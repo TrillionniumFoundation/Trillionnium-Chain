@@ -1276,6 +1276,21 @@ impl SealedPocoApplicationPlanV0 {
         self.operation_count
     }
 
+    /// Rebinds the private sealed plan to the complete ordered raw-operation
+    /// owner without exposing an operation-root constructor. This is a
+    /// comparison only; it grants no write, JMT, persistence, or callback
+    /// authority.
+    pub(crate) fn binds_exact_operations_v0(&self, raw_operations: &[Vec<u8>]) -> bool {
+        usize::try_from(self.operation_count) == Ok(raw_operations.len())
+            && self.operation_root
+                == ordered_bytes_root(
+                    APPLICATION_OPERATION_DOMAIN,
+                    APPLICATION_OPERATION_NODE_DOMAIN,
+                    APPLICATION_OPERATION_ROOT_DOMAIN,
+                    raw_operations,
+                )
+    }
+
     pub(crate) const fn mutation_root(&self) -> [u8; 32] {
         self.mutation_root
     }

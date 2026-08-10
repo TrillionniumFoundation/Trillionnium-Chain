@@ -31,17 +31,21 @@
 //! version through that same still-open snapshot and then close it, without
 //! applying or persisting the plan. One owning comparator rebuilds native
 //! receipts, matches all four roots plus strict ordinary commitments, and
-//! retains the exact finished plan on either success or mismatch. Non-runtime
-//! write sealing and success-only cursor advance, plan persistence, callback
-//! delivery, and actual Core execution remain absent until later carriers
-//! supply those distinct authorities. Owner-preserving
+//! retains the exact finished plan on either success or mismatch. A consuming
+//! single-attempt non-runtime sealer can now bind PoCO/validator family-local
+//! writes back to the exact retained owner while preserving the original
+//! unsealed attempt and open snapshot. Successive-family cursor advance,
+//! complete-body JMT planning, plan persistence, callbacks, and actual Core
+//! execution remain absent until later carriers supply those distinct
+//! authorities. Owner-preserving
 //! typed failure promotion, a consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
-//! same-snapshot family-state attempts are now present. The attempts still do
-//! not seal writes, advance the cursor, or advance Core.
+//! same-snapshot family-state attempts are now present. The family-local seal
+//! is not a complete-block JMT or persistence authority: it cannot advance the
+//! cursor, form a receipt, persist, callback, or advance Core.
 
 use crate::{
-    auth_tree::{PlannedAuthUpdate, PlannedAuthUpdateSealV0},
+    auth_tree::{AuthWrite, PlannedAuthUpdate, PlannedAuthUpdateSealV0},
     native_execution::{NativeBlockExecutionV0, NativeTransactionReceiptFactsV0},
     store::{
         ApplicationStore, AuthenticatedRuntimeReadFailureV0, AuthenticatedRuntimeReadSnapshotV0,
@@ -51,6 +55,7 @@ use crate::{
         NativeValidationReservationTokenV0,
     },
 };
+use anyhow::Context;
 use bytes::Bytes;
 use serde::{de::DeserializeOwned, Serialize};
 use sha2::{Digest, Sha256};
@@ -702,6 +707,77 @@ enum AuthorizedCoreNonRuntimeFamilyAttemptV0 {
     ValidatorTransition(Box<AuthorizedCoreValidatorTransitionAttemptV0>),
 }
 
+/// Owner-bound, family-local write seal for one successful PoCO prefix. The
+/// original unsealed overlay remains inside `attempted` so a later cursor
+/// tranche can continue same-block operations and regenerate the one final
+/// block seal. These writes must not be concatenated as independent PoCO
+/// blocks and are not a JMT plan or persistence authority.
+#[must_use = "a PoCO write seal still owns its exact family attempt and open cursor"]
+struct OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0 {
+    attempted: Box<AuthorizedCorePocoApplicationAttemptV0>,
+    plan: crate::poco_application::SealedPocoApplicationPlanV0,
+    writes: Vec<AuthWrite>,
+}
+
+/// Owner-bound canonical lifecycle write for one successful validator
+/// transition. The scheduled lifecycle and exact open cursor stay together;
+/// no complete-body plan, receipt, persistence, or callback can be derived
+/// from the write alone.
+#[must_use = "a validator write seal still owns its exact family attempt and open cursor"]
+struct OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0 {
+    attempted: Box<AuthorizedCoreValidatorTransitionAttemptV0>,
+    write: AuthWrite,
+}
+
+#[must_use = "a non-runtime write seal still owns exactly one successful family attempt"]
+enum OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0 {
+    PocoApplication(Box<OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0>),
+    ValidatorTransition(Box<OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0>),
+}
+
+#[must_use = "a failed write seal still owns the exact successful family attempt"]
+enum FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0 {
+    PocoApplication {
+        attempted: Box<AuthorizedCorePocoApplicationAttemptV0>,
+        reason: CoreAuthorizedNonRuntimeWriteSealInvariantV0,
+    },
+    ValidatorTransition {
+        attempted: Box<AuthorizedCoreValidatorTransitionAttemptV0>,
+        reason: CoreAuthorizedNonRuntimeWriteSealInvariantV0,
+    },
+}
+
+impl std::fmt::Debug for FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0")
+            .field("pending_explicit_snapshot_finish", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0 {
+    Snapshot(AuthenticatedRuntimeReadFailureV0),
+    Seal(CoreAuthorizedNonRuntimeWriteSealInvariantV0),
+}
+
+#[must_use = "a closed write-seal failure still retains its exact attempted family owner"]
+enum ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0 {
+    PocoApplication {
+        owner: Box<ClosedCoreAuthorizedNonRuntimePayloadOwnerV0>,
+        operation: Box<crate::poco_application::PocoApplicationOperationV0>,
+        overlay: Box<crate::poco_application::PocoApplicationBlockOverlayV0>,
+        cause: ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0,
+    },
+    ValidatorTransition {
+        owner: Box<ClosedCoreAuthorizedNonRuntimePayloadOwnerV0>,
+        transition: Box<crate::validator_lifecycle::ValidatorSetTransitionV1>,
+        scheduled_lifecycle: Box<crate::ValidatorLifecycleStateV1>,
+        cause: ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0,
+    },
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(super) enum CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0 {
     PocoGovernanceAuthorization,
@@ -716,6 +792,18 @@ pub(super) enum CoreAuthorizedNonRuntimeFamilyInvariantV0 {
     PocoProjection,
     PocoOperation(crate::poco_application::PocoApplicationInvariantV0),
     ValidatorTransition(crate::validator_lifecycle::ValidatorTransitionInvariantV1),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) enum CoreAuthorizedNonRuntimeWriteSealInvariantV0 {
+    OwnerBinding,
+    PocoSourceBinding,
+    PocoSeal,
+    PocoSealedPostcondition,
+    PocoWriteEncoding,
+    ValidatorScheduleRebind,
+    ValidatorWriteEncoding,
+    ValidatorWritePostcondition,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -756,8 +844,10 @@ pub(super) enum CoreAuthorizedRegularNonRuntimeUnavailableKindV0 {
 pub(super) enum CoreAuthorizedRegularNonRuntimeInvariantV0 {
     SemanticDecodeSnapshot(CoreAuthorizedRegularNonRuntimeSourceInvariantV0),
     FamilySnapshot(CoreAuthorizedRegularNonRuntimeSourceInvariantV0),
+    WriteSealSnapshot(CoreAuthorizedRegularNonRuntimeSourceInvariantV0),
     FamilyAuthenticatedSource(CoreAuthorizedRegularNonRuntimeSourceInvariantV0),
     Family(CoreAuthorizedNonRuntimeFamilyInvariantV0),
+    WriteSeal(CoreAuthorizedNonRuntimeWriteSealInvariantV0),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -1006,6 +1096,12 @@ impl CoreAuthorizedRegularNonRuntimeInvariantV0 {
             Self::FamilySnapshot(CoreAuthorizedRegularNonRuntimeSourceInvariantV0::Host) => {
                 "native_regular_non_runtime_family_snapshot_host_invariant"
             }
+            Self::WriteSealSnapshot(
+                CoreAuthorizedRegularNonRuntimeSourceInvariantV0::AuthenticatedState,
+            ) => "native_regular_non_runtime_write_seal_snapshot_authenticated_state_invariant",
+            Self::WriteSealSnapshot(CoreAuthorizedRegularNonRuntimeSourceInvariantV0::Host) => {
+                "native_regular_non_runtime_write_seal_snapshot_host_invariant"
+            }
             Self::FamilyAuthenticatedSource(
                 CoreAuthorizedRegularNonRuntimeSourceInvariantV0::AuthenticatedState,
             ) => "native_regular_non_runtime_authenticated_source_state_invariant",
@@ -1055,6 +1151,30 @@ impl CoreAuthorizedRegularNonRuntimeInvariantV0 {
             Self::Family(Family::ValidatorTransition(
                 Validator::ScheduledLifecyclePostcondition,
             )) => "native_regular_validator_scheduled_lifecycle_postcondition_invariant",
+            Self::WriteSeal(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding) => {
+                "native_regular_non_runtime_write_seal_owner_binding_invariant"
+            }
+            Self::WriteSeal(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSourceBinding) => {
+                "native_regular_poco_write_seal_source_binding_invariant"
+            }
+            Self::WriteSeal(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSeal) => {
+                "native_regular_poco_write_seal_invariant"
+            }
+            Self::WriteSeal(
+                CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSealedPostcondition,
+            ) => "native_regular_poco_write_seal_postcondition_invariant",
+            Self::WriteSeal(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoWriteEncoding) => {
+                "native_regular_poco_write_encoding_invariant"
+            }
+            Self::WriteSeal(
+                CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorScheduleRebind,
+            ) => "native_regular_validator_write_seal_schedule_rebind_invariant",
+            Self::WriteSeal(
+                CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWriteEncoding,
+            ) => "native_regular_validator_write_encoding_invariant",
+            Self::WriteSeal(
+                CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition,
+            ) => "native_regular_validator_write_postcondition_invariant",
         }
     }
 
@@ -1064,10 +1184,14 @@ impl CoreAuthorizedRegularNonRuntimeInvariantV0 {
                 "closing a non-runtime semantic-decode snapshot exposed an invariant"
             }
             Self::FamilySnapshot(_) => "closing a non-runtime family snapshot exposed an invariant",
+            Self::WriteSealSnapshot(_) => {
+                "closing a non-runtime write-seal snapshot exposed an invariant"
+            }
             Self::FamilyAuthenticatedSource(_) => {
                 "an authenticated non-runtime family source exposed an invariant"
             }
             Self::Family(_) => "non-runtime family evaluation requires host fail-stop",
+            Self::WriteSeal(_) => "non-runtime family write sealing requires host fail-stop",
         }
     }
 }
@@ -1514,6 +1638,304 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                 ),
             },
         )),
+    }
+}
+
+fn validate_core_authorized_non_runtime_write_seal_owner_v0(
+    routed: &CoreAuthorizedNonRuntimePayloadRoutingV0,
+) -> anyhow::Result<()> {
+    let expected_next = routed
+        .index
+        .checked_add(1)
+        .context("non-runtime write-seal cursor index exhausted")?;
+    anyhow::ensure!(
+        routed.index == routed.open.next_transaction_index
+            && routed.next_transaction_index == expected_next,
+        "non-runtime write-seal cursor provenance drift"
+    );
+    let authorized = &routed.open.open.authorized;
+    let index = usize::try_from(routed.index)
+        .context("non-runtime write-seal cursor index does not fit host")?;
+    anyhow::ensure!(
+        authorized
+            .body
+            .application_payload()
+            .transactions()
+            .get(index)
+            .map(Vec::as_slice)
+            == Some(routed.exact_outer_bytes.as_slice()),
+        "non-runtime write-seal raw body owner drift"
+    );
+    let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&routed.exact_outer_bytes)
+        .context("non-runtime write-seal envelope no longer decodes")?;
+    anyhow::ensure!(
+        envelope == routed.envelope,
+        "non-runtime write-seal envelope owner drift"
+    );
+    let exact_inner_bytes = envelope
+        .payload_bytes()
+        .context("non-runtime write-seal envelope payload no longer decodes")?;
+    anyhow::ensure!(
+        exact_inner_bytes == routed.exact_inner_bytes,
+        "non-runtime write-seal inner payload owner drift"
+    );
+    let signer = crate::validate_signed_command_envelope_against_policy_v1(
+        &envelope,
+        authorized.header.chain_id().as_str(),
+        authorized.header.timestamp_ms(),
+        &authorized.context.signer_policy.authorized_signers,
+    )
+    .context("non-runtime write-seal envelope authorization drift")?;
+    anyhow::ensure!(
+        routed.context.target_height == authorized.header.height().get()
+            && routed.context.target_block_id == authorized.validation_id.block_id()
+            && routed.context.validation_timestamp_ms == authorized.header.timestamp_ms()
+            && routed.context.signer_id == signer.signer_id
+            && routed.context.signer_role == signer.signer_role
+            && routed.context.payload_len == routed.exact_inner_bytes.len(),
+        "non-runtime write-seal target owner drift"
+    );
+    Ok(())
+}
+
+/// Derives only family-local canonical writes from one complete successful
+/// attempt. The exact attempt remains embedded beside those writes, including
+/// its still-open parent snapshot and uncommitted cursor. PoCO sealing runs on
+/// a bounded overlay clone so either branch retains the original owner. This
+/// step does not concatenate PoCO prefixes, plan a JMT update, finish the
+/// snapshot, advance the cursor, form a receipt, persist, callback, or call
+/// Core.
+#[allow(dead_code)]
+fn seal_core_authorized_non_runtime_family_writes_v0(
+    attempted: AuthorizedCoreNonRuntimeFamilyAttemptV0,
+) -> std::result::Result<
+    OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0,
+    FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0,
+> {
+    match attempted {
+        AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted) => {
+            let sealed = (|| {
+                validate_core_authorized_non_runtime_write_seal_owner_v0(
+                    &attempted.decoded.owner.routed,
+                )
+                .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                let reencoded = serde_json::to_vec(&attempted.decoded.operation)
+                    .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
+                }
+                let routed = &attempted.decoded.owner.routed;
+                if routed.envelope.payload_type
+                    != crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0
+                {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
+                }
+                let authorized = &routed.open.open.authorized;
+                if attempted.overlay.source_version()
+                    != authorized.context.parent_header.height().get()
+                    || attempted.overlay.source_root()
+                        != *authorized.context.parent_header.state_root().as_bytes()
+                    || attempted.overlay.target_height() != authorized.header.height()
+                    || attempted.overlay.operation_count() != 1
+                    || attempted.decoded.operation.target_height()
+                        != authorized.header.height().get()
+                {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSourceBinding);
+                }
+                let plan = attempted
+                    .overlay
+                    .clone()
+                    .seal()
+                    .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSeal)?;
+                if plan.source_version() != authorized.context.parent_header.height().get()
+                    || plan.source_root()
+                        != *authorized.context.parent_header.state_root().as_bytes()
+                    || plan.target_height() != authorized.header.height()
+                    || plan.target_manifest().cutoff_height() != authorized.header.height()
+                    || !plan.binds_exact_operations_v0(std::slice::from_ref(
+                        &attempted.decoded.owner.routed.exact_inner_bytes,
+                    ))
+                {
+                    return Err(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSealedPostcondition,
+                    );
+                }
+                let writes =
+                    crate::poco_transition::auth_writes_from_sealed_poco_application_v0(&plan)
+                        .map_err(|_| {
+                            CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoWriteEncoding
+                        })?;
+                if writes.len() != plan.namespace_writes().len()
+                    || !writes
+                        .iter()
+                        .zip(plan.namespace_writes())
+                        .all(|(write, (key, value))| write.key() == key && write.value() == value)
+                {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoWriteEncoding);
+                }
+                Ok((plan, writes))
+            })();
+            match sealed {
+                Ok((plan, writes)) => Ok(
+                    OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication(Box::new(
+                        OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0 {
+                            attempted,
+                            plan,
+                            writes,
+                        },
+                    )),
+                ),
+                Err(reason) => Err(
+                    FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                        attempted,
+                        reason,
+                    },
+                ),
+            }
+        }
+        AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted) => {
+            let sealed = (|| {
+                validate_core_authorized_non_runtime_write_seal_owner_v0(
+                    &attempted.decoded.owner.routed,
+                )
+                .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                let reencoded = serde_json::to_vec(&attempted.decoded.transition)
+                    .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
+                }
+                let routed = &attempted.decoded.owner.routed;
+                if routed.envelope.payload_type
+                    != crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1
+                {
+                    return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
+                }
+                let mut rebuilt = routed
+                    .open
+                    .open
+                    .authorized
+                    .context
+                    .validator_lifecycle
+                    .clone();
+                let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
+                    command_id: &routed.envelope.command_id,
+                    signer_id: &routed.context.signer_id,
+                    signer_role: &routed.context.signer_role,
+                    nonce: routed.envelope.nonce,
+                    chain_id: routed.envelope.chain_id.as_str(),
+                    accepted_height: routed.context.target_height,
+                };
+                rebuilt
+                    .schedule(attempted.decoded.transition.clone(), authorization)
+                    .map_err(|_| {
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorScheduleRebind
+                    })?;
+                if rebuilt != attempted.scheduled_lifecycle {
+                    return Err(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorScheduleRebind,
+                    );
+                }
+                let target_height = routed.open.open.authorized.header.height().get();
+                let write = crate::authenticated_lifecycle_write(target_height, &rebuilt).map_err(
+                    |_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWriteEncoding,
+                )?;
+                let expected_key = crate::auth_tree::validator_state_key().map_err(|_| {
+                    CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition
+                })?;
+                if write.key() != expected_key.as_slice() {
+                    return Err(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition,
+                    );
+                }
+                let record =
+                    crate::auth_tree::AuthenticatedObjectRecord::decode(write.value().ok_or(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition,
+                    )?)
+                    .map_err(|_| {
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition
+                    })?;
+                let lifecycle_bytes = serde_json::to_vec(&rebuilt).map_err(|_| {
+                    CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWriteEncoding
+                })?;
+                if record.object_type != crate::VALIDATOR_LIFECYCLE_SCHEMA_V1
+                    || record.object_version != target_height
+                    || record.value != lifecycle_bytes
+                {
+                    return Err(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorWritePostcondition,
+                    );
+                }
+                Ok(write)
+            })();
+            match sealed {
+                Ok(write) => Ok(
+                    OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition(
+                        Box::new(OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0 {
+                            attempted,
+                            write,
+                        }),
+                    ),
+                ),
+                Err(reason) => Err(
+                    FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                        attempted,
+                        reason,
+                    },
+                ),
+            }
+        }
+    }
+}
+
+/// Closes a failed family-local write seal while retaining the attempted
+/// overlay or scheduled lifecycle. Snapshot finish failure consumes and
+/// outranks the pending seal invariant; no writes, plan, cursor advance,
+/// receipt, terminal callback, or persistence authority escapes.
+#[allow(dead_code)]
+fn finish_failed_core_authorized_non_runtime_family_write_seal_v0(
+    failed: FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0,
+) -> Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0> {
+    match failed {
+        FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication { attempted, reason } => {
+            let AuthorizedCorePocoApplicationAttemptV0 { decoded, overlay } = *attempted;
+            let DecodedCoreAuthorizedPocoApplicationPayloadV0 { owner, operation } = decoded;
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(reason),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                    owner: Box::new(owner),
+                    operation: Box::new(operation),
+                    overlay: Box::new(overlay),
+                    cause,
+                },
+            )
+        }
+        FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+            attempted,
+            reason,
+        } => {
+            let AuthorizedCoreValidatorTransitionAttemptV0 {
+                decoded,
+                scheduled_lifecycle,
+            } = *attempted;
+            let DecodedCoreAuthorizedValidatorTransitionPayloadV0 { owner, transition } = decoded;
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(reason),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                    owner: Box::new(owner),
+                    transition: Box::new(transition),
+                    scheduled_lifecycle: Box::new(scheduled_lifecycle),
+                    cause,
+                },
+            )
+        }
     }
 }
 
@@ -2029,6 +2451,33 @@ impl ClosedCoreAuthorizedRegularNonRuntimeFailureV0
     }
 }
 
+impl ClosedCoreAuthorizedRegularNonRuntimeFailureV0
+    for ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0
+{
+    fn outcome_facts_v0(&self) -> CoreAuthorizedRegularNonRuntimeFailureOutcomeFactsV0 {
+        let (owner, cause) = match self {
+            Self::PocoApplication { owner, cause, .. }
+            | Self::ValidatorTransition { owner, cause, .. } => (owner, cause),
+        };
+        let generation = owner.authorized.validation_id.generation();
+        match cause {
+            ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Snapshot(failure) => {
+                authenticated_non_runtime_read_outcome_facts_v0(
+                    generation,
+                    failure,
+                    CoreAuthorizedRegularNonRuntimeInvariantV0::WriteSealSnapshot,
+                )
+            }
+            ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(reason) => {
+                CoreAuthorizedRegularNonRuntimeFailureOutcomeFactsV0::invariant(
+                    generation,
+                    CoreAuthorizedRegularNonRuntimeInvariantV0::WriteSeal(*reason),
+                )
+            }
+        }
+    }
+}
+
 fn authenticated_pre_execution_read_outcome_facts_v0(
     generation: u64,
     failure: &AuthenticatedRuntimeReadFailureV0,
@@ -2318,6 +2767,15 @@ fn promote_closed_core_authorized_non_runtime_family_failure_v0(
     failed: Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0>,
 ) -> RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0<
     ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0,
+> {
+    retain_non_runtime_failure_outcome_v0(failed)
+}
+
+#[allow(dead_code)]
+fn promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(
+    failed: Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0>,
+) -> RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0<
+    ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0,
 > {
     retain_non_runtime_failure_outcome_v0(failed)
 }
@@ -5669,6 +6127,7 @@ mod tests {
         finish_and_plan_test_regular_runtime_execution_for_test_v0,
         finish_core_authorized_regular_validation_v0,
         finish_failed_core_authorized_non_runtime_family_attempt_v0,
+        finish_failed_core_authorized_non_runtime_family_write_seal_v0,
         finish_failed_core_authorized_non_runtime_semantic_decode_v0,
         finish_failed_core_authorized_regular_runtime_attempt_v0,
         finish_failed_core_authorized_regular_transaction_decode_v0,
@@ -5688,25 +6147,30 @@ mod tests {
         open_test_regular_runtime_execution_for_test_v0,
         prepare_next_core_authorized_regular_payload_v0,
         promote_closed_core_authorized_non_runtime_family_failure_v0,
+        promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0,
         promote_closed_core_authorized_non_runtime_semantic_decode_failure_v0,
         promote_closed_core_authorized_regular_post_state_plan_failure_v0,
         promote_closed_core_authorized_regular_runtime_failure_v0,
         promote_closed_core_authorized_regular_transaction_decode_failure_v0,
         promote_core_authorized_regular_execution_outcome_v0,
-        promote_failed_core_issued_regular_validation_open_v0, stage_runtime_mutations_for_test_v0,
+        promote_failed_core_issued_regular_validation_open_v0,
+        seal_core_authorized_non_runtime_family_writes_v0, stage_runtime_mutations_for_test_v0,
         take_core_regular_validation_job_v0, validate_snapshot_authenticated_regular_context_v0,
         ClassifiedCoreAuthorizedRegularRuntimeCommitmentsV0,
         ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+        ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0,
         ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
         ClosedCoreAuthorizedRegularPostStatePlanCauseV0,
         ClosedCoreAuthorizedRegularRuntimeAttemptCauseV0,
         ClosedCoreAuthorizedRegularTransactionDecodeCauseV0,
         ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0,
+        ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0,
         ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0,
         CoreAuthorizedExactRegularBodyFailureClassV0, CoreAuthorizedExactRegularBodyFailureV0,
         CoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
         CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0,
         CoreAuthorizedNonRuntimeFamilyInvariantV0, CoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
+        CoreAuthorizedNonRuntimeWriteSealInvariantV0,
         CoreAuthorizedRegularCommitmentComparisonCauseV0,
         CoreAuthorizedRegularCommitmentInvariantV0, CoreAuthorizedRegularComputedRootMismatchV0,
         CoreAuthorizedRegularExecutionOutcomeV0,
@@ -8031,6 +8495,100 @@ mod tests {
                 "production family attempt gained a forbidden source/output surface: {forbidden_surface}"
             );
         }
+        let write_seal_owner_offset = implementation_source
+            .find("fn validate_core_authorized_non_runtime_write_seal_owner_v0(")
+            .expect("production non-runtime write-seal owner rebind");
+        let write_seal_offset = implementation_source
+            .find("fn seal_core_authorized_non_runtime_family_writes_v0(")
+            .expect("production consuming non-runtime family write sealer");
+        assert!(write_seal_owner_offset < write_seal_offset);
+        let write_seal_owner_body =
+            &implementation_source[write_seal_owner_offset..write_seal_offset];
+        for required_binding in [
+            "serde_json::from_slice(&routed.exact_outer_bytes)",
+            "envelope == routed.envelope",
+            "exact_inner_bytes == routed.exact_inner_bytes",
+            "validate_signed_command_envelope_against_policy_v1(",
+            "routed.context.signer_id == signer.signer_id",
+            "routed.context.signer_role == signer.signer_role",
+        ] {
+            assert!(
+                write_seal_owner_body.contains(required_binding),
+                "production write-seal owner rebind lost: {required_binding}"
+            );
+        }
+        for forbidden_surface in [
+            "next_transaction_index = ",
+            "next_transaction_index +=",
+            "snapshot.finish()",
+            "plan_exact_next_auth_update_v0",
+            "ExecutionOutcomeV0",
+            "Input::",
+            "Core::step",
+            "persist_transition(",
+        ] {
+            assert!(
+                !write_seal_owner_body.contains(forbidden_surface),
+                "production write-seal owner rebind gained authority: {forbidden_surface}"
+            );
+        }
+        let write_seal_signature_end = implementation_source[write_seal_offset..]
+            .find(" {\n")
+            .map(|offset| write_seal_offset + offset)
+            .expect("production family write-seal signature end");
+        let write_seal_signature =
+            &implementation_source[write_seal_offset..write_seal_signature_end];
+        assert!(write_seal_signature.contains("attempted: AuthorizedCoreNonRuntimeFamilyAttemptV0"));
+        for forbidden_parameter in [
+            "route:",
+            "validation_id:",
+            "snapshot:",
+            "header:",
+            "height:",
+            "version:",
+            "root:",
+            "raw:",
+            "writes:",
+            "lifecycle:",
+            "plan:",
+        ] {
+            assert!(
+                !write_seal_signature.contains(forbidden_parameter),
+                "production family write seal gained caller authority: {forbidden_parameter}"
+            );
+        }
+        let write_seal_body = implementation_source[write_seal_offset..]
+            .split_once("fn finish_failed_core_authorized_non_runtime_family_write_seal_v0(")
+            .expect("production family write-seal body boundary")
+            .0;
+        assert!(write_seal_body
+            .contains(".overlay\n                    .clone()\n                    .seal()"));
+        assert!(write_seal_body.contains(
+            "crate::poco_transition::auth_writes_from_sealed_poco_application_v0(&plan)"
+        ));
+        assert!(write_seal_body
+            .contains("crate::authenticated_lifecycle_write(target_height, &rebuilt)"));
+        for forbidden_surface in [
+            "plan_exact_next_auth_update_v0",
+            ".seal_v0()",
+            "snapshot.finish()",
+            "next_transaction_index = ",
+            "next_transaction_index +=",
+            "finish_and_plan_core_authorized_regular_post_state_v0",
+            "ExecutionOutcomeV0",
+            "PayloadValidationResult",
+            "Input::",
+            "into_core_input",
+            "Core::step",
+            "core.step(",
+            "persist_transition(",
+            "receipt:",
+        ] {
+            assert!(
+                !write_seal_body.contains(forbidden_surface),
+                "production family write seal gained a forbidden authority: {forbidden_surface}"
+            );
+        }
         let plan_offset = implementation_source
             .find("fn finish_and_plan_core_authorized_regular_post_state_v0(")
             .expect("production consuming post-state planner");
@@ -8087,6 +8645,11 @@ mod tests {
                 "fn finish_failed_core_authorized_non_runtime_family_attempt_v0(",
                 "failed: Box<FailedCoreAuthorizedNonRuntimeFamilyAttemptV0>",
                 "Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0>",
+            ),
+            (
+                "fn finish_failed_core_authorized_non_runtime_family_write_seal_v0(",
+                "failed: FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0",
+                "Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0>",
             ),
         ] {
             let offset = implementation_source
@@ -8691,6 +9254,8 @@ mod tests {
             "ClosedCoreAuthorizedNonRuntimePayloadOwnerV0",
             "AuthorizedCorePocoApplicationAttemptV0",
             "AuthorizedCoreValidatorTransitionAttemptV0",
+            "OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0",
+            "OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0",
             "AppliedCoreAuthorizedRuntimeTransactionV0",
             "FinishedPlannedCoreAuthorizedRegularRuntimeExecutionV0",
             "MatchedCoreAuthorizedRegularRuntimeCommitmentsV0",
@@ -8884,6 +9449,9 @@ mod tests {
             "AuthorizedCoreNonRuntimeFamilyAttemptV0",
             "FailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
             "ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
+            "OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0",
+            "FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0",
+            "ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0",
         ] {
             let declaration = format!("enum {capability} {{");
             let attributes = item_attribute_source(implementation_source, &declaration);
@@ -8905,8 +9473,10 @@ mod tests {
                 format!("impl serde::Deserialize for {capability}"),
                 format!("impl BorshSerialize for {capability}"),
                 format!("impl BorshDeserialize for {capability}"),
+                format!("impl Drop for {capability}"),
                 format!("impl From<{capability}"),
                 format!("impl TryFrom<{capability}"),
+                "fn into_parts(self)".to_string(),
             ] {
                 assert!(!implementation_source.contains(&forbidden));
             }
@@ -12307,6 +12877,416 @@ mod tests {
     }
 
     #[test]
+    fn production_poco_family_write_seal_retains_owner_without_planning_or_advance() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-write-seal".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .expect("authorize PoCO family write-seal attempt");
+        let sealed = seal_core_authorized_non_runtime_family_writes_v0(attempted)
+            .expect("seal owner-bound PoCO family writes");
+        let sealed = match sealed {
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication(sealed) => {
+                sealed
+            }
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition(_) => {
+                panic!("PoCO family write seal changed family")
+            }
+        };
+        assert_eq!(sealed.plan.source_version(), 1);
+        assert_eq!(sealed.plan.source_root(), store.parent_state_root);
+        assert_eq!(sealed.plan.target_height(), Height::new(2));
+        assert_eq!(sealed.plan.operation_count(), 1);
+        assert!(sealed
+            .plan
+            .binds_exact_operations_v0(std::slice::from_ref(&exact_inner)));
+        let expected_writes =
+            crate::poco_transition::auth_writes_from_sealed_poco_application_v0(&sealed.plan)
+                .expect("rederive sealed PoCO writes");
+        assert_eq!(sealed.writes, expected_writes);
+        assert!(!sealed.writes.is_empty());
+        let inert_plan = sealed
+            .attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .snapshot
+            .plan_exact_next_auth_update_v0(sealed.writes.clone())
+            .expect("independently plan sealed PoCO writes without persistence");
+        assert_eq!(inert_plan.version, 2);
+        assert_ne!(
+            <[u8; 32]>::from(inert_plan.root_hash),
+            store.parent_state_root
+        );
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .open
+                .next_transaction_index,
+            0
+        );
+        assert_eq!(
+            sealed.attempted.decoded.owner.routed.next_transaction_index,
+            1
+        );
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .open
+                .open
+                .authorized
+                .route,
+            PayloadValidationRouteV0::Proposal
+        );
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .context
+                .target_block_id,
+            expected_id
+        );
+        assert!(sealed
+            .attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .changes
+            .is_empty());
+        assert!(sealed
+            .attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .applied
+            .is_empty());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(inert_plan);
+        drop(sealed);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection,
+            "family write sealing must not publish PoCO state"
+        );
+    }
+
+    #[test]
+    fn production_mixed_runtime_then_poco_write_seal_retains_prior_private_evidence() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let first_runtime = base.body.application_payload().transactions()[0].clone();
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-write-seal-after-runtime".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![first_runtime, exact_outer.clone()]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open mixed runtime/PoCO write-seal cursor");
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("first runtime transaction succeeds before PoCO sealing");
+        assert_eq!(open.next_transaction_index, 1);
+        assert_eq!(open.applied.len(), 1);
+        assert!(!open.changes.is_empty());
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare second mixed PoCO payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("mixed PoCO payload entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode mixed PoCO payload");
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .expect("authorize mixed PoCO family attempt");
+        let sealed = seal_core_authorized_non_runtime_family_writes_v0(attempted)
+            .expect("seal mixed PoCO family writes");
+        let sealed = match sealed {
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication(sealed) => {
+                sealed
+            }
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition(_) => {
+                panic!("mixed PoCO write seal changed family")
+            }
+        };
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .open
+                .next_transaction_index,
+            1
+        );
+        assert_eq!(
+            sealed.attempted.decoded.owner.routed.next_transaction_index,
+            2
+        );
+        assert_eq!(sealed.attempted.decoded.owner.routed.open.applied.len(), 1);
+        assert!(!sealed
+            .attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .changes
+            .is_empty());
+        assert!(sealed.plan.binds_exact_operations_v0(&[exact_inner]));
+        assert!(!sealed.writes.is_empty());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(sealed);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
+    fn poco_write_seal_source_drift_is_fail_stop_and_retains_the_exact_attempt() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-write-seal-source-drift".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .expect("authorize PoCO source-drift seal attempt");
+        let mut attempted = match attempted {
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted) => attempted,
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(_) => {
+                panic!("PoCO source-drift attempt changed family")
+            }
+        };
+        attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .authorized
+            .context
+            .parent_header = profile.header.clone();
+        let failed = seal_core_authorized_non_runtime_family_writes_v0(
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted),
+        )
+        .err()
+        .expect("PoCO source drift must retain a write-seal failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_write_seal_v0(failed);
+        let promoted =
+            promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(closed);
+        let (outcome, closed) = match promoted {
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::InvariantFault {
+                outcome,
+                failed,
+            } => (outcome, failed),
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::Unavailable { .. }
+            | RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::DeterministicallyInvalid {
+                ..
+            } => panic!("PoCO write-seal source drift did not fail stop"),
+        };
+        assert_eq!(
+            outcome.code(),
+            "native_regular_poco_write_seal_source_binding_invariant"
+        );
+        assert_eq!(outcome.terminal_disposition(), None);
+        assert!(outcome.successful_execution().is_none());
+        match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                owner,
+                operation,
+                overlay,
+                cause,
+            } => {
+                assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+                assert_eq!(owner.exact_outer_bytes, exact_outer);
+                assert_eq!(owner.cursor_next_transaction_index, 0);
+                assert_eq!(owner.decoded_next_transaction_index, 1);
+                assert_eq!(operation.target_height(), 2);
+                assert_eq!(overlay.operation_count(), 1);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSourceBinding,
+                    )
+                );
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                ..
+            } => panic!("PoCO write-seal failure changed family"),
+        }
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
+    fn poco_write_seal_finish_failure_outranks_source_binding_drift() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-write-seal-finish-override".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .expect("authorize PoCO finish-override seal attempt");
+        let mut attempted = match attempted {
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted) => attempted,
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(_) => {
+                panic!("PoCO finish-override attempt changed family")
+            }
+        };
+        attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .authorized
+            .context
+            .parent_header = profile.header.clone();
+        attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .snapshot
+            .inject_finish_failure_for_test_v0();
+        let failed = seal_core_authorized_non_runtime_family_writes_v0(
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted),
+        )
+        .err()
+        .expect("PoCO source drift must retain a pending write-seal failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_write_seal_v0(failed);
+        let promoted =
+            promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(closed);
+        let (outcome, closed) = match promoted {
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::InvariantFault {
+                outcome,
+                failed,
+            } => (outcome, failed),
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::Unavailable { .. }
+            | RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::DeterministicallyInvalid {
+                ..
+            } => panic!("PoCO finish override changed disposition"),
+        };
+        assert_eq!(
+            outcome.code(),
+            "native_regular_non_runtime_write_seal_snapshot_host_invariant"
+        );
+        assert_eq!(outcome.terminal_disposition(), None);
+        match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                owner,
+                operation,
+                overlay,
+                cause,
+            } => {
+                assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+                assert_eq!(owner.exact_outer_bytes, exact_outer);
+                assert_eq!(operation.target_height(), 2);
+                assert_eq!(overlay.operation_count(), 1);
+                assert!(matches!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Snapshot(
+                        AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                            stage: crate::store::AuthenticatedRuntimeReadStageV0::EndSnapshot,
+                            ..
+                        },
+                    )
+                ));
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                ..
+            } => {
+                panic!("PoCO finish override changed family")
+            }
+        }
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
     fn production_poco_governance_rejection_closes_without_cursor_or_state_mutation() {
         let store = test_store_with_poco_application_authority();
         let base = fixture_profile(store.parent_state_root, 0);
@@ -12795,6 +13775,363 @@ mod tests {
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
         drop(attempted);
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_validator_family_write_seal_is_canonical_and_owner_bound() {
+        let store = test_store();
+        let command_id = "native-validator-family-write-seal";
+        let exact_inner = valid_validator_transition_bytes(&store, command_id);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .expect("authorize validator family write-seal attempt");
+        let sealed = seal_core_authorized_non_runtime_family_writes_v0(attempted)
+            .expect("seal owner-bound validator lifecycle write");
+        let sealed = match sealed {
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition(
+                sealed,
+            ) => sealed,
+            super::OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication(_) => {
+                panic!("validator family write seal changed family")
+            }
+        };
+        assert_eq!(sealed.write.key(), validator_state_key().unwrap());
+        let record = AuthenticatedObjectRecord::decode(
+            sealed
+                .write
+                .value()
+                .expect("validator family write cannot delete lifecycle"),
+        )
+        .expect("decode sealed validator lifecycle record");
+        assert_eq!(record.object_type, VALIDATOR_LIFECYCLE_SCHEMA_V1);
+        assert_eq!(record.object_version, 2);
+        assert_eq!(
+            record.value,
+            serde_json::to_vec(&sealed.attempted.scheduled_lifecycle).unwrap()
+        );
+        let inert_plan = sealed
+            .attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .snapshot
+            .plan_exact_next_auth_update_v0([sealed.write.clone()])
+            .expect("independently plan sealed validator write without persistence");
+        assert_eq!(inert_plan.version, 2);
+        assert_ne!(
+            <[u8; 32]>::from(inert_plan.root_hash),
+            store.parent_state_root
+        );
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .open
+                .next_transaction_index,
+            0
+        );
+        assert_eq!(
+            sealed.attempted.decoded.owner.routed.next_transaction_index,
+            1
+        );
+        assert_eq!(
+            sealed
+                .attempted
+                .decoded
+                .owner
+                .routed
+                .open
+                .open
+                .authorized
+                .validation_id
+                .block_id(),
+            expected_id
+        );
+        assert_eq!(
+            sealed.attempted.decoded.owner.routed.exact_outer_bytes,
+            exact_outer
+        );
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(inert_plan);
+        drop(sealed);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+    }
+
+    #[test]
+    fn validator_write_seal_failure_retains_owner_and_finish_failure_outranks_it() {
+        for inject_finish_failure in [false, true] {
+            let store = test_store();
+            let command_id = if inject_finish_failure {
+                "native-validator-write-seal-finish-override"
+            } else {
+                "native-validator-write-seal-successor-drift"
+            };
+            let exact_inner = valid_validator_transition_bytes(&store, command_id);
+            let exact_outer = signed_envelope_bytes(
+                TEST_CHAIN.as_str(),
+                command_id.to_string(),
+                81,
+                "did:operator:1",
+                "operator",
+                1,
+                1_700_000_000_000,
+                1_700_000_100_000,
+                crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+                &exact_inner,
+            );
+            let profile = replace_profile_transactions(
+                fixture_profile(store.parent_state_root, 0),
+                vec![exact_outer.clone()],
+            );
+            let expected_id = profile.header.id();
+            let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+                decode_only_non_runtime_family(&store, &profile),
+            )
+            .expect("authorize validator write-seal failure fixture");
+            let mut attempted = match attempted {
+                super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted) => {
+                    attempted
+                }
+                super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(_) => {
+                    panic!("validator write-seal failure fixture changed family")
+                }
+            };
+            attempted.scheduled_lifecycle.governance_sequence += 1;
+            if inject_finish_failure {
+                attempted
+                    .decoded
+                    .owner
+                    .routed
+                    .open
+                    .open
+                    .snapshot
+                    .inject_finish_failure_for_test_v0();
+            }
+            let failed = seal_core_authorized_non_runtime_family_writes_v0(
+                super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted),
+            )
+            .err()
+            .expect("validator successor drift must retain a seal failure");
+            let closed = finish_failed_core_authorized_non_runtime_family_write_seal_v0(failed);
+            let promoted =
+                promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(closed);
+            let (outcome, closed) = match promoted {
+                RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::InvariantFault {
+                    outcome,
+                    failed,
+                } => (outcome, failed),
+                RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::Unavailable { .. }
+                | RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::DeterministicallyInvalid {
+                    ..
+                } => panic!("validator write-seal invariant changed disposition"),
+            };
+            assert_eq!(outcome.terminal_disposition(), None);
+            assert!(outcome.successful_execution().is_none());
+            assert_eq!(
+                outcome.code(),
+                if inject_finish_failure {
+                    "native_regular_non_runtime_write_seal_snapshot_host_invariant"
+                } else {
+                    "native_regular_validator_write_seal_schedule_rebind_invariant"
+                }
+            );
+            match *closed {
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                    owner,
+                    transition,
+                    scheduled_lifecycle,
+                    cause,
+                } => {
+                    assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+                    assert_eq!(owner.exact_outer_bytes, exact_outer);
+                    assert_eq!(owner.cursor_next_transaction_index, 0);
+                    assert_eq!(owner.decoded_next_transaction_index, 1);
+                    assert_eq!(transition.transition_id, command_id);
+                    assert_eq!(scheduled_lifecycle.governance_sequence, 2);
+                    if inject_finish_failure {
+                        assert!(matches!(
+                            cause,
+                            ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Snapshot(
+                                AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                                    stage:
+                                        crate::store::AuthenticatedRuntimeReadStageV0::EndSnapshot,
+                                    ..
+                                },
+                            )
+                        ));
+                    } else {
+                        assert_eq!(
+                            cause,
+                            ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(
+                                CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorScheduleRebind,
+                            )
+                        );
+                    }
+                }
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                    ..
+                } => panic!("validator write-seal failure changed family"),
+            }
+            assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+            assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+            assert!(store.validator_lifecycle.pending_transition.is_none());
+        }
+    }
+
+    #[test]
+    fn validator_write_seal_rejects_raw_owner_and_scheduled_successor_splice() {
+        let store = test_store();
+        let command_id = "native-validator-write-seal-owner-splice";
+        let exact_inner = valid_validator_transition_bytes(&store, command_id);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .expect("authorize validator owner-splice fixture");
+        let mut attempted = match attempted {
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted) => {
+                attempted
+            }
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(_) => {
+                panic!("validator owner-splice fixture changed family")
+            }
+        };
+
+        // Poison the retained envelope and authenticated lifecycle together,
+        // then rebuild a matching successor. A sealer that trusted those
+        // sibling fields instead of the exact raw body could emit this write.
+        attempted.decoded.owner.routed.envelope.nonce = 2;
+        attempted
+            .decoded
+            .owner
+            .routed
+            .open
+            .open
+            .authorized
+            .context
+            .validator_lifecycle
+            .governance_sequence = 1;
+        let routed = &attempted.decoded.owner.routed;
+        let mut poisoned_successor = routed
+            .open
+            .open
+            .authorized
+            .context
+            .validator_lifecycle
+            .clone();
+        let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
+            command_id: &routed.envelope.command_id,
+            signer_id: &routed.context.signer_id,
+            signer_role: &routed.context.signer_role,
+            nonce: routed.envelope.nonce,
+            chain_id: routed.envelope.chain_id.as_str(),
+            accepted_height: routed.context.target_height,
+        };
+        poisoned_successor
+            .schedule(attempted.decoded.transition.clone(), authorization)
+            .expect("construct internally consistent poisoned successor");
+        attempted.scheduled_lifecycle = poisoned_successor;
+
+        let failed = seal_core_authorized_non_runtime_family_writes_v0(
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted),
+        )
+        .err()
+        .expect("exact raw owner must reject the poisoned sibling fields");
+        let closed = finish_failed_core_authorized_non_runtime_family_write_seal_v0(failed);
+        let promoted =
+            promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(closed);
+        let (outcome, closed) = match promoted {
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::InvariantFault {
+                outcome,
+                failed,
+            } => (outcome, failed),
+            RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::Unavailable { .. }
+            | RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0::DeterministicallyInvalid {
+                ..
+            } => panic!("validator owner splice changed disposition"),
+        };
+        assert_eq!(
+            outcome.code(),
+            "native_regular_non_runtime_write_seal_owner_binding_invariant"
+        );
+        assert_eq!(outcome.terminal_disposition(), None);
+        match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition {
+                owner,
+                transition,
+                scheduled_lifecycle,
+                cause,
+            } => {
+                assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+                assert_eq!(owner.exact_outer_bytes, exact_outer);
+                assert_eq!(owner.exact_inner_bytes, exact_inner);
+                assert_eq!(owner.envelope.nonce, 2);
+                assert_eq!(
+                    owner
+                        .authorized
+                        .context
+                        .validator_lifecycle
+                        .governance_sequence,
+                    1
+                );
+                assert_eq!(transition.transition_id, command_id);
+                assert_eq!(scheduled_lifecycle.governance_sequence, 2);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding,
+                    )
+                );
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication { .. } => {
+                panic!("validator owner splice changed family")
+            }
+        }
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
     }
 
     #[test]
@@ -13302,11 +14639,12 @@ mod tests {
     }
 
     #[test]
-    fn non_runtime_terminal_reason_codes_are_exhaustive_static_and_unique() {
+    fn non_runtime_failure_reason_codes_are_exhaustive_static_and_unique() {
         use super::{
             CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0 as FamilyInvalid,
             CoreAuthorizedNonRuntimeFamilyInvariantV0 as FamilyInvariant,
             CoreAuthorizedNonRuntimeSemanticDecodeCauseV0 as Semantic,
+            CoreAuthorizedNonRuntimeWriteSealInvariantV0 as WriteSeal,
             CoreAuthorizedRegularNonRuntimeDeterministicInvalidV0 as Invalid,
             CoreAuthorizedRegularNonRuntimeInvariantV0 as Invariant,
             CoreAuthorizedRegularNonRuntimeSourceInvariantV0 as SourceInvariant,
@@ -13325,7 +14663,7 @@ mod tests {
                 .iter()
                 .copied()
                 .collect::<std::collections::BTreeSet<_>>();
-            assert_eq!(unique.len(), codes.len(), "terminal reason codes collided");
+            assert_eq!(unique.len(), codes.len(), "failure reason codes collided");
             assert!(codes.iter().all(|code| {
                 code.starts_with("native_regular_")
                     && code
@@ -13437,10 +14775,20 @@ mod tests {
             Invariant::SemanticDecodeSnapshot(SourceInvariant::Host).code(),
             Invariant::FamilySnapshot(SourceInvariant::AuthenticatedState).code(),
             Invariant::FamilySnapshot(SourceInvariant::Host).code(),
+            Invariant::WriteSealSnapshot(SourceInvariant::AuthenticatedState).code(),
+            Invariant::WriteSealSnapshot(SourceInvariant::Host).code(),
             Invariant::FamilyAuthenticatedSource(SourceInvariant::AuthenticatedState).code(),
             Invariant::FamilyAuthenticatedSource(SourceInvariant::Host).code(),
             Invariant::Family(FamilyInvariant::PocoExecutionContext).code(),
             Invariant::Family(FamilyInvariant::PocoProjection).code(),
+            Invariant::WriteSeal(WriteSeal::OwnerBinding).code(),
+            Invariant::WriteSeal(WriteSeal::PocoSourceBinding).code(),
+            Invariant::WriteSeal(WriteSeal::PocoSeal).code(),
+            Invariant::WriteSeal(WriteSeal::PocoSealedPostcondition).code(),
+            Invariant::WriteSeal(WriteSeal::PocoWriteEncoding).code(),
+            Invariant::WriteSeal(WriteSeal::ValidatorScheduleRebind).code(),
+            Invariant::WriteSeal(WriteSeal::ValidatorWriteEncoding).code(),
+            Invariant::WriteSeal(WriteSeal::ValidatorWritePostcondition).code(),
         ]);
 
         assert_eq!(
@@ -13483,6 +14831,7 @@ mod tests {
         for function in [
             "fn promote_closed_core_authorized_non_runtime_semantic_decode_failure_v0(",
             "fn promote_closed_core_authorized_non_runtime_family_failure_v0(",
+            "fn promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0(",
         ] {
             let body = source
                 .split_once(function)

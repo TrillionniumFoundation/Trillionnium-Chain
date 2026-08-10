@@ -611,8 +611,8 @@ call `Core::step`, persist or deliver an outbox, or provide
 `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. The
 pre-terminal failure carriers share that private,
 non-cloneable, non-serializable, no-parts/no-standalone-cause boundary. Plan
-application/persistence and head update, non-runtime family semantic
-decode/execution/cursor advance,
+application/persistence and head update, successive-family cursor integration
+and complete-body planning/persistence,
 speculative-parent overlays, host callback-outbox persistence/delivery, actual
 Core callback execution, ABCI wiring, and cross-process rollback
 protection remain hard open prerequisites before any terminal/Core callback
@@ -1006,9 +1006,14 @@ whole-block/no-receipt invalid with explicit stable codes, typed source loss is
 retryable, and authenticated/host/family invariants fail stop. Snapshot finish
 still outranks the pending reason; no diagnostic string participates. Success
 retains the open snapshot, decoded owner, and unsealed PoCO overlay or scheduled
-lifecycle. Write sealing, multi-operation cursor integration, success-only
-advance, receipts, durable terminal artifacts/outbox, callback delivery, and
-Core/ABCI integration remain open.
+lifecycle. An owner-bound single-attempt seal now additionally carries either a
+PoCO plan produced from a bounded overlay clone plus canonical namespace writes,
+or a rescheduled canonical validator singleton write. It neither closes the
+snapshot nor advances the cursor, and it is not a complete-body JMT or
+persistence authority. Multi-operation cursor integration, complete-body PoCO
+resealing and exact JMT planning, success-only advance, receipts, durable
+terminal artifacts/outbox, callback delivery, and Core/ABCI integration remain
+open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

@@ -2,7 +2,7 @@
 
 Status: **release-blocking register**
 
-Last audited: 2026-08-09
+Last audited: 2026-08-10
 
 ## Recoverability-first integration reset (2026-08-08)
 
@@ -1053,9 +1053,9 @@ epoch prune, and Core transition remain open.
    for valid or computed-root-invalid outcomes while refusing any input for a
    comparator invariant. Neither bridge calls `Core::step` or provides
    `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. JMT
-   plan application/persistence, non-runtime dispatch, pre-comparator failure
-   promotion/deduplication, and host outbox/Core/ABCI callback delivery remain
-   open. The Core
+   plan application/persistence, successive-family cursor/body completion,
+   success receipts, durable evaluated-artifact deduplication, and host
+   outbox/Core/ABCI callback delivery remain open. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
    evidence-object CEV0 values are retained with the header, and the Core alone
@@ -1223,8 +1223,8 @@ epoch prune, and Core transition remain open.
    and four-root comparison now come through one bounded production
    join/cursor chain.
    Synthetic genesis/native state authority, speculative-parent overlays,
-   non-runtime family write sealing/multi-operation cursor advance, JMT plan
-   application/state persistence, durable host
+   multi-operation non-runtime cursor advance, complete-body PoCO resealing and
+   exact JMT planning/application/state persistence, durable host
    callback-outbox scheduling/delivery, actual Core callback execution, and
    ABCI wiring
    remain hard gaps before terminal/Core callback and still have no production
@@ -1570,9 +1570,17 @@ epoch prune, and Core transition remain open.
    `PruneExpiredCertificate`. All nineteen families now have isolated leaf-
    reason/capacity-order/prepared-carrier closure. Snapshot-closed non-runtime
    semantic/family failure mapping into the app-private outcome kernel is now
-   closed; write sealing, multi-operation cursor integration, success receipts,
-   durable terminal artifacts/outbox, and host/Core delivery remain next, and
-   no phase is complete.
+   closed. Single-attempt owner-bound family-local write sealing is also closed:
+   PoCO seals a bounded overlay clone into its high-level plan and canonical
+   namespace writes while retaining the original unsealed overlay; validator
+   transitions are rescheduled from the retained authenticated lifecycle and
+   encoded as one canonical singleton write. Success does not finish the
+   snapshot or advance the cursor. Seal/rebind/encoding failures retain the
+   exact attempted owner, fail stop, and are still overridden by a typed
+   snapshot-finish failure. Multi-operation cursor integration, complete-body
+   PoCO resealing and exact JMT planning, success receipts, durable terminal
+   artifacts/outbox, and host/Core delivery remain next, and no phase is
+   complete.
    The consuming mapping accepts only the exact closed owner. Eight semantic-
    decode reasons plus every PoCO and validator deterministic/invariant reason,
    operator authorization, and unsupported-family rejection have explicit
@@ -1675,10 +1683,12 @@ epoch prune, and Core transition remain open.
    lifecycle companion corruption while preserving nested nullifier and
    postcondition reasons; no unclassified certificate-prune leaf remains.
    Isolated operation-family leaf reasons and snapshot-closed non-runtime
-   failure promotion are now closed. The success carrier still owns the open
-   snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
-   writes, integrate successive family operations into the cursor, advance,
-   emit a success receipt, persist a terminal artifact, or deliver a result.
+   failure promotion are now closed. The single-attempt success carrier still
+   owns the open snapshot and unsealed overlay/scheduled lifecycle beside an
+   owner-bound family-local sealed plan/write. It does not integrate successive
+   family operations into the cursor, advance, form a complete-body exact JMT
+   plan, emit a success receipt, persist a terminal artifact, or deliver a
+   result.
    The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter

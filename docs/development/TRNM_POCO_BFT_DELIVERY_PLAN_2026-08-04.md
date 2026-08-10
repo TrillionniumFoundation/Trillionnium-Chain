@@ -762,10 +762,17 @@ an earlier phase.
   `PruneRevokedValidatorHistory`, and `PruneExpiredCertificate`. All nineteen
   operation families now have isolated leaf-reason/capacity-order/prepared-
   carrier closure. Snapshot-closed non-runtime semantic and family failure
-  mapping is now also closed inside the app-private outcome kernel; write
-  sealing, multi-operation cursor integration, success receipts, durable
-  terminal artifacts/outbox, and host/Core delivery remain next, and no phase
-  is complete.
+  mapping is now also closed inside the app-private outcome kernel. The next
+  single-attempt boundary is closed as owner-bound family-local write sealing:
+  PoCO seals a bounded overlay clone into its high-level plan and canonical
+  namespace writes while retaining the original unsealed overlay; validator
+  transitions are rescheduled from the retained authenticated lifecycle and
+  encoded as one canonical singleton write. The exact attempt and open snapshot
+  remain inside either success carrier, so these writes are not a complete-body
+  JMT or persistence authority. Multi-operation cursor integration,
+  complete-body PoCO resealing and exact JMT planning, success receipts,
+  durable terminal artifacts/outbox, and host/Core delivery remain next, and
+  no phase is complete.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -775,7 +782,8 @@ an earlier phase.
   pruned/source loss remains retryable `Unavailable`; authenticated-state,
   host, snapshot, projection, carrier, arithmetic, and family invariants remain
   nonterminal fail-stop. Snapshot finish failure still outranks the pending
-  semantic/family cause. A three-way retained carrier keeps `Unavailable`,
+  semantic/family/write-seal cause. A three-way retained carrier keeps
+  `Unavailable`,
   `DeterministicallyInvalid`, and `InvariantFault` structurally distinct while
   preserving route, full `ValidationId`, raw bytes, cursor, and any prior
   runtime evidence only inside the exact owner. Proposal and synced fixtures
@@ -927,10 +935,13 @@ an earlier phase.
   All operation-family leaves now retain their closed deterministic or
   invariant reason without diagnostic-string fallback. Snapshot-closed
   semantic/family failures promote into the app-private outcome kernel while
-  retaining the exact owner; success still keeps the decoded owner plus the
-  open snapshot and unsealed family state. These attempts do not yet seal
-  family writes, merge multiple family operations into the cursor, advance it,
-  form success receipts, persist a terminal result, or deliver a callback.
+  retaining the exact owner. A successful single-family attempt can now carry
+  both its original decoded owner/open snapshot/unsealed PoCO overlay or
+  scheduled lifecycle and an owner-bound family-local sealed plan/write. That
+  seal is prefix evidence, not authority to concatenate independent PoCO
+  blocks, merge successive family operations into the cursor, advance it, form
+  a complete-body JMT plan or success receipt, persist a terminal result, or
+  deliver a callback.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;
@@ -954,7 +965,7 @@ an earlier phase.
   after durable host-delivery acknowledgement, speculative-parent/BlockTree
   reconstruction,
   application-reservation takeover, revalidatable evaluated-artifact
-  persistence, non-runtime family decode/execution and cursor advance,
+  persistence, successive non-runtime family integration and cursor advance,
   plan/state persistence, host callback-outbox scheduling/delivery acknowledgement,
   actual `Core::step` callback
   delivery, and ABCI wiring remain absent. In particular, the object-graph
