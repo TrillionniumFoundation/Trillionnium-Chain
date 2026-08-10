@@ -21,6 +21,15 @@ additional private carrier types:
 6. only then add speculative execution/finalize, epoch rollover, networking
    and PoCO shadow observation in that order.
 
+Step 4 now has one deliberately narrow process-local integration slice:
+complete-body state/receipts-root deterministic invalidity can retain a live
+first-seal owner and traverse an app-private non-cloneable driver with a fixed
+store, owned Core, and injected test sink through real `Core::step`,
+`delivered`, exact safety-state confirmation, `acked`, and `StorageAck`.
+Because there is no production constructor, SafetyState codec/WAL, host wiring,
+recovery remint, or crash takeover, this does not complete step 4 or satisfy the
+frozen production contract.
+
 The frozen contracts are release gates. A test-only carrier or an in-memory
 simulation cannot satisfy them.
 
@@ -313,25 +322,32 @@ an earlier phase.
   V6-to-v7 activation verifies reserved rows, empty outbox, checksums, and
   accounting before changing metadata and rolls back atomically on drift.
   Current application-store schema v8 preserves the verified v7 reserved and
-  callback-pending rows and activates only persisted representation plus deep
-  startup/recovery validation for deterministic-invalid `delivered` and
-  `acked`. `Delivered` retains its congruent outbox with delivery attempt at
-  least one and no accepted-Core fields. `Acked` retires the outbox/accounting
-  and binds an accepted Core revision later than creation plus the canonical
+  callback-pending rows and activates deterministic-invalid `delivered` and
+  `acked` representation, deep startup/recovery validation, and app-private
+  writable transitions. `Delivered` retains its congruent outbox with delivery
+  attempt at least one and no accepted-Core fields. `Acked` retires the
+  outbox/accounting and binds an accepted Core revision later than creation plus the canonical
   callback payload checksum. Both use the delivery-row checksum domain. The
   explicit per-step atomic migration chain is `v3 -> v4 -> v5 -> v6 -> v7 ->
   v8`; v7-to-v8 validates the complete v7 journal before changing metadata and
-  rolls back to byte-identical v7 on drift. V8 has no writable delivery/ack
-  API, live delivery owner, real `Core::step` dispatcher, durable SafetyState
-  sink/WAL, or takeover path.
+  rolls back to byte-identical v7 on drift. The first successful
+  deterministic-invalid seal retains a
+  non-cloneable live owner. An app-private non-cloneable driver fixes one
+  store, owned Core instance, and injected test sink while it exercises real
+  route-specific `Core::step`, validates the exact `PersistSafetyState`
+  barrier/state, writes `delivered`, confirms the same state through that sink,
+  writes `acked`, and only then issues `StorageAck`. Completion-only replay is
+  disabled because the Core tombstone does not bind the artifact checksum.
   Snapshot
   construction scrubs outbox then jobs only from its temporary copy and
   verifies both empty, and install refuses to discard non-empty target-local
   work. This is a revalidatable raw job/recovery-fact foundation plus a narrow
-  durable deterministic-invalid callback intent, not signed-proposal-witness
-  reconstruction, `Valid` artifact persistence, executable crash takeover,
-  `Core::step`, Core callback delivery/acknowledgement, state apply, or
-  process-wide callback exactly-once.
+  durable deterministic-invalid callback intent plus a process-local real-Core
+  delivery/ack test integration, not signed-proposal-witness reconstruction,
+  `Valid` artifact persistence, executable crash takeover, state apply, or
+  process-wide callback exactly-once. There is no production driver
+  constructor, SafetyState codec/WAL, host/AppCore/ABCI/node wiring, generic
+  recovery remint, or process-wide Core uniqueness guarantee.
   Its only host value is borrowed
   from the initialized `AppCore`, and the canonical signer-policy preimage is
   recomputed against both store metadata and the authenticated lifecycle
@@ -844,14 +860,16 @@ an earlier phase.
   plan, receipt, static-commitment, and `BlockId` invariants pass may state and
   then receipts mismatches become whole-block deterministic invalidity. The
   result remains a private matched/failed/classified owner: app-private `Valid`
-  promotion, plan application/persistence/head update, callback delivery/
-  `Core::step`/ABCI, speculative parents, cross-epoch/handoff, and phase
-  completion all remain open. Schema v7 now consumes only the two root-
+  promotion, plan application/persistence/head update, production callback
+  hosting/ABCI, speculative parents, cross-epoch/handoff, and phase completion
+  all remain open. Schema v7 now consumes only the two root-
   mismatch owners into one durable deterministic-invalid artifact plus atomic
   `callback_pending` outbox intent; that is persistence, not delivery or
-  terminal Core authority. Schema v8 adds only deep validation of frozen
-  `delivered`/`acked` recovery records and still performs no delivery or
-  acknowledgement.
+  terminal Core authority. Schema v8 now adds the app-private, process-local
+  fixed-store/owned-Core/injected-test-sink delivery chain through real
+  `Core::step`, `delivered`, exact safety-state confirmation, `acked`, and
+  `StorageAck`; it adds no production durability, recovery remint, takeover, or
+  exactly-once authority.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -1034,7 +1052,8 @@ an earlier phase.
   and the plan plus ordinary commitments are verified before state-then-
   receipts mismatch classification. This still does not authorize independent
   PoCO-block concatenation, app-private `Valid` promotion, plan application/
-  persistence/head update, a terminal host result, or callback delivery.
+  persistence/head update, a terminal host result, or callback delivery by
+  that comparator itself.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;
@@ -1053,10 +1072,13 @@ an earlier phase.
   congruence boundary. Schema v7 additionally stores only the complete-body
   state/receipts root-mismatch artifact and callback-pending outbox intent, but
   has no crash-takeover lease. Schema v8 recognizes the frozen
-  `delivered`/`acked` recovery forms but has no transition writer, live owner,
-  Core driver, or SafetyState durability. Core's completed `StorageAck` cleanup
-  barrier and schema-v6 completion tombstone are not a host callback-outbox
-  delivery acknowledgement. The deterministic-invalid validation-time transaction is
+  `delivered`/`acked` recovery forms and adds an app-private process-local
+  transition writer, first-seal deterministic-invalid owner, owned-Core driver, and injected
+  test sink. It has no production constructor or SafetyState durability. The
+  driver uses Core's `StorageAck` cleanup barrier only after exact sink
+  confirmation and application acknowledgement; the schema-v6 completion
+  tombstone alone cannot authorize artifact replay. The deterministic-invalid
+  validation-time transaction is
   atomic, but the corresponding `Valid` transaction still must retain a
   revalidatable evaluated artifact and callback outbox. The distinct Finalize-
   time transaction must revalidate authority and
@@ -1067,14 +1089,14 @@ an earlier phase.
   reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
   mixed-body app-private `Valid` promotion, plan application/state
-  persistence, host callback-
-  outbox scheduling/delivery acknowledgement,
-  actual `Core::step` callback
-  delivery, and ABCI wiring remain absent. In particular, the object-graph
+  persistence, production callback-outbox scheduling/delivery, durable
+  SafetyState storage, crash takeover, and ABCI wiring remain absent. In
+  particular, the object-graph
   gate is not callback authority and the private admission branch emits no
   callback for a losing clone. The v7 consuming bridge proves only the exact
-  route/full-ID/reason binding of the persisted invalid intent; it is not a
-  delivered or exactly-once callback.
+  route/full-ID/reason binding of the persisted invalid intent; only the
+  retained first-seal deterministic-invalid owner can enter the v8 driver, and that process-local
+  delivery is not a process-wide exactly-once callback.
   Snapshot-closed real runtime-attempt failures now also enter the same outcome
   kernel without diagnostic-string classification: the opaque runtime token's
   transaction-reject branch becomes whole-block invalid, its invariant branch
@@ -1144,11 +1166,12 @@ an earlier phase.
   snapshots. Schema v7 preserves valid reserved rows and atomically seals only
   complete mixed-body state-root/receipts-root deterministic mismatches with a
   canonical artifact and congruent `callback_pending` outbox row. It still
-  provides no `Valid` artifact, Core obligation reactivation, `Core::step`,
-  callback delivery/acknowledgement, executable takeover, or Finalize apply;
-  schema v8 only freezes/deep-validates the later `delivered` and `acked`
-  persistence shapes and adds no writer or authority. Those are the next
-  ordered slices.
+  provides no `Valid` artifact, Core obligation reactivation, executable
+  takeover, or Finalize apply. Schema v8 freezes/deep-validates the later
+  `delivered` and `acked` persistence shapes and adds an app-private
+  process-local writer/driver using real `Core::step` and an injected test
+  safety sink. Production SafetyState durability, host wiring, recovery remint,
+  and crash takeover remain the next ordered slices.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,

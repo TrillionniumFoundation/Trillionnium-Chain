@@ -34,6 +34,20 @@ run_unit_filter trnm-consensus-app \
 run_unit_filter trnm-consensus-app \
   durable_complete_body_invalid_seals_one_callback_pending_record_and_recovers_it
 run_unit_filter trnm-consensus-app \
+  live_durable_invalid_callbacks_cross_real_core_barriers_for_both_routes_and_reasons
+run_unit_filter trnm-consensus-app \
+  live_invalid_postwrite_safety_uncertainty_confirms_exact_before_core_release
+run_unit_filter trnm-consensus-app \
+  live_invalid_binding_refuses_completion_only_core_state_without_artifact_binding
+run_unit_filter trnm-consensus-app \
+  live_invalid_safety_conflict_quarantines_without_ack_or_core_release
+run_unit_filter trnm-consensus-app \
+  live_invalid_storage_ack_releases_exact_safety_halt_without_state_change
+run_unit_filter trnm-consensus-app \
+  callback_driver_is_store_nested_and_raw_journal_transitions_are_private
+run_unit_filter trnm-consensus-app \
+  callback_driver_source_keeps_safety_sink_explicitly_non_production
+run_unit_filter trnm-consensus-app \
   durable_complete_body_invalid_precommit_failpoints_roll_back_and_return_owner
 run_unit_filter trnm-consensus-app \
   durable_complete_body_invalid_restart_rejects_artifact_and_outbox_splices

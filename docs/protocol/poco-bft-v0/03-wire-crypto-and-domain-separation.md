@@ -544,8 +544,9 @@ double-accounting. Every other invalid reason, `Valid`, `Unavailable`,
 inactive and fail closed in v7.
 
 Current application-store schema v8 leaves the physical relations unchanged
-and activates only the persisted representation and deep recovery validation
-of `delivered` and `acked` deterministic-invalid rows. `Delivered` retains the
+and activates the persisted representation, deep recovery validation, and
+app-private writable transitions for `delivered` and `acked`
+deterministic-invalid rows. `Delivered` retains the
 exact artifact and congruent callback outbox, requires a canonical delivery
 attempt of at least one, and has no accepted-Core revision or payload checksum.
 `Acked` retains the artifact, deletes the outbox and retires its outbox
@@ -553,8 +554,15 @@ accounting, binds an accepted Core revision later than the job's creation
 revision, and binds the canonical callback payload checksum rederived from the
 job identity and artifact. Both states use a separate delivery-row integrity
 domain. `Evaluated`, `Applied`, `Valid`, every unsupported invalid reason,
-`Unavailable`, and invariants remain inactive. V8 has no API that writes either
-state and creates no live callback-delivery authority.
+`Unavailable`, and invariants remain inactive. The first successful
+deterministic-invalid seal can
+retain a non-cloneable live owner; recovery bytes cannot recreate it. An
+app-private non-cloneable driver fixes one store, owned Core instance, and
+injected test sink while it calls the real route-specific `Core::step`, checks
+the exact `PersistSafetyState` barrier/state, writes `delivered`, confirms the
+same state through that sink, writes `acked`, and only then calls
+`StorageAck`. Completion-only replay is disabled because the Core completion
+tombstone does not bind the artifact checksum.
 
 Exact reopen returns verified durable state without reminting first-evaluation
 or callback-delivery authority. Startup/recovery exact-decodes and canonically
@@ -573,11 +581,12 @@ remain byte-for-byte intact, corrupt v6 activation rolls back atomically, and
 v7-to-v8 activation deep-validates every v7 reserved/callback-pending record
 before changing metadata and preserves v7 byte-for-byte on failure. State sync
 deletes outbox then jobs only from the temporary copy and verifies both are
-empty. These facts are
-corruption/congruence seals and durable callback intent only, never
-signed-proposal reconstruction, Core callback authority, a writable
-delivery/ack state machine, live delivery ownership, real `Core::step`, a
-durable SafetyState sink/WAL, takeover, or exactly-once authority.
+empty. Durable rows loaded by recovery remain corruption/congruence facts and
+cannot mint signed-proposal or Core callback authority. The writable invalid
+delivery/ack chain is only a process-local real-Core integration exercised
+with an injected test sink: there is no production driver constructor,
+SafetyState codec/WAL, host/AppCore/ABCI/node wiring, recovery remint, takeover,
+process-wide Core uniqueness, or exactly-once authority.
 
 The exact process-local integrity labels used by this foundation are:
 
@@ -674,36 +683,33 @@ transaction decode/index/context, runtime-gated success-only advance, same-
 snapshot complete-body JMT planning, and four-root comparison.
 Synthetic genesis authority, speculative-parent storage, complete-body JMT
 plan application/state persistence and head update, final typed retryable-
-versus-invariant host mapping, a private route-aware callback adapter,
-host/Core callback wiring, ABCI wiring, non-runtime routing, and promotion of
-the owning classifications into
-`ExecutionOutcomeV0` or other terminal authority remain hard gaps before a
-terminal/Core callback path. The object-graph gate itself performs no terminal
-mapping; only the current private admission branch is proven to emit no
-callback for a losing clone.
+versus-invariant host mapping, production host/Core callback wiring, ABCI
+wiring, non-runtime routing, and promotion of the owning classifications into
+general terminal authority remain hard gaps. The object-graph gate itself
+performs no terminal mapping; only the current private admission branch is
+proven to emit no callback for a losing clone.
 The route-bearing disposition likewise is not a terminal result and invokes no
 Core `Input` or ABCI operation. A narrow consuming bridge may prepare only the
 complete-body state-root or receipts-root deterministic mismatch for the v7
 application-store transaction; it cannot prepare `Valid`, `Unavailable`, or an
 invariant fault. Schema v7 atomically couples that canonical invalid artifact
-with callback-outbox intent, but it does not call `Core::step` or deliver the
-intent. Schema v8 can deeply validate later `delivered`/`acked` rows, but has
-no writable transition API, live delivery owner, Core driver, or SafetyState
-sink/WAL and therefore does not prove that any callback was delivered or
-acknowledged. A future delivery bridge must map `Proposal` only to
-`PayloadValidated` and `Synced` only to `SyncedPayloadValidated`. The `Valid`
-validation-time artifact/outbox boundary remains open. The distinct Finalize-
+with callback-outbox intent, but its transaction does not itself call Core.
+Schema v8 adds the fixed-store/owned-Core/injected-test-sink driver and
+writable process-local delivery/ack chain described above. It maps `Proposal`
+only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but
+does not supply production SafetyState durability or recovery authority. The
+`Valid` validation-time artifact/outbox boundary remains open. The distinct Finalize-
 time atomic boundary still must revalidate exact authority and atomically
 couple JMT/domain apply, root/native-head persistence, head advancement, and
-applied state. Core's completed cleanup `StorageAck` and completion tombstone
-are not a host callback-outbox delivery acknowledgement.
+applied state. The current driver uses Core's cleanup `StorageAck` only after
+the injected sink and application `acked` transition; that process-local test
+boundary is not a production host callback-outbox delivery acknowledgement.
 Authenticated replay tickets, completion retirement after a durable
 host-delivery acknowledgement, speculative-parent/
 BlockTree reconstruction, application-reservation takeover, `Valid` evaluated-
-artifact persistence, host callback-outbox scheduling/delivery acknowledgement,
-crash takeover, Core callback delivery, ABCI, the `Valid` validation-time and
-Finalize-time atomic boundaries, and process-wide callback exactly-once remain
-absent.
+artifact persistence, production callback-outbox scheduling/delivery,
+crash takeover, ABCI, the `Valid` validation-time and Finalize-time atomic
+boundaries, and process-wide callback exactly-once remain absent.
 Runtime
 resource estimation now has a distinct `try_estimate_resources_v0` call and
 opaque estimate-failure token: state dependency errors remain typed,

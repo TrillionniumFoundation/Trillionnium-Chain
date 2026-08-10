@@ -558,8 +558,8 @@ prepared owner. `Valid`, `Evaluated`, `Delivered`, `Acked`, `Applied`,
 `Unavailable`, and invariant results remain inactive and fail closed in v7.
 
 Current application-store schema v8 preserves every verified v7 `reserved` and
-`callback_pending` row and activates only the persisted representation and
-deep-recovery validation of two later deterministic-invalid delivery states.
+`callback_pending` row and activates two later deterministic-invalid delivery
+states plus their app-private writable transitions.
 A `delivered` row must retain its congruent outbox with a canonical delivery
 attempt of at least one; the accepted-Core revision and payload-checksum fields
 must still be absent. An `acked` row must have retired that outbox and its
@@ -568,9 +568,19 @@ creation revision, and must bind the rederived canonical invalid-callback
 payload checksum. Both states use the domain-separated delivery-row checksum.
 `evaluated`, `applied`, every `Valid` result, every other invalid reason,
 `Unavailable`, and invariant results remain inactive and fail closed in v8.
-There is no writable delivery/ack transition API or live delivery owner; these
-states currently exist only so startup, recovery, migration, and snapshot
-validation have one frozen fail-closed representation.
+The first successful deterministic-invalid seal retains a non-cloneable live
+owner that inert reopen/recovery facts cannot recreate. An app-private
+non-cloneable driver fixes one designated store, one owned Core instance, and
+one injected safety sink for the whole process-local phase chain. It calls the
+real route-specific
+`Core::step`, accepts only the exact `PersistSafetyState` barrier/state, marks
+the callback `delivered`, confirms that exact state through the same sink,
+marks it `acked`, and only then submits the matching `StorageAck`. The driver
+does not accept completion-only replay: the current Core completion tombstone
+does not bind the artifact/callback checksum, so an empty-effect completion
+cannot authorize a durable artifact. After `StorageAck`, an unchanged Core
+state and either no effect or the exact expected `SafetyHalted` effect are
+required.
 
 An exact reopen returns its checksum-verified durable state rather than silently
 coalescing unfinished work, while no reopen can recreate the unique first-
@@ -603,11 +613,13 @@ snapshot generation scrubs outbox rows first and jobs second only from the
 temporary copy and verifies both are empty, leaving the source database
 unchanged; installation refuses to overwrite a non-empty target-local
 validation journal. This is a revalidatable raw request/recovery-fact foundation
-plus a durable deterministic-invalid callback-pending record and frozen v8
-delivery-state recovery formats. It is not a reconstruction of the signed
-proposal witness, a durable `Valid` artifact, a writable delivery/ack state
-machine, executable crash takeover, real `Core::step`, a durable SafetyState
-sink/WAL, Core callback delivery, or a process-wide callback exactly-once
+plus a durable deterministic-invalid callback-pending record and a
+process-local, real-Core delivery/ack integration exercised with an injected
+test sink. It is not a reconstruction of the signed proposal witness, a
+durable `Valid` artifact, a production host integration, executable crash
+takeover, or a durable SafetyState codec/WAL. There is no production driver
+constructor, no `AppCore`/ABCI/`trnm-node` wiring, no generic recovery remint of
+the live owner, and no process-wide Core uniqueness or callback exactly-once
 guarantee.
 
 That carrier now also opens a production, process-local sequential transaction
@@ -664,8 +676,9 @@ comparator drift becomes fail-stop while retaining the failed plan. A second
 private consuming carrier derives the exact route/full `ValidationId`, result,
 and valid commitments from that outcome and can form only the corresponding
 `PayloadValidated` or `SyncedPayloadValidated` Core `Input`; an invariant fault
-cannot form an input. This is type-level callback material only: it does not
-call `Core::step`, persist or deliver an outbox, or provide
+cannot form an input. This legacy runtime-only carrier is type-level callback
+material only: it does not itself call `Core::step`, persist or deliver an
+outbox, or provide
 `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. The
 pre-terminal failure carriers share that private,
 non-cloneable, non-serializable, no-parts/no-standalone-cause boundary.
@@ -691,17 +704,22 @@ validator items use the frozen empty internal receipt, while cutoff refresh and
 implicit validator activation add no body receipt. The result is still only a
 private matched/failed/classified owner, not an app-private `Valid` outcome.
 Plan application/persistence and head update, a durable `Valid` artifact/outbox,
-speculative-parent overlays, cross-epoch/handoff, actual Core callback
-execution, ABCI wiring, and cross-process rollback
-protection remain hard open prerequisites before any terminal/Core callback
-path. The object-graph gate performs no terminal mapping, and only the current
-private admission branch is proven not to emit a callback for a losing clone.
-The private route-bearing bridge now proves that `Proposal` maps only to
-`PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it does
-not submit that input to a Core instance or establish callback delivery.
+speculative-parent overlays, cross-epoch/handoff, production host/Core wiring,
+ABCI wiring, and cross-process rollback protection remain hard open
+prerequisites before the general terminal/Core callback path. The
+deterministic-invalid state/receipts-root slice alone now has a process-local
+real-Core driver integration; the object-graph gate itself performs no
+terminal mapping, and only the current private admission branch is proven not
+to emit a callback for a losing clone.
+The legacy private route-bearing outcome bridge proves that `Proposal` maps
+only to `PayloadValidated` and `Synced` only to
+`SyncedPayloadValidated`, but it does not itself submit that input to a Core
+instance or establish callback delivery.
 Neither the v7 invalid journal nor the v8 delivery-state activation stores an
 evaluated `Valid` artifact, durable JMT plan, or `Valid` callback outbox. V8
-adds no delivery writer, live owner, Core callback execution, or SafetyState
+adds process-local invalid delivery writers, a non-cloneable live owner, and
+real Core callback/barrier execution behind an app-private driver, but its
+injected sink is only a test boundary and supplies no production SafetyState
 durability. A private inert durable-plan codec now covers the exact
 persistence-bearing JMT
 version/root, nodes, values, stale indices, and key preimages without exposing
@@ -723,16 +741,16 @@ boundary must persist a versioned revalidatable artifact together with
 callback-outbox intent; a distinct
 Finalize-time atomic boundary must revalidate the exact authority and couple
 JMT/domain apply, root/native-head persistence, head advancement, and applied
-state. Neither the `Valid` validation-time nor Finalize-time boundary,
-authenticated replay tickets, completion retirement
+state. Neither the `Valid` validation-time nor the Finalize-time boundary is
+implemented. Authenticated replay tickets, completion retirement
 after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-application-reservation takeover, `Valid` evaluated-artifact persistence, host
-callback-outbox scheduling/delivery acknowledgement, crash takeover, Core
-callback delivery,
-nor callback exactly-once is implemented. Core's completed `StorageAck`
-cleanup barrier and completion tombstone are not a host callback-outbox
-delivery acknowledgement.
+application-reservation takeover, `Valid` evaluated-artifact persistence,
+production callback scheduling/delivery, crash takeover, completion-only
+artifact replay, and callback exactly-once are also not implemented. The current
+process-local invalid driver uses Core's `StorageAck` cleanup barrier only
+after its injected sink and application `acked` transition; that test boundary
+is not a production host callback-outbox acknowledgement or WAL.
 Snapshot-closed real runtime-attempt failures now have a separate owning bridge
 into the same outcome kernel. It uses only the opaque runtime attempt's stable
 disposition and the exhaustive typed authenticated-read variants: transaction
@@ -1124,8 +1142,8 @@ inside a private classification carrier, with full provenance/final-source/
 plan/static invariants before state-then-receipts mismatch classification. It
 does not promote app-private `Valid`. Plan application/persistence/head update,
 durable `Valid` terminal artifact/outbox, speculative-parent
-and cross-epoch/handoff support, callback delivery, and Core/ABCI integration
-remain open.
+and cross-epoch/handoff support, production callback durability/recovery, and
+Core/ABCI host integration remain open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

@@ -24,6 +24,14 @@ use trnm_consensus_core::{PayloadValidationParentV0, PayloadValidationRouteV0, V
 use trnm_consensus_types::{decode_block_header_v0_exact, Block, BlockId, BlockKind, View};
 use trnm_finality_types::hash_domain;
 
+// The raw Delivered/Acked journal transitions are private to this parent
+// module.  Nesting the callback driver here lets it consume those hooks while
+// preventing sibling modules from bypassing the real-Core and exact-sink
+// capability chain.
+#[allow(dead_code)]
+#[path = "native_validation_callback_driver.rs"]
+pub(crate) mod native_validation_callback_driver;
+
 use super::{
     auth_tree::{
         authenticated_key_hash, plan_put_value_set, poco_snapshot_key_components,
@@ -34,12 +42,13 @@ use super::{
     },
     native_payload_validation::PreparedDurableInvalidV0,
     native_validation_artifact::{
-        durable_deterministic_invalid_result_kind_v0,
+        durable_deterministic_invalid_result_kind_v0, durable_invalid_callback_outbox_checksum_v0,
         durable_invalid_callback_payload_checksum_for_identity_v0,
         prepare_durable_invalid_artifact_v0, prepare_durable_invalid_callback_v0,
         verify_durable_invalid_artifact_v0, verify_durable_invalid_callback_v0,
         DurableDeterministicInvalidReasonV0, DurableNativeValidationRecordErrorV0,
-        NativeValidationArtifactIdentityV0, DURABLE_INVALID_ARTIFACT_BYTES_V0,
+        NativeValidationArtifactIdentityV0, RevalidatedDurableInvalidArtifactV0,
+        RevalidatedDurableInvalidCallbackV0, DURABLE_INVALID_ARTIFACT_BYTES_V0,
         DURABLE_INVALID_ARTIFACT_CODEC_V0, DURABLE_INVALID_CALLBACK_BYTES_V0,
         DURABLE_INVALID_CALLBACK_CODEC_V0,
     },
@@ -886,6 +895,337 @@ impl DurableNativeValidationJobV0 {
     }
 }
 
+/// Deeply revalidated join of one deterministic-invalid job, its canonical
+/// artifact and its exact callback outbox row. This remains an inert durable
+/// fact until it is joined to the unique process-local preparation lineage.
+struct RevalidatedNativeValidationInvalidOutboxV0 {
+    artifact: RevalidatedDurableInvalidArtifactV0,
+    callback: RevalidatedDurableInvalidCallbackV0,
+    delivery_attempt: u64,
+}
+
+#[must_use = "a verified callback record is still not live Core delivery authority"]
+struct VerifiedNativeValidationInvalidCallbackV0 {
+    job: Box<DurableNativeValidationJobV0>,
+    artifact: RevalidatedDurableInvalidArtifactV0,
+    callback: RevalidatedDurableInvalidCallbackV0,
+    delivery_attempt: u64,
+}
+
+impl VerifiedNativeValidationInvalidCallbackV0 {
+    fn new_v0(
+        job: DurableNativeValidationJobV0,
+        outbox: RevalidatedNativeValidationInvalidOutboxV0,
+    ) -> Self {
+        Self {
+            job: Box::new(job),
+            artifact: outbox.artifact,
+            callback: outbox.callback,
+            delivery_attempt: outbox.delivery_attempt,
+        }
+    }
+
+    const fn route(&self) -> PayloadValidationRouteV0 {
+        self.job.route()
+    }
+
+    const fn validation_id(&self) -> ValidationId {
+        self.job.validation_id()
+    }
+
+    const fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        self.artifact.reason()
+    }
+
+    const fn request_fingerprint(&self) -> [u8; 32] {
+        self.job.request_fingerprint()
+    }
+
+    const fn immutable_checksum(&self) -> [u8; 32] {
+        self.job.immutable_checksum()
+    }
+
+    const fn artifact_checksum(&self) -> [u8; 32] {
+        self.artifact.checksum()
+    }
+
+    const fn callback_payload_checksum(&self) -> [u8; 32] {
+        self.callback.payload_checksum()
+    }
+
+    const fn idempotency_key(&self) -> [u8; 32] {
+        self.callback.idempotency_key()
+    }
+
+    const fn outbox_checksum(&self) -> [u8; 32] {
+        self.callback.outbox_checksum()
+    }
+
+    const fn delivery_attempt(&self) -> u64 {
+        self.delivery_attempt
+    }
+}
+
+/// Distinguishes first durable creation from exact owner-preserving replay.
+/// Both retain the same live process capability; generic database recovery
+/// never constructs this disposition or its owner.
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum NativeValidationInvalidSealDispositionV0 {
+    NewlyCommitted,
+    ExactExisting,
+    CommitConfirmedExisting,
+}
+
+/// Live callback-delivery owner produced only while consuming the unique
+/// complete-body deterministic-invalid preparation. The database artifact is
+/// retained merely as a verified fact and cannot mint this type on reopen.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a live deterministic-invalid callback owner must be delivered or retained"]
+pub(super) struct LiveNativeValidationInvalidCallbackV0 {
+    prepared: PreparedDurableInvalidV0,
+    verified: VerifiedNativeValidationInvalidCallbackV0,
+    disposition: NativeValidationInvalidSealDispositionV0,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl LiveNativeValidationInvalidCallbackV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.verified.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.verified.validation_id()
+    }
+
+    pub(super) const fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        self.verified.reason()
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.verified.request_fingerprint()
+    }
+
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.verified.immutable_checksum()
+    }
+
+    pub(super) const fn artifact_checksum(&self) -> [u8; 32] {
+        self.verified.artifact_checksum()
+    }
+
+    pub(super) const fn callback_payload_checksum(&self) -> [u8; 32] {
+        self.verified.callback_payload_checksum()
+    }
+
+    pub(super) const fn idempotency_key(&self) -> [u8; 32] {
+        self.verified.idempotency_key()
+    }
+
+    pub(super) const fn delivery_attempt(&self) -> u64 {
+        self.verified.delivery_attempt()
+    }
+
+    pub(super) const fn disposition(&self) -> NativeValidationInvalidSealDispositionV0 {
+        self.disposition
+    }
+
+    pub(super) const fn state(&self) -> NativeValidationJobStateV0 {
+        self.verified.job.state()
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.prepared.is_bound_to_store_v0(store)
+    }
+}
+
+/// Owner retained after the Core callback has been accepted and the exact
+/// application outbox has atomically entered `Delivered`.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a delivered callback must reach exact safety persistence and acknowledgement"]
+pub(super) struct DeliveredNativeValidationInvalidCallbackV0 {
+    prepared: PreparedDurableInvalidV0,
+    verified: VerifiedNativeValidationInvalidCallbackV0,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl DeliveredNativeValidationInvalidCallbackV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.verified.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.verified.validation_id()
+    }
+
+    pub(super) const fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        self.verified.reason()
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.verified.request_fingerprint()
+    }
+
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.verified.immutable_checksum()
+    }
+
+    pub(super) const fn artifact_checksum(&self) -> [u8; 32] {
+        self.verified.artifact_checksum()
+    }
+
+    pub(super) const fn callback_payload_checksum(&self) -> [u8; 32] {
+        self.verified.callback_payload_checksum()
+    }
+
+    pub(super) const fn idempotency_key(&self) -> [u8; 32] {
+        self.verified.idempotency_key()
+    }
+
+    pub(super) const fn delivery_attempt(&self) -> u64 {
+        self.verified.delivery_attempt()
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.prepared.is_bound_to_store_v0(store)
+    }
+
+    /// Binds a driver-verified exact Core safety revision to this delivered
+    /// owner. The callback payload checksum is derived from the retained
+    /// canonical outbox rather than accepted as a detached argument.
+    fn bind_confirmed_core_completion_v0(
+        self: Box<Self>,
+        accepted_core_revision: u64,
+    ) -> std::result::Result<
+        Box<ConfirmedCoreInvalidCompletionV0>,
+        Box<FailedBindConfirmedCoreInvalidCompletionV0>,
+    > {
+        if accepted_core_revision <= self.verified.job.creation_revision() {
+            return Err(Box::new(FailedBindConfirmedCoreInvalidCompletionV0 {
+                owner: self,
+                cause: BindConfirmedCoreInvalidCompletionFailureCauseV0::RevisionNotAdvanced,
+            }));
+        }
+        Ok(Box::new(ConfirmedCoreInvalidCompletionV0 {
+            delivered: self,
+            accepted_core_revision,
+        }))
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum BindConfirmedCoreInvalidCompletionFailureCauseV0 {
+    RevisionNotAdvanced,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a failed completion binding retains the delivered callback owner"]
+pub(super) struct FailedBindConfirmedCoreInvalidCompletionV0 {
+    #[allow(dead_code)]
+    owner: Box<DeliveredNativeValidationInvalidCallbackV0>,
+    cause: BindConfirmedCoreInvalidCompletionFailureCauseV0,
+}
+
+impl fmt::Debug for FailedBindConfirmedCoreInvalidCompletionV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("FailedBindConfirmedCoreInvalidCompletionV0")
+            .field("cause", &self.cause)
+            .field("retains_delivered_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl FailedBindConfirmedCoreInvalidCompletionV0 {
+    #[allow(dead_code)]
+    pub(super) const fn cause(&self) -> BindConfirmedCoreInvalidCompletionFailureCauseV0 {
+        self.cause
+    }
+}
+
+/// Driver-attested exact safety-state persistence joined to the delivered
+/// callback lineage. Only the callback driver should construct this after its
+/// durable sink confirms the exact Core state.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a confirmed Core completion must be atomically acknowledged"]
+pub(super) struct ConfirmedCoreInvalidCompletionV0 {
+    delivered: Box<DeliveredNativeValidationInvalidCallbackV0>,
+    accepted_core_revision: u64,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl ConfirmedCoreInvalidCompletionV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.delivered.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.delivered.validation_id()
+    }
+
+    pub(super) const fn callback_payload_checksum(&self) -> [u8; 32] {
+        self.delivered.callback_payload_checksum()
+    }
+
+    pub(super) const fn accepted_core_revision(&self) -> u64 {
+        self.accepted_core_revision
+    }
+}
+
+/// Durable application acknowledgement retained through the subsequent Core
+/// `StorageAck` release. Its outbox has been retired exactly once.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "an acknowledged callback still owns the pending Core barrier release"]
+pub(super) struct AckedNativeValidationInvalidCallbackV0 {
+    prepared: PreparedDurableInvalidV0,
+    durable: Box<DurableNativeValidationJobV0>,
+    accepted_core_revision: u64,
+    callback_payload_checksum: [u8; 32],
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl AckedNativeValidationInvalidCallbackV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.durable.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.durable.validation_id()
+    }
+
+    pub(super) fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        match native_validation_job_invalid_reason_v0(&self.durable) {
+            Some(reason) => reason,
+            None => unreachable!(),
+        }
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.durable.request_fingerprint()
+    }
+
+    pub(super) const fn artifact_checksum(&self) -> [u8; 32] {
+        match self.durable.artifact_checksum {
+            Some(checksum) => checksum,
+            None => unreachable!(),
+        }
+    }
+
+    pub(super) const fn callback_payload_checksum(&self) -> [u8; 32] {
+        self.callback_payload_checksum
+    }
+
+    pub(super) const fn accepted_core_revision(&self) -> u64 {
+        self.accepted_core_revision
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.prepared.is_bound_to_store_v0(store)
+    }
+}
+
 /// Whether this call created the durable row or joined the already-identical
 /// job. Only `Reserved` retains first-evaluation admission. `Existing`
 /// returns the checksum-verified durable state for explicit recovery/takeover
@@ -901,8 +1241,8 @@ pub(super) enum NativeValidationReservationDecisionV0 {
 #[cfg_attr(not(test), allow(dead_code))]
 #[must_use = "a durable invalid seal decision must remain attached to verified journal state"]
 pub(super) enum NativeValidationInvalidSealDecisionV0 {
-    CallbackPending(Box<DurableNativeValidationJobV0>),
-    Existing(Box<DurableNativeValidationJobV0>),
+    CallbackPending(Box<LiveNativeValidationInvalidCallbackV0>),
+    Existing(Box<LiveNativeValidationInvalidCallbackV0>),
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -928,6 +1268,16 @@ pub(super) struct FailedNativeValidationInvalidSealV0 {
     cause: NativeValidationInvalidSealFailureCauseV0,
 }
 
+impl fmt::Debug for FailedNativeValidationInvalidSealV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("FailedNativeValidationInvalidSealV0")
+            .field("cause", &self.cause)
+            .field("retains_prepared_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
 #[cfg_attr(not(test), allow(dead_code))]
 impl FailedNativeValidationInvalidSealV0 {
     pub(super) const fn cause(&self) -> &NativeValidationInvalidSealFailureCauseV0 {
@@ -940,6 +1290,88 @@ impl FailedNativeValidationInvalidSealV0 {
 
     pub(super) fn into_prepared_v0(self) -> PreparedDurableInvalidV0 {
         self.prepared
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, PartialEq, Eq)]
+pub(super) enum NativeValidationInvalidJournalTransitionFailureCauseV0 {
+    Storage(NativeValidationReservationFailureCauseV0),
+    HostInvariant {
+        stage: NativeValidationReservationStageV0,
+    },
+    DeliveryAttemptOverflow,
+    AccountingUnderflow,
+    Invariant(NativeValidationReservationInvariantV0),
+}
+
+fn native_validation_invalid_transition_failure_v0(
+    cause: NativeValidationReservationFailureCauseV0,
+) -> NativeValidationInvalidJournalTransitionFailureCauseV0 {
+    match cause {
+        NativeValidationReservationFailureCauseV0::Invariant { kind, .. } => {
+            NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(kind)
+        }
+        NativeValidationReservationFailureCauseV0::HostInvariant { stage, .. } => {
+            NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant { stage }
+        }
+        other => NativeValidationInvalidJournalTransitionFailureCauseV0::Storage(other),
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a failed delivery transition retains its live callback owner"]
+pub(super) struct FailedNativeValidationInvalidDeliveryV0 {
+    owner: Box<LiveNativeValidationInvalidCallbackV0>,
+    cause: NativeValidationInvalidJournalTransitionFailureCauseV0,
+}
+
+impl fmt::Debug for FailedNativeValidationInvalidDeliveryV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("FailedNativeValidationInvalidDeliveryV0")
+            .field("cause", &self.cause)
+            .field("retains_live_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl FailedNativeValidationInvalidDeliveryV0 {
+    pub(super) const fn cause(&self) -> &NativeValidationInvalidJournalTransitionFailureCauseV0 {
+        &self.cause
+    }
+
+    pub(super) fn into_owner_v0(self) -> Box<LiveNativeValidationInvalidCallbackV0> {
+        self.owner
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a failed acknowledgement retains its confirmed completion owner"]
+pub(super) struct FailedNativeValidationInvalidAcknowledgementV0 {
+    owner: Box<ConfirmedCoreInvalidCompletionV0>,
+    cause: NativeValidationInvalidJournalTransitionFailureCauseV0,
+}
+
+impl fmt::Debug for FailedNativeValidationInvalidAcknowledgementV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("FailedNativeValidationInvalidAcknowledgementV0")
+            .field("cause", &self.cause)
+            .field("retains_confirmed_completion_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl FailedNativeValidationInvalidAcknowledgementV0 {
+    pub(super) const fn cause(&self) -> &NativeValidationInvalidJournalTransitionFailureCauseV0 {
+        &self.cause
+    }
+
+    pub(super) fn into_owner_v0(self) -> Box<ConfirmedCoreInvalidCompletionV0> {
+        self.owner
     }
 }
 
@@ -1111,14 +1543,34 @@ enum NativeValidationReservationInnerDecisionV0 {
 }
 
 enum NativeValidationInvalidSealInnerDecisionV0 {
-    CallbackPending(DurableNativeValidationJobV0),
-    Existing(DurableNativeValidationJobV0),
-    CommitUncertainExisting(DurableNativeValidationJobV0),
+    CallbackPending(VerifiedNativeValidationInvalidCallbackV0),
+    Existing(VerifiedNativeValidationInvalidCallbackV0),
+    CommitUncertainExisting(VerifiedNativeValidationInvalidCallbackV0),
 }
 
 enum NativeValidationInvalidCommitReadbackV0 {
     Reserved,
-    CallbackPending(Box<DurableNativeValidationJobV0>),
+    CallbackPending(Box<VerifiedNativeValidationInvalidCallbackV0>),
+}
+
+enum NativeValidationInvalidDeliveryInnerDecisionV0 {
+    Delivered(VerifiedNativeValidationInvalidCallbackV0),
+    CommitUncertainDelivered(VerifiedNativeValidationInvalidCallbackV0),
+}
+
+enum NativeValidationInvalidDeliveryCommitReadbackV0 {
+    CallbackPending,
+    Delivered(Box<VerifiedNativeValidationInvalidCallbackV0>),
+}
+
+enum NativeValidationInvalidAcknowledgementInnerDecisionV0 {
+    Acked(DurableNativeValidationJobV0),
+    CommitUncertainAcked(DurableNativeValidationJobV0),
+}
+
+enum NativeValidationInvalidAcknowledgementCommitReadbackV0 {
+    Delivered,
+    Acked(Box<DurableNativeValidationJobV0>),
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -1598,15 +2050,34 @@ impl ApplicationStore {
         Box<FailedNativeValidationInvalidSealV0>,
     > {
         match self.seal_durable_invalid_and_enqueue_callback_inner_v0(&prepared, failpoint) {
-            Ok(NativeValidationInvalidSealInnerDecisionV0::CallbackPending(job)) => Ok(
-                NativeValidationInvalidSealDecisionV0::CallbackPending(Box::new(job)),
-            ),
-            Ok(
-                NativeValidationInvalidSealInnerDecisionV0::Existing(job)
-                | NativeValidationInvalidSealInnerDecisionV0::CommitUncertainExisting(job),
-            ) => Ok(NativeValidationInvalidSealDecisionV0::Existing(Box::new(
-                job,
-            ))),
+            Ok(NativeValidationInvalidSealInnerDecisionV0::CallbackPending(verified)) => {
+                Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(
+                    Box::new(LiveNativeValidationInvalidCallbackV0 {
+                        prepared,
+                        verified,
+                        disposition: NativeValidationInvalidSealDispositionV0::NewlyCommitted,
+                    }),
+                ))
+            }
+            Ok(NativeValidationInvalidSealInnerDecisionV0::Existing(verified)) => {
+                Ok(NativeValidationInvalidSealDecisionV0::Existing(Box::new(
+                    LiveNativeValidationInvalidCallbackV0 {
+                        prepared,
+                        verified,
+                        disposition: NativeValidationInvalidSealDispositionV0::ExactExisting,
+                    },
+                )))
+            }
+            Ok(NativeValidationInvalidSealInnerDecisionV0::CommitUncertainExisting(verified)) => {
+                Ok(NativeValidationInvalidSealDecisionV0::Existing(Box::new(
+                    LiveNativeValidationInvalidCallbackV0 {
+                        prepared,
+                        verified,
+                        disposition:
+                            NativeValidationInvalidSealDispositionV0::CommitConfirmedExisting,
+                    },
+                )))
+            }
             Err(cause) => Err(Box::new(FailedNativeValidationInvalidSealV0 {
                 prepared,
                 cause,
@@ -1663,7 +2134,7 @@ impl ApplicationStore {
             ))?;
         let existing = durable_native_validation_job_from_existing_v0(existing, self)
             .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
-        verify_native_validation_job_outbox_v0(
+        let verified_outbox = revalidate_native_validation_job_outbox_v0(
             &transaction,
             &existing,
             NativeValidationReservationStageV0::ReadExisting,
@@ -1693,7 +2164,17 @@ impl ApplicationStore {
                 )
             })?;
             return Ok(NativeValidationInvalidSealInnerDecisionV0::Existing(
-                existing,
+                VerifiedNativeValidationInvalidCallbackV0::new_v0(
+                    existing,
+                    verified_outbox.ok_or(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                        NativeValidationReservationInvariantV0::StateMismatch,
+                    ))?,
+                ),
+            ));
+        }
+        if verified_outbox.is_some() {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::StateMismatch,
             ));
         }
         if existing.state != NativeValidationJobStateV0::Reserved {
@@ -1890,7 +2371,7 @@ impl ApplicationStore {
             ))?;
         let sealed = durable_native_validation_job_from_existing_v0(sealed, self)
             .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
-        verify_native_validation_job_outbox_v0(
+        let verified_outbox = revalidate_native_validation_job_outbox_v0(
             &transaction,
             &sealed,
             NativeValidationReservationStageV0::ConfirmCommit,
@@ -1903,6 +2384,12 @@ impl ApplicationStore {
                 NativeValidationReservationInvariantV0::CommitReadbackConflict,
             ));
         }
+        let sealed = VerifiedNativeValidationInvalidCallbackV0::new_v0(
+            sealed,
+            verified_outbox.ok_or(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ))?,
+        );
         if failpoint == Some(NativeValidationInvalidSealFailpointV0::BeforeCommit) {
             return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
                 stage: NativeValidationReservationStageV0::Commit,
@@ -1984,7 +2471,7 @@ impl ApplicationStore {
             ))?;
         let job = durable_native_validation_job_from_existing_v0(job, self)
             .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
-        verify_native_validation_job_outbox_v0(
+        let verified_outbox = revalidate_native_validation_job_outbox_v0(
             &connection,
             &job,
             NativeValidationReservationStageV0::ConfirmCommit,
@@ -2007,13 +2494,832 @@ impl ApplicationStore {
                 if native_validation_job_invalid_reason_v0(&job) == Some(prepared.reason()) =>
             {
                 Ok(NativeValidationInvalidCommitReadbackV0::CallbackPending(
-                    Box::new(job),
+                    Box::new(VerifiedNativeValidationInvalidCallbackV0::new_v0(
+                        job,
+                        verified_outbox.ok_or(
+                            NativeValidationInvalidSealFailureCauseV0::Invariant(
+                                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                            ),
+                        )?,
+                    )),
                 ))
             }
             _ => Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
                 NativeValidationReservationInvariantV0::CommitReadbackConflict,
             )),
         }
+    }
+
+    /// Atomically records that the exact live callback was accepted by the
+    /// current Core instance. The outbox remains durable and its attempt is
+    /// advanced exactly once; journal byte accounting is unchanged.
+    #[cfg_attr(not(test), allow(dead_code))]
+    fn mark_native_validation_invalid_callback_delivered_v0(
+        &self,
+        owner: Box<LiveNativeValidationInvalidCallbackV0>,
+    ) -> std::result::Result<
+        Box<DeliveredNativeValidationInvalidCallbackV0>,
+        Box<FailedNativeValidationInvalidDeliveryV0>,
+    > {
+        match self.mark_native_validation_invalid_callback_delivered_inner_v0(&owner) {
+            Ok(
+                NativeValidationInvalidDeliveryInnerDecisionV0::Delivered(verified)
+                | NativeValidationInvalidDeliveryInnerDecisionV0::CommitUncertainDelivered(verified),
+            ) => {
+                let LiveNativeValidationInvalidCallbackV0 { prepared, .. } = *owner;
+                Ok(Box::new(DeliveredNativeValidationInvalidCallbackV0 {
+                    prepared,
+                    verified,
+                }))
+            }
+            Err(cause) => Err(Box::new(FailedNativeValidationInvalidDeliveryV0 {
+                owner,
+                cause,
+            })),
+        }
+    }
+
+    fn mark_native_validation_invalid_callback_delivered_inner_v0(
+        &self,
+        owner: &LiveNativeValidationInvalidCallbackV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidDeliveryInnerDecisionV0,
+        NativeValidationInvalidJournalTransitionFailureCauseV0,
+    > {
+        if !owner.is_bound_to_store_v0(self) {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::IssuingStoreMismatch,
+                ),
+            );
+        }
+        self.writer_waiters.fetch_add(1, Ordering::AcqRel);
+        let writer = self.writer_gate.lock();
+        self.writer_waiters.fetch_sub(1, Ordering::AcqRel);
+        let _writer = writer.map_err(|_| {
+            NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::LockWriter,
+            }
+        })?;
+        let mut connection = self
+            .connect_native_validation_job_v0()
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::BeginTransaction,
+                        &error,
+                    ),
+                )
+            })?;
+        validate_native_validation_job_bindings_v0(&transaction, self)
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        read_bounded_native_validation_journal_accounting_v0(
+            &transaction,
+            NativeValidationReservationStageV0::ReadCapacity,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        let existing = load_native_validation_job_v0(&transaction, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let existing = durable_native_validation_job_from_existing_v0(existing, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        let existing_outbox = revalidate_native_validation_job_outbox_v0(
+            &transaction,
+            &existing,
+            NativeValidationReservationStageV0::ReadExisting,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?
+        .ok_or(
+            NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::StateMismatch,
+            ),
+        )?;
+        let existing = VerifiedNativeValidationInvalidCallbackV0::new_v0(existing, existing_outbox);
+        if !native_validation_invalid_callback_lineage_matches_v0(&existing, owner) {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::RouteMismatch,
+                ),
+            );
+        }
+        if existing.job.state == NativeValidationJobStateV0::Delivered {
+            if existing.delivery_attempt
+                != owner.delivery_attempt().checked_add(1).ok_or(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::DeliveryAttemptOverflow,
+                )?
+            {
+                return Err(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                        NativeValidationReservationInvariantV0::StateMismatch,
+                    ),
+                );
+            }
+            transaction.commit().map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )
+            })?;
+            return Ok(NativeValidationInvalidDeliveryInnerDecisionV0::Delivered(
+                existing,
+            ));
+        }
+        if existing.job.state != NativeValidationJobStateV0::CallbackPending
+            || existing.delivery_attempt() != owner.delivery_attempt()
+        {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let next_attempt = existing.delivery_attempt().checked_add(1).ok_or(
+            NativeValidationInvalidJournalTransitionFailureCauseV0::DeliveryAttemptOverflow,
+        )?;
+        let next_outbox_checksum = durable_invalid_callback_outbox_checksum_v0(
+            native_validation_artifact_identity_v0(&existing.job),
+            existing.artifact_checksum(),
+            DURABLE_INVALID_CALLBACK_CODEC_V0,
+            existing.callback_payload_checksum(),
+            existing.idempotency_key(),
+            next_attempt,
+        );
+        let next_row_checksum = native_validation_job_delivery_row_checksum_v0(
+            &existing.job.immutable_checksum,
+            NativeValidationJobStateV0::Delivered,
+            existing.job.result_kind,
+            existing.job.invalid_reason_code_be.as_deref(),
+            existing.job.artifact_codec.as_deref(),
+            existing.job.artifact_checksum.as_ref(),
+            None,
+            None,
+            Some(&next_outbox_checksum),
+        );
+        let outbox_updated = transaction
+            .execute(
+                "UPDATE validation_callback_outbox_v0
+                 SET delivery_attempt_be=?1, outbox_checksum=?2
+                 WHERE route=?3 AND block_id=?4 AND view_be=?5 AND generation_be=?6
+                   AND delivery_attempt_be=?7 AND outbox_checksum=?8",
+                params![
+                    next_attempt.to_be_bytes().as_slice(),
+                    next_outbox_checksum.as_slice(),
+                    native_validation_route_code_v0(existing.route()),
+                    existing.validation_id().block_id().as_bytes().as_slice(),
+                    existing
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing.delivery_attempt().to_be_bytes().as_slice(),
+                    existing.outbox_checksum().as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if outbox_updated != 1 {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let job_updated = transaction
+            .execute(
+                "UPDATE validation_jobs_v0 SET state=3, row_checksum=?1
+                 WHERE route=?2 AND block_id=?3 AND view_be=?4 AND generation_be=?5
+                   AND state=2 AND row_checksum=?6",
+                params![
+                    next_row_checksum.as_slice(),
+                    native_validation_route_code_v0(existing.route()),
+                    existing.validation_id().block_id().as_bytes().as_slice(),
+                    existing
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing.job.row_checksum.as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if job_updated != 1 {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let delivered = load_native_validation_job_v0(&transaction, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let delivered = durable_native_validation_job_from_existing_v0(delivered, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        let delivered_outbox = revalidate_native_validation_job_outbox_v0(
+            &transaction,
+            &delivered,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?
+        .ok_or(
+            NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ),
+        )?;
+        let delivered =
+            VerifiedNativeValidationInvalidCallbackV0::new_v0(delivered, delivered_outbox);
+        if delivered.job.state != NativeValidationJobStateV0::Delivered
+            || delivered.delivery_attempt() != next_attempt
+            || !native_validation_invalid_callback_lineage_matches_v0(&delivered, owner)
+        {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            );
+        }
+        if let Err(error) = transaction.commit() {
+            return match self.confirm_native_validation_invalid_delivery_v0(owner) {
+                Ok(NativeValidationInvalidDeliveryCommitReadbackV0::Delivered(verified)) => Ok(
+                    NativeValidationInvalidDeliveryInnerDecisionV0::CommitUncertainDelivered(
+                        *verified,
+                    ),
+                ),
+                Ok(NativeValidationInvalidDeliveryCommitReadbackV0::CallbackPending) => {
+                    Err(native_validation_invalid_transition_failure_v0(
+                        classify_native_validation_reservation_sqlite_failure_v0(
+                            NativeValidationReservationStageV0::Commit,
+                            &error,
+                        ),
+                    ))
+                }
+                Err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(kind)) => {
+                    Err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(kind))
+                }
+                Err(NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant {
+                    stage,
+                }) => Err(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant { stage },
+                ),
+                Err(_) => Err(native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )),
+            };
+        }
+        Ok(NativeValidationInvalidDeliveryInnerDecisionV0::Delivered(
+            delivered,
+        ))
+    }
+
+    fn confirm_native_validation_invalid_delivery_v0(
+        &self,
+        owner: &LiveNativeValidationInvalidCallbackV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidDeliveryCommitReadbackV0,
+        NativeValidationInvalidJournalTransitionFailureCauseV0,
+    > {
+        let connection = self
+            .open_native_validation_confirmation_connection_v0()
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        read_bounded_native_validation_journal_accounting_v0(
+            &connection,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        let job = load_native_validation_job_v0(&connection, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let job = durable_native_validation_job_from_existing_v0(job, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        let outbox = revalidate_native_validation_job_outbox_v0(
+            &connection,
+            &job,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?
+        .ok_or(
+            NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ),
+        )?;
+        let verified = VerifiedNativeValidationInvalidCallbackV0::new_v0(job, outbox);
+        if !native_validation_invalid_callback_lineage_matches_v0(&verified, owner) {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            );
+        }
+        match verified.job.state {
+            NativeValidationJobStateV0::CallbackPending
+                if verified.delivery_attempt() == owner.delivery_attempt() =>
+            {
+                Ok(NativeValidationInvalidDeliveryCommitReadbackV0::CallbackPending)
+            }
+            NativeValidationJobStateV0::Delivered
+                if verified.delivery_attempt()
+                    == owner.delivery_attempt().checked_add(1).ok_or(
+                        NativeValidationInvalidJournalTransitionFailureCauseV0::DeliveryAttemptOverflow,
+                    )? =>
+            {
+                Ok(NativeValidationInvalidDeliveryCommitReadbackV0::Delivered(
+                    Box::new(verified),
+                ))
+            }
+            _ => Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            ),
+        }
+    }
+
+    /// Atomically retires the delivered outbox after the callback driver has
+    /// confirmed exact Core safety-state persistence.
+    #[cfg_attr(not(test), allow(dead_code))]
+    fn acknowledge_native_validation_invalid_callback_v0(
+        &self,
+        owner: Box<ConfirmedCoreInvalidCompletionV0>,
+    ) -> std::result::Result<
+        Box<AckedNativeValidationInvalidCallbackV0>,
+        Box<FailedNativeValidationInvalidAcknowledgementV0>,
+    > {
+        match self.acknowledge_native_validation_invalid_callback_inner_v0(&owner) {
+            Ok(
+                NativeValidationInvalidAcknowledgementInnerDecisionV0::Acked(durable)
+                | NativeValidationInvalidAcknowledgementInnerDecisionV0::CommitUncertainAcked(
+                    durable,
+                ),
+            ) => {
+                let ConfirmedCoreInvalidCompletionV0 {
+                    delivered,
+                    accepted_core_revision,
+                } = *owner;
+                let DeliveredNativeValidationInvalidCallbackV0 { prepared, verified } = *delivered;
+                Ok(Box::new(AckedNativeValidationInvalidCallbackV0 {
+                    prepared,
+                    durable: Box::new(durable),
+                    accepted_core_revision,
+                    callback_payload_checksum: verified.callback_payload_checksum(),
+                }))
+            }
+            Err(cause) => Err(Box::new(FailedNativeValidationInvalidAcknowledgementV0 {
+                owner,
+                cause,
+            })),
+        }
+    }
+
+    fn acknowledge_native_validation_invalid_callback_inner_v0(
+        &self,
+        owner: &ConfirmedCoreInvalidCompletionV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidAcknowledgementInnerDecisionV0,
+        NativeValidationInvalidJournalTransitionFailureCauseV0,
+    > {
+        let delivered_owner = &owner.delivered;
+        if !delivered_owner.is_bound_to_store_v0(self) {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::IssuingStoreMismatch,
+                ),
+            );
+        }
+        self.writer_waiters.fetch_add(1, Ordering::AcqRel);
+        let writer = self.writer_gate.lock();
+        self.writer_waiters.fetch_sub(1, Ordering::AcqRel);
+        let _writer = writer.map_err(|_| {
+            NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::LockWriter,
+            }
+        })?;
+        let mut connection = self
+            .connect_native_validation_job_v0()
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::BeginTransaction,
+                        &error,
+                    ),
+                )
+            })?;
+        validate_native_validation_job_bindings_v0(&transaction, self)
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        let accounting = read_bounded_native_validation_journal_accounting_v0(
+            &transaction,
+            NativeValidationReservationStageV0::ReadCapacity,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        let existing = load_native_validation_job_v0(&transaction, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let existing = durable_native_validation_job_from_existing_v0(existing, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        if existing.state == NativeValidationJobStateV0::Acked {
+            verify_native_validation_job_outbox_v0(
+                &transaction,
+                &existing,
+                NativeValidationReservationStageV0::ReadExisting,
+            )
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+            if !native_validation_invalid_acked_job_matches_confirmation_v0(&existing, owner) {
+                return Err(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                        NativeValidationReservationInvariantV0::StateMismatch,
+                    ),
+                );
+            }
+            transaction.commit().map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )
+            })?;
+            return Ok(NativeValidationInvalidAcknowledgementInnerDecisionV0::Acked(existing));
+        }
+        let existing_outbox = revalidate_native_validation_job_outbox_v0(
+            &transaction,
+            &existing,
+            NativeValidationReservationStageV0::ReadExisting,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?
+        .ok_or(
+            NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::StateMismatch,
+            ),
+        )?;
+        let existing = VerifiedNativeValidationInvalidCallbackV0::new_v0(existing, existing_outbox);
+        if existing.job.state != NativeValidationJobStateV0::Delivered
+            || !native_validation_invalid_delivered_lineage_matches_v0(&existing, delivered_owner)
+        {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let callback_bytes = u64::try_from(DURABLE_INVALID_CALLBACK_BYTES_V0).map_err(|_| {
+            NativeValidationInvalidJournalTransitionFailureCauseV0::AccountingUnderflow
+        })?;
+        let next_outbox_count = accounting
+            .outbox_count
+            .checked_sub(1)
+            .ok_or(NativeValidationInvalidJournalTransitionFailureCauseV0::AccountingUnderflow)?;
+        let next_outbox_bytes = accounting
+            .outbox_bytes
+            .checked_sub(callback_bytes)
+            .ok_or(NativeValidationInvalidJournalTransitionFailureCauseV0::AccountingUnderflow)?;
+        let accepted_core_revision_be = owner.accepted_core_revision().to_be_bytes();
+        let callback_payload_checksum = owner.callback_payload_checksum();
+        let acked_row_checksum = native_validation_job_delivery_row_checksum_v0(
+            &existing.job.immutable_checksum,
+            NativeValidationJobStateV0::Acked,
+            existing.job.result_kind,
+            existing.job.invalid_reason_code_be.as_deref(),
+            existing.job.artifact_codec.as_deref(),
+            existing.job.artifact_checksum.as_ref(),
+            Some(&accepted_core_revision_be),
+            Some(&callback_payload_checksum),
+            None,
+        );
+        let deleted = transaction
+            .execute(
+                "DELETE FROM validation_callback_outbox_v0
+                 WHERE route=?1 AND block_id=?2 AND view_be=?3 AND generation_be=?4
+                   AND delivery_attempt_be=?5 AND outbox_checksum=?6",
+                params![
+                    native_validation_route_code_v0(existing.route()),
+                    existing.validation_id().block_id().as_bytes().as_slice(),
+                    existing
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing.delivery_attempt().to_be_bytes().as_slice(),
+                    existing.outbox_checksum().as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if deleted != 1 {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let job_updated = transaction
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET state=4, accepted_core_revision_be=?1,
+                     accepted_core_payload_checksum=?2, row_checksum=?3
+                 WHERE route=?4 AND block_id=?5 AND view_be=?6 AND generation_be=?7
+                   AND state=3 AND row_checksum=?8",
+                params![
+                    accepted_core_revision_be.as_slice(),
+                    callback_payload_checksum.as_slice(),
+                    acked_row_checksum.as_slice(),
+                    native_validation_route_code_v0(existing.route()),
+                    existing.validation_id().block_id().as_bytes().as_slice(),
+                    existing
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing.job.row_checksum.as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if job_updated != 1 {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ),
+            );
+        }
+        let accounting_updated = transaction
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET outbox_count_be=?1, outbox_bytes_be=?2
+                 WHERE singleton=1 AND outbox_count_be=?3 AND outbox_bytes_be=?4",
+                params![
+                    next_outbox_count.to_be_bytes().as_slice(),
+                    next_outbox_bytes.to_be_bytes().as_slice(),
+                    accounting.outbox_count.to_be_bytes().as_slice(),
+                    accounting.outbox_bytes.to_be_bytes().as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if accounting_updated != 1 {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                ),
+            );
+        }
+        let expected_accounting = NativeValidationJournalAccountingV0 {
+            job_count: accounting.job_count,
+            request_bytes: accounting.request_bytes,
+            artifact_bytes: accounting.artifact_bytes,
+            outbox_count: next_outbox_count,
+            outbox_bytes: next_outbox_bytes,
+        };
+        let readback_accounting = read_bounded_native_validation_journal_accounting_v0(
+            &transaction,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        if readback_accounting != expected_accounting {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            );
+        }
+        let acked = load_native_validation_job_v0(&transaction, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let acked = durable_native_validation_job_from_existing_v0(acked, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        verify_native_validation_job_outbox_v0(
+            &transaction,
+            &acked,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        if !native_validation_invalid_acked_job_matches_confirmation_v0(&acked, owner) {
+            return Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            );
+        }
+        if let Err(error) = transaction.commit() {
+            return match self.confirm_native_validation_invalid_acknowledgement_v0(owner) {
+                Ok(NativeValidationInvalidAcknowledgementCommitReadbackV0::Acked(durable)) => Ok(
+                    NativeValidationInvalidAcknowledgementInnerDecisionV0::CommitUncertainAcked(
+                        *durable,
+                    ),
+                ),
+                Ok(NativeValidationInvalidAcknowledgementCommitReadbackV0::Delivered) => {
+                    Err(native_validation_invalid_transition_failure_v0(
+                        classify_native_validation_reservation_sqlite_failure_v0(
+                            NativeValidationReservationStageV0::Commit,
+                            &error,
+                        ),
+                    ))
+                }
+                Err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(kind)) => {
+                    Err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(kind))
+                }
+                Err(NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant {
+                    stage,
+                }) => Err(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::HostInvariant { stage },
+                ),
+                Err(_) => Err(native_validation_invalid_transition_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )),
+            };
+        }
+        Ok(NativeValidationInvalidAcknowledgementInnerDecisionV0::Acked(acked))
+    }
+
+    fn confirm_native_validation_invalid_acknowledgement_v0(
+        &self,
+        owner: &ConfirmedCoreInvalidCompletionV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidAcknowledgementCommitReadbackV0,
+        NativeValidationInvalidJournalTransitionFailureCauseV0,
+    > {
+        let connection = self
+            .open_native_validation_confirmation_connection_v0()
+            .map_err(native_validation_invalid_transition_failure_v0)?;
+        read_bounded_native_validation_journal_accounting_v0(
+            &connection,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_transition_failure_v0)?;
+        let job = load_native_validation_job_v0(&connection, owner.validation_id())
+            .map_err(native_validation_invalid_transition_failure_v0)?
+            .ok_or(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            )?;
+        let job = durable_native_validation_job_from_existing_v0(job, self)
+            .map_err(NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant)?;
+        match job.state {
+            NativeValidationJobStateV0::Delivered => {
+                let outbox = revalidate_native_validation_job_outbox_v0(
+                    &connection,
+                    &job,
+                    NativeValidationReservationStageV0::ConfirmCommit,
+                )
+                .map_err(native_validation_invalid_transition_failure_v0)?
+                .ok_or(
+                    NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                        NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                    ),
+                )?;
+                let verified = VerifiedNativeValidationInvalidCallbackV0::new_v0(job, outbox);
+                if native_validation_invalid_delivered_lineage_matches_v0(
+                    &verified,
+                    &owner.delivered,
+                ) {
+                    Ok(NativeValidationInvalidAcknowledgementCommitReadbackV0::Delivered)
+                } else {
+                    Err(
+                        NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                            NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                        ),
+                    )
+                }
+            }
+            NativeValidationJobStateV0::Acked => {
+                verify_native_validation_job_outbox_v0(
+                    &connection,
+                    &job,
+                    NativeValidationReservationStageV0::ConfirmCommit,
+                )
+                .map_err(native_validation_invalid_transition_failure_v0)?;
+                if native_validation_invalid_acked_job_matches_confirmation_v0(&job, owner) {
+                    Ok(
+                        NativeValidationInvalidAcknowledgementCommitReadbackV0::Acked(Box::new(
+                            job,
+                        )),
+                    )
+                } else {
+                    Err(
+                        NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                            NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                        ),
+                    )
+                }
+            }
+            _ => Err(
+                NativeValidationInvalidJournalTransitionFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::CommitReadbackConflict,
+                ),
+            ),
+        }
+    }
+
+    fn open_native_validation_confirmation_connection_v0(
+        &self,
+    ) -> std::result::Result<Connection, NativeValidationReservationFailureCauseV0> {
+        let connection = Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(|error| {
+            classify_native_validation_reservation_sqlite_failure_v0(
+                NativeValidationReservationStageV0::ConfirmCommit,
+                &error,
+            )
+        })?;
+        connection
+            .busy_timeout(Duration::from_secs(5))
+            .map_err(|error| {
+                classify_native_validation_reservation_sqlite_failure_v0(
+                    NativeValidationReservationStageV0::ConfirmCommit,
+                    &error,
+                )
+            })?;
+        validate_native_validation_job_bindings_v0(&connection, self)?;
+        Ok(connection)
     }
 
     fn reserve_or_reopen_native_validation_job_inner_v0(
@@ -5967,6 +7273,55 @@ fn native_validation_job_invalid_reason_v0(
         .and_then(DurableDeterministicInvalidReasonV0::from_code_v0)
 }
 
+fn native_validation_invalid_callback_lineage_matches_v0(
+    verified: &VerifiedNativeValidationInvalidCallbackV0,
+    owner: &LiveNativeValidationInvalidCallbackV0,
+) -> bool {
+    verified.route() == owner.route()
+        && verified.validation_id() == owner.validation_id()
+        && verified.reason() == owner.reason()
+        && verified.request_fingerprint() == owner.request_fingerprint()
+        && verified.immutable_checksum() == owner.immutable_checksum()
+        && verified.artifact_checksum() == owner.artifact_checksum()
+        && verified.callback_payload_checksum() == owner.callback_payload_checksum()
+        && verified.idempotency_key() == owner.idempotency_key()
+}
+
+fn native_validation_invalid_delivered_lineage_matches_v0(
+    verified: &VerifiedNativeValidationInvalidCallbackV0,
+    owner: &DeliveredNativeValidationInvalidCallbackV0,
+) -> bool {
+    verified.route() == owner.route()
+        && verified.validation_id() == owner.validation_id()
+        && verified.reason() == owner.reason()
+        && verified.request_fingerprint() == owner.request_fingerprint()
+        && verified.immutable_checksum() == owner.immutable_checksum()
+        && verified.artifact_checksum() == owner.artifact_checksum()
+        && verified.callback_payload_checksum() == owner.callback_payload_checksum()
+        && verified.idempotency_key() == owner.idempotency_key()
+        && verified.delivery_attempt() == owner.delivery_attempt()
+        && verified.outbox_checksum() == owner.verified.outbox_checksum()
+}
+
+fn native_validation_invalid_acked_job_matches_confirmation_v0(
+    job: &DurableNativeValidationJobV0,
+    owner: &ConfirmedCoreInvalidCompletionV0,
+) -> bool {
+    job.state == NativeValidationJobStateV0::Acked
+        && job.route() == owner.route()
+        && job.validation_id() == owner.validation_id()
+        && job.request_fingerprint() == owner.delivered.request_fingerprint()
+        && job.immutable_checksum() == owner.delivered.immutable_checksum()
+        && native_validation_job_invalid_reason_v0(job) == Some(owner.delivered.reason())
+        && job.artifact_checksum == Some(owner.delivered.artifact_checksum())
+        && job
+            .accepted_core_revision_be
+            .as_deref()
+            .and_then(native_validation_u64_v0)
+            == Some(owner.accepted_core_revision())
+        && job.accepted_core_payload_checksum == Some(owner.callback_payload_checksum())
+}
+
 fn native_validation_record_invariant_v0(
     error: DurableNativeValidationRecordErrorV0,
 ) -> NativeValidationReservationInvariantV0 {
@@ -5999,11 +7354,14 @@ fn native_validation_outbox_from_row_v0(
     })
 }
 
-fn verify_native_validation_job_outbox_v0(
+fn revalidate_native_validation_job_outbox_v0(
     connection: &Connection,
     job: &DurableNativeValidationJobV0,
     stage: NativeValidationReservationStageV0,
-) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+) -> std::result::Result<
+    Option<RevalidatedNativeValidationInvalidOutboxV0>,
+    NativeValidationReservationFailureCauseV0,
+> {
     let validation_id = job.validation_id();
     let outbox = connection
         .query_row(
@@ -6036,7 +7394,7 @@ fn verify_native_validation_job_outbox_v0(
                     NativeValidationReservationInvariantV0::StateMismatch,
                 ));
             }
-            Ok(())
+            Ok(None)
         }
         NativeValidationJobStateV0::CallbackPending | NativeValidationJobStateV0::Delivered => {
             let outbox = outbox
@@ -6117,7 +7475,27 @@ fn verify_native_validation_job_outbox_v0(
                     NativeValidationReservationInvariantV0::StateMismatch,
                 ));
             }
-            verify_durable_invalid_callback_v0(
+            let stored_reason = native_validation_job_invalid_reason_v0(job).ok_or_else(|| {
+                invariant(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)
+            })?;
+            let artifact = verify_durable_invalid_artifact_v0(
+                job.artifact_codec.as_deref().ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?,
+                job.artifact_bytes.as_deref().ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?,
+                artifact_checksum,
+                result_kind,
+                stored_reason,
+                native_validation_artifact_identity_v0(job),
+            )
+            .map_err(|error| invariant(native_validation_record_invariant_v0(error)))?;
+            let callback = verify_durable_invalid_callback_v0(
                 &outbox.payload_codec,
                 &outbox.payload_bytes,
                 payload_checksum,
@@ -6147,12 +7525,24 @@ fn verify_native_validation_job_outbox_v0(
                     NativeValidationReservationInvariantV0::ChecksumMismatch,
                 ));
             }
-            Ok(())
+            Ok(Some(RevalidatedNativeValidationInvalidOutboxV0 {
+                artifact,
+                callback,
+                delivery_attempt,
+            }))
         }
         _ => Err(invariant(
             NativeValidationReservationInvariantV0::StateMismatch,
         )),
     }
+}
+
+fn verify_native_validation_job_outbox_v0(
+    connection: &Connection,
+    job: &DurableNativeValidationJobV0,
+    stage: NativeValidationReservationStageV0,
+) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+    revalidate_native_validation_job_outbox_v0(connection, job, stage).map(|_| ())
 }
 
 trait TransposeOptionV0<T> {

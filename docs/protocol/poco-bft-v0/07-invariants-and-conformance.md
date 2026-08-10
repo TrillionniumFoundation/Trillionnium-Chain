@@ -809,10 +809,24 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   row/outbox/accounting relationships MUST be revalidated at startup and
   recovery;
 - schema v8 MUST continue to reject `evaluated`, `applied`, `Valid`, every
-  unsupported invalid reason, `Unavailable`, and invariant results; accepting a
-  deeply verified `delivered` or `acked` row MUST NOT imply that this binary can
-  create that row, owns a live callback, called `Core::step`, durably persisted
-  a Core `SafetyState`, acknowledged its barrier, or can take over the job;
+  unsupported invalid reason, `Unavailable`, and invariant results; a deeply
+  verified `delivered` or `acked` recovery row alone MUST NOT mint a live
+  callback owner, reconstruct Core authority, or permit job takeover;
+- the process-local deterministic-invalid delivery path MUST consume only the
+  live owner retained by the first successful deterministic-invalid seal; its
+  app-private, non-cloneable driver MUST keep one designated store, one owned
+  Core instance, and one injected safety sink fixed for the whole phase chain.
+  It MUST call
+  the route-specific real `Core::step`, require the exact
+  `PersistSafetyState` barrier/state and matching completion, persist
+  `delivered`, confirm that exact state through the same sink, persist `acked`,
+  and only then issue the exact `StorageAck`. A completion-only/empty-effect
+  callback MUST NOT authorize an artifact because the current Core completion
+  tombstone does not bind its artifact or callback checksum. After
+  `StorageAck`, the Core SafetyState MUST remain exactly unchanged and the release
+  effects MUST be empty when that state has no safety halt or exactly the
+  matching `SafetyHalted` effect when it does; every other state/effect
+  combination MUST fail closed;
 - the validation-job journal MUST be bounded at 65,536 rows and 512 MiB of raw
   request records with no eviction, and exact reopen MUST precede capacity
   rejection; migration MUST advance explicitly and serially through `v3 -> v4
@@ -847,10 +861,12 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   validation journal rather than silently discard target-local work; the
   raw job/fingerprint/checksums, v7 deterministic-invalid artifact/outbox, and
   v8 delivered/acked recovery facts MUST NOT be treated as signed-proposal
-  reconstruction, JMT/terminal authority, writable callback
-  delivery/acknowledgement, live-owner authority, executable crash takeover,
-  real `Core::step`, SafetyState sink/WAL evidence, or process-wide callback
-  exactly-once evidence;
+  reconstruction, JMT/terminal authority, recovery-reminted live-owner
+  authority, executable crash takeover, SafetyState codec/WAL evidence, or
+  process-wide callback exactly-once evidence. The current writable
+  delivery/ack path and real `Core::step` integration are process-local test
+  boundaries only: no production driver constructor, host/AppCore/ABCI/node
+  wiring, durable safety sink, or process-wide Core uniqueness is implied;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
   joined fact may escape unless explicit snapshot finish succeeds, and finish
@@ -986,28 +1002,27 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   synthetic-genesis/native-state authority, speculative-parent overlays,
   non-runtime dispatch, JMT plan application/state persistence,
   owning-classification-to-terminal promotion, final typed retryable-versus-
-  invariant host mapping, a private route-aware callback adapter, host/Core
-  callback wiring, and ABCI
+  invariant host mapping, production host/Core callback wiring, and ABCI
   wiring/adapter remain open hard prerequisites and provide no terminal
   production execution-path conformance evidence yet; the object-graph gate
   performs no terminal mapping, and only the current private admission branch
-  is proven not to emit a callback for a losing clone; the route-bearing
-  disposition MUST NOT itself create a terminal result, call Core `Input`,
-  persist state, or enter ABCI; a future consuming bridge MUST map `Proposal`
-  only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, and
-  reservation/outbox identity MUST remain `(route, full ValidationId)`; v7
-  closes that validation-time atomic boundary only for the two complete-body
-  deterministic root mismatches, and v8 freezes only later delivery-state
-  persistence/recovery shapes without adding a writer, live delivery owner,
-  Core driver, or durable SafetyState sink, while a revalidatable `Valid`
-  artifact and callback-outbox intent remain open; the separate Finalize-
+  is proven not to emit a callback for a losing clone. The current consuming
+  invalid bridge maps `Proposal` only to `PayloadValidated` and `Synced` only
+  to `SyncedPayloadValidated`, and reservation/outbox identity remains
+  `(route, full ValidationId)`. V7 closes the validation-time atomic boundary
+  only for the two complete-body deterministic root mismatches. V8 adds the
+  app-private process-local delivery writer, live-owner chain, real Core
+  driver, and injected test sink described above, but no production
+  constructor, durable SafetyState sink, recovery remint, or takeover. A
+  revalidatable `Valid` artifact and callback-outbox intent remain open; the
+  separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
   JMT/domain apply, root/native-head persistence, head advancement, and applied
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-  application-reservation takeover, `Valid` evaluated-artifact persistence, host
-  callback-outbox scheduling/delivery acknowledgement, crash takeover, Core
-  callback delivery,
+  application-reservation takeover, `Valid` evaluated-artifact persistence,
+  production callback-outbox scheduling/delivery and SafetyState durability,
+  crash takeover,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.

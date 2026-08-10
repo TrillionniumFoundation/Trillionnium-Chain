@@ -9,13 +9,16 @@ Last audited: 2026-08-11
 The six production integration contracts are frozen in
 [`../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`](../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md).
 They remain implementation gaps until backed by durable code and crash tests:
-SafetyState codec/WAL, complete canonical SignIntent, a writable validation
-callback delivery/ack state machine with live ownership and Core integration,
-ordered ancestor finalization queue, BlockId-keyed speculative overlay, and
-strict separation of consensus parameters from local backpressure. The local
-validation journal and deterministic-invalid callback intent now have frozen
-partial formats, including v8 delivery-state recovery shapes, but no additional
-private carrier or inert persisted row closes the delivery contract.
+SafetyState codec/WAL, complete canonical SignIntent, a production validation
+callback driver with crash takeover, ordered ancestor finalization queue,
+BlockId-keyed speculative overlay, and strict separation of consensus
+parameters from local backpressure. The local validation journal now has a
+narrow process-local deterministic-invalid delivery/ack integration: a
+non-cloneable app-private driver fixes one store, owned Core instance, and
+injected test sink while exercising real `Core::step`, `delivered`, exact-state
+confirmation, `acked`, and `StorageAck`. This is not a production constructor,
+durable safety sink, recovery remint, host wiring, or process-wide exactly-once
+contract.
 
 The normative documents in this directory remain ahead of the complete Rust
 implementation. `trnm-consensus-types`, `trnm-consensus-core`, and
@@ -1054,8 +1057,8 @@ epoch prune, and Core transition remain open.
    exact owners into `ExecutionOutcomeV0`, deriving generation from the
    retained Core request; a second derives a route/full-ID Core callback input
    for valid or computed-root-invalid outcomes while refusing any input for a
-   comparator invariant. Neither bridge calls `Core::step` or provides
-   `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. A
+   comparator invariant. Neither legacy bridge itself calls `Core::step` or
+   provides `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. A
    separate consuming complete-body planner now rebinds the complete mixed
    cursor provenance, merges the replayed runtime final delta with only the
    final replace-only PoCO prefix writes or the no-PoCO scheduled-cutoff
@@ -1074,10 +1077,14 @@ epoch prune, and Core transition remain open.
    state-root and receipts-root deterministic mismatch into application-store
    schema v7; one atomic transaction persists its canonical invalid artifact
    and matching `callback_pending` outbox intent. It cannot admit `Valid`,
-   `Unavailable`, or an invariant and calls no `Core::step`. Schema v8 only
-   freezes and deep-validates later `delivered`/`acked` persistence shapes; it
-   supplies no transition writer, live owner, Core driver, or SafetyState
-   sink/WAL. The Core
+   `Unavailable`, or an invariant. Schema v8 adds the app-private
+   process-local delivery/ack transition chain: the first seal retains a live
+   non-cloneable owner, a non-cloneable driver fixes its store, owned Core, and
+   injected sink, and the driver exercises the real Core persistence barrier
+   before `delivered`, exact sink confirmation, `acked`, and `StorageAck`.
+   Generic reopen/recovery cannot recreate that owner, completion-only replay
+   is rejected because Core does not bind the artifact checksum, and there is
+   still no production constructor or SafetyState codec/WAL. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
    evidence-object CEV0 values are retained with the header, and the Core alone
@@ -1217,27 +1224,35 @@ epoch prune, and Core transition remain open.
    This closes the revalidatable raw request-record/recovery-fact foundation and
    the narrow deterministic-root-mismatch artifact/outbox transaction only; it
    does not reconstruct the signed proposal witness, persist a `Valid` artifact,
-   restore a Core obligation, grant executable crash takeover, call
-   `Core::step`, deliver/acknowledge a Core callback, apply state, or provide
-   process-wide callback exactly-once.
+   restore a Core obligation, grant executable crash takeover, apply state, or
+   provide process-wide callback exactly-once. The v7 transaction itself does
+   not call Core; only the owner retained by the first successful
+   deterministic-invalid seal can enter the separate v8 process-local driver.
 
    Current application-store schema v8 preserves verified v7 `reserved` and
-   `callback_pending` rows and activates only persisted representation plus
-   startup/recovery deep validation for deterministic-invalid `delivered` and
-   `acked`. `Delivered` retains the congruent outbox with delivery attempt at
-   least one and no accepted-Core fields. `Acked` deletes the outbox, retires
-   its accounting, and binds both an accepted Core revision later than job
+   `callback_pending` rows and activates deterministic-invalid `delivered` and
+   `acked` representation, deep startup/recovery validation, and app-private
+   writable transitions. `Delivered` retains the congruent outbox with delivery
+   attempt at least one and no accepted-Core fields. `Acked` deletes the outbox,
+   retires its accounting, and binds both an accepted Core revision later than job
    creation and the rederived canonical callback payload checksum. Both states
    bind the delivery-row checksum domain. V8 still rejects `evaluated`,
    `applied`, `Valid`, unsupported invalid reasons, `Unavailable`, and
    invariants. The explicit startup/snapshot migration chain is `v3 -> v4 ->
    v5 -> v6 -> v7 -> v8`, with a fixed-successor `BEGIN IMMEDIATE` transaction
    per step; v7-to-v8 deep-validates the entire v7 journal before changing
-   metadata and rolls back to byte-identical v7 on drift. There is no production
-   API that writes `delivered` or `acked`, no live delivery owner, no callback
-   dispatcher calling real `Core::step`, no durable SafetyState sink/WAL, and
-   no crash takeover. These v8 rows are recovery/integrity facts, not evidence
-   that delivery or acknowledgement occurred.
+   metadata and rolls back to byte-identical v7 on drift. A non-cloneable
+   app-private driver owns the designated Core and fixes the store and injected
+   test sink across the live-owner phase chain. It calls real route-specific
+   `Core::step`, requires the exact `PersistSafetyState` barrier/state, writes
+   `delivered`, confirms that state through the same sink, writes `acked`, and
+   only then calls `StorageAck`; completion-only replay is disabled and the
+   post-ack Core state/effect set is checked exactly. There is no production
+   driver constructor, durable SafetyState sink/WAL, generic recovery remint,
+   host/AppCore/ABCI/node wiring, crash takeover, or process-wide Core
+   uniqueness/exactly-once guarantee. Rows loaded from recovery remain inert
+   integrity facts and are not evidence that a new process owns delivery
+   authority.
 
    The initialized `AppCore` can now privately lend that carrier one canonical
    signer-policy preimage after its commitment matches both store metadata and
@@ -1302,12 +1317,14 @@ epoch prune, and Core transition remain open.
    root comparator, with no conversion between the two capability families.
    Synthetic genesis/native state authority, speculative-parent overlays,
    mixed-body app-private `Valid`, exact JMT plan application/state persistence/head
-   update, durable host callback-outbox scheduling/delivery, actual Core
-   callback execution, and ABCI wiring remain hard gaps before terminal/Core
-   callback. Schema v7's persisted deterministic-invalid callback intent is not
-   delivery authority, and schema v8's deeply verified delivery-state rows add
-   no writable delivery/ack API, live owner, real Core call, or SafetyState
-   persistence. They close none of those gaps. A consuming dispatcher
+   update, production host callback-outbox scheduling/delivery, crash takeover,
+   and ABCI wiring remain hard gaps before the general terminal/Core callback.
+   Schema v7's persisted deterministic-invalid callback intent alone is not
+   delivery authority. Schema v8 now preserves the live owner retained by the
+   first deterministic-invalid seal and
+   uses an app-private fixed-store/owned-Core/injected-test-sink driver for real
+   Core delivery and acknowledgement, but supplies neither production
+   SafetyState persistence nor recovery authority. A consuming dispatcher
    derives only PoCO application,
    validator transition, or unsupported from the retained verified envelope;
    its consuming semantic step now strict-decodes canonical PoCO operations and
@@ -1803,9 +1820,9 @@ epoch prune, and Core transition remain open.
    roots, and retains a private matched/failed/classified owner. It still cannot
    form app-private `Valid`, apply or persist the plan/head, persist a terminal
    `Valid` artifact/outbox, or deliver a result.
-   The separate private callback-shaped bridge maps `Proposal` only to
+   The separate legacy private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
-   does not call a Core instance, deliver a callback, or enter ABCI.
+   does not itself call a Core instance, deliver a callback, or enter ABCI.
    Application-store schema v6 is the historical reserved-only format: it
    durably stores the revalidatable raw request record and checksum-verified
    `reserved` recovery fact for `(route, full ValidationId)`, returns exact
@@ -1815,12 +1832,16 @@ epoch prune, and Core transition remain open.
    state-root and receipts-root deterministic mismatches only. It writes a
    canonical invalid artifact and congruent `callback_pending` intent but does
    not reconstruct a signed-proposal witness, support `Valid`, restore the Core
-   obligation, call `Core::step`, or confer callback delivery authority.
+   obligation, or confer callback delivery authority from durable bytes alone.
    Current schema v8 additionally freezes and deep-validates `delivered` with
    its attempt-positive outbox and `acked` with no outbox plus accepted
-   revision/canonical payload checksum. No production API writes either state,
-   no live owner can enter a Core, and no SafetyState sink/WAL or takeover path
-   exists. A private inert app-owned durable physical-plan codec now covers
+   revision/canonical payload checksum. It also adds an app-private
+   non-cloneable process-local driver which fixes one store, owned Core, and
+   injected test sink, carries only the first-seal deterministic-invalid owner through real
+   `Core::step`, writes both states in order, and issues `StorageAck` only after
+   exact sink confirmation. No production constructor, durable SafetyState
+   sink/WAL, recovery remint, or takeover path exists. A private inert app-owned
+   durable physical-plan codec now covers
    the exact persistence-bearing JMT fields. It pins each `NodeKey`/`Node` to
    `jmt-sha256-0.12.0-node-borsh-v0`, uses app-owned framing for values, stale
    indices and preimages, and decodes only to bounded unverified bytes. An
@@ -1844,9 +1865,11 @@ epoch prune, and Core transition remain open.
    replay tickets, completion retirement after durable host-delivery
    acknowledgement, speculative-parent/BlockTree
    reconstruction, application-reservation takeover, `Valid` evaluated-
-   artifact persistence, host callback-outbox scheduling/delivery acknowledgement,
-   crash takeover, Core callback delivery, and those two atomic boundaries
-   remain absent. Runtime now exposes a separate
+   artifact persistence, production callback-outbox scheduling/delivery,
+   crash takeover, and those two atomic boundaries remain absent. The current
+   invalid callback integration remains process-local and test-sink-backed,
+   without process-wide Core uniqueness or exactly-once authority. Runtime now
+   exposes a separate
    `try_estimate_resources_v0` call whose opaque estimate-failure token cannot
    be confused with a real execution-attempt failure: it preserves the exact
    typed state error, classifies deterministic failures without diagnostic

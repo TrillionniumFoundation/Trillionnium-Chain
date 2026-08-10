@@ -20,8 +20,11 @@
 //! before host or authenticated-state access. The durable row is congruence
 //! and evaluation authority only. A narrow owning bridge can atomically persist
 //! complete-body state/receipts mismatches as deterministic-invalid artifacts
-//! plus callback-pending outbox records; Valid artifacts, JMT application,
-//! callback delivery/acknowledgement, and crash takeover remain absent. The
+//! plus callback-pending outbox records. Its retained first-seal owner can enter
+//! the schema-v8 app-private process-local driver for real Core barrier tests,
+//! Delivered/Acked journal transitions, and an injected exact-state sink.
+//! Valid artifacts, JMT application, production callback durability/host
+//! wiring, and crash takeover remain absent. The
 //! production sequential cursor
 //! freezes the initialized host signer policy, internal body index, exact
 //! outer/inner bytes, strict signer/transaction decode, and derived execution
@@ -52,8 +55,10 @@
 //! promotion and plan application/persistence remain absent. A narrow owning
 //! bridge can now consume only a complete-body state/receipts mismatch backed
 //! by the exact durable reservation into an app-private prepared-invalid
-//! capability; this module does not encode or persist the artifact, deliver a
-//! callback, or execute Core. Owner-preserving typed failure promotion,
+//! capability. That bridge itself does not encode or persist the artifact,
+//! deliver a callback, or execute Core; the separate store-nested schema-v8
+//! driver consumes its first-seal lineage for the process-local integration
+//! described above. Owner-preserving typed failure promotion,
 //! a consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
 //! same-snapshot family-state attempts are now present. The family-local seal
@@ -7809,11 +7814,17 @@ mod tests {
             encode_poco_snapshot_value_envelope_v0, genesis_poco_snapshot_writes_v0,
         },
         store::{
+            native_validation_callback_driver::{
+                BindLiveInvalidDeliveryFailureCauseV0, FailedPersistCoreInvalidSafetyV0,
+                NativeValidationCallbackDriverV0, ReleasedCoreInvalidDeliveryV0,
+                TestDurableCoreSafetyStateSinkV0, TestSafetySinkFaultV0,
+            },
             ApplicationStore, AuthenticatedRuntimeReadFailureV0,
-            NativeValidationInvalidSealDecisionV0, NativeValidationInvalidSealFailpointV0,
-            NativeValidationInvalidSealFailureCauseV0, NativeValidationJobStateV0,
-            NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
-            NativeValidationReservationFailureCauseV0, NativeValidationReservationInvariantV0,
+            NativeValidationInvalidSealDecisionV0, NativeValidationInvalidSealDispositionV0,
+            NativeValidationInvalidSealFailpointV0, NativeValidationInvalidSealFailureCauseV0,
+            NativeValidationJobStateV0, NativeValidationReservationDecisionV0,
+            NativeValidationReservationFactsV0, NativeValidationReservationFailureCauseV0,
+            NativeValidationReservationInvariantV0,
         },
         validator_lifecycle::{
             ConsensusValidatorV1, ScheduledValidatorTransitionV1, ValidatorGovernanceV1,
@@ -8918,6 +8929,33 @@ mod tests {
         .expect("construct Core fixture parent QC")
     }
 
+    fn core_qc_for_exact_header(header: &BlockHeader, set: &ValidatorSet) -> QuorumCertificate {
+        let votes = set.validators()[..3]
+            .iter()
+            .map(|validator| {
+                core_vote(
+                    set,
+                    header.view(),
+                    header.height(),
+                    header.id(),
+                    validator.id(),
+                )
+            })
+            .collect();
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            header.view(),
+            header.height(),
+            header.id(),
+            set.id(),
+            votes,
+            set,
+        )
+        .expect("construct Core fixture target QC")
+    }
+
     fn core_signed_proposal(
         profile: &FixtureProfile,
         block: Block,
@@ -8970,6 +9008,18 @@ mod tests {
         core: Core,
         effect: Effect,
         registered_state: SafetyState,
+    }
+
+    /// Exact live-Core lineage for one durable complete-body root mismatch.
+    ///
+    /// The prepared owner and the still-pending Core obligation are derived
+    /// from the same validation effect. Keeping this fixture joined prevents
+    /// callback-driver tests from accidentally validating a journal row made
+    /// from one Core while stepping a different Core with a merely equal ID.
+    struct PreparedLiveDurableInvalidFixtureV0 {
+        core: Core,
+        registered_state: SafetyState,
+        prepared: super::PreparedDurableInvalidV0,
     }
 
     fn live_core_target_validation_fixture_v0(
@@ -9118,6 +9168,54 @@ mod tests {
         } = live_core_target_validation_fixture_v0(profile, target_route);
         assert_eq!(core.safety_state(), &registered_state);
         effect
+    }
+
+    fn poisoned_all_family_complete_body_profile_v0(
+        store: &TestStore,
+        reason: DurableDeterministicInvalidReasonV0,
+    ) -> FixtureProfile {
+        let honest = honest_all_family_complete_body_profile(store);
+        let state_root = honest.header.state_root();
+        let receipts_root = honest.header.receipts_root();
+        match reason {
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch => {
+                replace_profile_execution_roots(honest, StateRoot::new([0xf1; 32]), receipts_root)
+            }
+            DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch => {
+                replace_profile_execution_roots(honest, state_root, ReceiptsRoot::new([0xf2; 32]))
+            }
+        }
+    }
+
+    fn prepared_live_durable_invalid_fixture_v0(
+        store: &TestStore,
+        route: PayloadValidationRouteV0,
+        reason: DurableDeterministicInvalidReasonV0,
+    ) -> PreparedLiveDurableInvalidFixtureV0 {
+        let profile = poisoned_all_family_complete_body_profile_v0(store, reason);
+        let LiveCoreTargetValidationFixtureV0 {
+            core,
+            effect,
+            registered_state,
+        } = live_core_target_validation_fixture_v0(&profile, route);
+        let owner = durable_invalid_all_family_complete_body_owner_from_effect_v0(store, effect);
+        let prepared = prepare_durable_invalid_complete_body_v0(owner)
+            .expect("prepare exact live-Core durable-invalid owner");
+        assert_eq!(prepared.route(), route);
+        assert_eq!(prepared.reason(), reason);
+        assert_eq!(core.safety_state(), &registered_state);
+        assert!(core
+            .safety_state()
+            .payload_validation_obligations()
+            .iter()
+            .any(|obligation| {
+                obligation.route() == route && obligation.id() == prepared.validation_id()
+            }));
+        PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        }
     }
 
     fn core_validation_effect(profile: &FixtureProfile) -> Effect {
@@ -16528,6 +16626,564 @@ mod tests {
             assert_eq!(parts.reason().code_v0(), expected_code);
             assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
         }
+    }
+
+    #[test]
+    fn live_durable_invalid_fixtures_join_each_route_and_closed_reason_to_one_core_obligation() {
+        for route in [
+            PayloadValidationRouteV0::Proposal,
+            PayloadValidationRouteV0::Synced,
+        ] {
+            for reason in [
+                DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+                DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+            ] {
+                // Full ValidationIds are intentionally equal across fresh test
+                // stores, so each matrix member needs its own store and Core.
+                // This catches tests that accidentally join authority by ID
+                // alone instead of preserving the issuing object graph.
+                let store = test_store_with_poco_application_authority();
+                let PreparedLiveDurableInvalidFixtureV0 {
+                    core,
+                    registered_state,
+                    prepared,
+                } = prepared_live_durable_invalid_fixture_v0(&store, route, reason);
+                assert_eq!(core.safety_state(), &registered_state);
+                assert_eq!(prepared.route(), route);
+                assert_eq!(prepared.reason(), reason);
+                let obligation = core
+                    .safety_state()
+                    .payload_validation_obligations()
+                    .iter()
+                    .find(|obligation| {
+                        obligation.route() == route && obligation.id() == prepared.validation_id()
+                    })
+                    .expect("live fixture retained its exact Core obligation");
+                assert_eq!(obligation.id(), prepared.validation_id());
+                assert_eq!(core.pending_validation_count(), 1);
+                assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+            }
+        }
+    }
+
+    #[test]
+    fn live_durable_invalid_callbacks_cross_real_core_barriers_for_both_routes_and_reasons() {
+        for route in [
+            PayloadValidationRouteV0::Proposal,
+            PayloadValidationRouteV0::Synced,
+        ] {
+            for reason in [
+                DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+                DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+            ] {
+                let store = test_store_with_poco_application_authority();
+                let PreparedLiveDurableInvalidFixtureV0 {
+                    core,
+                    registered_state,
+                    prepared,
+                } = prepared_live_durable_invalid_fixture_v0(&store, route, reason);
+                let expected_id = prepared.validation_id();
+                let expected_request_fingerprint = prepared.request_fingerprint();
+                let expected_callback_revision = registered_state
+                    .revision()
+                    .checked_add(1)
+                    .expect("advance exact callback safety revision");
+                let safety_sink = TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state);
+                let mut driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+                    &store.store,
+                    core,
+                    CoreRootSignatures,
+                    safety_sink,
+                );
+
+                let live = match store
+                    .store
+                    .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+                {
+                    Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(live)) => live,
+                    Ok(NativeValidationInvalidSealDecisionV0::Existing(live)) => panic!(
+                        "fresh live callback unexpectedly reopened {:?}",
+                        live.state()
+                    ),
+                    Err(failed) => panic!("live callback seal failed: {:?}", failed.cause()),
+                };
+                assert_eq!(live.route(), route);
+                assert_eq!(live.validation_id(), expected_id);
+                assert_eq!(live.reason(), reason);
+                assert_eq!(live.state(), NativeValidationJobStateV0::CallbackPending);
+                assert_eq!(
+                    live.disposition(),
+                    NativeValidationInvalidSealDispositionV0::NewlyCommitted
+                );
+                let expected_artifact_checksum = live.artifact_checksum();
+                let expected_callback_payload_checksum = live.callback_payload_checksum();
+
+                let bound = driver
+                    .bind_live_invalid_delivery_v0(live)
+                    .expect("bind live callback to its exact Core obligation");
+                assert_eq!(bound.route(), route);
+                assert_eq!(bound.validation_id(), expected_id);
+                assert_eq!(driver.pending_validation_count_for_test_v0(), 1);
+
+                let accepted = driver
+                    .step_bound_invalid_delivery_v0(bound)
+                    .unwrap_or_else(|_| panic!("Core rejected exact live {route:?}/{reason:?}"));
+                let barrier = accepted.barrier();
+                assert_eq!(barrier.get(), expected_callback_revision);
+                assert_eq!(accepted.state().revision(), expected_callback_revision);
+                assert_eq!(accepted.completion_revision(), expected_callback_revision);
+                assert_eq!(accepted.state(), driver.safety_state_for_test_v0());
+                assert_eq!(driver.pending_validation_count_for_test_v0(), 0);
+                assert!(!driver
+                    .safety_state_for_test_v0()
+                    .payload_validation_obligations()
+                    .iter()
+                    .any(|obligation| obligation.id() == expected_id));
+                let completion = driver
+                    .safety_state_for_test_v0()
+                    .payload_validation_completions()
+                    .iter()
+                    .find(|completion| {
+                        completion.route() == route && completion.id() == expected_id
+                    })
+                    .expect("Core records the exact invalid completion before release");
+                assert_eq!(
+                    completion.result(),
+                    PayloadValidationResult::DeterministicallyInvalid
+                );
+                assert_eq!(
+                    completion.first_recorded_revision(),
+                    expected_callback_revision
+                );
+
+                // The application journal records Core acceptance before the
+                // injected safety sink runs. No StorageAck has been sent yet.
+                let delivered = driver
+                    .mark_core_invalid_delivery_delivered_v0(accepted)
+                    .expect("mark exact callback Delivered");
+                assert_eq!(delivered.barrier(), barrier);
+                assert_eq!(
+                    store
+                        .store
+                        .load_native_validation_recovery_work_v0()
+                        .expect("recover Delivered callback")
+                        .into_iter()
+                        .find(|job| job.validation_id() == expected_id)
+                        .expect("Delivered job remains durable")
+                        .state(),
+                    NativeValidationJobStateV0::Delivered
+                );
+
+                let confirmed = driver
+                    .persist_and_confirm_core_invalid_safety_v0(delivered)
+                    .expect("persist and confirm exact Core safety image");
+                assert_eq!(
+                    driver.safety_sink_state_for_test_v0(expected_callback_revision),
+                    Some(driver.safety_state_for_test_v0())
+                );
+
+                let acked = driver
+                    .acknowledge_core_invalid_delivery_v0(confirmed)
+                    .expect("atomically retire outbox into Acked tombstone");
+                assert_eq!(
+                    store
+                        .store
+                        .load_native_validation_recovery_work_v0()
+                        .expect("recover Acked callback")
+                        .into_iter()
+                        .find(|job| job.validation_id() == expected_id)
+                        .expect("Acked job remains durable")
+                        .state(),
+                    NativeValidationJobStateV0::Acked
+                );
+
+                let released = driver
+                    .release_acked_core_invalid_delivery_v0(acked)
+                    .unwrap_or_else(|failed| {
+                        panic!("release exact Core barrier failed: {failed:?}")
+                    });
+                let owner = match released {
+                    ReleasedCoreInvalidDeliveryV0::Completed(owner) => owner,
+                    ReleasedCoreInvalidDeliveryV0::SafetyHalted { .. } => {
+                        panic!("ordinary fixture unexpectedly entered safety halt")
+                    }
+                };
+                assert_eq!(owner.route(), route);
+                assert_eq!(owner.validation_id(), expected_id);
+                assert_eq!(owner.reason(), reason);
+                assert_eq!(owner.request_fingerprint(), expected_request_fingerprint);
+                assert_eq!(owner.artifact_checksum(), expected_artifact_checksum);
+                assert_eq!(
+                    owner.callback_payload_checksum(),
+                    expected_callback_payload_checksum
+                );
+                assert_eq!(owner.accepted_core_revision(), expected_callback_revision);
+                assert!(owner.is_bound_to_store_v0(&store.store));
+                assert_eq!(
+                    driver.safety_state_for_test_v0().revision(),
+                    expected_callback_revision
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn live_invalid_postwrite_safety_uncertainty_confirms_exact_before_core_release() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let expected_id = prepared.validation_id();
+        let safety_sink = TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state);
+        let mut driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            core,
+            CoreRootSignatures,
+            safety_sink,
+        );
+        let live = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            .expect("seal safety-uncertainty callback")
+        {
+            NativeValidationInvalidSealDecisionV0::CallbackPending(live) => live,
+            NativeValidationInvalidSealDecisionV0::Existing(_) => {
+                panic!("fresh safety-uncertainty callback already existed")
+            }
+        };
+        let bound = driver
+            .bind_live_invalid_delivery_v0(live)
+            .expect("bind safety-uncertainty callback");
+        let accepted = driver
+            .step_bound_invalid_delivery_v0(bound)
+            .unwrap_or_else(|_| panic!("Core rejected safety-uncertainty callback"));
+        let callback_state = accepted.state().clone();
+        let callback_revision = callback_state.revision();
+        let delivered = driver
+            .mark_core_invalid_delivery_delivered_v0(accepted)
+            .expect("mark safety-uncertainty callback Delivered");
+
+        driver.fail_safety_sink_once_for_test_v0(TestSafetySinkFaultV0::AfterWrite);
+        let confirmed = driver
+            .persist_and_confirm_core_invalid_safety_v0(delivered)
+            .expect("post-write sink error reconciles through exact readback");
+        assert_eq!(
+            driver.safety_sink_state_for_test_v0(callback_revision),
+            Some(&callback_state)
+        );
+
+        // The callback barrier is still pending: retrying an ordinary Core
+        // callback is rejected and leaves the exact accepted state unchanged.
+        assert!(driver.invalid_callback_retry_is_blocked_for_test_v0(
+            PayloadValidationRouteV0::Proposal,
+            expected_id,
+        ));
+        assert_eq!(driver.safety_state_for_test_v0(), &callback_state);
+
+        // Only the exact sink confirmation permits the application Acked
+        // tombstone and subsequent Core StorageAck.
+        let acked = driver
+            .acknowledge_core_invalid_delivery_v0(confirmed)
+            .expect("acknowledge safety-uncertainty callback once confirmed");
+        let released = driver
+            .release_acked_core_invalid_delivery_v0(acked)
+            .unwrap_or_else(|failure| {
+                panic!("release confirmed safety-uncertainty callback: {failure:?}")
+            });
+        assert!(matches!(
+            released,
+            ReleasedCoreInvalidDeliveryV0::Completed(_)
+        ));
+    }
+
+    #[test]
+    fn live_invalid_binding_refuses_completion_only_core_state_without_artifact_binding() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            mut core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let expected_id = prepared.validation_id();
+        let live = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            .expect("seal completion-only binding fixture")
+        {
+            NativeValidationInvalidSealDecisionV0::CallbackPending(live) => live,
+            NativeValidationInvalidSealDecisionV0::Existing(_) => {
+                panic!("fresh completion-only binding fixture already existed")
+            }
+        };
+        let expected_artifact_checksum = live.artifact_checksum();
+        let expected_payload_checksum = live.callback_payload_checksum();
+
+        let effects = core
+            .step(
+                Input::PayloadValidated {
+                    id: expected_id,
+                    result: PayloadValidationResult::DeterministicallyInvalid,
+                },
+                &CoreRootSignatures,
+            )
+            .expect("install matching completion without application artifact binding");
+        assert!(matches!(
+            effects.as_slice(),
+            [Effect::PersistSafetyState { .. }]
+        ));
+        assert!(!core
+            .safety_state()
+            .payload_validation_obligations()
+            .iter()
+            .any(|obligation| obligation.id() == expected_id));
+        assert!(core
+            .safety_state()
+            .payload_validation_completions()
+            .iter()
+            .any(|completion| {
+                completion.route() == PayloadValidationRouteV0::Proposal
+                    && completion.id() == expected_id
+                    && completion.result() == PayloadValidationResult::DeterministicallyInvalid
+            }));
+
+        let driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            core,
+            CoreRootSignatures,
+            TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state),
+        );
+        let failure = match driver.bind_live_invalid_delivery_v0(live) {
+            Ok(_) => panic!("completion-only Core state minted callback delivery authority"),
+            Err(failure) => failure,
+        };
+        assert_eq!(
+            failure.cause(),
+            BindLiveInvalidDeliveryFailureCauseV0::CompletionLacksArtifactBinding
+        );
+        let live = failure.into_owner_v0();
+        assert_eq!(live.validation_id(), expected_id);
+        assert_eq!(live.artifact_checksum(), expected_artifact_checksum);
+        assert_eq!(live.callback_payload_checksum(), expected_payload_checksum);
+        assert_eq!(live.state(), NativeValidationJobStateV0::CallbackPending);
+        assert_eq!(
+            store
+                .store
+                .load_native_validation_recovery_work_v0()
+                .expect("recover refused completion-only callback")
+                .into_iter()
+                .find(|job| job.validation_id() == expected_id)
+                .expect("completion-only refusal retains durable callback")
+                .state(),
+            NativeValidationJobStateV0::CallbackPending
+        );
+    }
+
+    #[test]
+    fn live_invalid_safety_conflict_quarantines_without_ack_or_core_release() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Synced,
+            DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+        );
+        let expected_id = prepared.validation_id();
+        let mut driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            core,
+            CoreRootSignatures,
+            TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state),
+        );
+        let live = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            .expect("seal safety-conflict callback")
+        {
+            NativeValidationInvalidSealDecisionV0::CallbackPending(live) => live,
+            NativeValidationInvalidSealDecisionV0::Existing(_) => {
+                panic!("fresh safety-conflict callback already existed")
+            }
+        };
+        let bound = driver
+            .bind_live_invalid_delivery_v0(live)
+            .expect("bind safety-conflict callback");
+        let accepted = driver
+            .step_bound_invalid_delivery_v0(bound)
+            .unwrap_or_else(|_| panic!("Core rejected safety-conflict callback"));
+        let callback_state = accepted.state().clone();
+        let callback_revision = callback_state.revision();
+        let delivered = driver
+            .mark_core_invalid_delivery_delivered_v0(accepted)
+            .expect("mark safety-conflict callback Delivered");
+
+        driver.fail_safety_sink_once_for_test_v0(TestSafetySinkFaultV0::ConfirmConflict);
+        let conflict = match driver.persist_and_confirm_core_invalid_safety_v0(delivered) {
+            Ok(_) => panic!("conflicting safety readback was accepted as exact"),
+            Err(failure) => match *failure {
+                FailedPersistCoreInvalidSafetyV0::Conflict(conflict) => conflict,
+                FailedPersistCoreInvalidSafetyV0::Retryable(_) => {
+                    panic!("safety conflict remained retryable")
+                }
+                FailedPersistCoreInvalidSafetyV0::CompletionBinding(_) => {
+                    panic!("safety conflict reached completion binding")
+                }
+            },
+        };
+        assert_eq!(conflict.state(), &callback_state);
+        assert!(conflict.persist_error().is_none());
+        assert_eq!(
+            driver.safety_sink_state_for_test_v0(callback_revision),
+            Some(&callback_state)
+        );
+        assert_eq!(driver.safety_state_for_test_v0(), &callback_state);
+        assert!(driver.invalid_callback_retry_is_blocked_for_test_v0(
+            PayloadValidationRouteV0::Synced,
+            expected_id,
+        ));
+        assert_eq!(
+            store
+                .store
+                .load_native_validation_recovery_work_v0()
+                .expect("recover quarantined safety-conflict callback")
+                .into_iter()
+                .find(|job| job.validation_id() == expected_id)
+                .expect("quarantined callback remains durable")
+                .state(),
+            NativeValidationJobStateV0::Delivered
+        );
+    }
+
+    #[test]
+    fn live_invalid_storage_ack_releases_exact_safety_halt_without_state_change() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            mut core,
+            registered_state: _,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let expected_id = prepared.validation_id();
+        let target_header = core
+            .safety_state()
+            .payload_validation_obligations()
+            .iter()
+            .find(|obligation| {
+                obligation.route() == PayloadValidationRouteV0::Proposal
+                    && obligation.id() == expected_id
+            })
+            .expect("target obligation before QC retention")
+            .proposal()
+            .block()
+            .header()
+            .clone();
+        let validator_set = core.config().validator_set().clone();
+        let target_qc = core_qc_for_exact_header(&target_header, &validator_set);
+        let target_qc_id = target_qc.id();
+
+        let qc_effects = core
+            .step(Input::QuorumCertificate(target_qc), &CoreRootSignatures)
+            .expect("retain target QC while payload validation is pending");
+        let (qc_barrier, qc_state) = qc_effects
+            .iter()
+            .find_map(|effect| match effect {
+                Effect::PersistSafetyState { barrier, state } => {
+                    Some((*barrier, state.as_ref().clone()))
+                }
+                _ => None,
+            })
+            .expect("pending target QC crosses its persistence barrier");
+        let qc_release = core
+            .step(
+                Input::StorageAck {
+                    barrier: qc_barrier,
+                },
+                &CoreRootSignatures,
+            )
+            .expect("release retained target QC sync request");
+        assert!(matches!(
+            qc_release.as_slice(),
+            [Effect::RequestStandaloneQcSync { certificate_id, .. }]
+                if *certificate_id == target_qc_id
+        ));
+        assert_eq!(core.safety_state(), &qc_state);
+        assert!(core
+            .safety_state()
+            .payload_validation_obligations()
+            .iter()
+            .any(|obligation| obligation.id() == expected_id));
+
+        let live = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            .expect("seal safety-halt callback")
+        {
+            NativeValidationInvalidSealDecisionV0::CallbackPending(live) => live,
+            NativeValidationInvalidSealDecisionV0::Existing(_) => {
+                panic!("fresh safety-halt callback already existed")
+            }
+        };
+        let mut driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            core,
+            CoreRootSignatures,
+            TestDurableCoreSafetyStateSinkV0::from_state_v0(qc_state),
+        );
+        let bound = driver
+            .bind_live_invalid_delivery_v0(live)
+            .expect("bind safety-halt callback");
+        let accepted = driver
+            .step_bound_invalid_delivery_v0(bound)
+            .unwrap_or_else(|_| panic!("Core rejected safety-halt callback"));
+        let halted_state = accepted.state().clone();
+        let expected_halt = halted_state
+            .safety_halt()
+            .cloned()
+            .expect("retained QC turns deterministic invalidity into a safety halt");
+        assert_eq!(accepted.state(), driver.safety_state_for_test_v0());
+        assert!(driver.invalid_callback_retry_is_blocked_for_test_v0(
+            PayloadValidationRouteV0::Proposal,
+            expected_id,
+        ));
+
+        let delivered = driver
+            .mark_core_invalid_delivery_delivered_v0(accepted)
+            .expect("mark safety-halt callback Delivered");
+        let confirmed = driver
+            .persist_and_confirm_core_invalid_safety_v0(delivered)
+            .expect("persist exact safety-halt state");
+        let acked = driver
+            .acknowledge_core_invalid_delivery_v0(confirmed)
+            .expect("acknowledge exact safety-halt completion");
+        assert_eq!(driver.safety_state_for_test_v0(), &halted_state);
+
+        let released = driver
+            .release_acked_core_invalid_delivery_v0(acked)
+            .unwrap_or_else(|failure| panic!("release safety-halt barrier: {failure:?}"));
+        let (owner, released_halt) = match released {
+            ReleasedCoreInvalidDeliveryV0::SafetyHalted { owner, halt } => (owner, halt),
+            ReleasedCoreInvalidDeliveryV0::Completed(_) => {
+                panic!("safety-halt barrier released an empty effect set")
+            }
+        };
+        assert_eq!(released_halt.as_ref(), &expected_halt);
+        assert_eq!(owner.validation_id(), expected_id);
+        assert_eq!(driver.safety_state_for_test_v0(), &halted_state);
     }
 
     #[test]
