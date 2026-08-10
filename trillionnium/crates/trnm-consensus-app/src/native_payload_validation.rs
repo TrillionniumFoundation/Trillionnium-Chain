@@ -15,11 +15,13 @@
 //! snapshot-closed failures into the app-private outcome kernel. A production
 //! sequential cursor now
 //! begins behind the Core request's shared process-local one-shot claim and a
-//! schema-v6 durable `(route, full ValidationId)` job reservation, so both cloned
+//! schema-v7 durable `(route, full ValidationId)` job reservation, so both cloned
 //! replays and independently materialized exact duplicates are suppressed
 //! before host or authenticated-state access. The durable row is congruence
-//! and reservation authority only: it does not persist evaluation artifacts,
-//! results, JMT changes, callbacks, acknowledgements, or crash takeover. The
+//! and evaluation authority only. A narrow owning bridge can atomically persist
+//! complete-body state/receipts mismatches as deterministic-invalid artifacts
+//! plus callback-pending outbox records; Valid artifacts, JMT application,
+//! callback delivery/acknowledgement, and crash takeover remain absent. The
 //! production sequential cursor
 //! freezes the initialized host signer policy, internal body index, exact
 //! outer/inner bytes, strict signer/transaction decode, and derived execution
@@ -47,9 +49,11 @@
 //! per body item in body order, rederives the final merged writes, verifies the
 //! retained plan/seal, and classifies state-before-receipts mismatches only
 //! after strict four-root/static commitment validation. App-private `Valid`
-//! promotion, plan application/persistence, durable evaluated artifacts,
-//! callbacks, and actual Core execution remain absent until later carriers
-//! supply those distinct authorities. Owner-preserving typed failure promotion,
+//! promotion and plan application/persistence remain absent. A narrow owning
+//! bridge can now consume only a complete-body state/receipts mismatch backed
+//! by the exact durable reservation into an app-private prepared-invalid
+//! capability; this module does not encode or persist the artifact, deliver a
+//! callback, or execute Core. Owner-preserving typed failure promotion,
 //! a consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
 //! same-snapshot family-state attempts are now present. The family-local seal
@@ -60,6 +64,7 @@
 use crate::{
     auth_tree::{AuthWrite, PlannedAuthUpdate, PlannedAuthUpdateSealV0},
     native_execution::{NativeBlockExecutionV0, NativeTransactionReceiptFactsV0},
+    native_validation_artifact::DurableDeterministicInvalidReasonV0,
     store::{
         native_validation_request_fingerprint_v0, ApplicationStore,
         AuthenticatedRuntimeReadFailureV0, AuthenticatedRuntimeReadSnapshotV0,
@@ -2430,12 +2435,124 @@ impl std::fmt::Debug for FailedCoreAuthorizedRegularCompleteBodyCommitmentCompar
     }
 }
 
+/// Owning deterministic-invalid branch produced only by the complete-body
+/// classifier. The closed root-mismatch cause remains joined to the exact
+/// finished body and its reservation until the consuming durable bridge
+/// revalidates all three.
+#[must_use = "a deterministic mixed-body mismatch still lacks durable artifact authority"]
+struct DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
+    failed: Box<FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0>,
+}
+
+/// App-private authority to encode and atomically persist one closed
+/// deterministic-invalid artifact. Its fields are intentionally private and
+/// it has no detached constructor: only the consuming complete-body bridge can
+/// join the durable reservation to the stable closed reason.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a prepared durable invalid result must be consumed by the validation journal"]
+pub(super) struct PreparedDurableInvalidV0 {
+    reservation: NativeValidationReservationTokenV0,
+    reason: DurableDeterministicInvalidReasonV0,
+}
+
+/// Narrow consuming view used by the validation store. Keeping the fields
+/// private prevents sibling modules from assembling reservation/reason pairs;
+/// the journal may inspect the retained identity and reason but cannot mint a
+/// new preparation capability.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "prepared durable-invalid store parts retain one reservation authority"]
+pub(super) struct PreparedDurableInvalidStorePartsV0 {
+    reservation: NativeValidationReservationTokenV0,
+    reason: DurableDeterministicInvalidReasonV0,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl PreparedDurableInvalidV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.reservation.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.reservation.validation_id()
+    }
+
+    pub(super) const fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        self.reason
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.reservation.request_fingerprint()
+    }
+
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.reservation.immutable_checksum()
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.reservation.is_bound_to_store_v0(store)
+    }
+
+    pub(super) fn into_store_parts_v0(self) -> PreparedDurableInvalidStorePartsV0 {
+        PreparedDurableInvalidStorePartsV0 {
+            reservation: self.reservation,
+            reason: self.reason,
+        }
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl PreparedDurableInvalidStorePartsV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.reservation.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.reservation.validation_id()
+    }
+
+    pub(super) const fn reason(&self) -> DurableDeterministicInvalidReasonV0 {
+        self.reason
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(clippy::enum_variant_names)]
+enum PrepareDurableInvalidFailureCauseV0 {
+    RetainedCauseInvariant,
+    #[cfg(test)]
+    TestOnlyReservation,
+    ReservationRouteInvariant,
+    ReservationValidationIdInvariant,
+}
+
+/// Failed preparation retains the complete deterministic-invalid owner so a
+/// fail-stop caller cannot accidentally discard or substitute the classified
+/// body while examining the private failure cause.
+#[must_use = "a failed durable-invalid preparation retains its exact mismatch owner"]
+#[cfg_attr(not(test), allow(dead_code))]
+struct FailedPrepareDurableInvalidV0 {
+    owner: DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0,
+    cause: PrepareDurableInvalidFailureCauseV0,
+}
+
+impl std::fmt::Debug for FailedPrepareDurableInvalidV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("FailedPrepareDurableInvalidV0")
+            .field("cause", &self.cause)
+            .field("retains_exact_deterministic_mismatch_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
 /// Process-local disposition of one complete mixed-body comparison. It is
 /// deliberately not an `ExecutionOutcomeV0`, payload result, or callback.
 #[must_use = "a classified mixed-body comparison is not terminal host authority"]
 enum ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
     Valid(Box<MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0>),
-    DeterministicallyInvalid(Box<FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0>),
+    DeterministicallyInvalid(
+        DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0,
+    ),
     InvariantFault(Box<FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0>),
 }
 
@@ -6025,7 +6142,9 @@ fn classify_core_authorized_regular_complete_body_commitment_comparison_v0(
                 | CoreAuthorizedRegularComputedRootMismatchV0::Receipts,
             ) => {
                 ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::DeterministicallyInvalid(
-                    failed,
+                    DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
+                        failed,
+                    },
                 )
             }
             CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(_) => {
@@ -6033,6 +6152,79 @@ fn classify_core_authorized_regular_complete_body_commitment_comparison_v0(
             }
         },
     }
+}
+
+/// Consumes the only owning deterministic-invalid complete-body branch and
+/// joins it to the durable reservation already retained by the exact Core
+/// request. There is no overload accepting a detached route, validation ID,
+/// reservation, mismatch, or reason code.
+///
+/// A test-only reservation, a retained invariant cause, or any route/full-ID
+/// disagreement preserves the complete owner and cannot mint durable artifact
+/// authority. Valid and invariant classifier branches are structurally unable
+/// to call this function because they have different owner types.
+#[allow(dead_code)]
+fn prepare_durable_invalid_complete_body_v0(
+    owner: DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0,
+) -> Result<PreparedDurableInvalidV0, Box<FailedPrepareDurableInvalidV0>> {
+    let reason = match owner.failed.cause {
+        CoreAuthorizedRegularCommitmentComparisonCauseV0::DeterministicMismatch(
+            CoreAuthorizedRegularComputedRootMismatchV0::State,
+        ) => DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        CoreAuthorizedRegularCommitmentComparisonCauseV0::DeterministicMismatch(
+            CoreAuthorizedRegularComputedRootMismatchV0::Receipts,
+        ) => DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+        CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(_) => {
+            return Err(Box::new(FailedPrepareDurableInvalidV0 {
+                owner,
+                cause: PrepareDurableInvalidFailureCauseV0::RetainedCauseInvariant,
+            }));
+        }
+    };
+    let authorized = &owner.failed.finished.authorized;
+    #[cfg(not(test))]
+    let CoreAuthorizedRegularReservationV0::Durable(reservation) = &authorized.reservation;
+    #[cfg(test)]
+    let reservation = match &authorized.reservation {
+        CoreAuthorizedRegularReservationV0::Durable(reservation) => reservation,
+        CoreAuthorizedRegularReservationV0::TestOnly => {
+            return Err(Box::new(FailedPrepareDurableInvalidV0 {
+                owner,
+                cause: PrepareDurableInvalidFailureCauseV0::TestOnlyReservation,
+            }));
+        }
+    };
+    if reservation.route() != authorized.route {
+        return Err(Box::new(FailedPrepareDurableInvalidV0 {
+            owner,
+            cause: PrepareDurableInvalidFailureCauseV0::ReservationRouteInvariant,
+        }));
+    }
+    if reservation.validation_id() != authorized.validation_id {
+        return Err(Box::new(FailedPrepareDurableInvalidV0 {
+            owner,
+            cause: PrepareDurableInvalidFailureCauseV0::ReservationValidationIdInvariant,
+        }));
+    }
+
+    let DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 { failed } = owner;
+    let FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0 { finished, cause: _ } =
+        *failed;
+    let FinishedPlannedCoreAuthorizedRegularCompleteBodyV0 { authorized, .. } = finished;
+    let CoreAuthorizedExactRegularBodyV0 { reservation, .. } = authorized;
+    #[cfg(not(test))]
+    let CoreAuthorizedRegularReservationV0::Durable(reservation) = reservation;
+    #[cfg(test)]
+    let reservation = match reservation {
+        CoreAuthorizedRegularReservationV0::Durable(reservation) => reservation,
+        CoreAuthorizedRegularReservationV0::TestOnly => {
+            unreachable!("durable reservation was checked before consuming the exact owner")
+        }
+    };
+    Ok(PreparedDurableInvalidV0 {
+        reservation,
+        reason,
+    })
 }
 
 /// Rebuilds all commitment material from one finished production plan and
@@ -7557,7 +7749,7 @@ mod tests {
         open_core_authorized_regular_transaction_cursor_v0,
         open_core_authorized_regular_validation_for_test_v0,
         open_inert_regular_body_traversal_for_test_v0,
-        open_test_regular_runtime_execution_for_test_v0,
+        open_test_regular_runtime_execution_for_test_v0, prepare_durable_invalid_complete_body_v0,
         prepare_next_core_authorized_regular_payload_v0,
         promote_closed_core_authorized_non_runtime_family_failure_v0,
         promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0,
@@ -7594,6 +7786,7 @@ mod tests {
         CoreAuthorizedRegularValidationSessionAdmissionV0, CoreIssuedRegularValidationJobV0,
         CoreIssuedRegularValidationOwnerV0, CoreIssuedRegularValidationReservationCauseV0,
         CoreRegularValidationEffectIntakeV0, DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0,
+        DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0,
         DispatchedCoreAuthorizedNonRuntimePayloadV0, FailedCoreAuthorizedNonRuntimeFamilyAttemptV0,
         FailedCoreAuthorizedRegularRuntimeAttemptV0, FinishedFailedTestRegularRuntimeExecutionV0,
         FinishedInertRegularBodyCursorFailureV0,
@@ -7601,7 +7794,8 @@ mod tests {
         InertRegularBodyFinishFailureV0, NativeBlockExecutionV0, NativeSignerPolicyBindingV0,
         NativeTransactionReceiptFactsV0, NativeValidationHostV0,
         OpenCoreAuthorizedRegularTransactionCursorV0, OpenCoreAuthorizedRegularValidationFailureV0,
-        PreparedCoreAuthorizedRegularPayloadV0, PreparedCoreAuthorizedRuntimeTransactionV0,
+        PrepareDurableInvalidFailureCauseV0, PreparedCoreAuthorizedRegularPayloadV0,
+        PreparedCoreAuthorizedRuntimeTransactionV0,
         RetainedCoreAuthorizedRegularNonRuntimeFailureOutcomeV0,
         SnapshotAuthenticatedRegularContextV0, TestAuthorizedRegularRuntimeRequestV0,
         TestRegularRuntimeCommitmentComparisonFailureV0, TestRegularRuntimeFinishFailureV0,
@@ -7609,12 +7803,16 @@ mod tests {
     };
     use crate::{
         auth_tree::{validator_state_key, AuthWrite, AuthenticatedObjectRecord, InMemoryAuthTree},
+        native_validation_artifact::DurableDeterministicInvalidReasonV0,
         poco_snapshot::{PocoSnapshotEntryKindV0, PocoSnapshotEntryV0},
         poco_transition::{
             encode_poco_snapshot_value_envelope_v0, genesis_poco_snapshot_writes_v0,
         },
         store::{
             ApplicationStore, AuthenticatedRuntimeReadFailureV0,
+            NativeValidationInvalidSealDecisionV0, NativeValidationInvalidSealFailpointV0,
+            NativeValidationInvalidSealFailureCauseV0, NativeValidationJobStateV0,
+            NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
             NativeValidationReservationFailureCauseV0, NativeValidationReservationInvariantV0,
         },
         validator_lifecycle::{
@@ -9121,6 +9319,44 @@ mod tests {
         classify_core_authorized_regular_complete_body_commitment_comparison_v0(
             match_finished_core_authorized_regular_complete_body_commitments_v0(finished),
         )
+    }
+
+    fn durable_invalid_all_family_complete_body_owner(
+        store: &TestStore,
+        poison_state: Option<StateRoot>,
+        poison_receipts: Option<ReceiptsRoot>,
+    ) -> DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
+        let honest = honest_all_family_complete_body_profile(store);
+        let state_root = poison_state.unwrap_or_else(|| honest.header.state_root());
+        let receipts_root = poison_receipts.unwrap_or_else(|| honest.header.receipts_root());
+        let profile = replace_profile_execution_roots(honest, state_root, receipts_root);
+        let job = core_regular_validation_job_for_test_v0(core_validation_request(&profile));
+        let open = match begin_core_authorized_regular_validation_session_v0(
+            &test_native_validation_host(store),
+            job,
+        ) {
+            CoreAuthorizedRegularValidationSessionAdmissionV0::Open(open) => *open,
+            other => panic!("durable invalid complete-body fixture did not open: {other:?}"),
+        };
+        let open = open_core_authorized_regular_transaction_cursor_from_open_v0(open);
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute durable-invalid all-family runtime item");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = advance_next_production_non_runtime_payload(open);
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("finish durable-invalid all-family complete-body plan");
+        match classify_core_authorized_regular_complete_body_commitment_comparison_v0(
+            match_finished_core_authorized_regular_complete_body_commitments_v0(finished),
+        ) {
+            ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::DeterministicallyInvalid(
+                owner,
+            ) => owner,
+            ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::Valid(_)
+            | ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::InvariantFault(_) => {
+                panic!("poisoned durable complete-body roots changed disposition")
+            }
+        }
     }
 
     fn finish_production_runtime_plan(
@@ -10727,13 +10963,17 @@ mod tests {
         let complete_classifier_offset = implementation_source
             .find("fn classify_core_authorized_regular_complete_body_commitment_comparison_v0(")
             .expect("production owning mixed-body classifier");
+        let complete_invalid_bridge_offset = implementation_source
+            .find("fn prepare_durable_invalid_complete_body_v0(")
+            .expect("production owning deterministic-invalid durable bridge");
         let production_comparator_offset = implementation_source
             .find("fn match_finished_core_authorized_regular_runtime_commitments_v0(")
             .expect("production consuming four-root comparator");
         assert!(complete_plan_offset < complete_provenance_offset);
         assert!(complete_provenance_offset < complete_comparator_offset);
         assert!(complete_comparator_offset < complete_classifier_offset);
-        assert!(complete_classifier_offset < production_comparator_offset);
+        assert!(complete_classifier_offset < complete_invalid_bridge_offset);
+        assert!(complete_invalid_bridge_offset < production_comparator_offset);
 
         let complete_comparator_signature_end = implementation_source[complete_comparator_offset..]
             .find(" {\n")
@@ -10902,12 +11142,116 @@ mod tests {
         for required_variant in [
             "Valid(Box<MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0>)",
             "DeterministicallyInvalid(",
-            "Box<FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0>",
+            "DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0",
             "InvariantFault(Box<FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0>)",
         ] {
             assert!(complete_disposition_enum.contains(required_variant));
         }
         assert!(!complete_disposition_enum.contains("Unavailable"));
+
+        let complete_invalid_bridge_signature_end = implementation_source
+            [complete_invalid_bridge_offset..]
+            .find(" {\n")
+            .map(|offset| complete_invalid_bridge_offset + offset)
+            .expect("deterministic-invalid durable bridge signature end");
+        let complete_invalid_bridge_signature = &implementation_source
+            [complete_invalid_bridge_offset..complete_invalid_bridge_signature_end];
+        assert!(complete_invalid_bridge_signature.contains(
+            "owner: DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0"
+        ));
+        assert!(complete_invalid_bridge_signature.contains("Result<PreparedDurableInvalidV0,"));
+        for forbidden_parameter in [
+            "ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0",
+            "MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0",
+            "FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0",
+            "cause:",
+            "reason:",
+            "reservation:",
+            "route:",
+            "validation_id:",
+        ] {
+            assert!(
+                !complete_invalid_bridge_signature.contains(forbidden_parameter),
+                "durable-invalid bridge gained detached input: {forbidden_parameter}"
+            );
+        }
+        let complete_invalid_bridge_body =
+            &implementation_source[complete_invalid_bridge_offset..production_comparator_offset];
+        for required_binding in [
+            "CoreAuthorizedRegularComputedRootMismatchV0::State",
+            "DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch",
+            "CoreAuthorizedRegularComputedRootMismatchV0::Receipts",
+            "DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch",
+            "CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(_)",
+            "CoreAuthorizedRegularReservationV0::Durable(reservation)",
+            "CoreAuthorizedRegularReservationV0::TestOnly",
+            "reservation.route() != authorized.route",
+            "reservation.validation_id() != authorized.validation_id",
+        ] {
+            assert!(
+                complete_invalid_bridge_body.contains(required_binding),
+                "durable-invalid bridge lost required owner binding: {required_binding}"
+            );
+        }
+        for forbidden_surface in [
+            "PayloadValidationResult",
+            "Input::",
+            "Core::step",
+            "core.step(",
+            "persist_transition(",
+            "seal_evaluated_and_enqueue",
+        ] {
+            assert!(
+                !complete_invalid_bridge_body.contains(forbidden_surface),
+                "durable-invalid bridge crossed a later authority: {forbidden_surface}"
+            );
+        }
+        let prepared_invalid_declaration_offset = implementation_source
+            .find("pub(super) struct PreparedDurableInvalidV0 {")
+            .expect("opaque prepared durable-invalid capability");
+        let prepared_invalid_declaration = implementation_source
+            [prepared_invalid_declaration_offset..]
+            .split_once("pub(super) struct PreparedDurableInvalidV0 {")
+            .expect("prepared durable-invalid declaration body")
+            .1
+            .split_once("}\n")
+            .expect("prepared durable-invalid capability end")
+            .0;
+        assert!(prepared_invalid_declaration
+            .contains("reservation: NativeValidationReservationTokenV0"));
+        assert!(
+            prepared_invalid_declaration.contains("reason: DurableDeterministicInvalidReasonV0")
+        );
+        assert!(!prepared_invalid_declaration.contains("pub "));
+        for forbidden_constructor in [
+            "impl From<",
+            "impl TryFrom<",
+            "fn new(",
+            "fn from_parts",
+            "fn from_reason",
+        ] {
+            assert!(
+                !implementation_source
+                    [prepared_invalid_declaration_offset..complete_invalid_bridge_offset]
+                    .contains(forbidden_constructor),
+                "prepared durable-invalid authority gained detached construction: {forbidden_constructor}"
+            );
+        }
+        let production_source = implementation_source;
+        for forbidden_capability_surface in [
+            "impl Clone for PreparedDurableInvalidV0",
+            "impl Serialize for PreparedDurableInvalidV0",
+            "impl serde::Serialize for PreparedDurableInvalidV0",
+            "impl Deserialize for PreparedDurableInvalidV0",
+            "impl serde::Deserialize for PreparedDurableInvalidV0",
+            "impl From<PreparedDurableInvalidV0",
+            "impl TryFrom<PreparedDurableInvalidV0",
+        ] {
+            assert!(
+                !production_source.contains(forbidden_capability_surface),
+                "prepared durable-invalid authority became reconstructible: {forbidden_capability_surface}"
+            );
+        }
 
         let production_comparator_signature_end = implementation_source
             [production_comparator_offset..]
@@ -11545,8 +11889,8 @@ mod tests {
             .find("load_native_validation_job_v0(&transaction, facts.validation_id)")
             .expect("durable reservation existing-row lookup");
         let capacity_offset = reservation_transaction
-            .find("read_reserved_only_native_validation_journal_accounting_v0(")
-            .expect("constant-time reserved-only durable journal gate");
+            .find("read_bounded_native_validation_journal_accounting_v0(")
+            .expect("constant-time bounded durable journal gate");
         let insert_offset = reservation_transaction
             .find("insert_native_validation_job_v0(&transaction, facts, self)")
             .expect("durable reservation insert");
@@ -11563,6 +11907,18 @@ mod tests {
         assert!(reservation_transaction.contains(
             "NativeValidationReservationInnerDecisionV0::CommitUncertainExisting(existing)"
         ));
+        let invalid_seal_transaction = store_source
+            .split_once("fn seal_durable_invalid_and_enqueue_callback_inner_v0(")
+            .expect("durable invalid seal transaction")
+            .1
+            .split_once("fn confirm_durable_invalid_callback_v0(")
+            .expect("durable invalid seal transaction end")
+            .0;
+        assert!(
+            !invalid_seal_transaction
+                .contains("NativeValidationInvalidSealFailureCauseV0::Storage("),
+            "durable invalid seal bypassed the typed nested-failure mapper"
+        );
         let reserved_only_gate = store_source
             .split_once("fn read_reserved_only_native_validation_journal_accounting_v0(")
             .expect("reserved-only validation journal gate")
@@ -11616,6 +11972,18 @@ mod tests {
             .find("DELETE FROM validation_jobs_v0")
             .expect("snapshot validation-job scrub");
         assert!(outbox_delete < job_delete);
+        let v6_to_v7_migration = store_source
+            .split_once("fn migrate_store_schema_v6_to_v7(")
+            .expect("schema-v6 to schema-v7 migration")
+            .1
+            .split_once("fn ensure_metadata_binding(")
+            .expect("schema-v6 to schema-v7 migration end")
+            .0;
+        assert!(v6_to_v7_migration.contains("params![STORE_SCHEMA_VERSION_V7]"));
+        assert!(
+            !v6_to_v7_migration.contains("params![STORE_SCHEMA_VERSION]"),
+            "schema-v6 migration used the moving active-version alias"
+        );
         let reservation_confirmation = store_source
             .split_once("fn confirm_native_validation_job_v0(")
             .expect("durable reservation commit confirmation")
@@ -11808,6 +12176,11 @@ mod tests {
                 "struct",
                 "FailedCoreAuthorizedRegularCompleteBodyCommitmentComparisonV0",
             ),
+            (
+                "struct",
+                "DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0",
+            ),
+            ("struct", "FailedPrepareDurableInvalidV0"),
             (
                 "enum",
                 "ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0",
@@ -15995,12 +16368,12 @@ mod tests {
                 }
             };
             assert_eq!(
-                failed.finished.authorized.validation_id.block_id(),
+                failed.failed.finished.authorized.validation_id.block_id(),
                 expected_id
             );
             assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
             assert_runtime_fixture_objects_absent(&store.store);
-            failed.cause
+            failed.failed.cause
         }
 
         assert!(matches!(
@@ -16024,6 +16397,592 @@ mod tests {
                 CoreAuthorizedRegularComputedRootMismatchV0::State
             )
         ));
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_bridge_freezes_state_and_receipts_reason_codes() {
+        for (poison_state, poison_receipts, expected_reason, expected_code) in [
+            (
+                Some(StateRoot::new([0xe1; 32])),
+                None,
+                DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+                1_u32,
+            ),
+            (
+                None,
+                Some(ReceiptsRoot::new([0xe2; 32])),
+                DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+                2_u32,
+            ),
+        ] {
+            let store = test_store_with_poco_application_authority();
+            let owner = durable_invalid_all_family_complete_body_owner(
+                &store,
+                poison_state,
+                poison_receipts,
+            );
+            let expected_route = owner.failed.finished.authorized.route;
+            let expected_id = owner.failed.finished.authorized.validation_id;
+            let prepared = match prepare_durable_invalid_complete_body_v0(owner) {
+                Ok(prepared) => prepared,
+                Err(failed) => panic!("durable root mismatch did not prepare: {failed:?}"),
+            };
+            assert_eq!(prepared.route(), expected_route);
+            assert_eq!(prepared.validation_id(), expected_id);
+            assert_eq!(prepared.reason(), expected_reason);
+            assert_eq!(prepared.reason().code_v0(), expected_code);
+
+            let parts = prepared.into_store_parts_v0();
+            assert_eq!(parts.route(), expected_route);
+            assert_eq!(parts.validation_id(), expected_id);
+            assert_eq!(parts.reason(), expected_reason);
+            assert_eq!(parts.reason().code_v0(), expected_code);
+            assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        }
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_seals_one_callback_pending_record_and_recovers_it() {
+        let store = test_store_with_poco_application_authority();
+        let owner = durable_invalid_all_family_complete_body_owner(
+            &store,
+            Some(StateRoot::new([0xe7; 32])),
+            None,
+        );
+        let expected_route = owner.failed.finished.authorized.route;
+        let expected_id = owner.failed.finished.authorized.validation_id;
+        let prepared = prepare_durable_invalid_complete_body_v0(owner)
+            .expect("prepare durable state-root mismatch");
+
+        let committed_but_unconfirmed = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_with_test_failpoint_v0(
+                prepared,
+                NativeValidationInvalidSealFailpointV0::AfterCommitBeforeReturn,
+            ) {
+            Ok(_) => panic!("post-commit response-loss failpoint unexpectedly returned success"),
+            Err(failed) => failed,
+        };
+        assert!(matches!(
+            committed_but_unconfirmed.cause(),
+            NativeValidationInvalidSealFailureCauseV0::HostInvariant { .. }
+        ));
+        let prepared = committed_but_unconfirmed.into_prepared_v0();
+        let sealed = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(job)) => job,
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(job)) => {
+                panic!(
+                    "exact durable-invalid retry duplicated callback-pending state {:?}",
+                    job.state()
+                )
+            }
+            Err(failed) => panic!("exact durable-invalid retry failed: {:?}", failed.cause()),
+        };
+        assert_eq!(sealed.route(), expected_route);
+        assert_eq!(sealed.validation_id(), expected_id);
+        assert_eq!(sealed.state(), NativeValidationJobStateV0::CallbackPending);
+
+        let exact_reopen_profile = {
+            let honest = honest_all_family_complete_body_profile(&store);
+            let receipts_root = honest.header.receipts_root();
+            replace_profile_execution_roots(honest, StateRoot::new([0xe7; 32]), receipts_root)
+        };
+        let exact_reopen = match begin_core_authorized_regular_validation_session_v0(
+            &test_native_validation_host(&store),
+            core_regular_validation_job_for_test_v0(core_validation_request(&exact_reopen_profile)),
+        ) {
+            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(existing) => {
+                existing
+            }
+            other => panic!("callback-pending exact request did not reopen inertly: {other:?}"),
+        };
+        assert_eq!(exact_reopen.request.route(), expected_route);
+        assert_eq!(exact_reopen.request.id(), expected_id);
+        assert_eq!(exact_reopen.existing.route(), expected_route);
+        assert_eq!(exact_reopen.existing.validation_id(), expected_id);
+        assert_eq!(
+            exact_reopen.existing.state(),
+            NativeValidationJobStateV0::CallbackPending
+        );
+
+        let reserved_id = match store.store.reserve_or_reopen_native_validation_job_v0(
+            NativeValidationReservationFactsV0::new_for_test_v0(
+                PayloadValidationRouteV0::Synced,
+                expected_id
+                    .generation()
+                    .checked_add(100)
+                    .expect("advance mixed recovery generation"),
+                TEST_CHAIN.as_str(),
+            ),
+        ) {
+            Ok(NativeValidationReservationDecisionV0::Reserved(token)) => token.validation_id(),
+            Ok(NativeValidationReservationDecisionV0::Existing(_)) | Err(_) => {
+                panic!("reserve mixed recovery companion job")
+            }
+        };
+
+        let connection = rusqlite::Connection::open(store.root.join("state.json.sqlite3"))
+            .expect("open durable-invalid journal");
+        assert_eq!(
+            connection
+                .query_row(
+                    "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                    [],
+                    |row| row.get::<_, u64>(0),
+                )
+                .expect("count callback outbox"),
+            1
+        );
+        let journal_shape = connection
+            .query_row(
+                "SELECT state, result_kind, invalid_reason_code_be,
+                        length(artifact_bytes)
+                 FROM validation_jobs_v0
+                 WHERE state=2",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                        row.get::<_, u64>(3)?,
+                    ))
+                },
+            )
+            .expect("read callback-pending job shape");
+        assert_eq!(journal_shape, (2, 1, 1_u32.to_be_bytes().to_vec(), 120));
+        assert_eq!(
+            connection
+                .query_row(
+                    "SELECT length(payload_bytes) FROM validation_callback_outbox_v0",
+                    [],
+                    |row| row.get::<_, u64>(0),
+                )
+                .expect("read callback payload length"),
+            84
+        );
+        let accounting = connection
+            .query_row(
+                "SELECT artifact_bytes_be, outbox_count_be, outbox_bytes_be
+                 FROM validation_journal_accounting_v0 WHERE singleton=1",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, Vec<u8>>(0)?,
+                        row.get::<_, Vec<u8>>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                    ))
+                },
+            )
+            .expect("read callback-pending accounting");
+        assert_eq!(accounting.0, 120_u64.to_be_bytes());
+        assert_eq!(accounting.1, 1_u64.to_be_bytes());
+        assert_eq!(accounting.2, 84_u64.to_be_bytes());
+        drop(connection);
+
+        let recovery = store
+            .store
+            .load_native_validation_recovery_work_v0()
+            .expect("recover callback-pending invalid job");
+        assert_eq!(recovery.len(), 2);
+        assert_eq!(recovery[0].validation_id(), reserved_id);
+        assert_eq!(recovery[0].state(), NativeValidationJobStateV0::Reserved);
+        assert_eq!(recovery[1].validation_id(), expected_id);
+        assert_eq!(
+            recovery[1].state(),
+            NativeValidationJobStateV0::CallbackPending
+        );
+
+        let signer_policy_hash_hex =
+            hex::encode(crate::signer_policy_commitment(&store.authorized_signers));
+        let reopened = ApplicationStore::open(
+            &store.root.join("state.json"),
+            TEST_CHAIN.as_str(),
+            &signer_policy_hash_hex,
+        )
+        .expect("reopen durable-invalid store");
+        reopened
+            .load_or_migrate()
+            .expect("restart authenticates callback-pending invalid job");
+        let reopened_recovery = reopened
+            .load_native_validation_recovery_work_v0()
+            .expect("enumerate reopened callback-pending invalid job");
+        assert_eq!(reopened_recovery.len(), 2);
+        assert_eq!(reopened_recovery[0].validation_id(), reserved_id);
+        assert_eq!(
+            reopened_recovery[0].state(),
+            NativeValidationJobStateV0::Reserved
+        );
+        assert_eq!(reopened_recovery[1].validation_id(), expected_id);
+        assert_eq!(
+            reopened_recovery[1].state(),
+            NativeValidationJobStateV0::CallbackPending
+        );
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_rejects_cross_store_owner_splice() {
+        let first = test_store_with_poco_application_authority();
+        let second = test_store_with_poco_application_authority();
+        let poison = Some(StateRoot::new([0xe8; 32]));
+        let first_owner = durable_invalid_all_family_complete_body_owner(&first, poison, None);
+        let second_owner = durable_invalid_all_family_complete_body_owner(&second, poison, None);
+        let first_prepared = prepare_durable_invalid_complete_body_v0(first_owner)
+            .expect("prepare first-store durable invalid owner");
+        let second_prepared = prepare_durable_invalid_complete_body_v0(second_owner)
+            .expect("prepare second-store durable invalid owner");
+        assert_eq!(
+            first_prepared.validation_id(),
+            second_prepared.validation_id()
+        );
+
+        let failed = match second
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(first_prepared)
+        {
+            Ok(_) => panic!("first-store owner sealed the second store"),
+            Err(failed) => failed,
+        };
+        assert!(matches!(
+            failed.cause(),
+            NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::IssuingStoreMismatch
+            )
+        ));
+        assert_eq!(
+            failed.prepared().validation_id(),
+            second_prepared.validation_id()
+        );
+        let recovered_first_prepared = failed.into_prepared_v0();
+        match first
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(recovered_first_prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(job)) => {
+                assert_eq!(job.state(), NativeValidationJobStateV0::CallbackPending)
+            }
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(job)) => panic!(
+                "recovered first-store owner unexpectedly reopened state {:?}",
+                job.state()
+            ),
+            Err(failed) => panic!(
+                "recovered first-store owner did not seal: {:?}",
+                failed.cause()
+            ),
+        }
+
+        match second
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(second_prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(job)) => {
+                assert_eq!(job.state(), NativeValidationJobStateV0::CallbackPending)
+            }
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(job)) => {
+                panic!(
+                    "second-store owner unexpectedly reopened state {:?}",
+                    job.state()
+                )
+            }
+            Err(failed) => panic!("second-store owner did not seal: {:?}", failed.cause()),
+        }
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_precommit_failpoints_roll_back_and_return_owner() {
+        let store = test_store_with_poco_application_authority();
+        let owner = durable_invalid_all_family_complete_body_owner(
+            &store,
+            None,
+            Some(ReceiptsRoot::new([0xe9; 32])),
+        );
+        let expected_id = owner.failed.finished.authorized.validation_id;
+        let mut prepared = prepare_durable_invalid_complete_body_v0(owner)
+            .expect("prepare durable receipts-root mismatch");
+
+        for failpoint in [
+            NativeValidationInvalidSealFailpointV0::AfterOutboxInsert,
+            NativeValidationInvalidSealFailpointV0::AfterJobUpdate,
+            NativeValidationInvalidSealFailpointV0::AfterAccountingUpdate,
+            NativeValidationInvalidSealFailpointV0::BeforeCommit,
+        ] {
+            let failed = match store
+                .store
+                .seal_durable_invalid_and_enqueue_callback_with_test_failpoint_v0(
+                    prepared, failpoint,
+                ) {
+                Ok(_) => panic!("durable-invalid failpoint {failpoint:?} committed"),
+                Err(failed) => failed,
+            };
+            assert!(matches!(
+                failed.cause(),
+                NativeValidationInvalidSealFailureCauseV0::HostInvariant { .. }
+            ));
+            prepared = failed.into_prepared_v0();
+            assert_eq!(prepared.validation_id(), expected_id);
+
+            let connection = rusqlite::Connection::open(store.root.join("state.json.sqlite3"))
+                .expect("open failpoint validation journal");
+            assert_eq!(
+                connection
+                    .query_row("SELECT state FROM validation_jobs_v0", [], |row| {
+                        row.get::<_, i64>(0)
+                    })
+                    .expect("read rolled-back validation job state"),
+                0
+            );
+            assert_eq!(
+                connection
+                    .query_row(
+                        "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                        [],
+                        |row| row.get::<_, u64>(0),
+                    )
+                    .expect("count rolled-back callback rows"),
+                0
+            );
+            let accounting = connection
+                .query_row(
+                    "SELECT artifact_bytes_be, outbox_count_be, outbox_bytes_be
+                     FROM validation_journal_accounting_v0 WHERE singleton=1",
+                    [],
+                    |row| {
+                        Ok((
+                            row.get::<_, Vec<u8>>(0)?,
+                            row.get::<_, Vec<u8>>(1)?,
+                            row.get::<_, Vec<u8>>(2)?,
+                        ))
+                    },
+                )
+                .expect("read rolled-back validation accounting");
+            assert_eq!(accounting.0, 0_u64.to_be_bytes());
+            assert_eq!(accounting.1, 0_u64.to_be_bytes());
+            assert_eq!(accounting.2, 0_u64.to_be_bytes());
+            drop(connection);
+
+            let signer_policy_hash_hex =
+                hex::encode(crate::signer_policy_commitment(&store.authorized_signers));
+            let reopened = ApplicationStore::open(
+                &store.root.join("state.json"),
+                TEST_CHAIN.as_str(),
+                &signer_policy_hash_hex,
+            )
+            .expect("reopen failpoint validation store");
+            reopened
+                .load_or_migrate()
+                .expect("rolled-back validation store restarts cleanly");
+        }
+
+        match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(job)) => {
+                assert_eq!(job.validation_id(), expected_id);
+                assert_eq!(job.state(), NativeValidationJobStateV0::CallbackPending);
+            }
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(job)) => panic!(
+                "post-failpoint seal unexpectedly reopened state {:?}",
+                job.state()
+            ),
+            Err(failed) => panic!("post-failpoint seal failed: {:?}", failed.cause()),
+        }
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_restart_rejects_artifact_and_outbox_splices() {
+        for target in ["artifact", "outbox"] {
+            let store = test_store_with_poco_application_authority();
+            let owner = durable_invalid_all_family_complete_body_owner(
+                &store,
+                Some(StateRoot::new([0xea; 32])),
+                None,
+            );
+            let prepared = prepare_durable_invalid_complete_body_v0(owner)
+                .expect("prepare durable-invalid tamper fixture");
+            match store
+                .store
+                .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            {
+                Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(_)) => {}
+                Ok(NativeValidationInvalidSealDecisionV0::Existing(job)) => panic!(
+                    "tamper fixture unexpectedly reopened state {:?}",
+                    job.state()
+                ),
+                Err(failed) => panic!("tamper fixture seal failed: {:?}", failed.cause()),
+            }
+
+            let connection = rusqlite::Connection::open(store.root.join("state.json.sqlite3"))
+                .expect("open durable-invalid tamper database");
+            if target == "artifact" {
+                let mut bytes = connection
+                    .query_row("SELECT artifact_bytes FROM validation_jobs_v0", [], |row| {
+                        row.get::<_, Vec<u8>>(0)
+                    })
+                    .expect("read durable invalid artifact");
+                bytes[0] ^= 0x01;
+                connection
+                    .execute(
+                        "UPDATE validation_jobs_v0 SET artifact_bytes=?1",
+                        rusqlite::params![bytes],
+                    )
+                    .expect("tamper durable invalid artifact");
+            } else {
+                let mut bytes = connection
+                    .query_row(
+                        "SELECT payload_bytes FROM validation_callback_outbox_v0",
+                        [],
+                        |row| row.get::<_, Vec<u8>>(0),
+                    )
+                    .expect("read durable invalid callback payload");
+                bytes[0] ^= 0x01;
+                connection
+                    .execute(
+                        "UPDATE validation_callback_outbox_v0 SET payload_bytes=?1",
+                        rusqlite::params![bytes],
+                    )
+                    .expect("tamper durable invalid callback payload");
+            }
+            drop(connection);
+
+            let signer_policy_hash_hex =
+                hex::encode(crate::signer_policy_commitment(&store.authorized_signers));
+            let reopened = ApplicationStore::open(
+                &store.root.join("state.json"),
+                TEST_CHAIN.as_str(),
+                &signer_policy_hash_hex,
+            )
+            .expect("reopen tampered durable-invalid store");
+            assert!(
+                reopened.load_or_migrate().is_err(),
+                "restart accepted tampered {target} bytes"
+            );
+        }
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_bridge_rejects_test_only_and_retained_invariant() {
+        {
+            let store = test_store_with_poco_application_authority();
+            let honest = honest_all_family_complete_body_profile(&store);
+            let honest_receipts_root = honest.header.receipts_root();
+            let profile = replace_profile_execution_roots(
+                honest,
+                StateRoot::new([0xe3; 32]),
+                honest_receipts_root,
+            );
+            let owner = match classify_all_family_complete_body(&store, &profile) {
+                ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::DeterministicallyInvalid(
+                    owner,
+                ) => owner,
+                ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::Valid(_)
+                | ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::InvariantFault(_) => {
+                    panic!("test-only poisoned roots changed disposition")
+                }
+            };
+            let failed = match prepare_durable_invalid_complete_body_v0(owner) {
+                Ok(_) => panic!("test-only reservation minted durable invalid authority"),
+                Err(failed) => failed,
+            };
+            assert_eq!(
+                failed.cause,
+                PrepareDurableInvalidFailureCauseV0::TestOnlyReservation
+            );
+            assert!(matches!(
+                failed.owner.failed.finished.authorized.reservation,
+                CoreAuthorizedRegularReservationV0::TestOnly
+            ));
+        }
+
+        {
+            let store = test_store_with_poco_application_authority();
+            let mut owner = durable_invalid_all_family_complete_body_owner(
+                &store,
+                Some(StateRoot::new([0xe4; 32])),
+                None,
+            );
+            let expected_id = owner.failed.finished.authorized.validation_id;
+            owner.failed.cause = CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(
+                CoreAuthorizedRegularCommitmentInvariantV0::BlockIdentity,
+            );
+            let failed = match prepare_durable_invalid_complete_body_v0(owner) {
+                Ok(_) => panic!("retained invariant minted durable invalid authority"),
+                Err(failed) => failed,
+            };
+            assert_eq!(
+                failed.cause,
+                PrepareDurableInvalidFailureCauseV0::RetainedCauseInvariant
+            );
+            assert_eq!(
+                failed.owner.failed.finished.authorized.validation_id,
+                expected_id
+            );
+            assert!(matches!(
+                failed.owner.failed.cause,
+                CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(
+                    CoreAuthorizedRegularCommitmentInvariantV0::BlockIdentity
+                )
+            ));
+        }
+    }
+
+    #[test]
+    fn durable_complete_body_invalid_bridge_rejects_route_and_full_id_splices() {
+        {
+            let store = test_store_with_poco_application_authority();
+            let mut owner = durable_invalid_all_family_complete_body_owner(
+                &store,
+                Some(StateRoot::new([0xe5; 32])),
+                None,
+            );
+            owner.failed.finished.authorized.route = PayloadValidationRouteV0::Synced;
+            let failed = match prepare_durable_invalid_complete_body_v0(owner) {
+                Ok(_) => panic!("route splice minted durable invalid authority"),
+                Err(failed) => failed,
+            };
+            assert_eq!(
+                failed.cause,
+                PrepareDurableInvalidFailureCauseV0::ReservationRouteInvariant
+            );
+            assert_eq!(
+                failed.owner.failed.finished.authorized.route,
+                PayloadValidationRouteV0::Synced
+            );
+        }
+
+        {
+            let store = test_store_with_poco_application_authority();
+            let mut owner = durable_invalid_all_family_complete_body_owner(
+                &store,
+                None,
+                Some(ReceiptsRoot::new([0xe6; 32])),
+            );
+            let retained_id = owner.failed.finished.authorized.validation_id;
+            let spliced_id = ValidationId::new(
+                retained_id.block_id(),
+                retained_id.view(),
+                retained_id
+                    .generation()
+                    .checked_add(1)
+                    .expect("advance test validation generation"),
+            );
+            owner.failed.finished.authorized.validation_id = spliced_id;
+            let failed = match prepare_durable_invalid_complete_body_v0(owner) {
+                Ok(_) => panic!("full ValidationId splice minted durable invalid authority"),
+                Err(failed) => failed,
+            };
+            assert_eq!(
+                failed.cause,
+                PrepareDurableInvalidFailureCauseV0::ReservationValidationIdInvariant
+            );
+            assert_eq!(
+                failed.owner.failed.finished.authorized.validation_id,
+                spliced_id
+            );
+        }
     }
 
     #[test]

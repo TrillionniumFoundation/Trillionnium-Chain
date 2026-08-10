@@ -45,6 +45,8 @@ mod execution_outcome;
 mod native_execution;
 #[allow(dead_code)]
 mod native_payload_validation;
+#[allow(dead_code)]
+mod native_validation_artifact;
 #[cfg(feature = "scale-gate")]
 mod persistent_scale;
 #[allow(dead_code)]
@@ -9360,8 +9362,8 @@ mod tests {
                 panic!("first source reservation must own durable admission")
             }
         };
-        // This is a deliberate raw-SQL future-child fixture: the active v6
-        // binary rejects non-empty outbox state on startup, but snapshot
+        // This is a deliberate raw-SQL malformed-child fixture: the active v7
+        // binary accepts only fully verified callback-pending invalid rows, but snapshot
         // scrubbing must still remove child rows before their parent without
         // changing the authoritative source copy.
         let source_connection = rusqlite::Connection::open(&source_database_path).unwrap();
@@ -9410,7 +9412,7 @@ mod tests {
             .build_snapshot_database(&committed, &snapshot_path, pinned)
             .unwrap();
         assert_eq!((built.height, built.app_hash), expected);
-        // The builder validates the temporary v6 database before its atomic
+        // The builder validates the temporary v7 database before its atomic
         // rename, so success also proves both node-local journal tables were
         // empty rather than copied into the snapshot.
         assert!(!snapshot_path.with_extension("snapshot.tmp").exists());
@@ -10359,7 +10361,7 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "6"
+            "7"
         );
         assert_eq!(
             database

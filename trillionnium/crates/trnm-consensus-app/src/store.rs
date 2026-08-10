@@ -32,6 +32,15 @@ use super::{
         AuthenticatedObjectRecord, InMemoryAuthTree, PlannedAuthUpdate, PruneStats,
         MAX_AUTH_KEY_PREIMAGE_BYTES,
     },
+    native_payload_validation::PreparedDurableInvalidV0,
+    native_validation_artifact::{
+        durable_deterministic_invalid_result_kind_v0, prepare_durable_invalid_artifact_v0,
+        prepare_durable_invalid_callback_v0, verify_durable_invalid_artifact_v0,
+        verify_durable_invalid_callback_v0, DurableDeterministicInvalidReasonV0,
+        DurableNativeValidationRecordErrorV0, NativeValidationArtifactIdentityV0,
+        DURABLE_INVALID_ARTIFACT_BYTES_V0, DURABLE_INVALID_ARTIFACT_CODEC_V0,
+        DURABLE_INVALID_CALLBACK_BYTES_V0, DURABLE_INVALID_CALLBACK_CODEC_V0,
+    },
     persist_state_bytes,
     poco_transition::{
         take_and_validate_production_poco_projection_v0, ProductionPocoProjectionV0,
@@ -40,7 +49,9 @@ use super::{
     ValidatorLifecycleStateV1, APP_VERSION, VALIDATOR_LIFECYCLE_SCHEMA_V1,
 };
 
-const STORE_SCHEMA_VERSION: &str = "6";
+const STORE_SCHEMA_VERSION_V7: &str = "7";
+const STORE_SCHEMA_VERSION: &str = STORE_SCHEMA_VERSION_V7;
+const STORE_SCHEMA_VERSION_V6: &str = "6";
 const STORE_SCHEMA_VERSION_V5: &str = "5";
 const STORE_SCHEMA_VERSION_V4: &str = "4";
 const LEGACY_STORE_SCHEMA_VERSION: &str = "3";
@@ -749,6 +760,9 @@ impl NativeValidationReservationFactsV0 {
 pub(super) struct NativeValidationReservationTokenV0 {
     route: PayloadValidationRouteV0,
     validation_id: ValidationId,
+    request_fingerprint: [u8; 32],
+    immutable_checksum: [u8; 32],
+    issuing_writer_gate: Arc<Mutex<()>>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -759,6 +773,18 @@ impl NativeValidationReservationTokenV0 {
 
     pub(super) const fn validation_id(&self) -> ValidationId {
         self.validation_id
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.request_fingerprint
+    }
+
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.immutable_checksum
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        Arc::ptr_eq(&self.issuing_writer_gate, &store.writer_gate)
     }
 }
 
@@ -842,6 +868,10 @@ impl DurableNativeValidationJobV0 {
         self.facts.request_fingerprint
     }
 
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.immutable_checksum
+    }
+
     pub(super) const fn creation_revision(&self) -> u64 {
         self.facts.creation_revision
     }
@@ -864,6 +894,65 @@ pub(super) enum NativeValidationReservationDecisionV0 {
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a durable invalid seal decision must remain attached to verified journal state"]
+pub(super) enum NativeValidationInvalidSealDecisionV0 {
+    CallbackPending(Box<DurableNativeValidationJobV0>),
+    Existing(Box<DurableNativeValidationJobV0>),
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, PartialEq, Eq)]
+pub(super) enum NativeValidationInvalidSealFailureCauseV0 {
+    Storage(NativeValidationReservationFailureCauseV0),
+    HostInvariant {
+        stage: NativeValidationReservationStageV0,
+    },
+    ArtifactByteCapacity {
+        maximum: u64,
+    },
+    CallbackByteCapacity {
+        maximum: u64,
+    },
+    Invariant(NativeValidationReservationInvariantV0),
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a failed durable invalid seal retains its unique prepared owner"]
+pub(super) struct FailedNativeValidationInvalidSealV0 {
+    prepared: PreparedDurableInvalidV0,
+    cause: NativeValidationInvalidSealFailureCauseV0,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl FailedNativeValidationInvalidSealV0 {
+    pub(super) const fn cause(&self) -> &NativeValidationInvalidSealFailureCauseV0 {
+        &self.cause
+    }
+
+    pub(super) const fn prepared(&self) -> &PreparedDurableInvalidV0 {
+        &self.prepared
+    }
+
+    pub(super) fn into_prepared_v0(self) -> PreparedDurableInvalidV0 {
+        self.prepared
+    }
+}
+
+fn native_validation_invalid_seal_failure_v0(
+    cause: NativeValidationReservationFailureCauseV0,
+) -> NativeValidationInvalidSealFailureCauseV0 {
+    match cause {
+        NativeValidationReservationFailureCauseV0::Invariant { kind, .. } => {
+            NativeValidationInvalidSealFailureCauseV0::Invariant(kind)
+        }
+        NativeValidationReservationFailureCauseV0::HostInvariant { stage, .. } => {
+            NativeValidationInvalidSealFailureCauseV0::HostInvariant { stage }
+        }
+        other => NativeValidationInvalidSealFailureCauseV0::Storage(other),
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum NativeValidationReservationStageV0 {
     LockWriter,
@@ -881,6 +970,7 @@ pub(super) enum NativeValidationReservationStageV0 {
 #[cfg_attr(not(test), allow(dead_code))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum NativeValidationReservationInvariantV0 {
+    IssuingStoreMismatch,
     RouteMismatch,
     TargetHeightMismatch,
     ParentBlockIdMismatch,
@@ -994,10 +1084,36 @@ struct NativeValidationReservationExistingV0 {
     row_checksum: Vec<u8>,
 }
 
+struct NativeValidationCallbackOutboxExistingV0 {
+    route: i64,
+    block_id: Vec<u8>,
+    view_be: Vec<u8>,
+    generation_be: Vec<u8>,
+    result_kind: i64,
+    artifact_checksum: Vec<u8>,
+    payload_codec: String,
+    payload_bytes: Vec<u8>,
+    payload_checksum: Vec<u8>,
+    idempotency_key: Vec<u8>,
+    delivery_attempt_be: Vec<u8>,
+    outbox_checksum: Vec<u8>,
+}
+
 enum NativeValidationReservationInnerDecisionV0 {
     Reserved,
     Existing(DurableNativeValidationJobV0),
     CommitUncertainExisting(DurableNativeValidationJobV0),
+}
+
+enum NativeValidationInvalidSealInnerDecisionV0 {
+    CallbackPending(DurableNativeValidationJobV0),
+    Existing(DurableNativeValidationJobV0),
+    CommitUncertainExisting(DurableNativeValidationJobV0),
+}
+
+enum NativeValidationInvalidCommitReadbackV0 {
+    Reserved,
+    CallbackPending(Box<DurableNativeValidationJobV0>),
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -1005,6 +1121,17 @@ enum NativeValidationReservationInnerDecisionV0 {
 pub(super) enum StoreFailpoint {
     BeforeSqlCommit,
     AfterSqlCommitBeforeStatus,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum NativeValidationInvalidSealFailpointV0 {
+    AfterOutboxInsert,
+    AfterJobUpdate,
+    AfterAccountingUpdate,
+    BeforeCommit,
+    #[cfg(test)]
+    AfterCommitBeforeReturn,
 }
 
 #[derive(Debug, Clone)]
@@ -1400,12 +1527,21 @@ impl ApplicationStore {
     > {
         let route = facts.route;
         let validation_id = facts.validation_id;
+        let request_fingerprint = facts.request_fingerprint;
+        let immutable_checksum = native_validation_job_immutable_checksum_v0(
+            &facts,
+            &native_validation_runtime_profile_ref_v0(facts.protocol_version),
+            &native_validation_host_config_ref_v0(self),
+        );
         match self.reserve_or_reopen_native_validation_job_inner_v0(&facts) {
             Ok(NativeValidationReservationInnerDecisionV0::Reserved) => {
                 Ok(NativeValidationReservationDecisionV0::Reserved(
                     NativeValidationReservationTokenV0 {
                         route,
                         validation_id,
+                        request_fingerprint,
+                        immutable_checksum,
+                        issuing_writer_gate: Arc::clone(&self.writer_gate),
                     },
                 ))
             }
@@ -1419,6 +1555,458 @@ impl ApplicationStore {
                 facts,
                 cause,
             })),
+        }
+    }
+
+    /// Atomically consumes one owning deterministic-invalid preparation into
+    /// the v7 callback-pending journal state. No Core callback is invoked here.
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub(super) fn seal_durable_invalid_and_enqueue_callback_v0(
+        &self,
+        prepared: PreparedDurableInvalidV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidSealDecisionV0,
+        Box<FailedNativeValidationInvalidSealV0>,
+    > {
+        self.seal_durable_invalid_and_enqueue_callback_with_failpoint_v0(prepared, None)
+    }
+
+    #[cfg(test)]
+    pub(super) fn seal_durable_invalid_and_enqueue_callback_with_test_failpoint_v0(
+        &self,
+        prepared: PreparedDurableInvalidV0,
+        failpoint: NativeValidationInvalidSealFailpointV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidSealDecisionV0,
+        Box<FailedNativeValidationInvalidSealV0>,
+    > {
+        self.seal_durable_invalid_and_enqueue_callback_with_failpoint_v0(prepared, Some(failpoint))
+    }
+
+    fn seal_durable_invalid_and_enqueue_callback_with_failpoint_v0(
+        &self,
+        prepared: PreparedDurableInvalidV0,
+        failpoint: Option<NativeValidationInvalidSealFailpointV0>,
+    ) -> std::result::Result<
+        NativeValidationInvalidSealDecisionV0,
+        Box<FailedNativeValidationInvalidSealV0>,
+    > {
+        match self.seal_durable_invalid_and_enqueue_callback_inner_v0(&prepared, failpoint) {
+            Ok(NativeValidationInvalidSealInnerDecisionV0::CallbackPending(job)) => Ok(
+                NativeValidationInvalidSealDecisionV0::CallbackPending(Box::new(job)),
+            ),
+            Ok(
+                NativeValidationInvalidSealInnerDecisionV0::Existing(job)
+                | NativeValidationInvalidSealInnerDecisionV0::CommitUncertainExisting(job),
+            ) => Ok(NativeValidationInvalidSealDecisionV0::Existing(Box::new(
+                job,
+            ))),
+            Err(cause) => Err(Box::new(FailedNativeValidationInvalidSealV0 {
+                prepared,
+                cause,
+            })),
+        }
+    }
+
+    fn seal_durable_invalid_and_enqueue_callback_inner_v0(
+        &self,
+        prepared: &PreparedDurableInvalidV0,
+        failpoint: Option<NativeValidationInvalidSealFailpointV0>,
+    ) -> std::result::Result<
+        NativeValidationInvalidSealInnerDecisionV0,
+        NativeValidationInvalidSealFailureCauseV0,
+    > {
+        if !prepared.is_bound_to_store_v0(self) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::IssuingStoreMismatch,
+            ));
+        }
+        self.writer_waiters.fetch_add(1, Ordering::AcqRel);
+        let writer = self.writer_gate.lock();
+        self.writer_waiters.fetch_sub(1, Ordering::AcqRel);
+        let _writer =
+            writer.map_err(
+                |_| NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                    stage: NativeValidationReservationStageV0::LockWriter,
+                },
+            )?;
+        let mut connection = self
+            .connect_native_validation_job_v0()
+            .map_err(native_validation_invalid_seal_failure_v0)?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::BeginTransaction,
+                        &error,
+                    ),
+                )
+            })?;
+        validate_native_validation_job_bindings_v0(&transaction, self)
+            .map_err(native_validation_invalid_seal_failure_v0)?;
+        let accounting = read_bounded_native_validation_journal_accounting_v0(
+            &transaction,
+            NativeValidationReservationStageV0::ReadCapacity,
+        )
+        .map_err(native_validation_invalid_seal_failure_v0)?;
+        let existing = load_native_validation_job_v0(&transaction, prepared.validation_id())
+            .map_err(native_validation_invalid_seal_failure_v0)?
+            .ok_or(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ))?;
+        let existing = durable_native_validation_job_from_existing_v0(existing, self)
+            .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
+        verify_native_validation_job_outbox_v0(
+            &transaction,
+            &existing,
+            NativeValidationReservationStageV0::ReadExisting,
+        )
+        .map_err(native_validation_invalid_seal_failure_v0)?;
+        if existing.route() != prepared.route()
+            || existing.validation_id() != prepared.validation_id()
+            || existing.request_fingerprint() != prepared.request_fingerprint()
+            || existing.immutable_checksum() != prepared.immutable_checksum()
+        {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::RouteMismatch,
+            ));
+        }
+        if existing.state == NativeValidationJobStateV0::CallbackPending {
+            if native_validation_job_invalid_reason_v0(&existing) != Some(prepared.reason()) {
+                return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ));
+            }
+            transaction.commit().map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )
+            })?;
+            return Ok(NativeValidationInvalidSealInnerDecisionV0::Existing(
+                existing,
+            ));
+        }
+        if existing.state != NativeValidationJobStateV0::Reserved {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::StateMismatch,
+            ));
+        }
+
+        let identity = native_validation_artifact_identity_v0(&existing);
+        let artifact = prepare_durable_invalid_artifact_v0(identity, prepared.reason());
+        let callback = prepare_durable_invalid_callback_v0(&artifact);
+        let artifact_bytes = u64::try_from(artifact.encoded().len()).map_err(|_| {
+            NativeValidationInvalidSealFailureCauseV0::ArtifactByteCapacity {
+                maximum: MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES,
+            }
+        })?;
+        let callback_bytes = u64::try_from(callback.payload().len()).map_err(|_| {
+            NativeValidationInvalidSealFailureCauseV0::CallbackByteCapacity {
+                maximum: MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES,
+            }
+        })?;
+        let next_artifact_bytes = accounting
+            .artifact_bytes
+            .checked_add(artifact_bytes)
+            .filter(|total| *total <= MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES)
+            .ok_or(
+                NativeValidationInvalidSealFailureCauseV0::ArtifactByteCapacity {
+                    maximum: MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES,
+                },
+            )?;
+        let next_outbox_count = accounting
+            .outbox_count
+            .checked_add(1)
+            .filter(|count| {
+                *count <= accounting.job_count && *count <= MAX_NATIVE_VALIDATION_RESERVATIONS
+            })
+            .ok_or(
+                NativeValidationInvalidSealFailureCauseV0::CallbackByteCapacity {
+                    maximum: MAX_NATIVE_VALIDATION_RESERVATIONS,
+                },
+            )?;
+        let next_outbox_bytes = accounting
+            .outbox_bytes
+            .checked_add(callback_bytes)
+            .filter(|total| *total <= MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES)
+            .ok_or(
+                NativeValidationInvalidSealFailureCauseV0::CallbackByteCapacity {
+                    maximum: MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES,
+                },
+            )?;
+        let result_kind = i64::from(durable_deterministic_invalid_result_kind_v0());
+        let reason_be = prepared.reason().code_v0().to_be_bytes();
+        let row_checksum = native_validation_job_row_checksum_v0(
+            &existing.immutable_checksum,
+            NativeValidationJobStateV0::CallbackPending,
+            Some(result_kind),
+            Some(&reason_be),
+            Some(artifact.artifact_codec()),
+            Some(&artifact.checksum()),
+            None,
+            None,
+        );
+        transaction
+            .execute(
+                "INSERT INTO validation_callback_outbox_v0(
+                     route, block_id, view_be, generation_be, result_kind,
+                     artifact_checksum, payload_codec, payload_bytes,
+                     payload_checksum, idempotency_key, delivery_attempt_be,
+                     outbox_checksum
+                 ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
+                params![
+                    native_validation_route_code_v0(prepared.route()),
+                    prepared.validation_id().block_id().as_bytes().as_slice(),
+                    prepared
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    prepared
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    result_kind,
+                    callback.artifact_checksum().as_slice(),
+                    callback.payload_codec(),
+                    callback.payload().as_slice(),
+                    callback.payload_checksum().as_slice(),
+                    callback.idempotency_key().as_slice(),
+                    callback.delivery_attempt().to_be_bytes().as_slice(),
+                    callback.outbox_checksum().as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if failpoint == Some(NativeValidationInvalidSealFailpointV0::AfterOutboxInsert) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Insert,
+            });
+        }
+        let updated = transaction
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET state=2, result_kind=?1, invalid_reason_code_be=?2,
+                     artifact_codec=?3, artifact_bytes=?4, artifact_checksum=?5,
+                     row_checksum=?6
+                 WHERE route=?7 AND block_id=?8 AND view_be=?9 AND generation_be=?10
+                   AND state=0 AND row_checksum=?11",
+                params![
+                    result_kind,
+                    reason_be.as_slice(),
+                    artifact.artifact_codec(),
+                    artifact.encoded().as_slice(),
+                    artifact.checksum().as_slice(),
+                    row_checksum.as_slice(),
+                    native_validation_route_code_v0(prepared.route()),
+                    prepared.validation_id().block_id().as_bytes().as_slice(),
+                    prepared
+                        .validation_id()
+                        .view()
+                        .get()
+                        .to_be_bytes()
+                        .as_slice(),
+                    prepared
+                        .validation_id()
+                        .generation()
+                        .to_be_bytes()
+                        .as_slice(),
+                    existing.row_checksum.as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if updated != 1 {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::StateMismatch,
+            ));
+        }
+        if failpoint == Some(NativeValidationInvalidSealFailpointV0::AfterJobUpdate) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Insert,
+            });
+        }
+        let accounting_updated = transaction
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET artifact_bytes_be=?1, outbox_count_be=?2, outbox_bytes_be=?3
+                 WHERE singleton=1 AND artifact_bytes_be=?4
+                   AND outbox_count_be=?5 AND outbox_bytes_be=?6",
+                params![
+                    next_artifact_bytes.to_be_bytes().as_slice(),
+                    next_outbox_count.to_be_bytes().as_slice(),
+                    next_outbox_bytes.to_be_bytes().as_slice(),
+                    accounting.artifact_bytes.to_be_bytes().as_slice(),
+                    accounting.outbox_count.to_be_bytes().as_slice(),
+                    accounting.outbox_bytes.to_be_bytes().as_slice(),
+                ],
+            )
+            .map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Insert,
+                        &error,
+                    ),
+                )
+            })?;
+        if accounting_updated != 1 {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+            ));
+        }
+        if failpoint == Some(NativeValidationInvalidSealFailpointV0::AfterAccountingUpdate) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Insert,
+            });
+        }
+        let sealed = load_native_validation_job_v0(&transaction, prepared.validation_id())
+            .map_err(native_validation_invalid_seal_failure_v0)?
+            .ok_or(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ))?;
+        let sealed = durable_native_validation_job_from_existing_v0(sealed, self)
+            .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
+        verify_native_validation_job_outbox_v0(
+            &transaction,
+            &sealed,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_seal_failure_v0)?;
+        if sealed.state != NativeValidationJobStateV0::CallbackPending
+            || native_validation_job_invalid_reason_v0(&sealed) != Some(prepared.reason())
+        {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ));
+        }
+        if failpoint == Some(NativeValidationInvalidSealFailpointV0::BeforeCommit) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Commit,
+            });
+        }
+        if let Err(error) = transaction.commit() {
+            return match self.confirm_durable_invalid_callback_v0(prepared) {
+                Ok(NativeValidationInvalidCommitReadbackV0::CallbackPending(job)) => {
+                    Ok(NativeValidationInvalidSealInnerDecisionV0::CommitUncertainExisting(*job))
+                }
+                Ok(NativeValidationInvalidCommitReadbackV0::Reserved) => {
+                    Err(native_validation_invalid_seal_failure_v0(
+                        classify_native_validation_reservation_sqlite_failure_v0(
+                            NativeValidationReservationStageV0::Commit,
+                            &error,
+                        ),
+                    ))
+                }
+                Err(NativeValidationInvalidSealFailureCauseV0::Invariant(kind)) => {
+                    Err(NativeValidationInvalidSealFailureCauseV0::Invariant(kind))
+                }
+                Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant { stage }) => {
+                    Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant { stage })
+                }
+                Err(_) => Err(native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::Commit,
+                        &error,
+                    ),
+                )),
+            };
+        }
+        #[cfg(test)]
+        if failpoint == Some(NativeValidationInvalidSealFailpointV0::AfterCommitBeforeReturn) {
+            return Err(NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::ConfirmCommit,
+            });
+        }
+        Ok(NativeValidationInvalidSealInnerDecisionV0::CallbackPending(
+            sealed,
+        ))
+    }
+
+    fn confirm_durable_invalid_callback_v0(
+        &self,
+        prepared: &PreparedDurableInvalidV0,
+    ) -> std::result::Result<
+        NativeValidationInvalidCommitReadbackV0,
+        NativeValidationInvalidSealFailureCauseV0,
+    > {
+        let connection = Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        )
+        .map_err(|error| {
+            native_validation_invalid_seal_failure_v0(
+                classify_native_validation_reservation_sqlite_failure_v0(
+                    NativeValidationReservationStageV0::ConfirmCommit,
+                    &error,
+                ),
+            )
+        })?;
+        connection
+            .busy_timeout(Duration::from_secs(5))
+            .map_err(|error| {
+                native_validation_invalid_seal_failure_v0(
+                    classify_native_validation_reservation_sqlite_failure_v0(
+                        NativeValidationReservationStageV0::ConfirmCommit,
+                        &error,
+                    ),
+                )
+            })?;
+        validate_native_validation_job_bindings_v0(&connection, self)
+            .map_err(native_validation_invalid_seal_failure_v0)?;
+        let job = load_native_validation_job_v0(&connection, prepared.validation_id())
+            .map_err(native_validation_invalid_seal_failure_v0)?
+            .ok_or(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ))?;
+        let job = durable_native_validation_job_from_existing_v0(job, self)
+            .map_err(NativeValidationInvalidSealFailureCauseV0::Invariant)?;
+        verify_native_validation_job_outbox_v0(
+            &connection,
+            &job,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )
+        .map_err(native_validation_invalid_seal_failure_v0)?;
+        if job.route() != prepared.route()
+            || job.validation_id() != prepared.validation_id()
+            || job.request_fingerprint() != prepared.request_fingerprint()
+            || job.immutable_checksum() != prepared.immutable_checksum()
+        {
+            return Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            ));
+        }
+        match job.state {
+            NativeValidationJobStateV0::Reserved => {
+                Ok(NativeValidationInvalidCommitReadbackV0::Reserved)
+            }
+            NativeValidationJobStateV0::CallbackPending
+                if native_validation_job_invalid_reason_v0(&job) == Some(prepared.reason()) =>
+            {
+                Ok(NativeValidationInvalidCommitReadbackV0::CallbackPending(
+                    Box::new(job),
+                ))
+            }
+            _ => Err(NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::CommitReadbackConflict,
+            )),
         }
     }
 
@@ -1461,15 +2049,20 @@ impl ApplicationStore {
                             sqlite: None,
                         },
                     )?;
+                verify_native_validation_job_outbox_v0(
+                    &transaction,
+                    &existing,
+                    NativeValidationReservationStageV0::ReadExisting,
+                )?;
                 validate_native_validation_job_congruence_v0(facts, &existing, self)?;
-                read_reserved_only_native_validation_journal_accounting_v0(
+                read_bounded_native_validation_journal_accounting_v0(
                     &transaction,
                     NativeValidationReservationStageV0::ReadExisting,
                 )?;
                 NativeValidationReservationInnerDecisionV0::Existing(existing)
             }
             None => {
-                let accounting = read_reserved_only_native_validation_journal_accounting_v0(
+                let accounting = read_bounded_native_validation_journal_accounting_v0(
                     &transaction,
                     NativeValidationReservationStageV0::ReadCapacity,
                 )?;
@@ -1654,6 +2247,11 @@ impl ApplicationStore {
                     sqlite: None,
                 }
             })?;
+        verify_native_validation_job_outbox_v0(
+            &connection,
+            &existing,
+            NativeValidationReservationStageV0::ConfirmCommit,
+        )?;
         validate_native_validation_job_congruence_v0(facts, &existing, self).map_err(
             |failure| match failure {
                 NativeValidationReservationFailureCauseV0::Invariant { kind, sqlite, .. } => {
@@ -1700,6 +2298,12 @@ impl ApplicationStore {
     ) -> Result<()> {
         validate_foreign_key_integrity(connection)?;
         validate_storage_resource_bounds(connection)?;
+        let schema_version = metadata(connection, "schema_version")?;
+        ensure!(
+            schema_version == STORE_SCHEMA_VERSION || schema_version == STORE_SCHEMA_VERSION_V6,
+            "native validation recovery requires schema v6 or v7"
+        );
+        let reserved_only = schema_version == STORE_SCHEMA_VERSION_V6;
         let mut statement = connection.prepare(
             "SELECT route, block_id, view_be, generation_be, target_height_be,
                     target_header_cev0, body_record_codec, body_record, body_checksum,
@@ -1722,16 +2326,33 @@ impl ApplicationStore {
                 durable_native_validation_job_from_existing_v0(row?, self).map_err(|kind| {
                     anyhow!("native validation recovery row invariant failed: {kind:?}")
                 })?;
+            verify_native_validation_job_outbox_v0(
+                connection,
+                &job,
+                NativeValidationReservationStageV0::ReadExisting,
+            )
+            .map_err(|cause| anyhow!("native validation recovery outbox failed: {cause:?}"))?;
             ensure!(
                 job.runtime_profile_ref
                     == native_validation_runtime_profile_ref_v0(job.facts.protocol_version)
                     && job.host_config_ref == expected_host_config_ref,
                 "native validation recovery row configuration reference differs from this host"
             );
-            ensure!(
-                job.state == NativeValidationJobStateV0::Reserved,
-                "application-store schema v6 foundation encountered an evaluated validation job before its artifact codec is active"
-            );
+            if reserved_only {
+                ensure!(
+                    job.state == NativeValidationJobStateV0::Reserved,
+                    "application-store schema v6 contains an active validation result"
+                );
+            } else {
+                ensure!(
+                    matches!(
+                        job.state,
+                        NativeValidationJobStateV0::Reserved
+                            | NativeValidationJobStateV0::CallbackPending
+                    ),
+                    "application-store schema v7 contains an inactive validation state"
+                );
+            }
             visit(job)?;
         }
         Ok(())
@@ -2768,8 +3389,19 @@ impl ApplicationStore {
                 native_validation_journal_accounting_raw_v0(&transaction)?,
             )
             .context("decode snapshot-install validation journal accounting")?;
+            let local_jobs =
+                transaction.query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                    row.get::<_, u64>(0)
+                })?;
+            let local_outbox = transaction.query_row(
+                "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
             ensure!(
-                accounting.job_count == 0
+                local_jobs == 0
+                    && local_outbox == 0
+                    && accounting.job_count == 0
                     && accounting.request_bytes == 0
                     && accounting.artifact_bytes == 0
                     && accounting.outbox_count == 0
@@ -2795,6 +3427,10 @@ impl ApplicationStore {
             }
             if installed_schema == STORE_SCHEMA_VERSION_V5 {
                 migrate_store_schema_v5_to_v6(&mut destination)?;
+                installed_schema = metadata(&destination, "schema_version")?;
+            }
+            if installed_schema == STORE_SCHEMA_VERSION_V6 {
+                migrate_store_schema_v6_to_v7(&mut destination, self)?;
                 installed_schema = metadata(&destination, "schema_version")?;
             }
             ensure!(
@@ -2899,7 +3535,7 @@ impl ApplicationStore {
                 "SQLite snapshot contains unfinished authenticated maintenance"
             );
         }
-        if store_schema == STORE_SCHEMA_VERSION {
+        if store_schema == STORE_SCHEMA_VERSION || store_schema == STORE_SCHEMA_VERSION_V6 {
             let jobs =
                 connection.query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
                     row.get::<_, u64>(0)
@@ -3271,6 +3907,7 @@ impl ApplicationStore {
         match schema.as_deref() {
             Some(schema) => ensure!(
                 schema == STORE_SCHEMA_VERSION
+                    || schema == STORE_SCHEMA_VERSION_V6
                     || schema == STORE_SCHEMA_VERSION_V5
                     || schema == STORE_SCHEMA_VERSION_V4
                     || schema == LEGACY_STORE_SCHEMA_VERSION,
@@ -3299,6 +3936,9 @@ impl ApplicationStore {
         }
         if metadata(&connection, "schema_version")? == STORE_SCHEMA_VERSION_V5 {
             migrate_store_schema_v5_to_v6(&mut connection)?;
+        }
+        if metadata(&connection, "schema_version")? == STORE_SCHEMA_VERSION_V6 {
+            migrate_store_schema_v6_to_v7(&mut connection, self)?;
         }
         if initialize {
             ensure_metadata_binding(&connection, "chain_id", &self.chain_id)?;
@@ -3544,6 +4184,7 @@ impl ApplicationStore {
             .context("existing application store is missing or cannot read schema_version")?;
         ensure!(
             schema_version == STORE_SCHEMA_VERSION
+                || schema_version == STORE_SCHEMA_VERSION_V6
                 || schema_version == STORE_SCHEMA_VERSION_V5
                 || schema_version == STORE_SCHEMA_VERSION_V4
                 || schema_version == LEGACY_STORE_SCHEMA_VERSION,
@@ -4588,15 +5229,7 @@ fn read_reserved_only_native_validation_journal_accounting_v0(
     NativeValidationJournalAccountingV0,
     NativeValidationReservationFailureCauseV0,
 > {
-    let raw = native_validation_journal_accounting_raw_v0(connection)
-        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
-    let accounting = decode_native_validation_journal_accounting_v0(raw).ok_or(
-        NativeValidationReservationFailureCauseV0::Invariant {
-            stage,
-            kind: NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
-            sqlite: None,
-        },
-    )?;
+    let accounting = read_bounded_native_validation_journal_accounting_v0(connection, stage)?;
     let outbox_exists = connection
         .query_row(
             "SELECT EXISTS(SELECT 1 FROM validation_callback_outbox_v0 LIMIT 1)",
@@ -4618,6 +5251,139 @@ fn read_reserved_only_native_validation_journal_accounting_v0(
         || accounting.outbox_bytes != 0
         || outbox_exists
         || non_reserved_job_exists
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::StateMismatch,
+            sqlite: None,
+        });
+    }
+    Ok(accounting)
+}
+
+fn read_active_native_validation_journal_accounting_v0(
+    connection: &Connection,
+    stage: NativeValidationReservationStageV0,
+) -> std::result::Result<
+    NativeValidationJournalAccountingV0,
+    NativeValidationReservationFailureCauseV0,
+> {
+    let accounting = read_bounded_native_validation_journal_accounting_v0(connection, stage)?;
+    let result_kind = i64::from(durable_deterministic_invalid_result_kind_v0());
+    let invalid_job_exists = connection
+        .query_row(
+            "SELECT EXISTS(
+                 SELECT 1
+                 FROM validation_jobs_v0 AS job
+                 LEFT JOIN validation_callback_outbox_v0 AS outbox
+                   ON outbox.route=job.route AND outbox.block_id=job.block_id
+                  AND outbox.view_be=job.view_be AND outbox.generation_be=job.generation_be
+                 WHERE job.state NOT IN (0,2)
+                    OR (job.state=0 AND outbox.block_id IS NOT NULL)
+                    OR (job.state=2 AND (
+                        job.result_kind<>?1 OR
+                        job.invalid_reason_code_be NOT IN (X'00000001',X'00000002') OR
+                        job.artifact_codec<>?2 OR outbox.block_id IS NULL OR
+                        outbox.result_kind<>job.result_kind OR
+                        outbox.artifact_checksum<>job.artifact_checksum OR
+                        outbox.payload_codec<>?3 OR outbox.delivery_attempt_be<>zeroblob(8)
+                    ))
+                 LIMIT 1
+             )",
+            params![
+                result_kind,
+                DURABLE_INVALID_ARTIFACT_CODEC_V0,
+                DURABLE_INVALID_CALLBACK_CODEC_V0,
+            ],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let invalid_outbox_exists = connection
+        .query_row(
+            "SELECT EXISTS(
+                 SELECT 1
+                 FROM validation_callback_outbox_v0 AS outbox
+                 LEFT JOIN validation_jobs_v0 AS job
+                   ON job.route=outbox.route AND job.block_id=outbox.block_id
+                  AND job.view_be=outbox.view_be AND job.generation_be=outbox.generation_be
+                 WHERE job.block_id IS NULL OR job.state<>2 OR
+                       outbox.result_kind<>?1 OR
+                       outbox.result_kind<>job.result_kind OR
+                       outbox.artifact_checksum<>job.artifact_checksum OR
+                       outbox.payload_codec<>?2 OR
+                       outbox.delivery_attempt_be<>zeroblob(8)
+                 LIMIT 1
+             )",
+            params![result_kind, DURABLE_INVALID_CALLBACK_CODEC_V0],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let callback_pending_exists = connection
+        .query_row(
+            "SELECT EXISTS(SELECT 1 FROM validation_jobs_v0 WHERE state=2 LIMIT 1)",
+            [],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let outbox_exists = connection
+        .query_row(
+            "SELECT EXISTS(SELECT 1 FROM validation_callback_outbox_v0 LIMIT 1)",
+            [],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    if invalid_job_exists
+        || invalid_outbox_exists
+        || callback_pending_exists != outbox_exists
+        || (accounting.artifact_bytes == 0) == callback_pending_exists
+        || (accounting.outbox_count == 0) == outbox_exists
+        || (accounting.outbox_bytes == 0) == outbox_exists
+        || accounting.artifact_bytes > MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES
+        || accounting.outbox_count > accounting.job_count
+        || accounting.outbox_bytes > MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::StateMismatch,
+            sqlite: None,
+        });
+    }
+    Ok(accounting)
+}
+
+/// Reads only the singleton accounting row and validates its scalar bounds.
+/// Admission and seal transactions use this O(1) gate; the full table/join
+/// congruence audit remains a startup, migration, and snapshot responsibility.
+fn read_bounded_native_validation_journal_accounting_v0(
+    connection: &Connection,
+    stage: NativeValidationReservationStageV0,
+) -> std::result::Result<
+    NativeValidationJournalAccountingV0,
+    NativeValidationReservationFailureCauseV0,
+> {
+    let raw = native_validation_journal_accounting_raw_v0(connection)
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let accounting = decode_native_validation_journal_accounting_v0(raw).ok_or(
+        NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+            sqlite: None,
+        },
+    )?;
+    let exact_artifact_bytes = accounting
+        .outbox_count
+        .checked_mul(DURABLE_INVALID_ARTIFACT_BYTES_V0 as u64);
+    let exact_outbox_bytes = accounting
+        .outbox_count
+        .checked_mul(DURABLE_INVALID_CALLBACK_BYTES_V0 as u64);
+    if accounting.job_count > MAX_NATIVE_VALIDATION_RESERVATIONS
+        || accounting.request_bytes > MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES
+        || accounting.artifact_bytes > MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES
+        || accounting.outbox_count > accounting.job_count
+        || accounting.outbox_count > MAX_NATIVE_VALIDATION_RESERVATIONS
+        || accounting.outbox_bytes > MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES
+        || exact_artifact_bytes != Some(accounting.artifact_bytes)
+        || exact_outbox_bytes != Some(accounting.outbox_bytes)
     {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
@@ -4838,17 +5604,6 @@ fn durable_native_validation_job_from_existing_v0(
         .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
     let state = NativeValidationJobStateV0::from_code(existing.state)
         .ok_or(NativeValidationReservationInvariantV0::StateMismatch)?;
-    if state != NativeValidationJobStateV0::Reserved
-        || existing.result_kind.is_some()
-        || existing.invalid_reason_code_be.is_some()
-        || existing.artifact_codec.is_some()
-        || existing.artifact_bytes.is_some()
-        || existing.artifact_checksum.is_some()
-        || existing.accepted_core_revision_be.is_some()
-        || existing.accepted_core_payload_checksum.is_some()
-    {
-        return Err(NativeValidationReservationInvariantV0::StateMismatch);
-    }
     let artifact_checksum = existing
         .artifact_checksum
         .as_deref()
@@ -4861,6 +5616,32 @@ fn durable_native_validation_job_from_existing_v0(
         .map(native_validation_array_v0::<32>)
         .transpose_option()
         .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    match state {
+        NativeValidationJobStateV0::Reserved
+            if existing.result_kind.is_none()
+                && existing.invalid_reason_code_be.is_none()
+                && existing.artifact_codec.is_none()
+                && existing.artifact_bytes.is_none()
+                && artifact_checksum.is_none()
+                && existing.accepted_core_revision_be.is_none()
+                && accepted_core_payload_checksum.is_none() => {}
+        NativeValidationJobStateV0::CallbackPending
+            if existing.result_kind
+                == Some(i64::from(durable_deterministic_invalid_result_kind_v0()))
+                && existing
+                    .invalid_reason_code_be
+                    .as_deref()
+                    .and_then(native_validation_u32_v0)
+                    .and_then(DurableDeterministicInvalidReasonV0::from_code_v0)
+                    .is_some()
+                && existing.artifact_codec.as_deref()
+                    == Some(DURABLE_INVALID_ARTIFACT_CODEC_V0)
+                && existing.artifact_bytes.is_some()
+                && artifact_checksum.is_some()
+                && existing.accepted_core_revision_be.is_none()
+                && accepted_core_payload_checksum.is_none() => {}
+        _ => return Err(NativeValidationReservationInvariantV0::StateMismatch),
+    }
     let row_checksum = native_validation_array_v0(&existing.row_checksum)
         .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
     let facts = NativeValidationReservationFactsV0 {
@@ -4888,6 +5669,42 @@ fn durable_native_validation_job_from_existing_v0(
         != immutable_checksum
     {
         return Err(NativeValidationReservationInvariantV0::ChecksumMismatch);
+    }
+    if state == NativeValidationJobStateV0::CallbackPending {
+        let identity = NativeValidationArtifactIdentityV0::new_v0(
+            facts.route,
+            facts.validation_id,
+            facts.request_fingerprint,
+            immutable_checksum,
+        );
+        let result_kind = u8::try_from(
+            existing
+                .result_kind
+                .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?,
+        )
+        .map_err(|_| NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+        let reason = existing
+            .invalid_reason_code_be
+            .as_deref()
+            .and_then(native_validation_u32_v0)
+            .and_then(DurableDeterministicInvalidReasonV0::from_code_v0)
+            .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+        verify_durable_invalid_artifact_v0(
+            existing
+                .artifact_codec
+                .as_deref()
+                .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?,
+            existing
+                .artifact_bytes
+                .as_deref()
+                .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?,
+            artifact_checksum
+                .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?,
+            result_kind,
+            reason,
+            identity,
+        )
+        .map_err(native_validation_record_invariant_v0)?;
     }
     if native_validation_job_row_checksum_v0(
         &immutable_checksum,
@@ -4917,6 +5734,187 @@ fn durable_native_validation_job_from_existing_v0(
         accepted_core_payload_checksum,
         row_checksum,
     })
+}
+
+fn native_validation_artifact_identity_v0(
+    job: &DurableNativeValidationJobV0,
+) -> NativeValidationArtifactIdentityV0 {
+    NativeValidationArtifactIdentityV0::new_v0(
+        job.facts.route,
+        job.facts.validation_id,
+        job.facts.request_fingerprint,
+        job.immutable_checksum,
+    )
+}
+
+fn native_validation_job_invalid_reason_v0(
+    job: &DurableNativeValidationJobV0,
+) -> Option<DurableDeterministicInvalidReasonV0> {
+    job.invalid_reason_code_be
+        .as_deref()
+        .and_then(native_validation_u32_v0)
+        .and_then(DurableDeterministicInvalidReasonV0::from_code_v0)
+}
+
+fn native_validation_record_invariant_v0(
+    error: DurableNativeValidationRecordErrorV0,
+) -> NativeValidationReservationInvariantV0 {
+    match error {
+        DurableNativeValidationRecordErrorV0::Codec(_) => {
+            NativeValidationReservationInvariantV0::PersistedRepresentationMalformed
+        }
+        DurableNativeValidationRecordErrorV0::Binding(_) => {
+            NativeValidationReservationInvariantV0::ChecksumMismatch
+        }
+    }
+}
+
+fn native_validation_outbox_from_row_v0(
+    row: &rusqlite::Row<'_>,
+) -> rusqlite::Result<NativeValidationCallbackOutboxExistingV0> {
+    Ok(NativeValidationCallbackOutboxExistingV0 {
+        route: row.get(0)?,
+        block_id: row.get(1)?,
+        view_be: row.get(2)?,
+        generation_be: row.get(3)?,
+        result_kind: row.get(4)?,
+        artifact_checksum: row.get(5)?,
+        payload_codec: row.get(6)?,
+        payload_bytes: row.get(7)?,
+        payload_checksum: row.get(8)?,
+        idempotency_key: row.get(9)?,
+        delivery_attempt_be: row.get(10)?,
+        outbox_checksum: row.get(11)?,
+    })
+}
+
+fn verify_native_validation_job_outbox_v0(
+    connection: &Connection,
+    job: &DurableNativeValidationJobV0,
+    stage: NativeValidationReservationStageV0,
+) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+    let validation_id = job.validation_id();
+    let outbox = connection
+        .query_row(
+            "SELECT route, block_id, view_be, generation_be, result_kind,
+                    artifact_checksum, payload_codec, payload_bytes,
+                    payload_checksum, idempotency_key, delivery_attempt_be,
+                    outbox_checksum
+             FROM validation_callback_outbox_v0
+             WHERE route=?1 AND block_id=?2 AND view_be=?3 AND generation_be=?4",
+            params![
+                native_validation_route_code_v0(job.route()),
+                validation_id.block_id().as_bytes().as_slice(),
+                validation_id.view().get().to_be_bytes().as_slice(),
+                validation_id.generation().to_be_bytes().as_slice(),
+            ],
+            native_validation_outbox_from_row_v0,
+        )
+        .optional()
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+
+    let invariant = |kind| NativeValidationReservationFailureCauseV0::Invariant {
+        stage,
+        kind,
+        sqlite: None,
+    };
+    match job.state {
+        NativeValidationJobStateV0::Reserved => {
+            if outbox.is_some() {
+                return Err(invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ));
+            }
+            Ok(())
+        }
+        NativeValidationJobStateV0::CallbackPending => {
+            let outbox = outbox
+                .ok_or_else(|| invariant(NativeValidationReservationInvariantV0::StateMismatch))?;
+            let route = native_validation_route_from_code_v0(outbox.route).ok_or_else(|| {
+                invariant(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)
+            })?;
+            let block_id = native_validation_array_v0::<32>(&outbox.block_id)
+                .map(BlockId::new)
+                .ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let view = native_validation_u64_v0(&outbox.view_be)
+                .map(View::new)
+                .ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let generation = native_validation_u64_v0(&outbox.generation_be).ok_or_else(|| {
+                invariant(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)
+            })?;
+            if route != job.route()
+                || ValidationId::new(block_id, view, generation) != validation_id
+            {
+                return Err(invariant(
+                    NativeValidationReservationInvariantV0::RouteMismatch,
+                ));
+            }
+            let result_kind = u8::try_from(outbox.result_kind).map_err(|_| {
+                invariant(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)
+            })?;
+            let artifact_checksum = native_validation_array_v0(&outbox.artifact_checksum)
+                .ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let payload_checksum = native_validation_array_v0(&outbox.payload_checksum)
+                .ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let idempotency_key =
+                native_validation_array_v0(&outbox.idempotency_key).ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let delivery_attempt = native_validation_u64_v0(&outbox.delivery_attempt_be)
+                .ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            let outbox_checksum =
+                native_validation_array_v0(&outbox.outbox_checksum).ok_or_else(|| {
+                    invariant(
+                        NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                    )
+                })?;
+            if job.result_kind != Some(outbox.result_kind)
+                || job.artifact_checksum != Some(artifact_checksum)
+            {
+                return Err(invariant(
+                    NativeValidationReservationInvariantV0::StateMismatch,
+                ));
+            }
+            verify_durable_invalid_callback_v0(
+                &outbox.payload_codec,
+                &outbox.payload_bytes,
+                payload_checksum,
+                idempotency_key,
+                delivery_attempt,
+                outbox_checksum,
+                result_kind,
+                artifact_checksum,
+                native_validation_artifact_identity_v0(job),
+            )
+            .map_err(|error| invariant(native_validation_record_invariant_v0(error)))?;
+            Ok(())
+        }
+        _ => Err(invariant(
+            NativeValidationReservationInvariantV0::StateMismatch,
+        )),
+    }
 }
 
 trait TransposeOptionV0<T> {
@@ -6165,7 +7163,44 @@ fn migrate_store_schema_v5_to_v6(connection: &mut Connection) -> Result<()> {
     transaction.execute_batch("DROP TABLE native_validation_reservations;")?;
     transaction.execute(
         "UPDATE metadata SET value=?1 WHERE key='schema_version'",
-        params![STORE_SCHEMA_VERSION],
+        params![STORE_SCHEMA_VERSION_V6],
+    )?;
+    transaction.commit()?;
+    Ok(())
+}
+
+fn migrate_store_schema_v6_to_v7(
+    connection: &mut Connection,
+    store: &ApplicationStore,
+) -> Result<()> {
+    let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+    ensure!(
+        metadata(&transaction, "schema_version")? == STORE_SCHEMA_VERSION_V6,
+        "application store schema changed before v6 to v7 migration"
+    );
+    ensure!(
+        store.verify_compatible_database_bindings(&transaction)? == STORE_SCHEMA_VERSION_V6,
+        "application store bindings changed before v6 to v7 migration"
+    );
+    // Schema v6 deliberately activated only revalidatable Reserved jobs. Before
+    // changing the version marker, authenticate every row and the journal-wide
+    // accounting/FK/resource invariants inside the same writer transaction.
+    // This makes the metadata-only activation atomic: a malformed row, future
+    // state, callback child, or accounting drift leaves the database at v6.
+    read_reserved_only_native_validation_journal_accounting_v0(
+        &transaction,
+        NativeValidationReservationStageV0::ReadExisting,
+    )
+    .map_err(|cause| anyhow!("schema-v6 reserved-only journal invariant: {cause:?}"))?;
+    store
+        .visit_native_validation_recovery_work_v0(&transaction, |job| {
+            drop(job);
+            Ok(())
+        })
+        .context("validate schema-v6 reserved-only native validation journal")?;
+    transaction.execute(
+        "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+        params![STORE_SCHEMA_VERSION_V7],
     )?;
     transaction.commit()?;
     Ok(())
@@ -6198,6 +7233,7 @@ fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
     let schema_version = metadata(connection, "schema_version")?;
     ensure!(
         schema_version == STORE_SCHEMA_VERSION
+            || schema_version == STORE_SCHEMA_VERSION_V6
             || schema_version == STORE_SCHEMA_VERSION_V5
             || schema_version == STORE_SCHEMA_VERSION_V4
             || schema_version == LEGACY_STORE_SCHEMA_VERSION,
@@ -6206,7 +7242,7 @@ fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
     let canonical = Connection::open_in_memory()?;
     canonical.execute_batch(STORE_SCHEMA_SQL)?;
     canonical.execute_batch(NATIVE_VALIDATION_JOURNAL_SCHEMA_V0_SQL)?;
-    if schema_version != STORE_SCHEMA_VERSION {
+    if schema_version != STORE_SCHEMA_VERSION && schema_version != STORE_SCHEMA_VERSION_V6 {
         canonical.execute_batch(
             "DROP TABLE validation_callback_outbox_v0;
              DROP TABLE validation_jobs_v0;
@@ -6280,8 +7316,9 @@ fn validate_storage_resource_bounds(connection: &Connection) -> Result<()> {
             "SQLite store {table}.{column} exceeds the {maximum}-byte resource limit"
         );
     }
-    match metadata(connection, "schema_version")?.as_str() {
-        STORE_SCHEMA_VERSION => {
+    let schema_version = metadata(connection, "schema_version")?;
+    match schema_version.as_str() {
+        STORE_SCHEMA_VERSION | STORE_SCHEMA_VERSION_V6 => {
             let jobs =
                 connection.query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
                     row.get::<_, u64>(0)
@@ -6298,10 +7335,6 @@ fn validate_storage_resource_bounds(connection: &Connection) -> Result<()> {
             ensure!(
                 outbox <= jobs,
                 "SQLite store native validation callback outbox exceeds its job count"
-            );
-            ensure!(
-                outbox == 0,
-                "application-store schema v6 foundation encountered a callback outbox row before its codec is active"
             );
             let request_bytes = connection.query_row(
                 "SELECT COALESCE(SUM(
@@ -6370,6 +7403,23 @@ fn validate_storage_resource_bounds(connection: &Connection) -> Result<()> {
                     }),
                 "SQLite store native validation accounting differs from journal contents"
             );
+            if schema_version == STORE_SCHEMA_VERSION_V6 {
+                read_reserved_only_native_validation_journal_accounting_v0(
+                    connection,
+                    NativeValidationReservationStageV0::ReadExisting,
+                )
+                .map_err(|cause| {
+                    anyhow!("application-store schema-v6 validation journal invariant: {cause:?}")
+                })?;
+            } else {
+                read_active_native_validation_journal_accounting_v0(
+                    connection,
+                    NativeValidationReservationStageV0::ReadExisting,
+                )
+                .map_err(|cause| {
+                    anyhow!("application-store schema-v7 validation journal invariant: {cause:?}")
+                })?;
+            }
         }
         STORE_SCHEMA_VERSION_V5 => {
             let reservations = connection.query_row(
@@ -7223,13 +8273,59 @@ mod native_validation_reservation_tests {
     };
 
     use super::{
-        metadata, migrate_store_schema_v4_to_v5, migrate_store_schema_v5_to_v6, schema_objects,
-        validate_snapshot_schema, ApplicationStore, NativeValidationReservationDecisionV0,
-        NativeValidationReservationFactsV0, NativeValidationReservationFailureCauseV0,
-        NativeValidationReservationInvariantV0,
-        LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL, STORE_SCHEMA_VERSION,
-        STORE_SCHEMA_VERSION_V4, STORE_SCHEMA_VERSION_V5,
+        metadata, migrate_store_schema_v4_to_v5, migrate_store_schema_v5_to_v6,
+        migrate_store_schema_v6_to_v7, native_validation_invalid_seal_failure_v0, schema_objects,
+        validate_snapshot_schema, ApplicationStore, NativeValidationInvalidSealFailureCauseV0,
+        NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
+        NativeValidationReservationFailureCauseV0, NativeValidationReservationInvariantV0,
+        NativeValidationReservationStageV0, LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL,
+        STORE_SCHEMA_VERSION, STORE_SCHEMA_VERSION_V4, STORE_SCHEMA_VERSION_V5,
+        STORE_SCHEMA_VERSION_V6,
     };
+
+    #[test]
+    fn invalid_seal_preserves_fail_stop_reservation_causes() {
+        let invariant = native_validation_invalid_seal_failure_v0(
+            NativeValidationReservationFailureCauseV0::Invariant {
+                stage: NativeValidationReservationStageV0::Insert,
+                kind: NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                sqlite: None,
+            },
+        );
+        assert_eq!(
+            invariant,
+            NativeValidationInvalidSealFailureCauseV0::Invariant(
+                NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+            )
+        );
+
+        let host_invariant = native_validation_invalid_seal_failure_v0(
+            NativeValidationReservationFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Commit,
+                sqlite: None,
+            },
+        );
+        assert_eq!(
+            host_invariant,
+            NativeValidationInvalidSealFailureCauseV0::HostInvariant {
+                stage: NativeValidationReservationStageV0::Commit,
+            }
+        );
+
+        let unavailable = NativeValidationReservationFailureCauseV0::HostResourceUnavailable {
+            stage: NativeValidationReservationStageV0::OpenDatabase,
+            sqlite: None,
+        };
+        assert!(matches!(
+            native_validation_invalid_seal_failure_v0(unavailable),
+            NativeValidationInvalidSealFailureCauseV0::Storage(
+                NativeValidationReservationFailureCauseV0::HostResourceUnavailable {
+                    stage: NativeValidationReservationStageV0::OpenDatabase,
+                    sqlite: None,
+                }
+            )
+        ));
+    }
 
     fn test_store(label: &str) -> (PathBuf, ApplicationStore) {
         let unique = SystemTime::now()
@@ -7338,7 +8434,7 @@ mod native_validation_reservation_tests {
                  DROP TABLE validation_jobs_v0;
                  DROP TABLE validation_journal_accounting_v0;",
             )
-            .expect("drop schema v6 validation journal");
+            .expect("drop schema v6/v7 validation journal");
         connection
             .execute_batch(LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL)
             .expect("create schema v5 reservation table");
@@ -7348,6 +8444,15 @@ mod native_validation_reservation_tests {
                 rusqlite::params![STORE_SCHEMA_VERSION_V5],
             )
             .expect("set schema v5 fixture version");
+    }
+
+    fn downgrade_fresh_store_to_schema_v6(connection: &rusqlite::Connection) {
+        connection
+            .execute(
+                "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+                rusqlite::params![STORE_SCHEMA_VERSION_V6],
+            )
+            .expect("set schema v6 fixture version");
     }
 
     #[test]
@@ -7806,14 +8911,14 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn fresh_store_uses_schema_v6_and_empty_validation_journal() {
-        let (root, store) = test_store("fresh-v6");
-        let connection = store.connect().expect("open fresh schema v6 store");
+    fn fresh_store_uses_schema_v7_and_empty_validation_journal() {
+        let (root, store) = test_store("fresh-v7");
+        let connection = store.connect().expect("open fresh schema v7 store");
         assert_eq!(
             metadata(&connection, "schema_version").expect("read fresh schema version"),
             STORE_SCHEMA_VERSION
         );
-        validate_snapshot_schema(&connection).expect("validate fresh schema v6");
+        validate_snapshot_schema(&connection).expect("validate fresh schema v7");
         assert!(table_exists(&connection, "validation_jobs_v0"));
         assert!(table_exists(&connection, "validation_callback_outbox_v0"));
         assert!(!table_exists(&connection, "native_validation_reservations"));
@@ -7823,7 +8928,7 @@ mod native_validation_reservation_tests {
             .expect("scan empty recovery journal")
             .is_empty());
         drop(store);
-        fs::remove_dir_all(root).expect("remove fresh schema v6 test directory");
+        fs::remove_dir_all(root).expect("remove fresh schema v7 test directory");
     }
 
     #[test]
@@ -7855,7 +8960,303 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn schema_v5_empty_migrates_atomically_to_v6() {
+    fn schema_v6_reserved_jobs_migrate_atomically_to_v7() {
+        let (root, store) = test_store("migration-v6-reserved");
+        for (route, generation) in [
+            (PayloadValidationRouteV0::Proposal, 21),
+            (PayloadValidationRouteV0::Synced, 22),
+        ] {
+            assert!(matches!(
+                store.reserve_or_reopen_native_validation_job_v0(facts(route, generation, 8, 9,)),
+                Ok(NativeValidationReservationDecisionV0::Reserved(_))
+            ));
+        }
+        let connection = store.connect().expect("open schema v6 migration fixture");
+        let row_checksums_before = {
+            let mut statement = connection
+                .prepare(
+                    "SELECT row_checksum FROM validation_jobs_v0
+                     ORDER BY route, block_id, view_be, generation_be",
+                )
+                .expect("prepare schema v6 checksum query");
+            let checksums = statement
+                .query_map([], |row| row.get::<_, Vec<u8>>(0))
+                .expect("query schema v6 row checksums")
+                .collect::<rusqlite::Result<Vec<_>>>()
+                .expect("collect schema v6 row checksums");
+            checksums
+        };
+        downgrade_fresh_store_to_schema_v6(&connection);
+        validate_snapshot_schema(&connection).expect("validate canonical schema v6 fixture");
+        drop(connection);
+
+        store
+            .load_or_migrate()
+            .expect("migrate checksum-verified schema v6 jobs to v7");
+        let connection = store.connect().expect("open migrated schema v7 store");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read migrated schema version"),
+            STORE_SCHEMA_VERSION
+        );
+        let row_checksums_after = {
+            let mut statement = connection
+                .prepare(
+                    "SELECT row_checksum FROM validation_jobs_v0
+                     ORDER BY route, block_id, view_be, generation_be",
+                )
+                .expect("prepare migrated checksum query");
+            let checksums = statement
+                .query_map([], |row| row.get::<_, Vec<u8>>(0))
+                .expect("query migrated row checksums")
+                .collect::<rusqlite::Result<Vec<_>>>()
+                .expect("collect migrated row checksums");
+            checksums
+        };
+        assert_eq!(row_checksums_after, row_checksums_before);
+        drop(connection);
+        assert_eq!(
+            store
+                .load_native_validation_recovery_work_v0()
+                .expect("scan migrated schema v7 jobs")
+                .len(),
+            2
+        );
+        drop(store);
+        fs::remove_dir_all(root).expect("remove schema v6 migration directory");
+    }
+
+    #[test]
+    fn schema_v6_checksum_drift_migration_fails_closed_and_preserves_version() {
+        let (root, store) = test_store("migration-v6-checksum-drift");
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(facts(
+                PayloadValidationRouteV0::Proposal,
+                23,
+                8,
+                9,
+            )),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open corrupt schema v6 fixture");
+        downgrade_fresh_store_to_schema_v6(&connection);
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0 SET immutable_checksum=zeroblob(32)",
+                [],
+            )
+            .expect("corrupt schema v6 immutable checksum");
+        let schema_before = schema_objects(&connection).expect("capture schema v6 objects");
+        drop(connection);
+
+        let error = store
+            .load_or_migrate()
+            .expect_err("checksum-drifted schema v6 migration must fail closed");
+        assert!(error
+            .to_string()
+            .contains("validate schema-v6 reserved-only native validation journal"));
+        let connection = rusqlite::Connection::open(&store.database_path)
+            .expect("reopen rejected schema v6 database directly");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read preserved schema v6 version"),
+            STORE_SCHEMA_VERSION_V6
+        );
+        assert_eq!(
+            schema_objects(&connection).expect("read preserved schema v6 objects"),
+            schema_before
+        );
+        assert_eq!(
+            connection
+                .query_row(
+                    "SELECT immutable_checksum FROM validation_jobs_v0",
+                    [],
+                    |row| row.get::<_, Vec<u8>>(0),
+                )
+                .expect("read preserved corrupt immutable checksum"),
+            vec![0; 32]
+        );
+        assert_eq!(
+            connection
+                .query_row("PRAGMA quick_check", [], |row| row.get::<_, String>(0))
+                .expect("quick-check rejected schema v6 database"),
+            "ok"
+        );
+        drop(connection);
+        drop(store);
+        fs::remove_dir_all(root).expect("remove rejected schema v6 migration directory");
+    }
+
+    #[test]
+    fn schema_v6_active_state_outbox_and_accounting_drift_migrations_roll_back() {
+        for (case, generation) in [
+            ("active-state", 24_u64),
+            ("outbox", 25_u64),
+            ("accounting", 26_u64),
+        ] {
+            let (root, store) = test_store(&format!("migration-v6-{case}"));
+            let reserved_facts = facts(PayloadValidationRouteV0::Proposal, generation, 8, 9);
+            let validation_id = reserved_facts.validation_id;
+            assert!(matches!(
+                store.reserve_or_reopen_native_validation_job_v0(reserved_facts),
+                Ok(NativeValidationReservationDecisionV0::Reserved(_))
+            ));
+            let connection = store.connect().expect("open schema v6 rejection fixture");
+            let existing = super::load_native_validation_job_v0(&connection, validation_id)
+                .expect("load schema v6 rejection row")
+                .expect("schema v6 rejection row exists");
+            let durable = super::durable_native_validation_job_from_existing_v0(existing, &store)
+                .expect("baseline schema v6 reserved row validates");
+            downgrade_fresh_store_to_schema_v6(&connection);
+            match case {
+                "active-state" => {
+                    let artifact_codec = "inactive-v6-artifact-v0";
+                    let artifact_checksum = [0x91_u8; 32];
+                    let row_checksum = super::native_validation_job_row_checksum_v0(
+                        &durable.immutable_checksum,
+                        super::NativeValidationJobStateV0::Evaluated,
+                        Some(0),
+                        None,
+                        Some(artifact_codec),
+                        Some(&artifact_checksum),
+                        None,
+                        None,
+                    );
+                    connection
+                        .execute(
+                            "UPDATE validation_jobs_v0
+                             SET state=1, result_kind=0, artifact_codec=?1,
+                                 artifact_bytes=X'', artifact_checksum=?2,
+                                 row_checksum=?3",
+                            rusqlite::params![
+                                artifact_codec,
+                                artifact_checksum.as_slice(),
+                                row_checksum.as_slice(),
+                            ],
+                        )
+                        .expect("write inactive schema v6 job state");
+                }
+                "outbox" => {
+                    connection
+                        .execute(
+                            "INSERT INTO validation_callback_outbox_v0(
+                                 route, block_id, view_be, generation_be, result_kind,
+                                 artifact_checksum, payload_codec, payload_bytes,
+                                 payload_checksum, idempotency_key, delivery_attempt_be,
+                                 outbox_checksum
+                             ) VALUES (?1,?2,?3,?4,1,?5,'inactive-v6-callback-v0',X'',?6,?7,zeroblob(8),?8)",
+                            rusqlite::params![
+                                super::native_validation_route_code_v0(
+                                    PayloadValidationRouteV0::Proposal
+                                ),
+                                validation_id.block_id().as_bytes().as_slice(),
+                                validation_id.view().get().to_be_bytes().as_slice(),
+                                validation_id.generation().to_be_bytes().as_slice(),
+                                [0x92_u8; 32].as_slice(),
+                                [0x93_u8; 32].as_slice(),
+                                [0x94_u8; 32].as_slice(),
+                                [0x95_u8; 32].as_slice(),
+                            ],
+                        )
+                        .expect("write inactive schema v6 outbox row");
+                }
+                "accounting" => {
+                    connection
+                        .execute(
+                            "UPDATE validation_journal_accounting_v0
+                             SET artifact_bytes_be=?1 WHERE singleton=1",
+                            rusqlite::params![120_u64.to_be_bytes().as_slice()],
+                        )
+                        .expect("drift schema v6 journal accounting");
+                }
+                _ => unreachable!("closed schema v6 rejection case"),
+            }
+            let before_state = connection
+                .query_row("SELECT state FROM validation_jobs_v0", [], |row| {
+                    row.get::<_, i64>(0)
+                })
+                .expect("read pre-migration schema v6 state");
+            let before_outbox = connection
+                .query_row(
+                    "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                    [],
+                    |row| row.get::<_, u64>(0),
+                )
+                .expect("read pre-migration schema v6 outbox count");
+            let before_accounting = connection
+                .query_row(
+                    "SELECT artifact_bytes_be, outbox_count_be, outbox_bytes_be
+                     FROM validation_journal_accounting_v0 WHERE singleton=1",
+                    [],
+                    |row| {
+                        Ok((
+                            row.get::<_, Vec<u8>>(0)?,
+                            row.get::<_, Vec<u8>>(1)?,
+                            row.get::<_, Vec<u8>>(2)?,
+                        ))
+                    },
+                )
+                .expect("read pre-migration schema v6 accounting");
+            drop(connection);
+
+            assert!(
+                store.connect().is_err(),
+                "schema v6 {case} migration unexpectedly succeeded"
+            );
+            let connection = rusqlite::Connection::open(&store.database_path)
+                .expect("reopen rejected schema v6 migration directly");
+            assert_eq!(
+                metadata(&connection, "schema_version")
+                    .expect("read rolled-back schema v6 version"),
+                STORE_SCHEMA_VERSION_V6
+            );
+            assert_eq!(
+                connection
+                    .query_row("SELECT state FROM validation_jobs_v0", [], |row| {
+                        row.get::<_, i64>(0)
+                    })
+                    .expect("read rolled-back schema v6 state"),
+                before_state
+            );
+            assert_eq!(
+                connection
+                    .query_row(
+                        "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                        [],
+                        |row| row.get::<_, u64>(0),
+                    )
+                    .expect("read rolled-back schema v6 outbox count"),
+                before_outbox
+            );
+            assert_eq!(
+                connection
+                    .query_row(
+                        "SELECT artifact_bytes_be, outbox_count_be, outbox_bytes_be
+                         FROM validation_journal_accounting_v0 WHERE singleton=1",
+                        [],
+                        |row| {
+                            Ok((
+                                row.get::<_, Vec<u8>>(0)?,
+                                row.get::<_, Vec<u8>>(1)?,
+                                row.get::<_, Vec<u8>>(2)?,
+                            ))
+                        },
+                    )
+                    .expect("read rolled-back schema v6 accounting"),
+                before_accounting
+            );
+            assert_eq!(
+                connection
+                    .query_row("PRAGMA quick_check", [], |row| row.get::<_, String>(0))
+                    .expect("quick-check rejected schema v6 migration"),
+                "ok"
+            );
+            drop(connection);
+            drop(store);
+            fs::remove_dir_all(root).expect("remove rejected schema v6 migration case");
+        }
+    }
+
+    #[test]
+    fn schema_v5_empty_migrates_atomically_through_v6_to_v7() {
         let (root, store) = test_store("migration-v5-empty");
         let connection = store.connect().expect("open schema v5 migration fixture");
         downgrade_fresh_store_to_schema_v5(&connection);
@@ -7864,8 +9265,8 @@ mod native_validation_reservation_tests {
 
         store
             .load_or_migrate()
-            .expect("migrate empty schema v5 store to v6");
-        let connection = store.connect().expect("open migrated schema v6 store");
+            .expect("migrate empty schema v5 store through v6 to v7");
+        let connection = store.connect().expect("open migrated schema v7 store");
         assert_eq!(
             metadata(&connection, "schema_version").expect("read migrated schema version"),
             STORE_SCHEMA_VERSION
@@ -7873,7 +9274,7 @@ mod native_validation_reservation_tests {
         assert!(!table_exists(&connection, "native_validation_reservations"));
         assert!(table_exists(&connection, "validation_jobs_v0"));
         assert!(table_exists(&connection, "validation_callback_outbox_v0"));
-        validate_snapshot_schema(&connection).expect("validate migrated schema v6");
+        validate_snapshot_schema(&connection).expect("validate migrated schema v7");
         drop(connection);
         drop(store);
         fs::remove_dir_all(root).expect("remove empty schema v5 migration directory");
@@ -7972,8 +9373,8 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn schema_v4_migrates_serially_through_v5_to_v6() {
-        let (root, store) = test_store("migration-v4-v6");
+    fn schema_v4_migrates_serially_through_v5_and_v6_to_v7() {
+        let (root, store) = test_store("migration-v4-v7");
         let mut connection = store.connect().expect("open schema v4 migration fixture");
         downgrade_fresh_store_to_schema_v5(&connection);
         connection
@@ -7997,13 +9398,20 @@ mod native_validation_reservation_tests {
 
         migrate_store_schema_v5_to_v6(&mut connection).expect("migrate schema v5 to v6");
         assert_eq!(
-            metadata(&connection, "schema_version").expect("read final schema version"),
-            STORE_SCHEMA_VERSION
+            metadata(&connection, "schema_version").expect("read schema v6 version"),
+            STORE_SCHEMA_VERSION_V6
         );
         assert!(!table_exists(&connection, "native_validation_reservations"));
         assert!(table_exists(&connection, "validation_jobs_v0"));
         assert!(table_exists(&connection, "validation_callback_outbox_v0"));
-        validate_snapshot_schema(&connection).expect("validate final schema v6");
+        validate_snapshot_schema(&connection).expect("validate intermediate schema v6");
+
+        migrate_store_schema_v6_to_v7(&mut connection, &store).expect("migrate schema v6 to v7");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read final schema version"),
+            STORE_SCHEMA_VERSION
+        );
+        validate_snapshot_schema(&connection).expect("validate final schema v7");
         drop(connection);
         drop(store);
         fs::remove_dir_all(root).expect("remove serial schema migration directory");
@@ -8322,9 +9730,10 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn exact_reopen_rejects_a_different_non_reserved_job() {
+    fn exact_reopen_stays_inert_but_restart_rejects_a_different_non_reserved_job() {
         let (root, store) = test_store("foreign-inactive-state");
         let first = facts(PayloadValidationRouteV0::Proposal, 13, 8, 9);
+        let first_id = first.validation_id;
         let second = facts(PayloadValidationRouteV0::Proposal, 14, 8, 9);
         let second_id = second.validation_id;
         for candidate in [first, second] {
@@ -8371,24 +9780,32 @@ mod native_validation_reservation_tests {
             .expect("write checksum-consistent foreign inactive state");
         drop(connection);
 
-        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
+        let reopened = match store.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             13,
             8,
             9,
         )) {
-            Ok(_) => panic!("reserved job reopened beside a non-reserved job"),
-            Err(failure) => failure,
-        };
-        assert!(matches!(
-            failure.cause(),
-            NativeValidationReservationFailureCauseV0::Invariant {
-                stage: super::NativeValidationReservationStageV0::ReadExisting,
-                kind: NativeValidationReservationInvariantV0::StateMismatch,
-                ..
+            Ok(NativeValidationReservationDecisionV0::Existing(existing)) => existing,
+            Ok(NativeValidationReservationDecisionV0::Reserved(_)) => {
+                panic!("exact reopen reminted first-evaluation authority")
             }
-        ));
+            Err(failure) => panic!("exact inert reopen failed: {:?}", failure.cause()),
+        };
+        assert_eq!(reopened.validation_id(), first_id);
+        assert_eq!(
+            reopened.state(),
+            super::NativeValidationJobStateV0::Reserved
+        );
         drop(store);
+        let corrupted = ApplicationStore::open(
+            &root.join("app.status"),
+            "reservation-test-chain",
+            &"11".repeat(32),
+        )
+        .expect("reopen foreign inactive-state store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
         fs::remove_dir_all(root).expect("remove foreign inactive-state test directory");
     }
 

@@ -498,7 +498,7 @@ duplicate, `Unavailable`, or `DeterministicallyInvalid` result. The exact route
 travels with the owner through open/body/cursor/runtime/post-state/comparator
 and process-local disposition; callers cannot inject a bool or naked route.
 
-Separately from application-store schema v6, Core `SafetyState` schema v5
+Separately from application-store schema v7, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either `ValidatePayload` or `ValidateSyncedPayload` may escape a
 `PersistSafetyState -> StorageAck` barrier. Each record binds the Core-selected
@@ -538,22 +538,30 @@ crash replay, callback exactly-once, type-level callback authority, or recovery
 liveness.
 
 After that wrapper/route check and process-local claim, and before any host or
-snapshot read, application-store schema v6 durably reserves one
+snapshot read, historical application-store schema v6 durably reserved one
 `validation_jobs_v0` row for `(route, full ValidationId)` under
 `BEGIN IMMEDIATE`. The row freezes the raw target header, a strict versioned
 payload/evidence body record, parent tip and optional exact parent state,
 execution-configuration references, the currently generation-derived creation
 revision, the existing raw-source fingerprint, and domain-separated body/
-immutable/row checksums. It starts in `reserved`. The schema reserves columns
-and a `validation_callback_outbox_v0` table for later tranches, but this binary
-accepts only `reserved` rows and an empty outbox; later artifact, transition,
-idempotency, and outbox semantics are not yet frozen. An
+immutable/row checksums. It starts in `reserved`; v6 accepts only that state and
+an empty `validation_callback_outbox_v0`. Application-store schema v7 preserves
+all verified v6 reservations and activates exactly one later state:
+`callback_pending` for a complete mixed-body computed state-root or receipts-root
+mismatch. A consuming owner-bound bridge maps only those two mismatches to stable
+reason codes 1 and 2. One `BEGIN IMMEDIATE` transaction writes the fixed 120-byte
+`trnm.native-validation.invalid-artifact.v0` artifact, the fixed 84-byte
+`trnm.native-validation.invalid-callback.v0` payload, their domain-separated
+checksums and idempotency key, the unique outbox row, the job state, and O(1)
+accounting. A pre-commit error rolls all of them back and returns the unique
+prepared owner. `Valid`, `Evaluated`, `Delivered`, `Acked`, `Applied`,
+`Unavailable`, and invariant results remain inactive and fail closed. An
 exact reopen returns its checksum-verified durable state rather than silently
 coalescing unfinished work, while no reopen can recreate the unique first-
 reservation token. Startup and recovery exact-decode and canonically re-encode
 the target and any present parent header, rebind identity/parent/configuration
 fields, rederive the frozen
-raw-source fingerprint, and enumerate verified rows in canonical identity
+raw-source fingerprint, and enumerate verified rows in canonical state/identity
 order. Malformed framing, semantic splice, checksum drift, accounting drift,
 or host/runtime reference drift fails closed. A headerless height-zero parent
 is only a structurally revalidated inert recovery fact: it must bind an
@@ -565,14 +573,18 @@ atomically maintained O(1) accounting singleton while startup independently
 audits it against the real rows; exact reopen precedes capacity rejection. The
 application compatibility boundary also requires `max_block_bytes <= 16 MiB`.
 Schema-v5 migration succeeds only when its legacy reservation table is empty;
-a non-empty v5 table is unreplayable and rolls back unchanged. State-sync
+a non-empty v5 table is unreplayable and rolls back unchanged. The v6-to-v7
+activation validates every reserved row, foreign key, binding, resource bound,
+and accounting fact in one transaction and rolls back to v6 on any drift.
+State-sync
 snapshot generation scrubs outbox rows first and jobs second only from the
 temporary copy and verifies both are empty, leaving the source database
 unchanged; installation refuses to overwrite a non-empty target-local
-validation journal. This is a revalidatable raw reserved-job/recovery-fact foundation,
-not a reconstruction of the signed proposal witness and not an
-evaluated artifact, executable crash takeover, Core callback delivery,
-acknowledgement, or process-wide callback exactly-once guarantee.
+validation journal. This is a revalidatable raw request/recovery-fact foundation
+plus a durable deterministic-invalid callback-pending record. It is not a
+reconstruction of the signed proposal witness, a durable `Valid` artifact,
+executable crash takeover, Core callback delivery, acknowledgement, or a
+process-wide callback exactly-once guarantee.
 
 That carrier now also opens a production, process-local sequential transaction
 cursor. Its host tuple can only be borrowed from initialized `AppCore`; the
@@ -654,7 +666,7 @@ receipts preserve real gas, exact `u128` fees, and ordered events; PoCO and
 validator items use the frozen empty internal receipt, while cutoff refresh and
 implicit validator activation add no body receipt. The result is still only a
 private matched/failed/classified owner, not an app-private `Valid` outcome.
-Plan application/persistence and head update, durable artifact/outbox,
+Plan application/persistence and head update, a durable `Valid` artifact/outbox,
 speculative-parent overlays, cross-epoch/handoff, actual Core callback
 execution, ABCI wiring, and cross-process rollback
 protection remain hard open prerequisites before any terminal/Core callback
@@ -663,8 +675,9 @@ private admission branch is proven not to emit a callback for a losing clone.
 The private route-bearing bridge now proves that `Proposal` maps only to
 `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it does
 not submit that input to a Core instance or establish callback delivery.
-The reservation stores no evaluated artifact, result, JMT plan, or outbox. A
-private inert durable-plan codec now covers the exact persistence-bearing JMT
+The v7 journal stores no evaluated `Valid` artifact, durable JMT plan, or
+`Valid` callback outbox. A private inert durable-plan codec now covers the exact
+persistence-bearing JMT
 version/root, nodes, values, stale indices, and key preimages without exposing
 the process-local plan seal or serializing `TreeUpdateBatch` as a container.
 Its per-node representation is explicitly pinned to the existing
@@ -675,19 +688,20 @@ an artifact after another fork occupies that state version. A separate
 consuming boundary retains and rebinds the original parent root, requires an
 unoccupied target, replans the same writes on the current reader, and releases
 the fresh `PlannedAuthUpdate` only if its physical bytes are still exact. The
-codec is not yet embedded in an evaluated artifact or written to the job
+codec is not yet embedded in a `Valid` evaluated artifact or written to the job
 table. A future activation must first prove the 64 MiB physical-plan envelope
 against the consensus block/write scale gate; exceeding a local artifact budget
 can never
-become deterministic invalidity. The validation-time atomic boundary must
-persist a versioned revalidatable artifact together with callback-outbox
-intent; a distinct
+become deterministic invalidity. The remaining `Valid` validation-time atomic
+boundary must persist a versioned revalidatable artifact together with
+callback-outbox intent; a distinct
 Finalize-time atomic boundary must revalidate the exact authority and couple
 JMT/domain apply, root/native-head persistence, head advancement, and applied
-state. Neither boundary, authenticated replay tickets, completion retirement
+state. Neither the `Valid` validation-time nor Finalize-time boundary,
+authenticated replay tickets, completion retirement
 after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-application-reservation takeover, evaluated-artifact persistence, host
+application-reservation takeover, `Valid` evaluated-artifact persistence, host
 callback-outbox scheduling/delivery acknowledgement, crash takeover, Core
 callback delivery,
 nor callback exactly-once is implemented. Core's completed `StorageAck`
@@ -1083,7 +1097,7 @@ comparator now closes body-wide receipts and mixed-body four-root comparison
 inside a private classification carrier, with full provenance/final-source/
 plan/static invariants before state-then-receipts mismatch classification. It
 does not promote app-private `Valid`. Plan application/persistence/head update,
-durable terminal artifacts/outbox, speculative-parent
+durable `Valid` terminal artifact/outbox, speculative-parent
 and cross-epoch/handoff support, callback delivery, and Core/ABCI integration
 remain open.
 Runtime resource estimation now has a separate fallible API and opaque

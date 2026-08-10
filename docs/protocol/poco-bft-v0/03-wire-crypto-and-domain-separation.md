@@ -480,7 +480,7 @@ a duplicate, `Unavailable`, or `DeterministicallyInvalid` wire result. The
 route remains inside the owner across open/body/cursor/runtime/post-state/
 comparator/disposition; no naked bool or route is accepted as authority.
 
-Separately from application-store schema v6, Core `SafetyState` schema v5
+Separately from application-store schema v7, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either validation effect may escape a `PersistSafetyState -> StorageAck`
 barrier. This cloneable persistence fact binds the Core-selected route, full
@@ -517,31 +517,47 @@ recovery supplies exact-result suppression, but these local persistence rules
 establish no new transport, type-level callback capability, crash replay/
 liveness, host-delivery acknowledgement, or callback exactly-once protocol.
 
-Application-store schema v6 adds local `validation_jobs_v0` and
+Historical application-store schema v6 adds local `validation_jobs_v0` and
 `validation_callback_outbox_v0` relations; neither is a wire type or peer
 authority. Before any host/snapshot read, one `BEGIN IMMEDIATE` transaction
 stores the route/full ID, exact target header, a strict versioned raw body
 record, parent tip and optional exact parent header/state root, configuration
 references, the currently generation-derived creation revision, the existing
 source fingerprint, and distinct domain-separated body/immutable/row
-checksums. The initial state is `reserved`. Future state/artifact columns and
-the outbox table are structural reservations only: this binary rejects every
-non-`reserved` row and every non-empty outbox, and their codecs/checksum/
-idempotency semantics are not yet frozen. Exact reopen returns the
-verified durable state without reminting first-evaluation authority, and the
-startup/recovery scanner exact-decodes and canonically re-encodes the target
-and any present parent header,
-rebinds identity/parent/configuration fields, rederives the raw-source
-fingerprint, and validates checksums plus canonical row order. The journal is
-capped at 65,536 rows plus a 512-MiB raw-request budget, with an atomic O(1)
-accounting singleton independently audited at startup. The app accepts only
-parameter profiles with `max_block_bytes <= 16 MiB`. Empty schema v5 journals
-migrate atomically; non-empty v5
-reservations fail closed and remain byte-for-byte intact. State sync deletes
-outbox then jobs only from the temporary copy and verifies both are empty.
-These checksums are corruption/congruence seals, never body-validity,
-execution, evaluated-result, callback, acknowledgement, takeover, or
-exactly-once authority.
+checksums. Its only active state is `reserved`; v6 rejects every non-reserved
+row and every non-empty outbox.
+
+Application-store schema v7 preserves those reserved rows and activates one
+narrow terminal persistence case: `callback_pending`
+`DeterministicallyInvalid` for the complete mixed-body comparator's computed
+state-root or computed receipts-root mismatch. A fixed canonical artifact binds
+the route, full `ValidationId`, raw-request fingerprint, immutable-job
+checksum, result tag, and closed reason code. A fixed callback payload binds
+the same route/full ID and result to the artifact checksum. Distinct hashes
+bind the artifact bytes, callback payload bytes, callback idempotency identity,
+and complete outbox row. One `BEGIN IMMEDIATE` transaction stores the artifact,
+inserts exactly one congruent outbox row, moves the job from `reserved` to
+`callback_pending`, and updates accounting; no committed intermediate
+`evaluated` state is valid. Exact retry returns the existing row without
+double-accounting. Every other invalid reason, `Valid`, `Unavailable`,
+`InvariantFault`, `evaluated`, `delivered`, `acked`, and `applied` remains
+inactive and fail closed in v7.
+
+Exact reopen returns verified durable state without reminting first-evaluation
+authority. Startup/recovery exact-decodes and canonically re-encodes the target
+and any present parent header, rebinds identity/parent/configuration fields,
+rederives the raw-source fingerprint, and validates the job, artifact, outbox,
+checksums, and canonical row order. The journal is capped at 65,536 rows plus a
+512-MiB raw-request budget, with separate bounded artifact/outbox accounting
+and an atomic O(1) accounting singleton independently audited at startup. The
+app accepts only parameter profiles with `max_block_bytes <= 16 MiB`. Empty
+schema v5 journals migrate through reserved-only v6 into v7; non-empty v5
+reservations fail closed and remain byte-for-byte intact, and corrupt v6
+activation rolls back atomically. State sync deletes outbox then jobs only from
+the temporary copy and verifies both are empty. These facts are
+corruption/congruence seals and durable callback intent only, never
+signed-proposal reconstruction, Core callback authority, delivery,
+acknowledgement, takeover, or exactly-once authority.
 
 The exact process-local integrity labels used by this foundation are:
 
@@ -553,11 +569,28 @@ trnm.consensus-app.validation-job-immutable.v0      // hash_domain
 trnm.consensus-app.validation-job-row.v0            // hash_domain
 trnm.consensus-app.validation-runtime-profile.v0    // hash_domain
 trnm.consensus-app.validation-host-config.v0        // hash_domain
+trnm.consensus-app.validation-artifact.v0           // hash_domain
+trnm.consensus-app.validation-callback-payload.v0   // hash_domain
+trnm.consensus-app.validation-callback-idempotency.v0 // hash_domain
+trnm.consensus-app.validation-callback-outbox-row.v0  // hash_domain
 ```
 
 These are node-local integrity/congruence labels, not consensus signature or
-wire-object domains. Artifact and callback labels remain intentionally absent
-until their exact codecs and recovery semantics are defined.
+wire-object domains. The v7 artifact and callback records use the fixed codec
+labels `trnm.native-validation.invalid-artifact.v0` and
+`trnm.native-validation.invalid-callback.v0`; both remain application-local
+inert records and introduce no peer-visible result or signing domain.
+
+The invalid-artifact v0 record is exactly 120 bytes: big-endian `u16` codec
+version zero, one-byte route, 32-byte block ID, big-endian `u64` view and
+generation, 32-byte request fingerprint, 32-byte immutable-job checksum,
+one-byte deterministic-invalid result tag, and big-endian `u32` reason. Reason
+zero is unassigned; one means computed state-root mismatch and two means
+computed receipts-root mismatch. The invalid-callback v0 record is exactly 84
+bytes: version, route, block ID, view, generation, the same result tag, and the
+32-byte artifact checksum in that order. Decoders require the exact size,
+known version/route/result/reason, strict EOF, and byte-identical canonical
+re-encoding.
 
 The same process-local carrier may now borrow the canonical signer-policy
 preimage only from initialized `AppCore`, after its commitment matches store
@@ -626,20 +659,25 @@ terminal/Core callback path. The object-graph gate itself performs no terminal
 mapping; only the current private admission branch is proven to emit no
 callback for a losing clone.
 The route-bearing disposition likewise is not a terminal result and invokes no
-Core `Input`, persistence, or ABCI operation. A future consuming bridge must
-map `Proposal` only to `PayloadValidated` and `Synced` only to
-`SyncedPayloadValidated`. The future validation-time atomic boundary still
-must couple a versioned revalidatable evaluated artifact with callback-outbox
-intent. The distinct Finalize-time atomic boundary still must revalidate exact
-authority and atomically couple JMT/domain apply, root/native-head persistence,
-head advancement, and applied state. Core's completed cleanup `StorageAck` and
-completion tombstone are not a host callback-outbox delivery acknowledgement.
+Core `Input` or ABCI operation. A narrow consuming bridge may prepare only the
+complete-body state-root or receipts-root deterministic mismatch for the v7
+application-store transaction; it cannot prepare `Valid`, `Unavailable`, or an
+invariant fault. Schema v7 atomically couples that canonical invalid artifact
+with callback-outbox intent, but it does not call `Core::step` or deliver the
+intent. A future delivery bridge must map `Proposal` only to
+`PayloadValidated` and `Synced` only to `SyncedPayloadValidated`. The `Valid`
+validation-time artifact/outbox boundary remains open. The distinct Finalize-
+time atomic boundary still must revalidate exact authority and atomically
+couple JMT/domain apply, root/native-head persistence, head advancement, and
+applied state. Core's completed cleanup `StorageAck` and completion tombstone
+are not a host callback-outbox delivery acknowledgement.
 Authenticated replay tickets, completion retirement after a durable
 host-delivery acknowledgement, speculative-parent/
-BlockTree reconstruction, application-reservation takeover, evaluated-artifact
-persistence, host callback-outbox scheduling/delivery acknowledgement, crash
-takeover, Core callback delivery, ABCI, both atomic boundaries, and process-wide
-callback exactly-once remain absent.
+BlockTree reconstruction, application-reservation takeover, `Valid` evaluated-
+artifact persistence, host callback-outbox scheduling/delivery acknowledgement,
+crash takeover, Core callback delivery, ABCI, the `Valid` validation-time and
+Finalize-time atomic boundaries, and process-wide callback exactly-once remain
+absent.
 Runtime
 resource estimation now has a distinct `try_estimate_resources_v0` call and
 opaque estimate-failure token: state dependency errors remain typed,

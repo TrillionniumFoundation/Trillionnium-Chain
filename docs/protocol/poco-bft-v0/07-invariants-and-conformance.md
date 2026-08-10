@@ -723,7 +723,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`; route MUST remain owned through open/body/cursor/
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
-- separately from application-store schema v6, Core `SafetyState` schema v6
+- separately from application-store schema v7, Core `SafetyState` schema v6
   MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
@@ -766,26 +766,47 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   suppress an exact same-result replay but Core cleanup/completion MUST NOT be
   represented as type-level callback authority, host callback-outbox delivery
   acknowledgement, or callback exactly-once;
-- application-store schema v6 MUST durably reserve one `validation_jobs_v0`
+- historical application-store schema v6 MUST durably reserve one
+  `validation_jobs_v0`
   row for `(route, full ValidationId)` after wrapper/route congruence and the
   process-local claim but before host or snapshot reads; one
   `BEGIN IMMEDIATE` transaction MUST freeze the exact target header, strict
   versioned raw body record, parent tip and optional exact parent state,
   configuration references, the currently generation-derived creation
   revision, raw-source fingerprint, and distinct body/immutable/row checksums
-  in state `reserved`; the active v6 binary MUST reject every non-`reserved`
-  row and non-empty outbox because artifact/outbox codecs and transition
-  semantics are not yet frozen; a congruent reopen
+  in state `reserved`; schema v6 MUST reject every non-`reserved` row and
+  non-empty outbox; a congruent reopen
   MUST return the checksum-verified durable state and MUST NOT remint the
   first-reservation token; route, source, target, parent, configuration,
   revision, framing, state, or checksum drift MUST fail closed;
-- the schema-v6 job journal MUST be bounded at 65,536 rows and 512 MiB of raw
+- application-store schema v7 MUST preserve every valid schema-v6 `reserved`
+  row and additionally admit only `callback_pending` deterministic-invalid
+  rows produced by the complete mixed-body comparator's computed state-root or
+  computed receipts-root mismatch; no other invalid reason, `Valid`,
+  `Unavailable`, `InvariantFault`, `evaluated`, `delivered`, `acked`, or
+  `applied` state is active in v7;
+- the v7 deterministic-invalid artifact MUST canonically bind the route, full
+  `ValidationId`, request fingerprint, immutable-job checksum, closed result
+  tag, and stable root-mismatch reason; the corresponding callback payload,
+  idempotency key, and outbox row MUST bind that same route/full ID, result,
+  and artifact checksum under distinct domains; decode/checksum consistency is
+  an inert recovery fact and MUST NOT reconstruct Core callback authority;
+- one `BEGIN IMMEDIATE` transaction MUST change a matching `reserved` job to
+  `callback_pending`, store its deterministic-invalid artifact, insert exactly
+  one congruent callback-outbox row, and update row/aggregate accounting; a
+  crash or failure before commit MUST leave `reserved` with no outbox, while an
+  exact committed retry MUST return the existing callback-pending state without
+  double-accounting or reminting reservation authority;
+- the validation-job journal MUST be bounded at 65,536 rows and 512 MiB of raw
   request records with no eviction, and exact reopen MUST precede capacity
   rejection; schema-v5 migration MUST proceed only when the legacy reservation
-  table is empty, while a non-empty v5 table MUST roll back without deleting,
-  rewriting, or fabricating replay fields; restart recovery MUST enumerate all
-  verified jobs in canonical state/identity order but MUST NOT treat those
-  facts as reconstructed Core or evaluation authority; startup/recovery MUST
+  table is empty, then advance through the reserved-only v6 format before v7
+  activation; a non-empty v5 table MUST roll back without deleting, rewriting,
+  or fabricating replay fields, and v6-to-v7 activation MUST fail atomically on
+  any non-reserved row, outbox row, checksum, or accounting drift; restart
+  recovery MUST enumerate all verified jobs in canonical state/identity order
+  but MUST NOT treat those facts as reconstructed Core or evaluation authority;
+  startup/recovery MUST
   exact-decode and canonically re-encode target and parent headers, rebind all
   duplicated identity/parent/configuration fields, and rederive the frozen
   request fingerprint; checksum-consistent semantic splices MUST fail closed.
@@ -803,8 +824,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   checkpoint/VACUUM, MUST verify both exported tables are empty, and MUST leave
   the source database unchanged; installation MUST reject a non-empty target
   validation journal rather than silently discard target-local work; the
-  job/fingerprint/checksums MUST NOT be
-  treated as body validation, an evaluated artifact/result, JMT/terminal
+  raw job/fingerprint/checksums and v7 deterministic-invalid artifact/outbox
+  MUST NOT be treated as signed-proposal reconstruction, JMT/terminal
   authority, callback delivery/acknowledgement, executable crash takeover, or
   process-wide callback exactly-once evidence;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
@@ -951,17 +972,19 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   disposition MUST NOT itself create a terminal result, call Core `Input`,
   persist state, or enter ABCI; a future consuming bridge MUST map `Proposal`
   only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, and
-  reservation/outbox identity MUST remain `(route, full ValidationId)`; the
-  future validation-time atomic boundary MUST couple a versioned revalidatable
-  evaluated artifact with callback-outbox intent, and the separate Finalize-
+  reservation/outbox identity MUST remain `(route, full ValidationId)`; v7
+  closes that validation-time atomic boundary only for the two complete-body
+  deterministic root mismatches, while a revalidatable `Valid` artifact and
+  callback-outbox intent remain open; the separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
   JMT/domain apply, root/native-head persistence, head advancement, and applied
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-  application-reservation takeover, evaluated-artifact persistence, host
+  application-reservation takeover, `Valid` evaluated-artifact persistence, host
   callback-outbox scheduling/delivery acknowledgement, crash takeover, Core
   callback delivery,
-  process-wide callback exactly-once, and both atomic boundaries remain open;
+  process-wide callback exactly-once, and the `Valid` validation-time plus
+  Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.
 
 Repeated runs with the same inputs must produce byte-identical logical outputs and final safety state.

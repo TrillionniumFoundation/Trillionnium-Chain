@@ -30,6 +30,14 @@ run_unit_filter trnm-consensus-core \
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
+  invalid_artifact_and_callback_v0_frozen_vectors
+run_unit_filter trnm-consensus-app \
+  durable_complete_body_invalid_seals_one_callback_pending_record_and_recovers_it
+run_unit_filter trnm-consensus-app \
+  durable_complete_body_invalid_precommit_failpoints_roll_back_and_return_owner
+run_unit_filter trnm-consensus-app \
+  durable_complete_body_invalid_restart_rejects_artifact_and_outbox_splices
+run_unit_filter trnm-consensus-app \
   recovery_scanner_orders_reserved_jobs_and_fails_closed_on_checksum_drift
 run_unit_filter trnm-consensus-app \
   restart_rejects_checksum_consistent_canonical_header_splice
@@ -38,11 +46,15 @@ run_unit_filter trnm-consensus-app \
 run_unit_filter trnm-consensus-app \
   exact_reopen_and_restart_reject_nonempty_inactive_outbox
 run_unit_filter trnm-consensus-app \
-  exact_reopen_rejects_a_different_non_reserved_job
+  exact_reopen_stays_inert_but_restart_rejects_a_different_non_reserved_job
 run_unit_filter trnm-consensus-app \
   restart_rejects_validation_journal_accounting_drift
 run_unit_filter trnm-consensus-app \
   schema_v5_nonempty_migration_fails_closed_and_preserves_rows
+run_unit_filter trnm-consensus-app \
+  schema_v6_reserved_jobs_migrate_atomically_to_v7
+run_unit_filter trnm-consensus-app \
+  schema_v6_active_state_outbox_and_accounting_drift_migrations_roll_back
 run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 
