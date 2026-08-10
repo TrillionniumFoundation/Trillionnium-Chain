@@ -623,6 +623,7 @@ pub(crate) fn verify_durable_invalid_callback_v0(
     payload_checksum: [u8; 32],
     idempotency_key: [u8; 32],
     delivery_attempt: u64,
+    expected_delivery_attempt: u64,
     outbox_checksum: [u8; 32],
     stored_result_kind: u8,
     stored_artifact_checksum: [u8; 32],
@@ -637,7 +638,7 @@ pub(crate) fn verify_durable_invalid_callback_v0(
     if stored_result_kind != DURABLE_DETERMINISTIC_INVALID_RESULT_KIND_V0 {
         return Err(DurableNativeValidationBindingErrorV0::ResultKindMismatch.into());
     }
-    if delivery_attempt != DURABLE_INVALID_DELIVERY_ATTEMPT_V0 {
+    if delivery_attempt != expected_delivery_attempt {
         return Err(DurableNativeValidationBindingErrorV0::DeliveryAttemptMismatch.into());
     }
     let unverified = decode_durable_invalid_callback_v0(payload_bytes)?;
@@ -677,6 +678,16 @@ pub(crate) fn verify_durable_invalid_callback_v0(
         idempotency_key,
         outbox_checksum,
     })
+}
+
+pub(crate) fn durable_invalid_callback_payload_checksum_for_identity_v0(
+    identity: NativeValidationArtifactIdentityV0,
+    artifact_checksum: [u8; 32],
+) -> [u8; 32] {
+    durable_invalid_callback_payload_checksum_v0(&encode_durable_invalid_callback_v0(
+        identity,
+        artifact_checksum,
+    ))
 }
 
 pub(crate) fn durable_invalid_callback_idempotency_key_v0(
@@ -1026,6 +1037,7 @@ mod tests {
                 callback.payload_checksum(),
                 callback.idempotency_key(),
                 callback.delivery_attempt(),
+                callback.delivery_attempt(),
                 callback.outbox_checksum(),
                 callback.result_kind(),
                 callback.artifact_checksum(),
@@ -1225,6 +1237,7 @@ mod tests {
                 wrong_payload_checksum,
                 callback.idempotency_key(),
                 callback.delivery_attempt(),
+                callback.delivery_attempt(),
                 callback.outbox_checksum(),
                 callback.result_kind(),
                 callback.artifact_checksum(),
@@ -1241,6 +1254,7 @@ mod tests {
                 callback.payload_checksum(),
                 callback.idempotency_key(),
                 1,
+                callback.delivery_attempt(),
                 callback.outbox_checksum(),
                 callback.result_kind(),
                 callback.artifact_checksum(),
@@ -1281,6 +1295,7 @@ mod tests {
                 spliced_payload_checksum,
                 spliced_idempotency,
                 callback.delivery_attempt(),
+                callback.delivery_attempt(),
                 spliced_outbox,
                 callback.result_kind(),
                 callback.artifact_checksum(),
@@ -1299,6 +1314,7 @@ mod tests {
                 callback.payload(),
                 callback.payload_checksum(),
                 wrong_idempotency,
+                callback.delivery_attempt(),
                 callback.delivery_attempt(),
                 callback.outbox_checksum(),
                 callback.result_kind(),
@@ -1319,6 +1335,7 @@ mod tests {
                 callback.payload_checksum(),
                 callback.idempotency_key(),
                 callback.delivery_attempt(),
+                callback.delivery_attempt(),
                 wrong_outbox,
                 callback.result_kind(),
                 callback.artifact_checksum(),
@@ -1326,6 +1343,55 @@ mod tests {
             ),
             Err(DurableNativeValidationRecordErrorV0::Binding(
                 DurableNativeValidationBindingErrorV0::OutboxChecksumMismatch
+            ))
+        ));
+    }
+
+    #[test]
+    fn callback_verifier_binds_an_explicit_delivery_attempt() {
+        let identity = fixture_identity_v0(PayloadValidationRouteV0::Proposal);
+        let artifact = prepare_durable_invalid_artifact_v0(
+            identity,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let callback = prepare_durable_invalid_callback_v0(&artifact);
+        let delivered_attempt = 3;
+        let delivered_outbox = durable_invalid_callback_outbox_checksum_v0(
+            identity,
+            callback.artifact_checksum(),
+            callback.payload_codec(),
+            callback.payload_checksum(),
+            callback.idempotency_key(),
+            delivered_attempt,
+        );
+        verify_durable_invalid_callback_v0(
+            callback.payload_codec(),
+            callback.payload(),
+            callback.payload_checksum(),
+            callback.idempotency_key(),
+            delivered_attempt,
+            delivered_attempt,
+            delivered_outbox,
+            callback.result_kind(),
+            callback.artifact_checksum(),
+            identity,
+        )
+        .expect("verify explicit delivered attempt");
+        assert!(matches!(
+            verify_durable_invalid_callback_v0(
+                callback.payload_codec(),
+                callback.payload(),
+                callback.payload_checksum(),
+                callback.idempotency_key(),
+                delivered_attempt,
+                delivered_attempt + 1,
+                delivered_outbox,
+                callback.result_kind(),
+                callback.artifact_checksum(),
+                identity,
+            ),
+            Err(DurableNativeValidationRecordErrorV0::Binding(
+                DurableNativeValidationBindingErrorV0::DeliveryAttemptMismatch
             ))
         ));
     }

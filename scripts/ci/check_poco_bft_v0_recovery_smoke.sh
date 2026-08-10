@@ -52,11 +52,19 @@ run_unit_filter trnm-consensus-app \
 run_unit_filter trnm-consensus-app \
   schema_v5_nonempty_migration_fails_closed_and_preserves_rows
 run_unit_filter trnm-consensus-app \
-  schema_v6_reserved_jobs_migrate_atomically_to_v7
+  schema_v6_reserved_jobs_migrate_atomically_through_v7_to_v8
 run_unit_filter trnm-consensus-app \
   schema_v6_active_state_outbox_and_accounting_drift_migrations_roll_back
+run_unit_filter trnm-consensus-app \
+  schema_v7_reserved_and_callback_pending_rows_migrate_byte_exactly_to_v8
+run_unit_filter trnm-consensus-app \
+  schema_v7_delivery_state_activation_fails_closed_and_preserves_rows
+run_unit_filter trnm-consensus-app \
+  schema_v8_recovers_delivered_and_acked_with_retired_outbox_accounting
+run_unit_filter trnm-consensus-app \
+  schema_v8_restart_rejects_evaluated_applied_and_valid_rows
 run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 
 printf '%s\n' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-validation-job-recovery-integrity-outbox-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-validation-job-recovery-integrity-outbox-delivery-states-snapshot'

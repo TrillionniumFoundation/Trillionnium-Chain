@@ -9362,8 +9362,8 @@ mod tests {
                 panic!("first source reservation must own durable admission")
             }
         };
-        // This is a deliberate raw-SQL malformed-child fixture: the active v7
-        // binary accepts only fully verified callback-pending invalid rows, but snapshot
+        // This is a deliberate raw-SQL malformed-child fixture: the active v8
+        // binary accepts only fully verified callback delivery states, but snapshot
         // scrubbing must still remove child rows before their parent without
         // changing the authoritative source copy.
         let source_connection = rusqlite::Connection::open(&source_database_path).unwrap();
@@ -9412,7 +9412,7 @@ mod tests {
             .build_snapshot_database(&committed, &snapshot_path, pinned)
             .unwrap();
         assert_eq!((built.height, built.app_hash), expected);
-        // The builder validates the temporary v7 database before its atomic
+        // The builder validates the temporary v8 database before its atomic
         // rename, so success also proves both node-local journal tables were
         // empty rather than copied into the snapshot.
         assert!(!snapshot_path.with_extension("snapshot.tmp").exists());
@@ -10361,7 +10361,7 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "7"
+            "8"
         );
         assert_eq!(
             database

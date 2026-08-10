@@ -15,7 +15,7 @@
 //! snapshot-closed failures into the app-private outcome kernel. A production
 //! sequential cursor now
 //! begins behind the Core request's shared process-local one-shot claim and a
-//! schema-v7 durable `(route, full ValidationId)` job reservation, so both cloned
+//! schema-v8 durable `(route, full ValidationId)` job reservation, so both cloned
 //! replays and independently materialized exact duplicates are suppressed
 //! before host or authenticated-state access. The durable row is congruence
 //! and evaluation authority only. A narrow owning bridge can atomically persist
@@ -7692,7 +7692,7 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_core::{
         Core, CoreConfig, Effect, Input, PayloadValidationRequest, PayloadValidationResult,
-        PayloadValidationRouteV0, ValidationId,
+        PayloadValidationRouteV0, SafetyState, ValidationId,
     };
     use trnm_consensus_types::{
         ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind, ChainId,
@@ -8966,10 +8966,16 @@ mod tests {
         core_target_validation_effect(profile, PayloadValidationRouteV0::Synced)
     }
 
-    fn core_target_validation_effect(
+    struct LiveCoreTargetValidationFixtureV0 {
+        core: Core,
+        effect: Effect,
+        registered_state: SafetyState,
+    }
+
+    fn live_core_target_validation_fixture_v0(
         profile: &FixtureProfile,
         target_route: PayloadValidationRouteV0,
-    ) -> Effect {
+    ) -> LiveCoreTargetValidationFixtureV0 {
         let trusted_genesis_timestamp_ms = profile
             .parent
             .timestamp_ms()
@@ -9057,7 +9063,14 @@ mod tests {
         let effects = core
             .step(target_input, &CoreRootSignatures)
             .expect("admit exact Core fixture target");
-        release_core_persisted_effects(&mut core, effects)
+        let registered_state = effects
+            .iter()
+            .find_map(|effect| match effect {
+                Effect::PersistSafetyState { state, .. } => Some(state.as_ref().clone()),
+                _ => None,
+            })
+            .expect("target admission persists its exact validation obligation");
+        let effect = release_core_persisted_effects(&mut core, effects)
             .into_iter()
             .find(|effect| {
                 matches!(
@@ -9071,7 +9084,40 @@ mod tests {
                     )
                 )
             })
-            .expect("Core emits exact target validation effect")
+            .expect("Core emits exact target validation effect");
+        let validation_id = match &effect {
+            Effect::ValidatePayload(request) | Effect::ValidateSyncedPayload(request) => {
+                request.id()
+            }
+            _ => unreachable!("target validation fixture retained a non-validation effect"),
+        };
+        assert_eq!(core.safety_state(), &registered_state);
+        assert_eq!(core.pending_validation_count(), 1);
+        assert!(core
+            .safety_state()
+            .payload_validation_obligations()
+            .iter()
+            .any(|obligation| {
+                obligation.route() == target_route && obligation.id() == validation_id
+            }));
+        LiveCoreTargetValidationFixtureV0 {
+            core,
+            effect,
+            registered_state,
+        }
+    }
+
+    fn core_target_validation_effect(
+        profile: &FixtureProfile,
+        target_route: PayloadValidationRouteV0,
+    ) -> Effect {
+        let LiveCoreTargetValidationFixtureV0 {
+            core,
+            effect,
+            registered_state,
+        } = live_core_target_validation_fixture_v0(profile, target_route);
+        assert_eq!(core.safety_state(), &registered_state);
+        effect
     }
 
     fn core_validation_effect(profile: &FixtureProfile) -> Effect {
@@ -9225,6 +9271,12 @@ mod tests {
             core_validation_request(profile),
         )
         .expect("open complete PoCO/runtime/validator/PoCO cursor");
+        complete_production_all_family_cursor_from_cursor_v0(open)
+    }
+
+    fn complete_production_all_family_cursor_from_cursor_v0(
+        open: OpenCoreAuthorizedRegularTransactionCursorV0,
+    ) -> OpenCoreAuthorizedRegularTransactionCursorV0 {
         let open = advance_next_production_non_runtime_payload(open);
         let open = attempt_next_production_runtime_transaction(open)
             .expect("execute runtime item in all-family complete body");
@@ -9321,16 +9373,27 @@ mod tests {
         )
     }
 
-    fn durable_invalid_all_family_complete_body_owner(
+    fn durable_invalid_all_family_complete_body_owner_from_effect_v0(
         store: &TestStore,
-        poison_state: Option<StateRoot>,
-        poison_receipts: Option<ReceiptsRoot>,
+        effect: Effect,
     ) -> DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
-        let honest = honest_all_family_complete_body_profile(store);
-        let state_root = poison_state.unwrap_or_else(|| honest.header.state_root());
-        let receipts_root = poison_receipts.unwrap_or_else(|| honest.header.receipts_root());
-        let profile = replace_profile_execution_roots(honest, state_root, receipts_root);
-        let job = core_regular_validation_job_for_test_v0(core_validation_request(&profile));
+        let request = match effect {
+            Effect::ValidatePayload(request)
+                if request.route() == PayloadValidationRouteV0::Proposal =>
+            {
+                request
+            }
+            Effect::ValidateSyncedPayload(request)
+                if request.route() == PayloadValidationRouteV0::Synced =>
+            {
+                request
+            }
+            Effect::ValidatePayload(_) | Effect::ValidateSyncedPayload(_) => {
+                panic!("durable invalid complete-body fixture effect disagreed with its route")
+            }
+            _ => panic!("durable invalid complete-body fixture requires a validation effect"),
+        };
+        let job = core_regular_validation_job_for_test_v0(request);
         let open = match begin_core_authorized_regular_validation_session_v0(
             &test_native_validation_host(store),
             job,
@@ -9338,14 +9401,12 @@ mod tests {
             CoreAuthorizedRegularValidationSessionAdmissionV0::Open(open) => *open,
             other => panic!("durable invalid complete-body fixture did not open: {other:?}"),
         };
-        let open = open_core_authorized_regular_transaction_cursor_from_open_v0(open);
-        let open = advance_next_production_non_runtime_payload(open);
-        let open = attempt_next_production_runtime_transaction(open)
-            .expect("execute durable-invalid all-family runtime item");
-        let open = advance_next_production_non_runtime_payload(open);
-        let open = advance_next_production_non_runtime_payload(open);
-        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
-            .expect("finish durable-invalid all-family complete-body plan");
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(
+            complete_production_all_family_cursor_from_cursor_v0(
+                open_core_authorized_regular_transaction_cursor_from_open_v0(open),
+            ),
+        )
+        .expect("finish durable-invalid all-family complete-body plan");
         match classify_core_authorized_regular_complete_body_commitment_comparison_v0(
             match_finished_core_authorized_regular_complete_body_commitments_v0(finished),
         ) {
@@ -9357,6 +9418,21 @@ mod tests {
                 panic!("poisoned durable complete-body roots changed disposition")
             }
         }
+    }
+
+    fn durable_invalid_all_family_complete_body_owner(
+        store: &TestStore,
+        poison_state: Option<StateRoot>,
+        poison_receipts: Option<ReceiptsRoot>,
+    ) -> DeterministicallyInvalidCoreAuthorizedRegularCompleteBodyCommitmentsV0 {
+        let honest = honest_all_family_complete_body_profile(store);
+        let state_root = poison_state.unwrap_or_else(|| honest.header.state_root());
+        let receipts_root = poison_receipts.unwrap_or_else(|| honest.header.receipts_root());
+        let profile = replace_profile_execution_roots(honest, state_root, receipts_root);
+        durable_invalid_all_family_complete_body_owner_from_effect_v0(
+            store,
+            core_validation_effect(&profile),
+        )
     }
 
     fn finish_production_runtime_plan(
@@ -11976,13 +12052,26 @@ mod tests {
             .split_once("fn migrate_store_schema_v6_to_v7(")
             .expect("schema-v6 to schema-v7 migration")
             .1
-            .split_once("fn ensure_metadata_binding(")
+            .split_once("fn migrate_store_schema_v7_to_v8(")
             .expect("schema-v6 to schema-v7 migration end")
             .0;
         assert!(v6_to_v7_migration.contains("params![STORE_SCHEMA_VERSION_V7]"));
         assert!(
             !v6_to_v7_migration.contains("params![STORE_SCHEMA_VERSION]"),
             "schema-v6 migration used the moving active-version alias"
+        );
+        let v7_to_v8_migration = store_source
+            .split_once("fn migrate_store_schema_v7_to_v8(")
+            .expect("schema-v7 to schema-v8 migration")
+            .1
+            .split_once("fn ensure_metadata_binding(")
+            .expect("schema-v7 to schema-v8 migration end")
+            .0;
+        assert!(v7_to_v8_migration.contains("params![STORE_SCHEMA_VERSION_V8]"));
+        assert!(v7_to_v8_migration.contains("visit_native_validation_recovery_work_v0"));
+        assert!(
+            !v7_to_v8_migration.contains("params![STORE_SCHEMA_VERSION]"),
+            "schema-v7 migration used the moving active-version alias"
         );
         let reservation_confirmation = store_source
             .split_once("fn confirm_native_validation_job_v0(")

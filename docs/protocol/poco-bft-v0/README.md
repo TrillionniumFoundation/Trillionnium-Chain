@@ -498,7 +498,7 @@ duplicate, `Unavailable`, or `DeterministicallyInvalid` result. The exact route
 travels with the owner through open/body/cursor/runtime/post-state/comparator
 and process-local disposition; callers cannot inject a bool or naked route.
 
-Separately from application-store schema v7, Core `SafetyState` schema v5
+Separately from current application-store schema v8, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either `ValidatePayload` or `ValidateSyncedPayload` may escape a
 `PersistSafetyState -> StorageAck` barrier. Each record binds the Core-selected
@@ -555,8 +555,24 @@ reason codes 1 and 2. One `BEGIN IMMEDIATE` transaction writes the fixed 120-byt
 checksums and idempotency key, the unique outbox row, the job state, and O(1)
 accounting. A pre-commit error rolls all of them back and returns the unique
 prepared owner. `Valid`, `Evaluated`, `Delivered`, `Acked`, `Applied`,
-`Unavailable`, and invariant results remain inactive and fail closed. An
-exact reopen returns its checksum-verified durable state rather than silently
+`Unavailable`, and invariant results remain inactive and fail closed in v7.
+
+Current application-store schema v8 preserves every verified v7 `reserved` and
+`callback_pending` row and activates only the persisted representation and
+deep-recovery validation of two later deterministic-invalid delivery states.
+A `delivered` row must retain its congruent outbox with a canonical delivery
+attempt of at least one; the accepted-Core revision and payload-checksum fields
+must still be absent. An `acked` row must have retired that outbox and its
+outbox accounting, must bind an accepted Core revision later than the job's
+creation revision, and must bind the rederived canonical invalid-callback
+payload checksum. Both states use the domain-separated delivery-row checksum.
+`evaluated`, `applied`, every `Valid` result, every other invalid reason,
+`Unavailable`, and invariant results remain inactive and fail closed in v8.
+There is no writable delivery/ack transition API or live delivery owner; these
+states currently exist only so startup, recovery, migration, and snapshot
+validation have one frozen fail-closed representation.
+
+An exact reopen returns its checksum-verified durable state rather than silently
 coalescing unfinished work, while no reopen can recreate the unique first-
 reservation token. Startup and recovery exact-decode and canonically re-encode
 the target and any present parent header, rebind identity/parent/configuration
@@ -573,18 +589,26 @@ atomically maintained O(1) accounting singleton while startup independently
 audits it against the real rows; exact reopen precedes capacity rejection. The
 application compatibility boundary also requires `max_block_bytes <= 16 MiB`.
 Schema-v5 migration succeeds only when its legacy reservation table is empty;
-a non-empty v5 table is unreplayable and rolls back unchanged. The v6-to-v7
-activation validates every reserved row, foreign key, binding, resource bound,
-and accounting fact in one transaction and rolls back to v6 on any drift.
+a non-empty v5 table is unreplayable and rolls back unchanged. Startup and
+snapshot installation advance explicitly through `v3 -> v4 -> v5 -> v6 ->
+v7 -> v8`; every migration step has its own `BEGIN IMMEDIATE` atomic boundary
+and writes only its fixed successor version. The v6-to-v7 activation validates
+every reserved row, foreign key, binding, resource bound, and accounting fact
+and rolls back to v6 on any drift. The metadata-only v7-to-v8 activation first
+deep-validates the complete v7 reserved/callback-pending journal and rolls back
+to v7 byte-for-byte on any incompatible state, outbox, checksum, binding, or
+accounting fact.
 State-sync
 snapshot generation scrubs outbox rows first and jobs second only from the
 temporary copy and verifies both are empty, leaving the source database
 unchanged; installation refuses to overwrite a non-empty target-local
 validation journal. This is a revalidatable raw request/recovery-fact foundation
-plus a durable deterministic-invalid callback-pending record. It is not a
-reconstruction of the signed proposal witness, a durable `Valid` artifact,
-executable crash takeover, Core callback delivery, acknowledgement, or a
-process-wide callback exactly-once guarantee.
+plus a durable deterministic-invalid callback-pending record and frozen v8
+delivery-state recovery formats. It is not a reconstruction of the signed
+proposal witness, a durable `Valid` artifact, a writable delivery/ack state
+machine, executable crash takeover, real `Core::step`, a durable SafetyState
+sink/WAL, Core callback delivery, or a process-wide callback exactly-once
+guarantee.
 
 That carrier now also opens a production, process-local sequential transaction
 cursor. Its host tuple can only be borrowed from initialized `AppCore`; the
@@ -675,8 +699,10 @@ private admission branch is proven not to emit a callback for a losing clone.
 The private route-bearing bridge now proves that `Proposal` maps only to
 `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it does
 not submit that input to a Core instance or establish callback delivery.
-The v7 journal stores no evaluated `Valid` artifact, durable JMT plan, or
-`Valid` callback outbox. A private inert durable-plan codec now covers the exact
+Neither the v7 invalid journal nor the v8 delivery-state activation stores an
+evaluated `Valid` artifact, durable JMT plan, or `Valid` callback outbox. V8
+adds no delivery writer, live owner, Core callback execution, or SafetyState
+durability. A private inert durable-plan codec now covers the exact
 persistence-bearing JMT
 version/root, nodes, values, stale indices, and key preimages without exposing
 the process-local plan seal or serializing `TreeUpdateBatch` as a container.

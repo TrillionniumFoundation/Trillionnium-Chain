@@ -723,7 +723,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`; route MUST remain owned through open/body/cursor/
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
-- separately from application-store schema v7, Core `SafetyState` schema v6
+- separately from current application-store schema v8, Core `SafetyState` schema v6
   MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
@@ -797,13 +797,34 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   crash or failure before commit MUST leave `reserved` with no outbox, while an
   exact committed retry MUST return the existing callback-pending state without
   double-accounting or reminting reservation authority;
+- application-store schema v8 MUST preserve every verified v7 `reserved` and
+  `callback_pending` row and additionally admit only two frozen
+  deterministic-invalid delivery representations: `delivered` MUST retain its
+  exact artifact and congruent outbox with canonical `delivery_attempt >= 1`
+  while both accepted-Core fields remain absent; `acked` MUST retain the exact
+  artifact, MUST have no outbox, MUST bind an accepted Core revision later than
+  the job creation revision, and MUST bind the rederived canonical callback
+  payload checksum; both later states MUST use the domain-separated
+  `trnm.consensus-app.validation-job-delivery-row.v0` checksum, and their real
+  row/outbox/accounting relationships MUST be revalidated at startup and
+  recovery;
+- schema v8 MUST continue to reject `evaluated`, `applied`, `Valid`, every
+  unsupported invalid reason, `Unavailable`, and invariant results; accepting a
+  deeply verified `delivered` or `acked` row MUST NOT imply that this binary can
+  create that row, owns a live callback, called `Core::step`, durably persisted
+  a Core `SafetyState`, acknowledged its barrier, or can take over the job;
 - the validation-job journal MUST be bounded at 65,536 rows and 512 MiB of raw
   request records with no eviction, and exact reopen MUST precede capacity
-  rejection; schema-v5 migration MUST proceed only when the legacy reservation
-  table is empty, then advance through the reserved-only v6 format before v7
-  activation; a non-empty v5 table MUST roll back without deleting, rewriting,
-  or fabricating replay fields, and v6-to-v7 activation MUST fail atomically on
-  any non-reserved row, outbox row, checksum, or accounting drift; restart
+  rejection; migration MUST advance explicitly and serially through `v3 -> v4
+  -> v5 -> v6 -> v7 -> v8`, with one `BEGIN IMMEDIATE` atomic boundary per
+  fixed-version step; schema-v5 migration MUST proceed only when the legacy
+  reservation table is empty, then advance through the reserved-only v6 format
+  before v7 activation; a non-empty v5 table MUST roll back without deleting,
+  rewriting, or fabricating replay fields, v6-to-v7 activation MUST fail
+  atomically on any non-reserved row, outbox row, checksum, or accounting drift,
+  and v7-to-v8 activation MUST deep-validate the complete v7
+  reserved/callback-pending journal before changing metadata and MUST preserve
+  v7 byte-for-byte on failure; restart
   recovery MUST enumerate all verified jobs in canonical state/identity order
   but MUST NOT treat those facts as reconstructed Core or evaluation authority;
   startup/recovery MUST
@@ -824,10 +845,12 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   checkpoint/VACUUM, MUST verify both exported tables are empty, and MUST leave
   the source database unchanged; installation MUST reject a non-empty target
   validation journal rather than silently discard target-local work; the
-  raw job/fingerprint/checksums and v7 deterministic-invalid artifact/outbox
-  MUST NOT be treated as signed-proposal reconstruction, JMT/terminal
-  authority, callback delivery/acknowledgement, executable crash takeover, or
-  process-wide callback exactly-once evidence;
+  raw job/fingerprint/checksums, v7 deterministic-invalid artifact/outbox, and
+  v8 delivered/acked recovery facts MUST NOT be treated as signed-proposal
+  reconstruction, JMT/terminal authority, writable callback
+  delivery/acknowledgement, live-owner authority, executable crash takeover,
+  real `Core::step`, SafetyState sink/WAL evidence, or process-wide callback
+  exactly-once evidence;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
   joined fact may escape unless explicit snapshot finish succeeds, and finish
@@ -974,8 +997,10 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, and
   reservation/outbox identity MUST remain `(route, full ValidationId)`; v7
   closes that validation-time atomic boundary only for the two complete-body
-  deterministic root mismatches, while a revalidatable `Valid` artifact and
-  callback-outbox intent remain open; the separate Finalize-
+  deterministic root mismatches, and v8 freezes only later delivery-state
+  persistence/recovery shapes without adding a writer, live delivery owner,
+  Core driver, or durable SafetyState sink, while a revalidatable `Valid`
+  artifact and callback-outbox intent remain open; the separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
   JMT/domain apply, root/native-head persistence, head advancement, and applied
   state; authenticated replay tickets, completion retirement after durable

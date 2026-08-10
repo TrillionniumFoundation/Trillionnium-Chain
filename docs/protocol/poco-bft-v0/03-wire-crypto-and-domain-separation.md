@@ -480,7 +480,7 @@ a duplicate, `Unavailable`, or `DeterministicallyInvalid` wire result. The
 route remains inside the owner across open/body/cursor/runtime/post-state/
 comparator/disposition; no naked bool or route is accepted as authority.
 
-Separately from application-store schema v7, Core `SafetyState` schema v5
+Separately from current application-store schema v8, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either validation effect may escape a `PersistSafetyState -> StorageAck`
 barrier. This cloneable persistence fact binds the Core-selected route, full
@@ -543,21 +543,41 @@ double-accounting. Every other invalid reason, `Valid`, `Unavailable`,
 `InvariantFault`, `evaluated`, `delivered`, `acked`, and `applied` remains
 inactive and fail closed in v7.
 
+Current application-store schema v8 leaves the physical relations unchanged
+and activates only the persisted representation and deep recovery validation
+of `delivered` and `acked` deterministic-invalid rows. `Delivered` retains the
+exact artifact and congruent callback outbox, requires a canonical delivery
+attempt of at least one, and has no accepted-Core revision or payload checksum.
+`Acked` retains the artifact, deletes the outbox and retires its outbox
+accounting, binds an accepted Core revision later than the job's creation
+revision, and binds the canonical callback payload checksum rederived from the
+job identity and artifact. Both states use a separate delivery-row integrity
+domain. `Evaluated`, `Applied`, `Valid`, every unsupported invalid reason,
+`Unavailable`, and invariants remain inactive. V8 has no API that writes either
+state and creates no live callback-delivery authority.
+
 Exact reopen returns verified durable state without reminting first-evaluation
-authority. Startup/recovery exact-decodes and canonically re-encodes the target
+or callback-delivery authority. Startup/recovery exact-decodes and canonically
+re-encodes the target
 and any present parent header, rebinds identity/parent/configuration fields,
 rederives the raw-source fingerprint, and validates the job, artifact, outbox,
 checksums, and canonical row order. The journal is capped at 65,536 rows plus a
 512-MiB raw-request budget, with separate bounded artifact/outbox accounting
 and an atomic O(1) accounting singleton independently audited at startup. The
-app accepts only parameter profiles with `max_block_bytes <= 16 MiB`. Empty
-schema v5 journals migrate through reserved-only v6 into v7; non-empty v5
-reservations fail closed and remain byte-for-byte intact, and corrupt v6
-activation rolls back atomically. State sync deletes outbox then jobs only from
-the temporary copy and verifies both are empty. These facts are
+app accepts only parameter profiles with `max_block_bytes <= 16 MiB`.
+Application stores advance explicitly through `v3 -> v4 -> v5 -> v6 -> v7 ->
+v8`, with one fixed-successor `BEGIN IMMEDIATE` transaction per migration
+step. Empty schema-v5 journals can cross the reserved-only v6 and
+callback-pending v7 activations; non-empty v5 reservations fail closed and
+remain byte-for-byte intact, corrupt v6 activation rolls back atomically, and
+v7-to-v8 activation deep-validates every v7 reserved/callback-pending record
+before changing metadata and preserves v7 byte-for-byte on failure. State sync
+deletes outbox then jobs only from the temporary copy and verifies both are
+empty. These facts are
 corruption/congruence seals and durable callback intent only, never
-signed-proposal reconstruction, Core callback authority, delivery,
-acknowledgement, takeover, or exactly-once authority.
+signed-proposal reconstruction, Core callback authority, a writable
+delivery/ack state machine, live delivery ownership, real `Core::step`, a
+durable SafetyState sink/WAL, takeover, or exactly-once authority.
 
 The exact process-local integrity labels used by this foundation are:
 
@@ -567,6 +587,7 @@ trnm.consensus-app.native-validation-reservation.v0 // raw framed fingerprint do
 trnm.consensus-app.validation-body.v0               // hash_domain
 trnm.consensus-app.validation-job-immutable.v0      // hash_domain
 trnm.consensus-app.validation-job-row.v0            // hash_domain
+trnm.consensus-app.validation-job-delivery-row.v0   // hash_domain
 trnm.consensus-app.validation-runtime-profile.v0    // hash_domain
 trnm.consensus-app.validation-host-config.v0        // hash_domain
 trnm.consensus-app.validation-artifact.v0           // hash_domain
@@ -576,7 +597,9 @@ trnm.consensus-app.validation-callback-outbox-row.v0  // hash_domain
 ```
 
 These are node-local integrity/congruence labels, not consensus signature or
-wire-object domains. The v7 artifact and callback records use the fixed codec
+wire-object domains. The v7 artifact/callback records and the v8 delivery-row
+state binding use these labels only as local corruption and congruence checks.
+The artifact and callback records use the fixed codec
 labels `trnm.native-validation.invalid-artifact.v0` and
 `trnm.native-validation.invalid-callback.v0`; both remain application-local
 inert records and introduce no peer-visible result or signing domain.
@@ -664,7 +687,10 @@ complete-body state-root or receipts-root deterministic mismatch for the v7
 application-store transaction; it cannot prepare `Valid`, `Unavailable`, or an
 invariant fault. Schema v7 atomically couples that canonical invalid artifact
 with callback-outbox intent, but it does not call `Core::step` or deliver the
-intent. A future delivery bridge must map `Proposal` only to
+intent. Schema v8 can deeply validate later `delivered`/`acked` rows, but has
+no writable transition API, live delivery owner, Core driver, or SafetyState
+sink/WAL and therefore does not prove that any callback was delivered or
+acknowledged. A future delivery bridge must map `Proposal` only to
 `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`. The `Valid`
 validation-time artifact/outbox boundary remains open. The distinct Finalize-
 time atomic boundary still must revalidate exact authority and atomically

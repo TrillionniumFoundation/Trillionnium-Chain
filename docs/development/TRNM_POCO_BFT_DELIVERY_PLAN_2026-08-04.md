@@ -233,7 +233,7 @@ an earlier phase.
   `Unavailable`, nor `DeterministicallyInvalid`. The route remains owned with
   the request through open/body/cursor/runtime/post-state/comparator and final
   process-local disposition. No naked bool or route can be injected into those
-  constructors. Separately from application-store schema v7, Core
+  constructors. Separately from current application-store schema v8, Core
   `SafetyState` schema v5 introduced a canonically ordered
   `DurablePayloadValidationObligationV0` before either `ValidatePayload` or
   `ValidateSyncedPayload` may escape a `PersistSafetyState -> StorageAck`
@@ -312,6 +312,18 @@ an earlier phase.
   reason and the `evaluated`, `delivered`, `acked`, and `applied` states.
   V6-to-v7 activation verifies reserved rows, empty outbox, checksums, and
   accounting before changing metadata and rolls back atomically on drift.
+  Current application-store schema v8 preserves the verified v7 reserved and
+  callback-pending rows and activates only persisted representation plus deep
+  startup/recovery validation for deterministic-invalid `delivered` and
+  `acked`. `Delivered` retains its congruent outbox with delivery attempt at
+  least one and no accepted-Core fields. `Acked` retires the outbox/accounting
+  and binds an accepted Core revision later than creation plus the canonical
+  callback payload checksum. Both use the delivery-row checksum domain. The
+  explicit per-step atomic migration chain is `v3 -> v4 -> v5 -> v6 -> v7 ->
+  v8`; v7-to-v8 validates the complete v7 journal before changing metadata and
+  rolls back to byte-identical v7 on drift. V8 has no writable delivery/ack
+  API, live delivery owner, real `Core::step` dispatcher, durable SafetyState
+  sink/WAL, or takeover path.
   Snapshot
   construction scrubs outbox then jobs only from its temporary copy and
   verifies both empty, and install refuses to discard non-empty target-local
@@ -837,7 +849,9 @@ an earlier phase.
   completion all remain open. Schema v7 now consumes only the two root-
   mismatch owners into one durable deterministic-invalid artifact plus atomic
   `callback_pending` outbox intent; that is persistence, not delivery or
-  terminal Core authority.
+  terminal Core authority. Schema v8 adds only deep validation of frozen
+  `delivered`/`acked` recovery records and still performs no delivery or
+  acknowledgement.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -1038,9 +1052,11 @@ an earlier phase.
   Application-store schema v6 supplies the reserved-only durable cross-instance
   congruence boundary. Schema v7 additionally stores only the complete-body
   state/receipts root-mismatch artifact and callback-pending outbox intent, but
-  has no crash-takeover lease. Core's completed `StorageAck` cleanup barrier and
-  schema-v6 completion tombstone are not a host callback-outbox delivery
-  acknowledgement. The deterministic-invalid validation-time transaction is
+  has no crash-takeover lease. Schema v8 recognizes the frozen
+  `delivered`/`acked` recovery forms but has no transition writer, live owner,
+  Core driver, or SafetyState durability. Core's completed `StorageAck` cleanup
+  barrier and schema-v6 completion tombstone are not a host callback-outbox
+  delivery acknowledgement. The deterministic-invalid validation-time transaction is
   atomic, but the corresponding `Valid` transaction still must retain a
   revalidatable evaluated artifact and callback outbox. The distinct Finalize-
   time transaction must revalidate authority and
@@ -1130,7 +1146,9 @@ an earlier phase.
   canonical artifact and congruent `callback_pending` outbox row. It still
   provides no `Valid` artifact, Core obligation reactivation, `Core::step`,
   callback delivery/acknowledgement, executable takeover, or Finalize apply;
-  those are the next ordered slices.
+  schema v8 only freezes/deep-validates the later `delivered` and `acked`
+  persistence shapes and adds no writer or authority. Those are the next
+  ordered slices.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,
