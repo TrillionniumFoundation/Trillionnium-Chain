@@ -1052,10 +1052,18 @@ epoch prune, and Core transition remain open.
    retained Core request; a second derives a route/full-ID Core callback input
    for valid or computed-root-invalid outcomes while refusing any input for a
    comparator invariant. Neither bridge calls `Core::step` or provides
-   `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. JMT
-   plan application/persistence, complete-body mixed-family write merge and
-   exact JMT planning, success receipts, durable evaluated-artifact
-   deduplication, and host
+   `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. A
+   separate consuming complete-body planner now rebinds the complete mixed
+   cursor provenance, merges the replayed runtime final delta with only the
+   final replace-only PoCO prefix writes or the no-PoCO scheduled-cutoff
+   manifest refresh plus the final explicit or `prepare_height(target)`-
+   implicit validator singleton, rejects duplicate raw keys and key hashes,
+   and produces/seals one exact-next JMT plan on that same snapshot. Snapshot
+   finish failure discards and outranks any pending plan or successful seal.
+   This is an inert owner-bound planning carrier, not the runtime-only receipt/
+   four-root comparator path. Non-runtime/body-wide success receipts, mixed-
+   body header/four-root comparison and `Valid`, JMT plan application/
+   persistence/head update, durable evaluated-artifact deduplication, and host
    outbox/Core/ABCI callback delivery remain open. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
@@ -1219,13 +1227,15 @@ epoch prune, and Core transition remain open.
    Core callback, persistence, or ABCI authority.
 
    The exact `BlockId`, peer body, positive-height parent header, and committed-
-   head active configuration plus authoritative tx decode/index/context and
-   runtime-gated success-only advance, same-snapshot complete-body planning,
-   and four-root comparison now come through one bounded production
-   join/cursor chain.
+   head active configuration plus authoritative tx decode/index/context,
+   runtime/non-runtime success-only advance, and owner-bound mixed complete-
+   body inert planning now come through one bounded production join/cursor
+   chain. The existing receipt/four-root comparison remains a separate runtime-
+   only path.
    Synthetic genesis/native state authority, speculative-parent overlays,
-   complete-body mixed-family write merge, final PoCO prefix consumption and
-   exact JMT planning/application/state persistence, durable host
+   non-runtime/body-wide success receipts, mixed-body header/four-root
+   comparison and `Valid`, exact JMT plan application/state persistence/head
+   update, durable host
    callback-outbox scheduling/delivery, actual Core callback execution, and
    ABCI wiring
    remain hard gaps before terminal/Core callback and still have no production
@@ -1588,9 +1598,16 @@ epoch prune, and Core transition remain open.
    prefix and close the snapshot without applying or publishing writes.
    Seal/rebind/encoding failures retain the exact
    attempted owner, fail stop, and are still overridden by a typed snapshot-
-   finish failure. Complete-body mixed-family write merge and exact JMT
-   planning, success receipts, durable terminal artifacts/outbox, and host/Core
-   delivery remain next, and no phase is complete.
+   finish failure. Owner-bound complete-body inert planning is now closed as
+   well: the complete cursor provenance is rebound before the replayed runtime
+   final delta, final replace-only PoCO prefix or no-PoCO scheduled-cutoff
+   refresh, and final/implicit validator singleton are merged. Raw-key and key-
+   hash conflicts are rejected before one exact-next JMT plan/seal is produced
+   on the same snapshot; finish failure still overrides and discards a pending
+   success. Non-runtime/body-wide success receipts, mixed-body header/four-root
+   comparison and `Valid`, plan application/persistence/head update, durable
+   terminal artifacts/outbox, host/Core/ABCI delivery, speculative parents,
+   cross-epoch/handoff, and every phase remain open.
    The consuming mapping accepts only the exact closed owner. Eight semantic-
    decode reasons plus every PoCO and validator deterministic/invariant reason,
    operator authorization, and unsupported-family rejection have explicit
@@ -1697,9 +1714,14 @@ epoch prune, and Core transition remain open.
    are now closed. The open cursor privately retains exact prior item
    provenance, the evolving unsealed PoCO overlay, the staged validator
    lifecycle, and only the latest whole-prefix plan/write; success advances the
-   index without closing the snapshot. It still cannot form a complete-body
-   exact JMT plan, emit a success receipt, persist a terminal artifact, or
-   deliver a result.
+   index without closing the snapshot. A distinct consuming complete-body
+   planner rebinds that full provenance, merges the runtime final delta with the
+   final replace-only PoCO prefix or scheduled-cutoff refresh and the final/
+   implicit validator singleton, rejects raw-key/hash collisions, and forms one
+   sealed exact-next JMT plan before mandatory snapshot finish. The resulting
+   carrier is inert: it cannot emit non-runtime/body-wide receipts, compare the
+   mixed body against header/four roots or form `Valid`, apply or persist the
+   plan/head, persist a terminal artifact/outbox, or deliver a result.
    The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter

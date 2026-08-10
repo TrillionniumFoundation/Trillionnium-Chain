@@ -617,10 +617,18 @@ non-runtime provenance stays private, PoCO continues from one evolving unsealed
 overlay, validator scheduling continues from the staged lifecycle, each latest
 whole-prefix plan/write replaces its predecessor, and the internal index moves
 only after execution plus sealing succeed. This remains open-snapshot staged
-execution, not a receipt or complete-body plan. Plan application/persistence
-and head update, complete-body mixed-family write merge/planning/persistence,
-speculative-parent overlays, host callback-outbox persistence/delivery, actual
-Core callback execution, ABCI wiring, and cross-process rollback
+execution until the whole body is consumed. A distinct owner-bound planner then
+rebinds the complete cursor provenance, merges the replayed runtime final delta
+with only the final replace-only PoCO prefix writes or the no-PoCO scheduled-
+cutoff manifest refresh plus the final explicit or `prepare_height(target)`-
+implicit validator singleton, and rejects duplicate raw keys and key hashes.
+It produces and seals exactly one exact-next JMT plan on that same snapshot;
+snapshot finish is mandatory and overrides/discards any pending planning cause
+or successful plan. This is inert planning only, not non-runtime/body-wide
+success receipts, a mixed-body header/four-root comparator or `Valid` outcome.
+Plan application/persistence and head update, durable artifact/outbox,
+speculative-parent overlays, cross-epoch/handoff, actual Core callback
+execution, ABCI wiring, and cross-process rollback
 protection remain hard open prerequisites before any terminal/Core callback
 path. The object-graph gate performs no terminal mapping, and only the current
 private admission branch is proven not to emit a callback for a losing clone.
@@ -1019,10 +1027,17 @@ PoCO plan produced from a bounded overlay clone plus canonical namespace writes,
 or a rescheduled canonical validator singleton write. A private consuming
 advance now folds that seal into the snapshot-owning cursor, retains the
 evolving overlay/lifecycle and exact item owner, replaces the latest prefix
-write, and advances only on success. It does not close the snapshot and is not
-a complete-body JMT or persistence authority. Complete-body mixed-family write
-merge and exact JMT planning, receipts, durable terminal artifacts/outbox,
-callback delivery, and Core/ABCI integration remain open.
+write, and advances only on success. It does not close the snapshot. Once the
+whole body is consumed, a separate planner rebinds all cursor provenance,
+merges the replayed runtime final delta with the final replace-only PoCO prefix
+or the no-PoCO scheduled-cutoff refresh and the final/implicit validator
+singleton, rejects raw-key/hash conflicts, and creates one sealed exact-next
+JMT plan on the same snapshot. Only successful snapshot finish exposes that
+inert carrier; finish failure takes precedence. Non-runtime/body-wide success
+receipts, mixed-body header/four-root comparison and `Valid`, plan application/
+persistence/head update, durable terminal artifacts/outbox, speculative-parent
+and cross-epoch/handoff support, callback delivery, and Core/ABCI integration
+remain open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

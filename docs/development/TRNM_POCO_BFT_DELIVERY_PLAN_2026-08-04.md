@@ -780,9 +780,20 @@ an earlier phase.
   a duplicate second operation closes with the first prefix retained. A real
   second validator transition with nonce two reaches the staged
   `PendingTransitionExists` guard ahead of a poisoned proof, proving it did not
-  restart from the authenticated parent. Complete-body write merge and exact
-  JMT planning, success receipts, durable terminal artifacts/outbox, and
-  host/Core delivery remain next, and no phase is complete.
+  restart from the authenticated parent. Owner-bound complete-body inert
+  planning is now also closed. One consuming planner rebinds the complete
+  runtime/non-runtime cursor provenance, merges the replayed runtime final
+  delta with only the final replace-only PoCO prefix writes or, when no PoCO
+  operation exists at a scheduled cutoff, the required manifest refresh, and
+  includes the final explicit or `prepare_height(target)`-implicit validator
+  singleton. It rejects duplicate raw authenticated keys and duplicate key
+  hashes, then produces and seals exactly one exact-next JMT plan on the same
+  pinned snapshot. Snapshot finish remains mandatory and overrides any pending
+  planning cause or successful plan/seal. This carrier is inert planning
+  evidence only: non-runtime/body-wide success receipts, mixed-body header/four-
+  root comparison and `Valid` outcome, plan application/persistence/head
+  update, durable artifact/outbox, callback/`Core::step`/ABCI, speculative
+  parents, cross-epoch/handoff, and phase completion all remain open.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -951,9 +962,16 @@ an earlier phase.
   seal is consumed by the private success-only cursor advance: the cursor keeps
   exact applied non-runtime provenance, continues PoCO from the prior unsealed
   overlay, continues validator scheduling from the prior staged lifecycle, and
-  replaces the latest whole-prefix seal/write. It is still not authority to
-  concatenate independent PoCO blocks, form a complete-body JMT plan or success
-  receipt, persist a terminal result, or deliver a callback.
+  replaces the latest whole-prefix seal/write. A separate consuming complete-
+  body planner rebinds the complete cursor provenance, merges the replayed
+  runtime final delta with the final replace-only PoCO prefix or the no-PoCO
+  scheduled-cutoff refresh and the final/implicit validator singleton, rejects
+  duplicate raw keys and key hashes, and creates one sealed exact-next JMT plan
+  on that same snapshot. Only successful snapshot finish exposes the inert plan;
+  finish failure discards it and takes precedence. This does not authorize
+  independent PoCO-block concatenation, non-runtime/body-wide success receipts,
+  mixed-body header/four-root comparison or `Valid`, plan application/
+  persistence/head update, a terminal result, or callback delivery.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;
@@ -961,10 +979,12 @@ an earlier phase.
   body, and committed-head active configuration now have one bounded production
   validation constructor, and authoritative transaction
   decode/index/context plus runtime-gated success-only advance now share one
-  snapshot-owning production cursor. Complete-body same-snapshot JMT planning
-  and the four-root comparator are now production-compiled process-local
-  carriers, and clones within one request object graph now share process-local
-  one-shot exclusion. Schema-v5 reservation supplies a durable cross-instance
+  snapshot-owning production cursor. The legacy runtime-only same-snapshot JMT
+  planning/four-root comparator and the new mixed-family inert complete-body
+  planner are production-compiled process-local carriers, but remain distinct:
+  the latter has no non-runtime receipts or header-root comparison. Clones within
+  one request object graph now share process-local one-shot exclusion. Schema-v5
+  reservation supplies a durable cross-instance
   congruence boundary, but it stores no evaluated artifact or result and has no
   crash-takeover lease. Core's completed `StorageAck` cleanup barrier and
   schema-v6 completion tombstone are not a host callback-outbox delivery
@@ -977,8 +997,9 @@ an earlier phase.
   after durable host-delivery acknowledgement, speculative-parent/BlockTree
   reconstruction,
   application-reservation takeover, revalidatable evaluated-artifact
-  persistence, complete-body mixed-family write merge and exact JMT planning,
-  plan/state persistence, host callback-outbox scheduling/delivery acknowledgement,
+  persistence, non-runtime/body-wide receipt production and mixed-body header/
+  four-root comparison, plan application/state persistence, host callback-
+  outbox scheduling/delivery acknowledgement,
   actual `Core::step` callback
   delivery, and ABCI wiring remain absent. In particular, the object-graph
   gate is not callback authority and the private admission branch emits no

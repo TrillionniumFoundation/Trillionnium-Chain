@@ -37,10 +37,15 @@
 //! unsealed attempt and open snapshot. A consuming success-only advance now
 //! retains exact prior item provenance, continues the evolving PoCO overlay or
 //! staged validator lifecycle, replaces the latest whole-prefix write seal,
-//! and moves the internal cursor. Complete-body mixed-family JMT planning,
-//! receipts, plan persistence, callbacks, and actual Core execution remain
-//! absent until later carriers supply those distinct authorities. Owner-preserving
-//! typed failure promotion, a consuming closed-set non-runtime family
+//! and moves the internal cursor. A distinct complete-body owner now rebinds
+//! that full cursor provenance, merges the final runtime delta, replace-only
+//! PoCO prefix or mandatory cutoff refresh, and final or implicit validator
+//! singleton, rejects raw-key/hash conflicts, and creates exactly one inert
+//! exact-next JMT plan/seal before closing the snapshot. Mixed-family success
+//! receipts, header-root comparison, plan application/persistence, callbacks,
+//! and actual Core execution remain absent until later carriers supply those
+//! distinct authorities. Owner-preserving typed failure promotion, a
+//! consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
 //! same-snapshot family-state attempts are now present. The family-local seal
 //! becomes cursor state only through that private consuming advance; neither
@@ -1552,6 +1557,42 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                         ));
                     }
                 };
+                let governing_lifecycle = if let Some(prefix) =
+                    &decoded.owner.routed.open.validator_prefix
+                {
+                    prefix.lifecycle.clone()
+                } else {
+                    match prepared_core_authorized_validator_lifecycle_v0(
+                        &decoded.owner.routed.open,
+                    ) {
+                        Ok(lifecycle) => lifecycle,
+                        Err(_) => {
+                            return Err(Box::new(
+                                FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                                    decoded,
+                                    cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                        CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoExecutionContext,
+                                    ),
+                                },
+                            ));
+                        }
+                    }
+                };
+                if crate::poco_checkpoint::validate_application_validator_projection(
+                    &authenticated.validator_set,
+                    &governing_lifecycle.active_validators,
+                )
+                .is_err()
+                {
+                    return Err(Box::new(
+                        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                            decoded,
+                            cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoProjection,
+                            ),
+                        },
+                    ));
+                }
                 let context =
                     match crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
                         authenticated.parent_header.height().get(),
@@ -1562,7 +1603,7 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                         authenticated.validator_set.epoch(),
                         authenticated.parameters,
                         crate::poco_application_governance_signer_commitment_v0(
-                            &authenticated.validator_lifecycle,
+                            &governing_lifecycle,
                         ),
                     ) {
                         Ok(context) => context,
@@ -1621,26 +1662,25 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
             ))
         }
         DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(decoded) => {
-            let mut lifecycle = decoded
-                .owner
-                .routed
-                .open
-                .validator_prefix
-                .as_ref()
-                .map_or_else(
-                    || {
-                        decoded
-                            .owner
-                            .routed
-                            .open
-                            .open
-                            .authorized
-                            .context
-                            .validator_lifecycle
-                            .clone()
-                    },
-                    |prefix| prefix.lifecycle.clone(),
-                );
+            let mut lifecycle = if let Some(prefix) = &decoded.owner.routed.open.validator_prefix {
+                prefix.lifecycle.clone()
+            } else {
+                match prepared_core_authorized_validator_lifecycle_v0(&decoded.owner.routed.open) {
+                    Ok(lifecycle) => lifecycle,
+                    Err(_) => {
+                        return Err(Box::new(
+                            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                                decoded,
+                                cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                    CoreAuthorizedNonRuntimeFamilyInvariantV0::ValidatorTransition(
+                                        crate::validator_lifecycle::ValidatorTransitionInvariantV1::AuthenticatedLifecycle,
+                                    ),
+                                ),
+                            },
+                        ));
+                    }
+                }
+            };
             let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
                 command_id: &decoded.owner.routed.envelope.command_id,
                 signer_id: &decoded.owner.routed.context.signer_id,
@@ -1756,34 +1796,64 @@ fn auth_writes_match_v0(left: &[AuthWrite], right: &[AuthWrite]) -> bool {
             .all(|(left, right)| left.key() == right.key() && left.value() == right.value())
 }
 
-fn validate_core_authorized_non_runtime_prefix_v0(
-    routed: &CoreAuthorizedNonRuntimePayloadRoutingV0,
+fn prepared_core_authorized_validator_lifecycle_v0(
+    open: &OpenCoreAuthorizedRegularTransactionCursorV0,
+) -> anyhow::Result<crate::ValidatorLifecycleStateV1> {
+    let mut lifecycle = open.open.authorized.context.validator_lifecycle.clone();
+    lifecycle
+        .prepare_height(open.open.authorized.header.height().get())
+        .context("prepare authenticated validator lifecycle for target height")?;
+    Ok(lifecycle)
+}
+
+fn validate_core_authorized_regular_cursor_prefix_v0(
+    open: &OpenCoreAuthorizedRegularTransactionCursorV0,
 ) -> anyhow::Result<Vec<Vec<u8>>> {
-    let open = &routed.open;
     let authorized = &open.open.authorized;
     let body = authorized.body.application_payload().transactions();
     let target_height = authorized.header.height().get();
     let target_block_id = authorized.validation_id.block_id();
+    let exclusive_end = open.next_transaction_index;
     let mut indices = BTreeSet::new();
     let mut previous_runtime_index = None;
     for applied in &open.applied {
+        let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&applied.exact_outer_bytes)?;
+        let signer = crate::validate_signed_command_envelope_against_policy_v1(
+            &envelope,
+            authorized.header.chain_id().as_str(),
+            authorized.header.timestamp_ms(),
+            &authorized.context.signer_policy.authorized_signers,
+        )?;
+        let exact_inner_bytes = envelope.payload_bytes()?;
+        let transaction: CanonicalTxV1 = serde_json::from_slice(&exact_inner_bytes)?;
+        transaction.validate()?;
+        let native_receipt =
+            NativeTransactionReceiptFactsV0::try_from_runtime_receipt(&applied.runtime_receipt)?;
         anyhow::ensure!(
-            applied.index < routed.index
+            applied.index < exclusive_end
                 && previous_runtime_index.is_none_or(|previous| previous < applied.index)
                 && indices.insert(applied.index)
                 && body.get(usize::try_from(applied.index)?).map(Vec::as_slice)
                     == Some(applied.exact_outer_bytes.as_slice())
+                && envelope.payload_type == CANONICAL_TX_PAYLOAD_TYPE_V1
+                && envelope.signer_id == transaction.sender
+                && envelope.nonce == transaction.nonce
+                && exact_inner_bytes == applied.exact_inner_bytes
+                && transaction == applied.transaction
                 && applied.context.target_height == target_height
                 && applied.context.target_block_id == target_block_id
                 && applied.context.validation_timestamp_ms == authorized.header.timestamp_ms()
-                && applied.context.payload_len == applied.exact_inner_bytes.len(),
+                && applied.context.signer_id == signer.signer_id
+                && applied.context.signer_role == signer.signer_role
+                && applied.context.payload_len == applied.exact_inner_bytes.len()
+                && native_receipt == applied.native_receipt,
             "non-runtime prefix runtime provenance drift"
         );
         previous_runtime_index = Some(applied.index);
     }
 
     let mut poco_raws = Vec::new();
-    let mut rebuilt_validator = authorized.context.validator_lifecycle.clone();
+    let mut rebuilt_validator = prepared_core_authorized_validator_lifecycle_v0(open)?;
     let mut validator_count = 0usize;
     let mut previous_non_runtime_index = None;
     for applied in &open.applied_non_runtime {
@@ -1849,7 +1919,7 @@ fn validate_core_authorized_non_runtime_prefix_v0(
             }
         };
         anyhow::ensure!(
-            index < routed.index
+            index < exclusive_end
                 && previous_non_runtime_index.is_none_or(|previous| previous < index)
                 && indices.insert(index)
                 && body.get(usize::try_from(index)?).map(Vec::as_slice)
@@ -1883,8 +1953,8 @@ fn validate_core_authorized_non_runtime_prefix_v0(
         );
     }
     anyhow::ensure!(
-        usize::try_from(routed.index)? == indices.len()
-            && (0..routed.index).all(|index| indices.contains(&index)),
+        usize::try_from(exclusive_end)? == indices.len()
+            && (0..exclusive_end).all(|index| indices.contains(&index)),
         "non-runtime prefix does not cover the exact prior body"
     );
 
@@ -1968,9 +2038,10 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     &attempted.decoded.owner.routed,
                 )
                 .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
-                let mut exact_poco_operations =
-                    validate_core_authorized_non_runtime_prefix_v0(&attempted.decoded.owner.routed)
-                        .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                let mut exact_poco_operations = validate_core_authorized_regular_cursor_prefix_v0(
+                    &attempted.decoded.owner.routed.open,
+                )
+                .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 let reencoded = serde_json::to_vec(&attempted.decoded.operation)
                     .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
@@ -2055,8 +2126,10 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     &attempted.decoded.owner.routed,
                 )
                 .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
-                validate_core_authorized_non_runtime_prefix_v0(&attempted.decoded.owner.routed)
-                    .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                validate_core_authorized_regular_cursor_prefix_v0(
+                    &attempted.decoded.owner.routed.open,
+                )
+                .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 let reencoded = serde_json::to_vec(&attempted.decoded.transition)
                     .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
@@ -2068,18 +2141,13 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                 {
                     return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
                 }
-                let mut rebuilt = routed.open.validator_prefix.as_ref().map_or_else(
-                    || {
-                        routed
-                            .open
-                            .open
-                            .authorized
-                            .context
-                            .validator_lifecycle
-                            .clone()
-                    },
-                    |prefix| prefix.lifecycle.clone(),
-                );
+                let mut rebuilt = if let Some(prefix) = &routed.open.validator_prefix {
+                    prefix.lifecycle.clone()
+                } else {
+                    prepared_core_authorized_validator_lifecycle_v0(&routed.open).map_err(|_| {
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::ValidatorScheduleRebind
+                    })?
+                };
                 let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
                     command_id: &routed.envelope.command_id,
                     signer_id: &routed.context.signer_id,
@@ -2384,6 +2452,33 @@ enum AppliedCoreAuthorizedNonRuntimePayloadV0 {
     },
 }
 
+/// Closed PoCO write provenance retained by the complete-body planner. A
+/// business-operation prefix keeps its high-level sealed plan; a scheduled
+/// empty cutoff keeps the authenticated projection needed to rederive the one
+/// mandatory manifest refresh. Neither variant is a receipt or persistence
+/// capability.
+enum FinishedCoreAuthorizedRegularPocoWriteSourceV0 {
+    Operations(crate::poco_application::SealedPocoApplicationPlanV0),
+    ScheduledCutoff(crate::poco_transition::ProductionPocoProjectionV0),
+}
+
+/// Snapshot-finished complete mixed-body evidence plus one inert exact-next
+/// JMT plan. Runtime, PoCO, validator, and mandatory system writes have already
+/// been merged and sealed against the same parent transaction, but this owner
+/// cannot construct success receipts, compare header roots, persist, callback,
+/// or cross a Core/ABCI boundary.
+#[must_use = "a complete-body post-state plan still lacks receipts and root comparison"]
+struct FinishedPlannedCoreAuthorizedRegularCompleteBodyV0 {
+    authorized: CoreAuthorizedExactRegularBodyV0,
+    changes: BTreeMap<String, StoredObject>,
+    applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    final_poco: Option<FinishedCoreAuthorizedRegularPocoWriteSourceV0>,
+    final_validator_lifecycle: Option<crate::ValidatorLifecycleStateV1>,
+    post_state_update: PlannedAuthUpdate,
+    post_state_update_seal: PlannedAuthUpdateSealV0,
+}
+
 /// Snapshot-finished complete-body runtime evidence plus an inert exact-next
 /// JMT plan derived before that same parent transaction closed. This carrier
 /// cannot apply the plan, compare header roots, mint a terminal outcome, or
@@ -2619,6 +2714,58 @@ struct ClosedFailedCoreAuthorizedRegularPostStatePlanV0 {
     poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
     validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
     cause: ClosedCoreAuthorizedRegularPostStatePlanCauseV0,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum CoreAuthorizedRegularCompleteBodyPlanCauseV0 {
+    IncompleteBody { executed: u32, expected: u32 },
+    CompleteBodyProvenanceInvariant,
+    ReceiptReplayStateRead(AuthenticatedRuntimeReadFailureV0),
+    ReceiptMutationDeltaInvariant,
+    StateDeltaProvenanceInvariant,
+    PrepareWritesInvariant,
+    ValidatorHeightPreparationInvariant,
+    ValidatorWriteInvariant,
+    PocoScheduleInvariant,
+    PocoCutoffProjectionRead(AuthenticatedRuntimeReadFailureV0),
+    PocoCutoffWriteInvariant,
+    MergedWriteKeyConflictInvariant,
+    MergedWriteHashCollisionInvariant,
+    Plan(AuthenticatedRuntimeReadFailureV0),
+    PlanWriteSetInvariant,
+    PlanTargetInvariant,
+    PlanSealInvariant,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0 {
+    Snapshot(AuthenticatedRuntimeReadFailureV0),
+    Plan(CoreAuthorizedRegularCompleteBodyPlanCauseV0),
+}
+
+/// Snapshot-closed complete-body planning failure. This owner is deliberately
+/// distinct from the runtime-only post-state failure that already has an
+/// execution-outcome promotion bridge; no receipt or terminal classification
+/// can be derived from this planning-only tranche.
+#[must_use = "a failed complete-body plan retains its exact closed cursor"]
+struct ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0 {
+    authorized: CoreAuthorizedExactRegularBodyV0,
+    next_transaction_index: u32,
+    changes: BTreeMap<String, StoredObject>,
+    applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
+    cause: ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0,
+}
+
+impl std::fmt::Debug for ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0")
+            .field("retains_exact_closed_mixed_cursor", &true)
+            .finish_non_exhaustive()
+    }
 }
 
 impl std::fmt::Debug for ClosedFailedCoreAuthorizedRegularPostStatePlanV0 {
@@ -4628,28 +4775,18 @@ fn replay_core_authorized_runtime_receipt_changes_v0(
     snapshot: &AuthenticatedRuntimeReadSnapshotV0,
     target_height: u64,
     applied: &[AppliedCoreAuthorizedRuntimeTransactionV0],
-) -> std::result::Result<BTreeMap<String, StoredObject>, CoreAuthorizedRegularPostStatePlanCauseV0>
-{
+) -> std::result::Result<
+    BTreeMap<String, StoredObject>,
+    CoreAuthorizedRegularRuntimeMutationStageFailureV0,
+> {
     let mut replayed = BTreeMap::new();
     for attempt in applied {
-        replayed = match stage_core_authorized_runtime_mutations_v0(
+        replayed = stage_core_authorized_runtime_mutations_v0(
             snapshot,
             target_height,
             &replayed,
             &attempt.runtime_receipt.mutations,
-        ) {
-            Ok(replayed) => replayed,
-            Err(CoreAuthorizedRegularRuntimeMutationStageFailureV0::StateRead(error)) => {
-                return Err(
-                    CoreAuthorizedRegularPostStatePlanCauseV0::ReceiptReplayStateRead(error),
-                );
-            }
-            Err(CoreAuthorizedRegularRuntimeMutationStageFailureV0::Invariant(_)) => {
-                return Err(
-                    CoreAuthorizedRegularPostStatePlanCauseV0::ReceiptMutationDeltaInvariant,
-                );
-            }
-        };
+        )?;
     }
     Ok(replayed)
 }
@@ -4705,16 +4842,10 @@ fn rebuild_finished_runtime_receipt_changes_v0(
 /// the authenticated writes derived from the retained final changes. This is
 /// deliberately a structural check only; applying or persisting the plan
 /// remains outside this carrier.
-fn planned_auth_update_matches_runtime_changes_v0(
-    plan: &PlannedAuthUpdate,
-    changes: &BTreeMap<String, StoredObject>,
-) -> bool {
+fn planned_auth_update_matches_writes_v0(plan: &PlannedAuthUpdate, writes: &[AuthWrite]) -> bool {
     let mut expected_preimages = BTreeMap::new();
     let mut expected_values = BTreeMap::new();
-    for object in changes.values() {
-        let Ok(write) = crate::authenticated_object_write(object) else {
-            return false;
-        };
+    for write in writes {
         let Ok(hash) = crate::auth_tree::authenticated_key_hash(write.key()) else {
             return false;
         };
@@ -4733,6 +4864,48 @@ fn planned_auth_update_matches_runtime_changes_v0(
     }
     plan.preimages() == &expected_preimages
         && plan.tree_update_batch.node_batch.values() == &expected_values
+}
+
+fn planned_auth_update_matches_runtime_changes_v0(
+    plan: &PlannedAuthUpdate,
+    changes: &BTreeMap<String, StoredObject>,
+) -> bool {
+    let Ok(writes) = changes
+        .values()
+        .map(crate::authenticated_object_write)
+        .collect::<anyhow::Result<Vec<_>>>()
+    else {
+        return false;
+    };
+    planned_auth_update_matches_writes_v0(plan, &writes)
+}
+
+fn validate_unique_complete_body_auth_writes_v0(
+    writes: &[AuthWrite],
+) -> std::result::Result<(), CoreAuthorizedRegularCompleteBodyPlanCauseV0> {
+    let mut raw_keys = BTreeSet::new();
+    let mut hashed_keys = BTreeMap::new();
+    for write in writes {
+        if !raw_keys.insert(write.key().to_vec()) {
+            return Err(
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::MergedWriteKeyConflictInvariant,
+            );
+        }
+        let hash = crate::auth_tree::authenticated_key_hash(write.key()).map_err(|_| {
+            CoreAuthorizedRegularCompleteBodyPlanCauseV0::MergedWriteHashCollisionInvariant
+        })?;
+        if let Some(prior_key) = hashed_keys.insert(hash, write.key().to_vec()) {
+            if prior_key != write.key() {
+                return Err(
+                    CoreAuthorizedRegularCompleteBodyPlanCauseV0::MergedWriteHashCollisionInvariant,
+                );
+            }
+            return Err(
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::MergedWriteKeyConflictInvariant,
+            );
+        }
+    }
+    Ok(())
 }
 
 fn fail_prepared_core_authorized_runtime_transaction_v0(
@@ -4984,7 +5157,15 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
             &open.snapshot,
             target_height,
             &applied,
-        )?;
+        )
+        .map_err(|cause| match cause {
+            CoreAuthorizedRegularRuntimeMutationStageFailureV0::StateRead(error) => {
+                CoreAuthorizedRegularPostStatePlanCauseV0::ReceiptReplayStateRead(error)
+            }
+            CoreAuthorizedRegularRuntimeMutationStageFailureV0::Invariant(_) => {
+                CoreAuthorizedRegularPostStatePlanCauseV0::ReceiptMutationDeltaInvariant
+            }
+        })?;
         if replayed_changes != changes {
             return Err(CoreAuthorizedRegularPostStatePlanCauseV0::ReceiptMutationDeltaInvariant);
         }
@@ -5043,6 +5224,236 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
         authorized,
         changes,
         applied,
+        post_state_update,
+        post_state_update_seal,
+    })
+}
+
+/// Consumes one fully advanced mixed-family cursor into a single exact-next
+/// authenticated-state plan. Runtime writes, the final replace-only PoCO
+/// prefix, the final validator lifecycle, and mandatory block-height system
+/// writes are merged exactly once on the retained parent snapshot. Success
+/// closes that snapshot but deliberately has no receipt, root-comparator,
+/// persistence, callback, or Core authority.
+#[allow(dead_code)]
+fn finish_and_plan_complete_core_authorized_regular_post_state_v0(
+    open: OpenCoreAuthorizedRegularTransactionCursorV0,
+) -> std::result::Result<
+    FinishedPlannedCoreAuthorizedRegularCompleteBodyV0,
+    Box<ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0>,
+> {
+    let expected = open
+        .open
+        .authorized
+        .body
+        .application_payload()
+        .transaction_count();
+    let target_height = open.open.authorized.header.height().get();
+    let parent_lifecycle = &open.open.authorized.context.validator_lifecycle;
+    let planning = (|| {
+        if open.next_transaction_index != expected {
+            return Err(
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::IncompleteBody {
+                    executed: open.next_transaction_index,
+                    expected,
+                },
+            );
+        }
+        validate_core_authorized_regular_cursor_prefix_v0(&open).map_err(|_| {
+            CoreAuthorizedRegularCompleteBodyPlanCauseV0::CompleteBodyProvenanceInvariant
+        })?;
+        if open.changes.iter().any(|(map_key, object)| {
+            map_key != &object.object_key_hex
+                || object.value_hash_hex
+                    != hex::encode(trnm_finality_types::hash_domain(
+                        "trnm.state.object.value.v1",
+                        &[&object.value_bytes],
+                    ))
+        }) {
+            return Err(
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::StateDeltaProvenanceInvariant,
+            );
+        }
+        let replayed_changes = replay_core_authorized_runtime_receipt_changes_v0(
+            &open.open.snapshot,
+            target_height,
+            &open.applied,
+        )
+        .map_err(|cause| match cause {
+            CoreAuthorizedRegularRuntimeMutationStageFailureV0::StateRead(error) => {
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::ReceiptReplayStateRead(error)
+            }
+            CoreAuthorizedRegularRuntimeMutationStageFailureV0::Invariant(_) => {
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::ReceiptMutationDeltaInvariant
+            }
+        })?;
+        if replayed_changes != open.changes {
+            return Err(
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::ReceiptMutationDeltaInvariant,
+            );
+        }
+
+        let mut writes = replayed_changes
+            .values()
+            .map(crate::authenticated_object_write)
+            .collect::<anyhow::Result<Vec<_>>>()
+            .map_err(|_| CoreAuthorizedRegularCompleteBodyPlanCauseV0::PrepareWritesInvariant)?;
+
+        let prepared_lifecycle =
+            prepared_core_authorized_validator_lifecycle_v0(&open).map_err(|_| {
+                CoreAuthorizedRegularCompleteBodyPlanCauseV0::ValidatorHeightPreparationInvariant
+            })?;
+        let implicit_validator_lifecycle = if let Some(prefix) = &open.validator_prefix {
+            writes.push(prefix.write.clone());
+            None
+        } else if prepared_lifecycle != *parent_lifecycle {
+            writes.push(
+                crate::authenticated_lifecycle_write(target_height, &prepared_lifecycle).map_err(
+                    |_| CoreAuthorizedRegularCompleteBodyPlanCauseV0::ValidatorWriteInvariant,
+                )?,
+            );
+            Some(prepared_lifecycle.clone())
+        } else {
+            None
+        };
+
+        let mut cutoff_projection = None;
+        if let Some(prefix) = &open.poco_prefix {
+            writes.extend(prefix.writes.iter().cloned());
+        } else {
+            crate::poco_checkpoint::validate_application_validator_projection(
+                &open.open.authorized.context.validator_set,
+                &prepared_lifecycle.active_validators,
+            )
+            .map_err(|_| CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoScheduleInvariant)?;
+            let parameters = &open.open.authorized.context.parameters;
+            let geometry = trnm_consensus_types::EpochGeometryV0::new(
+                open.open.authorized.context.validator_set.epoch(),
+                parameters,
+            )
+            .map_err(|_| CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoScheduleInvariant)?;
+            let checkpoint_height = geometry.checkpoint_height().get();
+            let cutoff_height = checkpoint_height
+                .checked_sub(parameters.snapshot_lead_blocks())
+                .ok_or(CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoScheduleInvariant)?;
+            if cutoff_height >= checkpoint_height {
+                return Err(CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoScheduleInvariant);
+            }
+            if target_height == cutoff_height {
+                let projection = open
+                    .open
+                    .snapshot
+                    .load_authenticated_production_poco_projection_v0()
+                    .map_err(
+                        CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoCutoffProjectionRead,
+                    )?;
+                writes.push(
+                    crate::poco_transition::scheduled_cutoff_manifest_refresh_write_v0(
+                        trnm_consensus_types::Height::new(target_height),
+                        &projection,
+                    )
+                    .map_err(|_| {
+                        CoreAuthorizedRegularCompleteBodyPlanCauseV0::PocoCutoffWriteInvariant
+                    })?,
+                );
+                cutoff_projection = Some(projection);
+            }
+        }
+
+        validate_unique_complete_body_auth_writes_v0(&writes)?;
+        let plan = open
+            .open
+            .snapshot
+            .plan_exact_next_auth_update_v0(writes.clone())
+            .map_err(CoreAuthorizedRegularCompleteBodyPlanCauseV0::Plan)?;
+        if plan.version != target_height {
+            return Err(CoreAuthorizedRegularCompleteBodyPlanCauseV0::PlanTargetInvariant);
+        }
+        if !planned_auth_update_matches_writes_v0(&plan, &writes) {
+            return Err(CoreAuthorizedRegularCompleteBodyPlanCauseV0::PlanWriteSetInvariant);
+        }
+        let plan_seal = plan
+            .seal_v0()
+            .map_err(|_| CoreAuthorizedRegularCompleteBodyPlanCauseV0::PlanSealInvariant)?;
+        Ok((
+            plan,
+            plan_seal,
+            replayed_changes,
+            cutoff_projection,
+            implicit_validator_lifecycle,
+        ))
+    })();
+
+    let OpenCoreAuthorizedRegularTransactionCursorV0 {
+        open,
+        next_transaction_index,
+        changes,
+        applied,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
+    } = open;
+    let OpenCoreAuthorizedRegularValidationV0 {
+        authorized,
+        snapshot,
+    } = open;
+    if let Err(error) = snapshot.finish() {
+        return Err(Box::new(
+            ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0 {
+                authorized,
+                next_transaction_index,
+                changes,
+                applied,
+                applied_non_runtime,
+                poco_prefix,
+                validator_prefix,
+                cause: ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0::Snapshot(error),
+            },
+        ));
+    }
+    let (
+        post_state_update,
+        post_state_update_seal,
+        changes,
+        cutoff_projection,
+        implicit_validator_lifecycle,
+    ) = match planning {
+        Ok(planned) => planned,
+        Err(cause) => {
+            return Err(Box::new(
+                ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0 {
+                    authorized,
+                    next_transaction_index,
+                    changes,
+                    applied,
+                    applied_non_runtime,
+                    poco_prefix,
+                    validator_prefix,
+                    cause: ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0::Plan(cause),
+                },
+            ));
+        }
+    };
+    let final_poco = match (poco_prefix, cutoff_projection) {
+        (Some(prefix), None) => Some(FinishedCoreAuthorizedRegularPocoWriteSourceV0::Operations(
+            prefix.plan,
+        )),
+        (None, Some(projection)) => {
+            Some(FinishedCoreAuthorizedRegularPocoWriteSourceV0::ScheduledCutoff(projection))
+        }
+        (None, None) => None,
+        (Some(_), Some(_)) => unreachable!("PoCO operations replace scheduled cutoff refresh"),
+    };
+    let final_validator_lifecycle = validator_prefix
+        .map(|prefix| prefix.lifecycle)
+        .or(implicit_validator_lifecycle);
+    Ok(FinishedPlannedCoreAuthorizedRegularCompleteBodyV0 {
+        authorized,
+        changes,
+        applied,
+        applied_non_runtime,
+        final_poco,
+        final_validator_lifecycle,
         post_state_update,
         post_state_update_seal,
     })
@@ -6546,6 +6957,7 @@ mod tests {
         decode_dispatched_core_authorized_non_runtime_payload_v0,
         dispatch_core_authorized_non_runtime_payload_v0,
         execute_next_exact_runtime_transaction_for_test_v0,
+        finish_and_plan_complete_core_authorized_regular_post_state_v0,
         finish_and_plan_core_authorized_regular_post_state_v0,
         finish_and_plan_test_regular_runtime_execution_for_test_v0,
         finish_core_authorized_regular_validation_v0,
@@ -6627,8 +7039,9 @@ mod tests {
             NativeValidationReservationFailureCauseV0, NativeValidationReservationInvariantV0,
         },
         validator_lifecycle::{
-            ConsensusValidatorV1, ValidatorGovernanceV1, ValidatorLifecycleStateV1,
-            VALIDATOR_GOVERNANCE_SCHEMA_V1, VALIDATOR_LIFECYCLE_SCHEMA_V1,
+            ConsensusValidatorV1, ScheduledValidatorTransitionV1, ValidatorGovernanceV1,
+            ValidatorLifecycleStateV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
+            VALIDATOR_LIFECYCLE_SCHEMA_V1,
         },
         AppState, BlockDelta, PendingBlock, APP_VERSION,
     };
@@ -6754,6 +7167,13 @@ mod tests {
         })
     }
 
+    fn compact_cutoff_at_two_parameters() -> ConsensusParametersV0 {
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.epoch_length_blocks = 7;
+        fields.snapshot_lead_blocks = 3;
+        ConsensusParametersV0::new(fields).expect("construct compact cutoff-at-two parameters")
+    }
+
     fn build_test_store(include_poco_application_authority: bool) -> TestStore {
         build_test_store_with_lifecycle(include_poco_application_authority, |_| {})
     }
@@ -6762,6 +7182,34 @@ mod tests {
         include_poco_application_authority: bool,
         configure_lifecycle: impl FnOnce(&mut ValidatorLifecycleStateV1),
     ) -> TestStore {
+        build_test_store_with_parameters_and_lifecycle(
+            include_poco_application_authority,
+            ConsensusParametersV0::reference_shadow_v0(),
+            1,
+            configure_lifecycle,
+        )
+    }
+
+    fn build_test_store_with_parameters_at_height(
+        include_poco_application_authority: bool,
+        parameters: ConsensusParametersV0,
+        parent_height: u64,
+    ) -> TestStore {
+        build_test_store_with_parameters_and_lifecycle(
+            include_poco_application_authority,
+            parameters,
+            parent_height,
+            |_| {},
+        )
+    }
+
+    fn build_test_store_with_parameters_and_lifecycle(
+        include_poco_application_authority: bool,
+        parameters: ConsensusParametersV0,
+        parent_height: u64,
+        configure_lifecycle: impl FnOnce(&mut ValidatorLifecycleStateV1),
+    ) -> TestStore {
+        assert!(parent_height > 0);
         let root = unique_test_root();
         fs::create_dir_all(&root).expect("create native-input test directory");
         let status_path = root.join("state.json");
@@ -6774,7 +7222,6 @@ mod tests {
         let expected = store
             .load_or_migrate()
             .expect("initialize native-input test store");
-        let parameters = ConsensusParametersV0::reference_shadow_v0();
         let native_validator_set = validator_set(&parameters, 0);
         let active_validators = native_validator_set
             .validators()
@@ -6868,12 +7315,21 @@ mod tests {
         let parent_update = authenticated
             .plan_put_value_set(1, parent_writes)
             .expect("plan authenticated parent configuration version");
-        let parent_state_root = authenticated
+        let mut parent_state_root = authenticated
             .apply(parent_update)
             .map(<[u8; 32]>::from)
             .expect("apply authenticated parent version");
+        for version in 2..=parent_height {
+            let update = authenticated
+                .plan_put_value_set(version, Vec::new())
+                .expect("plan empty authenticated parent continuation");
+            parent_state_root = authenticated
+                .apply(update)
+                .map(<[u8; 32]>::from)
+                .expect("apply empty authenticated parent continuation");
+        }
         let state = AppState {
-            height: 1,
+            height: parent_height,
             app_hash: parent_state_root,
             validator_lifecycle: Some(lifecycle),
             ..AppState::default()
@@ -6894,11 +7350,109 @@ mod tests {
         }
     }
 
+    fn test_store_with_pending_validator_activation_at_height_three() -> TestStore {
+        let mut test = test_store_with_poco_application_authority();
+        let current = test.store.load_or_migrate().unwrap();
+        let mut lifecycle = test.validator_lifecycle.clone();
+        lifecycle.pending_transition = Some(ScheduledValidatorTransitionV1 {
+            transition_id: "native-implicit-height-three".to_string(),
+            base_validator_set_hash_hex: lifecycle.active_set_hash_hex().unwrap(),
+            accepted_height: 1,
+            activation_height: 3,
+            target_validators: lifecycle.active_validators.clone(),
+        });
+        lifecycle.validate().unwrap();
+        let write = crate::authenticated_lifecycle_write(2, &lifecycle).unwrap();
+        let update = test.store.plan_auth_update(2, [write]).unwrap();
+        let update_for_tree = update.clone();
+        let next_root: [u8; 32] = update.root_hash.into();
+        let pending = PendingBlock {
+            height: 2,
+            app_hash: next_root,
+            tx_results: Vec::new(),
+            native_execution: crate::test_authorized_empty_native_execution(
+                current.height,
+                current.app_hash,
+                2,
+                next_root,
+            ),
+            validator_updates: Vec::new(),
+            delta: BlockDelta {
+                validator_lifecycle: Some(lifecycle.clone()),
+                ..BlockDelta::default()
+            },
+            auth_update: update,
+            poco_checkpoint_execution: None,
+        };
+        test.store
+            .persist_transition(&current, &pending, 0)
+            .unwrap();
+        let tree_root: [u8; 32] = test
+            .authenticated_parent
+            .apply(update_for_tree)
+            .map(Into::into)
+            .unwrap();
+        assert_eq!(tree_root, next_root);
+        test.parent_state_root = next_root;
+        test.validator_lifecycle = lifecycle;
+        test
+    }
+
     fn test_native_validation_host(store: &TestStore) -> NativeValidationHostV0<'_> {
         NativeValidationHostV0 {
             store: &store.store,
             chain_id: TEST_CHAIN.as_str(),
             authorized_signers: &store.authorized_signers,
+        }
+    }
+
+    fn open_exact_test_authorized_regular_cursor(
+        store: &TestStore,
+        profile: &FixtureProfile,
+    ) -> OpenCoreAuthorizedRegularTransactionCursorV0 {
+        let snapshot = store
+            .store
+            .begin_authenticated_runtime_read_snapshot_for_test_v0(
+                profile.parent.height().get(),
+                *profile.parent.state_root().as_bytes(),
+            )
+            .expect("open exact test-only parent snapshot");
+        let lifecycle = snapshot
+            .load_authenticated_validator_lifecycle_v0()
+            .expect("load exact test-only parent lifecycle");
+        assert_eq!(lifecycle, store.validator_lifecycle);
+        crate::poco_checkpoint::validate_application_validator_projection(
+            &profile.validator_set,
+            &lifecycle.active_validators,
+        )
+        .expect("bind exact test-only validator projection");
+        OpenCoreAuthorizedRegularTransactionCursorV0 {
+            open: super::OpenCoreAuthorizedRegularValidationV0 {
+                authorized: super::CoreAuthorizedExactRegularBodyV0 {
+                    reservation: CoreAuthorizedRegularReservationV0::TestOnly,
+                    route: PayloadValidationRouteV0::Proposal,
+                    validation_id: ValidationId::new(profile.header.id(), profile.header.view(), 0),
+                    header: profile.header.clone(),
+                    body: profile.body.clone(),
+                    context: SnapshotAuthenticatedRegularContextV0 {
+                        parent_header: profile.parent.clone(),
+                        validator_set: profile.validator_set.clone(),
+                        parameters: profile.parameters,
+                        validator_lifecycle: lifecycle,
+                        signer_policy: NativeSignerPolicyBindingV0 {
+                            commitment: crate::signer_policy_commitment(&store.authorized_signers),
+                            authorized_signers: store.authorized_signers.clone(),
+                        },
+                    },
+                },
+                snapshot,
+            },
+            next_transaction_index: 0,
+            changes: BTreeMap::new(),
+            applied: Vec::new(),
+            applied_non_runtime: Vec::new(),
+            poco_prefix: None,
+            validator_prefix: None,
         }
     }
 
@@ -7054,7 +7608,21 @@ mod tests {
     }
 
     fn fixture_profile(parent_state_root: [u8; 32], discriminator: u8) -> FixtureProfile {
-        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        fixture_profile_at_height(
+            parent_state_root,
+            1,
+            ConsensusParametersV0::reference_shadow_v0(),
+            discriminator,
+        )
+    }
+
+    fn fixture_profile_at_height(
+        parent_state_root: [u8; 32],
+        parent_height: u64,
+        parameters: ConsensusParametersV0,
+        discriminator: u8,
+    ) -> FixtureProfile {
+        let target_height = parent_height.checked_add(1).unwrap();
         let validator_set = validator_set(&parameters, discriminator);
         let credit = CanonicalTxV1 {
             schema: CANONICAL_TX_SCHEMA_V1.to_string(),
@@ -7096,7 +7664,7 @@ mod tests {
             ProtocolVersion::V0,
             validator_set.epoch(),
             View::new(1),
-            Height::new(1),
+            Height::new(parent_height),
             BlockKind::Regular,
             BlockId::new(*validator_set.genesis_hash().as_bytes()),
             trnm_consensus_core::leader_for(&validator_set, View::new(1)),
@@ -7139,7 +7707,7 @@ mod tests {
             ProtocolVersion::V0,
             validator_set.epoch(),
             View::new(2),
-            Height::new(2),
+            Height::new(target_height),
             BlockKind::Regular,
             parent.id(),
             trnm_consensus_core::leader_for(&validator_set, View::new(2)),
@@ -8958,8 +9526,12 @@ mod tests {
         );
         assert!(family_attempt_body
             .contains("if let Some(prefix) = &decoded.owner.routed.open.poco_prefix"));
-        assert!(family_attempt_body.contains(".validator_prefix\n                .as_ref()"));
-        assert!(family_attempt_body.contains("|prefix| prefix.lifecycle.clone()"));
+        assert!(family_attempt_body
+            .contains("if let Some(prefix) = &decoded.owner.routed.open.validator_prefix"));
+        assert!(family_attempt_body.contains("prefix.lifecycle.clone()"));
+        assert!(family_attempt_body.contains(
+            "prepared_core_authorized_validator_lifecycle_v0(&decoded.owner.routed.open)"
+        ));
         for forbidden_surface in [
             "with_poco_projection_loader",
             "ProductionPocoProjectionV0,",
@@ -8977,7 +9549,7 @@ mod tests {
             .find("fn validate_core_authorized_non_runtime_write_seal_owner_v0(")
             .expect("production non-runtime write-seal owner rebind");
         let prefix_rebind_offset = implementation_source
-            .find("fn validate_core_authorized_non_runtime_prefix_v0(")
+            .find("fn validate_core_authorized_regular_cursor_prefix_v0(")
             .expect("production non-runtime staged-prefix rebind");
         let write_seal_offset = implementation_source
             .find("fn seal_core_authorized_non_runtime_family_writes_v0(")
@@ -9021,7 +9593,7 @@ mod tests {
         let prefix_rebind_signature =
             &implementation_source[prefix_rebind_offset..prefix_rebind_signature_end];
         assert!(
-            prefix_rebind_signature.contains("routed: &CoreAuthorizedNonRuntimePayloadRoutingV0")
+            prefix_rebind_signature.contains("open: &OpenCoreAuthorizedRegularTransactionCursorV0")
         );
         for forbidden_parameter in [
             "route:",
@@ -9041,6 +9613,10 @@ mod tests {
         for required_binding in [
             "indices.insert(applied.index)",
             "indices.insert(index)",
+            "serde_json::from_slice(&applied.exact_outer_bytes)",
+            "exact_inner_bytes == applied.exact_inner_bytes",
+            "transaction == applied.transaction",
+            "native_receipt == applied.native_receipt",
             "prefix.overlay.clone().seal()?",
             "prefix.plan.binds_exact_operations_v0(&poco_raws)",
             "auth_writes_match_v0(&prefix.writes, &expected_writes)",
@@ -9131,13 +9707,15 @@ mod tests {
         }
         assert_eq!(
             write_seal_body
-                .matches("validate_core_authorized_non_runtime_prefix_v0(")
+                .matches("validate_core_authorized_regular_cursor_prefix_v0(")
                 .count(),
             2,
             "both family seal arms must rebind the exact prior cursor prefix"
         );
         assert!(write_seal_body.contains("plan.binds_exact_operations_v0(&exact_poco_operations)"));
-        assert!(write_seal_body.contains("routed.open.validator_prefix.as_ref().map_or_else("));
+        assert!(write_seal_body.contains("if let Some(prefix) = &routed.open.validator_prefix"));
+        assert!(write_seal_body
+            .contains("prepared_core_authorized_validator_lifecycle_v0(&routed.open)"));
 
         let non_runtime_advance_offset = implementation_source
             .find("fn advance_core_authorized_non_runtime_success_v0(")
@@ -9307,7 +9885,7 @@ mod tests {
         assert!(!closed_plan_owner.contains("seal"));
         assert!(!closed_plan_owner.contains("plan:"));
         let production_plan_body = implementation_source[plan_offset..]
-            .split_once("fn match_finished_core_authorized_regular_runtime_commitments_v0(")
+            .split_once("fn finish_and_plan_complete_core_authorized_regular_post_state_v0(")
             .expect("production post-state planner body boundary")
             .0;
         assert!(production_plan_body
@@ -9317,6 +9895,78 @@ mod tests {
         );
         assert!(production_plan_body.contains("let plan_seal = plan\n            .seal_v0()"));
         assert!(!production_plan_body.contains("let writes = changes\n            .values()"));
+        let complete_plan_offset = implementation_source
+            .find("fn finish_and_plan_complete_core_authorized_regular_post_state_v0(")
+            .expect("production consuming complete-body planner");
+        let complete_plan_signature_end = implementation_source[complete_plan_offset..]
+            .find(" {\n")
+            .map(|offset| complete_plan_offset + offset)
+            .expect("production complete-body planner signature end");
+        let complete_plan_signature =
+            &implementation_source[complete_plan_offset..complete_plan_signature_end];
+        assert!(
+            complete_plan_signature.contains("open: OpenCoreAuthorizedRegularTransactionCursorV0")
+        );
+        assert!(
+            complete_plan_signature.contains("FinishedPlannedCoreAuthorizedRegularCompleteBodyV0")
+        );
+        assert!(complete_plan_signature
+            .contains("Box<ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0>"));
+        for forbidden_parameter in [
+            "writes:",
+            "version:",
+            "root:",
+            "header:",
+            "body:",
+            "changes:",
+            "receipts:",
+            "snapshot:",
+            "verifier:",
+        ] {
+            assert!(
+                !complete_plan_signature.contains(forbidden_parameter),
+                "production complete-body planner gained caller input: {forbidden_parameter}"
+            );
+        }
+        let complete_plan_body = implementation_source[complete_plan_offset..]
+            .split_once("fn match_finished_core_authorized_regular_runtime_commitments_v0(")
+            .expect("production complete-body planner body boundary")
+            .0;
+        assert_eq!(
+            complete_plan_body
+                .matches(".plan_exact_next_auth_update_v0(")
+                .count(),
+            1,
+            "complete-body planner must derive one exact-next JMT plan"
+        );
+        assert_eq!(
+            complete_plan_body.matches(".seal_v0()").count(),
+            1,
+            "complete-body planner must seal one exact-next JMT plan"
+        );
+        assert_eq!(
+            complete_plan_body.matches("snapshot.finish()").count(),
+            1,
+            "complete-body planner must close its one retained snapshot"
+        );
+        for forbidden_surface in [
+            "NativeBlockExecutionV0::try_new",
+            "internal_operation(",
+            "match_finished_core_authorized_regular_runtime_commitments_v0(",
+            "ExecutionOutcomeV0",
+            "PayloadValidationResult",
+            "Input::",
+            "into_core_input",
+            "Core::step",
+            "core.step(",
+            "persist_transition(",
+            ".apply(",
+        ] {
+            assert!(
+                !complete_plan_body.contains(forbidden_surface),
+                "complete-body planner gained forbidden authority: {forbidden_surface}"
+            );
+        }
         let production_comparator_offset = implementation_source
             .find("fn match_finished_core_authorized_regular_runtime_commitments_v0(")
             .expect("production consuming four-root comparator");
@@ -9878,6 +10528,7 @@ mod tests {
             "OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0",
             "OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0",
             "AppliedCoreAuthorizedRuntimeTransactionV0",
+            "FinishedPlannedCoreAuthorizedRegularCompleteBodyV0",
             "FinishedPlannedCoreAuthorizedRegularRuntimeExecutionV0",
             "MatchedCoreAuthorizedRegularRuntimeCommitmentsV0",
             "FailedCoreAuthorizedRegularRuntimeCommitmentComparisonV0",
@@ -9887,6 +10538,7 @@ mod tests {
             "FailedCoreAuthorizedRegularRuntimeAttemptV0",
             "ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0",
             "ClosedFailedCoreAuthorizedRegularPostStatePlanV0",
+            "ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0",
         ] {
             let declaration = format!("struct {capability} {{");
             let attributes = item_attribute_source(implementation_source, &declaration);
@@ -10075,6 +10727,7 @@ mod tests {
             "OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0",
             "FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0",
             "ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0",
+            "FinishedCoreAuthorizedRegularPocoWriteSourceV0",
         ] {
             let declaration = format!("enum {capability} {{");
             let attributes = item_attribute_source(implementation_source, &declaration);
@@ -10104,6 +10757,28 @@ mod tests {
                 assert!(!implementation_source.contains(&forbidden));
             }
         }
+        for cause in [
+            "CoreAuthorizedRegularCompleteBodyPlanCauseV0",
+            "ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0",
+        ] {
+            for forbidden in [
+                format!("impl Clone for {cause}"),
+                format!("impl Serialize for {cause}"),
+                format!("impl serde::Serialize for {cause}"),
+                format!("impl Deserialize for {cause}"),
+                format!("impl serde::Deserialize for {cause}"),
+                format!("impl BorshSerialize for {cause}"),
+                format!("impl BorshDeserialize for {cause}"),
+                format!("impl Drop for {cause}"),
+                format!("impl From<{cause}"),
+                format!("impl TryFrom<{cause}"),
+            ] {
+                assert!(
+                    !implementation_source.contains(&forbidden),
+                    "complete-body cause gained a reconstructing conversion: {forbidden}"
+                );
+            }
+        }
         for (kind, capability) in [
             ("struct", "CoreAuthorizedRegularPocoPrefixV0"),
             ("struct", "CoreAuthorizedRegularValidatorPrefixV0"),
@@ -10121,6 +10796,17 @@ mod tests {
                 "OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0",
             ),
             ("enum", "FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0"),
+            ("enum", "FinishedCoreAuthorizedRegularPocoWriteSourceV0"),
+            ("enum", "CoreAuthorizedRegularCompleteBodyPlanCauseV0"),
+            ("enum", "ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0"),
+            (
+                "struct",
+                "FinishedPlannedCoreAuthorizedRegularCompleteBodyV0",
+            ),
+            (
+                "struct",
+                "ClosedFailedCoreAuthorizedRegularCompleteBodyPlanV0",
+            ),
         ] {
             for visibility in ["pub ", "pub(crate) ", "pub(super) "] {
                 assert!(
@@ -13957,6 +14643,91 @@ mod tests {
     }
 
     #[test]
+    fn production_complete_mixed_body_plans_runtime_and_final_poco_prefix_once() {
+        let store = test_store_with_poco_application_authority();
+        let committed_before = store.store.load_or_migrate().unwrap();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let runtime = base.body.application_payload().transactions()[0].clone();
+        let (_, poco_inner) = author_two_valid_poco_application_operations(&store, &base);
+        let first_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-complete-poco-runtime-poco-first".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &poco_inner[0],
+        );
+        let second_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-complete-poco-runtime-poco-second".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &poco_inner[1],
+        );
+        let profile = replace_profile_transactions(base, vec![first_poco, runtime, second_poco]);
+        let target_height = profile.header.height().get();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open complete mixed body cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute runtime item in complete mixed body");
+        let open = advance_next_production_non_runtime_payload(open);
+        let mut expected_writes = open
+            .changes
+            .values()
+            .map(crate::authenticated_object_write)
+            .collect::<anyhow::Result<Vec<_>>>()
+            .unwrap();
+        expected_writes.extend(open.poco_prefix.as_ref().unwrap().writes.iter().cloned());
+        let expected_plan = store
+            .authenticated_parent
+            .plan_put_value_set(target_height, expected_writes)
+            .expect("independently plan complete mixed writes");
+
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("finish one exact complete mixed-body plan");
+        assert_eq!(finished.post_state_update.version, target_height);
+        assert_eq!(
+            finished.post_state_update.root_hash,
+            expected_plan.root_hash
+        );
+        finished
+            .post_state_update
+            .verify_seal_v0(&finished.post_state_update_seal)
+            .expect("verify complete mixed-body plan seal");
+        assert_eq!(finished.applied.len(), 1);
+        assert_eq!(finished.applied_non_runtime.len(), 2);
+        assert!(!finished.changes.is_empty());
+        match finished.final_poco.as_ref().unwrap() {
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::Operations(plan) => {
+                assert_eq!(plan.operation_count(), 2);
+                assert!(plan.binds_exact_operations_v0(&poco_inner));
+            }
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::ScheduledCutoff(_) => {
+                panic!("business operations became a scheduled cutoff write")
+            }
+        }
+        assert!(finished.final_validator_lifecycle.is_none());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_runtime_fixture_objects_absent(&store.store);
+        let committed_after = store.store.load_or_migrate().unwrap();
+        assert_eq!(committed_after.height, committed_before.height);
+        assert_eq!(committed_after.app_hash, committed_before.app_hash);
+    }
+
+    #[test]
     fn production_poco_validator_poco_keeps_independent_staged_prefixes() {
         let store = test_store_with_poco_application_authority();
         let base = fixture_profile(store.parent_state_root, 0);
@@ -14039,6 +14810,342 @@ mod tests {
         assert!(store.validator_lifecycle.pending_transition.is_none());
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
         drop(open);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_complete_body_merges_runtime_poco_and_validator_replacements() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let runtime = base.body.application_payload().transactions()[0].clone();
+        let (_, poco_inner) = author_two_valid_poco_application_operations(&store, &base);
+        let validator_id = "native-complete-poco-validator-poco";
+        let validator_inner = valid_validator_transition_bytes(&store, validator_id);
+        let transactions = vec![
+            signed_envelope_bytes(
+                TEST_CHAIN.as_str(),
+                "native-complete-poco-validator-first".to_string(),
+                81,
+                "did:operator:1",
+                "operator",
+                1,
+                1_700_000_000_000,
+                1_700_000_100_000,
+                crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                &poco_inner[0],
+            ),
+            runtime,
+            signed_envelope_bytes(
+                TEST_CHAIN.as_str(),
+                validator_id.to_string(),
+                81,
+                "did:operator:1",
+                "operator",
+                1,
+                1_700_000_000_000,
+                1_700_000_100_000,
+                crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+                &validator_inner,
+            ),
+            signed_envelope_bytes(
+                TEST_CHAIN.as_str(),
+                "native-complete-poco-validator-second".to_string(),
+                81,
+                "did:operator:1",
+                "operator",
+                2,
+                1_700_000_000_000,
+                1_700_000_100_000,
+                crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                &poco_inner[1],
+            ),
+        ];
+        let profile = replace_profile_transactions(base, transactions);
+        let target_height = profile.header.height().get();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open complete PoCO/runtime/validator/PoCO cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute runtime item in all-family complete body");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = advance_next_production_non_runtime_payload(open);
+        let mut expected_writes = open
+            .changes
+            .values()
+            .map(crate::authenticated_object_write)
+            .collect::<anyhow::Result<Vec<_>>>()
+            .unwrap();
+        expected_writes.extend(open.poco_prefix.as_ref().unwrap().writes.iter().cloned());
+        expected_writes.push(open.validator_prefix.as_ref().unwrap().write.clone());
+        let expected_plan = store
+            .authenticated_parent
+            .plan_put_value_set(target_height, expected_writes)
+            .expect("independently plan runtime, final PoCO, and validator writes");
+
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("finish exact all-family complete-body plan");
+        assert_eq!(
+            finished.post_state_update.root_hash,
+            expected_plan.root_hash
+        );
+        assert_eq!(finished.applied.len(), 1);
+        assert!(!finished.changes.is_empty());
+        assert_eq!(finished.applied_non_runtime.len(), 3);
+        match finished.final_poco.as_ref().unwrap() {
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::Operations(plan) => {
+                assert_eq!(plan.operation_count(), 2);
+                assert!(plan.binds_exact_operations_v0(&poco_inner));
+            }
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::ScheduledCutoff(_) => {
+                panic!("business operations became a scheduled cutoff write")
+            }
+        }
+        let lifecycle = finished
+            .final_validator_lifecycle
+            .as_ref()
+            .expect("retain final scheduled validator lifecycle");
+        assert_eq!(lifecycle.governance_sequence, 1);
+        assert_eq!(
+            lifecycle
+                .pending_transition
+                .as_ref()
+                .map(|pending| pending.transition_id.as_str()),
+            Some(validator_id)
+        );
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+    }
+
+    #[test]
+    fn complete_empty_body_plans_due_validator_activation_write() {
+        let store = test_store_with_pending_validator_activation_at_height_three();
+        let profile = replace_profile_transactions(
+            fixture_profile_at_height(
+                store.parent_state_root,
+                2,
+                ConsensusParametersV0::reference_shadow_v0(),
+                0,
+            ),
+            Vec::new(),
+        );
+        let mut expected_lifecycle = store.validator_lifecycle.clone();
+        expected_lifecycle.prepare_height(3).unwrap();
+        let expected_write = crate::authenticated_lifecycle_write(3, &expected_lifecycle).unwrap();
+        let expected_plan = store
+            .authenticated_parent
+            .plan_put_value_set(3, [expected_write])
+            .expect("independently plan due validator activation");
+        let open = open_exact_test_authorized_regular_cursor(&store, &profile);
+
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("plan mandatory due validator lifecycle write");
+        assert_eq!(
+            finished.post_state_update.root_hash,
+            expected_plan.root_hash
+        );
+        assert!(finished.applied.is_empty());
+        assert!(finished.applied_non_runtime.is_empty());
+        assert!(finished.final_poco.is_none());
+        let final_lifecycle = finished
+            .final_validator_lifecycle
+            .expect("retain implicitly prepared validator lifecycle");
+        assert!(final_lifecycle.pending_transition.is_none());
+        assert_eq!(
+            final_lifecycle.last_applied_transition_id.as_deref(),
+            Some("native-implicit-height-three")
+        );
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert!(store.validator_lifecycle.pending_transition.is_some());
+    }
+
+    #[test]
+    fn production_complete_cutoff_body_refreshes_only_without_poco_operations() {
+        let parameters = compact_cutoff_at_two_parameters();
+        let store = build_test_store_with_parameters_at_height(true, parameters, 1);
+        let profile = replace_profile_transactions(
+            fixture_profile_at_height(store.parent_state_root, 1, parameters, 0),
+            Vec::new(),
+        );
+        let source_projection = load_test_authenticated_poco_projection(&store);
+        let refresh = crate::poco_transition::scheduled_cutoff_manifest_refresh_write_v0(
+            Height::new(2),
+            &source_projection,
+        )
+        .unwrap();
+        let expected_plan = store
+            .authenticated_parent
+            .plan_put_value_set(2, [refresh])
+            .expect("independently plan scheduled cutoff refresh");
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open scheduled cutoff empty cursor");
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("plan mandatory empty cutoff refresh");
+        assert_eq!(
+            finished.post_state_update.root_hash,
+            expected_plan.root_hash
+        );
+        match finished.final_poco.as_ref().unwrap() {
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::ScheduledCutoff(projection) => {
+                assert_eq!(projection, &source_projection);
+            }
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::Operations(_) => {
+                panic!("empty cutoff became a business-operation seal")
+            }
+        }
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+
+        let operation_store = build_test_store_with_parameters_at_height(true, parameters, 1);
+        let base = fixture_profile_at_height(operation_store.parent_state_root, 1, parameters, 0);
+        let (_, inner) = author_valid_poco_application_operation(&operation_store, &base);
+        let outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-cutoff-business-operation".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &inner,
+        );
+        let profile = replace_profile_transactions(base, vec![outer]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&operation_store),
+            core_validation_request(&profile),
+        )
+        .expect("open cutoff business-operation cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let expected_writes = open.poco_prefix.as_ref().unwrap().writes.clone();
+        let expected_plan = operation_store
+            .authenticated_parent
+            .plan_put_value_set(2, expected_writes)
+            .expect("independently plan cutoff business-operation writes");
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .expect("plan cutoff operation without duplicate refresh");
+        assert_eq!(
+            finished.post_state_update.root_hash,
+            expected_plan.root_hash
+        );
+        match finished.final_poco.as_ref().unwrap() {
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::Operations(plan) => {
+                assert_eq!(plan.operation_count(), 1);
+                assert!(plan.binds_exact_operations_v0(&[inner]));
+            }
+            super::FinishedCoreAuthorizedRegularPocoWriteSourceV0::ScheduledCutoff(_) => {
+                panic!("business operation was double-planned as cutoff refresh")
+            }
+        }
+        assert_eq!(
+            operation_store
+                .store
+                .active_runtime_snapshot_pins_for_test_v0(),
+            0
+        );
+    }
+
+    #[test]
+    fn complete_body_write_merge_rejects_duplicate_raw_keys_without_deduplication() {
+        let first = AuthWrite::put(b"complete-body-duplicate".to_vec(), b"first".to_vec())
+            .expect("construct first duplicate-key write");
+        let second = AuthWrite::put(b"complete-body-duplicate".to_vec(), b"second".to_vec())
+            .expect("construct second duplicate-key write");
+        assert_eq!(
+            super::validate_unique_complete_body_auth_writes_v0(&[first, second]),
+            Err(
+                super::CoreAuthorizedRegularCompleteBodyPlanCauseV0::MergedWriteKeyConflictInvariant
+            )
+        );
+    }
+
+    #[test]
+    fn production_complete_body_rebinds_runtime_receipt_owner_before_planning() {
+        let store = test_store();
+        let profile = fixture_profile(store.parent_state_root, 0);
+        let mut open = complete_production_runtime_cursor(&store, &profile);
+        let empty_internal_receipt = NativeTransactionReceiptFactsV0::internal_operation();
+        assert_ne!(open.applied[0].native_receipt, empty_internal_receipt);
+        open.applied[0].native_receipt = empty_internal_receipt;
+
+        let failed = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .err()
+            .expect("runtime receipt-owner drift must fail before complete-body planning");
+        assert_eq!(failed.next_transaction_index, 2);
+        assert_eq!(failed.applied.len(), 2);
+        assert!(matches!(
+            failed.cause,
+            super::ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0::Plan(
+                super::CoreAuthorizedRegularCompleteBodyPlanCauseV0::CompleteBodyProvenanceInvariant
+            )
+        ));
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_complete_body_finish_failure_outranks_successful_mixed_plan() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let runtime = base.body.application_payload().transactions()[0].clone();
+        let (_, inner) = author_two_valid_poco_application_operations(&store, &base);
+        let first = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-complete-finish-override-first".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &inner[0],
+        );
+        let second = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-complete-finish-override-second".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &inner[1],
+        );
+        let profile = replace_profile_transactions(base, vec![first, runtime, second]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .unwrap();
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute runtime item before finish override");
+        let mut open = advance_next_production_non_runtime_payload(open);
+        open.open.snapshot.inject_finish_failure_for_test_v0();
+        let failed = finish_and_plan_complete_core_authorized_regular_post_state_v0(open)
+            .err()
+            .expect("snapshot finish must replace successful mixed planning");
+        assert_eq!(failed.next_transaction_index, 3);
+        assert_eq!(failed.applied.len(), 1);
+        assert_eq!(failed.applied_non_runtime.len(), 2);
+        assert!(!failed.changes.is_empty());
+        assert!(failed.poco_prefix.is_some());
+        assert!(matches!(
+            failed.cause,
+            super::ClosedCoreAuthorizedRegularCompleteBodyPlanCauseV0::Snapshot(
+                AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                    stage: crate::store::AuthenticatedRuntimeReadStageV0::EndSnapshot,
+                    ..
+                }
+            )
+        ));
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
     }
 
