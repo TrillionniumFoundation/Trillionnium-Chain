@@ -795,12 +795,22 @@ compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-`OpenChallenge`, `ReleaseSettlement`, `RegisterFutureCandidate`,
-`RegisterValidator`, and `RotateValidator`; every other family stays audit-open
-before terminal failure mapping;
-resolve challenge types its pending/certificate join before clone, preserves
-the exact not-pending reason, and splits signed next resolution from
-authenticated pending/old-lifecycle drift;
+`OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
+`RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; every
+other family stays audit-open before terminal failure mapping;
+resolve challenge now freezes the exact pending/certificate rows and indices,
+target lifecycle/height/decision, challenge-decision nullifier, and semantic
+transition before clone. Signed IDs, pending identity, and accepted-certificate
+presence precede pending-family `-1` and defensive-total caps; unsupported
+fields, decision, semantic/window checks, and accumulator count `+1` follow.
+Only proof verification and prepared removal/lifecycle/semantic mutation run on
+the clone. A real four-block fixture fills both pending slots and resolves one
+from the authenticated next block, proving 2-to-1, count `+1`, terminal
+certificate state, and seal; rejected and sustained shared vectors remain
+unchanged. Collision coverage freezes signed/pending/certificate, cap,
+unsupported-field, decision/window/semantic/counter, proof, structural,
+carrier/source-row, and rollback priorities; raw proof-key/encoding faults stay
+decode-first;
 governance proposal and approval type signed rules plus the pre-clone proposal
 join, preserve exact missing-proposal and too-early reasons, and fail stop on
 authenticated parameters/proposal/pending-fact divergence;

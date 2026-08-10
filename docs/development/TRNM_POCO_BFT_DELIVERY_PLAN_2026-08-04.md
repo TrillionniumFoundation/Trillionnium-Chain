@@ -544,14 +544,31 @@ an earlier phase.
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-  `OpenChallenge`, `ReleaseSettlement`, `RegisterFutureCandidate`,
-  `RegisterValidator`, and `RotateValidator`; all other families remain
-  audit-open before terminal failure mapping.
-  `ResolveChallenge` now validates signed IDs, pending identity, active
-  certificate presence, and authenticated lifecycle before clone; not-pending
-  is its existing exact deterministic reason, too-early resolution is
-  `ProtocolWindowOrCap`, signed next-resolution drift is `SemanticTransition`,
-  and pending/old-lifecycle companion drift is `AuthenticatedOverlay`.
+  `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
+  `RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; all
+  other families remain audit-open before terminal failure mapping.
+  `ResolveChallenge` now carries one exact pending removal, certificate
+  lifecycle successor, resolution decision nullifier, and semantic transition
+  across capacity admission and execution. Its frozen order is structural and
+  exact owner/context/revision/replay admission, signed IDs, exact pending
+  identity, and active accepted-certificate presence, then pending-family `-1`
+  and defensive-total record caps. Unsupported-field rejection, derived
+  decision, exact pending semantic predecessor, lifecycle window and signed
+  successor, and accumulator count `+1` follow before clone. Only the insertion
+  proof, pending removal, certificate lifecycle update, and semantic mutation
+  run on the candidate. The carrier freezes both source rows and indices, the
+  target lifecycle/height/decision, nullifier subject, and semantic change;
+  cross-family, same-family body, pending-row, or certificate-row drift is a
+  `DerivedMutationPostcondition`. A test-only four-block witness creates and
+  accepts two independent certificates, fills both pending slots, then resolves
+  one from the authenticated next block: pending count falls from two to one,
+  the certificate becomes challenge-rejected, count advances by one, and the
+  block seals. Both frozen rejected/sustained vectors still apply and seal.
+  Collision tests freeze malformed/missing/mismatched IDs, missing or non-
+  accepted certificates, record cap, unsupported fields, decision/window/
+  successor/authenticated-predecessor/counter, proof shape/subject/root,
+  structural, carrier, and full-overlay rollback priorities; raw proof-key and
+  encoding faults remain decode-first.
   Governance proposal now preserves nested typed errors and maps its remaining
   signed target/phase/parameters/semantic and duplicate-target rejects to
   `GovernanceRule`. Governance approval validates signed hash/next epoch,

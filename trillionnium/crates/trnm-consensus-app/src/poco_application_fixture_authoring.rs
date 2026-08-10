@@ -2799,6 +2799,75 @@ pub(super) fn release_settlement_full_capacity_fixture_v0() -> Result<(
     Ok((block, built.raw, operation))
 }
 
+pub(super) fn resolve_challenge_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let fixtures = [
+        certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
+        certificate_fixture_for_provider(&chain, b'b', 1, b"validator-b")?,
+    ];
+
+    let mut setup_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut funding_decisions = Vec::with_capacity(fixtures.len());
+    for fixture in &fixtures {
+        let (authorize, next) = authorize_consumer_key(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&authorize.raw)?;
+        nullifiers = next;
+        let (meter, next) = define_meter(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&meter.raw)?;
+        nullifiers = next;
+        let (provider, next) = register_provider(&setup_block, &chain, fixture, &nullifiers)?;
+        setup_block.apply_raw(&provider.raw)?;
+        nullifiers = next;
+        let (funding, next, funding_decision) =
+            fund_settlement(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&funding.raw)?;
+        nullifiers = next;
+        funding_decisions.push(funding_decision);
+    }
+    chain.commit_block(setup_block, nullifiers)?;
+
+    let mut acceptance_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for (fixture, funding_decision) in fixtures.iter().zip(funding_decisions) {
+        let (acceptance, next) =
+            accept_certificate(&acceptance_block, fixture, funding_decision, &nullifiers)?;
+        acceptance_block.apply_raw(&acceptance.raw)?;
+        nullifiers = next;
+    }
+    chain.commit_block(acceptance_block, nullifiers)?;
+
+    let mut opening_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut challenge_ids = Vec::with_capacity(fixtures.len());
+    for fixture in &fixtures {
+        let (opening, next, challenge_id) = open_challenge(&opening_block, fixture, &nullifiers)?;
+        opening_block.apply_raw(&opening.raw)?;
+        nullifiers = next;
+        challenge_ids.push(challenge_id);
+    }
+    chain.commit_block(opening_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.overlay.authority.pending_challenges.len() == MAX_PENDING_CHALLENGES,
+        "resolve capacity fixture did not fill the pending-challenge family"
+    );
+    let (built, _) = resolve_challenge(
+        &block,
+        &fixtures[0],
+        challenge_ids[0],
+        ChallengeResolutionV0::Rejected,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
 fn rebound_negative_operation(
     block: &PocoApplicationBlockOverlayV0,
     base: &BuiltOperationV0,

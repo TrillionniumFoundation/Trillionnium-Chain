@@ -1385,11 +1385,23 @@ epoch prune, and Core transition remain open.
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
    `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
-   `ReleaseSettlement`, `RegisterFutureCandidate`,
+   `ReleaseSettlement`, `ResolveChallenge`, `RegisterFutureCandidate`,
    `RegisterValidator`, and `RotateValidator`; all other families remain audit-
    open before terminal failure mapping.
-   `ResolveChallenge` now types its pre-clone pending/certificate join and
-   separates signed resolution from authenticated pending/lifecycle drift.
+   `ResolveChallenge` now carries the exact pending/certificate rows and slots,
+   target lifecycle/height/decision, one challenge-decision nullifier, and its
+   semantic transition across capacity admission. Signed IDs, pending identity,
+   and an active accepted certificate precede pending-family `-1` and defensive-
+   total caps. Unsupported fields, derived decision, semantic predecessor/
+   successor and window checks, and accumulator count `+1` remain pre-clone;
+   only proof verification and the prepared removals/updates run on the clone.
+   A four-block fixture creates and accepts two real certificates, fills both
+   pending slots, then resolves one from the authenticated next block and seals
+   the 2-to-1/count-`+1` transition. Both rejected/sustained shared vectors stay
+   green. Its collision matrix freezes signed/pending/certificate, cap,
+   unsupported-field, decision/window/semantic/counter, late-proof, structural,
+   body/carrier/source-row, and full-rollback priorities. Raw proof-key and
+   encoding faults remain decode-first.
    Governance proposal/approval now type their signed rules and pre-clone
    proposal join while keeping authenticated parameters/pending-fact drift
    invariant and preserving the exact missing-proposal reason.
