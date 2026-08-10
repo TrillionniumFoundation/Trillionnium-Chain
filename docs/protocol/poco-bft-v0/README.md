@@ -624,8 +624,15 @@ cutoff manifest refresh plus the final explicit or `prepare_height(target)`-
 implicit validator singleton, and rejects duplicate raw keys and key hashes.
 It produces and seals exactly one exact-next JMT plan on that same snapshot;
 snapshot finish is mandatory and overrides/discards any pending planning cause
-or successful plan. This is inert planning only, not non-runtime/body-wide
-success receipts, a mixed-body header/four-root comparator or `Valid` outcome.
+or successful plan. The planning carrier remains inert. A distinct consuming
+comparator now rebinds every mixed-body item and final state source, rebuilds
+one receipt per body item in exact index order, rederives the merged writes,
+verifies the retained plan/seal plus strict ordinary commitments, and
+classifies only state then receipts mismatches as deterministic. Runtime
+receipts preserve real gas, exact `u128` fees, and ordered events; PoCO and
+validator items use the frozen empty internal receipt, while cutoff refresh and
+implicit validator activation add no body receipt. The result is still only a
+private matched/failed/classified owner, not an app-private `Valid` outcome.
 Plan application/persistence and head update, durable artifact/outbox,
 speculative-parent overlays, cross-epoch/handoff, actual Core callback
 execution, ABCI wiring, and cross-process rollback
@@ -1033,9 +1040,12 @@ merges the replayed runtime final delta with the final replace-only PoCO prefix
 or the no-PoCO scheduled-cutoff refresh and the final/implicit validator
 singleton, rejects raw-key/hash conflicts, and creates one sealed exact-next
 JMT plan on the same snapshot. Only successful snapshot finish exposes that
-inert carrier; finish failure takes precedence. Non-runtime/body-wide success
-receipts, mixed-body header/four-root comparison and `Valid`, plan application/
-persistence/head update, durable terminal artifacts/outbox, speculative-parent
+inert carrier; finish failure takes precedence. A subsequent owner-only
+comparator now closes body-wide receipts and mixed-body four-root comparison
+inside a private classification carrier, with full provenance/final-source/
+plan/static invariants before state-then-receipts mismatch classification. It
+does not promote app-private `Valid`. Plan application/persistence/head update,
+durable terminal artifacts/outbox, speculative-parent
 and cross-epoch/handoff support, callback delivery, and Core/ABCI integration
 remain open.
 Runtime resource estimation now has a separate fallible API and opaque

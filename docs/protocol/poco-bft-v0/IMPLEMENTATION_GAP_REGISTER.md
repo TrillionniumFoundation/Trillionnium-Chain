@@ -1061,10 +1061,13 @@ epoch prune, and Core transition remain open.
    and produces/seals one exact-next JMT plan on that same snapshot. Snapshot
    finish failure discards and outranks any pending plan or successful seal.
    This is an inert owner-bound planning carrier, not the runtime-only receipt/
-   four-root comparator path. Non-runtime/body-wide success receipts, mixed-
-   body header/four-root comparison and `Valid`, JMT plan application/
-   persistence/head update, durable evaluated-artifact deduplication, and host
-   outbox/Core/ABCI callback delivery remain open. The Core
+   four-root comparator path. A distinct consuming mixed-body comparator now
+   rebuilds one body-indexed receipt per payload item, rederives all final
+   writes, verifies the plan/seal and strict ordinary commitments, and exposes
+   only private matched/failed/classified owners with state-before-receipts
+   deterministic mismatch order. App-private mixed-body `Valid`, JMT plan
+   application/persistence/head update, durable evaluated-artifact
+   deduplication, and host outbox/Core/ABCI callback delivery remain open. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
    evidence-object CEV0 values are retained with the header, and the Core alone
@@ -1230,11 +1233,11 @@ epoch prune, and Core transition remain open.
    head active configuration plus authoritative tx decode/index/context,
    runtime/non-runtime success-only advance, and owner-bound mixed complete-
    body inert planning now come through one bounded production join/cursor
-   chain. The existing receipt/four-root comparison remains a separate runtime-
-   only path.
+   chain. The existing runtime-only receipt/four-root path remains separate;
+   the mixed-body path now has its own owner-only body-wide receipt and four-
+   root comparator, with no conversion between the two capability families.
    Synthetic genesis/native state authority, speculative-parent overlays,
-   non-runtime/body-wide success receipts, mixed-body header/four-root
-   comparison and `Valid`, exact JMT plan application/state persistence/head
+   mixed-body app-private `Valid`, exact JMT plan application/state persistence/head
    update, durable host
    callback-outbox scheduling/delivery, actual Core callback execution, and
    ABCI wiring
@@ -1604,10 +1607,14 @@ epoch prune, and Core transition remain open.
    refresh, and final/implicit validator singleton are merged. Raw-key and key-
    hash conflicts are rejected before one exact-next JMT plan/seal is produced
    on the same snapshot; finish failure still overrides and discards a pending
-   success. Non-runtime/body-wide success receipts, mixed-body header/four-root
-   comparison and `Valid`, plan application/persistence/head update, durable
-   terminal artifacts/outbox, host/Core/ABCI delivery, speculative parents,
-   cross-epoch/handoff, and every phase remain open.
+   success. Body-wide receipt reconstruction and mixed-body header/four-root
+   comparison are now closed by a later consuming comparator: runtime receipt
+   facts remain exact, PoCO/validator receipts are frozen empty, system writes
+   create no receipt, and all owner/final-source/plan/static invariants precede
+   state then receipts mismatch classification. App-private mixed-body `Valid`,
+   plan application/persistence/head update, durable terminal artifacts/outbox,
+   host/Core/ABCI delivery, speculative parents, cross-epoch/handoff, and every
+   phase remain open.
    The consuming mapping accepts only the exact closed owner. Eight semantic-
    decode reasons plus every PoCO and validator deterministic/invariant reason,
    operator authorization, and unsupported-family rejection have explicit
@@ -1719,9 +1726,12 @@ epoch prune, and Core transition remain open.
    final replace-only PoCO prefix or scheduled-cutoff refresh and the final/
    implicit validator singleton, rejects raw-key/hash collisions, and forms one
    sealed exact-next JMT plan before mandatory snapshot finish. The resulting
-   carrier is inert: it cannot emit non-runtime/body-wide receipts, compare the
-   mixed body against header/four roots or form `Valid`, apply or persist the
-   plan/head, persist a terminal artifact/outbox, or deliver a result.
+   planning carrier is inert. Its separate consuming comparator now emits no
+   detached receipt capability but internally rebuilds the exact body-wide
+   receipt sequence, rederives final writes, verifies the plan and all four
+   roots, and retains a private matched/failed/classified owner. It still cannot
+   form app-private `Valid`, apply or persist the plan/head, persist a terminal
+   artifact/outbox, or deliver a result.
    The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter

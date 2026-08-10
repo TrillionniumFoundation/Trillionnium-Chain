@@ -789,11 +789,20 @@ an earlier phase.
   singleton. It rejects duplicate raw authenticated keys and duplicate key
   hashes, then produces and seals exactly one exact-next JMT plan on the same
   pinned snapshot. Snapshot finish remains mandatory and overrides any pending
-  planning cause or successful plan/seal. This carrier is inert planning
-  evidence only: non-runtime/body-wide success receipts, mixed-body header/four-
-  root comparison and `Valid` outcome, plan application/persistence/head
-  update, durable artifact/outbox, callback/`Core::step`/ABCI, speculative
-  parents, cross-epoch/handoff, and phase completion all remain open.
+  planning cause or successful plan/seal. That carrier remains inert planning
+  evidence. A separate single-input comparator now rebinds the complete item
+  sequence and final PoCO/validator/system-write sources, verifies the retained
+  plan/seal and exact merged writes, and rebuilds exactly one receipt per body
+  item in body order. Runtime items retain their real gas, exact `u128` fee,
+  and ordered events; PoCO and validator items use the frozen empty internal
+  receipt, while scheduled-cutoff refresh and implicit validator activation
+  are system writes and add no receipt. Only after provenance, final-state,
+  plan, receipt, static-commitment, and `BlockId` invariants pass may state and
+  then receipts mismatches become whole-block deterministic invalidity. The
+  result remains a private matched/failed/classified owner: app-private `Valid`
+  promotion, plan application/persistence/head update, durable artifact/outbox,
+  callback/`Core::step`/ABCI, speculative parents, cross-epoch/handoff, and
+  phase completion all remain open.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -968,10 +977,15 @@ an earlier phase.
   scheduled-cutoff refresh and the final/implicit validator singleton, rejects
   duplicate raw keys and key hashes, and creates one sealed exact-next JMT plan
   on that same snapshot. Only successful snapshot finish exposes the inert plan;
-  finish failure discards it and takes precedence. This does not authorize
-  independent PoCO-block concatenation, non-runtime/body-wide success receipts,
-  mixed-body header/four-root comparison or `Valid`, plan application/
-  persistence/head update, a terminal result, or callback delivery.
+  finish failure discards it and takes precedence. A following owner-only
+  comparator now closes body-wide receipt reconstruction and mixed-body four-
+  root comparison without exposing an intermediate receipt carrier: exact
+  item indices/bytes/envelopes/semantic owners are rebound, runtime receipts
+  rebuild the final delta, final PoCO/cutoff and validator writes are rederived,
+  and the plan plus ordinary commitments are verified before state-then-
+  receipts mismatch classification. This still does not authorize independent
+  PoCO-block concatenation, app-private `Valid` promotion, plan application/
+  persistence/head update, a terminal host result, or callback delivery.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;
@@ -980,9 +994,11 @@ an earlier phase.
   validation constructor, and authoritative transaction
   decode/index/context plus runtime-gated success-only advance now share one
   snapshot-owning production cursor. The legacy runtime-only same-snapshot JMT
-  planning/four-root comparator and the new mixed-family inert complete-body
-  planner are production-compiled process-local carriers, but remain distinct:
-  the latter has no non-runtime receipts or header-root comparison. Clones within
+  planning/four-root comparator and the new mixed-family complete-body planner/
+  comparator are production-compiled process-local carriers, but remain
+  distinct: the latter closes body-wide receipts and header-root comparison
+  only into private matched/failed/classified owners and cannot reuse the
+  runtime-only outcome/callback bridge. Clones within
   one request object graph now share process-local one-shot exclusion. Schema-v5
   reservation supplies a durable cross-instance
   congruence boundary, but it stores no evaluated artifact or result and has no
@@ -997,8 +1013,8 @@ an earlier phase.
   after durable host-delivery acknowledgement, speculative-parent/BlockTree
   reconstruction,
   application-reservation takeover, revalidatable evaluated-artifact
-  persistence, non-runtime/body-wide receipt production and mixed-body header/
-  four-root comparison, plan application/state persistence, host callback-
+  persistence, mixed-body app-private `Valid` promotion, plan application/state
+  persistence, host callback-
   outbox scheduling/delivery acknowledgement,
   actual `Core::step` callback
   delivery, and ABCI wiring remain absent. In particular, the object-graph
