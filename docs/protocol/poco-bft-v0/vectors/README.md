@@ -345,7 +345,10 @@ that do not call the Rust consensus crates:
   consumer-key, meter, and validator replay, deletes the operation-derived
   `active_from_height`, policy `active_from_height`, or `target_epoch`
   respectively. Those omissions never alter production operation bytes,
-  decision preimages, current target binding, or exact subjects.
+  decision preimages, current target binding, or exact subjects. The
+  consumer-key prune success inserts family 11 over canonical consumer/key
+  identity plus the complete ordered nonce-watermark row; this owner binding
+  keeps distinct empty rows independently prunable.
   `check-final` independently rebuilds this evidence after private authoring
   metadata is stripped; `scaffold-required` emits all nine source-digest-bound
   next-block skeletons but no scaffold marker is accepted as authority.

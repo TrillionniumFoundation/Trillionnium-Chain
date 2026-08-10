@@ -729,8 +729,27 @@ the target height MUST be strictly after every
 applicable checked retention boundary, no live reference may remain, and all
 required permanent nullifiers MUST be inserted or preserved in the same
 overlay/JMT/manifest transition. Nonce-summary insertion is mandatory before
-pruning a revoked key. Partial delete, double prune or prune without replay
-state invalidates the transition.
+pruning a revoked key. Its family-11 identifier commits to canonical consumer
+ID and key ID followed by the complete ordered watermark row, so even two empty
+rows have distinct permanent subjects. Its exact identifier is
+`Digest("trnm.poco-bft.consumer-nonce-summary.v0", preimage)`, using the framed
+domain hash from `03-wire-crypto-and-domain-separation.md`, where:
+
+```text
+preimage =
+    u16_be(SCHEMA_VERSION_V0) ||
+    u32_be(len(consumer_id)) || consumer_id ||
+    u32_be(len(consumer_key_id)) || consumer_key_id ||
+    u32_be(watermark_count) ||
+    for each watermark in authority order:
+        u32_be(len(provider_id)) || provider_id ||
+        u64_be(max_accepted_nonce) ||
+        logical_key_hash32
+```
+
+Every identifier is the exact canonical decoded byte value, not its hex text.
+Partial delete, double prune or prune without replay state invalidates the
+transition.
 
 These four prune kernels are not a production or authenticated cross-epoch
 closure. Their useful retention boundaries cross epochs, but the production

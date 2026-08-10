@@ -1259,9 +1259,18 @@ epoch prune, and Core transition remain open.
    classifies present old semantic/key-authority divergence as an authenticated
    invariant, and retains deterministic signed-successor rejection; existing
    typed failures pass through unchanged, so
-   consumer-key prune now shares the pre-clone negative-fact rejection and
-   keeps authenticated retention/certificate/nonce failures invariant, while
-   signed prune shape and temporal/reference rejection remain deterministic.
+   consumer-key prune now shares the pre-clone negative-fact rejection and has
+   an exact prepared decrement carrier. Consumer `-1` and nonce-watermark `-N`
+   caps precede unsupported fields; terminal/retention/reference checks,
+   authenticated kind-2/kind-3 companion rebinding, the signed all-delete set,
+   and counter arithmetic remain pre-clone. The carrier freezes the complete
+   row/slot, raw semantic owner, every source byte, and an owner-bound family-11
+   subject over canonical consumer/key identity plus the ordered watermark row.
+   Carrier/source drift fails stop before the late proof; only after that proof
+   may the exact slot and leaves be deleted. A real nonempty-watermark `4 -> 3`
+   fixture plus a two-distinct-empty-row regression close the handler/audit
+   surface. Synthetic over-cap rows prove priority only. Production cross-epoch
+   reachability still requires Core activation and host integration.
    Meter definition now separates signed policy/semantic shape from protocol
    cap rejection and consumes one shared prepared policy/semantic transition
    across capacity admission and execution. For `DefineMeterPolicy` only,
@@ -1325,6 +1334,21 @@ epoch prune, and Core transition remain open.
    unreachable handler-boundary witness, not authenticated capacity evidence;
    frozen vectors and valid wire bytes stay unchanged and raw proof-key/
    encoding faults remain decode-first.
+   `PruneRevokedConsumerKey` now closes the isolated decrement carrier and
+   capacity-order path without claiming production epoch reachability. Exact
+   IDs/slot and consumer `-1` plus nonce `-N` capacity arithmetic precede field
+   admission; terminal/retention/reference checks, full kind-2/kind-3
+   authenticated rebinding, exact all-delete semantics, and count `+1` precede
+   clone. The carrier freezes full row/slot, raw semantic owner, all source
+   values, and the family-11 subject. Its digest includes canonical consumer
+   and key IDs before the ordered watermark row, eliminating the prior empty-
+   row collision. A committed multi-block fixture proves a real nonempty
+   watermark is removed with its row at full consumer-family capacity, and a
+   second same-block fixture successfully prunes two distinct empty rows. The
+   collision matrix covers caps, unsupported/temporal/reference, authenticated
+   companions, delete shape, counter/proof, carrier drift and rollback. Only
+   the consumer-key-prune shared sequence changes; independent Node and Rust
+   consumers rebuild it, while the other eight sequences remain identical.
    `ReleaseSettlement` now carries one exact funded-unused reservation/delete
    transition across capacity admission and execution. Structural and exact
    owner/context/revision/replay, signed certificate ID, and exact reservation
@@ -1408,7 +1432,8 @@ epoch prune, and Core transition remain open.
    metadata only and therefore proves handler ordering, not a second
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
-   `FundSettlement`, `AuthorizeConsumerKey`, `RevokeConsumerKey`, `OpenChallenge`,
+   `FundSettlement`, `AuthorizeConsumerKey`, `RevokeConsumerKey`,
+   `PruneRevokedConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
    `RotateValidator`; all other families remain audit-open before terminal

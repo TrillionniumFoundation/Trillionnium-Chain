@@ -479,6 +479,34 @@ an earlier phase.
   unreachable handler-boundary cap witness, not authenticated capacity
   evidence; raw proof-key/encoding faults remain decode-first and frozen shared
   vectors remain byte-identical.
+  `PruneRevokedConsumerKey` now closes the corresponding decrement path at the
+  isolated handler/audit boundary. Canonical IDs and exact slot presence feed
+  consumer-key `-1`, nonce-watermark `-N`, every other family, and defensive-
+  total capacity arithmetic before unsupported-field admission. Revocation,
+  checked strict retention, absence of an exact active-certificate reference,
+  complete kind-2/kind-3 authenticated companion rebinding, exact all-delete
+  semantic ownership, and accumulator count `+1` then run before clone. The
+  prepared carrier freezes the complete authority row and slot, exact raw
+  semantic owner, every source byte, and one family-11 summary subject. That
+  summary is owner-bound to canonical consumer ID plus key ID before hashing
+  the ordered watermark row; this prevents distinct empty rows from sharing a
+  permanent nullifier. Only carrier/source CAS, the late proof, exact slot
+  removal, and prepared deletes remain on the clone. A real multi-block fixture
+  fills four keys, accepts a certificate to create a nonempty watermark,
+  terminally prunes the certificate, revokes the key, advances through the
+  isolated epoch context, and proves sorted `4 -> 3`, global watermark `1 ->
+  0`, exact kind-2/kind-3 deletion, count `+1`, untouched rows, and seal. A
+  second regression prunes two distinct empty rows in one block and proves two
+  distinct family-11 subjects. Collision tests freeze ID/negative-fact,
+  consumer and nonce caps, unsupported fields, active/boundary/reference,
+  authenticated companions, delete set, arithmetic, proof count/family/ID/
+  root, structural, body/raw-owner/full-row/source carrier drift, and complete
+  rollback priorities. Synthetic over-cap rows remain handler-boundary
+  witnesses; a decrement cannot independently reach defensive-total overflow
+  from valid authenticated state. The consumer-key prune shared sequence was
+  intentionally regenerated for the owner-bound family-11 subject; the other
+  eight sequences remain semantically identical. This is not production
+  cross-epoch prune, Core activation, or host integration.
   `ReleaseSettlement` now carries one exact funded-unused reservation/delete
   transition across capacity admission and execution. Its frozen order is
   structural and exact owner/context/revision/replay admission, signed
@@ -571,7 +599,7 @@ an earlier phase.
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-  `RevokeConsumerKey`,
+  `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
   `RegisterValidator`, and `RotateValidator`; all other families remain audit-

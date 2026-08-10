@@ -675,10 +675,16 @@ maps an authenticated negative key lookup to deterministic missing-fact;
 revocation also binds the signed logical key to the body identity, fails stop
 on a present active-predecessor/key-authority divergence, and leaves malformed
 signed revoked successors deterministic;
-consumer-key prune uses that negative-fact reason before clone, keeps signed
-delete/retention/reference rejection deterministic, and keeps authenticated
-retention arithmetic, certificate decoding, and nonce-watermark faults
-invariant;
+consumer-key prune now carries the exact full row, raw semantic owner, all
+kind-2/kind-3 source bytes and the family-11 subject across capacity admission.
+Its consumer `-1` and nonce `-N` caps precede unsupported fields; terminal/
+retention/reference checks precede authenticated companions and the signed
+all-delete set; counter exhaustion precedes late proof verification. The
+family-11 digest includes canonical consumer/key identity plus the ordered
+watermark row, so two empty rows remain independently prunable. Carrier drift
+fails stop before proof, and proof succeeds before exact slot/leaf deletion.
+The real nonempty-watermark fixture and two-empty-row regression close only the
+isolated handler/audit surface, not production cross-epoch reachability;
 meter definition preserves nested typed errors and separates deterministic
 signed policy/semantic shape from deterministic active-parameter cap rejection.
 `DefineMeterPolicy` now carries one shared prepared policy/semantic transition
@@ -817,6 +823,7 @@ priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
 `RevokeConsumerKey`,
+`PruneRevokedConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
 `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
 `RegisterValidator`, and `RotateValidator`; every other family stays audit-open

@@ -1787,11 +1787,8 @@ fn revoke_consumer_key(
     Ok((built, next))
 }
 
-pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
-    PocoApplicationBlockOverlayV0,
-    Vec<u8>,
-    PocoApplicationOperationV0,
-)> {
+fn consumer_key_full_capacity_with_watermark_chain_v0(
+) -> Result<(FixtureChainV0, [CertificateFixtureV0; 4])> {
     let mut chain = authenticated_candidate_genesis_v0()?;
     let fixtures = [
         certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
@@ -1838,6 +1835,27 @@ pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
     acceptance_block.apply_raw(&acceptance.raw)?;
     chain.commit_block(acceptance_block, nullifiers)?;
 
+    let source = chain.start_overlay()?;
+    ensure!(
+        source.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES,
+        "authenticated consumer-key fixture lost the full family"
+    );
+    ensure!(
+        !source.overlay.authority.consumer_keys[0]
+            .nonce_watermarks
+            .is_empty(),
+        "authenticated consumer-key fixture lacks a real nonce watermark"
+    );
+    Ok((chain, fixtures))
+}
+
+pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+
     let block = chain.start_overlay()?;
     ensure!(
         block.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES,
@@ -1852,6 +1870,178 @@ pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
     let (built, _) = revoke_consumer_key(&block, &fixtures[0], &chain.nullifiers)?;
     let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
     Ok((block, built.raw, operation))
+}
+
+pub(super) fn prune_revoked_consumer_key_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+    let fixture = &fixtures[0];
+
+    let mut opening_block = chain.start_overlay()?;
+    let (opening, nullifiers, challenge_id) =
+        open_challenge(&opening_block, fixture, &chain.nullifiers)?;
+    opening_block.apply_raw(&opening.raw)?;
+    chain.commit_block(opening_block, nullifiers)?;
+
+    let mut resolution_block = chain.start_overlay()?;
+    let (resolution, nullifiers) = resolve_challenge(
+        &resolution_block,
+        fixture,
+        challenge_id,
+        ChallengeResolutionV0::Rejected,
+        &chain.nullifiers,
+    )?;
+    resolution_block.apply_raw(&resolution.raw)?;
+    chain.commit_block(resolution_block, nullifiers)?;
+
+    chain.advance_empty_versions(283)?;
+    chain.active_epoch = Epoch::new(28);
+    let certificate_id = *fixture.certificate.certificate_id().as_bytes();
+    let mut certificate_prune_block = chain.start_overlay()?;
+    let (certificate_prune, nullifiers) =
+        prune_certificate(&certificate_prune_block, certificate_id, &chain.nullifiers)?;
+    certificate_prune_block.apply_raw(&certificate_prune.raw)?;
+    chain.commit_block(certificate_prune_block, nullifiers)?;
+
+    let mut revocation_block = chain.start_overlay()?;
+    let (revocation, nullifiers) =
+        revoke_consumer_key(&revocation_block, fixture, &chain.nullifiers)?;
+    revocation_block.apply_raw(&revocation.raw)?;
+    chain.commit_block(revocation_block, nullifiers)?;
+
+    chain.advance_empty_versions(571)?;
+    chain.active_epoch = Epoch::new(57);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == 572,
+        "consumer-key prune fixture target height drifted"
+    );
+    ensure!(
+        block.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES,
+        "consumer-key prune fixture lost the full family"
+    );
+    let target = &block.overlay.authority.consumer_keys[0];
+    ensure!(
+        target.revoked_at_height == Some(285) && !target.nonce_watermarks.is_empty(),
+        "consumer-key prune fixture lacks the revoked full-row target"
+    );
+    ensure!(
+        !block
+            .overlay
+            .authority
+            .active_certificates
+            .iter()
+            .any(|certificate| { certificate.certificate_id_hex == hex::encode(certificate_id) }),
+        "consumer-key prune fixture retained the active certificate reference"
+    );
+    let (built, _) = prune_consumer_key(&block, fixture, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn prune_revoked_consumer_key_active_reference_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+    let fixture = &fixtures[0];
+    let mut revocation_block = chain.start_overlay()?;
+    let (revocation, nullifiers) =
+        revoke_consumer_key(&revocation_block, fixture, &chain.nullifiers)?;
+    revocation_block.apply_raw(&revocation.raw)?;
+    chain.commit_block(revocation_block, nullifiers)?;
+
+    chain.advance_empty_versions(283)?;
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == 284,
+        "active-reference prune fixture target height drifted"
+    );
+    ensure!(
+        block
+            .overlay
+            .authority
+            .active_certificates
+            .iter()
+            .any(|certificate| {
+                certificate.certificate_id_hex
+                    == hex::encode(fixture.certificate.certificate_id().as_bytes())
+            }),
+        "active-reference prune fixture lost its certificate"
+    );
+    let target = &block.overlay.authority.consumer_keys[0];
+    let boundary = protocol_retention_boundary_v0(
+        target
+            .revoked_at_height
+            .context("active-reference prune fixture lacks revocation")?,
+        &block.context.active_parameters,
+    )?;
+    ensure!(
+        block.context.target_height.get() > boundary,
+        "active-reference prune fixture did not pass retention"
+    );
+    let (built, _) = prune_consumer_key(&block, fixture, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn prune_two_empty_consumer_keys_fixture_v0(
+) -> Result<(PocoApplicationBlockOverlayV0, Vec<Vec<u8>>)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let fixtures = [
+        certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
+        certificate_fixture_for_provider(&chain, b'b', 1, b"validator-b")?,
+    ];
+    let mut authorization_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for fixture in &fixtures {
+        let (authorization, next) =
+            authorize_consumer_key(&authorization_block, fixture, &nullifiers)?;
+        authorization_block.apply_raw(&authorization.raw)?;
+        nullifiers = next;
+    }
+    chain.commit_block(authorization_block, nullifiers)?;
+
+    let mut revocation_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for fixture in &fixtures {
+        let (revocation, next) = revoke_consumer_key(&revocation_block, fixture, &nullifiers)?;
+        revocation_block.apply_raw(&revocation.raw)?;
+        nullifiers = next;
+    }
+    chain.commit_block(revocation_block, nullifiers)?;
+
+    chain.advance_empty_versions(283)?;
+    chain.active_epoch = Epoch::new(28);
+    let baseline = chain.start_overlay()?;
+    ensure!(
+        baseline
+            .overlay
+            .authority
+            .consumer_keys
+            .iter()
+            .all(|authority| authority.nonce_watermarks.is_empty()),
+        "empty consumer-key prune fixture unexpectedly has nonce watermarks"
+    );
+    let mut authoring_block = baseline.clone();
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut raw_operations = Vec::with_capacity(fixtures.len());
+    for fixture in &fixtures {
+        let (prune, next) = prune_consumer_key(&authoring_block, fixture, &nullifiers)?;
+        authoring_block.apply_raw(&prune.raw)?;
+        raw_operations.push(prune.raw);
+        nullifiers = next;
+    }
+    ensure!(
+        authoring_block.overlay.authority.consumer_keys.is_empty(),
+        "two-key prune authoring did not remove both empty rows"
+    );
+    Ok((baseline, raw_operations))
 }
 
 fn define_meter(
@@ -3064,7 +3254,7 @@ fn prune_consumer_key(
             exact_hash32(&watermark.logical_key_hex, "fixture nonce watermark key")?.to_vec(),
         )?);
     }
-    let summary = consumer_nonce_summary_digest_v0(&authority.nonce_watermarks)?;
+    let summary = consumer_nonce_summary_digest_v0(authority)?;
     let (built, next, _) = finish_operation(
         block,
         "prune-revoked-consumer-key",
