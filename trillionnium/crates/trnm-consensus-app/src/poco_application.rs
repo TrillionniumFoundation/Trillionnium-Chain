@@ -14756,7 +14756,6 @@ mod tests {
                 assert_eq!(block.apply_decoded_exact(&raw, &operation), Err(expected));
                 assert_block_overlay_unchanged(&block, &before);
             };
-
         let (context, projection, raw, operation) =
             sequence_step_vector_fixture("governance_propose_approve", 0);
         let mut canonical =
@@ -15063,6 +15062,24 @@ mod tests {
                 assert_block_overlay_unchanged(&block, &before);
             };
 
+        let replace_insertion_subject =
+            |operation: &mut PocoApplicationOperationV0,
+             family: PocoNullifierFamilyV0,
+             identifier: [u8; 32]| {
+                let key = derive_poco_nullifier_key_v0(family, identifier);
+                let siblings = std::array::from_fn(|level| {
+                    crate::poco_nullifier::poco_nullifier_default_hash_v0(level)
+                        .expect("fixed nullifier level is in range")
+                });
+                operation.nullifier_insertions = vec![RawNullifierInsertionV0 {
+                    family: family.code(),
+                    identifier_hex: hex::encode(identifier),
+                    proof_hex: hex::encode(
+                        PocoNullifierProofV0::new(key, siblings).canonical_bytes(),
+                    ),
+                }];
+            };
+
         let (context, projection, raw, operation) =
             sequence_step_vector_fixture("governance_propose_approve", 1);
         let mut canonical =
@@ -15354,6 +15371,88 @@ mod tests {
             below_cap,
             bad_root,
             DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let mut wrong_family = operation.clone();
+        replace_insertion_subject(
+            &mut wrong_family,
+            PocoNullifierFamilyV0::SettlementDecision,
+            [0x77; 32],
+        );
+        let (below_cap, _) =
+            approve_governance_capacity_fixture(MAX_FINALIZED_GOVERNANCE_APPROVALS - 1);
+        assert_failure(
+            below_cap,
+            wrong_family,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut wrong_subject = operation.clone();
+        replace_insertion_subject(
+            &mut wrong_subject,
+            PocoNullifierFamilyV0::GovernanceDecision,
+            [0x88; 32],
+        );
+        let (below_cap, _) =
+            approve_governance_capacity_fixture(MAX_FINALIZED_GOVERNANCE_APPROVALS - 1);
+        assert_failure(
+            below_cap,
+            wrong_subject.clone(),
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut saturated_too_early = saturated.clone();
+        saturated_too_early
+            .overlay
+            .authority
+            .pending_governance_proposals[0]
+            .proposed_height = saturated_too_early.context.target_height.get();
+        assert_failure(
+            saturated_too_early,
+            wrong_subject.clone(),
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let (mut below_cap_too_early, _) =
+            approve_governance_capacity_fixture(MAX_FINALIZED_GOVERNANCE_APPROVALS - 1);
+        below_cap_too_early
+            .overlay
+            .authority
+            .pending_governance_proposals[0]
+            .proposed_height = below_cap_too_early.context.target_height.get();
+        assert_failure(
+            below_cap_too_early,
+            wrong_subject.clone(),
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let (mut below_cap_too_early, mut unsupported_too_early) =
+            approve_governance_capacity_fixture(MAX_FINALIZED_GOVERNANCE_APPROVALS - 1);
+        below_cap_too_early
+            .overlay
+            .authority
+            .pending_governance_proposals[0]
+            .proposed_height = below_cap_too_early.context.target_height.get();
+        unsupported_too_early.nullifier_non_membership_checks =
+            vec![unsupported_too_early.nullifier_insertions[0].clone()];
+        assert_failure(
+            below_cap_too_early,
+            unsupported_too_early,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let (mut exhausted_with_wrong_subject, _) =
+            approve_governance_capacity_fixture(MAX_FINALIZED_GOVERNANCE_APPROVALS - 1);
+        exhausted_with_wrong_subject.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX).unwrap();
+        exhausted_with_wrong_subject
+            .overlay
+            .authority
+            .set_accumulator(exhausted_with_wrong_subject.overlay.accumulator);
+        assert_failure(
+            exhausted_with_wrong_subject,
+            wrong_subject,
+            Invariant(InvariantReason::ProtocolCounterExhausted),
         );
 
         let mut structural = saturated.clone();
