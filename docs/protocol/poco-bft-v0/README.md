@@ -717,9 +717,24 @@ late on the cloned candidate. Canonical H1 apply/seal plus saturated/cap-minus-
 one collisions cover signed/authenticated, proof count/family/ID/root, counter,
 structural, body/carrier and full-overlay rollback boundaries; proof-key and
 encoding faults remain decode-first. The same closure also extends to open
-challenge below;
-release settlement validates signed ID and reservation existence before clone,
-then separates signed delete shape from authenticated leaf/reservation drift;
+challenge and release settlement below;
+release settlement now carries one exact funded-unused reservation/delete
+transition across capacity admission. Structural and exact owner/context/
+revision/replay plus signed certificate ID and exact reservation lookup precede
+the reservation-family `-1` and defensive-total record caps. After those caps,
+unsupported-field rejection, derived decision, one exact kind-6 delete with
+authenticated reservation/settlement agreement, and accumulator count `+2`
+construct the carrier. It freezes the exact slot/value, family-1 certificate
+and family-3 settlement-decision subjects, and semantic delete; only the two
+chained proofs, reservation removal, and delete mutation remain clone-late.
+Cross-family, same-family body, and slot drift fail as derived postconditions.
+A real two-block fixture funds and commits four reservations, then releases one
+from the authenticated next block, proving 4-to-3, count `+2`, kind-6 deletion,
+and seal. Its collision matrix covers signed/missing/unsupported/decision/
+authenticated/counter, both proof positions, structural bounds, carrier
+binding, and full rollback. Frozen `release_refund_replay` H2 bytes and H3
+resurrection rejection remain unchanged; raw proof-key/encoding faults remain
+decode-first;
 open challenge now carries one prepared pending record, challenge nullifier,
 and lifecycle semantic transition through capacity admission. Structural and
 exact owner/context/revision/replay plus cheap unsupported-field admission stay
@@ -780,9 +795,9 @@ compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-`OpenChallenge`, `RegisterFutureCandidate`, `RegisterValidator`, and
-`RotateValidator`; every other family stays audit-open before terminal failure
-mapping;
+`OpenChallenge`, `ReleaseSettlement`, `RegisterFutureCandidate`,
+`RegisterValidator`, and `RotateValidator`; every other family stays audit-open
+before terminal failure mapping;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;

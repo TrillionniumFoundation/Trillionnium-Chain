@@ -450,12 +450,28 @@ an earlier phase.
   authenticated faults, cap-versus-late proof count/family/ID/root faults, structural
   priority, counter exhaustion, exact-boundary success, body/carrier mismatch,
   and full-overlay rollback; raw proof-key/encoding faults remain
-  decode-first. The same closure also extends to `OpenChallenge` below; the
-  remaining operation families stay audit-open.
-  `ReleaseSettlement` now validates its signed certificate ID and reservation
-  negative fact before clone, preserves nested typed failures, treats a signed
-  non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
-  reservation divergence as `AuthenticatedOverlay`.
+  decode-first. The same closure also extends to `OpenChallenge` and
+  `ReleaseSettlement` below; the remaining operation families stay audit-open.
+  `ReleaseSettlement` now carries one exact funded-unused reservation/delete
+  transition across capacity admission and execution. Its frozen order is
+  structural and exact owner/context/revision/replay admission, signed
+  certificate ID, exact reservation lookup, reservation-family `-1` and
+  defensive-total record caps, cheap unsupported-field rejection, derived
+  release decision, one exact kind-6 delete with authenticated reservation/
+  settlement companion agreement, then accumulator count `+2`. The carrier
+  freezes the reservation slot/value, family-1 certificate and family-3
+  settlement-decision nullifiers, and semantic delete. Only both chained
+  insertion proofs, reservation removal, and delete mutation run on the clone;
+  defensive cross-family, same-family body, or slot drift is
+  `DerivedMutationPostcondition`. A test-only two-block witness really funds
+  four distinct certificates, commits that full family state, then releases one
+  from the next authenticated block: reservations fall from four to three,
+  count advances by two, kind 6 is deleted, and the block seals. Collision tests
+  freeze malformed/missing/unsupported/decision/signed-delete/authenticated-
+  companion/counter, both proof positions, structural, carrier, and full-
+  overlay rollback priorities. The frozen `release_refund_replay` H2 bytes and
+  H3 resurrection rejection remain unchanged; raw proof-key/encoding faults
+  remain decode-first.
   `OpenChallenge` now also carries one prepared pending record, challenge
   nullifier, and lifecycle semantic transition across capacity admission and
   execution. Its frozen order is structural and exact owner/context/revision/
@@ -528,9 +544,9 @@ an earlier phase.
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-  `OpenChallenge`, `RegisterFutureCandidate`, `RegisterValidator`, and
-  `RotateValidator`; all other families remain audit-open before terminal
-  failure mapping.
+  `OpenChallenge`, `ReleaseSettlement`, `RegisterFutureCandidate`,
+  `RegisterValidator`, and `RotateValidator`; all other families remain
+  audit-open before terminal failure mapping.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending
   is its existing exact deterministic reason, too-early resolution is

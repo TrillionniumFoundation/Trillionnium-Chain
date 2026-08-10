@@ -2733,6 +2733,72 @@ fn release_settlement(
     Ok((built, next))
 }
 
+pub(super) fn release_settlement_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let mut funding_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut release_certificate_id = None;
+    for index in 0..MAX_FUNDED_UNUSED_RESERVATIONS {
+        let mut certificate_id = [0x81; 32];
+        certificate_id[31] = u8::try_from(index)?;
+        let mut settlement_commitment = [0x91; 32];
+        settlement_commitment[31] = u8::try_from(index)?;
+        let mut payload = Vec::new();
+        payload.extend_from_slice(&certificate_id);
+        payload.extend_from_slice(&settlement_commitment);
+        payload.push(SettlementStateV0::FinalizedFundedUnused as u8);
+        payload.extend_from_slice(&funding_block.context.target_height.get().to_be_bytes());
+        let change = semantic_change(
+            &funding_block,
+            PocoSnapshotEntryKindV0::Settlement,
+            &certificate_id,
+            &payload,
+        )?;
+        let (built, next, _) = finish_operation(
+            &funding_block,
+            "fund-settlement-capacity",
+            "fund_settlement",
+            PocoApplicationOperationBodyV0::FundSettlement {
+                certificate_id_hex: hex::encode(certificate_id),
+                settlement_commitment_hex: hex::encode(settlement_commitment),
+                reserved_units: CanonicalU128V0::new(u128::try_from(index)? + 1),
+                funding_decision_id_hex: "0".repeat(64),
+            },
+            vec![change],
+            vec![
+                ProofRequestV0 {
+                    list: "non_membership",
+                    family: PocoNullifierFamilyV0::Certificate,
+                    subject: ProofSubjectV0::Literal(certificate_id),
+                },
+                ProofRequestV0 {
+                    list: "insertion",
+                    family: PocoNullifierFamilyV0::SettlementDecision,
+                    subject: ProofSubjectV0::Decision("fund-settlement"),
+                },
+            ],
+            &nullifiers,
+        )?;
+        funding_block.apply_raw(&built.raw)?;
+        nullifiers = next;
+        release_certificate_id.get_or_insert(certificate_id);
+    }
+    chain.commit_block(funding_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    let (built, _) = release_settlement(
+        &block,
+        release_certificate_id.context("release capacity fixture lacks certificate")?,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
 fn rebound_negative_operation(
     block: &PocoApplicationBlockOverlayV0,
     base: &BuiltOperationV0,

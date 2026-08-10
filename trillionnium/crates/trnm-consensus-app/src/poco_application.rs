@@ -2917,6 +2917,7 @@ enum PreparedCapacityOperationV0 {
     AuthorizeConsumerKey(Box<PreparedAuthorizeConsumerKeyV0>),
     DefineMeter(Box<PreparedDefineMeterV0>),
     FundSettlement(Box<PreparedFundSettlementV0>),
+    ReleaseSettlement(Box<PreparedReleaseSettlementV0>),
     OpenChallenge(Box<PreparedOpenChallengeV0>),
     RegisterFutureCandidate(Box<PreparedFutureCandidateV0>),
     RegisterValidator(Box<PreparedRegisterValidatorV0>),
@@ -2942,6 +2943,14 @@ struct PreparedFundSettlementV0 {
     reservation: FundedUnusedReservationV0,
     expected_absences: [(PocoNullifierFamilyV0, [u8; 32]); 1],
     expected_insertions: [(PocoNullifierFamilyV0, [u8; 32]); 1],
+    changes: Vec<PreparedSemanticChangeV0>,
+}
+
+#[derive(Debug)]
+struct PreparedReleaseSettlementV0 {
+    reservation_index: usize,
+    expected_reservation: FundedUnusedReservationV0,
+    expected_insertions: [(PocoNullifierFamilyV0, [u8; 32]); 2],
     changes: Vec<PreparedSemanticChangeV0>,
 }
 
@@ -3158,6 +3167,7 @@ fn validate_operation_capacity_before_clone_v0(
     let mut prepared = PreparedCapacityOperationV0::Deferred;
     let mut future_candidate_insertion = None;
     let mut validator_history_insertion = None;
+    let mut release_reservation_index = None;
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
             consumer_id_hex,
@@ -3338,7 +3348,7 @@ fn validate_operation_capacity_before_clone_v0(
                     PocoApplicationDeterministicInvalidV0::SemanticTransition,
                 )
             })?;
-            authority
+            let reservation_index = authority
                 .funded_unused_reservations
                 .binary_search_by(|reservation| {
                     reservation
@@ -3351,6 +3361,7 @@ fn validate_operation_capacity_before_clone_v0(
                         PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
                     )
                 })?;
+            release_reservation_index = Some(reservation_index);
             delta.reservations_removed = 1;
         }
         PocoApplicationOperationBodyV0::OpenChallenge {
@@ -3660,6 +3671,26 @@ fn validate_operation_capacity_before_clone_v0(
             PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
         ));
     }
+    if let PocoApplicationOperationBodyV0::ReleaseSettlement {
+        certificate_id_hex,
+        release_decision_id_hex,
+    } = &operation.body
+    {
+        prepared = PreparedCapacityOperationV0::ReleaseSettlement(Box::new(
+            prepare_release_settlement_v0(
+                overlay,
+                operation,
+                decision_preimage,
+                certificate_id_hex,
+                release_decision_id_hex,
+                release_reservation_index.ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
+            )?,
+        ));
+    }
     if let PocoApplicationOperationBodyV0::RegisterValidator {
         validator_id_hex,
         target_epoch,
@@ -3930,6 +3961,7 @@ fn apply_operation_v0(
         PocoApplicationOperationBodyV0::RegisterFutureCandidate { .. } => 5,
         PocoApplicationOperationBodyV0::RegisterValidator { .. } => 6,
         PocoApplicationOperationBodyV0::RotateValidator { .. } => 7,
+        PocoApplicationOperationBodyV0::ReleaseSettlement { .. } => 8,
         _ => 0,
     };
     let actual_prepared_tag = match &prepared {
@@ -3941,6 +3973,7 @@ fn apply_operation_v0(
         PreparedCapacityOperationV0::RegisterFutureCandidate(_) => 5,
         PreparedCapacityOperationV0::RegisterValidator(_) => 6,
         PreparedCapacityOperationV0::RotateValidator(_) => 7,
+        PreparedCapacityOperationV0::ReleaseSettlement(_) => 8,
     };
     if expected_prepared_tag != actual_prepared_tag {
         return Err(invariant_application_error_v0(
@@ -3955,6 +3988,7 @@ fn apply_operation_v0(
             | PocoApplicationOperationBodyV0::RegisterFutureCandidate { .. }
             | PocoApplicationOperationBodyV0::RegisterValidator { .. }
             | PocoApplicationOperationBodyV0::RotateValidator { .. }
+            | PocoApplicationOperationBodyV0::ReleaseSettlement { .. }
     );
     if !field_admission_was_preclone {
         validate_operation_field_admission_v0(operation)?;
@@ -3963,32 +3997,36 @@ fn apply_operation_v0(
         mut prepared_authorize_consumer_key,
         mut prepared_define_meter,
         mut prepared_fund_settlement,
+        mut prepared_release_settlement,
         mut prepared_open_challenge,
         mut prepared_future_candidate,
         mut prepared_register_validator,
         mut prepared_rotate_validator,
     ) = match prepared {
-        PreparedCapacityOperationV0::Deferred => (None, None, None, None, None, None, None),
+        PreparedCapacityOperationV0::Deferred => (None, None, None, None, None, None, None, None),
         PreparedCapacityOperationV0::AuthorizeConsumerKey(prepared) => {
-            (Some(*prepared), None, None, None, None, None, None)
+            (Some(*prepared), None, None, None, None, None, None, None)
         }
         PreparedCapacityOperationV0::DefineMeter(prepared) => {
-            (None, Some(*prepared), None, None, None, None, None)
+            (None, Some(*prepared), None, None, None, None, None, None)
         }
         PreparedCapacityOperationV0::FundSettlement(prepared) => {
-            (None, None, Some(*prepared), None, None, None, None)
+            (None, None, Some(*prepared), None, None, None, None, None)
+        }
+        PreparedCapacityOperationV0::ReleaseSettlement(prepared) => {
+            (None, None, None, Some(*prepared), None, None, None, None)
         }
         PreparedCapacityOperationV0::OpenChallenge(prepared) => {
-            (None, None, None, Some(*prepared), None, None, None)
+            (None, None, None, None, Some(*prepared), None, None, None)
         }
         PreparedCapacityOperationV0::RegisterFutureCandidate(prepared) => {
-            (None, None, None, None, Some(*prepared), None, None)
+            (None, None, None, None, None, Some(*prepared), None, None)
         }
         PreparedCapacityOperationV0::RegisterValidator(prepared) => {
-            (None, None, None, None, None, Some(*prepared), None)
+            (None, None, None, None, None, None, Some(*prepared), None)
         }
         PreparedCapacityOperationV0::RotateValidator(prepared) => {
-            (None, None, None, None, None, None, Some(*prepared))
+            (None, None, None, None, None, None, None, Some(*prepared))
         }
     };
     match &operation.body {
@@ -4097,17 +4135,17 @@ fn apply_operation_v0(
             meter_decision_id_hex,
             evidence_decision_id_hex,
         ),
-        PocoApplicationOperationBodyV0::ReleaseSettlement {
-            certificate_id_hex,
-            release_decision_id_hex,
-        } => apply_release_settlement_v0(
-            context,
-            overlay,
-            operation,
-            decision_preimage,
-            certificate_id_hex,
-            release_decision_id_hex,
-        ),
+        PocoApplicationOperationBodyV0::ReleaseSettlement { .. } => {
+            apply_prepared_release_settlement_v0(
+                overlay,
+                operation,
+                prepared_release_settlement.take().ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
+            )
+        }
         PocoApplicationOperationBodyV0::OpenChallenge { .. } => apply_prepared_open_challenge_v0(
             overlay,
             operation,
@@ -5642,15 +5680,14 @@ fn apply_accept_certificate_v0(
     apply_prepared_changes(overlay, changes, false)
 }
 
-#[allow(clippy::too_many_arguments)]
-fn apply_release_settlement_v0(
-    _context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+fn prepare_release_settlement_v0(
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
     preimage: [u8; 32],
     certificate_id_hex: &str,
     release_decision_id_hex: &str,
-) -> Result<()> {
+    reservation_index: usize,
+) -> Result<PreparedReleaseSettlementV0> {
     let signed_semantic = || {
         deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::SemanticTransition,
@@ -5658,21 +5695,22 @@ fn apply_release_settlement_v0(
     };
     let authenticated_overlay =
         || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    validate_operation_field_admission_v0(operation)?;
     let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
     let release_decision =
         require_derived_decision_id(preimage, b"release-settlement", release_decision_id_hex)?;
-    let reservation_index = overlay
+    let expected_reservation = overlay
         .authority
         .funded_unused_reservations
-        .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| {
-            deterministic_application_error_v0(
-                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
-            )
+        .get(reservation_index)
+        .filter(|reservation| reservation.certificate_id_hex == certificate_id_hex)
+        .cloned()
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::DerivedMutationPostcondition)
         })?;
-    let reservation = overlay.authority.funded_unused_reservations[reservation_index].clone();
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
-    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::Settlement])?;
+    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::Settlement])
+        .map_err(|_| signed_semantic())?;
     let change = &changes[0];
     if change.next_value.is_some() {
         return Err(signed_semantic());
@@ -5685,22 +5723,59 @@ fn apply_release_settlement_v0(
             commitment,
             state: SettlementStateV0::FinalizedFundedUnused,
             finalized_height,
-        }) if hex::encode(commitment) == reservation.settlement_commitment_hex
-            && *finalized_height == reservation.finalized_height => {}
+        }) if hex::encode(commitment) == expected_reservation.settlement_commitment_hex
+            && *finalized_height == expected_reservation.finalized_height => {}
         _ => return Err(authenticated_overlay()),
+    }
+    overlay.accumulator.count().checked_add(2).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    Ok(PreparedReleaseSettlementV0 {
+        reservation_index,
+        expected_reservation,
+        expected_insertions: release_nullifier_subjects_v0(certificate_id, release_decision),
+        changes,
+    })
+}
+
+fn apply_prepared_release_settlement_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedReleaseSettlementV0,
+) -> Result<()> {
+    let body_matches = match &operation.body {
+        PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex,
+            release_decision_id_hex,
+        } => {
+            certificate_id_hex == &prepared.expected_reservation.certificate_id_hex
+                && exact_hash32_hex(release_decision_id_hex).ok()
+                    == Some(prepared.expected_insertions[1].1)
+        }
+        _ => false,
+    };
+    let reservation_matches = overlay
+        .authority
+        .funded_unused_reservations
+        .get(prepared.reservation_index)
+        == Some(&prepared.expected_reservation);
+    if !body_matches || !reservation_matches {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
     }
     insert_nullifiers(
         overlay,
         &operation.nullifier_insertions,
-        &release_nullifier_subjects_v0(certificate_id, release_decision),
+        &prepared.expected_insertions,
     )?;
     overlay
         .authority
         .funded_unused_reservations
-        .remove(reservation_index);
+        .remove(prepared.reservation_index);
     // Funding and release decision nullifiers remain in kind 16 permanently;
     // deleting the rich leaf in this same transition cannot reopen replay.
-    apply_prepared_changes(overlay, changes, true)
+    apply_prepared_changes(overlay, prepared.changes, true)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -10486,6 +10561,479 @@ mod tests {
         assert_eq!(candidate.accumulator, before.accumulator);
         assert!(candidate.mutations.is_empty());
         assert!(candidate.operation_ids.is_empty());
+    }
+
+    #[test]
+    fn release_settlement_preparation_freezes_decrement_and_late_proofs() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let (baseline, raw, operation) =
+            fixture_authoring::release_settlement_full_capacity_fixture_v0().unwrap();
+        assert_eq!(
+            baseline.overlay.authority.funded_unused_reservations.len(),
+            MAX_FUNDED_UNUSED_RESERVATIONS,
+        );
+        assert_eq!(baseline.operation_count(), 0);
+        assert_eq!(
+            PocoApplicationOperationV0::decode_exact(&raw).unwrap(),
+            operation,
+        );
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex, ..
+        } = &operation.body
+        else {
+            unreachable!();
+        };
+        let certificate_id_hex = certificate_id_hex.clone();
+        let certificate_id = exact_hash32_hex(&certificate_id_hex).unwrap();
+        let reservation_index = baseline
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .binary_search_by(|reservation| {
+                reservation
+                    .certificate_id_hex
+                    .as_str()
+                    .cmp(certificate_id_hex.as_str())
+            })
+            .unwrap();
+        let settlement_key = (
+            PocoSnapshotEntryKindV0::Settlement,
+            semantic_identity_digest_v0(PocoSnapshotEntryKindV0::Settlement, &certificate_id)
+                .to_vec(),
+        );
+        assert!(baseline.overlay.entries.contains_key(&settlement_key));
+        let accumulator_before = baseline.overlay.accumulator.count();
+
+        let mut canonical = baseline.clone();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        assert_eq!(
+            canonical.overlay.authority.funded_unused_reservations.len(),
+            MAX_FUNDED_UNUSED_RESERVATIONS - 1,
+        );
+        assert!(canonical
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .iter()
+            .all(|reservation| reservation.certificate_id_hex != certificate_id_hex));
+        assert_eq!(
+            canonical.overlay.accumulator.count(),
+            accumulator_before + 2,
+        );
+        assert!(!canonical.overlay.entries.contains_key(&settlement_key));
+        assert_eq!(canonical.seal().unwrap().operation_count(), 1);
+
+        let (context, projection, shared_raw, shared_operation) =
+            sequence_step_vector_fixture("release_refund_replay", 1);
+        let mut shared =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        shared
+            .apply_decoded_exact(&shared_raw, &shared_operation)
+            .unwrap();
+        assert_eq!(shared.seal().unwrap().operation_count(), 1);
+
+        let rebind_decision =
+            |context: &AuthenticatedPocoApplicationContextV0,
+             operation: &mut PocoApplicationOperationV0| {
+                let preimage = decision_preimage_digest_v0(context, operation).unwrap();
+                let PocoApplicationOperationBodyV0::ReleaseSettlement {
+                    release_decision_id_hex,
+                    ..
+                } = &mut operation.body
+                else {
+                    unreachable!();
+                };
+                *release_decision_id_hex =
+                    hex::encode(derived_decision_id_v0(preimage, b"release-settlement"));
+            };
+        let assert_failure =
+            |mut candidate: PocoApplicationBlockOverlayV0,
+             candidate_operation: PocoApplicationOperationV0,
+             expected: PocoApplicationApplyFailureV0| {
+                let candidate_raw = serde_json::to_vec(&candidate_operation).unwrap();
+                PocoApplicationOperationV0::decode_exact(&candidate_raw).unwrap();
+                let before = candidate.clone();
+                assert_eq!(
+                    candidate.apply_decoded_exact(&candidate_raw, &candidate_operation),
+                    Err(expected),
+                );
+                assert_block_overlay_unchanged(&candidate, &before);
+            };
+
+        let mut malformed_id = operation.clone();
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex, ..
+        } = &mut malformed_id.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "0".to_string();
+        assert_failure(
+            baseline.clone(),
+            malformed_id,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut missing_reservation = baseline.clone();
+        missing_reservation
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .remove(reservation_index);
+        let mut later_unsupported = operation.clone();
+        later_unsupported.nullifier_non_membership_checks =
+            vec![later_unsupported.nullifier_insertions[0].clone()];
+        assert_failure(
+            missing_reservation,
+            later_unsupported,
+            DeterministicallyInvalid(Invalid::MissingRequiredAuthorityFact),
+        );
+
+        let mut unsupported_candidate = baseline.clone();
+        unsupported_candidate.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX - 1).unwrap();
+        unsupported_candidate
+            .overlay
+            .authority
+            .set_accumulator(unsupported_candidate.overlay.accumulator);
+        let mut unsupported = operation.clone();
+        unsupported.nullifier_non_membership_checks =
+            vec![unsupported.nullifier_insertions[0].clone()];
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            release_decision_id_hex,
+            ..
+        } = &mut unsupported.body
+        else {
+            unreachable!();
+        };
+        *release_decision_id_hex = "aa".repeat(32);
+        assert_failure(
+            unsupported_candidate,
+            unsupported,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_decision = operation.clone();
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            release_decision_id_hex,
+            ..
+        } = &mut bad_decision.body
+        else {
+            unreachable!();
+        };
+        *release_decision_id_hex = "aa".repeat(32);
+        assert_failure(
+            baseline.clone(),
+            bad_decision,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut signed_non_delete = operation.clone();
+        let current_settlement = owned_semantic_parts(
+            settlement_key.0,
+            &settlement_key.1,
+            baseline.overlay.entries.get(&settlement_key).unwrap(),
+        )
+        .unwrap();
+        signed_non_delete.semantic_changes[0].next_value_hex =
+            Some(hex::encode(encode_test_semantic_envelope_v0(
+                settlement_key.0,
+                current_settlement.revision.checked_add(1).unwrap(),
+                &current_settlement.identity,
+                &current_settlement.payload,
+            )));
+        rebind_decision(&baseline.context, &mut signed_non_delete);
+        assert_failure(
+            baseline.clone(),
+            signed_non_delete,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut companion_drift = baseline.clone();
+        companion_drift.overlay.authority.funded_unused_reservations[reservation_index]
+            .settlement_commitment_hex = "bb".repeat(32);
+        assert_failure(
+            companion_drift,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut malformed_predecessor = baseline.clone();
+        malformed_predecessor
+            .overlay
+            .entries
+            .insert(settlement_key.clone(), vec![0xff]);
+        assert_failure(
+            malformed_predecessor,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut exhausted = baseline.clone();
+        exhausted.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX - 1).unwrap();
+        exhausted
+            .overlay
+            .authority
+            .set_accumulator(exhausted.overlay.accumulator);
+        let mut later_bad_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut later_bad_root.nullifier_insertions);
+        assert_failure(
+            exhausted,
+            later_bad_root,
+            Invariant(InvariantReason::ProtocolCounterExhausted),
+        );
+
+        let mut bad_insertion_shape = operation.clone();
+        bad_insertion_shape.nullifier_insertions.pop();
+        assert_failure(
+            baseline.clone(),
+            bad_insertion_shape,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mutate_subject = |raw: &mut RawNullifierInsertionV0,
+                              family: PocoNullifierFamilyV0,
+                              identifier: [u8; 32]| {
+            let key = derive_poco_nullifier_key_v0(family, identifier);
+            *raw = RawNullifierInsertionV0 {
+                family: family.code(),
+                identifier_hex: hex::encode(identifier),
+                proof_hex: hex::encode(
+                    PocoNullifierProofV0::new(key, [[0x55; 32]; 256]).canonical_bytes(),
+                ),
+            };
+        };
+        let mut bad_first_subject = operation.clone();
+        mutate_subject(
+            &mut bad_first_subject.nullifier_insertions[0],
+            PocoNullifierFamilyV0::Tuple,
+            [0xc1; 32],
+        );
+        assert_failure(
+            baseline.clone(),
+            bad_first_subject,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_second_subject = operation.clone();
+        mutate_subject(
+            &mut bad_second_subject.nullifier_insertions[1],
+            PocoNullifierFamilyV0::MeterDecision,
+            [0xc2; 32],
+        );
+        assert_failure(
+            baseline.clone(),
+            bad_second_subject,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_first_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_first_root.nullifier_insertions[..1]);
+        assert_failure(
+            baseline.clone(),
+            bad_first_root,
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let mut bad_second_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_second_root.nullifier_insertions[1..]);
+        assert_failure(
+            baseline.clone(),
+            bad_second_root.clone(),
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let later_fault_raw = serde_json::to_vec(&bad_second_root).unwrap();
+        let mut operation_full = baseline.clone();
+        operation_full.raw_operations = vec![Vec::new(); MAX_APPLICATION_OPERATIONS_PER_BLOCK];
+        let before = operation_full.clone();
+        assert_eq!(
+            operation_full.apply_decoded_exact(&later_fault_raw, &bad_second_root),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&operation_full, &before);
+
+        let mut byte_full = baseline.clone();
+        byte_full.aggregate_operation_bytes = MAX_POCO_SNAPSHOT_BUNDLE_BYTES;
+        let before = byte_full.clone();
+        assert_eq!(
+            byte_full.apply_decoded_exact(&later_fault_raw, &bad_second_root),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&byte_full, &before);
+
+        let decision_preimage = decision_preimage_digest_v0(&baseline.context, &operation).unwrap();
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut cross_family = operation.clone();
+        cross_family.body = PocoApplicationOperationBodyV0::PruneExpiredCertificate {
+            certificate_id_hex: "11".repeat(32),
+        };
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &cross_family,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut same_family_decision = operation.clone();
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            release_decision_id_hex,
+            ..
+        } = &mut same_family_decision.body
+        else {
+            unreachable!();
+        };
+        *release_decision_id_hex = "33".repeat(32);
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &same_family_decision,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        candidate.authority.funded_unused_reservations[reservation_index].funding_decision_id_hex =
+            "44".repeat(32);
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &operation,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut same_family = operation.clone();
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex, ..
+        } = &mut same_family.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "22".repeat(32);
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &same_family,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        candidate
+            .authority
+            .funded_unused_reservations
+            .remove(reservation_index);
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &operation,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
     }
 
     #[test]

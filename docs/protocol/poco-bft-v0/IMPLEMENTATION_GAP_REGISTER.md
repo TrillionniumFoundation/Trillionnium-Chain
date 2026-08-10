@@ -1300,9 +1300,24 @@ epoch prune, and Core transition remain open.
    minus-one collisions freeze signed/authenticated, proof count/family/ID/root,
    counter, structural, body/carrier, exact-boundary and full-overlay rollback
    behavior; proof-key and encoding faults remain decode-first. The same
-   closure also extends to `OpenChallenge` below.
-   `ReleaseSettlement` now performs a typed pre-clone reservation lookup and
-   separates signed delete shape from authenticated leaf/reservation drift.
+   closure also extends to `OpenChallenge` and `ReleaseSettlement` below.
+   `ReleaseSettlement` now carries one exact funded-unused reservation/delete
+   transition across capacity admission and execution. Structural and exact
+   owner/context/revision/replay, signed certificate ID, and exact reservation
+   lookup precede reservation-family `-1` and defensive-total record caps.
+   Unsupported-field rejection, derived decision, one exact kind-6 delete with
+   authenticated reservation/settlement agreement, and accumulator count `+2`
+   then construct a carrier freezing the exact slot/value, family-1 certificate
+   and family-3 settlement-decision subjects, and semantic delete. Only the two
+   chained proofs, reservation removal, and delete mutation remain clone-late;
+   cross-family, same-family body, and slot drift fail as derived postconditions.
+   A real two-block fixture funds and commits four reservations, then releases
+   one from the authenticated next block, proving 4-to-3, count `+2`, kind-6
+   deletion, and seal. Its collision matrix covers signed/missing/unsupported/
+   decision/authenticated/counter, both proof positions, structural bounds,
+   carrier binding, and full rollback. Frozen `release_refund_replay` H2 bytes
+   and H3 resurrection rejection remain unchanged; raw proof-key/encoding
+   faults remain decode-first.
    `OpenChallenge` now carries one prepared pending record, challenge
    nullifier, and lifecycle semantic transition across capacity admission and
    execution. Structural and exact owner/context/revision/replay plus cheap
@@ -1370,7 +1385,7 @@ epoch prune, and Core transition remain open.
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
    `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
-   `RegisterFutureCandidate`,
+   `ReleaseSettlement`, `RegisterFutureCandidate`,
    `RegisterValidator`, and `RotateValidator`; all other families remain audit-
    open before terminal failure mapping.
    `ResolveChallenge` now types its pre-clone pending/certificate join and
