@@ -1247,8 +1247,9 @@ epoch prune, and Core transition remain open.
    proof, validator-rule, validator-PoP, and signed semantic-change paths are
    typed without diagnostic string matching. A proven missing authority fact
    is deterministic; a present-but-malformed companion, malformed authenticated
-   semantic predecessor, or derived CAS/mutation failure is invariant. Unrefined leaf failures remain conservatively classified as
-   authenticated-overlay invariants. Decision-ID and cap/window failures are
+   semantic predecessor, or derived CAS/mutation failure is invariant. The
+   closed leaf sets retain explicit stable reason codes rather than a generic
+   authenticated-overlay fallback. Decision-ID and cap/window failures are
    deterministic. Nullifier shape/key rejects and an exactly key-bound proof
    that fails its authenticated root check remain distinct deterministic
    reasons, while authenticated nullifier-count exhaustion is invariant;
@@ -1567,8 +1568,24 @@ epoch prune, and Core transition remain open.
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`,
    `RotateValidator`, `RevokeValidator`, `PruneRevokedValidatorHistory`, and
    `PruneExpiredCertificate`. All nineteen families now have isolated leaf-
-   reason/capacity-order/prepared-carrier closure; terminal failure mapping is
-   next, and no phase is complete.
+   reason/capacity-order/prepared-carrier closure. Snapshot-closed non-runtime
+   semantic/family failure mapping into the app-private outcome kernel is now
+   closed; write sealing, multi-operation cursor integration, success receipts,
+   durable terminal artifacts/outbox, and host/Core delivery remain next, and
+   no phase is complete.
+   The consuming mapping accepts only the exact closed owner. Eight semantic-
+   decode reasons plus every PoCO and validator deterministic/invariant reason,
+   operator authorization, and unsupported-family rejection have explicit
+   stable codes with no Debug/display parsing. Deterministic failures become
+   whole-block no-receipt invalid; typed database/storage/resource/pruned/
+   source loss remains retryable `Unavailable`; authenticated-state, host,
+   snapshot, projection, carrier, arithmetic, and family invariants remain
+   fail-stop. Snapshot finish failure continues to outrank the pending cause.
+   A three-variant retained result preserves the route, full `ValidationId`,
+   raw owner, cursor, and prior runtime evidence without exposing a receipt or
+   write. Proposal/synced and mixed runtime-then-non-runtime fixtures prove
+   generation and artifacts cannot be detached. This is not persistence,
+   callback/outbox authority, `Core::step`, Finalize, ABCI, or phase closure.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
@@ -1657,11 +1674,12 @@ epoch prune, and Core transition remain open.
    authority, retention/live-reference rejection, and authenticated settlement/
    lifecycle companion corruption while preserving nested nullifier and
    postcondition reasons; no unclassified certificate-prune leaf remains.
-   Isolated operation-family leaf-reason completion is now closed; terminal
-   failure mapping is the next dependency. The success carrier still owns the open
+   Isolated operation-family leaf reasons and snapshot-closed non-runtime
+   failure promotion are now closed. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,
-   emit a receipt, or promote a terminal result. The private consuming bridge maps `Proposal` only to
+   emit a success receipt, persist a terminal artifact, or deliver a result.
+   The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter
    ABCI. Reservation identity is already

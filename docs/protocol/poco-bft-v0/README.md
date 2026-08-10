@@ -999,11 +999,16 @@ certificate prune now separates signed ID/delete-set drift, exact missing
 certificate authority, retention/live-reference rejection, and authenticated
 settlement/lifecycle companion corruption while preserving nested nullifier and
 postcondition reasons; it has no unclassified leaf;
-unrefined leaf failures conservatively remain authenticated-overlay invariants
-without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
-overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
-multi-operation cursor integration, success-only cursor advance, receipts, and
-terminal failure promotion remain open.
+all nineteen operation families now have closed leaf reasons, capacity order,
+and prepared carriers. Snapshot-closed semantic/family failures consume their
+exact owner into a three-way app-private outcome: deterministic leaves are
+whole-block/no-receipt invalid with explicit stable codes, typed source loss is
+retryable, and authenticated/host/family invariants fail stop. Snapshot finish
+still outranks the pending reason; no diagnostic string participates. Success
+retains the open snapshot, decoded owner, and unsealed PoCO overlay or scheduled
+lifecycle. Write sealing, multi-operation cursor integration, success-only
+advance, receipts, durable terminal artifacts/outbox, callback delivery, and
+Core/ABCI integration remain open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

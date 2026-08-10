@@ -747,9 +747,11 @@ an earlier phase.
   synthetic usage-32 collision is only handler-boundary priority evidence;
   the defensive total is mathematically dominated by valid family caps for
   this operation and has no independent authenticated witness. Existing
-  shared operation bytes remain unchanged. This is isolated handler/audit
-  closure, not terminal failure mapping, write sealing, Core/host integration,
-  production cross-epoch reachability, or phase completion.
+  shared operation bytes remain unchanged. The Accept tranche itself closes
+  only isolated handler/audit behavior; terminal failure mapping is the
+  separate closure immediately below. Neither tranche supplies write sealing,
+  Core/host integration, production cross-epoch reachability, or phase
+  completion.
   Capacity-order closure now
   covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
   `FundSettlement`, `AcceptCertificate`, `AuthorizeConsumerKey`,
@@ -759,8 +761,28 @@ an earlier phase.
   `RegisterValidator`, `RotateValidator`, `RevokeValidator`,
   `PruneRevokedValidatorHistory`, and `PruneExpiredCertificate`. All nineteen
   operation families now have isolated leaf-reason/capacity-order/prepared-
-  carrier closure; terminal failure mapping is the next dependency and no
-  phase is complete.
+  carrier closure. Snapshot-closed non-runtime semantic and family failure
+  mapping is now also closed inside the app-private outcome kernel; write
+  sealing, multi-operation cursor integration, success receipts, durable
+  terminal artifacts/outbox, and host/Core delivery remain next, and no phase
+  is complete.
+  The mapping consumes only the exact retained closed owner. All eight strict
+  semantic-decode reasons, every PoCO deterministic/invariant reason, every
+  validator-transition deterministic/invariant reason, operator authorization,
+  and unsupported-family rejection have explicit data-free stable codes rather
+  than Debug/display-derived classification. Deterministic reasons become
+  whole-block no-receipt invalid outcomes; typed database/storage/resource/
+  pruned/source loss remains retryable `Unavailable`; authenticated-state,
+  host, snapshot, projection, carrier, arithmetic, and family invariants remain
+  nonterminal fail-stop. Snapshot finish failure still outranks the pending
+  semantic/family cause. A three-way retained carrier keeps `Unavailable`,
+  `DeterministicallyInvalid`, and `InvariantFault` structurally distinct while
+  preserving route, full `ValidationId`, raw bytes, cursor, and any prior
+  runtime evidence only inside the exact owner. Proposal and synced fixtures
+  derive generation solely from that owner, and a mixed runtime-then-PoCO
+  failure proves prior delta/receipts cannot become success artifacts. This
+  bridge constructs no callback, calls no `Core::step`, persists no outcome,
+  and grants no sealing, Finalize, ABCI, or phase authority.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and
@@ -902,12 +924,13 @@ an earlier phase.
   settlement/lifecycle/authority companion corruption as
   `AuthenticatedOverlay`; nested nullifier and mutation-postcondition reasons
   remain intact. No unclassified certificate-prune leaf remains.
-  Leaf errors not yet assigned a narrower reason remain conservatively typed
-  as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
-  the still-open snapshot and unsealed family state. These attempts do not yet
-  seal family writes, merge multiple family operations into the cursor, advance
-  it, form receipts, or promote a terminal result. Remaining PoCO leaf-reason
-  refinement is required before terminal family-failure mapping.
+  All operation-family leaves now retain their closed deterministic or
+  invariant reason without diagnostic-string fallback. Snapshot-closed
+  semantic/family failures promote into the app-private outcome kernel while
+  retaining the exact owner; success still keeps the decoded owner plus the
+  open snapshot and unsealed family state. These attempts do not yet seal
+  family writes, merge multiple family operations into the cursor, advance it,
+  form success receipts, persist a terminal result, or deliver a callback.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;

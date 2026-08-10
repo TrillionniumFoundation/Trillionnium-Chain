@@ -10,6 +10,10 @@ use std::fmt::Display;
 use crate::native_payload_validation::{
     ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0, CoreAuthorizedRegularComputedRootMismatchV0,
     CoreAuthorizedRegularFailureOutcomeFactsV0,
+    CoreAuthorizedRegularNonRuntimeDeterministicInvalidV0,
+    CoreAuthorizedRegularNonRuntimeFailureOutcomeFactsV0,
+    CoreAuthorizedRegularNonRuntimeFailureOutcomeViewV0,
+    CoreAuthorizedRegularNonRuntimeInvariantV0, CoreAuthorizedRegularNonRuntimeUnavailableKindV0,
     CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0,
     CoreAuthorizedRegularPreExecutionInvalidKindV0,
     CoreAuthorizedRegularPreExecutionInvariantStageV0,
@@ -279,6 +283,7 @@ enum DeterministicallyInvalidCauseV0 {
     ComputedRootMismatch(ComputedRootMismatchV0),
     NativeRegularBodyEvidence,
     NativeRegularTransactionEncodingOrAuthorization,
+    NativeRegularNonRuntime(CoreAuthorizedRegularNonRuntimeDeterministicInvalidV0),
 }
 
 impl DeterministicallyInvalidCauseV0 {
@@ -298,6 +303,7 @@ impl DeterministicallyInvalidCauseV0 {
             Self::NativeRegularTransactionEncodingOrAuthorization => {
                 "native_regular_transaction_encoding_or_authorization_invalid"
             }
+            Self::NativeRegularNonRuntime(reason) => reason.code(),
         }
     }
 
@@ -321,6 +327,7 @@ impl DeterministicallyInvalidCauseV0 {
             Self::NativeRegularTransactionEncodingOrAuthorization => {
                 "canonical body transaction encoding or authorization is invalid"
             }
+            Self::NativeRegularNonRuntime(reason) => reason.reason(),
         }
     }
 
@@ -335,7 +342,8 @@ impl DeterministicallyInvalidCauseV0 {
             }),
             Self::ComputedRootMismatch(_)
             | Self::NativeRegularBodyEvidence
-            | Self::NativeRegularTransactionEncodingOrAuthorization => None,
+            | Self::NativeRegularTransactionEncodingOrAuthorization
+            | Self::NativeRegularNonRuntime(_) => None,
         }
     }
 }
@@ -387,6 +395,7 @@ enum InvariantFaultCauseV0 {
     NativeRegularCommitmentComparison,
     NativeRegularRuntimeAttempt,
     NativeRegularPreExecution(CoreAuthorizedRegularPreExecutionInvariantStageV0),
+    NativeRegularNonRuntime(CoreAuthorizedRegularNonRuntimeInvariantV0),
 }
 
 impl InvariantFaultCauseV0 {
@@ -410,6 +419,7 @@ impl InvariantFaultCauseV0 {
             Self::NativeRegularPreExecution(
                 CoreAuthorizedRegularPreExecutionInvariantStageV0::PostStatePlan,
             ) => "native_regular_post_state_plan_invariant",
+            Self::NativeRegularNonRuntime(reason) => reason.code(),
         }
     }
 
@@ -428,6 +438,7 @@ impl InvariantFaultCauseV0 {
             Self::NativeRegularPreExecution(_) => {
                 "native regular pre-execution invariant requires host fail-stop"
             }
+            Self::NativeRegularNonRuntime(reason) => reason.reason(),
         }
     }
 
@@ -443,7 +454,8 @@ impl InvariantFaultCauseV0 {
             Self::AuthenticatedInputGenerationMismatch
             | Self::NativeRegularCommitmentComparison
             | Self::NativeRegularRuntimeAttempt
-            | Self::NativeRegularPreExecution(_) => None,
+            | Self::NativeRegularPreExecution(_)
+            | Self::NativeRegularNonRuntime(_) => None,
         }
     }
 }
@@ -706,6 +718,56 @@ pub(super) fn failure_from_core_authorized_regular_runtime_attempt_v0(
     }
 }
 
+/// Shared data-free mapping for retryable source/dependency categories already
+/// extracted from an owning native validation failure.
+const fn native_regular_unavailable_cause_v0(
+    kind: CoreAuthorizedRegularPreExecutionUnavailableKindV0,
+) -> UnavailableCauseV0 {
+    match kind {
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::BodySource => {
+            UnavailableCauseV0::BodyNonCanonical
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::ParentStateMissing => {
+            UnavailableCauseV0::ParentStateMissing
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::ParentStateUnauthenticated => {
+            UnavailableCauseV0::ParentStateUnauthenticated
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::Database => {
+            UnavailableCauseV0::Database
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::StorageIo => {
+            UnavailableCauseV0::StorageIo
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::HostResource => {
+            UnavailableCauseV0::HostResource
+        }
+        CoreAuthorizedRegularPreExecutionUnavailableKindV0::ReservationCapacity => {
+            UnavailableCauseV0::ReservationCapacity
+        }
+    }
+}
+
+const fn native_regular_non_runtime_unavailable_cause_v0(
+    kind: CoreAuthorizedRegularNonRuntimeUnavailableKindV0,
+) -> UnavailableCauseV0 {
+    match kind {
+        CoreAuthorizedRegularNonRuntimeUnavailableKindV0::ParentStateMissing => {
+            UnavailableCauseV0::ParentStateMissing
+        }
+        CoreAuthorizedRegularNonRuntimeUnavailableKindV0::ParentStateUnauthenticated => {
+            UnavailableCauseV0::ParentStateUnauthenticated
+        }
+        CoreAuthorizedRegularNonRuntimeUnavailableKindV0::Database => UnavailableCauseV0::Database,
+        CoreAuthorizedRegularNonRuntimeUnavailableKindV0::StorageIo => {
+            UnavailableCauseV0::StorageIo
+        }
+        CoreAuthorizedRegularNonRuntimeUnavailableKindV0::HostResource => {
+            UnavailableCauseV0::HostResource
+        }
+    }
+}
+
 /// Maps one owner-derived pre-execution failure classification into the common
 /// outcome kernel. Callers cannot supply a diagnostic string or detached
 /// generation; the native adapter obtains these facts only from a complete
@@ -717,37 +779,12 @@ pub(super) fn failure_from_core_authorized_regular_pre_execution_v0(
         CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::Unavailable {
             generation,
             kind,
-        } => {
-            let cause = match kind {
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::BodySource => {
-                    UnavailableCauseV0::BodyNonCanonical
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::ParentStateMissing => {
-                    UnavailableCauseV0::ParentStateMissing
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::ParentStateUnauthenticated => {
-                    UnavailableCauseV0::ParentStateUnauthenticated
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::Database => {
-                    UnavailableCauseV0::Database
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::StorageIo => {
-                    UnavailableCauseV0::StorageIo
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::HostResource => {
-                    UnavailableCauseV0::HostResource
-                }
-                CoreAuthorizedRegularPreExecutionUnavailableKindV0::ReservationCapacity => {
-                    UnavailableCauseV0::ReservationCapacity
-                }
-            };
-            ExecutionOutcomeV0 {
-                inner: ExecutionOutcomeKindV0::Unavailable(UnavailableV0 {
-                    generation: ValidationGenerationV0::new(generation),
-                    cause,
-                }),
-            }
-        }
+        } => ExecutionOutcomeV0 {
+            inner: ExecutionOutcomeKindV0::Unavailable(UnavailableV0 {
+                generation: ValidationGenerationV0::new(generation),
+                cause: native_regular_unavailable_cause_v0(kind),
+            }),
+        },
         CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::DeterministicallyInvalid {
             generation,
             kind,
@@ -774,6 +811,42 @@ pub(super) fn failure_from_core_authorized_regular_pre_execution_v0(
                 inner: ExecutionOutcomeKindV0::InvariantFault(InvariantFaultV0 {
                     generation: ValidationGenerationV0::new(generation),
                     cause: InvariantFaultCauseV0::NativeRegularPreExecution(stage),
+                }),
+            }
+        }
+    }
+}
+
+/// Maps only facts extracted from a complete snapshot-closed non-runtime
+/// semantic or family owner. The exact typed reason becomes a stable app-
+/// private code without inspecting diagnostics, while retryable source loss
+/// remains non-terminal and every invariant remains fail-stop.
+pub(super) fn failure_from_core_authorized_regular_non_runtime_v0(
+    facts: CoreAuthorizedRegularNonRuntimeFailureOutcomeFactsV0,
+) -> ExecutionOutcomeV0<()> {
+    match facts.into_view_v0() {
+        CoreAuthorizedRegularNonRuntimeFailureOutcomeViewV0::Unavailable { generation, kind } => {
+            ExecutionOutcomeV0 {
+                inner: ExecutionOutcomeKindV0::Unavailable(UnavailableV0 {
+                    generation: ValidationGenerationV0::new(generation),
+                    cause: native_regular_non_runtime_unavailable_cause_v0(kind),
+                }),
+            }
+        }
+        CoreAuthorizedRegularNonRuntimeFailureOutcomeViewV0::DeterministicallyInvalid {
+            generation,
+            reason,
+        } => ExecutionOutcomeV0 {
+            inner: ExecutionOutcomeKindV0::DeterministicallyInvalid(DeterministicallyInvalidV0 {
+                generation: ValidationGenerationV0::new(generation),
+                cause: DeterministicallyInvalidCauseV0::NativeRegularNonRuntime(reason),
+            }),
+        },
+        CoreAuthorizedRegularNonRuntimeFailureOutcomeViewV0::Invariant { generation, reason } => {
+            ExecutionOutcomeV0 {
+                inner: ExecutionOutcomeKindV0::InvariantFault(InvariantFaultV0 {
+                    generation: ValidationGenerationV0::new(generation),
+                    cause: InvariantFaultCauseV0::NativeRegularNonRuntime(reason),
                 }),
             }
         }
