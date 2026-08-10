@@ -2571,6 +2571,7 @@ impl PocoApplicationBlockOverlayV0 {
             PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. }
                 | PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
                 | PocoApplicationOperationBodyV0::OpenChallenge { .. }
+                | PocoApplicationOperationBodyV0::ProposeGovernance { .. }
         );
         if operation_has_preclone_field_admission {
             validate_operation_field_admission_v0(operation).map_err(|error| {
@@ -2920,6 +2921,7 @@ enum PreparedCapacityOperationV0 {
     ReleaseSettlement(Box<PreparedReleaseSettlementV0>),
     OpenChallenge(Box<PreparedOpenChallengeV0>),
     ResolveChallenge(Box<PreparedResolveChallengeV0>),
+    ProposeGovernance(Box<PreparedProposeGovernanceV0>),
     RegisterFutureCandidate(Box<PreparedFutureCandidateV0>),
     RegisterValidator(Box<PreparedRegisterValidatorV0>),
     RotateValidator(Box<PreparedRotateValidatorV0>),
@@ -2971,6 +2973,15 @@ struct PreparedResolveChallengeV0 {
     target_lifecycle: CertificateAuthorityLifecycleV0,
     target_height: u64,
     resolution_decision_id_hex: String,
+    expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 1],
+    changes: Vec<PreparedSemanticChangeV0>,
+}
+
+#[derive(Debug)]
+struct PreparedProposeGovernanceV0 {
+    proposal: PendingGovernanceProposalV0,
+    pending_insertion: usize,
+    finalized_insertion: usize,
     expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 1],
     changes: Vec<PreparedSemanticChangeV0>,
 }
@@ -3458,7 +3469,32 @@ fn validate_operation_capacity_before_clone_v0(
             resolve_certificate_index = Some(certificate_index);
             delta.pending_challenges_removed = 1;
         }
-        PocoApplicationOperationBodyV0::ProposeGovernance { .. } => {
+        PocoApplicationOperationBodyV0::ProposeGovernance {
+            target_epoch,
+            phase,
+            parameters_hash_hex,
+            activation_height,
+            proposal_decision_id_hex,
+        } => {
+            prepared = PreparedCapacityOperationV0::ProposeGovernance(Box::new(
+                prepare_propose_governance_v0(
+                    context,
+                    overlay,
+                    operation,
+                    decision_preimage,
+                    *target_epoch,
+                    *phase,
+                    parameters_hash_hex,
+                    *activation_height,
+                    proposal_decision_id_hex,
+                )
+                .map_err(|error| {
+                    preserve_application_failure_or_deterministic_v0(
+                        error,
+                        PocoApplicationDeterministicInvalidV0::GovernanceRule,
+                    )
+                })?,
+            ));
             delta.pending_governance_added = 1;
         }
         PocoApplicationOperationBodyV0::ApproveGovernance {
@@ -4010,6 +4046,7 @@ fn apply_operation_v0(
         PocoApplicationOperationBodyV0::RotateValidator { .. } => 7,
         PocoApplicationOperationBodyV0::ReleaseSettlement { .. } => 8,
         PocoApplicationOperationBodyV0::ResolveChallenge { .. } => 9,
+        PocoApplicationOperationBodyV0::ProposeGovernance { .. } => 10,
         _ => 0,
     };
     let actual_prepared_tag = match &prepared {
@@ -4023,6 +4060,7 @@ fn apply_operation_v0(
         PreparedCapacityOperationV0::RotateValidator(_) => 7,
         PreparedCapacityOperationV0::ReleaseSettlement(_) => 8,
         PreparedCapacityOperationV0::ResolveChallenge(_) => 9,
+        PreparedCapacityOperationV0::ProposeGovernance(_) => 10,
     };
     if expected_prepared_tag != actual_prepared_tag {
         return Err(invariant_application_error_v0(
@@ -4039,6 +4077,7 @@ fn apply_operation_v0(
             | PocoApplicationOperationBodyV0::RotateValidator { .. }
             | PocoApplicationOperationBodyV0::ReleaseSettlement { .. }
             | PocoApplicationOperationBodyV0::ResolveChallenge { .. }
+            | PocoApplicationOperationBodyV0::ProposeGovernance { .. }
     );
     if !field_admission_was_preclone {
         validate_operation_field_admission_v0(operation)?;
@@ -4050,15 +4089,17 @@ fn apply_operation_v0(
         mut prepared_release_settlement,
         mut prepared_open_challenge,
         mut prepared_resolve_challenge,
+        mut prepared_propose_governance,
         mut prepared_future_candidate,
         mut prepared_register_validator,
         mut prepared_rotate_validator,
     ) = match prepared {
         PreparedCapacityOperationV0::Deferred => {
-            (None, None, None, None, None, None, None, None, None)
+            (None, None, None, None, None, None, None, None, None, None)
         }
         PreparedCapacityOperationV0::AuthorizeConsumerKey(prepared) => (
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4078,11 +4119,13 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::FundSettlement(prepared) => (
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4100,6 +4143,7 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::OpenChallenge(prepared) => (
             None,
@@ -4107,6 +4151,7 @@ fn apply_operation_v0(
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4122,8 +4167,22 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
+        ),
+        PreparedCapacityOperationV0::ProposeGovernance(prepared) => (
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(*prepared),
+            None,
+            None,
+            None,
         ),
         PreparedCapacityOperationV0::RegisterFutureCandidate(prepared) => (
+            None,
             None,
             None,
             None,
@@ -4142,10 +4201,12 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
             Some(*prepared),
             None,
         ),
         PreparedCapacityOperationV0::RotateValidator(prepared) => (
+            None,
             None,
             None,
             None,
@@ -4294,29 +4355,17 @@ fn apply_operation_v0(
                 })?,
             )
         }
-        PocoApplicationOperationBodyV0::ProposeGovernance {
-            target_epoch,
-            phase,
-            parameters_hash_hex,
-            activation_height,
-            proposal_decision_id_hex,
-        } => apply_propose_governance_v0(
-            context,
-            overlay,
-            operation,
-            decision_preimage,
-            *target_epoch,
-            *phase,
-            parameters_hash_hex,
-            *activation_height,
-            proposal_decision_id_hex,
-        )
-        .map_err(|error| {
-            preserve_application_failure_or_deterministic_v0(
-                error,
-                PocoApplicationDeterministicInvalidV0::GovernanceRule,
+        PocoApplicationOperationBodyV0::ProposeGovernance { .. } => {
+            apply_prepared_propose_governance_v0(
+                overlay,
+                operation,
+                prepared_propose_governance.take().ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
             )
-        }),
+        }
         PocoApplicationOperationBodyV0::ApproveGovernance {
             target_epoch,
             parameters_hash_hex,
@@ -6231,9 +6280,9 @@ fn apply_prepared_resolve_challenge_v0(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn apply_propose_governance_v0(
+fn prepare_propose_governance_v0(
     context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
     preimage: [u8; 32],
     target_epoch: u64,
@@ -6241,7 +6290,8 @@ fn apply_propose_governance_v0(
     parameters_hash_hex: &str,
     activation_height: u64,
     proposal_decision_id_hex: &str,
-) -> Result<()> {
+) -> Result<PreparedProposeGovernanceV0> {
+    validate_operation_field_admission_v0(operation)?;
     let expected_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
         invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
     })?;
@@ -6274,19 +6324,22 @@ fn apply_propose_governance_v0(
     })?;
     let decision =
         require_derived_decision_id(preimage, b"propose-governance", proposal_decision_id_hex)?;
-    ensure!(
-        overlay
-            .authority
-            .pending_governance_proposals
-            .binary_search_by_key(&target_epoch, |proposal| proposal.target_epoch)
-            .is_err()
-            && overlay
-                .authority
-                .finalized_governance_approvals
-                .binary_search_by_key(&target_epoch, |approval| approval.target_epoch)
-                .is_err(),
-        "governance target already has proposal or approval authority"
-    );
+    let pending_insertion = match overlay
+        .authority
+        .pending_governance_proposals
+        .binary_search_by_key(&target_epoch, |proposal| proposal.target_epoch)
+    {
+        Err(insertion) => insertion,
+        Ok(_) => bail!("governance target already has proposal authority"),
+    };
+    let finalized_insertion = match overlay
+        .authority
+        .finalized_governance_approvals
+        .binary_search_by_key(&target_epoch, |approval| approval.target_epoch)
+    {
+        Err(insertion) => insertion,
+        Ok(_) => bail!("governance target already has approval authority"),
+    };
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(
         &changes,
@@ -6346,27 +6399,75 @@ fn apply_propose_governance_v0(
         ),
         _ => bail!("governance proposal lacks pending semantic fact"),
     }
-    insert_nullifiers(
-        overlay,
-        &operation.nullifier_insertions,
-        &[(PocoNullifierFamilyV0::GovernanceDecision, decision)],
-    )?;
-    overlay
-        .authority
-        .pending_governance_proposals
-        .push(PendingGovernanceProposalV0 {
+    overlay.accumulator.count().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    Ok(PreparedProposeGovernanceV0 {
+        proposal: PendingGovernanceProposalV0 {
             target_epoch,
             proposal_decision_id_hex: proposal_decision_id_hex.to_string(),
             proposed_height: context.target_height.get(),
             phase: phase as u8,
             parameters_hash_hex: parameters_hash_hex.to_string(),
             activation_height,
-        });
+        },
+        pending_insertion,
+        finalized_insertion,
+        expected_nullifiers: [(PocoNullifierFamilyV0::GovernanceDecision, decision)],
+        changes,
+    })
+}
+
+fn apply_prepared_propose_governance_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedProposeGovernanceV0,
+) -> Result<()> {
+    let body_matches = match &operation.body {
+        PocoApplicationOperationBodyV0::ProposeGovernance {
+            target_epoch,
+            phase,
+            parameters_hash_hex,
+            activation_height,
+            proposal_decision_id_hex,
+        } => {
+            *target_epoch == prepared.proposal.target_epoch
+                && *phase == prepared.proposal.phase
+                && parameters_hash_hex == &prepared.proposal.parameters_hash_hex
+                && *activation_height == prepared.proposal.activation_height
+                && proposal_decision_id_hex == &prepared.proposal.proposal_decision_id_hex
+        }
+        _ => false,
+    };
+    let pending_matches = overlay
+        .authority
+        .pending_governance_proposals
+        .binary_search_by_key(&prepared.proposal.target_epoch, |proposal| {
+            proposal.target_epoch
+        })
+        == Err(prepared.pending_insertion);
+    let finalized_matches = overlay
+        .authority
+        .finalized_governance_approvals
+        .binary_search_by_key(&prepared.proposal.target_epoch, |approval| {
+            approval.target_epoch
+        })
+        == Err(prepared.finalized_insertion);
+    if !body_matches || !pending_matches || !finalized_matches {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    }
+    insert_nullifiers(
+        overlay,
+        &operation.nullifier_insertions,
+        &prepared.expected_nullifiers,
+    )?;
     overlay
         .authority
         .pending_governance_proposals
-        .sort_by_key(|proposal| proposal.target_epoch);
-    apply_prepared_changes(overlay, changes, false)
+        .insert(prepared.pending_insertion, prepared.proposal);
+    apply_prepared_changes(overlay, prepared.changes, false)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -9200,6 +9301,43 @@ mod tests {
         }));
         block.overlay.authority.pending_challenges = pending;
         (block, operation)
+    }
+
+    fn propose_governance_capacity_fixture(
+        pending_count: usize,
+    ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
+        let (context, projection, _, operation) =
+            sequence_step_vector_fixture("governance_propose_approve", 0);
+        let PocoApplicationOperationBodyV0::ProposeGovernance { target_epoch, .. } =
+            &operation.body
+        else {
+            unreachable!();
+        };
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let mut pending = max_capacity_authority_state().pending_governance_proposals;
+        pending.truncate(pending_count);
+        assert!(pending
+            .iter()
+            .all(|proposal| proposal.target_epoch != *target_epoch));
+        block.overlay.authority.pending_governance_proposals = pending;
+        (block, operation)
+    }
+
+    fn bind_propose_governance_decision_v0(
+        context: &AuthenticatedPocoApplicationContextV0,
+        operation: &mut PocoApplicationOperationV0,
+    ) {
+        let preimage = decision_preimage_digest_v0(context, operation).unwrap();
+        let decision = derived_decision_id_v0(preimage, b"propose-governance");
+        let PocoApplicationOperationBodyV0::ProposeGovernance {
+            proposal_decision_id_hex,
+            ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *proposal_decision_id_hex = hex::encode(decision);
     }
 
     fn poison_raw_nullifier_roots_v0(raw: &mut [RawNullifierInsertionV0]) {
@@ -14411,6 +14549,312 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn propose_governance_preparation_freezes_capacity_and_late_proof_priority() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let assert_failure =
+            |mut block: PocoApplicationBlockOverlayV0,
+             operation: PocoApplicationOperationV0,
+             expected: PocoApplicationApplyFailureV0| {
+                let raw = serde_json::to_vec(&operation).unwrap();
+                PocoApplicationOperationV0::decode_exact(&raw).unwrap();
+                let before = block.clone();
+                assert_eq!(block.apply_decoded_exact(&raw, &operation), Err(expected));
+                assert_block_overlay_unchanged(&block, &before);
+            };
+
+        let (context, projection, raw, operation) =
+            sequence_step_vector_fixture("governance_propose_approve", 0);
+        let mut canonical =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let accumulator_before = canonical.overlay.accumulator.count();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        assert_eq!(
+            canonical
+                .overlay
+                .authority
+                .pending_governance_proposals
+                .len(),
+            1,
+        );
+        assert_eq!(
+            canonical.overlay.accumulator.count(),
+            accumulator_before + 1
+        );
+        assert_eq!(canonical.seal().unwrap().operation_count(), 1);
+
+        let (saturated, operation) =
+            propose_governance_capacity_fixture(MAX_PENDING_GOVERNANCE_PROPOSALS);
+        assert_failure(
+            saturated.clone(),
+            operation.clone(),
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let mut unsupported = operation.clone();
+        unsupported.nullifier_non_membership_checks =
+            vec![unsupported.nullifier_insertions[0].clone()];
+        assert_failure(
+            saturated.clone(),
+            unsupported,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        for fault in 0..5 {
+            let mut malformed = operation.clone();
+            let PocoApplicationOperationBodyV0::ProposeGovernance {
+                target_epoch,
+                phase,
+                parameters_hash_hex,
+                activation_height,
+                proposal_decision_id_hex,
+            } = &mut malformed.body
+            else {
+                unreachable!();
+            };
+            match fault {
+                0 => *target_epoch = target_epoch.checked_add(1).unwrap(),
+                1 => *phase = u8::MAX,
+                2 => *parameters_hash_hex = "0".to_string(),
+                3 => *activation_height = activation_height.checked_add(1).unwrap(),
+                4 => *proposal_decision_id_hex = "aa".repeat(32),
+                _ => unreachable!(),
+            }
+            if fault != 4 {
+                bind_propose_governance_decision_v0(&saturated.context, &mut malformed);
+            }
+            assert_failure(
+                saturated.clone(),
+                malformed,
+                DeterministicallyInvalid(if fault == 4 {
+                    Invalid::SemanticTransition
+                } else {
+                    Invalid::GovernanceRule
+                }),
+            );
+        }
+
+        let mut malformed_change = operation.clone();
+        malformed_change.semantic_changes[0].next_value_hex = Some("00".to_string());
+        bind_propose_governance_decision_v0(&saturated.context, &mut malformed_change);
+        assert_failure(
+            saturated.clone(),
+            malformed_change,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut hash_mismatch = operation.clone();
+        let PocoApplicationOperationBodyV0::ProposeGovernance {
+            parameters_hash_hex,
+            ..
+        } = &mut hash_mismatch.body
+        else {
+            unreachable!();
+        };
+        *parameters_hash_hex = "aa".repeat(32);
+        bind_propose_governance_decision_v0(&saturated.context, &mut hash_mismatch);
+        assert_failure(
+            saturated.clone(),
+            hash_mismatch,
+            DeterministicallyInvalid(Invalid::GovernanceRule),
+        );
+
+        let mut duplicate = saturated.clone();
+        let PocoApplicationOperationBodyV0::ProposeGovernance { target_epoch, .. } =
+            &operation.body
+        else {
+            unreachable!();
+        };
+        duplicate.overlay.authority.pending_governance_proposals[0].target_epoch = *target_epoch;
+        duplicate
+            .overlay
+            .authority
+            .pending_governance_proposals
+            .sort_by_key(|proposal| proposal.target_epoch);
+        assert_failure(
+            duplicate,
+            operation.clone(),
+            DeterministicallyInvalid(Invalid::GovernanceRule),
+        );
+
+        let mut finalized_duplicate = saturated.clone();
+        let mut approval = max_capacity_authority_state().finalized_governance_approvals[0].clone();
+        approval.target_epoch = *target_epoch;
+        finalized_duplicate
+            .overlay
+            .authority
+            .finalized_governance_approvals
+            .push(approval);
+        finalized_duplicate
+            .overlay
+            .authority
+            .finalized_governance_approvals
+            .sort_by_key(|approval| approval.target_epoch);
+        assert_failure(
+            finalized_duplicate,
+            operation.clone(),
+            DeterministicallyInvalid(Invalid::GovernanceRule),
+        );
+
+        let mut exhausted = saturated.clone();
+        exhausted.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX).unwrap();
+        exhausted
+            .overlay
+            .authority
+            .set_accumulator(exhausted.overlay.accumulator);
+        assert_failure(
+            exhausted,
+            operation.clone(),
+            Invariant(InvariantReason::ProtocolCounterExhausted),
+        );
+
+        let mut saturated_bad_shape = saturated.clone();
+        let mut bad_shape_operation = operation.clone();
+        bad_shape_operation.nullifier_insertions.clear();
+        assert_failure(
+            saturated_bad_shape.clone(),
+            bad_shape_operation.clone(),
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+        saturated_bad_shape.aggregate_operation_bytes = MAX_POCO_SNAPSHOT_BUNDLE_BYTES;
+        assert_failure(
+            saturated_bad_shape,
+            bad_shape_operation,
+            DeterministicallyInvalid(Invalid::PerBlockCapacity),
+        );
+
+        let (below_cap_bad_shape, mut bad_shape_operation) =
+            propose_governance_capacity_fixture(MAX_PENDING_GOVERNANCE_PROPOSALS - 1);
+        bad_shape_operation.nullifier_insertions.clear();
+        assert_failure(
+            below_cap_bad_shape,
+            bad_shape_operation,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut saturated_bad_root = saturated.clone();
+        let mut bad_root_operation = operation.clone();
+        poison_nullifier_roots_v0(&mut bad_root_operation);
+        assert_failure(
+            saturated_bad_root.clone(),
+            bad_root_operation.clone(),
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+        saturated_bad_root.raw_operations = vec![Vec::new(); MAX_APPLICATION_OPERATIONS_PER_BLOCK];
+        assert_failure(
+            saturated_bad_root,
+            bad_root_operation,
+            DeterministicallyInvalid(Invalid::PerBlockCapacity),
+        );
+
+        let (below_cap_bad_root, mut bad_root_operation) =
+            propose_governance_capacity_fixture(MAX_PENDING_GOVERNANCE_PROPOSALS - 1);
+        poison_nullifier_roots_v0(&mut bad_root_operation);
+        assert_failure(
+            below_cap_bad_root,
+            bad_root_operation,
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let (mut boundary, boundary_operation) =
+            propose_governance_capacity_fixture(MAX_PENDING_GOVERNANCE_PROPOSALS - 1);
+        let boundary_raw = serde_json::to_vec(&boundary_operation).unwrap();
+        let boundary_accumulator = boundary.overlay.accumulator.count();
+        boundary
+            .apply_decoded_exact(&boundary_raw, &boundary_operation)
+            .unwrap();
+        assert_eq!(boundary.operation_count(), 1);
+        assert_eq!(
+            boundary
+                .overlay
+                .authority
+                .pending_governance_proposals
+                .len(),
+            MAX_PENDING_GOVERNANCE_PROPOSALS,
+        );
+        assert_eq!(
+            boundary.overlay.accumulator.count(),
+            boundary_accumulator + 1
+        );
+
+        let (baseline, operation) = propose_governance_capacity_fixture(0);
+        let decision_preimage = decision_preimage_digest_v0(&baseline.context, &operation).unwrap();
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut mismatched_operation = operation.clone();
+        let PocoApplicationOperationBodyV0::ProposeGovernance { phase, .. } =
+            &mut mismatched_operation.body
+        else {
+            unreachable!();
+        };
+        *phase = crate::poco_semantics::RolloutPhaseV0::Full as u8;
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &mismatched_operation,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        let mut row = max_capacity_authority_state().pending_governance_proposals[0].clone();
+        row.target_epoch = 0;
+        candidate.authority.pending_governance_proposals.push(row);
+        candidate
+            .authority
+            .pending_governance_proposals
+            .sort_by_key(|proposal| proposal.target_epoch);
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &operation,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
     }
 
     #[test]

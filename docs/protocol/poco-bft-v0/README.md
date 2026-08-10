@@ -796,8 +796,9 @@ priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
-`RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; every
-other family stays audit-open before terminal failure mapping;
+`ProposeGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
+`RotateValidator`; every other family stays audit-open before terminal failure
+mapping;
 resolve challenge now freezes the exact pending/certificate rows and indices,
 target lifecycle/height/decision, challenge-decision nullifier, and semantic
 transition before clone. Signed IDs, pending identity, and accepted-certificate
@@ -811,9 +812,19 @@ unchanged. Collision coverage freezes signed/pending/certificate, cap,
 unsupported-field, decision/window/semantic/counter, proof, structural,
 carrier/source-row, and rollback priorities; raw proof-key/encoding faults stay
 decode-first;
-governance proposal and approval type signed rules plus the pre-clone proposal
-join, preserve exact missing-proposal and too-early reasons, and fail stop on
-authenticated parameters/proposal/pending-fact divergence;
+governance proposal now freezes one exact pending proposal, both sorted
+pending/finalized absence slots, its governance-decision nullifier, and the
+role-2 parameters plus pending-governance semantic creates before clone. Cheap
+unsupported fields, signed successor epoch/phase/hash/activation/decision,
+authority absence, exact hash/geometry/fact agreement, and accumulator count
+`+1` precede pending-family and defensive-total caps; only proof verification,
+sorted insertion, and prepared semantic mutation remain late. The shared H1
+vector still applies and seals. Authority-only saturated/boundary fixtures
+freeze cap-versus-late-proof, signed/semantic/counter, structural, carrier/
+source-row, and rollback priorities without claiming another authenticated
+success fixture. Governance approval continues to preserve exact missing-
+proposal and too-early reasons and fails stop on authenticated parameters/
+proposal/pending-fact divergence;
 certificate acceptance now has typed pre-clone signed envelope/proof,
 reservation/key/meter negative-fact, nonce-cap, and authenticated span/counter
 admission; every later execution join is now leaf-typed;

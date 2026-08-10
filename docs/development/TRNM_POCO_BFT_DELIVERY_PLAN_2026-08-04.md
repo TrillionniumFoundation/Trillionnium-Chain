@@ -545,8 +545,9 @@ an earlier phase.
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
-  `RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; all
-  other families remain audit-open before terminal failure mapping.
+  `ProposeGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
+  `RotateValidator`; all other families remain audit-open before terminal
+  failure mapping.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and
@@ -569,9 +570,27 @@ an earlier phase.
   successor/authenticated-predecessor/counter, proof shape/subject/root,
   structural, carrier, and full-overlay rollback priorities; raw proof-key and
   encoding faults remain decode-first.
-  Governance proposal now preserves nested typed errors and maps its remaining
-  signed target/phase/parameters/semantic and duplicate-target rejects to
-  `GovernanceRule`. Governance approval validates signed hash/next epoch,
+  `ProposeGovernance` now carries one exact pending proposal, its sorted
+  pending/finalized absence slots, governance-decision nullifier, and two
+  semantic creates across capacity admission and execution. Its frozen order
+  is structural and exact owner/context/revision/replay admission, cheap
+  unsupported-field rejection, signed successor epoch/phase/hash/activation/
+  derived decision, exact pending/finalized authority absence, exact role-2
+  parameters and pending-governance creates with hash/geometry/fact agreement,
+  and authenticated accumulator count `+1`; pending-governance and defensive-
+  total record caps follow before clone. Only insertion-proof verification,
+  exact sorted authority insertion, and prepared semantic mutation remain on
+  the candidate. Body/carrier or either absence-slot drift is a
+  `DerivedMutationPostcondition`. The frozen shared H1 governance vector still
+  applies and seals. Saturated and cap-minus-one fixtures inject unrelated
+  authority rows only, so they freeze the handler boundary rather than claim a
+  second authenticated end-to-end success path; their matrix covers cheap
+  fields, signed rules, semantic/hash/geometry/duplicate facts, counter,
+  cap-versus-late proof shape/root, structural bounds, exact-boundary apply,
+  carrier/source-row drift, and full-overlay rollback. Raw proof-key/encoding
+  faults remain decode-first. Governance proposal preserves nested typed errors
+  and maps its remaining signed target/phase/parameters/semantic and duplicate-
+  target rejects to `GovernanceRule`. Governance approval validates signed hash/next epoch,
   proposal existence, and finalized duplication before clone; missing proposal
   retains `GovernanceApprovalMissing`, too-early approval is
   `ProtocolWindowOrCap`, signed approved-state drift is `GovernanceRule`, and

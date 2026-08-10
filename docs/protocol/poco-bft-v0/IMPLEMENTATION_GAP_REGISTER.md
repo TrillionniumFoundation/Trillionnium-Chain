@@ -1385,9 +1385,9 @@ epoch prune, and Core transition remain open.
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
    `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
-   `ReleaseSettlement`, `ResolveChallenge`, `RegisterFutureCandidate`,
-   `RegisterValidator`, and `RotateValidator`; all other families remain audit-
-   open before terminal failure mapping.
+   `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
+   `RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; all
+   other families remain audit-open before terminal failure mapping.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
@@ -1402,9 +1402,21 @@ epoch prune, and Core transition remain open.
    unsupported-field, decision/window/semantic/counter, late-proof, structural,
    body/carrier/source-row, and full-rollback priorities. Raw proof-key and
    encoding faults remain decode-first.
-   Governance proposal/approval now type their signed rules and pre-clone
-   proposal join while keeping authenticated parameters/pending-fact drift
-   invariant and preserving the exact missing-proposal reason.
+   `ProposeGovernance` now prepares one exact pending proposal, both sorted
+   pending/finalized absence slots, one governance-decision nullifier, and the
+   role-2 parameters plus pending-governance semantic creates before clone.
+   Cheap unsupported-field admission, successor epoch/phase/hash/activation/
+   decision rules, exact authority absence, semantic hash/geometry/fact
+   agreement, and accumulator count `+1` precede pending-family/defensive-total
+   caps. Only insertion-proof verification, sorted record insertion, and
+   prepared semantic mutation remain late. The canonical shared H1 proposal
+   still applies and seals; authority-only saturated/cap-minus-one fixtures
+   freeze signed/semantic/counter, cap-versus-proof, structural, carrier/source-
+   row, exact-boundary, and rollback priorities without claiming another
+   authenticated success path. Governance approval continues to type its
+   signed rules and pre-clone proposal join while keeping authenticated
+   parameters/pending-fact drift invariant and preserving the exact missing-
+   proposal reason.
    Certificate acceptance pre-clone admission now types signed certificate
    shape/proof, reservation/key/meter negative facts, nonce cap, and
    authenticated rolling-span/counter faults. The reservation/certificate/
