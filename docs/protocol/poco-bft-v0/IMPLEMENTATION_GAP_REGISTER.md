@@ -1528,16 +1528,47 @@ epoch prune, and Core transition remain open.
    relationship, parameter, or signature join. Epoch-28 fixture bootstrap is
    not production cross-epoch activation, Core/host integration, terminal
    mapping, or a phase.
+   `AcceptCertificate` now closes the final audit-open family. Its shallow
+   pre-cap owner derivation binds canonical certificate ID, the exact funded
+   reservation, active-certificate absence, the signed kind-1 certificate
+   envelope, and the consumer-key/meter rows required to compute nonce
+   `+0/+1` and usage `+0..+4`. Fixed family/defensive-total caps then precede
+   derived decisions, strict certificate verification, the exact kind
+   `1/3/4/6/7/12` transition, authenticated kind-2/5/8/9 companions, four
+   usage calculations, prune arithmetic, and checked accumulator `+3`. The
+   prepared carrier owns only touched rows and sources: reservation removal,
+   complete consumer-key successor, four usage replace/insert slots, active-
+   certificate insertion/full successor, meter policy, provider history,
+   four read-only semantic companions, six raw/prepared semantic changes, and
+   the exact two absence plus three insertion proof fields/subjects. Defensive
+   full-carrier rederivation and all explicit CAS checks precede all proofs;
+   the two same-root absence checks precede the three evolving-root insertions;
+   the temporary accumulator advances only with each successful insertion,
+   while touched authority rows and semantic mutations remain unchanged until
+   all five proofs succeed. The last `Deferred`/tag-zero path is gone and the operation-body
+   match is exhaustive across nineteen prepared variants. Real evidence
+   covers the cold H1 sixteen-op/H2 three-accept/H3 fourth-accept path
+   (`3 -> 4` certificates, `1 -> 0` reservations, `3 -> 4` watermarks,
+   `12 -> 16` usage, `31 -> 36` total records, count `+3`, six CAS writes), a
+   same-owner nonce-two hot replace with zero nonce/usage additions, and a
+   fifth real funded certificate rejected at active capacity before poisoned
+   proofs. Usage-32 injection remains handler-boundary-only; defensive total
+   overflow is dominated by valid family caps and has no independent
+   authenticated Accept witness. Shared vectors remain byte-identical. This
+   closes only isolated handler leaf/capacity/carrier/rollback evidence, not
+   terminal mapping, sealing, Core/host execution, cross-epoch production
+   reachability, durable-node work, or a phase.
    Capacity-order
    closure is now limited to `DefineMeterPolicy`,
    `RetireMeterPolicy`, `PruneRetiredMeter`, `FundSettlement`,
-   `AuthorizeConsumerKey`, `RevokeConsumerKey`,
+   `AcceptCertificate`, `AuthorizeConsumerKey`, `RevokeConsumerKey`,
    `PruneRevokedConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`,
    `RotateValidator`, `RevokeValidator`, `PruneRevokedValidatorHistory`, and
-   `PruneExpiredCertificate`; all other families remain audit-open before
-   terminal failure mapping.
+   `PruneExpiredCertificate`. All nineteen families now have isolated leaf-
+   reason/capacity-order/prepared-carrier closure; terminal failure mapping is
+   next, and no phase is complete.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
@@ -1626,8 +1657,8 @@ epoch prune, and Core transition remain open.
    authority, retention/live-reference rejection, and authenticated settlement/
    lifecycle companion corruption while preserving nested nullifier and
    postcondition reasons; no unclassified certificate-prune leaf remains.
-   Leaf-reason completion remains a hard
-   dependency before terminal failure mapping. The success carrier still owns the open
+   Isolated operation-family leaf-reason completion is now closed; terminal
+   failure mapping is the next dependency. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,
    emit a receipt, or promote a terminal result. The private consuming bridge maps `Proposal` only to

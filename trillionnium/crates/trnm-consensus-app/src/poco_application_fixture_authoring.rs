@@ -1664,6 +1664,52 @@ fn certificate_fixture_for_provider(
     })
 }
 
+fn certificate_fixture_with_nonce_v0(
+    chain: &FixtureChainV0,
+    owner: &CertificateFixtureV0,
+    consumer_nonce: u64,
+    settlement_commitment: [u8; 32],
+) -> Result<CertificateFixtureV0> {
+    let body = ConsumptionCertificateBodyV0::new(
+        chain.genesis_hash,
+        chain.chain_id,
+        ValidatorId::from_bytes(&owner.provider_id)
+            .map_err(|error| anyhow::anyhow!("provider ID: {error:?}"))?,
+        ValidatorId::from_bytes(&owner.consumer_id)
+            .map_err(|error| anyhow::anyhow!("consumer ID: {error:?}"))?,
+        ValidatorId::from_bytes(&owner.consumer_key_id)
+            .map_err(|error| anyhow::anyhow!("consumer key ID: {error:?}"))?,
+        owner.task_id.clone(),
+        owner.output_commitment,
+        owner.meter_id.clone(),
+        1,
+        10,
+        Height::new(1),
+        Height::new(1),
+        consumer_nonce,
+        settlement_commitment,
+        None,
+    )
+    .map_err(|error| anyhow::anyhow!("hot certificate fixture body: {error:?}"))?;
+    let certificate = ConsumptionCertificateV0::new(
+        body.clone(),
+        signature64(&owner.consumer_signing_key, body.digest().as_bytes()),
+    )
+    .map_err(|error| anyhow::anyhow!("hot certificate fixture: {error:?}"))?;
+    Ok(CertificateFixtureV0 {
+        consumer_id: owner.consumer_id.clone(),
+        consumer_key_id: owner.consumer_key_id.clone(),
+        provider_id: owner.provider_id.clone(),
+        task_id: owner.task_id.clone(),
+        meter_id: owner.meter_id.clone(),
+        consumer_signing_key: owner.consumer_signing_key.clone(),
+        provider_signing_key: owner.provider_signing_key.clone(),
+        output_commitment: owner.output_commitment,
+        settlement_commitment,
+        certificate,
+    })
+}
+
 fn validator_pop(
     chain: &FixtureChainV0,
     signing_key: &SigningKey,
@@ -2200,8 +2246,8 @@ pub(super) fn prune_two_empty_consumer_keys_fixture_v0(
     Ok((baseline, raw_operations))
 }
 
-fn active_certificate_full_capacity_chain_v0() -> Result<(FixtureChainV0, Vec<CertificateFixtureV0>)>
-{
+fn active_certificate_capacity_setup_chain_v0(
+) -> Result<(FixtureChainV0, Vec<CertificateFixtureV0>, Vec<[u8; 32]>)> {
     let mut chain = authenticated_candidate_genesis_v0()?;
     // Keep this exact a/b/c/e owner set aligned with the authenticated
     // relationship facts installed by the candidate genesis authoring path.
@@ -2253,6 +2299,12 @@ fn active_certificate_full_capacity_chain_v0() -> Result<(FixtureChainV0, Vec<Ce
         "certificate capacity fixture did not fill the H1 prerequisite families"
     );
     chain.commit_block(setup_block, nullifiers)?;
+    Ok((chain, fixtures, funding_decisions))
+}
+
+fn active_certificate_full_capacity_chain_v0() -> Result<(FixtureChainV0, Vec<CertificateFixtureV0>)>
+{
+    let (mut chain, fixtures, funding_decisions) = active_certificate_capacity_setup_chain_v0()?;
 
     let mut acceptance_block = chain.start_overlay()?;
     let mut nullifiers = chain.nullifiers.clone();
@@ -2299,6 +2351,145 @@ fn active_certificate_full_capacity_chain_v0() -> Result<(FixtureChainV0, Vec<Ce
         "authenticated H2 certificate capacity state drifted"
     );
     Ok((chain, fixtures))
+}
+
+pub(super) fn accept_certificate_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures, funding_decisions) = active_certificate_capacity_setup_chain_v0()?;
+    let mut acceptance_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for (fixture, funding_decision) in fixtures
+        .iter()
+        .zip(funding_decisions.iter().copied())
+        .take(MAX_ACTIVE_CERTIFICATES - 1)
+    {
+        let (acceptance, next) =
+            accept_certificate(&acceptance_block, fixture, funding_decision, &nullifiers)?;
+        acceptance_block.apply_raw(&acceptance.raw)?;
+        nullifiers = next;
+    }
+    ensure!(
+        acceptance_block.context.target_height.get() == 2
+            && acceptance_block.operation_count() == MAX_ACTIVE_CERTIFICATES - 1
+            && acceptance_block.overlay.authority.active_certificates.len()
+                == MAX_ACTIVE_CERTIFICATES - 1
+            && acceptance_block
+                .overlay
+                .authority
+                .funded_unused_reservations
+                .len()
+                == 1
+            && total_nonce_watermarks_v0(&acceptance_block.overlay.authority)?
+                == MAX_ACTIVE_CERTIFICATES - 1
+            && usage_bucket_count_v0(&acceptance_block.overlay.authority)?
+                == (MAX_ACTIVE_CERTIFICATES - 1) * 4,
+        "certificate acceptance fixture did not commit the H2 three-certificate source"
+    );
+    chain.commit_block(acceptance_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    let target_fixture = fixtures
+        .last()
+        .context("certificate acceptance fixture lacks the fourth owner")?;
+    let target_funding_decision = *funding_decisions
+        .last()
+        .context("certificate acceptance fixture lacks the fourth funding decision")?;
+    let (built, _) = accept_certificate(
+        &block,
+        target_fixture,
+        target_funding_decision,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    ensure!(
+        block.context.target_height.get() == 3
+            && block.overlay.authority.active_certificates.len() == MAX_ACTIVE_CERTIFICATES - 1
+            && block.overlay.authority.funded_unused_reservations.len() == 1
+            && total_nonce_watermarks_v0(&block.overlay.authority)? == MAX_ACTIVE_CERTIFICATES - 1
+            && usage_bucket_count_v0(&block.overlay.authority)?
+                == (MAX_ACTIVE_CERTIFICATES - 1) * 4
+            && authority_record_count_v0(&block.overlay.authority)? == 31,
+        "certificate acceptance full-capacity source drifted"
+    );
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn accept_certificate_hot_usage_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures, funding_decisions) = active_certificate_capacity_setup_chain_v0()?;
+    let owner = fixtures
+        .first()
+        .context("hot certificate fixture lacks its owner")?;
+    let hot = certificate_fixture_with_nonce_v0(&chain, owner, 2, [0x75; 32])?;
+
+    let mut block = chain.start_overlay()?;
+    let (first, next) = accept_certificate(
+        &block,
+        owner,
+        *funding_decisions
+            .first()
+            .context("hot certificate fixture lacks its original funding decision")?,
+        &chain.nullifiers,
+    )?;
+    block.apply_raw(&first.raw)?;
+    let (funding, next, hot_funding_decision) = fund_settlement(&block, &hot, &next)?;
+    block.apply_raw(&funding.raw)?;
+    ensure!(
+        block.context.target_height.get() == 2
+            && block.overlay.authority.active_certificates.len() == 1
+            && block.overlay.authority.funded_unused_reservations.len()
+                == MAX_FUNDED_UNUSED_RESERVATIONS
+            && total_nonce_watermarks_v0(&block.overlay.authority)? == 1
+            && usage_bucket_count_v0(&block.overlay.authority)? == 4,
+        "hot certificate H2 source preparation drifted"
+    );
+    chain.commit_block(block, next)?;
+
+    let block = chain.start_overlay()?;
+    let (built, _) = accept_certificate(&block, &hot, hot_funding_decision, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    ensure!(
+        block.context.target_height.get() == 3
+            && block.overlay.authority.active_certificates.len() == 1
+            && total_nonce_watermarks_v0(&block.overlay.authority)? == 1
+            && usage_bucket_count_v0(&block.overlay.authority)? == 4,
+        "hot certificate H3 source drifted"
+    );
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn accept_certificate_active_capacity_rejection_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = active_certificate_full_capacity_chain_v0()?;
+    let owner = fixtures
+        .first()
+        .context("active-capacity certificate fixture lacks its owner")?;
+    let fifth = certificate_fixture_with_nonce_v0(&chain, owner, 2, [0x76; 32])?;
+    let mut funding_block = chain.start_overlay()?;
+    let (funding, nullifiers, funding_decision) =
+        fund_settlement(&funding_block, &fifth, &chain.nullifiers)?;
+    funding_block.apply_raw(&funding.raw)?;
+    chain.commit_block(funding_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    let (built, _) = accept_certificate(&block, &fifth, funding_decision, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    ensure!(
+        block.context.target_height.get() == 4
+            && block.overlay.authority.active_certificates.len() == MAX_ACTIVE_CERTIFICATES
+            && block.overlay.authority.funded_unused_reservations.len() == 1,
+        "active-certificate capacity rejection source drifted"
+    );
+    Ok((block, built.raw, operation))
 }
 
 fn prune_expired_certificate_fixture_at_source_v0(
@@ -2747,11 +2938,24 @@ fn accept_certificate(
         &tuple_payload,
     )?;
     let tuple_key = exact_hash32(&tuple_change.logical_key_hex, "tuple logical key")?;
+    let settlement_finalized_height = block
+        .overlay
+        .authority
+        .funded_unused_reservations
+        .binary_search_by(|reservation| {
+            reservation
+                .certificate_id_hex
+                .as_str()
+                .cmp(hex::encode(certificate_id).as_str())
+        })
+        .ok()
+        .map(|index| block.overlay.authority.funded_unused_reservations[index].finalized_height)
+        .context("certificate acceptance fixture lacks its funded reservation")?;
     let mut settlement_payload = Vec::new();
     settlement_payload.extend_from_slice(&certificate_id);
     settlement_payload.extend_from_slice(&fixture.settlement_commitment);
     settlement_payload.push(SettlementStateV0::Consumed as u8);
-    settlement_payload.extend_from_slice(&1u64.to_be_bytes());
+    settlement_payload.extend_from_slice(&settlement_finalized_height.to_be_bytes());
     let settlement_change = semantic_change(
         block,
         PocoSnapshotEntryKindV0::Settlement,

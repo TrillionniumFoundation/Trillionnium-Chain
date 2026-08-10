@@ -713,15 +713,54 @@ an earlier phase.
   epoch-28 fixture context is isolated test bootstrap and does not establish
   production cross-epoch activation, Core/host integration, terminal mapping,
   or a phase.
+  `AcceptCertificate` now closes the final audit-open operation-family path.
+  Canonical certificate ID, exact funded-unused reservation presence, active-
+  certificate absence, and the one signed kind-1 certificate envelope needed
+  to identify its consumer-key/meter capacity owners precede the fixed family
+  caps. The computed delta is nonce watermark `+0/+1`, usage buckets `+0..+4`,
+  reservation `-1`, and active certificate `+1`; family caps retain their
+  canonical consumer/nonce/meter/usage/reservation/certificate/challenge/
+  governance/validator/future order before the defensive total. All derived
+  decisions, strict certificate signature, exact six-change semantic set,
+  consumer-key/meter/relationship/provider authenticated joins, four checked
+  usage successors, prune-boundary arithmetic, and accumulator count `+3`
+  then complete before clone. A touched-row carrier freezes the reservation
+  removal slot, complete consumer-key watermark successor, four usage
+  replace/insert slots, active-certificate insertion slot and full successor,
+  meter-policy/provider-history rows, exact kind-2/5/8/9 companion bytes,
+  raw semantic/proof-field owners, both absence subjects, all three insertion
+  subjects, and six prepared CAS values. Body/row/slot/field/source drift fails
+  closed through defensive full-carrier rederivation plus explicit source CAS,
+  before the two same-root Certificate/Tuple absence proofs and three evolving-
+  root Settlement/Meter/Evidence insertions. The temporary accumulator advances
+  only with each successful insertion proof; touched authority rows and semantic
+  mutations remain unchanged until all five proofs succeed. The obsolete `Deferred`
+  carrier/tag-zero fallback is removed, so all nineteen operation variants are
+  exhaustively prepared. A real a/b/c/e chain commits sixteen H1 setup
+  operations, accepts three certificates at H2, then seals the fourth at H3,
+  proving active `3 -> 4`, reservations `1 -> 0`, nonce `3 -> 4`, usage
+  `12 -> 16`, authority records `31 -> 36`, accumulator `+3`, six semantic
+  mutations, and byte-exact preservation of the first three rows. A second
+  real same-owner nonce-two chain proves the hot nonce/usage replace path with
+  zero record additions, while a real fifth certificate funded after four
+  active rows loses to the certificate cap before poisoned proofs. The
+  synthetic usage-32 collision is only handler-boundary priority evidence;
+  the defensive total is mathematically dominated by valid family caps for
+  this operation and has no independent authenticated witness. Existing
+  shared operation bytes remain unchanged. This is isolated handler/audit
+  closure, not terminal failure mapping, write sealing, Core/host integration,
+  production cross-epoch reachability, or phase completion.
   Capacity-order closure now
   covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
-  `FundSettlement`, `AuthorizeConsumerKey`,
+  `FundSettlement`, `AcceptCertificate`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
   `RegisterValidator`, `RotateValidator`, `RevokeValidator`,
-  `PruneRevokedValidatorHistory`, and `PruneExpiredCertificate`; all other
-  families remain audit-open before terminal failure mapping.
+  `PruneRevokedValidatorHistory`, and `PruneExpiredCertificate`. All nineteen
+  operation families now have isolated leaf-reason/capacity-order/prepared-
+  carrier closure; terminal failure mapping is the next dependency and no
+  phase is complete.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and
