@@ -2200,6 +2200,259 @@ pub(super) fn prune_two_empty_consumer_keys_fixture_v0(
     Ok((baseline, raw_operations))
 }
 
+fn active_certificate_full_capacity_chain_v0() -> Result<(FixtureChainV0, Vec<CertificateFixtureV0>)>
+{
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    // Keep this exact a/b/c/e owner set aligned with the authenticated
+    // relationship facts installed by the candidate genesis authoring path.
+    let fixtures = authenticated_candidate_fixtures_v0(&chain)?;
+    ensure!(
+        fixtures.len() == MAX_ACTIVE_CERTIFICATES,
+        "certificate capacity fixture owner count drifted"
+    );
+
+    let mut setup_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut funding_decisions = Vec::with_capacity(fixtures.len());
+    for fixture in &fixtures {
+        let (authorization, next) = authorize_consumer_key(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&authorization.raw)?;
+        nullifiers = next;
+
+        let (meter, next) = define_meter(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&meter.raw)?;
+        nullifiers = next;
+
+        let (registration, next) = register_provider(&setup_block, &chain, fixture, &nullifiers)?;
+        setup_block.apply_raw(&registration.raw)?;
+        nullifiers = next;
+
+        let (funding, next, funding_decision) =
+            fund_settlement(&setup_block, fixture, &nullifiers)?;
+        setup_block.apply_raw(&funding.raw)?;
+        nullifiers = next;
+        funding_decisions.push(funding_decision);
+    }
+    ensure!(
+        setup_block.context.target_height.get() == 1
+            && setup_block.operation_count() == fixtures.len() * 4
+            && setup_block.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES
+            && setup_block.overlay.authority.meter_policies.len() == MAX_METER_POLICIES
+            && setup_block
+                .overlay
+                .authority
+                .funded_unused_reservations
+                .len()
+                == MAX_FUNDED_UNUSED_RESERVATIONS
+            && setup_block
+                .overlay
+                .authority
+                .validator_registration_history
+                .len()
+                == MAX_VALIDATOR_REGISTRATION_HISTORIES,
+        "certificate capacity fixture did not fill the H1 prerequisite families"
+    );
+    chain.commit_block(setup_block, nullifiers)?;
+
+    let mut acceptance_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for (fixture, funding_decision) in fixtures.iter().zip(funding_decisions) {
+        let (acceptance, next) =
+            accept_certificate(&acceptance_block, fixture, funding_decision, &nullifiers)?;
+        acceptance_block.apply_raw(&acceptance.raw)?;
+        nullifiers = next;
+    }
+    ensure!(
+        acceptance_block.context.target_height.get() == 2
+            && acceptance_block.operation_count() == fixtures.len()
+            && acceptance_block.overlay.authority.active_certificates.len()
+                == MAX_ACTIVE_CERTIFICATES
+            && acceptance_block
+                .overlay
+                .authority
+                .funded_unused_reservations
+                .is_empty(),
+        "certificate capacity fixture did not complete the H2 four-certificate acceptance"
+    );
+    chain.commit_block(acceptance_block, nullifiers)?;
+    validate_application_authority_projection_v0(&chain.projection)?;
+
+    let authority = authenticated_candidate_authority_v0(&chain.projection)?;
+    ensure!(
+        chain.source_version == 2
+            && authority.active_certificates.len() == MAX_ACTIVE_CERTIFICATES
+            && authority.active_certificates.iter().all(|certificate| {
+                certificate.accepted_height == 2
+                    && certificate.finalized_epoch == 0
+                    && certificate.settlement_finalized_height == 1
+                    && certificate.prunable_after_height == 282
+                    && certificate.semantic_keys.len() == 5
+            })
+            && authority.funded_unused_reservations.is_empty()
+            && total_nonce_watermarks_v0(&authority)? == MAX_ACTIVE_CERTIFICATES
+            && authority.meter_usage.len() == MAX_ACTIVE_CERTIFICATES
+            && authority.consumer_provider_usage.len() == MAX_ACTIVE_CERTIFICATES
+            && authority.task_provider_usage.len() == MAX_ACTIVE_CERTIFICATES
+            && authority.provider_usage.len() == MAX_ACTIVE_CERTIFICATES
+            && usage_bucket_count_v0(&authority)? == MAX_ACTIVE_CERTIFICATES * 4
+            && authority_record_count_v0(&authority)? == 36,
+        "authenticated H2 certificate capacity state drifted"
+    );
+    Ok((chain, fixtures))
+}
+
+fn prune_expired_certificate_fixture_at_source_v0(
+    mut chain: FixtureChainV0,
+    fixture: &CertificateFixtureV0,
+    source_version: u64,
+    expected_target_height: u64,
+) -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    ensure!(
+        source_version.checked_add(1) == Some(expected_target_height),
+        "certificate prune fixture source/target height mismatch"
+    );
+    chain.advance_empty_versions(source_version)?;
+    // Fixture-only epoch selection makes the exact protocol window reachable;
+    // it is not a claim that production Core epoch activation is wired.
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == expected_target_height
+            && block.overlay.authority.active_certificates.len() == MAX_ACTIVE_CERTIFICATES,
+        "certificate prune fixture target context drifted"
+    );
+    let certificate_id = *fixture.certificate.certificate_id().as_bytes();
+    let certificate_id_hex = hex::encode(certificate_id);
+    let target_index = block
+        .overlay
+        .authority
+        .active_certificates
+        .binary_search_by(|certificate| {
+            certificate
+                .certificate_id_hex
+                .as_str()
+                .cmp(certificate_id_hex.as_str())
+        })
+        .map_err(|_| anyhow::anyhow!("certificate prune full-capacity target is absent"))?;
+    let target = &block.overlay.authority.active_certificates[target_index];
+    ensure!(
+        target.accepted_height == 2
+            && target.prunable_after_height == 282
+            && target.semantic_keys.len() == 5,
+        "certificate prune full-capacity target provenance drifted"
+    );
+    let (built, _) = prune_certificate(&block, certificate_id, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn prune_expired_certificate_exact_boundary_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (chain, fixtures) = active_certificate_full_capacity_chain_v0()?;
+    let fixture = &fixtures[0];
+    let result = prune_expired_certificate_fixture_at_source_v0(chain, fixture, 281, 282)?;
+    let certificate_id_hex = hex::encode(fixture.certificate.certificate_id().as_bytes());
+    let target = result
+        .0
+        .overlay
+        .authority
+        .active_certificates
+        .iter()
+        .find(|certificate| certificate.certificate_id_hex == certificate_id_hex)
+        .context("certificate exact-boundary target is absent")?;
+    ensure!(
+        result.0.context.target_height.get() == target.prunable_after_height,
+        "certificate exact-boundary fixture is not exact"
+    );
+    Ok(result)
+}
+
+pub(super) fn prune_expired_certificate_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (chain, fixtures) = active_certificate_full_capacity_chain_v0()?;
+    let fixture = &fixtures[0];
+    let result = prune_expired_certificate_fixture_at_source_v0(chain, fixture, 282, 283)?;
+    let certificate_id_hex = hex::encode(fixture.certificate.certificate_id().as_bytes());
+    let target = result
+        .0
+        .overlay
+        .authority
+        .active_certificates
+        .iter()
+        .find(|certificate| certificate.certificate_id_hex == certificate_id_hex)
+        .context("certificate first-after target is absent")?;
+    ensure!(
+        result.0.context.target_height.get()
+            == target
+                .prunable_after_height
+                .checked_add(1)
+                .context("certificate first-after boundary overflow")?,
+        "certificate first-after fixture is not the first admissible height"
+    );
+    Ok(result)
+}
+
+pub(super) fn prune_expired_certificate_pending_challenge_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = active_certificate_full_capacity_chain_v0()?;
+    let fixture = &fixtures[0];
+    let certificate_id_hex = hex::encode(fixture.certificate.certificate_id().as_bytes());
+
+    let mut opening_block = chain.start_overlay()?;
+    ensure!(
+        opening_block.context.target_height.get() == 3,
+        "certificate pending fixture opening height drifted"
+    );
+    let (opening, nullifiers, _) = open_challenge(&opening_block, fixture, &chain.nullifiers)?;
+    opening_block.apply_raw(&opening.raw)?;
+    chain.commit_block(opening_block, nullifiers)?;
+
+    let result = prune_expired_certificate_fixture_at_source_v0(chain, fixture, 282, 283)?;
+    let target = result
+        .0
+        .overlay
+        .authority
+        .active_certificates
+        .iter()
+        .find(|certificate| certificate.certificate_id_hex == certificate_id_hex)
+        .context("certificate pending fixture target is absent")?;
+    let pending = result
+        .0
+        .overlay
+        .authority
+        .pending_challenges
+        .iter()
+        .find(|challenge| challenge.certificate_id_hex == certificate_id_hex)
+        .context("certificate pending fixture lost its real challenge")?;
+    let lifecycle = authenticated_certificate_lifecycle_companion_v0(&result.0.overlay, target)?;
+    ensure!(
+        result.0.context.target_height.get() > target.prunable_after_height
+            && pending.opened_height == 3
+            && matches!(
+                lifecycle.fact,
+                SemanticFactV0::RevocationOrChallenge {
+                    state: LifecycleStateV0::ChallengePending,
+                    effective_height: 3,
+                }
+            ),
+        "certificate pending fixture lacks the retained real challenge companion"
+    );
+    Ok(result)
+}
+
 fn define_meter(
     block: &PocoApplicationBlockOverlayV0,
     fixture: &CertificateFixtureV0,

@@ -683,15 +683,45 @@ an earlier phase.
   permanent-identity resurrection guard, not the full-capacity carrier matrix
   or production epoch reachability. This is not Core activation, host
   integration, terminal mapping, durable-node closure, or a phase.
+  `PruneExpiredCertificate` now closes its isolated decrement/five-delete path.
+  Canonical certificate ID and exact active-row presence precede certificate
+  `-1`, every other family cap, and the defensive total. Unsupported-field
+  admission then precedes exact kind-1 certificate-body ownership and an
+  independently derived five-leaf retained set: certificate, tuple, consumed
+  settlement, measurement evidence, and lifecycle. Those companions bind the
+  body-derived row fields, tuple owner/accepted height, settlement commitment/
+  finalized height, evidence state/root, and pending-aware lifecycle height.
+  Strict comparison with the stored acceptance-time prune boundary and the
+  pending/reservation guards precede the exact signed five-delete set and
+  checked accumulator `+2`. The prepared carrier freezes the complete row and
+  slot, both proof-field owners, raw semantic owner, two permanent subjects,
+  and all five source bytes. Body/row/field/source drift fails before the two
+  chained late proofs; only after both proofs may the row and five leaves be
+  removed. A real H1 sixteen-operation setup and H2 four-certificate accept
+  chain reaches authenticated full capacity. It rejects H282 at the exact
+  stored boundary and seals first-after H283 as sorted `4 -> 3`, preserving
+  three byte-exact rows and the unrelated nonce/usage owners while deleting
+  exactly five leaves and advancing count by two. A separate real H3 open-
+  challenge source crosses retention but rejects prune while its pending row
+  and `ChallengePending` lifecycle companion remain authenticated. Same-ID
+  funded-unused coexistence and synthetic six-row `6 -> 5` capacity collisions
+  are handler-boundary witnesses only; neither is authenticated-reachable.
+  Frozen certificate-prune shared bytes remain the single rejected-lifecycle
+  replay, not the full-capacity or carrier matrix. This prune closure rebinds
+  the retained body/five-leaf owners; it does not replay every acceptance-era
+  consumer, meter, provider, relationship, parameter, or signature join. The
+  epoch-28 fixture context is isolated test bootstrap and does not establish
+  production cross-epoch activation, Core/host integration, terminal mapping,
+  or a phase.
   Capacity-order closure now
   covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
   `FundSettlement`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
-  `RegisterValidator`, `RotateValidator`, `RevokeValidator`, and
-  `PruneRevokedValidatorHistory`; all other families remain audit-open before
-  terminal failure mapping.
+  `RegisterValidator`, `RotateValidator`, `RevokeValidator`,
+  `PruneRevokedValidatorHistory`, and `PruneExpiredCertificate`; all other
+  families remain audit-open before terminal failure mapping.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and

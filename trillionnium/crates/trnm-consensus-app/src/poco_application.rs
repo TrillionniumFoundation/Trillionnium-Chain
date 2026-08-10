@@ -2930,6 +2930,7 @@ enum PreparedCapacityOperationV0 {
     RotateValidator(Box<PreparedRotateValidatorV0>),
     RevokeValidator(Box<PreparedRevokeValidatorV0>),
     PruneRevokedValidatorHistory(Box<PreparedPruneRevokedValidatorHistoryV0>),
+    PruneExpiredCertificate(Box<PreparedPruneExpiredCertificateV0>),
     RevokeConsumerKey(Box<PreparedRevokeConsumerKeyV0>),
     PruneRevokedConsumerKey(Box<PreparedPruneRevokedConsumerKeyV0>),
 }
@@ -3089,6 +3090,17 @@ struct PreparedPruneRevokedValidatorHistoryV0 {
     expected_semantic_changes: Vec<RawSemanticChangeV0>,
     expected_non_membership_checks: Vec<RawNullifierInsertionV0>,
     expected_nullifier_insertions: Vec<RawNullifierInsertionV0>,
+    changes: Vec<PreparedSemanticChangeV0>,
+}
+
+#[derive(Debug)]
+struct PreparedPruneExpiredCertificateV0 {
+    certificate_index: usize,
+    expected_certificate: ActiveCertificateAuthorityV0,
+    expected_semantic_changes: Vec<RawSemanticChangeV0>,
+    expected_non_membership_checks: Vec<RawNullifierInsertionV0>,
+    expected_nullifier_insertions: Vec<RawNullifierInsertionV0>,
+    expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 2],
     changes: Vec<PreparedSemanticChangeV0>,
 }
 
@@ -3285,6 +3297,7 @@ fn validate_operation_capacity_before_clone_v0(
     let mut prune_meter_index = None;
     let mut revoke_validator_index = None;
     let mut prune_validator_history_index = None;
+    let mut prune_certificate_index = None;
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
             consumer_id_hex,
@@ -3726,19 +3739,21 @@ fn validate_operation_capacity_before_clone_v0(
                     PocoApplicationDeterministicInvalidV0::SemanticTransition,
                 )
             })?;
-            authority
-                .active_certificates
-                .binary_search_by(|certificate| {
-                    certificate
-                        .certificate_id_hex
-                        .as_str()
-                        .cmp(certificate_id_hex)
-                })
-                .map_err(|_| {
-                    deterministic_application_error_v0(
-                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
-                    )
-                })?;
+            prune_certificate_index = Some(
+                authority
+                    .active_certificates
+                    .binary_search_by(|certificate| {
+                        certificate
+                            .certificate_id_hex
+                            .as_str()
+                            .cmp(certificate_id_hex)
+                    })
+                    .map_err(|_| {
+                        deterministic_application_error_v0(
+                            PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                        )
+                    })?,
+            );
             delta.active_certificates_removed = 1;
         }
         PocoApplicationOperationBodyV0::RotateValidator { .. } => {
@@ -3995,6 +4010,23 @@ fn validate_operation_capacity_before_clone_v0(
                 overlay,
                 operation,
                 prune_validator_history_index.ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
+            )?,
+        ));
+    }
+    if matches!(
+        &operation.body,
+        PocoApplicationOperationBodyV0::PruneExpiredCertificate { .. }
+    ) {
+        prepared = PreparedCapacityOperationV0::PruneExpiredCertificate(Box::new(
+            prepare_prune_expired_certificate_v0(
+                context,
+                overlay,
+                operation,
+                prune_certificate_index.ok_or_else(|| {
                     invariant_application_error_v0(
                         PocoApplicationInvariantV0::DerivedMutationPostcondition,
                     )
@@ -4361,6 +4393,7 @@ fn apply_operation_v0(
         PocoApplicationOperationBodyV0::PruneRetiredMeter { .. } => 15,
         PocoApplicationOperationBodyV0::RevokeValidator { .. } => 16,
         PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { .. } => 17,
+        PocoApplicationOperationBodyV0::PruneExpiredCertificate { .. } => 18,
         _ => 0,
     };
     let actual_prepared_tag = match &prepared {
@@ -4382,6 +4415,7 @@ fn apply_operation_v0(
         PreparedCapacityOperationV0::PruneRetiredMeter(_) => 15,
         PreparedCapacityOperationV0::RevokeValidator(_) => 16,
         PreparedCapacityOperationV0::PruneRevokedValidatorHistory(_) => 17,
+        PreparedCapacityOperationV0::PruneExpiredCertificate(_) => 18,
     };
     if expected_prepared_tag != actual_prepared_tag {
         return Err(invariant_application_error_v0(
@@ -4406,6 +4440,7 @@ fn apply_operation_v0(
             | PocoApplicationOperationBodyV0::PruneRetiredMeter { .. }
             | PocoApplicationOperationBodyV0::RevokeValidator { .. }
             | PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { .. }
+            | PocoApplicationOperationBodyV0::PruneExpiredCertificate { .. }
     );
     if !field_admission_was_preclone {
         validate_operation_field_admission_v0(operation)?;
@@ -4415,6 +4450,7 @@ fn apply_operation_v0(
     let mut prepared_prune_retired_meter = None;
     let mut prepared_revoke_validator = None;
     let mut prepared_prune_revoked_validator_history = None;
+    let mut prepared_prune_expired_certificate = None;
     let (
         mut prepared_authorize_consumer_key,
         mut prepared_define_meter,
@@ -4630,6 +4666,12 @@ fn apply_operation_v0(
                 None, None, None, None, None, None, None, None, None, None, None, None,
             )
         }
+        PreparedCapacityOperationV0::PruneExpiredCertificate(prepared) => {
+            prepared_prune_expired_certificate = Some(*prepared);
+            (
+                None, None, None, None, None, None, None, None, None, None, None, None,
+            )
+        }
     };
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. } => {
@@ -4833,8 +4875,16 @@ fn apply_operation_v0(
                     })?,
             )
         }
-        PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } => {
-            apply_prune_certificate_v0(context, overlay, operation, certificate_id_hex)
+        PocoApplicationOperationBodyV0::PruneExpiredCertificate { .. } => {
+            apply_prepared_prune_expired_certificate_v0(
+                overlay,
+                operation,
+                prepared_prune_expired_certificate.take().ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
+            )
         }
     }
 }
@@ -8529,12 +8579,12 @@ fn apply_prepared_prune_revoked_validator_history_v0(
     apply_prepared_changes(overlay, prepared.changes, true)
 }
 
-fn apply_prune_certificate_v0(
+fn prepare_prune_expired_certificate_v0(
     context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
-    certificate_id_hex: &str,
-) -> Result<()> {
+    certificate_index: usize,
+) -> Result<PreparedPruneExpiredCertificateV0> {
     let signed_semantic = || {
         deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::SemanticTransition,
@@ -8547,17 +8597,197 @@ fn apply_prune_certificate_v0(
     };
     let authenticated_overlay =
         || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    validate_operation_field_admission_v0(operation)?;
+    let PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } =
+        &operation.body
+    else {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    };
     let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
-    let certificate_index = overlay
+    let certificate = overlay
         .authority
         .active_certificates
-        .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| {
-            deterministic_application_error_v0(
-                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
-            )
+        .get(certificate_index)
+        .filter(|certificate| certificate.certificate_id_hex == *certificate_id_hex)
+        .cloned()
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::DerivedMutationPostcondition)
         })?;
-    let certificate = overlay.authority.active_certificates[certificate_index].clone();
+    validate_active_certificate(&certificate).map_err(|_| authenticated_overlay())?;
+    let body = authenticated_active_certificate_body_v0(overlay, &certificate)
+        .map_err(|_| authenticated_overlay())?;
+    if body.genesis_hash() != context.genesis_hash || body.chain_id() != context.chain_id {
+        return Err(authenticated_overlay());
+    }
+
+    let tuple_identity = consumption_tuple_identity(&body);
+    let tuple_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::UniqueConsumptionTuple,
+        &tuple_identity,
+    );
+    if hex::encode(tuple_key) != certificate.tuple_key_hex {
+        return Err(authenticated_overlay());
+    }
+    let certificate_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::ConsumptionCertificate,
+        &certificate_id,
+    );
+    let settlement_key =
+        semantic_identity_digest_v0(PocoSnapshotEntryKindV0::Settlement, &certificate_id);
+    let measurement_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::MeasurementEvidence,
+        &certificate_id,
+    );
+    let lifecycle_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::RevocationOrChallenge,
+        &certificate_id,
+    );
+    let mut expected_keys = vec![
+        SemanticKeyRefV0 {
+            kind: PocoSnapshotEntryKindV0::ConsumptionCertificate as u8,
+            logical_key_hex: hex::encode(certificate_key),
+        },
+        SemanticKeyRefV0 {
+            kind: PocoSnapshotEntryKindV0::UniqueConsumptionTuple as u8,
+            logical_key_hex: hex::encode(tuple_key),
+        },
+        SemanticKeyRefV0 {
+            kind: PocoSnapshotEntryKindV0::Settlement as u8,
+            logical_key_hex: hex::encode(settlement_key),
+        },
+        SemanticKeyRefV0 {
+            kind: PocoSnapshotEntryKindV0::MeasurementEvidence as u8,
+            logical_key_hex: hex::encode(measurement_key),
+        },
+        SemanticKeyRefV0 {
+            kind: PocoSnapshotEntryKindV0::RevocationOrChallenge as u8,
+            logical_key_hex: hex::encode(lifecycle_key),
+        },
+    ];
+    expected_keys.sort();
+    if certificate.semantic_keys != expected_keys {
+        return Err(authenticated_overlay());
+    }
+
+    let certificate_value = overlay
+        .entries
+        .get(&(
+            PocoSnapshotEntryKindV0::ConsumptionCertificate,
+            certificate_key.to_vec(),
+        ))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    let certificate_parts = owned_semantic_parts(
+        PocoSnapshotEntryKindV0::ConsumptionCertificate,
+        &certificate_key,
+        &certificate_value,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if certificate_parts.identity != certificate_id
+        || !matches!(
+            certificate_parts.fact,
+            SemanticFactV0::ConsumptionCertificate
+        )
+    {
+        return Err(authenticated_overlay());
+    }
+
+    let tuple_value = overlay
+        .entries
+        .get(&(
+            PocoSnapshotEntryKindV0::UniqueConsumptionTuple,
+            tuple_key.to_vec(),
+        ))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    let tuple_parts = owned_semantic_parts(
+        PocoSnapshotEntryKindV0::UniqueConsumptionTuple,
+        &tuple_key,
+        &tuple_value,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if tuple_parts.identity != tuple_identity
+        || validate_tuple_acceptance_authority_v0(
+            &tuple_parts.fact,
+            certificate_id,
+            certificate.accepted_height,
+        )
+        .is_err()
+    {
+        return Err(authenticated_overlay());
+    }
+
+    let settlement_value = overlay
+        .entries
+        .get(&(PocoSnapshotEntryKindV0::Settlement, settlement_key.to_vec()))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    let settlement_parts = owned_semantic_parts(
+        PocoSnapshotEntryKindV0::Settlement,
+        &settlement_key,
+        &settlement_value,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if settlement_parts.identity != certificate_id
+        || !matches!(
+            settlement_parts.fact,
+            SemanticFactV0::Settlement {
+                commitment,
+                state: SettlementStateV0::Consumed,
+                finalized_height,
+            } if hex::encode(commitment) == certificate.settlement_commitment_hex
+                && finalized_height == certificate.settlement_finalized_height
+                && finalized_height <= certificate.accepted_height
+        )
+    {
+        return Err(authenticated_overlay());
+    }
+
+    let measurement_value = overlay
+        .entries
+        .get(&(
+            PocoSnapshotEntryKindV0::MeasurementEvidence,
+            measurement_key.to_vec(),
+        ))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    let measurement_parts = owned_semantic_parts(
+        PocoSnapshotEntryKindV0::MeasurementEvidence,
+        &measurement_key,
+        &measurement_value,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    let measurement_matches = match &measurement_parts.fact {
+        SemanticFactV0::MeasurementEvidence {
+            evidence_root: Some(evidence_root),
+            state: MeasurementStateV0::Verified,
+        } => Some(hex::encode(evidence_root)) == certificate.evidence_root_hex,
+        SemanticFactV0::MeasurementEvidence {
+            evidence_root: None,
+            state: MeasurementStateV0::NotRequired,
+        } => certificate.evidence_root_hex.is_none(),
+        _ => false,
+    };
+    if measurement_parts.identity != certificate_id || !measurement_matches {
+        return Err(authenticated_overlay());
+    }
+
+    let lifecycle_parts = authenticated_certificate_lifecycle_companion_v0(overlay, &certificate)
+        .map_err(|_| authenticated_overlay())?;
+    let lifecycle_value = overlay
+        .entries
+        .get(&(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            lifecycle_key.to_vec(),
+        ))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    if lifecycle_parts.identity != certificate_id {
+        return Err(authenticated_overlay());
+    }
+
     if !prune_target_is_strictly_after_boundary_v0(
         context.target_height.get(),
         certificate.prunable_after_height,
@@ -8568,15 +8798,16 @@ fn apply_prune_certificate_v0(
         .authority
         .pending_challenges
         .iter()
-        .any(|item| item.certificate_id_hex == certificate_id_hex)
+        .any(|item| item.certificate_id_hex == *certificate_id_hex)
         || overlay
             .authority
             .funded_unused_reservations
             .iter()
-            .any(|item| item.certificate_id_hex == certificate_id_hex)
+            .any(|item| item.certificate_id_hex == *certificate_id_hex)
     {
         return Err(protocol_reject());
     }
+
     let changes =
         prepare_semantic_changes(overlay, &operation.semantic_changes, true).map_err(|error| {
             preserve_application_failure_or_deterministic_v0(
@@ -8597,47 +8828,125 @@ fn apply_prune_certificate_v0(
     if actual_keys != certificate.semantic_keys {
         return Err(signed_semantic());
     }
-    let settlement_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::Settlement)
-        .map_err(|_| authenticated_overlay())?;
-    if !matches!(
-        settlement_change.expected_fact.as_ref(),
-        Some(SemanticFactV0::Settlement {
-            state: SettlementStateV0::Consumed,
-            ..
-        })
-    ) {
+    let expected_sources = BTreeMap::from([
+        (
+            (
+                PocoSnapshotEntryKindV0::ConsumptionCertificate,
+                certificate_key.to_vec(),
+            ),
+            (certificate_value, certificate_id.to_vec()),
+        ),
+        (
+            (
+                PocoSnapshotEntryKindV0::UniqueConsumptionTuple,
+                tuple_key.to_vec(),
+            ),
+            (tuple_value, tuple_identity),
+        ),
+        (
+            (PocoSnapshotEntryKindV0::Settlement, settlement_key.to_vec()),
+            (settlement_value, certificate_id.to_vec()),
+        ),
+        (
+            (
+                PocoSnapshotEntryKindV0::MeasurementEvidence,
+                measurement_key.to_vec(),
+            ),
+            (measurement_value, certificate_id.to_vec()),
+        ),
+        (
+            (
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                lifecycle_key.to_vec(),
+            ),
+            (lifecycle_value, certificate_id.to_vec()),
+        ),
+    ]);
+    if changes.iter().any(|change| {
+        expected_sources
+            .get(&(change.kind, change.logical_key.clone()))
+            .is_none_or(|(source, identity)| {
+                change.expected_value.as_ref() != Some(source)
+                    || change.expected_identity.as_ref() != Some(identity)
+                    || change.next_value.is_some()
+            })
+    }) {
         return Err(authenticated_overlay());
     }
-    let lifecycle_change =
-        change_for_kind(&changes, PocoSnapshotEntryKindV0::RevocationOrChallenge)
-            .map_err(|_| authenticated_overlay())?;
-    let expected_terminal_lifecycle = match certificate.lifecycle {
-        CertificateAuthorityLifecycleV0::ChallengeRejected => LifecycleStateV0::ChallengeRejected,
-        CertificateAuthorityLifecycleV0::ChallengeSustained => LifecycleStateV0::ChallengeSustained,
-        CertificateAuthorityLifecycleV0::Accepted => LifecycleStateV0::Accepted,
-    };
-    if !matches!(
-        lifecycle_change.expected_fact.as_ref(),
-        Some(SemanticFactV0::RevocationOrChallenge { state, .. })
-            if *state == expected_terminal_lifecycle
-    ) {
-        return Err(authenticated_overlay());
-    }
-    let tuple_key =
-        exact_hash32_hex(&certificate.tuple_key_hex).map_err(|_| authenticated_overlay())?;
-    insert_nullifiers(
-        overlay,
-        &operation.nullifier_insertions,
-        &[
+    overlay.accumulator.count().checked_add(2).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    Ok(PreparedPruneExpiredCertificateV0 {
+        certificate_index,
+        expected_certificate: certificate,
+        expected_semantic_changes: operation.semantic_changes.clone(),
+        expected_non_membership_checks: operation.nullifier_non_membership_checks.clone(),
+        expected_nullifier_insertions: operation.nullifier_insertions.clone(),
+        expected_nullifiers: [
             (PocoNullifierFamilyV0::Certificate, certificate_id),
             (PocoNullifierFamilyV0::Tuple, tuple_key),
         ],
+        changes,
+    })
+}
+
+fn apply_prepared_prune_expired_certificate_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedPruneExpiredCertificateV0,
+) -> Result<()> {
+    let body_matches = matches!(
+        &operation.body,
+        PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex }
+            if certificate_id_hex == &prepared.expected_certificate.certificate_id_hex
+    );
+    let source_row_matches = overlay
+        .authority
+        .active_certificates
+        .get(prepared.certificate_index)
+        == Some(&prepared.expected_certificate);
+    let semantic_owner_matches = operation.semantic_changes == prepared.expected_semantic_changes;
+    let field_owner_matches = operation.nullifier_non_membership_checks
+        == prepared.expected_non_membership_checks
+        && operation.nullifier_insertions == prepared.expected_nullifier_insertions;
+    let expected_subjects_match =
+        exact_hash32_hex(&prepared.expected_certificate.certificate_id_hex)
+            .and_then(|certificate_id| {
+                Ok([
+                    (PocoNullifierFamilyV0::Certificate, certificate_id),
+                    (
+                        PocoNullifierFamilyV0::Tuple,
+                        exact_hash32_hex(&prepared.expected_certificate.tuple_key_hex)?,
+                    ),
+                ])
+            })
+            .is_ok_and(|subjects| subjects == prepared.expected_nullifiers);
+    let change_sources_match = prepared.changes.iter().all(|change| {
+        let key = (change.kind, change.logical_key.clone());
+        overlay.entries.get(&key) == change.expected_value.as_ref()
+            && !overlay.mutations.contains_key(&key)
+    });
+    if !body_matches
+        || !source_row_matches
+        || !semantic_owner_matches
+        || !field_owner_matches
+        || !expected_subjects_match
+        || !change_sources_match
+    {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    }
+    insert_nullifiers(
+        overlay,
+        &operation.nullifier_insertions,
+        &prepared.expected_nullifiers,
     )?;
     overlay
         .authority
         .active_certificates
-        .remove(certificate_index);
-    apply_prepared_changes(overlay, changes, true)
+        .remove(prepared.certificate_index);
+    apply_prepared_changes(overlay, prepared.changes, true)
 }
 
 fn prepare_semantic_changes(
@@ -9178,39 +9487,58 @@ fn protocol_retention_boundary_v0(
         .context("retention boundary overflow")
 }
 
+fn authenticated_active_certificate_body_v0(
+    overlay: &PocoApplicationOverlayV0,
+    certificate: &ActiveCertificateAuthorityV0,
+) -> Result<ConsumptionCertificateBodyV0> {
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    validate_active_certificate(certificate).map_err(|_| authenticated_overlay())?;
+    let certificate_id =
+        exact_hash32_hex(&certificate.certificate_id_hex).map_err(|_| authenticated_overlay())?;
+    let parts = source_parts_for_identity(
+        overlay,
+        PocoSnapshotEntryKindV0::ConsumptionCertificate,
+        &certificate_id,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if !matches!(parts.fact, SemanticFactV0::ConsumptionCertificate) {
+        return Err(authenticated_overlay());
+    }
+    let decoded = decode_consumption_certificate_v0_exact(&parts.payload)
+        .map_err(|_| authenticated_overlay())?;
+    let body = decoded.body();
+    if decoded.certificate_id().as_bytes() != &certificate_id
+        || hex::encode(body.consumer_id().as_bytes()) != certificate.consumer_id_hex
+        || hex::encode(body.consumer_key_id().as_bytes()) != certificate.consumer_key_id_hex
+        || hex::encode(body.provider_id().as_bytes()) != certificate.provider_id_hex
+        || hex::encode(body.task_id()) != certificate.task_id_hex
+        || hex::encode(body.meter_id()) != certificate.meter_id_hex
+        || body.meter_version() != certificate.meter_version
+        || hex::encode(body.settlement_commitment().as_slice())
+            != certificate.settlement_commitment_hex
+        || body.consumed_units()
+            != certificate
+                .consumed_units
+                .get()
+                .map_err(|_| authenticated_overlay())?
+        || body
+            .measurement_evidence_root()
+            .map(|root| hex::encode(root.as_slice()))
+            != certificate.evidence_root_hex
+    {
+        return Err(authenticated_overlay());
+    }
+    Ok(body.clone())
+}
+
 fn active_certificate_reference_exists_v0(
     overlay: &PocoApplicationOverlayV0,
     mut predicate: impl FnMut(&ConsumptionCertificateBodyV0) -> bool,
 ) -> Result<bool> {
     for certificate in &overlay.authority.active_certificates {
-        let certificate_id = exact_hash32_hex(&certificate.certificate_id_hex)?;
-        let parts = source_parts_for_identity(
-            overlay,
-            PocoSnapshotEntryKindV0::ConsumptionCertificate,
-            &certificate_id,
-        )?;
-        let decoded = decode_consumption_certificate_v0_exact(&parts.payload)
-            .map_err(|error| anyhow::anyhow!("decode active certificate reference: {error:?}"))?;
-        let body = decoded.body();
-        ensure!(
-            decoded.certificate_id().as_bytes() == &certificate_id
-                && hex::encode(body.consumer_id().as_bytes()) == certificate.consumer_id_hex
-                && hex::encode(body.consumer_key_id().as_bytes())
-                    == certificate.consumer_key_id_hex
-                && hex::encode(body.provider_id().as_bytes()) == certificate.provider_id_hex
-                && hex::encode(body.task_id()) == certificate.task_id_hex
-                && hex::encode(body.meter_id()) == certificate.meter_id_hex
-                && body.meter_version() == certificate.meter_version
-                && hex::encode(body.settlement_commitment().as_slice())
-                    == certificate.settlement_commitment_hex
-                && body.consumed_units() == certificate.consumed_units.get()?
-                && body
-                    .measurement_evidence_root()
-                    .map(|root| hex::encode(root.as_slice()))
-                    == certificate.evidence_root_hex,
-            "active certificate reference diverges from authority owner"
-        );
-        if predicate(body) {
+        let body = authenticated_active_certificate_body_v0(overlay, certificate)?;
+        if predicate(&body) {
             return Ok(true);
         }
     }
@@ -14198,6 +14526,586 @@ mod tests {
         assert_eq!(candidate.authority, before.authority);
         assert_eq!(candidate.accumulator, before.accumulator);
         assert!(candidate.mutations.is_empty());
+    }
+
+    #[test]
+    fn prune_expired_certificate_preparation_freezes_decrement_five_leaves_and_two_proofs() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let (baseline, raw, operation) =
+            fixture_authoring::prune_expired_certificate_full_capacity_fixture_v0().unwrap();
+        assert_eq!(
+            PocoApplicationOperationV0::decode_exact(&raw).unwrap(),
+            operation,
+        );
+        assert_eq!(serde_json::to_vec(&operation).unwrap(), raw);
+        assert_eq!(baseline.context.target_height.get(), 283);
+        assert_eq!(
+            baseline.overlay.authority.active_certificates.len(),
+            MAX_ACTIVE_CERTIFICATES,
+        );
+        assert_eq!(baseline.operation_count(), 0);
+        let PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } =
+            &operation.body
+        else {
+            unreachable!();
+        };
+        let target_index = baseline
+            .overlay
+            .authority
+            .active_certificates
+            .binary_search_by(|certificate| certificate.certificate_id_hex.cmp(certificate_id_hex))
+            .unwrap();
+        let source_rows = baseline.overlay.authority.active_certificates.clone();
+        let source_target = source_rows[target_index].clone();
+        assert_eq!(source_target.accepted_height, 2);
+        assert_eq!(source_target.prunable_after_height, 282);
+        assert_eq!(
+            source_target.lifecycle,
+            CertificateAuthorityLifecycleV0::Accepted
+        );
+        assert_eq!(source_target.semantic_keys.len(), 5);
+        assert_eq!(operation.semantic_changes.len(), 5);
+        assert!(operation
+            .semantic_changes
+            .iter()
+            .all(|change| change.next_value_hex.is_none()));
+        let actual_signed_keys = operation
+            .semantic_changes
+            .iter()
+            .map(|change| SemanticKeyRefV0 {
+                kind: change.kind,
+                logical_key_hex: change.logical_key_hex.clone(),
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(actual_signed_keys, source_target.semantic_keys);
+        assert!(operation.nullifier_non_membership_checks.is_empty());
+        assert_eq!(operation.nullifier_insertions.len(), 2);
+        let certificate_id = exact_hash32_hex(certificate_id_hex).unwrap();
+        let tuple_key = exact_hash32_hex(&source_target.tuple_key_hex).unwrap();
+        let insertion_subjects = operation
+            .nullifier_insertions
+            .iter()
+            .map(|raw| {
+                (
+                    PocoNullifierFamilyV0::from_u8(raw.family).unwrap(),
+                    exact_hash32_hex(&raw.identifier_hex).unwrap(),
+                )
+            })
+            .collect::<BTreeSet<_>>();
+        assert_eq!(
+            insertion_subjects,
+            BTreeSet::from([
+                (PocoNullifierFamilyV0::Certificate, certificate_id),
+                (PocoNullifierFamilyV0::Tuple, tuple_key),
+            ]),
+        );
+        let source_leaves = source_target
+            .semantic_keys
+            .iter()
+            .map(|reference| {
+                let kind = PocoSnapshotEntryKindV0::from_u8(reference.kind).unwrap();
+                let logical_key = exact_hash32_hex(&reference.logical_key_hex)
+                    .unwrap()
+                    .to_vec();
+                let map_key = (kind, logical_key);
+                let value = baseline.overlay.entries.get(&map_key).unwrap().clone();
+                (map_key, value)
+            })
+            .collect::<Vec<_>>();
+        let source_usage = (
+            baseline.overlay.authority.meter_usage.clone(),
+            baseline.overlay.authority.consumer_provider_usage.clone(),
+            baseline.overlay.authority.task_provider_usage.clone(),
+            baseline.overlay.authority.provider_usage.clone(),
+        );
+        let target_consumer_index = baseline
+            .overlay
+            .authority
+            .consumer_keys
+            .binary_search_by(|key| {
+                (&key.consumer_id_hex, &key.consumer_key_id_hex).cmp(&(
+                    &source_target.consumer_id_hex,
+                    &source_target.consumer_key_id_hex,
+                ))
+            })
+            .unwrap();
+        let retained_nonce_key = baseline.overlay.authority.consumer_keys[target_consumer_index]
+            .nonce_watermarks
+            .iter()
+            .find(|watermark| watermark.provider_id_hex == source_target.provider_id_hex)
+            .map(|watermark| {
+                (
+                    PocoSnapshotEntryKindV0::ConsumerNonce,
+                    exact_hash32_hex(&watermark.logical_key_hex)
+                        .unwrap()
+                        .to_vec(),
+                )
+            })
+            .unwrap();
+        let retained_nonce_value = baseline
+            .overlay
+            .entries
+            .get(&retained_nonce_key)
+            .unwrap()
+            .clone();
+        let accumulator_before = baseline.overlay.accumulator.count();
+
+        let mut canonical = baseline.clone();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        let expected_rows = source_rows
+            .iter()
+            .enumerate()
+            .filter(|(index, _)| *index != target_index)
+            .map(|(_, row)| row.clone())
+            .collect::<Vec<_>>();
+        assert_eq!(
+            canonical.overlay.authority.active_certificates,
+            expected_rows
+        );
+        assert!(canonical
+            .overlay
+            .authority
+            .active_certificates
+            .windows(2)
+            .all(|pair| pair[0].certificate_id_hex < pair[1].certificate_id_hex));
+        assert_eq!(
+            canonical.overlay.accumulator.count(),
+            accumulator_before + 2,
+        );
+        assert_eq!(
+            (
+                canonical.overlay.authority.meter_usage.clone(),
+                canonical.overlay.authority.consumer_provider_usage.clone(),
+                canonical.overlay.authority.task_provider_usage.clone(),
+                canonical.overlay.authority.provider_usage.clone(),
+            ),
+            source_usage,
+        );
+        assert_eq!(
+            canonical.overlay.entries.get(&retained_nonce_key),
+            Some(&retained_nonce_value),
+        );
+        assert_eq!(canonical.overlay.mutations.len(), source_leaves.len());
+        for (map_key, source_value) in &source_leaves {
+            assert!(!canonical.overlay.entries.contains_key(map_key));
+            let mutation = canonical.overlay.mutations.get(map_key).unwrap();
+            assert_eq!(mutation.expected_value.as_ref(), Some(source_value));
+            assert!(mutation.next_value.is_none());
+        }
+        assert_eq!(canonical.clone().seal().unwrap().operation_count(), 1);
+        let before_duplicate = canonical.clone();
+        assert_eq!(
+            canonical.apply_decoded_exact(&raw, &operation),
+            Err(DeterministicallyInvalid(Invalid::DuplicateOperation)),
+        );
+        assert_block_overlay_unchanged(&canonical, &before_duplicate);
+
+        let assert_failure =
+            |mut candidate: PocoApplicationBlockOverlayV0,
+             candidate_operation: PocoApplicationOperationV0,
+             expected: PocoApplicationApplyFailureV0| {
+                let candidate_raw = serde_json::to_vec(&candidate_operation).unwrap();
+                let before = candidate.clone();
+                assert_eq!(
+                    candidate.apply_decoded_exact(&candidate_raw, &candidate_operation),
+                    Err(expected),
+                );
+                assert_block_overlay_unchanged(&candidate, &before);
+            };
+
+        let mut malformed = operation.clone();
+        let PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } =
+            &mut malformed.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "0".to_string();
+        poison_raw_nullifier_roots_v0(&mut malformed.nullifier_insertions);
+        assert_failure(
+            baseline.clone(),
+            malformed,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut missing = baseline.clone();
+        missing
+            .overlay
+            .authority
+            .active_certificates
+            .remove(target_index);
+        let mut later_bad_proof = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut later_bad_proof.nullifier_insertions);
+        assert_failure(
+            missing,
+            later_bad_proof,
+            DeterministicallyInvalid(Invalid::MissingRequiredAuthorityFact),
+        );
+
+        let mut synthetic_over_capacity = baseline.clone();
+        for suffix in [1u8, 2] {
+            let mut extra = source_rows.last().unwrap().clone();
+            extra.certificate_id_hex = format!("{}{:02x}", "fe".repeat(31), suffix);
+            synthetic_over_capacity
+                .overlay
+                .authority
+                .active_certificates
+                .push(extra);
+        }
+        synthetic_over_capacity
+            .overlay
+            .authority
+            .active_certificates
+            .sort_by(|left, right| left.certificate_id_hex.cmp(&right.certificate_id_hex));
+        assert_eq!(
+            synthetic_over_capacity
+                .overlay
+                .authority
+                .active_certificates
+                .len(),
+            MAX_ACTIVE_CERTIFICATES + 2,
+        );
+        let mut later_field_fault = operation.clone();
+        later_field_fault.nullifier_non_membership_checks =
+            vec![later_field_fault.nullifier_insertions[0].clone()];
+        poison_raw_nullifier_roots_v0(&mut later_field_fault.nullifier_insertions);
+        assert_failure(
+            synthetic_over_capacity,
+            later_field_fault,
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let mut unsupported = operation.clone();
+        unsupported.nullifier_non_membership_checks =
+            vec![unsupported.nullifier_insertions[0].clone()];
+        poison_raw_nullifier_roots_v0(&mut unsupported.nullifier_insertions);
+        assert_failure(
+            baseline.clone(),
+            unsupported,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let (boundary, boundary_raw, mut boundary_operation) =
+            fixture_authoring::prune_expired_certificate_exact_boundary_fixture_v0().unwrap();
+        assert_eq!(boundary.context.target_height.get(), 282);
+        assert_eq!(
+            PocoApplicationOperationV0::decode_exact(&boundary_raw).unwrap(),
+            boundary_operation,
+        );
+        poison_raw_nullifier_roots_v0(&mut boundary_operation.nullifier_insertions);
+        assert_failure(
+            boundary,
+            boundary_operation,
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let (pending, pending_raw, mut pending_operation) =
+            fixture_authoring::prune_expired_certificate_pending_challenge_fixture_v0().unwrap();
+        assert_eq!(pending.context.target_height.get(), 283);
+        assert_eq!(
+            PocoApplicationOperationV0::decode_exact(&pending_raw).unwrap(),
+            pending_operation,
+        );
+        poison_raw_nullifier_roots_v0(&mut pending_operation.nullifier_insertions);
+        assert_failure(
+            pending,
+            pending_operation,
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        // Same-ID funded-unused plus active certificate is not reachable from
+        // authenticated application history; this is only a handler-boundary
+        // witness for guard priority over late proof.
+        let mut synthetic_reservation = baseline.clone();
+        synthetic_reservation
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .push(FundedUnusedReservationV0 {
+                certificate_id_hex: source_target.certificate_id_hex.clone(),
+                settlement_commitment_hex: source_target.settlement_commitment_hex.clone(),
+                funding_decision_id_hex: source_target.funding_decision_id_hex.clone(),
+                finalized_height: source_target.settlement_finalized_height,
+                reserved_units: source_target.consumed_units,
+            });
+        synthetic_reservation
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .sort_by(|left, right| left.certificate_id_hex.cmp(&right.certificate_id_hex));
+        let mut bad_reservation_proof = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_reservation_proof.nullifier_insertions);
+        assert_failure(
+            synthetic_reservation,
+            bad_reservation_proof,
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        for (source_key, _) in &source_leaves {
+            let mut missing_leaf = baseline.clone();
+            missing_leaf.overlay.entries.remove(source_key);
+            let mut poisoned = operation.clone();
+            poison_raw_nullifier_roots_v0(&mut poisoned.nullifier_insertions);
+            assert_failure(
+                missing_leaf,
+                poisoned,
+                Invariant(InvariantReason::AuthenticatedOverlay),
+            );
+        }
+
+        let mut row_body_drift = baseline.clone();
+        row_body_drift.overlay.authority.active_certificates[target_index]
+            .settlement_commitment_hex = "dd".repeat(32);
+        assert_failure(
+            row_body_drift,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut settlement_fact_drift = baseline.clone();
+        let settlement_key = source_leaves
+            .iter()
+            .find(|(key, _)| key.0 == PocoSnapshotEntryKindV0::Settlement)
+            .map(|(key, _)| key.clone())
+            .unwrap();
+        let settlement_value = settlement_fact_drift
+            .overlay
+            .entries
+            .get(&settlement_key)
+            .unwrap()
+            .clone();
+        let settlement_parts =
+            owned_semantic_parts(settlement_key.0, &settlement_key.1, &settlement_value).unwrap();
+        let mut settlement_payload = settlement_parts.payload;
+        settlement_payload[64] = SettlementStateV0::FinalizedFundedUnused as u8;
+        settlement_fact_drift.overlay.entries.insert(
+            settlement_key.clone(),
+            encode_test_semantic_envelope_v0(
+                settlement_key.0,
+                settlement_parts.revision,
+                &settlement_parts.identity,
+                &settlement_payload,
+            ),
+        );
+        assert_failure(
+            settlement_fact_drift,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut measurement_fact_drift = baseline.clone();
+        let measurement_key = source_leaves
+            .iter()
+            .find(|(key, _)| key.0 == PocoSnapshotEntryKindV0::MeasurementEvidence)
+            .map(|(key, _)| key.clone())
+            .unwrap();
+        let measurement_value = measurement_fact_drift
+            .overlay
+            .entries
+            .get(&measurement_key)
+            .unwrap()
+            .clone();
+        let measurement_parts =
+            owned_semantic_parts(measurement_key.0, &measurement_key.1, &measurement_value)
+                .unwrap();
+        let mut measurement_payload = measurement_parts.payload;
+        assert_eq!(
+            measurement_payload.last().copied(),
+            Some(MeasurementStateV0::NotRequired as u8),
+        );
+        *measurement_payload.last_mut().unwrap() = MeasurementStateV0::Verified as u8;
+        measurement_fact_drift.overlay.entries.insert(
+            measurement_key.clone(),
+            encode_test_semantic_envelope_v0(
+                measurement_key.0,
+                measurement_parts.revision,
+                &measurement_parts.identity,
+                &measurement_payload,
+            ),
+        );
+        assert_failure(
+            measurement_fact_drift,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut missing_delete = operation.clone();
+        missing_delete.semantic_changes.pop();
+        assert_failure(
+            baseline.clone(),
+            missing_delete,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut replacement = operation.clone();
+        replacement.semantic_changes[0].next_value_hex = Some(hex::encode(&source_leaves[0].1));
+        assert_failure(
+            baseline.clone(),
+            replacement,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut exhausted = baseline.clone();
+        exhausted.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX - 1).unwrap();
+        exhausted
+            .overlay
+            .authority
+            .set_accumulator(exhausted.overlay.accumulator);
+        let mut exhausted_bad_proof = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut exhausted_bad_proof.nullifier_insertions);
+        assert_failure(
+            exhausted,
+            exhausted_bad_proof,
+            Invariant(InvariantReason::ProtocolCounterExhausted),
+        );
+
+        let mut bad_shape = operation.clone();
+        bad_shape.nullifier_insertions.pop();
+        assert_failure(
+            baseline.clone(),
+            bad_shape,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_subject = operation.clone();
+        bad_subject.nullifier_insertions[0].identifier_hex = "a5".repeat(32);
+        assert_failure(
+            baseline.clone(),
+            bad_subject,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_first_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_first_root.nullifier_insertions);
+        assert_failure(
+            baseline.clone(),
+            bad_first_root,
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let mut bad_second_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_second_root.nullifier_insertions[1..]);
+        assert_failure(
+            baseline.clone(),
+            bad_second_root,
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let decision_preimage = decision_preimage_digest_v0(&baseline.context, &operation).unwrap();
+        let prepare = || {
+            validate_operation_capacity_before_clone_v0(
+                &baseline.context,
+                &baseline.overlay,
+                &operation,
+                decision_preimage,
+            )
+            .unwrap()
+        };
+        let assert_carrier_drift =
+            |mut candidate: PocoApplicationOverlayV0,
+             candidate_operation: &PocoApplicationOperationV0,
+             prepared: PreparedCapacityOperationV0| {
+                let before = candidate.clone();
+                let error = apply_operation_v0(
+                    &baseline.context,
+                    &mut candidate,
+                    candidate_operation,
+                    decision_preimage,
+                    prepared,
+                )
+                .unwrap_err();
+                assert_eq!(
+                    error
+                        .downcast_ref::<PocoApplicationApplyFailureV0>()
+                        .copied(),
+                    Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+                );
+                assert_eq!(candidate.entries, before.entries);
+                assert_eq!(
+                    candidate.source_authority_value,
+                    before.source_authority_value,
+                );
+                assert_eq!(candidate.authority, before.authority);
+                assert_eq!(candidate.accumulator, before.accumulator);
+                assert_eq!(candidate.operation_ids, before.operation_ids);
+                assert_eq!(
+                    candidate
+                        .mutations
+                        .values()
+                        .map(OverlayMutationV0::canonical_bytes)
+                        .collect::<Vec<_>>(),
+                    before
+                        .mutations
+                        .values()
+                        .map(OverlayMutationV0::canonical_bytes)
+                        .collect::<Vec<_>>(),
+                );
+            };
+
+        let mut cross_family = operation.clone();
+        cross_family.body = PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory {
+            validator_id_hex: hex::encode(b"different-prune-family"),
+        };
+        assert_carrier_drift(baseline.overlay.clone(), &cross_family, prepare());
+
+        let mut body_drift = operation.clone();
+        let PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } =
+            &mut body_drift.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "cd".repeat(32);
+        poison_raw_nullifier_roots_v0(&mut body_drift.nullifier_insertions);
+        assert_carrier_drift(baseline.overlay.clone(), &body_drift, prepare());
+
+        let mut semantic_owner_drift = operation.clone();
+        semantic_owner_drift.semantic_changes.pop();
+        assert_carrier_drift(baseline.overlay.clone(), &semantic_owner_drift, prepare());
+
+        let mut non_membership_owner_drift = operation.clone();
+        non_membership_owner_drift.nullifier_non_membership_checks =
+            vec![non_membership_owner_drift.nullifier_insertions[0].clone()];
+        assert_carrier_drift(
+            baseline.overlay.clone(),
+            &non_membership_owner_drift,
+            prepare(),
+        );
+
+        let mut insertion_owner_drift = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut insertion_owner_drift.nullifier_insertions);
+        assert_carrier_drift(baseline.overlay.clone(), &insertion_owner_drift, prepare());
+
+        let mut slot_drift = baseline.overlay.clone();
+        slot_drift
+            .authority
+            .active_certificates
+            .remove(target_index);
+        assert_carrier_drift(slot_drift, &operation, prepare());
+
+        let mut row_drift = baseline.overlay.clone();
+        row_drift.authority.active_certificates[target_index].evidence_decision_id_hex =
+            "dd".repeat(32);
+        assert_carrier_drift(row_drift, &operation, prepare());
+
+        let mut source_drift = baseline.overlay.clone();
+        source_drift.entries.remove(&source_leaves[0].0);
+        assert_carrier_drift(source_drift, &operation, prepare());
+
+        let mut mutation_drift = baseline.overlay.clone();
+        mutation_drift.mutations.insert(
+            source_leaves[0].0.clone(),
+            OverlayMutationV0 {
+                kind: source_leaves[0].0 .0,
+                logical_key: source_leaves[0].0 .1.clone(),
+                expected_value: Some(source_leaves[0].1.clone()),
+                next_value: None,
+            },
+        );
+        assert_carrier_drift(mutation_drift, &operation, prepare());
     }
 
     #[test]

@@ -1504,14 +1504,40 @@ epoch prune, and Core transition remain open.
    permanent-identity resurrection guard, not this full-capacity carrier matrix
    or production epoch reachability. This does not close Core activation, host
    integration, terminal mapping, durable-node work, or a phase. Capacity-order
+   closure now also includes `PruneExpiredCertificate`. Canonical certificate
+   ID and exact active-row presence precede active-certificate `-1`, every
+   other family cap, and the defensive total. Unsupported-field admission then
+   precedes exact certificate-body ownership and an independently derived
+   five-leaf retained set: kind-1 certificate, kind-4 tuple, kind-6 consumed
+   settlement, kind-7 measurement, and kind-12 pending-aware lifecycle. The
+   stored acceptance-time boundary, pending/reservation guards, exact signed
+   five deletes, and checked accumulator `+2` follow before clone. Its carrier
+   freezes the complete row/slot, both proof-field owners, raw semantic owner,
+   two permanent subjects, and all five source bytes. Carrier/source drift
+   fails before the two chained proofs; row and leaves are removed only after
+   both verify. A real H1 sixteen-operation/H2 four-accept chain rejects exact-
+   boundary H282 and seals first-after H283 as sorted authenticated `4 -> 3`,
+   preserving three byte-exact rows and unrelated nonce/usage owners while
+   deleting five leaves and advancing count by two. A real H3 challenge remains
+   pending beyond retention and rejects with its `ChallengePending` companion
+   intact. Same-ID reservation coexistence and synthetic six-row `6 -> 5` cap
+   collisions are handler-boundary witnesses only. The shared certificate-
+   prune replay remains the rejected-lifecycle single-row witness, not this
+   full-capacity/carrier matrix. The prune handler rebinds the retained body/
+   five-leaf owners, not every acceptance-era consumer, meter, provider,
+   relationship, parameter, or signature join. Epoch-28 fixture bootstrap is
+   not production cross-epoch activation, Core/host integration, terminal
+   mapping, or a phase.
+   Capacity-order
    closure is now limited to `DefineMeterPolicy`,
    `RetireMeterPolicy`, `PruneRetiredMeter`, `FundSettlement`,
    `AuthorizeConsumerKey`, `RevokeConsumerKey`,
    `PruneRevokedConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`,
-   `RotateValidator`, `RevokeValidator`, and `PruneRevokedValidatorHistory`;
-   all other families remain audit-open before terminal failure mapping.
+   `RotateValidator`, `RevokeValidator`, `PruneRevokedValidatorHistory`, and
+   `PruneExpiredCertificate`; all other families remain audit-open before
+   terminal failure mapping.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
