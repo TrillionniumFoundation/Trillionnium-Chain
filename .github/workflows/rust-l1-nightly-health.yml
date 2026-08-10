@@ -85,8 +85,9 @@ jobs:
           }
           trap cleanup_devnet EXIT INT TERM
           ./scripts/devnet_up.sh
-          # allow initial cargo startup + block production on CI runners
-          sleep ${DEVNET_AUDIT_WAIT_SECONDS:-12}
+          # Build once before launch and wait on canonical block evidence rather
+          # than a host-speed-dependent fixed sleep.
+          ./scripts/wait_for_devnet_blocks.sh
           cleanup_devnet
           trap - EXIT INT TERM
           ./scripts/audit_state_roots.sh
