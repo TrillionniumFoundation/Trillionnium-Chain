@@ -7816,8 +7816,9 @@ mod tests {
         store::{
             native_validation_callback_driver::{
                 BindLiveInvalidDeliveryFailureCauseV0, FailedPersistCoreInvalidSafetyV0,
-                NativeValidationCallbackDriverV0, ReleasedCoreInvalidDeliveryV0,
-                TestDurableCoreSafetyStateSinkV0, TestSafetySinkFaultV0,
+                NativeValidationCallbackDriverPhaseFailureV0, NativeValidationCallbackDriverV0,
+                ReleasedCoreInvalidDeliveryV0, TestDurableCoreSafetyStateSinkV0,
+                TestSafetySinkFaultV0,
             },
             ApplicationStore, AuthenticatedRuntimeReadFailureV0,
             NativeValidationInvalidSealDecisionV0, NativeValidationInvalidSealDispositionV0,
@@ -16828,6 +16829,164 @@ mod tests {
     }
 
     #[test]
+    fn live_invalid_phase_owners_reject_foreign_driver_even_for_cloned_cores() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let expected_id = prepared.validation_id();
+        let expected_callback_revision = registered_state
+            .revision()
+            .checked_add(1)
+            .expect("advance cloned-Core callback revision");
+        let foreign_core = core.clone();
+        let mut issuing_driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            core,
+            CoreRootSignatures,
+            TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state.clone()),
+        );
+        let mut foreign_driver = NativeValidationCallbackDriverV0::new_for_test_v0(
+            &store.store,
+            foreign_core,
+            CoreRootSignatures,
+            TestDurableCoreSafetyStateSinkV0::from_state_v0(registered_state.clone()),
+        );
+        let durable_state = || {
+            store
+                .store
+                .load_native_validation_recovery_work_v0()
+                .expect("recover driver-affinity callback")
+                .into_iter()
+                .find(|job| job.validation_id() == expected_id)
+                .expect("driver-affinity callback remains durable")
+                .state()
+        };
+
+        let live = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            .expect("seal driver-affinity callback")
+        {
+            NativeValidationInvalidSealDecisionV0::CallbackPending(live) => live,
+            NativeValidationInvalidSealDecisionV0::Existing(_) => {
+                panic!("fresh driver-affinity callback already existed")
+            }
+        };
+        let bound = issuing_driver
+            .bind_live_invalid_delivery_v0(live)
+            .expect("bind callback to issuing driver");
+
+        let bound = match foreign_driver.step_bound_invalid_delivery_v0(bound) {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(bound)) => bound,
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => {
+                panic!("foreign driver reached Core step: {failure:?}")
+            }
+            Ok(_) => panic!("foreign driver accepted issuing driver's bound owner"),
+        };
+        assert_eq!(issuing_driver.safety_state_for_test_v0(), &registered_state);
+        assert_eq!(foreign_driver.safety_state_for_test_v0(), &registered_state);
+        assert_eq!(issuing_driver.pending_validation_count_for_test_v0(), 1);
+        assert_eq!(foreign_driver.pending_validation_count_for_test_v0(), 1);
+        assert_eq!(durable_state(), NativeValidationJobStateV0::CallbackPending);
+
+        let accepted = issuing_driver
+            .step_bound_invalid_delivery_v0(bound)
+            .expect("issuing driver accepts its bound owner");
+        assert_eq!(accepted.state().revision(), expected_callback_revision);
+        let accepted = match foreign_driver.mark_core_invalid_delivery_delivered_v0(accepted) {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(accepted)) => accepted,
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => {
+                panic!("foreign driver reached Delivered journal write: {failure:?}")
+            }
+            Ok(_) => panic!("foreign driver marked issuing driver's owner Delivered"),
+        };
+        assert_eq!(durable_state(), NativeValidationJobStateV0::CallbackPending);
+        assert_eq!(foreign_driver.safety_state_for_test_v0(), &registered_state);
+        assert_eq!(foreign_driver.pending_validation_count_for_test_v0(), 1);
+
+        let delivered = issuing_driver
+            .mark_core_invalid_delivery_delivered_v0(accepted)
+            .expect("issuing driver marks its callback Delivered");
+        assert_eq!(durable_state(), NativeValidationJobStateV0::Delivered);
+        let delivered = match foreign_driver.persist_and_confirm_core_invalid_safety_v0(delivered) {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(delivered)) => {
+                delivered
+            }
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => {
+                panic!("foreign driver reached safety sink: {failure:?}")
+            }
+            Ok(_) => panic!("foreign driver persisted issuing driver's Core state"),
+        };
+        assert_eq!(durable_state(), NativeValidationJobStateV0::Delivered);
+        assert!(foreign_driver
+            .safety_sink_state_for_test_v0(expected_callback_revision)
+            .is_none());
+        assert_eq!(foreign_driver.safety_state_for_test_v0(), &registered_state);
+
+        let confirmed = issuing_driver
+            .persist_and_confirm_core_invalid_safety_v0(delivered)
+            .expect("issuing driver persists its exact Core state");
+        assert_eq!(
+            issuing_driver.safety_sink_state_for_test_v0(expected_callback_revision),
+            Some(issuing_driver.safety_state_for_test_v0())
+        );
+        let confirmed = match foreign_driver.acknowledge_core_invalid_delivery_v0(confirmed) {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(confirmed)) => {
+                confirmed
+            }
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => {
+                panic!("foreign driver reached Acked journal write: {failure:?}")
+            }
+            Ok(_) => panic!("foreign driver acknowledged issuing driver's completion"),
+        };
+        assert_eq!(durable_state(), NativeValidationJobStateV0::Delivered);
+
+        let acked = issuing_driver
+            .acknowledge_core_invalid_delivery_v0(confirmed)
+            .expect("issuing driver acknowledges its completion");
+        assert_eq!(durable_state(), NativeValidationJobStateV0::Acked);
+        let issuing_state_before_release = issuing_driver.safety_state_for_test_v0().clone();
+        let foreign_state_before_release = foreign_driver.safety_state_for_test_v0().clone();
+        let acked = match foreign_driver.release_acked_core_invalid_delivery_v0(acked) {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(acked)) => acked,
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => {
+                panic!("foreign driver reached Core StorageAck: {failure:?}")
+            }
+            Ok(_) => panic!("foreign driver released issuing driver's Core barrier"),
+        };
+        assert_eq!(
+            issuing_driver.safety_state_for_test_v0(),
+            &issuing_state_before_release
+        );
+        assert_eq!(
+            foreign_driver.safety_state_for_test_v0(),
+            &foreign_state_before_release
+        );
+        assert_eq!(foreign_driver.pending_validation_count_for_test_v0(), 1);
+        assert_eq!(durable_state(), NativeValidationJobStateV0::Acked);
+
+        let released = issuing_driver
+            .release_acked_core_invalid_delivery_v0(acked)
+            .expect("issuing driver releases its exact Core barrier");
+        let owner = match released {
+            ReleasedCoreInvalidDeliveryV0::Completed(owner) => owner,
+            ReleasedCoreInvalidDeliveryV0::SafetyHalted { .. } => {
+                panic!("ordinary cloned-Core fixture unexpectedly entered safety halt")
+            }
+        };
+        assert_eq!(owner.validation_id(), expected_id);
+        assert_eq!(issuing_driver.pending_validation_count_for_test_v0(), 0);
+        assert_eq!(foreign_driver.pending_validation_count_for_test_v0(), 1);
+    }
+
+    #[test]
     fn live_invalid_postwrite_safety_uncertainty_confirms_exact_before_core_release() {
         let store = test_store_with_poco_application_authority();
         let PreparedLiveDurableInvalidFixtureV0 {
@@ -17032,7 +17191,7 @@ mod tests {
         driver.fail_safety_sink_once_for_test_v0(TestSafetySinkFaultV0::ConfirmConflict);
         let conflict = match driver.persist_and_confirm_core_invalid_safety_v0(delivered) {
             Ok(_) => panic!("conflicting safety readback was accepted as exact"),
-            Err(failure) => match *failure {
+            Err(NativeValidationCallbackDriverPhaseFailureV0::Phase(failure)) => match *failure {
                 FailedPersistCoreInvalidSafetyV0::Conflict(conflict) => conflict,
                 FailedPersistCoreInvalidSafetyV0::Retryable(_) => {
                     panic!("safety conflict remained retryable")
@@ -17041,6 +17200,9 @@ mod tests {
                     panic!("safety conflict reached completion binding")
                 }
             },
+            Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(_)) => {
+                panic!("issuing driver rejected its own safety phase owner")
+            }
         };
         assert_eq!(conflict.state(), &callback_state);
         assert!(conflict.persist_error().is_none());

@@ -7,6 +7,7 @@
 //! persistence boundary, not a codec or WAL implementation; no production
 //! durability or cross-crash obligation takeover is claimed here.
 
+use std::sync::Arc;
 use trnm_consensus_core::{
     BarrierId, Core, CoreError, Effect, Input, PayloadTerminalResult, PayloadValidationResult,
     PayloadValidationRouteV0, SafetyHalt, SafetyState, ValidationId,
@@ -35,6 +36,35 @@ pub(crate) struct NativeValidationCallbackDriverV0<'a, V, S> {
     core: Core,
     verifier: V,
     safety_sink: S,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
+}
+
+/// Unforgeable process-local identity for one driver instance. It is neither
+/// serialized nor derived from Core/SafetyState bytes: identical Core clones
+/// hosted by different drivers still receive distinct identities.
+struct NativeValidationCallbackDriverAffinityV0;
+
+/// Distinguishes a pre-side-effect foreign-driver rejection from the phase's
+/// existing operation failure. `ForeignDriver` always returns the unchanged
+/// phase owner so it can be retried only on its issuing driver. `Phase`
+/// preserves the existing retry/quarantine contract of the operation itself.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a driver phase failure retains either affinity or operation context"]
+pub(crate) enum NativeValidationCallbackDriverPhaseFailureV0<P, F> {
+    ForeignDriver(P),
+    Phase(F),
+}
+
+impl<P, F: std::fmt::Debug> std::fmt::Debug for NativeValidationCallbackDriverPhaseFailureV0<P, F> {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ForeignDriver(_) => formatter
+                .debug_struct("ForeignDriver")
+                .field("retains_unchanged_phase_owner", &true)
+                .finish(),
+            Self::Phase(failure) => formatter.debug_tuple("Phase").field(failure).finish(),
+        }
+    }
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -87,6 +117,7 @@ impl FailedBindLiveInvalidDeliveryV0 {
 #[must_use = "a Core-bound live callback must be stepped or returned intact"]
 pub(crate) struct CoreBoundLiveInvalidDeliveryV0 {
     owner: Box<LiveNativeValidationInvalidCallbackV0>,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -106,6 +137,10 @@ impl CoreBoundLiveInvalidDeliveryV0 {
     pub(crate) const fn callback_payload_checksum(&self) -> [u8; 32] {
         self.owner.callback_payload_checksum()
     }
+
+    fn affinity_v0(&self) -> &Arc<NativeValidationCallbackDriverAffinityV0> {
+        &self.affinity
+    }
 }
 
 /// Rebinds a live seal lineage to Core-owned signed-proposal/parent authority.
@@ -116,6 +151,7 @@ fn bind_live_invalid_delivery_v0(
     store: &ApplicationStore,
     core: &Core,
     owner: Box<LiveNativeValidationInvalidCallbackV0>,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 ) -> Result<CoreBoundLiveInvalidDeliveryV0, Box<FailedBindLiveInvalidDeliveryV0>> {
     let fail = |owner, cause| Box::new(FailedBindLiveInvalidDeliveryV0 { owner, cause });
     if !owner.is_bound_to_store_v0(store) {
@@ -175,7 +211,7 @@ fn bind_live_invalid_delivery_v0(
                 BindLiveInvalidDeliveryFailureCauseV0::RequestFingerprintMismatch,
             ));
         }
-        return Ok(CoreBoundLiveInvalidDeliveryV0 { owner });
+        return Ok(CoreBoundLiveInvalidDeliveryV0 { owner, affinity });
     }
 
     if let Some(completion) = same_id_completions.first() {
@@ -230,6 +266,7 @@ pub(crate) struct CoreAcceptedInvalidDeliveryV0 {
     state: Box<SafetyState>,
     completion_revision: u64,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -256,6 +293,10 @@ impl CoreAcceptedInvalidDeliveryV0 {
 
     pub(crate) const fn barrier(&self) -> BarrierId {
         self.barrier
+    }
+
+    fn affinity_v0(&self) -> &Arc<NativeValidationCallbackDriverAffinityV0> {
+        &self.affinity
     }
 }
 
@@ -298,6 +339,7 @@ pub(crate) struct InvalidCoreAcceptedDeliveryV0 {
     observed_state: SafetyState,
     observed_effects: Vec<Effect>,
     cause: CoreInvalidDeliveryStepInvariantV0,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -368,7 +410,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     verifier: &V,
     bound: CoreBoundLiveInvalidDeliveryV0,
 ) -> Result<CoreAcceptedInvalidDeliveryV0, FailedCoreInvalidDeliveryStepV0> {
-    let CoreBoundLiveInvalidDeliveryV0 { owner } = bound;
+    let CoreBoundLiveInvalidDeliveryV0 { owner, affinity } = bound;
     let route = owner.route();
     let id = owner.validation_id();
     let effects = match core.step(invalid_callback_input_v0(route, id), verifier) {
@@ -376,20 +418,21 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
         Err(error) => {
             return Err(FailedCoreInvalidDeliveryStepV0::Rejected(Box::new(
                 RejectedCoreInvalidDeliveryStepV0 {
-                    owner: CoreBoundLiveInvalidDeliveryV0 { owner },
+                    owner: CoreBoundLiveInvalidDeliveryV0 { owner, affinity },
                     error,
                 },
             )));
         }
     };
 
-    let fail_after_step = |owner, cause, effects: Vec<Effect>, core: &Core| {
+    let fail_after_step = |owner, affinity, cause, effects: Vec<Effect>, core: &Core| {
         FailedCoreInvalidDeliveryStepV0::AcceptedInvariant(Box::new(
             InvalidCoreAcceptedDeliveryV0 {
                 owner,
                 observed_state: core.safety_state().clone(),
                 observed_effects: effects,
                 cause,
+                affinity,
             },
         ))
     };
@@ -397,6 +440,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     let Some(Effect::PersistSafetyState { barrier, state }) = effects.first() else {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::UnexpectedEffectSet,
             effects,
             core,
@@ -405,6 +449,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     if effects.len() != 1 {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::UnexpectedEffectSet,
             effects,
             core,
@@ -415,6 +460,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     if barrier.get() != state.revision() {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::BarrierRevisionMismatch,
             effects,
             core,
@@ -423,6 +469,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     if state.as_ref() != core.safety_state() {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::PersistedStateMismatch,
             effects,
             core,
@@ -435,6 +482,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::ObligationRetained,
             effects,
             core,
@@ -443,6 +491,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     let Some(completion_revision) = exact_invalid_completion_v0(&state, route, id) else {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::CompletionMissingOrChanged,
             effects,
             core,
@@ -451,6 +500,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     if completion_revision != state.revision() {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::CompletionRevisionMismatch,
             effects,
             core,
@@ -461,6 +511,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
     {
         return Err(fail_after_step(
             owner,
+            affinity,
             CoreInvalidDeliveryStepInvariantV0::TerminalFactMismatch,
             effects,
             core,
@@ -471,6 +522,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
         state,
         completion_revision,
         barrier,
+        affinity,
     })
 }
 
@@ -481,6 +533,7 @@ pub(crate) struct DeliveredCoreInvalidDeliveryV0 {
     state: Box<SafetyState>,
     completion_revision: u64,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -496,6 +549,10 @@ impl DeliveredCoreInvalidDeliveryV0 {
     pub(crate) const fn barrier(&self) -> BarrierId {
         self.barrier
     }
+
+    fn affinity_v0(&self) -> &Arc<NativeValidationCallbackDriverAffinityV0> {
+        &self.affinity
+    }
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -505,6 +562,7 @@ pub(crate) struct FailedMarkCoreInvalidDeliveryDeliveredV0 {
     state: Box<SafetyState>,
     completion_revision: u64,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 impl std::fmt::Debug for FailedMarkCoreInvalidDeliveryDeliveredV0 {
@@ -529,6 +587,7 @@ impl FailedMarkCoreInvalidDeliveryDeliveredV0 {
             state: self.state,
             completion_revision: self.completion_revision,
             barrier: self.barrier,
+            affinity: self.affinity,
         }
     }
 }
@@ -544,6 +603,7 @@ fn mark_core_invalid_delivery_delivered_v0(
         state,
         completion_revision,
         barrier,
+        affinity,
     } = accepted;
     match store.mark_native_validation_invalid_callback_delivered_v0(owner) {
         Ok(owner) => Ok(DeliveredCoreInvalidDeliveryV0 {
@@ -551,12 +611,14 @@ fn mark_core_invalid_delivery_delivered_v0(
             state,
             completion_revision,
             barrier,
+            affinity,
         }),
         Err(store_failure) => Err(Box::new(FailedMarkCoreInvalidDeliveryDeliveredV0 {
             store_failure,
             state,
             completion_revision,
             barrier,
+            affinity,
         })),
     }
 }
@@ -646,6 +708,7 @@ pub(crate) struct InvalidPersistedCompletionBindingV0 {
     failure: Box<FailedBindConfirmedCoreInvalidCompletionV0>,
     state: Box<SafetyState>,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -695,6 +758,13 @@ pub(crate) struct ConfirmedCoreInvalidDeliveryV0 {
     state: Box<SafetyState>,
     completion_revision: u64,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
+}
+
+impl ConfirmedCoreInvalidDeliveryV0 {
+    fn affinity_v0(&self) -> &Arc<NativeValidationCallbackDriverAffinityV0> {
+        &self.affinity
+    }
 }
 
 /// Persists and confirms the exact Core safety image, then binds the durable
@@ -758,6 +828,7 @@ fn persist_and_confirm_core_invalid_safety_v0<S: DurableCoreSafetyStateSinkV0>(
         state,
         completion_revision,
         barrier,
+        affinity,
     } = delivered;
     match owner.bind_confirmed_core_completion_v0(completion_revision) {
         Ok(owner) => Ok(ConfirmedCoreInvalidDeliveryV0 {
@@ -765,6 +836,7 @@ fn persist_and_confirm_core_invalid_safety_v0<S: DurableCoreSafetyStateSinkV0>(
             state,
             completion_revision,
             barrier,
+            affinity,
         }),
         Err(failure) => Err(Box::new(
             FailedPersistCoreInvalidSafetyV0::CompletionBinding(Box::new(
@@ -772,6 +844,7 @@ fn persist_and_confirm_core_invalid_safety_v0<S: DurableCoreSafetyStateSinkV0>(
                     failure,
                     state,
                     barrier,
+                    affinity,
                 },
             )),
         )),
@@ -784,6 +857,13 @@ pub(crate) struct AckedCoreInvalidDeliveryV0 {
     owner: Box<AckedNativeValidationInvalidCallbackV0>,
     state: Box<SafetyState>,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
+}
+
+impl AckedCoreInvalidDeliveryV0 {
+    fn affinity_v0(&self) -> &Arc<NativeValidationCallbackDriverAffinityV0> {
+        &self.affinity
+    }
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -793,6 +873,7 @@ pub(crate) struct FailedAcknowledgeCoreInvalidDeliveryV0 {
     state: Box<SafetyState>,
     completion_revision: u64,
     barrier: BarrierId,
+    affinity: Arc<NativeValidationCallbackDriverAffinityV0>,
 }
 
 impl std::fmt::Debug for FailedAcknowledgeCoreInvalidDeliveryV0 {
@@ -817,6 +898,7 @@ impl FailedAcknowledgeCoreInvalidDeliveryV0 {
             state: self.state,
             completion_revision: self.completion_revision,
             barrier: self.barrier,
+            affinity: self.affinity,
         }
     }
 }
@@ -830,18 +912,21 @@ fn acknowledge_core_invalid_delivery_v0(
         state,
         completion_revision,
         barrier,
+        affinity,
     } = confirmed;
     match store.acknowledge_native_validation_invalid_callback_v0(owner) {
         Ok(owner) => Ok(AckedCoreInvalidDeliveryV0 {
             owner,
             state,
             barrier,
+            affinity,
         }),
         Err(store_failure) => Err(Box::new(FailedAcknowledgeCoreInvalidDeliveryV0 {
             store_failure,
             state,
             completion_revision,
             barrier,
+            affinity,
         })),
     }
 }
@@ -1008,6 +1093,7 @@ impl<'a, V: SignatureVerifier, S> NativeValidationCallbackDriverV0<'a, V, S> {
             core,
             verifier,
             safety_sink,
+            affinity: Arc::new(NativeValidationCallbackDriverAffinityV0),
         }
     }
 
@@ -1015,35 +1101,88 @@ impl<'a, V: SignatureVerifier, S> NativeValidationCallbackDriverV0<'a, V, S> {
         &self,
         owner: Box<LiveNativeValidationInvalidCallbackV0>,
     ) -> Result<CoreBoundLiveInvalidDeliveryV0, Box<FailedBindLiveInvalidDeliveryV0>> {
-        bind_live_invalid_delivery_v0(self.application_store, &self.core, owner)
+        bind_live_invalid_delivery_v0(
+            self.application_store,
+            &self.core,
+            owner,
+            Arc::clone(&self.affinity),
+        )
     }
 
     pub(crate) fn step_bound_invalid_delivery_v0(
         &mut self,
         bound: CoreBoundLiveInvalidDeliveryV0,
-    ) -> Result<CoreAcceptedInvalidDeliveryV0, FailedCoreInvalidDeliveryStepV0> {
+    ) -> Result<
+        CoreAcceptedInvalidDeliveryV0,
+        NativeValidationCallbackDriverPhaseFailureV0<
+            CoreBoundLiveInvalidDeliveryV0,
+            FailedCoreInvalidDeliveryStepV0,
+        >,
+    > {
+        if !Arc::ptr_eq(&self.affinity, bound.affinity_v0()) {
+            return Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(
+                bound,
+            ));
+        }
         step_bound_invalid_delivery_v0(&mut self.core, &self.verifier, bound)
+            .map_err(NativeValidationCallbackDriverPhaseFailureV0::Phase)
     }
 
     pub(crate) fn mark_core_invalid_delivery_delivered_v0(
         &self,
         accepted: CoreAcceptedInvalidDeliveryV0,
-    ) -> Result<DeliveredCoreInvalidDeliveryV0, Box<FailedMarkCoreInvalidDeliveryDeliveredV0>> {
+    ) -> Result<
+        DeliveredCoreInvalidDeliveryV0,
+        NativeValidationCallbackDriverPhaseFailureV0<
+            CoreAcceptedInvalidDeliveryV0,
+            Box<FailedMarkCoreInvalidDeliveryDeliveredV0>,
+        >,
+    > {
+        if !Arc::ptr_eq(&self.affinity, accepted.affinity_v0()) {
+            return Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(
+                accepted,
+            ));
+        }
         mark_core_invalid_delivery_delivered_v0(self.application_store, accepted)
+            .map_err(NativeValidationCallbackDriverPhaseFailureV0::Phase)
     }
 
     pub(crate) fn acknowledge_core_invalid_delivery_v0(
         &self,
         confirmed: ConfirmedCoreInvalidDeliveryV0,
-    ) -> Result<AckedCoreInvalidDeliveryV0, Box<FailedAcknowledgeCoreInvalidDeliveryV0>> {
+    ) -> Result<
+        AckedCoreInvalidDeliveryV0,
+        NativeValidationCallbackDriverPhaseFailureV0<
+            ConfirmedCoreInvalidDeliveryV0,
+            Box<FailedAcknowledgeCoreInvalidDeliveryV0>,
+        >,
+    > {
+        if !Arc::ptr_eq(&self.affinity, confirmed.affinity_v0()) {
+            return Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(
+                confirmed,
+            ));
+        }
         acknowledge_core_invalid_delivery_v0(self.application_store, confirmed)
+            .map_err(NativeValidationCallbackDriverPhaseFailureV0::Phase)
     }
 
     pub(crate) fn release_acked_core_invalid_delivery_v0(
         &mut self,
         acked: AckedCoreInvalidDeliveryV0,
-    ) -> Result<ReleasedCoreInvalidDeliveryV0, Box<FailedReleaseCoreInvalidDeliveryV0>> {
+    ) -> Result<
+        ReleasedCoreInvalidDeliveryV0,
+        NativeValidationCallbackDriverPhaseFailureV0<
+            AckedCoreInvalidDeliveryV0,
+            Box<FailedReleaseCoreInvalidDeliveryV0>,
+        >,
+    > {
+        if !Arc::ptr_eq(&self.affinity, acked.affinity_v0()) {
+            return Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(
+                acked,
+            ));
+        }
         release_acked_core_invalid_delivery_v0(&mut self.core, &self.verifier, acked)
+            .map_err(NativeValidationCallbackDriverPhaseFailureV0::Phase)
     }
 
     /// Read-only test observation; this never exposes the owned Core itself.
@@ -1082,11 +1221,24 @@ impl<'a, V: SignatureVerifier, S: DurableCoreSafetyStateSinkV0>
     pub(crate) fn persist_and_confirm_core_invalid_safety_v0(
         &mut self,
         delivered: DeliveredCoreInvalidDeliveryV0,
-    ) -> Result<ConfirmedCoreInvalidDeliveryV0, Box<FailedPersistCoreInvalidSafetyV0<S::Error>>>
-    {
+    ) -> PersistAndConfirmCoreInvalidSafetyResultV0<S::Error> {
+        if !Arc::ptr_eq(&self.affinity, delivered.affinity_v0()) {
+            return Err(NativeValidationCallbackDriverPhaseFailureV0::ForeignDriver(
+                delivered,
+            ));
+        }
         persist_and_confirm_core_invalid_safety_v0(&mut self.safety_sink, delivered)
+            .map_err(NativeValidationCallbackDriverPhaseFailureV0::Phase)
     }
 }
+
+type PersistAndConfirmCoreInvalidSafetyResultV0<E> = Result<
+    ConfirmedCoreInvalidDeliveryV0,
+    NativeValidationCallbackDriverPhaseFailureV0<
+        DeliveredCoreInvalidDeliveryV0,
+        Box<FailedPersistCoreInvalidSafetyV0<E>>,
+    >,
+>;
 
 #[cfg(test)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1259,6 +1411,16 @@ mod tests {
         let forbidden_completion_variant = ["Exact", "Completion"].concat();
         assert!(!source.contains(&forbidden_completion_variant));
         assert!(source.contains("CompletionLacksArtifactBinding"));
+        assert!(source.contains("affinity: Arc<NativeValidationCallbackDriverAffinityV0>"));
+        assert!(source.contains("Arc::new(NativeValidationCallbackDriverAffinityV0)"));
+        assert!(source.contains("Arc::ptr_eq(&self.affinity"));
+        for exposed_affinity in [
+            ["pub fn affinity", "_v0"].concat(),
+            ["pub(super) fn affinity", "_v0"].concat(),
+            ["pub(crate) fn affinity", "_v0"].concat(),
+        ] {
+            assert!(!source.contains(&exposed_affinity));
+        }
         let forbidden_detached_bind = [
             "pub(crate) fn bind_live_invalid_delivery_v0(\n    ",
             "store:",
