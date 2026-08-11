@@ -303,13 +303,17 @@ impl FinalizedTip {
 /// Current durable safety-state schema. Version five added bounded, canonical
 /// payload-validation obligations so persistence cannot silently forget a
 /// Core-issued validation route, generation, proposal, or exact parent.
-/// Version six adds route-scoped completion tombstones so an acknowledged
-/// callback result remains durable after its matching obligation is removed.
+/// Version six added route-scoped completion tombstones. Version seven keeps
+/// those tombstones while replacing their process-local validation-capability
+/// value with an inert, durable result snapshot. A decoded snapshot can prove
+/// equality with a newly supplied live result, but can never reconstruct a
+/// [`ValidatedBlockCommitmentsV0`] capability.
 ///
-/// Version-five records do not contain completion tombstones and must fail
-/// closed in `Core::recover`; there is deliberately no implicit v5-to-v6
-/// reconstruction or migration in this model layer.
-pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 6;
+/// Version-five records omit completion tombstones, and version-six records
+/// retain opaque live validation capabilities. Both older schemas must fail
+/// closed in `Core::recover`; there is deliberately no implicit migration in
+/// this model layer.
+pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 7;
 
 /// A verified timeout certificate whose selected high QC cannot yet be
 /// adopted because its block, ancestry, or payload is unavailable locally.
@@ -693,12 +697,102 @@ impl DurablePayloadValidationObligationV0 {
     }
 }
 
+/// Inert comparison data retained from one live valid-payload capability.
+///
+/// This value deliberately contains only the four stable facts exposed by
+/// [`ValidatedBlockCommitmentsV0`]. It is cloneable persistence data, not a
+/// validation capability, and has no conversion back into the live token.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DurableValidatedBlockCommitmentsV1 {
+    block_id: BlockId,
+    logical_block_size: u64,
+    transaction_count: u32,
+    evidence_count: u32,
+}
+
+impl DurableValidatedBlockCommitmentsV1 {
+    pub(crate) const fn from_live(commitments: ValidatedBlockCommitmentsV0) -> Self {
+        Self {
+            block_id: commitments.block_id(),
+            logical_block_size: commitments.logical_block_size(),
+            transaction_count: commitments.transaction_count(),
+            evidence_count: commitments.evidence_count(),
+        }
+    }
+
+    pub const fn block_id(self) -> BlockId {
+        self.block_id
+    }
+
+    pub const fn logical_block_size(self) -> u64 {
+        self.logical_block_size
+    }
+
+    pub const fn transaction_count(self) -> u32 {
+        self.transaction_count
+    }
+
+    pub const fn evidence_count(self) -> u32 {
+        self.evidence_count
+    }
+}
+
+/// Durable, non-authoritative projection of a live payload-validation result.
+///
+/// `Valid` stores only inert comparison data. `matches_live` projects a newly
+/// supplied live callback result in the same direction; no API performs the
+/// reverse conversion or grants callback, voting, or application authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DurablePayloadValidationResultV1 {
+    Valid {
+        commitments: DurableValidatedBlockCommitmentsV1,
+    },
+    Unavailable,
+    DeterministicallyInvalid,
+}
+
+impl DurablePayloadValidationResultV1 {
+    pub(crate) const fn from_live(result: PayloadValidationResult) -> Self {
+        match result {
+            PayloadValidationResult::Valid { commitments } => Self::Valid {
+                commitments: DurableValidatedBlockCommitmentsV1::from_live(commitments),
+            },
+            PayloadValidationResult::Unavailable => Self::Unavailable,
+            PayloadValidationResult::DeterministicallyInvalid => Self::DeterministicallyInvalid,
+        }
+    }
+
+    pub fn matches_live(self, result: PayloadValidationResult) -> bool {
+        self == Self::from_live(result)
+    }
+
+    pub const fn commitments(self) -> Option<DurableValidatedBlockCommitmentsV1> {
+        match self {
+            Self::Valid { commitments } => Some(commitments),
+            Self::Unavailable | Self::DeterministicallyInvalid => None,
+        }
+    }
+
+    pub const fn is_valid(self) -> bool {
+        matches!(self, Self::Valid { .. })
+    }
+
+    pub const fn is_unavailable(self) -> bool {
+        matches!(self, Self::Unavailable)
+    }
+
+    pub const fn is_deterministically_invalid(self) -> bool {
+        matches!(self, Self::DeterministicallyInvalid)
+    }
+}
+
 /// One durable, route-scoped payload-validation completion tombstone.
 ///
-/// This cloneable persistence fact records the exact result accepted for one
-/// Core-selected route and full [`ValidationId`]. It is distinct from the
-/// block-scoped [`PayloadTerminalFact`]: all three validation results,
-/// including [`PayloadValidationResult::Unavailable`], close only this exact
+/// This cloneable persistence fact records the exact inert projection of the
+/// result accepted for one Core-selected route and full [`ValidationId`]. It
+/// is distinct from the block-scoped [`PayloadTerminalFact`]: all three
+/// durable result variants, including
+/// [`DurablePayloadValidationResultV1::Unavailable`], close only this exact
 /// generation and route. Possession of this read-only record does not grant
 /// callback, terminal, or application-state authority.
 ///
@@ -709,7 +803,7 @@ impl DurablePayloadValidationObligationV0 {
 pub struct DurablePayloadValidationCompletionV0 {
     route: PayloadValidationRouteV0,
     id: ValidationId,
-    result: PayloadValidationResult,
+    result: DurablePayloadValidationResultV1,
     first_recorded_revision: u64,
 }
 
@@ -717,7 +811,7 @@ impl DurablePayloadValidationCompletionV0 {
     pub(crate) const fn new(
         route: PayloadValidationRouteV0,
         id: ValidationId,
-        result: PayloadValidationResult,
+        result: DurablePayloadValidationResultV1,
         first_recorded_revision: u64,
     ) -> Self {
         Self {
@@ -740,7 +834,7 @@ impl DurablePayloadValidationCompletionV0 {
         (self.route, self.id)
     }
 
-    pub const fn result(&self) -> PayloadValidationResult {
+    pub const fn result(&self) -> DurablePayloadValidationResultV1 {
         self.result
     }
 

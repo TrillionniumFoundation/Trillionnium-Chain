@@ -26,7 +26,8 @@ pub use crate::error::{CoreError, Result};
 pub use crate::model::{
     BarrierId, ClaimedPayloadValidationRequestV0, CoreConfig, DuplicatePayloadValidationRequestV0,
     DurableFinalizationV0, DurablePayloadValidationCompletionV0,
-    DurablePayloadValidationObligationV0, Effect, FinalizedTip, Input, InvalidPayloadReference,
+    DurablePayloadValidationObligationV0, DurablePayloadValidationResultV1,
+    DurableValidatedBlockCommitmentsV1, Effect, FinalizedTip, Input, InvalidPayloadReference,
     OutboundMessage, PayloadTerminalFact, PayloadTerminalResult, PayloadValidationParentV0,
     PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0,
     PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState, SignId, SignIntent,

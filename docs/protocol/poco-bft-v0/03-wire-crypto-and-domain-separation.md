@@ -489,30 +489,32 @@ barrier. This cloneable persistence fact binds the Core-selected route, full
 also binds generation to that revision. It is not a wire object, terminal
 token, or callback capability. `StorageAck` reconstructs the request only from
 that record and its exact volatile proposal mirror. Core `SafetyState` schema
-v6 adds a separately canonically sorted
-`DurablePayloadValidationCompletionV0` keyed by `(route, full ValidationId)`.
-Every callback atomically replaces its exact obligation with the same-key
-completion before persistence. This cloneable local persistence fact retains
-all three results, complete `ValidatedBlockCommitmentsV0` for `Valid`, and
-`first_recorded_revision`; exact same-result replay is durably idempotent after
-restart. Opposite-route reuse, a source/owner splice, different results, or
-different `Valid` commitments is invariant or a typed integration conflict,
-never a replacement. `Unavailable` closes only that generation and does not
-poison a later generation for the same block. These records are distinct from
-the block-ID-level terminal payload facts, which retain cross-generation
-`Valid`/`DeterministicallyInvalid` semantics. Exact synced cancellation removes
-the obligation behind the cleanup barrier without inventing a callback
-completion. Safety halt clears obligations while retaining prior completions.
-There is no automatic completion eviction: registration reserves the future
-slot and `completions + obligations` is bounded by authenticated
-`max_observed_messages`. Complete signed-proposal durable size -- logical block
-plus exact certified-tail witness -- is bounded by authenticated
-`max_consensus_message_bytes`; aggregate obligation accounting additionally
+v6 introduced the separately sorted completion set, but retained a process-
+local `ValidatedBlockCommitmentsV0` capability in its cloneable record. Current
+schema v7 replaces that field with the inert
+`DurablePayloadValidationResultV1`. Its `Valid` variant contains only block ID,
+logical size, transaction-count, and evidence-count comparison data and has no
+conversion back to a live validation capability. Every callback atomically
+replaces its exact obligation with the same-key completion before persistence;
+same-result replay first projects the newly supplied live result into the same
+inert form. Opposite-route reuse, a source/owner splice, different results, or
+different `Valid` comparison data is invariant or a typed integration
+conflict, never a replacement. `Unavailable` closes only that generation and
+does not poison a later generation for the same block. These records remain
+distinct from block-ID-level terminal payload facts. Exact synced cancellation
+removes the obligation without inventing a completion; safety halt clears
+obligations while retaining prior completions. There is no automatic
+completion eviction: registration reserves the future slot and `completions +
+obligations` is bounded by authenticated `max_observed_messages`. Complete
+signed-proposal durable size -- logical block plus exact certified-tail witness
+-- is bounded by authenticated `max_consensus_message_bytes`; aggregate
+obligation accounting additionally
 covers fixed route/ID/revision/parent facts and an optional exact parent header.
 
-Recovery validates schema-v6 obligations and completions and then rejects a
-non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state schema v5 has no implicit migration. Completion-only
+Recovery validates schema-v7 obligations and inert completions and then rejects
+a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
+validation. Safety-state schemas v5 and v6 have no implicit migration.
+Completion-only
 recovery supplies exact-result suppression, but these local persistence rules
 establish no new transport, type-level callback capability, crash replay/
 liveness, host-delivery acknowledgement, or callback exactly-once protocol.

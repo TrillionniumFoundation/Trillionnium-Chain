@@ -647,10 +647,10 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   durable completion before persistence, while exact synced cancellation
   persists removal without fabricating a callback result;
 - exact same-result callbacks remain idempotent after completion-only recovery;
-  opposite-route, result, source, and full-`Valid`-commitment splices fail
+  opposite-route, result, source, and inert-`Valid`-comparison splices fail
   closed; `Unavailable` completes only one generation, and a later generation
   for the same block remains admissible;
-- recovery validates schema-v6 obligations and completions but rejects any
+- recovery validates schema-v7 obligations and inert completions but rejects any
   non-empty obligation set rather than reissuing it; safety halt clears every
   obligation while retaining prior completions in the same durable revision;
 - the active-v0 success-only receipt policy: every one of the 21 exhaustive
@@ -723,8 +723,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`; route MUST remain owned through open/body/cursor/
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
-- separately from current application-store schema v8, Core `SafetyState` schema v6
-  MUST retain the schema-v5 obligation rule: canonically order and persist one
+- separately from current application-store schema v8, Core `SafetyState`
+  schema v7 MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
   MUST bind the Core-selected route, full `ValidationId`, exact
@@ -738,20 +738,25 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   include fixed route/ID/revision/parent facts and any exact parent header, and
   arithmetic or resource-bound failure MUST occur before a new obligation or
   validation effect is admitted;
-- Core `SafetyState` schema v6 MUST separately canonically order durable
+- Core `SafetyState` schema v7 MUST separately canonically order durable
   `DurablePayloadValidationCompletionV0` values by `(route, full
   ValidationId)`; every direct or synced callback MUST atomically replace only
   its exact obligation with a same-key completion before persistence, and the
-  completion MUST retain its complete three-result value, full
-  `ValidatedBlockCommitmentsV0` for `Valid`, and
-  `first_recorded_revision`; exact same-result callback replay MUST remain
-  idempotent after restart;
+  completion MUST retain `DurablePayloadValidationResultV1` plus
+  `first_recorded_revision`; its `Valid` variant MUST contain only inert block
+  ID, logical-size, transaction-count, and evidence-count comparison data and
+  MUST NOT reconstruct or expose a live `ValidatedBlockCommitmentsV0`;
+  exact-result callback replay MUST project the new live result into that same
+  inert form before comparison and MUST remain idempotent after restart;
 - an opposite-route reuse, source/owner splice, different result, or different
-  `Valid` commitments under the same full ID MUST fail closed and MUST NOT
+  inert `Valid` comparison facts under the same full ID MUST fail closed and
+  MUST NOT
   overwrite a completion; `Unavailable` MUST close only its exact generation
   and MUST NOT prevent a new generation for the same block; completion records
   MUST remain distinct from block-ID-level terminal payload facts, which MUST
   retain only cross-generation `Valid`/`DeterministicallyInvalid` semantics;
+- Core recovery MUST reject safety-state schemas v5 and v6; the model layer
+  MUST NOT implicitly migrate either older representation to schema v7;
 - exact synced cancellation MUST remove only its matching obligation behind a
   cleanup `PersistSafetyState -> StorageAck` barrier without creating a
   callback completion; safety halt MUST clear the complete obligation set in
@@ -759,10 +764,10 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   completion eviction MUST NOT occur, registration MUST reserve the future
   completion slot, and `completions + obligations` MUST NOT exceed
   authenticated `max_observed_messages`;
-- recovery MUST validate every schema-v6 obligation and completion and then
+- recovery MUST validate every schema-v7 obligation and inert completion and then
   reject a non-empty obligation set with `InvalidRecovery`; it MUST NOT reissue
   pending validation without an authenticated replay ticket, and safety-state
-  schema v5 MUST NOT be implicitly migrated; completion-only recovery MAY
+  schemas v5 and v6 MUST NOT be implicitly migrated; completion-only recovery MAY
   suppress an exact same-result replay but Core cleanup/completion MUST NOT be
   represented as type-level callback authority, host callback-outbox delivery
   acknowledgement, or callback exactly-once;

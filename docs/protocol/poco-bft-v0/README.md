@@ -506,32 +506,33 @@ route, full `ValidationId`, exact `SignedProposalV0`, exact
 `PayloadValidationParentV0`, and `first_recorded_revision`; the live invariant
 also binds the generation to that first revision. `StorageAck` reconstructs a
 request only from the durable record and its matching volatile proposal mirror.
-Core `SafetyState` schema v6 adds a separate canonically sorted
-`DurablePayloadValidationCompletionV0` set keyed by `(route, full
-ValidationId)`. Every direct or synced callback atomically replaces its exact
-obligation with a same-key completion before persistence. The completion
-stores all three result variants, the complete `ValidatedBlockCommitmentsV0`
-for `Valid`, and `first_recorded_revision`; an exact same-result callback is
-therefore durably idempotent after restart. Reuse under the opposite route,
+Core `SafetyState` schema v6 added the separately sorted completion set, but
+retained the process-local `ValidatedBlockCommitmentsV0` capability inside a
+cloneable record. Current schema v7 replaces that field with
+`DurablePayloadValidationResultV1`: `Valid` stores only inert block ID, logical
+size, transaction-count, and evidence-count comparison facts. There is no
+conversion back to the live capability. Every direct or synced callback still
+atomically replaces its exact obligation with a same-key completion before
+persistence, and replay compares a newly supplied live result only after
+projecting it into the same inert form. Reuse under the opposite route,
 different source/owner facts, a different result, or different `Valid`
-commitments is invariant or a typed integration conflict and cannot overwrite
-the record. `Unavailable` closes only that generation, permitting a later
-generation for the same block. These tombstones are distinct from block-ID-
-level terminal payload facts, which continue to encode only cross-generation
-`Valid`/`DeterministicallyInvalid` semantics. Exact synced cancellation removes
-its obligation behind the persistence barrier without fabricating a callback
-completion. Safety halt clears obligations in the same revision and retains
-prior completions. Completion eviction is disabled; registration reserves its
-future slot under `completions + obligations <= max_observed_messages`.
+comparison facts is invariant or a typed integration conflict and cannot
+overwrite the record. `Unavailable` closes only that generation, permitting a
+later generation for the same block. These tombstones remain distinct from
+block-ID-level terminal payload facts. Exact synced cancellation removes its
+obligation without fabricating a completion; safety halt clears obligations
+while retaining prior completions. Completion eviction remains disabled under
+`completions + obligations <= max_observed_messages`. Schemas v5 and v6 are
+rejected by `Core::recover`; there is no implicit model-layer migration to v7.
 
 Core bounds the complete signed-proposal durable resource -- logical block plus
 exact certified-tail witness -- by authenticated
 `max_consensus_message_bytes`. Its aggregate obligation budget additionally
 counts the fixed route/ID/revision/parent facts and any exact parent header.
-Recovery validates every schema-v6 obligation and completion and then rejects
+Recovery validates every schema-v7 obligation and inert completion and then rejects
 a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state
-schema v5 has no implicit migration. Completion-only recovery provides durable
+validation. Safety-state schemas v5 and v6 have no implicit migration.
+Completion-only recovery provides durable
 exact-result suppression, but non-empty obligations remain fail-closed. This
 is durable pre-effect capture, cleanup ordering, and result idempotence, not
 crash replay, callback exactly-once, type-level callback authority, or recovery

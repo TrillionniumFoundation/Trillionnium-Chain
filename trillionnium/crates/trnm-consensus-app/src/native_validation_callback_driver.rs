@@ -9,8 +9,9 @@
 
 use std::sync::Arc;
 use trnm_consensus_core::{
-    BarrierId, Core, CoreError, Effect, Input, PayloadTerminalResult, PayloadValidationResult,
-    PayloadValidationRouteV0, SafetyHalt, SafetyState, ValidationId,
+    BarrierId, Core, CoreError, DurablePayloadValidationResultV1, Effect, Input,
+    PayloadTerminalResult, PayloadValidationResult, PayloadValidationRouteV0, SafetyHalt,
+    SafetyState, ValidationId,
 };
 use trnm_consensus_types::SignatureVerifier;
 
@@ -221,7 +222,7 @@ fn bind_live_invalid_delivery_v0(
                 BindLiveInvalidDeliveryFailureCauseV0::RouteMismatch,
             ));
         }
-        if completion.result() != PayloadValidationResult::DeterministicallyInvalid {
+        if completion.result() != DurablePayloadValidationResultV1::DeterministicallyInvalid {
             return Err(fail(
                 owner,
                 BindLiveInvalidDeliveryFailureCauseV0::CompletionResultMismatch,
@@ -388,7 +389,7 @@ fn exact_invalid_completion_v0(
     let completion = completions.next()?;
     if completions.next().is_some()
         || completion.route() != route
-        || completion.result() != PayloadValidationResult::DeterministicallyInvalid
+        || completion.result() != DurablePayloadValidationResultV1::DeterministicallyInvalid
     {
         return None;
     }

@@ -4,9 +4,9 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
     leader_for, BarrierId, Core, CoreConfig, CoreError, DurablePayloadValidationCompletionV0,
-    DurablePayloadValidationObligationV0, Effect, FinalizedTip, Input, InvalidPayloadReference,
-    OutboundMessage, PayloadValidationResult, PayloadValidationRouteV0, SafetyHalt, SafetyState,
-    SignId, SignIntent, ValidationId,
+    DurablePayloadValidationObligationV0, DurablePayloadValidationResultV1, Effect, FinalizedTip,
+    Input, InvalidPayloadReference, OutboundMessage, PayloadValidationResult,
+    PayloadValidationRouteV0, SafetyHalt, SafetyState, SignId, SignIntent, ValidationId,
 };
 use trnm_consensus_types::{
     ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind,
@@ -3578,15 +3578,15 @@ fn update_payload_validation_completion_trace_digest(
     hasher.update(id.generation().to_le_bytes());
 
     match completion.result() {
-        PayloadValidationResult::Valid { commitments } => {
+        DurablePayloadValidationResultV1::Valid { commitments } => {
             hasher.update([1]);
             hasher.update(commitments.block_id().as_bytes());
             hasher.update(commitments.logical_block_size().to_le_bytes());
             hasher.update(commitments.transaction_count().to_le_bytes());
             hasher.update(commitments.evidence_count().to_le_bytes());
         }
-        PayloadValidationResult::Unavailable => hasher.update([2]),
-        PayloadValidationResult::DeterministicallyInvalid => hasher.update([3]),
+        DurablePayloadValidationResultV1::Unavailable => hasher.update([2]),
+        DurablePayloadValidationResultV1::DeterministicallyInvalid => hasher.update([3]),
     }
 
     hasher.update(completion.first_recorded_revision().to_le_bytes());

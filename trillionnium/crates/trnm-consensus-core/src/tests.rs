@@ -3177,7 +3177,27 @@ fn recovery_before_finalization_ack_does_not_reconstruct_a_vote_candidate() {
         .find(|completion| completion.id() == validation)
         .expect("the Valid callback atomically leaves one durable completion");
     assert_eq!(completion.route(), PayloadValidationRouteV0::Proposal);
-    assert_eq!(completion.result(), result);
+    assert!(completion.result().matches_live(result));
+    let live_commitments = result
+        .commitments()
+        .expect("the fixture returns one live Valid capability");
+    let durable_commitments = completion
+        .result()
+        .commitments()
+        .expect("the durable result retains only inert comparison data");
+    assert_eq!(durable_commitments.block_id(), live_commitments.block_id());
+    assert_eq!(
+        durable_commitments.logical_block_size(),
+        live_commitments.logical_block_size()
+    );
+    assert_eq!(
+        durable_commitments.transaction_count(),
+        live_commitments.transaction_count()
+    );
+    assert_eq!(
+        durable_commitments.evidence_count(),
+        live_commitments.evidence_count()
+    );
     assert_eq!(completion.first_recorded_revision(), gated.revision());
     let expected_completion = (*completion).clone();
     let expected_completions = gated.payload_validation_completions().to_vec();
@@ -3855,7 +3875,10 @@ fn validation_generations_retry_live_while_nonempty_recovery_fails_closed() {
         .find(|completion| completion.id() == first_id)
         .expect("Unavailable atomically replaces its exact durable obligation");
     assert_eq!(completion.route(), PayloadValidationRouteV0::Proposal);
-    assert_eq!(completion.result(), PayloadValidationResult::Unavailable);
+    assert_eq!(
+        completion.result(),
+        DurablePayloadValidationResultV1::Unavailable
+    );
     assert_eq!(completion.first_recorded_revision(), cleaned.revision());
     let expected_completion = (*completion).clone();
     assert!(core
@@ -4813,7 +4836,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
         .cloned()
         .expect("fixture completion is durable");
     assert_eq!(base.route(), PayloadValidationRouteV0::Proposal);
-    assert_eq!(base.result(), PayloadValidationResult::Unavailable);
+    assert_eq!(base.result(), DurablePayloadValidationResultV1::Unavailable);
 
     let assert_invalid = |label: &str, state: SafetyState, message: &'static str| {
         assert_eq!(
@@ -4828,7 +4851,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
     let other = DurablePayloadValidationCompletionV0::new(
         PayloadValidationRouteV0::Proposal,
         other_id,
-        PayloadValidationResult::Unavailable,
+        DurablePayloadValidationResultV1::Unavailable,
         completed.revision(),
     );
     let mut reversed = vec![base.clone(), other];
@@ -4873,7 +4896,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
     let mismatched_result = DurablePayloadValidationCompletionV0::new(
         base.route(),
         base.id(),
-        foreign_commitments,
+        DurablePayloadValidationResultV1::from_live(foreign_commitments),
         base.first_recorded_revision(),
     );
     assert_invalid(
@@ -4907,7 +4930,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
     let overlap = DurablePayloadValidationCompletionV0::new(
         obligation.route(),
         obligation.id(),
-        PayloadValidationResult::Unavailable,
+        DurablePayloadValidationResultV1::Unavailable,
         obligated.revision(),
     );
     let mut overlapping = obligated.payload_validation_completions().to_vec();
@@ -4939,7 +4962,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
         over_capacity.push(DurablePayloadValidationCompletionV0::new(
             PayloadValidationRouteV0::Proposal,
             ValidationId::new(block_id, View::new(1), 1),
-            PayloadValidationResult::Unavailable,
+            DurablePayloadValidationResultV1::Unavailable,
             completed.revision(),
         ));
     }
@@ -4957,40 +4980,43 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
 }
 
 #[test]
-fn recovery_rejects_schema_v5_without_durable_payload_validation_completions() {
+fn recovery_rejects_pre_v7_safety_state_without_inert_completion_snapshots() {
     let (config, core) = configured_core();
     let state = core.safety_state();
-    let schema_v5 = SafetyState::from_persisted_parts(
-        5,
-        state.chain_id(),
-        state.protocol_version(),
-        state.epoch(),
-        state.validator_set_id(),
-        state.genesis_block_id(),
-        state.current_view(),
-        state.last_voted_view(),
-        state.last_timeout_view(),
-        state.high_qc().clone(),
-        state.locked_qc().clone(),
-        state.finalized(),
-        state.revision(),
-        state.payload_terminal_facts().to_vec(),
-        vec![],
-        vec![],
-        state.pending_tc_high_qc_sync().cloned(),
-        state.pending_standalone_qc_sync().cloned(),
-        state.pending_sign().cloned(),
-        state.last_finalization().cloned(),
-        state.pending_finalize(),
-        state.safety_halt().cloned(),
-    );
-    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 6);
-    assert_eq!(
-        Core::recover(config, schema_v5, &RootSignatures),
-        Err(CoreError::InvalidRecovery(
-            "unsupported safety-state schema version"
-        ))
-    );
+    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 7);
+    for legacy_schema in [5, 6] {
+        let legacy = SafetyState::from_persisted_parts(
+            legacy_schema,
+            state.chain_id(),
+            state.protocol_version(),
+            state.epoch(),
+            state.validator_set_id(),
+            state.genesis_block_id(),
+            state.current_view(),
+            state.last_voted_view(),
+            state.last_timeout_view(),
+            state.high_qc().clone(),
+            state.locked_qc().clone(),
+            state.finalized(),
+            state.revision(),
+            state.payload_terminal_facts().to_vec(),
+            vec![],
+            vec![],
+            state.pending_tc_high_qc_sync().cloned(),
+            state.pending_standalone_qc_sync().cloned(),
+            state.pending_sign().cloned(),
+            state.last_finalization().cloned(),
+            state.pending_finalize(),
+            state.safety_halt().cloned(),
+        );
+        assert_eq!(
+            Core::recover(config.clone(), legacy, &RootSignatures),
+            Err(CoreError::InvalidRecovery(
+                "unsupported safety-state schema version"
+            )),
+            "schema {legacy_schema} must not be implicitly migrated"
+        );
+    }
 }
 
 #[test]
@@ -5573,7 +5599,7 @@ fn unavailable_tc_target_retries_then_invalid_halts_with_the_full_tc() {
     assert_eq!(unavailable_completion.id(), unavailable_id);
     assert_eq!(
         unavailable_completion.result(),
-        PayloadValidationResult::Unavailable
+        DurablePayloadValidationResultV1::Unavailable
     );
     assert_eq!(
         unavailable_completion.first_recorded_revision(),

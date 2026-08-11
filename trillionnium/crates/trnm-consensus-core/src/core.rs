@@ -11,11 +11,11 @@ use crate::{
     block_tree::{Ancestry, BlockTree, PayloadTransition},
     model::{DeferredEffect, PendingPersistence},
     BarrierId, CoreConfig, CoreError, DurablePayloadValidationCompletionV0,
-    DurablePayloadValidationObligationV0, Effect, FinalizedTip, Input, InvalidPayloadReference,
-    OutboundMessage, PayloadTerminalFact, PayloadTerminalResult, PayloadValidationParentV0,
-    PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0,
-    PendingStandaloneQcSync, PendingTcHighQcSync, Result, SafetyHalt, SafetyState, SignIntent,
-    ValidationId, SAFETY_STATE_SCHEMA_VERSION,
+    DurablePayloadValidationObligationV0, DurablePayloadValidationResultV1, Effect, FinalizedTip,
+    Input, InvalidPayloadReference, OutboundMessage, PayloadTerminalFact, PayloadTerminalResult,
+    PayloadValidationParentV0, PayloadValidationRequest, PayloadValidationResult,
+    PayloadValidationRouteV0, PendingStandaloneQcSync, PendingTcHighQcSync, Result, SafetyHalt,
+    SafetyState, SignIntent, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
 };
 
 type ObservationKey = (Epoch, View, ValidatorId);
@@ -2381,6 +2381,7 @@ impl Core {
         id: ValidationId,
         result: PayloadValidationResult,
     ) -> Result<()> {
+        let durable_result = DurablePayloadValidationResultV1::from_live(result);
         for previous in self
             .safety
             .payload_validation_completions()
@@ -2388,10 +2389,10 @@ impl Core {
             .filter(|completion| completion.id().block_id() == id.block_id())
         {
             if matches!(
-                (previous.result(), result),
+                (previous.result(), durable_result),
                 (
-                    PayloadValidationResult::Valid { commitments: first },
-                    PayloadValidationResult::Valid {
+                    DurablePayloadValidationResultV1::Valid { commitments: first },
+                    DurablePayloadValidationResultV1::Valid {
                         commitments: second
                     }
                 ) if first != second
@@ -2428,7 +2429,12 @@ impl Core {
             .unwrap_or_else(|index| index);
         completions.insert(
             index,
-            DurablePayloadValidationCompletionV0::new(route, id, result, first_recorded_revision),
+            DurablePayloadValidationCompletionV0::new(
+                route,
+                id,
+                durable_result,
+                first_recorded_revision,
+            ),
         );
         self.safety.set_payload_validation_completions(completions);
         Ok(())
@@ -2454,11 +2460,13 @@ impl Core {
             .iter()
             .filter(|completion| completion.id().block_id() == block_id)
             .filter_map(|completion| match completion.result() {
-                PayloadValidationResult::Valid { .. } => Some(PayloadTerminalResult::Valid),
-                PayloadValidationResult::DeterministicallyInvalid => {
+                DurablePayloadValidationResultV1::Valid { .. } => {
+                    Some(PayloadTerminalResult::Valid)
+                }
+                DurablePayloadValidationResultV1::DeterministicallyInvalid => {
                     Some(PayloadTerminalResult::DeterministicallyInvalid)
                 }
-                PayloadValidationResult::Unavailable => None,
+                DurablePayloadValidationResultV1::Unavailable => None,
             })
             .any(|previous| previous != terminal)
         {
@@ -2559,16 +2567,16 @@ impl Core {
         else {
             return Ok(None);
         };
-        if previous == result {
+        if previous.matches_live(result) {
             return Ok(Some(Vec::new()));
         }
         let terminal_conflict = matches!(
             (previous, result),
             (
-                PayloadValidationResult::Valid { .. },
+                DurablePayloadValidationResultV1::Valid { .. },
                 PayloadValidationResult::DeterministicallyInvalid
             ) | (
-                PayloadValidationResult::DeterministicallyInvalid,
+                DurablePayloadValidationResultV1::DeterministicallyInvalid,
                 PayloadValidationResult::Valid { .. }
             )
         );
@@ -2585,6 +2593,22 @@ impl Core {
     fn validate_payload_capability(
         id: ValidationId,
         result: PayloadValidationResult,
+    ) -> Result<()> {
+        let Some(commitments) = result.commitments() else {
+            return Ok(());
+        };
+        if commitments.block_id() != id.block_id() {
+            return Err(CoreError::ValidationCapabilityMismatch {
+                expected: id.block_id(),
+                received: commitments.block_id(),
+            });
+        }
+        Ok(())
+    }
+
+    fn validate_durable_payload_completion(
+        id: ValidationId,
+        result: DurablePayloadValidationResultV1,
     ) -> Result<()> {
         let Some(commitments) = result.commitments() else {
             return Ok(());
@@ -3571,7 +3595,7 @@ impl Core {
         let mut terminal_results_by_block = BTreeMap::new();
         for completion in completions {
             let id = completion.id();
-            Self::validate_payload_capability(id, completion.result()).map_err(|_| {
+            Self::validate_durable_payload_completion(id, completion.result()).map_err(|_| {
                 CoreError::InvalidRecovery(
                     "durable payload validation completion result differs from its full id",
                 )
@@ -3629,8 +3653,8 @@ impl Core {
                 let valid_commitment_conflict = matches!(
                     (previous, completion.result()),
                     (
-                        PayloadValidationResult::Valid { commitments: first },
-                        PayloadValidationResult::Valid {
+                        DurablePayloadValidationResultV1::Valid { commitments: first },
+                        DurablePayloadValidationResultV1::Valid {
                             commitments: second
                         }
                     ) if first != second

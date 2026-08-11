@@ -115,10 +115,10 @@ deliberately reports `wire_conformance = false`.
   and recovery re-verifies and reissues the exact target after any required
   safety replay or TC-priority work. Proposal-carried ordinary QCs with missing
   parent context now create that same exact durable active/backlog obligation.
-  Current safety-state schema v6 also retains bounded block-ID-level terminal
+  Current safety-state schema v7 also retains bounded block-ID-level terminal
   payload facts across crash and volatile block-tree eviction, separately from
-  its route/full-ID completion tombstones. Safety-state schema v5 has no
-  implicit migration to v6.
+  its route/full-ID inert completion tombstones. Safety-state schemas v5 and v6
+  have no implicit migration to v7.
 - Same-view/different-block QC conflicts are observed and durably halt before
   finalized-height subsumption. Subject to that check, a different-view
   competitor at the durable finalized height is subsumed without a sync or
@@ -925,11 +925,14 @@ epoch prune, and Core transition remain open.
    both QC/invalid arrival orders for a known header, TC retry, carried-TC
    collision, signer cancellation, and durable halt recovery have focused
    tests. Bounded block-ID-level terminal
-   `Valid`/`DeterministicallyInvalid` facts remain part of safety-state schema
-   v6 and survive crash and volatile block-tree eviction. Separately, a
-   route/full-ID completion tombstone now persists all three callback results;
-   `Unavailable` remains non-terminal and source-generation scoped even though
-   its exact generation completion survives restart. This is still not the
+   `Valid`/`DeterministicallyInvalid` facts remain part of current Core
+   safety-state schema v7 and survive crash and volatile block-tree eviction.
+   Separately, a route/full-ID completion tombstone stores the inert projection
+   of all three callback results; its `Valid` form retains only block ID,
+   logical size, transaction count, and evidence count, never a live
+   validation capability. `Unavailable` remains non-terminal and
+   source-generation scoped even though its exact generation completion
+   survives restart. This is still not the
    complete host-validation contract:
    `Block` carries an opaque payload rather than the full canonical
    transactions plus objective evidence and authenticated parent/runtime
@@ -1148,15 +1151,19 @@ epoch prune, and Core transition remain open.
    `first_recorded_revision`; the live invariant requires generation to equal
    that first revision. The acknowledgement reconstructs the request only from
    that durable record and its exact volatile proposal mirror. Core
-   `SafetyState` schema v6 now adds a separately canonically sorted
+   `SafetyState` schema v6 introduced the separately canonically sorted
    `DurablePayloadValidationCompletionV0` keyed by `(route, full
-   ValidationId)`. Every direct or synced callback atomically replaces the
-   exact obligation with a same-key completion before persistence. That record
-   stores all three results, full `ValidatedBlockCommitmentsV0` for `Valid`,
-   and `first_recorded_revision`, giving exact same-result replay durable
-   idempotence across restart. Opposite-route reuse, source/owner splice,
-   result conflict, or a different `Valid` commitment is invariant or a typed
-   integration conflict and cannot overwrite the record. `Unavailable`
+   ValidationId)`, but retained a process-local validation capability inside
+   the cloneable record. Current schema v7 stores
+   `DurablePayloadValidationResultV1` instead. Its `Valid` variant is only an
+   inert snapshot of block ID, logical size, transaction count, and evidence
+   count; it cannot reconstruct `ValidatedBlockCommitmentsV0`. Every direct or
+   synced callback atomically replaces the exact obligation with a same-key
+   completion before persistence, and replay projects the newly supplied live
+   result into the same inert form before comparison. Opposite-route reuse,
+   source/owner splice, result conflict, or different `Valid` comparison facts
+   are invariant or a typed integration conflict and cannot overwrite the
+   record. `Unavailable`
    completes only its exact generation, so a new generation for the same block
    remains legal. Completion tombstones are distinct from block-ID-level
    terminal facts. Exact synced cancellation removes its obligation behind the
@@ -1168,9 +1175,11 @@ epoch prune, and Core transition remain open.
    tail witness -- is bounded by authenticated
    `max_consensus_message_bytes`; the aggregate obligation bound additionally
    covers fixed route/ID/revision/parent facts and any exact parent header.
-   Recovery validates every schema-v6 obligation and completion and then
+   `Core::recover` rejects schemas v5 and v6; there is no implicit migration to
+   schema v7 in the model layer.
+   Recovery validates every schema-v7 obligation and inert completion and then
    rejects a non-empty obligation set with `InvalidRecovery`; it does not
-   reissue pending validation. Schema v5 is not implicitly migrated.
+   reissue pending validation. Schemas v5 and v6 are not implicitly migrated.
    Completion-only recovery suppresses exact result replay, but this closes
    durable pre-effect capture, cleanup ordering, and callback-result
    idempotence only, not crash replay/liveness, type-level callback authority,

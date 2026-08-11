@@ -251,16 +251,19 @@ an earlier phase.
   `first_recorded_revision`; the live invariant also requires the validation
   generation to equal that first revision. `StorageAck` reconstructs the
   request only from this durable record and its exact volatile proposal mirror.
-  Core `SafetyState` schema v6 now adds a separately canonically sorted
-  `DurablePayloadValidationCompletionV0` set keyed by `(route, full
-  ValidationId)`. Every direct or synced callback atomically replaces its
-  exact obligation with the same-key completion before persistence; the
-  completion retains all three results, including full
-  `ValidatedBlockCommitmentsV0` for `Valid`, plus its
-  `first_recorded_revision`. Exact same-result replay is therefore idempotent
-  across restart. An opposite-route reuse, a different result or `Valid`
-  commitment under the same key, or any source/owner splice is invariant or a
-  typed integration conflict and cannot overwrite the tombstone.
+  Core `SafetyState` schema v6 introduced the separately sorted
+  `DurablePayloadValidationCompletionV0` set, but retained a process-local
+  validation capability in its cloneable record. Current schema v7 stores
+  `DurablePayloadValidationResultV1` instead. Its `Valid` variant contains only
+  inert block ID, logical size, transaction-count, and evidence-count
+  comparison facts and has no conversion back to
+  `ValidatedBlockCommitmentsV0`. Every direct or synced callback still
+  atomically replaces its exact obligation with the same-key completion before
+  persistence; replay projects a new live result into the same inert form
+  before comparison. An opposite-route reuse, a different result or different
+  `Valid` comparison facts under the same key, or any source/owner splice is
+  invariant or a typed integration conflict and cannot overwrite the
+  tombstone.
   `Unavailable` closes only that generation, so a fresh generation for the
   same block may still be registered. These completion tombstones are distinct
   from the block-ID-level terminal payload facts, which still carry only
@@ -275,11 +278,11 @@ an earlier phase.
   logical block plus exact certified-tail witness -- under authenticated
   `max_consensus_message_bytes`; the aggregate obligation budget additionally
   covers fixed route/ID/revision/parent facts and any exact parent header.
-  Recovery first validates every schema-v6 obligation and completion and then
-  rejects any non-empty obligation set with `InvalidRecovery`; it does not
-  reissue a pending request.
-  Safety-state schema v5 has no implicit migration. Completion-only recovery
-  provides exact-result suppression, but non-empty obligations remain
+  Recovery first validates every schema-v7 obligation and inert completion and
+  then rejects any non-empty obligation set with `InvalidRecovery`; it does not
+  reissue a pending request. Safety-state schemas v5 and v6 have no implicit
+  migration. Completion-only recovery provides exact-result suppression, but
+  non-empty obligations remain
   fail-closed. This closes durable pre-effect capture, cleanup ordering, and
   callback-result idempotence, not crash replay, callback exactly-once, or
   liveness.
@@ -1076,9 +1079,9 @@ an earlier phase.
   transition writer, first-seal deterministic-invalid owner, owned-Core driver, and injected
   test sink. It has no production constructor or SafetyState durability. The
   driver uses Core's `StorageAck` cleanup barrier only after exact sink
-  confirmation and application acknowledgement; the schema-v6 completion
-  tombstone alone cannot authorize artifact replay. The deterministic-invalid
-  validation-time transaction is
+  confirmation and application acknowledgement; the schema-v7 inert
+  completion tombstone alone cannot authorize artifact replay. The
+  deterministic-invalid validation-time transaction is
   atomic, but the corresponding `Valid` transaction still must retain a
   revalidatable evaluated artifact and callback outbox. The distinct Finalize-
   time transaction must revalidate authority and
@@ -1145,17 +1148,22 @@ an earlier phase.
   recovery-replay busy gates only after authentication and then share the same
   durable halt transition.
 - Core `SafetyState` schema v5 introduced durable capture of every direct or
-  synced payload-validation obligation before its validation effect. Schema v6
-  atomically replaces an exact callback obligation with a canonically sorted
-  `(route, full ValidationId)` completion tombstone containing the complete
-  three-result value, full `Valid` commitments, and first revision; exact
-  result replay remains idempotent after restart. There is no automatic
+  synced payload-validation obligation before its validation effect. Historical
+  schema v6 atomically replaced an exact callback obligation with a canonically
+  sorted `(route, full ValidationId)` completion tombstone, but embedded the
+  process-local `Valid` capability in that cloneable record. Current schema v7
+  instead stores an inert three-result projection and first revision; its
+  `Valid` form contains only block ID, logical size, transaction count, and
+  evidence count and has no conversion back to live authority. Exact result
+  replay projects a newly supplied live result into the same inert form and
+  remains idempotent after restart. There is no automatic
   eviction, and registration reserves the future tombstone under the shared
   `completions + obligations <= max_observed_messages` bound. Safety halt
   clears obligations atomically while retaining prior completions. Recovery
   validates both record sets but deliberately rejects a non-empty obligation
   set until authenticated replay tickets and speculative-parent reconstruction
-  exist; schema v5 is not implicitly migrated. This ordering and tombstone are
+  exist; schemas v5 and v6 are not implicitly migrated. This ordering and
+  tombstone are
   distinct from, and do not implement, an application callback outbox,
   delivery acknowledgement, type-level callback authority, or callback
   exactly-once.

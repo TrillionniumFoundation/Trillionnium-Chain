@@ -7696,8 +7696,9 @@ mod tests {
 
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_core::{
-        Core, CoreConfig, Effect, Input, PayloadValidationRequest, PayloadValidationResult,
-        PayloadValidationRouteV0, SafetyState, ValidationId,
+        Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input,
+        PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0, SafetyState,
+        ValidationId,
     };
     use trnm_consensus_types::{
         ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind, ChainId,
@@ -11719,7 +11720,53 @@ mod tests {
             "self.insert_payload_validation_obligation(PayloadValidationRouteV0::Synced,"
         ));
         assert!(!synced_registration_body.contains("PayloadValidationRouteV0::Proposal"));
-        assert!(core_model_source.contains("pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 6;"));
+        assert!(core_model_source.contains("pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 7;"));
+        assert_eq!(
+            item_attribute_lines(
+                core_model_source,
+                "pub struct DurableValidatedBlockCommitmentsV1 {"
+            ),
+            ["#[derive(Debug, Clone, Copy, PartialEq, Eq)]"],
+            "inert durable Valid comparison gained an unreviewed derive or attribute surface"
+        );
+        let durable_commitments_body = core_model_source
+            .split_once("pub struct DurableValidatedBlockCommitmentsV1 {")
+            .expect("inert durable Valid comparison declaration")
+            .1
+            .split_once("}\n")
+            .expect("inert durable Valid comparison declaration end")
+            .0;
+        assert_eq!(
+            durable_commitments_body.trim(),
+            "block_id: BlockId,\n    logical_block_size: u64,\n    transaction_count: u32,\n    evidence_count: u32,"
+        );
+        assert!(core_model_source.contains(
+            "pub(crate) const fn from_live(commitments: ValidatedBlockCommitmentsV0) -> Self"
+        ));
+        assert_eq!(
+            item_attribute_lines(
+                core_model_source,
+                "pub enum DurablePayloadValidationResultV1 {"
+            ),
+            ["#[derive(Debug, Clone, Copy, PartialEq, Eq)]"],
+            "inert durable result gained an unreviewed derive or attribute surface"
+        );
+        assert!(!core_model_source.contains("into_live"));
+        assert!(!core_model_source.contains(
+            "impl From<DurableValidatedBlockCommitmentsV1> for ValidatedBlockCommitmentsV0"
+        ));
+        for forbidden_durable_result_surface in [
+            "Serialize for DurableValidatedBlockCommitmentsV1",
+            "Deserialize for DurableValidatedBlockCommitmentsV1",
+            "BorshSerialize for DurableValidatedBlockCommitmentsV1",
+            "BorshDeserialize for DurableValidatedBlockCommitmentsV1",
+            "Serialize for DurablePayloadValidationResultV1",
+            "Deserialize for DurablePayloadValidationResultV1",
+            "BorshSerialize for DurablePayloadValidationResultV1",
+            "BorshDeserialize for DurablePayloadValidationResultV1",
+        ] {
+            assert!(!core_model_source.contains(forbidden_durable_result_surface));
+        }
         assert_eq!(
             item_attribute_lines(
                 core_model_source,
@@ -11762,13 +11809,13 @@ mod tests {
             .0;
         assert_eq!(
             durable_completion_body.trim(),
-            "route: PayloadValidationRouteV0,\n    id: ValidationId,\n    result: PayloadValidationResult,\n    first_recorded_revision: u64,"
+            "route: PayloadValidationRouteV0,\n    id: ValidationId,\n    result: DurablePayloadValidationResultV1,\n    first_recorded_revision: u64,"
         );
         assert!(core_model_source.contains(
-            "pub(crate) const fn new(\n        route: PayloadValidationRouteV0,\n        id: ValidationId,\n        result: PayloadValidationResult,\n        first_recorded_revision: u64,"
+            "pub(crate) const fn new(\n        route: PayloadValidationRouteV0,\n        id: ValidationId,\n        result: DurablePayloadValidationResultV1,\n        first_recorded_revision: u64,"
         ));
         assert!(!core_model_source.contains(
-            "pub const fn new(\n        route: PayloadValidationRouteV0,\n        id: ValidationId,\n        result: PayloadValidationResult,"
+            "pub const fn new(\n        route: PayloadValidationRouteV0,\n        id: ValidationId,\n        result: DurablePayloadValidationResultV1,"
         ));
         assert!(!core_implementation_source.contains("resolved_validations"));
         assert!(core_implementation_source.contains(
@@ -16750,7 +16797,7 @@ mod tests {
                     .expect("Core records the exact invalid completion before release");
                 assert_eq!(
                     completion.result(),
-                    PayloadValidationResult::DeterministicallyInvalid
+                    DurablePayloadValidationResultV1::DeterministicallyInvalid
                 );
                 assert_eq!(
                     completion.first_recorded_revision(),
@@ -17112,7 +17159,8 @@ mod tests {
             .any(|completion| {
                 completion.route() == PayloadValidationRouteV0::Proposal
                     && completion.id() == expected_id
-                    && completion.result() == PayloadValidationResult::DeterministicallyInvalid
+                    && completion.result()
+                        == DurablePayloadValidationResultV1::DeterministicallyInvalid
             }));
 
         let driver = NativeValidationCallbackDriverV0::new_for_test_v0(
