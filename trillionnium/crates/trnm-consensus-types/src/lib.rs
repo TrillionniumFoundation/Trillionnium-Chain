@@ -50,16 +50,19 @@ pub use canonical::CanonicalSignable;
 pub use certificate::{QuorumCertificate, TimeoutCertificate};
 pub use cev0_decode::{
     decode_application_payload_v0_exact, decode_application_payload_v0_exact_for_root_binding,
-    decode_block_header_v0_exact, decode_checkpoint_finality_proof_v0_exact,
-    decode_consensus_parameters_v0_exact, decode_double_vote_evidence_v0_exact,
-    decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_block_header_v0_exact, decode_certified_header_v0_exact_with_trusted_genesis,
+    decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
+    decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
-    decode_handoff_certificate_v0_exact, decode_handoff_descriptor_v0_exact,
-    decode_next_epoch_commitment_v0_exact, decode_ordinary_certified_header_v0_exact,
-    decode_ordinary_qc_v0_exact, decode_ordinary_timeout_certificate_v0_exact,
-    decode_validator_set_v0_exact, DecodeError, DecodeErrorCode, DecodeResult,
-    EpochAnchorAuthorizationKernelV0, MAX_CEV0_CERTIFICATE_ITEMS,
-    MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES, MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    decode_finality_proof_v0_exact_with_trusted_genesis, decode_handoff_certificate_v0_exact,
+    decode_handoff_descriptor_v0_exact, decode_next_epoch_commitment_v0_exact,
+    decode_ordinary_certified_header_v0_exact, decode_ordinary_qc_v0_exact,
+    decode_ordinary_timeout_certificate_v0_exact,
+    decode_qc_reference_v0_exact_with_trusted_genesis,
+    decode_timeout_certificate_v0_exact_with_trusted_genesis, decode_validator_set_v0_exact,
+    DecodeError, DecodeErrorCode, DecodeResult, EpochAnchorAuthorizationKernelV0,
+    MAX_CEV0_CERTIFICATE_ITEMS, MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES,
+    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
 };
 #[doc(hidden)]
 pub use commit::CommitProof;

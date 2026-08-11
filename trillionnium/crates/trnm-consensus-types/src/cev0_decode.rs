@@ -22,7 +22,7 @@ use crate::{
     ChainId, CommonConsensusContextV0, ConsensusParametersHash, ConsensusParametersV0,
     ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch,
     EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0,
-    ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash,
+    ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0,
     HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, Height, LeaderSchedule,
     MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
     PayloadDigest, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
@@ -728,6 +728,35 @@ pub fn decode_ordinary_qc_v0_exact(
     admit_raw_ordinary_qc(raw, validator_set)
 }
 
+/// Decodes one complete QC reference in an authenticated epoch-zero context.
+///
+/// Ordinary, positive-view QCs retain the exact admission rules of
+/// [`decode_ordinary_qc_v0_exact`]. The only synthetic value admitted by this
+/// entry point is the one empty-signature `GenesisQcV0` reconstructed from
+/// `epoch_zero_validator_set`. Peer bytes must match that trusted value field
+/// for field and must canonically re-encode byte-for-byte. Empty-signature
+/// splices and epoch-anchor QCs remain unauthorized.
+pub fn decode_qc_reference_v0_exact_with_trusted_genesis(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+) -> DecodeResult<QcReferenceV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let reference = admit_raw_qc_reference_with_trusted_genesis(
+        raw,
+        epoch_zero_validator_set,
+        &trusted_genesis,
+    )?;
+    require_exact_canonical_reencoding(
+        bytes,
+        try_canonical_bytes(|encoder| reference.encode_cev0(encoder)),
+        0,
+    )?;
+    Ok(reference)
+}
+
 /// Decodes one complete TC whose referenced QCs are all ordinary QCs.
 ///
 /// The synthetic-anchor form requires separate trusted authorization and is
@@ -740,6 +769,29 @@ pub fn decode_ordinary_timeout_certificate_v0_exact(
     let raw = parse_raw_timeout_certificate(&mut cursor)?;
     cursor.finish()?;
     admit_raw_timeout_certificate(raw, validator_set)
+}
+
+/// Decodes one complete epoch-zero TC with trusted GenesisQC references.
+///
+/// Every referenced QC is admitted either as an ordinary QC or as the exact
+/// `GenesisQcV0` derived from `epoch_zero_validator_set`. Epoch-anchor and
+/// other empty-signature forms are rejected. The returned value must
+/// canonically re-encode to the supplied exact root.
+pub fn decode_timeout_certificate_v0_exact_with_trusted_genesis(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+) -> DecodeResult<TimeoutCertificateV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_timeout_certificate(&mut cursor)?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let certificate = admit_raw_timeout_certificate_with_reference_admission(
+        raw,
+        epoch_zero_validator_set,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
+    )?;
+    require_exact_canonical_reencoding(bytes, certificate.try_cev0_bytes(), 0)?;
+    Ok(certificate)
 }
 
 /// Decodes one complete canonical application-payload value.
@@ -1206,6 +1258,34 @@ pub fn decode_ordinary_certified_header_v0_exact(
     )
 }
 
+/// Decodes one complete epoch-zero certified header with trusted GenesisQC.
+///
+/// The proposal justify and optional TC references may contain the exact
+/// empty-signature GenesisQC derived from `epoch_zero_validator_set`.
+/// Certifying QCs remain ordinary, and epoch-anchor authorization remains
+/// outside this entry point. The complete semantic value must canonically
+/// re-encode byte-for-byte to the supplied exact root.
+pub fn decode_certified_header_v0_exact_with_trusted_genesis(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+) -> DecodeResult<CertifiedHeaderV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_ordinary_certified_header(&mut cursor)?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let certified = admit_raw_certified_header_with_reference_admission(
+        raw,
+        epoch_zero_validator_set,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
+    )?;
+    require_exact_canonical_reencoding(bytes, certified.try_cev0_bytes(), 0)?;
+    Ok(certified)
+}
+
 /// Decodes one complete same-epoch `FinalityProofV0` against authenticated
 /// validator/parameter context.
 ///
@@ -1229,6 +1309,34 @@ pub fn decode_finality_proof_v0_exact(
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
     )
+}
+
+/// Decodes one complete epoch-zero finality proof with trusted GenesisQC.
+///
+/// This extends [`decode_finality_proof_v0_exact`] only enough to admit the
+/// trusted genesis justification (and a TC that references it) in the exact
+/// protocol positions allowed by `CertifiedHeaderV0`. It cannot reconstruct
+/// epoch-anchor authorization. The complete proof must canonically re-encode
+/// byte-for-byte to the supplied exact root.
+pub fn decode_finality_proof_v0_exact_with_trusted_genesis(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+) -> DecodeResult<FinalityProofV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let proof = admit_raw_finality_proof_with_reference_admission(
+        raw,
+        epoch_zero_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
+    )?;
+    require_exact_canonical_reencoding(bytes, proof.try_cev0_bytes(), 0)?;
+    Ok(proof)
 }
 
 /// Decodes the exact old-set checkpoint/two-seal finality kernel.
@@ -1318,6 +1426,22 @@ fn admit_raw_ordinary_certified_header(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_parent_timestamp_ms: u64,
 ) -> DecodeResult<CertifiedHeaderV0> {
+    admit_raw_certified_header_with_reference_admission(
+        raw,
+        validator_set,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+        QcReferenceAdmissionV0::OrdinaryOnly,
+    )
+}
+
+fn admit_raw_certified_header_with_reference_admission(
+    raw: RawOrdinaryCertifiedHeader<'_>,
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+    reference_admission: QcReferenceAdmissionV0<'_>,
+) -> DecodeResult<CertifiedHeaderV0> {
     let object_offset = raw.object_offset;
     let proposer_offset = raw.header.proposer_id.length_offset;
     let header = admit_raw_block_header(raw.header)?;
@@ -1345,15 +1469,21 @@ fn admit_raw_ordinary_certified_header(
     )
     .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidFinalityProof, object_offset))?;
 
-    let justify_qc = admit_raw_ordinary_qc(raw.justify_qc, validator_set)?;
+    let justify_qc = admit_raw_qc_reference(raw.justify_qc, validator_set, reference_admission)?;
     let timeout_certificate = raw
         .timeout_certificate
-        .map(|certificate| admit_raw_timeout_certificate(certificate, validator_set))
+        .map(|certificate| {
+            admit_raw_timeout_certificate_with_reference_admission(
+                certificate,
+                validator_set,
+                reference_admission,
+            )
+        })
         .transpose()?;
     let certifying_qc = admit_raw_ordinary_qc(raw.certifying_qc, validator_set)?;
     CertifiedHeaderV0::new(
         header,
-        QcReferenceV0::ordinary(justify_qc),
+        justify_qc,
         timeout_certificate,
         None,
         raw.proposer_signature,
@@ -1407,6 +1537,22 @@ fn admit_raw_finality_proof(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_finalized_parent_timestamp_ms: u64,
 ) -> DecodeResult<FinalityProofV0> {
+    admit_raw_finality_proof_with_reference_admission(
+        raw,
+        active_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+        QcReferenceAdmissionV0::OrdinaryOnly,
+    )
+}
+
+fn admit_raw_finality_proof_with_reference_admission(
+    raw: RawCheckpointFinalityProof<'_>,
+    active_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+    reference_admission: QcReferenceAdmissionV0<'_>,
+) -> DecodeResult<FinalityProofV0> {
     require_schema_v0(raw.schema_version, raw.object_offset)?;
     if raw.genesis_hash.is_zero() {
         return Err(DecodeError::new(
@@ -1442,25 +1588,28 @@ fn admit_raw_finality_proof(
         ));
     }
 
-    let finalized_block = admit_raw_ordinary_certified_header(
+    let finalized_block = admit_raw_certified_header_with_reference_admission(
         raw.finalized_block,
         active_validator_set,
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
+        reference_admission,
     )?;
     let child_parent_timestamp_ms = finalized_block.header().timestamp_ms();
-    let child = admit_raw_ordinary_certified_header(
+    let child = admit_raw_certified_header_with_reference_admission(
         raw.child,
         active_validator_set,
         consensus_parameters,
         child_parent_timestamp_ms,
+        reference_admission,
     )?;
     let grandchild_parent_timestamp_ms = child.header().timestamp_ms();
-    let grandchild = admit_raw_ordinary_certified_header(
+    let grandchild = admit_raw_certified_header_with_reference_admission(
         raw.grandchild,
         active_validator_set,
         consensus_parameters,
         grandchild_parent_timestamp_ms,
+        reference_admission,
     )?;
     let proof = FinalityProofV0::new(
         finalized_block,
@@ -2183,9 +2332,42 @@ fn parse_raw_timeout_certificate<'a>(
     })
 }
 
+#[derive(Clone, Copy)]
+enum QcReferenceAdmissionV0<'a> {
+    OrdinaryOnly,
+    TrustedGenesis(&'a GenesisQcV0),
+}
+
+fn admit_raw_qc_reference(
+    raw: RawQc<'_>,
+    validator_set: &ValidatorSet,
+    admission: QcReferenceAdmissionV0<'_>,
+) -> DecodeResult<QcReferenceV0> {
+    match admission {
+        QcReferenceAdmissionV0::OrdinaryOnly => {
+            admit_raw_ordinary_qc(raw, validator_set).map(QcReferenceV0::ordinary)
+        }
+        QcReferenceAdmissionV0::TrustedGenesis(trusted_genesis) => {
+            admit_raw_qc_reference_with_trusted_genesis(raw, validator_set, trusted_genesis)
+        }
+    }
+}
+
 fn admit_raw_timeout_certificate(
     raw: RawTimeoutCertificate<'_>,
     validator_set: &ValidatorSet,
+) -> DecodeResult<TimeoutCertificateV0> {
+    admit_raw_timeout_certificate_with_reference_admission(
+        raw,
+        validator_set,
+        QcReferenceAdmissionV0::OrdinaryOnly,
+    )
+}
+
+fn admit_raw_timeout_certificate_with_reference_admission(
+    raw: RawTimeoutCertificate<'_>,
+    validator_set: &ValidatorSet,
+    reference_admission: QcReferenceAdmissionV0<'_>,
 ) -> DecodeResult<TimeoutCertificateV0> {
     require_schema_v0(raw.schema_version, raw.object_offset)?;
     let chain_id = admit_consensus_string(raw.chain_id)?;
@@ -2218,10 +2400,11 @@ fn admit_raw_timeout_certificate(
     }
     let mut referenced_qcs = Vec::with_capacity(raw.referenced_qcs.len());
     for referenced in raw.referenced_qcs {
-        let certificate = admit_raw_ordinary_qc(referenced, validator_set).map_err(|error| {
-            DecodeError::new(DecodeErrorCode::InvalidReferencedQc, error.byte_offset())
-        })?;
-        referenced_qcs.push(QcReferenceV0::ordinary(certificate));
+        let reference = admit_raw_qc_reference(referenced, validator_set, reference_admission)
+            .map_err(|error| {
+                DecodeError::new(DecodeErrorCode::InvalidReferencedQc, error.byte_offset())
+            })?;
+        referenced_qcs.push(reference);
     }
     validate_timeout_relations(
         raw.timed_out_view,
@@ -2352,6 +2535,68 @@ fn admit_raw_ordinary_qc(
         validator_set,
     )
     .map_err(|error| map_validation_error(error, raw.object_offset, SemanticObject::Certificate))
+}
+
+fn trusted_genesis_qc_v0(
+    epoch_zero_validator_set: &ValidatorSet,
+    byte_offset: usize,
+) -> DecodeResult<GenesisQcV0> {
+    GenesisQcV0::new(
+        epoch_zero_validator_set.genesis_hash(),
+        epoch_zero_validator_set.chain_id(),
+        epoch_zero_validator_set,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, byte_offset))
+}
+
+fn admit_raw_qc_reference_with_trusted_genesis(
+    raw: RawQc<'_>,
+    epoch_zero_validator_set: &ValidatorSet,
+    trusted_genesis: &GenesisQcV0,
+) -> DecodeResult<QcReferenceV0> {
+    if !raw.signatures.is_empty() {
+        return admit_raw_ordinary_qc(raw, epoch_zero_validator_set).map(QcReferenceV0::ordinary);
+    }
+
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    if raw.genesis_hash != trusted_genesis.genesis_hash()
+        || chain_id != trusted_genesis.chain_id()
+        || protocol_version != trusted_genesis.protocol_version()
+        || raw.epoch != trusted_genesis.epoch()
+        || raw.validator_set_id != trusted_genesis.validator_set_hash()
+        || raw.view != trusted_genesis.view()
+        || raw.height != trusted_genesis.height()
+        || raw.block_id != trusted_genesis.block_id()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnauthorizedSyntheticQc,
+            raw.object_offset,
+        ));
+    }
+    trusted_genesis
+        .matches_trusted_set(epoch_zero_validator_set)
+        .map_err(|_| {
+            DecodeError::new(DecodeErrorCode::UnauthorizedSyntheticQc, raw.object_offset)
+        })?;
+    Ok(QcReferenceV0::genesis_anchor(trusted_genesis.clone()))
+}
+
+fn require_exact_canonical_reencoding(
+    supplied: &[u8],
+    canonical: crate::Result<Vec<u8>>,
+    byte_offset: usize,
+) -> DecodeResult<()> {
+    let canonical =
+        canonical.map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, byte_offset))?;
+    if canonical.as_slice() != supplied {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            byte_offset,
+        ));
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -3425,6 +3670,169 @@ mod tests {
         let mut references = vec![QcReferenceV0::ordinary(low), QcReferenceV0::ordinary(high)];
         references.sort_by_key(QcReferenceV0::id);
         TimeoutCertificateV0::new(View::new(9), entries, references, selected, set).unwrap()
+    }
+
+    fn trusted_genesis_set(parameters: &ConsensusParametersV0) -> ValidatorSet {
+        ValidatorSet::new(
+            GenesisHash::new([71; 32]),
+            ChainId::new("trnm-trusted-genesis-decoder").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            vec![
+                validator(1, 1),
+                validator(2, 1),
+                validator(3, 1),
+                validator(4, 1),
+            ],
+        )
+        .unwrap()
+    }
+
+    fn trusted_genesis_reference(set: &ValidatorSet) -> QcReferenceV0 {
+        QcReferenceV0::genesis_anchor(
+            GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap(),
+        )
+    }
+
+    fn qc_reference_bytes(reference: &QcReferenceV0) -> Vec<u8> {
+        try_canonical_bytes(|encoder| reference.encode_cev0(encoder)).unwrap()
+    }
+
+    fn trusted_genesis_timeout(set: &ValidatorSet) -> TimeoutCertificateV0 {
+        let reference = trusted_genesis_reference(set);
+        let high_qc = reference.qc_ref();
+        let entries = set.validators()[..3]
+            .iter()
+            .map(|validator| {
+                TimeoutEntryV0::new(
+                    validator.id(),
+                    high_qc,
+                    Signature64::from_array([validator.id().as_bytes()[0]; SIGNATURE_BYTES]),
+                )
+                .unwrap()
+            })
+            .collect();
+        TimeoutCertificateV0::new(
+            View::new(2),
+            entries,
+            vec![reference.clone()],
+            reference.id(),
+            set,
+        )
+        .unwrap()
+    }
+
+    fn trusted_genesis_header(
+        set: &ValidatorSet,
+        view: u64,
+        height: u64,
+        parent_id: BlockId,
+        timestamp_ms: u64,
+    ) -> BlockHeader {
+        let proposer_index = usize::try_from((view - 1) % set.validators().len() as u64).unwrap();
+        let root_seed = u8::try_from(height).unwrap();
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(height),
+            BlockKind::Regular,
+            parent_id,
+            set.validators()[proposer_index].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([root_seed; 32]),
+            StateRoot::new([root_seed.wrapping_add(1); 32]),
+            ReceiptsRoot::new([root_seed.wrapping_add(2); 32]),
+            EvidenceRoot::new([root_seed.wrapping_add(3); 32]),
+            timestamp_ms,
+            None,
+        )
+        .unwrap()
+    }
+
+    fn trusted_genesis_certified(
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        header: BlockHeader,
+        justify_qc: QcReferenceV0,
+        timeout_certificate: Option<TimeoutCertificateV0>,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> CertifiedHeaderV0 {
+        let certifying_qc = qc_for_block(
+            set,
+            header.view().get(),
+            header.height().get(),
+            header.id(),
+            &[0, 1, 2],
+        );
+        CertifiedHeaderV0::new(
+            header,
+            justify_qc,
+            timeout_certificate,
+            None,
+            Signature64::from_array([91; SIGNATURE_BYTES]),
+            certifying_qc,
+            set,
+            None,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        )
+        .unwrap()
+    }
+
+    fn trusted_genesis_finality_fixture(
+    ) -> (ValidatorSet, ConsensusParametersV0, u64, FinalityProofV0) {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = trusted_genesis_set(&parameters);
+        let authenticated_genesis_timestamp_ms = 100;
+        let first_header = trusted_genesis_header(
+            &set,
+            1,
+            1,
+            BlockId::new(*set.genesis_hash().as_bytes()),
+            101,
+        );
+        let first = trusted_genesis_certified(
+            &set,
+            &parameters,
+            first_header,
+            trusted_genesis_reference(&set),
+            None,
+            authenticated_genesis_timestamp_ms,
+        );
+        let second_header = trusted_genesis_header(&set, 2, 2, first.header().id(), 102);
+        let second = trusted_genesis_certified(
+            &set,
+            &parameters,
+            second_header,
+            QcReferenceV0::ordinary(first.certifying_qc().clone()),
+            None,
+            first.header().timestamp_ms(),
+        );
+        let third_header = trusted_genesis_header(&set, 3, 3, second.header().id(), 103);
+        let third = trusted_genesis_certified(
+            &set,
+            &parameters,
+            third_header,
+            QcReferenceV0::ordinary(second.certifying_qc().clone()),
+            None,
+            second.header().timestamp_ms(),
+        );
+        let proof = FinalityProofV0::new(
+            first,
+            second,
+            third,
+            &set,
+            None,
+            &parameters,
+            authenticated_genesis_timestamp_ms,
+        )
+        .unwrap();
+        (set, parameters, authenticated_genesis_timestamp_ms, proof)
     }
 
     struct SampleHandoffKernel {
@@ -4642,6 +5050,249 @@ mod tests {
                 DecodeErrorCode::CountLimitExceeded
             );
         }
+    }
+
+    #[test]
+    fn trusted_genesis_qc_reference_decoder_accepts_only_the_exact_anchor() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = trusted_genesis_set(&parameters);
+        let reference = trusted_genesis_reference(&set);
+        let bytes = qc_reference_bytes(&reference);
+
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&bytes, &set).unwrap(),
+            reference
+        );
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&bytes, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let ordinary = qc(&set, 1, 1, 81, &[0, 1, 2]);
+        let ordinary_bytes = ordinary.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&ordinary_bytes, &set)
+                .unwrap()
+                .as_ordinary(),
+            Some(&ordinary)
+        );
+
+        let view_offset = qc_view_offset(&bytes);
+        let mut wrong_view = bytes.clone();
+        wrong_view[view_offset..view_offset + 8].copy_from_slice(&1u64.to_be_bytes());
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&wrong_view, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let block_offset = view_offset + 16;
+        let mut wrong_block = bytes.clone();
+        wrong_block[block_offset] ^= 1;
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&wrong_block, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let epoch_anchor = sample_handoff_kernel()
+            .authorization
+            .epoch_anchor_qc()
+            .try_cev0_bytes()
+            .unwrap();
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&epoch_anchor, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&bytes[..bytes.len() - 1], &set,)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnexpectedEof
+        );
+        let mut trailing = bytes;
+        trailing.push(0);
+        assert_eq!(
+            decode_qc_reference_v0_exact_with_trusted_genesis(&trailing, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::TrailingBytes
+        );
+    }
+
+    #[test]
+    fn trusted_genesis_timeout_decoder_reconstructs_only_exact_references() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = trusted_genesis_set(&parameters);
+        let timeout = trusted_genesis_timeout(&set);
+        let bytes = timeout.try_cev0_bytes().unwrap();
+
+        assert_eq!(
+            decode_timeout_certificate_v0_exact_with_trusted_genesis(&bytes, &set).unwrap(),
+            timeout
+        );
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&bytes, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidReferencedQc
+        );
+
+        let (_, _, first_reference) = tc_offsets(&bytes);
+        let nested_view = first_reference + qc_view_offset(&bytes[first_reference..]);
+        let mut spliced = bytes.clone();
+        spliced[nested_view..nested_view + 8].copy_from_slice(&1u64.to_be_bytes());
+        assert_eq!(
+            decode_timeout_certificate_v0_exact_with_trusted_genesis(&spliced, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidReferencedQc
+        );
+
+        let mut trailing = bytes;
+        trailing.push(0);
+        assert_eq!(
+            decode_timeout_certificate_v0_exact_with_trusted_genesis(&trailing, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::TrailingBytes
+        );
+    }
+
+    #[test]
+    fn trusted_genesis_certified_header_and_finality_proof_round_trip_exactly() {
+        fn certified_anchor_tag_offset(bytes: &[u8]) -> usize {
+            let mut cursor = Cursor::new(bytes);
+            parse_raw_block_header(&mut cursor).unwrap();
+            parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS).unwrap();
+            match cursor.u8().unwrap() {
+                0 => {}
+                1 => {
+                    parse_raw_timeout_certificate(&mut cursor).unwrap();
+                }
+                _ => unreachable!("fixture uses a canonical timeout tag"),
+            }
+            cursor.offset()
+        }
+
+        let (set, parameters, genesis_timestamp_ms, proof) = trusted_genesis_finality_fixture();
+        let first = proof.finalized_block().clone();
+        let first_bytes = first.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_certified_header_v0_exact_with_trusted_genesis(
+                &first_bytes,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap(),
+            first
+        );
+        assert_eq!(
+            decode_ordinary_certified_header_v0_exact(
+                &first_bytes,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let skipped_header = trusted_genesis_header(
+            &set,
+            3,
+            1,
+            BlockId::new(*set.genesis_hash().as_bytes()),
+            genesis_timestamp_ms + 1,
+        );
+        let skipped = trusted_genesis_certified(
+            &set,
+            &parameters,
+            skipped_header,
+            trusted_genesis_reference(&set),
+            Some(trusted_genesis_timeout(&set)),
+            genesis_timestamp_ms,
+        );
+        let skipped_bytes = skipped.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_certified_header_v0_exact_with_trusted_genesis(
+                &skipped_bytes,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap(),
+            skipped
+        );
+
+        let anchor_tag = certified_anchor_tag_offset(&skipped_bytes);
+        let mut epoch_authorization_tag = skipped_bytes.clone();
+        epoch_authorization_tag[anchor_tag] = 1;
+        assert_eq!(
+            decode_certified_header_v0_exact_with_trusted_genesis(
+                &epoch_authorization_tag,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::InvalidCheckpointTwoSeal
+        );
+        let mut unknown_authorization_tag = skipped_bytes;
+        unknown_authorization_tag[anchor_tag] = 2;
+        assert_eq!(
+            decode_certified_header_v0_exact_with_trusted_genesis(
+                &unknown_authorization_tag,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::InvalidOptionalTag
+        );
+
+        let proof_bytes = proof.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_finality_proof_v0_exact_with_trusted_genesis(
+                &proof_bytes,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap(),
+            proof
+        );
+        assert_eq!(
+            decode_finality_proof_v0_exact(&proof_bytes, &set, &parameters, genesis_timestamp_ms,)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let mut trailing = proof_bytes;
+        trailing.push(0);
+        assert_eq!(
+            decode_finality_proof_v0_exact_with_trusted_genesis(
+                &trailing,
+                &set,
+                &parameters,
+                genesis_timestamp_ms,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::TrailingBytes
+        );
     }
 
     #[test]
