@@ -9,8 +9,9 @@ Last audited: 2026-08-11
 The six production integration contracts are frozen in
 [`../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`](../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md).
 They remain implementation gaps until backed by durable code and crash tests:
-SafetyState codec/WAL, complete canonical SignIntent, a production validation
-callback driver with crash takeover, ordered ancestor finalization queue,
+SafetyState WAL/store and revision journal, complete canonical SignIntent, a
+production validation callback driver with crash takeover, ordered ancestor
+finalization queue,
 BlockId-keyed speculative overlay, and strict separation of consensus
 parameters from local backpressure. The local validation journal now has a
 narrow process-local deterministic-invalid delivery/ack integration: a
@@ -19,6 +20,17 @@ injected test sink while exercising real `Core::step`, `delivered`, exact-state
 confirmation, `acked`, and `StorageAck`. This is not a production constructor,
 durable safety sink, recovery remint, host wiring, or process-wide exactly-once
 contract.
+
+The exact bounded SafetyState representation slice is now present separately:
+record codec v0 covers epoch-zero Core SafetyState schema v7, binds the exact
+Core configuration, verifier profile, layout, and record/blob limits, and uses
+trusted-Genesis-aware exact nested CEV0 admission. Decode returns only an
+unverified inert state which must pass `Core::validate_persisted_state_v0`.
+The conservative capacity preflight moves an undersized record budget to host
+configuration admission. This closes neither the SafetyState SQLite WAL/store
+nor predecessor/revision and rollback protection, atomic fsync/readback,
+obligation replay/takeover, complete canonical SignIntent, or ordered
+finalization-queue contracts.
 
 The normative documents in this directory remain ahead of the complete Rust
 implementation. `trnm-consensus-types`, `trnm-consensus-core`, and
@@ -1087,7 +1099,7 @@ epoch prune, and Core transition remain open.
    before `delivered`, exact sink confirmation, `acked`, and `StorageAck`.
    Generic reopen/recovery cannot recreate that owner, completion-only replay
    is rejected because Core does not bind the artifact checksum, and there is
-   still no production constructor or SafetyState codec/WAL. The Core
+   still no production constructor or SafetyState WAL/store. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
    evidence-object CEV0 values are retained with the header, and the Core alone

@@ -16,8 +16,8 @@ additional private carrier types:
    expanding the carrier graph;
 4. implement durable validation jobs plus callback outbox and invoke the real
    `Core::step` path;
-5. close SafetyState codec/WAL and complete canonical SignIntent before a real
-   single-node driver;
+5. wrap the exact bounded SafetyState record codec in a durable WAL/store and
+   complete canonical SignIntent before a real single-node driver;
 6. only then add speculative execution/finalize, epoch rollover, networking
    and PoCO shadow observation in that order.
 
@@ -26,9 +26,19 @@ complete-body state/receipts-root deterministic invalidity can retain a live
 first-seal owner and traverse an app-private non-cloneable driver with a fixed
 store, owned Core, and injected test sink through real `Core::step`,
 `delivered`, exact safety-state confirmation, `acked`, and `StorageAck`.
-Because there is no production constructor, SafetyState codec/WAL, host wiring,
+Because there is no production constructor, SafetyState WAL/store, host wiring,
 recovery remint, or crash takeover, this does not complete step 4 or satisfy the
 frozen production contract.
+
+The representation half of step 5 is now implemented: SafetyState record codec
+v0 is frozen to epoch-zero Core SafetyState schema v7, exact-decodes nested
+trusted-Genesis CEV0, and binds Core configuration, verifier profile, codec
+layout, and host-selected limits. It yields only an inert unverified record;
+`Core::validate_persisted_state_v0` remains the semantic/cryptographic gate.
+The next slice is still the independent atomic SafetyState WAL/store with
+predecessor/revision and rollback protection. There is no production driver
+constructor, obligation takeover, complete canonical SignIntent, or ordered
+finalization queue.
 
 The frozen contracts are release gates. A test-only carrier or an in-memory
 simulation cannot satisfy them.
@@ -286,6 +296,14 @@ an earlier phase.
   fail-closed. This closes durable pre-effect capture, cleanup ordering, and
   callback-result idempotence, not crash replay, callback exactly-once, or
   liveness.
+  An exact bounded record codec v0 now serializes only epoch-zero schema-v7
+  SafetyState. It uses strict/canonical trusted-Genesis-aware nested CEV0,
+  binds the Core configuration, verifier profile, fixed layout, and record/blob
+  limits, and returns only an unverified inert state requiring
+  `Core::validate_persisted_state_v0`. Its conservative capacity calculation
+  must admit the active `CoreConfig` before use. It is not an atomic store or
+  revision journal and adds no fsync, rollback protection, obligation replay,
+  production recovery, complete SignIntent, or ordered finalization queue.
   After wrapper/route congruence and the object-graph claim, but before host or
   snapshot reads, historical application-store schema v6 inserts one
   `validation_jobs_v0` row under `BEGIN IMMEDIATE`. It freezes the route/full
@@ -349,7 +367,7 @@ an earlier phase.
   delivery/ack test integration, not signed-proposal-witness reconstruction,
   `Valid` artifact persistence, executable crash takeover, state apply, or
   process-wide callback exactly-once. There is no production driver
-  constructor, SafetyState codec/WAL, host/AppCore/ABCI/node wiring, generic
+  constructor, SafetyState WAL/store, host/AppCore/ABCI/node wiring, generic
   recovery remint, or process-wide Core uniqueness guarantee.
   Its only host value is borrowed
   from the initialized `AppCore`, and the canonical signer-policy preimage is
@@ -1077,7 +1095,7 @@ an earlier phase.
   has no crash-takeover lease. Schema v8 recognizes the frozen
   `delivered`/`acked` recovery forms and adds an app-private process-local
   transition writer, first-seal deterministic-invalid owner, owned-Core driver, and injected
-  test sink. It has no production constructor or SafetyState durability. The
+  test sink. It has no production constructor or SafetyState WAL durability. The
   driver uses Core's `StorageAck` cleanup barrier only after exact sink
   confirmation and application acknowledgement; the schema-v7 inert
   completion tombstone alone cannot authorize artifact replay. The
@@ -1093,7 +1111,7 @@ an earlier phase.
   application-reservation takeover, `Valid` evaluated-artifact persistence,
   mixed-body app-private `Valid` promotion, plan application/state
   persistence, production callback-outbox scheduling/delivery, durable
-  SafetyState storage, crash takeover, and ABCI wiring remain absent. In
+  SafetyState WAL storage, crash takeover, and ABCI wiring remain absent. In
   particular, the object-graph
   gate is not callback authority and the private admission branch emits no
   callback for a losing clone. The v7 consuming bridge proves only the exact
@@ -1178,7 +1196,7 @@ an earlier phase.
   takeover, or Finalize apply. Schema v8 freezes/deep-validates the later
   `delivered` and `acked` persistence shapes and adds an app-private
   process-local writer/driver using real `Core::step` and an injected test
-  safety sink. Production SafetyState durability, host wiring, recovery remint,
+  safety sink. Production SafetyState WAL durability, host wiring, recovery remint,
   and crash takeover remain the next ordered slices.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before

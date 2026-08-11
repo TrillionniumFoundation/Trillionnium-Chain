@@ -20,6 +20,7 @@ mod block_tree;
 mod core;
 mod error;
 mod model;
+mod safety_state_record;
 
 pub use crate::core::{leader_for, Core};
 pub use crate::error::{CoreError, Result};
@@ -32,6 +33,13 @@ pub use crate::model::{
     PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0,
     PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState, SignId, SignIntent,
     SignKind, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
+};
+pub use crate::safety_state_record::{
+    decode_safety_state_record_v0_exact, encode_safety_state_record_v0,
+    minimum_safety_state_record_limits_v0, safety_state_record_config_ref_v0,
+    SafetyStateRecordContextV0, SafetyStateRecordErrorV0, SafetyStateRecordLimitsV0,
+    UnverifiedSafetyStateRecordV0, SAFETY_STATE_RECORD_CODEC_VERSION_V0,
+    SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
 };
 
 #[cfg(test)]

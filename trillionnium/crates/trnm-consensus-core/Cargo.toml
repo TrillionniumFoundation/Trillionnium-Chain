@@ -12,4 +12,5 @@ protocol = "poco-bft-v0"
 wire_conformance = false
 
 [dependencies]
+sha2 = { version = "0.10", default-features = false }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

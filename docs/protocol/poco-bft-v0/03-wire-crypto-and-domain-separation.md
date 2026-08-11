@@ -519,6 +519,54 @@ recovery supplies exact-result suppression, but these local persistence rules
 establish no new transport, type-level callback capability, crash replay/
 liveness, host-delivery acknowledgement, or callback exactly-once protocol.
 
+The node-local `SafetyState` record codec v0 is frozen to epoch-zero Core
+`SafetyState` schema v7. Its exact outer layout is:
+
+```text
+magic[8] = "TRNMSF7\0"
+record_codec_version:u16 = 0
+safety_state_schema_version:u16 = 7
+config_ref[32]
+safety_state_payload:Bytes
+record_checksum[32]
+EOF
+```
+
+All integer and length fields are big-endian. The state payload follows the
+schema-v7 `SafetyState` declaration order with closed one-byte tags and
+explicitly bounded `u16` identifiers, `u32` blobs, and `u32` lists. Nested
+consensus certificates are exact CEV0. QC references, TCs, certified headers,
+and finality proofs use trusted-Genesis-aware exact admission: an empty-
+signature QC is accepted only when every field equals the unique epoch-zero
+Genesis QC derived from the bound validator set. Epoch anchors and every other
+synthetic splice are unsupported. Exact decode checks the outer checksum
+before parsing the state, requires strict EOF, and requires decode/re-encode
+byte equality. It returns `UnverifiedSafetyStateRecordV0`, never live payload-
+validation, signing, finalization, or callback authority; the decoded state
+must pass `Core::validate_persisted_state_v0` with the bound configuration and
+signature verifier before it is an authenticated inert recovery fact.
+
+The codec uses three node-local length-framed SHA-256 domains:
+
+```text
+trnm.consensus-core.safety-state-layout.v0
+trnm.consensus-core.safety-state-config.v0
+trnm.consensus-core.safety-state-record.v0
+```
+
+The layout reference binds the fixed codec description. The configuration
+reference binds the local validator, exact validator-set CEV0, exact consensus
+parameters, trusted-Genesis timestamp, Core block/message bounds, explicit
+verifier-profile reference, layout reference, and the selected record/blob
+limits. The record checksum binds the complete outer prefix through the state
+payload. The host must select limits no smaller than the codec's conservative
+`CoreConfig`-derived capacity preflight and must run that preflight before Core
+can enter a persistence barrier. These domains are local integrity/
+configuration domains, not consensus signature domains.
+The checksum does not prove freshness, predecessor continuity, rollback
+resistance, atomic persistence, or fsync. No SafetyState SQLite WAL/store or
+revision journal exists yet.
+
 Historical application-store schema v6 adds local `validation_jobs_v0` and
 `validation_callback_outbox_v0` relations; neither is a wire type or peer
 authority. Before any host/snapshot read, one `BEGIN IMMEDIATE` transaction
@@ -587,7 +635,7 @@ empty. Durable rows loaded by recovery remain corruption/congruence facts and
 cannot mint signed-proposal or Core callback authority. The writable invalid
 delivery/ack chain is only a process-local real-Core integration exercised
 with an injected test sink: there is no production driver constructor,
-SafetyState codec/WAL, host/AppCore/ABCI/node wiring, recovery remint, takeover,
+SafetyState WAL/store, host/AppCore/ABCI/node wiring, recovery remint, takeover,
 process-wide Core uniqueness, or exactly-once authority.
 
 The exact process-local integrity labels used by this foundation are:
@@ -605,11 +653,18 @@ trnm.consensus-app.validation-artifact.v0           // hash_domain
 trnm.consensus-app.validation-callback-payload.v0   // hash_domain
 trnm.consensus-app.validation-callback-idempotency.v0 // hash_domain
 trnm.consensus-app.validation-callback-outbox-row.v0  // hash_domain
+trnm.consensus-core.safety-state-layout.v0             // hash_domain
+trnm.consensus-core.safety-state-config.v0             // hash_domain
+trnm.consensus-core.safety-state-record.v0             // hash_domain
 ```
 
 These are node-local integrity/congruence labels, not consensus signature or
 wire-object domains. The v7 artifact/callback records and the v8 delivery-row
-state binding use these labels only as local corruption and congruence checks.
+state binding use the application labels only as local corruption and
+congruence checks. The three Core labels bind the exact epoch-zero schema-v7
+SafetyState codec layout, its trusted configuration/profile/limits, and one
+canonical record respectively; they provide no WAL freshness or rollback
+authority.
 The artifact and callback records use the fixed codec
 labels `trnm.native-validation.invalid-artifact.v0` and
 `trnm.native-validation.invalid-callback.v0`; both remain application-local
@@ -699,7 +754,7 @@ with callback-outbox intent, but its transaction does not itself call Core.
 Schema v8 adds the fixed-store/owned-Core/injected-test-sink driver and
 writable process-local delivery/ack chain described above. It maps `Proposal`
 only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but
-does not supply production SafetyState durability or recovery authority. The
+does not supply production SafetyState WAL durability or recovery authority. The
 `Valid` validation-time artifact/outbox boundary remains open. The distinct Finalize-
 time atomic boundary still must revalidate exact authority and atomically
 couple JMT/domain apply, root/native-head persistence, head advancement, and

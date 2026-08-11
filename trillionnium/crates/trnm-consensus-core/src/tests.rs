@@ -508,6 +508,40 @@ fn configured_core_with_parameters(parameters: ConsensusParametersV0) -> (CoreCo
     (config, core)
 }
 
+const SAFETY_STATE_RECORD_TEST_PROFILE_REF: [u8; 32] = [0x71; 32];
+
+fn safety_state_record_test_limits() -> SafetyStateRecordLimitsV0 {
+    SafetyStateRecordLimitsV0::new(64 * 1024 * 1024, 16 * 1024 * 1024)
+        .expect("valid safety-state record test limits")
+}
+
+fn roundtrip_safety_state_record(config: &CoreConfig, state: &SafetyState) -> SafetyState {
+    let context = SafetyStateRecordContextV0::new(
+        config,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+    )
+    .expect("capacity-compatible safety-state record context");
+    let encoded = encode_safety_state_record_v0(state, &context)
+        .expect("the Core-produced SafetyState has an exact durable encoding");
+    let decoded = decode_safety_state_record_v0_exact(&encoded, &context)
+        .expect("the exact durable SafetyState record decodes");
+    assert_eq!(decoded.state(), state);
+    assert_eq!(
+        encode_safety_state_record_v0(decoded.state(), &context)
+            .expect("the decoded SafetyState re-encodes"),
+        encoded,
+        "the durable record must be byte-canonical"
+    );
+    decoded.state().clone()
+}
+
+fn assert_safety_state_record_roundtrip_and_validate(config: &CoreConfig, state: &SafetyState) {
+    let decoded = roundtrip_safety_state_record(config, state);
+    Core::validate_persisted_state_v0(config, &decoded, &RootSignatures)
+        .expect("the decoded record remains a semantically valid inert SafetyState");
+}
+
 fn assert_rejected_without_state_change(core: &mut Core, input: Input) {
     let before = core.clone();
     assert!(matches!(
@@ -801,7 +835,11 @@ fn validation_request_freezes_the_exact_speculative_parent_header() {
     let effects = core
         .step(Input::Proposal(Box::new(child)), &RootSignatures)
         .expect("speculative child accepted");
-    let effects = release_persisted_effects(&mut core, effects);
+    let (barrier, durable_child) = persistence_effect(&effects);
+    assert_safety_state_record_roundtrip_and_validate(&config, &durable_child);
+    let effects = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("exact-parent validation obligation persisted");
     let request = effects
         .iter()
         .find_map(|effect| match effect {
@@ -823,7 +861,7 @@ fn validation_request_freezes_the_exact_speculative_parent_header() {
 
 #[test]
 fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
-    let (_config, mut direct_core) = configured_core();
+    let (direct_config, mut direct_core) = configured_core();
     let set = direct_core.config().validator_set().clone();
     let proposed = proposal(&set, genesis_qc(&set), 1, b"route-bound request");
 
@@ -836,6 +874,7 @@ fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
     )));
     let (barrier, durable_direct) = persistence_effect(&effects);
     assert_eq!(durable_direct.payload_validation_obligations().len(), 1);
+    assert_safety_state_record_roundtrip_and_validate(&direct_config, &durable_direct);
     let effects = direct_core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("direct request released after persistence");
@@ -893,7 +932,7 @@ fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
         }
     }
 
-    let (_config, mut synced_core) = configured_core();
+    let (synced_config, mut synced_core) = configured_core();
     let effects = synced_core
         .step(Input::SyncedProposal(Box::new(proposed)), &RootSignatures)
         .expect("synced proposal accepted");
@@ -903,6 +942,7 @@ fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
     )));
     let (barrier, durable_synced) = persistence_effect(&effects);
     assert_eq!(durable_synced.payload_validation_obligations().len(), 1);
+    assert_safety_state_record_roundtrip_and_validate(&synced_config, &durable_synced);
     let effects = synced_core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("synced request released after persistence");
@@ -1006,7 +1046,7 @@ fn payload_validation_request_clones_share_exactly_one_process_local_claim() {
 
 #[test]
 fn distinct_payload_validation_generations_claim_independently() {
-    let (_config, mut core) = configured_core();
+    let (config, mut core) = configured_core();
     let set = core.config().validator_set().clone();
     let proposed = proposal(&set, genesis_qc(&set), 1, b"independent generations");
 
@@ -1028,6 +1068,17 @@ fn distinct_payload_validation_generations_claim_independently() {
         .expect("first generation retired as unavailable");
     let (barrier, retired) = persistence_effect(&effects);
     assert!(retired.payload_validation_obligations().is_empty());
+    assert_eq!(
+        retired
+            .payload_validation_completions()
+            .iter()
+            .find(|completion| completion.id() == first_id)
+            .expect("Unavailable completion is durable")
+            .result(),
+        DurablePayloadValidationResultV1::Unavailable
+    );
+    assert_eq!(retired.payload_terminal_result(first_id.block_id()), None);
+    assert_safety_state_record_roundtrip_and_validate(&config, &retired);
     assert!(core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("first generation cleanup became durable")
@@ -1640,7 +1691,7 @@ fn busy_gate_precedes_peer_authentication() {
 
 #[test]
 fn vote_signing_is_persist_ack_sign_verify_broadcast() {
-    let (_config, mut core) = configured_core();
+    let (config, mut core) = configured_core();
     let set = core.config().validator_set();
     let proposal = proposal(set, genesis_qc(set), 1, b"one");
     let effects = core
@@ -1661,6 +1712,23 @@ fn vote_signing_is_persist_ack_sign_verify_broadcast() {
         .expect("valid payload accepted");
     let (barrier, persisted) = persistence_effect(&effects);
     assert!(persisted.pending_sign().is_some());
+    let completion = persisted
+        .payload_validation_completions()
+        .iter()
+        .find(|completion| completion.id() == validation)
+        .expect("Valid completion is durable");
+    let commitments = completion
+        .result()
+        .commitments()
+        .expect("Valid completion retains inert comparison facts");
+    assert_eq!(commitments.block_id(), validation.block_id());
+    assert!(commitments.logical_block_size() > 0);
+    assert_eq!(commitments.transaction_count(), 1);
+    assert_eq!(
+        persisted.payload_terminal_result(validation.block_id()),
+        Some(PayloadTerminalResult::Valid)
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &persisted);
     assert!(matches!(
         core.step(
             Input::LocalTimeout {
@@ -1705,7 +1773,7 @@ fn vote_signing_is_persist_ack_sign_verify_broadcast() {
 
 #[test]
 fn timeout_signing_uses_the_same_durable_barrier() {
-    let (_config, mut core) = configured_core();
+    let (config, mut core) = configured_core();
     let effects = core
         .step(
             Input::LocalTimeout {
@@ -1715,7 +1783,8 @@ fn timeout_signing_uses_the_same_durable_barrier() {
             &RootSignatures,
         )
         .expect("timeout accepted");
-    let (barrier, _) = persistence_effect(&effects);
+    let (barrier, persisted) = persistence_effect(&effects);
+    assert_safety_state_record_roundtrip_and_validate(&config, &persisted);
     let request = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("timeout state durable");
@@ -1827,7 +1896,7 @@ fn synthetic_genesis_bootstraps_but_signed_ordinary_view_zero_cannot_be_construc
 
 #[test]
 fn genesis_anchor_accepts_view_one_and_an_exact_tc_authorized_skipped_view() {
-    let (_config, mut view_one_core) = configured_core();
+    let (view_one_config, mut view_one_core) = configured_core();
     let set = view_one_core.config().validator_set().clone();
     let view_one = proposal(&set, genesis_qc(&set), 1, b"view one");
     let effects = view_one_core
@@ -1835,8 +1904,9 @@ fn genesis_anchor_accepts_view_one_and_an_exact_tc_authorized_skipped_view() {
         .expect("view-one Genesis proposal accepted");
     let (_barrier, state) = persistence_effect(&effects);
     assert_eq!(state.current_view(), View::new(1));
+    assert_safety_state_record_roundtrip_and_validate(&view_one_config, &state);
 
-    let (_config, mut skipped_core) = configured_core();
+    let (skipped_config, mut skipped_core) = configured_core();
     let skipped = timeout_proposal(
         &set,
         timeout_certificate(&set, 8, genesis_qc(&set)),
@@ -1849,11 +1919,12 @@ fn genesis_anchor_accepts_view_one_and_an_exact_tc_authorized_skipped_view() {
     assert_eq!(state.current_view(), View::new(9));
     assert!(state.high_qc().as_synthetic().is_some());
     assert!(state.locked_qc().as_synthetic().is_some());
+    assert_safety_state_record_roundtrip_and_validate(&skipped_config, &state);
 }
 
 #[test]
 fn a_qc_never_finalizes_without_a_complete_verified_three_chain() {
-    let (_config, mut core) = configured_core();
+    let (config, mut core) = configured_core();
     let set = core.config().validator_set().clone();
     let genesis = genesis_qc(&set);
 
@@ -1887,6 +1958,7 @@ fn a_qc_never_finalizes_without_a_complete_verified_three_chain() {
     let (barrier, state) = persistence_effect(&effects);
     assert_eq!(state.finalized().block_id(), committed_id);
     assert!(state.pending_finalize().is_some());
+    assert_safety_state_record_roundtrip_and_validate(&config, &state);
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("commit state durable");
@@ -2374,6 +2446,7 @@ fn standalone_qc_backlog_survives_crash_and_advances_without_preemption() {
             .collect::<Vec<_>>(),
         vec![second_qc.id()]
     );
+    assert_safety_state_record_roundtrip_and_validate(&config, &durable_backlog);
 
     // The storage write completed, but the process crashed before observing
     // its acknowledgement. Recovery must reissue the exact immutable active
@@ -2770,6 +2843,7 @@ fn proposal_carried_multi_ref_tc_persists_complete_crash_recoverable_sync() {
     assert_eq!(pending.selected_high_qc().id(), selected_qc.id());
     assert_eq!(durable.current_view(), View::new(5));
     assert!(durable.pending_standalone_qc_sync().is_none());
+    assert_safety_state_record_roundtrip_and_validate(&config, &durable);
     assert!(matches!(
         core.step(Input::StorageAck { barrier }, &RootSignatures)
             .expect("complete TC persists before requesting its first dependency")
@@ -3356,6 +3430,7 @@ fn conflicting_terminal_callback_clears_the_finalization_vote_candidate() {
         halted.safety_halt(),
         Some(SafetyHalt::ConflictingPayloadValidation { .. })
     ));
+    assert_safety_state_record_roundtrip_and_validate(&config, &halted);
     assert!(matches!(
         core.step(Input::StorageAck { barrier }, &RootSignatures)
             .expect("the halt is released only after persistence")
@@ -4189,6 +4264,16 @@ fn uncertified_invalid_payload_halts_only_when_a_qc_later_references_it() {
         terminal_state.payload_terminal_result(proposed.block().id()),
         Some(PayloadTerminalResult::DeterministicallyInvalid)
     );
+    assert_eq!(
+        terminal_state
+            .payload_validation_completions()
+            .iter()
+            .find(|completion| completion.id() == id)
+            .expect("deterministically-invalid completion is durable")
+            .result(),
+        DurablePayloadValidationResultV1::DeterministicallyInvalid
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &terminal_state);
     assert!(core
         .step(
             Input::QuorumCertificate(certificate.clone()),
@@ -4240,6 +4325,7 @@ fn uncertified_invalid_payload_halts_only_when_a_qc_later_references_it() {
         }
         other => panic!("unexpected payload halt: {other:?}"),
     }
+    assert_safety_state_record_roundtrip_and_validate(&config, &halted);
     assert!(matches!(
         recovered
             .step(Input::StorageAck { barrier }, &RootSignatures)
@@ -4416,6 +4502,11 @@ fn recovered_invalid_fact_rejects_a_vote_outbox_without_a_durable_halt() {
         vote_state.pending_finalize(),
         None,
     );
+    let decoded = roundtrip_safety_state_record(&config, &tampered);
+    assert!(matches!(
+        Core::validate_persisted_state_v0(&config, &decoded, &RootSignatures),
+        Err(CoreError::InvalidRecovery(_))
+    ));
     assert!(matches!(
         Core::recover(config, tampered, &RootSignatures),
         Err(CoreError::InvalidRecovery(_))
@@ -4904,6 +4995,12 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
     assert_eq!(base.result(), DurablePayloadValidationResultV1::Unavailable);
 
     let assert_invalid = |label: &str, state: SafetyState, message: &'static str| {
+        let decoded = roundtrip_safety_state_record(&config, &state);
+        assert_eq!(
+            Core::validate_persisted_state_v0(&config, &decoded, &RootSignatures),
+            Err(CoreError::InvalidRecovery(message)),
+            "{label}: exact decoding must not upgrade a checksum-consistent splice"
+        );
         assert_eq!(
             Core::recover(config.clone(), state, &RootSignatures),
             Err(CoreError::InvalidRecovery(message)),
@@ -5684,6 +5781,7 @@ fn unavailable_tc_target_retries_then_invalid_halts_with_the_full_tc() {
             .certificate_id(),
         certificate.id()
     );
+    assert_safety_state_record_roundtrip_and_validate(&config, &retriable);
     assert!(matches!(
         core.step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("source cleanup is durable before retrying the TC target")
@@ -5745,6 +5843,7 @@ fn unavailable_tc_target_retries_then_invalid_halts_with_the_full_tc() {
         }
         other => panic!("unexpected TC payload halt: {other:?}"),
     }
+    assert_safety_state_record_roundtrip_and_validate(&config, &halted);
     assert!(matches!(
         core.step(
             Input::StorageAck {
@@ -5854,6 +5953,7 @@ fn pending_tc_timeout_outbox_survives_a_crash_and_resumes_exactly() {
         Some(SignIntent::TimeoutVote { view, .. }) if *view == View::new(3)
     ));
     assert!(timeout_state.pending_tc_high_qc_sync().is_some());
+    assert_safety_state_record_roundtrip_and_validate(&config, &timeout_state);
 
     let mut after_crash = Core::recover(config, timeout_state, &RootSignatures)
         .expect("pending TC plus timeout outbox recovers");
@@ -7020,6 +7120,42 @@ fn recovery_fences_boundary_vote_inside_an_invalid_payload_halt_witness() {
 }
 
 #[test]
+fn safety_state_record_roundtrips_an_invalid_payload_pending_vote_witness() {
+    let (config, mut core) = configured_core();
+    let effects = core
+        .step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: View::new(1),
+            },
+            &RootSignatures,
+        )
+        .expect("timeout creates a positive durable revision for the halt fixture");
+    let (_barrier, state) = persistence_effect(&effects);
+    let set = config.validator_set();
+    let block_id = BlockId::new([0xE6; 32]);
+    let view = View::new(1);
+    let height = Height::new(1);
+    let signing_root = Vote::signing_root_for_set(set, view, height, block_id)
+        .expect("valid pending-vote signing root");
+    let halted = decoded_halted_state_with_invalid_reference(
+        &state,
+        view,
+        Some(view),
+        state.last_timeout_view(),
+        block_id,
+        InvalidPayloadReference::PendingVote(Box::new(SignIntent::Vote {
+            view,
+            height,
+            block_id,
+            signing_root,
+        })),
+    );
+
+    assert_safety_state_record_roundtrip_and_validate(&config, &halted);
+}
+
+#[test]
 fn conflicting_timeout_certificate_entries_produce_equivocation_evidence() {
     let (_config, mut core) = configured_core();
     let set = core.config().validator_set().clone();
@@ -7095,6 +7231,7 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
     let halt = state.safety_halt().expect("durable safety halt");
     let (halt_first, halt_second) = halt.conflicting_qcs().expect("conflicting QC halt");
     assert_ne!(halt_first.block_id(), halt_second.block_id());
+    assert_safety_state_record_roundtrip_and_validate(&config, &state);
     assert!(matches!(
         core.step(Input::StorageAck { barrier }, &RootSignatures)
             .expect("halt state durable")

@@ -538,6 +538,24 @@ is durable pre-effect capture, cleanup ordering, and result idempotence, not
 crash replay, callback exactly-once, type-level callback authority, or recovery
 liveness.
 
+Core now also has one exact bounded `SafetyState` record codec v0, frozen only
+for epoch-zero `SafetyState` schema v7. Its outer record binds the codec and
+SafetyState schema versions, one configuration reference, the exact state
+payload, and a domain-separated checksum. The configuration reference binds
+the exact Core configuration, verifier-profile reference, codec-layout
+reference, and host-selected record/blob limits. Nested QC references, timeout
+certificates, certified headers, and finality proofs use exact CEV0 admission;
+the trusted-Genesis variants accept only the unique epoch-zero Genesis QC
+derived from that bound validator set, while epoch anchors fail closed. Decode
+requires strict EOF and byte-identical canonical re-encoding and returns only
+an inert `UnverifiedSafetyStateRecordV0`; callers must still pass its state to
+`Core::validate_persisted_state_v0` for configuration, semantic, and
+cryptographic validation. A conservative limit preflight derived from
+`CoreConfig` must succeed before the context can encode or decode. This codec
+does not provide a SQLite WAL/store, revision/predecessor or rollback journal,
+atomic fsync/readback, obligation takeover, a complete durable `SignIntent`, or
+the required ordered finalization queue.
+
 After that wrapper/route check and process-local claim, and before any host or
 snapshot read, historical application-store schema v6 durably reserved one
 `validation_jobs_v0` row for `(route, full ValidationId)` under
@@ -618,7 +636,8 @@ plus a durable deterministic-invalid callback-pending record and a
 process-local, real-Core delivery/ack integration exercised with an injected
 test sink. It is not a reconstruction of the signed proposal witness, a
 durable `Valid` artifact, a production host integration, executable crash
-takeover, or a durable SafetyState codec/WAL. There is no production driver
+takeover, or a durable SafetyState WAL/store. The exact bounded record codec
+above is a representation layer only. There is no production driver
 constructor, no `AppCore`/ABCI/`trnm-node` wiring, no generic recovery remint of
 the live owner, and no process-wide Core uniqueness or callback exactly-once
 guarantee.

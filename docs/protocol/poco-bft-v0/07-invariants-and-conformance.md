@@ -771,6 +771,35 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   suppress an exact same-result replay but Core cleanup/completion MUST NOT be
   represented as type-level callback authority, host callback-outbox delivery
   acknowledgement, or callback exactly-once;
+- SafetyState record codec v0 MUST encode only epoch-zero Core `SafetyState`
+  schema v7 and MUST reject every other SafetyState schema, non-zero epoch, and
+  epoch-anchor branch; the outer record MUST bind magic, codec version zero,
+  SafetyState schema version seven, configuration reference, exact bounded
+  state payload, domain-separated record checksum, and strict EOF, and an
+  accepted decode MUST reproduce byte-identical canonical bytes;
+- nested QC references, TCs, certified headers, and finality proofs in that
+  record MUST use exact CEV0 admission; a synthetic empty-signature QC MAY be
+  accepted only when it exactly equals the trusted epoch-zero Genesis QC
+  derived from the bound validator set, while an epoch anchor or any other
+  synthetic splice MUST fail closed;
+- the record configuration reference MUST bind the local validator, exact
+  validator-set CEV0, exact consensus parameters, trusted-Genesis timestamp,
+  Core block/message bounds, an explicit verifier-profile reference, the
+  codec-layout reference, and the selected record/blob limits; creation of a
+  codec context MUST run the conservative `CoreConfig`-derived capacity
+  preflight and MUST reject limits that cannot hold every state permitted by
+  that configuration;
+- exact decode MUST yield only an inert unverified record. Before the decoded
+  state is used as an authenticated persistence fact, it MUST pass
+  `Core::validate_persisted_state_v0` with the exact bound configuration and
+  signature verifier. A checksum, canonical re-encoding, or inert `Valid`
+  completion MUST NOT mint a live payload-validation, signing, finalization,
+  callback, or obligation-replay capability;
+- SafetyState record codec v0 is not a journal: it supplies no atomic store,
+  fsync/readback evidence, predecessor chain, rollback/revision-gap detection,
+  or crash-takeover authority. A conforming production host still MUST supply
+  the independent SafetyState WAL/store and MUST NOT call `StorageAck` merely
+  because bytes encode and decode successfully;
 - historical application-store schema v6 MUST durably reserve one
   `validation_jobs_v0`
   row for `(route, full ValidationId)` after wrapper/route congruence and the
@@ -867,7 +896,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   raw job/fingerprint/checksums, v7 deterministic-invalid artifact/outbox, and
   v8 delivered/acked recovery facts MUST NOT be treated as signed-proposal
   reconstruction, JMT/terminal authority, recovery-reminted live-owner
-  authority, executable crash takeover, SafetyState codec/WAL evidence, or
+  authority, executable crash takeover, SafetyState WAL/journal evidence, or
   process-wide callback exactly-once evidence. The current writable
   delivery/ack path and real `Core::step` integration are process-local test
   boundaries only: no production driver constructor, host/AppCore/ABCI/node
@@ -1026,7 +1055,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
-  production callback-outbox scheduling/delivery and SafetyState durability,
+  production callback-outbox scheduling/delivery and SafetyState WAL durability,
   crash takeover,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
