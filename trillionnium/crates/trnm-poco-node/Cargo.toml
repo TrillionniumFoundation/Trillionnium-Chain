@@ -1,0 +1,31 @@
+[package]
+name = "trnm-poco-node"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+autobins = false
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-g1-host-scaffold"
+protocol = "poco-bft-v0"
+production_candidate = false
+production_consensus_activation = false
+incomplete = true
+effect_driver = false
+
+[[bin]]
+name = "trnm-poco-node"
+path = "src/main.rs"
+
+[dependencies]
+sha2 = "0.10"
+trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+tempfile = "3"

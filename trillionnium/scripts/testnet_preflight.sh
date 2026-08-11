@@ -94,7 +94,7 @@ if [ "$GIT_HEAD_STATE" = "attached" ] && [ -n "$CURRENT_WORKTREE_BRANCH_REF" ]; 
   fi
 fi
 
-log "start testnet preflight"
+log "start legacy local harness rehearsal (development only; no PoCO/testnet readiness decision)"
 log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_expected_worktree_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>} git_worktree_branch_ref_match=$GIT_WORKTREE_BRANCH_REF_MATCH git_status_summary=$GIT_STATUS_SUMMARY"
 
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
@@ -174,7 +174,7 @@ python3 ./scripts/v2/check_validator_config_bundle.py \
 log "workspace tests"
 cargo test --workspace --locked | tee -a "$LOG"
 
-log "single-node parallel sanity"
+log "legacy single-node parallel sanity"
 cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
@@ -198,7 +198,7 @@ if ! grep -q 'bft_round_change_backoff_total_ms=' "$ROOT/run/parallel-sanity.log
   exit 3
 fi
 
-log "bft restart recovery drill"
+log "legacy BFT restart recovery drill"
 RECOVERY_RUNS="${RECOVERY_RUNS:-1}"
 case "$RECOVERY_RUNS" in
   ''|*[!0-9]*)
@@ -258,7 +258,7 @@ cleanup_devnet() {
   fi
 }
 
-log "devnet + audit"
+log "legacy loopback devnet + local state-root audit"
 DEVNET_STARTED=0
 trap cleanup_devnet EXIT
 ./scripts/devnet_up.sh | tee -a "$LOG"
@@ -300,12 +300,24 @@ fi
 rollback_command="$rollback_command && rm -f $(printf '%q' "$latest_audit") $(printf '%q' "$latest_bench") $(printf '%q' "$latest_mixed") $(printf '%q' "$latest_profile")"
 
 cat > "$SUMMARY" <<EOF
-rust_l1_testnet_preflight
-status=GO
-result=GO
+trnm_legacy_local_harness_preflight
+artifact_schema=trnm-legacy-local-harness-preflight-v1
+status=PASS
+result=PASS
+evaluation_scope=legacy_local_harness_rehearsal
+pass_semantics=local_rehearsal_only
+readiness_decision=NOT_EVALUATED
+development_only=true
+legacy_harness=true
+loopback_local_devnet=true
+poco_bft_evaluated=false
+poco_bft_readiness=NOT_EVALUATED
+public_testnet_evaluated=false
+public_testnet_readiness=NOT_EVALUATED
+production_ready=false
 timestamp=$TS
 generated_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-truth_source=$ROOT/RELEASE_READINESS.md
+truth_source=$GIT_TOPLEVEL/RELEASE_READINESS.md
 log=$LOG
 git_toplevel=$GIT_TOPLEVEL
 git_branch=$GIT_BRANCH
@@ -340,7 +352,7 @@ EOF
 cp -f "$SUMMARY" "$OUT_DIR/go-no-go-latest.txt"
 cp -f "$LOG" "$OUT_DIR/preflight-latest.log"
 
-log "[OK] testnet preflight passed"
+log "[OK] legacy local harness rehearsal passed; PoCO/public-testnet readiness remains NOT_EVALUATED"
 log "summary: $SUMMARY"
 log "log: $LOG"
 echo "$SUMMARY"

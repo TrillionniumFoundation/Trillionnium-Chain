@@ -50,7 +50,8 @@ pub use canonical::CanonicalSignable;
 pub use certificate::{QuorumCertificate, TimeoutCertificate};
 pub use cev0_decode::{
     decode_application_payload_v0_exact, decode_application_payload_v0_exact_for_root_binding,
-    decode_block_header_v0_exact, decode_certified_header_v0_exact_with_trusted_genesis,
+    decode_block_header_v0_exact, decode_canonical_sign_intent_v0_exact,
+    decode_certified_header_v0_exact_with_trusted_genesis,
     decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
     decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
@@ -61,8 +62,8 @@ pub use cev0_decode::{
     decode_qc_reference_v0_exact_with_trusted_genesis,
     decode_timeout_certificate_v0_exact_with_trusted_genesis, decode_validator_set_v0_exact,
     DecodeError, DecodeErrorCode, DecodeResult, EpochAnchorAuthorizationKernelV0,
-    MAX_CEV0_CERTIFICATE_ITEMS, MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES,
-    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES, MAX_CEV0_CERTIFICATE_ITEMS,
+    MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES, MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
 };
 #[doc(hidden)]
 pub use commit::CommitProof;
@@ -95,7 +96,11 @@ pub use joint_handoff::{
     verify_same_version_joint_handoff_kernel_v0, JointHandoffKernelError,
     JointHandoffKernelErrorCode, JointHandoffKernelResult, JointHandoffKernelV0,
 };
-pub use message::{Proposal, ProposalJustification, QcRef, TimeoutVote, Vote};
+pub use message::{
+    CanonicalSignIntentV0, CanonicalSignPreimageV0, Proposal, ProposalJustification, QcRef,
+    SignIntentFingerprintV0, TimeoutVote, TimeoutVoteSignPreimageV0, Vote, VoteSignPreimageV0,
+    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
+};
 pub use ordered_root::{ordered_leaf_digest_v0, OrderedRootV0, RootKind};
 pub use parameters::{
     ConsensusParametersV0, ConsensusParametersV0Fields, LeaderSchedule, RolloutPhase,

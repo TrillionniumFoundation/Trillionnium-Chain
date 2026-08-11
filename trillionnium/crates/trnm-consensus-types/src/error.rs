@@ -75,6 +75,7 @@ pub enum ValidationError {
     InvalidEpochTransition(&'static str),
     InvalidJointCertificate(&'static str),
     InvalidEvidence(&'static str),
+    InvalidSignIntent(&'static str),
     InvalidCommitProof(&'static str),
     InvalidFinalityProof(&'static str),
     InvalidValidatorSet(&'static str),
@@ -180,6 +181,9 @@ impl fmt::Display for ValidationError {
                 write!(formatter, "invalid joint certificate: {reason}")
             }
             Self::InvalidEvidence(reason) => write!(formatter, "invalid evidence: {reason}"),
+            Self::InvalidSignIntent(reason) => {
+                write!(formatter, "invalid canonical sign intent: {reason}")
+            }
             Self::InvalidCommitProof(reason) => write!(formatter, "invalid commit proof: {reason}"),
             Self::InvalidFinalityProof(reason) => {
                 write!(formatter, "invalid finality proof: {reason}")

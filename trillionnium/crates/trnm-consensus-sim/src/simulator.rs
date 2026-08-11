@@ -2421,17 +2421,24 @@ impl Simulator {
                         },
                     );
                 }
-                Effect::RequestSignature {
-                    id, signing_root, ..
-                } => self.schedule_after(
-                    1,
-                    Event::Signature {
-                        node,
-                        incarnation,
-                        id,
-                        root: signing_root,
-                    },
-                ),
+                Effect::RequestSignature { intent } => {
+                    intent.validate(&self.validator_set)?;
+                    if intent.author() != self.nodes[node].validator {
+                        return Err(SimError::InvalidConfig(
+                            "sign intent author differs from simulated node",
+                        ));
+                    }
+                    let root = intent.signing_root();
+                    self.schedule_after(
+                        1,
+                        Event::Signature {
+                            node,
+                            incarnation,
+                            id: SignId::new(root),
+                            root,
+                        },
+                    );
+                }
                 Effect::Broadcast(message) => {
                     let wire = match message {
                         OutboundMessage::Vote(vote) => WireMessage::Vote(Box::new(vote)),
@@ -3378,23 +3385,27 @@ fn safety_state_trace_digest(state: &SafetyState) -> [u8; 32] {
     match state.pending_sign() {
         None => hasher.update([0]),
         Some(SignIntent::Vote {
+            authorizing_safety_revision,
             view,
             height,
             block_id,
             signing_root,
         }) => {
             hasher.update([1]);
+            hasher.update(authorizing_safety_revision.to_le_bytes());
             hasher.update(view.get().to_le_bytes());
             hasher.update(height.get().to_le_bytes());
             hasher.update(block_id.as_bytes());
             hasher.update(signing_root.as_bytes());
         }
         Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision,
             view,
             high_qc,
             signing_root,
         }) => {
             hasher.update([2]);
+            hasher.update(authorizing_safety_revision.to_le_bytes());
             hasher.update(view.get().to_le_bytes());
             hasher.update(high_qc.qc_digest().as_bytes());
             hasher.update(high_qc.epoch().get().to_le_bytes());
@@ -3456,23 +3467,27 @@ fn safety_state_trace_digest(state: &SafetyState) -> [u8; 32] {
                     hasher.update([2]);
                     match intent.as_ref() {
                         SignIntent::Vote {
+                            authorizing_safety_revision,
                             view,
                             height,
                             block_id,
                             signing_root,
                         } => {
                             hasher.update([1]);
+                            hasher.update(authorizing_safety_revision.to_le_bytes());
                             hasher.update(view.get().to_le_bytes());
                             hasher.update(height.get().to_le_bytes());
                             hasher.update(block_id.as_bytes());
                             hasher.update(signing_root.as_bytes());
                         }
                         SignIntent::TimeoutVote {
+                            authorizing_safety_revision,
                             view,
                             high_qc,
                             signing_root,
                         } => {
                             hasher.update([2]);
+                            hasher.update(authorizing_safety_revision.to_le_bytes());
                             hasher.update(view.get().to_le_bytes());
                             hasher.update(high_qc.qc_digest().as_bytes());
                             hasher.update(signing_root.as_bytes());
@@ -3669,23 +3684,25 @@ fn safety_halt_fingerprint(halt: &SafetyHalt) -> String {
                 }
                 InvalidPayloadReference::PendingVote(intent) => match intent.as_ref() {
                     SignIntent::Vote {
+                        authorizing_safety_revision,
                         view,
                         height,
                         block_id,
                         signing_root,
                     } => format!(
-                        "pending-vote:view={}:height={}:block={}:root={}",
+                        "pending-vote:revision={authorizing_safety_revision}:view={}:height={}:block={}:root={}",
                         view.get(),
                         height.get(),
                         hex_block(*block_id),
                         hex_bytes(signing_root.as_bytes())
                     ),
                     SignIntent::TimeoutVote {
+                        authorizing_safety_revision,
                         view,
                         high_qc,
                         signing_root,
                     } => format!(
-                        "pending-timeout:view={}:high-qc={}:root={}",
+                        "pending-timeout:revision={authorizing_safety_revision}:view={}:high-qc={}:root={}",
                         view.get(),
                         hex_certificate(high_qc.qc_digest()),
                         hex_bytes(signing_root.as_bytes())

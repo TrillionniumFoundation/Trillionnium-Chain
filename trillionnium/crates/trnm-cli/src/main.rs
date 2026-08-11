@@ -1,11 +1,11 @@
 use anyhow::{anyhow, bail, Result};
 use clap::{Parser, Subcommand, ValueEnum};
-use ed25519_dalek::SigningKey;
+use ed25519_dalek::{Signer, SigningKey};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     fs,
-    io::Read,
+    io::{IsTerminal, Read},
     path::{Path, PathBuf},
     process::Command as ProcCommand,
     thread,
@@ -17,12 +17,25 @@ const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY: &str = "hybrid_settlement_poco_weig
 const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY: &str = "shadow_settlement_compare_only";
 const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID: u64 = 7_351;
 const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
+const LOCAL_WALLET_WARNING: &str = "WARNING: trnm-cli local wallets are development-only plaintext keystores, not production HSM/KMS signers; never use validator or production funds here.";
+
+fn warn_development_only_adapter(surface: &str) {
+    eprintln!(
+        "WARNING: {surface} is using a command-template adapter. This adapter is development-only and is not an authenticated production node endpoint."
+    );
+}
+
+fn missing_backend(surface: &str, configuration: &str, disabled_surrogate: &str) -> anyhow::Error {
+    anyhow!(
+        "{surface} unavailable: no real endpoint/backend is configured; {disabled_surrogate} are disabled. Configure {configuration} only for a development-only command adapter, or use a production node endpoint when one is available"
+    )
+}
 
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-cli",
     version,
-    about = "Trillionnium native CLI (wallet/query/tx tooling)"
+    about = "Trillionnium development-only CLI adapter (not a production node client)"
 )]
 struct Args {
     #[command(subcommand)]
@@ -141,12 +154,14 @@ enum WalletCommand {
         #[arg(long)]
         out: Option<PathBuf>,
     },
-    /// Import private key hex into local wallet store
+    /// Import a 32-byte Ed25519 seed from a protected standard-input pipe
     Import {
         #[arg(long, default_value = "default")]
         name: String,
-        #[arg(long)]
-        private_key_hex: String,
+        #[arg(long, default_value_t = false, conflicts_with = "private_key_hex")]
+        private_key_stdin: bool,
+        #[arg(long, hide = true, conflicts_with = "private_key_stdin")]
+        private_key_hex: Option<String>,
         #[arg(long)]
         out: Option<PathBuf>,
     },
@@ -157,7 +172,7 @@ enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Sign arbitrary text with a local wallet
+    /// Sign exact UTF-8 text with Ed25519 using the development-only local wallet
     Sign {
         #[arg(long, default_value = "default")]
         name: String,
@@ -418,37 +433,28 @@ fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) 
 
     validate_non_empty_cli_field(&signer, "signer")?;
 
-    if let Some(template) = submit_consumption_receipt_template_override() {
-        let mut cmd = template;
-        cmd = tpl(
-            cmd,
-            "receipt_json_path",
-            &receipt_json.display().to_string(),
-        );
-        cmd = tpl(cmd, "receipt_json", &receipt.payload_json);
-        cmd = tpl(cmd, "task_id", &receipt.task_id.to_string());
-        cmd = tpl(cmd, "consumer_id", &receipt.consumer_id);
-        cmd = tpl(cmd, "output_hash", &receipt.output_hash);
-        cmd = tpl(cmd, "billing_window_id", &receipt.billing_window_id);
-        cmd = tpl(cmd, "consumer_nonce", &receipt.consumer_nonce.to_string());
-        cmd = tpl(cmd, "signer", &signer);
-        let tx_hash = run_template(&cmd)?;
-        emit_pending_tx_hash(&tx_hash)?;
-    } else {
-        let tx_hash = format!(
-            "0x{}",
-            hash(&[
-                "submit-consumption-receipt",
-                &receipt.task_id.to_string(),
-                &receipt.consumer_id,
-                &receipt.output_hash,
-                &receipt.billing_window_id,
-                &receipt.consumer_nonce.to_string(),
-                &signer,
-            ])
-        );
-        emit_pending_tx_hash(&tx_hash)?;
-    }
+    let mut cmd = submit_consumption_receipt_template_override().ok_or_else(|| {
+        missing_backend(
+            "consumption receipt submission",
+            "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD (or its legacy consumption alias)",
+            "synthetic pending transaction hashes",
+        )
+    })?;
+    warn_development_only_adapter("consumption receipt submission");
+    cmd = tpl(
+        cmd,
+        "receipt_json_path",
+        &receipt_json.display().to_string(),
+    );
+    cmd = tpl(cmd, "receipt_json", &receipt.payload_json);
+    cmd = tpl(cmd, "task_id", &receipt.task_id.to_string());
+    cmd = tpl(cmd, "consumer_id", &receipt.consumer_id);
+    cmd = tpl(cmd, "output_hash", &receipt.output_hash);
+    cmd = tpl(cmd, "billing_window_id", &receipt.billing_window_id);
+    cmd = tpl(cmd, "consumer_nonce", &receipt.consumer_nonce.to_string());
+    cmd = tpl(cmd, "signer", &signer);
+    let tx_hash = run_template(&cmd)?;
+    emit_pending_tx_hash(&tx_hash)?;
 
     Ok(())
 }
@@ -476,31 +482,22 @@ fn challenge_consumption_tx(
     validate_non_empty_cli_field(&challenger, "challenger")?;
     validate_non_empty_cli_field(&signer, "signer")?;
 
-    if let Some(template) = challenge_consumption_template_override() {
-        let mut cmd = template;
-        cmd = tpl(cmd, "task_id", &task_id.to_string());
-        cmd = tpl(cmd, "consumer_id", &consumer_id);
-        cmd = tpl(cmd, "output_hash", &output_hash);
-        cmd = tpl(cmd, "billing_window_id", &billing_window_id);
-        cmd = tpl(cmd, "challenger", &challenger);
-        cmd = tpl(cmd, "signer", &signer);
-        let tx_hash = run_template(&cmd)?;
-        emit_pending_tx_hash(&tx_hash)?;
-    } else {
-        let tx_hash = format!(
-            "0x{}",
-            hash(&[
-                "challenge-consumption",
-                &task_id.to_string(),
-                &consumer_id,
-                &output_hash,
-                &billing_window_id,
-                &challenger,
-                &signer,
-            ])
-        );
-        emit_pending_tx_hash(&tx_hash)?;
-    }
+    let mut cmd = challenge_consumption_template_override().ok_or_else(|| {
+        missing_backend(
+            "consumption challenge submission",
+            "TRNM_TX_CHALLENGE_SETTLEMENT_CMD (or its legacy consumption alias)",
+            "synthetic pending transaction hashes",
+        )
+    })?;
+    warn_development_only_adapter("consumption challenge submission");
+    cmd = tpl(cmd, "task_id", &task_id.to_string());
+    cmd = tpl(cmd, "consumer_id", &consumer_id);
+    cmd = tpl(cmd, "output_hash", &output_hash);
+    cmd = tpl(cmd, "billing_window_id", &billing_window_id);
+    cmd = tpl(cmd, "challenger", &challenger);
+    cmd = tpl(cmd, "signer", &signer);
+    let tx_hash = run_template(&cmd)?;
+    emit_pending_tx_hash(&tx_hash)?;
 
     Ok(())
 }
@@ -539,41 +536,29 @@ fn resolve_consumption_tx(
         .unwrap_or_default();
     let resolution_code = resolution_code.unwrap_or_default();
 
-    if let Some(template) = resolve_consumption_template_override() {
-        let mut cmd = template;
-        cmd = tpl(cmd, "task_id", &task_id.to_string());
-        cmd = tpl(cmd, "consumer_id", &consumer_id);
-        cmd = tpl(cmd, "output_hash", &output_hash);
-        cmd = tpl(cmd, "billing_window_id", &billing_window_id);
-        cmd = tpl(cmd, "decision", decision);
-        cmd = tpl(
-            cmd,
-            "credited_consumption_units",
-            &credited_consumption_units,
-        );
-        cmd = tpl(cmd, "resolution_code", &resolution_code);
-        cmd = tpl(cmd, "resolver", &resolver);
-        cmd = tpl(cmd, "signer", &signer);
-        let tx_hash = run_template(&cmd)?;
-        emit_pending_tx_hash(&tx_hash)?;
-    } else {
-        let tx_hash = format!(
-            "0x{}",
-            hash(&[
-                "resolve-consumption",
-                &task_id.to_string(),
-                &consumer_id,
-                &output_hash,
-                &billing_window_id,
-                decision,
-                &credited_consumption_units,
-                &resolution_code,
-                &resolver,
-                &signer,
-            ])
-        );
-        emit_pending_tx_hash(&tx_hash)?;
-    }
+    let mut cmd = resolve_consumption_template_override().ok_or_else(|| {
+        missing_backend(
+            "consumption resolution submission",
+            "TRNM_TX_RESOLVE_SETTLEMENT_CMD (or its legacy consumption alias)",
+            "synthetic pending transaction hashes",
+        )
+    })?;
+    warn_development_only_adapter("consumption resolution submission");
+    cmd = tpl(cmd, "task_id", &task_id.to_string());
+    cmd = tpl(cmd, "consumer_id", &consumer_id);
+    cmd = tpl(cmd, "output_hash", &output_hash);
+    cmd = tpl(cmd, "billing_window_id", &billing_window_id);
+    cmd = tpl(cmd, "decision", decision);
+    cmd = tpl(
+        cmd,
+        "credited_consumption_units",
+        &credited_consumption_units,
+    );
+    cmd = tpl(cmd, "resolution_code", &resolution_code);
+    cmd = tpl(cmd, "resolver", &resolver);
+    cmd = tpl(cmd, "signer", &signer);
+    let tx_hash = run_template(&cmd)?;
+    emit_pending_tx_hash(&tx_hash)?;
 
     Ok(())
 }
@@ -2166,12 +2151,6 @@ fn task_query(task_id: u64) -> Result<serde_json::Value> {
     parse_task_query_response(&stdout, task_id)
 }
 
-fn hash(parts: &[&str]) -> String {
-    let mut h = Sha256::new();
-    h.update(parts.join("|").as_bytes());
-    hex::encode(h.finalize())
-}
-
 fn sha256_hex(data: &[u8]) -> String {
     let mut h = Sha256::new();
     h.update(data);
@@ -2259,12 +2238,8 @@ fn is_single_sided_env_quote(c: char) -> bool {
 fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
     loop {
-        let Some(first) = normalized.chars().next() else {
-            return None;
-        };
-        let Some(last) = normalized.chars().last() else {
-            return None;
-        };
+        let first = normalized.chars().next()?;
+        let last = normalized.chars().last()?;
         let wrapped_by_quotes = matches!(
             (Some(first), Some(last)),
             (Some('"'), Some('"'))
@@ -2667,6 +2642,45 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     Ok(x)
 }
 
+fn read_private_key_seed<R: Read>(reader: R) -> Result<String> {
+    const MAX_PRIVATE_KEY_INPUT_BYTES: u64 = 1_024;
+
+    let mut raw = String::new();
+    let mut bounded = reader.take(MAX_PRIVATE_KEY_INPUT_BYTES + 1);
+    bounded
+        .read_to_string(&mut raw)
+        .map_err(|err| anyhow!("failed to read Ed25519 seed from standard input: {err}"))?;
+    if raw.len() as u64 > MAX_PRIVATE_KEY_INPUT_BYTES {
+        bail!("private key input exceeds 1024-byte safety limit");
+    }
+    ensure_hex_32_bytes(&raw)
+}
+
+fn reject_private_key_process_argument(private_key_hex: Option<&str>) -> Result<()> {
+    if private_key_hex.is_some() {
+        bail!(
+            "--private-key-hex is disabled: command-line secrets leak through shell history and process listings; use --private-key-stdin with a protected pipe. The local wallet is development-only and must not hold validator or production keys"
+        );
+    }
+    Ok(())
+}
+
+fn read_wallet_import_private_key(private_key_stdin: bool) -> Result<String> {
+    if !private_key_stdin {
+        bail!(
+            "private key input required: use --private-key-stdin with a protected pipe; command-line private-key arguments are disabled"
+        );
+    }
+
+    let stdin = std::io::stdin();
+    if stdin.is_terminal() {
+        bail!(
+            "--private-key-stdin refuses an interactive terminal because input would be echoed; provide the seed through a protected pipe or file descriptor"
+        );
+    }
+    read_private_key_seed(stdin.lock())
+}
+
 #[cfg(unix)]
 fn ensure_owner_only_permissions(meta: &fs::Metadata, path: &Path, kind: &str) -> Result<()> {
     use std::os::unix::fs::PermissionsExt;
@@ -2785,16 +2799,39 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_hex_32_bytes(raw.trim())
 }
 
-fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
-    let key = hex::decode(priv_hex)?;
+fn signing_key_from_priv_hex(priv_hex: &str) -> Result<SigningKey> {
+    let normalized = ensure_hex_32_bytes(priv_hex)?;
+    let key = hex::decode(normalized)?;
     let key_bytes: [u8; 32] = key
         .as_slice()
         .try_into()
         .map_err(|_| anyhow!("private key hex must be 32 bytes (64 hex chars)"))?;
-    let signing_key = SigningKey::from_bytes(&key_bytes);
+    Ok(SigningKey::from_bytes(&key_bytes))
+}
+
+fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
+    let signing_key = signing_key_from_priv_hex(priv_hex)?;
     let digest = Sha256::digest(signing_key.verifying_key().as_bytes());
     let addr_hex = hex::encode(&digest[..20]);
     Ok(format!("trnm1{}", addr_hex))
+}
+
+fn ed25519_public_key_hex(priv_hex: &str) -> Result<String> {
+    let signing_key = signing_key_from_priv_hex(priv_hex)?;
+    Ok(hex::encode(signing_key.verifying_key().as_bytes()))
+}
+
+fn sign_message_ed25519(priv_hex: &str, message: &str) -> Result<(String, String)> {
+    let signing_key = signing_key_from_priv_hex(priv_hex)?;
+    let verifying_key = signing_key.verifying_key();
+    let signature = signing_key.sign(message.as_bytes());
+    verifying_key
+        .verify_strict(message.as_bytes(), &signature)
+        .map_err(|_| anyhow!("internal Ed25519 signature self-verification failed"))?;
+    Ok((
+        hex::encode(verifying_key.as_bytes()),
+        hex::encode(signature.to_bytes()),
+    ))
 }
 
 fn is_unsafe_sign_message_char(c: char) -> bool {
@@ -3155,7 +3192,9 @@ fn run_template(cmd: &str) -> Result<String> {
         return Ok(txh);
     }
 
-    Ok(format!("0x{}", hash(&["fallback", &merged])))
+    bail!(
+        "development-only tx command completed without a valid transaction hash; refusing to fabricate a pending tx hash"
+    )
 }
 
 fn run_template_raw(cmd: &str) -> Result<String> {
@@ -3858,11 +3897,12 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         status = Some(normalized);
                     }
                 }
-                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
-                    if status.is_none() {
-                        status = infer_kv_tx_status(&key, &value);
-                    }
+                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode"
+                    if status.is_none() =>
+                {
+                    status = infer_kv_tx_status(&key, &value);
                 }
+                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {}
                 "error" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
@@ -3926,7 +3966,7 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
     let cmd = format!("cargo run -q -p trnm-rpc -- get-tx --tx-hash {}", requested);
-    match {
+    let rpc_result = {
         let (program, args) = parse_template_command(&cmd)?;
         let out = ProcCommand::new(program)
             .args(args)
@@ -3944,7 +3984,8 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
         } else {
             Ok(stdout.to_string())
         }
-    } {
+    };
+    match rpc_result {
         Ok(raw) => {
             let parsed = parse_tx_query_response(&raw, &requested)?;
             if let Some(got) = normalize_tx_hash(&parsed.tx_hash) {
@@ -4195,14 +4236,16 @@ fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
 }
 
 fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
+    eprintln!("{LOCAL_WALLET_WARNING}");
     let store = resolve_wallet_store(out)?;
     let priv_hex = random_priv_hex()?;
     let path = write_key(&store, &name, &priv_hex)?;
     let addr = derive_address_from_priv_hex(&priv_hex)?;
+    let public_key = ed25519_public_key_hex(&priv_hex)?;
     println!("wallet_name={}", name);
     println!("wallet_path={}", path.display());
     println!("address={}", addr);
-    println!("public_key_hint={}", sha256_hex(priv_hex.as_bytes()));
+    println!("public_key={}", public_key);
     Ok(())
 }
 
@@ -4271,31 +4314,25 @@ fn main() -> Result<()> {
                     denom,
                 };
 
-                if let Ok(template) = std::env::var("TRNM_TX_TRANSFER_CMD") {
-                    let mut cmd = template;
-                    cmd = tpl(cmd, "from", &req.from);
-                    cmd = tpl(cmd, "to", &req.to);
-                    cmd = tpl(cmd, "amount", &req.amount);
-                    cmd = tpl(cmd, "denom", &req.denom);
-                    let tx_hash = run_template(&cmd)?;
-                    persist_local_pending_tx(&tx_hash)?;
-                    let out = TransferTxResponse {
-                        tx_hash,
-                        status: "pending".into(),
-                    };
-                    println!("{}", serde_json::to_string_pretty(&out)?);
-                } else {
-                    let tx_hash = format!(
-                        "0x{}",
-                        hash(&["transfer", &req.from, &req.to, &req.amount, &req.denom])
-                    );
-                    persist_local_pending_tx(&tx_hash)?;
-                    let out = TransferTxResponse {
-                        tx_hash,
-                        status: "pending".into(),
-                    };
-                    println!("{}", serde_json::to_string_pretty(&out)?);
-                }
+                let mut cmd = std::env::var("TRNM_TX_TRANSFER_CMD").map_err(|_| {
+                    missing_backend(
+                        "transfer submission",
+                        "TRNM_TX_TRANSFER_CMD",
+                        "synthetic pending transaction hashes",
+                    )
+                })?;
+                warn_development_only_adapter("transfer submission");
+                cmd = tpl(cmd, "from", &req.from);
+                cmd = tpl(cmd, "to", &req.to);
+                cmd = tpl(cmd, "amount", &req.amount);
+                cmd = tpl(cmd, "denom", &req.denom);
+                let tx_hash = run_template(&cmd)?;
+                persist_local_pending_tx(&tx_hash)?;
+                let out = TransferTxResponse {
+                    tx_hash,
+                    status: "pending".into(),
+                };
+                println!("{}", serde_json::to_string_pretty(&out)?);
             }
             TxCommand::SubmitConsumptionReceipt {
                 receipt_json,
@@ -4350,16 +4387,21 @@ fn main() -> Result<()> {
             }
             WalletCommand::Import {
                 name,
+                private_key_stdin,
                 private_key_hex,
                 out,
             } => {
+                eprintln!("{LOCAL_WALLET_WARNING}");
+                reject_private_key_process_argument(private_key_hex.as_deref())?;
                 let store = resolve_wallet_store(out)?;
-                let priv_hex = ensure_hex_32_bytes(&private_key_hex)?;
+                let priv_hex = read_wallet_import_private_key(private_key_stdin)?;
                 let path = write_key(&store, &name, &priv_hex)?;
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
+                let public_key = ed25519_public_key_hex(&priv_hex)?;
                 println!("wallet_name={}", name);
                 println!("wallet_path={}", path.display());
                 println!("address={}", addr);
+                println!("public_key={}", public_key);
             }
             WalletCommand::Address { name, store } => {
                 let store = resolve_wallet_store(store)?;
@@ -4375,16 +4417,23 @@ fn main() -> Result<()> {
             } => {
                 ensure_sign_message(&message)?;
                 ensure_safe_sign_message(&message)?;
+                eprintln!("{LOCAL_WALLET_WARNING}");
+                eprintln!(
+                    "WARNING: wallet sign produces a development-only offline text signature; it is not a transaction signature, consensus SignIntent, or production authorization."
+                );
                 let store = resolve_wallet_store(store)?;
                 let priv_hex = read_key(&store, &name)?;
-                let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
+                let (public_key, signature) = sign_message_ed25519(&priv_hex, &message)?;
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
                 let message_sha256 = sha256_hex(message.as_bytes());
                 println!("wallet_name={}", name);
                 println!("address={}", addr);
+                println!("signature_scheme=ed25519");
+                println!("signed_bytes=utf8");
+                println!("public_key={}", public_key);
                 println!("message={}", message);
                 println!("message_sha256={}", message_sha256);
-                println!("signature={}", sig);
+                println!("signature={}", signature);
             }
         },
         Command::Query { query } => match query {
@@ -4396,23 +4445,19 @@ fn main() -> Result<()> {
             } => {
                 let addr = resolve_address_for_query(address, name, store)?;
 
-                if let Ok(template) = std::env::var("TRNM_QUERY_BALANCE_CMD") {
-                    let mut cmd = template;
-                    cmd = tpl(cmd, "address", &addr);
-                    cmd = tpl(cmd, "denom", &denom);
-                    let raw = run_template_raw(&cmd)?;
-                    let out = parse_balance_query_response(&raw, &addr, &denom)?;
-                    println!("{}", serde_json::to_string_pretty(&out)?);
-                } else {
-                    let seeded = hash(&["balance", &addr, &denom]);
-                    let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
-                    let out = BalanceQueryResponse {
-                        address: addr,
-                        balance: pseudo.to_string(),
-                        denom,
-                    };
-                    println!("{}", serde_json::to_string_pretty(&out)?);
-                }
+                let mut cmd = std::env::var("TRNM_QUERY_BALANCE_CMD").map_err(|_| {
+                    missing_backend(
+                        "balance query",
+                        "TRNM_QUERY_BALANCE_CMD",
+                        "synthetic balances",
+                    )
+                })?;
+                warn_development_only_adapter("balance query");
+                cmd = tpl(cmd, "address", &addr);
+                cmd = tpl(cmd, "denom", &denom);
+                let raw = run_template_raw(&cmd)?;
+                let out = parse_balance_query_response(&raw, &addr, &denom)?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
             }
             QueryCommand::Task { task_id } => {
                 let out = task_query(task_id)?;
@@ -5095,13 +5140,14 @@ mod tests {
     }
 
     #[test]
-    fn cli_help_retires_mvp_wording_on_root_and_wallet_surface() {
+    fn cli_help_exposes_development_only_and_real_ed25519_boundaries() {
         let mut root = Args::command();
         let mut root_help = Vec::new();
         root.write_long_help(&mut root_help)
             .expect("render root help");
         let root_help = String::from_utf8(root_help).expect("utf8 root help");
-        assert!(root_help.contains("Trillionnium native CLI (wallet/query/tx tooling)"));
+        assert!(root_help
+            .contains("Trillionnium development-only CLI adapter (not a production node client)"));
         assert!(!root_help.contains("wallet/query/tx MVP"));
 
         let mut root = Args::command();
@@ -5114,7 +5160,9 @@ mod tests {
             .expect("render wallet help");
         let wallet_help = String::from_utf8(wallet_help).expect("utf8 wallet help");
         assert!(wallet_help.contains("Create a new local wallet"));
-        assert!(wallet_help.contains("Sign arbitrary text with a local wallet"));
+        assert!(wallet_help.contains(
+            "Sign exact UTF-8 text with Ed25519 using the development-only local wallet"
+        ));
         assert!(!wallet_help.contains("MVP placeholder"));
         assert!(!wallet_help.contains("MVP deterministic signature"));
     }
@@ -5229,7 +5277,7 @@ mod tests {
     }
 
     #[test]
-    fn consumption_settlement_write_paths_emit_pending_hashes_with_default_signers() {
+    fn consumption_settlement_write_paths_fail_closed_without_backend() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
         std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
@@ -5265,81 +5313,46 @@ mod tests {
         let tx_file = root.join("txs.json");
         std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
 
-        submit_consumption_receipt_tx(receipt_path.clone(), None).unwrap();
-        challenge_consumption_tx(
-            42,
-            "consumer-bravo".into(),
-            "0xabc123".into(),
-            "bw-7".into(),
-            "arbiter-alpha".into(),
-            None,
-        )
-        .unwrap();
-        resolve_consumption_tx(
-            42,
-            "consumer-bravo".into(),
-            "0xabc123".into(),
-            "bw-7".into(),
-            ConsumptionResolutionDecisionArg::Discount,
-            Some(11),
-            Some("accepted_discounted".into()),
-            "arbiter-alpha".into(),
-            None,
-        )
-        .unwrap();
+        let errors = [
+            submit_consumption_receipt_tx(receipt_path.clone(), None)
+                .unwrap_err()
+                .to_string(),
+            challenge_consumption_tx(
+                42,
+                "consumer-bravo".into(),
+                "0xabc123".into(),
+                "bw-7".into(),
+                "arbiter-alpha".into(),
+                None,
+            )
+            .unwrap_err()
+            .to_string(),
+            resolve_consumption_tx(
+                42,
+                "consumer-bravo".into(),
+                "0xabc123".into(),
+                "bw-7".into(),
+                ConsumptionResolutionDecisionArg::Discount,
+                Some(11),
+                Some("accepted_discounted".into()),
+                "arbiter-alpha".into(),
+                None,
+            )
+            .unwrap_err()
+            .to_string(),
+        ];
 
-        let submit_hash = format!(
-            "0x{}",
-            hash(&[
-                "submit-consumption-receipt",
-                "42",
-                "consumer-bravo",
-                "0xabc123",
-                "bw-7",
-                "9",
-                "consumer-bravo",
-            ])
-        );
-        let challenge_hash = format!(
-            "0x{}",
-            hash(&[
-                "challenge-consumption",
-                "42",
-                "consumer-bravo",
-                "0xabc123",
-                "bw-7",
-                "arbiter-alpha",
-                "arbiter-alpha",
-            ])
-        );
-        let resolve_hash = format!(
-            "0x{}",
-            hash(&[
-                "resolve-consumption",
-                "42",
-                "consumer-bravo",
-                "0xabc123",
-                "bw-7",
-                "discount",
-                "11",
-                "accepted_discounted",
-                "arbiter-alpha",
-                "arbiter-alpha",
-            ])
-        );
-
-        let raw = std::fs::read_to_string(&tx_file).unwrap();
-        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
-        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
-            assert_eq!(
-                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
-                Some(tx_hash.as_str())
+        for error in errors {
+            assert!(
+                error.contains("no real endpoint/backend is configured")
+                    && error.contains("synthetic pending transaction hashes")
+                    && error.contains("development-only command adapter"),
+                "unexpected error: {error}"
             );
-            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
         }
-        assert_eq!(
-            query_local_tx_status(&resolve_hash).as_deref(),
-            Some("pending")
+        assert!(
+            !tx_file.exists(),
+            "a missing backend must not create local pending transaction state"
         );
 
         std::env::remove_var("TRNM_RPC_TX_FILE");
@@ -5845,6 +5858,73 @@ mod tests {
         );
 
         assert!(ensure_hex_32_bytes("0x1234").is_err());
+    }
+
+    #[test]
+    fn wallet_import_reads_seed_from_bounded_non_argv_source() {
+        let wrapped = " \u{2068}<\"0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\">\u{2069}\n";
+        let seed = read_private_key_seed(wrapped.as_bytes()).unwrap();
+        assert_eq!(
+            seed,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        let oversized = vec![b'a'; 1_025];
+        let err = read_private_key_seed(oversized.as_slice())
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("exceeds 1024-byte safety limit"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn wallet_import_rejects_private_key_in_process_arguments() {
+        let err = reject_private_key_process_argument(Some(
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        ))
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("--private-key-hex is disabled")
+                && err.contains("shell history and process listings")
+                && err.contains("development-only"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn wallet_import_cli_exposes_only_explicit_stdin_as_supported_secret_source() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-stdin",
+            "--out",
+            "/tmp/trnm-wallets",
+        ])
+        .expect("parse stdin-backed wallet import");
+
+        match args.cmd {
+            Command::Wallet {
+                wallet:
+                    WalletCommand::Import {
+                        name,
+                        private_key_stdin,
+                        private_key_hex,
+                        out,
+                    },
+            } => {
+                assert_eq!(name, "alice");
+                assert!(private_key_stdin);
+                assert_eq!(private_key_hex, None);
+                assert_eq!(out, Some(PathBuf::from("/tmp/trnm-wallets")));
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
     }
 
     #[test]
@@ -7353,6 +7433,18 @@ mod tests {
     }
 
     #[test]
+    fn run_template_rejects_success_without_tx_hash_instead_of_fabricating_one() {
+        let err = run_template("printf '%s' accepted")
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("without a valid transaction hash")
+                && err.contains("refusing to fabricate a pending tx hash"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
     fn tx_query_parse_json_and_kv() {
         let json = "{\"tx_hash\":\"0xabc\",\"status\":\"committed\",\"error\":null}";
         let parsed = parse_tx_query_response(json, "0xabc").unwrap();
@@ -8338,6 +8430,29 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_accepts_plain_visible_text() {
         ensure_safe_sign_message("rotate signer to cold-key slot b").unwrap();
+    }
+
+    #[test]
+    fn wallet_sign_uses_verifiable_rfc8032_ed25519_over_exact_utf8_bytes() {
+        let seed = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        let message = "rotate signer to cold-key slot b";
+        let (public_key_hex, signature_hex) = sign_message_ed25519(seed, message).unwrap();
+
+        assert_eq!(public_key_hex.len(), 64);
+        assert_eq!(signature_hex.len(), 128);
+        let public_key_bytes: [u8; 32] = hex::decode(public_key_hex).unwrap().try_into().unwrap();
+        let signature_bytes: [u8; 64] = hex::decode(signature_hex).unwrap().try_into().unwrap();
+        let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(&public_key_bytes).unwrap();
+        let signature = ed25519_dalek::Signature::from_bytes(&signature_bytes);
+        verifying_key
+            .verify_strict(message.as_bytes(), &signature)
+            .unwrap();
+        assert!(
+            verifying_key
+                .verify_strict(b"rotate signer to a different slot", &signature)
+                .is_err(),
+            "an Ed25519 signature must remain bound to the exact UTF-8 message bytes"
+        );
     }
 
     #[test]

@@ -29,14 +29,14 @@ use crate::model::{
 };
 
 pub const SAFETY_STATE_RECORD_CODEC_VERSION_V0: u16 = 0;
-pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 7;
+pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 8;
 
-const MAGIC: &[u8; 8] = b"TRNMSF7\0";
+const MAGIC: &[u8; 8] = b"TRNMSF8\0";
 const CONFIG_DOMAIN: &str = "trnm.consensus-core.safety-state-config.v0";
 const RECORD_DOMAIN: &str = "trnm.consensus-core.safety-state-record.v0";
 const LAYOUT_DOMAIN: &str = "trnm.consensus-core.safety-state-layout.v0";
 const LAYOUT_DESCRIPTION: &[u8] =
-    b"schema7;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;sha256-domain-framed";
+    b"schema8;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;sha256-domain-framed";
 
 const TAG_NONE: u8 = 0;
 const TAG_SOME: u8 = 1;
@@ -359,7 +359,7 @@ pub fn minimum_safety_state_record_limits_v0(
         completions,
         pending_tc,
         standalone_qcs,
-        162, // largest pending SignIntent including its option tag
+        170, // largest pending SignIntent including its option tag
         finalization,
         33, // pending-finalize option plus CertificateId
         maximum_halt,
@@ -1248,23 +1248,27 @@ fn encode_sign_intent(
 ) -> Result<(), SafetyStateRecordErrorV0> {
     match value {
         SignIntent::Vote {
+            authorizing_safety_revision,
             view,
             height,
             block_id,
             signing_root,
         } => {
             encoder.u8(TAG_SIGN_VOTE)?;
+            encoder.u64(*authorizing_safety_revision)?;
             encoder.u64(view.get())?;
             encoder.u64(height.get())?;
             encoder.fixed(block_id.as_bytes())?;
             encoder.fixed(signing_root.as_bytes())
         }
         SignIntent::TimeoutVote {
+            authorizing_safety_revision,
             view,
             high_qc,
             signing_root,
         } => {
             encoder.u8(TAG_SIGN_TIMEOUT)?;
+            encoder.u64(*authorizing_safety_revision)?;
             encoder.u64(view.get())?;
             encode_qc_ref(*high_qc, encoder)?;
             encoder.fixed(signing_root.as_bytes())
@@ -1275,12 +1279,14 @@ fn encode_sign_intent(
 fn decode_sign_intent(decoder: &mut Decoder<'_>) -> Result<SignIntent, SafetyStateRecordErrorV0> {
     match decoder.u8("sign intent")? {
         TAG_SIGN_VOTE => Ok(SignIntent::Vote {
+            authorizing_safety_revision: decoder.u64("vote authorizing revision")?,
             view: View::new(decoder.u64("vote view")?),
             height: Height::new(decoder.u64("vote height")?),
             block_id: BlockId::new(decoder.fixed::<32>("vote block ID")?),
             signing_root: SigningRoot::new(decoder.fixed::<32>("vote signing root")?),
         }),
         TAG_SIGN_TIMEOUT => Ok(SignIntent::TimeoutVote {
+            authorizing_safety_revision: decoder.u64("timeout authorizing revision")?,
             view: View::new(decoder.u64("timeout-vote view")?),
             high_qc: decode_qc_ref(decoder)?,
             signing_root: SigningRoot::new(decoder.fixed::<32>("timeout signing root")?),
@@ -1794,19 +1800,19 @@ mod tests {
         assert_eq!(
             safety_state_record_config_ref_v0(&context).expect("config reference"),
             [
-                0xe8, 0x0b, 0xd9, 0xd2, 0x70, 0xbc, 0x3f, 0x46, 0xd3, 0x01, 0xf4, 0x48, 0x52, 0xf7,
-                0xa2, 0x6a, 0x30, 0x44, 0x28, 0x5b, 0x1e, 0x8a, 0x91, 0x72, 0x92, 0x4f, 0x8e, 0x6c,
-                0xe6, 0x6d, 0xec, 0x1b,
+                0x88, 0x01, 0x37, 0x6a, 0xa2, 0x8b, 0xe6, 0x5b, 0x27, 0xc9, 0x5c, 0x88, 0xe7, 0x82,
+                0xa8, 0x74, 0x39, 0x3b, 0x1d, 0x4e, 0x55, 0x90, 0x8d, 0x23, 0x80, 0x02, 0x65, 0xf4,
+                0x72, 0xbe, 0xab, 0x0b,
             ],
-            "the schema-v7 configuration reference is frozen"
+            "the schema-v8 configuration reference is frozen"
         );
         assert_eq!(encoded.len(), 591, "the Genesis record layout is frozen");
         assert_eq!(
             decoded.record_checksum(),
             [
-                0x33, 0xbe, 0x63, 0x15, 0xcb, 0xd2, 0xec, 0x53, 0x7a, 0xe6, 0xda, 0x55, 0xd6, 0x41,
-                0x9b, 0xb8, 0x6e, 0xf3, 0x7d, 0xe1, 0x01, 0x24, 0xb6, 0x39, 0x67, 0x20, 0x3d, 0x37,
-                0xea, 0x79, 0x95, 0x6c,
+                0xc9, 0xa2, 0xb2, 0xc3, 0xc6, 0x72, 0x6a, 0x98, 0x1c, 0x5f, 0xef, 0xdd, 0x9f, 0x1b,
+                0x36, 0x3e, 0x5b, 0x73, 0x19, 0x96, 0x1b, 0xb6, 0x2a, 0xa9, 0x35, 0x94, 0x2f, 0x0c,
+                0x0d, 0xd2, 0x72, 0x1f,
             ],
             "the Genesis record checksum is frozen"
         );
@@ -1876,7 +1882,7 @@ mod tests {
             decode_safety_state_record_v0_exact(&unknown_schema, &context).unwrap_err(),
             SafetyStateRecordErrorV0::UnsupportedSafetySchema(6)
         );
-        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 7);
+        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 8);
     }
 
     #[test]

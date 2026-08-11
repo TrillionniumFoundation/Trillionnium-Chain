@@ -7,8 +7,8 @@ use crate::{
         DOMAIN_CONSUMPTION_CERTIFICATE_ID, DOMAIN_DOUBLE_SIGN_EVIDENCE, DOMAIN_EPOCH_COMMITMENT,
         DOMAIN_FINALITY_PROOF, DOMAIN_HANDOFF_CERTIFICATE, DOMAIN_HANDOFF_DESCRIPTOR,
         DOMAIN_HANDOFF_VOTE, DOMAIN_ORDERED_LEAF, DOMAIN_ORDERED_NODE, DOMAIN_ORDERED_ROOT,
-        DOMAIN_PARAMETERS, DOMAIN_PROPOSAL, DOMAIN_QUORUM_CERTIFICATE, DOMAIN_TIMEOUT,
-        DOMAIN_TIMEOUT_CERTIFICATE, DOMAIN_UPGRADE_PLAN, DOMAIN_VALIDATOR_KEY_POP,
+        DOMAIN_PARAMETERS, DOMAIN_PROPOSAL, DOMAIN_QUORUM_CERTIFICATE, DOMAIN_SIGN_INTENT,
+        DOMAIN_TIMEOUT, DOMAIN_TIMEOUT_CERTIFICATE, DOMAIN_UPGRADE_PLAN, DOMAIN_VALIDATOR_KEY_POP,
         DOMAIN_VALIDATOR_SET, DOMAIN_VOTE,
     },
     message::proposal_signing_root_from_digests,
@@ -130,6 +130,10 @@ fn every_frozen_domain_matches_empty_payload_vector() {
         (
             DOMAIN_TIMEOUT,
             "d8c0749929d468bd016e25f8ac872de594d46969b979ec22b8ab2f4614c79438",
+        ),
+        (
+            DOMAIN_SIGN_INTENT,
+            "6ffcdc164b76ed0bde5b33304168003061bb6519feaeebcc9565e318db2ee1e6",
         ),
         (
             DOMAIN_QUORUM_CERTIFICATE,
@@ -555,6 +559,213 @@ fn rust_foundation_objects_match_independent_vectors() {
         .into_bytes(),
         fixed_hex("4c43933da64bb71ebbee269852b28f3ef95a6e0e4fba26a6d11e90695f334d68")
     );
+}
+
+#[test]
+fn canonical_sign_intent_binds_preimage_author_and_safety_revision() {
+    let set = vector_validator_set();
+    let author = ValidatorId::from_bytes(b"validator-a").unwrap();
+    let block_id = vector_header().id();
+    let vote =
+        CanonicalSignIntentV0::vote(&set, author, 17, View::new(42), Height::new(99), block_id)
+            .unwrap();
+
+    vote.validate(&set).unwrap();
+    assert_eq!(
+        vote.schema_version(),
+        CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0
+    );
+    assert_eq!(vote.chain_id(), set.chain_id());
+    assert_eq!(vote.protocol_version(), set.protocol_version());
+    assert_eq!(vote.epoch(), set.epoch());
+    assert_eq!(vote.validator_set_id(), set.id());
+    assert_eq!(vote.author(), author);
+    assert_eq!(vote.authorizing_safety_revision(), 17);
+    assert_eq!(
+        vote.signing_root(),
+        Vote::signing_root_for_set(&set, View::new(42), Height::new(99), block_id).unwrap()
+    );
+    assert_eq!(
+        vote.signing_root().into_bytes(),
+        fixed_hex("73d3a516141972fe483e56e7d31818dac92bba58aa0ba52d3c894bc4c62b4873")
+    );
+    assert_eq!(
+        vote.fingerprint().into_bytes(),
+        fixed_hex("8345d9ce557b38346107fd70b392c487161b9d2d898fc0e605027678ffdb52e7")
+    );
+    assert_eq!(vote.canonical_bytes().unwrap().len(), 287);
+    let vote_golden = fixed_hex::<287>(
+        "0000000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e5640000000b76616c696461746f722d610000000000000011000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e564000000000000002a010000000000000063f37dcd9417597c664d041fb1631be705c80faa21f9889dead145744ff73e888573d3a516141972fe483e56e7d31818dac92bba58aa0ba52d3c894bc4c62b48738345d9ce557b38346107fd70b392c487161b9d2d898fc0e605027678ffdb52e7",
+    );
+    assert_eq!(vote.canonical_bytes().unwrap(), vote_golden);
+    assert_eq!(
+        decode_canonical_sign_intent_v0_exact(&vote_golden, &set).unwrap(),
+        vote
+    );
+    assert!(!vote.preimage().canonical_bytes().unwrap().is_empty());
+    assert!(
+        vote.canonical_bytes().unwrap().len() > vote.preimage().canonical_bytes().unwrap().len()
+    );
+
+    let next_revision =
+        CanonicalSignIntentV0::vote(&set, author, 18, View::new(42), Height::new(99), block_id)
+            .unwrap();
+    assert_eq!(next_revision.signing_root(), vote.signing_root());
+    assert_ne!(next_revision.fingerprint(), vote.fingerprint());
+
+    assert!(
+        CanonicalSignIntentV0::vote(&set, author, 0, View::new(42), Height::new(99), block_id,)
+            .is_err()
+    );
+
+    let high_qc = QcRef::new(
+        CertificateId::new(fixed_hex(
+            "f499b0efbdc44cb4ae5156094e012e90146cf61703805cb06455c2c6f5602370",
+        )),
+        set.epoch(),
+        View::new(41),
+        Height::new(98),
+        BlockId::new(pattern(96)),
+        set.id(),
+    );
+    let timeout =
+        CanonicalSignIntentV0::timeout_vote(&set, author, 19, View::new(42), high_qc).unwrap();
+    timeout.validate(&set).unwrap();
+    assert_eq!(
+        timeout.signing_root(),
+        TimeoutVote::signing_root_for_set(&set, View::new(42), high_qc).unwrap()
+    );
+    assert_eq!(
+        timeout.signing_root().into_bytes(),
+        fixed_hex("c182b0cb4b34881ae7929b7f365d9117d0eedb8be8faa996a8afef7d70fb0efa")
+    );
+    assert_eq!(
+        timeout.fingerprint().into_bytes(),
+        fixed_hex("d9436f0d29a8ea20b98dc0c80a51ae2d0fa00c31a39a0692d1defd12d5aab96a")
+    );
+    assert_eq!(timeout.canonical_bytes().unwrap().len(), 335);
+    let timeout_golden = fixed_hex::<335>(
+        "0000000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e5640000000b76616c696461746f722d610000000000000013010000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f000b74726e6d2d746573742d300000000000000000000000073fe4549631bce9e77683cdc7441d4f780bd112d6e8348813b180ddbd83c2e564000000000000002a02f499b0efbdc44cb4ae5156094e012e90146cf61703805cb06455c2c6f5602370000000000000000700000000000000290000000000000062606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7fc182b0cb4b34881ae7929b7f365d9117d0eedb8be8faa996a8afef7d70fb0efad9436f0d29a8ea20b98dc0c80a51ae2d0fa00c31a39a0692d1defd12d5aab96a",
+    );
+    assert_eq!(timeout.canonical_bytes().unwrap(), timeout_golden);
+    assert_eq!(
+        decode_canonical_sign_intent_v0_exact(&timeout_golden, &set).unwrap(),
+        timeout
+    );
+    assert_ne!(timeout.fingerprint(), vote.fingerprint());
+}
+
+#[test]
+fn canonical_sign_intent_decoder_is_bounded_exact_and_fail_closed() {
+    let set = vector_validator_set();
+    let author = ValidatorId::from_bytes(b"validator-a").unwrap();
+    let intent = CanonicalSignIntentV0::vote(
+        &set,
+        author,
+        17,
+        View::new(42),
+        Height::new(99),
+        vector_header().id(),
+    )
+    .unwrap();
+    let canonical = intent.canonical_bytes().unwrap();
+    assert_eq!(
+        decode_canonical_sign_intent_v0_exact(&canonical, &set).unwrap(),
+        intent
+    );
+
+    let chain_length = set.chain_id().as_bytes().len();
+    let author_length = author.as_bytes().len();
+    let outer_protocol_offset = 2 + 2 + chain_length;
+    let outer_set_offset = outer_protocol_offset + 4 + 8;
+    let author_length_offset = outer_set_offset + 32;
+    let revision_offset = author_length_offset + 4 + author_length;
+    let tag_offset = revision_offset + 8;
+    let context_offset = tag_offset + 1;
+    let context_kind_offset = context_offset + 2 + 32 + 2 + chain_length + 4 + 8 + 32 + 8;
+    let signing_root_offset = canonical.len() - 64;
+    let fingerprint_offset = canonical.len() - 32;
+    assert_eq!(
+        (
+            outer_protocol_offset,
+            outer_set_offset,
+            revision_offset,
+            tag_offset
+        ),
+        (15, 27, 74, 82)
+    );
+
+    let assert_code = |bytes: &[u8], expected: DecodeErrorCode| {
+        let error = decode_canonical_sign_intent_v0_exact(bytes, &set).unwrap_err();
+        assert_eq!(error.code(), expected);
+        error
+    };
+
+    let mut tampered = canonical.clone();
+    tampered[1] = 1;
+    assert_code(&tampered, DecodeErrorCode::InvalidSchemaVersion);
+
+    let mut tampered = canonical.clone();
+    tampered[2..4].copy_from_slice(&129u16.to_be_bytes());
+    assert_code(&tampered, DecodeErrorCode::LengthLimitExceeded);
+
+    let mut tampered = canonical.clone();
+    tampered[author_length_offset..author_length_offset + 4].copy_from_slice(&129u32.to_be_bytes());
+    assert_code(&tampered, DecodeErrorCode::LengthLimitExceeded);
+
+    let mut tampered = canonical.clone();
+    tampered[outer_protocol_offset + 3] = 1;
+    assert_code(&tampered, DecodeErrorCode::InvalidProtocolVersion);
+
+    let mut tampered = canonical.clone();
+    tampered[outer_set_offset] ^= 1;
+    assert_code(&tampered, DecodeErrorCode::ContextMismatch);
+
+    let mut tampered = canonical.clone();
+    tampered[revision_offset..revision_offset + 8].fill(0);
+    let error = assert_code(&tampered, DecodeErrorCode::InvalidSignIntent);
+    assert_eq!(error.byte_offset(), revision_offset);
+
+    let mut tampered = canonical.clone();
+    tampered[revision_offset + 7] ^= 1;
+    let error = assert_code(&tampered, DecodeErrorCode::InvalidSignIntent);
+    assert_eq!(error.byte_offset(), fingerprint_offset);
+
+    let mut tampered = canonical.clone();
+    tampered[tag_offset] = 2;
+    let error = assert_code(&tampered, DecodeErrorCode::InvalidSignIntentTag);
+    assert_eq!(error.byte_offset(), tag_offset);
+
+    let mut tampered = canonical.clone();
+    tampered[context_offset + 2] ^= 1;
+    assert_code(&tampered, DecodeErrorCode::ContextMismatch);
+
+    let mut tampered = canonical.clone();
+    tampered[context_kind_offset] = MessageKind::Timeout as u8;
+    assert_code(&tampered, DecodeErrorCode::ContextMismatch);
+
+    let mut tampered = canonical.clone();
+    tampered[signing_root_offset] ^= 1;
+    let error = assert_code(&tampered, DecodeErrorCode::InvalidSignIntent);
+    assert_eq!(error.byte_offset(), signing_root_offset);
+
+    let mut tampered = canonical.clone();
+    tampered[fingerprint_offset] ^= 1;
+    let error = assert_code(&tampered, DecodeErrorCode::InvalidSignIntent);
+    assert_eq!(error.byte_offset(), fingerprint_offset);
+
+    let mut truncated = canonical.clone();
+    truncated.pop();
+    assert_code(&truncated, DecodeErrorCode::UnexpectedEof);
+
+    let mut trailing = canonical.clone();
+    trailing.push(0);
+    let error = assert_code(&trailing, DecodeErrorCode::TrailingBytes);
+    assert_eq!(error.byte_offset(), canonical.len());
+
+    let oversized = vec![0; MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES + 1];
+    let error = assert_code(&oversized, DecodeErrorCode::LengthLimitExceeded);
+    assert_eq!(error.byte_offset(), 0);
 }
 
 #[test]

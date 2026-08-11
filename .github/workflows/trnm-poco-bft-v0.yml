@@ -5,8 +5,11 @@ on:
   pull_request:
     paths:
       - ".github/workflows/trnm-poco-bft-v0.yml"
+      - ".github/workflows/rust-l1-testnet-preflight.yml"
       - "PROJECT_ID"
       - "PROJECT_BOUNDARY.json"
+      - "RELEASE_READINESS.md"
+      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
       - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
@@ -26,18 +29,25 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-safety-store/**"
+      - "trillionnium/crates/trnm-consensus-signer-journal/**"
       - "trillionnium/crates/trnm-consensus-sim/**"
       - "trillionnium/crates/trnm-consensus-types/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
       - "trillionnium/crates/trnm-runtime/**"
       - "trillionnium/fuzz/**"
+      - "trillionnium/scripts/testnet_preflight.sh"
   push:
     branches: [main]
     paths:
       - ".github/workflows/trnm-poco-bft-v0.yml"
+      - ".github/workflows/rust-l1-testnet-preflight.yml"
       - "PROJECT_ID"
       - "PROJECT_BOUNDARY.json"
+      - "RELEASE_READINESS.md"
+      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
       - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
@@ -57,12 +67,16 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-safety-store/**"
+      - "trillionnium/crates/trnm-consensus-signer-journal/**"
       - "trillionnium/crates/trnm-consensus-sim/**"
       - "trillionnium/crates/trnm-consensus-types/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
       - "trillionnium/crates/trnm-runtime/**"
       - "trillionnium/fuzz/**"
+      - "trillionnium/scripts/testnet_preflight.sh"
 
 permissions:
   contents: read
@@ -126,6 +140,10 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify CI coverage and readiness-truth boundaries
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh
 
       - name: Install checksum-pinned protoc 29.3
         working-directory: trillionnium-chain
@@ -242,13 +260,16 @@ jobs:
           cargo test --locked -p trnm-consensus-types
           cargo test --locked -p trnm-consensus-crypto
           cargo test --locked -p trnm-consensus-core
+          cargo test --locked -p trnm-consensus-safety-store --lib --tests
+          cargo test --locked -p trnm-consensus-signer-journal --all-targets
           cargo test --locked -p trnm-consensus-sim
           cargo test --locked -p trnm-consensus-app --lib
           cargo test --locked -p trnm-finality-types
+          cargo test --locked -p trnm-poco-node --all-targets
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
-      - name: Crash-recovery smoke
+      - name: Core, application, and SafetyStore recovery gate
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
 
@@ -259,11 +280,14 @@ jobs:
           cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-core --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-safety-store --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-signer-journal --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-sim --all-targets -- -D warnings
           # These integration crates retain legacy workspace dependencies.
           # --no-deps keeps strictness on the selected package without
           # turning unrelated retained warnings into PoCO tranche failures.
           cargo clippy --locked -p trnm-finality-types --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-poco-node --all-targets -- -D warnings
           cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
           # Apply the same package-scoped boundary to consensus-app.
@@ -317,7 +341,7 @@ jobs:
         run: bash ./scripts/ci/check_poco_bft_v0_formal.sh
 
   release-artifacts:
-    name: Release library artifact build
+    name: Development-only integration library artifact build
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' ||
@@ -353,7 +377,7 @@ jobs:
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
-      - name: Build release integration libraries
+      - name: Build development-only integration libraries
         working-directory: trillionnium-chain/trillionnium
         run: |
           set -euo pipefail
@@ -361,10 +385,14 @@ jobs:
             -p trnm-consensus-types \
             -p trnm-consensus-crypto \
             -p trnm-consensus-core \
+            -p trnm-consensus-safety-store \
+            -p trnm-consensus-signer-journal \
             -p trnm-consensus-app \
             -p trnm-finality-types \
+            -p trnm-poco-node \
             -p trnm-protocol \
             -p trnm-runtime
+          artifact_stage="$(mktemp -d "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.XXXXXX")"
           find target/release/deps -maxdepth 1 -type f \
             \( -name 'libtrnm_consensus_*' \
                -o -name 'libtrnm_finality_types*' \
@@ -372,18 +400,87 @@ jobs:
                -o -name 'libtrnm_runtime*' \) \
             -print0 | sort -z > "$RUNNER_TEMP/trnm-poco-artifacts.list"
           test -s "$RUNNER_TEMP/trnm-poco-artifacts.list"
-          tar --null --files-from "$RUNNER_TEMP/trnm-poco-artifacts.list" \
-            --create --gzip --file "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz"
-          sha256sum "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz" \
-            > "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz.sha256"
+          while IFS= read -r -d '' artifact; do
+            cp -- "$artifact" "$artifact_stage/"
+          done < "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          find "$artifact_stage" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_safety_store*' -print -quit \
+            | grep -q .
+          find "$artifact_stage" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_signer_journal*' -print -quit \
+            | grep -q .
+          metadata="$artifact_stage/ARTIFACT-METADATA.txt"
+          {
+            printf '%s\n' 'artifact_schema=trnm-poco-bft-v0-development-libraries-v1'
+            printf '%s\n' 'artifact_class=development_only'
+            printf '%s\n' 'build_profile=release'
+            printf '%s\n' 'development_only=true'
+            printf '%s\n' 'production_consensus_activation=false'
+            printf '%s\n' 'deployable_node=false'
+            printf '%s\n' 'production_candidate=false'
+            printf '%s\n' 'incomplete=true'
+            printf '%s\n' 'effect_driver=false'
+            printf '%s\n' 'poco_node_binary_included=false'
+            printf '%s\n' 'production_ready=false'
+            printf '%s\n' 'includes_trnm_consensus_safety_store=true'
+            printf '%s\n' 'includes_trnm_consensus_signer_journal=true'
+            printf '%s\n' 'external_monotonic_signer_watermark_bound=false'
+            printf '%s\n' 'truth_source=RELEASE_READINESS.md'
+            printf 'source_revision=%s\n' "$GITHUB_SHA"
+          } > "$metadata"
+          (
+            cd "$artifact_stage"
+            sha256sum lib* > LIBRARIES.sha256
+          )
+          cp -- "$metadata" \
+            "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.metadata.txt"
+          tar --sort=name --owner=0 --group=0 --numeric-owner \
+            --directory "$artifact_stage" --create --gzip \
+            --file "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz" .
+          sha256sum "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz" \
+            > "$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz.sha256"
 
-      - name: Upload release libraries
+      - name: Verify development-only artifact boundary
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/trnm-poco-bft-v0-development-libs.tar.gz"
+          checksum="$archive.sha256"
+          sha256sum --check --strict "$checksum"
+          inspection="$(mktemp -d "$RUNNER_TEMP/trnm-poco-bft-v0-artifact-inspection.XXXXXX")"
+          tar --extract --gzip --file "$archive" --directory "$inspection"
+          metadata="$inspection/ARTIFACT-METADATA.txt"
+          test -f "$metadata"
+          grep -Fxq 'artifact_class=development_only' "$metadata"
+          grep -Fxq 'build_profile=release' "$metadata"
+          grep -Fxq 'development_only=true' "$metadata"
+          grep -Fxq 'production_consensus_activation=false' "$metadata"
+          grep -Fxq 'deployable_node=false' "$metadata"
+          grep -Fxq 'production_candidate=false' "$metadata"
+          grep -Fxq 'incomplete=true' "$metadata"
+          grep -Fxq 'effect_driver=false' "$metadata"
+          grep -Fxq 'poco_node_binary_included=false' "$metadata"
+          grep -Fxq 'production_ready=false' "$metadata"
+          grep -Fxq 'includes_trnm_consensus_safety_store=true' "$metadata"
+          grep -Fxq "source_revision=$GITHUB_SHA" "$metadata"
+          find "$inspection" -maxdepth 1 -type f \
+            -name 'libtrnm_consensus_safety_store*' -print -quit \
+            | grep -q .
+          if find "$inspection" -maxdepth 1 -type f -perm /111 -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains an executable' >&2
+            exit 1
+          fi
+
+      - name: Upload development-only libraries
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-poco-bft-v0-libs-${{ github.run_id }}-${{ github.run_attempt }}
+          name: trnm-poco-bft-v0-development-libs-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/trnm-poco-bft-v0-libs.tar.gz
-            ${{ runner.temp }}/trnm-poco-bft-v0-libs.tar.gz.sha256
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.tar.gz
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.tar.gz.sha256
+            ${{ runner.temp }}/trnm-poco-bft-v0-development-libs.metadata.txt
           if-no-files-found: error
           retention-days: 14
 

@@ -10,6 +10,7 @@ pub(crate) const DOMAIN_BLOCK: &[u8] = b"trnm.poco-bft.block.v0";
 pub(crate) const DOMAIN_PROPOSAL: &[u8] = b"trnm.poco-bft.proposal.v0";
 pub(crate) const DOMAIN_VOTE: &[u8] = b"trnm.poco-bft.vote.v0";
 pub(crate) const DOMAIN_TIMEOUT: &[u8] = b"trnm.poco-bft.timeout.v0";
+pub(crate) const DOMAIN_SIGN_INTENT: &[u8] = b"trnm.poco-bft.sign-intent.v0";
 pub(crate) const DOMAIN_QUORUM_CERTIFICATE: &[u8] = b"trnm.poco-bft.qc.v0";
 pub(crate) const DOMAIN_TIMEOUT_CERTIFICATE: &[u8] = b"trnm.poco-bft.tc.v0";
 pub(crate) const DOMAIN_HANDOFF_DESCRIPTOR: &[u8] = b"trnm.poco-bft.handoff-descriptor.v0";
@@ -34,11 +35,12 @@ pub(crate) const DOMAIN_CONSUMPTION_CERTIFICATE_ID: &[u8] =
     b"trnm.poco.consumption-certificate-id.v0";
 
 #[allow(dead_code)]
-pub(crate) const FROZEN_DOMAINS: [&[u8]; 21] = [
+pub(crate) const FROZEN_DOMAINS: [&[u8]; 22] = [
     DOMAIN_BLOCK,
     DOMAIN_PROPOSAL,
     DOMAIN_VOTE,
     DOMAIN_TIMEOUT,
+    DOMAIN_SIGN_INTENT,
     DOMAIN_QUORUM_CERTIFICATE,
     DOMAIN_TIMEOUT_CERTIFICATE,
     DOMAIN_HANDOFF_DESCRIPTOR,

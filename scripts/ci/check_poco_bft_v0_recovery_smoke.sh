@@ -43,6 +43,10 @@ run_unit_filter trnm-consensus-core \
 run_unit_filter trnm-consensus-core \
   persisted_sign_intent_is_re_requested_after_recovery
 run_unit_filter trnm-consensus-core \
+  callback_persistence_preserves_exact_sign_intent_across_crash_resume
+run_unit_filter trnm-consensus-core \
+  synced_callback_persistence_preserves_exact_vote_intent_across_crash_resume
+run_unit_filter trnm-consensus-core \
   durable_valid_fact_still_requires_body_and_context_readiness_after_recovery
 run_integration_filter trnm-consensus-safety-store sqlite_store \
   initializes_reads_head_and_reopens_exactly
@@ -56,6 +60,18 @@ run_integration_filter trnm-consensus-safety-store sqlite_store \
   revision_gap_durably_halts_and_survives_reopen
 run_integration_filter trnm-consensus-safety-store sqlite_store \
   raw_sqlite_accounting_head_and_record_tampering_is_rejected_on_reopen
+run_unit_filter trnm-consensus-safety-store \
+  torn_halt_latch_is_fail_closed_without_damaging_the_head_slots
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  deleting_persistent_wal_or_shm_after_close_fails_reopen_closed
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  tampered_only_valid_lock_watermark_slot_is_rejected_on_reopen
+run_integration_filter trnm-consensus-signer-journal sqlite_journal \
+  signature_is_persisted_before_return_and_exact_replay_skips_producer
+run_integration_filter trnm-consensus-signer-journal sqlite_journal \
+  external_watermark_recovers_each_local_first_commit_window
+run_integration_filter trnm-consensus-signer-journal sqlite_journal \
+  whole_namespace_rollback_is_detected_by_external_watermark
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
@@ -110,4 +126,4 @@ run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 
 printf '%s\n' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-validation-job-recovery-integrity-outbox-delivery-states-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-snapshot'

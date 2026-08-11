@@ -18,18 +18,20 @@ use core::fmt;
 use crate::canonical::try_canonical_bytes;
 use crate::proposal_v0::{validate_scheduled_leader, validate_timestamp_step};
 use crate::{
-    ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CertificateId, CertifiedHeaderV0,
-    ChainId, CommonConsensusContextV0, ConsensusParametersHash, ConsensusParametersV0,
-    ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch,
-    EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0,
-    ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0,
-    HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, Height, LeaderSchedule,
-    MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
-    PayloadDigest, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
-    RolloutPhase, Signature64, SignatureShareV0, SignatureVerifier, StateRoot,
-    TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId,
-    ValidatorSet, ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
-    MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
+    ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, CertificateId,
+    CertifiedHeaderV0, ChainId, CommonConsensusContextV0, ConsensusParametersHash,
+    ConsensusParametersV0, ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0,
+    Epoch, EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot,
+    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0,
+    GenesisHash, GenesisQcV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
+    Height, LeaderSchedule, MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0,
+    NextEpochCommitmentV0Fields, PayloadDigest, ProtocolVersion, QcRef, QcReferenceV0,
+    QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0, Signature64,
+    SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
+    TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
+    ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS,
+    MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -41,6 +43,21 @@ pub const MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES: usize =
 
 /// The maximum old-plus-new signature shares in one handoff certificate.
 pub const MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES: usize = MAX_CEV0_CERTIFICATE_ITEMS * 2;
+
+/// Maximum exact CEV0 bytes in one canonical Core-to-signer intent.
+///
+/// The bound covers two maximum-width chain IDs, one maximum-width validator
+/// ID, the larger timeout-vote preimage, and both fixed 32-byte digests. It is
+/// independent of transport framing and is checked before any field parsing.
+pub const MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES: usize =
+    // Outer schema/profile, author, revision, and preimage tag.
+    2 + (2 + MAX_CONSENSUS_STRING_BYTES) + 4 + 8 + 32 + (4 + MAX_VALIDATOR_ID_BYTES) + 8 + 1
+    // Nested common consensus context.
+    + 2 + 32 + (2 + MAX_CONSENSUS_STRING_BYTES) + 4 + 8 + 32 + 8 + 1
+    // Timeout high-QC summary: digest, epoch, view, height, and block ID.
+    + 32 + 8 + 8 + 8 + 32
+    // Signing root and intent fingerprint.
+    + 32 + 32;
 
 pub type DecodeResult<T> = core::result::Result<T, DecodeError>;
 
@@ -96,6 +113,8 @@ pub enum DecodeErrorCode {
     InvalidConsensusParameters,
     InvalidFinalityProof,
     InvalidCheckpointTwoSeal,
+    InvalidSignIntentTag,
+    InvalidSignIntent,
 }
 
 impl DecodeErrorCode {
@@ -150,6 +169,8 @@ impl DecodeErrorCode {
             Self::InvalidConsensusParameters => "invalid_consensus_parameters",
             Self::InvalidFinalityProof => "invalid_finality_proof",
             Self::InvalidCheckpointTwoSeal => "invalid_checkpoint_two_seal",
+            Self::InvalidSignIntentTag => "invalid_sign_intent_tag",
+            Self::InvalidSignIntent => "invalid_sign_intent",
         }
     }
 }
@@ -712,6 +733,237 @@ fn admit_raw_validator_set(raw: RawValidatorSet<'_>) -> DecodeResult<ValidatorSe
             SemanticObject::ValidatorSet,
         )
     })
+}
+
+/// Decodes one complete canonical Core-to-signer authorization envelope.
+///
+/// The active validator set is trusted authorization context: both the outer
+/// profile and the nested signed-message context must bind to it exactly, and
+/// the author must be one of its members. The decoder admits only the frozen
+/// vote and timeout-vote variants, exhausts the supplied root, validates the
+/// embedded signing root and intent fingerprint, and requires byte-for-byte
+/// canonical re-encoding before returning the typed intent.
+///
+/// This function validates encoding and validator-set binding. A signer must
+/// separately enforce its monotonic SafetyState revision/watermark policy.
+pub fn decode_canonical_sign_intent_v0_exact(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+) -> DecodeResult<CanonicalSignIntentV0> {
+    if bytes.len() > MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_canonical_sign_intent(&mut cursor)?;
+    cursor.finish()?;
+    let intent = admit_raw_canonical_sign_intent(raw, validator_set)?;
+    require_exact_canonical_reencoding(bytes, intent.canonical_bytes(), 0)?;
+    Ok(intent)
+}
+
+fn parse_raw_canonical_sign_intent<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawCanonicalSignIntent<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let chain_id = cursor.bounded_consensus_bytes_raw()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let validator_set_id_offset = cursor.offset();
+    let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let author = cursor.bounded_validator_id_bytes_raw()?;
+    let authorizing_safety_revision_offset = cursor.offset();
+    let authorizing_safety_revision = cursor.u64()?;
+    let preimage_tag_offset = cursor.offset();
+    let preimage_tag = cursor.u8()?;
+    let preimage = match preimage_tag {
+        0 => RawCanonicalSignPreimage::Vote {
+            context: parse_raw_common_consensus_context(cursor)?,
+            height: Height::new(cursor.u64()?),
+            block_id: BlockId::new(cursor.fixed()?),
+        },
+        1 => RawCanonicalSignPreimage::TimeoutVote {
+            context: parse_raw_common_consensus_context(cursor)?,
+            high_qc_digest: CertificateId::new(cursor.fixed()?),
+            high_qc_epoch: Epoch::new(cursor.u64()?),
+            high_qc_view: View::new(cursor.u64()?),
+            high_qc_height: Height::new(cursor.u64()?),
+            high_qc_block_id: BlockId::new(cursor.fixed()?),
+        },
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidSignIntentTag,
+                preimage_tag_offset,
+            ));
+        }
+    };
+    let signing_root_offset = cursor.offset();
+    let signing_root = SigningRoot::new(cursor.fixed()?);
+    let fingerprint_offset = cursor.offset();
+    let fingerprint = SignIntentFingerprintV0::new(cursor.fixed()?);
+    Ok(RawCanonicalSignIntent {
+        object_offset,
+        schema_version,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        validator_set_id_offset,
+        validator_set_id,
+        author,
+        authorizing_safety_revision_offset,
+        authorizing_safety_revision,
+        preimage,
+        signing_root_offset,
+        signing_root,
+        fingerprint_offset,
+        fingerprint,
+    })
+}
+
+fn admit_raw_canonical_sign_intent(
+    raw: RawCanonicalSignIntent<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<CanonicalSignIntentV0> {
+    if raw.schema_version != CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            raw.object_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    validator_set.validate_shape().map_err(|error| {
+        map_validation_error(error, raw.object_offset, SemanticObject::ValidatorSet)
+    })?;
+    if chain_id != validator_set.chain_id()
+        || protocol_version != validator_set.protocol_version()
+        || raw.epoch != validator_set.epoch()
+        || raw.validator_set_id != validator_set.id()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            raw.validator_set_id_offset,
+        ));
+    }
+    let author = admit_validator_id(raw.author)?;
+    if validator_set.validator(author).is_none() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnknownSigner,
+            raw.author.length_offset,
+        ));
+    }
+    if raw.authorizing_safety_revision == 0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSignIntent,
+            raw.authorizing_safety_revision_offset,
+        ));
+    }
+
+    let intent = match raw.preimage {
+        RawCanonicalSignPreimage::Vote {
+            context,
+            height,
+            block_id,
+        } => {
+            let context = admit_raw_sign_context(context, MessageKind::Vote, validator_set)?;
+            CanonicalSignIntentV0::vote(
+                validator_set,
+                author,
+                raw.authorizing_safety_revision,
+                context.view(),
+                height,
+                block_id,
+            )
+        }
+        RawCanonicalSignPreimage::TimeoutVote {
+            context,
+            high_qc_digest,
+            high_qc_epoch,
+            high_qc_view,
+            high_qc_height,
+            high_qc_block_id,
+        } => {
+            let context = admit_raw_sign_context(context, MessageKind::Timeout, validator_set)?;
+            CanonicalSignIntentV0::timeout_vote(
+                validator_set,
+                author,
+                raw.authorizing_safety_revision,
+                context.view(),
+                QcRef::new(
+                    high_qc_digest,
+                    high_qc_epoch,
+                    high_qc_view,
+                    high_qc_height,
+                    high_qc_block_id,
+                    validator_set.id(),
+                ),
+            )
+        }
+    }
+    .map_err(|error| map_validation_error(error, raw.object_offset, SemanticObject::SignIntent))?;
+
+    if raw.signing_root != intent.signing_root() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSignIntent,
+            raw.signing_root_offset,
+        ));
+    }
+    if raw.fingerprint != intent.fingerprint() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSignIntent,
+            raw.fingerprint_offset,
+        ));
+    }
+    Ok(intent)
+}
+
+fn admit_raw_sign_context(
+    raw: RawCommonConsensusContext<'_>,
+    expected_kind: MessageKind,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<CommonConsensusContextV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    if raw.validator_set_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            raw.validator_set_hash_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    if raw.message_kind != expected_kind as u8 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            raw.message_kind_offset,
+        ));
+    }
+    require_trusted_set_context(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_hash,
+        validator_set,
+        raw.object_offset,
+    )?;
+    CommonConsensusContextV0::new(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_hash,
+        raw.view,
+        expected_kind,
+    )
+    .map_err(|error| map_validation_error(error, raw.object_offset, SemanticObject::SignIntent))
 }
 
 /// Decodes one complete ordinary QC and validates it against a trusted set.
@@ -2713,6 +2965,43 @@ struct RawCommonConsensusContext<'a> {
 }
 
 #[derive(Debug)]
+enum RawCanonicalSignPreimage<'a> {
+    Vote {
+        context: RawCommonConsensusContext<'a>,
+        height: Height,
+        block_id: BlockId,
+    },
+    TimeoutVote {
+        context: RawCommonConsensusContext<'a>,
+        high_qc_digest: CertificateId,
+        high_qc_epoch: Epoch,
+        high_qc_view: View,
+        high_qc_height: Height,
+        high_qc_block_id: BlockId,
+    },
+}
+
+#[derive(Debug)]
+struct RawCanonicalSignIntent<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    validator_set_id_offset: usize,
+    validator_set_id: ValidatorSetId,
+    author: RawBytes<'a>,
+    authorizing_safety_revision_offset: usize,
+    authorizing_safety_revision: u64,
+    preimage: RawCanonicalSignPreimage<'a>,
+    signing_root_offset: usize,
+    signing_root: SigningRoot,
+    fingerprint_offset: usize,
+    fingerprint: SignIntentFingerprintV0,
+}
+
+#[derive(Debug)]
 struct RawVoteEvidenceRecord<'a> {
     object_offset: usize,
     context: RawCommonConsensusContext<'a>,
@@ -3121,6 +3410,7 @@ enum SemanticObject {
     ValidatorSet,
     Certificate,
     NextEpochCommitment,
+    SignIntent,
 }
 
 fn map_validation_error(
@@ -3157,10 +3447,12 @@ fn map_validation_error(
         ValidationError::ConflictingSameViewQc => DecodeErrorCode::ConflictingSameViewQc,
         ValidationError::InsufficientQuorum { .. } => DecodeErrorCode::InsufficientQuorum,
         ValidationError::InvalidCertificate(_) => DecodeErrorCode::InvalidReferencedQc,
+        ValidationError::InvalidSignIntent(_) => DecodeErrorCode::InvalidSignIntent,
         _ => match object {
             SemanticObject::ValidatorSet => DecodeErrorCode::ContextMismatch,
             SemanticObject::Certificate => DecodeErrorCode::InvalidReferencedQc,
             SemanticObject::NextEpochCommitment => DecodeErrorCode::InvalidNextEpochCommitment,
+            SemanticObject::SignIntent => DecodeErrorCode::InvalidSignIntent,
         },
     };
     DecodeError::new(code, byte_offset)

@@ -4,6 +4,30 @@ Status: **active engineering plan; no phase is complete**
 
 Working branch: `feature/chain-poco-bft-v0`
 
+## 2026-08-11 delivery-strategy gate
+
+Delivery now follows the active dual-track decision in
+[`../architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md`](../architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md).
+The CometBFT application/JMT path remains an explicitly development-only devnet
+candidate and differential oracle while the custom PoCO-BFT path remains an
+incubator. The tracks do not share validator safety state, signer journals,
+chain IDs, readiness labels, or release artifacts.
+
+PoCO-BFT cannot replace that development candidate merely because its Core or
+simulator passes. It must first close the single-node production host, signer,
+fork-aware execution, ordered finalization, crash recovery, state-sync,
+real-node, soak, and external-review gates in the dual-track decision. PoCO
+economic power remains shadow-only throughout those gates.
+
+The immediate implementation order is therefore:
+
+1. correct CLI/RPC/testnet/CI truth boundaries;
+2. build the minimal fail-closed `trnm-poco-node` host;
+3. close canonical signing and cross-crash recovery;
+4. add BlockId-keyed speculative execution and ordered finalization;
+5. close epoch/state-sync/evidence/light-client contracts;
+6. only then implement and validate P2 real-node networking and operations.
+
 ## 2026-08-08 execution-order reset
 
 The current implementation order is closed around recoverability rather than
@@ -32,18 +56,20 @@ not complete step 4 or satisfy the frozen production contract.
 
 The representation and standalone journal portions of step 5 are now
 implemented. SafetyState record codec v0 is frozen to epoch-zero Core
-SafetyState schema v7, exact-decodes nested trusted-Genesis CEV0, and binds Core
+SafetyState schema v8, exact-decodes nested trusted-Genesis CEV0, and binds Core
 configuration, verifier profile, codec layout, and host-selected limits. The
 Linux-only `trnm-consensus-safety-store` adds node-local SQLite journal schema
-v1 with persistent WAL, `synchronous=FULL`, a two-revision checksummed
+v2 with persistent WAL, `synchronous=FULL`, a two-revision checksummed
 predecessor chain, two separately aligned Stable/HeadIntent head slots, and an
 independent one-way terminal-halt latch.
 It semantically revalidates inert heads and exact successors, including
 obligation-bearing facts, while `Core::recover` still rejects obligations.
 Core now emits opaque persistence requests with process-local designated-Core
-affinity. There is still no production driver/journal adapter, independent
-monotonic signer watermark, obligation takeover, complete canonical
-SignIntent/sign journal, or ordered finalization queue.
+affinity. `CanonicalSignIntentV0`, strict exact decoding/vectors, and a first
+append-only signer-journal slice are present; the inert node owner holds that
+journal but exposes no signing/effect-driving API. There is still no production
+external monotonic watermark, HSM/KMS producer, complete HotStuff SafetyRules
+or locked-QC reconciliation, obligation takeover, or ordered finalization queue.
 
 The frozen contracts are release gates. A test-only carrier or an in-memory
 simulation cannot satisfy them.
@@ -268,7 +294,7 @@ an earlier phase.
   request only from this durable record and its exact volatile proposal mirror.
   Core `SafetyState` schema v6 introduced the separately sorted
   `DurablePayloadValidationCompletionV0` set, but retained a process-local
-  validation capability in its cloneable record. Current schema v7 stores
+  validation capability in its cloneable record. Schema v7 stores
   `DurablePayloadValidationResultV1` instead. Its `Valid` variant contains only
   inert block ID, logical size, transaction-count, and evidence-count
   comparison facts and has no conversion back to
@@ -293,22 +319,24 @@ an earlier phase.
   logical block plus exact certified-tail witness -- under authenticated
   `max_consensus_message_bytes`; the aggregate obligation budget additionally
   covers fixed route/ID/revision/parent facts and any exact parent header.
-  Recovery first validates every schema-v7 obligation and inert completion and
+  Current schema v8 additionally freezes the first durable authorizing revision
+  of a pending SignIntent across unrelated callback persistence. Recovery first
+  validates every schema-v8 obligation and inert completion and
   then rejects any non-empty obligation set with `InvalidRecovery`; it does not
-  reissue a pending request. Safety-state schemas v5 and v6 have no implicit
+  reissue a pending request. Safety-state schemas v5 through v7 have no implicit
   migration. Completion-only recovery provides exact-result suppression, but
   non-empty obligations remain
   fail-closed. This closes durable pre-effect capture, cleanup ordering, and
   callback-result idempotence, not crash replay, callback exactly-once, or
   liveness.
-  An exact bounded record codec v0 now serializes only epoch-zero schema-v7
+  An exact bounded record codec v0 now serializes only epoch-zero schema-v8
   SafetyState. It uses strict/canonical trusted-Genesis-aware nested CEV0,
   binds the Core configuration, verifier profile, fixed layout, and record/blob
   limits, and returns only an unverified inert state requiring
   `Core::validate_persisted_state_v0`. Its conservative capacity calculation
   must admit the active `CoreConfig` before use.
   A separate Linux-only `trnm-consensus-safety-store` now wraps that record in
-  node-local SQLite journal schema v1. It is outside ApplicationStore/AppHash/
+  node-local SQLite journal schema v2. It is outside ApplicationStore/AppHash/
   snapshots/state sync; binds the exact Core configuration, verifier profile,
   codecs and resource limits; uses persistent WAL with `synchronous=FULL`; and
   holds lifetime locks on its protected local namespace. It keeps active and
@@ -321,10 +349,10 @@ an earlier phase.
   `Core::recover`. Core's opaque persistence request binds the exact
   barrier/state, and a process-local affinity lets the future host reject an
   effect emitted by a public clone of its designated Core.
-  The journal has no production host/driver adapter, authenticated obligation
-  replay, complete SignIntent/sign journal, or ordered finalization queue. A
+  The journal has no production effect-driver adapter, authenticated obligation
+  replay, complete SafetyRules signer, or ordered finalization queue. A
   whole-namespace rollback still needs an independent monotonic signer/host
-  watermark, arbitrary external clones remain undetected, and journal v1 is
+  watermark, arbitrary external clones remain undetected, and journal v2 is
   not certified for network/FUSE/overlay filesystems, fork-after-open, or an
   untrusted same-EUID process.
   After wrapper/route congruence and the object-graph claim, but before host or
@@ -1123,7 +1151,7 @@ an earlier phase.
   test sink. It has no production constructor or adapter to the standalone
   SafetyState journal. The
   driver uses Core's `StorageAck` cleanup barrier only after exact sink
-  confirmation and application acknowledgement; the schema-v7 inert
+  confirmation and application acknowledgement; the schema-v8 inert
   completion tombstone alone cannot authorize artifact replay. The
   deterministic-invalid validation-time transaction is
   atomic, but the corresponding `Valid` transaction still must retain a
@@ -1196,8 +1224,8 @@ an earlier phase.
   synced payload-validation obligation before its validation effect. Historical
   schema v6 atomically replaced an exact callback obligation with a canonically
   sorted `(route, full ValidationId)` completion tombstone, but embedded the
-  process-local `Valid` capability in that cloneable record. Current schema v7
-  instead stores an inert three-result projection and first revision; its
+  process-local `Valid` capability in that cloneable record. Schema v7 instead
+  stores an inert three-result projection and first revision; its
   `Valid` form contains only block ID, logical size, transaction count, and
   evidence count and has no conversion back to live authority. Exact result
   replay projects a newly supplied live result into the same inert form and
@@ -1205,9 +1233,12 @@ an earlier phase.
   eviction, and registration reserves the future tombstone under the shared
   `completions + obligations <= max_observed_messages` bound. Safety halt
   clears obligations atomically while retaining prior completions. Recovery
-  validates both record sets but deliberately rejects a non-empty obligation
-  set until authenticated replay tickets and speculative-parent reconstruction
-  exist; schemas v5 and v6 are not implicitly migrated. This ordering and
+  validates those facts, while current schema v8 additionally freezes the
+  first durable authorizing revision inside a pending `SignIntent`. Schemas v5
+  through v7 are not implicitly migrated because that signing authorization
+  cannot be reconstructed safely after a crash. Recovery deliberately rejects
+  a non-empty obligation set until authenticated replay tickets and
+  speculative-parent reconstruction exist. This ordering and
   tombstone are
   distinct from, and do not implement, an application callback outbox,
   delivery acknowledgement, type-level callback authority, or callback

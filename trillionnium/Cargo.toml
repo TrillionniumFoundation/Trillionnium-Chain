@@ -3,6 +3,8 @@ exclude = ["fuzz"]
 members = [
   "crates/trnm-consensus-core",
   "crates/trnm-consensus-safety-store",
+  "crates/trnm-consensus-signer-journal",
+  "crates/trnm-poco-node",
   "crates/trnm-consensus-crypto",
   "crates/trnm-consensus-sim",
   "crates/trnm-consensus-types",

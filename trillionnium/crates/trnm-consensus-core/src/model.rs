@@ -5,11 +5,11 @@ use core::{
 };
 
 use trnm_consensus_types::{
-    Block, BlockHeader, BlockId, CertificateId, ChainId, ConsensusParametersV0, Epoch,
-    EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height, ProtocolVersion, QcRef,
-    QcReferenceV0, QuorumCertificate, SignatureBytes, SignedProposalV0, SigningRoot,
-    TimeoutCertificateV0, TimeoutVote, ValidatedBlockCommitmentsV0, ValidatorId, ValidatorSet,
-    ValidatorSetId, View, Vote,
+    Block, BlockHeader, BlockId, CanonicalSignIntentV0, CertificateId, ChainId,
+    ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height,
+    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, SignatureBytes, SignedProposalV0,
+    SigningRoot, TimeoutCertificateV0, TimeoutVote, ValidatedBlockCommitmentsV0, ValidatorId,
+    ValidatorSet, ValidatorSetId, View, Vote,
 };
 
 use crate::{CoreError, Result};
@@ -178,12 +178,14 @@ pub enum SignKind {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SignIntent {
     Vote {
+        authorizing_safety_revision: u64,
         view: View,
         height: Height,
         block_id: BlockId,
         signing_root: SigningRoot,
     },
     TimeoutVote {
+        authorizing_safety_revision: u64,
         view: View,
         high_qc: QcRef,
         signing_root: SigningRoot,
@@ -191,6 +193,23 @@ pub enum SignIntent {
 }
 
 impl SignIntent {
+    /// SafetyState revision which first made this signing authorization
+    /// durable. Unrelated exact callback persistence may advance the enclosing
+    /// state revision while this outbox remains pending, but it must never
+    /// change the signer authorization or its canonical fingerprint.
+    pub const fn authorizing_safety_revision(&self) -> u64 {
+        match self {
+            Self::Vote {
+                authorizing_safety_revision,
+                ..
+            }
+            | Self::TimeoutVote {
+                authorizing_safety_revision,
+                ..
+            } => *authorizing_safety_revision,
+        }
+    }
+
     pub const fn view(&self) -> View {
         match self {
             Self::Vote { view, .. } | Self::TimeoutVote { view, .. } => *view,
@@ -307,13 +326,16 @@ impl FinalizedTip {
 /// those tombstones while replacing their process-local validation-capability
 /// value with an inert, durable result snapshot. A decoded snapshot can prove
 /// equality with a newly supplied live result, but can never reconstruct a
-/// [`ValidatedBlockCommitmentsV0`] capability.
+/// [`ValidatedBlockCommitmentsV0`] capability. Version eight freezes the
+/// authorizing SafetyState revision inside each pending signing intent so an
+/// unrelated callback revision cannot change its canonical signer contract.
 ///
-/// Version-five records omit completion tombstones, and version-six records
-/// retain opaque live validation capabilities. Both older schemas must fail
-/// closed in `Core::recover`; there is deliberately no implicit migration in
-/// this model layer.
-pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 7;
+/// Version-five records omit completion tombstones, version-six records retain
+/// opaque live validation capabilities, and version-seven records do not bind
+/// the first durable signing barrier. All older schemas must fail closed in
+/// `Core::recover`; there is deliberately no implicit migration in this model
+/// layer.
+pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 8;
 
 /// A verified timeout certificate whose selected high QC cannot yet be
 /// adopted because its block, ancestry, or payload is unavailable locally.
@@ -1529,10 +1551,7 @@ pub enum Effect {
     ValidatePayload(PayloadValidationRequest),
     ValidateSyncedPayload(PayloadValidationRequest),
     RequestSignature {
-        id: SignId,
-        author: ValidatorId,
-        kind: SignKind,
-        signing_root: SigningRoot,
+        intent: CanonicalSignIntentV0,
     },
     Broadcast(OutboundMessage),
     ArmViewTimer {

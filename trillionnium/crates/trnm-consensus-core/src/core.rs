@@ -1404,8 +1404,14 @@ impl Core {
             header.height(),
             proposal.block().id(),
         )?;
+        let authorizing_safety_revision = self
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
         self.safety.set_last_voted(header.view());
         self.safety.set_pending_sign(Some(SignIntent::Vote {
+            authorizing_safety_revision,
             view: header.view(),
             height: header.height(),
             block_id: proposal.block().id(),
@@ -1596,8 +1602,14 @@ impl Core {
         let high_qc = self.safety.high_qc().qc_ref();
         self.require_pre_checkpoint_height(high_qc.height())?;
         let root = TimeoutVote::signing_root_for_set(self.config.validator_set(), view, high_qc)?;
+        let authorizing_safety_revision = self
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
         self.safety.set_last_timeout(view);
         self.safety.set_pending_sign(Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision,
             view,
             high_qc,
             signing_root: root,
@@ -1803,6 +1815,7 @@ impl Core {
                 height,
                 block_id,
                 signing_root,
+                ..
             } => {
                 if signing_root != id.signing_root() {
                     return Err(CoreError::SignIdMismatch);
@@ -1826,6 +1839,7 @@ impl Core {
                 view,
                 high_qc,
                 signing_root,
+                ..
             } => {
                 if signing_root != id.signing_root() {
                     return Err(CoreError::SignIdMismatch);
@@ -3297,12 +3311,40 @@ impl Core {
 
     fn signature_effect(&self, intent: &SignIntent) -> Result<Effect> {
         self.require_supported_sign_intent(intent)?;
-        Ok(Effect::RequestSignature {
-            id: intent.id(),
-            author: self.config.local_validator(),
-            kind: intent.kind(),
-            signing_root: intent.signing_root(),
-        })
+        let canonical = match intent {
+            SignIntent::Vote {
+                authorizing_safety_revision,
+                view,
+                height,
+                block_id,
+                ..
+            } => trnm_consensus_types::CanonicalSignIntentV0::vote(
+                self.config.validator_set(),
+                self.config.local_validator(),
+                *authorizing_safety_revision,
+                *view,
+                *height,
+                *block_id,
+            )?,
+            SignIntent::TimeoutVote {
+                authorizing_safety_revision,
+                view,
+                high_qc,
+                ..
+            } => trnm_consensus_types::CanonicalSignIntentV0::timeout_vote(
+                self.config.validator_set(),
+                self.config.local_validator(),
+                *authorizing_safety_revision,
+                *view,
+                *high_qc,
+            )?,
+        };
+        if canonical.signing_root() != intent.signing_root() {
+            return Err(CoreError::InvalidRecovery(
+                "persisted sign intent root does not match its canonical preimage",
+            ));
+        }
+        Ok(Effect::RequestSignature { intent: canonical })
     }
 
     fn tc_high_qc_sync_effect(&self) -> Result<Effect> {
@@ -4128,6 +4170,13 @@ impl Core {
             ));
         }
         if let Some(intent) = self.safety.pending_sign() {
+            if intent.authorizing_safety_revision() == 0
+                || intent.authorizing_safety_revision() > self.safety.revision()
+            {
+                return Err(CoreError::InvalidRecovery(
+                    "pending signing intent has an invalid authorizing revision",
+                ));
+            }
             if intent.view() != self.safety.current_view() {
                 return Err(CoreError::InvalidRecovery(
                     "pending signing intent is not for the current view",
@@ -4276,6 +4325,7 @@ impl Core {
                         }
                         InvalidPayloadReference::PendingVote(intent) => {
                             let SignIntent::Vote {
+                                authorizing_safety_revision,
                                 view,
                                 height,
                                 block_id: intent_block_id,
@@ -4286,7 +4336,9 @@ impl Core {
                                     "invalid-payload halt cites a timeout-vote intent",
                                 ));
                             };
-                            if intent_block_id != block_id
+                            if *authorizing_safety_revision == 0
+                                || *authorizing_safety_revision > self.safety.revision()
+                                || intent_block_id != block_id
                                 || Vote::signing_root_for_set(
                                     set,
                                     *view,
@@ -4412,6 +4464,11 @@ impl Core {
         }
         if self.safety.pending_sign() != previous.pending_sign() {
             if let Some(intent) = self.safety.pending_sign() {
+                if intent.authorizing_safety_revision() != self.safety.revision() {
+                    return Err(CoreError::InvalidRecovery(
+                        "new signing intent is not authorized by its persistence revision",
+                    ));
+                }
                 let watermark_advanced = match intent {
                     SignIntent::Vote { view, .. } => previous
                         .last_voted_view()

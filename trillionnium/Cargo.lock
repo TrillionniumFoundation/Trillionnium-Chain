@@ -1645,6 +1645,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-signer-journal"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "getrandom 0.2.17",
+ "libc",
+ "rusqlite",
+ "sha2",
+ "subtle",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-consensus-sim"
 version = "0.1.0"
 dependencies = [
@@ -1658,6 +1674,7 @@ name = "trnm-consensus-types"
 version = "0.1.0"
 dependencies = [
  "sha2",
+ "subtle",
 ]
 
 [[package]]
@@ -1726,6 +1743,19 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
+]
+
+[[package]]
+name = "trnm-poco-node"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "tempfile",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
 ]
 
 [[package]]

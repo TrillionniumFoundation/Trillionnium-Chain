@@ -2,14 +2,15 @@ use alloc::{boxed::Box, vec, vec::Vec};
 
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact,
-    ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind, CertificateId,
-    CertifiedHeaderV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, ContextAuthorizedQcV0,
-    Epoch, EvidenceRoot, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, FinalityProofV0,
-    GenesisHash, GenesisQcV0, Height, NextEpochCommitmentHash, PayloadDigest, ProposalWitnessV0,
-    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes,
-    SignatureVerifier, SignedProposalV0, SigningRoot, StateRoot, TimeoutCertificateV0,
-    TimeoutEntryV0, TimeoutVote, ValidatedBlockCommitmentsV0, ValidationError, Validator,
-    ValidatorId, ValidatorSet, View, Vote, VotingPower, SIGNATURE_BYTES,
+    ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind,
+    CanonicalSignPreimageV0, CertificateId, CertifiedHeaderV0, ChainId, ConsensusParametersV0,
+    ConsensusPublicKey, ContextAuthorizedQcV0, Epoch, EvidenceRoot, ExecutionReceiptCommitmentV0,
+    ExecutionReceiptsV0, FinalityProofV0, GenesisHash, GenesisQcV0, Height,
+    NextEpochCommitmentHash, PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
+    ValidatedBlockCommitmentsV0, ValidationError, Validator, ValidatorId, ValidatorSet, View, Vote,
+    VotingPower, SIGNATURE_BYTES,
 };
 
 use crate::core::payload_parent_context_matches_target_v0;
@@ -746,9 +747,9 @@ fn conflicting_qc_halt_persistence(
 
 fn signature_request(effects: &[Effect]) -> (SignId, SigningRoot) {
     match effects {
-        [Effect::RequestSignature {
-            id, signing_root, ..
-        }] => (*id, *signing_root),
+        [Effect::RequestSignature { intent }] => {
+            (SignId::new(intent.signing_root()), intent.signing_root())
+        }
         _ => panic!("expected exactly one signature request: {effects:?}"),
     }
 }
@@ -1347,6 +1348,7 @@ fn persisted_successor_rejects_a_reintroduced_signing_outbox() {
         Some(view),
         previous.revision().checked_add(1).unwrap(),
         Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision: previous.revision().checked_add(1).unwrap(),
             view,
             high_qc: previous.high_qc().qc_ref(),
             signing_root,
@@ -1888,6 +1890,19 @@ fn vote_signing_is_persist_ack_sign_verify_broadcast() {
     let request = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("write acknowledged");
+    let [Effect::RequestSignature { intent }] = request.as_slice() else {
+        panic!("expected one complete canonical sign intent: {request:?}");
+    };
+    intent
+        .validate(core.config().validator_set())
+        .expect("Core emits a self-consistent signer contract");
+    assert_eq!(intent.author(), core.config().local_validator());
+    assert_eq!(intent.authorizing_safety_revision(), barrier.get());
+    assert!(matches!(
+        intent.preimage(),
+        CanonicalSignPreimageV0::Vote(preimage)
+            if preimage.block_id() == validation.block_id()
+    ));
     let (sign_id, root) = signature_request(&request);
     let invalid_signature = SignatureBytes::from_array([0xEE; SIGNATURE_BYTES]);
     assert!(matches!(
@@ -1933,6 +1948,18 @@ fn timeout_signing_uses_the_same_durable_barrier() {
     let request = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("timeout state durable");
+    let [Effect::RequestSignature { intent }] = request.as_slice() else {
+        panic!("expected one complete timeout sign intent: {request:?}");
+    };
+    intent
+        .validate(core.config().validator_set())
+        .expect("timeout signer contract validates independently");
+    assert_eq!(intent.authorizing_safety_revision(), barrier.get());
+    assert!(matches!(
+        intent.preimage(),
+        CanonicalSignPreimageV0::TimeoutVote(preimage)
+            if preimage.view() == View::new(1)
+    ));
     let (id, root) = signature_request(&request);
     let effects = core
         .step(
@@ -1971,6 +1998,241 @@ fn persisted_sign_intent_is_re_requested_after_recovery() {
         .expect("resume accepted");
     let (id, _) = signature_request(&effects);
     assert_eq!(id, expected);
+}
+
+#[test]
+fn callback_persistence_preserves_exact_sign_intent_across_crash_resume() {
+    let (config, mut core) = configured_core();
+    let set = config.validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"callback during signing");
+    let proposal_effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal accepted");
+    let validation_effects = release_persisted_effects(&mut core, proposal_effects);
+    let validation_id = validation_effect(&validation_effects);
+    let validation_result = valid_result_for_effect(&core, &validation_effects, validation_id);
+
+    let timeout_effects = core
+        .step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: View::new(1),
+            },
+            &RootSignatures,
+        )
+        .expect("timeout signing intent staged");
+    let (sign_barrier, sign_state) = persistence_effect(&timeout_effects);
+    assert_eq!(
+        sign_state
+            .pending_sign()
+            .expect("signing outbox is durable")
+            .authorizing_safety_revision(),
+        sign_barrier.get()
+    );
+    let request = core
+        .step(
+            Input::StorageAck {
+                barrier: sign_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("first signing barrier acknowledged");
+    let first_intent = match request.as_slice() {
+        [Effect::RequestSignature { intent }] => intent.clone(),
+        _ => panic!("expected one complete signature request: {request:?}"),
+    };
+    let first_bytes = first_intent
+        .canonical_bytes()
+        .expect("first intent has canonical bytes");
+    let first_fingerprint = first_intent.fingerprint();
+    let first_revision = first_intent.authorizing_safety_revision();
+    assert_eq!(first_revision, sign_barrier.get());
+
+    let callback_effects = core
+        .step(
+            Input::PayloadValidated {
+                id: validation_id,
+                result: validation_result,
+            },
+            &RootSignatures,
+        )
+        .expect("the exact registered callback may persist while signing");
+    let (callback_barrier, callback_state) = persistence_effect(&callback_effects);
+    assert_eq!(
+        callback_barrier.get(),
+        sign_barrier
+            .get()
+            .checked_add(1)
+            .expect("fixture revision fits")
+    );
+    assert_eq!(
+        callback_state
+            .pending_sign()
+            .expect("callback persistence preserves the signing outbox")
+            .authorizing_safety_revision(),
+        first_revision
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &callback_state);
+    assert!(core
+        .step(
+            Input::StorageAck {
+                barrier: callback_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("callback persistence acknowledged")
+        .is_empty());
+
+    let mut recovered = Core::recover(config, callback_state, &RootSignatures)
+        .expect("completion-only callback state is recoverable");
+    let resumed = recovered
+        .step(Input::Resume, &RootSignatures)
+        .expect("pending signature resumed");
+    let resumed_intent = match resumed.as_slice() {
+        [Effect::RequestSignature { intent }] => intent,
+        _ => panic!("expected the pending signature request: {resumed:?}"),
+    };
+    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
+    assert_eq!(resumed_intent.fingerprint(), first_fingerprint);
+    assert_eq!(
+        resumed_intent
+            .canonical_bytes()
+            .expect("resumed intent has canonical bytes"),
+        first_bytes
+    );
+    assert_eq!(resumed_intent, &first_intent);
+}
+
+#[test]
+fn synced_callback_persistence_preserves_exact_vote_intent_across_crash_resume() {
+    let (config, mut core) = configured_core();
+    let set = config.validator_set().clone();
+
+    let unrelated = proposal(&set, genesis_qc(&set), 1, b"unrelated synced callback");
+    let unrelated_effects = core
+        .step(Input::SyncedProposal(Box::new(unrelated)), &RootSignatures)
+        .expect("unrelated synced proposal accepted");
+    let unrelated_validation_effects = release_persisted_effects(&mut core, unrelated_effects);
+    let unrelated_id = synced_validation_effect(&unrelated_validation_effects);
+    let unrelated_result =
+        valid_result_for_effect(&core, &unrelated_validation_effects, unrelated_id);
+
+    let timeout = timeout_certificate(&set, 1, genesis_qc(&set));
+    let vote_proposal = timeout_proposal(&set, timeout.clone(), b"vote after timeout");
+    let timeout_effects = core
+        .step(Input::TimeoutCertificate(timeout), &RootSignatures)
+        .expect("timeout certificate advances the current view");
+    let (timeout_barrier, _) = persistence_effect(&timeout_effects);
+    core.step(
+        Input::StorageAck {
+            barrier: timeout_barrier,
+        },
+        &RootSignatures,
+    )
+    .expect("timeout progress is durable");
+
+    let proposal_effects = core
+        .step(Input::Proposal(Box::new(vote_proposal)), &RootSignatures)
+        .expect("view-two proposal accepted");
+    let vote_validation_effects = release_persisted_effects(&mut core, proposal_effects);
+    let vote_validation_id = validation_effect(&vote_validation_effects);
+    let vote_validation_result =
+        valid_result_for_effect(&core, &vote_validation_effects, vote_validation_id);
+    let sign_effects = core
+        .step(
+            Input::PayloadValidated {
+                id: vote_validation_id,
+                result: vote_validation_result,
+            },
+            &RootSignatures,
+        )
+        .expect("validated proposal stages a vote intent");
+    let (sign_barrier, sign_state) = persistence_effect(&sign_effects);
+    assert!(matches!(
+        sign_state.pending_sign(),
+        Some(SignIntent::Vote {
+            authorizing_safety_revision,
+            block_id,
+            ..
+        }) if *authorizing_safety_revision == sign_barrier.get()
+            && *block_id == vote_validation_id.block_id()
+    ));
+    let request = core
+        .step(
+            Input::StorageAck {
+                barrier: sign_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("vote signing barrier acknowledged");
+    let first_intent = match request.as_slice() {
+        [Effect::RequestSignature { intent }] => intent.clone(),
+        _ => panic!("expected one complete vote signature request: {request:?}"),
+    };
+    assert!(matches!(
+        first_intent.preimage(),
+        CanonicalSignPreimageV0::Vote(preimage)
+            if preimage.block_id() == vote_validation_id.block_id()
+    ));
+    let first_bytes = first_intent
+        .canonical_bytes()
+        .expect("first vote intent has canonical bytes");
+    let first_fingerprint = first_intent.fingerprint();
+    let first_revision = first_intent.authorizing_safety_revision();
+
+    let callback_effects = core
+        .step(
+            Input::SyncedPayloadValidated {
+                id: unrelated_id,
+                result: unrelated_result,
+            },
+            &RootSignatures,
+        )
+        .expect("the unrelated exact synced callback may persist while signing");
+    let (callback_barrier, callback_state) = persistence_effect(&callback_effects);
+    assert_eq!(
+        callback_barrier.get(),
+        sign_barrier
+            .get()
+            .checked_add(1)
+            .expect("fixture revision fits")
+    );
+    assert_eq!(
+        callback_state
+            .pending_sign()
+            .expect("callback persistence preserves the vote outbox")
+            .authorizing_safety_revision(),
+        first_revision
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &callback_state);
+    assert!(core
+        .step(
+            Input::StorageAck {
+                barrier: callback_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("unrelated callback persistence acknowledged")
+        .is_empty());
+
+    let mut recovered = Core::recover(config, callback_state, &RootSignatures)
+        .expect("completion-only vote callback state is recoverable");
+    let resumed = recovered
+        .step(Input::Resume, &RootSignatures)
+        .expect("pending vote signature resumed");
+    let resumed_intent = match resumed.as_slice() {
+        [Effect::RequestSignature { intent }] => intent,
+        _ => panic!("expected the pending vote signature request: {resumed:?}"),
+    };
+    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
+    assert_eq!(resumed_intent.fingerprint(), first_fingerprint);
+    assert_eq!(
+        resumed_intent
+            .canonical_bytes()
+            .expect("resumed vote intent has canonical bytes"),
+        first_bytes
+    );
+    assert_eq!(resumed_intent, &first_intent);
 }
 
 #[test]
@@ -5287,11 +5549,11 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
 }
 
 #[test]
-fn recovery_rejects_pre_v7_safety_state_without_inert_completion_snapshots() {
+fn recovery_rejects_pre_v8_safety_state_without_frozen_sign_authorization() {
     let (config, core) = configured_core();
     let state = core.safety_state();
-    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 7);
-    for legacy_schema in [5, 6] {
+    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 8);
+    for legacy_schema in [5, 6, 7] {
         let legacy = SafetyState::from_persisted_parts(
             legacy_schema,
             state.chain_id(),
@@ -7045,6 +7307,7 @@ fn recovery_fences_high_lock_pending_syncs_and_both_sign_intents() {
         None,
         None,
         Some(SignIntent::Vote {
+            authorizing_safety_revision: state.revision(),
             view: View::new(4),
             height: Height::new(4),
             block_id: boundary_qc.block_id(),
@@ -7068,6 +7331,7 @@ fn recovery_fences_high_lock_pending_syncs_and_both_sign_intents() {
         None,
         None,
         Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision: state.revision(),
             view: View::new(5),
             high_qc: boundary_ref,
             signing_root: timeout_root,
@@ -7248,6 +7512,7 @@ fn recovery_fences_boundary_vote_inside_an_invalid_payload_halt_witness() {
         state.last_timeout_view(),
         block_id,
         InvalidPayloadReference::PendingVote(Box::new(SignIntent::Vote {
+            authorizing_safety_revision: state.revision(),
             view: View::new(4),
             height: Height::new(4),
             block_id,
@@ -7290,6 +7555,7 @@ fn safety_state_record_roundtrips_an_invalid_payload_pending_vote_witness() {
         state.last_timeout_view(),
         block_id,
         InvalidPayloadReference::PendingVote(Box::new(SignIntent::Vote {
+            authorizing_safety_revision: state.revision(),
             view,
             height,
             block_id,

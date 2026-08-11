@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-08-05
+Updated date: 2026-08-11
 Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
 `refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
 document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
@@ -17,6 +17,27 @@ cached tracking ref contemporaneous.
 ## Current Conclusion
 
 **Conclusion: Not release-ready; do not claim external readiness.**
+
+### 2026-08-11 delivery strategy truth
+
+- The active delivery strategy is the dual-track decision in
+  `docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md`.
+- The CometBFT application/JMT path may produce explicitly development-only
+  devnet evidence. It is not a public-testnet or mainnet readiness claim.
+- The custom PoCO-BFT path is an incubator until its non-legacy production host,
+  signer journal, fork-aware executor, ordered finalization, recovery, state
+  sync, authenticated networking, multi-node campaigns, soak, and independent
+  review gates pass on an exact reproducible artifact.
+- Legacy node, CLI, RPC, simulator, or local `GO` evidence is not PoCO-BFT P2
+  evidence. PoCO economic voting power remains shadow-only.
+- G0 truth-label corrections and the first G1 safety slice are present in the
+  current working tranche: an inert non-legacy host owns Core, SafetyStore, and
+  an append-only signer journal; canonical Vote/Timeout intents have strict
+  decoding and frozen cross-implementation vectors. This is not a running
+  node, signer, complete SafetyRules service, or release gate pass. Application
+  ownership, obligation takeover, fork execution, ordered finalization,
+  locked-QC rollback protection, state sync, networking, and kill-matrix
+  evidence remain open.
 
 ### 2026-08-04 PoCO-BFT target truth
 

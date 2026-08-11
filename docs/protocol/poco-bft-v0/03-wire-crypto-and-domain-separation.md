@@ -80,6 +80,7 @@ trnm.poco-bft.block.v0
 trnm.poco-bft.proposal.v0
 trnm.poco-bft.vote.v0
 trnm.poco-bft.timeout.v0
+trnm.poco-bft.sign-intent.v0
 trnm.poco-bft.qc.v0
 trnm.poco-bft.tc.v0
 trnm.poco-bft.handoff-descriptor.v0
@@ -101,6 +102,33 @@ trnm.poco.consumption-certificate-id.v0
 ```
 
 A domain change is a protocol-version change.
+
+`trnm.poco-bft.sign-intent.v0` freezes the node-local Core-to-signer
+authorization envelope; it is not a peer consensus message. Its exact CEV0
+fingerprint preimage is:
+
+```text
+schema_version                 u16        // 0
+chain_id                       ConsensusString
+protocol_version               u32
+epoch                          u64
+validator_set_id               Hash32
+author                         Bytes
+authorizing_safety_revision    u64        // positive, frozen by first durable intent
+preimage_variant               u8         // 0 VoteSignV0, 1 TimeoutSignV0
+canonical_sign_preimage        variant bytes
+signing_root                   Hash32
+```
+
+The `fingerprint` is `Digest("trnm.poco-bft.sign-intent.v0",
+fingerprint_preimage)`. Canonical persisted/transport bytes append that
+`fingerprint` as the final 32 bytes. A signer MUST validate the complete
+envelope, recompute both the signing root and fingerprint, require exact EOF,
+and require decode/re-encode byte equality before journal lookup or key use.
+The authorizing revision is the revision committed by the persist-before-sign
+barrier that first created the intent; unrelated later SafetyState writes MUST
+NOT alter it. The foundation vectors freeze complete Vote and Timeout
+envelopes, including their exact bytes, roots, revisions, and fingerprints.
 
 ## 5. Common consensus context
 
@@ -490,8 +518,8 @@ also binds generation to that revision. It is not a wire object, terminal
 token, or callback capability. `StorageAck` reconstructs the request only from
 that record and its exact volatile proposal mirror. Core `SafetyState` schema
 v6 introduced the separately sorted completion set, but retained a process-
-local `ValidatedBlockCommitmentsV0` capability in its cloneable record. Current
-schema v7 replaces that field with the inert
+local `ValidatedBlockCommitmentsV0` capability in its cloneable record. Schema
+v7 replaced that field with the inert
 `DurablePayloadValidationResultV1`. Its `Valid` variant contains only block ID,
 logical size, transaction-count, and evidence-count comparison data and has no
 conversion back to a live validation capability. Every callback atomically
@@ -510,22 +538,27 @@ signed-proposal durable size -- logical block plus exact certified-tail witness
 -- is bounded by authenticated `max_consensus_message_bytes`; aggregate
 obligation accounting additionally
 covers fixed route/ID/revision/parent facts and an optional exact parent header.
+Current schema v8 additionally freezes the first durable signing barrier's
+`authorizing_safety_revision` inside each pending `SignIntent`. Exact callback
+persistence may advance the enclosing state revision while a signer response
+is outstanding, but re-emission after a crash reconstructs the identical
+canonical intent bytes and fingerprint from that frozen revision.
 
-Recovery validates schema-v7 obligations and inert completions and then rejects
+Recovery validates schema-v8 obligations and inert completions and then rejects
 a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state schemas v5 and v6 have no implicit migration.
+validation. Safety-state schemas v5 through v7 have no implicit migration.
 Completion-only
 recovery supplies exact-result suppression, but these local persistence rules
 establish no new transport, type-level callback capability, crash replay/
 liveness, host-delivery acknowledgement, or callback exactly-once protocol.
 
 The node-local `SafetyState` record codec v0 is frozen to epoch-zero Core
-`SafetyState` schema v7. Its exact outer layout is:
+`SafetyState` schema v8. Its exact outer layout is:
 
 ```text
-magic[8] = "TRNMSF7\0"
+magic[8] = "TRNMSF8\0"
 record_codec_version:u16 = 0
-safety_state_schema_version:u16 = 7
+safety_state_schema_version:u16 = 8
 config_ref[32]
 safety_state_payload:Bytes
 record_checksum[32]
@@ -533,7 +566,7 @@ EOF
 ```
 
 All integer and length fields are big-endian. The state payload follows the
-schema-v7 `SafetyState` declaration order with closed one-byte tags and
+schema-v8 `SafetyState` declaration order with closed one-byte tags and
 explicitly bounded `u16` identifiers, `u32` blobs, and `u32` lists. Nested
 consensus certificates are exact CEV0. QC references, TCs, certified headers,
 and finality proofs use trusted-Genesis-aware exact admission: an empty-
@@ -567,7 +600,7 @@ The record checksum alone does not prove freshness, predecessor continuity,
 rollback resistance, atomic persistence, or fsync.
 
 The standalone, Linux-only `trnm-consensus-safety-store` now supplies a
-node-local SQLite journal schema v1 around that record. It is outside
+node-local SQLite journal schema v2 around that record. It is outside
 `ApplicationStore`, AppHash, snapshots, and peer state sync. The metadata row
 binds a random journal identity, the exact record/configuration and verifier-
 profile references, codec/schema versions, record/blob limits, database
@@ -585,7 +618,7 @@ full selected head watermark and exact conflict without overwriting either head
 slot. An incomplete latch write is halt-uncertain and any nonzero malformed
 latch fails closed.
 
-Journal schema v1 has five canonical `STRICT` tables:
+Journal schema v2 has five canonical `STRICT` tables:
 
 ```text
 safety_store_metadata_v0
@@ -595,7 +628,7 @@ safety_state_accounting_v0
 safety_store_halt_v0
 ```
 
-The record relation stores the exact schema-v7 record bytes and checksum,
+The record relation stores the exact schema-v8 record bytes and checksum,
 transition-context bytes and checksum, predecessor revision/checksum, and
 journal-scoped chain checksum. The head binds the active revision/checksum and
 retention floor; accounting admits one or two records only. The halt row is a
@@ -623,11 +656,11 @@ revision regressions and gaps, and interrupted commits. They cannot detect an
 attacker restoring the whole database, WAL, and sidecar to an older
 self-consistent image; an independent monotonic host or signer watermark is
 still required. They also do not certify arbitrary external filesystem clones.
-Journal v1 requires a pre-existing owner-controlled immediate parent and
+Journal v2 requires a pre-existing owner-controlled immediate parent and
 assumes local Linux storage. It is not certified
 for NFS, SMB, FUSE, overlay filesystems, fork-after-open, or an untrusted
 same-EUID process. An interrupted first initialization remains fail-closed and
-requires operator cleanup of the partial namespace; v1 does not resume or
+requires operator cleanup of the partial namespace; v2 does not resume or
 repair it automatically.
 
 Historical application-store schema v6 adds local `validation_jobs_v0` and
@@ -732,7 +765,7 @@ trnm.consensus-safety-store.lock.v0                     // hash_domain
 These are node-local integrity/congruence labels, not consensus signature or
 wire-object domains. The v7 artifact/callback records and the v8 delivery-row
 state binding use the application labels only as local corruption and
-congruence checks. The three Core labels bind the exact epoch-zero schema-v7
+congruence checks. The three Core labels bind the exact epoch-zero schema-v8
 SafetyState codec layout, its trusted configuration/profile/limits, and one
 canonical record. The six safety-store labels bind the transition context,
 journal metadata, record predecessor chain, active head, durable halt, and the

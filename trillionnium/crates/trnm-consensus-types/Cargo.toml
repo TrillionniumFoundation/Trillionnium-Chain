@@ -13,3 +13,4 @@ wire_conformance = false
 
 [dependencies]
 sha2 = { version = "0.10", default-features = false }
+subtle = { version = "2.6", default-features = false }

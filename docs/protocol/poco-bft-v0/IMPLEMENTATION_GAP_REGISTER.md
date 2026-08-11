@@ -9,8 +9,8 @@ Last audited: 2026-08-11
 The six production integration contracts are frozen in
 [`../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`](../../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md).
 They remain implementation gaps until backed by durable code and crash tests:
-production ownership and host integration for the SafetyState journal,
-complete canonical SignIntent plus its sign journal, a production validation
+production effect driving around the SafetyState journal, a production signer
+adapter plus complete SafetyRules/lock-state reconciliation, a production validation
 callback driver with authenticated obligation replay and crash takeover,
 ordered ancestor finalization queue,
 BlockId-keyed speculative overlay, and strict separation of consensus
@@ -24,14 +24,14 @@ process-wide exactly-once contract.
 
 The exact bounded SafetyState representation and standalone local-journal slices
 are now present separately. Record codec v0 covers epoch-zero Core SafetyState
-schema v7, binds the exact Core configuration, verifier profile, layout, and
+schema v8, binds the exact Core configuration, verifier profile, layout, and
 record/blob limits, and uses trusted-Genesis-aware exact nested CEV0 admission.
 Decode returns only an unverified inert state which must pass
 `Core::validate_persisted_state_v0`; conservative capacity preflight moves an
 undersized record budget to host configuration admission.
 
 The Linux-only `trnm-consensus-safety-store` implements SQLite journal schema
-v1 outside ApplicationStore/AppHash/snapshot/state-sync ownership. It uses
+v2 outside ApplicationStore/AppHash/snapshot/state-sync ownership. It uses
 persistent WAL, `synchronous=FULL`, exact transactional readback, a checksummed
 two-revision predecessor chain, separately aligned Stable/HeadIntent head
 slots, and an independent one-way terminal-halt latch. Metadata binds the exact Core
@@ -41,11 +41,22 @@ obligation-bearing head remains inert and `Core::recover` still refuses it.
 Core persistence is now an opaque Core-issued request with a process-local
 designated-Core affinity boundary.
 
+The complete `CanonicalSignIntentV0` now freezes its first durable SafetyState
+revision, has strict bounded Vote/Timeout decoding, and is fixed by independent
+Python/Rust bytes, signing-root, and fingerprint vectors. The separate
+`trnm-consensus-signer-journal` provides an append-only SQLite intent/signature
+event chain, exact replay, strict per-kind view and SafetyState-revision
+watermarks, and a mandatory external monotonic CAS interface. The inert
+`trnm-poco-node` owner holds Core, SafetyStore, and this journal together, but
+has no signature producer or effect driver.
+
 This does not close production driver/journal wiring, authenticated obligation
-replay/takeover, the complete canonical SignIntent/sign journal, or the ordered
-finalization-queue contract. It also lacks an independent monotonic signer/host
-watermark, so rollback of the whole database/WAL/sidecar namespace or an
-external clone remains outside detection. NFS/SMB/FUSE/overlay filesystems,
+replay/takeover, full HotStuff SafetyRules/locked-QC persistence, signer-to-
+SafetyState reconciliation, or the ordered finalization-queue contract. The
+external watermark is an interface only and has no production HSM/KMS/monotonic
+implementation; it also does not bind the complete SafetyState head. Therefore
+the signer journal alone cannot close whole-SafetyStore rollback safety.
+NFS/SMB/FUSE/overlay filesystems,
 fork-after-open, untrusted same-EUID processes, and process-wide Core uniqueness
 are not certified. Interrupted first initialization is fail-closed but still
 requires operator cleanup of the partial namespace rather than automatic
@@ -61,8 +72,9 @@ deliberately reports `wire_conformance = false`.
 ## Foundation items closed on this branch
 
 - Exact CEV0 prefix, checked `u32` frames/Bytes/Lists, primitive widths, and all
-  21 frozen domains now match the independent Python foundation vectors,
-  including the handoff-descriptor and three ordered-root domains.
+  22 frozen Core/signer domains now match the independent Python foundation
+  vectors, including the sign-intent, handoff-descriptor, and three
+  ordered-root domains.
 - The complete common signed context binds schema, genesis, restricted-ASCII
   chain ID, protocol version, epoch, validator-set hash, view, and message
   kind.
@@ -146,10 +158,12 @@ deliberately reports `wire_conformance = false`.
   and recovery re-verifies and reissues the exact target after any required
   safety replay or TC-priority work. Proposal-carried ordinary QCs with missing
   parent context now create that same exact durable active/backlog obligation.
-  Current safety-state schema v7 also retains bounded block-ID-level terminal
+  Current safety-state schema v8 also retains bounded block-ID-level terminal
   payload facts across crash and volatile block-tree eviction, separately from
-  its route/full-ID inert completion tombstones. Safety-state schemas v5 and v6
-  have no implicit migration to v7.
+  its route/full-ID inert completion tombstones, and freezes the first durable
+  authorizing revision of a pending SignIntent across unrelated callback
+  revisions. Safety-state schemas v5 through v7 have no implicit migration to
+  v8.
 - Same-view/different-block QC conflicts are observed and durably halt before
   finalized-height subsumption. Subject to that check, a different-view
   competitor at the durable finalized height is subsumed without a sync or
@@ -957,7 +971,7 @@ epoch prune, and Core transition remain open.
    collision, signer cancellation, and durable halt recovery have focused
    tests. Bounded block-ID-level terminal
    `Valid`/`DeterministicallyInvalid` facts remain part of current Core
-   safety-state schema v7 and survive crash and volatile block-tree eviction.
+   safety-state schema v8 and survive crash and volatile block-tree eviction.
    Separately, a route/full-ID completion tombstone stores the inert projection
    of all three callback results; its `Valid` form retains only block ID,
    logical size, transaction count, and evidence count, never a live
@@ -1186,7 +1200,7 @@ epoch prune, and Core transition remain open.
    `SafetyState` schema v6 introduced the separately canonically sorted
    `DurablePayloadValidationCompletionV0` keyed by `(route, full
    ValidationId)`, but retained a process-local validation capability inside
-   the cloneable record. Current schema v7 stores
+   the cloneable record. Current schema v8 stores
    `DurablePayloadValidationResultV1` instead. Its `Valid` variant is only an
    inert snapshot of block ID, logical size, transaction count, and evidence
    count; it cannot reconstruct `ValidatedBlockCommitmentsV0`. Every direct or
@@ -1207,11 +1221,13 @@ epoch prune, and Core transition remain open.
    tail witness -- is bounded by authenticated
    `max_consensus_message_bytes`; the aggregate obligation bound additionally
    covers fixed route/ID/revision/parent facts and any exact parent header.
-   `Core::recover` rejects schemas v5 and v6; there is no implicit migration to
-   schema v7 in the model layer.
-   Recovery validates every schema-v7 obligation and inert completion and then
+   Schema v8 also freezes each pending SignIntent's first durable authorizing
+   revision so an exact callback write cannot change the signer contract after
+   crash/restart. `Core::recover` rejects schemas v5 through v7; there is no
+   implicit migration to schema v8 in the model layer.
+   Recovery validates every schema-v8 obligation and inert completion and then
    rejects a non-empty obligation set with `InvalidRecovery`; it does not
-   reissue pending validation. Schemas v5 and v6 are not implicitly migrated.
+   reissue pending validation. Schemas v5 through v7 are not implicitly migrated.
    Completion-only recovery suppresses exact result replay, but this closes
    durable pre-effect capture, cleanup ordering, and callback-result
    idempotence only, not crash replay/liveness, type-level callback authority,
@@ -1227,7 +1243,7 @@ epoch prune, and Core transition remain open.
    for checking the designated-Core binding before persistence.
 
    The new Linux-only `trnm-consensus-safety-store` is a standalone node-local
-   SQLite journal schema v1, not an ApplicationStore table. It binds exact Core
+   SQLite journal schema v2, not an ApplicationStore table. It binds exact Core
    configuration, verifier profile, record/schema/transition codecs,
    record/blob limits and database budget; requires persistent WAL and
    `synchronous=FULL`; pins the owner-controlled directory, database, WAL, SHM
@@ -1246,8 +1262,9 @@ epoch prune, and Core transition remain open.
 
    This store is deliberately excluded from AppHash, application snapshots,
    and peer state-sync replacement. It has no production AppCore/node/ABCI
-   owner or callback-driver adapter, no complete SignIntent/sign journal, and
-   no authenticated obligation replay or full crash takeover. It cannot detect
+   owner or callback-driver adapter and no authenticated obligation replay or
+   full crash takeover. The separate signer journal is not a complete
+   SafetyRules service and does not bind locked-QC state. The safety store cannot detect
    rollback of the complete database/WAL/sidecar namespace without an
    independent monotonic signer/host watermark and does not certify arbitrary
    external clones. Its filesystem contract is local Linux only; NFS, SMB,

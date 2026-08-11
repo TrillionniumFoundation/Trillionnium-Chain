@@ -508,7 +508,7 @@ also binds the generation to that first revision. `StorageAck` reconstructs a
 request only from the durable record and its matching volatile proposal mirror.
 Core `SafetyState` schema v6 added the separately sorted completion set, but
 retained the process-local `ValidatedBlockCommitmentsV0` capability inside a
-cloneable record. Current schema v7 replaces that field with
+cloneable record. Schema v7 replaced that field with
 `DurablePayloadValidationResultV1`: `Valid` stores only inert block ID, logical
 size, transaction-count, and evidence-count comparison facts. There is no
 conversion back to the live capability. Every direct or synced callback still
@@ -522,16 +522,18 @@ later generation for the same block. These tombstones remain distinct from
 block-ID-level terminal payload facts. Exact synced cancellation removes its
 obligation without fabricating a completion; safety halt clears obligations
 while retaining prior completions. Completion eviction remains disabled under
-`completions + obligations <= max_observed_messages`. Schemas v5 and v6 are
-rejected by `Core::recover`; there is no implicit model-layer migration to v7.
+`completions + obligations <= max_observed_messages`. Current schema v8 also
+freezes a pending SignIntent's first durable authorizing revision across
+unrelated callback writes. Schemas v5 through v7 are rejected by
+`Core::recover`; there is no implicit model-layer migration to v8.
 
 Core bounds the complete signed-proposal durable resource -- logical block plus
 exact certified-tail witness -- by authenticated
 `max_consensus_message_bytes`. Its aggregate obligation budget additionally
 counts the fixed route/ID/revision/parent facts and any exact parent header.
-Recovery validates every schema-v7 obligation and inert completion and then rejects
+Recovery validates every schema-v8 obligation and inert completion and then rejects
 a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state schemas v5 and v6 have no implicit migration.
+validation. Safety-state schemas v5 through v7 have no implicit migration.
 Completion-only recovery provides durable
 exact-result suppression, but non-empty obligations remain fail-closed. This
 is durable pre-effect capture, cleanup ordering, and result idempotence, not
@@ -539,7 +541,7 @@ crash replay, callback exactly-once, type-level callback authority, or recovery
 liveness.
 
 Core now also has one exact bounded `SafetyState` record codec v0, frozen only
-for epoch-zero `SafetyState` schema v7. Its outer record binds the codec and
+for epoch-zero `SafetyState` schema v8. Its outer record binds the codec and
 SafetyState schema versions, one configuration reference, the exact state
 payload, and a domain-separated checksum. The configuration reference binds
 the exact Core configuration, verifier-profile reference, codec-layout
@@ -554,12 +556,13 @@ cryptographic validation. A conservative limit preflight derived from
 `CoreConfig` must succeed before the context can encode or decode.
 
 The standalone `trnm-consensus-safety-store` crate now wraps that codec in a
-Linux-only, node-local SQLite journal schema v1. It is intentionally separate
+Linux-only, node-local SQLite journal schema v2. It is intentionally separate
 from `ApplicationStore`, AppHash, application snapshots, and peer state-sync
 replacement. Its immediate parent directory must already exist and be
 owner-controlled before initialization. An interrupted first initialization is
 fail-closed and requires operator cleanup of the partial journal namespace;
-v1 does not auto-repair or resume it. The journal pins that directory plus its
+v2 does not auto-repair or resume it. Historical journal-v1/schema-v7 stores
+are rejected without implicit migration. The journal pins that directory plus its
 main database, persistent WAL, SHM, and lock sidecar; holds lifetime-exclusive
 writer locks; requires SQLite WAL with `synchronous=FULL`; and performs exact
 transactional readback. Metadata binds the exact Core configuration reference,
@@ -582,13 +585,16 @@ Its returned head is still an inert fact: an obligation-bearing head can be
 authenticated and reported as requiring replay, but `Core::recover` continues
 to reject it.
 
-This is not yet production host wiring, a complete durable `SignIntent` or sign
-journal, authenticated obligation replay, or full cross-crash takeover. The
-journal cannot detect restoration of the whole database/WAL/sidecar set to an
-older self-consistent image without an independent monotonic host or signer
-watermark, and it does not detect arbitrary external clones. Journal v1 is not
-certified for NFS, SMB, FUSE, overlay filesystems, fork-after-open, or an
-untrusted same-EUID process. It establishes no process-wide Core uniqueness.
+This is not yet production host/effect-driver wiring, authenticated obligation
+replay, full cross-crash takeover, or complete HotStuff SafetyRules/locked-QC
+reconciliation. The separate signer journal provides durable canonical
+`SignIntent` exact replay only behind injected signature-producer and external
+monotonic-watermark interfaces; `trnm-poco-node` exposes neither as a production
+adapter. The SafetyState journal alone cannot detect restoration of its complete
+database/WAL/sidecar namespace, and the signer journal's external watermark has
+no production implementation. Safety journal v2 is not certified for NFS, SMB,
+FUSE, overlay filesystems, fork-after-open, or an untrusted same-EUID process.
+Neither store establishes process-wide Core uniqueness.
 
 After that wrapper/route check and process-local claim, and before any host or
 snapshot read, historical application-store schema v6 durably reserved one

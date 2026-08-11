@@ -1,0 +1,161 @@
+# TRNM Consensus Delivery Dual-Track Decision — 2026-08-11
+
+Status: **active delivery decision; no production-readiness claim**
+
+This decision governs delivery sequencing. It does not silently amend the
+PoCO-BFT v0 wire protocol, safety rules, or economic rules. Any such amendment
+still requires a versioned protocol decision and conformance updates.
+
+## 1. Decision
+
+Trillionnium Chain will keep two deliberately separate consensus delivery
+tracks until the custom PoCO-BFT node has production-parity evidence:
+
+1. **CometBFT development-devnet track.** The existing CometBFT application
+   adapter, deterministic runtime, JMT/ICS23 store, snapshots, and validator
+   lifecycle fixtures remain the shortest deployable path for development and
+   differential evidence. This track may produce explicitly labelled
+   development-only devnet artifacts. It is not a public-testnet or mainnet
+   readiness claim.
+2. **PoCO-BFT incubator track.** The frozen PoCO-BFT protocol and deterministic
+   Core remain the target custom consensus design. This track cannot be called
+   a node candidate until a new, non-legacy `trnm-poco-node` owns the complete
+   production lifecycle and passes the promotion gates in this decision.
+
+The two tracks share the deterministic runtime, authenticated JMT state,
+canonical transaction semantics, proof formats where compatible, and
+differential vectors. They do not share validator safety state, signing
+journals, node databases, chain IDs, readiness labels, or release artifacts.
+
+## 2. Why this is required
+
+The July CometBFT spike already has local four- and six-validator process
+evidence, crash recovery, application replay, validator rotation, partitions,
+JMT commitments, and snapshot state sync. The August PoCO-BFT branch has a
+strong deterministic safety kernel and standalone SafetyState journal, but P2
+real-node work has not started: there is no production host, authenticated
+transport, complete signer journal, fork-aware execution adapter, state sync,
+or deployable node artifact.
+
+PoCO-derived validator power is not by itself evidence that a bespoke BFT
+engine is required. CometBFT accepts deterministic application-supplied
+validator-set and voting-power updates. A custom engine is justified only by a
+documented requirement that cannot be implemented safely at that application
+boundary, or by measured evidence that the custom engine provides a required
+property while meeting the same safety, recovery, operations, and audit bar.
+
+Continuing replacement-first development before that evidence would rebuild
+P2P, WAL/replay, signer isolation, state sync, RPC, mempool, observability, and
+operator tooling simultaneously. The dual-track boundary preserves a usable
+integration oracle while making the replacement burden explicit.
+
+## 3. Immediate engineering order
+
+No new PoCO protocol carrier or typestate layer is added unless it directly
+closes one of the frozen production contracts.
+
+The PoCO-BFT incubator proceeds in this order:
+
+1. correct legacy CLI, RPC, testnet, CI, and release labels that can imply
+   production behavior when no production backend exists;
+2. create the minimal fail-closed `trnm-poco-node` production host with unique
+   ownership of Core, SafetyState store, signer, application/overlay store,
+   pacemaker, network boundary, and recovery coordinator;
+3. complete `CanonicalSignIntentV0`, an append-only sign journal, an
+   independently monotonic signer watermark, exact signature replay, and real
+   process kill-point tests;
+4. implement authenticated validation-obligation takeover, BlockId-keyed
+   speculative execution, a durable ordered finalization queue, and idempotent
+   application acknowledgement;
+5. close epoch transition, checkpoint/state sync, evidence persistence, and an
+   independent light-client verifier;
+6. only then add the real authenticated P2P node, remote signer, transaction
+   ingress, operational controls, and multi-node campaigns.
+
+PoCO voting power remains `shadow` throughout these steps.
+
+## 4. PoCO-BFT promotion gates
+
+The custom track may replace the CometBFT development candidate only after all
+of the following are bound to an exact commit and reproducible artifact:
+
+### G1 — single-node safety and recovery
+
+- a production-reachable, non-legacy host owns exactly one Core, SafetyState
+  store, signer journal, application store, and BlockId overlay namespace;
+- every persisted vote, timeout, and handoff intent carries the complete
+  canonical preimage, authorized SafetyState revision, and stable fingerprint;
+- kill/restart at every persistence, signing, callback, finalization, and
+  snapshot boundary produces no double-sign, skipped ancestor, lost durable
+  obligation, or ambiguous restart state;
+- whole-namespace rollback/clone is detected by an independent signer
+  watermark or causes fail-stop before a signature can leave the boundary.
+
+### G2 — protocol closure
+
+- unequal-weight and adversarial-identity leader-selection evidence is reviewed
+  before freezing proposer policy;
+- epoch handoff/reset, evidence retention, checkpoint recovery, state sync, and
+  same-epoch/cross-epoch light-client vectors are implemented;
+- Rust traces, conformance vectors, bounded formal models, mutants, property
+  tests, and decoder fuzzing agree on the frozen invariants.
+
+### G3 — real-node parity
+
+- authenticated and bounded transport, version negotiation, peer quotas,
+  backpressure, WAL/replay, remote signer, transaction ingress, RPC, metrics,
+  and runtime/JMT integration are production-reachable;
+- reproducible four- and seven-validator campaigns cover process kill, disk
+  full/read-only/corruption, stale state, OOM, clock skew, equivocation,
+  partitions, healing, catch-up, and snapshot restore;
+- the result has zero conflicting finalized blocks and zero double-signs, and
+  all recovery evidence can be independently replayed.
+
+### G4 — operational and review parity
+
+- measured SLOs, resource bounds, disk growth, recovery time, and P50/P95/P99
+  latency are enforced from real telemetry;
+- a 72-hour campaign and then a seven-day multi-host soak pass;
+- reproducible signed node artifacts, SBOM/provenance, upgrade compatibility,
+  downgrade refusal, long fuzz campaigns, an external consensus review, and an
+  independent light client pass.
+
+Passing a Core unit-test or simulator gate cannot satisfy a real-node gate.
+
+## 5. Decision and exit criteria
+
+At each promotion review, one of three outcomes must be recorded:
+
+- **continue dual-track** when the custom path is making bounded progress but
+  has not reached parity;
+- **promote PoCO-BFT** only when G1–G4 pass and the remaining custom-engine
+  benefit is documented against the same CometBFT application workload;
+- **retain CometBFT** when the required PoCO validator/economic semantics fit
+  safely behind ABCI++ and the custom engine has no demonstrated compensating
+  benefit, or when its recovery/operations burden misses a gate.
+
+Any claim that CometBFT cannot carry the required validator semantics must name
+the exact ABCI++ limitation, the affected invariant, the rejected adapter
+designs, and a reproducible counterexample. Preference for Rust, message-count
+reductions, or ownership of the stack is not sufficient by itself.
+
+## 6. Claim boundary
+
+Until a promotion decision is recorded:
+
+- CometBFT artifacts are labelled `development_only` and must not claim PoCO
+  production finality;
+- PoCO-BFT artifacts are labelled `incubator` and must not claim node, testnet,
+  or deployment readiness;
+- legacy `trnm-node`, `trnm-cli`, `trnm-rpc`, and `trnm-sim` evidence cannot be
+  used as PoCO-BFT P2 evidence;
+- no PoCO economic weight is activated outside deterministic shadow output.
+
+## 7. References
+
+- `TRNM_CONSENSUS_ENGINE_DECISION_2026-07-27.md`
+- `TRNM_COMETBFT_SPIKE_2026-07-27.md`
+- `TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
+- `TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`
+- `../development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md`
+- `../protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md`

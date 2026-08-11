@@ -4,18 +4,18 @@ use rusqlite::Connection;
 
 use crate::SafetyStoreErrorV0;
 
-pub(crate) const JOURNAL_SCHEMA_VERSION_V1: u16 = 1;
+pub(crate) const JOURNAL_SCHEMA_VERSION_V2: u16 = 2;
 pub(crate) const TRANSITION_CONTEXT_CODEC_V0: u16 = 0;
 pub(crate) const MAXIMUM_SQL_STATE_RECORD_BYTES: usize = 64 * 1024 * 1024;
 pub(crate) const MAXIMUM_TRANSITION_CONTEXT_BYTES_V0: usize = 328;
 
-pub(crate) const JOURNAL_SCHEMA_SQL_V1: &str = "
+pub(crate) const JOURNAL_SCHEMA_SQL_V2: &str = "
     CREATE TABLE safety_store_metadata_v0 (
         singleton INTEGER PRIMARY KEY NOT NULL CHECK(singleton=1),
-        journal_schema INTEGER NOT NULL CHECK(journal_schema=1),
+        journal_schema INTEGER NOT NULL CHECK(journal_schema=2),
         journal_id BLOB NOT NULL CHECK(length(journal_id)=32),
         core_record_codec INTEGER NOT NULL CHECK(core_record_codec=0),
-        safety_schema INTEGER NOT NULL CHECK(safety_schema=7),
+        safety_schema INTEGER NOT NULL CHECK(safety_schema=8),
         core_config_ref BLOB NOT NULL CHECK(length(core_config_ref)=32),
         verifier_profile_ref BLOB NOT NULL CHECK(length(verifier_profile_ref)=32),
         maximum_record_bytes_be BLOB NOT NULL CHECK(length(maximum_record_bytes_be)=8),
@@ -73,7 +73,7 @@ pub(crate) fn validate_canonical_schema(connection: &Connection) -> Result<(), S
     let canonical = Connection::open_in_memory()
         .map_err(|error| SafetyStoreErrorV0::sqlite("open canonical schema", error))?;
     canonical
-        .execute_batch(JOURNAL_SCHEMA_SQL_V1)
+        .execute_batch(JOURNAL_SCHEMA_SQL_V2)
         .map_err(|error| SafetyStoreErrorV0::sqlite("install canonical schema", error))?;
     if schema_objects(connection)? != schema_objects(&canonical)? {
         return Err(SafetyStoreErrorV0::SchemaMismatch);
@@ -113,4 +113,25 @@ fn schema_objects(
         }
     }
     Ok(objects)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn journal_v1_with_safety_schema_v7_is_not_implicitly_migrated() {
+        let connection = Connection::open_in_memory().expect("open historical schema fixture");
+        let historical = JOURNAL_SCHEMA_SQL_V2
+            .replace("journal_schema=2", "journal_schema=1")
+            .replace("safety_schema=8", "safety_schema=7");
+        connection
+            .execute_batch(&historical)
+            .expect("install historical journal-v1 schema");
+
+        assert!(matches!(
+            validate_canonical_schema(&connection),
+            Err(SafetyStoreErrorV0::SchemaMismatch)
+        ));
+    }
 }

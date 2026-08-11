@@ -25,7 +25,7 @@ use crate::{
     error::{SafetyStoreConflictV0, SafetyStoreErrorV0},
     hash::hash_domain,
     schema::{
-        validate_canonical_schema, JOURNAL_SCHEMA_SQL_V1, JOURNAL_SCHEMA_VERSION_V1,
+        validate_canonical_schema, JOURNAL_SCHEMA_SQL_V2, JOURNAL_SCHEMA_VERSION_V2,
         MAXIMUM_SQL_STATE_RECORD_BYTES, MAXIMUM_TRANSITION_CONTEXT_BYTES_V0,
         TRANSITION_CONTEXT_CODEC_V0,
     },
@@ -1313,7 +1313,7 @@ fn initialize_schema(
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|error| SafetyStoreErrorV0::sqlite("begin initialization", error))?;
     transaction
-        .execute_batch(JOURNAL_SCHEMA_SQL_V1)
+        .execute_batch(JOURNAL_SCHEMA_SQL_V2)
         .map_err(|error| SafetyStoreErrorV0::sqlite("install safety-store schema", error))?;
     let metadata = metadata_values(profile, journal_id)?;
     if transaction
@@ -1325,7 +1325,7 @@ fn initialize_schema(
                 maximum_database_bytes_be, transition_codec, metadata_checksum
              ) VALUES (1, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
             params![
-                i64::from(JOURNAL_SCHEMA_VERSION_V1),
+                i64::from(JOURNAL_SCHEMA_VERSION_V2),
                 journal_id.as_slice(),
                 i64::from(SAFETY_STATE_RECORD_CODEC_VERSION_V0),
                 i64::from(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0),
@@ -1461,7 +1461,7 @@ fn metadata_values(
     journal_id: [u8; 32],
 ) -> Result<MetadataValuesV0, SafetyStoreErrorV0> {
     let core_config_ref = profile.core_config_ref()?;
-    let journal_schema = JOURNAL_SCHEMA_VERSION_V1.to_be_bytes();
+    let journal_schema = JOURNAL_SCHEMA_VERSION_V2.to_be_bytes();
     let record_codec = SAFETY_STATE_RECORD_CODEC_VERSION_V0.to_be_bytes();
     let safety_schema = SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0.to_be_bytes();
     let record_limit = usize_to_u64(
@@ -1532,7 +1532,7 @@ fn validate_metadata(
         })
         .map_err(|error| SafetyStoreErrorV0::sqlite("count safety-store metadata", error))?;
     if metadata_count != 1
-        || row.0 != i64::from(JOURNAL_SCHEMA_VERSION_V1)
+        || row.0 != i64::from(JOURNAL_SCHEMA_VERSION_V2)
         || row.1.as_slice() != journal_id.as_slice()
         || row.2 != i64::from(SAFETY_STATE_RECORD_CODEC_VERSION_V0)
         || row.3 != i64::from(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0)

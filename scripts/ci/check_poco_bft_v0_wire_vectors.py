@@ -24,6 +24,7 @@ DOMAINS = (
     "trnm.poco-bft.proposal.v0",
     "trnm.poco-bft.vote.v0",
     "trnm.poco-bft.timeout.v0",
+    "trnm.poco-bft.sign-intent.v0",
     "trnm.poco-bft.qc.v0",
     "trnm.poco-bft.tc.v0",
     "trnm.poco-bft.handoff-descriptor.v0",
@@ -259,6 +260,73 @@ def build_vectors() -> dict[str, object]:
             cev0_list(validators),
         )
     )
+    actual_validator_set_hash = digest(
+        "trnm.poco-bft.validator-set.v0", validator_set
+    )
+    intent_vote_context = common_context(
+        genesis_hash=genesis_hash,
+        chain_id=chain_id,
+        protocol_version=0,
+        epoch=7,
+        validator_set_hash=actual_validator_set_hash,
+        view=42,
+        message_kind=1,
+    )
+    intent_vote_preimage = (
+        intent_vote_context + uint(99, 64) + block_id
+    )
+    intent_vote_root = digest("trnm.poco-bft.vote.v0", intent_vote_preimage)
+    intent_fingerprint_preimage = b"".join(
+        (
+            uint(0, 16),
+            consensus_string(chain_id),
+            uint(0, 32),
+            uint(7, 64),
+            actual_validator_set_hash,
+            cev0_bytes(b"validator-a"),
+            uint(17, 64),
+            uint(0, 8),
+            intent_vote_preimage,
+            intent_vote_root,
+        )
+    )
+    intent_fingerprint = digest(
+        "trnm.poco-bft.sign-intent.v0", intent_fingerprint_preimage
+    )
+    canonical_sign_intent = intent_fingerprint_preimage + intent_fingerprint
+    intent_timeout_context = common_context(
+        genesis_hash=genesis_hash,
+        chain_id=chain_id,
+        protocol_version=0,
+        epoch=7,
+        validator_set_hash=actual_validator_set_hash,
+        view=42,
+        message_kind=2,
+    )
+    intent_timeout_preimage = intent_timeout_context + high_qc_summary
+    intent_timeout_root = digest(
+        "trnm.poco-bft.timeout.v0", intent_timeout_preimage
+    )
+    timeout_intent_fingerprint_preimage = b"".join(
+        (
+            uint(0, 16),
+            consensus_string(chain_id),
+            uint(0, 32),
+            uint(7, 64),
+            actual_validator_set_hash,
+            cev0_bytes(b"validator-a"),
+            uint(19, 64),
+            uint(1, 8),
+            intent_timeout_preimage,
+            intent_timeout_root,
+        )
+    )
+    timeout_intent_fingerprint = digest(
+        "trnm.poco-bft.sign-intent.v0", timeout_intent_fingerprint_preimage
+    )
+    canonical_timeout_intent = (
+        timeout_intent_fingerprint_preimage + timeout_intent_fingerprint
+    )
 
     sample = {
         "inputs": {
@@ -306,9 +374,21 @@ def build_vectors() -> dict[str, object]:
         "validator_set_v0": {
             "cev0_hex": validator_set.hex(),
             "length": len(validator_set),
-            "validator_set_hash_hex": digest(
-                "trnm.poco-bft.validator-set.v0", validator_set
-            ).hex(),
+            "validator_set_hash_hex": actual_validator_set_hash.hex(),
+        },
+        "canonical_vote_sign_intent_v0": {
+            "authorizing_safety_revision": 17,
+            "cev0_hex": canonical_sign_intent.hex(),
+            "fingerprint_hex": intent_fingerprint.hex(),
+            "length": len(canonical_sign_intent),
+            "signing_root_hex": intent_vote_root.hex(),
+        },
+        "canonical_timeout_sign_intent_v0": {
+            "authorizing_safety_revision": 19,
+            "cev0_hex": canonical_timeout_intent.hex(),
+            "fingerprint_hex": timeout_intent_fingerprint.hex(),
+            "length": len(canonical_timeout_intent),
+            "signing_root_hex": intent_timeout_root.hex(),
         },
         "sample_qc_preimage": {
             "cev0_hex": qc_preimage.hex(),

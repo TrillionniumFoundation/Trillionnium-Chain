@@ -4,7 +4,7 @@
 //! snapshots, and state-sync replacement. It adds an explicit lifetime writer
 //! lock, SQLite WAL transactions with `synchronous=FULL`, a monotonic revision
 //! chain, exact active-head readback, and two-revision retention around Core's
-//! inert schema-7 record codec.
+//! inert schema-8 record codec.
 //!
 //! Stored records and transition contexts remain comparison facts. They never
 //! mint validation, callback, signing, finalization, or obligation-replay

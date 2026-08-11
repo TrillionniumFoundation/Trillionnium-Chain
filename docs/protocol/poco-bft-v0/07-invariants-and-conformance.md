@@ -650,7 +650,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   opposite-route, result, source, and inert-`Valid`-comparison splices fail
   closed; `Unavailable` completes only one generation, and a later generation
   for the same block remains admissible;
-- recovery validates schema-v7 obligations and inert completions but rejects any
+- recovery validates schema-v8 obligations and inert completions but rejects any
   non-empty obligation set rather than reissuing it; safety halt clears every
   obligation while retaining prior completions in the same durable revision;
 - the active-v0 success-only receipt policy: every one of the 21 exhaustive
@@ -724,7 +724,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
 - separately from current application-store schema v8, Core `SafetyState`
-  schema v7 MUST retain the schema-v5 obligation rule: canonically order and persist one
+  schema v8 MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
   MUST bind the Core-selected route, full `ValidationId`, exact
@@ -738,7 +738,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   include fixed route/ID/revision/parent facts and any exact parent header, and
   arithmetic or resource-bound failure MUST occur before a new obligation or
   validation effect is admitted;
-- Core `SafetyState` schema v7 MUST separately canonically order durable
+- Core `SafetyState` schema v8 MUST separately canonically order durable
   `DurablePayloadValidationCompletionV0` values by `(route, full
   ValidationId)`; every direct or synced callback MUST atomically replace only
   its exact obligation with a same-key completion before persistence, and the
@@ -755,8 +755,12 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   and MUST NOT prevent a new generation for the same block; completion records
   MUST remain distinct from block-ID-level terminal payload facts, which MUST
   retain only cross-generation `Valid`/`DeterministicallyInvalid` semantics;
-- Core recovery MUST reject safety-state schemas v5 and v6; the model layer
-  MUST NOT implicitly migrate either older representation to schema v7;
+- Core schema v8 MUST persist the positive SafetyState revision that first
+  authorized each pending `SignIntent`; callback persistence MAY advance the
+  enclosing revision but MUST preserve that authorizing revision, canonical
+  intent bytes, and fingerprint exactly through crash/resume;
+- Core recovery MUST reject safety-state schemas v5, v6, and v7; the model layer
+  MUST NOT implicitly migrate any older representation to schema v8;
 - exact synced cancellation MUST remove only its matching obligation behind a
   cleanup `PersistSafetyState -> StorageAck` barrier without creating a
   callback completion; safety halt MUST clear the complete obligation set in
@@ -764,17 +768,17 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   completion eviction MUST NOT occur, registration MUST reserve the future
   completion slot, and `completions + obligations` MUST NOT exceed
   authenticated `max_observed_messages`;
-- recovery MUST validate every schema-v7 obligation and inert completion and then
+- recovery MUST validate every schema-v8 obligation and inert completion and then
   reject a non-empty obligation set with `InvalidRecovery`; it MUST NOT reissue
   pending validation without an authenticated replay ticket, and safety-state
-  schemas v5 and v6 MUST NOT be implicitly migrated; completion-only recovery MAY
+  schemas v5 through v7 MUST NOT be implicitly migrated; completion-only recovery MAY
   suppress an exact same-result replay but Core cleanup/completion MUST NOT be
   represented as type-level callback authority, host callback-outbox delivery
   acknowledgement, or callback exactly-once;
 - SafetyState record codec v0 MUST encode only epoch-zero Core `SafetyState`
-  schema v7 and MUST reject every other SafetyState schema, non-zero epoch, and
+  schema v8 and MUST reject every other SafetyState schema, non-zero epoch, and
   epoch-anchor branch; the outer record MUST bind magic, codec version zero,
-  SafetyState schema version seven, configuration reference, exact bounded
+  SafetyState schema version eight, configuration reference, exact bounded
   state payload, domain-separated record checksum, and strict EOF, and an
   accepted decode MUST reproduce byte-identical canonical bytes;
 - nested QC references, TCs, certified headers, and finality proofs in that
@@ -795,14 +799,14 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   signature verifier. A checksum, canonical re-encoding, or inert `Valid`
   completion MUST NOT mint a live payload-validation, signing, finalization,
   callback, or obligation-replay capability;
-- standalone safety-journal schema v1 MUST remain outside `ApplicationStore`,
+- standalone safety-journal schema v2 MUST remain outside `ApplicationStore`,
   AppHash, application snapshots, and peer state-sync replacement. Its
   metadata MUST bind the exact Core configuration reference, verifier profile,
   record codec and SafetyState schema, record/blob limits, database budget, and
-  transition-context codec. It MUST use the exact schema-v7 record decoder and
+  transition-context codec. It MUST use the exact schema-v8 record decoder and
   `Core::validate_persisted_state_v0` rather than treating a SQLite row or
   checksum as Core authority;
-- journal v1 MUST retain only a two-revision window -- the active record and,
+- journal v2 MUST retain only a two-revision window -- the active record and,
   after genesis, its previous record -- as a checksummed predecessor chain,
   independently audit row/byte accounting, and
   validate each exact one-revision successor with
@@ -833,7 +837,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   issue `StorageAck` merely because bytes encode/decode or a journal write
   succeeds; the request must remain bound to the designated Core and the rest
   of the host persistence protocol;
-- journal v1 MUST be described as a local Linux filesystem boundary only. It
+- journal v2 MUST be described as a local Linux filesystem boundary only. It
   does not prove freshness if an adversary restores the complete database,
   persistent WAL, and lock sidecar to an older self-consistent image; a
   production host still needs an independent monotonic signer/host watermark.
