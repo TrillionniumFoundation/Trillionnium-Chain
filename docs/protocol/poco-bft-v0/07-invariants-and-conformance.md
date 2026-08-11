@@ -726,7 +726,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`; route MUST remain owned through open/body/cursor/
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
-- separately from current application-store schema v8, Core `SafetyState`
+- separately from current application-store schema v9, Core `SafetyState`
   schema v8 MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
@@ -913,11 +913,51 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   unsupported invalid reason, `Unavailable`, and invariant results; a deeply
   verified `delivered` or `acked` recovery row alone MUST NOT mint a live
   callback owner, reconstruct Core authority, or permit job takeover;
-- the G1c application recovery owner MUST open an existing exact schema-v8
+- application-store schema v9 MUST first deeply validate every v8 row under
+  the v8 invalid-only rules and MUST rebuild the physical journal atomically.
+  It MUST preserve every v8 deterministic-invalid representation and MAY add
+  only Valid `callback_pending` with one exact attempt-zero outbox;
+- the only v9 Valid writer MUST consume the real Proposal- or Synced-route
+  complete-body matching owner and MUST NOT accept detached route, full
+  `ValidationId`, roots, receipts, replay identities, writes, plan commitment, or
+  commitments. One `BEGIN IMMEDIATE` transaction MUST move the exact job
+  directly from `reserved` to `callback_pending`, write the versioned artifact,
+  insert the fixed 84-byte callback intent, and update variable-width
+  accounting; no durable `evaluated` intermediate state may exist;
+- a v9 Valid artifact MUST canonically bind its route/full ID, request
+  fingerprint, immutable-job checksum, exact committed parent BlockId/version/
+  root, four roots, canonical receipts, body-global command IDs and signer/
+  nonce tuples, canonical domain-write recipe and semantic views, and exact
+  domain-separated commitment to every physical JMT-plan field. The artifact
+  MUST NOT store the physical plan bytes. Strict decode, EOF, checksum,
+  exact-parent replanning with root/commitment equality, and job/outbox
+  correlation MUST produce inert facts only and MUST NOT recreate
+  `ValidatedBlockCommitmentsV0`, Core callback authority, a JMT apply capability,
+  or application-head authority;
+- v9 MUST reject Valid `delivered`/`acked`, every `evaluated`/`applied` row, and
+  every other unsupported state/result combination. Failure before commit MUST
+  preserve the exact Reserved/no-outbox/accounting image and return the complete
+  prepared owner. Exact retry after a successful commit whose API response was
+  lost MUST return the existing byte-identical row without double-accounting;
+  this test seam MUST NOT be described as an actual SQLite commit-error,
+  fresh-process, SIGKILL, power-loss, device-cache, or hardware-fsync test;
+- each active v9 Valid-P row MUST protect its exact parent JMT history from
+  query-floor/pruning advancement. Until a BlockId overlay/ordered-finalization
+  owner consumes the artifact and defines safe GC, the legacy committed-head
+  writer MUST fail closed rather than advance past an inert Valid obligation;
+- v9 MUST cap one Valid artifact at 62,980,096 bytes, including the 4 MiB
+  receipts budget, 56 MiB replay/domain-delta budget, fixed framing, and
+  32-byte plan commitment. This bound MUST NOT be described as a bound on the
+  physical JMT plan or on peak process memory. Worst-case replanning,
+  allocator/OOM, SQLite/WAL/page-cache, disk-pressure, and cgroup evidence
+  remain release-blocking local-resource work and MUST NOT be mapped to
+  deterministic invalidity;
+- the G1c application recovery owner MUST open an existing exact schema-v9
   database only, MUST deeply validate the complete journal, and MUST admit only
   deterministic-invalid `callback_pending`, `delivered`, and `acked` rows.
-  `reserved`, `evaluated`, `applied`, `Valid`, `Unavailable`, unknown state/
-  result tags, duplicates, and active-set ambiguity MUST fail closed. Recovered
+  `reserved`, `evaluated`, `applied`, every v9 `Valid`, `Unavailable`, unknown
+  state/result tags, duplicates, and active-set ambiguity MUST fail closed.
+  Recovered
   writable authority MUST remain behind the one non-cloneable store-affine
   facade; inert row facts alone MUST NOT recreate it. Before the first
   supported row, a create-once, checksummed and parent-synced local manifest
@@ -994,15 +1034,18 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
 - the validation-job journal MUST be bounded at 65,536 rows and 512 MiB of raw
   request records with no eviction, and exact reopen MUST precede capacity
   rejection; migration MUST advance explicitly and serially through `v3 -> v4
-  -> v5 -> v6 -> v7 -> v8`, with one `BEGIN IMMEDIATE` atomic boundary per
+  -> v5 -> v6 -> v7 -> v8 -> v9`, with one `BEGIN IMMEDIATE` atomic boundary per
   fixed-version step; schema-v5 migration MUST proceed only when the legacy
   reservation table is empty, then advance through the reserved-only v6 format
   before v7 activation; a non-empty v5 table MUST roll back without deleting,
   rewriting, or fabricating replay fields, v6-to-v7 activation MUST fail
-  atomically on any non-reserved row, outbox row, checksum, or accounting drift,
-  and v7-to-v8 activation MUST deep-validate the complete v7
+  atomically on any non-reserved row, outbox row, checksum, or accounting drift;
+  v7-to-v8 activation MUST deep-validate the complete v7
   reserved/callback-pending journal before changing metadata and MUST preserve
-  v7 byte-for-byte on failure; restart
+  v7 byte-for-byte on failure; v8-to-v9 activation MUST validate the exact
+  canonical v8 physical schema plus complete invalid-only journal before its
+  atomic rebuild and MUST independently deep-audit the resulting v9 image;
+  restart
   recovery MUST enumerate all verified jobs in canonical state/identity order
   but MUST NOT treat those facts as reconstructed Core or evaluation authority;
   startup/recovery MUST
@@ -1180,6 +1223,16 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   bytes, verified envelope/context, cursor, and snapshot without advancing or
   becoming terminal invalid; none of these carriers converts into terminal,
   Core-callback, or ABCI authority;
+- every strictly verified outer command envelope in a regular body, regardless
+  of runtime, PoCO, or validator family, MUST enter one body-global command-ID
+  and `(signer ID, nonce)` replay namespace before execution or non-runtime
+  routing. Admission MUST query the replay tables through the same pinned
+  committed-parent SQLite transaction and MUST compare the current body prefix;
+  a committed-parent or same-body collision MUST close as the stable whole-
+  block deterministic-invalid code
+  `native_regular_transaction_replay_invalid`, while replay-index database,
+  storage, pruned-history, or authenticated-state failure MUST retain its typed
+  unavailable/fail-stop classification and MUST NOT collapse into invalidity;
 - every open/decode/runtime/planning failed-close carrier MUST be private,
   process-local, non-cloneable, and non-serializable; MUST expose no
   `From`/`TryFrom`, parts, standalone-cause, or public constructor from naked
@@ -1198,7 +1251,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   caller, so this is not production-path or terminal-authority evidence;
 - typed historical cutoff/projection reads, the exact estimate-input,
   synthetic-genesis/native-state authority, speculative-parent overlays,
-  non-runtime dispatch, JMT plan application/state persistence,
+  JMT plan application/state persistence,
   owning-classification-to-terminal promotion, final typed retryable-versus-
   invariant host mapping, production host/Core callback wiring, and ABCI
   wiring/adapter remain open hard prerequisites and provide no terminal
@@ -1213,19 +1266,25 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   driver, and injected test sink described above. G1c separately adds the
   bounded existing-only deterministic-invalid SafetyStore/application/node
   join, but no production constructor, fresh execution, general recovery
-  remint, or other result takeover. A
-  revalidatable `Valid` artifact and callback-outbox intent remain open; the
-  separate Finalize-
+  remint, or other result takeover. V9 adds the owner-only atomic Valid-P seal:
+  a real Proposal/Synced matching owner becomes one inert, deeply revalidatable
+  artifact and attempt-zero callback-outbox intent without an Evaluated row.
+  It does not deliver that intent, remint a live callback after reopen, or apply
+  the encoded state. The separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
   JMT/domain apply, root/native-head persistence, head advancement, and applied
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-  application-reservation takeover, `Valid` evaluated-artifact persistence,
+  application-reservation takeover,
   production callback-outbox scheduling/delivery, general authenticated
   integration with the standalone safety journal, application-validation crash
   takeover outside the bounded G1e SIGKILL matrix,
-  process-wide callback exactly-once, and the `Valid` validation-time plus
-  Finalize-time atomic boundaries remain open;
+  process-wide callback exactly-once, and the Finalize-time atomic boundary
+  remain open. G1h's same-process tests additionally exercise the real legacy-
+  head guard, physical prune followed by exact-parent replan, source-local
+  snapshot scrubbing, and coherent surface-checksum tamper followed by fresh-
+  handle rejection. They MUST NOT be represented as Valid-path child-process
+  SIGKILL, power-loss/fsync, or actual SQLite commit-error evidence;
 - parameter and arithmetic boundary failures.
 
 Repeated runs with the same inputs must produce byte-identical logical outputs and final safety state.

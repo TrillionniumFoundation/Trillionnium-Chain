@@ -498,7 +498,7 @@ duplicate, `Unavailable`, or `DeterministicallyInvalid` result. The exact route
 travels with the owner through open/body/cursor/runtime/post-state/comparator
 and process-local disposition; callers cannot inject a bool or naked route.
 
-Separately from current application-store schema v8, Core `SafetyState` schema v5
+Separately from current application-store schema v9, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either `ValidatePayload` or `ValidateSyncedPayload` may escape a
 `PersistSafetyState -> StorageAck` barrier. Each record binds the Core-selected
@@ -617,9 +617,9 @@ accounting. A pre-commit error rolls all of them back and returns the unique
 prepared owner. `Valid`, `Evaluated`, `Delivered`, `Acked`, `Applied`,
 `Unavailable`, and invariant results remain inactive and fail closed in v7.
 
-Current application-store schema v8 preserves every verified v7 `reserved` and
-`callback_pending` row and activates two later deterministic-invalid delivery
-states plus their app-private writable transitions.
+Historical application-store schema v8 preserves every verified v7 `reserved`
+and `callback_pending` row and activates two later deterministic-invalid
+delivery states plus their app-private writable transitions.
 A `delivered` row must retain its congruent outbox with a canonical delivery
 attempt of at least one; the accepted-Core revision and payload-checksum fields
 must still be absent. An `acked` row must have retired that outbox and its
@@ -628,6 +628,56 @@ creation revision, and must bind the rederived canonical invalid-callback
 payload checksum. Both states use the domain-separated delivery-row checksum.
 `evaluated`, `applied`, every `Valid` result, every other invalid reason,
 `Unavailable`, and invariant results remain inactive and fail closed in v8.
+
+Current application-store schema v9 first authenticates the complete v8
+invalid-only journal under the v8 rules, then atomically rebuilds the journal
+under the v9 physical contract. V9 preserves all v8 deterministic-invalid
+states and additionally activates exactly one `Valid` representation:
+`callback_pending` with an attempt-zero outbox. The only writer consumes the
+real owner returned by the Proposal or Synced mixed-body comparator; it has no
+overload accepting detached roots, receipts, writes, plan commitment, route, or
+`ValidationId`. One `BEGIN IMMEDIATE` transaction changes `reserved` directly
+to `callback_pending`, stores the strict versioned `Valid` artifact, inserts the
+fixed 84-byte callback intent, and updates variable-width accounting. There is
+no durable `evaluated` intermediate state. The artifact binds the route/full
+ID, request and immutable-job checksums, exact committed parent BlockId/version/
+root, four computed roots, canonical receipts, body-global outer-envelope
+command IDs and signer/nonces, the canonical domain-write recipe and semantic
+views, and a fixed domain-separated commitment covering every exact physical
+JMT-plan field. Decode and deep reopen validation remain inert: they replan the
+canonical writes against the authenticated exact parent and require both the
+root and commitment to match, but cannot recreate
+`ValidatedBlockCommitmentsV0`, a Core input, JMT apply authority, or
+application-head authority. The physical plan bytes are not stored in the
+Valid artifact.
+
+An error before commit returns the complete prepared owner and leaves the
+original reservation/outbox/accounting image unchanged. The
+`AfterCommitBeforeReturn` test seam represents only a successful SQLite commit
+whose API response is lost; exact retry returns the byte-identical existing
+row without double-accounting. It is not evidence for an actual SQLite commit
+error, a fresh-process restart, SIGKILL, power loss, device-cache behavior, or
+hardware fsync. V9 still rejects `Valid` `delivered`/`acked`, every
+`evaluated`/`applied` row, and all unsupported result/state combinations.
+While an inert Valid-P row exists, its exact parent history is protected from
+query-floor/pruning advancement and the legacy committed-head writer fails
+closed. Sustainable head advancement and eventual artifact/history GC remain
+blocked on the BlockId overlay plus ordered-finalization owner.
+Current tests exercise the actual `persist_transition` guard with byte-exact
+head/journal preservation, physical pruning below the pinned parent followed by
+exact-parent replanning, source-local snapshot scrubbing, and fresh-handle
+rejection of a plan-commitment splice after every artifact/job/callback surface
+checksum is coherently recomputed. These are still same-process SQLite tests,
+not a Valid-path child-process crash matrix.
+
+The v9 artifact cell is bounded at 62,980,096 bytes: 4 MiB canonical receipts,
+56 MiB replay/domain delta, and 64 KiB fixed framing, including the 32-byte plan
+commitment. Removing the full physical plan avoids claiming an unproved 64 MiB
+upper bound on JMT node amplification. It does not close worst-case replanning
+CPU/RAM, allocator/OOM, SQLite/WAL/page-cache, cgroup, or disk-pressure
+behavior; those remain local availability/release gates and may never become
+deterministic block invalidity.
+
 The first successful deterministic-invalid seal retains a non-cloneable live
 owner that inert reopen/recovery facts cannot recreate. An app-private
 non-cloneable driver fixes one designated store, one owned Core instance, and
@@ -651,10 +701,12 @@ complete challenge to a deeply verified application row that is already
 `DeterministicallyInvalid`. More than one obligation, a different result, or a
 missing/mismatched row fails closed.
 
-The schema-v8 recovery facade admits only existing `CallbackPending`,
+The existing-only recovery facade may open the current schema-v9 store, but it
+still admits only existing `CallbackPending`,
 `Delivered`, and `Acked` deterministic-invalid rows. It never creates a
 reservation or runs fresh execution, and it rejects `Reserved`, `Evaluated`,
-`Applied`, `Valid`, `Unavailable`, and unknown state/result tags at open. It
+`Applied`, every v9 `Valid` row, `Unavailable`, and unknown state/result tags at
+open. It
 retains recovered transition owners internally rather than reconstructing a
 general callback token from inert row bytes.
 
@@ -735,21 +787,25 @@ application compatibility boundary also requires `max_block_bytes <= 16 MiB`.
 Schema-v5 migration succeeds only when its legacy reservation table is empty;
 a non-empty v5 table is unreplayable and rolls back unchanged. Startup and
 snapshot installation advance explicitly through `v3 -> v4 -> v5 -> v6 ->
-v7 -> v8`; every migration step has its own `BEGIN IMMEDIATE` atomic boundary
+v7 -> v8 -> v9`; every migration step has its own `BEGIN IMMEDIATE` atomic boundary
 and writes only its fixed successor version. The v6-to-v7 activation validates
 every reserved row, foreign key, binding, resource bound, and accounting fact
 and rolls back to v6 on any drift. The metadata-only v7-to-v8 activation first
 deep-validates the complete v7 reserved/callback-pending journal and rolls back
 to v7 byte-for-byte on any incompatible state, outbox, checksum, binding, or
-accounting fact.
+accounting fact. V8-to-v9 first authenticates the canonical v8 physical schema
+and complete invalid-only journal, atomically rebuilds the parent/child tables,
+then independently deep-audits schema, foreign keys, rows, variable-width
+accounting, resource bounds, and SQLite integrity before commit.
 State-sync
 snapshot generation scrubs outbox rows first and jobs second only from the
 temporary copy and verifies both are empty, leaving the source database
 unchanged; installation refuses to overwrite a non-empty target-local
 validation journal. This is a revalidatable raw request/recovery-fact foundation
-plus a bounded deterministic-invalid G1c takeover/join. It is not a
-reconstruction of the signed proposal witness, a durable `Valid` artifact, a
-fresh executor, a BlockId-keyed speculative overlay, an ordered finalization
+plus a bounded deterministic-invalid G1c takeover/join and inert owner-derived
+Valid-P seal. It is not reconstruction of the signed proposal witness or
+durable callback authority, a fresh executor, a BlockId-keyed speculative
+overlay, an ordered finalization
 queue, or a general application recovery protocol. There is no production
 effect driver, authenticated network, state-sync recovery join, complete
 production crash matrix, process-wide Core uniqueness, or callback exactly-once
@@ -802,7 +858,16 @@ advances nor becomes terminal invalid.
 
 This is still not terminal production execution authority. The production
 cursor can perform real runtime attempts plus owner-bound successive
-PoCO/validator attempts, family-local sealing, and success-only advance. Before
+PoCO/validator attempts, family-local sealing, and success-only advance. Each
+strictly verified outer command envelope first enters one body-global replay
+namespace shared by runtime, PoCO, and validator families. The cursor checks
+both command ID and `(signer ID, nonce)` against the same pinned committed-parent
+SQLite transaction and against its current body prefix before any runtime
+execution or non-runtime routing. A committed or same-body collision closes as
+the stable whole-block deterministic-invalid code
+`native_regular_transaction_replay_invalid`; a replay-index read failure remains
+typed source loss or authenticated fail-stop and cannot become invalidity.
+Before
 planning a complete runtime-only body, it replays each retained real
 `RuntimeReceipt` mutation set separately and sequentially against the same
 authenticated snapshot. A key may recur in different transactions only when
@@ -857,12 +922,14 @@ verifies the retained plan/seal plus strict ordinary commitments, and
 classifies only state then receipts mismatches as deterministic. Runtime
 receipts preserve real gas, exact `u128` fees, and ordered events; PoCO and
 validator items use the frozen empty internal receipt, while cutoff refresh and
-implicit validator activation add no body receipt. The result is still only a
-private matched/failed/classified owner, not an app-private `Valid` outcome.
-Plan application/persistence and head update, a durable `Valid` artifact/outbox,
-speculative-parent overlays, cross-epoch/handoff, production host/Core wiring,
-ABCI wiring, and cross-process rollback protection remain hard open
-prerequisites before the general terminal/Core callback path. The
+implicit validator activation add no body receipt. A matching result remains a
+private owner rather than a Core callback, but schema v9 can now consume only
+that real owner into the inert `Valid` artifact and attempt-zero
+`callback_pending` outbox described above. Plan application/persistence and
+head update, callback delivery, speculative-parent overlays, cross-epoch/
+handoff, production host/Core wiring, ABCI wiring, and cross-process rollback
+protection remain hard open prerequisites before the general terminal/Core
+callback path. The
 deterministic-invalid state/receipts-root slice alone now has a process-local
 real-Core driver integration; the object-graph gate itself performs no
 terminal mapping, and only the current private admission branch is proven not
@@ -871,12 +938,12 @@ The legacy private route-bearing outcome bridge proves that `Proposal` maps
 only to `PayloadValidated` and `Synced` only to
 `SyncedPayloadValidated`, but it does not itself submit that input to a Core
 instance or establish callback delivery.
-Neither the v7 invalid journal nor the v8 delivery-state activation stores an
-evaluated `Valid` artifact, durable JMT plan, or `Valid` callback outbox. V8
-adds process-local invalid delivery writers, a non-cloneable live owner, and
-real Core callback/barrier execution behind an app-private driver, but its
-injected sink is only a test boundary and is not wired to the standalone
-SafetyState journal. A private inert durable-plan codec now covers the exact
+V7 and v8 remain invalid-only. V8 adds process-local invalid delivery writers,
+a non-cloneable live owner, and real Core callback/barrier execution behind an
+app-private driver, but its injected sink is only a test boundary and is not
+wired to the standalone SafetyState journal. V9 adds only the owner-derived
+inert Valid-P artifact/outbox transaction; it does not add delivery or apply.
+A private inert durable-plan codec covers the exact
 persistence-bearing JMT
 version/root, nodes, values, stale indices, and key preimages without exposing
 the process-local plan seal or serializing `TreeUpdateBatch` as a container.
@@ -887,25 +954,26 @@ writes produce only an inert verified carrier, so recovery can still verify
 an artifact after another fork occupies that state version. A separate
 consuming boundary retains and rebinds the original parent root, requires an
 unoccupied target, replans the same writes on the current reader, and releases
-the fresh `PlannedAuthUpdate` only if its physical bytes are still exact. The
-codec is not yet embedded in a `Valid` evaluated artifact or written to the job
-table. A future activation must first prove the 64 MiB physical-plan envelope
-against the consensus block/write scale gate; exceeding a local artifact budget
-can never
-become deterministic invalidity. The remaining `Valid` validation-time atomic
-boundary must persist a versioned revalidatable artifact together with
-callback-outbox intent; a distinct
+the fresh `PlannedAuthUpdate` only if its physical bytes are still exact. V9
+embeds only the fixed physical-plan commitment in its Valid-P artifact; reopen
+uses the private codec transiently to replan and compare the exact parent/root/
+commitment, and never calls that apply-capable boundary. Capacity failure
+remains local/fail-closed and can never become deterministic invalidity. The
+Valid validation-time artifact/
+outbox atomic boundary is now present only at that inert owner-derived stage; a
+distinct
 Finalize-time atomic boundary must revalidate the exact authority and couple
 JMT/domain apply, root/native-head persistence, head advancement, and applied
-state. Neither the `Valid` validation-time nor the Finalize-time boundary is
-implemented. General authenticated replay tickets and completion retirement
+state. General authenticated replay tickets and completion retirement
 after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
-application-reservation takeover, `Valid` evaluated-artifact persistence,
-production callback scheduling/delivery, recovery for outcomes outside the G1c
+application-reservation takeover, production Valid callback scheduling/
+delivery, recovery for outcomes outside the G1c
 deterministic-invalid matrix, application-validation crash takeover outside the
 bounded G1e SIGKILL matrix, completion-only artifact replay, and callback
-exactly-once are also not implemented. The current
+exactly-once are also not implemented. The G1h Valid seal has same-process
+ordering, rollback, response-loss retry, and reopen evidence only; it has no
+Valid-path child-process SIGKILL or power-loss/fsync evidence. The current
 process-local invalid driver uses Core's `StorageAck` cleanup barrier only
 after its injected sink and application `acked` transition; that test boundary
 is not a production host callback-outbox acknowledgement. The separate inert
@@ -1299,10 +1367,14 @@ inert carrier; finish failure takes precedence. A subsequent owner-only
 comparator now closes body-wide receipts and mixed-body four-root comparison
 inside a private classification carrier, with full provenance/final-source/
 plan/static invariants before state-then-receipts mismatch classification. It
-does not promote app-private `Valid`. Plan application/persistence/head update,
-durable `Valid` terminal artifact/outbox, speculative-parent
-and cross-epoch/handoff support, production callback durability/recovery, and
-Core/ABCI host integration remain open.
+does not itself promote a Core `Valid` callback. Schema v9 can consume only its
+real matching owner into an inert, deeply revalidatable Valid-P artifact plus
+attempt-zero outbox, but does not deliver that callback or apply any state.
+Plan application/persistence/head update, speculative-parent and cross-epoch/
+handoff support, production callback durability/recovery, and Core/ABCI host
+integration remain open. Until the overlay/finalization owner can consume and
+GC Valid-P, its exact parent history is pinned and the legacy committed-head
+writer fails closed.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

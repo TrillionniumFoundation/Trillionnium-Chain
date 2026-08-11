@@ -15,7 +15,7 @@
 //! snapshot-closed failures into the app-private outcome kernel. A production
 //! sequential cursor now
 //! begins behind the Core request's shared process-local one-shot claim and a
-//! schema-v8 durable `(route, full ValidationId)` job reservation, so both cloned
+//! schema-v9 durable `(route, full ValidationId)` job reservation, so both cloned
 //! replays and independently materialized exact duplicates are suppressed
 //! before host or authenticated-state access. The durable row is congruence
 //! and evaluation authority only. A narrow owning bridge can atomically persist
@@ -23,12 +23,24 @@
 //! plus callback-pending outbox records. Its retained first-seal owner can enter
 //! the schema-v8 app-private process-local driver for real Core barrier tests,
 //! Delivered/Acked journal transitions, and an injected exact-state sink.
-//! Valid artifacts, JMT application, production callback durability/host
-//! wiring, and crash takeover remain absent. The
+//! Schema v9 additionally lets one owner-only bridge consume the real Proposal
+//! or Synced complete-body `Valid` owner and atomically seal a strict inert
+//! `Valid` artifact plus an attempt-zero `CallbackPending` outbox. The encoded
+//! record binds its exact parent, four roots, receipts, global outer-envelope
+//! command-ID/signer-nonce replay index, domain-write recipe, and a fixed
+//! commitment to every exact physical JMT-plan field, but cannot recreate live
+//! commitments or apply authority. Valid
+//! callback delivery, JMT/domain/head application, speculative overlays,
+//! production host wiring, and crash takeover remain absent. The
 //! production sequential cursor
 //! freezes the initialized host signer policy, internal body index, exact
 //! outer/inner bytes, strict signer/transaction decode, and derived execution
-//! context facts while retaining that open snapshot. A second narrow carrier
+//! context facts while retaining that open snapshot. Before either runtime or
+//! non-runtime execution, every strictly verified outer envelope is admitted
+//! through one body-global command-ID and signer-nonce namespace against that
+//! same parent snapshot plus the current body prefix. A committed or same-body
+//! collision closes as `native_regular_transaction_replay_invalid`; replay-index
+//! read failure remains typed source loss or fail-stop. A second narrow carrier
 //! now consumes one prepared transaction into the real runtime against only
 //! the cursor's prior delta and that same snapshot. The cursor advances only
 //! after runtime success, native-receipt conversion, and atomic mutation
@@ -52,13 +64,13 @@
 //! per body item in body order, rederives the final merged writes, verifies the
 //! retained plan/seal, and classifies state-before-receipts mismatches only
 //! after strict four-root/static commitment validation. App-private `Valid`
-//! promotion and plan application/persistence remain absent. A narrow owning
-//! bridge can now consume only a complete-body state/receipts mismatch backed
-//! by the exact durable reservation into an app-private prepared-invalid
-//! capability. That bridge itself does not encode or persist the artifact,
-//! deliver a callback, or execute Core; the separate store-nested schema-v8
-//! driver consumes its first-seal lineage for the process-local integration
-//! described above. Owner-preserving typed failure promotion,
+//! promotion into Core and plan application/persistence remain absent. A
+//! narrow owning bridge can now consume only a complete-body state/receipts
+//! mismatch backed by the exact durable reservation into an app-private
+//! prepared-invalid capability. That bridge itself does not encode or persist
+//! the artifact, deliver a callback, or execute Core; the separate store-nested
+//! schema-v8 driver consumes its first-seal lineage for the process-local
+//! integration described above. Owner-preserving typed failure promotion,
 //! a consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
 //! same-snapshot family-state attempts are now present. The family-local seal
@@ -69,6 +81,11 @@
 use crate::{
     auth_tree::{AuthWrite, PlannedAuthUpdate, PlannedAuthUpdateSealV0},
     native_execution::{NativeBlockExecutionV0, NativeTransactionReceiptFactsV0},
+    native_valid_artifact::{
+        prepare_durable_valid_artifact_v0, DurableValidArtifactFactsV0,
+        DurableValidArtifactInputV0, DurableValidCodecErrorV0,
+        PreparedDurableValidArtifactRecordV0,
+    },
     native_validation_artifact::DurableDeterministicInvalidReasonV0,
     store::{
         native_validation_request_fingerprint_v0, ApplicationStore,
@@ -264,6 +281,7 @@ pub(super) enum CoreAuthorizedRegularPreExecutionUnavailableKindV0 {
 pub(super) enum CoreAuthorizedRegularPreExecutionInvalidKindV0 {
     BodyEvidence,
     TransactionEncodingOrAuthorization,
+    TransactionReplay,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -437,6 +455,8 @@ impl std::fmt::Debug for ClosedFailedCoreAuthorizedRegularValidationV0 {
 struct OpenCoreAuthorizedRegularTransactionCursorV0 {
     open: OpenCoreAuthorizedRegularValidationV0,
     next_transaction_index: u32,
+    replay_command_ids: BTreeSet<String>,
+    replay_signer_nonces: BTreeSet<(String, u64)>,
     changes: BTreeMap<String, StoredObject>,
     applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
     applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
@@ -1373,6 +1393,8 @@ fn close_core_authorized_non_runtime_payload_owner_v0(
     let OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index: cursor_next_transaction_index,
+        replay_command_ids: _,
+        replay_signer_nonces: _,
         changes,
         applied,
         applied_non_runtime,
@@ -2471,6 +2493,121 @@ pub(super) struct PreparedDurableInvalidStorePartsV0 {
     reason: DurableDeterministicInvalidReasonV0,
 }
 
+/// App-private authority to seal one complete, owner-derived Valid evaluation
+/// into the durable validation journal.  The live commitments are retained
+/// separately from the inert artifact bytes: decoding the latter can never
+/// recreate this value or a Core callback.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a prepared durable Valid result must be consumed by the validation journal"]
+pub(super) struct PreparedDurableValidV0 {
+    reservation: NativeValidationReservationTokenV0,
+    validated_commitments: ValidatedBlockCommitmentsV0,
+    artifact: PreparedDurableValidArtifactRecordV0,
+}
+
+/// The only live Valid capability released after the ApplicationStore has
+/// authenticated the exact artifact/outbox transaction.  Its inner prepared
+/// owner stays opaque so no sibling module can detach or recreate the
+/// commitments before the store supplies its unforgeable seal permit.
+#[cfg_attr(not(test), allow(dead_code))]
+#[must_use = "a sealed durable Valid owner must stay joined to its store record"]
+pub(super) struct SealedDurableValidV0 {
+    reservation: NativeValidationReservationTokenV0,
+    validated_commitments: ValidatedBlockCommitmentsV0,
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl PreparedDurableValidV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.reservation.route()
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.reservation.validation_id()
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.reservation.request_fingerprint()
+    }
+
+    pub(super) const fn immutable_checksum(&self) -> [u8; 32] {
+        self.reservation.immutable_checksum()
+    }
+
+    pub(super) const fn artifact(&self) -> &PreparedDurableValidArtifactRecordV0 {
+        &self.artifact
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.reservation.is_bound_to_store_v0(store)
+    }
+
+    pub(super) fn into_sealed_v0(
+        self,
+        _permit: crate::store::NativeValidationValidSealPermitV0,
+    ) -> SealedDurableValidV0 {
+        let Self {
+            reservation,
+            validated_commitments,
+            artifact: _,
+        } = self;
+        SealedDurableValidV0 {
+            reservation,
+            validated_commitments,
+        }
+    }
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+impl SealedDurableValidV0 {
+    pub(super) const fn validated_commitments(&self) -> ValidatedBlockCommitmentsV0 {
+        self.validated_commitments
+    }
+
+    pub(super) fn is_bound_to_store_v0(&self, store: &ApplicationStore) -> bool {
+        self.reservation.is_bound_to_store_v0(store)
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub(super) enum PrepareDurableValidFailureCauseV0 {
+    #[cfg(test)]
+    TestOnlyReservation,
+    ReservationRouteInvariant,
+    ReservationValidationIdInvariant,
+    RetainedProvenanceInvariant,
+    RetainedWriteRecipeInvariant,
+    RetainedPlanSealInvariant,
+    RetainedPlanRecipeInvariant,
+    RetainedExecutionInvariant,
+    RetainedReplayIndexInvariant,
+    RetainedCommitmentInvariant,
+    UnsupportedParameterProfile,
+    ReceiptEncoding,
+    DurablePlanCommitment,
+    Artifact(DurableValidCodecErrorV0),
+}
+
+/// A failed preparation retains the full matched owner.  A caller inspecting
+/// the typed failure therefore cannot accidentally substitute detached roots,
+/// receipts, writes, or plan bytes and retry under the same reservation.
+#[must_use = "a failed durable Valid preparation retains its exact matched owner"]
+#[cfg_attr(not(test), allow(dead_code))]
+pub(super) struct FailedPrepareDurableValidV0 {
+    owner: Box<MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0>,
+    cause: PrepareDurableValidFailureCauseV0,
+}
+
+impl std::fmt::Debug for FailedPrepareDurableValidV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("FailedPrepareDurableValidV0")
+            .field("cause", &self.cause)
+            .field("retains_exact_matched_owner", &true)
+            .finish_non_exhaustive()
+    }
+}
+
 #[cfg_attr(not(test), allow(dead_code))]
 impl PreparedDurableInvalidV0 {
     pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
@@ -2869,6 +3006,7 @@ pub(super) enum CoreAuthorizedRegularComputedRootMismatchV0 {
 enum CoreAuthorizedRegularCommitmentInvariantV0 {
     TransactionCount,
     TransactionProvenance,
+    CompleteBodyReplayIndex,
     ReceiptMutationDelta,
     PlannedStateDelta,
     NativeReceiptRebuild,
@@ -2894,7 +3032,7 @@ enum CoreAuthorizedRegularCommitmentComparisonCauseV0 {
     Invariant(CoreAuthorizedRegularCommitmentInvariantV0),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum CoreAuthorizedRegularTransactionDecodeCauseV0 {
     Exhausted,
     IndexOverflow,
@@ -2904,6 +3042,8 @@ enum CoreAuthorizedRegularTransactionDecodeCauseV0 {
     InvalidCanonicalTransaction,
     SenderMismatch,
     NonceMismatch,
+    ReplayCollision,
+    ReplaySource(AuthenticatedRuntimeReadFailureV0),
 }
 
 /// A pending decode failure cannot reveal its classification until the same
@@ -3217,6 +3357,19 @@ impl ClosedFailedCoreAuthorizedRegularTransactionDecodeV0 {
                 generation,
                 kind: CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionEncodingOrAuthorization,
             },
+            ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
+                CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision,
+            ) => CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::DeterministicallyInvalid {
+                generation,
+                kind: CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionReplay,
+            },
+            ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
+                CoreAuthorizedRegularTransactionDecodeCauseV0::ReplaySource(failure),
+            ) => authenticated_pre_execution_read_outcome_facts_v0(
+                generation,
+                failure,
+                CoreAuthorizedRegularPreExecutionInvariantStageV0::TransactionDecode,
+            ),
             ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
                 CoreAuthorizedRegularTransactionDecodeCauseV0::Exhausted
                 | CoreAuthorizedRegularTransactionDecodeCauseV0::IndexOverflow
@@ -4363,6 +4516,8 @@ fn open_core_authorized_regular_transaction_cursor_from_open_v0(
     OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index: 0,
+        replay_command_ids: BTreeSet::new(),
+        replay_signer_nonces: BTreeSet::new(),
         changes: BTreeMap::new(),
         applied: Vec::new(),
         applied_non_runtime: Vec::new(),
@@ -4592,9 +4747,42 @@ fn decode_exact_authorized_runtime_transaction_for_test_v0(
 /// Prepares only the exact item selected by the internal cursor. The returned
 /// value continues to own the open cursor and snapshot; no production API can
 /// advance it before a future runtime attempt consumes the whole carrier.
+fn admit_core_authorized_regular_replay_identity_v0(
+    open: &mut OpenCoreAuthorizedRegularTransactionCursorV0,
+    exact_outer_bytes: &[u8],
+) -> std::result::Result<(), CoreAuthorizedRegularTransactionDecodeCauseV0> {
+    let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(exact_outer_bytes)
+        .map_err(|_| CoreAuthorizedRegularTransactionDecodeCauseV0::InvalidEnvelope)?;
+    let signer_nonce = (envelope.signer_id.clone(), envelope.nonce);
+    if open.replay_command_ids.contains(&envelope.command_id)
+        || open.replay_signer_nonces.contains(&signer_nonce)
+    {
+        return Err(CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision);
+    }
+    let committed_command = open
+        .open
+        .snapshot
+        .contains_command_id_exact_v0(&envelope.command_id)
+        .map_err(CoreAuthorizedRegularTransactionDecodeCauseV0::ReplaySource)?;
+    let committed_signer_nonce = open
+        .open
+        .snapshot
+        .contains_signer_nonce_exact_v0(&signer_nonce.0, signer_nonce.1)
+        .map_err(CoreAuthorizedRegularTransactionDecodeCauseV0::ReplaySource)?;
+    if committed_command || committed_signer_nonce {
+        return Err(CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision);
+    }
+    if !open.replay_command_ids.insert(envelope.command_id)
+        || !open.replay_signer_nonces.insert(signer_nonce)
+    {
+        return Err(CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision);
+    }
+    Ok(())
+}
+
 #[allow(dead_code)]
 fn prepare_next_core_authorized_regular_payload_v0(
-    open: OpenCoreAuthorizedRegularTransactionCursorV0,
+    mut open: OpenCoreAuthorizedRegularTransactionCursorV0,
 ) -> Result<
     PreparedCoreAuthorizedRegularPayloadV0,
     Box<FailedCoreAuthorizedRegularTransactionDecodeV0>,
@@ -4602,6 +4790,15 @@ fn prepare_next_core_authorized_regular_payload_v0(
     let decoded = decode_next_core_authorized_regular_payload_v0(&open);
     match decoded {
         Ok(DecodedCoreAuthorizedRegularPayloadV0::Runtime(decoded)) => {
+            if let Err(cause) = admit_core_authorized_regular_replay_identity_v0(
+                &mut open,
+                &decoded.exact_outer_bytes,
+            ) {
+                return Err(Box::new(FailedCoreAuthorizedRegularTransactionDecodeV0 {
+                    open,
+                    cause,
+                }));
+            }
             Ok(PreparedCoreAuthorizedRegularPayloadV0::Runtime(
                 PreparedCoreAuthorizedRuntimeTransactionV0 {
                     open,
@@ -4615,6 +4812,15 @@ fn prepare_next_core_authorized_regular_payload_v0(
             ))
         }
         Ok(DecodedCoreAuthorizedRegularPayloadV0::NonRuntime(decoded)) => {
+            if let Err(cause) = admit_core_authorized_regular_replay_identity_v0(
+                &mut open,
+                &decoded.exact_outer_bytes,
+            ) {
+                return Err(Box::new(FailedCoreAuthorizedRegularTransactionDecodeV0 {
+                    open,
+                    cause,
+                }));
+            }
             Ok(PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(
                 CoreAuthorizedNonRuntimePayloadRoutingV0 {
                     open,
@@ -4644,6 +4850,8 @@ fn finish_failed_core_authorized_regular_transaction_decode_v0(
     let OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index,
+        replay_command_ids: _,
+        replay_signer_nonces: _,
         changes,
         applied,
         applied_non_runtime,
@@ -4694,11 +4902,27 @@ fn validate_runtime_mutation_key_type_value_v0(
     target_height: u64,
     mutation: &RuntimeMutation,
 ) -> std::result::Result<(), CoreAuthorizedRegularRuntimeMutationStageFailureV0> {
+    validate_runtime_object_key_type_value_v0(
+        target_height,
+        &mutation.object_key_hex,
+        &mutation.object_type,
+        mutation.next_version,
+        &mutation.value_bytes,
+    )
+}
+
+fn validate_runtime_object_key_type_value_v0(
+    target_height: u64,
+    object_key_hex: &str,
+    object_type: &str,
+    object_version: u64,
+    value_bytes: &[u8],
+) -> std::result::Result<(), CoreAuthorizedRegularRuntimeMutationStageFailureV0> {
     let mut task_state = None;
-    let expected_key = match mutation.object_type.as_str() {
+    let expected_key = match object_type {
         ACCOUNT_OBJECT_TYPE_V1 => {
             let account = decode_canonical_runtime_object_value_v0::<AccountV1>(
-                &mutation.value_bytes,
+                value_bytes,
                 CoreAuthorizedRegularRuntimeMutationInvariantV0::NonCanonicalAccountValue,
             )?;
             CanonicalCommandV1::CreditAccount {
@@ -4715,7 +4939,7 @@ fn validate_runtime_mutation_key_type_value_v0(
         }
         TASK_OBJECT_TYPE_V1 => {
             let task = decode_canonical_runtime_object_value_v0::<TaskV1>(
-                &mutation.value_bytes,
+                value_bytes,
                 CoreAuthorizedRegularRuntimeMutationInvariantV0::NonCanonicalTaskValue,
             )?;
             CanonicalCommandV1::CreateTask {
@@ -4737,7 +4961,7 @@ fn validate_runtime_mutation_key_type_value_v0(
         }
         FEE_POLICY_OBJECT_TYPE_V1 => {
             let policy = decode_canonical_runtime_object_value_v0::<FeePolicyV1>(
-                &mutation.value_bytes,
+                value_bytes,
                 CoreAuthorizedRegularRuntimeMutationInvariantV0::NonCanonicalFeePolicyValue,
             )?;
             CanonicalCommandV1::SetFeePolicy {
@@ -4755,7 +4979,7 @@ fn validate_runtime_mutation_key_type_value_v0(
         }
         MONETARY_STATE_OBJECT_TYPE_V1 => {
             let _ = decode_canonical_runtime_object_value_v0::<MonetaryStateV1>(
-                &mutation.value_bytes,
+                value_bytes,
                 CoreAuthorizedRegularRuntimeMutationInvariantV0::NonCanonicalMonetaryStateValue,
             )?;
             monetary_state_key()
@@ -4768,7 +4992,7 @@ fn validate_runtime_mutation_key_type_value_v0(
             );
         }
     };
-    if mutation.object_key_hex != expected_key {
+    if object_key_hex != expected_key {
         return Err(
             CoreAuthorizedRegularRuntimeMutationStageFailureV0::Invariant(
                 CoreAuthorizedRegularRuntimeMutationInvariantV0::CanonicalKeyMismatch,
@@ -4776,7 +5000,7 @@ fn validate_runtime_mutation_key_type_value_v0(
         );
     }
     if let Some(task) = task_state {
-        validate_authenticated_task_state_v0(&task, mutation.next_version, target_height).map_err(
+        validate_authenticated_task_state_v0(&task, object_version, target_height).map_err(
             |_| {
                 CoreAuthorizedRegularRuntimeMutationStageFailureV0::Invariant(
                     CoreAuthorizedRegularRuntimeMutationInvariantV0::UnreachableTaskState,
@@ -4785,6 +5009,23 @@ fn validate_runtime_mutation_key_type_value_v0(
         )?;
     }
     Ok(())
+}
+
+/// Read-only semantic check used by the durable Valid artifact decoder.  It
+/// intentionally returns only a boolean and cannot mint a runtime mutation or
+/// any apply authority from persisted bytes.
+pub(super) fn validate_durable_valid_runtime_object_v0(
+    target_height: u64,
+    object: &StoredObject,
+) -> bool {
+    validate_runtime_object_key_type_value_v0(
+        target_height,
+        &object.object_key_hex,
+        &object.object_type,
+        object.version,
+        &object.value_bytes,
+    )
+    .is_ok()
 }
 
 /// Applies the complete receipt mutation set to a clone of the cursor delta.
@@ -5019,6 +5260,8 @@ fn fail_prepared_core_authorized_runtime_transaction_v0(
     let OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index,
+        replay_command_ids: _,
+        replay_signer_nonces: _,
         changes: _,
         applied: _,
         applied_non_runtime,
@@ -5202,6 +5445,8 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
     let OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index,
+        replay_command_ids: _,
+        replay_signer_nonces: _,
         changes,
         applied,
         applied_non_runtime,
@@ -5486,6 +5731,8 @@ fn finish_and_plan_complete_core_authorized_regular_post_state_v0(
     let OpenCoreAuthorizedRegularTransactionCursorV0 {
         open,
         next_transaction_index,
+        replay_command_ids: _,
+        replay_signer_nonces: _,
         changes,
         applied,
         applied_non_runtime,
@@ -5792,6 +6039,63 @@ fn rebuild_finished_complete_body_native_execution_v0(
         .map_err(|_| invariant(CoreAuthorizedRegularCommitmentInvariantV0::NativeExecutionRebuild))
 }
 
+type CompleteBodyReplayIndexV0 = (Vec<String>, Vec<(String, u64)>);
+
+fn rebuild_finished_complete_body_replay_index_v0(
+    finished: &FinishedPlannedCoreAuthorizedRegularCompleteBodyV0,
+) -> std::result::Result<CompleteBodyReplayIndexV0, CoreAuthorizedRegularCommitmentComparisonCauseV0>
+{
+    let invariant = |reason| CoreAuthorizedRegularCommitmentComparisonCauseV0::Invariant(reason);
+    validate_finished_complete_body_item_provenance_v0(finished)?;
+    let mut command_ids = BTreeSet::new();
+    let mut signer_nonces = BTreeSet::new();
+    for applied in &finished.applied {
+        let envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(&applied.exact_outer_bytes)
+            .map_err(|_| {
+                invariant(CoreAuthorizedRegularCommitmentInvariantV0::CompleteBodyReplayIndex)
+            })?;
+        if !command_ids.insert(envelope.command_id)
+            || !signer_nonces.insert((envelope.signer_id, envelope.nonce))
+        {
+            return Err(invariant(
+                CoreAuthorizedRegularCommitmentInvariantV0::CompleteBodyReplayIndex,
+            ));
+        }
+    }
+    for applied in &finished.applied_non_runtime {
+        let envelope = match applied {
+            AppliedCoreAuthorizedNonRuntimePayloadV0::PocoApplication { envelope, .. }
+            | AppliedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition { envelope, .. } => {
+                envelope
+            }
+        };
+        if !command_ids.insert(envelope.command_id.clone())
+            || !signer_nonces.insert((envelope.signer_id.clone(), envelope.nonce))
+        {
+            return Err(invariant(
+                CoreAuthorizedRegularCommitmentInvariantV0::CompleteBodyReplayIndex,
+            ));
+        }
+    }
+    let expected = usize::try_from(
+        finished
+            .authorized
+            .body
+            .application_payload()
+            .transaction_count(),
+    )
+    .map_err(|_| invariant(CoreAuthorizedRegularCommitmentInvariantV0::CompleteBodyReplayIndex))?;
+    if command_ids.len() != expected || signer_nonces.len() != expected {
+        return Err(invariant(
+            CoreAuthorizedRegularCommitmentInvariantV0::CompleteBodyReplayIndex,
+        ));
+    }
+    Ok((
+        command_ids.into_iter().collect(),
+        signer_nonces.into_iter().collect(),
+    ))
+}
+
 fn rebuild_finished_complete_body_auth_writes_v0(
     finished: &FinishedPlannedCoreAuthorizedRegularCompleteBodyV0,
 ) -> std::result::Result<Vec<AuthWrite>, CoreAuthorizedRegularCommitmentComparisonCauseV0> {
@@ -5981,6 +6285,10 @@ fn match_finished_core_authorized_regular_complete_body_commitments_v0(
 > {
     let comparison = (|| {
         validate_finished_complete_body_item_provenance_v0(&finished)?;
+        // Replay admission is part of the Valid classification boundary, not
+        // a later persistence convenience. A body that would collide with
+        // itself must never acquire the live Valid owner that can reach Vote.
+        let _ = rebuild_finished_complete_body_replay_index_v0(&finished)?;
         let writes = rebuild_finished_complete_body_auth_writes_v0(&finished)?;
         finished
             .post_state_update
@@ -6229,6 +6537,188 @@ fn prepare_durable_invalid_complete_body_v0(
     Ok(PreparedDurableInvalidV0 {
         reservation,
         reason,
+    })
+}
+
+/// Consumes the only complete mixed-body `Valid` owner into one durable
+/// artifact preparation.  Every artifact-bearing fact is rederived from that
+/// owner: this function has no overload accepting detached roots, receipts,
+/// writes, plan bytes, reservation identity, or commitments.
+///
+/// The artifact remains inert.  The live `ValidatedBlockCommitmentsV0` stays
+/// joined to the unique reservation only in [`PreparedDurableValidV0`], and a
+/// restart cannot recreate either capability from the encoded record.
+#[allow(dead_code)]
+fn prepare_durable_valid_complete_body_v0(
+    owner: Box<MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0>,
+) -> Result<PreparedDurableValidV0, Box<FailedPrepareDurableValidV0>> {
+    let authorized = &owner.finished.authorized;
+    #[cfg(not(test))]
+    let CoreAuthorizedRegularReservationV0::Durable(reservation) = &authorized.reservation;
+    #[cfg(test)]
+    let reservation = match &authorized.reservation {
+        CoreAuthorizedRegularReservationV0::Durable(reservation) => reservation,
+        CoreAuthorizedRegularReservationV0::TestOnly => {
+            return Err(Box::new(FailedPrepareDurableValidV0 {
+                owner,
+                cause: PrepareDurableValidFailureCauseV0::TestOnlyReservation,
+            }));
+        }
+    };
+    if reservation.route() != authorized.route {
+        return Err(Box::new(FailedPrepareDurableValidV0 {
+            owner,
+            cause: PrepareDurableValidFailureCauseV0::ReservationRouteInvariant,
+        }));
+    }
+    if reservation.validation_id() != authorized.validation_id {
+        return Err(Box::new(FailedPrepareDurableValidV0 {
+            owner,
+            cause: PrepareDurableValidFailureCauseV0::ReservationValidationIdInvariant,
+        }));
+    }
+
+    let prepared = (|| {
+        if authorized.context.parameters != ConsensusParametersV0::reference_shadow_v0() {
+            return Err(PrepareDurableValidFailureCauseV0::UnsupportedParameterProfile);
+        }
+        validate_finished_complete_body_item_provenance_v0(&owner.finished)
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedProvenanceInvariant)?;
+        let mut writes = rebuild_finished_complete_body_auth_writes_v0(&owner.finished)
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedWriteRecipeInvariant)?;
+        owner
+            .finished
+            .post_state_update
+            .verify_seal_v0(&owner.finished.post_state_update_seal)
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedPlanSealInvariant)?;
+        if !planned_auth_update_matches_writes_v0(&owner.finished.post_state_update, &writes) {
+            return Err(PrepareDurableValidFailureCauseV0::RetainedPlanRecipeInvariant);
+        }
+        let rebuilt_execution = rebuild_finished_complete_body_native_execution_v0(&owner.finished)
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedExecutionInvariant)?;
+        let (command_ids, signer_nonces) =
+            rebuild_finished_complete_body_replay_index_v0(&owner.finished)
+                .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedReplayIndexInvariant)?;
+        if rebuilt_execution != owner.native_execution
+            || rebuilt_execution.application_payload() != authorized.body.application_payload()
+        {
+            return Err(PrepareDurableValidFailureCauseV0::RetainedExecutionInvariant);
+        }
+
+        let header = &authorized.header;
+        let parent = &authorized.context.parent_header;
+        let payload_root = authorized
+            .body
+            .payload_root()
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant)?;
+        let post_state_root = StateRoot::new(owner.finished.post_state_update.root_hash.into());
+        let receipts_root = rebuilt_execution
+            .execution_receipts()
+            .receipts_root()
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant)?;
+        let evidence_root = authorized
+            .body
+            .evidence_root()
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant)?;
+        let fresh_commitments = authorized
+            .body
+            .validate_ordinary_commitments(
+                header,
+                rebuilt_execution.execution_receipts(),
+                &authorized.context.parameters,
+                &authorized.context.validator_set,
+                &StrictEd25519Verifier,
+            )
+            .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant)?;
+        if header.id() != authorized.validation_id.block_id()
+            || header.view() != authorized.validation_id.view()
+            || owner.validated_commitments.block_id() != header.id()
+            || fresh_commitments != owner.validated_commitments
+            || header.parent_id() != parent.id()
+            || parent.height().get().checked_add(1) != Some(header.height().get())
+            || owner.finished.post_state_update.version != header.height().get()
+            || header.payload_root() != payload_root
+            || header.state_root() != post_state_root
+            || header.receipts_root() != receipts_root
+            || header.evidence_root() != evidence_root
+            || owner.validated_commitments.logical_block_size()
+                != authorized
+                    .body
+                    .logical_block_size_v0(header)
+                    .map_err(|_| PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant)?
+            || owner.validated_commitments.transaction_count()
+                != authorized.body.application_payload().transaction_count()
+            || usize::try_from(owner.validated_commitments.evidence_count()).ok()
+                != Some(authorized.body.evidence().len())
+        {
+            return Err(PrepareDurableValidFailureCauseV0::RetainedCommitmentInvariant);
+        }
+
+        writes.sort_by(|left, right| left.key().cmp(right.key()));
+        let receipts_cev0 = owner
+            .native_execution
+            .execution_receipts()
+            .try_cev0_bytes()
+            .map_err(|_| PrepareDurableValidFailureCauseV0::ReceiptEncoding)?;
+        let durable_plan_commitment = owner
+            .finished
+            .post_state_update
+            .durable_jmt_plan_commitment_v0()
+            .map_err(|_| PrepareDurableValidFailureCauseV0::DurablePlanCommitment)?;
+        let identity =
+            crate::native_validation_artifact::NativeValidationArtifactIdentityV0::new_v0(
+                reservation.route(),
+                reservation.validation_id(),
+                reservation.request_fingerprint(),
+                reservation.immutable_checksum(),
+            );
+        let facts = DurableValidArtifactFactsV0::new_v0(
+            header.height().get(),
+            parent.height().get(),
+            parent.id(),
+            parent.height().get(),
+            *parent.state_root().as_bytes(),
+            *payload_root.as_bytes(),
+            *post_state_root.as_bytes(),
+            *receipts_root.as_bytes(),
+            *evidence_root.as_bytes(),
+            owner.validated_commitments.logical_block_size(),
+            owner.validated_commitments.transaction_count(),
+            owner.validated_commitments.evidence_count(),
+        );
+        let artifact = prepare_durable_valid_artifact_v0(DurableValidArtifactInputV0 {
+            identity,
+            facts,
+            command_ids: &command_ids,
+            signer_nonces: &signer_nonces,
+            receipts_cev0: &receipts_cev0,
+            writes: &writes,
+            durable_plan_commitment,
+        })
+        .map_err(PrepareDurableValidFailureCauseV0::Artifact)?;
+        Ok((owner.validated_commitments, artifact))
+    })();
+    let (validated_commitments, artifact) = match prepared {
+        Ok(prepared) => prepared,
+        Err(cause) => return Err(Box::new(FailedPrepareDurableValidV0 { owner, cause })),
+    };
+
+    let MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0 { finished, .. } = *owner;
+    let FinishedPlannedCoreAuthorizedRegularCompleteBodyV0 { authorized, .. } = finished;
+    let CoreAuthorizedExactRegularBodyV0 { reservation, .. } = authorized;
+    #[cfg(not(test))]
+    let CoreAuthorizedRegularReservationV0::Durable(reservation) = reservation;
+    #[cfg(test)]
+    let reservation = match reservation {
+        CoreAuthorizedRegularReservationV0::Durable(reservation) => reservation,
+        CoreAuthorizedRegularReservationV0::TestOnly => {
+            unreachable!("durable reservation was checked before consuming the Valid owner")
+        }
+    };
+    Ok(PreparedDurableValidV0 {
+        reservation,
+        validated_commitments,
+        artifact,
     })
 }
 
@@ -6901,6 +7391,10 @@ fn decode_next_exact_body_runtime_transaction_for_test_v0(
         }
         CoreAuthorizedRegularTransactionDecodeCauseV0::NonceMismatch => {
             InertRegularBodyCursorFailureV0::NonceMismatch
+        }
+        CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision
+        | CoreAuthorizedRegularTransactionDecodeCauseV0::ReplaySource(_) => {
+            InertRegularBodyCursorFailureV0::InvalidOrUnauthorizedEnvelope
         }
     })?;
     let payload_len = u32::try_from(decoded.context.payload_len)
@@ -7701,10 +8195,13 @@ impl FinishedInertRegularBodyTraversalV0 {
 }
 
 #[cfg(test)]
+pub(crate) use tests::durable_valid_seal_test_fixture_v0;
+
+#[cfg(test)]
 mod tests {
     use bytes::Bytes;
     use std::{
-        collections::BTreeMap,
+        collections::{BTreeMap, BTreeSet},
         fs,
         os::unix::fs::PermissionsExt,
         path::PathBuf,
@@ -7774,7 +8271,7 @@ mod tests {
         open_core_authorized_regular_validation_for_test_v0,
         open_inert_regular_body_traversal_for_test_v0,
         open_test_regular_runtime_execution_for_test_v0, prepare_durable_invalid_complete_body_v0,
-        prepare_next_core_authorized_regular_payload_v0,
+        prepare_durable_valid_complete_body_v0, prepare_next_core_authorized_regular_payload_v0,
         promote_closed_core_authorized_non_runtime_family_failure_v0,
         promote_closed_core_authorized_non_runtime_family_write_seal_failure_v0,
         promote_closed_core_authorized_non_runtime_semantic_decode_failure_v0,
@@ -7888,6 +8385,27 @@ mod tests {
         validator_set: ValidatorSet,
         parameters: ConsensusParametersV0,
         authorized_signers: Vec<AuthorizedSignerV1>,
+    }
+
+    /// Narrow cross-module fixture for exercising the real G1h owner-to-store
+    /// seal boundary. The underlying native validation fixture stays private;
+    /// callers can only borrow its issuing store and consume the one prepared
+    /// owner that was derived through the production validation path.
+    pub(crate) struct DurableValidSealTestFixtureV0 {
+        store: TestStore,
+        prepared: Option<super::PreparedDurableValidV0>,
+    }
+
+    impl DurableValidSealTestFixtureV0 {
+        pub(crate) const fn store_v0(&self) -> &ApplicationStore {
+            &self.store.store
+        }
+
+        pub(crate) fn take_prepared_v0(&mut self) -> super::PreparedDurableValidV0 {
+            self.prepared
+                .take()
+                .expect("the unique durable Valid test owner was already consumed")
+        }
     }
 
     fn unique_test_root() -> PathBuf {
@@ -8033,7 +8551,14 @@ mod tests {
         fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
             .expect("protect native-input test directory");
         let status_path = root.join("state.json");
-        let authorized_signers = test_authorized_signers();
+        let mut authorized_signers = test_authorized_signers();
+        if include_poco_application_authority {
+            authorized_signers.push(AuthorizedSignerV1 {
+                signer_id: "did:operator:2".to_string(),
+                signer_role: "operator".to_string(),
+                public_key_hex: hex::encode(test_signing_key(83).verifying_key().to_bytes()),
+            });
+        }
         let signer_policy_hash_hex =
             hex::encode(crate::signer_policy_commitment(&authorized_signers));
         let store =
@@ -8274,6 +8799,8 @@ mod tests {
                 snapshot,
             },
             next_transaction_index: 0,
+            replay_command_ids: BTreeSet::new(),
+            replay_signer_nonces: BTreeSet::new(),
             changes: BTreeMap::new(),
             applied: Vec::new(),
             applied_non_runtime: Vec::new(),
@@ -9548,9 +10075,31 @@ mod tests {
             .expect("execute second exact production transaction")
     }
 
-    fn all_family_complete_body_profile(store: &TestStore) -> FixtureProfile {
+    fn all_family_complete_body_profile_with_replay_nonces_v0(
+        store: &TestStore,
+        first_poco_nonce: u64,
+        validator_nonce: u64,
+        second_poco_nonce: u64,
+    ) -> FixtureProfile {
         let base = fixture_profile(store.parent_state_root, 0);
-        let runtime = base.body.application_payload().transactions()[0].clone();
+        let runtime = signed_canonical_transaction_bytes(
+            0,
+            "all-family-credit",
+            83,
+            "did:operator:2",
+            "operator",
+            &CanonicalTxV1 {
+                schema: CANONICAL_TX_SCHEMA_V1.to_string(),
+                sender: "did:operator:2".to_string(),
+                nonce: 1,
+                max_gas: 100_000,
+                fee_limit: 100_000,
+                command: CanonicalCommandV1::CreditAccount {
+                    account: "did:client:1".to_string(),
+                    amount: 10_000,
+                },
+            },
+        );
         let (_, poco_inner) = author_two_valid_poco_application_operations(store, &base);
         let validator_id = "native-complete-poco-validator-poco";
         let validator_inner = valid_validator_transition_bytes(store, validator_id);
@@ -9563,7 +10112,7 @@ mod tests {
                     81,
                     "did:operator:1",
                     "operator",
-                    1,
+                    first_poco_nonce,
                     1_700_000_000_000,
                     1_700_000_100_000,
                     crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -9576,7 +10125,7 @@ mod tests {
                     81,
                     "did:operator:1",
                     "operator",
-                    1,
+                    validator_nonce,
                     1_700_000_000_000,
                     1_700_000_100_000,
                     crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
@@ -9588,7 +10137,7 @@ mod tests {
                     81,
                     "did:operator:1",
                     "operator",
-                    2,
+                    second_poco_nonce,
                     1_700_000_000_000,
                     1_700_000_100_000,
                     crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -9596,6 +10145,15 @@ mod tests {
                 ),
             ],
         )
+    }
+
+    fn all_family_complete_body_profile(store: &TestStore) -> FixtureProfile {
+        // PoCO and validator transitions intentionally share the authenticated
+        // governance signer, but their semantic sequence spaces are distinct.
+        // The outer replay envelope therefore allocates three unique nonces;
+        // the validator must retain nonce 1 because its lifecycle sequence is
+        // independently authenticated at zero.
+        all_family_complete_body_profile_with_replay_nonces_v0(store, 2, 1, 3)
     }
 
     fn complete_production_all_family_cursor(
@@ -9624,8 +10182,10 @@ mod tests {
     /// before rerunning the same exact body through the consuming comparator.
     /// The state root comes from the merged final writes on a cloned parent;
     /// the receipt root is built explicitly as empty/runtime/empty/empty.
-    fn honest_all_family_complete_body_profile(store: &TestStore) -> FixtureProfile {
-        let profile = all_family_complete_body_profile(store);
+    fn author_all_family_complete_body_roots_v0(
+        store: &TestStore,
+        profile: FixtureProfile,
+    ) -> FixtureProfile {
         let open = complete_production_all_family_cursor(store, &profile);
         assert_eq!(open.applied.len(), 1);
         assert_eq!(open.applied[0].index, 1);
@@ -9696,6 +10256,10 @@ mod tests {
         replace_profile_execution_roots(profile, state_root, receipts_root)
     }
 
+    fn honest_all_family_complete_body_profile(store: &TestStore) -> FixtureProfile {
+        author_all_family_complete_body_roots_v0(store, all_family_complete_body_profile(store))
+    }
+
     fn classify_all_family_complete_body(
         store: &TestStore,
         profile: &FixtureProfile,
@@ -9753,6 +10317,70 @@ mod tests {
             | ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::InvariantFault(_) => {
                 panic!("poisoned durable complete-body roots changed disposition")
             }
+        }
+    }
+
+    fn durable_valid_all_family_complete_body_owner_from_effect_v0(
+        store: &TestStore,
+        effect: Effect,
+    ) -> Box<super::MatchedCoreAuthorizedRegularCompleteBodyCommitmentsV0> {
+        let request = match effect {
+            Effect::ValidatePayload(request)
+                if request.route() == PayloadValidationRouteV0::Proposal =>
+            {
+                request
+            }
+            Effect::ValidateSyncedPayload(request)
+                if request.route() == PayloadValidationRouteV0::Synced =>
+            {
+                request
+            }
+            Effect::ValidatePayload(_) | Effect::ValidateSyncedPayload(_) => {
+                panic!("durable Valid complete-body fixture effect disagreed with its route")
+            }
+            _ => panic!("durable Valid complete-body fixture requires a validation effect"),
+        };
+        let job = core_regular_validation_job_for_test_v0(request);
+        let open = match begin_core_authorized_regular_validation_session_v0(
+            &test_native_validation_host(store),
+            job,
+        ) {
+            CoreAuthorizedRegularValidationSessionAdmissionV0::Open(open) => *open,
+            other => panic!("durable Valid complete-body fixture did not open: {other:?}"),
+        };
+        let finished = finish_and_plan_complete_core_authorized_regular_post_state_v0(
+            complete_production_all_family_cursor_from_cursor_v0(
+                open_core_authorized_regular_transaction_cursor_from_open_v0(open),
+            ),
+        )
+        .expect("finish durable Valid all-family complete-body plan");
+        match classify_core_authorized_regular_complete_body_commitment_comparison_v0(
+            match_finished_core_authorized_regular_complete_body_commitments_v0(finished),
+        ) {
+            ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::Valid(owner) => owner,
+            ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::DeterministicallyInvalid(
+                _,
+            )
+            | ClassifiedCoreAuthorizedRegularCompleteBodyCommitmentsV0::InvariantFault(_) => {
+                panic!("honest durable complete-body roots changed disposition")
+            }
+        }
+    }
+
+    pub(crate) fn durable_valid_seal_test_fixture_v0(
+        route: PayloadValidationRouteV0,
+    ) -> DurableValidSealTestFixtureV0 {
+        let store = test_store_with_poco_application_authority();
+        let profile = honest_all_family_complete_body_profile(&store);
+        let owner = durable_valid_all_family_complete_body_owner_from_effect_v0(
+            &store,
+            core_target_validation_effect(&profile, route),
+        );
+        let prepared = prepare_durable_valid_complete_body_v0(owner)
+            .expect("prepare the real all-family durable Valid test owner");
+        DurableValidSealTestFixtureV0 {
+            store,
+            prepared: Some(prepared),
         }
     }
 
@@ -11418,7 +12046,7 @@ mod tests {
             );
         }
         let complete_comparator_surface =
-            &implementation_source[complete_provenance_offset..production_comparator_offset];
+            &implementation_source[complete_provenance_offset..complete_classifier_offset];
         assert_eq!(
             complete_comparator_surface
                 .matches("NativeBlockExecutionV0::try_new(")
@@ -16442,7 +17070,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            1,
+            2,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16454,7 +17082,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            2,
+            3,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16508,7 +17136,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            1,
+            2,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16520,7 +17148,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            2,
+            3,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16593,7 +17221,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            1,
+            2,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16617,7 +17245,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            2,
+            3,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -16815,6 +17443,214 @@ mod tests {
             profile.body.application_payload().transactions().len()
         );
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn cross_family_replay_collision_is_rejected_before_valid_classification_v0() {
+        let store = test_store_with_poco_application_authority();
+        let profile = all_family_complete_body_profile_with_replay_nonces_v0(&store, 1, 1, 2);
+        let request = core_validation_request(&profile);
+        let expected_generation = request.id().generation();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            request,
+        )
+        .expect("open duplicate-replay mixed-family cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute unique runtime item before cross-family replay");
+        let failed = prepare_next_core_authorized_regular_payload_v0(open)
+            .err()
+            .expect("validator envelope must collide with the first PoCO signer nonce");
+        let closed = finish_failed_core_authorized_regular_transaction_decode_v0(failed);
+        assert_eq!(
+            closed.cause,
+            ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
+                CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision,
+            )
+        );
+        match closed.outcome_facts_v0() {
+            super::CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::DeterministicallyInvalid {
+                generation,
+                kind: super::CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionReplay,
+            } => assert_eq!(generation, expected_generation),
+            _ => panic!("cross-family replay changed deterministic classification"),
+        }
+        assert_eq!(closed.next_transaction_index, 2);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn duplicate_command_id_is_rejected_before_second_runtime_execution_v0() {
+        let store = test_store();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let first_outer = base.body.application_payload().transactions()[0].clone();
+        let first_envelope: SignedCommandEnvelopeV1 =
+            serde_json::from_slice(&first_outer).expect("decode first runtime envelope");
+        let second_envelope: SignedCommandEnvelopeV1 =
+            serde_json::from_slice(&base.body.application_payload().transactions()[1])
+                .expect("decode second runtime envelope");
+        let second_inner = second_envelope
+            .payload_bytes()
+            .expect("decode second runtime payload");
+        let duplicate_second = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            first_envelope.command_id,
+            82,
+            "did:client:1",
+            "hepta",
+            second_envelope.nonce,
+            second_envelope.issued_at_unix_ms,
+            second_envelope.expires_at_unix_ms,
+            CANONICAL_TX_PAYLOAD_TYPE_V1,
+            &second_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![first_outer, duplicate_second]);
+        let request = core_validation_request(&profile);
+        let expected_generation = request.id().generation();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            request,
+        )
+        .expect("open duplicate-command runtime cursor");
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute first unique runtime command");
+        let failed = prepare_next_core_authorized_regular_payload_v0(open)
+            .err()
+            .expect("duplicate command ID must fail before second execution");
+        let closed = finish_failed_core_authorized_regular_transaction_decode_v0(failed);
+        assert_eq!(
+            closed.cause,
+            ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
+                CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision,
+            )
+        );
+        match closed.outcome_facts_v0() {
+            super::CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::DeterministicallyInvalid {
+                generation,
+                kind: super::CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionReplay,
+            } => assert_eq!(generation, expected_generation),
+            _ => panic!("duplicate command ID changed deterministic classification"),
+        }
+        assert_eq!(closed.next_transaction_index, 1);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn committed_command_and_signer_nonce_replays_are_rejected_in_parent_snapshot_v0() {
+        for collide_command in [true, false] {
+            let store = test_store();
+            let profile = fixture_profile(store.parent_state_root, 0);
+            let first_envelope: SignedCommandEnvelopeV1 =
+                serde_json::from_slice(&profile.body.application_payload().transactions()[0])
+                    .expect("decode first committed-replay envelope");
+            if collide_command {
+                store
+                    .store
+                    .insert_committed_command_id_for_test_v0(&first_envelope.command_id)
+                    .expect("insert committed command replay fixture");
+            } else {
+                store
+                    .store
+                    .insert_committed_signer_nonce_for_test_v0(
+                        &first_envelope.signer_id,
+                        first_envelope.nonce,
+                    )
+                    .expect("insert committed signer-nonce replay fixture");
+            }
+            let request = core_validation_request(&profile);
+            let expected_generation = request.id().generation();
+            let open = open_core_authorized_regular_transaction_cursor_v0(
+                &test_native_validation_host(&store),
+                request,
+            )
+            .expect("open committed-replay parent snapshot");
+            let failed = prepare_next_core_authorized_regular_payload_v0(open)
+                .err()
+                .expect("committed replay must fail before execution");
+            let closed = finish_failed_core_authorized_regular_transaction_decode_v0(failed);
+            assert_eq!(
+                closed.cause,
+                ClosedCoreAuthorizedRegularTransactionDecodeCauseV0::Decode(
+                    CoreAuthorizedRegularTransactionDecodeCauseV0::ReplayCollision,
+                )
+            );
+            match closed.outcome_facts_v0() {
+                super::CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::DeterministicallyInvalid {
+                    generation,
+                    kind: super::CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionReplay,
+                } => assert_eq!(generation, expected_generation),
+                _ => panic!("committed replay changed deterministic classification"),
+            }
+            assert_eq!(closed.next_transaction_index, 0);
+            assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        }
+    }
+
+    #[test]
+    fn durable_valid_bridge_consumes_only_real_matched_owner_for_both_routes_v0() {
+        for route in [
+            PayloadValidationRouteV0::Proposal,
+            PayloadValidationRouteV0::Synced,
+        ] {
+            let store = test_store_with_poco_application_authority();
+            let profile = honest_all_family_complete_body_profile(&store);
+            let expected_block_id = profile.header.id();
+            let owner = durable_valid_all_family_complete_body_owner_from_effect_v0(
+                &store,
+                core_target_validation_effect(&profile, route),
+            );
+            let prepared = prepare_durable_valid_complete_body_v0(owner)
+                .expect("prepare owner-derived durable Valid artifact");
+            assert_eq!(prepared.route(), route);
+            assert_eq!(prepared.validation_id().block_id(), expected_block_id);
+            assert!(prepared.is_bound_to_store_v0(&store.store));
+
+            let artifact = prepared.artifact();
+            assert_eq!(artifact.identity().route(), route);
+            assert_eq!(
+                artifact.identity().validation_id(),
+                prepared.validation_id()
+            );
+            assert_eq!(
+                artifact.identity().request_fingerprint(),
+                prepared.request_fingerprint()
+            );
+            assert_eq!(
+                artifact.identity().job_immutable_checksum(),
+                prepared.immutable_checksum()
+            );
+            assert_eq!(artifact.facts().parent_block_id(), profile.parent.id());
+            assert_eq!(
+                artifact.facts().target_height(),
+                profile.header.height().get()
+            );
+            assert_eq!(
+                artifact.facts().state_root(),
+                *profile.header.state_root().as_bytes()
+            );
+            let revalidated = crate::native_valid_artifact::verify_durable_valid_artifact_v0(
+                artifact.artifact_codec(),
+                artifact.encoded(),
+                artifact.checksum(),
+                crate::native_valid_artifact::durable_valid_result_kind_v0(),
+                artifact.identity(),
+                artifact.facts(),
+            )
+            .expect("revalidate exact owner-derived Valid artifact");
+            assert_eq!(
+                revalidated.writes().len(),
+                revalidated
+                    .writes()
+                    .iter()
+                    .map(|write| write.key())
+                    .collect::<BTreeSet<_>>()
+                    .len()
+            );
+            assert!(!revalidated.receipts_cev0().is_empty());
+            assert_ne!(revalidated.durable_plan_commitment(), [0; 32]);
+            assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        }
     }
 
     #[test]
@@ -19332,7 +20168,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            1,
+            2,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
@@ -19344,7 +20180,7 @@ mod tests {
             81,
             "did:operator:1",
             "operator",
-            2,
+            3,
             1_700_000_000_000,
             1_700_000_100_000,
             crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,

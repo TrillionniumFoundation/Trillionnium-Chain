@@ -46,6 +46,8 @@ mod native_execution;
 #[allow(dead_code)]
 mod native_payload_validation;
 #[allow(dead_code)]
+mod native_valid_artifact;
+#[allow(dead_code)]
 mod native_validation_artifact;
 #[cfg(feature = "scale-gate")]
 mod persistent_scale;
@@ -10380,7 +10382,7 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "8"
+            "9"
         );
         assert_eq!(
             database

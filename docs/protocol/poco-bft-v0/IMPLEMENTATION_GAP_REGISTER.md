@@ -15,12 +15,33 @@ callback driver with authenticated obligation replay and crash takeover,
 ordered ancestor finalization queue,
 BlockId-keyed speculative overlay, and strict separation of consensus
 parameters from local backpressure. The local validation journal now has a
-narrow deterministic-invalid delivery/ack path and an existing-only schema-v8
-recovery facade. Its recovery owner admits only `CallbackPending`, `Delivered`,
-and `Acked` rows after complete store validation; `Reserved`, `Evaluated`,
-`Applied`, `Valid`, `Unavailable`, and unknown states/results fail closed. This
-is not a fresh executor, general result replay mechanism, production callback
-scheduler, or process-wide exactly-once contract.
+narrow deterministic-invalid delivery/ack path and current schema v9. V9
+preserves the v8 deterministic-invalid states and adds one owner-only atomic
+Valid-P seal: the real Proposal/Synced complete-body matching owner becomes a
+strict inert artifact plus attempt-zero `CallbackPending` outbox without an
+`Evaluated` row. Its exact parent, roots, receipts, body-global replay index,
+domain-write recipe/views, and fixed commitment to every exact physical JMT-
+plan field are deeply revalidated. Reopen replans on the authenticated exact
+parent and compares both root and commitment; the artifact does not store the
+physical plan bytes and cannot recreate live commitments, callback, apply, or
+head authority.
+The existing-only recovery facade remains deterministic-invalid-only: it
+admits `CallbackPending`, `Delivered`, and `Acked` invalid rows after complete
+store validation, while `Reserved`, `Evaluated`, `Applied`, every `Valid`,
+`Unavailable`, and unknown states/results fail closed. This is not a fresh
+executor, general result replay mechanism, production callback scheduler, or
+process-wide exactly-once contract.
+
+The production cursor now also enforces one global outer-envelope command-ID
+and signer-nonce replay namespace across runtime, PoCO, and validator families
+before execution/routing. It reads the committed replay tables through the same
+pinned parent transaction and tracks the current body prefix; collision maps to
+`native_regular_transaction_replay_invalid`, while replay-index source or
+integrity failure keeps its typed unavailable/fail-stop classification.
+An active Valid-P row pins the exact parent JMT history and blocks the legacy
+committed-head writer until the BlockId overlay/ordered-finalization owner can
+consume and GC it. This deliberately trades liveness for safe bounded truth;
+it is not a sustainable execution pipeline yet.
 
 The exact bounded SafetyState representation and standalone local-journal slices
 are now present separately. Record codec v0 covers epoch-zero Core SafetyState
@@ -1261,7 +1282,7 @@ epoch prune, and Core transition remain open.
    comparator/disposition; no constructor accepts a naked bool or route.
 
    Core `SafetyState` schema v5, which is separate from current
-   application-store schema v8 and its historical reserved-only schema-v6 and
+   application-store schema v9 and its historical reserved-only schema-v6 and
    callback-pending schema-v7 predecessors described
    below, introduced a canonically ordered
    `DurablePayloadValidationObligationV0` before either direct or synced
@@ -1408,7 +1429,7 @@ epoch prune, and Core transition remain open.
    not call Core; only the owner retained by the first successful
    deterministic-invalid seal can enter the separate v8 process-local driver.
 
-   Current application-store schema v8 preserves verified v7 `reserved` and
+   Historical application-store schema v8 preserves verified v7 `reserved` and
    `callback_pending` rows and activates deterministic-invalid `delivered` and
    `acked` representation, deep startup/recovery validation, and app-private
    writable transitions. `Delivered` retains the congruent outbox with delivery
@@ -1418,9 +1439,13 @@ epoch prune, and Core transition remain open.
    bind the delivery-row checksum domain. V8 still rejects `evaluated`,
    `applied`, `Valid`, unsupported invalid reasons, `Unavailable`, and
    invariants. The explicit startup/snapshot migration chain is `v3 -> v4 ->
-   v5 -> v6 -> v7 -> v8`, with a fixed-successor `BEGIN IMMEDIATE` transaction
+   v5 -> v6 -> v7 -> v8 -> v9`, with a fixed-successor `BEGIN IMMEDIATE` transaction
    per step; v7-to-v8 deep-validates the entire v7 journal before changing
-   metadata and rolls back to byte-identical v7 on drift. A non-cloneable
+   metadata and rolls back to byte-identical v7 on drift. V8-to-v9 first checks
+   the canonical v8 physical schema and complete invalid-only journal, then
+   atomically rebuilds the parent/child tables and independently deep-audits the
+   v9 schema, foreign keys, rows, variable-width accounting, resource bounds,
+   and SQLite integrity before commit. A non-cloneable
    app-private driver owns the designated Core and fixes the store and injected
    test sink across the live-owner phase chain. It calls real route-specific
    `Core::step`, requires the opaque persistence request issued with that
@@ -1437,6 +1462,22 @@ epoch prune, and Core transition remain open.
    complete production crash/power-loss matrix, or process-wide Core
    uniqueness/exactly-once guarantee.
 
+   Current schema v9 preserves those v8 states and additionally permits only
+   owner-derived Valid `callback_pending` with its attempt-zero outbox. It
+   consumes the real Proposal/Synced complete-body matching owner, atomically
+   stores the strict inert artifact/callback/accounting without an Evaluated
+   row, and returns the live commitments only to that first successful seal.
+   Reopen deep-validates inert facts and cannot remint them. Valid delivery,
+   apply, and G1c takeover remain rejected. The active Valid-P parent-history
+   pin and legacy-head fail-closed gate remain until overlay/finalization can
+   consume and GC the row. Current G1h tests cover same-process rollback,
+   successful-commit response loss and exact retry, the real legacy
+   `persist_transition` guard with byte-exact head/journal preservation,
+   physical prune below the pinned parent followed by exact-parent replan,
+   source-local snapshot scrubbing, and fresh-handle rejection of a coherently
+   rechecksummed plan-commitment splice. They do not cover actual commit errors,
+   child-process SIGKILL, power loss, or fsync hardware behavior.
+
    The initialized `AppCore` can now privately lend that carrier one canonical
    signer-policy preimage after its commitment matches both store metadata and
    the same snapshot's authenticated lifecycle. A production sequential cursor
@@ -1445,7 +1486,12 @@ epoch prune, and Core transition remain open.
    sender/nonce, and derives target height, native `BlockId`, header timestamp,
    signer id/role, and inner payload length. The prepared transaction owns the
    cursor and open snapshot and exposes no seek/repeat/skip, `into_parts`, or
-   caller-supplied tx/index/context/view. A failed decode closes with the exact
+   caller-supplied tx/index/context/view. Before runtime execution or non-runtime
+   routing, every verified outer envelope enters the same body-global command-ID
+   and signer-nonce namespace and is checked against the pinned committed parent
+   plus current prefix. Collision has the stable code
+   `native_regular_transaction_replay_invalid`; replay-index source/integrity
+   faults remain typed unavailable/fail-stop. A failed decode closes with the exact
    authorized owner, next internal index, private delta, and applied receipts,
    including work completed before a later item failed. A single consuming
    production attempt executes the real fallible runtime over the cursor's
@@ -2001,8 +2047,9 @@ epoch prune, and Core transition remain open.
    detached receipt capability but internally rebuilds the exact body-wide
    receipt sequence, rederives final writes, verifies the plan and all four
    roots, and retains a private matched/failed/classified owner. It still cannot
-   form app-private `Valid`, apply or persist the plan/head, persist a terminal
-   `Valid` artifact/outbox, or deliver a result.
+   call Core or apply/persist the plan/head, but schema v9 can now consume only
+   the real matching owner into an inert Valid-P artifact plus attempt-zero
+   callback outbox.
    The separate legacy private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not itself call a Core instance, deliver a callback, or enter ABCI.
@@ -2016,7 +2063,7 @@ epoch prune, and Core transition remain open.
    canonical invalid artifact and congruent `callback_pending` intent but does
    not reconstruct a signed-proposal witness, support `Valid`, restore the Core
    obligation, or confer callback delivery authority from durable bytes alone.
-   Current schema v8 additionally freezes and deep-validates `delivered` with
+   Historical schema v8 additionally freezes and deep-validates `delivered` with
    its attempt-positive outbox and `acked` with no outbox plus accepted
    revision/canonical payload checksum. It also adds an app-private
    non-cloneable process-local driver which fixes one store, owned Core, and
@@ -2024,9 +2071,18 @@ epoch prune, and Core transition remain open.
    `Core::step`, writes both states in order, and issues `StorageAck` only after
    exact sink confirmation. A separate G1c existing-only path now performs the
    bounded deterministic-invalid three-store join; no production constructor,
-   fresh executor, general recovery remint, or other result takeover exists. A
-   private inert app-owned
-   durable physical-plan codec now covers
+   fresh executor, general recovery remint, or other result takeover exists.
+   Current schema v9 atomically rebuilds only after a complete v8 invalid-only
+   audit, preserves all v8 rows, and additionally admits Valid only as
+   `CallbackPending` with an attempt-zero outbox. Its writer directly consumes
+   the owner-derived Proposal/Synced complete-body match, atomically stores the
+   strict artifact/callback/accounting, and leaves no `Evaluated` intermediate.
+   The artifact binds exact identity/parent, four roots, receipts, the global
+   command-ID/signer-nonce replay set, canonical domain writes/views, and the
+   fixed domain-separated commitment to every exact physical JMT-plan field,
+   while decode/reopen replans against the exact parent and remains inert. V9
+   Valid delivery, callback scheduling, apply, and recovery takeover remain
+   unsupported. A private inert app-owned durable physical-plan codec now covers
    the exact persistence-bearing JMT fields. It pins each `NodeKey`/`Node` to
    `jmt-sha256-0.12.0-node-borsh-v0`, uses app-owned framing for values, stale
    indices and preimages, and decodes only to bounded unverified bytes. An
@@ -2037,21 +2093,31 @@ epoch prune, and Core transition remain open.
    requires an unoccupied target, replans the same writes on the current
    reader, and releases an apply-capable plan only when the physical bytes are
    still exact. The codec neither exposes the opaque process-local plan seal
-   nor participates in the v7 invalid artifact. `Valid` activation still needs
-   a scale gate proving that every consensus-permitted block fits the 64 MiB
-   physical-plan envelope; a local capacity failure cannot become deterministic
-   invalidity. The remaining `Valid` validation-time atomic boundary must
-   persist a versioned revalidatable evaluated artifact with its callback
-   outbox, and the separate Finalize-time boundary still must
+   nor participates in the v7 invalid artifact. Schema v9 embeds only the
+   32-byte physical-plan commitment in the owner-derived Valid-P artifact; it
+   does not embed those plan bytes or call the apply-capable boundary. The cell
+   is bounded at 62,980,096 bytes (4 MiB receipts, 56 MiB replay/domain delta,
+   and 64 KiB fixed framing). This removes an unproved 64 MiB physical-plan
+   assumption, but worst-case replanning CPU/RAM, allocator/OOM, SQLite/WAL/
+   page-cache, disk-pressure, and cgroup evidence remain release-blocking local-
+   resource work. A local capacity failure cannot become deterministic
+   invalidity. The separate Finalize-time boundary still must
    revalidate exact authority and atomically apply JMT/domain state, persist
    roots/native head, advance the head, and mark the reservation applied.
    Core's completed validation-cleanup `StorageAck` and completion tombstone
    are not a host callback-outbox delivery acknowledgement. Authenticated
    replay tickets, completion retirement after durable host-delivery
    acknowledgement, speculative-parent/BlockTree
-   reconstruction, application-reservation takeover, `Valid` evaluated-
-   artifact persistence, production callback-outbox scheduling/delivery,
-   crash takeover, and those two atomic boundaries remain absent. The current
+   reconstruction, application-reservation takeover, production Valid callback-
+   outbox scheduling/delivery, crash takeover, and the Finalize-time atomic
+   boundary remain absent. An active Valid-P row therefore protects its exact
+   parent history from pruning and blocks the legacy committed-head writer until
+   the overlay/finalization consumer and GC policy exist. G1h currently proves
+   same-process pre-commit rollback, successful-commit response-loss exact
+   replay, the actual legacy-head guard, physical prune/replan, source-local
+   snapshot scrub, and semantic commitment-splice rejection after coherent
+   checksum replacement. It has no Valid-path fresh-process SIGKILL, power-
+   loss/fsync, or actual SQLite commit-error evidence. The current
    invalid callback integration remains process-local and test-sink-backed,
    without process-wide Core uniqueness or exactly-once authority. Runtime now
    exposes a separate

@@ -97,15 +97,23 @@ stores:
   references used by evaluation;
 - creation revision and a row checksum.
 
-The monotonic state machine is:
+The logical monotonic state machine is:
 
 `reserved -> evaluated -> callback_pending -> delivered -> acked -> applied`
+
+`evaluated` is a logical authority boundary, not necessarily a separately
+committed row. A schema may atomically seal the evaluated artifact and create
+`callback_pending` in one transaction; it must never expose a durable
+half-evaluated image between those two facts.
 
 Rules:
 
 - evaluation may start only after `reserved` is durable;
-- `evaluated` stores the typed terminal result. A valid result also stores all
-  four computed roots, receipts, a sealed domain delta and exact JMT plan;
+- `evaluated` seals the typed terminal result. A valid result also stores all
+  four computed roots, receipts, a sealed domain delta, the canonical write
+  recipe, and a domain-separated commitment to every exact physical JMT-plan
+  field. Recovery replans against the authenticated exact parent and must match
+  both the committed root and plan commitment;
   deterministic invalidity stores its closed reason code. Retryable
   `Unavailable` is an attempt fact, not a terminal callback, and must be
   retried under a Core-authorized generation;
@@ -148,15 +156,18 @@ revision.
 Every unfinalized executable block owns a sealed overlay keyed by its native
 `BlockId`. An overlay binds its exact parent `BlockId`, parent state/JMT
 version and root, body/config fingerprints, receipts, all four computed roots,
-domain delta, JMT plan and artifact checksum.
+domain delta, canonical write recipe, exact physical-plan commitment and
+artifact checksum.
 
 - height-one execution uses an explicit synthetic-genesis authority;
 - a child executes only from its exact parent overlay (or the committed tip
   when that parent is finalized); it may never reopen an unrelated committed
   head and splice the result;
 - evaluation never mutates committed application state;
-- Finalize revalidates the job, overlay lineage, parent/head and roots, then
-  atomically promotes the sealed delta/JMT plan, receipts, native block/head,
+- Finalize revalidates the job, overlay lineage, parent/head and roots, replans
+  the canonical writes against that exact parent, requires the resulting root
+  and every physical-plan field to match the sealed commitment, then atomically
+  promotes the sealed delta/replanned JMT update, receipts, native block/head,
   job state and finalization acknowledgement;
 - promotion is idempotent. Conflicting forks and descendants of a discarded
   parent are reclaimed only after they are no longer needed by Core recovery,

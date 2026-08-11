@@ -283,6 +283,7 @@ enum DeterministicallyInvalidCauseV0 {
     ComputedRootMismatch(ComputedRootMismatchV0),
     NativeRegularBodyEvidence,
     NativeRegularTransactionEncodingOrAuthorization,
+    NativeRegularTransactionReplay,
     NativeRegularNonRuntime(CoreAuthorizedRegularNonRuntimeDeterministicInvalidV0),
 }
 
@@ -303,6 +304,7 @@ impl DeterministicallyInvalidCauseV0 {
             Self::NativeRegularTransactionEncodingOrAuthorization => {
                 "native_regular_transaction_encoding_or_authorization_invalid"
             }
+            Self::NativeRegularTransactionReplay => "native_regular_transaction_replay_invalid",
             Self::NativeRegularNonRuntime(reason) => reason.code(),
         }
     }
@@ -327,6 +329,9 @@ impl DeterministicallyInvalidCauseV0 {
             Self::NativeRegularTransactionEncodingOrAuthorization => {
                 "canonical body transaction encoding or authorization is invalid"
             }
+            Self::NativeRegularTransactionReplay => {
+                "canonical body transaction command or signer nonce is already consumed"
+            }
             Self::NativeRegularNonRuntime(reason) => reason.reason(),
         }
     }
@@ -343,6 +348,7 @@ impl DeterministicallyInvalidCauseV0 {
             Self::ComputedRootMismatch(_)
             | Self::NativeRegularBodyEvidence
             | Self::NativeRegularTransactionEncodingOrAuthorization
+            | Self::NativeRegularTransactionReplay
             | Self::NativeRegularNonRuntime(_) => None,
         }
     }
@@ -795,6 +801,9 @@ pub(super) fn failure_from_core_authorized_regular_pre_execution_v0(
                 }
                 CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionEncodingOrAuthorization => {
                     DeterministicallyInvalidCauseV0::NativeRegularTransactionEncodingOrAuthorization
+                }
+                CoreAuthorizedRegularPreExecutionInvalidKindV0::TransactionReplay => {
+                    DeterministicallyInvalidCauseV0::NativeRegularTransactionReplay
                 }
             };
             ExecutionOutcomeV0 {

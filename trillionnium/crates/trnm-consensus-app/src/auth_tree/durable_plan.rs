@@ -17,6 +17,7 @@ use jmt::{
     storage::{Node, NodeKey, StaleNodeIndex, TreeReader},
     KeyHash, RootHash, Sha256Jmt, Version,
 };
+use sha2::{Digest, Sha256};
 
 use super::{
     key_hash, plan_put_value_set, AuthWrite, PlannedAuthUpdate, MAX_AUTH_KEY_PREIMAGE_BYTES,
@@ -24,10 +25,14 @@ use super::{
 
 const DURABLE_AUTH_PLAN_CODEC_VERSION_V0: u16 = 0;
 const DURABLE_AUTH_PLAN_JMT_LAYOUT_V0: &[u8] = b"jmt-sha256-0.12.0-node-borsh-v0";
+const DURABLE_AUTH_PLAN_COMMITMENT_DOMAIN_V0: &[u8] =
+    b"trnm.consensus-app.durable-jmt-plan-commitment.v0";
 
-// The validation artifact table currently reserves at most 64 MiB per
-// artifact. Keep this component independently bounded so it can never consume
-// more than that future envelope.
+pub(crate) const DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0: usize = 32;
+
+/// Legacy bound for the test/reference full-plan byte codec below. Production
+/// Valid artifacts retain only the streaming commitment and do not require the
+/// complete physical plan to fit this envelope.
 const MAX_DURABLE_AUTH_PLAN_BYTES_V0: usize = 64 * 1024 * 1024;
 const MAX_DURABLE_AUTH_PLAN_NODE_KEY_BYTES_V0: usize = 4 * 1024;
 const MAX_DURABLE_AUTH_PLAN_NODE_BYTES_V0: usize = 64 * 1024;
@@ -40,13 +45,14 @@ const MAX_DURABLE_AUTH_PLAN_VALUE_BYTES_V0: usize = 16 * 1024 * 1024;
 /// apply-capable [`PlannedAuthUpdate`] merely because their framing and Borsh
 /// payloads are self-consistent.
 #[allow(dead_code)]
-pub(crate) struct UnverifiedDurablePlannedAuthUpdateV0 {
-    encoded: Box<[u8]>,
+pub(crate) struct UnverifiedDurablePlannedAuthUpdateV0<'a> {
+    encoded: &'a [u8],
     target_version: Version,
+    root_hash: RootHash,
 }
 
 #[allow(dead_code)]
-impl UnverifiedDurablePlannedAuthUpdateV0 {
+impl<'a> UnverifiedDurablePlannedAuthUpdateV0<'a> {
     /// Replans the canonical writes against the caller's exact parent reader
     /// and returns an inert verified carrier only when every
     /// persistence-bearing field matches the durable physical record.
@@ -60,7 +66,7 @@ impl UnverifiedDurablePlannedAuthUpdateV0 {
         expected_next_version: Version,
         expected_parent_root: Option<RootHash>,
         writes: impl IntoIterator<Item = AuthWrite>,
-    ) -> Result<RevalidatedDurablePlannedAuthUpdateV0> {
+    ) -> Result<RevalidatedDurablePlannedAuthUpdateV0<'a>> {
         ensure!(
             self.target_version == expected_next_version,
             "durable JMT target is not the expected exact-next version"
@@ -69,29 +75,128 @@ impl UnverifiedDurablePlannedAuthUpdateV0 {
         let replanned =
             plan_put_value_set(reader, expected_next_version, self.target_version, writes)?;
         ensure!(
-            replanned.encode_durable_jmt_plan_v0()?.as_slice() == self.encoded.as_ref(),
+            replanned.encode_durable_jmt_plan_v0()?.as_slice() == self.encoded,
             "durable JMT physical plan does not match canonical replanning"
         );
         Ok(RevalidatedDurablePlannedAuthUpdateV0 {
             encoded: self.encoded,
             target_version: self.target_version,
             parent_root: expected_parent_root,
+            root_hash: self.root_hash,
         })
     }
+
+    /// Replans from one inert, canonical raw write recipe without exposing a
+    /// general tombstone constructor or any apply-capable write carrier to the
+    /// sibling artifact module.  The result remains historical verification
+    /// only and still requires [`RevalidatedDurablePlannedAuthUpdateV0::into_applicable_v0`]
+    /// at a future authoritative apply boundary.
+    pub(crate) fn revalidate_raw_recipe_v0<'b, R, I>(
+        self,
+        reader: &R,
+        expected_next_version: Version,
+        expected_parent_root: Option<RootHash>,
+        writes: I,
+    ) -> Result<RevalidatedDurablePlannedAuthUpdateV0<'a>>
+    where
+        R: TreeReader,
+        I: IntoIterator<Item = (&'b [u8], Option<&'b [u8]>)>,
+    {
+        let rebuilt = rebuild_raw_write_recipe_v0(writes)?;
+        self.revalidate_v0(reader, expected_next_version, expected_parent_root, rebuilt)
+    }
+}
+
+/// Exact-parent and raw-recipe verification result for a fixed durable plan
+/// commitment.  It intentionally has no method that can release a
+/// [`PlannedAuthUpdate`] or otherwise grant apply authority.
+#[allow(dead_code)]
+pub(crate) struct RevalidatedDurableAuthPlanCommitmentV0 {
+    commitment: [u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0],
+    target_version: Version,
+    parent_root: Option<RootHash>,
+    root_hash: RootHash,
+}
+
+#[allow(dead_code)]
+impl RevalidatedDurableAuthPlanCommitmentV0 {
+    pub(crate) const fn commitment_v0(&self) -> [u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0] {
+        self.commitment
+    }
+
+    pub(crate) const fn target_version_v0(&self) -> Version {
+        self.target_version
+    }
+
+    pub(crate) const fn parent_root_v0(&self) -> Option<RootHash> {
+        self.parent_root
+    }
+
+    pub(crate) const fn root_hash_v0(&self) -> RootHash {
+        self.root_hash
+    }
+}
+
+/// Replans one canonical borrowed raw-write recipe from its exact authenticated
+/// parent and compares both the resulting root and the streaming commitment of
+/// every persistence-bearing JMT field.
+///
+/// The returned carrier is historical evidence only.  In particular, it does
+/// not retain the fresh plan and cannot be converted into apply authority.
+#[allow(dead_code)]
+pub(crate) fn revalidate_durable_jmt_plan_commitment_v0<'a, R, I>(
+    reader: &R,
+    expected_next_version: Version,
+    expected_parent_root: Option<RootHash>,
+    expected_root_hash: RootHash,
+    expected_commitment: [u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0],
+    writes: I,
+) -> Result<RevalidatedDurableAuthPlanCommitmentV0>
+where
+    R: TreeReader,
+    I: IntoIterator<Item = (&'a [u8], Option<&'a [u8]>)>,
+{
+    verify_parent_root_v0(reader, expected_next_version, expected_parent_root)?;
+    let rebuilt = rebuild_raw_write_recipe_v0(writes)?;
+    let replanned = plan_put_value_set(
+        reader,
+        expected_next_version,
+        expected_next_version,
+        rebuilt,
+    )?;
+    ensure!(
+        replanned.root_hash == expected_root_hash,
+        "durable JMT commitment root does not match canonical replanning"
+    );
+    ensure!(
+        replanned.durable_jmt_plan_commitment_v0()? == expected_commitment,
+        "durable JMT commitment does not match canonical replanning"
+    );
+    Ok(RevalidatedDurableAuthPlanCommitmentV0 {
+        commitment: expected_commitment,
+        target_version: expected_next_version,
+        parent_root: expected_parent_root,
+        root_hash: expected_root_hash,
+    })
 }
 
 /// Exact-parent/canonical-write verified plan that remains inert until the
 /// current authoritative apply boundary rechecks head/root and target
 /// occupancy.
 #[allow(dead_code)]
-pub(crate) struct RevalidatedDurablePlannedAuthUpdateV0 {
-    encoded: Box<[u8]>,
+pub(crate) struct RevalidatedDurablePlannedAuthUpdateV0<'a> {
+    encoded: &'a [u8],
     target_version: Version,
     parent_root: Option<RootHash>,
+    root_hash: RootHash,
 }
 
 #[allow(dead_code)]
-impl RevalidatedDurablePlannedAuthUpdateV0 {
+impl RevalidatedDurablePlannedAuthUpdateV0<'_> {
+    pub(crate) const fn root_hash_v0(&self) -> RootHash {
+        self.root_hash
+    }
+
     /// Consumes the inert verified carrier and releases its fresh plan only at
     /// an exact-current-parent, unoccupied-target boundary.
     ///
@@ -122,7 +227,7 @@ impl RevalidatedDurablePlannedAuthUpdateV0 {
             writes,
         )?;
         ensure!(
-            replanned.encode_durable_jmt_plan_v0()?.as_slice() == self.encoded.as_ref(),
+            replanned.encode_durable_jmt_plan_v0()?.as_slice() == self.encoded,
             "current durable JMT physical plan does not match the evaluated artifact"
         );
         Ok(replanned)
@@ -163,7 +268,130 @@ fn verify_parent_root_v0<R: TreeReader>(
     Ok(())
 }
 
+fn rebuild_raw_write_recipe_v0<'a>(
+    writes: impl IntoIterator<Item = (&'a [u8], Option<&'a [u8]>)>,
+) -> Result<Vec<AuthWrite>> {
+    let writes = writes.into_iter();
+    let (minimum_write_count, maximum_write_count) = writes.size_hint();
+    let mut rebuilt: Vec<AuthWrite> = Vec::new();
+    rebuilt
+        .try_reserve_exact(maximum_write_count.unwrap_or(minimum_write_count))
+        .context("reserve durable write recipe entries")?;
+    for (key, value) in writes {
+        ensure!(
+            !key.is_empty(),
+            "durable write recipe contains an empty key"
+        );
+        ensure!(
+            key.len() <= MAX_AUTH_KEY_PREIMAGE_BYTES,
+            "durable write recipe key exceeds the preimage bound"
+        );
+        ensure!(
+            value.is_none_or(|value| value.len() <= MAX_DURABLE_AUTH_PLAN_VALUE_BYTES_V0),
+            "durable write recipe value exceeds the plan value bound"
+        );
+        if let Some(previous) = rebuilt.last() {
+            ensure!(
+                previous.key.as_slice() < key,
+                "durable write recipe keys are not strictly canonical"
+            );
+        }
+        rebuilt.push(AuthWrite {
+            key: try_copy_plan_bytes_v0(key, "durable write recipe key")?,
+            value: value
+                .map(|value| try_copy_plan_bytes_v0(value, "durable write recipe value"))
+                .transpose()?,
+        });
+    }
+    Ok(rebuilt)
+}
+
 impl PlannedAuthUpdate {
+    /// Streams the exact canonical v0 durable-plan record into SHA-256 without
+    /// ever materializing the complete physical plan as one `Vec<u8>`.
+    ///
+    /// The commitment preimage is:
+    ///
+    /// `u16(domain_len) || domain || durable_plan_codec_v0_bytes`
+    ///
+    /// and therefore binds the app codec version, pinned JMT/Borsh layout,
+    /// target version, root, and every node, value, stale index, and key
+    /// preimage field in their canonical map/set order.
+    pub(crate) fn durable_jmt_plan_commitment_v0(
+        &self,
+    ) -> Result<[u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0]> {
+        validate_plan_shape_v0(self)?;
+
+        let mut commitment = DurableAuthPlanCommitmentWriterV0::new_v0()?;
+        commitment.write_v0(&DURABLE_AUTH_PLAN_CODEC_VERSION_V0.to_be_bytes());
+        commitment.write_u16_framed_v0(
+            DURABLE_AUTH_PLAN_JMT_LAYOUT_V0,
+            DURABLE_AUTH_PLAN_JMT_LAYOUT_V0.len(),
+            "durable JMT layout identifier",
+        )?;
+        commitment.write_v0(&self.version.to_be_bytes());
+        commitment.write_v0(&self.root_hash.0);
+
+        let nodes = self.tree_update_batch.node_batch.nodes();
+        commitment.write_count_v0(nodes.len(), "durable JMT node")?;
+        for (node_key, node) in nodes {
+            let node_key = borsh::to_vec(node_key).context("encode durable JMT node key")?;
+            let node = borsh::to_vec(node).context("encode durable JMT node")?;
+            commitment.write_u32_framed_v0(
+                &node_key,
+                MAX_DURABLE_AUTH_PLAN_NODE_KEY_BYTES_V0,
+                "durable JMT node key",
+            )?;
+            commitment.write_u32_framed_v0(
+                &node,
+                MAX_DURABLE_AUTH_PLAN_NODE_BYTES_V0,
+                "durable JMT node",
+            )?;
+        }
+
+        let values = self.tree_update_batch.node_batch.values();
+        commitment.write_count_v0(values.len(), "durable JMT value")?;
+        for ((version, key_hash), value) in values {
+            commitment.write_v0(&version.to_be_bytes());
+            commitment.write_v0(&key_hash.0);
+            match value {
+                None => commitment.write_v0(&[0]),
+                Some(value) => {
+                    commitment.write_v0(&[1]);
+                    commitment.write_u32_framed_v0(
+                        value,
+                        MAX_DURABLE_AUTH_PLAN_VALUE_BYTES_V0,
+                        "durable JMT value",
+                    )?;
+                }
+            }
+        }
+
+        let stale_indices = &self.tree_update_batch.stale_node_index_batch;
+        commitment.write_count_v0(stale_indices.len(), "durable stale JMT index")?;
+        for stale in stale_indices {
+            commitment.write_v0(&stale.stale_since_version.to_be_bytes());
+            let node_key =
+                borsh::to_vec(&stale.node_key).context("encode durable stale JMT node key")?;
+            commitment.write_u32_framed_v0(
+                &node_key,
+                MAX_DURABLE_AUTH_PLAN_NODE_KEY_BYTES_V0,
+                "durable stale JMT node key",
+            )?;
+        }
+
+        commitment.write_count_v0(self.preimages.len(), "durable JMT key preimage")?;
+        for (key_hash, preimage) in &self.preimages {
+            commitment.write_v0(&key_hash.0);
+            commitment.write_u32_framed_v0(
+                preimage,
+                MAX_AUTH_KEY_PREIMAGE_BYTES,
+                "durable JMT key preimage",
+            )?;
+        }
+        Ok(commitment.finish_v0())
+    }
+
     /// Encodes every persistence-bearing field of this plan in a bounded,
     /// canonical app-owned record.
     ///
@@ -282,7 +510,7 @@ impl PlannedAuthUpdate {
     #[allow(dead_code)]
     pub(crate) fn decode_durable_jmt_plan_v0(
         encoded: &[u8],
-    ) -> Result<UnverifiedDurablePlannedAuthUpdateV0> {
+    ) -> Result<UnverifiedDurablePlannedAuthUpdateV0<'_>> {
         ensure!(
             encoded.len() <= MAX_DURABLE_AUTH_PLAN_BYTES_V0,
             "durable JMT plan record exceeds {} bytes",
@@ -302,7 +530,7 @@ impl PlannedAuthUpdate {
             "unsupported durable JMT layout identifier"
         );
         let version = decoder.read_u64_v0("durable JMT plan version")?;
-        let _: [u8; 32] = decoder.read_array_v0("durable JMT root hash")?;
+        let root_hash = RootHash(decoder.read_array_v0("durable JMT root hash")?);
 
         let node_count = decoder.read_count_v0("durable JMT node count", 10)?;
         let mut previous_node_key = None;
@@ -406,8 +634,9 @@ impl PlannedAuthUpdate {
         decoder.finish_v0()?;
 
         Ok(UnverifiedDurablePlannedAuthUpdateV0 {
-            encoded: encoded.into(),
+            encoded,
             target_version: version,
+            root_hash,
         })
     }
 }
@@ -455,6 +684,70 @@ where
         "{label} is not in canonical jmt-0.12.0 Borsh form"
     );
     Ok(decoded)
+}
+
+struct DurableAuthPlanCommitmentWriterV0 {
+    hasher: Sha256,
+}
+
+impl DurableAuthPlanCommitmentWriterV0 {
+    fn new_v0() -> Result<Self> {
+        let domain_length = u16::try_from(DURABLE_AUTH_PLAN_COMMITMENT_DOMAIN_V0.len())
+            .context("durable JMT commitment domain exceeds u16::MAX")?;
+        let mut hasher = Sha256::new();
+        hasher.update(domain_length.to_be_bytes());
+        hasher.update(DURABLE_AUTH_PLAN_COMMITMENT_DOMAIN_V0);
+        Ok(Self { hasher })
+    }
+
+    fn write_v0(&mut self, value: &[u8]) {
+        self.hasher.update(value);
+    }
+
+    fn write_count_v0(&mut self, count: usize, label: &str) -> Result<()> {
+        let count =
+            u32::try_from(count).with_context(|| format!("{label} count exceeds u32::MAX"))?;
+        self.write_v0(&count.to_be_bytes());
+        Ok(())
+    }
+
+    fn write_u16_framed_v0(
+        &mut self,
+        value: &[u8],
+        maximum_length: usize,
+        label: &str,
+    ) -> Result<()> {
+        ensure!(
+            value.len() <= maximum_length,
+            "{label} exceeds {maximum_length} bytes"
+        );
+        let length =
+            u16::try_from(value.len()).with_context(|| format!("{label} exceeds u16::MAX"))?;
+        self.write_v0(&length.to_be_bytes());
+        self.write_v0(value);
+        Ok(())
+    }
+
+    fn write_u32_framed_v0(
+        &mut self,
+        value: &[u8],
+        maximum_length: usize,
+        label: &str,
+    ) -> Result<()> {
+        ensure!(
+            value.len() <= maximum_length,
+            "{label} exceeds {maximum_length} bytes"
+        );
+        let length =
+            u32::try_from(value.len()).with_context(|| format!("{label} exceeds u32::MAX"))?;
+        self.write_v0(&length.to_be_bytes());
+        self.write_v0(value);
+        Ok(())
+    }
+
+    fn finish_v0(self) -> [u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0] {
+        self.hasher.finalize().into()
+    }
 }
 
 fn push_count_v0(encoded: &mut Vec<u8>, count: usize, label: &str) -> Result<()> {
@@ -511,8 +804,22 @@ fn append_with_limit_v0(
         "{label} exceeds durable JMT plan budget of {} bytes",
         maximum_bytes
     );
+    if next_len > encoded.capacity() {
+        encoded
+            .try_reserve_exact(next_len - encoded.len())
+            .with_context(|| format!("reserve memory for {label}"))?;
+    }
     encoded.extend_from_slice(value);
     Ok(())
+}
+
+fn try_copy_plan_bytes_v0(value: &[u8], label: &str) -> Result<Vec<u8>> {
+    let mut copied = Vec::new();
+    copied
+        .try_reserve_exact(value.len())
+        .with_context(|| format!("reserve memory for {label}"))?;
+    copied.extend_from_slice(value);
+    Ok(copied)
 }
 
 struct DurableAuthPlanDecoderV0<'a> {
@@ -809,6 +1116,121 @@ mod tests {
     }
 
     #[test]
+    fn durable_jmt_plan_commitment_streams_the_exact_canonical_record_v0() {
+        let (_, _, plan) = fixture();
+        let encoded = plan.encode_durable_jmt_plan_v0().expect("encode plan");
+        let mut expected = Sha256::new();
+        expected.update(
+            u16::try_from(DURABLE_AUTH_PLAN_COMMITMENT_DOMAIN_V0.len())
+                .expect("commitment domain length")
+                .to_be_bytes(),
+        );
+        expected.update(DURABLE_AUTH_PLAN_COMMITMENT_DOMAIN_V0);
+        expected.update(&encoded);
+        let expected: [u8; DURABLE_AUTH_PLAN_COMMITMENT_BYTES_V0] = expected.finalize().into();
+
+        assert_eq!(
+            plan.durable_jmt_plan_commitment_v0()
+                .expect("stream durable plan commitment"),
+            expected,
+        );
+        assert_eq!(
+            expected,
+            [
+                0xb4, 0x89, 0x9b, 0x7f, 0xf2, 0xfe, 0xb2, 0x4c, 0x53, 0x24, 0x61, 0xd5, 0x72, 0xb7,
+                0x81, 0x22, 0x3c, 0xa0, 0xe2, 0xb2, 0x8a, 0x2f, 0xda, 0x99, 0x52, 0x27, 0xa1, 0xd1,
+                0xca, 0x15, 0x5a, 0xf6,
+            ],
+            "domain-separated durable JMT commitment vector drifted"
+        );
+        let mut without_stats = plan.clone();
+        without_stats.tree_update_batch.node_stats.clear();
+        assert_eq!(
+            without_stats
+                .durable_jmt_plan_commitment_v0()
+                .expect("commitment without diagnostics"),
+            expected,
+            "diagnostic node statistics must not enter the commitment"
+        );
+    }
+
+    #[test]
+    fn durable_jmt_plan_commitment_revalidation_is_exact_and_inert_v0() {
+        let (tree, writes, plan) = fixture();
+        let commitment = plan
+            .durable_jmt_plan_commitment_v0()
+            .expect("commit exact durable plan");
+        let parent_root = tree.root_hash(0);
+        let revalidated = revalidate_durable_jmt_plan_commitment_v0(
+            &tree,
+            1,
+            parent_root,
+            plan.root_hash,
+            commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .expect("revalidate exact commitment");
+        assert_eq!(revalidated.commitment_v0(), commitment);
+        assert_eq!(revalidated.target_version_v0(), 1);
+        assert_eq!(revalidated.parent_root_v0(), parent_root);
+        assert_eq!(revalidated.root_hash_v0(), plan.root_hash);
+
+        let mut wrong_commitment = commitment;
+        wrong_commitment[0] ^= 1;
+        assert!(revalidate_durable_jmt_plan_commitment_v0(
+            &tree,
+            1,
+            parent_root,
+            plan.root_hash,
+            wrong_commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .is_err());
+
+        let mut wrong_root = plan.root_hash;
+        wrong_root.0[0] ^= 1;
+        assert!(revalidate_durable_jmt_plan_commitment_v0(
+            &tree,
+            1,
+            parent_root,
+            wrong_root,
+            commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .is_err());
+
+        let mut wrong_parent = parent_root.expect("fixture parent root");
+        wrong_parent.0[0] ^= 1;
+        assert!(revalidate_durable_jmt_plan_commitment_v0(
+            &tree,
+            1,
+            Some(wrong_parent),
+            plan.root_hash,
+            commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .is_err());
+
+        let mut spliced_writes = writes;
+        spliced_writes.push(put(
+            task_key("durable-plan-commitment-splice").expect("spliced key"),
+            b"spliced",
+        ));
+        spliced_writes.sort_by(|left, right| left.key().cmp(right.key()));
+        assert!(revalidate_durable_jmt_plan_commitment_v0(
+            &tree,
+            1,
+            parent_root,
+            plan.root_hash,
+            commitment,
+            spliced_writes
+                .iter()
+                .map(|write| (write.key(), write.value())),
+        )
+        .is_err());
+    }
+
+    #[test]
     fn durable_jmt_plan_decoder_rejects_version_layout_truncation_and_suffix() {
         let (_, _, plan) = fixture();
         let encoded = plan.encode_durable_jmt_plan_v0().expect("encode plan");
@@ -991,6 +1413,34 @@ mod tests {
             .plan_put_value_set(2, writes.clone())
             .expect("alternate target plan");
         assert_eq!(primary_plan.root_hash, alternate_plan.root_hash);
+        let primary_commitment = primary_plan
+            .durable_jmt_plan_commitment_v0()
+            .expect("commit primary plan");
+        assert_ne!(
+            primary_commitment,
+            alternate_plan
+                .durable_jmt_plan_commitment_v0()
+                .expect("commit alternate plan"),
+            "the commitment must bind equal-root physical history"
+        );
+        revalidate_durable_jmt_plan_commitment_v0(
+            &primary,
+            2,
+            primary.root_hash(1),
+            primary_plan.root_hash,
+            primary_commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .expect("revalidate commitment against primary history");
+        assert!(revalidate_durable_jmt_plan_commitment_v0(
+            &alternate,
+            2,
+            alternate.root_hash(1),
+            primary_plan.root_hash,
+            primary_commitment,
+            writes.iter().map(|write| (write.key(), write.value())),
+        )
+        .is_err());
         let encoded = primary_plan
             .encode_durable_jmt_plan_v0()
             .expect("encode primary plan");
