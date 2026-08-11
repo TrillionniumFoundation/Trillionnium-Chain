@@ -106,7 +106,8 @@ TrillionniumChain/
   Its current G1c recovery slice performs only the bounded three-store joins
   obligation + `CallbackPending`, obligation + `Delivered`, completion +
   `Delivered`, and completion + `Acked`; it is not a deployable node or a
-  general effect driver
+  general effect driver. G1e adds only a non-default, feature-gated real-process
+  SIGKILL test observer for those four states; the helper is not a node artifact
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
@@ -134,16 +135,33 @@ recovery owner opens an existing schema-v8 journal and supports only
 `CallbackPending`, `Delivered`, and `Acked`; `Reserved`, `Evaluated`, `Applied`,
 `Valid`, and `Unavailable` remain fail-closed. A fresh executor, BlockId-keyed
 speculative overlay, ordered finalization, general effect driver and network,
-state sync, real-process kill matrix, and whole-namespace rollback protection
-remain release blockers. The application recovery facade now excludes ordinary
+state sync, the complete production crash matrix, and whole-namespace rollback
+protection remain release blockers. The feature-gated G1e test uses an
+authentic feature-only fixture to seed `O+P`; the official existing-only host
+then authenticates and observes that boundary and drives the real
+`P -> D -> C -> K` transitions. It exercises sixteen real SIGKILL checkpoints:
+`O+P`, `O+D`, `C+D`, and `C+K` across both routes and both supported
+deterministic-invalid reasons. Thus `O+P` is recovery-from-preseeded-state
+evidence, while the other three states are reached by official host
+transitions. A fresh process must authenticate and recover the exact journals
+after each kill, and the parent compares the complete `ValidationId`, completion
+revision, and signer-watermark tuple across checkpoint, recovery, and final
+verification processes. The file adapter separately covers live-owner
+exclusion, stale CAS, journal switching, checksum corruption, and trailing
+bytes. This is local Linux process-termination
+evidence only; it is not power-loss, host-reboot, device-write-cache, or
+hardware-fsync evidence. Its filesystem watermark and helper are test-only,
+require `recovery-process-test-support`, and are excluded from the
+`--no-default-features` development-library artifact. The application recovery
+facade now excludes ordinary
 shared opens with an exclusive sidecar lock, pins the owner PID plus canonical
 parent/lock/main-database identities, and requires a create-once checksummed
 manifest that durably binds the designated Safety journal/profile. Recovery
 also rejects non-owner or group/world-writable parent, database, lock,
 manifest, and existing WAL/SHM components; the three store parents may not be
 equal or nested. This remains a local Linux boundary: WAL/SHM inodes are
-SQLite-managed rather than independently pinned, and no hostile same-EUID or
-real-process kill campaign is certified.
+SQLite-managed rather than independently pinned, and no hostile same-EUID,
+power-loss, or complete production kill campaign is certified.
 
 ### Web4 frontend (`web4-frontend`)
 

@@ -92,9 +92,25 @@ lock, main-database, and Safety-binding identities for its lifetime, and scans
 the complete supported/active row set before the node joins it. Parent, main,
 lock, manifest, and existing WAL/SHM objects must be owner-bound and not
 group/world writable; the three canonical store parents must be distinct and
-non-nested. WAL/SHM inodes remain SQLite-managed, hostile same-EUID bypass is
-outside this local Linux contract, and no real process kill-point matrix,
-general network/effect driver, or state-sync recovery join has been completed.
+non-nested. WAL/SHM inodes remain SQLite-managed and hostile same-EUID bypass is
+outside this local Linux contract. The feature-gated G1e harness now covers
+sixteen real SIGKILL checkpoints: `O+P`, `O+D`, `C+D`, and `C+K` across both
+routes and both supported deterministic-invalid reasons. An authentic
+feature-only fixture seeds `O+P`; the official existing-only host authenticates
+and observes that boundary, then drives `P -> D -> C -> K` to reach the other
+three states. A fresh process authenticates and recovers the exact journals
+after every kill. The `O+P` cases are recovery-from-preseeded-state evidence,
+not host-creation evidence. The parent compares the complete `ValidationId`,
+completion revision, and signer-watermark tuple across the checkpoint,
+recovery, and final verification processes. Focused adapter tests reject a
+live second owner, stale CAS, journal switching, checksum corruption, and
+trailing bytes. It is not power-loss, host-reboot,
+device-write-cache, or hardware-fsync evidence.
+The helper and its filesystem watermark require
+`recovery-process-test-support` and remain outside the
+`--no-default-features` development-library artifact. The complete production
+crash matrix, general network/effect driver, and state-sync recovery join remain
+open.
 
 The normative documents in this directory remain ahead of the complete Rust
 implementation. `trnm-consensus-types`, `trnm-consensus-core`, and
@@ -1389,9 +1405,13 @@ epoch prune, and Core transition remain open.
    calls `StorageAck`; completion-only replay is disabled and the
    post-ack Core state/effect set is checked exactly. G1c separately binds
    existing deterministic-invalid rows to a concrete SafetyStore readback in
-   the inert node. There is no production driver constructor, fresh execution,
-   generic result recovery, host/AppCore/ABCI network wiring, real-process kill
-   matrix, or process-wide Core uniqueness/exactly-once guarantee.
+   the inert node. The feature-only G1e fixture seeds authentic `O+P`; the
+   official existing-only host authenticates and observes that boundary and
+   drives `P -> D -> C -> K`. The harness exercises real SIGKILL at all sixteen
+   route/reason/state checkpoints. There is still no production driver constructor,
+   fresh execution, generic result recovery, host/AppCore/ABCI network wiring,
+   complete production crash/power-loss matrix, or process-wide Core
+   uniqueness/exactly-once guarantee.
 
    The initialized `AppCore` can now privately lend that carrier one canonical
    signer-policy preimage after its commitment matches both store metadata and

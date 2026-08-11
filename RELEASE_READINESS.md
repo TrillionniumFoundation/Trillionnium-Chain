@@ -38,8 +38,22 @@ cached tracking ref contemporaneous.
   existing-only deterministic-invalid `O+P/O+D/C+D/C+K` recovery owner is now
   present, including durable Safety-journal nomination; general `Valid`/
   `Unavailable` takeover, fresh execution, fork execution, ordered
-  finalization, locked-QC rollback protection, state sync, networking, and
-  real-process kill-matrix evidence remain open.
+  finalization, locked-QC rollback protection, state sync, networking, and the
+  complete production crash matrix remain open. G1e adds a feature-gated local
+  Linux matrix of sixteen real SIGKILL checkpoints at `O+P`, `O+D`, `C+D`, and
+  `C+K`, across both routes and both supported deterministic-invalid reasons.
+  An authentic feature-only fixture seeds `O+P`; the official existing-only
+  host authenticates and observes that boundary, then drives `P -> D -> C -> K`
+  to reach the other three checkpoints. A fresh process verifies recovery
+  after each kill. The `O+P` cases are recovery-from-preseeded-state evidence,
+  not evidence that the host created `O+P`. The harness compares the complete
+  `ValidationId`, completion revision, and signer-watermark tuple across the
+  checkpoint, recovery, and verification processes; focused adapter tests also
+  cover live lock, stale CAS, journal switching, checksum corruption, and
+  trailing bytes. This is process-SIGKILL
+  evidence, not power-loss, host-reboot, device-write-cache, or hardware-fsync
+  evidence. The helper and filesystem watermark are test-only and absent from
+  the `--no-default-features` development-library artifact.
 
 ### 2026-08-04 PoCO-BFT target truth
 

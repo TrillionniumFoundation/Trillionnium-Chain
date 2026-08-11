@@ -38,6 +38,25 @@ run_feature_unit_filter() {
     -p "$package" --lib --features "$feature" "$filter" -- --test-threads=1
 }
 
+run_feature_integration_filter() {
+  local package="$1"
+  local feature="$2"
+  local target="$3"
+  local filter="$4"
+  local listed
+
+  listed="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --features "$feature" --test "$target" "$filter" -- --list)"
+  if ! grep -Fq -- "$filter" <<<"$listed"; then
+    printf 'recovery smoke filter matched no test: package=%s feature=%s target=%s filter=%s\n' \
+      "$package" "$feature" "$target" "$filter" >&2
+    exit 2
+  fi
+  cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --features "$feature" --test "$target" "$filter" -- \
+    --test-threads=1
+}
+
 run_integration_filter() {
   local package="$1"
   local target="$2"
@@ -153,10 +172,17 @@ run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 run_feature_unit_filter trnm-poco-node recovery-test-support \
   strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k
+run_feature_integration_filter trnm-poco-node recovery-process-test-support \
+  recovery_process_kill_matrix \
+  real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k
 
 printf '%s\n' \
   'validation_recovery=deterministic_invalid_existing_only' \
-  'process_kill_matrix=NOT_EVALUATED' \
+  'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED' \
+  'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' \
+  'validation_recovery_process_kill_checkpoint_count=16' \
+  'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' \
+  'power_loss_fsync_matrix=NOT_EVALUATED' \
   'valid_recovery=not_implemented' \
   'unavailable_recovery=not_implemented' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-g1e-real-process-sigkill-snapshot'

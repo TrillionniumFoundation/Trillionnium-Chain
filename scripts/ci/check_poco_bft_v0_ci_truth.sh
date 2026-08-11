@@ -14,13 +14,20 @@ APP_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-app/src/store.rs"
 SAFETY_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-safety-store/src/sqlite.rs"
 NODE_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/lib.rs"
 NODE_RECOVERY_TESTS="$ROOT/trillionnium/crates/trnm-poco-node/src/recovery_tests.rs"
+NODE_PROCESS_KILL_HELPER="$ROOT/trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-recovery-kill-helper.rs"
+NODE_PROCESS_KILL_TEST="$ROOT/trillionnium/crates/trnm-poco-node/tests/recovery_process_kill_matrix.rs"
+NODE_PROCESS_WATERMARK="$ROOT/trillionnium/crates/trnm-poco-node/src/recovery_process_watermark.rs"
 NODE_CARGO="$ROOT/trillionnium/crates/trnm-poco-node/Cargo.toml"
 G1C_TRUTH="$ROOT/docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md"
 ROOT_README="$ROOT/README.md"
+RELEASE_TRUTH="$ROOT/RELEASE_READINESS.md"
 PROTOCOL_README="$ROOT/docs/protocol/poco-bft-v0/README.md"
+CONSENSUS_SAFETY_DOC="$ROOT/docs/protocol/poco-bft-v0/02-chained-qc-consensus.md"
 WIRE_DOC="$ROOT/docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md"
 INVARIANTS_DOC="$ROOT/docs/protocol/poco-bft-v0/07-invariants-and-conformance.md"
 DELIVERY_PLAN="$ROOT/docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+DUAL_TRACK_DECISION="$ROOT/docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
+PRODUCTION_CONTRACTS="$ROOT/docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
 
 fail() {
   printf 'PoCO-BFT CI/readiness truth gate failed: %s\n' "$*" >&2
@@ -69,13 +76,20 @@ for required in \
   "$SAFETY_STORE_SOURCE" \
   "$NODE_SOURCE" \
   "$NODE_RECOVERY_TESTS" \
+  "$NODE_PROCESS_KILL_HELPER" \
+  "$NODE_PROCESS_KILL_TEST" \
+  "$NODE_PROCESS_WATERMARK" \
   "$NODE_CARGO" \
   "$G1C_TRUTH" \
   "$ROOT_README" \
+  "$RELEASE_TRUTH" \
   "$PROTOCOL_README" \
+  "$CONSENSUS_SAFETY_DOC" \
   "$WIRE_DOC" \
   "$INVARIANTS_DOC" \
-  "$DELIVERY_PLAN"; do
+  "$DELIVERY_PLAN" \
+  "$DUAL_TRACK_DECISION" \
+  "$PRODUCTION_CONTRACTS"; do
   require_file "$required"
 done
 
@@ -91,7 +105,11 @@ require_literal_count "$POCO_WORKFLOW" \
 require_literal_count "$POCO_WORKFLOW" \
   '      - "RELEASE_READINESS.md"' 2
 require_literal_count "$POCO_WORKFLOW" \
+  '      - "README.md"' 2
+require_literal_count "$POCO_WORKFLOW" \
   '      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-poco-node/**"' 2
 
@@ -136,8 +154,21 @@ require_literal "$RECOVERY_GATE" \
 require_literal "$RECOVERY_GATE" \
   'strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k'
 require_literal "$RECOVERY_GATE" \
+  'run_feature_integration_filter trnm-poco-node recovery-process-test-support \
+  recovery_process_kill_matrix \
+  real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k'
+require_literal "$RECOVERY_GATE" \
   'validation_recovery=deterministic_invalid_existing_only'
-require_literal "$RECOVERY_GATE" 'process_kill_matrix=NOT_EVALUATED'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_checkpoint_count=16'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+require_literal "$RECOVERY_GATE" 'power_loss_fsync_matrix=NOT_EVALUATED'
+reject_literal "$RECOVERY_GATE" 'process_kill_matrix=NOT_EVALUATED'
 require_literal "$RECOVERY_GATE" 'valid_recovery=not_implemented'
 require_literal "$RECOVERY_GATE" 'unavailable_recovery=not_implemented'
 
@@ -197,6 +228,37 @@ require_literal "$NODE_SOURCE" \
   'left.starts_with(right) || right.starts_with(left)'
 require_literal "$NODE_RECOVERY_TESTS" \
   'fn strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k()'
+require_literal "$NODE_CARGO" 'recovery-process-test-support = ['
+require_literal "$NODE_CARGO" '  "dep:ed25519-dalek",'
+require_literal "$NODE_CARGO" '  "dep:fs2",'
+require_literal "$NODE_CARGO" '  "recovery-test-support",'
+require_literal "$NODE_CARGO" 'name = "trnm-poco-recovery-kill-helper"'
+require_literal "$NODE_CARGO" \
+  'required-features = ["recovery-process-test-support"]'
+require_literal "$NODE_PROCESS_KILL_TEST" \
+  'fn real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k()'
+require_literal "$NODE_PROCESS_KILL_TEST" 'ExitStatusExt'
+require_literal "$NODE_PROCESS_KILL_TEST" 'SIGKILL'
+require_literal "$NODE_PROCESS_KILL_TEST" \
+  'let exact_identity = checkpoint'
+require_literal "$NODE_PROCESS_KILL_TEST" \
+  'format!("verified_v0={route}/{reason}/completion_acked;{exact_identity}\n")'
+require_literal "$NODE_PROCESS_KILL_HELPER" \
+  'open_existing_with_process_checkpoint_observer_v0'
+require_literal "$NODE_PROCESS_KILL_HELPER" \
+  'identity_v0={}:{}:{};completion_revision={};watermark_v0={}:{}:{}:{}'
+require_literal "$NODE_SOURCE" '"obligation_callback_pending"'
+require_literal "$NODE_SOURCE" '"obligation_delivered"'
+require_literal "$NODE_SOURCE" '"completion_delivered"'
+require_literal "$NODE_SOURCE" '"completion_acked"'
+require_literal "$NODE_PROCESS_WATERMARK" \
+  'It is not an independently administered'
+require_literal "$NODE_PROCESS_WATERMARK" \
+  'cloning, hostile same-EUID replacement, device write-cache loss, or power'
+require_literal "$NODE_PROCESS_WATERMARK" \
+  'fn file_watermark_excludes_live_owner_and_enforces_exact_cas()'
+require_literal "$NODE_PROCESS_WATERMARK" \
+  'fn file_watermark_rejects_checksum_corruption_and_trailing_bytes()'
 require_literal "$NODE_CARGO" 'production_candidate = false'
 require_literal "$NODE_CARGO" 'production_consensus_activation = false'
 require_literal "$NODE_CARGO" 'incomplete = true'
@@ -207,9 +269,39 @@ require_literal "$NODE_SOURCE" \
 require_literal "$G1C_TRUTH" \
   'the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`'
 require_literal "$G1C_TRUTH" \
-  'outside this local Linux contract, and no real process kill-point matrix,'
+  'feature-only fixture seeds `O+P`; the official existing-only host authenticates'
 require_literal "$G1C_TRUTH" \
-  'general network/effect driver, or state-sync recovery join has been completed.'
+  'The `O+P` cases are recovery-from-preseeded-state evidence,'
+require_literal "$G1C_TRUTH" \
+  'not host-creation evidence. The parent compares the complete `ValidationId`,'
+require_literal "$G1C_TRUTH" \
+  'trailing bytes. It is not power-loss, host-reboot,'
+require_literal "$G1C_TRUTH" \
+  'device-write-cache, or hardware-fsync evidence.'
+require_literal "$RELEASE_TRUTH" \
+  'Linux matrix of sixteen real SIGKILL checkpoints at `O+P`, `O+D`, `C+D`, and'
+require_literal "$RELEASE_TRUTH" \
+  'The helper and filesystem watermark are test-only and absent from'
+require_literal "$ROOT_README" \
+  '`O+P`, `O+D`, `C+D`, and `C+K` across both routes and both supported'
+require_literal "$ROOT_README" \
+  'authentic feature-only fixture to seed `O+P`; the official existing-only host'
+require_literal "$PROTOCOL_README" \
+  'This is local Linux process-termination evidence, not power-loss, host-reboot,'
+require_literal "$INVARIANTS_DOC" \
+  'all sixteen checkpoints, and MUST use a fresh process to authenticate and'
+require_literal "$DELIVERY_PLAN" \
+  'feature-gated local Linux matrix of sixteen real SIGKILL checkpoints across the'
+require_literal "$DUAL_TRACK_DECISION" \
+  'production crash matrix. G1e adds a feature-gated local Linux matrix of sixteen'
+require_literal "$CONSENSUS_SAFETY_DOC" \
+  'including an `fsync`-equivalent for both data and metadata needed after power loss'
+require_literal "$PRODUCTION_CONTRACTS" '## Required crash matrix'
+require_literal "$PRODUCTION_CONTRACTS" \
+  'signer-journal fsync, signature production,'
+reject_literal "$RELEASE_TRUTH" 'real-process kill-matrix evidence remain open'
+reject_literal "$ROOT_README" 'state sync, real-process kill matrix, and'
+reject_literal "$G1C_TRUTH" 'no real process kill-point matrix'
 
 # Keep the ordinary recovery rejection distinct from the one-obligation G1c
 # session, and describe the concrete Safety token as bounded joint provenance
@@ -248,20 +340,21 @@ reject_literal "$G1C_TRUTH" 'grants only authenticated comparison facts'
 # trigger this workflow, while remaining explicitly incomplete and outside the
 # uploaded library archive.
 require_literal "$POCO_WORKFLOW" \
-  'cargo test --locked -p trnm-poco-node --all-targets --features recovery-test-support'
+  'cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support'
 require_literal "$POCO_WORKFLOW" \
-  'cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-test-support --no-deps -- -D warnings'
-require_literal_count "$POCO_WORKFLOW" '--features recovery-test-support' 2
+  'cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings'
+require_literal_count "$POCO_WORKFLOW" '--features recovery-process-test-support' 2
 require_literal "$POCO_WORKFLOW" \
   '            -p trnm-poco-node \'
 require_literal "$POCO_WORKFLOW" \
-  'name: Core, application, SafetyStore, signer, and inert-node G1c recovery gate'
+  'name: Bounded G1e real-process SIGKILL recovery gate'
 
 # Release-profile libraries are useful integration artifacts, not a node or a
 # production-readiness decision. Keep that boundary machine-readable both in
 # the workflow UI and in the uploaded archive metadata.
 require_literal "$POCO_WORKFLOW" \
   'name: Development-only integration library artifact build'
+require_literal "$POCO_WORKFLOW" 'needs: [rust, vectors-schema-proto]'
 require_literal "$POCO_WORKFLOW" \
   'cargo build --locked --release --no-default-features \'
 require_literal "$POCO_WORKFLOW" \
@@ -278,10 +371,24 @@ require_literal "$POCO_WORKFLOW" 'poco_node_binary_included=false'
 require_literal "$POCO_WORKFLOW" 'production_ready=false'
 require_literal "$POCO_WORKFLOW" 'test_features_included=false'
 require_literal "$POCO_WORKFLOW" 'recovery_test_support_included=false'
+require_literal "$POCO_WORKFLOW" 'recovery_process_test_support_included=false'
 require_literal "$POCO_WORKFLOW" 'recovery_only_core_step=true'
 require_literal "$POCO_WORKFLOW" \
   'validation_recovery_scope=deterministic_invalid_existing_only_v0'
-require_literal "$POCO_WORKFLOW" 'validation_recovery_process_kill_matrix=false'
+require_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_matrix=EVALUATED'
+require_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
+require_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_case_count=16'
+require_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+require_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_evidence=true'
+require_literal "$POCO_WORKFLOW" \
+  'artifact_validation_recovery_process_sigkill_capability=false'
+require_literal "$POCO_WORKFLOW" 'process_sigkill_helper_included=false'
+require_literal "$POCO_WORKFLOW" 'power_loss_fsync_matrix=NOT_EVALUATED'
 require_literal "$POCO_WORKFLOW" 'application_safety_binding_manifest=true'
 require_literal "$POCO_WORKFLOW" \
   'application_safety_binding_initializer=fixture_only_not_in_artifact'
@@ -341,4 +448,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete node_scaffold=triggered,tested,clippy,release-built,incomplete readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete node_scaffold=triggered,tested,clippy,release-built,incomplete process_sigkill=bounded_local_linux power_loss_fsync=not_evaluated process_helper_artifact=false readiness=development_only,no_legacy_go'

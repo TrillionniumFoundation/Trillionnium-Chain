@@ -53,9 +53,16 @@ store, owned Core, and injected test sink through real `Core::step`,
 G1c additionally provides one existing-only, deterministic-invalid recovery
 join across the application, SafetyState, and signer journals. Because that
 join is bounded to `O+P`, `O+D`, `C+D`, and `C+K`, remains inert, and has no
-fresh executor, general result recovery, production effect driver, or
-real-process kill matrix, it does not complete step 4 or satisfy the frozen
-production contract.
+fresh executor, general result recovery, or production effect driver, it does
+not complete step 4 or satisfy the frozen production contract. G1e adds a
+feature-gated local Linux matrix of sixteen real SIGKILL checkpoints across the
+four states, two routes, and two supported deterministic-invalid reasons. Its
+authentic feature-only fixture seeds `O+P`; the official existing-only host
+authenticates and observes that boundary, then drives `P -> D -> C -> K` to
+reach the other three states. A fresh process verifies each restart. The
+`O+P` cases are recovery-from-preseeded-state evidence, not host-creation
+evidence. This is not power-loss, host-reboot, device-write-cache, or
+hardware-fsync evidence, and it is not the complete production crash matrix.
 
 The representation and standalone journal portions of step 5 are now
 implemented. SafetyState record codec v0 is frozen to epoch-zero Core
@@ -443,8 +450,16 @@ an earlier phase.
   takeover/join, not signed-proposal-witness reconstruction, `Valid` artifact
   persistence, fresh execution, BlockId-keyed speculative execution, ordered
   finalization, state apply, or process-wide callback exactly-once. There is no
-  production effect driver/network, state-sync recovery join, real-process kill
-  matrix, or whole-namespace rollback protection. The application recovery
+  production effect driver/network, state-sync recovery join, complete
+  production crash/power-loss matrix, or whole-namespace rollback protection.
+  The feature-only G1e fixture seeds an authentic `O+P`, after which the
+  official existing-only host authenticates and observes `O+P` and drives the
+  real `P -> D -> C -> K` transitions. The matrix exercises sixteen SIGKILL
+  checkpoints, and a fresh process must authenticate and recover the exact
+  journals after each one. The helper
+  and filesystem watermark require `recovery-process-test-support` and are
+  excluded by the development artifact's `--no-default-features` build. The
+  application recovery
   facade now takes the exclusive side of the shared/exclusive sidecar lock,
   pins its PID and canonical parent/lock/main-database/Safety-binding
   identities, and audits all supported/active rows before the bounded join. A
@@ -1293,9 +1308,11 @@ an earlier phase.
   safety sink. A standalone Linux-only SafetyState SQLite journal now exists,
   but production driver/journal wiring, an independent monotonic rollback
   watermark, general obligation/result recovery, fresh execution, ordered
-  finalization, and real-process crash coverage remain the next ordered slices.
-  G1c covers only the existing deterministic-invalid `O+P`, `O+D`, `C+D`, and
-  `C+K` join in an inert node owner.
+  finalization, power-loss/fsync hardware evidence, and the complete production
+  crash matrix remain the next ordered slices. G1c covers only the existing
+  deterministic-invalid `O+P`, `O+D`, `C+D`, and `C+K` join in an inert node
+  owner; G1e adds only the feature-gated local Linux SIGKILL matrix for those
+  same states.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,

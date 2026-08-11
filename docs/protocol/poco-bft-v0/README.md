@@ -721,8 +721,18 @@ plus a bounded deterministic-invalid G1c takeover/join. It is not a
 reconstruction of the signed proposal witness, a durable `Valid` artifact, a
 fresh executor, a BlockId-keyed speculative overlay, an ordered finalization
 queue, or a general application recovery protocol. There is no production
-effect driver, authenticated network, state-sync recovery join, real-process
-kill matrix, process-wide Core uniqueness, or callback exactly-once guarantee.
+effect driver, authenticated network, state-sync recovery join, complete
+production crash matrix, process-wide Core uniqueness, or callback exactly-once
+guarantee. The feature-gated G1e harness inserts an observer into the official
+existing-only host and exercises sixteen real SIGKILL checkpoints: `O+P`,
+`O+D`, `C+D`, and `C+K` across both routes and both supported
+deterministic-invalid reasons. An authentic feature-only fixture seeds `O+P`;
+the host authenticates and observes that boundary, then drives
+`P -> D -> C -> K` to reach the other three states. A fresh process
+authenticates and recovers the exact journals after each kill. The `O+P` cases
+are recovery-from-preseeded-state evidence, not host-creation evidence.
+This is local Linux process-termination evidence, not power-loss, host-reboot,
+device-write-cache, or hardware-fsync evidence.
 The application recovery facade takes the exclusive side of the
 ordinary-shared/recovery-exclusive sidecar lock, pins its PID and canonical
 parent/lock/main-database/manifest identities, and audits the complete
@@ -732,8 +742,9 @@ group/world writable; all three store parents must be canonical, distinct, and
 non-nested. WAL/SHM inode lifecycles remain SQLite-managed, and a hostile
 same-EUID process remains outside this local Linux contract. The non-default
 `recovery-test-support` fixture may bootstrap `P` only for dedicated recovery
-tests; development library artifacts build with `--no-default-features` and
-record that this fixture is absent.
+tests. The SIGKILL helper and its filesystem watermark additionally require
+`recovery-process-test-support`; development library artifacts build with
+`--no-default-features` and record that both test surfaces are absent.
 Whole-namespace rollback/clone safety still depends on a production independent
 monotonic boundary that is not implemented here.
 
@@ -862,8 +873,9 @@ after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
 application-reservation takeover, `Valid` evaluated-artifact persistence,
 production callback scheduling/delivery, recovery for outcomes outside the G1c
-deterministic-invalid matrix, real-process crash takeover, completion-only
-artifact replay, and callback exactly-once are also not implemented. The current
+deterministic-invalid matrix, crash takeover outside the bounded G1e SIGKILL
+matrix, completion-only artifact replay, and callback exactly-once are also not
+implemented. The current
 process-local invalid driver uses Core's `StorageAck` cleanup barrier only
 after its injected sink and application `acked` transition; that test boundary
 is not a production host callback-outbox acknowledgement. The separate inert

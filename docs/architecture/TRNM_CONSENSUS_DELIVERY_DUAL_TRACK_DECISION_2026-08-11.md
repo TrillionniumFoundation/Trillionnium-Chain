@@ -89,15 +89,26 @@ application recovery transition only when the pinned manifest and exact
 existing `Delivered`/`Acked` row also match.
 
 This slice has no fresh executor, BlockId speculative overlay, ordered
-finalization queue, general effect driver/network, state sync, or real-process
-kill matrix. `Reserved`, `Evaluated`, `Applied`, `Valid`, and `Unavailable`
-recovery remain unsupported. Whole-namespace rollback protection still needs a
+finalization queue, general effect driver/network, state sync, or complete
+production crash matrix. G1e adds a feature-gated local Linux matrix of sixteen
+real SIGKILL checkpoints: `O+P`, `O+D`, `C+D`, and `C+K` across both routes and
+both supported deterministic-invalid reasons. An authentic feature-only
+fixture seeds `O+P`; the official existing-only host authenticates and observes
+that boundary, then drives `P -> D -> C -> K` to reach the other three states.
+The `O+P` cases therefore prove recovery from an authentic preseeded state, and
+a fresh process verifies every exact restart.
+This is not power-loss, host-reboot, device-write-cache, or hardware-fsync
+evidence; the helper and filesystem watermark are excluded from the
+`--no-default-features` development-library artifact. `Reserved`, `Evaluated`,
+`Applied`, `Valid`, and `Unavailable` recovery remain unsupported.
+Whole-namespace rollback protection still needs a
 production independent monotonic boundary. The application recovery facade now
 uses ordinary-shared/recovery-exclusive sidecar locking, pins its process,
 canonical parent, lock, and main-database identities, and audits all supported
 and active rows before joining. That is still local Linux evidence: SQLite owns
 the WAL/SHM inode lifecycle, hostile same-EUID bypass remains out of scope, and
-no real-process kill campaign has certified this ownership protocol.
+neither sudden power loss nor the complete production kill-point campaign has
+certified this ownership protocol.
 
 ## 4. PoCO-BFT promotion gates
 

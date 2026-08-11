@@ -10,6 +10,11 @@ publish = false
 [features]
 default = []
 recovery-test-support = ["trnm-consensus-app/recovery-test-support"]
+recovery-process-test-support = [
+  "dep:ed25519-dalek",
+  "dep:fs2",
+  "recovery-test-support",
+]
 
 [package.metadata.trnm]
 lane = "poco-bft-g1-host-scaffold"
@@ -23,7 +28,19 @@ effect_driver = false
 name = "trnm-poco-node"
 path = "src/main.rs"
 
+[[bin]]
+name = "trnm-poco-recovery-kill-helper"
+path = "src/bin/trnm-poco-recovery-kill-helper.rs"
+required-features = ["recovery-process-test-support"]
+
+[[test]]
+name = "recovery_process_kill_matrix"
+path = "tests/recovery_process_kill_matrix.rs"
+required-features = ["recovery-process-test-support"]
+
 [dependencies]
+ed25519-dalek = { version = "2", optional = true }
+fs2 = { version = "0.4", optional = true }
 sha2 = "0.10"
 trnm-consensus-app = { version = "0.1.0", path = "../trnm-consensus-app" }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }

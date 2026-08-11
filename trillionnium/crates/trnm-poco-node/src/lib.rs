@@ -37,6 +37,8 @@ use std::{
 };
 
 use sha2::{Digest, Sha256};
+#[cfg(feature = "recovery-process-test-support")]
+use trnm_consensus_app::NativeValidationRecoveredInvalidReasonV0;
 use trnm_consensus_app::{
     NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
     NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryOpenFailureV0,
@@ -273,6 +275,20 @@ impl PocoNodeStartConfigV0 {
     pub const fn maximum_signer_database_bytes(&self) -> usize {
         self.signer_journal_profile.maximum_database_bytes()
     }
+
+    /// Exact SafetyStore profile used only by the required-feature process
+    /// recovery helper while it constructs an initial authentic O+P case.
+    #[cfg(feature = "recovery-process-test-support")]
+    pub fn recovery_process_safety_store_profile_v0(&self) -> SafetyStateStoreProfileV0 {
+        self.safety_store_profile.clone()
+    }
+
+    /// Exact signer-journal profile used only by the required-feature process
+    /// recovery helper while it constructs an initial authentic O+P case.
+    #[cfg(feature = "recovery-process-test-support")]
+    pub fn recovery_process_signer_journal_profile_v0(&self) -> SignerJournalProfileV0 {
+        self.signer_journal_profile.clone()
+    }
 }
 
 /// Existing-only startup configuration for the bounded G1c validation
@@ -401,6 +417,72 @@ pub enum ValidationRecoveryBootstrapV0 {
         completion_revision: u64,
         source: ValidationRecoverySourceStateV0,
     },
+}
+
+/// A durable boundary exposed only to the real-process recovery test helper.
+///
+/// These names describe the exact SafetyState/ApplicationStore pair after
+/// both stores have completed their own durability and exact-readback checks.
+/// The observer cannot alter either store and is absent from default builds
+/// and the official `--no-default-features` development-library artifact.
+#[cfg(feature = "recovery-process-test-support")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ValidationRecoveryProcessCheckpointPhaseV0 {
+    ObligationCallbackPending,
+    ObligationDelivered,
+    CompletionDelivered,
+    CompletionAcked,
+}
+
+#[cfg(feature = "recovery-process-test-support")]
+impl ValidationRecoveryProcessCheckpointPhaseV0 {
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::ObligationCallbackPending => "obligation_callback_pending",
+            Self::ObligationDelivered => "obligation_delivered",
+            Self::CompletionDelivered => "completion_delivered",
+            Self::CompletionAcked => "completion_acked",
+        }
+    }
+}
+
+/// Exact facts supplied to the feature-only real-process checkpoint observer.
+#[cfg(feature = "recovery-process-test-support")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ValidationRecoveryProcessCheckpointV0 {
+    phase: ValidationRecoveryProcessCheckpointPhaseV0,
+    route: PayloadValidationRouteV0,
+    validation_id: ValidationId,
+    reason: NativeValidationRecoveredInvalidReasonV0,
+    obligation_revision: u64,
+    safety_revision: u64,
+}
+
+#[cfg(feature = "recovery-process-test-support")]
+impl ValidationRecoveryProcessCheckpointV0 {
+    pub const fn phase(self) -> ValidationRecoveryProcessCheckpointPhaseV0 {
+        self.phase
+    }
+
+    pub const fn route(self) -> PayloadValidationRouteV0 {
+        self.route
+    }
+
+    pub const fn validation_id(self) -> ValidationId {
+        self.validation_id
+    }
+
+    pub const fn reason(self) -> NativeValidationRecoveredInvalidReasonV0 {
+        self.reason
+    }
+
+    pub const fn obligation_revision(self) -> u64 {
+        self.obligation_revision
+    }
+
+    pub const fn safety_revision(self) -> u64 {
+        self.safety_revision
+    }
 }
 
 /// Non-cloneable owner of one Core, its safety store, and signer journal.
@@ -627,6 +709,43 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
         config: PocoNodeValidationRecoveryConfigV0,
         external_watermark: W,
     ) -> Result<Self, PocoNodeHostErrorV0> {
+        #[cfg(feature = "recovery-process-test-support")]
+        {
+            Self::open_existing_inner_v0(config, external_watermark, None)
+        }
+        #[cfg(not(feature = "recovery-process-test-support"))]
+        {
+            Self::open_existing_inner_v0(config, external_watermark)
+        }
+    }
+
+    /// Opens through the official host while observing authenticated durable
+    /// boundaries for the feature-gated real-process SIGKILL matrix.
+    ///
+    /// The observer is invoked only after the named store pair has completed
+    /// its normal durability and exact-readback checks. Returning from the
+    /// observer allows the official transition to continue unchanged. This
+    /// API does not exist in default builds or the official
+    /// `--no-default-features` development-library artifact.
+    #[cfg(feature = "recovery-process-test-support")]
+    pub fn open_existing_with_process_checkpoint_observer_v0<F>(
+        config: PocoNodeValidationRecoveryConfigV0,
+        external_watermark: W,
+        mut observer: F,
+    ) -> Result<Self, PocoNodeHostErrorV0>
+    where
+        F: FnMut(ValidationRecoveryProcessCheckpointV0),
+    {
+        Self::open_existing_inner_v0(config, external_watermark, Some(&mut observer))
+    }
+
+    fn open_existing_inner_v0(
+        config: PocoNodeValidationRecoveryConfigV0,
+        external_watermark: W,
+        #[cfg(feature = "recovery-process-test-support")] checkpoint_observer: Option<
+            &mut dyn FnMut(ValidationRecoveryProcessCheckpointV0),
+        >,
+    ) -> Result<Self, PocoNodeHostErrorV0> {
         reject_activation_request(config.node_config())?;
         let core_config = config.node.core_config().clone();
         let chain_id = core_config.validator_set().chain_id();
@@ -689,6 +808,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
                 &mut application_recovery,
                 active_application_jobs,
                 &verifier,
+                #[cfg(feature = "recovery-process-test-support")]
+                checkpoint_observer,
             )?,
             count => {
                 return Err(PocoNodeHostErrorV0::UnsupportedValidationObligationCount { count });
@@ -866,6 +987,9 @@ fn recover_one_invalid_obligation_v0(
     application: &mut NativeValidationRecoveryStoreV0,
     active_application_jobs: usize,
     verifier: &StrictEd25519Verifier,
+    #[cfg(feature = "recovery-process-test-support")] mut checkpoint_observer: Option<
+        &mut dyn FnMut(ValidationRecoveryProcessCheckpointV0),
+    >,
 ) -> Result<ValidationRecoveryOpenPartsV0, PocoNodeHostErrorV0> {
     if !matches!(
         head.transition_context(),
@@ -883,6 +1007,8 @@ fn recover_one_invalid_obligation_v0(
             },
         );
     }
+    #[cfg(feature = "recovery-process-test-support")]
+    let obligation_revision = head.revision();
     let session = Core::begin_payload_validation_obligation_recovery_v0(
         core_config,
         head.state().clone(),
@@ -910,6 +1036,20 @@ fn recover_one_invalid_obligation_v0(
     ) {
         return Err(PocoNodeHostErrorV0::UnexpectedObligationApplicationState);
     }
+    let reconciled_callback = application
+        .recovered_obligation_callback_facts_v0()
+        .ok_or(PocoNodeHostErrorV0::MissingReconciledApplicationOwner)?;
+    validate_callback_identity_v0(&reconciled_callback, route, validation_id)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    if source == NativeValidationRecoveredInvalidStateV0::CallbackPending {
+        emit_recovery_process_checkpoint_v0(
+            &mut checkpoint_observer,
+            ValidationRecoveryProcessCheckpointPhaseV0::ObligationCallbackPending,
+            reconciled_callback,
+            obligation_revision,
+            obligation_revision,
+        );
+    }
     let input = match route {
         PayloadValidationRouteV0::Proposal => Input::PayloadValidated {
             id: validation_id,
@@ -928,6 +1068,17 @@ fn recover_one_invalid_obligation_v0(
         .record_recovered_core_acceptance_v0(&request)
         .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
     validate_callback_identity_v0(&callback_facts, route, validation_id)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::ObligationDelivered,
+        callback_facts,
+        obligation_revision,
+        obligation_revision,
+    );
     let context =
         native_invalid_transition_context_v0(&callback_facts, request.state().revision())?;
     safety_store
@@ -939,6 +1090,17 @@ fn recover_one_invalid_obligation_v0(
     let confirmed = safety_store
         .confirmed_native_deterministic_invalid_head_exact_v0(request.state(), &context)
         .map_err(PocoNodeHostErrorV0::safety_store)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::CompletionDelivered,
+        callback_facts,
+        obligation_revision,
+        confirmed.revision(),
+    );
     let completion_state = application
         .recover_confirmed_invalid_completion_v0(&confirmed)
         .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
@@ -949,6 +1111,17 @@ fn recover_one_invalid_obligation_v0(
         .acknowledge_recovered_invalid_completion_v0(&confirmed)
         .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
     validate_acked_facts_against_confirmation_v0(&acked, &confirmed)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::CompletionAcked,
+        callback_facts,
+        obligation_revision,
+        confirmed.revision(),
+    );
     let barrier = request.barrier();
     let pending_inert_effects = core
         .step(Input::StorageAck { barrier }, verifier)
@@ -968,6 +1141,26 @@ fn recover_one_invalid_obligation_v0(
         pending_inert_effects,
         true,
     ))
+}
+
+#[cfg(feature = "recovery-process-test-support")]
+fn emit_recovery_process_checkpoint_v0(
+    observer: &mut Option<&mut dyn FnMut(ValidationRecoveryProcessCheckpointV0)>,
+    phase: ValidationRecoveryProcessCheckpointPhaseV0,
+    callback: NativeValidationRecoveredInvalidCallbackFactsV0,
+    obligation_revision: u64,
+    safety_revision: u64,
+) {
+    if let Some(observer) = observer.as_deref_mut() {
+        observer(ValidationRecoveryProcessCheckpointV0 {
+            phase,
+            route: callback.route(),
+            validation_id: callback.validation_id(),
+            reason: callback.reason(),
+            obligation_revision,
+            safety_revision,
+        });
+    }
 }
 
 impl From<NativeValidationRecoveredInvalidStateV0> for ValidationRecoverySourceStateV0 {

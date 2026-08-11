@@ -8,8 +8,10 @@ on:
       - ".github/workflows/rust-l1-testnet-preflight.yml"
       - "PROJECT_ID"
       - "PROJECT_BOUNDARY.json"
+      - "README.md"
       - "RELEASE_READINESS.md"
       - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
+      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
       - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
@@ -46,8 +48,10 @@ on:
       - ".github/workflows/rust-l1-testnet-preflight.yml"
       - "PROJECT_ID"
       - "PROJECT_BOUNDARY.json"
+      - "README.md"
       - "RELEASE_READINESS.md"
       - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
+      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
       - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
@@ -265,11 +269,11 @@ jobs:
           cargo test --locked -p trnm-consensus-sim
           cargo test --locked -p trnm-consensus-app --lib
           cargo test --locked -p trnm-finality-types
-          cargo test --locked -p trnm-poco-node --all-targets --features recovery-test-support
+          cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
-      - name: Core, application, SafetyStore, signer, and inert-node G1c recovery gate
+      - name: Bounded G1e real-process SIGKILL recovery gate
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
 
@@ -287,7 +291,7 @@ jobs:
           # --no-deps keeps strictness on the selected package without
           # turning unrelated retained warnings into PoCO tranche failures.
           cargo clippy --locked -p trnm-finality-types --all-targets --no-deps -- -D warnings
-          cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-test-support --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings
           cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
           # Apply the same package-scoped boundary to consensus-app.
@@ -342,6 +346,7 @@ jobs:
 
   release-artifacts:
     name: Development-only integration library artifact build
+    needs: [rust, vectors-schema-proto]
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       (github.event_name == 'schedule' ||
@@ -424,9 +429,17 @@ jobs:
             printf '%s\n' 'production_ready=false'
             printf '%s\n' 'test_features_included=false'
             printf '%s\n' 'recovery_test_support_included=false'
+            printf '%s\n' 'recovery_process_test_support_included=false'
             printf '%s\n' 'recovery_only_core_step=true'
             printf '%s\n' 'validation_recovery_scope=deterministic_invalid_existing_only_v0'
-            printf '%s\n' 'validation_recovery_process_kill_matrix=false'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_matrix=EVALUATED'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_case_count=16'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_evidence=true'
+            printf '%s\n' 'artifact_validation_recovery_process_sigkill_capability=false'
+            printf '%s\n' 'process_sigkill_helper_included=false'
+            printf '%s\n' 'power_loss_fsync_matrix=NOT_EVALUATED'
             printf '%s\n' 'application_safety_binding_manifest=true'
             printf '%s\n' 'application_safety_binding_initializer=fixture_only_not_in_artifact'
             printf '%s\n' 'application_recovery_secure_namespace=true'
@@ -477,9 +490,17 @@ jobs:
           grep -Fxq 'production_ready=false' "$metadata"
           grep -Fxq 'test_features_included=false' "$metadata"
           grep -Fxq 'recovery_test_support_included=false' "$metadata"
+          grep -Fxq 'recovery_process_test_support_included=false' "$metadata"
           grep -Fxq 'recovery_only_core_step=true' "$metadata"
           grep -Fxq 'validation_recovery_scope=deterministic_invalid_existing_only_v0' "$metadata"
-          grep -Fxq 'validation_recovery_process_kill_matrix=false' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_matrix=EVALUATED' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_case_count=16' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_evidence=true' "$metadata"
+          grep -Fxq 'artifact_validation_recovery_process_sigkill_capability=false' "$metadata"
+          grep -Fxq 'process_sigkill_helper_included=false' "$metadata"
+          grep -Fxq 'power_loss_fsync_matrix=NOT_EVALUATED' "$metadata"
           grep -Fxq 'application_safety_binding_manifest=true' "$metadata"
           grep -Fxq 'application_safety_binding_initializer=fixture_only_not_in_artifact' "$metadata"
           grep -Fxq 'application_recovery_secure_namespace=true' "$metadata"
@@ -498,6 +519,13 @@ jobs:
             | grep -q .; then
             printf '%s\n' \
               'development-only library archive unexpectedly contains an executable' >&2
+            exit 1
+          fi
+          if find "$inspection" -maxdepth 1 -type f \
+            -name '*trnm-poco-recovery-kill-helper*' -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains the SIGKILL helper' >&2
             exit 1
           fi
 

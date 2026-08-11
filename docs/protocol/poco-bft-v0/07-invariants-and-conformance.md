@@ -973,8 +973,23 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
 - G1c MUST NOT be described as general validation recovery. Fresh execution,
   `Reserved`, `Evaluated`, `Applied`, `Valid`, and `Unavailable` takeover, a
   BlockId-keyed speculative overlay, ordered finalization, a general effect
-  driver/network, state-sync recovery, and a real-process kill-point matrix
-  remain unimplemented. The application recovery facade MUST take an exclusive
+  driver/network, state-sync recovery, and the complete production crash matrix
+  remain unimplemented. The feature-gated G1e matrix MUST use an authentic
+  feature-only fixture to seed `O+P`; the official existing-only host MUST
+  authenticate and observe that boundary and MUST drive `P -> D -> C -> K` to
+  reach `O+D`, `C+D`, and `C+K`. It MUST cover both routes and both supported
+  deterministic-invalid reasons, MUST kill and reap the child with SIGKILL at
+  all sixteen checkpoints, and MUST use a fresh process to authenticate and
+  recover the exact journals. The harness MUST compare the complete
+  `ValidationId`, completion revision, and signer-watermark tuple across the
+  checkpoint, recovery, and final verification processes. It MUST NOT describe
+  the preseeded `O+P` cases as
+  host-creation evidence, MUST NOT manually prebuild `O+D`, `C+D`, or `C+K`,
+  and MUST NOT be described as power-loss, host-reboot, device-write-cache, or
+  hardware-fsync evidence. Its helper and filesystem watermark MUST remain
+  behind `recovery-process-test-support` and MUST be absent from the
+  `--no-default-features` development-library artifact. The application
+  recovery facade MUST take an exclusive
   sidecar lock that excludes every ordinary shared owner, pin the owner PID and
   canonical parent/lock/main-database/manifest identities for its lifetime, and
   audit the complete supported/active row set before reconciliation. Parent,
@@ -1164,8 +1179,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
   production callback-outbox scheduling/delivery, general authenticated
-  integration with the standalone safety journal, and real-process crash
-  takeover,
+  integration with the standalone safety journal, crash takeover outside the
+  bounded G1e SIGKILL matrix,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.
