@@ -26,19 +26,24 @@ complete-body state/receipts-root deterministic invalidity can retain a live
 first-seal owner and traverse an app-private non-cloneable driver with a fixed
 store, owned Core, and injected test sink through real `Core::step`,
 `delivered`, exact safety-state confirmation, `acked`, and `StorageAck`.
-Because there is no production constructor, SafetyState WAL/store, host wiring,
-recovery remint, or crash takeover, this does not complete step 4 or satisfy the
-frozen production contract.
+Because there is no production constructor, adapter to the standalone
+SafetyState journal, host wiring, recovery remint, or crash takeover, this does
+not complete step 4 or satisfy the frozen production contract.
 
-The representation half of step 5 is now implemented: SafetyState record codec
-v0 is frozen to epoch-zero Core SafetyState schema v7, exact-decodes nested
-trusted-Genesis CEV0, and binds Core configuration, verifier profile, codec
-layout, and host-selected limits. It yields only an inert unverified record;
-`Core::validate_persisted_state_v0` remains the semantic/cryptographic gate.
-The next slice is still the independent atomic SafetyState WAL/store with
-predecessor/revision and rollback protection. There is no production driver
-constructor, obligation takeover, complete canonical SignIntent, or ordered
-finalization queue.
+The representation and standalone journal portions of step 5 are now
+implemented. SafetyState record codec v0 is frozen to epoch-zero Core
+SafetyState schema v7, exact-decodes nested trusted-Genesis CEV0, and binds Core
+configuration, verifier profile, codec layout, and host-selected limits. The
+Linux-only `trnm-consensus-safety-store` adds node-local SQLite journal schema
+v1 with persistent WAL, `synchronous=FULL`, a two-revision checksummed
+predecessor chain, two separately aligned Stable/HeadIntent head slots, and an
+independent one-way terminal-halt latch.
+It semantically revalidates inert heads and exact successors, including
+obligation-bearing facts, while `Core::recover` still rejects obligations.
+Core now emits opaque persistence requests with process-local designated-Core
+affinity. There is still no production driver/journal adapter, independent
+monotonic signer watermark, obligation takeover, complete canonical
+SignIntent/sign journal, or ordered finalization queue.
 
 The frozen contracts are release gates. A test-only carrier or an in-memory
 simulation cannot satisfy them.
@@ -301,9 +306,27 @@ an earlier phase.
   binds the Core configuration, verifier profile, fixed layout, and record/blob
   limits, and returns only an unverified inert state requiring
   `Core::validate_persisted_state_v0`. Its conservative capacity calculation
-  must admit the active `CoreConfig` before use. It is not an atomic store or
-  revision journal and adds no fsync, rollback protection, obligation replay,
-  production recovery, complete SignIntent, or ordered finalization queue.
+  must admit the active `CoreConfig` before use.
+  A separate Linux-only `trnm-consensus-safety-store` now wraps that record in
+  node-local SQLite journal schema v1. It is outside ApplicationStore/AppHash/
+  snapshots/state sync; binds the exact Core configuration, verifier profile,
+  codecs and resource limits; uses persistent WAL with `synchronous=FULL`; and
+  holds lifetime locks on its protected local namespace. It keeps active and
+  previous revisions as a checksummed predecessor chain and uses separately
+  aligned, fsynced Stable/HeadIntent head slots to distinguish an interrupted
+  commit at its exact source or target. A third one-way latch binds a durable
+  conflict without overwriting either recoverable head slot. Every record and successor
+  is exact-decoded and semantically/cryptographically revalidated. The head is
+  inert: obligations can be authenticated as stored facts but still block
+  `Core::recover`. Core's opaque persistence request binds the exact
+  barrier/state, and a process-local affinity lets the future host reject an
+  effect emitted by a public clone of its designated Core.
+  The journal has no production host/driver adapter, authenticated obligation
+  replay, complete SignIntent/sign journal, or ordered finalization queue. A
+  whole-namespace rollback still needs an independent monotonic signer/host
+  watermark, arbitrary external clones remain undetected, and journal v1 is
+  not certified for network/FUSE/overlay filesystems, fork-after-open, or an
+  untrusted same-EUID process.
   After wrapper/route congruence and the object-graph claim, but before host or
   snapshot reads, historical application-store schema v6 inserts one
   `validation_jobs_v0` row under `BEGIN IMMEDIATE`. It freezes the route/full
@@ -355,8 +378,9 @@ an earlier phase.
   deterministic-invalid seal retains a
   non-cloneable live owner. An app-private non-cloneable driver fixes one
   store, owned Core instance, and injected test sink while it exercises real
-  route-specific `Core::step`, validates the exact `PersistSafetyState`
-  barrier/state, writes `delivered`, confirms the same state through that sink,
+  route-specific `Core::step`, validates the opaque persistence request against
+  the designated-Core affinity and its exact barrier/state, writes `delivered`,
+  confirms the same state through that sink,
   writes `acked`, and only then issues `StorageAck`. Completion-only replay is
   disabled because the Core tombstone does not bind the artifact checksum.
   Snapshot
@@ -367,8 +391,9 @@ an earlier phase.
   delivery/ack test integration, not signed-proposal-witness reconstruction,
   `Valid` artifact persistence, executable crash takeover, state apply, or
   process-wide callback exactly-once. There is no production driver
-  constructor, SafetyState WAL/store, host/AppCore/ABCI/node wiring, generic
-  recovery remint, or process-wide Core uniqueness guarantee.
+  constructor, adapter to the standalone SafetyState journal,
+  host/AppCore/ABCI/node wiring, generic recovery remint, or process-wide Core
+  uniqueness guarantee.
   Its only host value is borrowed
   from the initialized `AppCore`, and the canonical signer-policy preimage is
   recomputed against both store metadata and the authenticated lifecycle
@@ -889,8 +914,8 @@ an earlier phase.
   terminal Core authority. Schema v8 now adds the app-private, process-local
   fixed-store/owned-Core/injected-test-sink delivery chain through real
   `Core::step`, `delivered`, exact safety-state confirmation, `acked`, and
-  `StorageAck`; it adds no production durability, recovery remint, takeover, or
-  exactly-once authority.
+  `StorageAck`; that driver is not connected to the standalone SafetyState
+  journal and adds no recovery remint, takeover, or exactly-once authority.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -1095,7 +1120,8 @@ an earlier phase.
   has no crash-takeover lease. Schema v8 recognizes the frozen
   `delivered`/`acked` recovery forms and adds an app-private process-local
   transition writer, first-seal deterministic-invalid owner, owned-Core driver, and injected
-  test sink. It has no production constructor or SafetyState WAL durability. The
+  test sink. It has no production constructor or adapter to the standalone
+  SafetyState journal. The
   driver uses Core's `StorageAck` cleanup barrier only after exact sink
   confirmation and application acknowledgement; the schema-v7 inert
   completion tombstone alone cannot authorize artifact replay. The
@@ -1111,7 +1137,8 @@ an earlier phase.
   application-reservation takeover, `Valid` evaluated-artifact persistence,
   mixed-body app-private `Valid` promotion, plan application/state
   persistence, production callback-outbox scheduling/delivery, durable
-  SafetyState WAL storage, crash takeover, and ABCI wiring remain absent. In
+  callback-driver integration with the SafetyState journal, crash takeover, and
+  ABCI wiring remain absent. In
   particular, the object-graph
   gate is not callback authority and the private admission branch emits no
   callback for a losing clone. The v7 consuming bridge proves only the exact
@@ -1196,8 +1223,10 @@ an earlier phase.
   takeover, or Finalize apply. Schema v8 freezes/deep-validates the later
   `delivered` and `acked` persistence shapes and adds an app-private
   process-local writer/driver using real `Core::step` and an injected test
-  safety sink. Production SafetyState WAL durability, host wiring, recovery remint,
-  and crash takeover remain the next ordered slices.
+  safety sink. A standalone Linux-only SafetyState SQLite journal now exists,
+  but production driver/journal wiring, an independent monotonic rollback
+  watermark, recovery remint, authenticated obligation replay, host wiring, and
+  crash takeover remain the next ordered slices.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,

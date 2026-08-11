@@ -2293,7 +2293,7 @@ impl Simulator {
                     let waits_for_sync_validation = effects.iter().any(|effect| {
                         matches!(
                             effect,
-                            Effect::PersistSafetyState { .. } | Effect::ValidateSyncedPayload(_)
+                            Effect::PersistSafetyState(_) | Effect::ValidateSyncedPayload(_)
                         )
                     });
                     self.record(
@@ -2368,7 +2368,9 @@ impl Simulator {
         let incarnation = self.nodes[node].incarnation;
         for effect in effects {
             match effect {
-                Effect::PersistSafetyState { barrier, state } => {
+                Effect::PersistSafetyState(request) => {
+                    let barrier = request.barrier();
+                    let state = Box::new(request.state().clone());
                     let state_digest = safety_state_trace_digest(&state);
                     self.record(
                         "persist-request",

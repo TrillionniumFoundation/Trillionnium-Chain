@@ -8991,7 +8991,7 @@ mod tests {
 
     fn release_core_persisted_effects(core: &mut Core, effects: Vec<Effect>) -> Vec<Effect> {
         let barrier = effects.iter().find_map(|effect| match effect {
-            Effect::PersistSafetyState { barrier, .. } => Some(*barrier),
+            Effect::PersistSafetyState(request) => Some(request.barrier()),
             _ => None,
         });
         match barrier {
@@ -9118,7 +9118,7 @@ mod tests {
         let registered_state = effects
             .iter()
             .find_map(|effect| match effect {
-                Effect::PersistSafetyState { state, .. } => Some(state.as_ref().clone()),
+                Effect::PersistSafetyState(request) => Some(request.state().clone()),
                 _ => None,
             })
             .expect("target admission persists its exact validation obligation");
@@ -11849,10 +11849,10 @@ mod tests {
             .expect("Core recovery end")
             .0;
         let recovery_validation_offset = recovery_body
-            .find("value.validate_runtime(verifier, true)?;")
+            .find("Self::validate_persisted_state_v0(&config, &state, verifier)?;")
             .expect("durable recovery validation");
         let nonempty_fail_closed_offset = recovery_body
-            .find("if !value.safety.payload_validation_obligations().is_empty()")
+            .find("if !state.payload_validation_obligations().is_empty()")
             .expect("nonempty durable obligation fail-closed gate");
         assert!(recovery_validation_offset < nonempty_fail_closed_offset);
         assert!(recovery_body.contains("authenticated replay ticket before recovery can reissue"));
@@ -11991,7 +11991,7 @@ mod tests {
             .split_once("impl DuplicatePayloadValidationRequestV0 {")
             .expect("duplicate Core request implementation")
             .1
-            .split_once("#[derive(Debug, Clone, PartialEq, Eq)]\npub enum Effect")
+            .split_once("pub struct SafetyStatePersistenceV0 {")
             .expect("duplicate Core request implementation end")
             .0;
         assert!(!duplicate_request_impl.contains("into_parts"));
@@ -17145,7 +17145,7 @@ mod tests {
             .expect("install matching completion without application artifact binding");
         assert!(matches!(
             effects.as_slice(),
-            [Effect::PersistSafetyState { .. }]
+            [Effect::PersistSafetyState(_)]
         ));
         assert!(!core
             .safety_state()
@@ -17312,8 +17312,8 @@ mod tests {
         let (qc_barrier, qc_state) = qc_effects
             .iter()
             .find_map(|effect| match effect {
-                Effect::PersistSafetyState { barrier, state } => {
-                    Some((*barrier, state.as_ref().clone()))
+                Effect::PersistSafetyState(request) => {
+                    Some((request.barrier(), request.state().clone()))
                 }
                 _ => None,
             })

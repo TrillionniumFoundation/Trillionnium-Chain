@@ -1,4 +1,4 @@
-use alloc::{boxed::Box, collections::BTreeMap, vec, vec::Vec};
+use alloc::{boxed::Box, collections::BTreeMap, sync::Arc, vec, vec::Vec};
 
 use trnm_consensus_types::{
     Block, BlockHeader, BlockId, BlockKind, CertificateId, ContextAuthorizedQcV0, Epoch,
@@ -15,7 +15,8 @@ use crate::{
     Input, InvalidPayloadReference, OutboundMessage, PayloadTerminalFact, PayloadTerminalResult,
     PayloadValidationParentV0, PayloadValidationRequest, PayloadValidationResult,
     PayloadValidationRouteV0, PendingStandaloneQcSync, PendingTcHighQcSync, Result, SafetyHalt,
-    SafetyState, SignIntent, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
+    SafetyState, SafetyStatePersistenceBindingV0, SignIntent, ValidationId,
+    SAFETY_STATE_SCHEMA_VERSION,
 };
 
 type ObservationKey = (Epoch, View, ValidatorId);
@@ -45,6 +46,41 @@ enum AuthenticatedTcOutcome {
 /// `Core` owns no clock, network, database, or private key. All interaction
 /// with those facilities is represented by [`Input`] and [`Effect`]. Failed
 /// steps are transactional: no state is changed when `step` returns an error.
+#[derive(Debug)]
+struct CorePersistenceAffinityV0(Arc<()>);
+
+pub(crate) struct CorePersistenceSealV0(());
+
+impl CorePersistenceSealV0 {
+    const fn new() -> Self {
+        Self(())
+    }
+}
+
+impl CorePersistenceAffinityV0 {
+    fn new() -> Self {
+        Self(Arc::new(()))
+    }
+
+    fn preserve(&self) -> Self {
+        Self(Arc::clone(&self.0))
+    }
+}
+
+impl Clone for CorePersistenceAffinityV0 {
+    fn clone(&self) -> Self {
+        Self::new()
+    }
+}
+
+impl PartialEq for CorePersistenceAffinityV0 {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+impl Eq for CorePersistenceAffinityV0 {}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Core {
     config: CoreConfig,
@@ -67,9 +103,28 @@ pub struct Core {
     observed_qcs: BTreeMap<View, QuorumCertificate>,
     next_validation_generation: u64,
     replay_required: bool,
+    persistence_affinity: CorePersistenceAffinityV0,
 }
 
 impl Core {
+    /// Returns an opaque process-local binding for this exact Core instance.
+    ///
+    /// Publicly cloning the Core creates a new binding. Internal transactional
+    /// snapshots preserve it, so an effect from a successful step remains
+    /// accepted while an effect from a throwaway clone does not.
+    pub fn safety_state_persistence_binding_v0(&self) -> SafetyStatePersistenceBindingV0 {
+        SafetyStatePersistenceBindingV0::new(
+            Arc::clone(&self.persistence_affinity.0),
+            CorePersistenceSealV0::new(),
+        )
+    }
+
+    fn transactional_clone_v0(&self) -> Self {
+        let mut cloned = self.clone();
+        cloned.persistence_affinity = self.persistence_affinity.preserve();
+        cloned
+    }
+
     /// Starts a core from the exact context-authorized genesis anchor.
     pub fn new<V: SignatureVerifier>(
         config: CoreConfig,
@@ -109,6 +164,33 @@ impl Core {
         config.validate()?;
         let replay_required = safety_replay_required(state);
         Self::empty(config.clone(), state.clone(), replay_required).validate_runtime(verifier, true)
+    }
+
+    /// Validates the monotonic relation between two independently authenticated
+    /// persisted safety states.
+    ///
+    /// This checks one exact revision step and every history relation expressible
+    /// from the two durable states. It deliberately does not mint a live Core or
+    /// prove that `current` is the newest record. For a standalone QC target that
+    /// was processed and removed, the persisted form can prove only canonical
+    /// queue removal and that the durable high QC subsumes the target; the
+    /// process-local block tree used by live admission is not serialized.
+    pub fn validate_persisted_successor_v0<V: SignatureVerifier>(
+        config: &CoreConfig,
+        previous: &SafetyState,
+        current: &SafetyState,
+        verifier: &V,
+    ) -> Result<()> {
+        Self::validate_persisted_state_v0(config, previous, verifier)?;
+        Self::validate_persisted_state_v0(config, current, verifier)?;
+        if previous.revision().checked_add(1) != Some(current.revision()) {
+            return Err(CoreError::InvalidRecovery(
+                "persisted successor is not exactly one revision newer",
+            ));
+        }
+        let replay_required = safety_replay_required(current);
+        Self::empty(config.clone(), current.clone(), replay_required)
+            .validate_monotonic_transition_inner(previous, true)
     }
 
     /// Restores the durable safety state after a process restart.
@@ -297,7 +379,7 @@ impl Core {
         // their validation order or semantics.
         self.preauthenticate_input(&input, verifier)?;
         let previous_safety = self.safety.clone();
-        let mut next = self.clone();
+        let mut next = self.transactional_clone_v0();
         let effects = next.apply(input, verifier)?;
         next.validate_runtime(verifier, false)?;
         next.validate_monotonic_transition(&previous_safety)?;
@@ -364,6 +446,7 @@ impl Core {
             observed_qcs,
             next_validation_generation,
             replay_required,
+            persistence_affinity: CorePersistenceAffinityV0::new(),
         }
     }
 
@@ -2217,7 +2300,7 @@ impl Core {
         referenced_qcs: &[QuorumCertificate],
         verifier: &V,
     ) -> Result<Option<Self>> {
-        let mut staged = self.clone();
+        let mut staged = self.transactional_clone_v0();
         for certificate in referenced_qcs {
             if !staged.qc_is_ready_for_adoption(certificate)? {
                 return Ok(None);
@@ -2808,8 +2891,8 @@ impl Core {
     ) -> Result<Vec<Effect>> {
         if let Some(pending) = &self.pending_persistence {
             return match effects.as_slice() {
-                [Effect::PersistSafetyState { barrier, state }]
-                    if *barrier == pending.barrier && state.as_ref() == &self.safety =>
+                [Effect::PersistSafetyState(request)]
+                    if request.barrier() == pending.barrier && request.state() == &self.safety =>
                 {
                     Ok(effects)
                 }
@@ -3202,10 +3285,14 @@ impl Core {
         }
         let barrier = self.safety.next_revision()?;
         self.pending_persistence = Some(PendingPersistence { barrier, deferred });
-        Ok(vec![Effect::PersistSafetyState {
-            barrier,
-            state: Box::new(self.safety.clone()),
-        }])
+        Ok(vec![Effect::PersistSafetyState(
+            crate::SafetyStatePersistenceV0::new(
+                barrier,
+                Box::new(self.safety.clone()),
+                Arc::clone(&self.persistence_affinity.0),
+                CorePersistenceSealV0::new(),
+            ),
+        )])
     }
 
     fn signature_effect(&self, intent: &SignIntent) -> Result<Effect> {
@@ -4239,6 +4326,14 @@ impl Core {
     }
 
     fn validate_monotonic_transition(&self, previous: &SafetyState) -> Result<()> {
+        self.validate_monotonic_transition_inner(previous, false)
+    }
+
+    fn validate_monotonic_transition_inner(
+        &self,
+        previous: &SafetyState,
+        persisted_pair: bool,
+    ) -> Result<()> {
         if self.safety.current_view() < previous.current_view() {
             return Err(CoreError::InvalidRecovery("current view regressed"));
         }
@@ -4314,6 +4409,36 @@ impl Core {
             return Err(CoreError::InvalidRecovery(
                 "safety-state revision is not monotonic",
             ));
+        }
+        if self.safety.pending_sign() != previous.pending_sign() {
+            if let Some(intent) = self.safety.pending_sign() {
+                let watermark_advanced = match intent {
+                    SignIntent::Vote { view, .. } => previous
+                        .last_voted_view()
+                        .is_none_or(|previous_view| previous_view < *view),
+                    SignIntent::TimeoutVote { view, .. } => previous
+                        .last_timeout_view()
+                        .is_none_or(|previous_view| previous_view < *view),
+                };
+                if !watermark_advanced {
+                    return Err(CoreError::InvalidRecovery(
+                        "pending signing intent was introduced without advancing its watermark",
+                    ));
+                }
+            }
+        }
+        if self.safety.pending_finalize() != previous.pending_finalize()
+            && self.safety.pending_finalize().is_some()
+        {
+            let finality_advanced =
+                self.safety.finalized().height() > previous.finalized().height();
+            let proof_changed =
+                self.safety.last_finalization_proof() != previous.last_finalization_proof();
+            if !finality_advanced || !proof_changed {
+                return Err(CoreError::InvalidRecovery(
+                    "finalization outbox was introduced without a new permanent finalization",
+                ));
+            }
         }
         match (
             previous.pending_tc_high_qc_sync(),
@@ -4400,8 +4525,12 @@ impl Core {
                         }
                         let subsumed = self.qc_is_durably_subsumed(certificate)?;
                         let processed_ready_prefix = index < first_retained_index
-                            && self.qc_is_ready_for_adoption(certificate)?
-                            && qc_order_key_ref(self.safety.high_qc()) >= qc_order_key(certificate);
+                            && qc_order_key_ref(self.safety.high_qc()) >= qc_order_key(certificate)
+                            && if persisted_pair {
+                                !self.payload_is_deterministically_invalid(certificate.block_id())
+                            } else {
+                                self.qc_is_ready_for_adoption(certificate)?
+                            };
                         if !subsumed && !processed_ready_prefix {
                             return Err(CoreError::InvalidRecovery(
                                 "standalone QC target was removed before processing or finality subsumption",

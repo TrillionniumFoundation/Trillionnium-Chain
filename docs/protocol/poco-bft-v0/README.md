@@ -551,10 +551,44 @@ requires strict EOF and byte-identical canonical re-encoding and returns only
 an inert `UnverifiedSafetyStateRecordV0`; callers must still pass its state to
 `Core::validate_persisted_state_v0` for configuration, semantic, and
 cryptographic validation. A conservative limit preflight derived from
-`CoreConfig` must succeed before the context can encode or decode. This codec
-does not provide a SQLite WAL/store, revision/predecessor or rollback journal,
-atomic fsync/readback, obligation takeover, a complete durable `SignIntent`, or
-the required ordered finalization queue.
+`CoreConfig` must succeed before the context can encode or decode.
+
+The standalone `trnm-consensus-safety-store` crate now wraps that codec in a
+Linux-only, node-local SQLite journal schema v1. It is intentionally separate
+from `ApplicationStore`, AppHash, application snapshots, and peer state-sync
+replacement. Its immediate parent directory must already exist and be
+owner-controlled before initialization. An interrupted first initialization is
+fail-closed and requires operator cleanup of the partial journal namespace;
+v1 does not auto-repair or resume it. The journal pins that directory plus its
+main database, persistent WAL, SHM, and lock sidecar; holds lifetime-exclusive
+writer locks; requires SQLite WAL with `synchronous=FULL`; and performs exact
+transactional readback. Metadata binds the exact Core configuration reference,
+verifier profile, codec/schema versions, record/blob limits, database budget,
+and transition-context codec. The active and previous revisions are retained
+as one checksummed predecessor chain with independently audited accounting.
+Two separately aligned checksummed head slots alternate `Stable` and
+`HeadIntent` watermarks, so open can distinguish the exact pre-commit head from
+its one-step target. A third one-way terminal-halt latch binds conflicts without
+overwriting either head slot; every other database/sidecar combination fails closed.
+
+Core persistence effects now carry an opaque `SafetyStatePersistenceV0`
+request: only Core can bind its exact barrier and state. A process-local
+binding identifies the host-designated Core instance; public Core clones
+receive different affinities, while Core's private transactional steps preserve
+the issuing affinity. A host adapter must verify that binding before passing
+the request to the journal. The journal exact-decodes and semantically and
+cryptographically validates every retained state and its successor relation.
+Its returned head is still an inert fact: an obligation-bearing head can be
+authenticated and reported as requiring replay, but `Core::recover` continues
+to reject it.
+
+This is not yet production host wiring, a complete durable `SignIntent` or sign
+journal, authenticated obligation replay, or full cross-crash takeover. The
+journal cannot detect restoration of the whole database/WAL/sidecar set to an
+older self-consistent image without an independent monotonic host or signer
+watermark, and it does not detect arbitrary external clones. Journal v1 is not
+certified for NFS, SMB, FUSE, overlay filesystems, fork-after-open, or an
+untrusted same-EUID process. It establishes no process-wide Core uniqueness.
 
 After that wrapper/route check and process-local claim, and before any host or
 snapshot read, historical application-store schema v6 durably reserved one
@@ -592,7 +626,8 @@ owner that inert reopen/recovery facts cannot recreate. An app-private
 non-cloneable driver fixes one designated store, one owned Core instance, and
 one injected safety sink for the whole process-local phase chain. It calls the
 real route-specific
-`Core::step`, accepts only the exact `PersistSafetyState` barrier/state, marks
+`Core::step`, accepts only the opaque persistence request issued by that
+designated Core and its exact barrier/state, marks
 the callback `delivered`, confirms that exact state through the same sink,
 marks it `acked`, and only then submits the matching `StorageAck`. The driver
 does not accept completion-only replay: the current Core completion tombstone
@@ -636,11 +671,10 @@ plus a durable deterministic-invalid callback-pending record and a
 process-local, real-Core delivery/ack integration exercised with an injected
 test sink. It is not a reconstruction of the signed proposal witness, a
 durable `Valid` artifact, a production host integration, executable crash
-takeover, or a durable SafetyState WAL/store. The exact bounded record codec
-above is a representation layer only. There is no production driver
-constructor, no `AppCore`/ABCI/`trnm-node` wiring, no generic recovery remint of
-the live owner, and no process-wide Core uniqueness or callback exactly-once
-guarantee.
+takeover, or an integration with the standalone SafetyState journal above.
+There is no production driver constructor, no `AppCore`/ABCI/`trnm-node`
+wiring, no generic recovery remint of the live owner, and no process-wide Core
+uniqueness or callback exactly-once guarantee.
 
 That carrier now also opens a production, process-local sequential transaction
 cursor. Its host tuple can only be borrowed from initialized `AppCore`; the
@@ -739,8 +773,8 @@ Neither the v7 invalid journal nor the v8 delivery-state activation stores an
 evaluated `Valid` artifact, durable JMT plan, or `Valid` callback outbox. V8
 adds process-local invalid delivery writers, a non-cloneable live owner, and
 real Core callback/barrier execution behind an app-private driver, but its
-injected sink is only a test boundary and supplies no production SafetyState
-durability. A private inert durable-plan codec now covers the exact
+injected sink is only a test boundary and is not wired to the standalone
+SafetyState journal. A private inert durable-plan codec now covers the exact
 persistence-bearing JMT
 version/root, nodes, values, stale indices, and key preimages without exposing
 the process-local plan seal or serializing `TreeUpdateBatch` as a container.
@@ -770,7 +804,8 @@ production callback scheduling/delivery, crash takeover, completion-only
 artifact replay, and callback exactly-once are also not implemented. The current
 process-local invalid driver uses Core's `StorageAck` cleanup barrier only
 after its injected sink and application `acked` transition; that test boundary
-is not a production host callback-outbox acknowledgement or WAL.
+is not a production host callback-outbox acknowledgement and is not connected
+to the standalone SafetyState journal.
 Snapshot-closed real runtime-attempt failures now have a separate owning bridge
 into the same outcome kernel. It uses only the opaque runtime attempt's stable
 disposition and the exhaustive typed authenticated-read variants: transaction

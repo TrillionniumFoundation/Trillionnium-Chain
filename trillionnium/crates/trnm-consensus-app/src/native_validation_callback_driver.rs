@@ -438,7 +438,7 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
         ))
     };
 
-    let Some(Effect::PersistSafetyState { barrier, state }) = effects.first() else {
+    let Some(Effect::PersistSafetyState(request)) = effects.first() else {
         return Err(fail_after_step(
             owner,
             affinity,
@@ -456,8 +456,8 @@ fn step_bound_invalid_delivery_v0<V: SignatureVerifier>(
             core,
         ));
     }
-    let barrier = *barrier;
-    let state = state.clone();
+    let barrier = request.barrier();
+    let state = Box::new(request.state().clone());
     if barrier.get() != state.revision() {
         return Err(fail_after_step(
             owner,

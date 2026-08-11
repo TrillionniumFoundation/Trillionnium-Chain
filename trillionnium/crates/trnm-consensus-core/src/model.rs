@@ -1457,12 +1457,75 @@ impl DuplicatePayloadValidationRequestV0 {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Effect {
-    PersistSafetyState {
+#[derive(Debug, Clone)]
+pub struct SafetyStatePersistenceV0 {
+    barrier: BarrierId,
+    state: Box<SafetyState>,
+    affinity: Arc<()>,
+}
+
+impl PartialEq for SafetyStatePersistenceV0 {
+    fn eq(&self, other: &Self) -> bool {
+        self.barrier == other.barrier && self.state == other.state
+    }
+}
+
+impl Eq for SafetyStatePersistenceV0 {}
+
+impl SafetyStatePersistenceV0 {
+    pub(crate) fn new(
         barrier: BarrierId,
         state: Box<SafetyState>,
-    },
+        affinity: Arc<()>,
+        _seal: crate::core::CorePersistenceSealV0,
+    ) -> Self {
+        Self {
+            barrier,
+            state,
+            affinity,
+        }
+    }
+
+    pub const fn barrier(&self) -> BarrierId {
+        self.barrier
+    }
+
+    pub fn state(&self) -> &SafetyState {
+        &self.state
+    }
+}
+
+/// Process-local binding for one host-designated Core instance.
+///
+/// Publicly cloning a [`crate::Core`] deliberately creates a different
+/// binding. The Core's private transactional snapshots preserve it, so a host
+/// can reject persistence effects emitted by a throwaway public clone without
+/// gaining access to the underlying identity token.
+#[derive(Debug, Clone)]
+pub struct SafetyStatePersistenceBindingV0 {
+    affinity: Arc<()>,
+}
+
+impl SafetyStatePersistenceBindingV0 {
+    pub(crate) fn new(affinity: Arc<()>, _seal: crate::core::CorePersistenceSealV0) -> Self {
+        Self { affinity }
+    }
+
+    pub fn accepts(&self, request: &SafetyStatePersistenceV0) -> bool {
+        Arc::ptr_eq(&self.affinity, &request.affinity)
+    }
+}
+
+/// Effects are the Core's only boundary for nondeterministic host work.
+///
+/// A [`SafetyStatePersistenceV0`] is opaque outside this crate: only the Core
+/// can bind an exact barrier to the state that it advanced. Cloning the effect
+/// permits an idempotent retry of those exact bytes, but cannot forge another
+/// persistence request. Hosts additionally bind it to their designated Core
+/// through [`SafetyStatePersistenceBindingV0`].
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Effect {
+    PersistSafetyState(SafetyStatePersistenceV0),
     ValidatePayload(PayloadValidationRequest),
     ValidateSyncedPayload(PayloadValidationRequest),
     RequestSignature {

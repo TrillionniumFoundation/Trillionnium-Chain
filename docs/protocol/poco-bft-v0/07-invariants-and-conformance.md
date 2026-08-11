@@ -795,11 +795,51 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   signature verifier. A checksum, canonical re-encoding, or inert `Valid`
   completion MUST NOT mint a live payload-validation, signing, finalization,
   callback, or obligation-replay capability;
-- SafetyState record codec v0 is not a journal: it supplies no atomic store,
-  fsync/readback evidence, predecessor chain, rollback/revision-gap detection,
-  or crash-takeover authority. A conforming production host still MUST supply
-  the independent SafetyState WAL/store and MUST NOT call `StorageAck` merely
-  because bytes encode and decode successfully;
+- standalone safety-journal schema v1 MUST remain outside `ApplicationStore`,
+  AppHash, application snapshots, and peer state-sync replacement. Its
+  metadata MUST bind the exact Core configuration reference, verifier profile,
+  record codec and SafetyState schema, record/blob limits, database budget, and
+  transition-context codec. It MUST use the exact schema-v7 record decoder and
+  `Core::validate_persisted_state_v0` rather than treating a SQLite row or
+  checksum as Core authority;
+- journal v1 MUST retain only a two-revision window -- the active record and,
+  after genesis, its previous record -- as a checksummed predecessor chain,
+  independently audit row/byte accounting, and
+  validate each exact one-revision successor with
+  `Core::validate_persisted_successor_v0`. Revision regression, a gap, a
+  same-revision different record/context, a broken predecessor relation, or a
+  checksum-consistent semantic splice MUST fail closed and MAY set the durable
+  halt;
+- the journal MUST use SQLite persistent WAL, `synchronous=FULL`,
+  `BEGIN IMMEDIATE`, exact transactional readback, canonical-schema/resource
+  checks, and an owner-lifetime exclusive writer lock. Its separately fsynced
+  sidecar MUST use two independently checksummed alternating slots: `Stable`
+  MUST name one exact database head, and `Intent` MUST name that source plus
+  its exact one-revision target. On open, an Intent MAY resolve only to the
+  exact source or target; every other database/sidecar pairing MUST fail
+  closed;
+- Core MUST emit safety persistence as an opaque Core-issued request which
+  binds one exact barrier and SafetyState. A host-designated Core binding MUST
+  be checked before persistence: public Core clones MUST have different
+  process-local affinities, while a successful private transactional Core step
+  MUST preserve the issuer's affinity. Exact request clones MAY support only
+  idempotent persistence of those same bytes; they MUST NOT permit construction
+  of another barrier or state;
+- a journal head containing validation obligations MAY be decoded and fully
+  validated as an inert durable fact and MUST report that authenticated replay
+  is required. It MUST NOT mint obligation, callback, signing, finalization, or
+  recovery authority, and `Core::recover` MUST continue to reject such a head
+  until authenticated obligation replay exists. A production host MUST NOT
+  issue `StorageAck` merely because bytes encode/decode or a journal write
+  succeeds; the request must remain bound to the designated Core and the rest
+  of the host persistence protocol;
+- journal v1 MUST be described as a local Linux filesystem boundary only. It
+  does not prove freshness if an adversary restores the complete database,
+  persistent WAL, and lock sidecar to an older self-consistent image; a
+  production host still needs an independent monotonic signer/host watermark.
+  NFS, SMB, FUSE, overlay filesystems, fork-after-open, an untrusted same-EUID
+  process, arbitrary external clone detection, and process-wide Core uniqueness
+  are outside its certified scope;
 - historical application-store schema v6 MUST durably reserve one
   `validation_jobs_v0`
   row for `(route, full ValidationId)` after wrapper/route congruence and the
@@ -851,8 +891,9 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   app-private, non-cloneable driver MUST keep one designated store, one owned
   Core instance, and one injected safety sink fixed for the whole phase chain.
   It MUST call
-  the route-specific real `Core::step`, require the exact
-  `PersistSafetyState` barrier/state and matching completion, persist
+  the route-specific real `Core::step`, require the opaque persistence request
+  issued with that designated Core's affinity plus its exact barrier/state and
+  matching completion, persist
   `delivered`, confirm that exact state through the same sink, persist `acked`,
   and only then issue the exact `StorageAck`. A completion-only/empty-effect
   callback MUST NOT authorize an artifact because the current Core completion
@@ -896,11 +937,12 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   raw job/fingerprint/checksums, v7 deterministic-invalid artifact/outbox, and
   v8 delivered/acked recovery facts MUST NOT be treated as signed-proposal
   reconstruction, JMT/terminal authority, recovery-reminted live-owner
-  authority, executable crash takeover, SafetyState WAL/journal evidence, or
-  process-wide callback exactly-once evidence. The current writable
+  authority, executable crash takeover, evidence from the separate SafetyState
+  journal, or process-wide callback exactly-once evidence. The current writable
   delivery/ack path and real `Core::step` integration are process-local test
   boundaries only: no production driver constructor, host/AppCore/ABCI/node
-  wiring, durable safety sink, or process-wide Core uniqueness is implied;
+  wiring, adapter to the standalone safety journal, or process-wide Core
+  uniqueness is implied;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
   joined fact may escape unless explicit snapshot finish succeeds, and finish
@@ -1047,7 +1089,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   only for the two complete-body deterministic root mismatches. V8 adds the
   app-private process-local delivery writer, live-owner chain, real Core
   driver, and injected test sink described above, but no production
-  constructor, durable SafetyState sink, recovery remint, or takeover. A
+  constructor, adapter to the standalone SafetyState journal, recovery remint,
+  or takeover. A
   revalidatable `Valid` artifact and callback-outbox intent remain open; the
   separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
@@ -1055,8 +1098,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
-  production callback-outbox scheduling/delivery and SafetyState WAL durability,
-  crash takeover,
+  production callback-outbox scheduling/delivery, authenticated integration
+  with the standalone safety journal, and crash takeover,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.

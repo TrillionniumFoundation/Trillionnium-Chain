@@ -563,9 +563,72 @@ payload. The host must select limits no smaller than the codec's conservative
 `CoreConfig`-derived capacity preflight and must run that preflight before Core
 can enter a persistence barrier. These domains are local integrity/
 configuration domains, not consensus signature domains.
-The checksum does not prove freshness, predecessor continuity, rollback
-resistance, atomic persistence, or fsync. No SafetyState SQLite WAL/store or
-revision journal exists yet.
+The record checksum alone does not prove freshness, predecessor continuity,
+rollback resistance, atomic persistence, or fsync.
+
+The standalone, Linux-only `trnm-consensus-safety-store` now supplies a
+node-local SQLite journal schema v1 around that record. It is outside
+`ApplicationStore`, AppHash, snapshots, and peer state sync. The metadata row
+binds a random journal identity, the exact record/configuration and verifier-
+profile references, codec/schema versions, record/blob limits, database
+budget, and transition-context codec. SQLite must remain in persistent WAL
+mode with `synchronous=FULL`; mutations use `BEGIN IMMEDIATE`, exact readback,
+full canonical-schema/resource/accounting validation, and a lifetime-exclusive
+local writer lock. The journal retains a two-revision window: the active record
+and, after genesis, its previous record, as a checksummed predecessor chain.
+Its separately fsynced lock sidecar places two checksummed head slots in
+distinct aligned regions: a `Stable` slot names one exact head, while a
+`HeadIntent` slot names both that source and its one-revision target, permitting
+restart to distinguish a non-applied commit from an applied commit whose final
+Stable rewrite was interrupted. A third one-way terminal-halt latch binds the
+full selected head watermark and exact conflict without overwriting either head
+slot. An incomplete latch write is halt-uncertain and any nonzero malformed
+latch fails closed.
+
+Journal schema v1 has five canonical `STRICT` tables:
+
+```text
+safety_store_metadata_v0
+safety_state_records_v0
+safety_state_head_v0
+safety_state_accounting_v0
+safety_store_halt_v0
+```
+
+The record relation stores the exact schema-v7 record bytes and checksum,
+transition-context bytes and checksum, predecessor revision/checksum, and
+journal-scoped chain checksum. The head binds the active revision/checksum and
+retention floor; accounting admits one or two records only. The halt row is a
+sticky fail-closed conflict fact, not a peer-visible consensus message.
+
+Transition context codec v0 is journal-local, bounded, and inert. Its ordinary
+form is empty of host authority; its closed native-invalid
+form binds the exact route/full validation ID, request/job/application
+references, reason, artifact/callback/idempotency checksums, delivery attempt,
+delivered-row/outbox checksums, and completion revision. Context and state are
+checked together, but neither can mint callback or replay authority.
+
+Core emits persistence only as an opaque `SafetyStatePersistenceV0` request
+containing its exact barrier and state. The process-local
+`SafetyStatePersistenceBindingV0` lets a host verify that the request came from
+its designated Core: public Core clones receive fresh affinities, while private
+transactional Core steps preserve the issuer. The standalone journal opens
+unbound so it can inspect inert obligation-bearing records, then accepts one
+explicit, one-way designated-Core binding and rejects every persistence request
+from a public clone or other Core before any I/O. A future production host must
+still choose and retain that authoritative Core and bind it exactly once.
+
+The journal's chain and sidecar detect local row/head/sidecar disagreement,
+revision regressions and gaps, and interrupted commits. They cannot detect an
+attacker restoring the whole database, WAL, and sidecar to an older
+self-consistent image; an independent monotonic host or signer watermark is
+still required. They also do not certify arbitrary external filesystem clones.
+Journal v1 requires a pre-existing owner-controlled immediate parent and
+assumes local Linux storage. It is not certified
+for NFS, SMB, FUSE, overlay filesystems, fork-after-open, or an untrusted
+same-EUID process. An interrupted first initialization remains fail-closed and
+requires operator cleanup of the partial namespace; v1 does not resume or
+repair it automatically.
 
 Historical application-store schema v6 adds local `validation_jobs_v0` and
 `validation_callback_outbox_v0` relations; neither is a wire type or peer
@@ -609,8 +672,9 @@ deterministic-invalid seal can
 retain a non-cloneable live owner; recovery bytes cannot recreate it. An
 app-private non-cloneable driver fixes one store, owned Core instance, and
 injected test sink while it calls the real route-specific `Core::step`, checks
-the exact `PersistSafetyState` barrier/state, writes `delivered`, confirms the
-same state through that sink, writes `acked`, and only then calls
+the opaque persistence request against the designated-Core affinity and exact
+barrier/state, writes `delivered`, confirms the same state through that sink,
+writes `acked`, and only then calls
 `StorageAck`. Completion-only replay is disabled because the Core completion
 tombstone does not bind the artifact checksum.
 
@@ -635,10 +699,11 @@ empty. Durable rows loaded by recovery remain corruption/congruence facts and
 cannot mint signed-proposal or Core callback authority. The writable invalid
 delivery/ack chain is only a process-local real-Core integration exercised
 with an injected test sink: there is no production driver constructor,
-SafetyState WAL/store, host/AppCore/ABCI/node wiring, recovery remint, takeover,
-process-wide Core uniqueness, or exactly-once authority.
+adapter to the standalone SafetyState journal, host/AppCore/ABCI/node wiring,
+recovery remint, takeover, process-wide Core uniqueness, or exactly-once
+authority.
 
-The exact process-local integrity labels used by this foundation are:
+The exact node-local integrity labels used by this foundation are:
 
 ```text
 trnm.native-validation-reservation.hash.v0          // raw SHA-256 prefix
@@ -656,6 +721,12 @@ trnm.consensus-app.validation-callback-outbox-row.v0  // hash_domain
 trnm.consensus-core.safety-state-layout.v0             // hash_domain
 trnm.consensus-core.safety-state-config.v0             // hash_domain
 trnm.consensus-core.safety-state-record.v0             // hash_domain
+trnm.consensus-safety-store.transition-context.v0       // hash_domain
+trnm.consensus-safety-store.metadata.v0                 // hash_domain
+trnm.consensus-safety-store.record-chain.v0             // hash_domain
+trnm.consensus-safety-store.head.v0                     // hash_domain
+trnm.consensus-safety-store.halt.v0                     // hash_domain
+trnm.consensus-safety-store.lock.v0                     // hash_domain
 ```
 
 These are node-local integrity/congruence labels, not consensus signature or
@@ -663,8 +734,11 @@ wire-object domains. The v7 artifact/callback records and the v8 delivery-row
 state binding use the application labels only as local corruption and
 congruence checks. The three Core labels bind the exact epoch-zero schema-v7
 SafetyState codec layout, its trusted configuration/profile/limits, and one
-canonical record respectively; they provide no WAL freshness or rollback
-authority.
+canonical record. The six safety-store labels bind the transition context,
+journal metadata, record predecessor chain, active head, durable halt, and the
+Stable/HeadIntent slots plus terminal-halt latch respectively. These local checksums are not an
+external monotonic watermark and therefore do not prove freshness against
+rollback of the complete journal namespace.
 The artifact and callback records use the fixed codec
 labels `trnm.native-validation.invalid-artifact.v0` and
 `trnm.native-validation.invalid-callback.v0`; both remain application-local
@@ -754,7 +828,8 @@ with callback-outbox intent, but its transaction does not itself call Core.
 Schema v8 adds the fixed-store/owned-Core/injected-test-sink driver and
 writable process-local delivery/ack chain described above. It maps `Proposal`
 only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but
-does not supply production SafetyState WAL durability or recovery authority. The
+is not wired to the standalone SafetyState journal and supplies no production
+recovery authority. The
 `Valid` validation-time artifact/outbox boundary remains open. The distinct Finalize-
 time atomic boundary still must revalidate exact authority and atomically
 couple JMT/domain apply, root/native-head persistence, head advancement, and

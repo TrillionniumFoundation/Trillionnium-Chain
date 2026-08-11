@@ -31,8 +31,9 @@ pub use crate::model::{
     DurableValidatedBlockCommitmentsV1, Effect, FinalizedTip, Input, InvalidPayloadReference,
     OutboundMessage, PayloadTerminalFact, PayloadTerminalResult, PayloadValidationParentV0,
     PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0,
-    PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState, SignId, SignIntent,
-    SignKind, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
+    PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState,
+    SafetyStatePersistenceBindingV0, SafetyStatePersistenceV0, SignId, SignIntent, SignKind,
+    ValidationId, SAFETY_STATE_SCHEMA_VERSION,
 };
 pub use crate::safety_state_record::{
     decode_safety_state_record_v0_exact, encode_safety_state_record_v0,

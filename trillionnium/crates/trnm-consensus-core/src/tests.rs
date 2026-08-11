@@ -671,9 +671,45 @@ fn valid_result_for_effect(
 
 fn persistence_effect(effects: &[Effect]) -> (BarrierId, SafetyState) {
     match effects {
-        [Effect::PersistSafetyState { barrier, state }] => (*barrier, state.as_ref().clone()),
+        [Effect::PersistSafetyState(request)] => (request.barrier(), request.state().clone()),
         _ => panic!("expected exactly one persistence effect: {effects:?}"),
     }
+}
+
+#[test]
+fn persistence_effects_are_affined_to_the_issuing_core_instance() {
+    let (config, mut core) = configured_core();
+    let previous = core.safety_state().clone();
+    let binding = core.safety_state_persistence_binding_v0();
+    let mut public_clone = core.clone();
+    let clone_binding = public_clone.safety_state_persistence_binding_v0();
+    let input = Input::LocalTimeout {
+        epoch: Epoch::new(0),
+        view: previous.current_view(),
+    };
+
+    let original_effects = core
+        .step(input.clone(), &RootSignatures)
+        .expect("the designated Core emits its persistence request");
+    let clone_effects = public_clone
+        .step(input, &RootSignatures)
+        .expect("the public clone emits an otherwise equal persistence request");
+    assert_eq!(original_effects, clone_effects);
+
+    let [Effect::PersistSafetyState(original)] = original_effects.as_slice() else {
+        panic!("designated Core emitted a non-persistence effect: {original_effects:?}");
+    };
+    let [Effect::PersistSafetyState(cloned)] = clone_effects.as_slice() else {
+        panic!("cloned Core emitted a non-persistence effect: {clone_effects:?}");
+    };
+    assert!(binding.accepts(original));
+    assert!(!binding.accepts(cloned));
+    assert!(clone_binding.accepts(cloned));
+    assert!(!clone_binding.accepts(original));
+    let retry = (*original).clone();
+    assert!(binding.accepts(&retry));
+    Core::validate_persisted_successor_v0(&config, &previous, original.state(), &RootSignatures)
+        .expect("a successful internal transactional clone preserves Core affinity and history");
 }
 
 fn conflicting_qc_halt_persistence(
@@ -682,14 +718,13 @@ fn conflicting_qc_halt_persistence(
     expected_second: &QuorumCertificate,
 ) -> (BarrierId, SafetyState) {
     assert!(
-        effects.iter().all(|effect| matches!(
-            effect,
-            Effect::PersistSafetyState { .. } | Effect::Evidence(_)
-        )),
+        effects
+            .iter()
+            .all(|effect| matches!(effect, Effect::PersistSafetyState(_) | Effect::Evidence(_))),
         "a QC-conflict step may expose only persistence plus diagnostic evidence: {effects:?}"
     );
     let mut persisted = effects.iter().filter_map(|effect| match effect {
-        Effect::PersistSafetyState { barrier, state } => Some((*barrier, state.as_ref().clone())),
+        Effect::PersistSafetyState(request) => Some((request.barrier(), request.state().clone())),
         _ => None,
     });
     let (barrier, state) = persisted
@@ -768,7 +803,7 @@ fn replay_valid(core: &mut Core, proposal: SignedProposalV0) {
 
 fn release_persisted_effects(core: &mut Core, effects: Vec<Effect>) -> Vec<Effect> {
     let barrier = effects.iter().find_map(|effect| match effect {
-        Effect::PersistSafetyState { barrier, .. } => Some(*barrier),
+        Effect::PersistSafetyState(request) => Some(request.barrier()),
         _ => None,
     });
     match barrier {
@@ -1245,6 +1280,116 @@ fn persisted_state_with_qcs<H: IntoQcReference, L: IntoQcReference>(
         state.pending_finalize(),
         state.safety_halt().cloned(),
     )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn persisted_state_with_outbox_fields(
+    state: &SafetyState,
+    current_view: View,
+    last_voted_view: Option<View>,
+    last_timeout_view: Option<View>,
+    revision: u64,
+    pending_sign: Option<SignIntent>,
+    pending_finalize: Option<CertificateId>,
+) -> SafetyState {
+    SafetyState::from_persisted_parts(
+        state.schema_version(),
+        state.chain_id(),
+        state.protocol_version(),
+        state.epoch(),
+        state.validator_set_id(),
+        state.genesis_block_id(),
+        current_view,
+        last_voted_view,
+        last_timeout_view,
+        state.high_qc().clone(),
+        state.locked_qc().clone(),
+        state.finalized(),
+        revision,
+        state.payload_terminal_facts().to_vec(),
+        state.payload_validation_obligations().to_vec(),
+        state.payload_validation_completions().to_vec(),
+        state.pending_tc_high_qc_sync().cloned(),
+        state.pending_standalone_qc_sync().cloned(),
+        pending_sign,
+        state.last_finalization().cloned(),
+        pending_finalize,
+        state.safety_halt().cloned(),
+    )
+}
+
+#[test]
+fn persisted_successor_rejects_a_reintroduced_signing_outbox() {
+    let (config, core) = configured_core();
+    let genesis = core.safety_state();
+    let view = genesis.current_view();
+    let previous = persisted_state_with_outbox_fields(
+        genesis,
+        view,
+        None,
+        Some(view),
+        genesis.revision().checked_add(1).unwrap(),
+        None,
+        None,
+    );
+    Core::validate_persisted_state_v0(&config, &previous, &RootSignatures)
+        .expect("a previously completed timeout signing watermark is a valid inert state");
+    let signing_root = TimeoutVote::signing_root_for_set(
+        config.validator_set(),
+        view,
+        previous.high_qc().qc_ref(),
+    )
+    .expect("derive timeout signing root");
+    let current = persisted_state_with_outbox_fields(
+        &previous,
+        view,
+        None,
+        Some(view),
+        previous.revision().checked_add(1).unwrap(),
+        Some(SignIntent::TimeoutVote {
+            view,
+            high_qc: previous.high_qc().qc_ref(),
+            signing_root,
+        }),
+        None,
+    );
+    Core::validate_persisted_state_v0(&config, &current, &RootSignatures)
+        .expect("the spliced state is self-consistent in isolation");
+    assert_eq!(
+        Core::validate_persisted_successor_v0(&config, &previous, &current, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "pending signing intent was introduced without advancing its watermark",
+        ))
+    );
+}
+
+#[test]
+fn persisted_successor_rejects_a_reintroduced_finalization_outbox() {
+    let (config, mut core) = configured_core();
+    finalize_height_one(&mut core);
+    let previous = core.safety_state().clone();
+    assert!(previous.pending_finalize().is_none());
+    let proof_id = previous
+        .last_finalization()
+        .expect("height-one finality retains its permanent proof")
+        .proof_id();
+    let current = persisted_state_with_outbox_fields(
+        &previous,
+        previous.current_view(),
+        previous.last_voted_view(),
+        previous.last_timeout_view(),
+        previous.revision().checked_add(1).unwrap(),
+        previous.pending_sign().cloned(),
+        Some(proof_id),
+    );
+    Core::validate_persisted_state_v0(&config, &current, &RootSignatures)
+        .expect("the spliced finalization outbox is self-consistent in isolation");
+    assert_eq!(
+        Core::validate_persisted_successor_v0(&config, &previous, &current, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "finalization outbox was introduced without a new permanent finalization",
+        ))
+    );
 }
 
 fn decoded_state_with_validation_records(
@@ -2082,9 +2227,9 @@ fn same_view_competitor_at_finalized_height_halts_before_subsumption_and_recover
         .expect("durable proof QC detects the conflict even during recovery replay");
     assert!(recovered_effects.iter().any(|effect| matches!(
         effect,
-        Effect::PersistSafetyState { state, .. }
+        Effect::PersistSafetyState(request)
             if matches!(
-                state.safety_halt(),
+                request.state().safety_halt(),
                 Some(SafetyHalt::ConflictingQuorumCertificates { .. })
             )
     )));
@@ -2095,8 +2240,8 @@ fn same_view_competitor_at_finalized_height_halts_before_subsumption_and_recover
     let (barrier, halted) = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { barrier, state } => {
-                Some((*barrier, state.as_ref().clone()))
+            Effect::PersistSafetyState(request) => {
+                Some((request.barrier(), request.state().clone()))
             }
             _ => None,
         })
@@ -2144,7 +2289,7 @@ fn two_historical_qcs_from_one_later_view_halt_on_the_second_arrival() {
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("historical same-view conflict persists before subsumption");
@@ -2345,7 +2490,7 @@ fn tc_reference_conflict_halts_before_subsumed_view_progress() {
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("TC reference conflict is durable");
@@ -2745,7 +2890,7 @@ fn carrier_and_direct_qc_orders_preserve_the_first_exact_active_and_canonical_ba
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("the conflicting arrival persists its halt");
@@ -3007,7 +3152,7 @@ fn pending_sign_allows_authenticated_carrier_and_direct_tc_conflicts_to_halt() {
     let carrier_halt = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("carrier conflict persists its halt");
@@ -3029,7 +3174,7 @@ fn pending_sign_allows_authenticated_carrier_and_direct_tc_conflicts_to_halt() {
     let direct_tc_halt = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("direct TC conflict persists its halt");
@@ -3078,7 +3223,7 @@ fn pending_finalize_allows_authenticated_carrier_conflict_to_halt() {
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("pending-finalize conflict persists its halt");
@@ -3110,7 +3255,7 @@ fn recovered_replay_carrier_conflict_halts_before_stale_height_rejection() {
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("replay conflict persists its halt");
@@ -6466,7 +6611,7 @@ fn pending_timeout_sync_target_is_idempotent_and_same_view_conflicts_halt() {
     let halted = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { state, .. } => Some(state.as_ref()),
+            Effect::PersistSafetyState(request) => Some(request.state()),
             _ => None,
         })
         .expect("conflicting TC persists a fail-stop witness");
@@ -7222,8 +7367,8 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
     let (barrier, state) = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { barrier, state } => {
-                Some((*barrier, state.as_ref().clone()))
+            Effect::PersistSafetyState(request) => {
+                Some((request.barrier(), request.state().clone()))
             }
             _ => None,
         })
@@ -7377,8 +7522,8 @@ fn duplicate_block_justifications_keep_the_first_exact_witness_for_locking() {
     let (barrier, state) = effects
         .iter()
         .find_map(|effect| match effect {
-            Effect::PersistSafetyState { barrier, state } => {
-                Some((*barrier, state.as_ref().clone()))
+            Effect::PersistSafetyState(request) => {
+                Some((request.barrier(), request.state().clone()))
             }
             _ => None,
         })

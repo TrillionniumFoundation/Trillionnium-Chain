@@ -21,12 +21,41 @@ run_unit_filter() {
     -p "$package" --lib "$filter" -- --test-threads=1
 }
 
+run_integration_filter() {
+  local package="$1"
+  local target="$2"
+  local filter="$3"
+  local listed
+
+  listed="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --test "$target" "$filter" -- --list)"
+  if ! grep -Fq -- "$filter" <<<"$listed"; then
+    printf 'recovery smoke filter matched no test: package=%s target=%s filter=%s\n' \
+      "$package" "$target" "$filter" >&2
+    exit 2
+  fi
+  cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --test "$target" "$filter" -- --test-threads=1
+}
+
 run_unit_filter trnm-consensus-core \
   recovery_with_a_claimed_durable_validation_fails_closed_without_reopening_it
 run_unit_filter trnm-consensus-core \
   persisted_sign_intent_is_re_requested_after_recovery
 run_unit_filter trnm-consensus-core \
   durable_valid_fact_still_requires_body_and_context_readiness_after_recovery
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  initializes_reads_head_and_reopens_exactly
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  exact_retries_preserve_two_revision_retention_and_reopen_head
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  persistence_requires_the_one_designated_core_affinity
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  same_revision_different_valid_context_durably_halts
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  revision_gap_durably_halts_and_survives_reopen
+run_integration_filter trnm-consensus-safety-store sqlite_store \
+  raw_sqlite_accounting_head_and_record_tampering_is_rejected_on_reopen
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
@@ -81,4 +110,4 @@ run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 
 printf '%s\n' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-validation-job-recovery-integrity-outbox-delivery-states-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-validation-job-recovery-integrity-outbox-delivery-states-snapshot'
