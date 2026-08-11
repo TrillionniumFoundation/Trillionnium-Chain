@@ -15,12 +15,12 @@ callback driver with authenticated obligation replay and crash takeover,
 ordered ancestor finalization queue,
 BlockId-keyed speculative overlay, and strict separation of consensus
 parameters from local backpressure. The local validation journal now has a
-narrow process-local deterministic-invalid delivery/ack integration: a
-non-cloneable app-private driver fixes one store, owned Core instance, and
-injected test sink while exercising real `Core::step`, `delivered`, exact-state
-confirmation, `acked`, and `StorageAck`. This is not a production constructor,
-adapter to the standalone safety journal, recovery remint, host wiring, or
-process-wide exactly-once contract.
+narrow deterministic-invalid delivery/ack path and an existing-only schema-v8
+recovery facade. Its recovery owner admits only `CallbackPending`, `Delivered`,
+and `Acked` rows after complete store validation; `Reserved`, `Evaluated`,
+`Applied`, `Valid`, `Unavailable`, and unknown states/results fail closed. This
+is not a fresh executor, general result replay mechanism, production callback
+scheduler, or process-wide exactly-once contract.
 
 The exact bounded SafetyState representation and standalone local-journal slices
 are now present separately. Record codec v0 covers epoch-zero Core SafetyState
@@ -37,9 +37,30 @@ two-revision predecessor chain, separately aligned Stable/HeadIntent head
 slots, and an independent one-way terminal-halt latch. Metadata binds the exact Core
 configuration/profile and record/blob/database limits. Every head and
 successor is decoded and semantically/cryptographically revalidated; an
-obligation-bearing head remains inert and `Core::recover` still refuses it.
-Core persistence is now an opaque Core-issued request with a process-local
-designated-Core affinity boundary.
+obligation-bearing head remains inert and ordinary `Core::recover` still
+refuses it. A separate non-cloneable, inert recovery session can challenge
+exactly one durable obligation and release a Core only after a trusted host
+reconciles the complete application record as already
+`DeterministicallyInvalid`; concurrent obligations and all other outcomes stay
+unsupported. Core persistence is an opaque Core-issued request with a
+process-local designated-Core affinity boundary.
+
+SafetyStore now exposes a concrete, non-cloneable
+`ConfirmedNativeDeterministicInvalidHeadV0` only after the complete `head()`
+validation path confirms the exact native-invalid context. It has read-only
+state/context/revision/checksum accessors, no public constructor or parts
+conversion, and implements no application/Core authority trait. It grants no
+standalone or general transition authority; the bounded production application
+recovery API accepts it only as a required provenance input when the pinned
+manifest and exact existing `Delivered`/`Acked` row also match. The API checks
+its issuing journal/profile, and the node supplies those expected values from
+the SafetyStore it actually owns, with no detached confirmation trait. A
+fixed checksummed sidecar manifest is created once before the first supported
+fixture row, fsynced with its parent, and binds the App host configuration to
+that journal/profile. Recovery requires and pins the exact manifest identity
+and bytes, so each restart cannot nominate a different real journal. The
+manifest remains a local binding, not protection against cloning or rolling
+back the complete namespace.
 
 The complete `CanonicalSignIntentV0` now freezes its first durable SafetyState
 revision, has strict bounded Vote/Timeout decoding, and is fixed by independent
@@ -47,12 +68,17 @@ Python/Rust bytes, signing-root, and fingerprint vectors. The separate
 `trnm-consensus-signer-journal` provides an append-only SQLite intent/signature
 event chain, exact replay, strict per-kind view and SafetyState-revision
 watermarks, and a mandatory external monotonic CAS interface. The inert
-`trnm-poco-node` owner holds Core, SafetyStore, and this journal together, but
-has no signature producer or effect driver.
+`trnm-poco-node` owner now opens the application, SafetyState, and signer
+journals and performs only a bounded deterministic-invalid join. In shorthand,
+the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`: one Core obligation with
+an application `CallbackPending` or `Delivered` row, or one Core completion
+with an application `Delivered` or `Acked` row. The host stays inert after the
+join and has no signature producer or general effect driver.
 
-This does not close production driver/journal wiring, authenticated obligation
-replay/takeover, full HotStuff SafetyRules/locked-QC persistence, signer-to-
-SafetyState reconciliation, or the ordered finalization-queue contract. The
+This does not close general authenticated obligation/result takeover, fresh
+execution, BlockId-keyed speculative overlays, production driver/journal
+wiring, full HotStuff SafetyRules/locked-QC persistence, signer-to-SafetyState
+reconciliation, or the ordered finalization-queue contract. The
 external watermark is an interface only and has no production HSM/KMS/monotonic
 implementation; it also does not bind the complete SafetyState head. Therefore
 the signer journal alone cannot close whole-SafetyStore rollback safety.
@@ -60,7 +86,15 @@ NFS/SMB/FUSE/overlay filesystems,
 fork-after-open, untrusted same-EUID processes, and process-wide Core uniqueness
 are not certified. Interrupted first initialization is fail-closed but still
 requires operator cleanup of the partial namespace rather than automatic
-resume or repair.
+resume or repair. The application recovery facade acquires the exclusive side
+of a shared/exclusive sidecar lock, pins the owner PID plus canonical parent,
+lock, main-database, and Safety-binding identities for its lifetime, and scans
+the complete supported/active row set before the node joins it. Parent, main,
+lock, manifest, and existing WAL/SHM objects must be owner-bound and not
+group/world writable; the three canonical store parents must be distinct and
+non-nested. WAL/SHM inodes remain SQLite-managed, hostile same-EUID bypass is
+outside this local Linux contract, and no real process kill-point matrix,
+general network/effect driver, or state-sync recovery join has been completed.
 
 The normative documents in this directory remain ahead of the complete Rust
 implementation. `trnm-consensus-types`, `trnm-consensus-core`, and
@@ -1225,12 +1259,14 @@ epoch prune, and Core transition remain open.
    revision so an exact callback write cannot change the signer contract after
    crash/restart. `Core::recover` rejects schemas v5 through v7; there is no
    implicit migration to schema v8 in the model layer.
-   Recovery validates every schema-v8 obligation and inert completion and then
-   rejects a non-empty obligation set with `InvalidRecovery`; it does not
-   reissue pending validation. Schemas v5 through v7 are not implicitly migrated.
-   Completion-only recovery suppresses exact result replay, but this closes
-   durable pre-effect capture, cleanup ordering, and callback-result
-   idempotence only, not crash replay/liveness, type-level callback authority,
+   Ordinary `Core::recover` validates every schema-v8 obligation and inert
+   completion and then rejects a non-empty obligation set with
+   `InvalidRecovery`; that entry does not reissue pending validation. The
+   separate G1c one-obligation recovery session is the only bounded
+   authenticated-ticket exception and admits only a reconciled
+   deterministic-invalid result. Schemas v5 through v7 are not implicitly
+   migrated. Completion-only ordinary recovery suppresses exact result replay,
+   but this does not provide general crash replay/liveness, callback authority,
    or callback exactly-once.
 
    Core persistence effects now carry an opaque `SafetyStatePersistenceV0`
@@ -1258,11 +1294,19 @@ epoch prune, and Core transition remain open.
    cryptographically/semantically validated, and checked as an exact monotonic
    successor before acceptance. The returned head remains inert; it explicitly
    reports when authenticated obligation replay is required and does not make
-   `Core::recover` accept obligations.
+   ordinary `Core::recover` accept obligations. Its concrete non-cloneable
+   native-invalid exact-readback token grants no detached or general
+   callback/Core/application authority. It is a bounded bearer proof: the
+   application recovery API may use it for `C+D`/`C+K` only when the durable
+   local manifest and the exact existing row independently match its complete
+   provenance and transition lineage. The separate Core recovery session
+   admits exactly one reconciled deterministic-invalid obligation without
+   changing the ordinary entry.
 
    This store is deliberately excluded from AppHash, application snapshots,
-   and peer state-sync replacement. It has no production AppCore/node/ABCI
-   owner or callback-driver adapter and no authenticated obligation replay or
+   and peer state-sync replacement. The inert G1c node owns it only for the
+   bounded three-store deterministic-invalid recovery matrix; there is no
+   production AppCore/ABCI effect driver, general obligation/result replay, or
    full crash takeover. The separate signer journal is not a complete
    SafetyRules service and does not bind locked-QC state. The safety store cannot detect
    rollback of the complete database/WAL/sidecar namespace without an
@@ -1343,12 +1387,11 @@ epoch prune, and Core transition remain open.
    designated Core's affinity plus its exact barrier/state, writes `delivered`,
    confirms that state through the same sink, writes `acked`, and only then
    calls `StorageAck`; completion-only replay is disabled and the
-   post-ack Core state/effect set is checked exactly. There is no production
-   driver constructor, adapter to the standalone SafetyState journal, generic
-   recovery remint, host/AppCore/ABCI/node wiring, crash takeover, or process-wide Core
-   uniqueness/exactly-once guarantee. Rows loaded from recovery remain inert
-   integrity facts and are not evidence that a new process owns delivery
-   authority.
+   post-ack Core state/effect set is checked exactly. G1c separately binds
+   existing deterministic-invalid rows to a concrete SafetyStore readback in
+   the inert node. There is no production driver constructor, fresh execution,
+   generic result recovery, host/AppCore/ABCI network wiring, real-process kill
+   matrix, or process-wide Core uniqueness/exactly-once guarantee.
 
    The initialized `AppCore` can now privately lend that carrier one canonical
    signer-policy preimage after its commitment matches both store metadata and
@@ -1935,8 +1978,9 @@ epoch prune, and Core transition remain open.
    non-cloneable process-local driver which fixes one store, owned Core, and
    injected test sink, carries only the first-seal deterministic-invalid owner through real
    `Core::step`, writes both states in order, and issues `StorageAck` only after
-   exact sink confirmation. No production constructor, adapter to the
-   standalone SafetyState journal, recovery remint, or takeover path exists. A
+   exact sink confirmation. A separate G1c existing-only path now performs the
+   bounded deterministic-invalid three-store join; no production constructor,
+   fresh executor, general recovery remint, or other result takeover exists. A
    private inert app-owned
    durable physical-plan codec now covers
    the exact persistence-bearing JMT fields. It pins each `NodeKey`/`Node` to

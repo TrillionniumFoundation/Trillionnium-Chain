@@ -6,9 +6,11 @@
 //! chain, exact active-head readback, and two-revision retention around Core's
 //! inert schema-8 record codec.
 //!
-//! Stored records and transition contexts remain comparison facts. They never
-//! mint validation, callback, signing, finalization, or obligation-replay
-//! authority. The journal also cannot detect an adversary restoring the whole
+//! Stored records and transition contexts remain comparison facts. A dedicated
+//! non-cloneable exact-readback capability can attest that the fully validated
+//! active head carries a native deterministic-invalid context, but it never
+//! mints application, callback, Core, signing, finalization, or obligation-
+//! replay authority by itself. The journal also cannot detect an adversary restoring the whole
 //! database, persistent WAL, and lock sidecar to an older self-consistent
 //! image; a production host must cross-check an independent monotonic
 //! signer/host watermark.
@@ -28,8 +30,8 @@ mod transition_context;
 
 pub use error::{SafetyStoreConflictV0, SafetyStoreErrorV0};
 pub use sqlite::{
-    RecoveredSafetyStateV0, SafetyPersistDispositionV0, SafetyStateStoreProfileV0,
-    SqliteSafetyStateStoreV0,
+    ConfirmedNativeDeterministicInvalidHeadV0, RecoveredSafetyStateV0, SafetyPersistDispositionV0,
+    SafetyStateStoreProfileV0, SqliteSafetyStateStoreV0,
 };
 pub use transition_context::{
     decode_transition_context_v0_exact, encode_transition_context_v0,

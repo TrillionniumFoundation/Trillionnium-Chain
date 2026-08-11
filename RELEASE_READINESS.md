@@ -34,10 +34,12 @@ cached tracking ref contemporaneous.
   current working tranche: an inert non-legacy host owns Core, SafetyStore, and
   an append-only signer journal; canonical Vote/Timeout intents have strict
   decoding and frozen cross-implementation vectors. This is not a running
-  node, signer, complete SafetyRules service, or release gate pass. Application
-  ownership, obligation takeover, fork execution, ordered finalization,
-  locked-QC rollback protection, state sync, networking, and kill-matrix
-  evidence remain open.
+  node, signer, complete SafetyRules service, or release gate pass. A bounded
+  existing-only deterministic-invalid `O+P/O+D/C+D/C+K` recovery owner is now
+  present, including durable Safety-journal nomination; general `Valid`/
+  `Unavailable` takeover, fresh execution, fork execution, ordered
+  finalization, locked-QC rollback protection, state sync, networking, and
+  real-process kill-matrix evidence remain open.
 
 ### 2026-08-04 PoCO-BFT target truth
 

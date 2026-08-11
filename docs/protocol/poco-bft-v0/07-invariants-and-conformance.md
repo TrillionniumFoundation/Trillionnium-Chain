@@ -650,9 +650,12 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   opposite-route, result, source, and inert-`Valid`-comparison splices fail
   closed; `Unavailable` completes only one generation, and a later generation
   for the same block remains admissible;
-- recovery validates schema-v8 obligations and inert completions but rejects any
-  non-empty obligation set rather than reissuing it; safety halt clears every
-  obligation while retaining prior completions in the same durable revision;
+- ordinary `Core::recover` validates schema-v8 obligations and inert
+  completions but rejects any non-empty obligation set rather than reissuing
+  it; the separate G1c one-obligation session is the sole bounded
+  authenticated-ticket exception and admits only a reconciled
+  deterministic-invalid result; safety halt clears every obligation while
+  retaining prior completions in the same durable revision;
 - the active-v0 success-only receipt policy: every one of the 21 exhaustive
   deterministic runtime transaction rejects invalidates the whole block and
   produces no receipt or mutation, while each of the 7 authenticated-state or
@@ -768,13 +771,17 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   completion eviction MUST NOT occur, registration MUST reserve the future
   completion slot, and `completions + obligations` MUST NOT exceed
   authenticated `max_observed_messages`;
-- recovery MUST validate every schema-v8 obligation and inert completion and then
-  reject a non-empty obligation set with `InvalidRecovery`; it MUST NOT reissue
-  pending validation without an authenticated replay ticket, and safety-state
-  schemas v5 through v7 MUST NOT be implicitly migrated; completion-only recovery MAY
-  suppress an exact same-result replay but Core cleanup/completion MUST NOT be
-  represented as type-level callback authority, host callback-outbox delivery
-  acknowledgement, or callback exactly-once;
+- ordinary `Core::recover` MUST validate every schema-v8 obligation and inert
+  completion and then reject a non-empty obligation set with
+  `InvalidRecovery`; that entry MUST NOT reissue pending validation. The
+  separate G1c recovery session is the only current authenticated replay-ticket
+  path: it MUST accept exactly one obligation, MUST remain inert until trusted
+  reconciliation, and MUST admit only the exact route-bound
+  deterministic-invalid result. Safety-state schemas v5 through v7 MUST NOT be
+  implicitly migrated. Completion-only ordinary recovery MAY suppress an exact
+  same-result replay, but Core cleanup/completion MUST NOT be represented as
+  general callback authority, host callback-outbox delivery acknowledgement,
+  or callback exactly-once;
 - SafetyState record codec v0 MUST encode only epoch-zero Core `SafetyState`
   schema v8 and MUST reject every other SafetyState schema, non-zero epoch, and
   epoch-anchor branch; the outer record MUST bind magic, codec version zero,
@@ -832,11 +839,27 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
 - a journal head containing validation obligations MAY be decoded and fully
   validated as an inert durable fact and MUST report that authenticated replay
   is required. It MUST NOT mint obligation, callback, signing, finalization, or
-  recovery authority, and `Core::recover` MUST continue to reject such a head
-  until authenticated obligation replay exists. A production host MUST NOT
-  issue `StorageAck` merely because bytes encode/decode or a journal write
-  succeeds; the request must remain bound to the designated Core and the rest
-  of the host persistence protocol;
+  recovery authority, and ordinary `Core::recover` MUST continue to reject such
+  a head. The separate G1c recovery entry MUST be inert and non-cloneable, MUST
+  accept exactly one durable obligation, MUST expose no Core before
+  reconciliation, and MAY activate only after the trusted host matches the
+  complete challenge to an existing, deeply verified
+  `DeterministicallyInvalid` application row. Multiple obligations, every other
+  result class, omission, duplicate identity, or field mismatch MUST fail
+  closed. A production host MUST NOT issue `StorageAck` merely because bytes
+  encode/decode or a journal write succeeds; the request must remain bound to
+  the designated Core and the rest of the host persistence protocol;
+- the SafetyStore native-invalid exact-readback capability MUST be a concrete,
+  non-cloneable type with no public constructor or parts conversion. Only the
+  complete authenticated `head()` path MAY issue it, and only when the exact
+  transition context is native deterministic-invalid. Its state, context,
+  transition, revision, and checksum accessors MUST be read-only; the concrete
+  capability MUST NOT implement an authority trait or authorize any callback,
+  Core transition, or general application transition by itself. The bounded
+  application recovery facade MAY accept it only as a required provenance
+  input when the pinned local manifest names the same journal/profile and the
+  exact existing `Delivered`/`Acked` row and full transition lineage also
+  match. An Ordinary or mismatched/tampered head MUST produce no capability;
 - journal v2 MUST be described as a local Linux filesystem boundary only. It
   does not prove freshness if an adversary restores the complete database,
   persistent WAL, and lock sidecar to an older self-consistent image; a
@@ -890,6 +913,25 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   unsupported invalid reason, `Unavailable`, and invariant results; a deeply
   verified `delivered` or `acked` recovery row alone MUST NOT mint a live
   callback owner, reconstruct Core authority, or permit job takeover;
+- the G1c application recovery owner MUST open an existing exact schema-v8
+  database only, MUST deeply validate the complete journal, and MUST admit only
+  deterministic-invalid `callback_pending`, `delivered`, and `acked` rows.
+  `reserved`, `evaluated`, `applied`, `Valid`, `Unavailable`, unknown state/
+  result tags, duplicates, and active-set ambiguity MUST fail closed. Recovered
+  writable authority MUST remain behind the one non-cloneable store-affine
+  facade; inert row facts alone MUST NOT recreate it. Before the first
+  supported row, a create-once, checksummed and parent-synced local manifest
+  MUST bind the App host configuration to the designated Safety journal and
+  verifier profile. Recovery MUST require, exact-decode, identity-pin, and
+  byte-pin that manifest before opening SQLite work, and MUST reject a missing,
+  tampered, replaced, or differently nominated binding;
+- the G1c node join MUST own the existing application, SafetyState, and signer
+  stores and MUST remain bounded to `O+P`, `O+D`, `C+D`, and `C+K`: exactly one
+  obligation with `CallbackPending` or `Delivered`, or exactly one current
+  deterministic-invalid completion with `Delivered` or `Acked`. Context,
+  active-count, identity, lineage, accepted-revision, exact-readback, or
+  acknowledgement mismatch MUST fail closed. Successful join MUST remain inert
+  and MUST NOT sign, broadcast, schedule, or claim deployment readiness;
 - the process-local deterministic-invalid delivery path MUST consume only the
   live owner retained by the first successful deterministic-invalid seal; its
   app-private, non-cloneable driver MUST keep one designated store, one owned
@@ -928,6 +970,22 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   recovery fact: it MUST bind a height-one epoch-zero regular target to the
   target genesis hash, while the trusted genesis timestamp/hash authority
   remains Core-owned and MUST be reauthenticated before executable takeover;
+- G1c MUST NOT be described as general validation recovery. Fresh execution,
+  `Reserved`, `Evaluated`, `Applied`, `Valid`, and `Unavailable` takeover, a
+  BlockId-keyed speculative overlay, ordered finalization, a general effect
+  driver/network, state-sync recovery, and a real-process kill-point matrix
+  remain unimplemented. The application recovery facade MUST take an exclusive
+  sidecar lock that excludes every ordinary shared owner, pin the owner PID and
+  canonical parent/lock/main-database/manifest identities for its lifetime, and
+  audit the complete supported/active row set before reconciliation. Parent,
+  main database, lock, manifest, and any existing WAL/SHM object MUST have the
+  expected owner and MUST NOT be group/world writable; Safety, signer, and App
+  parents MUST be canonical and pairwise non-overlapping, including ancestor/
+  descendant relationships. This remains a local Linux contract: WAL/SHM
+  inodes are SQLite-managed and hostile same-EUID bypass is not certified.
+  Whole-namespace rollback/clone protection remains open
+  until a production independent monotonic boundary is bound to the complete
+  startup/signing contract;
 - validation-job admission MUST use an atomically maintained O(1) accounting
   singleton for row/request-byte capacity, while startup MUST independently
   compare it with real `COUNT`/`SUM` facts; accounting drift MUST fail closed,
@@ -944,9 +1002,11 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   authority, executable crash takeover, evidence from the separate SafetyState
   journal, or process-wide callback exactly-once evidence. The current writable
   delivery/ack path and real `Core::step` integration are process-local test
-  boundaries only: no production driver constructor, host/AppCore/ABCI/node
-  wiring, adapter to the standalone safety journal, or process-wide Core
-  uniqueness is implied;
+  boundaries only. The separate G1c node MAY join their exact existing
+  deterministic-invalid rows to the concrete SafetyStore capability only under
+  the bounded matrix above; neither path implies a production driver,
+  host/AppCore/ABCI network wiring, general recovery, or process-wide Core
+  uniqueness;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
   joined fact may escape unless explicit snapshot finish succeeds, and finish
@@ -1092,9 +1152,10 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `(route, full ValidationId)`. V7 closes the validation-time atomic boundary
   only for the two complete-body deterministic root mismatches. V8 adds the
   app-private process-local delivery writer, live-owner chain, real Core
-  driver, and injected test sink described above, but no production
-  constructor, adapter to the standalone SafetyState journal, recovery remint,
-  or takeover. A
+  driver, and injected test sink described above. G1c separately adds the
+  bounded existing-only deterministic-invalid SafetyStore/application/node
+  join, but no production constructor, fresh execution, general recovery
+  remint, or other result takeover. A
   revalidatable `Valid` artifact and callback-outbox intent remain open; the
   separate Finalize-
   time atomic boundary MUST revalidate exact authority and atomically couple
@@ -1102,8 +1163,9 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   state; authenticated replay tickets, completion retirement after durable
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
-  production callback-outbox scheduling/delivery, authenticated integration
-  with the standalone safety journal, and crash takeover,
+  production callback-outbox scheduling/delivery, general authenticated
+  integration with the standalone safety journal, and real-process crash
+  takeover,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.

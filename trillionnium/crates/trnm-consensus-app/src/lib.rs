@@ -66,6 +66,8 @@ mod poco_nullifier;
 mod poco_preparation_journal;
 mod poco_semantics;
 pub mod poco_snapshot;
+#[cfg(feature = "recovery-test-support")]
+mod recovery_test_support;
 // B2-H3a/H3b1 is crate-private: exact PoCO state is now sealed across the
 // production persistence and restore paths, while the authoritative runtime
 // mutation source and business authorization remain a later step.
@@ -77,6 +79,23 @@ mod store;
 mod validator_lifecycle;
 
 pub use poco_checkpoint::{PocoAuthorityConfigV0, POCO_AUTHORITY_CONFIG_SCHEMA_V0};
+#[cfg(test)]
+pub(crate) use store::native_validation_recovery::NativeValidationConfirmedInvalidTransitionV0;
+pub use store::native_validation_recovery::{
+    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
+    NativeValidationRecoveredInvalidReasonV0, NativeValidationRecoveredInvalidStateV0,
+    NativeValidationRecoveryOpenFailureV0, NativeValidationRecoveryReconcileFailureV0,
+    NativeValidationRecoveryStoreConfigV0, NativeValidationRecoveryStoreV0,
+    NativeValidationRecoveryTransitionFailureV0, NativeValidationRecoveryUnsupportedV0,
+};
+
+#[cfg(feature = "recovery-test-support")]
+pub use recovery_test_support::{
+    advance_native_validation_recovery_test_fixture_to_delivered_v0,
+    initialize_native_validation_recovery_test_fixture_v0,
+    NativeValidationRecoveryTestFixtureConfigV0, NativeValidationRecoveryTestFixtureErrorV0,
+    NativeValidationRecoveryTestFixtureStateV0, NativeValidationRecoveryTestFixtureV0,
+};
 
 #[cfg(feature = "scale-gate")]
 pub use persistent_scale::{

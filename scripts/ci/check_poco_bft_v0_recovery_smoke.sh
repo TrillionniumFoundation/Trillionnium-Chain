@@ -21,6 +21,23 @@ run_unit_filter() {
     -p "$package" --lib "$filter" -- --test-threads=1
 }
 
+run_feature_unit_filter() {
+  local package="$1"
+  local feature="$2"
+  local filter="$3"
+  local listed
+
+  listed="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --lib --features "$feature" "$filter" -- --list)"
+  if ! grep -Fq -- "$filter" <<<"$listed"; then
+    printf 'recovery smoke filter matched no test: package=%s feature=%s filter=%s\n' \
+      "$package" "$feature" "$filter" >&2
+    exit 2
+  fi
+  cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --lib --features "$feature" "$filter" -- --test-threads=1
+}
+
 run_integration_filter() {
   local package="$1"
   local target="$2"
@@ -40,6 +57,16 @@ run_integration_filter() {
 
 run_unit_filter trnm-consensus-core \
   recovery_with_a_claimed_durable_validation_fails_closed_without_reopening_it
+run_unit_filter trnm-consensus-core \
+  proposal_obligation_recovery_rebuilds_the_exact_target_before_invalid_callback
+run_unit_filter trnm-consensus-core \
+  synced_obligation_recovery_rebuilds_the_exact_route_and_witness
+run_unit_filter trnm-consensus-core \
+  recovered_invalid_completion_ack_releases_the_fence_back_to_safety_replay
+run_unit_filter trnm-consensus-core \
+  obligation_recovery_never_exposes_a_core_when_reconciliation_is_omitted
+run_unit_filter trnm-consensus-core \
+  obligation_recovery_rejects_tampered_duplicate_and_concurrent_records
 run_unit_filter trnm-consensus-core \
   persisted_sign_intent_is_re_requested_after_recovery
 run_unit_filter trnm-consensus-core \
@@ -124,6 +151,12 @@ run_unit_filter trnm-consensus-app \
   schema_v8_restart_rejects_evaluated_applied_and_valid_rows
 run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
+run_feature_unit_filter trnm-poco-node recovery-test-support \
+  strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k
 
 printf '%s\n' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-snapshot'
+  'validation_recovery=deterministic_invalid_existing_only' \
+  'process_kill_matrix=NOT_EVALUATED' \
+  'valid_recovery=not_implemented' \
+  'unavailable_recovery=not_implemented' \
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-snapshot'

@@ -25,6 +25,13 @@ pub enum SafetyStoreErrorV0 {
     CoreAlreadyBound,
     CoreNotBound,
     CoreAffinityMismatch,
+    MissingNativeDeterministicInvalidTransition {
+        revision: u64,
+    },
+    NativeDeterministicInvalidHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
     UnsupportedPlatform,
     Io {
         stage: &'static str,
@@ -102,6 +109,17 @@ impl fmt::Display for SafetyStoreErrorV0 {
             }
             Self::CoreAffinityMismatch => formatter
                 .write_str("safety-state persistence request came from a foreign Core instance"),
+            Self::MissingNativeDeterministicInvalidTransition { revision } => write!(
+                formatter,
+                "safety-state revision {revision} has no native deterministic-invalid transition"
+            ),
+            Self::NativeDeterministicInvalidHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "native deterministic-invalid head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
             Self::UnsupportedPlatform => {
                 formatter.write_str("safety-store lifetime locking is unsupported on this platform")
             }

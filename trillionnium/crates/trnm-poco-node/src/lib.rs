@@ -3,26 +3,32 @@
 //!
 //! This package is deliberately separate from the frozen legacy `trnm-node`
 //! harness. It is the first process-ownership boundary for one [`Core`] and
-//! one [`SqliteSafetyStateStoreV0`] plus one independent signer journal:
-//! construction or recovery keeps all three under one process-local owner,
-//! and none can be detached from the host through this API.
+//! one [`SqliteSafetyStateStoreV0`] plus one independent signer journal.
+//! The recovery-only owner added in G1c also owns one existing native
+//! application validation journal. Construction or recovery keeps every
+//! selected store under one process-local owner, and none can be detached from
+//! the host through this API.
 //!
-//! This is not an effect driver or a production node. In particular, this
-//! crate does not call `Core::step`, sign, broadcast, execute application
-//! payloads, finalize blocks, run a pacemaker, serve a network, or install
-//! state sync. The binary always exits non-zero. These omissions keep the
-//! scaffold inert until the frozen production contracts have real adapters;
-//! they must not be bypassed with the private CometBFT application fixture.
+//! This is not a general effect driver or a production node. Its recovery-only
+//! owner calls `Core::step` solely for one reconciled deterministic-invalid
+//! callback and its exact durable `StorageAck`; it does not sign, broadcast,
+//! execute fresh application payloads, finalize blocks, run a pacemaker, serve
+//! a network, or install state sync. The binary always exits non-zero. These
+//! omissions keep the scaffold inert until the frozen production contracts
+//! have real adapters; they must not be bypassed with the private CometBFT
+//! application fixture.
 //!
-//! The safety store and signer journal must live in distinct, already-existing
-//! canonical parent directories. This limits one directory replacement from
-//! replacing both local histories, but does not create an atomic transaction
-//! across either store or the external signer watermark. New initialization
-//! writes the safety store first and the signer journal second. A crash between
-//! those operations can therefore leave a safety-only namespace; any partial
-//! namespace fails closed on recovery and requires explicit operator
-//! quarantine or recovery. This scaffold deliberately does not reconcile the
-//! Core lock state, safety revision, and signer watermark across those stores.
+//! The safety store, signer journal, and optional application recovery store
+//! must live in non-overlapping, already-existing canonical parent
+//! directories. Equal, ancestor, and descendant parent namespaces are all
+//! refused. This limits one directory replacement from replacing several
+//! local histories, but does not create an atomic transaction across any store
+//! or the external signer watermark. New initialization writes the safety
+//! store first and the signer journal second. A crash between those operations
+//! can therefore leave a safety-only namespace; any partial namespace fails
+//! closed on recovery and requires explicit operator quarantine or recovery.
+//! This scaffold deliberately does not reconcile the Core lock state, safety
+//! revision, and signer watermark across those stores.
 
 use std::{
     error::Error,
@@ -31,10 +37,22 @@ use std::{
 };
 
 use sha2::{Digest, Sha256};
-use trnm_consensus_core::{Core, CoreConfig, SafetyState, SafetyStateRecordLimitsV0};
+use trnm_consensus_app::{
+    NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
+    NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryOpenFailureV0,
+    NativeValidationRecoveryReconcileFailureV0, NativeValidationRecoveryStoreConfigV0,
+    NativeValidationRecoveryStoreV0, NativeValidationRecoveryTransitionFailureV0,
+};
+use trnm_consensus_core::{
+    Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input, PayloadValidationResult,
+    PayloadValidationRouteV0, SafetyState, SafetyStatePersistenceV0, SafetyStateRecordLimitsV0,
+    ValidationId,
+};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_store::{
-    RecoveredSafetyStateV0, SafetyStateStoreProfileV0, SafetyStoreErrorV0, SqliteSafetyStateStoreV0,
+    ConfirmedNativeDeterministicInvalidHeadV0, NativeDeterministicInvalidTransitionV0,
+    RecoveredSafetyStateV0, SafetyStateStoreProfileV0, SafetyStoreErrorV0,
+    SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
 };
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, JournalCapacityV0, SignerJournalErrorV0, SignerJournalProfileV0,
@@ -77,7 +95,7 @@ pub enum UnwiredProductionContractV0 {
     CompleteHotstuffSafetyRules,
     SafetyStateSignerLockReconciliation,
     ApplicationStoreAdapter,
-    ApplicationValidationRecovery,
+    ApplicationValidationRecoveryBeyondDeterministicInvalid,
     BlockIdSpeculativeOverlay,
     OrderedFinalizationQueue,
     EffectDriver,
@@ -93,7 +111,9 @@ impl UnwiredProductionContractV0 {
             Self::CompleteHotstuffSafetyRules => "complete_hotstuff_safety_rules",
             Self::SafetyStateSignerLockReconciliation => "safety_state_signer_lock_reconciliation",
             Self::ApplicationStoreAdapter => "application_store_adapter",
-            Self::ApplicationValidationRecovery => "application_validation_recovery",
+            Self::ApplicationValidationRecoveryBeyondDeterministicInvalid => {
+                "application_validation_recovery_beyond_deterministic_invalid_v0"
+            }
             Self::BlockIdSpeculativeOverlay => "block_id_speculative_overlay",
             Self::OrderedFinalizationQueue => "ordered_finalization_queue",
             Self::EffectDriver => "core_effect_driver",
@@ -110,7 +130,7 @@ pub const UNWIRED_PRODUCTION_CONTRACTS_V0: &[UnwiredProductionContractV0] = &[
     UnwiredProductionContractV0::CompleteHotstuffSafetyRules,
     UnwiredProductionContractV0::SafetyStateSignerLockReconciliation,
     UnwiredProductionContractV0::ApplicationStoreAdapter,
-    UnwiredProductionContractV0::ApplicationValidationRecovery,
+    UnwiredProductionContractV0::ApplicationValidationRecoveryBeyondDeterministicInvalid,
     UnwiredProductionContractV0::BlockIdSpeculativeOverlay,
     UnwiredProductionContractV0::OrderedFinalizationQueue,
     UnwiredProductionContractV0::EffectDriver,
@@ -192,7 +212,7 @@ impl PocoNodeStartConfigV0 {
         if !signer_journal_parent.is_dir() {
             return Err(PocoNodeHostErrorV0::InvalidSignerJournalParent);
         }
-        if safety_store_parent == signer_journal_parent {
+        if canonical_parent_namespaces_overlap_v0(&safety_store_parent, &signer_journal_parent) {
             return Err(PocoNodeHostErrorV0::SharedStoreParentNamespace);
         }
         let safety_store_path = safety_store_parent.join(safety_store_file_name);
@@ -255,6 +275,80 @@ impl PocoNodeStartConfigV0 {
     }
 }
 
+/// Existing-only startup configuration for the bounded G1c validation
+/// recovery path.
+///
+/// The application status path is canonicalized only through its already-
+/// existing parent. The application facade separately derives and verifies
+/// its exact SQLite path before opening it. All three store parents must be
+/// non-overlapping canonical namespaces: equal, ancestor, and descendant
+/// parents are refused.
+#[derive(Debug)]
+pub struct PocoNodeValidationRecoveryConfigV0 {
+    node: PocoNodeStartConfigV0,
+    application_status_path: PathBuf,
+    signer_policy_hash: [u8; 32],
+}
+
+impl PocoNodeValidationRecoveryConfigV0 {
+    pub fn new(
+        node: PocoNodeStartConfigV0,
+        application_status_path: impl AsRef<Path>,
+        signer_policy_hash: [u8; 32],
+    ) -> Result<Self, PocoNodeHostErrorV0> {
+        let application_status_path = application_status_path.as_ref();
+        if !application_status_path.is_absolute() {
+            return Err(PocoNodeHostErrorV0::RelativeApplicationStatusPath);
+        }
+        let application_file_name = application_status_path
+            .file_name()
+            .ok_or(PocoNodeHostErrorV0::InvalidApplicationStatusPath)?;
+        let application_parent = fs::canonicalize(
+            application_status_path
+                .parent()
+                .ok_or(PocoNodeHostErrorV0::InvalidApplicationStatusPath)?,
+        )
+        .map_err(PocoNodeHostErrorV0::application_store_parent)?;
+        if !application_parent.is_dir() {
+            return Err(PocoNodeHostErrorV0::InvalidApplicationStoreParent);
+        }
+        let safety_parent = node
+            .safety_store_path
+            .parent()
+            .ok_or(PocoNodeHostErrorV0::InvalidSafetyStorePath)?;
+        let signer_parent = node
+            .signer_journal_path
+            .parent()
+            .ok_or(PocoNodeHostErrorV0::InvalidSignerJournalPath)?;
+        if canonical_parent_namespaces_overlap_v0(&application_parent, safety_parent)
+            || canonical_parent_namespaces_overlap_v0(&application_parent, signer_parent)
+        {
+            return Err(PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace);
+        }
+        Ok(Self {
+            node,
+            application_status_path: application_parent.join(application_file_name),
+            signer_policy_hash,
+        })
+    }
+
+    pub const fn node_config(&self) -> &PocoNodeStartConfigV0 {
+        &self.node
+    }
+
+    pub fn application_status_path(&self) -> &Path {
+        self.application_status_path.as_path()
+    }
+
+    pub const fn signer_policy_hash(&self) -> [u8; 32] {
+        self.signer_policy_hash
+    }
+}
+
+fn canonical_parent_namespaces_overlap_v0(left: &Path, right: &Path) -> bool {
+    left.starts_with(right) || right.starts_with(left)
+}
+
 fn derive_signer_watermark_scope_v0(core_config: &CoreConfig) -> [u8; 32] {
     let validator_set = core_config.validator_set();
     let author = core_config.local_validator();
@@ -281,6 +375,32 @@ pub enum HostBootstrapModeV0 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HostLifecyclePhaseV0 {
     BootstrappedInert,
+}
+
+/// Application-journal state observed before the bounded recovery transition.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ValidationRecoverySourceStateV0 {
+    CallbackPending,
+    Delivered,
+    Acked,
+}
+
+/// Exact result of the recovery-aware inert bootstrap.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ValidationRecoveryBootstrapV0 {
+    NotRequired,
+    ObligationCompleted {
+        route: PayloadValidationRouteV0,
+        validation_id: ValidationId,
+        completion_revision: u64,
+        source: ValidationRecoverySourceStateV0,
+    },
+    CompletionConfirmed {
+        route: PayloadValidationRouteV0,
+        validation_id: ValidationId,
+        completion_revision: u64,
+        source: ValidationRecoverySourceStateV0,
+    },
 }
 
 /// Non-cloneable owner of one Core, its safety store, and signer journal.
@@ -348,11 +468,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeHostV0<W> {
         })
     }
 
-    /// Opens and authenticates the exact journal head, recovers Core, and
-    /// binds the journal to that recovered instance.
+    /// Opens and authenticates an ordinary exact journal head, recovers Core,
+    /// and binds the journal to that recovered instance.
     ///
-    /// Obligation-bearing heads fail before Core construction because the
-    /// authenticated validation replay/takeover contract does not yet exist.
+    /// Obligation-bearing or native-invalid-context heads fail before Core
+    /// construction. Call [`PocoNodeValidationRecoveryHostV0::open_existing`]
+    /// for the bounded G1c recovery join. This legacy inert entry point cannot
+    /// inspect an independent application journal and must never be used as a
+    /// production recovery path.
     pub fn open_existing(
         config: PocoNodeStartConfigV0,
         external_watermark: W,
@@ -375,6 +498,15 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeHostV0<W> {
         let head = safety_store
             .head()
             .map_err(PocoNodeHostErrorV0::safety_store)?;
+        if !matches!(
+            head.transition_context(),
+            SafetyTransitionContextV0::Ordinary
+        ) || head_has_current_invalid_completion_v0(head.state())
+        {
+            return Err(PocoNodeHostErrorV0::ValidationRecoveryAwareOpenRequired {
+                revision: head.revision(),
+            });
+        }
         let obligation_count = head.state().payload_validation_obligations().len();
         if obligation_count != 0 {
             return Err(
@@ -459,6 +591,515 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeHostV0<W> {
     }
 }
 
+/// Non-cloneable, recovery-aware owner of the Core and all three local
+/// journals used by the bounded deterministic-invalid G1c slice.
+///
+/// This type has no constructor for fresh application state and no effect-
+/// driving API. It can only authenticate an existing schema-v8 application
+/// journal and either complete one exact durable invalid obligation, confirm
+/// one exact already-persisted completion, or prove that no active recovery
+/// work exists.
+pub struct PocoNodeValidationRecoveryHostV0<W> {
+    core: Core,
+    safety_store: SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    signer_journal: SqliteSignerJournalV0<W>,
+    signer_journal_head: SignerWatermarkV0,
+    _application_recovery: NativeValidationRecoveryStoreV0,
+    application_status_path: PathBuf,
+    recovery: ValidationRecoveryBootstrapV0,
+    pending_inert_effects: Vec<Effect>,
+}
+
+type ValidationRecoveryOpenPartsV0 = (Core, ValidationRecoveryBootstrapV0, Vec<Effect>, bool);
+
+impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
+    /// Opens all three existing stores and closes the bounded O/P/D/C/K crash
+    /// matrix for one deterministic-invalid validation job.
+    ///
+    /// The order is intentionally a recoverable join, not a cross-WAL atomic
+    /// transaction. For an obligation head the exact callback is first
+    /// accepted by Core, the application row becomes Delivered, the opaque
+    /// Core persistence request is written with its complete application
+    /// context, that exact SafetyStore head is read back, the application row
+    /// becomes Acked, and only then is `StorageAck` returned to Core. For an
+    /// already-complete head no callback or synthetic `StorageAck` is issued.
+    pub fn open_existing(
+        config: PocoNodeValidationRecoveryConfigV0,
+        external_watermark: W,
+    ) -> Result<Self, PocoNodeHostErrorV0> {
+        reject_activation_request(config.node_config())?;
+        let core_config = config.node.core_config().clone();
+        let chain_id = core_config.validator_set().chain_id();
+        let PocoNodeValidationRecoveryConfigV0 {
+            node,
+            application_status_path,
+            signer_policy_hash,
+        } = config;
+        let PocoNodeStartConfigV0 {
+            safety_store_path,
+            safety_store_profile,
+            signer_journal_path,
+            signer_journal_profile,
+        } = node;
+        let verifier = StrictEd25519Verifier;
+        let mut safety_store = SqliteSafetyStateStoreV0::open_existing(
+            safety_store_path,
+            safety_store_profile,
+            verifier,
+        )
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+        let head = safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        let mut signer_journal = SqliteSignerJournalV0::open_existing(
+            signer_journal_path,
+            signer_journal_profile,
+            external_watermark,
+        )
+        .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        let signer_journal_head = signer_journal
+            .external_head()
+            .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        let mut application_recovery = NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                application_status_path.clone(),
+                chain_id,
+                signer_policy_hash,
+                safety_store.journal_id_v0(),
+                safety_store.verifier_profile_ref_v0(),
+            ),
+        )
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryOpen)?;
+        let active_application_jobs = application_recovery.active_recovery_job_count_v0();
+        let obligation_count = head.state().payload_validation_obligations().len();
+
+        let (core, recovery, pending_inert_effects, safety_already_bound) = match obligation_count {
+            0 => recover_without_obligation_v0(
+                core_config,
+                head,
+                &safety_store,
+                &mut application_recovery,
+                active_application_jobs,
+                &verifier,
+            )?,
+            1 => recover_one_invalid_obligation_v0(
+                core_config,
+                head,
+                &mut safety_store,
+                &mut application_recovery,
+                active_application_jobs,
+                &verifier,
+            )?,
+            count => {
+                return Err(PocoNodeHostErrorV0::UnsupportedValidationObligationCount { count });
+            }
+        };
+        if !safety_already_bound {
+            safety_store
+                .bind_core_v0(core.safety_state_persistence_binding_v0())
+                .map_err(PocoNodeHostErrorV0::safety_store)?;
+        }
+        let final_head = safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        if final_head.state() != core.safety_state() {
+            return Err(PocoNodeHostErrorV0::RecoveredHeadMismatch);
+        }
+        application_recovery
+            .final_exact_audit_v0()
+            .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+        Ok(Self {
+            core,
+            safety_store,
+            signer_journal,
+            signer_journal_head,
+            _application_recovery: application_recovery,
+            application_status_path,
+            recovery,
+            pending_inert_effects,
+        })
+    }
+
+    pub const fn lifecycle_phase(&self) -> HostLifecyclePhaseV0 {
+        HostLifecyclePhaseV0::BootstrappedInert
+    }
+
+    pub const fn core_config(&self) -> &CoreConfig {
+        self.core.config()
+    }
+
+    pub const fn safety_state(&self) -> &SafetyState {
+        self.core.safety_state()
+    }
+
+    pub const fn recovery(&self) -> ValidationRecoveryBootstrapV0 {
+        self.recovery
+    }
+
+    pub fn safety_store_path(&self) -> &Path {
+        self.safety_store.path()
+    }
+
+    pub fn signer_journal_path(&self) -> &Path {
+        self.signer_journal.path()
+    }
+
+    pub fn application_status_path(&self) -> &Path {
+        self.application_status_path.as_path()
+    }
+
+    pub const fn signer_journal_head(&self) -> SignerWatermarkV0 {
+        self.signer_journal_head
+    }
+
+    pub fn signer_journal_capacity(&self) -> Result<JournalCapacityV0, PocoNodeHostErrorV0> {
+        self.signer_journal
+            .capacity()
+            .map_err(PocoNodeHostErrorV0::signer_journal)
+    }
+
+    /// Effects made durable by the final same-process `StorageAck` but kept
+    /// inert by this scaffold. V0 permits only a durable safety-halt notice;
+    /// no effect is signed, broadcast, or delivered by this package.
+    pub fn pending_inert_effect_count(&self) -> usize {
+        self.pending_inert_effects.len()
+    }
+
+    pub fn safety_head(&self) -> Result<RecoveredSafetyStateV0, PocoNodeHostErrorV0> {
+        self.safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)
+    }
+
+    pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
+        Err(ProductionActivationBlockedV0::new())
+    }
+}
+
+fn recover_without_obligation_v0(
+    core_config: CoreConfig,
+    head: RecoveredSafetyStateV0,
+    safety_store: &SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    application: &mut NativeValidationRecoveryStoreV0,
+    active_application_jobs: usize,
+    verifier: &StrictEd25519Verifier,
+) -> Result<ValidationRecoveryOpenPartsV0, PocoNodeHostErrorV0> {
+    match head.transition_context() {
+        SafetyTransitionContextV0::Ordinary => {
+            if head_has_current_invalid_completion_v0(head.state()) {
+                return Err(PocoNodeHostErrorV0::OrdinaryContextForInvalidCompletion {
+                    revision: head.revision(),
+                });
+            }
+            if active_application_jobs != 0 {
+                return Err(
+                    PocoNodeHostErrorV0::UnexpectedActiveApplicationRecoveryJobs {
+                        expected: 0,
+                        actual: active_application_jobs,
+                    },
+                );
+            }
+            let core = Core::recover(core_config, head.state().clone(), verifier)
+                .map_err(PocoNodeHostErrorV0::core)?;
+            Ok((
+                core,
+                ValidationRecoveryBootstrapV0::NotRequired,
+                Vec::new(),
+                false,
+            ))
+        }
+        SafetyTransitionContextV0::NativeDeterministicInvalid(_) => {
+            if active_application_jobs > 1 {
+                return Err(
+                    PocoNodeHostErrorV0::UnexpectedActiveApplicationRecoveryJobs {
+                        expected: 1,
+                        actual: active_application_jobs,
+                    },
+                );
+            }
+            let confirmed = safety_store
+                .confirmed_native_deterministic_invalid_head_v0()
+                .map_err(PocoNodeHostErrorV0::safety_store)?;
+            let source = application
+                .recover_confirmed_invalid_completion_v0(&confirmed)
+                .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+            let expected_active = match source {
+                NativeValidationRecoveredInvalidStateV0::Delivered => 1,
+                NativeValidationRecoveredInvalidStateV0::Acked => 0,
+                NativeValidationRecoveredInvalidStateV0::CallbackPending => {
+                    return Err(PocoNodeHostErrorV0::UnexpectedCompletionApplicationState);
+                }
+            };
+            if active_application_jobs != expected_active {
+                return Err(
+                    PocoNodeHostErrorV0::UnexpectedActiveApplicationRecoveryJobs {
+                        expected: expected_active,
+                        actual: active_application_jobs,
+                    },
+                );
+            }
+            let acked = application
+                .acknowledge_recovered_invalid_completion_v0(&confirmed)
+                .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+            validate_acked_facts_against_confirmation_v0(&acked, &confirmed)?;
+            let core = Core::recover(core_config, confirmed.state().clone(), verifier)
+                .map_err(PocoNodeHostErrorV0::core)?;
+            Ok((
+                core,
+                ValidationRecoveryBootstrapV0::CompletionConfirmed {
+                    route: confirmed.transition().route(),
+                    validation_id: confirmed.transition().validation_id(),
+                    completion_revision: confirmed.transition().completion_revision(),
+                    source: source.into(),
+                },
+                Vec::new(),
+                false,
+            ))
+        }
+    }
+}
+
+fn recover_one_invalid_obligation_v0(
+    core_config: CoreConfig,
+    head: RecoveredSafetyStateV0,
+    safety_store: &mut SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    application: &mut NativeValidationRecoveryStoreV0,
+    active_application_jobs: usize,
+    verifier: &StrictEd25519Verifier,
+) -> Result<ValidationRecoveryOpenPartsV0, PocoNodeHostErrorV0> {
+    if !matches!(
+        head.transition_context(),
+        SafetyTransitionContextV0::Ordinary
+    ) {
+        return Err(PocoNodeHostErrorV0::UnexpectedObligationTransitionContext {
+            revision: head.revision(),
+        });
+    }
+    if active_application_jobs != 1 {
+        return Err(
+            PocoNodeHostErrorV0::UnexpectedActiveApplicationRecoveryJobs {
+                expected: 1,
+                actual: active_application_jobs,
+            },
+        );
+    }
+    let session = Core::begin_payload_validation_obligation_recovery_v0(
+        core_config,
+        head.state().clone(),
+        verifier,
+    )
+    .map_err(PocoNodeHostErrorV0::core)?;
+    let route = session.challenge().route();
+    let validation_id = session.challenge().id();
+    let mut core = match session.reconcile_and_activate_v0(application) {
+        Ok(core) => core,
+        Err(error) => {
+            if let Some(failure) = application.last_reconcile_failure_v0() {
+                return Err(PocoNodeHostErrorV0::ApplicationRecoveryReconcile(failure));
+            }
+            return Err(PocoNodeHostErrorV0::core(error));
+        }
+    };
+    let source = application
+        .recovered_obligation_state_v0()
+        .ok_or(PocoNodeHostErrorV0::MissingReconciledApplicationOwner)?;
+    if !matches!(
+        source,
+        NativeValidationRecoveredInvalidStateV0::CallbackPending
+            | NativeValidationRecoveredInvalidStateV0::Delivered
+    ) {
+        return Err(PocoNodeHostErrorV0::UnexpectedObligationApplicationState);
+    }
+    let input = match route {
+        PayloadValidationRouteV0::Proposal => Input::PayloadValidated {
+            id: validation_id,
+            result: PayloadValidationResult::DeterministicallyInvalid,
+        },
+        PayloadValidationRouteV0::Synced => Input::SyncedPayloadValidated {
+            id: validation_id,
+            result: PayloadValidationResult::DeterministicallyInvalid,
+        },
+    };
+    let effects = core
+        .step(input, verifier)
+        .map_err(PocoNodeHostErrorV0::core)?;
+    let request = take_exact_recovery_persistence_v0(effects)?;
+    let callback_facts = application
+        .record_recovered_core_acceptance_v0(&request)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    validate_callback_identity_v0(&callback_facts, route, validation_id)?;
+    let context =
+        native_invalid_transition_context_v0(&callback_facts, request.state().revision())?;
+    safety_store
+        .bind_core_v0(core.safety_state_persistence_binding_v0())
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    safety_store
+        .persist_exact_v0(&request, &context)
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    let confirmed = safety_store
+        .confirmed_native_deterministic_invalid_head_exact_v0(request.state(), &context)
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    let completion_state = application
+        .recover_confirmed_invalid_completion_v0(&confirmed)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    if completion_state != NativeValidationRecoveredInvalidStateV0::Delivered {
+        return Err(PocoNodeHostErrorV0::UnexpectedCompletionApplicationState);
+    }
+    let acked = application
+        .acknowledge_recovered_invalid_completion_v0(&confirmed)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    validate_acked_facts_against_confirmation_v0(&acked, &confirmed)?;
+    let barrier = request.barrier();
+    let pending_inert_effects = core
+        .step(Input::StorageAck { barrier }, verifier)
+        .map_err(PocoNodeHostErrorV0::core)?;
+    validate_inert_post_ack_effects_v0(&pending_inert_effects)?;
+    if core.safety_state() != confirmed.state() {
+        return Err(PocoNodeHostErrorV0::RecoveredHeadMismatch);
+    }
+    Ok((
+        core,
+        ValidationRecoveryBootstrapV0::ObligationCompleted {
+            route,
+            validation_id,
+            completion_revision: confirmed.transition().completion_revision(),
+            source: source.into(),
+        },
+        pending_inert_effects,
+        true,
+    ))
+}
+
+impl From<NativeValidationRecoveredInvalidStateV0> for ValidationRecoverySourceStateV0 {
+    fn from(state: NativeValidationRecoveredInvalidStateV0) -> Self {
+        match state {
+            NativeValidationRecoveredInvalidStateV0::CallbackPending => Self::CallbackPending,
+            NativeValidationRecoveredInvalidStateV0::Delivered => Self::Delivered,
+            NativeValidationRecoveredInvalidStateV0::Acked => Self::Acked,
+        }
+    }
+}
+
+fn head_has_current_invalid_completion_v0(state: &SafetyState) -> bool {
+    state
+        .payload_validation_completions()
+        .iter()
+        .any(|completion| {
+            completion.first_recorded_revision() == state.revision()
+                && completion.result() == DurablePayloadValidationResultV1::DeterministicallyInvalid
+        })
+}
+
+fn take_exact_recovery_persistence_v0(
+    effects: Vec<Effect>,
+) -> Result<SafetyStatePersistenceV0, PocoNodeHostErrorV0> {
+    if effects.len() != 1 {
+        return Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffectSet {
+            expected: 1,
+            actual: effects.len(),
+        });
+    }
+    match effects
+        .into_iter()
+        .next()
+        .expect("exact effect count checked")
+    {
+        Effect::PersistSafetyState(request) => Ok(request),
+        effect => Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffect {
+            effect: effect_name_v0(&effect),
+        }),
+    }
+}
+
+fn effect_name_v0(effect: &Effect) -> &'static str {
+    match effect {
+        Effect::PersistSafetyState(_) => "persist_safety_state",
+        Effect::ValidatePayload(_) => "validate_payload",
+        Effect::ValidateSyncedPayload(_) => "validate_synced_payload",
+        Effect::RequestSignature { .. } => "request_signature",
+        Effect::Broadcast(_) => "broadcast",
+        Effect::ArmViewTimer { .. } => "arm_view_timer",
+        Effect::RequestSafetyReplay { .. } => "request_safety_replay",
+        Effect::RequestTcHighQcSync { .. } => "request_tc_high_qc_sync",
+        Effect::RequestStandaloneQcSync { .. } => "request_standalone_qc_sync",
+        Effect::SafetyHalted(_) => "safety_halted",
+        Effect::Finalize(_) => "finalize",
+        Effect::Evidence(_) => "evidence",
+    }
+}
+
+fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNodeHostErrorV0> {
+    if let Some(effect) = effects
+        .iter()
+        .find(|effect| !matches!(effect, Effect::SafetyHalted(_)))
+    {
+        return Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffect {
+            effect: effect_name_v0(effect),
+        });
+    }
+    Ok(())
+}
+
+fn validate_callback_identity_v0(
+    facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
+    route: PayloadValidationRouteV0,
+    validation_id: ValidationId,
+) -> Result<(), PocoNodeHostErrorV0> {
+    if facts.route() != route || facts.validation_id() != validation_id {
+        return Err(PocoNodeHostErrorV0::ApplicationCallbackIdentityMismatch);
+    }
+    Ok(())
+}
+
+fn native_invalid_transition_context_v0(
+    facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
+    completion_revision: u64,
+) -> Result<SafetyTransitionContextV0, PocoNodeHostErrorV0> {
+    let transition = NativeDeterministicInvalidTransitionV0::new(
+        facts.route(),
+        facts.validation_id(),
+        facts.request_fingerprint(),
+        facts.immutable_checksum(),
+        facts.host_config_ref(),
+        facts.reason().code_v0(),
+        facts.artifact_checksum(),
+        facts.callback_payload_checksum(),
+        facts.idempotency_key(),
+        facts.delivery_attempt(),
+        facts.row_checksum(),
+        facts.outbox_checksum(),
+        completion_revision,
+    )
+    .map_err(PocoNodeHostErrorV0::safety_store)?;
+    Ok(SafetyTransitionContextV0::native_deterministic_invalid(
+        transition,
+    ))
+}
+
+fn validate_acked_facts_against_confirmation_v0(
+    acked: &NativeValidationRecoveredAckedFactsV0,
+    confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+) -> Result<(), PocoNodeHostErrorV0> {
+    let transition = confirmed.transition();
+    if acked.route() != transition.route()
+        || acked.validation_id() != transition.validation_id()
+        || acked.request_fingerprint() != transition.request_fingerprint()
+        || acked.immutable_checksum() != transition.job_immutable_checksum()
+        || acked.host_config_ref() != transition.application_host_config_ref()
+        || acked.reason().code_v0() != transition.reason_code()
+        || acked.artifact_checksum() != transition.artifact_checksum()
+        || acked.callback_payload_checksum() != transition.callback_payload_checksum()
+        || acked.accepted_core_revision() != transition.completion_revision()
+        || acked.predecessor_idempotency_key() != transition.idempotency_key()
+        || acked.predecessor_delivery_attempt() != transition.delivery_attempt()
+        || acked.predecessor_delivered_row_checksum() != transition.delivered_job_row_checksum()
+        || acked.predecessor_outbox_checksum() != transition.outbox_checksum()
+    {
+        return Err(PocoNodeHostErrorV0::ApplicationAcknowledgementMismatch);
+    }
+    Ok(())
+}
+
 fn reject_activation_request(config: &PocoNodeStartConfigV0) -> Result<(), PocoNodeHostErrorV0> {
     let parameters = config.core_config().consensus_parameters();
     if parameters.production_activation() {
@@ -519,6 +1160,11 @@ pub enum PocoNodeHostErrorV0 {
     SignerJournalParentIo(Box<io::Error>),
     InvalidSignerJournalParent,
     SharedStoreParentNamespace,
+    RelativeApplicationStatusPath,
+    InvalidApplicationStatusPath,
+    ApplicationStoreParentIo(Box<io::Error>),
+    InvalidApplicationStoreParent,
+    SharedApplicationStoreParentNamespace,
     ProductionActivationRequested,
     NonShadowRolloutRequested {
         rollout_phase: RolloutPhase,
@@ -530,10 +1176,45 @@ pub enum PocoNodeHostErrorV0 {
         revision: u64,
         obligation_count: usize,
     },
+    ValidationRecoveryAwareOpenRequired {
+        revision: u64,
+    },
+    UnsupportedValidationObligationCount {
+        count: usize,
+    },
+    UnexpectedActiveApplicationRecoveryJobs {
+        expected: usize,
+        actual: usize,
+    },
+    OrdinaryContextForInvalidCompletion {
+        revision: u64,
+    },
+    UnexpectedObligationTransitionContext {
+        revision: u64,
+    },
+    MissingNativeInvalidTransitionContext {
+        revision: u64,
+    },
+    MissingReconciledApplicationOwner,
+    UnexpectedObligationApplicationState,
+    UnexpectedCompletionApplicationState,
+    ApplicationCallbackIdentityMismatch,
+    ApplicationAcknowledgementMismatch,
+    UnexpectedRecoveryEffectSet {
+        expected: usize,
+        actual: usize,
+    },
+    UnexpectedRecoveryEffect {
+        effect: &'static str,
+    },
     RecoveredHeadMismatch,
+    RecoveredTransitionHeadMismatch,
     Core(Box<trnm_consensus_core::CoreError>),
     SafetyStore(Box<SafetyStoreErrorV0>),
     SignerJournal(Box<SignerJournalErrorV0>),
+    ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
+    ApplicationRecoveryReconcile(NativeValidationRecoveryReconcileFailureV0),
+    ApplicationRecoveryTransition(NativeValidationRecoveryTransitionFailureV0),
 }
 
 impl PocoNodeHostErrorV0 {
@@ -555,6 +1236,10 @@ impl PocoNodeHostErrorV0 {
 
     fn signer_journal_parent(error: io::Error) -> Self {
         Self::SignerJournalParentIo(Box::new(error))
+    }
+
+    fn application_store_parent(error: io::Error) -> Self {
+        Self::ApplicationStoreParentIo(Box::new(error))
     }
 }
 
@@ -587,9 +1272,24 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             }
             Self::SharedStoreParentNamespace => {
                 formatter.write_str(
-                    "safety-store and signer-journal must use distinct canonical parent directories",
+                    "safety-store and signer-journal must use non-overlapping canonical parent directories",
                 )
             }
+            Self::RelativeApplicationStatusPath => {
+                formatter.write_str("application status path must be absolute")
+            }
+            Self::InvalidApplicationStatusPath => {
+                formatter.write_str("application status path must name a file")
+            }
+            Self::ApplicationStoreParentIo(error) => {
+                write!(formatter, "application-store parent must already exist: {error}")
+            }
+            Self::InvalidApplicationStoreParent => {
+                formatter.write_str("application-store parent must be a directory")
+            }
+            Self::SharedApplicationStoreParentNamespace => formatter.write_str(
+                "application, safety, and signer stores must use non-overlapping canonical parent directories",
+            ),
             Self::ProductionActivationRequested => formatter.write_str(
                 "incomplete PoCO host refuses production-activated consensus parameters",
             ),
@@ -605,15 +1305,73 @@ impl fmt::Display for PocoNodeHostErrorV0 {
                 obligation_count,
             } => write!(
                 formatter,
-                "safety revision {revision} retains {obligation_count} validation obligation(s), but authenticated replay/takeover is not implemented",
+                "safety revision {revision} retains {obligation_count} validation obligation(s); this legacy open cannot authenticate the application recovery join",
             ),
+            Self::ValidationRecoveryAwareOpenRequired { revision } => write!(
+                formatter,
+                "safety revision {revision} requires the application-aware validation recovery host",
+            ),
+            Self::UnsupportedValidationObligationCount { count } => write!(
+                formatter,
+                "bounded validation recovery requires at most one obligation, got {count}",
+            ),
+            Self::UnexpectedActiveApplicationRecoveryJobs { expected, actual } => write!(
+                formatter,
+                "validation recovery expected {expected} active application job(s), got {actual}",
+            ),
+            Self::OrdinaryContextForInvalidCompletion { revision } => write!(
+                formatter,
+                "safety revision {revision} records a deterministic-invalid completion with an ordinary transition context",
+            ),
+            Self::UnexpectedObligationTransitionContext { revision } => write!(
+                formatter,
+                "obligation-bearing safety revision {revision} has a non-ordinary transition context",
+            ),
+            Self::MissingNativeInvalidTransitionContext { revision } => write!(
+                formatter,
+                "safety revision {revision} lacks its authenticated native-invalid transition context",
+            ),
+            Self::MissingReconciledApplicationOwner => formatter.write_str(
+                "application recovery accepted the Core challenge without retaining its exact owner",
+            ),
+            Self::UnexpectedObligationApplicationState => formatter.write_str(
+                "obligation recovery did not bind a CallbackPending or Delivered application row",
+            ),
+            Self::UnexpectedCompletionApplicationState => formatter.write_str(
+                "completion recovery encountered an application state outside Delivered/Acked",
+            ),
+            Self::ApplicationCallbackIdentityMismatch => formatter.write_str(
+                "application callback facts differ from the Core recovery challenge",
+            ),
+            Self::ApplicationAcknowledgementMismatch => formatter.write_str(
+                "application acknowledgement differs from the authenticated SafetyStore context",
+            ),
+            Self::UnexpectedRecoveryEffectSet { expected, actual } => write!(
+                formatter,
+                "Core recovery expected {expected} effect(s), got {actual}",
+            ),
+            Self::UnexpectedRecoveryEffect { effect } => {
+                write!(formatter, "Core recovery emitted unsupported effect {effect}")
+            }
             Self::RecoveredHeadMismatch => {
                 formatter.write_str("recovered Core state differs from the authenticated journal head")
             }
+            Self::RecoveredTransitionHeadMismatch => formatter.write_str(
+                "SafetyStore exact readback differs from the Core request or application transition context",
+            ),
             Self::Core(error) => write!(formatter, "PoCO Core startup failed: {error}"),
             Self::SafetyStore(error) => write!(formatter, "PoCO safety-store startup failed: {error}"),
             Self::SignerJournal(error) => {
                 write!(formatter, "PoCO signer-journal startup failed: {error}")
+            }
+            Self::ApplicationRecoveryOpen(error) => {
+                write!(formatter, "application recovery open failed: {error}")
+            }
+            Self::ApplicationRecoveryReconcile(error) => {
+                write!(formatter, "application recovery reconciliation failed: {error:?}")
+            }
+            Self::ApplicationRecoveryTransition(error) => {
+                write!(formatter, "application recovery transition failed: {error:?}")
             }
         }
     }
@@ -624,12 +1382,17 @@ impl Error for PocoNodeHostErrorV0 {
         match self {
             Self::SafetyStoreParentIo(error) => Some(error.as_ref()),
             Self::SignerJournalParentIo(error) => Some(error.as_ref()),
+            Self::ApplicationStoreParentIo(error) => Some(error.as_ref()),
             Self::SafetyStore(error) => Some(error.as_ref()),
             Self::SignerJournal(error) => Some(error.as_ref()),
+            Self::ApplicationRecoveryOpen(error) => Some(error),
             _ => None,
         }
     }
 }
+
+#[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+mod recovery_tests;
 
 #[cfg(test)]
 mod tests {
@@ -781,14 +1544,19 @@ mod tests {
     #[cfg(target_os = "linux")]
     fn protected_store_namespace(root: &TempDir, name: &str) -> PathBuf {
         let namespace = root.path().join(name);
-        fs::create_dir(&namespace).expect("create isolated store namespace");
+        create_protected_directory(&namespace);
+        namespace
+    }
+
+    #[cfg(target_os = "linux")]
+    fn create_protected_directory(path: &Path) {
+        fs::create_dir_all(path).expect("create isolated store namespace");
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(&namespace, fs::Permissions::from_mode(0o700))
+            fs::set_permissions(path, fs::Permissions::from_mode(0o700))
                 .expect("protect isolated store namespace");
         }
-        namespace
     }
 
     #[cfg(target_os = "linux")]
@@ -799,6 +1567,13 @@ mod tests {
         )
     }
 
+    #[cfg(target_os = "linux")]
+    fn triple_store_paths(root: &TempDir) -> (PathBuf, PathBuf, PathBuf) {
+        let (safety, signer) = dual_store_paths(root);
+        let application = protected_store_namespace(root, "application").join("state.json");
+        (safety, signer, application)
+    }
+
     #[test]
     fn static_activation_gate_names_real_unwired_contracts() {
         let error = production_activation_gate_v0().expect_err("activation must remain blocked");
@@ -807,6 +1582,165 @@ mod tests {
         assert!(error.to_string().contains("complete_hotstuff_safety_rules"));
         assert!(!error.to_string().contains("append_only_sign_journal"));
         assert!(error.to_string().contains("block_id_speculative_overlay"));
+        assert!(error
+            .to_string()
+            .contains("application_validation_recovery_beyond_deterministic_invalid_v0"));
+        assert!(!error
+            .to_string()
+            .contains(",application_validation_recovery,"));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn validation_recovery_config_requires_a_third_canonical_namespace() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let application_path = safety_path
+            .parent()
+            .expect("safety namespace")
+            .join("state.json");
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let error = PocoNodeValidationRecoveryConfigV0::new(node, application_path, [0x5a; 32])
+            .expect_err("application WAL must not share the safety namespace");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn validation_recovery_config_rejects_application_ancestor_and_descendant_namespaces() {
+        let directory = protected_temp_dir();
+        let cases = [
+            (
+                "application-under-safety",
+                "safety",
+                "signer",
+                "safety/application",
+            ),
+            (
+                "application-over-safety",
+                "application/safety",
+                "signer",
+                "application",
+            ),
+            (
+                "application-under-signer",
+                "safety",
+                "signer",
+                "signer/application",
+            ),
+            (
+                "application-over-signer",
+                "safety",
+                "application/signer",
+                "application",
+            ),
+        ];
+
+        for (case, safety_parent, signer_parent, application_parent) in cases {
+            let case_root = directory.path().join(case);
+            let safety_parent = case_root.join(safety_parent);
+            let signer_parent = case_root.join(signer_parent);
+            let application_parent = case_root.join(application_parent);
+            create_protected_directory(&safety_parent);
+            create_protected_directory(&signer_parent);
+            create_protected_directory(&application_parent);
+
+            let node = start_config(
+                safety_parent.join("safety.sqlite3"),
+                signer_parent.join("signer.sqlite3"),
+                core_config(ConsensusParametersV0::reference_shadow_v0()),
+            )
+            .expect("safety and signer parents remain non-overlapping");
+            let error = PocoNodeValidationRecoveryConfigV0::new(
+                node,
+                application_parent.join("state.json"),
+                [0x5a; 32],
+            )
+            .expect_err("application parent must not contain or be contained by another store");
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+            ));
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn validation_recovery_config_rejects_nested_application_after_symlink_canonicalization() {
+        use std::os::unix::fs::symlink;
+
+        let directory = protected_temp_dir();
+        let safety_parent = protected_store_namespace(&directory, "safety");
+        let signer_parent = protected_store_namespace(&directory, "signer");
+        let nested_application_parent = safety_parent.join("nested-application");
+        create_protected_directory(&nested_application_parent);
+        let application_alias = directory.path().join("application-alias");
+        symlink(&nested_application_parent, &application_alias)
+            .expect("create application namespace symlink");
+
+        let node = start_config(
+            safety_parent.join("safety.sqlite3"),
+            signer_parent.join("signer.sqlite3"),
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("raw safety and signer paths are valid siblings");
+        let error = PocoNodeValidationRecoveryConfigV0::new(
+            node,
+            application_alias.join("state.json"),
+            [0x5a; 32],
+        )
+        .expect_err("canonicalized application alias must reveal the nested namespace");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn validation_recovery_config_freezes_three_distinct_paths() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, application_path) = triple_store_paths(&directory);
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let recovery = PocoNodeValidationRecoveryConfigV0::new(node, &application_path, [0x5a; 32])
+            .expect("valid triple-store recovery config");
+        assert_eq!(recovery.application_status_path(), application_path);
+        assert_eq!(recovery.signer_policy_hash(), [0x5a; 32]);
+        assert_eq!(recovery.node_config().safety_store_path(), safety_path);
+        assert_eq!(recovery.node_config().signer_journal_path(), signer_path);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn validation_recovery_config_rejects_relative_application_path() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let error =
+            PocoNodeValidationRecoveryConfigV0::new(node, "relative/state.json", [0x5a; 32])
+                .expect_err("relative application recovery state must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::RelativeApplicationStatusPath
+        ));
     }
 
     #[test]
@@ -852,6 +1786,52 @@ mod tests {
             core_config(ConsensusParametersV0::reference_shadow_v0()),
         )
         .expect_err("two histories in one canonical parent must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedStoreParentNamespace
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn startup_config_rejects_safety_signer_ancestor_and_descendant_namespaces() {
+        let directory = protected_temp_dir();
+        let outer = protected_store_namespace(&directory, "outer");
+        let nested = outer.join("nested");
+        create_protected_directory(&nested);
+
+        for (safety_parent, signer_parent) in [(&outer, &nested), (&nested, &outer)] {
+            let error = start_config(
+                safety_parent.join("safety.sqlite3"),
+                signer_parent.join("signer.sqlite3"),
+                core_config(ConsensusParametersV0::reference_shadow_v0()),
+            )
+            .expect_err("safety and signer parents must not contain one another");
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::SharedStoreParentNamespace
+            ));
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn startup_config_rejects_nested_store_after_symlink_canonicalization() {
+        use std::os::unix::fs::symlink;
+
+        let directory = protected_temp_dir();
+        let safety_parent = protected_store_namespace(&directory, "safety");
+        let nested_signer_parent = safety_parent.join("nested-signer");
+        create_protected_directory(&nested_signer_parent);
+        let signer_alias = directory.path().join("signer-alias");
+        symlink(&nested_signer_parent, &signer_alias).expect("create signer namespace symlink");
+
+        let error = start_config(
+            safety_parent.join("safety.sqlite3"),
+            signer_alias.join("signer.sqlite3"),
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect_err("canonicalized signer alias must reveal the nested namespace");
         assert!(matches!(
             error,
             PocoNodeHostErrorV0::SharedStoreParentNamespace

@@ -1594,9 +1594,11 @@ dependencies = [
  "bytes",
  "clap",
  "ed25519-dalek",
+ "fs2",
  "hex",
  "ics23",
  "jmt",
+ "libc",
  "prost",
  "rusqlite",
  "serde",
@@ -1606,6 +1608,7 @@ dependencies = [
  "tendermint-proto",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
  "trnm-consensus-types",
  "trnm-finality-types",
  "trnm-node",
@@ -1749,8 +1752,10 @@ dependencies = [
 name = "trnm-poco-node"
 version = "0.1.0"
 dependencies = [
+ "ed25519-dalek",
  "sha2",
  "tempfile",
+ "trnm-consensus-app",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
  "trnm-consensus-safety-store",

@@ -7,6 +7,10 @@ authors.workspace = true
 autobins = false
 publish = false
 
+[features]
+default = []
+recovery-test-support = ["trnm-consensus-app/recovery-test-support"]
+
 [package.metadata.trnm]
 lane = "poco-bft-g1-host-scaffold"
 protocol = "poco-bft-v0"
@@ -21,6 +25,7 @@ path = "src/main.rs"
 
 [dependencies]
 sha2 = "0.10"
+trnm-consensus-app = { version = "0.1.0", path = "../trnm-consensus-app" }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
@@ -28,4 +33,5 @@ trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-s
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]
+ed25519-dalek = "2"
 tempfile = "3"

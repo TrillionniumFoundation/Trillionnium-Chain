@@ -544,13 +544,15 @@ persistence may advance the enclosing state revision while a signer response
 is outstanding, but re-emission after a crash reconstructs the identical
 canonical intent bytes and fingerprint from that frozen revision.
 
-Recovery validates schema-v8 obligations and inert completions and then rejects
-a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state schemas v5 through v7 have no implicit migration.
-Completion-only
-recovery supplies exact-result suppression, but these local persistence rules
-establish no new transport, type-level callback capability, crash replay/
-liveness, host-delivery acknowledgement, or callback exactly-once protocol.
+Ordinary `Core::recover` validates schema-v8 obligations and inert completions
+and then rejects a non-empty obligation set with `InvalidRecovery`; that entry
+does not reissue pending validation. Safety-state schemas v5 through v7 have no
+implicit migration. Completion-only ordinary recovery supplies exact-result
+suppression. The separate G1c one-obligation recovery session is the only
+bounded authenticated-ticket exception and admits only a reconciled
+deterministic-invalid result. These local persistence rules establish no new
+transport, general callback capability, general crash replay/liveness,
+host-delivery acknowledgement, or callback exactly-once protocol.
 
 The node-local `SafetyState` record codec v0 is frozen to epoch-zero Core
 `SafetyState` schema v8. Its exact outer layout is:
@@ -731,10 +733,18 @@ deletes outbox then jobs only from the temporary copy and verifies both are
 empty. Durable rows loaded by recovery remain corruption/congruence facts and
 cannot mint signed-proposal or Core callback authority. The writable invalid
 delivery/ack chain is only a process-local real-Core integration exercised
-with an injected test sink: there is no production driver constructor,
-adapter to the standalone SafetyState journal, host/AppCore/ABCI/node wiring,
-recovery remint, takeover, process-wide Core uniqueness, or exactly-once
-authority.
+with an injected test sink. G1c adds a distinct existing-only recovery owner
+and inert node join for exact deterministic-invalid `O+P`, `O+D`, `C+D`, and
+`C+K` states. Ordinary `Core::recover` still rejects obligations; only the
+separate one-obligation session can be reconciled. Its App namespace contains
+a fixed checksummed manifest that binds the App host configuration to the
+designated Safety journal/profile before the first supported fixture row;
+recovery pins and revalidates that manifest and refuses a new nomination. The
+three canonical store parents must be pairwise non-overlapping, and recovery
+rejects non-owner or group/world-writable parent/main/lock/manifest/existing
+WAL/SHM objects. There is no production
+effect driver, fresh execution, general result takeover, host/AppCore/ABCI
+network wiring, process-wide Core uniqueness, or exactly-once authority.
 
 The exact node-local integrity labels used by this foundation are:
 
@@ -861,8 +871,9 @@ with callback-outbox intent, but its transaction does not itself call Core.
 Schema v8 adds the fixed-store/owned-Core/injected-test-sink driver and
 writable process-local delivery/ack chain described above. It maps `Proposal`
 only to `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but
-is not wired to the standalone SafetyState journal and supplies no production
-recovery authority. The
+does not itself wire the standalone SafetyState journal. The separate G1c node
+performs only the bounded existing deterministic-invalid join and supplies no
+general production recovery authority. The
 `Valid` validation-time artifact/outbox boundary remains open. The distinct Finalize-
 time atomic boundary still must revalidate exact authority and atomically
 couple JMT/domain apply, root/native-head persistence, head advancement, and

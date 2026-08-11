@@ -7,6 +7,7 @@ authors.workspace = true
 
 [features]
 default = []
+recovery-test-support = []
 scale-gate = []
 
 [[bin]]
@@ -32,9 +33,11 @@ anyhow = "1"
 borsh = { version = "1", features = ["derive"] }
 bytes = "1"
 clap = { version = "4", features = ["derive"] }
+fs2 = "0.4"
 hex = "0.4"
 ics23 = "=0.12.0"
 jmt = "=0.12.0"
+libc = "0.2"
 prost = "0.13"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -48,6 +51,7 @@ trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 trnm-runtime = { version = "0.1.0", path = "../trnm-runtime" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
+trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]

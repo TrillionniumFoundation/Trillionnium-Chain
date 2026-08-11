@@ -1,6 +1,8 @@
 use std::{
     collections::BTreeMap,
-    fmt, fs,
+    fmt,
+    fs::{self, File, OpenOptions},
+    os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::{Path, PathBuf},
     sync::{
         atomic::{AtomicUsize, Ordering},
@@ -10,6 +12,7 @@ use std::{
 };
 
 use anyhow::{anyhow, ensure, Context, Result};
+use fs2::FileExt;
 use jmt::{
     storage::{HasPreimage, LeafNode, NibblePath, Node, NodeKey, TreeReader},
     JellyfishMerkleIterator, KeyHash, RootHash, Version,
@@ -31,6 +34,13 @@ use trnm_finality_types::hash_domain;
 #[allow(dead_code)]
 #[path = "native_validation_callback_driver.rs"]
 pub(crate) mod native_validation_callback_driver;
+
+// The recovery facade is a child of the authoritative store module so it can
+// revalidate and advance the journal without publishing `ApplicationStore`
+// or any of its general mutation surface.  Its public owners remain opaque
+// and store-affine.
+#[path = "native_validation_recovery.rs"]
+pub(crate) mod native_validation_recovery;
 
 use super::{
     auth_tree::{
@@ -1601,6 +1611,384 @@ pub(super) struct ApplicationStore {
     writer_waiters: Arc<AtomicUsize>,
     maintenance_gate: Arc<Mutex<()>>,
     active_snapshot_pins: Arc<AtomicUsize>,
+    namespace_owner: Arc<ApplicationStoreNamespaceOwnerV0>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct ApplicationStoreFileIdentityV0 {
+    device: u64,
+    inode: u64,
+}
+
+impl ApplicationStoreFileIdentityV0 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ApplicationStoreOwnerModeV0 {
+    OrdinaryShared,
+    RecoveryExclusive,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum ApplicationStoreNamespaceOpenFailureV0 {
+    InvalidPath,
+    ParentUnavailable,
+    MissingDatabase,
+    DatabaseIsNotRegularFile,
+    Locked,
+    UnsafeNamespace,
+    NamespaceChanged,
+    ProcessChanged,
+    Io,
+}
+
+impl fmt::Display for ApplicationStoreNamespaceOpenFailureV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(match self {
+            Self::InvalidPath => "application store namespace path is invalid",
+            Self::ParentUnavailable => "application store namespace parent is unavailable",
+            Self::MissingDatabase => "application store database is missing",
+            Self::DatabaseIsNotRegularFile => {
+                "application store database is not a regular non-symlink file"
+            }
+            Self::Locked => "application store namespace is owned by another lifetime",
+            Self::UnsafeNamespace => {
+                "application store recovery namespace ownership or mode is unsafe"
+            }
+            Self::NamespaceChanged => "application store namespace identity changed",
+            Self::ProcessChanged => "application store owner crossed a process boundary",
+            Self::Io => "application store namespace I/O failed",
+        })
+    }
+}
+
+impl std::error::Error for ApplicationStoreNamespaceOpenFailureV0 {}
+
+#[derive(Debug)]
+struct ApplicationStoreNamespaceOwnerV0 {
+    owner_pid: u32,
+    mode: ApplicationStoreOwnerModeV0,
+    canonical_parent: PathBuf,
+    parent_handle: File,
+    parent_identity: ApplicationStoreFileIdentityV0,
+    parent_uid: u32,
+    database_path: PathBuf,
+    lock_path: PathBuf,
+    lock_handle: File,
+    lock_identity: ApplicationStoreFileIdentityV0,
+    #[cfg(test)]
+    test_lock_released: std::sync::atomic::AtomicBool,
+}
+
+impl ApplicationStoreNamespaceOwnerV0 {
+    fn acquire(
+        status_path: &Path,
+        mode: ApplicationStoreOwnerModeV0,
+    ) -> std::result::Result<(Self, PathBuf, PathBuf), ApplicationStoreNamespaceOpenFailureV0> {
+        let file_name = status_path
+            .file_name()
+            .ok_or(ApplicationStoreNamespaceOpenFailureV0::InvalidPath)?;
+        let requested_parent = status_path
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+            .unwrap_or_else(|| Path::new("."));
+        if mode == ApplicationStoreOwnerModeV0::OrdinaryShared {
+            fs::create_dir_all(requested_parent)
+                .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::ParentUnavailable)?;
+        }
+        let canonical_parent = fs::canonicalize(requested_parent)
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::ParentUnavailable)?;
+        let parent_handle = open_application_store_parent_v0(&canonical_parent)?;
+        let parent_metadata = parent_handle
+            .metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+        let parent_path_metadata = canonical_parent
+            .symlink_metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::ParentUnavailable)?;
+        if !parent_metadata.is_dir()
+            || !parent_path_metadata.file_type().is_dir()
+            || parent_path_metadata.file_type().is_symlink()
+            || ApplicationStoreFileIdentityV0::from_metadata(&parent_metadata)
+                != ApplicationStoreFileIdentityV0::from_metadata(&parent_path_metadata)
+        {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged);
+        }
+        let parent_identity = ApplicationStoreFileIdentityV0::from_metadata(&parent_metadata);
+        let parent_uid = parent_metadata.uid();
+        if mode == ApplicationStoreOwnerModeV0::RecoveryExclusive {
+            validate_application_store_recovery_parent_v0(
+                &parent_metadata,
+                &parent_path_metadata,
+                parent_uid,
+            )?;
+        }
+        let status_path = canonical_parent.join(file_name);
+        let database_path = application_store_database_path_v0(&status_path);
+        if mode == ApplicationStoreOwnerModeV0::RecoveryExclusive {
+            validate_existing_application_store_database_path_v0(&database_path, Some(parent_uid))?;
+        }
+        let lock_path = application_store_lock_path_v0(&database_path)?;
+        let lock_handle = open_application_store_lock_v0(&lock_path, mode)?;
+        lock_handle
+            .sync_all()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+        parent_handle
+            .sync_all()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+        match mode {
+            ApplicationStoreOwnerModeV0::OrdinaryShared => {
+                FileExt::try_lock_shared(&lock_handle).map_err(classify_owner_lock_error_v0)?;
+            }
+            ApplicationStoreOwnerModeV0::RecoveryExclusive => {
+                FileExt::try_lock_exclusive(&lock_handle).map_err(classify_owner_lock_error_v0)?;
+            }
+        }
+        let lock_metadata =
+            validate_application_store_lock_v0(&lock_path, &lock_handle, parent_uid)?;
+        let owner = Self {
+            owner_pid: std::process::id(),
+            mode,
+            canonical_parent,
+            parent_handle,
+            parent_identity,
+            parent_uid,
+            database_path: database_path.clone(),
+            lock_path,
+            lock_handle,
+            lock_identity: ApplicationStoreFileIdentityV0::from_metadata(&lock_metadata),
+            #[cfg(test)]
+            test_lock_released: std::sync::atomic::AtomicBool::new(false),
+        };
+        owner.validate()?;
+        Ok((owner, status_path, database_path))
+    }
+
+    fn validate(&self) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+        if std::process::id() != self.owner_pid {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::ProcessChanged);
+        }
+        #[cfg(test)]
+        if self
+            .test_lock_released
+            .load(std::sync::atomic::Ordering::Acquire)
+        {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::Locked);
+        }
+        let parent_handle_metadata = self
+            .parent_handle
+            .metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+        let parent_path_metadata = self
+            .canonical_parent
+            .symlink_metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+        if !parent_handle_metadata.is_dir()
+            || !parent_path_metadata.file_type().is_dir()
+            || parent_path_metadata.file_type().is_symlink()
+            || ApplicationStoreFileIdentityV0::from_metadata(&parent_handle_metadata)
+                != self.parent_identity
+            || ApplicationStoreFileIdentityV0::from_metadata(&parent_path_metadata)
+                != self.parent_identity
+        {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged);
+        }
+        if self.mode == ApplicationStoreOwnerModeV0::RecoveryExclusive {
+            validate_application_store_recovery_parent_v0(
+                &parent_handle_metadata,
+                &parent_path_metadata,
+                self.parent_uid,
+            )?;
+            validate_existing_application_store_database_path_v0(
+                &self.database_path,
+                Some(self.parent_uid),
+            )?;
+        }
+        let lock_metadata = validate_application_store_lock_v0(
+            &self.lock_path,
+            &self.lock_handle,
+            self.parent_uid,
+        )?;
+        if ApplicationStoreFileIdentityV0::from_metadata(&lock_metadata) != self.lock_identity {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged);
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    fn release_for_recovery_test_v0(
+        &self,
+    ) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+        if self.mode != ApplicationStoreOwnerModeV0::OrdinaryShared {
+            return Err(ApplicationStoreNamespaceOpenFailureV0::Locked);
+        }
+        if !self
+            .test_lock_released
+            .swap(true, std::sync::atomic::Ordering::AcqRel)
+        {
+            FileExt::unlock(&self.lock_handle)
+                .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+        }
+        Ok(())
+    }
+}
+
+pub(super) fn application_store_database_path_v0(status_path: &Path) -> PathBuf {
+    let extension = status_path
+        .extension()
+        .and_then(|value| value.to_str())
+        .map(|value| format!("{value}.sqlite3"))
+        .unwrap_or_else(|| "sqlite3".to_string());
+    status_path.with_extension(extension)
+}
+
+fn application_store_lock_path_v0(
+    database_path: &Path,
+) -> std::result::Result<PathBuf, ApplicationStoreNamespaceOpenFailureV0> {
+    let mut file_name = database_path
+        .file_name()
+        .ok_or(ApplicationStoreNamespaceOpenFailureV0::InvalidPath)?
+        .to_os_string();
+    file_name.push(".owner.lock");
+    Ok(database_path.with_file_name(file_name))
+}
+
+fn open_application_store_parent_v0(
+    canonical_parent: &Path,
+) -> std::result::Result<File, ApplicationStoreNamespaceOpenFailureV0> {
+    let mut options = OpenOptions::new();
+    options
+        .read(true)
+        .custom_flags(libc::O_DIRECTORY | libc::O_NOFOLLOW | libc::O_CLOEXEC);
+    options
+        .open(canonical_parent)
+        .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::ParentUnavailable)
+}
+
+fn open_application_store_lock_v0(
+    lock_path: &Path,
+    mode: ApplicationStoreOwnerModeV0,
+) -> std::result::Result<File, ApplicationStoreNamespaceOpenFailureV0> {
+    let mut options = OpenOptions::new();
+    options.read(true).write(true);
+    if mode == ApplicationStoreOwnerModeV0::OrdinaryShared {
+        options.create(true).mode(0o600);
+    }
+    options.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
+    let file = options
+        .open(lock_path)
+        .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+    if mode == ApplicationStoreOwnerModeV0::OrdinaryShared {
+        file.set_permissions(fs::Permissions::from_mode(0o600))
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::Io)?;
+    }
+    Ok(file)
+}
+
+fn classify_owner_lock_error_v0(error: std::io::Error) -> ApplicationStoreNamespaceOpenFailureV0 {
+    if matches!(
+        error.kind(),
+        std::io::ErrorKind::WouldBlock | std::io::ErrorKind::PermissionDenied
+    ) {
+        ApplicationStoreNamespaceOpenFailureV0::Locked
+    } else {
+        ApplicationStoreNamespaceOpenFailureV0::Io
+    }
+}
+
+fn validate_application_store_lock_v0(
+    lock_path: &Path,
+    lock_handle: &File,
+    expected_owner_uid: u32,
+) -> std::result::Result<fs::Metadata, ApplicationStoreNamespaceOpenFailureV0> {
+    let handle_metadata = lock_handle
+        .metadata()
+        .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+    let path_metadata = lock_path
+        .symlink_metadata()
+        .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+    if !handle_metadata.is_file()
+        || !path_metadata.file_type().is_file()
+        || path_metadata.file_type().is_symlink()
+        || handle_metadata.nlink() != 1
+        || path_metadata.nlink() != 1
+        || handle_metadata.uid() != expected_owner_uid
+        || path_metadata.uid() != expected_owner_uid
+        || handle_metadata.mode() & 0o077 != 0
+        || path_metadata.mode() & 0o077 != 0
+        || ApplicationStoreFileIdentityV0::from_metadata(&handle_metadata)
+            != ApplicationStoreFileIdentityV0::from_metadata(&path_metadata)
+    {
+        return Err(ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged);
+    }
+    Ok(handle_metadata)
+}
+
+fn validate_existing_application_store_database_path_v0(
+    database_path: &Path,
+    expected_owner_uid: Option<u32>,
+) -> std::result::Result<fs::Metadata, ApplicationStoreNamespaceOpenFailureV0> {
+    let metadata = database_path.symlink_metadata().map_err(|error| {
+        if error.kind() == std::io::ErrorKind::NotFound {
+            ApplicationStoreNamespaceOpenFailureV0::MissingDatabase
+        } else {
+            ApplicationStoreNamespaceOpenFailureV0::Io
+        }
+    })?;
+    if !metadata.file_type().is_file() || metadata.file_type().is_symlink() {
+        return Err(ApplicationStoreNamespaceOpenFailureV0::DatabaseIsNotRegularFile);
+    }
+    if metadata.nlink() != 1
+        || expected_owner_uid.is_some_and(|uid| metadata.uid() != uid)
+        || metadata.mode() & 0o022 != 0
+    {
+        return Err(ApplicationStoreNamespaceOpenFailureV0::UnsafeNamespace);
+    }
+    Ok(metadata)
+}
+
+fn validate_application_store_recovery_auxiliary_v0(
+    database_path: &Path,
+    suffix: &str,
+    expected_owner_uid: u32,
+) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+    let mut auxiliary = database_path.as_os_str().to_os_string();
+    auxiliary.push(suffix);
+    let auxiliary = PathBuf::from(auxiliary);
+    let metadata = match auxiliary.symlink_metadata() {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(_) => return Err(ApplicationStoreNamespaceOpenFailureV0::Io),
+    };
+    if !metadata.file_type().is_file()
+        || metadata.file_type().is_symlink()
+        || metadata.nlink() != 1
+        || metadata.uid() != expected_owner_uid
+        || metadata.mode() & 0o022 != 0
+    {
+        return Err(ApplicationStoreNamespaceOpenFailureV0::UnsafeNamespace);
+    }
+    Ok(())
+}
+
+fn validate_application_store_recovery_parent_v0(
+    handle_metadata: &fs::Metadata,
+    path_metadata: &fs::Metadata,
+    expected_owner_uid: u32,
+) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+    if handle_metadata.uid() != expected_owner_uid
+        || path_metadata.uid() != expected_owner_uid
+        || handle_metadata.mode() & 0o022 != 0
+        || path_metadata.mode() & 0o022 != 0
+    {
+        return Err(ApplicationStoreNamespaceOpenFailureV0::UnsafeNamespace);
+    }
+    Ok(())
 }
 
 pub(super) struct PinnedSnapshot {
@@ -1956,6 +2344,23 @@ impl HasPreimage for SqliteAuthReader<'_> {
 }
 
 impl ApplicationStore {
+    fn require_namespace_owner_v0(&self) -> Result<()> {
+        self.validate_namespace_owner_v0()
+            .map_err(|failure| anyhow!(failure))
+    }
+
+    fn require_native_validation_namespace_owner_v0(
+        &self,
+        stage: NativeValidationReservationStageV0,
+    ) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+        self.validate_namespace_owner_v0().map_err(|_| {
+            NativeValidationReservationFailureCauseV0::HostInvariant {
+                stage,
+                sqlite: None,
+            }
+        })
+    }
+
     fn lock_writer(&self) -> Result<std::sync::MutexGuard<'_, ()>> {
         self.writer_waiters.fetch_add(1, Ordering::AcqRel);
         let locked = self.writer_gate.lock();
@@ -2442,7 +2847,9 @@ impl ApplicationStore {
     > {
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|error| {
             native_validation_invalid_seal_failure_v0(
@@ -3302,7 +3709,9 @@ impl ApplicationStore {
     ) -> std::result::Result<Connection, NativeValidationReservationFailureCauseV0> {
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|error| {
             classify_native_validation_reservation_sqlite_failure_v0(
@@ -3469,9 +3878,14 @@ impl ApplicationStore {
     fn connect_native_validation_job_v0(
         &self,
     ) -> std::result::Result<Connection, NativeValidationReservationFailureCauseV0> {
+        self.require_native_validation_namespace_owner_v0(
+            NativeValidationReservationStageV0::OpenDatabase,
+        )?;
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|error| {
             classify_native_validation_reservation_sqlite_failure_v0(
@@ -3518,6 +3932,9 @@ impl ApplicationStore {
                 sqlite: None,
             });
         }
+        self.require_native_validation_namespace_owner_v0(
+            NativeValidationReservationStageV0::ConfigureDatabase,
+        )?;
         Ok(connection)
     }
 
@@ -3528,7 +3945,9 @@ impl ApplicationStore {
     {
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|error| {
             classify_native_validation_reservation_sqlite_failure_v0(
@@ -3688,22 +4107,113 @@ impl ApplicationStore {
         chain_id: &str,
         signer_policy_hash_hex: &str,
     ) -> Result<Self> {
-        let extension = status_path
-            .extension()
-            .and_then(|value| value.to_str())
-            .map(|value| format!("{value}.sqlite3"))
-            .unwrap_or_else(|| "sqlite3".to_string());
+        Self::open_with_namespace_owner_v0(
+            status_path,
+            chain_id,
+            signer_policy_hash_hex,
+            ApplicationStoreOwnerModeV0::OrdinaryShared,
+        )
+        .map_err(|failure| anyhow!(failure))
+    }
+
+    pub(super) fn open_existing_recovery_v0(
+        status_path: &Path,
+        chain_id: &str,
+        signer_policy_hash_hex: &str,
+    ) -> std::result::Result<Self, ApplicationStoreNamespaceOpenFailureV0> {
+        Self::open_with_namespace_owner_v0(
+            status_path,
+            chain_id,
+            signer_policy_hash_hex,
+            ApplicationStoreOwnerModeV0::RecoveryExclusive,
+        )
+    }
+
+    fn open_with_namespace_owner_v0(
+        status_path: &Path,
+        chain_id: &str,
+        signer_policy_hash_hex: &str,
+        mode: ApplicationStoreOwnerModeV0,
+    ) -> std::result::Result<Self, ApplicationStoreNamespaceOpenFailureV0> {
+        let (namespace_owner, status_path, database_path) =
+            ApplicationStoreNamespaceOwnerV0::acquire(status_path, mode)?;
         let store = Self {
-            status_path: status_path.to_path_buf(),
-            database_path: status_path.with_extension(extension),
+            status_path,
+            database_path,
             chain_id: chain_id.to_string(),
             signer_policy_hash_hex: signer_policy_hash_hex.to_string(),
             writer_gate: Arc::new(Mutex::new(())),
             writer_waiters: Arc::new(AtomicUsize::new(0)),
             maintenance_gate: Arc::new(Mutex::new(())),
             active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
+            namespace_owner: Arc::new(namespace_owner),
         };
+        store.validate_namespace_owner_v0()?;
+        if mode == ApplicationStoreOwnerModeV0::RecoveryExclusive {
+            validate_existing_application_store_database_path_v0(
+                &store.database_path,
+                Some(store.namespace_owner.parent_uid),
+            )?;
+        }
         Ok(store)
+    }
+
+    fn validate_namespace_owner_v0(
+        &self,
+    ) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+        self.namespace_owner.validate()
+    }
+
+    /// Verifies the minimum filesystem boundary required before the recovery
+    /// facade may reopen SQLite by pathname. This excludes non-owner and
+    /// group/world-writable namespace components; it does not claim to defend
+    /// against a hostile process running under the same effective UID.
+    pub(super) fn validate_secure_native_validation_recovery_namespace_v0(
+        &self,
+    ) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+        self.validate_namespace_owner_v0()?;
+        let parent_handle_metadata = self
+            .namespace_owner
+            .parent_handle
+            .metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+        let parent_path_metadata = self
+            .namespace_owner
+            .canonical_parent
+            .symlink_metadata()
+            .map_err(|_| ApplicationStoreNamespaceOpenFailureV0::NamespaceChanged)?;
+        validate_application_store_recovery_parent_v0(
+            &parent_handle_metadata,
+            &parent_path_metadata,
+            self.namespace_owner.parent_uid,
+        )?;
+        validate_existing_application_store_database_path_v0(
+            &self.database_path,
+            Some(self.namespace_owner.parent_uid),
+        )?;
+        validate_application_store_recovery_auxiliary_v0(
+            &self.database_path,
+            "-wal",
+            self.namespace_owner.parent_uid,
+        )?;
+        validate_application_store_recovery_auxiliary_v0(
+            &self.database_path,
+            "-shm",
+            self.namespace_owner.parent_uid,
+        )?;
+        validate_application_store_lock_v0(
+            &self.namespace_owner.lock_path,
+            &self.namespace_owner.lock_handle,
+            self.namespace_owner.parent_uid,
+        )?;
+        Ok(())
+    }
+
+    #[cfg(test)]
+    pub(super) fn release_namespace_owner_for_recovery_test_v0(
+        &self,
+    ) -> std::result::Result<(), ApplicationStoreNamespaceOpenFailureV0> {
+        self.namespace_owner.release_for_recovery_test_v0()
     }
 
     pub(super) fn load_or_migrate(&self) -> Result<AppState> {
@@ -4589,8 +5099,14 @@ impl ApplicationStore {
         remove_file_if_exists(&temporary)?;
         remove_sqlite_sidecars(&temporary)?;
 
-        let mut target = Connection::open(&temporary)
-            .with_context(|| format!("create SQLite snapshot {}", temporary.display()))?;
+        let mut target = Connection::open_with_flags(
+            &temporary,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_CREATE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .with_context(|| format!("create SQLite snapshot {}", temporary.display()))?;
         {
             let backup = Backup::new(pinned.source()?, &mut target)?;
             backup.run_to_completion(256, Duration::from_millis(2), None)?;
@@ -4603,7 +5119,12 @@ impl ApplicationStore {
         // temporary copy, child outbox first, before pruning/VACUUM; the
         // authoritative source database remains intact.
         {
-            let mut connection = Connection::open(&temporary)?;
+            let mut connection = Connection::open_with_flags(
+                &temporary,
+                OpenFlags::SQLITE_OPEN_READ_WRITE
+                    | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                    | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+            )?;
             let transaction =
                 connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
             transaction.execute("DELETE FROM validation_callback_outbox_v0", [])?;
@@ -4622,7 +5143,12 @@ impl ApplicationStore {
         let snapshot_store = self.with_database_path(temporary.clone());
         snapshot_store.prune_auth_versions_before(state, state.height)?;
         {
-            let connection = Connection::open(&temporary)?;
+            let connection = Connection::open_with_flags(
+                &temporary,
+                OpenFlags::SQLITE_OPEN_READ_WRITE
+                    | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                    | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+            )?;
             connection.execute_batch(
                 "
                 PRAGMA wal_checkpoint(TRUNCATE);
@@ -4815,7 +5341,9 @@ impl ApplicationStore {
     ) -> Result<AppState> {
         let connection = Connection::open_with_flags(
             path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .with_context(|| format!("open untrusted SQLite snapshot {}", path.display()))?;
         connection.execute_batch(
@@ -4908,7 +5436,9 @@ impl ApplicationStore {
     ) -> Result<Option<StoredObject>> {
         let connection = Connection::open_with_flags(
             path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .with_context(|| format!("open validated SQLite snapshot {}", path.display()))?;
         connection.execute_batch(
@@ -5030,6 +5560,7 @@ impl ApplicationStore {
             writer_waiters: Arc::new(AtomicUsize::new(0)),
             maintenance_gate: Arc::new(Mutex::new(())),
             active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
+            namespace_owner: Arc::clone(&self.namespace_owner),
         }
     }
 
@@ -5207,14 +5738,21 @@ impl ApplicationStore {
     }
 
     fn connect(&self) -> Result<Connection> {
+        self.require_namespace_owner_v0()?;
         if let Some(parent) = self.database_path.parent() {
             fs::create_dir_all(parent).with_context(|| {
                 format!("create application store directory {}", parent.display())
             })?;
         }
         let initialize = !self.database_path.exists();
-        let mut connection = Connection::open(&self.database_path)
-            .with_context(|| format!("open application store {}", self.database_path.display()))?;
+        let mut connection = Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_CREATE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .with_context(|| format!("open application store {}", self.database_path.display()))?;
         connection.busy_timeout(Duration::from_secs(5))?;
         if initialize {
             connection.execute_batch("PRAGMA journal_mode=WAL;")?;
@@ -5290,13 +5828,17 @@ impl ApplicationStore {
             self.verify_database_bindings(&connection)?;
         }
         validate_auth_prune_metadata(&connection)?;
+        self.require_namespace_owner_v0()?;
         Ok(connection)
     }
 
     fn connect_read(&self) -> Result<Connection> {
+        self.require_namespace_owner_v0()?;
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .with_context(|| {
             format!(
@@ -5312,6 +5854,7 @@ impl ApplicationStore {
             ",
         )?;
         self.verify_database_bindings(&connection)?;
+        self.require_namespace_owner_v0()?;
         Ok(connection)
     }
 
@@ -5319,9 +5862,18 @@ impl ApplicationStore {
     fn connect_authenticated_runtime_read_v0(
         &self,
     ) -> std::result::Result<Connection, AuthenticatedRuntimeReadFailureV0> {
+        self.validate_namespace_owner_v0().map_err(|_| {
+            AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                stage: AuthenticatedRuntimeReadStageV0::OpenDatabase,
+                sqlite: None,
+                reason: "application store namespace owner changed",
+            }
+        })?;
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .map_err(|error| {
             classify_sqlite_authenticated_read_failure_v0(
@@ -5350,6 +5902,13 @@ impl ApplicationStore {
                     &error,
                 )
             })?;
+        self.validate_namespace_owner_v0().map_err(|_| {
+            AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                stage: AuthenticatedRuntimeReadStageV0::ConfigureDatabase,
+                sqlite: None,
+                reason: "application store namespace owner changed",
+            }
+        })?;
         Ok(connection)
     }
 
@@ -5466,7 +6025,14 @@ impl ApplicationStore {
     }
 
     fn connect_maintenance(&self) -> Result<Connection> {
-        let connection = Connection::open(&self.database_path).with_context(|| {
+        self.require_namespace_owner_v0()?;
+        let connection = Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .with_context(|| {
             format!(
                 "open application store maintenance connection {}",
                 self.database_path.display()
@@ -5481,13 +6047,17 @@ impl ApplicationStore {
         )?;
         self.verify_database_bindings(&connection)?;
         validate_auth_prune_metadata(&connection)?;
+        self.require_namespace_owner_v0()?;
         Ok(connection)
     }
 
     fn probe_existing_database(&self) -> Result<()> {
+        self.require_namespace_owner_v0()?;
         let connection = Connection::open_with_flags(
             &self.database_path,
-            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
         .with_context(|| {
             format!(
@@ -5499,6 +6069,7 @@ impl ApplicationStore {
         validate_foreign_key_integrity(&connection)?;
         validate_storage_resource_bounds(&connection)?;
         self.verify_compatible_database_bindings(&connection)?;
+        self.require_namespace_owner_v0()?;
         Ok(())
     }
 
@@ -9388,14 +9959,16 @@ mod authenticated_runtime_read_taxonomy_tests {
 
     #[test]
     fn typed_runtime_object_api_preserves_cannot_open_as_storage_unavailable() {
-        let path = std::env::temp_dir().join(format!(
-            "trnm-authenticated-runtime-read-missing-{}-{}.json",
+        let root = std::env::temp_dir().join(format!(
+            "trnm-authenticated-runtime-read-missing-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .expect("system clock after Unix epoch")
                 .as_nanos()
         ));
+        fs::create_dir_all(&root).expect("create typed-read test directory");
+        let path = root.join("state.json");
         let store = ApplicationStore::open(&path, "typed-read-test", &"00".repeat(32))
             .expect("construct store path");
         assert!(matches!(
@@ -9408,6 +9981,8 @@ mod authenticated_runtime_read_taxonomy_tests {
                 },
             })
         ));
+        drop(store);
+        fs::remove_dir_all(root).expect("remove typed-read test directory");
     }
 
     fn floor_test_connection() -> Connection {

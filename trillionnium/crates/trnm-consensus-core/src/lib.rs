@@ -13,6 +13,13 @@
 //! `Input::SafetyReplayComplete`. Missing ancestry remains fail-closed.
 //! After completing a recovered signing/finalization outbox, call `Resume`
 //! again to continue replay/timer recovery.
+//!
+//! `Core::recover` remains fail-closed for every durable payload-validation
+//! obligation.  The explicit `begin_payload_validation_obligation_recovery_v0`
+//! session is a narrower trusted-host boundary for exactly one independently
+//! reconciled deterministic-invalid job; it never exposes a live Core before
+//! that reconciliation and fences all consensus progress until the exact
+//! callback becomes a durable transition.
 
 extern crate alloc;
 
@@ -22,7 +29,10 @@ mod error;
 mod model;
 mod safety_state_record;
 
-pub use crate::core::{leader_for, Core};
+pub use crate::core::{
+    leader_for, Core, PayloadValidationRecoveryChallengeV0, PayloadValidationRecoveryDecisionV0,
+    PayloadValidationRecoveryReconcilerV0, PayloadValidationRecoverySessionV0,
+};
 pub use crate::error::{CoreError, Result};
 pub use crate::model::{
     BarrierId, ClaimedPayloadValidationRequestV0, CoreConfig, DuplicatePayloadValidationRequestV0,

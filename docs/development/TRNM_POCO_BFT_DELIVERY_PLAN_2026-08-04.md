@@ -50,9 +50,12 @@ complete-body state/receipts-root deterministic invalidity can retain a live
 first-seal owner and traverse an app-private non-cloneable driver with a fixed
 store, owned Core, and injected test sink through real `Core::step`,
 `delivered`, exact safety-state confirmation, `acked`, and `StorageAck`.
-Because there is no production constructor, adapter to the standalone
-SafetyState journal, host wiring, recovery remint, or crash takeover, this does
-not complete step 4 or satisfy the frozen production contract.
+G1c additionally provides one existing-only, deterministic-invalid recovery
+join across the application, SafetyState, and signer journals. Because that
+join is bounded to `O+P`, `O+D`, `C+D`, and `C+K`, remains inert, and has no
+fresh executor, general result recovery, production effect driver, or
+real-process kill matrix, it does not complete step 4 or satisfy the frozen
+production contract.
 
 The representation and standalone journal portions of step 5 are now
 implemented. SafetyState record codec v0 is frozen to epoch-zero Core
@@ -63,13 +66,16 @@ v2 with persistent WAL, `synchronous=FULL`, a two-revision checksummed
 predecessor chain, two separately aligned Stable/HeadIntent head slots, and an
 independent one-way terminal-halt latch.
 It semantically revalidates inert heads and exact successors, including
-obligation-bearing facts, while `Core::recover` still rejects obligations.
+obligation-bearing facts, while ordinary `Core::recover` still rejects
+obligations. A separate session accepts exactly one reconciled
+deterministic-invalid obligation.
 Core now emits opaque persistence requests with process-local designated-Core
 affinity. `CanonicalSignIntentV0`, strict exact decoding/vectors, and a first
 append-only signer-journal slice are present; the inert node owner holds that
 journal but exposes no signing/effect-driving API. There is still no production
 external monotonic watermark, HSM/KMS producer, complete HotStuff SafetyRules
-or locked-QC reconciliation, obligation takeover, or ordered finalization queue.
+or locked-QC reconciliation, general obligation/result takeover, BlockId
+overlay, or ordered finalization queue.
 
 The frozen contracts are release gates. A test-only carrier or an in-memory
 simulation cannot satisfy them.
@@ -320,15 +326,16 @@ an earlier phase.
   `max_consensus_message_bytes`; the aggregate obligation budget additionally
   covers fixed route/ID/revision/parent facts and any exact parent header.
   Current schema v8 additionally freezes the first durable authorizing revision
-  of a pending SignIntent across unrelated callback persistence. Recovery first
-  validates every schema-v8 obligation and inert completion and
-  then rejects any non-empty obligation set with `InvalidRecovery`; it does not
-  reissue a pending request. Safety-state schemas v5 through v7 have no implicit
-  migration. Completion-only recovery provides exact-result suppression, but
-  non-empty obligations remain
-  fail-closed. This closes durable pre-effect capture, cleanup ordering, and
-  callback-result idempotence, not crash replay, callback exactly-once, or
-  liveness.
+  of a pending SignIntent across unrelated callback persistence. Ordinary
+  `Core::recover` first validates every schema-v8 obligation and inert
+  completion and then rejects any non-empty obligation set with
+  `InvalidRecovery`; that entry does not reissue a pending request.
+  Safety-state schemas v5 through v7 have no implicit migration. Completion-only
+  ordinary recovery provides exact-result suppression, while non-empty
+  obligations remain fail-closed there. The separate G1c one-obligation
+  recovery session is the only bounded authenticated-ticket exception and
+  admits only a reconciled deterministic-invalid result. This does not provide
+  general crash replay, callback exactly-once, or liveness.
   An exact bounded record codec v0 now serializes only epoch-zero schema-v8
   SafetyState. It uses strict/canonical trusted-Genesis-aware nested CEV0,
   binds the Core configuration, verifier profile, fixed layout, and record/blob
@@ -411,17 +418,42 @@ an earlier phase.
   confirms the same state through that sink,
   writes `acked`, and only then issues `StorageAck`. Completion-only replay is
   disabled because the Core tombstone does not bind the artifact checksum.
+  G1c adds a separate inert Core recovery session without changing ordinary
+  `Core::recover`: ordinary recovery still rejects an obligation-bearing state,
+  while the session accepts exactly one durable obligation and releases a Core
+  only after full application-journal reconciliation proves the existing result
+  is `DeterministicallyInvalid`. Concurrent obligations and every other result
+  class remain fail closed.
+
+  A recovery-only schema-v8 application owner opens existing data and admits
+  only `CallbackPending`, `Delivered`, and `Acked`; `Reserved`, `Evaluated`,
+  `Applied`, `Valid`, and `Unavailable` remain unsupported. A concrete,
+  non-cloneable SafetyStore exact-readback token is issued only by the complete
+  authenticated-head path. It grants no callback, Core, or general application
+  transition authority by itself; the bounded application recovery API accepts
+  it only as a required provenance input together with the pinned manifest and
+  exact existing `Delivered`/`Acked` row.
+  The inert node combines the three journals only for `O+P`, `O+D`, `C+D`, and
+  `C+K` (obligation + pending/delivered and completion + delivered/acked).
   Snapshot
   construction scrubs outbox then jobs only from its temporary copy and
   verifies both empty, and install refuses to discard non-empty target-local
   work. This is a revalidatable raw job/recovery-fact foundation plus a narrow
-  durable deterministic-invalid callback intent plus a process-local real-Core
-  delivery/ack test integration, not signed-proposal-witness reconstruction,
-  `Valid` artifact persistence, executable crash takeover, state apply, or
-  process-wide callback exactly-once. There is no production driver
-  constructor, adapter to the standalone SafetyState journal,
-  host/AppCore/ABCI/node wiring, generic recovery remint, or process-wide Core
-  uniqueness guarantee.
+  durable deterministic-invalid callback intent plus a bounded G1c three-store
+  takeover/join, not signed-proposal-witness reconstruction, `Valid` artifact
+  persistence, fresh execution, BlockId-keyed speculative execution, ordered
+  finalization, state apply, or process-wide callback exactly-once. There is no
+  production effect driver/network, state-sync recovery join, real-process kill
+  matrix, or whole-namespace rollback protection. The application recovery
+  facade now takes the exclusive side of the shared/exclusive sidecar lock,
+  pins its PID and canonical parent/lock/main-database/Safety-binding
+  identities, and audits all supported/active rows before the bounded join. A
+  fixed create-once local manifest prevents a later startup from nominating a
+  different Safety journal/profile. Parent, main, lock, manifest, and existing
+  WAL/SHM objects are owner-bound and not group/world writable, and the three
+  canonical store parents are non-overlapping. WAL/SHM inodes remain
+  SQLite-managed, and hostile same-EUID bypass is outside this local Linux
+  boundary.
   Its only host value is borrowed
   from the initialized `AppCore`, and the canonical signer-policy preimage is
   recomputed against both store metadata and the authenticated lifecycle
@@ -943,7 +975,10 @@ an earlier phase.
   fixed-store/owned-Core/injected-test-sink delivery chain through real
   `Core::step`, `delivered`, exact safety-state confirmation, `acked`, and
   `StorageAck`; that driver is not connected to the standalone SafetyState
-  journal and adds no recovery remint, takeover, or exactly-once authority.
+  journal and adds no recovery remint, takeover, or exactly-once authority. The
+  separate G1c node recovery join now bridges exact existing deterministic-
+  invalid facts across the journals, but does not turn this live first-seal
+  driver into a production constructor or general recovery path.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -1236,10 +1271,11 @@ an earlier phase.
   validates those facts, while current schema v8 additionally freezes the
   first durable authorizing revision inside a pending `SignIntent`. Schemas v5
   through v7 are not implicitly migrated because that signing authorization
-  cannot be reconstructed safely after a crash. Recovery deliberately rejects
-  a non-empty obligation set until authenticated replay tickets and
-  speculative-parent reconstruction exist. This ordering and
-  tombstone are
+  cannot be reconstructed safely after a crash. Ordinary `Core::recover`
+  deliberately rejects a non-empty obligation set. The separate G1c session is
+  the sole bounded authenticated replay-ticket path and accepts exactly one
+  reconciled deterministic-invalid obligation; general replay and
+  speculative-parent reconstruction remain open. This ordering and tombstone are
   distinct from, and do not implement, an application callback outbox,
   delivery acknowledgement, type-level callback authority, or callback
   exactly-once.
@@ -1256,8 +1292,10 @@ an earlier phase.
   process-local writer/driver using real `Core::step` and an injected test
   safety sink. A standalone Linux-only SafetyState SQLite journal now exists,
   but production driver/journal wiring, an independent monotonic rollback
-  watermark, recovery remint, authenticated obligation replay, host wiring, and
-  crash takeover remain the next ordered slices.
+  watermark, general obligation/result recovery, fresh execution, ordered
+  finalization, and real-process crash coverage remain the next ordered slices.
+  G1c covers only the existing deterministic-invalid `O+P`, `O+D`, `C+D`, and
+  `C+K` join in an inert node owner.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,

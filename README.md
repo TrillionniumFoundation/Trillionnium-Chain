@@ -80,6 +80,16 @@ TrillionniumChain/
 - `trnm-consensus-core`: deterministic PoCO-BFT state-machine prototype. It has no
   sockets, database, filesystem, wall-clock, or signer-device dependency and
   requires persistence acknowledgement before requesting a signature
+- `trnm-consensus-safety-store`: standalone Linux SQLite SafetyState journal.
+  Its concrete, non-cloneable native-invalid exact-readback token can be issued
+  only after complete head validation; the token exposes read-only facts and
+  grants no callback, Core, or general application transition authority by
+  itself. G1c accepts it only as one required provenance input to the bounded
+  application recovery transition, together with the pinned local binding
+  manifest and the exact existing `Delivered`/`Acked` row
+- `trnm-consensus-signer-journal`: append-only canonical sign-intent/signature
+  journal with an injected external monotonic-watermark contract; the external
+  production watermark/remote signer remains unwired
 - `trnm-consensus-sim`: deterministic, replayable fault simulator for the pure
   core; it is test evidence, not a deployed network or production node
 - `trnm-consensus-app`: the preserved CometBFT development oracle and runtime
@@ -92,6 +102,11 @@ TrillionniumChain/
   and negative resource/replay checks, four-node proposal/vote/finalize/commit
   crash recovery, six-node validator
   rotation, and rootless partition-safety evidence
+- `trnm-poco-node`: non-legacy but deliberately inert PoCO bootstrap scaffold.
+  Its current G1c recovery slice performs only the bounded three-store joins
+  obligation + `CallbackPending`, obligation + `Delivered`, completion +
+  `Delivered`, and completion + `Acked`; it is not a deployable node or a
+  general effect driver
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
@@ -110,6 +125,25 @@ runtime table in `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`
 remains useful evidence for the reusable runtime/JMT boundary, but its CometBFT
 production-authority decision is superseded. Bridge, external contracts, and
 full ZK platform work remain outside the frozen PoCO-BFT v0 scope.
+
+The G1c validation-recovery slice is intentionally narrow. Ordinary
+`Core::recover` still rejects every obligation-bearing SafetyState; a separate
+inert session admits exactly one durable obligation and only an independently
+reconciled `DeterministicallyInvalid` application result. The application
+recovery owner opens an existing schema-v8 journal and supports only
+`CallbackPending`, `Delivered`, and `Acked`; `Reserved`, `Evaluated`, `Applied`,
+`Valid`, and `Unavailable` remain fail-closed. A fresh executor, BlockId-keyed
+speculative overlay, ordered finalization, general effect driver and network,
+state sync, real-process kill matrix, and whole-namespace rollback protection
+remain release blockers. The application recovery facade now excludes ordinary
+shared opens with an exclusive sidecar lock, pins the owner PID plus canonical
+parent/lock/main-database identities, and requires a create-once checksummed
+manifest that durably binds the designated Safety journal/profile. Recovery
+also rejects non-owner or group/world-writable parent, database, lock,
+manifest, and existing WAL/SHM components; the three store parents may not be
+equal or nested. This remains a local Linux boundary: WAL/SHM inodes are
+SQLite-managed rather than independently pinned, and no hostile same-EUID or
+real-process kill campaign is certified.
 
 ### Web4 frontend (`web4-frontend`)
 

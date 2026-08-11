@@ -10,6 +10,12 @@ pub enum CoreError {
     Protocol(ValidationError),
     InvalidConfig(&'static str),
     InvalidRecovery(&'static str),
+    PayloadValidationRecoveryNotRequired,
+    UnsupportedPayloadValidationRecovery {
+        obligations: usize,
+    },
+    UnsupportedPayloadValidationRecoveryState(&'static str),
+    PayloadValidationRecoveryRejected,
     LocalValidatorMissing(Box<ValidatorId>),
     WrongEpoch {
         expected: Epoch,
@@ -76,6 +82,20 @@ impl fmt::Display for CoreError {
             Self::Protocol(error) => write!(formatter, "protocol validation failed: {error}"),
             Self::InvalidConfig(reason) => write!(formatter, "invalid core config: {reason}"),
             Self::InvalidRecovery(reason) => write!(formatter, "invalid recovery state: {reason}"),
+            Self::PayloadValidationRecoveryNotRequired => formatter.write_str(
+                "payload-validation obligation recovery requires exactly one durable obligation",
+            ),
+            Self::UnsupportedPayloadValidationRecovery { obligations } => write!(
+                formatter,
+                "payload-validation obligation recovery does not support {obligations} concurrent obligations",
+            ),
+            Self::UnsupportedPayloadValidationRecoveryState(reason) => write!(
+                formatter,
+                "unsupported payload-validation recovery state: {reason}",
+            ),
+            Self::PayloadValidationRecoveryRejected => formatter.write_str(
+                "the trusted host rejected the exact payload-validation recovery challenge",
+            ),
             Self::LocalValidatorMissing(id) => {
                 write!(
                     formatter,

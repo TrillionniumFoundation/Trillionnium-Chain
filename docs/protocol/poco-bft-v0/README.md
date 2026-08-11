@@ -531,14 +531,15 @@ Core bounds the complete signed-proposal durable resource -- logical block plus
 exact certified-tail witness -- by authenticated
 `max_consensus_message_bytes`. Its aggregate obligation budget additionally
 counts the fixed route/ID/revision/parent facts and any exact parent header.
-Recovery validates every schema-v8 obligation and inert completion and then rejects
-a non-empty obligation set with `InvalidRecovery`; it does not reissue pending
-validation. Safety-state schemas v5 through v7 have no implicit migration.
-Completion-only recovery provides durable
-exact-result suppression, but non-empty obligations remain fail-closed. This
-is durable pre-effect capture, cleanup ordering, and result idempotence, not
-crash replay, callback exactly-once, type-level callback authority, or recovery
-liveness.
+Ordinary `Core::recover` validates every schema-v8 obligation and inert
+completion and then rejects a non-empty obligation set with `InvalidRecovery`;
+that entry does not reissue pending validation. Safety-state schemas v5 through
+v7 have no implicit migration. Completion-only ordinary recovery provides
+durable exact-result suppression, but non-empty obligations remain fail-closed
+there. The separate G1c one-obligation recovery session described below is the
+only bounded authenticated-ticket exception, and only for a reconciled
+deterministic-invalid result. These rules do not provide general crash replay,
+callback exactly-once, type-level callback authority, or recovery liveness.
 
 Core now also has one exact bounded `SafetyState` record codec v0, frozen only
 for epoch-zero `SafetyState` schema v8. Its outer record binds the codec and
@@ -642,6 +643,49 @@ cannot authorize a durable artifact. After `StorageAck`, an unchanged Core
 state and either no effect or the exact expected `SafetyHalted` effect are
 required.
 
+G1c adds a separate existing-only recovery facade without weakening ordinary
+startup. `Core::recover` still rejects every non-empty durable-obligation set.
+The only alternative is an inert, non-cloneable session for exactly one
+obligation; no live Core is exposed until a trusted reconciler matches the
+complete challenge to a deeply verified application row that is already
+`DeterministicallyInvalid`. More than one obligation, a different result, or a
+missing/mismatched row fails closed.
+
+The schema-v8 recovery facade admits only existing `CallbackPending`,
+`Delivered`, and `Acked` deterministic-invalid rows. It never creates a
+reservation or runs fresh execution, and it rejects `Reserved`, `Evaluated`,
+`Applied`, `Valid`, `Unavailable`, and unknown state/result tags at open. It
+retains recovered transition owners internally rather than reconstructing a
+general callback token from inert row bytes.
+
+The standalone SafetyStore supplies the concrete, non-cloneable
+`ConfirmedNativeDeterministicInvalidHeadV0` exact-readback token. Only the
+store's complete authenticated `head()` path can construct it. Its state,
+context, transition, revision, and checksums are read-only facts; it has no
+public constructor/parts conversion and implements no application or Core
+authority trait. The production application recovery API accepts only this
+concrete token and validates its issuing journal/profile; the node obtains
+those expected values from the SafetyStore it actually owns rather than from a
+detached caller projection. Before the first supported application recovery
+row is created, the test-only bootstrap writes a fixed 140-byte, checksummed,
+create-once manifest beside the App database. It binds the App host
+configuration to that Safety journal/profile, is synced with its parent, and
+is opened and identity/byte-pinned before recovery. A missing, replaced,
+tampered, or newly nominated binding fails closed. This local manifest is not
+included in application state snapshots.
+
+The token is not standalone or general transition authority. It becomes one
+necessary input to the bounded `C+D`/`C+K` application transition only when the
+pinned manifest names its issuing journal/profile and the facade independently
+matches the exact existing `Delivered`/`Acked` row and full transition lineage.
+
+The inert `trnm-poco-node` recovery host joins three existing stores using the
+bounded matrix `O+P`, `O+D`, `C+D`, and `C+K`: obligation plus
+`CallbackPending`, obligation plus `Delivered`, completion plus `Delivered`, or
+completion plus `Acked`. Every other active-count/context/status combination
+fails closed. A successful join only returns a bootstrapped inert owner; it
+does not sign, broadcast, schedule, or make the package deployable.
+
 An exact reopen returns its checksum-verified durable state rather than silently
 coalescing unfinished work, while no reopen can recreate the unique first-
 reservation token. Startup and recovery exact-decode and canonically re-encode
@@ -673,14 +717,25 @@ snapshot generation scrubs outbox rows first and jobs second only from the
 temporary copy and verifies both are empty, leaving the source database
 unchanged; installation refuses to overwrite a non-empty target-local
 validation journal. This is a revalidatable raw request/recovery-fact foundation
-plus a durable deterministic-invalid callback-pending record and a
-process-local, real-Core delivery/ack integration exercised with an injected
-test sink. It is not a reconstruction of the signed proposal witness, a
-durable `Valid` artifact, a production host integration, executable crash
-takeover, or an integration with the standalone SafetyState journal above.
-There is no production driver constructor, no `AppCore`/ABCI/`trnm-node`
-wiring, no generic recovery remint of the live owner, and no process-wide Core
-uniqueness or callback exactly-once guarantee.
+plus a bounded deterministic-invalid G1c takeover/join. It is not a
+reconstruction of the signed proposal witness, a durable `Valid` artifact, a
+fresh executor, a BlockId-keyed speculative overlay, an ordered finalization
+queue, or a general application recovery protocol. There is no production
+effect driver, authenticated network, state-sync recovery join, real-process
+kill matrix, process-wide Core uniqueness, or callback exactly-once guarantee.
+The application recovery facade takes the exclusive side of the
+ordinary-shared/recovery-exclusive sidecar lock, pins its PID and canonical
+parent/lock/main-database/manifest identities, and audits the complete
+supported/active row set before joining. Parent, main database, lock, manifest,
+and existing WAL/SHM objects must have the expected owner and may not be
+group/world writable; all three store parents must be canonical, distinct, and
+non-nested. WAL/SHM inode lifecycles remain SQLite-managed, and a hostile
+same-EUID process remains outside this local Linux contract. The non-default
+`recovery-test-support` fixture may bootstrap `P` only for dedicated recovery
+tests; development library artifacts build with `--no-default-features` and
+record that this fixture is absent.
+Whole-namespace rollback/clone safety still depends on a production independent
+monotonic boundary that is not implemented here.
 
 That carrier now also opens a production, process-local sequential transaction
 cursor. Its host tuple can only be borrowed from initialized `AppCore`; the
@@ -802,16 +857,17 @@ callback-outbox intent; a distinct
 Finalize-time atomic boundary must revalidate the exact authority and couple
 JMT/domain apply, root/native-head persistence, head advancement, and applied
 state. Neither the `Valid` validation-time nor the Finalize-time boundary is
-implemented. Authenticated replay tickets, completion retirement
+implemented. General authenticated replay tickets and completion retirement
 after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
 application-reservation takeover, `Valid` evaluated-artifact persistence,
-production callback scheduling/delivery, crash takeover, completion-only
+production callback scheduling/delivery, recovery for outcomes outside the G1c
+deterministic-invalid matrix, real-process crash takeover, completion-only
 artifact replay, and callback exactly-once are also not implemented. The current
 process-local invalid driver uses Core's `StorageAck` cleanup barrier only
 after its injected sink and application `acked` transition; that test boundary
-is not a production host callback-outbox acknowledgement and is not connected
-to the standalone SafetyState journal.
+is not a production host callback-outbox acknowledgement. The separate inert
+G1c node join does not make that first-seal path a general SafetyState adapter.
 Snapshot-closed real runtime-attempt failures now have a separate owning bridge
 into the same outcome kernel. It uses only the opaque runtime attempt's stable
 disposition and the exhaustive typed authenticated-read variants: transaction

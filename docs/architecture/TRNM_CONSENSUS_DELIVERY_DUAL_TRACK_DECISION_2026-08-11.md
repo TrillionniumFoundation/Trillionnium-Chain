@@ -32,10 +32,11 @@ journals, node databases, chain IDs, readiness labels, or release artifacts.
 The July CometBFT spike already has local four- and six-validator process
 evidence, crash recovery, application replay, validator rotation, partitions,
 JMT commitments, and snapshot state sync. The August PoCO-BFT branch has a
-strong deterministic safety kernel and standalone SafetyState journal, but P2
-real-node work has not started: there is no production host, authenticated
-transport, complete signer journal, fork-aware execution adapter, state sync,
-or deployable node artifact.
+strong deterministic safety kernel, standalone SafetyState and signer
+journals, and a bounded inert G1c three-store recovery join. P2 real-node work
+has still not started: there is no production effect driver, authenticated
+transport, production remote signer/external watermark, fork-aware execution
+adapter, state sync, or deployable node artifact.
 
 PoCO-derived validator power is not by itself evidence that a bespoke BFT
 engine is required. CometBFT accepts deterministic application-supplied
@@ -73,6 +74,30 @@ The PoCO-BFT incubator proceeds in this order:
    ingress, operational controls, and multi-node campaigns.
 
 PoCO voting power remains `shadow` throughout these steps.
+
+The current G1c slice is evidence toward step 4, not completion of it. Ordinary
+`Core::recover` still refuses an obligation-bearing head. A separate inert
+session accepts exactly one reconciled deterministic-invalid obligation; the
+schema-v8 application recovery owner opens existing data only and supports
+`CallbackPending`, `Delivered`, and `Acked`. The inert node joins only
+obligation + pending, obligation + delivered, completion + delivered, and
+completion + acked across the application, SafetyState, and signer stores. A
+concrete non-cloneable SafetyStore token proves exact native-invalid head
+readback but grants no callback, Core, or general application transition
+authority by itself. It is one required provenance input to the bounded
+application recovery transition only when the pinned manifest and exact
+existing `Delivered`/`Acked` row also match.
+
+This slice has no fresh executor, BlockId speculative overlay, ordered
+finalization queue, general effect driver/network, state sync, or real-process
+kill matrix. `Reserved`, `Evaluated`, `Applied`, `Valid`, and `Unavailable`
+recovery remain unsupported. Whole-namespace rollback protection still needs a
+production independent monotonic boundary. The application recovery facade now
+uses ordinary-shared/recovery-exclusive sidecar locking, pins its process,
+canonical parent, lock, and main-database identities, and audits all supported
+and active rows before joining. That is still local Linux evidence: SQLite owns
+the WAL/SHM inode lifecycle, hostile same-EUID bypass remains out of scope, and
+no real-process kill campaign has certified this ownership protocol.
 
 ## 4. PoCO-BFT promotion gates
 

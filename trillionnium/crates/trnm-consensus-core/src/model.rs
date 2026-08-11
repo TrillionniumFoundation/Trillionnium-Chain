@@ -661,11 +661,12 @@ impl SafetyHalt {
 ///
 /// This is a persistence fact from which the safety core reconstructs the
 /// exact route, generation, signed proposal, and authenticated parent after
-/// the registration persistence acknowledgement in the same process. Crash
-/// recovery validates the record but deliberately fails closed while any
-/// obligation remains; authenticated replay-ticket support is required before
-/// cross-crash reissue. It is not a host callback capability: possession of
-/// this cloneable record does not authorize construction of
+/// the registration persistence acknowledgement in the same process. Ordinary
+/// [`Core::recover`](crate::Core::recover) deliberately fails closed while any
+/// obligation remains. The separately gated V0 recovery session can restore
+/// exactly one obligation only after a trusted host reconciles a pre-existing
+/// deterministic-invalid application result. It is not a host callback
+/// capability: possession of this cloneable record does not authorize construction of
 /// [`Input::PayloadValidated`] or [`Input::SyncedPayloadValidated`], and only
 /// `Core` may decide whether the obligation is live and when it is resolved.
 ///

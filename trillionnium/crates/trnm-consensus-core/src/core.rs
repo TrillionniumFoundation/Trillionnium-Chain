@@ -81,6 +81,126 @@ impl PartialEq for CorePersistenceAffinityV0 {
 
 impl Eq for CorePersistenceAffinityV0 {}
 
+/// The trusted host's decision for one exact recovery-time validation job.
+///
+/// V0 deliberately supports only a job whose already-durable application
+/// result is `DeterministicallyInvalid`.  `AcceptDeterministicallyInvalid` is
+/// therefore not a fresh execution result: it is the trusted host's assertion
+/// that its independently recovered journal contains that terminal result for
+/// every fact exposed by the challenge.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PayloadValidationRecoveryDecisionV0 {
+    AcceptDeterministicallyInvalid,
+    Reject,
+}
+
+/// Trusted-host reconciliation boundary for a crash-surviving validation job.
+///
+/// The Core authenticates the durable obligation and constructs the challenge,
+/// but it cannot inspect or authenticate the application's separate WAL.  A
+/// production host must implement this trait by matching the complete challenge
+/// against that WAL.  Returning `AcceptDeterministicallyInvalid` without such a
+/// check violates the host integration contract; it does not turn caller data
+/// into Core-authenticated application state.
+pub trait PayloadValidationRecoveryReconcilerV0 {
+    fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        challenge: &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0;
+}
+
+/// One Core-authenticated, process-local obligation recovery challenge.
+///
+/// This value is intentionally non-cloneable, has no public parts constructor,
+/// and is owned by its recovery session.  Its affinity is meaningful only in
+/// this process; the complete durable obligation remains the cross-process
+/// identity that a trusted host must reconcile with its application journal.
+#[derive(Debug)]
+#[must_use = "the exact recovery challenge must be reconciled before a live Core can exist"]
+pub struct PayloadValidationRecoveryChallengeV0 {
+    safety_head_revision: u64,
+    obligation: DurablePayloadValidationObligationV0,
+    affinity: Arc<()>,
+}
+
+impl PayloadValidationRecoveryChallengeV0 {
+    pub const fn safety_head_revision(&self) -> u64 {
+        self.safety_head_revision
+    }
+
+    pub const fn route(&self) -> PayloadValidationRouteV0 {
+        self.obligation.route()
+    }
+
+    pub const fn id(&self) -> ValidationId {
+        self.obligation.id()
+    }
+
+    pub const fn proposal(&self) -> &SignedProposalV0 {
+        self.obligation.proposal()
+    }
+
+    pub const fn parent(&self) -> &PayloadValidationParentV0 {
+        self.obligation.parent()
+    }
+
+    pub const fn first_recorded_revision(&self) -> u64 {
+        self.obligation.first_recorded_revision()
+    }
+
+    /// Compares only the process-local recovery-session affinity.
+    ///
+    /// This lets a trusted reconciler reject a challenge accidentally routed
+    /// through another concurrently constructed recovery session without
+    /// exposing or serializing the affinity itself.
+    pub fn same_recovery_instance_v0(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.affinity, &other.affinity)
+    }
+}
+
+/// Inert two-phase recovery session for one durable validation obligation.
+///
+/// No live Core is exposed by this type.  The only consuming exit invokes a
+/// trusted-host reconciler over the internally owned challenge and returns a
+/// Core only after an explicit deterministic-invalid acceptance.
+#[derive(Debug)]
+#[must_use = "dropping the session keeps payload-validation recovery fail-closed"]
+pub struct PayloadValidationRecoverySessionV0 {
+    core: Core,
+    challenge: PayloadValidationRecoveryChallengeV0,
+}
+
+impl PayloadValidationRecoverySessionV0 {
+    pub const fn challenge(&self) -> &PayloadValidationRecoveryChallengeV0 {
+        &self.challenge
+    }
+
+    pub fn reconcile_and_activate_v0<R: PayloadValidationRecoveryReconcilerV0>(
+        mut self,
+        reconciler: &mut R,
+    ) -> Result<Core> {
+        if reconciler.reconcile_deterministically_invalid_obligation_v0(&self.challenge)
+            != PayloadValidationRecoveryDecisionV0::AcceptDeterministicallyInvalid
+        {
+            return Err(CoreError::PayloadValidationRecoveryRejected);
+        }
+        if !Arc::ptr_eq(&self.core.persistence_affinity.0, &self.challenge.affinity)
+            || self.core.safety.revision() != self.challenge.safety_head_revision
+        {
+            return Err(CoreError::PayloadValidationRecoveryRejected);
+        }
+        self.core
+            .activate_recovered_payload_validation_v0(&self.challenge.obligation)?;
+        Ok(self.core)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct RecoveredPayloadValidationFenceV0 {
+    route: PayloadValidationRouteV0,
+    id: ValidationId,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Core {
     config: CoreConfig,
@@ -103,6 +223,7 @@ pub struct Core {
     observed_qcs: BTreeMap<View, QuorumCertificate>,
     next_validation_generation: u64,
     replay_required: bool,
+    recovered_validation_pending: Option<RecoveredPayloadValidationFenceV0>,
     persistence_affinity: CorePersistenceAffinityV0,
 }
 
@@ -221,6 +342,50 @@ impl Core {
         }
         let replay_required = safety_replay_required(&state);
         Ok(Self::empty(config, state, replay_required))
+    }
+
+    /// Begins the bounded V0 takeover of one crash-surviving validation job.
+    ///
+    /// This is deliberately separate from [`Self::recover`], which continues
+    /// to reject every nonempty obligation set.  The returned session is inert:
+    /// it exposes no Core and can become live only through
+    /// [`PayloadValidationRecoverySessionV0::reconcile_and_activate_v0`].  V0
+    /// accepts exactly one durable obligation and only a trusted-host assertion
+    /// that the matching application journal already contains a
+    /// deterministic-invalid result.  Concurrent obligations and other result
+    /// classes remain fail-closed for later protocol versions.
+    pub fn begin_payload_validation_obligation_recovery_v0<V: SignatureVerifier>(
+        config: CoreConfig,
+        state: SafetyState,
+        verifier: &V,
+    ) -> Result<PayloadValidationRecoverySessionV0> {
+        Self::validate_persisted_state_v0(&config, &state, verifier)?;
+        let obligation = match state.payload_validation_obligations() {
+            [] => return Err(CoreError::PayloadValidationRecoveryNotRequired),
+            [obligation] => obligation.clone(),
+            obligations => {
+                return Err(CoreError::UnsupportedPayloadValidationRecovery {
+                    obligations: obligations.len(),
+                });
+            }
+        };
+        if state
+            .payload_terminal_result(obligation.id().block_id())
+            .is_some()
+        {
+            return Err(CoreError::UnsupportedPayloadValidationRecoveryState(
+                "the challenged block already has a durable terminal payload fact",
+            ));
+        }
+        let safety_head_revision = state.revision();
+        let replay_required = safety_replay_required(&state);
+        let core = Self::empty(config, state, replay_required);
+        let challenge = PayloadValidationRecoveryChallengeV0 {
+            safety_head_revision,
+            obligation,
+            affinity: Arc::clone(&core.persistence_affinity.0),
+        };
+        Ok(PayloadValidationRecoverySessionV0 { core, challenge })
     }
 
     pub const fn config(&self) -> &CoreConfig {
@@ -363,6 +528,117 @@ impl Core {
         ))
     }
 
+    fn activate_recovered_payload_validation_v0(
+        &mut self,
+        challenged: &DurablePayloadValidationObligationV0,
+    ) -> Result<()> {
+        if self.recovered_validation_pending.is_some()
+            || self.pending_validation_count() != 0
+            || self.pending_persistence.is_some()
+            || self.awaiting_signature
+        {
+            return Err(CoreError::InvalidRecovery(
+                "payload-validation recovery session was not inert at activation",
+            ));
+        }
+        let durable = self
+            .safety
+            .payload_validation_obligations()
+            .first()
+            .filter(|durable| *durable == challenged)
+            .cloned()
+            .ok_or(CoreError::InvalidRecovery(
+                "payload-validation recovery challenge differs from the durable obligation",
+            ))?;
+        if self.safety.payload_validation_obligations().len() != 1 {
+            return Err(CoreError::UnsupportedPayloadValidationRecovery {
+                obligations: self.safety.payload_validation_obligations().len(),
+            });
+        }
+
+        let proposal = durable.proposal().clone();
+        let block_id = proposal.block().id();
+        let header = proposal.block().header();
+        let parent = durable.parent();
+        let parent_binding_is_exact = match parent.exact_header() {
+            Some(exact) => {
+                exact.id() == parent.tip().block_id()
+                    && exact.height() == parent.tip().height()
+                    && exact.view() == parent.tip().view()
+                    && exact.timestamp_ms() == parent.tip().timestamp_ms()
+                    && payload_parent_context_matches_target_v0(header, exact)?
+            }
+            None => {
+                parent.tip().height().get() == 0
+                    && parent.tip().view().get() == 0
+                    && parent.tip().block_id() == self.config.genesis_block_id()
+                    && parent.tip().timestamp_ms() == self.config.trusted_genesis_timestamp_ms()
+            }
+        };
+        if durable.id().block_id() != block_id
+            || durable.id().view() != header.view()
+            || header.parent_id() != parent.tip().block_id()
+            || header.height() != parent.tip().height().checked_next()?
+            || !parent_binding_is_exact
+        {
+            return Err(CoreError::PayloadValidationRecoveryRejected);
+        }
+        let protected = self.protected_blocks();
+        self.blocks.insert_verified_proposal(
+            proposal.block().header().clone(),
+            proposal.witness().clone(),
+            &protected,
+        )?;
+        self.restore_durable_payload_fact(block_id)?;
+        match durable.route() {
+            PayloadValidationRouteV0::Proposal => {
+                self.pending_validations.insert(durable.id(), proposal);
+            }
+            PayloadValidationRouteV0::Synced => {
+                self.pending_sync_validations.insert(durable.id(), proposal);
+            }
+        }
+        self.recovered_validation_pending = Some(RecoveredPayloadValidationFenceV0 {
+            route: durable.route(),
+            id: durable.id(),
+        });
+        self.validate_recovered_payload_validation_fence_v0()
+    }
+
+    fn validate_recovered_payload_validation_fence_v0(&self) -> Result<()> {
+        let Some(fence) = self.recovered_validation_pending else {
+            return Ok(());
+        };
+        let [obligation] = self.safety.payload_validation_obligations() else {
+            return Err(CoreError::InvalidRecovery(
+                "recovered payload-validation fence lacks its unique durable obligation",
+            ));
+        };
+        if obligation.route() != fence.route || obligation.id() != fence.id {
+            return Err(CoreError::InvalidRecovery(
+                "recovered payload-validation fence differs from its durable obligation",
+            ));
+        }
+        let proposal = match fence.route {
+            PayloadValidationRouteV0::Proposal => self.pending_validations.get(&fence.id),
+            PayloadValidationRouteV0::Synced => self.pending_sync_validations.get(&fence.id),
+        };
+        if proposal != Some(obligation.proposal()) || self.pending_validation_count() != 1 {
+            return Err(CoreError::InvalidRecovery(
+                "recovered payload-validation fence lacks its exact volatile route",
+            ));
+        }
+        let block_id = obligation.proposal().block().id();
+        if self.blocks.header(block_id) != Some(obligation.proposal().block().header())
+            || self.blocks.witness(block_id) != Some(obligation.proposal().witness())
+        {
+            return Err(CoreError::InvalidRecovery(
+                "recovered payload-validation target or witness differs from its obligation",
+            ));
+        }
+        Ok(())
+    }
+
     /// Applies one deterministic input and returns ordered effects.
     pub fn step<V: SignatureVerifier>(
         &mut self,
@@ -446,6 +722,7 @@ impl Core {
             observed_qcs,
             next_validation_generation,
             replay_required,
+            recovered_validation_pending: None,
             persistence_affinity: CorePersistenceAffinityV0::new(),
         }
     }
@@ -522,6 +799,21 @@ impl Core {
     }
 
     fn reject_while_busy(&self, input: &Input) -> Result<()> {
+        if let Some(fence) = self.recovered_validation_pending {
+            let exact_terminal_callback = match (fence.route, input) {
+                (PayloadValidationRouteV0::Proposal, Input::PayloadValidated { id, result })
+                | (
+                    PayloadValidationRouteV0::Synced,
+                    Input::SyncedPayloadValidated { id, result },
+                ) => *id == fence.id && result.is_deterministically_invalid(),
+                _ => false,
+            };
+            if !matches!(input, Input::Resume) && !exact_terminal_callback {
+                return Err(CoreError::Busy(
+                    "a recovered deterministic-invalid validation must be durably consumed before consensus resumes",
+                ));
+            }
+        }
         if let Input::CancelSyncedPayloadValidation { id } = input {
             if !self.pending_sync_validations.contains_key(id) {
                 return Err(CoreError::UnknownValidation(id.block_id()));
@@ -699,6 +991,14 @@ impl Core {
     }
 
     fn resume<V: SignatureVerifier>(&mut self, verifier: &V) -> Result<Vec<Effect>> {
+        if self.recovered_validation_pending.is_some() {
+            // Reconciliation established that the application already owns an
+            // exact deterministic-invalid result.  Resume is an idempotent
+            // probe only; it must not emit timers, signing, replay, or a second
+            // validation capability before that result crosses a persistence
+            // barrier through its exact callback route.
+            return Ok(Vec::new());
+        }
         if let Some(halt) = self.safety.safety_halt().cloned() {
             return Ok(vec![Effect::SafetyHalted(Box::new(halt))]);
         }
@@ -1239,6 +1539,7 @@ impl Core {
             });
         }
         self.require_payload_validation_obligation(route, id, &proposal)?;
+        self.consume_recovered_payload_validation_fence_v0(route, id, result)?;
         self.pending_validations.remove(&id);
         self.remove_payload_validation_obligation(route, id)?;
         self.record_payload_validation_completion(route, id, result)?;
@@ -1511,6 +1812,7 @@ impl Core {
             });
         }
         self.require_payload_validation_obligation(route, id, &proposal)?;
+        self.consume_recovered_payload_validation_fence_v0(route, id, result)?;
         self.pending_sync_validations.remove(&id);
         self.remove_payload_validation_obligation(route, id)?;
         self.record_payload_validation_completion(route, id, result)?;
@@ -1579,6 +1881,24 @@ impl Core {
         self.pending_sync_validations.remove(&id);
         self.remove_payload_validation_obligation(PayloadValidationRouteV0::Synced, id)?;
         self.persist(Vec::new())
+    }
+
+    fn consume_recovered_payload_validation_fence_v0(
+        &mut self,
+        route: PayloadValidationRouteV0,
+        id: ValidationId,
+        result: PayloadValidationResult,
+    ) -> Result<()> {
+        let Some(fence) = self.recovered_validation_pending else {
+            return Ok(());
+        };
+        if fence.route != route || fence.id != id || !result.is_deterministically_invalid() {
+            return Err(CoreError::InvalidRecovery(
+                "recovered payload-validation callback differs from its reconciled deterministic-invalid job",
+            ));
+        }
+        self.recovered_validation_pending = None;
+        Ok(())
     }
 
     fn handle_local_timeout(&mut self, epoch: Epoch, view: View) -> Result<Vec<Effect>> {
@@ -3837,6 +4157,7 @@ impl Core {
         }
         self.validate_payload_validation_obligations(verifier, verify_durable_crypto)?;
         self.validate_payload_validation_completions()?;
+        self.validate_recovered_payload_validation_fence_v0()?;
         if self.safety.payload_terminal_facts().len() > self.config.max_observed_messages() {
             return Err(CoreError::InvalidRecovery(
                 "durable payload terminal facts exceed the configured bound",

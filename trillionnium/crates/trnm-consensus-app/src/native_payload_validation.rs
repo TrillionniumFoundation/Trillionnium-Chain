@@ -6232,6 +6232,22 @@ fn prepare_durable_invalid_complete_body_v0(
     })
 }
 
+/// Narrow bridge used only by the separately feature-gated recovery fixture
+/// support. It deliberately accepts the one fresh reservation token returned
+/// by the real journal transaction and one closed two-variant reason; it does
+/// not accept detached identity, checksum, artifact, outbox, or SQL material.
+/// Production builds do not contain this constructor.
+#[cfg(feature = "recovery-test-support")]
+pub(super) fn prepare_recovery_test_durable_invalid_v0(
+    reservation: NativeValidationReservationTokenV0,
+    reason: DurableDeterministicInvalidReasonV0,
+) -> PreparedDurableInvalidV0 {
+    PreparedDurableInvalidV0 {
+        reservation,
+        reason,
+    }
+}
+
 /// Rebuilds all commitment material from one finished production plan and
 /// compares it to the only retained header. There is no second header, body,
 /// plan, root, receipt, configuration, or verifier input, and neither success
@@ -7690,6 +7706,7 @@ mod tests {
     use std::{
         collections::BTreeMap,
         fs,
+        os::unix::fs::PermissionsExt,
         path::PathBuf,
         time::{SystemTime, UNIX_EPOCH},
     };
@@ -7697,8 +7714,9 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_core::{
         Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input,
+        PayloadValidationRecoveryDecisionV0, PayloadValidationRecoveryReconcilerV0,
         PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0, SafetyState,
-        ValidationId,
+        SafetyStatePersistenceV0, ValidationId,
     };
     use trnm_consensus_types::{
         ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind, ChainId,
@@ -7821,6 +7839,10 @@ mod tests {
                 ReleasedCoreInvalidDeliveryV0, TestDurableCoreSafetyStateSinkV0,
                 TestSafetySinkFaultV0,
             },
+            native_validation_recovery::{
+                bootstrap_native_validation_safety_binding_manifest_v0,
+                native_validation_safety_binding_manifest_path_v0,
+            },
             ApplicationStore, AuthenticatedRuntimeReadFailureV0,
             NativeValidationInvalidSealDecisionV0, NativeValidationInvalidSealDispositionV0,
             NativeValidationInvalidSealFailpointV0, NativeValidationInvalidSealFailureCauseV0,
@@ -7833,10 +7855,16 @@ mod tests {
             ValidatorLifecycleStateV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
             VALIDATOR_LIFECYCLE_SCHEMA_V1,
         },
-        AppState, BlockDelta, PendingBlock, APP_VERSION,
+        AppState, BlockDelta, NativeValidationConfirmedInvalidTransitionV0,
+        NativeValidationRecoveredInvalidCallbackFactsV0, NativeValidationRecoveredInvalidStateV0,
+        NativeValidationRecoveryOpenFailureV0, NativeValidationRecoveryReconcileFailureV0,
+        NativeValidationRecoveryStoreConfigV0, NativeValidationRecoveryStoreV0,
+        NativeValidationRecoveryTransitionFailureV0, PendingBlock, APP_VERSION,
     };
 
     const TEST_CHAIN: ChainId = ChainId::from_static("trnm-native-input-session-test");
+    const TEST_SAFETY_JOURNAL_ID: [u8; 32] = [0x61; 32];
+    const TEST_SAFETY_VERIFIER_PROFILE_REF: [u8; 32] = [0x62; 32];
 
     struct TestStore {
         root: PathBuf,
@@ -8002,6 +8030,8 @@ mod tests {
         assert!(parent_height > 0);
         let root = unique_test_root();
         fs::create_dir_all(&root).expect("create native-input test directory");
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
+            .expect("protect native-input test directory");
         let status_path = root.join("state.json");
         let authorized_signers = test_authorized_signers();
         let signer_policy_hash_hex =
@@ -8127,6 +8157,12 @@ mod tests {
         store
             .replace_empty_state_from_tree(&expected, &state, &authenticated)
             .expect("persist empty authenticated test head");
+        bootstrap_native_validation_safety_binding_manifest_v0(
+            &store,
+            TEST_SAFETY_JOURNAL_ID,
+            TEST_SAFETY_VERIFIER_PROFILE_REF,
+        )
+        .expect("bootstrap fixed test SafetyStore binding manifest");
 
         TestStore {
             root,
@@ -9218,6 +9254,206 @@ mod tests {
             registered_state,
             prepared,
         }
+    }
+
+    fn open_native_validation_recovery_store_v0(
+        store: &TestStore,
+    ) -> NativeValidationRecoveryStoreV0 {
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release ordinary test owner before exclusive recovery");
+        NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            ),
+        )
+        .expect("open exact existing native validation recovery store")
+    }
+
+    struct TestConfirmedInvalidTransitionV0 {
+        facts: NativeValidationRecoveredInvalidCallbackFactsV0,
+        completion_revision: u64,
+        tamper: Option<TestConfirmedInvalidTransitionTamperV0>,
+    }
+
+    #[derive(Clone, Copy)]
+    enum TestConfirmedInvalidTransitionTamperV0 {
+        Route,
+        ValidationId,
+        Reason,
+        Attempt,
+        DeliveredRow,
+        Outbox,
+        Revision,
+    }
+
+    impl TestConfirmedInvalidTransitionV0 {
+        fn exact_v0(
+            facts: NativeValidationRecoveredInvalidCallbackFactsV0,
+            completion_revision: u64,
+        ) -> Self {
+            Self {
+                facts,
+                completion_revision,
+                tamper: None,
+            }
+        }
+
+        fn tampered_v0(
+            facts: NativeValidationRecoveredInvalidCallbackFactsV0,
+            completion_revision: u64,
+            tamper: TestConfirmedInvalidTransitionTamperV0,
+        ) -> Self {
+            Self {
+                facts,
+                completion_revision,
+                tamper: Some(tamper),
+            }
+        }
+    }
+
+    impl NativeValidationConfirmedInvalidTransitionV0 for TestConfirmedInvalidTransitionV0 {
+        fn route_v0(&self) -> PayloadValidationRouteV0 {
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::Route)
+            ) {
+                match self.facts.route() {
+                    PayloadValidationRouteV0::Proposal => PayloadValidationRouteV0::Synced,
+                    PayloadValidationRouteV0::Synced => PayloadValidationRouteV0::Proposal,
+                }
+            } else {
+                self.facts.route()
+            }
+        }
+
+        fn validation_id_v0(&self) -> ValidationId {
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::ValidationId)
+            ) {
+                let id = self.facts.validation_id();
+                ValidationId::new(id.block_id(), id.view(), id.generation() + 1)
+            } else {
+                self.facts.validation_id()
+            }
+        }
+
+        fn request_fingerprint_v0(&self) -> [u8; 32] {
+            self.facts.request_fingerprint()
+        }
+
+        fn job_immutable_checksum_v0(&self) -> [u8; 32] {
+            self.facts.immutable_checksum()
+        }
+
+        fn application_host_config_ref_v0(&self) -> [u8; 32] {
+            self.facts.host_config_ref()
+        }
+
+        fn reason_code_v0(&self) -> u32 {
+            let code = self.facts.reason().code_v0();
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::Reason)
+            ) {
+                if code == 1 {
+                    2
+                } else {
+                    1
+                }
+            } else {
+                code
+            }
+        }
+
+        fn artifact_checksum_v0(&self) -> [u8; 32] {
+            self.facts.artifact_checksum()
+        }
+
+        fn callback_payload_checksum_v0(&self) -> [u8; 32] {
+            self.facts.callback_payload_checksum()
+        }
+
+        fn idempotency_key_v0(&self) -> [u8; 32] {
+            self.facts.idempotency_key()
+        }
+
+        fn delivery_attempt_v0(&self) -> u64 {
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::Attempt)
+            ) {
+                self.facts.delivery_attempt() + 1
+            } else {
+                self.facts.delivery_attempt()
+            }
+        }
+
+        fn delivered_job_row_checksum_v0(&self) -> [u8; 32] {
+            let mut checksum = self.facts.row_checksum();
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::DeliveredRow)
+            ) {
+                checksum[0] ^= 1;
+            }
+            checksum
+        }
+
+        fn outbox_checksum_v0(&self) -> [u8; 32] {
+            let mut checksum = self.facts.outbox_checksum();
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::Outbox)
+            ) {
+                checksum[0] ^= 1;
+            }
+            checksum
+        }
+
+        fn completion_revision_v0(&self) -> u64 {
+            if matches!(
+                self.tamper,
+                Some(TestConfirmedInvalidTransitionTamperV0::Revision)
+            ) {
+                self.completion_revision + 1
+            } else {
+                self.completion_revision
+            }
+        }
+    }
+
+    fn step_recovered_invalid_callback_v0(
+        core: &mut Core,
+        route: PayloadValidationRouteV0,
+        id: ValidationId,
+    ) -> SafetyStatePersistenceV0 {
+        let input = match route {
+            PayloadValidationRouteV0::Proposal => Input::PayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+            PayloadValidationRouteV0::Synced => Input::SyncedPayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+        };
+        let effects = core
+            .step(input, &CoreRootSignatures)
+            .expect("step exact recovered deterministic-invalid callback");
+        effects
+            .into_iter()
+            .find_map(|effect| match effect {
+                Effect::PersistSafetyState(request) => Some(request),
+                _ => None,
+            })
+            .expect("recovered invalid callback requests exact safety persistence")
     }
 
     fn core_validation_effect(profile: &FixtureProfile) -> Effect {
@@ -16712,6 +16948,700 @@ mod tests {
                 assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
             }
         }
+    }
+
+    #[test]
+    fn recovered_invalid_obligations_rebind_both_routes_reasons_and_preserve_delivered_attempt() {
+        for route in [
+            PayloadValidationRouteV0::Proposal,
+            PayloadValidationRouteV0::Synced,
+        ] {
+            for reason in [
+                DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+                DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+            ] {
+                let store = test_store_with_poco_application_authority();
+                let PreparedLiveDurableInvalidFixtureV0 {
+                    core,
+                    registered_state,
+                    prepared,
+                } = prepared_live_durable_invalid_fixture_v0(&store, route, reason);
+                let config = core.config().clone();
+                let id = prepared.validation_id();
+                let pending = match store
+                    .store
+                    .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+                {
+                    Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(owner)) => owner,
+                    Ok(NativeValidationInvalidSealDecisionV0::Existing(_)) => {
+                        panic!("fresh recovery fixture unexpectedly reopened")
+                    }
+                    Err(failure) => panic!("seal recovery fixture failed: {failure:?}"),
+                };
+                drop(pending);
+                drop(core);
+
+                let mut recovery = open_native_validation_recovery_store_v0(&store);
+                assert_eq!(recovery.active_recovery_job_count_v0(), 1);
+                assert_eq!(recovery.acked_history_job_count_v0(), 0);
+                let session = Core::begin_payload_validation_obligation_recovery_v0(
+                    config.clone(),
+                    registered_state.clone(),
+                    &CoreRootSignatures,
+                )
+                .expect("begin CallbackPending obligation recovery");
+                let mut recovered = session
+                    .reconcile_and_activate_v0(&mut recovery)
+                    .expect("reconcile exact CallbackPending invalid job");
+                assert_eq!(
+                    recovery.recovered_obligation_state_v0(),
+                    Some(NativeValidationRecoveredInvalidStateV0::CallbackPending)
+                );
+                let pending_facts = recovery
+                    .recovered_obligation_callback_facts_v0()
+                    .expect("retain recovered CallbackPending facts");
+                assert_eq!(pending_facts.route(), route);
+                assert_eq!(pending_facts.validation_id(), id);
+                assert_eq!(pending_facts.delivery_attempt(), 0);
+                assert!(recovered
+                    .step(Input::Resume, &CoreRootSignatures)
+                    .expect("resume recovered obligation fence")
+                    .is_empty());
+                let completed_state = step_recovered_invalid_callback_v0(&mut recovered, route, id);
+                let first_delivered = recovery
+                    .record_recovered_core_acceptance_v0(&completed_state)
+                    .expect("atomically recover CallbackPending into Delivered");
+                assert_eq!(first_delivered.delivery_attempt(), 1);
+                assert_eq!(first_delivered.route(), route);
+                assert_eq!(first_delivered.validation_id(), id);
+                drop(recovered);
+                drop(recovery);
+
+                // Crash before the new SafetyState becomes authoritative: the
+                // application is Delivered while SafetyStore still contains
+                // the original obligation. Exact replay must retain attempt 1.
+                let mut delivered_recovery = open_native_validation_recovery_store_v0(&store);
+                assert_eq!(delivered_recovery.active_recovery_job_count_v0(), 1);
+                assert_eq!(delivered_recovery.acked_history_job_count_v0(), 0);
+                let delivered_session = Core::begin_payload_validation_obligation_recovery_v0(
+                    config,
+                    registered_state,
+                    &CoreRootSignatures,
+                )
+                .expect("begin Delivered obligation recovery");
+                let mut delivered_core = delivered_session
+                    .reconcile_and_activate_v0(&mut delivered_recovery)
+                    .expect("reconcile exact Delivered invalid job");
+                assert_eq!(
+                    delivered_recovery.recovered_obligation_state_v0(),
+                    Some(NativeValidationRecoveredInvalidStateV0::Delivered)
+                );
+                let before_replay = delivered_recovery
+                    .recovered_obligation_callback_facts_v0()
+                    .expect("retain recovered Delivered facts");
+                assert_eq!(before_replay, first_delivered);
+                let replayed_state =
+                    step_recovered_invalid_callback_v0(&mut delivered_core, route, id);
+                let after_replay = delivered_recovery
+                    .record_recovered_core_acceptance_v0(&replayed_state)
+                    .expect("exact-readback recovered Delivered callback");
+                assert_eq!(after_replay, before_replay);
+                assert_eq!(after_replay.delivery_attempt(), 1);
+            }
+        }
+    }
+
+    #[test]
+    fn recovered_confirmed_invalid_completion_requires_full_context_and_acks_idempotently() {
+        let store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+        );
+        let config = core.config().clone();
+        let id = prepared.validation_id();
+        let pending = match store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(owner)) => owner,
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(_)) => {
+                panic!("fresh completion fixture unexpectedly reopened")
+            }
+            Err(failure) => panic!("seal completion fixture failed: {failure:?}"),
+        };
+        drop(pending);
+        drop(core);
+
+        let mut obligation_recovery = open_native_validation_recovery_store_v0(&store);
+        let session = Core::begin_payload_validation_obligation_recovery_v0(
+            config,
+            registered_state,
+            &CoreRootSignatures,
+        )
+        .expect("begin completion precursor obligation recovery");
+        let mut recovered_core = session
+            .reconcile_and_activate_v0(&mut obligation_recovery)
+            .expect("reconcile completion precursor obligation");
+        let completed_state = step_recovered_invalid_callback_v0(
+            &mut recovered_core,
+            PayloadValidationRouteV0::Proposal,
+            id,
+        );
+        let delivered = obligation_recovery
+            .record_recovered_core_acceptance_v0(&completed_state)
+            .expect("record completion precursor Delivered row");
+        let completion_revision = completed_state.state().revision();
+        assert_eq!(delivered.delivery_attempt(), 1);
+        drop(recovered_core);
+        drop(obligation_recovery);
+
+        for tamper in [
+            TestConfirmedInvalidTransitionTamperV0::Route,
+            TestConfirmedInvalidTransitionTamperV0::ValidationId,
+            TestConfirmedInvalidTransitionTamperV0::Reason,
+            TestConfirmedInvalidTransitionTamperV0::Attempt,
+            TestConfirmedInvalidTransitionTamperV0::DeliveredRow,
+            TestConfirmedInvalidTransitionTamperV0::Outbox,
+            TestConfirmedInvalidTransitionTamperV0::Revision,
+        ] {
+            let confirmation = TestConfirmedInvalidTransitionV0::tampered_v0(
+                delivered,
+                completion_revision,
+                tamper,
+            );
+            let mut recovery = open_native_validation_recovery_store_v0(&store);
+            assert!(recovery
+                .recover_confirmed_invalid_completion_for_test_v0(
+                    completed_state.state(),
+                    &confirmation,
+                )
+                .is_err());
+        }
+
+        let exact = TestConfirmedInvalidTransitionV0::exact_v0(delivered, completion_revision);
+        let mut completion_recovery = open_native_validation_recovery_store_v0(&store);
+        assert_eq!(
+            completion_recovery
+                .recover_confirmed_invalid_completion_for_test_v0(completed_state.state(), &exact,)
+                .expect("recover exact C+Delivered pair"),
+            NativeValidationRecoveredInvalidStateV0::Delivered
+        );
+        let acked = completion_recovery
+            .acknowledge_recovered_invalid_completion_for_test_v0(completed_state.state(), &exact)
+            .expect("atomically recover C+Delivered into Acked");
+        assert_eq!(completion_recovery.active_recovery_job_count_v0(), 0);
+        assert_eq!(completion_recovery.acked_history_job_count_v0(), 1);
+        assert_eq!(acked.route(), delivered.route());
+        assert_eq!(acked.validation_id(), delivered.validation_id());
+        assert_eq!(acked.reason(), delivered.reason());
+        assert_eq!(acked.request_fingerprint(), delivered.request_fingerprint());
+        assert_eq!(acked.immutable_checksum(), delivered.immutable_checksum());
+        assert_eq!(acked.host_config_ref(), delivered.host_config_ref());
+        assert_eq!(acked.artifact_checksum(), delivered.artifact_checksum());
+        assert_eq!(
+            acked.callback_payload_checksum(),
+            delivered.callback_payload_checksum()
+        );
+        assert_eq!(acked.accepted_core_revision(), completion_revision);
+        assert_eq!(
+            acked.predecessor_idempotency_key(),
+            delivered.idempotency_key()
+        );
+        assert_eq!(
+            acked.predecessor_delivery_attempt(),
+            delivered.delivery_attempt()
+        );
+        assert_eq!(
+            acked.predecessor_delivered_row_checksum(),
+            delivered.row_checksum()
+        );
+        assert_eq!(
+            acked.predecessor_outbox_checksum(),
+            delivered.outbox_checksum()
+        );
+        drop(completion_recovery);
+
+        let mut acked_recovery = open_native_validation_recovery_store_v0(&store);
+        assert_eq!(acked_recovery.active_recovery_job_count_v0(), 0);
+        assert_eq!(acked_recovery.acked_history_job_count_v0(), 1);
+        assert_eq!(
+            acked_recovery
+                .recover_confirmed_invalid_completion_for_test_v0(completed_state.state(), &exact,)
+                .expect("recover exact C+Acked pair"),
+            NativeValidationRecoveredInvalidStateV0::Acked
+        );
+        let repeated = acked_recovery
+            .acknowledge_recovered_invalid_completion_for_test_v0(completed_state.state(), &exact)
+            .expect("idempotently authenticate C+Acked pair");
+        assert_eq!(repeated, acked);
+    }
+
+    #[test]
+    fn recovery_existing_only_missing_path_creates_neither_database_nor_parent() {
+        let absent_parent = unique_test_root().join("must-remain-absent");
+        assert!(!absent_parent.exists());
+        let status_path = absent_parent.join("state.json");
+        let failure = match NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                status_path.clone(),
+                TEST_CHAIN,
+                [0x5a; 32],
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            ),
+        ) {
+            Ok(_) => panic!("existing-only recovery unexpectedly created a database"),
+            Err(failure) => failure,
+        };
+        assert_eq!(
+            failure,
+            NativeValidationRecoveryOpenFailureV0::MissingDatabase
+        );
+        assert!(!status_path.exists());
+        assert!(!status_path.with_extension("json.sqlite3").exists());
+        assert!(!absent_parent.exists());
+    }
+
+    #[test]
+    fn recovery_requires_the_bootstrapped_safety_binding_manifest() {
+        let store = test_store_with_poco_application_authority();
+        let manifest_path = native_validation_safety_binding_manifest_path_v0(
+            &store.root.join("state.json.sqlite3"),
+        )
+        .expect("derive test SafetyStore binding manifest path");
+        fs::remove_file(&manifest_path).expect("remove test SafetyStore binding manifest");
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release normal test owner");
+        let failure = match NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            ),
+        ) {
+            Ok(_) => panic!("recovery without the fixed SafetyStore binding did not fail closed"),
+            Err(failure) => failure,
+        };
+        assert_eq!(
+            failure,
+            NativeValidationRecoveryOpenFailureV0::MissingSafetyBinding
+        );
+    }
+
+    #[test]
+    fn recovery_matches_durable_safety_provenance_and_reopens_exactly() {
+        let store = test_store_with_poco_application_authority();
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release normal test owner");
+        let config = |journal_id| {
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                journal_id,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            )
+        };
+        let wrong_nomination =
+            match NativeValidationRecoveryStoreV0::open_existing_v8(config([0x63; 32])) {
+                Ok(_) => panic!("a newly nominated SafetyStore replaced the durable binding"),
+                Err(failure) => failure,
+            };
+        assert_eq!(
+            wrong_nomination,
+            NativeValidationRecoveryOpenFailureV0::InvalidSafetyProvenance
+        );
+        let exact =
+            NativeValidationRecoveryStoreV0::open_existing_v8(config(TEST_SAFETY_JOURNAL_ID))
+                .expect("open exact durable SafetyStore binding");
+        exact
+            .final_exact_audit_v0()
+            .expect("audit exact durable SafetyStore binding");
+        drop(exact);
+        let reopened =
+            NativeValidationRecoveryStoreV0::open_existing_v8(config(TEST_SAFETY_JOURNAL_ID))
+                .expect("reopen the same durable SafetyStore binding");
+        reopened
+            .final_exact_audit_v0()
+            .expect("reaudit exact durable SafetyStore binding");
+    }
+
+    #[test]
+    fn recovery_pins_and_revalidates_the_safety_binding_manifest() {
+        for replace_inode in [false, true] {
+            let store = test_store_with_poco_application_authority();
+            let manifest_path = native_validation_safety_binding_manifest_path_v0(
+                &store.root.join("state.json.sqlite3"),
+            )
+            .expect("derive test SafetyStore binding manifest path");
+            store
+                .store
+                .release_namespace_owner_for_recovery_test_v0()
+                .expect("release normal test owner");
+            let recovery = NativeValidationRecoveryStoreV0::open_existing_v8(
+                NativeValidationRecoveryStoreConfigV0::new(
+                    store.root.join("state.json"),
+                    TEST_CHAIN,
+                    crate::signer_policy_commitment(&store.authorized_signers),
+                    TEST_SAFETY_JOURNAL_ID,
+                    TEST_SAFETY_VERIFIER_PROFILE_REF,
+                ),
+            )
+            .expect("open pinned SafetyStore binding manifest");
+            if replace_inode {
+                let displaced = manifest_path.with_extension("displaced");
+                fs::rename(&manifest_path, &displaced).expect("displace pinned binding manifest");
+                fs::copy(&displaced, &manifest_path).expect("replace binding manifest inode");
+                fs::set_permissions(&manifest_path, fs::Permissions::from_mode(0o600))
+                    .expect("restore replacement binding manifest mode");
+            } else {
+                let mut bytes = fs::read(&manifest_path).expect("read binding manifest");
+                bytes[12] ^= 1;
+                fs::write(&manifest_path, bytes).expect("tamper binding manifest in place");
+                fs::set_permissions(&manifest_path, fs::Permissions::from_mode(0o600))
+                    .expect("restore tampered binding manifest mode");
+            }
+            assert_eq!(
+                recovery.final_exact_audit_v0(),
+                Err(NativeValidationRecoveryTransitionFailureV0::NamespaceChanged)
+            );
+        }
+    }
+
+    #[test]
+    fn recovery_rejects_group_writable_namespace_components() {
+        for component in ["parent", "database", "manifest", "lock"] {
+            let store = test_store_with_poco_application_authority();
+            let database_path = store.root.join("state.json.sqlite3");
+            let manifest_path = native_validation_safety_binding_manifest_path_v0(&database_path)
+                .expect("derive binding manifest path");
+            let target = match component {
+                "parent" => store.root.clone(),
+                "database" => database_path.clone(),
+                "manifest" => manifest_path,
+                "lock" => store.root.join("state.json.sqlite3.owner.lock"),
+                _ => unreachable!("closed component fixture"),
+            };
+            store
+                .store
+                .release_namespace_owner_for_recovery_test_v0()
+                .expect("release normal test owner");
+            let unsafe_mode = if component == "parent" { 0o770 } else { 0o660 };
+            fs::set_permissions(&target, fs::Permissions::from_mode(unsafe_mode))
+                .expect("make recovery namespace component group writable");
+            assert!(NativeValidationRecoveryStoreV0::open_existing_v8(
+                NativeValidationRecoveryStoreConfigV0::new(
+                    store.root.join("state.json"),
+                    TEST_CHAIN,
+                    crate::signer_policy_commitment(&store.authorized_signers),
+                    TEST_SAFETY_JOURNAL_ID,
+                    TEST_SAFETY_VERIFIER_PROFILE_REF,
+                ),
+            )
+            .is_err());
+        }
+    }
+
+    #[test]
+    fn recovery_namespace_owner_is_exclusive_against_normal_and_recovery_lifetimes() {
+        let store = test_store_with_poco_application_authority();
+        let recovery_config = || {
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            )
+        };
+        let blocked_by_normal =
+            match NativeValidationRecoveryStoreV0::open_existing_v8(recovery_config()) {
+                Ok(_) => panic!("normal shared owner did not exclude recovery"),
+                Err(failure) => failure,
+            };
+        assert_eq!(
+            blocked_by_normal,
+            NativeValidationRecoveryOpenFailureV0::Locked
+        );
+
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release normal test owner");
+        let recovery = NativeValidationRecoveryStoreV0::open_existing_v8(recovery_config())
+            .expect("open first exclusive recovery owner");
+        let blocked_recovery =
+            match NativeValidationRecoveryStoreV0::open_existing_v8(recovery_config()) {
+                Ok(_) => panic!("second recovery owner bypassed the lifetime lock"),
+                Err(failure) => failure,
+            };
+        assert_eq!(
+            blocked_recovery,
+            NativeValidationRecoveryOpenFailureV0::Locked
+        );
+        assert!(ApplicationStore::open(
+            &store.root.join("state.json"),
+            TEST_CHAIN.as_str(),
+            &hex::encode(crate::signer_policy_commitment(&store.authorized_signers)),
+        )
+        .is_err());
+        drop(recovery);
+
+        let reopened_normal = ApplicationStore::open(
+            &store.root.join("state.json"),
+            TEST_CHAIN.as_str(),
+            &hex::encode(crate::signer_policy_commitment(&store.authorized_signers)),
+        )
+        .expect("normal shared owner reopens after recovery drops");
+        drop(reopened_normal);
+    }
+
+    #[test]
+    fn recovery_final_audit_rejects_main_database_inode_replacement() {
+        let store = test_store_with_poco_application_authority();
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release normal test owner");
+        let recovery = NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            ),
+        )
+        .expect("open pinned recovery namespace");
+        let database_path = store.root.join("state.json.sqlite3");
+        let displaced_path = store.root.join("state.json.sqlite3.displaced");
+        fs::rename(&database_path, &displaced_path).expect("displace pinned recovery database");
+        fs::copy(&displaced_path, &database_path).expect("install replacement database inode");
+        assert_eq!(
+            recovery.final_exact_audit_v0(),
+            Err(NativeValidationRecoveryTransitionFailureV0::NamespaceChanged)
+        );
+    }
+
+    #[test]
+    fn recovery_final_audit_rejects_parent_directory_inode_replacement() {
+        let store = test_store_with_poco_application_authority();
+        store
+            .store
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release normal test owner");
+        let recovery = NativeValidationRecoveryStoreV0::open_existing_v8(
+            NativeValidationRecoveryStoreConfigV0::new(
+                store.root.join("state.json"),
+                TEST_CHAIN,
+                crate::signer_policy_commitment(&store.authorized_signers),
+                TEST_SAFETY_JOURNAL_ID,
+                TEST_SAFETY_VERIFIER_PROFILE_REF,
+            ),
+        )
+        .expect("open pinned recovery namespace");
+        let original_root = store.root.clone();
+        let displaced_root = original_root.with_extension("displaced");
+        fs::rename(&original_root, &displaced_root)
+            .expect("displace pinned recovery parent directory");
+        fs::create_dir(&original_root).expect("install replacement recovery parent directory");
+        assert_eq!(
+            recovery.final_exact_audit_v0(),
+            Err(NativeValidationRecoveryTransitionFailureV0::NamespaceChanged)
+        );
+        drop(recovery);
+        drop(store);
+        fs::remove_dir_all(displaced_root).expect("remove displaced recovery fixture");
+    }
+
+    #[test]
+    fn recovered_obligation_rejects_a_second_authentic_active_job() {
+        let store = test_store_with_poco_application_authority();
+        let first = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let second = prepared_live_durable_invalid_fixture_v0(
+            &store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedReceiptsRootMismatch,
+        );
+        assert_ne!(
+            first.prepared.validation_id(),
+            second.prepared.validation_id()
+        );
+        for prepared in [first.prepared, second.prepared] {
+            match store
+                .store
+                .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+            {
+                Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(owner)) => drop(owner),
+                Ok(NativeValidationInvalidSealDecisionV0::Existing(_)) => {
+                    panic!("fresh active-set fixture unexpectedly reopened")
+                }
+                Err(failure) => panic!("seal active-set fixture failed: {failure:?}"),
+            }
+        }
+        drop(second.core);
+        let config = first.core.config().clone();
+        let registered_state = first.registered_state;
+        drop(first.core);
+        let mut recovery = open_native_validation_recovery_store_v0(&store);
+        assert_eq!(recovery.active_recovery_job_count_v0(), 2);
+        let session = Core::begin_payload_validation_obligation_recovery_v0(
+            config,
+            registered_state,
+            &CoreRootSignatures,
+        )
+        .expect("begin active sibling recovery fixture");
+        assert!(session.reconcile_and_activate_v0(&mut recovery).is_err());
+        assert_eq!(
+            recovery.last_reconcile_failure_v0(),
+            Some(NativeValidationRecoveryReconcileFailureV0::ActiveSetMismatch)
+        );
+    }
+
+    #[test]
+    fn recovered_invalid_obligation_rejects_wrong_owner_missing_duplicate_and_tamper() {
+        let issuing_store = test_store_with_poco_application_authority();
+        let PreparedLiveDurableInvalidFixtureV0 {
+            core,
+            registered_state,
+            prepared,
+        } = prepared_live_durable_invalid_fixture_v0(
+            &issuing_store,
+            PayloadValidationRouteV0::Proposal,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let config = core.config().clone();
+        let id = prepared.validation_id();
+        let pending = match issuing_store
+            .store
+            .seal_durable_invalid_and_enqueue_callback_v0(prepared)
+        {
+            Ok(NativeValidationInvalidSealDecisionV0::CallbackPending(owner)) => owner,
+            Ok(NativeValidationInvalidSealDecisionV0::Existing(_)) => {
+                panic!("fresh rejection fixture unexpectedly reopened")
+            }
+            Err(failure) => panic!("seal rejection fixture failed: {failure:?}"),
+        };
+        drop(pending);
+        drop(core);
+
+        let mut duplicate_recovery = open_native_validation_recovery_store_v0(&issuing_store);
+        let duplicate_session = Core::begin_payload_validation_obligation_recovery_v0(
+            config.clone(),
+            registered_state.clone(),
+            &CoreRootSignatures,
+        )
+        .expect("begin duplicate reconciliation fixture");
+        assert_eq!(
+            PayloadValidationRecoveryReconcilerV0::reconcile_deterministically_invalid_obligation_v0(
+                &mut duplicate_recovery,
+                duplicate_session.challenge(),
+            ),
+            PayloadValidationRecoveryDecisionV0::AcceptDeterministicallyInvalid
+        );
+        assert_eq!(
+            PayloadValidationRecoveryReconcilerV0::reconcile_deterministically_invalid_obligation_v0(
+                &mut duplicate_recovery,
+                duplicate_session.challenge(),
+            ),
+            PayloadValidationRecoveryDecisionV0::Reject
+        );
+        assert_eq!(
+            duplicate_recovery.last_reconcile_failure_v0(),
+            Some(NativeValidationRecoveryReconcileFailureV0::AlreadyReconciled)
+        );
+        drop(duplicate_session);
+        drop(duplicate_recovery);
+
+        let missing_store = test_store_with_poco_application_authority();
+        let mut missing_recovery = open_native_validation_recovery_store_v0(&missing_store);
+        let missing_session = Core::begin_payload_validation_obligation_recovery_v0(
+            config.clone(),
+            registered_state.clone(),
+            &CoreRootSignatures,
+        )
+        .expect("begin missing reconciliation fixture");
+        assert!(missing_session
+            .reconcile_and_activate_v0(&mut missing_recovery)
+            .is_err());
+        assert_eq!(
+            missing_recovery.last_reconcile_failure_v0(),
+            Some(NativeValidationRecoveryReconcileFailureV0::Missing)
+        );
+
+        let wrong_store = test_store_with_poco_application_authority();
+        let wrong_profile = poisoned_all_family_complete_body_profile_v0(
+            &wrong_store,
+            DurableDeterministicInvalidReasonV0::ComputedStateRootMismatch,
+        );
+        let LiveCoreTargetValidationFixtureV0 {
+            core: wrong_core,
+            effect: wrong_effect,
+            registered_state: wrong_state,
+        } = live_core_target_validation_fixture_v0(
+            &wrong_profile,
+            PayloadValidationRouteV0::Synced,
+        );
+        let wrong_id = match wrong_effect {
+            Effect::ValidateSyncedPayload(request) => request.id(),
+            _ => panic!("wrong-owner fixture changed route"),
+        };
+        assert_eq!(wrong_id, id);
+        let mut wrong_recovery = open_native_validation_recovery_store_v0(&issuing_store);
+        let wrong_session = Core::begin_payload_validation_obligation_recovery_v0(
+            wrong_core.config().clone(),
+            wrong_state,
+            &CoreRootSignatures,
+        )
+        .expect("begin wrong-route reconciliation fixture");
+        assert!(wrong_session
+            .reconcile_and_activate_v0(&mut wrong_recovery)
+            .is_err());
+        assert_eq!(
+            wrong_recovery.last_reconcile_failure_v0(),
+            Some(NativeValidationRecoveryReconcileFailureV0::ChallengeFactsMismatch)
+        );
+        drop(wrong_recovery);
+
+        let mut tamper_recovery = open_native_validation_recovery_store_v0(&issuing_store);
+        let database = rusqlite::Connection::open(issuing_store.root.join("state.json.sqlite3"))
+            .expect("open recovery tamper database");
+        database
+            .execute(
+                "UPDATE validation_jobs_v0 SET request_fingerprint=zeroblob(32)",
+                [],
+            )
+            .expect("tamper recovered request fingerprint");
+        drop(database);
+        let tamper_session = Core::begin_payload_validation_obligation_recovery_v0(
+            config,
+            registered_state,
+            &CoreRootSignatures,
+        )
+        .expect("begin tampered reconciliation fixture");
+        assert!(tamper_session
+            .reconcile_and_activate_v0(&mut tamper_recovery)
+            .is_err());
+        assert_eq!(
+            tamper_recovery.last_reconcile_failure_v0(),
+            Some(NativeValidationRecoveryReconcileFailureV0::StoreIntegrity)
+        );
     }
 
     #[test]

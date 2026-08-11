@@ -275,6 +275,10 @@ fn initializes_reads_head_and_reopens_exactly() {
         &SafetyTransitionContextV0::Ordinary
     );
     assert!(!head.requires_authenticated_obligation_replay());
+    assert!(matches!(
+        store.confirmed_native_deterministic_invalid_head_v0(),
+        Err(SafetyStoreErrorV0::MissingNativeDeterministicInvalidTransition { revision: 0 })
+    ));
     drop(store);
 
     let reopened = SqliteSafetyStateStoreV0::open_existing(&path, profile, AcceptSignatures)
@@ -382,19 +386,124 @@ fn exact_retries_preserve_two_revision_retention_and_reopen_head() {
             .expect("persist revision two"),
         SafetyPersistDispositionV0::Inserted
     );
+    let journal_id = store.journal_id_v0();
+    let verifier_profile_ref = store.verifier_profile_ref_v0();
+    assert_eq!(verifier_profile_ref, profile.verifier_profile_ref());
+    let authenticated_head = store.head().expect("revision two head");
+    assert_eq!(authenticated_head.state(), revision_two.state());
+    let confirmed = store
+        .confirmed_native_deterministic_invalid_head_v0()
+        .expect("confirm native deterministic-invalid revision two head");
+    assert_eq!(confirmed.journal_id_v0(), journal_id);
+    assert_eq!(confirmed.verifier_profile_ref_v0(), verifier_profile_ref);
+    assert_eq!(confirmed.revision(), authenticated_head.revision());
+    assert_eq!(confirmed.state(), authenticated_head.state());
     assert_eq!(
-        store.head().expect("revision two head").state(),
-        revision_two.state()
+        confirmed.transition_context(),
+        authenticated_head.transition_context()
     );
+    assert_eq!(
+        confirmed.transition(),
+        revision_two_context
+            .native_invalid()
+            .expect("native deterministic-invalid context")
+    );
+    assert_eq!(
+        confirmed.state_record_checksum(),
+        authenticated_head.state_record_checksum()
+    );
+    assert_eq!(
+        confirmed.chain_checksum(),
+        authenticated_head.chain_checksum()
+    );
+    let exact_confirmed = store
+        .confirmed_native_deterministic_invalid_head_exact_v0(
+            revision_two.state(),
+            &revision_two_context,
+        )
+        .expect("confirm exact expected revision two head");
+    assert_eq!(exact_confirmed.journal_id_v0(), journal_id);
+    assert_eq!(
+        exact_confirmed.verifier_profile_ref_v0(),
+        verifier_profile_ref
+    );
+    assert_eq!(exact_confirmed.revision(), revision_two.state().revision());
+    assert!(matches!(
+        store.confirmed_native_deterministic_invalid_head_exact_v0(
+            revision_one.state(),
+            &revision_two_context,
+        ),
+        Err(SafetyStoreErrorV0::NativeDeterministicInvalidHeadMismatch {
+            expected_revision: 1,
+            actual_revision: 2,
+        })
+    ));
+    let wrong_expected_context = native_invalid_context(
+        id,
+        revision_two.state().revision(),
+        NATIVE_INVALID_REASON_RECEIPTS_ROOT_MISMATCH_V0,
+    );
+    assert!(matches!(
+        store.confirmed_native_deterministic_invalid_head_exact_v0(
+            revision_two.state(),
+            &wrong_expected_context,
+        ),
+        Err(SafetyStoreErrorV0::NativeDeterministicInvalidHeadMismatch {
+            expected_revision: 2,
+            actual_revision: 2,
+        })
+    ));
+    assert_eq!(
+        store
+            .confirmed_native_deterministic_invalid_head_exact_v0(
+                revision_two.state(),
+                &revision_two_context,
+            )
+            .expect("exact retry returns the same authenticated facts")
+            .transition_context(),
+        &revision_two_context
+    );
+
+    let unrelated_path = temporary.path().join("unrelated-fresh.sqlite3");
+    let unrelated = SqliteSafetyStateStoreV0::initialize_new(
+        &unrelated_path,
+        profile.clone(),
+        AcceptSignatures,
+        &genesis,
+    )
+    .expect("initialize unrelated fresh safety store");
+    assert_ne!(unrelated.journal_id_v0(), journal_id);
+    assert_eq!(unrelated.verifier_profile_ref_v0(), verifier_profile_ref);
+    drop(unrelated);
     drop(store);
 
     let reopened = SqliteSafetyStateStoreV0::open_existing(&path, profile, AcceptSignatures)
         .expect("reopen two-revision journal");
+    let reopened_head = reopened.head().expect("reopened head");
+    assert_eq!(reopened_head.state(), revision_two.state());
+    let reopened_confirmed = reopened
+        .confirmed_native_deterministic_invalid_head_v0()
+        .expect("reopened store confirms native deterministic-invalid head");
+    assert_eq!(reopened.journal_id_v0(), journal_id);
+    assert_eq!(reopened.verifier_profile_ref_v0(), verifier_profile_ref);
+    assert_eq!(reopened_confirmed.journal_id_v0(), journal_id);
     assert_eq!(
-        reopened.head().expect("reopened head").state(),
-        revision_two.state()
+        reopened_confirmed.verifier_profile_ref_v0(),
+        verifier_profile_ref
     );
-    drop(reopened);
+    assert_eq!(reopened_confirmed.state(), reopened_head.state());
+    assert_eq!(
+        reopened_confirmed.transition_context(),
+        reopened_head.transition_context()
+    );
+    assert_eq!(
+        reopened_confirmed.state_record_checksum(),
+        reopened_head.state_record_checksum()
+    );
+    assert_eq!(
+        reopened_confirmed.chain_checksum(),
+        reopened_head.chain_checksum()
+    );
 
     let connection = Connection::open(&path).expect("open journal for read-only assertion");
     let revisions = connection
@@ -411,6 +520,28 @@ fn exact_retries_preserve_two_revision_retention_and_reopen_head() {
         })
         .collect::<Vec<_>>();
     assert_eq!(revisions, vec![1, 2]);
+    drop(connection);
+
+    let connection = Connection::open(&path).expect("open raw SQLite tamper connection");
+    enable_persistent_wal_for_raw_connection(&connection);
+    assert_eq!(
+        connection
+            .execute(
+                "UPDATE safety_state_records_v0 \
+                 SET transition_context_checksum=zeroblob(32) \
+                 WHERE revision_be=x'0000000000000002'",
+                [],
+            )
+            .expect("tamper native deterministic-invalid transition checksum"),
+        1
+    );
+    drop(connection);
+    assert!(matches!(
+        reopened.confirmed_native_deterministic_invalid_head_v0(),
+        Err(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+            "record-chain checksum"
+        ))
+    ));
 }
 
 #[test]

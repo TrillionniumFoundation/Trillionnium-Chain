@@ -30,7 +30,7 @@ use crate::{
         TRANSITION_CONTEXT_CODEC_V0,
     },
     transition_context_checksum_v0, validate_transition_context_against_state_v0,
-    SafetyTransitionContextV0,
+    NativeDeterministicInvalidTransitionV0, SafetyTransitionContextV0,
 };
 
 const LOCK_MAGIC_V0: &[u8; 8] = b"TRNMSLK\0";
@@ -188,6 +188,85 @@ impl RecoveredSafetyStateV0 {
 
     pub fn requires_authenticated_obligation_replay(&self) -> bool {
         !self.state.payload_validation_obligations().is_empty()
+    }
+}
+
+/// Non-forgeable proof that one fully authenticated journal head carries the
+/// native deterministic-invalid transition context returned with that exact
+/// state revision.
+///
+/// This value is deliberately non-`Clone` and has no public constructor or
+/// parts conversion. It can be created only by [`SqliteSafetyStateStoreV0`]
+/// after the complete `head()` validation path succeeds. The capability proves
+/// exact SafetyStore readback and freezes the issuing journal/profile identity;
+/// it does not by itself grant application, callback, or Core authority. The
+/// journal identifier distinguishes an unrelated freshly initialized store,
+/// but copying or rolling back the complete journal namespace also copies that
+/// identifier and remains outside this store's protection boundary.
+#[derive(Debug)]
+#[must_use = "the confirmed native-invalid head must remain paired with its exact state/context"]
+pub struct ConfirmedNativeDeterministicInvalidHeadV0 {
+    journal_id: [u8; 32],
+    verifier_profile_ref: [u8; 32],
+    head: RecoveredSafetyStateV0,
+}
+
+impl ConfirmedNativeDeterministicInvalidHeadV0 {
+    fn from_authenticated_head(
+        journal_id: [u8; 32],
+        verifier_profile_ref: [u8; 32],
+        head: RecoveredSafetyStateV0,
+    ) -> Result<Self, SafetyStoreErrorV0> {
+        if head.transition_context.native_invalid().is_none() {
+            return Err(
+                SafetyStoreErrorV0::MissingNativeDeterministicInvalidTransition {
+                    revision: head.revision(),
+                },
+            );
+        }
+        Ok(Self {
+            journal_id,
+            verifier_profile_ref,
+            head,
+        })
+    }
+
+    /// Identifier frozen from the issuing store, never from caller-supplied
+    /// expected state or transition values.
+    pub const fn journal_id_v0(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
+    /// Verifier/profile identity frozen from the issuing store profile.
+    pub const fn verifier_profile_ref_v0(&self) -> [u8; 32] {
+        self.verifier_profile_ref
+    }
+
+    pub const fn state(&self) -> &SafetyState {
+        self.head.state()
+    }
+
+    pub const fn transition_context(&self) -> &SafetyTransitionContextV0 {
+        self.head.transition_context()
+    }
+
+    pub fn transition(&self) -> &NativeDeterministicInvalidTransitionV0 {
+        self.head
+            .transition_context()
+            .native_invalid()
+            .expect("private constructor requires a native deterministic-invalid transition")
+    }
+
+    pub const fn revision(&self) -> u64 {
+        self.head.revision()
+    }
+
+    pub const fn state_record_checksum(&self) -> [u8; 32] {
+        self.head.state_record_checksum()
+    }
+
+    pub const fn chain_checksum(&self) -> [u8; 32] {
+        self.head.chain_checksum()
     }
 }
 
@@ -563,6 +642,20 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         Ok(())
     }
 
+    /// Stable identifier of this journal namespace.
+    ///
+    /// An unrelated fresh store receives a different value. A complete
+    /// namespace clone retains it, so callers must not treat this as an
+    /// external anti-rollback watermark.
+    pub const fn journal_id_v0(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
+    /// Verifier/profile identity bound into every record in this store.
+    pub const fn verifier_profile_ref_v0(&self) -> [u8; 32] {
+        self.profile.verifier_profile_ref()
+    }
+
     pub fn head(&self) -> Result<RecoveredSafetyStateV0, SafetyStoreErrorV0> {
         self.ensure_file_identity()?;
         self.ensure_not_halted()?;
@@ -591,6 +684,43 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         let recovered = decode_and_validate_record(&row, &self.profile, &self.verifier)?;
         self.postcheck_primary_resources()?;
         Ok(recovered)
+    }
+
+    /// Returns a non-forgeable capability for the current authenticated native
+    /// deterministic-invalid head.
+    ///
+    /// The full `head()` validation path runs on every call. An Ordinary head
+    /// is a typed failure and never produces a capability.
+    pub fn confirmed_native_deterministic_invalid_head_v0(
+        &self,
+    ) -> Result<ConfirmedNativeDeterministicInvalidHeadV0, SafetyStoreErrorV0> {
+        ConfirmedNativeDeterministicInvalidHeadV0::from_authenticated_head(
+            self.journal_id,
+            self.profile.verifier_profile_ref(),
+            self.head()?,
+        )
+    }
+
+    /// Returns the same capability only when the authenticated readback is
+    /// byte-semantically equal to the caller's exact expected state and
+    /// transition context.
+    ///
+    /// This comparison does not trust the expected values: the authoritative
+    /// side is still produced by the complete `head()` validation path.
+    pub fn confirmed_native_deterministic_invalid_head_exact_v0(
+        &self,
+        expected_state: &SafetyState,
+        expected_context: &SafetyTransitionContextV0,
+    ) -> Result<ConfirmedNativeDeterministicInvalidHeadV0, SafetyStoreErrorV0> {
+        let confirmed = self.confirmed_native_deterministic_invalid_head_v0()?;
+        if confirmed.state() != expected_state || confirmed.transition_context() != expected_context
+        {
+            return Err(SafetyStoreErrorV0::NativeDeterministicInvalidHeadMismatch {
+                expected_revision: expected_state.revision(),
+                actual_revision: confirmed.revision(),
+            });
+        }
+        Ok(confirmed)
     }
 
     pub fn persist_exact_v0(

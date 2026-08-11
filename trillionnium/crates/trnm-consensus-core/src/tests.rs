@@ -1252,6 +1252,438 @@ fn recovery_with_an_unclaimed_durable_validation_fails_closed_without_revoking_i
     assert_eq!(stale_id.block_id(), proposed.block().id());
 }
 
+fn obligation_recovery_fixture(
+    route: PayloadValidationRouteV0,
+    body: &'static [u8],
+) -> (CoreConfig, SafetyState, SignedProposalV0, ValidationId) {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, body);
+    let input = match route {
+        PayloadValidationRouteV0::Proposal => Input::Proposal(Box::new(proposed.clone())),
+        PayloadValidationRouteV0::Synced => Input::SyncedProposal(Box::new(proposed.clone())),
+    };
+    let effects = core
+        .step(input, &RootSignatures)
+        .expect("the fixture registers one durable validation obligation");
+    let (_, durable) = persistence_effect(&effects);
+    let [obligation] = durable.payload_validation_obligations() else {
+        panic!("the fixture must persist exactly one obligation");
+    };
+    assert_eq!(obligation.route(), route);
+    assert_eq!(obligation.proposal(), &proposed);
+    let id = obligation.id();
+    (config, durable, proposed, id)
+}
+
+struct ExactDeterministicInvalidReconcilerV0 {
+    expected_head_revision: u64,
+    expected_route: PayloadValidationRouteV0,
+    expected_id: ValidationId,
+    expected_proposal: SignedProposalV0,
+    expected_parent: PayloadValidationParentV0,
+    expected_first_revision: u64,
+    calls: usize,
+}
+
+impl PayloadValidationRecoveryReconcilerV0 for ExactDeterministicInvalidReconcilerV0 {
+    fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        challenge: &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0 {
+        self.calls += 1;
+        if challenge.safety_head_revision() == self.expected_head_revision
+            && challenge.route() == self.expected_route
+            && challenge.id() == self.expected_id
+            && challenge.proposal() == &self.expected_proposal
+            && challenge.parent() == &self.expected_parent
+            && challenge.first_recorded_revision() == self.expected_first_revision
+        {
+            PayloadValidationRecoveryDecisionV0::AcceptDeterministicallyInvalid
+        } else {
+            PayloadValidationRecoveryDecisionV0::Reject
+        }
+    }
+}
+
+fn activate_exact_obligation_recovery(
+    config: CoreConfig,
+    durable: SafetyState,
+    expected_route: PayloadValidationRouteV0,
+) -> (Core, ValidationId, usize) {
+    let session = Core::begin_payload_validation_obligation_recovery_v0(
+        config,
+        durable.clone(),
+        &RootSignatures,
+    )
+    .expect("the exact single-obligation recovery session begins inertly");
+    let challenge = session.challenge();
+    let expected_id = challenge.id();
+    let mut reconciler = ExactDeterministicInvalidReconcilerV0 {
+        expected_head_revision: durable.revision(),
+        expected_route,
+        expected_id,
+        expected_proposal: challenge.proposal().clone(),
+        expected_parent: challenge.parent().clone(),
+        expected_first_revision: challenge.first_recorded_revision(),
+        calls: 0,
+    };
+    let core = session
+        .reconcile_and_activate_v0(&mut reconciler)
+        .expect("the trusted host accepts the complete deterministic-invalid job");
+    (core, expected_id, reconciler.calls)
+}
+
+#[test]
+fn proposal_obligation_recovery_rebuilds_the_exact_target_before_invalid_callback() {
+    let (config, durable, proposed, id) = obligation_recovery_fixture(
+        PayloadValidationRouteV0::Proposal,
+        b"recovered proposal invalid",
+    );
+    let (mut recovered, recovered_id, reconciliations) = activate_exact_obligation_recovery(
+        config,
+        durable.clone(),
+        PayloadValidationRouteV0::Proposal,
+    );
+    assert_eq!(recovered_id, id);
+    assert_eq!(reconciliations, 1);
+    assert_eq!(recovered.pending_validation_count(), 1);
+    assert!(recovered
+        .step(Input::Resume, &RootSignatures)
+        .expect("Resume is an inert probe while the recovered result is fenced")
+        .is_empty());
+    assert_eq!(
+        recovered.step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: recovered.safety_state().current_view(),
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::Busy(
+            "a recovered deterministic-invalid validation must be durably consumed before consensus resumes",
+        )),
+        "pacemaker input cannot bypass the recovery callback fence"
+    );
+    assert_eq!(
+        recovered.step(
+            Input::PayloadValidated {
+                id,
+                result: PayloadValidationResult::Unavailable,
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::Busy(
+            "a recovered deterministic-invalid validation must be durably consumed before consensus resumes",
+        )),
+        "the recovered deterministic-invalid claim cannot be weakened to Unavailable"
+    );
+
+    let effects = recovered
+        .step(
+            Input::PayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+            &RootSignatures,
+        )
+        .expect("the exact callback finds its reconstructed BlockTree target");
+    let (_, persisted) = persistence_effect(&effects);
+    assert!(persisted.payload_validation_obligations().is_empty());
+    assert_eq!(
+        persisted.payload_terminal_result(proposed.block().id()),
+        Some(PayloadTerminalResult::DeterministicallyInvalid)
+    );
+}
+
+#[test]
+fn synced_obligation_recovery_rebuilds_the_exact_route_and_witness() {
+    let (config, durable, proposed, id) = obligation_recovery_fixture(
+        PayloadValidationRouteV0::Synced,
+        b"recovered synced invalid",
+    );
+    let (mut recovered, recovered_id, reconciliations) =
+        activate_exact_obligation_recovery(config, durable, PayloadValidationRouteV0::Synced);
+    assert_eq!(recovered_id, id);
+    assert_eq!(reconciliations, 1);
+    assert_eq!(recovered.pending_validation_count(), 1);
+    assert_eq!(
+        recovered.step(
+            Input::PayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::Busy(
+            "a recovered deterministic-invalid validation must be durably consumed before consensus resumes",
+        )),
+        "a proposal-route callback cannot consume a synced-route challenge"
+    );
+    let effects = recovered
+        .step(
+            Input::SyncedPayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+            &RootSignatures,
+        )
+        .expect("the exact synced callback finds its reconstructed target and witness");
+    let (_, persisted) = persistence_effect(&effects);
+    assert!(persisted.payload_validation_obligations().is_empty());
+    assert_eq!(
+        persisted.payload_terminal_result(proposed.block().id()),
+        Some(PayloadTerminalResult::DeterministicallyInvalid)
+    );
+}
+
+#[test]
+fn recovered_invalid_completion_ack_releases_the_fence_back_to_safety_replay() {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let parent = proposal(&set, genesis_qc(&set), 1, b"recovery replay parent");
+    let parent_qc = qc(&set, 1, 1, parent.block().id());
+    insert_valid_and_vote(&mut core, parent);
+    let _ = accept_qc(&mut core, parent_qc.clone());
+    assert_ne!(
+        core.safety_state().high_qc().qc_ref().block_id(),
+        core.safety_state().finalized().block_id()
+    );
+
+    let child = proposal(&set, parent_qc, 2, b"recovery replay invalid child");
+    let effects = core
+        .step(Input::Proposal(Box::new(child)), &RootSignatures)
+        .expect("the child obligation is persisted above the replay anchor");
+    let (_, durable) = persistence_effect(&effects);
+    let id = durable.payload_validation_obligations()[0].id();
+    let (mut recovered, recovered_id, reconciliations) =
+        activate_exact_obligation_recovery(config, durable, PayloadValidationRouteV0::Proposal);
+    assert_eq!(recovered_id, id);
+    assert_eq!(reconciliations, 1);
+
+    let effects = recovered
+        .step(
+            Input::PayloadValidated {
+                id,
+                result: PayloadValidationResult::DeterministicallyInvalid,
+            },
+            &RootSignatures,
+        )
+        .expect("the reconciled invalid result becomes a persistence request");
+    let (barrier, completed) = persistence_effect(&effects);
+    assert!(completed.payload_validation_obligations().is_empty());
+    assert!(recovered
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the recovered completion becomes durable")
+        .is_empty());
+    assert!(matches!(
+        recovered
+            .step(Input::Resume, &RootSignatures)
+            .expect("ordinary safety replay resumes only after completion acknowledgement")
+            .as_slice(),
+        [Effect::RequestSafetyReplay { .. }]
+    ));
+}
+
+struct RejectRecoveryV0 {
+    calls: usize,
+}
+
+impl PayloadValidationRecoveryReconcilerV0 for RejectRecoveryV0 {
+    fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        _challenge: &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0 {
+        self.calls += 1;
+        PayloadValidationRecoveryDecisionV0::Reject
+    }
+}
+
+#[test]
+fn obligation_recovery_never_exposes_a_core_when_reconciliation_is_omitted() {
+    let (config, durable, _, _) =
+        obligation_recovery_fixture(PayloadValidationRouteV0::Proposal, b"recovery omission");
+    let session =
+        Core::begin_payload_validation_obligation_recovery_v0(config, durable, &RootSignatures)
+            .expect("the inert recovery session begins");
+    let mut reconciler = RejectRecoveryV0 { calls: 0 };
+    assert_eq!(
+        session.reconcile_and_activate_v0(&mut reconciler),
+        Err(CoreError::PayloadValidationRecoveryRejected)
+    );
+    assert_eq!(
+        reconciler.calls, 1,
+        "Core must actually invoke the reconciler"
+    );
+}
+
+struct WrongSessionRecoveryV0<'a> {
+    expected: &'a PayloadValidationRecoveryChallengeV0,
+    calls: usize,
+}
+
+impl PayloadValidationRecoveryReconcilerV0 for WrongSessionRecoveryV0<'_> {
+    fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        challenge: &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0 {
+        self.calls += 1;
+        if challenge.same_recovery_instance_v0(self.expected) {
+            PayloadValidationRecoveryDecisionV0::AcceptDeterministicallyInvalid
+        } else {
+            PayloadValidationRecoveryDecisionV0::Reject
+        }
+    }
+}
+
+#[test]
+fn obligation_recovery_challenge_is_bound_to_one_process_local_session() {
+    let (config, durable, _, _) = obligation_recovery_fixture(
+        PayloadValidationRouteV0::Proposal,
+        b"wrong recovery session",
+    );
+    let first = Core::begin_payload_validation_obligation_recovery_v0(
+        config.clone(),
+        durable.clone(),
+        &RootSignatures,
+    )
+    .expect("first inert recovery session begins");
+    let second =
+        Core::begin_payload_validation_obligation_recovery_v0(config, durable, &RootSignatures)
+            .expect("second inert recovery session begins");
+    assert!(!first
+        .challenge()
+        .same_recovery_instance_v0(second.challenge()));
+    let mut wrong = WrongSessionRecoveryV0 {
+        expected: first.challenge(),
+        calls: 0,
+    };
+    assert_eq!(
+        second.reconcile_and_activate_v0(&mut wrong),
+        Err(CoreError::PayloadValidationRecoveryRejected)
+    );
+    assert_eq!(wrong.calls, 1);
+}
+
+#[test]
+fn obligation_recovery_rejects_tampered_duplicate_and_concurrent_records() {
+    let (config, durable, _, _) = obligation_recovery_fixture(
+        PayloadValidationRouteV0::Proposal,
+        b"tampered recovery obligation",
+    );
+    let obligation = durable.payload_validation_obligations()[0].clone();
+    let tampered = DurablePayloadValidationObligationV0::new(
+        obligation.route(),
+        ValidationId::new(
+            BlockId::new([0x6D; 32]),
+            obligation.id().view(),
+            obligation.id().generation(),
+        ),
+        obligation.proposal().clone(),
+        obligation.parent().clone(),
+        obligation.first_recorded_revision(),
+    );
+    let tampered_state = decoded_state_with_validation_records(&durable, vec![tampered], vec![]);
+    assert!(matches!(
+        Core::begin_payload_validation_obligation_recovery_v0(
+            config.clone(),
+            tampered_state,
+            &RootSignatures,
+        ),
+        Err(CoreError::InvalidRecovery(
+            "durable payload validation id differs from its signed proposal",
+        ))
+    ));
+
+    let duplicated_state = decoded_state_with_validation_records(
+        &durable,
+        vec![obligation.clone(), obligation],
+        vec![],
+    );
+    assert!(matches!(
+        Core::begin_payload_validation_obligation_recovery_v0(
+            config,
+            duplicated_state,
+            &RootSignatures,
+        ),
+        Err(CoreError::InvalidRecovery(
+            "durable payload validation obligations are not uniquely sorted by full id",
+        ))
+    ));
+
+    let (terminal_config, terminal_durable, _, terminal_id) = obligation_recovery_fixture(
+        PayloadValidationRouteV0::Proposal,
+        b"terminal fact recovery conflict",
+    );
+    let terminal_state = SafetyState::from_persisted_parts(
+        terminal_durable.schema_version(),
+        terminal_durable.chain_id(),
+        terminal_durable.protocol_version(),
+        terminal_durable.epoch(),
+        terminal_durable.validator_set_id(),
+        terminal_durable.genesis_block_id(),
+        terminal_durable.current_view(),
+        terminal_durable.last_voted_view(),
+        terminal_durable.last_timeout_view(),
+        terminal_durable.high_qc().clone(),
+        terminal_durable.locked_qc().clone(),
+        terminal_durable.finalized(),
+        terminal_durable.revision(),
+        vec![PayloadTerminalFact::new(
+            terminal_id.block_id(),
+            PayloadTerminalResult::Valid,
+            terminal_durable.revision(),
+        )],
+        terminal_durable.payload_validation_obligations().to_vec(),
+        terminal_durable.payload_validation_completions().to_vec(),
+        terminal_durable.pending_tc_high_qc_sync().cloned(),
+        terminal_durable.pending_standalone_qc_sync().cloned(),
+        terminal_durable.pending_sign().cloned(),
+        terminal_durable.last_finalization().cloned(),
+        terminal_durable.pending_finalize(),
+        terminal_durable.safety_halt().cloned(),
+    );
+    assert!(matches!(
+        Core::begin_payload_validation_obligation_recovery_v0(
+            terminal_config,
+            terminal_state,
+            &RootSignatures,
+        ),
+        Err(CoreError::UnsupportedPayloadValidationRecoveryState(
+            "the challenged block already has a durable terminal payload fact",
+        ))
+    ));
+
+    let (multi_config, mut multi_core) = configured_core();
+    let set = multi_core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"two recovery obligations are unsupported",
+    );
+    let effects = multi_core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("the first obligation is staged");
+    let (barrier, _) = persistence_effect(&effects);
+    multi_core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the first obligation is durably released");
+    let effects = multi_core
+        .step(Input::SyncedProposal(Box::new(proposed)), &RootSignatures)
+        .expect("a distinct route receives its own durable generation");
+    let (_, concurrent) = persistence_effect(&effects);
+    assert_eq!(concurrent.payload_validation_obligations().len(), 2);
+    assert!(matches!(
+        Core::begin_payload_validation_obligation_recovery_v0(
+            multi_config,
+            concurrent,
+            &RootSignatures,
+        ),
+        Err(CoreError::UnsupportedPayloadValidationRecovery { obligations: 2 })
+    ));
+}
+
 fn persisted_state_with_qcs<H: IntoQcReference, L: IntoQcReference>(
     state: &SafetyState,
     high_qc: H,
