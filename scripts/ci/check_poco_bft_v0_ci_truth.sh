@@ -13,9 +13,12 @@ APP_RECOVERY="$ROOT/trillionnium/crates/trnm-consensus-app/src/native_validation
 APP_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-app/src/store.rs"
 SAFETY_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-safety-store/src/sqlite.rs"
 NODE_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/lib.rs"
+NODE_TIMEOUT_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs"
 NODE_RECOVERY_TESTS="$ROOT/trillionnium/crates/trnm-poco-node/src/recovery_tests.rs"
 NODE_PROCESS_KILL_HELPER="$ROOT/trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-recovery-kill-helper.rs"
 NODE_PROCESS_KILL_TEST="$ROOT/trillionnium/crates/trnm-poco-node/tests/recovery_process_kill_matrix.rs"
+NODE_TIMEOUT_PROCESS_KILL_HELPER="$ROOT/trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-timeout-signing-kill-helper.rs"
+NODE_TIMEOUT_PROCESS_KILL_TEST="$ROOT/trillionnium/crates/trnm-poco-node/tests/timeout_signing_process_kill_matrix.rs"
 NODE_PROCESS_WATERMARK="$ROOT/trillionnium/crates/trnm-poco-node/src/recovery_process_watermark.rs"
 NODE_CARGO="$ROOT/trillionnium/crates/trnm-poco-node/Cargo.toml"
 G1C_TRUTH="$ROOT/docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md"
@@ -56,6 +59,43 @@ require_literal_count() {
     || fail "expected $expected occurrences in ${path#$ROOT/}, found $actual: $literal"
 }
 
+require_toml_target_feature() {
+  local path="$1"
+  local target_kind="$2"
+  local target_name="$3"
+  local required_feature="$4"
+  if ! python3 - "$path" "$target_kind" "$target_name" "$required_feature" <<'PY'
+import pathlib
+import sys
+import tomllib
+
+path = pathlib.Path(sys.argv[1])
+target_kind = sys.argv[2]
+target_name = sys.argv[3]
+required_feature = sys.argv[4]
+with path.open("rb") as source:
+    document = tomllib.load(source)
+matches = [
+    target
+    for target in document.get(target_kind, [])
+    if target.get("name") == target_name
+]
+if len(matches) != 1:
+    raise SystemExit(
+        f"expected exactly one [[{target_kind}]] named {target_name}, found {len(matches)}"
+    )
+actual = matches[0].get("required-features")
+if actual != [required_feature]:
+    raise SystemExit(
+        f"[[{target_kind}]] {target_name} required-features={actual!r}, "
+        f"expected [{required_feature!r}]"
+    )
+PY
+  then
+    fail "target $target_kind/$target_name is not gated only by $required_feature"
+  fi
+}
+
 reject_literal() {
   local path="$1"
   local literal="$2"
@@ -75,9 +115,12 @@ for required in \
   "$APP_STORE_SOURCE" \
   "$SAFETY_STORE_SOURCE" \
   "$NODE_SOURCE" \
+  "$NODE_TIMEOUT_SOURCE" \
   "$NODE_RECOVERY_TESTS" \
   "$NODE_PROCESS_KILL_HELPER" \
   "$NODE_PROCESS_KILL_TEST" \
+  "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  "$NODE_TIMEOUT_PROCESS_KILL_TEST" \
   "$NODE_PROCESS_WATERMARK" \
   "$NODE_CARGO" \
   "$G1C_TRUTH" \
@@ -110,6 +153,12 @@ require_literal_count "$POCO_WORKFLOW" \
   '      - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "docs/protocol/poco-bft-v0/**"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "scripts/ci/check_poco_bft_v0_*"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-poco-node/**"' 2
 
@@ -146,6 +195,12 @@ require_literal "$RECOVERY_GATE" \
 require_literal "$RECOVERY_GATE" \
   'whole_namespace_rollback_is_detected_by_external_watermark'
 require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_signing_persists_before_broadcast_and_replays_exactly'
+require_literal "$RECOVERY_GATE" \
+  'unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry'
+require_literal "$RECOVERY_GATE" \
+  'signer_revision_ahead_of_authenticated_safety_head_fails_startup'
+require_literal "$RECOVERY_GATE" \
   'proposal_obligation_recovery_rebuilds_the_exact_target_before_invalid_callback'
 require_literal "$RECOVERY_GATE" \
   'synced_obligation_recovery_rebuilds_the_exact_route_and_witness'
@@ -158,6 +213,10 @@ require_literal "$RECOVERY_GATE" \
   recovery_process_kill_matrix \
   real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k'
 require_literal "$RECOVERY_GATE" \
+  'run_feature_integration_filter trnm-poco-node recovery-process-test-support \
+  timeout_signing_process_kill_matrix \
+  real_process_sigkill_matrix_replays_exact_bounded_timeout_signing'
+require_literal "$RECOVERY_GATE" \
   'validation_recovery=deterministic_invalid_existing_only'
 require_literal "$RECOVERY_GATE" \
   'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED'
@@ -167,8 +226,22 @@ require_literal "$RECOVERY_GATE" \
   'validation_recovery_process_kill_checkpoint_count=16'
 require_literal "$RECOVERY_GATE" \
   'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_signature_replay=EVALUATED'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_process_sigkill_matrix=SIGKILL_EVALUATED'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_process_sigkill_checkpoint_count=6'
+require_literal "$RECOVERY_GATE" \
+  'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries'
+require_literal "$RECOVERY_GATE" 'vote_signing_effect_loop=NOT_IMPLEMENTED'
 require_literal "$RECOVERY_GATE" 'power_loss_fsync_matrix=NOT_EVALUATED'
-reject_literal "$RECOVERY_GATE" 'process_kill_matrix=NOT_EVALUATED'
+reject_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_matrix=NOT_EVALUATED'
 require_literal "$RECOVERY_GATE" 'valid_recovery=not_implemented'
 require_literal "$RECOVERY_GATE" 'unavailable_recovery=not_implemented'
 
@@ -233,8 +306,16 @@ require_literal "$NODE_CARGO" '  "dep:ed25519-dalek",'
 require_literal "$NODE_CARGO" '  "dep:fs2",'
 require_literal "$NODE_CARGO" '  "recovery-test-support",'
 require_literal "$NODE_CARGO" 'name = "trnm-poco-recovery-kill-helper"'
-require_literal "$NODE_CARGO" \
-  'required-features = ["recovery-process-test-support"]'
+require_literal "$NODE_CARGO" 'name = "trnm-poco-timeout-signing-kill-helper"'
+require_literal "$NODE_CARGO" 'name = "timeout_signing_process_kill_matrix"'
+require_toml_target_feature "$NODE_CARGO" bin \
+  trnm-poco-recovery-kill-helper recovery-process-test-support
+require_toml_target_feature "$NODE_CARGO" bin \
+  trnm-poco-timeout-signing-kill-helper recovery-process-test-support
+require_toml_target_feature "$NODE_CARGO" test \
+  recovery_process_kill_matrix recovery-process-test-support
+require_toml_target_feature "$NODE_CARGO" test \
+  timeout_signing_process_kill_matrix recovery-process-test-support
 require_literal "$NODE_PROCESS_KILL_TEST" \
   'fn real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k()'
 require_literal "$NODE_PROCESS_KILL_TEST" 'ExitStatusExt'
@@ -247,6 +328,25 @@ require_literal "$NODE_PROCESS_KILL_HELPER" \
   'open_existing_with_process_checkpoint_observer_v0'
 require_literal "$NODE_PROCESS_KILL_HELPER" \
   'identity_v0={}:{}:{};completion_revision={};watermark_v0={}:{}:{}:{}'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_TEST" \
+  'fn real_process_sigkill_matrix_replays_exact_bounded_timeout_signing()'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_TEST" 'EXPECTED_PHASES.len(), 6'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_TEST" 'status.signal()'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_TEST" 'Some(SIGKILL)'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  'PocoNodeHostV0::open_existing('
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  'host.on_local_timeout_with_process_checkpoint_observer_v0'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  'ProducerEnteredAfterIntentWatermark'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  'ProducerGeneratedBeforeReturn'
+require_literal "$NODE_TIMEOUT_PROCESS_KILL_HELPER" \
+  '.verify(validator_set, &StrictEd25519Verifier)'
+require_literal "$POCO_WORKFLOW" \
+  "-name '*trnm-poco-timeout-signing-kill-helper*' -print -quit"
+require_literal "$POCO_WORKFLOW" \
+  'development-only library archive unexpectedly contains the timeout SIGKILL helper'
 require_literal "$NODE_SOURCE" '"obligation_callback_pending"'
 require_literal "$NODE_SOURCE" '"obligation_delivered"'
 require_literal "$NODE_SOURCE" '"completion_delivered"'
@@ -263,9 +363,43 @@ require_literal "$NODE_CARGO" 'production_candidate = false'
 require_literal "$NODE_CARGO" 'production_consensus_activation = false'
 require_literal "$NODE_CARGO" 'incomplete = true'
 require_literal "$NODE_CARGO" 'effect_driver = false'
+require_literal "$NODE_CARGO" 'bounded_timeout_signing_effect_loop = true'
+require_literal "$NODE_CARGO" 'vote_signing_effect_loop = false'
+require_literal "$NODE_CARGO" 'production_signature_producer = false'
 require_literal "$NODE_SOURCE" 'pub const PRODUCTION_CANDIDATE_V0: bool = false;'
 require_literal "$NODE_SOURCE" \
   'pub const HOST_IMPLEMENTATION_COMPLETE_V0: bool = false;'
+require_literal "$NODE_TIMEOUT_SOURCE" 'pub fn on_local_timeout_v0('
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'pub fn on_local_timeout_with_process_checkpoint_observer_v0<F>('
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeTimeoutSigningProcessCheckpointPhaseV0::SafetyPersistedBeforeStorageAck'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeTimeoutSigningProcessCheckpointPhaseV0::SignatureRequestedBeforeJournal'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeTimeoutSigningProcessCheckpointPhaseV0::SignaturePersistedBeforeSignatureReady'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeTimeoutSigningProcessCheckpointPhaseV0::BroadcastProducedBeforeReturn'
+require_literal "$NODE_TIMEOUT_SOURCE" '.sign_exact_v0(&intent, &mut self.signature_producer)'
+require_literal "$NODE_TIMEOUT_SOURCE" 'pub struct PocoNodeSignedOutboundV0'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeHostErrorV0::UnsupportedTimeoutSigningIntentKind'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'runtime_status: BoundedTimeoutRuntimeStatusV0'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'PocoNodeHostErrorV0::BoundedTimeoutHostFailStopped'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'SignatureProducerErrorV0::Unavailable'
+require_literal "$NODE_TIMEOUT_SOURCE" \
+  'source: ExternalWatermarkErrorV0::Unavailable'
+require_literal "$NODE_SOURCE" \
+  'fn bounded_timeout_signing_persists_before_broadcast_and_replays_exactly()'
+require_literal "$NODE_SOURCE" \
+  'fn unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry()'
+require_literal "$NODE_SOURCE" \
+  'fn signer_revision_ahead_of_authenticated_safety_head_fails_startup()'
+require_literal "$NODE_SOURCE" \
+  'fn non_retryable_signer_failure_terminally_fail_stops_the_live_host()'
 require_literal "$G1C_TRUTH" \
   'the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`'
 require_literal "$G1C_TRUTH" \
@@ -302,6 +436,49 @@ require_literal "$PRODUCTION_CONTRACTS" \
 reject_literal "$RELEASE_TRUTH" 'real-process kill-matrix evidence remain open'
 reject_literal "$ROOT_README" 'state sync, real-process kill matrix, and'
 reject_literal "$G1C_TRUTH" 'no real process kill-point matrix'
+
+# G1f is one default-build timeout lane, not a production/general driver.
+require_literal "$ROOT_README" \
+  'G1f ordinary owner now uniquely holds Core, SafetyStore, signer journal, and'
+require_literal "$RELEASE_TRUTH" \
+  'default-build G1f path is bounded to a host-derived local timeout'
+require_literal "$G1C_TRUTH" \
+  'G1f adds a distinct default-build ordinary owner for one bounded local-timeout'
+require_literal "$PROTOCOL_README" \
+  'The distinct G1f ordinary owner is active but deliberately bounded.'
+require_literal "$INVARIANTS_DOC" \
+  '- the distinct G1f ordinary host MUST own one Core, SafetyStore, signer journal,'
+require_literal "$DELIVERY_PLAN" \
+  'G1f now provides the first default-build ordinary vertical effect loop.'
+require_literal "$DUAL_TRACK_DECISION" \
+  'G1f separately advances steps 2 and 3 without claiming either complete.'
+require_literal "$PRODUCTION_CONTRACTS" \
+  'Current G1f evidence closes only the local-timeout subset of this contract.'
+require_literal "$ROOT_README" \
+  'required-feature local Linux matrix now kills and reaps a direct child with'
+require_literal "$RELEASE_TRUTH" \
+  'required-feature local Linux process matrix covers six'
+require_literal "$G1C_TRUTH" \
+  'required-feature local Linux matrix now exercises six real child-process'
+require_literal "$PROTOCOL_README" \
+  'required-feature timeout matrix now covers six real local Linux child-process'
+require_literal "$INVARIANTS_DOC" \
+  '- the required-feature G1f process matrix MUST cover exactly six distinct'
+require_literal "$DELIVERY_PLAN" \
+  'matrix now covers six exact child SIGKILL/reap boundaries from SafetyStore'
+require_literal "$DUAL_TRACK_DECISION" \
+  'child SIGKILL/reap and two-fresh-process exact replay at six bounded points'
+require_literal "$PRODUCTION_CONTRACTS" \
+  'local Linux matrix now covers six direct-child SIGKILL/reap boundaries from'
+require_literal "$PROTOCOL_README" \
+  'A non-retryable runtime failure terminally latches'
+require_literal "$INVARIANTS_DOC" \
+  'latch the live G1f host until a fresh authenticated reopen.'
+reject_literal "$ROOT_README" 'G1f production node'
+reject_literal "$RELEASE_TRUTH" 'G1f production signer'
+reject_literal "$RELEASE_TRUTH" 'no real-process SIGKILL or power-loss'
+reject_literal "$G1C_TRUTH" 'real-process SIGKILL and power-loss matrices are not evaluated'
+reject_literal "$PROTOCOL_README" 'timeout-path SIGKILL and power-loss matrices remain unevaluated'
 
 # Keep the ordinary recovery rejection distinct from the one-obligation G1c
 # session, and describe the concrete Safety token as bounded joint provenance
@@ -347,7 +524,7 @@ require_literal_count "$POCO_WORKFLOW" '--features recovery-process-test-support
 require_literal "$POCO_WORKFLOW" \
   '            -p trnm-poco-node \'
 require_literal "$POCO_WORKFLOW" \
-  'name: Bounded G1e real-process SIGKILL recovery gate'
+  'name: Bounded G1e and G1f real-process SIGKILL recovery gates'
 
 # Release-profile libraries are useful integration artifacts, not a node or a
 # production-readiness decision. Keep that boundary machine-readable both in
@@ -367,12 +544,29 @@ require_literal "$POCO_WORKFLOW" 'deployable_node=false'
 require_literal "$POCO_WORKFLOW" 'production_candidate=false'
 require_literal "$POCO_WORKFLOW" 'incomplete=true'
 require_literal "$POCO_WORKFLOW" 'effect_driver=false'
+require_literal "$POCO_WORKFLOW" 'source_bounded_timeout_signing_effect_loop=true'
+require_literal "$POCO_WORKFLOW" 'artifact_bounded_timeout_signing_effect_loop=false'
+require_literal "$POCO_WORKFLOW" 'source_vote_signing_effect_loop=false'
+require_literal "$POCO_WORKFLOW" 'production_signature_producer=false'
+require_literal "$POCO_WORKFLOW" 'network_broadcast_transport=false'
 require_literal "$POCO_WORKFLOW" 'poco_node_binary_included=false'
 require_literal "$POCO_WORKFLOW" 'production_ready=false'
 require_literal "$POCO_WORKFLOW" 'test_features_included=false'
 require_literal "$POCO_WORKFLOW" 'recovery_test_support_included=false'
 require_literal "$POCO_WORKFLOW" 'recovery_process_test_support_included=false'
-require_literal "$POCO_WORKFLOW" 'recovery_only_core_step=true'
+require_literal "$POCO_WORKFLOW" 'recovery_only_core_step=false'
+require_literal "$POCO_WORKFLOW" \
+  'source_bounded_timeout_process_sigkill_matrix=EVALUATED'
+require_literal "$POCO_WORKFLOW" \
+  'source_bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast'
+require_literal "$POCO_WORKFLOW" \
+  'source_bounded_timeout_process_sigkill_case_count=6'
+require_literal "$POCO_WORKFLOW" \
+  'source_bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries'
+require_literal "$POCO_WORKFLOW" \
+  'source_bounded_timeout_process_sigkill_evidence=true'
+require_literal "$POCO_WORKFLOW" \
+  'artifact_bounded_timeout_process_sigkill_capability=false'
 require_literal "$POCO_WORKFLOW" \
   'validation_recovery_scope=deterministic_invalid_existing_only_v0'
 require_literal "$POCO_WORKFLOW" \
@@ -448,4 +642,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete node_scaffold=triggered,tested,clippy,release-built,incomplete process_sigkill=bounded_local_linux power_loss_fsync=not_evaluated process_helper_artifact=false readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=bounded_local_linux_six_points node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=bounded_local_linux power_loss_fsync=not_evaluated process_helper_artifact=false readiness=development_only,no_legacy_go'

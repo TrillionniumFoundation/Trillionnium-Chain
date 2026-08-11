@@ -67,13 +67,37 @@ revision, has strict bounded Vote/Timeout decoding, and is fixed by independent
 Python/Rust bytes, signing-root, and fingerprint vectors. The separate
 `trnm-consensus-signer-journal` provides an append-only SQLite intent/signature
 event chain, exact replay, strict per-kind view and SafetyState-revision
-watermarks, and a mandatory external monotonic CAS interface. The inert
-`trnm-poco-node` owner now opens the application, SafetyState, and signer
-journals and performs only a bounded deterministic-invalid join. In shorthand,
-the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`: one Core obligation with
-an application `CallbackPending` or `Delivered` row, or one Core completion
-with an application `Delivered` or `Acked` row. The host stays inert after the
-join and has no signature producer or general effect driver.
+watermarks, and a mandatory external monotonic CAS interface. The separate
+`trnm-poco-node` validation-recovery owner opens the application, SafetyState,
+and signer journals and performs only a bounded deterministic-invalid join. In
+shorthand, the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`: one Core
+obligation with an application `CallbackPending` or `Delivered` row, or one
+Core completion with an application `Delivered` or `Acked` row. That recovery
+owner stays inert after the join.
+
+G1f adds a distinct default-build ordinary owner for one bounded local-timeout
+signing path. It uniquely owns Core, SafetyStore, signer journal, and one
+injected exact-idempotent producer; accepts only host-derived current
+epoch/view timeout input; confirms an Ordinary exact SafetyStore readback
+before `StorageAck`; signs only a Core-emitted canonical timeout intent;
+and returns a private-field outbound wrapper containing the canonical intent
+fingerprint, first authorizing Safety revision, and typed timeout vote. Exact
+restart replay returns the persisted signature without another producer call.
+Vote signing and non-timeout outboxes fail closed. The signer maximum Safety
+revision is reconciled against the authenticated Safety head. Any
+non-retryable error terminally latches the live ordinary host; only producer or
+external-watermark `Unavailable` may retry the exact durable timeout intent.
+The required-feature local Linux matrix now exercises six real child-process
+SIGKILL/reap boundaries across Safety readback/ack, canonical request/journal,
+producer entry and deterministic generation, completed signature persistence,
+and verified typed Broadcast. Two fresh official-host processes authenticate
+the exact pre-stage and reproduce the complete outbound identity after every
+kill. This is process-termination evidence only: it does not cover power loss,
+hardware fsync/device cache, production HSM/KMS, network wire bytes, or
+whole-namespace rollback/cloning.
+This is a bounded timeout dispatcher, not a general effect driver, production
+signature producer, pacemaker, transport, or node. Its power-loss matrix is not
+evaluated.
 
 This does not close general authenticated obligation/result takeover, fresh
 execution, BlockId-keyed speculative overlays, production driver/journal
@@ -2094,9 +2118,10 @@ epoch prune, and Core transition remain open.
 
 ### P2 real-node gaps
 
-P2 has not started. There is no authenticated network, append-only WAL/signing
-journal, remote-signer custody/watermark protocol, catch-up/state sync, or
-runtime/JMT execution adapter around this core. Consequently no 4-/7-node
+P2 has not started. The append-only canonical signer journal and bounded G1f
+timeout path exist, but there is no node event WAL, authenticated network,
+production remote-signer custody/watermark implementation, catch-up/state sync,
+or runtime/JMT execution adapter around this core. Consequently no 4-/7-node
 crash, equivocation, or partition/heal result is a real-node result yet.
 
 P2 may begin only after the P1 safety gates are green. Immutable artifacts may

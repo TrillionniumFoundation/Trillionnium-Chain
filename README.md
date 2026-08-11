@@ -102,11 +102,23 @@ TrillionniumChain/
   and negative resource/replay checks, four-node proposal/vote/finalize/commit
   crash recovery, six-node validator
   rotation, and rootless partition-safety evidence
-- `trnm-poco-node`: non-legacy but deliberately inert PoCO bootstrap scaffold.
-  Its current G1c recovery slice performs only the bounded three-store joins
-  obligation + `CallbackPending`, obligation + `Delivered`, completion +
-  `Delivered`, and completion + `Acked`; it is not a deployable node or a
-  general effect driver. G1e adds only a non-default, feature-gated real-process
+- `trnm-poco-node`: non-legacy, fail-closed PoCO host scaffold. Its default-build
+  G1f ordinary owner now uniquely holds Core, SafetyStore, signer journal, and
+  one injected exact-idempotent producer for a bounded local-timeout path:
+  `PersistSafetyState -> StorageAck -> CanonicalSignIntentV0 -> sign journal ->
+  SignatureReady -> fingerprint-bound outbound`. A restart replays the exact
+  persisted timeout signature without invoking the producer again. A
+  required-feature local Linux matrix now kills and reaps a direct child with
+  SIGKILL at six bounded userspace points from SafetyStore readback through
+  verified typed Broadcast, then compares the full fingerprint/revision/root/
+  TimeoutVote/signature identity across two fresh official-host recovery
+  processes. Vote signing, a production producer/HSM, pacemaker, transport,
+  application execution, and a general effect driver remain absent. This is
+  not power-loss, hardware-fsync, wire-byte delivery, or whole-namespace
+  rollback evidence. The separate G1c
+  recovery owner performs only the bounded three-store joins obligation +
+  `CallbackPending`, obligation + `Delivered`, completion + `Delivered`, and
+  completion + `Acked`. G1e adds only a non-default, feature-gated real-process
   SIGKILL test observer for those four states; the helper is not a node artifact
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)

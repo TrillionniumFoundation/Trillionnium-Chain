@@ -932,6 +932,49 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   active-count, identity, lineage, accepted-revision, exact-readback, or
   acknowledgement mismatch MUST fail closed. Successful join MUST remain inert
   and MUST NOT sign, broadcast, schedule, or claim deployment readiness;
+- the distinct G1f ordinary host MUST own one Core, SafetyStore, signer journal,
+  and exact-idempotent producer without exposing any of them. Its public active
+  inputs MUST remain limited to `Resume` and a local timeout derived from the
+  Core's current epoch/view. It MUST NOT accept caller-supplied consensus
+  coordinates or arbitrary `Input`/`Core::step` access;
+- the fresh G1f timeout path MUST persist the exact Core-affined
+  `SafetyStatePersistenceV0` under Ordinary context, reauthenticate the full
+  head and barrier/state equality, and prove that the new timeout intent's
+  first authorizing revision equals that head before issuing `StorageAck`.
+  Recovered timeout replay MAY retain an older first authorizing revision only
+  when it is positive, no greater than the authenticated head, the recovered
+  Core state equals that complete head, and the Core-emitted canonical intent
+  matches the durable pending timeout outbox;
+- before every G1f signature, signer maximum Safety revision MUST NOT exceed
+  the authenticated SafetyStore revision. The journal and its external
+  watermark MUST complete before `SignatureReady`; an unavailable producer MAY
+  leave one exact prepared tail which only the same durable intent may resume.
+  Producer or external-watermark `Unavailable` MAY retry only that exact
+  durable intent through `Resume`; every other runtime failure MUST terminally
+  latch the live G1f host until a fresh authenticated reopen.
+  A prepared signer tail without a Core pending-sign outbox, a signer revision
+  ahead of SafetyStore, a Vote intent, pending finalization/QC sync, or any
+  non-whitelisted effect MUST fail closed before an outbound is released;
+- a G1f outbound MUST be privately constructed from the exact just-completed
+  timeout signature and MUST carry its canonical intent fingerprint and first
+  authorizing Safety revision. Restart replay MUST return the identical typed
+  timeout vote without another producer invocation. This evidence MUST NOT be
+  described as a production signer, network-byte/broadcast guarantee, general
+  effect driver, stale-timer-safe pacemaker, Vote path, or power-loss/fsync
+  matrix;
+- the required-feature G1f process matrix MUST cover exactly six distinct
+  local Linux userspace boundaries: Safety readback before `StorageAck`,
+  released canonical signature request before journal entry, producer entry
+  after the intent-event external watermark, deterministic signature
+  generation before producer return, completed signature event/external
+  watermark before `SignatureReady`, and verified typed Broadcast before API
+  return. The parent MUST retain the direct child identity, confirm SIGKILL
+  signal 9 and reap it, then use two fresh official-host processes to
+  authenticate the expected `0/0/0`, `1/1/1`, or `1/2/2` signer stage and
+  compare the complete outbound identity. It MUST remain behind
+  `recovery-process-test-support`, MUST NOT enter release artifacts, and MUST
+  NOT be described as power-loss, host-reboot, device-cache/hardware-fsync,
+  production HSM/KMS, network-wire-byte, or whole-namespace rollback evidence;
 - the process-local deterministic-invalid delivery path MUST consume only the
   live owner retained by the first successful deterministic-invalid seal; its
   app-private, non-cloneable driver MUST keep one designated store, one owned
@@ -1179,8 +1222,8 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
   application-reservation takeover, `Valid` evaluated-artifact persistence,
   production callback-outbox scheduling/delivery, general authenticated
-  integration with the standalone safety journal, crash takeover outside the
-  bounded G1e SIGKILL matrix,
+  integration with the standalone safety journal, application-validation crash
+  takeover outside the bounded G1e SIGKILL matrix,
   process-wide callback exactly-once, and the `Valid` validation-time plus
   Finalize-time atomic boundaries remain open;
 - parameter and arithmetic boundary failures.

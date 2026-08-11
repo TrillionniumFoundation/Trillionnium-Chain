@@ -118,6 +118,12 @@ run_integration_filter trnm-consensus-signer-journal sqlite_journal \
   external_watermark_recovers_each_local_first_commit_window
 run_integration_filter trnm-consensus-signer-journal sqlite_journal \
   whole_namespace_rollback_is_detected_by_external_watermark
+run_unit_filter trnm-poco-node \
+  bounded_timeout_signing_persists_before_broadcast_and_replays_exactly
+run_unit_filter trnm-poco-node \
+  unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry
+run_unit_filter trnm-poco-node \
+  signer_revision_ahead_of_authenticated_safety_head_fails_startup
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
@@ -175,6 +181,9 @@ run_feature_unit_filter trnm-poco-node recovery-test-support \
 run_feature_integration_filter trnm-poco-node recovery-process-test-support \
   recovery_process_kill_matrix \
   real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k
+run_feature_integration_filter trnm-poco-node recovery-process-test-support \
+  timeout_signing_process_kill_matrix \
+  real_process_sigkill_matrix_replays_exact_bounded_timeout_signing
 
 printf '%s\n' \
   'validation_recovery=deterministic_invalid_existing_only' \
@@ -182,7 +191,14 @@ printf '%s\n' \
   'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' \
   'validation_recovery_process_kill_checkpoint_count=16' \
   'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' \
+  'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
+  'bounded_timeout_signature_replay=EVALUATED' \
+  'bounded_timeout_process_sigkill_matrix=SIGKILL_EVALUATED' \
+  'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' \
+  'bounded_timeout_process_sigkill_checkpoint_count=6' \
+  'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' \
+  'vote_signing_effect_loop=NOT_IMPLEMENTED' \
   'power_loss_fsync_matrix=NOT_EVALUATED' \
   'valid_recovery=not_implemented' \
   'unavailable_recovery=not_implemented' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-g1e-real-process-sigkill-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-bounded-timeout-signing-replay-g1f-real-process-sigkill-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-g1e-real-process-sigkill-snapshot'

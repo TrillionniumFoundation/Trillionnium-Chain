@@ -63,6 +63,27 @@ safety revision, chain/profile drift, or root/preimage mismatch fails closed.
 Signer state is local, monotonic and never reconstructed from application,
 Core or peer snapshot data.
 
+Current G1f evidence closes only the local-timeout subset of this contract. A
+non-cloneable ordinary host owns Core, SafetyStore, signer journal, and one
+injected exact-idempotent producer; confirms the exact Ordinary SafetyState
+write before `StorageAck`; completes the journal and external watermark before
+`SignatureReady`; and releases a private-field typed timeout outbound bound to
+the canonical intent fingerprint. Exact reopen replays the persisted signature
+without another producer call, while signer revision ahead of the authenticated
+SafetyStore and Vote signing fail closed. Non-retryable runtime failures latch
+the live host; only producer or external-watermark `Unavailable` may retry the
+same durable intent. This is not a production producer or
+complete SafetyRules/locked-QC rollback boundary. The host binary, pacemaker,
+network transport, and Vote path remain unimplemented. A required-feature
+local Linux matrix now covers six direct-child SIGKILL/reap boundaries from
+authenticated Safety readback through verified typed Broadcast and requires
+two fresh official-host exact replays. It authenticates the `0/0/0`, `1/1/1`,
+or `1/2/2` signer stage and compares the complete typed outbound identity. The
+producer-generation checkpoint occurs before the helper producer returns to
+the signer; it is not evidence for the narrower post-trait-return window. This
+is not power-loss/hardware-fsync, production HSM/KMS, network wire-byte, or
+whole-namespace rollback evidence.
+
 ## 3. Durable validation job and callback outbox
 
 The authoritative application database owns one

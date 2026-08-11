@@ -64,6 +64,24 @@ reach the other three states. A fresh process verifies each restart. The
 evidence. This is not power-loss, host-reboot, device-write-cache, or
 hardware-fsync evidence, and it is not the complete production crash matrix.
 
+G1f now provides the first default-build ordinary vertical effect loop. The
+non-cloneable host uniquely owns Core, SafetyStore, signer journal, and one
+injected exact-idempotent producer; its only active input is a host-derived
+current-view local timeout. The path confirms the exact Ordinary SafetyStore
+head before `StorageAck`, journals and signs only the resulting canonical
+timeout intent, confirms the external watermark before `SignatureReady`, and
+returns a fingerprint-bound typed timeout outbound. Exact reopen replays the
+persisted signature without another producer call, and signer revision ahead
+of SafetyStore fails startup. Vote signing is explicitly refused. This does
+not close a production HSM/KMS producer, general effect driver, pacemaker,
+transport, or application/overlay. A required-feature local Linux process
+matrix now covers six exact child SIGKILL/reap boundaries from SafetyStore
+readback through verified typed Broadcast. Every case uses two fresh official
+host processes, checks the precise signer stage, and compares the complete
+fingerprint/revision/root/TimeoutVote/signature identity. It is not power-loss,
+hardware-fsync/device-cache, production HSM/KMS, network wire-byte, or
+whole-namespace rollback evidence.
+
 The representation and standalone journal portions of step 5 are now
 implemented. SafetyState record codec v0 is frozen to epoch-zero Core
 SafetyState schema v8, exact-decodes nested trusted-Genesis CEV0, and binds Core
@@ -78,8 +96,9 @@ obligations. A separate session accepts exactly one reconciled
 deterministic-invalid obligation.
 Core now emits opaque persistence requests with process-local designated-Core
 affinity. `CanonicalSignIntentV0`, strict exact decoding/vectors, and a first
-append-only signer-journal slice are present; the inert node owner holds that
-journal but exposes no signing/effect-driving API. There is still no production
+append-only signer-journal slice are present; G1f connects the ordinary host to
+that journal only for the bounded local-timeout sequence described above. The
+separate G1c recovery owner remains inert. There is still no production
 external monotonic watermark, HSM/KMS producer, complete HotStuff SafetyRules
 or locked-QC reconciliation, general obligation/result takeover, BlockId
 overlay, or ordered finalization queue.

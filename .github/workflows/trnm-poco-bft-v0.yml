@@ -273,7 +273,7 @@ jobs:
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
-      - name: Bounded G1e real-process SIGKILL recovery gate
+      - name: Bounded G1e and G1f real-process SIGKILL recovery gates
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
 
@@ -425,12 +425,23 @@ jobs:
             printf '%s\n' 'production_candidate=false'
             printf '%s\n' 'incomplete=true'
             printf '%s\n' 'effect_driver=false'
+            printf '%s\n' 'source_bounded_timeout_signing_effect_loop=true'
+            printf '%s\n' 'artifact_bounded_timeout_signing_effect_loop=false'
+            printf '%s\n' 'source_vote_signing_effect_loop=false'
+            printf '%s\n' 'production_signature_producer=false'
+            printf '%s\n' 'network_broadcast_transport=false'
             printf '%s\n' 'poco_node_binary_included=false'
             printf '%s\n' 'production_ready=false'
             printf '%s\n' 'test_features_included=false'
             printf '%s\n' 'recovery_test_support_included=false'
             printf '%s\n' 'recovery_process_test_support_included=false'
-            printf '%s\n' 'recovery_only_core_step=true'
+            printf '%s\n' 'recovery_only_core_step=false'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_matrix=EVALUATED'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_case_count=6'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries'
+            printf '%s\n' 'source_bounded_timeout_process_sigkill_evidence=true'
+            printf '%s\n' 'artifact_bounded_timeout_process_sigkill_capability=false'
             printf '%s\n' 'validation_recovery_scope=deterministic_invalid_existing_only_v0'
             printf '%s\n' 'source_validation_recovery_process_sigkill_matrix=EVALUATED'
             printf '%s\n' 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
@@ -486,12 +497,23 @@ jobs:
           grep -Fxq 'production_candidate=false' "$metadata"
           grep -Fxq 'incomplete=true' "$metadata"
           grep -Fxq 'effect_driver=false' "$metadata"
+          grep -Fxq 'source_bounded_timeout_signing_effect_loop=true' "$metadata"
+          grep -Fxq 'artifact_bounded_timeout_signing_effect_loop=false' "$metadata"
+          grep -Fxq 'source_vote_signing_effect_loop=false' "$metadata"
+          grep -Fxq 'production_signature_producer=false' "$metadata"
+          grep -Fxq 'network_broadcast_transport=false' "$metadata"
           grep -Fxq 'poco_node_binary_included=false' "$metadata"
           grep -Fxq 'production_ready=false' "$metadata"
           grep -Fxq 'test_features_included=false' "$metadata"
           grep -Fxq 'recovery_test_support_included=false' "$metadata"
           grep -Fxq 'recovery_process_test_support_included=false' "$metadata"
-          grep -Fxq 'recovery_only_core_step=true' "$metadata"
+          grep -Fxq 'recovery_only_core_step=false' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_matrix=EVALUATED' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_case_count=6' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' "$metadata"
+          grep -Fxq 'source_bounded_timeout_process_sigkill_evidence=true' "$metadata"
+          grep -Fxq 'artifact_bounded_timeout_process_sigkill_capability=false' "$metadata"
           grep -Fxq 'validation_recovery_scope=deterministic_invalid_existing_only_v0' "$metadata"
           grep -Fxq 'source_validation_recovery_process_sigkill_matrix=EVALUATED' "$metadata"
           grep -Fxq 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' "$metadata"
@@ -526,6 +548,13 @@ jobs:
             | grep -q .; then
             printf '%s\n' \
               'development-only library archive unexpectedly contains the SIGKILL helper' >&2
+            exit 1
+          fi
+          if find "$inspection" -maxdepth 1 -type f \
+            -name '*trnm-poco-timeout-signing-kill-helper*' -print -quit \
+            | grep -q .; then
+            printf '%s\n' \
+              'development-only library archive unexpectedly contains the timeout SIGKILL helper' >&2
             exit 1
           fi
 

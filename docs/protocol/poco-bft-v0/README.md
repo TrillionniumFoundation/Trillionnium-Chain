@@ -686,6 +686,36 @@ completion plus `Acked`. Every other active-count/context/status combination
 fails closed. A successful join only returns a bootstrapped inert owner; it
 does not sign, broadcast, schedule, or make the package deployable.
 
+The distinct G1f ordinary owner is active but deliberately bounded. In the
+default build it uniquely holds Core, SafetyStore, signer journal, and one
+injected exact-idempotent producer. Its only active consensus input is a local
+timeout whose epoch/view are derived from the authenticated Core state. It
+requires the exact Ordinary SafetyStore persistence/readback before
+`StorageAck`, accepts only the resulting canonical timeout intent, requires the
+Core state to equal the authenticated head, completes the signer journal plus
+external watermark before `SignatureReady`, and returns a private-field
+outbound wrapper carrying the stable intent fingerprint and first authorizing
+Safety revision. Reopen plus `Resume` returns the same typed timeout vote and
+persisted signature without another producer call. Durable Vote outboxes,
+pending finalization/QC-sync states, and every non-whitelisted effect fail
+closed before producer use. A non-retryable runtime failure terminally latches
+that live host; only producer or external-watermark `Unavailable` may retry the
+same durable intent through `Resume`. This does not supply a production producer/HSM,
+timer-generation-aware pacemaker, network transport, fresh application
+execution, Vote pipeline, general effect driver, or deployable binary. Its
+required-feature timeout matrix now covers six real local Linux child-process
+SIGKILL/reap boundaries: authenticated Safety persistence before `StorageAck`,
+released canonical request before journal entry, producer entry after the
+intent watermark, deterministic signature generation before producer return,
+completed signature journal/watermark before `SignatureReady`, and verified
+typed Broadcast before public return. Each kill is followed by two fresh
+official-host opens which authenticate the exact signer stage and reproduce
+the complete fingerprint/revision/root/TimeoutVote/signature identity. The
+producer-generation point is before the helper producer returns to the signer,
+not the narrower post-trait-return/pre-signature-event window. Power loss,
+host reboot, device cache/hardware fsync, production HSM/KMS, network wire
+bytes, and whole-namespace rollback/cloning remain unevaluated.
+
 An exact reopen returns its checksum-verified durable state rather than silently
 coalescing unfinished work, while no reopen can recreate the unique first-
 reservation token. Startup and recovery exact-decode and canonically re-encode
@@ -873,9 +903,9 @@ after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
 application-reservation takeover, `Valid` evaluated-artifact persistence,
 production callback scheduling/delivery, recovery for outcomes outside the G1c
-deterministic-invalid matrix, crash takeover outside the bounded G1e SIGKILL
-matrix, completion-only artifact replay, and callback exactly-once are also not
-implemented. The current
+deterministic-invalid matrix, application-validation crash takeover outside the
+bounded G1e SIGKILL matrix, completion-only artifact replay, and callback
+exactly-once are also not implemented. The current
 process-local invalid driver uses Core's `StorageAck` cleanup barrier only
 after its injected sink and application `acked` transition; that test boundary
 is not a production host callback-outbox acknowledgement. The separate inert

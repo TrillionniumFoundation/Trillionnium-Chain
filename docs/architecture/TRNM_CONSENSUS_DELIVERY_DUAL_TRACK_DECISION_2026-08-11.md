@@ -33,8 +33,9 @@ The July CometBFT spike already has local four- and six-validator process
 evidence, crash recovery, application replay, validator rotation, partitions,
 JMT commitments, and snapshot state sync. The August PoCO-BFT branch has a
 strong deterministic safety kernel, standalone SafetyState and signer
-journals, and a bounded inert G1c three-store recovery join. P2 real-node work
-has still not started: there is no production effect driver, authenticated
+journals, a bounded inert G1c three-store recovery join, and a default-build
+G1f host-owned timeout signing loop with exact persisted replay. P2 real-node
+work has still not started: there is no production effect driver, authenticated
 transport, production remote signer/external watermark, fork-aware execution
 adapter, state sync, or deployable node artifact.
 
@@ -109,6 +110,22 @@ and active rows before joining. That is still local Linux evidence: SQLite owns
 the WAL/SHM inode lifecycle, hostile same-EUID bypass remains out of scope, and
 neither sudden power loss nor the complete production kill-point campaign has
 certified this ownership protocol.
+
+G1f separately advances steps 2 and 3 without claiming either complete. The
+ordinary host now uniquely owns Core, SafetyStore, signer journal, and an
+injected producer for one host-derived local-timeout lane. It proves exact
+persist/readback before `StorageAck`, canonical timeout intent journaling,
+external-watermark confirmation before `SignatureReady`, fingerprint-bound
+typed outbound release, exact restart replay without a second producer call,
+and fail-stop when the signer maximum Safety revision is ahead of the
+authenticated SafetyStore. Vote signing is explicitly refused. The producer is
+still an injected adapter rather than a production HSM/KMS, the binary still
+refuses activation. A required-feature local Linux matrix now proves direct
+child SIGKILL/reap and two-fresh-process exact replay at six bounded points
+from SafetyStore readback to verified typed Broadcast. It does not prove power
+loss/hardware fsync, production HSM/KMS, network wire bytes, or
+whole-namespace rollback. Pacemaker token ownership, transport, application
+execution, and the general effect loop remain open.
 
 ## 4. PoCO-BFT promotion gates
 

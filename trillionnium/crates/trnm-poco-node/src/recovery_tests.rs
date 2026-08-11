@@ -23,8 +23,8 @@ use trnm_consensus_safety_store::{
     SafetyStoreErrorV0, SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
 };
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignerWatermarkV0,
-    SqliteSignerJournalV0,
+    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignatureProducerErrorV0,
+    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader,
@@ -81,6 +81,18 @@ impl ExternalMonotonicWatermarkV0 for MemoryWatermark {
         }
         *value = Some(target);
         Ok(())
+    }
+}
+
+#[derive(Debug, Default)]
+struct UnavailableProducerV0;
+
+impl SignatureProducerV0 for UnavailableProducerV0 {
+    fn sign(
+        &mut self,
+        _request: SignatureRequestV0<'_>,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        Err(SignatureProducerErrorV0::Unavailable)
     }
 }
 
@@ -801,7 +813,8 @@ fn exercise_recovery_case_v0(
         obligation_revision,
     );
 
-    let legacy_error = match PocoNodeHostV0::open_existing(start, watermark) {
+    let legacy_error = match PocoNodeHostV0::open_existing(start, watermark, UnavailableProducerV0)
+    {
         Ok(_) => panic!("legacy host bypassed application-aware C+K recovery"),
         Err(error) => error,
     };

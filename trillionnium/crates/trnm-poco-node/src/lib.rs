@@ -9,14 +9,16 @@
 //! selected store under one process-local owner, and none can be detached from
 //! the host through this API.
 //!
-//! This is not a general effect driver or a production node. Its recovery-only
-//! owner calls `Core::step` solely for one reconciled deterministic-invalid
-//! callback and its exact durable `StorageAck`; it does not sign, broadcast,
-//! execute fresh application payloads, finalize blocks, run a pacemaker, serve
-//! a network, or install state sync. The binary always exits non-zero. These
-//! omissions keep the scaffold inert until the frozen production contracts
-//! have real adapters; they must not be bypassed with the private CometBFT
-//! application fixture.
+//! This is not a general effect driver or a production node. The ordinary
+//! owner can drive only `Resume` and a host-derived local timeout through the
+//! exact Core -> SafetyStore -> signer-journal -> outbound boundary. The
+//! recovery-only owner separately calls `Core::step` solely for one reconciled
+//! deterministic-invalid callback and its exact durable `StorageAck`. Neither
+//! path executes fresh application payloads, finalizes blocks, runs a complete
+//! pacemaker, serves a network, or installs state sync. The binary always exits
+//! non-zero. These omissions keep the scaffold fail-closed until the frozen
+//! production contracts have real adapters; they must not be bypassed with the
+//! private CometBFT application fixture.
 //!
 //! The safety store, signer journal, and optional application recovery store
 //! must live in non-overlapping, already-existing canonical parent
@@ -27,8 +29,9 @@
 //! store first and the signer journal second. A crash between those operations
 //! can therefore leave a safety-only namespace; any partial namespace fails
 //! closed on recovery and requires explicit operator quarantine or recovery.
-//! This scaffold deliberately does not reconcile the Core lock state, safety
-//! revision, and signer watermark across those stores.
+//! Startup rejects a signer maximum Safety revision ahead of the authenticated
+//! SafetyStore head, but this is not complete locked-QC/SafetyRules or
+//! whole-SafetyStore rollback reconciliation.
 
 use std::{
     error::Error,
@@ -60,12 +63,19 @@ use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, JournalCapacityV0, SignerJournalErrorV0, SignerJournalProfileV0,
     SignerWatermarkV0, SqliteSignerJournalV0,
 };
-use trnm_consensus_types::{GenesisQcV0, RolloutPhase};
+use trnm_consensus_types::RolloutPhase;
+
+mod ordinary_timeout;
+
+#[cfg(feature = "recovery-process-test-support")]
+pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
+pub use ordinary_timeout::{PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0};
 
 /// This package must not be interpreted as a deployable consensus candidate.
 pub const PRODUCTION_CANDIDATE_V0: bool = false;
 
-/// This package deliberately has no effect-driving/running state.
+/// This package has only a bounded timeout-signing effect path, not a complete
+/// node host, pacemaker, application driver, or network runtime.
 pub const HOST_IMPLEMENTATION_COMPLETE_V0: bool = false;
 
 /// SHA-256 of `trnm.poco-node.strict-ed25519-verifier-profile.v0`.
@@ -79,8 +89,8 @@ pub const STRICT_ED25519_VERIFIER_PROFILE_REF_V0: [u8; 32] = [
 
 /// SHA-256 of `trnm.poco-node.signer-journal-profile.v0`.
 ///
-/// This binds the inert host's frozen strict-Ed25519 signer-journal profile;
-/// it is not a key identifier or a claim that a producer is wired.
+/// This binds the host's frozen strict-Ed25519 signer-journal profile; it is not
+/// a key identifier or a claim that a production producer/HSM is configured.
 pub const SIGNER_JOURNAL_PROFILE_REF_V0: [u8; 32] = [
     0xe4, 0xff, 0xb8, 0x35, 0x52, 0x4b, 0xfd, 0x25, 0x4a, 0xb3, 0x11, 0x0c, 0xa6, 0xad, 0xcf, 0x13,
     0xc4, 0x85, 0x57, 0x4c, 0xdf, 0xdf, 0xc0, 0x0d, 0x1e, 0x84, 0x42, 0x2d, 0x42, 0xb9, 0x36, 0x69,
@@ -140,7 +150,7 @@ pub const UNWIRED_PRODUCTION_CONTRACTS_V0: &[UnwiredProductionContractV0] = &[
     UnwiredProductionContractV0::StateSync,
 ];
 
-/// Typed, local-only startup configuration for an inert host.
+/// Typed, local-only startup configuration for the bounded host scaffold.
 ///
 /// Consensus parameters remain inside [`CoreConfig`]. Record and database
 /// capacities are node-local resource bounds and never become block-validity
@@ -380,17 +390,18 @@ fn derive_signer_watermark_scope_v0(core_config: &CoreConfig) -> [u8; 32] {
     hasher.finalize().into()
 }
 
-/// How the inert owner acquired its exact safety state.
+/// How a host owner acquired its exact safety state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HostBootstrapModeV0 {
     InitializedGenesis,
     RecoveredExisting,
 }
 
-/// The only lifecycle phase currently expressible by this package.
+/// Lifecycle phases currently expressible by the ordinary and recovery hosts.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum HostLifecyclePhaseV0 {
     BootstrappedInert,
+    BoundedTimeoutSigning,
 }
 
 /// Application-journal state observed before the bounded recovery transition.
@@ -482,194 +493,6 @@ impl ValidationRecoveryProcessCheckpointV0 {
 
     pub const fn safety_revision(self) -> u64 {
         self.safety_revision
-    }
-}
-
-/// Non-cloneable owner of one Core, its safety store, and signer journal.
-///
-/// There is intentionally no mutable Core accessor, `step`, `run`, signer,
-/// application adapter, or escape hatch returning the two owned parts.
-pub struct PocoNodeHostV0<W> {
-    core: Core,
-    safety_store: SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
-    signer_journal: SqliteSignerJournalV0<W>,
-    signer_journal_head: SignerWatermarkV0,
-    bootstrap_mode: HostBootstrapModeV0,
-}
-
-impl<W: ExternalMonotonicWatermarkV0> PocoNodeHostV0<W> {
-    /// Creates the epoch-zero Core, initializes its journal at revision zero,
-    /// and binds future persistence to this exact Core instance.
-    ///
-    /// The safety store is initialized before the signer journal. There is no
-    /// atomic transaction across the two SQLite stores or the external
-    /// watermark. An interrupted partial initialization is intentionally not
-    /// repaired here: subsequent recovery fails closed and requires explicit
-    /// operator quarantine or recovery.
-    pub fn initialize_new(
-        config: PocoNodeStartConfigV0,
-        genesis_qc: GenesisQcV0,
-        external_watermark: W,
-    ) -> Result<Self, PocoNodeHostErrorV0> {
-        reject_activation_request(&config)?;
-        let core_config = config.core_config().clone();
-        let PocoNodeStartConfigV0 {
-            safety_store_path,
-            safety_store_profile,
-            signer_journal_path,
-            signer_journal_profile,
-        } = config;
-        let verifier = StrictEd25519Verifier;
-        let core =
-            Core::new(core_config, genesis_qc, &verifier).map_err(PocoNodeHostErrorV0::core)?;
-        let mut safety_store = SqliteSafetyStateStoreV0::initialize_new(
-            safety_store_path,
-            safety_store_profile,
-            verifier,
-            core.safety_state(),
-        )
-        .map_err(PocoNodeHostErrorV0::safety_store)?;
-        let mut signer_journal = SqliteSignerJournalV0::initialize_new(
-            signer_journal_path,
-            signer_journal_profile,
-            external_watermark,
-        )
-        .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        let signer_journal_head = signer_journal
-            .external_head()
-            .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        safety_store
-            .bind_core_v0(core.safety_state_persistence_binding_v0())
-            .map_err(PocoNodeHostErrorV0::safety_store)?;
-        Ok(Self {
-            core,
-            safety_store,
-            signer_journal,
-            signer_journal_head,
-            bootstrap_mode: HostBootstrapModeV0::InitializedGenesis,
-        })
-    }
-
-    /// Opens and authenticates an ordinary exact journal head, recovers Core,
-    /// and binds the journal to that recovered instance.
-    ///
-    /// Obligation-bearing or native-invalid-context heads fail before Core
-    /// construction. Call [`PocoNodeValidationRecoveryHostV0::open_existing`]
-    /// for the bounded G1c recovery join. This legacy inert entry point cannot
-    /// inspect an independent application journal and must never be used as a
-    /// production recovery path.
-    pub fn open_existing(
-        config: PocoNodeStartConfigV0,
-        external_watermark: W,
-    ) -> Result<Self, PocoNodeHostErrorV0> {
-        reject_activation_request(&config)?;
-        let core_config = config.core_config().clone();
-        let PocoNodeStartConfigV0 {
-            safety_store_path,
-            safety_store_profile,
-            signer_journal_path,
-            signer_journal_profile,
-        } = config;
-        let verifier = StrictEd25519Verifier;
-        let mut safety_store = SqliteSafetyStateStoreV0::open_existing(
-            safety_store_path,
-            safety_store_profile,
-            verifier,
-        )
-        .map_err(PocoNodeHostErrorV0::safety_store)?;
-        let head = safety_store
-            .head()
-            .map_err(PocoNodeHostErrorV0::safety_store)?;
-        if !matches!(
-            head.transition_context(),
-            SafetyTransitionContextV0::Ordinary
-        ) || head_has_current_invalid_completion_v0(head.state())
-        {
-            return Err(PocoNodeHostErrorV0::ValidationRecoveryAwareOpenRequired {
-                revision: head.revision(),
-            });
-        }
-        let obligation_count = head.state().payload_validation_obligations().len();
-        if obligation_count != 0 {
-            return Err(
-                PocoNodeHostErrorV0::AuthenticatedObligationReplayUnavailable {
-                    revision: head.revision(),
-                    obligation_count,
-                },
-            );
-        }
-        let mut signer_journal = SqliteSignerJournalV0::open_existing(
-            signer_journal_path,
-            signer_journal_profile,
-            external_watermark,
-        )
-        .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        let signer_journal_head = signer_journal
-            .external_head()
-            .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        let core = Core::recover(core_config, head.state().clone(), &verifier)
-            .map_err(PocoNodeHostErrorV0::core)?;
-        if core.safety_state() != head.state() {
-            return Err(PocoNodeHostErrorV0::RecoveredHeadMismatch);
-        }
-        safety_store
-            .bind_core_v0(core.safety_state_persistence_binding_v0())
-            .map_err(PocoNodeHostErrorV0::safety_store)?;
-        Ok(Self {
-            core,
-            safety_store,
-            signer_journal,
-            signer_journal_head,
-            bootstrap_mode: HostBootstrapModeV0::RecoveredExisting,
-        })
-    }
-
-    pub const fn bootstrap_mode(&self) -> HostBootstrapModeV0 {
-        self.bootstrap_mode
-    }
-
-    pub const fn lifecycle_phase(&self) -> HostLifecyclePhaseV0 {
-        HostLifecyclePhaseV0::BootstrappedInert
-    }
-
-    pub const fn core_config(&self) -> &CoreConfig {
-        self.core.config()
-    }
-
-    /// Exposes inert state facts, not the live Core or a persistence binding.
-    pub const fn safety_state(&self) -> &SafetyState {
-        self.core.safety_state()
-    }
-
-    pub fn safety_store_path(&self) -> &Path {
-        self.safety_store.path()
-    }
-
-    pub fn signer_journal_path(&self) -> &Path {
-        self.signer_journal.path()
-    }
-
-    /// Captured exact external/local signer head at successful bootstrap.
-    /// The inert host has no API capable of advancing it.
-    pub const fn signer_journal_head(&self) -> SignerWatermarkV0 {
-        self.signer_journal_head
-    }
-
-    pub fn signer_journal_capacity(&self) -> Result<JournalCapacityV0, PocoNodeHostErrorV0> {
-        self.signer_journal
-            .capacity()
-            .map_err(PocoNodeHostErrorV0::signer_journal)
-    }
-
-    pub fn safety_head(&self) -> Result<RecoveredSafetyStateV0, PocoNodeHostErrorV0> {
-        self.safety_store
-            .head()
-            .map_err(PocoNodeHostErrorV0::safety_store)
-    }
-
-    /// No running/effect-driving state is constructible in this slice.
-    pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
-        Err(ProductionActivationBlockedV0::new())
     }
 }
 
@@ -776,9 +599,10 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
             external_watermark,
         )
         .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        let signer_journal_head = signer_journal
+        signer_journal
             .external_head()
             .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        validate_signer_safety_revision_v0(&signer_journal, &head)?;
         let mut application_recovery = NativeValidationRecoveryStoreV0::open_existing_v8(
             NativeValidationRecoveryStoreConfigV0::new(
                 application_status_path.clone(),
@@ -826,9 +650,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
         if final_head.state() != core.safety_state() {
             return Err(PocoNodeHostErrorV0::RecoveredHeadMismatch);
         }
+        validate_signer_safety_revision_v0(&signer_journal, &final_head)?;
         application_recovery
             .final_exact_audit_v0()
             .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+        let signer_journal_head = signer_journal
+            .external_head()
+            .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        validate_signer_safety_revision_v0(&signer_journal, &final_head)?;
         Ok(Self {
             core,
             safety_store,
@@ -1221,6 +1050,35 @@ fn effect_name_v0(effect: &Effect) -> &'static str {
     }
 }
 
+fn validate_signer_safety_revision_v0<W: ExternalMonotonicWatermarkV0>(
+    signer_journal: &SqliteSignerJournalV0<W>,
+    safety_head: &RecoveredSafetyStateV0,
+) -> Result<(), PocoNodeHostErrorV0> {
+    let capacity = signer_journal
+        .capacity()
+        .map_err(PocoNodeHostErrorV0::signer_journal)?;
+    if let Some(signer_revision) = capacity.maximum_safety_revision() {
+        if signer_revision > safety_head.revision() {
+            return Err(PocoNodeHostErrorV0::SignerSafetyRevisionAhead {
+                signer_revision,
+                safety_revision: safety_head.revision(),
+            });
+        }
+    }
+    let prepared_tail = capacity.intent_count() > 0
+        && capacity
+            .intent_count()
+            .checked_mul(2)
+            .and_then(|events| events.checked_sub(1))
+            == Some(capacity.event_count());
+    if prepared_tail && safety_head.state().pending_sign().is_none() {
+        return Err(PocoNodeHostErrorV0::PreparedSignerIntentWithoutCoreOutbox {
+            safety_revision: safety_head.revision(),
+        });
+    }
+    Ok(())
+}
+
 fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNodeHostErrorV0> {
     if let Some(effect) = effects
         .iter()
@@ -1402,6 +1260,56 @@ pub enum PocoNodeHostErrorV0 {
     },
     RecoveredHeadMismatch,
     RecoveredTransitionHeadMismatch,
+    OrdinaryPersistenceReadbackMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    NonOrdinarySigningHead {
+        revision: u64,
+    },
+    SignerSafetyRevisionAhead {
+        signer_revision: u64,
+        safety_revision: u64,
+    },
+    PreparedSignerIntentWithoutCoreOutbox {
+        safety_revision: u64,
+    },
+    UnsupportedBoundedBootstrapState {
+        revision: u64,
+        state: &'static str,
+    },
+    UnsupportedTimeoutSigningIntentKind,
+    MissingTimeoutIntentAfterPersistence {
+        revision: u64,
+    },
+    MissingDurableTimeoutSignIntent {
+        revision: u64,
+    },
+    DurableSignIntentMismatch {
+        revision: u64,
+    },
+    SigningCoreSafetyHeadMismatch {
+        core_revision: u64,
+        safety_revision: u64,
+    },
+    SigningHeadChangedDuringProducer {
+        before_revision: u64,
+        after_revision: u64,
+    },
+    SignIntentSafetyRevisionMismatch {
+        intent_revision: u64,
+        safety_revision: u64,
+    },
+    MultipleBoundedPersistenceEffects,
+    MultipleSignedOutboundContexts,
+    MissingSignedOutboundContext,
+    SignedOutboundMismatch,
+    UnconsumedSignedOutboundContext,
+    UnsupportedBoundedHostEffect {
+        effect: &'static str,
+    },
+    BoundedEffectLimitExceeded,
+    BoundedTimeoutHostFailStopped,
     Core(Box<trnm_consensus_core::CoreError>),
     SafetyStore(Box<SafetyStoreErrorV0>),
     SignerJournal(Box<SignerJournalErrorV0>),
@@ -1552,6 +1460,93 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::RecoveredTransitionHeadMismatch => formatter.write_str(
                 "SafetyStore exact readback differs from the Core request or application transition context",
             ),
+            Self::OrdinaryPersistenceReadbackMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "ordinary SafetyStore readback revision {actual_revision} differs from Core barrier {expected_revision}",
+            ),
+            Self::NonOrdinarySigningHead { revision } => write!(
+                formatter,
+                "signing requires an ordinary authenticated SafetyStore head, got revision {revision}",
+            ),
+            Self::SignerSafetyRevisionAhead {
+                signer_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "signer journal safety revision {signer_revision} is ahead of SafetyStore revision {safety_revision}",
+            ),
+            Self::PreparedSignerIntentWithoutCoreOutbox { safety_revision } => write!(
+                formatter,
+                "signer journal has one prepared unsigned tail, but SafetyStore revision {safety_revision} has no durable Core signing outbox",
+            ),
+            Self::UnsupportedBoundedBootstrapState { revision, state } => write!(
+                formatter,
+                "bounded timeout-signing host cannot open SafetyStore revision {revision} with {state}",
+            ),
+            Self::UnsupportedTimeoutSigningIntentKind => formatter.write_str(
+                "bounded timeout-signing host refuses vote signing and non-timeout outbound messages",
+            ),
+            Self::MissingTimeoutIntentAfterPersistence { revision } => write!(
+                formatter,
+                "ordinary timeout persistence at SafetyStore revision {revision} did not retain a durable timeout sign intent",
+            ),
+            Self::MissingDurableTimeoutSignIntent { revision } => write!(
+                formatter,
+                "SafetyStore revision {revision} has no durable timeout sign intent for the Core signer request",
+            ),
+            Self::DurableSignIntentMismatch { revision } => write!(
+                formatter,
+                "Core signer request differs from the durable timeout intent at SafetyStore revision {revision}",
+            ),
+            Self::SigningCoreSafetyHeadMismatch {
+                core_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "Core signing state revision {core_revision} differs from authenticated SafetyStore revision {safety_revision}",
+            ),
+            Self::SigningHeadChangedDuringProducer {
+                before_revision,
+                after_revision,
+            } => write!(
+                formatter,
+                "authenticated SafetyStore head changed from revision {before_revision} to {after_revision} while the signature producer was running",
+            ),
+            Self::SignIntentSafetyRevisionMismatch {
+                intent_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "sign intent authorizes SafetyState revision {intent_revision}, but authenticated head is {safety_revision}",
+            ),
+            Self::MultipleBoundedPersistenceEffects => formatter.write_str(
+                "bounded timeout-signing call emitted more than one SafetyState persistence effect",
+            ),
+            Self::MultipleSignedOutboundContexts => formatter.write_str(
+                "bounded timeout-signing call attempted to authorize multiple outbound messages",
+            ),
+            Self::MissingSignedOutboundContext => formatter.write_str(
+                "Core emitted a broadcast without the exact signer context owned by this call",
+            ),
+            Self::SignedOutboundMismatch => formatter.write_str(
+                "Core outbound message differs from the exact signature and signing root released by the signer journal",
+            ),
+            Self::UnconsumedSignedOutboundContext => formatter.write_str(
+                "Core accepted a signature without emitting its exact outbound message",
+            ),
+            Self::UnsupportedBoundedHostEffect { effect } => write!(
+                formatter,
+                "bounded timeout-signing host cannot drive Core effect {effect}",
+            ),
+            Self::BoundedEffectLimitExceeded => formatter.write_str(
+                "bounded timeout-signing host exceeded its per-call effect limit",
+            ),
+            Self::BoundedTimeoutHostFailStopped => formatter.write_str(
+                "bounded timeout-signing host is terminally fail-stopped after a non-retryable error",
+            ),
             Self::Core(error) => write!(formatter, "PoCO Core startup failed: {error}"),
             Self::SafetyStore(error) => write!(formatter, "PoCO safety-store startup failed: {error}"),
             Self::SignerJournal(error) => {
@@ -1592,15 +1587,25 @@ mod tests {
     #[cfg(target_os = "linux")]
     use std::{
         fs,
-        sync::{Arc, Mutex},
+        sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc, Mutex,
+        },
     };
 
     #[cfg(target_os = "linux")]
+    use ed25519_dalek::{Signer, SigningKey};
+    #[cfg(target_os = "linux")]
     use tempfile::TempDir;
-    use trnm_consensus_core::SafetyStateRecordLimitsV0;
+    use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
+    #[cfg(target_os = "linux")]
+    use trnm_consensus_signer_journal::{
+        SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
+    };
     use trnm_consensus_types::{
-        ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, GenesisQcV0,
-        ProtocolVersion, Validator, ValidatorId, ValidatorSet, VotingPower,
+        BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
+        GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcReferenceV0, SignatureBytes,
+        Validator, ValidatorId, ValidatorSet, View, VotingPower,
     };
 
     use super::*;
@@ -1663,6 +1668,79 @@ mod tests {
         }
     }
 
+    #[cfg(target_os = "linux")]
+    #[derive(Debug, Default)]
+    struct UnavailableProducerV0;
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for UnavailableProducerV0 {
+        fn sign(
+            &mut self,
+            _request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            Err(SignatureProducerErrorV0::Unavailable)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[derive(Debug, Default)]
+    struct RejectedProducerV0 {
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for RejectedProducerV0 {
+        fn sign(
+            &mut self,
+            _request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            Err(SignatureProducerErrorV0::Rejected)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    struct StrictProducerV0 {
+        key: SigningKey,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for StrictProducerV0 {
+        fn sign(
+            &mut self,
+            request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            assert_eq!(request.signer_profile_ref(), SIGNER_JOURNAL_PROFILE_REF_V0);
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            Ok(SignatureBytes::from_array(
+                self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+            ))
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    struct UnavailableOnceProducerV0 {
+        key: SigningKey,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for UnavailableOnceProducerV0 {
+        fn sign(
+            &mut self,
+            request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            let call = self.calls.fetch_add(1, Ordering::SeqCst);
+            if call == 0 {
+                return Err(SignatureProducerErrorV0::Unavailable);
+            }
+            Ok(SignatureBytes::from_array(
+                self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+            ))
+        }
+    }
+
     fn validator_id(index: u8) -> ValidatorId {
         ValidatorId::new([index; 32])
     }
@@ -1689,6 +1767,34 @@ mod tests {
         .expect("valid validator set");
         CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
             .expect("valid Core config")
+    }
+
+    #[cfg(target_os = "linux")]
+    fn strict_core_config_and_local_key() -> (CoreConfig, SigningKey) {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let validators = (1_u8..=4)
+            .map(|index| {
+                let key = SigningKey::from_bytes(&[index.saturating_add(40); 32]);
+                Validator::new(
+                    validator_id(index),
+                    ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                    VotingPower::new(1).expect("positive strict voting power"),
+                )
+                .expect("valid strict validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0xa5; 32]),
+            ChainId::from_static("trnm-poco-node-timeout-signing-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("valid strict validator set");
+        let config = CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
+            .expect("valid strict Core config");
+        (config, SigningKey::from_bytes(&[41; 32]))
     }
 
     fn record_limits() -> SafetyStateRecordLimitsV0 {
@@ -2090,21 +2196,31 @@ mod tests {
             start_config(&safety_path, &signer_path, core_config).expect("valid inert host config");
         let watermark = MemoryWatermark::default();
 
-        let host = PocoNodeHostV0::initialize_new(config.clone(), genesis_qc, watermark.clone())
-            .expect("initialize exact dual-store owner");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc,
+            watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize exact dual-store owner");
         assert_eq!(
             host.bootstrap_mode(),
             HostBootstrapModeV0::InitializedGenesis
         );
         assert_eq!(
             host.lifecycle_phase(),
-            HostLifecyclePhaseV0::BootstrappedInert
+            HostLifecyclePhaseV0::BoundedTimeoutSigning
         );
         assert_eq!(host.safety_state().revision(), 0);
         assert_eq!(host.safety_head().expect("journal head").revision(), 0);
         assert_eq!(host.safety_store_path(), safety_path.as_path());
         assert_eq!(host.signer_journal_path(), signer_path.as_path());
-        assert_eq!(host.signer_journal_head().sequence(), 0);
+        assert_eq!(
+            host.signer_journal_head()
+                .expect("authenticated signer head")
+                .sequence(),
+            0
+        );
         assert_eq!(
             host.signer_journal_capacity()
                 .expect("signer capacity")
@@ -2113,8 +2229,11 @@ mod tests {
         );
         assert!(host.production_activation_check().is_err());
 
-        let duplicate_open = match PocoNodeHostV0::open_existing(config.clone(), watermark.clone())
-        {
+        let duplicate_open = match PocoNodeHostV0::open_existing(
+            config.clone(),
+            watermark.clone(),
+            UnavailableProducerV0,
+        ) {
             Ok(_) => panic!("a second live owner must not open the same journal"),
             Err(error) => error,
         };
@@ -2125,7 +2244,7 @@ mod tests {
         ));
         drop(host);
 
-        let recovered = PocoNodeHostV0::open_existing(config, watermark)
+        let mut recovered = PocoNodeHostV0::open_existing(config, watermark, UnavailableProducerV0)
             .expect("recover exact dual-store owner");
         assert_eq!(
             recovered.bootstrap_mode(),
@@ -2134,8 +2253,283 @@ mod tests {
         assert_eq!(recovered.safety_state().revision(), 0);
         assert_eq!(recovered.safety_store_path(), safety_path.as_path());
         assert_eq!(recovered.signer_journal_path(), signer_path.as_path());
-        assert_eq!(recovered.signer_journal_head().sequence(), 0);
+        assert_eq!(
+            recovered
+                .signer_journal_head()
+                .expect("authenticated signer head")
+                .sequence(),
+            0
+        );
         assert!(recovered.production_activation_check().is_err());
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn bounded_timeout_signing_persists_before_broadcast_and_replays_exactly() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout host config");
+        let watermark = MemoryWatermark::default();
+        let producer_calls = Arc::new(AtomicUsize::new(0));
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc,
+            watermark.clone(),
+            StrictProducerV0 {
+                key: local_key.clone(),
+                calls: Arc::clone(&producer_calls),
+            },
+        )
+        .expect("initialize bounded timeout-signing host");
+
+        assert_eq!(
+            host.resume_v0().expect("resume genesis host"),
+            vec![PocoNodeHostActionV0::ArmViewTimer {
+                epoch: Epoch::new(0),
+                view: View::new(1),
+            }]
+        );
+
+        let actions = host
+            .on_local_timeout_v0()
+            .expect("persist, sign, and release one local timeout");
+        let [PocoNodeHostActionV0::Broadcast(first_outbound)] = actions.as_slice() else {
+            panic!("timeout path must release exactly one signed outbound");
+        };
+        assert_eq!(first_outbound.authorizing_safety_revision(), 1);
+        assert_ne!(first_outbound.intent_fingerprint().into_bytes(), [0; 32]);
+        let OutboundMessage::TimeoutVote(first_timeout) = first_outbound.message() else {
+            panic!("bounded host must release only timeout votes");
+        };
+        assert_eq!(first_timeout.epoch(), Epoch::new(0));
+        assert_eq!(first_timeout.view(), View::new(1));
+        first_timeout
+            .verify(core_config.validator_set(), &StrictEd25519Verifier)
+            .expect("released timeout vote verifies under the frozen validator set");
+        assert_eq!(producer_calls.load(Ordering::SeqCst), 1);
+
+        let durable_head = host.safety_head().expect("authenticated safety head");
+        assert_eq!(durable_head.revision(), 1);
+        assert!(matches!(
+            durable_head.state().pending_sign(),
+            Some(SignIntent::TimeoutVote {
+                authorizing_safety_revision: 1,
+                view,
+                ..
+            }) if *view == View::new(1)
+        ));
+        assert!(host.safety_state().pending_sign().is_none());
+        let capacity = host
+            .signer_journal_capacity()
+            .expect("authenticated signer capacity");
+        assert_eq!(capacity.intent_count(), 1);
+        assert_eq!(capacity.event_count(), 2);
+        assert_eq!(capacity.maximum_safety_revision(), Some(1));
+        assert_eq!(capacity.maximum_timeout_view(), Some(1));
+        assert_eq!(
+            host.signer_journal_head()
+                .expect("synchronized signer head")
+                .sequence(),
+            2
+        );
+        let first_outbound = first_outbound.clone();
+        drop(host);
+
+        let mut recovered = PocoNodeHostV0::open_existing(
+            config,
+            watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&producer_calls),
+            },
+        )
+        .expect("recover exact pending timeout outbox");
+        let replay = recovered
+            .resume_v0()
+            .expect("replay persisted signature and timeout vote");
+        assert_eq!(
+            replay,
+            vec![PocoNodeHostActionV0::Broadcast(first_outbound)]
+        );
+        assert_eq!(
+            producer_calls.load(Ordering::SeqCst),
+            1,
+            "persisted exact replay must skip the producer"
+        );
+        assert_eq!(
+            recovered
+                .signer_journal_head()
+                .expect("replayed signer head")
+                .sequence(),
+            2
+        );
+        let replay_capacity = recovered
+            .signer_journal_capacity()
+            .expect("replayed signer capacity");
+        assert_eq!(replay_capacity.intent_count(), 1);
+        assert_eq!(replay_capacity.event_count(), 2);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid producer retry config");
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc(&core_config),
+            MemoryWatermark::default(),
+            UnavailableOnceProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&calls),
+            },
+        )
+        .expect("initialize producer retry host");
+
+        let first_error = host
+            .on_local_timeout_v0()
+            .expect_err("first producer call is deliberately unavailable");
+        assert!(matches!(
+            first_error,
+            PocoNodeHostErrorV0::SignerJournal(error)
+                if matches!(
+                    error.as_ref(),
+                    SignerJournalErrorV0::SignatureProducer(
+                        SignatureProducerErrorV0::Unavailable
+                    )
+                )
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        let prepared = host
+            .signer_journal_capacity()
+            .expect("prepared signer tail is authenticated");
+        assert_eq!(prepared.intent_count(), 1);
+        assert_eq!(prepared.event_count(), 1);
+        assert_eq!(prepared.maximum_safety_revision(), Some(1));
+        assert_eq!(
+            host.signer_journal_head()
+                .expect("prepared external watermark")
+                .sequence(),
+            1
+        );
+        assert_eq!(host.safety_head().expect("safety head").revision(), 1);
+
+        let retry = host
+            .resume_v0()
+            .expect("same durable Core intent completes on retry");
+        let [PocoNodeHostActionV0::Broadcast(retried_outbound)] = retry.as_slice() else {
+            panic!("retry must release exactly one timeout outbound");
+        };
+        assert_eq!(retried_outbound.authorizing_safety_revision(), 1);
+        assert!(matches!(
+            retried_outbound.message(),
+            OutboundMessage::TimeoutVote(_)
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+        let completed = host
+            .signer_journal_capacity()
+            .expect("completed signer tail is authenticated");
+        assert_eq!(completed.intent_count(), 1);
+        assert_eq!(completed.event_count(), 2);
+        assert_eq!(
+            host.signer_journal_head()
+                .expect("completed external watermark")
+                .sequence(),
+            2
+        );
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn non_retryable_signer_failure_terminally_fail_stops_the_live_host() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, _) = strict_core_config_and_local_key();
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid fail-stop config");
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc(&core_config),
+            MemoryWatermark::default(),
+            RejectedProducerV0 {
+                calls: Arc::clone(&calls),
+            },
+        )
+        .expect("initialize fail-stop host");
+
+        let first = host
+            .on_local_timeout_v0()
+            .expect_err("producer rejection is non-retryable in the live host");
+        assert!(matches!(
+            first,
+            PocoNodeHostErrorV0::SignerJournal(error)
+                if matches!(
+                    error.as_ref(),
+                    SignerJournalErrorV0::SignatureProducer(
+                        SignatureProducerErrorV0::Rejected
+                    )
+                )
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+        assert!(matches!(
+            host.resume_v0(),
+            Err(PocoNodeHostErrorV0::BoundedTimeoutHostFailStopped)
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn bounded_dispatcher_rejects_vote_intent_before_producer_or_journal() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid vote refusal config");
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc(&core_config),
+            MemoryWatermark::default(),
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&calls),
+            },
+        )
+        .expect("initialize vote refusal host");
+        let vote_intent = CanonicalSignIntentV0::vote(
+            core_config.validator_set(),
+            core_config.local_validator(),
+            1,
+            View::new(1),
+            Height::new(1),
+            BlockId::new([0x51; 32]),
+        )
+        .expect("shape-valid canonical vote intent");
+
+        let error = host
+            .drive_test_effects_v0(vec![Effect::RequestSignature {
+                intent: vote_intent,
+            }])
+            .expect_err("timeout-only dispatcher must reject vote signing");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::UnsupportedTimeoutSigningIntentKind
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+        let capacity = host
+            .signer_journal_capacity()
+            .expect("vote refusal leaves journal unchanged");
+        assert_eq!(capacity.intent_count(), 0);
+        assert_eq!(capacity.event_count(), 0);
     }
 
     #[cfg(target_os = "linux")]
@@ -2148,8 +2542,13 @@ mod tests {
         let config = start_config(&safety_path, &signer_path, core_config.clone())
             .expect("valid initial config");
         let watermark = MemoryWatermark::default();
-        let host = PocoNodeHostV0::initialize_new(config, genesis_qc, watermark.clone())
-            .expect("initialize dual stores");
+        let host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc,
+            watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize dual stores");
         drop(host);
 
         let mismatched = PocoNodeStartConfigV0::new(
@@ -2163,14 +2562,72 @@ mod tests {
             MAXIMUM_SIGNER_DATABASE_BYTES,
         )
         .expect("shape-valid alternate local capacity profile");
-        let error = match PocoNodeHostV0::open_existing(mismatched, watermark) {
-            Ok(_) => panic!("different signer profile must not open"),
-            Err(error) => error,
-        };
+        let error =
+            match PocoNodeHostV0::open_existing(mismatched, watermark, UnavailableProducerV0) {
+                Ok(_) => panic!("different signer profile must not open"),
+                Err(error) => error,
+            };
         assert!(matches!(
             error,
             PocoNodeHostErrorV0::SignerJournal(error)
                 if matches!(error.as_ref(), SignerJournalErrorV0::MetadataMismatch)
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn signer_revision_ahead_of_authenticated_safety_head_fails_startup() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid rollback-join config");
+        let signer_profile = config.signer_journal_profile.clone();
+        let watermark = MemoryWatermark::default();
+        let host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis.clone(),
+            watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize exact dual stores at revision zero");
+        drop(host);
+
+        let mut signer_journal =
+            SqliteSignerJournalV0::open_existing(&signer_path, signer_profile, watermark.clone())
+                .expect("open independent signer journal fixture");
+        let intent = CanonicalSignIntentV0::timeout_vote(
+            core_config.validator_set(),
+            core_config.local_validator(),
+            1,
+            View::new(1),
+            QcReferenceV0::genesis_anchor(genesis).qc_ref(),
+        )
+        .expect("valid timeout intent one revision ahead of SafetyStore");
+        let calls = Arc::new(AtomicUsize::new(0));
+        signer_journal
+            .sign_exact_v0(
+                &intent,
+                &mut StrictProducerV0 {
+                    key: local_key,
+                    calls: Arc::clone(&calls),
+                },
+            )
+            .expect("advance signer journal fixture to safety revision one");
+        drop(signer_journal);
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+        let error = match PocoNodeHostV0::open_existing(config, watermark, UnavailableProducerV0) {
+            Ok(_) => panic!("signer-ahead rollback join must fail closed"),
+            Err(error) => error,
+        };
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SignerSafetyRevisionAhead {
+                signer_revision: 1,
+                safety_revision: 0,
+            }
         ));
     }
 
@@ -2187,11 +2644,12 @@ mod tests {
             config.clone(),
             genesis_qc(&safety_only_core_config),
             watermark.clone(),
+            UnavailableProducerV0,
         )
         .expect("initialize missing-signer fixture");
         drop(host);
         fs::remove_file(&signer_path).expect("remove signer database only");
-        let error = match PocoNodeHostV0::open_existing(config, watermark) {
+        let error = match PocoNodeHostV0::open_existing(config, watermark, UnavailableProducerV0) {
             Ok(_) => panic!("safety-only namespace must fail closed"),
             Err(error) => error,
         };
@@ -2211,11 +2669,12 @@ mod tests {
             config.clone(),
             genesis_qc(&signer_only_core_config),
             watermark.clone(),
+            UnavailableProducerV0,
         )
         .expect("initialize missing-safety fixture");
         drop(host);
         fs::remove_file(&safety_path).expect("remove safety database only");
-        let error = match PocoNodeHostV0::open_existing(config, watermark) {
+        let error = match PocoNodeHostV0::open_existing(config, watermark, UnavailableProducerV0) {
             Ok(_) => panic!("signer-only namespace must fail closed"),
             Err(error) => error,
         };

@@ -30,16 +30,32 @@ cached tracking ref contemporaneous.
   review gates pass on an exact reproducible artifact.
 - Legacy node, CLI, RPC, simulator, or local `GO` evidence is not PoCO-BFT P2
   evidence. PoCO economic voting power remains shadow-only.
-- G0 truth-label corrections and the first G1 safety slice are present in the
-  current working tranche: an inert non-legacy host owns Core, SafetyStore, and
-  an append-only signer journal; canonical Vote/Timeout intents have strict
-  decoding and frozen cross-implementation vectors. This is not a running
-  node, signer, complete SafetyRules service, or release gate pass. A bounded
+- G0 truth-label corrections and the first G1 safety slices are present in the
+  current working tranche. The non-legacy ordinary host uniquely owns Core,
+  SafetyStore, an append-only signer journal, and one injected producer. Its
+  default-build G1f path is bounded to a host-derived local timeout and crosses
+  exact Safety persistence/readback, `StorageAck`, canonical intent journaling,
+  external-watermark confirmation, `SignatureReady`, and a fingerprint-bound
+  typed outbound. Restart replays the persisted signature without invoking the
+  producer again. Its required-feature local Linux process matrix covers six
+  exact userspace boundaries: Safety readback before ack, released signature
+  request before journal entry, producer entry after the intent watermark,
+  deterministic signature generation before producer return, completed
+  signature journal/watermark before `SignatureReady`, and verified Broadcast
+  before API return. Every case confirms direct-child SIGKILL/reap and two
+  fresh official-host exact replays. Vote signing fails closed. This is not a
+  running-node retry loop: non-retryable failures latch the live host, while
+  only producer or external-watermark `Unavailable` may resume the same
+  durable intent. This remains not a
+  production signer/HSM, complete SafetyRules service,
+  pacemaker/network, power-loss/hardware-fsync proof, wire-byte delivery, or
+  release gate pass. A bounded
   existing-only deterministic-invalid `O+P/O+D/C+D/C+K` recovery owner is now
   present, including durable Safety-journal nomination; general `Valid`/
   `Unavailable` takeover, fresh execution, fork execution, ordered
   finalization, locked-QC rollback protection, state sync, networking, and the
-  complete production crash matrix remain open. G1e adds a feature-gated local
+  complete production crash matrix remain open. The bounded timeout path has
+  no power-loss/hardware-fsync matrix. G1e adds a feature-gated local
   Linux matrix of sixteen real SIGKILL checkpoints at `O+P`, `O+D`, `C+D`, and
   `C+K`, across both routes and both supported deterministic-invalid reasons.
   An authentic feature-only fixture seeds `O+P`; the official existing-only
