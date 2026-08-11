@@ -1063,6 +1063,58 @@ fn recovery_with_a_claimed_durable_validation_fails_closed_without_reopening_it(
     let stale_id = request.id();
     assert!(request.try_claim().is_ok());
 
+    Core::validate_persisted_state_v0(&config, &durable_request, &RootSignatures)
+        .expect("an obligation-bearing record is a valid inert persistence fact");
+    assert!(
+        Core::validate_persisted_state_v0(&config, &durable_request, &RejectSignatures).is_err(),
+        "read-only validation still authenticates durable obligation signatures"
+    );
+
+    let mismatched_config = CoreConfig::new(
+        config.local_validator(),
+        config.validator_set().clone(),
+        *config.consensus_parameters(),
+        config
+            .trusted_genesis_timestamp_ms()
+            .checked_add(1)
+            .expect("test timestamp does not overflow"),
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("the mismatched persistence context is internally valid");
+    assert_eq!(
+        Core::validate_persisted_state_v0(&mismatched_config, &durable_request, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "durable payload validation lacks a non-genesis parent header",
+        )),
+        "an inert record is still bound to the exact trusted persistence context"
+    );
+
+    let obligation = durable_request
+        .payload_validation_obligations()
+        .first()
+        .expect("the fixture retains one durable obligation");
+    let spliced_obligation = DurablePayloadValidationObligationV0::new(
+        obligation.route(),
+        ValidationId::new(
+            BlockId::new([0x5E; 32]),
+            obligation.id().view(),
+            obligation.id().generation(),
+        ),
+        obligation.proposal().clone(),
+        obligation.parent().clone(),
+        obligation.first_recorded_revision(),
+    );
+    let spliced_state =
+        decoded_state_with_validation_records(&durable_request, vec![spliced_obligation], vec![]);
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &spliced_state, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "durable payload validation id differs from its signed proposal",
+        )),
+        "a checksum-consistent decoder splice cannot become a validated inert fact"
+    );
+
     assert_eq!(
         Core::recover(config, durable_request, &RootSignatures),
         Err(CoreError::InvalidRecovery(
@@ -1094,6 +1146,9 @@ fn recovery_with_an_unclaimed_durable_validation_fails_closed_without_revoking_i
         .expect("durable request released");
     let stale = into_validation_request(effects);
     let stale_id = stale.id();
+
+    Core::validate_persisted_state_v0(&config, &durable_request, &RootSignatures)
+        .expect("an unclaimed obligation is still a valid inert persistence fact");
 
     assert_eq!(
         Core::recover(config, durable_request, &RootSignatures),
@@ -3198,6 +3253,16 @@ fn recovery_before_finalization_ack_does_not_reconstruct_a_vote_candidate() {
         durable_commitments.evidence_count(),
         live_commitments.evidence_count()
     );
+    assert_eq!(
+        DurableValidatedBlockCommitmentsV1::from_persisted_parts(
+            durable_commitments.block_id(),
+            durable_commitments.logical_block_size(),
+            durable_commitments.transaction_count(),
+            durable_commitments.evidence_count(),
+        ),
+        durable_commitments,
+        "durable decoding reconstructs only the inert comparison snapshot"
+    );
     assert_eq!(completion.first_recorded_revision(), gated.revision());
     let expected_completion = (*completion).clone();
     let expected_completions = gated.payload_validation_completions().to_vec();
@@ -5008,6 +5073,13 @@ fn recovery_rejects_pre_v7_safety_state_without_inert_completion_snapshots() {
             state.last_finalization().cloned(),
             state.pending_finalize(),
             state.safety_halt().cloned(),
+        );
+        assert_eq!(
+            Core::validate_persisted_state_v0(&config, &legacy, &RootSignatures),
+            Err(CoreError::InvalidRecovery(
+                "unsupported safety-state schema version"
+            )),
+            "schema {legacy_schema} must not validate as a current inert record"
         );
         assert_eq!(
             Core::recover(config.clone(), legacy, &RootSignatures),

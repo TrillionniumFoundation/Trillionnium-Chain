@@ -93,33 +93,52 @@ impl Core {
         Ok(value)
     }
 
+    /// Validates one decoded durable safety state without recovering a live core.
+    ///
+    /// This authenticates the schema, configured context, cryptographic
+    /// witnesses, and every semantic invariant available in the record.
+    /// Payload-validation obligations are allowed here as inert persistence
+    /// facts; validation neither reissues them nor grants callback authority.
+    /// A self-consistent [`SafetyState`] still cannot prove in isolation that
+    /// it is the newest durable record.
+    pub fn validate_persisted_state_v0<V: SignatureVerifier>(
+        config: &CoreConfig,
+        state: &SafetyState,
+        verifier: &V,
+    ) -> Result<()> {
+        config.validate()?;
+        let replay_required = safety_replay_required(state);
+        Self::empty(config.clone(), state.clone(), replay_required).validate_runtime(verifier, true)
+    }
+
     /// Restores the durable safety state after a process restart.
+    ///
+    /// [`Self::validate_persisted_state_v0`] is the read-only validation
+    /// boundary for storage layers that need to authenticate an inert record,
+    /// including one that still contains payload-validation obligations. This
+    /// recovery boundary deliberately remains stricter: obligations cannot be
+    /// reissued until an authenticated replay-ticket protocol exists.
     ///
     /// If `state.pending_sign()` is present, the caller must feed `Resume` and
     /// the core will request precisely that already-persisted signing root.
     /// The volatile block tree is rebuilt by replaying verified proposals and
     /// certificates from the finalized tip through the durable high QC; stale
-    /// replay inputs never cause a vote.
-    ///
-    /// The storage/signer integration must reject a snapshot whose revision
-    /// or signing watermarks precede its append-only sign journal. A
-    /// self-consistent `SafetyState` cannot prove it is the newest durable
-    /// record in isolation.
+    /// replay inputs never cause a vote. The storage/signer integration must
+    /// reject a snapshot whose revision or signing watermarks precede its
+    /// append-only sign journal.
     pub fn recover<V: SignatureVerifier>(
         config: CoreConfig,
         state: SafetyState,
         verifier: &V,
     ) -> Result<Self> {
-        config.validate()?;
-        let replay_required = safety_replay_required(&state);
-        let value = Self::empty(config, state, replay_required);
-        value.validate_runtime(verifier, true)?;
-        if !value.safety.payload_validation_obligations().is_empty() {
+        Self::validate_persisted_state_v0(&config, &state, verifier)?;
+        if !state.payload_validation_obligations().is_empty() {
             return Err(CoreError::InvalidRecovery(
                 "durable payload validation obligations require an authenticated replay ticket before recovery can reissue them",
             ));
         }
-        Ok(value)
+        let replay_required = safety_replay_required(&state);
+        Ok(Self::empty(config, state, replay_required))
     }
 
     pub const fn config(&self) -> &CoreConfig {

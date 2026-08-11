@@ -720,6 +720,27 @@ impl DurableValidatedBlockCommitmentsV1 {
         }
     }
 
+    /// Reconstructs one decoded inert commitment snapshot for validation as
+    /// part of a durable [`SafetyState`] record.
+    ///
+    /// This crate-private boundary deliberately has no counterpart that can
+    /// mint a live [`ValidatedBlockCommitmentsV0`]. Persisted bytes remain
+    /// comparison data and must never become payload-validation authority.
+    #[cfg_attr(not(test), allow(dead_code))]
+    pub(crate) const fn from_persisted_parts(
+        block_id: BlockId,
+        logical_block_size: u64,
+        transaction_count: u32,
+        evidence_count: u32,
+    ) -> Self {
+        Self {
+            block_id,
+            logical_block_size,
+            transaction_count,
+            evidence_count,
+        }
+    }
+
     pub const fn block_id(self) -> BlockId {
         self.block_id
     }
@@ -870,11 +891,13 @@ pub struct SafetyState {
 }
 
 impl SafetyState {
-    /// Reconstructs a decoded durable state for validation by [`crate::Core::recover`].
+    /// Reconstructs a decoded durable state for read-only validation by
+    /// [`crate::Core::validate_persisted_state_v0`].
     ///
     /// This constructor intentionally performs no cryptographic work. Callers
-    /// must authenticate the stored record and pass the result through
-    /// `Core::recover`, which validates all invariants available in this state.
+    /// must authenticate the stored record and pass the result through that
+    /// persisted-state validator. Only a state with no unresolved validation
+    /// obligations may subsequently enter [`crate::Core::recover`].
     #[allow(clippy::too_many_arguments)]
     pub fn from_persisted_parts(
         schema_version: u16,
