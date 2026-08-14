@@ -62,9 +62,9 @@ pub fn execute_research(
         &signed.command,
         ResearchCommandV1::IssueWorkloadReceipt(_) | ResearchCommandV1::CreateResearchClaim(_)
     ) {
-        // App v6 has no settlement activation tied to a verified Paper Raid V2
-        // finality commitment. Keep the frozen V1 wire/state decodable, but do
-        // not let its accepted-work or claim objects become an alternate
+        // App v7 has no settlement activation tied to the rework-native Paper
+        // Raid V4 finality commitment. Keep the frozen V1 wire/state decodable,
+        // but do not let its accepted-work or claim objects become an alternate
         // ranking/reward input lane.
         return Err(RuntimeError::LegacyResearchSettlementLocked);
     }

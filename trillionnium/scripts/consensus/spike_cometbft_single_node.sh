@@ -101,6 +101,8 @@ CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 RECEIPT_BIN="${TRNM_RESEARCH_RECEIPT_V2_BIN:-}"
 RESEARCH_SIGNING_INPUT="${TRNM_RESEARCH_SIGNING_INPUT:-}"
 RESEARCH_PREREQUISITE_SIGNING_INPUT="${TRNM_RESEARCH_PREREQUISITE_SIGNING_INPUT:-}"
+RESEARCH_SIGN_COMMAND="${TRNM_RESEARCH_SIGN_COMMAND:-sign-and-wrap}"
+HEPTA_PRIVATE_KEY="${TRNM_HEPTA_PRIVATE_KEY:-}"
 if [[ -z "$APP_BIN" ]]; then
   cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$CARGO_OUTPUT_DIR/debug/trnm-cometbft-app"
@@ -117,11 +119,30 @@ test -x "$APP_BIN"
 test -x "$CLI_BIN"
 test -x "$RECEIPT_BIN"
 
+case "$RESEARCH_SIGN_COMMAND" in
+  sign-and-wrap|paper-raid-v4-hepta-sign-and-wrap) ;;
+  *)
+    printf 'TRNM_COMETBFT_SINGLE_NODE_FAILED reason=invalid_research_sign_command\n' >&2
+    exit 2
+    ;;
+esac
+
 key_json="$("$CLI_BIN" keygen --output "$ROOT/operator.key")"
 public_key="$(printf '%s' "$key_json" | jq -r .public_key_hex)"
 nakama_key_json="$("$CLI_BIN" keygen --output "$ROOT/nakama.key")"
 nakama_public_key="$(printf '%s' "$nakama_key_json" | jq -r .public_key_hex)"
-hepta_key_json="$("$CLI_BIN" keygen --output "$ROOT/hepta.key")"
+hepta_private_key="$ROOT/hepta.key"
+if [[ -n "$HEPTA_PRIVATE_KEY" ]]; then
+  [[ "$HEPTA_PRIVATE_KEY" = /* && -f "$HEPTA_PRIVATE_KEY" \
+    && ! -L "$HEPTA_PRIVATE_KEY" ]] || {
+    printf 'TRNM_COMETBFT_SINGLE_NODE_FAILED reason=invalid_hepta_private_key\n' >&2
+    exit 2
+  }
+  hepta_private_key="$HEPTA_PRIVATE_KEY"
+  hepta_key_json="$("$RECEIPT_BIN" public-key "$hepta_private_key")"
+else
+  hepta_key_json="$("$CLI_BIN" keygen --output "$hepta_private_key")"
+fi
 hepta_public_key="$(printf '%s' "$hepta_key_json" | jq -r .public_key_hex)"
 if [[ -n "$RESEARCH_SIGNING_INPUT" ]]; then
   [[ "$RESEARCH_SIGNING_INPUT" = /* && -f "$RESEARCH_SIGNING_INPUT" \
@@ -206,9 +227,9 @@ if [[ -n "$RESEARCH_SIGNING_INPUT" ]]; then
     "$ROOT/research.prerequisite.tx.json")"
   test "$(printf '%s' "$prerequisite_fixture" | jq -er .public_key_hex)" = \
     "$nakama_public_key"
-  research_fixture="$("$RECEIPT_BIN" sign-and-wrap \
+  research_fixture="$("$RECEIPT_BIN" "$RESEARCH_SIGN_COMMAND" \
     "$RESEARCH_SIGNING_INPUT" \
-    "$ROOT/hepta.key" \
+    "$hepta_private_key" \
     "$ROOT/research.signed-command.json" \
     "$ROOT/research.tx.json")"
   expected_research_public_key=$hepta_public_key
@@ -274,7 +295,7 @@ jq \
    | .app_state={
        schema:"trnm_cometbft_genesis_v3",
        chain_id:"trnm-comet-spike",
-       app_version:6,
+       app_version:7,
        authorized_signers:[
          {
            signer_id:"did:operator:1",

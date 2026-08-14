@@ -31,15 +31,17 @@ use trnm_node::live::{
 };
 use trnm_protocol::{
     account_key, fee_policy_key, research_applied_command_key, research_domain_object_key,
-    task_key, CanonicalPaperRaidFinalityTxV2, CanonicalResearchTxV1, CanonicalTxV1, FeePolicyV1,
+    task_key, CanonicalPaperRaidFinalityTxV4, CanonicalResearchTxV1, CanonicalTxV1, FeePolicyV1,
     CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2,
-    CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3, CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1,
+    CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3,
+    CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V4, CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1,
     CANONICAL_TX_PAYLOAD_TYPE_V1, FEE_POLICY_OBJECT_TYPE_V1,
 };
 use trnm_research_protocol::{AuthorityRole, AuthoritySetV1};
 use trnm_runtime::{
-    paper_raid_finality_applied_command_key, paper_raid_finality_commitment_key, ExecutionContext,
-    ResourceEstimate, RuntimeEvent, RuntimeReceipt, StateObject, StateView as RuntimeStateView,
+    paper_raid_finality_applied_command_key_v4, paper_raid_finality_commitment_key_v4,
+    ExecutionContext, ResourceEstimate, RuntimeEvent, RuntimeReceipt, StateObject,
+    StateView as RuntimeStateView,
 };
 
 mod auth_tree;
@@ -72,7 +74,7 @@ pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
 pub const GENESIS_SCHEMA_V2: &str = "trnm_cometbft_genesis_v2";
 pub const GENESIS_SCHEMA_V3: &str = "trnm_cometbft_genesis_v3";
 pub const SIMULATION_RESPONSE_SCHEMA_V1: &str = "trnm_canonical_simulation_response_v1";
-pub const APP_VERSION: u64 = 6;
+pub const APP_VERSION: u64 = 7;
 const SNAPSHOT_FORMAT_V3: u32 = 3;
 const SNAPSHOT_FORMAT_V4: u32 = 4;
 const SNAPSHOT_SQLITE_STORE_SCHEMA_V3: u32 = 3;
@@ -846,11 +848,10 @@ impl CometBftApplication {
         tx: &[u8],
         timestamp_ms: u64,
     ) -> Result<ExecTxResult> {
-        // App v6 retains the exact outer JSON wire frozen by app v5.
-        // Legacy CanonicalTxV1 and Research V1 remain unchanged; Paper Raid
-        // finality is routed only through its frozen V2 inner schema. V3 is a
-        // pre-v7 protocol and must not be activated without a reviewed
-        // export/new-genesis ceremony and a new consensus app version.
+        // App v7 retains the exact outer JSON envelope while activating only
+        // rework-native Paper Raid V4. Frozen V2 and pre-v7 V3 remain
+        // independently decodable protocol artifacts but fail closed at
+        // consensus ingress.
         let envelope = SignedCommandEnvelopeV1::from_canonical_wire_bytes(tx)
             .context("decode canonical signed command envelope")?;
         self.validate_envelope(&envelope, timestamp_ms)?;
@@ -873,20 +874,23 @@ impl CometBftApplication {
             delta.validator_lifecycle = Some(lifecycle);
             return Ok(ExecTxResult::default());
         }
-        if envelope.payload_type == CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3 {
+        if matches!(
+            envelope.payload_type.as_str(),
+            CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2
+                | CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3
+        ) {
             return Err(anyhow!(
-                "Paper Raid finality V3 requires consensus app v7 and a reviewed new-genesis ceremony"
+                "legacy Paper Raid finality V2/V3 is not accepted by consensus app v7"
             ));
         }
         let (mutations, tx_result) = if envelope.payload_type
-            == CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2
+            == CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V4
         {
-            // V2 is the frozen active Paper Raid lane for consensus app v6.
-            let paper_raid_tx = CanonicalPaperRaidFinalityTxV2::from_canonical_bytes(&payload)
-                .context("decode canonical Paper Raid V2 finality transaction")?;
+            let paper_raid_tx = CanonicalPaperRaidFinalityTxV4::from_canonical_bytes(&payload)
+                .context("decode canonical Paper Raid V4 finality transaction")?;
             let signed = paper_raid_tx
                 .signed_paper_raid_finality_command()
-                .context("decode signed Paper Raid V2 finality command")?;
+                .context("decode signed Paper Raid V4 finality command")?;
             ensure!(
                 signed.signer_role == AuthorityRole::HeptaAuthority,
                 "Paper Raid finality signer must be a Hepta authority"
@@ -926,10 +930,7 @@ impl CometBftApplication {
                 changes: &delta.objects,
                 store: self.core.store.as_ref(),
             };
-            let commitment_key =
-                paper_raid_finality_commitment_key(signed.commitment.commitment_id)?;
-            let applied_key = paper_raid_finality_applied_command_key(signed.command_id)?;
-            let mut receipt = trnm_runtime::execute_paper_raid_finality(
+            let receipt = trnm_runtime::execute_paper_raid_finality_v4(
                 &paper_raid_tx,
                 ExecutionContext {
                     height: state.height.saturating_add(1),
@@ -941,46 +942,6 @@ impl CometBftApplication {
                 timestamp_ms / 1_000,
                 &objects,
             )?;
-            receipt.events = vec![RuntimeEvent {
-                kind: "trnm.paper-raid.finality.applied.v2".to_string(),
-                attributes: BTreeMap::from([
-                    ("command_id".to_string(), signed.command_id.to_hex()),
-                    (
-                        "command_fingerprint_hex".to_string(),
-                        hex::encode(signed.command_fingerprint()),
-                    ),
-                    ("applied_command_object_key_hex".to_string(), applied_key),
-                    (
-                        "commitment_id".to_string(),
-                        signed.commitment.commitment_id.to_hex(),
-                    ),
-                    ("commitment_object_key_hex".to_string(), commitment_key),
-                    (
-                        "payload_hash_hex".to_string(),
-                        hex::encode(signed.payload_hash()),
-                    ),
-                    (
-                        "scientific_finality".to_string(),
-                        signed.commitment.scientific_finality.to_string(),
-                    ),
-                    (
-                        "score_eligible".to_string(),
-                        signed.commitment.score_eligible.to_string(),
-                    ),
-                    (
-                        "ranking_eligible".to_string(),
-                        signed.commitment.ranking_eligible.to_string(),
-                    ),
-                    (
-                        "reward_eligible".to_string(),
-                        signed.commitment.reward_eligible.to_string(),
-                    ),
-                    (
-                        "economic_eligible".to_string(),
-                        signed.commitment.economic_eligible.to_string(),
-                    ),
-                ]),
-            }];
             runtime_receipt_result(paper_raid_tx.max_gas, receipt)
         } else if envelope.payload_type == CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1 {
             let research_tx = CanonicalResearchTxV1::from_canonical_bytes(&payload)
@@ -3680,14 +3641,15 @@ mod tests {
         v0_38::types::{ConsensusParams, VersionParams},
     };
     use trnm_finality_types::crypto::{public_key_hex, sign_hex};
-    use trnm_protocol::CanonicalPaperRaidFinalityTxV3;
+    use trnm_protocol::{CanonicalPaperRaidFinalityTxV2, CanonicalPaperRaidFinalityTxV3};
     use trnm_research_protocol::{
         AuthorityIdentityV1, ClaimShareV1, ContributionRole, ContributorWorkV1,
         CreateResearchClaimV1, ExternalKey, IssueWorkloadReceiptV1, MatchEvidenceCommitmentV1,
         ObjectRefV1, PaperRaidAppealStatusV2, PaperRaidAppealStatusV3,
-        PaperRaidFinalityCommitmentV2, PaperRaidFinalityCommitmentV3, ResearchCommandV1,
+        PaperRaidFinalityCommitmentV2, PaperRaidFinalityCommitmentV3,
+        PaperRaidFinalityCommitmentV4, PaperRaidReworkLineageV1, ResearchCommandV1,
         ResearchObjectKind, SignedPaperRaidFinalityCommandV2, SignedPaperRaidFinalityCommandV3,
-        SignedResearchCommandV1,
+        SignedPaperRaidFinalityCommandV4, SignedResearchCommandV1,
     };
 
     use super::*;
@@ -4130,6 +4092,61 @@ mod tests {
         }
     }
 
+    fn paper_raid_finality_commitment_v4(
+        match_evidence_ref: ObjectRefV1,
+    ) -> PaperRaidFinalityCommitmentV4 {
+        let v3 = paper_raid_finality_commitment_v3(match_evidence_ref);
+        PaperRaidFinalityCommitmentV4 {
+            commitment_id: v3.commitment_id,
+            paper_project_id: v3.paper_project_id,
+            submission_id: v3.submission_id,
+            match_evidence_ref: v3.match_evidence_ref,
+            release_candidate_hash: v3.release_candidate_hash,
+            paper_bundle_hash: v3.paper_bundle_hash,
+            submission_commitment_hash: v3.submission_commitment_hash,
+            author_consent_set_hash: v3.author_consent_set_hash,
+            tolerance_policy_hash: v3.tolerance_policy_hash,
+            evaluation_id: v3.evaluation_id,
+            evaluation_hash: v3.evaluation_hash,
+            evaluation_score_bps: v3.evaluation_score_bps,
+            evaluation_accepted: v3.evaluation_accepted,
+            evaluation_completed_at_unix_s: v3.evaluation_completed_at_unix_s,
+            latest_reproduction_id: v3.latest_reproduction_id,
+            latest_reproduction_hash: v3.latest_reproduction_hash,
+            latest_reproduction_accepted: v3.latest_reproduction_accepted,
+            latest_reproduction_completed_at_unix_s: v3.latest_reproduction_completed_at_unix_s,
+            evaluation_supersedes: v3.evaluation_supersedes,
+            evaluation_superseded_by: v3.evaluation_superseded_by,
+            reproduction_superseded_by: v3.reproduction_superseded_by,
+            appeal_status: v3.appeal_status,
+            appeal_id: v3.appeal_id,
+            appealed_evaluation_id: v3.appealed_evaluation_id,
+            appeal_resolution_hash: v3.appeal_resolution_hash,
+            appeal_window_closes_at_unix_s: v3.appeal_window_closes_at_unix_s,
+            settlement_policy_hash: v3.settlement_policy_hash,
+            scientific_finality: v3.scientific_finality,
+            score_eligible: v3.score_eligible,
+            ranking_eligible: v3.ranking_eligible,
+            reward_eligible: v3.reward_eligible,
+            economic_eligible: v3.economic_eligible,
+            finalized_at_unix_s: v3.finalized_at_unix_s,
+            rework_lineage: Some(PaperRaidReworkLineageV1 {
+                rework_id: external_key("hepta.rework", "rework-001"),
+                rework_cycle: 2,
+                rejected_submission_id: external_key("hepta.submission", "submission-000"),
+                replacement_submission_id: v3.submission_id,
+                rejected_revision_id: external_key("hepta.revision", "revision-000"),
+                replacement_revision_id: external_key("hepta.revision", "revision-001"),
+                rejected_release_candidate_hash: [0x31; 32],
+                replacement_release_candidate_hash: v3.release_candidate_hash,
+                rejected_paper_bundle_hash: [0x32; 32],
+                replacement_paper_bundle_hash: v3.paper_bundle_hash,
+                rejected_rework_content_commitment_sha256: [0x33; 32],
+                replacement_rework_content_commitment_sha256: [0x34; 32],
+            }),
+        }
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn research_envelope(
         chain_id: &str,
@@ -4176,7 +4193,7 @@ mod tests {
             nonce,
             now_unix_ms.saturating_sub(1_000),
             now_unix_ms.saturating_add(60_000),
-            CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2,
+            CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V4,
             payload,
             signing_key,
         )
@@ -4188,8 +4205,8 @@ mod tests {
         CometBftApplication,
         SigningKey,
         SigningKey,
-        CanonicalPaperRaidFinalityTxV2,
-        SignedPaperRaidFinalityCommandV2,
+        CanonicalPaperRaidFinalityTxV4,
+        SignedPaperRaidFinalityCommandV4,
         u64,
     ) {
         use trnm_protocol::{CanonicalCommandV1, CANONICAL_TX_SCHEMA_V1};
@@ -4264,16 +4281,16 @@ mod tests {
         assert_eq!(match_result.tx_results[0].code, 0);
         app.commit();
 
-        let signed_finality = SignedPaperRaidFinalityCommandV2::sign(
+        let signed_finality = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             external_key("trnm.command", "paper-raid-finality-001"),
             hepta_signer_id.to_string(),
             1,
-            paper_raid_finality_commitment(signed_match.command.primary_object_ref()),
+            paper_raid_finality_commitment_v4(signed_match.command.primary_object_ref()),
             &hepta_key,
         )
         .unwrap();
-        let paper_raid_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let paper_raid_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &signed_finality,
             1_000_000,
             1_000_000,
@@ -4737,17 +4754,19 @@ mod tests {
     }
 
     #[test]
-    fn app_v6_paper_raid_v2_ingress_uses_all_consensus_paths_and_frozen_domains() {
-        use trnm_protocol::{AccountV1, PaperRaidFinalityAppliedRecordV2};
+    fn app_v7_paper_raid_v4_ingress_uses_all_consensus_paths_and_rework_domains() {
+        use trnm_protocol::{AccountV1, PaperRaidFinalityAppliedRecordV4};
         use trnm_runtime::{
-            paper_raid_finality_evaluation_index_key, paper_raid_finality_submission_index_key,
-            PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
-            PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
-            PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
-            PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+            paper_raid_finality_evaluation_index_key_v4, paper_raid_finality_rework_index_key_v4,
+            paper_raid_finality_submission_index_key_v4,
+            PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_REWORK_INDEX_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V4,
         };
 
-        assert_eq!(APP_VERSION, 6);
+        assert_eq!(APP_VERSION, 7);
         let (app, _, hepta_key, paper_raid_tx, signed, now) = seeded_paper_raid_application();
         let signer_id = "did:trnm:hepta-authority";
         let payload = paper_raid_tx.canonical_bytes().unwrap();
@@ -4806,17 +4825,19 @@ mod tests {
         assert!(finalized.tx_results[0].gas_used > 0);
         assert_eq!(finalized.tx_results[0].events.len(), 1);
         let event = &finalized.tx_results[0].events[0];
-        assert_eq!(event.r#type, "trnm.paper-raid.finality.applied.v2");
+        assert_eq!(event.r#type, "trnm.paper-raid.finality.applied.v4");
+        let lineage = signed.commitment.rework_lineage.as_ref().unwrap();
         let commitment_key =
-            paper_raid_finality_commitment_key(signed.commitment.commitment_id).unwrap();
-        let applied_key = paper_raid_finality_applied_command_key(signed.command_id).unwrap();
-        let submission_index_key = paper_raid_finality_submission_index_key(
+            paper_raid_finality_commitment_key_v4(signed.commitment.commitment_id).unwrap();
+        let applied_key = paper_raid_finality_applied_command_key_v4(signed.command_id).unwrap();
+        let submission_index_key = paper_raid_finality_submission_index_key_v4(
             signed.commitment.paper_project_id,
             signed.commitment.submission_id,
         )
         .unwrap();
         let evaluation_index_key =
-            paper_raid_finality_evaluation_index_key(signed.commitment.evaluation_id).unwrap();
+            paper_raid_finality_evaluation_index_key_v4(signed.commitment.evaluation_id).unwrap();
+        let rework_index_key = paper_raid_finality_rework_index_key_v4(lineage.rework_id).unwrap();
         assert_eq!(
             event
                 .attributes
@@ -4850,25 +4871,75 @@ mod tests {
                 ("ranking_eligible".to_string(), "false".to_string()),
                 ("reward_eligible".to_string(), "false".to_string()),
                 ("economic_eligible".to_string(), "false".to_string()),
+                ("rework_id".to_string(), lineage.rework_id.to_hex(),),
+                ("rework_cycle".to_string(), "2".to_string()),
+                (
+                    "rework_index_object_key_hex".to_string(),
+                    rework_index_key.clone(),
+                ),
+                (
+                    "rejected_submission_id".to_string(),
+                    lineage.rejected_submission_id.to_hex(),
+                ),
+                (
+                    "replacement_submission_id".to_string(),
+                    lineage.replacement_submission_id.to_hex(),
+                ),
+                (
+                    "rejected_revision_id".to_string(),
+                    lineage.rejected_revision_id.to_hex(),
+                ),
+                (
+                    "replacement_revision_id".to_string(),
+                    lineage.replacement_revision_id.to_hex(),
+                ),
+                (
+                    "rejected_release_candidate_hash_hex".to_string(),
+                    hex::encode(lineage.rejected_release_candidate_hash),
+                ),
+                (
+                    "replacement_release_candidate_hash_hex".to_string(),
+                    hex::encode(lineage.replacement_release_candidate_hash),
+                ),
+                (
+                    "rejected_paper_bundle_hash_hex".to_string(),
+                    hex::encode(lineage.rejected_paper_bundle_hash),
+                ),
+                (
+                    "replacement_paper_bundle_hash_hex".to_string(),
+                    hex::encode(lineage.replacement_paper_bundle_hash),
+                ),
+                (
+                    "rejected_rework_content_commitment_sha256_hex".to_string(),
+                    hex::encode(lineage.rejected_rework_content_commitment_sha256),
+                ),
+                (
+                    "replacement_rework_content_commitment_sha256_hex".to_string(),
+                    hex::encode(lineage.replacement_rework_content_commitment_sha256),
+                ),
             ])
         );
 
         for (object_key, object_type) in [
             (
                 commitment_key.clone(),
-                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V4,
             ),
             (
                 applied_key.clone(),
-                PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V4,
             ),
             (
                 submission_index_key,
-                PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V4,
             ),
             (
                 evaluation_index_key,
-                PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V4,
+            ),
+            (
+                rework_index_key,
+                PAPER_RAID_FINALITY_REWORK_INDEX_OBJECT_TYPE_V4,
             ),
         ] {
             let query = app.query(RequestQuery {
@@ -4889,7 +4960,7 @@ mod tests {
             ..Default::default()
         });
         assert_eq!(
-            PaperRaidFinalityCommitmentV2::from_canonical_bytes(&commitment_query.value).unwrap(),
+            PaperRaidFinalityCommitmentV4::from_canonical_bytes(&commitment_query.value).unwrap(),
             signed.commitment.clone()
         );
         let applied_query = app.query(RequestQuery {
@@ -4897,7 +4968,7 @@ mod tests {
             ..Default::default()
         });
         let applied =
-            PaperRaidFinalityAppliedRecordV2::from_canonical_bytes(&applied_query.value).unwrap();
+            PaperRaidFinalityAppliedRecordV4::from_canonical_bytes(&applied_query.value).unwrap();
         assert_eq!(applied.command_id, signed.command_id.to_hex());
         assert_eq!(applied.commitment_object_key_hex, commitment_key);
 
@@ -4941,11 +5012,16 @@ mod tests {
             if mutate_submission {
                 commitment.submission_id =
                     external_key("hepta.submission", "submission-evaluation-conflict");
+                commitment
+                    .rework_lineage
+                    .as_mut()
+                    .unwrap()
+                    .replacement_submission_id = commitment.submission_id;
             } else {
                 commitment.evaluation_id =
                     external_key("hepta.evaluation", "evaluation-submission-conflict");
             }
-            let conflict_signed = SignedPaperRaidFinalityCommandV2::sign(
+            let conflict_signed = SignedPaperRaidFinalityCommandV4::sign(
                 "trnm-comet-spike".to_string(),
                 external_key("trnm.command", &format!("paper-raid-{suffix}")),
                 signer_id.to_string(),
@@ -4954,7 +5030,7 @@ mod tests {
                 &hepta_key,
             )
             .unwrap();
-            let conflict_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+            let conflict_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
                 &conflict_signed,
                 1_000_000,
                 1_000_000,
@@ -4980,9 +5056,9 @@ mod tests {
                 conflict.log
             );
             for object_key in [
-                paper_raid_finality_commitment_key(conflict_signed.commitment.commitment_id)
+                paper_raid_finality_commitment_key_v4(conflict_signed.commitment.commitment_id)
                     .unwrap(),
-                paper_raid_finality_applied_command_key(conflict_signed.command_id).unwrap(),
+                paper_raid_finality_applied_command_key_v4(conflict_signed.command_id).unwrap(),
             ] {
                 assert_eq!(
                     app.query(RequestQuery {
@@ -5006,7 +5082,7 @@ mod tests {
 
         let mut altered_commitment = signed.commitment.clone();
         altered_commitment.evaluation_hash = [0x99; 32];
-        let altered_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let altered_signed = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             signed.command_id,
             signer_id.to_string(),
@@ -5015,7 +5091,7 @@ mod tests {
             &hepta_key,
         )
         .unwrap();
-        let altered_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let altered_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &altered_signed,
             1_000_000,
             1_000_000,
@@ -5054,13 +5130,128 @@ mod tests {
     }
 
     #[test]
-    fn app_v6_rejects_pre_v7_paper_raid_v3_without_mutation() {
+    fn app_v7_original_paper_raid_v4_uses_no_rework_consensus_surface() {
+        use trnm_runtime::{
+            paper_raid_finality_evaluation_index_key_v4,
+            paper_raid_finality_submission_index_key_v4,
+            PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V4,
+            PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V4,
+        };
+
+        let (app, _, hepta_key, _, baseline, now) = seeded_paper_raid_application();
+        let signer_id = "did:trnm:hepta-authority";
+        let mut commitment = baseline.commitment;
+        commitment.rework_lineage = None;
+        let signed = SignedPaperRaidFinalityCommandV4::sign(
+            "trnm-comet-spike".to_string(),
+            external_key("trnm.command", "paper-raid-original-finality"),
+            signer_id.to_string(),
+            1,
+            commitment,
+            &hepta_key,
+        )
+        .unwrap();
+        let tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(&signed, 1_000_000, 1_000_000)
+            .unwrap();
+        let transaction = paper_raid_finality_envelope(
+            "trnm-comet-spike",
+            &tx.command_id,
+            signer_id,
+            "hepta",
+            tx.nonce,
+            &tx.canonical_bytes().unwrap(),
+            &hepta_key,
+            now,
+        );
+        let timestamp = timestamp_from_unix_ms(now);
+        assert_eq!(
+            app.check_tx(RequestCheckTx {
+                tx: transaction.clone(),
+                ..Default::default()
+            })
+            .code,
+            0
+        );
+        let prepared = app.prepare_proposal(RequestPrepareProposal {
+            txs: vec![transaction.clone()],
+            max_tx_bytes: 1024 * 1024,
+            height: 3,
+            time: timestamp,
+            ..Default::default()
+        });
+        assert_eq!(prepared.txs, vec![transaction.clone()]);
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: prepared.txs,
+                height: 3,
+                time: timestamp,
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Accept as i32
+        );
+        let finalized = app.finalize_block(RequestFinalizeBlock {
+            txs: vec![transaction],
+            height: 3,
+            time: timestamp,
+            ..Default::default()
+        });
+        assert_eq!(finalized.tx_results.len(), 1);
+        assert_eq!(finalized.tx_results[0].code, 0);
+        assert_eq!(finalized.tx_results[0].events.len(), 1);
+        let event = &finalized.tx_results[0].events[0];
+        assert_eq!(event.r#type, "trnm.paper-raid.finality.applied.v4");
+        assert!(event.attributes.iter().all(|attribute| {
+            !attribute.key.starts_with("rework_")
+                && !attribute.key.starts_with("rejected_")
+                && !attribute.key.starts_with("replacement_")
+        }));
+        app.commit();
+
+        for (object_key, object_type) in [
+            (
+                paper_raid_finality_commitment_key_v4(signed.commitment.commitment_id).unwrap(),
+                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V4,
+            ),
+            (
+                paper_raid_finality_applied_command_key_v4(signed.command_id).unwrap(),
+                PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V4,
+            ),
+            (
+                paper_raid_finality_submission_index_key_v4(
+                    signed.commitment.paper_project_id,
+                    signed.commitment.submission_id,
+                )
+                .unwrap(),
+                PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V4,
+            ),
+            (
+                paper_raid_finality_evaluation_index_key_v4(signed.commitment.evaluation_id)
+                    .unwrap(),
+                PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V4,
+            ),
+        ] {
+            let query = app.query(RequestQuery {
+                path: format!("/object/{object_key}"),
+                prove: true,
+                ..Default::default()
+            });
+            assert_eq!(query.code, 0, "original V4 object missing: {}", query.log);
+            assert_eq!(query.log, object_type);
+            assert!(query.proof_ops.is_some());
+        }
+    }
+
+    #[test]
+    fn app_v7_rejects_pre_v7_paper_raid_v3_without_mutation() {
         use trnm_protocol::AccountV1;
         use trnm_runtime::{
             paper_raid_finality_applied_command_key_v3, paper_raid_finality_commitment_key_v3,
         };
 
-        assert_eq!(APP_VERSION, 6);
+        assert_eq!(APP_VERSION, 7);
         let (app, _, hepta_key, _, signed_v2, now) = seeded_paper_raid_application();
         let signer_id = "did:trnm:hepta-authority";
         let signed_v3 = SignedPaperRaidFinalityCommandV3::sign(
@@ -5108,7 +5299,7 @@ mod tests {
         assert_eq!(checked.code, 1);
         assert!(checked
             .log
-            .contains("requires consensus app v7 and a reviewed new-genesis ceremony"));
+            .contains("legacy Paper Raid finality V2/V3 is not accepted by consensus app v7"));
         assert!(raw.len() < 1_000_000);
         assert!(app
             .prepare_proposal(RequestPrepareProposal {
@@ -5162,14 +5353,14 @@ mod tests {
                 ..Default::default()
             });
         }));
-        let direct_finalize_panic = direct_finalize.expect_err("App v6 must fail-stop on V3");
+        let direct_finalize_panic = direct_finalize.expect_err("App v7 must fail-stop on V3");
         let direct_finalize_message = direct_finalize_panic
             .downcast_ref::<String>()
             .map(String::as_str)
             .or_else(|| direct_finalize_panic.downcast_ref::<&str>().copied())
             .expect("direct FinalizeBlock panic must carry a string rejection reason");
         assert!(direct_finalize_message.contains(
-            "ProcessProposal accepted a block that FinalizeBlock cannot execute: Paper Raid finality V3 requires consensus app v7 and a reviewed new-genesis ceremony"
+            "ProcessProposal accepted a block that FinalizeBlock cannot execute: legacy Paper Raid finality V2/V3 is not accepted by consensus app v7"
         ));
         let after_consensus_state = app
             .core
@@ -5197,6 +5388,91 @@ mod tests {
             after_consensus_state.signer_nonces,
             before_consensus_state.signer_nonces
         );
+    }
+
+    #[test]
+    fn app_v7_rejects_frozen_paper_raid_v2_without_mutation() {
+        use trnm_protocol::AccountV1;
+        use trnm_runtime::{
+            paper_raid_finality_applied_command_key, paper_raid_finality_commitment_key,
+        };
+
+        let (app, _, hepta_key, _, signed_v4, now) = seeded_paper_raid_application();
+        let signer_id = "did:trnm:hepta-authority";
+        let signed_v2 = SignedPaperRaidFinalityCommandV2::sign(
+            "trnm-comet-spike".to_string(),
+            signed_v4.command_id,
+            signer_id.to_string(),
+            signed_v4.nonce,
+            paper_raid_finality_commitment(signed_v4.commitment.match_evidence_ref),
+            &hepta_key,
+        )
+        .unwrap();
+        let tx_v2 =
+            CanonicalPaperRaidFinalityTxV2::from_signed_command(&signed_v2, 1_000_000, 1_000_000)
+                .unwrap();
+        let envelope = SignedCommandEnvelopeV1::sign(
+            "trnm-comet-spike",
+            tx_v2.command_id.clone(),
+            signer_id,
+            "hepta",
+            tx_v2.nonce,
+            now.saturating_sub(1_000),
+            now.saturating_add(60_000),
+            CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2,
+            &tx_v2.canonical_bytes().unwrap(),
+            &hepta_key,
+        )
+        .unwrap();
+        let raw = Bytes::from(envelope.to_wire_bytes().unwrap());
+        let before: AccountV1 = serde_json::from_slice(
+            &app.query(RequestQuery {
+                path: format!("/account/{signer_id}"),
+                ..Default::default()
+            })
+            .value,
+        )
+        .unwrap();
+        let checked = app.check_tx(RequestCheckTx {
+            tx: raw.clone(),
+            ..Default::default()
+        });
+        assert_eq!(checked.code, 1);
+        assert!(checked
+            .log
+            .contains("legacy Paper Raid finality V2/V3 is not accepted by consensus app v7"));
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: vec![raw],
+                height: 3,
+                time: timestamp_from_unix_ms(now),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+        let after: AccountV1 = serde_json::from_slice(
+            &app.query(RequestQuery {
+                path: format!("/account/{signer_id}"),
+                ..Default::default()
+            })
+            .value,
+        )
+        .unwrap();
+        assert_eq!(after, before);
+        for key in [
+            paper_raid_finality_commitment_key(signed_v2.commitment.commitment_id).unwrap(),
+            paper_raid_finality_applied_command_key(signed_v2.command_id).unwrap(),
+        ] {
+            assert_eq!(
+                app.query(RequestQuery {
+                    path: format!("/object/{key}"),
+                    ..Default::default()
+                })
+                .code,
+                1
+            );
+        }
     }
 
     #[test]
@@ -5269,7 +5545,7 @@ mod tests {
             now,
         ));
 
-        let wrong_chain_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let wrong_chain_signed = SignedPaperRaidFinalityCommandV4::sign(
             "other-chain".to_string(),
             signed.command_id,
             signer_id.to_string(),
@@ -5278,7 +5554,7 @@ mod tests {
             &hepta_key,
         )
         .unwrap();
-        let wrong_chain_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let wrong_chain_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &wrong_chain_signed,
             1_000_000,
             1_000_000,
@@ -5295,7 +5571,7 @@ mod tests {
             now,
         ));
 
-        let wrong_signer_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let wrong_signer_signed = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             signed.command_id,
             "did:trnm:other-hepta".to_string(),
@@ -5304,7 +5580,7 @@ mod tests {
             &hepta_key,
         )
         .unwrap();
-        let wrong_signer_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let wrong_signer_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &wrong_signer_signed,
             1_000_000,
             1_000_000,
@@ -5323,7 +5599,7 @@ mod tests {
 
         let mut eligibility_commitment = signed.commitment.clone();
         eligibility_commitment.score_eligible = true;
-        let eligibility_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let eligibility_signed = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             signed.command_id,
             signer_id.to_string(),
@@ -5332,7 +5608,7 @@ mod tests {
             &hepta_key,
         )
         .unwrap();
-        let eligibility_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let eligibility_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &eligibility_signed,
             1_000_000,
             1_000_000,
@@ -5361,7 +5637,7 @@ mod tests {
         let mut future_commitment = signed.commitment.clone();
         future_commitment.appeal_window_closes_at_unix_s = now / 1_000 + 30;
         future_commitment.finalized_at_unix_s = now / 1_000 + 31;
-        let future_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let future_signed = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             external_key("trnm.command", "paper-raid-future-finality"),
             signer_id.to_string(),
@@ -5370,7 +5646,7 @@ mod tests {
             &hepta_key,
         )
         .unwrap();
-        let future_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let future_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &future_signed,
             1_000_000,
             1_000_000,
@@ -5395,7 +5671,7 @@ mod tests {
         assert_rejected(future_envelope);
 
         let wrong_inner_key = SigningKey::from_bytes(&[33u8; 32]);
-        let wrong_key_signed = SignedPaperRaidFinalityCommandV2::sign(
+        let wrong_key_signed = SignedPaperRaidFinalityCommandV4::sign(
             "trnm-comet-spike".to_string(),
             signed.command_id,
             signer_id.to_string(),
@@ -5404,7 +5680,7 @@ mod tests {
             &wrong_inner_key,
         )
         .unwrap();
-        let wrong_key_tx = CanonicalPaperRaidFinalityTxV2::from_signed_command(
+        let wrong_key_tx = CanonicalPaperRaidFinalityTxV4::from_signed_command(
             &wrong_key_signed,
             1_000_000,
             1_000_000,
@@ -5436,7 +5712,7 @@ mod tests {
     }
 
     #[test]
-    fn app_v6_rejects_legacy_workload_and_claim_settlement_lanes_atomically() {
+    fn app_v7_rejects_legacy_workload_and_claim_settlement_lanes_atomically() {
         use trnm_protocol::AccountV1;
 
         let (app, _, hepta_key, _, _, now) = seeded_paper_raid_application();
@@ -6043,21 +6319,21 @@ mod tests {
     #[test]
     fn init_chain_binds_chain_identity_signers_and_app_version() {
         let (app, _) = fixture();
-        assert_eq!(APP_VERSION, 6);
-        let v6_genesis = genesis_request(&app);
-        let decoded_v6: GenesisAppStateV3 =
-            serde_json::from_slice(&v6_genesis.app_state_bytes).unwrap();
-        assert_eq!(decoded_v6.app_version, 6);
+        assert_eq!(APP_VERSION, 7);
+        let v7_genesis = genesis_request(&app);
+        let decoded_v7: GenesisAppStateV3 =
+            serde_json::from_slice(&v7_genesis.app_state_bytes).unwrap();
+        assert_eq!(decoded_v7.app_version, 7);
         assert_eq!(
-            v6_genesis
+            v7_genesis
                 .consensus_params
                 .as_ref()
                 .and_then(|params| params.version.as_ref())
                 .map(|version| version.app),
-            Some(6)
+            Some(7)
         );
-        assert!(app.validate_genesis(&v6_genesis).is_ok());
-        let response = app.init_chain(v6_genesis);
+        assert!(app.validate_genesis(&v7_genesis).is_ok());
+        let response = app.init_chain(v7_genesis);
         assert_ne!(response.app_hash.as_ref(), empty_app_hash());
         let fee_policy = default_fee_policy_object();
         assert_eq!(
@@ -6630,7 +6906,7 @@ mod tests {
     }
 
     #[test]
-    fn app_v6_rejects_noncanonical_outer_envelope_encodings() {
+    fn app_v7_rejects_noncanonical_outer_envelope_encodings() {
         let (app, envelope) = fixture();
         let canonical = envelope.to_wire_bytes().unwrap();
         assert_eq!(
@@ -7652,8 +7928,8 @@ mod tests {
     }
 
     #[test]
-    fn v5_sqlite_store_requires_reviewed_new_genesis_and_v6_store_reopens() {
-        assert_eq!(APP_VERSION, 6);
+    fn v6_sqlite_store_requires_reviewed_new_genesis_and_v7_store_reopens() {
+        assert_eq!(APP_VERSION, 7);
         let root = std::env::temp_dir().join(format!(
             "trnm-comet-store-v5-version-boundary-{}-{}",
             std::process::id(),
@@ -7666,9 +7942,9 @@ mod tests {
         let expected = app.height_and_app_hash().unwrap();
         drop(app);
 
-        let reopened_v6 = CometBftApplication::new(config.clone()).unwrap();
-        assert_eq!(reopened_v6.height_and_app_hash().unwrap(), expected);
-        drop(reopened_v6);
+        let reopened_v7 = CometBftApplication::new(config.clone()).unwrap();
+        assert_eq!(reopened_v7.height_and_app_hash().unwrap(), expected);
+        drop(reopened_v7);
 
         let status_before = fs::read(&state_path).unwrap();
         let database_path = state_path.with_extension("json.sqlite3");
@@ -7681,10 +7957,10 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "6"
+            "7"
         );
         database
-            .execute("UPDATE metadata SET value='5' WHERE key='app_version'", [])
+            .execute("UPDATE metadata SET value='6' WHERE key='app_version'", [])
             .unwrap();
         database
             .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
@@ -7697,18 +7973,18 @@ mod tests {
         drop(database);
 
         let error = match CometBftApplication::new(config) {
-            Ok(_) => panic!("an app-version-5 store must not open under app version 6"),
+            Ok(_) => panic!("an app-version-6 store must not open under app version 7"),
             Err(error) => error,
         };
         let message = format!("{error:#}");
         assert!(
-            message.contains("app_version 5 cannot be opened by application version 6"),
-            "unexpected v5 store error: {message}"
+            message.contains("app_version 6 cannot be opened by application version 7"),
+            "unexpected v6 store error: {message}"
         );
         assert!(
             message.contains("reviewed export/new-genesis ceremony required")
                 && message.contains("in-place app-version migration is unsupported"),
-            "v5 store error omitted the migration boundary: {message}"
+            "v6 store error omitted the migration boundary: {message}"
         );
         assert_eq!(fs::read(&state_path).unwrap(), status_before);
 
@@ -7721,7 +7997,7 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "5"
+            "6"
         );
         assert_eq!(
             database

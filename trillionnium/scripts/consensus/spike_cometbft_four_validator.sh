@@ -168,7 +168,7 @@ jq --argjson validators "$validators" --argjson initial_validators "$initial_val
    | .app_state={
        schema:"trnm_cometbft_genesis_v3",
        chain_id:"trnm-comet-four",
-       app_version:6,
+       app_version:7,
        authorized_signers:$authorized_signers,
        research_authorities:{
          nakama_authorities:[],

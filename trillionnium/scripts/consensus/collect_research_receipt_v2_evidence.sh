@@ -4,16 +4,29 @@ export LC_ALL=C
 umask 077
 
 usage() {
-  printf 'usage: %s RPC_URL EXECUTION_HEIGHT TARGET_COMMAND_ID APPLIED_COMMAND_LOGICAL_KEY OUTPUT_DIR\n' "$0" >&2
+  printf 'usage: %s RPC_URL EXECUTION_HEIGHT TARGET_COMMAND_ID APPLIED_COMMAND_LOGICAL_KEY OUTPUT_DIR [research_v1|paper_raid_finality_v4]\n' "$0" >&2
   exit 2
 }
 
-[[ $# -eq 5 ]] || usage
+[[ $# -eq 5 || $# -eq 6 ]] || usage
 RPC_URL="${1%/}"
 EXECUTION_HEIGHT="$2"
 TARGET_COMMAND_ID="$3"
 APPLIED_COMMAND_LOGICAL_KEY="$4"
 OUTPUT_DIR="$5"
+DOMAIN_COMMAND_VERSION="${6:-research_v1}"
+
+case "$DOMAIN_COMMAND_VERSION" in
+  research_v1)
+    EXPECTED_EVENT_TYPE="trnm.research.applied.v1"
+    EXPECTED_PROOF_LOG="trnm.research.applied-command.v1"
+    ;;
+  paper_raid_finality_v4)
+    EXPECTED_EVENT_TYPE="trnm.paper-raid.finality.applied.v4"
+    EXPECTED_PROOF_LOG="trnm.paper-raid.finality-applied-command.v4"
+    ;;
+  *) usage ;;
+esac
 
 [[ "$RPC_URL" =~ ^https?://[^/@]+(:[0-9]+)?$ ]] || {
   printf 'RPC_URL must be an http(s) origin without credentials or a path\n' >&2
@@ -154,19 +167,74 @@ done
 TARGET_INDEX="${target_indices[0]}"
 cp -- "$OUTPUT_DIR/tx-$TARGET_INDEX.bin" "$OUTPUT_DIR/target-raw-tx.bin"
 
-jq -e --argjson index "$TARGET_INDEX" '
+jq -e \
+  --argjson index "$TARGET_INDEX" \
+  --arg domain "$DOMAIN_COMMAND_VERSION" \
+  --arg event_type "$EXPECTED_EVENT_TYPE" \
+  --arg command_id "$TARGET_COMMAND_ID" \
+  --arg applied_key "$APPLIED_COMMAND_LOGICAL_KEY" '
   (.result.txs_results // .result.tx_results)[$index] as $result
+  | ($result.events[0].attributes // []) as $attributes
+  | ($attributes | map({key:.key, value:.value}) | from_entries) as $values
+  | ($attributes | map(.key)) as $keys
   | ($result | type == "object")
     and (($result.code | tonumber) == 0)
     and (($result.events // []) | length == 1)
-    and ($result.events[0].type == "trnm.research.applied.v1")
-    and (($result.events[0].attributes // []) | length == 4)
-    and ([$result.events[0].attributes[].key] == [
-      "applied_command_object_key_hex",
-      "command_fingerprint_hex",
-      "command_id",
-      "primary_object_key_hex"
-    ])
+    and ($result.events[0].type == $event_type)
+    and ($values.command_id == $command_id)
+    and ($values.applied_command_object_key_hex == $applied_key)
+    and (if $domain == "research_v1" then
+      $keys == [
+        "applied_command_object_key_hex",
+        "command_fingerprint_hex",
+        "command_id",
+        "primary_object_key_hex"
+      ]
+    else
+      ($keys == [
+        "applied_command_object_key_hex",
+        "command_fingerprint_hex",
+        "command_id",
+        "commitment_id",
+        "commitment_object_key_hex",
+        "economic_eligible",
+        "payload_hash_hex",
+        "ranking_eligible",
+        "reward_eligible",
+        "scientific_finality",
+        "score_eligible"
+      ] or $keys == [
+        "applied_command_object_key_hex",
+        "command_fingerprint_hex",
+        "command_id",
+        "commitment_id",
+        "commitment_object_key_hex",
+        "economic_eligible",
+        "payload_hash_hex",
+        "ranking_eligible",
+        "rejected_paper_bundle_hash_hex",
+        "rejected_release_candidate_hash_hex",
+        "rejected_rework_content_commitment_sha256_hex",
+        "rejected_revision_id",
+        "rejected_submission_id",
+        "replacement_paper_bundle_hash_hex",
+        "replacement_release_candidate_hash_hex",
+        "replacement_rework_content_commitment_sha256_hex",
+        "replacement_revision_id",
+        "replacement_submission_id",
+        "reward_eligible",
+        "rework_cycle",
+        "rework_id",
+        "rework_index_object_key_hex",
+        "scientific_finality",
+        "score_eligible"
+      ])
+      and $values.scientific_finality == "true"
+      and $values.score_eligible == "false"
+      and $values.ranking_eligible == "false"
+      and $values.reward_eligible == "false"
+      and $values.economic_eligible == "false"
+    end)
     and ([
       $result.events[0].attributes[]
       | (.index == true or .index == "true")
@@ -177,11 +245,11 @@ jq --argjson index "$TARGET_INDEX" \
   "$OUTPUT_DIR/block-results-h.json" >"$OUTPUT_DIR/target-result.rpc.json"
 
 proof_json="$OUTPUT_DIR/applied-command-proof.json"
-jq -e --arg height "$EXECUTION_HEIGHT" '
+jq -e --arg height "$EXECUTION_HEIGHT" --arg proof_log "$EXPECTED_PROOF_LOG" '
   .result.response as $response
   | (($response.code | tonumber) == 0)
     and ($response.height == $height)
-    and ($response.log == "trnm.research.applied-command.v1")
+    and ($response.log == $proof_log)
     and ($response.key | type == "string" and length > 0)
     and ($response.value | type == "string" and length > 0)
     and (($response.proofOps.ops // $response.proof_ops.ops // []) | length == 1)
@@ -223,6 +291,7 @@ jq -n \
   --argjson commitment_height "$COMMITMENT_HEIGHT" \
   --arg command_id "$TARGET_COMMAND_ID" \
   --arg applied_command_logical_key "$APPLIED_COMMAND_LOGICAL_KEY" \
+  --arg domain_command_version "$DOMAIN_COMMAND_VERSION" \
   --argjson transaction_index "$TARGET_INDEX" \
   --argjson transaction_count "$tx_count" \
   '{
@@ -231,6 +300,7 @@ jq -n \
     execution_height:$execution_height,
     commitment_height:$commitment_height,
     command_id:$command_id,
+    domain_command_version:$domain_command_version,
     applied_command_logical_key:$applied_command_logical_key,
     transaction_index:$transaction_index,
     transaction_count:$transaction_count,

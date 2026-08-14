@@ -171,7 +171,7 @@ jq \
    | .app_state={
        schema:"trnm_cometbft_genesis_v3",
        chain_id:$chain_id,
-       app_version:6,
+       app_version:7,
        authorized_signers:[{
          signer_id:"did:operator:1",
          signer_role:"operator",

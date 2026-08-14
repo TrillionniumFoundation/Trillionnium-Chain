@@ -12,21 +12,28 @@ use trnm_protocol::{
 mod paper_raid;
 mod research;
 pub use paper_raid::{
-    execute_paper_raid_finality, execute_paper_raid_finality_v3,
+    execute_paper_raid_finality, execute_paper_raid_finality_v3, execute_paper_raid_finality_v4,
     paper_raid_finality_applied_command_key, paper_raid_finality_applied_command_key_v3,
-    paper_raid_finality_commitment_key, paper_raid_finality_commitment_key_v3,
+    paper_raid_finality_applied_command_key_v4, paper_raid_finality_commitment_key,
+    paper_raid_finality_commitment_key_v3, paper_raid_finality_commitment_key_v4,
     paper_raid_finality_evaluation_index_key, paper_raid_finality_evaluation_index_key_v3,
+    paper_raid_finality_evaluation_index_key_v4, paper_raid_finality_rework_index_key_v4,
     paper_raid_finality_submission_index_key, paper_raid_finality_submission_index_key_v3,
-    PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
+    paper_raid_finality_submission_index_key_v4, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V4,
     PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
     PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V3,
+    PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V4,
+    PAPER_RAID_FINALITY_REWORK_INDEX_OBJECT_TYPE_V4,
     PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
     PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V3,
+    PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V4,
 };
 pub use research::{execute_research, research_genesis_mutation};
 pub use trnm_protocol::{
     PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
     PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3,
+    PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V4,
 };
 
 #[derive(Debug, Error)]
@@ -71,6 +78,8 @@ pub enum RuntimeError {
     PaperRaidFinalitySubmissionExists,
     #[error("Paper Raid finality already exists for this evaluation")]
     PaperRaidFinalityEvaluationExists,
+    #[error("Paper Raid finality already exists for this rework identity")]
+    PaperRaidFinalityReworkExists,
     #[error(
         "Paper Raid finality block time {block_time_unix_s} precedes required finality time {required_unix_s}"
     )]
@@ -159,6 +168,7 @@ impl RuntimeError {
             Self::PaperRaidFinalityCommitmentExists => "paper_raid_finality_commitment_exists",
             Self::PaperRaidFinalitySubmissionExists => "paper_raid_finality_submission_exists",
             Self::PaperRaidFinalityEvaluationExists => "paper_raid_finality_evaluation_exists",
+            Self::PaperRaidFinalityReworkExists => "paper_raid_finality_rework_exists",
             Self::PaperRaidFinalityTimeNotReached { .. } => "paper_raid_finality_time_not_reached",
             Self::PaperRaidFinalityMirrorMismatch(_) => "paper_raid_finality_mirror_mismatch",
             Self::OperatorRequired => "operator_required",
