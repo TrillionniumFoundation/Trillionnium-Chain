@@ -322,10 +322,13 @@ def main() -> None:
     for publication_guard in (
         "Integration release evidence publisher must be a regular non-symlink file",
         'python3 "$publisher"',
-        '--binary-a "consensus_app=$scratch/target-a/release/trnm-cometbft-app"',
-        '--binary-a "receipt_v4=$scratch/target-a/release/trnm-research-receipt-v2"',
-        '--binary-b "consensus_app=$scratch/target-b/release/trnm-cometbft-app"',
-        '--binary-b "receipt_v4=$scratch/target-b/release/trnm-research-receipt-v2"',
+        'install -m 0500',
+        '$(stat -c \'%h\' "$scratch/artifacts-a/$binary") == 1',
+        'cmp --silent "$scratch/target-a/release/$binary" "$scratch/artifacts-a/$binary"',
+        '--binary-a "consensus_app=$scratch/artifacts-a/trnm-cometbft-app"',
+        '--binary-a "receipt_v4=$scratch/artifacts-a/trnm-research-receipt-v2"',
+        '--binary-b "consensus_app=$scratch/artifacts-b/trnm-cometbft-app"',
+        '--binary-b "receipt_v4=$scratch/artifacts-b/trnm-research-receipt-v2"',
         "A successful gate must also remove the build scratch before printing PASS",
     ):
         if publication_guard not in gate_text:

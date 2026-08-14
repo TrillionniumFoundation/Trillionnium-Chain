@@ -12,7 +12,7 @@ component_lock=${1:-}
   exit 64
 }
 
-for command_name in awk basename cargo cmp dirname env find git id mktemp python3 rustc sha256sum stat tar; do
+for command_name in awk basename cargo cmp dirname env find git id install mktemp python3 rustc sha256sum stat sync tar; do
   command -v "$command_name" >/dev/null 2>&1 || {
     printf 'ERROR: Paper Raid Chain SBOM gate requires %s\n' "$command_name" >&2
     exit 1
@@ -96,7 +96,13 @@ cargo_environment=(
   "TZ=UTC"
 )
 
-mkdir -m 0700 "$scratch/source" "$scratch/target-a" "$scratch/target-b" "$scratch/metadata-target"
+mkdir -m 0700 \
+  "$scratch/source" \
+  "$scratch/target-a" \
+  "$scratch/target-b" \
+  "$scratch/artifacts-a" \
+  "$scratch/artifacts-b" \
+  "$scratch/metadata-target"
 git archive --format=tar "$revision" | tar -xf - -C "$scratch/source"
 archive_symlink=$(find "$scratch/source" -type l -print -quit)
 [[ -z "$archive_symlink" ]] || {
@@ -202,7 +208,20 @@ build_candidate "$scratch/target-a"
 build_candidate "$scratch/target-b"
 
 for binary in trnm-cometbft-app trnm-research-receipt-v2; do
-  cmp --silent "$scratch/target-a/release/$binary" "$scratch/target-b/release/$binary" || {
+  install -m 0500 \
+    "$scratch/target-a/release/$binary" "$scratch/artifacts-a/$binary"
+  install -m 0500 \
+    "$scratch/target-b/release/$binary" "$scratch/artifacts-b/$binary"
+  sync -f "$scratch/artifacts-a/$binary"
+  sync -f "$scratch/artifacts-b/$binary"
+  [[ $(stat -c '%h' "$scratch/artifacts-a/$binary") == 1 \
+    && $(stat -c '%h' "$scratch/artifacts-b/$binary") == 1 ]] || {
+    printf 'ERROR: staged release artifact is not one regular link: %s\n' "$binary" >&2
+    exit 1
+  }
+  cmp --silent "$scratch/target-a/release/$binary" "$scratch/artifacts-a/$binary"
+  cmp --silent "$scratch/target-b/release/$binary" "$scratch/artifacts-b/$binary"
+  cmp --silent "$scratch/artifacts-a/$binary" "$scratch/artifacts-b/$binary" || {
     printf 'ERROR: isolated release builds differ byte-for-byte: %s\n' "$binary" >&2
     exit 1
   }
@@ -223,10 +242,10 @@ common_arguments=(
   --producer-contract "$scratch/producer-contract.json"
   --cargo-version-evidence "$cargo_version_evidence"
   --rustc-version-evidence "$rustc_version_evidence"
-  --binary-a "trnm-cometbft-app=$scratch/target-a/release/trnm-cometbft-app"
-  --binary-a "trnm-research-receipt-v2=$scratch/target-a/release/trnm-research-receipt-v2"
-  --binary-b "trnm-cometbft-app=$scratch/target-b/release/trnm-cometbft-app"
-  --binary-b "trnm-research-receipt-v2=$scratch/target-b/release/trnm-research-receipt-v2"
+  --binary-a "trnm-cometbft-app=$scratch/artifacts-a/trnm-cometbft-app"
+  --binary-a "trnm-research-receipt-v2=$scratch/artifacts-a/trnm-research-receipt-v2"
+  --binary-b "trnm-cometbft-app=$scratch/artifacts-b/trnm-cometbft-app"
+  --binary-b "trnm-research-receipt-v2=$scratch/artifacts-b/trnm-research-receipt-v2"
   --tool "gate=$gate"
   --tool "generator=$generator"
   --tool "library=$library"
@@ -264,10 +283,10 @@ python3 "$publisher" \
   --cargo-metadata "$metadata_evidence" \
   --cargo-version-evidence "$cargo_version_evidence" \
   --rustc-version-evidence "$rustc_version_evidence" \
-  --binary-a "consensus_app=$scratch/target-a/release/trnm-cometbft-app" \
-  --binary-a "receipt_v4=$scratch/target-a/release/trnm-research-receipt-v2" \
-  --binary-b "consensus_app=$scratch/target-b/release/trnm-cometbft-app" \
-  --binary-b "receipt_v4=$scratch/target-b/release/trnm-research-receipt-v2"
+  --binary-a "consensus_app=$scratch/artifacts-a/trnm-cometbft-app" \
+  --binary-a "receipt_v4=$scratch/artifacts-a/trnm-research-receipt-v2" \
+  --binary-b "consensus_app=$scratch/artifacts-b/trnm-cometbft-app" \
+  --binary-b "receipt_v4=$scratch/artifacts-b/trnm-research-receipt-v2"
 
 # A successful gate must also remove the build scratch before printing PASS.
 [[ -d "$scratch" && ! -L "$scratch" \
