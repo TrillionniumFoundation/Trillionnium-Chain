@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate deterministic Paper Raid Chain CycloneDX and provenance evidence."""
+"""Generate deterministic Paper Raid Chain release SBOM/provenance evidence."""
 
 from __future__ import annotations
 
@@ -8,7 +8,12 @@ import os
 import pathlib
 import sys
 
-from paper_raid_chain_sbom_lib import EvidenceError, build_artifacts, canonical_json
+from paper_raid_chain_sbom_lib import (
+    EvidenceError,
+    build_artifacts,
+    build_cargo_metadata_evidence,
+    canonical_json,
+)
 
 
 def mappings(values: list[str], label: str) -> dict[str, pathlib.Path]:
@@ -40,10 +45,12 @@ def write_new(path: pathlib.Path, content: bytes) -> None:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser()
     result.add_argument("--metadata", required=True, type=pathlib.Path)
+    result.add_argument("--metadata-evidence-output", required=True, type=pathlib.Path)
     result.add_argument("--source", required=True, type=pathlib.Path)
     result.add_argument("--revision", required=True)
     result.add_argument("--tree", required=True)
     result.add_argument("--component-lock", required=True, type=pathlib.Path)
+    result.add_argument("--producer-contract", required=True, type=pathlib.Path)
     result.add_argument("--cargo-version-evidence", required=True, type=pathlib.Path)
     result.add_argument("--rustc-version-evidence", required=True, type=pathlib.Path)
     result.add_argument("--binary-a", action="append", default=[])
@@ -57,12 +64,18 @@ def parser() -> argparse.ArgumentParser:
 def main() -> int:
     arguments = parser().parse_args()
     try:
+        write_new(
+            arguments.metadata_evidence_output,
+            build_cargo_metadata_evidence(arguments.metadata, arguments.source),
+        )
         sbom, provenance = build_artifacts(
             metadata_path=arguments.metadata,
+            metadata_evidence_path=arguments.metadata_evidence_output,
             source_root=arguments.source,
             revision=arguments.revision,
             source_tree=arguments.tree,
             component_lock_path=arguments.component_lock,
+            producer_contract_path=arguments.producer_contract,
             cargo_version_path=arguments.cargo_version_evidence,
             rustc_version_path=arguments.rustc_version_evidence,
             binaries_a=mappings(arguments.binary_a, "build A binary"),

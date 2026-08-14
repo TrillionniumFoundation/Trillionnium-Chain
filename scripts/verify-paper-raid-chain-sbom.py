@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify canonical Paper Raid Chain CycloneDX and dual-build provenance."""
+"""Verify canonical Paper Raid Chain release SBOM and dual-build provenance."""
 
 from __future__ import annotations
 
@@ -26,10 +26,12 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--sbom", required=True, type=pathlib.Path)
     result.add_argument("--provenance", required=True, type=pathlib.Path)
     result.add_argument("--metadata", required=True, type=pathlib.Path)
+    result.add_argument("--metadata-evidence", required=True, type=pathlib.Path)
     result.add_argument("--source", required=True, type=pathlib.Path)
     result.add_argument("--revision", required=True)
     result.add_argument("--tree", required=True)
     result.add_argument("--component-lock", required=True, type=pathlib.Path)
+    result.add_argument("--producer-contract", required=True, type=pathlib.Path)
     result.add_argument("--cargo-version-evidence", required=True, type=pathlib.Path)
     result.add_argument("--rustc-version-evidence", required=True, type=pathlib.Path)
     result.add_argument("--binary-a", action="append", default=[])
@@ -45,10 +47,12 @@ def main() -> int:
             sbom_path=arguments.sbom,
             provenance_path=arguments.provenance,
             metadata_path=arguments.metadata,
+            metadata_evidence_path=arguments.metadata_evidence,
             source_root=arguments.source,
             revision=arguments.revision,
             source_tree=arguments.tree,
             component_lock_path=arguments.component_lock,
+            producer_contract_path=arguments.producer_contract,
             cargo_version_path=arguments.cargo_version_evidence,
             rustc_version_path=arguments.rustc_version_evidence,
             binaries_a=mappings(arguments.binary_a, "build A binary"),

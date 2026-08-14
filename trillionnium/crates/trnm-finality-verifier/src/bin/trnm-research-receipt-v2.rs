@@ -21,12 +21,14 @@ use tendermint_proto::v0_38::{
     types::{SignedHeader as RawSignedHeader, ValidatorSet as RawValidatorSet},
 };
 use trnm_finality_types::{
-    comet_tx_hash, AppHashObjectProofV1, AppHashProofOpV1, SignedCommandEnvelopeV1,
-    APPHASH_OBJECT_PROOF_SCHEMA_V1, COMETBFT_JMT_PROOF_OP_TYPE_V1,
+    comet_tx_hash, AppHashObjectProofV1, AppHashProofOpV1, CometBftLightFinalityProofV1,
+    SignedCommandEnvelopeV1, APPHASH_OBJECT_PROOF_SCHEMA_V1, COMETBFT_JMT_PROOF_OP_TYPE_V1,
+    COMETBFT_LIGHT_FINALITY_PROOF_SCHEMA_V1,
 };
 use trnm_finality_verifier::{
     assemble_cometbft_apphash_finality_receipt_v2, encode_cometbft_header_v1,
     encode_cometbft_trust_anchor_v1, verify_cometbft_apphash_finality_receipt_v2_with_trust_anchor,
+    verify_cometbft_light_finality_proof_v1_with_trust_anchor, ChainTimeVerificationOutcomeV1,
     CometBftReceiptAssemblyInputV2, ReceiptV2VerificationOutcome, ValidatedCometBftTrustAnchorV1,
     VerifiedCometBftDomainCommandV2,
 };
@@ -83,7 +85,7 @@ fn stable_file_identity(metadata: &fs::Metadata) -> StableFileIdentity {
 
 fn usage(program: &str) -> anyhow::Error {
     anyhow!(
-        "usage:\n  {program} public-key PRIVATE_KEY\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v2-sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v3-pre-v7-artifact SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v4-sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v4-hepta-sign-and-wrap HEPTA_SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX [TRUST_ANCHOR_OUTPUT]"
+        "usage:\n  {program} public-key PRIVATE_KEY\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v2-sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v3-pre-v7-artifact SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v4-sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} paper-raid-v4-hepta-sign-and-wrap HEPTA_SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} trust-anchor-from-rpc BLOCK_JSON NEXT_VALIDATORS_JSON TRUSTED_HEADER_HASH_HEX OUTPUT\n  {program} chain-time-proof-from-rpc BLOCK_JSON COMMIT_JSON VALIDATORS_JSON TRUST_ANCHOR CHECKPOINT_REQUEST_OUTPUT\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX [TRUST_ANCHOR_OUTPUT]\n  {program} assemble-and-verify-with-anchor EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX TRUST_ANCHOR"
     )
 }
 
@@ -2131,11 +2133,171 @@ fn fixture_tx(private_key: &Path, output: &Path) -> Result<()> {
     Ok(())
 }
 
+fn rpc_block_header(block_json: &Value) -> Result<(block::Header, String)> {
+    let header: block::Header =
+        serde_json::from_value(required(block_json, "/result/block/header")?.clone())
+            .context("decode header from CometBFT block RPC JSON")?;
+    let rpc_hash = required_string(block_json, "/result/block_id/hash")?.to_ascii_lowercase();
+    ensure!(
+        rpc_hash.len() == 64
+            && rpc_hash.bytes().all(|byte| byte.is_ascii_hexdigit())
+            && rpc_hash == hex::encode(header.hash().as_bytes()),
+        "CometBFT block ID does not match the decoded canonical header"
+    );
+    Ok((header, rpc_hash))
+}
+
+fn rpc_validator_set(validators_json: &Value, pointer: &str) -> Result<validator::Set> {
+    let validator_infos: Vec<validator::Info> =
+        serde_json::from_value(required(validators_json, pointer)?.clone())
+            .context("decode validator set from CometBFT RPC JSON")?;
+    ensure!(!validator_infos.is_empty(), "validator set is empty");
+    Ok(validator::Set::without_proposer(validator_infos))
+}
+
+fn trust_anchor_from_rpc(
+    block_json_path: &Path,
+    next_validators_json_path: &Path,
+    trusted_header_hash_hex: &str,
+    output: &Path,
+) -> Result<()> {
+    ensure!(
+        trusted_header_hash_hex.len() == 64
+            && trusted_header_hash_hex
+                .bytes()
+                .all(|byte| byte.is_ascii_hexdigit())
+            && trusted_header_hash_hex == trusted_header_hash_hex.to_ascii_lowercase(),
+        "trusted header hash must be 32-byte lowercase hex"
+    );
+    let block_json = read_json(block_json_path)?;
+    let next_validators_json = read_json(next_validators_json_path)?;
+    let (header, header_hash_hex) = rpc_block_header(&block_json)?;
+    ensure!(
+        header_hash_hex == trusted_header_hash_hex,
+        "RPC header does not match the externally pinned trust hash"
+    );
+    let next_validators = rpc_validator_set(&next_validators_json, "/result/validators")?;
+    ensure!(
+        next_validators.hash() == header.next_validators_hash,
+        "next validator set does not match the trusted header"
+    );
+    let wire = encode_cometbft_trust_anchor_v1(
+        &header,
+        &next_validators,
+        2,
+        3,
+        Duration::from_secs(TRUSTING_PERIOD_SECONDS),
+        Duration::from_secs(CLOCK_DRIFT_SECONDS),
+    )?;
+    let anchor_hash_hex = wire.anchor_hash_hex.clone();
+    let anchor_bytes = wire.canonical_bytes()?;
+    let _ = ValidatedCometBftTrustAnchorV1::try_from(wire)?;
+    write_new(output, &anchor_bytes)?;
+    println!(
+        "{}",
+        serde_json::to_string(&json!({
+            "schema":"trnm_cometbft_trust_anchor_from_rpc_result_v1",
+            "trust_anchor_path":output,
+            "trust_anchor_hash_hex":anchor_hash_hex,
+            "chain_id":header.chain_id.as_str(),
+            "trusted_height":header.height.value(),
+            "trusted_header_hash_hex":header_hash_hex,
+            "trusted_header_time_rfc3339":header.time.to_rfc3339(),
+        }))?
+    );
+    Ok(())
+}
+
+#[derive(Serialize)]
+struct ChainTimeCheckpointAdmissionRequestV1<'a> {
+    trust_anchor_hash: &'a str,
+    proof: &'a CometBftLightFinalityProofV1,
+}
+
+fn chain_time_proof_from_rpc(
+    block_json_path: &Path,
+    commit_json_path: &Path,
+    validators_json_path: &Path,
+    trust_anchor_path: &Path,
+    output: &Path,
+) -> Result<()> {
+    let block_json = read_json(block_json_path)?;
+    let commit_json = read_json(commit_json_path)?;
+    let validators_json = read_json(validators_json_path)?;
+    let (header, block_id_hash_hex) = rpc_block_header(&block_json)?;
+    let signed_header: block::signed_header::SignedHeader =
+        serde_json::from_value(required(&commit_json, "/result/signed_header")?.clone())
+            .context("decode signed header from CometBFT commit RPC JSON")?;
+    ensure!(
+        signed_header.header == header,
+        "CometBFT commit and block endpoints disagree on the checkpoint header"
+    );
+    let commit_block_id_hash =
+        required_string(&commit_json, "/result/canonical_commit/block_id/hash")
+            .or_else(|_| {
+                required_string(&commit_json, "/result/signed_header/commit/block_id/hash")
+            })?
+            .to_ascii_lowercase();
+    ensure!(
+        commit_block_id_hash == block_id_hash_hex,
+        "CometBFT commit block ID does not match the checkpoint header"
+    );
+    let validators = rpc_validator_set(&validators_json, "/result/validators")?;
+    ensure!(
+        validators.hash() == header.validators_hash,
+        "checkpoint validator set does not match the checkpoint header"
+    );
+    let raw_signed_header: RawSignedHeader = signed_header.into();
+    let raw_validators: RawValidatorSet = validators.into();
+    let proof = CometBftLightFinalityProofV1 {
+        schema: COMETBFT_LIGHT_FINALITY_PROOF_SCHEMA_V1.to_string(),
+        header: encode_cometbft_header_v1(&header)?,
+        commit_height: header.height.value(),
+        commit_block_id_hash_hex: block_id_hash_hex,
+        signed_header_proto_hex: hex::encode(raw_signed_header.encode_to_vec()),
+        validator_set_proto_hex: hex::encode(raw_validators.encode_to_vec()),
+    };
+    proof.validate_shape()?;
+    let anchor_bytes = read_bounded(trust_anchor_path, MAX_RPC_JSON_BYTES)?;
+    let anchor = ValidatedCometBftTrustAnchorV1::from_canonical_bytes(&anchor_bytes)?;
+    let verified = match verify_cometbft_light_finality_proof_v1_with_trust_anchor(
+        &proof,
+        &anchor,
+        SystemTime::now(),
+    ) {
+        ChainTimeVerificationOutcomeV1::Verified(verified) => verified,
+        other => {
+            return Err(anyhow!(
+                "public Chain-time verifier did not return Verified: {other:?}"
+            ));
+        }
+    };
+    let request = ChainTimeCheckpointAdmissionRequestV1 {
+        trust_anchor_hash: &anchor.wire().anchor_hash_hex,
+        proof: &proof,
+    };
+    write_new(output, &serde_json::to_vec(&request)?)?;
+    println!(
+        "{}",
+        serde_json::to_string(&json!({
+            "schema":"trnm_cometbft_chain_time_proof_from_rpc_result_v1",
+            "checkpoint_request_path":output,
+            "trust_anchor_hash_hex":anchor.wire().anchor_hash_hex,
+            "chain_id":verified.chain_id,
+            "height":verified.height,
+            "header_hash_hex":verified.header_hash_hex,
+            "consensus_time_unix_ms":verified.consensus_time_unix_ms,
+        }))?
+    );
+    Ok(())
+}
+
 fn assemble_and_verify(
     evidence_dir: &Path,
     receipt_output: &Path,
     trusted_execution_header_hash_hex: &str,
     trust_anchor_output: Option<&Path>,
+    verification_anchor_path: Option<&Path>,
 ) -> Result<()> {
     if let Some(trust_anchor_output) = trust_anchor_output {
         ensure!(
@@ -2143,6 +2305,10 @@ fn assemble_and_verify(
             "receipt and trust-anchor outputs must be distinct"
         );
     }
+    ensure!(
+        trust_anchor_output.is_none() || verification_anchor_path.is_none(),
+        "generated and existing trust-anchor modes are mutually exclusive"
+    );
     ensure!(
         evidence_dir.is_absolute()
             && evidence_dir.is_dir()
@@ -2263,17 +2429,32 @@ fn assemble_and_verify(
     })
     .context("assemble Receipt V2 from RPC evidence")?;
 
-    let trust_anchor_wire = encode_cometbft_trust_anchor_v1(
-        &execution_header,
-        &validators,
-        2,
-        3,
-        Duration::from_secs(TRUSTING_PERIOD_SECONDS),
-        Duration::from_secs(CLOCK_DRIFT_SECONDS),
-    )?;
-    let trust_anchor_hash_hex = trust_anchor_wire.anchor_hash_hex.clone();
-    let trust_anchor_bytes = trust_anchor_wire.canonical_bytes()?;
-    let trust_anchor = ValidatedCometBftTrustAnchorV1::try_from(trust_anchor_wire)?;
+    let (trust_anchor_hash_hex, trust_anchor_bytes, trust_anchor) =
+        if let Some(verification_anchor_path) = verification_anchor_path {
+            let bytes = read_bounded(verification_anchor_path, MAX_RPC_JSON_BYTES)?;
+            let anchor = ValidatedCometBftTrustAnchorV1::from_canonical_bytes(&bytes)?;
+            (
+                anchor.wire().anchor_hash_hex.clone(),
+                Option::<Vec<u8>>::None,
+                anchor,
+            )
+        } else {
+            let wire = encode_cometbft_trust_anchor_v1(
+                &execution_header,
+                &validators,
+                2,
+                3,
+                Duration::from_secs(TRUSTING_PERIOD_SECONDS),
+                Duration::from_secs(CLOCK_DRIFT_SECONDS),
+            )?;
+            let hash = wire.anchor_hash_hex.clone();
+            let bytes = wire.canonical_bytes()?;
+            (
+                hash,
+                Some(bytes),
+                ValidatedCometBftTrustAnchorV1::try_from(wire)?,
+            )
+        };
     let outcome = verify_cometbft_apphash_finality_receipt_v2_with_trust_anchor(
         &receipt,
         &trust_anchor,
@@ -2292,11 +2473,14 @@ fn assemble_and_verify(
     };
     let receipt_bytes = receipt.canonical_bytes()?;
     if let Some(trust_anchor_output) = trust_anchor_output {
+        let trust_anchor_bytes = trust_anchor_bytes
+            .as_deref()
+            .context("generated trust-anchor bytes are absent")?;
         write_new_pair(
             receipt_output,
             &receipt_bytes,
             trust_anchor_output,
-            &trust_anchor_bytes,
+            trust_anchor_bytes,
         )?;
     } else {
         write_new(receipt_output, &receipt_bytes)?;
@@ -2307,7 +2491,7 @@ fn assemble_and_verify(
             "schema":"trnm_research_receipt_v2_assembly_result_v1",
             "status":"final",
             "receipt_path":receipt_output,
-            "trust_anchor_path":trust_anchor_output,
+            "trust_anchor_path":verification_anchor_path.or(trust_anchor_output),
             "receipt_hash_hex":verified.receipt_hash_hex,
             "trust_anchor_hash_hex":trust_anchor_hash_hex,
             "domain_command_version":domain_command_version,
@@ -2364,14 +2548,35 @@ fn run() -> Result<()> {
                 Path::new(&arguments[5]),
             )
         }
+        Some("trust-anchor-from-rpc") if arguments.len() == 6 => trust_anchor_from_rpc(
+            Path::new(&arguments[2]),
+            Path::new(&arguments[3]),
+            &arguments[4],
+            Path::new(&arguments[5]),
+        ),
+        Some("chain-time-proof-from-rpc") if arguments.len() == 7 => chain_time_proof_from_rpc(
+            Path::new(&arguments[2]),
+            Path::new(&arguments[3]),
+            Path::new(&arguments[4]),
+            Path::new(&arguments[5]),
+            Path::new(&arguments[6]),
+        ),
         Some("assemble-and-verify") if arguments.len() == 5 || arguments.len() == 6 => {
             assemble_and_verify(
                 Path::new(&arguments[2]),
                 Path::new(&arguments[3]),
                 &arguments[4],
                 arguments.get(5).map(Path::new),
+                None,
             )
         }
+        Some("assemble-and-verify-with-anchor") if arguments.len() == 6 => assemble_and_verify(
+            Path::new(&arguments[2]),
+            Path::new(&arguments[3]),
+            &arguments[4],
+            None,
+            Some(Path::new(&arguments[5])),
+        ),
         _ => Err(usage(&arguments[0])),
     }
 }

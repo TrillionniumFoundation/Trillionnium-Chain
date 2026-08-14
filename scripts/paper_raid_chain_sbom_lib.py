@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic CycloneDX/provenance kernel for the Paper Raid Chain candidate."""
+"""Deterministic CycloneDX/provenance kernel for a Paper Raid Chain release."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import stat
 import tomllib
 import urllib.parse
@@ -19,32 +20,41 @@ TARGETS = (
         "artifact_id": "consensus_app",
         "package": "trnm-consensus-app",
         "binary": "trnm-cometbft-app",
-        "cargo_profile": "debug",
+        "cargo_profile": "release",
         "features": (),
     },
     {
-        "artifact_id": "chain_cli",
-        "package": "trnm-node",
-        "binary": "trnm-chain-cli",
-        "cargo_profile": "debug",
-        "features": ("legacy-harness",),
-    },
-    {
-        "artifact_id": "receipt_v2",
+        "artifact_id": "receipt_v4",
         "package": "trnm-finality-verifier",
         "binary": "trnm-research-receipt-v2",
-        "cargo_profile": "debug",
+        "cargo_profile": "release",
         "features": (),
     },
 )
 
-SBOM_NAME = "trillionnium-chain-paper-raid-debug-candidate"
-SBOM_REF = "urn:trnm:paper-raid:chain-debug-candidate"
-PROVENANCE_SCHEMA = "trnm.paper-raid.chain-debug-candidate-provenance.v2"
-TOOL_VERSION = "1"
+SBOM_NAME = "trillionnium-chain-paper-raid-release-candidate"
+SBOM_REF = "urn:trnm:paper-raid:chain-release-candidate"
+PROVENANCE_SCHEMA = "trnm.paper-raid.chain-release-candidate-provenance.v3"
+CANDIDATE_BOUNDARY = "immutable-release-candidate"
+PRODUCER_CONTRACT_SCHEMA = (
+    "trnm.integration.paper-raid-chain-release-producer-contract.v1"
+)
+PRODUCER_MANIFEST_SCHEMA = (
+    "trnm.integration.paper-raid-chain-release-evidence-manifest.v1"
+)
+TOOL_VERSION = "2"
 LIVE_DRIVER_RELATIVE_PATH = pathlib.PurePosixPath(
     "trillionnium/scripts/consensus/spike_cometbft_single_node.sh"
 )
+STRICT_REVIEW_DRIVER_RELATIVE_PATH = pathlib.PurePosixPath(
+    "trillionnium/scripts/consensus/run_paper_raid_v4_review_chain.sh"
+)
+TOOL_RELATIVE_PATHS = {
+    "gate": "scripts/check-paper-raid-chain-sbom.sh",
+    "generator": "scripts/generate-paper-raid-chain-sbom.py",
+    "library": "scripts/paper_raid_chain_sbom_lib.py",
+    "verifier": "scripts/verify-paper-raid-chain-sbom.py",
+}
 
 
 class EvidenceError(ValueError):
@@ -66,22 +76,34 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 def read_regular(path: pathlib.Path) -> bytes:
     """Read one regular file once without following a final-component symlink."""
-    flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_NOFOLLOW", 0)
+    flags = (
+        os.O_RDONLY
+        | getattr(os, "O_CLOEXEC", 0)
+        | getattr(os, "O_NOFOLLOW", 0)
+        | getattr(os, "O_NONBLOCK", 0)
+    )
     try:
         descriptor = os.open(path, flags)
     except OSError as error:
         fail(f"cannot open regular non-symlink file {path}: {error}")
     try:
-        info = os.fstat(descriptor)
-        if not stat.S_ISREG(info.st_mode):
-            fail(f"input is not a regular file: {path}")
+        before = os.fstat(descriptor)
+        if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1:
+            fail(f"input is not one regular link: {path}")
         chunks: list[bytes] = []
         while True:
             chunk = os.read(descriptor, 1024 * 1024)
             if not chunk:
                 break
             chunks.append(chunk)
-        return b"".join(chunks)
+        raw = b"".join(chunks)
+        after = os.fstat(descriptor)
+        stable = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+        if any(getattr(before, name) != getattr(after, name) for name in stable):
+            fail(f"input changed while it was read: {path}")
+        if len(raw) != after.st_size:
+            fail(f"input length changed while it was read: {path}")
+        return raw
     finally:
         os.close(descriptor)
 
@@ -94,15 +116,19 @@ def sha256_file(path: pathlib.Path) -> str:
     return sha256_bytes(read_regular(path))
 
 
-def load_json(path: pathlib.Path) -> Any:
+def decode_json(raw: bytes, path: pathlib.Path) -> Any:
     try:
         return json.loads(
-            read_regular(path).decode("utf-8"), object_pairs_hook=_unique_object
+            raw.decode("utf-8"), object_pairs_hook=_unique_object
         )
     except UnicodeDecodeError as error:
         fail(f"JSON is not UTF-8: {path}: {error}")
     except json.JSONDecodeError as error:
         fail(f"invalid JSON: {path}: {error}")
+
+
+def load_json(path: pathlib.Path) -> Any:
+    return decode_json(read_regular(path), path)
 
 
 def canonical_json(value: Any) -> bytes:
@@ -114,7 +140,7 @@ def canonical_json(value: Any) -> bytes:
 
 def require_canonical_json(path: pathlib.Path) -> Any:
     raw = read_regular(path)
-    value = load_json(path)
+    value = decode_json(raw, path)
     if raw != canonical_json(value):
         fail(f"JSON is not in canonical byte form: {path}")
     return value
@@ -126,6 +152,54 @@ def require_hex(value: str, length: int, label: str) -> str:
     ):
         fail(f"{label} must be exactly {length} lowercase hexadecimal characters")
     return value
+
+
+def require_nonzero_digest(value: Any, label: str) -> str:
+    digest = require_hex(value, 64, label)
+    if digest == "0" * 64:
+        fail(f"{label} must be nonzero")
+    return digest
+
+
+def producer_contract(path: pathlib.Path) -> tuple[dict[str, Any], str]:
+    raw = read_regular(path)
+    value = decode_json(raw, path)
+    if raw != canonical_json(value):
+        fail("Integration release producer contract is not canonical JSON")
+    expected = {
+        "artifacts": [
+            {
+                "artifact_id": target["artifact_id"],
+                "binary": target["binary"],
+                "cargo_profile": target["cargo_profile"],
+                "features": list(target["features"]),
+                "package": target["package"],
+            }
+            for target in TARGETS
+        ],
+        "build": {
+            "binary_byte_identical": True,
+            "cargo_locked": True,
+            "isolated_target_builds": 2,
+            "network_offline": True,
+            "profile": "release",
+        },
+        "candidate_boundary": CANDIDATE_BOUNDARY,
+        "chain_tools": TOOL_RELATIVE_PATHS,
+        "manifest_schema": PRODUCER_MANIFEST_SCHEMA,
+        "provenance_schema": PROVENANCE_SCHEMA,
+        "sbom": {
+            "bom_format": "CycloneDX",
+            "candidate_name": SBOM_NAME,
+            "candidate_ref": SBOM_REF,
+            "dependency_closure_required": True,
+            "spec_version": "1.5",
+        },
+        "schema": PRODUCER_CONTRACT_SCHEMA,
+    }
+    if value != expected:
+        fail("Integration release producer contract differs from the exact Chain contract")
+    return value, sha256_bytes(raw)
 
 
 def require_source_root(path: pathlib.Path) -> pathlib.Path:
@@ -189,6 +263,7 @@ def parse_component_lock(path: pathlib.Path) -> tuple[str, dict[str, Any]]:
             "artifact_id",
             "binary",
             "cargo_profile",
+            "executable_sha256",
             "package",
         }:
             fail("Integration live binary field set differs")
@@ -196,20 +271,48 @@ def parse_component_lock(path: pathlib.Path) -> tuple[str, dict[str, Any]]:
         package = item.get("package")
         binary = item.get("binary")
         profile = item.get("cargo_profile")
+        executable_sha256 = item.get("executable_sha256")
         if not all(isinstance(entry, str) and entry for entry in (artifact, package, binary, profile)):
             fail("Integration live binary contains a blank or non-string field")
+        require_nonzero_digest(executable_sha256, f"Integration {artifact} executable digest")
         if artifact in seen_artifacts or package in seen_packages or binary in seen_binaries:
             fail("Integration live binary identifiers, packages, and binary names must be unique")
         seen_artifacts.add(artifact)
         seen_packages.add(package)
         seen_binaries.add(binary)
         normalized.append(dict(item))
+    if len(normalized) != len(TARGETS):
+        fail("Integration canonical-chain live_binaries count differs")
     expected = [
-        {key: target[key] for key in ("artifact_id", "binary", "cargo_profile", "package")}
-        for target in TARGETS
+        {
+            **{
+                key: target[key]
+                for key in ("artifact_id", "binary", "cargo_profile", "package")
+            },
+            "executable_sha256": normalized[index]["executable_sha256"],
+        }
+        for index, target in enumerate(TARGETS)
     ]
     if normalized != expected:
         fail("Integration canonical-chain live_binaries set/order differs from the Paper Raid contract")
+    signing = chain[0].get("paper_raid_v4_signing_authority")
+    if not isinstance(signing, dict) or set(signing) != {
+        "private_key_file_contract",
+        "public_key_hex",
+        "schema",
+        "signer_did",
+        "signer_role",
+    }:
+        fail("Integration Paper Raid V4 signing authority field set differs")
+    if (
+        signing.get("schema") != "trnm.paper-raid.v4-signing-authority.v1"
+        or signing.get("signer_did") != "did:trnm:hepta-authority"
+        or signing.get("signer_role") != "hepta"
+        or signing.get("private_key_file_contract")
+        != "ed25519-seed-lowercase-hex-32-byte-root-0400-v1"
+    ):
+        fail("Integration Paper Raid V4 signing authority differs")
+    require_nonzero_digest(signing.get("public_key_hex"), "Paper Raid V4 public key")
     # Bind only the canonical Chain component. Integration readiness, Hepta,
     # Nakama, and BFF fields evolve independently and must not invalidate
     # byte-identical Chain evidence or create a self-referential lock hash.
@@ -224,6 +327,71 @@ class CargoModel:
     closure: frozenset[str]
     edges: dict[str, tuple[str, ...]]
     lock_entries: dict[tuple[str, str, str], dict[str, Any]]
+
+
+def _cargo_metadata_evidence(model: CargoModel, source_root: pathlib.Path) -> dict[str, Any]:
+    stable = {
+        package_id: _stable_package_identity(
+            package_id, model.packages[package_id], source_root
+        )
+        for package_id in model.closure
+    }
+    packages: list[dict[str, Any]] = []
+    for package_id in sorted(model.closure, key=lambda value: stable[value]):
+        package = model.packages[package_id]
+        source = package.get("source") or ""
+        manifest_path: str | None = None
+        if not source:
+            manifest = within(
+                source_root,
+                pathlib.Path(package["manifest_path"]),
+                f"Cargo metadata evidence manifest for {package['name']}",
+            )
+            manifest_path = manifest.relative_to(source_root).as_posix()
+        lock_entry = model.lock_entries[
+            (package["name"], package["version"], package.get("source") or "")
+        ]
+        packages.append(
+            {
+                "checksum": lock_entry.get("checksum"),
+                "id": stable[package_id],
+                "manifest_path": manifest_path,
+                "name": package["name"],
+                "source": source or None,
+                "version": package["version"],
+            }
+        )
+    nodes = [
+        {
+            "dependencies": [stable[dependency] for dependency in model.edges[package_id]],
+            "id": stable[package_id],
+        }
+        for package_id in sorted(model.closure, key=lambda value: stable[value])
+    ]
+    targets = [
+        {
+            "artifact_id": target["artifact_id"],
+            "binary": target["binary"],
+            "features": list(target["features"]),
+            "package": target["package"],
+            "package_id": stable[model.roots[target["package"]]],
+        }
+        for target in TARGETS
+    ]
+    return {
+        "packages": packages,
+        "resolve": {"nodes": nodes},
+        "schema": "trnm.paper-raid.chain-cargo-metadata-evidence.v1",
+        "targets": targets,
+    }
+
+
+def build_cargo_metadata_evidence(
+    metadata_path: pathlib.Path, source_root: pathlib.Path
+) -> bytes:
+    root = require_source_root(source_root)
+    model = cargo_model(metadata_path, root / "trillionnium/Cargo.lock")
+    return canonical_json(_cargo_metadata_evidence(model, root))
 
 
 def _load_lock(path: pathlib.Path) -> dict[tuple[str, str, str], dict[str, Any]]:
@@ -526,10 +694,12 @@ def _binary_maps(values: dict[str, pathlib.Path], label: str) -> dict[str, pathl
 def build_artifacts(
     *,
     metadata_path: pathlib.Path,
+    metadata_evidence_path: pathlib.Path,
     source_root: pathlib.Path,
     revision: str,
     source_tree: str,
     component_lock_path: pathlib.Path,
+    producer_contract_path: pathlib.Path,
     cargo_version_path: pathlib.Path,
     rustc_version_path: pathlib.Path,
     binaries_a: dict[str, pathlib.Path],
@@ -543,21 +713,28 @@ def build_artifacts(
     lock_path = workspace / "Cargo.lock"
     toolchain_path = root / "rust-toolchain.toml"
     live_driver_path = root.joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
+    strict_review_driver_path = root.joinpath(
+        *STRICT_REVIEW_DRIVER_RELATIVE_PATH.parts
+    )
     for path, label in (
         (lock_path, "Cargo.lock"),
         (toolchain_path, "rust-toolchain.toml"),
         (live_driver_path, str(LIVE_DRIVER_RELATIVE_PATH)),
+        (strict_review_driver_path, str(STRICT_REVIEW_DRIVER_RELATIVE_PATH)),
     ):
         within(root, path, label)
         read_regular(path)
+    _contract, producer_contract_sha256 = producer_contract(producer_contract_path)
     chain_component_sha256, chain = parse_component_lock(component_lock_path)
     expected_chain_lock = {
         "project_id": "trillionnium-chain",
+        "repository": "TrillionniumFoundation/Trillionnium-Chain",
         "revision": revision,
         "source_tree": source_tree,
         "cargo_lock_sha256": sha256_file(lock_path),
         "rust_toolchain_sha256": sha256_file(toolchain_path),
         "live_driver_sha256": sha256_file(live_driver_path),
+        "strict_review_driver_sha256": sha256_file(strict_review_driver_path),
         "working_tree_dirty": False,
     }
     for field, expected in expected_chain_lock.items():
@@ -565,16 +742,29 @@ def build_artifacts(
             fail(
                 f"Integration canonical-chain {field} does not bind the immutable source candidate"
             )
+    branch = chain.get("branch")
+    if not isinstance(branch, str) or not re.fullmatch(
+        r"(?:feature|fix|chore|docs|test)/chain-[a-z0-9][a-z0-9._-]*", branch
+    ):
+        fail("Integration canonical-chain branch is not a canonical Chain topic branch")
     required_tools = {"gate", "generator", "library", "verifier"}
     if set(tool_paths) != required_tools:
         fail(f"tool path set differs; expected {sorted(required_tools)}")
     tool_hashes: dict[str, str] = {}
     for name, path in tool_paths.items():
-        if path.is_symlink():
-            fail(f"{name} tool symlink is forbidden")
-        tool_hashes[name] = sha256_file(path)
+        expected_path = root.joinpath(*pathlib.PurePosixPath(TOOL_RELATIVE_PATHS[name]).parts)
+        actual_tool = within(root, path, f"{name} tool")
+        expected_tool = within(root, expected_path, f"expected {name} tool")
+        if actual_tool != expected_tool:
+            fail(f"{name} tool path differs from the release producer contract")
+        tool_hashes[name] = sha256_file(actual_tool)
 
     model = cargo_model(metadata_path, lock_path)
+    expected_metadata_evidence = canonical_json(_cargo_metadata_evidence(model, root))
+    actual_metadata_evidence = read_regular(metadata_evidence_path)
+    if actual_metadata_evidence != expected_metadata_evidence:
+        fail("Cargo metadata evidence differs from the canonical dependency projection")
+    metadata_evidence_sha256 = sha256_bytes(actual_metadata_evidence)
     stable_identities = {
         package_id: _stable_package_identity(package_id, model.packages[package_id], root)
         for package_id in model.closure
@@ -584,13 +774,16 @@ def build_artifacts(
     first = _binary_maps(binaries_a, "build A")
     second = _binary_maps(binaries_b, "build B")
     binary_hashes: dict[str, str] = {}
-    for target in TARGETS:
+    for index, target in enumerate(TARGETS):
         name = target["binary"]
         first_bytes = read_regular(first[name])
         second_bytes = read_regular(second[name])
         if first_bytes != second_bytes:
             fail(f"isolated build outputs differ byte-for-byte: {name}")
         binary_hashes[name] = sha256_bytes(first_bytes)
+        locked = chain["live_binaries"][index]
+        if binary_hashes[name] != locked["executable_sha256"]:
+            fail(f"release build digest differs from Integration lock: {name}")
 
     package_components = [
         _package_component(
@@ -607,7 +800,7 @@ def build_artifacts(
         name = target["binary"]
         binary_components.append(
             {
-                "bom-ref": f"file:target/debug/{name}",
+                "bom-ref": f"file:target/release/{name}",
                 "hashes": [{"alg": "SHA-256", "content": binary_hashes[name]}],
                 "name": name,
                 "properties": property_list(
@@ -634,15 +827,23 @@ def build_artifacts(
     )
     metadata_properties: list[tuple[str, str]] = [
         ("trnm:binary-byte-identical", "true"),
-        ("trnm:build-profile", "debug"),
+        ("trnm:build-profile", "release"),
         ("trnm:cargo-lock:sha256", f"sha256:{sha256_file(lock_path)}"),
+        ("trnm:cargo-metadata:sha256", f"sha256:{metadata_evidence_sha256}"),
         ("trnm:cargo-version-evidence:sha256", f"sha256:{cargo_evidence_sha256}"),
         ("trnm:integration-chain-component:sha256", f"sha256:{chain_component_sha256}"),
         ("trnm:isolated-target-build-count", "2"),
+        ("trnm:live-driver:sha256", f"sha256:{sha256_file(live_driver_path)}"),
+        ("trnm:network-offline", "true"),
+        ("trnm:producer-contract:sha256", f"sha256:{producer_contract_sha256}"),
         ("trnm:rust-toolchain:sha256", f"sha256:{sha256_file(toolchain_path)}"),
         ("trnm:rustc-version-evidence:sha256", f"sha256:{rustc_evidence_sha256}"),
         ("trnm:source-revision:git-sha1", revision),
         ("trnm:source-tree:git-sha1", source_tree),
+        (
+            "trnm:strict-review-driver:sha256",
+            f"sha256:{sha256_file(strict_review_driver_path)}",
+        ),
         ("trnm:volatile-metadata", "omitted"),
     ]
     metadata_properties.extend(
@@ -654,7 +855,7 @@ def build_artifacts(
         "name": SBOM_NAME,
         "properties": property_list(
             [
-                ("trnm:candidate-boundary", "debug-integration-only"),
+                ("trnm:candidate-boundary", CANDIDATE_BOUNDARY),
                 ("trnm:economic-eligibility", "false"),
             ]
         ),
@@ -663,7 +864,7 @@ def build_artifacts(
     }
     dependencies: list[dict[str, Any]] = [
         {
-            "dependsOn": sorted(f"file:target/debug/{target['binary']}" for target in TARGETS),
+            "dependsOn": [f"file:target/release/{target['binary']}" for target in TARGETS],
             "ref": SBOM_REF,
         }
     ]
@@ -673,7 +874,7 @@ def build_artifacts(
                 "dependsOn": [
                     _package_ref(stable_identities[model.roots[target["package"]]])
                 ],
-                "ref": f"file:target/debug/{target['binary']}",
+                "ref": f"file:target/release/{target['binary']}",
             }
         )
     for package_id in sorted(model.closure):
@@ -704,14 +905,14 @@ def build_artifacts(
                         "version": cargo_evidence["details"]["release"],
                     },
                     {
-                        "name": "trnm-paper-raid-chain-sbom-generator",
-                        "type": "application",
-                        "version": TOOL_VERSION,
-                    },
-                    {
                         "name": "rustc",
                         "type": "application",
                         "version": rustc_evidence["details"]["release"],
+                    },
+                    {
+                        "name": "trnm-paper-raid-chain-sbom-generator",
+                        "type": "application",
+                        "version": TOOL_VERSION,
                     },
                 ]
             },
@@ -723,8 +924,10 @@ def build_artifacts(
     provenance = {
         "build": {
             "binary_byte_identical": True,
+            "cargo_locked": True,
             "isolated_target_builds": 2,
-            "profile": "debug",
+            "network_offline": True,
+            "profile": "release",
             "targets": [
                 {
                     "artifact_id": target["artifact_id"],
@@ -736,10 +939,13 @@ def build_artifacts(
                 for target in TARGETS
             ],
         },
-        "candidate_boundary": "debug-integration-only",
+        "candidate_boundary": CANDIDATE_BOUNDARY,
         "integration_chain_component_sha256": chain_component_sha256,
+        "paper_raid_v4_signing_authority": chain[
+            "paper_raid_v4_signing_authority"
+        ],
+        "producer_contract_sha256": producer_contract_sha256,
         "schema": PROVENANCE_SCHEMA,
-        "scripts": {name: f"sha256:{digest}" for name, digest in sorted(tool_hashes.items())},
         "sbom": {
             "bom_format": "CycloneDX",
             "sha256": sbom_sha256,
@@ -747,13 +953,25 @@ def build_artifacts(
         },
         "source": {
             "cargo_lock_sha256": sha256_file(lock_path),
+            "cargo_metadata_sha256": metadata_evidence_sha256,
+            "live_driver_sha256": sha256_file(live_driver_path),
             "revision": revision,
             "rust_toolchain_sha256": sha256_file(toolchain_path),
+            "strict_review_driver_sha256": sha256_file(
+                strict_review_driver_path
+            ),
             "tree": source_tree,
         },
         "toolchain_evidence": {
             "cargo": {**cargo_evidence, "sha256": cargo_evidence_sha256},
             "rustc": {**rustc_evidence, "sha256": rustc_evidence_sha256},
+        },
+        "tools": {
+            name: {
+                "path": TOOL_RELATIVE_PATHS[name],
+                "sha256": tool_hashes[name],
+            }
+            for name in sorted(tool_hashes)
         },
     }
     forbidden = {"serialNumber", "timestamp"}

@@ -291,7 +291,7 @@ jq \
   --argjson hepta_public_key_bytes "$hepta_public_key_bytes" \
   --argjson initial_validators "$initial_validators" \
   '.chain_id="trnm-comet-spike"
-   | .consensus_params.version.app="6"
+   | .consensus_params.version.app="7"
    | .app_state={
        schema:"trnm_cometbft_genesis_v3",
        chain_id:"trnm-comet-spike",

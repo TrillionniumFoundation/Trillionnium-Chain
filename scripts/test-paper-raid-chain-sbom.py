@@ -5,14 +5,24 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
 import pathlib
 import tempfile
 
 from paper_raid_chain_sbom_lib import (
+    CANDIDATE_BOUNDARY,
     EvidenceError,
     LIVE_DRIVER_RELATIVE_PATH,
+    STRICT_REVIEW_DRIVER_RELATIVE_PATH,
+    PRODUCER_CONTRACT_SCHEMA,
+    PRODUCER_MANIFEST_SCHEMA,
+    PROVENANCE_SCHEMA,
+    SBOM_NAME,
+    SBOM_REF,
     TARGETS,
+    TOOL_RELATIVE_PATHS,
     build_artifacts,
+    build_cargo_metadata_evidence,
     canonical_json,
     verify_artifacts,
 )
@@ -40,6 +50,13 @@ def fixture(base: pathlib.Path):
     )
     live_driver = source.joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
     write(live_driver, "#!/usr/bin/env bash\nset -euo pipefail\n")
+    strict_review_driver = source.joinpath(
+        *STRICT_REVIEW_DRIVER_RELATIVE_PATH.parts
+    )
+    write(
+        strict_review_driver,
+        "#!/usr/bin/env bash\nset -euo pipefail\n# strict review\n",
+    )
     package_ids: dict[str, str] = {}
     packages: list[dict] = []
     nodes: list[dict] = []
@@ -137,22 +154,49 @@ def fixture(base: pathlib.Path):
         "workspace_root": str(workspace),
     }
     write(metadata_path, canonical_json(metadata))
+    metadata_evidence_path = base / "metadata-evidence.json"
+    write(
+        metadata_evidence_path,
+        build_cargo_metadata_evidence(metadata_path, source),
+    )
 
     lock_path = base / "components.lock.json"
     component_lock = {
         "components": [
             {
                 "component_id": "canonical-chain",
+                "branch": "feature/chain-release-evidence",
                 "cargo_lock_sha256": "",
                 "live_binaries": [
                     {
-                        key: target[key]
-                        for key in ("artifact_id", "binary", "cargo_profile", "package")
+                        **{
+                            key: target[key]
+                            for key in (
+                                "artifact_id",
+                                "binary",
+                                "cargo_profile",
+                                "package",
+                            )
+                        },
+                        "executable_sha256": hashlib.sha256(
+                            f"synthetic deterministic binary:{target['binary']}\n".encode()
+                        ).hexdigest(),
                     }
                     for target in TARGETS
                 ],
                 "live_driver_sha256": "",
+                "strict_review_driver_sha256": "",
+                "paper_raid_v4_signing_authority": {
+                    "private_key_file_contract": (
+                        "ed25519-seed-lowercase-hex-32-byte-root-0400-v1"
+                    ),
+                    "public_key_hex": "c" * 64,
+                    "schema": "trnm.paper-raid.v4-signing-authority.v1",
+                    "signer_did": "did:trnm:hepta-authority",
+                    "signer_role": "hepta",
+                },
                 "project_id": "trillionnium-chain",
+                "repository": "TrillionniumFoundation/Trillionnium-Chain",
                 "revision": "a" * 40,
                 "rust_toolchain_sha256": "",
                 "source_tree": "b" * 40,
@@ -170,7 +214,44 @@ def fixture(base: pathlib.Path):
     component_lock["components"][0]["live_driver_sha256"] = hashlib.sha256(
         live_driver.read_bytes()
     ).hexdigest()
+    component_lock["components"][0]["strict_review_driver_sha256"] = (
+        hashlib.sha256(strict_review_driver.read_bytes()).hexdigest()
+    )
     write(lock_path, canonical_json(component_lock))
+
+    producer_contract_path = base / "paper-raid-chain-release-producer-v1.json"
+    producer_contract = {
+        "artifacts": [
+            {
+                "artifact_id": target["artifact_id"],
+                "binary": target["binary"],
+                "cargo_profile": target["cargo_profile"],
+                "features": list(target["features"]),
+                "package": target["package"],
+            }
+            for target in TARGETS
+        ],
+        "build": {
+            "binary_byte_identical": True,
+            "cargo_locked": True,
+            "isolated_target_builds": 2,
+            "network_offline": True,
+            "profile": "release",
+        },
+        "candidate_boundary": CANDIDATE_BOUNDARY,
+        "chain_tools": TOOL_RELATIVE_PATHS,
+        "manifest_schema": PRODUCER_MANIFEST_SCHEMA,
+        "provenance_schema": PROVENANCE_SCHEMA,
+        "sbom": {
+            "bom_format": "CycloneDX",
+            "candidate_name": SBOM_NAME,
+            "candidate_ref": SBOM_REF,
+            "dependency_closure_required": True,
+            "spec_version": "1.5",
+        },
+        "schema": PRODUCER_CONTRACT_SCHEMA,
+    }
+    write(producer_contract_path, canonical_json(producer_contract))
 
     binaries_a: dict[str, pathlib.Path] = {}
     binaries_b: dict[str, pathlib.Path] = {}
@@ -183,12 +264,12 @@ def fixture(base: pathlib.Path):
         write(binaries_b[name], content)
 
     script_root = pathlib.Path(__file__).resolve().parent
-    tools = {
-        "gate": script_root / "check-paper-raid-chain-sbom.sh",
-        "generator": script_root / "generate-paper-raid-chain-sbom.py",
-        "library": script_root / "paper_raid_chain_sbom_lib.py",
-        "verifier": script_root / "verify-paper-raid-chain-sbom.py",
-    }
+    tools = {}
+    for name, relative in TOOL_RELATIVE_PATHS.items():
+        source_tool = script_root.parent / relative
+        fixture_tool = source / relative
+        write(fixture_tool, source_tool.read_bytes())
+        tools[name] = fixture_tool
     cargo_version_path = base / "cargo-version-verbose.txt"
     rustc_version_path = base / "rustc-version-verbose.txt"
     write(
@@ -211,10 +292,12 @@ def fixture(base: pathlib.Path):
     )
     arguments = {
         "metadata_path": metadata_path,
+        "metadata_evidence_path": metadata_evidence_path,
         "source_root": source,
         "revision": "a" * 40,
         "source_tree": "b" * 40,
         "component_lock_path": lock_path,
+        "producer_contract_path": producer_contract_path,
         "cargo_version_path": cargo_version_path,
         "rustc_version_path": rustc_version_path,
         "binaries_a": binaries_a,
@@ -237,17 +320,27 @@ def main() -> None:
         if signal_guard not in gate_text:
             raise AssertionError(f"missing fail-stop signal guard: {signal_guard}")
     for publication_guard in (
-        "evidence parent must be owned by the invoking uid and not group/world writable",
-        "evidence staging identity changed before publication",
-        "evidence artifact set differs",
-        "os.O_NOFOLLOW | os.O_NONBLOCK",
-        "renameat2(",
-        "published evidence identity differs from staging",
+        "Integration release evidence publisher must be a regular non-symlink file",
+        'python3 "$publisher"',
+        '--binary-a "consensus_app=$scratch/target-a/release/trnm-cometbft-app"',
+        '--binary-a "receipt_v4=$scratch/target-a/release/trnm-research-receipt-v2"',
+        '--binary-b "consensus_app=$scratch/target-b/release/trnm-cometbft-app"',
+        '--binary-b "receipt_v4=$scratch/target-b/release/trnm-research-receipt-v2"',
         "A successful gate must also remove the build scratch before printing PASS",
     ):
         if publication_guard not in gate_text:
             raise AssertionError(
                 f"missing atomic evidence publication guard: {publication_guard}"
+            )
+    for forbidden_release_fragment in (
+        "target-a/debug",
+        "target-b/debug",
+        "trnm-chain-cli",
+        "--features legacy-harness",
+    ):
+        if forbidden_release_fragment in gate_text:
+            raise AssertionError(
+                f"release gate retained historical debug/CLI path: {forbidden_release_fragment}"
             )
     with tempfile.TemporaryDirectory(prefix="trnm-chain-sbom-selftest-") as raw_base:
         base = pathlib.Path(raw_base)
@@ -327,6 +420,10 @@ def main() -> None:
             if package.get("name") == "shared-dep":
                 package["checksum"] = None
         write(metadata_path, canonical_json(null_registry_checksum))
+        write(
+            arguments["metadata_evidence_path"],
+            build_cargo_metadata_evidence(metadata_path, arguments["source_root"]),
+        )
         verify_artifacts(**verify_arguments)
         mismatched_registry_checksum = copy.deepcopy(metadata)
         for package in mismatched_registry_checksum["packages"]:
@@ -338,6 +435,10 @@ def main() -> None:
             lambda: verify_artifacts(**verify_arguments),
         )
         write(metadata_path, canonical_json(metadata))
+        write(
+            arguments["metadata_evidence_path"],
+            build_cargo_metadata_evidence(metadata_path, arguments["source_root"]),
+        )
 
         lock_path = arguments["source_root"] / "trillionnium" / "Cargo.lock"
         original_lock = lock_path.read_bytes()
@@ -360,7 +461,7 @@ def main() -> None:
         expect_rejected("Cargo toolchain evidence drift", lambda: verify_artifacts(**verify_arguments))
         write(cargo_version, original_cargo_version)
 
-        binary_b = arguments["binaries_b"]["trnm-chain-cli"]
+        binary_b = arguments["binaries_b"]["trnm-research-receipt-v2"]
         original_binary = binary_b.read_bytes()
         write(binary_b, original_binary + b"tamper")
         expect_rejected("isolated binary mismatch", lambda: verify_artifacts(**verify_arguments))
@@ -375,6 +476,49 @@ def main() -> None:
         expect_rejected("duplicate Integration live binary", lambda: verify_artifacts(**verify_arguments))
         write(lock_fixture_path, canonical_json(component_lock))
 
+        debug_lock = copy.deepcopy(component_lock)
+        debug_lock["components"][0]["live_binaries"][0]["cargo_profile"] = "debug"
+        write(lock_fixture_path, canonical_json(debug_lock))
+        expect_rejected("debug Integration candidate", lambda: verify_artifacts(**verify_arguments))
+        write(lock_fixture_path, canonical_json(component_lock))
+
+        legacy_receipt_lock = copy.deepcopy(component_lock)
+        legacy_receipt_lock["components"][0]["live_binaries"][1]["artifact_id"] = (
+            "receipt_" + "v2"
+        )
+        write(lock_fixture_path, canonical_json(legacy_receipt_lock))
+        expect_rejected("legacy Receipt V2 authority", lambda: verify_artifacts(**verify_arguments))
+        write(lock_fixture_path, canonical_json(component_lock))
+
+        digest_lock = copy.deepcopy(component_lock)
+        digest_lock["components"][0]["live_binaries"][1]["executable_sha256"] = "f" * 64
+        write(lock_fixture_path, canonical_json(digest_lock))
+        expect_rejected("locked executable digest drift", lambda: verify_artifacts(**verify_arguments))
+        write(lock_fixture_path, canonical_json(component_lock))
+
+        signing_lock = copy.deepcopy(component_lock)
+        del signing_lock["components"][0]["paper_raid_v4_signing_authority"]
+        write(lock_fixture_path, canonical_json(signing_lock))
+        expect_rejected("missing V4 signing authority", lambda: verify_artifacts(**verify_arguments))
+        write(lock_fixture_path, canonical_json(component_lock))
+
+        strict_driver_lock = copy.deepcopy(component_lock)
+        del strict_driver_lock["components"][0]["strict_review_driver_sha256"]
+        write(lock_fixture_path, canonical_json(strict_driver_lock))
+        expect_rejected(
+            "missing strict Review driver digest",
+            lambda: verify_artifacts(**verify_arguments),
+        )
+        write(lock_fixture_path, canonical_json(component_lock))
+
+        producer_contract_path = arguments["producer_contract_path"]
+        producer_contract = producer_contract_path.read_bytes()
+        contract_value = copy.deepcopy(json.loads(producer_contract.decode("utf-8")))
+        contract_value["build"]["profile"] = "debug"
+        write(producer_contract_path, canonical_json(contract_value))
+        expect_rejected("debug producer contract", lambda: verify_artifacts(**verify_arguments))
+        write(producer_contract_path, producer_contract)
+
         live_driver = arguments["source_root"].joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
         original_live_driver = live_driver.read_bytes()
         write(live_driver, original_live_driver + b"# tamper\n")
@@ -383,6 +527,20 @@ def main() -> None:
             lambda: verify_artifacts(**verify_arguments),
         )
         write(live_driver, original_live_driver)
+
+        strict_review_driver = arguments["source_root"].joinpath(
+            *STRICT_REVIEW_DRIVER_RELATIVE_PATH.parts
+        )
+        original_strict_review_driver = strict_review_driver.read_bytes()
+        write(
+            strict_review_driver,
+            original_strict_review_driver + b"# tamper\n",
+        )
+        expect_rejected(
+            "Integration strict Review driver hash drift",
+            lambda: verify_artifacts(**verify_arguments),
+        )
+        write(strict_review_driver, original_strict_review_driver)
 
         symlink = arguments["source_root"] / "forbidden-link"
         symlink.symlink_to("rust-toolchain.toml")
