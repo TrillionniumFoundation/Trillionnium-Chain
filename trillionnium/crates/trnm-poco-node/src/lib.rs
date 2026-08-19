@@ -175,6 +175,7 @@ mod native_proposal_p_host;
 mod ordinary_timeout;
 #[cfg(feature = "legacy-consensus-app")]
 mod process_host;
+mod remote_signer_roles_v1;
 
 #[cfg(feature = "legacy-consensus-app")]
 pub use authenticated_genesis_commissioning::{
@@ -280,6 +281,18 @@ pub use process_host::{
     PocoNodeInertEffectKindV0, PocoNodeProcessBootstrapFactsV0, PocoNodeProcessBootstrapModeV0,
     PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
     PocoNodeProcessLifecyclePhaseV0,
+};
+pub use remote_signer_roles_v1::{
+    decode_remote_signer_role_bindings_v1_exact, ConsensusRemoteSignerProfileV1,
+    ConsensusSignerPurposeV1, ConsensusTimeoutSignCommandV1, ConsensusVoteSignCommandV1,
+    OperatorRecoveryPublicKeyV1, OperatorRecoveryRemoteSignerProfileV1,
+    OperatorRecoverySigningPurposeV1, P2pIdentityPublicKeyV1, P2pIdentityRemoteSignerProfileV1,
+    P2pIdentitySigningPurposeV1, PocoNodeRemoteSignerRoleBindingsV1, RemoteSignerEndpointRefV1,
+    RemoteSignerProfileRefV1, RemoteSignerRoleConfigErrorV1, RemoteSignerRoleV1,
+    MAX_REMOTE_SIGNER_ENDPOINT_DESCRIPTOR_BYTES_V1, MAX_REMOTE_SIGNER_PROFILE_DESCRIPTOR_BYTES_V1,
+    MAX_REMOTE_SIGNER_ROLE_BINDINGS_BYTES_V1, REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1,
+    REMOTE_SIGNER_ROLE_BINDINGS_SCHEMA_V1, REMOTE_SIGNER_RUNTIME_ACTIVATION_V1,
+    REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1,
 };
 
 /// This package must not be interpreted as a deployable consensus candidate.
