@@ -26,6 +26,18 @@
 //! itself preserve HotStuff lock safety after a whole SafetyStore rollback.
 //! Production activation remains blocked on a host-level reconciliation proof
 //! that binds Core/SafetyState, this journal, and the external watermark.
+//! Schema1 preserves the same boundary explicitly:
+//! `safety_rules_evaluation=false`, `safe_vote_authority=false`, and
+//! `production_activation=false`. Canonical Vote/Timeout intent revision and
+//! shape are conflict/accounting inputs, not proof that locked-QC or proposal
+//! ancestry rules passed. Any future runtime integration must first consume an
+//! unforgeable, durably persisted SafetyRules admission in the same trust
+//! domain before this journal may reach a signer producer.
+//!
+//! Schema1 also has no atomic migration of a schema0 external-watermark scope.
+//! It therefore cannot claim to prevent the same key from signing concurrently
+//! through an old journal or another scope. Schema0 remains read-only to the
+//! schema1 API; runtime wiring remains v0 and inactive.
 //! Existing journals can be opened through a two-phase startup boundary:
 //! [`PinnedSqliteSignerJournalV0`] authenticates and pins the local namespace
 //! and observes the external watermark without advancing it; only its
@@ -40,6 +52,10 @@
 //! untrusted same-EUID process.
 
 mod error;
+mod handoff_error_v1;
+mod handoff_model_v1;
+mod handoff_schema_v1;
+mod handoff_sqlite_v1;
 mod hash;
 mod model;
 mod schema;
@@ -48,6 +64,15 @@ mod sqlite;
 pub use error::{
     ExternalWatermarkErrorV0, SignatureProducerErrorV0, SignerJournalConflictV0,
     SignerJournalErrorV0,
+};
+pub use handoff_error_v1::{HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1};
+pub use handoff_model_v1::{
+    HandoffSignatureProducerV1, HandoffSignatureRequestV1, HandoffSignerJournalProfileV1,
+    StrictOldSetHandoffAdmissionV1,
+};
+pub use handoff_sqlite_v1::{
+    inspect_signer_journal_schema_read_only_v1, SignerJournalSchemaKindV1,
+    SqliteHandoffSignerJournalV1,
 };
 pub use model::{
     ExternalMonotonicWatermarkV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
