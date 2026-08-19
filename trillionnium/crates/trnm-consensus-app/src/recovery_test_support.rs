@@ -19,17 +19,25 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use bytes::Bytes;
+use tendermint_abci::Application;
+use tendermint_proto::v0_38::types::{ConsensusParams, VersionParams};
 use trnm_consensus_core::{
-    PayloadValidationRecoveryChallengeV0, PayloadValidationRecoveryDecisionV0,
-    PayloadValidationRecoveryReconcilerV0, PayloadValidationRouteV0, SafetyStatePersistenceV0,
-    ValidationId,
+    CoreConfig, PayloadValidationRecoveryChallengeV0, PayloadValidationRecoveryDecisionV0,
+    PayloadValidationRecoveryReconcilerV0, PayloadValidationRouteV0, SafetyState,
+    SafetyStatePersistenceV0, ValidationId,
 };
 use trnm_consensus_types::ChainId;
 
 use crate::{
+    native_execution::NativeBlockExecutionV0,
     native_payload_validation::prepare_recovery_test_durable_invalid_v0,
     native_validation_artifact::DurableDeterministicInvalidReasonV0,
+    signer_policy_commitment,
     store::{
+        empty_native_application_trusted_base_root_for_recovery_test_v0 as empty_trusted_base_root_v0,
+        native_application_h1_trusted_base_v0,
+        native_application_h1_validator_lifecycle_expectation_v0,
         native_validation_recovery::{
             bootstrap_native_validation_safety_binding_manifest_v0,
             NativeValidationRecoveredInvalidCallbackFactsV0,
@@ -42,7 +50,308 @@ use crate::{
         NativeValidationInvalidSealDecisionV0, NativeValidationJobStateV0,
         NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
     },
+    validator_lifecycle::{
+        validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1, ValidatorLifecycleStateV1,
+        VALIDATOR_GOVERNANCE_SCHEMA_V1,
+    },
+    AuthorizedSignerV1, CometBftApplication, ConsensusAppConfig, GenesisAppStateV2, APP_VERSION,
+    CONFIG_SCHEMA_V1, GENESIS_SCHEMA_V2,
 };
+
+/// Deterministic execution commitments for the empty h2/h3 bodies above the
+/// canonical h1 test checkpoint. These are derived by the same JMT planner
+/// and empty receipt implementation used by production validation; no durable
+/// job, callback, overlay, or Core authority is installed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NativeEmptyAnchorSuccessorCommitmentsV0 {
+    h2_state_root: [u8; 32],
+    h2_receipts_root: [u8; 32],
+    h3_state_root: [u8; 32],
+    h3_receipts_root: [u8; 32],
+}
+
+impl NativeEmptyAnchorSuccessorCommitmentsV0 {
+    pub const fn h2_state_root(self) -> [u8; 32] {
+        self.h2_state_root
+    }
+
+    pub const fn h2_receipts_root(self) -> [u8; 32] {
+        self.h2_receipts_root
+    }
+
+    pub const fn h3_state_root(self) -> [u8; 32] {
+        self.h3_state_root
+    }
+
+    pub const fn h3_receipts_root(self) -> [u8; 32] {
+        self.h3_receipts_root
+    }
+}
+
+/// Plans the exact empty h2 and h3 speculative state roots without opening a
+/// durable namespace. V0 rejects a geometry whose scheduled PoCO cutoff falls
+/// on either height because that body would require a manifest refresh write.
+pub fn empty_state_sync_anchor_successor_commitments_for_recovery_test_v0(
+    bundle: &NativeValidationRecoveryTestConfigBundleV0,
+    core_config: &CoreConfig,
+) -> Result<NativeEmptyAnchorSuccessorCommitmentsV0, NativeValidationRecoveryTestFixtureErrorV0> {
+    let lifecycle = recovery_test_validator_lifecycle_v0(bundle, core_config)?;
+    let mut h2_lifecycle = lifecycle.clone();
+    h2_lifecycle
+        .prepare_height(2)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let mut h3_lifecycle = h2_lifecycle.clone();
+    h3_lifecycle
+        .prepare_height(3)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    if h2_lifecycle != lifecycle || h3_lifecycle != lifecycle {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    let geometry = trnm_consensus_types::EpochGeometryV0::new(
+        core_config.validator_set().epoch(),
+        core_config.consensus_parameters(),
+    )
+    .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let cutoff = geometry
+        .checkpoint_height()
+        .get()
+        .checked_sub(core_config.consensus_parameters().snapshot_lead_blocks())
+        .ok_or(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    if matches!(cutoff, 2 | 3) {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    let (mut authenticated, _) = native_application_h1_trusted_base_v0(1, core_config, &lifecycle)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let h2 = authenticated
+        .plan_put_value_set(2, Vec::new())
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let h2_state_root = h2.root_hash.0;
+    authenticated
+        .apply(h2)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let h3 = authenticated
+        .plan_put_value_set(3, Vec::new())
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let h3_state_root = h3.root_hash.0;
+    let receipts_root = NativeBlockExecutionV0::try_new(&[], Vec::new())
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?
+        .execution_receipts()
+        .receipts_root()
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    Ok(NativeEmptyAnchorSuccessorCommitmentsV0 {
+        h2_state_root,
+        h2_receipts_root: *receipts_root.as_bytes(),
+        h3_state_root,
+        h3_receipts_root: *receipts_root.as_bytes(),
+    })
+}
+
+/// Deterministically derives the exact fresh schema-v12 h1 JMT root used by
+/// the recovery fixture. The projection contains the validator lifecycle and
+/// the Core-pinned kind-13/kind-14 configuration, but no kind-16 application
+/// authority or node-local replay history.
+pub fn empty_native_application_trusted_base_root_for_recovery_test_v0(
+    height: u64,
+    bundle: &NativeValidationRecoveryTestConfigBundleV0,
+    core_config: &CoreConfig,
+) -> Result<[u8; 32], NativeValidationRecoveryTestFixtureErrorV0> {
+    if height == 0 {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::PositiveHeightCheckpointRequired);
+    }
+    let lifecycle = recovery_test_validator_lifecycle_v0(bundle, core_config)?;
+    empty_trusted_base_root_v0(height, core_config, &lifecycle)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)
+}
+
+fn recovery_test_validator_lifecycle_v0(
+    bundle: &NativeValidationRecoveryTestConfigBundleV0,
+    core_config: &CoreConfig,
+) -> Result<ValidatorLifecycleStateV1, NativeValidationRecoveryTestFixtureErrorV0> {
+    native_application_h1_validator_lifecycle_expectation_v0(core_config, &bundle.application)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::InvalidApplicationConfig)
+}
+
+const RECOVERY_TEST_SIGNER_PUBLIC_KEY_HEX_V0: &str =
+    "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a";
+
+/// Paired application/recovery configuration derived from one canonical
+/// signer-policy preimage. Callers cannot supply a detached policy hash that
+/// disagrees with the `ConsensusAppConfig` later opened by the process host.
+#[derive(Debug, Clone)]
+pub struct NativeValidationRecoveryTestConfigBundleV0 {
+    application: ConsensusAppConfig,
+    recovery: NativeValidationRecoveryTestFixtureConfigV0,
+}
+
+impl NativeValidationRecoveryTestConfigBundleV0 {
+    pub fn new(
+        status_path: impl AsRef<Path>,
+        chain_id: ChainId,
+        expected_safety_journal_id: [u8; 32],
+        expected_safety_verifier_profile_ref: [u8; 32],
+    ) -> Result<Self, NativeValidationRecoveryTestFixtureErrorV0> {
+        let authorized_signers = vec![AuthorizedSignerV1 {
+            signer_id: "did:operator:recovery-test".to_string(),
+            signer_role: "operator".to_string(),
+            public_key_hex: RECOVERY_TEST_SIGNER_PUBLIC_KEY_HEX_V0.to_string(),
+        }];
+        let signer_policy_hash = signer_policy_commitment(&authorized_signers);
+        let recovery = NativeValidationRecoveryTestFixtureConfigV0::new(
+            status_path,
+            chain_id,
+            signer_policy_hash,
+            expected_safety_journal_id,
+            expected_safety_verifier_profile_ref,
+        )?;
+        let application = ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: chain_id.as_str().to_string(),
+            authorized_signers,
+            poco_authority: None,
+            state_path: Some(recovery.status_path().to_path_buf()),
+        };
+        application
+            .validate()
+            .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::InvalidApplicationConfig)?;
+        Ok(Self {
+            application,
+            recovery,
+        })
+    }
+
+    pub fn application_config_v0(&self) -> ConsensusAppConfig {
+        self.application.clone()
+    }
+
+    pub const fn recovery_fixture_config_v0(&self) -> &NativeValidationRecoveryTestFixtureConfigV0 {
+        &self.recovery
+    }
+}
+
+/// Test-only result of initializing the legacy ABCI application at genesis.
+///
+/// This type deliberately exposes only TRNM-owned configuration and the
+/// resulting state commitment. The temporary transport request used to open
+/// the migration-residue application stays inside this feature-gated helper,
+/// so native node tests do not acquire a direct ABCI/protobuf dependency.
+#[derive(Debug, Clone)]
+pub struct LegacyGenesisApplicationTestFixtureV0 {
+    application: ConsensusAppConfig,
+    state_root: [u8; 32],
+}
+
+impl LegacyGenesisApplicationTestFixtureV0 {
+    pub fn application_config_v0(&self) -> ConsensusAppConfig {
+        self.application.clone()
+    }
+
+    pub const fn state_root_v0(&self) -> [u8; 32] {
+        self.state_root
+    }
+}
+
+/// Initializes the current legacy application schema through its ABCI genesis
+/// adapter while keeping every external transport type private to the legacy
+/// application crate.
+///
+/// This is migration test support, not a native production initialization
+/// API. Removing the legacy adapter remains a separate G0 obligation.
+pub fn initialize_legacy_genesis_application_test_fixture_v0(
+    bundle: &NativeValidationRecoveryTestConfigBundleV0,
+    core_config: &CoreConfig,
+) -> Result<LegacyGenesisApplicationTestFixtureV0, NativeValidationRecoveryTestFixtureErrorV0> {
+    let application = bundle.application_config_v0();
+    let governance_signer = application
+        .authorized_signers
+        .first()
+        .filter(|signer| signer.signer_role == "operator")
+        .ok_or(NativeValidationRecoveryTestFixtureErrorV0::InvalidApplicationConfig)?;
+    let mut initial_validators = core_config
+        .validator_set()
+        .validators()
+        .iter()
+        .map(|validator| ConsensusValidatorV1 {
+            public_key_hex: hex::encode(validator.consensus_key().as_bytes()),
+            voting_power: validator.voting_power().get(),
+        })
+        .collect::<Vec<_>>();
+    initial_validators
+        .sort_unstable_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+    let request_validators = validators_to_abci(&initial_validators)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::InvalidApplicationConfig)?;
+    let genesis = GenesisAppStateV2 {
+        schema: GENESIS_SCHEMA_V2.to_string(),
+        chain_id: application.chain_id.clone(),
+        app_version: APP_VERSION,
+        authorized_signers: application.authorized_signers.clone(),
+        poco_authority: application.poco_authority.clone(),
+        poco_genesis_entries: Vec::new(),
+        validator_governance: ValidatorGovernanceV1 {
+            schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
+            signer_id: governance_signer.signer_id.clone(),
+            min_activation_delay_blocks: 2,
+            unsafe_allow_single_validator_genesis: false,
+        },
+        initial_validators,
+    };
+    let app_state_bytes = serde_json::to_vec(&genesis)
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::InvalidApplicationConfig)?;
+    let request = tendermint_proto::v0_38::abci::RequestInitChain {
+        chain_id: application.chain_id.clone(),
+        app_state_bytes: Bytes::from(app_state_bytes),
+        consensus_params: Some(ConsensusParams {
+            version: Some(VersionParams { app: APP_VERSION }),
+            ..Default::default()
+        }),
+        validators: request_validators,
+        ..Default::default()
+    };
+    let expected_validator_count = request.validators.len();
+    let app = CometBftApplication::new(application.clone())
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let response = app.init_chain(request);
+    if response.validators.len() != expected_validator_count {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    let (height, state_root) = app
+        .height_and_app_hash()
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    if height != 0 {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    drop(app);
+    Ok(LegacyGenesisApplicationTestFixtureV0 {
+        application,
+        state_root,
+    })
+}
+
+/// Read-only paths/facts for a fresh schema-v12 h1 TrustedBase fixture.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeEmptyApplicationTestFixtureV0 {
+    status_path: PathBuf,
+    database_path: PathBuf,
+    height: u64,
+    state_root: [u8; 32],
+}
+
+impl NativeEmptyApplicationTestFixtureV0 {
+    pub fn status_path(&self) -> &Path {
+        self.status_path.as_path()
+    }
+
+    pub fn database_path(&self) -> &Path {
+        self.database_path.as_path()
+    }
+
+    pub const fn height(&self) -> u64 {
+        self.height
+    }
+
+    pub const fn state_root(&self) -> [u8; 32] {
+        self.state_root
+    }
+}
 
 /// Canonical target state names used by the cross-crate recovery fixtures.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -177,6 +486,8 @@ pub enum NativeValidationRecoveryTestFixtureErrorV0 {
     StatusParentUnavailable,
     NamespaceAlreadyExists,
     NamespaceMetadataUnavailable,
+    InvalidApplicationConfig,
+    PositiveHeightCheckpointRequired,
     StoreInitialization,
     ChallengeRevisionMismatch,
     ChallengeRequestMalformed,
@@ -202,6 +513,10 @@ impl fmt::Display for NativeValidationRecoveryTestFixtureErrorV0 {
             Self::NamespaceMetadataUnavailable => {
                 "recovery fixture namespace metadata is unavailable"
             }
+            Self::InvalidApplicationConfig => "recovery fixture application config is invalid",
+            Self::PositiveHeightCheckpointRequired => {
+                "recovery fixture requires an authenticated positive-height checkpoint"
+            }
             Self::StoreInitialization => "recovery fixture store initialization failed",
             Self::ChallengeRevisionMismatch => {
                 "recovery fixture challenge revision lineage is invalid"
@@ -219,6 +534,78 @@ impl fmt::Display for NativeValidationRecoveryTestFixtureErrorV0 {
             Self::RecoveryTransition(_) => "recovery fixture durable transition failed",
         })
     }
+}
+
+/// Initializes a fresh current-schema ApplicationStore only when Safety
+/// already authenticates a positive-height application checkpoint. Synthetic
+/// Core genesis is rejected: it carries no exact application state root and
+/// must not be silently converted into a v12 TrustedBase. This fixture writes
+/// the Core-pinned active configuration, but no application authority.
+pub fn initialize_empty_native_application_test_fixture_v0(
+    bundle: &NativeValidationRecoveryTestConfigBundleV0,
+    core_config: &CoreConfig,
+    safety_state: &SafetyState,
+) -> Result<NativeEmptyApplicationTestFixtureV0, NativeValidationRecoveryTestFixtureErrorV0> {
+    let config = bundle.recovery_fixture_config_v0();
+    let applied = safety_state.application_applied();
+    let Some(anchor) = safety_state.state_sync_anchor() else {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::PositiveHeightCheckpointRequired);
+    };
+    let target = anchor.proof().finalized_block().header();
+    if safety_state.chain_id() != config.chain_id()
+        || safety_state.chain_id() != core_config.validator_set().chain_id()
+        || safety_state.validator_set_id() != core_config.validator_set().id()
+        || safety_state.genesis_block_id() != core_config.genesis_block_id()
+        || applied.height().get() == 0
+        || applied.block_id() != target.id()
+        || applied.height() != target.height()
+        || applied.view() != target.view()
+        || applied.timestamp_ms() != target.timestamp_ms()
+    {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::PositiveHeightCheckpointRequired);
+    }
+    let lifecycle = recovery_test_validator_lifecycle_v0(bundle, core_config)?;
+    let expected_state_root =
+        empty_trusted_base_root_v0(applied.height().get(), core_config, &lifecycle)
+            .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    if expected_state_root != *target.state_root().as_bytes() {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    require_absent_v0(config.status_path())?;
+    require_absent_v0(config.database_path())?;
+    let store = ApplicationStore::open(
+        config.status_path(),
+        config.chain_id().as_str(),
+        &hex::encode(config.signer_policy_hash()),
+    )
+    .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    store
+        .load_or_migrate()
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    let state_root = store
+        .initialize_empty_native_trusted_base_for_recovery_test_v0(
+            applied.block_id(),
+            applied.height().get(),
+            core_config,
+            lifecycle,
+        )
+        .map_err(|_| NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization)?;
+    if state_root != expected_state_root {
+        return Err(NativeValidationRecoveryTestFixtureErrorV0::StoreInitialization);
+    }
+    bootstrap_native_validation_safety_binding_manifest_v0(
+        &store,
+        config.expected_safety_journal_id(),
+        config.expected_safety_verifier_profile_ref(),
+    )
+    .map_err(NativeValidationRecoveryTestFixtureErrorV0::RecoveryOpen)?;
+    drop(store);
+    Ok(NativeEmptyApplicationTestFixtureV0 {
+        status_path: config.status_path().to_path_buf(),
+        database_path: config.database_path().to_path_buf(),
+        height: applied.height().get(),
+        state_root,
+    })
 }
 
 impl Error for NativeValidationRecoveryTestFixtureErrorV0 {
@@ -279,7 +666,9 @@ pub fn initialize_native_validation_recovery_test_fixture_v0(
         Ok(NativeValidationReservationDecisionV0::Existing(_)) => {
             return Err(NativeValidationRecoveryTestFixtureErrorV0::ExistingReservation);
         }
-        Err(_) => return Err(NativeValidationRecoveryTestFixtureErrorV0::ReservationFailed),
+        Err(_) => {
+            return Err(NativeValidationRecoveryTestFixtureErrorV0::ReservationFailed);
+        }
     };
     let prepared = prepare_recovery_test_durable_invalid_v0(reservation, durable_reason_v0(reason));
     let live = match store.seal_durable_invalid_and_enqueue_callback_v0(prepared) {

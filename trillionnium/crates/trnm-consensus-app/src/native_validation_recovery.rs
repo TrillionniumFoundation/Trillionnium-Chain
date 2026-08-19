@@ -176,6 +176,9 @@ pub enum NativeValidationRecoveryOpenFailureV0 {
     UnsupportedSchema,
     UnsupportedJob(NativeValidationRecoveryUnsupportedV0),
     DuplicateIdentity,
+    DatabaseUnavailable,
+    HostResourceUnavailable,
+    AuthenticatedGenesisApplicationActivationUnavailable,
     Integrity,
 }
 
@@ -204,6 +207,13 @@ impl fmt::Display for NativeValidationRecoveryOpenFailureV0 {
             Self::UnsupportedSchema => "validation recovery requires exact schema v8",
             Self::UnsupportedJob(_) => "validation recovery found an unsupported job state",
             Self::DuplicateIdentity => "validation recovery found a duplicate full identity",
+            Self::DatabaseUnavailable => "validation recovery database is unavailable",
+            Self::HostResourceUnavailable => {
+                "validation recovery host resources are temporarily unavailable"
+            }
+            Self::AuthenticatedGenesisApplicationActivationUnavailable => {
+                "authenticated-genesis application requires its dedicated inert bootstrap owner"
+            }
             Self::Integrity => "validation recovery database integrity validation failed",
         })
     }
@@ -610,8 +620,21 @@ enum RecoveredCompletionInvalidV0 {
 pub struct NativeValidationRecoveryStoreV0 {
     store: ApplicationStore,
     namespace_pin: NativeValidationRecoveryNamespacePinV0,
+    coordinator: NativeValidationRecoveryCoordinatorV0,
+}
+
+/// Store-less owner of deterministic-invalid recovery state.
+///
+/// The coordinator deliberately owns neither the application database nor its
+/// namespace pin.  Every operation receives both as borrowed authorities, so
+/// a wider application host can retain one exclusive store owner while using
+/// the same deterministic-invalid reconciliation machinery.  It is
+/// intentionally non-`Clone` and never exposes recovered callback owners.
+#[must_use = "the recovery coordinator owns recovered callback authority"]
+pub(crate) struct NativeValidationRecoveryCoordinatorV0 {
     expected_safety_journal_id: [u8; 32],
     expected_safety_verifier_profile_ref: [u8; 32],
+    coexisting_native_history: bool,
     supported_job_count: usize,
     active_recovery_job_count: usize,
     acked_history_job_count: usize,
@@ -620,6 +643,26 @@ pub struct NativeValidationRecoveryStoreV0 {
     completion: Option<RecoveredCompletionInvalidV0>,
     reconciled_safety_head_revision: Option<u64>,
     last_reconcile_failure: Option<NativeValidationRecoveryReconcileFailureV0>,
+}
+
+struct NativeValidationRecoveryBorrowedV0<'a> {
+    coordinator: &'a mut NativeValidationRecoveryCoordinatorV0,
+    store: &'a ApplicationStore,
+    namespace_pin: &'a NativeValidationRecoveryNamespacePinV0,
+}
+
+impl std::ops::Deref for NativeValidationRecoveryBorrowedV0<'_> {
+    type Target = NativeValidationRecoveryCoordinatorV0;
+
+    fn deref(&self) -> &Self::Target {
+        self.coordinator
+    }
+}
+
+impl std::ops::DerefMut for NativeValidationRecoveryBorrowedV0<'_> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.coordinator
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -825,7 +868,7 @@ pub(crate) fn bootstrap_native_validation_safety_binding_manifest_v0(
     Ok(())
 }
 
-struct NativeValidationRecoveryNamespacePinV0 {
+pub(crate) struct NativeValidationRecoveryNamespacePinV0 {
     owner_pid: u32,
     canonical_parent: PathBuf,
     parent_handle: File,
@@ -839,7 +882,9 @@ struct NativeValidationRecoveryNamespacePinV0 {
 }
 
 impl NativeValidationRecoveryNamespacePinV0 {
-    fn capture(store: &ApplicationStore) -> Result<Self, NativeValidationRecoveryOpenFailureV0> {
+    pub(crate) fn capture(
+        store: &ApplicationStore,
+    ) -> Result<Self, NativeValidationRecoveryOpenFailureV0> {
         store
             .validate_namespace_owner_v0()
             .map_err(map_namespace_open_failure_v0)?;
@@ -885,12 +930,33 @@ impl NativeValidationRecoveryNamespacePinV0 {
         Ok(pin)
     }
 
-    fn validate_open_v0(
+    pub(crate) fn validate_open_v0(
         &self,
         store: &ApplicationStore,
     ) -> Result<(), NativeValidationRecoveryOpenFailureV0> {
         self.validate_raw_v0(store)
             .map_err(map_namespace_open_failure_v0)
+    }
+
+    pub(crate) fn matches_safety_provenance_v0(
+        &self,
+        safety_journal_id: [u8; 32],
+        safety_verifier_profile_ref: [u8; 32],
+    ) -> bool {
+        self.safety_binding.manifest.safety_journal_id == safety_journal_id
+            && self.safety_binding.manifest.safety_verifier_profile_ref
+                == safety_verifier_profile_ref
+    }
+
+    /// Commits to the exact, already decoded and lifetime-pinned canonical
+    /// Safety binding bytes.  This is comparison material only: it does not
+    /// recreate the manifest, relax the namespace pin, or grant SafetyStore
+    /// authority.
+    pub(crate) fn safety_binding_manifest_checksum_v0(&self) -> [u8; 32] {
+        hash_domain(
+            "trnm.application.native-validation.safety-binding-canonical-bytes.v0",
+            &[&self.safety_binding.bytes],
+        )
     }
 
     fn validate_reconcile_v0(
@@ -1025,6 +1091,11 @@ fn map_namespace_open_failure_v0(
         ApplicationStoreNamespaceOpenFailureV0::ProcessChanged => {
             NativeValidationRecoveryOpenFailureV0::ProcessChanged
         }
+        ApplicationStoreNamespaceOpenFailureV0::
+            AuthenticatedGenesisApplicationActivationUnavailable => {
+                NativeValidationRecoveryOpenFailureV0::
+                    AuthenticatedGenesisApplicationActivationUnavailable
+            }
         ApplicationStoreNamespaceOpenFailureV0::InvalidPath
         | ApplicationStoreNamespaceOpenFailureV0::Io => {
             NativeValidationRecoveryOpenFailureV0::Integrity
@@ -1121,208 +1192,21 @@ impl NativeValidationRecoveryStoreV0 {
         )
         .map_err(map_namespace_open_failure_v0)?;
         let namespace_pin = NativeValidationRecoveryNamespacePinV0::capture(&store)?;
-        if namespace_pin.safety_binding.manifest.safety_journal_id != expected_safety_journal_id
-            || namespace_pin
-                .safety_binding
-                .manifest
-                .safety_verifier_profile_ref
-                != expected_safety_verifier_profile_ref
-        {
-            return Err(NativeValidationRecoveryOpenFailureV0::InvalidSafetyProvenance);
-        }
-        namespace_pin.validate_open_v0(&store)?;
-        store
-            .probe_existing_database()
-            .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)?;
-        namespace_pin.validate_open_v0(&store)?;
-        let connection = store
-            .connect_read()
-            .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)?;
-        namespace_pin.validate_open_v0(&store)?;
-        if metadata(&connection, "schema_version")
-            .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)?
-            != STORE_SCHEMA_VERSION
-        {
-            return Err(NativeValidationRecoveryOpenFailureV0::UnsupportedSchema);
-        }
-        preflight_supported_recovery_rows_v0(&connection)?;
-        let mut identities = BTreeMap::new();
-        let mut active_recovery_job_count = 0_usize;
-        let mut acked_history_job_count = 0_usize;
-        let mut audited_active_jobs = Vec::new();
-        store
-            .visit_native_validation_recovery_work_v0(&connection, |job| {
-                if identities
-                    .insert(job.validation_id(), job.route())
-                    .is_some()
-                {
-                    return Err(anyhow!("duplicate native validation identity"));
-                }
-                match job.state() {
-                    NativeValidationJobStateV0::CallbackPending => {
-                        let outbox = revalidate_native_validation_job_outbox_v0(
-                            &connection,
-                            &job,
-                            NativeValidationReservationStageV0::ReadExisting,
-                        )
-                        .map_err(|cause| anyhow!("CallbackPending recovery outbox: {cause:?}"))?
-                        .ok_or_else(|| anyhow!("missing CallbackPending recovery outbox"))?;
-                        ensure!(
-                            outbox.delivery_attempt == 0,
-                            "CallbackPending recovery attempt is not zero"
-                        );
-                        active_recovery_job_count = active_recovery_job_count
-                            .checked_add(1)
-                            .ok_or_else(|| anyhow!("active recovery count overflow"))?;
-                        audited_active_jobs.push(NativeValidationRecoveryActiveJobV0 {
-                            route: job.route(),
-                            validation_id: job.validation_id(),
-                            state: job.state(),
-                            row_checksum: job.row_checksum,
-                            outbox_checksum: outbox.callback.outbox_checksum(),
-                        });
-                    }
-                    NativeValidationJobStateV0::Delivered => {
-                        let outbox = revalidate_native_validation_job_outbox_v0(
-                            &connection,
-                            &job,
-                            NativeValidationReservationStageV0::ReadExisting,
-                        )
-                        .map_err(|cause| anyhow!("Delivered recovery outbox: {cause:?}"))?
-                        .ok_or_else(|| anyhow!("missing Delivered recovery outbox"))?;
-                        ensure!(
-                            outbox.delivery_attempt == 1,
-                            "Delivered recovery attempt is not canonical V0 attempt one"
-                        );
-                        active_recovery_job_count = active_recovery_job_count
-                            .checked_add(1)
-                            .ok_or_else(|| anyhow!("active recovery count overflow"))?;
-                        audited_active_jobs.push(NativeValidationRecoveryActiveJobV0 {
-                            route: job.route(),
-                            validation_id: job.validation_id(),
-                            state: job.state(),
-                            row_checksum: job.row_checksum,
-                            outbox_checksum: outbox.callback.outbox_checksum(),
-                        });
-                    }
-                    NativeValidationJobStateV0::Acked => {
-                        acked_history_job_count = acked_history_job_count
-                            .checked_add(1)
-                            .ok_or_else(|| anyhow!("Acked history count overflow"))?;
-                    }
-                    NativeValidationJobStateV0::Reserved
-                    | NativeValidationJobStateV0::Evaluated
-                    | NativeValidationJobStateV0::Applied => {
-                        return Err(anyhow!("unsupported recovery state passed preflight"));
-                    }
-                }
-                drop(job);
-                Ok(())
-            })
-            .map_err(|error| {
-                if error
-                    .to_string()
-                    .contains("duplicate native validation identity")
-                {
-                    NativeValidationRecoveryOpenFailureV0::DuplicateIdentity
-                } else {
-                    NativeValidationRecoveryOpenFailureV0::Integrity
-                }
-            })?;
-        let supported_job_count = identities.len();
-        audited_active_jobs.sort_unstable();
-        namespace_pin.validate_open_v0(&store)?;
+        let coordinator = NativeValidationRecoveryCoordinatorV0::open_existing_v0(
+            &store,
+            &namespace_pin,
+            expected_safety_journal_id,
+            expected_safety_verifier_profile_ref,
+        )?;
         Ok(Self {
             store,
             namespace_pin,
-            expected_safety_journal_id,
-            expected_safety_verifier_profile_ref,
-            supported_job_count,
-            active_recovery_job_count,
-            acked_history_job_count,
-            audited_active_jobs,
-            obligation: None,
-            completion: None,
-            reconciled_safety_head_revision: None,
-            last_reconcile_failure: None,
+            coordinator,
         })
     }
+}
 
-    pub const fn last_reconcile_failure_v0(
-        &self,
-    ) -> Option<NativeValidationRecoveryReconcileFailureV0> {
-        self.last_reconcile_failure
-    }
-
-    /// Total number of deeply verified CallbackPending/Delivered/Acked rows
-    /// seen at existing-only open. This is diagnostic only; use
-    /// `active_recovery_job_count_v0` for an Ordinary-context startup gate.
-    pub const fn supported_recovery_job_count_v0(&self) -> usize {
-        self.supported_job_count
-    }
-
-    /// Number of unfinished CallbackPending/Delivered rows. Only this count,
-    /// not historical Acked tombstones, may block an Ordinary SafetyStore
-    /// startup context.
-    pub const fn active_recovery_job_count_v0(&self) -> usize {
-        self.active_recovery_job_count
-    }
-
-    /// Number of deeply verified historical Acked tombstones. They remain
-    /// auditable but are not unfinished recovery work.
-    pub const fn acked_history_job_count_v0(&self) -> usize {
-        self.acked_history_job_count
-    }
-
-    /// Reopens the pinned main database, deeply revalidates every supported
-    /// journal row, and proves that the exact active P/D set still matches the
-    /// facade's current owner. Historical Acked rows remain audited but never
-    /// count as unfinished work.
-    pub fn final_exact_audit_v0(
-        &self,
-    ) -> std::result::Result<(), NativeValidationRecoveryTransitionFailureV0> {
-        self.namespace_pin.validate_transition_v0(&self.store)?;
-        let connection = self
-            .store
-            .connect_read()
-            .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-        let audit = audit_recovery_journal_v0(&self.store, &connection)?;
-        if let Some(completion) = self.completion.as_ref() {
-            let (route, id) = recovered_completion_identity_v0(completion);
-            match completion {
-                RecoveredCompletionInvalidV0::Delivered(_) => {
-                    require_exact_active_recovery_job_v0(
-                        &audit,
-                        route,
-                        id,
-                        NativeValidationJobStateV0::Delivered,
-                    )?;
-                }
-                RecoveredCompletionInvalidV0::Acked(_) => {
-                    require_empty_active_recovery_set_v0(&audit)?;
-                }
-            }
-        } else if let Some(obligation) = self.obligation.as_ref() {
-            let (route, id) = recovered_obligation_identity_v0(obligation);
-            let state = match obligation {
-                RecoveredObligationInvalidV0::CallbackPending(_) => {
-                    NativeValidationJobStateV0::CallbackPending
-                }
-                RecoveredObligationInvalidV0::Delivered(_) => NativeValidationJobStateV0::Delivered,
-            };
-            require_exact_active_recovery_job_v0(&audit, route, id, state)?;
-        }
-        if audit.supported_job_count != self.supported_job_count
-            || audit.active_recovery_job_count != self.active_recovery_job_count
-            || audit.acked_history_job_count != self.acked_history_job_count
-            || audit.active_jobs != self.audited_active_jobs
-        {
-            return Err(NativeValidationRecoveryTransitionFailureV0::ActiveSetMismatch);
-        }
-        self.namespace_pin.validate_transition_v0(&self.store)?;
-        Ok(())
-    }
-
+impl NativeValidationRecoveryBorrowedV0<'_> {
     fn install_audit_v0(&mut self, audit: NativeValidationRecoveryJournalAuditV0) {
         self.supported_job_count = audit.supported_job_count;
         self.active_recovery_job_count = audit.active_recovery_job_count;
@@ -1346,28 +1230,6 @@ impl NativeValidationRecoveryStoreV0 {
         Ok(())
     }
 
-    pub fn recovered_obligation_state_v0(&self) -> Option<NativeValidationRecoveredInvalidStateV0> {
-        self.obligation.as_ref().map(|owner| match owner {
-            RecoveredObligationInvalidV0::CallbackPending(_) => {
-                NativeValidationRecoveredInvalidStateV0::CallbackPending
-            }
-            RecoveredObligationInvalidV0::Delivered(_) => {
-                NativeValidationRecoveredInvalidStateV0::Delivered
-            }
-        })
-    }
-
-    pub fn recovered_obligation_callback_facts_v0(
-        &self,
-    ) -> Option<NativeValidationRecoveredInvalidCallbackFactsV0> {
-        self.obligation.as_ref().map(|owner| match owner {
-            RecoveredObligationInvalidV0::CallbackPending(owner) => {
-                callback_facts_v0(&owner.verified)
-            }
-            RecoveredObligationInvalidV0::Delivered(owner) => callback_facts_v0(&owner.verified),
-        })
-    }
-
     /// Records Core acceptance after the caller has stepped the recovered
     /// deterministic-invalid callback and obtained the exact resulting
     /// SafetyState.  `CallbackPending` advances atomically to `Delivered`;
@@ -1380,7 +1242,7 @@ impl NativeValidationRecoveryStoreV0 {
         NativeValidationRecoveredInvalidCallbackFactsV0,
         NativeValidationRecoveryTransitionFailureV0,
     > {
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         let expected_revision = self
             .reconciled_safety_head_revision
             .ok_or(NativeValidationRecoveryTransitionFailureV0::MissingOwner)?
@@ -1396,7 +1258,7 @@ impl NativeValidationRecoveryStoreV0 {
             .as_ref()
             .map(recovered_obligation_identity_v0)
             .ok_or(NativeValidationRecoveryTransitionFailureV0::MissingOwner)?;
-        validate_exact_invalid_completion_head_v0(&self.store, persistence.state(), route, id)?;
+        validate_exact_invalid_completion_head_v0(self.store, persistence.state(), route, id)?;
 
         let next_owner = match self
             .obligation
@@ -1404,15 +1266,22 @@ impl NativeValidationRecoveryStoreV0 {
             .ok_or(NativeValidationRecoveryTransitionFailureV0::MissingOwner)?
         {
             RecoveredObligationInvalidV0::CallbackPending(owner) => {
-                let verified =
-                    mark_recovered_callback_pending_delivered_v0(&self.store, owner.as_ref())?;
+                let verified = mark_recovered_callback_pending_delivered_v0(
+                    self.store,
+                    owner.as_ref(),
+                    self.coexisting_native_history,
+                )?;
                 RecoveredObligationInvalidV0::Delivered(Box::new(RecoveredDeliveredInvalidV0 {
                     verified,
                     issuing_writer_gate: Arc::clone(&self.store.writer_gate),
                 }))
             }
             RecoveredObligationInvalidV0::Delivered(owner) => {
-                let verified = reload_exact_delivered_owner_v0(&self.store, owner.as_ref())?;
+                let verified = reload_exact_delivered_owner_v0(
+                    self.store,
+                    owner.as_ref(),
+                    self.coexisting_native_history,
+                )?;
                 RecoveredObligationInvalidV0::Delivered(Box::new(RecoveredDeliveredInvalidV0 {
                     verified,
                     issuing_writer_gate: Arc::clone(&self.store.writer_gate),
@@ -1429,14 +1298,15 @@ impl NativeValidationRecoveryStoreV0 {
             .store
             .connect_read()
             .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-        let audit = audit_recovery_journal_v0(&self.store, &connection)?;
+        let audit =
+            audit_recovery_journal_v0(self.store, &connection, self.coexisting_native_history)?;
         require_exact_active_recovery_job_v0(
             &audit,
             route,
             id,
             NativeValidationJobStateV0::Delivered,
         )?;
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         self.install_audit_v0(audit);
         self.obligation = Some(next_owner);
         Ok(facts)
@@ -1482,17 +1352,18 @@ impl NativeValidationRecoveryStoreV0 {
     where
         C: NativeValidationConfirmedInvalidViewV0,
     {
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         if self.completion.is_some() {
             return Err(NativeValidationRecoveryTransitionFailureV0::WrongOwnerState);
         }
         let (route, id, completion_revision) =
-            exact_invalid_completion_at_head_v0(&self.store, safety_state)?;
+            exact_invalid_completion_at_head_v0(self.store, safety_state)?;
         let connection = self
             .store
             .connect_read()
             .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-        let audit = audit_recovery_journal_v0(&self.store, &connection)?;
+        let audit =
+            audit_recovery_journal_v0(self.store, &connection, self.coexisting_native_history)?;
         let mut matched = None;
         self.store
             .visit_native_validation_recovery_work_v0(&connection, |job| {
@@ -1564,7 +1435,7 @@ impl NativeValidationRecoveryStoreV0 {
             }
             _ => return Err(NativeValidationRecoveryTransitionFailureV0::WrongOwnerState),
         };
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         self.install_audit_v0(audit);
         self.completion = Some(owner);
         Ok(state)
@@ -1609,14 +1480,14 @@ impl NativeValidationRecoveryStoreV0 {
     where
         C: NativeValidationConfirmedInvalidViewV0,
     {
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         let (route, id) = self
             .completion
             .as_ref()
             .map(recovered_completion_identity_v0)
             .ok_or(NativeValidationRecoveryTransitionFailureV0::MissingOwner)?;
         let completion_revision =
-            validate_exact_invalid_completion_head_v0(&self.store, safety_state, route, id)?;
+            validate_exact_invalid_completion_head_v0(self.store, safety_state, route, id)?;
         let next_owner = match self
             .completion
             .as_ref()
@@ -1633,9 +1504,10 @@ impl NativeValidationRecoveryStoreV0 {
                     );
                 }
                 let durable = acknowledge_recovered_delivered_v0(
-                    &self.store,
+                    self.store,
                     owner.as_ref(),
                     completion_revision,
+                    self.coexisting_native_history,
                 )?;
                 RecoveredCompletionInvalidV0::Acked(Box::new(RecoveredAckedInvalidV0 {
                     durable: Box::new(durable),
@@ -1651,8 +1523,12 @@ impl NativeValidationRecoveryStoreV0 {
                         NativeValidationRecoveryTransitionFailureV0::SafetyCompletionMismatch,
                     );
                 }
-                let durable =
-                    reload_exact_acked_owner_v0(&self.store, owner.as_ref(), completion_revision)?;
+                let durable = reload_exact_acked_owner_v0(
+                    self.store,
+                    owner.as_ref(),
+                    completion_revision,
+                    self.coexisting_native_history,
+                )?;
                 RecoveredCompletionInvalidV0::Acked(Box::new(RecoveredAckedInvalidV0 {
                     durable: Box::new(durable),
                     issuing_writer_gate: Arc::clone(&self.store.writer_gate),
@@ -1672,9 +1548,10 @@ impl NativeValidationRecoveryStoreV0 {
             .store
             .connect_read()
             .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-        let audit = audit_recovery_journal_v0(&self.store, &connection)?;
+        let audit =
+            audit_recovery_journal_v0(self.store, &connection, self.coexisting_native_history)?;
         require_empty_active_recovery_set_v0(&audit)?;
-        self.namespace_pin.validate_transition_v0(&self.store)?;
+        self.namespace_pin.validate_transition_v0(self.store)?;
         self.install_audit_v0(audit);
         self.completion = Some(next_owner);
         Ok(facts)
@@ -1689,7 +1566,7 @@ impl NativeValidationRecoveryStoreV0 {
         safety_head_revision: u64,
         first_recorded_revision: u64,
     ) -> std::result::Result<(), NativeValidationRecoveryReconcileFailureV0> {
-        self.namespace_pin.validate_reconcile_v0(&self.store)?;
+        self.namespace_pin.validate_reconcile_v0(self.store)?;
         if self.obligation.is_some() || self.reconciled_safety_head_revision.is_some() {
             return Err(NativeValidationRecoveryReconcileFailureV0::AlreadyReconciled);
         }
@@ -1715,9 +1592,10 @@ impl NativeValidationRecoveryStoreV0 {
             .store
             .connect_read()
             .map_err(|_| NativeValidationRecoveryReconcileFailureV0::StoreUnavailable)?;
-        self.namespace_pin.validate_reconcile_v0(&self.store)?;
-        let audit = audit_recovery_journal_v0(&self.store, &connection)
-            .map_err(map_transition_reconcile_failure_v0)?;
+        self.namespace_pin.validate_reconcile_v0(self.store)?;
+        let audit =
+            audit_recovery_journal_v0(self.store, &connection, self.coexisting_native_history)
+                .map_err(map_transition_reconcile_failure_v0)?;
         let mut matched = None;
         self.store
             .visit_native_validation_recovery_work_v0(&connection, |job| {
@@ -1740,7 +1618,7 @@ impl NativeValidationRecoveryStoreV0 {
                 }
             })?;
         let job = matched.ok_or(NativeValidationRecoveryReconcileFailureV0::Missing)?;
-        validate_native_validation_job_congruence_v0(&expected, &job, &self.store)
+        validate_native_validation_job_congruence_v0(&expected, &job, self.store)
             .map_err(|_| NativeValidationRecoveryReconcileFailureV0::ChallengeFactsMismatch)?;
         if job.creation_revision() != first_recorded_revision {
             return Err(NativeValidationRecoveryReconcileFailureV0::ChallengeRevisionMismatch);
@@ -1790,7 +1668,7 @@ impl NativeValidationRecoveryStoreV0 {
         };
         require_exact_active_recovery_job_v0(&audit, route, id, state)
             .map_err(map_transition_reconcile_failure_v0)?;
-        self.namespace_pin.validate_reconcile_v0(&self.store)?;
+        self.namespace_pin.validate_reconcile_v0(self.store)?;
         self.install_audit_v0(audit);
         self.obligation = Some(owner);
         self.reconciled_safety_head_revision = Some(safety_head_revision);
@@ -1798,12 +1676,432 @@ impl NativeValidationRecoveryStoreV0 {
     }
 }
 
-impl PayloadValidationRecoveryReconcilerV0 for NativeValidationRecoveryStoreV0 {
-    fn reconcile_deterministically_invalid_obligation_v0(
+impl NativeValidationRecoveryCoordinatorV0 {
+    pub(crate) fn open_existing_v0(
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        expected_safety_journal_id: [u8; 32],
+        expected_safety_verifier_profile_ref: [u8; 32],
+    ) -> Result<Self, NativeValidationRecoveryOpenFailureV0> {
+        Self::open_existing_inner_v0(
+            store,
+            namespace_pin,
+            expected_safety_journal_id,
+            expected_safety_verifier_profile_ref,
+            false,
+        )
+    }
+
+    /// Creates the invalid-recovery coordinator after the enclosing native
+    /// application facade has authenticated the complete schema-v12 history.
+    /// Valid and Applied history remains owned by that facade and is ignored
+    /// here; every deterministic-invalid P/D/K row is still deeply audited.
+    pub(crate) fn open_coexisting_existing_v0(
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        expected_safety_journal_id: [u8; 32],
+        expected_safety_verifier_profile_ref: [u8; 32],
+    ) -> Result<Self, NativeValidationRecoveryOpenFailureV0> {
+        Self::open_existing_inner_v0(
+            store,
+            namespace_pin,
+            expected_safety_journal_id,
+            expected_safety_verifier_profile_ref,
+            true,
+        )
+    }
+
+    fn open_existing_inner_v0(
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        expected_safety_journal_id: [u8; 32],
+        expected_safety_verifier_profile_ref: [u8; 32],
+        coexisting_native_history: bool,
+    ) -> Result<Self, NativeValidationRecoveryOpenFailureV0> {
+        if expected_safety_journal_id == [0; 32]
+            || expected_safety_verifier_profile_ref == [0; 32]
+            || !namespace_pin.matches_safety_provenance_v0(
+                expected_safety_journal_id,
+                expected_safety_verifier_profile_ref,
+            )
+        {
+            return Err(NativeValidationRecoveryOpenFailureV0::InvalidSafetyProvenance);
+        }
+        namespace_pin.validate_open_v0(store)?;
+        if !coexisting_native_history {
+            store
+                .probe_existing_database()
+                .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)?;
+            namespace_pin.validate_open_v0(store)?;
+        }
+        let connection = store
+            .connect_read()
+            .map_err(|_| NativeValidationRecoveryOpenFailureV0::DatabaseUnavailable)?;
+        namespace_pin.validate_open_v0(store)?;
+        if coexisting_native_history {
+            connection
+                .execute_batch("BEGIN DEFERRED")
+                .map_err(|_| NativeValidationRecoveryOpenFailureV0::DatabaseUnavailable)?;
+        }
+        let mut identities = Vec::new();
+        let mut active_recovery_job_count = 0_usize;
+        let mut acked_history_job_count = 0_usize;
+        let mut audited_active_jobs = Vec::new();
+        let mut collect = |job: DurableNativeValidationJobV0| -> Result<()> {
+            if job.result_kind != Some(i64::from(durable_deterministic_invalid_result_kind_v0())) {
+                if coexisting_native_history {
+                    return Ok(());
+                }
+                return Err(anyhow!("unsupported recovery result passed preflight"));
+            }
+            identities
+                .try_reserve(1)
+                .context("reserve native validation recovery identity index")?;
+            identities.push((job.validation_id(), job.route()));
+            match job.state() {
+                NativeValidationJobStateV0::CallbackPending => {
+                    let outbox = revalidate_native_validation_job_outbox_v0(
+                        &connection,
+                        &job,
+                        NativeValidationReservationStageV0::ReadExisting,
+                    )
+                    .map_err(|cause| {
+                        native_application_startup_reservation_error_v0(
+                            "CallbackPending recovery outbox",
+                            cause,
+                        )
+                    })?
+                    .ok_or_else(|| anyhow!("missing CallbackPending recovery outbox"))?;
+                    ensure!(
+                        outbox.delivery_attempt == 0,
+                        "CallbackPending recovery attempt is not zero"
+                    );
+                    active_recovery_job_count = active_recovery_job_count
+                        .checked_add(1)
+                        .ok_or_else(|| anyhow!("active recovery count overflow"))?;
+                    audited_active_jobs
+                        .try_reserve(1)
+                        .context("reserve active recovery job index")?;
+                    audited_active_jobs.push(NativeValidationRecoveryActiveJobV0 {
+                        route: job.route(),
+                        validation_id: job.validation_id(),
+                        state: job.state(),
+                        row_checksum: job.row_checksum,
+                        outbox_checksum: outbox.callback.outbox_checksum(),
+                    });
+                }
+                NativeValidationJobStateV0::Delivered => {
+                    let outbox = revalidate_native_validation_job_outbox_v0(
+                        &connection,
+                        &job,
+                        NativeValidationReservationStageV0::ReadExisting,
+                    )
+                    .map_err(|cause| {
+                        native_application_startup_reservation_error_v0(
+                            "Delivered recovery outbox",
+                            cause,
+                        )
+                    })?
+                    .ok_or_else(|| anyhow!("missing Delivered recovery outbox"))?;
+                    ensure!(
+                        outbox.delivery_attempt == 1,
+                        "Delivered recovery attempt is not canonical V0 attempt one"
+                    );
+                    active_recovery_job_count = active_recovery_job_count
+                        .checked_add(1)
+                        .ok_or_else(|| anyhow!("active recovery count overflow"))?;
+                    audited_active_jobs
+                        .try_reserve(1)
+                        .context("reserve active recovery job index")?;
+                    audited_active_jobs.push(NativeValidationRecoveryActiveJobV0 {
+                        route: job.route(),
+                        validation_id: job.validation_id(),
+                        state: job.state(),
+                        row_checksum: job.row_checksum,
+                        outbox_checksum: outbox.callback.outbox_checksum(),
+                    });
+                }
+                NativeValidationJobStateV0::Acked => {
+                    acked_history_job_count = acked_history_job_count
+                        .checked_add(1)
+                        .ok_or_else(|| anyhow!("Acked history count overflow"))?;
+                }
+                NativeValidationJobStateV0::Reserved
+                | NativeValidationJobStateV0::Evaluated
+                | NativeValidationJobStateV0::Applied => {
+                    return Err(anyhow!("unsupported recovery state passed preflight"));
+                }
+            }
+            Ok(())
+        };
+        let audit = if coexisting_native_history {
+            store
+                .audit_native_consensus_application_open_snapshot_v0(
+                    &connection,
+                    &mut collect,
+                    |_| Ok(()),
+                )
+                .map_err(|cause| match cause {
+                    NativeApplicationFinalizationApplyFailureCauseV0::DatabaseUnavailable
+                    | NativeApplicationFinalizationApplyFailureCauseV0::CommitUncertain => {
+                        NativeValidationRecoveryOpenFailureV0::DatabaseUnavailable
+                    }
+                    NativeApplicationFinalizationApplyFailureCauseV0::HostResourceUnavailable => {
+                        NativeValidationRecoveryOpenFailureV0::HostResourceUnavailable
+                    }
+                    _ => NativeValidationRecoveryOpenFailureV0::Integrity,
+                })
+        } else {
+            (|| {
+                if metadata(&connection, "schema_version")
+                    .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)?
+                    != STORE_SCHEMA_VERSION
+                {
+                    return Err(NativeValidationRecoveryOpenFailureV0::UnsupportedSchema);
+                }
+                preflight_supported_recovery_rows_v0(&connection)?;
+                store
+                    .visit_native_validation_recovery_work_v0(&connection, &mut collect)
+                    .map_err(|_| NativeValidationRecoveryOpenFailureV0::Integrity)
+            })()
+        };
+        if coexisting_native_history {
+            connection
+                .execute_batch("ROLLBACK")
+                .map_err(|_| NativeValidationRecoveryOpenFailureV0::DatabaseUnavailable)?;
+        }
+        audit?;
+        identities.sort_unstable();
+        if identities.windows(2).any(|pair| pair[0].0 == pair[1].0) {
+            return Err(NativeValidationRecoveryOpenFailureV0::DuplicateIdentity);
+        }
+        let supported_job_count = identities.len();
+        audited_active_jobs.sort_unstable();
+        namespace_pin.validate_open_v0(store)?;
+        Ok(Self {
+            expected_safety_journal_id,
+            expected_safety_verifier_profile_ref,
+            coexisting_native_history,
+            supported_job_count,
+            active_recovery_job_count,
+            acked_history_job_count,
+            audited_active_jobs,
+            obligation: None,
+            completion: None,
+            reconciled_safety_head_revision: None,
+            last_reconcile_failure: None,
+        })
+    }
+
+    fn borrowed_v0<'a>(
+        &'a mut self,
+        store: &'a ApplicationStore,
+        namespace_pin: &'a NativeValidationRecoveryNamespacePinV0,
+    ) -> NativeValidationRecoveryBorrowedV0<'a> {
+        NativeValidationRecoveryBorrowedV0 {
+            coordinator: self,
+            store,
+            namespace_pin,
+        }
+    }
+
+    pub(crate) const fn last_reconcile_failure_v0(
+        &self,
+    ) -> Option<NativeValidationRecoveryReconcileFailureV0> {
+        self.last_reconcile_failure
+    }
+
+    pub(crate) const fn supported_recovery_job_count_v0(&self) -> usize {
+        self.supported_job_count
+    }
+
+    pub(crate) const fn active_recovery_job_count_v0(&self) -> usize {
+        self.active_recovery_job_count
+    }
+
+    pub(crate) const fn acked_history_job_count_v0(&self) -> usize {
+        self.acked_history_job_count
+    }
+
+    pub(crate) fn final_exact_audit_v0(
+        &self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+    ) -> std::result::Result<(), NativeValidationRecoveryTransitionFailureV0> {
+        namespace_pin.validate_transition_v0(store)?;
+        let connection = store
+            .connect_read()
+            .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
+        if self.coexisting_native_history {
+            store
+                .preflight_native_consensus_application_host_v0()
+                .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreIntegrity)?;
+        }
+        let audit = audit_recovery_journal_v0(store, &connection, self.coexisting_native_history)?;
+        if let Some(completion) = self.completion.as_ref() {
+            let (route, id) = recovered_completion_identity_v0(completion);
+            match completion {
+                RecoveredCompletionInvalidV0::Delivered(_) => {
+                    require_exact_active_recovery_job_v0(
+                        &audit,
+                        route,
+                        id,
+                        NativeValidationJobStateV0::Delivered,
+                    )?;
+                }
+                RecoveredCompletionInvalidV0::Acked(_) => {
+                    require_empty_active_recovery_set_v0(&audit)?;
+                }
+            }
+        } else if let Some(obligation) = self.obligation.as_ref() {
+            let (route, id) = recovered_obligation_identity_v0(obligation);
+            let state = match obligation {
+                RecoveredObligationInvalidV0::CallbackPending(_) => {
+                    NativeValidationJobStateV0::CallbackPending
+                }
+                RecoveredObligationInvalidV0::Delivered(_) => NativeValidationJobStateV0::Delivered,
+            };
+            require_exact_active_recovery_job_v0(&audit, route, id, state)?;
+        }
+        if audit.supported_job_count != self.supported_job_count
+            || audit.active_recovery_job_count != self.active_recovery_job_count
+            || audit.acked_history_job_count != self.acked_history_job_count
+            || audit.active_jobs != self.audited_active_jobs
+        {
+            return Err(NativeValidationRecoveryTransitionFailureV0::ActiveSetMismatch);
+        }
+        namespace_pin.validate_transition_v0(store)?;
+        Ok(())
+    }
+
+    pub(crate) fn recovered_obligation_state_v0(
+        &self,
+    ) -> Option<NativeValidationRecoveredInvalidStateV0> {
+        self.obligation.as_ref().map(|owner| match owner {
+            RecoveredObligationInvalidV0::CallbackPending(_) => {
+                NativeValidationRecoveredInvalidStateV0::CallbackPending
+            }
+            RecoveredObligationInvalidV0::Delivered(_) => {
+                NativeValidationRecoveredInvalidStateV0::Delivered
+            }
+        })
+    }
+
+    pub(crate) fn recovered_obligation_callback_facts_v0(
+        &self,
+    ) -> Option<NativeValidationRecoveredInvalidCallbackFactsV0> {
+        self.obligation.as_ref().map(|owner| match owner {
+            RecoveredObligationInvalidV0::CallbackPending(owner) => {
+                callback_facts_v0(&owner.verified)
+            }
+            RecoveredObligationInvalidV0::Delivered(owner) => callback_facts_v0(&owner.verified),
+        })
+    }
+
+    fn validate_coexisting_history_v0(
+        &self,
+        store: &ApplicationStore,
+    ) -> std::result::Result<(), NativeValidationRecoveryTransitionFailureV0> {
+        if self.coexisting_native_history {
+            store
+                .preflight_native_consensus_application_host_v0()
+                .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreIntegrity)?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn record_recovered_core_acceptance_v0(
         &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        persistence: &SafetyStatePersistenceV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidCallbackFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.validate_coexisting_history_v0(store)?;
+        self.borrowed_v0(store, namespace_pin)
+            .record_recovered_core_acceptance_v0(persistence)
+    }
+
+    pub(crate) fn recover_confirmed_invalid_completion_v0(
+        &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidStateV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.validate_coexisting_history_v0(store)?;
+        self.borrowed_v0(store, namespace_pin)
+            .recover_confirmed_invalid_completion_v0(confirmed)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn recover_confirmed_invalid_completion_for_test_v0<C>(
+        &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        safety_state: &SafetyState,
+        confirmation: &C,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidStateV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    >
+    where
+        C: NativeValidationConfirmedInvalidTransitionV0,
+    {
+        self.validate_coexisting_history_v0(store)?;
+        self.borrowed_v0(store, namespace_pin)
+            .recover_confirmed_invalid_completion_for_test_v0(safety_state, confirmation)
+    }
+
+    pub(crate) fn acknowledge_recovered_invalid_completion_v0(
+        &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredAckedFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.validate_coexisting_history_v0(store)?;
+        self.borrowed_v0(store, namespace_pin)
+            .acknowledge_recovered_invalid_completion_v0(confirmed)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn acknowledge_recovered_invalid_completion_for_test_v0<C>(
+        &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
+        safety_state: &SafetyState,
+        confirmation: &C,
+    ) -> std::result::Result<
+        NativeValidationRecoveredAckedFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    >
+    where
+        C: NativeValidationConfirmedInvalidTransitionV0,
+    {
+        self.validate_coexisting_history_v0(store)?;
+        self.borrowed_v0(store, namespace_pin)
+            .acknowledge_recovered_invalid_completion_for_test_v0(safety_state, confirmation)
+    }
+
+    pub(crate) fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        store: &ApplicationStore,
+        namespace_pin: &NativeValidationRecoveryNamespacePinV0,
         challenge: &PayloadValidationRecoveryChallengeV0,
     ) -> PayloadValidationRecoveryDecisionV0 {
-        let result = self.reconcile_obligation_v0(
+        if let Err(failure) = self.validate_coexisting_history_v0(store) {
+            self.last_reconcile_failure = Some(map_transition_reconcile_failure_v0(failure));
+            return PayloadValidationRecoveryDecisionV0::Reject;
+        }
+        let mut borrowed = self.borrowed_v0(store, namespace_pin);
+        let result = borrowed.reconcile_obligation_v0(
             challenge.route(),
             challenge.id(),
             challenge.proposal().block(),
@@ -1813,14 +2111,150 @@ impl PayloadValidationRecoveryReconcilerV0 for NativeValidationRecoveryStoreV0 {
         );
         match result {
             Ok(()) => {
-                self.last_reconcile_failure = None;
+                borrowed.last_reconcile_failure = None;
                 PayloadValidationRecoveryDecisionV0::AcceptDeterministicallyInvalid
             }
             Err(failure) => {
-                self.last_reconcile_failure = Some(failure);
+                borrowed.last_reconcile_failure = Some(failure);
                 PayloadValidationRecoveryDecisionV0::Reject
             }
         }
+    }
+}
+
+impl NativeValidationRecoveryStoreV0 {
+    pub const fn last_reconcile_failure_v0(
+        &self,
+    ) -> Option<NativeValidationRecoveryReconcileFailureV0> {
+        self.coordinator.last_reconcile_failure_v0()
+    }
+
+    pub const fn supported_recovery_job_count_v0(&self) -> usize {
+        self.coordinator.supported_recovery_job_count_v0()
+    }
+
+    pub const fn active_recovery_job_count_v0(&self) -> usize {
+        self.coordinator.active_recovery_job_count_v0()
+    }
+
+    pub const fn acked_history_job_count_v0(&self) -> usize {
+        self.coordinator.acked_history_job_count_v0()
+    }
+
+    pub fn final_exact_audit_v0(
+        &self,
+    ) -> std::result::Result<(), NativeValidationRecoveryTransitionFailureV0> {
+        self.coordinator
+            .final_exact_audit_v0(&self.store, &self.namespace_pin)
+    }
+
+    pub fn recovered_obligation_state_v0(&self) -> Option<NativeValidationRecoveredInvalidStateV0> {
+        self.coordinator.recovered_obligation_state_v0()
+    }
+
+    pub fn recovered_obligation_callback_facts_v0(
+        &self,
+    ) -> Option<NativeValidationRecoveredInvalidCallbackFactsV0> {
+        self.coordinator.recovered_obligation_callback_facts_v0()
+    }
+
+    pub fn record_recovered_core_acceptance_v0(
+        &mut self,
+        persistence: &SafetyStatePersistenceV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidCallbackFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.coordinator.record_recovered_core_acceptance_v0(
+            &self.store,
+            &self.namespace_pin,
+            persistence,
+        )
+    }
+
+    pub fn recover_confirmed_invalid_completion_v0(
+        &mut self,
+        confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidStateV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.coordinator.recover_confirmed_invalid_completion_v0(
+            &self.store,
+            &self.namespace_pin,
+            confirmed,
+        )
+    }
+
+    #[cfg(test)]
+    pub(crate) fn recover_confirmed_invalid_completion_for_test_v0<C>(
+        &mut self,
+        safety_state: &SafetyState,
+        confirmation: &C,
+    ) -> std::result::Result<
+        NativeValidationRecoveredInvalidStateV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    >
+    where
+        C: NativeValidationConfirmedInvalidTransitionV0,
+    {
+        self.coordinator
+            .recover_confirmed_invalid_completion_for_test_v0(
+                &self.store,
+                &self.namespace_pin,
+                safety_state,
+                confirmation,
+            )
+    }
+
+    pub fn acknowledge_recovered_invalid_completion_v0(
+        &mut self,
+        confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+    ) -> std::result::Result<
+        NativeValidationRecoveredAckedFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    > {
+        self.coordinator
+            .acknowledge_recovered_invalid_completion_v0(
+                &self.store,
+                &self.namespace_pin,
+                confirmed,
+            )
+    }
+
+    #[cfg(test)]
+    pub(crate) fn acknowledge_recovered_invalid_completion_for_test_v0<C>(
+        &mut self,
+        safety_state: &SafetyState,
+        confirmation: &C,
+    ) -> std::result::Result<
+        NativeValidationRecoveredAckedFactsV0,
+        NativeValidationRecoveryTransitionFailureV0,
+    >
+    where
+        C: NativeValidationConfirmedInvalidTransitionV0,
+    {
+        self.coordinator
+            .acknowledge_recovered_invalid_completion_for_test_v0(
+                &self.store,
+                &self.namespace_pin,
+                safety_state,
+                confirmation,
+            )
+    }
+}
+
+impl PayloadValidationRecoveryReconcilerV0 for NativeValidationRecoveryStoreV0 {
+    fn reconcile_deterministically_invalid_obligation_v0(
+        &mut self,
+        challenge: &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0 {
+        self.coordinator
+            .reconcile_deterministically_invalid_obligation_v0(
+                &self.store,
+                &self.namespace_pin,
+                challenge,
+            )
     }
 }
 
@@ -1979,6 +2413,7 @@ fn load_verified_callback_v0(
 fn reload_exact_delivered_owner_v0(
     store: &ApplicationStore,
     owner: &RecoveredDeliveredInvalidV0,
+    coexisting_native_history: bool,
 ) -> std::result::Result<
     VerifiedNativeValidationInvalidCallbackV0,
     NativeValidationRecoveryTransitionFailureV0,
@@ -1989,7 +2424,7 @@ fn reload_exact_delivered_owner_v0(
     let connection = store
         .connect_read()
         .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-    let audit = audit_recovery_journal_v0(store, &connection)?;
+    let audit = audit_recovery_journal_v0(store, &connection, coexisting_native_history)?;
     require_exact_active_recovery_job_v0(
         &audit,
         owner.verified.route(),
@@ -2008,6 +2443,7 @@ fn reload_exact_delivered_owner_v0(
 fn mark_recovered_callback_pending_delivered_v0(
     store: &ApplicationStore,
     owner: &RecoveredCallbackPendingInvalidV0,
+    coexisting_native_history: bool,
 ) -> std::result::Result<
     VerifiedNativeValidationInvalidCallbackV0,
     NativeValidationRecoveryTransitionFailureV0,
@@ -2033,7 +2469,7 @@ fn mark_recovered_callback_pending_delivered_v0(
         NativeValidationReservationStageV0::ReadCapacity,
     )
     .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreIntegrity)?;
-    let before_audit = audit_recovery_journal_v0(store, &transaction)?;
+    let before_audit = audit_recovery_journal_v0(store, &transaction, coexisting_native_history)?;
     require_exact_active_recovery_job_v0(
         &before_audit,
         owner.verified.route(),
@@ -2135,7 +2571,7 @@ fn mark_recovered_callback_pending_delivered_v0(
     {
         return Err(NativeValidationRecoveryTransitionFailureV0::StoreIntegrity);
     }
-    let after_audit = audit_recovery_journal_v0(store, &transaction)?;
+    let after_audit = audit_recovery_journal_v0(store, &transaction, coexisting_native_history)?;
     require_exact_active_recovery_job_v0(
         &after_audit,
         owner.verified.route(),
@@ -2148,7 +2584,8 @@ fn mark_recovered_callback_pending_delivered_v0(
             .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
         let observed =
             load_verified_callback_v0(&confirmation, store, owner.verified.validation_id())?;
-        let confirmation_audit = audit_recovery_journal_v0(store, &confirmation)?;
+        let confirmation_audit =
+            audit_recovery_journal_v0(store, &confirmation, coexisting_native_history)?;
         if observed.job.state() == NativeValidationJobStateV0::Delivered
             && observed.delivery_attempt() == next_attempt
             && observed.outbox_checksum() == next_outbox_checksum
@@ -2271,12 +2708,13 @@ fn reload_exact_acked_owner_v0(
     store: &ApplicationStore,
     owner: &RecoveredAckedInvalidV0,
     completion_revision: u64,
+    coexisting_native_history: bool,
 ) -> std::result::Result<DurableNativeValidationJobV0, NativeValidationRecoveryTransitionFailureV0>
 {
     let connection = store
         .connect_read()
         .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?;
-    let audit = audit_recovery_journal_v0(store, &connection)?;
+    let audit = audit_recovery_journal_v0(store, &connection, coexisting_native_history)?;
     require_empty_active_recovery_set_v0(&audit)?;
     let row = load_native_validation_job_v0(&connection, owner.durable.validation_id())
         .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreUnavailable)?
@@ -2308,6 +2746,7 @@ fn acknowledge_recovered_delivered_v0(
     store: &ApplicationStore,
     owner: &RecoveredDeliveredInvalidV0,
     completion_revision: u64,
+    coexisting_native_history: bool,
 ) -> std::result::Result<DurableNativeValidationJobV0, NativeValidationRecoveryTransitionFailureV0>
 {
     if !Arc::ptr_eq(&owner.issuing_writer_gate, &store.writer_gate) {
@@ -2334,7 +2773,7 @@ fn acknowledge_recovered_delivered_v0(
         NativeValidationReservationStageV0::ReadCapacity,
     )
     .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreIntegrity)?;
-    let before_audit = audit_recovery_journal_v0(store, &transaction)?;
+    let before_audit = audit_recovery_journal_v0(store, &transaction, coexisting_native_history)?;
     require_exact_active_recovery_job_v0(
         &before_audit,
         owner.verified.route(),
@@ -2464,7 +2903,7 @@ fn acknowledge_recovered_delivered_v0(
     {
         return Err(NativeValidationRecoveryTransitionFailureV0::StoreIntegrity);
     }
-    let after_audit = audit_recovery_journal_v0(store, &transaction)?;
+    let after_audit = audit_recovery_journal_v0(store, &transaction, coexisting_native_history)?;
     require_empty_active_recovery_set_v0(&after_audit)?;
     if transaction.commit().is_err() {
         let confirmation = store
@@ -2481,7 +2920,8 @@ fn acknowledge_recovered_delivered_v0(
             NativeValidationReservationStageV0::ConfirmCommit,
         )
         .map_err(|_| NativeValidationRecoveryTransitionFailureV0::StoreIntegrity)?;
-        let confirmation_audit = audit_recovery_journal_v0(store, &confirmation)?;
+        let confirmation_audit =
+            audit_recovery_journal_v0(store, &confirmation, coexisting_native_history)?;
         if observed.state() == NativeValidationJobStateV0::Acked
             && verify_acked_completion_v0(&observed, completion_revision).is_ok()
             && observed.request_fingerprint() == existing.request_fingerprint()
@@ -2574,6 +3014,7 @@ struct NativeValidationRecoveryJournalAuditV0 {
 fn audit_recovery_journal_v0(
     store: &ApplicationStore,
     connection: &rusqlite::Connection,
+    coexisting_native_history: bool,
 ) -> std::result::Result<
     NativeValidationRecoveryJournalAuditV0,
     NativeValidationRecoveryTransitionFailureV0,
@@ -2583,6 +3024,12 @@ fn audit_recovery_journal_v0(
     let mut acked_history_job_count = 0_usize;
     store
         .visit_native_validation_recovery_work_v0(connection, |job| {
+            if job.result_kind != Some(i64::from(durable_deterministic_invalid_result_kind_v0())) {
+                if coexisting_native_history {
+                    return Ok(());
+                }
+                return Err(anyhow!("unsupported result entered invalid recovery"));
+            }
             if identities
                 .insert(job.validation_id(), job.route())
                 .is_some()
@@ -2698,4 +3145,163 @@ fn preflight_supported_recovery_rows_v0(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod coordinator_surface_tests {
+    use super::*;
+    use std::os::unix::fs::PermissionsExt;
+
+    fn unique_test_root_v0(label: &str) -> PathBuf {
+        std::env::temp_dir().join(format!(
+            "trnm-native-invalid-coordinator-{label}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("test clock follows Unix epoch")
+                .as_nanos()
+        ))
+    }
+
+    fn install_authenticated_trusted_base_v0(store: &ApplicationStore) {
+        let height = 1_u64;
+        let state_root = [0x83; 32];
+        let block_id = trnm_consensus_types::BlockId::new([0x84; 32]);
+        let mut connection = store
+            .connect()
+            .expect("open coordinator trusted-base fixture");
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .expect("begin coordinator trusted-base fixture");
+        write_head_values(&transaction, height, state_root)
+            .expect("install coordinator authenticated application head");
+        write_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY, height)
+            .expect("install coordinator authenticated query floor");
+        transaction
+            .execute(
+                "DELETE FROM metadata WHERE key=?1",
+                params![AUTH_PRUNE_TARGET_KEY],
+            )
+            .expect("clear coordinator authenticated prune target");
+        transaction
+            .execute(
+                "INSERT INTO auth_roots(version_be, root_hash) VALUES (?1, ?2)",
+                params![height.to_be_bytes().as_slice(), state_root.as_slice()],
+            )
+            .expect("install coordinator authenticated head root");
+        write_committed_native_anchor_v0(
+            &transaction,
+            CommittedNativeAnchorV0 {
+                block_id,
+                height,
+                state_root: RootHash(state_root),
+            },
+        )
+        .expect("install coordinator exact trusted-base BlockId anchor");
+        transaction
+            .commit()
+            .expect("commit coordinator trusted-base fixture");
+    }
+
+    type OpenCoordinatorFnV0 =
+        fn(
+            &ApplicationStore,
+            &NativeValidationRecoveryNamespacePinV0,
+            [u8; 32],
+            [u8; 32],
+        )
+            -> Result<NativeValidationRecoveryCoordinatorV0, NativeValidationRecoveryOpenFailureV0>;
+
+    type ReconcileCoordinatorFnV0 = fn(
+        &mut NativeValidationRecoveryCoordinatorV0,
+        &ApplicationStore,
+        &NativeValidationRecoveryNamespacePinV0,
+        &PayloadValidationRecoveryChallengeV0,
+    ) -> PayloadValidationRecoveryDecisionV0;
+
+    #[test]
+    fn coordinator_api_borrows_the_unique_store_and_namespace_pin() {
+        let open: OpenCoordinatorFnV0 = NativeValidationRecoveryCoordinatorV0::open_existing_v0;
+        let open_coexisting: OpenCoordinatorFnV0 =
+            NativeValidationRecoveryCoordinatorV0::open_coexisting_existing_v0;
+        let reconcile: ReconcileCoordinatorFnV0 =
+            NativeValidationRecoveryCoordinatorV0::reconcile_deterministically_invalid_obligation_v0;
+        std::hint::black_box((open, open_coexisting, reconcile));
+    }
+
+    #[test]
+    fn coordinator_owns_only_recovery_state_for_compatibility_wrapping() {
+        let coordinator = NativeValidationRecoveryCoordinatorV0 {
+            expected_safety_journal_id: [0x71; 32],
+            expected_safety_verifier_profile_ref: [0x72; 32],
+            coexisting_native_history: true,
+            supported_job_count: 0,
+            active_recovery_job_count: 0,
+            acked_history_job_count: 0,
+            audited_active_jobs: Vec::new(),
+            obligation: None,
+            completion: None,
+            reconciled_safety_head_revision: None,
+            last_reconcile_failure: None,
+        };
+        assert_eq!(coordinator.supported_recovery_job_count_v0(), 0);
+        assert_eq!(coordinator.active_recovery_job_count_v0(), 0);
+        assert_eq!(coordinator.acked_history_job_count_v0(), 0);
+        assert_eq!(coordinator.recovered_obligation_state_v0(), None);
+        assert!(std::mem::needs_drop::<NativeValidationRecoveryCoordinatorV0>());
+        assert!(std::mem::needs_drop::<NativeValidationRecoveryStoreV0>());
+    }
+
+    #[test]
+    fn coordinator_opens_against_borrowed_store_and_pin_without_taking_them() {
+        let root = unique_test_root_v0("borrowed-open");
+        std::fs::create_dir_all(&root).expect("create coordinator test root");
+        std::fs::set_permissions(&root, std::fs::Permissions::from_mode(0o700))
+            .expect("protect coordinator test namespace");
+        let status_path = root.join("state.json");
+        let chain_id = "native-invalid-coordinator-test";
+        let signer_policy = "31".repeat(32);
+        let safety_journal_id = [0x81; 32];
+        let safety_profile = [0x82; 32];
+
+        let ordinary = ApplicationStore::open(&status_path, chain_id, &signer_policy)
+            .expect("open ordinary test store");
+        ordinary
+            .load_or_migrate()
+            .expect("initialize current application schema");
+        install_authenticated_trusted_base_v0(&ordinary);
+        bootstrap_native_validation_safety_binding_manifest_v0(
+            &ordinary,
+            safety_journal_id,
+            safety_profile,
+        )
+        .expect("bind test application namespace to SafetyStore identity");
+        ordinary
+            .release_namespace_owner_for_recovery_test_v0()
+            .expect("release ordinary owner for recovery open");
+        drop(ordinary);
+
+        let store =
+            ApplicationStore::open_existing_recovery_v0(&status_path, chain_id, &signer_policy)
+                .expect("open one exclusive recovery store");
+        let namespace_pin = NativeValidationRecoveryNamespacePinV0::capture(&store)
+            .expect("capture the shared recovery namespace pin");
+        let coordinator = NativeValidationRecoveryCoordinatorV0::open_coexisting_existing_v0(
+            &store,
+            &namespace_pin,
+            safety_journal_id,
+            safety_profile,
+        )
+        .expect("open store-less coordinator through borrowed owners");
+        assert_eq!(coordinator.supported_recovery_job_count_v0(), 0);
+        coordinator
+            .final_exact_audit_v0(&store, &namespace_pin)
+            .expect("repeat exact borrowed-owner audit");
+        assert!(namespace_pin.matches_safety_provenance_v0(safety_journal_id, safety_profile));
+
+        drop(coordinator);
+        drop(namespace_pin);
+        drop(store);
+        std::fs::remove_dir_all(root).expect("remove coordinator test root");
+    }
 }

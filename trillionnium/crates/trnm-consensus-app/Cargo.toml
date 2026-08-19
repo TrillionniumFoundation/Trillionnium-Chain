@@ -1,9 +1,15 @@
 [package]
 name = "trnm-consensus-app"
 version = "0.1.0"
-edition.workspace = true
-license.workspace = true
-authors.workspace = true
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+
+[package.metadata.trnm]
+lane = "comet-abci-migration-residue"
+mainline_role = "none"
+release_component = false
+native_extraction_required = true
 
 [features]
 default = []
@@ -56,3 +62,10 @@ trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]
 ed25519-dalek = "2"
+
+# This package is excluded from the active native workspace. Its standalone
+# archive workspace exists only so the checked differential vector can be
+# independently re-authored and verified without entering the active graph or
+# active Cargo.lock.
+[workspace]
+resolver = "2"

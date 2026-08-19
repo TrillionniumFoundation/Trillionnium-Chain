@@ -6,6 +6,7 @@
 /dist/
 /contracts/target/
 /trillionnium/target/
+/trillionnium/crates/trnm-consensus-app/target/
 /trillionnium/fuzz/artifacts/
 /trillionnium/fuzz/coverage/
 /trillionnium/fuzz/target/

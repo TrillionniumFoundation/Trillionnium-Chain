@@ -939,6 +939,19 @@ impl RevalidatedDurableValidCallbackV0 {
     }
 }
 
+impl From<PreparedDurableValidCallbackRecordV0> for RevalidatedDurableValidCallbackV0 {
+    fn from(prepared: PreparedDurableValidCallbackRecordV0) -> Self {
+        Self {
+            identity: prepared.identity,
+            artifact_checksum: prepared.artifact_checksum,
+            payload: prepared.payload,
+            payload_checksum: prepared.payload_checksum,
+            idempotency_key: prepared.idempotency_key,
+            outbox_checksum: prepared.outbox_checksum,
+        }
+    }
+}
+
 pub(crate) fn prepare_durable_valid_callback_v0(
     artifact: &PreparedDurableValidArtifactRecordV0,
 ) -> PreparedDurableValidCallbackRecordV0 {

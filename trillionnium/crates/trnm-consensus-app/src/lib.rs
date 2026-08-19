@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
+    os::unix::fs::{OpenOptionsExt, PermissionsExt},
     path::{Path, PathBuf},
     sync::{Arc, Mutex},
 };
@@ -42,13 +43,17 @@ use trnm_runtime::{
 mod auth_tree;
 #[allow(dead_code)]
 mod execution_outcome;
+mod native_consensus_application_host;
 mod native_execution;
 #[allow(dead_code)]
 mod native_payload_validation;
 #[allow(dead_code)]
+mod native_speculative_overlay;
+#[allow(dead_code)]
 mod native_valid_artifact;
 #[allow(dead_code)]
 mod native_validation_artifact;
+mod native_validation_valid_delivery;
 #[cfg(feature = "scale-gate")]
 mod persistent_scale;
 #[allow(dead_code)]
@@ -80,6 +85,28 @@ mod scale;
 mod store;
 mod validator_lifecycle;
 
+pub use native_consensus_application_host::{
+    ConfirmedNativeApplicationAppliedFactsV0, ConfirmedNativeApplicationFinalizationAppliedV0,
+    ConfirmedNativeApplicationNodeCheckpointFactsV0,
+    ConfirmedNativeApplicationStateSyncAnchorSuccessorsV0,
+    ConfirmedNativeApplicationStateSyncAnchorV0,
+    ConfirmedNativeApplicationValidCompletionRecoveryV0, NativeConsensusApplicationAppliedKindV0,
+    NativeConsensusApplicationAuthoritiesInstallRejectionV0,
+    NativeConsensusApplicationHostConfigV0, NativeConsensusApplicationHostErrorV0,
+    NativeConsensusApplicationHostV0, NativeConsensusApplicationValidCompletionSourceV0,
+    NativeStateSyncAnchorSuccessorValidationFactsV0,
+    PreparedNativeApplicationH1ProjectionExpectationV0,
+};
+pub use native_validation_valid_delivery::{
+    CoreAcceptedNativeValidationValidInvariantV0, CoreAcceptedNativeValidationValidV0,
+    InvalidCoreAcceptedNativeValidationValidV0, NativeAuthenticatedGenesisH1AckedValidV0,
+    NativeAuthenticatedGenesisH1CompletedAppConfirmationV0,
+    NativeAuthenticatedGenesisH1CoreAcceptedValidV0, NativeAuthenticatedGenesisH1DeliveredValidV0,
+    NativeAuthenticatedGenesisH1SafetyPersistedValidV0, NativeValidationValidAppFactsV0,
+    NativeValidationValidCallbackBindFailureV0, NativeValidationValidCallbackFailureV0,
+    NativeValidationValidCallbackRejectionV0, NativeValidationValidCallbackV0,
+    RejectedNativeValidationValidCallbackV0,
+};
 pub use poco_checkpoint::{PocoAuthorityConfigV0, POCO_AUTHORITY_CONFIG_SCHEMA_V0};
 #[cfg(test)]
 pub(crate) use store::native_validation_recovery::NativeValidationConfirmedInvalidTransitionV0;
@@ -90,13 +117,46 @@ pub use store::native_validation_recovery::{
     NativeValidationRecoveryStoreConfigV0, NativeValidationRecoveryStoreV0,
     NativeValidationRecoveryTransitionFailureV0, NativeValidationRecoveryUnsupportedV0,
 };
+pub use store::{
+    ConfirmedNativeAuthenticatedGenesisApplicationCommissioningV0,
+    ConfirmedNativeAuthenticatedGenesisH1ObligationTakeoverCompletedV0,
+    ConfirmedNativeAuthenticatedGenesisH1ObligationTakeoverCutV0,
+    ConfirmedNativeAuthenticatedGenesisH1StableApplicationV0,
+    NativeAuthenticatedGenesisApplicationCommissioningConfigV0,
+    NativeAuthenticatedGenesisApplicationCommissioningDispositionV0,
+    NativeAuthenticatedGenesisApplicationCommissioningErrorV0,
+    NativeAuthenticatedGenesisApplicationCommissioningHostV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverCompletedHostV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverConfigV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverCoreAcceptedV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverErrorV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverHostV0,
+    NativeAuthenticatedGenesisH1ObligationTakeoverSourceV0,
+    NativeAuthenticatedGenesisH1OfflineApplicationRegistrarV0,
+    NativeAuthenticatedGenesisH1OfflineCompletedV0,
+    NativeAuthenticatedGenesisH1OfflineValidationActivationRejectionV0,
+    NativeAuthenticatedGenesisH1OfflineValidationErrorV0,
+    NativeAuthenticatedGenesisH1OfflineValidationFactsV0,
+    NativeAuthenticatedGenesisH1OfflineValidationHostV0,
+    NativeAuthenticatedGenesisH1StableApplicationHostV0,
+    NativeAuthenticatedGenesisH1StableApplicationSourceV0,
+    NativeAuthenticatedGenesisH1StableRecoveryConfigV0,
+    NativeAuthenticatedGenesisH1StableRecoveryErrorV0,
+    PreparedNativeAuthenticatedGenesisH1InactiveExpectationV0,
+};
 
 #[cfg(feature = "recovery-test-support")]
 pub use recovery_test_support::{
     advance_native_validation_recovery_test_fixture_to_delivered_v0,
-    initialize_native_validation_recovery_test_fixture_v0,
-    NativeValidationRecoveryTestFixtureConfigV0, NativeValidationRecoveryTestFixtureErrorV0,
-    NativeValidationRecoveryTestFixtureStateV0, NativeValidationRecoveryTestFixtureV0,
+    empty_native_application_trusted_base_root_for_recovery_test_v0,
+    empty_state_sync_anchor_successor_commitments_for_recovery_test_v0,
+    initialize_empty_native_application_test_fixture_v0,
+    initialize_legacy_genesis_application_test_fixture_v0,
+    initialize_native_validation_recovery_test_fixture_v0, LegacyGenesisApplicationTestFixtureV0,
+    NativeEmptyAnchorSuccessorCommitmentsV0, NativeEmptyApplicationTestFixtureV0,
+    NativeValidationRecoveryTestConfigBundleV0, NativeValidationRecoveryTestFixtureConfigV0,
+    NativeValidationRecoveryTestFixtureErrorV0, NativeValidationRecoveryTestFixtureStateV0,
+    NativeValidationRecoveryTestFixtureV0,
 };
 
 #[cfg(feature = "scale-gate")]
@@ -4345,8 +4405,11 @@ fn persist_state_bytes(path: &Path, bytes: &[u8]) -> Result<()> {
         .create(true)
         .truncate(true)
         .write(true)
+        .mode(0o600)
         .open(&temporary)
         .with_context(|| format!("open temporary app state {}", temporary.display()))?;
+    file.set_permissions(fs::Permissions::from_mode(0o600))
+        .with_context(|| format!("protect temporary app state {}", temporary.display()))?;
     file.write_all(bytes)?;
     file.sync_all()?;
     fs::rename(&temporary, path).with_context(|| {
@@ -9467,7 +9530,7 @@ mod tests {
             .expect_err("snapshot install must not silently discard target-local work");
         assert!(error
             .to_string()
-            .contains("refuses to discard local native validation journal work"));
+            .contains("refuses to discard local native validation or speculative-overlay work"));
         assert_eq!(journal_counts(&target_database_path), (1, 0));
         let target_connection = rusqlite::Connection::open(&target_database_path).unwrap();
         target_connection
@@ -10355,6 +10418,11 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
+                DROP TABLE native_finalization_receipts_v0;
+                DROP TABLE native_committed_head_v0;
+                DROP TABLE native_authenticated_genesis_application_v0;
+                DROP TABLE native_speculative_overlay_sources_v0;
+                DROP TABLE native_speculative_overlays_v0;
                 DROP TABLE validation_callback_outbox_v0;
                 DROP TABLE validation_jobs_v0;
                 DROP TABLE validation_journal_accounting_v0;
@@ -10382,7 +10450,7 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "9"
+            "13"
         );
         assert_eq!(
             database
@@ -10448,6 +10516,11 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
+                DROP TABLE native_finalization_receipts_v0;
+                DROP TABLE native_committed_head_v0;
+                DROP TABLE native_authenticated_genesis_application_v0;
+                DROP TABLE native_speculative_overlay_sources_v0;
+                DROP TABLE native_speculative_overlays_v0;
                 DROP TABLE validation_callback_outbox_v0;
                 DROP TABLE validation_jobs_v0;
                 DROP TABLE validation_journal_accounting_v0;
