@@ -1654,6 +1654,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-poco-lab-validator"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "fs2",
+ "getrandom 0.2.17",
+ "hex",
+ "libc",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+ "trnm-finality-types",
+ "trnm-native-application",
+ "trnm-native-execution-v0",
+ "trnm-poco-node",
+ "trnm-protocol",
+]
+
+[[package]]
 name = "trnm-poco-mvcc-fee-v1"
 version = "0.1.0"
 dependencies = [

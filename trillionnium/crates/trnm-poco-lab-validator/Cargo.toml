@@ -1,0 +1,92 @@
+[package]
+name = "trnm-poco-lab-validator"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-g3-real-lan-lab-validator"
+protocol = "poco-bft-v0"
+network_scope = "single-lan"
+real_core_config = true
+real_core_runtime = true
+strict_ed25519 = true
+safety_store_dependency = true
+safety_store_runtime = true
+signer_journal_primitives = true
+signer_journal_runtime = true
+native_execution_dependency = true
+native_execution_runtime = true
+one_shot_authority_runtime = true
+one_shot_authority_artifact_schema = 1
+authenticated_frame = true
+authenticated_fresh_session_handshake = true
+authenticated_fresh_session_runtime = true
+authenticated_fresh_session_multihost_observed = false
+persisted_authenticated_peer_mesh_candidate = true
+persisted_authenticated_peer_mesh_runtime_wired = true
+generation_aware_pacemaker_candidate = true
+generation_aware_pacemaker_runtime_wired = true
+private_runtime_control_candidate = true
+private_runtime_control_runtime_wired = true
+signed_runtime_metrics_contract = true
+signed_runtime_metrics_independent_verifier = true
+signed_runtime_final_state_contract = true
+signed_runtime_final_state_independent_verifier = true
+signed_runtime_evidence_runtime_wired = true
+authenticated_frame_restart_replay_authority = false
+consensus_wire_candidate = true
+strict_consensus_ingress = true
+weighted_vote_qc_collector = true
+timeout_tc_collector = true
+bounded_consensus_ingress_loop_scaffold = true
+sparse_topology_consensus_relay_candidate = true
+sparse_topology_consensus_relay_origin_signature = true
+sparse_topology_consensus_relay_exact_replay_collector_mutation = false
+sparse_topology_consensus_relay_proposal_witness_verified_at_relay = false
+sparse_topology_consensus_relay_amplification_bound_proven = false
+sparse_topology_consensus_relay_runtime_wired = true
+consensus_run_report_contract = true
+consensus_run_report_independent_verifier = true
+consensus_run_report_runtime_wired = true
+consensus_run_cli_contract = true
+consensus_run_cli_fail_closed_without_runtime = false
+signed_process_event_journal = true
+coordinator_anchor_causal_binding = true
+external_wall_clock_temporal_provenance = false
+continuous_consensus_runtime = true
+simulator_dependency = false
+production_candidate = false
+production_consensus_activation = false
+geo_wan_evidence = false
+g3_evidence_complete = false
+validator_runtime_started = false
+incomplete = true
+
+[dependencies]
+anyhow = "1"
+ed25519-dalek = "2"
+fs2 = "0.4"
+getrandom = "0.2"
+hex = "0.4"
+libc = "0.2"
+rustix = { version = "1.1.4", features = ["process"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
+trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
+trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["lab-validator-runtime"] }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
+
+[dev-dependencies]
+tempfile = "3"
+trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["lab-validator-runtime-test-support"] }

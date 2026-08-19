@@ -22,6 +22,7 @@ members = [
   "crates/trnm-poco-order-finality-verifier-v1",
   "crates/trnm-poco-order-state-v1",
   "crates/trnm-poco-order-types-v1",
+  "crates/trnm-poco-lab-validator",
   "crates/trnm-poco-node",
   "crates/trnm-consensus-crypto",
   "crates/trnm-consensus-sim",
