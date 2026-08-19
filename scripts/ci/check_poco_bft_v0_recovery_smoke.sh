@@ -161,6 +161,9 @@ run_unit_filter trnm-poco-node \
   unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry
 run_unit_filter trnm-poco-node \
   signer_revision_ahead_of_authenticated_safety_head_fails_startup
+run_feature_integration_filter trnm-poco-node recovery-process-test-support \
+  timeout_signing_process_kill_matrix \
+  real_process_sigkill_matrix_replays_exact_bounded_timeout_signing
 
 # These adapter-store and recovery-feature cases remain useful for archive
 # inspection, but both Node recovery features activate the legacy
@@ -225,10 +228,6 @@ run_feature_unit_filter trnm-poco-node recovery-test-support \
 run_feature_integration_filter trnm-poco-node recovery-process-test-support \
   recovery_process_kill_matrix \
   real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k
-run_feature_integration_filter trnm-poco-node recovery-process-test-support \
-  timeout_signing_process_kill_matrix \
-  real_process_sigkill_matrix_replays_exact_bounded_timeout_signing
-
 printf '%s\n' \
   'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN' \
   'validation_recovery=legacy_deterministic_invalid_existing_only' \
@@ -238,7 +237,7 @@ printf '%s\n' \
   'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' \
   'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
   'bounded_timeout_signature_replay=EVALUATED' \
-  'bounded_timeout_process_sigkill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED' \
+  'bounded_timeout_process_sigkill_matrix=EVALUATED_ACTIVE_NATIVE' \
   'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' \
   'bounded_timeout_process_sigkill_checkpoint_count=6' \
   'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' \
@@ -256,7 +255,7 @@ printf '%s\n' \
   'poco_bft_recovery_evidence_mode=ACTIVE_NATIVE_DEFAULT_ONLY' \
   'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
   'bounded_timeout_signature_replay=EVALUATED' \
-  'bounded_timeout_process_sigkill_matrix=ARCHIVED_LOCAL_EVIDENCE_NOT_ACTIVE_NATIVE_CI' \
+  'bounded_timeout_process_sigkill_matrix=EVALUATED_ACTIVE_NATIVE' \
   'vote_signing_effect_loop=NOT_IMPLEMENTED' \
   'power_loss_fsync_matrix=NOT_EVALUATED' \
   'valid_recovery=not_implemented' \

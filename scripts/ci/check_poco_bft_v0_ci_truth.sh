@@ -115,7 +115,7 @@ end = text.index("\nelse\n", start)
 markers = (
     "run_unit_filter trnm-consensus-app ",
     "run_feature_unit_filter trnm-poco-node recovery-test-support ",
-    "run_feature_integration_filter trnm-poco-node recovery-process-test-support ",
+    "  recovery_process_kill_matrix \\",
 )
 for marker in markers:
     positions = []
@@ -128,6 +128,9 @@ for marker in markers:
         offset = found + len(marker)
     if not positions or any(position <= start or position >= end for position in positions):
         raise SystemExit(f"legacy recovery invocation escaped archive guard: {marker!r}")
+active_timeout = "  timeout_signing_process_kill_matrix \\"
+if text.count(active_timeout) != 1 or text.index(active_timeout) >= start:
+    raise SystemExit("active timeout SIGKILL matrix must execute before the legacy guard")
 PY
   then
     fail "legacy recovery tests are not confined to the explicit archive opt-in"
@@ -326,8 +329,8 @@ require_literal "$RECOVERY_GATE" \
   'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN'
 require_literal "$RECOVERY_GATE" \
   'validation_recovery_process_kill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED'
-require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_process_sigkill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED'
+require_literal_count "$RECOVERY_GATE" \
+  'bounded_timeout_process_sigkill_matrix=EVALUATED_ACTIVE_NATIVE' 2
 require_literal "$RECOVERY_GATE" \
   'legacy_app_archive_tests=NOT_ACTIVE_NATIVE_EVIDENCE'
 require_literal "$RECOVERY_GATE" \
@@ -338,7 +341,7 @@ require_literal "$RECOVERY_GATE" \
   'legacy_process_sigkill_feature_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY'
 require_literal "$RECOVERY_GATE" \
   'poco_bft_recovery_evidence_mode=ACTIVE_NATIVE_DEFAULT_ONLY'
-require_literal "$RECOVERY_GATE" \
+reject_literal "$RECOVERY_GATE" \
   'bounded_timeout_process_sigkill_matrix=ARCHIVED_LOCAL_EVIDENCE_NOT_ACTIVE_NATIVE_CI'
 require_literal "$RECOVERY_GATE" \
   'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-bounded-timeout-signing-replay-active-native-default'
@@ -476,16 +479,13 @@ require_literal "$NODE_RECOVERY_TESTS" \
 require_literal "$NODE_CARGO" 'recovery-process-test-support = ['
 require_literal "$NODE_CARGO" '  "dep:ed25519-dalek",'
 require_literal "$NODE_CARGO" '  "dep:fs2",'
-require_literal "$NODE_CARGO" '  "recovery-test-support",'
-require_literal "$NODE_CARGO" 'name = "trnm-poco-recovery-kill-helper"'
+reject_literal "$NODE_CARGO" '  "recovery-test-support",'
+reject_literal "$NODE_CARGO" 'name = "trnm-poco-recovery-kill-helper"'
 require_literal "$NODE_CARGO" 'name = "trnm-poco-timeout-signing-kill-helper"'
+reject_literal "$NODE_CARGO" 'name = "recovery_process_kill_matrix"'
 require_literal "$NODE_CARGO" 'name = "timeout_signing_process_kill_matrix"'
 require_toml_target_feature "$NODE_CARGO" bin \
-  trnm-poco-recovery-kill-helper recovery-process-test-support
-require_toml_target_feature "$NODE_CARGO" bin \
   trnm-poco-timeout-signing-kill-helper recovery-process-test-support
-require_toml_target_feature "$NODE_CARGO" test \
-  recovery_process_kill_matrix recovery-process-test-support
 require_toml_target_feature "$NODE_CARGO" test \
   timeout_signing_process_kill_matrix recovery-process-test-support
 require_literal "$NODE_PROCESS_KILL_TEST" \
@@ -814,4 +814,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=archived_not_active_native_ci node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=legacy_archive_opt_in power_loss_fsync=not_evaluated process_helper_artifact=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=legacy_archive_opt_in power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'
