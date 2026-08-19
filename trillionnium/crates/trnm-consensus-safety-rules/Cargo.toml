@@ -1,0 +1,31 @@
+[package]
+name = "trnm-consensus-safety-rules"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-inert-safety-rules"
+protocol = "poco-bft-v0"
+inert_pure_evaluation = true
+application_valid_authority = false
+complete_vote_admission = false
+signer_authority = false
+state_seed_authority = false
+finalized_reference_authority = false
+persistence_authority = false
+external_cas_authority = false
+hsm_authority = false
+core_integration = false
+remote_wire = false
+observe_qc = false
+observe_tc = false
+runtime_activation = false
+production_candidate = false
+production_consensus_activation = false
+
+[dependencies]
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

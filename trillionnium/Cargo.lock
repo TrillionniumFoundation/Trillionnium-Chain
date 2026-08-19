@@ -1456,6 +1456,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-safety-rules"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-consensus-safety-store"
 version = "0.1.0"
 dependencies = [
