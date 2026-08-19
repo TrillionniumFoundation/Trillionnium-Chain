@@ -1,0 +1,57 @@
+schema_version = 1
+evidence_id = "trnm-poco-g3-stage0-contract-v1"
+protocol_id = "poco-bft-v0"
+classification = "contract-and-self-test-only"
+source_candidate_profile = "clean-commit-v1"
+aggregate_build_report_schema_version = 3
+completed_run_summary_schema_version = 3
+current_fleet_probe_profile = "probe-fleet-v1"
+current_run_readiness_profile = "run-readiness-v2"
+
+# Contract and self-test truth only. None of these booleans is a field
+# observation, native build, validator run, or production claim.
+source_candidate_clean_commit_contract = true
+source_candidate_empty_git_status_contract = true
+source_candidate_fresh_clone_byte_identity_self_tested = true
+source_candidate_git_commit_tree_blob_mode_binding_self_tested = true
+source_candidate_cargo_lock_binding_self_tested = true
+reproducible_builder_schema3_boundary_self_tested = true
+reproducible_build_assembler_schema3_boundary_self_tested = true
+no_fault_bundle_schema3_propagation_self_tested = true
+probe_fleet_v1_acceptor_self_tested = true
+run_readiness_v2_acceptor_self_tested = true
+restart_cut_park_parked_ack_contract = true
+restart_status75_supervisor_contract_self_tested = true
+process2_authenticated_inert_boundary_self_tested = true
+
+# The preserved 2026-08-13 raw JSON is historical/audit-only and cannot
+# satisfy either current acceptor.
+historical_2026_08_13_probe_is_current_gate = false
+historical_2026_08_13_readiness_is_current_gate = false
+current_fleet_probe_observed = false
+current_run_readiness_observed = false
+
+# Restart activation remains unavailable after the exact parked handoff.
+successful_process2_restart_observed = false
+authenticated_process2_catchup_operational = false
+recovery_ready_operational = false
+recovery_start_operational = false
+
+# Operational and release claims remain false until fresh external evidence is
+# produced and accepted by the exact current contracts.
+reproducible_build_executed = false
+native_cross_architecture_build_observed = false
+validator_runtime_started = false
+validator_run_completed = false
+validator_run_7_completed = false
+validator_run_31_completed = false
+validator_run_100_completed = false
+signed_runtime_evidence_multihost_observed = false
+multihost_consensus_observed = false
+fault_restart_fleet_multihost_observed = false
+fault_matrix_completed = false
+performance_evidence = false
+g3_lan_multihost_evidence = false
+g3_geo_wan_evidence = false
+production_activation = false
+production_candidate = false
