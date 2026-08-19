@@ -175,6 +175,7 @@ mod native_proposal_p_host;
 mod ordinary_timeout;
 #[cfg(feature = "legacy-consensus-app")]
 mod process_host;
+mod remote_signer_protocol_adapter_v1;
 mod remote_signer_roles_v1;
 
 #[cfg(feature = "legacy-consensus-app")]
@@ -282,6 +283,20 @@ pub use process_host::{
     PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
     PocoNodeProcessLifecyclePhaseV0,
 };
+pub use remote_signer_protocol_adapter_v1::{
+    decode_remote_signer_protocol_adapter_v1_exact,
+    prepare_remote_signer_protocol_adapter_v1_exact, PocoNodeRemoteSignerProtocolAdapterErrorV1,
+    PocoNodeRemoteSignerProtocolAdapterV1, MAX_REMOTE_SIGNER_PROTOCOL_ADAPTER_BYTES_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_BARE_REF_BINDING_SOURCE_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_DESCRIPTOR_EQUIVALENCE_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_DIRECT_CONSTRUCTOR_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_LEASE_AUTHORITY_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_PRODUCTION_ACTIVATION_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_REQUEST_AUTHORITY_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_RESOLVER_ATTESTATION_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_RUNTIME_ACTIVATION_V1,
+    REMOTE_SIGNER_PROTOCOL_ADAPTER_SAFETY_RULES_V1, REMOTE_SIGNER_PROTOCOL_ADAPTER_SCHEMA_V1,
+};
 pub use remote_signer_roles_v1::{
     decode_remote_signer_role_bindings_v1_exact, ConsensusRemoteSignerProfileV1,
     ConsensusSignerPurposeV1, ConsensusTimeoutSignCommandV1, ConsensusVoteSignCommandV1,
@@ -292,7 +307,8 @@ pub use remote_signer_roles_v1::{
     MAX_REMOTE_SIGNER_ENDPOINT_DESCRIPTOR_BYTES_V1, MAX_REMOTE_SIGNER_PROFILE_DESCRIPTOR_BYTES_V1,
     MAX_REMOTE_SIGNER_ROLE_BINDINGS_BYTES_V1, REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1,
     REMOTE_SIGNER_ROLE_BINDINGS_SCHEMA_V1, REMOTE_SIGNER_RUNTIME_ACTIVATION_V1,
-    REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1,
+    REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1, REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1,
+    REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1,
 };
 
 /// This package must not be interpreted as a deployable consensus candidate.

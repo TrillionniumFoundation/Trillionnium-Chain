@@ -16,9 +16,13 @@
 //! outside the node configuration represented here.
 //!
 //! Only existing canonical sign intents can cross the typed vote and timeout
-//! command boundary.  Proposal and old/new handoff remain classified purposes,
-//! not sign commands: they require complete journal intents and durable Safety
-//! witnesses first.  There is intentionally no `sign(bytes)` trait or callback.
+//! command boundary. Those intents are publicly constructible and the typed
+//! wrappers prove only canonical shape, validator-set context, author, and
+//! command kind. They do not observe locked-QC state, justify ancestry,
+//! persist-before-sign state, or any other HotStuff SafetyRules witness.
+//! Proposal and old/new handoff remain classified purposes, not sign commands:
+//! they require complete journal intents and durable Safety witnesses first.
+//! There is intentionally no `sign(bytes)` trait or callback.
 //! No runtime consumes these types yet; P2P, consensus, operator/recovery, and
 //! remote-signer activation remain closed until the signer journal, whole-node
 //! checkpoint, and wire protocols can enforce the same role split.
@@ -68,6 +72,14 @@ pub const REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1: bool = false;
 
 /// This boundary exposes no caller-selected byte signing operation.
 pub const REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1: bool = false;
+
+/// Typed Vote/Timeout command construction does not evaluate locked-QC or any
+/// other HotStuff SafetyRules state.
+pub const REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1: bool = false;
+
+/// A publicly constructible, well-formed canonical Vote intent is not safe-vote
+/// authority and cannot be passed directly to a signature producer.
+pub const REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1: bool = false;
 
 /// Disjoint authority classes retained by the node configuration.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -614,8 +626,9 @@ pub fn decode_remote_signer_role_bindings_v1_exact(
     Ok(value)
 }
 
-/// Typed vote request.  Construction rejects timeout intents and requires the
-/// exact configured validator-set/author binding.
+/// Typed vote-shaped data. Construction rejects timeout intents and requires
+/// the exact configured validator-set/author binding, but it does not inspect
+/// locked-QC/justify state or grant safe-vote/signature-producer authority.
 #[derive(Debug, Clone, Copy)]
 pub struct ConsensusVoteSignCommandV1<'a> {
     intent: &'a CanonicalSignIntentV0,
@@ -643,7 +656,8 @@ impl<'a> ConsensusVoteSignCommandV1<'a> {
     }
 }
 
-/// Typed timeout-vote request.  Construction rejects ordinary vote intents.
+/// Typed timeout-vote-shaped data. Construction rejects ordinary vote intents,
+/// but it does not evaluate SafetyRules or grant signature-producer authority.
 #[derive(Debug, Clone, Copy)]
 pub struct ConsensusTimeoutSignCommandV1<'a> {
     intent: &'a CanonicalSignIntentV0,
@@ -1127,6 +1141,8 @@ mod tests {
         assert!(!REMOTE_SIGNER_RUNTIME_ACTIVATION_V1);
         assert!(!REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1);
         assert!(!REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1);
+        assert!(!REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1);
+        assert!(!REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1);
     }
 
     #[test]

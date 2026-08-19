@@ -56,6 +56,19 @@ production_signature_producer = false
 remote_signer_role_profiles = true
 remote_signer_role_bindings_canonical = true
 remote_signer_purpose_profile_digest_bound = true
+remote_signer_node_protocol_adapter = true
+remote_signer_node_protocol_adapter_exact = true
+remote_signer_node_protocol_descriptor_equivalence = false
+remote_signer_node_protocol_resolver_attestation = false
+remote_signer_node_protocol_safety_rules = false
+remote_signer_node_protocol_lease_authority = false
+remote_signer_node_protocol_request_authority = false
+remote_signer_node_protocol_bare_ref_binding_source = false
+remote_signer_node_protocol_direct_constructor = false
+remote_signer_node_protocol_runtime_activation = false
+remote_signer_node_protocol_production_activation = false
+remote_signer_safety_rules_evaluation = false
+remote_signer_safe_vote_authority = false
 remote_signer_authenticated_profile_resolver = false
 remote_signer_strict_public_key_parsing = false
 remote_signer_runtime_activation = false
@@ -160,6 +173,7 @@ sha2 = "0.10"
 tempfile = { version = "3", optional = true }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
