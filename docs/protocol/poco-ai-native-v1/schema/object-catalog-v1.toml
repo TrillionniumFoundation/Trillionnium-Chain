@@ -1,0 +1,434 @@
+schema_version = 1
+catalog_id = "trnm-poco-ai-native-v1-object-catalog-v1"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+status = "draft-design-only"
+normative = false
+implemented = false
+activation = false
+
+[[objects]]
+id = "AgentIdentityV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "AgentKeyV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "CapabilityGrantV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "CapabilityRevocationOperationV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "SessionKeyGrantV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "NonceLaneStateV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "AgentTransactionV1"
+plane = "agent"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "TaskOfferV1"
+plane = "market-task"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "BidV1"
+plane = "market-task"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "TaskLeaseV1"
+plane = "market-task"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "EscrowV1"
+plane = "market-task"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ComputeCheckpointV1"
+plane = "market-task"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ExecutionReceiptV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ResultV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "VerificationProfileV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "VerificationClaimV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ChallengeV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "EvaluationResultV1"
+plane = "compute-verify"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ArtifactCommitmentV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "DaCommitteeDescriptorV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "DaBatchEnvelopeV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "DaAttestationV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "AvailabilityCertificateV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "WithholdingEvidenceV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "RetrievalReceiptV1"
+plane = "data-availability"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "BatchRefV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ChainDescriptorV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "StackProfileV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "BlockHeaderV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "OrderProposalV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "VoteV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "QuorumCertificateV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "TimeoutV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "TimeoutCertificateV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "EpochDescriptorV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "EpochHandoffV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "EpochCheckpointV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "TransactionExecutionReceiptV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ConsumptionReceiptV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ConsumptionRollupV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "FeeScheduleV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "SettlementIntentV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "SettlementReceiptV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "StateSyncManifestV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "UpgradePlanV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "MigrationReceiptV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "V0ToV1ActivationStatementV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "V0ToV1ActivationCertificateV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "OrderFinalityProofV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ApplicationStateProofV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ArtifactAvailabilityProofV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+id = "ResultSettlementFinalityProofV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = false
+activation = false
+
+[[objects]]
+# The bounded candidate schema covers this listed tag only. It is not a
+# repository-wide accepted-wire registry or normative-freeze claim.
+id = "GlobalExecutionBindingV1"
+plane = "order-coordination-settlement"
+status = "design-only"
+implemented = false
+wire_schema_assigned = true
+activation = false

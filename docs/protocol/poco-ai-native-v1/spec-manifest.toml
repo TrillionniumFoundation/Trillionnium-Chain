@@ -1,0 +1,160 @@
+schema_version = 1
+manifest_id = "trnm-poco-ai-native-v1-support-manifest-v1"
+protocol_id = "trnm-poco-ai-native-v1"
+protocol_major = 1
+manifest_status = "draft-design-only"
+normative = false
+implementation_authority = false
+activation_authority = false
+
+status_path = "docs/protocol/poco-ai-native-v1/status.toml"
+parameters_path = "docs/protocol/poco-ai-native-v1/parameters.toml"
+stack_profile_path = "docs/protocol/poco-ai-native-v1/profiles/stack-reference-shadow.toml"
+verification_registry_path = "docs/protocol/poco-ai-native-v1/profiles/verification-registry-reference.toml"
+schema_readme_path = "docs/protocol/poco-ai-native-v1/schema/README.md"
+object_catalog_path = "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml"
+vectors_readme_path = "docs/protocol/poco-ai-native-v1/vectors/README.md"
+order_trust_path_schema_path = "docs/protocol/poco-ai-native-v1/schema/cev1-order-trust-path-iterator-v1.json"
+order_trust_path_vectors_path = "docs/protocol/poco-ai-native-v1/vectors/cev1-order-trust-path-iterator-v1.json"
+order_trust_path_gate_path = "scripts/ci/check_poco_ai_native_v1_order_trust_path_iterator.sh"
+order_trust_path_negative_cases = 63
+ordinary_finality_advance_schema_path = "docs/protocol/poco-ai-native-v1/schema/cev1-order-ordinary-finality-advance-v1.json"
+ordinary_finality_advance_vectors_path = "docs/protocol/poco-ai-native-v1/vectors/cev1-order-ordinary-finality-advance-v1.json"
+ordinary_finality_advance_gate_path = "scripts/ci/check_poco_ai_native_v1_order_ordinary_finality_advance.sh"
+ordinary_finality_advance_negative_cases = 52
+weak_subjectivity_renewal_schema_path = "docs/protocol/poco-ai-native-v1/schema/cev1-weak-subjectivity-checkpoint-renewal-v1.json"
+weak_subjectivity_renewal_vectors_path = "docs/protocol/poco-ai-native-v1/vectors/cev1-weak-subjectivity-checkpoint-renewal-v1.json"
+weak_subjectivity_renewal_gate_path = "scripts/ci/check_poco_ai_native_v1_weak_subjectivity_renewal.sh"
+weak_subjectivity_renewal_negative_cases = 45
+production_contracts_path = "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"
+delivery_plan_path = "docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md"
+gap_register_path = "docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md"
+formal_plan_path = "formal/quint/poco-ai-native-v1/README.md"
+transport_schema_boundary_path = "proto/trnm/poco/ai/v1/README.md"
+
+required_files = [
+  "docs/protocol/poco-ai-native-v1/README.md",
+  "docs/protocol/poco-ai-native-v1/01-system-model-threat-model-and-non-goals.md",
+  "docs/protocol/poco-ai-native-v1/02-versioning-chain-profile-wire-and-crypto.md",
+  "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
+  "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md",
+  "docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md",
+  "docs/protocol/poco-ai-native-v1/06-certified-data-availability.md",
+  "docs/protocol/poco-ai-native-v1/07-order-consensus-epochs-and-finality.md",
+  "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
+  "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
+  "docs/protocol/poco-ai-native-v1/10-invariants-formal-obligations-and-conformance.md",
+  "docs/protocol/poco-ai-native-v1/status.toml",
+  "docs/protocol/poco-ai-native-v1/spec-manifest.toml",
+  "docs/protocol/poco-ai-native-v1/parameters.toml",
+  "docs/protocol/poco-ai-native-v1/profiles/stack-reference-shadow.toml",
+  "docs/protocol/poco-ai-native-v1/profiles/verification-registry-reference.toml",
+  "docs/protocol/poco-ai-native-v1/schema/README.md",
+  "docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-foundation-order-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-order-finality-light-client-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-order-trust-path-iterator-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-order-ordinary-finality-advance-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-weak-subjectivity-checkpoint-renewal-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-cross-version-activation-proof-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-transaction-batch-da-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-agent-market-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-verify-challenge-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-object-mvcc-fee-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-consumption-settlement-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-cross-plane-readback-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/cev1-global-execution-binding-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/schema/v0-to-v1-activation-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/README.md",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-foundation-order-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-order-signature-crypto-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-order-finality-light-client-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-order-trust-path-iterator-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-order-ordinary-finality-advance-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-weak-subjectivity-checkpoint-renewal-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-cross-version-activation-proof-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-transaction-batch-da-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-agent-market-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-verify-challenge-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-object-mvcc-fee-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-consumption-settlement-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-cross-plane-readback-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/cev1-global-execution-binding-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/vectors/v0-to-v1-activation-kernel-v1.json",
+  "docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md",
+  "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md",
+  "docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md",
+  "formal/quint/poco-ai-native-v1/README.md",
+  "formal/quint/poco-ai-native-v1/weighted_order_kernel.qnt",
+  "formal/quint/poco-ai-native-v1/timeout_lock.qnt",
+  "formal/quint/poco-ai-native-v1/epoch_handoff_activation.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/duplicate_signer_weight.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/unsafe_lock_vote.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/tc_unlocks.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/tc_finalizes.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/two_chain_finality.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/single_quorum_handoff.qnt",
+  "formal/quint/poco-ai-native-v1/mutants/wrong_activation_anchor.qnt",
+  "proto/trnm/poco/ai/v1/README.md",
+  "scripts/ci/check_poco_ai_native_v1_foundation_vectors.py",
+  "scripts/ci/check_poco_ai_native_v1_foundation_independent.py",
+  "scripts/ci/check_poco_ai_native_v1_foundation_independent.sh",
+  "scripts/ci/check_poco_ai_native_v1_foundation_formal.sh",
+  "scripts/ci/check_poco_ai_native_v1_order_crypto.py",
+  "scripts/ci/check_poco_ai_native_v1_order_crypto.sh",
+  "scripts/ci/check_poco_ai_native_v1_order_finality_light_client.py",
+  "scripts/ci/check_poco_ai_native_v1_order_finality_light_client.sh",
+  "scripts/ci/check_poco_ai_native_v1_order_trust_path_iterator.sh",
+  "scripts/ci/check_poco_ai_native_v1_order_ordinary_finality_advance.sh",
+  "scripts/ci/check_poco_ai_native_v1_weak_subjectivity_renewal.sh",
+  "scripts/ci/check_poco_ai_native_v1_cross_version_activation_proof.py",
+  "scripts/ci/check_poco_ai_native_v1_cross_version_activation_proof.sh",
+  "scripts/ci/check_poco_ai_native_v1_upgrade_kernel.py",
+  "scripts/ci/check_poco_ai_native_v1_upgrade_kernel.sh",
+  "scripts/ci/check_poco_ai_native_v1_global_execution_binding.py",
+  "scripts/ci/check_trnm_poco_da_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_agent_market_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_verify_challenge_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_mvcc_fee_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_consumption_settlement_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_cross_plane_readback_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_cross_plane_checkpoint_v1_boundary.sh",
+  "scripts/ci/check_trnm_poco_order_state_v1_boundary.sh",
+  "trillionnium/crates/trnm-poco-order-finality-verifier-v1/Cargo.toml",
+  "trillionnium/crates/trnm-poco-order-finality-verifier-v1/README.md",
+  "trillionnium/crates/trnm-poco-order-finality-verifier-v1/src/lib.rs",
+  "trillionnium/crates/trnm-poco-order-state-v1/Cargo.toml",
+  "trillionnium/crates/trnm-poco-order-state-v1/README.md",
+  "trillionnium/crates/trnm-poco-order-state-v1/src/error.rs",
+  "trillionnium/crates/trnm-poco-order-state-v1/src/lib.rs",
+  "trillionnium/crates/trnm-poco-order-state-v1/src/store.rs",
+  "trillionnium/crates/trnm-poco-order-state-v1/src/tests.rs",
+  "trillionnium/crates/trnm-poco-node/src/cross_plane_checkpoint_v1.rs",
+]
+
+draft_candidate_normative_files = [
+  "docs/protocol/poco-ai-native-v1/README.md",
+  "docs/protocol/poco-ai-native-v1/01-system-model-threat-model-and-non-goals.md",
+  "docs/protocol/poco-ai-native-v1/02-versioning-chain-profile-wire-and-crypto.md",
+  "docs/protocol/poco-ai-native-v1/03-agent-identity-capabilities-and-nonce-lanes.md",
+  "docs/protocol/poco-ai-native-v1/04-market-task-lease-escrow-and-lifecycle.md",
+  "docs/protocol/poco-ai-native-v1/05-compute-receipts-verification-and-challenges.md",
+  "docs/protocol/poco-ai-native-v1/06-certified-data-availability.md",
+  "docs/protocol/poco-ai-native-v1/07-order-consensus-epochs-and-finality.md",
+  "docs/protocol/poco-ai-native-v1/08-coordination-settlement-execution-and-fees.md",
+  "docs/protocol/poco-ai-native-v1/09-light-client-state-sync-and-upgrades.md",
+  "docs/protocol/poco-ai-native-v1/10-invariants-formal-obligations-and-conformance.md",
+]
+
+plane_ids = [
+  "agent",
+  "market-task",
+  "compute-verify",
+  "data-availability",
+  "order-coordination-settlement",
+]
+
+reference_profile_ids = [
+  "stack-reference-shadow",
+  "verification-registry-reference",
+]

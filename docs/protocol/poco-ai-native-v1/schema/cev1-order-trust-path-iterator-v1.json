@@ -1,0 +1,132 @@
+{
+  "schema": "trnm-poco-ai-native-v1-order-trust-path-iterator-candidate",
+  "schema_version": 1,
+  "status": "candidate-non-normative",
+  "classification": "bounded-independent-light-client-trust-path-evidence",
+  "purpose": "Compose an exact FreshGenesis transition with at most two versioned checkpoint-anchored transitions without reinterpreting the existing FreshGenesis-only carrier.",
+  "canonical_encoding": "CEV1",
+  "digest_construction": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+  "imports": {
+    "foundation_schema": "cev1-foundation-order-kernel-v1.json",
+    "one_step_schema": "cev1-order-finality-light-client-kernel-v1.json",
+    "existing_first_step_type": "BoundedEpochTransitionEvidenceV1",
+    "import_rule": "Each embedded raw step is independently strict-decoded and byte-for-byte re-encoded by its declared variant; JSON summaries are never authority."
+  },
+  "domains": {
+    "trusted_order_state": "trnm.poco-ai.trusted-order-state.v1",
+    "checkpoint_anchored_transition_step": "trnm.poco-ai.checkpoint-anchored-transition-step.v1",
+    "order_trust_path": "trnm.poco-ai.order-trust-path.v1",
+    "protocol_sidecar_content": "trnm.poco-ai.protocol-sidecar-content.v1",
+    "merkle_leaf": "trnm.poco-ai.merkle-leaf.v1",
+    "merkle_node": "trnm.poco-ai.merkle-node.v1",
+    "merkle_list_root": "trnm.poco-ai.merkle-list-root.v1"
+  },
+  "handoff_sidecar_root_contract": {
+    "protocol_sidecar_discriminant_width": "u8",
+    "epoch_handoff_variant": 2,
+    "protocol_objects_root_kind": 1,
+    "epoch_handoff_object_kind": 30,
+    "item_id": "EpochHandoffV1.handoff_id",
+    "item_commitment": "DigestV1(\"trnm.poco-ai.protocol-sidecar-content.v1\", ProtocolObjectSidecarV1::EpochHandoff(EpochHandoffV1))",
+    "cardinality": 1,
+    "root_rule": "exact single-item typed ordered root; the complete wrapper and both signature lists are committed"
+  },
+  "bounded_accepted_enums": {
+    "TrustPathStepV1": {
+      "0": "ExistingFreshGenesisTransition",
+      "1": "CheckpointAnchoredTransition"
+    }
+  },
+  "added_cev1_types": {
+    "TrustedOrderStateBodyV1": [
+      ["schema_version", "u16=1"],
+      ["context", "ProtocolContextV1"],
+      ["epoch", "u64"],
+      ["epoch_start_height", "u64"],
+      ["finalized_height", "u64"],
+      ["finalized_header", "BlockHeaderV1"],
+      ["finalized_block_id", "BlockIdV1"],
+      ["certified_head_header", "BlockHeaderV1"],
+      ["certified_head_block_id", "BlockIdV1"],
+      ["certified_head_qc_id", "QuorumCertificateIdV1"],
+      ["epoch_descriptor", "EpochDescriptorV1"],
+      ["validator_set", "ValidatorSetDescriptorV1"],
+      ["consensus_parameters", "ConsensusParametersV1"],
+      ["latest_checkpoint_id", "Option<EpochCheckpointIdV1>"],
+      ["latest_handoff_id", "Option<EpochHandoffIdV1>"]
+    ],
+    "TrustedOrderStateV1": [
+      ["body", "TrustedOrderStateBodyV1"],
+      ["state_id", "Hash32 = H(trnm.poco-ai.trusted-order-state.v1, CEV1(body))"]
+    ],
+    "CheckpointAnchoredTransitionStepBodyV1": [
+      ["schema_version", "u16=1"],
+      ["input_state_id", "Hash32"],
+      ["checkpoint_certified_chain", "List<CertifiedHeaderV1>; exactly EpochCheckpoint+EpochSeal1+EpochSeal2"],
+      ["checkpoint", "EpochCheckpointV1"],
+      ["new_epoch_descriptor", "EpochDescriptorV1"],
+      ["new_validator_set", "ValidatorSetDescriptorV1"],
+      ["new_consensus_parameters", "ConsensusParametersV1"],
+      ["handoff", "EpochHandoffV1"],
+      ["new_epoch_certified_chain", "List<CertifiedHeaderV1>; exactly V1HandoffFirst+3 Ordinary"],
+      ["output_state", "TrustedOrderStateV1"]
+    ],
+    "CheckpointAnchoredTransitionStepV1": [
+      ["body", "CheckpointAnchoredTransitionStepBodyV1"],
+      ["step_id", "Hash32 = H(trnm.poco-ai.checkpoint-anchored-transition-step.v1, CEV1(body))"]
+    ],
+    "TrustPathStepV1": [
+      ["variant", "u8; 0 ExistingFreshGenesisTransition, 1 CheckpointAnchoredTransition"],
+      ["raw_step_cev1", "Bytes; independently exact-decoded according to variant"]
+    ],
+    "OrderTrustPathBodyV1": [
+      ["schema_version", "u16=1"],
+      ["initial_state", "TrustedOrderStateV1"],
+      ["steps", "List<TrustPathStepV1>; length 0..3"]
+    ],
+    "OrderTrustPathV1": [
+      ["body", "OrderTrustPathBodyV1"],
+      ["path_id", "Hash32 = H(trnm.poco-ai.order-trust-path.v1, CEV1(body))"]
+    ]
+  },
+  "verified_relations": [
+    "The initial state is epoch-0 FreshGenesis, with identical finalized and certified heads and no checkpoint or handoff sidecar.",
+    "If present, step zero is exactly one existing FreshGenesis-only BoundedEpochTransitionEvidenceV1 raw CEV1 value.",
+    "ExistingFreshGenesisTransition is forbidden after position zero; CheckpointAnchoredTransition is forbidden at position zero.",
+    "Every later step input_state_id equals the exact prior canonical TrustedOrderStateV1 state_id.",
+    "Every checkpoint chain directly extends the prior certified head and consumes its certified_head_qc_id as the first justify_qc_id.",
+    "Checkpoint, seal, descriptor, validator set, parameters, dual weighted quorum handoff, activation block and three-chain finality are all independently recomputed.",
+    "Every V1HandoffFirst header commits exactly one complete EpochHandoffV1 ProtocolObjectSidecarV1 wrapper, including both role signature lists, through the recomputed root-kind-1 protocol_objects_root; its other ordered roots are empty.",
+    "A V1HandoffFirst at initial_new_view carries no TC; the bounded alternative skips exactly that initial view, carries one complete TimeoutCertificateV1 whose sole safe-parent object is the identical EpochHandoffV1, has no locked QC, names the exact latest finalized EpochCheckpointV1, and targets initial_new_view+1.",
+    "Each output state is derived from verified raw headers and certificates; carried output summaries cannot substitute intermediate state.",
+    "Epoch and finalized height increase strictly on every transition.",
+    "The successor checkpoint schedule is locally decidable and starts exactly after the certified head.",
+    "The path is bounded to at most three transitions and is canonical under replay and append."
+  ],
+  "resource_bounds": {
+    "max_steps": 3,
+    "parser_max_steps_before_semantic_rejection": 16,
+    "per_step_bytes": "bounded by both old and new committed max_cev1_value_bytes",
+    "path_bytes": "bounded by initial committed max_cev1_value_bytes",
+    "certificate_signers": "bounded by each epoch's committed max_certificate_signers"
+  },
+  "positive_inventory": [
+    "zero_hop_trusted_fresh_genesis",
+    "one_hop_existing_fresh_genesis_transition",
+    "two_hop_checkpoint_anchored_transition",
+    "three_hop_checkpoint_anchored_transition",
+    "exact_replay_determinism",
+    "prefix_append_determinism"
+  ],
+  "negative_inventory_count": 63,
+  "explicit_exclusions": [
+    "No v0 activation authority or migration verification.",
+    "No weak-subjectivity checkpoint selection or trust expiry.",
+    "No arbitrary-length or unbounded trust path.",
+    "No ordinary-QC skipped-view transition inside CheckpointAnchoredTransitionStepV1, more than one skipped epoch-start view, multiple TCs in one step, Genesis/Activation epoch-start TC anchor, or general pacemaker-history verification.",
+    "No state-sync, DA, ApplicationStateProof, ArtifactAvailabilityProof or ResultSettlementFinalityProof verification.",
+    "No complete wire or crypto corpus claim.",
+    "No second implementation or interoperability claim.",
+    "No global light-client completeness, normative freeze, implementation or production activation claim."
+  ]
+}

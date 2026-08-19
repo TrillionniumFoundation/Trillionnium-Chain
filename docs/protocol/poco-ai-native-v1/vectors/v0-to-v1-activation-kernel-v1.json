@@ -1,0 +1,310 @@
+{
+  "artifact": "poco-ai-native-v1-v0-to-v1-activation-kernel-corpus",
+  "artifact_version": 1,
+  "status": "candidate-non-normative",
+  "schema": "../schema/v0-to-v1-activation-kernel-v1.json",
+  "positive_cases": [
+    {
+      "case_id": "exact_epoch_boundary_activation",
+      "fixture": {
+        "plan_projection": {
+          "upgrade_plan_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "source_protocol_version": 0,
+          "target_protocol_version": 1,
+          "source_v0_genesis_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+          "source_v0_chain_id": "trnm-v0-test-1",
+          "activation_epoch": 8,
+          "activation_height": 800,
+          "source_epoch": 7,
+          "source_epoch_start_height": 700,
+          "epoch_length_blocks": 100,
+          "source_terminal_height": 799,
+          "target_stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222",
+          "target_runtime_profile_hash": "4444444444444444444444444444444444444444444444444444444444444444",
+          "source_v0_target_validator_set_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+          "source_v0_target_consensus_parameters_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+          "target_v1_validator_set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f",
+          "target_v1_consensus_parameters_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+          "configuration_projection_hash": "5c54bf0806657b229ef794aa0dba8f0d43e2dd5536e587d8eff1f12dd36aa1f6",
+          "target_epoch_descriptor_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "target_chain_descriptor_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "migration_program_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "conformance_bundle_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "rollback_policy": 0
+        },
+        "frozen_v0_evidence_projection": {
+          "source_upgrade_plan_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "current_protocol_version": 0,
+          "target_protocol_version": 1,
+          "activation_epoch": 8,
+          "activation_height": 800,
+          "target_validator_set_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+          "target_consensus_parameters_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+          "state_migration_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "artifact_manifest_hash": "f96d83bb0e28cff50350e1b0a060d075fbf5e9dddcf4cf837674ad61706bcf42",
+          "source_terminal_checkpoint_id": "1212121212121212121212121212121212121212121212121212121212121212",
+          "source_terminal_block_id": "1313131313131313131313131313131313131313131313131313131313131313",
+          "source_terminal_finality_proof_hash": "1414141414141414141414141414141414141414141414141414141414141414",
+          "terminal_qc_digest_v0": "1515151515151515151515151515151515151515151515151515151515151515",
+          "handoff_certificate_digest_v0": "1616161616161616161616161616161616161616161616161616161616161616",
+          "old_validator_set_hash": "d2ae6d658ce16f44a93008ab1b2f1eb7747a0ec40a2fe25cc9b61293bcda77f5",
+          "new_validator_set_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+          "evidence_contract": "bounded-v0-epoch-handoff-fields-1-through-11",
+          "source_artifacts": [
+            {
+              "path": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-joint-handoff-kernel-v0.json",
+              "sha256": "e79fe77f0cb92be40ad5d0f2f39f9c872d1e187475d1bc80195530322b8f8da0"
+            },
+            {
+              "path": "docs/protocol/poco-bft-v0/vectors/joint-handoff-composition-kernel-v0.json",
+              "sha256": "f57992d7e97427efd3a62f59b2cc1e2eec8a053e2649ec0ca73a47343fb6a7cf"
+            },
+            {
+              "path": "scripts/ci/check_poco_bft_v0_joint_handoff_schema.mjs",
+              "sha256": "db3648de956ed6e2b441d67b9c7da8677ddc73e117c7c9be6e7f554402bc4d56"
+            }
+          ],
+          "authorization_output": false,
+          "deferred_transport_fields": [12, 13, 14]
+        },
+        "configuration_projection": {
+          "body": {
+            "schema_version": 1,
+            "source_v0_validator_set_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+            "source_v0_consensus_parameters_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+            "target_v1_validator_set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f",
+            "target_v1_consensus_parameters_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+            "validator_supplement_manifest_hash": "2929292929292929292929292929292929292929292929292929292929292929",
+            "parameter_mapping_version": 1,
+            "migration_program_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "hash": "5c54bf0806657b229ef794aa0dba8f0d43e2dd5536e587d8eff1f12dd36aa1f6"
+        },
+        "artifact_manifest": {
+          "body": {
+            "schema_version": 1,
+            "target_protocol_version": 1,
+            "upgrade_plan_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "protocol_spec_manifest_hash": "2121212121212121212121212121212121212121212121212121212121212121",
+            "schema_manifest_hash": "2223232323232323232323232323232323232323232323232323232323232323",
+            "conformance_bundle_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "binary_artifact_manifest_hash": "2424242424242424242424242424242424242424242424242424242424242424",
+            "sbom_hash": "2525252525252525252525252525252525252525252525252525252525252525",
+            "provenance_hash": "2626262626262626262626262626262626262626262626262626262626262626",
+            "cross_version_verifier_hash": "2727272727272727272727272727272727272727272727272727272727272727"
+          },
+          "hash": "f96d83bb0e28cff50350e1b0a060d075fbf5e9dddcf4cf837674ad61706bcf42"
+        },
+        "migration_receipt": {
+          "body": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-v1-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "upgrade_plan_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "source_terminal_checkpoint_id": "1212121212121212121212121212121212121212121212121212121212121212",
+            "source_terminal_finality_proof_hash": "1414141414141414141414141414141414141414141414141414141414141414",
+            "source_terminal_height": 799,
+            "migration_program_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "migration_input_root": "1717171717171717171717171717171717171717171717171717171717171717",
+            "migration_output_root": "1818181818181818181818181818181818181818181818181818181818181818",
+            "migration_receipts_root": "1919191919191919191919191919191919191919191919191919191919191919",
+            "rejected_objects_root": "1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a",
+            "audit_manifest_hash": "1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b"
+          },
+          "id": "9212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b0"
+        },
+        "activation_statement": {
+          "body": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-v1-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "source_v0_genesis_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "source_v0_chain_id": "trnm-v0-test-1",
+            "source_upgrade_plan_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "upgrade_plan_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "source_terminal_checkpoint_id": "1212121212121212121212121212121212121212121212121212121212121212",
+            "source_terminal_block_id": "1313131313131313131313131313131313131313131313131313131313131313",
+            "source_terminal_finality_proof_hash": "1414141414141414141414141414141414141414141414141414141414141414",
+            "migration_receipt_id": "9212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b0",
+            "source_v0_old_validator_set_hash": "d2ae6d658ce16f44a93008ab1b2f1eb7747a0ec40a2fe25cc9b61293bcda77f5",
+            "source_v0_new_validator_set_hash": "5555555555555555555555555555555555555555555555555555555555555555",
+            "source_v0_target_consensus_parameters_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+            "target_v1_validator_set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f",
+            "target_v1_consensus_parameters_hash": "9999999999999999999999999999999999999999999999999999999999999999",
+            "configuration_projection_hash": "5c54bf0806657b229ef794aa0dba8f0d43e2dd5536e587d8eff1f12dd36aa1f6",
+            "target_epoch_descriptor_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "activation_epoch": 8,
+            "activation_height": 800
+          },
+          "id": "9502f64a8a5c96b250a8da633bb3ddbefe36d5cb3833f1da53893dad4474ae1a"
+        },
+        "old_signing_set": {
+          "format": "frozen-v0-validator-set",
+          "set_hash": "d2ae6d658ce16f44a93008ab1b2f1eb7747a0ec40a2fe25cc9b61293bcda77f5",
+          "descriptor": {
+            "schema_version": 0,
+            "genesis_hash": "3333333333333333333333333333333333333333333333333333333333333333",
+            "chain_id": "trnm-v0-test-1",
+            "protocol_version": 0,
+            "epoch": 7,
+            "consensus_parameters_hash": "6666666666666666666666666666666666666666666666666666666666666666",
+            "validators": [
+              { "validator_id": "6f6c642d61", "consensus_public_key": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8", "effective_weight": 4 },
+              { "validator_id": "6f6c642d62", "consensus_public_key": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664", "effective_weight": 3 },
+              { "validator_id": "6f6c642d63", "consensus_public_key": "43cdc023d22d5f9e107d1a0693457d35d1d10eb7d21c721192f56f5de40665d3", "effective_weight": 2 },
+              { "validator_id": "6f6c642d64", "consensus_public_key": "481ede772da15785c9e59a086201b8c3f9c307129e3fc6d7f34aa4dfed5814e5", "effective_weight": 1 }
+            ]
+          }
+        },
+        "new_signing_set": {
+          "format": "cev1-validator-set-descriptor",
+          "set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f",
+          "descriptor": {
+            "schema_version": 1,
+            "context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-v1-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "epoch": 8,
+            "definition": {
+              "schema_version": 1,
+              "members": [
+                { "validator_id": "6e65772d61", "consensus_key_scheme": 0, "consensus_public_key": "51998ccfdfffd83d9724490818ca22a97a030d18bb2a9d74668f72b81c3fa588", "voting_weight": 4, "network_identity_commitment": "3030303030303030303030303030303030303030303030303030303030303030", "safety_signer_policy_hash": "3131313131313131313131313131313131313131313131313131313131313131", "poco_economic_record_hash": "3232323232323232323232323232323232323232323232323232323232323232" },
+                { "validator_id": "6e65772d62", "consensus_key_scheme": 0, "consensus_public_key": "c99e2b37de93002df68326a785493cd4aa487d1a45fa2117aa105048923bf781", "voting_weight": 3, "network_identity_commitment": "3334343434343434343434343434343434343434343434343434343434343434", "safety_signer_policy_hash": "3535353535353535353535353535353535353535353535353535353535353535", "poco_economic_record_hash": "3636363636363636363636363636363636363636363636363636363636363636" },
+                { "validator_id": "6e65772d63", "consensus_key_scheme": 0, "consensus_public_key": "aaa3fed4b0f14ba274faa5837c78aec0ee9f9ab5ca66b97b4201b875f6a896ca", "voting_weight": 2, "network_identity_commitment": "3737373737373737373737373737373737373737373737373737373737373737", "safety_signer_policy_hash": "3838383838383838383838383838383838383838383838383838383838383838", "poco_economic_record_hash": "3939393939393939393939393939393939393939393939393939393939393939" },
+                { "validator_id": "6e65772d64", "consensus_key_scheme": 0, "consensus_public_key": "00d05a1d1ea251396d557afbd4588b3c6d99dbeb972fed10a32562ea26dcdcfa", "voting_weight": 1, "network_identity_commitment": "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a", "safety_signer_policy_hash": "3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b", "poco_economic_record_hash": "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c" }
+              ],
+              "total_weight": 10,
+              "quorum_threshold": 7
+            }
+          }
+        },
+        "activation_certificate": {
+          "statement_id": "9502f64a8a5c96b250a8da633bb3ddbefe36d5cb3833f1da53893dad4474ae1a",
+          "old_set_signatures": [
+            { "signer_id": "6f6c642d61", "role": 0, "signing_set_hash": "d2ae6d658ce16f44a93008ab1b2f1eb7747a0ec40a2fe25cc9b61293bcda77f5", "signature_scheme": 0, "signature": "c0542bc92fe73bd94778b4ea039190a85ebf6c8faeaaeb8763d620583f8bc5634b8248770eceb8bc8eec896d7115de45f3e0792cff0bc173524c34c2cb4a200c" },
+            { "signer_id": "6f6c642d62", "role": 0, "signing_set_hash": "d2ae6d658ce16f44a93008ab1b2f1eb7747a0ec40a2fe25cc9b61293bcda77f5", "signature_scheme": 0, "signature": "c36834a39f130af558b5db04df8c6befa1f7673a9cc239267ce4c0a44a8a4ec08e51acb6fed994ec39a9158f49b4f13b0f8d10b4ac8427cfda0c190efb0ea602" }
+          ],
+          "new_set_signatures": [
+            { "signer_id": "6e65772d61", "role": 1, "signing_set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f", "signature_scheme": 0, "signature": "f8e19dbdd9a8fe76b9741696c2c5654d1e1e3fc9dab4fe0b45086332df6aeb0503faea2710a5fbae9aab89ab4e3bb9de31374b842b1921ee46c8b2243bcfe007" },
+            { "signer_id": "6e65772d62", "role": 1, "signing_set_hash": "c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f", "signature_scheme": 0, "signature": "67ec672c3b3fc21eec9f97703caececc3d0cae3a7a6ad5911425ae079362be99d4fbf8832fdbf0f4d63b0dd8ad525a433646405835731e338555a5ea201d4f04" }
+          ]
+        },
+        "activation_anchor": {
+          "body": {
+            "schema_version": 1,
+            "target_context": {
+              "schema_version": 1,
+              "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+              "chain_id": "trnm-v1-test-1",
+              "protocol_version": 1,
+              "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+            },
+            "activation_statement_id": "9502f64a8a5c96b250a8da633bb3ddbefe36d5cb3833f1da53893dad4474ae1a",
+            "handoff_certificate_digest_v0": "1616161616161616161616161616161616161616161616161616161616161616",
+            "terminal_qc_digest_v0": "1515151515151515151515151515151515151515151515151515151515151515",
+            "source_terminal_block_id": "1313131313131313131313131313131313131313131313131313131313131313",
+            "target_epoch_descriptor_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "activation_height": 800,
+            "initial_view": 1
+          },
+          "id": "1dd1226ff4deecb283036e8f3599359bdcfcdfd9a93d80b194a6dc1ab7f02be7"
+        },
+        "first_v1_block_projection": {
+          "block_kind": 5,
+          "context": {
+            "schema_version": 1,
+            "genesis_hash": "1111111111111111111111111111111111111111111111111111111111111111",
+            "chain_id": "trnm-v1-test-1",
+            "protocol_version": 1,
+            "stack_profile_hash": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "epoch": 8,
+          "height": 800,
+          "view": 1,
+          "initial_view": 1,
+          "parent_kind": 2,
+          "parent_block_id": "1313131313131313131313131313131313131313131313131313131313131313",
+          "parent_handoff_certificate_digest_v0": "1616161616161616161616161616161616161616161616161616161616161616",
+          "parent_activation_statement_id": "9502f64a8a5c96b250a8da633bb3ddbefe36d5cb3833f1da53893dad4474ae1a",
+          "epoch_descriptor_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "justify_qc_id": null,
+          "timeout_certificate_id": null,
+          "batch_ref_count": 0,
+          "protocol_sidecar_count": 0,
+          "batch_refs_root": "ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753",
+          "protocol_objects_root": "a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc",
+          "post_state_root": "1818181818181818181818181818181818181818181818181818181818181818",
+          "transaction_execution_receipts_root": "e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506",
+          "evidence_root": "a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd071",
+          "consumption_rollups_root": "34d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c2",
+          "settlement_root": "2834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa",
+          "resource_usage_root": "3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b1",
+          "next_epoch_descriptor_id": null,
+          "upgrade_plan_id": null,
+          "epoch_handoff_id": null,
+          "activation_statement_id": "9502f64a8a5c96b250a8da633bb3ddbefe36d5cb3833f1da53893dad4474ae1a",
+          "activation_anchor_id": "1dd1226ff4deecb283036e8f3599359bdcfcdfd9a93d80b194a6dc1ab7f02be7",
+          "handoff_certificate_digest_v0": "1616161616161616161616161616161616161616161616161616161616161616",
+          "terminal_qc_digest_v0": "1515151515151515151515151515151515151515151515151515151515151515",
+          "migration_receipt_id": "9212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b0"
+        }
+      }
+    }
+  ],
+  "negative_cases": [
+    { "case_id": "reject_source_version_is_one", "mutation": "source_version_is_one", "expected_error": "source_version" },
+    { "case_id": "reject_target_version_downgrade", "mutation": "target_version_downgrade", "expected_error": "target_version" },
+    { "case_id": "reject_fallback_enabled", "mutation": "fallback_enabled", "expected_error": "downgrade_or_fallback" },
+    { "case_id": "reject_activation_epoch_skip", "mutation": "activation_epoch_skip", "expected_error": "activation_epoch" },
+    { "case_id": "reject_activation_height_shift", "mutation": "activation_height_shift", "expected_error": "activation_height" },
+    { "case_id": "reject_terminal_height_not_boundary_minus_one", "mutation": "terminal_height_not_boundary_minus_one", "expected_error": "terminal_height" },
+    { "case_id": "reject_v0_evidence_source_hash_flip", "mutation": "v0_evidence_source_hash_flip", "expected_error": "v0_evidence_source_inventory" },
+    { "case_id": "reject_artifact_manifest_digest_flip", "mutation": "artifact_manifest_digest_flip", "expected_error": "artifact_manifest_hash" },
+    { "case_id": "reject_configuration_projection_digest_flip", "mutation": "configuration_projection_digest_flip", "expected_error": "configuration_projection_hash" },
+    { "case_id": "reject_migration_receipt_digest_flip", "mutation": "migration_receipt_digest_flip", "expected_error": "migration_receipt_id" },
+    { "case_id": "reject_activation_statement_digest_flip", "mutation": "activation_statement_digest_flip", "expected_error": "activation_statement_id" },
+    { "case_id": "reject_cross_chain_replay", "mutation": "cross_chain_replay", "expected_error": "activation_statement_id" },
+    { "case_id": "reject_old_signature_bitflip", "mutation": "old_signature_bitflip", "expected_error": "invalid_signature" },
+    { "case_id": "reject_new_signature_wrong_role", "mutation": "new_signature_wrong_role", "expected_error": "signature_role" },
+    { "case_id": "reject_old_signature_wrong_set", "mutation": "old_signature_wrong_set", "expected_error": "signature_set" },
+    { "case_id": "reject_old_under_quorum", "mutation": "old_under_quorum", "expected_error": "insufficient_quorum" },
+    { "case_id": "reject_new_under_quorum", "mutation": "new_under_quorum", "expected_error": "insufficient_quorum" },
+    { "case_id": "reject_duplicate_old_signer", "mutation": "duplicate_old_signer", "expected_error": "signature_order" },
+    { "case_id": "reject_activation_anchor_digest_flip", "mutation": "activation_anchor_digest_flip", "expected_error": "activation_anchor_id" },
+    { "case_id": "reject_anchor_terminal_qc_substitution", "mutation": "anchor_terminal_qc_substitution", "expected_error": "activation_anchor_id" },
+    { "case_id": "reject_first_block_parent_substitution", "mutation": "first_block_parent_substitution", "expected_error": "first_block_parent" },
+    { "case_id": "reject_first_block_wrong_kind", "mutation": "first_block_wrong_kind", "expected_error": "first_block_kind" },
+    { "case_id": "reject_first_block_has_payload", "mutation": "first_block_has_payload", "expected_error": "first_block_payload" },
+    { "case_id": "reject_first_block_nonempty_root", "mutation": "first_block_nonempty_root", "expected_error": "first_block_empty_root" },
+    { "case_id": "reject_first_block_state_substitution", "mutation": "first_block_state_substitution", "expected_error": "first_block_state" },
+    { "case_id": "reject_first_block_has_justify_qc", "mutation": "first_block_has_justify_qc", "expected_error": "first_block_justification" },
+    { "case_id": "reject_first_block_late_without_tc", "mutation": "first_block_late_without_tc", "expected_error": "first_block_view" },
+    { "case_id": "reject_target_set_substitution", "mutation": "target_set_substitution", "expected_error": "activation_statement_id" },
+    { "case_id": "reject_plan_id_substitution", "mutation": "plan_id_substitution", "expected_error": "artifact_manifest_hash" },
+    { "case_id": "reject_old_membership_substitution_under_committed_hash", "mutation": "old_membership_substitution_under_committed_hash", "expected_error": "validator_set_hash" },
+    { "case_id": "reject_new_duplicate_public_key", "mutation": "new_duplicate_public_key", "expected_error": "duplicate_public_key" }
+  ],
+  "explicit_exclusions": [
+    "UpgradePlanIdV1 recomputation because the draft has not assigned a CEV1 discriminant/encoding for the NoFallback type",
+    "authoritatively decoding and cryptographically verifying UpgradePlanV0 field 12, first-new-epoch proposal field 13, new-epoch finality field 14, the governed v0 upgrade carrier, or a complete cross-version authority proof; the exact bounded fields-1-through-11 sources are hash-bound and independently gated but explicitly return no authority",
+    "proving that the opaque upgrade_plan_id and source_upgrade_plan_hash were governed or order-finalized",
+    "executing the migration program, authenticating complete source state, recomputing migration output/audit/conservation roots, or checking the full configuration mapping",
+    "recomputing ChainDescriptorV1, StackProfileV1, EpochDescriptorV1, ConsensusParametersV1, the full source-v0-successor-to-target-v1 configuration mapping beyond the exact committed validator-set descriptor hash, a full BlockHeaderV1, or OrderProposalV1",
+    "a delayed first-v1 view and its exact TC safe-parent path",
+    "first-v1 three-chain finality, light-client adoption, crash durability, signer journaling, whole-node CAS, implementation, activation, production, release readiness, or normative freeze"
+  ]
+}

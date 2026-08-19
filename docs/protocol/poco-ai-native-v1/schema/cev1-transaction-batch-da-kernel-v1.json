@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "schema_id": "trnm-poco-ai-native-v1-transaction-batch-da-kernel-candidate-v1",
+  "classification": "candidate-non-normative",
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "namespace": {
+    "name": "TransactionBatch",
+    "tag": 0,
+    "artifact_evidence_supported": false
+  },
+  "encoding": {
+    "candidate_codec": "borsh-fixed-shape-little-endian",
+    "global_cev1_wire_schema_complete": false,
+    "transaction_envelope_parser_complete": false
+  },
+  "typed_objects": [
+    "DaCommitteeIdV1",
+    "BatchIdV1",
+    "ChunkIdV1",
+    "DaAttestationIdV1",
+    "AvailabilityCertificateIdV1",
+    "DaObligationIdV1",
+    "WithholdingEvidenceIdV1"
+  ],
+  "state_machine": {
+    "states": ["Stored", "Unavailable", "Certified", "GarbageCollected"],
+    "transitions": [
+      "admit_batch: absent -> Stored",
+      "audit_failure: Stored|Certified -> Unavailable",
+      "repair_exact: Unavailable -> Stored|Certified",
+      "admit_certificate: Stored -> Certified",
+      "garbage_collect: Certified(released,expired) -> GarbageCollected"
+    ],
+    "attestation_rule": "persist complete batch plus unsigned attestation body and fresh-connection exact readback before any signature can be accepted",
+    "certificate_threshold": "floor(2*total_weight/3)+1",
+    "author_sequence": "exact monotonic successor",
+    "author_quota": "bounded outstanding count and bytes",
+    "global_queue": "bounded batches and bytes"
+  },
+  "sqlite": {
+    "journal_schema": 2,
+    "automatic_migration": false,
+    "journal_mode": "DELETE",
+    "synchronous": "FULL",
+    "tables": [
+      "da_metadata_v1",
+      "da_author_state_v1",
+      "da_batches_v1",
+      "da_attestations_v1",
+      "da_gc_tombstones_v1"
+    ],
+    "triggers": false,
+    "views": false,
+    "fresh_connection_readback": true,
+    "unresolved_sidecars_fail_closed": true,
+    "checksummed_attestation_high_watermark": true,
+    "anti_whole_store_rollback_authority": false,
+    "rowid_sequence_authority": false,
+    "immutable_durable_manifest_checksum": true
+  },
+  "evidence": {
+    "durable_before_attest": true,
+    "strict_ed25519": true,
+    "checked_weighted_quorum": true,
+    "retrieval_ranges": true,
+    "repair": true,
+    "retention_extension_release": true,
+    "durable_gc_tombstone": true,
+    "gc_permit_public_constructor": false,
+    "production_gc_authority": false,
+    "external_byte_deletion_reachable": false,
+    "objective_attestor_equivocation": true
+  },
+  "excluded": [
+    "ArtifactEvidence namespace",
+    "network dissemination",
+    "remote retrieval protocol",
+    "production signer authorization",
+    "Order vote eligibility",
+    "whole-node checkpoint/CAS",
+    "node integration",
+    "full AgentTransactionV1 parser",
+    "global v1 implementation",
+    "normative freeze",
+    "production activation"
+  ]
+}
