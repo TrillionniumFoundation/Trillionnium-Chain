@@ -1,0 +1,44 @@
+{
+  "schema": "trnm.native-execution-v0.complete-durable-p.v1",
+  "classification": "candidate-non-production",
+  "scope": "frozen-v0 ordinary body, full StateRoot and durable P",
+  "inputs": {
+    "chain_id": "trnm-native-durable-test",
+    "genesis_hash_hex": "0707070707070707070707070707070707070707070707070707070707070707",
+    "chain_descriptor_hash_hex": "0808080808080808080808080808080808080808080808080808080808080808",
+    "store_id_hex": "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b",
+    "parent_height": 0,
+    "target_height": 1,
+    "parent_block_id_hex": "0909090909090909090909090909090909090909090909090909090909090909",
+    "parent_commit_id_hex": "0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a",
+    "block_id_hex": "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c",
+    "timestamp_ms": 1700000001000,
+    "initial_state_root_hex": "d5679a569893b373132fa56a8e2a240672a79d30375dabd02de12be2129a04c7",
+    "outer_transaction_sha256_hex": [
+      "def5d6229e8ca507eaed83a379de8036b1841c93e0ad3fdabf012f4eb1e26ddb",
+      "d16c8df742b22d0e7ed830b04686ad50df57b94c25ee9c59a44800705b57220a"
+    ],
+    "commands": [
+      "operator credit did:client:1 by 10000",
+      "did:client:1 create durable-task-0 after observing the first delta"
+    ]
+  },
+  "expected": {
+    "payload_root_hex": "02da78cb57b3e0cf4f15861b4b5e7af0f423826fbf56a5ef9b01f99389c68dbb",
+    "post_state_root_hex": "341a4f7e164b99ecdb9fedea6959115ef145d51e6ab0d786b28e11c99343679a",
+    "receipts_root_hex": "97ce54b75b5e428992460f65804d73540c790594d32bad1616282c271a66cfa0",
+    "evidence_root_hex": "df2f0138177d79d16f277d2c45d5a9fdbe492daa75c2b28fb901f3450022b047",
+    "durable_sequence_after_p": 2,
+    "durable_sequence_after_commit": 3,
+    "prepared_recovery_disposition": "ValidationReplayRequired",
+    "committed_recovery_disposition": "Exact"
+  },
+  "authority_boundary": {
+    "core_application_seal": false,
+    "safety_authority": false,
+    "whole_node_checkpoint_cas": false,
+    "request_signature": false,
+    "signing_or_broadcast": false,
+    "production_candidate": false
+  }
+}

@@ -1714,6 +1714,49 @@ name = "trnm-mempool"
 version = "0.1.0"
 
 [[package]]
+name = "trnm-native-application"
+version = "0.1.0"
+
+[[package]]
+name = "trnm-native-application-sqlite"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "rusqlite",
+ "sha2",
+ "trnm-consensus-core",
+ "trnm-consensus-crypto",
+ "trnm-consensus-safety-store",
+ "trnm-consensus-types",
+ "trnm-native-application",
+]
+
+[[package]]
+name = "trnm-native-execution-v0"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "borsh",
+ "ed25519-dalek",
+ "fs2",
+ "hex",
+ "ics23",
+ "jmt",
+ "prost",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
+ "trnm-finality-types",
+ "trnm-native-application",
+ "trnm-protocol",
+ "trnm-runtime",
+]
+
+[[package]]
 name = "trnm-node"
 version = "0.1.0"
 dependencies = [
