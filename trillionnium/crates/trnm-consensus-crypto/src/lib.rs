@@ -9,6 +9,12 @@
 use ed25519_dalek::{Signature, VerifyingKey};
 use trnm_consensus_types::{SignatureBytes, SignatureVerifier, SigningRoot, Validator};
 
+mod epoch_transition;
+
+pub use epoch_transition::{
+    verify_same_version_epoch_transition_strict_v0, StrictSameVersionEpochTransitionV0,
+};
+
 /// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
 ///
 /// Public keys must decode as Ed25519 compressed points. `verify_strict`

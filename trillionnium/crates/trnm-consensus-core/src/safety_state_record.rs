@@ -15,28 +15,30 @@ use trnm_consensus_types::{
     decode_ordinary_qc_v0_exact, decode_qc_reference_v0_exact_with_trusted_genesis,
     decode_timeout_certificate_v0_exact_with_trusted_genesis, Block, BlockId, CertificateId,
     ChainId, ContextAuthorizedQcV0, Epoch, Height, ProposalWitnessV0, ProtocolVersion, QcRef,
-    QcReferenceV0, QuorumCertificate, Signature64, SignedProposalV0, SigningRoot,
+    QcReferenceV0, QuorumCertificate, Signature64, SignedProposalV0, SigningRoot, StateRoot,
     TimeoutCertificateV0, ValidatorSetId, View,
 };
 
 use crate::model::{
-    CoreConfig, DurableFinalizationV0, DurablePayloadValidationCompletionV0,
+    AuthenticatedGenesisApplicationParentV0, BlockIdOverlayRefV0, CoreConfig,
+    DurableFinalizationV0, DurablePayloadValidationCompletionV0,
     DurablePayloadValidationObligationV0, DurablePayloadValidationResultV1,
-    DurableValidatedBlockCommitmentsV1, FinalizedTip, InvalidPayloadReference, PayloadTerminalFact,
-    PayloadTerminalResult, PayloadValidationParentV0, PayloadValidationRouteV0,
+    DurableStateSyncAnchorV0, DurableValidatedBlockCommitmentsV1, FinalizedTip,
+    InvalidPayloadReference, PayloadTerminalFact, PayloadTerminalResult,
+    PayloadValidationParentProvenanceV0, PayloadValidationParentV0, PayloadValidationRouteV0,
     PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState, SignIntent,
-    ValidationId,
+    ValidatedPayloadArtifactRefV0, ValidationId,
 };
 
 pub const SAFETY_STATE_RECORD_CODEC_VERSION_V0: u16 = 0;
-pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 8;
+pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 12;
 
-const MAGIC: &[u8; 8] = b"TRNMSF8\0";
+const MAGIC: &[u8; 8] = b"TRNMSF12";
 const CONFIG_DOMAIN: &str = "trnm.consensus-core.safety-state-config.v0";
 const RECORD_DOMAIN: &str = "trnm.consensus-core.safety-state-record.v0";
 const LAYOUT_DOMAIN: &str = "trnm.consensus-core.safety-state-layout.v0";
 const LAYOUT_DESCRIPTION: &[u8] =
-    b"schema8;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;sha256-domain-framed";
+    b"schema12;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;valid-artifact-overlay-ref;three-state-parent-carrier;authenticated-genesis-application-parent;exact-parent-provenance;ordered-finalization-queue;finalization-target-overlay-ref;durable-state-sync-anchor;application-applied-watermark;sha256-domain-framed";
 
 const TAG_NONE: u8 = 0;
 const TAG_SOME: u8 = 1;
@@ -47,6 +49,11 @@ const TAG_TERMINAL_INVALID: u8 = 1;
 const TAG_RESULT_VALID: u8 = 0;
 const TAG_RESULT_UNAVAILABLE: u8 = 1;
 const TAG_RESULT_INVALID: u8 = 2;
+const TAG_PARENT_FINALIZED: u8 = 0;
+const TAG_PARENT_SPECULATIVE: u8 = 1;
+const TAG_PARENT_CARRIER_LEGACY_GENESIS: u8 = 0;
+const TAG_PARENT_CARRIER_AUTHENTICATED_GENESIS_APPLICATION: u8 = 1;
+const TAG_PARENT_CARRIER_EXACT_HEADER: u8 = 2;
 const TAG_SIGN_VOTE: u8 = 0;
 const TAG_SIGN_TIMEOUT: u8 = 1;
 const TAG_HALT_CONFLICTING_QCS: u8 = 0;
@@ -60,10 +67,12 @@ const TAG_INVALID_REFERENCE_VOTE: u8 = 2;
 // These prevent an attacker-controlled count from amplifying a bounded record
 // into a much larger eager allocation before the item bytes are parsed.
 const MIN_TERMINAL_FACT_BYTES: usize = 41;
-const MIN_VALIDATION_OBLIGATION_BYTES: usize = 196;
+const MAX_TERMINAL_FACT_BYTES: usize = 137;
+const MIN_VALIDATION_OBLIGATION_BYTES: usize = 197;
 const MIN_VALIDATION_COMPLETION_BYTES: usize = 58;
 const MIN_BLOB_ITEM_BYTES: usize = 4;
 const MIN_NONEMPTY_BLOB_ITEM_BYTES: usize = 5;
+const MIN_DURABLE_FINALIZATION_BYTES: usize = 157;
 
 /// Host-selected resource bounds for one exact record.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -323,13 +332,14 @@ pub fn minimum_safety_state_record_limits_v0(
         .max(maximum_finality_bytes);
 
     let high_and_lock = checked_capacity_mul(2, checked_capacity_add(4, maximum_qc_bytes)?)?;
-    let terminal_facts = checked_capacity_mul(observed_slots, MIN_TERMINAL_FACT_BYTES)?;
+    let terminal_facts = checked_capacity_mul(observed_slots, MAX_TERMINAL_FACT_BYTES)?;
     let obligations = checked_capacity_add(
         maximum_message_bytes,
         checked_capacity_mul(observed_slots, 8)?,
     )?;
-    // The largest completion is the 106-byte inert Valid form.
-    let completions = checked_capacity_mul(observed_slots, 106)?;
+    // The largest completion is the 234-byte inert Valid form: the prior
+    // 106-byte snapshot plus the complete 128-byte artifact/overlay ref.
+    let completions = checked_capacity_mul(observed_slots, 234)?;
     let pending_tc = checked_capacity_add(5, maximum_tc_bytes)?;
     let standalone_qcs = checked_capacity_add(
         5,
@@ -342,7 +352,16 @@ pub fn minimum_safety_state_record_limits_v0(
             checked_capacity_add(4, maximum_qc_bytes)?,
         )?,
     )?;
-    let finalization = checked_capacity_add(61, maximum_finality_bytes)?;
+    let finalization = checked_capacity_add(157, maximum_finality_bytes)?;
+    // Optional tag + exact genesis parent tip + the bounded proof blob.
+    let state_sync_anchor = checked_capacity_add(61, maximum_finality_bytes)?;
+    let finalization_queue = checked_capacity_add(
+        4,
+        checked_capacity_mul(
+            config.max_blocks(),
+            checked_capacity_add(156, maximum_finality_bytes)?,
+        )?,
+    )?;
     let conflicting_qc_halt = checked_capacity_add(
         2,
         checked_capacity_mul(2, checked_capacity_add(4, maximum_qc_bytes)?)?,
@@ -353,6 +372,7 @@ pub fn minimum_safety_state_record_limits_v0(
     let state_record_bytes = [
         4096usize,
         chain_id_bytes,
+        145, // optional authenticated genesis application parent
         high_and_lock,
         terminal_facts,
         obligations,
@@ -361,6 +381,9 @@ pub fn minimum_safety_state_record_limits_v0(
         standalone_qcs,
         170, // largest pending SignIntent including its option tag
         finalization,
+        state_sync_anchor,
+        56, // application-applied FinalizedTip
+        finalization_queue,
         33, // pending-finalize option plus CertificateId
         maximum_halt,
     ]
@@ -412,6 +435,11 @@ pub fn safety_state_record_config_ref_v0(
         context.limits.maximum_blob_bytes,
     )?;
     encoder.u64(config.trusted_genesis_timestamp_ms())?;
+    encode_optional(
+        config.authenticated_genesis_application_parent_v0(),
+        &mut encoder,
+        encode_authenticated_genesis_application_parent,
+    )?;
     encoder.u64(usize_to_u64(config.max_blocks(), "max_blocks")?)?;
     encoder.u64(usize_to_u64(
         config.max_observed_messages(),
@@ -520,6 +548,10 @@ fn validate_state_scope(
         || state.epoch() != config.validator_set().epoch()
         || state.validator_set_id() != config.validator_set().id()
         || state.genesis_block_id() != config.genesis_block_id()
+        || state.authenticated_genesis_application_parent_v0().copied()
+            != config
+                .authenticated_genesis_application_parent_v0()
+                .copied()
     {
         return Err(SafetyStateRecordErrorV0::ConfigMismatch);
     }
@@ -543,6 +575,11 @@ fn encode_state_payload(
     encoder.u64(state.epoch().get())?;
     encoder.fixed(state.validator_set_id().as_bytes())?;
     encoder.fixed(state.genesis_block_id().as_bytes())?;
+    encode_optional(
+        state.authenticated_genesis_application_parent_v0(),
+        encoder,
+        encode_authenticated_genesis_application_parent,
+    )?;
     encoder.u64(state.current_view().get())?;
     encode_optional_view(state.last_voted_view(), encoder)?;
     encode_optional_view(state.last_timeout_view(), encoder)?;
@@ -559,10 +596,25 @@ fn encode_state_payload(
     )?;
     for fact in state.payload_terminal_facts() {
         encoder.fixed(fact.block_id().as_bytes())?;
-        encoder.u8(match fact.result() {
-            PayloadTerminalResult::Valid => TAG_TERMINAL_VALID,
-            PayloadTerminalResult::DeterministicallyInvalid => TAG_TERMINAL_INVALID,
-        })?;
+        match fact.result() {
+            PayloadTerminalResult::Valid => {
+                encoder.u8(TAG_TERMINAL_VALID)?;
+                let overlay =
+                    fact.valid_overlay()
+                        .ok_or(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                            "Valid terminal overlay",
+                        ))?;
+                encode_overlay_ref(overlay, encoder)?;
+            }
+            PayloadTerminalResult::DeterministicallyInvalid => {
+                if fact.valid_overlay().is_some() {
+                    return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                        "invalid terminal overlay",
+                    ));
+                }
+                encoder.u8(TAG_TERMINAL_INVALID)?;
+            }
+        }
         encoder.u64(fact.first_recorded_revision())?;
     }
 
@@ -616,6 +668,19 @@ fn encode_state_payload(
         encoder,
         |finalization, encoder| encode_durable_finalization(finalization, context, encoder),
     )?;
+    encode_optional(state.state_sync_anchor(), encoder, |anchor, encoder| {
+        encode_durable_state_sync_anchor(anchor, context, encoder)
+    })?;
+    encode_finalized_tip(state.application_applied(), encoder)?;
+    encode_count(
+        state.finalization_queue().len(),
+        context.core_config.max_blocks(),
+        "application finalization queue",
+        encoder,
+    )?;
+    for finalization in state.finalization_queue() {
+        encode_durable_finalization(finalization, context, encoder)?;
+    }
     encode_optional_certificate(state.pending_finalize(), encoder)?;
     encode_optional(state.safety_halt(), encoder, |halt, encoder| {
         encode_safety_halt(halt, context, encoder)
@@ -635,6 +700,11 @@ fn decode_state_payload(
     require_epoch_zero(epoch)?;
     let validator_set_id = ValidatorSetId::new(decoder.fixed::<32>("validator-set ID")?);
     let genesis_block_id = BlockId::new(decoder.fixed::<32>("genesis block ID")?);
+    let authenticated_genesis_application_parent = decode_optional(
+        decoder,
+        "authenticated genesis application parent",
+        decode_authenticated_genesis_application_parent,
+    )?;
     let current_view = View::new(decoder.u64("current view")?);
     let last_voted_view = decode_optional_view(decoder, "last voted view")?;
     let last_timeout_view = decode_optional_view(decoder, "last timeout view")?;
@@ -654,14 +724,18 @@ fn decode_state_payload(
             .try_reserve(1)
             .map_err(|_| SafetyStateRecordErrorV0::AllocationFailed("terminal facts"))?;
         let block_id = BlockId::new(decoder.fixed::<32>("terminal block ID")?);
-        let result = match decoder.u8("terminal result")? {
-            TAG_TERMINAL_VALID => PayloadTerminalResult::Valid,
-            TAG_TERMINAL_INVALID => PayloadTerminalResult::DeterministicallyInvalid,
+        let (result, valid_overlay) = match decoder.u8("terminal result")? {
+            TAG_TERMINAL_VALID => (
+                PayloadTerminalResult::Valid,
+                Some(decode_overlay_ref(decoder)?),
+            ),
+            TAG_TERMINAL_INVALID => (PayloadTerminalResult::DeterministicallyInvalid, None),
             tag => return Err(SafetyStateRecordErrorV0::UnknownTag("terminal result", tag)),
         };
-        payload_terminal_facts.push(PayloadTerminalFact::new(
+        payload_terminal_facts.push(PayloadTerminalFact::from_persisted_parts(
             block_id,
             result,
+            valid_overlay,
             decoder.u64("terminal first revision")?,
         ));
     }
@@ -719,18 +793,37 @@ fn decode_state_payload(
     let last_finalization = decode_optional(decoder, "last finalization", |decoder| {
         decode_durable_finalization(decoder, context)
     })?;
+    let state_sync_anchor = decode_optional(decoder, "state-sync anchor", |decoder| {
+        decode_durable_state_sync_anchor(decoder, context)
+    })?;
+    let application_applied = decode_finalized_tip(decoder)?;
+    let finalization_count = decoder.count(
+        "application finalization queue",
+        context.core_config.max_blocks(),
+        MIN_DURABLE_FINALIZATION_BYTES,
+    )?;
+    let mut finalization_queue = Vec::new();
+    finalization_queue
+        .try_reserve(finalization_count)
+        .map_err(|_| {
+            SafetyStateRecordErrorV0::AllocationFailed("application finalization queue")
+        })?;
+    for _ in 0..finalization_count {
+        finalization_queue.push(decode_durable_finalization(decoder, context)?);
+    }
     let pending_finalize = decode_optional_certificate(decoder)?;
     let safety_halt = decode_optional(decoder, "safety halt", |decoder| {
         decode_safety_halt(decoder, context)
     })?;
 
-    let state = SafetyState::from_persisted_parts(
+    let state = SafetyState::from_persisted_parts_v12(
         SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
         chain_id,
         protocol_version,
         epoch,
         validator_set_id,
         genesis_block_id,
+        authenticated_genesis_application_parent,
         current_view,
         last_voted_view,
         last_timeout_view,
@@ -745,6 +838,9 @@ fn decode_state_payload(
         pending_standalone_qc_sync,
         pending_sign,
         last_finalization,
+        state_sync_anchor,
+        application_applied,
+        finalization_queue,
         pending_finalize,
         safety_halt,
     );
@@ -790,12 +886,16 @@ fn encode_completion(
     encode_validation_id(value.id(), encoder)?;
     encoder.u64(value.first_recorded_revision())?;
     match value.result() {
-        DurablePayloadValidationResultV1::Valid { commitments } => {
+        DurablePayloadValidationResultV1::Valid {
+            commitments,
+            artifact_ref,
+        } => {
             encoder.u8(TAG_RESULT_VALID)?;
             encoder.fixed(commitments.block_id().as_bytes())?;
             encoder.u64(commitments.logical_block_size())?;
             encoder.u32(commitments.transaction_count())?;
             encoder.u32(commitments.evidence_count())?;
+            encode_artifact_ref(artifact_ref, encoder)?;
         }
         DurablePayloadValidationResultV1::Unavailable => encoder.u8(TAG_RESULT_UNAVAILABLE)?,
         DurablePayloadValidationResultV1::DeterministicallyInvalid => {
@@ -812,14 +912,18 @@ fn decode_completion(
     let id = decode_validation_id(decoder)?;
     let first_recorded_revision = decoder.u64("completion first revision")?;
     let result = match decoder.u8("completion result")? {
-        TAG_RESULT_VALID => DurablePayloadValidationResultV1::Valid {
-            commitments: DurableValidatedBlockCommitmentsV1::from_persisted_parts(
+        TAG_RESULT_VALID => {
+            let commitments = DurableValidatedBlockCommitmentsV1::from_persisted_parts(
                 BlockId::new(decoder.fixed::<32>("valid block ID")?),
                 decoder.u64("logical block size")?,
                 decoder.u32("transaction count")?,
                 decoder.u32("evidence count")?,
-            ),
-        },
+            );
+            DurablePayloadValidationResultV1::Valid {
+                commitments,
+                artifact_ref: decode_artifact_ref(decoder)?,
+            }
+        }
         TAG_RESULT_UNAVAILABLE => DurablePayloadValidationResultV1::Unavailable,
         TAG_RESULT_INVALID => DurablePayloadValidationResultV1::DeterministicallyInvalid,
         tag => {
@@ -837,15 +941,60 @@ fn decode_completion(
     ))
 }
 
+fn encode_authenticated_genesis_application_parent(
+    value: &AuthenticatedGenesisApplicationParentV0,
+    encoder: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    value.validate_shape_v0().map_err(|_| {
+        SafetyStateRecordErrorV0::InvalidConsensusValue("authenticated genesis application parent")
+    })?;
+    encoder.fixed(value.genesis_block_id().as_bytes())?;
+    encoder.u64(value.timestamp_ms())?;
+    encoder.u64(value.state_version())?;
+    encoder.fixed(value.state_root().as_bytes())?;
+    encoder.fixed(&value.descriptor_ref())?;
+    encoder.fixed(&value.projection_profile_ref())?;
+    Ok(())
+}
+
+fn decode_authenticated_genesis_application_parent(
+    decoder: &mut Decoder<'_>,
+) -> Result<AuthenticatedGenesisApplicationParentV0, SafetyStateRecordErrorV0> {
+    AuthenticatedGenesisApplicationParentV0::new(
+        BlockId::new(decoder.fixed::<32>("authenticated genesis application block ID")?),
+        decoder.u64("authenticated genesis application timestamp")?,
+        decoder.u64("authenticated genesis application state version")?,
+        StateRoot::new(decoder.fixed::<32>("authenticated genesis application state root")?),
+        decoder.fixed::<32>("authenticated genesis application descriptor reference")?,
+        decoder.fixed::<32>("authenticated genesis application projection profile")?,
+    )
+    .map_err(|_| {
+        SafetyStateRecordErrorV0::InvalidConsensusValue("authenticated genesis application parent")
+    })
+}
+
 fn encode_parent(
     value: &PayloadValidationParentV0,
     context: &SafetyStateRecordContextV0<'_>,
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
     encode_finalized_tip(value.tip(), encoder)?;
-    match value.exact_header() {
-        Some(header) => {
-            encoder.u8(TAG_SOME)?;
+    match value.provenance() {
+        PayloadValidationParentProvenanceV0::Finalized => {
+            encoder.u8(TAG_PARENT_FINALIZED)?;
+        }
+        PayloadValidationParentProvenanceV0::Speculative(overlay) => {
+            encoder.u8(TAG_PARENT_SPECULATIVE)?;
+            encode_overlay_ref(overlay, encoder)?;
+        }
+    }
+    match (
+        value.exact_header(),
+        value.authenticated_genesis_application_parent_v0(),
+        value.is_legacy_trusted_genesis_v0(),
+    ) {
+        (Some(header), None, false) => {
+            encoder.u8(TAG_PARENT_CARRIER_EXACT_HEADER)?;
             encoder.blob(
                 "parent header",
                 &header.try_cev0_bytes().map_err(|_| {
@@ -854,7 +1003,34 @@ fn encode_parent(
                 context.limits.maximum_blob_bytes,
             )?;
         }
-        None => encoder.u8(TAG_NONE)?,
+        (None, Some(parent), false) => {
+            if !matches!(
+                value.provenance(),
+                PayloadValidationParentProvenanceV0::Finalized
+            ) {
+                return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                    "authenticated genesis application parent provenance",
+                ));
+            }
+            encoder.u8(TAG_PARENT_CARRIER_AUTHENTICATED_GENESIS_APPLICATION)?;
+            encode_authenticated_genesis_application_parent(&parent, encoder)?;
+        }
+        (None, None, true) => {
+            if !matches!(
+                value.provenance(),
+                PayloadValidationParentProvenanceV0::Finalized
+            ) {
+                return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                    "legacy genesis parent provenance",
+                ));
+            }
+            encoder.u8(TAG_PARENT_CARRIER_LEGACY_GENESIS)?;
+        }
+        _ => {
+            return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                "payload parent carrier",
+            ))
+        }
     }
     Ok(())
 }
@@ -864,20 +1040,70 @@ fn decode_parent(
     _context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<PayloadValidationParentV0, SafetyStateRecordErrorV0> {
     let tip = decode_finalized_tip(decoder)?;
-    match decoder.u8("parent header presence")? {
-        TAG_NONE => Ok(PayloadValidationParentV0::trusted_genesis(tip)),
-        TAG_SOME => {
+    let provenance = match decoder.u8("parent provenance")? {
+        TAG_PARENT_FINALIZED => PayloadValidationParentProvenanceV0::Finalized,
+        TAG_PARENT_SPECULATIVE => {
+            PayloadValidationParentProvenanceV0::Speculative(decode_overlay_ref(decoder)?)
+        }
+        tag => {
+            return Err(SafetyStateRecordErrorV0::UnknownTag(
+                "parent provenance",
+                tag,
+            ))
+        }
+    };
+    let parent = match decoder.u8("parent carrier")? {
+        TAG_PARENT_CARRIER_LEGACY_GENESIS => {
+            if !matches!(provenance, PayloadValidationParentProvenanceV0::Finalized) {
+                return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                    "legacy genesis parent provenance",
+                ));
+            }
+            PayloadValidationParentV0::trusted_genesis(tip)
+        }
+        TAG_PARENT_CARRIER_AUTHENTICATED_GENESIS_APPLICATION => {
+            if !matches!(provenance, PayloadValidationParentProvenanceV0::Finalized) {
+                return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                    "authenticated genesis application parent provenance",
+                ));
+            }
+            let authenticated = decode_authenticated_genesis_application_parent(decoder)?;
+            PayloadValidationParentV0::authenticated_genesis_application(tip, authenticated)
+                .map_err(|_| {
+                    SafetyStateRecordErrorV0::InvalidConsensusValue(
+                        "authenticated genesis application parent",
+                    )
+                })?
+        }
+        TAG_PARENT_CARRIER_EXACT_HEADER => {
             let header = decode_block_header_v0_exact(
                 decoder.blob("parent header", decoder.limits.maximum_blob_bytes)?,
             )
             .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("parent header"))?;
-            Ok(PayloadValidationParentV0::from_exact_header(header))
+            match provenance {
+                PayloadValidationParentProvenanceV0::Finalized => {
+                    PayloadValidationParentV0::from_finalized_exact_header(header)
+                }
+                PayloadValidationParentProvenanceV0::Speculative(overlay) => {
+                    if overlay.block_id() != header.id()
+                        || overlay.parent_block_id() != header.parent_id()
+                    {
+                        return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                            "speculative parent overlay",
+                        ));
+                    }
+                    PayloadValidationParentV0::from_speculative_exact_header(header, overlay)
+                }
+            }
         }
-        tag => Err(SafetyStateRecordErrorV0::UnknownTag(
-            "parent header presence",
-            tag,
-        )),
+        tag => return Err(SafetyStateRecordErrorV0::UnknownTag("parent carrier", tag)),
+    };
+    if parent.tip() != tip {
+        return Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+            "parent tip",
+        ));
     }
+    Ok(parent)
 }
 
 fn encode_signed_proposal(
@@ -1130,14 +1356,8 @@ fn encode_durable_finalization(
     encoder: &mut Encoder,
 ) -> Result<(), SafetyStateRecordErrorV0> {
     encode_finalized_tip(value.authenticated_parent(), encoder)?;
-    encoder.blob(
-        "finality proof",
-        &value
-            .proof()
-            .try_cev0_bytes()
-            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("finality proof"))?,
-        context.limits.maximum_blob_bytes,
-    )
+    encode_overlay_ref(value.target_overlay_ref(), encoder)?;
+    encode_finality_proof_blob(value.proof(), context, encoder)
 }
 
 fn decode_durable_finalization(
@@ -1145,15 +1365,57 @@ fn decode_durable_finalization(
     context: &SafetyStateRecordContextV0<'_>,
 ) -> Result<DurableFinalizationV0, SafetyStateRecordErrorV0> {
     let parent = decode_finalized_tip(decoder)?;
-    let proof = decode_finality_proof_v0_exact_with_trusted_genesis(
+    let target_overlay_ref = decode_overlay_ref(decoder)?;
+    let proof = decode_finality_proof_blob(decoder, context, parent.timestamp_ms())?;
+    DurableFinalizationV0::new(parent, proof, target_overlay_ref)
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("durable finalization"))
+}
+
+fn encode_durable_state_sync_anchor(
+    value: &DurableStateSyncAnchorV0,
+    context: &SafetyStateRecordContextV0<'_>,
+    encoder: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    encode_finalized_tip(value.authenticated_parent(), encoder)?;
+    encode_finality_proof_blob(value.proof(), context, encoder)
+}
+
+fn decode_durable_state_sync_anchor(
+    decoder: &mut Decoder<'_>,
+    context: &SafetyStateRecordContextV0<'_>,
+) -> Result<DurableStateSyncAnchorV0, SafetyStateRecordErrorV0> {
+    let parent = decode_finalized_tip(decoder)?;
+    let proof = decode_finality_proof_blob(decoder, context, parent.timestamp_ms())?;
+    DurableStateSyncAnchorV0::new(parent, proof)
+        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("durable state-sync anchor"))
+}
+
+fn encode_finality_proof_blob(
+    proof: &trnm_consensus_types::FinalityProofV0,
+    context: &SafetyStateRecordContextV0<'_>,
+    encoder: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    encoder.blob(
+        "finality proof",
+        &proof
+            .try_cev0_bytes()
+            .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("finality proof"))?,
+        context.limits.maximum_blob_bytes,
+    )
+}
+
+fn decode_finality_proof_blob(
+    decoder: &mut Decoder<'_>,
+    context: &SafetyStateRecordContextV0<'_>,
+    authenticated_parent_timestamp_ms: u64,
+) -> Result<trnm_consensus_types::FinalityProofV0, SafetyStateRecordErrorV0> {
+    decode_finality_proof_v0_exact_with_trusted_genesis(
         decoder.blob("finality proof", decoder.limits.maximum_blob_bytes)?,
         context.core_config.validator_set(),
         context.core_config.consensus_parameters(),
-        parent.timestamp_ms(),
+        authenticated_parent_timestamp_ms,
     )
-    .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("finality proof"))?;
-    DurableFinalizationV0::new(parent, proof)
-        .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("durable finalization"))
+    .map_err(|_| SafetyStateRecordErrorV0::InvalidConsensusValue("finality proof"))
 }
 
 fn encode_safety_halt(
@@ -1352,6 +1614,42 @@ fn decode_validation_id(
         BlockId::new(decoder.fixed::<32>("validation block ID")?),
         View::new(decoder.u64("validation view")?),
         decoder.u64("validation generation")?,
+    ))
+}
+
+fn encode_overlay_ref(
+    value: BlockIdOverlayRefV0,
+    encoder: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    encoder.fixed(value.block_id().as_bytes())?;
+    encoder.fixed(value.parent_block_id().as_bytes())?;
+    encoder.fixed(&value.overlay_checksum())
+}
+
+fn decode_overlay_ref(
+    decoder: &mut Decoder<'_>,
+) -> Result<BlockIdOverlayRefV0, SafetyStateRecordErrorV0> {
+    Ok(BlockIdOverlayRefV0::new(
+        BlockId::new(decoder.fixed::<32>("overlay block ID")?),
+        BlockId::new(decoder.fixed::<32>("overlay parent block ID")?),
+        decoder.fixed::<32>("overlay checksum")?,
+    ))
+}
+
+fn encode_artifact_ref(
+    value: ValidatedPayloadArtifactRefV0,
+    encoder: &mut Encoder,
+) -> Result<(), SafetyStateRecordErrorV0> {
+    encode_overlay_ref(value.overlay(), encoder)?;
+    encoder.fixed(&value.source_artifact_checksum())
+}
+
+fn decode_artifact_ref(
+    decoder: &mut Decoder<'_>,
+) -> Result<ValidatedPayloadArtifactRefV0, SafetyStateRecordErrorV0> {
+    Ok(ValidatedPayloadArtifactRefV0::new(
+        decode_overlay_ref(decoder)?,
+        decoder.fixed::<32>("source artifact checksum")?,
     ))
 }
 
@@ -1769,6 +2067,29 @@ mod tests {
         test_config_with_parameters(ConsensusParametersV0::reference_shadow_v0())
     }
 
+    fn authenticated_genesis_application_config() -> CoreConfig {
+        let base = test_config();
+        let parent = AuthenticatedGenesisApplicationParentV0::new(
+            base.genesis_block_id(),
+            base.trusted_genesis_timestamp_ms(),
+            0,
+            StateRoot::new([0x31; 32]),
+            [0x41; 32],
+            [0x51; 32],
+        )
+        .expect("shape-valid authenticated genesis application parent");
+        CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+            base.local_validator(),
+            base.validator_set().clone(),
+            *base.consensus_parameters(),
+            base.trusted_genesis_timestamp_ms(),
+            parent,
+            base.max_blocks(),
+            base.max_observed_messages(),
+        )
+        .expect("valid authenticated genesis application config")
+    }
+
     fn limits() -> SafetyStateRecordLimitsV0 {
         SafetyStateRecordLimitsV0::new(1 << 26, 1 << 24).expect("valid test limits")
     }
@@ -1780,10 +2101,22 @@ mod tests {
             config.validator_set(),
         )
         .expect("valid trusted genesis QC");
-        Core::new(config.clone(), genesis, &AcceptSignatures)
-            .expect("valid genesis Core")
-            .safety_state()
-            .clone()
+        match config
+            .authenticated_genesis_application_parent_v0()
+            .copied()
+        {
+            Some(parent) => SafetyState::from_authenticated_genesis_application_for_test_v0(
+                config.validator_set(),
+                genesis,
+                config.trusted_genesis_timestamp_ms(),
+                parent,
+            )
+            .expect("inert authenticated-genesis SafetyState"),
+            None => Core::new(config.clone(), genesis, &AcceptSignatures)
+                .expect("valid legacy genesis Core")
+                .safety_state()
+                .clone(),
+        }
     }
 
     #[test]
@@ -1800,19 +2133,19 @@ mod tests {
         assert_eq!(
             safety_state_record_config_ref_v0(&context).expect("config reference"),
             [
-                0x88, 0x01, 0x37, 0x6a, 0xa2, 0x8b, 0xe6, 0x5b, 0x27, 0xc9, 0x5c, 0x88, 0xe7, 0x82,
-                0xa8, 0x74, 0x39, 0x3b, 0x1d, 0x4e, 0x55, 0x90, 0x8d, 0x23, 0x80, 0x02, 0x65, 0xf4,
-                0x72, 0xbe, 0xab, 0x0b,
+                0x74, 0xf2, 0x01, 0x6d, 0xaf, 0xf3, 0x9e, 0xe2, 0x7a, 0x0e, 0x01, 0x68, 0x17, 0xb9,
+                0x44, 0x35, 0xee, 0x36, 0x73, 0x0f, 0x71, 0x7d, 0xc4, 0xb6, 0xaf, 0x0d, 0x78, 0x5d,
+                0xb2, 0xa4, 0x84, 0x6c,
             ],
-            "the schema-v8 configuration reference is frozen"
+            "the schema-v12 configuration reference is frozen"
         );
-        assert_eq!(encoded.len(), 591, "the Genesis record layout is frozen");
+        assert_eq!(encoded.len(), 653, "the Genesis record layout is frozen");
         assert_eq!(
             decoded.record_checksum(),
             [
-                0xc9, 0xa2, 0xb2, 0xc3, 0xc6, 0x72, 0x6a, 0x98, 0x1c, 0x5f, 0xef, 0xdd, 0x9f, 0x1b,
-                0x36, 0x3e, 0x5b, 0x73, 0x19, 0x96, 0x1b, 0xb6, 0x2a, 0xa9, 0x35, 0x94, 0x2f, 0x0c,
-                0x0d, 0xd2, 0x72, 0x1f,
+                0xbc, 0x8b, 0x99, 0x80, 0xed, 0x04, 0x01, 0x76, 0xb0, 0xb4, 0x71, 0x79, 0xcc, 0x53,
+                0xfd, 0xeb, 0x5a, 0x87, 0xec, 0x1c, 0x1d, 0xbd, 0xc9, 0x75, 0x82, 0xf6, 0x77, 0x34,
+                0x38, 0x7f, 0x42, 0x0c,
             ],
             "the Genesis record checksum is frozen"
         );
@@ -1825,6 +2158,83 @@ mod tests {
         assert_eq!(
             decoded.record_checksum(),
             hash_domain(RECORD_DOMAIN, &[&encoded[..encoded.len() - 32]])
+        );
+    }
+
+    #[test]
+    fn authenticated_genesis_application_record_is_frozen_and_v11_fails_closed() {
+        let config = authenticated_genesis_application_config();
+        let context = SafetyStateRecordContextV0::new(&config, [0x61; 32], limits())
+            .expect("capacity-compatible authenticated-genesis context");
+        let state = genesis_state(&config);
+        let encoded = encode_safety_state_record_v0(&state, &context)
+            .expect("encode authenticated-genesis record");
+        let decoded = decode_safety_state_record_v0_exact(&encoded, &context)
+            .expect("decode authenticated-genesis record");
+        assert_eq!(decoded.state(), &state);
+        assert_eq!(
+            decoded
+                .state()
+                .authenticated_genesis_application_parent_v0(),
+            config.authenticated_genesis_application_parent_v0()
+        );
+        assert_eq!(
+            encoded.len(),
+            797,
+            "schema-v12 genesis-parent record length"
+        );
+        assert_eq!(
+            safety_state_record_config_ref_v0(&context).expect("config ref"),
+            [
+                0x3b, 0xfe, 0x9f, 0xbe, 0xe0, 0x2f, 0x5a, 0xd2, 0x43, 0x9b, 0xb1, 0xbf, 0x25, 0xa7,
+                0x47, 0x32, 0xaf, 0x14, 0x9b, 0x05, 0x86, 0x17, 0x4e, 0x72, 0xf7, 0x6b, 0x40, 0x56,
+                0x56, 0x78, 0x4d, 0x07,
+            ],
+            "schema-v12 genesis-parent configuration vector is frozen",
+        );
+        assert_eq!(
+            decoded.record_checksum(),
+            [
+                0x06, 0xd4, 0x76, 0x28, 0x65, 0xf1, 0x13, 0xb7, 0x18, 0xb0, 0xbe, 0x57, 0x12, 0xc9,
+                0xfd, 0x5e, 0x9c, 0x51, 0xd7, 0x53, 0x55, 0x56, 0x47, 0xcc, 0x09, 0x20, 0x6a, 0xd6,
+                0x0c, 0xd0, 0x50, 0x1f,
+            ],
+            "schema-v12 genesis-parent record checksum is frozen",
+        );
+
+        let mut legacy_schema = encoded.clone();
+        legacy_schema[10..12].copy_from_slice(&11u16.to_be_bytes());
+        assert_eq!(
+            decode_safety_state_record_v0_exact(&legacy_schema, &context),
+            Err(SafetyStateRecordErrorV0::UnsupportedSafetySchema(11)),
+        );
+
+        let base = test_config();
+        let foreign_parent = AuthenticatedGenesisApplicationParentV0::new(
+            base.genesis_block_id(),
+            base.trusted_genesis_timestamp_ms(),
+            0,
+            StateRoot::new([0x32; 32]),
+            [0x41; 32],
+            [0x51; 32],
+        )
+        .expect("shape-valid foreign root");
+        let foreign_config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+            base.local_validator(),
+            base.validator_set().clone(),
+            *base.consensus_parameters(),
+            base.trusted_genesis_timestamp_ms(),
+            foreign_parent,
+            base.max_blocks(),
+            base.max_observed_messages(),
+        )
+        .expect("shape-valid foreign config");
+        let foreign_context =
+            SafetyStateRecordContextV0::new(&foreign_config, [0x61; 32], limits())
+                .expect("capacity-compatible foreign context");
+        assert_eq!(
+            decode_safety_state_record_v0_exact(&encoded, &foreign_context),
+            Err(SafetyStateRecordErrorV0::ConfigMismatch),
         );
     }
 
@@ -1882,7 +2292,7 @@ mod tests {
             decode_safety_state_record_v0_exact(&unknown_schema, &context).unwrap_err(),
             SafetyStateRecordErrorV0::UnsupportedSafetySchema(6)
         );
-        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 8);
+        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 12);
     }
 
     #[test]
@@ -1926,14 +2336,14 @@ mod tests {
 
     #[test]
     fn inner_framing_rejects_counts_blobs_and_unknown_tags_before_allocation() {
-        let limits = SafetyStateRecordLimitsV0::new(128, 16).expect("small valid limits");
+        let small_limits = SafetyStateRecordLimitsV0::new(128, 16).expect("small valid limits");
 
-        let mut count_over_maximum = Decoder::new(&[0, 0, 0, 2, 0, 0], limits);
+        let mut count_over_maximum = Decoder::new(&[0, 0, 0, 2, 0, 0], small_limits);
         assert_eq!(
             count_over_maximum.count("items", 1, 1),
             Err(SafetyStateRecordErrorV0::InvalidConsensusValue("items"))
         );
-        let mut count_over_remaining = Decoder::new(&[0, 0, 0, 2, 0], limits);
+        let mut count_over_remaining = Decoder::new(&[0, 0, 0, 2, 0], small_limits);
         assert_eq!(
             count_over_remaining.count("items", 2, 1),
             Err(SafetyStateRecordErrorV0::InvalidConsensusValue("items"))
@@ -1942,28 +2352,99 @@ mod tests {
         let mut oversized_blob = Vec::from(17u32.to_be_bytes());
         oversized_blob.extend_from_slice(&[0; 17]);
         assert_eq!(
-            Decoder::new(&oversized_blob, limits).blob("blob", 16),
+            Decoder::new(&oversized_blob, small_limits).blob("blob", 16),
             Err(SafetyStateRecordErrorV0::BlobTooLarge("blob"))
         );
         assert_eq!(
-            Decoder::new(&[0, 0, 0, 5, 1, 2], limits).blob("blob", 16),
+            Decoder::new(&[0, 0, 0, 5, 1, 2], small_limits).blob("blob", 16),
             Err(SafetyStateRecordErrorV0::Truncated("blob"))
         );
 
         assert_eq!(
-            decode_route(&mut Decoder::new(&[0xff], limits)),
+            decode_route(&mut Decoder::new(&[0xff], small_limits)),
             Err(SafetyStateRecordErrorV0::UnknownTag(
                 "validation route",
                 0xff
             ))
         );
         assert_eq!(
-            decode_optional_view(&mut Decoder::new(&[0xff], limits), "optional view"),
+            decode_optional_view(&mut Decoder::new(&[0xff], small_limits), "optional view",),
             Err(SafetyStateRecordErrorV0::UnknownTag("optional view", 0xff))
         );
         assert_eq!(
-            decode_sign_intent(&mut Decoder::new(&[0xff], limits)),
+            decode_sign_intent(&mut Decoder::new(&[0xff], small_limits)),
             Err(SafetyStateRecordErrorV0::UnknownTag("sign intent", 0xff))
+        );
+
+        let config = test_config();
+        let parent_limits = limits();
+        let context = SafetyStateRecordContextV0::new(&config, [0x51; 32], parent_limits)
+            .expect("capacity-compatible parent context");
+        let tip = genesis_state(&config).finalized();
+        let mut unknown_parent = Encoder::new(parent_limits.maximum_record_bytes());
+        encode_finalized_tip(tip, &mut unknown_parent).expect("encode parent tip");
+        unknown_parent.u8(0xff).expect("encode unknown tag");
+        assert_eq!(
+            decode_parent(
+                &mut Decoder::new(&unknown_parent.finish(), parent_limits),
+                &context,
+            ),
+            Err(SafetyStateRecordErrorV0::UnknownTag(
+                "parent provenance",
+                0xff,
+            ))
+        );
+
+        let mut headerless_speculative = Encoder::new(parent_limits.maximum_record_bytes());
+        encode_finalized_tip(tip, &mut headerless_speculative).expect("encode parent tip");
+        headerless_speculative
+            .u8(TAG_PARENT_SPECULATIVE)
+            .expect("encode speculative tag");
+        encode_overlay_ref(
+            BlockIdOverlayRefV0::new(BlockId::new([1; 32]), BlockId::new([2; 32]), [3; 32]),
+            &mut headerless_speculative,
+        )
+        .expect("encode overlay ref");
+        headerless_speculative
+            .u8(TAG_NONE)
+            .expect("encode absent header");
+        assert_eq!(
+            decode_parent(
+                &mut Decoder::new(&headerless_speculative.finish(), parent_limits),
+                &context,
+            ),
+            Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+                "legacy genesis parent provenance",
+            ))
+        );
+
+        let authenticated = *authenticated_genesis_application_config()
+            .authenticated_genesis_application_parent_v0()
+            .expect("configured authenticated genesis parent");
+        let authenticated_parent =
+            PayloadValidationParentV0::authenticated_genesis_application(tip, authenticated)
+                .expect("tip-bound authenticated genesis parent");
+        let mut encoded_authenticated = Encoder::new(parent_limits.maximum_record_bytes());
+        encode_parent(&authenticated_parent, &context, &mut encoded_authenticated)
+            .expect("encode authenticated genesis parent carrier");
+        let encoded_authenticated = encoded_authenticated.finish();
+        assert_eq!(
+            encoded_authenticated[57], TAG_PARENT_CARRIER_AUTHENTICATED_GENESIS_APPLICATION,
+            "the authenticated genesis carrier has a distinct closed tag",
+        );
+        assert_eq!(
+            decode_parent(
+                &mut Decoder::new(&encoded_authenticated, parent_limits),
+                &context,
+            )
+            .expect("decode authenticated genesis parent carrier"),
+            authenticated_parent,
+        );
+        let mut unknown_carrier = encoded_authenticated;
+        unknown_carrier[57] = 0xff;
+        assert_eq!(
+            decode_parent(&mut Decoder::new(&unknown_carrier, parent_limits), &context,),
+            Err(SafetyStateRecordErrorV0::UnknownTag("parent carrier", 0xff,)),
         );
 
         let mut encoder = Encoder::new_with_blob_limit(128, 4);

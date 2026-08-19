@@ -28,7 +28,7 @@ remains a P1 blocker.
 
 ## Current regression evidence
 
-As of 2026-08-05, the crate contains 24 tests: 8 focused unit tests and 16
+As of 2026-08-12, the crate contains 32 tests: 16 focused unit tests and 16
 deterministic scenarios. They cover applied-chain prefix comparison, key-bound
 mock signatures, 4-/7-validator quorum-loss boundaries, 2+2 partition/heal,
 persistence-before-sign rollback, durable conflicting-QC halt/restart,
@@ -37,8 +37,9 @@ durable state through safety replay and synced-payload validation. Scripted
 payload callbacks additionally cover `Unavailable -> Valid` with a fresh
 generation, certified deterministic invalidity that remains halted after
 recovery, replay which waits for `Valid` before completing, and a wrong-block
-`Valid` capability that is rejected transactionally before the same request
-generation accepts its exact capability. A standalone
+candidate that the simulated application boundary rejects before sealing. The
+old generation is consumed as `Unavailable`; only a fresh Core request can
+later accept the exact candidate. A standalone
 QC-before-proposal scenario proves that the exact catch-up obligation is
 persisted before requesting data, survives a crash immediately after the
 durable acknowledgement releases the request, is reissued with the same
@@ -89,15 +90,37 @@ still require P2 fault surfaces.
 Every simulator-created proposal now retains a canonical
 `ApplicationPayloadV0`, deterministic receipt commitments, and empty ordered
 evidence, then mints `ValidatedBlockCommitmentsV0` through the real B2-D body
-kernel before returning `Valid`. The scripted enum can select outcomes but
-cannot forge the token's private fields. This exercises the core's real
-callback capability gate: ordinary and synced validation reject another
-block's token before consuming the request generation. This still does not
-model alternate body sources, authenticated parent state, authorized-runtime
-execution, or receipt provenance. Additional P1 blockers remain: all simulated
-validators currently have equal weight; recovery and TC
-aggregation and standalone-QC catch-up use global in-memory object
-availability; the complete
+kernel before returning `Valid`. Each live Core immediately issues one
+process-local application-seal authority to its private development-only
+simulated host. Every `Validate*` effect is uniquely claimed; its non-cloneable
+permit and later application-sealed proof remain in `SimNode`, never in the
+cloneable event queue or trace. A crash/recovery drops all old capabilities and
+installs the recovered Core's fresh authority. This exercises the real opaque
+Valid callback gate without adding a public Core bypass. It is not a durable
+ApplicationStore. Finalization follows the same process-local boundary: each
+live Core issues one application-finalization apply authority, while the
+cloneable event carries only the inert authenticated queue-front projection.
+The private simulated application consumes the exact one-shot front permit,
+derives a deterministic inert readback projection from the exact queue carrier
+and its durable Valid source, then consumes both permit and projection into the
+non-cloneable receipt. The projection is retained beside that receipt across
+Busy/rejected callbacks, and the unique receipt retries only against its
+issuing Core. Public clones and foreign authorities are rejected even when
+their durable carrier bytes agree; a successful queue pop rotates the front
+permit while retaining the installed application authority.
+Crash, recovery, and safety halt discard every old authority and receipt, and
+recovery installs fresh authorities from the authenticated recovered Core.
+This is still not durable ApplicationStore evidence: cross-crash Valid permit
+remint, SafetyStore readback, `StorageAck`, application
+acknowledgement/retirement, alternate body sources, authenticated parent state,
+authorized-runtime execution, and receipt provenance remain outside the
+simulator. Its row-like readback checksums are domain-separated in-memory
+comparison bytes, not SQLite/JMT receipt rows. The finalization apply/readback
+stand-in therefore does not prove the production ordered apply transaction,
+source binding, exact durable readback, or cross-store recovery matrix.
+Additional P1 blockers remain: all simulated
+validators currently have equal weight; recovery and TC aggregation and
+standalone-QC catch-up use global in-memory object availability; the complete
 persist/sign/broadcast crash matrix is absent; and no stale-disk/signer,
 epoch-transition, or heterogeneous-certificate campaign exists. The key-aware
 deterministic signature scheme is test-only and is not Ed25519 or

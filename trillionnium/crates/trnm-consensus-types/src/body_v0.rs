@@ -2,6 +2,7 @@ use alloc::{boxed::Box, vec::Vec};
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_DOUBLE_SIGN_EVIDENCE},
+    decode_application_payload_v0_exact_for_root_binding, decode_double_vote_evidence_v0_exact,
     ordered_leaf_digest_v0, BlockHeader, BlockId, BlockKind, CommonConsensusContextV0,
     ConsensusParametersV0, EvidenceId, EvidenceRoot, Height, MessageKind, NextEpochCommitmentHash,
     OrderedRootV0, PayloadDigest, ReceiptsRoot, Result, RootKind, SignatureBytes,
@@ -708,6 +709,140 @@ pub struct ValidatedBlockCommitmentsV0 {
     logical_block_size: u64,
     transaction_count: u32,
     evidence_count: u32,
+}
+
+/// Inert proof that one transport [`crate::Block`] carries an exact canonical
+/// regular body whose payload/evidence roots and logical size match its
+/// authenticated header.
+///
+/// This deliberately does not validate receipts, state execution, parent
+/// provenance, evidence signatures, or application authority. It exists for
+/// state-sync body transport: a finality proof authenticates headers and
+/// proposal witnesses, but does not carry the complete application body.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RootBoundRegularBodyV0 {
+    block_id: BlockId,
+    logical_block_size: u64,
+    transaction_count: u32,
+    evidence_count: u32,
+}
+
+impl RootBoundRegularBodyV0 {
+    pub const fn block_id(&self) -> BlockId {
+        self.block_id
+    }
+
+    pub const fn logical_block_size(&self) -> u64 {
+        self.logical_block_size
+    }
+
+    pub const fn transaction_count(&self) -> u32 {
+        self.transaction_count
+    }
+
+    pub const fn evidence_count(&self) -> u32 {
+        self.evidence_count
+    }
+}
+
+/// Binds the complete body bytes of one regular transport block to the roots
+/// already authenticated by its header.
+///
+/// The result is comparison material only. In particular it cannot authorize
+/// a Valid application result because receipts and the post-state root remain
+/// runtime-owned.
+pub fn validate_root_bound_regular_body_v0(
+    block: &crate::Block,
+    active_validator_set: &ValidatorSet,
+    parameters: &ConsensusParametersV0,
+) -> BlockValidationResult<RootBoundRegularBodyV0> {
+    let header = block.header();
+    header.validate_shape().map_err(|_| {
+        BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+    })?;
+    if header.block_kind() != BlockKind::Regular {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::NonRegularBlock,
+        ));
+    }
+    parameters.validate_safety_invariants().map_err(|_| {
+        BlockValidationError::new(BlockValidationErrorCode::ParametersContextMismatch)
+    })?;
+    active_validator_set
+        .validate_against_parameters(parameters)
+        .map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::ValidatorSetContextMismatch)
+        })?;
+    if header.consensus_parameters_hash() != parameters.hash() {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::ParametersContextMismatch,
+        ));
+    }
+    if header.genesis_hash() != active_validator_set.genesis_hash()
+        || header.chain_id() != active_validator_set.chain_id()
+        || header.protocol_version() != active_validator_set.protocol_version()
+        || header.epoch() != active_validator_set.epoch()
+        || header.validator_set_id() != active_validator_set.id()
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::ValidatorSetContextMismatch,
+        ));
+    }
+    let payload = decode_application_payload_v0_exact_for_root_binding(
+        block.application_payload(),
+        parameters,
+    )
+    .map_err(|_| BlockValidationError::new(BlockValidationErrorCode::PayloadRootMismatch))?;
+    let mut evidence = Vec::new();
+    evidence
+        .try_reserve_exact(block.evidence_objects().len())
+        .map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::LogicalBlockSizeExceeded)
+        })?;
+    for encoded in block.evidence_objects() {
+        evidence.push(
+            decode_double_vote_evidence_v0_exact(encoded, active_validator_set).map_err(|_| {
+                BlockValidationError::new(BlockValidationErrorCode::NonCanonicalEvidenceOrder)
+            })?,
+        );
+    }
+    let body = BlockBodyV0::new_admission(payload, evidence)?;
+    if body
+        .payload_root()
+        .map_err(|_| BlockValidationError::new(BlockValidationErrorCode::PayloadRootMismatch))?
+        != header.payload_root()
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::PayloadRootMismatch,
+        ));
+    }
+    if body
+        .evidence_root()
+        .map_err(|_| BlockValidationError::new(BlockValidationErrorCode::EvidenceRootMismatch))?
+        != header.evidence_root()
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::EvidenceRootMismatch,
+        ));
+    }
+    let logical_block_size = body.logical_block_size_v0(header).map_err(|_| {
+        BlockValidationError::new(BlockValidationErrorCode::LogicalBlockSizeExceeded)
+    })?;
+    if usize::try_from(logical_block_size).ok() != Some(block.logical_block_size())
+        || logical_block_size > u64::from(parameters.max_block_bytes())
+    {
+        return Err(BlockValidationError::new(
+            BlockValidationErrorCode::LogicalBlockSizeExceeded,
+        ));
+    }
+    Ok(RootBoundRegularBodyV0 {
+        block_id: block.id(),
+        logical_block_size,
+        transaction_count: body.application_payload().transaction_count(),
+        evidence_count: u32::try_from(body.evidence().len()).map_err(|_| {
+            BlockValidationError::new(BlockValidationErrorCode::LogicalBlockSizeExceeded)
+        })?,
+    })
 }
 
 /// Proof that the canonical checkpoint body, locally derived receipts, all
@@ -1421,6 +1556,49 @@ mod tests {
             .unwrap_err()
             .code(),
             BlockValidationErrorCode::PayloadLeafMismatch
+        );
+    }
+
+    #[test]
+    fn root_bound_regular_body_rejects_same_header_body_substitution() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = validator_set(&parameters);
+        let payload = ApplicationPayloadV0::new(vec![b"authenticated".to_vec()]).unwrap();
+        let receipts = ExecutionReceiptsV0::new(
+            &payload,
+            vec![
+                ExecutionReceiptCommitmentV0::for_transaction(&payload, 0, 0, 0, Vec::new())
+                    .unwrap(),
+            ],
+        )
+        .unwrap();
+        let body = BlockBodyV0::new(payload, Vec::new()).unwrap();
+        let header = header(&parameters, &set, &body, &receipts, BlockKind::Regular);
+        let exact = crate::Block::new(
+            header.clone(),
+            body.application_payload().try_cev0_bytes().unwrap(),
+            Vec::new(),
+        )
+        .unwrap();
+        let facts = validate_root_bound_regular_body_v0(&exact, &set, &parameters).unwrap();
+        assert_eq!(facts.block_id(), header.id());
+        assert_eq!(facts.transaction_count(), 1);
+        assert_eq!(facts.evidence_count(), 0);
+        assert_eq!(
+            facts.logical_block_size() as usize,
+            exact.logical_block_size()
+        );
+
+        let substitute = ApplicationPayloadV0::new(vec![b"substitute".to_vec()])
+            .unwrap()
+            .try_cev0_bytes()
+            .unwrap();
+        let same_header = crate::Block::new(header, substitute, Vec::new()).unwrap();
+        assert_eq!(
+            validate_root_bound_regular_body_v0(&same_header, &set, &parameters)
+                .unwrap_err()
+                .code(),
+            BlockValidationErrorCode::PayloadRootMismatch
         );
     }
 

@@ -3,10 +3,15 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
-    leader_for, BarrierId, Core, CoreConfig, CoreError, DurablePayloadValidationCompletionV0,
+    leader_for, native_finalization_applied_checksum_v0, ApplicationFinalizationApplyReadbackV0,
+    ApplicationFinalizationReceiptV0, ApplicationSealedValidV0, BarrierId, BlockIdOverlayRefV0,
+    Core, CoreConfig, CoreError, CoreIssuedApplicationFinalizationApplyAuthorityV0,
+    CoreIssuedApplicationFinalizationPermitV0, CoreIssuedApplicationSealAuthorityV0,
+    CoreIssuedValidPermitV0, DurableFinalizationV0, DurablePayloadValidationCompletionV0,
     DurablePayloadValidationObligationV0, DurablePayloadValidationResultV1, Effect, FinalizedTip,
-    Input, InvalidPayloadReference, OutboundMessage, PayloadValidationResult,
-    PayloadValidationRouteV0, SafetyHalt, SafetyState, SignId, SignIntent, ValidationId,
+    Input, InvalidPayloadReference, OutboundMessage, PayloadValidationRequest,
+    PayloadValidationResult, PayloadValidationRouteV0, SafetyHalt, SafetyState, SignId, SignIntent,
+    ValidatedPayloadArtifactRefV0, ValidationId,
 };
 use trnm_consensus_types::{
     ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind,
@@ -226,9 +231,10 @@ pub enum MessageKind {
 /// Deterministic host outcome selected by the fault simulator.
 ///
 /// A `Valid` outcome is materialized through the real canonical body/receipt
-/// kernel for the exact requested block. `MismatchedValid` deliberately mints
-/// a valid capability for a different header to exercise the core's
-/// fail-closed driver-boundary check; tests cannot forge the private token.
+/// kernel for the exact requested block, then crosses a development-only
+/// simulated application seal boundary. `MismatchedValid` produces a
+/// different-header candidate which that boundary rejects before sealing;
+/// Core sees `Unavailable` and may issue a fresh request generation.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ScriptedValidationOutcome {
     Valid,
@@ -351,7 +357,6 @@ enum Event {
         id: ValidationId,
         synced: bool,
         replay_generation: Option<u64>,
-        result: Option<PayloadValidationResult>,
     },
     RetryPayloadValidation {
         node: NodeId,
@@ -368,7 +373,8 @@ enum Event {
     FinalizationApplied {
         node: NodeId,
         incarnation: u64,
-        proof: Box<FinalityProofV0>,
+        proof: Box<DurableFinalizationV0>,
+        attempt: u8,
     },
     LocalTimeout {
         node: NodeId,
@@ -436,6 +442,34 @@ struct ValidationArtifacts {
     receipts: ExecutionReceiptsV0,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct SimValidationKeyV0 {
+    route: PayloadValidationRouteV0,
+    id: ValidationId,
+}
+
+impl SimValidationKeyV0 {
+    const fn new(route: PayloadValidationRouteV0, id: ValidationId) -> Self {
+        Self { route, id }
+    }
+}
+
+#[derive(Debug)]
+enum SimValidationCapabilityV0 {
+    Permit(CoreIssuedValidPermitV0),
+    ApplicationSealed(ApplicationSealedValidV0),
+}
+
+/// Development-only stand-in for the private ApplicationStore callback
+/// owner. Neither the Core permit nor the application-sealed proof enters a
+/// cloneable simulator event or trace.
+#[derive(Debug)]
+struct SimValidationCallbackV0 {
+    parent_block_id: BlockId,
+    outcome: Option<ScriptedValidationOutcome>,
+    capability: SimValidationCapabilityV0,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ReplayRequest {
     Safety {
@@ -456,6 +490,12 @@ struct SimNode {
     validator: ValidatorId,
     config: CoreConfig,
     core: Option<Core>,
+    application_seal_authority: Option<CoreIssuedApplicationSealAuthorityV0>,
+    validation_callbacks: BTreeMap<SimValidationKeyV0, SimValidationCallbackV0>,
+    application_finalization_apply_authority:
+        Option<CoreIssuedApplicationFinalizationApplyAuthorityV0>,
+    pending_application_finalization_readback: Option<ApplicationFinalizationApplyReadbackV0>,
+    pending_application_finalization_receipt: Option<ApplicationFinalizationReceiptV0>,
     durable: SafetyState,
     incarnation: u64,
     replaying: bool,
@@ -537,6 +577,9 @@ impl Simulator {
                 config.validator_count.saturating_mul(16),
             )?;
             let core = Core::new(core_config.clone(), genesis_qc.clone(), &MockSignatures)?;
+            let application_seal_authority = core.issue_application_seal_authority_v0()?;
+            let application_finalization_apply_authority =
+                core.issue_application_finalization_apply_authority_v0()?;
             let durable = core.safety_state().clone();
             let mut applied = BTreeMap::new();
             applied.insert(Height::new(0), GENESIS_BLOCK_ID);
@@ -544,6 +587,13 @@ impl Simulator {
                 validator: validator.id(),
                 config: core_config,
                 core: Some(core),
+                application_seal_authority: Some(application_seal_authority),
+                validation_callbacks: BTreeMap::new(),
+                application_finalization_apply_authority: Some(
+                    application_finalization_apply_authority,
+                ),
+                pending_application_finalization_readback: None,
+                pending_application_finalization_receipt: None,
                 durable,
                 incarnation: 0,
                 replaying: false,
@@ -769,6 +819,7 @@ impl Simulator {
                     node,
                     incarnation,
                     proof,
+                    ..
                 } if self.incarnation_is_current(*node, *incarnation) => {
                     self.push_proof_observation(
                         &mut observations,
@@ -800,20 +851,21 @@ impl Simulator {
         let Some(proof_id) = state.pending_finalize() else {
             return Ok(());
         };
-        let proof = state.last_finalization_proof().ok_or_else(|| {
+        let finalization = state.pending_finalization().ok_or_else(|| {
             SimError::InvalidFinalityObservation(Box::new(InvalidFinalityObservation {
                 node,
                 layer: format!("{layer}/finalize-proof"),
-                reason: "pending finalization has no permanent proof".to_owned(),
+                reason: "pending finalization has no durable queue front".to_owned(),
             }))
         })?;
+        let proof = finalization.proof();
         if proof.id() != proof_id {
             return Err(SimError::InvalidFinalityObservation(Box::new(
                 InvalidFinalityObservation {
                     node,
                     layer: format!("{layer}/finalize-proof"),
                     reason: format!(
-                        "pending proof id {} does not match permanent proof {}",
+                        "pending proof id {} does not match durable queue-front proof {}",
                         hex_certificate(proof_id),
                         hex_certificate(proof.id())
                     ),
@@ -1199,6 +1251,11 @@ impl Simulator {
                 .get_mut(node)
                 .ok_or(SimError::UnknownNode(node))?;
             state.core = None;
+            state.application_seal_authority = None;
+            state.validation_callbacks.clear();
+            state.application_finalization_apply_authority = None;
+            state.pending_application_finalization_readback = None;
+            state.pending_application_finalization_receipt = None;
             state.incarnation = state
                 .incarnation
                 .checked_add(1)
@@ -1226,7 +1283,16 @@ impl Simulator {
                 .get_mut(node)
                 .ok_or(SimError::UnknownNode(node))?;
             let core = Core::recover(state.config.clone(), state.durable.clone(), &MockSignatures)?;
+            let application_seal_authority = core.issue_application_seal_authority_v0()?;
+            let application_finalization_apply_authority =
+                core.issue_application_finalization_apply_authority_v0()?;
             state.core = Some(core);
+            state.application_seal_authority = Some(application_seal_authority);
+            state.validation_callbacks.clear();
+            state.application_finalization_apply_authority =
+                Some(application_finalization_apply_authority);
+            state.pending_application_finalization_readback = None;
+            state.pending_application_finalization_receipt = None;
             state.incarnation = state
                 .incarnation
                 .checked_add(1)
@@ -1457,8 +1523,7 @@ impl Simulator {
                 id,
                 synced,
                 replay_generation,
-                result,
-            } => self.handle_validation(node, incarnation, id, synced, replay_generation, result),
+            } => self.handle_validation(node, incarnation, id, synced, replay_generation),
             Event::RetryPayloadValidation {
                 node,
                 incarnation,
@@ -1475,7 +1540,8 @@ impl Simulator {
                 node,
                 incarnation,
                 proof,
-            } => self.handle_finalization(node, incarnation, *proof),
+                attempt,
+            } => self.handle_finalization(node, incarnation, *proof, attempt),
             Event::LocalTimeout {
                 node,
                 incarnation,
@@ -1684,7 +1750,6 @@ impl Simulator {
         id: ValidationId,
         synced: bool,
         replay_generation: Option<u64>,
-        scripted_result: Option<PayloadValidationResult>,
     ) -> Result<(), SimError> {
         if !self.incarnation_is_current(node, incarnation) {
             self.record(
@@ -1721,6 +1786,7 @@ impl Simulator {
             let current_generation = self.nodes[node].replay_generation;
             let required_by_current_replay = self.nodes[node].replaying
                 && self.nodes[node].replay_blocks.contains(&id.block_id());
+            let key = SimValidationKeyV0::new(PayloadValidationRouteV0::Synced, id);
             let cancellation = self.nodes[node]
                 .core
                 .as_mut()
@@ -1728,6 +1794,7 @@ impl Simulator {
                 .step(Input::CancelSyncedPayloadValidation { id }, &MockSignatures);
             match cancellation {
                 Ok(effects) => {
+                    self.nodes[node].validation_callbacks.remove(&key);
                     // Cancellation removes the process-local request first,
                     // but the durable obligation cleanup must cross its
                     // persistence barrier before a replacement validation can
@@ -1736,7 +1803,10 @@ impl Simulator {
                     // a real driver.
                     self.process_effects(node, effects)?;
                 }
-                Err(CoreError::UnknownValidation(_)) => return Ok(()),
+                Err(CoreError::UnknownValidation(_)) => {
+                    self.nodes[node].validation_callbacks.remove(&key);
+                    return Ok(());
+                }
                 Err(error) => return Err(error.into()),
             }
             if required_by_current_replay {
@@ -1787,6 +1857,10 @@ impl Simulator {
             return Ok(());
         }
         if self.nodes[node].halted {
+            let route = validation_route_v0(synced);
+            self.nodes[node]
+                .validation_callbacks
+                .remove(&SimValidationKeyV0::new(route, id));
             self.record(
                 "local-drop",
                 format!(
@@ -1796,34 +1870,132 @@ impl Simulator {
             );
             return Ok(());
         }
-        let validation_result = match scripted_result {
-            Some(result) => result,
+
+        let route = validation_route_v0(synced);
+        let key = SimValidationKeyV0::new(route, id);
+        if !self.nodes[node].validation_callbacks.contains_key(&key) {
+            return Err(SimError::InvalidConfig(
+                "validation callback lacks its exact claimed Core request",
+            ));
+        }
+        let (outcome, newly_selected) = match self.nodes[node]
+            .validation_callbacks
+            .get(&key)
+            .and_then(|callback| callback.outcome)
+        {
+            Some(outcome) => (outcome, false),
             None => {
                 let outcome = self.nodes[node]
                     .scripted_validation_results
                     .pop_front()
                     .unwrap_or(ScriptedValidationOutcome::Valid);
-                self.materialize_validation_outcome(id.block_id(), outcome)?
+                self.nodes[node]
+                    .validation_callbacks
+                    .get_mut(&key)
+                    .expect("the exact callback was checked above")
+                    .outcome = Some(outcome);
+                (outcome, true)
             }
         };
-        let input = if synced {
-            Input::SyncedPayloadValidated {
-                id,
-                result: validation_result,
+
+        if outcome == ScriptedValidationOutcome::MismatchedValid && newly_selected {
+            let candidate = self.mismatched_commitments_for(id.block_id())?;
+            if candidate.block_id() == id.block_id() {
+                return Err(SimError::InvalidConfig(
+                    "mismatched validation fixture did not change the block identity",
+                ));
             }
-        } else {
-            Input::PayloadValidated {
-                id,
-                result: validation_result,
+            self.record(
+                "validation-preseal-reject",
+                format!(
+                    "node={node} view={} generation={} block={} candidate={} disposition=unavailable",
+                    id.view().get(),
+                    id.generation(),
+                    hex_block(id.block_id()),
+                    hex_block(candidate.block_id())
+                ),
+            );
+        }
+
+        if outcome == ScriptedValidationOutcome::Valid
+            && matches!(
+                self.nodes[node]
+                    .validation_callbacks
+                    .get(&key)
+                    .map(|callback| &callback.capability),
+                Some(SimValidationCapabilityV0::Permit(_))
+            )
+        {
+            let commitments = self.validated_commitments_for(id.block_id())?;
+            if commitments.block_id() != id.block_id() {
+                return Err(SimError::InvalidConfig(
+                    "simulated application returned commitments for another block",
+                ));
+            }
+            let mut callback = self.nodes[node]
+                .validation_callbacks
+                .remove(&key)
+                .expect("the exact callback was checked above");
+            let permit = match callback.capability {
+                SimValidationCapabilityV0::Permit(permit) => permit,
+                SimValidationCapabilityV0::ApplicationSealed(_) => {
+                    return Err(SimError::InvalidConfig(
+                        "simulated Valid callback was sealed more than once",
+                    ));
+                }
+            };
+            let artifact_ref =
+                simulated_artifact_ref_v0(commitments.block_id(), callback.parent_block_id);
+            let authority = self.nodes[node].application_seal_authority.as_ref().ok_or(
+                SimError::InvalidConfig(
+                    "online Core lacks its simulated application seal authority",
+                ),
+            )?;
+            callback.capability = SimValidationCapabilityV0::ApplicationSealed(
+                authority.seal_after_application_store_commit_v0(permit, commitments, artifact_ref),
+            );
+            self.nodes[node].validation_callbacks.insert(key, callback);
+        }
+
+        let result = {
+            let state = &mut self.nodes[node];
+            let core = state.core.as_mut().expect("current incarnation is online");
+            match outcome {
+                ScriptedValidationOutcome::Valid => {
+                    let callback = state
+                        .validation_callbacks
+                        .get(&key)
+                        .expect("the exact callback was checked above");
+                    let SimValidationCapabilityV0::ApplicationSealed(proof) = &callback.capability
+                    else {
+                        return Err(SimError::InvalidConfig(
+                            "Valid outcome lacks its application-sealed proof",
+                        ));
+                    };
+                    core.step_application_sealed_valid_v0(proof, &MockSignatures)
+                }
+                ScriptedValidationOutcome::MismatchedValid
+                | ScriptedValidationOutcome::Unavailable
+                | ScriptedValidationOutcome::DeterministicallyInvalid => {
+                    let validation_result = materialize_nonvalid_validation_outcome(outcome);
+                    let input = if synced {
+                        Input::SyncedPayloadValidated {
+                            id,
+                            result: validation_result,
+                        }
+                    } else {
+                        Input::PayloadValidated {
+                            id,
+                            result: validation_result,
+                        }
+                    };
+                    core.step(input, &MockSignatures)
+                }
             }
         };
-        let result = self.nodes[node]
-            .core
-            .as_mut()
-            .expect("current incarnation is online")
-            .step(input, &MockSignatures);
         match result {
             Ok(effects) => {
+                self.nodes[node].validation_callbacks.remove(&key);
                 self.record(
                     if synced {
                         "sync-validated"
@@ -1835,7 +2007,7 @@ impl Simulator {
                         id.view().get(),
                         id.generation(),
                         hex_block(id.block_id()),
-                        payload_validation_label(validation_result)
+                        effective_validation_label(outcome)
                     ),
                 );
                 self.process_effects(node, effects)?;
@@ -1843,7 +2015,11 @@ impl Simulator {
                     && (!synced
                         || (self.nodes[node].replaying
                             && replay_generation == Some(self.nodes[node].replay_generation)));
-                if validation_result.is_unavailable() {
+                if matches!(
+                    outcome,
+                    ScriptedValidationOutcome::MismatchedValid
+                        | ScriptedValidationOutcome::Unavailable
+                ) {
                     if replay_callback_is_current
                         && self.nodes[node].replaying
                         && !self.nodes[node].halted
@@ -1886,7 +2062,7 @@ impl Simulator {
                         );
                     }
                 } else if synced
-                    && validation_result.is_valid()
+                    && outcome == ScriptedValidationOutcome::Valid
                     && replay_callback_is_current
                     && self.nodes[node].replaying
                     && !self.nodes[node].halted
@@ -1911,12 +2087,15 @@ impl Simulator {
                     id,
                     synced,
                     replay_generation,
-                    result: Some(validation_result),
                 },
             ),
-            Err(error @ CoreError::ValidationCapabilityMismatch { .. }) => {
+            Err(
+                error @ (CoreError::ValidationCapabilityMismatch { .. }
+                | CoreError::ValidPayloadPermitMismatch(_)
+                | CoreError::ApplicationSealedValidMismatch(_)),
+            ) => {
                 self.record(
-                    "validation-capability-reject",
+                    "validation-host-capability-reject",
                     format!(
                         "node={node} view={} generation={} block={} error={error}",
                         id.view().get(),
@@ -1924,40 +2103,22 @@ impl Simulator {
                         hex_block(id.block_id())
                     ),
                 );
-                self.schedule_after(
-                    1,
-                    Event::Validate {
-                        node,
-                        incarnation,
-                        id,
-                        synced,
-                        replay_generation,
-                        result: None,
-                    },
+                return Err(error.into());
+            }
+            Err(CoreError::UnknownValidation(block_id)) if block_id == id.block_id() => {
+                self.nodes[node].validation_callbacks.remove(&key);
+                self.record(
+                    "local-drop",
+                    format!(
+                        "retired-validation node={node} generation={} block={}",
+                        id.generation(),
+                        hex_block(id.block_id())
+                    ),
                 );
             }
             Err(error) => return Err(error.into()),
         }
         Ok(())
-    }
-
-    fn materialize_validation_outcome(
-        &self,
-        requested_block_id: BlockId,
-        outcome: ScriptedValidationOutcome,
-    ) -> Result<PayloadValidationResult, SimError> {
-        match outcome {
-            ScriptedValidationOutcome::Valid => Ok(PayloadValidationResult::Valid {
-                commitments: self.validated_commitments_for(requested_block_id)?,
-            }),
-            ScriptedValidationOutcome::MismatchedValid => Ok(PayloadValidationResult::Valid {
-                commitments: self.mismatched_commitments_for(requested_block_id)?,
-            }),
-            ScriptedValidationOutcome::Unavailable => Ok(PayloadValidationResult::Unavailable),
-            ScriptedValidationOutcome::DeterministicallyInvalid => {
-                Ok(PayloadValidationResult::DeterministicallyInvalid)
-            }
-        }
     }
 
     fn validated_commitments_for(
@@ -2136,29 +2297,216 @@ impl Simulator {
         &mut self,
         node: NodeId,
         incarnation: u64,
-        proof: FinalityProofV0,
+        proof: DurableFinalizationV0,
+        attempt: u8,
     ) -> Result<(), SimError> {
         if !self.incarnation_is_current(node, incarnation) {
             self.record("local-drop", format!("stale-finalization node={node}"));
             return Ok(());
         }
         if self.nodes[node].halted || self.nodes[node].safety().safety_halt().is_some() {
+            self.nodes[node].application_finalization_apply_authority = None;
+            self.nodes[node].pending_application_finalization_readback = None;
+            self.nodes[node].pending_application_finalization_receipt = None;
             self.record("local-drop", format!("halted-finalization node={node}"));
             return Ok(());
         }
-        let newly_finalized = self.collect_newly_finalized(node, &proof)?;
-        let effects = self.nodes[node]
+
+        if let Err(error) = self.prepare_simulated_finalization_receipt_v0(node, &proof) {
+            if matches!(&error, SimError::Core(CoreError::Busy(_))) && attempt < MAX_EVENT_RETRIES {
+                self.record(
+                    "finalization-retry",
+                    format!(
+                        "node={node} proof={} attempt={attempt} phase=permit error={error}",
+                        hex_certificate(proof.id())
+                    ),
+                );
+                self.schedule_after(
+                    1,
+                    Event::FinalizationApplied {
+                        node,
+                        incarnation,
+                        proof: Box::new(proof),
+                        attempt: attempt + 1,
+                    },
+                );
+                return Ok(());
+            }
+            return Err(error);
+        }
+
+        let receipt = self.nodes[node]
+            .pending_application_finalization_receipt
+            .take()
+            .expect("the simulated application retained its exact receipt owner");
+        let result = self.nodes[node]
             .core
             .as_mut()
             .expect("current incarnation is online")
-            .step(
-                Input::FinalizationApplied {
-                    proof_id: proof.id(),
-                },
-                &MockSignatures,
-            )?;
-        self.record_applied_finalization(node, &proof, &newly_finalized);
-        self.process_effects(node, effects)
+            .step_application_finalization_receipt_v0(receipt, &MockSignatures);
+        match result {
+            Ok(effects) => {
+                self.nodes[node].pending_application_finalization_readback = None;
+                self.process_effects(node, effects)
+            }
+            Err(rejection) => {
+                let (error, receipt) = rejection.into_parts();
+                if self.nodes[node]
+                    .pending_application_finalization_readback
+                    .as_ref()
+                    != Some(receipt.application_store_readback_v0())
+                {
+                    self.nodes[node].pending_application_finalization_receipt = Some(receipt);
+                    return Err(SimError::InvalidConfig(
+                        "rejected finalization receipt lost its exact in-memory readback projection",
+                    ));
+                }
+                self.nodes[node].pending_application_finalization_receipt = Some(receipt);
+                if matches!(&error, CoreError::Busy(_)) && attempt < MAX_EVENT_RETRIES {
+                    self.record(
+                        "finalization-retry",
+                        format!(
+                            "node={node} proof={} attempt={attempt} phase=receipt error={error}",
+                            hex_certificate(proof.id())
+                        ),
+                    );
+                    self.schedule_after(
+                        1,
+                        Event::FinalizationApplied {
+                            node,
+                            incarnation,
+                            proof: Box::new(proof),
+                            attempt: attempt + 1,
+                        },
+                    );
+                    Ok(())
+                } else {
+                    self.record(
+                        "finalization-host-capability-reject",
+                        format!(
+                            "node={node} proof={} attempt={attempt} error={error}",
+                            hex_certificate(proof.id())
+                        ),
+                    );
+                    Err(error.into())
+                }
+            }
+        }
+    }
+
+    /// Development-only stand-in for an ApplicationStore exact apply/readback.
+    ///
+    /// The cloneable event carries only inert comparison data. The sole Core
+    /// permit, once-issued application authority, and resulting receipt remain
+    /// private to `SimNode`. Its deterministic inert readback projection is
+    /// retained beside the receipt. A previously minted receipt is reused
+    /// verbatim on retry and is never reconstructed from the event.
+    fn prepare_simulated_finalization_receipt_v0(
+        &mut self,
+        node: NodeId,
+        proof: &DurableFinalizationV0,
+    ) -> Result<(), SimError> {
+        if let Some(receipt) = self.nodes[node]
+            .pending_application_finalization_receipt
+            .as_ref()
+        {
+            if receipt.finalization() != proof {
+                return Err(SimError::InvalidConfig(
+                    "queued finalization event conflicts with the retained receipt owner",
+                ));
+            }
+            if self.nodes[node]
+                .pending_application_finalization_readback
+                .as_ref()
+                != Some(receipt.application_store_readback_v0())
+            {
+                return Err(SimError::InvalidConfig(
+                    "retained finalization receipt differs from its in-memory readback projection",
+                ));
+            }
+            return Ok(());
+        }
+        if self.nodes[node]
+            .pending_application_finalization_readback
+            .is_some()
+        {
+            return Err(SimError::InvalidConfig(
+                "orphaned in-memory finalization readback lacks its unique receipt owner",
+            ));
+        }
+
+        let exact_front = self.nodes[node]
+            .core
+            .as_ref()
+            .expect("current incarnation is online")
+            .safety_state()
+            .pending_finalization();
+        if exact_front != Some(proof) {
+            return Err(SimError::InvalidConfig(
+                "queued finalization event is not the Core's exact authenticated front",
+            ));
+        }
+        if self.nodes[node]
+            .application_finalization_apply_authority
+            .is_none()
+        {
+            return Err(SimError::InvalidConfig(
+                "online Core lacks its simulated application-finalization authority",
+            ));
+        }
+
+        let newly_finalized = self.collect_newly_finalized(node, proof)?;
+        let permit = self.nodes[node]
+            .core
+            .as_ref()
+            .expect("current incarnation is online")
+            .issue_application_finalization_permit_v0()?;
+        if permit.finalization() != proof {
+            let readback = {
+                let state = &self.nodes[node];
+                simulated_application_finalization_readback_v0(
+                    state.safety(),
+                    state
+                        .application_finalization_apply_authority
+                        .as_ref()
+                        .expect("the authority was checked above"),
+                    &permit,
+                )?
+            };
+            let receipt = self.nodes[node]
+                .application_finalization_apply_authority
+                .as_ref()
+                .expect("the authority was checked above")
+                .receipt_after_application_store_apply_v0(permit, readback.clone())
+                .expect("the permit was issued by the same simulated Core authority");
+            self.nodes[node].pending_application_finalization_readback = Some(readback);
+            self.nodes[node].pending_application_finalization_receipt = Some(receipt);
+            return Err(SimError::InvalidConfig(
+                "Core finalization permit changed after exact-front admission",
+            ));
+        }
+
+        self.record_applied_finalization(node, proof, &newly_finalized);
+        let readback = {
+            let state = &self.nodes[node];
+            simulated_application_finalization_readback_v0(
+                state.safety(),
+                state
+                    .application_finalization_apply_authority
+                    .as_ref()
+                    .expect("the authority was checked above"),
+                &permit,
+            )?
+        };
+        let receipt = self.nodes[node]
+            .application_finalization_apply_authority
+            .as_ref()
+            .expect("the authority was checked above")
+            .receipt_after_application_store_apply_v0(permit, readback.clone())
+            .expect("the permit was issued by the same simulated Core authority");
+        self.nodes[node].pending_application_finalization_readback = Some(readback);
+        self.nodes[node].pending_application_finalization_receipt = Some(receipt);
+        Ok(())
     }
 
     fn handle_timeout(
@@ -2364,6 +2712,68 @@ impl Simulator {
 }
 
 impl Simulator {
+    fn schedule_simulated_validation_v0(
+        &mut self,
+        node: NodeId,
+        request: PayloadValidationRequest,
+        expected_route: PayloadValidationRouteV0,
+        replay_generation: Option<u64>,
+    ) -> Result<(), SimError> {
+        if self.nodes[node].application_seal_authority.is_none() {
+            return Err(SimError::InvalidConfig(
+                "online Core lacks its simulated application seal authority",
+            ));
+        }
+
+        // The event retains only copyable request identity. Claiming one clone
+        // consumes the shared Core request graph, while the read-only clone is
+        // used solely to prove the claimed parts were not substituted at this
+        // trusted development host boundary.
+        let request_facts = request.clone();
+        let claimed = request.try_claim().map_err(|_| {
+            SimError::InvalidConfig("simulator received an already-claimed validation request")
+        })?;
+        let (route, id, block, parent, permit) = claimed.into_parts();
+        if route != expected_route
+            || request_facts.route() != route
+            || request_facts.id() != id
+            || request_facts.block() != &block
+            || request_facts.parent() != &parent
+            || block.id() != id.block_id()
+            || block.header().parent_id() != parent.tip().block_id()
+        {
+            return Err(SimError::InvalidConfig(
+                "claimed validation request differs from its Core-issued facts",
+            ));
+        }
+
+        let key = SimValidationKeyV0::new(route, id);
+        if self.nodes[node].validation_callbacks.contains_key(&key) {
+            return Err(SimError::InvalidConfig(
+                "simulator already retains a callback for this validation request",
+            ));
+        }
+        self.nodes[node].validation_callbacks.insert(
+            key,
+            SimValidationCallbackV0 {
+                parent_block_id: parent.tip().block_id(),
+                outcome: None,
+                capability: SimValidationCapabilityV0::Permit(permit),
+            },
+        );
+        self.schedule_after(
+            1,
+            Event::Validate {
+                node,
+                incarnation: self.nodes[node].incarnation,
+                id,
+                synced: route == PayloadValidationRouteV0::Synced,
+                replay_generation,
+            },
+        );
+        Ok(())
+    }
+
     fn process_effects(&mut self, node: NodeId, effects: Vec<Effect>) -> Result<(), SimError> {
         let incarnation = self.nodes[node].incarnation;
         for effect in effects {
@@ -2392,34 +2802,23 @@ impl Simulator {
                     );
                 }
                 Effect::ValidatePayload(request) => {
-                    let id = request.id();
-                    self.schedule_after(
-                        1,
-                        Event::Validate {
-                            node,
-                            incarnation,
-                            id,
-                            synced: false,
-                            replay_generation: None,
-                            result: None,
-                        },
-                    );
+                    self.schedule_simulated_validation_v0(
+                        node,
+                        request,
+                        PayloadValidationRouteV0::Proposal,
+                        None,
+                    )?;
                 }
                 Effect::ValidateSyncedPayload(request) => {
                     let id = request.id();
                     self.nodes[node].replay_blocks.insert(id.block_id());
                     let replay_generation = self.nodes[node].replay_generation;
-                    self.schedule_after(
-                        1,
-                        Event::Validate {
-                            node,
-                            incarnation,
-                            id,
-                            synced: true,
-                            replay_generation: Some(replay_generation),
-                            result: None,
-                        },
-                    );
+                    self.schedule_simulated_validation_v0(
+                        node,
+                        request,
+                        PayloadValidationRouteV0::Synced,
+                        Some(replay_generation),
+                    )?;
                 }
                 Effect::RequestSignature { intent } => {
                     intent.validate(&self.validator_set)?;
@@ -2619,6 +3018,11 @@ impl Simulator {
                     self.nodes[node].advance_replay_generation()?;
                     self.nodes[node].replay_queue.clear();
                     self.nodes[node].replay_blocks.clear();
+                    self.nodes[node].validation_callbacks.clear();
+                    self.nodes[node].application_seal_authority = None;
+                    self.nodes[node].application_finalization_apply_authority = None;
+                    self.nodes[node].pending_application_finalization_readback = None;
+                    self.nodes[node].pending_application_finalization_receipt = None;
                     self.record(
                         "safety-halt",
                         format!(
@@ -2643,6 +3047,7 @@ impl Simulator {
                             node,
                             incarnation,
                             proof,
+                            attempt: 0,
                         },
                     );
                 }
@@ -3343,6 +3748,13 @@ fn safety_state_trace_digest(state: &SafetyState) -> [u8; 32] {
     for fact in state.payload_terminal_facts() {
         hasher.update(fact.block_id().as_bytes());
         hasher.update([payload_terminal_tag(fact.result())]);
+        match fact.valid_overlay() {
+            None => hasher.update([0]),
+            Some(overlay) => {
+                hasher.update([1]);
+                update_overlay_ref_trace_digest(&mut hasher, overlay);
+            }
+        }
         hasher.update(fact.first_recorded_revision().to_le_bytes());
     }
     hasher.update(b"TRNM_POCO_BFT_SIM_PAYLOAD_VALIDATION_OBLIGATIONS_V0");
@@ -3595,18 +4007,134 @@ fn update_payload_validation_completion_trace_digest(
     hasher.update(id.generation().to_le_bytes());
 
     match completion.result() {
-        DurablePayloadValidationResultV1::Valid { commitments } => {
+        DurablePayloadValidationResultV1::Valid {
+            commitments,
+            artifact_ref,
+        } => {
             hasher.update([1]);
             hasher.update(commitments.block_id().as_bytes());
             hasher.update(commitments.logical_block_size().to_le_bytes());
             hasher.update(commitments.transaction_count().to_le_bytes());
             hasher.update(commitments.evidence_count().to_le_bytes());
+            update_overlay_ref_trace_digest(hasher, artifact_ref.overlay());
+            hasher.update(artifact_ref.source_artifact_checksum());
         }
         DurablePayloadValidationResultV1::Unavailable => hasher.update([2]),
         DurablePayloadValidationResultV1::DeterministicallyInvalid => hasher.update([3]),
     }
 
     hasher.update(completion.first_recorded_revision().to_le_bytes());
+}
+
+fn simulated_artifact_ref_v0(
+    block_id: BlockId,
+    parent_block_id: BlockId,
+) -> ValidatedPayloadArtifactRefV0 {
+    let overlay_checksum = Sha256::new()
+        .chain_update(b"TRNM_POCO_BFT_SIM_OVERLAY_REF_V0")
+        .chain_update(block_id.as_bytes())
+        .chain_update(parent_block_id.as_bytes())
+        .finalize()
+        .into();
+    let source_artifact_checksum = Sha256::new()
+        .chain_update(b"TRNM_POCO_BFT_SIM_SOURCE_ARTIFACT_REF_V0")
+        .chain_update(block_id.as_bytes())
+        .chain_update(parent_block_id.as_bytes())
+        .finalize()
+        .into();
+    ValidatedPayloadArtifactRefV0::new(
+        BlockIdOverlayRefV0::new(block_id, parent_block_id, overlay_checksum),
+        source_artifact_checksum,
+    )
+}
+
+fn simulated_finalization_readback_checksum_v0(
+    label: &[u8],
+    finalization_checksum: [u8; 32],
+    route: PayloadValidationRouteV0,
+    id: ValidationId,
+    source_artifact_checksum: [u8; 32],
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"TRNM_POCO_BFT_SIM_INERT_FINALIZATION_READBACK_V0");
+    hasher.update((CHAIN_ID.as_bytes().len() as u64).to_be_bytes());
+    hasher.update(CHAIN_ID.as_bytes());
+    hasher.update((label.len() as u64).to_be_bytes());
+    hasher.update(label);
+    hasher.update(finalization_checksum);
+    hasher.update([payload_validation_route_tag(route)]);
+    hasher.update(id.block_id().as_bytes());
+    hasher.update(id.view().get().to_be_bytes());
+    hasher.update(id.generation().to_be_bytes());
+    hasher.update(source_artifact_checksum);
+    hasher.finalize().into()
+}
+
+/// Builds the simulator's deterministic, inert stand-in for one exact
+/// ApplicationStore post-commit readback.
+///
+/// The source identity and artifact checksum come from the Core's durable
+/// Valid completion for the exact queue-front overlay. The remaining row-like
+/// checksums are domain-separated comparison bytes derived from that source
+/// and carrier; no SQLite row, JMT apply, or durable receipt exists here.
+fn simulated_application_finalization_readback_v0(
+    safety: &SafetyState,
+    authority: &CoreIssuedApplicationFinalizationApplyAuthorityV0,
+    permit: &CoreIssuedApplicationFinalizationPermitV0,
+) -> Result<ApplicationFinalizationApplyReadbackV0, SimError> {
+    let finalization = permit.finalization();
+    let target = finalization.proof().finalized_block().header();
+    let target_overlay = finalization.target_overlay_ref();
+    let source = safety
+        .payload_validation_completions()
+        .iter()
+        .find_map(|completion| match completion.result() {
+            DurablePayloadValidationResultV1::Valid { artifact_ref, .. }
+                if completion.id().block_id() == target.id()
+                    && artifact_ref.overlay() == target_overlay =>
+            {
+                Some((
+                    completion.route(),
+                    completion.id(),
+                    artifact_ref.source_artifact_checksum(),
+                ))
+            }
+            _ => None,
+        })
+        .ok_or(SimError::InvalidConfig(
+            "finalization stand-in lacks the exact durable Valid source",
+        ))?;
+    let finalization_checksum = native_finalization_applied_checksum_v0(finalization)?;
+    let checksum = |label: &[u8]| {
+        simulated_finalization_readback_checksum_v0(
+            label,
+            finalization_checksum,
+            source.0,
+            source.1,
+            source.2,
+        )
+    };
+    authority
+        .application_store_apply_readback_v0(
+            permit,
+            source.0,
+            source.1,
+            target.height().get(),
+            checksum(b"application-host-config"),
+            checksum(b"prior-head"),
+            checksum(b"new-head"),
+            source.2,
+            checksum(b"accepted-source"),
+            checksum(b"applied-job-row"),
+            checksum(b"receipt-row"),
+        )
+        .map_err(Into::into)
+}
+
+fn update_overlay_ref_trace_digest(hasher: &mut Sha256, overlay: BlockIdOverlayRefV0) {
+    hasher.update(overlay.block_id().as_bytes());
+    hasher.update(overlay.parent_block_id().as_bytes());
+    hasher.update(overlay.overlay_checksum());
 }
 
 fn update_trace_bytes(hasher: &mut Sha256, bytes: &[u8]) {
@@ -3637,11 +4165,47 @@ const fn payload_validation_route_tag(route: PayloadValidationRouteV0) -> u8 {
     }
 }
 
+const fn validation_route_v0(synced: bool) -> PayloadValidationRouteV0 {
+    if synced {
+        PayloadValidationRouteV0::Synced
+    } else {
+        PayloadValidationRouteV0::Proposal
+    }
+}
+
 const fn payload_validation_label(result: PayloadValidationResult) -> &'static str {
     match result {
-        PayloadValidationResult::Valid { .. } => "valid",
+        PayloadValidationResult::Valid(_) => "valid",
         PayloadValidationResult::Unavailable => "unavailable",
         PayloadValidationResult::DeterministicallyInvalid => "deterministically-invalid",
+    }
+}
+
+fn materialize_nonvalid_validation_outcome(
+    outcome: ScriptedValidationOutcome,
+) -> PayloadValidationResult {
+    match outcome {
+        ScriptedValidationOutcome::MismatchedValid | ScriptedValidationOutcome::Unavailable => {
+            PayloadValidationResult::Unavailable
+        }
+        ScriptedValidationOutcome::DeterministicallyInvalid => {
+            PayloadValidationResult::DeterministicallyInvalid
+        }
+        ScriptedValidationOutcome::Valid => {
+            unreachable!("Valid must cross the application-sealed callback boundary")
+        }
+    }
+}
+
+const fn effective_validation_label(outcome: ScriptedValidationOutcome) -> &'static str {
+    match outcome {
+        ScriptedValidationOutcome::Valid => "valid",
+        ScriptedValidationOutcome::MismatchedValid | ScriptedValidationOutcome::Unavailable => {
+            payload_validation_label(PayloadValidationResult::Unavailable)
+        }
+        ScriptedValidationOutcome::DeterministicallyInvalid => {
+            payload_validation_label(PayloadValidationResult::DeterministicallyInvalid)
+        }
     }
 }
 
@@ -3842,6 +4406,35 @@ mod tests {
         state
     }
 
+    fn take_next_current_finalization_event(
+        simulator: &mut Simulator,
+        selected_node: Option<NodeId>,
+    ) -> (NodeId, u64, DurableFinalizationV0, u8) {
+        simulator.start();
+        for _ in 0..100_000 {
+            let Some((key, event)) = simulator.queue.pop_first() else {
+                panic!("the running simulator exhausted its queue before finalization");
+            };
+            simulator.tick = key.0;
+            match event {
+                Event::FinalizationApplied {
+                    node,
+                    incarnation,
+                    proof,
+                    attempt,
+                } if simulator.incarnation_is_current(node, incarnation)
+                    && selected_node.is_none_or(|selected| selected == node) =>
+                {
+                    return (node, incarnation, *proof, attempt);
+                }
+                event => simulator
+                    .handle_event(event)
+                    .expect("events preceding the selected finalization remain safe"),
+            }
+        }
+        panic!("the simulator did not expose finalization within the bounded event budget");
+    }
+
     fn register_real_synced_validation(
         simulator: &mut Simulator,
         node: NodeId,
@@ -3961,6 +4554,323 @@ mod tests {
     }
 
     #[test]
+    fn public_core_clone_rejects_finalization_receipt_and_preserves_exact_retry_owner() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 41).expect("valid config")).expect("valid simulator");
+        let (node, incarnation, proof, attempt) =
+            take_next_current_finalization_event(&mut simulator, None);
+        simulator
+            .prepare_simulated_finalization_receipt_v0(node, &proof)
+            .expect("the simulated application applies the exact queue front");
+        let expected_readback = simulator.nodes[node]
+            .pending_application_finalization_readback
+            .clone()
+            .expect("the in-memory apply retains its deterministic projection");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_some());
+
+        let original = simulator.nodes[node]
+            .core
+            .take()
+            .expect("the issuing Core is online");
+        simulator.nodes[node].core = Some(original.clone());
+        let error = simulator
+            .handle_finalization(node, incarnation, proof.clone(), attempt)
+            .expect_err("a public Core clone has fresh finalization affinities");
+        assert!(matches!(
+            error,
+            SimError::Core(CoreError::ApplicationFinalizationReceiptMismatch)
+        ));
+        assert_eq!(
+            simulator.nodes[node]
+                .pending_application_finalization_receipt
+                .as_ref()
+                .expect("the rejected sole owner is retained")
+                .finalization(),
+            &proof
+        );
+        assert_eq!(
+            simulator.nodes[node]
+                .pending_application_finalization_readback
+                .as_ref(),
+            Some(&expected_readback),
+            "receipt rejection must retain the exact inert readback projection"
+        );
+
+        simulator.nodes[node].core = Some(original);
+        simulator
+            .handle_finalization(node, incarnation, proof, attempt)
+            .expect("the same receipt owner retries against its issuing Core");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_readback
+            .is_none());
+    }
+
+    #[test]
+    fn foreign_finalization_receipt_is_rejected_by_exact_carrier_target_core() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 42).expect("valid config")).expect("valid simulator");
+        let (node, incarnation, proof, attempt) =
+            take_next_current_finalization_event(&mut simulator, None);
+        let foreign_core = simulator.nodes[node]
+            .core
+            .as_ref()
+            .expect("the target Core is online")
+            .clone();
+        let foreign_authority = foreign_core
+            .issue_application_finalization_apply_authority_v0()
+            .expect("the foreign public clone has one fresh authority");
+        let foreign_permit = foreign_core
+            .issue_application_finalization_permit_v0()
+            .expect("the foreign public clone exposes the same inert queue front");
+        assert_eq!(foreign_permit.finalization(), &proof);
+        let newly_finalized = simulator
+            .collect_newly_finalized(node, &proof)
+            .expect("the exact application prefix is available");
+        simulator.record_applied_finalization(node, &proof, &newly_finalized);
+        let foreign_readback = simulated_application_finalization_readback_v0(
+            foreign_core.safety_state(),
+            &foreign_authority,
+            &foreign_permit,
+        )
+        .expect("the foreign in-memory host projects its exact queue front");
+        simulator.nodes[node].pending_application_finalization_receipt = Some(
+            foreign_authority
+                .receipt_after_application_store_apply_v0(foreign_permit, foreign_readback.clone())
+                .expect("the foreign permit matches its own foreign authority"),
+        );
+        simulator.nodes[node].pending_application_finalization_readback = Some(foreign_readback);
+
+        let error = simulator
+            .handle_finalization(node, incarnation, proof.clone(), attempt)
+            .expect_err("equal durable carrier bytes do not confer foreign authority");
+        assert!(matches!(
+            error,
+            SimError::Core(CoreError::ApplicationFinalizationReceiptMismatch)
+        ));
+        assert_eq!(
+            simulator.nodes[node]
+                .pending_application_finalization_receipt
+                .as_ref()
+                .expect("the foreign owner remains intact")
+                .finalization(),
+            &proof
+        );
+
+        let _original = simulator.nodes[node].core.replace(foreign_core);
+        simulator.nodes[node].application_finalization_apply_authority = Some(foreign_authority);
+        simulator
+            .handle_finalization(node, incarnation, proof, attempt)
+            .expect("the exact owner succeeds only against its issuing foreign Core");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+    }
+
+    #[test]
+    fn finalization_front_rotation_reuses_authority_but_requires_a_fresh_permit() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 43).expect("valid config")).expect("valid simulator");
+        let (node, incarnation, first, first_attempt) =
+            take_next_current_finalization_event(&mut simulator, None);
+        assert!(matches!(
+            simulator.nodes[node]
+                .core
+                .as_ref()
+                .expect("the selected Core is online")
+                .issue_application_finalization_apply_authority_v0(),
+            Err(CoreError::ApplicationFinalizationApplyAuthorityAlreadyIssued)
+        ));
+        let first_height = first.finalized_block().header().height();
+        simulator
+            .handle_finalization(node, incarnation, first, first_attempt)
+            .expect("the first exact front is applied");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert!(simulator.nodes[node]
+            .application_finalization_apply_authority
+            .is_some());
+
+        let (second_node, second_incarnation, second, second_attempt) =
+            take_next_current_finalization_event(&mut simulator, Some(node));
+        assert_eq!(second_node, node);
+        assert!(second.finalized_block().header().height() > first_height);
+        simulator
+            .handle_finalization(
+                second_node,
+                second_incarnation,
+                second.clone(),
+                second_attempt,
+            )
+            .expect("front rotation permits the next ancestor with the same store authority");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert_eq!(
+            simulator.nodes[node]
+                .applied
+                .get(&second.finalized_block().header().height()),
+            Some(&second.finalized_block().header().id())
+        );
+    }
+
+    #[test]
+    fn crash_drops_finalization_capabilities_and_recovery_remints_exact_front() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 44).expect("valid config")).expect("valid simulator");
+        let (node, old_incarnation, proof, _) =
+            take_next_current_finalization_event(&mut simulator, None);
+        simulator
+            .prepare_simulated_finalization_receipt_v0(node, &proof)
+            .expect("the pre-crash application apply mints one live receipt");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_some());
+
+        simulator.crash(node).expect("the node crashes fail-closed");
+        assert!(simulator.nodes[node]
+            .application_finalization_apply_authority
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_readback
+            .is_none());
+        simulator
+            .recover(node)
+            .expect("the authenticated pending front recovers");
+        assert!(simulator.nodes[node]
+            .application_finalization_apply_authority
+            .is_some());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_readback
+            .is_none());
+
+        let (recovered_node, recovered_incarnation, recovered, recovered_attempt) =
+            take_next_current_finalization_event(&mut simulator, Some(node));
+        assert_eq!(recovered_node, node);
+        assert_ne!(recovered_incarnation, old_incarnation);
+        assert_eq!(recovered, proof);
+        simulator
+            .handle_finalization(
+                recovered_node,
+                recovered_incarnation,
+                recovered,
+                recovered_attempt,
+            )
+            .expect("the recovered Core remints and consumes only the exact durable front");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+    }
+
+    #[test]
+    fn busy_finalization_callback_retains_receipt_until_same_core_can_retry() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 45).expect("valid config")).expect("valid simulator");
+        let (node, incarnation, proof, attempt) =
+            take_next_current_finalization_event(&mut simulator, None);
+        simulator
+            .prepare_simulated_finalization_receipt_v0(node, &proof)
+            .expect("the simulated application applies the exact queue front");
+        let original = simulator.nodes[node]
+            .core
+            .take()
+            .expect("the issuing Core is online");
+        let mut busy_clone = original.clone();
+        let busy_authority = busy_clone
+            .issue_application_finalization_apply_authority_v0()
+            .expect("the public clone has one independent authority");
+        let busy_permit = busy_clone
+            .issue_application_finalization_permit_v0()
+            .expect("the public clone has one independent front permit");
+        let busy_readback = simulated_application_finalization_readback_v0(
+            busy_clone.safety_state(),
+            &busy_authority,
+            &busy_permit,
+        )
+        .expect("the busy clone projects its exact in-memory queue front");
+        let busy_receipt = busy_authority
+            .receipt_after_application_store_apply_v0(busy_permit, busy_readback)
+            .expect("the busy clone permit matches its own authority");
+        let busy_effects = busy_clone
+            .step_application_finalization_receipt_v0(busy_receipt, &MockSignatures)
+            .expect("the public clone stages its own persistence barrier");
+        assert!(busy_effects
+            .iter()
+            .any(|effect| matches!(effect, Effect::PersistSafetyState(_))));
+        simulator.nodes[node].core = Some(busy_clone);
+
+        simulator
+            .handle_finalization(node, incarnation, proof.clone(), attempt)
+            .expect("Busy retains the owner and schedules an exact retry");
+        assert_eq!(
+            simulator.nodes[node]
+                .pending_application_finalization_receipt
+                .as_ref()
+                .expect("Busy returned the sole owner")
+                .finalization(),
+            &proof
+        );
+        assert_eq!(
+            simulator.nodes[node]
+                .pending_application_finalization_readback
+                .as_ref(),
+            simulator.nodes[node]
+                .pending_application_finalization_receipt
+                .as_ref()
+                .map(ApplicationFinalizationReceiptV0::application_store_readback_v0),
+            "Busy must retain the exact inert projection beside its sole receipt owner"
+        );
+        assert!(simulator.trace.entries().iter().any(|entry| {
+            entry.code() == "finalization-retry"
+                && entry.detail().contains("phase=receipt")
+                && entry.detail().contains(&format!("node={node}"))
+        }));
+
+        simulator.nodes[node].core = Some(original);
+        let (retry_key, retry_event) = simulator
+            .queue
+            .iter()
+            .find_map(|(key, event)| match event {
+                Event::FinalizationApplied {
+                    node: queued_node,
+                    incarnation: queued_incarnation,
+                    proof: queued_proof,
+                    attempt: retry_attempt,
+                } if *queued_node == node
+                    && *queued_incarnation == incarnation
+                    && queued_proof.as_ref() == &proof
+                    && *retry_attempt == attempt + 1 =>
+                {
+                    Some((*key, event.clone()))
+                }
+                _ => None,
+            })
+            .expect("Busy scheduled the exact inert retry event");
+        simulator.queue.remove(&retry_key);
+        simulator.tick = retry_key.0;
+        simulator
+            .handle_event(retry_event)
+            .expect("the same issuing Core consumes its returned receipt owner");
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_readback
+            .is_none());
+    }
+
+    #[test]
     fn run_fails_before_processing_an_observed_cross_layer_fork() {
         let mut simulator = Simulator::new(
             SimConfig::new(4, 23)
@@ -4037,6 +4947,103 @@ mod tests {
     }
 
     #[test]
+    fn public_core_clone_rejects_sealed_valid_without_destroying_exact_retry() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 27).expect("valid config")).expect("valid simulator");
+        let node = 0;
+        let (_proposal, incarnation, id, replay_generation) =
+            register_real_synced_validation(&mut simulator, node);
+        simulator.nodes[node].replaying = true;
+        assert_eq!(
+            simulator.nodes[node].replay_generation, replay_generation,
+            "the affinity test must exercise the current synced callback, not the stale-event gate"
+        );
+        simulator.nodes[node]
+            .scripted_validation_results
+            .push_back(ScriptedValidationOutcome::Valid);
+
+        let original = simulator.nodes[node]
+            .core
+            .take()
+            .expect("the issuing Core is online");
+        simulator.nodes[node].core = Some(original.clone());
+        let error = simulator
+            .handle_validation(node, incarnation, id, true, Some(replay_generation))
+            .expect_err("a public Core clone has a foreign application/store affinity");
+        assert!(matches!(
+            error,
+            SimError::Core(CoreError::ApplicationSealedValidMismatch(block_id))
+                if block_id == id.block_id()
+        ));
+        let key = SimValidationKeyV0::new(PayloadValidationRouteV0::Synced, id);
+        assert!(matches!(
+            simulator.nodes[node]
+                .validation_callbacks
+                .get(&key)
+                .map(|callback| &callback.capability),
+            Some(SimValidationCapabilityV0::ApplicationSealed(_))
+        ));
+
+        simulator.nodes[node].core = Some(original);
+        simulator
+            .handle_validation(node, incarnation, id, true, Some(replay_generation))
+            .expect("the borrowed proof retries against its exact issuing Core");
+        assert!(!simulator.nodes[node]
+            .validation_callbacks
+            .contains_key(&key));
+        assert_eq!(
+            simulator.nodes[node]
+                .core
+                .as_ref()
+                .expect("the issuing Core remains online")
+                .pending_validation_count(),
+            0
+        );
+    }
+
+    #[test]
+    fn crash_drops_non_durable_validation_capabilities_and_stale_event() {
+        let mut simulator =
+            Simulator::new(SimConfig::new(4, 28).expect("valid config")).expect("valid simulator");
+        let node = 0;
+        let (_proposal, incarnation, id, replay_generation) =
+            register_real_synced_validation(&mut simulator, node);
+        assert_eq!(simulator.nodes[node].validation_callbacks.len(), 1);
+        assert!(simulator.nodes[node].application_seal_authority.is_some());
+        assert!(simulator.nodes[node]
+            .application_finalization_apply_authority
+            .is_some());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        simulator.nodes[node]
+            .scripted_validation_results
+            .push_back(ScriptedValidationOutcome::Valid);
+
+        simulator.crash(node).expect("the node crashes fail-closed");
+        assert!(simulator.nodes[node].validation_callbacks.is_empty());
+        assert!(simulator.nodes[node].application_seal_authority.is_none());
+        assert!(simulator.nodes[node]
+            .application_finalization_apply_authority
+            .is_none());
+        assert!(simulator.nodes[node]
+            .pending_application_finalization_receipt
+            .is_none());
+        simulator
+            .handle_validation(node, incarnation, id, true, Some(replay_generation))
+            .expect("the stale-incarnation event is discarded");
+        assert_eq!(
+            simulator.nodes[node].scripted_validation_results.front(),
+            Some(&ScriptedValidationOutcome::Valid)
+        );
+        assert!(simulator.trace.entries().iter().any(|entry| {
+            entry.code() == "local-drop"
+                && entry.detail().contains("stale-validation")
+                && entry.detail().contains(&format!("node={node}"))
+        }));
+    }
+
+    #[test]
     fn stale_sync_validation_callback_cannot_consume_or_mutate_a_new_request() {
         let mut simulator =
             Simulator::new(SimConfig::new(4, 31).expect("valid config")).expect("valid simulator");
@@ -4064,14 +5071,7 @@ mod tests {
         let trace_start = simulator.trace.entries().len();
 
         simulator
-            .handle_validation(
-                node,
-                incarnation,
-                stale_id,
-                true,
-                Some(stale_generation),
-                None,
-            )
+            .handle_validation(node, incarnation, stale_id, true, Some(stale_generation))
             .expect("a stale validation result is discarded after exact cancellation");
         let canceled = acknowledge_next_persistence(&mut simulator, node);
 
@@ -4153,14 +5153,7 @@ mod tests {
         );
 
         simulator
-            .handle_validation(
-                node,
-                incarnation,
-                stale_id,
-                true,
-                Some(stale_generation),
-                None,
-            )
+            .handle_validation(node, incarnation, stale_id, true, Some(stale_generation))
             .expect("the overlapping callback is rebound");
         let canceled = acknowledge_next_persistence(&mut simulator, node);
         assert!(canceled.payload_validation_obligations().is_empty());
@@ -4216,7 +5209,6 @@ mod tests {
                 current_id,
                 true,
                 Some(callback_generation),
-                None,
             )
             .expect("the replacement callback consumes the current scripted result");
 

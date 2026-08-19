@@ -1,10 +1,10 @@
 use core::fmt;
 
 use crate::{
-    BlockId, CertificateId, CheckpointTwoSealKernelV0, ConsensusParametersHash,
+    BlockId, BlockKind, CertificateId, CheckpointTwoSealKernelV0, ConsensusParametersHash,
     ConsensusParametersV0, Epoch, EpochAnchorAuthorizationKernelV0, FinalityProofV0, Height,
     NextEpochCommitmentHash, NextEpochCommitmentV0, ProtocolVersion, SignatureVerifier, StateRoot,
-    ValidationError, ValidatorSet, ValidatorSetId,
+    ValidationError, ValidatorSet, ValidatorSetId, View,
 };
 
 /// Stable failures for the B2-F same-version joint-handoff composition kernel.
@@ -70,6 +70,65 @@ impl fmt::Display for JointHandoffKernelError {
 impl core::error::Error for JointHandoffKernelError {}
 
 pub type JointHandoffKernelResult<T> = core::result::Result<T, JointHandoffKernelError>;
+
+/// Stable failures for the bounded same-version transition-proof kernel.
+///
+/// This kernel is deliberately a verification result only.  It does not
+/// activate a Core, create a signer namespace, or mutate SafetyState.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum SameVersionEpochTransitionKernelErrorCode {
+    InvalidJointHandoff,
+    InvalidNewEpochFinality,
+    InvalidFirstNewEpochGeometry,
+    AuthorizationSubstitution,
+    UnsupportedTimeoutPath,
+    InvalidNewEpochSignature,
+}
+
+impl SameVersionEpochTransitionKernelErrorCode {
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::InvalidJointHandoff => "invalid_joint_handoff",
+            Self::InvalidNewEpochFinality => "invalid_new_epoch_finality",
+            Self::InvalidFirstNewEpochGeometry => "invalid_first_new_epoch_geometry",
+            Self::AuthorizationSubstitution => "authorization_substitution",
+            Self::UnsupportedTimeoutPath => "unsupported_timeout_path",
+            Self::InvalidNewEpochSignature => "invalid_new_epoch_signature",
+        }
+    }
+}
+
+/// One stable bounded transition-proof failure.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SameVersionEpochTransitionKernelError {
+    code: SameVersionEpochTransitionKernelErrorCode,
+}
+
+impl SameVersionEpochTransitionKernelError {
+    const fn new(code: SameVersionEpochTransitionKernelErrorCode) -> Self {
+        Self { code }
+    }
+
+    pub const fn code(self) -> SameVersionEpochTransitionKernelErrorCode {
+        self.code
+    }
+}
+
+impl fmt::Display for SameVersionEpochTransitionKernelError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            formatter,
+            "same-version epoch-transition kernel error {}",
+            self.code.as_str()
+        )
+    }
+}
+
+impl core::error::Error for SameVersionEpochTransitionKernelError {}
+
+pub type SameVersionEpochTransitionKernelResult<T> =
+    core::result::Result<T, SameVersionEpochTransitionKernelError>;
 
 /// Verified same-version relations across the B2-C, B2-E, and B2-B kernels.
 ///
@@ -173,6 +232,196 @@ impl JointHandoffKernelV0 {
     pub const fn activation_height(&self) -> Height {
         self.activation_height
     }
+}
+
+/// Verified relations spanning the terminal old epoch and the first finalized
+/// new-epoch handoff block.
+///
+/// This private-field value remains inert because the supplied
+/// [`SignatureVerifier`] is not attested.  The strict downstream wrapper in
+/// `trnm-consensus-crypto` is the only API which upgrades these facts into a
+/// strict-Ed25519 observation.  Neither value is Core/Safety activation
+/// authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SameVersionEpochTransitionKernelV0 {
+    joint_handoff: JointHandoffKernelV0,
+    first_new_epoch_finality_proof_id: CertificateId,
+    first_new_epoch_block_id: BlockId,
+    first_new_epoch_height: Height,
+    first_new_epoch_state_root: StateRoot,
+    observed_new_epoch_tip_block_id: BlockId,
+    observed_new_epoch_tip_height: Height,
+    observed_new_epoch_tip_view: View,
+}
+
+impl SameVersionEpochTransitionKernelV0 {
+    pub const fn joint_handoff(&self) -> &JointHandoffKernelV0 {
+        &self.joint_handoff
+    }
+
+    pub const fn first_new_epoch_finality_proof_id(&self) -> CertificateId {
+        self.first_new_epoch_finality_proof_id
+    }
+
+    pub const fn first_new_epoch_block_id(&self) -> BlockId {
+        self.first_new_epoch_block_id
+    }
+
+    pub const fn first_new_epoch_height(&self) -> Height {
+        self.first_new_epoch_height
+    }
+
+    pub const fn first_new_epoch_state_root(&self) -> StateRoot {
+        self.first_new_epoch_state_root
+    }
+
+    pub const fn observed_new_epoch_tip_block_id(&self) -> BlockId {
+        self.observed_new_epoch_tip_block_id
+    }
+
+    pub const fn observed_new_epoch_tip_height(&self) -> Height {
+        self.observed_new_epoch_tip_height
+    }
+
+    pub const fn observed_new_epoch_tip_view(&self) -> View {
+        self.observed_new_epoch_tip_view
+    }
+}
+
+/// Verifies one exact, next-view-only same-version transition proof.
+///
+/// The function first re-runs the complete B2-F checkpoint/two-seal and dual
+/// quorum composition.  It then validates one new-epoch three-chain whose
+/// finalized target is the exact `EpochHandoff` block at activation height and
+/// view one.  The embedded authorization must byte-match the B2-F certificate
+/// kernel.  All three new-set proposer and certifying-QC signatures are
+/// checked by the supplied verifier.
+///
+/// Skipped-view/TC handoff is intentionally outside this first bounded
+/// tranche.  Success observes finality; it does not create a live Core,
+/// SafetyState, signing permission, or persistence transition.
+#[allow(clippy::too_many_arguments)]
+pub fn verify_same_version_epoch_transition_proof_kernel_v0<V: SignatureVerifier>(
+    old_checkpoint_finality: &FinalityProofV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    anchor_certificate_kernel: &EpochAnchorAuthorizationKernelV0,
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_validator_set: &ValidatorSet,
+    new_consensus_parameters: &ConsensusParametersV0,
+    authenticated_checkpoint_parent_timestamp_ms: u64,
+    first_new_epoch_finality: &FinalityProofV0,
+    verifier: &V,
+) -> SameVersionEpochTransitionKernelResult<SameVersionEpochTransitionKernelV0> {
+    let joint_handoff = verify_same_version_joint_handoff_kernel_v0(
+        old_checkpoint_finality,
+        next_epoch_commitment,
+        anchor_certificate_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+        authenticated_checkpoint_parent_timestamp_ms,
+        verifier,
+    )
+    .map_err(|_| {
+        transition_error(SameVersionEpochTransitionKernelErrorCode::InvalidJointHandoff)
+    })?;
+
+    let first = first_new_epoch_finality.finalized_block();
+    let child = first_new_epoch_finality.child();
+    let grandchild = first_new_epoch_finality.grandchild();
+    first_new_epoch_finality
+        .validate(
+            new_validator_set,
+            Some(old_validator_set),
+            new_consensus_parameters,
+            anchor_certificate_kernel
+                .terminal_old_header()
+                .timestamp_ms(),
+        )
+        .map_err(|_| {
+            transition_error(SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochFinality)
+        })?;
+
+    let first_header = first.header();
+    let child_header = child.header();
+    let grandchild_header = grandchild.header();
+    if first_header.block_kind() != BlockKind::EpochHandoff
+        || first_header.epoch() != joint_handoff.new_epoch()
+        || first_header.height() != joint_handoff.activation_height()
+        || first_header.parent_id() != joint_handoff.terminal_old_block_id()
+        || first_header.view() != View::new(1)
+        || child_header.block_kind() != BlockKind::Regular
+        || child_header.view() != View::new(2)
+        || grandchild_header.block_kind() != BlockKind::Regular
+        || grandchild_header.view() != View::new(3)
+    {
+        return Err(transition_error(
+            SameVersionEpochTransitionKernelErrorCode::InvalidFirstNewEpochGeometry,
+        ));
+    }
+    if first.timeout_certificate().is_some()
+        || child.timeout_certificate().is_some()
+        || grandchild.timeout_certificate().is_some()
+    {
+        return Err(transition_error(
+            SameVersionEpochTransitionKernelErrorCode::UnsupportedTimeoutPath,
+        ));
+    }
+
+    let authorization = first.epoch_anchor_authorization().ok_or_else(|| {
+        transition_error(SameVersionEpochTransitionKernelErrorCode::AuthorizationSubstitution)
+    })?;
+    let expected_authorization = anchor_certificate_kernel.try_cev0_bytes().map_err(|_| {
+        transition_error(SameVersionEpochTransitionKernelErrorCode::AuthorizationSubstitution)
+    })?;
+    let actual_authorization = authorization.try_cev0_bytes().map_err(|_| {
+        transition_error(SameVersionEpochTransitionKernelErrorCode::AuthorizationSubstitution)
+    })?;
+    if actual_authorization != expected_authorization {
+        return Err(transition_error(
+            SameVersionEpochTransitionKernelErrorCode::AuthorizationSubstitution,
+        ));
+    }
+
+    for certified in [first, child, grandchild] {
+        certified
+            .certifying_qc()
+            .verify(new_validator_set, verifier)
+            .map_err(|_| {
+                transition_error(
+                    SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochSignature,
+                )
+            })?;
+        let proposer = new_validator_set
+            .validator(certified.header().proposer_id())
+            .ok_or_else(|| {
+                transition_error(
+                    SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochSignature,
+                )
+            })?;
+        if !verifier.verify(
+            proposer,
+            &certified.proposal_signing_root(),
+            certified.proposer_signature(),
+        ) {
+            return Err(transition_error(
+                SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochSignature,
+            ));
+        }
+    }
+
+    Ok(SameVersionEpochTransitionKernelV0 {
+        joint_handoff,
+        first_new_epoch_finality_proof_id: first_new_epoch_finality.id(),
+        first_new_epoch_block_id: first_header.id(),
+        first_new_epoch_height: first_header.height(),
+        first_new_epoch_state_root: first_header.state_root(),
+        observed_new_epoch_tip_block_id: grandchild_header.id(),
+        observed_new_epoch_tip_height: grandchild_header.height(),
+        observed_new_epoch_tip_view: grandchild_header.view(),
+    })
 }
 
 /// Verifies the complete same-version joint-handoff composition kernel.
@@ -404,6 +653,12 @@ const fn error(code: JointHandoffKernelErrorCode) -> JointHandoffKernelError {
     JointHandoffKernelError::new(code)
 }
 
+const fn transition_error(
+    code: SameVersionEpochTransitionKernelErrorCode,
+) -> SameVersionEpochTransitionKernelError {
+    SameVersionEpochTransitionKernelError::new(code)
+}
+
 fn map_verification_failure(
     failure: ValidationError,
     fallback: JointHandoffKernelErrorCode,
@@ -496,6 +751,94 @@ mod tests {
         assert_eq!(token.terminal_old_block_id(), fixture.terminal_header.id());
         assert_eq!(token.terminal_old_qc_digest(), fixture.terminal_qc.id());
         assert_eq!(token.activation_height(), Height::new(10_001));
+    }
+
+    #[test]
+    fn same_version_transition_proof_binds_both_finality_sides() {
+        let fixture = fixture();
+        let first_new_epoch_finality = first_new_epoch_finality(&fixture);
+        let token = verify_transition(
+            &fixture,
+            &first_new_epoch_finality,
+            &ByteRejectingVerifier(None),
+        )
+        .unwrap();
+
+        assert_eq!(token.joint_handoff().old_epoch(), Epoch::new(0));
+        assert_eq!(token.joint_handoff().new_epoch(), Epoch::new(1));
+        assert_eq!(
+            token.joint_handoff().handoff_certificate_digest(),
+            fixture.anchor_kernel.handoff_certificate().id()
+        );
+        assert_eq!(
+            token.first_new_epoch_finality_proof_id(),
+            first_new_epoch_finality.id()
+        );
+        assert_eq!(
+            token.first_new_epoch_block_id(),
+            first_new_epoch_finality.finalized_block().header().id()
+        );
+        assert_eq!(token.first_new_epoch_height(), Height::new(10_001));
+        assert_eq!(token.first_new_epoch_state_root(), StateRoot::new([61; 32]));
+        assert_eq!(
+            token.observed_new_epoch_tip_block_id(),
+            first_new_epoch_finality.grandchild().header().id()
+        );
+        assert_eq!(token.observed_new_epoch_tip_height(), Height::new(10_003));
+        assert_eq!(token.observed_new_epoch_tip_view(), View::new(3));
+    }
+
+    #[test]
+    fn transition_proof_rejects_old_new_and_authorization_substitution() {
+        let fixture = fixture();
+        let first_new_epoch_finality = first_new_epoch_finality(&fixture);
+
+        let old_failure = verify_transition(
+            &fixture,
+            &first_new_epoch_finality,
+            &ByteRejectingVerifier(Some(1)),
+        )
+        .unwrap_err();
+        assert_eq!(
+            old_failure.code(),
+            SameVersionEpochTransitionKernelErrorCode::InvalidJointHandoff
+        );
+
+        let new_failure = verify_transition(
+            &fixture,
+            &first_new_epoch_finality,
+            &ByteRejectingVerifier(Some(3)),
+        )
+        .unwrap_err();
+        assert_eq!(
+            new_failure.code(),
+            SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochSignature
+        );
+
+        let foreign_certificate = HandoffCertificateV0::new(
+            fixture.descriptor.clone(),
+            handoff_shares_with_byte(&fixture.old_set, 4),
+            handoff_shares_with_byte(&fixture.new_set, 4),
+            &fixture.old_set,
+            &fixture.new_set,
+        )
+        .unwrap();
+        let foreign_authorization = EpochAnchorAuthorizationV0::new(
+            fixture.terminal_header.clone(),
+            fixture.terminal_qc.clone(),
+            foreign_certificate,
+            &fixture.old_set,
+            &fixture.new_set,
+        )
+        .unwrap();
+        let substituted =
+            first_new_epoch_finality_with_authorization(&fixture, foreign_authorization);
+        let substitution_failure =
+            verify_transition(&fixture, &substituted, &ByteRejectingVerifier(None)).unwrap_err();
+        assert_eq!(
+            substitution_failure.code(),
+            SameVersionEpochTransitionKernelErrorCode::AuthorizationSubstitution
+        );
     }
 
     #[test]
@@ -676,6 +1019,25 @@ mod tests {
             &fixture.new_set,
             &fixture.new_parameters,
             AUTHENTICATED_PARENT_TIMESTAMP_MS,
+            verifier,
+        )
+    }
+
+    fn verify_transition<V: SignatureVerifier>(
+        fixture: &Fixture,
+        first_new_epoch_finality: &FinalityProofV0,
+        verifier: &V,
+    ) -> SameVersionEpochTransitionKernelResult<SameVersionEpochTransitionKernelV0> {
+        verify_same_version_epoch_transition_proof_kernel_v0(
+            &fixture.finality,
+            &fixture.commitment,
+            &fixture.anchor_kernel,
+            &fixture.old_set,
+            &fixture.old_parameters,
+            &fixture.new_set,
+            &fixture.new_parameters,
+            AUTHENTICATED_PARENT_TIMESTAMP_MS,
+            first_new_epoch_finality,
             verifier,
         )
     }
@@ -898,6 +1260,160 @@ mod tests {
         .unwrap()
     }
 
+    fn first_new_epoch_finality(fixture: &Fixture) -> FinalityProofV0 {
+        let authorization = EpochAnchorAuthorizationV0::new(
+            fixture.anchor_kernel.terminal_old_header().clone(),
+            fixture.anchor_kernel.terminal_old_qc().clone(),
+            fixture.anchor_kernel.handoff_certificate().clone(),
+            &fixture.old_set,
+            &fixture.new_set,
+        )
+        .unwrap();
+        first_new_epoch_finality_with_authorization(fixture, authorization)
+    }
+
+    fn first_new_epoch_finality_with_authorization(
+        fixture: &Fixture,
+        authorization: EpochAnchorAuthorizationV0,
+    ) -> FinalityProofV0 {
+        let first_header = new_epoch_header(
+            &fixture.new_set,
+            BlockKind::EpochHandoff,
+            View::new(1),
+            Height::new(10_001),
+            fixture.terminal_header.id(),
+            fixture.new_set.validators()[0].id(),
+            StateRoot::new([61; 32]),
+            104,
+        );
+        let first_qc = quorum_certificate(
+            &fixture.new_set,
+            first_header.view(),
+            first_header.height(),
+            first_header.id(),
+            3,
+        );
+        let first = crate::CertifiedHeaderV0::new(
+            first_header.clone(),
+            QcReferenceV0::epoch_anchor(authorization.epoch_anchor_qc()),
+            None,
+            Some(authorization),
+            signature(3),
+            first_qc.clone(),
+            &fixture.new_set,
+            Some(&fixture.old_set),
+            &fixture.new_parameters,
+            fixture.terminal_header.timestamp_ms(),
+        )
+        .unwrap();
+
+        let child_header = new_epoch_header(
+            &fixture.new_set,
+            BlockKind::Regular,
+            View::new(2),
+            Height::new(10_002),
+            first_header.id(),
+            fixture.new_set.validators()[1].id(),
+            StateRoot::new([62; 32]),
+            105,
+        );
+        let child_qc = quorum_certificate(
+            &fixture.new_set,
+            child_header.view(),
+            child_header.height(),
+            child_header.id(),
+            3,
+        );
+        let child = crate::CertifiedHeaderV0::new(
+            child_header.clone(),
+            QcReferenceV0::ordinary(first_qc),
+            None,
+            None,
+            signature(3),
+            child_qc.clone(),
+            &fixture.new_set,
+            Some(&fixture.old_set),
+            &fixture.new_parameters,
+            first_header.timestamp_ms(),
+        )
+        .unwrap();
+
+        let grandchild_header = new_epoch_header(
+            &fixture.new_set,
+            BlockKind::Regular,
+            View::new(3),
+            Height::new(10_003),
+            child_header.id(),
+            fixture.new_set.validators()[2].id(),
+            StateRoot::new([63; 32]),
+            106,
+        );
+        let grandchild_qc = quorum_certificate(
+            &fixture.new_set,
+            grandchild_header.view(),
+            grandchild_header.height(),
+            grandchild_header.id(),
+            3,
+        );
+        let grandchild = crate::CertifiedHeaderV0::new(
+            grandchild_header,
+            QcReferenceV0::ordinary(child_qc),
+            None,
+            None,
+            signature(3),
+            grandchild_qc,
+            &fixture.new_set,
+            Some(&fixture.old_set),
+            &fixture.new_parameters,
+            child_header.timestamp_ms(),
+        )
+        .unwrap();
+
+        FinalityProofV0::new(
+            first,
+            child,
+            grandchild,
+            &fixture.new_set,
+            Some(&fixture.old_set),
+            &fixture.new_parameters,
+            fixture.terminal_header.timestamp_ms(),
+        )
+        .unwrap()
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new_epoch_header(
+        set: &ValidatorSet,
+        block_kind: BlockKind,
+        view: View,
+        height: Height,
+        parent_id: BlockId,
+        proposer_id: ValidatorId,
+        state_root: StateRoot,
+        timestamp_ms: u64,
+    ) -> BlockHeader {
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            height,
+            block_kind,
+            parent_id,
+            proposer_id,
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([54; 32]),
+            state_root,
+            ReceiptsRoot::new([55; 32]),
+            EvidenceRoot::new([56; 32]),
+            timestamp_ms,
+            None,
+        )
+        .unwrap()
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn header(
         set: &ValidatorSet,
@@ -998,9 +1514,15 @@ mod tests {
     }
 
     fn handoff_shares(set: &ValidatorSet) -> Vec<SignatureShareV0> {
+        handoff_shares_with_byte(set, 2)
+    }
+
+    fn handoff_shares_with_byte(set: &ValidatorSet, signature_byte: u8) -> Vec<SignatureShareV0> {
         set.validators()[..3]
             .iter()
-            .map(|validator| SignatureShareV0::new(validator.id(), signature(2)).unwrap())
+            .map(|validator| {
+                SignatureShareV0::new(validator.id(), signature(signature_byte)).unwrap()
+            })
             .collect()
     }
 

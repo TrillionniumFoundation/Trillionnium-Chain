@@ -1,11 +1,14 @@
-use alloc::collections::BTreeMap;
+use alloc::{collections::BTreeMap, vec::Vec};
 
 use trnm_consensus_types::{
     BlockHeader, BlockId, CertifiedHeaderV0, ConsensusParametersV0, FinalityProofV0,
     ProposalWitnessV0, QcRef, QcReferenceV0, QuorumCertificate, ValidatorSet,
 };
 
-use crate::{CoreError, DurableFinalizationV0, FinalizedTip, PayloadValidationResult, Result};
+use crate::{
+    BlockIdOverlayRefV0, CoreError, DurableFinalizationV0, FinalizedTip, PayloadValidationResult,
+    Result,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct BlockNode {
@@ -17,7 +20,7 @@ struct BlockNode {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PayloadStatus {
     Unknown,
-    Valid,
+    Valid(BlockIdOverlayRefV0),
     DeterministicallyInvalid,
 }
 
@@ -27,6 +30,7 @@ pub(crate) enum PayloadTransition {
     RepeatedTerminal,
     BecameValid,
     BecameDeterministicallyInvalid,
+    ConflictingValidOverlay,
     ConflictingTerminalResult,
 }
 
@@ -169,14 +173,22 @@ impl BlockTree {
             return Ok(PayloadTransition::Unavailable);
         }
         let next = match result {
-            PayloadValidationResult::Valid { .. } => PayloadStatus::Valid,
+            PayloadValidationResult::Valid(valid) => {
+                let overlay = valid.artifact_ref().overlay();
+                if overlay.block_id() != block_id
+                    || overlay.parent_block_id() != node.header.parent_id()
+                {
+                    return Err(CoreError::ConflictingPayloadValidation(block_id));
+                }
+                PayloadStatus::Valid(overlay)
+            }
             PayloadValidationResult::DeterministicallyInvalid => {
                 PayloadStatus::DeterministicallyInvalid
             }
             PayloadValidationResult::Unavailable => unreachable!(),
         };
         match (node.payload_status, next) {
-            (PayloadStatus::Unknown, PayloadStatus::Valid) => {
+            (PayloadStatus::Unknown, PayloadStatus::Valid(_)) => {
                 node.payload_status = next;
                 Ok(PayloadTransition::BecameValid)
             }
@@ -184,17 +196,54 @@ impl BlockTree {
                 node.payload_status = next;
                 Ok(PayloadTransition::BecameDeterministicallyInvalid)
             }
-            (PayloadStatus::Valid, PayloadStatus::Valid)
-            | (PayloadStatus::DeterministicallyInvalid, PayloadStatus::DeterministicallyInvalid) => {
+            (PayloadStatus::Valid(first), PayloadStatus::Valid(second)) if first == second => {
                 Ok(PayloadTransition::RepeatedTerminal)
             }
-            (PayloadStatus::Valid, PayloadStatus::DeterministicallyInvalid)
-            | (PayloadStatus::DeterministicallyInvalid, PayloadStatus::Valid) => {
+            (PayloadStatus::DeterministicallyInvalid, PayloadStatus::DeterministicallyInvalid) => {
+                Ok(PayloadTransition::RepeatedTerminal)
+            }
+            (PayloadStatus::Valid(_), PayloadStatus::Valid(_)) => {
+                Ok(PayloadTransition::ConflictingValidOverlay)
+            }
+            (PayloadStatus::Valid(_), PayloadStatus::DeterministicallyInvalid)
+            | (PayloadStatus::DeterministicallyInvalid, PayloadStatus::Valid(_)) => {
                 Ok(PayloadTransition::ConflictingTerminalResult)
             }
             (PayloadStatus::Unknown, PayloadStatus::Unknown)
-            | (PayloadStatus::Valid, PayloadStatus::Unknown)
+            | (PayloadStatus::Valid(_), PayloadStatus::Unknown)
             | (PayloadStatus::DeterministicallyInvalid, PayloadStatus::Unknown) => unreachable!(),
+        }
+    }
+
+    /// Restores an application-authenticated durable Valid overlay after the
+    /// dedicated anchored-successor recovery challenge has been accepted.
+    ///
+    /// This deliberately accepts no live validation commitments and is
+    /// crate-private: generic recovery and peer input cannot call it. The
+    /// exact header must already be installed and the overlay edge must match.
+    /// The trusted reconciler, not this helper, proves that the inert durable
+    /// commitments equal application execution of the exact body.
+    pub(crate) fn restore_authenticated_valid_overlay_v0(
+        &mut self,
+        block_id: BlockId,
+        overlay: BlockIdOverlayRefV0,
+    ) -> Result<()> {
+        let node = self
+            .nodes
+            .get_mut(&block_id)
+            .ok_or(CoreError::MissingBlock(block_id))?;
+        if overlay.block_id() != block_id || overlay.parent_block_id() != node.header.parent_id() {
+            return Err(CoreError::ConflictingPayloadValidation(block_id));
+        }
+        match node.payload_status {
+            PayloadStatus::Unknown => {
+                node.payload_status = PayloadStatus::Valid(overlay);
+                Ok(())
+            }
+            PayloadStatus::Valid(existing) if existing == overlay => Ok(()),
+            PayloadStatus::Valid(_) | PayloadStatus::DeterministicallyInvalid => {
+                Err(CoreError::ConflictingPayloadValidation(block_id))
+            }
         }
     }
 
@@ -213,7 +262,14 @@ impl BlockTree {
     pub(crate) fn payload_is_valid(&self, block_id: BlockId) -> bool {
         self.nodes
             .get(&block_id)
-            .is_some_and(|node| node.payload_status == PayloadStatus::Valid)
+            .is_some_and(|node| matches!(node.payload_status, PayloadStatus::Valid(_)))
+    }
+
+    pub(crate) fn payload_overlay_ref(&self, block_id: BlockId) -> Option<BlockIdOverlayRefV0> {
+        match self.nodes.get(&block_id)?.payload_status {
+            PayloadStatus::Valid(overlay) => Some(overlay),
+            PayloadStatus::Unknown | PayloadStatus::DeterministicallyInvalid => None,
+        }
     }
 
     pub(crate) fn validate_proposal_parent(
@@ -263,7 +319,7 @@ impl BlockTree {
             match node.payload_status {
                 PayloadStatus::DeterministicallyInvalid => return Ancestry::Conflicts,
                 PayloadStatus::Unknown => return Ancestry::Unknown,
-                PayloadStatus::Valid => {}
+                PayloadStatus::Valid(_) => {}
             }
             let height = node.header.height().get();
             if height <= finalized.height().get() {
@@ -327,10 +383,13 @@ impl BlockTree {
         }
         if [committed_node, child_node, grandchild_node]
             .iter()
-            .any(|node| node.payload_status != PayloadStatus::Valid)
+            .any(|node| !matches!(node.payload_status, PayloadStatus::Valid(_)))
         {
             return Ok(None);
         }
+        let PayloadStatus::Valid(target_overlay_ref) = committed_node.payload_status else {
+            return Ok(None);
+        };
         let committed_qc = child_node
             .witness
             .justify_qc()
@@ -384,7 +443,90 @@ impl BlockTree {
         Ok(Some(DurableFinalizationV0::new(
             authenticated_parent,
             proof,
+            target_overlay_ref,
         )?))
+    }
+
+    /// Reconstructs every newly implied three-chain proof in ancestor order.
+    ///
+    /// A lagging node may first receive a QC several blocks above its durable
+    /// finalized tip.  The newest QC still authenticates the intervening QCs:
+    /// each verified proposal witness carries the exact QC for its parent.
+    /// Returning only the newest three-chain would therefore skip application
+    /// finalizations even though the complete certified prefix is already
+    /// present and payload-Valid in this tree.
+    ///
+    /// This routine is read-only and builds the complete suffix before Core
+    /// mutates SafetyState.  An incomplete or non-monotonic suffix fails
+    /// closed; callers must never coalesce it into the newest proof.
+    pub(crate) fn detect_three_chain_suffix(
+        &self,
+        newest_certificate: &QuorumCertificate,
+        validator_set: &ValidatorSet,
+        consensus_parameters: &ConsensusParametersV0,
+        finalized: FinalizedTip,
+    ) -> Result<Vec<DurableFinalizationV0>> {
+        let mut newest = newest_certificate.clone();
+        let mut newest_first = Vec::new();
+
+        for _ in 0..=self.max_blocks {
+            let Some(finalization) =
+                self.detect_three_chain(&newest, validator_set, consensus_parameters, finalized)?
+            else {
+                break;
+            };
+            let authenticated_parent = finalization.authenticated_parent();
+            newest_first.push(finalization);
+            if authenticated_parent == finalized {
+                newest_first.reverse();
+                let mut expected_parent = finalized;
+                for finalization in &newest_first {
+                    if finalization.authenticated_parent() != expected_parent {
+                        return Err(CoreError::ConflictingCertificate);
+                    }
+                    let committed = finalization.proof().finalized_block().header();
+                    expected_parent = FinalizedTip::new(
+                        committed.height(),
+                        committed.view(),
+                        committed.id(),
+                        committed.timestamp_ms(),
+                    );
+                }
+                return Ok(newest_first);
+            }
+
+            if authenticated_parent.height() <= finalized.height() {
+                return Err(CoreError::ConflictingCertificate);
+            }
+            let newest_node = self
+                .nodes
+                .get(&newest.block_id())
+                .ok_or(CoreError::MissingBlock(newest.block_id()))?;
+            let previous = newest_node
+                .witness
+                .justify_qc()
+                .as_ordinary()
+                .cloned()
+                .ok_or(CoreError::InvalidOrdinaryCertificate)?;
+            if previous.block_id() != newest_node.header.parent_id()
+                || previous.height().checked_next()? != newest.height()
+            {
+                return Err(CoreError::ConflictingCertificate);
+            }
+            newest = previous;
+        }
+
+        if newest_first.is_empty() {
+            Ok(Vec::new())
+        } else {
+            Err(CoreError::MissingBlock(
+                newest_first
+                    .last()
+                    .expect("a nonempty suffix has a finalization")
+                    .authenticated_parent()
+                    .block_id(),
+            ))
+        }
     }
 
     pub(crate) fn prune_below(
@@ -434,7 +576,7 @@ impl BlockTree {
             .nodes
             .get(&child.parent_id())
             .ok_or(CoreError::MissingBlock(child.parent_id()))?;
-        if parent.payload_status != PayloadStatus::Valid {
+        if !matches!(parent.payload_status, PayloadStatus::Valid(_)) {
             return Err(CoreError::MissingBlock(child.parent_id()));
         }
         Ok(FinalizedTip::new(

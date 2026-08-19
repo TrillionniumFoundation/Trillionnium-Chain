@@ -26,6 +26,13 @@
 //! itself preserve HotStuff lock safety after a whole SafetyStore rollback.
 //! Production activation remains blocked on a host-level reconciliation proof
 //! that binds Core/SafetyState, this journal, and the external watermark.
+//! Existing journals can be opened through a two-phase startup boundary:
+//! [`PinnedSqliteSignerJournalV0`] authenticates and pins the local namespace
+//! and observes the external watermark without advancing it; only its
+//! owner-consuming activation may repair the single allowed local-first event
+//! window and release an operational [`SqliteSignerJournalV0`]. This makes a
+//! later cross-store startup refusal side-effect-free with respect to the
+//! external watermark.
 //!
 //! Journal v0 is Linux-only and assumes a local filesystem with reliable
 //! SQLite POSIX locks, `flock`, `fsync`, and stable inode identity. It does not
@@ -46,4 +53,10 @@ pub use model::{
     ExternalMonotonicWatermarkV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
     SignerWatermarkV0,
 };
-pub use sqlite::{JournalCapacityV0, SqliteSignerJournalV0};
+pub use sqlite::{
+    ConfirmedSignerNodeCheckpointFactsV0, JournalCapacityV0, PinnedSqliteSignerJournalV0,
+    SignerExternalWatermarkRelationV0, SignerJournalActivationFailureV0,
+    SignerJournalLifetimeInventoryV1, SignerJournalReconciliationFactsV0, SignerJournalTailFactsV0,
+    SignerJournalTailStateV0, SignerNodeCheckpointIdentityV0, SignerPreparedIntentFactsV0,
+    SqliteSignerJournalV0,
+};

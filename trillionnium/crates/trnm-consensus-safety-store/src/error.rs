@@ -32,6 +32,64 @@ pub enum SafetyStoreErrorV0 {
         expected_revision: u64,
         actual_revision: u64,
     },
+    MissingNativeValidTransition {
+        revision: u64,
+    },
+    NativeValidHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    MissingNativeValidPostAckAction {
+        revision: u64,
+    },
+    NativeValidPostAckActionMismatch {
+        revision: u64,
+        core_action_code: u32,
+        context_action_code: u32,
+    },
+    MissingNativeFinalizationAppliedTransition {
+        revision: u64,
+    },
+    NativeFinalizationAppliedHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    MissingNativeFinalizationAppliedManifest {
+        revision: u64,
+    },
+    NativeFinalizationAppliedManifestMismatch {
+        revision: u64,
+    },
+    NativeFinalizationAppliedPredecessorMismatch {
+        revision: u64,
+    },
+    MissingStateSyncCheckpointBootstrapTransition {
+        revision: u64,
+    },
+    StateSyncCheckpointBootstrapHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    MissingAuthenticatedGenesisApplicationBootstrapTransition {
+        revision: u64,
+    },
+    AuthenticatedGenesisApplicationBootstrapHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    AuthenticatedGenesisApplicationActivationUnavailable,
+    AuthenticatedGenesisApplicationH1OfflineBindingMismatch,
+    AuthenticatedGenesisApplicationH1OfflineRequiresDedicatedPersistence,
+    AuthenticatedGenesisApplicationH1OfflinePersistenceMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    SafetyNodeCheckpointHeadMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    StateSyncInitializationPending,
+    StateSyncInitializationIntentMismatch,
     UnsupportedPlatform,
     Io {
         stage: &'static str,
@@ -120,6 +178,103 @@ impl fmt::Display for SafetyStoreErrorV0 {
                 formatter,
                 "native deterministic-invalid head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
             ),
+            Self::MissingNativeValidTransition { revision } => write!(
+                formatter,
+                "safety-state revision {revision} has no native Valid transition"
+            ),
+            Self::NativeValidHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "native Valid head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::MissingNativeValidPostAckAction { revision } => write!(
+                formatter,
+                "native Valid SafetyState persistence revision {revision} has no Core-owned post-ack action"
+            ),
+            Self::NativeValidPostAckActionMismatch {
+                revision,
+                core_action_code,
+                context_action_code,
+            } => write!(
+                formatter,
+                "native Valid SafetyState persistence revision {revision} post-ack action differs: Core code {core_action_code}, transition-context code {context_action_code}"
+            ),
+            Self::MissingNativeFinalizationAppliedTransition { revision } => write!(
+                formatter,
+                "safety-state revision {revision} has no native finalization-applied transition"
+            ),
+            Self::NativeFinalizationAppliedHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "native finalization-applied head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::MissingNativeFinalizationAppliedManifest { revision } => write!(
+                formatter,
+                "native finalization-applied SafetyState persistence revision {revision} has no Core-owned transition manifest"
+            ),
+            Self::NativeFinalizationAppliedManifestMismatch { revision } => write!(
+                formatter,
+                "native finalization-applied SafetyState persistence revision {revision} differs from the Core-owned App readback or post-ack manifest"
+            ),
+            Self::NativeFinalizationAppliedPredecessorMismatch { revision } => write!(
+                formatter,
+                "native finalization-applied SafetyState persistence revision {revision} does not directly succeed the authenticated journal head"
+            ),
+            Self::MissingStateSyncCheckpointBootstrapTransition { revision } => write!(
+                formatter,
+                "safety-state revision {revision} has no state-sync checkpoint bootstrap transition"
+            ),
+            Self::StateSyncCheckpointBootstrapHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "state-sync checkpoint bootstrap head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::MissingAuthenticatedGenesisApplicationBootstrapTransition { revision } => write!(
+                formatter,
+                "safety-state revision {revision} has no authenticated-genesis application bootstrap transition"
+            ),
+            Self::AuthenticatedGenesisApplicationBootstrapHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "authenticated-genesis application bootstrap head differs from the exact expected state/context: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::AuthenticatedGenesisApplicationActivationUnavailable => formatter.write_str(
+                "authenticated-genesis application state is fenced from the generic SafetyStore activation surface",
+            ),
+            Self::AuthenticatedGenesisApplicationH1OfflineBindingMismatch => formatter.write_str(
+                "authenticated-genesis h1 offline Core binding differs from the exact live tag-5 journal",
+            ),
+            Self::AuthenticatedGenesisApplicationH1OfflineRequiresDedicatedPersistence => formatter.write_str(
+                "authenticated-genesis h1 offline state is fenced from generic SafetyStore persistence",
+            ),
+            Self::AuthenticatedGenesisApplicationH1OfflinePersistenceMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "authenticated-genesis h1 offline persistence differs from the exact bound phase: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::SafetyNodeCheckpointHeadMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "safety node-checkpoint head differs from the exact expected SafetyState: expected revision {expected_revision}, actual revision {actual_revision}"
+            ),
+            Self::StateSyncInitializationPending => formatter.write_str(
+                "safety-store h1 state-sync initialization has a durable unfinished intent",
+            ),
+            Self::StateSyncInitializationIntentMismatch => formatter.write_str(
+                "safety-store h1 state-sync initialization intent differs from the exact bundle/profile",
+            ),
             Self::UnsupportedPlatform => {
                 formatter.write_str("safety-store lifetime locking is unsupported on this platform")
             }
@@ -144,7 +299,9 @@ impl fmt::Display for SafetyStoreErrorV0 {
                     "persisted Core state failure at {stage}: {source}"
                 )
             }
-            Self::SchemaMismatch => formatter.write_str("safety-store schema differs from v1"),
+            Self::SchemaMismatch => {
+                formatter.write_str("safety-store schema differs from journal v6")
+            }
             Self::MetadataMismatch => {
                 formatter.write_str("safety-store metadata or binding differs")
             }

@@ -28,6 +28,7 @@ pub enum SignerJournalConflictV0 {
     ExternalWatermarkRollback,
     ExternalWatermarkAhead,
     ExternalWatermarkFork,
+    ExternalWatermarkRepairRequired,
     SafetyRevisionRegression {
         maximum: u64,
         incoming: u64,

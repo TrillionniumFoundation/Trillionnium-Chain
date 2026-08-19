@@ -34,6 +34,7 @@ mod message;
 mod ordered_root;
 mod parameters;
 mod proposal_v0;
+mod recovery;
 mod snapshot_candidate;
 mod timeout_v0;
 mod validator;
@@ -41,10 +42,11 @@ mod validator;
 pub use anchor::{ContextAuthorizedQcV0, EpochAnchorQcV0, GenesisQcV0, QcReferenceV0};
 pub use block::{Block, BlockHeader, BlockKind};
 pub use body_v0::{
-    ApplicationPayloadV0, BlockBodyV0, BlockValidationError, BlockValidationErrorCode,
-    BlockValidationResult, DoubleVoteEvidenceV0, ExecutionEventAttributeV0, ExecutionEventV0,
-    ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, ValidatedBlockCommitmentsV0,
-    ValidatedCheckpointCommitmentsV0, VoteEvidenceRecordV0,
+    validate_root_bound_regular_body_v0, ApplicationPayloadV0, BlockBodyV0, BlockValidationError,
+    BlockValidationErrorCode, BlockValidationResult, DoubleVoteEvidenceV0,
+    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0,
+    RootBoundRegularBodyV0, ValidatedBlockCommitmentsV0, ValidatedCheckpointCommitmentsV0,
+    VoteEvidenceRecordV0,
 };
 pub use canonical::CanonicalSignable;
 pub use certificate::{QuorumCertificate, TimeoutCertificate};
@@ -93,8 +95,11 @@ pub use ids::{
     VotingPower, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 pub use joint_handoff::{
+    verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, JointHandoffKernelError,
     JointHandoffKernelErrorCode, JointHandoffKernelResult, JointHandoffKernelV0,
+    SameVersionEpochTransitionKernelError, SameVersionEpochTransitionKernelErrorCode,
+    SameVersionEpochTransitionKernelResult, SameVersionEpochTransitionKernelV0,
 };
 pub use message::{
     CanonicalSignIntentV0, CanonicalSignPreimageV0, Proposal, ProposalJustification, QcRef,
@@ -106,6 +111,20 @@ pub use parameters::{
     ConsensusParametersV0, ConsensusParametersV0Fields, LeaderSchedule, RolloutPhase,
 };
 pub use proposal_v0::{ProposalWitnessV0, SignedProposalV0};
+pub use recovery::{
+    decode_recovery_caught_up_cut_v1_exact, decode_recovery_context_v1_exact,
+    decode_recovery_ready_set_v1_exact, decode_recovery_start_certificate_v1_exact,
+    decode_recovery_zero_delta_cut_v1_exact, decode_signed_recovery_ready_v1_exact,
+    decode_signed_recovery_start_v1_exact, RecoveryCaughtUpCutV1, RecoveryCaughtUpCutV1Fields,
+    RecoveryContextV1, RecoveryContextV1Fields, RecoveryErrorV1, RecoveryModeV1,
+    RecoveryReadySetV1, RecoveryResultV1, RecoveryStartCertificateV1, RecoveryZeroDeltaCutV1,
+    RecoveryZeroDeltaCutV1Fields, SignedRecoveryReadyV1, SignedRecoveryStartV1,
+    DIRECT7_RECOVERY_VALIDATOR_COUNT_V1, MAX_RECOVERY_CAUGHT_UP_CUT_BYTES_V1,
+    MAX_RECOVERY_CONTEXT_BYTES_V1, MAX_RECOVERY_READY_SET_BYTES_V1,
+    MAX_RECOVERY_START_CERTIFICATE_BYTES_V1, MAX_RECOVERY_ZERO_DELTA_CUT_BYTES_V1,
+    MAX_SIGNED_RECOVERY_READY_BYTES_V1, MAX_SIGNED_RECOVERY_START_BYTES_V1,
+    RECOVERY_PROCESS_INSTANCE_V1, RECOVERY_SCHEMA_VERSION_V1,
+};
 pub use snapshot_candidate::{
     compute_candidate_selection_kernel_v0, decode_validator_key_proof_of_possession_v0_exact,
     CandidateComputationV0, CandidateSelectionKernelV0,

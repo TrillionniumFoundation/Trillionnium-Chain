@@ -2,15 +2,16 @@ use alloc::{boxed::Box, vec, vec::Vec};
 
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact,
-    ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader, BlockId, BlockKind,
-    CanonicalSignPreimageV0, CertificateId, CertifiedHeaderV0, ChainId, ConsensusParametersV0,
-    ConsensusPublicKey, ContextAuthorizedQcV0, Epoch, EvidenceRoot, ExecutionReceiptCommitmentV0,
-    ExecutionReceiptsV0, FinalityProofV0, GenesisHash, GenesisQcV0, Height,
-    NextEpochCommitmentHash, PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcRef,
-    QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SignatureVerifier,
-    SignedProposalV0, SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
-    ValidatedBlockCommitmentsV0, ValidationError, Validator, ValidatorId, ValidatorSet, View, Vote,
-    VotingPower, SIGNATURE_BYTES,
+    decode_finality_proof_v0_exact_with_trusted_genesis, ApplicationPayloadV0, Block, BlockBodyV0,
+    BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, CanonicalSignPreimageV0, CertificateId,
+    CertifiedHeaderV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, ContextAuthorizedQcV0,
+    Epoch, EpochGeometryV0, EvidenceRoot, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0,
+    FinalityProofV0, GenesisHash, GenesisQcV0, Height, NextEpochCommitmentHash, PayloadDigest,
+    ProposalWitnessV0, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
+    SignatureBytes, SignatureVerifier, SignedProposalV0, SigningRoot, StateRoot,
+    TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote, ValidatedBlockCommitmentsV0,
+    ValidationError, Validator, ValidatorId, ValidatorSet, View, Vote, VotingPower,
+    SIGNATURE_BYTES,
 };
 
 use crate::core::payload_parent_context_matches_target_v0;
@@ -256,6 +257,53 @@ fn block_with_timestamp(
             .collect(),
     )
     .expect("payload matches header")
+}
+
+#[allow(clippy::too_many_arguments)]
+fn block_with_anchor_test_header_fields(
+    set: &ValidatorSet,
+    view: u64,
+    height: u64,
+    parent: BlockId,
+    payload: &[u8],
+    proposer: ValidatorId,
+    timestamp_ms: u64,
+    state_root: StateRoot,
+    block_kind: BlockKind,
+    next_epoch_commitment_hash: Option<NextEpochCommitmentHash>,
+) -> Block {
+    let (body, receipts) = canonical_body_and_receipts(payload);
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(view),
+        Height::new(height),
+        block_kind,
+        parent,
+        proposer,
+        set.id(),
+        set.consensus_parameters_hash(),
+        body.payload_root().expect("canonical payload root"),
+        state_root,
+        receipts.receipts_root().expect("canonical receipts root"),
+        body.evidence_root().expect("canonical evidence root"),
+        timestamp_ms,
+        next_epoch_commitment_hash,
+    )
+    .expect("shape-valid anchor test header");
+    Block::new(
+        header,
+        body.application_payload()
+            .try_cev0_bytes()
+            .expect("canonical application payload"),
+        body.evidence()
+            .iter()
+            .map(|item| item.try_cev0_bytes().expect("canonical evidence"))
+            .collect(),
+    )
+    .expect("anchor test payload matches header")
 }
 
 fn try_proposal_with_proposer<J: IntoQcReference>(
@@ -509,6 +557,437 @@ fn configured_core_with_parameters(parameters: ConsensusParametersV0) -> (CoreCo
     (config, core)
 }
 
+fn canonical_sign_intent_for_test(
+    config: &CoreConfig,
+    intent: &SignIntent,
+) -> CanonicalSignIntentV0 {
+    match intent {
+        SignIntent::Vote {
+            authorizing_safety_revision,
+            view,
+            height,
+            block_id,
+            ..
+        } => CanonicalSignIntentV0::vote(
+            config.validator_set(),
+            config.local_validator(),
+            *authorizing_safety_revision,
+            *view,
+            *height,
+            *block_id,
+        )
+        .expect("fixture vote intent is canonical"),
+        SignIntent::TimeoutVote {
+            authorizing_safety_revision,
+            view,
+            high_qc,
+            ..
+        } => CanonicalSignIntentV0::timeout_vote(
+            config.validator_set(),
+            config.local_validator(),
+            *authorizing_safety_revision,
+            *view,
+            *high_qc,
+        )
+        .expect("fixture timeout intent is canonical"),
+    }
+}
+
+fn h1_state_sync_fixture() -> (
+    CoreConfig,
+    FinalityProofV0,
+    SignedProposalV0,
+    SignedProposalV0,
+    SignedProposalV0,
+) {
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let config = CoreConfig::new(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        32,
+        64,
+    )
+    .expect("valid h1 state-sync config");
+    let h1 = proposal_with_parameters(&set, &parameters, genesis_qc(&set), 1, b"sync h1");
+    let q1 = qc(&set, 1, 1, h1.block().id());
+    let h2 = proposal_with_parameters(&set, &parameters, q1.clone(), 2, b"sync h2");
+    let q2 = qc(&set, 2, 2, h2.block().id());
+    let h3 = proposal_with_parameters(&set, &parameters, q2.clone(), 3, b"sync h3");
+    let q3 = qc(&set, 3, 3, h3.block().id());
+    let certified_h1 = CertifiedHeaderV0::from_signed_proposal(
+        h1.clone(),
+        q1,
+        &set,
+        None,
+        &parameters,
+        GENESIS_TIMESTAMP_MS,
+    )
+    .expect("valid certified h1");
+    let certified_h2 = CertifiedHeaderV0::from_signed_proposal(
+        h2.clone(),
+        q2,
+        &set,
+        None,
+        &parameters,
+        h1.block().header().timestamp_ms(),
+    )
+    .expect("valid certified h2");
+    let certified_h3 = CertifiedHeaderV0::from_signed_proposal(
+        h3.clone(),
+        q3,
+        &set,
+        None,
+        &parameters,
+        h2.block().header().timestamp_ms(),
+    )
+    .expect("valid certified h3");
+    let proof = FinalityProofV0::new(
+        certified_h1,
+        certified_h2,
+        certified_h3,
+        &set,
+        None,
+        &parameters,
+        GENESIS_TIMESTAMP_MS,
+    )
+    .expect("valid genesis-anchored h1 finality proof");
+    (config, proof, h1, h2, h3)
+}
+
+#[derive(Debug, Clone, Copy)]
+struct H1AnchorChainMutationV0 {
+    proof_parent_timestamp_ms: u64,
+    h1_timestamp_ms: u64,
+    h1_state_root: StateRoot,
+    h1_block_kind: BlockKind,
+    h1_next_epoch_commitment_hash: Option<NextEpochCommitmentHash>,
+}
+
+impl Default for H1AnchorChainMutationV0 {
+    fn default() -> Self {
+        Self {
+            proof_parent_timestamp_ms: GENESIS_TIMESTAMP_MS,
+            h1_timestamp_ms: 100,
+            h1_state_root: StateRoot::new([1; 32]),
+            h1_block_kind: BlockKind::Regular,
+            h1_next_epoch_commitment_hash: None,
+        }
+    }
+}
+
+fn h1_state_sync_fixture_with(
+    parameters: ConsensusParametersV0,
+    mutation: H1AnchorChainMutationV0,
+) -> (
+    CoreConfig,
+    FinalityProofV0,
+    SignedProposalV0,
+    SignedProposalV0,
+    SignedProposalV0,
+) {
+    let set = validator_set_with_parameters(&parameters);
+    let config = CoreConfig::new(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        32,
+        64,
+    )
+    .expect("valid mutated h1 state-sync config");
+    let genesis = genesis_qc(&set);
+    let h1_parent_timestamp_ms = mutation.proof_parent_timestamp_ms;
+    let h1_block = block_with_anchor_test_header_fields(
+        &set,
+        1,
+        1,
+        genesis.block_id(),
+        b"sync h1 mutated",
+        leader_for(&set, View::new(1)),
+        mutation.h1_timestamp_ms,
+        mutation.h1_state_root,
+        mutation.h1_block_kind,
+        mutation.h1_next_epoch_commitment_hash,
+    );
+    let h1 = signed_proposal_from_block(
+        &set,
+        &parameters,
+        h1_block,
+        QcReferenceV0::genesis_anchor(genesis),
+        None,
+        h1_parent_timestamp_ms,
+    )
+    .expect("valid mutated signed h1");
+    let q1 = qc(&set, 1, 1, h1.block().id());
+    let h2_block = block_with_timestamp(
+        &set,
+        2,
+        2,
+        q1.block_id(),
+        b"sync h2 mutated",
+        leader_for(&set, View::new(2)),
+        mutation.h1_timestamp_ms.saturating_add(100),
+    );
+    let h2 = signed_proposal_from_block(
+        &set,
+        &parameters,
+        h2_block,
+        QcReferenceV0::ordinary(q1.clone()),
+        None,
+        mutation.h1_timestamp_ms,
+    )
+    .expect("valid mutated signed h2");
+    let q2 = qc(&set, 2, 2, h2.block().id());
+    let h3_block = block_with_timestamp(
+        &set,
+        3,
+        3,
+        q2.block_id(),
+        b"sync h3 mutated",
+        leader_for(&set, View::new(3)),
+        mutation.h1_timestamp_ms.saturating_add(200),
+    );
+    let h3 = signed_proposal_from_block(
+        &set,
+        &parameters,
+        h3_block,
+        QcReferenceV0::ordinary(q2.clone()),
+        None,
+        mutation.h1_timestamp_ms.saturating_add(100),
+    )
+    .expect("valid mutated signed h3");
+    let q3 = qc(&set, 3, 3, h3.block().id());
+    let certified_h1 = CertifiedHeaderV0::from_signed_proposal(
+        h1.clone(),
+        q1,
+        &set,
+        None,
+        &parameters,
+        h1_parent_timestamp_ms,
+    )
+    .expect("valid mutated certified h1");
+    let certified_h2 = CertifiedHeaderV0::from_signed_proposal(
+        h2.clone(),
+        q2,
+        &set,
+        None,
+        &parameters,
+        mutation.h1_timestamp_ms,
+    )
+    .expect("valid mutated certified h2");
+    let certified_h3 = CertifiedHeaderV0::from_signed_proposal(
+        h3.clone(),
+        q3,
+        &set,
+        None,
+        &parameters,
+        mutation.h1_timestamp_ms.saturating_add(100),
+    )
+    .expect("valid mutated certified h3");
+    let proof = FinalityProofV0::new(
+        certified_h1,
+        certified_h2,
+        certified_h3,
+        &set,
+        None,
+        &parameters,
+        h1_parent_timestamp_ms,
+    )
+    .expect("valid mutated genesis-anchored h1 finality proof");
+    (config, proof, h1, h2, h3)
+}
+
+fn h1_state_sync_proof_with_invalid_proposer_signature() -> (CoreConfig, FinalityProofV0) {
+    let (config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+    let mut encoded = proof
+        .try_cev0_bytes()
+        .expect("encode the canonical h1 finality proof");
+    let proposer_signature = proof.finalized_block().proposer_signature().as_bytes();
+    let signature_offset = encoded
+        .windows(proposer_signature.len())
+        .position(|window| window == proposer_signature)
+        .expect("the finalized proposer signature occurs in its canonical proof");
+    encoded[signature_offset] ^= 1;
+    let tampered = decode_finality_proof_v0_exact_with_trusted_genesis(
+        &encoded,
+        config.validator_set(),
+        config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("exact decoding is deliberately cryptographically inert");
+    assert_ne!(
+        tampered.finalized_block().proposer_signature(),
+        proof.finalized_block().proposer_signature(),
+    );
+    (config, tampered)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn anchored_state_from_test_parts(
+    base: &SafetyState,
+    current_view: View,
+    high_qc: QcReferenceV0,
+    locked_qc: QcReferenceV0,
+    revision: u64,
+    payload_terminal_facts: Vec<PayloadTerminalFact>,
+) -> SafetyState {
+    SafetyState::from_persisted_parts_v11(
+        base.schema_version(),
+        base.chain_id(),
+        base.protocol_version(),
+        base.epoch(),
+        base.validator_set_id(),
+        base.genesis_block_id(),
+        current_view,
+        base.last_voted_view(),
+        base.last_timeout_view(),
+        high_qc,
+        locked_qc,
+        base.finalized(),
+        revision,
+        payload_terminal_facts,
+        base.payload_validation_obligations().to_vec(),
+        base.payload_validation_completions().to_vec(),
+        base.pending_tc_high_qc_sync().cloned(),
+        base.pending_standalone_qc_sync().cloned(),
+        base.pending_sign().cloned(),
+        base.last_finalization().cloned(),
+        base.state_sync_anchor().cloned(),
+        base.application_applied(),
+        base.finalization_queue().to_vec(),
+        base.pending_finalize(),
+        base.safety_halt().cloned(),
+    )
+}
+
+fn anchored_state_with_validation_parts_v0(
+    base: &SafetyState,
+    revision: u64,
+    obligations: Vec<DurablePayloadValidationObligationV0>,
+    completions: Vec<DurablePayloadValidationCompletionV0>,
+    facts: Vec<PayloadTerminalFact>,
+) -> SafetyState {
+    SafetyState::from_persisted_parts_v11(
+        base.schema_version(),
+        base.chain_id(),
+        base.protocol_version(),
+        base.epoch(),
+        base.validator_set_id(),
+        base.genesis_block_id(),
+        base.current_view(),
+        base.last_voted_view(),
+        base.last_timeout_view(),
+        base.high_qc().clone(),
+        base.locked_qc().clone(),
+        base.finalized(),
+        revision,
+        facts,
+        obligations,
+        completions,
+        base.pending_tc_high_qc_sync().cloned(),
+        base.pending_standalone_qc_sync().cloned(),
+        base.pending_sign().cloned(),
+        base.last_finalization().cloned(),
+        base.state_sync_anchor().cloned(),
+        base.application_applied(),
+        base.finalization_queue().to_vec(),
+        base.pending_finalize(),
+        base.safety_halt().cloned(),
+    )
+}
+
+#[derive(Debug)]
+struct ExactFreshStateSyncReconcilerV0 {
+    expected_state: SafetyState,
+    expected_h1: BlockHeader,
+    accept: bool,
+    calls: usize,
+}
+
+impl StateSyncAnchorRecoveryReconcilerV0 for ExactFreshStateSyncReconcilerV0 {
+    fn reconcile_state_sync_anchor_v0(
+        &mut self,
+        challenge: &StateSyncAnchorRecoveryChallengeV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_state() == &self.expected_state
+            && challenge.trusted_base_header() == &self.expected_h1
+    }
+}
+
+#[derive(Debug)]
+struct ExactAnchorSuccessorReconcilerV0 {
+    expected_state: SafetyState,
+    expected_phase: StateSyncAnchorSuccessorPhaseV0,
+    expected_child: SignedProposalV0,
+    expected_grandchild: SignedProposalV0,
+    accept: bool,
+    calls: usize,
+}
+
+impl StateSyncAnchorSuccessorRecoveryReconcilerV0 for ExactAnchorSuccessorReconcilerV0 {
+    fn reconcile_state_sync_anchor_successors_v0(
+        &mut self,
+        challenge: &StateSyncAnchorSuccessorRecoveryChallengeV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_state() == &self.expected_state
+            && challenge.phase() == self.expected_phase
+            && challenge.child() == &self.expected_child
+            && challenge.grandchild() == &self.expected_grandchild
+    }
+}
+
+#[derive(Debug)]
+struct ExactAnchorOrdinaryReconcilerV0 {
+    expected_state: SafetyState,
+    expected_child: SignedProposalV0,
+    expected_grandchild: SignedProposalV0,
+    accept: bool,
+    calls: usize,
+}
+
+impl StateSyncAnchorOrdinaryRecoveryReconcilerV0 for ExactAnchorOrdinaryReconcilerV0 {
+    fn reconcile_state_sync_anchor_ordinary_v0(
+        &mut self,
+        challenge: &StateSyncAnchorOrdinaryRecoveryChallengeV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_state() == &self.expected_state
+            && challenge.child() == &self.expected_child
+            && challenge.grandchild() == &self.expected_grandchild
+    }
+}
+
+#[derive(Debug)]
+struct ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+    expected_state: SafetyState,
+    expected_plan: AnchoredOrdinaryReplayArchivePlanV0,
+    expected_entries: Vec<AnchoredOrdinarySignedReplayEntryV0>,
+    accept: bool,
+    calls: usize,
+}
+
+impl AnchoredOrdinaryRehydrateReconcilerV0 for ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+    fn reconcile_checkpointed_ordinary_replay_v0(
+        &mut self,
+        challenge: &AnchoredOrdinaryRehydrateChallengeV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_state_v0() == &self.expected_state
+            && challenge.plan_v0() == self.expected_plan
+            && challenge.entries_v0() == self.expected_entries
+            && challenge.rehydrate_digest_v0() != [0; 32]
+    }
+}
+
 const SAFETY_STATE_RECORD_TEST_PROFILE_REF: [u8; 32] = [0x71; 32];
 
 fn safety_state_record_test_limits() -> SafetyStateRecordLimitsV0 {
@@ -537,10 +1016,5125 @@ fn roundtrip_safety_state_record(config: &CoreConfig, state: &SafetyState) -> Sa
     decoded.state().clone()
 }
 
+fn finalization_apply_authority_for_test(
+    core: &Core,
+) -> CoreIssuedApplicationFinalizationApplyAuthorityV0 {
+    core.issue_application_finalization_apply_authority_v0()
+        .expect("one application finalization apply authority per live Core")
+}
+
+fn finalization_readback_for_test(
+    core: &Core,
+    authority: &CoreIssuedApplicationFinalizationApplyAuthorityV0,
+    permit: &CoreIssuedApplicationFinalizationPermitV0,
+) -> ApplicationFinalizationApplyReadbackV0 {
+    let target = permit.finalization().proof().finalized_block().header();
+    let source = core
+        .safety_state()
+        .payload_validation_completions()
+        .iter()
+        .find(|completion| {
+            completion.result().artifact_ref().is_some_and(|artifact| {
+                artifact.overlay() == permit.finalization().target_overlay_ref()
+            })
+        })
+        .expect("the finalization target has one durable Valid source");
+    let source_artifact_checksum = source
+        .result()
+        .artifact_ref()
+        .expect("the finalization source is Valid")
+        .source_artifact_checksum();
+    authority
+        .application_store_apply_readback_v0(
+            permit,
+            source.route(),
+            source.id(),
+            target.height().get(),
+            [0x31; 32],
+            [0x32; 32],
+            [0x33; 32],
+            source_artifact_checksum,
+            [0x35; 32],
+            [0x36; 32],
+            [0x37; 32],
+        )
+        .expect("the simulated exact ApplicationStore readback binds the permit")
+}
+
+fn finalization_receipt_for_test(
+    core: &Core,
+    authority: &CoreIssuedApplicationFinalizationApplyAuthorityV0,
+) -> ApplicationFinalizationReceiptV0 {
+    let permit = core
+        .issue_application_finalization_permit_v0()
+        .expect("one permit for the exact durable queue front");
+    let readback = finalization_readback_for_test(core, authority, &permit);
+    authority
+        .receipt_after_application_store_apply_v0(permit, readback)
+        .expect("the permit and installed application authority share one live Core")
+}
+
+fn finalization_recovery_transition_for_test(
+    consumed: &DurableFinalizationV0,
+    readback: &ApplicationFinalizationApplyReadbackV0,
+    action: NativeFinalizationAppliedPostAckActionV0,
+    revision: u64,
+) -> NativeFinalizationAppliedRecoveryTransitionV0 {
+    NativeFinalizationAppliedRecoveryTransitionV0::from_persisted_parts(
+        readback.ordinal(),
+        consumed.proof_id(),
+        consumed.authenticated_parent().block_id(),
+        consumed.proof().finalized_block().header().id(),
+        consumed.target_overlay_ref().overlay_checksum(),
+        readback.source_route(),
+        readback.source_validation_id(),
+        readback.application_host_config_ref(),
+        readback.finalization_checksum(),
+        readback.source_artifact_checksum(),
+        readback.accepted_source_checksum(),
+        readback.applied_job_row_checksum(),
+        readback.prior_head_checksum(),
+        readback.new_head_checksum(),
+        readback.receipt_row_checksum(),
+        action,
+        revision,
+    )
+}
+
+struct ExactNativeFinalizationRecoveryReconcilerV0 {
+    expected_revision: u64,
+    expected_transition: NativeFinalizationAppliedRecoveryTransitionV0,
+    expected_readback: ApplicationFinalizationApplyReadbackV0,
+    accept: bool,
+    calls: usize,
+}
+
+impl NativeFinalizationAppliedRecoveryReconcilerV0 for ExactNativeFinalizationRecoveryReconcilerV0 {
+    fn reconcile_native_finalization_applied_v0(
+        &mut self,
+        challenge: &NativeFinalizationAppliedRecoveryChallengeV0,
+        transition: &NativeFinalizationAppliedRecoveryTransitionV0,
+        application_readback: &ApplicationFinalizationApplyReadbackV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_head_revision() == self.expected_revision
+            && transition == &self.expected_transition
+            && application_readback == &self.expected_readback
+    }
+}
+
+struct ExactNativeValidCompletionRecoveryReconcilerV0 {
+    expected_state: SafetyState,
+    expected_record_checksum: [u8; 32],
+    expected_action: NativeValidPostAckActionV0,
+    accept: bool,
+    calls: usize,
+}
+
+impl NativeValidCompletionRecoveryReconcilerV0 for ExactNativeValidCompletionRecoveryReconcilerV0 {
+    fn reconcile_native_valid_completion_v0(
+        &mut self,
+        challenge: &NativeValidCompletionRecoveryChallengeV0,
+        safety_state_record_checksum: [u8; 32],
+        post_ack_action: NativeValidPostAckActionV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.safety_state() == &self.expected_state
+            && safety_state_record_checksum == self.expected_record_checksum
+            && post_ack_action == self.expected_action
+    }
+}
+
+fn apply_finalization_for_test(
+    core: &mut Core,
+    authority: &CoreIssuedApplicationFinalizationApplyAuthorityV0,
+) -> Result<Vec<Effect>> {
+    let receipt = finalization_receipt_for_test(core, authority);
+    core.step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .map_err(|rejection| rejection.into_parts().0)
+}
+
 fn assert_safety_state_record_roundtrip_and_validate(config: &CoreConfig, state: &SafetyState) {
     let decoded = roundtrip_safety_state_record(config, state);
     Core::validate_persisted_state_v0(config, &decoded, &RootSignatures)
         .expect("the decoded record remains a semantically valid inert SafetyState");
+}
+
+fn authenticated_genesis_application_fixture_v0() -> (CoreConfig, SafetyState) {
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let parent = AuthenticatedGenesisApplicationParentV0::new(
+        BlockId::new(*set.genesis_hash().as_bytes()),
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .expect("shape-valid operator-pinned genesis application parent");
+    let config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        parent,
+        32,
+        64,
+    )
+    .expect("shadow-only authenticated-genesis config");
+    let state = SafetyState::from_authenticated_genesis_application_for_test_v0(
+        &set,
+        genesis_qc(&set),
+        GENESIS_TIMESTAMP_MS,
+        parent,
+    )
+    .expect("construct inert schema-v12 record fixture");
+    (config, state)
+}
+
+fn authenticated_genesis_h1_offline_fixture_v0(
+    payload: &[u8],
+) -> (
+    CoreConfig,
+    SignedProposalV0,
+    AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
+) {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let genesis = genesis_qc(config.validator_set());
+    let h1 = proposal_with_parameters(
+        config.validator_set(),
+        config.consensus_parameters(),
+        genesis.clone(),
+        1,
+        payload,
+    );
+    let prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare exact authenticated-genesis revision-zero facts");
+    struct TestRegistrarV0;
+
+    impl AuthenticatedGenesisApplicationH1OfflineApplicationRegistrarV0 for TestRegistrarV0 {
+        type Output = AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0;
+        type Error = std::convert::Infallible;
+
+        fn register_authenticated_genesis_application_h1_offline_v0(
+            self,
+            owner: AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
+        ) -> std::result::Result<Self::Output, Self::Error> {
+            Ok(owner)
+        }
+    }
+
+    let bundle = Core::begin_authenticated_genesis_application_h1_offline_validation_v0(
+        config.clone(),
+        prepared,
+        &RootSignatures,
+    )
+    .expect("prepare the bounded offline h1 activation bundle");
+    let owner = bundle
+        .activate_application_v0(TestRegistrarV0)
+        .unwrap_or_else(|never| match never {});
+    (config, h1, owner)
+}
+
+fn exact_h1_finality_proof_v0(config: &CoreConfig, h1: &SignedProposalV0) -> FinalityProofV0 {
+    let set = config.validator_set();
+    let parameters = config.consensus_parameters();
+    let q1 = qc(set, 1, 1, h1.block().id());
+    let h2 = proposal_with_parameters(set, parameters, q1.clone(), 2, b"promotion h2");
+    let q2 = qc(set, 2, 2, h2.block().id());
+    let h3 = proposal_with_parameters(set, parameters, q2.clone(), 3, b"promotion h3");
+    let q3 = qc(set, 3, 3, h3.block().id());
+    let certified_h1 = CertifiedHeaderV0::from_signed_proposal(
+        h1.clone(),
+        q1,
+        set,
+        None,
+        parameters,
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("certify the exact completed h1");
+    let certified_h2 = CertifiedHeaderV0::from_signed_proposal(
+        h2.clone(),
+        q2,
+        set,
+        None,
+        parameters,
+        h1.block().header().timestamp_ms(),
+    )
+    .expect("certify the direct h1 child");
+    let certified_h3 = CertifiedHeaderV0::from_signed_proposal(
+        h3,
+        q3,
+        set,
+        None,
+        parameters,
+        h2.block().header().timestamp_ms(),
+    )
+    .expect("certify the h1 grandchild");
+    FinalityProofV0::new(
+        certified_h1,
+        certified_h2,
+        certified_h3,
+        set,
+        None,
+        parameters,
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("construct the exact complete h1 finality proof")
+}
+
+fn completed_authenticated_genesis_h1_owner_v0(
+    payload: &[u8],
+) -> (
+    CoreConfig,
+    SignedProposalV0,
+    AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
+) {
+    let (config, h1, mut owner) = authenticated_genesis_h1_offline_fixture_v0(payload);
+    let obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1.clone(), &RootSignatures)
+        .expect("admit exact promotion h1");
+    let _safety_binding = owner
+        .issue_safety_persistence_binding_v0()
+        .expect("bind the completed promotion owner to its exact Safety namespace");
+    let request = owner
+        .acknowledge_obligation_persisted_v0(&obligation, obligation.barrier_v0(), &RootSignatures)
+        .expect("release exact promotion validation request");
+    let claimed = request
+        .try_claim_v0()
+        .unwrap_or_else(|_| panic!("fresh promotion request must be claimable"));
+    let (_route, validation_id, block, _parent, permit) = claimed.into_parts();
+    let sealed = owner.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(&config, &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+    let completion = owner
+        .accept_application_sealed_valid_v0(&sealed, &RootSignatures)
+        .expect("accept exact promotion h1 Valid result");
+    let [durable_completion] = completion
+        .persistence_v0()
+        .state()
+        .payload_validation_completions()
+    else {
+        panic!("promotion rev2 has one exact completion")
+    };
+    let delivery_facts = ApplicationNativeValidDeliveryFactsV0::new(
+        PayloadValidationRouteV0::Synced,
+        validation_id,
+        [0x91; 32],
+        [0x92; 32],
+        [0x93; 32],
+        native_valid_result_checksum_v0(durable_completion.result())
+            .expect("promotion completion is canonically Valid"),
+        [0x94; 32],
+        [0x95; 32],
+        1,
+        [0x96; 32],
+        [0x97; 32],
+        NativeValidPostAckActionV0::None,
+        2,
+    )
+    .expect("exact promotion delivery facts");
+    let sealed_delivery = owner
+        .seal_authenticated_genesis_h1_native_valid_transition_v0(completion, delivery_facts)
+        .expect("seal exact promotion delivery");
+    let _completed = owner
+        .acknowledge_completion_persisted_v0(
+            &sealed_delivery,
+            sealed_delivery.completion_persistence_v0().barrier_v0(),
+            &RootSignatures,
+        )
+        .expect("close exact promotion h1 rev2");
+    assert_eq!(
+        owner
+            .phase_v0()
+            .expect("classify completed promotion owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CompletedRev2
+    );
+    (config, h1, owner)
+}
+
+fn authenticated_genesis_empty_h1_proposal_v0(config: &CoreConfig) -> SignedProposalV0 {
+    let payload = ApplicationPayloadV0::new(Vec::new()).expect("empty application payload");
+    let receipts = ExecutionReceiptsV0::new(&payload, Vec::new()).expect("empty receipts");
+    let body = BlockBodyV0::new(payload, Vec::new()).expect("empty regular body");
+    let proposer = leader_for(config.validator_set(), View::new(1));
+    let header = BlockHeader::new(
+        config.validator_set().genesis_hash(),
+        config.validator_set().chain_id(),
+        config.validator_set().protocol_version(),
+        Epoch::new(0),
+        View::new(1),
+        Height::new(1),
+        BlockKind::Regular,
+        config.genesis_block_id(),
+        proposer,
+        config.validator_set().id(),
+        config.consensus_parameters().hash(),
+        body.payload_root().expect("empty payload root"),
+        StateRoot::new([1; 32]),
+        receipts.receipts_root().expect("empty receipts root"),
+        body.evidence_root().expect("empty evidence root"),
+        100,
+        None,
+    )
+    .expect("canonical empty h1 header");
+    let block = Block::new(
+        header,
+        body.application_payload()
+            .try_cev0_bytes()
+            .expect("encode empty payload"),
+        Vec::new(),
+    )
+    .expect("canonical empty h1 block");
+    let justify = QcReferenceV0::genesis_anchor(genesis_qc(config.validator_set()));
+    let root = ProposalWitnessV0::signing_root_for(block.header(), &justify, None, None)
+        .expect("empty h1 signing root");
+    let witness = ProposalWitnessV0::new(
+        block.header(),
+        justify,
+        None,
+        None,
+        signature(root),
+        config.validator_set(),
+        None,
+        config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("canonical empty h1 witness");
+    SignedProposalV0::new(
+        block,
+        witness,
+        config.validator_set(),
+        None,
+        config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("canonical empty h1 proposal")
+}
+
+struct AuthenticatedGenesisH1TakeoverTestRegistrarV0;
+
+impl AuthenticatedGenesisApplicationH1OfflineApplicationRegistrarV0
+    for AuthenticatedGenesisH1TakeoverTestRegistrarV0
+{
+    type Output = AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0;
+    type Error = std::convert::Infallible;
+
+    fn register_authenticated_genesis_application_h1_offline_v0(
+        self,
+        owner: AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
+    ) -> std::result::Result<Self::Output, Self::Error> {
+        Ok(owner)
+    }
+}
+
+fn authenticated_genesis_h1_takeover_fixture_v0() -> (
+    CoreConfig,
+    PreparedAuthenticatedGenesisApplicationBootstrapV0,
+    SignedProposalV0,
+    SafetyState,
+) {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let prepared_live = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare live exact empty-h1 owner");
+    let prepared_takeover = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare independent takeover tag-5 facts");
+    let bundle = Core::begin_authenticated_genesis_application_h1_offline_validation_v0(
+        config.clone(),
+        prepared_live,
+        &RootSignatures,
+    )
+    .expect("begin live exact empty-h1 owner");
+    let mut owner = bundle
+        .activate_application_v0(AuthenticatedGenesisH1TakeoverTestRegistrarV0)
+        .unwrap_or_else(|never| match never {});
+    let proposal = authenticated_genesis_empty_h1_proposal_v0(&config);
+    let persistence = owner
+        .submit_exact_h1_synced_proposal_v0(proposal.clone(), &RootSignatures)
+        .expect("derive the durable empty-h1 revision-one obligation");
+    (
+        config,
+        prepared_takeover,
+        proposal,
+        persistence.persistence_v0().state().clone(),
+    )
+}
+
+fn authenticated_genesis_h1_takeover_safety_facts_v0(
+    challenge: &AuthenticatedGenesisApplicationH1ObligationTakeoverChallengeV0,
+) -> AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyHeadFactsV0 {
+    AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyHeadFactsV0::from_authenticated_store_comparison_v0(
+        [0x01; 32],
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        challenge.safety_state_record_config_ref_v0(),
+        [0x03; 32],
+        [0x04; 32],
+        [0x05; 32],
+        [0x06; 32],
+        [0x07; 32],
+        [0x08; 32],
+        [0x09; 32],
+        [0x0A; 32],
+        challenge.barrier_v0(),
+        challenge.validation_id_v0(),
+        challenge.authenticated_parent_binding_ref_v0(),
+    )
+    .expect("shape-valid exact takeover Safety comparison facts")
+}
+
+struct AuthenticatedGenesisH1TakeoverTestReconcilerV0 {
+    expected_revision_one: SafetyState,
+    expected_proposal: SignedProposalV0,
+    accept: bool,
+    calls: usize,
+}
+
+impl AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyReconcilerV0
+    for AuthenticatedGenesisH1TakeoverTestReconcilerV0
+{
+    fn reconcile_authenticated_genesis_application_h1_obligation_takeover_v0(
+        &mut self,
+        challenge: &AuthenticatedGenesisApplicationH1ObligationTakeoverChallengeV0,
+        _safety_head_facts: &AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyHeadFactsV0,
+    ) -> bool {
+        self.calls += 1;
+        self.accept
+            && challenge.revision_zero_state_v0().revision() == 0
+            && challenge.revision_one_state_v0() == &self.expected_revision_one
+            && challenge.proposal_v0() == &self.expected_proposal
+    }
+}
+
+// Core cannot authenticate a foreign crate's live SQLite owner. This test-only
+// implementation models the explicitly trusted linked-host rebind boundary;
+// production callers must use SafetyStore's consuming rev1 capability bridge.
+struct AuthenticatedGenesisH1TakeoverLinkedHostRebindTestV0;
+
+impl AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyRebindRegistrarV0
+    for AuthenticatedGenesisH1TakeoverLinkedHostRebindTestV0
+{
+    type Error = CoreError;
+
+    fn rebind_authenticated_genesis_application_h1_obligation_takeover_v0(
+        self,
+        safety_head_facts: &AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyHeadFactsV0,
+        persistence: &AuthenticatedGenesisApplicationH1ObligationPersistenceV0,
+        binding: AuthenticatedGenesisApplicationH1OfflineSafetyPersistenceBindingV0,
+    ) -> std::result::Result<(), Self::Error> {
+        if safety_head_facts.barrier_v0() != persistence.barrier_v0()
+            || safety_head_facts.validation_id_v0() != persistence.validation_id_v0()
+            || !binding.accepts_persistence_v0(persistence.persistence_v0())
+        {
+            return Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+                "test linked-host rebind rejected the replay owner",
+            ));
+        }
+        Ok(())
+    }
+}
+
+#[test]
+fn authenticated_genesis_h1_obligation_takeover_replays_exact_rev1_before_safety_attested_ack_v0() {
+    let (config, prepared, proposal, revision_one) = authenticated_genesis_h1_takeover_fixture_v0();
+    let session = Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+        config.clone(),
+        prepared,
+        revision_one.clone(),
+        &RootSignatures,
+    )
+    .expect("real narrow replay exactly reproduces the durable revision-one obligation");
+    let challenge = session.challenge_v0();
+    let [obligation] = revision_one.payload_validation_obligations() else {
+        panic!("fixture has one durable obligation")
+    };
+    let validation_id = obligation.id();
+    let parent_binding_ref = obligation
+        .parent_binding_ref_v0()
+        .expect("durable obligation binds its authenticated parent");
+    assert_eq!(challenge.revision_zero_state_v0().revision(), 0);
+    assert_eq!(challenge.revision_one_state_v0(), &revision_one);
+    assert_eq!(challenge.proposal_v0(), &proposal);
+    assert_eq!(challenge.barrier_v0(), BarrierId::new(1));
+    assert_eq!(challenge.validation_id_v0(), validation_id);
+    assert_eq!(
+        challenge.authenticated_parent_binding_ref_v0(),
+        parent_binding_ref
+    );
+
+    let safety_facts = authenticated_genesis_h1_takeover_safety_facts_v0(challenge);
+    let expected_safety_facts = safety_facts.clone();
+    let mut reconciler = AuthenticatedGenesisH1TakeoverTestReconcilerV0 {
+        expected_revision_one: revision_one,
+        expected_proposal: proposal.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let attestation = challenge
+        .attest_authenticated_safety_head_v0(safety_facts, &mut reconciler)
+        .expect("trusted live Safety join attests the exact pending rev1 head");
+    assert_eq!(reconciler.calls, 1);
+    let activation = session
+        .activate_after_authenticated_safety_v0(attestation)
+        .expect("the session consumes only its own Safety attestation");
+    assert_eq!(activation.safety_head_facts_v0(), &expected_safety_facts);
+
+    let rebound = activation
+        .rebind_live_safety_v0(AuthenticatedGenesisH1TakeoverLinkedHostRebindTestV0)
+        .expect("the linked-host TCB installs the replay binding before ack");
+    let (bundle, request) = rebound
+        .acknowledge_and_release_validation_request_v0(&RootSignatures)
+        .expect("real StorageAck releases the sole live Core request after attestation");
+    assert_eq!(request.route_v0(), PayloadValidationRouteV0::Synced);
+    assert_eq!(request.validation_id_v0(), validation_id);
+    assert_eq!(request.block_v0(), proposal.block());
+    assert_eq!(
+        request
+            .parent_binding_ref_v0()
+            .expect("released request retains exact parent provenance"),
+        parent_binding_ref
+    );
+    let owner = bundle
+        .activate_application_v0(AuthenticatedGenesisH1TakeoverTestRegistrarV0)
+        .unwrap_or_else(|never| match never {});
+    assert_eq!(
+        owner.phase_v0().expect("classify the replayed live owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::ValidationRequestReleasedRev1
+    );
+    assert!(
+        owner.accepts_validation_request_v0(&request),
+        "the application owner authenticates its exact request before App reservation"
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_obligation_takeover_rejects_nonempty_body_and_foreign_provenance_v0() {
+    let (config, original_prepared, _proposal, _revision_one) =
+        authenticated_genesis_h1_takeover_fixture_v0();
+    let (_same_config, nonempty_h1, mut nonempty_owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"nonempty takeover payload");
+    let nonempty = nonempty_owner
+        .submit_exact_h1_synced_proposal_v0(nonempty_h1, &RootSignatures)
+        .expect("the general live h1 owner admits this canonical nonempty body");
+    assert!(matches!(
+        Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+            config.clone(),
+            original_prepared,
+            nonempty.persistence_v0().state().clone(),
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "takeover supports only the canonical empty h1 obligation"
+        ))
+    ));
+
+    let original_parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture has an authenticated application parent");
+    let foreign_parent = AuthenticatedGenesisApplicationParentV0::new(
+        original_parent.genesis_block_id(),
+        original_parent.timestamp_ms(),
+        original_parent.state_version(),
+        original_parent.state_root(),
+        [0xD1; 32],
+        [0xE1; 32],
+    )
+    .expect("same-root foreign application provenance");
+    let foreign_config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        config.local_validator(),
+        config.validator_set().clone(),
+        *config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+        foreign_parent,
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("shape-valid same-root foreign provenance config");
+    let foreign_prepared_live = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        foreign_config.clone(),
+        genesis_qc(foreign_config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare foreign live owner");
+    let foreign_bundle = Core::begin_authenticated_genesis_application_h1_offline_validation_v0(
+        foreign_config.clone(),
+        foreign_prepared_live,
+        &RootSignatures,
+    )
+    .expect("begin foreign live owner");
+    let mut foreign_owner = foreign_bundle
+        .activate_application_v0(AuthenticatedGenesisH1TakeoverTestRegistrarV0)
+        .unwrap_or_else(|never| match never {});
+    let foreign_h1 = authenticated_genesis_empty_h1_proposal_v0(&foreign_config);
+    let foreign_revision_one = foreign_owner
+        .submit_exact_h1_synced_proposal_v0(foreign_h1, &RootSignatures)
+        .expect("derive same-root foreign-provenance rev1")
+        .persistence_v0()
+        .state()
+        .clone();
+    let original_prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare original provenance takeover facts");
+    assert!(
+        Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+            config,
+            original_prepared,
+            foreign_revision_one,
+            &RootSignatures,
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_obligation_takeover_rejects_same_header_body_substitution_v0() {
+    let (config, prepared, proposal, mut revision_one) =
+        authenticated_genesis_h1_takeover_fixture_v0();
+    let substituted_payload =
+        ApplicationPayloadV0::new(vec![b"takeover substituted body".to_vec()])
+            .expect("canonical substituted payload")
+            .try_cev0_bytes()
+            .expect("encode substituted payload");
+    let substituted_block = Block::new(
+        proposal.block().header().clone(),
+        substituted_payload,
+        proposal.block().evidence_objects().to_vec(),
+    )
+    .expect("transport block accepts a same-header body carrier");
+    let substituted_proposal = SignedProposalV0::new(
+        substituted_block,
+        proposal.witness().clone(),
+        config.validator_set(),
+        None,
+        config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("unchanged signed header and witness remain structurally authenticated");
+    let [obligation] = revision_one.payload_validation_obligations() else {
+        panic!("fixture has one durable obligation")
+    };
+    let substituted_obligation = DurablePayloadValidationObligationV0::new(
+        obligation.route(),
+        obligation.id(),
+        substituted_proposal,
+        obligation.parent().clone(),
+        obligation.first_recorded_revision(),
+    );
+    revision_one.set_payload_validation_obligations(vec![substituted_obligation]);
+
+    assert!(
+        Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+            config,
+            prepared,
+            revision_one,
+            &RootSignatures,
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_obligation_takeover_rejects_phase_and_attestation_splice_v0() {
+    let (config, prepared_a, proposal, revision_one) =
+        authenticated_genesis_h1_takeover_fixture_v0();
+    let wrong_phase_prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare wrong-phase challenge");
+    assert!(
+        Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+            config.clone(),
+            wrong_phase_prepared,
+            SafetyState::from_authenticated_genesis_application_for_test_v0(
+                config.validator_set(),
+                genesis_qc(config.validator_set()),
+                config.trusted_genesis_timestamp_ms(),
+                config
+                    .authenticated_genesis_application_parent_v0()
+                    .copied()
+                    .expect("fixture parent"),
+            )
+            .expect("shape-valid revision-zero state"),
+            &RootSignatures,
+        )
+        .is_err()
+    );
+
+    let prepared_b = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare second takeover session");
+    let session_a = Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+        config.clone(),
+        prepared_a,
+        revision_one.clone(),
+        &RootSignatures,
+    )
+    .expect("begin takeover session A");
+    let session_b = Core::begin_authenticated_genesis_application_h1_obligation_takeover_v0(
+        config,
+        prepared_b,
+        revision_one.clone(),
+        &RootSignatures,
+    )
+    .expect("begin takeover session B");
+    assert!(!session_a
+        .challenge_v0()
+        .same_takeover_instance_v0(session_b.challenge_v0()));
+
+    let wrong_parent_facts =
+        AuthenticatedGenesisApplicationH1ObligationTakeoverSafetyHeadFactsV0::from_authenticated_store_comparison_v0(
+            [1; 32], [2; 32], session_a.challenge_v0().safety_state_record_config_ref_v0(),
+            [3; 32], [4; 32], [5; 32], [6; 32], [7; 32], [8; 32], [9; 32], [10; 32],
+            session_a.challenge_v0().barrier_v0(),
+            session_a.challenge_v0().validation_id_v0(),
+            [0xFA; 32],
+        )
+        .expect("shape-valid but foreign parent facts");
+    let mut reconciler = AuthenticatedGenesisH1TakeoverTestReconcilerV0 {
+        expected_revision_one: revision_one.clone(),
+        expected_proposal: proposal.clone(),
+        accept: true,
+        calls: 0,
+    };
+    assert!(session_a
+        .challenge_v0()
+        .attest_authenticated_safety_head_v0(wrong_parent_facts, &mut reconciler)
+        .is_err());
+    assert_eq!(
+        reconciler.calls, 0,
+        "Core rejects coordinate splice before TCB join"
+    );
+
+    reconciler.accept = false;
+    let rejected_safety_facts =
+        authenticated_genesis_h1_takeover_safety_facts_v0(session_a.challenge_v0());
+    assert!(session_a
+        .challenge_v0()
+        .attest_authenticated_safety_head_v0(rejected_safety_facts, &mut reconciler)
+        .is_err());
+    assert_eq!(
+        reconciler.calls, 1,
+        "the trusted join may still veto exact coordinates"
+    );
+
+    reconciler.accept = true;
+    let safety_facts = authenticated_genesis_h1_takeover_safety_facts_v0(session_a.challenge_v0());
+    let attestation = session_a
+        .challenge_v0()
+        .attest_authenticated_safety_head_v0(safety_facts, &mut reconciler)
+        .expect("session A mints its own exact attestation");
+    assert!(matches!(
+        session_b.activate_after_authenticated_safety_v0(attestation),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "takeover Safety attestation belongs to another session"
+        ))
+    ));
+}
+
+#[test]
+fn authenticated_genesis_h1_context_facts_are_exact_inert_core_config_material_v0() {
+    let (config, _h1, owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"authenticated genesis h1 context facts");
+    let facts = owner
+        .h1_context_facts_v0()
+        .expect("commissioned rev0 owner exposes inert h1 context facts");
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture carries the authenticated application parent");
+    let record_context = SafetyStateRecordContextV0::new(
+        &config,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+    )
+    .expect("fixture has an exact record context");
+
+    assert_eq!(facts.authenticated_genesis_application_parent_v0(), parent);
+    assert_eq!(
+        facts.safety_state_record_config_ref_v0(),
+        safety_state_record_config_ref_v0(&record_context)
+            .expect("derive the expected record config reference")
+    );
+    assert_eq!(facts.validator_set_v0(), config.validator_set());
+    assert_eq!(
+        facts.consensus_parameters_v0(),
+        config.consensus_parameters()
+    );
+    assert_eq!(
+        facts.trusted_genesis_timestamp_ms_v0(),
+        config.trusted_genesis_timestamp_ms()
+    );
+    assert_eq!(
+        facts,
+        facts.clone(),
+        "cloning inert facts grants no authority"
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_context_facts_cannot_be_reminted_after_h1_admission_v0() {
+    let (_config, h1, mut owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"authenticated genesis h1 phase fence");
+    let _obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1, &RootSignatures)
+        .expect("canonical h1 enters obligation-pending rev1");
+
+    assert!(matches!(
+        owner.h1_context_facts_v0(),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "h1 context facts are available only at commissioned revision zero"
+        ))
+    ));
+}
+
+#[test]
+fn authenticated_genesis_h1_activation_rejects_core_config_substitution_v0() {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture carries the authenticated application parent");
+    let substitutions = [
+        (
+            "local validator",
+            CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+                validator_id(2),
+                config.validator_set().clone(),
+                *config.consensus_parameters(),
+                config.trusted_genesis_timestamp_ms(),
+                parent,
+                config.max_blocks(),
+                config.max_observed_messages(),
+            )
+            .expect("shape-valid local-validator substitution"),
+        ),
+        (
+            "block bound",
+            CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+                config.local_validator(),
+                config.validator_set().clone(),
+                *config.consensus_parameters(),
+                config.trusted_genesis_timestamp_ms(),
+                parent,
+                config.max_blocks() + 1,
+                config.max_observed_messages(),
+            )
+            .expect("shape-valid block-bound substitution"),
+        ),
+        (
+            "observation bound",
+            CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+                config.local_validator(),
+                config.validator_set().clone(),
+                *config.consensus_parameters(),
+                config.trusted_genesis_timestamp_ms(),
+                parent,
+                config.max_blocks(),
+                config.max_observed_messages() + 1,
+            )
+            .expect("shape-valid observation-bound substitution"),
+        ),
+    ];
+
+    for (label, substituted) in substitutions {
+        let prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+            config.clone(),
+            genesis_qc(config.validator_set()),
+            SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+            safety_state_record_test_limits(),
+            &RootSignatures,
+        )
+        .expect("prepare exact config-A facts");
+        assert!(prepared.matches_core_config_v0(&config));
+        assert!(
+            !prepared.matches_core_config_v0(&substituted),
+            "{label} must change the complete prepared Core configuration"
+        );
+        let substituted_prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+            substituted.clone(),
+            genesis_qc(substituted.validator_set()),
+            SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+            safety_state_record_test_limits(),
+            &RootSignatures,
+        )
+        .expect("config B can independently prepare canonical facts");
+        assert_ne!(
+            prepared.safety_state_record_config_ref_v0(),
+            substituted_prepared.safety_state_record_config_ref_v0(),
+            "{label} must change the Safety record configuration reference"
+        );
+
+        assert!(matches!(
+            Core::begin_authenticated_genesis_application_h1_offline_validation_v0(
+                substituted,
+                prepared,
+                &RootSignatures,
+            ),
+            Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+                "prepared and configured authenticated application contexts differ"
+            ))
+        ));
+    }
+}
+
+#[test]
+fn authenticated_genesis_h1_offline_valid_closes_rev0_rev1_rev2_without_generic_effects_v0() {
+    let (config, h1, mut owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"authenticated genesis exact h1");
+    let expected_parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture carries its authenticated application parent");
+    assert_eq!(
+        owner.phase_v0().expect("classify commissioned owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CommissionedRev0
+    );
+    let obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1.clone(), &RootSignatures)
+        .expect("admit canonical signed h1");
+    assert_eq!(obligation.barrier_v0(), BarrierId::new(1));
+    assert_eq!(obligation.validation_id_v0().generation(), 1);
+    assert_eq!(obligation.persistence_v0().state().revision(), 1);
+    assert_eq!(
+        obligation
+            .persistence_v0()
+            .state()
+            .payload_validation_obligations()
+            .len(),
+        1
+    );
+    assert!(obligation
+        .persistence_v0()
+        .state()
+        .payload_validation_completions()
+        .is_empty());
+    assert_safety_state_record_roundtrip_and_validate(&config, obligation.persistence_v0().state());
+    assert_eq!(
+        owner.phase_v0().expect("classify rev1 pending owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::ObligationPersistencePendingRev1
+    );
+
+    let safety_binding = owner
+        .issue_safety_persistence_binding_v0()
+        .expect("issue the dedicated h1 SafetyStore binding");
+    assert!(safety_binding.accepts_persistence_v0(obligation.persistence_v0()));
+    assert_eq!(
+        safety_binding.authenticated_genesis_application_parent_v0(),
+        expected_parent
+    );
+    assert_eq!(safety_binding.proposal_v0(), &h1);
+    assert_eq!(
+        safety_binding.validation_id_v0(),
+        obligation.validation_id_v0()
+    );
+
+    let request = owner
+        .acknowledge_obligation_persisted_v0(&obligation, obligation.barrier_v0(), &RootSignatures)
+        .expect("release the sole request only after rev1 persistence");
+    assert_eq!(request.route_v0(), PayloadValidationRouteV0::Synced);
+    assert_eq!(request.validation_id_v0(), obligation.validation_id_v0());
+    assert_eq!(request.block_v0(), h1.block());
+    assert_eq!(
+        request
+            .parent_v0()
+            .authenticated_genesis_application_parent_v0(),
+        Some(expected_parent)
+    );
+    assert_eq!(
+        request
+            .parent_binding_ref_v0()
+            .expect("bind the exact authenticated parent"),
+        request
+            .parent_v0()
+            .binding_ref_v0()
+            .expect("derive the same exact parent binding")
+    );
+    assert_eq!(
+        owner.phase_v0().expect("classify released request owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::ValidationRequestReleasedRev1
+    );
+
+    let claimed = request
+        .try_claim_v0()
+        .unwrap_or_else(|_| panic!("fresh exact h1 request must be claimable once"));
+    let (route, validation_id, block, parent, permit) = claimed.into_parts();
+    assert_eq!(route, PayloadValidationRouteV0::Synced);
+    assert_eq!(validation_id, obligation.validation_id_v0());
+    assert_eq!(&block, h1.block());
+    assert_eq!(
+        parent.authenticated_genesis_application_parent_v0(),
+        Some(expected_parent)
+    );
+    let sealed = owner.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(&config, &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+    let completion = owner
+        .accept_application_sealed_valid_v0(&sealed, &RootSignatures)
+        .expect("accept only the App-sealed exact h1 Valid result");
+    assert_eq!(completion.barrier_v0(), BarrierId::new(2));
+    assert_eq!(completion.validation_id_v0(), validation_id);
+    assert_eq!(completion.persistence_v0().state().revision(), 2);
+    assert_eq!(
+        completion
+            .persistence_v0()
+            .native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::None)
+    );
+    assert!(safety_binding.accepts_persistence_v0(completion.persistence_v0()));
+    assert_safety_state_record_roundtrip_and_validate(&config, completion.persistence_v0().state());
+    assert_eq!(
+        owner.phase_v0().expect("classify rev2 pending owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CompletionPersistencePendingRev2
+    );
+    let [durable_completion] = completion
+        .persistence_v0()
+        .state()
+        .payload_validation_completions()
+    else {
+        panic!("exact rev2 state contains one completion")
+    };
+    let delivery_facts = ApplicationNativeValidDeliveryFactsV0::new(
+        PayloadValidationRouteV0::Synced,
+        validation_id,
+        [0x81; 32],
+        [0x82; 32],
+        [0x83; 32],
+        native_valid_result_checksum_v0(durable_completion.result())
+            .expect("rev2 completion contains a canonical Valid result"),
+        [0x84; 32],
+        [0x85; 32],
+        1,
+        [0x86; 32],
+        [0x87; 32],
+        NativeValidPostAckActionV0::None,
+        2,
+    )
+    .expect("exact App D-stage facts");
+    let sealed_delivery = owner
+        .seal_authenticated_genesis_h1_native_valid_transition_v0(completion, delivery_facts)
+        .expect("the installed application authority seals the exact rev2 carrier");
+    assert_eq!(sealed_delivery.delivery_facts_v0(), delivery_facts);
+    assert_ne!(sealed_delivery.carrier_checksum_v0(), [0; 32]);
+
+    let completed = owner
+        .acknowledge_completion_persisted_v0(
+            &sealed_delivery,
+            sealed_delivery.completion_persistence_v0().barrier_v0(),
+            &RootSignatures,
+        )
+        .expect("close with no post-ack effect");
+    assert_eq!(completed.proposal_v0(), &h1);
+    assert_eq!(completed.validation_id_v0(), validation_id);
+    assert_eq!(completed.safety_revision_v0(), 2);
+    assert_eq!(
+        completed.terminal_fact_v0().result(),
+        PayloadTerminalResult::Valid
+    );
+    assert_eq!(
+        completed
+            .completion_v0()
+            .result()
+            .artifact_ref()
+            .expect("terminal completion is Valid")
+            .overlay(),
+        completed
+            .terminal_fact_v0()
+            .valid_overlay()
+            .expect("terminal fact retains the same overlay")
+    );
+    assert_eq!(
+        owner.phase_v0().expect("classify bounded terminal owner"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CompletedRev2
+    );
+}
+
+#[test]
+fn completed_authenticated_h1_retires_only_into_exact_proof_derived_state_sync_candidate_v0() {
+    let (source_config, h1, owner) =
+        completed_authenticated_genesis_h1_owner_v0(b"proof carrying promotion h1");
+    let proof = exact_h1_finality_proof_v0(&source_config, &h1);
+    let proof_id = proof.id();
+    let source_parent = source_config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("source config binds the authenticated genesis application parent");
+    let candidate = owner
+        .retire_completed_into_h1_state_sync_promotion_v0(proof, &RootSignatures)
+        .expect("retire the completed narrow owner into an inert proof-derived candidate");
+
+    assert!(candidate
+        .plain_core_config_v0()
+        .authenticated_genesis_application_parent_v0()
+        .is_none());
+    assert_eq!(candidate.h1_proposal_v0(), &h1);
+    assert_eq!(candidate.proof_id_v0(), proof_id);
+    assert_eq!(candidate.source_authenticated_parent_v0(), source_parent);
+    assert_eq!(
+        candidate.source_validation_id_v0().block_id(),
+        h1.block().id()
+    );
+    assert_ne!(candidate.source_valid_result_checksum_v0(), [0; 32]);
+    let target = FinalizedTip::new(
+        h1.block().header().height(),
+        h1.block().header().view(),
+        h1.block().id(),
+        h1.block().header().timestamp_ms(),
+    );
+    let prepared = candidate.prepared_bootstrap_v0().safety_state();
+    assert_eq!(prepared.revision(), 0);
+    assert_eq!(prepared.finalized(), target);
+    assert_eq!(prepared.application_applied(), target);
+    assert_eq!(
+        prepared
+            .state_sync_anchor()
+            .expect("candidate retains the complete proof anchor")
+            .proof_id(),
+        proof_id
+    );
+
+    let (plain_config, prepared, returned_h1) = candidate.into_h1_state_sync_bootstrap_parts_v0();
+    assert!(plain_config
+        .authenticated_genesis_application_parent_v0()
+        .is_none());
+    assert_eq!(returned_h1, h1);
+    assert_eq!(prepared.safety_state().finalized(), target);
+}
+
+#[test]
+fn authenticated_h1_promotion_consumes_and_rejects_incomplete_or_foreign_authority_v0() {
+    let (incomplete_config, incomplete_h1, incomplete_owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"incomplete promotion owner");
+    let proof = exact_h1_finality_proof_v0(&incomplete_config, &incomplete_h1);
+    assert!(matches!(
+        incomplete_owner.retire_completed_into_h1_state_sync_promotion_v0(proof, &RootSignatures,),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "h1 state-sync promotion requires the exact completed revision-two owner"
+        ))
+    ));
+
+    let (source_config, source_h1, source_owner) =
+        completed_authenticated_genesis_h1_owner_v0(b"source promotion owner");
+    let (foreign_config, foreign_h1, _foreign_owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"foreign promotion proof");
+    assert_eq!(
+        source_config.validator_set(),
+        foreign_config.validator_set(),
+        "the negative must isolate proposal identity rather than validator-set scope"
+    );
+    assert_ne!(source_h1, foreign_h1);
+    let foreign_proof = exact_h1_finality_proof_v0(&foreign_config, &foreign_h1);
+    assert!(matches!(
+        source_owner.retire_completed_into_h1_state_sync_promotion_v0(
+            foreign_proof,
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "h1 state-sync proof does not exactly bind the completed proposal and rev2 Valid result"
+        ))
+    ));
+}
+
+#[test]
+fn authenticated_h1_promotion_requires_signature_verified_complete_finality_proof_v0() {
+    let (source_config, h1, owner) =
+        completed_authenticated_genesis_h1_owner_v0(b"promotion signature proof");
+    let proof = exact_h1_finality_proof_v0(&source_config, &h1);
+    assert!(owner
+        .retire_completed_into_h1_state_sync_promotion_v0(proof, &RejectSignatures)
+        .is_err());
+}
+
+#[test]
+fn authenticated_genesis_h1_stable_native_valid_recovery_is_exact_and_inert_v0() {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let genesis = genesis_qc(config.validator_set());
+    let prepared_live = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis.clone(),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare live empty-h1 owner");
+    let prepared_recovery = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare independent recovery facts");
+    struct Registrar;
+    impl AuthenticatedGenesisApplicationH1OfflineApplicationRegistrarV0 for Registrar {
+        type Output = AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0;
+        type Error = std::convert::Infallible;
+        fn register_authenticated_genesis_application_h1_offline_v0(
+            self,
+            owner: AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
+        ) -> std::result::Result<Self::Output, Self::Error> {
+            Ok(owner)
+        }
+    }
+    let bundle = Core::begin_authenticated_genesis_application_h1_offline_validation_v0(
+        config.clone(),
+        prepared_live,
+        &RootSignatures,
+    )
+    .expect("begin empty-h1 owner");
+    let mut owner = bundle
+        .activate_application_v0(Registrar)
+        .unwrap_or_else(|never| match never {});
+    let h1 = authenticated_genesis_empty_h1_proposal_v0(&config);
+    let obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1.clone(), &RootSignatures)
+        .expect("persistable empty-h1 obligation");
+    let revision_one = obligation.persistence_v0().state().clone();
+    let _binding = owner
+        .issue_safety_persistence_binding_v0()
+        .expect("issue dedicated live binding");
+    let request = owner
+        .acknowledge_obligation_persisted_v0(&obligation, obligation.barrier_v0(), &RootSignatures)
+        .expect("release exact empty-h1 request");
+    let claimed = request
+        .try_claim_v0()
+        .unwrap_or_else(|_| panic!("fresh empty-h1 request was already claimed"));
+    let (_route, validation_id, block, _parent, permit) = claimed.into_parts();
+    let sealed = owner.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(&config, &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+    let completion = owner
+        .accept_application_sealed_valid_v0(&sealed, &RootSignatures)
+        .expect("produce exact empty-h1 rev2");
+    let revision_two = completion.persistence_v0().state().clone();
+    let carrier_checksum = completion.carrier_checksum_v0();
+    let valid_result_checksum =
+        native_valid_result_checksum_v0(revision_two.payload_validation_completions()[0].result())
+            .expect("canonical valid checksum");
+    let delivery = ApplicationNativeValidDeliveryFactsV0::new(
+        PayloadValidationRouteV0::Synced,
+        validation_id,
+        [0x81; 32],
+        [0x82; 32],
+        [0x83; 32],
+        valid_result_checksum,
+        [0x84; 32],
+        [0x85; 32],
+        1,
+        [0x86; 32],
+        [0x87; 32],
+        NativeValidPostAckActionV0::None,
+        2,
+    )
+    .expect("exact delivery comparison facts");
+
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("authenticated parent");
+    let foreign_config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        validator_id(2),
+        config.validator_set().clone(),
+        *config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+        parent,
+        32,
+        64,
+    )
+    .expect("shape-valid foreign local Core config");
+    let foreign_prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        foreign_config,
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare foreign Core facts");
+    assert!(matches!(
+        Core::begin_authenticated_genesis_application_h1_stable_native_valid_recovery_v0(
+            config.clone(),
+            foreign_prepared,
+            revision_one.clone(),
+            revision_two.clone(),
+            &RootSignatures,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "prepared and configured authenticated-genesis contexts differ"
+        ))
+    ));
+    let splice_prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare exact splice challenge facts");
+    assert!(
+        Core::begin_authenticated_genesis_application_h1_stable_native_valid_recovery_v0(
+            config.clone(),
+            splice_prepared,
+            revision_two.clone(),
+            revision_one.clone(),
+            &RootSignatures,
+        )
+        .is_err()
+    );
+    assert_eq!(
+        Core::recover(config.clone(), revision_two.clone(), &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationActivationUnavailable)
+    );
+
+    let session = Core::begin_authenticated_genesis_application_h1_stable_native_valid_recovery_v0(
+        config,
+        prepared_recovery,
+        revision_one,
+        revision_two,
+        &RootSignatures,
+    )
+    .expect("begin dedicated stable completion recovery");
+    assert_eq!(session.challenge_v0().proposal_v0(), &h1);
+    assert_eq!(session.challenge_v0().validation_id_v0(), validation_id);
+    assert_eq!(
+        session.challenge_v0().completion_carrier_checksum_v0(),
+        carrier_checksum
+    );
+    let core_config_ref = session.challenge_v0().safety_state_record_config_ref_v0();
+    let safety_facts =
+        AuthenticatedGenesisApplicationH1StableNativeValidSafetyHeadFactsV0::from_authenticated_store_comparison_v0(
+            [1; 32], [2; 32], core_config_ref,
+            [3; 32], [4; 32], [5; 32], [6; 32], [7; 32], [8; 32],
+            [9; 32], [10; 32], [11; 32], [12; 32], [13; 32],
+            carrier_checksum, delivery,
+        )
+        .expect("shape-valid inert Safety comparison facts");
+    struct Reconciler;
+    impl AuthenticatedGenesisApplicationH1StableNativeValidRecoveryReconcilerV0 for Reconciler {
+        fn reconcile_authenticated_genesis_application_h1_stable_native_valid_v0(
+            &mut self,
+            _challenge: &AuthenticatedGenesisApplicationH1StableNativeValidRecoveryChallengeV0,
+            _safety_head_facts: &AuthenticatedGenesisApplicationH1StableNativeValidSafetyHeadFactsV0,
+        ) -> bool {
+            true
+        }
+    }
+    let attestation = session
+        .challenge_v0()
+        .attest_authenticated_reconciliation_v0(safety_facts, &mut Reconciler)
+        .expect("trusted exact join attests the inert tuple");
+    let mut replay = session
+        .reconcile_and_complete_v0(attestation)
+        .expect("session consumes its own attestation");
+    let recovered = replay
+        .release_inert_completed_facts_v0()
+        .expect("release exact completed facts once");
+    assert_eq!(recovered.proposal_v0(), &h1);
+    assert_eq!(recovered.completion_v0().id(), validation_id);
+    assert_eq!(
+        recovered.terminal_fact_v0().valid_overlay(),
+        Some(
+            recovered
+                .completion_v0()
+                .result()
+                .artifact_ref()
+                .expect("Valid")
+                .overlay()
+        )
+    );
+    assert_eq!(recovered.completion_carrier_checksum_v0(), carrier_checksum);
+    assert!(matches!(
+        replay.release_inert_completed_facts_v0(),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "stable h1 completion facts were already released"
+        ))
+    ));
+}
+
+#[test]
+fn authenticated_genesis_h1_offline_rejects_same_header_body_substitution_transactionally_v0() {
+    let (config, h1, mut owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"authenticated genesis canonical body");
+    let substituted_payload =
+        ApplicationPayloadV0::new(vec![b"authenticated genesis substituted body".to_vec()])
+            .expect("canonical substituted payload")
+            .try_cev0_bytes()
+            .expect("encode substituted payload");
+    let substituted_block = Block::new(
+        h1.block().header().clone(),
+        substituted_payload,
+        h1.block().evidence_objects().to_vec(),
+    )
+    .expect("transport block accepts a same-header body carrier");
+    let substituted = SignedProposalV0::new(
+        substituted_block,
+        h1.witness().clone(),
+        config.validator_set(),
+        None,
+        config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+    )
+    .expect("unchanged signed header and witness remain structurally authenticated");
+    assert_eq!(substituted.block().header(), h1.block().header());
+    assert_eq!(substituted.witness(), h1.witness());
+
+    assert!(matches!(
+        owner.submit_exact_h1_synced_proposal_v0(substituted, &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "offline h1 body is not canonically bound to its signed roots"
+        ))
+    ));
+    assert_eq!(
+        owner
+            .phase_v0()
+            .expect("rejected body leaves owner unchanged"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CommissionedRev0
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_offline_rejects_foreign_application_seal_transactionally_v0() {
+    let (_foreign_config, _foreign_h1, foreign_owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"foreign seal owner");
+    let (config, h1, mut owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"foreign seal target");
+    let obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1, &RootSignatures)
+        .expect("enter exact rev1 phase");
+    let _binding = owner
+        .issue_safety_persistence_binding_v0()
+        .expect("bind the target Safety owner");
+    let request = owner
+        .acknowledge_obligation_persisted_v0(&obligation, obligation.barrier_v0(), &RootSignatures)
+        .expect("release the target request");
+    let claimed = request
+        .try_claim_v0()
+        .unwrap_or_else(|_| panic!("target request must be claimable once"));
+    let (_route, validation_id, block, _parent, permit) = claimed.into_parts();
+    let foreign_sealed = foreign_owner.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(&config, &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+
+    match owner.accept_application_sealed_valid_v0(&foreign_sealed, &RootSignatures) {
+        Err(CoreError::ApplicationSealedValidMismatch(block_id)) => {
+            assert_eq!(block_id, validation_id.block_id());
+        }
+        Err(error) => panic!("foreign application seal returned the wrong error: {error:?}"),
+        Ok(_) => panic!("foreign application seal produced rev2 persistence"),
+    }
+    assert_eq!(
+        owner
+            .phase_v0()
+            .expect("foreign seal leaves owner unchanged"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::ValidationRequestReleasedRev1
+    );
+}
+
+#[test]
+fn authenticated_genesis_h1_offline_enforces_binding_barriers_and_phase_order_v0() {
+    let (config, h1, mut owner) =
+        authenticated_genesis_h1_offline_fixture_v0(b"offline phase and barrier ordering");
+    let obligation = owner
+        .submit_exact_h1_synced_proposal_v0(h1.clone(), &RootSignatures)
+        .expect("enter rev1 pending phase");
+    assert!(matches!(
+        owner.acknowledge_obligation_persisted_v0(
+            &obligation,
+            obligation.barrier_v0(),
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+    let _binding = owner
+        .issue_safety_persistence_binding_v0()
+        .expect("issue exact Safety binding once");
+    assert!(matches!(
+        owner.issue_safety_persistence_binding_v0(),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+    assert!(matches!(
+        owner.acknowledge_obligation_persisted_v0(&obligation, BarrierId::new(9), &RootSignatures,),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+    assert_eq!(
+        owner
+            .phase_v0()
+            .expect("wrong rev1 barrier is transactional"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::ObligationPersistencePendingRev1
+    );
+    let request = owner
+        .acknowledge_obligation_persisted_v0(&obligation, obligation.barrier_v0(), &RootSignatures)
+        .expect("exact rev1 barrier releases one request");
+    assert!(matches!(
+        owner.acknowledge_obligation_persisted_v0(
+            &obligation,
+            obligation.barrier_v0(),
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+    assert!(matches!(
+        owner.submit_exact_h1_synced_proposal_v0(h1, &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+
+    let claimed = request
+        .try_claim_v0()
+        .unwrap_or_else(|_| panic!("ordered request remains uniquely claimable"));
+    let (_route, _id, block, _parent, permit) = claimed.into_parts();
+    let sealed = owner.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(&config, &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+    let completion = owner
+        .accept_application_sealed_valid_v0(&sealed, &RootSignatures)
+        .expect("exact sealed result enters rev2 pending");
+    let [durable_completion] = completion
+        .persistence_v0()
+        .state()
+        .payload_validation_completions()
+    else {
+        panic!("exact rev2 state contains one completion")
+    };
+    let facts = ApplicationNativeValidDeliveryFactsV0::new(
+        PayloadValidationRouteV0::Synced,
+        completion.validation_id_v0(),
+        [0x91; 32],
+        [0x92; 32],
+        [0x93; 32],
+        native_valid_result_checksum_v0(durable_completion.result())
+            .expect("exact rev2 completion is Valid"),
+        [0x94; 32],
+        [0x95; 32],
+        1,
+        [0x96; 32],
+        [0x97; 32],
+        NativeValidPostAckActionV0::None,
+        2,
+    )
+    .expect("exact D facts");
+    let sealed_delivery = owner
+        .seal_authenticated_genesis_h1_native_valid_transition_v0(completion, facts)
+        .expect("seal exact D transition");
+    assert!(matches!(
+        owner.acknowledge_completion_persisted_v0(
+            &sealed_delivery,
+            BarrierId::new(99),
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+    assert_eq!(
+        owner
+            .phase_v0()
+            .expect("wrong rev2 barrier is transactional"),
+        AuthenticatedGenesisApplicationH1OfflinePhaseV0::CompletionPersistencePendingRev2
+    );
+    let _completed = owner
+        .acknowledge_completion_persisted_v0(
+            &sealed_delivery,
+            sealed_delivery.completion_persistence_v0().barrier_v0(),
+            &RootSignatures,
+        )
+        .expect("exact rev2 barrier reaches bounded completion");
+    assert!(matches!(
+        owner.accept_application_sealed_valid_v0(&sealed, &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            _
+        ))
+    ));
+}
+
+#[test]
+fn authenticated_genesis_h1_offline_surface_remains_non_generic_v0() {
+    let source = include_str!("core.rs");
+    let implementation = source
+        .split_once("impl AuthenticatedGenesisApplicationH1OfflineValidationV0 {")
+        .expect("bounded offline h1 implementation remains present")
+        .1
+        .split_once("\n}\n\n/// Inert schema-v12 SafetyState")
+        .expect("bounded offline h1 implementation remains separately auditable")
+        .0;
+    for forbidden in [
+        "pub fn core(",
+        "pub fn step(",
+        "pub fn effects(",
+        "pub fn into_parts(",
+        "pub fn resume(",
+        "pub fn timeout(",
+        "pub fn issue_application_seal_authority_v0(",
+        "pub fn issue_application_finalization",
+    ] {
+        assert!(
+            !implementation.contains(forbidden),
+            "bounded offline h1 owner must not expose `{forbidden}`",
+        );
+    }
+    for forbidden_trait in [
+        "impl Clone for AuthenticatedGenesisApplicationH1OfflineValidationV0",
+        "impl Deref for AuthenticatedGenesisApplicationH1OfflineValidationV0",
+        "impl AsRef<Core> for AuthenticatedGenesisApplicationH1OfflineValidationV0",
+        "impl From<AuthenticatedGenesisApplicationH1OfflineValidationV0> for Core",
+    ] {
+        assert!(
+            !source.contains(forbidden_trait),
+            "bounded offline h1 owner must not expose `{forbidden_trait}`",
+        );
+    }
+}
+
+#[test]
+fn authenticated_genesis_application_bootstrap_prepares_only_inert_canonical_facts_v0() {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture carries the exact application parent");
+    let genesis = genesis_qc(config.validator_set());
+    let prepared = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis.clone(),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("prepare inert authenticated-genesis commissioning facts");
+
+    let state = prepared.safety_state();
+    assert_eq!(state.schema_version(), SAFETY_STATE_SCHEMA_VERSION);
+    assert_eq!(state.revision(), 0);
+    assert_eq!(state.current_view(), View::new(1));
+    assert_eq!(state.high_qc(), state.locked_qc());
+    assert_eq!(state.finalized(), state.application_applied());
+    assert_eq!(state.finalized().height(), Height::new(0));
+    assert_eq!(state.finalized().view(), View::new(0));
+    assert_eq!(state.finalized().block_id(), config.genesis_block_id());
+    assert_eq!(
+        state.finalized().timestamp_ms(),
+        config.trusted_genesis_timestamp_ms()
+    );
+    assert_eq!(
+        state.authenticated_genesis_application_parent_v0(),
+        Some(&parent)
+    );
+    assert_eq!(
+        prepared.authenticated_genesis_application_parent_v0(),
+        parent
+    );
+    assert!(state.state_sync_anchor().is_none());
+    assert!(state.last_voted_view().is_none());
+    assert!(state.last_timeout_view().is_none());
+    assert!(state.payload_terminal_facts().is_empty());
+    assert!(state.payload_validation_obligations().is_empty());
+    assert!(state.payload_validation_completions().is_empty());
+    assert!(state.pending_tc_high_qc_sync().is_none());
+    assert!(state.pending_standalone_qc_sync().is_none());
+    assert!(state.pending_sign().is_none());
+    assert!(state.last_finalization().is_none());
+    assert!(state.finalization_queue().is_empty());
+    assert!(state.pending_finalize().is_none());
+    assert!(state.safety_halt().is_none());
+
+    let record_context = SafetyStateRecordContextV0::new(
+        &config,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+    )
+    .expect("capacity-compatible exact record context");
+    assert_eq!(
+        prepared.safety_state_record_config_ref_v0(),
+        safety_state_record_config_ref_v0(&record_context)
+            .expect("derive the same canonical record config reference")
+    );
+    let foreign_profile = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis.clone(),
+        [0x72; 32],
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("a distinct nonzero verifier profile remains structurally valid");
+    assert_ne!(
+        prepared.safety_state_record_config_ref_v0(),
+        foreign_profile.safety_state_record_config_ref_v0(),
+        "the canonical config reference must bind the verifier profile",
+    );
+    let wider_limits = SafetyStateRecordLimitsV0::new(65 * 1024 * 1024, 17 * 1024 * 1024)
+        .expect("shape-valid wider record limits");
+    let wider_envelope = Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config.clone(),
+        genesis.clone(),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        wider_limits,
+        &RootSignatures,
+    )
+    .expect("a wider bounded record envelope remains valid");
+    assert_ne!(
+        prepared.safety_state_record_config_ref_v0(),
+        wider_envelope.safety_state_record_config_ref_v0(),
+        "the canonical config reference must bind the record-resource envelope",
+    );
+    state
+        .validate_exact_authenticated_genesis_application_bootstrap_v0(&config, &genesis)
+        .expect("the returned state retains the exact fresh commissioning shape");
+    assert_safety_state_record_roundtrip_and_validate(&config, state);
+}
+
+#[test]
+fn authenticated_genesis_application_bootstrap_rejects_missing_or_weak_context_v0() {
+    let (plain_config, _) = configured_core();
+    match Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        plain_config.clone(),
+        genesis_qc(plain_config.validator_set()),
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    ) {
+        Err(CoreError::InvalidConfig(
+            "authenticated genesis application bootstrap requires its exact application parent",
+        )) => {}
+        Err(error) => panic!("missing-parent preparation returned the wrong error: {error:?}"),
+        Ok(_) => panic!("missing-parent preparation returned commissioning facts"),
+    }
+
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let genesis = genesis_qc(config.validator_set());
+    match Core::prepare_authenticated_genesis_application_bootstrap_v0(
+            config.clone(),
+            genesis.clone(),
+            [0; 32],
+            safety_state_record_test_limits(),
+            &RootSignatures,
+        ) {
+        Err(CoreError::InvalidConfig(
+            "authenticated genesis application bootstrap requires a nonzero verifier profile reference",
+        )) => {}
+        Err(error) => panic!("zero-profile preparation returned the wrong error: {error:?}"),
+        Ok(_) => panic!("zero-profile preparation returned commissioning facts"),
+    }
+    let insufficient_limits =
+        SafetyStateRecordLimitsV0::new(128, 1).expect("shape-valid but insufficient limits");
+    match Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        config,
+        genesis,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        insufficient_limits,
+        &RootSignatures,
+    ) {
+        Err(CoreError::InvalidConfig(
+            "authenticated genesis application bootstrap safety-state record context is invalid",
+        )) => {}
+        Err(error) => panic!("bounded preparation returned the wrong error: {error:?}"),
+        Ok(_) => panic!("insufficient record limits returned commissioning facts"),
+    }
+}
+
+#[test]
+fn prepared_authenticated_genesis_application_surface_remains_inert_v0() {
+    let source = include_str!("core.rs");
+    assert_eq!(
+        source
+            .matches("impl PreparedAuthenticatedGenesisApplicationBootstrapV0 {")
+            .count(),
+        1,
+        "the prepared facts must keep one auditable inherent implementation",
+    );
+    let implementation = source
+        .split_once("impl PreparedAuthenticatedGenesisApplicationBootstrapV0 {")
+        .expect("prepared authenticated-genesis implementation remains present")
+        .1;
+    let implementation = implementation
+        .split_once("\n}\n\n/// Exact live-only phases")
+        .expect("prepared implementation remains a separately bounded surface")
+        .0;
+
+    for forbidden in [
+        "fn core",
+        "fn into_parts",
+        "fn step",
+        "issue_",
+        "authority",
+        "permit",
+        "receipt",
+    ] {
+        assert!(
+            !implementation.contains(forbidden),
+            "prepared authenticated-genesis facts must not expose `{forbidden}`",
+        );
+    }
+    for forbidden_trait in [
+        "impl Deref for PreparedAuthenticatedGenesisApplicationBootstrapV0",
+        "impl AsRef<Core> for PreparedAuthenticatedGenesisApplicationBootstrapV0",
+        "impl From<PreparedAuthenticatedGenesisApplicationBootstrapV0> for Core",
+    ] {
+        assert!(
+            !source.contains(forbidden_trait),
+            "prepared authenticated-genesis facts must not expose `{forbidden_trait}`",
+        );
+    }
+}
+
+#[test]
+fn authenticated_genesis_application_bootstrap_rejects_every_nonempty_runtime_fact_v0() {
+    let worker = std::thread::Builder::new()
+        .name(std::string::String::from(
+            "core-authenticated-genesis-empty-classifier",
+        ))
+        .stack_size(32 * 1024 * 1024)
+        .spawn(run_authenticated_genesis_runtime_fact_matrix_v0)
+        .expect("spawn the bounded large-stack authenticated-genesis mutation matrix");
+    match worker.join() {
+        Ok(()) => {}
+        Err(payload) => std::panic::resume_unwind(payload),
+    }
+}
+
+fn run_authenticated_genesis_runtime_fact_matrix_v0() {
+    let (config, pristine) = authenticated_genesis_application_fixture_v0();
+    let genesis = genesis_qc(config.validator_set());
+    let set = config.validator_set();
+    let ordinary_block_id = BlockId::new([0x81; 32]);
+    let ordinary_qc = qc(set, 1, 1, ordinary_block_id);
+    let ordinary_reference = QcReferenceV0::ordinary(ordinary_qc.clone());
+    let proposed = proposal(set, genesis.clone(), 1, b"authenticated genesis mutation");
+    let validation_id =
+        ValidationId::new(proposed.block().id(), proposed.block().header().view(), 1);
+    let authenticated_parent = PayloadValidationParentV0::authenticated_genesis_application(
+        pristine.finalized(),
+        config
+            .authenticated_genesis_application_parent_v0()
+            .copied()
+            .expect("fixture carries its authenticated application parent"),
+    )
+    .expect("exact genesis parent context");
+    let obligation = DurablePayloadValidationObligationV0::new(
+        PayloadValidationRouteV0::Proposal,
+        validation_id,
+        proposed,
+        authenticated_parent,
+        1,
+    );
+    let completion = DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Proposal,
+        validation_id,
+        DurablePayloadValidationResultV1::DeterministicallyInvalid,
+        1,
+    );
+    let pending_tc = PendingTcHighQcSync::from_timeout_certificate(timeout_certificate(
+        set,
+        2,
+        ordinary_qc.clone(),
+    ))
+    .expect("canonical pending TC mutation");
+    let vote_root =
+        Vote::signing_root_for_set(set, View::new(1), Height::new(1), ordinary_block_id)
+            .expect("canonical pending vote mutation");
+    let (_plain_config, proof, h1, _h2, _h3) = h1_state_sync_fixture();
+    let finalization = DurableFinalizationV0::new(
+        pristine.finalized(),
+        proof,
+        BlockIdOverlayRefV0::new(h1.block().id(), pristine.finalized().block_id(), [0xA1; 32]),
+    )
+    .expect("shape-valid durable finalization mutation");
+
+    let mut future_view = pristine.clone();
+    future_view.set_current_view(View::new(2));
+    let mut voted = pristine.clone();
+    voted.set_last_voted(View::new(1));
+    let mut timed_out = pristine.clone();
+    timed_out.set_last_timeout(View::new(1));
+    let mut high_qc = pristine.clone();
+    high_qc.set_high_qc(ordinary_reference.clone());
+    let mut locked_qc = pristine.clone();
+    locked_qc.set_locked_qc(ordinary_reference);
+    let mut finalized = pristine.clone();
+    finalized.set_finalized(FinalizedTip::new(
+        Height::new(1),
+        View::new(1),
+        ordinary_block_id,
+        100,
+    ));
+    let mut revision = pristine.clone();
+    revision
+        .next_revision()
+        .expect("advance the durable revision mutation");
+    let mut terminal = pristine.clone();
+    terminal.set_payload_terminal_facts(vec![PayloadTerminalFact::new_deterministically_invalid(
+        BlockId::new([0x91; 32]),
+        1,
+    )]);
+    let mut obligation_state = pristine.clone();
+    obligation_state.set_payload_validation_obligations(vec![obligation]);
+    let mut completion_state = pristine.clone();
+    completion_state.set_payload_validation_completions(vec![completion]);
+    let mut tc_sync = pristine.clone();
+    tc_sync.set_pending_tc_high_qc_sync(Some(pending_tc));
+    let mut standalone_sync = pristine.clone();
+    standalone_sync.set_pending_standalone_qc_sync(Some(PendingStandaloneQcSync::new(ordinary_qc)));
+    let mut pending_sign = pristine.clone();
+    pending_sign.set_pending_sign(Some(SignIntent::Vote {
+        authorizing_safety_revision: 1,
+        view: View::new(1),
+        height: Height::new(1),
+        block_id: ordinary_block_id,
+        signing_root: vote_root,
+    }));
+    let mut last_finalization = pristine.clone();
+    last_finalization.set_last_finalization(finalization.clone());
+    let mut application_applied = pristine.clone();
+    application_applied.set_application_applied(FinalizedTip::new(
+        Height::new(1),
+        View::new(1),
+        ordinary_block_id,
+        100,
+    ));
+    let mut finalization_queue = pristine.clone();
+    finalization_queue.set_finalization_queue(vec![finalization.clone()]);
+    let mut pending_finalize = pristine.clone();
+    pending_finalize.set_pending_finalize(Some(finalization.proof_id()));
+    let mut safety_halt = pristine;
+    safety_halt.set_safety_halt(Some(SafetyHalt::conflicting_payload_validation(
+        ordinary_block_id,
+    )));
+
+    for (name, state) in [
+        ("advanced current view", future_view),
+        ("durable vote watermark", voted),
+        ("durable timeout watermark", timed_out),
+        ("advanced high QC", high_qc),
+        ("advanced locked QC", locked_qc),
+        ("advanced finalized tip", finalized),
+        ("advanced safety revision", revision),
+        ("payload terminal history", terminal),
+        ("payload validation obligation", obligation_state),
+        ("payload validation completion", completion_state),
+        ("pending TC high-QC sync", tc_sync),
+        ("pending standalone QC sync", standalone_sync),
+        ("pending sign outbox", pending_sign),
+        ("last durable finalization", last_finalization),
+        (
+            "advanced application-applied watermark",
+            application_applied,
+        ),
+        ("nonempty finalization queue", finalization_queue),
+        ("pending finalize proof", pending_finalize),
+        ("durable safety halt", safety_halt),
+    ] {
+        assert_eq!(
+            state.validate_exact_authenticated_genesis_application_bootstrap_v0(
+                &config, &genesis,
+            ),
+            Err(CoreError::InvalidRecovery(
+                "authenticated genesis application bootstrap must contain only exact inert revision-zero genesis facts",
+            )),
+            "{name} must not enter the commissioning record",
+        );
+    }
+}
+
+#[test]
+fn fresh_h1_state_sync_bootstrap_is_anchor_only_and_resumes_with_safety_replay() {
+    let (config, proof, h1, _h2, h3) = h1_state_sync_fixture();
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        config.clone(),
+        proof.clone(),
+        &RejectSignatures,
+    )
+    .is_err());
+
+    let prepared = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("the complete h1 proof prepares an inert bootstrap");
+    let state = prepared.safety_state();
+    assert_eq!(state.schema_version(), 12);
+    assert_eq!(state.revision(), 0);
+    assert_eq!(state.finalized(), state.application_applied());
+    assert_eq!(state.finalized().block_id(), h1.block().id());
+    assert_eq!(state.high_qc().qc_ref().block_id(), h3.block().id());
+    assert!(state.last_voted_view().is_none());
+    assert!(state.last_timeout_view().is_none());
+    assert!(state.last_finalization().is_none());
+    assert!(state.finalization_queue().is_empty());
+    assert!(state.pending_finalize().is_none());
+    assert!(state.payload_terminal_facts().is_empty());
+    assert!(state.payload_validation_obligations().is_empty());
+    assert!(state.payload_validation_completions().is_empty());
+    let anchor = state
+        .state_sync_anchor()
+        .expect("schema v12 keeps permanent h1 provenance");
+    assert_eq!(
+        anchor.proof().finalized_block().header(),
+        h1.block().header()
+    );
+    assert_eq!(anchor.authenticated_parent().block_id(), GENESIS);
+    assert_safety_state_record_roundtrip_and_validate(&config, state);
+
+    let durable = prepared.into_safety_state();
+    assert_eq!(
+        Core::recover(config.clone(), durable.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a state-sync anchored namespace requires its dedicated authenticated recovery session"
+        ))
+    );
+    let session =
+        Core::begin_state_sync_anchor_recovery_v0(config, durable.clone(), &RootSignatures)
+            .expect("the exact prepared state creates an inert recovery session");
+    let mut reconciler = ExactFreshStateSyncReconcilerV0 {
+        expected_state: durable,
+        expected_h1: h1.block().header().clone(),
+        accept: true,
+        calls: 0,
+    };
+    let mut core = session
+        .reconcile_and_activate_v0(&mut reconciler)
+        .expect("the trusted host accepted the exact base and virgin signer binding");
+    assert_eq!(reconciler.calls, 1);
+    let effects = core
+        .step(Input::Resume, &RootSignatures)
+        .expect("fresh anchor recovery resumes only through safety replay");
+    assert!(matches!(
+        effects.as_slice(),
+        [Effect::RequestSafetyReplay {
+            finalized,
+            high_qc,
+            locked_qc,
+        }] if *finalized == core.safety_state().finalized()
+            && *high_qc == core.safety_state().high_qc().qc_ref()
+            && *locked_qc == core.safety_state().locked_qc().qc_ref()
+    ));
+}
+
+#[test]
+fn state_sync_anchor_is_replay_request_only_until_successor_recovery_exists() {
+    let (config, proof, h1, h2, _h3) = h1_state_sync_fixture();
+    let durable = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("valid h1 bootstrap")
+        .into_safety_state();
+    let session =
+        Core::begin_state_sync_anchor_recovery_v0(config, durable.clone(), &RootSignatures)
+            .expect("exact h1 session");
+    let mut reconciler = ExactFreshStateSyncReconcilerV0 {
+        expected_state: durable,
+        expected_h1: h1.block().header().clone(),
+        accept: true,
+        calls: 0,
+    };
+    let mut core = session
+        .reconcile_and_activate_v0(&mut reconciler)
+        .expect("exact fresh host reconciliation");
+    let initial = core.clone();
+    let first_replay_request = core
+        .step(Input::Resume, &RootSignatures)
+        .expect("request initial safety replay");
+    let second_replay_request = core
+        .step(Input::Resume, &RootSignatures)
+        .expect("repeat the exact inert safety replay request");
+    assert_eq!(first_replay_request, second_replay_request);
+    assert!(matches!(
+        first_replay_request.as_slice(),
+        [Effect::RequestSafetyReplay { finalized, high_qc, locked_qc }]
+            if *finalized == initial.safety_state().finalized()
+                && *high_qc == initial.safety_state().high_qc().qc_ref()
+                && *locked_qc == initial.safety_state().locked_qc().qc_ref()
+    ));
+    assert_eq!(core, initial, "Resume must leave the anchored Core inert");
+
+    assert_eq!(
+        core.step(Input::SyncedProposal(Box::new(h2)), &RootSignatures),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryUnavailable),
+        "h2 cannot create a durable obligation before anchored-successor recovery"
+    );
+    assert_eq!(core, initial, "rejected h2 replay must be transactional");
+    assert_eq!(core.safety_state().revision(), 0);
+    assert!(core
+        .safety_state()
+        .payload_terminal_fact(h1.block().id())
+        .is_none());
+    assert!(core
+        .safety_state()
+        .payload_validation_completions()
+        .iter()
+        .all(|completion| completion.id().block_id() != h1.block().id()));
+    assert!(core
+        .safety_state()
+        .payload_validation_obligations()
+        .is_empty());
+
+    assert_eq!(
+        core.step(Input::SafetyReplayComplete, &RootSignatures),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryUnavailable),
+        "the replay fence cannot be cleared without authenticated successor recovery"
+    );
+    assert_eq!(core, initial, "rejected replay completion must be inert");
+    assert_eq!(
+        core.step(Input::Resume, &RootSignatures)
+            .expect("the replay request remains idempotently available"),
+        first_replay_request
+    );
+}
+
+#[test]
+fn state_sync_anchor_persisted_state_rejects_every_noncanonical_successor() {
+    let (config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+    let prepared = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("valid h1 bootstrap")
+        .into_safety_state();
+    let mut unreachable_successor = prepared.clone();
+    unreachable_successor
+        .next_revision()
+        .expect("construct a self-consistent but unreachable successor revision");
+
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &unreachable_successor, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "anchored h2 pending phase requires exactly one obligation",
+        )),
+        "storage must not authenticate a revision-only anchored successor",
+    );
+    assert_eq!(
+        Core::validate_persisted_successor_v0(
+            &config,
+            &prepared,
+            &unreachable_successor,
+            &RootSignatures,
+        ),
+        Err(CoreError::InvalidRecovery(
+            "anchored h2 pending phase requires exactly one obligation",
+        )),
+        "the standalone journal must reject the same unreachable successor",
+    );
+}
+
+fn anchored_successor_bundle_and_replay_v0(
+    config: &CoreConfig,
+    state: SafetyState,
+    h2: SignedProposalV0,
+    h3: SignedProposalV0,
+) -> StateSyncAnchorSuccessorReplayV0 {
+    let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+        config,
+        &state,
+        h2.clone(),
+        h3.clone(),
+        &RootSignatures,
+    )
+    .expect("exact h2/h3 carrier");
+    let phase = match state.revision() {
+        0 => StateSyncAnchorSuccessorPhaseV0::H1Bootstrap,
+        1 => StateSyncAnchorSuccessorPhaseV0::H2ValidationPending,
+        2 => StateSyncAnchorSuccessorPhaseV0::H2Valid,
+        3 => StateSyncAnchorSuccessorPhaseV0::H3ValidationPending,
+        4 => StateSyncAnchorSuccessorPhaseV0::H3Valid,
+        revision => panic!("test helper cannot recover phase at revision {revision}"),
+    };
+    let session = Core::begin_state_sync_anchor_successor_recovery_v0(
+        config.clone(),
+        state.clone(),
+        bundle,
+        &RootSignatures,
+    )
+    .expect("stable anchored-successor session");
+    let mut reconciler = ExactAnchorSuccessorReconcilerV0 {
+        expected_state: state,
+        expected_phase: phase,
+        expected_child: h2,
+        expected_grandchild: h3,
+        accept: true,
+        calls: 0,
+    };
+    let replay = session
+        .reconcile_and_activate_v0(&mut reconciler)
+        .expect("trusted exact application closure");
+    assert_eq!(reconciler.calls, 1);
+    replay
+}
+
+fn seal_anchored_successor_valid_v0(
+    replay: &StateSyncAnchorSuccessorReplayV0,
+    authority: &CoreIssuedApplicationSealAuthorityV0,
+    effects: Vec<Effect>,
+) -> ApplicationSealedValidV0 {
+    let request = into_validation_request(effects);
+    let claimed = request
+        .try_claim()
+        .unwrap_or_else(|_| panic!("exact successor request is unclaimed"));
+    let (_route, _id, block, _parent, permit) = claimed.into_parts();
+    authority.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(replay.config(), &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    )
+}
+
+fn h3_valid_anchor_successor_replay_v0() -> (
+    CoreConfig,
+    SignedProposalV0,
+    SignedProposalV0,
+    SignedProposalV0,
+    SafetyState,
+    StateSyncAnchorSuccessorReplayV0,
+) {
+    let (config, proof, h1, h2, h3) = h1_state_sync_fixture();
+    let initial = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("h1 bootstrap")
+        .into_safety_state();
+    let mut replay =
+        anchored_successor_bundle_and_replay_v0(&config, initial, h2.clone(), h3.clone());
+    let authority = replay
+        .issue_application_seal_authority_v0()
+        .expect("one anchored-successor application authority");
+    for expected in [
+        StateSyncAnchorSuccessorPhaseV0::H2Valid,
+        StateSyncAnchorSuccessorPhaseV0::H3Valid,
+    ] {
+        let obligation = replay
+            .step_next_proposal_v0(&RootSignatures)
+            .expect("register exact anchored successor");
+        let (obligation_barrier, _) = persistence_effect(&obligation);
+        let request = replay
+            .step_storage_ack_v0(obligation_barrier, &RootSignatures)
+            .expect("ack successor obligation");
+        let sealed = seal_anchored_successor_valid_v0(&replay, &authority, request);
+        let completion = replay
+            .step_application_sealed_valid_v0(&sealed, &RootSignatures)
+            .expect("record exact successor Valid result");
+        let (completion_barrier, _) = persistence_effect(&completion);
+        assert!(replay
+            .step_storage_ack_v0(completion_barrier, &RootSignatures)
+            .expect("ack successor completion")
+            .is_empty());
+        assert_eq!(replay.phase().expect("stable successor phase"), expected);
+    }
+    let revision_four = replay.safety_state().clone();
+    (config, h1, h2, h3, revision_four, replay)
+}
+
+#[derive(Clone)]
+struct AnchoredOrdinaryRehydrateFixtureV0 {
+    config: CoreConfig,
+    h2: SignedProposalV0,
+    h3: SignedProposalV0,
+    safety: SafetyState,
+    plan: AnchoredOrdinaryReplayArchivePlanV0,
+    entries: Vec<AnchoredOrdinarySignedReplayEntryV0>,
+}
+
+fn anchored_ordinary_rehydrate_fixture_v0() -> AnchoredOrdinaryRehydrateFixtureV0 {
+    let (config, _h1, h2, h3, _revision_four, mut replay) = h3_valid_anchor_successor_replay_v0();
+    let promotion = replay
+        .step_ordinary_promotion_v0(&RootSignatures)
+        .expect("prepare anchored ordinary revision five");
+    let (_, revision_five) = persistence_effect(&promotion);
+    let set = config.validator_set();
+    let parameters = config.consensus_parameters();
+    let q3 = revision_five
+        .state_sync_anchor()
+        .expect("fixture retains permanent h1 anchor")
+        .proof()
+        .grandchild()
+        .certifying_qc()
+        .clone();
+    let h4 = proposal_with_parameters(set, parameters, q3.clone(), 4, b"rehydrate h4");
+    let q4 = qc(set, 4, 4, h4.block().id());
+    let h5 = proposal_with_parameters(set, parameters, q4.clone(), 5, b"rehydrate h5");
+    let q5 = qc(set, 5, 5, h5.block().id());
+    let h4_artifact = artifact_ref_for_ids(h4.block().id(), h3.block().id());
+    let h5_artifact = artifact_ref_for_ids(h5.block().id(), h4.block().id());
+    let h4_commitments = DurableValidatedBlockCommitmentsV1::from_live(
+        valid_commitments_for_config(&config, h4.block()),
+    );
+    let h5_commitments = DurableValidatedBlockCommitmentsV1::from_live(
+        valid_commitments_for_config(&config, h5.block()),
+    );
+    let h4_source = ValidationId::new(h4.block().id(), h4.block().header().view(), 6);
+    let h5_source = ValidationId::new(h5.block().id(), h5.block().header().view(), 8);
+    let h4_target = ValidationId::new(h4.block().id(), h4.block().header().view(), 10);
+    let h5_target = ValidationId::new(h5.block().id(), h5.block().header().view(), 12);
+    let mut completions = revision_five.payload_validation_completions().to_vec();
+    completions.extend([
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Proposal,
+            h4_source,
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h4_commitments,
+                artifact_ref: h4_artifact,
+            },
+            7,
+        ),
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Proposal,
+            h5_source,
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h5_commitments,
+                artifact_ref: h5_artifact,
+            },
+            9,
+        ),
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Synced,
+            h4_target,
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h4_commitments,
+                artifact_ref: h4_artifact,
+            },
+            11,
+        ),
+        DurablePayloadValidationCompletionV0::new(
+            PayloadValidationRouteV0::Synced,
+            h5_target,
+            DurablePayloadValidationResultV1::Valid {
+                commitments: h5_commitments,
+                artifact_ref: h5_artifact,
+            },
+            13,
+        ),
+    ]);
+    completions.sort_by_key(DurablePayloadValidationCompletionV0::key);
+    let mut terminal_facts = revision_five.payload_terminal_facts().to_vec();
+    terminal_facts.extend([
+        PayloadTerminalFact::new_valid(h4_artifact.overlay(), 7),
+        PayloadTerminalFact::new_valid(h5_artifact.overlay(), 9),
+    ]);
+    terminal_facts.sort_by_key(|fact| fact.block_id());
+
+    let certified_h3 = CertifiedHeaderV0::from_signed_proposal(
+        h3.clone(),
+        q3,
+        set,
+        None,
+        parameters,
+        h2.block().header().timestamp_ms(),
+    )
+    .expect("certify replay h3");
+    let certified_h4 = CertifiedHeaderV0::from_signed_proposal(
+        h4.clone(),
+        q4.clone(),
+        set,
+        None,
+        parameters,
+        h3.block().header().timestamp_ms(),
+    )
+    .expect("certify replay h4");
+    let certified_h5 = CertifiedHeaderV0::from_signed_proposal(
+        h5.clone(),
+        q5.clone(),
+        set,
+        None,
+        parameters,
+        h4.block().header().timestamp_ms(),
+    )
+    .expect("certify replay h5");
+    let finality_proof = FinalityProofV0::new(
+        certified_h3,
+        certified_h4,
+        certified_h5,
+        set,
+        None,
+        parameters,
+        h2.block().header().timestamp_ms(),
+    )
+    .expect("construct replay h3 finality proof");
+    let h2_tip = FinalizedTip::new(
+        h2.block().header().height(),
+        h2.block().header().view(),
+        h2.block().id(),
+        h2.block().header().timestamp_ms(),
+    );
+    let h3_tip = FinalizedTip::new(
+        h3.block().header().height(),
+        h3.block().header().view(),
+        h3.block().id(),
+        h3.block().header().timestamp_ms(),
+    );
+    let finalization = DurableFinalizationV0::new(
+        h2_tip,
+        finality_proof,
+        revision_five
+            .payload_terminal_fact(h3.block().id())
+            .and_then(PayloadTerminalFact::valid_overlay)
+            .expect("anchored h3 has a permanent Valid overlay"),
+    )
+    .expect("construct exact replay finalization");
+    let safety = SafetyState::from_persisted_parts_v12(
+        revision_five.schema_version(),
+        revision_five.chain_id(),
+        revision_five.protocol_version(),
+        revision_five.epoch(),
+        revision_five.validator_set_id(),
+        revision_five.genesis_block_id(),
+        revision_five
+            .authenticated_genesis_application_parent_v0()
+            .copied(),
+        View::new(6),
+        revision_five.last_voted_view(),
+        revision_five.last_timeout_view(),
+        QcReferenceV0::ordinary(q5.clone()),
+        QcReferenceV0::ordinary(q4.clone()),
+        h3_tip,
+        13,
+        terminal_facts,
+        Vec::new(),
+        completions,
+        None,
+        None,
+        None,
+        Some(finalization),
+        revision_five.state_sync_anchor().cloned(),
+        h3_tip,
+        Vec::new(),
+        None,
+        None,
+    );
+    Core::validate_persisted_state_v0(&config, &safety, &RootSignatures)
+        .expect("synthetic checkpointed ordinary cut is a valid durable Core state");
+
+    let plan = AnchoredOrdinaryReplayArchivePlanV0::new(
+        [0x10; 32], [0x11; 32], [0x12; 32], 4, [0x13; 32], [0x14; 32], [0x15; 32], 2, 100,
+        [0x16; 32], 9, [0x17; 32], [0x18; 32], [0x19; 32], [0x1a; 32], 20, [0x1b; 32], [0x1c; 32],
+        [0x1e; 32], [0x1f; 32],
+    )
+    .expect("valid replay archive plan");
+    let h4_claim = AnchoredOrdinaryCheckpointedLinkClaimV0::new(
+        plan.session_id_v0(),
+        0,
+        [0x20; 32],
+        [0x30; 32],
+        h4_target,
+        [0x40; 32],
+        plan.canonical_store_sequence_v0(),
+        4,
+        [0x41; 32],
+        h4_artifact.source_artifact_checksum(),
+        [0x42; 32],
+        11,
+        [0x43; 32],
+        plan.initial_checkpoint_scope_v0(),
+        plan.initial_checkpoint_profile_ref_v0(),
+        plan.initial_checkpoint_checksum_v0(),
+        21,
+        [0x44; 32],
+        plan.initial_progress_checksum_v0(),
+        [0x1d; 32],
+        5,
+        [0x45; 32],
+    )
+    .expect("valid h4 checkpointed link claim");
+    let h5_claim = AnchoredOrdinaryCheckpointedLinkClaimV0::new(
+        plan.session_id_v0(),
+        1,
+        [0x21; 32],
+        [0x31; 32],
+        h5_target,
+        [0x40; 32],
+        plan.canonical_store_sequence_v0(),
+        8,
+        [0x46; 32],
+        h5_artifact.source_artifact_checksum(),
+        [0x47; 32],
+        13,
+        [0x48; 32],
+        plan.initial_checkpoint_scope_v0(),
+        plan.initial_checkpoint_profile_ref_v0(),
+        [0x44; 32],
+        22,
+        [0x49; 32],
+        [0x1d; 32],
+        plan.final_progress_checksum_v0(),
+        10,
+        [0x4a; 32],
+    )
+    .expect("valid h5 checkpointed link claim");
+    AnchoredOrdinaryRehydrateFixtureV0 {
+        config,
+        h2,
+        h3,
+        safety,
+        plan,
+        entries: vec![
+            AnchoredOrdinarySignedReplayEntryV0::new(h4, q4, h4_claim),
+            AnchoredOrdinarySignedReplayEntryV0::new(h5, q5, h5_claim),
+        ],
+    }
+}
+
+fn begin_anchored_ordinary_rehydrate_v0(
+    fixture: &AnchoredOrdinaryRehydrateFixtureV0,
+    plan: AnchoredOrdinaryReplayArchivePlanV0,
+    entries: Vec<AnchoredOrdinarySignedReplayEntryV0>,
+) -> Result<AnchoredOrdinaryRehydrateSessionV0> {
+    let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+        &fixture.config,
+        &fixture.safety,
+        fixture.h2.clone(),
+        fixture.h3.clone(),
+        &RootSignatures,
+    )?;
+    let session = Core::begin_state_sync_anchor_ordinary_recovery_v0(
+        fixture.config.clone(),
+        fixture.safety.clone(),
+        bundle,
+        &RootSignatures,
+    )?;
+    let mut reconciler = ExactAnchorOrdinaryReconcilerV0 {
+        expected_state: fixture.safety.clone(),
+        expected_child: fixture.h2.clone(),
+        expected_grandchild: fixture.h3.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let result = session.begin_checkpointed_ordinary_rehydrate_v0(
+        &mut reconciler,
+        plan,
+        entries,
+        &RootSignatures,
+    );
+    assert_eq!(reconciler.calls, 1);
+    result
+}
+
+fn reconcile_anchored_ordinary_rehydrate_v0(
+    fixture: &AnchoredOrdinaryRehydrateFixtureV0,
+) -> AnchoredOrdinaryRehydratedOwnerV0 {
+    let session =
+        begin_anchored_ordinary_rehydrate_v0(fixture, fixture.plan, fixture.entries.clone())
+            .expect("Core authenticates the complete checkpointed replay prefix");
+    let mut reconciler = ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+        expected_state: fixture.safety.clone(),
+        expected_plan: fixture.plan,
+        expected_entries: fixture.entries.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let owner = session
+        .reconcile_checkpointed_links_v0(&mut reconciler)
+        .expect("trusted store owners join every checkpointed replay link");
+    assert_eq!(reconciler.calls, 1);
+    owner
+}
+
+#[allow(clippy::too_many_arguments)]
+fn rebuild_checkpointed_claim_v0(
+    source: AnchoredOrdinaryCheckpointedLinkClaimV0,
+    cursor: u64,
+    source_row_checksum: [u8; 32],
+    source_artifact_checksum: [u8; 32],
+    source_history_checksum: [u8; 32],
+    checkpoint_predecessor_checksum: [u8; 32],
+    checkpoint_checksum: [u8; 32],
+    previous_progress_checksum: [u8; 32],
+    progress_checksum: [u8; 32],
+) -> AnchoredOrdinaryCheckpointedLinkClaimV0 {
+    AnchoredOrdinaryCheckpointedLinkClaimV0::new(
+        source.session_id_v0(),
+        cursor,
+        source.source_validation_store_id_v0(),
+        source.target_validation_store_id_v0(),
+        source.target_core_validation_id_v0(),
+        source.owner_id_v0(),
+        source.source_store_sequence_v0(),
+        source.source_row_revision_v0(),
+        source_row_checksum,
+        source_artifact_checksum,
+        source_history_checksum,
+        source.safety_revision_v0(),
+        source.alias_closure_checksum_v0(),
+        source.checkpoint_scope_v0(),
+        source.checkpoint_profile_ref_v0(),
+        checkpoint_predecessor_checksum,
+        source.checkpoint_generation_v0(),
+        checkpoint_checksum,
+        previous_progress_checksum,
+        progress_checksum,
+        source.link_row_revision_v0(),
+        source.link_row_checksum_v0(),
+    )
+    .expect("mutated test claim remains structurally constructible")
+}
+
+#[test]
+fn anchored_ordinary_bulk_rehydrate_is_exact_replay_fenced_and_repeatable_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+    let session =
+        begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, fixture.entries.clone())
+            .expect("Core authenticates the complete checkpointed replay prefix");
+    let first_digest = session.challenge_v0().rehydrate_digest_v0();
+    let mut reconciler = ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+        expected_state: fixture.safety.clone(),
+        expected_plan: fixture.plan,
+        expected_entries: fixture.entries.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let owner = session
+        .reconcile_checkpointed_links_v0(&mut reconciler)
+        .expect("trusted store owners join every checkpointed link");
+    assert_eq!(reconciler.calls, 1);
+    let facts = owner.facts_v0();
+    assert_eq!(facts.safety_revision_v0(), fixture.safety.revision());
+    assert_eq!(facts.replayed_link_count_v0(), 2);
+    assert_eq!(facts.finalized_v0(), fixture.safety.finalized());
+    assert_eq!(facts.high_qc_v0(), fixture.safety.high_qc().qc_ref());
+    assert_eq!(facts.locked_qc_v0(), fixture.safety.locked_qc().qc_ref());
+    assert_eq!(facts.rehydrate_digest_v0(), first_digest);
+    assert_eq!(
+        owner.challenge_v0().entries_v0(),
+        fixture.entries.as_slice()
+    );
+
+    let reopened =
+        begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, fixture.entries.clone())
+            .expect("process3 may repeat exact deterministic rehydration");
+    assert_eq!(reopened.challenge_v0().rehydrate_digest_v0(), first_digest);
+    let mut reopened_reconciler = ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+        expected_state: fixture.safety.clone(),
+        expected_plan: fixture.plan,
+        expected_entries: fixture.entries.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let reopened_owner = reopened
+        .reconcile_checkpointed_links_v0(&mut reopened_reconciler)
+        .expect("same durable owners can authenticate an exact reopen");
+    assert_eq!(reopened_reconciler.calls, 1);
+    assert_eq!(reopened_owner.facts_v0(), facts);
+}
+
+#[test]
+fn anchored_ordinary_activation_consumes_replay_fence_and_releases_one_exact_timer_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+    let owner = reconcile_anchored_ordinary_rehydrate_v0(&fixture);
+    let rehydrated_facts = owner.facts_v0();
+    let activation = owner
+        .reconcile_and_activate_checkpointed_ordinary_v0(&RootSignatures)
+        .expect("exact checkpointed owner clears only its Core replay fence");
+    assert_eq!(activation.facts_v0(), rehydrated_facts);
+    assert_eq!(
+        activation.startup_timer_v0().epoch_v0(),
+        fixture.safety.epoch()
+    );
+    assert_eq!(
+        activation.startup_timer_v0().view_v0(),
+        fixture.safety.current_view()
+    );
+
+    let (mut core, timer) = activation.into_parts_v0();
+    assert_eq!(core.safety_state(), &fixture.safety);
+    assert!(matches!(
+        timer.into_effect_v0(),
+        Effect::ArmViewTimer { epoch, view }
+            if epoch == fixture.safety.epoch() && view == fixture.safety.current_view()
+    ));
+    assert!(matches!(
+        core.step(Input::Resume, &RootSignatures)
+            .expect("activated Core no longer requests replay")
+            .as_slice(),
+        [Effect::ArmViewTimer { epoch, view }]
+            if *epoch == fixture.safety.epoch() && *view == fixture.safety.current_view()
+    ));
+}
+
+#[test]
+fn anchored_ordinary_activation_rejects_zero_multiple_and_mismatched_timers_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+    let activation = reconcile_anchored_ordinary_rehydrate_v0(&fixture)
+        .reconcile_and_activate_checkpointed_ordinary_v0(&RootSignatures)
+        .expect("fixture reaches the exact activated Core cut");
+    let (core, _timer) = activation.into_parts_v0();
+    let epoch = fixture.safety.epoch();
+    let view = fixture.safety.current_view();
+
+    assert!(matches!(
+        crate::core::exact_anchored_ordinary_replay_complete_timer_v0(&core, Vec::new()),
+        Err(CoreError::AnchoredOrdinaryRehydrateRejected(_))
+    ));
+    assert!(matches!(
+        crate::core::exact_anchored_ordinary_replay_complete_timer_v0(
+            &core,
+            vec![
+                Effect::ArmViewTimer { epoch, view },
+                Effect::ArmViewTimer { epoch, view },
+            ],
+        ),
+        Err(CoreError::AnchoredOrdinaryRehydrateRejected(_))
+    ));
+    assert!(matches!(
+        crate::core::exact_anchored_ordinary_replay_complete_timer_v0(
+            &core,
+            vec![Effect::ArmViewTimer {
+                epoch,
+                view: View::new(view.get() + 1),
+            }],
+        ),
+        Err(CoreError::AnchoredOrdinaryRehydrateRejected(_))
+    ));
+}
+
+#[test]
+fn anchored_ordinary_bulk_rehydrate_rejects_order_gap_fork_and_signed_substitution_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+
+    let mut reversed = fixture.entries.clone();
+    reversed.swap(0, 1);
+    assert!(begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, reversed).is_err());
+
+    let mut cursor_gap = fixture.entries.clone();
+    let entry = cursor_gap[1].clone();
+    let claim = entry.checkpointed_link_v0();
+    let gap_claim = rebuild_checkpointed_claim_v0(
+        claim,
+        2,
+        claim.source_row_checksum_v0(),
+        claim.source_artifact_checksum_v0(),
+        claim.source_application_history_checksum_v0(),
+        claim.checkpoint_predecessor_checksum_v0(),
+        claim.checkpoint_checksum_v0(),
+        claim.previous_progress_checksum_v0(),
+        claim.progress_checksum_v0(),
+    );
+    cursor_gap[1] = AnchoredOrdinarySignedReplayEntryV0::new(
+        entry.proposal_v0().clone(),
+        entry.certifying_qc_v0().clone(),
+        gap_claim,
+    );
+    assert!(begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, cursor_gap).is_err());
+
+    let q3 = fixture.entries[0]
+        .proposal_v0()
+        .witness()
+        .justify_qc()
+        .as_ordinary()
+        .expect("h4 carries q3")
+        .clone();
+    let fork = proposal_with_parameters(
+        fixture.config.validator_set(),
+        fixture.config.consensus_parameters(),
+        q3,
+        4,
+        b"forked replay h4",
+    );
+    let fork_qc = qc(fixture.config.validator_set(), 4, 4, fork.block().id());
+    let mut forked = fixture.entries.clone();
+    forked[1] =
+        AnchoredOrdinarySignedReplayEntryV0::new(fork, fork_qc, forked[1].checkpointed_link_v0());
+    assert!(begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, forked).is_err());
+
+    let mut proposal_substitution = fixture.entries.clone();
+    proposal_substitution[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+        fixture.entries[1].proposal_v0().clone(),
+        fixture.entries[0].certifying_qc_v0().clone(),
+        fixture.entries[0].checkpointed_link_v0(),
+    );
+    assert!(
+        begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, proposal_substitution,)
+            .is_err()
+    );
+
+    let mut qc_substitution = fixture.entries.clone();
+    qc_substitution[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+        fixture.entries[0].proposal_v0().clone(),
+        fixture.entries[1].certifying_qc_v0().clone(),
+        fixture.entries[0].checkpointed_link_v0(),
+    );
+    assert!(
+        begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, qc_substitution,).is_err()
+    );
+
+    let h3_timestamp = fixture.h3.block().header().timestamp_ms();
+    let substituted_timestamp = h3_timestamp
+        .checked_add(fixture.config.max_block_time_step_ms())
+        .and_then(|value| value.checked_add(1))
+        .expect("test timestamp remains bounded");
+    let wrong_time_block = block_with_timestamp(
+        fixture.config.validator_set(),
+        4,
+        4,
+        fixture.h3.block().id(),
+        b"wrong parent timestamp replay",
+        leader_for(fixture.config.validator_set(), View::new(4)),
+        substituted_timestamp,
+    );
+    let wrong_time_proposal = signed_proposal_from_block(
+        fixture.config.validator_set(),
+        fixture.config.consensus_parameters(),
+        wrong_time_block,
+        fixture.entries[0]
+            .proposal_v0()
+            .witness()
+            .justify_qc()
+            .clone(),
+        None,
+        substituted_timestamp - 1,
+    )
+    .expect("proposal is valid only under the substituted parent timestamp");
+    let wrong_time_qc = qc(
+        fixture.config.validator_set(),
+        4,
+        4,
+        wrong_time_proposal.block().id(),
+    );
+    let mut wrong_timestamp = fixture.entries.clone();
+    wrong_timestamp[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+        wrong_time_proposal,
+        wrong_time_qc,
+        fixture.entries[0].checkpointed_link_v0(),
+    );
+    assert!(
+        begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, wrong_timestamp,).is_err()
+    );
+}
+
+#[test]
+fn anchored_ordinary_bulk_rehydrate_rejects_artifact_checkpoint_and_terminal_cut_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+
+    let mut artifact = fixture.entries.clone();
+    let entry = artifact[0].clone();
+    let claim = entry.checkpointed_link_v0();
+    let artifact_claim = rebuild_checkpointed_claim_v0(
+        claim,
+        claim.cursor_v0(),
+        claim.source_row_checksum_v0(),
+        [0x91; 32],
+        claim.source_application_history_checksum_v0(),
+        claim.checkpoint_predecessor_checksum_v0(),
+        claim.checkpoint_checksum_v0(),
+        claim.previous_progress_checksum_v0(),
+        claim.progress_checksum_v0(),
+    );
+    artifact[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+        entry.proposal_v0().clone(),
+        entry.certifying_qc_v0().clone(),
+        artifact_claim,
+    );
+    assert!(begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, artifact).is_err());
+
+    let mut checkpoint = fixture.entries.clone();
+    let entry = checkpoint[0].clone();
+    let claim = entry.checkpointed_link_v0();
+    let checkpoint_claim = rebuild_checkpointed_claim_v0(
+        claim,
+        claim.cursor_v0(),
+        claim.source_row_checksum_v0(),
+        claim.source_artifact_checksum_v0(),
+        claim.source_application_history_checksum_v0(),
+        claim.checkpoint_predecessor_checksum_v0(),
+        [0x92; 32],
+        claim.previous_progress_checksum_v0(),
+        claim.progress_checksum_v0(),
+    );
+    checkpoint[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+        entry.proposal_v0().clone(),
+        entry.certifying_qc_v0().clone(),
+        checkpoint_claim,
+    );
+    assert!(begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, checkpoint).is_err());
+
+    let terminal_plan = AnchoredOrdinaryReplayArchivePlanV0::new(
+        fixture.plan.core_config_ref_v0(),
+        fixture.plan.recovery_challenge_digest_v0(),
+        fixture.plan.archive_context_digest_v0(),
+        fixture.plan.archive_sequence_v0(),
+        fixture.plan.archive_record_digest_v0(),
+        fixture.plan.session_id_v0(),
+        fixture.plan.validation_store_id_v0(),
+        fixture.plan.expected_link_count_v0(),
+        fixture.plan.canonical_store_sequence_v0(),
+        fixture.plan.application_history_digest_v0(),
+        fixture.plan.initial_safety_revision_v0(),
+        fixture.plan.initial_safety_state_checksum_v0(),
+        fixture.plan.initial_safety_chain_checksum_v0(),
+        fixture.plan.initial_checkpoint_scope_v0(),
+        fixture.plan.initial_checkpoint_profile_ref_v0(),
+        fixture.plan.initial_checkpoint_generation_v0(),
+        fixture.plan.initial_checkpoint_checksum_v0(),
+        fixture.plan.initial_progress_checksum_v0(),
+        [0x93; 32],
+        fixture.plan.durable_session_row_checksum_v0(),
+    )
+    .expect("terminal-cut substitution remains shape-valid");
+    assert!(
+        begin_anchored_ordinary_rehydrate_v0(&fixture, terminal_plan, fixture.entries.clone(),)
+            .is_err()
+    );
+}
+
+#[test]
+fn anchored_ordinary_bulk_rehydrate_requires_live_source_k_and_history_join_v0() {
+    let fixture = anchored_ordinary_rehydrate_fixture_v0();
+    for (source_row_checksum, history_checksum) in
+        [([0x94; 32], None), ([0x41; 32], Some([0x95; 32]))]
+    {
+        let mut entries = fixture.entries.clone();
+        let entry = entries[0].clone();
+        let claim = entry.checkpointed_link_v0();
+        let mutated = rebuild_checkpointed_claim_v0(
+            claim,
+            claim.cursor_v0(),
+            source_row_checksum,
+            claim.source_artifact_checksum_v0(),
+            history_checksum.unwrap_or(claim.source_application_history_checksum_v0()),
+            claim.checkpoint_predecessor_checksum_v0(),
+            claim.checkpoint_checksum_v0(),
+            claim.previous_progress_checksum_v0(),
+            claim.progress_checksum_v0(),
+        );
+        entries[0] = AnchoredOrdinarySignedReplayEntryV0::new(
+            entry.proposal_v0().clone(),
+            entry.certifying_qc_v0().clone(),
+            mutated,
+        );
+        let session = begin_anchored_ordinary_rehydrate_v0(&fixture, fixture.plan, entries)
+            .expect("opaque source facts remain untrusted until host reconciliation");
+        let mut exact = ExactCheckpointedOrdinaryRehydrateReconcilerV0 {
+            expected_state: fixture.safety.clone(),
+            expected_plan: fixture.plan,
+            expected_entries: fixture.entries.clone(),
+            accept: true,
+            calls: 0,
+        };
+        assert!(matches!(
+            session.reconcile_checkpointed_links_v0(&mut exact),
+            Err(CoreError::AnchoredOrdinaryRehydrateRejected(_))
+        ));
+        assert_eq!(exact.calls, 1);
+    }
+}
+
+#[test]
+fn application_sealed_valid_to_delivery_returns_only_the_affined_core_d_carrier_v0() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"core D authority");
+    let authority = core
+        .issue_application_seal_authority_v0()
+        .expect("one application authority");
+    let obligation = core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("proposal registers one obligation");
+    let (obligation_barrier, _) = persistence_effect(&obligation);
+    let released = core
+        .step(
+            Input::StorageAck {
+                barrier: obligation_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("obligation persistence releases validation");
+    let request = into_validation_request(released);
+    let claimed = request.try_claim().expect("claim exact request");
+    let (route, id, block, _parent, permit) = claimed.into_parts();
+    let proof = authority.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(core.config(), &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
+    );
+
+    let accepted = core
+        .step_application_sealed_valid_to_delivery_v0(&proof, &RootSignatures)
+        .expect("Core mints one D authority");
+    assert_eq!(accepted.route_v0(), route);
+    assert_eq!(accepted.validation_id_v0(), id);
+    assert_eq!(accepted.completion_revision_v0(), 2);
+    assert_eq!(accepted.barrier_v0().get(), 2);
+    assert_eq!(
+        accepted.persistence_request_v0().state(),
+        core.safety_state()
+    );
+    assert_ne!(accepted.valid_result_checksum_v0(), [0; 32]);
+    assert_ne!(accepted.delivery_digest_v0(), [0; 32]);
+    assert_eq!(
+        accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::RequestSignature),
+        "the vote intent is durable but no RequestSignature effect is released before Safety ACK",
+    );
+    assert!(core.safety_state().pending_sign().is_some());
+    assert!(matches!(
+        core.step_application_sealed_valid_to_delivery_v0(&proof, &RootSignatures),
+        Err(CoreError::UnknownValidation(id_block)) if id_block == block.id()
+    ));
+}
+
+#[test]
+fn h1_anchor_successor_replay_closes_exact_h2_h3_without_side_effects_v0() {
+    let (config, proof, h1, h2, h3) = h1_state_sync_fixture();
+    let initial = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("h1 bootstrap")
+        .into_safety_state();
+    let mut replay =
+        anchored_successor_bundle_and_replay_v0(&config, initial.clone(), h2.clone(), h3.clone());
+    assert_eq!(
+        replay.phase().expect("phase"),
+        StateSyncAnchorSuccessorPhaseV0::H1Bootstrap
+    );
+    let authority = replay
+        .issue_application_seal_authority_v0()
+        .expect("one test application authority");
+
+    let h2_persist = replay
+        .step_next_proposal_v0(&RootSignatures)
+        .expect("exact h2 registers");
+    let (h2_obligation_barrier, h2_obligation_state) = persistence_effect(&h2_persist);
+    assert_eq!(h2_obligation_state.revision(), 1);
+    assert_eq!(
+        h2_obligation_state.payload_validation_obligations().len(),
+        1
+    );
+    assert!(h2_obligation_state
+        .payload_validation_completions()
+        .is_empty());
+    assert_safety_state_record_roundtrip_and_validate(&config, &h2_obligation_state);
+    let mut recovered_h2 = anchored_successor_bundle_and_replay_v0(
+        &config,
+        h2_obligation_state.clone(),
+        h2.clone(),
+        h3.clone(),
+    );
+    assert_eq!(
+        recovered_h2.phase().expect("recovered rev1 phase"),
+        StateSyncAnchorSuccessorPhaseV0::H2ValidationPending
+    );
+    let replayed_h2_obligation = recovered_h2
+        .pending_obligation_persistence_v0()
+        .expect("rev1 recovery retains the exact persistence owner");
+    assert_eq!(replayed_h2_obligation.state(), &h2_obligation_state);
+    assert_eq!(replayed_h2_obligation.barrier(), h2_obligation_barrier);
+    let recovered_h2_authority = recovered_h2
+        .issue_application_seal_authority_v0()
+        .expect("recovered rev1 application authority");
+    let recovered_h2_request = recovered_h2
+        .step_storage_ack_v0(h2_obligation_barrier, &RootSignatures)
+        .expect("rev1 exact barrier remints the sole h2 request");
+    let recovered_h2_sealed = seal_anchored_successor_valid_v0(
+        &recovered_h2,
+        &recovered_h2_authority,
+        recovered_h2_request,
+    );
+    let recovered_h2_completion = recovered_h2
+        .step_application_sealed_valid_v0(&recovered_h2_sealed, &RootSignatures)
+        .expect("recovered rev1 request closes h2");
+    let (recovered_h2_barrier, recovered_h2_state) = persistence_effect(&recovered_h2_completion);
+    assert_eq!(recovered_h2_barrier, BarrierId::new(2));
+    assert_eq!(recovered_h2_state.revision(), 2);
+    let h2_request = replay
+        .step_storage_ack_v0(h2_obligation_barrier, &RootSignatures)
+        .expect("h2 obligation persistence acknowledged");
+    let h2_sealed = seal_anchored_successor_valid_v0(&replay, &authority, h2_request);
+    let h2_valid_persist = replay
+        .step_application_sealed_valid_v0(&h2_sealed, &RootSignatures)
+        .expect("opaque h2 Valid accepted");
+    let (h2_valid_barrier, h2_valid_state) = persistence_effect(&h2_valid_persist);
+    assert_eq!(h2_valid_state.revision(), 2);
+    assert!(h2_valid_state.payload_validation_obligations().is_empty());
+    assert_eq!(h2_valid_state.payload_validation_completions().len(), 1);
+    assert_eq!(h2_valid_state.payload_terminal_facts().len(), 1);
+    assert!(h2_valid_state
+        .payload_terminal_fact(h1.block().id())
+        .is_none());
+    assert_safety_state_record_roundtrip_and_validate(&config, &h2_valid_state);
+    assert!(replay
+        .step_storage_ack_v0(h2_valid_barrier, &RootSignatures)
+        .expect("h2 completion persistence acknowledged")
+        .is_empty());
+
+    let h3_persist = replay
+        .step_next_proposal_v0(&RootSignatures)
+        .expect("exact h3 registers");
+    let (h3_obligation_barrier, h3_obligation_state) = persistence_effect(&h3_persist);
+    assert_eq!(h3_obligation_state.revision(), 3);
+    assert_eq!(
+        h3_obligation_state.payload_validation_obligations().len(),
+        1
+    );
+    assert_eq!(
+        h3_obligation_state.payload_validation_completions().len(),
+        1
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &h3_obligation_state);
+    let mut recovered_h3 = anchored_successor_bundle_and_replay_v0(
+        &config,
+        h3_obligation_state.clone(),
+        h2.clone(),
+        h3.clone(),
+    );
+    assert_eq!(
+        recovered_h3.phase().expect("recovered rev3 phase"),
+        StateSyncAnchorSuccessorPhaseV0::H3ValidationPending
+    );
+    let replayed_h3_obligation = recovered_h3
+        .pending_obligation_persistence_v0()
+        .expect("rev3 recovery retains the exact persistence owner");
+    assert_eq!(replayed_h3_obligation.state(), &h3_obligation_state);
+    assert_eq!(replayed_h3_obligation.barrier(), h3_obligation_barrier);
+    let recovered_h3_authority = recovered_h3
+        .issue_application_seal_authority_v0()
+        .expect("recovered rev3 application authority");
+    let recovered_h3_request = recovered_h3
+        .step_storage_ack_v0(h3_obligation_barrier, &RootSignatures)
+        .expect("rev3 exact barrier remints the sole h3 request");
+    let recovered_h3_sealed = seal_anchored_successor_valid_v0(
+        &recovered_h3,
+        &recovered_h3_authority,
+        recovered_h3_request,
+    );
+    let recovered_h3_completion = recovered_h3
+        .step_application_sealed_valid_v0(&recovered_h3_sealed, &RootSignatures)
+        .expect("recovered rev3 request closes h3");
+    let (recovered_h3_barrier, recovered_h3_state) = persistence_effect(&recovered_h3_completion);
+    assert_eq!(recovered_h3_barrier, BarrierId::new(4));
+    assert_eq!(recovered_h3_state.revision(), 4);
+    let h3_request = replay
+        .step_storage_ack_v0(h3_obligation_barrier, &RootSignatures)
+        .expect("h3 obligation persistence acknowledged");
+    let h3_sealed = seal_anchored_successor_valid_v0(&replay, &authority, h3_request);
+    let h3_valid_persist = replay
+        .step_application_sealed_valid_v0(&h3_sealed, &RootSignatures)
+        .expect("opaque h3 Valid accepted");
+    let (h3_valid_barrier, h3_valid_state) = persistence_effect(&h3_valid_persist);
+    assert_eq!(h3_valid_state.revision(), 4);
+    assert!(h3_valid_state.payload_validation_obligations().is_empty());
+    assert_eq!(h3_valid_state.payload_validation_completions().len(), 2);
+    assert_eq!(h3_valid_state.payload_terminal_facts().len(), 2);
+    assert!(h3_valid_state
+        .payload_terminal_fact(h1.block().id())
+        .is_none());
+    assert_safety_state_record_roundtrip_and_validate(&config, &h3_valid_state);
+    assert!(replay
+        .step_storage_ack_v0(h3_valid_barrier, &RootSignatures)
+        .expect("h3 completion persistence acknowledged")
+        .is_empty());
+    assert_eq!(
+        replay.phase().expect("closed phase"),
+        StateSyncAnchorSuccessorPhaseV0::H3Valid
+    );
+
+    let reopened = anchored_successor_bundle_and_replay_v0(&config, h3_valid_state, h2, h3);
+    assert_eq!(
+        reopened.phase().expect("reopened closed phase"),
+        StateSyncAnchorSuccessorPhaseV0::H3Valid
+    );
+    assert_eq!(
+        reopened.safety_state().finalized().block_id(),
+        h1.block().id()
+    );
+    assert_eq!(
+        reopened.safety_state().application_applied(),
+        initial.application_applied()
+    );
+    assert!(reopened.safety_state().pending_sign().is_none());
+    assert!(reopened.safety_state().pending_finalize().is_none());
+    assert!(reopened.safety_state().finalization_queue().is_empty());
+}
+
+#[test]
+fn h3_valid_anchor_promotion_is_one_exact_persistence_ack_before_generic_core_v0() {
+    let (config, _h1, _h2, _h3, revision_four, mut replay) = h3_valid_anchor_successor_replay_v0();
+    let effects = replay
+        .step_ordinary_promotion_v0(&RootSignatures)
+        .expect("H3Valid crosses the explicit promotion persistence barrier");
+    let request = match effects.as_slice() {
+        [Effect::PersistSafetyState(request)] => request,
+        other => panic!("promotion produced unexpected effects: {other:?}"),
+    };
+    let manifest = request
+        .state_sync_anchor_ordinary_promotion_v0()
+        .expect("promotion request carries its Core-owned manifest");
+    assert_eq!(request.barrier(), BarrierId::new(5));
+    assert_eq!(manifest.transition_revision(), 5);
+    assert_eq!(
+        manifest.anchor_proof_id(),
+        revision_four
+            .state_sync_anchor()
+            .expect("permanent h1 anchor")
+            .proof_id()
+    );
+    assert!(request.native_valid_post_ack_action_v0().is_none());
+    assert!(request.native_finalization_applied_v0().is_none());
+    let expected_revision_five = anchored_state_with_validation_parts_v0(
+        &revision_four,
+        5,
+        revision_four.payload_validation_obligations().to_vec(),
+        revision_four.payload_validation_completions().to_vec(),
+        revision_four.payload_terminal_facts().to_vec(),
+    );
+    assert_eq!(request.state(), &expected_revision_five);
+    assert_eq!(replay.safety_state(), &expected_revision_five);
+    Core::validate_persisted_successor_v0(
+        &config,
+        &revision_four,
+        &expected_revision_five,
+        &RootSignatures,
+    )
+    .expect("the exact revision-four to revision-five promotion is monotonic");
+
+    let activation = replay
+        .acknowledge_ordinary_promotion_v0(request.barrier(), &RootSignatures)
+        .expect("the exact durable barrier releases generic Core");
+    assert!(matches!(
+        activation.effects(),
+        [Effect::ArmViewTimer { epoch, view }]
+            if *epoch == expected_revision_five.epoch()
+                && *view == expected_revision_five.current_view()
+    ));
+    let (mut core, _) = activation.into_parts_v0();
+    assert!(matches!(
+        core.step(Input::Resume, &RootSignatures)
+            .expect("promoted Resume is ordinary"),
+        effects if matches!(effects.as_slice(), [Effect::ArmViewTimer { .. }])
+    ));
+
+    let q3 = expected_revision_five
+        .state_sync_anchor()
+        .expect("permanent anchor")
+        .proof()
+        .grandchild()
+        .certifying_qc()
+        .clone();
+    let h4 = proposal_with_parameters(
+        config.validator_set(),
+        config.consensus_parameters(),
+        q3,
+        4,
+        b"ordinary promoted h4",
+    );
+    let ordinary = core
+        .step(Input::Proposal(Box::new(h4)), &RootSignatures)
+        .expect("promoted Core accepts an ordinary proposal");
+    assert!(matches!(
+        ordinary.as_slice(),
+        [Effect::PersistSafetyState(request)]
+            if request.state().revision() == 6
+                && request.state_sync_anchor_ordinary_promotion_v0().is_none()
+    ));
+}
+
+#[test]
+fn anchor_promotion_rejects_pre_h3_and_recovers_exact_committed_rev5_v0() {
+    let (config, proof, _h1, h2, h3) = h1_state_sync_fixture();
+    let initial = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("h1 bootstrap")
+        .into_safety_state();
+    let mut early =
+        anchored_successor_bundle_and_replay_v0(&config, initial, h2.clone(), h3.clone());
+    assert!(matches!(
+        early.step_ordinary_promotion_v0(&RootSignatures),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryRejected(_))
+    ));
+
+    let (config, _h1, h2, h3, revision_four, mut replay) = h3_valid_anchor_successor_replay_v0();
+    let promotion = replay
+        .step_ordinary_promotion_v0(&RootSignatures)
+        .expect("prepare committed rev5 crash cut");
+    let (barrier, revision_five) = persistence_effect(&promotion);
+    assert_eq!(barrier, BarrierId::new(5));
+    assert!(Core::recover(config.clone(), revision_five.clone(), &RootSignatures,).is_err());
+    let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+        &config,
+        &revision_five,
+        h2.clone(),
+        h3.clone(),
+        &RootSignatures,
+    )
+    .expect("authenticate exact proof-named bodies at promoted cut");
+    let session = Core::begin_state_sync_anchor_ordinary_recovery_v0(
+        config.clone(),
+        revision_five.clone(),
+        bundle,
+        &RootSignatures,
+    )
+    .expect("begin promoted restart recovery");
+    let mut reconciler = ExactAnchorOrdinaryReconcilerV0 {
+        expected_state: revision_five.clone(),
+        expected_child: h2,
+        expected_grandchild: h3,
+        accept: true,
+        calls: 0,
+    };
+    let activation = session
+        .reconcile_and_activate_v0(&mut reconciler, &RootSignatures)
+        .expect("trusted application join recovers promoted Core");
+    assert_eq!(reconciler.calls, 1);
+    assert!(matches!(
+        activation.effects(),
+        [Effect::ArmViewTimer { .. }]
+    ));
+    assert_eq!(activation.core().safety_state(), &revision_five);
+    let (mut recovered, _) = activation.into_parts_v0();
+    assert!(matches!(
+        recovered
+            .step(Input::Resume, &RootSignatures)
+            .expect("restart no longer reissues anchored-successor replay")
+            .as_slice(),
+        [Effect::ArmViewTimer { .. }]
+    ));
+
+    let tampered_rev5 = anchored_state_with_validation_parts_v0(
+        &revision_four,
+        5,
+        Vec::new(),
+        revision_four.payload_validation_completions()[..1].to_vec(),
+        revision_four.payload_terminal_facts()[..1].to_vec(),
+    );
+    assert!(Core::validate_persisted_state_v0(&config, &tampered_rev5, &RootSignatures,).is_err());
+}
+
+#[test]
+fn h1_anchor_successor_bundle_and_reconciler_tamper_fail_closed_v0() {
+    let (config, proof, h1, h2, h3) = h1_state_sync_fixture();
+    let state = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("h1 bootstrap")
+        .into_safety_state();
+
+    let foreign_body = proposal_with_parameters(
+        config.validator_set(),
+        config.consensus_parameters(),
+        h2.witness().justify_qc().clone(),
+        h2.block().header().view().get(),
+        b"foreign h2 body",
+    );
+    assert!(matches!(
+        Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+            &config,
+            &state,
+            foreign_body,
+            h3.clone(),
+            &RootSignatures,
+        ),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryRejected(_))
+    ));
+
+    let substituted_payload = ApplicationPayloadV0::new(vec![b"substituted h2 body".to_vec()])
+        .expect("canonical substituted payload")
+        .try_cev0_bytes()
+        .expect("encode substituted payload");
+    let substituted_block = Block::new(
+        h2.block().header().clone(),
+        substituted_payload,
+        h2.block().evidence_objects().to_vec(),
+    )
+    .expect("transport block accepts a same-header body carrier");
+    let substituted_h2 = SignedProposalV0::new(
+        substituted_block,
+        h2.witness().clone(),
+        config.validator_set(),
+        None,
+        config.consensus_parameters(),
+        h1.block().header().timestamp_ms(),
+    )
+    .expect("proposal witness authenticates the unchanged header");
+    assert_eq!(substituted_h2.block().header(), h2.block().header());
+    assert_eq!(substituted_h2.witness(), h2.witness());
+    assert!(matches!(
+        Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+            &config,
+            &state,
+            substituted_h2,
+            h3.clone(),
+            &RootSignatures,
+        ),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryRejected(_))
+    ));
+
+    assert!(matches!(
+        Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+            &config,
+            &state,
+            h2.clone(),
+            h3.clone(),
+            &RejectSignatures,
+        ),
+        Err(CoreError::Protocol(_))
+    ));
+
+    let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+        &config,
+        &state,
+        h2.clone(),
+        h3.clone(),
+        &RootSignatures,
+    )
+    .expect("exact bundle");
+    let session = Core::begin_state_sync_anchor_successor_recovery_v0(
+        config.clone(),
+        state.clone(),
+        bundle,
+        &RootSignatures,
+    )
+    .expect("exact inert session");
+    let mut rejecting = ExactAnchorSuccessorReconcilerV0 {
+        expected_state: state,
+        expected_phase: StateSyncAnchorSuccessorPhaseV0::H1Bootstrap,
+        expected_child: h2,
+        expected_grandchild: h3,
+        accept: false,
+        calls: 0,
+    };
+    assert!(matches!(
+        session.reconcile_and_activate_v0(&mut rejecting),
+        Err(CoreError::StateSyncAnchorSuccessorRecoveryRejected(_))
+    ));
+    assert_eq!(rejecting.calls, 1);
+}
+
+#[test]
+fn h1_anchor_successor_recovery_recovers_rev3_and_rejects_noncanonical_valid_metadata_v0() {
+    let (config, proof, _h1, h2, h3) = h1_state_sync_fixture();
+    let initial = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("h1 bootstrap")
+        .into_safety_state();
+    let mut replay =
+        anchored_successor_bundle_and_replay_v0(&config, initial, h2.clone(), h3.clone());
+    let authority = replay
+        .issue_application_seal_authority_v0()
+        .expect("one application authority");
+    let h2_o = replay.step_next_proposal_v0(&RootSignatures).expect("h2 O");
+    let (barrier, _) = persistence_effect(&h2_o);
+    let request = replay
+        .step_storage_ack_v0(barrier, &RootSignatures)
+        .expect("h2 P");
+    let sealed = seal_anchored_successor_valid_v0(&replay, &authority, request);
+    let h2_c = replay
+        .step_application_sealed_valid_v0(&sealed, &RootSignatures)
+        .expect("h2 C");
+    let (barrier, rev2) = persistence_effect(&h2_c);
+    assert!(replay
+        .step_storage_ack_v0(barrier, &RootSignatures)
+        .expect("h2 K")
+        .is_empty());
+    let h3_o = replay.step_next_proposal_v0(&RootSignatures).expect("h3 O");
+    let (_barrier, rev3) = persistence_effect(&h3_o);
+    let recovered_rev3 =
+        anchored_successor_bundle_and_replay_v0(&config, rev3.clone(), h2.clone(), h3.clone());
+    assert_eq!(
+        recovered_rev3.phase().expect("rev3 recovery phase"),
+        StateSyncAnchorSuccessorPhaseV0::H3ValidationPending
+    );
+    let recovered_persistence = recovered_rev3
+        .pending_obligation_persistence_v0()
+        .expect("rev3 recovery retains the exact h3 persistence owner");
+    assert_eq!(
+        recovered_persistence.state(),
+        &rev3,
+        "rev3 recovery must replay the byte-identical durable obligation"
+    );
+
+    let exact_completion = rev2.payload_validation_completions()[0].clone();
+    let exact_fact = rev2.payload_terminal_facts()[0];
+    let exact_result = exact_completion.result();
+    let commitments = exact_result.commitments().expect("Valid commitments");
+    let artifact = exact_result.artifact_ref().expect("Valid artifact");
+    let wrong_parent = ValidatedPayloadArtifactRefV0::new(
+        BlockIdOverlayRefV0::new(
+            artifact.overlay().block_id(),
+            BlockId::new([0x91; 32]),
+            artifact.overlay().overlay_checksum(),
+        ),
+        artifact.source_artifact_checksum(),
+    );
+    let wrong_result = DurablePayloadValidationResultV1::Valid {
+        commitments,
+        artifact_ref: wrong_parent,
+    };
+    let wrong_completion = DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        exact_completion.id(),
+        wrong_result,
+        2,
+    );
+    let wrong_fact = PayloadTerminalFact::new_valid(wrong_parent.overlay(), 2);
+    let wrong_parent_state = anchored_state_with_validation_parts_v0(
+        &rev2,
+        2,
+        Vec::new(),
+        vec![wrong_completion],
+        vec![wrong_fact],
+    );
+    assert!(
+        Core::validate_persisted_state_v0(&config, &wrong_parent_state, &RootSignatures,).is_err()
+    );
+
+    let wrong_generation = DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        ValidationId::new(h2.block().id(), h2.block().header().view(), 9),
+        exact_result,
+        2,
+    );
+    let wrong_generation_state = anchored_state_with_validation_parts_v0(
+        &rev2,
+        2,
+        Vec::new(),
+        vec![wrong_generation],
+        vec![exact_fact],
+    );
+    assert!(
+        Core::validate_persisted_state_v0(&config, &wrong_generation_state, &RootSignatures,)
+            .is_err()
+    );
+
+    let wrong_view = DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        ValidationId::new(
+            h2.block().id(),
+            h2.block()
+                .header()
+                .view()
+                .checked_next()
+                .expect("test view can advance"),
+            1,
+        ),
+        exact_result,
+        2,
+    );
+    let wrong_view_state = anchored_state_with_validation_parts_v0(
+        &rev2,
+        2,
+        Vec::new(),
+        vec![wrong_view],
+        vec![exact_fact],
+    );
+    assert!(
+        Core::validate_persisted_state_v0(&config, &wrong_view_state, &RootSignatures).is_err()
+    );
+
+    let wrong_revision = DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        exact_completion.id(),
+        exact_result,
+        1,
+    );
+    let wrong_revision_state = anchored_state_with_validation_parts_v0(
+        &rev2,
+        2,
+        Vec::new(),
+        vec![wrong_revision],
+        vec![exact_fact],
+    );
+    assert!(
+        Core::validate_persisted_state_v0(&config, &wrong_revision_state, &RootSignatures,)
+            .is_err()
+    );
+}
+
+#[test]
+fn fresh_h1_state_sync_anchor_rejects_foreign_config_and_signatures() {
+    let (config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+
+    let foreign_chain = ChainId::from_static("trnm-core-foreign-chain-0");
+    let foreign_chain_set = ValidatorSet::new(
+        config.validator_set().genesis_hash(),
+        foreign_chain,
+        config.validator_set().protocol_version(),
+        config.validator_set().epoch(),
+        config.consensus_parameters().hash(),
+        config.validator_set().validators().to_vec(),
+    )
+    .expect("shape-valid foreign-chain set");
+    let foreign_chain_config = CoreConfig::new(
+        validator_id(1),
+        foreign_chain_set,
+        *config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("shape-valid foreign-chain config");
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        foreign_chain_config,
+        proof.clone(),
+        &RootSignatures,
+    )
+    .is_err());
+
+    let foreign_genesis_set = ValidatorSet::new(
+        GenesisHash::new([0x6b; 32]),
+        config.validator_set().chain_id(),
+        config.validator_set().protocol_version(),
+        config.validator_set().epoch(),
+        config.consensus_parameters().hash(),
+        config.validator_set().validators().to_vec(),
+    )
+    .expect("shape-valid foreign-genesis set");
+    let foreign_genesis_config = CoreConfig::new(
+        validator_id(1),
+        foreign_genesis_set,
+        *config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("shape-valid foreign-genesis config");
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        foreign_genesis_config,
+        proof.clone(),
+        &RootSignatures,
+    )
+    .is_err());
+
+    let mut foreign_validators = config.validator_set().validators().to_vec();
+    foreign_validators[0] = Validator::new(
+        validator_id(1),
+        ConsensusPublicKey::new([0x91; 32]),
+        VotingPower::new(1).expect("positive voting power"),
+    )
+    .expect("shape-valid foreign validator");
+    let foreign_set = ValidatorSet::new(
+        config.validator_set().genesis_hash(),
+        config.validator_set().chain_id(),
+        config.validator_set().protocol_version(),
+        config.validator_set().epoch(),
+        config.consensus_parameters().hash(),
+        foreign_validators,
+    )
+    .expect("shape-valid foreign validator set");
+    let foreign_set_config = CoreConfig::new(
+        validator_id(1),
+        foreign_set,
+        *config.consensus_parameters(),
+        config.trusted_genesis_timestamp_ms(),
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("shape-valid foreign-set config");
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        foreign_set_config,
+        proof.clone(),
+        &RootSignatures,
+    )
+    .is_err());
+
+    let mut parameter_fields = config.consensus_parameters().fields();
+    parameter_fields.base_timeout_ms = parameter_fields.base_timeout_ms.saturating_add(1);
+    let foreign_parameters =
+        ConsensusParametersV0::new(parameter_fields).expect("shape-valid foreign parameters");
+    let foreign_parameter_set = validator_set_with_parameters(&foreign_parameters);
+    let foreign_parameter_config = CoreConfig::new(
+        validator_id(1),
+        foreign_parameter_set,
+        foreign_parameters,
+        config.trusted_genesis_timestamp_ms(),
+        config.max_blocks(),
+        config.max_observed_messages(),
+    )
+    .expect("shape-valid foreign-parameter config");
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        foreign_parameter_config,
+        proof.clone(),
+        &RootSignatures,
+    )
+    .is_err());
+
+    let (signature_config, invalid_signature_proof) =
+        h1_state_sync_proof_with_invalid_proposer_signature();
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        signature_config,
+        invalid_signature_proof,
+        &RootSignatures,
+    )
+    .is_err());
+
+    let _canonical = Core::prepare_h1_state_sync_bootstrap_v0(config, proof, &RootSignatures)
+        .expect("all foreign-context probes leave the canonical source usable");
+}
+
+#[test]
+fn fresh_h1_state_sync_anchor_binds_root_timestamp_kind_and_epoch_fence() {
+    let (root_config, root_proof, root_h1, _root_h2, _root_h3) = h1_state_sync_fixture_with(
+        consensus_parameters(),
+        H1AnchorChainMutationV0 {
+            h1_state_root: StateRoot::new([0x72; 32]),
+            ..H1AnchorChainMutationV0::default()
+        },
+    );
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        root_config.clone(),
+        root_proof.clone(),
+        &RejectSignatures,
+    )
+    .is_err());
+    let root_state =
+        Core::prepare_h1_state_sync_bootstrap_v0(root_config.clone(), root_proof, &RootSignatures)
+            .expect("a distinct authenticated state root prepares an exact anchor")
+            .into_safety_state();
+    assert_eq!(
+        root_state
+            .state_sync_anchor()
+            .expect("prepared state retains its anchor")
+            .proof()
+            .finalized_block()
+            .header()
+            .state_root(),
+        root_h1.block().header().state_root(),
+    );
+    Core::validate_persisted_state_v0(&root_config, &root_state, &RootSignatures)
+        .expect("the exact authenticated root remains durable");
+
+    let (timestamp_config, timestamp_proof, timestamp_h1, _timestamp_h2, _timestamp_h3) =
+        h1_state_sync_fixture_with(
+            consensus_parameters(),
+            H1AnchorChainMutationV0 {
+                h1_timestamp_ms: 101,
+                ..H1AnchorChainMutationV0::default()
+            },
+        );
+    let timestamp_state = Core::prepare_h1_state_sync_bootstrap_v0(
+        timestamp_config.clone(),
+        timestamp_proof,
+        &RootSignatures,
+    )
+    .expect("a distinct valid timestamp prepares an exact anchor")
+    .into_safety_state();
+    assert_eq!(
+        timestamp_state.finalized().timestamp_ms(),
+        timestamp_h1.block().header().timestamp_ms(),
+    );
+    Core::validate_persisted_state_v0(&timestamp_config, &timestamp_state, &RootSignatures)
+        .expect("the exact authenticated timestamp remains durable");
+
+    let kind_parameters = consensus_parameters();
+    let kind_set = validator_set_with_parameters(&kind_parameters);
+    let kind_genesis = genesis_qc(&kind_set);
+    let checkpoint_h1 = block_with_anchor_test_header_fields(
+        &kind_set,
+        1,
+        1,
+        kind_genesis.block_id(),
+        b"checkpoint cannot masquerade as h1",
+        leader_for(&kind_set, View::new(1)),
+        100,
+        StateRoot::new([0x44; 32]),
+        BlockKind::EpochCheckpoint,
+        Some(NextEpochCommitmentHash::new([0x33; 32])),
+    );
+    assert!(signed_proposal_from_block(
+        &kind_set,
+        &kind_parameters,
+        checkpoint_h1,
+        QcReferenceV0::genesis_anchor(kind_genesis),
+        None,
+        GENESIS_TIMESTAMP_MS,
+    )
+    .is_err(),
+    "the canonical signed-proposal type gate prevents a non-Regular h1 from reaching prepare_h1",
+    );
+
+    let bad_timestamp_parameters = consensus_parameters();
+    let bad_h1_timestamp_ms = bad_timestamp_parameters
+        .max_block_time_step_ms()
+        .checked_add(1)
+        .expect("reference timestamp bound does not overflow");
+    let (bad_timestamp_config, bad_timestamp_proof, _bad_h1, _bad_h2, _bad_h3) =
+        h1_state_sync_fixture_with(
+            bad_timestamp_parameters,
+            H1AnchorChainMutationV0 {
+                proof_parent_timestamp_ms: 1,
+                h1_timestamp_ms: bad_h1_timestamp_ms,
+                ..H1AnchorChainMutationV0::default()
+            },
+        );
+    assert!(Core::prepare_h1_state_sync_bootstrap_v0(
+        bad_timestamp_config,
+        bad_timestamp_proof,
+        &RootSignatures,
+    )
+    .is_err());
+
+    let short_parameters = short_epoch_parameters();
+    let shortest_geometry =
+        EpochGeometryV0::new(Epoch::new(0), &short_parameters).expect("valid shortest geometry");
+    assert_eq!(shortest_geometry.checkpoint_height(), Height::new(4));
+    let (fence_config, fence_proof, _fence_h1, _fence_h2, fence_h3) =
+        h1_state_sync_fixture_with(short_parameters, H1AnchorChainMutationV0::default());
+    assert_eq!(
+        fence_h3.block().header().height(),
+        shortest_geometry
+            .last_pre_checkpoint_height()
+            .expect("checkpoint height is positive"),
+    );
+    let fence_state = Core::prepare_h1_state_sync_bootstrap_v0(
+        fence_config.clone(),
+        fence_proof,
+        &RootSignatures,
+    )
+    .expect("the h1 three-chain ends exactly before the earliest valid checkpoint")
+    .into_safety_state();
+    Core::validate_persisted_state_v0(&fence_config, &fence_state, &RootSignatures)
+        .expect("the shortest-geometry fence remains exact after persistence");
+
+    let mut crossing_fence_fields = consensus_parameters().fields();
+    crossing_fence_fields.epoch_length_blocks = 5;
+    crossing_fence_fields.snapshot_lead_blocks = 3;
+    assert!(
+        ConsensusParametersV0::new(crossing_fence_fields).is_err(),
+        "parameter admission forbids moving the checkpoint onto the mandatory h1 three-chain",
+    );
+}
+
+#[test]
+fn fresh_h1_state_sync_anchor_persisted_shape_is_exact_and_history_free() {
+    let (config, proof, h1, _h2, _h3) = h1_state_sync_fixture();
+    let prepared = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("valid fresh anchor")
+        .into_safety_state();
+    let proof = prepared
+        .state_sync_anchor()
+        .expect("prepared state retains its anchor")
+        .proof();
+
+    let wrong_current_view = anchored_state_from_test_parts(
+        &prepared,
+        prepared
+            .current_view()
+            .checked_next()
+            .expect("test view does not overflow"),
+        prepared.high_qc().clone(),
+        prepared.locked_qc().clone(),
+        prepared.revision(),
+        Vec::new(),
+    );
+    let wrong_high = anchored_state_from_test_parts(
+        &prepared,
+        prepared.current_view(),
+        prepared.locked_qc().clone(),
+        prepared.locked_qc().clone(),
+        prepared.revision(),
+        Vec::new(),
+    );
+    let wrong_lock = anchored_state_from_test_parts(
+        &prepared,
+        prepared.current_view(),
+        prepared.high_qc().clone(),
+        QcReferenceV0::ordinary(proof.grandchild().certifying_qc().clone()),
+        prepared.revision(),
+        Vec::new(),
+    );
+    let wrong_revision = anchored_state_from_test_parts(
+        &prepared,
+        prepared.current_view(),
+        prepared.high_qc().clone(),
+        prepared.locked_qc().clone(),
+        1,
+        Vec::new(),
+    );
+    let synthetic_h1_history = anchored_state_from_test_parts(
+        &prepared,
+        prepared.current_view(),
+        prepared.high_qc().clone(),
+        prepared.locked_qc().clone(),
+        1,
+        vec![PayloadTerminalFact::new_deterministically_invalid(
+            h1.block().id(),
+            1,
+        )],
+    );
+
+    for (name, malformed) in [
+        ("current-view", wrong_current_view),
+        ("high-qc", wrong_high),
+        ("locked-qc", wrong_lock),
+        ("revision", wrong_revision),
+        ("h1-history", synthetic_h1_history),
+    ] {
+        assert!(
+            Core::validate_persisted_state_v0(&config, &malformed, &RootSignatures).is_err(),
+            "persisted anchor accepted noncanonical {name}",
+        );
+    }
+    Core::validate_persisted_state_v0(&config, &prepared, &RootSignatures)
+        .expect("all rejection probes leave the canonical source unchanged");
+}
+
+#[test]
+fn fresh_h1_state_sync_anchor_record_is_exact_and_configuration_bound() {
+    let (config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+    let prepared = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
+        .expect("valid fresh anchor")
+        .into_safety_state();
+    let context = SafetyStateRecordContextV0::new(
+        &config,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+    )
+    .expect("valid record context");
+    let encoded = encode_safety_state_record_v0(&prepared, &context)
+        .expect("encode canonical anchored record");
+    let decoded = decode_safety_state_record_v0_exact(&encoded, &context)
+        .expect("decode exact canonical anchored record");
+    assert_eq!(decoded.state(), &prepared);
+    Core::validate_persisted_state_v0(&config, decoded.state(), &RootSignatures)
+        .expect("decoded anchored record passes Core semantics");
+
+    let semantic_tamper = anchored_state_from_test_parts(
+        &prepared,
+        prepared.current_view(),
+        prepared.high_qc().clone(),
+        prepared.locked_qc().clone(),
+        1,
+        Vec::new(),
+    );
+    let semantic_tamper_bytes = encode_safety_state_record_v0(&semantic_tamper, &context)
+        .expect("record framing can encode inert decoder-facing parts");
+    let semantic_tamper_record =
+        decode_safety_state_record_v0_exact(&semantic_tamper_bytes, &context)
+            .expect("record framing authenticates bytes, not Core reachability");
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, semantic_tamper_record.state(), &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "anchored h2 pending phase requires exactly one obligation",
+        )),
+    );
+
+    let mut checksum_tampered = encoded.clone();
+    let last = checksum_tampered
+        .last_mut()
+        .expect("an encoded record has a checksum");
+    *last ^= 1;
+    assert!(decode_safety_state_record_v0_exact(&checksum_tampered, &context).is_err());
+
+    let mut trailing = encoded.clone();
+    trailing.push(0);
+    assert!(decode_safety_state_record_v0_exact(&trailing, &context).is_err());
+
+    let mut config_ref_tampered = encoded.clone();
+    config_ref_tampered[12] ^= 1;
+    assert_eq!(
+        decode_safety_state_record_v0_exact(&config_ref_tampered, &context),
+        Err(SafetyStateRecordErrorV0::ConfigMismatch),
+    );
+
+    let foreign_context =
+        SafetyStateRecordContextV0::new(&config, [0x72; 32], safety_state_record_test_limits())
+            .expect("shape-valid foreign verifier-profile context");
+    assert_eq!(
+        decode_safety_state_record_v0_exact(&encoded, &foreign_context),
+        Err(SafetyStateRecordErrorV0::ConfigMismatch),
+    );
+}
+
+#[test]
+fn native_valid_post_ack_manifest_has_eight_closed_action_codes() {
+    use crate::model::DeferredEffect;
+
+    let cases = [
+        (Vec::new(), NativeValidPostAckActionV0::None),
+        (
+            vec![DeferredEffect::RequestSignature],
+            NativeValidPostAckActionV0::RequestSignature,
+        ),
+        (
+            vec![DeferredEffect::ArmViewTimer],
+            NativeValidPostAckActionV0::ArmViewTimer,
+        ),
+        (
+            vec![DeferredEffect::ArmViewTimer, DeferredEffect::Finalize],
+            NativeValidPostAckActionV0::ArmViewTimerThenFinalize,
+        ),
+        (
+            vec![DeferredEffect::RequestTcHighQcSync],
+            NativeValidPostAckActionV0::RequestTcHighQcSync,
+        ),
+        (
+            vec![DeferredEffect::RequestStandaloneQcSync],
+            NativeValidPostAckActionV0::RequestStandaloneQcSync,
+        ),
+        (
+            vec![
+                DeferredEffect::ArmViewTimer,
+                DeferredEffect::RequestStandaloneQcSync,
+            ],
+            NativeValidPostAckActionV0::ArmViewTimerThenRequestStandaloneQcSync,
+        ),
+        (
+            vec![DeferredEffect::SafetyHalted],
+            NativeValidPostAckActionV0::SafetyHaltedConflict,
+        ),
+    ];
+    for (expected_code, (deferred, expected)) in (0u32..).zip(cases) {
+        assert_eq!(expected.code(), expected_code);
+        assert_eq!(
+            NativeValidPostAckActionV0::from_code(expected_code),
+            Some(expected)
+        );
+        assert_eq!(
+            NativeValidPostAckActionV0::from_deferred_v0(&deferred),
+            Some(expected)
+        );
+    }
+    assert_eq!(NativeValidPostAckActionV0::from_code(8), None);
+    assert_eq!(
+        NativeValidPostAckActionV0::from_deferred_v0(&[DeferredEffect::Finalize]),
+        None
+    );
+    assert_eq!(
+        NativeValidPostAckActionV0::from_deferred_v0(&[
+            DeferredEffect::RequestStandaloneQcSync,
+            DeferredEffect::ArmViewTimer,
+        ]),
+        None
+    );
+}
+
+#[test]
+fn native_finalization_applied_post_ack_manifest_has_nine_distinct_closed_action_codes() {
+    use crate::model::DeferredEffect;
+
+    let cases = [
+        (Vec::new(), NativeFinalizationAppliedPostAckActionV0::None),
+        (
+            vec![DeferredEffect::ArmViewTimer],
+            NativeFinalizationAppliedPostAckActionV0::ArmViewTimer,
+        ),
+        (
+            vec![DeferredEffect::RequestSignature],
+            NativeFinalizationAppliedPostAckActionV0::RequestSignature,
+        ),
+        (
+            vec![
+                DeferredEffect::ArmViewTimer,
+                DeferredEffect::RequestSignature,
+            ],
+            NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenRequestSignature,
+        ),
+        (
+            vec![DeferredEffect::Finalize],
+            NativeFinalizationAppliedPostAckActionV0::Finalize,
+        ),
+        (
+            vec![DeferredEffect::ArmViewTimer, DeferredEffect::Finalize],
+            NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenFinalize,
+        ),
+        (
+            vec![DeferredEffect::RequestTcHighQcSync],
+            NativeFinalizationAppliedPostAckActionV0::RequestTcHighQcSync,
+        ),
+        (
+            vec![DeferredEffect::RequestStandaloneQcSync],
+            NativeFinalizationAppliedPostAckActionV0::RequestStandaloneQcSync,
+        ),
+        (
+            vec![
+                DeferredEffect::ArmViewTimer,
+                DeferredEffect::RequestStandaloneQcSync,
+            ],
+            NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenRequestStandaloneQcSync,
+        ),
+    ];
+    for (expected_code, (deferred, expected)) in (0u32..).zip(cases) {
+        assert_eq!(expected.code(), expected_code);
+        assert_eq!(
+            NativeFinalizationAppliedPostAckActionV0::from_code(expected_code),
+            Some(expected)
+        );
+        assert_eq!(
+            NativeFinalizationAppliedPostAckActionV0::from_deferred_v0(&deferred),
+            Some(expected)
+        );
+    }
+    assert_eq!(NativeFinalizationAppliedPostAckActionV0::from_code(9), None);
+    assert_eq!(
+        NativeFinalizationAppliedPostAckActionV0::from_deferred_v0(&[
+            DeferredEffect::RequestSignature,
+            DeferredEffect::ArmViewTimer,
+        ]),
+        None
+    );
+}
+
+#[test]
+fn native_finalization_applied_recovery_remints_all_nine_shapes_against_exact_outboxes() {
+    let (_config, mut idle) = configured_core();
+    assert!(idle
+        .native_finalization_applied_recovery_effects_for_test_v0(
+            NativeFinalizationAppliedPostAckActionV0::None,
+        )
+        .expect("None matches an idle durable state")
+        .is_empty());
+    assert!(matches!(
+        idle.native_finalization_applied_recovery_effects_for_test_v0(
+            NativeFinalizationAppliedPostAckActionV0::ArmViewTimer,
+        )
+        .expect("Timer matches the same idle durable state")
+        .as_slice(),
+        [Effect::ArmViewTimer { epoch, view }]
+            if *epoch == idle.safety_state().epoch()
+                && *view == idle.safety_state().current_view()
+    ));
+
+    let (_signature_config, mut signature_source) = configured_core();
+    let signature_set = signature_source.config().validator_set().clone();
+    let signature_proposal = proposal(
+        &signature_set,
+        genesis_qc(&signature_set),
+        1,
+        b"tag3 exact vote-signature action",
+    );
+    let registration = signature_source
+        .step(
+            Input::Proposal(Box::new(signature_proposal)),
+            &RootSignatures,
+        )
+        .expect("proposal registers an exact payload-validation slot");
+    let validation_effects = release_persisted_effects(&mut signature_source, registration);
+    let validation = validation_effect(&validation_effects);
+    let result = valid_result_for_effect(&signature_source, &validation_effects, validation);
+    let sign_effects = signature_source
+        .step(
+            Input::PayloadValidated {
+                id: validation,
+                result,
+            },
+            &RootSignatures,
+        )
+        .expect("validated proposal creates a durable exact vote-sign intent");
+    let (_, signature_state) = persistence_effect(&sign_effects);
+    let mut timer_signature = signature_source.clone();
+    let mut signature = signature_source;
+    assert!(matches!(
+        signature
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::RequestSignature,
+            )
+            .expect("Signature matches the exact durable sign intent")
+            .as_slice(),
+        [Effect::RequestSignature { intent }]
+            if intent.signing_root()
+                == signature_state.pending_sign().expect("sign intent").signing_root()
+    ));
+    assert!(matches!(
+        timer_signature
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenRequestSignature,
+            )
+            .expect("Timer then Signature preserves exact ordering")
+            .as_slice(),
+        [Effect::ArmViewTimer { .. }, Effect::RequestSignature { .. }]
+    ));
+
+    let (_finalize_config, mut finalize, _id, _result) =
+        finalization_gated_validation(b"tag3 all-shapes finalize");
+    let expected_front = finalize
+        .safety_state()
+        .pending_finalization()
+        .expect("a durable finalization front")
+        .clone();
+    assert!(matches!(
+        finalize
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::Finalize,
+            )
+            .expect("Finalize matches the exact durable queue front")
+            .as_slice(),
+        [Effect::Finalize(front)] if front.as_ref() == &expected_front
+    ));
+    assert!(matches!(
+        finalize
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenFinalize,
+            )
+            .expect("Timer then Finalize preserves exact ordering")
+            .as_slice(),
+        [Effect::ArmViewTimer { .. }, Effect::Finalize(front)]
+            if front.as_ref() == &expected_front
+    ));
+
+    let (_tc_config, mut tc) = configured_core();
+    let tc_set = tc.config().validator_set().clone();
+    let tc_parent = proposal(&tc_set, genesis_qc(&tc_set), 1, b"tag3 tc parent");
+    let tc_parent_qc = qc(&tc_set, 1, 1, tc_parent.block().id());
+    let tc_target = proposal(&tc_set, tc_parent_qc, 2, b"tag3 tc target");
+    let tc_qc = qc(&tc_set, 2, 2, tc_target.block().id());
+    tc.step(
+        Input::TimeoutCertificate(timeout_certificate(&tc_set, 3, tc_qc.clone())),
+        &RootSignatures,
+    )
+    .expect("missing TC target becomes durable");
+    assert!(matches!(
+        tc.native_finalization_applied_recovery_effects_for_test_v0(
+            NativeFinalizationAppliedPostAckActionV0::RequestTcHighQcSync,
+        )
+        .expect("TC action matches its exact durable target")
+        .as_slice(),
+        [Effect::RequestTcHighQcSync { target, .. }]
+            if target.qc_digest() == tc_qc.id()
+    ));
+
+    let (_standalone_config, mut standalone) = configured_core();
+    let standalone_set = standalone.config().validator_set().clone();
+    let standalone_qc = qc(&standalone_set, 1, 1, BlockId::new([0x6a; 32]));
+    standalone
+        .step(
+            Input::QuorumCertificate(standalone_qc.clone()),
+            &RootSignatures,
+        )
+        .expect("unknown QC becomes a durable standalone target");
+    assert!(matches!(
+        standalone
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::RequestStandaloneQcSync,
+            )
+            .expect("Standalone sync matches its exact durable target")
+            .as_slice(),
+        [Effect::RequestStandaloneQcSync { target, .. }]
+            if target.qc_digest() == standalone_qc.id()
+    ));
+    assert!(matches!(
+        standalone
+            .native_finalization_applied_recovery_effects_for_test_v0(
+                NativeFinalizationAppliedPostAckActionV0::ArmViewTimerThenRequestStandaloneQcSync,
+            )
+            .expect("Timer then standalone sync preserves exact ordering")
+            .as_slice(),
+        [Effect::ArmViewTimer { .. }, Effect::RequestStandaloneQcSync { target, .. }]
+            if target.qc_digest() == standalone_qc.id()
+    ));
+
+    assert_eq!(
+        idle.native_finalization_applied_recovery_effects_for_test_v0(
+            NativeFinalizationAppliedPostAckActionV0::Finalize,
+        ),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "recorded tag-3 action does not match its durable outbox",
+        )),
+        "an inert action code cannot invent a missing durable outbox",
+    );
+}
+
+#[test]
+fn current_tag3_recovery_requires_exact_reconciliation_and_remints_only_its_recorded_action() {
+    let (config, mut core) = configured_core();
+    let authority = finalization_apply_authority_for_test(&core);
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"tag3 recovery one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"tag3 recovery two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"tag3 recovery three");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3.clone(), 4, b"tag3 recovery four");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    for proposed in [p1.clone(), p2.clone(), p3, p4] {
+        replay_valid(&mut core, proposed);
+    }
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate_with_two_qcs(&set, 5, q3, q4)),
+            &RootSignatures,
+        )
+        .expect("two ordered finalizations become durable");
+    let (barrier, _) = persistence_effect(&effects);
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the first finalization request is released");
+
+    let consumed = core
+        .safety_state()
+        .pending_finalization()
+        .expect("the exact first queue front exists")
+        .clone();
+    let permit = core
+        .issue_application_finalization_permit_v0()
+        .expect("the exact queue front has one permit");
+    let readback = finalization_readback_for_test(&core, &authority, &permit);
+    let wrong_readback = authority
+        .application_store_apply_readback_v0(
+            &permit,
+            readback.source_route(),
+            readback.source_validation_id(),
+            readback.ordinal(),
+            readback.application_host_config_ref(),
+            readback.prior_head_checksum(),
+            readback.new_head_checksum(),
+            readback.source_artifact_checksum(),
+            readback.accepted_source_checksum(),
+            readback.applied_job_row_checksum(),
+            [0x99; 32],
+        )
+        .expect("a distinct inert App readback remains comparison data");
+    let receipt = authority
+        .receipt_after_application_store_apply_v0(permit, readback.clone())
+        .expect("the exact App readback creates one receipt");
+    let effects = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect("the App receipt creates one tag-3 persistence request");
+    let request = persistence_request(&effects);
+    let manifest = request
+        .native_finalization_applied_v0()
+        .expect("the current head transition is tag 3");
+    assert_eq!(
+        manifest.post_ack_action_v0(),
+        NativeFinalizationAppliedPostAckActionV0::Finalize,
+    );
+    let persisted = request.state().clone();
+    let transition = finalization_recovery_transition_for_test(
+        &consumed,
+        &readback,
+        manifest.post_ack_action_v0(),
+        persisted.revision(),
+    );
+
+    let session = Core::begin_native_finalization_applied_recovery_v0(
+        config.clone(),
+        persisted.clone(),
+        &RootSignatures,
+    )
+    .expect("an authenticated current tag-3 SafetyState creates an inert session");
+    let mut reject = ExactNativeFinalizationRecoveryReconcilerV0 {
+        expected_revision: persisted.revision(),
+        expected_transition: transition.clone(),
+        expected_readback: readback.clone(),
+        accept: false,
+        calls: 0,
+    };
+    let wrong_transition = finalization_recovery_transition_for_test(
+        &consumed,
+        &readback,
+        manifest.post_ack_action_v0(),
+        persisted
+            .revision()
+            .checked_add(1)
+            .expect("test revision remains bounded"),
+    );
+    assert!(matches!(
+        session.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            &wrong_transition,
+            &readback,
+            &mut reject,
+        ),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "tag-3 transition, SafetyState, and ApplicationStore readback are not exactly congruent",
+        )),
+    ));
+    let transition_with_storage_union =
+        |application_host_config_ref, finalization_checksum, accepted_source_checksum| {
+            NativeFinalizationAppliedRecoveryTransitionV0::from_persisted_parts(
+                transition.ordinal(),
+                transition.proof_id(),
+                transition.parent_block_id(),
+                transition.target_block_id(),
+                transition.overlay_checksum(),
+                transition.source_route(),
+                transition.source_validation_id(),
+                application_host_config_ref,
+                finalization_checksum,
+                transition.source_artifact_checksum(),
+                accepted_source_checksum,
+                transition.applied_job_row_checksum(),
+                transition.prior_head_checksum(),
+                transition.new_head_checksum(),
+                transition.application_receipt_row_checksum(),
+                transition.post_ack_action_v0(),
+                transition.transition_revision(),
+            )
+        };
+    for mismatched_transition in [
+        transition_with_storage_union(
+            [0xa1; 32],
+            transition.finalization_checksum(),
+            transition.accepted_source_checksum(),
+        ),
+        transition_with_storage_union(
+            transition.application_host_config_ref(),
+            [0xa2; 32],
+            transition.accepted_source_checksum(),
+        ),
+        transition_with_storage_union(
+            transition.application_host_config_ref(),
+            transition.finalization_checksum(),
+            [0xa3; 32],
+        ),
+    ] {
+        assert!(matches!(
+            session.challenge().attest_authenticated_reconciliation_v0(
+                &persisted,
+                &mismatched_transition,
+                &readback,
+                &mut reject,
+            ),
+            Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+                "tag-3 transition, SafetyState, and ApplicationStore readback are not exactly congruent",
+            )),
+        ));
+    }
+    assert!(matches!(
+        session.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            &transition,
+            &wrong_readback,
+            &mut reject,
+        ),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "tag-3 transition, SafetyState, and ApplicationStore readback are not exactly congruent",
+        )),
+    ));
+    assert_eq!(
+        reject.calls, 0,
+        "inert mismatches never reach the trusted host"
+    );
+    assert!(matches!(
+        session.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            &transition,
+            &readback,
+            &mut reject,
+        ),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "the trusted host rejected the exact SafetyStore/ApplicationStore tuple",
+        )),
+    ));
+    assert_eq!(reject.calls, 1);
+
+    let mut accept = ExactNativeFinalizationRecoveryReconcilerV0 {
+        expected_revision: persisted.revision(),
+        expected_transition: transition.clone(),
+        expected_readback: readback.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let attestation = session
+        .challenge()
+        .attest_authenticated_reconciliation_v0(&persisted, &transition, &readback, &mut accept)
+        .expect("the trusted host authenticates the exact tuple");
+    assert_eq!(accept.calls, 1);
+    let mut recovered = session
+        .reconcile_and_activate_v0(attestation)
+        .expect("the exact session-affined attestation activates recovery");
+    let mut public_clone = recovered.clone();
+    assert_eq!(
+        public_clone.step(Input::Resume, &RootSignatures),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "the exact tag-3 recovery fence belongs to a different Core instance",
+        )),
+        "a public Core clone cannot consume the original process-local fence",
+    );
+    let before_resume = recovered.safety_state().clone();
+    let effects = recovered
+        .step(Input::Resume, &RootSignatures)
+        .expect("first Resume remints the exact recorded action");
+    assert!(matches!(
+        effects.as_slice(),
+        [Effect::Finalize(next)]
+            if next.as_ref() == before_resume.pending_finalization().expect("next queue front")
+    ));
+    assert_eq!(
+        recovered.safety_state(),
+        &before_resume,
+        "exact action remint creates no SafetyState transition",
+    );
+    assert!(!effects
+        .iter()
+        .any(|effect| matches!(effect, Effect::PersistSafetyState(_))));
+
+    // A public clone receives a fresh process affinity. Even identical
+    // protocol state and inert transition/readback rows cannot activate or
+    // consume the original session fence.
+    let foreign_session = Core::begin_native_finalization_applied_recovery_v0(
+        config,
+        persisted.clone(),
+        &RootSignatures,
+    )
+    .expect("a second inert recovery session has a distinct affinity");
+    let mut foreign_accept = ExactNativeFinalizationRecoveryReconcilerV0 {
+        expected_revision: persisted.revision(),
+        expected_transition: transition.clone(),
+        expected_readback: readback.clone(),
+        accept: true,
+        calls: 0,
+    };
+    let foreign_attestation = foreign_session
+        .challenge()
+        .attest_authenticated_reconciliation_v0(
+            &persisted,
+            &transition,
+            &readback,
+            &mut foreign_accept,
+        )
+        .expect("the second trusted session authenticates its own tuple");
+    let third_session = Core::begin_native_finalization_applied_recovery_v0(
+        recovered.config().clone(),
+        persisted,
+        &RootSignatures,
+    )
+    .expect("a third inert session has another affinity");
+    let rejection = third_session
+        .reconcile_and_activate_v0(foreign_attestation)
+        .expect_err("a foreign session attestation is rejected owner-preservingly");
+    assert_eq!(
+        rejection.error(),
+        &CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "recovery attestation belongs to a different session or SafetyState",
+        ),
+    );
+    let (_error, retry_session, retry_attestation) = rejection.into_parts();
+    foreign_session
+        .reconcile_and_activate_v0(retry_attestation)
+        .expect("the returned attestation remains usable by its issuing session");
+    drop(retry_session);
+}
+
+#[test]
+fn native_valid_post_ack_manifest_is_absent_from_ordinary_persistence() {
+    let (_config, mut timeout_core) = configured_core();
+    let timeout_epoch = timeout_core.safety_state().epoch();
+    let timeout_view = timeout_core.safety_state().current_view();
+    let timeout_effects = timeout_core
+        .step(
+            Input::LocalTimeout {
+                epoch: timeout_epoch,
+                view: timeout_view,
+            },
+            &RootSignatures,
+        )
+        .expect("ordinary timeout intent persists");
+    assert_eq!(
+        persistence_request(&timeout_effects).native_valid_post_ack_action_v0(),
+        None
+    );
+
+    let (_config, mut valid_core) = configured_core();
+    let set = valid_core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"native Valid manifest scope");
+    let registration = valid_core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal registration persists");
+    assert_eq!(
+        persistence_request(&registration).native_valid_post_ack_action_v0(),
+        None,
+        "registration is not a Valid callback transition"
+    );
+    let validation = release_persisted_effects(&mut valid_core, registration);
+    let id = validation_effect(&validation);
+    let result = valid_result_for_effect(&valid_core, &validation, id);
+    let callback = valid_core
+        .step(Input::PayloadValidated { id, result }, &RootSignatures)
+        .expect("Valid callback persists");
+    assert_eq!(
+        persistence_request(&callback).native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::RequestSignature)
+    );
+}
+
+#[test]
+fn native_valid_completion_recovery_remints_one_exact_inert_action_v0() {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"native Valid C plus D or K recovery",
+    );
+    let registration = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal registration persists");
+    let validation = release_persisted_effects(&mut core, registration);
+    let id = validation_effect(&validation);
+    let result = valid_result_for_effect(&core, &validation, id);
+    let callback = core
+        .step(Input::PayloadValidated { id, result }, &RootSignatures)
+        .expect("Valid callback persists");
+    let persisted = persistence_request(&callback).state().clone();
+    let expected_action = persistence_request(&callback)
+        .native_valid_post_ack_action_v0()
+        .expect("NativeValid transition carries one closed action");
+    assert_eq!(
+        expected_action,
+        NativeValidPostAckActionV0::RequestSignature
+    );
+    assert_eq!(
+        Core::recover(config.clone(), persisted.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
+    );
+
+    let session =
+        Core::begin_native_valid_completion_recovery_v0(config, persisted.clone(), &RootSignatures)
+            .expect("one current NativeValid completion creates an inert session");
+    assert_eq!(session.challenge().safety_state(), &persisted);
+    assert_eq!(
+        session.challenge().route_v0(),
+        PayloadValidationRouteV0::Proposal
+    );
+    assert_eq!(session.challenge().validation_id_v0(), id);
+    assert_eq!(
+        session.challenge().valid_result_checksum_v0(),
+        native_valid_result_checksum_v0(session.challenge().completion().result())
+            .expect("the challenged completion is Valid")
+    );
+    let record_checksum = [0x91; 32];
+    let mut reconciler = ExactNativeValidCompletionRecoveryReconcilerV0 {
+        expected_state: persisted.clone(),
+        expected_record_checksum: record_checksum,
+        expected_action,
+        accept: true,
+        calls: 0,
+    };
+    let attestation = session
+        .challenge()
+        .attest_authenticated_reconciliation_v0(
+            &persisted,
+            record_checksum,
+            expected_action,
+            &mut reconciler,
+        )
+        .expect("trusted Safety/App reconciliation mints one linear attestation");
+    assert_eq!(
+        attestation.safety_state_record_checksum_v0(),
+        record_checksum
+    );
+    assert_eq!(attestation.post_ack_action_v0(), expected_action);
+    let mut replay = session
+        .reconcile_and_activate_v0(attestation)
+        .expect("the exact session consumes its own attestation");
+    assert_eq!(reconciler.calls, 1);
+    assert_eq!(replay.safety_state(), &persisted);
+    let recovered = replay
+        .remint_inert_post_ack_action_v0()
+        .expect("the exact action is released once as inert comparison data");
+    assert_eq!(recovered.safety_head_revision_v0(), persisted.revision());
+    assert_eq!(recovered.safety_state_record_checksum_v0(), record_checksum);
+    assert_eq!(recovered.route_v0(), PayloadValidationRouteV0::Proposal);
+    assert_eq!(recovered.validation_id_v0(), id);
+    assert_eq!(recovered.post_ack_action_v0(), expected_action);
+    assert_eq!(
+        recovered.valid_result_checksum_v0(),
+        session_result_checksum_for_test(&persisted)
+    );
+    assert!(matches!(
+        replay.remint_inert_post_ack_action_v0(),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "the exact recovered post-ack action was already reminted"
+        ))
+    ));
+    assert_eq!(replay.safety_state(), &persisted);
+}
+
+fn session_result_checksum_for_test(state: &SafetyState) -> [u8; 32] {
+    native_valid_result_checksum_v0(state.payload_validation_completions()[0].result())
+        .expect("fixture completion is Valid")
+}
+
+fn historical_unavailable_synced_completion_v0(
+) -> (CoreConfig, Core, SignedProposalV0, ValidationId) {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"historical completion before current NativeValid",
+    );
+    let registration = core
+        .step(
+            Input::SyncedProposal(Box::new(proposed.clone())),
+            &RootSignatures,
+        )
+        .expect("historical synced proposal registration persists");
+    let validation = release_persisted_effects(&mut core, registration);
+    let historical_id = synced_validation_effect(&validation);
+    let unavailable = core
+        .step(
+            Input::SyncedPayloadValidated {
+                id: historical_id,
+                result: PayloadValidationResult::Unavailable,
+            },
+            &RootSignatures,
+        )
+        .expect("historical Unavailable completion persists");
+    let (barrier, historical_state) = persistence_effect(&unavailable);
+    assert_eq!(historical_state.payload_validation_completions().len(), 1);
+    assert_eq!(
+        historical_state.payload_validation_completions()[0].id(),
+        historical_id
+    );
+    assert!(core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("historical completion persistence is acknowledged")
+        .is_empty());
+    (config, core, proposed, historical_id)
+}
+
+fn current_native_valid_with_historical_completion_v0(
+) -> (CoreConfig, SafetyState, ValidationId, ValidationId) {
+    let (config, mut core, proposed, historical_id) = historical_unavailable_synced_completion_v0();
+    let registration = core
+        .step(Input::SyncedProposal(Box::new(proposed)), &RootSignatures)
+        .expect("the same proposal registers under a fresh generation");
+    let validation = release_persisted_effects(&mut core, registration);
+    let current_id = synced_validation_effect(&validation);
+    assert_ne!(current_id, historical_id);
+    let result = valid_result_for_effect(&core, &validation, current_id);
+    let callback = core
+        .step(
+            Input::SyncedPayloadValidated {
+                id: current_id,
+                result,
+            },
+            &RootSignatures,
+        )
+        .expect("current Valid completion persists beside history");
+    let (_, state) = persistence_effect(&callback);
+    assert_eq!(state.payload_validation_completions().len(), 2);
+    (config, state, historical_id, current_id)
+}
+
+#[test]
+fn native_valid_completion_recovery_accepts_history_and_one_current_valid_v0() {
+    let (config, state, historical_id, current_id) =
+        current_native_valid_with_historical_completion_v0();
+    let historical = state
+        .payload_validation_completions()
+        .iter()
+        .find(|completion| completion.id() == historical_id)
+        .expect("historical completion remains durable");
+    let current = state
+        .payload_validation_completions()
+        .iter()
+        .find(|completion| completion.id() == current_id)
+        .expect("current Valid completion remains durable");
+    assert!(historical.first_recorded_revision() < state.revision());
+    assert_eq!(current.first_recorded_revision(), state.revision());
+    assert!(current.result().is_valid());
+
+    let session = Core::begin_native_valid_completion_recovery_v0(config, state, &RootSignatures)
+        .expect("bounded recovery selects the unique current Valid completion");
+    assert_eq!(session.challenge().validation_id_v0(), current_id);
+    assert_eq!(
+        session.challenge().route_v0(),
+        PayloadValidationRouteV0::Synced
+    );
+}
+
+#[test]
+fn native_valid_completion_recovery_rejects_two_current_revision_completions_v0() {
+    let (config, state, historical_id, _current_id) =
+        current_native_valid_with_historical_completion_v0();
+    let mut completions = state.payload_validation_completions().to_vec();
+    let historical = completions
+        .iter_mut()
+        .find(|completion| completion.id() == historical_id)
+        .expect("historical completion remains durable");
+    *historical = DurablePayloadValidationCompletionV0::new(
+        historical.route(),
+        historical.id(),
+        historical.result(),
+        state.revision(),
+    );
+    let two_current = decoded_state_with_validation_records(&state, Vec::new(), completions);
+
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(config, two_current, &RootSignatures),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "bounded recovery requires exactly one completion first recorded at the current revision"
+        ))
+    ));
+}
+
+#[test]
+fn native_valid_completion_recovery_ignores_only_historical_completions_v0() {
+    let (config, mut core, proposed, historical_id) = historical_unavailable_synced_completion_v0();
+    let registration = core
+        .step(Input::SyncedProposal(Box::new(proposed)), &RootSignatures)
+        .expect("a fresh synced generation persists");
+    let validation = release_persisted_effects(&mut core, registration);
+    let pending_id = synced_validation_effect(&validation);
+    let cancellation = core
+        .step(
+            Input::CancelSyncedPayloadValidation { id: pending_id },
+            &RootSignatures,
+        )
+        .expect("canceling the fresh generation advances the durable revision");
+    let (_, state) = persistence_effect(&cancellation);
+    assert!(state.payload_validation_obligations().is_empty());
+    assert_eq!(state.payload_validation_completions().len(), 1);
+    let historical = &state.payload_validation_completions()[0];
+    assert_eq!(historical.id(), historical_id);
+    assert!(historical.first_recorded_revision() < state.revision());
+
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(config, state, &RootSignatures),
+        Err(CoreError::NativeValidCompletionRecoveryNotRequired)
+    ));
+}
+
+#[test]
+fn native_valid_completion_recovery_rejects_noncurrent_multiple_and_foreign_v0() {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"native Valid recovery rejection",
+    );
+    let registration = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal registration persists");
+    let validation = release_persisted_effects(&mut core, registration);
+    let id = validation_effect(&validation);
+    let result = valid_result_for_effect(&core, &validation, id);
+    let callback = core
+        .step(Input::PayloadValidated { id, result }, &RootSignatures)
+        .expect("Valid callback persists");
+    let persisted = persistence_request(&callback).state().clone();
+    let action = persistence_request(&callback)
+        .native_valid_post_ack_action_v0()
+        .expect("NativeValid action exists");
+
+    let first = Core::begin_native_valid_completion_recovery_v0(
+        config.clone(),
+        persisted.clone(),
+        &RootSignatures,
+    )
+    .expect("first inert session");
+    let second = Core::begin_native_valid_completion_recovery_v0(
+        config.clone(),
+        persisted.clone(),
+        &RootSignatures,
+    )
+    .expect("second inert session");
+    let mut reconciler = ExactNativeValidCompletionRecoveryReconcilerV0 {
+        expected_state: persisted.clone(),
+        expected_record_checksum: [0x44; 32],
+        expected_action: action,
+        accept: true,
+        calls: 0,
+    };
+    assert!(matches!(
+        first.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            [0; 32],
+            action,
+            &mut reconciler,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "authenticated SafetyStore record checksum is zero"
+        ))
+    ));
+    assert!(matches!(
+        first.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            [0x44; 32],
+            NativeValidPostAckActionV0::RequestTcHighQcSync,
+            &mut reconciler,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "the recorded post-ack action is incompatible with the durable outbox state"
+        ))
+    ));
+    let mut rejecting = ExactNativeValidCompletionRecoveryReconcilerV0 {
+        expected_state: persisted.clone(),
+        expected_record_checksum: [0x44; 32],
+        expected_action: action,
+        accept: false,
+        calls: 0,
+    };
+    assert!(matches!(
+        first.challenge().attest_authenticated_reconciliation_v0(
+            &persisted,
+            [0x44; 32],
+            action,
+            &mut rejecting,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "the trusted host rejected the exact SafetyStore/ApplicationStore tuple"
+        ))
+    ));
+    assert_eq!(rejecting.calls, 1);
+    let foreign = first
+        .challenge()
+        .attest_authenticated_reconciliation_v0(&persisted, [0x44; 32], action, &mut reconciler)
+        .expect("first session mints its own attestation");
+    assert!(matches!(
+        second.reconcile_and_activate_v0(foreign),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "recovery attestation belongs to a different session or SafetyState"
+        ))
+    ));
+
+    let mut two = persisted.payload_validation_completions().to_vec();
+    let base = &two[0];
+    let second_id = ValidationId::new(
+        base.id().block_id(),
+        base.id().view(),
+        base.id()
+            .generation()
+            .checked_add(1)
+            .expect("test generation"),
+    );
+    two.push(DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        second_id,
+        base.result(),
+        persisted.revision(),
+    ));
+    two.sort_by_key(DurablePayloadValidationCompletionV0::key);
+    let multiple = decoded_state_with_validation_records(&persisted, Vec::new(), two);
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(config.clone(), multiple, &RootSignatures,),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "bounded recovery requires exactly one completion first recorded at the current revision"
+        ))
+    ));
+
+    let old = SafetyState::from_persisted_parts(
+        persisted.schema_version(),
+        persisted.chain_id(),
+        persisted.protocol_version(),
+        persisted.epoch(),
+        persisted.validator_set_id(),
+        persisted.genesis_block_id(),
+        persisted.current_view(),
+        persisted.last_voted_view(),
+        persisted.last_timeout_view(),
+        persisted.high_qc().clone(),
+        persisted.locked_qc().clone(),
+        persisted.finalized(),
+        persisted.revision().checked_add(1).expect("test revision"),
+        persisted.payload_terminal_facts().to_vec(),
+        Vec::new(),
+        persisted.payload_validation_completions().to_vec(),
+        persisted.pending_tc_high_qc_sync().cloned(),
+        persisted.pending_standalone_qc_sync().cloned(),
+        persisted.pending_sign().cloned(),
+        persisted.last_finalization().cloned(),
+        persisted.pending_finalize(),
+        persisted.safety_halt().cloned(),
+    );
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(config, old, &RootSignatures),
+        Err(CoreError::NativeValidCompletionRecoveryNotRequired)
+    ));
+
+    let (anchor_config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+    let anchored =
+        Core::prepare_h1_state_sync_bootstrap_v0(anchor_config.clone(), proof, &RootSignatures)
+            .expect("exact h1 bootstrap")
+            .into_safety_state();
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(anchor_config, anchored, &RootSignatures,),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "state-sync anchored NativeValid completion requires its bounded successor protocol"
+        ))
+    ));
+
+    let (obligation_config, mut obligation_core) = configured_core();
+    let obligation_set = obligation_core.config().validator_set().clone();
+    let obligation_proposal = proposal(
+        &obligation_set,
+        genesis_qc(&obligation_set),
+        1,
+        b"ordinary obligation cannot enter completion recovery",
+    );
+    let obligation_effects = obligation_core
+        .step(
+            Input::Proposal(Box::new(obligation_proposal)),
+            &RootSignatures,
+        )
+        .expect("ordinary proposal creates one obligation");
+    let (_, obligation_state) = persistence_effect(&obligation_effects);
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(
+            obligation_config,
+            obligation_state,
+            &RootSignatures,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "NativeValid completion recovery cannot overlap a validation obligation"
+        ))
+    ));
+
+    let (unavailable_config, mut unavailable_core) = configured_core();
+    let unavailable_set = unavailable_core.config().validator_set().clone();
+    let unavailable_proposal = proposal(
+        &unavailable_set,
+        genesis_qc(&unavailable_set),
+        1,
+        b"Unavailable completion cannot enter NativeValid recovery",
+    );
+    let unavailable_registration = unavailable_core
+        .step(
+            Input::SyncedProposal(Box::new(unavailable_proposal)),
+            &RootSignatures,
+        )
+        .expect("synced proposal creates one obligation");
+    let unavailable_validation =
+        release_persisted_effects(&mut unavailable_core, unavailable_registration);
+    let unavailable_id = synced_validation_effect(&unavailable_validation);
+    let unavailable_effects = unavailable_core
+        .step(
+            Input::SyncedPayloadValidated {
+                id: unavailable_id,
+                result: PayloadValidationResult::Unavailable,
+            },
+            &RootSignatures,
+        )
+        .expect("Unavailable closes the exact durable generation");
+    let (_, unavailable_state) = persistence_effect(&unavailable_effects);
+    assert!(matches!(
+        Core::begin_native_valid_completion_recovery_v0(
+            unavailable_config,
+            unavailable_state,
+            &RootSignatures,
+        ),
+        Err(CoreError::NativeValidCompletionRecoveryRejected(
+            "the current durable completion is not Valid"
+        ))
+    ));
 }
 
 fn assert_rejected_without_state_change(core: &mut Core, input: Input) {
@@ -616,9 +6210,13 @@ fn into_validation_request(effects: Vec<Effect>) -> PayloadValidationRequest {
 }
 
 fn valid_commitments(core: &Core, block: &Block) -> ValidatedBlockCommitmentsV0 {
+    valid_commitments_for_config(core.config(), block)
+}
+
+fn valid_commitments_for_config(config: &CoreConfig, block: &Block) -> ValidatedBlockCommitmentsV0 {
     let application_payload = decode_application_payload_v0_exact(
         block.application_payload(),
-        core.config().consensus_parameters(),
+        config.consensus_parameters(),
     )
     .expect("core test block carries exact application payload CEV0");
     let receipts = ExecutionReceiptsV0::new(
@@ -641,7 +6239,7 @@ fn valid_commitments(core: &Core, block: &Block) -> ValidatedBlockCommitmentsV0 
         .evidence_objects()
         .iter()
         .map(|bytes| {
-            decode_double_vote_evidence_v0_exact(bytes, core.config().validator_set())
+            decode_double_vote_evidence_v0_exact(bytes, config.validator_set())
                 .expect("core test block carries exact evidence CEV0")
         })
         .collect();
@@ -649,17 +6247,31 @@ fn valid_commitments(core: &Core, block: &Block) -> ValidatedBlockCommitmentsV0 
     body.validate_ordinary_commitments(
         block.header(),
         &receipts,
-        core.config().consensus_parameters(),
-        core.config().validator_set(),
+        config.consensus_parameters(),
+        config.validator_set(),
         &RootSignatures,
     )
     .expect("canonical core-test block mints the B2-D commitment capability")
 }
 
+fn artifact_ref_for_ids(block_id: BlockId, parent_id: BlockId) -> ValidatedPayloadArtifactRefV0 {
+    let mut overlay_checksum = *block_id.as_bytes();
+    overlay_checksum[0] ^= 0x5a;
+    let mut source_artifact_checksum = *block_id.as_bytes();
+    source_artifact_checksum[0] ^= 0xa5;
+    ValidatedPayloadArtifactRefV0::new(
+        BlockIdOverlayRefV0::new(block_id, parent_id, overlay_checksum),
+        source_artifact_checksum,
+    )
+}
+
 fn valid_result(core: &Core, block: &Block) -> PayloadValidationResult {
-    PayloadValidationResult::Valid {
-        commitments: valid_commitments(core, block),
-    }
+    let block_id = block.id();
+    let parent_id = block.header().parent_id();
+    PayloadValidationResult::authorized_valid_v0(
+        valid_commitments(core, block),
+        artifact_ref_for_ids(block_id, parent_id),
+    )
 }
 
 fn valid_result_for_effect(
@@ -673,6 +6285,13 @@ fn valid_result_for_effect(
 fn persistence_effect(effects: &[Effect]) -> (BarrierId, SafetyState) {
     match effects {
         [Effect::PersistSafetyState(request)] => (request.barrier(), request.state().clone()),
+        _ => panic!("expected exactly one persistence effect: {effects:?}"),
+    }
+}
+
+fn persistence_request(effects: &[Effect]) -> &SafetyStatePersistenceV0 {
+    match effects {
+        [Effect::PersistSafetyState(request)] => request,
         _ => panic!("expected exactly one persistence effect: {effects:?}"),
     }
 }
@@ -855,6 +6474,354 @@ fn validation_request_keeps_synthetic_genesis_explicitly_headerless() {
     assert_eq!(request.parent().tip(), core.safety_state().finalized());
     assert_eq!(request.parent().tip().height(), Height::new(0));
     assert!(request.parent().exact_header().is_none());
+    assert!(request.parent().is_legacy_trusted_genesis_v0());
+    assert!(request
+        .parent()
+        .authenticated_genesis_application_parent_v0()
+        .is_none());
+    assert_eq!(
+        request.parent().provenance(),
+        PayloadValidationParentProvenanceV0::Finalized
+    );
+}
+
+#[test]
+fn authenticated_genesis_application_parent_is_inert_config_and_record_bound_v0() {
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let parent = AuthenticatedGenesisApplicationParentV0::new(
+        BlockId::new(*set.genesis_hash().as_bytes()),
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .expect("shape-valid operator-pinned genesis application parent");
+    let config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        parent,
+        32,
+        64,
+    )
+    .expect("shadow-only authenticated-genesis config");
+    let genesis = genesis_qc(&set);
+    assert_eq!(
+        Core::new(config.clone(), genesis.clone(), &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationActivationUnavailable),
+        "an operator-pinned application root cannot activate the generic Core surface",
+    );
+    let durable = SafetyState::from_authenticated_genesis_application_for_test_v0(
+        &set,
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        parent,
+    )
+    .expect("construct inert schema-v12 record fixture");
+    assert_eq!(
+        durable.authenticated_genesis_application_parent_v0(),
+        Some(&parent)
+    );
+    assert_safety_state_record_roundtrip_and_validate(&config, &durable);
+    let application_parent =
+        PayloadValidationParentV0::authenticated_genesis_application(durable.finalized(), parent)
+            .expect("construct inert tagged parent comparison facts");
+    assert_eq!(
+        application_parent.authenticated_genesis_application_parent_v0(),
+        Some(parent)
+    );
+    assert!(application_parent.exact_header().is_none());
+    assert!(!application_parent.is_legacy_trusted_genesis_v0());
+    assert_ne!(
+        application_parent.binding_ref_v0().expect("binding ref"),
+        PayloadValidationParentV0::trusted_genesis(application_parent.tip())
+            .binding_ref_v0()
+            .expect("legacy binding ref"),
+    );
+    assert_eq!(
+        Core::recover(config.clone(), durable.clone(), &RootSignatures),
+        Err(CoreError::AuthenticatedGenesisApplicationActivationUnavailable),
+        "an inert record cannot recover the generic Core surface",
+    );
+
+    let foreign_parent = AuthenticatedGenesisApplicationParentV0::new(
+        parent.genesis_block_id(),
+        parent.timestamp_ms(),
+        parent.state_version(),
+        StateRoot::new([0x32; 32]),
+        parent.descriptor_ref(),
+        parent.projection_profile_ref(),
+    )
+    .expect("shape-valid foreign root");
+    let foreign_config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        validator_id(1),
+        set,
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        foreign_parent,
+        32,
+        64,
+    )
+    .expect("shape-valid foreign config");
+    assert_eq!(
+        Core::validate_persisted_state_v0(&foreign_config, &durable, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "durable authenticated genesis application parent differs from core configuration",
+        ))
+    );
+}
+
+#[test]
+fn authenticated_genesis_application_parent_and_h1_state_sync_anchor_are_mutually_exclusive_v0() {
+    let (plain_config, proof, _h1, _h2, _h3) = h1_state_sync_fixture();
+    let parent = AuthenticatedGenesisApplicationParentV0::new(
+        plain_config.genesis_block_id(),
+        plain_config.trusted_genesis_timestamp_ms(),
+        0,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .expect("shape-valid operator-pinned genesis application parent");
+    let config = CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+        plain_config.local_validator(),
+        plain_config.validator_set().clone(),
+        *plain_config.consensus_parameters(),
+        plain_config.trusted_genesis_timestamp_ms(),
+        parent,
+        32,
+        64,
+    )
+    .expect("shadow-only authenticated-genesis config");
+    let genesis_parent = FinalizedTip::new(
+        Height::new(0),
+        View::new(0),
+        config.genesis_block_id(),
+        config.trusted_genesis_timestamp_ms(),
+    );
+    let anchor = DurableStateSyncAnchorV0::new(genesis_parent, proof)
+        .expect("shape-valid h1 state-sync anchor");
+    let mixed = SafetyState::from_h1_state_sync_anchor(
+        config.validator_set(),
+        config.genesis_block_id(),
+        Some(parent),
+        anchor,
+    )
+    .expect("schema-v12 decoder model can represent the unsupported mixed state");
+    assert_eq!(mixed.schema_version(), 12);
+    assert_eq!(
+        mixed.authenticated_genesis_application_parent_v0(),
+        Some(&parent)
+    );
+    assert!(mixed.state_sync_anchor().is_some());
+    assert_eq!(
+        mixed.validate_exact_authenticated_genesis_application_bootstrap_v0(
+            &config,
+            &genesis_qc(config.validator_set()),
+        ),
+        Err(CoreError::InvalidRecovery(
+            "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
+        )),
+        "the dedicated commissioning guard must reject the mixed trust-root state",
+    );
+
+    let decoded = roundtrip_safety_state_record(&config, &mixed);
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &decoded, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
+        )),
+        "a canonical schema-v12 record cannot combine the two bootstrap trust roots",
+    );
+}
+
+#[test]
+fn authenticated_genesis_application_parent_fences_every_generic_begin_surface_v0() {
+    macro_rules! assert_activation_unavailable {
+        ($surface:literal, $result:expr) => {
+            match $result {
+                Err(CoreError::AuthenticatedGenesisApplicationActivationUnavailable) => {}
+                Err(error) => panic!("{} returned the wrong error: {error:?}", $surface),
+                Ok(_) => panic!("{} leaked a recovery session", $surface),
+            }
+        };
+    }
+
+    let (config, durable) = authenticated_genesis_application_fixture_v0();
+    assert_activation_unavailable!(
+        "begin_state_sync_anchor_recovery_v0",
+        Core::begin_state_sync_anchor_recovery_v0(config.clone(), durable.clone(), &RootSignatures,)
+    );
+    assert_activation_unavailable!(
+        "begin_payload_validation_obligation_recovery_v0",
+        Core::begin_payload_validation_obligation_recovery_v0(
+            config.clone(),
+            durable.clone(),
+            &RootSignatures,
+        )
+    );
+    assert_activation_unavailable!(
+        "begin_native_valid_completion_recovery_v0",
+        Core::begin_native_valid_completion_recovery_v0(
+            config.clone(),
+            durable.clone(),
+            &RootSignatures,
+        )
+    );
+    assert_activation_unavailable!(
+        "begin_native_finalization_applied_recovery_v0",
+        Core::begin_native_finalization_applied_recovery_v0(
+            config.clone(),
+            durable.clone(),
+            &RootSignatures,
+        )
+    );
+
+    let (anchor_config, proof, _h1, h2, h3) = h1_state_sync_fixture();
+    match Core::prepare_h1_state_sync_bootstrap_v0(
+        config.clone(),
+        proof.clone(),
+        &RootSignatures,
+    ) {
+        Err(CoreError::InvalidConfig(
+            "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
+        )) => {}
+        Err(error) => panic!("prepare_h1_state_sync_bootstrap_v0 returned the wrong error: {error:?}"),
+        Ok(_) => panic!("prepare_h1_state_sync_bootstrap_v0 accepted mixed bootstrap trust roots"),
+    }
+    let anchor_state =
+        Core::prepare_h1_state_sync_bootstrap_v0(anchor_config.clone(), proof, &RootSignatures)
+            .expect("prepare a type-correct inert successor bundle fixture")
+            .into_safety_state();
+    let bundle = Core::prepare_h1_state_sync_anchor_successor_bundle_v0(
+        &anchor_config,
+        &anchor_state,
+        h2,
+        h3,
+        &RootSignatures,
+    )
+    .expect("prepare a type-correct inert successor bundle fixture");
+    assert_activation_unavailable!(
+        "begin_state_sync_anchor_successor_recovery_v0",
+        Core::begin_state_sync_anchor_successor_recovery_v0(
+            config,
+            durable,
+            bundle,
+            &RootSignatures,
+        )
+    );
+}
+
+#[test]
+fn authenticated_genesis_application_parent_rejects_malformed_and_nonshadow_config_v0() {
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let genesis = BlockId::new(*set.genesis_hash().as_bytes());
+    assert!(AuthenticatedGenesisApplicationParentV0::new(
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        1,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .is_err());
+    assert!(AuthenticatedGenesisApplicationParentV0::new(
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::ZERO,
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .is_err());
+    let parent = AuthenticatedGenesisApplicationParentV0::new(
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0x51; 32],
+    )
+    .expect("shape-valid parent");
+    for tampered in [
+        AuthenticatedGenesisApplicationParentV0::new(
+            genesis,
+            GENESIS_TIMESTAMP_MS,
+            0,
+            StateRoot::new([0x32; 32]),
+            parent.descriptor_ref(),
+            parent.projection_profile_ref(),
+        )
+        .expect("tampered root remains shape-valid"),
+        AuthenticatedGenesisApplicationParentV0::new(
+            genesis,
+            GENESIS_TIMESTAMP_MS,
+            0,
+            parent.state_root(),
+            [0x42; 32],
+            parent.projection_profile_ref(),
+        )
+        .expect("tampered descriptor remains shape-valid"),
+        AuthenticatedGenesisApplicationParentV0::new(
+            genesis,
+            GENESIS_TIMESTAMP_MS,
+            0,
+            parent.state_root(),
+            parent.descriptor_ref(),
+            [0x52; 32],
+        )
+        .expect("tampered profile remains shape-valid"),
+    ] {
+        assert_ne!(tampered.binding_ref_v0(), parent.binding_ref_v0());
+    }
+    assert!(AuthenticatedGenesisApplicationParentV0::new(
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::new([0x31; 32]),
+        [0; 32],
+        [0x51; 32],
+    )
+    .is_err());
+    assert!(AuthenticatedGenesisApplicationParentV0::new(
+        genesis,
+        GENESIS_TIMESTAMP_MS,
+        0,
+        StateRoot::new([0x31; 32]),
+        [0x41; 32],
+        [0; 32],
+    )
+    .is_err());
+    let mut production_fields = parameters.fields();
+    production_fields.production_activation = true;
+    let production = ConsensusParametersV0::new(production_fields)
+        .expect("production bit does not violate structural safety invariants");
+    let production_set = validator_set_with_parameters(&production);
+    let production_parent = AuthenticatedGenesisApplicationParentV0::new(
+        BlockId::new(*production_set.genesis_hash().as_bytes()),
+        GENESIS_TIMESTAMP_MS,
+        0,
+        parent.state_root(),
+        parent.descriptor_ref(),
+        parent.projection_profile_ref(),
+    )
+    .expect("shape-valid production-scoped parent");
+    assert!(
+        CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+            validator_id(1),
+            production_set,
+            production,
+            GENESIS_TIMESTAMP_MS,
+            production_parent,
+            32,
+            64,
+        )
+        .is_err()
+    );
 }
 
 #[test]
@@ -886,6 +6853,12 @@ fn validation_request_freezes_the_exact_speculative_parent_header() {
 
     assert_eq!(request.block(), &child_block);
     assert_eq!(request.parent().exact_header(), Some(&parent_header));
+    assert_eq!(
+        request.parent().provenance(),
+        PayloadValidationParentProvenanceV0::Speculative(
+            artifact_ref_for_ids(parent_header.id(), parent_header.parent_id()).overlay()
+        )
+    );
     assert_eq!(request.parent().tip().block_id(), parent_header.id());
     assert_eq!(request.parent().tip().height(), parent_header.height());
     assert_eq!(request.parent().tip().view(), parent_header.view());
@@ -948,6 +6921,7 @@ fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
         direct.id(),
         direct.block().clone(),
         direct.parent().clone(),
+        alloc::sync::Arc::new(()),
     );
     assert_ne!(direct, opposite_route);
 
@@ -955,7 +6929,7 @@ fn payload_validation_route_is_core_bound_and_survives_deferred_storage_ack() {
         .try_claim()
         .unwrap_or_else(|_| panic!("direct request wins its fresh claim"));
     assert_eq!(claimed.route(), PayloadValidationRouteV0::Proposal);
-    let (route, id, block, parent) = claimed.into_parts();
+    let (route, id, block, parent, _valid_permit) = claimed.into_parts();
     assert_eq!(route, PayloadValidationRouteV0::Proposal);
     assert_eq!(id, direct_clone.id());
     assert_eq!(&block, direct_clone.block());
@@ -1039,7 +7013,7 @@ fn payload_validation_request_clones_share_exactly_one_process_local_claim() {
                         assert_eq!(claimed.id(), expected_id);
                         assert_eq!(claimed.block(), &expected_block);
                         assert_eq!(claimed.parent(), &expected_parent);
-                        let (route, id, block, parent) = claimed.into_parts();
+                        let (route, id, block, parent, _valid_permit) = claimed.into_parts();
                         assert_eq!(route, expected_route);
                         assert_eq!(id, expected_id);
                         assert_eq!(block, expected_block);
@@ -1629,9 +7603,16 @@ fn obligation_recovery_rejects_tampered_duplicate_and_concurrent_records() {
         terminal_durable.locked_qc().clone(),
         terminal_durable.finalized(),
         terminal_durable.revision(),
-        vec![PayloadTerminalFact::new(
-            terminal_id.block_id(),
-            PayloadTerminalResult::Valid,
+        vec![PayloadTerminalFact::new_valid(
+            artifact_ref_for_ids(
+                terminal_id.block_id(),
+                terminal_durable.payload_validation_obligations()[0]
+                    .proposal()
+                    .block()
+                    .header()
+                    .parent_id(),
+            )
+            .overlay(),
             terminal_durable.revision(),
         )],
         terminal_durable.payload_validation_obligations().to_vec(),
@@ -1798,9 +7779,9 @@ fn persisted_successor_rejects_a_reintroduced_signing_outbox() {
 }
 
 #[test]
-fn persisted_successor_rejects_a_reintroduced_finalization_outbox() {
+fn persisted_successor_rejects_a_reintroduced_applied_finalization_queue_front() {
     let (config, mut core) = configured_core();
-    finalize_height_one(&mut core);
+    let (_set, _qc, _finalization_authority) = finalize_height_one(&mut core);
     let previous = core.safety_state().clone();
     assert!(previous.pending_finalize().is_none());
     let proof_id = previous
@@ -1817,11 +7798,83 @@ fn persisted_successor_rejects_a_reintroduced_finalization_outbox() {
         Some(proof_id),
     );
     Core::validate_persisted_state_v0(&config, &current, &RootSignatures)
-        .expect("the spliced finalization outbox is self-consistent in isolation");
+        .expect("the rebuilt applied-to-finalized queue is self-consistent in isolation");
+    assert_eq!(previous.application_applied(), previous.finalized());
+    assert!(previous.finalization_queue().is_empty());
+    assert_eq!(current.finalization_queue().len(), 1);
+    assert_eq!(
+        current.application_applied(),
+        current.finalization_queue()[0].authenticated_parent()
+    );
     assert_eq!(
         Core::validate_persisted_successor_v0(&config, &previous, &current, &RootSignatures,),
         Err(CoreError::InvalidRecovery(
-            "finalization outbox was introduced without a new permanent finalization",
+            "application-applied watermark changed without a prior queue front",
+        ))
+    );
+}
+
+#[test]
+fn persisted_successor_rejects_changed_finalization_carrier_without_finality_advance() {
+    let (config, mut core) = configured_core();
+    let (_set, _qc, _finalization_authority) = finalize_height_one(&mut core);
+    let previous = core.safety_state().clone();
+    assert!(previous.finalization_queue().is_empty());
+    assert_eq!(previous.application_applied(), previous.finalized());
+    let durable = previous
+        .last_finalization()
+        .expect("height-one finality retains its complete permanent carrier");
+    let parent = durable.authenticated_parent();
+    let tampered_parent = FinalizedTip::new(
+        parent.height(),
+        parent.view(),
+        parent.block_id(),
+        parent
+            .timestamp_ms()
+            .checked_add(1)
+            .expect("fixture parent timestamp advances by one millisecond"),
+    );
+    let tampered = DurableFinalizationV0::new(
+        tampered_parent,
+        durable.proof().clone(),
+        durable.target_overlay_ref(),
+    )
+    .expect("the tampered parent remains shape-valid in isolation");
+    assert_ne!(&tampered, durable);
+    assert_eq!(tampered.proof(), durable.proof());
+
+    let current = SafetyState::from_persisted_parts_v10(
+        previous.schema_version(),
+        previous.chain_id(),
+        previous.protocol_version(),
+        previous.epoch(),
+        previous.validator_set_id(),
+        previous.genesis_block_id(),
+        previous.current_view(),
+        previous.last_voted_view(),
+        previous.last_timeout_view(),
+        previous.high_qc().clone(),
+        previous.locked_qc().clone(),
+        previous.finalized(),
+        previous.revision().checked_add(1).unwrap(),
+        previous.payload_terminal_facts().to_vec(),
+        previous.payload_validation_obligations().to_vec(),
+        previous.payload_validation_completions().to_vec(),
+        previous.pending_tc_high_qc_sync().cloned(),
+        previous.pending_standalone_qc_sync().cloned(),
+        previous.pending_sign().cloned(),
+        Some(tampered),
+        previous.application_applied(),
+        previous.finalization_queue().to_vec(),
+        previous.pending_finalize(),
+        previous.safety_halt().cloned(),
+    );
+    Core::validate_persisted_state_v0(&config, &current, &RootSignatures)
+        .expect("the timestamp splice remains self-consistent in isolation");
+    assert_eq!(
+        Core::validate_persisted_successor_v0(&config, &previous, &current, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "permanent finalization carrier changed without advancing finality",
         ))
     );
 }
@@ -1908,9 +7961,8 @@ fn decoded_halted_state_with_invalid_reference(
 ) -> SafetyState {
     let mut facts = state.payload_terminal_facts().to_vec();
     facts.retain(|fact| fact.block_id() != block_id);
-    facts.push(PayloadTerminalFact::new(
+    facts.push(PayloadTerminalFact::new_deterministically_invalid(
         block_id,
-        PayloadTerminalResult::DeterministicallyInvalid,
         state.revision(),
     ));
     facts.sort_by_key(|fact| fact.block_id());
@@ -2077,7 +8129,14 @@ fn known_invalid_with_durable_same_view_qc() -> (
     (config, core, set, durable_qc, invalid_qc)
 }
 
-fn finalize_height_one(core: &mut Core) -> (ValidatorSet, QuorumCertificate) {
+fn finalize_height_one(
+    core: &mut Core,
+) -> (
+    ValidatorSet,
+    QuorumCertificate,
+    CoreIssuedApplicationFinalizationApplyAuthorityV0,
+) {
+    let finalization_authority = finalization_apply_authority_for_test(core);
     let set = core.config().validator_set().clone();
     let first = proposal(&set, genesis_qc(&set), 1, b"finalized stale-QC one");
     let first_qc = qc(&set, 1, 1, first.block().id());
@@ -2097,12 +8156,7 @@ fn finalize_height_one(core: &mut Core) -> (ValidatorSet, QuorumCertificate) {
         .iter()
         .any(|effect| matches!(effect, Effect::Finalize(_))));
 
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("height-one finality has a durable application outbox");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(core, &finalization_authority)
         .expect("height-one finality is applied");
     let effects = release_persisted_effects(core, effects);
     assert!(effects.is_empty());
@@ -2111,7 +8165,7 @@ fn finalize_height_one(core: &mut Core) -> (ValidatorSet, QuorumCertificate) {
         core.safety_state().finalized().block_id(),
         first_qc.block_id()
     );
-    (set, first_qc)
+    (set, first_qc, finalization_authority)
 }
 
 fn short_epoch_core_before_last_regular() -> (
@@ -2147,6 +8201,7 @@ fn short_epoch_core_at_boundary() -> (
     QuorumCertificate,
 ) {
     let (config, mut core, set, parameters, second_qc) = short_epoch_core_before_last_regular();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let third =
         proposal_with_parameters(&set, &parameters, second_qc, 3, b"short epoch last regular");
     let third_qc = qc(&set, 3, 3, third.block().id());
@@ -2155,12 +8210,7 @@ fn short_epoch_core_at_boundary() -> (
     assert!(effects
         .iter()
         .any(|effect| matches!(effect, Effect::Finalize(_))));
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("short epoch height-one finality is durable");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("short epoch finality applies");
     assert!(release_persisted_effects(&mut core, effects).is_empty());
     assert_eq!(core.safety_state().current_view(), View::new(4));
@@ -2361,6 +8411,10 @@ fn vote_signing_is_persist_ack_sign_verify_broadcast() {
         [Effect::Broadcast(OutboundMessage::Vote(_))]
     ));
     assert!(core.safety_state().pending_sign().is_none());
+    assert!(core
+        .safety_state()
+        .matches_signature_released_successor_of_v0(&persisted));
+    assert!(!persisted.matches_signature_released_successor_of_v0(core.safety_state()));
 }
 
 #[test]
@@ -2406,6 +8460,10 @@ fn timeout_signing_uses_the_same_durable_barrier() {
         effects.as_slice(),
         [Effect::Broadcast(OutboundMessage::TimeoutVote(_))]
     ));
+    assert!(core
+        .safety_state()
+        .matches_signature_released_successor_of_v0(&persisted));
+    assert!(!persisted.matches_signature_released_successor_of_v0(core.safety_state()));
 }
 
 #[test]
@@ -2515,24 +8573,25 @@ fn callback_persistence_preserves_exact_sign_intent_across_crash_resume() {
         .expect("callback persistence acknowledged")
         .is_empty());
 
-    let mut recovered = Core::recover(config, callback_state, &RootSignatures)
-        .expect("completion-only callback state is recoverable");
-    let resumed = recovered
-        .step(Input::Resume, &RootSignatures)
-        .expect("pending signature resumed");
-    let resumed_intent = match resumed.as_slice() {
-        [Effect::RequestSignature { intent }] => intent,
-        _ => panic!("expected the pending signature request: {resumed:?}"),
-    };
-    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
-    assert_eq!(resumed_intent.fingerprint(), first_fingerprint);
     assert_eq!(
-        resumed_intent
+        Core::recover(config.clone(), callback_state.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
+    );
+    let resumed_intent = callback_state
+        .pending_sign()
+        .expect("the dedicated recovery challenge retains the exact sign intent");
+    let resumed_canonical = canonical_sign_intent_for_test(&config, resumed_intent);
+    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
+    assert_eq!(resumed_canonical.fingerprint(), first_fingerprint);
+    assert_eq!(
+        resumed_canonical
             .canonical_bytes()
             .expect("resumed intent has canonical bytes"),
         first_bytes
     );
-    assert_eq!(resumed_intent, &first_intent);
+    assert_eq!(resumed_canonical, first_intent);
 }
 
 #[test]
@@ -2647,24 +8706,25 @@ fn synced_callback_persistence_preserves_exact_vote_intent_across_crash_resume()
         .expect("unrelated callback persistence acknowledged")
         .is_empty());
 
-    let mut recovered = Core::recover(config, callback_state, &RootSignatures)
-        .expect("completion-only vote callback state is recoverable");
-    let resumed = recovered
-        .step(Input::Resume, &RootSignatures)
-        .expect("pending vote signature resumed");
-    let resumed_intent = match resumed.as_slice() {
-        [Effect::RequestSignature { intent }] => intent,
-        _ => panic!("expected the pending vote signature request: {resumed:?}"),
-    };
-    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
-    assert_eq!(resumed_intent.fingerprint(), first_fingerprint);
     assert_eq!(
-        resumed_intent
+        Core::recover(config.clone(), callback_state.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
+    );
+    let resumed_intent = callback_state
+        .pending_sign()
+        .expect("the dedicated recovery challenge retains the exact vote intent");
+    let resumed_canonical = canonical_sign_intent_for_test(&config, resumed_intent);
+    assert_eq!(resumed_intent.authorizing_safety_revision(), first_revision);
+    assert_eq!(resumed_canonical.fingerprint(), first_fingerprint);
+    assert_eq!(
+        resumed_canonical
             .canonical_bytes()
             .expect("resumed vote intent has canonical bytes"),
         first_bytes
     );
-    assert_eq!(resumed_intent, &first_intent);
+    assert_eq!(resumed_canonical, first_intent);
 }
 
 #[test]
@@ -2827,6 +8887,7 @@ fn a_qc_never_finalizes_without_a_complete_verified_three_chain() {
 #[test]
 fn a_qc_with_unknown_ancestry_cannot_advance_high_qc_after_finalization() {
     let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let set = core.config().validator_set().clone();
     let p1 = proposal(&set, genesis_qc(&set), 1, b"one");
     let q1 = qc(&set, 1, 1, p1.block().id());
@@ -2846,15 +8907,14 @@ fn a_qc_with_unknown_ancestry_cannot_advance_high_qc_after_finalization() {
         .step(Input::QuorumCertificate(q3.clone()), &RootSignatures)
         .expect("third QC accepted");
     let (barrier, state) = persistence_effect(&effects);
-    let proof_id = state.pending_finalize().expect("commit outbox");
+    assert!(state.pending_finalize().is_some());
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("finality state durable");
     assert!(effects
         .iter()
         .any(|effect| matches!(effect, Effect::Finalize(_))));
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("application finalized");
     let (barrier, _) = persistence_effect(&effects);
     core.step(Input::StorageAck { barrier }, &RootSignatures)
@@ -2889,7 +8949,7 @@ fn a_qc_with_unknown_ancestry_cannot_advance_high_qc_after_finalization() {
 #[test]
 fn same_height_different_view_qc_is_finalized_subsumed_and_idempotent() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let stale = qc(&set, 7, 1, BlockId::new([0xD7; 32]));
     let before = core.safety_state().clone();
 
@@ -2910,7 +8970,7 @@ fn same_height_different_view_qc_is_finalized_subsumed_and_idempotent() {
 #[test]
 fn same_view_competitor_at_finalized_height_halts_before_subsumption_and_recovers() {
     let (config, mut core) = configured_core();
-    let (set, finalized_qc) = finalize_height_one(&mut core);
+    let (set, finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let conflict = qc(&set, 1, 1, BlockId::new([0xC1; 32]));
 
     let mut recovered_live =
@@ -2969,7 +9029,7 @@ fn same_view_competitor_at_finalized_height_halts_before_subsumption_and_recover
 #[test]
 fn two_historical_qcs_from_one_later_view_halt_on_the_second_arrival() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let first = qc(&set, 7, 1, BlockId::new([0x71; 32]));
     let second = qc(&set, 7, 1, BlockId::new([0x72; 32]));
 
@@ -2999,7 +9059,7 @@ fn two_historical_qcs_from_one_later_view_halt_on_the_second_arrival() {
 #[test]
 fn finalized_block_id_with_a_different_qc_view_is_rejected_transactionally() {
     let (_config, mut core) = configured_core();
-    let (set, finalized_qc) = finalize_height_one(&mut core);
+    let (set, finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let malformed = qc(&set, 7, 1, finalized_qc.block_id());
     let before = core.clone();
 
@@ -3013,7 +9073,7 @@ fn finalized_block_id_with_a_different_qc_view_is_rejected_transactionally() {
 #[test]
 fn finalized_block_id_with_a_lower_qc_height_is_rejected_transactionally() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, finalization_authority) = finalize_height_one(&mut core);
     let third_qc = core
         .safety_state()
         .high_qc()
@@ -3027,12 +9087,7 @@ fn finalized_block_id_with_a_lower_qc_height_is_rejected_transactionally() {
     assert!(effects
         .iter()
         .any(|effect| matches!(effect, Effect::Finalize(_))));
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("height-two finality outbox");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("height-two finality applied");
     assert!(release_persisted_effects(&mut core, effects).is_empty());
     assert_eq!(core.safety_state().finalized().height(), Height::new(2));
@@ -3049,7 +9104,7 @@ fn finalized_block_id_with_a_lower_qc_height_is_rejected_transactionally() {
 #[test]
 fn tc_with_a_subsumed_competing_selected_qc_advances_only_its_view() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let stale = qc(&set, 7, 1, BlockId::new([0xA7; 32]));
     let certificate = timeout_certificate(&set, 10, stale);
     let before = core.safety_state().clone();
@@ -3075,7 +9130,7 @@ fn tc_with_a_subsumed_competing_selected_qc_advances_only_its_view() {
 #[test]
 fn unrelated_subsumed_qc_does_not_join_an_active_tc_obligation() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let target = qc(&set, 7, 2, BlockId::new([0xA2; 32]));
     let certificate = timeout_certificate(&set, 10, target);
     let effects = core
@@ -3122,7 +9177,7 @@ fn known_stale_prefix_in_a_carried_tc_advances_view_without_extending_child() {
     let competing_qc = qc(&set, 7, 1, competing_parent.block().id());
     replay_valid(&mut core, competing_parent);
 
-    let (_set, _finalized_qc) = finalize_height_one(&mut core);
+    let (_set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let carrier_tc = timeout_certificate(&set, 10, competing_qc);
     let carrier = timeout_proposal(&set, carrier_tc, b"must not extend stale known parent");
     let before = core.safety_state().clone();
@@ -3148,7 +9203,7 @@ fn known_stale_prefix_in_a_carried_tc_advances_view_without_extending_child() {
 #[test]
 fn proposal_carried_finalized_subsumed_qc_is_dropped_without_sync_or_error() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let stale = qc(&set, 7, 1, BlockId::new([0xB7; 32]));
     let carrier = proposal(&set, stale, 8, b"subsumed carrier child");
     let before = core.safety_state().clone();
@@ -3166,7 +9221,7 @@ fn proposal_carried_finalized_subsumed_qc_is_dropped_without_sync_or_error() {
 #[test]
 fn tc_reference_conflict_halts_before_subsumed_view_progress() {
     let (_config, mut core) = configured_core();
-    let (set, _finalized_qc) = finalize_height_one(&mut core);
+    let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let first = qc(&set, 7, 1, BlockId::new([0xE1; 32]));
     let second = qc(&set, 7, 1, BlockId::new([0xE2; 32]));
     assert!(core
@@ -3901,6 +9956,8 @@ fn pending_finalize_allows_authenticated_carrier_conflict_to_halt() {
         .expect("third QC creates a durable finalization outbox");
     let (barrier, durable) = persistence_effect(&effects);
     assert!(durable.pending_finalize().is_some());
+    let expected_pending = durable.pending_finalize();
+    let expected_queue = durable.finalization_queue().to_vec();
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("finalization is released after its durable boundary");
@@ -3921,7 +9978,8 @@ fn pending_finalize_allows_authenticated_carrier_conflict_to_halt() {
             _ => None,
         })
         .expect("pending-finalize conflict persists its halt");
-    assert!(halted.pending_finalize().is_none());
+    assert_eq!(halted.pending_finalize(), expected_pending);
+    assert_eq!(halted.finalization_queue(), expected_queue);
     assert!(matches!(
         halted.safety_halt(),
         Some(SafetyHalt::ConflictingQuorumCertificates { .. })
@@ -3965,6 +10023,7 @@ fn recovered_replay_carrier_conflict_halts_before_stale_height_rejection() {
 #[test]
 fn ready_proposal_justify_runs_complete_qc_processing_before_child_validation() {
     let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let set = core.config().validator_set().clone();
     let p1 = proposal(&set, genesis_qc(&set), 1, b"carrier chain one");
     let finalized_id = p1.block().id();
@@ -4030,12 +10089,7 @@ fn ready_proposal_justify_runs_complete_qc_processing_before_child_validation() 
         )
         .expect("the terminal Valid fact is durable")
         .is_empty());
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("application finalization remains outstanding");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("application finalization is acknowledged");
     let (vote_barrier, vote_state) = persistence_effect(&effects);
     assert!(vote_state.pending_finalize().is_none());
@@ -4085,6 +10139,7 @@ fn ready_proposal_justify_runs_complete_qc_processing_before_child_validation() 
 fn invalid_callback_during_finalization_never_creates_a_vote_intent() {
     let (_config, mut core, validation, _valid_result) =
         finalization_gated_validation(b"invalid while finalizing");
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let effects = core
         .step(
             Input::PayloadValidated {
@@ -4106,12 +10161,7 @@ fn invalid_callback_during_finalization_never_creates_a_vote_intent() {
         .expect("the invalid fact is durable")
         .is_empty());
 
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("application finalization remains outstanding");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("finalization can clear without re-driving an invalid child");
     let (barrier, cleared) = persistence_effect(&effects);
     assert!(cleared.pending_finalize().is_none());
@@ -4184,54 +10234,19 @@ fn recovery_before_finalization_ack_does_not_reconstruct_a_vote_candidate() {
         .expect("the terminal fact is durable before the crash")
         .is_empty());
 
-    let mut recovered =
-        Core::recover(config, gated, &RootSignatures).expect("durable finalization recovers");
     assert_eq!(
-        recovered.safety_state().payload_validation_completions(),
-        expected_completions
+        Core::recover(config, gated.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
     );
-    assert!(recovered
-        .safety_state()
+    assert_eq!(gated.payload_validation_completions(), expected_completions);
+    assert!(gated
         .payload_validation_completions()
         .contains(&expected_completion));
-    assert!(recovered
-        .step(
-            Input::PayloadValidated {
-                id: validation,
-                result,
-            },
-            &RootSignatures,
-        )
-        .expect("the exact Valid completion remains idempotent after recovery")
-        .is_empty());
-    let proof_id = recovered
-        .safety_state()
+    assert!(gated
         .pending_finalize()
-        .expect("the exact finalization outbox survives recovery");
-    assert!(matches!(
-        recovered
-            .step(Input::Resume, &RootSignatures)
-            .expect("recovery first resumes finalization")
-            .as_slice(),
-        [Effect::Finalize(proof)] if proof.id() == proof_id
-    ));
-    let effects = recovered
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
-        .expect("the recovered application acknowledgement is accepted");
-    let (barrier, cleared) = persistence_effect(&effects);
-    assert!(cleared.pending_finalize().is_none());
-    assert!(cleared.pending_sign().is_none());
-    assert!(recovered
-        .step(Input::StorageAck { barrier }, &RootSignatures)
-        .expect("the recovered acknowledgement is durable")
-        .is_empty());
-    assert!(matches!(
-        recovered
-            .step(Input::Resume, &RootSignatures)
-            .expect("canonical bodies must be replayed after recovery")
-            .as_slice(),
-        [Effect::RequestSafetyReplay { .. }]
-    ));
+        .is_some(), "the exact finalization outbox remains durable behind the dedicated completion recovery fence");
 }
 
 #[test]
@@ -4252,6 +10267,8 @@ fn conflicting_terminal_callback_clears_the_finalization_vote_candidate() {
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("the first terminal result is durable")
         .is_empty());
+    let expected_pending = core.safety_state().pending_finalize();
+    let expected_queue = core.safety_state().finalization_queue().to_vec();
 
     let effects = core
         .step(
@@ -4263,7 +10280,8 @@ fn conflicting_terminal_callback_clears_the_finalization_vote_candidate() {
         )
         .expect("a conflicting terminal callback safety-halts");
     let (barrier, halted) = persistence_effect(&effects);
-    assert!(halted.pending_finalize().is_none());
+    assert_eq!(halted.pending_finalize(), expected_pending);
+    assert_eq!(halted.finalization_queue(), expected_queue);
     assert!(halted.pending_sign().is_none());
     assert!(matches!(
         halted.safety_halt(),
@@ -4293,6 +10311,7 @@ fn conflicting_terminal_callback_clears_the_finalization_vote_candidate() {
 #[test]
 fn stale_valid_callback_during_finalization_is_not_re_driven() {
     let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let set = core.config().validator_set().clone();
     let first = proposal(&set, genesis_qc(&set), 1, b"stale gated one");
     let first_qc = qc(&set, 1, 1, first.block().id());
@@ -4354,12 +10373,7 @@ fn stale_valid_callback_during_finalization_is_not_re_driven() {
         .expect("the stale terminal fact is durable")
         .is_empty());
 
-    let proof_id = core
-        .safety_state()
-        .pending_finalize()
-        .expect("application finalization is still outstanding");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("finalization does not revive the stale proposal");
     let (barrier, cleared) = persistence_effect(&effects);
     assert!(cleared.pending_finalize().is_none());
@@ -4554,6 +10568,7 @@ fn safety_anchor_replay_precedes_a_lower_standalone_qc_obligation() {
 #[test]
 fn tc_finality_discards_a_subsumed_standalone_qc_without_impossible_sync() {
     let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let set = core.config().validator_set().clone();
     let first = proposal(&set, genesis_qc(&set), 1, b"subsumption one");
     let q1 = qc(&set, 1, 1, first.block().id());
@@ -4572,11 +10587,10 @@ fn tc_finality_discards_a_subsumed_standalone_qc_without_impossible_sync() {
         .step(Input::QuorumCertificate(q3.clone()), &RootSignatures)
         .expect("third QC creates the first finalization");
     let (barrier, durable) = persistence_effect(&effects);
-    let proof_id = durable.pending_finalize().expect("first finalize outbox");
+    assert!(durable.pending_finalize().is_some());
     core.step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("first finalization is durable");
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("application accepts the first finalized block");
     let (barrier, _) = persistence_effect(&effects);
     core.step(Input::StorageAck { barrier }, &RootSignatures)
@@ -4630,6 +10644,7 @@ fn tc_finality_discards_a_subsumed_standalone_qc_without_impossible_sync() {
 #[test]
 fn tc_completion_atomically_drains_a_ready_standalone_active_and_backlog() {
     let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
     let set = core.config().validator_set().clone();
     let first = proposal(&set, genesis_qc(&set), 1, b"overlap one");
     let q1 = qc(&set, 1, 1, first.block().id());
@@ -4719,9 +10734,7 @@ fn tc_completion_atomically_drains_a_ready_standalone_active_and_backlog() {
     assert_eq!(completed.finalized().block_id(), q1.block_id());
     assert!(completed.pending_tc_high_qc_sync().is_none());
     assert!(completed.pending_standalone_qc_sync().is_none());
-    let proof_id = completed
-        .pending_finalize()
-        .expect("the TC-created finality outbox is durable");
+    assert!(completed.pending_finalize().is_some());
 
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
@@ -4732,8 +10745,7 @@ fn tc_completion_atomically_drains_a_ready_standalone_active_and_backlog() {
     assert!(!effects
         .iter()
         .any(|effect| matches!(effect, Effect::RequestStandaloneQcSync { .. })));
-    let effects = core
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
         .expect("application finalization acknowledgement is accepted");
     let (barrier, acknowledged) = persistence_effect(&effects);
     assert!(acknowledged.pending_standalone_qc_sync().is_none());
@@ -4946,6 +10958,264 @@ fn ordinary_validation_rejects_a_wrong_block_capability_without_consuming_the_ge
     assert_eq!(
         state.payload_terminal_result(id.block_id()),
         Some(PayloadTerminalResult::Valid)
+    );
+}
+
+#[test]
+fn ordinary_validation_requires_the_exact_sealed_overlay_edge() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"exact sealed overlay edge");
+    let effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal accepted");
+    let effects = release_persisted_effects(&mut core, effects);
+    let id = validation_effect(&effects);
+    let block = validation_block(&effects, id);
+    let exact = valid_result(&core, block);
+    let PayloadValidationResult::Valid(valid) = exact else {
+        unreachable!("fixture result is Valid")
+    };
+    let commitments = valid.commitments();
+
+    let wrong_block_id = BlockId::new([0x7b; 32]);
+    assert_ne!(wrong_block_id, id.block_id());
+    let wrong_block_ref = PayloadValidationResult::authorized_valid_v0(
+        commitments,
+        artifact_ref_for_ids(wrong_block_id, block.header().parent_id()),
+    );
+    let before = core.clone();
+    assert_eq!(
+        core.step(
+            Input::PayloadValidated {
+                id,
+                result: wrong_block_ref,
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::ValidationCapabilityMismatch {
+            expected: id.block_id(),
+            received: wrong_block_id,
+        })
+    );
+    assert_eq!(core, before);
+
+    let wrong_parent = BlockId::new([0x6c; 32]);
+    assert_ne!(wrong_parent, block.header().parent_id());
+    let wrong_parent_ref = PayloadValidationResult::authorized_valid_v0(
+        commitments,
+        artifact_ref_for_ids(id.block_id(), wrong_parent),
+    );
+    assert_eq!(
+        core.step(
+            Input::PayloadValidated {
+                id,
+                result: wrong_parent_ref,
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::ConflictingPayloadValidation(id.block_id()))
+    );
+    assert_eq!(core, before);
+
+    let effects = core
+        .step(
+            Input::PayloadValidated { id, result: exact },
+            &RootSignatures,
+        )
+        .expect("the exact overlay remains usable after both rejected callbacks");
+    let (_barrier, state) = persistence_effect(&effects);
+    let fact = state
+        .payload_terminal_fact(id.block_id())
+        .expect("Valid callback persists a terminal fact");
+    assert_eq!(
+        fact.valid_overlay(),
+        exact
+            .artifact_ref()
+            .map(ValidatedPayloadArtifactRefV0::overlay)
+    );
+}
+
+#[test]
+fn exact_validation_completion_replay_binds_the_source_artifact_checksum() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"exact source artifact replay");
+    let effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal accepted");
+    let effects = release_persisted_effects(&mut core, effects);
+    let id = validation_effect(&effects);
+    let exact = valid_result_for_effect(&core, &effects, id);
+    let PayloadValidationResult::Valid(valid) = exact else {
+        unreachable!("fixture result is Valid")
+    };
+    let commitments = valid.commitments();
+    let artifact_ref = valid.artifact_ref();
+    let effects = core
+        .step(
+            Input::PayloadValidated { id, result: exact },
+            &RootSignatures,
+        )
+        .expect("exact callback accepted");
+    let (barrier, _) = persistence_effect(&effects);
+    let _ = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("exact completion persisted before signing");
+    assert!(core
+        .step(
+            Input::PayloadValidated { id, result: exact },
+            &RootSignatures
+        )
+        .expect("byte-exact callback replay is idempotent")
+        .is_empty());
+
+    let mut changed_source = artifact_ref.source_artifact_checksum();
+    changed_source[0] ^= 1;
+    let conflicting = PayloadValidationResult::authorized_valid_v0(
+        commitments,
+        ValidatedPayloadArtifactRefV0::new(artifact_ref.overlay(), changed_source),
+    );
+    let before = core.clone();
+    assert_eq!(
+        core.step(
+            Input::PayloadValidated {
+                id,
+                result: conflicting,
+            },
+            &RootSignatures,
+        ),
+        Err(CoreError::ConflictingPayloadValidation(id.block_id()))
+    );
+    assert_eq!(core, before);
+}
+
+#[test]
+fn recovery_accepts_route_scoped_sources_only_when_they_share_one_terminal_overlay() {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"route-scoped sources share one overlay",
+    );
+    let effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal accepted");
+    let effects = release_persisted_effects(&mut core, effects);
+    let id = validation_effect(&effects);
+    let exact = valid_result_for_effect(&core, &effects, id);
+    let PayloadValidationResult::Valid(valid) = exact else {
+        unreachable!("fixture result is Valid")
+    };
+    let effects = core
+        .step(
+            Input::PayloadValidated { id, result: exact },
+            &RootSignatures,
+        )
+        .expect("Proposal-route Valid callback accepted");
+    let (_, completed) = persistence_effect(&effects);
+
+    let mut second_source_checksum = valid.artifact_ref().source_artifact_checksum();
+    second_source_checksum[0] ^= 1;
+    let second_route_result = PayloadValidationResult::authorized_valid_v0(
+        valid.commitments(),
+        ValidatedPayloadArtifactRefV0::new(valid.artifact_ref().overlay(), second_source_checksum),
+    );
+    let second_id = ValidationId::new(
+        id.block_id(),
+        id.view(),
+        id.generation()
+            .checked_add(1)
+            .expect("fixture generation does not overflow"),
+    );
+    assert!(second_id.generation() <= completed.revision());
+    let mut completions = completed.payload_validation_completions().to_vec();
+    completions.push(DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        second_id,
+        DurablePayloadValidationResultV1::from_live(second_route_result),
+        completed.revision(),
+    ));
+    completions.sort_by_key(DurablePayloadValidationCompletionV0::key);
+    let candidate = decoded_state_with_validation_records(&completed, vec![], completions);
+    let decoded = roundtrip_safety_state_record(&config, &candidate);
+    Core::validate_persisted_state_v0(&config, &decoded, &RootSignatures)
+        .expect("route-scoped sources may differ only behind one stable overlay");
+    assert_eq!(
+        decoded
+            .payload_terminal_fact(id.block_id())
+            .and_then(PayloadTerminalFact::valid_overlay),
+        Some(valid.artifact_ref().overlay())
+    );
+}
+
+#[test]
+fn recovery_rejects_cross_route_valid_completions_with_different_stable_overlays() {
+    let (config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"stable overlay recovery conflict",
+    );
+    let effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal accepted");
+    let effects = release_persisted_effects(&mut core, effects);
+    let id = validation_effect(&effects);
+    let exact = valid_result_for_effect(&core, &effects, id);
+    let PayloadValidationResult::Valid(valid) = exact else {
+        unreachable!("fixture result is Valid")
+    };
+    let commitments = valid.commitments();
+    let artifact_ref = valid.artifact_ref();
+    let effects = core
+        .step(
+            Input::PayloadValidated { id, result: exact },
+            &RootSignatures,
+        )
+        .expect("Valid callback accepted");
+    let (_, completed) = persistence_effect(&effects);
+
+    let mut changed_overlay_checksum = artifact_ref.overlay().overlay_checksum();
+    changed_overlay_checksum[0] ^= 1;
+    let conflicting_live = PayloadValidationResult::authorized_valid_v0(
+        commitments,
+        ValidatedPayloadArtifactRefV0::new(
+            BlockIdOverlayRefV0::new(
+                id.block_id(),
+                artifact_ref.overlay().parent_block_id(),
+                changed_overlay_checksum,
+            ),
+            artifact_ref.source_artifact_checksum(),
+        ),
+    );
+    let conflicting_id = ValidationId::new(
+        id.block_id(),
+        id.view(),
+        id.generation()
+            .checked_add(1)
+            .expect("fixture generation does not overflow"),
+    );
+    assert!(conflicting_id.generation() <= completed.revision());
+    let mut completions = completed.payload_validation_completions().to_vec();
+    completions.push(DurablePayloadValidationCompletionV0::new(
+        PayloadValidationRouteV0::Synced,
+        conflicting_id,
+        DurablePayloadValidationResultV1::from_live(conflicting_live),
+        completed.revision(),
+    ));
+    completions.sort_by_key(DurablePayloadValidationCompletionV0::key);
+    let tampered = decoded_state_with_validation_records(&completed, vec![], completions);
+    let decoded = roundtrip_safety_state_record(&config, &tampered);
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &decoded, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "durable Valid completion disagrees with its terminal overlay",
+        ))
     );
 }
 
@@ -5271,29 +11541,28 @@ fn durable_valid_fact_still_requires_body_and_context_readiness_after_recovery()
         durable.payload_terminal_result(proposed.block().id()),
         Some(PayloadTerminalResult::Valid)
     );
-    let recovered_before_ack = Core::recover(config.clone(), durable.clone(), &RootSignatures)
-        .expect("the durable Valid fact recovers if the process crashes before observing the ack");
     assert_eq!(
-        recovered_before_ack
-            .safety_state()
-            .payload_terminal_result(proposed.block().id()),
-        Some(PayloadTerminalResult::Valid)
+        Core::recover(config.clone(), durable.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
     );
     assert!(core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("Valid fact persisted")
         .is_empty());
 
-    let mut recovered =
-        Core::recover(config, durable, &RootSignatures).expect("Valid fact recovers after the ack");
-    let effects = recovered
-        .step(Input::SyncedProposal(Box::new(proposed)), &RootSignatures)
-        .expect("a newly sourced body still enters the host boundary");
-    let effects = release_persisted_effects(&mut recovered, effects);
-    let recovered_id = synced_validation_effect(&effects);
-    assert!(recovered_id.generation() > first_id.generation());
-    assert_eq!(recovered.safety_state().last_voted_view(), None);
-    assert!(recovered.safety_state().pending_sign().is_none());
+    let session =
+        Core::begin_native_valid_completion_recovery_v0(config, durable.clone(), &RootSignatures)
+            .expect("the durable Valid fact enters only its dedicated cross-store session");
+    assert_eq!(session.challenge().validation_id_v0(), first_id);
+    assert_eq!(
+        session
+            .challenge()
+            .safety_state()
+            .payload_terminal_result(proposed.block().id()),
+        Some(PayloadTerminalResult::Valid)
+    );
 }
 
 #[test]
@@ -5311,10 +11580,17 @@ fn recovered_invalid_fact_rejects_a_vote_outbox_without_a_durable_halt() {
         .step(Input::PayloadValidated { id, result }, &RootSignatures)
         .expect("valid callback stages a vote outbox");
     let (_, vote_state) = persistence_effect(&effects);
+    let missing_completion = decoded_state_with_validation_records(&vote_state, vec![], vec![]);
+    let decoded_missing_completion = roundtrip_safety_state_record(&config, &missing_completion);
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &decoded_missing_completion, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "vote intent has no durable completion for its Valid overlay",
+        ))
+    );
     let valid_fact = vote_state.payload_terminal_facts()[0];
-    let invalid_fact = PayloadTerminalFact::new(
+    let invalid_fact = PayloadTerminalFact::new_deterministically_invalid(
         valid_fact.block_id(),
-        PayloadTerminalResult::DeterministicallyInvalid,
         valid_fact.first_recorded_revision(),
     );
     let tampered = SafetyState::from_persisted_parts(
@@ -5642,7 +11918,8 @@ fn complete_signed_proposal_resource_bound_precedes_validation_registration() {
 
 #[test]
 fn aggregate_durable_validation_resource_bound_preserves_the_existing_obligation() {
-    const GENESIS_OBLIGATION_FIXED_BYTES: usize = 1 + (32 + 8 + 8) + 4 + (8 + 8 + 32 + 8) + 1 + 8;
+    const GENESIS_OBLIGATION_FIXED_BYTES: usize =
+        1 + (32 + 8 + 8) + 4 + (8 + 8 + 32 + 8) + 1 + 1 + 8;
     let reference_parameters = consensus_parameters();
     let reference_set = validator_set_with_parameters(&reference_parameters);
     let reference = proposal_with_parameters(
@@ -5981,11 +12258,11 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
 }
 
 #[test]
-fn recovery_rejects_pre_v8_safety_state_without_frozen_sign_authorization() {
+fn recovery_rejects_pre_v12_safety_state_without_genesis_application_parent_layout() {
     let (config, core) = configured_core();
     let state = core.safety_state();
-    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 8);
-    for legacy_schema in [5, 6, 7] {
+    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 12);
+    for legacy_schema in [5, 6, 7, 8, 9, 10, 11] {
         let legacy = SafetyState::from_persisted_parts(
             legacy_schema,
             state.chain_id(),
@@ -6286,6 +12563,7 @@ fn recovery_replays_stale_verified_headers_before_resuming_finality() {
 
     let mut restarted = Core::recover(config.clone(), state, &RootSignatures)
         .expect("recover durable commit outbox");
+    let restarted_finalization_authority = finalization_apply_authority_for_test(&restarted);
     assert!(matches!(
         restarted
             .step(Input::Resume, &RootSignatures)
@@ -6293,8 +12571,7 @@ fn recovery_replays_stale_verified_headers_before_resuming_finality() {
             .as_slice(),
         [Effect::Finalize(_)]
     ));
-    let effects = restarted
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut restarted, &restarted_finalization_authority)
         .expect("application commit acknowledged");
     let (barrier, cleared) = persistence_effect(&effects);
     assert!(cleared.pending_finalize().is_none());
@@ -6336,6 +12613,7 @@ fn recovery_replays_stale_verified_headers_before_resuming_finality() {
 #[test]
 fn recovered_core_treats_tc_qcs_below_finality_as_durably_subsumed() {
     let (config, mut original) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&original);
     let set = original.config().validator_set().clone();
 
     let p1 = proposal(&set, genesis_qc(&set), 1, b"stale tc one");
@@ -6356,12 +12634,11 @@ fn recovered_core_treats_tc_qcs_below_finality_as_durably_subsumed() {
         .step(Input::QuorumCertificate(q3.clone()), &RootSignatures)
         .expect("first finality QC accepted");
     let (barrier, state) = persistence_effect(&effects);
-    let proof_id = state.pending_finalize().expect("first finality outbox");
+    assert!(state.pending_finalize().is_some());
     original
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("first finality state durable");
-    let effects = original
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut original, &finalization_authority)
         .expect("first finality applied");
     let (barrier, _) = persistence_effect(&effects);
     original
@@ -6374,20 +12651,25 @@ fn recovered_core_treats_tc_qcs_below_finality_as_durably_subsumed() {
         .expect("second finality QC accepted");
     let (barrier, state) = persistence_effect(&effects);
     assert_eq!(state.finalized().block_id(), p2.block().id());
-    let proof_id = state.pending_finalize().expect("second finality outbox");
+    assert!(state.pending_finalize().is_some());
     original
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("second finality state durable");
-    let effects = original
-        .step(Input::FinalizationApplied { proof_id }, &RootSignatures)
+    let effects = apply_finalization_for_test(&mut original, &finalization_authority)
         .expect("second finality applied");
     let (barrier, durable) = persistence_effect(&effects);
     original
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("second finality acknowledgement durable");
 
+    let finalized_chain_root_before_recovery = original.finalized_chain_root_v0();
     let mut recovered =
         Core::recover(config, durable, &RootSignatures).expect("finalized state recovers");
+    assert_eq!(
+        recovered.finalized_chain_root_v0(),
+        finalized_chain_root_before_recovery,
+        "the hash-linked finalized-prefix commitment must survive exact SafetyState recovery"
+    );
     assert!(recovered
         .step(Input::Resume, &RootSignatures)
         .expect("recovery requests only live safety anchors")
@@ -7047,23 +13329,14 @@ fn pending_multi_ref_tc_rechecks_subsumption_after_lower_qc_finality_and_recover
 
     // A crash after the atomic state write but before its acknowledgement
     // replays only the exact finality outbox; the cleared TC never resurrects.
-    let mut recovered_completed = Core::recover(config, completed_state, &RootSignatures)
-        .expect("the completed but unacknowledged transition recovers");
-    assert!(recovered_completed
-        .safety_state()
-        .pending_tc_high_qc_sync()
-        .is_none());
-    assert!(matches!(
-        recovered_completed
-            .step(Input::Resume, &RootSignatures)
-            .expect("the exact unacknowledged finality is replayed")
-            .as_slice(),
-        [Effect::Finalize(proof)] if proof.id() == proof_id
-    ));
-    assert!(recovered_completed
-        .safety_state()
-        .pending_tc_high_qc_sync()
-        .is_none());
+    assert_eq!(
+        Core::recover(config, completed_state.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a current NativeValid completion requires its dedicated cross-store recovery session"
+        ))
+    );
+    assert!(completed_state.pending_tc_high_qc_sync().is_none());
+    assert_eq!(completed_state.pending_finalize(), Some(proof_id));
 
     let released = uninterrupted
         .step(
@@ -7173,8 +13446,13 @@ fn already_ready_tc_delivered_qc_runs_the_same_finality_transition() {
 }
 
 #[test]
-fn one_tc_coalesces_multiple_monotonic_finality_steps_into_the_latest_proof() {
-    let (_config, mut core) = configured_core();
+fn one_tc_queues_every_monotonic_finality_step_in_ancestor_order() {
+    let (config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
+    assert!(matches!(
+        core.issue_application_finalization_apply_authority_v0(),
+        Err(CoreError::ApplicationFinalizationApplyAuthorityAlreadyIssued)
+    ));
     let set = core.config().validator_set().clone();
     let p1 = proposal(&set, genesis_qc(&set), 1, b"coalesced one");
     let q1 = qc(&set, 1, 1, p1.block().id());
@@ -7195,30 +13473,823 @@ fn one_tc_coalesces_multiple_monotonic_finality_steps_into_the_latest_proof() {
     let (barrier, finalized) = persistence_effect(&effects);
     assert_eq!(finalized.high_qc().id(), q4.id());
     assert_eq!(finalized.finalized().block_id(), p2.block().id());
+    assert_eq!(finalized.application_applied().height(), Height::new(0));
+    assert_eq!(finalized.finalization_queue().len(), 2);
+    assert_eq!(
+        finalized.finalization_queue()[0]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p1.block().id()
+    );
+    assert_eq!(
+        finalized.finalization_queue()[0].target_overlay_ref(),
+        artifact_ref_for_ids(p1.block().id(), p1.block().header().parent_id()).overlay()
+    );
+    assert_eq!(
+        finalized.finalization_queue()[1]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p2.block().id()
+    );
+    assert_eq!(
+        finalized.finalization_queue()[1].target_overlay_ref(),
+        artifact_ref_for_ids(p2.block().id(), p2.block().header().parent_id()).overlay()
+    );
     let latest = finalized
         .last_finalization_proof()
         .expect("latest proof permanently covers the new finalized tip");
     assert_eq!(latest.finalized_block().header().id(), p2.block().id());
-    let proof_id = finalized
+    let first_proof_id = finalized
         .pending_finalize()
-        .expect("one coalesced finality outbox is durable");
+        .expect("the oldest finality outbox is durable");
+    assert_eq!(first_proof_id, finalized.finalization_queue()[0].proof_id());
+
+    let mut tampered_checksum = finalized.finalization_queue()[0]
+        .target_overlay_ref()
+        .overlay_checksum();
+    tampered_checksum[0] ^= 1;
+    let mut tampered_queue = finalized.finalization_queue().to_vec();
+    let original_front = tampered_queue[0].clone();
+    tampered_queue[0] = DurableFinalizationV0::new(
+        original_front.authenticated_parent(),
+        original_front.proof().clone(),
+        BlockIdOverlayRefV0::new(
+            original_front.target_overlay_ref().block_id(),
+            original_front.target_overlay_ref().parent_block_id(),
+            tampered_checksum,
+        ),
+    )
+    .expect("shape-valid but terminal-inconsistent overlay fixture");
+    let mut tampered_state = finalized.clone();
+    tampered_state.set_finalization_queue(tampered_queue);
+    let tampered_state = roundtrip_safety_state_record(&config, &tampered_state);
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &tampered_state, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "application-finalization queue target overlay differs from its terminal Valid fact",
+        ))
+    );
+
+    let mut exact_capacity_queue = finalized.finalization_queue().to_vec();
+    exact_capacity_queue.resize(config.max_blocks(), original_front.clone());
+    let mut exact_capacity_state = finalized.clone();
+    exact_capacity_state.set_finalization_queue(exact_capacity_queue.clone());
+    assert_eq!(
+        roundtrip_safety_state_record(&config, &exact_capacity_state),
+        exact_capacity_state,
+        "the schema-v12 codec admits exactly max_blocks inert queue carriers",
+    );
+    exact_capacity_queue.push(original_front);
+    let mut over_capacity_state = finalized.clone();
+    over_capacity_state.set_finalization_queue(exact_capacity_queue);
+    let context = SafetyStateRecordContextV0::new(
+        &config,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+    )
+    .expect("capacity-compatible safety-state record context");
+    assert_eq!(
+        encode_safety_state_record_v0(&over_capacity_state, &context),
+        Err(SafetyStateRecordErrorV0::InvalidConsensusValue(
+            "application finalization queue",
+        )),
+        "the codec rejects max_blocks + 1 before emitting an oversized record",
+    );
+    assert_eq!(
+        Core::validate_persisted_state_v0(&config, &over_capacity_state, &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "application-finalization queue exceeds the configured block bound",
+        )),
+    );
+
+    let persisted = roundtrip_safety_state_record(&config, &finalized);
+    let mut recovered = Core::recover(config, persisted, &RootSignatures)
+        .expect("the ordered finalization queue recovers");
+    assert!(matches!(
+        recovered
+            .step(Input::Resume, &RootSignatures)
+            .expect("restart reissues only the queue front")
+            .as_slice(),
+        [Effect::Finalize(proof)]
+            if proof.id() == first_proof_id
+                && proof.finalized_block().header().id() == p1.block().id()
+                && proof.target_overlay_ref()
+                    == finalized.finalization_queue()[0].target_overlay_ref()
+    ));
 
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
-        .expect("the coalesced proof is emitted after persistence");
+        .expect("the oldest proof is emitted after persistence");
+    assert!(matches!(
+        effects.as_slice(),
+        [
+            Effect::ArmViewTimer { epoch, view },
+            Effect::Finalize(proof),
+        ]
+            if *epoch == finalized.epoch()
+                && *view == finalized.current_view()
+                && proof.id() == first_proof_id
+                && proof.finalized_block().header().id() == p1.block().id()
+                && proof.target_overlay_ref()
+                    == finalized.finalization_queue()[0].target_overlay_ref()
+    ));
+
+    // Recovery authenticates the same durable front but creates fresh
+    // process-local authority.  Its receipt cannot cross into the original
+    // Core and the owner returned by that rejection succeeds unchanged on the
+    // recovered Core which minted it.
+    let recovered_authority = finalization_apply_authority_for_test(&recovered);
+    let recovered_permit = recovered
+        .issue_application_finalization_permit_v0()
+        .expect("the recovered Core issues its exact pending-front permit");
+    let recovered_readback =
+        finalization_readback_for_test(&recovered, &recovered_authority, &recovered_permit);
+    assert!(!finalization_authority.matches_application_finalization_permit_v0(&recovered_permit));
+    let recovered_permit_rejection = finalization_authority
+        .receipt_after_application_store_apply_v0(recovered_permit, recovered_readback.clone())
+        .expect_err("the original application authority rejects before any foreign store write");
     assert_eq!(
-        effects
-            .iter()
-            .filter(|effect| matches!(effect, Effect::Finalize(_)))
-            .count(),
-        1
+        recovered_permit_rejection.error(),
+        &CoreError::ApplicationFinalizationPermitMismatch
     );
-    assert!(effects.iter().any(|effect| matches!(
-        effect,
-        Effect::Finalize(proof)
-            if proof.id() == proof_id
+    let recovered_permit = recovered_permit_rejection.into_permit();
+    assert!(recovered_authority.matches_application_finalization_permit_v0(&recovered_permit));
+    let recovered_receipt = recovered_authority
+        .receipt_after_application_store_apply_v0(recovered_permit, recovered_readback)
+        .expect("the owner returned by prewrite rejection remains usable by its issuing authority");
+    let before_recovered_receipt = core.safety_state().clone();
+    let rejection = core
+        .step_application_finalization_receipt_v0(recovered_receipt, &RootSignatures)
+        .expect_err("a recovered Core has a fresh process affinity");
+    assert_eq!(
+        rejection.error(),
+        &CoreError::ApplicationFinalizationReceiptMismatch
+    );
+    assert_eq!(core.safety_state(), &before_recovered_receipt);
+    let recovered_receipt = rejection.into_receipt();
+    let recovered_effects = recovered
+        .step_application_finalization_receipt_v0(recovered_receipt, &RootSignatures)
+        .expect("the exact recovered queue-front owner remains usable on its issuing Core");
+    let (_recovered_barrier, recovered_after_first) = persistence_effect(&recovered_effects);
+    assert_eq!(
+        recovered_after_first.application_applied().block_id(),
+        p1.block().id()
+    );
+
+    // Even the correct installed application authority cannot turn a permit
+    // for a different Core/front into an acknowledgement for this queue.
+    let (_foreign_config, mut foreign_core, _foreign_validation, _foreign_result) =
+        finalization_gated_validation(b"foreign finalization receipt front");
+    let foreign_authority = finalization_apply_authority_for_test(&foreign_core);
+    let foreign_permit = foreign_core
+        .issue_application_finalization_permit_v0()
+        .expect("foreign Core has its own exact pending front");
+    let foreign_readback =
+        finalization_readback_for_test(&foreign_core, &foreign_authority, &foreign_permit);
+    assert_ne!(
+        foreign_permit.finalization(),
+        core.safety_state()
+            .pending_finalization()
+            .expect("the original front remains pending")
+    );
+    assert!(!finalization_authority.matches_application_finalization_permit_v0(&foreign_permit));
+    let foreign_permit_rejection = finalization_authority
+        .receipt_after_application_store_apply_v0(foreign_permit, foreign_readback.clone())
+        .expect_err("a foreign permit is rejected before the receiving store can write");
+    assert_eq!(
+        foreign_permit_rejection.error(),
+        &CoreError::ApplicationFinalizationPermitMismatch
+    );
+    let foreign_permit = foreign_permit_rejection.into_permit();
+    assert!(foreign_authority.matches_application_finalization_permit_v0(&foreign_permit));
+    let foreign_receipt = foreign_authority
+        .receipt_after_application_store_apply_v0(foreign_permit, foreign_readback)
+        .expect("the returned foreign permit remains usable with its issuing authority");
+    let before_foreign_front = core.safety_state().clone();
+    let rejection = core
+        .step_application_finalization_receipt_v0(foreign_receipt, &RootSignatures)
+        .expect_err("a different durable queue front cannot be acknowledged");
+    assert_eq!(
+        rejection.error(),
+        &CoreError::ApplicationFinalizationReceiptMismatch
+    );
+    assert_eq!(core.safety_state(), &before_foreign_front);
+    let foreign_receipt = rejection.into_receipt();
+    let _foreign_effects = foreign_core
+        .step_application_finalization_receipt_v0(foreign_receipt, &RootSignatures)
+        .expect("the receipt returned by the original Core remains usable on its foreign issuer");
+
+    // One front issues one permit. A public Core clone has equal protocol
+    // state but fresh affinities; its rejection returns the exact sole owner,
+    // which then succeeds on the issuing Core.
+    let permit = core
+        .issue_application_finalization_permit_v0()
+        .expect("the original exact queue front issues one permit");
+    let readback = finalization_readback_for_test(&core, &finalization_authority, &permit);
+    assert!(matches!(
+        core.issue_application_finalization_permit_v0(),
+        Err(CoreError::ApplicationFinalizationPermitAlreadyIssued)
+    ));
+    let mut public_clone = core.clone();
+    let public_clone_authority = finalization_apply_authority_for_test(&public_clone);
+    assert!(!public_clone_authority.matches_application_finalization_permit_v0(&permit));
+    let permit_rejection = public_clone_authority
+        .receipt_after_application_store_apply_v0(permit, readback.clone())
+        .expect_err("a public Core clone rejects the permit before any simulated store write");
+    assert_eq!(
+        permit_rejection.error(),
+        &CoreError::ApplicationFinalizationPermitMismatch
+    );
+    let permit = permit_rejection.into_permit();
+    assert!(finalization_authority.matches_application_finalization_permit_v0(&permit));
+    let receipt = finalization_authority
+        .receipt_after_application_store_apply_v0(permit, readback)
+        .expect("the issuing application authority consumes its returned permit");
+    let public_clone_before = public_clone.safety_state().clone();
+    let rejection = public_clone
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect_err("a public Core clone must receive fresh receipt affinities");
+    assert_eq!(
+        rejection.error(),
+        &CoreError::ApplicationFinalizationReceiptMismatch
+    );
+    assert_eq!(public_clone.safety_state(), &public_clone_before);
+    let receipt = rejection.into_receipt();
+    let effects = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect("the oldest queue entry is acknowledged first");
+    let manifest = persistence_request(&effects)
+        .native_finalization_applied_v0()
+        .expect("the receipt transition carries its exact App readback manifest");
+    assert_eq!(manifest.predecessor(), finalized.application_applied());
+    assert_eq!(
+        manifest.successor().block_id(),
+        p1.block().id(),
+        "the persisted successor is the exact consumed queue front",
+    );
+    assert_eq!(
+        manifest.post_ack_action_v0(),
+        NativeFinalizationAppliedPostAckActionV0::Finalize,
+    );
+    assert_eq!(
+        manifest
+            .application_store_readback_v0()
+            .source_validation_id()
+            .block_id(),
+        p1.block().id(),
+    );
+    assert_eq!(
+        manifest
+            .application_store_readback_v0()
+            .finalization_checksum(),
+        native_finalization_applied_checksum_v0(&finalized.finalization_queue()[0])
+            .expect("queue front has a canonical checksum"),
+    );
+    assert_eq!(
+        persistence_request(&effects).native_valid_post_ack_action_v0(),
+        None,
+        "finalization-applied and NativeValid manifests are disjoint",
+    );
+    let (barrier, after_first) = persistence_effect(&effects);
+    assert_eq!(
+        after_first.application_applied().block_id(),
+        p1.block().id()
+    );
+    assert_eq!(after_first.finalization_queue().len(), 1);
+    assert_eq!(
+        after_first.finalization_queue()[0]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p2.block().id()
+    );
+    let second_proof_id = after_first
+        .pending_finalize()
+        .expect("the next ancestor becomes the queue front");
+
+    assert!(matches!(
+        core.issue_application_finalization_permit_v0(),
+        Err(CoreError::Busy(
+            "waiting for durable safety-state acknowledgement"
+        ))
+    ));
+
+    let effects = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the next ancestor is emitted only after the first ack is durable");
+    assert!(matches!(
+        effects.as_slice(),
+        [Effect::Finalize(proof)]
+            if proof.id() == second_proof_id
                 && proof.finalized_block().header().id() == p2.block().id()
-    )));
+                && proof.target_overlay_ref()
+                    == after_first.finalization_queue()[0].target_overlay_ref()
+    ));
+
+    let effects = apply_finalization_for_test(&mut core, &finalization_authority)
+        .expect("the second ancestor is acknowledged");
+    let (_barrier, drained) = persistence_effect(&effects);
+    assert_eq!(drained.application_applied().block_id(), p2.block().id());
+    assert!(drained.finalization_queue().is_empty());
+    assert!(drained.pending_finalize().is_none());
+}
+
+#[test]
+fn one_high_qc_reconstructs_every_missing_finalization_from_genesis() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"suffix one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"suffix two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"suffix three");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3, 4, b"suffix four");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    let p5 = proposal(&set, q4, 5, b"suffix five");
+    let q5 = qc(&set, 5, 5, p5.block().id());
+    let p6 = proposal(&set, q5, 6, b"suffix six");
+    let q6 = qc(&set, 6, 6, p6.block().id());
+    for proposed in [&p1, &p2, &p3, &p4, &p5, &p6] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 7, q6.clone())),
+            &RootSignatures,
+        )
+        .expect("one ready high QC reconstructs the complete certified suffix");
+    let (_barrier, finalized) = persistence_effect(&effects);
+    assert_eq!(finalized.high_qc().id(), q6.id());
+    assert_eq!(finalized.application_applied().height(), Height::new(0));
+    assert_eq!(finalized.finalized().block_id(), p4.block().id());
+    assert_eq!(finalized.finalization_queue().len(), 4);
+
+    let expected = [
+        (&p1, GENESIS),
+        (&p2, p1.block().id()),
+        (&p3, p2.block().id()),
+        (&p4, p3.block().id()),
+    ];
+    for (durable, (proposed, parent_id)) in finalized.finalization_queue().iter().zip(expected) {
+        assert_eq!(durable.authenticated_parent().block_id(), parent_id);
+        assert_eq!(
+            durable.proof().finalized_block().header().id(),
+            proposed.block().id()
+        );
+        assert_eq!(
+            durable.target_overlay_ref(),
+            artifact_ref_for_ids(proposed.block().id(), parent_id).overlay()
+        );
+    }
+    assert_eq!(
+        finalized.pending_finalize(),
+        Some(finalized.finalization_queue()[0].proof_id())
+    );
+    assert_eq!(
+        finalized.last_finalization(),
+        finalized.finalization_queue().last()
+    );
+}
+
+#[test]
+fn live_suffix_at_the_block_tree_bound_stays_below_the_queue_bound() {
+    const MAX_BLOCKS: usize = 6;
+
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let config = CoreConfig::new(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        MAX_BLOCKS,
+        64,
+    )
+    .expect("valid exact-capacity config");
+    let mut core = Core::new(config, genesis_qc(&set), &RootSignatures)
+        .expect("valid exact-capacity bootstrap");
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"bounded suffix one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"bounded suffix two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"bounded suffix three");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3, 4, b"bounded suffix four");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    let p5 = proposal(&set, q4, 5, b"bounded suffix five");
+    let q5 = qc(&set, 5, 5, p5.block().id());
+    let p6 = proposal(&set, q5, 6, b"bounded suffix six");
+    let q6 = qc(&set, 6, 6, p6.block().id());
+    for proposed in [&p1, &p2, &p3, &p4, &p5, &p6] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 7, q6)),
+            &RootSignatures,
+        )
+        .expect("the complete live tree produces its maximal fresh suffix");
+    let (_barrier, finalized) = persistence_effect(&effects);
+    assert_eq!(finalized.finalization_queue().len(), MAX_BLOCKS - 2);
+    assert!(finalized.finalization_queue().len() < MAX_BLOCKS);
+}
+
+#[test]
+fn persisted_nonempty_finalization_queue_blocks_a_later_suffix_without_changing_its_front() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"blocked suffix one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"blocked suffix two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"blocked suffix three");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3, 4, b"blocked suffix four");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    let p5 = proposal(&set, q4.clone(), 5, b"blocked suffix five");
+    let q5 = qc(&set, 5, 5, p5.block().id());
+    let p6 = proposal(&set, q5, 6, b"blocked suffix six");
+    let q6 = qc(&set, 6, 6, p6.block().id());
+    for proposed in [&p1, &p2, &p3, &p4, &p5, &p6] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 7, q4)),
+            &RootSignatures,
+        )
+        .expect("the first ready suffix is persisted");
+    let (barrier, queued) = persistence_effect(&effects);
+    assert_eq!(queued.finalization_queue().len(), 2);
+    let expected_front = queued.finalization_queue()[0].clone();
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the queue front is durably released to the application");
+
+    let before = core.clone();
+    assert_eq!(
+        core.step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 8, q6)),
+            &RootSignatures,
+        ),
+        Err(CoreError::Busy(
+            "waiting for application finalization acknowledgement",
+        )),
+    );
+    assert_eq!(core, before);
+    assert_eq!(core.safety_state().finalization_queue().len(), 2);
+    assert_eq!(core.safety_state().finalization_queue()[0], expected_front);
+    assert_eq!(
+        core.safety_state().pending_finalize(),
+        Some(expected_front.proof_id()),
+    );
+}
+
+#[test]
+fn reconstructed_suffix_uses_exact_block_ids_when_siblings_share_height_and_state_root() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"exact sibling parent");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let selected = proposal(&set, q1.clone(), 2, b"selected same-root sibling");
+    let sibling = timeout_proposal(
+        &set,
+        timeout_certificate(&set, 4, q1),
+        b"foreign same-root sibling",
+    );
+    assert_eq!(
+        selected.block().header().height(),
+        sibling.block().header().height()
+    );
+    assert_eq!(
+        selected.block().header().state_root(),
+        sibling.block().header().state_root(),
+        "the block fixture intentionally assigns one state root per height",
+    );
+    assert_ne!(selected.block().id(), sibling.block().id());
+
+    let q2 = qc(&set, 2, 2, selected.block().id());
+    let p3 = proposal(&set, q2, 3, b"exact sibling child");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3, 4, b"exact sibling grandchild");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    for proposed in [&p1, &sibling, &selected, &p3, &p4] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let selected_overlay = artifact_ref_for_ids(selected.block().id(), p1.block().id()).overlay();
+    let sibling_overlay = artifact_ref_for_ids(sibling.block().id(), p1.block().id()).overlay();
+    assert_eq!(
+        core.safety_state()
+            .payload_terminal_fact(selected.block().id())
+            .and_then(PayloadTerminalFact::valid_overlay),
+        Some(selected_overlay),
+    );
+    assert_eq!(
+        core.safety_state()
+            .payload_terminal_fact(sibling.block().id())
+            .and_then(PayloadTerminalFact::valid_overlay),
+        Some(sibling_overlay),
+    );
+    assert_ne!(selected_overlay, sibling_overlay);
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 5, q4)),
+            &RootSignatures,
+        )
+        .expect("the selected certified branch reconstructs its exact suffix");
+    let (_barrier, finalized) = persistence_effect(&effects);
+    assert_eq!(finalized.finalization_queue().len(), 2);
+    assert_eq!(
+        finalized.finalization_queue()[0]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p1.block().id(),
+    );
+    assert_eq!(
+        finalized.finalization_queue()[1]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        selected.block().id(),
+    );
+    assert_eq!(
+        finalized.finalization_queue()[1].target_overlay_ref(),
+        selected_overlay,
+    );
+    assert!(finalized.finalization_queue().iter().all(|durable| {
+        durable.proof().finalized_block().header().id() != sibling.block().id()
+            && durable.target_overlay_ref() != sibling_overlay
+    }));
+}
+
+#[test]
+fn certified_same_root_fork_cannot_append_a_prefix_past_the_applied_tip() {
+    let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"fork common parent");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+
+    let applied = proposal(&set, q1.clone(), 2, b"applied same-root branch");
+    let applied_q2 = qc(&set, 2, 2, applied.block().id());
+    let applied_p3 = proposal(&set, applied_q2, 3, b"applied branch child");
+    let applied_q3 = qc(&set, 3, 3, applied_p3.block().id());
+    let applied_p4 = proposal(&set, applied_q3, 4, b"applied branch grandchild");
+    let applied_q4 = qc(&set, 4, 4, applied_p4.block().id());
+
+    // A higher-view sibling has the same height and state root, but a
+    // different BlockId and an entirely different certified continuation.
+    let competing = timeout_proposal(
+        &set,
+        timeout_certificate(&set, 4, q1),
+        b"competing same-root branch",
+    );
+    assert_eq!(
+        applied.block().header().height(),
+        competing.block().header().height()
+    );
+    assert_eq!(
+        applied.block().header().state_root(),
+        competing.block().header().state_root(),
+    );
+    assert_ne!(applied.block().id(), competing.block().id());
+    let competing_q2 = qc(&set, 5, 2, competing.block().id());
+    let competing_p3 = proposal(&set, competing_q2, 6, b"competing branch child");
+    let competing_q3 = qc(&set, 6, 3, competing_p3.block().id());
+    let competing_p4 = proposal(&set, competing_q3, 7, b"competing branch grandchild");
+    let competing_q4 = qc(&set, 7, 4, competing_p4.block().id());
+
+    for proposed in [
+        &p1,
+        &applied,
+        &applied_p3,
+        &applied_p4,
+        &competing,
+        &competing_p3,
+        &competing_p4,
+    ] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 8, applied_q4)),
+            &RootSignatures,
+        )
+        .expect("the first certified branch becomes the exact durable tip");
+    let (barrier, queued) = persistence_effect(&effects);
+    assert_eq!(queued.finalization_queue().len(), 2);
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the first branch queue is durable");
+    for expected in [&p1, &applied] {
+        let effects = apply_finalization_for_test(&mut core, &finalization_authority)
+            .expect("the exact queue front is applied in order");
+        let (barrier, applied_state) = persistence_effect(&effects);
+        assert_eq!(
+            applied_state.application_applied().block_id(),
+            expected.block().id(),
+        );
+        core.step(Input::StorageAck { barrier }, &RootSignatures)
+            .expect("the application watermark is durable");
+    }
+    assert_eq!(
+        core.safety_state().finalized().block_id(),
+        applied.block().id()
+    );
+    assert_eq!(
+        core.safety_state().application_applied().block_id(),
+        applied.block().id(),
+    );
+    assert!(core.safety_state().finalization_queue().is_empty());
+
+    let before = core.clone();
+    assert_eq!(
+        core.step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 9, competing_q4)),
+            &RootSignatures,
+        ),
+        Err(CoreError::ConflictingCertificate),
+    );
+    assert_eq!(
+        core, before,
+        "a conflicting embedded suffix must not append even one valid-looking prefix",
+    );
+    assert_eq!(
+        core.safety_state().finalized().block_id(),
+        applied.block().id(),
+    );
+    assert_eq!(
+        core.safety_state().application_applied().block_id(),
+        applied.block().id(),
+    );
+    assert!(core.safety_state().finalization_queue().is_empty());
+}
+
+#[test]
+fn pending_q5_and_tc_q6_append_the_complete_suffix_after_applied_height_two() {
+    let (_config, mut core) = configured_core();
+    let finalization_authority = finalization_apply_authority_for_test(&core);
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"overlap suffix one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"overlap suffix two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"overlap suffix three");
+    let q3 = qc(&set, 3, 3, p3.block().id());
+    let p4 = proposal(&set, q3, 4, b"overlap suffix four");
+    let q4 = qc(&set, 4, 4, p4.block().id());
+    let p5 = proposal(&set, q4.clone(), 5, b"overlap suffix five");
+    let q5 = qc(&set, 5, 5, p5.block().id());
+    let p6 = proposal(&set, q5.clone(), 6, b"overlap suffix six");
+    let q6 = qc(&set, 6, 6, p6.block().id());
+    for proposed in [&p1, &p2, &p3, &p4] {
+        replay_valid(&mut core, proposed.clone());
+    }
+
+    let effects = core
+        .step(
+            Input::TimeoutCertificate(timeout_certificate(&set, 7, q4)),
+            &RootSignatures,
+        )
+        .expect("q4 first queues heights one and two");
+    let (barrier, queued) = persistence_effect(&effects);
+    assert_eq!(queued.finalization_queue().len(), 2);
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the initial queue is durable");
+    for expected in [&p1, &p2] {
+        let effects = apply_finalization_for_test(&mut core, &finalization_authority)
+            .expect("the application acknowledges the exact queue front");
+        let (barrier, applied) = persistence_effect(&effects);
+        assert_eq!(
+            applied.application_applied().block_id(),
+            expected.block().id()
+        );
+        core.step(Input::StorageAck { barrier }, &RootSignatures)
+            .expect("the application watermark is durable");
+    }
+    assert_eq!(
+        core.safety_state().application_applied().block_id(),
+        p2.block().id()
+    );
+    assert_eq!(core.safety_state().finalized().block_id(), p2.block().id());
+    assert!(core.safety_state().finalization_queue().is_empty());
+
+    replay_valid(&mut core, p5.clone());
+    let tc = timeout_certificate(&set, 9, q6.clone());
+    let effects = core
+        .step(Input::TimeoutCertificate(tc.clone()), &RootSignatures)
+        .expect("missing q6 target becomes the durable TC obligation");
+    let (barrier, pending_tc) = persistence_effect(&effects);
+    assert_eq!(
+        pending_tc
+            .pending_tc_high_qc_sync()
+            .expect("q6 TC remains pending")
+            .certificate_id(),
+        tc.id()
+    );
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the q6 TC obligation is durable");
+
+    let effects = core
+        .step(Input::QuorumCertificate(q5.clone()), &RootSignatures)
+        .expect("ready q5 waits behind the higher-priority TC");
+    let (barrier, both_pending) = persistence_effect(&effects);
+    assert_eq!(
+        both_pending
+            .pending_standalone_qc_sync()
+            .expect("q5 is retained as the standalone active target")
+            .active()
+            .id(),
+        q5.id()
+    );
+    assert!(both_pending.pending_tc_high_qc_sync().is_some());
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("both pending targets are durable");
+
+    let effects = core
+        .step(Input::SyncedProposal(Box::new(p6)), &RootSignatures)
+        .expect("the exact q6 block arrives through the synced route");
+    let effects = release_persisted_effects(&mut core, effects);
+    let id = synced_validation_effect(&effects);
+    let result = valid_result_for_effect(&core, &effects, id);
+    let effects = core
+        .step(
+            Input::SyncedPayloadValidated { id, result },
+            &RootSignatures,
+        )
+        .expect("q6 completion appends both missing ancestors without conflict");
+    assert_eq!(
+        persistence_request(&effects).native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::ArmViewTimerThenFinalize)
+    );
+    let (barrier, completed) = persistence_effect(&effects);
+    assert_eq!(completed.high_qc().id(), q6.id());
+    assert_eq!(completed.application_applied().block_id(), p2.block().id());
+    assert_eq!(completed.finalized().block_id(), p4.block().id());
+    assert!(completed.pending_tc_high_qc_sync().is_none());
+    assert!(completed.pending_standalone_qc_sync().is_none());
+    assert_eq!(completed.finalization_queue().len(), 2);
+    assert_eq!(
+        completed.finalization_queue()[0]
+            .authenticated_parent()
+            .block_id(),
+        p2.block().id()
+    );
+    assert_eq!(
+        completed.finalization_queue()[0]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p3.block().id()
+    );
+    assert_eq!(
+        completed.finalization_queue()[0].target_overlay_ref(),
+        artifact_ref_for_ids(p3.block().id(), p2.block().id()).overlay()
+    );
+    assert_eq!(
+        completed.finalization_queue()[1]
+            .authenticated_parent()
+            .block_id(),
+        p3.block().id()
+    );
+    assert_eq!(
+        completed.finalization_queue()[1]
+            .proof()
+            .finalized_block()
+            .header()
+            .id(),
+        p4.block().id()
+    );
+    assert_eq!(
+        completed.finalization_queue()[1].target_overlay_ref(),
+        artifact_ref_for_ids(p4.block().id(), p3.block().id()).overlay()
+    );
+    assert_eq!(
+        completed.pending_finalize(),
+        Some(completed.finalization_queue()[0].proof_id())
+    );
+    assert!(matches!(
+        core.step(Input::StorageAck { barrier }, &RootSignatures)
+            .expect("only the oldest recovered ancestor is released")
+            .as_slice(),
+        [Effect::ArmViewTimer { .. }, Effect::Finalize(proof)]
+            if proof.id() == completed.finalization_queue()[0].proof_id()
+                && proof.finalized_block().header().id() == p3.block().id()
+    ));
 }
 
 #[test]
@@ -7881,6 +14952,7 @@ fn recovery_fences_finalized_tip_and_finality_certifying_qc() {
             first.block().header().timestamp_ms(),
         ),
         proof,
+        artifact_ref_for_ids(second.block().id(), first.block().id()).overlay(),
     )
     .expect("valid durable finality witness");
     let decoded = decoded_state_with_obligations(

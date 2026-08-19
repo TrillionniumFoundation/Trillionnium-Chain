@@ -4,6 +4,7 @@ use std::{
     ffi::OsString,
     fs::{self, File, OpenOptions},
     path::{Path, PathBuf},
+    sync::Arc,
     time::Duration,
 };
 
@@ -14,8 +15,9 @@ use rusqlite::{
 use subtle::ConstantTimeEq;
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
-    decode_canonical_sign_intent_v0_exact, CanonicalSignIntentV0, CanonicalSignPreimageV0,
-    SignatureBytes, SignatureVerifier, SigningRoot,
+    decode_canonical_sign_intent_v0_exact, CanonicalSignIntentV0, CanonicalSignPreimageV0, ChainId,
+    Epoch, ProtocolVersion, SignatureBytes, SignatureVerifier, SigningRoot, ValidatorId,
+    ValidatorSetId,
 };
 
 use crate::{
@@ -38,6 +40,7 @@ const INTENT_DOMAIN_V0: &str = "trnm.consensus-signer-journal.intent.v0";
 const EVENT_DOMAIN_V0: &str = "trnm.consensus-signer-journal.event.v0";
 const CHAIN_DOMAIN_V0: &str = "trnm.consensus-signer-journal.chain.v0";
 const HEAD_DOMAIN_V0: &str = "trnm.consensus-signer-journal.head.v0";
+const LIFETIME_INVENTORY_DOMAIN_V1: &str = "trnm.consensus-signer-journal.lifetime-inventory.v1";
 const MAXIMUM_SHM_BYTES_V0: u64 = 1024 * 1024;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -96,6 +99,380 @@ pub struct JournalCapacityV0 {
     maximum_timeout_view: Option<u64>,
 }
 
+/// Authority-free projection of every durable Vote and TimeoutVote intent in
+/// one fully audited journal head.
+///
+/// Durable counts include the unique prepared-but-not-signed tail, when one
+/// exists. Signed counts include only intents whose signed event and Ed25519
+/// signature were verified by the same full audit. The digest binds these
+/// counts to the exact profile, journal, watermark, capacity, per-kind maxima,
+/// and pending-tail description. This type has no public constructor or serde
+/// representation; callers can compare or report it but cannot select counts.
+///
+/// ```compile_fail
+/// use trnm_consensus_signer_journal::SignerJournalLifetimeInventoryV1;
+/// fn forge() -> SignerJournalLifetimeInventoryV1 {
+///     SignerJournalLifetimeInventoryV1 {
+///         durable_vote_intent_count: 1,
+///         durable_timeout_intent_count: 0,
+///         signed_vote_intent_count: 1,
+///         signed_timeout_intent_count: 0,
+///         inventory_digest: [1; 32],
+///     }
+/// }
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SignerJournalLifetimeInventoryV1 {
+    durable_vote_intent_count: u64,
+    durable_timeout_intent_count: u64,
+    signed_vote_intent_count: u64,
+    signed_timeout_intent_count: u64,
+    inventory_digest: [u8; 32],
+}
+
+impl SignerJournalLifetimeInventoryV1 {
+    pub const fn durable_vote_intent_count(&self) -> u64 {
+        self.durable_vote_intent_count
+    }
+
+    pub const fn durable_timeout_intent_count(&self) -> u64 {
+        self.durable_timeout_intent_count
+    }
+
+    pub const fn signed_vote_intent_count(&self) -> u64 {
+        self.signed_vote_intent_count
+    }
+
+    pub const fn signed_timeout_intent_count(&self) -> u64 {
+        self.signed_timeout_intent_count
+    }
+
+    pub const fn inventory_digest(&self) -> [u8; 32] {
+        self.inventory_digest
+    }
+}
+
+/// Relationship observed between the authenticated local journal head and the
+/// independently administered external watermark during a pinned startup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SignerExternalWatermarkRelationV0 {
+    /// The external watermark exactly matches the local event-chain head.
+    Exact,
+    /// The local journal is exactly one authenticated event ahead. Activation
+    /// may repair this single local-first crash window with one external CAS.
+    LocalOneAhead,
+}
+
+/// Copied, inert description of the unique prepared-but-not-signed tail.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SignerPreparedIntentFactsV0 {
+    fingerprint: [u8; 32],
+    epoch: u64,
+    view: u64,
+    kind: u8,
+    safety_revision: u64,
+    signing_root: [u8; 32],
+    intent_checksum: [u8; 32],
+}
+
+/// Lifecycle state of the authenticated final journal event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SignerJournalTailStateV0 {
+    Prepared,
+    Signed,
+}
+
+/// Copied, inert description of the intent referenced by the final event.
+/// Signature bytes, when present, are public verification material and do not
+/// grant producer or journal authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SignerJournalTailFactsV0 {
+    state: SignerJournalTailStateV0,
+    fingerprint: [u8; 32],
+    epoch: u64,
+    view: u64,
+    kind: u8,
+    safety_revision: u64,
+    signing_root: [u8; 32],
+    intent_checksum: [u8; 32],
+    signature: Option<[u8; 64]>,
+}
+
+impl SignerJournalTailFactsV0 {
+    pub const fn state(&self) -> SignerJournalTailStateV0 {
+        self.state
+    }
+
+    pub const fn fingerprint(&self) -> [u8; 32] {
+        self.fingerprint
+    }
+
+    pub const fn epoch(&self) -> u64 {
+        self.epoch
+    }
+
+    pub const fn view(&self) -> u64 {
+        self.view
+    }
+
+    pub const fn kind(&self) -> u8 {
+        self.kind
+    }
+
+    pub const fn safety_revision(&self) -> u64 {
+        self.safety_revision
+    }
+
+    pub const fn signing_root(&self) -> [u8; 32] {
+        self.signing_root
+    }
+
+    pub const fn intent_checksum(&self) -> [u8; 32] {
+        self.intent_checksum
+    }
+
+    pub const fn signature(&self) -> Option<[u8; 64]> {
+        self.signature
+    }
+}
+
+impl SignerPreparedIntentFactsV0 {
+    pub const fn fingerprint(&self) -> [u8; 32] {
+        self.fingerprint
+    }
+
+    pub const fn epoch(&self) -> u64 {
+        self.epoch
+    }
+
+    pub const fn view(&self) -> u64 {
+        self.view
+    }
+
+    pub const fn kind(&self) -> u8 {
+        self.kind
+    }
+
+    pub const fn safety_revision(&self) -> u64 {
+        self.safety_revision
+    }
+
+    pub const fn signing_root(&self) -> [u8; 32] {
+        self.signing_root
+    }
+
+    pub const fn intent_checksum(&self) -> [u8; 32] {
+        self.intent_checksum
+    }
+}
+
+/// Authenticated, copied startup facts. This value carries no database,
+/// external-watermark, or signing authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SignerJournalReconciliationFactsV0 {
+    journal_id: [u8; 32],
+    profile_checksum: [u8; 32],
+    local_watermark: SignerWatermarkV0,
+    observed_external_watermark: SignerWatermarkV0,
+    external_relation: SignerExternalWatermarkRelationV0,
+    capacity: JournalCapacityV0,
+    lifetime_inventory: SignerJournalLifetimeInventoryV1,
+    tail: Option<SignerJournalTailFactsV0>,
+    pending_intent: Option<SignerPreparedIntentFactsV0>,
+}
+
+impl SignerJournalReconciliationFactsV0 {
+    pub const fn journal_id(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
+    pub const fn profile_checksum(&self) -> [u8; 32] {
+        self.profile_checksum
+    }
+
+    pub const fn local_watermark(&self) -> SignerWatermarkV0 {
+        self.local_watermark
+    }
+
+    pub const fn observed_external_watermark(&self) -> SignerWatermarkV0 {
+        self.observed_external_watermark
+    }
+
+    pub const fn external_relation(&self) -> SignerExternalWatermarkRelationV0 {
+        self.external_relation
+    }
+
+    pub const fn capacity(&self) -> JournalCapacityV0 {
+        self.capacity
+    }
+
+    pub const fn lifetime_inventory(&self) -> SignerJournalLifetimeInventoryV1 {
+        self.lifetime_inventory
+    }
+
+    pub const fn tail(&self) -> Option<SignerJournalTailFactsV0> {
+        self.tail
+    }
+
+    pub const fn pending_intent(&self) -> Option<SignerPreparedIntentFactsV0> {
+        self.pending_intent
+    }
+}
+
+/// Immutable signer identity authenticated by one pinned journal profile.
+///
+/// This value is comparison material only. It contains no private key,
+/// external-watermark owner, or journal handle.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SignerNodeCheckpointIdentityV0 {
+    chain_id: ChainId,
+    protocol_version: ProtocolVersion,
+    epoch: Epoch,
+    validator_set_id: ValidatorSetId,
+    author: ValidatorId,
+    signer_profile_ref: [u8; 32],
+    external_watermark_scope: [u8; 32],
+}
+
+impl SignerNodeCheckpointIdentityV0 {
+    fn from_profile(profile: &SignerJournalProfileV0) -> Self {
+        Self {
+            chain_id: profile.chain_id(),
+            protocol_version: profile.protocol_version(),
+            epoch: profile.epoch(),
+            validator_set_id: profile.validator_set_id(),
+            author: profile.author(),
+            signer_profile_ref: profile.signer_profile_ref(),
+            external_watermark_scope: profile.external_watermark_scope(),
+        }
+    }
+
+    pub const fn chain_id(&self) -> ChainId {
+        self.chain_id
+    }
+
+    pub const fn protocol_version(&self) -> ProtocolVersion {
+        self.protocol_version
+    }
+
+    pub const fn epoch(&self) -> Epoch {
+        self.epoch
+    }
+
+    pub const fn validator_set_id(&self) -> ValidatorSetId {
+        self.validator_set_id
+    }
+
+    pub const fn author(&self) -> ValidatorId {
+        self.author
+    }
+
+    pub const fn signer_profile_ref(&self) -> [u8; 32] {
+        self.signer_profile_ref
+    }
+
+    pub const fn external_watermark_scope(&self) -> [u8; 32] {
+        self.external_watermark_scope
+    }
+}
+
+/// One-shot, authority-free facts for an exactly externally checkpointed
+/// signer-journal head.
+///
+/// The capability intentionally implements neither `Clone` nor `Copy`, has
+/// private fields, no public constructor, and no serde representation. It can
+/// be created only after the pinned SQLite namespace is deeply revalidated, a
+/// fresh independently administered watermark is observed equal to the local
+/// event-chain head, and the local namespace is revalidated once more. The
+/// operation never advances the external watermark.
+///
+/// ```compile_fail
+/// use trnm_consensus_signer_journal::ConfirmedSignerNodeCheckpointFactsV0;
+/// fn requires_clone<T: Clone>() {}
+/// requires_clone::<ConfirmedSignerNodeCheckpointFactsV0>();
+/// ```
+///
+/// ```compile_fail
+/// use trnm_consensus_signer_journal::ConfirmedSignerNodeCheckpointFactsV0;
+/// fn forge() -> ConfirmedSignerNodeCheckpointFactsV0 {
+///     ConfirmedSignerNodeCheckpointFactsV0 {
+///         journal_id: [1; 32],
+///     }
+/// }
+/// ```
+#[derive(Debug)]
+#[must_use = "confirmed signer facts must be consumed by the trusted node-checkpoint join"]
+pub struct ConfirmedSignerNodeCheckpointFactsV0 {
+    journal_id: [u8; 32],
+    profile_checksum: [u8; 32],
+    identity: SignerNodeCheckpointIdentityV0,
+    exact_watermark: SignerWatermarkV0,
+    capacity: JournalCapacityV0,
+    lifetime_inventory: SignerJournalLifetimeInventoryV1,
+    tail: Option<SignerJournalTailFactsV0>,
+    pending_intent: Option<SignerPreparedIntentFactsV0>,
+    owner_affinity: Arc<()>,
+}
+
+impl ConfirmedSignerNodeCheckpointFactsV0 {
+    pub const fn journal_id(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
+    pub const fn profile_checksum(&self) -> [u8; 32] {
+        self.profile_checksum
+    }
+
+    pub const fn identity(&self) -> SignerNodeCheckpointIdentityV0 {
+        self.identity
+    }
+
+    pub const fn exact_watermark(&self) -> SignerWatermarkV0 {
+        self.exact_watermark
+    }
+
+    pub const fn capacity(&self) -> JournalCapacityV0 {
+        self.capacity
+    }
+
+    pub const fn lifetime_inventory(&self) -> SignerJournalLifetimeInventoryV1 {
+        self.lifetime_inventory
+    }
+
+    pub const fn tail(&self) -> Option<SignerJournalTailFactsV0> {
+        self.tail
+    }
+
+    pub const fn pending_intent(&self) -> Option<SignerPreparedIntentFactsV0> {
+        self.pending_intent
+    }
+
+    /// Confirms that these detached facts came from this exact still-pinned
+    /// owner and that its canonical namespace remains at `expected_path`.
+    pub fn belongs_to_pinned_journal_at_path_v0<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        pinned: &PinnedSqliteSignerJournalV0<W>,
+        expected_path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner_affinity, &pinned.owner_affinity)
+            && pinned.path() == expected_path
+            && pinned.ensure_file_identity().is_ok()
+    }
+
+    /// Confirms that these facts came from this exact operational owner and
+    /// its still-pinned canonical namespace. Freshness is established by the
+    /// operational confirmation method which minted this capability.
+    pub fn belongs_to_operational_journal_at_path_v0<W: ExternalMonotonicWatermarkV0>(
+        &self,
+        journal: &SqliteSignerJournalV0<W>,
+        expected_path: &Path,
+    ) -> bool {
+        Arc::ptr_eq(&self.owner_affinity, &journal.owner_affinity)
+            && journal.path() == expected_path
+            && journal.ensure_file_identity().is_ok()
+    }
+}
+
 impl JournalCapacityV0 {
     pub const fn intent_count(&self) -> u64 {
         self.intent_count
@@ -143,6 +520,63 @@ pub struct SqliteSignerJournalV0<W> {
     journal_id: [u8; 32],
     observed_head: JournalHeadV0,
     owner_pid: u32,
+    owner_affinity: Arc<()>,
+}
+
+/// Non-cloneable, existing-only startup owner. It pins and authenticates the
+/// complete local namespace and observes the external watermark without
+/// changing either. Call [`Self::activate_v0`] only after the host has
+/// reconciled these copied facts with its Core, SafetyStore, and AppStore.
+pub struct PinnedSqliteSignerJournalV0<W> {
+    connection: Connection,
+    database_file: File,
+    lock_file: File,
+    wal_file: File,
+    shm_file: File,
+    directory_file: File,
+    database_path: PathBuf,
+    lock_path: PathBuf,
+    directory_path: PathBuf,
+    database_identity: FileIdentityV0,
+    lock_identity: FileIdentityV0,
+    wal_identity: FileIdentityV0,
+    shm_identity: FileIdentityV0,
+    directory_identity: FileIdentityV0,
+    profile: SignerJournalProfileV0,
+    external_watermark: W,
+    journal_id: [u8; 32],
+    observed_head: JournalHeadV0,
+    facts: SignerJournalReconciliationFactsV0,
+    owner_pid: u32,
+    owner_affinity: Arc<()>,
+}
+
+/// Owner-preserving activation failure. The caller may inspect the failure,
+/// recover the still-pinned startup session, or discard it and reopen.
+pub struct SignerJournalActivationFailureV0<W> {
+    error: SignerJournalErrorV0,
+    pinned: Box<PinnedSqliteSignerJournalV0<W>>,
+}
+
+impl<W> SignerJournalActivationFailureV0<W> {
+    fn new(pinned: PinnedSqliteSignerJournalV0<W>, error: SignerJournalErrorV0) -> Self {
+        Self {
+            error,
+            pinned: Box::new(pinned),
+        }
+    }
+
+    pub const fn error(&self) -> &SignerJournalErrorV0 {
+        &self.error
+    }
+
+    pub fn into_pinned(self) -> PinnedSqliteSignerJournalV0<W> {
+        *self.pinned
+    }
+
+    pub fn into_error(self) -> SignerJournalErrorV0 {
+        self.error
+    }
 }
 
 impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
@@ -223,6 +657,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             journal_id,
             observed_head,
             owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
         };
         store.validate_database()?;
         let initial = store.watermark_for(store.observed_head)?;
@@ -242,38 +677,112 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         profile: SignerJournalProfileV0,
         external_watermark: W,
     ) -> Result<Self, SignerJournalErrorV0> {
-        ensure_supported_platform()?;
-        let database_path = canonical_existing_database_path(database_path.as_ref())?;
-        let directory_path = database_path
-            .parent()
-            .ok_or(SignerJournalErrorV0::InvalidProfile("database parent"))?
-            .to_path_buf();
-        let directory_file = File::open(&directory_path)
-            .map_err(|error| SignerJournalErrorV0::io("pin signer directory", error))?;
-        let directory_identity = directory_handle_identity(&directory_file)?;
-        require_auxiliary_files(&database_path)?;
-        let lock_path = lock_path_for(&database_path)?;
-        let lock_file = open_existing_private_file(&lock_path, "open lock sidecar")?;
-        acquire_lifetime_lock(&lock_file)?;
-        let database_file = open_existing_private_file(&database_path, "pin database")?;
-        acquire_lifetime_lock(&database_file)?;
-        let database_identity = file_handle_identity(&database_file)?;
-        let lock_identity = file_handle_identity(&lock_file)?;
-        let (wal_file, wal_identity, shm_file, shm_identity) =
-            pin_auxiliary_files(&database_path, profile.maximum_database_bytes())?;
+        Self::pin_existing_v0(database_path, profile, external_watermark)?
+            .activate_v0()
+            .map_err(SignerJournalActivationFailureV0::into_error)
+    }
 
-        let connection = Connection::open_with_flags(
-            &database_path,
-            OpenFlags::SQLITE_OPEN_READ_WRITE
+    /// Pins and authenticates an existing journal without advancing the
+    /// external watermark or changing the SQLite namespace.
+    pub fn pin_existing_v0(
+        database_path: impl AsRef<Path>,
+        profile: SignerJournalProfileV0,
+        external_watermark: W,
+    ) -> Result<PinnedSqliteSignerJournalV0<W>, SignerJournalErrorV0> {
+        PinnedSqliteSignerJournalV0::open_existing_v0(database_path, profile, external_watermark)
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.database_path
+    }
+
+    pub const fn profile(&self) -> &SignerJournalProfileV0 {
+        &self.profile
+    }
+
+    /// Consumes an operational owner into the read-only startup form without
+    /// changing the journal or external watermark.
+    ///
+    /// This is used by a whole-node commissioning join which must keep signing
+    /// disabled until the first cross-store checkpoint has been durably
+    /// installed.  The returned pinned owner must still pass its normal fresh
+    /// revalidation before it can be activated again.
+    pub fn into_pinned_v0(
+        mut self,
+    ) -> Result<PinnedSqliteSignerJournalV0<W>, SignerJournalErrorV0> {
+        let operational_inventory = self.validate_database()?;
+        let operational_head = read_head(&self.connection, self.journal_id)?;
+        if operational_head != self.observed_head {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        let local_watermark =
+            watermark_for_parts(&self.profile, self.journal_id, operational_head)?;
+        let capacity = read_capacity(&self.connection)?;
+        validate_capacity(&capacity, &self.profile)?;
+        let tail = read_tail_facts(&self.connection, operational_head)?;
+        let pending_intent = read_pending_intent_facts(&self.connection)?;
+        let observed_external_watermark = self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+            .map_err(|error| {
+                SignerJournalErrorV0::external("pin operational external watermark", error)
+            })?
+            .ok_or(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkMissing,
+            ))?;
+        if observed_external_watermark != local_watermark {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkRepairRequired,
+            ));
+        }
+
+        let facts = SignerJournalReconciliationFactsV0 {
+            journal_id: self.journal_id,
+            profile_checksum: self.profile.profile_checksum(),
+            local_watermark,
+            observed_external_watermark,
+            external_relation: SignerExternalWatermarkRelationV0::Exact,
+            capacity,
+            lifetime_inventory: operational_inventory,
+            tail,
+            pending_intent,
+        };
+        let pinned_connection = Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
                 | OpenFlags::SQLITE_OPEN_NO_MUTEX
                 | OpenFlags::SQLITE_OPEN_NOFOLLOW,
         )
-        .map_err(|error| SignerJournalErrorV0::sqlite("open existing database", error))?;
-        configure_connection(&connection, false, profile.maximum_database_bytes())?;
-        materialize_auxiliary_files(&connection)?;
-        let journal_id = read_and_validate_metadata(&connection, &profile)?;
-        let observed_head = read_head(&connection, journal_id)?;
-        let mut store = Self {
+        .map_err(|error| SignerJournalErrorV0::sqlite("open pinned operational database", error))?;
+        configure_pinned_read_only_connection(&pinned_connection)?;
+        let pinned_inventory = validate_pinned_database_connection(
+            &pinned_connection,
+            &self.database_path,
+            &self.profile,
+            self.journal_id,
+        )?;
+        let pinned_head = read_head(&pinned_connection, self.journal_id)?;
+        let pinned_capacity = read_capacity(&pinned_connection)?;
+        validate_capacity(&pinned_capacity, &self.profile)?;
+        let pinned_tail = read_tail_facts(&pinned_connection, pinned_head)?;
+        let pinned_pending_intent = read_pending_intent_facts(&pinned_connection)?;
+        if pinned_head != operational_head
+            || pinned_capacity != facts.capacity
+            || pinned_inventory != facts.lifetime_inventory
+            || pinned_tail != facts.tail
+            || pinned_pending_intent != facts.pending_intent
+            || watermark_for_parts(&self.profile, self.journal_id, pinned_head)?
+                != facts.local_watermark
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        self.ensure_file_identity()?;
+
+        let Self {
             connection,
             database_file,
             lock_file,
@@ -292,20 +801,100 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             external_watermark,
             journal_id,
             observed_head,
-            owner_pid: std::process::id(),
+            owner_pid,
+            owner_affinity,
+        } = self;
+        drop(connection);
+        let pinned = PinnedSqliteSignerJournalV0 {
+            connection: pinned_connection,
+            database_file,
+            lock_file,
+            wal_file,
+            shm_file,
+            directory_file,
+            database_path,
+            lock_path,
+            directory_path,
+            database_identity,
+            lock_identity,
+            wal_identity,
+            shm_identity,
+            directory_identity,
+            profile,
+            external_watermark,
+            journal_id,
+            observed_head,
+            facts,
+            owner_pid,
+            owner_affinity,
         };
-        store.validate_database()?;
-        store.synchronize_external_head()?;
-        store.ensure_file_identity()?;
-        Ok(store)
+        pinned.revalidate_pinned()?;
+        Ok(pinned)
     }
 
-    pub fn path(&self) -> &Path {
-        &self.database_path
-    }
-
-    pub const fn profile(&self) -> &SignerJournalProfileV0 {
-        &self.profile
+    /// Freshly confirms the exact operational journal/external-watermark head
+    /// without preparing an intent, advancing either namespace, or invoking a
+    /// signature producer.
+    ///
+    /// This is the runtime counterpart of the pinned-startup checkpoint
+    /// projection.  It accepts only an already-exact external watermark; the
+    /// normal one-event repair path is deliberately not entered here because
+    /// a whole-node checkpoint must describe an observed cut, not create one.
+    pub fn confirm_node_checkpoint_head_exact_v0(
+        &mut self,
+    ) -> Result<ConfirmedSignerNodeCheckpointFactsV0, SignerJournalErrorV0> {
+        self.ensure_operational()?;
+        let before_head = read_head(&self.connection, self.journal_id)?;
+        let before_inventory = self.validate_database()?;
+        if before_head != self.observed_head {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        let local = self.watermark_for(before_head)?;
+        let external = self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+            .map_err(|error| {
+                SignerJournalErrorV0::external(
+                    "confirm operational node-checkpoint external watermark",
+                    error,
+                )
+            })?
+            .ok_or(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkMissing,
+            ))?;
+        if external != local {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkRepairRequired,
+            ));
+        }
+        let capacity = read_capacity(&self.connection)?;
+        validate_capacity(&capacity, &self.profile)?;
+        let tail = read_tail_facts(&self.connection, before_head)?;
+        let pending_intent = read_pending_intent_facts(&self.connection)?;
+        let after_inventory = self.validate_database()?;
+        let after_head = read_head(&self.connection, self.journal_id)?;
+        if before_head != after_head
+            || before_inventory != after_inventory
+            || after_head != self.observed_head
+            || self.watermark_for(after_head)? != external
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        Ok(ConfirmedSignerNodeCheckpointFactsV0 {
+            journal_id: self.journal_id,
+            profile_checksum: self.profile.profile_checksum(),
+            identity: SignerNodeCheckpointIdentityV0::from_profile(&self.profile),
+            exact_watermark: external,
+            capacity,
+            lifetime_inventory: after_inventory,
+            tail,
+            pending_intent,
+            owner_affinity: Arc::clone(&self.owner_affinity),
+        })
     }
 
     pub fn capacity(&self) -> Result<JournalCapacityV0, SignerJournalErrorV0> {
@@ -710,34 +1299,10 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
                 SignerJournalConflictV0::ExternalWatermarkMissing,
             ))?;
         let local = self.watermark_for(self.observed_head)?;
-        validate_external_identity(&external, &local)?;
-        if external == local {
-            return Ok(());
-        }
-        if external.sequence() > local.sequence() {
-            return Err(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkAhead,
-            ));
-        }
-        if external.sequence() == local.sequence() {
-            return Err(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkFork,
-            ));
-        }
-        if external.sequence().checked_add(1) != Some(local.sequence()) {
-            return Err(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkRollback,
-            ));
-        }
-        let head_event = read_event(&self.connection, local.sequence())?.ok_or(
-            SignerJournalErrorV0::PersistedRepresentationMalformed("local head event is absent"),
-        )?;
-        if head_event.predecessor_sequence != external.sequence()
-            || head_event.predecessor_chain_checksum != external.chain_checksum()
+        if validate_external_relation(&self.connection, external, local)?
+            == SignerExternalWatermarkRelationV0::Exact
         {
-            return Err(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkFork,
-            ));
+            return Ok(());
         }
         self.external_watermark
             .compare_and_advance(Some(external), local)
@@ -766,13 +1331,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         &self,
         head: JournalHeadV0,
     ) -> Result<SignerWatermarkV0, SignerJournalErrorV0> {
-        SignerWatermarkV0::from_persisted_parts(
-            self.profile.external_watermark_scope(),
-            self.journal_id,
-            head.sequence,
-            head.chain_checksum,
-        )
-        .map_err(|error| SignerJournalErrorV0::external("construct local watermark", error))
+        watermark_for_parts(&self.profile, self.journal_id, head)
     }
 
     fn ensure_operational(&mut self) -> Result<(), SignerJournalErrorV0> {
@@ -814,7 +1373,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         Ok(())
     }
 
-    fn validate_database(&self) -> Result<(), SignerJournalErrorV0> {
+    fn validate_database(&self) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
         self.ensure_file_identity()?;
         validate_transaction_environment(&self.connection, &self.profile)?;
         validate_canonical_schema(&self.connection)?;
@@ -823,10 +1382,562 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             return Err(SignerJournalErrorV0::MetadataMismatch);
         }
         validate_integrity(&self.connection)?;
-        validate_all_records(&self.connection, &self.profile, self.journal_id)?;
+        let lifetime_inventory =
+            validate_all_records(&self.connection, &self.profile, self.journal_id)?;
         validate_storage_resource_bounds(&self.database_path, &self.profile)?;
+        Ok(lifetime_inventory)
+    }
+}
+
+impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
+    pub fn open_existing_v0(
+        database_path: impl AsRef<Path>,
+        profile: SignerJournalProfileV0,
+        mut external_watermark: W,
+    ) -> Result<Self, SignerJournalErrorV0> {
+        ensure_supported_platform()?;
+        let database_path = canonical_existing_database_path(database_path.as_ref())?;
+        let directory_path = database_path
+            .parent()
+            .ok_or(SignerJournalErrorV0::InvalidProfile("database parent"))?
+            .to_path_buf();
+        let directory_file = File::open(&directory_path)
+            .map_err(|error| SignerJournalErrorV0::io("pin signer directory", error))?;
+        let directory_identity = directory_handle_identity(&directory_file)?;
+        require_auxiliary_files(&database_path)?;
+        let lock_path = lock_path_for(&database_path)?;
+        let lock_file = open_existing_private_file(&lock_path, "open lock sidecar")?;
+        acquire_lifetime_lock(&lock_file)?;
+        let database_file = open_existing_private_file(&database_path, "pin database")?;
+        acquire_lifetime_lock(&database_file)?;
+        let database_identity = file_handle_identity(&database_file)?;
+        let lock_identity = file_handle_identity(&lock_file)?;
+        let (wal_file, wal_identity, shm_file, shm_identity) =
+            pin_auxiliary_files(&database_path, profile.maximum_database_bytes())?;
+
+        let connection = Connection::open_with_flags(
+            &database_path,
+            OpenFlags::SQLITE_OPEN_READ_ONLY
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(|error| SignerJournalErrorV0::sqlite("open pinned existing database", error))?;
+        configure_pinned_read_only_connection(&connection)?;
+        let journal_id = read_and_validate_metadata(&connection, &profile)?;
+        let observed_head = read_head(&connection, journal_id)?;
+        let lifetime_inventory =
+            validate_pinned_database_connection(&connection, &database_path, &profile, journal_id)?;
+        let local_watermark = watermark_for_parts(&profile, journal_id, observed_head)?;
+        let observed_external_watermark = external_watermark
+            .load(profile.external_watermark_scope())
+            .map_err(|error| {
+                SignerJournalErrorV0::external("observe pinned external watermark", error)
+            })?
+            .ok_or(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkMissing,
+            ))?;
+        let external_relation =
+            validate_external_relation(&connection, observed_external_watermark, local_watermark)?;
+        let capacity = read_capacity(&connection)?;
+        validate_capacity(&capacity, &profile)?;
+        let tail = read_tail_facts(&connection, observed_head)?;
+        let pending_intent = read_pending_intent_facts(&connection)?;
+        let facts = SignerJournalReconciliationFactsV0 {
+            journal_id,
+            profile_checksum: profile.profile_checksum(),
+            local_watermark,
+            observed_external_watermark,
+            external_relation,
+            capacity,
+            lifetime_inventory,
+            tail,
+            pending_intent,
+        };
+        let pinned = Self {
+            connection,
+            database_file,
+            lock_file,
+            wal_file,
+            shm_file,
+            directory_file,
+            database_path,
+            lock_path,
+            directory_path,
+            database_identity,
+            lock_identity,
+            wal_identity,
+            shm_identity,
+            directory_identity,
+            profile,
+            external_watermark,
+            journal_id,
+            observed_head,
+            facts,
+            owner_pid: std::process::id(),
+            owner_affinity: Arc::new(()),
+        };
+        pinned.revalidate_pinned()?;
+        Ok(pinned)
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.database_path
+    }
+
+    pub const fn profile(&self) -> &SignerJournalProfileV0 {
+        &self.profile
+    }
+
+    pub const fn reconciliation_facts(&self) -> SignerJournalReconciliationFactsV0 {
+        self.facts
+    }
+
+    /// Confirms the exact local/external signer head for a future whole-node
+    /// checkpoint join without advancing either durable namespace.
+    pub fn confirm_node_checkpoint_head_exact_v0(
+        &mut self,
+    ) -> Result<ConfirmedSignerNodeCheckpointFactsV0, SignerJournalErrorV0> {
+        let before_inventory = self.revalidate_pinned()?;
+        let external = self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+            .map_err(|error| {
+                SignerJournalErrorV0::external("confirm node-checkpoint external watermark", error)
+            })?
+            .ok_or(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkMissing,
+            ))?;
+        let relation =
+            validate_external_relation(&self.connection, external, self.facts.local_watermark)?;
+        if relation != SignerExternalWatermarkRelationV0::Exact {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkRepairRequired,
+            ));
+        }
+        let after_inventory = self.revalidate_pinned()?;
+        if before_inventory != after_inventory {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        Ok(ConfirmedSignerNodeCheckpointFactsV0 {
+            journal_id: self.journal_id,
+            profile_checksum: self.profile.profile_checksum(),
+            identity: SignerNodeCheckpointIdentityV0::from_profile(&self.profile),
+            exact_watermark: external,
+            capacity: self.facts.capacity,
+            lifetime_inventory: after_inventory,
+            tail: self.facts.tail,
+            pending_intent: self.facts.pending_intent,
+            owner_affinity: Arc::clone(&self.owner_affinity),
+        })
+    }
+
+    /// Consumes the pinned startup owner, rechecks its exact local and external
+    /// observations, repairs at most the authenticated one-event local-first
+    /// window, and yields the normal operational journal owner.
+    pub fn activate_v0(
+        mut self,
+    ) -> Result<SqliteSignerJournalV0<W>, SignerJournalActivationFailureV0<W>> {
+        if let Err(error) = self.revalidate_pinned() {
+            return Err(SignerJournalActivationFailureV0::new(self, error));
+        }
+
+        let external = match self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+        {
+            Ok(Some(value)) => value,
+            Ok(None) => {
+                return Err(SignerJournalActivationFailureV0::new(
+                    self,
+                    SignerJournalErrorV0::Conflict(
+                        SignerJournalConflictV0::ExternalWatermarkMissing,
+                    ),
+                ));
+            }
+            Err(error) => {
+                return Err(SignerJournalActivationFailureV0::new(
+                    self,
+                    SignerJournalErrorV0::external(
+                        "recheck pinned external watermark before activation",
+                        error,
+                    ),
+                ));
+            }
+        };
+        if external != self.facts.observed_external_watermark {
+            return Err(SignerJournalActivationFailureV0::new(
+                self,
+                SignerJournalErrorV0::Conflict(SignerJournalConflictV0::ExternalWatermarkFork),
+            ));
+        }
+        let relation = match validate_external_relation(
+            &self.connection,
+            external,
+            self.facts.local_watermark,
+        ) {
+            Ok(value) => value,
+            Err(error) => return Err(SignerJournalActivationFailureV0::new(self, error)),
+        };
+        if relation != self.facts.external_relation {
+            return Err(SignerJournalActivationFailureV0::new(
+                self,
+                SignerJournalErrorV0::Conflict(SignerJournalConflictV0::ExternalWatermarkFork),
+            ));
+        }
+
+        if relation == SignerExternalWatermarkRelationV0::LocalOneAhead {
+            if let Err(error) = self
+                .external_watermark
+                .compare_and_advance(Some(external), self.facts.local_watermark)
+            {
+                return Err(SignerJournalActivationFailureV0::new(
+                    self,
+                    SignerJournalErrorV0::external("activate pinned external watermark", error),
+                ));
+            }
+            self.facts.observed_external_watermark = self.facts.local_watermark;
+            self.facts.external_relation = SignerExternalWatermarkRelationV0::Exact;
+        }
+        let confirmed = match self
+            .external_watermark
+            .load(self.profile.external_watermark_scope())
+        {
+            Ok(value) => value,
+            Err(error) => {
+                return Err(SignerJournalActivationFailureV0::new(
+                    self,
+                    SignerJournalErrorV0::external("confirm activated external watermark", error),
+                ));
+            }
+        };
+        if confirmed != Some(self.facts.local_watermark) {
+            return Err(SignerJournalActivationFailureV0::new(
+                self,
+                SignerJournalErrorV0::Conflict(SignerJournalConflictV0::ExternalWatermarkFork),
+            ));
+        }
+
+        let operational_connection = match Connection::open_with_flags(
+            &self.database_path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        ) {
+            Ok(value) => value,
+            Err(error) => {
+                return Err(SignerJournalActivationFailureV0::new(
+                    self,
+                    SignerJournalErrorV0::sqlite("open activated existing database", error),
+                ));
+            }
+        };
+        let activated_inventory = match configure_connection(
+            &operational_connection,
+            false,
+            self.profile.maximum_database_bytes(),
+        )
+        .and_then(|()| materialize_auxiliary_files(&operational_connection))
+        .and_then(|()| {
+            validate_operational_database_connection(
+                &operational_connection,
+                &self.database_path,
+                &self.profile,
+                self.journal_id,
+            )
+        }) {
+            Ok(inventory) => inventory,
+            Err(error) => return Err(SignerJournalActivationFailureV0::new(self, error)),
+        };
+        let activated_head = match read_head(&operational_connection, self.journal_id) {
+            Ok(value) => value,
+            Err(error) => return Err(SignerJournalActivationFailureV0::new(self, error)),
+        };
+        if activated_head != self.observed_head
+            || activated_inventory != self.facts.lifetime_inventory
+        {
+            return Err(SignerJournalActivationFailureV0::new(
+                self,
+                SignerJournalErrorV0::Conflict(SignerJournalConflictV0::CommitReadbackConflict),
+            ));
+        }
+        if let Err(error) = self.ensure_file_identity() {
+            return Err(SignerJournalActivationFailureV0::new(self, error));
+        }
+
+        let Self {
+            connection,
+            database_file,
+            lock_file,
+            wal_file,
+            shm_file,
+            directory_file,
+            database_path,
+            lock_path,
+            directory_path,
+            database_identity,
+            lock_identity,
+            wal_identity,
+            shm_identity,
+            directory_identity,
+            profile,
+            external_watermark,
+            journal_id,
+            observed_head,
+            facts: _,
+            owner_pid,
+            owner_affinity,
+        } = self;
+        drop(connection);
+        Ok(SqliteSignerJournalV0 {
+            connection: operational_connection,
+            database_file,
+            lock_file,
+            wal_file,
+            shm_file,
+            directory_file,
+            database_path,
+            lock_path,
+            directory_path,
+            database_identity,
+            lock_identity,
+            wal_identity,
+            shm_identity,
+            directory_identity,
+            profile,
+            external_watermark,
+            journal_id,
+            observed_head,
+            owner_pid,
+            owner_affinity,
+        })
+    }
+
+    fn revalidate_pinned(&self) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
+        self.ensure_file_identity()?;
+        let before_head = read_head(&self.connection, self.journal_id)?;
+        let before_inventory = validate_pinned_database_connection(
+            &self.connection,
+            &self.database_path,
+            &self.profile,
+            self.journal_id,
+        )?;
+        let capacity = read_capacity(&self.connection)?;
+        validate_capacity(&capacity, &self.profile)?;
+        let tail = read_tail_facts(&self.connection, before_head)?;
+        let pending_intent = read_pending_intent_facts(&self.connection)?;
+        let after_inventory = validate_pinned_database_connection(
+            &self.connection,
+            &self.database_path,
+            &self.profile,
+            self.journal_id,
+        )?;
+        let after_head = read_head(&self.connection, self.journal_id)?;
+        if before_head != after_head
+            || before_inventory != after_inventory
+            || after_head != self.observed_head
+            || capacity != self.facts.capacity
+            || after_inventory != self.facts.lifetime_inventory
+            || tail != self.facts.tail
+            || pending_intent != self.facts.pending_intent
+            || watermark_for_parts(&self.profile, self.journal_id, after_head)?
+                != self.facts.local_watermark
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::CommitReadbackConflict,
+            ));
+        }
+        Ok(after_inventory)
+    }
+
+    fn ensure_file_identity(&self) -> Result<(), SignerJournalErrorV0> {
+        if std::process::id() != self.owner_pid {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ProcessChanged,
+            ));
+        }
+        let wal_path = sqlite_auxiliary_path(&self.database_path, "-wal");
+        let shm_path = sqlite_auxiliary_path(&self.database_path, "-shm");
+        if file_identity(&self.database_path)? != self.database_identity
+            || file_identity(&self.lock_path)? != self.lock_identity
+            || file_identity(&wal_path)? != self.wal_identity
+            || file_identity(&shm_path)? != self.shm_identity
+            || directory_identity(&self.directory_path)? != self.directory_identity
+            || file_handle_identity(&self.database_file)? != self.database_identity
+            || file_handle_identity(&self.lock_file)? != self.lock_identity
+            || file_handle_identity(&self.wal_file)? != self.wal_identity
+            || file_handle_identity(&self.shm_file)? != self.shm_identity
+            || directory_handle_identity(&self.directory_file)? != self.directory_identity
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::FileIdentityChanged,
+            ));
+        }
         Ok(())
     }
+}
+
+fn watermark_for_parts(
+    profile: &SignerJournalProfileV0,
+    journal_id: [u8; 32],
+    head: JournalHeadV0,
+) -> Result<SignerWatermarkV0, SignerJournalErrorV0> {
+    SignerWatermarkV0::from_persisted_parts(
+        profile.external_watermark_scope(),
+        journal_id,
+        head.sequence,
+        head.chain_checksum,
+    )
+    .map_err(|error| SignerJournalErrorV0::external("construct local watermark", error))
+}
+
+fn validate_external_relation(
+    connection: &Connection,
+    external: SignerWatermarkV0,
+    local: SignerWatermarkV0,
+) -> Result<SignerExternalWatermarkRelationV0, SignerJournalErrorV0> {
+    validate_external_identity(&external, &local)?;
+    if external == local {
+        return Ok(SignerExternalWatermarkRelationV0::Exact);
+    }
+    if external.sequence() > local.sequence() {
+        return Err(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkAhead,
+        ));
+    }
+    if external.sequence() == local.sequence() {
+        return Err(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkFork,
+        ));
+    }
+    if external.sequence().checked_add(1) != Some(local.sequence()) {
+        return Err(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkRollback,
+        ));
+    }
+    let head_event = read_event(connection, local.sequence())?.ok_or(
+        SignerJournalErrorV0::PersistedRepresentationMalformed("local head event is absent"),
+    )?;
+    if head_event.predecessor_sequence != external.sequence()
+        || head_event.predecessor_chain_checksum != external.chain_checksum()
+    {
+        return Err(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkFork,
+        ));
+    }
+    Ok(SignerExternalWatermarkRelationV0::LocalOneAhead)
+}
+
+fn read_pending_intent_facts(
+    connection: &Connection,
+) -> Result<Option<SignerPreparedIntentFactsV0>, SignerJournalErrorV0> {
+    let fingerprint: Option<Vec<u8>> = connection
+        .query_row(
+            "SELECT prepared.fingerprint
+             FROM signer_journal_events_v0 prepared
+             WHERE prepared.event_kind=0 AND NOT EXISTS (
+                 SELECT 1 FROM signer_journal_events_v0 signed
+                 WHERE signed.fingerprint=prepared.fingerprint AND signed.event_kind=1
+             )",
+            [],
+            |row| row.get(0),
+        )
+        .optional()
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pending signer intent", error))?;
+    let Some(fingerprint) = fingerprint else {
+        return Ok(None);
+    };
+    let fingerprint = decode_array32(&fingerprint, "pending intent fingerprint")?;
+    let pending = read_intent(connection, fingerprint)?.ok_or(
+        SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "pending event references absent intent",
+        ),
+    )?;
+    Ok(Some(prepared_intent_facts_v0(&pending)))
+}
+
+fn prepared_intent_facts_v0(pending: &PreparedIntentV0) -> SignerPreparedIntentFactsV0 {
+    SignerPreparedIntentFactsV0 {
+        fingerprint: pending.fingerprint,
+        epoch: pending.epoch,
+        view: pending.view,
+        kind: pending.kind,
+        safety_revision: pending.safety_revision,
+        signing_root: pending.signing_root,
+        intent_checksum: pending.intent_checksum,
+    }
+}
+
+fn read_tail_facts(
+    connection: &Connection,
+    head: JournalHeadV0,
+) -> Result<Option<SignerJournalTailFactsV0>, SignerJournalErrorV0> {
+    if head.sequence == 0 {
+        return Ok(None);
+    }
+    let event = read_event(connection, head.sequence)?.ok_or(
+        SignerJournalErrorV0::PersistedRepresentationMalformed("local head event is absent"),
+    )?;
+    let intent = read_intent(connection, event.fingerprint)?.ok_or(
+        SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "tail event references absent intent",
+        ),
+    )?;
+    let (state, signature) = match (event.kind, event.signature) {
+        (0, None) => (SignerJournalTailStateV0::Prepared, None),
+        (1, Some(signature)) => (SignerJournalTailStateV0::Signed, Some(signature)),
+        _ => {
+            return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
+                "tail event lifecycle",
+            ));
+        }
+    };
+    Ok(Some(SignerJournalTailFactsV0 {
+        state,
+        fingerprint: intent.fingerprint,
+        epoch: intent.epoch,
+        view: intent.view,
+        kind: intent.kind,
+        safety_revision: intent.safety_revision,
+        signing_root: intent.signing_root,
+        intent_checksum: intent.intent_checksum,
+        signature,
+    }))
+}
+
+fn validate_pinned_database_connection(
+    connection: &Connection,
+    database_path: &Path,
+    profile: &SignerJournalProfileV0,
+    journal_id: [u8; 32],
+) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
+    validate_pinned_read_only_environment(connection)?;
+    validate_canonical_schema(connection)?;
+    if read_and_validate_metadata(connection, profile)? != journal_id {
+        return Err(SignerJournalErrorV0::MetadataMismatch);
+    }
+    validate_integrity(connection)?;
+    let lifetime_inventory = validate_all_records(connection, profile, journal_id)?;
+    validate_storage_resource_bounds(database_path, profile)?;
+    Ok(lifetime_inventory)
+}
+
+fn validate_operational_database_connection(
+    connection: &Connection,
+    database_path: &Path,
+    profile: &SignerJournalProfileV0,
+    journal_id: [u8; 32],
+) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
+    validate_transaction_environment(connection, profile)?;
+    validate_canonical_schema(connection)?;
+    if read_and_validate_metadata(connection, profile)? != journal_id {
+        return Err(SignerJournalErrorV0::MetadataMismatch);
+    }
+    validate_integrity(connection)?;
+    let lifetime_inventory = validate_all_records(connection, profile, journal_id)?;
+    validate_storage_resource_bounds(database_path, profile)?;
+    Ok(lifetime_inventory)
 }
 
 fn prepare_intent(
@@ -1426,7 +2537,7 @@ fn validate_all_records(
     connection: &Connection,
     profile: &SignerJournalProfileV0,
     journal_id: [u8; 32],
-) -> Result<(), SignerJournalErrorV0> {
+) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
     let mut intent_statement = connection
         .prepare(
             "SELECT fingerprint, epoch_be, view_be, intent_kind, safety_revision_be,
@@ -1441,6 +2552,7 @@ fn validate_all_records(
     let mut round_keys = BTreeSet::new();
     let mut revisions = BTreeSet::new();
     let mut maximum_views = [None, None];
+    let mut durable_intent_counts = [0_u64, 0_u64];
     let mut intent_bytes = 0u64;
     for row in rows {
         let intent =
@@ -1493,6 +2605,9 @@ fn validate_all_records(
             }
         }
         maximum_views[kind_index] = Some(intent.view);
+        durable_intent_counts[kind_index] = durable_intent_counts[kind_index]
+            .checked_add(1)
+            .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
         intent_bytes = intent_bytes
             .checked_add(intent.canonical_intent.len() as u64)
             .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
@@ -1509,6 +2624,7 @@ fn validate_all_records(
     let mut predecessor = initial;
     let mut prepared = BTreeSet::new();
     let mut signed = BTreeSet::new();
+    let mut signed_intent_counts = [0_u64, 0_u64];
     let mut event_statement = connection
         .prepare(
             "SELECT sequence_be, event_kind, fingerprint, signature,
@@ -1572,6 +2688,10 @@ fn validate_all_records(
                         "persisted signature verification",
                     ));
                 }
+                let kind_index = usize::from(intent.kind);
+                signed_intent_counts[kind_index] = signed_intent_counts[kind_index]
+                    .checked_add(1)
+                    .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
             }
             _ => {
                 return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
@@ -1623,7 +2743,157 @@ fn validate_all_records(
             "accounting differs from append-only rows",
         ));
     }
-    Ok(())
+    let pending_intent = match pending_fingerprint {
+        Some(fingerprint) => Some(prepared_intent_facts_v0(intents.get(&fingerprint).ok_or(
+            SignerJournalErrorV0::PersistedRepresentationMalformed(
+                "pending intent is absent from audited inventory",
+            ),
+        )?)),
+        None => None,
+    };
+    build_lifetime_inventory_v1(
+        profile,
+        journal_id,
+        head,
+        capacity,
+        durable_intent_counts,
+        signed_intent_counts,
+        pending_intent,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn build_lifetime_inventory_v1(
+    profile: &SignerJournalProfileV0,
+    journal_id: [u8; 32],
+    head: JournalHeadV0,
+    capacity: JournalCapacityV0,
+    durable_intent_counts: [u64; 2],
+    signed_intent_counts: [u64; 2],
+    pending_intent: Option<SignerPreparedIntentFactsV0>,
+) -> Result<SignerJournalLifetimeInventoryV1, SignerJournalErrorV0> {
+    let durable_total = durable_intent_counts[0]
+        .checked_add(durable_intent_counts[1])
+        .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
+    let signed_total = signed_intent_counts[0]
+        .checked_add(signed_intent_counts[1])
+        .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
+    let expected_event_count = durable_total
+        .checked_add(signed_total)
+        .ok_or(SignerJournalErrorV0::CapacityExhausted)?;
+    let unsigned_vote = durable_intent_counts[0]
+        .checked_sub(signed_intent_counts[0])
+        .ok_or(SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "signed Vote inventory exceeds durable Vote inventory",
+        ))?;
+    let unsigned_timeout = durable_intent_counts[1]
+        .checked_sub(signed_intent_counts[1])
+        .ok_or(SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "signed TimeoutVote inventory exceeds durable TimeoutVote inventory",
+        ))?;
+    let expected_unsigned = match pending_intent {
+        None => [0, 0],
+        Some(pending) if pending.kind == 0 => [1, 0],
+        Some(pending) if pending.kind == 1 => [0, 1],
+        Some(_) => {
+            return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
+                "pending signer intent kind",
+            ));
+        }
+    };
+    if durable_total != capacity.intent_count
+        || expected_event_count != capacity.event_count
+        || [unsigned_vote, unsigned_timeout] != expected_unsigned
+    {
+        return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "lifetime inventory differs from audited lifecycle",
+        ));
+    }
+
+    let watermark = watermark_for_parts(profile, journal_id, head)?;
+    let inventory_digest = lifetime_inventory_digest_v1(
+        profile.profile_checksum(),
+        journal_id,
+        watermark,
+        capacity,
+        durable_intent_counts,
+        signed_intent_counts,
+        pending_intent,
+    );
+    Ok(SignerJournalLifetimeInventoryV1 {
+        durable_vote_intent_count: durable_intent_counts[0],
+        durable_timeout_intent_count: durable_intent_counts[1],
+        signed_vote_intent_count: signed_intent_counts[0],
+        signed_timeout_intent_count: signed_intent_counts[1],
+        inventory_digest,
+    })
+}
+
+#[allow(clippy::too_many_arguments)]
+fn lifetime_inventory_digest_v1(
+    profile_checksum: [u8; 32],
+    journal_id: [u8; 32],
+    watermark: SignerWatermarkV0,
+    capacity: JournalCapacityV0,
+    durable_intent_counts: [u64; 2],
+    signed_intent_counts: [u64; 2],
+    pending_intent: Option<SignerPreparedIntentFactsV0>,
+) -> [u8; 32] {
+    let maximum_safety_revision = encode_optional_u64_v1(capacity.maximum_safety_revision);
+    let maximum_vote_view = encode_optional_u64_v1(capacity.maximum_vote_view);
+    let maximum_timeout_view = encode_optional_u64_v1(capacity.maximum_timeout_view);
+    let pending_tag = [u8::from(pending_intent.is_some())];
+    let pending_fingerprint = pending_intent.map_or([0; 32], |pending| pending.fingerprint);
+    let pending_epoch = pending_intent
+        .map_or(0, |pending| pending.epoch)
+        .to_be_bytes();
+    let pending_view = pending_intent
+        .map_or(0, |pending| pending.view)
+        .to_be_bytes();
+    let pending_kind = [pending_intent.map_or(0, |pending| pending.kind)];
+    let pending_safety_revision = pending_intent
+        .map_or(0, |pending| pending.safety_revision)
+        .to_be_bytes();
+    let pending_signing_root = pending_intent.map_or([0; 32], |pending| pending.signing_root);
+    let pending_intent_checksum = pending_intent.map_or([0; 32], |pending| pending.intent_checksum);
+    hash_domain(
+        LIFETIME_INVENTORY_DOMAIN_V1,
+        &[
+            &profile_checksum,
+            &journal_id,
+            &watermark.scope(),
+            &watermark.journal_id(),
+            &watermark.sequence().to_be_bytes(),
+            &watermark.chain_checksum(),
+            &capacity.intent_count.to_be_bytes(),
+            &capacity.event_count.to_be_bytes(),
+            &capacity.intent_bytes.to_be_bytes(),
+            &maximum_safety_revision,
+            &maximum_vote_view,
+            &maximum_timeout_view,
+            &durable_intent_counts[0].to_be_bytes(),
+            &durable_intent_counts[1].to_be_bytes(),
+            &signed_intent_counts[0].to_be_bytes(),
+            &signed_intent_counts[1].to_be_bytes(),
+            &pending_tag,
+            &pending_fingerprint,
+            &pending_epoch,
+            &pending_view,
+            &pending_kind,
+            &pending_safety_revision,
+            &pending_signing_root,
+            &pending_intent_checksum,
+        ],
+    )
+}
+
+fn encode_optional_u64_v1(value: Option<u64>) -> [u8; 9] {
+    let mut encoded = [0_u8; 9];
+    if let Some(value) = value {
+        encoded[0] = 1;
+        encoded[1..].copy_from_slice(&value.to_be_bytes());
+    }
+    encoded
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1762,6 +3032,63 @@ fn configure_connection(
         .map_err(|error| SignerJournalErrorV0::sqlite("set WAL bound", error))?;
     enable_persistent_wal(connection)?;
     validate_transaction_environment_raw(connection, maximum_database_bytes)
+}
+
+fn configure_pinned_read_only_connection(
+    connection: &Connection,
+) -> Result<(), SignerJournalErrorV0> {
+    connection
+        .busy_timeout(DEFAULT_BUSY_TIMEOUT)
+        .map_err(|error| SignerJournalErrorV0::sqlite("configure pinned busy timeout", error))?;
+    // These are connection-local controls. In particular, this path does not
+    // set max_page_count, journal_size_limit, persistent-WAL file controls, or
+    // execute a writer transaction.
+    connection
+        .execute_batch(
+            "PRAGMA synchronous=FULL;
+             PRAGMA foreign_keys=ON;
+             PRAGMA trusted_schema=OFF;
+             PRAGMA query_only=ON;",
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::sqlite("configure pinned read-only SQLite", error)
+        })?;
+    validate_pinned_read_only_environment(connection)
+}
+
+fn validate_pinned_read_only_environment(
+    connection: &Connection,
+) -> Result<(), SignerJournalErrorV0> {
+    let journal_mode: String = connection
+        .query_row("PRAGMA journal_mode", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned journal mode", error))?;
+    let synchronous: i64 = connection
+        .query_row("PRAGMA synchronous", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned synchronous mode", error))?;
+    let foreign_keys: i64 = connection
+        .query_row("PRAGMA foreign_keys", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned foreign-key mode", error))?;
+    let trusted_schema: i64 = connection
+        .query_row("PRAGMA trusted_schema", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned trusted-schema mode", error))?;
+    let query_only: i64 = connection
+        .query_row("PRAGMA query_only", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned query-only mode", error))?;
+    let page_size: i64 = connection
+        .query_row("PRAGMA page_size", [], |row| row.get(0))
+        .map_err(|error| SignerJournalErrorV0::sqlite("read pinned page size", error))?;
+    if !journal_mode.eq_ignore_ascii_case("wal")
+        || synchronous < 2
+        || foreign_keys != 1
+        || trusted_schema != 0
+        || query_only != 1
+        || page_size != 4096
+    {
+        return Err(SignerJournalErrorV0::PersistedRepresentationMalformed(
+            "pinned SQLite read-only environment",
+        ));
+    }
+    Ok(())
 }
 
 fn validate_transaction_environment(
@@ -2280,4 +3607,44 @@ fn sql_shape_error(column: usize, shape: &'static str) -> rusqlite::Error {
         rusqlite::types::Type::Blob,
         std::io::Error::new(std::io::ErrorKind::InvalidData, shape).into(),
     )
+}
+
+#[cfg(test)]
+mod lifetime_inventory_tests {
+    use super::*;
+
+    #[test]
+    fn same_total_swapped_kind_distribution_changes_inventory_digest() {
+        let journal_id = [0x22; 32];
+        let watermark =
+            SignerWatermarkV0::from_persisted_parts([0x11; 32], journal_id, 6, [0x33; 32])
+                .expect("fixture watermark");
+        let capacity = JournalCapacityV0 {
+            intent_count: 3,
+            event_count: 6,
+            intent_bytes: 384,
+            maximum_safety_revision: Some(3),
+            maximum_vote_view: Some(9),
+            maximum_timeout_view: Some(8),
+        };
+        let two_vote_one_timeout = lifetime_inventory_digest_v1(
+            [0x44; 32],
+            journal_id,
+            watermark,
+            capacity,
+            [2, 1],
+            [2, 1],
+            None,
+        );
+        let one_vote_two_timeout = lifetime_inventory_digest_v1(
+            [0x44; 32],
+            journal_id,
+            watermark,
+            capacity,
+            [1, 2],
+            [1, 2],
+            None,
+        );
+        assert_ne!(two_vote_one_timeout, one_vote_two_timeout);
+    }
 }

@@ -33,9 +33,19 @@ pub(crate) const DOMAIN_DOUBLE_SIGN_EVIDENCE: &[u8] = b"trnm.poco-bft.double-sig
 pub(crate) const DOMAIN_CONSUMPTION_CERTIFICATE: &[u8] = b"trnm.poco.consumption-certificate.v0";
 pub(crate) const DOMAIN_CONSUMPTION_CERTIFICATE_ID: &[u8] =
     b"trnm.poco.consumption-certificate-id.v0";
+pub(crate) const DOMAIN_RECOVERY_CONTEXT_V1: &[u8] = b"trnm.poco-bft.recovery-context.v1";
+pub(crate) const DOMAIN_RECOVERY_CAUGHT_UP_CUT_V1: &[u8] =
+    b"trnm.poco-bft.recovery-caught-up-cut.v1";
+pub(crate) const DOMAIN_RECOVERY_ZERO_DELTA_CUT_V1: &[u8] =
+    b"trnm.poco-bft.recovery-zero-delta-cut.v1";
+pub(crate) const DOMAIN_RECOVERY_READY_V1: &[u8] = b"trnm.poco-bft.recovery-ready.v1";
+pub(crate) const DOMAIN_RECOVERY_READY_SET_V1: &[u8] = b"trnm.poco-bft.recovery-ready-set.v1";
+pub(crate) const DOMAIN_RECOVERY_START_V1: &[u8] = b"trnm.poco-bft.recovery-start.v1";
+pub(crate) const DOMAIN_RECOVERY_START_CERTIFICATE_V1: &[u8] =
+    b"trnm.poco-bft.recovery-start-certificate.v1";
 
 #[allow(dead_code)]
-pub(crate) const FROZEN_DOMAINS: [&[u8]; 22] = [
+pub(crate) const FROZEN_DOMAINS: [&[u8]; 29] = [
     DOMAIN_BLOCK,
     DOMAIN_PROPOSAL,
     DOMAIN_VOTE,
@@ -58,6 +68,13 @@ pub(crate) const FROZEN_DOMAINS: [&[u8]; 22] = [
     DOMAIN_ORDERED_ROOT,
     DOMAIN_CONSUMPTION_CERTIFICATE,
     DOMAIN_CONSUMPTION_CERTIFICATE_ID,
+    DOMAIN_RECOVERY_CONTEXT_V1,
+    DOMAIN_RECOVERY_CAUGHT_UP_CUT_V1,
+    DOMAIN_RECOVERY_ZERO_DELTA_CUT_V1,
+    DOMAIN_RECOVERY_READY_V1,
+    DOMAIN_RECOVERY_READY_SET_V1,
+    DOMAIN_RECOVERY_START_V1,
+    DOMAIN_RECOVERY_START_CERTIFICATE_V1,
 ];
 
 pub trait CanonicalSignable {

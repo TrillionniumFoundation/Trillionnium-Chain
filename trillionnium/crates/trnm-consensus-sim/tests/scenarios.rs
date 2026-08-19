@@ -800,7 +800,7 @@ fn unavailable_payload_retries_the_same_block_under_a_new_generation() {
 }
 
 #[test]
-fn mismatched_valid_capability_is_rejected_without_consuming_the_generation() {
+fn mismatched_valid_candidate_is_rejected_before_seal_and_retried_fresh() {
     let mut simulator = simulator(4, 0xB2D0_CAFE);
     simulator
         .queue_payload_validation_results(
@@ -816,7 +816,7 @@ fn mismatched_valid_capability_is_rejected_without_consuming_the_generation() {
     assert!(simulator
         .run_until(40_000, |simulator| {
             simulator.trace().entries().iter().any(|entry| {
-                entry.code() == "validation-capability-reject" && entry.detail().contains("node=0 ")
+                entry.code() == "validation-preseal-reject" && entry.detail().contains("node=0 ")
             }) && simulator.trace().entries().iter().any(|entry| {
                 entry.code() == "payload-validated"
                     && entry.detail().contains("node=0 ")
@@ -830,9 +830,19 @@ fn mismatched_valid_capability_is_rejected_without_consuming_the_generation() {
         .entries()
         .iter()
         .find(|entry| {
-            entry.code() == "validation-capability-reject" && entry.detail().contains("node=0 ")
+            entry.code() == "validation-preseal-reject" && entry.detail().contains("node=0 ")
         })
-        .expect("the wrong-block capability is traced");
+        .expect("the wrong-block application candidate is rejected before sealing");
+    let unavailable = simulator
+        .trace()
+        .entries()
+        .iter()
+        .find(|entry| {
+            entry.code() == "payload-validated"
+                && entry.detail().contains("node=0 ")
+                && entry.detail().contains("result=unavailable")
+        })
+        .expect("the rejected candidate consumes the old generation as unavailable");
     let accepted = simulator
         .trace()
         .entries()
@@ -845,12 +855,25 @@ fn mismatched_valid_capability_is_rejected_without_consuming_the_generation() {
         .expect("the exact capability is accepted afterward");
     assert_eq!(
         trace_field(rejected.detail(), "generation"),
-        trace_field(accepted.detail(), "generation")
+        trace_field(unavailable.detail(), "generation")
     );
     assert_eq!(
         trace_field(rejected.detail(), "block"),
+        trace_field(unavailable.detail(), "block")
+    );
+    assert_eq!(
+        trace_field(unavailable.detail(), "block"),
         trace_field(accepted.detail(), "block")
     );
+    let rejected_generation = trace_field(rejected.detail(), "generation")
+        .expect("the rejected generation is traced")
+        .parse::<u64>()
+        .expect("the rejected generation is numeric");
+    let accepted_generation = trace_field(accepted.detail(), "generation")
+        .expect("the accepted generation is traced")
+        .parse::<u64>()
+        .expect("the accepted generation is numeric");
+    assert!(accepted_generation > rejected_generation);
     assert!(reaches_height(&mut simulator, 1, 100_000));
     assert!(!simulator.has_conflicting_finality());
 }

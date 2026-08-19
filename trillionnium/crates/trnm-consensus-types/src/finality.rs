@@ -369,7 +369,10 @@ impl CertifiedHeaderV0 {
 }
 
 /// Exact frozen `FinalityProofV0`; unlike legacy `CommitProof`, it carries
-/// complete signed proposal envelopes and exact nested certificates.
+/// the three certified headers, their proposal witnesses, and exact nested
+/// certificates. It deliberately does not retain block bodies or reconstruct
+/// `SignedProposalV0`; state-sync replay must obtain each complete proposal
+/// separately and exact-match its header and witness to this proof.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FinalityProofV0 {
     genesis_hash: GenesisHash,
