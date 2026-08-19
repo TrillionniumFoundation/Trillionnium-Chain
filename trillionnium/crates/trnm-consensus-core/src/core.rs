@@ -6539,11 +6539,8 @@ impl Core {
             return Err(CoreError::PayloadValidationRecoveryRejected);
         }
         let protected = self.protected_blocks();
-        self.blocks.insert_verified_proposal(
-            proposal.block().header().clone(),
-            proposal.witness().clone(),
-            &protected,
-        )?;
+        self.blocks
+            .insert_verified_proposal(&proposal, &protected)?;
         self.restore_durable_payload_fact(block_id)?;
         match durable.route() {
             PayloadValidationRouteV0::Proposal => {
@@ -6613,13 +6610,9 @@ impl Core {
                 ),
             )?;
             let protected = self.protected_blocks();
-            self.blocks.insert_verified_proposal(
-                proposal.block().header().clone(),
-                proposal.witness().clone(),
-                &protected,
-            )?;
+            self.blocks.insert_verified_proposal(proposal, &protected)?;
             self.blocks
-                .restore_authenticated_valid_overlay_v0(block_id, artifact_ref.overlay())?;
+                .restore_authenticated_valid_overlay_v0(proposal, artifact_ref.overlay())?;
         }
         Ok(())
     }
@@ -6831,15 +6824,9 @@ impl Core {
             }
 
             let protected = self.protected_blocks();
-            self.blocks.insert_verified_proposal(
-                header.clone(),
-                proposal.witness().clone(),
-                &protected,
-            )?;
-            self.blocks.restore_authenticated_valid_overlay_v0(
-                proposal.block().id(),
-                artifact_ref.overlay(),
-            )?;
+            self.blocks.insert_verified_proposal(proposal, &protected)?;
+            self.blocks
+                .restore_authenticated_valid_overlay_v0(proposal, artifact_ref.overlay())?;
             self.blocks.validate_certificate_binding(certificate)?;
 
             source_ids.push(claim.source_validation_store_id);
@@ -8522,11 +8509,8 @@ impl Core {
             return self.persist_carried_qc_transition(&before, side_effects);
         }
         let protected = self.protected_blocks();
-        self.blocks.insert_verified_proposal(
-            proposal.block().header().clone(),
-            proposal.witness().clone(),
-            &protected,
-        )?;
+        self.blocks
+            .insert_verified_proposal(&proposal, &protected)?;
         self.restore_durable_payload_fact(proposal.block().id())?;
 
         if header.view() > self.safety.current_view() {
@@ -8662,11 +8646,8 @@ impl Core {
             return Ok(side_effects);
         }
         let protected = self.protected_blocks();
-        self.blocks.insert_verified_proposal(
-            header.clone(),
-            proposal.witness().clone(),
-            &protected,
-        )?;
+        self.blocks
+            .insert_verified_proposal(&proposal, &protected)?;
         self.restore_durable_payload_fact(proposal.block().id())?;
         if self.blocks.payload_is_known(proposal.block().id()) {
             let mut effects = if self.blocks.payload_is_valid(proposal.block().id()) {
@@ -8885,7 +8866,9 @@ impl Core {
         self.remove_payload_validation_obligation(route, id)?;
         self.record_payload_validation_completion(route, id, result)?;
         let block_id = proposal.block().id();
-        let transition = self.blocks.record_payload_validation(block_id, result)?;
+        let transition = self
+            .blocks
+            .record_payload_validation_for_proposal(&proposal, result)?;
         let fact_transition = self.record_payload_terminal_fact(block_id, result)?;
         if transition == PayloadTransition::ConflictingValidOverlay {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
@@ -9202,7 +9185,9 @@ impl Core {
         self.remove_payload_validation_obligation(route, id)?;
         self.record_payload_validation_completion(route, id, result)?;
         let block_id = proposal.block().id();
-        let transition = self.blocks.record_payload_validation(block_id, result)?;
+        let transition = self
+            .blocks
+            .record_payload_validation_for_proposal(&proposal, result)?;
         let fact_transition = self.record_payload_terminal_fact(block_id, result)?;
         if transition == PayloadTransition::ConflictingValidOverlay {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
@@ -10424,18 +10409,16 @@ impl Core {
         let Some(result) = self.safety.payload_terminal_result(block_id) else {
             return Ok(());
         };
-        let result = match result {
+        match result {
             // A durable Valid fact detects cross-restart terminal conflicts,
             // but the current schema does not retain the canonical body,
             // authenticated parent state, or frozen runtime handle. A newly
             // sourced body must therefore cross the host boundary again before
             // the volatile tree becomes vote-ready.
             PayloadTerminalResult::Valid => return Ok(()),
-            PayloadTerminalResult::DeterministicallyInvalid => {
-                PayloadValidationResult::DeterministicallyInvalid
-            }
-        };
-        if self.blocks.record_payload_validation(block_id, result)?
+            PayloadTerminalResult::DeterministicallyInvalid => {}
+        }
+        if self.blocks.record_deterministically_invalid(block_id)?
             == PayloadTransition::ConflictingTerminalResult
         {
             return Err(CoreError::InvalidRecovery(

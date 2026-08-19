@@ -66,6 +66,23 @@
 
 extern crate alloc;
 
+/// Complete proposal bodies are retained only after the existing bounded
+/// application-Valid transition. This data-only cache is the prerequisite for
+/// a later safety-kernel shadow comparison.
+pub const CORE_BOUNDED_EXACT_VALIDATED_PROPOSAL_RETENTION_V0: bool = true;
+
+/// Proposal retention does not mint application-validity authority.
+pub const CORE_PROPOSAL_RETENTION_APPLICATION_VALID_AUTHORITY_V0: bool = false;
+
+/// Proposal retention does not mint finality authority.
+pub const CORE_PROPOSAL_RETENTION_FINALITY_AUTHORITY_V0: bool = false;
+
+/// Proposal retention is volatile and does not mint persistence authority.
+pub const CORE_PROPOSAL_RETENTION_PERSISTENCE_AUTHORITY_V0: bool = false;
+
+/// Proposal retention cannot authorize or request a signature.
+pub const CORE_PROPOSAL_RETENTION_SIGNER_AUTHORITY_V0: bool = false;
+
 mod block_tree;
 mod core;
 mod error;

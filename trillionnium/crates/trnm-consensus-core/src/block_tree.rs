@@ -1,8 +1,11 @@
-use alloc::{collections::BTreeMap, vec::Vec};
+use alloc::{
+    collections::{BTreeMap, BTreeSet},
+    vec::Vec,
+};
 
 use trnm_consensus_types::{
     BlockHeader, BlockId, CertifiedHeaderV0, ConsensusParametersV0, FinalityProofV0,
-    ProposalWitnessV0, QcRef, QcReferenceV0, QuorumCertificate, ValidatorSet,
+    ProposalWitnessV0, QcRef, QcReferenceV0, QuorumCertificate, SignedProposalV0, ValidatorSet,
 };
 
 use crate::{
@@ -14,6 +17,11 @@ use crate::{
 struct BlockNode {
     header: BlockHeader,
     witness: ProposalWitnessV0,
+    // The complete body is frozen only after this exact proposal crosses the
+    // existing application-Valid boundary. Unknown/Unavailable bodies remain
+    // source-scoped and replaceable exactly as they were before this field
+    // existed.
+    validated_proposal: Option<SignedProposalV0>,
     payload_status: PayloadStatus,
 }
 
@@ -55,25 +63,34 @@ impl BlockTree {
         }
     }
 
-    /// Inserts the one exact, already-verified proposal witness for a block.
+    /// Inserts the one exact, already-verified proposal envelope for a block.
     ///
-    /// A repeated proposal is idempotent only when both its header and witness
-    /// are byte-for-byte the same semantic values. In particular, a later QC
-    /// or TC cannot replace the justification that the proposer actually
-    /// signed and that a future finality proof must reproduce exactly.
+    /// Header and witness identity become fixed immediately. The complete body
+    /// is deliberately not frozen until application validation succeeds, so a
+    /// source-scoped `Unavailable` result may still retry the authenticated
+    /// header from another body source. Once frozen, only the exact complete
+    /// proposal is idempotent; a different body can never replace it.
     pub(crate) fn insert_verified_proposal(
         &mut self,
-        header: BlockHeader,
-        witness: ProposalWitnessV0,
+        proposal: &SignedProposalV0,
         protected: &[BlockId],
     ) -> Result<()> {
+        let header = proposal.block().header();
+        let witness = proposal.witness();
         let block_id = header.id();
         if let Some(existing) = self.nodes.get(&block_id) {
-            if existing.header != header {
+            if &existing.header != header {
                 return Err(CoreError::ConflictingBlock(block_id));
             }
-            if existing.witness != witness {
+            if &existing.witness != witness {
                 return Err(CoreError::ConflictingProposalWitness(block_id));
+            }
+            if existing
+                .validated_proposal
+                .as_ref()
+                .is_some_and(|validated| validated != proposal)
+            {
+                return Err(CoreError::ConflictingBlock(block_id));
             }
             return Ok(());
         }
@@ -81,8 +98,9 @@ impl BlockTree {
         self.nodes.insert(
             block_id,
             BlockNode {
-                header,
-                witness,
+                header: header.clone(),
+                witness: witness.clone(),
+                validated_proposal: None,
                 payload_status: PayloadStatus::Unknown,
             },
         );
@@ -153,11 +171,71 @@ impl BlockTree {
         self.nodes.get(&block_id).map(|node| &node.witness)
     }
 
+    /// Returns the complete proposal frozen by an existing application-Valid
+    /// transition. This is retained comparison data only: it is not an
+    /// application-validity, finality, persistence, or signing authority.
+    pub(crate) fn validated_proposal(&self, block_id: BlockId) -> Option<&SignedProposalV0> {
+        self.nodes
+            .get(&block_id)
+            .and_then(|node| node.validated_proposal.as_ref())
+    }
+
+    /// Reconstructs the exact frozen proposal path from the finalized child
+    /// through `target`, inclusive, in parent-to-child order.
+    ///
+    /// Every returned body previously crossed the existing application-Valid
+    /// boundary, but this read-only projection mints no application, finality,
+    /// persistence, recovery, or signing authority. Missing/unfrozen nodes,
+    /// malformed edges, cycles, and paths beyond `maximum` all return `None`.
+    #[allow(
+        dead_code,
+        reason = "the immediately following Core safety-shadow commit consumes this bounded prerequisite"
+    )]
+    pub(crate) fn exact_validated_proposal_path(
+        &self,
+        target: BlockId,
+        finalized: FinalizedTip,
+        maximum: usize,
+        max_block_time_step_ms: u64,
+    ) -> Option<Vec<SignedProposalV0>> {
+        let path = bounded_parent_path_v0(target, finalized.block_id(), maximum, |block_id| {
+            let node = self.nodes.get(&block_id)?;
+            let proposal = node.validated_proposal.as_ref()?;
+            if proposal.block().header() != &node.header
+                || proposal.witness() != &node.witness
+                || proposal.block().id() != block_id
+            {
+                return None;
+            }
+            Some(proposal.block().header().parent_id())
+        })?;
+
+        let mut proposals = Vec::with_capacity(path.len());
+        let mut previous_header = None;
+        for block_id in path {
+            let proposal = self.validated_proposal(block_id)?;
+            let header = proposal.block().header();
+            let justify = proposal.witness().justify_qc().qc_ref();
+            let edge_matches = match previous_header {
+                Some(parent) => {
+                    edge_matches_header(header, justify, parent, max_block_time_step_ms)
+                }
+                None => edge_matches_finalized(header, justify, finalized, max_block_time_step_ms),
+            };
+            if !edge_matches || header.height() <= finalized.height() {
+                return None;
+            }
+            previous_header = Some(header);
+            proposals.push(proposal.clone());
+        }
+        Some(proposals)
+    }
+
     pub(crate) fn justify_qc(&self, block_id: BlockId) -> Option<&QcReferenceV0> {
         self.witness(block_id).map(ProposalWitnessV0::justify_qc)
     }
 
-    pub(crate) fn record_payload_validation(
+    fn record_payload_validation(
         &mut self,
         block_id: BlockId,
         result: PayloadValidationResult,
@@ -215,6 +293,64 @@ impl BlockTree {
         }
     }
 
+    /// Restores only the durable deterministic-invalid fact. A caller cannot
+    /// use this narrow API to mark a block Valid without supplying and freezing
+    /// the exact complete proposal through the application-authenticated path.
+    pub(crate) fn record_deterministically_invalid(
+        &mut self,
+        block_id: BlockId,
+    ) -> Result<PayloadTransition> {
+        self.record_payload_validation(block_id, PayloadValidationResult::DeterministicallyInvalid)
+    }
+
+    /// Applies one source-scoped validation result and freezes the complete
+    /// proposal only when that exact body becomes application-Valid.
+    pub(crate) fn record_payload_validation_for_proposal(
+        &mut self,
+        proposal: &SignedProposalV0,
+        result: PayloadValidationResult,
+    ) -> Result<PayloadTransition> {
+        let block_id = proposal.block().id();
+        let node = self
+            .nodes
+            .get(&block_id)
+            .ok_or(CoreError::MissingBlock(block_id))?;
+        if proposal.block().header() != &node.header {
+            return Err(CoreError::ConflictingBlock(block_id));
+        }
+        if proposal.witness() != &node.witness {
+            return Err(CoreError::ConflictingProposalWitness(block_id));
+        }
+        if result.is_valid()
+            && node
+                .validated_proposal
+                .as_ref()
+                .is_some_and(|validated| validated != proposal)
+        {
+            return Err(CoreError::ConflictingBlock(block_id));
+        }
+
+        let transition = self.record_payload_validation(block_id, result)?;
+        if result.is_valid()
+            && !matches!(
+                transition,
+                PayloadTransition::ConflictingValidOverlay
+                    | PayloadTransition::ConflictingTerminalResult
+            )
+        {
+            let node = self
+                .nodes
+                .get_mut(&block_id)
+                .ok_or(CoreError::MissingBlock(block_id))?;
+            match &node.validated_proposal {
+                Some(existing) if existing == proposal => {}
+                Some(_) => return Err(CoreError::ConflictingBlock(block_id)),
+                None => node.validated_proposal = Some(proposal.clone()),
+            }
+        }
+        Ok(transition)
+    }
+
     /// Restores an application-authenticated durable Valid overlay after the
     /// dedicated anchored-successor recovery challenge has been accepted.
     ///
@@ -225,22 +361,42 @@ impl BlockTree {
     /// commitments equal application execution of the exact body.
     pub(crate) fn restore_authenticated_valid_overlay_v0(
         &mut self,
-        block_id: BlockId,
+        proposal: &SignedProposalV0,
         overlay: BlockIdOverlayRefV0,
     ) -> Result<()> {
+        let block_id = proposal.block().id();
         let node = self
             .nodes
             .get_mut(&block_id)
             .ok_or(CoreError::MissingBlock(block_id))?;
+        if proposal.block().header() != &node.header {
+            return Err(CoreError::ConflictingBlock(block_id));
+        }
+        if proposal.witness() != &node.witness {
+            return Err(CoreError::ConflictingProposalWitness(block_id));
+        }
         if overlay.block_id() != block_id || overlay.parent_block_id() != node.header.parent_id() {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
+        }
+        if node
+            .validated_proposal
+            .as_ref()
+            .is_some_and(|validated| validated != proposal)
+        {
+            return Err(CoreError::ConflictingBlock(block_id));
         }
         match node.payload_status {
             PayloadStatus::Unknown => {
                 node.payload_status = PayloadStatus::Valid(overlay);
+                node.validated_proposal = Some(proposal.clone());
                 Ok(())
             }
-            PayloadStatus::Valid(existing) if existing == overlay => Ok(()),
+            PayloadStatus::Valid(existing) if existing == overlay => {
+                if node.validated_proposal.is_none() {
+                    node.validated_proposal = Some(proposal.clone());
+                }
+                Ok(())
+            }
             PayloadStatus::Valid(_) | PayloadStatus::DeterministicallyInvalid => {
                 Err(CoreError::ConflictingPayloadValidation(block_id))
             }
@@ -588,6 +744,36 @@ impl BlockTree {
     }
 }
 
+fn bounded_parent_path_v0<F>(
+    target: BlockId,
+    finalized: BlockId,
+    maximum: usize,
+    mut parent_for: F,
+) -> Option<Vec<BlockId>>
+where
+    F: FnMut(BlockId) -> Option<BlockId>,
+{
+    if maximum == 0 || target == finalized {
+        return None;
+    }
+    let mut newest_first = Vec::new();
+    let mut seen = BTreeSet::new();
+    let mut cursor = target;
+    for _ in 0..maximum {
+        if !seen.insert(cursor) {
+            return None;
+        }
+        newest_first.push(cursor);
+        let parent = parent_for(cursor)?;
+        if parent == finalized {
+            newest_first.reverse();
+            return Some(newest_first);
+        }
+        cursor = parent;
+    }
+    None
+}
+
 fn edge_matches_finalized(
     child: &BlockHeader,
     justify_qc: QcRef,
@@ -646,4 +832,24 @@ fn edge_coordinates_match(
         && justify_qc.block_id() == parent_id
         && justify_qc.height().get() == parent_height
         && justify_qc.view().get() == parent_view
+}
+
+#[cfg(test)]
+mod retention_tests {
+    use super::{bounded_parent_path_v0, BlockId};
+
+    #[test]
+    fn bounded_parent_path_rejects_a_cycle_before_reaching_finality() {
+        let first = BlockId::new([1; 32]);
+        let second = BlockId::new([2; 32]);
+        let finalized = BlockId::new([3; 32]);
+        assert!(bounded_parent_path_v0(first, finalized, 4, |block_id| {
+            match block_id {
+                value if value == first => Some(second),
+                value if value == second => Some(first),
+                _ => None,
+            }
+        })
+        .is_none());
+    }
 }

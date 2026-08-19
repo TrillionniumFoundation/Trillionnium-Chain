@@ -14,13 +14,24 @@ use trnm_consensus_types::{
     SIGNATURE_BYTES,
 };
 
-use crate::core::payload_parent_context_matches_target_v0;
+use crate::{
+    block_tree::{BlockTree, PayloadTransition},
+    core::payload_parent_context_matches_target_v0,
+};
 
 use super::*;
 
 const CHAIN: ChainId = ChainId::from_static("trnm-core-test-0");
 const GENESIS: BlockId = BlockId::new([0xA5; 32]);
 const GENESIS_TIMESTAMP_MS: u64 = 0;
+
+const _: () = {
+    assert!(CORE_BOUNDED_EXACT_VALIDATED_PROPOSAL_RETENTION_V0);
+    assert!(!CORE_PROPOSAL_RETENTION_APPLICATION_VALID_AUTHORITY_V0);
+    assert!(!CORE_PROPOSAL_RETENTION_FINALITY_AUTHORITY_V0);
+    assert!(!CORE_PROPOSAL_RETENTION_PERSISTENCE_AUTHORITY_V0);
+    assert!(!CORE_PROPOSAL_RETENTION_SIGNER_AUTHORITY_V0);
+};
 
 #[derive(Debug, Clone, Copy)]
 struct RootSignatures;
@@ -385,6 +396,35 @@ fn proposal_from_block<J: IntoQcReference>(
         authenticated_parent_timestamp_ms,
     )
     .expect("valid signed proposal")
+}
+
+fn same_signed_envelope_with_body_bytes(
+    set: &ValidatorSet,
+    proposal: &SignedProposalV0,
+    application_payload: Vec<u8>,
+) -> SignedProposalV0 {
+    let replacement = Block::new(
+        proposal.block().header().clone(),
+        application_payload,
+        proposal.block().evidence_objects().to_vec(),
+    )
+    .expect("replacement body retains a valid header envelope");
+    let parent_timestamp_ms = proposal
+        .witness()
+        .justify_qc()
+        .qc_ref()
+        .height()
+        .get()
+        .saturating_mul(100);
+    SignedProposalV0::new(
+        replacement,
+        proposal.witness().clone(),
+        set,
+        None,
+        &consensus_parameters(),
+        parent_timestamp_ms,
+    )
+    .expect("body bytes are not independently trusted by proposal shape validation")
 }
 
 fn signed_proposal_from_block(
@@ -6294,6 +6334,184 @@ fn persistence_request(effects: &[Effect]) -> &SafetyStatePersistenceV0 {
         [Effect::PersistSafetyState(request)] => request,
         _ => panic!("expected exactly one persistence effect: {effects:?}"),
     }
+}
+
+#[test]
+fn exact_proposal_retention_preserves_unavailable_retry_then_freezes_valid_body() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let valid = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"validated body retained exactly",
+    );
+    let unavailable = same_signed_envelope_with_body_bytes(&set, &valid, vec![0xff]);
+    assert_eq!(unavailable.block().header(), valid.block().header());
+    assert_eq!(unavailable.witness(), valid.witness());
+    assert_ne!(unavailable, valid);
+
+    let mut tree = BlockTree::new(4);
+    tree.insert_verified_proposal(&unavailable, &[])
+        .expect("first source fixes only header and witness");
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(
+            &unavailable,
+            PayloadValidationResult::Unavailable,
+        )
+        .expect("Unavailable remains source-scoped"),
+        PayloadTransition::Unavailable,
+    );
+    assert!(tree.validated_proposal(valid.block().id()).is_none());
+    tree.insert_verified_proposal(&valid, &[])
+        .expect("a different body source remains admissible before Valid");
+
+    let result = valid_result(&core, valid.block());
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&valid, result)
+            .expect("the exact application-Valid body becomes frozen"),
+        PayloadTransition::BecameValid,
+    );
+    assert_eq!(tree.validated_proposal(valid.block().id()), Some(&valid));
+    tree.insert_verified_proposal(&valid, &[])
+        .expect("exact frozen proposal replay is idempotent");
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&valid, result)
+            .expect("exact Valid replay remains idempotent"),
+        PayloadTransition::RepeatedTerminal,
+    );
+    assert_eq!(
+        tree.insert_verified_proposal(&unavailable, &[]),
+        Err(CoreError::ConflictingBlock(valid.block().id())),
+        "a pre-Valid body cannot replace the frozen exact proposal",
+    );
+}
+
+#[test]
+fn deterministic_invalid_restore_cannot_freeze_or_replace_a_complete_proposal() {
+    let set = validator_set();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"deterministic invalid retention boundary",
+    );
+    let mut tree = BlockTree::new(4);
+    tree.insert_verified_proposal(&proposed, &[])
+        .expect("proposal header and witness insert");
+    assert_eq!(
+        tree.record_deterministically_invalid(proposed.block().id())
+            .expect("narrow durable-invalid restore is accepted"),
+        PayloadTransition::BecameDeterministicallyInvalid,
+    );
+    assert!(tree.validated_proposal(proposed.block().id()).is_none());
+    assert_eq!(
+        tree.record_deterministically_invalid(proposed.block().id())
+            .expect("exact deterministic-invalid replay is idempotent"),
+        PayloadTransition::RepeatedTerminal,
+    );
+}
+
+#[test]
+fn exact_validated_path_is_bounded_and_requires_every_frozen_edge() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"retained path one");
+    let q1 = qc(&set, 1, 1, p1.block().id());
+    let p2 = proposal(&set, q1, 2, b"retained path two");
+    let q2 = qc(&set, 2, 2, p2.block().id());
+    let p3 = proposal(&set, q2, 3, b"retained path three");
+    let finalized = FinalizedTip::new(Height::new(0), View::new(0), GENESIS, GENESIS_TIMESTAMP_MS);
+
+    let mut complete = BlockTree::new(8);
+    for proposal in [&p1, &p2, &p3] {
+        complete
+            .insert_verified_proposal(proposal, &[])
+            .expect("complete path proposal inserts");
+        complete
+            .record_payload_validation_for_proposal(proposal, valid_result(&core, proposal.block()))
+            .expect("complete path body freezes after Valid");
+    }
+    assert_eq!(
+        complete
+            .exact_validated_proposal_path(
+                p3.block().id(),
+                finalized,
+                3,
+                core.config().max_block_time_step_ms(),
+            )
+            .expect("three exact frozen proposals form the path"),
+        vec![p1.clone(), p2.clone(), p3.clone()],
+    );
+    assert!(complete
+        .exact_validated_proposal_path(
+            p3.block().id(),
+            finalized,
+            2,
+            core.config().max_block_time_step_ms(),
+        )
+        .is_none());
+
+    let mut missing = BlockTree::new(8);
+    for proposal in [&p1, &p2, &p3] {
+        missing
+            .insert_verified_proposal(proposal, &[])
+            .expect("path header and witness insert");
+    }
+    for proposal in [&p1, &p3] {
+        missing
+            .record_payload_validation_for_proposal(proposal, valid_result(&core, proposal.block()))
+            .expect("selected path body freezes");
+    }
+    assert!(missing
+        .exact_validated_proposal_path(
+            p3.block().id(),
+            finalized,
+            3,
+            core.config().max_block_time_step_ms(),
+        )
+        .is_none());
+
+    let wrong_finalized_edge = FinalizedTip::new(
+        Height::new(0),
+        View::new(0),
+        GENESIS,
+        p1.block().header().timestamp_ms(),
+    );
+    assert!(complete
+        .exact_validated_proposal_path(
+            p3.block().id(),
+            wrong_finalized_edge,
+            3,
+            core.config().max_block_time_step_ms(),
+        )
+        .is_none());
+}
+
+#[test]
+fn exact_proposal_retention_remains_bounded_and_honors_protected_nodes() {
+    let set = validator_set();
+    let genesis = genesis_qc(&set);
+    let first = proposal(&set, genesis.clone(), 1, b"protected retained proposal");
+    let mut side_branches = vec![first.clone()];
+    for timed_out_view in 1..=4 {
+        side_branches.push(timeout_proposal(
+            &set,
+            timeout_certificate(&set, timed_out_view, genesis.clone()),
+            &[0x90 + timed_out_view as u8],
+        ));
+    }
+
+    let mut tree = BlockTree::new(4);
+    for proposal in &side_branches[..4] {
+        tree.insert_verified_proposal(proposal, &[])
+            .expect("bounded side branch inserts");
+    }
+    tree.insert_verified_proposal(&side_branches[4], &[first.block().id()])
+        .expect("one unprotected side branch is evicted");
+    assert!(tree.contains_header(first.block().id()));
+    assert!(tree.contains_header(side_branches[4].block().id()));
+    assert!(!tree.contains_header(side_branches[1].block().id()));
 }
 
 #[test]
