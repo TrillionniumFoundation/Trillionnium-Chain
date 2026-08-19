@@ -18,6 +18,7 @@ fn run_rpc_with_env(
 
     let mut cmd = Command::new(env!("CARGO_BIN_EXE_trnm-rpc"));
     cmd.args(args)
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .env("TRNM_RPC_ACCOUNTS_FILE", &accounts_file)
         .env("TRNM_RPC_TX_FILE", &tx_file)
         .env("TRNM_RPC_FAUCET_LIMITS_FILE", &faucet_limits_file)

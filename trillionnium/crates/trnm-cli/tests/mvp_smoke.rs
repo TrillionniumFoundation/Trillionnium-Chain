@@ -806,6 +806,63 @@ fn smoke_query_balance_development_adapter_returns_only_adapter_value() {
 }
 
 #[test]
+fn smoke_query_balance_rejects_exit_zero_malformed_adapter_output() {
+    for (label, command) in [
+        ("empty", "true"),
+        ("scalar-without-identity", "printf '%s' '42'"),
+        ("arbitrary", "printf '%s' 'request completed successfully'"),
+        (
+            "missing-address",
+            r#"printf '%s' '{"balance":"42","denom":"trnm"}'"#,
+        ),
+        (
+            "missing-denom",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"42"}'"#,
+        ),
+        (
+            "mismatched-address",
+            r#"printf '%s' '{"address":"trnm1other","balance":"42","denom":"trnm"}'"#,
+        ),
+        (
+            "mismatched-denom",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"42","denom":"utrnm"}'"#,
+        ),
+        (
+            "noncanonical-amount",
+            r#"printf '%s' '{"address":"trnm1adapter","balance":"01","denom":"trnm"}'"#,
+        ),
+    ] {
+        let out = Command::new(bin())
+            .env("TRNM_QUERY_BALANCE_CMD", command)
+            .args([
+                "query",
+                "balance",
+                "--address",
+                "trnm1adapter",
+                "--denom",
+                "trnm",
+            ])
+            .output()
+            .unwrap();
+
+        assert!(
+            !out.status.success(),
+            "malformed adapter case {label} must fail closed"
+        );
+        assert!(
+            out.stdout.is_empty(),
+            "malformed adapter case {label} must not emit a balance"
+        );
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("balance query response")
+                || stderr.contains("no explicit balance amount"),
+            "unexpected stderr for {label}: {stderr}"
+        );
+    }
+}
+
+#[test]
 fn smoke_tx_submit_consumption_receipt_without_backend_fails_closed() {
     let root = tmp_dir("tx-query-fallback");
     let tx_file = root.join("txs.json");
@@ -848,6 +905,67 @@ fn smoke_tx_submit_consumption_receipt_without_backend_fails_closed() {
     assert!(
         !tx_file.exists(),
         "a missing backend must not persist synthetic pending state"
+    );
+}
+
+#[test]
+fn smoke_tx_query_local_pending_state_requires_exact_non_authoritative_opt_in() {
+    let root = tmp_dir("tx-query-local-opt-in");
+    let tx_file = root.join("txs.json");
+    let tx_hash = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    std::fs::write(
+        &tx_file,
+        format!(
+            r#"{{"{tx_hash}":{{"tx_hash":"{tx_hash}","status":"pending","status_source":"development_only_local_pending_cache","authoritative":false,"production_ready":false}}}}"#
+        ),
+    )
+    .unwrap();
+
+    let disabled = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env("TRNM_TX_QUERY_CMD", "false")
+        .env_remove("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE")
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(
+        !disabled.status.success(),
+        "local pending state must not replace a required backend without explicit opt-in"
+    );
+    assert!(disabled.stdout.is_empty());
+
+    let malformed = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env_remove("TRNM_TX_QUERY_CMD")
+        .env("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE", " 1 ")
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(!malformed.status.success());
+    assert!(malformed.stdout.is_empty());
+    assert!(String::from_utf8_lossy(&malformed.stderr)
+        .contains("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE must be exactly 1"));
+
+    let enabled = Command::new(bin())
+        .env("TRNM_RPC_TX_FILE", &tx_file)
+        .env_remove("TRNM_TX_QUERY_CMD")
+        .env("TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE", "1")
+        .args(["tx", "query", tx_hash])
+        .output()
+        .unwrap();
+    assert!(
+        enabled.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&enabled.stderr)
+    );
+    assert!(String::from_utf8_lossy(&enabled.stdout).contains("status=pending"));
+    let stderr = String::from_utf8_lossy(&enabled.stderr);
+    assert!(
+        stderr.contains("source=development_only_local_pending_cache")
+            && stderr.contains("authoritative=false")
+            && stderr.contains("production_ready=false")
+            && stderr.contains("not node inclusion or finality evidence"),
+        "local status warning must be explicit: {stderr}"
     );
 }
 

@@ -129,7 +129,7 @@ fn put_sample_poco_task(st: &mut StateStore, task_id: u64, worker: &str, result_
 #[command(
     name = "trnm-node",
     version,
-    about = "Trillionnium Rust node (mock execution loop)"
+    about = "Trillionnium development-only legacy simulator (mock execution loop; not a production node)"
 )]
 struct Args {
     #[arg(long, default_value = "configs/node1.toml")]
@@ -23729,7 +23729,7 @@ fn main() -> Result<()> {
     validate_startup_args(&args)?;
     let cfg = load_config(&args.config)?;
 
-    println!("[node] start");
+    println!("[node] start development_only=true legacy_harness=true production_ready=false");
     println!(
         "[node] id={} rpc={} p2p={}",
         cfg.node_id, cfg.rpc_addr, cfg.p2p_addr

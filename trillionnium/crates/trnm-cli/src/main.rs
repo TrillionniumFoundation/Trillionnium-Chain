@@ -18,6 +18,7 @@ const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY: &str = "shadow_settlement_compare_only
 const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID: u64 = 7_351;
 const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
 const LOCAL_WALLET_WARNING: &str = "WARNING: trnm-cli local wallets are development-only plaintext keystores, not production HSM/KMS signers; never use validator or production funds here.";
+const DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV: &str = "TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE";
 
 fn warn_development_only_adapter(surface: &str) {
     eprintln!(
@@ -563,24 +564,44 @@ fn resolve_consumption_tx(
     Ok(())
 }
 
-fn parse_balance_query_response(
+fn validate_balance_query_response(
+    response: BalanceQueryResponse,
+    requested_address: &str,
+    requested_denom: &str,
+) -> Result<BalanceQueryResponse> {
+    if response.address != requested_address {
+        bail!(
+            "balance query response address mismatch: requested={}, got={}",
+            requested_address,
+            response.address
+        );
+    }
+    if response.denom != requested_denom {
+        bail!(
+            "balance query response denom mismatch: requested={}, got={}",
+            requested_denom,
+            response.denom
+        );
+    }
+    let parsed = response.balance.parse::<u128>().map_err(|_| {
+        anyhow!("balance query response amount must be a canonical non-negative u128 integer")
+    })?;
+    if parsed.to_string() != response.balance {
+        bail!("balance query response amount must use canonical decimal encoding");
+    }
+    Ok(response)
+}
+
+pub(crate) fn parse_balance_query_response(
     raw: &str,
     requested_address: &str,
     requested_denom: &str,
 ) -> Result<BalanceQueryResponse> {
     if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(raw) {
-        return Ok(resp);
+        return validate_balance_query_response(resp, requested_address, requested_denom);
     }
 
     if let Ok(value) = serde_json::from_str::<serde_json::Value>(raw) {
-        if let Some(balance) = json_scalar_string(&value) {
-            return Ok(BalanceQueryResponse {
-                address: requested_address.to_string(),
-                balance,
-                denom: requested_denom.to_string(),
-            });
-        }
-
         for candidate in [
             Some(&value),
             value.get("result"),
@@ -615,7 +636,9 @@ fn parse_balance_query_response(
                 .get("address")
                 .and_then(json_scalar_string)
                 .filter(|value| !value.is_empty())
-                .unwrap_or_else(|| requested_address.to_string());
+                .ok_or_else(|| {
+                    anyhow!("balance query response must explicitly bind the requested address")
+                })?;
             let denom = nested_balance
                 .and_then(|value| value.get("denom"))
                 .and_then(json_scalar_string)
@@ -626,12 +649,18 @@ fn parse_balance_query_response(
                         .and_then(json_scalar_string)
                         .filter(|value| !value.is_empty())
                 })
-                .unwrap_or_else(|| requested_denom.to_string());
-            return Ok(BalanceQueryResponse {
-                address,
-                balance,
-                denom,
-            });
+                .ok_or_else(|| {
+                    anyhow!("balance query response must explicitly bind the requested denom")
+                })?;
+            return validate_balance_query_response(
+                BalanceQueryResponse {
+                    address,
+                    balance,
+                    denom,
+                },
+                requested_address,
+                requested_denom,
+            );
         }
     }
 
@@ -659,11 +688,26 @@ fn parse_balance_query_response(
         }
     }
 
-    Ok(BalanceQueryResponse {
-        address: address.unwrap_or_else(|| requested_address.to_string()),
-        balance: balance.unwrap_or_else(|| raw.trim().to_string()),
-        denom: denom.unwrap_or_else(|| requested_denom.to_string()),
-    })
+    let balance = balance.ok_or_else(|| {
+        anyhow!(
+            "failed to parse balance query response: adapter returned no explicit balance amount"
+        )
+    })?;
+    let address = address.ok_or_else(|| {
+        anyhow!("balance query response must explicitly bind the requested address")
+    })?;
+    let denom = denom.ok_or_else(|| {
+        anyhow!("balance query response must explicitly bind the requested denom")
+    })?;
+    validate_balance_query_response(
+        BalanceQueryResponse {
+            address,
+            balance,
+            denom,
+        },
+        requested_address,
+        requested_denom,
+    )
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -3935,14 +3979,7 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     if !requested.starts_with("0x") {
         bail!("invalid tx hash for query (expected 0x-prefixed hex tx hash)");
     }
-
-    if let Some(status) = query_local_tx_status(&requested) {
-        return Ok(TxQueryResponse {
-            tx_hash: requested,
-            status,
-            error: None,
-        });
-    }
+    let allow_local_diagnostic = development_only_local_tx_state_enabled()?;
 
     if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
         let cmd = tpl(template, "tx_hash", &requested);
@@ -3958,6 +3995,10 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
             }
         }
         return Ok(parsed);
+    }
+
+    if let Some(response) = development_only_local_tx_query(&requested, allow_local_diagnostic) {
+        return Ok(response);
     }
 
     let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -4002,12 +4043,10 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
         Err(e) => {
             let msg = e.to_string();
             if msg.contains("TX_NOT_FOUND") {
-                if let Some(status) = query_local_tx_status(&requested) {
-                    return Ok(TxQueryResponse {
-                        tx_hash: requested,
-                        status,
-                        error: None,
-                    });
+                if let Some(response) =
+                    development_only_local_tx_query(&requested, allow_local_diagnostic)
+                {
+                    return Ok(response);
                 }
             }
             Err(e)
@@ -4099,6 +4138,31 @@ fn default_tx_state_file() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("run/rpc/txs.json"))
 }
 
+fn development_only_local_tx_state_enabled() -> Result<bool> {
+    match std::env::var_os(DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV) {
+        None => Ok(false),
+        Some(value) if value == std::ffi::OsStr::new("1") => Ok(true),
+        Some(_) => bail!(
+            "{DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV} must be exactly 1 to enable the non-authoritative development-only local pending-state diagnostic"
+        ),
+    }
+}
+
+fn development_only_local_tx_query(tx_hash: &str, enabled: bool) -> Option<TxQueryResponse> {
+    if !enabled {
+        return None;
+    }
+    let status = query_local_tx_status(tx_hash)?;
+    eprintln!(
+        "WARNING: tx status source=development_only_local_pending_cache authoritative=false production_ready=false; this is not node inclusion or finality evidence"
+    );
+    Some(TxQueryResponse {
+        tx_hash: tx_hash.to_string(),
+        status,
+        error: None,
+    })
+}
+
 fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     let path = default_tx_state_file();
     let raw = fs::read_to_string(path).ok()?;
@@ -4177,6 +4241,9 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
             },
             "status": status,
             "error": null,
+            "status_source": "development_only_local_pending_cache",
+            "authoritative": false,
+            "production_ready": false,
             "submitted_at_unix_ms": submitted_at_unix_ms,
             "updated_at_unix_ms": now_ms
         }),
@@ -5740,9 +5807,9 @@ mod tests {
     #[test]
     fn balance_query_parser_accepts_wrapped_partial_json() {
         let parsed = parse_balance_query_response(
-            r#"{"result":{"balance":"42","denom":"utrnm"}}"#,
+            r#"{"result":{"address":"trnm1requested","balance":"42","denom":"utrnm"}}"#,
             "trnm1requested",
-            "trnm",
+            "utrnm",
         )
         .unwrap();
         assert_eq!(
@@ -5756,24 +5823,19 @@ mod tests {
     }
 
     #[test]
-    fn balance_query_parser_accepts_scalar_json_balance() {
-        let parsed = parse_balance_query_response("12345\n", "trnm1requested", "trnm").unwrap();
-        assert_eq!(
-            parsed,
-            BalanceQueryResponse {
-                address: "trnm1requested".into(),
-                balance: "12345".into(),
-                denom: "trnm".into(),
-            }
-        );
+    fn balance_query_parser_rejects_scalar_json_without_explicit_identity() {
+        let err = parse_balance_query_response("12345\n", "trnm1requested", "trnm")
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("no explicit balance amount"));
     }
 
     #[test]
     fn balance_query_parser_accepts_nested_balance_amount_object() {
         let parsed = parse_balance_query_response(
             r#"{"response":{"data":{"address":"trnm1adapter","balance":{"amount":"77","denom":"utrnm"}}}}"#,
-            "trnm1requested",
-            "trnm",
+            "trnm1adapter",
+            "utrnm",
         )
         .unwrap();
         assert_eq!(
@@ -5790,8 +5852,8 @@ mod tests {
     fn balance_query_parser_accepts_kv_text_output() {
         let parsed = parse_balance_query_response(
             "address=trnm1adapter\nbalance=77\ndenom=utrnm\n",
-            "trnm1requested",
-            "trnm",
+            "trnm1adapter",
+            "utrnm",
         )
         .unwrap();
         assert_eq!(
@@ -5802,6 +5864,80 @@ mod tests {
                 denom: "utrnm".into(),
             }
         );
+    }
+
+    #[test]
+    fn balance_query_parser_rejects_empty_or_unstructured_success_output() {
+        for raw in ["", "   \n", "request completed successfully", "status=ok\n"] {
+            let err = parse_balance_query_response(raw, "trnm1requested", "trnm")
+                .unwrap_err()
+                .to_string();
+            assert!(
+                err.contains("no explicit balance amount"),
+                "unexpected error for {raw:?}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn balance_query_parser_rejects_response_identity_mismatch() {
+        let address_err = parse_balance_query_response(
+            r#"{"address":"trnm1other","balance":"42","denom":"trnm"}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(address_err.contains("address mismatch"));
+
+        let denom_err = parse_balance_query_response(
+            r#"{"address":"trnm1requested","balance":"42","denom":"utrnm"}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(denom_err.contains("denom mismatch"));
+
+        let missing_address = parse_balance_query_response(
+            r#"{"balance":"42","denom":"trnm"}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(missing_address.contains("explicitly bind the requested address"));
+
+        let missing_denom = parse_balance_query_response(
+            r#"{"address":"trnm1requested","balance":"42"}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(missing_denom.contains("explicitly bind the requested denom"));
+    }
+
+    #[test]
+    fn balance_query_parser_rejects_noncanonical_or_out_of_range_amounts() {
+        for amount in [
+            "-1",
+            "+1",
+            "1.0",
+            "01",
+            " 1",
+            "340282366920938463463374607431768211456",
+        ] {
+            let raw =
+                format!(r#"{{"address":"trnm1requested","balance":"{amount}","denom":"trnm"}}"#);
+            let err = parse_balance_query_response(&raw, "trnm1requested", "trnm")
+                .unwrap_err()
+                .to_string();
+            assert!(
+                err.contains("canonical") || err.contains("non-negative u128"),
+                "unexpected error for {amount:?}: {err}"
+            );
+        }
     }
 
     #[test]

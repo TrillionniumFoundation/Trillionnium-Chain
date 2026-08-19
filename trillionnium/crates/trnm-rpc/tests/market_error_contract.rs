@@ -4,6 +4,7 @@ use std::process::Command;
 
 fn run_ok(args: &[&str]) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .output()
@@ -16,6 +17,7 @@ fn run_ok(args: &[&str]) -> String {
 
 fn run_fail(args: &[&str]) -> String {
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(args)
         .output()

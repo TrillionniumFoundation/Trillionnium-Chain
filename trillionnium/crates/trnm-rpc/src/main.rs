@@ -7,6 +7,7 @@ use std::io::{Seek, SeekFrom};
 use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashSet},
+    ffi::OsStr,
     fs::{self, OpenOptions},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
@@ -82,16 +83,37 @@ const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
 const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY: &str = "shadow_settlement_compare_only";
 const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY: &str = "hybrid_settlement_poco_weight_bps";
 const SETTLEMENT_WEIGHT_TOTAL_BPS: u64 = 10_000;
+const DEVELOPMENT_ONLY_OPT_IN_ENV: &str = "TRNM_RPC_DEVELOPMENT_ONLY";
+const DEVELOPMENT_ONLY_OPT_IN_VALUE: &str = "1";
 
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-rpc",
     version,
-    about = "Trillionnium RPC (state-backed query schema)"
+    about = "Trillionnium development-only local-file RPC harness (not a production node RPC)",
+    after_long_help = "Safety boundary: this binary has no production node backend. Every execution is disabled unless TRNM_RPC_DEVELOPMENT_ONLY=1 is set explicitly for a local test or development rehearsal."
 )]
 struct Args {
     #[command(subcommand)]
     cmd: Command,
+}
+
+fn validate_development_only_opt_in(value: Option<&OsStr>) -> Result<()> {
+    if value.and_then(OsStr::to_str) == Some(DEVELOPMENT_ONLY_OPT_IN_VALUE) {
+        return Ok(());
+    }
+
+    bail!(
+        "trnm-rpc unavailable: no production node backend is implemented and the local-file/model surrogate is disabled by default; set {DEVELOPMENT_ONLY_OPT_IN_ENV}={DEVELOPMENT_ONLY_OPT_IN_VALUE} only for an explicit development-only local test or rehearsal"
+    )
+}
+
+fn require_development_only_opt_in() -> Result<()> {
+    validate_development_only_opt_in(std::env::var_os(DEVELOPMENT_ONLY_OPT_IN_ENV).as_deref())?;
+    eprintln!(
+        "[trnm-rpc][development_only] local-file/model harness enabled explicitly; production_ready=false"
+    );
+    Ok(())
 }
 
 #[derive(Debug, Subcommand)]
@@ -676,6 +698,8 @@ fn metering_policy_has_nonzero_denominators(policy: &TaskMeteringPolicyQueryResp
         && policy.worker_slash_rebate_per_work_unit_den != 0
 }
 
+// Keep the legacy wire fields explicit at this boundary so schema drift remains visible.
+#[allow(clippy::too_many_arguments)]
 fn build_task_metering_query_response(
     path: String,
     workload_class: String,
@@ -3051,7 +3075,7 @@ fn append_quarantine_records(path: &Path, entries: &[IngressQuarantineRecord]) -
         .truncate(true)
         .open(&quarantine_path)?;
     for entry in existing {
-        writeln!(file, "{}", entry.to_string())?;
+        writeln!(file, "{entry}")?;
     }
     file.sync_all()?;
 
@@ -3284,21 +3308,19 @@ fn validate_task_metadata_core_fields(metadata: &TaskMetadata) -> Result<()> {
         }
 
         match provenance.privacy_tier {
-            Some(PrivacyTier::Public) => {
-                if provenance.provenance_index.is_some() {
-                    bail!(
-                        "metadata.provenance.provenance_index must be absent when privacy_tier=public"
-                    );
-                }
+            Some(PrivacyTier::Public) if provenance.provenance_index.is_some() => {
+                bail!(
+                    "metadata.provenance.provenance_index must be absent when privacy_tier=public"
+                );
             }
-            Some(PrivacyTier::Internal) | Some(PrivacyTier::Restricted) => {
-                if provenance.provenance_index.is_none() {
-                    bail!(
-                        "metadata.provenance.provenance_index is required when privacy_tier=internal|restricted"
-                    );
-                }
+            Some(PrivacyTier::Internal | PrivacyTier::Restricted)
+                if provenance.provenance_index.is_none() =>
+            {
+                bail!(
+                    "metadata.provenance.provenance_index is required when privacy_tier=internal|restricted"
+                );
             }
-            None => {}
+            _ => {}
         }
     }
 
@@ -4629,12 +4651,26 @@ fn parse_query_normalized_audit_events_query_from_path(
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
     let structural_normalized = raw
         .chars()
-        .filter_map(|ch| match ch {
-            '\u{061C}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{200E}' | '\u{200F}'
-            | '\u{2060}' | '\u{2061}' | '\u{2062}' | '\u{2063}' | '\u{2064}' | '\u{2066}'
-            | '\u{2067}' | '\u{2068}' | '\u{2069}' | '\u{FEFF}' => None,
-            _ if ch.is_control() => None,
-            _ => Some(ch),
+        .filter(|ch| {
+            !matches!(
+                *ch,
+                '\u{061C}'
+                    | '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{2060}'
+                    | '\u{2061}'
+                    | '\u{2062}'
+                    | '\u{2063}'
+                    | '\u{2064}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+                    | '\u{FEFF}'
+            ) && !ch.is_control()
         })
         .collect::<String>();
     let normalized = normalize_wrapped_env_value(&structural_normalized);
@@ -4710,6 +4746,9 @@ fn health_probe_body(ts_unix_ms: u128) -> String {
     serde_json::json!({
         "ok": true,
         "service": "trnm-rpc",
+        "scope": "local-file-model-harness",
+        "development_only": true,
+        "production_ready": false,
         "ts_unix_ms": ts_unix_ms,
         "version": 1
     })
@@ -4754,9 +4793,9 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
-fn parse_query_capability_audit_subject_from_target<'a>(
-    target: &'a str,
-) -> std::result::Result<&'a str, &'static str> {
+fn parse_query_capability_audit_subject_from_target(
+    target: &str,
+) -> std::result::Result<&str, &'static str> {
     let (path, query) = match target.split_once('?') {
         Some((path, query)) => (path, Some(query)),
         None => (target, None),
@@ -4816,9 +4855,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
-            (Some((method, _)), Some(path), Some(target))
-                if path == "/query-settlement-governance" =>
-            {
+            (Some((method, _)), Some("/query-settlement-governance"), Some(target)) => {
                 query_settlement_governance_http_response(method, target, &governance_state())
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-task/") => {
@@ -4933,9 +4970,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     (Err(err), _) => http_response_for_method(method, &err),
                 }
             }
-            (Some((method, _)), Some(path), Some(target))
-                if path == "/query-normalized-audit-events" =>
-            {
+            (Some((method, _)), Some("/query-normalized-audit-events"), Some(target)) => {
                 let query = parse_query_normalized_audit_events_query_from_path(target);
                 match query {
                     Ok(query) => {
@@ -5056,10 +5091,10 @@ fn is_trusted_event_source(event: &NodeEventRecord) -> bool {
     }
 }
 
-fn filtered_node_events_for_task<'a>(
+fn filtered_node_events_for_task(
     task_id: u64,
-    node_events: &'a [NodeEventRecord],
-) -> impl Iterator<Item = &'a NodeEventRecord> {
+    node_events: &[NodeEventRecord],
+) -> impl Iterator<Item = &NodeEventRecord> {
     node_events.iter().filter(move |event| {
         event.task_id == task_id
             && is_legal_node_event_transition(
@@ -5132,10 +5167,7 @@ fn normalize_result_hash_replay_identity(value: Option<&str>) -> Option<String> 
     })
 }
 
-fn sorted_task_adapter_records<'a>(
-    task_id: u64,
-    recs: &'a [AdapterRecord],
-) -> Vec<&'a AdapterRecord> {
+fn sorted_task_adapter_records(task_id: u64, recs: &[AdapterRecord]) -> Vec<&AdapterRecord> {
     let mut task_recs: Vec<&AdapterRecord> = recs
         .iter()
         .filter(|r| {
@@ -5907,6 +5939,7 @@ fn query_normalized_audit_events(
 
 fn main() -> Result<()> {
     let args = Args::parse();
+    require_development_only_opt_in()?;
     let st = governance_state();
     let recs = load_latest_adapter_records();
 
@@ -6742,6 +6775,7 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::CommandFactory;
     use std::panic::{catch_unwind, AssertUnwindSafe};
     use std::sync::{
         atomic::{AtomicU64, Ordering},
@@ -6759,6 +6793,26 @@ mod tests {
         env_lock()
             .lock()
             .unwrap_or_else(|poison| poison.into_inner())
+    }
+
+    #[test]
+    fn cli_help_and_opt_in_contract_are_explicitly_development_only() {
+        let help = Args::command().render_long_help().to_string();
+        assert!(help.contains(
+            "Trillionnium development-only local-file RPC harness (not a production node RPC)"
+        ));
+        assert!(help.contains("TRNM_RPC_DEVELOPMENT_ONLY=1"));
+        assert!(help.contains("no production node backend"));
+
+        validate_development_only_opt_in(Some(OsStr::new("1"))).unwrap();
+        for rejected in [None, Some(OsStr::new("true")), Some(OsStr::new(" 1 "))] {
+            let err = validate_development_only_opt_in(rejected)
+                .expect_err("anything except the exact opt-in must fail closed")
+                .to_string();
+            assert!(err.contains("no production node backend"));
+            assert!(err.contains("local-file/model surrogate is disabled by default"));
+            assert!(err.contains("TRNM_RPC_DEVELOPMENT_ONLY=1"));
+        }
     }
 
     fn unique_tmp_path(prefix: &str, ext: &str) -> PathBuf {
@@ -7936,13 +7990,27 @@ mod tests {
 
         assert_eq!(
             object.len(),
-            4,
-            "health body should stay minimal for probes"
+            7,
+            "health body should stay bounded for probes"
         );
         assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
         assert_eq!(
             object.get("service"),
             Some(&serde_json::Value::String("trnm-rpc".to_string()))
+        );
+        assert_eq!(
+            object.get("scope"),
+            Some(&serde_json::Value::String(
+                "local-file-model-harness".to_string()
+            ))
+        );
+        assert_eq!(
+            object.get("development_only"),
+            Some(&serde_json::Value::Bool(true))
+        );
+        assert_eq!(
+            object.get("production_ready"),
+            Some(&serde_json::Value::Bool(false))
         );
         assert_eq!(
             object.get("ts_unix_ms").and_then(serde_json::Value::as_u64),

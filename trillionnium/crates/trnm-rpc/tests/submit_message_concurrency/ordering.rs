@@ -13,6 +13,7 @@ fn submit_message_concurrent_same_idempotency_key_different_sessions_are_isolate
         let session = if i % 2 == 0 { "s-1" } else { "s-2" }.to_string();
         joins.push(thread::spawn(move || {
             Command::new("cargo")
+                .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
                 .args(["run", "-p", "trnm-rpc", "--"])
                 .args([
                     "submit-message",
@@ -64,6 +65,7 @@ fn submit_message_concurrent_same_idempotency_key_different_channels_are_isolate
         let channel = if i % 2 == 0 { "telegram" } else { "feishu" }.to_string();
         joins.push(thread::spawn(move || {
             Command::new("cargo")
+                .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
                 .args(["run", "-p", "trnm-rpc", "--"])
                 .args([
                     "submit-message",
@@ -115,6 +117,7 @@ fn submit_message_concurrent_same_idempotency_key_different_users_are_isolated()
         let user_id = if i % 2 == 0 { "u-1" } else { "u-2" }.to_string();
         joins.push(thread::spawn(move || {
             Command::new("cargo")
+                .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
                 .args(["run", "-p", "trnm-rpc", "--"])
                 .args([
                     "submit-message",

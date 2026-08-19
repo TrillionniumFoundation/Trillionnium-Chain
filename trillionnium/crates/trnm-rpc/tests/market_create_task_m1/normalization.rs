@@ -6,6 +6,7 @@ fn market_create_task_trims_creator_before_persisting() {
     let _ = fs::remove_dir_all("run/market_test");
 
     let output = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args([
             "run",
             "-p",

@@ -430,6 +430,8 @@ fn research_object_type(kind: ResearchObjectKind) -> &'static str {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "status", rename_all = "snake_case")]
+// Preserve the development-only JSON response shape without adding wire-level indirection.
+#[allow(clippy::large_enum_variant)]
 pub enum SubmitOutcome {
     Accepted {
         command_id: String,
@@ -954,12 +956,12 @@ pub fn load_live_chain_config(path: &Path) -> Result<LiveChainConfig> {
 }
 
 pub fn now_unix_ms() -> Result<u64> {
-    Ok(SystemTime::now()
+    SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_err(|_| anyhow!("system clock is before UNIX epoch"))?
         .as_millis()
         .try_into()
-        .map_err(|_| anyhow!("system clock does not fit u64 milliseconds"))?)
+        .map_err(|_| anyhow!("system clock does not fit u64 milliseconds"))
 }
 
 #[cfg(test)]

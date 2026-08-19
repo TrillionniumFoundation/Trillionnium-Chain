@@ -28,7 +28,7 @@ pub(crate) struct BootstrappedNodeRuntime {
 pub(crate) fn bootstrap_node_runtime(args: &Args) -> Result<BootstrappedNodeRuntime> {
     let cfg = load_config(&args.config)?;
 
-    println!("[node] start");
+    println!("[node] start development_only=true legacy_harness=true production_ready=false");
     println!(
         "[node] id={} rpc={} p2p={}",
         cfg.node_id, cfg.rpc_addr, cfg.p2p_addr
