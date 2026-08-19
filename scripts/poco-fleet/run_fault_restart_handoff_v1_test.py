@@ -172,6 +172,11 @@ def runtime(
 
 
 def main() -> None:
+    assert fleet.PROCESS2_INERT_BOUNDARY_MESSAGE_V1 == (
+        "continuous consensus RestartCut/RestartPark/RestartParkedAck-joined "
+        "process2 is inert; authenticated start-catchup, RecoveryReady, and "
+        "RecoveryStart remain unavailable"
+    )
     validators = processes()
     target = validators[1]
     accepted = handoff(target)

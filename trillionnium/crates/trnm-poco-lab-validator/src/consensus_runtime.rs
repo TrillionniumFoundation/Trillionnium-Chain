@@ -863,7 +863,7 @@ where
                         )?;
                     joined.record_inert_safety_halted_v1()?;
                     bail!(
-                        "continuous consensus RestartCut-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable"
+                        "continuous consensus RestartCut/RestartPark/RestartParkedAck-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable"
                     );
                 }
                 Err(error) => return Err(anyhow!("start runtime event journal: {error}")),
@@ -6829,7 +6829,7 @@ mod tests {
             "consume process2 start, RestartCut/RestartPark, and full inert recovery",
             "let joined =",
             "joined.record_inert_safety_halted_v1()",
-            "authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable",
+            "RestartCut/RestartPark/RestartParkedAck-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable",
         ] {
             assert!(inert_process2.contains(required), "missing {required}");
         }

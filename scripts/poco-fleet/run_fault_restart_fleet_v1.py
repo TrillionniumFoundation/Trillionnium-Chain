@@ -59,7 +59,8 @@ CONTROL_POLL_SECONDS = 1.0
 PROCESS1_TARGET_PARKED_EXIT_STATUS_V1 = 75
 PROCESS2_INERT_EXIT_STATUS_V1 = 2
 PROCESS2_INERT_BOUNDARY_MESSAGE_V1 = (
-    "continuous consensus RestartCut-joined process2 is inert; authenticated "
+    "continuous consensus RestartCut/RestartPark/RestartParkedAck-joined process2 "
+    "is inert; authenticated "
     "start-catchup, RecoveryReady, and RecoveryStart remain unavailable"
 )
 MANAGEMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.:@-]{0,127}$")
