@@ -55,21 +55,26 @@ cached tracking ref contemporaneous.
   `Unavailable` takeover, fresh execution, fork execution, ordered
   finalization, locked-QC rollback protection, state sync, networking, and the
   complete production crash matrix remain open. The bounded timeout path has
-  no power-loss/hardware-fsync matrix. G1e adds a feature-gated local
-  Linux matrix of sixteen real SIGKILL checkpoints at `O+P`, `O+D`, `C+D`, and
-  `C+K`, across both routes and both supported deterministic-invalid reasons.
-  An authentic feature-only fixture seeds `O+P`; the official existing-only
-  host authenticates and observes that boundary, then drives `P -> D -> C -> K`
-  to reach the other three checkpoints. A fresh process verifies recovery
-  after each kill. The `O+P` cases are recovery-from-preseeded-state evidence,
-  not evidence that the host created `O+P`. The harness compares the complete
+  no power-loss/hardware-fsync matrix.
+  G1e validation-recovery SIGKILL is archive-only. It is non-buildable in the
+  active Cargo graph. Its historical
+  feature-gated source describes sixteen SIGKILL checkpoints at `O+P`, `O+D`,
+  `C+D`, and `C+K`, across both routes and both supported deterministic-invalid
+  reasons. An authentic feature-only fixture seeded `O+P`; the official
+  existing-only host authenticated and observed that boundary, then drove
+  `P -> D -> C -> K` to reach the other three checkpoints. The former harness
+  used a fresh process after each kill. The `O+P` cases are
+  recovery-from-preseeded-state evidence,
+  not evidence that the host created `O+P`. The former harness compared the complete
   `ValidationId`, completion revision, and signer-watermark tuple across the
-  checkpoint, recovery, and verification processes; focused adapter tests also
-  cover live lock, stale CAS, journal switching, checksum corruption, and
-  trailing bytes. This is process-SIGKILL
-  evidence, not power-loss, host-reboot, device-write-cache, or hardware-fsync
-  evidence. The helper and filesystem watermark are test-only and absent from
-  the `--no-default-features` development-library artifact.
+  checkpoint, recovery, and verification processes. Independent current
+  same-process adapter tests cover live lock, stale CAS, journal switching,
+  checksum corruption, and
+  trailing bytes. That record is historical process-SIGKILL evidence, not
+  power-loss, host-reboot, device-write-cache, or hardware-fsync evidence. The
+  active manifest no longer registers the helper or integration-test target;
+  their tracked files are archive source only and absent from the
+  `--no-default-features` development-library artifact.
 
 ### 2026-08-04 PoCO-BFT target truth
 

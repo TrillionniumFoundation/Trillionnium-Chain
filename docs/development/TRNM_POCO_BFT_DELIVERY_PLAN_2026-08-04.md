@@ -54,15 +54,16 @@ G1c additionally provides one existing-only, deterministic-invalid recovery
 join across the application, SafetyState, and signer journals. Because that
 join is bounded to `O+P`, `O+D`, `C+D`, and `C+K`, remains inert, and has no
 fresh executor, general result recovery, or production effect driver, it does
-not complete step 4 or satisfy the frozen production contract. G1e adds a
-feature-gated local Linux matrix of sixteen real SIGKILL checkpoints across the
-four states, two routes, and two supported deterministic-invalid reasons. Its
-authentic feature-only fixture seeds `O+P`; the official existing-only host
-authenticates and observes that boundary, then drives `P -> D -> C -> K` to
-reach the other three states. A fresh process verifies each restart. The
-`O+P` cases are recovery-from-preseeded-state evidence, not host-creation
-evidence. This is not power-loss, host-reboot, device-write-cache, or
-hardware-fsync evidence, and it is not the complete production crash matrix.
+not complete step 4 or satisfy the frozen production contract.
+G1e validation-recovery SIGKILL is archive-only. It is non-buildable in the active
+Cargo graph. Its former feature-gated local Linux design covered sixteen
+SIGKILL checkpoints across four states, two routes, and two supported
+deterministic-invalid reasons, but the active manifest now registers neither
+its legacy feature/dependency edge nor its helper/integration-test targets.
+Consequently it contributes zero current active-native checkpoints, CI
+evidence, or readiness evidence. The archived record was not power-loss,
+host-reboot, device-write-cache, hardware-fsync, or a complete production crash
+matrix.
 
 G1f now provides the first default-build ordinary vertical effect loop. The
 non-cloneable host uniquely owns Core, SafetyStore, signer journal, and one
@@ -521,13 +522,13 @@ an earlier phase.
   finalization, state apply, or process-wide callback exactly-once. There is no
   production effect driver/network, state-sync recovery join, complete
   production crash/power-loss matrix, or whole-namespace rollback protection.
-  The feature-only G1e fixture seeds an authentic `O+P`, after which the
-  official existing-only host authenticates and observes `O+P` and drives the
-  real `P -> D -> C -> K` transitions. The matrix exercises sixteen SIGKILL
-  checkpoints, and a fresh process must authenticate and recover the exact
-  journals after each one. The helper
-  and filesystem watermark require `recovery-process-test-support` and are
-  excluded by the development artifact's `--no-default-features` build. The
+  The historical G1e source described a feature-only fixture that seeded an
+  authentic `O+P`, followed by the existing-only host driving
+  `P -> D -> C -> K` across a former sixteen-checkpoint SIGKILL design. Its old
+  helper and integration-test targets are not registered in the active Cargo
+  graph, so this archive contributes zero current native-CI checkpoints. The
+  still-active `recovery-process-test-support` targets belong only to G1f's
+  six-point bounded-timeout signing matrix. The
   application recovery
   facade now takes the exclusive side of the shared/exclusive sidecar lock,
   pins its PID and canonical parent/lock/main-database/Safety-binding
@@ -1393,8 +1394,8 @@ an earlier phase.
   finalization, power-loss/fsync hardware evidence, and the complete production
   crash matrix remain the next ordered slices. G1c covers only the existing
   deterministic-invalid `O+P`, `O+D`, `C+D`, and `C+K` join in an inert node
-  owner; G1e adds only the feature-gated local Linux SIGKILL matrix for those
-  same states.
+  owner; the former G1e local Linux validation-recovery SIGKILL design remains
+  historical, non-buildable archive source only.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,

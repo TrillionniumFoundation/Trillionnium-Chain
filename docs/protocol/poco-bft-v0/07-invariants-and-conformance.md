@@ -1060,21 +1060,16 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `Reserved`, `Evaluated`, `Applied`, `Valid`, and `Unavailable` takeover, a
   BlockId-keyed speculative overlay, ordered finalization, a general effect
   driver/network, state-sync recovery, and the complete production crash matrix
-  remain unimplemented. The feature-gated G1e matrix MUST use an authentic
-  feature-only fixture to seed `O+P`; the official existing-only host MUST
-  authenticate and observe that boundary and MUST drive `P -> D -> C -> K` to
-  reach `O+D`, `C+D`, and `C+K`. It MUST cover both routes and both supported
-  deterministic-invalid reasons, MUST kill and reap the child with SIGKILL at
-  all sixteen checkpoints, and MUST use a fresh process to authenticate and
-  recover the exact journals. The harness MUST compare the complete
-  `ValidationId`, completion revision, and signer-watermark tuple across the
-  checkpoint, recovery, and final verification processes. It MUST NOT describe
-  the preseeded `O+P` cases as
-  host-creation evidence, MUST NOT manually prebuild `O+D`, `C+D`, or `C+K`,
-  and MUST NOT be described as power-loss, host-reboot, device-write-cache, or
-  hardware-fsync evidence. Its helper and filesystem watermark MUST remain
-  behind `recovery-process-test-support` and MUST be absent from the
-  `--no-default-features` development-library artifact. The application
+  remain unimplemented. G1e validation-recovery SIGKILL is archive-only. It is
+  non-buildable in the active Cargo graph. Its tracked historical source MUST
+  NOT be treated as current conformance evidence: the active graph MUST keep
+  the legacy feature/dependency edge and old helper/integration-test targets
+  absent, and the active G1e checkpoint count is zero. Any future restoration
+  MUST reintroduce reviewed typed authority and explicit targets, rerun every
+  crash boundary, and produce new commit-bound evidence; it MUST NOT inherit a
+  green result from the archive source. The still-active
+  `recovery-process-test-support` feature is exclusively the separate six-point
+  G1f bounded-timeout signing matrix. The application
   recovery facade MUST take an exclusive
   sidecar lock that excludes every ordinary shared owner, pin the owner PID and
   canonical parent/lock/main-database/manifest identities for its lifetime, and
@@ -1278,7 +1273,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   application-reservation takeover,
   production callback-outbox scheduling/delivery, general authenticated
   integration with the standalone safety journal, application-validation crash
-  takeover outside the bounded G1e SIGKILL matrix,
+  takeover (there is no active G1e validation-recovery crash matrix),
   process-wide callback exactly-once, and the Finalize-time atomic boundary
   remain open. G1h's same-process tests additionally exercise the real legacy-
   head guard, physical prune followed by exact-parent replan, source-local

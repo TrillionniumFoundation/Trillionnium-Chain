@@ -809,16 +809,20 @@ overlay, an ordered finalization
 queue, or a general application recovery protocol. There is no production
 effect driver, authenticated network, state-sync recovery join, complete
 production crash matrix, process-wide Core uniqueness, or callback exactly-once
-guarantee. The feature-gated G1e harness inserts an observer into the official
-existing-only host and exercises sixteen real SIGKILL checkpoints: `O+P`,
-`O+D`, `C+D`, and `C+K` across both routes and both supported
-deterministic-invalid reasons. An authentic feature-only fixture seeds `O+P`;
-the host authenticates and observes that boundary, then drives
-`P -> D -> C -> K` to reach the other three states. A fresh process
-authenticates and recovers the exact journals after each kill. The `O+P` cases
+guarantee. G1e validation-recovery SIGKILL is archive-only. It is non-buildable
+in the active Cargo graph. Its historical feature-gated harness inserted an
+observer into the official existing-only host and covered sixteen SIGKILL
+checkpoints: `O+P`, `O+D`, `C+D`, and `C+K` across both routes and both
+supported deterministic-invalid reasons. An authentic feature-only fixture
+seeded `O+P`; the host authenticated and observed that boundary, then drove
+`P -> D -> C -> K` to reach the other three states. The former harness used a
+fresh process to authenticate and recover the exact journals after each kill.
+The `O+P` cases
 are recovery-from-preseeded-state evidence, not host-creation evidence.
-This is local Linux process-termination evidence, not power-loss, host-reboot,
-device-write-cache, or hardware-fsync evidence.
+This is historical local Linux process-termination evidence, not power-loss,
+host-reboot, device-write-cache, or hardware-fsync evidence. The active Cargo
+manifest no longer registers its helper or integration-test target, so the
+tracked files provide no current native-CI or readiness evidence.
 The application recovery facade takes the exclusive side of the
 ordinary-shared/recovery-exclusive sidecar lock, pins its PID and canonical
 parent/lock/main-database/manifest identities, and audits the complete
@@ -827,10 +831,11 @@ and existing WAL/SHM objects must have the expected owner and may not be
 group/world writable; all three store parents must be canonical, distinct, and
 non-nested. WAL/SHM inode lifecycles remain SQLite-managed, and a hostile
 same-EUID process remains outside this local Linux contract. The non-default
-`recovery-test-support` fixture may bootstrap `P` only for dedicated recovery
-tests. The SIGKILL helper and its filesystem watermark additionally require
-`recovery-process-test-support`; development library artifacts build with
-`--no-default-features` and record that both test surfaces are absent.
+legacy recovery fixture and G1e helper/test target are absent from the active
+Cargo graph. The still-active `recovery-process-test-support` feature belongs
+only to the separate six-point bounded-timeout G1f helper and matrix; it grants
+no G1e validation-recovery authority. Development library artifacts build with
+`--no-default-features` and record that test surface as absent.
 Whole-namespace rollback/clone safety still depends on a production independent
 monotonic boundary that is not implemented here.
 
@@ -969,8 +974,9 @@ after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
 application-reservation takeover, production Valid callback scheduling/
 delivery, recovery for outcomes outside the G1c
-deterministic-invalid matrix, application-validation crash takeover outside the
-bounded G1e SIGKILL matrix, completion-only artifact replay, and callback
+deterministic-invalid matrix, application-validation crash takeover (the old
+bounded G1e SIGKILL source is archive-only), completion-only artifact replay,
+and callback
 exactly-once are also not implemented. The G1h Valid seal has same-process
 ordering, rollback, response-loss retry, and reopen evidence only; it has no
 Valid-path child-process SIGKILL or power-loss/fsync evidence. The current

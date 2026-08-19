@@ -596,39 +596,28 @@ require_literal "$NODE_SOURCE" \
 require_literal "$G1C_TRUTH" \
   'the admitted matrix is `O+P`, `O+D`, `C+D`, and `C+K`'
 require_literal "$G1C_TRUTH" \
-  'feature-only fixture seeds `O+P`; the official existing-only host authenticates'
-require_literal "$G1C_TRUTH" \
-  'The `O+P` cases are recovery-from-preseeded-state evidence,'
-require_literal "$G1C_TRUTH" \
-  'not host-creation evidence. The parent compares the complete `ValidationId`,'
-require_literal "$G1C_TRUTH" \
-  'trailing bytes. It is not power-loss, host-reboot,'
-require_literal "$G1C_TRUTH" \
-  'device-write-cache, or hardware-fsync evidence.'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$RELEASE_TRUTH" \
-  'Linux matrix of sixteen real SIGKILL checkpoints at `O+P`, `O+D`, `C+D`, and'
-require_literal "$RELEASE_TRUTH" \
-  'The helper and filesystem watermark are test-only and absent from'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$ROOT_README" \
-  '`O+P`, `O+D`, `C+D`, and `C+K` across both routes and both supported'
-require_literal "$ROOT_README" \
-  'authentic feature-only fixture to seed `O+P`; the official existing-only host'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$PROTOCOL_README" \
-  'This is local Linux process-termination evidence, not power-loss, host-reboot,'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$INVARIANTS_DOC" \
-  'all sixteen checkpoints, and MUST use a fresh process to authenticate and'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$DELIVERY_PLAN" \
-  'feature-gated local Linux matrix of sixteen real SIGKILL checkpoints across the'
+  'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$DUAL_TRACK_DECISION" \
-  'production crash matrix. G1e adds a feature-gated local Linux matrix of sixteen'
+  'G1e validation-recovery SIGKILL is archive-only.'
+require_literal "$INVARIANTS_DOC" \
+  'the active G1e checkpoint count is zero'
+require_literal "$PROTOCOL_README" \
+  'only to the separate six-point bounded-timeout G1f helper and matrix'
 require_literal "$CONSENSUS_SAFETY_DOC" \
   'including an `fsync`-equivalent for both data and metadata needed after power loss'
 require_literal "$PRODUCTION_CONTRACTS" '## Required crash matrix'
 require_literal "$PRODUCTION_CONTRACTS" \
   'signer-journal fsync, signature production,'
-reject_literal "$RELEASE_TRUTH" 'real-process kill-matrix evidence remain open'
-reject_literal "$ROOT_README" 'state sync, real-process kill matrix, and'
-reject_literal "$G1C_TRUTH" 'no real process kill-point matrix'
 
 # G1f is one default-build timeout lane, not a production/general driver.
 require_literal "$ROOT_README" \

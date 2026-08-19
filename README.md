@@ -118,8 +118,10 @@ TrillionniumChain/
   rollback evidence. The separate G1c
   recovery owner performs only the bounded three-store joins obligation +
   `CallbackPending`, obligation + `Delivered`, completion + `Delivered`, and
-  completion + `Acked`. G1e adds only a non-default, feature-gated real-process
-  SIGKILL test observer for those four states; the helper is not a node artifact
+  completion + `Acked`. G1e validation-recovery SIGKILL is archive-only. It is
+  non-buildable in the active Cargo graph. Its tracked helper and integration
+  test preserve the former four-state design, but they are not node artifacts,
+  active native-CI tests, or current readiness evidence
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
@@ -148,23 +150,27 @@ recovery owner opens an existing schema-v8 journal and supports only
 `Valid`, and `Unavailable` remain fail-closed. A fresh executor, BlockId-keyed
 speculative overlay, ordered finalization, general effect driver and network,
 state sync, the complete production crash matrix, and whole-namespace rollback
-protection remain release blockers. The feature-gated G1e test uses an
-authentic feature-only fixture to seed `O+P`; the official existing-only host
-then authenticates and observes that boundary and drives the real
-`P -> D -> C -> K` transitions. It exercises sixteen real SIGKILL checkpoints:
+protection remain release blockers. The tracked historical G1e source describes
+an authentic feature-only fixture that seeds `O+P`; the official existing-only
+host then authenticates and observes that boundary and drives the real
+`P -> D -> C -> K` transitions. That archived design covered sixteen SIGKILL
+checkpoints:
 `O+P`, `O+D`, `C+D`, and `C+K` across both routes and both supported
-deterministic-invalid reasons. Thus `O+P` is recovery-from-preseeded-state
-evidence, while the other three states are reached by official host
-transitions. A fresh process must authenticate and recover the exact journals
-after each kill, and the parent compares the complete `ValidationId`, completion
+deterministic-invalid reasons. In that historical record, `O+P` was
+recovery-from-preseeded-state evidence, while the other three states were
+reached by official host transitions. Its former harness required a fresh
+process to authenticate and
+recover the exact journals after each kill, and the parent compared the
+complete `ValidationId`, completion
 revision, and signer-watermark tuple across checkpoint, recovery, and final
-verification processes. The file adapter separately covers live-owner
+verification processes. Independent same-process file-adapter tests cover live-owner
 exclusion, stale CAS, journal switching, checksum corruption, and trailing
-bytes. This is local Linux process-termination
-evidence only; it is not power-loss, host-reboot, device-write-cache, or
-hardware-fsync evidence. Its filesystem watermark and helper are test-only,
-require `recovery-process-test-support`, and are excluded from the
-`--no-default-features` development-library artifact. The application recovery
+bytes. That was historical local Linux process-termination evidence only; it
+was not power-loss, host-reboot, device-write-cache, or hardware-fsync
+evidence. The active Cargo manifest no longer registers its
+filesystem watermark, helper, or integration-test target; the tracked files
+are archive source only and are excluded from the `--no-default-features`
+development-library artifact. The application recovery
 facade now excludes ordinary
 shared opens with an exclusive sidecar lock, pins the owner PID plus canonical
 parent/lock/main-database identities, and requires a create-once checksummed

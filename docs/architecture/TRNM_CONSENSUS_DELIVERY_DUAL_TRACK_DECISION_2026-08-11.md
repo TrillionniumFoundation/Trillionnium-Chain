@@ -91,15 +91,14 @@ existing `Delivered`/`Acked` row also match.
 
 This slice has no fresh executor, BlockId speculative overlay, ordered
 finalization queue, general effect driver/network, state sync, or complete
-production crash matrix. G1e adds a feature-gated local Linux matrix of sixteen
-real SIGKILL checkpoints: `O+P`, `O+D`, `C+D`, and `C+K` across both routes and
-both supported deterministic-invalid reasons. An authentic feature-only
-fixture seeds `O+P`; the official existing-only host authenticates and observes
-that boundary, then drives `P -> D -> C -> K` to reach the other three states.
-The `O+P` cases therefore prove recovery from an authentic preseeded state, and
-a fresh process verifies every exact restart.
-This is not power-loss, host-reboot, device-write-cache, or hardware-fsync
-evidence; the helper and filesystem watermark are excluded from the
+production crash matrix. G1e validation-recovery SIGKILL is archive-only. It is
+non-buildable in the active Cargo graph. Its former feature-gated local Linux
+design described sixteen checkpoints across `O+P`, `O+D`, `C+D`, and `C+K`,
+both routes, and both supported deterministic-invalid reasons. The active
+manifest now registers neither its legacy feature/dependency edge nor its
+helper/integration-test targets, so it supplies zero current native-CI or
+readiness evidence. The historical record was not power-loss, host-reboot,
+device-write-cache, or hardware-fsync evidence and remains outside the
 `--no-default-features` development-library artifact. `Reserved`, `Evaluated`,
 `Applied`, `Valid`, and `Unavailable` recovery remain unsupported.
 Whole-namespace rollback protection still needs a
