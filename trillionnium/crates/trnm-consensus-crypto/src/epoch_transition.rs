@@ -1,5 +1,6 @@
 use alloc::vec::Vec;
 
+use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
     validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, BlockHeader, BlockId, CertificateId,
@@ -10,6 +11,45 @@ use trnm_consensus_types::{
 };
 
 use crate::StrictEd25519Verifier;
+
+const STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0: &[u8] =
+    b"trnm.poco-bft.strict-epoch-activation-binding-ref.v0";
+
+/// Inert evidence reference for one exact, strictly verified epoch activation.
+///
+/// The digest commits to the complete CEV0 preimages in this fixed order:
+/// checkpoint finality, next-epoch commitment, authorization kernel, old
+/// validator set, old consensus parameters, new validator set, new consensus
+/// parameters, and authenticated checkpoint-parent header.
+///
+/// This value deliberately has no public raw constructor and is neither
+/// `Clone` nor `Copy`. It cannot construct an authority, epoch anchor, signer
+/// lease, Core, or recovery capability. A recovery path may persist the raw
+/// bytes, but must re-run
+/// [`verify_same_version_epoch_activation_authority_strict_v0`] and compare
+/// the newly derived reference; stored bytes alone never recreate this type.
+///
+/// ```compile_fail
+/// use trnm_consensus_crypto::StrictEpochActivationBindingRefV0;
+///
+/// fn require_clone<T: Clone>() {}
+/// require_clone::<StrictEpochActivationBindingRefV0>();
+/// ```
+///
+/// ```compile_fail
+/// use trnm_consensus_crypto::StrictEpochActivationBindingRefV0;
+///
+/// let _ = StrictEpochActivationBindingRefV0([0_u8; 32]);
+/// ```
+#[derive(Debug, PartialEq, Eq)]
+pub struct StrictEpochActivationBindingRefV0([u8; 32]);
+
+impl StrictEpochActivationBindingRefV0 {
+    /// Returns the inert digest bytes for persistence or comparison.
+    pub const fn as_bytes(&self) -> &[u8; 32] {
+        &self.0
+    }
+}
 
 /// Strict-Ed25519 authority for the exact pre-first-block epoch anchor.
 ///
@@ -57,6 +97,7 @@ use crate::StrictEd25519Verifier;
 ///     new_consensus_parameters: todo!(),
 ///     authenticated_checkpoint_parent_header: todo!(),
 ///     authorization_kernel: todo!(),
+///     binding_ref: todo!(),
 /// };
 /// ```
 #[derive(Debug, PartialEq, Eq)]
@@ -70,6 +111,7 @@ pub struct StrictSameVersionEpochActivationAuthorityV0 {
     new_consensus_parameters: ConsensusParametersV0,
     authenticated_checkpoint_parent_header: BlockHeader,
     authorization_kernel: EpochAnchorAuthorizationKernelV0,
+    binding_ref: StrictEpochActivationBindingRefV0,
 }
 
 impl StrictSameVersionEpochActivationAuthorityV0 {
@@ -115,6 +157,12 @@ impl StrictSameVersionEpochActivationAuthorityV0 {
 
     pub const fn authorization_kernel(&self) -> &EpochAnchorAuthorizationKernelV0 {
         &self.authorization_kernel
+    }
+
+    /// Returns the inert evidence reference derived from every exact CEV0
+    /// preimage owned by this strict authority.
+    pub const fn binding_ref(&self) -> &StrictEpochActivationBindingRefV0 {
+        &self.binding_ref
     }
 
     pub fn authorization_cev0_bytes(&self) -> trnm_consensus_types::Result<Vec<u8>> {
@@ -167,6 +215,16 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
         authenticated_checkpoint_parent_header.timestamp_ms(),
         &StrictEd25519Verifier,
     )?;
+    let binding_ref = strict_epoch_activation_binding_ref_v0(
+        old_checkpoint_finality,
+        next_epoch_commitment,
+        anchor_certificate_kernel,
+        old_validator_set,
+        old_consensus_parameters,
+        new_validator_set,
+        new_consensus_parameters,
+        authenticated_checkpoint_parent_header,
+    );
 
     Ok(StrictSameVersionEpochActivationAuthorityV0 {
         joint_handoff,
@@ -178,7 +236,64 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
         new_consensus_parameters: *new_consensus_parameters,
         authenticated_checkpoint_parent_header: authenticated_checkpoint_parent_header.clone(),
         authorization_kernel: anchor_certificate_kernel.clone(),
+        binding_ref,
     })
+}
+
+#[allow(clippy::too_many_arguments)]
+fn strict_epoch_activation_binding_ref_v0(
+    old_checkpoint_finality: &FinalityProofV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    authorization_kernel: &EpochAnchorAuthorizationKernelV0,
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_validator_set: &ValidatorSet,
+    new_consensus_parameters: &ConsensusParametersV0,
+    authenticated_checkpoint_parent_header: &BlockHeader,
+) -> StrictEpochActivationBindingRefV0 {
+    let old_checkpoint_finality_cev0 = old_checkpoint_finality
+        .try_cev0_bytes()
+        .expect("strictly verified checkpoint finality has bounded CEV0");
+    let next_epoch_commitment_cev0 = next_epoch_commitment
+        .try_cev0_bytes()
+        .expect("strictly verified next-epoch commitment has bounded CEV0");
+    let authorization_kernel_cev0 = authorization_kernel
+        .try_cev0_bytes()
+        .expect("strictly verified authorization kernel has bounded CEV0");
+    let old_validator_set_cev0 = old_validator_set
+        .try_cev0_bytes()
+        .expect("strictly verified old validator set has bounded CEV0");
+    let old_consensus_parameters_cev0 = old_consensus_parameters.canonical_bytes();
+    let new_validator_set_cev0 = new_validator_set
+        .try_cev0_bytes()
+        .expect("strictly verified new validator set has bounded CEV0");
+    let new_consensus_parameters_cev0 = new_consensus_parameters.canonical_bytes();
+    let authenticated_checkpoint_parent_header_cev0 = authenticated_checkpoint_parent_header
+        .try_cev0_bytes()
+        .expect("authenticated checkpoint-parent header has bounded CEV0");
+
+    StrictEpochActivationBindingRefV0(strict_epoch_activation_binding_digest_v0([
+        old_checkpoint_finality_cev0.as_slice(),
+        next_epoch_commitment_cev0.as_slice(),
+        authorization_kernel_cev0.as_slice(),
+        old_validator_set_cev0.as_slice(),
+        old_consensus_parameters_cev0.as_slice(),
+        new_validator_set_cev0.as_slice(),
+        new_consensus_parameters_cev0.as_slice(),
+        authenticated_checkpoint_parent_header_cev0.as_slice(),
+    ]))
+}
+
+fn strict_epoch_activation_binding_digest_v0(preimages: [&[u8]; 8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.domain.hash.v1");
+    hasher.update((STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0.len() as u64).to_be_bytes());
+    hasher.update(STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0);
+    for preimage in preimages {
+        hasher.update((preimage.len() as u64).to_be_bytes());
+        hasher.update(preimage);
+    }
+    hasher.finalize().into()
 }
 
 /// Strict-Ed25519 observation of one bounded same-version epoch transition.

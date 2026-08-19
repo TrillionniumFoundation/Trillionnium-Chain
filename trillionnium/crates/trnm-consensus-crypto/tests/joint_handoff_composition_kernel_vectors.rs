@@ -1,4 +1,5 @@
 use serde_json::Value;
+use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::{
     verify_same_version_epoch_activation_authority_strict_v0, StrictEd25519Verifier,
 };
@@ -17,6 +18,12 @@ const VECTOR: &str = include_str!(
 const AUTHORITY_VECTOR: &str = include_str!(
     "../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json"
 );
+const STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0: &[u8] =
+    b"trnm.poco-bft.strict-epoch-activation-binding-ref.v0";
+const POSITIVE_BINDING_REF_HEX: &str =
+    "4ba70b831d3bd70a1be8669f654ac42148017fca0b83f84e999ac532b9c70e4f";
+const FALLBACK_BINDING_REF_HEX: &str =
+    "3f719cc7d84539da791a3206d46c4d529f390b2333c35128847f7b62dcd2fc73";
 
 struct DecodedBundle {
     old_parameters: ConsensusParametersV0,
@@ -156,7 +163,57 @@ fn strict_pre_first_block_authority_owns_every_exact_bound_preimage() {
             authority.handoff_certificate(),
             decoded.anchor_kernel.handoff_certificate()
         );
+        let expected_binding_ref = match profile {
+            "positive" => POSITIVE_BINDING_REF_HEX,
+            "authenticated_fallback" => FALLBACK_BINDING_REF_HEX,
+            _ => unreachable!("the profile loop is closed above"),
+        };
+        assert_eq!(
+            authority.binding_ref().as_bytes(),
+            &hex_32(expected_binding_ref),
+            "{id} strict activation binding vector drift"
+        );
     }
+}
+
+#[test]
+fn strict_binding_ref_commits_every_exact_cev0_preimage_in_fixed_order() {
+    let root: Value = serde_json::from_str(AUTHORITY_VECTOR)
+        .expect("valid authenticated checkpoint/handoff vector JSON");
+    let decoded = decode_authority_bundle(object(&root, "positive"));
+    let preimages = exact_activation_preimages(&decoded);
+    let baseline = activation_binding_vector_v0(&preimages);
+
+    assert_eq!(baseline, hex_32(POSITIVE_BINDING_REF_HEX));
+
+    let labels = [
+        "checkpoint finality",
+        "next-epoch commitment",
+        "authorization kernel",
+        "old validator set",
+        "old consensus parameters",
+        "new validator set",
+        "new consensus parameters",
+        "checkpoint-parent header",
+    ];
+    for (index, label) in labels.into_iter().enumerate() {
+        let mut substituted = preimages.clone();
+        let offset = substituted[index].len() / 2;
+        substituted[index][offset] ^= 0x01;
+        assert_ne!(
+            activation_binding_vector_v0(&substituted),
+            baseline,
+            "{label} substitution must change the binding reference"
+        );
+    }
+
+    let mut reordered = preimages.clone();
+    reordered.swap(0, 1);
+    assert_ne!(
+        activation_binding_vector_v0(&reordered),
+        baseline,
+        "field order is part of the frozen binding vector"
+    );
 }
 
 #[test]
@@ -285,6 +342,21 @@ fn strict_authority_rejects_parent_timestamp_and_header_substitution() {
         substituted_timestamp,
         decoded.checkpoint_parent_header.state_root(),
     );
+    assert_ne!(
+        wrong_timestamp_parent.id(),
+        decoded.finality.finalized_block().header().parent_id(),
+        "the changed timestamp must also change the canonical parent identity"
+    );
+    let baseline_preimages = exact_activation_preimages(&decoded);
+    let mut timestamp_preimages = baseline_preimages.clone();
+    timestamp_preimages[7] = wrong_timestamp_parent
+        .try_cev0_bytes()
+        .expect("bounded substituted parent header");
+    assert_ne!(
+        activation_binding_vector_v0(&timestamp_preimages),
+        activation_binding_vector_v0(&baseline_preimages),
+        "the exact parent timestamp and resulting header ID are binding inputs"
+    );
     let timestamp_failure = verify_same_version_epoch_activation_authority_strict_v0(
         &decoded.finality,
         &decoded.commitment,
@@ -309,6 +381,15 @@ fn strict_authority_rejects_parent_timestamp_and_header_substitution() {
     assert_ne!(
         wrong_identity_parent.id(),
         decoded.finality.finalized_block().header().parent_id()
+    );
+    let mut identity_preimages = baseline_preimages.clone();
+    identity_preimages[7] = wrong_identity_parent
+        .try_cev0_bytes()
+        .expect("bounded substituted parent header");
+    assert_ne!(
+        activation_binding_vector_v0(&identity_preimages),
+        activation_binding_vector_v0(&baseline_preimages),
+        "a different canonical parent header ID must change the binding reference"
     );
     let identity_failure = verify_same_version_epoch_activation_authority_strict_v0(
         &decoded.finality,
@@ -556,6 +637,57 @@ fn rebuild_parent_header(
         header.next_epoch_commitment_hash(),
     )
     .expect("substituted parent header remains structurally valid")
+}
+
+fn exact_activation_preimages(decoded: &DecodedAuthorityBundle) -> [Vec<u8>; 8] {
+    [
+        decoded
+            .finality
+            .try_cev0_bytes()
+            .expect("bounded checkpoint finality"),
+        decoded
+            .commitment
+            .try_cev0_bytes()
+            .expect("bounded next-epoch commitment"),
+        decoded
+            .anchor_kernel
+            .try_cev0_bytes()
+            .expect("bounded authorization kernel"),
+        decoded
+            .old_set
+            .try_cev0_bytes()
+            .expect("bounded old validator set"),
+        decoded.old_parameters.canonical_bytes(),
+        decoded
+            .new_set
+            .try_cev0_bytes()
+            .expect("bounded new validator set"),
+        decoded.new_parameters.canonical_bytes(),
+        decoded
+            .checkpoint_parent_header
+            .try_cev0_bytes()
+            .expect("bounded checkpoint-parent header"),
+    ]
+}
+
+fn activation_binding_vector_v0(preimages: &[Vec<u8>; 8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.domain.hash.v1");
+    hasher.update(
+        u64::try_from(STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0.len())
+            .expect("binding domain length fits u64")
+            .to_be_bytes(),
+    );
+    hasher.update(STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0);
+    for preimage in preimages {
+        hasher.update(
+            u64::try_from(preimage.len())
+                .expect("bounded CEV0 preimage length fits u64")
+                .to_be_bytes(),
+        );
+        hasher.update(preimage);
+    }
+    hasher.finalize().into()
 }
 
 fn assert_token_facts(token: &JointHandoffKernelV0, facts: &Value, id: &str) {

@@ -15,8 +15,8 @@ mod epoch_transition;
 
 pub use epoch_transition::{
     verify_same_version_epoch_activation_authority_strict_v0,
-    verify_same_version_epoch_transition_strict_v0, StrictSameVersionEpochActivationAuthorityV0,
-    StrictSameVersionEpochTransitionV0,
+    verify_same_version_epoch_transition_strict_v0, StrictEpochActivationBindingRefV0,
+    StrictSameVersionEpochActivationAuthorityV0, StrictSameVersionEpochTransitionV0,
 };
 
 /// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.
