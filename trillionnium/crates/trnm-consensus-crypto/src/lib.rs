@@ -6,13 +6,17 @@
 //! messages are verified as RFC 8032 Ed25519 signatures over the exact raw
 //! 32-byte [`trnm_consensus_types::SigningRoot`].
 
+extern crate alloc;
+
 use ed25519_dalek::{Signature, VerifyingKey};
 use trnm_consensus_types::{SignatureBytes, SignatureVerifier, SigningRoot, Validator};
 
 mod epoch_transition;
 
 pub use epoch_transition::{
-    verify_same_version_epoch_transition_strict_v0, StrictSameVersionEpochTransitionV0,
+    verify_same_version_epoch_activation_authority_strict_v0,
+    verify_same_version_epoch_transition_strict_v0, StrictSameVersionEpochActivationAuthorityV0,
+    StrictSameVersionEpochTransitionV0,
 };
 
 /// Stateless strict Ed25519 verifier for PoCO-BFT v0 consensus roots.

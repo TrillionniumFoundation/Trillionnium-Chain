@@ -11,6 +11,7 @@ lane = "poco-bft-p1-reference-verifier"
 protocol = "poco-bft-v0"
 private_key_api = false
 strict_same_version_epoch_transition_observation = true
+strict_same_version_epoch_pre_first_block_authority = true
 same_version_epoch_transition_signing_authority = false
 same_version_epoch_transition_core_activation = false
 

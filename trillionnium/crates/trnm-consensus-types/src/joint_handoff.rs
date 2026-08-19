@@ -1,10 +1,10 @@
 use core::fmt;
 
 use crate::{
-    BlockId, BlockKind, CertificateId, CheckpointTwoSealKernelV0, ConsensusParametersHash,
-    ConsensusParametersV0, Epoch, EpochAnchorAuthorizationKernelV0, FinalityProofV0, Height,
-    NextEpochCommitmentHash, NextEpochCommitmentV0, ProtocolVersion, SignatureVerifier, StateRoot,
-    ValidationError, ValidatorSet, ValidatorSetId, View,
+    BlockHeader, BlockId, BlockKind, CertificateId, CheckpointTwoSealKernelV0,
+    ConsensusParametersHash, ConsensusParametersV0, Epoch, EpochAnchorAuthorizationKernelV0,
+    FinalityProofV0, Height, NextEpochCommitmentHash, NextEpochCommitmentV0, ProtocolVersion,
+    SignatureVerifier, StateRoot, ValidationError, ValidatorSet, ValidatorSetId, View,
 };
 
 /// Stable failures for the B2-F same-version joint-handoff composition kernel.
@@ -18,6 +18,7 @@ pub enum JointHandoffKernelErrorCode {
     InvalidOldContext,
     InvalidNewContext,
     InvalidCommitmentContext,
+    CheckpointParentMismatch,
     InvalidCheckpointFinality,
     InvalidCertificateKernel,
     CheckpointHandoffMismatch,
@@ -32,6 +33,7 @@ impl JointHandoffKernelErrorCode {
             Self::InvalidOldContext => "invalid_old_context",
             Self::InvalidNewContext => "invalid_new_context",
             Self::InvalidCommitmentContext => "invalid_commitment_context",
+            Self::CheckpointParentMismatch => "checkpoint_parent_mismatch",
             Self::InvalidCheckpointFinality => "invalid_checkpoint_finality",
             Self::InvalidCertificateKernel => "invalid_certificate_kernel",
             Self::CheckpointHandoffMismatch => "checkpoint_handoff_mismatch",
@@ -143,6 +145,16 @@ pub type SameVersionEpochTransitionKernelResult<T> =
 ///
 /// The token does not attest which `SignatureVerifier` implementation was
 /// supplied. Production integration must use the strict Ed25519 verifier.
+/// No method can derive an [`crate::EpochAnchorQcV0`] from this inert token,
+/// even when a caller supplied a verifier that accepts every signature.
+///
+/// ```compile_fail
+/// use trnm_consensus_types::JointHandoffKernelV0;
+///
+/// fn cannot_upgrade_structural_facts(kernel: JointHandoffKernelV0) {
+///     let _ = kernel.epoch_anchor_qc();
+/// }
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct JointHandoffKernelV0 {
     checkpoint_finality_proof_id: CertificateId,
@@ -162,6 +174,48 @@ pub struct JointHandoffKernelV0 {
     terminal_old_block_id: BlockId,
     terminal_old_qc_digest: CertificateId,
     activation_height: Height,
+}
+
+/// Validates the exact checkpoint-parent header consumed by a later strict
+/// composition boundary.
+///
+/// A scalar timestamp is not sufficient evidence: the timestamp must be read
+/// from the complete header whose canonical ID is the checkpoint's signed
+/// `parent_id`. The checkpoint's ordinary justify QC must also name the same
+/// parent height, view, and block ID. This function returns no epoch anchor,
+/// authorization, signer capability, or durable-state mutation authority.
+pub fn validate_checkpoint_parent_header_v0(
+    old_checkpoint_finality: &FinalityProofV0,
+    authenticated_checkpoint_parent_header: &BlockHeader,
+) -> JointHandoffKernelResult<()> {
+    let checkpoint = old_checkpoint_finality.finalized_block();
+    let checkpoint_header = checkpoint.header();
+    let parent = authenticated_checkpoint_parent_header;
+    let Some(parent_height_successor) = parent.height().get().checked_add(1) else {
+        return Err(error(JointHandoffKernelErrorCode::CheckpointParentMismatch));
+    };
+    let Some(checkpoint_justify) = checkpoint.justify_qc().as_ordinary() else {
+        return Err(error(JointHandoffKernelErrorCode::CheckpointParentMismatch));
+    };
+
+    if parent.id() != checkpoint_header.parent_id()
+        || parent_height_successor != checkpoint_header.height().get()
+        || parent.block_kind() != BlockKind::Regular
+        || parent.next_epoch_commitment_hash().is_some()
+        || parent.genesis_hash() != checkpoint_header.genesis_hash()
+        || parent.chain_id() != checkpoint_header.chain_id()
+        || parent.protocol_version() != checkpoint_header.protocol_version()
+        || parent.epoch() != checkpoint_header.epoch()
+        || parent.validator_set_id() != checkpoint_header.validator_set_id()
+        || parent.consensus_parameters_hash() != checkpoint_header.consensus_parameters_hash()
+        || checkpoint_justify.block_id() != parent.id()
+        || checkpoint_justify.height() != parent.height()
+        || checkpoint_justify.view() != parent.view()
+    {
+        return Err(error(JointHandoffKernelErrorCode::CheckpointParentMismatch));
+    }
+
+    Ok(())
 }
 
 impl JointHandoffKernelV0 {

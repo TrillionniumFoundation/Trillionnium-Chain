@@ -1,15 +1,21 @@
 use serde_json::Value;
-use trnm_consensus_crypto::StrictEd25519Verifier;
+use trnm_consensus_crypto::{
+    verify_same_version_epoch_activation_authority_strict_v0, StrictEd25519Verifier,
+};
 use trnm_consensus_types::{
-    decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
-    decode_epoch_anchor_authorization_kernel_v0_exact, decode_next_epoch_commitment_v0_exact,
-    decode_validator_set_v0_exact, verify_same_version_joint_handoff_kernel_v0,
-    ConsensusParametersV0, DecodeError, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
-    JointHandoffKernelV0, NextEpochCommitmentV0, ValidatorSet,
+    decode_block_header_v0_exact, decode_checkpoint_finality_proof_v0_exact,
+    decode_consensus_parameters_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact,
+    verify_same_version_joint_handoff_kernel_v0, BlockHeader, ConsensusParametersV0, DecodeError,
+    EpochAnchorAuthorizationKernelV0, FinalityProofV0, JointHandoffKernelErrorCode,
+    JointHandoffKernelV0, NextEpochCommitmentV0, StateRoot, ValidatorSet,
 };
 
 const VECTOR: &str = include_str!(
     "../../../../docs/protocol/poco-bft-v0/vectors/joint-handoff-composition-kernel-v0.json"
+);
+const AUTHORITY_VECTOR: &str = include_str!(
+    "../../../../docs/protocol/poco-bft-v0/vectors/poco-authenticated-checkpoint-handoff-v0.json"
 );
 
 struct DecodedBundle {
@@ -21,6 +27,18 @@ struct DecodedBundle {
     finality: FinalityProofV0,
     anchor_kernel: EpochAnchorAuthorizationKernelV0,
     composition_parent_timestamp_ms: u64,
+}
+
+struct DecodedAuthorityBundle {
+    old_parameters: ConsensusParametersV0,
+    new_parameters: ConsensusParametersV0,
+    old_set: ValidatorSet,
+    new_set: ValidatorSet,
+    commitment: NextEpochCommitmentV0,
+    checkpoint_parent_header: BlockHeader,
+    finality: FinalityProofV0,
+    anchor_kernel: EpochAnchorAuthorizationKernelV0,
+    raw_anchor_kernel: Vec<u8>,
 }
 
 #[derive(Debug)]
@@ -64,6 +82,249 @@ fn exact_raw_positive_bundles_return_only_the_committed_inert_facts() {
 
     let ids: Vec<_> = positives.iter().map(|case| string(case, "id")).collect();
     assert_eq!(ids, ["distinct_set", "exact_fallback"]);
+}
+
+#[test]
+fn strict_pre_first_block_authority_owns_every_exact_bound_preimage() {
+    let root: Value = serde_json::from_str(AUTHORITY_VECTOR)
+        .expect("valid authenticated checkpoint/handoff vector JSON");
+
+    for profile in ["positive", "authenticated_fallback"] {
+        let case = object(&root, profile);
+        let id = string(case, "id");
+        let decoded = decode_authority_bundle(case);
+        let authority = verify_same_version_epoch_activation_authority_strict_v0(
+            &decoded.finality,
+            &decoded.commitment,
+            &decoded.anchor_kernel,
+            &decoded.old_set,
+            &decoded.old_parameters,
+            &decoded.new_set,
+            &decoded.new_parameters,
+            &decoded.checkpoint_parent_header,
+        )
+        .unwrap_or_else(|failure| panic!("{id} authority failed: {failure}"));
+
+        assert_eq!(
+            authority.joint_handoff().checkpoint_finality_proof_id(),
+            decoded.finality.id()
+        );
+        assert_eq!(
+            authority.joint_handoff().handoff_certificate_digest(),
+            decoded.anchor_kernel.handoff_certificate().id()
+        );
+        assert_eq!(authority.old_checkpoint_finality(), &decoded.finality);
+        assert_eq!(authority.next_epoch_commitment(), &decoded.commitment);
+        assert_eq!(authority.old_validator_set(), &decoded.old_set);
+        assert_eq!(authority.new_validator_set(), &decoded.new_set);
+        assert_eq!(
+            authority.old_consensus_parameters(),
+            &decoded.old_parameters
+        );
+        assert_eq!(
+            authority.new_consensus_parameters(),
+            &decoded.new_parameters
+        );
+        assert_eq!(
+            authority.authenticated_checkpoint_parent_header(),
+            &decoded.checkpoint_parent_header
+        );
+        assert_eq!(
+            authority.authenticated_checkpoint_parent_block_id(),
+            decoded.finality.finalized_block().header().parent_id()
+        );
+        assert_eq!(
+            authority.authenticated_checkpoint_parent_timestamp_ms(),
+            decoded.checkpoint_parent_header.timestamp_ms()
+        );
+        assert_eq!(authority.authorization_kernel(), &decoded.anchor_kernel);
+        assert_eq!(
+            authority
+                .authorization_cev0_bytes()
+                .expect("bounded authorization bytes"),
+            decoded.raw_anchor_kernel
+        );
+        assert_eq!(
+            authority.terminal_old_header(),
+            decoded.anchor_kernel.terminal_old_header()
+        );
+        assert_eq!(
+            authority.terminal_old_qc(),
+            decoded.anchor_kernel.terminal_old_qc()
+        );
+        assert_eq!(
+            authority.handoff_certificate(),
+            decoded.anchor_kernel.handoff_certificate()
+        );
+    }
+}
+
+#[test]
+fn strict_authority_rejects_cross_bundle_substitution_before_minting() {
+    let root: Value = serde_json::from_str(AUTHORITY_VECTOR)
+        .expect("valid authenticated checkpoint/handoff vector JSON");
+    let first = decode_authority_bundle(object(&root, "positive"));
+    let second = decode_authority_bundle(object(&root, "authenticated_fallback"));
+    let generic_root: Value =
+        serde_json::from_str(VECTOR).expect("valid B2-F composition vector JSON");
+    let foreign_context = decode_raw_bundle(&array(&generic_root, "positive_cases")[0])
+        .expect("foreign but internally valid composition context");
+
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &second.finality,
+        &first.commitment,
+        &first.anchor_kernel,
+        &first.old_set,
+        &first.old_parameters,
+        &first.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &second.commitment,
+        &first.anchor_kernel,
+        &first.old_set,
+        &first.old_parameters,
+        &first.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &first.commitment,
+        &second.anchor_kernel,
+        &first.old_set,
+        &first.old_parameters,
+        &first.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+    assert_eq!(
+        first.new_set, second.new_set,
+        "the authenticated fallback corpus intentionally retains the same candidate set"
+    );
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &first.commitment,
+        &first.anchor_kernel,
+        &foreign_context.old_set,
+        &first.old_parameters,
+        &first.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &first.commitment,
+        &first.anchor_kernel,
+        &first.old_set,
+        &first.old_parameters,
+        &foreign_context.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+
+    let mut old_parameter_fields = first.old_parameters.fields();
+    old_parameter_fields.base_timeout_ms += 1;
+    let substituted_old_parameters =
+        ConsensusParametersV0::new(old_parameter_fields).expect("valid substituted old params");
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &first.commitment,
+        &first.anchor_kernel,
+        &first.old_set,
+        &substituted_old_parameters,
+        &first.new_set,
+        &first.new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+
+    let mut new_parameter_fields = first.new_parameters.fields();
+    new_parameter_fields.base_timeout_ms += 1;
+    let substituted_new_parameters =
+        ConsensusParametersV0::new(new_parameter_fields).expect("valid substituted new params");
+    assert!(verify_same_version_epoch_activation_authority_strict_v0(
+        &first.finality,
+        &first.commitment,
+        &first.anchor_kernel,
+        &first.old_set,
+        &first.old_parameters,
+        &first.new_set,
+        &substituted_new_parameters,
+        &first.checkpoint_parent_header,
+    )
+    .is_err());
+}
+
+#[test]
+fn strict_authority_rejects_parent_timestamp_and_header_substitution() {
+    let root: Value = serde_json::from_str(AUTHORITY_VECTOR)
+        .expect("valid authenticated checkpoint/handoff vector JSON");
+    let decoded = decode_authority_bundle(object(&root, "positive"));
+    let checkpoint_timestamp = decoded.finality.finalized_block().header().timestamp_ms();
+
+    let substituted_timestamp = decoded
+        .checkpoint_parent_header
+        .timestamp_ms()
+        .checked_add(1)
+        .expect("fixture timestamp has room");
+    assert!(substituted_timestamp < checkpoint_timestamp);
+    assert!(
+        checkpoint_timestamp - substituted_timestamp
+            <= decoded.old_parameters.max_block_time_step_ms()
+    );
+    let wrong_timestamp_parent = rebuild_parent_header(
+        &decoded.checkpoint_parent_header,
+        substituted_timestamp,
+        decoded.checkpoint_parent_header.state_root(),
+    );
+    let timestamp_failure = verify_same_version_epoch_activation_authority_strict_v0(
+        &decoded.finality,
+        &decoded.commitment,
+        &decoded.anchor_kernel,
+        &decoded.old_set,
+        &decoded.old_parameters,
+        &decoded.new_set,
+        &decoded.new_parameters,
+        &wrong_timestamp_parent,
+    )
+    .expect_err("a plausible scalar timestamp cannot substitute its exact parent header");
+    assert_eq!(
+        timestamp_failure.code(),
+        JointHandoffKernelErrorCode::CheckpointParentMismatch
+    );
+
+    let wrong_identity_parent = rebuild_parent_header(
+        &decoded.checkpoint_parent_header,
+        decoded.checkpoint_parent_header.timestamp_ms(),
+        StateRoot::new([0xa5; 32]),
+    );
+    assert_ne!(
+        wrong_identity_parent.id(),
+        decoded.finality.finalized_block().header().parent_id()
+    );
+    let identity_failure = verify_same_version_epoch_activation_authority_strict_v0(
+        &decoded.finality,
+        &decoded.commitment,
+        &decoded.anchor_kernel,
+        &decoded.old_set,
+        &decoded.old_parameters,
+        &decoded.new_set,
+        &decoded.new_parameters,
+        &wrong_identity_parent,
+    )
+    .expect_err("a different valid header cannot substitute the checkpoint parent");
+    assert_eq!(
+        identity_failure.code(),
+        JointHandoffKernelErrorCode::CheckpointParentMismatch
+    );
 }
 
 #[test]
@@ -222,6 +483,79 @@ fn decode_raw_bundle(case: &Value) -> Result<DecodedBundle, BundleDecodeFailure>
         anchor_kernel,
         composition_parent_timestamp_ms,
     })
+}
+
+fn decode_authority_bundle(case: &Value) -> DecodedAuthorityBundle {
+    let preheader = object(case, "preheader");
+    let checkpoint_finality = object(case, "checkpoint_finality");
+    let handoff = object(case, "handoff");
+
+    let old_parameters =
+        decode_consensus_parameters_v0_exact(&raw(preheader, "old_parameters_cev0_hex"))
+            .expect("exact old parameters");
+    let new_parameters =
+        decode_consensus_parameters_v0_exact(&raw(preheader, "new_parameters_cev0_hex"))
+            .expect("exact new parameters");
+    let old_set = decode_validator_set_v0_exact(&raw(preheader, "old_validator_set_cev0_hex"))
+        .expect("exact old set");
+    let new_set = decode_validator_set_v0_exact(&raw(preheader, "new_validator_set_cev0_hex"))
+        .expect("exact new set");
+    let commitment = decode_next_epoch_commitment_v0_exact(&raw(preheader, "commitment_cev0_hex"))
+        .expect("exact next-epoch commitment");
+    let checkpoint_parent_header =
+        decode_block_header_v0_exact(&raw(preheader, "checkpoint_parent_header_cev0_hex"))
+            .expect("exact checkpoint parent header");
+    let finality = decode_checkpoint_finality_proof_v0_exact(
+        &raw(checkpoint_finality, "raw_finality_proof_cev0_hex"),
+        &old_set,
+        &old_parameters,
+        &commitment,
+        checkpoint_parent_header.timestamp_ms(),
+    )
+    .expect("exact checkpoint/two-seal finality");
+    let raw_anchor_kernel = raw(handoff, "raw_anchor_certificate_kernel_cev0_hex");
+    let anchor_kernel =
+        decode_epoch_anchor_authorization_kernel_v0_exact(&raw_anchor_kernel, &old_set, &new_set)
+            .expect("exact anchor certificate kernel");
+
+    DecodedAuthorityBundle {
+        old_parameters,
+        new_parameters,
+        old_set,
+        new_set,
+        commitment,
+        checkpoint_parent_header,
+        finality,
+        anchor_kernel,
+        raw_anchor_kernel,
+    }
+}
+
+fn rebuild_parent_header(
+    header: &BlockHeader,
+    timestamp_ms: u64,
+    state_root: StateRoot,
+) -> BlockHeader {
+    BlockHeader::new(
+        header.genesis_hash(),
+        header.chain_id(),
+        header.protocol_version(),
+        header.epoch(),
+        header.view(),
+        header.height(),
+        header.block_kind(),
+        header.parent_id(),
+        header.proposer_id(),
+        header.validator_set_id(),
+        header.consensus_parameters_hash(),
+        header.payload_digest(),
+        state_root,
+        header.receipts_root(),
+        header.evidence_root(),
+        timestamp_ms,
+        header.next_epoch_commitment_hash(),
+    )
+    .expect("substituted parent header remains structurally valid")
 }
 
 fn assert_token_facts(token: &JointHandoffKernelV0, facts: &Value, id: &str) {

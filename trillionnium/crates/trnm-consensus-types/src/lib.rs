@@ -95,7 +95,7 @@ pub use ids::{
     VotingPower, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 pub use joint_handoff::{
-    verify_same_version_epoch_transition_proof_kernel_v0,
+    validate_checkpoint_parent_header_v0, verify_same_version_epoch_transition_proof_kernel_v0,
     verify_same_version_joint_handoff_kernel_v0, JointHandoffKernelError,
     JointHandoffKernelErrorCode, JointHandoffKernelResult, JointHandoffKernelV0,
     SameVersionEpochTransitionKernelError, SameVersionEpochTransitionKernelErrorCode,
