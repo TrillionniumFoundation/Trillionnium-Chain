@@ -717,7 +717,15 @@ require_literal_count "$POCO_WORKFLOW" '--features recovery-process-test-support
 require_literal "$POCO_WORKFLOW" \
   '            -p trnm-poco-node \'
 require_literal "$POCO_WORKFLOW" \
+  'name: Active native bounded-timeout SIGKILL recovery gate'
+reject_literal "$POCO_WORKFLOW" \
   'name: Bounded G1e and G1f real-process SIGKILL recovery gates'
+reject_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-app --lib'
+reject_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-app'
+reject_literal "$POCO_WORKFLOW" \
+  '            -p trnm-consensus-app \'
 
 # Release-profile libraries are useful integration artifacts, not a node or a
 # production-readiness decision. Keep that boundary machine-readable both in
@@ -763,17 +771,23 @@ require_literal "$POCO_WORKFLOW" \
 require_literal "$POCO_WORKFLOW" \
   'validation_recovery_scope=deterministic_invalid_existing_only_v0'
 require_literal "$POCO_WORKFLOW" \
-  'source_validation_recovery_process_sigkill_matrix=EVALUATED'
+  'source_validation_recovery_process_sigkill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
 require_literal "$POCO_WORKFLOW" \
-  'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
+  'source_validation_recovery_process_sigkill_scope=none'
 require_literal "$POCO_WORKFLOW" \
-  'source_validation_recovery_process_sigkill_case_count=16'
+  'source_validation_recovery_process_sigkill_case_count=0'
 require_literal "$POCO_WORKFLOW" \
-  'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+  'source_validation_recovery_process_sigkill_checkpoint_origin=none'
 require_literal "$POCO_WORKFLOW" \
-  'source_validation_recovery_process_sigkill_evidence=true'
+  'source_validation_recovery_process_sigkill_evidence=false'
 require_literal "$POCO_WORKFLOW" \
   'artifact_validation_recovery_process_sigkill_capability=false'
+reject_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_matrix=EVALUATED'
+reject_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_case_count=16'
+reject_literal "$POCO_WORKFLOW" \
+  'source_validation_recovery_process_sigkill_evidence=true'
 require_literal "$POCO_WORKFLOW" 'process_sigkill_helper_included=false'
 require_literal "$POCO_WORKFLOW" 'power_loss_fsync_matrix=NOT_EVALUATED'
 require_literal "$POCO_WORKFLOW" 'application_safety_binding_manifest=true'

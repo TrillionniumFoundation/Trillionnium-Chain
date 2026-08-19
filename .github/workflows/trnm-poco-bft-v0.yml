@@ -267,13 +267,12 @@ jobs:
           cargo test --locked -p trnm-consensus-safety-store --lib --tests
           cargo test --locked -p trnm-consensus-signer-journal --all-targets
           cargo test --locked -p trnm-consensus-sim
-          cargo test --locked -p trnm-consensus-app --lib
           cargo test --locked -p trnm-finality-types
           cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
-      - name: Bounded G1e and G1f real-process SIGKILL recovery gates
+      - name: Active native bounded-timeout SIGKILL recovery gate
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
 
@@ -294,8 +293,6 @@ jobs:
           cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings
           cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
-          # Apply the same package-scoped boundary to consensus-app.
-          cargo clippy --locked -p trnm-consensus-app --lib --tests --no-deps -- -D warnings
 
       - name: Rustfmt
         working-directory: trillionnium-chain/trillionnium
@@ -392,7 +389,6 @@ jobs:
             -p trnm-consensus-core \
             -p trnm-consensus-safety-store \
             -p trnm-consensus-signer-journal \
-            -p trnm-consensus-app \
             -p trnm-finality-types \
             -p trnm-poco-node \
             -p trnm-protocol \
@@ -443,11 +439,11 @@ jobs:
             printf '%s\n' 'source_bounded_timeout_process_sigkill_evidence=true'
             printf '%s\n' 'artifact_bounded_timeout_process_sigkill_capability=false'
             printf '%s\n' 'validation_recovery_scope=deterministic_invalid_existing_only_v0'
-            printf '%s\n' 'source_validation_recovery_process_sigkill_matrix=EVALUATED'
-            printf '%s\n' 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
-            printf '%s\n' 'source_validation_recovery_process_sigkill_case_count=16'
-            printf '%s\n' 'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
-            printf '%s\n' 'source_validation_recovery_process_sigkill_evidence=true'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_scope=none'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_case_count=0'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_checkpoint_origin=none'
+            printf '%s\n' 'source_validation_recovery_process_sigkill_evidence=false'
             printf '%s\n' 'artifact_validation_recovery_process_sigkill_capability=false'
             printf '%s\n' 'process_sigkill_helper_included=false'
             printf '%s\n' 'power_loss_fsync_matrix=NOT_EVALUATED'
@@ -515,11 +511,11 @@ jobs:
           grep -Fxq 'source_bounded_timeout_process_sigkill_evidence=true' "$metadata"
           grep -Fxq 'artifact_bounded_timeout_process_sigkill_capability=false' "$metadata"
           grep -Fxq 'validation_recovery_scope=deterministic_invalid_existing_only_v0' "$metadata"
-          grep -Fxq 'source_validation_recovery_process_sigkill_matrix=EVALUATED' "$metadata"
-          grep -Fxq 'source_validation_recovery_process_sigkill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' "$metadata"
-          grep -Fxq 'source_validation_recovery_process_sigkill_case_count=16' "$metadata"
-          grep -Fxq 'source_validation_recovery_process_sigkill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' "$metadata"
-          grep -Fxq 'source_validation_recovery_process_sigkill_evidence=true' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_scope=none' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_case_count=0' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_checkpoint_origin=none' "$metadata"
+          grep -Fxq 'source_validation_recovery_process_sigkill_evidence=false' "$metadata"
           grep -Fxq 'artifact_validation_recovery_process_sigkill_capability=false' "$metadata"
           grep -Fxq 'process_sigkill_helper_included=false' "$metadata"
           grep -Fxq 'power_loss_fsync_matrix=NOT_EVALUATED' "$metadata"
