@@ -8,6 +8,7 @@ members = [
   "crates/trnm-consensus-core",
   "crates/trnm-consensus-safety-store",
   "crates/trnm-consensus-signer-journal",
+  "crates/trnm-consensus-remote-signer-protocol",
   "crates/trnm-native-application",
   "crates/trnm-native-application-sqlite",
   "crates/trnm-native-execution-v0",
