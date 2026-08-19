@@ -1894,6 +1894,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-whole-node-checkpoint-types"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-worker-agent"
 version = "0.1.0"
 dependencies = [
