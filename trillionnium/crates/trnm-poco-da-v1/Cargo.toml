@@ -1,0 +1,55 @@
+[package]
+name = "trnm-poco-da-v1"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-transaction-batch-da-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+namespace = "transaction-batch-only"
+artifact_evidence_namespace = false
+cev1_global_schema_complete = false
+transaction_envelope_parser_complete = false
+durable_before_attest_local_kernel = true
+attestation_high_watermark = true
+anti_whole_store_rollback_authority = false
+immutable_durable_manifest_checksum = true
+signed_full_range_retrieval_proof_candidate = true
+proof_driven_exact_repair_candidate = true
+canonical_multilevel_chunk_paths_checked = true
+certificate_author_policy_key_binding = true
+repair_window_enforced = true
+authoritative_repair_height_source = false
+generic_chunk_range_retrieval = false
+requester_registry_integration = false
+durable_responder_signer_journal = false
+withholding_adjudication = false
+gc_permit_public_constructor = false
+production_gc_authority = false
+external_byte_deletion_reachable = false
+network_service = false
+whole_node_checkpoint_integration = false
+node_integration = false
+protocol_implementation_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+
+[dependencies]
+borsh = { version = "1", features = ["derive"] }
+ed25519-dalek = "2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["arbitrary_precision"] }
+tempfile = "3"
