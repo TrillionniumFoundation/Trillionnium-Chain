@@ -102,7 +102,7 @@ pub(crate) const JOURNAL_SCHEMA_SQL_V1: &str = "
         fingerprint BLOB NOT NULL CHECK(length(fingerprint)=32),
         signature BLOB CHECK(
             (event_kind=0 AND signature IS NULL) OR
-            (event_kind=1 AND length(signature)=64)
+            (event_kind=1 AND signature IS NOT NULL AND length(signature)=64)
         ),
         predecessor_sequence_be BLOB NOT NULL CHECK(length(predecessor_sequence_be)=8),
         predecessor_chain_checksum BLOB NOT NULL CHECK(length(predecessor_chain_checksum)=32),
@@ -175,7 +175,9 @@ pub(crate) const JOURNAL_SCHEMA_SQL_V1: &str = "
             SELECT 1
             FROM signer_events_v1 AS prepared
             LEFT JOIN signer_events_v1 AS signed
-              ON signed.fingerprint=prepared.fingerprint AND signed.event_kind=1
+              ON signed.fingerprint=prepared.fingerprint
+             AND signed.event_kind=1
+             AND signed.signature IS NOT NULL
             WHERE prepared.event_kind=0 AND signed.fingerprint IS NULL
         )
         BEGIN SELECT RAISE(ABORT, 'schema1 permits only one global pending intent'); END;
@@ -189,7 +191,9 @@ pub(crate) const JOURNAL_SCHEMA_SQL_V1: &str = "
                 SELECT 1
                 FROM signer_events_v1 AS prepared
                 LEFT JOIN signer_events_v1 AS signed
-                  ON signed.fingerprint=prepared.fingerprint AND signed.event_kind=1
+                  ON signed.fingerprint=prepared.fingerprint
+                 AND signed.event_kind=1
+                 AND signed.signature IS NOT NULL
                 WHERE prepared.event_kind=0 AND signed.fingerprint IS NULL
                   AND prepared.fingerprint<>NEW.fingerprint
             )

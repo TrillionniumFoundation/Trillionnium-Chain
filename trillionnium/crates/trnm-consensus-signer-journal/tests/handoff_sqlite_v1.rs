@@ -864,6 +864,64 @@ fn fixture_profile_from_vector() -> HandoffSignerJournalProfileV1 {
 }
 
 #[test]
+fn schema_rejects_null_signed_event_at_insert_time() {
+    let fixture = authority_fixture();
+    let profile = fixture.profile();
+    let temporary = TempDir::new().expect("temporary directory");
+    let path = protected_path(&temporary, "null-signed-event.sqlite3");
+    let mut producer = ExactProducer::new(fixture.signing_key.clone());
+    producer.fail_after_sign_once();
+    let mut journal = SqliteHandoffSignerJournalV1::create_new(
+        &path,
+        profile.clone(),
+        MemoryWatermark::default(),
+    )
+    .expect("create journal");
+
+    assert!(matches!(
+        journal.sign_old_epoch_exact_v1(&vote(&profile, 1, 1, 0x10), &mut producer),
+        Err(HandoffSignerJournalErrorV1::SignatureProducer(
+            SignatureProducerErrorV0::Unavailable
+        ))
+    ));
+    assert_eq!(table_counts(&path), (1, 1, 0));
+    drop(journal);
+
+    let connection = Connection::open(&path).expect("open pending journal");
+    let error = connection
+        .execute_batch(
+            "INSERT INTO signer_events_v1(
+                 sequence_be,
+                 event_kind,
+                 fingerprint,
+                 signature,
+                 predecessor_sequence_be,
+                 predecessor_chain_checksum,
+                 event_checksum,
+                 chain_checksum
+             )
+             SELECT
+                 x'0000000000000002',
+                 1,
+                 fingerprint,
+                 NULL,
+                 sequence_be,
+                 chain_checksum,
+                 zeroblob(32),
+                 zeroblob(32)
+             FROM signer_events_v1
+             WHERE event_kind=0;",
+        )
+        .expect_err("schema must reject a signed event whose signature is SQL NULL");
+    assert!(matches!(
+        error,
+        rusqlite::Error::SqliteFailure(ref failure, _)
+            if failure.code == rusqlite::ErrorCode::ConstraintViolation
+    ));
+    assert_eq!(table_counts(&path), (1, 1, 0));
+}
+
+#[test]
 fn prepared_producer_signature_fence_and_external_fault_windows_fail_closed() {
     let fixture = authority_fixture();
     let profile = fixture.profile();
