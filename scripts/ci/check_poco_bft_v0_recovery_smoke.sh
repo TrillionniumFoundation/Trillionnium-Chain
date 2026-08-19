@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 MANIFEST="$ROOT/trillionnium/Cargo.toml"
+LEGACY_APP_MANIFEST="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.toml"
 
 require_one_executed_test() {
   local scope="$1"
@@ -18,17 +19,22 @@ require_one_executed_test() {
 run_unit_filter() {
   local package="$1"
   local filter="$2"
+  local manifest="$MANIFEST"
   local listed
   local output
 
-  listed="$(cargo test --manifest-path "$MANIFEST" --locked \
+  if [[ "$package" == "trnm-consensus-app" ]]; then
+    manifest="$LEGACY_APP_MANIFEST"
+  fi
+
+  listed="$(cargo test --manifest-path "$manifest" --locked \
     -p "$package" --lib "$filter" -- --list)"
   if [[ "$(grep -Fc -- "$filter: test" <<<"$listed" || true)" != 1 ]]; then
     printf 'recovery smoke filter did not match exactly one test: package=%s filter=%s\n' \
       "$package" "$filter" >&2
     exit 2
   fi
-  output="$(cargo test --manifest-path "$MANIFEST" --locked \
+  output="$(cargo test --manifest-path "$manifest" --locked \
     -p "$package" --lib "$filter" -- --test-threads=1 2>&1)" || {
     printf '%s\n' "$output"
     exit 1
@@ -165,11 +171,12 @@ run_feature_integration_filter trnm-poco-node recovery-process-test-support \
   timeout_signing_process_kill_matrix \
   real_process_sigkill_matrix_replays_exact_bounded_timeout_signing
 
-# These adapter-store and recovery-feature cases remain useful for archive
-# inspection, but both Node recovery features activate the legacy
-# trnm-consensus-app dependency. They are therefore excluded from the active
-# native CI path unless a local reviewer explicitly opts in. An opt-in pass is
-# still archive evidence, never native release or readiness authority.
+# The excluded trnm-consensus-app workspace remains useful for archive
+# inspection. It is excluded from the active native workspace and runs only
+# through its own manifest when a local reviewer explicitly opts in. The old
+# Node recovery feature and process-kill target are non-buildable archive
+# source; they are never invoked here. An opt-in pass remains archive evidence,
+# never native release or readiness authority.
 if [[ "${TRNM_RUN_LEGACY_APP_ARCHIVE_TESTS:-0}" == "1" ]]; then
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
@@ -223,30 +230,27 @@ run_unit_filter trnm-consensus-app \
   schema_v8_restart_rejects_evaluated_applied_and_valid_rows
 run_unit_filter trnm-consensus-app \
   native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
-run_feature_unit_filter trnm-poco-node recovery-test-support \
-  strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k
-run_feature_integration_filter trnm-poco-node recovery-process-test-support \
-  recovery_process_kill_matrix \
-  real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k
 printf '%s\n' \
   'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN' \
   'validation_recovery=legacy_deterministic_invalid_existing_only' \
-  'validation_recovery_process_kill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED' \
-  'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' \
-  'validation_recovery_process_kill_checkpoint_count=16' \
-  'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' \
+  'validation_recovery_process_kill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE' \
+  'validation_recovery_process_kill_scope=none' \
+  'validation_recovery_process_kill_checkpoint_count=0' \
+  'validation_recovery_process_kill_checkpoint_origin=none' \
   'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
   'bounded_timeout_signature_replay=EVALUATED' \
   'bounded_timeout_process_sigkill_matrix=EVALUATED_ACTIVE_NATIVE' \
   'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' \
   'bounded_timeout_process_sigkill_checkpoint_count=6' \
   'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' \
-  'legacy_app_archive_tests=NOT_ACTIVE_NATIVE_EVIDENCE' \
+  'legacy_app_archive_tests=EVALUATED_STANDALONE_ARCHIVE_NOT_ACTIVE_NATIVE_EVIDENCE' \
+  'legacy_node_recovery_feature_tests=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE' \
+  'legacy_process_sigkill_feature_tests=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE' \
   'vote_signing_effect_loop=NOT_IMPLEMENTED' \
   'power_loss_fsync_matrix=NOT_EVALUATED' \
   'valid_recovery=not_implemented' \
   'unavailable_recovery=not_implemented' \
-  'poco_bft_recovery_smoke=passed scope=legacy-app-archive-opt-in-not-active-native-evidence'
+  'poco_bft_recovery_smoke=passed scope=standalone-legacy-app-archive-plus-active-native-timeout-not-release-evidence'
 else
 printf '%s\n' \
   'legacy_app_archive_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY' \

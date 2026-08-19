@@ -19,6 +19,8 @@ CORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-core/src/core.rs"
 CORE_TESTS="$ROOT/trillionnium/crates/trnm-consensus-core/src/tests.rs"
 APP_RECOVERY="$ROOT/trillionnium/crates/trnm-consensus-app/src/native_validation_recovery.rs"
 APP_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-app/src/store.rs"
+LEGACY_APP_CARGO="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.toml"
+LEGACY_APP_LOCK="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.lock"
 SAFETY_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-safety-store/src/sqlite.rs"
 NODE_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/lib.rs"
 NODE_TIMEOUT_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/ordinary_timeout.rs"
@@ -112,12 +114,7 @@ if text.count(guard) != 1:
     raise SystemExit("recovery smoke must contain exactly one legacy archive guard")
 start = text.index(guard)
 end = text.index("\nelse\n", start)
-markers = (
-    "run_unit_filter trnm-consensus-app ",
-    "run_feature_unit_filter trnm-poco-node recovery-test-support ",
-    "  recovery_process_kill_matrix \\",
-)
-for marker in markers:
+for marker in ("run_unit_filter trnm-consensus-app ",):
     positions = []
     offset = 0
     while True:
@@ -128,6 +125,12 @@ for marker in markers:
         offset = found + len(marker)
     if not positions or any(position <= start or position >= end for position in positions):
         raise SystemExit(f"legacy recovery invocation escaped archive guard: {marker!r}")
+for forbidden in (
+    "run_feature_unit_filter trnm-poco-node recovery-test-support ",
+    "  recovery_process_kill_matrix \\",
+):
+    if forbidden in text:
+        raise SystemExit(f"non-buildable legacy Node recovery invocation remains: {forbidden!r}")
 active_timeout = "  timeout_signing_process_kill_matrix \\"
 if text.count(active_timeout) != 1 or text.index(active_timeout) >= start:
     raise SystemExit("active timeout SIGKILL matrix must execute before the legacy guard")
@@ -208,6 +211,8 @@ for required in \
   "$CORE_TESTS" \
   "$APP_RECOVERY" \
   "$APP_STORE_SOURCE" \
+  "$LEGACY_APP_CARGO" \
+  "$LEGACY_APP_LOCK" \
   "$SAFETY_STORE_SOURCE" \
   "$NODE_SOURCE" \
   "$NODE_TIMEOUT_SOURCE" \
@@ -313,12 +318,10 @@ require_literal "$RECOVERY_GATE" \
   'synced_obligation_recovery_rebuilds_the_exact_route_and_witness'
 require_literal "$RECOVERY_GATE" \
   'obligation_recovery_rejects_tampered_duplicate_and_concurrent_records'
-require_literal "$RECOVERY_GATE" \
-  'strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k'
-require_literal "$RECOVERY_GATE" \
-  'run_feature_integration_filter trnm-poco-node recovery-process-test-support \
-  recovery_process_kill_matrix \
-  real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k'
+reject_literal "$RECOVERY_GATE" \
+  'run_feature_unit_filter trnm-poco-node recovery-test-support'
+reject_literal "$RECOVERY_GATE" \
+  'real_process_sigkill_matrix_recovers_o_p_o_d_c_d_and_c_k'
 require_literal "$RECOVERY_GATE" \
   'run_feature_integration_filter trnm-poco-node recovery-process-test-support \
   timeout_signing_process_kill_matrix \
@@ -328,11 +331,29 @@ require_literal "$RECOVERY_GATE" \
 require_literal "$RECOVERY_GATE" \
   'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery_process_kill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED'
+  'LEGACY_APP_MANIFEST="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.toml"'
+require_literal "$RECOVERY_GATE" \
+  'if [[ "$package" == "trnm-consensus-app" ]]; then'
+require_literal "$RECOVERY_GATE" \
+  'manifest="$LEGACY_APP_MANIFEST"'
+require_literal_count "$RECOVERY_GATE" \
+  'cargo test --manifest-path "$manifest" --locked \' 2
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_matrix=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_scope=none'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_checkpoint_count=0'
+require_literal "$RECOVERY_GATE" \
+  'validation_recovery_process_kill_checkpoint_origin=none'
 require_literal_count "$RECOVERY_GATE" \
   'bounded_timeout_process_sigkill_matrix=EVALUATED_ACTIVE_NATIVE' 2
 require_literal "$RECOVERY_GATE" \
-  'legacy_app_archive_tests=NOT_ACTIVE_NATIVE_EVIDENCE'
+  'legacy_app_archive_tests=EVALUATED_STANDALONE_ARCHIVE_NOT_ACTIVE_NATIVE_EVIDENCE'
+require_literal "$RECOVERY_GATE" \
+  'legacy_node_recovery_feature_tests=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
+require_literal "$RECOVERY_GATE" \
+  'legacy_process_sigkill_feature_tests=UNAVAILABLE_NON_BUILDABLE_ARCHIVE_SOURCE'
 require_literal "$RECOVERY_GATE" \
   'legacy_app_archive_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY'
 require_literal "$RECOVERY_GATE" \
@@ -814,4 +835,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=legacy_archive_opt_in power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=unavailable_non_buildable_archive_source power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'
