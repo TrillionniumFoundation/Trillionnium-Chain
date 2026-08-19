@@ -6,6 +6,14 @@ ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 POCO_WORKFLOW="$ROOT/.github/workflows/trnm-poco-bft-v0.yml"
 LEGACY_WORKFLOW="$ROOT/.github/workflows/rust-l1-testnet-preflight.yml"
 RECOVERY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_recovery_smoke.sh"
+G3_LAN_FLEET_GATE="$ROOT/scripts/ci/check_poco_g3_lan_fleet.sh"
+G3_SOURCE_CANDIDATE_PREPARE="$ROOT/scripts/poco-fleet/prepare_source_candidate.py"
+G3_SOURCE_CANDIDATE_CHECK="$ROOT/scripts/poco-fleet/check_source_candidate.py"
+G3_REPRODUCIBLE_CANDIDATE_BUILD="$ROOT/scripts/poco-fleet/build_reproducible_lab_candidate.py"
+G3_REPRODUCIBLE_BUILD_REPORT_ASSEMBLER="$ROOT/scripts/poco-fleet/assemble_reproducible_build_report.py"
+G3_FAULT_RESTART_RUNNER="$ROOT/scripts/poco-fleet/run_fault_restart_fleet_v1.py"
+G3_FAULT_RESTART_HANDOFF_TEST="$ROOT/scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
+G3_LAB_CONSENSUS_RUNTIME="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
 LEGACY_PREFLIGHT="$ROOT/trillionnium/scripts/testnet_preflight.sh"
 CORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-core/src/core.rs"
 CORE_TESTS="$ROOT/trillionnium/crates/trnm-consensus-core/src/tests.rs"
@@ -40,6 +48,90 @@ fail() {
 require_file() {
   local path="$1"
   [[ -f "$path" ]] || fail "missing file: $path"
+}
+
+require_tracked() {
+  local path="$1"
+  local relative="${path#$ROOT/}"
+  git -C "$ROOT" cat-file -e ":$relative" 2>/dev/null \
+    || fail "required source is absent from the candidate index: $relative"
+  git -C "$ROOT" diff --quiet -- "$relative" \
+    || fail "required candidate index differs from the current working source: $relative"
+}
+
+require_g3_gate_authority_index() {
+  local relative
+  local required_list
+
+  require_file "$G3_LAN_FLEET_GATE"
+  require_tracked "$G3_LAN_FLEET_GATE"
+  if ! required_list="$(python3 - "$G3_LAN_FLEET_GATE" <<'PY'
+import pathlib
+import re
+import sys
+
+gate = pathlib.Path(sys.argv[1])
+text = gate.read_text(encoding="utf-8")
+match = re.search(
+    r"(?ms)^readonly -a REQUIRED_FILES=\(\n(?P<body>.*?)^\)\n",
+    text,
+)
+if match is None:
+    raise SystemExit("G3 Stage0 gate lost its exact REQUIRED_FILES authority array")
+paths = []
+for line in match.group("body").splitlines():
+    item = re.fullmatch(r'  "([^"]+)"', line)
+    if item is None:
+        raise SystemExit(f"non-canonical G3 REQUIRED_FILES entry: {line!r}")
+    relative = item.group(1)
+    path = pathlib.PurePosixPath(relative)
+    if path.is_absolute() or ".." in path.parts or relative in paths:
+        raise SystemExit(f"unsafe or duplicate G3 REQUIRED_FILES entry: {relative!r}")
+    paths.append(relative)
+if not paths:
+    raise SystemExit("G3 REQUIRED_FILES must not be empty")
+print("\n".join(paths))
+PY
+  )"; then
+    fail "cannot parse the G3 Stage0 authority set"
+  fi
+  while IFS= read -r relative; do
+    require_file "$ROOT/$relative"
+    require_tracked "$ROOT/$relative"
+  done <<<"$required_list"
+}
+
+require_legacy_recovery_archive_guard() {
+  if ! python3 - "$RECOVERY_GATE" <<'PY'
+import pathlib
+import sys
+
+text = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
+guard = 'if [[ "${TRNM_RUN_LEGACY_APP_ARCHIVE_TESTS:-0}" == "1" ]]; then'
+if text.count(guard) != 1:
+    raise SystemExit("recovery smoke must contain exactly one legacy archive guard")
+start = text.index(guard)
+end = text.index("\nelse\n", start)
+markers = (
+    "run_unit_filter trnm-consensus-app ",
+    "run_feature_unit_filter trnm-poco-node recovery-test-support ",
+    "run_feature_integration_filter trnm-poco-node recovery-process-test-support ",
+)
+for marker in markers:
+    positions = []
+    offset = 0
+    while True:
+        found = text.find(marker, offset)
+        if found < 0:
+            break
+        positions.append(found)
+        offset = found + len(marker)
+    if not positions or any(position <= start or position >= end for position in positions):
+        raise SystemExit(f"legacy recovery invocation escaped archive guard: {marker!r}")
+PY
+  then
+    fail "legacy recovery tests are not confined to the explicit archive opt-in"
+  fi
 }
 
 require_literal() {
@@ -136,6 +228,13 @@ for required in \
   require_file "$required"
 done
 
+# The Stage0 gate is itself candidate-index authority, and every source in its
+# canonical REQUIRED_FILES array must be present and byte-identical to the
+# candidate index. This prevents a dirty local fixture from validating truth
+# that the candidate commit would not ship.
+require_g3_gate_authority_index
+require_legacy_recovery_archive_guard
+
 # A SafetyStore change must trigger both pull-request and main-push PoCO gates.
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-consensus-safety-store/**"' 2
@@ -180,6 +279,11 @@ require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh'
+require_literal "$RECOVERY_GATE" 'require_one_executed_test() {'
+require_literal_count "$RECOVERY_GATE" \
+  'grep -Fc -- "$filter: test"' 4
+require_literal_count "$RECOVERY_GATE" \
+  'test result: ok. 1 passed; 0 failed; 0 ignored;' 1
 require_literal "$RECOVERY_GATE" \
   'torn_halt_latch_is_fail_closed_without_damaging_the_head_slots'
 require_literal "$RECOVERY_GATE" \
@@ -217,33 +321,101 @@ require_literal "$RECOVERY_GATE" \
   timeout_signing_process_kill_matrix \
   real_process_sigkill_matrix_replays_exact_bounded_timeout_signing'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery=deterministic_invalid_existing_only'
+  'if [[ "${TRNM_RUN_LEGACY_APP_ARCHIVE_TESTS:-0}" == "1" ]]; then'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED'
+  'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k'
+  'validation_recovery_process_kill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery_process_kill_checkpoint_count=16'
+  'bounded_timeout_process_sigkill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED'
 require_literal "$RECOVERY_GATE" \
-  'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k'
+  'legacy_app_archive_tests=NOT_ACTIVE_NATIVE_EVIDENCE'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD'
+  'legacy_app_archive_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_signature_replay=EVALUATED'
+  'legacy_node_recovery_feature_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_process_sigkill_matrix=SIGKILL_EVALUATED'
+  'legacy_process_sigkill_feature_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast'
+  'poco_bft_recovery_evidence_mode=ACTIVE_NATIVE_DEFAULT_ONLY'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_process_sigkill_checkpoint_count=6'
+  'bounded_timeout_process_sigkill_matrix=ARCHIVED_LOCAL_EVIDENCE_NOT_ACTIVE_NATIVE_CI'
 require_literal "$RECOVERY_GATE" \
-  'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries'
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-bounded-timeout-signing-replay-active-native-default'
 require_literal "$RECOVERY_GATE" 'vote_signing_effect_loop=NOT_IMPLEMENTED'
 require_literal "$RECOVERY_GATE" 'power_loss_fsync_matrix=NOT_EVALUATED'
 reject_literal "$RECOVERY_GATE" \
   'validation_recovery_process_kill_matrix=NOT_EVALUATED'
+reject_literal "$RECOVERY_GATE" \
+  "'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED'"
+reject_literal "$RECOVERY_GATE" \
+  "'bounded_timeout_process_sigkill_matrix=SIGKILL_EVALUATED'"
 require_literal "$RECOVERY_GATE" 'valid_recovery=not_implemented'
 require_literal "$RECOVERY_GATE" 'unavailable_recovery=not_implemented'
+
+# G3 Stage0 is a no-Cargo, no-SSH source/fixture contract. It must bind the
+# strict clean-commit candidate through schema-3 native/aggregate reports,
+# current readiness fixtures, and the full Cut/Park/ParkedAck inert handoff
+# without accepting historical raw observations as current evidence.
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 negatives=19 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_current_run_readiness_self_test=passed producer_positive=1 negatives=23 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_source_candidate_test=passed strict_profile=clean-commit-v1 fresh_clone_byte_identity=true git_tree_blob_binding=true commit_tree_binding=true cargo_lock_bound=true dirty_worktrees_rejected=true legacy_v1_audit_only=true actual_build_executed=false production_activation=false geo_wan=false'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_reproducible_build_report_test=passed strict_candidate=true schema3_provenance=true both_architectures_bound=true legacy_candidate_rejected=true schema2_local_rejected=true'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_network_smoke_fleet_test=passed positives=5 negatives=7'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_run_bundle_self_test=passed positives=3 negatives=58'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_fault_restart_handoff_v1_test=passed target_only=true exit75_exact=true exit75_ssh_preserved=true schema2_exact=true p1_locator_digest_unlink=true peer_liveness=true single_p2_launch=true normal_artifacts_absent=true truth_bits_unchanged=true'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_lan_fleet_stage0_gate=passed required_files='
+require_literal "$G3_LAN_FLEET_GATE" \
+  'readiness=current_fixture_self_tests_only strict_candidate=clean-commit-v1 strict_builder_schema=3 strict_aggregate_schema=3 commit_tree_blob_cargo_lock_bound=true'
+require_literal "$G3_LAN_FLEET_GATE" \
+  'cargo_executed=false ssh_executed=false evidence_generated=false validator_run=false multihost_observed=false fault_matrix_completed=false performance_evidence=false geo_wan=false production_activation=false strict_clippy_gate_closed=false'
+require_literal "$G3_SOURCE_CANDIDATE_PREPARE" \
+  'parser.add_argument("--require-clean", action="store_true")'
+require_literal "$G3_SOURCE_CANDIDATE_PREPARE" \
+  'CARGO_LOCK_PATH = "trillionnium/Cargo.lock"'
+require_literal "$G3_SOURCE_CANDIDATE_CHECK" \
+  'def validate(path: pathlib.Path, *, require_clean: bool = False)'
+require_literal "$G3_SOURCE_CANDIDATE_CHECK" \
+  'strict source candidate must use clean-commit-v1'
+require_literal "$G3_REPRODUCIBLE_CANDIDATE_BUILD" \
+  '[sys.executable, str(CHECK), str(candidate), "--require-clean"]'
+require_literal "$G3_REPRODUCIBLE_CANDIDATE_BUILD" \
+  '"schema_version": 3'
+require_literal "$G3_REPRODUCIBLE_BUILD_REPORT_ASSEMBLER" \
+  'check_source_candidate.validate(path, require_clean=True)'
+require_literal "$G3_REPRODUCIBLE_BUILD_REPORT_ASSEMBLER" \
+  'report.get("schema_version") != 3'
+require_literal "$G3_FAULT_RESTART_RUNNER" \
+  'PROCESS2_INERT_BOUNDARY_MESSAGE_V1 = ('
+require_literal "$G3_FAULT_RESTART_RUNNER" \
+  '"continuous consensus RestartCut/RestartPark/RestartParkedAck-joined "'
+require_literal "$G3_FAULT_RESTART_RUNNER" \
+  '"process2 is inert; authenticated start-catchup, RecoveryReady, and "'
+require_literal "$G3_FAULT_RESTART_HANDOFF_TEST" \
+  'assert fleet.PROCESS2_INERT_BOUNDARY_MESSAGE_V1 == ('
+require_literal "$G3_LAB_CONSENSUS_RUNTIME" \
+  'continuous consensus RestartCut/RestartPark/RestartParkedAck-joined process2 is inert; authenticated start-catchup, RecoveryReady, and RecoveryStart remain unavailable'
+reject_literal "$G3_LAN_FLEET_GATE" 'docs/evidence/'
+reject_literal "$G3_LAN_FLEET_GATE" 'lan-fleet-probe-2026-08-13.json'
+reject_literal "$G3_LAN_FLEET_GATE" 'lan-run-readiness-2026-08-13.json'
+reject_literal "$G3_LAN_FLEET_GATE" 'positives=2 negatives=23'
+reject_literal "$G3_LAN_FLEET_GATE" 'positives=3 negatives=55'
+reject_literal "$G3_LAN_FLEET_GATE" 'positives=1 negatives=24'
+reject_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_network_smoke_fleet_test=passed positives=4 negatives=5'
+reject_literal "$G3_LAN_FLEET_GATE" 'RestartCut-joined process2'
 
 # G1c is a bounded recovery join, not a relaxation of ordinary Core recovery.
 # Keep the implementation/test anchors and exact claim boundary machine-checked.
@@ -642,4 +814,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=bounded_local_linux_six_points node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=bounded_local_linux power_loss_fsync=not_evaluated process_helper_artifact=false readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=archived_not_active_native_ci node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=legacy_archive_opt_in power_loss_fsync=not_evaluated process_helper_artifact=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'

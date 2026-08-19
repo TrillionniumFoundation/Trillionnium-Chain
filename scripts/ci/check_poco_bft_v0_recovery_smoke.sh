@@ -5,20 +5,36 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 MANIFEST="$ROOT/trillionnium/Cargo.toml"
 
+require_one_executed_test() {
+  local scope="$1"
+  local output="$2"
+  if ! grep -Fq -- 'test result: ok. 1 passed; 0 failed; 0 ignored;' <<<"$output"; then
+    printf 'recovery smoke did not execute exactly one passing, non-ignored test: %s\n' \
+      "$scope" >&2
+    exit 2
+  fi
+}
+
 run_unit_filter() {
   local package="$1"
   local filter="$2"
   local listed
+  local output
 
   listed="$(cargo test --manifest-path "$MANIFEST" --locked \
     -p "$package" --lib "$filter" -- --list)"
-  if ! grep -Fq -- "$filter" <<<"$listed"; then
-    printf 'recovery smoke filter matched no test: package=%s filter=%s\n' \
+  if [[ "$(grep -Fc -- "$filter: test" <<<"$listed" || true)" != 1 ]]; then
+    printf 'recovery smoke filter did not match exactly one test: package=%s filter=%s\n' \
       "$package" "$filter" >&2
     exit 2
   fi
-  cargo test --manifest-path "$MANIFEST" --locked \
-    -p "$package" --lib "$filter" -- --test-threads=1
+  output="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --lib "$filter" -- --test-threads=1 2>&1)" || {
+    printf '%s\n' "$output"
+    exit 1
+  }
+  printf '%s\n' "$output"
+  require_one_executed_test "package=$package filter=$filter" "$output"
 }
 
 run_feature_unit_filter() {
@@ -26,16 +42,23 @@ run_feature_unit_filter() {
   local feature="$2"
   local filter="$3"
   local listed
+  local output
 
   listed="$(cargo test --manifest-path "$MANIFEST" --locked \
     -p "$package" --lib --features "$feature" "$filter" -- --list)"
-  if ! grep -Fq -- "$filter" <<<"$listed"; then
-    printf 'recovery smoke filter matched no test: package=%s feature=%s filter=%s\n' \
+  if [[ "$(grep -Fc -- "$filter: test" <<<"$listed" || true)" != 1 ]]; then
+    printf 'recovery smoke filter did not match exactly one test: package=%s feature=%s filter=%s\n' \
       "$package" "$feature" "$filter" >&2
     exit 2
   fi
-  cargo test --manifest-path "$MANIFEST" --locked \
-    -p "$package" --lib --features "$feature" "$filter" -- --test-threads=1
+  output="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --lib --features "$feature" "$filter" -- --test-threads=1 2>&1)" || {
+    printf '%s\n' "$output"
+    exit 1
+  }
+  printf '%s\n' "$output"
+  require_one_executed_test \
+    "package=$package feature=$feature filter=$filter" "$output"
 }
 
 run_feature_integration_filter() {
@@ -44,17 +67,24 @@ run_feature_integration_filter() {
   local target="$3"
   local filter="$4"
   local listed
+  local output
 
   listed="$(cargo test --manifest-path "$MANIFEST" --locked \
     -p "$package" --features "$feature" --test "$target" "$filter" -- --list)"
-  if ! grep -Fq -- "$filter" <<<"$listed"; then
-    printf 'recovery smoke filter matched no test: package=%s feature=%s target=%s filter=%s\n' \
+  if [[ "$(grep -Fc -- "$filter: test" <<<"$listed" || true)" != 1 ]]; then
+    printf 'recovery smoke filter did not match exactly one test: package=%s feature=%s target=%s filter=%s\n' \
       "$package" "$feature" "$target" "$filter" >&2
     exit 2
   fi
-  cargo test --manifest-path "$MANIFEST" --locked \
+  output="$(cargo test --manifest-path "$MANIFEST" --locked \
     -p "$package" --features "$feature" --test "$target" "$filter" -- \
-    --test-threads=1
+    --test-threads=1 2>&1)" || {
+    printf '%s\n' "$output"
+    exit 1
+  }
+  printf '%s\n' "$output"
+  require_one_executed_test \
+    "package=$package feature=$feature target=$target filter=$filter" "$output"
 }
 
 run_integration_filter() {
@@ -62,16 +92,23 @@ run_integration_filter() {
   local target="$2"
   local filter="$3"
   local listed
+  local output
 
   listed="$(cargo test --manifest-path "$MANIFEST" --locked \
     -p "$package" --test "$target" "$filter" -- --list)"
-  if ! grep -Fq -- "$filter" <<<"$listed"; then
-    printf 'recovery smoke filter matched no test: package=%s target=%s filter=%s\n' \
+  if [[ "$(grep -Fc -- "$filter: test" <<<"$listed" || true)" != 1 ]]; then
+    printf 'recovery smoke filter did not match exactly one test: package=%s target=%s filter=%s\n' \
       "$package" "$target" "$filter" >&2
     exit 2
   fi
-  cargo test --manifest-path "$MANIFEST" --locked \
-    -p "$package" --test "$target" "$filter" -- --test-threads=1
+  output="$(cargo test --manifest-path "$MANIFEST" --locked \
+    -p "$package" --test "$target" "$filter" -- --test-threads=1 2>&1)" || {
+    printf '%s\n' "$output"
+    exit 1
+  }
+  printf '%s\n' "$output"
+  require_one_executed_test \
+    "package=$package target=$target filter=$filter" "$output"
 }
 
 run_unit_filter trnm-consensus-core \
@@ -124,6 +161,13 @@ run_unit_filter trnm-poco-node \
   unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry
 run_unit_filter trnm-poco-node \
   signer_revision_ahead_of_authenticated_safety_head_fails_startup
+
+# These adapter-store and recovery-feature cases remain useful for archive
+# inspection, but both Node recovery features activate the legacy
+# trnm-consensus-app dependency. They are therefore excluded from the active
+# native CI path unless a local reviewer explicitly opts in. An opt-in pass is
+# still archive evidence, never native release or readiness authority.
+if [[ "${TRNM_RUN_LEGACY_APP_ARCHIVE_TESTS:-0}" == "1" ]]; then
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
@@ -186,19 +230,36 @@ run_feature_integration_filter trnm-poco-node recovery-process-test-support \
   real_process_sigkill_matrix_replays_exact_bounded_timeout_signing
 
 printf '%s\n' \
-  'validation_recovery=deterministic_invalid_existing_only' \
-  'validation_recovery_process_kill_matrix=SIGKILL_EVALUATED' \
+  'poco_bft_recovery_evidence_mode=LEGACY_APP_ARCHIVE_OPT_IN' \
+  'validation_recovery=legacy_deterministic_invalid_existing_only' \
+  'validation_recovery_process_kill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED' \
   'validation_recovery_process_kill_scope=local_linux_test_only_deterministic_invalid_o_p_o_d_c_d_c_k' \
   'validation_recovery_process_kill_checkpoint_count=16' \
   'validation_recovery_process_kill_checkpoint_origin=authentic_feature_fixture_seeds_o_p_official_host_observes_o_p_drives_d_c_k' \
   'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
   'bounded_timeout_signature_replay=EVALUATED' \
-  'bounded_timeout_process_sigkill_matrix=SIGKILL_EVALUATED' \
+  'bounded_timeout_process_sigkill_matrix=LEGACY_ARCHIVE_SIGKILL_EVALUATED' \
   'bounded_timeout_process_sigkill_scope=local_linux_test_only_safety_ack_signer_journal_producer_signature_ready_broadcast' \
   'bounded_timeout_process_sigkill_checkpoint_count=6' \
   'bounded_timeout_process_sigkill_checkpoint_origin=official_host_four_boundaries_feature_producer_two_boundaries' \
+  'legacy_app_archive_tests=NOT_ACTIVE_NATIVE_EVIDENCE' \
   'vote_signing_effect_loop=NOT_IMPLEMENTED' \
   'power_loss_fsync_matrix=NOT_EVALUATED' \
   'valid_recovery=not_implemented' \
   'unavailable_recovery=not_implemented' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-bounded-timeout-signing-replay-g1f-real-process-sigkill-validation-job-recovery-integrity-outbox-delivery-states-g1c-three-store-join-g1e-real-process-sigkill-snapshot'
+  'poco_bft_recovery_smoke=passed scope=legacy-app-archive-opt-in-not-active-native-evidence'
+else
+printf '%s\n' \
+  'legacy_app_archive_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY' \
+  'legacy_node_recovery_feature_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY' \
+  'legacy_process_sigkill_feature_tests=SKIPPED_NO_ACTIVE_NATIVE_WORKFLOW_AUTHORITY' \
+  'poco_bft_recovery_evidence_mode=ACTIVE_NATIVE_DEFAULT_ONLY' \
+  'bounded_timeout_signing_effect_loop=EVALUATED_DEFAULT_BUILD' \
+  'bounded_timeout_signature_replay=EVALUATED' \
+  'bounded_timeout_process_sigkill_matrix=ARCHIVED_LOCAL_EVIDENCE_NOT_ACTIVE_NATIVE_CI' \
+  'vote_signing_effect_loop=NOT_IMPLEMENTED' \
+  'power_loss_fsync_matrix=NOT_EVALUATED' \
+  'valid_recovery=not_implemented' \
+  'unavailable_recovery=not_implemented' \
+  'poco_bft_recovery_smoke=passed scope=core-sign-safety-journal-torn-halt-latch-wal-shm-watermark-bounded-timeout-signing-replay-active-native-default'
+fi
