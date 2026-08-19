@@ -1,0 +1,45 @@
+[package]
+name = "trnm-poco-cross-plane-readback-v1"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-cross-plane-readback-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+five_plane_fresh_readback_join = true
+double_sampled_no_intervening_change = true
+same_da_head_and_certificate_sqlite_snapshot = true
+explicit_typed_identifier_adapters = true
+terminal_receipts_match_sampled_store_heads = true
+cross_plane_readback_consistent_candidate = true
+order_proof_authority_complete = false
+cross_plane_atomic_commit = false
+cross_plane_authority_integration = false
+whole_node_checkpoint_integration = false
+anti_whole_store_rollback_authority = false
+node_private_owner = false
+node_process_integration = false
+g2_global_complete = false
+protocol_implementation_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+
+[dependencies]
+borsh = { version = "1", features = ["derive"] }
+sha2 = "0.10"
+trnm-poco-agent-market-v1 = { path = "../trnm-poco-agent-market-v1" }
+trnm-poco-consumption-settlement-v1 = { path = "../trnm-poco-consumption-settlement-v1" }
+trnm-poco-da-v1 = { path = "../trnm-poco-da-v1" }
+trnm-poco-mvcc-fee-v1 = { path = "../trnm-poco-mvcc-fee-v1" }
+trnm-poco-verify-challenge-v1 = { path = "../trnm-poco-verify-challenge-v1" }
+
+[dev-dependencies]
+tempfile = "3"

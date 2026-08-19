@@ -1817,6 +1817,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-poco-cross-plane-readback-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
+ "trnm-poco-consumption-settlement-v1",
+ "trnm-poco-da-v1",
+ "trnm-poco-mvcc-fee-v1",
+ "trnm-poco-verify-challenge-v1",
+]
+
+[[package]]
 name = "trnm-poco-da-v1"
 version = "0.1.0"
 dependencies = [
@@ -1828,6 +1842,25 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
+]
+
+[[package]]
+name = "trnm-poco-global-execution-v1"
+version = "0.1.0"
+dependencies = [
+ "borsh",
+ "ed25519-dalek",
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-poco-agent-market-v1",
+ "trnm-poco-consumption-settlement-v1",
+ "trnm-poco-da-v1",
+ "trnm-poco-mvcc-fee-v1",
+ "trnm-poco-order-application-v1",
+ "trnm-poco-order-finality-verifier-v1",
+ "trnm-poco-order-types-v1",
+ "trnm-poco-verify-challenge-v1",
 ]
 
 [[package]]
@@ -1873,6 +1906,19 @@ dependencies = [
  "ed25519-dalek",
  "serde_json",
  "sha2",
+ "trnm-poco-order-types-v1",
+]
+
+[[package]]
+name = "trnm-poco-order-state-v1"
+version = "0.1.0"
+dependencies = [
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-poco-global-execution-v1",
+ "trnm-poco-order-application-v1",
+ "trnm-poco-order-finality-verifier-v1",
  "trnm-poco-order-types-v1",
 ]
 
