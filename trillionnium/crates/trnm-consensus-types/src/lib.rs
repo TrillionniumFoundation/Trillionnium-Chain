@@ -28,6 +28,7 @@ mod error;
 mod evidence;
 mod finality;
 mod handoff;
+mod handoff_sign_intent;
 mod ids;
 mod joint_handoff;
 mod message;
@@ -52,8 +53,8 @@ pub use canonical::CanonicalSignable;
 pub use certificate::{QuorumCertificate, TimeoutCertificate};
 pub use cev0_decode::{
     decode_application_payload_v0_exact, decode_application_payload_v0_exact_for_root_binding,
-    decode_block_header_v0_exact, decode_canonical_sign_intent_v0_exact,
-    decode_certified_header_v0_exact_with_trusted_genesis,
+    decode_block_header_v0_exact, decode_canonical_handoff_sign_intent_v1_exact,
+    decode_canonical_sign_intent_v0_exact, decode_certified_header_v0_exact_with_trusted_genesis,
     decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
     decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
@@ -64,8 +65,9 @@ pub use cev0_decode::{
     decode_qc_reference_v0_exact_with_trusted_genesis,
     decode_timeout_certificate_v0_exact_with_trusted_genesis, decode_validator_set_v0_exact,
     DecodeError, DecodeErrorCode, DecodeResult, EpochAnchorAuthorizationKernelV0,
-    MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES, MAX_CEV0_CERTIFICATE_ITEMS,
-    MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES, MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1, MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES,
+    MAX_CEV0_CERTIFICATE_ITEMS, MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES,
+    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
 };
 #[doc(hidden)]
 pub use commit::CommitProof;
@@ -86,6 +88,11 @@ pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0
 pub use handoff::{
     EpochAnchorAuthorizationV0, HandoffCertificateV0, HandoffDescriptorV0,
     HandoffDescriptorV0Fields, SignatureShareV0,
+};
+pub use handoff_sign_intent::{
+    CanonicalHandoffSignIntentV1, CanonicalHandoffSignPreimageV1, HandoffSignIntentFingerprintV1,
+    HandoffSignerRoleV1, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
+    HANDOFF_SIGNER_PROFILE_V1,
 };
 pub use ids::{
     BlockId, CertificateId, ChainId, ConsensusParametersHash, ConsensusPublicKey, ConsensusString,

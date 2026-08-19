@@ -18,20 +18,22 @@ use core::fmt;
 use crate::canonical::try_canonical_bytes;
 use crate::proposal_v0::{validate_scheduled_leader, validate_timestamp_step};
 use crate::{
-    ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, CertificateId,
-    CertifiedHeaderV0, ChainId, CommonConsensusContextV0, ConsensusParametersHash,
-    ConsensusParametersV0, ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0,
-    Epoch, EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot,
-    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0,
-    GenesisHash, GenesisQcV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
-    Height, LeaderSchedule, MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0,
-    NextEpochCommitmentV0Fields, PayloadDigest, ProtocolVersion, QcRef, QcReferenceV0,
-    QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0, Signature64,
-    SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
+    ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CanonicalHandoffSignIntentV1,
+    CanonicalSignIntentV0, CertificateId, CertifiedHeaderV0, ChainId, CommonConsensusContextV0,
+    ConsensusParametersHash, ConsensusParametersV0, ConsensusParametersV0Fields,
+    ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch, EpochAnchorAuthorizationV0,
+    EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0, ExecutionEventV0,
+    ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0, HandoffCertificateV0,
+    HandoffDescriptorV0, HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1,
+    HandoffSignerRoleV1, Height, LeaderSchedule, MessageKind, NextEpochCommitmentHash,
+    NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0,
+    Signature64, SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
     TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
     ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
-    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS,
-    MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
+    CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
+    HANDOFF_SIGNER_PROFILE_V1, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
+    SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -58,6 +60,38 @@ pub const MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES: usize =
     + 32 + 8 + 8 + 8 + 32
     // Signing root and intent fingerprint.
     + 32 + 32;
+
+const MAX_CEV0_HANDOFF_DESCRIPTOR_BYTES_V0: usize =
+    // Schema, genesis, chain, epochs, and protocol versions.
+    2 + 32 + (2 + MAX_CONSENSUS_STRING_BYTES) + 8 + 8 + 4 + 4
+    // Old/new set and parameter references.
+    + 32 + 32 + 32 + 32
+    // Checkpoint, terminal-old, and activation coordinates/commitments.
+    + 8 + 32 + 32 + 32 + 8 + 32 + 32 + 8 + 8 + 8;
+
+/// Maximum exact CEV0 bytes in one typed old/new handoff signer intent.
+///
+/// The bound includes the complete descriptor twice-bound as its digest and
+/// exact bytes, both trusted set/parameter references, the closed signer role,
+/// and the intent fingerprint. It is checked before parsing or allocation.
+pub const MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1: usize = 2
+    + (4 + HANDOFF_SIGNER_PROFILE_V1.len())
+    + 32
+    + (2 + MAX_CONSENSUS_STRING_BYTES)
+    + 8
+    + 8
+    + 1
+    + (4 + MAX_VALIDATOR_ID_BYTES)
+    + 4
+    + 4
+    + 32
+    + 32
+    + 32
+    + 32
+    + 32
+    + (4 + MAX_CEV0_HANDOFF_DESCRIPTOR_BYTES_V0)
+    + 32
+    + 32;
 
 pub type DecodeResult<T> = core::result::Result<T, DecodeError>;
 
@@ -115,6 +149,8 @@ pub enum DecodeErrorCode {
     InvalidCheckpointTwoSeal,
     InvalidSignIntentTag,
     InvalidSignIntent,
+    InvalidHandoffSignIntentRole,
+    InvalidHandoffSignIntent,
 }
 
 impl DecodeErrorCode {
@@ -171,6 +207,8 @@ impl DecodeErrorCode {
             Self::InvalidCheckpointTwoSeal => "invalid_checkpoint_two_seal",
             Self::InvalidSignIntentTag => "invalid_sign_intent_tag",
             Self::InvalidSignIntent => "invalid_sign_intent",
+            Self::InvalidHandoffSignIntentRole => "invalid_handoff_sign_intent_role",
+            Self::InvalidHandoffSignIntent => "invalid_handoff_sign_intent",
         }
     }
 }
@@ -758,6 +796,155 @@ pub fn decode_canonical_sign_intent_v0_exact(
     cursor.finish()?;
     let intent = admit_raw_canonical_sign_intent(raw, validator_set)?;
     require_exact_canonical_reencoding(bytes, intent.canonical_bytes(), 0)?;
+    Ok(intent)
+}
+
+/// Decodes one complete typed old/new epoch-handoff signer request.
+///
+/// All four trusted transition objects are required. The decoder rejects a
+/// syntactically valid intent when any descriptor byte, role, validator,
+/// signing root, set ID, parameter hash, or outer transition coordinate does
+/// not reconstruct exactly from that trusted profile. No arbitrary signing
+/// bytes or caller-provided root are admitted. Successful decoding is
+/// data-only and grants no journal, watermark, producer, finality, or
+/// transition authority.
+pub fn decode_canonical_handoff_sign_intent_v1_exact(
+    bytes: &[u8],
+    old_validator_set: &ValidatorSet,
+    new_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    new_consensus_parameters: &ConsensusParametersV0,
+) -> DecodeResult<CanonicalHandoffSignIntentV1> {
+    if bytes.len() > MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+
+    let mut cursor = Cursor::new(bytes);
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    if schema_version != CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            object_offset,
+        ));
+    }
+    let profile = cursor.bounded_body_bytes(HANDOFF_SIGNER_PROFILE_V1.len())?;
+    if profile.bytes != HANDOFF_SIGNER_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            profile.length_offset,
+        ));
+    }
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = admit_consensus_string(cursor.bounded_consensus_bytes()?)?;
+    let old_epoch = Epoch::new(cursor.u64()?);
+    let new_epoch = Epoch::new(cursor.u64()?);
+    let role_offset = cursor.offset();
+    let signer_role = match cursor.u8()? {
+        0 => HandoffSignerRoleV1::OldSet,
+        1 => HandoffSignerRoleV1::NewSet,
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidHandoffSignIntentRole,
+                role_offset,
+            ));
+        }
+    };
+    let validator_offset = cursor.offset();
+    let validator_id = admit_validator_id(cursor.bounded_validator_id_bytes()?)?;
+    let old_protocol_offset = cursor.offset();
+    let old_protocol_version = ProtocolVersion::new(cursor.u32()?).map_err(|_| {
+        DecodeError::new(DecodeErrorCode::InvalidProtocolVersion, old_protocol_offset)
+    })?;
+    let new_protocol_offset = cursor.offset();
+    let new_protocol_version = ProtocolVersion::new(cursor.u32()?).map_err(|_| {
+        DecodeError::new(DecodeErrorCode::InvalidProtocolVersion, new_protocol_offset)
+    })?;
+    let old_validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let new_validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let old_consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let new_consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let descriptor_digest_offset = cursor.offset();
+    let descriptor_digest = CertificateId::new(cursor.fixed()?);
+    let descriptor_bytes = cursor.bounded_body_bytes(MAX_CEV0_HANDOFF_DESCRIPTOR_BYTES_V0)?;
+    let descriptor = decode_handoff_descriptor_v0_exact(descriptor_bytes.bytes).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            descriptor_bytes.length_offset,
+        )
+    })?;
+    let signing_root_offset = cursor.offset();
+    let signing_root = SigningRoot::new(cursor.fixed()?);
+    let fingerprint_offset = cursor.offset();
+    let fingerprint = HandoffSignIntentFingerprintV1::new(cursor.fixed()?);
+    cursor.finish()?;
+
+    let intent = match signer_role {
+        HandoffSignerRoleV1::OldSet => CanonicalHandoffSignIntentV1::old_set(
+            &descriptor,
+            old_validator_set,
+            new_validator_set,
+            old_consensus_parameters,
+            new_consensus_parameters,
+            validator_id,
+        ),
+        HandoffSignerRoleV1::NewSet => CanonicalHandoffSignIntentV1::new_set(
+            &descriptor,
+            old_validator_set,
+            new_validator_set,
+            old_consensus_parameters,
+            new_consensus_parameters,
+            validator_id,
+        ),
+    }
+    .map_err(|error| {
+        map_validation_error(error, object_offset, SemanticObject::HandoffSignIntent)
+    })?;
+    let preimage = intent.preimage();
+    if genesis_hash != preimage.genesis_hash()
+        || chain_id != preimage.chain_id()
+        || old_epoch != preimage.old_epoch()
+        || new_epoch != preimage.new_epoch()
+        || old_protocol_version != preimage.old_protocol_version()
+        || new_protocol_version != preimage.new_protocol_version()
+        || old_validator_set_id != preimage.old_validator_set_id()
+        || new_validator_set_id != preimage.new_validator_set_id()
+        || old_consensus_parameters_hash != preimage.old_consensus_parameters_hash()
+        || new_consensus_parameters_hash != preimage.new_consensus_parameters_hash()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            genesis_offset,
+        ));
+    }
+    if descriptor_digest != preimage.descriptor_digest()
+        || descriptor_bytes.bytes != preimage.descriptor_bytes()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            descriptor_digest_offset,
+        ));
+    }
+    if signing_root != intent.signing_root() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            signing_root_offset,
+        ));
+    }
+    if fingerprint != intent.fingerprint() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            fingerprint_offset,
+        ));
+    }
+    if validator_id != intent.validator_id() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffSignIntent,
+            validator_offset,
+        ));
+    }
+    require_exact_canonical_reencoding(bytes, intent.canonical_bytes(), object_offset)?;
     Ok(intent)
 }
 
@@ -3411,6 +3598,7 @@ enum SemanticObject {
     Certificate,
     NextEpochCommitment,
     SignIntent,
+    HandoffSignIntent,
 }
 
 fn map_validation_error(
@@ -3447,12 +3635,18 @@ fn map_validation_error(
         ValidationError::ConflictingSameViewQc => DecodeErrorCode::ConflictingSameViewQc,
         ValidationError::InsufficientQuorum { .. } => DecodeErrorCode::InsufficientQuorum,
         ValidationError::InvalidCertificate(_) => DecodeErrorCode::InvalidReferencedQc,
+        ValidationError::InvalidSignIntent(_)
+            if matches!(object, SemanticObject::HandoffSignIntent) =>
+        {
+            DecodeErrorCode::InvalidHandoffSignIntent
+        }
         ValidationError::InvalidSignIntent(_) => DecodeErrorCode::InvalidSignIntent,
         _ => match object {
             SemanticObject::ValidatorSet => DecodeErrorCode::ContextMismatch,
             SemanticObject::Certificate => DecodeErrorCode::InvalidReferencedQc,
             SemanticObject::NextEpochCommitment => DecodeErrorCode::InvalidNextEpochCommitment,
             SemanticObject::SignIntent => DecodeErrorCode::InvalidSignIntent,
+            SemanticObject::HandoffSignIntent => DecodeErrorCode::InvalidHandoffSignIntent,
         },
     };
     DecodeError::new(code, byte_offset)
