@@ -5,20 +5,47 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 autobins = false
+autotests = false
 publish = false
 
 [features]
 default = []
-recovery-test-support = ["trnm-consensus-app/recovery-test-support"]
+lab-validator-runtime = []
+lab-validator-runtime-test-support = [
+  "lab-validator-runtime",
+  "dep:ed25519-dalek",
+  "dep:serde_json",
+  "dep:trnm-finality-types",
+  "dep:trnm-protocol",
+  "trnm-native-application-sqlite/test-support",
+]
 recovery-process-test-support = [
   "dep:ed25519-dalek",
   "dep:fs2",
-  "recovery-test-support",
 ]
+g2-process-test-support = [
+  "dep:ed25519-dalek",
+  "dep:tempfile",
+]
+
+# The former App-aware recovery modules remain as non-buildable archive source.
+# Keeping their cfg names known avoids warnings without restoring a feature or
+# dependency edge into the active workspace.
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = [
+  'cfg(feature, values("legacy-consensus-app", "recovery-test-support"))',
+] }
 
 [package.metadata.trnm]
 lane = "poco-bft-g1-host-scaffold"
 protocol = "poco-bft-v0"
+poco_ai_v1_supported = false
+poco_ai_v1_activation = false
+consensus_mainline = "native-poco-bft"
+native_poco_mainline_decision = "adopted"
+zero_comet_production_dependency_target = true
+zero_comet_production_dependency_achieved = true
+legacy_comet_migration_residue_present = false
 production_candidate = false
 production_consensus_activation = false
 incomplete = true
@@ -26,15 +53,77 @@ effect_driver = false
 bounded_timeout_signing_effect_loop = true
 vote_signing_effect_loop = false
 production_signature_producer = false
+native_application_boundary_dependency = true
+native_application_owner_scaffold = true
+native_application_owner_public_api = false
+native_application_owner_production_constructor = false
+native_application_finality_permit_integration = false
+native_application_recovery_integration = false
+native_application_commit_uncertainty_recovery = false
+native_application_durable_p_host = true
+native_application_durable_p_host_public_api = false
+native_application_durable_p_host_production_constructor = false
+native_application_durable_p_store_reopen_readback = true
+native_application_durable_p_restart_takeover = false
+native_application_durable_p_core_callback = true
+native_application_core_d_private_carrier = true
+native_application_core_d_restart_takeover = false
+native_application_safety_c_authority = true
+native_application_safety_c_process_positive_fixture = false
+native_application_k_checkpoint_facts = true
+native_application_k_whole_node_cas = true
+native_application_k_whole_node_cas_successor_only = true
+native_application_k_whole_node_cas_bounded_integration = true
+native_application_k_whole_node_cas_process_positive_fixture = false
+native_application_request_signature_released = true
+native_application_request_signature_inert_private = true
+native_application_request_signature_signing = false
+lab_one_shot_authority_runtime = true
+lab_positive_checkpoint_bootstrap = false
+lab_continuous_validator_runtime = false
+lab_deployed_ordinary_recovery_owner = true
+lab_deployed_ordinary_recovery_replay_fenced = true
+lab_deployed_ordinary_recovery_activation = false
+lab_deployed_ordinary_network_catch_up = false
+lab_deployed_coherent_whole_root_rollback_authority = false
+lab_same_version_epoch_transition_proof_candidate = true
+lab_same_version_epoch_transition_strict_ed25519 = true
+lab_same_version_epoch_transition_live_parent_join = true
+lab_same_version_epoch_transition_local_checkpoint_execution = false
+lab_same_version_epoch_transition_core_activation = false
+lab_same_version_epoch_transition_signing_authority = false
+lab_same_version_epoch_transition_production = false
+poco_ai_v1_bounded_rust_order_verifier = true
+poco_ai_v1_global_light_client = false
+poco_ai_v1_cross_plane_checkpoint_candidate = true
+poco_ai_v1_cross_plane_checkpoint_node_private = true
+poco_ai_v1_cross_plane_checkpoint_immutable_preflight = true
+poco_ai_v1_cross_plane_checkpoint_rw_identity_recheck = true
+poco_ai_v1_cross_plane_checkpoint_rollback_journal_header_preflight = true
+poco_ai_v1_cross_plane_checkpoint_process_integration = false
+poco_ai_v1_cross_plane_source_atomicity = false
+poco_ai_v1_order_finalized_cross_plane_authority = false
+poco_ai_v1_anti_whole_store_rollback_authority = false
+poco_ai_v1_manifest_bound_candidate_local_owner = true
+poco_ai_v1_manifest_bound_candidate_local_journal = true
+poco_ai_v1_manifest_bound_candidate_local_successor_cas = true
+poco_ai_v1_manifest_bound_candidate_local_external_pin_reopen = true
+poco_ai_v1_manifest_bound_candidate_local_fresh_exact_join_recovery = true
+poco_ai_v1_manifest_bound_candidate_local_owner_retains_live_journal = true
+poco_ai_v1_manifest_bound_candidate_local_owner_fresh_exact_revalidation = true
+poco_ai_v1_manifest_bound_candidate_local_path_hash_separate_connection_toctou_narrowed = true
+poco_ai_v1_manifest_bound_candidate_local_descriptor_bound_openat_identity = false
+poco_ai_v1_manifest_bound_candidate_local_same_uid_rename_race_closed = false
+poco_ai_v1_manifest_bound_candidate_local_namespace_identity_and_owner_pinned = false
+poco_ai_v1_manifest_bound_candidate_local_external_pin_authenticated_process_owner = true
+poco_ai_v1_manifest_bound_candidate_local_process_integration = true
+poco_ai_v1_manifest_bound_candidate_local_journal_only_authority = false
+poco_ai_v1_manifest_bound_candidate_local_external_pin_process_persisted = true
+poco_ai_v1_g2_global_complete = false
 
 [[bin]]
 name = "trnm-poco-node"
 path = "src/main.rs"
-
-[[bin]]
-name = "trnm-poco-recovery-kill-helper"
-path = "src/bin/trnm-poco-recovery-kill-helper.rs"
-required-features = ["recovery-process-test-support"]
 
 [[bin]]
 name = "trnm-poco-timeout-signing-kill-helper"
@@ -42,26 +131,47 @@ path = "src/bin/trnm-poco-timeout-signing-kill-helper.rs"
 required-features = ["recovery-process-test-support"]
 
 [[test]]
-name = "recovery_process_kill_matrix"
-path = "tests/recovery_process_kill_matrix.rs"
-required-features = ["recovery-process-test-support"]
-
-[[test]]
 name = "timeout_signing_process_kill_matrix"
 path = "tests/timeout_signing_process_kill_matrix.rs"
 required-features = ["recovery-process-test-support"]
 
+[[test]]
+name = "g2_manifest_bound_process_v2"
+path = "tests/g2_manifest_bound_process_v2.rs"
+
 [dependencies]
+borsh = { version = "1.5", features = ["derive"] }
 ed25519-dalek = { version = "2", optional = true }
 fs2 = { version = "0.4", optional = true }
+rusqlite = { version = "0.32", features = ["bundled"] }
+serde_json = { version = "1", optional = true }
 sha2 = "0.10"
-trnm-consensus-app = { version = "0.1.0", path = "../trnm-consensus-app" }
+tempfile = { version = "3", optional = true }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types", optional = true }
+trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
+trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
+trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }
+trnm-poco-cross-plane-readback-v1 = { version = "0.1.0", path = "../trnm-poco-cross-plane-readback-v1" }
+trnm-poco-agent-market-v1 = { version = "0.1.0", path = "../trnm-poco-agent-market-v1" }
+trnm-poco-consumption-settlement-v1 = { version = "0.1.0", path = "../trnm-poco-consumption-settlement-v1" }
+trnm-poco-da-v1 = { version = "0.1.0", path = "../trnm-poco-da-v1" }
+trnm-poco-global-execution-v1 = { version = "0.1.0", path = "../trnm-poco-global-execution-v1" }
+trnm-poco-mvcc-fee-v1 = { version = "0.1.0", path = "../trnm-poco-mvcc-fee-v1" }
+trnm-poco-order-application-v1 = { version = "0.1.0", path = "../trnm-poco-order-application-v1" }
+trnm-poco-order-finality-verifier-v1 = { version = "0.1.0", path = "../trnm-poco-order-finality-verifier-v1" }
+trnm-poco-order-state-v1 = { version = "0.1.0", path = "../trnm-poco-order-state-v1" }
+trnm-poco-order-types-v1 = { version = "0.1.0", path = "../trnm-poco-order-types-v1" }
+trnm-poco-verify-challenge-v1 = { version = "0.1.0", path = "../trnm-poco-verify-challenge-v1" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol", optional = true }
 
 [dev-dependencies]
 ed25519-dalek = "2"
+serde_json = "1"
 tempfile = "3"
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }

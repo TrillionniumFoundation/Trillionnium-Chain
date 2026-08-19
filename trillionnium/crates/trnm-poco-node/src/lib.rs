@@ -1,24 +1,83 @@
 #![forbid(unsafe_code)]
 //! Fail-closed lifecycle scaffold for the future PoCO-BFT node.
 //!
-//! This package is deliberately separate from the frozen legacy `trnm-node`
-//! harness. It is the first process-ownership boundary for one [`Core`] and
-//! one [`SqliteSafetyStateStoreV0`] plus one independent signer journal.
-//! The recovery-only owner added in G1c also owns one existing native
-//! application validation journal. Construction or recovery keeps every
-//! selected store under one process-local owner, and none can be detached from
-//! the host through this API.
+//! The default build now contains a private, non-cloneable owner scaffold for
+//! one `trnm-native-application` implementation. Its raw constructor and
+//! finality-permit constructor are test-only, and none of its types are
+//! re-exported, so the production crate has no execute-to-committed-head
+//! authority. The test seam preserves exact request/result binding and
+//! fail-stops on application uncertainty or result substitution, but it is not
+//! yet joined to Core, SafetyStore, finality, authenticated recovery,
+//! whole-node checkpointing, or the process host.
 //!
-//! This is not a general effect driver or a production node. The ordinary
-//! owner can drive only `Resume` and a host-derived local timeout through the
-//! exact Core -> SafetyStore -> signer-journal -> outbound boundary. The
-//! recovery-only owner separately calls `Core::step` solely for one reconciled
-//! deterministic-invalid callback and its exact durable `StorageAck`. Neither
-//! path executes fresh application payloads, finalizes blocks, runs a complete
-//! pacemaker, serves a network, or installs state sync. The binary always exits
-//! non-zero. These omissions keep the scaffold fail-closed until the frozen
-//! production contracts have real adapters; they must not be bypassed with the
-//! private CometBFT application fixture.
+//! The owner module is intentionally not part of this crate's external API:
+//!
+//! ```compile_fail
+//! use trnm_poco_node::native_application_owner::PocoNodeNativeApplicationOwnerV0;
+//! ```
+//!
+//! Nor may the owner or its finality capability be re-exported at the crate
+//! root:
+//!
+//! ```compile_fail
+//! use trnm_poco_node::PocoNodeNativeApplicationOwnerV0;
+//! ```
+//!
+//! ```compile_fail
+//! use trnm_poco_node::PocoNodeNativeFinalityPermitV0;
+//! ```
+//!
+//! The default-built durable-`P` splice is equally private; downstream crates
+//! cannot name either its Node owner or its joined Core/App capability:
+//!
+//! ```compile_fail
+//! use trnm_poco_node::native_proposal_p_host::PocoNodeNativeProposalPHostV0;
+//! ```
+//!
+//! ```compile_fail
+//! use trnm_poco_node::PocoNodeNativePersistedProposalPV0;
+//! ```
+//!
+//! This package is deliberately separate from the frozen legacy `trnm-node`
+//! harness. The feature-gated `PocoNodeProcessHostV0` is the development-only,
+//! existing-state owner for one Core, SQLite SafetyStore, native application
+//! facade, and independent signer journal. It reconciles those namespaces
+//! before retaining exact Core effects as inert memory; none of the owners can
+//! be detached through its API. Earlier bounded timeout and invalid-recovery
+//! hosts remain test adapters, not the process entry point.
+//!
+//! This is not a general effect driver or a production node. The unified owner
+//! executes only authenticated startup reconciliation, including the existing
+//! deterministic-invalid and tag-3 recovery slices. A fresh epoch-zero h1
+//! state-sync anchor may enter an offline replay-fenced mode whose sole
+//! retained effect is `RequestSafetyReplay`. A separate existing-only owner
+//! can instead authenticate the exact proof-named empty h2/h3 bodies, keep a
+//! virgin signer pinned, and close their real speculative P/D/C/K lifecycle
+//! without finalization authority. Stable rev0/rev2/rev4 cuts reopen; rev1/3
+//! remain unrecoverable in-flight cuts. Rev4 reconstructs the pruned h2
+//! transition and requires its chain checksum to equal Safety's authenticated
+//! retained rev3 predecessor before activation.
+//! This is not a snapshot downloader, peer authenticator, or
+//! general-height/cross-epoch state sync. The host never signs, applies a
+//! fresh finalization, arms a timer,
+//! synchronizes a certificate, binds a network, or accepts ingress. Its
+//! retained effects are observable only as sanitized kinds. Default,
+//! production-shaped and unknown binary invocations always exit non-zero. Two
+//! explicit manifest-bound G2 candidate-only commands may instead prepare an
+//! inert process anchor or retain a freshly revalidated inert owner until
+//! control-stdin EOF; neither command reaches Core, networking, signing,
+//! voting or application. These
+//! omissions keep the scaffold fail-closed until the
+//! frozen production contracts have real adapters; they must not be bypassed
+//! with the private CometBFT application fixture.
+//!
+//! An operator-pinned authenticated genesis application parent is also outside
+//! every ordinary or generic owner in this package. The separate
+//! feature-gated `PocoNodeAuthenticatedGenesisCommissioningHostV0` can own only its inert
+//! revision-zero commissioning closure; it exposes no Core, effect, runtime
+//! authority, signer activation, network, timer, finalization, or production
+//! path. Generic hosts never infer that role or fall through to store-level
+//! rejection.
 //!
 //! The safety store, signer journal, and optional application recovery store
 //! must live in non-overlapping, already-existing canonical parent
@@ -40,36 +99,188 @@ use std::{
 };
 
 use sha2::{Digest, Sha256};
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 use trnm_consensus_app::NativeValidationRecoveredInvalidReasonV0;
+#[cfg(feature = "legacy-consensus-app")]
 use trnm_consensus_app::{
     NativeValidationRecoveredAckedFactsV0, NativeValidationRecoveredInvalidCallbackFactsV0,
     NativeValidationRecoveredInvalidStateV0, NativeValidationRecoveryOpenFailureV0,
     NativeValidationRecoveryReconcileFailureV0, NativeValidationRecoveryStoreConfigV0,
     NativeValidationRecoveryStoreV0, NativeValidationRecoveryTransitionFailureV0,
 };
+#[cfg(feature = "legacy-consensus-app")]
 use trnm_consensus_core::{
-    Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input, PayloadValidationResult,
-    PayloadValidationRouteV0, SafetyState, SafetyStatePersistenceV0, SafetyStateRecordLimitsV0,
+    Core, Input, PayloadValidationResult, PayloadValidationRouteV0, SafetyStatePersistenceV0,
     ValidationId,
 };
+use trnm_consensus_core::{
+    CoreConfig, DurablePayloadValidationResultV1, Effect, SafetyState, SafetyStateRecordLimitsV0,
+};
+#[cfg(any(feature = "legacy-consensus-app", test))]
 use trnm_consensus_crypto::StrictEd25519Verifier;
+#[cfg(feature = "legacy-consensus-app")]
+use trnm_consensus_safety_store::SqliteSafetyStateStoreV0;
+#[cfg(feature = "legacy-consensus-app")]
 use trnm_consensus_safety_store::{
     ConfirmedNativeDeterministicInvalidHeadV0, NativeDeterministicInvalidTransitionV0,
-    RecoveredSafetyStateV0, SafetyStateStoreProfileV0, SafetyStoreErrorV0,
-    SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
+    SafetyTransitionContextV0,
 };
+use trnm_consensus_safety_store::{
+    RecoveredSafetyStateV0, SafetyStateStoreProfileV0, SafetyStoreErrorV0,
+};
+#[cfg(feature = "legacy-consensus-app")]
+use trnm_consensus_signer_journal::JournalCapacityV0;
+#[cfg(any(feature = "legacy-consensus-app", test))]
+use trnm_consensus_signer_journal::SignerWatermarkV0;
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, JournalCapacityV0, SignerJournalErrorV0, SignerJournalProfileV0,
-    SignerWatermarkV0, SqliteSignerJournalV0,
+    ExternalMonotonicWatermarkV0, SignerJournalErrorV0, SignerJournalProfileV0,
+    SqliteSignerJournalV0,
 };
 use trnm_consensus_types::RolloutPhase;
 
+#[cfg(feature = "legacy-consensus-app")]
+mod authenticated_genesis_commissioning;
+#[cfg(feature = "legacy-consensus-app")]
+mod authenticated_genesis_h1_takeover;
+#[allow(dead_code)]
+mod cross_plane_checkpoint_v1;
+#[cfg(feature = "lab-validator-runtime")]
+mod deployed_lab_commissioning;
+#[cfg(feature = "lab-validator-runtime")]
+mod deployed_lab_process2_recovery;
+#[cfg(feature = "lab-validator-runtime")]
+mod deployed_lab_recovery;
+mod external_node_checkpoint;
+mod g2_manifest_bound_process_v2;
+#[allow(dead_code)]
+mod g2_manifest_bound_v2;
+#[allow(dead_code)]
+mod g2_order_commit_v1;
+#[cfg(feature = "lab-validator-runtime")]
+mod lab_authority;
+#[cfg(feature = "lab-validator-runtime")]
+mod lab_epoch_handoff;
+#[allow(dead_code)]
+mod native_application_owner;
+#[cfg(feature = "lab-validator-runtime")]
+mod native_h1_ordinary_takeover;
+#[cfg(feature = "lab-validator-runtime-test-support")]
+mod native_h1_ordinary_test_support;
+mod native_h1_state_sync_commissioning;
+#[allow(dead_code)]
+mod native_proposal_p_host;
 mod ordinary_timeout;
+#[cfg(feature = "legacy-consensus-app")]
+mod process_host;
 
+#[cfg(feature = "legacy-consensus-app")]
+pub use authenticated_genesis_commissioning::{
+    PocoNodeAuthenticatedGenesisCommissioningConfigV0,
+    PocoNodeAuthenticatedGenesisCommissioningErrorV0,
+    PocoNodeAuthenticatedGenesisCommissioningFactsV0,
+    PocoNodeAuthenticatedGenesisCommissioningHostV0,
+    PocoNodeAuthenticatedGenesisCommissioningModeV0,
+    PocoNodeAuthenticatedGenesisH1CompletedFactsV0, PocoNodeAuthenticatedGenesisH1CompletedHostV0,
+    PocoNodeAuthenticatedGenesisH1CompletedModeV0, PocoNodeAuthenticatedGenesisH1RunErrorV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoveryConfigV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoveryErrorV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoveryFactsV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoveryHostV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoveryModeV0,
+    PocoNodeAuthenticatedGenesisH1StableRecoverySourceV0,
+};
+#[cfg(feature = "legacy-consensus-app")]
+pub use authenticated_genesis_h1_takeover::{
+    PocoNodeAuthenticatedGenesisH1TakeoverConfigV0, PocoNodeAuthenticatedGenesisH1TakeoverErrorV0,
+    PocoNodeAuthenticatedGenesisH1TakeoverFactsV0, PocoNodeAuthenticatedGenesisH1TakeoverHostV0,
+    PocoNodeAuthenticatedGenesisH1TakeoverModeV0, PocoNodeAuthenticatedGenesisH1TakeoverSourceV0,
+};
+
+#[cfg(feature = "lab-validator-runtime")]
+pub use deployed_lab_commissioning::{
+    commission_deployed_lab_ordinary_runtime_v0, PocoNodeDeployedLabBootstrapV0,
+    PocoNodeDeployedLabCommissioningErrorV0,
+};
+#[cfg(feature = "lab-validator-runtime")]
+pub use deployed_lab_process2_recovery::{
+    recover_deployed_lab_process2_v0, PocoNodeDeployedLabProcess2ActivatedFactsV1,
+    PocoNodeDeployedLabProcess2ActivatedOwnerV1, PocoNodeDeployedLabProcess2CaughtUpOwnerV1,
+    PocoNodeDeployedLabProcess2RecoveryErrorV0, PocoNodeDeployedLabProcess2RecoveryFactsV0,
+    PocoNodeDeployedLabProcess2RecoveryOwnerV0, PocoNodeDeployedLabRecoveredOrdinaryRuntimeFactsV1,
+    PocoNodeDeployedLabRecoveredOrdinaryRuntimeV1, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    DEPLOYED_LAB_PROCESS2_ACTIVATION_V0, DEPLOYED_LAB_PROCESS2_CLEAN_CUT_RECOVERY_V0,
+    DEPLOYED_LAB_PROCESS2_PENDING_SIGN_REPLAY_V0,
+};
+#[cfg(feature = "lab-validator-runtime")]
+pub use deployed_lab_recovery::{
+    reopen_deployed_lab_ordinary_cut_v0, PocoNodeDeployedLabAuthenticatedReplayFactsV0,
+    PocoNodeDeployedLabAuthenticatedReplayOwnerV0, PocoNodeDeployedLabOrdinaryRecoveryOwnerV0,
+    PocoNodeDeployedLabRecoveryErrorV0, PocoNodeDeployedLabRecoveryFactsV0,
+    PocoNodeDeployedLabReplayBlockV0, PocoNodeDeployedLabSignedAncestryReplayChallengeV0,
+    PocoNodeDeployedLabSignedReplayEntryV0, DEPLOYED_LAB_COHERENT_WHOLE_ROOT_ROLLBACK_AUTHORITY_V0,
+};
+pub use external_node_checkpoint::{
+    reconcile_development_only_external_node_checkpoint_startup_v0,
+    ConfirmedNodeCheckpointCandidateV0, ExternalNodeCheckpointDecodeErrorV0,
+    ExternalNodeCheckpointFieldsV0, ExternalNodeCheckpointStartupErrorV0,
+    ExternalNodeCheckpointStartupModeV0, ExternalNodeCheckpointStartupOutcomeV0,
+    ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
+    SqliteExternalNodeCheckpointStoreV0, EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0,
+    EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0, EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0,
+    EXTERNAL_NODE_CHECKPOINT_SCHEMA_V0,
+};
+pub use g2_manifest_bound_process_v2::{
+    prepare_g2_manifest_bound_candidate_process_v2, run_g2_manifest_bound_candidate_process_v2,
+    PocoNodeG2CandidatePreparedFactsV2, PocoNodeG2CandidateProcessErrorV2,
+    PocoNodeG2CandidateProcessManifestV2,
+};
+#[cfg(feature = "g2-process-test-support")]
+#[doc(hidden)]
+pub use g2_order_commit_v1::real_e2e_tests::PocoNodeG2ProcessFixtureV2;
+#[cfg(feature = "lab-validator-runtime")]
+pub use lab_authority::{
+    PocoNodeLabAuthorityErrorV0, PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,
+    PocoNodeLabCheckpointComparisonClassV0, PocoNodeLabCheckpointComparisonErrorV0,
+    PocoNodeLabFreshOrdinaryGenesisConfigV0, PocoNodeLabInertRequestFactsV0,
+    PocoNodeLabInertRequestOwnerV0, PocoNodeLabInertTimeoutFactsV0, PocoNodeLabInertTimeoutOwnerV0,
+    PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabPendingFinalizationOwnerV0,
+    PocoNodeLabPhaseFactsV0, PocoNodeLabProposalBindingV0, PocoNodeLabProposalJournalConfigV0,
+    PocoNodeLabProposalParentV0, PocoNodeLabRuntimeFactsV0, PocoNodeLabSignedTimeoutFactsV0,
+    PocoNodeLabSignedTimeoutOutboundV0, PocoNodeLabSignedTimeoutOwnerV0,
+    PocoNodeLabSignedVoteFactsV0, PocoNodeLabSignedVoteOutboundV0, PocoNodeLabSignedVoteOwnerV0,
+    PocoNodeLabTerminalCheckpointApplicationV0, PocoNodeLabTerminalCutV0,
+    PocoNodeLabTerminalOwnerV0,
+};
+#[cfg(feature = "lab-validator-runtime")]
+pub use lab_epoch_handoff::{
+    verify_poco_node_lab_same_version_epoch_transition_v0,
+    PocoNodeLabEpochTransitionObservationErrorV0, PocoNodeLabVerifiedEpochTransitionObservationV0,
+};
+#[cfg(feature = "lab-validator-runtime")]
+pub use native_h1_ordinary_takeover::PocoNodeNativeH1OrdinaryRecoveryConfigV0;
+#[cfg(feature = "lab-validator-runtime-test-support")]
+pub use native_h1_ordinary_test_support::{
+    commission_native_h1_ordinary_lab_test_bundle_v0, PocoNodeNativeH1OrdinaryLabTestBundleV0,
+    PocoNodeNativeH1OrdinaryLabTestSupportErrorV0,
+};
+pub use native_h1_state_sync_commissioning::{
+    PocoNodeNativeH1StateSyncCommissionedFactsV0, PocoNodeNativeH1StateSyncCommissionedHostV0,
+    PocoNodeNativeH1StateSyncCommissioningConfigV0, PocoNodeNativeH1StateSyncCommissioningErrorV0,
+    PocoNodeNativeH1StateSyncPromotionSourceV0,
+};
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
 pub use ordinary_timeout::{PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0};
+#[cfg(feature = "legacy-consensus-app")]
+pub use process_host::{
+    PocoNodeInertEffectKindV0, PocoNodeProcessBootstrapFactsV0, PocoNodeProcessBootstrapModeV0,
+    PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
+    PocoNodeProcessLifecyclePhaseV0,
+};
 
 /// This package must not be interpreted as a deployable consensus candidate.
 pub const PRODUCTION_CANDIDATE_V0: bool = false;
@@ -175,6 +386,7 @@ impl PocoNodeStartConfigV0 {
         maximum_signer_intent_bytes: usize,
         maximum_signer_database_bytes: usize,
     ) -> Result<Self, PocoNodeHostErrorV0> {
+        reject_authenticated_genesis_commissioning_v0(&core_config)?;
         let safety_store_path = safety_store_path.as_ref();
         if !safety_store_path.is_absolute() {
             return Err(PocoNodeHostErrorV0::RelativeSafetyStorePath);
@@ -266,6 +478,11 @@ impl PocoNodeStartConfigV0 {
         self.safety_store_profile.record_limits()
     }
 
+    #[cfg(feature = "legacy-consensus-app")]
+    pub(crate) const fn safety_verifier_profile_ref_v0(&self) -> [u8; 32] {
+        self.safety_store_profile.verifier_profile_ref()
+    }
+
     pub const fn maximum_database_bytes(&self) -> usize {
         self.safety_store_profile.maximum_database_bytes()
     }
@@ -309,6 +526,7 @@ impl PocoNodeStartConfigV0 {
 /// its exact SQLite path before opening it. All three store parents must be
 /// non-overlapping canonical namespaces: equal, ancestor, and descendant
 /// parents are refused.
+#[cfg(feature = "legacy-consensus-app")]
 #[derive(Debug)]
 pub struct PocoNodeValidationRecoveryConfigV0 {
     node: PocoNodeStartConfigV0,
@@ -316,12 +534,14 @@ pub struct PocoNodeValidationRecoveryConfigV0 {
     signer_policy_hash: [u8; 32],
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 impl PocoNodeValidationRecoveryConfigV0 {
     pub fn new(
         node: PocoNodeStartConfigV0,
         application_status_path: impl AsRef<Path>,
         signer_policy_hash: [u8; 32],
     ) -> Result<Self, PocoNodeHostErrorV0> {
+        reject_authenticated_genesis_commissioning_v0(node.core_config())?;
         let application_status_path = application_status_path.as_ref();
         if !application_status_path.is_absolute() {
             return Err(PocoNodeHostErrorV0::RelativeApplicationStatusPath);
@@ -375,6 +595,18 @@ fn canonical_parent_namespaces_overlap_v0(left: &Path, right: &Path) -> bool {
     left.starts_with(right) || right.starts_with(left)
 }
 
+fn reject_authenticated_genesis_commissioning_v0(
+    core_config: &CoreConfig,
+) -> Result<(), PocoNodeHostErrorV0> {
+    if core_config
+        .authenticated_genesis_application_parent_v0()
+        .is_some()
+    {
+        return Err(PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost);
+    }
+    Ok(())
+}
+
 fn derive_signer_watermark_scope_v0(core_config: &CoreConfig) -> [u8; 32] {
     let validator_set = core_config.validator_set();
     let author = core_config.local_validator();
@@ -405,6 +637,7 @@ pub enum HostLifecyclePhaseV0 {
 }
 
 /// Application-journal state observed before the bounded recovery transition.
+#[cfg(feature = "legacy-consensus-app")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoverySourceStateV0 {
     CallbackPending,
@@ -413,6 +646,7 @@ pub enum ValidationRecoverySourceStateV0 {
 }
 
 /// Exact result of the recovery-aware inert bootstrap.
+#[cfg(feature = "legacy-consensus-app")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoveryBootstrapV0 {
     NotRequired,
@@ -436,7 +670,10 @@ pub enum ValidationRecoveryBootstrapV0 {
 /// both stores have completed their own durability and exact-readback checks.
 /// The observer cannot alter either store and is absent from default builds
 /// and the official `--no-default-features` development-library artifact.
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ValidationRecoveryProcessCheckpointPhaseV0 {
     ObligationCallbackPending,
@@ -445,7 +682,10 @@ pub enum ValidationRecoveryProcessCheckpointPhaseV0 {
     CompletionAcked,
 }
 
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 impl ValidationRecoveryProcessCheckpointPhaseV0 {
     pub const fn as_str(self) -> &'static str {
         match self {
@@ -458,7 +698,10 @@ impl ValidationRecoveryProcessCheckpointPhaseV0 {
 }
 
 /// Exact facts supplied to the feature-only real-process checkpoint observer.
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ValidationRecoveryProcessCheckpointV0 {
     phase: ValidationRecoveryProcessCheckpointPhaseV0,
@@ -469,7 +712,10 @@ pub struct ValidationRecoveryProcessCheckpointV0 {
     safety_revision: u64,
 }
 
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 impl ValidationRecoveryProcessCheckpointV0 {
     pub const fn phase(self) -> ValidationRecoveryProcessCheckpointPhaseV0 {
         self.phase
@@ -504,6 +750,7 @@ impl ValidationRecoveryProcessCheckpointV0 {
 /// journal and either complete one exact durable invalid obligation, confirm
 /// one exact already-persisted completion, or prove that no active recovery
 /// work exists.
+#[cfg(feature = "legacy-consensus-app")]
 pub struct PocoNodeValidationRecoveryHostV0<W> {
     core: Core,
     safety_store: SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
@@ -515,8 +762,10 @@ pub struct PocoNodeValidationRecoveryHostV0<W> {
     pending_inert_effects: Vec<Effect>,
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 type ValidationRecoveryOpenPartsV0 = (Core, ValidationRecoveryBootstrapV0, Vec<Effect>, bool);
 
+#[cfg(feature = "legacy-consensus-app")]
 impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
     /// Opens all three existing stores and closes the bounded O/P/D/C/K crash
     /// matrix for one deterministic-invalid validation job.
@@ -532,6 +781,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
         config: PocoNodeValidationRecoveryConfigV0,
         external_watermark: W,
     ) -> Result<Self, PocoNodeHostErrorV0> {
+        reject_activation_request(config.node_config())?;
         #[cfg(feature = "recovery-process-test-support")]
         {
             Self::open_existing_inner_v0(config, external_watermark, None)
@@ -559,6 +809,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
     where
         F: FnMut(ValidationRecoveryProcessCheckpointV0),
     {
+        reject_activation_request(config.node_config())?;
         Self::open_existing_inner_v0(config, external_watermark, Some(&mut observer))
     }
 
@@ -726,6 +977,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeValidationRecoveryHostV0<W> {
     }
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn recover_without_obligation_v0(
     core_config: CoreConfig,
     head: RecoveredSafetyStateV0,
@@ -806,9 +1058,28 @@ fn recover_without_obligation_v0(
                 false,
             ))
         }
+        SafetyTransitionContextV0::NativeValid(_) => {
+            Err(PocoNodeHostErrorV0::NativeValidRecoveryUnavailable {
+                revision: head.revision(),
+            })
+        }
+        SafetyTransitionContextV0::NativeFinalizationApplied(_) => Err(
+            PocoNodeHostErrorV0::NativeFinalizationAppliedRecoveryUnavailable {
+                revision: head.revision(),
+            },
+        ),
+        SafetyTransitionContextV0::StateSyncCheckpointBootstrap(_) => Err(
+            PocoNodeHostErrorV0::StateSyncCheckpointBootstrapRequiresUnifiedHost {
+                revision: head.revision(),
+            },
+        ),
+        SafetyTransitionContextV0::AuthenticatedGenesisApplicationBootstrap(_) => {
+            Err(PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost)
+        }
     }
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn recover_one_invalid_obligation_v0(
     core_config: CoreConfig,
     head: RecoveredSafetyStateV0,
@@ -972,7 +1243,10 @@ fn recover_one_invalid_obligation_v0(
     ))
 }
 
-#[cfg(feature = "recovery-process-test-support")]
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
 fn emit_recovery_process_checkpoint_v0(
     observer: &mut Option<&mut dyn FnMut(ValidationRecoveryProcessCheckpointV0)>,
     phase: ValidationRecoveryProcessCheckpointPhaseV0,
@@ -992,6 +1266,7 @@ fn emit_recovery_process_checkpoint_v0(
     }
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 impl From<NativeValidationRecoveredInvalidStateV0> for ValidationRecoverySourceStateV0 {
     fn from(state: NativeValidationRecoveredInvalidStateV0) -> Self {
         match state {
@@ -1012,6 +1287,7 @@ fn head_has_current_invalid_completion_v0(state: &SafetyState) -> bool {
         })
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn take_exact_recovery_persistence_v0(
     effects: Vec<Effect>,
 ) -> Result<SafetyStatePersistenceV0, PocoNodeHostErrorV0> {
@@ -1079,6 +1355,7 @@ fn validate_signer_safety_revision_v0<W: ExternalMonotonicWatermarkV0>(
     Ok(())
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNodeHostErrorV0> {
     if let Some(effect) = effects
         .iter()
@@ -1091,6 +1368,7 @@ fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNode
     Ok(())
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn validate_callback_identity_v0(
     facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
     route: PayloadValidationRouteV0,
@@ -1102,6 +1380,7 @@ fn validate_callback_identity_v0(
     Ok(())
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn native_invalid_transition_context_v0(
     facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
     completion_revision: u64,
@@ -1127,6 +1406,7 @@ fn native_invalid_transition_context_v0(
     ))
 }
 
+#[cfg(feature = "legacy-consensus-app")]
 fn validate_acked_facts_against_confirmation_v0(
     acked: &NativeValidationRecoveredAckedFactsV0,
     confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
@@ -1152,6 +1432,7 @@ fn validate_acked_facts_against_confirmation_v0(
 }
 
 fn reject_activation_request(config: &PocoNodeStartConfigV0) -> Result<(), PocoNodeHostErrorV0> {
+    reject_authenticated_genesis_commissioning_v0(config.core_config())?;
     let parameters = config.core_config().consensus_parameters();
     if parameters.production_activation() {
         return Err(PocoNodeHostErrorV0::ProductionActivationRequested);
@@ -1216,6 +1497,7 @@ pub enum PocoNodeHostErrorV0 {
     ApplicationStoreParentIo(Box<io::Error>),
     InvalidApplicationStoreParent,
     SharedApplicationStoreParentNamespace,
+    AuthenticatedGenesisCommissioningRequiresDedicatedHost,
     ProductionActivationRequested,
     NonShadowRolloutRequested {
         rollout_phase: RolloutPhase,
@@ -1238,6 +1520,15 @@ pub enum PocoNodeHostErrorV0 {
         actual: usize,
     },
     OrdinaryContextForInvalidCompletion {
+        revision: u64,
+    },
+    NativeValidRecoveryUnavailable {
+        revision: u64,
+    },
+    NativeFinalizationAppliedRecoveryUnavailable {
+        revision: u64,
+    },
+    StateSyncCheckpointBootstrapRequiresUnifiedHost {
         revision: u64,
     },
     UnexpectedObligationTransitionContext {
@@ -1313,8 +1604,11 @@ pub enum PocoNodeHostErrorV0 {
     Core(Box<trnm_consensus_core::CoreError>),
     SafetyStore(Box<SafetyStoreErrorV0>),
     SignerJournal(Box<SignerJournalErrorV0>),
+    #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
+    #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryReconcile(NativeValidationRecoveryReconcileFailureV0),
+    #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryTransition(NativeValidationRecoveryTransitionFailureV0),
 }
 
@@ -1339,6 +1633,7 @@ impl PocoNodeHostErrorV0 {
         Self::SignerJournalParentIo(Box::new(error))
     }
 
+    #[cfg(feature = "legacy-consensus-app")]
     fn application_store_parent(error: io::Error) -> Self {
         Self::ApplicationStoreParentIo(Box::new(error))
     }
@@ -1391,6 +1686,9 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::SharedApplicationStoreParentNamespace => formatter.write_str(
                 "application, safety, and signer stores must use non-overlapping canonical parent directories",
             ),
+            Self::AuthenticatedGenesisCommissioningRequiresDedicatedHost => formatter.write_str(
+                "authenticated genesis application commissioning requires the dedicated inert commissioning host",
+            ),
             Self::ProductionActivationRequested => formatter.write_str(
                 "incomplete PoCO host refuses production-activated consensus parameters",
             ),
@@ -1423,6 +1721,18 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::OrdinaryContextForInvalidCompletion { revision } => write!(
                 formatter,
                 "safety revision {revision} records a deterministic-invalid completion with an ordinary transition context",
+            ),
+            Self::NativeValidRecoveryUnavailable { revision } => write!(
+                formatter,
+                "safety revision {revision} records a native Valid completion, but this invalid-only recovery host cannot authenticate its application lifecycle or remint its callback authority",
+            ),
+            Self::NativeFinalizationAppliedRecoveryUnavailable { revision } => write!(
+                formatter,
+                "safety revision {revision} records a native finalization apply, but this invalid-only recovery host cannot authenticate its ApplicationStore receipt or remint the exact post-ack action",
+            ),
+            Self::StateSyncCheckpointBootstrapRequiresUnifiedHost { revision } => write!(
+                formatter,
+                "safety revision {revision} is an h1 state-sync checkpoint bootstrap which only the unified offline process host may reconcile",
             ),
             Self::UnexpectedObligationTransitionContext { revision } => write!(
                 formatter,
@@ -1552,12 +1862,15 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::SignerJournal(error) => {
                 write!(formatter, "PoCO signer-journal startup failed: {error}")
             }
+            #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => {
                 write!(formatter, "application recovery open failed: {error}")
             }
+            #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryReconcile(error) => {
                 write!(formatter, "application recovery reconciliation failed: {error:?}")
             }
+            #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryTransition(error) => {
                 write!(formatter, "application recovery transition failed: {error:?}")
             }
@@ -1573,6 +1886,7 @@ impl Error for PocoNodeHostErrorV0 {
             Self::ApplicationStoreParentIo(error) => Some(error.as_ref()),
             Self::SafetyStore(error) => Some(error.as_ref()),
             Self::SignerJournal(error) => Some(error.as_ref()),
+            #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => Some(error),
             _ => None,
         }
@@ -1597,11 +1911,15 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     #[cfg(target_os = "linux")]
     use tempfile::TempDir;
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    use trnm_consensus_core::AuthenticatedGenesisApplicationParentV0;
     use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
     #[cfg(target_os = "linux")]
     use trnm_consensus_signer_journal::{
         SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
     };
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    use trnm_consensus_types::StateRoot;
     use trnm_consensus_types::{
         BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
         GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcReferenceV0, SignatureBytes,
@@ -1624,7 +1942,22 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[derive(Debug, Clone, Default)]
-    struct MemoryWatermark(Arc<Mutex<Option<SignerWatermarkV0>>>);
+    struct MemoryWatermark {
+        value: Arc<Mutex<Option<SignerWatermarkV0>>>,
+        load_calls: Arc<AtomicUsize>,
+        compare_calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    impl MemoryWatermark {
+        fn load_call_count(&self) -> usize {
+            self.load_calls.load(Ordering::SeqCst)
+        }
+
+        fn compare_call_count(&self) -> usize {
+            self.compare_calls.load(Ordering::SeqCst)
+        }
+    }
 
     #[cfg(target_os = "linux")]
     impl ExternalMonotonicWatermarkV0 for MemoryWatermark {
@@ -1635,7 +1968,8 @@ mod tests {
             Option<SignerWatermarkV0>,
             trnm_consensus_signer_journal::ExternalWatermarkErrorV0,
         > {
-            let value = *self.0.lock().expect("test watermark lock");
+            self.load_calls.fetch_add(1, Ordering::SeqCst);
+            let value = *self.value.lock().expect("test watermark lock");
             if value.is_some_and(|watermark| watermark.scope() != scope) {
                 return Err(
                     trnm_consensus_signer_journal::ExternalWatermarkErrorV0::InvalidPersistedState,
@@ -1651,7 +1985,8 @@ mod tests {
         ) -> Result<(), trnm_consensus_signer_journal::ExternalWatermarkErrorV0> {
             use trnm_consensus_signer_journal::ExternalWatermarkErrorV0;
 
-            let mut value = self.0.lock().expect("test watermark lock");
+            self.compare_calls.fetch_add(1, Ordering::SeqCst);
+            let mut value = self.value.lock().expect("test watermark lock");
             if *value != expected {
                 return Err(ExternalWatermarkErrorV0::CompareFailed);
             }
@@ -1797,6 +2132,30 @@ mod tests {
         (config, SigningKey::from_bytes(&[41; 32]))
     }
 
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn authenticated_genesis_core_config_v0() -> CoreConfig {
+        let base = core_config(ConsensusParametersV0::reference_shadow_v0());
+        let parent = AuthenticatedGenesisApplicationParentV0::new(
+            base.genesis_block_id(),
+            base.trusted_genesis_timestamp_ms(),
+            0,
+            StateRoot::new([0x31; 32]),
+            [0x41; 32],
+            [0x51; 32],
+        )
+        .expect("shape-valid authenticated genesis application parent");
+        CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+            base.local_validator(),
+            base.validator_set().clone(),
+            *base.consensus_parameters(),
+            base.trusted_genesis_timestamp_ms(),
+            parent,
+            base.max_blocks(),
+            base.max_observed_messages(),
+        )
+        .expect("shadow authenticated-genesis Core config")
+    }
+
     fn record_limits() -> SafetyStateRecordLimitsV0 {
         SafetyStateRecordLimitsV0::new(MAXIMUM_RECORD_BYTES, MAXIMUM_BLOB_BYTES)
             .expect("valid local record limits")
@@ -1817,6 +2176,37 @@ mod tests {
             MAXIMUM_SIGNER_INTENT_BYTES,
             MAXIMUM_SIGNER_DATABASE_BYTES,
         )
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn unchecked_start_config_v0(
+        safety_store_path: impl AsRef<Path>,
+        signer_journal_path: impl AsRef<Path>,
+        core_config: CoreConfig,
+    ) -> PocoNodeStartConfigV0 {
+        let signer_journal_profile = SignerJournalProfileV0::new(
+            core_config.validator_set().clone(),
+            core_config.local_validator(),
+            SIGNER_JOURNAL_PROFILE_REF_V0,
+            derive_signer_watermark_scope_v0(&core_config),
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect("construct test-only signer profile before the node fence");
+        let safety_store_profile = SafetyStateStoreProfileV0::new(
+            core_config,
+            STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+        )
+        .expect("construct test-only Safety profile before the node fence");
+        PocoNodeStartConfigV0 {
+            safety_store_path: safety_store_path.as_ref().to_path_buf(),
+            safety_store_profile,
+            signer_journal_path: signer_journal_path.as_ref().to_path_buf(),
+            signer_journal_profile,
+        }
     }
 
     fn genesis_qc(core_config: &CoreConfig) -> GenesisQcV0 {
@@ -1866,11 +2256,28 @@ mod tests {
         )
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     fn triple_store_paths(root: &TempDir) -> (PathBuf, PathBuf, PathBuf) {
         let (safety, signer) = dual_store_paths(root);
         let application = protected_store_namespace(root, "application").join("state.json");
         (safety, signer, application)
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn assert_store_parent_empty_v0(path: &Path, context: &str) {
+        let parent = path.parent().expect("store path retains its parent");
+        let entries = fs::read_dir(parent)
+            .expect("read protected store parent")
+            .map(|entry| {
+                entry
+                    .expect("read protected store-parent entry")
+                    .file_name()
+            })
+            .collect::<Vec<_>>();
+        assert!(
+            entries.is_empty(),
+            "{context} must leave the complete store parent empty: {entries:?}"
+        );
     }
 
     #[test]
@@ -1889,7 +2296,123 @@ mod tests {
             .contains(",application_validation_recovery,"));
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn ordinary_config_surfaces_fence_authenticated_genesis_before_path_validation_v0() {
+        enum Surface {
+            Start,
+            ValidationRecovery,
+        }
+
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, _) = triple_store_paths(&directory);
+        for surface in [Surface::Start, Surface::ValidationRecovery] {
+            let error = match surface {
+                Surface::Start => start_config(
+                    "relative-safety.sqlite3",
+                    "relative-signer.sqlite3",
+                    authenticated_genesis_core_config_v0(),
+                )
+                .expect_err("authenticated-genesis start config must be fenced before relative paths"),
+                Surface::ValidationRecovery => PocoNodeValidationRecoveryConfigV0::new(
+                    unchecked_start_config_v0(
+                        &safety_path,
+                        &signer_path,
+                        authenticated_genesis_core_config_v0(),
+                    ),
+                    "relative-application.json",
+                    [0x5a; 32],
+                )
+                .expect_err(
+                    "authenticated-genesis recovery config must be fenced before its application path",
+                ),
+            };
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost
+            ));
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn ordinary_host_entries_fence_authenticated_genesis_before_every_owner_v0() {
+        #[derive(Clone, Copy, Debug)]
+        enum Surface {
+            Initialize,
+            Open,
+            ValidationRecoveryOpen,
+        }
+
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, application_path) = triple_store_paths(&directory);
+        let core_config = authenticated_genesis_core_config_v0();
+        let genesis_qc = genesis_qc(&core_config);
+        for surface in [
+            Surface::Initialize,
+            Surface::Open,
+            Surface::ValidationRecoveryOpen,
+        ] {
+            let watermark = MemoryWatermark::default();
+            let node = unchecked_start_config_v0(&safety_path, &signer_path, core_config.clone());
+            let error = match surface {
+                Surface::Initialize => PocoNodeHostV0::initialize_new(
+                    node,
+                    genesis_qc.clone(),
+                    watermark.clone(),
+                    UnavailableProducerV0,
+                )
+                .err()
+                .expect("generic initialization must reject authenticated genesis"),
+                Surface::Open => {
+                    PocoNodeHostV0::open_existing(node, watermark.clone(), UnavailableProducerV0)
+                        .err()
+                        .expect("generic open must reject authenticated genesis")
+                }
+                Surface::ValidationRecoveryOpen => PocoNodeValidationRecoveryHostV0::open_existing(
+                    PocoNodeValidationRecoveryConfigV0 {
+                        node,
+                        application_status_path: application_path.clone(),
+                        signer_policy_hash: [0x5a; 32],
+                    },
+                    watermark.clone(),
+                )
+                .err()
+                .expect("generic recovery open must reject authenticated genesis"),
+            };
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost
+            ));
+            assert_eq!(
+                watermark.load_call_count(),
+                0,
+                "{surface:?} must reject before loading the external watermark",
+            );
+            assert_eq!(
+                watermark.compare_call_count(),
+                0,
+                "{surface:?} must reject before external watermark CAS",
+            );
+            assert!(
+                !safety_path.exists(),
+                "{surface:?} must reject before SafetyStore creation/open",
+            );
+            assert!(
+                !signer_path.exists(),
+                "{surface:?} must reject before signer creation/open",
+            );
+            assert!(
+                !application_path.exists(),
+                "{surface:?} must reject before application recovery open",
+            );
+            assert_store_parent_empty_v0(&safety_path, "Safety fence");
+            assert_store_parent_empty_v0(&signer_path, "signer fence");
+            assert_store_parent_empty_v0(&application_path, "application fence");
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn validation_recovery_config_requires_a_third_canonical_namespace() {
         let directory = protected_temp_dir();
@@ -1912,7 +2435,7 @@ mod tests {
         ));
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn validation_recovery_config_rejects_application_ancestor_and_descendant_namespaces() {
         let directory = protected_temp_dir();
@@ -1971,7 +2494,7 @@ mod tests {
         }
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn validation_recovery_config_rejects_nested_application_after_symlink_canonicalization() {
         use std::os::unix::fs::symlink;
@@ -2003,7 +2526,7 @@ mod tests {
         ));
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn validation_recovery_config_freezes_three_distinct_paths() {
         let directory = protected_temp_dir();
@@ -2022,7 +2545,7 @@ mod tests {
         assert_eq!(recovery.node_config().signer_journal_path(), signer_path);
     }
 
-    #[cfg(target_os = "linux")]
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn validation_recovery_config_rejects_relative_application_path() {
         let directory = protected_temp_dir();

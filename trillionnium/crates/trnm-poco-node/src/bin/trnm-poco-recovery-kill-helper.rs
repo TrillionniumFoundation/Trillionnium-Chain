@@ -20,12 +20,15 @@ use trnm_consensus_app::{
     NativeValidationRecoveryTestFixtureStateV0,
 };
 use trnm_consensus_core::{
-    leader_for, Core, CoreConfig, DurablePayloadValidationResultV1, Effect, Input, OutboundMessage,
-    PayloadValidationResult, PayloadValidationRouteV0, SafetyStateRecordLimitsV0, SignId,
-    ValidationId,
+    leader_for, BlockIdOverlayRefV0, Core, CoreConfig, DurablePayloadValidationResultV1, Effect,
+    Input, OutboundMessage, PayloadValidationRouteV0, SafetyStateRecordLimitsV0, SignId,
+    ValidatedPayloadArtifactRefV0, ValidationId,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
-use trnm_consensus_safety_store::{SafetyTransitionContextV0, SqliteSafetyStateStoreV0};
+use trnm_consensus_safety_store::{
+    native_valid_result_checksum_v0, NativeValidTransitionV0, SafetyTransitionContextV0,
+    SqliteSafetyStateStoreV0, NATIVE_VALID_POST_ACK_REQUEST_SIGNATURE_V0,
+};
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, SignerWatermarkV0, SqliteSignerJournalV0,
 };
@@ -783,6 +786,18 @@ fn valid_commitments_v0(core: &Core, block: &Block) -> ValidatedBlockCommitments
     .expect("strict verifier validates canonical process-test commitments")
 }
 
+fn fixture_artifact_ref_v0(block: &Block) -> ValidatedPayloadArtifactRefV0 {
+    let block_id = block.id();
+    let mut overlay_checksum = *block_id.as_bytes();
+    overlay_checksum[0] ^= 0x5a;
+    let mut source_artifact_checksum = *block_id.as_bytes();
+    source_artifact_checksum[0] ^= 0xa5;
+    ValidatedPayloadArtifactRefV0::new(
+        BlockIdOverlayRefV0::new(block_id, block.header().parent_id(), overlay_checksum),
+        source_artifact_checksum,
+    )
+}
+
 fn node_start_config_v0(
     safety_path: &Path,
     signer_path: &Path,
@@ -811,17 +826,44 @@ fn persist_and_ack_v0(
         panic!("expected one exact process-test Core persistence request: {effects:?}");
     };
     let barrier = request.barrier();
+    let context = request
+        .state()
+        .payload_validation_completions()
+        .iter()
+        .find(|completion| {
+            completion.first_recorded_revision() == request.state().revision()
+                && completion.result().is_valid()
+        })
+        .map(|completion| {
+            SafetyTransitionContextV0::native_valid(
+                NativeValidTransitionV0::new(
+                    completion.route(),
+                    completion.id(),
+                    [0x31; 32],
+                    [0x32; 32],
+                    [0x33; 32],
+                    native_valid_result_checksum_v0(completion.result())
+                        .expect("derive process-test Valid result checksum"),
+                    [0x34; 32],
+                    [0x35; 32],
+                    1,
+                    [0x36; 32],
+                    [0x37; 32],
+                    NATIVE_VALID_POST_ACK_REQUEST_SIGNATURE_V0,
+                    request.state().revision(),
+                )
+                .expect("construct process-test NativeValid transition context"),
+            )
+        })
+        .unwrap_or_else(SafetyTransitionContextV0::ordinary);
     store
-        .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
+        .persist_exact_v0(request, &context)
         .expect("persist exact process-test Core request in SafetyStore");
     let head = store
         .head()
         .expect("authenticate exact process-test persisted head");
     assert_eq!(head.state(), request.state());
-    assert!(matches!(
-        head.transition_context(),
-        SafetyTransitionContextV0::Ordinary
-    ));
+    assert_eq!(head.transition_context(), &context);
     core.step(Input::StorageAck { barrier }, &StrictEd25519Verifier)
         .expect("ack only the exact durable process-test Core request")
 }
@@ -839,6 +881,9 @@ fn create_obligation_head_v0<W: ExternalMonotonicWatermarkV0>(
     let verifier = StrictEd25519Verifier;
     let mut core = Core::new(fixture.core_config.clone(), fixture.genesis_qc(), &verifier)
         .expect("initialize strict-Ed25519 process-test Core");
+    let application_seal_authority = core
+        .issue_application_seal_authority_v0()
+        .expect("issue the process-test Core application seal authority exactly once");
     let mut safety_store = SqliteSafetyStateStoreV0::initialize_new(
         start.safety_store_path(),
         start.recovery_process_safety_store_profile_v0(),
@@ -868,19 +913,23 @@ fn create_obligation_head_v0<W: ExternalMonotonicWatermarkV0>(
         )
         .expect("register process-test parent validation obligation");
     let released = persist_and_ack_v0(&mut core, &mut safety_store, effects);
-    let parent_id = match released.as_slice() {
-        [Effect::ArmViewTimer { .. }, Effect::ValidatePayload(request)] => request.id(),
+    let parent_request = match released.as_slice() {
+        [Effect::ArmViewTimer { .. }, Effect::ValidatePayload(request)] => request.clone(),
         _ => panic!("parent persistence did not release exact process validation: {released:?}"),
     };
+    let (_, _, _, _, parent_valid_permit) = parent_request
+        .try_claim()
+        .expect("claim the exact process-test parent validation request")
+        .into_parts();
     let commitments = valid_commitments_v0(&core, parent.block());
+    let artifact_ref = fixture_artifact_ref_v0(parent.block());
+    let application_proof = application_seal_authority.seal_after_application_store_commit_v0(
+        parent_valid_permit,
+        commitments,
+        artifact_ref,
+    );
     let effects = core
-        .step(
-            Input::PayloadValidated {
-                id: parent_id,
-                result: PayloadValidationResult::Valid { commitments },
-            },
-            &StrictEd25519Verifier,
-        )
+        .step_application_sealed_valid_v0(&application_proof, &StrictEd25519Verifier)
         .expect("accept valid process-test parent payload");
     let released = persist_and_ack_v0(&mut core, &mut safety_store, effects);
     let intent = match released.as_slice() {
