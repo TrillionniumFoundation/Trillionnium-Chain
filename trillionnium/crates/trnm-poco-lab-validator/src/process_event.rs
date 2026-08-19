@@ -3011,10 +3011,6 @@ fn process2_restart_ancestry_v1(
 enum ProcessStartGateV1<'a> {
     InitialProcessOnly,
     StoredRestartCutParkAck(&'a ReopenedRestartCutParkAckCertificatesV1),
-    /// Compatibility-only pair gate. It deliberately has no successful
-    /// normal-build path because Cut/Park alone cannot prove durable receipt
-    /// of all seven parked acknowledgements.
-    StoredRestartCutPark(&'a StoredRestartCutParkCertificatesV1),
     #[cfg(test)]
     UnverifiedTestRestart,
 }
@@ -3112,25 +3108,11 @@ impl RuntimeEventJournalV1 {
             ProcessStartGateV1::StoredRestartCutParkAck(stored) => {
                 stored.revalidate_fresh_v1()?;
             }
-            ProcessStartGateV1::StoredRestartCutPark(stored) => {
-                stored.revalidate_fresh_v1().map_err(|_| {
-                    RuntimeEventErrorV1::Invalid(
-                        "stored RestartCut/RestartPark pair failed authenticated fresh readback",
-                    )
-                })?;
-                return Err(RuntimeEventErrorV1::Invalid(
-                    "legacy Cut/Park-only process-2 gate lacks the stored ParkedAck certificate",
-                ));
-            }
             ProcessStartGateV1::InitialProcessOnly => {}
             #[cfg(test)]
             ProcessStartGateV1::UnverifiedTestRestart => {}
         }
-        let create_if_missing = !matches!(
-            gate,
-            ProcessStartGateV1::StoredRestartCutParkAck(_)
-                | ProcessStartGateV1::StoredRestartCutPark(_)
-        );
+        let create_if_missing = !matches!(gate, ProcessStartGateV1::StoredRestartCutParkAck(_));
         let (path, parent, file) = open_locked_journal(path, create_if_missing)?;
         let parent_identity = RuntimeEventJournalParentIdentityV1::from_metadata_v1(
             &parent.metadata().map_err(RuntimeEventErrorV1::Io)?,
@@ -3189,11 +3171,6 @@ impl RuntimeEventJournalV1 {
                     "runtime event journal exceeds the bounded two-process contract",
                 ));
             }
-            ProcessStartGateV1::StoredRestartCutPark(stored) => {
-                validate_process2_restart_cut_predecessor_v1(
-                    &events, &recovered, &context, stored,
-                )?;
-            }
             ProcessStartGateV1::StoredRestartCutParkAck(stored) => {
                 validate_process2_restart_cut_park_ack_predecessor_v1(
                     &events, &recovered, &context, stored,
@@ -3206,13 +3183,6 @@ impl RuntimeEventJournalV1 {
         match gate {
             ProcessStartGateV1::StoredRestartCutParkAck(stored) => {
                 stored.revalidate_fresh_v1()?;
-            }
-            ProcessStartGateV1::StoredRestartCutPark(stored) => {
-                stored.revalidate_fresh_v1().map_err(|_| {
-                    RuntimeEventErrorV1::Invalid(
-                        "stored RestartCut/RestartPark pair changed before process-2 journal append",
-                    )
-                })?;
             }
             ProcessStartGateV1::InitialProcessOnly => {}
             #[cfg(test)]
@@ -4639,108 +4609,6 @@ fn validate_process2_restart_cut_park_ack_predecessor_v1(
         ));
     }
     stored.revalidate_fresh_v1()
-}
-
-#[allow(unreachable_code)]
-fn validate_process2_restart_cut_predecessor_v1(
-    events: &[SignedRuntimeEventV1],
-    recovered: &RecoveredJournalV1,
-    context: &RuntimeEventContextV1,
-    stored: &StoredRestartCutParkCertificatesV1,
-) -> Result<(), RuntimeEventErrorV1> {
-    let _ = (events, recovered, context, stored);
-    return Err(RuntimeEventErrorV1::Invalid(
-        "Cut/Park-only process-2 predecessor lacks the exact ParkedAck artifact and rpa1",
-    ));
-    let [.., restart_prepare, restart_cut, restart_park] = events else {
-        return Err(RuntimeEventErrorV1::Invalid(
-            "stored RestartCut lacks its exact target Park predecessor",
-        ));
-    };
-    let body = stored.body_v1();
-    let identity = body.campaign().identity();
-    let statement_count =
-        u64::try_from(stored.statement_count_v1()).map_err(|_| RuntimeEventErrorV1::TooLarge)?;
-    let expected_statement_count = u64::try_from(context.validator_set.validators().len())
-        .map_err(|_| RuntimeEventErrorV1::TooLarge)?;
-    let restart_prepare_sha256 =
-        decode_hex::<32>(&restart_prepare.event_sha256, "restart prepare event hash")?;
-    let restart_park_sha256 =
-        decode_hex::<32>(&restart_park.event_sha256, "restart park event hash")?;
-    let cut_park_subject = RestartCutParkSubjectV1::decode(&restart_cut.subject)?;
-    let park_subject = RestartParkSubjectV1::decode(&restart_park.subject)?;
-    let parked = match recovered.state.restart {
-        RuntimeRestartJournalStateV1::Parked(facts)
-            if facts.cut_park.preparation.role_v1() == RestartParkRoleV1::Target =>
-        {
-            facts
-        }
-        _ => {
-            return Err(RuntimeEventErrorV1::Invalid(
-                "stored RestartCut lacks its exact target Park predecessor",
-            ));
-        }
-    };
-    let RestartPreparationJournalV1::Target(target_preparation) = parked.cut_park.preparation
-    else {
-        return Err(RuntimeEventErrorV1::Invalid(
-            "stored RestartCut lacks its exact target Park predecessor",
-        ));
-    };
-
-    if recovered.process_instance != 1
-        || recovered.state.current_instance != 1
-        || recovered.state.last_kind.as_deref() != Some("restart_park")
-        || restart_prepare.kind != "restart_prepare"
-        || restart_prepare.process_instance != 1
-        || restart_cut.kind != "restart_cut"
-        || restart_cut.process_instance != 1
-        || restart_park.kind != "restart_park"
-        || restart_park.process_instance != 1
-        || restart_prepare.sequence.checked_add(1) != Some(restart_cut.sequence)
-        || restart_cut.sequence.checked_add(1) != Some(restart_park.sequence)
-        || restart_park.sequence.checked_add(1) != Some(recovered.next_sequence)
-        || restart_cut.previous_event_sha256 != restart_prepare.event_sha256
-        || restart_park.previous_event_sha256 != restart_cut.event_sha256
-        || recovered.previous_event_sha256 != restart_park_sha256
-        || body.runtime_journal_head_v1() != (restart_prepare.sequence, restart_prepare_sha256)
-        || target_preparation.prepare_head != (restart_prepare.sequence, restart_prepare_sha256)
-        || body.process_instance() != 1
-        || body.target_validator() != context.validator_id
-        || body.target_config_sha256() != context.config_sha256
-        || body.run_id() != context.run_id
-        || body.coordinator_manifest_sha256() != context.coordinator_manifest_sha256
-        || body.validator_set_id() != *context.validator_set.id().as_bytes()
-        || body.validator_set_sha256() != context.validator_set_sha256
-        || identity.candidate_source_sha256() != context.candidate_source_sha256
-        || identity.binary_sha256() != context.binary_sha256
-        || body.fleet_start_certificate_sha256()
-            != recovered
-                .state
-                .fleet_start_certificate_sha256
-                .unwrap_or([0; 32])
-        || !body.pending_sign_is_none()
-        || stored.local_role_v1() != RestartParkRoleV1::Target
-        || stored.cut_artifact_sha256_v1() == [0; 32]
-        || stored.park_artifact_sha256_v1() == [0; 32]
-        || cut_park_subject.cut_artifact_sha256 != stored.cut_artifact_sha256_v1()
-        || cut_park_subject.park_artifact_sha256 != stored.park_artifact_sha256_v1()
-        || cut_park_subject.body_sha256 != body.digest()
-        || cut_park_subject.admission_set_sha256 != stored.admission_set_sha256_v1()
-        || park_subject.park_artifact_sha256 != cut_park_subject.park_artifact_sha256
-        || park_subject.local_park_statement_sha256 != stored.local_park_statement_sha256_v1()
-        || statement_count != expected_statement_count
-        || restart_cut.value != statement_count
-        || restart_park.value != statement_count
-        || parked.cut_park.subject != cut_park_subject
-        || parked.cut_park.statement_count != statement_count
-        || parked.subject != park_subject
-    {
-        return Err(RuntimeEventErrorV1::Invalid(
-            "stored RestartCut/RestartPark pair lacks its exact target Park predecessor",
-        ));
-    }
-    Ok(())
 }
 
 /// Independently verifies one copied runtime journal using only the closed
@@ -7129,12 +6997,18 @@ mod tests {
     }
 
     #[test]
-    fn loaded_restart_cut_park_pair_cannot_open_process2_without_parked_ack() {
+    fn loaded_restart_cut_park_pair_cannot_open_process2_or_mutate_without_parked_ack() {
         let fixture = process2_gate_fixture();
-        let before = {
+        let journal_before = fs::read(&fixture.journal_path).unwrap();
+        let journal_metadata_before = fs::metadata(&fixture.journal_path).unwrap();
+        let events_before = {
             let file = File::open(&fixture.journal_path).unwrap();
             read_exact_events(&file).unwrap()
         };
+        let cut_path = fixture.stored.cut_path_v1().to_owned();
+        let park_path = fixture.stored.park_path_v1().to_owned();
+        let cut_before = fs::read(&cut_path).unwrap();
+        let park_before = fs::read(&park_path).unwrap();
         assert!(matches!(
             RuntimeEventJournalV1::start_process2_with_context_and_stored_restart_cut_v1(
                 &fixture.journal_path,
@@ -7146,10 +7020,17 @@ mod tests {
                 "legacy Cut/Park-only process-2 gate lacks the stored ParkedAck certificate"
             ))
         ));
+        let journal_metadata_after = fs::metadata(&fixture.journal_path).unwrap();
+        assert_eq!(fs::read(&fixture.journal_path).unwrap(), journal_before);
         assert_eq!(
             read_exact_events(&File::open(&fixture.journal_path).unwrap()).unwrap(),
-            before
+            events_before
         );
+        assert_eq!(journal_metadata_after.dev(), journal_metadata_before.dev());
+        assert_eq!(journal_metadata_after.ino(), journal_metadata_before.ino());
+        assert_eq!(journal_metadata_after.len(), journal_metadata_before.len());
+        assert_eq!(fs::read(cut_path).unwrap(), cut_before);
+        assert_eq!(fs::read(park_path).unwrap(), park_before);
     }
 
     #[test]

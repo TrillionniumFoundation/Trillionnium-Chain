@@ -687,7 +687,7 @@ impl LocalRestartParkV1 {
 
     /// Structural convenience only; unlike [`Self::validate_for_restart_body`]
     /// this does not authenticate FleetStart and must never gate authority.
-    #[allow(dead_code)]
+    #[cfg(test)]
     pub(crate) fn has_target_park_shape_for(&self, restart_cut_body: &RestartCutBodyV1) -> bool {
         self.role == RestartParkRoleV1::Target
             && self.local_validator == restart_cut_body.target_validator
@@ -700,7 +700,7 @@ impl LocalRestartParkV1 {
 
     /// Structural convenience only; the authoritative fact join is
     /// [`Self::validate_for_restart_body`].
-    #[allow(dead_code)]
+    #[cfg(test)]
     pub(crate) fn has_peer_park_shape_for(&self, restart_cut_body: &RestartCutBodyV1) -> bool {
         self.role == RestartParkRoleV1::Peer
             && self.local_validator != restart_cut_body.target_validator

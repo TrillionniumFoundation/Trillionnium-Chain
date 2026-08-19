@@ -43,7 +43,6 @@ pub const MAX_CONSENSUS_RUN_BLOCKS_V1: u64 = 10_000_000;
 /// comparison data into a report which appears to have crossed Core, Safety,
 /// Application, signer, checkpoint, and event-journal authority boundaries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[allow(dead_code)] // Frozen before the continuous runtime owner is wired.
 pub(crate) struct ConsensusRunTerminalFactsV1 {
     submitted_height: u64,
     committed_height: u64,
@@ -83,7 +82,6 @@ impl ConsensusRunTerminalFactsV1 {
     /// Node terminal construction; no runner-supplied scalar can enter this
     /// projection. Height ordering is checked again at the report boundary so
     /// `submitted < highQC` or `highQC < finalized` can never be normalized.
-    #[allow(dead_code)] // Wired only by the still-fail-closed process loop.
     pub(crate) fn from_continuous_terminal(
         terminal: &ContinuousValidatorTerminalCutV0,
     ) -> Result<Self> {
@@ -145,7 +143,6 @@ impl ConsensusRunTerminalFactsV1 {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[allow(dead_code)] // Frozen before the continuous runtime owner is wired.
 pub(crate) struct ConsensusRunBoundsV1 {
     pub(crate) requested_duration_seconds: u64,
     pub(crate) requested_max_blocks: u64,
@@ -599,7 +596,6 @@ impl ConsensusReportContextV1 {
 /// Creates the signed terminal value. The caller must already have obtained
 /// every field from fresh authority readback; this function provides no such
 /// authority and is intentionally unavailable outside this crate.
-#[allow(dead_code)] // Frozen before the continuous runtime owner is wired.
 pub(crate) fn sign_consensus_run_report_v1(
     config: &LoadedValidatorConfig,
     bounds: ConsensusRunBoundsV1,
@@ -939,7 +935,6 @@ fn exact_ordinary_tip(ordinary_start_height: u64, ordinary_count: u64) -> Result
 
 /// Persists one already signed terminal report without replacement, then
 /// verifies its exact fresh readback before returning.
-#[allow(dead_code)] // Frozen before the continuous runtime owner is wired.
 pub(crate) fn write_consensus_run_report_v1(
     path: &Path,
     report: &SignedConsensusRunReportV1,

@@ -36,9 +36,7 @@ pub const RUNTIME_FINAL_STATE_BODY_HASH_DOMAIN_V1: &[u8] =
 pub const RUNTIME_FINAL_STATE_SIGNATURE_DOMAIN_V1: &[u8] =
     b"trnm.poco-g3.runtime-final-state.signature.v3";
 
-#[allow(dead_code)]
 const RUNTIME_METRICS_FILE: &str = "runtime-metrics.json";
-#[allow(dead_code)]
 const RUNTIME_FINAL_STATE_FILE: &str = "runtime-final-state.json";
 const MAX_RUNTIME_EVIDENCE_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_FINALITY_SAMPLES: usize = 1_000_000;
@@ -348,7 +346,6 @@ impl SignedRuntimeFinalStateV1 {
     }
 }
 
-#[allow(dead_code)]
 pub(crate) struct RuntimeMetricsFactsV1 {
     pub(crate) measurement_started_at: String,
     pub(crate) measurement_ended_at: String,
@@ -361,7 +358,6 @@ pub(crate) struct RuntimeMetricsFactsV1 {
     pub(crate) network_rx_bytes: u64,
 }
 
-#[allow(dead_code)]
 pub(crate) struct RuntimeFinalStateFactsV1 {
     pub(crate) finalized_nonempty_ordinary_block_count: u64,
     pub(crate) double_sign_events: u64,
@@ -370,7 +366,6 @@ pub(crate) struct RuntimeFinalStateFactsV1 {
     pub(crate) safety_halt_violations: u64,
 }
 
-#[allow(dead_code)]
 pub(crate) fn sign_runtime_metrics_v1(
     config: &LoadedValidatorConfig,
     clean_stopped_journal: &CleanStoppedJournalCutV1,
@@ -442,7 +437,6 @@ pub(crate) fn sign_runtime_metrics_v1(
     Ok(evidence)
 }
 
-#[allow(dead_code)]
 pub(crate) fn sign_runtime_final_state_v1(
     config: &LoadedValidatorConfig,
     clean_stopped_journal: &CleanStoppedJournalCutV1,
@@ -534,7 +528,6 @@ pub(crate) fn sign_runtime_final_state_v1(
     Ok(evidence)
 }
 
-#[allow(dead_code)]
 pub(crate) fn write_runtime_metrics_v1(
     config: &LoadedValidatorConfig,
     evidence: &SignedRuntimeMetricsV1,
@@ -550,7 +543,6 @@ pub(crate) fn write_runtime_metrics_v1(
     Ok(target)
 }
 
-#[allow(dead_code)]
 pub(crate) fn write_runtime_final_state_v1(
     config: &LoadedValidatorConfig,
     evidence: &SignedRuntimeFinalStateV1,
@@ -856,7 +848,6 @@ fn canonical_utc_timestamp(value: &str) -> bool {
     (1..=maximum_day).contains(&day)
 }
 
-#[allow(dead_code)]
 fn write_create_new_canonical<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let parent_path = path
         .parent()

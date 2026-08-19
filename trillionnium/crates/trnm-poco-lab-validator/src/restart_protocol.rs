@@ -395,7 +395,6 @@ impl RoutedRestartProtocolActionV1 {
 
     /// Consumes the already-minted sole `New` owner. This method does not
     /// construct or duplicate admission authority.
-    #[allow(dead_code)]
     pub(crate) fn into_admitted_message_v1(self) -> AdmittedRestartProtocolMessageV1 {
         self.admitted
     }
