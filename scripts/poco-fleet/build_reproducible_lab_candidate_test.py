@@ -227,6 +227,20 @@ def main() -> None:
             "RUSTFLAGS",
         }:
             raise AssertionError("isolated build environment is not closed")
+        remaps = closed_environment["RUSTFLAGS"].split()
+        expected_remaps = {
+            f"--remap-path-prefix={source}=/trnm-source",
+            f"--remap-path-prefix={root / 'target-control'}=/trnm-target",
+            f"--remap-path-prefix={cargo_home}=/trnm-cargo-home",
+            (
+                f"--remap-path-prefix={root / 'environment-target-control'}="
+                "/trnm-environment"
+            ),
+        }
+        if set(remaps) != expected_remaps:
+            raise AssertionError(
+                "isolated build environment does not remap every invocation-local root"
+            )
         with mock.patch.dict(
             builder.os.environ,
             {"PATH": "relative-bin:/usr/bin", "HOME": str(root)},
@@ -373,6 +387,7 @@ def main() -> None:
         "poco_g3_reproducible_builder_boundary_test=passed "
         f"ambient_overrides={len(ambient_controls)} git_authority_overrides=5 "
         "all_cargo_configs_rejected=true closed_build_environment=true "
+        "cargo_home_and_environment_paths_remapped=true "
         "candidate_inode_pinned=true strict_checker_required=true "
         "cargo_lock_verified_before_build=true schema3_provenance=true "
         "binary_inode_pinned=true output_inode_pinned=true "

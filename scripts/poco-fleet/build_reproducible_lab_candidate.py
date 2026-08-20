@@ -407,7 +407,9 @@ def isolated_build_environment(
         "LANG": "C",
         "RUSTFLAGS": (
             f"--remap-path-prefix={source}=/trnm-source "
-            f"--remap-path-prefix={target}=/trnm-target"
+            f"--remap-path-prefix={target}=/trnm-target "
+            f"--remap-path-prefix={cargo_home}=/trnm-cargo-home "
+            f"--remap-path-prefix={environment_root}=/trnm-environment"
         ),
     }
     rustup_home_value = os.environ.get("RUSTUP_HOME")
