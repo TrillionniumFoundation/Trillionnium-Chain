@@ -1,15 +1,17 @@
 schema_version = 1
-evidence_id = "trnm-poco-g3-stage0-contract-v1"
+evidence_id = "trnm-poco-g3-stage0-linux-x86_64-repro-d6bb34c1-20260820"
 protocol_id = "poco-bft-v0"
-classification = "contract-and-self-test-only"
+classification = "operator-observed-native-build-only"
 source_candidate_profile = "clean-commit-v1"
 aggregate_build_report_schema_version = 3
 completed_run_summary_schema_version = 3
 current_fleet_probe_profile = "probe-fleet-v1"
 current_run_readiness_profile = "run-readiness-v2"
+current_build_evidence_profile = "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1"
+current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820"
 
-# Contract and self-test truth only. None of these booleans is a field
-# observation, native build, validator run, or production claim.
+# Contract and self-test truth retained by the observed native-build record.
+# These booleans do not imply a validator run or production claim.
 source_candidate_clean_commit_contract = true
 source_candidate_empty_git_status_contract = true
 source_candidate_fresh_clone_byte_identity_self_tested = true
@@ -37,10 +39,19 @@ authenticated_process2_catchup_operational = false
 recovery_ready_operational = false
 recovery_start_operational = false
 
+# Two manual-SSH X230 builder invocations and two native macOS builder
+# invocations were observed for the exact d6bb34c1 candidate. Each invocation
+# performed two isolated Cargo builds. The records are content addressed and
+# deeply rehashed, but the runner identity and execution are not
+# cryptographically attested.
+reproducible_build_executed = true
+native_linux_x86_64_reproducible_build_observed = true
+native_cross_architecture_build_observed = true
+aggregate_build_report_emitted = true
+build_execution_cryptographically_attested = false
+
 # Operational and release claims remain false until fresh external evidence is
 # produced and accepted by the exact current contracts.
-reproducible_build_executed = false
-native_cross_architecture_build_observed = false
 validator_runtime_started = false
 validator_run_completed = false
 validator_run_7_completed = false

@@ -1,10 +1,12 @@
 # PoCO G3 Stage0 evidence truth
 
 This directory records the claim boundary for the bounded PoCO G3 lab lane.
-The current repository state supplies contracts and local self-tests only. It
-does not contain a current fleet observation, a native cross-architecture
-reproducible build, a validator run, or multihost evidence. The machine-readable
-boundary is [`status.toml`](status.toml).
+It now contains a content-addressed, operator-observed native Linux x86_64 and
+Apple arm64 reproducible-build record for the exact `d6bb34c1` source
+candidate. It does not contain a validator run, formal multihost evidence,
+performance evidence, or any production claim. The machine-readable boundary
+is [`status.toml`](status.toml), and the raw build records are under
+[`stage0-repro-d6bb34c1-20260820`](stage0-repro-d6bb34c1-20260820/README.md).
 
 ## Strict source and build contract
 
@@ -36,9 +38,17 @@ schema-3 no-fault summary must preserve these fields together with the empty
 status and `Cargo.lock` bindings. Legacy candidate/build/summary schemas fail
 closed on the current formal path.
 
-The Python builder and assembler tests exercise schema and failure boundaries;
-they deliberately do not execute either native release build. Therefore
-`reproducible_build_executed=false` remains authoritative.
+The Python builder and assembler tests still exercise schema and failure
+boundaries rather than proving external execution. Separately, the
+`d6bb34c1` evidence directory preserves two manual-SSH X230 builder reports and
+two native macOS builder reports. Each report covers two independent release
+builds; the role binaries agree byte-for-byte within each architecture, and a
+schema-3 aggregate binds both architectures to the same strict candidate and
+`Cargo.lock`. The source and common Linux ELF binaries pass the deep verifier.
+
+This remains an unsigned operator observation. It does not cryptographically
+attest runner identity, the physical host, or tool/cache use, and it must not be
+described as a hosted-CI or supply-chain-attested build.
 
 ## Readiness evidence boundary
 
@@ -78,7 +88,7 @@ restart.
 
 ## Claim boundary
 
-All current positive statements are contract or self-test statements. Native
-reproducible build, validator execution, signed multihost runtime evidence,
-fault completion, performance, LAN multihost, geo-WAN, and production claims
-remain false.
+Positive statements are limited to the retained contracts/self-tests and the
+scoped native reproducible-build observation. Validator execution, signed
+multihost runtime evidence, fault completion, performance, LAN multihost,
+geo-WAN, and production claims remain false.
