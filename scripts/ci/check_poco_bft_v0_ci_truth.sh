@@ -392,6 +392,8 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_reproducible_build_report_test=passed strict_candidate=true schema3_provenance=true both_architectures_bound=true legacy_candidate_rejected=true schema2_local_rejected=true'
 require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_stage0_reproducible_build_evidence_test=passed positives=3 negatives=51 shallow_binary_bytes_rehashed=false deep_binary_bytes_rehashed=true operator_recorded_execution=true cryptographic_execution_attestation=false'
+require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_network_smoke_fleet_test=passed positives=5 negatives=7'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58'
