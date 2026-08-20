@@ -388,7 +388,7 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_source_candidate_test=passed strict_profile=clean-commit-v1 fresh_clone_byte_identity=true git_tree_blob_binding=true commit_tree_binding=true cargo_lock_bound=true dirty_worktrees_rejected=true legacy_v1_audit_only=true actual_build_executed=false production_activation=false geo_wan=false'
 require_literal "$G3_LAN_FLEET_GATE" \
-  'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true'
+  'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true cargo_home_and_environment_paths_remapped=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_reproducible_build_report_test=passed strict_candidate=true schema3_provenance=true both_architectures_bound=true legacy_candidate_rejected=true schema2_local_rejected=true'
 require_literal "$G3_LAN_FLEET_GATE" \
