@@ -14,7 +14,7 @@ use trnm_consensus_types::{
     ValidatorId, ValidatorSet, ValidatorSetId, View, Vote,
 };
 
-use crate::{CoreError, Result};
+use crate::{CoreError, Result, CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CoreConfig {
@@ -164,6 +164,13 @@ impl CoreConfig {
         }
         if self.max_blocks < 4 {
             return Err(CoreError::InvalidConfig("max_blocks must be at least four"));
+        }
+        if self.consensus_parameters.max_consensus_message_bytes() as usize
+            > CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1
+        {
+            return Err(CoreError::InvalidConfig(
+                "one consensus message may exceed the retained-proposal hard cap",
+            ));
         }
         if self.max_observed_messages < self.validator_set.validators().len() {
             return Err(CoreError::InvalidConfig(

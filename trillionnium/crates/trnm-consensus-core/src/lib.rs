@@ -71,6 +71,22 @@ extern crate alloc;
 /// a later safety-kernel shadow comparison.
 pub const CORE_BOUNDED_EXACT_VALIDATED_PROPOSAL_RETENTION_V0: bool = true;
 
+/// Fixed process-local hard limit for the checked sum of exact proposal
+/// resources retained after application-Valid. The deterministic accounting
+/// unit is `SignedProposalV0::durable_validation_resource_size_v0`; bounded
+/// map/Arc metadata remains separately bounded by `CoreConfig::max_blocks`.
+pub const CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1: usize = 64 * 1024 * 1024;
+
+/// Every retained application-Valid proposal is charged before mutation and
+/// every tree removal releases the exact stored charge.
+pub const CORE_PROPOSAL_RETENTION_AGGREGATE_RESOURCE_BUDGET_ENFORCED_V1: bool = true;
+
+/// BlockTree clones share each immutable application-Valid proposal cache
+/// allocation. A transactional Core snapshot therefore does not deep-clone
+/// this cache entry; other separately bounded Core proposal carriers are not
+/// covered by this flag.
+pub const CORE_PROPOSAL_RETENTION_ARC_BACKED_V1: bool = true;
+
 /// Proposal retention does not mint application-validity authority.
 pub const CORE_PROPOSAL_RETENTION_APPLICATION_VALID_AUTHORITY_V0: bool = false;
 

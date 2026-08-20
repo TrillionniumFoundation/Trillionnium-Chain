@@ -59,6 +59,11 @@ pub enum CoreError {
         actual: usize,
         maximum: usize,
     },
+    ValidatedProposalRetentionBudgetExceeded {
+        retained: usize,
+        requested: usize,
+        maximum: usize,
+    },
     ValidationCapabilityMismatch {
         expected: BlockId,
         received: BlockId,
@@ -206,6 +211,14 @@ impl fmt::Display for CoreError {
             Self::PayloadValidationResourceTooLarge { actual, maximum } => write!(
                 formatter,
                 "payload-validation durable resource weight is too large: {actual} bytes exceeds {maximum} bytes",
+            ),
+            Self::ValidatedProposalRetentionBudgetExceeded {
+                retained,
+                requested,
+                maximum,
+            } => write!(
+                formatter,
+                "validated-proposal retention budget exceeded: {retained} retained bytes plus {requested} requested bytes exceeds {maximum} bytes",
             ),
             Self::ValidationCapabilityMismatch { expected, received } => write!(
                 formatter,

@@ -27,6 +27,9 @@ const GENESIS_TIMESTAMP_MS: u64 = 0;
 
 const _: () = {
     assert!(CORE_BOUNDED_EXACT_VALIDATED_PROPOSAL_RETENTION_V0);
+    assert!(CORE_PROPOSAL_RETENTION_AGGREGATE_RESOURCE_BUDGET_ENFORCED_V1);
+    assert!(CORE_PROPOSAL_RETENTION_ARC_BACKED_V1);
+    assert!(CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1 > 0);
     assert!(!CORE_PROPOSAL_RETENTION_APPLICATION_VALID_AUTHORITY_V0);
     assert!(!CORE_PROPOSAL_RETENTION_FINALITY_AUTHORITY_V0);
     assert!(!CORE_PROPOSAL_RETENTION_PERSISTENCE_AUTHORITY_V0);
@@ -6351,7 +6354,7 @@ fn exact_proposal_retention_preserves_unavailable_retry_then_freezes_valid_body(
     assert_eq!(unavailable.witness(), valid.witness());
     assert_ne!(unavailable, valid);
 
-    let mut tree = BlockTree::new(4);
+    let mut tree = BlockTree::new(4, usize::MAX);
     tree.insert_verified_proposal(&unavailable, &[])
         .expect("first source fixes only header and witness");
     assert_eq!(
@@ -6388,6 +6391,302 @@ fn exact_proposal_retention_preserves_unavailable_retry_then_freezes_valid_body(
 }
 
 #[test]
+fn aggregate_validated_proposal_retention_budget_is_exact_and_transactional() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let first = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"first aggregate retained proposal",
+    );
+    let second = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"second aggregate retained proposal",
+    );
+    let first_bytes = first
+        .durable_validation_resource_size_v0()
+        .expect("first deterministic retention charge");
+    let second_bytes = second
+        .durable_validation_resource_size_v0()
+        .expect("second deterministic retention charge");
+    let exact_total = first_bytes
+        .checked_add(second_bytes)
+        .expect("test retention total");
+    let maximum = exact_total - 1;
+
+    let mut tree = BlockTree::new(4, maximum);
+    for proposed in [&first, &second] {
+        tree.insert_verified_proposal(proposed, &[])
+            .expect("bounded sibling proposal inserts");
+    }
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&first, valid_result(&core, first.block()),)
+            .expect("first retained proposal fits"),
+        PayloadTransition::BecameValid,
+    );
+    assert_eq!(tree.retained_validated_proposal_bytes(), first_bytes);
+    assert!(tree.retention_accounting_is_exact_for_test());
+
+    let before_rejection = tree.clone();
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&second, valid_result(&core, second.block()),),
+        Err(CoreError::ValidatedProposalRetentionBudgetExceeded {
+            retained: first_bytes,
+            requested: second_bytes,
+            maximum,
+        }),
+    );
+    assert_eq!(
+        tree, before_rejection,
+        "budget failure mutates no tree fact"
+    );
+
+    tree.set_retention_budget_for_test(exact_total);
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&second, valid_result(&core, second.block()),)
+            .expect("the exact aggregate budget admits the second proposal"),
+        PayloadTransition::BecameValid,
+    );
+    assert_eq!(tree.retained_validated_proposal_bytes(), exact_total);
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&second, valid_result(&core, second.block()),)
+            .expect("an exact Valid replay is not charged twice"),
+        PayloadTransition::RepeatedTerminal,
+    );
+    assert_eq!(tree.retained_validated_proposal_bytes(), exact_total);
+    assert!(tree.retention_accounting_is_exact_for_test());
+}
+
+#[test]
+fn invalid_valid_overlay_is_rejected_before_retention_capacity() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"invalid overlay before retention capacity",
+    );
+    let block_id = proposed.block().id();
+    let wrong_parent = BlockId::new([0x6d; 32]);
+    assert_ne!(wrong_parent, proposed.block().header().parent_id());
+    let result = PayloadValidationResult::authorized_valid_v0(
+        valid_commitments(&core, proposed.block()),
+        artifact_ref_for_ids(block_id, wrong_parent),
+    );
+    let mut tree = BlockTree::new(4, 0);
+    tree.insert_verified_proposal(&proposed, &[])
+        .expect("invalid-overlay target header and witness insert");
+    let before = tree.clone();
+
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&proposed, result),
+        Err(CoreError::ConflictingPayloadValidation(block_id)),
+    );
+    assert_eq!(tree, before);
+}
+
+#[test]
+fn frozen_body_conflict_precedes_overlay_and_retention_errors() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let valid = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"frozen body conflict error order",
+    );
+    let conflicting = same_signed_envelope_with_body_bytes(&set, &valid, vec![0xff]);
+    assert_eq!(conflicting.block().id(), valid.block().id());
+    assert_eq!(conflicting.witness(), valid.witness());
+    assert_ne!(conflicting, valid);
+    let retained = valid
+        .durable_validation_resource_size_v0()
+        .expect("deterministic frozen proposal charge");
+    let mut tree = BlockTree::new(4, retained);
+    tree.insert_verified_proposal(&valid, &[])
+        .expect("frozen-body target inserts");
+    tree.record_payload_validation_for_proposal(&valid, valid_result(&core, valid.block()))
+        .expect("exact body becomes application-Valid");
+    let wrong_parent = BlockId::new([0x6e; 32]);
+    assert_ne!(wrong_parent, valid.block().header().parent_id());
+    let doubly_invalid = PayloadValidationResult::authorized_valid_v0(
+        valid_commitments(&core, valid.block()),
+        artifact_ref_for_ids(valid.block().id(), wrong_parent),
+    );
+    let before = tree.clone();
+
+    assert_eq!(
+        tree.record_payload_validation_for_proposal(&conflicting, doubly_invalid),
+        Err(CoreError::ConflictingBlock(valid.block().id())),
+    );
+    assert_eq!(tree, before);
+}
+
+#[test]
+fn authenticated_valid_restore_obeys_the_same_pre_mutation_retention_budget() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(
+        &set,
+        genesis_qc(&set),
+        1,
+        b"authenticated restore retention budget",
+    );
+    let requested = proposed
+        .durable_validation_resource_size_v0()
+        .expect("deterministic restore charge");
+    let maximum = requested - 1;
+    let overlay =
+        artifact_ref_for_ids(proposed.block().id(), proposed.block().header().parent_id())
+            .overlay();
+    let mut tree = BlockTree::new(4, maximum);
+    tree.insert_verified_proposal(&proposed, &[])
+        .expect("restore target header and witness insert");
+    let before_rejection = tree.clone();
+
+    assert_eq!(
+        tree.restore_authenticated_valid_overlay_v0(&proposed, overlay),
+        Err(CoreError::ValidatedProposalRetentionBudgetExceeded {
+            retained: 0,
+            requested,
+            maximum,
+        }),
+    );
+    assert_eq!(tree, before_rejection, "restore rejection is transactional");
+
+    tree.set_retention_budget_for_test(requested);
+    tree.restore_authenticated_valid_overlay_v0(&proposed, overlay)
+        .expect("the exact restore budget admits the immutable proposal");
+    assert_eq!(
+        tree.validated_proposal(proposed.block().id()),
+        Some(&proposed)
+    );
+    assert_eq!(tree.retained_validated_proposal_bytes(), requested);
+    assert!(tree.retention_accounting_is_exact_for_test());
+}
+
+#[test]
+fn finalization_pruning_releases_every_removed_retention_charge() {
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let p1 = proposal(&set, genesis_qc(&set), 1, b"pruned retained proposal one");
+    let p2 = proposal(
+        &set,
+        qc(&set, 1, 1, p1.block().id()),
+        2,
+        b"pruned retained proposal two",
+    );
+    let p3 = proposal(
+        &set,
+        qc(&set, 2, 2, p2.block().id()),
+        3,
+        b"retained finalized proposal three",
+    );
+    let mut tree = BlockTree::new(8, usize::MAX);
+    for proposed in [&p1, &p2, &p3] {
+        tree.insert_verified_proposal(proposed, &[])
+            .expect("finalization path proposal inserts");
+        tree.record_payload_validation_for_proposal(
+            proposed,
+            valid_result(&core, proposed.block()),
+        )
+        .expect("finalization path proposal becomes application-Valid");
+    }
+    let p3_bytes = p3
+        .durable_validation_resource_size_v0()
+        .expect("deterministic surviving proposal charge");
+
+    tree.prune_below(3, p3.block().id(), &[])
+        .expect("finalization pruning releases the older exact bodies");
+    assert!(!tree.contains_header(p1.block().id()));
+    assert!(!tree.contains_header(p2.block().id()));
+    assert!(tree.contains_header(p3.block().id()));
+    assert_eq!(tree.retained_validated_proposal_bytes(), p3_bytes);
+    assert!(tree.retention_accounting_is_exact_for_test());
+}
+
+#[test]
+fn core_valid_callback_enforces_budget_and_retained_cache_clones_share_allocation() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"core callback retention budget");
+    let block_id = proposed.block().id();
+    let requested = proposed
+        .durable_validation_resource_size_v0()
+        .expect("deterministic callback charge");
+    let maximum = requested - 1;
+    let registration = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal registration persists");
+    let validation = release_persisted_effects(&mut core, registration);
+    let id = validation_effect(&validation);
+    let result = valid_result_for_effect(&core, &validation, id);
+    let before_safety = core.safety_state().clone();
+    let before_pending = core.pending_validation_count();
+    core.set_validated_proposal_retention_budget_for_test_v1(maximum);
+
+    assert_eq!(
+        core.step(Input::PayloadValidated { id, result }, &RootSignatures,),
+        Err(CoreError::ValidatedProposalRetentionBudgetExceeded {
+            retained: 0,
+            requested,
+            maximum,
+        }),
+    );
+    assert_eq!(core.safety_state(), &before_safety);
+    assert_eq!(core.pending_validation_count(), before_pending);
+    assert_eq!(core.retained_validated_proposal_bytes_for_test_v1(), 0);
+    assert!(core.retained_proposal_accounting_is_exact_for_test_v1());
+
+    core.set_validated_proposal_retention_budget_for_test_v1(requested);
+    let effects = core
+        .step(Input::PayloadValidated { id, result }, &RootSignatures)
+        .expect("the exact retention budget admits the Valid callback");
+    assert!(matches!(
+        effects.as_slice(),
+        [Effect::PersistSafetyState(_)]
+    ));
+    assert_eq!(
+        core.retained_validated_proposal_bytes_for_test_v1(),
+        requested,
+    );
+    assert!(core.retained_proposal_accounting_is_exact_for_test_v1());
+    let cloned = core.clone();
+    assert!(core.retained_proposal_allocation_is_shared_for_test_v1(&cloned, block_id));
+    assert_eq!(
+        cloned.retained_validated_proposal_bytes_for_test_v1(),
+        requested,
+    );
+}
+
+#[test]
+fn core_config_rejects_one_message_larger_than_the_retention_hard_cap() {
+    let mut fields = consensus_parameters().fields();
+    fields.max_consensus_message_bytes =
+        u32::try_from(CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1 + 1)
+            .expect("the fixed retention cap fits below u32::MAX");
+    let parameters = ConsensusParametersV0::new(fields).expect("protocol parameters remain valid");
+    let set = validator_set_with_parameters(&parameters);
+    assert_eq!(
+        CoreConfig::new(
+            validator_id(1),
+            set,
+            parameters,
+            GENESIS_TIMESTAMP_MS,
+            32,
+            64,
+        ),
+        Err(CoreError::InvalidConfig(
+            "one consensus message may exceed the retained-proposal hard cap",
+        )),
+    );
+}
+
+#[test]
 fn deterministic_invalid_restore_cannot_freeze_or_replace_a_complete_proposal() {
     let set = validator_set();
     let proposed = proposal(
@@ -6396,7 +6695,7 @@ fn deterministic_invalid_restore_cannot_freeze_or_replace_a_complete_proposal() 
         1,
         b"deterministic invalid retention boundary",
     );
-    let mut tree = BlockTree::new(4);
+    let mut tree = BlockTree::new(4, usize::MAX);
     tree.insert_verified_proposal(&proposed, &[])
         .expect("proposal header and witness insert");
     assert_eq!(
@@ -6423,7 +6722,7 @@ fn exact_validated_path_is_bounded_and_requires_every_frozen_edge() {
     let p3 = proposal(&set, q2, 3, b"retained path three");
     let finalized = FinalizedTip::new(Height::new(0), View::new(0), GENESIS, GENESIS_TIMESTAMP_MS);
 
-    let mut complete = BlockTree::new(8);
+    let mut complete = BlockTree::new(8, usize::MAX);
     for proposal in [&p1, &p2, &p3] {
         complete
             .insert_verified_proposal(proposal, &[])
@@ -6441,7 +6740,7 @@ fn exact_validated_path_is_bounded_and_requires_every_frozen_edge() {
                 core.config().max_block_time_step_ms(),
             )
             .expect("three exact frozen proposals form the path"),
-        vec![p1.clone(), p2.clone(), p3.clone()],
+        vec![&p1, &p2, &p3],
     );
     assert!(complete
         .exact_validated_proposal_path(
@@ -6452,7 +6751,7 @@ fn exact_validated_path_is_bounded_and_requires_every_frozen_edge() {
         )
         .is_none());
 
-    let mut missing = BlockTree::new(8);
+    let mut missing = BlockTree::new(8, usize::MAX);
     for proposal in [&p1, &p2, &p3] {
         missing
             .insert_verified_proposal(proposal, &[])
@@ -6490,7 +6789,8 @@ fn exact_validated_path_is_bounded_and_requires_every_frozen_edge() {
 
 #[test]
 fn exact_proposal_retention_remains_bounded_and_honors_protected_nodes() {
-    let set = validator_set();
+    let (_config, core) = configured_core();
+    let set = core.config().validator_set().clone();
     let genesis = genesis_qc(&set);
     let first = proposal(&set, genesis.clone(), 1, b"protected retained proposal");
     let mut side_branches = vec![first.clone()];
@@ -6502,16 +6802,30 @@ fn exact_proposal_retention_remains_bounded_and_honors_protected_nodes() {
         ));
     }
 
-    let mut tree = BlockTree::new(4);
+    let mut tree = BlockTree::new(4, usize::MAX);
     for proposal in &side_branches[..4] {
         tree.insert_verified_proposal(proposal, &[])
             .expect("bounded side branch inserts");
+        tree.record_payload_validation_for_proposal(
+            proposal,
+            valid_result(&core, proposal.block()),
+        )
+        .expect("the retained side branch becomes application-Valid");
     }
+    let before_eviction = tree.retained_validated_proposal_bytes();
+    let evicted_bytes = side_branches[1]
+        .durable_validation_resource_size_v0()
+        .expect("deterministic evicted proposal charge");
     tree.insert_verified_proposal(&side_branches[4], &[first.block().id()])
         .expect("one unprotected side branch is evicted");
     assert!(tree.contains_header(first.block().id()));
     assert!(tree.contains_header(side_branches[4].block().id()));
     assert!(!tree.contains_header(side_branches[1].block().id()));
+    assert_eq!(
+        tree.retained_validated_proposal_bytes(),
+        before_eviction - evicted_bytes,
+    );
+    assert!(tree.retention_accounting_is_exact_for_test());
 }
 
 #[test]

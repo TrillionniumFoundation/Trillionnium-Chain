@@ -1,5 +1,6 @@
 use alloc::{
     collections::{BTreeMap, BTreeSet},
+    sync::Arc,
     vec::Vec,
 };
 
@@ -21,7 +22,8 @@ struct BlockNode {
     // existing application-Valid boundary. Unknown/Unavailable bodies remain
     // source-scoped and replaceable exactly as they were before this field
     // existed.
-    validated_proposal: Option<SignedProposalV0>,
+    validated_proposal: Option<Arc<SignedProposalV0>>,
+    validated_proposal_resource_bytes: usize,
     payload_status: PayloadStatus,
 }
 
@@ -52,13 +54,17 @@ pub(crate) enum Ancestry {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct BlockTree {
     max_blocks: usize,
+    max_retained_validated_proposal_bytes: usize,
+    retained_validated_proposal_bytes: usize,
     nodes: BTreeMap<BlockId, BlockNode>,
 }
 
 impl BlockTree {
-    pub(crate) fn new(max_blocks: usize) -> Self {
+    pub(crate) fn new(max_blocks: usize, max_retained_validated_proposal_bytes: usize) -> Self {
         Self {
             max_blocks,
+            max_retained_validated_proposal_bytes,
+            retained_validated_proposal_bytes: 0,
             nodes: BTreeMap::new(),
         }
     }
@@ -87,7 +93,7 @@ impl BlockTree {
             }
             if existing
                 .validated_proposal
-                .as_ref()
+                .as_deref()
                 .is_some_and(|validated| validated != proposal)
             {
                 return Err(CoreError::ConflictingBlock(block_id));
@@ -101,6 +107,7 @@ impl BlockTree {
                 header: header.clone(),
                 witness: witness.clone(),
                 validated_proposal: None,
+                validated_proposal_resource_bytes: 0,
                 payload_status: PayloadStatus::Unknown,
             },
         );
@@ -177,7 +184,34 @@ impl BlockTree {
     pub(crate) fn validated_proposal(&self, block_id: BlockId) -> Option<&SignedProposalV0> {
         self.nodes
             .get(&block_id)
+            .and_then(|node| node.validated_proposal.as_deref())
+    }
+
+    #[cfg(test)]
+    pub(crate) const fn retained_validated_proposal_bytes(&self) -> usize {
+        self.retained_validated_proposal_bytes
+    }
+
+    #[cfg(test)]
+    pub(crate) fn validated_proposal_arc_for_test(
+        &self,
+        block_id: BlockId,
+    ) -> Option<&Arc<SignedProposalV0>> {
+        self.nodes
+            .get(&block_id)
             .and_then(|node| node.validated_proposal.as_ref())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_retention_budget_for_test(&mut self, maximum: usize) {
+        self.max_retained_validated_proposal_bytes = maximum;
+    }
+
+    #[cfg(test)]
+    pub(crate) fn retention_accounting_is_exact_for_test(&self) -> bool {
+        self.nodes.values().try_fold(0_usize, |total, node| {
+            total.checked_add(node.validated_proposal_resource_bytes)
+        }) == Some(self.retained_validated_proposal_bytes)
     }
 
     /// Reconstructs the exact frozen proposal path from the finalized child
@@ -197,7 +231,7 @@ impl BlockTree {
         finalized: FinalizedTip,
         maximum: usize,
         max_block_time_step_ms: u64,
-    ) -> Option<Vec<SignedProposalV0>> {
+    ) -> Option<Vec<&SignedProposalV0>> {
         let path = bounded_parent_path_v0(target, finalized.block_id(), maximum, |block_id| {
             let node = self.nodes.get(&block_id)?;
             let proposal = node.validated_proposal.as_ref()?;
@@ -226,7 +260,7 @@ impl BlockTree {
                 return None;
             }
             previous_header = Some(header);
-            proposals.push(proposal.clone());
+            proposals.push(proposal);
         }
         Some(proposals)
     }
@@ -324,11 +358,34 @@ impl BlockTree {
         if result.is_valid()
             && node
                 .validated_proposal
-                .as_ref()
+                .as_deref()
                 .is_some_and(|validated| validated != proposal)
         {
             return Err(CoreError::ConflictingBlock(block_id));
         }
+        if result.artifact_ref().is_some_and(|artifact| {
+            artifact.overlay().block_id() != block_id
+                || artifact.overlay().parent_block_id() != node.header.parent_id()
+        }) {
+            return Err(CoreError::ConflictingPayloadValidation(block_id));
+        }
+
+        let requested_resource_bytes = if result.is_valid()
+            && node.validated_proposal.is_none()
+            && match node.payload_status {
+                PayloadStatus::Unknown => true,
+                PayloadStatus::Valid(existing) => result
+                    .artifact_ref()
+                    .is_some_and(|artifact| artifact.overlay() == existing),
+                PayloadStatus::DeterministicallyInvalid => false,
+            } {
+            Some(proposal.durable_validation_resource_size_v0()?)
+        } else {
+            None
+        };
+        let next_retained = requested_resource_bytes
+            .map(|requested| self.checked_retained_total(requested))
+            .transpose()?;
 
         let transition = self.record_payload_validation(block_id, result)?;
         if result.is_valid()
@@ -342,10 +399,20 @@ impl BlockTree {
                 .nodes
                 .get_mut(&block_id)
                 .ok_or(CoreError::MissingBlock(block_id))?;
-            match &node.validated_proposal {
+            match node.validated_proposal.as_deref() {
                 Some(existing) if existing == proposal => {}
                 Some(_) => return Err(CoreError::ConflictingBlock(block_id)),
-                None => node.validated_proposal = Some(proposal.clone()),
+                None => {
+                    let requested =
+                        requested_resource_bytes.ok_or(CoreError::ArithmeticOverflow(
+                            "missing validated-proposal retention charge",
+                        ))?;
+                    node.validated_proposal = Some(Arc::new(proposal.clone()));
+                    node.validated_proposal_resource_bytes = requested;
+                    self.retained_validated_proposal_bytes = next_retained.ok_or(
+                        CoreError::ArithmeticOverflow("missing validated-proposal retained total"),
+                    )?;
+                }
             }
         }
         Ok(transition)
@@ -367,7 +434,7 @@ impl BlockTree {
         let block_id = proposal.block().id();
         let node = self
             .nodes
-            .get_mut(&block_id)
+            .get(&block_id)
             .ok_or(CoreError::MissingBlock(block_id))?;
         if proposal.block().header() != &node.header {
             return Err(CoreError::ConflictingBlock(block_id));
@@ -380,20 +447,50 @@ impl BlockTree {
         }
         if node
             .validated_proposal
-            .as_ref()
+            .as_deref()
             .is_some_and(|validated| validated != proposal)
         {
             return Err(CoreError::ConflictingBlock(block_id));
         }
+        let needs_install = node.validated_proposal.is_none()
+            && match node.payload_status {
+                PayloadStatus::Unknown => true,
+                PayloadStatus::Valid(existing) => existing == overlay,
+                PayloadStatus::DeterministicallyInvalid => false,
+            };
+        let requested_resource_bytes = needs_install
+            .then(|| proposal.durable_validation_resource_size_v0())
+            .transpose()?;
+        let next_retained = requested_resource_bytes
+            .map(|requested| self.checked_retained_total(requested))
+            .transpose()?;
+        let node = self
+            .nodes
+            .get_mut(&block_id)
+            .ok_or(CoreError::MissingBlock(block_id))?;
         match node.payload_status {
             PayloadStatus::Unknown => {
                 node.payload_status = PayloadStatus::Valid(overlay);
-                node.validated_proposal = Some(proposal.clone());
+                let requested = requested_resource_bytes.ok_or(CoreError::ArithmeticOverflow(
+                    "missing restored-proposal retention charge",
+                ))?;
+                node.validated_proposal = Some(Arc::new(proposal.clone()));
+                node.validated_proposal_resource_bytes = requested;
+                self.retained_validated_proposal_bytes = next_retained.ok_or(
+                    CoreError::ArithmeticOverflow("missing restored-proposal retained total"),
+                )?;
                 Ok(())
             }
             PayloadStatus::Valid(existing) if existing == overlay => {
                 if node.validated_proposal.is_none() {
-                    node.validated_proposal = Some(proposal.clone());
+                    let requested = requested_resource_bytes.ok_or(
+                        CoreError::ArithmeticOverflow("missing restored-proposal retention charge"),
+                    )?;
+                    node.validated_proposal = Some(Arc::new(proposal.clone()));
+                    node.validated_proposal_resource_bytes = requested;
+                    self.retained_validated_proposal_bytes = next_retained.ok_or(
+                        CoreError::ArithmeticOverflow("missing restored-proposal retained total"),
+                    )?;
                 }
                 Ok(())
             }
@@ -690,12 +787,40 @@ impl BlockTree {
         finalized_height: u64,
         finalized_id: BlockId,
         protected: &[BlockId],
-    ) {
-        self.nodes.retain(|block_id, node| {
-            *block_id == finalized_id
-                || node.header.height().get() >= finalized_height
-                || protected.contains(block_id)
-        });
+    ) -> Result<()> {
+        let removed: Vec<_> = self
+            .nodes
+            .iter()
+            .filter_map(|(block_id, node)| {
+                (*block_id != finalized_id
+                    && node.header.height().get() < finalized_height
+                    && !protected.contains(block_id))
+                .then_some(*block_id)
+            })
+            .collect();
+        let released = removed.iter().try_fold(0_usize, |total, block_id| {
+            total
+                .checked_add(
+                    self.nodes
+                        .get(block_id)
+                        .ok_or(CoreError::MissingBlock(*block_id))?
+                        .validated_proposal_resource_bytes,
+                )
+                .ok_or(CoreError::ArithmeticOverflow(
+                    "pruned validated-proposal resource bytes",
+                ))
+        })?;
+        let next_retained = self
+            .retained_validated_proposal_bytes
+            .checked_sub(released)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "pruned validated-proposal resource release",
+            ))?;
+        for block_id in removed {
+            self.nodes.remove(&block_id);
+        }
+        self.retained_validated_proposal_bytes = next_retained;
+        Ok(())
     }
 
     fn make_room(&mut self, protected: &[BlockId], incoming_parent: BlockId) -> Result<()> {
@@ -716,8 +841,47 @@ impl BlockTree {
             .min_by_key(|(block_id, node)| (node.header.height(), node.header.view(), **block_id))
             .map(|(block_id, _)| *block_id)
             .ok_or(CoreError::BlockTreeFull)?;
-        self.nodes.remove(&candidate);
+        self.remove_node(candidate)?;
         Ok(())
+    }
+
+    fn checked_retained_total(&self, requested: usize) -> Result<usize> {
+        let next = self
+            .retained_validated_proposal_bytes
+            .checked_add(requested)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "retained validated-proposal resource bytes",
+            ))?;
+        if next > self.max_retained_validated_proposal_bytes {
+            return Err(CoreError::ValidatedProposalRetentionBudgetExceeded {
+                retained: self.retained_validated_proposal_bytes,
+                requested,
+                maximum: self.max_retained_validated_proposal_bytes,
+            });
+        }
+        Ok(next)
+    }
+
+    fn remove_node(&mut self, block_id: BlockId) -> Result<Option<BlockNode>> {
+        let Some(resource_bytes) = self
+            .nodes
+            .get(&block_id)
+            .map(|node| node.validated_proposal_resource_bytes)
+        else {
+            return Ok(None);
+        };
+        let next_retained = self
+            .retained_validated_proposal_bytes
+            .checked_sub(resource_bytes)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "retained validated-proposal resource release",
+            ))?;
+        let node = self
+            .nodes
+            .remove(&block_id)
+            .ok_or(CoreError::MissingBlock(block_id))?;
+        self.retained_validated_proposal_bytes = next_retained;
+        Ok(Some(node))
     }
 
     fn authenticated_parent(
@@ -836,7 +1000,21 @@ fn edge_coordinates_match(
 
 #[cfg(test)]
 mod retention_tests {
-    use super::{bounded_parent_path_v0, BlockId};
+    use super::{bounded_parent_path_v0, BlockId, BlockTree, CoreError};
+
+    #[test]
+    fn retained_resource_addition_overflow_fails_before_mutation() {
+        let mut tree = BlockTree::new(4, usize::MAX);
+        tree.retained_validated_proposal_bytes = usize::MAX;
+        let before = tree.clone();
+        assert_eq!(
+            tree.checked_retained_total(1),
+            Err(CoreError::ArithmeticOverflow(
+                "retained validated-proposal resource bytes"
+            ))
+        );
+        assert_eq!(tree, before);
+    }
 
     #[test]
     fn bounded_parent_path_rejects_a_cycle_before_reaching_finality() {

@@ -28,7 +28,8 @@ use crate::{
     PayloadValidationRouteV0, PendingStandaloneQcSync, PendingTcHighQcSync, Result, SafetyHalt,
     SafetyState, SafetyStatePersistenceBindingV0, SafetyStatePersistenceV0,
     SafetyStateRecordContextV0, SafetyStateRecordLimitsV0, SignIntent,
-    StateSyncAnchorOrdinaryPromotionPersistenceV0, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
+    StateSyncAnchorOrdinaryPromotionPersistenceV0, ValidationId,
+    CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1, SAFETY_STATE_SCHEMA_VERSION,
 };
 
 type ObservationKey = (Epoch, View, ValidatorId);
@@ -7252,6 +7253,36 @@ impl Core {
         self.effects_for_native_finalization_applied_action_v0(action)
     }
 
+    #[cfg(test)]
+    pub(crate) const fn retained_validated_proposal_bytes_for_test_v1(&self) -> usize {
+        self.blocks.retained_validated_proposal_bytes()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn set_validated_proposal_retention_budget_for_test_v1(&mut self, maximum: usize) {
+        self.blocks.set_retention_budget_for_test(maximum);
+    }
+
+    #[cfg(test)]
+    pub(crate) fn retained_proposal_allocation_is_shared_for_test_v1(
+        &self,
+        other: &Self,
+        block_id: BlockId,
+    ) -> bool {
+        match (
+            self.blocks.validated_proposal_arc_for_test(block_id),
+            other.blocks.validated_proposal_arc_for_test(block_id),
+        ) {
+            (Some(left), Some(right)) => Arc::ptr_eq(left, right),
+            _ => false,
+        }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn retained_proposal_accounting_is_exact_for_test_v1(&self) -> bool {
+        self.blocks.retention_accounting_is_exact_for_test()
+    }
+
     /// Applies one deterministic input and returns ordered effects.
     pub fn step<V: SignatureVerifier>(
         &mut self,
@@ -8022,7 +8053,10 @@ impl Core {
         Self {
             config,
             safety,
-            blocks: BlockTree::new(max_blocks),
+            blocks: BlockTree::new(
+                max_blocks,
+                CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1,
+            ),
             pending_validations: BTreeMap::new(),
             pending_sync_validations: BTreeMap::new(),
             pending_persistence: None,
@@ -9838,7 +9872,7 @@ impl Core {
             }
             let protected = self.protected_blocks();
             self.blocks
-                .prune_below(finalized.height().get(), finalized.block_id(), &protected);
+                .prune_below(finalized.height().get(), finalized.block_id(), &protected)?;
         }
         Ok(())
     }
