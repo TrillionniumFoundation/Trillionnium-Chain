@@ -18,6 +18,11 @@ from typing import NoReturn
 CURRENT_SCHEMA_VERSION = 1
 CURRENT_PROFILE = "probe-fleet-v1"
 EXPECTED_HOST_COUNT = 6
+# Linux ``MemTotal`` is a managed-page count, not an immutable DIMM-size fact.
+# Keep the fixed x86_64 fleet fingerprint fail-closed while admitting at most
+# eight 4 KiB pages of boot/kernel reserved-page accounting drift.
+LINUX_X86_64_PAGE_BYTES = 4096
+LINUX_X86_64_MEMTOTAL_TOLERANCE_BYTES = 8 * LINUX_X86_64_PAGE_BYTES
 HISTORICAL_EVIDENCE_NAMES = {"lan-fleet-probe-2026-08-13.json"}
 HISTORICAL_ONLY_ERROR = (
     "the 2026-08-13 flat probe is historical/audit-only; "
@@ -93,6 +98,12 @@ def positive_decimal(value: object, field: str) -> int:
     if parsed <= 0 or str(parsed) != value:
         fail(f"{field} must be a canonical positive decimal string")
     return parsed
+
+
+def positive_inventory_integer(value: object, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        fail(f"{field} must be a positive TOML integer")
+    return value
 
 
 def nonempty_string(value: object, field: str) -> str:
@@ -217,9 +228,27 @@ def validate(document: dict[str, object], inventory: dict[str, object]) -> dict[
             "cpu_threads"
         ):
             fail(f"host {host_id} CPU thread count mismatch")
-        if positive_decimal(facts["memory_bytes"], f"host {host_id} memory_bytes") != host.get(
-            "memory_bytes"
-        ):
+        observed_memory = positive_decimal(
+            facts["memory_bytes"], f"host {host_id} memory_bytes"
+        )
+        expected_memory = positive_inventory_integer(
+            host.get("memory_bytes"), f"inventory host {host_id} memory_bytes"
+        )
+        if (host.get("os"), host.get("arch")) == ("linux", "x86_64"):
+            if expected_memory % LINUX_X86_64_PAGE_BYTES != 0:
+                fail(
+                    f"inventory host {host_id} memory_bytes must be "
+                    f"{LINUX_X86_64_PAGE_BYTES}-byte aligned"
+                )
+            memory_delta = observed_memory - expected_memory
+            if abs(memory_delta) > LINUX_X86_64_MEMTOTAL_TOLERANCE_BYTES:
+                fail(f"host {host_id} memory size mismatch")
+            if memory_delta % LINUX_X86_64_PAGE_BYTES != 0:
+                fail(
+                    f"host {host_id} Linux/x86_64 MemTotal drift must be "
+                    f"{LINUX_X86_64_PAGE_BYTES}-byte page aligned"
+                )
+        elif observed_memory != expected_memory:
             fail(f"host {host_id} memory size mismatch")
         # ``date +%s%N`` is not portable to every BSD date implementation.
         # The current producer therefore owns epoch_ns only as a non-empty raw
@@ -247,7 +276,10 @@ def main() -> None:
     print(
         "poco_g3_current_fleet_observation=passed "
         f"schema={CURRENT_PROFILE} hosts={report['host_count']} failures=0 "
-        "inventory_match=true build=false validator_run=false multihost_run=false "
+        "inventory_contract_match=true linux_x86_64_memtotal_match=page-bounded "
+        f"linux_x86_64_memtotal_tolerance_bytes={LINUX_X86_64_MEMTOTAL_TOLERANCE_BYTES} "
+        f"linux_x86_64_page_bytes={LINUX_X86_64_PAGE_BYTES} macos_memory_match=exact "
+        "build=false validator_run=false multihost_run=false "
         "geo_wan=false production=false"
     )
 

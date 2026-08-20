@@ -14,6 +14,7 @@ EXPECTED_TOPOLOGIES = {
     "thirty_one": 31,
     "one_hundred": 100,
 }
+LINUX_X86_64_PAGE_BYTES = 4096
 
 
 def fail(message: str) -> None:
@@ -72,8 +73,21 @@ def main() -> None:
         architecture_pairs.add((os_name, arch))
         if not isinstance(host.get("cpu_threads"), int) or host["cpu_threads"] <= 0:
             fail(f"{host_id} cpu_threads must be positive")
-        if not isinstance(host.get("memory_bytes"), int) or host["memory_bytes"] < 2**30:
+        memory_bytes = host.get("memory_bytes")
+        if (
+            isinstance(memory_bytes, bool)
+            or not isinstance(memory_bytes, int)
+            or memory_bytes < 2**30
+        ):
             fail(f"{host_id} memory_bytes is implausible")
+        if (
+            (os_name, arch) == ("linux", "x86_64")
+            and memory_bytes % LINUX_X86_64_PAGE_BYTES != 0
+        ):
+            fail(
+                f"{host_id} Linux/x86_64 memory_bytes must be "
+                f"{LINUX_X86_64_PAGE_BYTES}-byte aligned"
+            )
         validator_eligible = host.get("validator_eligible")
         roles = host.get("run_roles")
         if not isinstance(validator_eligible, bool):
@@ -115,7 +129,8 @@ def main() -> None:
     print(
         "poco_g3_lan_inventory=passed hosts=6 topology=7,31,100 "
         "validator_hosts=5 observer_hosts=1 observer_role=load-generator,evidence-collector,crypto-cross-verifier "
-        "network_scope=single-lan geo_wan_evidence=false heterogeneous=true"
+        "network_scope=single-lan geo_wan_evidence=false heterogeneous=true "
+        "linux_x86_64_memory_reference_page_aligned=true"
     )
 
 

@@ -160,7 +160,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
 
 readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_consensus_contract_self_test=passed vectors=2 mutations=4 deployment_inputs_absent=true'
-  'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 negatives=19 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
+  'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 bounded_memory_positives=3 negatives=25 inventory_alignment_negatives=2 linux_memtotal_tolerance_bytes=32768 linux_page_bytes=4096 macos_memory_exact=true historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
   'poco_g3_current_run_readiness_self_test=passed producer_positive=1 negatives=23 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
   'poco_g3_source_candidate_test=passed strict_profile=clean-commit-v1 fresh_clone_byte_identity=true git_tree_blob_binding=true commit_tree_binding=true cargo_lock_bound=true dirty_worktrees_rejected=true legacy_v1_audit_only=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true cargo_home_and_environment_paths_remapped=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true binary_inode_pinned=true output_inode_pinned=true unowned_replacement_preserved=true actual_build_executed=false production_activation=false geo_wan=false'
@@ -370,7 +370,7 @@ run_exact_python() {
 
 run_exact_python \
   "scripts/poco-fleet/validate_inventory.py" \
-  'poco_g3_lan_inventory=passed hosts=6 topology=7,31,100 validator_hosts=5 observer_hosts=1 observer_role=load-generator,evidence-collector,crypto-cross-verifier network_scope=single-lan geo_wan_evidence=false heterogeneous=true' \
+  'poco_g3_lan_inventory=passed hosts=6 topology=7,31,100 validator_hosts=5 observer_hosts=1 observer_role=load-generator,evidence-collector,crypto-cross-verifier network_scope=single-lan geo_wan_evidence=false heterogeneous=true linux_x86_64_memory_reference_page_aligned=true' \
   "$FLEET/inventory.toml"
 run_exact_python \
   "scripts/poco-fleet/check_topology.py" \

@@ -382,7 +382,7 @@ require_literal "$RECOVERY_GATE" 'unavailable_recovery=not_implemented'
 # current readiness fixtures, and the full Cut/Park/ParkedAck inert handoff
 # without accepting historical raw observations as current evidence.
 require_literal "$G3_LAN_FLEET_GATE" \
-  'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 negatives=19 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
+  'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 bounded_memory_positives=3 negatives=25 inventory_alignment_negatives=2 linux_memtotal_tolerance_bytes=32768 linux_page_bytes=4096 macos_memory_exact=true historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_current_run_readiness_self_test=passed producer_positive=1 negatives=23 historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
 require_literal "$G3_LAN_FLEET_GATE" \

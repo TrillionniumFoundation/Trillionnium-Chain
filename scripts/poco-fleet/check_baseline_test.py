@@ -12,6 +12,7 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import tomllib
 from unittest import mock
 
 
@@ -20,10 +21,20 @@ sys.dont_write_bytecode = True
 HERE = pathlib.Path(__file__).resolve().parent
 CHECKER = HERE / "check_baseline.py"
 PROBE = HERE / "probe_fleet.py"
+INVENTORY_VALIDATOR = HERE / "validate_inventory.py"
 HISTORICAL_NAME = "lan-fleet-probe-2026-08-13.json"
 HOST_COUNT = 6
 CPU_THREADS = 8
 MEMORY_BYTES = 16 * 1024**3
+LINUX_PAGE_BYTES = 4096
+LINUX_MEMTOTAL_TOLERANCE_BYTES = 32 * 1024
+MAC_HOST_ID = "host-5"
+REAL_OBSERVED_LINUX_DRIFTS = {
+    "host-0": -8192,
+    "host-1": -4096,
+    "host-2": -24576,
+    "host-3": 12288,
+}
 
 
 def load_probe():
@@ -46,14 +57,16 @@ def write_inventory(path: pathlib.Path) -> None:
     ]
     for index in range(HOST_COUNT):
         management = "local" if index == 0 else f"fixture-ssh-{index}"
+        os_name = "macos" if index == HOST_COUNT - 1 else "linux"
+        arch = "arm64" if os_name == "macos" else "x86_64"
         lines.extend(
             [
                 "[[hosts]]",
                 f'id = "host-{index}"',
                 f'management = "{management}"',
                 f'lan_ip = "10.23.0.{index + 1}"',
-                'os = "linux"',
-                'arch = "x86_64"',
+                f'os = "{os_name}"',
+                f'arch = "{arch}"',
                 f"cpu_threads = {CPU_THREADS}",
                 f"memory_bytes = {MEMORY_BYTES}",
                 "",
@@ -62,11 +75,16 @@ def write_inventory(path: pathlib.Path) -> None:
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def current_facts() -> dict[str, str]:
+def current_facts(os_name: str = "linux", arch: str = "x86_64") -> dict[str, str]:
+    kernel = (
+        "Darwin fixture-kernel arm64"
+        if os_name == "macos"
+        else "Linux fixture-kernel x86_64"
+    )
     return {
         "hostname": "fixture-host",
-        "kernel": "Linux fixture-kernel x86_64",
-        "arch": "x86_64",
+        "kernel": kernel,
+        "arch": arch,
         "cpu_threads": str(CPU_THREADS),
         "memory_bytes": str(MEMORY_BYTES),
         "epoch_ns": "fixture-raw-epoch-ns",
@@ -75,6 +93,9 @@ def current_facts() -> dict[str, str]:
 
 def produce_current_document(inventory: pathlib.Path) -> dict:
     probe = load_probe()
+    with inventory.open("rb") as source:
+        hosts = tomllib.load(source)["hosts"]
+    hosts_by_route = {host["management"]: host for host in hosts}
     monotonic_values = iter(range(1_000, 1_000 + HOST_COUNT * 2))
 
     class FakeTime:
@@ -86,12 +107,16 @@ def produce_current_document(inventory: pathlib.Path) -> dict:
         def time_ns() -> int:
             return 2_000
 
-    def fake_remote(*_args, **_kwargs) -> subprocess.CompletedProcess[str]:
-        stdout = "".join(f"{key}={value}\n" for key, value in current_facts().items())
+    def facts_for(host: dict) -> dict[str, str]:
+        return current_facts(host["os"], host["arch"])
+
+    def fake_remote(command, **_kwargs) -> subprocess.CompletedProcess[str]:
+        host = hosts_by_route[command[-2]]
+        stdout = "".join(f"{key}={value}\n" for key, value in facts_for(host).items())
         return subprocess.CompletedProcess([], 0, stdout=stdout, stderr="")
 
     probe.time = FakeTime
-    probe.local_probe = current_facts
+    probe.local_probe = lambda: facts_for(hosts[0])
     output = io.StringIO()
     with (
         mock.patch.object(probe.subprocess, "run", side_effect=fake_remote),
@@ -153,6 +178,15 @@ def mutate(base: dict, change) -> dict:
     return document
 
 
+def accept(base: dict, inventory: pathlib.Path, change) -> None:
+    result = run(mutate(base, change), inventory)
+    if result.returncode != 0:
+        raise AssertionError(
+            f"fleet observation positive control failed; rc={result.returncode}; "
+            f"stderr={result.stderr!r}"
+        )
+
+
 def reject(base: dict, inventory: pathlib.Path, change, expected: str) -> None:
     result = run(mutate(base, change), inventory)
     if result.returncode == 0 or expected not in result.stderr:
@@ -164,6 +198,15 @@ def reject(base: dict, inventory: pathlib.Path, change, expected: str) -> None:
 
 def observation(document: dict, host_id: str) -> dict:
     return next(item for item in document["observations"] if item["id"] == host_id)
+
+
+def set_memory_delta(document: dict, host_id: str, delta: int) -> None:
+    observation(document, host_id)["facts"]["memory_bytes"] = str(MEMORY_BYTES + delta)
+
+
+def apply_real_observed_linux_drifts(document: dict) -> None:
+    for host_id, delta in REAL_OBSERVED_LINUX_DRIFTS.items():
+        set_memory_delta(document, host_id, delta)
 
 
 def legacy_flat(document: dict) -> None:
@@ -193,6 +236,27 @@ def main() -> None:
         )
         if any(claim not in positive.stdout for claim in false_claims):
             raise AssertionError(f"missing fail-closed claim boundary: {positive.stdout!r}")
+        memory_contract_claims = (
+            "inventory_contract_match=true",
+            "linux_x86_64_memtotal_match=page-bounded",
+            "linux_x86_64_memtotal_tolerance_bytes=32768",
+            "linux_x86_64_page_bytes=4096",
+            "macos_memory_match=exact",
+        )
+        if any(claim not in positive.stdout for claim in memory_contract_claims):
+            raise AssertionError(f"missing bounded memory contract: {positive.stdout!r}")
+
+        accept(base, inventory, apply_real_observed_linux_drifts)
+        accept(
+            base,
+            inventory,
+            lambda d: set_memory_delta(d, "host-0", LINUX_MEMTOTAL_TOLERANCE_BYTES),
+        )
+        accept(
+            base,
+            inventory,
+            lambda d: set_memory_delta(d, "host-0", -LINUX_MEMTOTAL_TOLERANCE_BYTES),
+        )
 
         historical_path = run_historical_path(inventory)
         if historical_path.returncode == 0 or "historical/audit-only" not in historical_path.stderr:
@@ -239,6 +303,34 @@ def main() -> None:
                 lambda d: observation(d, "host-0")["facts"].update(memory_bytes="1"),
                 "memory size mismatch",
             ),
+            (
+                lambda d: set_memory_delta(
+                    d, "host-0", LINUX_MEMTOTAL_TOLERANCE_BYTES + LINUX_PAGE_BYTES
+                ),
+                "memory size mismatch",
+            ),
+            (
+                lambda d: set_memory_delta(
+                    d, "host-0", -(LINUX_MEMTOTAL_TOLERANCE_BYTES + LINUX_PAGE_BYTES)
+                ),
+                "memory size mismatch",
+            ),
+            (
+                lambda d: set_memory_delta(d, "host-0", 1),
+                "MemTotal drift must be 4096-byte page aligned",
+            ),
+            (
+                lambda d: set_memory_delta(d, "host-0", -1),
+                "MemTotal drift must be 4096-byte page aligned",
+            ),
+            (
+                lambda d: set_memory_delta(d, MAC_HOST_ID, LINUX_PAGE_BYTES),
+                "memory size mismatch",
+            ),
+            (
+                lambda d: set_memory_delta(d, MAC_HOST_ID, -LINUX_PAGE_BYTES),
+                "memory size mismatch",
+            ),
             (lambda d: observation(d, "host-0")["facts"].update(epoch_ns=""), "non-empty string"),
             (lambda d: observation(d, "host-1").update(id="host-0"), "unique inventory members"),
             (lambda d: d["observations"].reverse(), "canonical inventory order"),
@@ -252,9 +344,51 @@ def main() -> None:
         if duplicate_result.returncode == 0 or "duplicate JSON key" not in duplicate_result.stderr:
             raise AssertionError(duplicate_result.stderr)
 
+        misaligned_checker_inventory = pathlib.Path(directory) / "misaligned-checker.toml"
+        misaligned_checker_inventory.write_text(
+            inventory.read_text(encoding="utf-8").replace(
+                f"memory_bytes = {MEMORY_BYTES}",
+                f"memory_bytes = {MEMORY_BYTES + 1}",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        misaligned_checker = run(base, misaligned_checker_inventory)
+        if (
+            misaligned_checker.returncode == 0
+            or "inventory host host-0 memory_bytes must be 4096-byte aligned"
+            not in misaligned_checker.stderr
+        ):
+            raise AssertionError(misaligned_checker.stderr)
+
+        canonical_inventory = (HERE / "inventory.toml").read_text(encoding="utf-8")
+        misaligned_validator_inventory = pathlib.Path(directory) / "misaligned-validator.toml"
+        misaligned_validator_inventory.write_text(
+            canonical_inventory.replace(
+                "memory_bytes = 24781164544",
+                "memory_bytes = 24781164545",
+                1,
+            ),
+            encoding="utf-8",
+        )
+        misaligned_validator = subprocess.run(
+            [sys.executable, str(INVENTORY_VALIDATOR), str(misaligned_validator_inventory)],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if (
+            misaligned_validator.returncode == 0
+            or "Linux/x86_64 memory_bytes must be 4096-byte aligned"
+            not in misaligned_validator.stderr
+        ):
+            raise AssertionError(misaligned_validator.stderr)
+
     print(
         "poco_g3_current_fleet_observation_self_test=passed "
-        f"producer_positive=1 negatives={len(controls) + 2} historical_gate=false "
+        f"producer_positive=1 bounded_memory_positives=3 negatives={len(controls) + 2} "
+        "inventory_alignment_negatives=2 linux_memtotal_tolerance_bytes=32768 "
+        "linux_page_bytes=4096 macos_memory_exact=true historical_gate=false "
         "build=false validator_run=false multihost_run=false geo_wan=false production=false"
     )
 
