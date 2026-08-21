@@ -1,7 +1,43 @@
 # TRNM PoCO G3 Stage0 LAN evidence runbook
 
-Status: **contract/self-test only; no current readiness, build, validator,
-multihost, fault, performance, geo-WAN, or production observation**
+Status: **unsigned native build and X230 fresh-clone observations are tracked,
+but rust-src cross-time drift disproves reproducibility for the committed
+builder; a clean committed-tool v2 remap control kept v1 frozen and restored
+native Linux cross-time reproducibility without placing the fix in
+d6bb34c1/c971f1b0f; readiness, real validator runs, and production observations
+remain false**
+
+The tracked build-only observation is recorded in
+`docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/`. It covers two manual
+SSH X230 builder invocations and two native macOS builder invocations for the
+exact `d6bb34c1` candidate. It does not cryptographically attest runner
+identity or execution, and it does not close Stage0.
+
+The later
+`stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json` binds two
+byte-identical clean clones, their empty statuses, the same commit/tree,
+`Cargo.lock`, source archive, and transport bundle. Its first offline attempt
+found the job-local Cargo cache incomplete, so public dependency fetch was used
+before the formal offline rerun passed fmt, check, and the recorded key tests.
+This is also an unsigned manual-SSH observation: its runner identity is not
+cryptographically attested, its referenced logs are not bundled, and it did
+not run a real 7-validator campaign.
+
+The same candidate and rustc were later rebuilt on X230 after rust-src was
+installed. Each pair of internal builds still matched and its schema-3 report
+still said `reproducible_build=true`, but both binary hashes and sizes drifted
+from the 2026-08-20 baseline because the physical rust-src sysroot path entered
+`.rodata`. Treat `reproducible_build=true` as invocation-local identity only.
+
+The final control cloned a complete tool bundle with `git clone --no-local`,
+detached at exact clean commit `08efb8f4`, required empty status, and executed
+the tracked v2 wrapper while keeping the evidence-bound v1 bytes frozen. V2
+replaced only the native build seam, canonically remapped rust-src, and restored
+both historical hashes in two independent builds. This supports native Linux
+cross-time reproducibility through committed tool code. The unsigned manual-SSH
+runner is not cryptographically attested, the bundle is recorded but unbundled,
+the raw schema-3 report does not self-bind the tool hashes, and the fix remains
+absent from d6bb34c1/c971f1b0f.
 
 This runbook deliberately omits physical addresses, host identities,
 management routes, and machine-local paths. Those belong only in the
@@ -188,7 +224,27 @@ python3 scripts/poco-fleet/collect_no_fault_run_bundle_v1_test.py
 python3 scripts/poco-fleet/run_fault_restart_handoff_v1_test.py
 ```
 
-Until separate fresh evidence is produced and independently accepted, keep all
-of these false: reproducible build execution; validator runs at every planned
-size; signed multihost consensus; restart/fault completion; performance; LAN
-multihost evidence; geo-WAN evidence; and production activation/candidacy.
+The tracked unsigned observations make clean-clone fmt/check/key tests,
+byte-identical source candidates, and invocation-local binary identity true for
+the exact content-addressed `d6bb34c1` inputs. They do not make native
+cross-time reproducibility true. The first offline cache was not ready; public
+dependency fetch occurred; only the formal rerun was offline. The clean
+committed v2 tool control keeps v1 frozen and makes the scoped native Linux
+cross-time observation true. Until the fix is present in the exact source
+candidate and fresh candidate-contained evidence is independently accepted,
+keep all of these false: committed candidate remap fix; current
+fleet/readiness; complete deep-reverification
+bundle availability; real 7-, 31-, and 100-validator runs; signed multihost
+consensus; restart/fault completion; performance; LAN multihost evidence;
+geo-WAN evidence; and production activation/candidacy.
+
+Print the typed observation status independently of the fixture/self-test gate:
+
+```bash
+python3 scripts/poco-fleet/check_stage0_observation_status.py
+```
+
+The default report is structured and currently says
+`stage0_observation_complete=false`. Use `--require-complete` only where an
+incomplete observation must make the command non-zero. Neither mode promotes a
+contract/self-test transcript into an observation.

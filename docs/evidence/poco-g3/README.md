@@ -1,11 +1,18 @@
 # PoCO G3 Stage0 evidence truth
 
 This directory records the claim boundary for the bounded PoCO G3 lab lane.
-It now contains a content-addressed, operator-observed native Linux x86_64 and
-Apple arm64 reproducible-build record for the exact `d6bb34c1` source
-candidate. It does not contain a validator run, formal multihost evidence,
-performance evidence, or any production claim. The machine-readable boundary
-is [`status.toml`](status.toml), and the raw build records are under
+It now contains content-addressed native build records, an X230 fresh-clone
+fmt/check/key-test record, and a rust-src cross-time drift/control record for
+the exact `d6bb34c1` source candidate. The build records prove identity within
+individual builder invocations, but the later rust-src observation disproves
+cross-time reproducibility for unpatched v1. The final remap control kept the
+evidence-bound v1 builder byte-for-byte frozen and restored the historical
+hashes through the tracked v2 wrapper in clean tool commit `08efb8f4`. This
+supports scoped native Linux cross-time reproducibility, but the fix is still
+absent from d6bb34c1 and c971f1b0f. There is no validator run, formal
+multihost evidence, complete
+deep-reverification bundle, performance evidence, or production claim. The
+machine-readable boundary is [`status.toml`](status.toml), and raw records are under
 [`stage0-repro-d6bb34c1-20260820`](stage0-repro-d6bb34c1-20260820/README.md).
 
 ## Strict source and build contract
@@ -42,13 +49,31 @@ The Python builder and assembler tests still exercise schema and failure
 boundaries rather than proving external execution. Separately, the
 `d6bb34c1` evidence directory preserves two manual-SSH X230 builder reports and
 two native macOS builder reports. Each report covers two independent release
-builds; the role binaries agree byte-for-byte within each architecture, and a
+builds; the role binaries agree byte-for-byte within that invocation, and a
 schema-3 aggregate binds both architectures to the same strict candidate and
 `Cargo.lock`. The source and common Linux ELF binaries pass the deep verifier.
+However, a later invocation with the same candidate and rustc but newly
+installed rust-src produced different Linux hashes while still reporting
+`reproducible_build=true`. The physical rust-src sysroot path entered `.rodata`.
+Thus that field proves only invocation-local identity, not cross-time output
+stability.
 
-This remains an unsigned operator observation. It does not cryptographically
-attest runner identity, the physical host, or tool/cache use, and it must not be
-described as a hosted-CI or supply-chain-attested build.
+The final X230 control cloned a complete content-addressed Git bundle without a
+local-object shortcut, detached at exact clean tool commit `08efb8f4`, and
+executed the tracked v2 wrapper with empty checkout status. The evidence-bound
+v1 builder retained its historical SHA-256; v2 replaced only the native build
+seam, mapped the physical rust-src root to rustc's canonical `/rustc/<commit>`
+root, and restored both historical Linux hashes. This supports scoped native
+Linux cross-time reproducibility. The control remains unsigned manual-SSH
+evidence, its bundle is recorded but unbundled here, and the raw schema-3 build
+report does not self-bind the tool commit or wrapper hashes. The fix is also
+absent from the d6bb34c1 source candidate and c971f1b0f Stage0 truth base.
+
+These remain unsigned operator observations. The fresh-clone record preserves
+that its first offline cache was incomplete, public dependency fetch was used,
+and the formal rerun was offline. It does not cryptographically attest runner
+identity, the physical host, or those recorded tool/cache facts, and it must
+not be described as hosted-CI or supply-chain-attested evidence.
 
 ## Readiness evidence boundary
 
@@ -88,7 +113,12 @@ restart.
 
 ## Claim boundary
 
-Positive statements are limited to the retained contracts/self-tests and the
-scoped native reproducible-build observation. Validator execution, signed
-multihost runtime evidence, fault completion, performance, LAN multihost,
-geo-WAN, and production claims remain false.
+Positive statements are limited to the retained contracts/self-tests, the
+invocation-local native binary-identity observation, the fresh-clone gate
+record, the rust-src drift observation, and the unsigned committed-tool v2
+control. The drift disproves unpatched v1 cross-time stability; the clean
+committed v2 control restores it for native Linux. The raw build report still
+does not bind the tool source, and the d6bb34c1 candidate does not contain the
+repair. Validator execution, signed multihost runtime evidence, fault
+completion, performance, LAN multihost, geo-WAN, and production claims remain
+false.

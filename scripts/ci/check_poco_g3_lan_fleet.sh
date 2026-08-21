@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Stage 0 is deliberately local and read-only.  It compiles Python into a
-# temporary directory and runs fixture/self-test contracts only.  Cargo/Rust
-# integration, strict Clippy, SSH fleet execution, and evidence production are
-# later gates and are not represented as green here.
+# This Stage0 contract self-test is deliberately local and read-only. It
+# compiles Python into a temporary directory and runs fixture/self-test
+# contracts only. Cargo/Rust integration, strict Clippy, SSH fleet execution,
+# and evidence production are later gates and are not represented as green
+# here.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FLEET="$ROOT/scripts/poco-fleet"
@@ -16,7 +17,7 @@ export PYTHONNOUSERSITE=1
 unset PYTHONHOME PYTHONPATH
 
 fail() {
-  printf 'PoCO G3 LAN fleet Stage0 gate failed: %s\n' "$*" >&2
+  printf 'PoCO G3 LAN fleet Stage0 contract self-test gate failed: %s\n' "$*" >&2
   exit 1
 }
 
@@ -45,6 +46,8 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/check_signed_runtime_evidence_test.py"
   "scripts/poco-fleet/check_source_candidate.py"
   "scripts/poco-fleet/check_source_candidate_test.py"
+  "scripts/poco-fleet/check_stage0_observation_status.py"
+  "scripts/poco-fleet/check_stage0_observation_status_test.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence_test.py"
   "scripts/poco-fleet/check_topology.py"
@@ -109,6 +112,8 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/check_signed_runtime_evidence_test.py"
   "scripts/poco-fleet/check_source_candidate.py"
   "scripts/poco-fleet/check_source_candidate_test.py"
+  "scripts/poco-fleet/check_stage0_observation_status.py"
+  "scripts/poco-fleet/check_stage0_observation_status_test.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence_test.py"
   "scripts/poco-fleet/check_topology.py"
@@ -150,6 +155,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/check_source_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2_test.py"
+  "scripts/poco-fleet/check_stage0_observation_status_test.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence_test.py"
   "scripts/poco-fleet/assemble_reproducible_build_report_test.py"
   "scripts/poco-fleet/assemble_run_bundle_v1_test.py"
@@ -175,6 +181,7 @@ readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_g3_source_candidate_test=passed strict_profile=clean-commit-v1 fresh_clone_byte_identity=true git_tree_blob_binding=true commit_tree_binding=true cargo_lock_bound=true dirty_worktrees_rejected=true legacy_v1_audit_only=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_builder_boundary_test=passed ambient_overrides=12 git_authority_overrides=5 all_cargo_configs_rejected=true closed_build_environment=true cargo_home_and_environment_paths_remapped=true candidate_inode_pinned=true strict_checker_required=true cargo_lock_verified_before_build=true schema3_provenance=true binary_inode_pinned=true output_inode_pinned=true unowned_replacement_preserved=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_builder_v2_boundary_test=passed v1_evidence_bytes_unchanged=true rust_src_canonical_remap=true absent_rust_src_compatible=true malformed_and_duplicate_commit=fail-closed relative_sysroot=fail-closed symlink_rust_src=fail-closed unexpected_stderr=fail-closed actual_build_executed=false production_activation=false geo_wan=false'
+  'poco_g3_stage0_observation_status_test=passed positives=2 negatives=7 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
   'poco_g3_stage0_reproducible_build_evidence_test=passed positives=3 negatives=51 shallow_binary_bytes_rehashed=false deep_binary_bytes_rehashed=true operator_recorded_execution=true cryptographic_execution_attestation=false duplicate_json=fail-closed unchecked_pyc=ignored unsafe_paths=fail-closed symlinks=fail-closed actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_reproducible_build_report_test=passed strict_candidate=true schema3_provenance=true both_architectures_bound=true legacy_candidate_rejected=true schema2_local_rejected=true validator_binary_bytes_rehashed=true material_builder_bytes_rehashed=true input_inode_pinned=true output_inode_pinned=true unique_json=true actual_build_executed=false production_activation=false geo_wan=false'
   'poco_g3_run_bundle_assembler_v1_test=passed positives=13 negatives=14 no_fault_active_assembly=true mixed_plan_only=true mixed_active_assembly=fail-closed no_partial_output=true creates_runtime_evidence=false g3_complete=false geo_wan=false production_activation=false'
@@ -246,9 +253,11 @@ def require_all(relative: str, literals: tuple[str, ...]) -> None:
 gate_source = source("scripts/ci/check_poco_g3_lan_fleet.sh")
 for forbidden in ("docs/" + "evidence/", "2026-" + "08-13.json"):
     if forbidden in gate_source:
-        raise SystemExit(f"Stage0 gate regained forbidden historical input {forbidden!r}")
+        raise SystemExit(
+            f"Stage0 contract self-test gate regained forbidden historical input {forbidden!r}"
+        )
 if re.search(r"(?m)^[ \t]*(?:cargo|ssh)(?:[ \t]|$)", gate_source):
-    raise SystemExit("Stage0 gate must not execute Cargo or SSH")
+    raise SystemExit("Stage0 contract self-test gate must not execute Cargo or SSH")
 
 require_all(
     "scripts/poco-fleet/prepare_source_candidate.py",
@@ -397,4 +406,4 @@ for index in "${!NO_CARGO_SELF_TESTS[@]}"; do
 done
 
 printf '%s\n' \
-  "poco_g3_lan_fleet_stage0_gate=passed required_files=${#REQUIRED_FILES[@]} python_compile=${#PYTHON_FILES[@]} no_cargo_self_tests=${#NO_CARGO_SELF_TESTS[@]} readiness=current_fixture_self_tests_only strict_candidate=clean-commit-v1 strict_builder_schema=3 strict_aggregate_schema=3 commit_tree_blob_cargo_lock_bound=true cargo_executed=false ssh_executed=false evidence_generated=false validator_run=false multihost_observed=false fault_matrix_completed=false performance_evidence=false geo_wan=false production_activation=false strict_clippy_gate_closed=false dormant_clippy_warning_baseline=31_normal,13_test"
+  "poco_g3_lan_fleet_contract_self_test_gate=passed stage0_observation_complete=false observation_status_evaluated=false required_files=${#REQUIRED_FILES[@]} python_compile=${#PYTHON_FILES[@]} no_cargo_self_tests=${#NO_CARGO_SELF_TESTS[@]} readiness=current_fixture_self_tests_only strict_candidate=clean-commit-v1 strict_builder_schema=3 strict_aggregate_schema=3 commit_tree_blob_cargo_lock_bound=true cargo_executed=false ssh_executed=false evidence_generated=false validator_run=false multihost_observed=false fault_matrix_completed=false performance_evidence=false geo_wan=false production_activation=false strict_clippy_gate_closed=false dormant_clippy_warning_baseline=31_normal,13_test"

@@ -1,7 +1,7 @@
 schema_version = 1
-evidence_id = "trnm-poco-g3-stage0-linux-x86_64-repro-d6bb34c1-20260820"
+evidence_id = "trnm-poco-g3-stage0-observations-d6bb34c1-20260821"
 protocol_id = "poco-bft-v0"
-classification = "operator-observed-native-build-only"
+classification = "operator-observed-build-fresh-clone-and-committed-tool-remap-control-only"
 source_candidate_profile = "clean-commit-v1"
 aggregate_build_report_schema_version = 3
 completed_run_summary_schema_version = 3
@@ -9,6 +9,12 @@ current_fleet_probe_profile = "probe-fleet-v1"
 current_run_readiness_profile = "run-readiness-v2"
 current_build_evidence_profile = "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1"
 current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820"
+current_fresh_clone_gates_evidence_profile = "poco-g3-stage0-x230-fresh-clone-gates-observation-v1"
+current_fresh_clone_gates_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
+current_fresh_clone_gates_evidence_sha256 = "77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21"
+current_rust_src_cross_time_control_profile = "poco-g3-stage0-rust-src-cross-time-control-v3"
+current_rust_src_cross_time_control_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-cross-time-control-report.json"
+current_rust_src_cross_time_control_sha256 = "a00870446ea027a95786ee567c466b05339359ddd0261b10fc1eac1d4681ae63"
 
 # Contract and self-test truth retained by the observed native-build record.
 # These booleans do not imply a validator run or production claim.
@@ -39,16 +45,60 @@ authenticated_process2_catchup_operational = false
 recovery_ready_operational = false
 recovery_start_operational = false
 
-# Two manual-SSH X230 builder invocations and two native macOS builder
-# invocations were observed for the exact d6bb34c1 candidate. Each invocation
-# performed two isolated Cargo builds. The records are content addressed and
-# deeply rehashed, but the runner identity and execution are not
-# cryptographically attested.
+# Historical manual-SSH X230 and native macOS invocations each produced two
+# internally identical builds. A later X230 rerun with the same d6bb34c1 input
+# and rustc, but with rust-src installed, drifted from the historical Linux
+# hashes because the physical rust-src sysroot path entered .rodata. Therefore
+# invocation-local identity remains observed and exposes the unpatched v1
+# drift. A later clean committed v2 tool control restores the historical bytes.
+reproducible_builder_invocation_executed = true
+within_invocation_binary_identity_observed = true
 reproducible_build_executed = true
 native_linux_x86_64_reproducible_build_observed = true
+native_cross_time_reproducible_build_observed = true
 native_cross_architecture_build_observed = true
 aggregate_build_report_emitted = true
 build_execution_cryptographically_attested = false
+rust_src_cross_time_drift_observed = true
+rust_src_physical_sysroot_path_in_rodata_observed = true
+rust_src_drift_report_claims_reproducible_build = true
+
+# An unsigned X230 control cloned the complete committed-tool bundle without a
+# local-object shortcut, detached at exact commit 08efb8f4 with empty status,
+# and executed the tracked v2 wrapper. The evidence-bound v1 builder remained
+# byte-for-byte frozen; v2 replaced only its native build seam, canonically
+# remapped rust-src, and restored both historical Linux hashes. The committed
+# tool control supports native Linux cross-time reproducibility, but d6bb34c1
+# and c971f1b0f do not contain the fix, and raw schema 3 does not bind tool
+# source or cryptographically attest the runner.
+rust_src_remap_control_observed = true
+committed_rust_src_remap_builder_control_observed = true
+rust_src_remap_control_restored_historical_hashes = true
+rust_src_remap_control_exit_zero = true
+rust_src_remap_control_report_claims_reproducible_build = true
+rust_src_remap_code_under_test_committed = true
+committed_candidate_rust_src_remap_fix_observed = false
+rust_src_remap_in_d6bb_candidate = false
+rust_src_remap_in_stage0_truth_base = false
+rust_src_remap_tool_source_bound_to_raw_report = false
+rust_src_remap_runner_identity_cryptographically_attested = false
+
+# A later unsigned manual-SSH X230 observation bound two byte-identical fresh
+# clones to the same d6bb34c1 tree, Cargo.lock, source archive, and transport
+# bundle. The first offline attempt found the job-local Cargo cache incomplete;
+# public dependency fetch was used before the formal offline rerun passed.
+fresh_clone_gates_observed = true
+fresh_clone_source_candidates_byte_identical_observed = true
+fresh_clone_fmt_observed = true
+fresh_clone_check_observed = true
+key_tests_observed = true
+fresh_clone_gates_initial_offline_cache_ready = false
+fresh_clone_gates_public_dependency_fetch_used = true
+fresh_clone_gates_formal_rerun_offline = true
+fresh_clone_gates_paid_ci_used = false
+fresh_clone_gates_runner_identity_cryptographically_attested = false
+fresh_clone_gates_logs_bundled = false
+stage0_deep_reverification_bundle_available = false
 
 # Operational and release claims remain false until fresh external evidence is
 # produced and accepted by the exact current contracts.

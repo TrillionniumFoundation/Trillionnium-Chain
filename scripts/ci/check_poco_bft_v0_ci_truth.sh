@@ -11,6 +11,12 @@ G3_SOURCE_CANDIDATE_PREPARE="$ROOT/scripts/poco-fleet/prepare_source_candidate.p
 G3_SOURCE_CANDIDATE_CHECK="$ROOT/scripts/poco-fleet/check_source_candidate.py"
 G3_REPRODUCIBLE_CANDIDATE_BUILD="$ROOT/scripts/poco-fleet/build_reproducible_lab_candidate.py"
 G3_REPRODUCIBLE_BUILD_REPORT_ASSEMBLER="$ROOT/scripts/poco-fleet/assemble_reproducible_build_report.py"
+G3_STAGE0_OBSERVATION_STATUS="$ROOT/scripts/poco-fleet/check_stage0_observation_status.py"
+G3_STAGE0_STATUS="$ROOT/docs/evidence/poco-g3/status.toml"
+G3_FRESH_CLONE_GATES_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
+G3_RUST_SRC_CROSS_TIME_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-cross-time-control-report.json"
+G3_RUST_SRC_DRIFT_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-drift-build-report.json"
+G3_RUST_SRC_REMAP_CONTROL_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-remapped-v2-committed-control-build-report.json"
 G3_FAULT_RESTART_RUNNER="$ROOT/scripts/poco-fleet/run_fault_restart_fleet_v1.py"
 G3_FAULT_RESTART_HANDOFF_TEST="$ROOT/scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
 G3_LAB_CONSENSUS_RUNTIME="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
@@ -79,7 +85,9 @@ match = re.search(
     text,
 )
 if match is None:
-    raise SystemExit("G3 Stage0 gate lost its exact REQUIRED_FILES authority array")
+    raise SystemExit(
+        "G3 Stage0 contract self-test gate lost its exact REQUIRED_FILES authority array"
+    )
 paths = []
 for line in match.group("body").splitlines():
     item = re.fullmatch(r'  "([^"]+)"', line)
@@ -95,7 +103,7 @@ if not paths:
 print("\n".join(paths))
 PY
   )"; then
-    fail "cannot parse the G3 Stage0 authority set"
+    fail "cannot parse the G3 Stage0 contract self-test authority set"
   fi
   while IFS= read -r relative; do
     require_file "$ROOT/$relative"
@@ -206,6 +214,12 @@ for required in \
   "$POCO_WORKFLOW" \
   "$LEGACY_WORKFLOW" \
   "$RECOVERY_GATE" \
+  "$G3_STAGE0_OBSERVATION_STATUS" \
+  "$G3_STAGE0_STATUS" \
+  "$G3_FRESH_CLONE_GATES_REPORT" \
+  "$G3_RUST_SRC_CROSS_TIME_REPORT" \
+  "$G3_RUST_SRC_DRIFT_REPORT" \
+  "$G3_RUST_SRC_REMAP_CONTROL_REPORT" \
   "$LEGACY_PREFLIGHT" \
   "$CORE_SOURCE" \
   "$CORE_TESTS" \
@@ -236,11 +250,16 @@ for required in \
   require_file "$required"
 done
 
-# The Stage0 gate is itself candidate-index authority, and every source in its
-# canonical REQUIRED_FILES array must be present and byte-identical to the
-# candidate index. This prevents a dirty local fixture from validating truth
-# that the candidate commit would not ship.
+# The Stage0 contract self-test gate is itself candidate-index authority, and
+# every source in its canonical REQUIRED_FILES array must be present and
+# byte-identical to the candidate index. This prevents a dirty local fixture
+# from validating truth that the candidate commit would not ship.
 require_g3_gate_authority_index
+require_tracked "$G3_STAGE0_STATUS"
+require_tracked "$G3_FRESH_CLONE_GATES_REPORT"
+require_tracked "$G3_RUST_SRC_CROSS_TIME_REPORT"
+require_tracked "$G3_RUST_SRC_DRIFT_REPORT"
+require_tracked "$G3_RUST_SRC_REMAP_CONTROL_REPORT"
 require_legacy_recovery_archive_guard
 
 # A SafetyStore change must trigger both pull-request and main-push PoCO gates.
@@ -377,10 +396,10 @@ reject_literal "$RECOVERY_GATE" \
 require_literal "$RECOVERY_GATE" 'valid_recovery=not_implemented'
 require_literal "$RECOVERY_GATE" 'unavailable_recovery=not_implemented'
 
-# G3 Stage0 is a no-Cargo, no-SSH source/fixture contract. It must bind the
-# strict clean-commit candidate through schema-3 native/aggregate reports,
-# current readiness fixtures, and the full Cut/Park/ParkedAck inert handoff
-# without accepting historical raw observations as current evidence.
+# The G3 Stage0 contract gate is a no-Cargo, no-SSH source/fixture self-test. It
+# must bind the strict clean-commit candidate through schema-3 native/aggregate
+# reports, current readiness fixtures, and the full Cut/Park/ParkedAck inert
+# handoff without accepting historical raw observations as current evidence.
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_current_fleet_observation_self_test=passed producer_positive=1 bounded_memory_positives=3 negatives=25 inventory_alignment_negatives=2 linux_memtotal_tolerance_bytes=32768 linux_page_bytes=4096 macos_memory_exact=true historical_gate=false build=false validator_run=false multihost_run=false geo_wan=false production=false'
 require_literal "$G3_LAN_FLEET_GATE" \
@@ -394,6 +413,8 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_stage0_reproducible_build_evidence_test=passed positives=3 negatives=51 shallow_binary_bytes_rehashed=false deep_binary_bytes_rehashed=true operator_recorded_execution=true cryptographic_execution_attestation=false'
 require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_stage0_observation_status_test=passed positives=2 negatives=7 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
+require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_network_smoke_fleet_test=passed positives=5 negatives=7'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58'
@@ -402,11 +423,45 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_fault_restart_handoff_v1_test=passed target_only=true exit75_exact=true exit75_ssh_preserved=true schema2_exact=true p1_locator_digest_unlink=true peer_liveness=true single_p2_launch=true normal_artifacts_absent=true truth_bits_unchanged=true'
 require_literal "$G3_LAN_FLEET_GATE" \
-  'poco_g3_lan_fleet_stage0_gate=passed required_files='
+  'poco_g3_lan_fleet_contract_self_test_gate=passed stage0_observation_complete=false observation_status_evaluated=false required_files='
 require_literal "$G3_LAN_FLEET_GATE" \
   'readiness=current_fixture_self_tests_only strict_candidate=clean-commit-v1 strict_builder_schema=3 strict_aggregate_schema=3 commit_tree_blob_cargo_lock_bound=true'
 require_literal "$G3_LAN_FLEET_GATE" \
   'cargo_executed=false ssh_executed=false evidence_generated=false validator_run=false multihost_observed=false fault_matrix_completed=false performance_evidence=false geo_wan=false production_activation=false strict_clippy_gate_closed=false'
+reject_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_lan_fleet_stage0_gate=passed'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'DEFAULT_STATUS = ROOT / "docs/evidence/poco-g3/status.toml"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  '"fresh_clone_fmt_observed"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  '"fresh_clone_check_observed"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  '"key_tests_observed"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  '"validator_run_7_completed"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  '"--require-complete"'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'contract_self_tests_are_observations=false'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'native_reproducible_build='
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'rust_src_cross_time_control_bound=true'
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'rust_src_remap_code_under_test_committed='
+require_literal "$G3_STAGE0_OBSERVATION_STATUS" \
+  'committed_rust_src_remap_builder_control_observed='
+require_literal "$G3_STAGE0_STATUS" \
+  'current_rust_src_cross_time_control_profile = "poco-g3-stage0-rust-src-cross-time-control-v3"'
+require_literal "$G3_RUST_SRC_CROSS_TIME_REPORT" \
+  '"committed_v2_remap_control_observation": {'
+if ! g3_stage0_observation_status="$(python3 "$G3_STAGE0_OBSERVATION_STATUS")"; then
+  fail "typed G3 Stage0 observation status is invalid"
+fi
+expected_g3_stage0_observation_status='poco_g3_stage0_observation_status=reported stage0_observation_complete=false native_build_records_present=true within_invocation_binary_identity_observed=true native_reproducible_build=true native_build_cryptographically_attested=false rust_src_cross_time_control_bound=true rust_src_cross_time_control_sha256=a00870446ea027a95786ee567c466b05339359ddd0261b10fc1eac1d4681ae63 rust_src_drift_observed=true rust_src_remap_control_restored_historical_hashes=true rust_src_remap_code_under_test_committed=true committed_rust_src_remap_builder_control_observed=true committed_candidate_rust_src_remap_fix_observed=false rust_src_remap_in_d6bb_candidate=false rust_src_remap_tool_source_bound_to_raw_report=false fresh_clone_report_bound=true fresh_clone_report_sha256=77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21 fresh_clone_fmt_observed=true fresh_clone_check_observed=true key_tests_observed=true initial_offline_cache_ready=false public_dependency_fetch_used=true formal_rerun_offline=true fresh_clone_runner_cryptographically_attested=false fresh_clone_logs_bundled=false deep_reverification_bundle_available=false validator_run_7_completed=false contract_self_tests_are_observations=false missing=committed_candidate_rust_src_remap_fix_observed,current_fleet_probe_observed,current_run_readiness_observed,stage0_deep_reverification_bundle_available,validator_run_7_completed'
+[[ "$g3_stage0_observation_status" == "$expected_g3_stage0_observation_status" ]] \
+  || fail "typed G3 Stage0 observation truth differs from the expected incomplete boundary"
 require_literal "$G3_SOURCE_CANDIDATE_PREPARE" \
   'parser.add_argument("--require-clean", action="store_true")'
 require_literal "$G3_SOURCE_CANDIDATE_PREPARE" \
@@ -840,4 +895,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=unavailable_non_buildable_archive_source power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=unavailable_non_buildable_archive_source power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0_contract=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert g3_stage0_observation=unsigned-build-records,fresh-clone-gates,rust-src-cross-time-drift,committed-v2-remap-control,native-linux-cross-time-reproducible,candidate-remap-fix-absent,incomplete readiness=development_only,no_legacy_go'
