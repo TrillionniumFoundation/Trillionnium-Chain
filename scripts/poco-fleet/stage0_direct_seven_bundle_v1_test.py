@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import datetime
+import errno
+import fcntl
 import hashlib
 import json
 import os
@@ -957,6 +959,252 @@ def tree_entry_count_boundary_rejection(root: pathlib.Path) -> None:
     )
 
 
+def assert_descriptors_closed(descriptors: list[int], label: str) -> None:
+    for descriptor in descriptors:
+        try:
+            fcntl.fcntl(descriptor, fcntl.F_GETFD)
+        except OSError as error:
+            if error.errno != errno.EBADF:
+                raise
+        else:
+            raise AssertionError(f"{label} leaked fd {descriptor}")
+
+
+def fstat_fault_fd_controls(root: pathlib.Path) -> None:
+    checker_target = root / "checker-fstat-fault/child"
+    checker_target.mkdir(parents=True)
+    checker_baseline = len(os.listdir("/proc/self/fd"))
+    checker_seen: list[int] = []
+    checker_original = checker._FSTAT_V1
+
+    def checker_fstat(descriptor: int):
+        checker_seen.append(descriptor)
+        if len(checker_seen) == 2:
+            raise OSError(errno.EIO, "injected child fstat failure")
+        return checker_original(descriptor)
+
+    checker._FSTAT_V1 = checker_fstat
+    try:
+        try:
+            checker.pin_directory(checker_target, "injected checker pin")
+        except OSError as error:
+            if "injected child fstat failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("checker child fstat fault unexpectedly passed")
+    finally:
+        checker._FSTAT_V1 = checker_original
+    assert_descriptors_closed(checker_seen, "checker pin_directory")
+    if len(os.listdir("/proc/self/fd")) != checker_baseline:
+        raise AssertionError("checker pin_directory changed the fd baseline")
+
+    final_path = root / "assembler-fstat-fault-final"
+    output = assembler.OutputTree.create(final_path)
+    assembler_baseline = len(os.listdir("/proc/self/fd"))
+    assembler_seen: list[int] = []
+    assembler_original = assembler._FSTAT_V1
+
+    def assembler_fstat(descriptor: int):
+        assembler_seen.append(descriptor)
+        raise OSError(errno.EIO, "injected output child fstat failure")
+
+    assembler._FSTAT_V1 = assembler_fstat
+    try:
+        try:
+            output.pin_parent("nested/artifact.bin")
+        except OSError as error:
+            if "injected output child fstat failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("output child fstat fault unexpectedly passed")
+    finally:
+        assembler._FSTAT_V1 = assembler_original
+    assert_descriptors_closed(assembler_seen, "OutputTree.pin_parent")
+    if len(os.listdir("/proc/self/fd")) != assembler_baseline:
+        raise AssertionError("OutputTree.pin_parent changed the fd baseline")
+    if final_path.exists():
+        raise AssertionError("fstat failure published a final output")
+    output.close()
+
+
+def foreign_leaf_close_only_control(root: pathlib.Path) -> None:
+    source = root / "foreign-leaf-source.bin"
+    source.write_bytes(b"original staged bytes")
+    final_path = root / "foreign-leaf-final"
+    output = assembler.OutputTree.create(final_path)
+    foreign = b"foreign leaf secret"
+    held = output.path / "nested/held-original.bin"
+
+    def replace_target_leaf() -> None:
+        target = output.path / "nested/artifact.bin"
+        target.rename(held)
+        target.write_bytes(foreign)
+
+    try:
+        assert_system_exit(
+            lambda: assembler.copy_pinned(
+                source,
+                output,
+                "nested/artifact.bin",
+                "foreign leaf race",
+                _before_target_validation=replace_target_leaf,
+            ),
+            "changed during its pinned copy",
+        )
+        if (output.path / "nested/artifact.bin").read_bytes() != foreign:
+            raise AssertionError("copy failure removed the foreign leaf")
+        if held.read_bytes() != source.read_bytes():
+            raise AssertionError("copy failure removed the held original leaf")
+        if final_path.exists():
+            raise AssertionError("foreign leaf failure published a final output")
+    finally:
+        output.close()
+
+
+def unverified_publish_control(root: pathlib.Path) -> None:
+    final_path = root / "unverified-publish-final"
+    output = assembler.OutputTree.create(final_path)
+    try:
+        assert_system_exit(
+            output.publish,
+            "has not passed deep verification",
+        )
+        if final_path.exists():
+            raise AssertionError("unverified staging was published")
+        if not output.path.is_dir():
+            raise AssertionError("unverified staging quarantine was not retained")
+    finally:
+        output.close()
+
+    first = "11" * 16
+    second = "22" * 16
+    alias_final = root / f"{assembler.QUARANTINE_PREFIX}{first}"
+    tokens = iter((first, second))
+    original_token_hex = assembler.secrets.token_hex
+    assembler.secrets.token_hex = lambda _count: next(tokens)
+    alias_output: assembler.OutputTree | None = None
+    try:
+        alias_output = assembler.OutputTree.create(alias_final)
+        if alias_final.exists():
+            raise AssertionError("quarantine RNG alias created the final path")
+        if alias_output.path.name != f"{assembler.QUARANTINE_PREFIX}{second}":
+            raise AssertionError("quarantine RNG alias was not skipped")
+    finally:
+        assembler.secrets.token_hex = original_token_hex
+        if alias_output is not None:
+            alias_output.close()
+
+    unsafe_parent = root / "unsafe-publish-parent"
+    unsafe_parent.mkdir()
+    unsafe_parent.chmod(0o775)
+    unsafe_final = unsafe_parent / "final"
+    assert_system_exit(
+        lambda: assembler.OutputTree.create(unsafe_final),
+        "group/world writable without sticky-bit rename protection",
+    )
+    if unsafe_final.exists():
+        raise AssertionError("unsafe publication parent received a final path")
+
+
+def prepublish_failure_and_atomic_collision_controls(
+    source: dict[str, pathlib.Path | str], root: pathlib.Path
+) -> None:
+    failed_final = root / "prepublish-checker-failure-final"
+    before = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*"))
+    original_validate = checker.validate
+    original_unlink = os.unlink
+    original_rmdir = os.rmdir
+    delete_attempts: list[str] = []
+
+    def forbid_delete(*_args, **_kwargs):
+        delete_attempts.append("delete")
+        raise AssertionError("failure path attempted pathname deletion")
+
+    def fail_after_build(_bundle: pathlib.Path, *, emit: bool = True):
+        del emit
+        os.unlink = forbid_delete
+        os.rmdir = forbid_delete
+        raise SystemExit("injected checker-after-build failure")
+
+    checker.validate = fail_after_build
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, failed_final),
+            "injected checker-after-build failure",
+        )
+    finally:
+        checker.validate = original_validate
+        os.unlink = original_unlink
+        os.rmdir = original_rmdir
+    if delete_attempts:
+        raise AssertionError("assembler attempted automatic failure cleanup")
+    if failed_final.exists() or failed_final.is_symlink():
+        raise AssertionError("checker failure published a completion path")
+    retained = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*")) - before
+    if len(retained) != 1 or not (next(iter(retained)) / "manifest.json").is_file():
+        raise AssertionError("checker failure did not retain one built quarantine")
+
+    collision_final = root / "atomic-noreplace-collision-final"
+    before = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*"))
+    original_rename = assembler._RENAME_NOREPLACE_V1
+    foreign = b"foreign publication winner"
+    foreign_identity: tuple[int, int] | None = None
+
+    def collide_then_rename(
+        source_directory: int,
+        source_name: str,
+        target_directory: int,
+        target_name: str,
+    ) -> None:
+        nonlocal foreign_identity
+        collision_final.write_bytes(foreign)
+        metadata = collision_final.stat()
+        foreign_identity = (metadata.st_dev, metadata.st_ino)
+        original_rename(
+            source_directory,
+            source_name,
+            target_directory,
+            target_name,
+        )
+
+    assembler._RENAME_NOREPLACE_V1 = collide_then_rename
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, collision_final),
+            "appeared before atomic no-replace publication",
+        )
+    finally:
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+    observed = collision_final.stat()
+    if (
+        foreign_identity is None
+        or (observed.st_dev, observed.st_ino) != foreign_identity
+        or collision_final.read_bytes() != foreign
+    ):
+        raise AssertionError("renameat2 no-replace modified the foreign winner")
+    retained = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*")) - before
+    if len(retained) != 1 or not (next(iter(retained)) / "manifest.json").is_file():
+        raise AssertionError("rename collision did not retain staged evidence")
+
+    indeterminate_final = root / "post-rename-fsync-failure-final"
+    original_publish_fsync = assembler._PUBLISH_PARENT_FSYNC_V1
+
+    def fail_publish_fsync(_descriptor: int) -> None:
+        raise OSError(errno.EIO, "injected parent fsync failure")
+
+    assembler._PUBLISH_PARENT_FSYNC_V1 = fail_publish_fsync
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, indeterminate_final),
+            "publication is indeterminate after renameat2 succeeded",
+        )
+    finally:
+        assembler._PUBLISH_PARENT_FSYNC_V1 = original_publish_fsync
+    if not indeterminate_final.is_dir():
+        raise AssertionError("post-rename fsync failure lost the published inode")
+    checker.validate(indeterminate_final, emit=False)
+
+
 def ancestor_swap_controls(root: pathlib.Path) -> None:
     def one_source(label: str) -> tuple[pathlib.Path, pathlib.Path, pathlib.Path, object]:
         base = root / label
@@ -1022,7 +1270,6 @@ def ancestor_swap_controls(root: pathlib.Path) -> None:
             raise AssertionError("source ancestor swap created copied output bytes")
     finally:
         restore(ancestor, held)
-        output.cleanup()
         output.close()
 
     target_source = root / "copy-target-source.bin"
@@ -1049,7 +1296,6 @@ def ancestor_swap_controls(root: pathlib.Path) -> None:
         if (target_output.path / "nested/artifact.bin").exists():
             raise AssertionError("target ancestor swap redirected copied bytes")
     finally:
-        target_output.cleanup()
         target_output.close()
 
     base = root / "output-parent-ancestor-swap"
@@ -1076,49 +1322,35 @@ def ancestor_swap_controls(root: pathlib.Path) -> None:
         held_parent.rename(parent)
 
     create_base = root / "output-create-replacement"
-    create_base.mkdir()
-    create_path = create_base / "bundle"
-    held_create = create_base / "held"
+    create_base.mkdir(mode=0o700)
+    create_path = create_base / "published-bundle"
+    replacement_paths: list[pathlib.Path] = []
 
     def replace_created_output() -> None:
-        create_path.rename(held_create)
-        create_path.mkdir()
+        quarantines = list(create_base.glob(f"{assembler.QUARANTINE_PREFIX}*"))
+        if len(quarantines) != 1:
+            raise AssertionError("create race did not expose one private quarantine")
+        staging = quarantines[0]
+        held = create_base / "held-original-bundle"
+        staging.rename(held)
+        staging.mkdir(mode=0o700)
+        (staging / "foreign-secret").write_bytes(b"foreign nested secret")
+        replacement_paths.extend((staging, held))
 
     assert_system_exit(
         lambda: assembler.OutputTree.create(
             create_path,
             _after_output_opened=replace_created_output,
         ),
-        "output directory path was replaced",
+        "staged output directory path was replaced",
     )
-    if not create_path.is_dir() or not held_create.is_dir():
-        raise AssertionError("create failure removed a foreign replacement inode")
-    create_path.rmdir()
-    held_create.rmdir()
-
-    cleanup_base = root / "output-cleanup-replacement"
-    cleanup_base.mkdir()
-    cleanup_path = cleanup_base / "bundle"
-    held_cleanup = cleanup_base / "held"
-    cleanup_tree = assembler.OutputTree.create(cleanup_path)
-
-    def replace_cleanup_output() -> None:
-        cleanup_path.rename(held_cleanup)
-        cleanup_path.mkdir()
-
-    try:
-        assert_system_exit(
-            lambda: cleanup_tree.cleanup(
-                _before_final_remove=replace_cleanup_output
-            ),
-            "refusing to remove a substituted output directory",
-        )
-        if not cleanup_path.is_dir() or not held_cleanup.is_dir():
-            raise AssertionError("cleanup removed a foreign replacement inode")
-    finally:
-        cleanup_tree.close()
-        cleanup_path.rmdir()
-        held_cleanup.rmdir()
+    if create_path.exists():
+        raise AssertionError("failed staging create published a completion path")
+    staging, held = replacement_paths
+    if (staging / "foreign-secret").read_bytes() != b"foreign nested secret":
+        raise AssertionError("close-only failure removed a foreign nested secret")
+    if not held.is_dir():
+        raise AssertionError("close-only failure removed the original staged tree")
 
 
 def main() -> None:
@@ -1126,7 +1358,42 @@ def main() -> None:
         root = pathlib.Path(raw)
         source = prepare(root)
         positive = root / "positive"
-        assemble_case(source, positive)
+        published_source_identity: tuple[int, int] | None = None
+        original_rename = assembler._RENAME_NOREPLACE_V1
+
+        def observe_successful_rename(
+            source_directory: int,
+            source_name: str,
+            target_directory: int,
+            target_name: str,
+        ) -> None:
+            nonlocal published_source_identity
+            metadata = os.stat(
+                source_name,
+                dir_fd=source_directory,
+                follow_symlinks=False,
+            )
+            published_source_identity = (metadata.st_dev, metadata.st_ino)
+            original_rename(
+                source_directory,
+                source_name,
+                target_directory,
+                target_name,
+            )
+
+        assembler._RENAME_NOREPLACE_V1 = observe_successful_rename
+        try:
+            assemble_case(source, positive)
+        finally:
+            assembler._RENAME_NOREPLACE_V1 = original_rename
+        positive_metadata = positive.stat()
+        if published_source_identity != (
+            positive_metadata.st_dev,
+            positive_metadata.st_ino,
+        ):
+            raise AssertionError("successful publication changed staging identity")
+        if list(root.glob(f"{assembler.QUARANTINE_PREFIX}*")):
+            raise AssertionError("successful publication left a quarantine path")
         manifest = checker.validate(positive, emit=False)
         if (
             manifest["claims"] != checker.CLAIMS
@@ -1148,6 +1415,10 @@ def main() -> None:
         assembler_low_disk_prewrite_rejection(source, root)
         assembler_double_slash_disjoint_rejection(source, root)
         tree_entry_count_boundary_rejection(root)
+        fstat_fault_fd_controls(root)
+        foreign_leaf_close_only_control(root)
+        unverified_publish_control(root)
+        prepublish_failure_and_atomic_collision_controls(source, root)
         ancestor_swap_controls(root)
 
         reject(
@@ -1285,7 +1556,14 @@ def main() -> None:
         "poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false "
         "fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 "
         "symlink=blocked duplicate_json=blocked trailing=blocked "
-        "ancestor_dirfd_swap=blocked foreign_cleanup_inode=preserved "
+        "ancestor_dirfd_swap=blocked failure_cleanup=close-only "
+        "private_quarantine_retained=true foreign_nested_secret=preserved "
+        "foreign_leaf=preserved fstat_fault_fd_baseline=true "
+        "linux_renameat2_noreplace=verified unverified_publish=blocked "
+        "quarantine_rng_alias=blocked unsafe_publish_parent=blocked "
+        "prepublish_failure_final_absent=true "
+        "publish_collision_foreign=preserved postrename_failure=indeterminate "
+        "successful_publish_inode=preserved successful_quarantine=absent "
         "double_slash_disjoint=blocked public_secret_prewrite=blocked "
         "oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked "
         "tree_entries_4096_plus_one=blocked tree_depth_64_plus_one=blocked "

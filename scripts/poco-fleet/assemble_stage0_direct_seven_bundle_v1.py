@@ -14,10 +14,13 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import ctypes
+import errno
 import hashlib
 import json
 import os
 import pathlib
+import secrets
 import stat
 import sys
 import tarfile
@@ -35,7 +38,50 @@ import run_consensus_fleet as consensus_runner  # noqa: E402
 
 
 _OUTPUT_STATVFS_V1 = os.fstatvfs
+_FSTAT_V1 = os.fstat
+_PUBLISH_PARENT_FSYNC_V1 = os.fsync
 OUTPUT_FREE_SPACE_RESERVE_BYTES = 64 * 1024 * 1024
+RENAME_NOREPLACE = 1
+QUARANTINE_PREFIX = ".stage0-direct-seven-quarantine-"
+
+
+def _linux_rename_noreplace(
+    source_directory: int,
+    source_name: str,
+    target_directory: int,
+    target_name: str,
+) -> None:
+    """Publish one directory with Linux's atomic no-replace primitive."""
+
+    if sys.platform != "linux":
+        fail("atomic publication requires Linux renameat2(RENAME_NOREPLACE)")
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        fail("libc does not expose Linux renameat2(RENAME_NOREPLACE)")
+    renameat2.argtypes = (
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_uint,
+    )
+    renameat2.restype = ctypes.c_int
+    if (
+        renameat2(
+            source_directory,
+            os.fsencode(source_name),
+            target_directory,
+            os.fsencode(target_name),
+            RENAME_NOREPLACE,
+        )
+        != 0
+    ):
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), target_name)
+
+
+_RENAME_NOREPLACE_V1 = _linux_rename_noreplace
 
 
 @dataclass(frozen=True)
@@ -108,19 +154,32 @@ class RelativeDirectoryPin:
 
 
 class OutputTree:
-    """A newly created output tree addressed only through pinned dirfds."""
+    """A private staged tree published once with atomic no-replace rename.
+
+    Failure handling is deliberately close-only.  A private mode-0700
+    quarantine may remain behind, because recursively deleting pathnames in an
+    adversarially changed tree cannot provide compare-and-unlink atomicity.
+    The requested final path is the publication/completion boundary and is not
+    created until the fully assembled tree passes its independent checker.
+    """
 
     def __init__(
         self,
-        path: pathlib.Path,
+        final_path: pathlib.Path,
+        staging_path: pathlib.Path,
         parent: checker.PinnedDirectory,
+        staging_name: str,
         descriptor: int,
         identity: os.stat_result,
     ) -> None:
-        self.path = path
+        self.final_path = final_path
+        self.path = staging_path
         self.parent = parent
+        self.staging_name = staging_name
         self.descriptor = descriptor
         self.identity = identity
+        self._verified = False
+        self.published = False
         self.closed = False
 
     @classmethod
@@ -131,61 +190,92 @@ class OutputTree:
         _after_parent_ancestors_pinned: Callable[[], None] | None = None,
         _after_output_opened: Callable[[], None] | None = None,
     ) -> OutputTree:
+        if sys.platform != "linux":
+            fail("output staging is supported only on Linux with renameat2")
         path = checker.absolute_path(path)
         parent = checker.pin_directory(
             path.parent,
             "output parent",
             _after_ancestors_pinned=_after_parent_ancestors_pinned,
         )
-        created = False
-        created_identity: tuple[int, int] | None = None
         descriptor: int | None = None
         try:
+            parent.validate()
+            parent_metadata = os.fstat(parent.descriptor)
+            if (
+                parent_metadata.st_mode & (stat.S_IWGRP | stat.S_IWOTH)
+                and not parent_metadata.st_mode & stat.S_ISVTX
+            ):
+                fail(
+                    "output parent is group/world writable without sticky-bit "
+                    "rename protection"
+                )
             try:
                 os.stat(path.name, dir_fd=parent.descriptor, follow_symlinks=False)
             except FileNotFoundError:
                 pass
             else:
                 fail("output already exists; observation bundles are immutable")
-            os.mkdir(path.name, mode=0o700, dir_fd=parent.descriptor)
-            created = True
-            created_metadata = os.stat(
-                path.name, dir_fd=parent.descriptor, follow_symlinks=False
-            )
-            created_identity = (created_metadata.st_dev, created_metadata.st_ino)
+
+            staging_name = ""
+            for _attempt in range(16):
+                candidate = QUARANTINE_PREFIX + secrets.token_hex(16)
+                if candidate == path.name:
+                    continue
+                try:
+                    os.mkdir(candidate, mode=0o700, dir_fd=parent.descriptor)
+                except FileExistsError:
+                    continue
+                staging_name = candidate
+                break
+            if not staging_name:
+                fail("could not allocate a private output quarantine")
+
             descriptor = os.open(
-                path.name,
+                staging_name,
                 os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY,
                 dir_fd=parent.descriptor,
             )
             identity = os.fstat(descriptor)
             linked = os.stat(
-                path.name, dir_fd=parent.descriptor, follow_symlinks=False
+                staging_name,
+                dir_fd=parent.descriptor,
+                follow_symlinks=False,
             )
             if (
                 linked.st_dev,
                 linked.st_ino,
                 stat.S_IFMT(linked.st_mode),
-            ) != (identity.st_dev, identity.st_ino, stat.S_IFDIR):
-                fail("output directory changed identity while opening")
-            result = cls(path, parent, descriptor, identity)
+                stat.S_IMODE(linked.st_mode),
+                linked.st_uid,
+            ) != (
+                identity.st_dev,
+                identity.st_ino,
+                stat.S_IFDIR,
+                0o700,
+                os.geteuid(),
+            ):
+                fail("private output quarantine changed identity or authority")
+            staging_path = path.parent / staging_name
+            result = cls(
+                path,
+                staging_path,
+                parent,
+                staging_name,
+                descriptor,
+                identity,
+            )
             if _after_output_opened is not None:
                 _after_output_opened()
             result.validate()
             return result
         except BaseException:
+            # There is intentionally no pathname cleanup here.  Anything
+            # created so far remains inside the private quarantine; closing
+            # held fds cannot remove an attacker-substituted object.
             if descriptor is not None:
                 with contextlib.suppress(OSError):
                     os.close(descriptor)
-            if created and created_identity is not None:
-                with contextlib.suppress(OSError):
-                    linked = os.stat(
-                        path.name,
-                        dir_fd=parent.descriptor,
-                        follow_symlinks=False,
-                    )
-                    if (linked.st_dev, linked.st_ino) == created_identity:
-                        os.rmdir(path.name, dir_fd=parent.descriptor)
             parent.close()
             raise
 
@@ -194,24 +284,89 @@ class OutputTree:
             fail("output directory pin is already closed")
         self.parent.validate()
         opened = os.fstat(self.descriptor)
+        link_parent = self.parent.descriptor
+        link_name = self.final_path.name if self.published else self.staging_name
         linked = os.stat(
-            self.path.name,
-            dir_fd=self.parent.descriptor,
+            link_name,
+            dir_fd=link_parent,
             follow_symlinks=False,
         )
-        expected = (self.identity.st_dev, self.identity.st_ino, stat.S_IFDIR)
+        expected = (
+            self.identity.st_dev,
+            self.identity.st_ino,
+            stat.S_IFDIR,
+            0o700,
+            os.geteuid(),
+        )
         if (
             opened.st_dev,
             opened.st_ino,
             stat.S_IFMT(opened.st_mode),
+            stat.S_IMODE(opened.st_mode),
+            opened.st_uid,
         ) != expected or (
             linked.st_dev,
             linked.st_ino,
             stat.S_IFMT(linked.st_mode),
+            stat.S_IMODE(linked.st_mode),
+            linked.st_uid,
         ) != expected:
-            fail("output directory path was replaced")
+            fail(
+                "published output path was replaced"
+                if self.published
+                else "staged output directory path was replaced"
+            )
+
+    def verify(self) -> None:
+        """Deep-check and seal staging against API writes before publication."""
+
+        if self.published:
+            fail("cannot verify an already published output")
+        if self._verified:
+            fail("staged output is already sealed against further writes")
+        self.validate()
+        checker.validate(self.path, emit=False)
+        os.fsync(self.descriptor)
+        self.validate()
+        self._verified = True
+
+    def publish(self) -> pathlib.Path:
+        """Atomically expose the validated bundle at its immutable final name."""
+
+        if not self._verified:
+            fail("refusing to publish an output that has not passed deep verification")
+        self.validate()
+        # Re-run the checker at the commit boundary.  The private staging path
+        # is no longer writable through this API once ``verify`` seals it.
+        checker.validate(self.path, emit=False)
+        os.fsync(self.descriptor)
+        self.validate()
+        try:
+            _RENAME_NOREPLACE_V1(
+                self.parent.descriptor,
+                self.staging_name,
+                self.parent.descriptor,
+                self.final_path.name,
+            )
+        except OSError as error:
+            if error.errno == errno.EEXIST:
+                fail("output appeared before atomic no-replace publication")
+            fail(f"atomic no-replace publication failed: {error}")
+        self.published = True
+        self.path = self.final_path
+        try:
+            self.validate()
+            _PUBLISH_PARENT_FSYNC_V1(self.parent.descriptor)
+        except BaseException as error:
+            fail(
+                "publication is indeterminate after renameat2 succeeded; "
+                f"the final path may exist and must not be rolled back: {error}"
+            )
+        return self.final_path
 
     def pin_parent(self, relative: str) -> tuple[RelativeDirectoryPin, str]:
+        if self._verified or self.published:
+            fail("staged output is sealed against further writes")
         path = checker.safe_relative(relative, "output relative path")
         descriptors = [os.dup(self.descriptor)]
         links: list[DirectoryLink] = []
@@ -235,16 +390,17 @@ class OutputTree:
                     os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY,
                     dir_fd=descriptors[-1],
                 )
-                opened = os.fstat(child)
+                # Transfer ownership before fstat so injected/kernel failures
+                # cannot strand the newly opened child descriptor.
+                descriptors.append(child)
+                opened = _FSTAT_V1(child)
                 if (
                     before.st_dev,
                     before.st_ino,
                     stat.S_IFMT(before.st_mode),
                 ) != (opened.st_dev, opened.st_ino, stat.S_IFDIR):
-                    os.close(child)
                     fail("output-relative ancestor changed while opening")
                 links.append(DirectoryLink(component, opened.st_dev, opened.st_ino))
-                descriptors.append(child)
             result = RelativeDirectoryPin(self, descriptors, links)
             result.validate()
             return result, path.name
@@ -253,49 +409,6 @@ class OutputTree:
                 with contextlib.suppress(OSError):
                     os.close(descriptor)
             raise
-
-    def cleanup(
-        self,
-        *,
-        _before_final_remove: Callable[[], None] | None = None,
-    ) -> None:
-        """Delete only the exact inode created by this assembler."""
-
-        self.validate()
-
-        def clear(descriptor: int) -> None:
-            with os.scandir(descriptor) as iterator:
-                entries = list(iterator)
-            for entry in entries:
-                metadata = entry.stat(follow_symlinks=False)
-                if stat.S_ISDIR(metadata.st_mode):
-                    child = os.open(
-                        entry.name,
-                        os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY,
-                        dir_fd=descriptor,
-                    )
-                    try:
-                        clear(child)
-                    finally:
-                        os.close(child)
-                    os.rmdir(entry.name, dir_fd=descriptor)
-                else:
-                    os.unlink(entry.name, dir_fd=descriptor)
-
-        clear(self.descriptor)
-        if _before_final_remove is not None:
-            _before_final_remove()
-        linked = os.stat(
-            self.path.name,
-            dir_fd=self.parent.descriptor,
-            follow_symlinks=False,
-        )
-        if (linked.st_dev, linked.st_ino) != (
-            self.identity.st_dev,
-            self.identity.st_ino,
-        ):
-            fail("refusing to remove a substituted output directory")
-        os.rmdir(self.path.name, dir_fd=self.parent.descriptor)
 
     def close(self) -> None:
         if self.closed:
@@ -394,6 +507,7 @@ def copy_pinned(
     allow_empty: bool = False,
     _after_source_ancestors_pinned: Callable[[], None] | None = None,
     _after_target_ancestors_pinned: Callable[[], None] | None = None,
+    _before_target_validation: Callable[[], None] | None = None,
 ) -> dict[str, Any]:
     pinned_source = checker.open_pinned_regular(
         source,
@@ -414,7 +528,6 @@ def copy_pinned(
         pinned_source.close()
         raise
     target_descriptor: int | None = None
-    target_identity: tuple[int, int] | None = None
     digest = hashlib.sha256()
     size = 0
     try:
@@ -431,8 +544,6 @@ def copy_pinned(
             dir_fd=target_parent.descriptor,
         )
         os.fchmod(target_descriptor, 0o500 if executable else 0o400)
-        created = os.fstat(target_descriptor)
-        target_identity = (created.st_dev, created.st_ino)
         remaining = pinned_source.metadata.st_size
         while remaining:
             chunk = os.read(source_descriptor, min(1024 * 1024, remaining))
@@ -451,6 +562,8 @@ def copy_pinned(
             fail(f"{field} grew during its pinned copy")
         os.fsync(target_descriptor)
         pinned_source.validate()
+        if _before_target_validation is not None:
+            _before_target_validation()
         target_after = os.fstat(target_descriptor)
         target_link = os.stat(
             target_name, dir_fd=target_parent.descriptor, follow_symlinks=False
@@ -468,18 +581,9 @@ def copy_pinned(
         ):
             fail(f"output artifact {relative!r} changed during its pinned copy")
         target_parent.validate()
-    except BaseException:
-        if target_identity is not None:
-            with contextlib.suppress(OSError):
-                linked = os.stat(
-                    target_name,
-                    dir_fd=target_parent.descriptor,
-                    follow_symlinks=False,
-                )
-                if (linked.st_dev, linked.st_ino) == target_identity:
-                    os.unlink(target_name, dir_fd=target_parent.descriptor)
-        raise
     finally:
+        # Failure is close-only.  Removing this pathname after an identity
+        # comparison would still race a foreign replacement before unlink.
         pinned_source.close()
         if target_descriptor is not None:
             os.close(target_descriptor)
@@ -498,7 +602,6 @@ def write_new(
 ) -> None:
     parent, name = output.pin_parent(relative)
     descriptor: int | None = None
-    identity: tuple[int, int] | None = None
     try:
         descriptor = os.open(
             name,
@@ -507,8 +610,6 @@ def write_new(
             dir_fd=parent.descriptor,
         )
         os.fchmod(descriptor, 0o500 if executable else 0o400)
-        created = os.fstat(descriptor)
-        identity = (created.st_dev, created.st_ino)
         remaining = memoryview(content)
         while remaining:
             written = os.write(descriptor, remaining)
@@ -526,14 +627,9 @@ def write_new(
         ) != (linked.st_dev, linked.st_ino, len(content), stat.S_IFREG):
             fail(f"output artifact {relative!r} changed during its pinned write")
         parent.validate()
-    except BaseException:
-        if identity is not None:
-            with contextlib.suppress(OSError):
-                linked = os.stat(name, dir_fd=parent.descriptor, follow_symlinks=False)
-                if (linked.st_dev, linked.st_ino) == identity:
-                    os.unlink(name, dir_fd=parent.descriptor)
-        raise
     finally:
+        # Failure is close-only for the same compare-and-unlink reason as the
+        # pinned copy path.  The private quarantine remains unpublished.
         if descriptor is not None:
             os.close(descriptor)
         parent.close()
@@ -847,8 +943,8 @@ def assemble(
         if snapshot_tree(runner_output, include=sealed_runner_paths) != runner_before:
             fail("runner output changed across assembly")
 
-        derived = checker.derive(output)
-        artifacts = artifact_records(output)
+        derived = checker.derive(output_tree.path)
+        artifacts = artifact_records(output_tree.path)
         manifest = {
             "schema_version": checker.SCHEMA_VERSION,
             "evidence_profile": checker.PROFILE,
@@ -871,14 +967,17 @@ def assemble(
         }
         write_new(output_tree, "manifest.json", checker.canonical_json(manifest))
         output_tree.validate()
-        checker.validate(output, emit=False)
+        output_tree.verify()
+        output_tree.publish()
     except BaseException:
-        with contextlib.suppress(BaseException):
-            output_tree.cleanup()
+        # Never recurse through attacker-changeable pathnames on failure.  The
+        # mode-0700 quarantine is retained before rename.  After a successful
+        # rename, a post-publication failure is explicitly indeterminate and
+        # the already complete final tree is likewise never rolled back.
         output_tree.close()
         raise
     output_tree.close()
-    return output
+    return output_tree.final_path
 
 
 def main() -> None:
@@ -923,6 +1022,8 @@ def main() -> None:
     print(
         "poco_g3_stage0_direct_seven_assembler=passed validators=7 "
         "private_keys_bundled=false runner_truth_bits_changed=false "
+        "publish=linux-renameat2-noreplace failure_cleanup=close-only "
+        "private_quarantine_retained_on_failure=true crash_durable_bundle=false "
         "raw_replay_hash_chain=recomputed terminal_seal_signature=verified "
         "proposal_qc_finality_semantics_independently_decoded=false "
         "stage0_profile_max_file_bytes=134217728 "

@@ -51,6 +51,12 @@ import evidence_bundle_profiles_v1 as evidence_profiles  # noqa: E402
 import run_consensus_fleet as consensus_runner  # noqa: E402
 
 
+# Indirection is intentionally narrow: the no-Cargo fault suite injects an
+# ``fstat`` failure immediately after a child fd is opened and verifies that
+# ownership has already transferred to the enclosing pin.
+_FSTAT_V1 = os.fstat
+
+
 PROFILE = "poco-g3-stage0-direct-seven-observation-bundle-v1"
 SCHEMA_VERSION = 1
 VALIDATOR_COUNT = 7
@@ -509,7 +515,7 @@ def pin_directory(
     try:
         descriptor = os.open("/", flags)
         descriptors.append(descriptor)
-        root_metadata = os.fstat(descriptor)
+        root_metadata = _FSTAT_V1(descriptor)
         identities.append(
             DirectoryIdentity(root_metadata.st_dev, root_metadata.st_ino, root_metadata.st_mode)
         )
@@ -523,16 +529,18 @@ def pin_directory(
                 child = os.open(component, flags, dir_fd=descriptors[-1])
             except OSError as error:
                 fail(f"cannot pin {field} ancestor {component!r}: {error}")
-            opened = os.fstat(child)
+            # Transfer ownership before the first operation which may fail.
+            # The outer exception path then closes this fd as well as every
+            # previously pinned ancestor.
+            descriptors.append(child)
+            opened = _FSTAT_V1(child)
             if (
                 not stat.S_ISDIR(before.st_mode)
                 or (before.st_dev, before.st_ino, stat.S_IFMT(before.st_mode))
                 != (opened.st_dev, opened.st_ino, stat.S_IFDIR)
             ):
-                os.close(child)
                 fail(f"{field} contains a replaced or non-directory ancestor")
             names.append(component)
-            descriptors.append(child)
             identities.append(
                 DirectoryIdentity(opened.st_dev, opened.st_ino, opened.st_mode)
             )
