@@ -237,7 +237,9 @@ impl CanonicalLabNativeApplicationConfigInputsV0 {
             !run_id.is_empty()
                 && run_id.len() <= 96
                 && run_id.bytes().all(|byte| {
-                    byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-'
+                    byte.is_ascii_lowercase()
+                        || byte.is_ascii_digit()
+                        || matches!(byte, b'-' | b'T' | b'Z')
                 }),
             "lab run id is not canonical"
         );
@@ -3576,6 +3578,23 @@ mod tests {
         assert_ne!(config_a.store_id(), config_redeployed.store_id());
         assert_ne!(config_a.store_id(), config_rerun.store_id());
         assert_ne!(config_a.store_id(), config_rebuilt.store_id());
+    }
+
+    #[test]
+    fn canonical_lab_config_accepts_the_exact_fleet_timestamp_markers_v0() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = consensus_set(&parameters);
+        let local = set.validators()[0].id();
+        NativeApplicationConfigV0::from_canonical_lab_inputs_v0(canonical_lab_inputs(
+            set,
+            parameters,
+            local,
+            "poco-g3-7-20260821T085050Z-d74fe7e2",
+            [0x92; 32],
+            [0x94; 32],
+            application_signers(),
+        ))
+        .expect("the fleet-wide canonical run ID must commission native application state");
     }
 
     #[test]
