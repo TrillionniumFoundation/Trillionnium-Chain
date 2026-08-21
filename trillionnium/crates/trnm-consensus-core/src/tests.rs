@@ -34,6 +34,19 @@ const _: () = {
     assert!(!CORE_PROPOSAL_RETENTION_FINALITY_AUTHORITY_V0);
     assert!(!CORE_PROPOSAL_RETENTION_PERSISTENCE_AUTHORITY_V0);
     assert!(!CORE_PROPOSAL_RETENTION_SIGNER_AUTHORITY_V0);
+    assert!(CORE_SAFETY_RULES_SHADOW_EVALUATION_V1);
+    assert!(CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1 == 64);
+    assert!(CORE_SAFETY_RULES_ANCESTRY_OVER_BOUND_FAILS_CLOSED_V1);
+    assert!(!CORE_SAFETY_RULES_LONG_ANCESTRY_LIVENESS_EQUIVALENCE_V1);
+    assert!(!CORE_SAFETY_RULES_AUTHORITATIVE_V1);
+    assert!(!CORE_SAFETY_RULES_APPLICATION_VALID_AUTHORITY_V1);
+    assert!(!CORE_SAFETY_RULES_PERSISTENCE_AUTHORITY_V1);
+    assert!(!CORE_SAFETY_RULES_SIGNER_AUTHORITY_V1);
+    assert!(!CORE_SAFETY_RULES_RECOVERY_REPLAY_AUTHORITY_V1);
+    assert!(!CORE_SAFETY_RULES_REMOTE_WIRE_V1);
+    assert!(!CORE_SAFETY_RULES_RUNTIME_ACTIVATION_V1);
+    assert!(!CORE_SAFETY_RULES_PRODUCTION_CANDIDATE_V1);
+    assert!(!CORE_SAFETY_RULES_PRODUCTION_CONSENSUS_ACTIVATION_V1);
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -15941,4 +15954,349 @@ fn safe_vote_rule_rejects_a_fork_below_the_lock() {
         .expect("unsafe proposal is consumed without voting");
     assert!(release_persisted_effects(&mut core, effects).is_empty());
     assert_eq!(core.pending_validation_count(), 0);
+}
+
+fn core_with_replayed_linear_prefix_for_shadow_bound(
+    target_height: u64,
+) -> (Core, SignedProposalV0) {
+    assert!(target_height > 1);
+    let parameters = consensus_parameters();
+    let set = validator_set_with_parameters(&parameters);
+    let config = CoreConfig::new(
+        validator_id(1),
+        set.clone(),
+        parameters,
+        GENESIS_TIMESTAMP_MS,
+        128,
+        256,
+    )
+    .expect("valid long-shadow-path Core configuration");
+    let bootstrap =
+        Core::new(config.clone(), genesis_qc(&set), &RootSignatures).expect("valid bootstrap");
+    let genesis = bootstrap.safety_state();
+    let mut justify = genesis_qc(&set).into_qc_reference();
+    let mut prefix = Vec::with_capacity((target_height - 1) as usize);
+    for height in 1..target_height {
+        let payload = height.to_be_bytes();
+        let proposed = proposal(&set, justify.clone(), height, &payload);
+        justify = qc(&set, height, height, proposed.block().id()).into_qc_reference();
+        prefix.push(proposed);
+    }
+    // Keep replay's maximum height at the target while avoiding a certificate
+    // for the target itself: the durable high QC certifies a sibling in the
+    // immediately preceding view, and a complete TC carries the parent QC into
+    // the target view. This is a valid recovered fork shape and leaves the
+    // finalized-to-target path available for the comparison-only bound probe.
+    let high_sibling = proposal(
+        &set,
+        justify.clone(),
+        target_height,
+        b"shadow-bound high sibling",
+    );
+    let high_qc = qc(
+        &set,
+        target_height,
+        target_height,
+        high_sibling.block().id(),
+    );
+    let target = timeout_proposal(
+        &set,
+        timeout_certificate(&set, target_height, justify),
+        b"shadow-bound target",
+    );
+    assert_eq!(target.block().header().height(), Height::new(target_height));
+    assert_eq!(target.block().header().view(), View::new(target_height + 1));
+    let recovered_state = SafetyState::from_persisted_parts(
+        SAFETY_STATE_SCHEMA_VERSION,
+        genesis.chain_id(),
+        genesis.protocol_version(),
+        genesis.epoch(),
+        genesis.validator_set_id(),
+        genesis.genesis_block_id(),
+        View::new(target_height + 1),
+        None,
+        None,
+        high_qc.into_qc_reference(),
+        genesis.locked_qc().clone(),
+        genesis.finalized(),
+        genesis.revision(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    );
+    let mut recovered = Core::recover(config, recovered_state, &RootSignatures)
+        .expect("long exact high-QC path enters fail-closed replay");
+    for proposed in prefix {
+        replay_valid(&mut recovered, proposed);
+    }
+    replay_valid(&mut recovered, high_sibling);
+    replay_valid(&mut recovered, target.clone());
+    recovered
+        .step(Input::SafetyReplayComplete, &RootSignatures)
+        .expect("the complete exact prefix satisfies replay");
+    (recovered, target)
+}
+
+#[test]
+fn safety_rules_shadow_core_bound_admits_64_and_fails_closed_at_65() {
+    let (at_bound, target_64) = core_with_replayed_linear_prefix_for_shadow_bound(64);
+    let mut at_bound_probe = at_bound.clone();
+    assert!(at_bound_probe
+        .stage_vote_validated_proposal_for_test_v1(&target_64, &RootSignatures)
+        .expect("an exact 64-block path is inside the inclusive Core shadow bound"));
+    assert_eq!(
+        at_bound_probe.safety_state().last_voted_view(),
+        Some(View::new(65))
+    );
+    assert!(matches!(
+        at_bound_probe.safety_state().pending_sign(),
+        Some(SignIntent::Vote { view, height, .. })
+            if *view == View::new(65) && *height == Height::new(64)
+    ));
+    assert_eq!(
+        at_bound.safety_state().last_voted_view(),
+        None,
+        "the pre-persistence boundary was exercised only on an isolated clone"
+    );
+
+    let (over_bound, target_65) = core_with_replayed_linear_prefix_for_shadow_bound(65);
+    let mut over_bound_probe = over_bound.clone();
+    let before = over_bound_probe.clone();
+    assert_eq!(
+        over_bound_probe.stage_vote_validated_proposal_for_test_v1(&target_65, &RootSignatures),
+        Err(CoreError::SafetyRulesShadowMismatch(
+            "exact application-Valid ancestry is missing, unfrozen, or exceeds the shadow bound"
+        ))
+    );
+    assert_eq!(
+        over_bound_probe, before,
+        "the over-bound rejection occurs before Core mutation"
+    );
+}
+
+#[test]
+fn safety_rules_shadow_core_accepts_a_view_stronger_shallower_high_qc() {
+    let (config, bootstrap) = configured_core();
+    let set = config.validator_set().clone();
+    let genesis = genesis_qc(&set);
+    let locked_parent = proposal(&set, genesis.clone(), 1, b"shadow deep-lock parent");
+    let locked_parent_qc = qc(&set, 1, 1, locked_parent.block().id());
+    let locked_child = proposal(&set, locked_parent_qc, 2, b"shadow deep lock");
+    let locked_qc = qc(&set, 2, 2, locked_child.block().id());
+    let shallow_high_proposal = timeout_proposal(
+        &set,
+        timeout_certificate(&set, 2, genesis),
+        b"shadow view-stronger shallow high",
+    );
+    let shallow_high_qc = qc(&set, 3, 1, shallow_high_proposal.block().id());
+    assert!(shallow_high_qc.view() > locked_qc.view());
+    assert!(shallow_high_qc.height() < locked_qc.height());
+    let target = proposal(
+        &set,
+        shallow_high_qc.clone(),
+        4,
+        b"shadow shallower-fork unlock target",
+    );
+
+    let genesis_state = bootstrap.safety_state();
+    let recovered_state = SafetyState::from_persisted_parts(
+        SAFETY_STATE_SCHEMA_VERSION,
+        genesis_state.chain_id(),
+        genesis_state.protocol_version(),
+        genesis_state.epoch(),
+        genesis_state.validator_set_id(),
+        genesis_state.genesis_block_id(),
+        View::new(4),
+        None,
+        None,
+        shallow_high_qc.clone().into_qc_reference(),
+        locked_qc.clone().into_qc_reference(),
+        genesis_state.finalized(),
+        genesis_state.revision(),
+        Vec::new(),
+        Vec::new(),
+        Vec::new(),
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    );
+    let mut recovered = Core::recover(config, recovered_state, &RootSignatures)
+        .expect("view ordering permits a shallower high QC above a deeper lock");
+    for proposed in [
+        locked_parent,
+        locked_child,
+        shallow_high_proposal,
+        target.clone(),
+    ] {
+        replay_valid(&mut recovered, proposed);
+    }
+    recovered
+        .step(Input::SafetyReplayComplete, &RootSignatures)
+        .expect("both exact fork paths satisfy recovery replay");
+
+    let expected_high = QcRef::from(&shallow_high_qc);
+    let expected_lock = QcRef::from(&locked_qc);
+    let mut timeout_probe = recovered.clone();
+    let timeout_effects = timeout_probe
+        .step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: View::new(4),
+            },
+            &RootSignatures,
+        )
+        .expect("the timeout shadow uses view-ordered QC strength");
+    let (_barrier, timeout_state) = persistence_effect(&timeout_effects);
+    assert_eq!(timeout_state.high_qc().qc_ref(), expected_high);
+    assert_eq!(timeout_state.locked_qc().qc_ref(), expected_lock);
+    assert!(matches!(
+        timeout_state.pending_sign(),
+        Some(SignIntent::TimeoutVote { high_qc, .. }) if *high_qc == expected_high
+    ));
+
+    let mut vote_probe = recovered.clone();
+    assert!(vote_probe
+        .stage_vote_validated_proposal_for_test_v1(&target, &RootSignatures)
+        .expect("the higher-view shallow justify unlocks the deeper fork lock"));
+    assert_eq!(vote_probe.safety_state().high_qc().qc_ref(), expected_high);
+    assert_eq!(
+        vote_probe.safety_state().locked_qc().qc_ref(),
+        expected_lock
+    );
+    assert!(matches!(
+        vote_probe.safety_state().pending_sign(),
+        Some(SignIntent::Vote { block_id, .. }) if *block_id == target.block().id()
+    ));
+}
+
+#[test]
+fn safety_rules_shadow_timeout_uses_the_exact_complete_high_qc() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"shadow timeout high QC");
+    let high_qc = qc(&set, 1, 1, proposed.block().id());
+    insert_valid_and_vote(&mut core, proposed);
+    accept_qc(&mut core, high_qc.clone());
+    let expected_high_qc = QcRef::from(&high_qc);
+    let epoch = core.safety_state().epoch();
+    let view = core.safety_state().current_view();
+
+    let effects = core
+        .step(Input::LocalTimeout { epoch, view }, &RootSignatures)
+        .expect("pure and legacy TimeoutVote candidates match");
+    let (barrier, persisted) = persistence_effect(&effects);
+    assert!(matches!(
+        persisted.pending_sign(),
+        Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision,
+            view: pending_view,
+            high_qc: pending_high_qc,
+            ..
+        }) if *authorizing_safety_revision == barrier.get()
+            && *pending_view == view
+            && *pending_high_qc == expected_high_qc
+    ));
+    let request = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("timeout persistence releases only the legacy signer request");
+    assert!(matches!(
+        request.as_slice(),
+        [Effect::RequestSignature { intent }]
+            if matches!(
+                intent.preimage(),
+                CanonicalSignPreimageV0::TimeoutVote(preimage)
+                    if preimage.view() == view && preimage.high_qc() == expected_high_qc
+            )
+    ));
+}
+
+#[test]
+fn safety_rules_shadow_missing_body_releases_aggregate_charge_and_fails_closed() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"shadow missing frozen body");
+    let block_id = proposed.block().id();
+    let proposal_effects = core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("proposal enters validation");
+    let validation_effects = release_persisted_effects(&mut core, proposal_effects);
+    let validation = validation_effect(&validation_effects);
+    let valid = valid_result_for_effect(&core, &validation_effects, validation);
+
+    let timeout_effects = core
+        .step(
+            Input::LocalTimeout {
+                epoch: Epoch::new(0),
+                view: View::new(1),
+            },
+            &RootSignatures,
+        )
+        .expect("timeout keeps the later Valid callback from staging a Vote");
+    let (timeout_barrier, _) = persistence_effect(&timeout_effects);
+    let timeout_request = core
+        .step(
+            Input::StorageAck {
+                barrier: timeout_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("timeout persistence releases its signer request");
+    let (timeout_id, timeout_root) = signature_request(&timeout_request);
+
+    let callback_effects = core
+        .step(
+            Input::PayloadValidated {
+                id: validation,
+                result: valid,
+            },
+            &RootSignatures,
+        )
+        .expect("Valid body is frozen while the timeout signature is outstanding");
+    let (callback_barrier, callback_state) = persistence_effect(&callback_effects);
+    assert_eq!(
+        callback_state.payload_terminal_result(block_id),
+        Some(PayloadTerminalResult::Valid)
+    );
+    assert!(core
+        .step(
+            Input::StorageAck {
+                barrier: callback_barrier,
+            },
+            &RootSignatures,
+        )
+        .expect("Valid callback is durable")
+        .is_empty());
+    let retained_before_forget = core.retained_validated_proposal_bytes_for_test_v1();
+    assert!(retained_before_forget > 0);
+    assert!(core
+        .forget_validated_proposal_for_test_v1(block_id)
+        .expect("test-only removal releases its aggregate charge"));
+    assert_eq!(core.retained_validated_proposal_bytes_for_test_v1(), 0);
+    assert!(core.retained_proposal_accounting_is_exact_for_test_v1());
+    core.step(
+        Input::SignatureReady {
+            id: timeout_id,
+            signature: signature(timeout_root),
+        },
+        &RootSignatures,
+    )
+    .expect("timeout signature clears the legacy signing outbox");
+
+    let before = core.clone();
+    assert_eq!(
+        core.step(Input::Proposal(Box::new(proposed)), &RootSignatures),
+        Err(CoreError::SafetyRulesShadowMismatch(
+            "exact application-Valid ancestry is missing, unfrozen, or exceeds the shadow bound"
+        ))
+    );
+    assert_eq!(core, before, "a shadow mismatch is transactional");
 }

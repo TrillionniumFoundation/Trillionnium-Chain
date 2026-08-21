@@ -99,6 +99,56 @@ pub const CORE_PROPOSAL_RETENTION_PERSISTENCE_AUTHORITY_V0: bool = false;
 /// Proposal retention cannot authorize or request a signature.
 pub const CORE_PROPOSAL_RETENTION_SIGNER_AUTHORITY_V0: bool = false;
 
+/// Every newly created Vote and TimeoutVote intent at the live pre-persistence
+/// boundary is independently reconstructed and compared against the pure
+/// safety kernel before legacy state mutation.
+pub const CORE_SAFETY_RULES_SHADOW_EVALUATION_V1: bool = true;
+
+/// Fixed maximum number of post-finalized proposal bodies accepted by the v1
+/// shadow evaluator. This bound is independent of a larger BlockTree limit.
+pub const CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1: u32 =
+    trnm_consensus_safety_rules::MAX_SAFETY_ANCESTRY_BLOCKS_V1;
+
+/// A legacy-admissible Vote whose exact post-finalized path exceeds the fixed
+/// shadow bound is rejected before mutation, persistence, or signing.
+pub const CORE_SAFETY_RULES_ANCESTRY_OVER_BOUND_FAILS_CLOSED_V1: bool = true;
+
+/// The v1 integration does not claim legacy liveness equivalence for exact
+/// post-finalized paths above [`CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1`].
+pub const CORE_SAFETY_RULES_LONG_ANCESTRY_LIVENESS_EQUIVALENCE_V1: bool = false;
+
+/// The safety-rules result is comparison-only and cannot authorize a Core
+/// transition independently of the existing legacy gates.
+pub const CORE_SAFETY_RULES_AUTHORITATIVE_V1: bool = false;
+
+/// The shadow consumes only proposals already accepted as application-Valid.
+pub const CORE_SAFETY_RULES_APPLICATION_VALID_AUTHORITY_V1: bool = false;
+
+/// Shadow transitions are never passed to SafetyStore or recovery.
+pub const CORE_SAFETY_RULES_PERSISTENCE_AUTHORITY_V1: bool = false;
+
+/// The pure candidate is never passed to a signer or used as signing authority.
+pub const CORE_SAFETY_RULES_SIGNER_AUTHORITY_V1: bool = false;
+
+/// The v1 shadow covers only newly created Vote and TimeoutVote intents at the
+/// live pre-persistence boundary. Recovered pending intents and tag-3
+/// post-ack signature remints stay on the existing durable-outbox path and do
+/// not gain recovery, replay, or cross-upgrade signer-release authority from
+/// this integration.
+pub const CORE_SAFETY_RULES_RECOVERY_REPLAY_AUTHORITY_V1: bool = false;
+
+/// Shadow transitions are never sent over a remote-signer wire.
+pub const CORE_SAFETY_RULES_REMOTE_WIRE_V1: bool = false;
+
+/// No node or validator runtime is activated by this comparison.
+pub const CORE_SAFETY_RULES_RUNTIME_ACTIVATION_V1: bool = false;
+
+/// This crate remains outside the production-candidate boundary.
+pub const CORE_SAFETY_RULES_PRODUCTION_CANDIDATE_V1: bool = false;
+
+/// Production consensus activation remains unavailable.
+pub const CORE_SAFETY_RULES_PRODUCTION_CONSENSUS_ACTIVATION_V1: bool = false;
+
 mod block_tree;
 mod core;
 mod error;

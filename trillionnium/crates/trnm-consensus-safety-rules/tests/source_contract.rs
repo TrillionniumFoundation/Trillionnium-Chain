@@ -16,7 +16,10 @@ fn inert_safety_rules_source_contract_remains_narrow() {
         "persistence_authority = false",
         "external_cas_authority = false",
         "hsm_authority = false",
-        "core_integration = false",
+        "core_integration = true",
+        "core_shadow_integration = true",
+        "core_authoritative_integration = false",
+        "recovery_replay_authority = false",
         "remote_wire = false",
         "observe_qc = false",
         "observe_tc = false",
@@ -32,8 +35,13 @@ fn inert_safety_rules_source_contract_remains_narrow() {
 
     assert!(source.contains("trnm.consensus.safety-rules.state.v1"));
     assert!(source.contains("trnm.consensus.safety-rules.transition.v1"));
+    assert!(source.contains("pub const RECOVERY_REPLAY_AUTHORITY_V1: bool = false;"));
     assert!(source.contains("proposal\n            .verify("));
     assert!(readme.contains("inert consensus-safety candidate"));
+    assert!(readme.contains("Fresh intent creation is the complete v1 coverage boundary"));
+    assert!(readme.contains("`Resume` after `Core::recover`"));
+    assert!(readme.contains("tag-3 post-ack signature remint"));
+    assert!(readme.contains("do not re-run the shadow"));
 
     for forbidden in [
         "SigningKey",

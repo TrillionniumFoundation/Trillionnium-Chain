@@ -2,12 +2,16 @@ use alloc::{boxed::Box, collections::BTreeMap, sync::Arc, vec, vec::Vec};
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use sha2::{Digest, Sha256};
+use trnm_consensus_safety_rules::{
+    FinalizedBlockRefV1, InertSafetyTransitionKindV1, PureHotStuffSafetyKernelV1,
+    SafetyRulesContextV1, SafetyRulesStateSeedV1, SafetyRulesStateV1,
+};
 use trnm_consensus_types::{
-    validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind, CertificateId,
-    ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, EpochGeometryV0, EquivocationEvidence,
-    FinalityProofV0, GenesisQcV0, Height, QcRef, QcReferenceV0, QuorumCertificate,
-    RootBoundRegularBodyV0, SignatureVerifier, SignedProposalV0, TimeoutCertificateV0, TimeoutVote,
-    ValidationError, ValidatorId, ValidatorSet, View, Vote,
+    validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
+    CanonicalSignIntentV0, CertificateId, ConsensusParametersV0, ContextAuthorizedQcV0, Epoch,
+    EpochGeometryV0, EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height, QcRef,
+    QcReferenceV0, QuorumCertificate, RootBoundRegularBodyV0, SignatureVerifier, SignedProposalV0,
+    TimeoutCertificateV0, TimeoutVote, ValidationError, ValidatorId, ValidatorSet, View, Vote,
 };
 
 use crate::{
@@ -29,7 +33,8 @@ use crate::{
     SafetyState, SafetyStatePersistenceBindingV0, SafetyStatePersistenceV0,
     SafetyStateRecordContextV0, SafetyStateRecordLimitsV0, SignIntent,
     StateSyncAnchorOrdinaryPromotionPersistenceV0, ValidationId,
-    CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1, SAFETY_STATE_SCHEMA_VERSION,
+    CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1,
+    CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1, SAFETY_STATE_SCHEMA_VERSION,
 };
 
 type ObservationKey = (Epoch, View, ValidatorId);
@@ -8085,7 +8090,7 @@ impl Core {
             Input::TimeoutVote(vote) => self.handle_timeout_vote(vote, verifier),
             Input::QuorumCertificate(certificate) => self.handle_qc(certificate, verifier),
             Input::TimeoutCertificate(certificate) => self.handle_tc(certificate, verifier),
-            Input::LocalTimeout { epoch, view } => self.handle_local_timeout(epoch, view),
+            Input::LocalTimeout { epoch, view } => self.handle_local_timeout(epoch, view, verifier),
             Input::PayloadValidated { id, result } => {
                 self.handle_payload_validated(id, result, verifier)
             }
@@ -8580,7 +8585,7 @@ impl Core {
                 effects.extend(side_effects);
                 return Ok(effects);
             }
-            let mut effects = self.try_vote_validated_proposal(&proposal)?;
+            let mut effects = self.try_vote_validated_proposal(&proposal, verifier)?;
             effects.extend(side_effects);
             return Ok(effects);
         }
@@ -8979,7 +8984,7 @@ impl Core {
         if let Some(effects) = self.persist_observed_qc_for_validated_block(block_id, verifier)? {
             return self.bind_native_valid_post_ack_manifest_v0(effects);
         }
-        let effects = self.try_vote_validated_proposal(&proposal)?;
+        let effects = self.try_vote_validated_proposal(&proposal, verifier)?;
         self.ensure_native_valid_cleanup_barrier_v0(effects)
     }
 
@@ -9010,14 +9015,22 @@ impl Core {
             .is_some_and(|observed| observed.proposal == *proposal)
     }
 
-    fn try_vote_validated_proposal(&mut self, proposal: &SignedProposalV0) -> Result<Vec<Effect>> {
-        if !self.stage_vote_validated_proposal(proposal)? {
+    fn try_vote_validated_proposal<V: SignatureVerifier>(
+        &mut self,
+        proposal: &SignedProposalV0,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        if !self.stage_vote_validated_proposal(proposal, verifier)? {
             return Ok(Vec::new());
         }
         self.persist(vec![DeferredEffect::RequestSignature])
     }
 
-    fn stage_vote_validated_proposal(&mut self, proposal: &SignedProposalV0) -> Result<bool> {
+    fn stage_vote_validated_proposal<V: SignatureVerifier>(
+        &mut self,
+        proposal: &SignedProposalV0,
+        verifier: &V,
+    ) -> Result<bool> {
         if self.safety.pending_standalone_qc_sync().is_some() {
             return Ok(false);
         }
@@ -9040,6 +9053,9 @@ impl Core {
             return Err(CoreError::ConcurrentSignIntent);
         }
         if !self.validated_overlay_gate_v0(proposal)? {
+            return Ok(false);
+        }
+        if !self.is_exact_observed_proposal(proposal) {
             return Ok(false);
         }
 
@@ -9081,14 +9097,16 @@ impl Core {
             .revision()
             .checked_add(1)
             .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
-        self.safety.set_last_voted(header.view());
-        self.safety.set_pending_sign(Some(SignIntent::Vote {
+        let legacy_intent = SignIntent::Vote {
             authorizing_safety_revision,
             view: header.view(),
             height: header.height(),
             block_id: proposal.block().id(),
             signing_root: root,
-        }));
+        };
+        self.verify_vote_safety_shadow_v1(proposal, &legacy_intent, verifier)?;
+        self.safety.set_last_voted(header.view());
+        self.safety.set_pending_sign(Some(legacy_intent));
         Ok(true)
     }
 
@@ -9119,6 +9137,308 @@ impl Core {
             return Err(CoreError::ConflictingPayloadValidation(block_id));
         }
         Ok(true)
+    }
+
+    /// Reconstructs the pure kernel's complete immutable context from the
+    /// already-validated Core configuration. The fixed v1 safety-kernel bound
+    /// is an additional fail-closed liveness limit: a larger BlockTree may
+    /// admit a longer path, but this shadow never truncates or approves it.
+    fn safety_rules_shadow_context_v1(&self) -> Result<SafetyRulesContextV1> {
+        SafetyRulesContextV1::new(
+            self.config.validator_set().clone(),
+            *self.config.consensus_parameters(),
+            self.config.local_validator(),
+            self.config.trusted_genesis_timestamp_ms(),
+            CORE_SAFETY_RULES_MAX_ANCESTRY_BLOCKS_V1,
+        )
+        .map_err(|_| {
+            CoreError::SafetyRulesShadowMismatch(
+                "the pure kernel rejected the exact Core consensus context",
+            )
+        })
+    }
+
+    /// Builds the exact finalized coordinate consumed by the shadow. Genesis
+    /// is reconstructed only from trusted configuration. Every positive-height
+    /// reference comes from the complete durable finalization/anchor header,
+    /// never from the compact FinalizedTip alone.
+    fn safety_rules_shadow_finalized_ref_v1(
+        &self,
+        context: &SafetyRulesContextV1,
+    ) -> Result<FinalizedBlockRefV1> {
+        let finalized = self.safety.finalized();
+        let reference = if finalized.height() == Height::new(0) {
+            FinalizedBlockRefV1::trusted_genesis(context)
+        } else {
+            // `validate_runtime` requires `last_finalization`, when present,
+            // to bind the current finalized tip exactly. The anchor proof is
+            // therefore used only by the validated anchor-only generation.
+            let exact = if let Some(finalization) = self.safety.last_finalization() {
+                finalization.proof().finalized_block().header()
+            } else if let Some(anchor) = self.safety.state_sync_anchor() {
+                anchor.proof().finalized_block().header()
+            } else {
+                return Err(CoreError::SafetyRulesShadowMismatch(
+                    "positive finalized tip lacks its exact durable header",
+                ));
+            };
+            if exact.height() != finalized.height()
+                || exact.view() != finalized.view()
+                || exact.id() != finalized.block_id()
+                || exact.timestamp_ms() != finalized.timestamp_ms()
+            {
+                return Err(CoreError::SafetyRulesShadowMismatch(
+                    "durable finalized header differs from the Core finalized tip",
+                ));
+            }
+            FinalizedBlockRefV1::from_header(exact).map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "the pure kernel rejected the exact durable finalized header",
+                )
+            })?
+        };
+        if reference.height() != finalized.height()
+            || reference.view() != finalized.view()
+            || reference.block_id() != finalized.block_id()
+            || reference.timestamp_ms() != finalized.timestamp_ms()
+        {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "reconstructed finalized reference differs from the Core finalized tip",
+            ));
+        }
+        Ok(reference)
+    }
+
+    /// Rebuilds and freshly verifies the pure kernel's predecessor state. The
+    /// resulting value is transient comparison data and is never persisted.
+    fn safety_rules_shadow_state_v1<V: SignatureVerifier>(
+        &self,
+        context: &SafetyRulesContextV1,
+        verifier: &V,
+    ) -> Result<SafetyRulesStateV1> {
+        let finalized = self.safety_rules_shadow_finalized_ref_v1(context)?;
+        SafetyRulesStateV1::new(
+            context,
+            SafetyRulesStateSeedV1::new(
+                self.safety.current_view(),
+                self.safety.last_voted_view(),
+                self.safety.last_timeout_view(),
+                self.safety.high_qc().clone(),
+                self.safety.locked_qc().clone(),
+                finalized,
+                self.safety.revision(),
+            ),
+            verifier,
+        )
+        .map_err(|_| {
+            CoreError::SafetyRulesShadowMismatch(
+                "the pure kernel rejected the exact Core safety predecessor",
+            )
+        })
+    }
+
+    fn canonical_sign_intent_for_legacy_v1(
+        &self,
+        intent: &SignIntent,
+    ) -> Result<CanonicalSignIntentV0> {
+        match intent {
+            SignIntent::Vote {
+                authorizing_safety_revision,
+                view,
+                height,
+                block_id,
+                ..
+            } => CanonicalSignIntentV0::vote(
+                self.config.validator_set(),
+                self.config.local_validator(),
+                *authorizing_safety_revision,
+                *view,
+                *height,
+                *block_id,
+            )
+            .map_err(CoreError::from),
+            SignIntent::TimeoutVote {
+                authorizing_safety_revision,
+                view,
+                high_qc,
+                ..
+            } => CanonicalSignIntentV0::timeout_vote(
+                self.config.validator_set(),
+                self.config.local_validator(),
+                *authorizing_safety_revision,
+                *view,
+                *high_qc,
+            )
+            .map_err(CoreError::from),
+        }
+    }
+
+    /// Runs only after the existing application-Valid, observation, ancestry,
+    /// lock, epoch, and watermark gates have admitted an imminent legacy Vote.
+    /// The pure transition is discarded after exact comparison.
+    fn verify_vote_safety_shadow_v1<V: SignatureVerifier>(
+        &self,
+        proposal: &SignedProposalV0,
+        legacy_intent: &SignIntent,
+        verifier: &V,
+    ) -> Result<()> {
+        let context = self.safety_rules_shadow_context_v1()?;
+        let state = self.safety_rules_shadow_state_v1(&context, verifier)?;
+        let mut ancestry = self
+            .blocks
+            .exact_validated_proposal_path(
+                proposal.block().id(),
+                self.safety.finalized(),
+                context.max_ancestry_blocks() as usize,
+                self.config.max_block_time_step_ms(),
+            )
+            .ok_or(CoreError::SafetyRulesShadowMismatch(
+                "exact application-Valid ancestry is missing, unfrozen, or exceeds the shadow bound",
+            ))?;
+        let exact_target = ancestry.pop().ok_or(CoreError::SafetyRulesShadowMismatch(
+            "exact application-Valid ancestry omitted the target",
+        ))?;
+        if exact_target != proposal {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "frozen ancestry target differs from the imminent legacy Vote",
+            ));
+        }
+
+        let (authorizing_safety_revision, view, height, block_id, legacy_signing_root) =
+            match legacy_intent {
+                SignIntent::Vote {
+                    authorizing_safety_revision,
+                    view,
+                    height,
+                    block_id,
+                    signing_root,
+                } => (
+                    *authorizing_safety_revision,
+                    *view,
+                    *height,
+                    *block_id,
+                    *signing_root,
+                ),
+                SignIntent::TimeoutVote { .. } => {
+                    return Err(CoreError::SafetyRulesShadowMismatch(
+                        "an imminent legacy Vote carried a timeout intent",
+                    ));
+                }
+            };
+        let legacy_canonical = self
+            .canonical_sign_intent_for_legacy_v1(legacy_intent)
+            .map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "the imminent legacy Vote has no canonical signer intent",
+                )
+            })?;
+        let transition = PureHotStuffSafetyKernelV1::prepare_vote_from_refs(
+            &context, &state, &ancestry, proposal, verifier,
+        )
+        .map_err(|_| {
+            CoreError::SafetyRulesShadowMismatch("the pure kernel rejected an imminent legacy Vote")
+        })?;
+        let successor = transition.successor_state();
+        if transition.kind() != InertSafetyTransitionKindV1::Vote
+            || transition.predecessor_state_digest() != state.digest()
+            || transition.vote_block_id() != Some(block_id)
+            || view != proposal.block().header().view()
+            || height != proposal.block().header().height()
+            || block_id != proposal.block().id()
+            || legacy_signing_root != legacy_canonical.signing_root()
+            || transition.canonical_intent() != &legacy_canonical
+            || successor.current_view() != self.safety.current_view()
+            || successor.last_voted_view() != Some(view)
+            || successor.last_timeout_view() != self.safety.last_timeout_view()
+            || successor.high_qc() != self.safety.high_qc()
+            || successor.locked_qc() != self.safety.locked_qc()
+            || successor.finalized() != state.finalized()
+            || successor.revision() != authorizing_safety_revision
+        {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "pure and legacy Vote successors differ",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Freshly verifies both retained QCs and rebuilds the exact timeout
+    /// successor/intent after the legacy timeout gates have admitted it.
+    fn verify_timeout_safety_shadow_v1<V: SignatureVerifier>(
+        &self,
+        legacy_intent: &SignIntent,
+        verifier: &V,
+    ) -> Result<()> {
+        let context = self.safety_rules_shadow_context_v1()?;
+        let state = self.safety_rules_shadow_state_v1(&context, verifier)?;
+        let (authorizing_safety_revision, view, high_qc, legacy_signing_root) = match legacy_intent
+        {
+            SignIntent::TimeoutVote {
+                authorizing_safety_revision,
+                view,
+                high_qc,
+                signing_root,
+            } => (*authorizing_safety_revision, *view, *high_qc, *signing_root),
+            SignIntent::Vote { .. } => {
+                return Err(CoreError::SafetyRulesShadowMismatch(
+                    "an imminent legacy TimeoutVote carried a Vote intent",
+                ));
+            }
+        };
+        let legacy_canonical = self
+            .canonical_sign_intent_for_legacy_v1(legacy_intent)
+            .map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "the imminent legacy TimeoutVote has no canonical signer intent",
+                )
+            })?;
+        let transition = PureHotStuffSafetyKernelV1::prepare_timeout(&context, &state, verifier)
+            .map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "the pure kernel rejected an imminent legacy TimeoutVote",
+                )
+            })?;
+        let successor = transition.successor_state();
+        if transition.kind() != InertSafetyTransitionKindV1::TimeoutVote
+            || transition.predecessor_state_digest() != state.digest()
+            || transition.vote_block_id().is_some()
+            || view != self.safety.current_view()
+            || high_qc != self.safety.high_qc().qc_ref()
+            || legacy_signing_root != legacy_canonical.signing_root()
+            || transition.canonical_intent() != &legacy_canonical
+            || successor.current_view() != self.safety.current_view()
+            || successor.last_voted_view() != self.safety.last_voted_view()
+            || successor.last_timeout_view() != Some(view)
+            || successor.high_qc() != self.safety.high_qc()
+            || successor.locked_qc() != self.safety.locked_qc()
+            || successor.finalized() != state.finalized()
+            || successor.revision() != authorizing_safety_revision
+        {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "pure and legacy TimeoutVote successors differ",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Test-only entry to the real pre-persistence Vote staging boundary.
+    /// Tests invoke it only on an isolated Core clone; it emits no signer or
+    /// persistence effect by itself.
+    #[cfg(test)]
+    pub(crate) fn stage_vote_validated_proposal_for_test_v1<V: SignatureVerifier>(
+        &mut self,
+        proposal: &SignedProposalV0,
+        verifier: &V,
+    ) -> Result<bool> {
+        self.stage_vote_validated_proposal(proposal, verifier)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn forget_validated_proposal_for_test_v1(
+        &mut self,
+        block_id: BlockId,
+    ) -> Result<bool> {
+        self.blocks.forget_validated_proposal_for_test(block_id)
     }
 
     fn try_stage_finalization_blocked_vote<V: SignatureVerifier>(
@@ -9160,7 +9480,7 @@ impl Core {
         }) {
             return Ok(false);
         }
-        self.stage_vote_validated_proposal(&proposal)
+        self.stage_vote_validated_proposal(&proposal, verifier)
     }
 
     fn persist_observed_qc_for_validated_block<V: SignatureVerifier>(
@@ -9314,7 +9634,12 @@ impl Core {
         Ok(())
     }
 
-    fn handle_local_timeout(&mut self, epoch: Epoch, view: View) -> Result<Vec<Effect>> {
+    fn handle_local_timeout<V: SignatureVerifier>(
+        &mut self,
+        epoch: Epoch,
+        view: View,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
         self.require_epoch(epoch)?;
         if view != self.safety.current_view() {
             return Err(CoreError::WrongView {
@@ -9340,13 +9665,15 @@ impl Core {
             .revision()
             .checked_add(1)
             .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
-        self.safety.set_last_timeout(view);
-        self.safety.set_pending_sign(Some(SignIntent::TimeoutVote {
+        let legacy_intent = SignIntent::TimeoutVote {
             authorizing_safety_revision,
             view,
             high_qc,
             signing_root: root,
-        }));
+        };
+        self.verify_timeout_safety_shadow_v1(&legacy_intent, verifier)?;
+        self.safety.set_last_timeout(view);
+        self.safety.set_pending_sign(Some(legacy_intent));
         self.persist(vec![DeferredEffect::RequestSignature])
     }
 
@@ -11320,34 +11647,7 @@ impl Core {
 
     fn signature_effect(&self, intent: &SignIntent) -> Result<Effect> {
         self.require_supported_sign_intent(intent)?;
-        let canonical = match intent {
-            SignIntent::Vote {
-                authorizing_safety_revision,
-                view,
-                height,
-                block_id,
-                ..
-            } => trnm_consensus_types::CanonicalSignIntentV0::vote(
-                self.config.validator_set(),
-                self.config.local_validator(),
-                *authorizing_safety_revision,
-                *view,
-                *height,
-                *block_id,
-            )?,
-            SignIntent::TimeoutVote {
-                authorizing_safety_revision,
-                view,
-                high_qc,
-                ..
-            } => trnm_consensus_types::CanonicalSignIntentV0::timeout_vote(
-                self.config.validator_set(),
-                self.config.local_validator(),
-                *authorizing_safety_revision,
-                *view,
-                *high_qc,
-            )?,
-        };
+        let canonical = self.canonical_sign_intent_for_legacy_v1(intent)?;
         if canonical.signing_root() != intent.signing_root() {
             return Err(CoreError::InvalidRecovery(
                 "persisted sign intent root does not match its canonical preimage",

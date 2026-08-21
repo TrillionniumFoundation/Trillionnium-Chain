@@ -8,8 +8,11 @@
 //! complete high QC retained in the supplied state.
 //!
 //! The output is only a consensus-safety candidate. Application validity,
-//! persistence, external anti-rollback, signing authority, Core integration,
-//! runtime activation, and production use all remain explicitly unavailable.
+//! persistence, external anti-rollback, signing authority, authoritative Core
+//! integration, runtime activation, and production use all remain explicitly
+//! unavailable. Core may invoke the evaluator as a fail-closed shadow and
+//! discard the returned candidate after exact comparison with its legacy
+//! transition.
 
 extern crate alloc;
 
@@ -46,7 +49,12 @@ pub const FINALIZED_REFERENCE_AUTHORITY_V1: bool = false;
 pub const PERSISTENCE_AUTHORITY_V1: bool = false;
 pub const EXTERNAL_CAS_AUTHORITY_V1: bool = false;
 pub const HSM_AUTHORITY_V1: bool = false;
-pub const CORE_INTEGRATION_V1: bool = false;
+pub const CORE_INTEGRATION_V1: bool = true;
+pub const CORE_SHADOW_INTEGRATION_V1: bool = true;
+pub const CORE_AUTHORITATIVE_INTEGRATION_V1: bool = false;
+/// Recovered pending intents and tag-3 signature remints do not re-run this
+/// evaluator and cannot derive recovery or cross-upgrade signer authority from it.
+pub const RECOVERY_REPLAY_AUTHORITY_V1: bool = false;
 pub const REMOTE_WIRE_V1: bool = false;
 pub const OBSERVE_QC_V1: bool = false;
 pub const OBSERVE_TC_V1: bool = false;
@@ -455,11 +463,21 @@ impl SafetyRulesStateV1 {
         verify_qc_reference_v1(context, &self.locked_qc, verifier)?;
         let high = self.high_qc.qc_ref();
         let locked = self.locked_qc.qc_ref();
+        // HotStuff QC strength is ordered by view, not height. Across forks a
+        // later-view high QC may certify a shallower block than the retained
+        // lock. High and lock must nevertheless each remain independently
+        // at/above finality in both coordinates, and an equal-height reference
+        // must identify the exact finalized block.
         if high.view() >= self.current_view
             || locked.view() > high.view()
-            || locked.height() > high.height()
+            || self.finalized.view > high.view()
+            || self.finalized.height > high.height()
             || self.finalized.view > locked.view()
             || self.finalized.height > locked.height()
+            || (self.finalized.height == high.height()
+                && self.finalized.block_id != high.block_id())
+            || (self.finalized.height == locked.height()
+                && self.finalized.block_id != locked.block_id())
             || same_view_conflict(high, locked)
             || repeated_block_has_different_coordinate(high, locked)
             || qc_conflicts_with_finalized(high, self.finalized)
@@ -561,65 +579,27 @@ pub struct PureHotStuffSafetyKernelV1;
 impl PureHotStuffSafetyKernelV1 {
     /// Re-verifies a complete proposal and bounded finalized ancestry, applies
     /// the chained-HotStuff lock rule, and rebuilds the exact vote intent.
-    pub fn prepare_vote<V: SignatureVerifier>(
+    pub fn prepare_vote<'a, V: SignatureVerifier>(
         context: &SafetyRulesContextV1,
         state: &SafetyRulesStateV1,
-        ancestry: &[SignedProposalV0],
-        target: &SignedProposalV0,
+        ancestry: &'a [SignedProposalV0],
+        target: &'a SignedProposalV0,
         verifier: &V,
     ) -> SafetyRulesResultV1<InertSafetyTransitionV1> {
-        state.validate_fresh(context, verifier)?;
-        let header = target.block().header();
-        if header.view() != state.current_view {
-            return Err(SafetyRulesErrorV1::WrongView);
-        }
-        if state
-            .last_voted_view
-            .is_some_and(|last| last >= header.view())
-        {
-            return Err(SafetyRulesErrorV1::VoteWatermarkRegression);
-        }
+        prepare_vote_v1(context, state, ancestry.iter(), target, verifier)
+    }
 
-        let extends_lock = verify_ancestry_v1(context, state, ancestry, target, verifier)?;
-        let justify = target.witness().justify_qc().qc_ref();
-        if !extends_lock && justify.view() <= state.locked_qc.qc_ref().view() {
-            return Err(SafetyRulesErrorV1::UnsafeLock);
-        }
-
-        let successor_revision = state
-            .revision
-            .checked_add(1)
-            .ok_or(SafetyRulesErrorV1::ArithmeticOverflow)?;
-        let mut successor = state.clone();
-        successor.last_voted_view = Some(header.view());
-        successor.revision = successor_revision;
-        successor.digest = compute_state_digest_v1(&successor);
-
-        let canonical_intent = CanonicalSignIntentV0::vote(
-            &context.validator_set,
-            context.author,
-            successor_revision,
-            header.view(),
-            header.height(),
-            target.block().id(),
-        )
-        .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
-        let predecessor_state_digest = state.digest;
-        let candidate_digest = compute_vote_transition_digest_v1(
-            predecessor_state_digest,
-            successor.digest,
-            &canonical_intent,
-            ancestry,
-            target,
-        )?;
-        Ok(InertSafetyTransitionV1 {
-            kind: InertSafetyTransitionKindV1::Vote,
-            predecessor_state_digest,
-            successor_state: successor,
-            canonical_intent,
-            candidate_digest,
-            vote_block_id: Some(target.block().id()),
-        })
+    /// Borrowed-proposal counterpart used by Core's Arc-backed retention
+    /// cache. It evaluates and hashes the exact same proposal sequence without
+    /// deep-cloning retained bodies or changing any authority boundary.
+    pub fn prepare_vote_from_refs<'a, V: SignatureVerifier>(
+        context: &SafetyRulesContextV1,
+        state: &SafetyRulesStateV1,
+        ancestry: &[&'a SignedProposalV0],
+        target: &'a SignedProposalV0,
+        verifier: &V,
+    ) -> SafetyRulesResultV1<InertSafetyTransitionV1> {
+        prepare_vote_v1(context, state, ancestry.iter().copied(), target, verifier)
     }
 
     /// Rebuilds a timeout intent from the exact complete high QC in state. The
@@ -672,6 +652,71 @@ impl PureHotStuffSafetyKernelV1 {
     }
 }
 
+fn prepare_vote_v1<'a, V, I>(
+    context: &SafetyRulesContextV1,
+    state: &SafetyRulesStateV1,
+    ancestry: I,
+    target: &'a SignedProposalV0,
+    verifier: &V,
+) -> SafetyRulesResultV1<InertSafetyTransitionV1>
+where
+    V: SignatureVerifier,
+    I: Clone + ExactSizeIterator<Item = &'a SignedProposalV0>,
+{
+    state.validate_fresh(context, verifier)?;
+    let header = target.block().header();
+    if header.view() != state.current_view {
+        return Err(SafetyRulesErrorV1::WrongView);
+    }
+    if state
+        .last_voted_view
+        .is_some_and(|last| last >= header.view())
+    {
+        return Err(SafetyRulesErrorV1::VoteWatermarkRegression);
+    }
+
+    let extends_lock = verify_ancestry_v1(context, state, ancestry.clone(), target, verifier)?;
+    let justify = target.witness().justify_qc().qc_ref();
+    if !extends_lock && justify.view() <= state.locked_qc.qc_ref().view() {
+        return Err(SafetyRulesErrorV1::UnsafeLock);
+    }
+
+    let successor_revision = state
+        .revision
+        .checked_add(1)
+        .ok_or(SafetyRulesErrorV1::ArithmeticOverflow)?;
+    let mut successor = state.clone();
+    successor.last_voted_view = Some(header.view());
+    successor.revision = successor_revision;
+    successor.digest = compute_state_digest_v1(&successor);
+
+    let canonical_intent = CanonicalSignIntentV0::vote(
+        &context.validator_set,
+        context.author,
+        successor_revision,
+        header.view(),
+        header.height(),
+        target.block().id(),
+    )
+    .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+    let predecessor_state_digest = state.digest;
+    let candidate_digest = compute_vote_transition_digest_v1(
+        predecessor_state_digest,
+        successor.digest,
+        &canonical_intent,
+        ancestry,
+        target,
+    )?;
+    Ok(InertSafetyTransitionV1 {
+        kind: InertSafetyTransitionKindV1::Vote,
+        predecessor_state_digest,
+        successor_state: successor,
+        canonical_intent,
+        candidate_digest,
+        vote_block_id: Some(target.block().id()),
+    })
+}
+
 fn verify_qc_reference_v1<V: SignatureVerifier>(
     context: &SafetyRulesContextV1,
     reference: &QcReferenceV0,
@@ -690,13 +735,17 @@ fn verify_qc_reference_v1<V: SignatureVerifier>(
     }
 }
 
-fn verify_ancestry_v1<V: SignatureVerifier>(
+fn verify_ancestry_v1<'a, V, I>(
     context: &SafetyRulesContextV1,
     state: &SafetyRulesStateV1,
-    ancestry: &[SignedProposalV0],
-    target: &SignedProposalV0,
+    ancestry: I,
+    target: &'a SignedProposalV0,
     verifier: &V,
-) -> SafetyRulesResultV1<bool> {
+) -> SafetyRulesResultV1<bool>
+where
+    V: SignatureVerifier,
+    I: ExactSizeIterator<Item = &'a SignedProposalV0>,
+{
     let path_len = ancestry
         .len()
         .checked_add(1)
@@ -714,7 +763,7 @@ fn verify_ancestry_v1<V: SignatureVerifier>(
     let mut seen = BTreeSet::new();
     seen.insert(previous_block_id);
 
-    for proposal in ancestry.iter().chain(core::iter::once(target)) {
+    for proposal in ancestry.chain(core::iter::once(target)) {
         let block = proposal.block();
         let header = block.header();
         if header.block_kind() != BlockKind::Regular {
@@ -829,13 +878,16 @@ fn compute_state_digest_v1(state: &SafetyRulesStateV1) -> SafetyRulesStateDigest
     SafetyRulesStateDigestV1(hasher.finalize().into())
 }
 
-fn compute_vote_transition_digest_v1(
+fn compute_vote_transition_digest_v1<'a, I>(
     predecessor: SafetyRulesStateDigestV1,
     successor: SafetyRulesStateDigestV1,
     intent: &CanonicalSignIntentV0,
-    ancestry: &[SignedProposalV0],
-    target: &SignedProposalV0,
-) -> SafetyRulesResultV1<SafetyCandidateDigestV1> {
+    ancestry: I,
+    target: &'a SignedProposalV0,
+) -> SafetyRulesResultV1<SafetyCandidateDigestV1>
+where
+    I: ExactSizeIterator<Item = &'a SignedProposalV0>,
+{
     let mut hasher = Sha256::new();
     hasher.update(SAFETY_RULES_TRANSITION_DIGEST_DOMAIN_V1);
     hasher.update([0]);
@@ -853,7 +905,7 @@ fn compute_vote_transition_digest_v1(
         .and_then(|count| u32::try_from(count).ok())
         .ok_or(SafetyRulesErrorV1::ArithmeticOverflow)?;
     hasher.update(count.to_be_bytes());
-    for proposal in ancestry.iter().chain(core::iter::once(target)) {
+    for proposal in ancestry.chain(core::iter::once(target)) {
         update_proposal_identity_v1(&mut hasher, proposal);
     }
     Ok(SafetyCandidateDigestV1(hasher.finalize().into()))

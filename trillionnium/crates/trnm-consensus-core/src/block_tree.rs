@@ -221,10 +221,6 @@ impl BlockTree {
     /// boundary, but this read-only projection mints no application, finality,
     /// persistence, recovery, or signing authority. Missing/unfrozen nodes,
     /// malformed edges, cycles, and paths beyond `maximum` all return `None`.
-    #[allow(
-        dead_code,
-        reason = "the immediately following Core safety-shadow commit consumes this bounded prerequisite"
-    )]
     pub(crate) fn exact_validated_proposal_path(
         &self,
         target: BlockId,
@@ -234,10 +230,15 @@ impl BlockTree {
     ) -> Option<Vec<&SignedProposalV0>> {
         let path = bounded_parent_path_v0(target, finalized.block_id(), maximum, |block_id| {
             let node = self.nodes.get(&block_id)?;
+            let PayloadStatus::Valid(overlay) = node.payload_status else {
+                return None;
+            };
             let proposal = node.validated_proposal.as_ref()?;
             if proposal.block().header() != &node.header
                 || proposal.witness() != &node.witness
                 || proposal.block().id() != block_id
+                || overlay.block_id() != block_id
+                || overlay.parent_block_id() != node.header.parent_id()
             {
                 return None;
             }
@@ -263,6 +264,30 @@ impl BlockTree {
             proposals.push(proposal);
         }
         Some(proposals)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn forget_validated_proposal_for_test(&mut self, block_id: BlockId) -> Result<bool> {
+        let Some(node) = self.nodes.get(&block_id) else {
+            return Ok(false);
+        };
+        if node.validated_proposal.is_none() {
+            return Ok(false);
+        }
+        let next_retained = self
+            .retained_validated_proposal_bytes
+            .checked_sub(node.validated_proposal_resource_bytes)
+            .ok_or(CoreError::ArithmeticOverflow(
+                "forgotten validated-proposal resource release",
+            ))?;
+        let node = self
+            .nodes
+            .get_mut(&block_id)
+            .ok_or(CoreError::MissingBlock(block_id))?;
+        node.validated_proposal = None;
+        node.validated_proposal_resource_bytes = 0;
+        self.retained_validated_proposal_bytes = next_retained;
+        Ok(true)
     }
 
     pub(crate) fn justify_qc(&self, block_id: BlockId) -> Option<&QcReferenceV0> {
@@ -1029,5 +1054,28 @@ mod retention_tests {
             }
         })
         .is_none());
+    }
+
+    #[test]
+    fn bounded_parent_path_rejects_a_path_above_its_inclusive_maximum() {
+        let ids: alloc::vec::Vec<_> = (0_u8..=65)
+            .map(|coordinate| BlockId::new([coordinate; 32]))
+            .collect();
+        let finalized = ids[0];
+        let target = ids[65];
+        let parent_for = |block_id: BlockId| {
+            ids.iter()
+                .position(|candidate| *candidate == block_id)
+                .and_then(|position| position.checked_sub(1))
+                .map(|position| ids[position])
+        };
+
+        assert!(bounded_parent_path_v0(target, finalized, 64, parent_for).is_none());
+        assert_eq!(
+            bounded_parent_path_v0(target, finalized, 65, parent_for)
+                .expect("the exact inclusive bound admits the complete path")
+                .len(),
+            65
+        );
     }
 }

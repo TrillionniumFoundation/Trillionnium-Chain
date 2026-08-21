@@ -77,6 +77,7 @@ pub enum CoreError {
     ApplicationFinalizationPermitMismatch,
     ApplicationFinalizationReadbackMismatch,
     ApplicationFinalizationReceiptMismatch,
+    SafetyRulesShadowMismatch(&'static str),
     NativeFinalizationAppliedRecoveryRejected(&'static str),
     ConflictingPayloadValidation(BlockId),
     UnsafeProposal,
@@ -254,6 +255,9 @@ impl fmt::Display for CoreError {
             Self::ApplicationFinalizationReceiptMismatch => formatter.write_str(
                 "application finalization receipt does not belong to this Core, queue front, or apply authority",
             ),
+            Self::SafetyRulesShadowMismatch(reason) => {
+                write!(formatter, "safety-rules shadow mismatch: {reason}")
+            }
             Self::NativeFinalizationAppliedRecoveryRejected(reason) => write!(
                 formatter,
                 "native finalization-applied recovery reconciliation was rejected: {reason}",

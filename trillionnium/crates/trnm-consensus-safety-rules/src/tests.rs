@@ -269,6 +269,25 @@ fn genesis_reference(context: &SafetyRulesContextV1) -> QcReferenceV0 {
     )
 }
 
+fn positive_finalized_reference(
+    context: &SafetyRulesContextV1,
+    view: u64,
+    height: u64,
+    payload_tag: u8,
+) -> FinalizedBlockRefV1 {
+    let finalized = block(
+        &context.validator_set,
+        view,
+        height,
+        BlockId::new([payload_tag.wrapping_sub(1); 32]),
+        height.saturating_mul(100),
+        payload_tag,
+        leader(&context.validator_set, view),
+    );
+    FinalizedBlockRefV1::from_header(finalized.header())
+        .expect("shape-valid positive finalized reference")
+}
+
 fn genesis_state(context: &SafetyRulesContextV1) -> SafetyRulesStateV1 {
     let genesis = match genesis_reference(context) {
         QcReferenceV0::Synthetic(anchor) => match *anchor {
@@ -363,6 +382,15 @@ fn vote_transition_rebuilds_intent_and_advances_only_vote_watermark() {
     let transition =
         PureHotStuffSafetyKernelV1::prepare_vote(&context, &state, &[], &target, &RootSignatures)
             .expect("safe first vote");
+    let borrowed = PureHotStuffSafetyKernelV1::prepare_vote_from_refs(
+        &context,
+        &state,
+        &[],
+        &target,
+        &RootSignatures,
+    )
+    .expect("borrowed safe first vote");
+    assert_eq!(borrowed, transition);
 
     assert_eq!(transition.kind(), InertSafetyTransitionKindV1::Vote);
     assert_eq!(transition.predecessor_state_digest(), state.digest());
@@ -450,6 +478,89 @@ fn timeout_uses_exact_retained_high_qc_and_timeout_then_vote_same_view_is_allowe
     assert_eq!(vote.successor_state().last_voted_view(), Some(View::new(1)));
     assert_eq!(vote.successor_state().revision(), 2);
     assert_eq!(vote.canonical_intent().authorizing_safety_revision(), 2);
+}
+
+#[test]
+fn higher_view_shallower_high_qc_is_valid_and_timeout_uses_it_exactly() {
+    let context = context();
+    let high = QcReferenceV0::ordinary(qc(&context.validator_set, 3, 1, BlockId::new([0x81; 32])));
+    let locked =
+        QcReferenceV0::ordinary(qc(&context.validator_set, 2, 2, BlockId::new([0x82; 32])));
+    let exact_high = high.qc_ref();
+    let exact_lock = locked.qc_ref();
+    assert!(exact_high.view() > exact_lock.view());
+    assert!(exact_high.height() < exact_lock.height());
+
+    let state = SafetyRulesStateV1::new(
+        &context,
+        SafetyRulesStateSeedV1::new(
+            View::new(4),
+            None,
+            None,
+            high,
+            locked,
+            FinalizedBlockRefV1::trusted_genesis(&context),
+            0,
+        ),
+        &RootSignatures,
+    )
+    .expect("higher-view high QC remains stronger across a shallower fork");
+    let timeout = PureHotStuffSafetyKernelV1::prepare_timeout(&context, &state, &RootSignatures)
+        .expect("timeout uses the exact view-stronger high QC");
+
+    assert_eq!(timeout.successor_state().high_qc().qc_ref(), exact_high);
+    assert_eq!(timeout.successor_state().locked_qc().qc_ref(), exact_lock);
+    match timeout.canonical_intent().preimage() {
+        CanonicalSignPreimageV0::TimeoutVote(preimage) => {
+            assert_eq!(preimage.view(), View::new(4));
+            assert_eq!(preimage.high_qc(), exact_high);
+        }
+        CanonicalSignPreimageV0::Vote(_) => panic!("unexpected vote intent"),
+    }
+}
+
+#[test]
+fn state_rejects_qcs_below_or_equal_height_conflicting_with_finality() {
+    let context = context();
+    let finalized = positive_finalized_reference(&context, 2, 2, 0x91);
+    let exact_finalized_qc = || {
+        QcReferenceV0::ordinary(qc(
+            &context.validator_set,
+            finalized.view().get(),
+            finalized.height().get(),
+            finalized.block_id(),
+        ))
+    };
+    let state = |high: QcReferenceV0, locked: QcReferenceV0| {
+        SafetyRulesStateV1::new(
+            &context,
+            SafetyRulesStateSeedV1::new(View::new(5), None, None, high, locked, finalized, 0),
+            &RootSignatures,
+        )
+    };
+
+    let high_below_finalized =
+        QcReferenceV0::ordinary(qc(&context.validator_set, 3, 1, BlockId::new([0x92; 32])));
+    assert_eq!(
+        state(high_below_finalized, exact_finalized_qc()),
+        Err(SafetyRulesErrorV1::InvalidState)
+    );
+
+    let high_conflicts_at_finalized_height =
+        QcReferenceV0::ordinary(qc(&context.validator_set, 3, 2, BlockId::new([0x93; 32])));
+    assert_eq!(
+        state(high_conflicts_at_finalized_height, exact_finalized_qc()),
+        Err(SafetyRulesErrorV1::InvalidState)
+    );
+
+    let locked_conflicts_at_finalized_height =
+        QcReferenceV0::ordinary(qc(&context.validator_set, 2, 2, BlockId::new([0x94; 32])));
+    let high_above_finalized =
+        QcReferenceV0::ordinary(qc(&context.validator_set, 3, 3, BlockId::new([0x95; 32])));
+    assert_eq!(
+        state(high_above_finalized, locked_conflicts_at_finalized_height),
+        Err(SafetyRulesErrorV1::InvalidState)
+    );
 }
 
 #[test]
@@ -1046,7 +1157,10 @@ const _: () = {
     assert!(!PERSISTENCE_AUTHORITY_V1);
     assert!(!EXTERNAL_CAS_AUTHORITY_V1);
     assert!(!HSM_AUTHORITY_V1);
-    assert!(!CORE_INTEGRATION_V1);
+    assert!(CORE_INTEGRATION_V1);
+    assert!(CORE_SHADOW_INTEGRATION_V1);
+    assert!(!CORE_AUTHORITATIVE_INTEGRATION_V1);
+    assert!(!RECOVERY_REPLAY_AUTHORITY_V1);
     assert!(!REMOTE_WIRE_V1);
     assert!(!OBSERVE_QC_V1);
     assert!(!OBSERVE_TC_V1);
