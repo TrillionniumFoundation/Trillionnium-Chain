@@ -426,7 +426,7 @@ pub(crate) fn sign_runtime_metrics_v1(
     evidence.body_sha256 = hex::encode(body_hash);
     evidence.signature = hex::encode(
         config
-            .signing_key()
+            .consensus_signing_key()
             .sign(&domain_hash(
                 RUNTIME_METRICS_SIGNATURE_DOMAIN_V1,
                 &body_hash,
@@ -517,7 +517,7 @@ pub(crate) fn sign_runtime_final_state_v1(
     evidence.body_sha256 = hex::encode(body_hash);
     evidence.signature = hex::encode(
         config
-            .signing_key()
+            .consensus_signing_key()
             .sign(&domain_hash(
                 RUNTIME_FINAL_STATE_SIGNATURE_DOMAIN_V1,
                 &body_hash,

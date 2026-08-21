@@ -42,7 +42,7 @@ use crate::{
 
 const TEMPLATE_MAX_BYTES_V1: u64 = 2 * 1024 * 1024;
 const BOOTSTRAP_SCHEMA_V1: &str = "trnm.poco.zero-comet-public-bootstrap.v1";
-const VALIDATOR_SET_SCHEMA_VERSION_V1: u32 = 1;
+const VALIDATOR_SET_SCHEMA_VERSION_V1: u32 = 2;
 const ORDINARY_START_HEIGHT_V1: u64 = 4;
 const CONSENSUS_PARAMETERS_PROFILE_V1: &str = "reference-shadow-v0";
 const LAB_CHAIN_ID_V1: &str = "trnm-poco-g3-lab-v0";
@@ -58,8 +58,12 @@ const FINALITY_PATH_V1: &str = "public/bootstrap/finality-proof.cev0";
 struct ValidatorRecordV1 {
     validator_id: String,
     consensus_public_key: String,
+    p2p_identity_public_key: String,
+    operator_recovery_public_key: String,
     voting_power: u64,
     key_pop_signature: String,
+    p2p_identity_key_pop_signature: String,
+    operator_recovery_key_pop_signature: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -981,7 +985,7 @@ fn admit_template_and_keys(
     );
 
     let mut previous_id = None;
-    let mut consensus_keys = BTreeSet::new();
+    let mut role_keys = BTreeSet::new();
     let mut validators = Vec::with_capacity(template.validators.len());
     let mut signing_keys = BTreeMap::new();
     let mut secret_patterns = Vec::with_capacity(template.validators.len() * 2);
@@ -993,20 +997,47 @@ fn admit_template_and_keys(
         );
         previous_id = Some(id_bytes);
         let public_key = decode_hex32(&record.consensus_public_key, "consensus_public_key")?;
-        ensure!(
-            consensus_keys.insert(public_key),
-            "validator-set template repeats a consensus public key"
-        );
-        let verifying_key = VerifyingKey::from_bytes(&public_key)
-            .map_err(|_| anyhow!("consensus public key is not Ed25519"))?;
-        ensure!(!verifying_key.is_weak(), "consensus public key is weak");
-        let pop_bytes = decode_hex64(&record.key_pop_signature, "key_pop_signature")?;
-        verifying_key
-            .verify_strict(
-                &pop_challenge(&template.run_id, &record.validator_id),
-                &Signature::from_bytes(&pop_bytes),
-            )
-            .map_err(|_| anyhow!("validator key proof-of-possession is invalid"))?;
+        let p2p_identity_public_key =
+            decode_hex32(&record.p2p_identity_public_key, "p2p_identity_public_key")?;
+        let operator_recovery_public_key = decode_hex32(
+            &record.operator_recovery_public_key,
+            "operator_recovery_public_key",
+        )?;
+        for (role_key, signature, role) in [
+            (
+                public_key,
+                record.key_pop_signature.as_str(),
+                LabKeyRoleV1::Consensus,
+            ),
+            (
+                p2p_identity_public_key,
+                record.p2p_identity_key_pop_signature.as_str(),
+                LabKeyRoleV1::P2pIdentity,
+            ),
+            (
+                operator_recovery_public_key,
+                record.operator_recovery_key_pop_signature.as_str(),
+                LabKeyRoleV1::OperatorRecovery,
+            ),
+        ] {
+            ensure!(
+                role_keys.insert(role_key),
+                "validator-set template reuses a public key across roles"
+            );
+            let verifying_key = VerifyingKey::from_bytes(&role_key)
+                .map_err(|_| anyhow!("validator role public key is not Ed25519"))?;
+            ensure!(
+                !verifying_key.is_weak(),
+                "validator role public key is weak"
+            );
+            let pop_bytes = decode_hex64(signature, "role_key_pop_signature")?;
+            verifying_key
+                .verify_strict(
+                    &pop_challenge(&template.run_id, &record.validator_id, role),
+                    &Signature::from_bytes(&pop_bytes),
+                )
+                .map_err(|_| anyhow!("validator role-key proof-of-possession is invalid"))?;
+        }
         let validator_id = ValidatorId::new(id_bytes);
         let secret_path = secret_directory.join(format!("{}.pk8", record.validator_id));
         let secret_bytes = read_strict_secret(&secret_path)?;
@@ -1091,9 +1122,28 @@ fn sha256(bytes: &[u8]) -> [u8; 32] {
     Sha256::digest(bytes).into()
 }
 
-fn pop_challenge(run_id: &str, validator_id: &str) -> Vec<u8> {
+#[derive(Debug, Clone, Copy)]
+enum LabKeyRoleV1 {
+    Consensus,
+    P2pIdentity,
+    OperatorRecovery,
+}
+
+impl LabKeyRoleV1 {
+    const fn label(self) -> &'static [u8] {
+        match self {
+            Self::Consensus => b"consensus",
+            Self::P2pIdentity => b"p2p-identity",
+            Self::OperatorRecovery => b"operator-recovery",
+        }
+    }
+}
+
+fn pop_challenge(run_id: &str, validator_id: &str, role: LabKeyRoleV1) -> Vec<u8> {
     let mut challenge = Vec::new();
-    challenge.extend_from_slice(b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0");
+    challenge.extend_from_slice(b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0");
+    challenge.extend_from_slice(&(role.label().len() as u32).to_be_bytes());
+    challenge.extend_from_slice(role.label());
     challenge.extend_from_slice(&(run_id.len() as u32).to_be_bytes());
     challenge.extend_from_slice(run_id.as_bytes());
     challenge.extend_from_slice(&(validator_id.len() as u32).to_be_bytes());
@@ -1293,7 +1343,7 @@ mod tests {
 
     fn test_template(run_id: &str, source: u8, keys: &[SigningKey]) -> ValidatorSetTemplateV1 {
         ValidatorSetTemplateV1 {
-            schema_version: 1,
+            schema_version: 2,
             run_id: run_id.to_owned(),
             chain_id: LAB_CHAIN_ID_V1.to_owned(),
             protocol_version: 0,
@@ -1306,12 +1356,45 @@ mod tests {
                 .enumerate()
                 .map(|(index, key)| {
                     let validator_id = hex::encode([u8::try_from(index + 1).unwrap(); 32]);
+                    let p2p_identity_key =
+                        SigningKey::from_bytes(&[u8::try_from(index + 0x41).unwrap(); 32]);
+                    let operator_recovery_key =
+                        SigningKey::from_bytes(&[u8::try_from(index + 0x61).unwrap(); 32]);
                     ValidatorRecordV1 {
                         validator_id: validator_id.clone(),
                         consensus_public_key: hex::encode(key.verifying_key().to_bytes()),
+                        p2p_identity_public_key: hex::encode(
+                            p2p_identity_key.verifying_key().to_bytes(),
+                        ),
+                        operator_recovery_public_key: hex::encode(
+                            operator_recovery_key.verifying_key().to_bytes(),
+                        ),
                         voting_power: 1,
                         key_pop_signature: hex::encode(
-                            key.sign(&pop_challenge(run_id, &validator_id)).to_bytes(),
+                            key.sign(&pop_challenge(
+                                run_id,
+                                &validator_id,
+                                LabKeyRoleV1::Consensus,
+                            ))
+                            .to_bytes(),
+                        ),
+                        p2p_identity_key_pop_signature: hex::encode(
+                            p2p_identity_key
+                                .sign(&pop_challenge(
+                                    run_id,
+                                    &validator_id,
+                                    LabKeyRoleV1::P2pIdentity,
+                                ))
+                                .to_bytes(),
+                        ),
+                        operator_recovery_key_pop_signature: hex::encode(
+                            operator_recovery_key
+                                .sign(&pop_challenge(
+                                    run_id,
+                                    &validator_id,
+                                    LabKeyRoleV1::OperatorRecovery,
+                                ))
+                                .to_bytes(),
                         ),
                     }
                 })

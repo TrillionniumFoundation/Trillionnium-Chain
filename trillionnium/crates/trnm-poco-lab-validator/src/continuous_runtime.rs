@@ -964,7 +964,7 @@ impl ContinuousRestartParkedAuthorityV1 {
             config.local_validator(),
             target_prepare.body().clone(),
             config.validator_set(),
-            config.signing_key(),
+            config.consensus_signing_key(),
         )
         .map_err(|error| anyhow!("sign peer RestartCut declaration: {error}"))?;
         let park = sign_local_restart_park_v1(
@@ -1090,7 +1090,7 @@ fn sign_local_restart_park_v1(
         config.validator_set(),
     )
     .map_err(|error| anyhow!("construct exact local-park signing digest: {error}"))?;
-    let signature = config.signing_key().sign(&digest).to_bytes();
+    let signature = config.consensus_signing_key().sign(&digest).to_bytes();
     SignedLocalRestartParkV1::from_parts(
         config.local_validator(),
         restart_cut_body,
@@ -1348,7 +1348,7 @@ impl ContinuousValidatorAuthorityV0 {
             config.local_validator(),
             config.validator_set().clone(),
             *config.consensus_parameters(),
-            config.signing_key().clone(),
+            config.consensus_signing_key().clone(),
             config.ordinary_start_height(),
             runtime,
             signer_lifetime,
@@ -1712,7 +1712,7 @@ impl ContinuousValidatorAuthorityV0 {
         config: &mut LoadedValidatorConfig,
     ) -> Result<SignedProposalV0> {
         let preimage = self.proposal_preimage_from_loaded_config_v0(config)?;
-        preimage.seal_with_key_v0(config.signing_key())
+        preimage.seal_with_key_v0(config.consensus_signing_key())
     }
 
     pub fn proposal_preimage_v0(

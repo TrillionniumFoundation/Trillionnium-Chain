@@ -471,7 +471,7 @@ def mutate_validator_set(root: pathlib.Path, mutate) -> None:
 
 
 def mutate_secret(root: pathlib.Path) -> None:
-    secrets = sorted((root / "secrets").iterdir())
+    secrets = sorted((root / "secrets").glob("*/*.pk8"))
     secrets[0].write_bytes(secrets[1].read_bytes())
     rehash_manifest_ref(root, secrets[0].relative_to(root).as_posix())
 
@@ -533,7 +533,7 @@ def inject_bootstrap_deployment_field(root: pathlib.Path) -> None:
 def leak_secret_into_fully_readdressed_bootstrap(root: pathlib.Path) -> None:
     relative = "public/bootstrap/h1.proposal"
     proposal_path = root / relative
-    secret_path = sorted((root / "secrets").iterdir())[0]
+    secret_path = sorted((root / "secrets").glob("*/*.pk8"))[0]
     proposal_path.write_bytes(secret_path.read_bytes()[-32:])
     proposal_hash = hashlib.sha256(proposal_path.read_bytes()).hexdigest()
     bootstrap_relative = "public/bootstrap/bootstrap.json"
@@ -707,6 +707,37 @@ def main() -> None:
             validator_binary_hash,
         )
         check_run_material.validate(source, 7, emit=False)
+        check_run_material.validate(source, 7, emit=False)
+        validator_set = json.loads(
+            (source / "public/validator-set.json").read_text(encoding="utf-8")
+        )
+        first_validator = validator_set["validators"][0]
+        if (
+            validator_set["schema_version"] != 2
+            or set(first_validator)
+            != {
+                "validator_id",
+                "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
+                "voting_power",
+                "key_pop_signature",
+                "p2p_identity_key_pop_signature",
+                "operator_recovery_key_pop_signature",
+            }
+            or len(
+                {
+                    first_validator["consensus_public_key"],
+                    first_validator["p2p_identity_public_key"],
+                    first_validator["operator_recovery_public_key"],
+                }
+            )
+            != 3
+        ):
+            raise AssertionError("validator key-role schema/vector is not exact v2")
+        manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
+        if len(manifest["secret_files"]) != 7 * 3:
+            raise AssertionError("validator role-secret inventory is not exactly three per validator")
         symlink_root = parent / "run-root-symlink"
         symlink_root.symlink_to(source, target_is_directory=True)
         expect_root_reject(symlink_root, "must be a real directory")
@@ -752,11 +783,37 @@ def main() -> None:
         expect_reject(
             source,
             "duplicate-key",
-            "public keys must be unique",
+            "public keys must be unique across all roles",
             lambda root: mutate_validator_set(
                 root,
                 lambda value: value["validators"][1].update(
                     consensus_public_key=value["validators"][0]["consensus_public_key"]
+                ),
+            ),
+        )
+        expect_reject(
+            source,
+            "equal-role-keys",
+            "public keys must be unique across all roles",
+            lambda root: mutate_validator_set(
+                root,
+                lambda value: value["validators"][0].update(
+                    p2p_identity_public_key=value["validators"][0][
+                        "consensus_public_key"
+                    ]
+                ),
+            ),
+        )
+        expect_reject(
+            source,
+            "role-pop-substitution",
+            "proof-of-possession is invalid",
+            lambda root: mutate_validator_set(
+                root,
+                lambda value: value["validators"][0].update(
+                    p2p_identity_key_pop_signature=value["validators"][0][
+                        "operator_recovery_key_pop_signature"
+                    ]
                 ),
             ),
         )
@@ -782,16 +839,22 @@ def main() -> None:
         expect_reject(
             source,
             "wrong-secret",
-            "secret key differs from its public validator descriptor",
+            "role secret key differs from its public validator descriptor",
             mutate_secret,
         )
         expect_reject(
             source,
             "open-secret-mode",
             "secret mode must be exactly 0600",
-            lambda root: (root / "secrets" / sorted((root / "secrets").iterdir())[0].name).chmod(
+            lambda root: sorted((root / "secrets").glob("*/*.pk8"))[0].chmod(
                 stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP
             ),
+        )
+        expect_reject(
+            source,
+            "open-secret-role-directory",
+            "secret authority directories must be real mode-0700 directories",
+            lambda root: (root / "secrets" / "p2p-identity").chmod(0o750),
         )
         expect_reject(
             source,
@@ -851,14 +914,14 @@ def main() -> None:
         )
         expect_reject(
             source,
-            "workload-consensus-key-overlap",
-            "overlap each other or consensus authority",
+            "workload-p2p-role-key-overlap",
+            "overlap each other or validator role authority",
             lambda root: mutate_policy(
                 root,
                 lambda value: value["header"]["operator"].update(
                     public_key_hex=json.loads(
                         (root / "public/validator-set.json").read_text(encoding="utf-8")
-                    )["validators"][0]["consensus_public_key"]
+                    )["validators"][0]["p2p_identity_public_key"]
                 ),
             ),
         )
@@ -922,15 +985,15 @@ def main() -> None:
         )
 
     print(
-        "poco_g3_run_material_self_test=passed positives=2 negatives=33 "
-        "validator_hosts=5 mac_observer=true ephemeral_keys=true pop=true "
+        "poco_g3_run_material_self_test=passed positives=3 negatives=36 "
+        "validator_hosts=5 mac_observer=true ephemeral_role_keys=three pop=true "
         "public_workload=true ordinary_start_height=4 ordinal_height_mapping=true "
         "content_addressed=true application_private_keys=false "
         "builder_inode_pinned=true builder_path_substitution_rejected=true "
         "material_builder_validator_binary_distinct=true same_binary_fallback_rejected=true "
         "material_author_hash_bound=true material_author_runtime_deployed=false "
         "run_root_symlink_rejected=true generator_output_symlink_rejected=true "
-        "public_bootstrap_bundle=true bootstrap_runtime_closed=false "
+        "public_bootstrap_bundle=true bootstrap_runtime_closed=false role_reopen=true "
         "production_activation=false geo_wan=false"
     )
 

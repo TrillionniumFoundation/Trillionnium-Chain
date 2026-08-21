@@ -567,7 +567,7 @@ def build_signed_report(
     }
     return sign_report(
         report,
-        deployments / validator_id / f"secrets/{validator_id}.pk8",
+        deployments / validator_id / f"secrets/consensus/{validator_id}.pk8",
     )
 
 
@@ -644,7 +644,7 @@ def observer_coordinator_manifest_symlink(
 
 
 def observer_extra_secret(root: pathlib.Path, first: str, _second: str) -> None:
-    source = root / first / f"secrets/{first}.pk8"
+    source = root / first / f"secrets/consensus/{first}.pk8"
     target = root / "observer-public/secrets/leaked.pk8"
     target.parent.mkdir()
     shutil.copyfile(source, target)
@@ -752,7 +752,7 @@ def exercise_public_report_negatives(
     semantic["report"]["core_runtime"] = True
     semantic = sign_report(
         semantic["report"],
-        deployments / validator_id / f"secrets/{validator_id}.pk8",
+        deployments / validator_id / f"secrets/consensus/{validator_id}.pk8",
     )
     semantic_path = parent / "signed-report-resigned-semantic-drift.json"
     write_json(semantic_path, semantic)
@@ -830,8 +830,8 @@ def observer_wrong_material_author(root: pathlib.Path, _first: str, _second: str
 
 
 def extra_secret(root: pathlib.Path, first: str, second: str) -> None:
-    source = root / second / f"secrets/{second}.pk8"
-    target = root / first / f"secrets/{second}.pk8"
+    source = root / second / f"secrets/consensus/{second}.pk8"
+    target = root / first / f"secrets/consensus/{second}.pk8"
     shutil.copyfile(source, target)
     target.chmod(0o600)
 
@@ -874,7 +874,7 @@ def observer_substituted_bootstrap(root: pathlib.Path, _first: str, _second: str
 
 
 def application_private_key_leak(root: pathlib.Path, first: str, _second: str) -> None:
-    source = root / first / f"secrets/{first}.pk8"
+    source = root / first / f"secrets/consensus/{first}.pk8"
     target = root / first / "secrets/workload-application.pk8"
     shutil.copyfile(source, target)
     target.chmod(0o600)

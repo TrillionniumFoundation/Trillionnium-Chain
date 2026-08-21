@@ -43,6 +43,7 @@ RUN_ID = re.compile(
     r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$"
 )
 VALID_COUNTS = {7, 31, 100}
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 REQUIRED_FAULTS = {
     "leader_loss",
     "validator_process_kill",
@@ -1318,7 +1319,7 @@ def validate(
     )
     validators = descriptor["validators"]
     if (
-        descriptor["schema_version"] != 1
+        descriptor["schema_version"] != 2
         or descriptor["run_id"] != run_id
         or descriptor["chain_id"] != "trnm-poco-g3-lab-v0"
         or descriptor["protocol_version"] != 0
@@ -1335,32 +1336,74 @@ def validate(
     previous = ""
     keys: set[str] = set()
     for index, raw in enumerate(validators):
-        record = exact(raw, {"validator_id", "consensus_public_key", "voting_power", "key_pop_signature"}, f"validator[{index}]")
+        record = exact(
+            raw,
+            {
+                "validator_id",
+                "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
+                "voting_power",
+                "key_pop_signature",
+                "p2p_identity_key_pop_signature",
+                "operator_recovery_key_pop_signature",
+            },
+            f"validator[{index}]",
+        )
         validator_id = record["validator_id"]
         public_key = record["consensus_public_key"]
         validator_id_bytes = hex_bytes(validator_id, 32, f"validator[{index}].validator_id")
         public_key_bytes = hex_bytes(public_key, 32, f"validator[{index}].consensus_public_key")
-        hex_bytes(record["key_pop_signature"], 64, f"validator[{index}].key_pop_signature")
         voting_power = uint(record["voting_power"], f"validator[{index}].voting_power", positive=True)
-        if validator_id <= previous or public_key in keys:
+        if validator_id <= previous:
             fail("validator set order/key uniqueness differs")
         previous = validator_id
-        keys.add(public_key)
         run = run_id.encode("ascii")
         author = validator_id.encode("ascii")
-        pop_message = (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0"
-            + len(run).to_bytes(4, "big")
-            + run
-            + len(author).to_bytes(4, "big")
-            + author
+        role_values = (
+            ("consensus", public_key, record["key_pop_signature"]),
+            (
+                "p2p-identity",
+                record["p2p_identity_public_key"],
+                record["p2p_identity_key_pop_signature"],
+            ),
+            (
+                "operator-recovery",
+                record["operator_recovery_public_key"],
+                record["operator_recovery_key_pop_signature"],
+            ),
         )
-        verify_ed25519(
-            public_key,
-            pop_message,
-            record["key_pop_signature"],
-            f"validator[{index}] proof-of-possession",
-        )
+        for role, role_public_key, role_signature in role_values:
+            role_public_key_bytes = hex_bytes(
+                role_public_key,
+                32,
+                f"validator[{index}].{role}.public_key",
+            )
+            del role_public_key_bytes
+            hex_bytes(
+                role_signature,
+                64,
+                f"validator[{index}].{role}.key_pop_signature",
+            )
+            if role_public_key in keys:
+                fail("validator set role key uniqueness differs")
+            keys.add(role_public_key)
+            role_bytes = role.encode("ascii")
+            pop_message = (
+                b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0"
+                + len(role_bytes).to_bytes(4, "big")
+                + role_bytes
+                + len(run).to_bytes(4, "big")
+                + run
+                + len(author).to_bytes(4, "big")
+                + author
+            )
+            verify_ed25519(
+                role_public_key,
+                pop_message,
+                role_signature,
+                f"validator[{index}] {role} proof-of-possession",
+            )
         by_id[validator_id] = record
         canonical_inventory.append(
             (validator_id_bytes, public_key_bytes, voting_power)
@@ -1403,20 +1446,27 @@ def validate(
             {
                 "schema_version", "run_id", "validator_id", "host_id", "lan_ip",
                 "p2p_port", "metrics_port", "weight", "consensus_public_key",
+                "p2p_identity_public_key", "operator_recovery_public_key",
                 "validator_set_sha256", "binary_sha256", "ordinary_start_height",
-                "workload_corpus_sha256", "workload_policy_sha256", "secret_key_path",
+                "workload_corpus_sha256", "workload_policy_sha256",
+                "consensus_secret_key_path", "p2p_identity_secret_key_path",
+                "operator_recovery_secret_key_path",
                 "peers", "network_scope", "geo_wan_evidence", "production_activation",
             },
             f"validator config[{validator_id}]",
         )
         plan = plan_by_id[validator_id]
         if (
-            config["schema_version"] != 1
+            config["schema_version"] != 2
             or config["run_id"] != run_id
             or config["validator_id"] != validator_id
             or config["host_id"] != plan.get("host_id")
             or config["weight"] != by_id[validator_id]["voting_power"]
             or config["consensus_public_key"] != by_id[validator_id]["consensus_public_key"]
+            or config["p2p_identity_public_key"]
+            != by_id[validator_id]["p2p_identity_public_key"]
+            or config["operator_recovery_public_key"]
+            != by_id[validator_id]["operator_recovery_public_key"]
             or config["validator_set_sha256"] != set_ref["sha256"]
             or config["binary_sha256"] != binary_ref["sha256"]
             or isinstance(config["ordinary_start_height"], bool)
@@ -1426,6 +1476,12 @@ def validate(
             or not HEX32.fullmatch(config["workload_corpus_sha256"])
             or not isinstance(config["workload_policy_sha256"], str)
             or not HEX32.fullmatch(config["workload_policy_sha256"])
+            or config["consensus_secret_key_path"]
+            != f"secrets/consensus/{validator_id}.pk8"
+            or config["p2p_identity_secret_key_path"]
+            != f"secrets/p2p-identity/{validator_id}.pk8"
+            or config["operator_recovery_secret_key_path"]
+            != f"secrets/operator-recovery/{validator_id}.pk8"
             or config["network_scope"] != "single-lan"
             or config["geo_wan_evidence"] is not False
             or config["production_activation"] is not False
@@ -1564,19 +1620,27 @@ def validate(
         ):
             fail("coordinator public reference differs from observer-public bytes")
     secret_values = coordinator["secret_files"]
-    if not isinstance(secret_values, list) or len(secret_values) != expected_count:
+    if not isinstance(secret_values, list) or len(secret_values) != 3 * expected_count:
         fail("coordinator secret-reference inventory cardinality differs")
-    secret_ids: set[str] = set()
+    secret_roles: set[tuple[str, str]] = set()
     for index, value in enumerate(secret_values):
         record = exact(value, {"path", "sha256", "bytes"}, f"coordinator.secret_files[{index}]")
         relative = str(safe_relative(record["path"], f"coordinator.secret_files[{index}].path"))
-        match = re.fullmatch(r"secrets/([0-9a-f]{64})\.pk8", relative)
+        match = re.fullmatch(
+            r"secrets/(consensus|p2p-identity|operator-recovery)/([0-9a-f]{64})\.pk8",
+            relative,
+        )
         hex_bytes(record["sha256"], 32, f"coordinator.secret_files[{index}].sha256", nonzero=True)
         uint(record["bytes"], f"coordinator.secret_files[{index}].bytes", positive=True)
-        if match is None or match.group(1) in secret_ids:
+        binding = None if match is None else (match.group(1), match.group(2))
+        if binding is None or binding in secret_roles:
             fail("coordinator secret-reference inventory is not closed")
-        secret_ids.add(match.group(1))
-    if secret_ids != validator_ids:
+        secret_roles.add(binding)
+    if secret_roles != {
+        (role, validator_id)
+        for role in KEY_ROLES
+        for validator_id in validator_ids
+    }:
         fail("coordinator secret-reference inventory differs from validators")
     agreement_fields = (
         "requested_duration_seconds", "requested_max_blocks",

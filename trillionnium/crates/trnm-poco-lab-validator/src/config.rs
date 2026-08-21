@@ -34,6 +34,7 @@ use crate::{
         VerifiedPublicZeroCometBootstrapV1,
     },
     crypto::LabFileWatermark,
+    key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
     workload_corpus::VerifiedWorkloadCorpusV1,
 };
 
@@ -49,8 +50,12 @@ const MAX_FROZEN_INPUT_BYTES: u64 = 64 * 1024 * 1024;
 struct ValidatorRecordJson {
     validator_id: String,
     consensus_public_key: String,
+    p2p_identity_public_key: String,
+    operator_recovery_public_key: String,
     voting_power: u64,
     key_pop_signature: String,
+    p2p_identity_key_pop_signature: String,
+    operator_recovery_key_pop_signature: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -137,6 +142,8 @@ struct ObserverEndpointJson {
     p2p_port: u16,
     metrics_port: u16,
     consensus_public_key: String,
+    p2p_identity_public_key: String,
+    operator_recovery_public_key: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -280,6 +287,8 @@ pub struct PeerConfig {
     pub lan_ip: String,
     pub p2p_port: u16,
     pub consensus_public_key: String,
+    pub p2p_identity_public_key: String,
+    pub operator_recovery_public_key: String,
 }
 
 impl PeerConfig {
@@ -311,12 +320,16 @@ struct ValidatorConfigJson {
     metrics_port: u16,
     weight: u64,
     consensus_public_key: String,
+    p2p_identity_public_key: String,
+    operator_recovery_public_key: String,
     validator_set_sha256: String,
     binary_sha256: String,
     ordinary_start_height: u64,
     workload_corpus_sha256: String,
     workload_policy_sha256: String,
-    secret_key_path: String,
+    consensus_secret_key_path: String,
+    p2p_identity_secret_key_path: String,
+    operator_recovery_secret_key_path: String,
     peers: Vec<PeerConfig>,
     network_scope: String,
     geo_wan_evidence: bool,
@@ -337,7 +350,10 @@ pub struct LoadedValidatorConfig {
     consensus_parameters: ConsensusParametersV0,
     peers: Vec<PeerConfig>,
     incoming_peers: Vec<PeerConfig>,
-    signing_key: SigningKey,
+    consensus_signing_key: SigningKey,
+    p2p_identity_signing_key: SigningKey,
+    operator_recovery_signing_key: SigningKey,
+    key_role_registry: ValidatorKeyRoleRegistryV1,
     validator_set_sha256: [u8; 32],
     topology_sha256: [u8; 32],
     config_sha256: [u8; 32],
@@ -365,6 +381,7 @@ pub struct PublicReportVerifierContext {
     p2p_port: u16,
     local_validator: ValidatorId,
     validator_set: ValidatorSet,
+    key_role_registry: ValidatorKeyRoleRegistryV1,
     peers: Vec<PeerConfig>,
     incoming_peers: Vec<PeerConfig>,
     validator_set_sha256: [u8; 32],
@@ -457,7 +474,7 @@ impl LoadedValidatorConfig {
         validate_manifest_binding(&manifest, &config, validator_set_sha256, &descriptor)?;
         validate_topology_binding(&topology, &config, &descriptor)?;
         let consensus_parameters = ConsensusParametersV0::reference_shadow_v0();
-        let (validator_set, candidate_source_sha256) =
+        let (validator_set, candidate_source_sha256, key_role_registry) =
             build_validator_set(&descriptor, &consensus_parameters)?;
 
         let workload_corpus_sha256 = decode_hex32(
@@ -512,11 +529,24 @@ impl LoadedValidatorConfig {
         let local = validator_set
             .validator(local_validator)
             .ok_or_else(|| anyhow!("local validator is absent from validator set"))?;
+        let local_roles = key_role_registry
+            .binding(local_validator)
+            .ok_or_else(|| anyhow!("local validator is absent from key-role registry"))?;
         if local.consensus_key().as_bytes()
             != &decode_hex32(&config.consensus_public_key, "config.consensus_public_key")?
+            || local_roles.p2p_identity_public_key()
+                != decode_hex32(
+                    &config.p2p_identity_public_key,
+                    "config.p2p_identity_public_key",
+                )?
+            || local_roles.operator_recovery_public_key()
+                != decode_hex32(
+                    &config.operator_recovery_public_key,
+                    "config.operator_recovery_public_key",
+                )?
             || local.voting_power().get() != config.weight
         {
-            bail!("local config key/weight differs from validator set");
+            bail!("local config key roles/weight differ from validator set descriptor");
         }
 
         let local_ip = config
@@ -532,32 +562,34 @@ impl LoadedValidatorConfig {
         {
             bail!("validator ports must be positive and distinct");
         }
-        validate_peers(&config, &validator_set, local_validator)?;
+        validate_peers(&config, &validator_set, &key_role_registry, local_validator)?;
         let incoming_peers =
             derive_incoming_peers(&topology, &descriptor, config.validator_id.as_str())?;
 
-        let secret_relative = strict_relative_path(&config.secret_key_path)?;
-        let expected_secret = PathBuf::from("secrets").join(format!("{}.pk8", config.validator_id));
-        if secret_relative != expected_secret {
-            bail!("config.secret_key_path differs from the closed per-validator layout");
-        }
-        let secret_path = canonical_regular_file(&run_root.join(&secret_relative))?;
-        require_descendant(&run_root, &secret_path, "validator secret")?;
-        let metadata = fs::metadata(&secret_path).context("stat validator secret")?;
-        if metadata.permissions().mode() & 0o777 != 0o600 {
-            bail!("validator secret mode must be exactly 0600");
-        }
-        let secret_bytes = read_regular_file_pinned(&secret_path, "validator secret")?;
-        require_manifest_bytes(
+        let consensus_signing_key = load_validator_role_secret(
+            &run_root,
             &manifest,
-            &secret_relative.to_string_lossy(),
-            &secret_bytes,
-            true,
+            &config.consensus_secret_key_path,
+            "consensus",
+            &config.validator_id,
+            local_roles.consensus_public_key(),
         )?;
-        let signing_key = load_pkcs8_ed25519_seed(&secret_bytes)?;
-        if signing_key.verifying_key().to_bytes() != local.consensus_key().into_bytes() {
-            bail!("validator secret does not match the committed public key");
-        }
+        let p2p_identity_signing_key = load_validator_role_secret(
+            &run_root,
+            &manifest,
+            &config.p2p_identity_secret_key_path,
+            "p2p-identity",
+            &config.validator_id,
+            local_roles.p2p_identity_public_key(),
+        )?;
+        let operator_recovery_signing_key = load_validator_role_secret(
+            &run_root,
+            &manifest,
+            &config.operator_recovery_secret_key_path,
+            "operator-recovery",
+            &config.validator_id,
+            local_roles.operator_recovery_public_key(),
+        )?;
 
         let binary_path = canonical_regular_file(binary_path.as_ref())?;
         let binary_sha256 = sha256_running_image(&binary_path)?;
@@ -578,7 +610,10 @@ impl LoadedValidatorConfig {
             consensus_parameters,
             peers: config.peers,
             incoming_peers,
-            signing_key,
+            consensus_signing_key,
+            p2p_identity_signing_key,
+            operator_recovery_signing_key,
+            key_role_registry,
             validator_set_sha256,
             topology_sha256,
             config_sha256,
@@ -655,8 +690,20 @@ impl LoadedValidatorConfig {
         &self.incoming_peers
     }
 
-    pub const fn signing_key(&self) -> &SigningKey {
-        &self.signing_key
+    pub const fn consensus_signing_key(&self) -> &SigningKey {
+        &self.consensus_signing_key
+    }
+
+    pub const fn p2p_identity_signing_key(&self) -> &SigningKey {
+        &self.p2p_identity_signing_key
+    }
+
+    pub const fn operator_recovery_signing_key(&self) -> &SigningKey {
+        &self.operator_recovery_signing_key
+    }
+
+    pub const fn key_role_registry(&self) -> &ValidatorKeyRoleRegistryV1 {
+        &self.key_role_registry
     }
 
     pub const fn validator_set_sha256(&self) -> [u8; 32] {
@@ -876,6 +923,7 @@ impl PublicReportVerifierContext {
     ) -> Self {
         let mut validator_config_sha256 = BTreeMap::new();
         validator_config_sha256.insert(local_validator, config_sha256);
+        let key_role_registry = Self::test_key_role_registry_v1(&validator_set);
         Self {
             run_id,
             host_id: "replay-archive-test".to_owned(),
@@ -883,6 +931,7 @@ impl PublicReportVerifierContext {
             p2p_port: 1,
             local_validator,
             validator_set,
+            key_role_registry,
             peers: Vec::new(),
             incoming_peers: Vec::new(),
             validator_set_sha256,
@@ -916,6 +965,7 @@ impl PublicReportVerifierContext {
         let config_sha256 = *validator_config_sha256
             .get(&local_validator)
             .expect("selected test validator has a config digest");
+        let key_role_registry = Self::test_key_role_registry_v1(&validator_set);
         Self {
             run_id: identity.run_id().to_owned(),
             host_id: "observer-test".to_owned(),
@@ -923,6 +973,7 @@ impl PublicReportVerifierContext {
             p2p_port: 1,
             local_validator,
             validator_set,
+            key_role_registry,
             peers: Vec::new(),
             incoming_peers: Vec::new(),
             validator_set_sha256: identity.validator_set_sha256(),
@@ -938,6 +989,34 @@ impl PublicReportVerifierContext {
             expected_outgoing_peers,
             bootstrap_initial_cut,
         }
+    }
+
+    #[cfg(test)]
+    fn test_key_role_registry_v1(validator_set: &ValidatorSet) -> ValidatorKeyRoleRegistryV1 {
+        let bindings = validator_set
+            .validators()
+            .iter()
+            .map(|validator| {
+                let derive_public_key = |role: &[u8]| {
+                    let mut hasher = Sha256::new();
+                    hasher.update(b"trnm.poco-g3.test-key-role-seed.v1");
+                    hasher.update((role.len() as u64).to_be_bytes());
+                    hasher.update(role);
+                    hasher.update(validator.id().as_bytes());
+                    let seed: [u8; 32] = hasher.finalize().into();
+                    SigningKey::from_bytes(&seed).verifying_key().to_bytes()
+                };
+                ValidatorKeyRoleBindingV1::new(
+                    validator.id(),
+                    validator.consensus_key().into_bytes(),
+                    derive_public_key(b"p2p-identity"),
+                    derive_public_key(b"operator-recovery"),
+                )
+                .expect("derived test key-role binding is valid")
+            })
+            .collect();
+        ValidatorKeyRoleRegistryV1::new(validator_set, bindings)
+            .expect("derived test key-role registry matches validator set")
     }
 
     pub fn load(
@@ -1196,7 +1275,11 @@ impl PublicReportVerifierContext {
         let expected_coordinator_secrets = topology
             .validators
             .iter()
-            .map(|validator| PathBuf::from(format!("secrets/{}.pk8", validator.validator_id)))
+            .flat_map(|validator| {
+                ["consensus", "p2p-identity", "operator-recovery"].map(|role| {
+                    PathBuf::from(format!("secrets/{role}/{}.pk8", validator.validator_id))
+                })
+            })
             .collect::<BTreeSet<_>>();
         let actual_coordinator_secrets = coordinator
             .secret_files
@@ -1221,7 +1304,7 @@ impl PublicReportVerifierContext {
             bail!("observer-public validator set cardinality differs from run");
         }
         let parameters = ConsensusParametersV0::reference_shadow_v0();
-        let (validator_set, candidate_source_sha256) =
+        let (validator_set, candidate_source_sha256, key_role_registry) =
             build_validator_set(&descriptor, &parameters)?;
         if candidate_source_sha256 != source {
             bail!("observer-public source digest differs across manifest and validator set");
@@ -1232,7 +1315,7 @@ impl PublicReportVerifierContext {
             .ok_or_else(|| anyhow!("observer-public bundle lacks macOS observer config"))?;
         let observer: ObserverConfigJson = serde_json::from_slice(observer_bytes)
             .context("decode frozen macOS observer config JSON")?;
-        if observer.schema_version != 1
+        if observer.schema_version != 2
             || observer.run_id != manifest.run_id
             || observer.host_id != "mac"
             || observer.lan_ip != "192.168.0.5"
@@ -1279,6 +1362,8 @@ impl PublicReportVerifierContext {
                 || actual.p2p_port != planned.p2p_port
                 || actual.metrics_port != planned.metrics_port
                 || actual.consensus_public_key != set_record.consensus_public_key
+                || actual.p2p_identity_public_key != set_record.p2p_identity_public_key
+                || actual.operator_recovery_public_key != set_record.operator_recovery_public_key
             {
                 bail!("observer endpoint inventory differs from topology/validator set");
             }
@@ -1300,10 +1385,21 @@ impl PublicReportVerifierContext {
         let config: ValidatorConfigJson = serde_json::from_slice(config_bytes)
             .context("decode observer selected validator config JSON")?;
         validate_fixed_config_fields(&config)?;
-        let secret_relative = strict_relative_path(&config.secret_key_path)?;
-        let expected_secret = format!("secrets/{}.pk8", config.validator_id);
-        if secret_relative != Path::new(&expected_secret) {
-            bail!("observer config secret reference differs from closed validator layout");
+        for (configured, role) in [
+            (&config.consensus_secret_key_path, "consensus"),
+            (&config.p2p_identity_secret_key_path, "p2p-identity"),
+            (
+                &config.operator_recovery_secret_key_path,
+                "operator-recovery",
+            ),
+        ] {
+            let relative = strict_relative_path(configured)?;
+            let expected = PathBuf::from("secrets")
+                .join(role)
+                .join(format!("{}.pk8", config.validator_id));
+            if relative != expected {
+                bail!("observer config role-secret reference differs from closed layout");
+            }
         }
         let expected_config = PathBuf::from(format!("public/configs/{}.json", config.validator_id));
         if config.run_id != manifest.run_id || relative_config != expected_config {
@@ -1349,11 +1445,24 @@ impl PublicReportVerifierContext {
         let local = validator_set
             .validator(local_validator)
             .ok_or_else(|| anyhow!("observer report author is absent from validator set"))?;
+        let local_roles = key_role_registry
+            .binding(local_validator)
+            .ok_or_else(|| anyhow!("observer report author is absent from key-role registry"))?;
         if local.consensus_key().as_bytes()
             != &decode_hex32(&config.consensus_public_key, "config.consensus_public_key")?
+            || local_roles.p2p_identity_public_key()
+                != decode_hex32(
+                    &config.p2p_identity_public_key,
+                    "config.p2p_identity_public_key",
+                )?
+            || local_roles.operator_recovery_public_key()
+                != decode_hex32(
+                    &config.operator_recovery_public_key,
+                    "config.operator_recovery_public_key",
+                )?
             || local.voting_power().get() != config.weight
         {
-            bail!("observer config key/weight differs from validator set");
+            bail!("observer config key roles/weight differ from validator set descriptor");
         }
         let local_ip = config
             .lan_ip
@@ -1367,7 +1476,7 @@ impl PublicReportVerifierContext {
         {
             bail!("observer config endpoints cross the frozen private-LAN profile");
         }
-        validate_peers(&config, &validator_set, local_validator)?;
+        validate_peers(&config, &validator_set, &key_role_registry, local_validator)?;
         let incoming_peers =
             derive_incoming_peers(&topology, &descriptor, config.validator_id.as_str())?;
         let mut validator_config_sha256 = BTreeMap::new();
@@ -1409,6 +1518,7 @@ impl PublicReportVerifierContext {
             p2p_port: config.p2p_port,
             local_validator,
             validator_set,
+            key_role_registry,
             peers: config.peers,
             incoming_peers,
             validator_set_sha256,
@@ -1500,13 +1610,17 @@ impl PublicReportVerifierContext {
         &self.expected_outgoing_peers
     }
 
+    pub const fn key_role_registry(&self) -> &ValidatorKeyRoleRegistryV1 {
+        &self.key_role_registry
+    }
+
     pub const fn bootstrap_initial_cut(&self) -> VerifiedPublicBootstrapInitialCutV1 {
         self.bootstrap_initial_cut
     }
 }
 
 fn validate_fixed_config_fields(config: &ValidatorConfigJson) -> Result<()> {
-    if config.schema_version != 1
+    if config.schema_version != 2
         || config.network_scope != "single-lan"
         || config.geo_wan_evidence
         || config.production_activation
@@ -1525,6 +1639,14 @@ fn validate_fixed_config_fields(config: &ValidatorConfigJson) -> Result<()> {
     }
     decode_hex32(&config.validator_id, "config.validator_id")?;
     decode_hex32(&config.consensus_public_key, "config.consensus_public_key")?;
+    decode_hex32(
+        &config.p2p_identity_public_key,
+        "config.p2p_identity_public_key",
+    )?;
+    decode_hex32(
+        &config.operator_recovery_public_key,
+        "config.operator_recovery_public_key",
+    )?;
     decode_hex32(&config.validator_set_sha256, "config.validator_set_sha256")?;
     decode_hex32(&config.binary_sha256, "config.binary_sha256")?;
     decode_hex32(
@@ -1542,7 +1664,7 @@ fn validate_fixed_config_fields(config: &ValidatorConfigJson) -> Result<()> {
 }
 
 fn validate_set_fixed_fields(descriptor: &ValidatorSetJson, run_id: &str) -> Result<()> {
-    if descriptor.schema_version != 1
+    if descriptor.schema_version != 2
         || descriptor.run_id != run_id
         || descriptor.chain_id != "trnm-poco-g3-lab-v0"
         || descriptor.protocol_version != 0
@@ -1685,7 +1807,10 @@ fn validate_manifest(
         PathBuf::from("public/bootstrap/finality-proof.cev0"),
         PathBuf::from("public/bootstrap/bootstrap.json"),
     ]);
-    let expected_secret = BTreeSet::from([PathBuf::from(format!("secrets/{validator_id}.pk8"))]);
+    let expected_secret = ["consensus", "p2p-identity", "operator-recovery"]
+        .map(|role| PathBuf::from(format!("secrets/{role}/{validator_id}.pk8")))
+        .into_iter()
+        .collect::<BTreeSet<_>>();
     let actual_public = manifest
         .public_files
         .iter()
@@ -1697,7 +1822,7 @@ fn validate_manifest(
         .map(|record| strict_relative_path(&record.path))
         .collect::<Result<BTreeSet<_>>>()?;
     if actual_public != expected_public || actual_secret != expected_secret {
-        bail!("validator deployment must contain exactly one local secret and ten public inputs");
+        bail!("validator deployment must contain exactly three local role secrets and ten public inputs");
     }
     if source == [0; 32] {
         bail!("manifest source digest must not be zero");
@@ -1965,6 +2090,8 @@ fn validate_topology_binding(
             || actual.lan_ip != expected.lan_ip
             || actual.p2p_port != expected.p2p_port
             || actual.consensus_public_key != set_record.consensus_public_key
+            || actual.p2p_identity_public_key != set_record.p2p_identity_public_key
+            || actual.operator_recovery_public_key != set_record.operator_recovery_public_key
         {
             bail!("local config peer tuple differs from topology/set");
         }
@@ -1997,6 +2124,8 @@ fn derive_incoming_peers(
                 lan_ip: validator.lan_ip.clone(),
                 p2p_port: validator.p2p_port,
                 consensus_public_key: record.consensus_public_key.clone(),
+                p2p_identity_public_key: record.p2p_identity_public_key.clone(),
+                operator_recovery_public_key: record.operator_recovery_public_key.clone(),
             });
         }
     }
@@ -2006,9 +2135,28 @@ fn derive_incoming_peers(
     Ok(incoming)
 }
 
-fn pop_challenge(run_id: &str, validator_id: &str) -> Vec<u8> {
+#[derive(Debug, Clone, Copy)]
+enum LabKeyRoleV1 {
+    Consensus,
+    P2pIdentity,
+    OperatorRecovery,
+}
+
+impl LabKeyRoleV1 {
+    const fn label(self) -> &'static [u8] {
+        match self {
+            Self::Consensus => b"consensus",
+            Self::P2pIdentity => b"p2p-identity",
+            Self::OperatorRecovery => b"operator-recovery",
+        }
+    }
+}
+
+fn pop_challenge(run_id: &str, validator_id: &str, role: LabKeyRoleV1) -> Vec<u8> {
     let mut challenge = Vec::new();
-    challenge.extend_from_slice(b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0");
+    challenge.extend_from_slice(b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0");
+    challenge.extend_from_slice(&(role.label().len() as u32).to_be_bytes());
+    challenge.extend_from_slice(role.label());
     challenge.extend_from_slice(&(run_id.len() as u32).to_be_bytes());
     challenge.extend_from_slice(run_id.as_bytes());
     challenge.extend_from_slice(&(validator_id.len() as u32).to_be_bytes());
@@ -2019,44 +2167,82 @@ fn pop_challenge(run_id: &str, validator_id: &str) -> Vec<u8> {
 fn build_validator_set(
     descriptor: &ValidatorSetJson,
     parameters: &ConsensusParametersV0,
-) -> Result<(ValidatorSet, [u8; 32])> {
+) -> Result<(ValidatorSet, [u8; 32], ValidatorKeyRoleRegistryV1)> {
     if !matches!(descriptor.validators.len(), 7 | 31 | 100) {
         bail!("G3 validator-set cardinality must be 7, 31, or 100");
     }
     let mut previous = None;
     let mut public_keys = BTreeSet::new();
     let mut validators = Vec::with_capacity(descriptor.validators.len());
+    let mut role_bindings = Vec::with_capacity(descriptor.validators.len());
     for record in &descriptor.validators {
         let id_bytes = decode_hex32(&record.validator_id, "validator.validator_id")?;
         if previous.is_some_and(|value: [u8; 32]| value >= id_bytes) {
             bail!("validator-set records are not strictly ID-sorted");
         }
         previous = Some(id_bytes);
-        let public_key = decode_hex32(
+        let consensus_public_key = decode_hex32(
             &record.consensus_public_key,
             "validator.consensus_public_key",
         )?;
-        if !public_keys.insert(public_key) {
-            bail!("validator-set contains a duplicate consensus public key");
+        let p2p_identity_public_key = decode_hex32(
+            &record.p2p_identity_public_key,
+            "validator.p2p_identity_public_key",
+        )?;
+        let operator_recovery_public_key = decode_hex32(
+            &record.operator_recovery_public_key,
+            "validator.operator_recovery_public_key",
+        )?;
+        for (public_key, signature, role) in [
+            (
+                consensus_public_key,
+                record.key_pop_signature.as_str(),
+                LabKeyRoleV1::Consensus,
+            ),
+            (
+                p2p_identity_public_key,
+                record.p2p_identity_key_pop_signature.as_str(),
+                LabKeyRoleV1::P2pIdentity,
+            ),
+            (
+                operator_recovery_public_key,
+                record.operator_recovery_key_pop_signature.as_str(),
+                LabKeyRoleV1::OperatorRecovery,
+            ),
+        ] {
+            if !public_keys.insert(public_key) {
+                bail!("validator-set reuses a public key across validator key roles");
+            }
+            let pop =
+                hex::decode(signature).context("validator role-key PoP is not canonical hex")?;
+            if pop.len() != 64 {
+                bail!("validator role-key PoP must be exactly 64 bytes");
+            }
+            let verifying_key = VerifyingKey::from_bytes(&public_key)
+                .map_err(|_| anyhow!("validator role-key PoP public key is not Ed25519"))?;
+            let pop_signature: [u8; 64] =
+                pop.as_slice().try_into().expect("PoP length was checked");
+            verifying_key
+                .verify_strict(
+                    &pop_challenge(&descriptor.run_id, &record.validator_id, role),
+                    &Signature::from_bytes(&pop_signature),
+                )
+                .map_err(|_| anyhow!("validator role-key proof-of-possession is invalid"))?;
         }
-        let pop = hex::decode(&record.key_pop_signature)
-            .context("validator key PoP is not canonical hex")?;
-        if pop.len() != 64 {
-            bail!("validator key PoP must be exactly 64 bytes");
-        }
-        let verifying_key = VerifyingKey::from_bytes(&public_key)
-            .map_err(|_| anyhow!("validator PoP public key is not Ed25519"))?;
-        let pop_signature: [u8; 64] = pop.as_slice().try_into().expect("PoP length was checked");
-        verifying_key
-            .verify_strict(
-                &pop_challenge(&descriptor.run_id, &record.validator_id),
-                &Signature::from_bytes(&pop_signature),
+        let validator_id = ValidatorId::new(id_bytes);
+        role_bindings.push(
+            ValidatorKeyRoleBindingV1::new(
+                validator_id,
+                consensus_public_key,
+                p2p_identity_public_key,
+                operator_recovery_public_key,
             )
-            .map_err(|_| anyhow!("validator key proof-of-possession is invalid"))?;
+            .map_err(|error| anyhow!("invalid validator key-role binding: {error}"))?,
+        );
         validators.push(
             Validator::new(
-                ValidatorId::new(id_bytes),
-                ConsensusPublicKey::new(public_key),
+                validator_id,
+                ConsensusPublicKey::new(consensus_public_key),
                 VotingPower::new(record.voting_power).map_err(|error| {
                     anyhow!("validator voting power must be positive: {error:?}")
                 })?,
@@ -2085,18 +2271,22 @@ fn build_validator_set(
     validator_set
         .validate_against_parameters(parameters)
         .map_err(|error| anyhow!("validator set violates reference parameters: {error:?}"))?;
+    let key_role_registry = ValidatorKeyRoleRegistryV1::new(&validator_set, role_bindings)
+        .map_err(|error| anyhow!("invalid validator key-role registry: {error}"))?;
     Ok((
         validator_set,
         decode_hex32(
             &descriptor.candidate_source_sha256,
             "validator_set.candidate_source_sha256",
         )?,
+        key_role_registry,
     ))
 }
 
 fn validate_peers(
     config: &ValidatorConfigJson,
     validator_set: &ValidatorSet,
+    key_role_registry: &ValidatorKeyRoleRegistryV1,
     local_validator: ValidatorId,
 ) -> Result<()> {
     let expected_degree = if validator_set.validators().len() == 7 {
@@ -2120,6 +2310,22 @@ fn validate_peers(
             != &decode_hex32(&peer.consensus_public_key, "peer.consensus_public_key")?
         {
             bail!("peer key differs from validator set");
+        }
+        let roles = key_role_registry
+            .binding(id)
+            .ok_or_else(|| anyhow!("config peer is absent from key-role registry"))?;
+        if roles.p2p_identity_public_key()
+            != decode_hex32(
+                &peer.p2p_identity_public_key,
+                "peer.p2p_identity_public_key",
+            )?
+            || roles.operator_recovery_public_key()
+                != decode_hex32(
+                    &peer.operator_recovery_public_key,
+                    "peer.operator_recovery_public_key",
+                )?
+        {
+            bail!("peer role keys differ from validator key-role registry");
         }
         let address = peer.socket_addr()?;
         if !address.ip().is_ipv4() || !is_private_lan(address.ip()) || address.port() == 0 {
@@ -2253,6 +2459,36 @@ fn strict_relative_path(value: &str) -> Result<PathBuf> {
         bail!("secret path must be one strict relative path");
     }
     Ok(path.to_path_buf())
+}
+
+fn load_validator_role_secret(
+    run_root: &Path,
+    manifest: &ManifestJson,
+    configured_path: &str,
+    role_directory: &str,
+    validator_id: &str,
+    expected_public_key: [u8; 32],
+) -> Result<SigningKey> {
+    let relative = strict_relative_path(configured_path)?;
+    let expected = PathBuf::from("secrets")
+        .join(role_directory)
+        .join(format!("{validator_id}.pk8"));
+    if relative != expected {
+        bail!("validator role-secret path differs from the closed role layout");
+    }
+    let path = canonical_regular_file(&run_root.join(&relative))?;
+    require_descendant(run_root, &path, "validator role secret")?;
+    let metadata = fs::metadata(&path).context("stat validator role secret")?;
+    if metadata.permissions().mode() & 0o777 != 0o600 {
+        bail!("validator role secret mode must be exactly 0600");
+    }
+    let bytes = read_regular_file_pinned(&path, "validator role secret")?;
+    require_manifest_bytes(manifest, &relative.to_string_lossy(), &bytes, true)?;
+    let signing_key = load_pkcs8_ed25519_seed(&bytes)?;
+    if signing_key.verifying_key().to_bytes() != expected_public_key {
+        bail!("validator role secret does not match its committed public key");
+    }
+    Ok(signing_key)
 }
 
 pub(crate) fn load_pkcs8_ed25519_seed(bytes: &[u8]) -> Result<SigningKey> {

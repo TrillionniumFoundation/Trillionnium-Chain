@@ -3,11 +3,35 @@ use std::io::{self, Read, Write};
 
 use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use sha2::{Digest, Sha256};
-use trnm_consensus_types::{ValidatorId, ValidatorSet};
+use trnm_consensus_types::ValidatorId;
+#[cfg(test)]
+use trnm_consensus_types::ValidatorSet;
 
-const FRAME_MAGIC: &[u8; 8] = b"TRNMG3F1";
-const FRAME_VERSION: u16 = 1;
-const FRAME_SIGNING_DOMAIN: &[u8] = b"trnm.poco-g3.authenticated-frame.v1";
+use crate::key_roles::ValidatorKeyRoleRegistryV1;
+
+pub trait P2pIdentityKeyResolverV1 {
+    fn p2p_identity_public_key_v1(&self, validator_id: ValidatorId) -> Option<[u8; 32]>;
+}
+
+impl P2pIdentityKeyResolverV1 for ValidatorKeyRoleRegistryV1 {
+    fn p2p_identity_public_key_v1(&self, validator_id: ValidatorId) -> Option<[u8; 32]> {
+        self.p2p_identity_public_key(validator_id)
+    }
+}
+
+// Frozen legacy fixtures predate the key-role registry. Normal builds expose
+// no such resolver and the live transport can accept only the registry.
+#[cfg(test)]
+impl P2pIdentityKeyResolverV1 for ValidatorSet {
+    fn p2p_identity_public_key_v1(&self, validator_id: ValidatorId) -> Option<[u8; 32]> {
+        self.validator(validator_id)
+            .map(|validator| validator.consensus_key().into_bytes())
+    }
+}
+
+const FRAME_MAGIC: &[u8; 8] = b"TRNMG3F2";
+const FRAME_VERSION: u16 = 2;
+const FRAME_SIGNING_DOMAIN: &[u8] = b"trnm.poco-g3.authenticated-frame.v2";
 pub const MAX_FRAME_BODY_BYTES: usize = 8 * 1024 * 1024;
 pub const MAX_FRAME_PAYLOAD_BYTES: usize = 6 * 1024 * 1024;
 const SIGNATURE_BYTES: usize = 64;
@@ -217,7 +241,7 @@ impl AuthenticatedFrame {
     pub fn decode(
         body: &[u8],
         expected_run_id: &str,
-        validator_set: &ValidatorSet,
+        key_roles: &impl P2pIdentityKeyResolverV1,
     ) -> Result<Self, FrameError> {
         if body.len() > MAX_FRAME_BODY_BYTES {
             return Err(FrameError::TooLarge);
@@ -242,8 +266,8 @@ impl AuthenticatedFrame {
         }
         let sender_bytes: [u8; 32] = take_array(body, &mut cursor, "sender")?;
         let sender = ValidatorId::new(sender_bytes);
-        let validator = validator_set
-            .validator(sender)
+        let p2p_identity_public_key = key_roles
+            .p2p_identity_public_key_v1(sender)
             .ok_or(FrameError::UnknownSender)?;
         let session = take_array(body, &mut cursor, "session")?;
         let sequence = u64::from_be_bytes(take_array(body, &mut cursor, "sequence")?);
@@ -265,7 +289,7 @@ impl AuthenticatedFrame {
         if cursor != body.len() || signed_end + SIGNATURE_BYTES != body.len() {
             return Err(FrameError::Malformed("trailing frame bytes"));
         }
-        let public_key = VerifyingKey::from_bytes(validator.consensus_key().as_bytes())
+        let public_key = VerifyingKey::from_bytes(&p2p_identity_public_key)
             .map_err(|_| FrameError::InvalidSignature)?;
         let signature = Signature::from_bytes(&signature_bytes);
         let root = frame_signing_root(&body[..signed_end]);
@@ -313,7 +337,7 @@ pub fn write_framed(
 pub fn read_framed(
     reader: &mut impl Read,
     expected_run_id: &str,
-    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
 ) -> Result<AuthenticatedFrame, FrameError> {
     let mut length = [0u8; 4];
     reader.read_exact(&mut length)?;
@@ -323,7 +347,7 @@ pub fn read_framed(
     }
     let mut body = vec![0u8; length];
     reader.read_exact(&mut body)?;
-    AuthenticatedFrame::decode(&body, expected_run_id, validator_set)
+    AuthenticatedFrame::decode(&body, expected_run_id, key_roles)
 }
 
 fn frame_signing_root(signed_body: &[u8]) -> [u8; 32] {
@@ -375,67 +399,85 @@ pub(crate) fn validate_run_id_bytes(value: &[u8]) -> Result<(), FrameError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1};
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
         Validator, VotingPower,
     };
 
-    fn fixture() -> (SigningKey, ValidatorSet, ValidatorId) {
-        let key = SigningKey::from_bytes(&[0x42; 32]);
+    fn fixture() -> (
+        SigningKey,
+        SigningKey,
+        ValidatorSet,
+        ValidatorKeyRoleRegistryV1,
+        ValidatorId,
+    ) {
+        let mut consensus_keys = (0..4)
+            .map(|offset| SigningKey::from_bytes(&[0x42 + offset; 32]))
+            .collect::<Vec<_>>();
+        let mut p2p_keys = (0..4)
+            .map(|offset| SigningKey::from_bytes(&[0x52 + offset; 32]))
+            .collect::<Vec<_>>();
+        let operator_keys = (0..4)
+            .map(|offset| SigningKey::from_bytes(&[0x62 + offset; 32]))
+            .collect::<Vec<_>>();
         let id = ValidatorId::new([0x11; 32]);
         let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let ids = [
+            id,
+            ValidatorId::new([0x12; 32]),
+            ValidatorId::new([0x13; 32]),
+            ValidatorId::new([0x14; 32]),
+        ];
         let set = ValidatorSet::new(
             GenesisHash::new([0x22; 32]),
             ChainId::new("trnm-poco-g3-lab-v0").unwrap(),
             ProtocolVersion::V0,
             Epoch::new(0),
             parameters.hash(),
-            vec![
-                Validator::new(
-                    id,
-                    ConsensusPublicKey::new(key.verifying_key().to_bytes()),
-                    VotingPower::new(1).unwrap(),
-                )
-                .unwrap(),
-                Validator::new(
-                    ValidatorId::new([0x12; 32]),
-                    ConsensusPublicKey::new(
-                        SigningKey::from_bytes(&[0x43; 32])
-                            .verifying_key()
-                            .to_bytes(),
-                    ),
-                    VotingPower::new(1).unwrap(),
-                )
-                .unwrap(),
-                Validator::new(
-                    ValidatorId::new([0x13; 32]),
-                    ConsensusPublicKey::new(
-                        SigningKey::from_bytes(&[0x44; 32])
-                            .verifying_key()
-                            .to_bytes(),
-                    ),
-                    VotingPower::new(1).unwrap(),
-                )
-                .unwrap(),
-                Validator::new(
-                    ValidatorId::new([0x14; 32]),
-                    ConsensusPublicKey::new(
-                        SigningKey::from_bytes(&[0x45; 32])
-                            .verifying_key()
-                            .to_bytes(),
-                    ),
-                    VotingPower::new(1).unwrap(),
-                )
-                .unwrap(),
-            ],
+            ids.iter()
+                .zip(&consensus_keys)
+                .map(|(validator_id, key)| {
+                    Validator::new(
+                        *validator_id,
+                        ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                        VotingPower::new(1).unwrap(),
+                    )
+                    .unwrap()
+                })
+                .collect(),
         )
         .unwrap();
-        (key, set, id)
+        let key_roles = ValidatorKeyRoleRegistryV1::new(
+            &set,
+            ids.iter()
+                .zip(&consensus_keys)
+                .zip(&p2p_keys)
+                .zip(&operator_keys)
+                .map(|(((validator_id, consensus), p2p), operator)| {
+                    ValidatorKeyRoleBindingV1::new(
+                        *validator_id,
+                        consensus.verifying_key().to_bytes(),
+                        p2p.verifying_key().to_bytes(),
+                        operator.verifying_key().to_bytes(),
+                    )
+                    .unwrap()
+                })
+                .collect(),
+        )
+        .unwrap();
+        (
+            p2p_keys.remove(0),
+            consensus_keys.remove(0),
+            set,
+            key_roles,
+            id,
+        )
     }
 
     #[test]
     fn frame_roundtrip_is_exact_and_authenticated() {
-        let (key, set, id) = fixture();
+        let (key, consensus_key, _set, key_roles, id) = fixture();
         let frame = AuthenticatedFrame {
             sender: id,
             session: [0x55; 32],
@@ -447,22 +489,39 @@ mod tests {
             .encode("poco-g3-7-20260813T160000Z-0123abcd", &key)
             .unwrap();
         assert_eq!(
-            AuthenticatedFrame::decode(&encoded, "poco-g3-7-20260813T160000Z-0123abcd", &set)
+            AuthenticatedFrame::decode(
+                &encoded,
+                "poco-g3-7-20260813T160000Z-0123abcd",
+                &key_roles,
+            )
                 .unwrap(),
             frame
         );
+        assert_eq!(&encoded[..8], b"TRNMG3F2");
+        assert_eq!(&encoded[8..10], &2u16.to_be_bytes());
+        let substituted = frame
+            .encode("poco-g3-7-20260813T160000Z-0123abcd", &consensus_key)
+            .unwrap();
+        assert!(matches!(
+            AuthenticatedFrame::decode(
+                &substituted,
+                "poco-g3-7-20260813T160000Z-0123abcd",
+                &key_roles,
+            ),
+            Err(FrameError::InvalidSignature)
+        ));
         let mut mutated = encoded;
         let index = mutated.len() - 65;
         mutated[index] ^= 1;
         assert!(matches!(
-            AuthenticatedFrame::decode(&mutated, "poco-g3-7-20260813T160000Z-0123abcd", &set),
+            AuthenticatedFrame::decode(&mutated, "poco-g3-7-20260813T160000Z-0123abcd", &key_roles,),
             Err(FrameError::InvalidSignature)
         ));
     }
 
     #[test]
     fn wrong_run_trailing_and_oversize_fail_closed() {
-        let (key, set, id) = fixture();
+        let (key, _consensus_key, _set, key_roles, id) = fixture();
         let frame = AuthenticatedFrame {
             sender: id,
             session: [0x55; 32],
@@ -474,12 +533,12 @@ mod tests {
             .encode("poco-g3-7-20260813T160000Z-0123abcd", &key)
             .unwrap();
         assert!(matches!(
-            AuthenticatedFrame::decode(&encoded, "poco-g3-7-20260813T160001Z-0123abcd", &set),
+            AuthenticatedFrame::decode(&encoded, "poco-g3-7-20260813T160001Z-0123abcd", &key_roles,),
             Err(FrameError::WrongRun)
         ));
         encoded.push(0);
         assert!(matches!(
-            AuthenticatedFrame::decode(&encoded, "poco-g3-7-20260813T160000Z-0123abcd", &set),
+            AuthenticatedFrame::decode(&encoded, "poco-g3-7-20260813T160000Z-0123abcd", &key_roles,),
             Err(FrameError::Malformed(_))
         ));
         let oversize = AuthenticatedFrame {
@@ -497,7 +556,7 @@ mod tests {
 
     #[test]
     fn replay_window_requires_zero_start_and_strict_sequence() {
-        let (key, set, _) = fixture();
+        let (key, _consensus_key, set, key_roles, _) = fixture();
         let mut window = FrameReplayWindow::new(2).unwrap();
         let mut frame = AuthenticatedFrame {
             sender: set.validators()[0].id(),
@@ -511,7 +570,7 @@ mod tests {
                 .encode("poco-g3-7-20260813T000000Z-00000001", &key)
                 .unwrap(),
             "poco-g3-7-20260813T000000Z-00000001",
-            &set,
+            &key_roles,
         )
         .unwrap();
         window.admit(&decoded).unwrap();
@@ -564,7 +623,7 @@ mod tests {
 
     #[test]
     fn restart_frame_kinds_roundtrip_through_the_authenticated_envelope() {
-        let (key, set, id) = fixture();
+        let (key, _consensus_key, _set, key_roles, id) = fixture();
         let run_id = "poco-g3-7-20260814T010000Z-89abcdef";
         for (sequence, kind) in [
             FrameKind::RestartPrepare,
@@ -586,7 +645,7 @@ mod tests {
             };
             let encoded = frame.encode(run_id, &key).unwrap();
             assert_eq!(
-                AuthenticatedFrame::decode(&encoded, run_id, &set).unwrap(),
+                AuthenticatedFrame::decode(&encoded, run_id, &key_roles).unwrap(),
                 frame
             );
         }

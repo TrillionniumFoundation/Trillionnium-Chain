@@ -605,7 +605,7 @@ pub(crate) fn sign_consensus_run_report_v1(
     sign_with_context(
         ConsensusReportContextV1::from_loaded(config),
         config.validator_set(),
-        config.signing_key(),
+        config.consensus_signing_key(),
         bounds,
         facts,
         clean_stopped_journal,

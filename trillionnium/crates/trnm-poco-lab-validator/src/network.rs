@@ -519,7 +519,7 @@ pub fn run_network_smoke(
         bail!("network-smoke system clock regressed");
     }
     let body = serde_json::to_vec(&report).context("encode network-smoke report")?;
-    let signature = config.signing_key().sign(&report_root(&body));
+    let signature = config.consensus_signing_key().sign(&report_root(&body));
     Ok(SignedNetworkSmokeReport {
         report,
         signature: hex::encode(signature.to_bytes()),
@@ -609,8 +609,9 @@ fn accept_one(
         stream,
         config.run_id(),
         config.local_validator(),
-        config.signing_key(),
+        config.p2p_identity_signing_key(),
         config.validator_set(),
+        config.key_role_registry(),
         transport_context(config),
     )
     .context("authenticate inbound network-smoke connection")?;
@@ -648,8 +649,9 @@ fn connect_expected(
             config.run_id(),
             config.local_validator(),
             remote,
-            config.signing_key(),
+            config.p2p_identity_signing_key(),
             config.validator_set(),
+            config.key_role_registry(),
             transport_context(config),
         )
         .with_context(|| format!("authenticate outbound peer {remote_addr}"))?;
@@ -1143,6 +1145,8 @@ mod tests {
             lan_ip: "127.0.0.1".to_owned(),
             p2p_port: 20_000 + u16::try_from(port_offset).unwrap(),
             consensus_public_key: hex::encode([0x33; 32]),
+            p2p_identity_public_key: hex::encode([0x44; 32]),
+            operator_recovery_public_key: hex::encode([0x55; 32]),
         }
     }
 }

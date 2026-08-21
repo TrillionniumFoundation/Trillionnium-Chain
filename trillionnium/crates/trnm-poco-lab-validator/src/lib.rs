@@ -30,6 +30,7 @@ pub mod epoch_handoff_evidence;
 pub mod fleet_barrier;
 pub mod fleet_barrier_evidence;
 pub mod frame;
+pub mod key_roles;
 pub mod loop_driver;
 pub mod network;
 pub mod pacemaker;
@@ -112,6 +113,15 @@ pub const COORDINATOR_ANCHOR_CAUSAL_BINDING: bool = true;
 pub const EXTERNAL_WALL_CLOCK_TEMPORAL_PROVENANCE: bool = false;
 pub const CONTINUOUS_CONSENSUS_RUNTIME: bool = true;
 pub const AUTHENTICATED_FRESH_SESSION_RUNTIME: bool = true;
+/// The live handshake and authenticated frame envelope use only the committed
+/// P2P identity role, never the consensus public key.
+pub const P2P_IDENTITY_KEY_ROLE_RUNTIME_WIRED: bool = true;
+/// Operator/recovery statements still use explicitly named consensus signing
+/// in this slice; migrating them requires a separately versioned protocol.
+pub const OPERATOR_RECOVERY_KEY_ROLE_RUNTIME_WIRED: bool = false;
+/// No production remote consensus signer is activated by laboratory key-role
+/// material or transport separation.
+pub const REMOTE_CONSENSUS_SIGNER_ACTIVATION: bool = false;
 /// Exact directed peer sessions are owned by the bounded continuous authority.
 /// This is an implementation fact, not multihost observation evidence.
 pub const PERSISTENT_AUTHENTICATED_PEER_MESH_CANDIDATE: bool = true;

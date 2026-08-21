@@ -4,7 +4,7 @@
 The topology committed to the repository is deliberately key-free.  This
 tool consumes that frozen placement plan and creates a new private run root:
 
-* one OpenSSL-generated Ed25519 PKCS#8 key per validator (mode 0600),
+* three role-separated OpenSSL Ed25519 PKCS#8 keys per validator (mode 0600),
 * one public proof-of-possession and validator-set descriptor,
 * one exact per-validator process configuration, and
 * one content-addressed manifest binding every generated file.
@@ -160,12 +160,20 @@ def planner_output(validator_count: int, profile: str) -> dict[str, Any]:
     return topology
 
 
-def pop_challenge(selected_run_id: str, validator_id: str) -> bytes:
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
+
+
+def pop_challenge(selected_run_id: str, validator_id: str, role: str) -> bytes:
+    if role not in KEY_ROLES:
+        fail("unknown validator key role")
+    role_bytes = role.encode("ascii")
     run = selected_run_id.encode("ascii")
     validator = validator_id.encode("ascii")
     return b"".join(
         (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0",
+            b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0",
+            len(role_bytes).to_bytes(4, "big"),
+            role_bytes,
             len(run).to_bytes(4, "big"),
             run,
             len(validator).to_bytes(4, "big"),
@@ -291,6 +299,8 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     os.chmod(output, 0o700)
     (output / "public").mkdir(mode=0o700)
     (output / "secrets").mkdir(mode=0o700)
+    for role in KEY_ROLES:
+        (output / "secrets" / role).mkdir(mode=0o700)
 
     topology = planner_output(args.validator_count, args.weight_profile)
     topology_bytes = canonical_json(topology)
@@ -298,18 +308,29 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     write_new(topology_path, topology_bytes, 0o644)
 
     key_records: dict[str, dict[str, str]] = {}
-    secret_paths: dict[str, pathlib.Path] = {}
+    secret_paths: dict[tuple[str, str], pathlib.Path] = {}
+    all_role_public_keys: set[str] = set()
     for planned in topology["validators"]:
         validator_id = planned["validator_id"]
-        secret_path = output / "secrets" / f"{validator_id}.pk8"
-        public_key, pop_signature = generate_key(
-            secret_path, pop_challenge(selected_run_id, validator_id)
-        )
+        role_material: dict[str, tuple[str, str]] = {}
+        for role in KEY_ROLES:
+            secret_path = output / "secrets" / role / f"{validator_id}.pk8"
+            public_key, pop_signature = generate_key(
+                secret_path, pop_challenge(selected_run_id, validator_id, role)
+            )
+            if public_key in all_role_public_keys:
+                fail("OpenSSL generated a duplicate validator role public key")
+            all_role_public_keys.add(public_key)
+            role_material[role] = (public_key, pop_signature)
+            secret_paths[(validator_id, role)] = secret_path
         key_records[validator_id] = {
-            "consensus_public_key": public_key,
-            "key_pop_signature": pop_signature,
+            "consensus_public_key": role_material["consensus"][0],
+            "key_pop_signature": role_material["consensus"][1],
+            "p2p_identity_public_key": role_material["p2p-identity"][0],
+            "p2p_identity_key_pop_signature": role_material["p2p-identity"][1],
+            "operator_recovery_public_key": role_material["operator-recovery"][0],
+            "operator_recovery_key_pop_signature": role_material["operator-recovery"][1],
         }
-        secret_paths[validator_id] = secret_path
 
     validators = []
     for planned in sorted(topology["validators"], key=lambda value: value["validator_id"]):
@@ -318,12 +339,16 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
             {
                 "validator_id": validator_id,
                 "consensus_public_key": key_records[validator_id]["consensus_public_key"],
+                "p2p_identity_public_key": key_records[validator_id]["p2p_identity_public_key"],
+                "operator_recovery_public_key": key_records[validator_id]["operator_recovery_public_key"],
                 "voting_power": planned["weight"],
                 "key_pop_signature": key_records[validator_id]["key_pop_signature"],
+                "p2p_identity_key_pop_signature": key_records[validator_id]["p2p_identity_key_pop_signature"],
+                "operator_recovery_key_pop_signature": key_records[validator_id]["operator_recovery_key_pop_signature"],
             }
         )
     validator_set_template = {
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": selected_run_id,
         "chain_id": "trnm-poco-g3-lab-v0",
         "protocol_version": 0,
@@ -441,7 +466,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
                     workload_corpus_hash,
                     str(workload_policy_path.resolve()),
                     workload_policy_hash,
-                    str((output / "secrets").resolve()),
+                    str((output / "secrets" / "consensus").resolve()),
                     str(validator_set_path.resolve()),
                     str(bootstrap_directory.resolve()),
                 ],
@@ -534,10 +559,12 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
                     "lan_ip": peer["lan_ip"],
                     "p2p_port": peer["p2p_port"],
                     "consensus_public_key": key_records[peer_id]["consensus_public_key"],
+                    "p2p_identity_public_key": key_records[peer_id]["p2p_identity_public_key"],
+                    "operator_recovery_public_key": key_records[peer_id]["operator_recovery_public_key"],
                 }
             )
         config = {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": selected_run_id,
             "validator_id": validator_id,
             "host_id": planned["host_id"],
@@ -546,12 +573,16 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
             "metrics_port": planned["metrics_port"],
             "weight": planned["weight"],
             "consensus_public_key": key_records[validator_id]["consensus_public_key"],
+            "p2p_identity_public_key": key_records[validator_id]["p2p_identity_public_key"],
+            "operator_recovery_public_key": key_records[validator_id]["operator_recovery_public_key"],
             "validator_set_sha256": validator_set_hash,
             "ordinary_start_height": args.ordinary_start_height,
             "workload_corpus_sha256": workload_corpus_hash,
             "workload_policy_sha256": workload_policy_hash,
             "binary_sha256": linux_hash,
-            "secret_key_path": f"secrets/{validator_id}.pk8",
+            "consensus_secret_key_path": f"secrets/consensus/{validator_id}.pk8",
+            "p2p_identity_secret_key_path": f"secrets/p2p-identity/{validator_id}.pk8",
+            "operator_recovery_secret_key_path": f"secrets/operator-recovery/{validator_id}.pk8",
             "peers": peers,
             "network_scope": "single-lan",
             "geo_wan_evidence": False,
@@ -566,7 +597,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
         if participant["validator_eligible"]:
             continue
         observer = {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": selected_run_id,
             "host_id": participant["host_id"],
             "lan_ip": participant["lan_ip"],
@@ -584,6 +615,12 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
                     "metrics_port": planned["metrics_port"],
                     "consensus_public_key": key_records[planned["validator_id"]][
                         "consensus_public_key"
+                    ],
+                    "p2p_identity_public_key": key_records[planned["validator_id"]][
+                        "p2p_identity_public_key"
+                    ],
+                    "operator_recovery_public_key": key_records[planned["validator_id"]][
+                        "operator_recovery_public_key"
                     ],
                 }
                 for planned in topology["validators"]
@@ -607,7 +644,7 @@ def prepare(args: argparse.Namespace) -> pathlib.Path:
     public_refs.extend(ref(output, path) for path in bootstrap_paths)
     public_refs.extend(ref(output, path) for path in sorted(config_paths))
     public_refs.extend(ref(output, path) for path in sorted(observer_paths))
-    secret_refs = [ref(output, secret_paths[key]) for key in sorted(secret_paths)]
+    secret_refs = [ref(output, path) for path in sorted(secret_paths.values())]
     manifest = {
         "schema_version": 2,
         "run_id": selected_run_id,

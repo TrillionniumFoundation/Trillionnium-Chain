@@ -39,6 +39,7 @@ use crate::{
     frame::{
         AuthenticatedFrame, FrameError, FrameKind, MAX_FRAME_BODY_BYTES, MAX_FRAME_PAYLOAD_BYTES,
     },
+    key_roles::ValidatorKeyRoleRegistryV1,
     transport::{AuthenticatedConnection, RunTransportContext},
 };
 
@@ -428,8 +429,9 @@ impl MeshTerminalFailureV0 {
 struct MeshIdentityV0 {
     run_id: String,
     local: ValidatorId,
-    signing_key: SigningKey,
+    p2p_identity_signing_key: SigningKey,
     validator_set: ValidatorSet,
+    key_roles: ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 }
 
@@ -438,8 +440,9 @@ impl MeshIdentityV0 {
         Self {
             run_id: config.run_id().to_owned(),
             local: config.local_validator(),
-            signing_key: config.signing_key().clone(),
+            p2p_identity_signing_key: config.p2p_identity_signing_key().clone(),
             validator_set: config.validator_set().clone(),
+            key_roles: config.key_role_registry().clone(),
             transport_context: RunTransportContext::new(
                 config.topology_sha256(),
                 config.candidate_source_sha256(),
@@ -1608,8 +1611,9 @@ fn connect_authenticated_until(
             &identity.run_id,
             identity.local,
             remote,
-            &identity.signing_key,
+            &identity.p2p_identity_signing_key,
             &identity.validator_set,
+            &identity.key_roles,
             identity.transport_context,
         ) {
             Ok(connection) => connection,
@@ -1654,8 +1658,9 @@ fn authenticate_incoming(
         io,
         &identity.run_id,
         identity.local,
-        &identity.signing_key,
+        &identity.p2p_identity_signing_key,
         &identity.validator_set,
+        &identity.key_roles,
         identity.transport_context,
     ) {
         Ok(connection) => connection,
@@ -2130,6 +2135,10 @@ mod tests {
     fn authenticated_identity_fixture_v0() -> (MeshIdentityV0, MeshIdentityV0) {
         let client_key = SigningKey::from_bytes(&[0x61; 32]);
         let server_key = SigningKey::from_bytes(&[0x62; 32]);
+        let client_consensus_key = SigningKey::from_bytes(&[0x31; 32]);
+        let server_consensus_key = SigningKey::from_bytes(&[0x32; 32]);
+        let client_operator_key = SigningKey::from_bytes(&[0x41; 32]);
+        let server_operator_key = SigningKey::from_bytes(&[0x42; 32]);
         let client = ValidatorId::new([0x71; 32]);
         let server = ValidatorId::new([0x72; 32]);
         let parameters = ConsensusParametersV0::reference_shadow_v0();
@@ -2142,14 +2151,34 @@ mod tests {
             vec![
                 Validator::new(
                     client,
-                    ConsensusPublicKey::new(client_key.verifying_key().to_bytes()),
+                    ConsensusPublicKey::new(client_consensus_key.verifying_key().to_bytes()),
                     VotingPower::new(1).unwrap(),
                 )
                 .unwrap(),
                 Validator::new(
                     server,
-                    ConsensusPublicKey::new(server_key.verifying_key().to_bytes()),
+                    ConsensusPublicKey::new(server_consensus_key.verifying_key().to_bytes()),
                     VotingPower::new(1).unwrap(),
+                )
+                .unwrap(),
+            ],
+        )
+        .unwrap();
+        let key_roles = ValidatorKeyRoleRegistryV1::new(
+            &validator_set,
+            vec![
+                crate::key_roles::ValidatorKeyRoleBindingV1::new(
+                    client,
+                    client_consensus_key.verifying_key().to_bytes(),
+                    client_key.verifying_key().to_bytes(),
+                    client_operator_key.verifying_key().to_bytes(),
+                )
+                .unwrap(),
+                crate::key_roles::ValidatorKeyRoleBindingV1::new(
+                    server,
+                    server_consensus_key.verifying_key().to_bytes(),
+                    server_key.verifying_key().to_bytes(),
+                    server_operator_key.verifying_key().to_bytes(),
                 )
                 .unwrap(),
             ],
@@ -2160,15 +2189,17 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: client,
-                signing_key: client_key,
+                p2p_identity_signing_key: client_key,
                 validator_set: validator_set.clone(),
+                key_roles: key_roles.clone(),
                 transport_context: context,
             },
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: server,
-                signing_key: server_key,
+                p2p_identity_signing_key: server_key,
                 validator_set,
+                key_roles,
                 transport_context: context,
             },
         )
@@ -2672,8 +2703,9 @@ mod tests {
                 &client.run_id,
                 client.local,
                 server_thread_remote_v0(&client.validator_set, client.local),
-                &client.signing_key,
+                &client.p2p_identity_signing_key,
                 &client.validator_set,
+                &client.key_roles,
                 client.transport_context,
             )
             .unwrap();

@@ -1228,7 +1228,7 @@ fn run_fleet_barrier_v1(
         local_cut,
         mesh_sessions,
         config.validator_set(),
-        config.signing_key(),
+        config.consensus_signing_key(),
     )
     .map_err(|error| anyhow!("sign local fleet Ready: {error}"))?;
     let mut admission =
@@ -1286,7 +1286,7 @@ fn run_fleet_barrier_v1(
         ready_event_sequence,
         ready_event_sha256,
         config.validator_set(),
-        config.signing_key(),
+        config.consensus_signing_key(),
     )
     .map_err(|error| anyhow!("sign local fleet Start: {error}"))?;
     ensure!(
@@ -1728,7 +1728,7 @@ impl FleetBarrierOwnerV1<'_> {
                     hop_budget,
                     payload,
                     self.config.validator_set(),
-                    self.config.signing_key(),
+                    self.config.consensus_signing_key(),
                 )
                 .map_err(|error| anyhow!("construct originated fleet barrier relay: {error}"))?;
                 self.outbox
@@ -2950,7 +2950,7 @@ impl LocalRestartPreparedOwnerV1 {
             self.facts.local_validator,
             body,
             config.validator_set(),
-            config.signing_key(),
+            config.consensus_signing_key(),
         )
         .map_err(|error| anyhow!("sign target RestartPrepare: {error}"))?;
         ensure!(
@@ -3427,7 +3427,7 @@ impl BoundedConsensusOwnerV1 {
             hop_budget,
             payload,
             self.config.validator_set(),
-            self.config.signing_key(),
+            self.config.consensus_signing_key(),
         )
         .map_err(|error| anyhow!("construct originated consensus relay: {error}"))?;
         self.authority_v1()?

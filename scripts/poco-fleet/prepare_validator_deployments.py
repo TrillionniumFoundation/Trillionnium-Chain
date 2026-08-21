@@ -4,7 +4,8 @@
 The coordinator root contains every ephemeral secret and must never be copied
 to a validator host. Each emitted validator deployment contains exactly the
 public topology, public validator set, public workload and zero-Comet bootstrap
-sidecars, one local config, and one local PKCS#8 secret. The separate observer
+sidecars, one local config, and exactly one local PKCS#8 secret for each frozen
+validator key role. The separate observer
 root contains every public coordinator input plus the exact coordinator
 manifest, but no secret bytes or application private-key authority.
 """
@@ -31,6 +32,7 @@ BOOTSTRAP_RELATIVE_PATHS = (
     "public/bootstrap/finality-proof.cev0",
     "public/bootstrap/bootstrap.json",
 )
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 
 
 def fail(message: str) -> None:
@@ -282,24 +284,27 @@ def prepare(coordinator: pathlib.Path, output: pathlib.Path, count: int) -> path
                 False,
                 public_by_path.get("public/workload-policy.json"),
             ),
-            (
-                coordinator / f"secrets/{validator_id}.pk8",
-                root / f"secrets/{validator_id}.pk8",
-                0o600,
-                True,
-                secret_by_path.get(f"secrets/{validator_id}.pk8"),
-            ),
         ]
         for relative in BOOTSTRAP_RELATIVE_PATHS:
-            targets.insert(
-                -1,
+            targets.append(
                 (
                     coordinator / relative,
                     root / relative,
                     0o644,
                     False,
                     public_by_path.get(relative),
-                ),
+                )
+            )
+        for role in KEY_ROLES:
+            relative = f"secrets/{role}/{validator_id}.pk8"
+            targets.append(
+                (
+                    coordinator / relative,
+                    root / relative,
+                    0o600,
+                    True,
+                    secret_by_path.get(relative),
+                )
             )
         public_refs: list[dict[str, Any]] = []
         secret_refs: list[dict[str, Any]] = []
@@ -346,7 +351,7 @@ def main() -> None:
     print(
         f"poco_g3_validator_deployments=prepared validators={args.validators} root={output} "
         f"ordinary_start_height={ordinary_start_height} "
-        "secrets_per_validator=1 public_workload_per_validator=true "
+        "secrets_per_validator=3 public_workload_per_validator=true "
         "public_bootstrap_bundle_per_validator=true "
         "application_private_keys=false observer_public_bundle=true "
         "material_author_hash_bound=true material_author_runtime_deployed=false "

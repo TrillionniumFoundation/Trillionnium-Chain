@@ -26,16 +26,20 @@ from poco_consensus_contract import canonical_lab_genesis_hash  # noqa: E402
 
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
 _VALIDATOR_AUTH_CACHE: dict[
-    tuple[str, str], tuple[str, str, bytes]
+    tuple[str, str, str], tuple[str, str, bytes]
 ] = {}
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 
 
-def pop_challenge(run_id: str, validator_id: str) -> bytes:
+def pop_challenge(run_id: str, validator_id: str, role: str) -> bytes:
+    role_bytes = role.encode("ascii")
     run = run_id.encode("ascii")
     validator = validator_id.encode("ascii")
     return b"".join(
         (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0",
+            b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0",
+            len(role_bytes).to_bytes(4, "big"),
+            role_bytes,
             len(run).to_bytes(4, "big"),
             run,
             len(validator).to_bytes(4, "big"),
@@ -44,8 +48,12 @@ def pop_challenge(run_id: str, validator_id: str) -> bytes:
     )
 
 
-def validator_auth(run_id: str, validator_id: str) -> tuple[str, str, bytes]:
-    cache_key = (run_id, validator_id)
+def validator_auth(
+    run_id: str, validator_id: str, role: str
+) -> tuple[str, str, bytes]:
+    if role not in KEY_ROLES:
+        raise AssertionError("unknown validator key role")
+    cache_key = (run_id, validator_id, role)
     if cache_key in _VALIDATOR_AUTH_CACHE:
         return _VALIDATOR_AUTH_CACHE[cache_key]
     with tempfile.TemporaryDirectory(prefix="trnm-poco-g3-bundle-key-") as raw:
@@ -84,7 +92,7 @@ def validator_auth(run_id: str, validator_id: str) -> tuple[str, str, bytes]:
         if not public_der.startswith(ED25519_SPKI_PREFIX) or len(public_der) != 44:
             raise AssertionError("OpenSSL returned a non-canonical Ed25519 public key")
         secret_bytes = secret.read_bytes()
-        message.write_bytes(pop_challenge(run_id, validator_id))
+        message.write_bytes(pop_challenge(run_id, validator_id, role))
         signature = subprocess.run(
             [
                 "openssl",
@@ -421,16 +429,31 @@ def build(root: pathlib.Path, count: int = 7) -> None:
         validator["validator_id"]: [] for validator in summary["validators"]
     }
     planned_by_id = {item["validator_id"]: item for item in topology["validators"]}
-    validator_auth_records = {
-        validator_id: validator_auth(summary["run_id"], validator_id)
+    validator_role_auth_records = {
+        validator_id: {
+            role: validator_auth(summary["run_id"], validator_id, role)
+            for role in KEY_ROLES
+        }
         for validator_id in planned_by_id
+    }
+    validator_auth_records = {
+        validator_id: records["consensus"]
+        for validator_id, records in validator_role_auth_records.items()
     }
     consensus_keys = {
         validator_id: record[0]
         for validator_id, record in validator_auth_records.items()
     }
+    p2p_identity_keys = {
+        validator_id: records["p2p-identity"][0]
+        for validator_id, records in validator_role_auth_records.items()
+    }
+    operator_recovery_keys = {
+        validator_id: records["operator-recovery"][0]
+        for validator_id, records in validator_role_auth_records.items()
+    }
     validator_set = {
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": summary["run_id"],
         "chain_id": "trnm-poco-g3-lab-v0",
         "genesis_hash": canonical_lab_genesis_hash(
@@ -453,8 +476,18 @@ def build(root: pathlib.Path, count: int = 7) -> None:
             {
                 "validator_id": validator_id,
                 "consensus_public_key": consensus_keys[validator_id],
+                "p2p_identity_public_key": p2p_identity_keys[validator_id],
+                "operator_recovery_public_key": operator_recovery_keys[
+                    validator_id
+                ],
                 "voting_power": planned_by_id[validator_id]["weight"],
                 "key_pop_signature": validator_auth_records[validator_id][1],
+                "p2p_identity_key_pop_signature": validator_role_auth_records[
+                    validator_id
+                ]["p2p-identity"][1],
+                "operator_recovery_key_pop_signature": validator_role_auth_records[
+                    validator_id
+                ]["operator-recovery"][1],
             }
             for validator_id in sorted(planned_by_id)
         ],
@@ -526,7 +559,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
     for validator in summary["validators"]:
         validator_id = validator["validator_id"]
         config = {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": summary["run_id"],
             "validator_id": validator_id,
             "host_id": validator["host_id"],
@@ -535,18 +568,28 @@ def build(root: pathlib.Path, count: int = 7) -> None:
             "metrics_port": validator["metrics_port"],
             "weight": validator["weight"],
             "consensus_public_key": consensus_keys[validator_id],
+            "p2p_identity_public_key": p2p_identity_keys[validator_id],
+            "operator_recovery_public_key": operator_recovery_keys[validator_id],
             "validator_set_sha256": validator_set_sha256,
             "binary_sha256": validator["binary_sha256"],
             "ordinary_start_height": 4,
             "workload_corpus_sha256": evidence_test.digest("workload-corpus"),
             "workload_policy_sha256": evidence_test.digest("workload-policy"),
-            "secret_key_path": f"secrets/{validator_id}.pk8",
+            "consensus_secret_key_path": f"secrets/consensus/{validator_id}.pk8",
+            "p2p_identity_secret_key_path": (
+                f"secrets/p2p-identity/{validator_id}.pk8"
+            ),
+            "operator_recovery_secret_key_path": (
+                f"secrets/operator-recovery/{validator_id}.pk8"
+            ),
             "peers": [
                 {
                     "validator_id": peer_id,
                     "lan_ip": planned_by_id[peer_id]["lan_ip"],
                     "p2p_port": planned_by_id[peer_id]["p2p_port"],
                     "consensus_public_key": consensus_keys[peer_id],
+                    "p2p_identity_public_key": p2p_identity_keys[peer_id],
+                    "operator_recovery_public_key": operator_recovery_keys[peer_id],
                 }
                 for peer_id in planned_by_id[validator_id]["peers"]
             ],
@@ -653,7 +696,7 @@ def build(root: pathlib.Path, count: int = 7) -> None:
         "observer/mac/config.json",
         json.dumps(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "run_id": summary["run_id"],
                 "host_id": "mac",
                 "lan_ip": "192.168.0.5",
@@ -674,6 +717,12 @@ def build(root: pathlib.Path, count: int = 7) -> None:
                         "p2p_port": item["p2p_port"],
                         "metrics_port": item["metrics_port"],
                         "consensus_public_key": consensus_keys[item["validator_id"]],
+                        "p2p_identity_public_key": p2p_identity_keys[
+                            item["validator_id"]
+                        ],
+                        "operator_recovery_public_key": operator_recovery_keys[
+                            item["validator_id"]
+                        ],
                     }
                     for item in topology["validators"]
                 ],
@@ -770,13 +819,14 @@ def build(root: pathlib.Path, count: int = 7) -> None:
         ],
         "secret_files": [
             {
-                "path": f"secrets/{validator_id}.pk8",
+                "path": f"secrets/{role}/{validator_id}.pk8",
                 "sha256": hashlib.sha256(
-                    validator_auth_records[validator_id][2]
+                    validator_role_auth_records[validator_id][role][2]
                 ).hexdigest(),
-                "bytes": len(validator_auth_records[validator_id][2]),
+                "bytes": len(validator_role_auth_records[validator_id][role][2]),
             }
             for validator_id in sorted(planned_by_id)
+            for role in KEY_ROLES
         ],
         "production_activation": False,
     }

@@ -437,12 +437,25 @@ def build(root: pathlib.Path) -> str:
         ),
     )
     validator_ids = sorted(hashlib.sha256(f"validator-{index}".encode()).hexdigest() for index in range(7))
-    secrets: dict[str, pathlib.Path] = {}
-    public_keys: dict[str, str] = {}
+    role_secrets: dict[str, dict[str, pathlib.Path]] = {}
+    role_public_keys: dict[str, dict[str, str]] = {}
     for index, validator_id in enumerate(validator_ids):
-        secret, public_key = keypair(root, index)
-        secrets[validator_id] = secret
-        public_keys[validator_id] = public_key
+        role_secrets[validator_id] = {}
+        role_public_keys[validator_id] = {}
+        for offset, role in enumerate(
+            ("consensus", "p2p-identity", "operator-recovery")
+        ):
+            secret, public_key = keypair(root, index * 3 + offset)
+            role_secrets[validator_id][role] = secret
+            role_public_keys[validator_id][role] = public_key
+    secrets = {
+        validator_id: values["consensus"]
+        for validator_id, values in role_secrets.items()
+    }
+    public_keys = {
+        validator_id: values["consensus"]
+        for validator_id, values in role_public_keys.items()
+    }
     topology = {
         "schema_version": 1,
         "run_id": RUN_ID,
@@ -473,23 +486,39 @@ def build(root: pathlib.Path) -> str:
     validators = []
     for validator_id in validator_ids:
         author = validator_id.encode("ascii")
-        pop = (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0"
-            + len(run).to_bytes(4, "big")
-            + run
-            + len(author).to_bytes(4, "big")
-            + author
-        )
+        role_pops: dict[str, str] = {}
+        for role in ("consensus", "p2p-identity", "operator-recovery"):
+            role_bytes = role.encode("ascii")
+            pop = (
+                b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0"
+                + len(role_bytes).to_bytes(4, "big")
+                + role_bytes
+                + len(run).to_bytes(4, "big")
+                + run
+                + len(author).to_bytes(4, "big")
+                + author
+            )
+            role_pops[role] = sign(role_secrets[validator_id][role], pop)
         validators.append(
             {
                 "validator_id": validator_id,
-                "consensus_public_key": public_keys[validator_id],
+                "consensus_public_key": role_public_keys[validator_id]["consensus"],
+                "p2p_identity_public_key": role_public_keys[validator_id][
+                    "p2p-identity"
+                ],
+                "operator_recovery_public_key": role_public_keys[validator_id][
+                    "operator-recovery"
+                ],
                 "voting_power": 1,
-                "key_pop_signature": sign(secrets[validator_id], pop),
+                "key_pop_signature": role_pops["consensus"],
+                "p2p_identity_key_pop_signature": role_pops["p2p-identity"],
+                "operator_recovery_key_pop_signature": role_pops[
+                    "operator-recovery"
+                ],
             }
         )
     descriptor = {
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": RUN_ID,
         "chain_id": "trnm-poco-g3-lab-v0",
         "genesis_hash": canonical_lab_genesis_hash(
@@ -590,7 +619,7 @@ def build(root: pathlib.Path) -> str:
     for validator_id in validator_ids:
         plan = plan_by_id[validator_id]
         config = {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": RUN_ID,
             "validator_id": validator_id,
             "host_id": plan["host_id"],
@@ -599,12 +628,24 @@ def build(root: pathlib.Path) -> str:
             "metrics_port": plan["metrics_port"],
             "weight": 1,
             "consensus_public_key": public_keys[validator_id],
+            "p2p_identity_public_key": role_public_keys[validator_id][
+                "p2p-identity"
+            ],
+            "operator_recovery_public_key": role_public_keys[validator_id][
+                "operator-recovery"
+            ],
             "validator_set_sha256": set_artifact["sha256"],
             "binary_sha256": binary["sha256"],
             "ordinary_start_height": 4,
             "workload_corpus_sha256": hashlib.sha256(b"workload-corpus").hexdigest(),
             "workload_policy_sha256": hashlib.sha256(b"workload-policy").hexdigest(),
-            "secret_key_path": f"secrets/{validator_id}.pk8",
+            "consensus_secret_key_path": f"secrets/consensus/{validator_id}.pk8",
+            "p2p_identity_secret_key_path": (
+                f"secrets/p2p-identity/{validator_id}.pk8"
+            ),
+            "operator_recovery_secret_key_path": (
+                f"secrets/operator-recovery/{validator_id}.pk8"
+            ),
             "peers": [],
             "network_scope": "single-lan",
             "geo_wan_evidence": False,
@@ -683,11 +724,14 @@ def build(root: pathlib.Path) -> str:
         ],
         "secret_files": [
             {
-                "path": f"secrets/{validator_id}.pk8",
-                "sha256": hashlib.sha256(secrets[validator_id].read_bytes()).hexdigest(),
-                "bytes": secrets[validator_id].stat().st_size,
+                "path": f"secrets/{role}/{validator_id}.pk8",
+                "sha256": hashlib.sha256(
+                    role_secrets[validator_id][role].read_bytes()
+                ).hexdigest(),
+                "bytes": role_secrets[validator_id][role].stat().st_size,
             }
             for validator_id in validator_ids
+            for role in ("consensus", "p2p-identity", "operator-recovery")
         ],
         "production_activation": False,
     }
@@ -902,7 +946,7 @@ def rewrite_signed_journal(
         for item in manifest["artifacts"]
         if item["role"] == "validator_runtime_event_journal"
     )
-    secret = root / f"key-{validator_ids.index(validator_id)}.pk8"
+    secret = root / f"key-{validator_ids.index(validator_id) * 3}.pk8"
     previous = bytes(32)
     for sequence, event in enumerate(events):
         event["sequence"] = sequence
@@ -1047,7 +1091,7 @@ def rewrite_signed_report_until_semantic_rejection(
         for item in manifest["artifacts"]
         if item["role"] == "validator_runtime_event_journal"
     )
-    secret = root / f"key-{validator_ids.index(validator_id)}.pk8"
+    secret = root / f"key-{validator_ids.index(validator_id) * 3}.pk8"
     report_path = root / report_ref["path"]
     report = json.loads(report_path.read_text())
     mutate(report)

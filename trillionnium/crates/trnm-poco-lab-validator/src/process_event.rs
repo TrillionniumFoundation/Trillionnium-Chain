@@ -3027,7 +3027,7 @@ impl RuntimeEventJournalV1 {
         Self::start_with_context_gate(
             path.as_ref(),
             context,
-            config.signing_key().clone(),
+            config.consensus_signing_key().clone(),
             ProcessStartGateV1::InitialProcessOnly,
         )
     }
@@ -3056,7 +3056,7 @@ impl RuntimeEventJournalV1 {
         Process2JournalStartedFromRestartCutV1::start_with_context_v1(
             path.as_ref(),
             context,
-            config.signing_key().clone(),
+            config.consensus_signing_key().clone(),
             stored,
         )
     }

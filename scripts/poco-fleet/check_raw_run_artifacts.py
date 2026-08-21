@@ -30,6 +30,7 @@ HEX64 = re.compile(r"^[0-9a-f]{64}$")
 HEX128 = re.compile(r"^[0-9a-f]{128}$")
 RFC3339_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 
 
 def fail(message: str) -> None:
@@ -131,12 +132,17 @@ def nearest_rank(values: list[float], percentile: float) -> float:
     return ordered[max(0, math.ceil(percentile * len(ordered)) - 1)]
 
 
-def pop_challenge(run_id: str, validator_id: str) -> bytes:
+def pop_challenge(run_id: str, validator_id: str, role: str) -> bytes:
+    if role not in KEY_ROLES:
+        fail("unknown validator key role")
+    role_bytes = role.encode("ascii")
     run = run_id.encode("ascii")
     validator = validator_id.encode("ascii")
     return b"".join(
         (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0",
+            b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0",
+            len(role_bytes).to_bytes(4, "big"),
+            role_bytes,
             len(run).to_bytes(4, "big"),
             run,
             len(validator).to_bytes(4, "big"),
@@ -145,14 +151,20 @@ def pop_challenge(run_id: str, validator_id: str) -> bytes:
     )
 
 
-def verify_pop(public_key: str, signature: str, run_id: str, validator_id: str) -> None:
+def verify_pop(
+    public_key: str,
+    signature: str,
+    run_id: str,
+    validator_id: str,
+    role: str,
+) -> None:
     public_der = ED25519_SPKI_PREFIX + bytes.fromhex(public_key)
     with tempfile.NamedTemporaryFile(prefix="poco-g3-raw-pub-") as public_file:
         with tempfile.NamedTemporaryFile(prefix="poco-g3-raw-msg-") as message_file:
             with tempfile.NamedTemporaryFile(prefix="poco-g3-raw-sig-") as signature_file:
                 public_file.write(public_der)
                 public_file.flush()
-                message_file.write(pop_challenge(run_id, validator_id))
+                message_file.write(pop_challenge(run_id, validator_id, role))
                 message_file.flush()
                 signature_file.write(bytes.fromhex(signature))
                 signature_file.flush()
@@ -341,7 +353,7 @@ def validate(
         "validator_set",
     )
     if (
-        validator_set["schema_version"] != 1
+        validator_set["schema_version"] != 2
         or validator_set["run_id"] != run_id
         or validator_set["chain_id"] != "trnm-poco-g3-lab-v0"
         or validator_set["protocol_version"] != 0
@@ -365,14 +377,17 @@ def validate(
             {
                 "validator_id",
                 "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
                 "voting_power",
                 "key_pop_signature",
+                "p2p_identity_key_pop_signature",
+                "operator_recovery_key_pop_signature",
             },
             f"validator_set.validators[{index}]",
         )
         validator_id = record["validator_id"]
         public_key = record["consensus_public_key"]
-        signature = record["key_pop_signature"]
         power = record["voting_power"]
         if (
             not isinstance(validator_id, str)
@@ -381,9 +396,6 @@ def validate(
             or validator_id not in planned_by_id
             or not isinstance(public_key, str)
             or not HEX64.fullmatch(public_key)
-            or public_key in set_public_keys
-            or not isinstance(signature, str)
-            or not HEX128.fullmatch(signature)
             or isinstance(power, bool)
             or not isinstance(power, int)
             or power <= 0
@@ -391,9 +403,31 @@ def validate(
         ):
             fail("validator_set record differs from topology/canonical inventory")
         previous_validator_id = validator_id
-        set_public_keys.add(public_key)
+        role_values = (
+            ("consensus", public_key, record["key_pop_signature"]),
+            (
+                "p2p-identity",
+                record["p2p_identity_public_key"],
+                record["p2p_identity_key_pop_signature"],
+            ),
+            (
+                "operator-recovery",
+                record["operator_recovery_public_key"],
+                record["operator_recovery_key_pop_signature"],
+            ),
+        )
+        for role, role_public_key, signature in role_values:
+            if (
+                not isinstance(role_public_key, str)
+                or not HEX64.fullmatch(role_public_key)
+                or role_public_key in set_public_keys
+                or not isinstance(signature, str)
+                or not HEX128.fullmatch(signature)
+            ):
+                fail("validator_set role key inventory is invalid or non-unique")
+            set_public_keys.add(role_public_key)
+            verify_pop(role_public_key, signature, run_id, validator_id, role)
         total_power += power
-        verify_pop(public_key, signature, run_id, validator_id)
         validator_set_by_id[validator_id] = record
         canonical_inventory.append(
             (bytes.fromhex(validator_id), bytes.fromhex(public_key), power)
@@ -461,7 +495,7 @@ def validate(
     # candidate, and non-production LAN boundary must therefore all agree
     # before any process evidence can be interpreted.
     configs: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
-    consensus_keys: dict[str, str] = {}
+    role_keys: dict[str, dict[str, str]] = {}
     validator_set_hashes: set[str] = set()
     workload_bindings: set[tuple[int, str, str]] = set()
     for validator_id in sorted(summary_validators):
@@ -478,12 +512,16 @@ def validate(
                 "metrics_port",
                 "weight",
                 "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
                 "validator_set_sha256",
                 "binary_sha256",
                 "ordinary_start_height",
                 "workload_corpus_sha256",
                 "workload_policy_sha256",
-                "secret_key_path",
+                "consensus_secret_key_path",
+                "p2p_identity_secret_key_path",
+                "operator_recovery_secret_key_path",
                 "peers",
                 "network_scope",
                 "geo_wan_evidence",
@@ -496,7 +534,7 @@ def validate(
         public_key = config["consensus_public_key"]
         validator_set_sha256 = config["validator_set_sha256"]
         if (
-            config["schema_version"] != 1
+            config["schema_version"] != 2
             or config["run_id"] != run_id
             or config["validator_id"] != validator_id
             or config["host_id"] != expected["host_id"]
@@ -512,7 +550,12 @@ def validate(
             or not HEX64.fullmatch(config["workload_corpus_sha256"])
             or not isinstance(config["workload_policy_sha256"], str)
             or not HEX64.fullmatch(config["workload_policy_sha256"])
-            or config["secret_key_path"] != f"secrets/{validator_id}.pk8"
+            or config["consensus_secret_key_path"]
+            != f"secrets/consensus/{validator_id}.pk8"
+            or config["p2p_identity_secret_key_path"]
+            != f"secrets/p2p-identity/{validator_id}.pk8"
+            or config["operator_recovery_secret_key_path"]
+            != f"secrets/operator-recovery/{validator_id}.pk8"
             or config["network_scope"] != "single-lan"
             or config["geo_wan_evidence"] is not False
             or config["production_activation"] is not False
@@ -523,11 +566,20 @@ def validate(
             or not isinstance(plan, dict)
         ):
             fail(f"validator_config[{validator_id}] differs from topology/candidate")
-        if public_key in consensus_keys.values():
-            fail("validator configs contain duplicate consensus public keys")
-        if public_key != validator_set_by_id[validator_id]["consensus_public_key"]:
-            fail(f"validator_config[{validator_id}] key differs from validator_set")
-        consensus_keys[validator_id] = public_key
+        expected_roles = {
+            "consensus_public_key": validator_set_by_id[validator_id][
+                "consensus_public_key"
+            ],
+            "p2p_identity_public_key": validator_set_by_id[validator_id][
+                "p2p_identity_public_key"
+            ],
+            "operator_recovery_public_key": validator_set_by_id[validator_id][
+                "operator_recovery_public_key"
+            ],
+        }
+        if any(config[field] != value for field, value in expected_roles.items()):
+            fail(f"validator_config[{validator_id}] role key differs from validator_set")
+        role_keys[validator_id] = expected_roles
         validator_set_hashes.add(validator_set_sha256)
         workload_bindings.add(
             (
@@ -559,7 +611,7 @@ def validate(
                 "validator_id": peer_id,
                 "lan_ip": planned_by_id[peer_id]["lan_ip"],
                 "p2p_port": planned_by_id[peer_id]["p2p_port"],
-                "consensus_public_key": consensus_keys[peer_id],
+                **role_keys[peer_id],
             }
             for peer_id in plan["peers"]
         ]
@@ -589,7 +641,7 @@ def validate(
     )
     planned_observer = planned_participants_by_id.get("mac")
     expected_observer_config = {
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": run_id,
         "host_id": "mac",
         "lan_ip": planned_observer.get("lan_ip") if isinstance(planned_observer, dict) else None,
@@ -605,7 +657,7 @@ def validate(
                 "lan_ip": item["lan_ip"],
                 "p2p_port": item["p2p_port"],
                 "metrics_port": item["metrics_port"],
-                "consensus_public_key": consensus_keys[item["validator_id"]],
+                **role_keys[item["validator_id"]],
             }
             for item in planned
         ],
@@ -663,16 +715,24 @@ def validate(
             fail("coordinator_manifest public content reference differs from raw bytes")
 
     secret_values = coordinator["secret_files"]
-    if not isinstance(secret_values, list) or len(secret_values) != validator_count:
+    if not isinstance(secret_values, list) or len(secret_values) != 3 * validator_count:
         fail("coordinator_manifest secret inventory cardinality mismatch")
-    secret_ids: set[str] = set()
+    secret_roles: set[tuple[str, str]] = set()
     for index, value in enumerate(secret_values):
         record = manifest_ref(value, f"coordinator_manifest.secret_files[{index}]")
-        match = re.fullmatch(r"secrets/([0-9a-f]{64})\.pk8", record["path"])
-        if match is None or match.group(1) in secret_ids:
+        match = re.fullmatch(
+            r"secrets/(consensus|p2p-identity|operator-recovery)/([0-9a-f]{64})\.pk8",
+            record["path"],
+        )
+        binding = None if match is None else (match.group(1), match.group(2))
+        if binding is None or binding in secret_roles:
             fail("coordinator_manifest secret inventory is not closed and unique")
-        secret_ids.add(match.group(1))
-    if secret_ids != set(summary_validators):
+        secret_roles.add(binding)
+    if secret_roles != {
+        (role, validator_id)
+        for role in KEY_ROLES
+        for validator_id in summary_validators
+    }:
         fail("coordinator_manifest secret inventory differs from validator_set")
 
     _, observer_report_path = artifact(records, "observer_report", "mac")

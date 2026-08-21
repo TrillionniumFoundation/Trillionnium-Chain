@@ -25,6 +25,7 @@ BOOTSTRAP_RELATIVE_PATHS = (
     "public/bootstrap/finality-proof.cev0",
     "public/bootstrap/bootstrap.json",
 )
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 
 
 def fail(message: str) -> None:
@@ -265,7 +266,11 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
         coordinator_public_by_path[path_value] = record
     if set(coordinator_public_by_path) != set(observer_expected):
         fail("observer-public coordinator manifest public inventory is incomplete")
-    expected_secret_paths = {f"secrets/{validator_id}.pk8" for validator_id in validator_ids}
+    expected_secret_paths = {
+        f"secrets/{role}/{validator_id}.pk8"
+        for validator_id in validator_ids
+        for role in KEY_ROLES
+    }
     observed_secret_paths: set[str] = set()
     for value in coordinator_secret_values:
         record = exact(value, {"path", "sha256", "bytes"}, "coordinator secret reference")
@@ -386,7 +391,9 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
             **{relative: coordinator / relative for relative in BOOTSTRAP_RELATIVE_PATHS},
         }
         expected_secret = {
-            f"secrets/{validator_id}.pk8": coordinator / f"secrets/{validator_id}.pk8"
+            f"secrets/{role}/{validator_id}.pk8": coordinator
+            / f"secrets/{role}/{validator_id}.pk8"
+            for role in KEY_ROLES
         }
         for values, expected, secret in (
             (manifest["public_files"], expected_public, False),
@@ -433,7 +440,7 @@ def validate(coordinator: pathlib.Path, deployments: pathlib.Path, count: int, e
         print(
             f"poco_g3_validator_deployments=passed validators={count} "
             f"ordinary_start_height={ordinary_start_height} "
-            "secrets_per_validator=1 public_workload_per_validator=true "
+            "secrets_per_validator=3 public_workload_per_validator=true "
             "public_bootstrap_bundle_per_validator=true "
             "observer_public_bundle=true coordinator_all_secrets_not_deployed=true "
             "application_private_keys=false material_author_hash_bound=true "

@@ -31,6 +31,7 @@ HEX64 = re.compile(r"^[0-9a-f]{64}$")
 HEX128 = re.compile(r"^[0-9a-f]{128}$")
 RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 ED25519_SPKI_PREFIX = bytes.fromhex("302a300506032b6570032100")
+KEY_ROLES = ("consensus", "p2p-identity", "operator-recovery")
 WORKLOAD_CORPUS_MAGIC = b"trnm-poco-g3-workload-corpus-v1\n"
 WORKLOAD_CORPUS_FOOTER = b"trnm-poco-g3-workload-corpus-end-v1\n"
 WORKLOAD_ENTRY_BYTES = 8 + 8 + 64 + 64 + 32
@@ -110,12 +111,17 @@ def verify_ref(root: pathlib.Path, value: object, field: str, *, secret: bool) -
     return path
 
 
-def pop_challenge(selected_run_id: str, validator_id: str) -> bytes:
+def pop_challenge(selected_run_id: str, validator_id: str, role: str) -> bytes:
+    if role not in KEY_ROLES:
+        fail("unknown validator key role")
+    role_bytes = role.encode("ascii")
     run = selected_run_id.encode("ascii")
     validator = validator_id.encode("ascii")
     return b"".join(
         (
-            b"TRNM/PoCO/G3/EphemeralKeyPoP/v1\0",
+            b"TRNM/PoCO/G3/EphemeralKeyRolePoP/v2\0",
+            len(role_bytes).to_bytes(4, "big"),
+            role_bytes,
             len(run).to_bytes(4, "big"),
             run,
             len(validator).to_bytes(4, "big"),
@@ -201,7 +207,7 @@ def validate_workload(
     corpus_path: pathlib.Path,
     policy_path: pathlib.Path,
     expected_chain_id: str,
-    consensus_public_keys: set[str],
+    validator_role_public_keys: set[str],
 ) -> tuple[str, str, int]:
     policy = exact(
         read_json(policy_path, "workload_policy"),
@@ -296,8 +302,8 @@ def validate_workload(
     if header != expected_header:
         fail("workload policy header differs from the frozen public campaign profile")
     application_keys = {operator["public_key_hex"], client["public_key_hex"]}
-    if len(application_keys) != 2 or application_keys & consensus_public_keys:
-        fail("workload application keys overlap each other or consensus authority")
+    if len(application_keys) != 2 or application_keys & validator_role_public_keys:
+        fail("workload application keys overlap each other or validator role authority")
     if (
         policy["schema_version"] != 1
         or policy["schema"] != "trnm_poco_g3_workload_policy_v1"
@@ -531,6 +537,17 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
     root = root.resolve(strict=True)
     if stat.S_IMODE(root.stat().st_mode) & 0o077:
         fail("run root must not grant group/world permissions")
+    for directory in [root / "secrets", *(root / "secrets" / role for role in KEY_ROLES)]:
+        try:
+            metadata = directory.lstat()
+        except FileNotFoundError:
+            fail("secret authority directories are incomplete")
+        if (
+            stat.S_ISLNK(metadata.st_mode)
+            or not stat.S_ISDIR(metadata.st_mode)
+            or stat.S_IMODE(metadata.st_mode) != 0o700
+        ):
+            fail("secret authority directories must be real mode-0700 directories")
     manifest = exact(
         read_json(root / "manifest.json", "manifest"),
         {
@@ -663,7 +680,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
     )
     if validator_set != {
         **validator_set,
-        "schema_version": 1,
+        "schema_version": 2,
         "run_id": selected_run_id,
         "chain_id": "trnm-poco-g3-lab-v0",
         "protocol_version": 0,
@@ -685,12 +702,21 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         fail("validator-set cardinality mismatch")
     validator_by_id: dict[str, dict[str, Any]] = {}
     previous = ""
-    public_keys: set[str] = set()
+    all_role_public_keys: set[str] = set()
     total_power = 0
     for index, value in enumerate(validator_records):
         record = exact(
             value,
-            {"validator_id", "consensus_public_key", "voting_power", "key_pop_signature"},
+            {
+                "validator_id",
+                "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
+                "voting_power",
+                "key_pop_signature",
+                "p2p_identity_key_pop_signature",
+                "operator_recovery_key_pop_signature",
+            },
             f"validators[{index}]",
         )
         validator_id = record["validator_id"]
@@ -701,26 +727,42 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         previous = validator_id
         if validator_id not in planned_by_id:
             fail("validator-set contains a foreign validator")
-        public_key = record["consensus_public_key"]
-        signature = record["key_pop_signature"]
-        if not isinstance(public_key, str) or not HEX64.fullmatch(public_key):
-            fail("validator public key must be 32 bytes")
-        if public_key in public_keys:
-            fail("validator public keys must be unique")
-        public_keys.add(public_key)
-        if not isinstance(signature, str) or not HEX128.fullmatch(signature):
-            fail("validator PoP signature must be 64 bytes")
+        role_values = (
+            (
+                "consensus",
+                record["consensus_public_key"],
+                record["key_pop_signature"],
+            ),
+            (
+                "p2p-identity",
+                record["p2p_identity_public_key"],
+                record["p2p_identity_key_pop_signature"],
+            ),
+            (
+                "operator-recovery",
+                record["operator_recovery_public_key"],
+                record["operator_recovery_key_pop_signature"],
+            ),
+        )
+        for role, public_key, signature in role_values:
+            if not isinstance(public_key, str) or not HEX64.fullmatch(public_key):
+                fail("validator role public key must be 32 bytes")
+            if public_key in all_role_public_keys:
+                fail("validator public keys must be unique across all roles")
+            all_role_public_keys.add(public_key)
+            if not isinstance(signature, str) or not HEX128.fullmatch(signature):
+                fail("validator role PoP signature must be 64 bytes")
+            verify_pop(
+                bytes.fromhex(public_key),
+                pop_challenge(selected_run_id, validator_id, role),
+                bytes.fromhex(signature),
+            )
         power = record["voting_power"]
         if isinstance(power, bool) or not isinstance(power, int) or power <= 0:
             fail("validator voting power must be positive")
         if power != planned_by_id[validator_id]["weight"]:
             fail("validator-set power differs from topology")
         total_power += power
-        verify_pop(
-            bytes.fromhex(public_key),
-            pop_challenge(selected_run_id, validator_id),
-            bytes.fromhex(signature),
-        )
         validator_by_id[validator_id] = record
     if any(record["voting_power"] * 4 > total_power for record in validator_records):
         fail("one validator exceeds the 25 percent voting-power cap")
@@ -749,24 +791,41 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         workload_corpus_path,
         workload_policy_path,
         validator_set["chain_id"],
-        public_keys,
+        all_role_public_keys,
     )
 
-    secret_by_id: dict[str, pathlib.Path] = {}
+    secret_by_role_id: dict[tuple[str, str], pathlib.Path] = {}
     for path in secret_paths:
-        if path.parent != root / "secrets" or path.suffix != ".pk8":
-            fail("secret keys must use the closed secrets/<validator>.pk8 layout")
+        relative = path.relative_to(root)
+        if (
+            len(relative.parts) != 3
+            or relative.parts[0] != "secrets"
+            or relative.parts[1] not in KEY_ROLES
+            or path.suffix != ".pk8"
+        ):
+            fail("secret keys must use the closed secrets/<role>/<validator>.pk8 layout")
+        role = relative.parts[1]
         validator_id = path.stem
-        if validator_id in secret_by_id:
-            fail("duplicate validator secret")
-        secret_by_id[validator_id] = path
-    if set(secret_by_id) != set(validator_by_id):
-        fail("secret key set differs from validator set")
-    for validator_id, secret_path in secret_by_id.items():
+        if (role, validator_id) in secret_by_role_id:
+            fail("duplicate validator role secret")
+        secret_by_role_id[(role, validator_id)] = path
+    expected_role_secrets = {
+        (role, validator_id)
+        for role in KEY_ROLES
+        for validator_id in validator_by_id
+    }
+    if set(secret_by_role_id) != expected_role_secrets:
+        fail("secret role-key set differs from validator set")
+    public_field_by_role = {
+        "consensus": "consensus_public_key",
+        "p2p-identity": "p2p_identity_public_key",
+        "operator-recovery": "operator_recovery_public_key",
+    }
+    for (role, validator_id), secret_path in secret_by_role_id.items():
         if public_from_secret(secret_path).hex() != validator_by_id[validator_id][
-            "consensus_public_key"
+            public_field_by_role[role]
         ]:
-            fail("secret key differs from its public validator descriptor")
+            fail("role secret key differs from its public validator descriptor")
 
     validate_bootstrap(
         root,
@@ -796,12 +855,16 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
                 "metrics_port",
                 "weight",
                 "consensus_public_key",
+                "p2p_identity_public_key",
+                "operator_recovery_public_key",
                 "validator_set_sha256",
                 "binary_sha256",
                 "ordinary_start_height",
                 "workload_corpus_sha256",
                 "workload_policy_sha256",
-                "secret_key_path",
+                "consensus_secret_key_path",
+                "p2p_identity_secret_key_path",
+                "operator_recovery_secret_key_path",
                 "peers",
                 "network_scope",
                 "geo_wan_evidence",
@@ -815,7 +878,7 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
             candidate["linux_x86_64_sha256"]
         )
         expected_fixed = {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": selected_run_id,
             "validator_id": validator_id,
             "host_id": host_id,
@@ -824,12 +887,20 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
             "metrics_port": plan["metrics_port"],
             "weight": plan["weight"],
             "consensus_public_key": validator_by_id[validator_id]["consensus_public_key"],
+            "p2p_identity_public_key": validator_by_id[validator_id][
+                "p2p_identity_public_key"
+            ],
+            "operator_recovery_public_key": validator_by_id[validator_id][
+                "operator_recovery_public_key"
+            ],
             "validator_set_sha256": manifest["validator_set_sha256"],
             "binary_sha256": expected_binary,
             "ordinary_start_height": ordinary_start_height,
             "workload_corpus_sha256": workload_corpus_hash,
             "workload_policy_sha256": workload_policy_hash,
-            "secret_key_path": f"secrets/{validator_id}.pk8",
+            "consensus_secret_key_path": f"secrets/consensus/{validator_id}.pk8",
+            "p2p_identity_secret_key_path": f"secrets/p2p-identity/{validator_id}.pk8",
+            "operator_recovery_secret_key_path": f"secrets/operator-recovery/{validator_id}.pk8",
             "network_scope": "single-lan",
             "geo_wan_evidence": False,
             "production_activation": False,
@@ -845,7 +916,14 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
         for peer_index, peer_value in enumerate(peers):
             peer = exact(
                 peer_value,
-                {"validator_id", "lan_ip", "p2p_port", "consensus_public_key"},
+                {
+                    "validator_id",
+                    "lan_ip",
+                    "p2p_port",
+                    "consensus_public_key",
+                    "p2p_identity_public_key",
+                    "operator_recovery_public_key",
+                },
                 f"config[{validator_id}].peers[{peer_index}]",
             )
             peer_id = peer["validator_id"]
@@ -857,6 +935,12 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
                 "lan_ip": peer_plan["lan_ip"],
                 "p2p_port": peer_plan["p2p_port"],
                 "consensus_public_key": validator_by_id[peer_id]["consensus_public_key"],
+                "p2p_identity_public_key": validator_by_id[peer_id][
+                    "p2p_identity_public_key"
+                ],
+                "operator_recovery_public_key": validator_by_id[peer_id][
+                    "operator_recovery_public_key"
+                ],
             }:
                 fail("config peer differs from topology/key descriptor")
             observed_peer_ids.append(peer_id)
@@ -906,11 +990,17 @@ def validate(root: pathlib.Path, expected_count: int, *, emit: bool = True) -> N
                 "consensus_public_key": validator_by_id[planned["validator_id"]][
                     "consensus_public_key"
                 ],
+                "p2p_identity_public_key": validator_by_id[planned["validator_id"]][
+                    "p2p_identity_public_key"
+                ],
+                "operator_recovery_public_key": validator_by_id[planned["validator_id"]][
+                    "operator_recovery_public_key"
+                ],
             }
             for planned in planned
         ]
         if observer != {
-            "schema_version": 1,
+            "schema_version": 2,
             "run_id": selected_run_id,
             "host_id": host_id,
             "lan_ip": plan["lan_ip"],

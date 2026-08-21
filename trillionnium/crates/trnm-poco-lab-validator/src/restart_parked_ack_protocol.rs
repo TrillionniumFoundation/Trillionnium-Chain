@@ -170,7 +170,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
         stored.validator_set_v1(),
     )
     .map_err(|error| anyhow::anyhow!("form exact ParkedAck signing digest: {error}"))?;
-    let signature = config.signing_key().sign(&digest).to_bytes();
+    let signature = config.consensus_signing_key().sign(&digest).to_bytes();
     let statement = SignedRestartParkedAckV1::from_parts(
         common,
         stored.local_validator_v1(),

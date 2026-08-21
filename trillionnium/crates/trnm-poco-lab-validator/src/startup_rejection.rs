@@ -735,7 +735,11 @@ pub fn attempt_isolated_startup_rejection_v1(
         network_started: false,
         signature: [0; SIGNATURE_BYTES_V1],
     };
-    sign_evidence(&mut evidence, config.signing_key(), config.validator_set())?;
+    sign_evidence(
+        &mut evidence,
+        config.consensus_signing_key(),
+        config.validator_set(),
+    )?;
     evidence.verify(config.validator_set())?;
     evidence.verify_owned(fleet_start_certificate, config.validator_set())
 }

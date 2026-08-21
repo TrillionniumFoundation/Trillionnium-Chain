@@ -19,19 +19,20 @@ use trnm_consensus_types::{ValidatorId, ValidatorSet};
 use crate::frame::{
     read_framed, validate_run_id_bytes, write_framed, AuthenticatedFrame, FrameError, FrameKind,
 };
+use crate::key_roles::ValidatorKeyRoleRegistryV1;
 
-const HANDSHAKE_MAGIC: &[u8; 8] = b"TRNMG3H1";
-const HANDSHAKE_VERSION: u16 = 1;
+const HANDSHAKE_MAGIC: &[u8; 8] = b"TRNMG3H2";
+const HANDSHAKE_VERSION: u16 = 2;
 const CHALLENGE_TAG: u8 = 1;
 const HELLO_TAG: u8 = 2;
 const FINISHED_TAG: u8 = 3;
 const MAX_HANDSHAKE_BYTES: usize = 512;
-const CHALLENGE_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-challenge.v1";
-const HELLO_DOMAIN: &[u8] = b"trnm.poco-g3.initiator-hello.v1";
-const FINISHED_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-finished.v1";
-const SESSION_DOMAIN: &[u8] = b"trnm.poco-g3.connection-session.v1";
-const TRANSCRIPT_DOMAIN: &[u8] = b"trnm.poco-g3.handshake-transcript.v1";
-const NETWORK_CONTEXT_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.v1";
+const CHALLENGE_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-challenge.v2";
+const HELLO_DOMAIN: &[u8] = b"trnm.poco-g3.initiator-hello.v2";
+const FINISHED_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-finished.v2";
+const SESSION_DOMAIN: &[u8] = b"trnm.poco-g3.connection-session.v2";
+const TRANSCRIPT_DOMAIN: &[u8] = b"trnm.poco-g3.handshake-transcript.v2";
+const NETWORK_CONTEXT_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.v2";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RunTransportContext {
@@ -79,7 +80,7 @@ pub struct AuthenticatedConnection<T> {
     session: ConnectionSession,
     run_id: String,
     signing_key: SigningKey,
-    validator_set: ValidatorSet,
+    key_roles: ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
     next_send: u64,
     next_receive: u64,
@@ -94,6 +95,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
         expected_remote: ValidatorId,
         signing_key: &SigningKey,
         validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
         transport_context: RunTransportContext,
     ) -> Result<Self, FrameError> {
         let session = client_handshake(
@@ -103,6 +105,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
             expected_remote,
             signing_key,
             validator_set,
+            key_roles,
             transport_context,
         )?;
         Ok(Self {
@@ -111,7 +114,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
             session,
             run_id: run_id.to_owned(),
             signing_key: signing_key.clone(),
-            validator_set: validator_set.clone(),
+            key_roles: key_roles.clone(),
             transport_context,
             next_send: 0,
             next_receive: 0,
@@ -125,6 +128,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
         local: ValidatorId,
         signing_key: &SigningKey,
         validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
         transport_context: RunTransportContext,
     ) -> Result<Self, FrameError> {
         let session = server_handshake(
@@ -133,6 +137,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
             local,
             signing_key,
             validator_set,
+            key_roles,
             transport_context,
         )?;
         Ok(Self {
@@ -141,7 +146,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
             session,
             run_id: run_id.to_owned(),
             signing_key: signing_key.clone(),
-            validator_set: validator_set.clone(),
+            key_roles: key_roles.clone(),
             transport_context,
             next_send: 0,
             next_receive: 0,
@@ -200,7 +205,7 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
             self.poisoned = true;
             FrameError::Replay
         })?;
-        let frame = match read_framed(&mut self.io, &self.run_id, &self.validator_set) {
+        let frame = match read_framed(&mut self.io, &self.run_id, &self.key_roles) {
             Ok(frame) => frame,
             Err(error) => {
                 self.poisoned = true;
@@ -225,16 +230,17 @@ pub fn server_handshake(
     local: ValidatorId,
     signing_key: &SigningKey,
     validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
-    require_local_key(local, signing_key, validator_set)?;
+    require_local_key(local, signing_key, key_roles)?;
     let mut receiver_nonce = [0u8; 32];
     getrandom::getrandom(&mut receiver_nonce)
         .map_err(|_| FrameError::Malformed("receiver entropy unavailable"))?;
     let challenge = encode_challenge(
         run_id,
         local,
-        network_context_digest(validator_set, transport_context),
+        network_context_digest(validator_set, key_roles, transport_context),
         receiver_nonce,
         signing_key,
     )?;
@@ -246,13 +252,14 @@ pub fn server_handshake(
         local,
         receiver_nonce,
         validator_set,
+        key_roles,
         transport_context,
     )?;
     let finished = encode_finished(
         run_id,
         local,
         session.remote,
-        network_context_digest(validator_set, transport_context),
+        network_context_digest(validator_set, key_roles, transport_context),
         session.session,
         &challenge,
         &hello,
@@ -269,15 +276,17 @@ pub fn client_handshake(
     expected_remote: ValidatorId,
     signing_key: &SigningKey,
     validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
-    require_local_key(local, signing_key, validator_set)?;
+    require_local_key(local, signing_key, key_roles)?;
     let challenge = read_record(io)?;
     let receiver_nonce = decode_challenge(
         &challenge,
         run_id,
         expected_remote,
         validator_set,
+        key_roles,
         transport_context,
     )?;
     let mut sender_nonce = [0u8; 32];
@@ -287,7 +296,7 @@ pub fn client_handshake(
         run_id,
         local,
         expected_remote,
-        network_context_digest(validator_set, transport_context),
+        network_context_digest(validator_set, key_roles, transport_context),
         receiver_nonce,
         sender_nonce,
         signing_key,
@@ -299,7 +308,7 @@ pub fn client_handshake(
             run_id,
             local,
             expected_remote,
-            network_context_digest(validator_set, transport_context),
+            network_context_digest(validator_set, key_roles, transport_context),
             receiver_nonce,
             sender_nonce,
         ),
@@ -314,6 +323,7 @@ pub fn client_handshake(
         &challenge,
         &hello,
         validator_set,
+        key_roles,
         transport_context,
     )?;
     Ok(session)
@@ -339,6 +349,7 @@ fn decode_challenge(
     run_id: &str,
     expected_receiver: ValidatorId,
     validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<[u8; 32], FrameError> {
     let mut cursor = HandshakeCursor::new(body);
@@ -348,7 +359,7 @@ fn decode_challenge(
         return Err(FrameError::UnknownSender);
     }
     let context = cursor.array("challenge network-context digest")?;
-    if context != network_context_digest(validator_set, transport_context) {
+    if context != network_context_digest(validator_set, key_roles, transport_context) {
         return Err(FrameError::InvalidSignature);
     }
     let nonce = cursor.array("challenge nonce")?;
@@ -359,7 +370,7 @@ fn decode_challenge(
         &body[..body.len() - 64],
         signature,
         receiver,
-        validator_set,
+        key_roles,
     )?;
     Ok(nonce)
 }
@@ -389,6 +400,7 @@ fn decode_hello(
     local: ValidatorId,
     expected_receiver_nonce: [u8; 32],
     validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
     let mut cursor = HandshakeCursor::new(body);
@@ -401,7 +413,7 @@ fn decode_hello(
     let signature: [u8; 64] = cursor.array("hello signature")?;
     cursor.finish()?;
     if receiver != local
-        || network_context != network_context_digest(validator_set, transport_context)
+        || network_context != network_context_digest(validator_set, key_roles, transport_context)
         || receiver_nonce != expected_receiver_nonce
         || sender == local
     {
@@ -412,7 +424,7 @@ fn decode_hello(
         &body[..body.len() - 64],
         signature,
         sender,
-        validator_set,
+        key_roles,
     )?;
     Ok(ConnectionSession {
         remote: sender,
@@ -458,6 +470,7 @@ fn decode_finished(
     challenge: &[u8],
     hello: &[u8],
     validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<(), FrameError> {
     let mut cursor = HandshakeCursor::new(body);
@@ -471,7 +484,7 @@ fn decode_finished(
     cursor.finish()?;
     if sender != expected_sender
         || receiver != expected_receiver
-        || network_context != network_context_digest(validator_set, transport_context)
+        || network_context != network_context_digest(validator_set, key_roles, transport_context)
         || session != expected_session
         || transcript != transcript_hash(challenge, hello)
     {
@@ -482,19 +495,19 @@ fn decode_finished(
         &body[..body.len() - 64],
         signature,
         sender,
-        validator_set,
+        key_roles,
     )
 }
 
 fn require_local_key(
     local: ValidatorId,
     key: &SigningKey,
-    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
 ) -> Result<(), FrameError> {
-    let record = validator_set
-        .validator(local)
+    let expected = key_roles
+        .p2p_identity_public_key(local)
         .ok_or(FrameError::UnknownSender)?;
-    if record.consensus_key().as_bytes() != &key.verifying_key().to_bytes() {
+    if expected != key.verifying_key().to_bytes() {
         return Err(FrameError::InvalidSignature);
     }
     Ok(())
@@ -505,13 +518,12 @@ fn verify_record(
     body: &[u8],
     signature: [u8; 64],
     author: ValidatorId,
-    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
 ) -> Result<(), FrameError> {
-    let record = validator_set
-        .validator(author)
+    let public_key = key_roles
+        .p2p_identity_public_key(author)
         .ok_or(FrameError::UnknownSender)?;
-    let key = VerifyingKey::from_bytes(record.consensus_key().as_bytes())
-        .map_err(|_| FrameError::InvalidSignature)?;
+    let key = VerifyingKey::from_bytes(&public_key).map_err(|_| FrameError::InvalidSignature)?;
     key.verify_strict(
         &signing_root(domain, body),
         &Signature::from_bytes(&signature),
@@ -561,10 +573,15 @@ fn derive_session(
     hasher.finalize().into()
 }
 
-fn network_context_digest(validator_set: &ValidatorSet, context: RunTransportContext) -> [u8; 32] {
+fn network_context_digest(
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    context: RunTransportContext,
+) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(NETWORK_CONTEXT_DOMAIN);
     hasher.update(validator_set.id().as_bytes());
+    hasher.update(key_roles.digest_v1());
     hasher.update(context.topology_sha256);
     hasher.update(context.candidate_source_sha256);
     hasher.update(context.binary_sha256);
@@ -660,6 +677,7 @@ mod tests {
     use std::net::{TcpListener, TcpStream};
     use std::thread;
 
+    use crate::key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1};
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
         Validator, VotingPower,
@@ -673,12 +691,18 @@ mod tests {
     fn fixture() -> (
         SigningKey,
         SigningKey,
+        SigningKey,
         ValidatorId,
         ValidatorId,
         ValidatorSet,
+        ValidatorKeyRoleRegistryV1,
     ) {
         let client_key = SigningKey::from_bytes(&[0x61; 32]);
         let server_key = SigningKey::from_bytes(&[0x62; 32]);
+        let client_consensus_key = SigningKey::from_bytes(&[0x31; 32]);
+        let server_consensus_key = SigningKey::from_bytes(&[0x32; 32]);
+        let client_operator_key = SigningKey::from_bytes(&[0x41; 32]);
+        let server_operator_key = SigningKey::from_bytes(&[0x42; 32]);
         let client = ValidatorId::new([0x71; 32]);
         let server = ValidatorId::new([0x72; 32]);
         let parameters = ConsensusParametersV0::reference_shadow_v0();
@@ -691,28 +715,57 @@ mod tests {
             vec![
                 Validator::new(
                     client,
-                    ConsensusPublicKey::new(client_key.verifying_key().to_bytes()),
+                    ConsensusPublicKey::new(client_consensus_key.verifying_key().to_bytes()),
                     VotingPower::new(1).unwrap(),
                 )
                 .unwrap(),
                 Validator::new(
                     server,
-                    ConsensusPublicKey::new(server_key.verifying_key().to_bytes()),
+                    ConsensusPublicKey::new(server_consensus_key.verifying_key().to_bytes()),
                     VotingPower::new(1).unwrap(),
                 )
                 .unwrap(),
             ],
         )
         .unwrap();
-        (client_key, server_key, client, server, set)
+        let key_roles = ValidatorKeyRoleRegistryV1::new(
+            &set,
+            vec![
+                ValidatorKeyRoleBindingV1::new(
+                    client,
+                    client_consensus_key.verifying_key().to_bytes(),
+                    client_key.verifying_key().to_bytes(),
+                    client_operator_key.verifying_key().to_bytes(),
+                )
+                .unwrap(),
+                ValidatorKeyRoleBindingV1::new(
+                    server,
+                    server_consensus_key.verifying_key().to_bytes(),
+                    server_key.verifying_key().to_bytes(),
+                    server_operator_key.verifying_key().to_bytes(),
+                )
+                .unwrap(),
+            ],
+        )
+        .unwrap();
+        (
+            client_key,
+            server_key,
+            client_consensus_key,
+            client,
+            server,
+            set,
+            key_roles,
+        )
     }
 
     #[test]
     fn fresh_challenge_authenticates_both_ends_and_frames() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let server_set = set.clone();
+        let server_key_roles = key_roles.clone();
         let run_id = "poco-g3-7-20260813T000000Z-1234abcd";
         let server_thread = thread::spawn(move || {
             let (stream, _) = listener.accept().unwrap();
@@ -722,6 +775,7 @@ mod tests {
                 server,
                 &server_key,
                 &server_set,
+                &server_key_roles,
                 TEST_TRANSPORT_CONTEXT,
             )
             .unwrap();
@@ -741,6 +795,7 @@ mod tests {
             server,
             &client_key,
             &set,
+            &key_roles,
             TEST_TRANSPORT_CONTEXT,
         )
         .unwrap();
@@ -753,12 +808,13 @@ mod tests {
 
     #[test]
     fn each_receiver_challenge_produces_a_distinct_session() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         let mut sessions = Vec::new();
         for _ in 0..2 {
             let listener = TcpListener::bind("127.0.0.1:0").unwrap();
             let address = listener.local_addr().unwrap();
             let server_set = set.clone();
+            let server_key_roles = key_roles.clone();
             let server_key = server_key.clone();
             let thread = thread::spawn(move || {
                 let (stream, _) = listener.accept().unwrap();
@@ -768,6 +824,7 @@ mod tests {
                     server,
                     &server_key,
                     &server_set,
+                    &server_key_roles,
                     TEST_TRANSPORT_CONTEXT,
                 )
                 .unwrap()
@@ -781,6 +838,7 @@ mod tests {
                 server,
                 &client_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             )
             .unwrap()
@@ -793,17 +851,18 @@ mod tests {
 
     #[test]
     fn client_requires_server_finished_key_confirmation() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let run_id = "poco-g3-7-20260813T000000Z-1234abcd";
         let server_set = set.clone();
+        let server_key_roles = key_roles.clone();
         let thread = thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
             let challenge = encode_challenge(
                 run_id,
                 server,
-                network_context_digest(&server_set, TEST_TRANSPORT_CONTEXT),
+                network_context_digest(&server_set, &server_key_roles, TEST_TRANSPORT_CONTEXT),
                 [0x91; 32],
                 &server_key,
             )
@@ -820,6 +879,7 @@ mod tests {
                 server,
                 &client_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             ),
             Err(FrameError::Io(_))
@@ -829,7 +889,7 @@ mod tests {
 
     #[test]
     fn same_run_and_pair_keys_with_substituted_validator_set_are_rejected() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         let parameters = ConsensusParametersV0::reference_shadow_v0();
         let third_key = SigningKey::from_bytes(&[0x63; 32]);
         let alternate = ValidatorSet::new(
@@ -863,12 +923,13 @@ mod tests {
         assert_ne!(set.id(), alternate.id());
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
+        let alternate_key_roles = key_roles.clone();
         let thread = thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
             let challenge = encode_challenge(
                 "poco-g3-7-20260813T000000Z-1234abcd",
                 server,
-                network_context_digest(&alternate, TEST_TRANSPORT_CONTEXT),
+                network_context_digest(&alternate, &alternate_key_roles, TEST_TRANSPORT_CONTEXT),
                 [0x94; 32],
                 &server_key,
             )
@@ -884,6 +945,7 @@ mod tests {
                 server,
                 &client_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             ),
             Err(FrameError::InvalidSignature)
@@ -893,10 +955,11 @@ mod tests {
 
     #[test]
     fn same_run_and_validator_set_with_substituted_topology_are_rejected() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         let listener = TcpListener::bind("127.0.0.1:0").unwrap();
         let address = listener.local_addr().unwrap();
         let server_set = set.clone();
+        let server_key_roles = key_roles.clone();
         let thread = thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
             let challenge = encode_challenge(
@@ -904,6 +967,7 @@ mod tests {
                 server,
                 network_context_digest(
                     &server_set,
+                    &server_key_roles,
                     RunTransportContext::new([0x88; 32], [0x75; 32], [0x76; 32], [0x77; 32]),
                 ),
                 [0x95; 32],
@@ -921,6 +985,7 @@ mod tests {
                 server,
                 &client_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             ),
             Err(FrameError::InvalidSignature)
@@ -930,11 +995,12 @@ mod tests {
 
     #[test]
     fn tampered_finished_and_transcript_are_rejected() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
         for mode in ["signature", "transcript"] {
             let listener = TcpListener::bind("127.0.0.1:0").unwrap();
             let address = listener.local_addr().unwrap();
             let server_set = set.clone();
+            let server_key_roles = key_roles.clone();
             let server_key = server_key.clone();
             let thread = thread::spawn(move || {
                 let (mut stream, _) = listener.accept().unwrap();
@@ -942,7 +1008,7 @@ mod tests {
                 let challenge = encode_challenge(
                     "poco-g3-7-20260813T000000Z-1234abcd",
                     server,
-                    network_context_digest(&server_set, TEST_TRANSPORT_CONTEXT),
+                    network_context_digest(&server_set, &server_key_roles, TEST_TRANSPORT_CONTEXT),
                     nonce,
                     &server_key,
                 )
@@ -955,6 +1021,7 @@ mod tests {
                     server,
                     nonce,
                     &server_set,
+                    &server_key_roles,
                     TEST_TRANSPORT_CONTEXT,
                 )
                 .unwrap();
@@ -962,7 +1029,7 @@ mod tests {
                     "poco-g3-7-20260813T000000Z-1234abcd",
                     server,
                     client,
-                    network_context_digest(&server_set, TEST_TRANSPORT_CONTEXT),
+                    network_context_digest(&server_set, &server_key_roles, TEST_TRANSPORT_CONTEXT),
                     session.session,
                     &challenge,
                     &hello,
@@ -986,6 +1053,7 @@ mod tests {
                     server,
                     &client_key,
                     &set,
+                    &key_roles,
                     TEST_TRANSPORT_CONTEXT,
                 ),
                 Err(FrameError::InvalidSignature)
@@ -996,7 +1064,8 @@ mod tests {
 
     #[test]
     fn wrong_local_key_and_noncanonical_run_fail_before_handshake() {
-        let (client_key, server_key, client, server, set) = fixture();
+        let (client_key, server_key, client_consensus_key, client, server, set, key_roles) =
+            fixture();
         let mut empty = Cursor::new(Vec::<u8>::new());
         assert!(matches!(
             server_handshake(
@@ -1005,6 +1074,7 @@ mod tests {
                 server,
                 &client_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             ),
             Err(FrameError::InvalidSignature)
@@ -1017,9 +1087,23 @@ mod tests {
                 server,
                 &server_key,
                 &set,
+                &key_roles,
                 TEST_TRANSPORT_CONTEXT,
             ),
             Err(FrameError::Malformed("non-canonical run ID"))
+        ));
+        let mut empty = Cursor::new(Vec::<u8>::new());
+        assert!(matches!(
+            server_handshake(
+                &mut empty,
+                "poco-g3-7-20260813T000000Z-1234abcd",
+                client,
+                &client_consensus_key,
+                &set,
+                &key_roles,
+                TEST_TRANSPORT_CONTEXT,
+            ),
+            Err(FrameError::InvalidSignature)
         ));
         assert_ne!(client, server);
     }
@@ -1054,7 +1138,7 @@ mod tests {
         local: ValidatorId,
         remote: ValidatorId,
         key: SigningKey,
-        set: ValidatorSet,
+        key_roles: ValidatorKeyRoleRegistryV1,
     ) -> AuthenticatedConnection<T> {
         AuthenticatedConnection {
             io,
@@ -1065,7 +1149,7 @@ mod tests {
             },
             run_id: "poco-g3-7-20260813T000000Z-1234abcd".to_owned(),
             signing_key: key,
-            validator_set: set,
+            key_roles,
             transport_context: TEST_TRANSPORT_CONTEXT,
             next_send: 0,
             next_receive: 0,
@@ -1075,13 +1159,13 @@ mod tests {
 
     #[test]
     fn uncertain_send_and_malformed_receive_permanently_poison_connection() {
-        let (client_key, _, client, server, set) = fixture();
+        let (client_key, _, _, client, server, _set, key_roles) = fixture();
         let mut sender = direct_connection(
             PartialWriteFailure { writes: 0 },
             client,
             server,
             client_key.clone(),
-            set.clone(),
+            key_roles.clone(),
         );
         assert!(matches!(
             sender.send(FrameKind::Health, b"request".to_vec()),
@@ -1098,7 +1182,7 @@ mod tests {
             client,
             server,
             client_key,
-            set,
+            key_roles,
         );
         assert!(matches!(receiver.receive(), Err(FrameError::TooLarge)));
         assert!(receiver.is_poisoned());
@@ -1107,13 +1191,13 @@ mod tests {
 
     #[test]
     fn exhausted_sequence_poisoning_precedes_any_io() {
-        let (client_key, _, client, server, set) = fixture();
+        let (client_key, _, _, client, server, _set, key_roles) = fixture();
         let mut connection = direct_connection(
             Cursor::new(Vec::<u8>::new()),
             client,
             server,
             client_key,
-            set,
+            key_roles,
         );
         connection.next_send = u64::MAX;
         assert!(matches!(

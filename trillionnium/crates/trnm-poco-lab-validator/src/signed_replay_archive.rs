@@ -354,7 +354,7 @@ trait ReplayArchiveTerminalConfigV1 {
     fn local_validator(&self) -> trnm_consensus_types::ValidatorId;
     fn validator_set(&self) -> &ValidatorSet;
     fn consensus_parameters(&self) -> &ConsensusParametersV0;
-    fn signing_key(&self) -> &SigningKey;
+    fn consensus_signing_key(&self) -> &SigningKey;
     fn validator_set_sha256(&self) -> [u8; 32];
     fn topology_sha256(&self) -> [u8; 32];
     fn config_sha256(&self) -> [u8; 32];
@@ -387,8 +387,8 @@ impl ReplayArchiveTerminalConfigV1 for LoadedValidatorConfig {
         LoadedValidatorConfig::consensus_parameters(self)
     }
 
-    fn signing_key(&self) -> &SigningKey {
-        LoadedValidatorConfig::signing_key(self)
+    fn consensus_signing_key(&self) -> &SigningKey {
+        LoadedValidatorConfig::consensus_signing_key(self)
     }
 
     fn validator_set_sha256(&self) -> [u8; 32] {
@@ -1463,7 +1463,7 @@ impl SignedReplayArchiveV1 {
             .ok_or_else(|| anyhow!("terminal seal validator is absent from validator set"))?;
         ensure!(
             validator.consensus_key().as_bytes()
-                == &config.signing_key().verifying_key().to_bytes(),
+                == &config.consensus_signing_key().verifying_key().to_bytes(),
             "terminal seal signing key differs from validator set"
         );
         let mut seal = ReplayArchiveTerminalSealV1 {
@@ -1507,9 +1507,9 @@ impl SignedReplayArchiveV1 {
         let body_sha256 = seal.computed_body_sha256_v1()?;
         seal.body_sha256 = hex::encode(body_sha256);
         let signature_root = hash_parts_v1(TERMINAL_SEAL_SIGNATURE_DOMAIN_V1, &[&body_sha256]);
-        let signature = config.signing_key().sign(&signature_root);
+        let signature = config.consensus_signing_key().sign(&signature_root);
         config
-            .signing_key()
+            .consensus_signing_key()
             .verifying_key()
             .verify_strict(&signature_root, &signature)
             .context("self-verify terminal replay archive seal signature")?;
@@ -3612,7 +3612,7 @@ mod tests {
             &self.consensus_parameters
         }
 
-        fn signing_key(&self) -> &SigningKey {
+        fn consensus_signing_key(&self) -> &SigningKey {
             &self.signing_key
         }
 
