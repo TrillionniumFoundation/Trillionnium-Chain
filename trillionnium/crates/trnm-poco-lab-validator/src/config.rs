@@ -41,7 +41,15 @@ use crate::{
 const PKCS8_ED25519_PREFIX: [u8; 16] = [
     0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x04, 0x22, 0x04, 0x20,
 ];
-const MAX_CORE_BLOCKS: usize = 131_072;
+/// Exact durable block-capacity envelope for the currently deployed bounded
+/// fleet runner.  The SafetyState codec sizes its worst-case finalization
+/// queue from this value, so it must not inherit the much wider workload-file
+/// parsing bound.  Requests above this cap are rejected by the runtime and
+/// fleet preflights before commissioning creates any authority namespace.
+/// Because the value is bound into the Core config reference, an old namespace
+/// created under the historical wider value is intentionally not reopen-
+/// compatible and must fail closed rather than be migrated in place.
+pub(crate) const DEPLOYED_CORE_MAX_BLOCKS_V1: usize = 128;
 const OBSERVED_MESSAGES_PER_VALIDATOR: usize = 64;
 const MAX_FROZEN_INPUT_BYTES: u64 = 64 * 1024 * 1024;
 
@@ -640,7 +648,7 @@ impl LoadedValidatorConfig {
             self.validator_set.clone(),
             self.consensus_parameters,
             0,
-            MAX_CORE_BLOCKS,
+            DEPLOYED_CORE_MAX_BLOCKS_V1,
             observed,
         )
         .map_err(|error| anyhow!("invalid Core config: {error}"))

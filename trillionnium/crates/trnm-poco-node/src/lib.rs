@@ -203,8 +203,9 @@ pub use authenticated_genesis_h1_takeover::{
 
 #[cfg(feature = "lab-validator-runtime")]
 pub use deployed_lab_commissioning::{
-    commission_deployed_lab_ordinary_runtime_v0, PocoNodeDeployedLabBootstrapV0,
-    PocoNodeDeployedLabCommissioningErrorV0,
+    commission_deployed_lab_ordinary_runtime_v0, validate_deployed_lab_core_record_envelope_v0,
+    PocoNodeDeployedLabBootstrapV0, PocoNodeDeployedLabCommissioningErrorV0,
+    DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0, DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0,
 };
 #[cfg(feature = "lab-validator-runtime")]
 pub use deployed_lab_process2_recovery::{

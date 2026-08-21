@@ -1,4 +1,4 @@
-//! Bounded real-process PoCO-BFT consensus owner for the 7/31/100-validator LAN lanes.
+//! Bounded real-process PoCO-BFT consensus owner for the Stage0 seven-validator LAN lane.
 //!
 //! The public entry in this module deliberately accepts a one-shot
 //! commissioner.  The commissioner is invoked inside the same bounded 32 MiB
@@ -7,10 +7,10 @@
 //! report authority.  This prevents a deep authority graph from being built
 //! on a smaller caller stack and moved into the runtime afterwards.
 //!
-//! The frozen seven-validator topology uses direct consensus frames. The
-//! 31/100-validator degree-eight ring profiles use independently origin-signed
-//! relay envelopes with bounded hop budgets and process-local exact-replay
-//! suppression. A successful report from this module is single-LAN
+//! The active frozen topology uses direct consensus frames. The 31/100
+//! degree-eight ring layouts remain dormant planning code until their durable
+//! Core/store capacity profiles are separately verified; runtime preflight
+//! rejects both before effects. A successful report from this module is single-LAN
 //! validator-run evidence only; it does not set any fault, performance,
 //! geo-WAN, G3-complete, or production truth bit.
 
@@ -36,14 +36,14 @@ use trnm_consensus_types::{
     StateRoot, TimeoutCertificateV0, ValidatorId, View, RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_poco_node::{
-    PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1, PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1,
-    PocoNodeDeployedLabZeroDeltaRestartCutV1, PocoNodeLabAuthorityPhaseV0,
-    PocoNodeLabOrdinaryProposalRuntimeV0,
+    validate_deployed_lab_core_record_envelope_v0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
+    PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
+    PocoNodeLabAuthorityPhaseV0, PocoNodeLabOrdinaryProposalRuntimeV0,
 };
 
 use crate::{
     bootstrap_material::VerifiedPublicBootstrapInitialCutV1,
-    config::LoadedValidatorConfig,
+    config::{LoadedValidatorConfig, DEPLOYED_CORE_MAX_BLOCKS_V1},
     consensus_mesh::{
         MeshIngressEventV0, PeerDirectionV0, PeerSessionFactsV0, PersistentAuthenticatedPeerMeshV0,
     },
@@ -804,7 +804,7 @@ const fn is_restart_protocol_kind_v1(kind: FrameKind) -> bool {
     )
 }
 
-/// Runs one bounded 7/31/100-validator consensus process.
+/// Runs one bounded seven-validator Stage0 consensus process.
 ///
 /// `commission` must consume the already authenticated public bootstrap
 /// material and return the exact native h1->h2->h3 ordinary takeover owner.
@@ -1070,7 +1070,14 @@ impl ConsensusRuntimePreflightV1 {
             (MINIMUM_CONSENSUS_RUN_BLOCKS_V1..=MAX_CONSENSUS_RUN_BLOCKS_V1).contains(&max_blocks),
             "bounded consensus max_blocks cannot produce one ordinary three-chain finality"
         );
+        validate_deployed_core_max_blocks_v1(max_blocks)?;
         let validator_count = config.validator_set().validators().len();
+        validate_active_validator_count_v1(validator_count)?;
+        let core_config = config
+            .core_config()
+            .context("derive deployed Core capacity preflight")?;
+        validate_deployed_lab_core_record_envelope_v0(&core_config)
+            .map_err(|error| anyhow!("deployed Core record envelope is invalid: {error}"))?;
         let (expected_degree, transport) = match validator_count {
             DIRECT_VALIDATOR_COUNT_V1 => {
                 (DIRECT_PEER_DEGREE_V1, ConsensusTransportProfileV1::Direct)
@@ -1185,6 +1192,25 @@ impl ConsensusRuntimePreflightV1 {
             bootstrap_initial_cut,
         })
     }
+}
+
+fn validate_deployed_core_max_blocks_v1(max_blocks: u64) -> Result<usize> {
+    let requested = usize::try_from(max_blocks).map_err(|_| {
+        anyhow!("bounded consensus max_blocks exceeds the durable Core capacity envelope")
+    })?;
+    ensure!(
+        requested <= DEPLOYED_CORE_MAX_BLOCKS_V1,
+        "bounded consensus max_blocks exceeds the durable Core capacity envelope"
+    );
+    Ok(requested)
+}
+
+fn validate_active_validator_count_v1(validator_count: usize) -> Result<()> {
+    ensure!(
+        validator_count == DIRECT_VALIDATOR_COUNT_V1,
+        "active bounded consensus is frozen to the direct seven-validator Stage0 profile"
+    );
+    Ok(())
 }
 
 fn run_fleet_barrier_v1(
@@ -6350,7 +6376,10 @@ mod tests {
         ProposalWitnessV0, ProtocolVersion, QcReferenceV0, ReceiptsRoot, SignatureBytes,
         SignedProposalV0, StateRoot, Validator, ValidatorSet, Vote, VotingPower,
     };
-    use trnm_poco_node::commission_native_h1_ordinary_lab_test_bundle_v0;
+    use trnm_poco_node::{
+        commission_native_h1_ordinary_lab_test_bundle_v0, DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0,
+        DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0,
+    };
 
     use super::*;
     use crate::{
@@ -7491,6 +7520,13 @@ mod tests {
         assert_eq!(CONSENSUS_RUNTIME_STARTUP_ALLOWANCE_SECONDS_V1, 630);
         assert_eq!(CONSENSUS_RUNTIME_FLEET_PROCESS_ALLOWANCE_SECONDS_V1, 660);
         assert_eq!(MINIMUM_CONSENSUS_RUN_BLOCKS_V1, 3);
+        assert_eq!(DEPLOYED_CORE_MAX_BLOCKS_V1, 128);
+        assert_eq!(validate_deployed_core_max_blocks_v1(128).unwrap(), 128);
+        assert!(validate_deployed_core_max_blocks_v1(129).is_err());
+        assert!(validate_deployed_core_max_blocks_v1(u64::MAX).is_err());
+        assert!(validate_active_validator_count_v1(7).is_ok());
+        assert!(validate_active_validator_count_v1(31).is_err());
+        assert!(validate_active_validator_count_v1(100).is_err());
         assert_eq!(
             MESH_SETUP_TIMEOUT_V1,
             Duration::from_secs(CONSENSUS_RUNTIME_MESH_SETUP_ALLOWANCE_SECONDS_V1)
@@ -7519,6 +7555,72 @@ mod tests {
             canonical_utc_timestamp_v1(UNIX_EPOCH).unwrap(),
             "1970-01-01T00:00:00Z"
         );
+    }
+
+    #[test]
+    fn deployed_core_capacity_fits_commissioning_record_envelope_v1() {
+        let core_config = |validator_count: usize, max_blocks: usize| {
+            let parameters = ConsensusParametersV0::reference_shadow_v0();
+            let validators = (1..=validator_count)
+                .map(|index| {
+                    let marker = u8::try_from(index).unwrap();
+                    let key = SigningKey::from_bytes(&[marker; 32]);
+                    Validator::new(
+                        ValidatorId::new([marker; 32]),
+                        ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                        VotingPower::new(1).unwrap(),
+                    )
+                    .unwrap()
+                })
+                .collect::<Vec<_>>();
+            let validator_set = ValidatorSet::new(
+                GenesisHash::new([u8::try_from(validator_count).unwrap(); 32]),
+                ChainId::new(&format!("trnm-poco-deployed-capacity-{validator_count}")).unwrap(),
+                ProtocolVersion::V0,
+                Epoch::new(0),
+                parameters.hash(),
+                validators,
+            )
+            .unwrap();
+            trnm_consensus_core::CoreConfig::new(
+                validator_set.validators()[0].id(),
+                validator_set,
+                parameters,
+                0,
+                max_blocks,
+                validator_count * 64,
+            )
+            .unwrap()
+        };
+
+        for validator_count in [7, 31] {
+            let config = core_config(validator_count, DEPLOYED_CORE_MAX_BLOCKS_V1);
+            let minimum = trnm_consensus_core::minimum_safety_state_record_limits_v0(&config)
+                .expect("derive record-envelope-compatible topology");
+            assert!(minimum.maximum_record_bytes() <= DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0);
+            assert!(minimum.maximum_blob_bytes() <= DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0);
+            validate_deployed_lab_core_record_envelope_v0(&config)
+                .expect("record-envelope-compatible topology fits exact Node envelope");
+        }
+
+        let unsupported_hundred = core_config(100, DEPLOYED_CORE_MAX_BLOCKS_V1);
+        let unsupported_minimum =
+            trnm_consensus_core::minimum_safety_state_record_limits_v0(&unsupported_hundred)
+                .expect("derive unsupported hundred-validator envelope");
+        assert!(unsupported_minimum.maximum_record_bytes() > DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0);
+        assert_eq!(
+            validate_deployed_lab_core_record_envelope_v0(&unsupported_hundred)
+                .unwrap_err()
+                .stage_v0(),
+            "source.record_capacity"
+        );
+
+        let historical_wide = core_config(7, 131_072);
+        let historical_minimum =
+            trnm_consensus_core::minimum_safety_state_record_limits_v0(&historical_wide)
+                .expect("derive historical over-wide record envelope");
+        assert!(historical_minimum.maximum_record_bytes() > DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0);
+        assert!(validate_deployed_lab_core_record_envelope_v0(&historical_wide).is_err());
     }
 
     #[test]

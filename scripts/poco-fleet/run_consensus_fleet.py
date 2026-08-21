@@ -7,8 +7,9 @@ chain plus one terminal replay-archive set, and the secret-free macOS observer
 independently verifies those signed facts against the frozen coordinator anchor.
 It never synthesizes runtime
 events, measurements, final state, or fault evidence. The deployed runtime
-uses the frozen seven-validator direct mesh or the independently origin-signed
-31/100-validator sparse relay profile selected by the closed topology.
+uses the frozen seven-validator direct mesh. The independently origin-signed
+31/100-validator sparse relay layouts remain plan-only until their durable
+Core/store capacity profiles have been independently verified.
 """
 
 from __future__ import annotations
@@ -35,7 +36,11 @@ import sealed_artifact_transport_v1 as sealed_transport
 
 
 MAX_DURATION_SECONDS = 7 * 24 * 60 * 60
-MAX_BLOCKS = 10_000_000
+# Must equal the deployed Rust Core capacity.  The broader report/workload
+# formats remain able to describe larger future profiles, but this runner
+# rejects them before any fleet effect until their durable store envelopes are
+# implemented and independently verified.
+MAX_BLOCKS = 128
 MIN_FINALIZABLE_BLOCKS = 3
 MAX_SIGNER_INTENTS = 4_096
 MAX_SIGNED_REPLAY_ARCHIVE_ENTRIES = 8_192
@@ -907,12 +912,16 @@ def validated_launch_skew_ns(first_launch_ns: int, last_launch_ns: int) -> int:
 
 
 def validate_runtime_topology(validators: int, *, plan_only: bool) -> bool:
-    """Admit only the three runtime topologies implemented by the Rust owner."""
+    """Keep 31/100 visible for planning but fail closed for active effects."""
 
-    del plan_only
     if isinstance(validators, bool) or validators not in {7, 31, 100}:
         base.fail("continuous consensus topology is outside the frozen 7/31/100 profiles")
-    return True
+    active_supported = validators == 7
+    if not plan_only and not active_supported:
+        base.fail(
+            "active consensus is frozen to the direct seven-validator Stage0 profile"
+        )
+    return active_supported
 
 
 def runtime_transport_profile(validators: int) -> dict[str, int | str]:

@@ -394,22 +394,21 @@ def test_run_bounds() -> None:
     assert typical["maximum_total_intents"] == 220
     assert typical["maximum_signed_replay_archive_entries"] == 321
     assert typical["process_completion_allowance_seconds"] == 660
-    assert fleet.validated_run_bounds(1, 4_034)["maximum_total_intents"] == 4_096
+    capacity_edge = fleet.validated_run_bounds(1, fleet.MAX_BLOCKS)
+    assert capacity_edge["maximum_local_vote_intents"] == 159
+    assert capacity_edge["maximum_total_intents"] == 190
+    assert capacity_edge["maximum_total_intents"] < fleet.MAX_SIGNER_INTENTS
 
     for duration in (False, 0, fleet.MAX_DURATION_SECONDS + 1):
         expect_failure(
             lambda duration=duration: fleet.validated_run_bounds(duration, 3),
             "duration crosses",
         )
-    for max_blocks in (False, 0, 1, 2, fleet.MAX_BLOCKS + 1):
+    for max_blocks in (False, 0, 1, 2, fleet.MAX_BLOCKS + 1, 1 << 4096):
         expect_failure(
             lambda max_blocks=max_blocks: fleet.validated_run_bounds(1, max_blocks),
             "max-blocks",
         )
-    expect_failure(
-        lambda: fleet.validated_run_bounds(1, 4_035),
-        "signer capacity",
-    )
     assert fleet.validated_launch_skew_ns(10, 30_000_000_010) == 30_000_000_000
     for first, last, message in [
         (False, 1, "monotonic interval"),
@@ -421,8 +420,16 @@ def test_run_bounds() -> None:
             message,
         )
     assert fleet.validate_runtime_topology(7, plan_only=False) is True
-    assert fleet.validate_runtime_topology(31, plan_only=False) is True
-    assert fleet.validate_runtime_topology(100, plan_only=False) is True
+    assert fleet.validate_runtime_topology(31, plan_only=True) is False
+    assert fleet.validate_runtime_topology(100, plan_only=True) is False
+    expect_failure(
+        lambda: fleet.validate_runtime_topology(31, plan_only=False),
+        "direct seven-validator Stage0 profile",
+    )
+    expect_failure(
+        lambda: fleet.validate_runtime_topology(100, plan_only=False),
+        "direct seven-validator Stage0 profile",
+    )
     assert fleet.runtime_transport_profile(7) == {
         "mode": "direct",
         "peer_degree": 6,
@@ -1019,14 +1026,42 @@ def test_independent_anchor_and_output_boundary() -> None:
         )
 
     source = (HERE / "run_consensus_fleet.py").read_text(encoding="utf-8")
+    bounds = "run_bounds = validated_run_bounds("
     anchor = "anchor_snapshot = checked_coordinator_anchor("
+    topology = "runtime_topology_supported = validate_runtime_topology("
+    coordinator_input = "coordinator = base.require_private_directory("
     preflight = "mesh_resources.preflight_mesh_fleet_resources_v1("
     output_effect = "output.mkdir("
     deployment_effect = "base.create_stages("
     assert '"--coordinator-manifest-sha256"' in source
+    assert source.index(bounds) < source.index(coordinator_input)
     assert source.index(anchor) < source.index(preflight)
+    assert source.index(topology) < source.index(coordinator_input)
     assert source.index(anchor) < source.index(output_effect)
     assert source.index(anchor) < source.index(deployment_effect)
+    rust_config = (
+        HERE.parents[1]
+        / "trillionnium/crates/trnm-poco-lab-validator/src/config.rs"
+    ).read_text(encoding="utf-8")
+    assert fleet.MAX_BLOCKS == 128
+    assert "pub(crate) const DEPLOYED_CORE_MAX_BLOCKS_V1: usize = 128;" in rust_config
+    rust_runtime = (
+        HERE.parents[1]
+        / "trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
+    ).read_text(encoding="utf-8")
+    assert "validate_deployed_lab_core_record_envelope_v0(&core_config)" in rust_runtime
+    assert rust_runtime.index(
+        "let preflight = ConsensusRuntimePreflightV1::new("
+    ) < rust_runtime.index("let owner = thread::Builder::new()")
+    node_commissioning = (
+        HERE.parents[1]
+        / "trillionnium/crates/trnm-poco-node/src/deployed_lab_commissioning.rs"
+    ).read_text(encoding="utf-8")
+    assert node_commissioning.index(
+        "let limits = validate_deployed_lab_core_record_envelope_v0(&core_config)?;"
+    ) < node_commissioning.index(
+        "let paths = prepare_paths_v0(authority_root.as_ref())?;"
+    )
 
 
 def lifecycle_fixture() -> tuple[str, str, list[dict[str, object]], dict[str, object]]:

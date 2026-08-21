@@ -18,7 +18,8 @@ use std::{
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
-    native_valid_result_checksum_v0, ApplicationNativeValidDeliveryFactsV0,
+    minimum_safety_state_record_limits_v0, native_valid_result_checksum_v0,
+    ApplicationNativeValidDeliveryFactsV0,
     AuthenticatedGenesisApplicationH1OfflineApplicationOwnerV0,
     AuthenticatedGenesisApplicationH1OfflineApplicationRegistrarV0,
     AuthenticatedGenesisApplicationParentV0, BlockIdOverlayRefV0, Core, CoreConfig,
@@ -50,8 +51,8 @@ use crate::{
     SIGNER_JOURNAL_PROFILE_REF_V0, STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
 };
 
-const MAXIMUM_RECORD_BYTES_V0: usize = 64 * 1024 * 1024;
-const MAXIMUM_BLOB_BYTES_V0: usize = 16 * 1024 * 1024;
+pub const DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0: usize = 64 * 1024 * 1024;
+pub const DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0: usize = 16 * 1024 * 1024;
 const MAXIMUM_SAFETY_DATABASE_BYTES_V0: usize = 256 * 1024 * 1024;
 const MAXIMUM_SIGNER_INTENTS_V0: u64 = 4_096;
 const MAXIMUM_SIGNER_INTENT_BYTES_V0: usize = 4_096;
@@ -279,9 +280,12 @@ where
     F: FnOnce(&Path) -> Result<W, E>,
     E: fmt::Debug,
 {
+    // This check deliberately precedes creation of the authority namespaces.
+    // A Core profile whose worst-case durable record cannot fit the deployed
+    // store envelope must fail without leaving a partial fresh-only root.
+    let limits = validate_deployed_lab_core_record_envelope_v0(&core_config)?;
     let paths = prepare_paths_v0(authority_root.as_ref())?;
     let watermark = deploy_try!("watermark.open", open_watermark(&paths.watermark));
-    let limits = record_limits_v0()?;
     let chain_facts = application_config.chain_genesis_facts_v0();
     let application = initialize_native_application_v0(&paths.application, application_config)?;
 
@@ -663,9 +667,34 @@ fn prepare_paths_v0(
 
 fn record_limits_v0() -> Result<SafetyStateRecordLimitsV0, PocoNodeDeployedLabCommissioningErrorV0>
 {
-    SafetyStateRecordLimitsV0::new(MAXIMUM_RECORD_BYTES_V0, MAXIMUM_BLOB_BYTES_V0).map_err(
-        |error| PocoNodeDeployedLabCommissioningErrorV0::from_debug("source.record_limits", error),
+    SafetyStateRecordLimitsV0::new(
+        DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0,
+        DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0,
     )
+    .map_err(|error| {
+        PocoNodeDeployedLabCommissioningErrorV0::from_debug("source.record_limits", error)
+    })
+}
+
+/// Proves that the exact worst-case Core safety record fits the deployed lab
+/// store envelope. This is public so fleet runtime preflight can perform the
+/// same check before spawning its owner thread or creating any run artifact.
+pub fn validate_deployed_lab_core_record_envelope_v0(
+    core_config: &CoreConfig,
+) -> Result<SafetyStateRecordLimitsV0, PocoNodeDeployedLabCommissioningErrorV0> {
+    let limits = record_limits_v0()?;
+    let minimum = minimum_safety_state_record_limits_v0(core_config).map_err(|error| {
+        PocoNodeDeployedLabCommissioningErrorV0::from_debug("source.minimum_record_limits", error)
+    })?;
+    if minimum.maximum_record_bytes() > limits.maximum_record_bytes()
+        || minimum.maximum_blob_bytes() > limits.maximum_blob_bytes()
+    {
+        return Err(PocoNodeDeployedLabCommissioningErrorV0::message(
+            "source.record_capacity",
+            "Core worst-case safety record exceeds the deployed store envelope",
+        ));
+    }
+    Ok(limits)
 }
 
 fn h1_valid_commitments_v0(

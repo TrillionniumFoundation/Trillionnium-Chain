@@ -5,10 +5,11 @@
 //! the fail-closed production-node binary. Its candidate boundary verifies a
 //! closed deployment bundle, commissions the authenticated native h1->h2->h3
 //! takeover into real Core/Safety/App/checkpoint/signer authority, establishes
-//! the exact 7-validator direct or 31/100-validator sparse persistent mesh,
-//! and drives bounded Proposal/Vote/QC/TimeoutVote/TC progress under a
-//! generation-aware pacemaker. Sparse statements retain an independently
-//! authenticated origin across bounded relay hops. A durable signed
+//! the exact seven-validator direct persistent mesh, and drives bounded
+//! Proposal/Vote/QC/TimeoutVote/TC progress under a generation-aware
+//! pacemaker. The 31/100 sparse layouts and independently authenticated relay
+//! statements remain planning-only until their durable capacity profiles are
+//! separately verified. A durable signed
 //! process-event chain and terminal consensus, metrics, and final-state
 //! reports remain causally bound to the coordinator digest. The implementation
 //! is connected as a candidate, but no successful multihost LAN consensus
