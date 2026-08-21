@@ -141,6 +141,27 @@ def test_partial_stage_creation_cleans_exact_prior_root() -> None:
     assert any("beta" in call[-1] for call in cleanup)
 
 
+def test_local_stage_creates_private_deployment_directories() -> None:
+    with tempfile.TemporaryDirectory(prefix="poco-g3-local-stage-test-") as raw:
+        prefix = pathlib.Path(raw) / "stage"
+        fixture = process("local", "local")
+        with mock.patch.object(fleet, "REMOTE_STAGE_PREFIX", str(prefix)):
+            stages = fleet.create_stages(
+                [fixture],
+                "poco-g3-7-20260813T120000Z-00000000",
+                pathlib.Path(raw) / "evidence",
+            )
+            stage = stages["local"]
+            assert stage.local_path is not None
+            assert stage.local_path.stat().st_mode & 0o777 == 0o700
+            for relative in ("bin", "validators"):
+                child = stage.local_path / relative
+                assert child.is_dir()
+                assert child.stat().st_mode & 0o777 == 0o700
+            fleet.clean_stages(stages)
+            assert not stage.local_path.exists()
+
+
 def test_remote_binary_hash_mismatch_is_rejected() -> None:
     with tempfile.TemporaryDirectory(prefix="poco-g3-network-smoke-test-") as raw:
         source = pathlib.Path(raw) / "validator"
@@ -204,12 +225,13 @@ def main() -> None:
     test_input_symlinks_are_rejected_before_resolution()
     test_process_output_is_file_backed_without_pipe_pressure()
     test_partial_stage_creation_cleans_exact_prior_root()
+    test_local_stage_creates_private_deployment_directories()
     test_remote_binary_hash_mismatch_is_rejected()
     test_observer_stage_is_registered_before_later_copy_failure()
     print(
-        "poco_g3_network_smoke_fleet_test=passed positives=5 negatives=7 "
+        "poco_g3_network_smoke_fleet_test=passed positives=6 negatives=7 "
         "unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true "
-        "remote_binary_hash=true observer_stage_cleanup_registered=true "
+        "local_stage_directories=true remote_binary_hash=true observer_stage_cleanup_registered=true "
         "validator_run_completed=false g3_complete=false geo_wan=false"
     )
 

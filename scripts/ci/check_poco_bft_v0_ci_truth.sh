@@ -415,7 +415,7 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_stage0_observation_status_test=passed positives=2 negatives=7 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
 require_literal "$G3_LAN_FLEET_GATE" \
-  'poco_g3_network_smoke_fleet_test=passed positives=5 negatives=7'
+  'poco_g3_network_smoke_fleet_test=passed positives=6 negatives=7'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58'
 require_literal "$G3_LAN_FLEET_GATE" \

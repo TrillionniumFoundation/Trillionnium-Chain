@@ -361,9 +361,14 @@ def create_stages(
                 if path.exists() or path.is_symlink():
                     fail("local stage already exists")
                 path.mkdir(mode=0o700)
-                stages[process.host_id] = HostStage(
+                stage = HostStage(
                     process.host_id, process.management, str(path), path
                 )
+                # Register the root before creating children so any partial
+                # local stage is removed by the shared exception cleanup.
+                stages[process.host_id] = stage
+                (path / "bin").mkdir(mode=0o700)
+                (path / "validators").mkdir(mode=0o700)
             else:
                 quoted = shell_path(name)
                 # Register the attempted root before the remote mutation. A
