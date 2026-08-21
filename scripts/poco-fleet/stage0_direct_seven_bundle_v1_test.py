@@ -1186,6 +1186,54 @@ def prepublish_failure_and_atomic_collision_controls(
     if len(retained) != 1 or not (next(iter(retained)) / "manifest.json").is_file():
         raise AssertionError("rename collision did not retain staged evidence")
 
+    precommit_final = root / "rename-precommit-error-final"
+    before = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*"))
+
+    def fail_before_rename(*_args, **_kwargs) -> None:
+        raise OSError(errno.EIO, "injected precommit rename failure")
+
+    assembler._RENAME_NOREPLACE_V1 = fail_before_rename
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, precommit_final),
+            "failed before the final path was created",
+        )
+    finally:
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+    if precommit_final.exists():
+        raise AssertionError("precommit rename failure created a final path")
+    retained = set(root.glob(f"{assembler.QUARANTINE_PREFIX}*")) - before
+    if len(retained) != 1 or not (next(iter(retained)) / "manifest.json").is_file():
+        raise AssertionError("precommit rename failure lost staged evidence")
+
+    committed_then_raised_final = root / "rename-committed-then-raised-final"
+
+    def commit_then_raise(
+        source_directory: int,
+        source_name: str,
+        target_directory: int,
+        target_name: str,
+    ) -> None:
+        original_rename(
+            source_directory,
+            source_name,
+            target_directory,
+            target_name,
+        )
+        raise OSError(errno.EIO, "injected exception after committed rename")
+
+    assembler._RENAME_NOREPLACE_V1 = commit_then_raise
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, committed_then_raised_final),
+            "committed the expected inode before raising",
+        )
+    finally:
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+    if not committed_then_raised_final.is_dir():
+        raise AssertionError("committed-then-raised rename lost the final inode")
+    checker.validate(committed_then_raised_final, emit=False)
+
     indeterminate_final = root / "post-rename-fsync-failure-final"
     original_publish_fsync = assembler._PUBLISH_PARENT_FSYNC_V1
 
@@ -1563,6 +1611,7 @@ def main() -> None:
         "quarantine_rng_alias=blocked unsafe_publish_parent=blocked "
         "prepublish_failure_final_absent=true "
         "publish_collision_foreign=preserved postrename_failure=indeterminate "
+        "rename_exception_identity_recheck=true "
         "successful_publish_inode=preserved successful_quarantine=absent "
         "double_slash_disjoint=blocked public_secret_prewrite=blocked "
         "oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked "

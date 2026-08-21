@@ -348,10 +348,59 @@ class OutputTree:
                 self.parent.descriptor,
                 self.final_path.name,
             )
-        except OSError as error:
-            if error.errno == errno.EEXIST:
+        except BaseException as error:
+            def linked_identity(name: str) -> tuple[int, int, int] | None:
+                try:
+                    metadata = os.stat(
+                        name,
+                        dir_fd=self.parent.descriptor,
+                        follow_symlinks=False,
+                    )
+                except FileNotFoundError:
+                    return None
+                return (
+                    metadata.st_dev,
+                    metadata.st_ino,
+                    stat.S_IFMT(metadata.st_mode),
+                )
+
+            expected = (self.identity.st_dev, self.identity.st_ino, stat.S_IFDIR)
+            try:
+                staging_link = linked_identity(self.staging_name)
+                final_link = linked_identity(self.final_path.name)
+            except OSError as inspection_error:
+                fail(
+                    "publication is indeterminate after renameat2 raised and "
+                    f"link identity could not be rechecked: {error}; "
+                    f"inspection={inspection_error}"
+                )
+            if final_link == expected:
+                self.published = True
+                self.path = self.final_path
+                fail(
+                    "publication is indeterminate because renameat2 committed "
+                    f"the expected inode before raising: {error}"
+                )
+            if staging_link != expected:
+                fail(
+                    "publication is indeterminate because renameat2 raised and "
+                    f"the expected staging inode is no longer pinned by name: {error}"
+                )
+            if (
+                isinstance(error, OSError)
+                and error.errno == errno.EEXIST
+                and final_link is not None
+            ):
                 fail("output appeared before atomic no-replace publication")
-            fail(f"atomic no-replace publication failed: {error}")
+            if final_link is not None:
+                fail(
+                    "atomic no-replace publication failed while a foreign final "
+                    f"inode remained intact: {error}"
+                )
+            fail(
+                "atomic no-replace publication failed before the final path "
+                f"was created: {error}"
+            )
         self.published = True
         self.path = self.final_path
         try:
