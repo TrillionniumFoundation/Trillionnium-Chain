@@ -3,9 +3,17 @@
 
 This profile does not reinterpret the legacy runner completion bits.  The
 runner deliberately seals ``validator_run_completed=false``.  A much narrower
-``stage0_direct_seven_observed`` fact is derived independently from the exact
-seven-validator signed-runtime chains, the macOS verification results, the
-terminal agreement, and the complete replay-archive sets.
+``stage0_direct_seven_observed`` fact is derived from the exact seven-validator
+signed-runtime chains, the macOS verification results, the terminal agreement,
+and the complete replay-archive sets.  This checker independently recomputes
+artifact hashes, the raw replay hash chains, and the validator-signed terminal
+facts.  It does *not* independently decode Proposal/QC/finality payload
+semantics; those semantics remain an observer projection authenticated by each
+validator's terminal seal.
+
+The 128 MiB per-item limit is a stricter Stage0/X230 admission profile; it is
+not a claim that this bundle checker accepts the runner's generic 512 MiB
+artifact ceiling.
 
 The bundle contains public coordinator material only.  The coordinator
 manifest's secret references are checked, but private validator keys are both
@@ -15,6 +23,7 @@ unnecessary for verification and forbidden from the evidence bundle.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import datetime
 import hashlib
 import json
@@ -46,11 +55,17 @@ PROFILE = "poco-g3-stage0-direct-seven-observation-bundle-v1"
 SCHEMA_VERSION = 1
 VALIDATOR_COUNT = 7
 MAXIMUM_PREFLIGHT_AGE_SECONDS = 3_600
-MAXIMUM_FILE_COUNT = 1_000
-MAXIMUM_BUNDLE_BYTES = 4 * 1024 * 1024 * 1024
-MAXIMUM_FILE_BYTES = 1024 * 1024 * 1024
+# These are deliberately stricter Stage0 evidence-admission bounds for the
+# X230 verifier.  They do not claim compatibility with the runner's generic
+# 512 MiB artifact ceiling.
+MAXIMUM_FILE_COUNT = 4_096
+MAXIMUM_TREE_DEPTH = 64
+MAXIMUM_BUNDLE_BYTES = 768 * 1024 * 1024
+MAXIMUM_FILE_BYTES = 128 * 1024 * 1024
 MAXIMUM_JSON_BYTES = 16 * 1024 * 1024
-MAXIMUM_JSONL_BYTES = 256 * 1024 * 1024
+MAXIMUM_JSONL_BYTES = 128 * 1024 * 1024
+MAXIMUM_SOURCE_MEMBER_COUNT = 25_000
+MAXIMUM_SOURCE_UNCOMPRESSED_BYTES = 128 * 1024 * 1024
 MAXIMUM_REPLAY_CONTEXT_BYTES = 64 * 1024
 MAXIMUM_REPLAY_HEAD_BYTES = 16 * 1024
 MAXIMUM_REPLAY_TERMINAL_SEAL_BYTES = 256 * 1024
@@ -118,6 +133,9 @@ DERIVED_KEYS = {
     "fleet_start_certificate_sha256",
     "terminal_agreement",
     "runner_legacy_validator_run_completed",
+    "raw_replay_hash_chains_recomputed",
+    "terminal_seal_signatures_verified",
+    "proposal_qc_finality_semantics_independently_decoded",
     "stage0_direct_seven_observed",
 }
 TERMINAL_KEYS = {
@@ -137,6 +155,7 @@ CLAIMS = {
     "geo_wan_evidence": False,
     "production_activation": False,
     "production_candidate": False,
+    "proposal_qc_finality_semantics_independently_decoded": False,
 }
 STAGE0_STATUS_PROJECTION = {
     "current_fleet_probe_observed": True,
@@ -293,8 +312,294 @@ class FileFact:
     changed_ns: int
 
 
+@dataclass(frozen=True)
+class DirectoryIdentity:
+    device: int
+    inode: int
+    mode: int
+
+
+class PinnedDirectory:
+    """An absolute directory chain held open one component at a time.
+
+    Every lookup is relative to an already-open parent and uses ``O_NOFOLLOW``.
+    Keeping all descriptors alive makes later file operations immune to an
+    ancestor rename; ``validate`` additionally rejects a currently swapped or
+    unlinked ancestor before success is reported.
+    """
+
+    def __init__(
+        self,
+        path: pathlib.Path,
+        descriptors: list[int],
+        names: list[str],
+        identities: list[DirectoryIdentity],
+        field: str,
+    ) -> None:
+        self.path = path
+        self._descriptors = descriptors
+        self._names = names
+        self._identities = identities
+        self._field = field
+        self._closed = False
+
+    @property
+    def descriptor(self) -> int:
+        if self._closed:
+            fail(f"{self._field} directory pin is already closed")
+        return self._descriptors[-1]
+
+    @property
+    def identity(self) -> DirectoryIdentity:
+        return self._identities[-1]
+
+    def validate(self) -> None:
+        if self._closed:
+            fail(f"{self._field} directory pin is already closed")
+        for index, (descriptor, expected) in enumerate(
+            zip(self._descriptors, self._identities, strict=True)
+        ):
+            observed = os.fstat(descriptor)
+            if (
+                observed.st_dev,
+                observed.st_ino,
+                stat.S_IFMT(observed.st_mode),
+            ) != (expected.device, expected.inode, stat.S_IFDIR):
+                fail(f"{self._field} pinned ancestor changed identity")
+            if index:
+                try:
+                    linked = os.stat(
+                        self._names[index - 1],
+                        dir_fd=self._descriptors[index - 1],
+                        follow_symlinks=False,
+                    )
+                except OSError as error:
+                    fail(f"{self._field} pinned ancestor was unlinked: {error}")
+                if (
+                    linked.st_dev,
+                    linked.st_ino,
+                    stat.S_IFMT(linked.st_mode),
+                ) != (expected.device, expected.inode, stat.S_IFDIR):
+                    fail(f"{self._field} pinned ancestor path was replaced")
+
+    def close(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+        for descriptor in reversed(self._descriptors):
+            os.close(descriptor)
+
+    def __enter__(self) -> PinnedDirectory:
+        return self
+
+    def __exit__(self, kind: object, _value: object, _traceback: object) -> None:
+        try:
+            if kind is None:
+                self.validate()
+        finally:
+            self.close()
+
+
+class PinnedRegularFile:
+    """One regular leaf opened relative to a fully pinned ancestor chain."""
+
+    def __init__(
+        self,
+        path: pathlib.Path,
+        field: str,
+        ancestors: PinnedDirectory,
+        descriptor: int,
+        metadata: os.stat_result,
+    ) -> None:
+        self.path = path
+        self.field = field
+        self.ancestors = ancestors
+        self.descriptor = descriptor
+        self.metadata = metadata
+        self._closed = False
+
+    def validate(self) -> None:
+        if self._closed:
+            fail(f"{self.field} file pin is already closed")
+        opened = os.fstat(self.descriptor)
+        if file_identity(opened) != file_identity(self.metadata):
+            fail(f"{self.field} changed during its pinned operation")
+        self.ancestors.validate()
+        try:
+            linked = os.stat(
+                self.path.name,
+                dir_fd=self.ancestors.descriptor,
+                follow_symlinks=False,
+            )
+        except OSError as error:
+            fail(f"{self.field} pinned leaf was unlinked: {error}")
+        if file_identity(linked) != file_identity(self.metadata):
+            fail(f"{self.field} pinned leaf path was replaced")
+
+    def close(self) -> None:
+        if self._closed:
+            return
+        self._closed = True
+        os.close(self.descriptor)
+        self.ancestors.close()
+
+    def __enter__(self) -> PinnedRegularFile:
+        return self
+
+    def __exit__(self, kind: object, _value: object, _traceback: object) -> None:
+        try:
+            if kind is None:
+                self.validate()
+        finally:
+            self.close()
+
+
 def fail(message: str) -> NoReturn:
     raise SystemExit(f"PoCO G3 Stage0 direct-seven bundle invalid: {message}")
+
+
+def typed_equal(left: object, right: object) -> bool:
+    """JSON equality that never aliases bool with integer or integer with float."""
+
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return set(left) == set(right) and all(
+            typed_equal(left[key], right[key]) for key in left
+        )
+    if isinstance(left, list):
+        return len(left) == len(right) and all(
+            typed_equal(a, b) for a, b in zip(left, right, strict=True)
+        )
+    return left == right
+
+
+def file_identity(metadata: os.stat_result) -> tuple[int, int, int, int, int, int, int]:
+    return (
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_mode,
+        metadata.st_nlink,
+        metadata.st_size,
+        metadata.st_mtime_ns,
+        metadata.st_ctime_ns,
+    )
+
+
+def absolute_path(raw: pathlib.Path) -> pathlib.Path:
+    """Canonical Linux absolute spelling with exactly one leading slash."""
+
+    absolute = os.path.abspath(os.fspath(raw))
+    return pathlib.Path("/" + absolute.lstrip("/"))
+
+
+def pin_directory(
+    raw: pathlib.Path,
+    field: str,
+    *,
+    _after_ancestors_pinned: Callable[[], None] | None = None,
+) -> PinnedDirectory:
+    """Open every absolute directory component with dirfd + ``O_NOFOLLOW``."""
+
+    path = absolute_path(raw)
+    flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY
+    descriptors: list[int] = []
+    names: list[str] = []
+    identities: list[DirectoryIdentity] = []
+    try:
+        descriptor = os.open("/", flags)
+        descriptors.append(descriptor)
+        root_metadata = os.fstat(descriptor)
+        identities.append(
+            DirectoryIdentity(root_metadata.st_dev, root_metadata.st_ino, root_metadata.st_mode)
+        )
+        for component in path.parts[1:]:
+            try:
+                before = os.stat(
+                    component,
+                    dir_fd=descriptors[-1],
+                    follow_symlinks=False,
+                )
+                child = os.open(component, flags, dir_fd=descriptors[-1])
+            except OSError as error:
+                fail(f"cannot pin {field} ancestor {component!r}: {error}")
+            opened = os.fstat(child)
+            if (
+                not stat.S_ISDIR(before.st_mode)
+                or (before.st_dev, before.st_ino, stat.S_IFMT(before.st_mode))
+                != (opened.st_dev, opened.st_ino, stat.S_IFDIR)
+            ):
+                os.close(child)
+                fail(f"{field} contains a replaced or non-directory ancestor")
+            names.append(component)
+            descriptors.append(child)
+            identities.append(
+                DirectoryIdentity(opened.st_dev, opened.st_ino, opened.st_mode)
+            )
+        result = PinnedDirectory(path, descriptors, names, identities, field)
+        if _after_ancestors_pinned is not None:
+            _after_ancestors_pinned()
+        result.validate()
+        return result
+    except BaseException:
+        for descriptor in reversed(descriptors):
+            with contextlib.suppress(OSError):
+                os.close(descriptor)
+        raise
+
+
+def open_pinned_regular(
+    raw: pathlib.Path,
+    field: str,
+    *,
+    allow_empty: bool,
+    maximum: int = MAXIMUM_FILE_BYTES,
+    _after_ancestors_pinned: Callable[[], None] | None = None,
+) -> PinnedRegularFile:
+    """Open one bounded leaf through its fully pinned parent chain."""
+
+    path = absolute_path(raw)
+    ancestors = pin_directory(path.parent, f"{field} parent")
+    descriptor: int | None = None
+    try:
+        if _after_ancestors_pinned is not None:
+            _after_ancestors_pinned()
+        try:
+            before = os.stat(
+                path.name,
+                dir_fd=ancestors.descriptor,
+                follow_symlinks=False,
+            )
+            descriptor = os.open(
+                path.name,
+                os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                dir_fd=ancestors.descriptor,
+            )
+        except OSError as error:
+            fail(f"cannot open {field} through its pinned parent: {error}")
+        opened = os.fstat(descriptor)
+        if (
+            not stat.S_ISREG(before.st_mode)
+            or before.st_nlink != 1
+            or before.st_size > maximum
+            or (not allow_empty and before.st_size <= 0)
+            or file_identity(before) != file_identity(opened)
+        ):
+            os.close(descriptor)
+            descriptor = None
+            fail(
+                f"{field} must be one bounded regular non-symlink, "
+                "non-hardlinked file"
+            )
+        result = PinnedRegularFile(path, field, ancestors, descriptor, opened)
+        result.validate()
+        return result
+    except BaseException:
+        if descriptor is not None:
+            with contextlib.suppress(OSError):
+                os.close(descriptor)
+        ancestors.close()
+        raise
 
 
 def exact(value: object, keys: set[str], field: str) -> dict[str, Any]:
@@ -354,6 +659,57 @@ def exact_u64(value: object, field: str, *, positive: bool = False) -> int:
     ):
         fail(f"{field} must be one bounded {'positive ' if positive else ''}u64")
     return value
+
+
+def validate_schema_integer_fields(value: object, field: str) -> None:
+    """Reject JSON bool/float aliases for every recursively named schema version."""
+
+    if isinstance(value, dict):
+        if "schema_version" in value and type(value["schema_version"]) is not int:
+            fail(f"{field}.schema_version must be one exact JSON integer")
+        for key, child in value.items():
+            validate_schema_integer_fields(child, f"{field}.{key}")
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            validate_schema_integer_fields(child, f"{field}[{index}]")
+
+
+def validate_coordinator_manifest_exact_types(document: dict[str, Any]) -> None:
+    if type(document.get("schema_version")) is not int or document.get("schema_version") != 2:
+        fail("coordinator manifest schema_version must be the exact integer 2")
+    if type(document.get("validator_count")) is not int or document.get("validator_count") != VALIDATOR_COUNT:
+        fail("coordinator manifest validator_count must be the exact integer 7")
+
+
+def validate_runner_manifest_exact_types(document: dict[str, Any]) -> None:
+    if type(document.get("schema_version")) is not int or document.get("schema_version") != 1:
+        fail("runner output manifest schema_version must be the exact integer 1")
+    if type(document.get("validator_count")) is not int or document.get("validator_count") != VALIDATOR_COUNT:
+        fail("runner output manifest validator_count must be the exact integer 7")
+    for field in (
+        "observer_process_started",
+        "observer_report_received",
+        "validator_run_completed",
+        "fault_matrix_completed",
+        "performance_evidence",
+        "g3_lan_multihost_evidence",
+        "geo_wan_evidence",
+        "production_activation",
+    ):
+        if document.get(field) is not False:
+            fail(f"runner output manifest {field} must be the exact boolean false")
+    artifacts = document.get("artifacts")
+    if not isinstance(artifacts, list):
+        fail("runner output manifest artifacts must be a list")
+    for index, artifact in enumerate(artifacts):
+        if not isinstance(artifact, dict):
+            fail(f"runner output manifest artifacts[{index}] must be an object")
+        value = artifact.get("bytes")
+        if type(value) is not int or value < 0 or value > MAXIMUM_FILE_BYTES:
+            fail(
+                f"runner output manifest artifacts[{index}].bytes must be one "
+                "bounded exact integer"
+            )
 
 
 def strict_json_bytes(raw: bytes, field: str) -> dict[str, Any]:
@@ -433,46 +789,21 @@ def read_pinned(
     allow_empty: bool,
     maximum: int = MAXIMUM_FILE_BYTES,
     capture: bool = False,
+    _after_ancestors_pinned: Callable[[], None] | None = None,
 ) -> tuple[bytes, FileFact]:
-    path = path.absolute()
-    try:
-        before = path.lstat()
-    except OSError as error:
-        fail(f"cannot inspect {field}: {error}")
-    if (
-        stat.S_ISLNK(before.st_mode)
-        or not stat.S_ISREG(before.st_mode)
-        or before.st_nlink != 1
-        or before.st_size > maximum
-        or (not allow_empty and before.st_size <= 0)
-    ):
-        fail(f"{field} must be one bounded regular non-symlink, non-hardlinked file")
-    descriptor = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)
+    pinned = open_pinned_regular(
+        path,
+        field,
+        allow_empty=allow_empty,
+        maximum=maximum,
+        _after_ancestors_pinned=_after_ancestors_pinned,
+    )
+    before = pinned.metadata
+    descriptor = pinned.descriptor
     digest = hashlib.sha256()
     chunks: list[bytes] = []
     try:
-        opened = os.fstat(descriptor)
-        identity = (
-            opened.st_dev,
-            opened.st_ino,
-            opened.st_mode,
-            opened.st_nlink,
-            opened.st_size,
-            opened.st_mtime_ns,
-            opened.st_ctime_ns,
-        )
-        expected = (
-            before.st_dev,
-            before.st_ino,
-            before.st_mode,
-            before.st_nlink,
-            before.st_size,
-            before.st_mtime_ns,
-            before.st_ctime_ns,
-        )
-        if identity != expected:
-            fail(f"{field} changed identity while opening")
-        remaining = opened.st_size
+        remaining = before.st_size
         while remaining:
             chunk = os.read(descriptor, min(1024 * 1024, remaining))
             if not chunk:
@@ -483,21 +814,11 @@ def read_pinned(
             remaining -= len(chunk)
         if os.read(descriptor, 1):
             fail(f"{field} grew during its pinned read")
-        after = os.fstat(descriptor)
-        if (
-            after.st_dev,
-            after.st_ino,
-            after.st_mode,
-            after.st_nlink,
-            after.st_size,
-            after.st_mtime_ns,
-            after.st_ctime_ns,
-        ) != identity:
-            fail(f"{field} changed during its pinned read")
+        pinned.validate()
     finally:
-        os.close(descriptor)
+        pinned.close()
     fact = FileFact(
-        path=path,
+        path=pinned.path,
         sha256=digest.hexdigest(),
         bytes=before.st_size,
         device=before.st_dev,
@@ -520,48 +841,23 @@ def visit_jsonl_pinned(
 ) -> tuple[FileFact, int]:
     """Stream one pinned JSONL file with bounded per-record memory."""
 
-    path = path.absolute()
-    try:
-        before = path.lstat()
-    except OSError as error:
-        fail(f"cannot inspect {field}: {error}")
-    if (
-        stat.S_ISLNK(before.st_mode)
-        or not stat.S_ISREG(before.st_mode)
-        or before.st_nlink != 1
-        or before.st_size <= 0
-        or before.st_size > maximum
-        or maximum_line <= 0
-    ):
-        fail(f"{field} must be one bounded regular non-symlink JSONL file")
-    descriptor = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW)
+    if maximum_line <= 0:
+        fail(f"{field} JSONL line bound must be positive")
+    pinned = open_pinned_regular(
+        path,
+        field,
+        allow_empty=False,
+        maximum=maximum,
+    )
+    path = pinned.path
+    before = pinned.metadata
+    descriptor = pinned.descriptor
     digest = hashlib.sha256()
     pending = bytearray()
     line_count = 0
     total = 0
     try:
-        opened = os.fstat(descriptor)
-        identity = (
-            opened.st_dev,
-            opened.st_ino,
-            opened.st_mode,
-            opened.st_nlink,
-            opened.st_size,
-            opened.st_mtime_ns,
-            opened.st_ctime_ns,
-        )
-        expected = (
-            before.st_dev,
-            before.st_ino,
-            before.st_mode,
-            before.st_nlink,
-            before.st_size,
-            before.st_mtime_ns,
-            before.st_ctime_ns,
-        )
-        if identity != expected:
-            fail(f"{field} changed identity while opening")
-        remaining = opened.st_size
+        remaining = before.st_size
         while remaining:
             chunk = os.read(descriptor, min(1024 * 1024, remaining))
             if not chunk:
@@ -588,19 +884,9 @@ def visit_jsonl_pinned(
             fail(f"{field} ends in an unterminated JSONL record")
         if line_count == 0:
             fail(f"{field} contains no JSONL records")
-        after = os.fstat(descriptor)
-        if (
-            after.st_dev,
-            after.st_ino,
-            after.st_mode,
-            after.st_nlink,
-            after.st_size,
-            after.st_mtime_ns,
-            after.st_ctime_ns,
-        ) != identity:
-            fail(f"{field} changed during its pinned stream")
+        pinned.validate()
     finally:
-        os.close(descriptor)
+        pinned.close()
     return (
         FileFact(
             path=path,
@@ -618,39 +904,92 @@ def visit_jsonl_pinned(
 
 
 def real_root(path: pathlib.Path, field: str) -> pathlib.Path:
-    path = path.absolute()
-    try:
-        metadata = path.lstat()
-        resolved = path.resolve(strict=True)
-    except OSError as error:
-        fail(f"cannot resolve {field}: {error}")
-    if (
-        resolved != path
-        or stat.S_ISLNK(metadata.st_mode)
-        or not stat.S_ISDIR(metadata.st_mode)
-    ):
-        fail(f"{field} must be one real non-symlink directory")
+    path = absolute_path(path)
+    with pin_directory(path, field) as pinned:
+        pinned.validate()
     return path
 
 
-def tree_files(root: pathlib.Path) -> dict[str, pathlib.Path]:
-    root = real_root(root, "bundle root")
+def tree_files(
+    root: pathlib.Path,
+    *,
+    _after_root_ancestors_pinned: Callable[[], None] | None = None,
+) -> dict[str, pathlib.Path]:
+    root = absolute_path(root)
     files: dict[str, pathlib.Path] = {}
     total = 0
-    for path in root.rglob("*"):
-        relative = path.relative_to(root).as_posix()
-        metadata = path.lstat()
-        if stat.S_ISLNK(metadata.st_mode):
-            fail(f"bundle contains symbolic link {relative!r}")
-        if stat.S_ISREG(metadata.st_mode):
-            if metadata.st_nlink != 1:
-                fail(f"bundle contains hardlinked file {relative!r}")
-            files[relative] = path
-            total += metadata.st_size
-        elif not stat.S_ISDIR(metadata.st_mode):
-            fail(f"bundle contains non-file entry {relative!r}")
-        if len(files) > MAXIMUM_FILE_COUNT or total > MAXIMUM_BUNDLE_BYTES:
-            fail("bundle crosses its file-count or byte bound")
+    entry_count = 0
+
+    def walk(descriptor: int, prefix: tuple[str, ...]) -> None:
+        nonlocal entry_count, total
+        if len(prefix) > MAXIMUM_TREE_DEPTH:
+            fail("bundle crosses its directory-depth bound")
+        try:
+            with os.scandir(descriptor) as iterator:
+                for entry in iterator:
+                    entry_count += 1
+                    if entry_count > MAXIMUM_FILE_COUNT:
+                        fail("bundle crosses its file/directory entry-count bound")
+                    visit_entry(descriptor, prefix, entry)
+        except OSError as error:
+            fail(f"cannot scan pinned bundle directory: {error}")
+
+    def visit_entry(
+        descriptor: int,
+        prefix: tuple[str, ...],
+        entry: os.DirEntry[str],
+    ) -> None:
+        nonlocal total
+        try:
+            relative_parts = (*prefix, entry.name)
+            relative = pathlib.PurePosixPath(*relative_parts).as_posix()
+            metadata = entry.stat(follow_symlinks=False)
+            if stat.S_ISLNK(metadata.st_mode):
+                fail(f"bundle contains symbolic link {relative!r}")
+            if stat.S_ISREG(metadata.st_mode):
+                if metadata.st_nlink != 1:
+                    fail(f"bundle contains hardlinked file {relative!r}")
+                if metadata.st_size > MAXIMUM_FILE_BYTES:
+                    fail(f"bundle file {relative!r} crosses the per-item byte bound")
+                files[relative] = root.joinpath(*relative_parts)
+                total += metadata.st_size
+            elif stat.S_ISDIR(metadata.st_mode):
+                flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY
+                try:
+                    child = os.open(entry.name, flags, dir_fd=descriptor)
+                except OSError as error:
+                    fail(f"cannot pin bundle directory {relative!r}: {error}")
+                try:
+                    opened = os.fstat(child)
+                    expected = (metadata.st_dev, metadata.st_ino, stat.S_IFDIR)
+                    if (opened.st_dev, opened.st_ino, stat.S_IFMT(opened.st_mode)) != expected:
+                        fail(f"bundle directory {relative!r} changed while opening")
+                    walk(child, relative_parts)
+                    linked = os.stat(
+                        entry.name, dir_fd=descriptor, follow_symlinks=False
+                    )
+                    if (
+                        linked.st_dev,
+                        linked.st_ino,
+                        stat.S_IFMT(linked.st_mode),
+                    ) != expected:
+                        fail(f"bundle directory {relative!r} changed during traversal")
+                finally:
+                    os.close(child)
+            else:
+                fail(f"bundle contains non-file entry {relative!r}")
+            if total > MAXIMUM_BUNDLE_BYTES:
+                fail("bundle crosses its file-count or byte bound")
+        except OSError as error:
+            fail(f"cannot inspect bundle entry {entry.name!r}: {error}")
+
+    with pin_directory(
+        root,
+        "bundle root",
+        _after_ancestors_pinned=_after_root_ancestors_pinned,
+    ) as pinned:
+        walk(pinned.descriptor, ())
+        pinned.validate()
     return files
 
 
@@ -697,18 +1036,88 @@ def sha256(path: pathlib.Path, field: str, *, allow_empty: bool = False) -> str:
     return read_pinned(path, field, allow_empty=allow_empty)[1].sha256
 
 
-def cargo_lock_bytes(candidate: pathlib.Path) -> bytes:
+def validate_source_candidate_resource_envelope(candidate: pathlib.Path) -> None:
+    """Bound the legacy candidate verifier before it retains member contents."""
+
+    pinned = open_pinned_regular(
+        candidate,
+        "source candidate",
+        allow_empty=False,
+        maximum=MAXIMUM_FILE_BYTES,
+    )
     try:
-        with tarfile.open(candidate, "r:") as archive:
-            member = archive.getmember("source/trillionnium/Cargo.lock")
-            if not member.isfile() or member.size <= 0 or member.size > MAXIMUM_JSON_BYTES:
-                fail("source candidate Cargo.lock crosses its extraction bound")
-            stream = archive.extractfile(member)
-            if stream is None:
-                fail("source candidate Cargo.lock has no regular byte stream")
-            payload = stream.read(MAXIMUM_JSON_BYTES + 1)
-    except (OSError, KeyError, tarfile.TarError) as error:
-        fail(f"cannot reopen source candidate Cargo.lock: {error}")
+        member_count = 0
+        member_bytes = 0
+        with os.fdopen(os.dup(pinned.descriptor), "rb", closefd=True) as source:
+            try:
+                with tarfile.open(fileobj=source, mode="r:") as archive:
+                    for member in archive:
+                        member_count += 1
+                        if member_count > MAXIMUM_SOURCE_MEMBER_COUNT:
+                            fail("source candidate crosses the X230 member-count bound")
+                        if member.size < 0 or member.size > MAXIMUM_FILE_BYTES:
+                            fail("source candidate member crosses the per-item byte bound")
+                        member_bytes += member.size
+                        if member_bytes > MAXIMUM_SOURCE_UNCOMPRESSED_BYTES:
+                            fail("source candidate crosses the X230 uncompressed-byte bound")
+            except tarfile.TarError as error:
+                fail(f"source candidate cannot be resource-scanned: {error}")
+        pinned.validate()
+    finally:
+        pinned.close()
+
+
+def validate_clean_source_candidate(candidate: pathlib.Path) -> dict[str, object]:
+    """Run the legacy deep checker through a held Linux parent dirfd alias."""
+
+    pinned = open_pinned_regular(
+        candidate,
+        "clean source candidate",
+        allow_empty=False,
+        maximum=MAXIMUM_FILE_BYTES,
+    )
+    try:
+        proc_parent = pathlib.Path(f"/proc/self/fd/{pinned.ancestors.descriptor}")
+        if not proc_parent.exists():
+            fail("Stage0 X230 verification requires Linux /proc/self/fd")
+        anchored = proc_parent / pinned.path.name
+        try:
+            report = check_source_candidate.validate(anchored, require_clean=True)
+        except (SystemExit, OSError, tarfile.TarError, ValueError) as error:
+            fail(f"clean-commit-v1 source candidate failed deep verification: {error}")
+        pinned.validate()
+        return report
+    finally:
+        pinned.close()
+
+
+def cargo_lock_bytes(candidate: pathlib.Path) -> bytes:
+    pinned = open_pinned_regular(
+        candidate,
+        "source candidate for Cargo.lock extraction",
+        allow_empty=False,
+        maximum=MAXIMUM_FILE_BYTES,
+    )
+    try:
+        with os.fdopen(os.dup(pinned.descriptor), "rb", closefd=True) as source:
+            try:
+                with tarfile.open(fileobj=source, mode="r:") as archive:
+                    member = archive.getmember("source/trillionnium/Cargo.lock")
+                    if (
+                        not member.isfile()
+                        or member.size <= 0
+                        or member.size > MAXIMUM_JSON_BYTES
+                    ):
+                        fail("source candidate Cargo.lock crosses its extraction bound")
+                    stream = archive.extractfile(member)
+                    if stream is None:
+                        fail("source candidate Cargo.lock has no regular byte stream")
+                    payload = stream.read(MAXIMUM_JSON_BYTES + 1)
+            except (OSError, KeyError, tarfile.TarError) as error:
+                fail(f"cannot reopen source candidate Cargo.lock: {error}")
+        pinned.validate()
+    finally:
+        pinned.close()
     if len(payload) != member.size:
         fail("source candidate Cargo.lock length differs from its bounded member")
     return payload
@@ -726,22 +1135,28 @@ def validate_aggregate(
     macos_builder: pathlib.Path,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     aggregate = exact(strict_json(path, "aggregate build report"), AGGREGATE_KEYS, "aggregate build report")
-    binaries = {
-        "linux_validator_sha256": sha256(linux_validator, "Linux validator binary"),
-        "linux_material_builder_sha256": sha256(linux_builder, "Linux material-builder binary"),
-        "macos_validator_sha256": sha256(macos_validator, "macOS validator binary"),
-        "macos_material_builder_sha256": sha256(macos_builder, "macOS material-builder binary"),
-    }
+    binaries: dict[str, str] = {}
+    binary_inputs = (
+        (linux_validator, "Linux validator binary", "linux_validator_sha256"),
+        (
+            linux_builder,
+            "Linux material-builder binary",
+            "linux_material_builder_sha256",
+        ),
+        (macos_validator, "macOS validator binary", "macos_validator_sha256"),
+        (
+            macos_builder,
+            "macOS material-builder binary",
+            "macos_material_builder_sha256",
+        ),
+    )
+    for binary_path, field, output_field in binary_inputs:
+        _raw, fact = read_pinned(binary_path, field, allow_empty=False)
+        if stat.S_IMODE(fact.mode) & 0o111 == 0:
+            fail(f"{field} is not executable")
+        binaries[output_field] = fact.sha256
     if len(set(binaries.values())) != 4:
         fail("the four architecture/role binaries must have distinct exact bytes")
-    for binary_path, field in (
-        (linux_validator, "Linux validator binary"),
-        (linux_builder, "Linux material-builder binary"),
-        (macos_validator, "macOS validator binary"),
-        (macos_builder, "macOS material-builder binary"),
-    ):
-        if stat.S_IMODE(binary_path.stat().st_mode) & 0o111 == 0:
-            fail(f"{field} is not executable")
     provenance = {
         "source_tree_sha256": candidate_report["source_candidate_sha256"],
         "source_candidate_profile": candidate_report["source_profile"],
@@ -776,7 +1191,7 @@ def validate_aggregate(
         "independent_build_roots": True,
         "production_activation": False,
     }
-    if aggregate != expected:
+    if not typed_equal(aggregate, expected):
         fail("aggregate build report differs from candidate and all four binaries")
     exact_lock = cargo_lock_bytes(candidate_path)
     bundled_lock, bundled_fact = read_pinned(
@@ -820,6 +1235,13 @@ def validate_preflight(
     inventory = load_inventory(inventory_path)
     probe = strict_json(probe_path, "probe-fleet-v1")
     readiness = strict_json(readiness_path, "run-readiness-v2")
+    if type(probe.get("schema_version")) is not int or probe.get("schema_version") != 1:
+        fail("probe-fleet-v1 schema_version must be the exact integer 1")
+    if (
+        type(readiness.get("schema_version")) is not int
+        or readiness.get("schema_version") != 2
+    ):
+        fail("run-readiness-v2 schema_version must be the exact integer 2")
     try:
         check_baseline.validate(probe, inventory)
         check_run_readiness_evidence.validate(readiness, inventory)
@@ -894,6 +1316,107 @@ def validate_secret_references(
         fail("coordinator secret role/validator references are incomplete")
 
 
+def validate_source_coordinator_inventory(
+    root: pathlib.Path,
+    coordinator: dict[str, Any],
+) -> tuple[set[str], set[str]]:
+    """Close and content-address both source authority inventories before copy."""
+
+    root = real_root(root, "source coordinator root")
+    exact(coordinator, runner_bridge.COORDINATOR_KEYS, "coordinator manifest")
+    validate_coordinator_manifest_exact_types(coordinator)
+    validator_set = strict_json(
+        root / "public/validator-set.json", "source coordinator validator set"
+    )
+    validate_schema_integer_fields(validator_set, "source coordinator validator set")
+    raw_validators = validator_set.get("validators")
+    validator_ids = (
+        {
+            item.get("validator_id")
+            for item in raw_validators
+            if isinstance(item, dict)
+            and isinstance(item.get("validator_id"), str)
+            and HEX64.fullmatch(item["validator_id"]) is not None
+        }
+        if isinstance(raw_validators, list)
+        else set()
+    )
+    if len(validator_ids) != VALIDATOR_COUNT:
+        fail("source coordinator validator set must contain seven exact identities")
+    typed_validator_ids = {str(value) for value in validator_ids}
+
+    public_identities = coordinator_public_identities(coordinator)
+    public_paths = {path.removeprefix("coordinator/") for path in public_identities}
+    expected_public_paths = {
+        *evidence_profiles.COORDINATOR_PUBLIC_SINGLETON_PATHS.values(),
+        *(f"public/configs/{validator_id}.json" for validator_id in typed_validator_ids),
+        "public/observer-configs/mac.json",
+    }
+    if public_paths != expected_public_paths:
+        fail("coordinator public inventory differs from the exact seven-validator set")
+
+    validate_secret_references(coordinator, typed_validator_ids)
+    secret_values = coordinator["secret_files"]
+    secret_paths = {
+        safe_relative(reference["path"], "coordinator secret path").as_posix()
+        for reference in secret_values
+    }
+    if public_paths & secret_paths or any(
+        path == "secrets" or path.startswith("secrets/") for path in public_paths
+    ):
+        fail("coordinator public and secret authority inventories overlap")
+
+    actual_files = set(tree_files(root))
+    public_tree = {"manifest.json", *public_paths}
+    if actual_files not in (public_tree, public_tree | secret_paths):
+        fail(
+            "source coordinator tree must contain the exact public inventory and "
+            "either zero or every separately inventoried secret"
+        )
+    secrets_present = actual_files == public_tree | secret_paths
+    if secrets_present:
+        for role in ("consensus", "p2p-identity", "operator-recovery"):
+            with pin_directory(
+                root / "secrets" / role, f"coordinator {role} directory"
+            ) as pinned:
+                if stat.S_IMODE(os.fstat(pinned.descriptor).st_mode) != 0o700:
+                    fail("coordinator secret authority directories must be mode 0700")
+
+    inventories = [("public", coordinator["public_files"])]
+    if secrets_present:
+        inventories.append(("secret", secret_values))
+    for authority, values in inventories:
+        for index, raw in enumerate(values):
+            reference = exact(
+                raw,
+                {"path", "sha256", "bytes"},
+                f"coordinator {authority}_files[{index}]",
+            )
+            relative = safe_relative(
+                reference["path"], f"coordinator {authority}_files[{index}].path"
+            ).as_posix()
+            expected_hash = reference["sha256"]
+            expected_bytes = reference["bytes"]
+            if (
+                not isinstance(expected_hash, str)
+                or HEX64.fullmatch(expected_hash) is None
+                or type(expected_bytes) is not int
+                or expected_bytes <= 0
+                or expected_bytes > MAXIMUM_FILE_BYTES
+            ):
+                fail(f"coordinator {authority} reference is not a bounded content address")
+            _raw, fact = read_pinned(
+                root.joinpath(*pathlib.PurePosixPath(relative).parts),
+                f"coordinator {authority} file {relative}",
+                allow_empty=False,
+            )
+            if (fact.sha256, fact.bytes) != (expected_hash, expected_bytes):
+                fail(f"coordinator {authority} reference differs from exact bytes")
+            if authority == "secret" and stat.S_IMODE(fact.mode) != 0o600:
+                fail("coordinator secret authority files must be mode 0600")
+    return public_paths, secret_paths
+
+
 def validate_topology_inventory_join(
     coordinator_root: pathlib.Path,
     coordinator: dict[str, Any],
@@ -924,9 +1447,13 @@ def validate_topology_inventory_join(
             fail("topology participant differs from the preflight inventory")
         participant_ids.add(host_id)
     validators = topology.get("validators")
+    topology_validator_count = topology.get("validator_count")
+    topology_peer_degree = topology.get("peer_degree")
     if (
-        topology.get("validator_count") != VALIDATOR_COUNT
-        or topology.get("peer_degree") != 6
+        type(topology_validator_count) is not int
+        or topology_validator_count != VALIDATOR_COUNT
+        or type(topology_peer_degree) is not int
+        or topology_peer_degree != 6
         or not isinstance(validators, list)
         or len(validators) != VALIDATOR_COUNT
     ):
@@ -959,9 +1486,11 @@ def validate_topology_inventory_join(
 
 def expected_artifact_identities(root: pathlib.Path) -> dict[str, tuple[str, str]]:
     coordinator = strict_json(root / "coordinator/manifest.json", "coordinator manifest")
+    validate_coordinator_manifest_exact_types(coordinator)
     runner_manifest = strict_json(
         root / "runner/runner-output-manifest.json", "runner output manifest"
     )
+    validate_runner_manifest_exact_types(runner_manifest)
     expected = dict(FIXED_PATH_IDENTITIES)
     for path, identity in coordinator_public_identities(coordinator).items():
         if path in expected:
@@ -986,15 +1515,17 @@ def validate_all_json_artifacts(root: pathlib.Path, expected_paths: set[str]) ->
     for relative in sorted(expected_paths):
         path = root.joinpath(*pathlib.PurePosixPath(relative).parts)
         if path.suffix == ".json":
-            strict_json(path, relative)
+            document = strict_json(path, relative)
+            validate_schema_integer_fields(document, relative)
         elif path.suffix == ".jsonl":
             visit_jsonl_pinned(
                 path,
                 relative,
                 maximum=MAXIMUM_JSONL_BYTES,
                 maximum_line=MAXIMUM_JSON_BYTES,
-                visitor=lambda line, index: strict_json_bytes(
-                    line, f"{relative}[{index}]"
+                visitor=lambda line, index: validate_schema_integer_fields(
+                    strict_json_bytes(line, f"{relative}[{index}]"),
+                    f"{relative}[{index}]",
                 ),
             )
 
@@ -1151,7 +1682,7 @@ def validate_raw_replay_archive(
         "maximum_archive_entries": archive_lifetime["maximum_total_entries"],
         "context_sha256": context_digest.hex(),
     }
-    if context != expected_context:
+    if not typed_equal(context, expected_context):
         fail(f"replay context {validator_id} differs from authenticated public inputs")
 
     prior_record = hash_parts(REPLAY_GENESIS_DOMAIN, (context_digest,))
@@ -1261,7 +1792,7 @@ def validate_raw_replay_archive(
         "context_sha256": context_digest.hex(),
         "record_sha256": prior_record.hex(),
     }
-    if head != expected_head:
+    if not typed_equal(head, expected_head):
         fail(f"replay head {validator_id} differs from the full raw log")
 
     seal, seal_fact = strict_rust_json(
@@ -1345,7 +1876,7 @@ def validate_raw_replay_archive(
         "proposal_count": proposal_count,
         "quorum_certificate_count": quorum_certificate_count,
     }
-    if seal != expected_seal:
+    if not typed_equal(seal, expected_seal):
         fail(
             f"replay terminal seal {validator_id} differs from raw and signed terminal facts"
         )
@@ -1407,6 +1938,10 @@ def validate_raw_replay_archives(
 
 
 def derive(root: pathlib.Path) -> dict[str, Any]:
+    # Enforce the small-host envelope before legacy validators that retain
+    # candidate members or signed artifacts with ``read_bytes`` are called.
+    resource_files = tree_files(root)
+    validate_all_json_artifacts(root, set(resource_files))
     candidate_path = root / "candidate/source.tar"
     cargo_lock_path = root / "candidate/Cargo.lock"
     aggregate_path = root / "candidate/aggregate-build-report.json"
@@ -1420,12 +1955,8 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
     coordinator_root = root / "coordinator"
     runner_root = root / "runner"
 
-    try:
-        candidate_report = check_source_candidate.validate(
-            candidate_path, require_clean=True
-        )
-    except (SystemExit, OSError, tarfile.TarError, ValueError) as error:
-        fail(f"clean-commit-v1 source candidate failed deep verification: {error}")
+    validate_source_candidate_resource_envelope(candidate_path)
+    candidate_report = validate_clean_source_candidate(candidate_path)
     aggregate, binaries = validate_aggregate(
         aggregate_path,
         candidate_report=candidate_report,
@@ -1450,6 +1981,7 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         macos_validator,
         linux_builder,
     )
+    validate_coordinator_manifest_exact_types(coordinator)
     validator_set = strict_json(
         coordinator_root / "public/validator-set.json", "validator set"
     )
@@ -1471,6 +2003,10 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         fail("validator set must contain exactly seven canonical identities")
     typed_validator_ids = {str(item) for item in validator_ids}
     validate_secret_references(coordinator, typed_validator_ids)
+    runner_manifest = strict_json(
+        runner_root / "runner-output-manifest.json", "runner output manifest"
+    )
+    validate_runner_manifest_exact_types(runner_manifest)
     signed_sources, plan, runner_summary = runner_bridge.validate_runner_output(
         runner_root,
         coordinator,
@@ -1478,6 +2014,11 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         typed_validator_ids,
         VALIDATOR_COUNT,
     )
+    if (
+        type(runner_summary.get("validator_count")) is not int
+        or runner_summary.get("validator_count") != VALIDATOR_COUNT
+    ):
+        fail("runner summary validator_count must be the exact integer 7")
     validator_host_ids = validate_topology_inventory_join(
         coordinator_root, coordinator, inventory, plan
     )
@@ -1516,12 +2057,45 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         metrics = evidence["metrics"]
         final_state = evidence["final_state"]
         starts.add(metrics["measurement_started_at"])
-        finalized_count = final_state["finalized_ordinary_block_count"]
+        finalized_count = exact_u64(
+            final_state["finalized_ordinary_block_count"],
+            f"validator {validator_id} finalized_ordinary_block_count",
+            positive=True,
+        )
+        exact_u64(
+            final_state["finalized_height"],
+            f"validator {validator_id} finalized_height",
+            positive=True,
+        )
+        exact_u64(
+            final_state["finalized_nonempty_ordinary_block_count"],
+            f"validator {validator_id} finalized_nonempty_ordinary_block_count",
+            positive=True,
+        )
+        exact_u64(
+            final_state["process_instance_count"],
+            f"validator {validator_id} process_instance_count",
+            positive=True,
+        )
+        exact_u64(
+            report["committed_ordinary_block_count"],
+            f"validator {validator_id} committed_ordinary_block_count",
+            positive=True,
+        )
+        exact_u64(
+            report["finalized_ordinary_block_count"],
+            f"validator {validator_id} report finalized_ordinary_block_count",
+            positive=True,
+        )
+        for field in (
+            "double_sign_events",
+            "duplicate_apply_events",
+            "state_drift_events",
+            "safety_halt_violations",
+        ):
+            exact_u64(final_state[field], f"validator {validator_id} {field}")
         if (
-            isinstance(finalized_count, bool)
-            or not isinstance(finalized_count, int)
-            or finalized_count <= 0
-            or report["committed_ordinary_block_count"] != finalized_count
+            report["committed_ordinary_block_count"] != finalized_count
             or report["finalized_ordinary_block_count"] != finalized_count
             or final_state["finalized_nonempty_ordinary_block_count"] != finalized_count
             or final_state["process_instance_count"] != 1
@@ -1583,7 +2157,7 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         TERMINAL_KEYS,
         "runner terminal agreement",
     )
-    if terminal != expected_terminal:
+    if not typed_equal(terminal, expected_terminal):
         fail("runner terminal agreement differs from seven signed terminal states")
     processes = runner_summary["processes"]
     if (
@@ -1639,13 +2213,20 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         "signed_artifact_chain_count": VALIDATOR_COUNT,
         "observer_verified_process_count": VALIDATOR_COUNT,
         "observer_verified_replay_archive_count": VALIDATOR_COUNT,
-        "fleet_barrier_round": signed_runtime["fleet_barrier_round"],
+        "fleet_barrier_round": exact_u64(
+            signed_runtime["fleet_barrier_round"],
+            "signed runtime fleet_barrier_round",
+            positive=True,
+        ),
         "fleet_ready_set_sha256": signed_runtime["fleet_ready_set_sha256"],
         "fleet_start_certificate_sha256": signed_runtime[
             "fleet_start_certificate_sha256"
         ],
         "terminal_agreement": terminal,
         "runner_legacy_validator_run_completed": False,
+        "raw_replay_hash_chains_recomputed": True,
+        "terminal_seal_signatures_verified": True,
+        "proposal_qc_finality_semantics_independently_decoded": False,
         "stage0_direct_seven_observed": True,
     }
     return {
@@ -1653,9 +2234,7 @@ def derive(root: pathlib.Path) -> dict[str, Any]:
         "candidate": candidate,
         "preflight": preflight,
         "coordinator_manifest_sha256": coordinator_anchor,
-        "runner_ordered_artifact_root": strict_json(
-            runner_root / "runner-output-manifest.json", "runner output manifest"
-        )["ordered_artifact_root"],
+        "runner_ordered_artifact_root": runner_manifest["ordered_artifact_root"],
         "derived_observation": derived,
     }
 
@@ -1679,8 +2258,10 @@ def validate(root: pathlib.Path, *, emit: bool = True) -> dict[str, Any]:
     if manifest_raw != canonical_json(manifest):
         fail("manifest.json is not canonical or has trailing bytes")
     if (
-        manifest["schema_version"] != SCHEMA_VERSION
+        type(manifest["schema_version"]) is not int
+        or manifest["schema_version"] != SCHEMA_VERSION
         or manifest["evidence_profile"] != PROFILE
+        or type(manifest["validator_count"]) is not int
         or manifest["validator_count"] != VALIDATOR_COUNT
         or manifest["network_scope"] != "single-lan"
     ):
@@ -1688,10 +2269,10 @@ def validate(root: pathlib.Path, *, emit: bool = True) -> dict[str, Any]:
     exact(manifest["candidate"], CANDIDATE_KEYS, "candidate")
     exact(manifest["preflight"], PREFLIGHT_KEYS, "preflight")
     exact(manifest["derived_observation"], DERIVED_KEYS, "derived_observation")
-    if manifest["claims"] != CLAIMS:
+    if not typed_equal(manifest["claims"], CLAIMS):
         fail("claims cross the exact scoped Stage0 non-production boundary")
-    if manifest["stage0_status_projection"] != STAGE0_STATUS_PROJECTION:
-        fail("typed Stage0 status projection differs from independently authorized facts")
+    if not typed_equal(manifest["stage0_status_projection"], STAGE0_STATUS_PROJECTION):
+        fail("typed Stage0 status projection differs from authorized scoped facts")
 
     artifacts = manifest["artifacts"]
     if not isinstance(artifacts, list) or not artifacts:
@@ -1740,8 +2321,8 @@ def validate(root: pathlib.Path, *, emit: bool = True) -> dict[str, Any]:
         "runner_ordered_artifact_root": manifest["runner_ordered_artifact_root"],
         "derived_observation": manifest["derived_observation"],
     }
-    if observed != expected_projection:
-        fail("manifest projection differs from independently derived exact facts")
+    if not typed_equal(observed, expected_projection):
+        fail("manifest projection differs from recomputed exact facts")
 
     files_after = tree_files(root)
     if set(files_after) != set(files_before):
@@ -1759,6 +2340,10 @@ def validate(root: pathlib.Path, *, emit: bool = True) -> dict[str, Any]:
             "clean_commit=true cargo_lock_rehashed=true dual_arch_binaries=4 "
             "probe_fleet=fresh readiness=fresh signed_chains=7 "
             "observer_verifications=7 replay_archive_sets=7 terminal_agreement=true "
+            "raw_replay_hash_chain=recomputed terminal_seal_signature=verified "
+            "proposal_qc_finality_semantics_independently_decoded=false "
+            "stage0_profile_max_file_bytes=134217728 "
+            "runner_generic_512m_compatibility_claim=false "
             "runner_validator_run_completed=false stage0_direct_seven_observed=true "
             "validator_run_7_completed_observed=true "
             "fault_matrix=false performance=false g3_lan=false geo_wan=false "

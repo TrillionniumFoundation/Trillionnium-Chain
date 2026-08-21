@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import tomllib
+import types
 
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -579,6 +580,26 @@ def refresh_runner(bundle: pathlib.Path) -> None:
     refresh_outer(bundle)
 
 
+def refresh_outer_path_reference(bundle: pathlib.Path, relative: str) -> None:
+    """Refresh one nested content address without parsing the mutated JSON."""
+
+    manifest_path = bundle / "manifest.json"
+    manifest = read_json(manifest_path)
+    for artifact in manifest["artifacts"]:
+        if artifact["path"] == relative:
+            path = bundle.joinpath(*pathlib.PurePosixPath(relative).parts)
+            artifact["sha256"] = digest(path)
+            artifact["bytes"] = path.stat().st_size
+            break
+    else:
+        raise AssertionError(f"outer manifest omits {relative}")
+    manifest["ordered_artifact_root"] = checker.ordered_artifact_root(
+        manifest["artifacts"]
+    )
+    manifest_path.chmod(0o600)
+    write_json(manifest_path, manifest)
+
+
 def reject(
     positive: pathlib.Path,
     root: pathlib.Path,
@@ -811,6 +832,295 @@ def extra_secret(bundle: pathlib.Path) -> None:
     path.write_bytes(b"must-not-be-bundled")
 
 
+def outer_schema(bundle: pathlib.Path, value: object) -> None:
+    path = bundle / "manifest.json"
+    manifest = read_json(path)
+    manifest["schema_version"] = value
+    path.chmod(0o600)
+    write_json(path, manifest)
+
+
+def runner_schema(bundle: pathlib.Path, value: object) -> None:
+    relative = "runner/runner-output-manifest.json"
+    path = bundle / relative
+    manifest = read_json(path)
+    manifest["schema_version"] = value
+    path.chmod(0o600)
+    write_json(path, manifest)
+    refresh_outer_path_reference(bundle, relative)
+
+
+def assert_system_exit(action, expected: str) -> None:
+    try:
+        action()
+    except SystemExit as error:
+        if expected not in str(error):
+            raise AssertionError(
+                f"expected rejection containing {expected!r}, observed {error!s}"
+            ) from error
+    else:
+        raise AssertionError("negative control unexpectedly passed")
+
+
+def assembler_public_secret_prewrite_rejection(
+    source: dict[str, pathlib.Path | str], root: pathlib.Path
+) -> None:
+    coordinator = root / "malicious-coordinator"
+    shutil.copytree(pathlib.Path(source["coordinator_root"]), coordinator)
+    manifest_path = coordinator / "manifest.json"
+    manifest = read_json(manifest_path)
+    manifest["public_files"].append(dict(manifest["secret_files"][0]))
+    manifest_path.chmod(0o600)
+    write_json(manifest_path, manifest)
+    malicious = dict(source)
+    malicious["coordinator_root"] = coordinator
+    malicious["coordinator_manifest_sha256"] = digest(manifest_path)
+    output = root / "must-remain-absent-public-secret"
+    assert_system_exit(
+        lambda: assemble_case(malicious, output),
+        "public/secret inventory is not closed",
+    )
+    if output.exists() or output.is_symlink():
+        raise AssertionError("malicious public secret created output bytes")
+
+
+def assembler_oversized_prewrite_rejection(
+    source: dict[str, pathlib.Path | str], root: pathlib.Path
+) -> None:
+    oversized = root / "oversized-validator.bin"
+    with oversized.open("wb") as stream:
+        stream.truncate(checker.MAXIMUM_FILE_BYTES + 1)
+    oversized.chmod(0o755)
+    malicious = dict(source)
+    malicious["linux_validator_binary"] = oversized
+    output = root / "must-remain-absent-oversized"
+    assert_system_exit(
+        lambda: assemble_case(malicious, output),
+        "bounded regular non-symlink",
+    )
+    if output.exists() or output.is_symlink():
+        raise AssertionError("oversized input created output bytes")
+
+
+def assembler_low_disk_prewrite_rejection(
+    source: dict[str, pathlib.Path | str], root: pathlib.Path
+) -> None:
+    output = root / "must-remain-absent-low-disk"
+    original = assembler._OUTPUT_STATVFS_V1
+    assembler._OUTPUT_STATVFS_V1 = lambda _descriptor: types.SimpleNamespace(
+        f_bavail=0,
+        f_frsize=4096,
+    )
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, output),
+            "output filesystem lacks the bounded bundle plus safety reserve",
+        )
+    finally:
+        assembler._OUTPUT_STATVFS_V1 = original
+    if output.exists() or output.is_symlink():
+        raise AssertionError("low-disk admission created output bytes")
+
+
+def assembler_double_slash_disjoint_rejection(
+    source: dict[str, pathlib.Path | str], root: pathlib.Path
+) -> None:
+    coordinator = pathlib.Path(source["coordinator_root"])
+    output = pathlib.Path(
+        "//" + (coordinator / "nested-output-must-not-exist").as_posix().lstrip("/")
+    )
+    assert_system_exit(
+        lambda: assemble_case(source, output),
+        "output must remain disjoint from every input path",
+    )
+    if output.exists() or output.is_symlink():
+        raise AssertionError("double-leading-slash alias created nested input output")
+
+
+def tree_entry_count_boundary_rejection(root: pathlib.Path) -> None:
+    tree = root / "tree-entry-count-boundary"
+    tree.mkdir()
+    for index in range(checker.MAXIMUM_FILE_COUNT + 1):
+        (tree / f"entry-{index:05d}").touch()
+    assert_system_exit(
+        lambda: checker.tree_files(tree),
+        "file/directory entry-count bound",
+    )
+    deep_root = root / "tree-depth-boundary"
+    cursor = deep_root
+    for index in range(checker.MAXIMUM_TREE_DEPTH + 1):
+        cursor /= f"d{index:02d}"
+        cursor.mkdir(parents=True)
+    assert_system_exit(
+        lambda: checker.tree_files(deep_root),
+        "directory-depth bound",
+    )
+
+
+def ancestor_swap_controls(root: pathlib.Path) -> None:
+    def one_source(label: str) -> tuple[pathlib.Path, pathlib.Path, pathlib.Path, object]:
+        base = root / label
+        ancestor = base / "ancestor"
+        victim = ancestor / "nested/artifact.bin"
+        victim.parent.mkdir(parents=True)
+        victim.write_bytes(b"same bounded bytes")
+        held = base / "held"
+
+        def swap() -> None:
+            ancestor.rename(held)
+            replacement = ancestor / "nested/artifact.bin"
+            replacement.parent.mkdir(parents=True)
+            replacement.write_bytes(b"same bounded bytes")
+
+        return ancestor, victim, held, swap
+
+    def restore(ancestor: pathlib.Path, held: pathlib.Path) -> None:
+        shutil.rmtree(ancestor)
+        held.rename(ancestor)
+
+    ancestor, victim, held, swap = one_source("read-ancestor-swap")
+    try:
+        assert_system_exit(
+            lambda: checker.read_pinned(
+                victim,
+                "ancestor-swap read",
+                allow_empty=False,
+                capture=True,
+                _after_ancestors_pinned=swap,
+            ),
+            "pinned ancestor path was replaced",
+        )
+    finally:
+        restore(ancestor, held)
+
+    ancestor, victim, held, swap = one_source("tree-ancestor-swap")
+    try:
+        assert_system_exit(
+            lambda: checker.tree_files(
+                ancestor,
+                _after_root_ancestors_pinned=swap,
+            ),
+            "pinned ancestor path was replaced",
+        )
+    finally:
+        restore(ancestor, held)
+
+    ancestor, victim, held, swap = one_source("copy-ancestor-swap")
+    output = assembler.OutputTree.create(root / "copy-race-output")
+    try:
+        assert_system_exit(
+            lambda: assembler.copy_pinned(
+                victim,
+                output,
+                "artifact.bin",
+                "ancestor-swap copy",
+                _after_source_ancestors_pinned=swap,
+            ),
+            "pinned ancestor path was replaced",
+        )
+        if checker.tree_files(output.path):
+            raise AssertionError("source ancestor swap created copied output bytes")
+    finally:
+        restore(ancestor, held)
+        output.cleanup()
+        output.close()
+
+    target_source = root / "copy-target-source.bin"
+    target_source.write_bytes(b"target ancestor swap bytes")
+    target_output = assembler.OutputTree.create(root / "copy-target-race-output")
+    held_target = target_output.path / "held-nested"
+
+    def swap_target_ancestor() -> None:
+        nested = target_output.path / "nested"
+        nested.rename(held_target)
+        nested.mkdir()
+
+    try:
+        assert_system_exit(
+            lambda: assembler.copy_pinned(
+                target_source,
+                target_output,
+                "nested/artifact.bin",
+                "target-ancestor-swap copy",
+                _after_target_ancestors_pinned=swap_target_ancestor,
+            ),
+            "output-relative ancestor was replaced",
+        )
+        if (target_output.path / "nested/artifact.bin").exists():
+            raise AssertionError("target ancestor swap redirected copied bytes")
+    finally:
+        target_output.cleanup()
+        target_output.close()
+
+    base = root / "output-parent-ancestor-swap"
+    parent = base / "parent"
+    parent.mkdir(parents=True)
+    held_parent = base / "held"
+
+    def swap_output_parent() -> None:
+        parent.rename(held_parent)
+        parent.mkdir()
+
+    try:
+        assert_system_exit(
+            lambda: assembler.OutputTree.create(
+                parent / "bundle",
+                _after_parent_ancestors_pinned=swap_output_parent,
+            ),
+            "pinned ancestor path was replaced",
+        )
+        if (parent / "bundle").exists():
+            raise AssertionError("output-parent ancestor swap created an output")
+    finally:
+        shutil.rmtree(parent)
+        held_parent.rename(parent)
+
+    create_base = root / "output-create-replacement"
+    create_base.mkdir()
+    create_path = create_base / "bundle"
+    held_create = create_base / "held"
+
+    def replace_created_output() -> None:
+        create_path.rename(held_create)
+        create_path.mkdir()
+
+    assert_system_exit(
+        lambda: assembler.OutputTree.create(
+            create_path,
+            _after_output_opened=replace_created_output,
+        ),
+        "output directory path was replaced",
+    )
+    if not create_path.is_dir() or not held_create.is_dir():
+        raise AssertionError("create failure removed a foreign replacement inode")
+    create_path.rmdir()
+    held_create.rmdir()
+
+    cleanup_base = root / "output-cleanup-replacement"
+    cleanup_base.mkdir()
+    cleanup_path = cleanup_base / "bundle"
+    held_cleanup = cleanup_base / "held"
+    cleanup_tree = assembler.OutputTree.create(cleanup_path)
+
+    def replace_cleanup_output() -> None:
+        cleanup_path.rename(held_cleanup)
+        cleanup_path.mkdir()
+
+    try:
+        assert_system_exit(
+            lambda: cleanup_tree.cleanup(
+                _before_final_remove=replace_cleanup_output
+            ),
+            "refusing to remove a substituted output directory",
+        )
+        if not cleanup_path.is_dir() or not held_cleanup.is_dir():
+            raise AssertionError("cleanup removed a foreign replacement inode")
+    finally:
+        cleanup_tree.close()
+        cleanup_path.rmdir()
+        held_cleanup.rmdir()
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory(prefix="poco-g3-stage0-direct-seven-") as raw:
         root = pathlib.Path(raw)
@@ -832,6 +1142,13 @@ def main() -> None:
             raise AssertionError("positive scoped truth boundary differs")
         if (positive / "coordinator/secrets").exists():
             raise AssertionError("assembler copied private coordinator keys")
+
+        assembler_public_secret_prewrite_rejection(source, root)
+        assembler_oversized_prewrite_rejection(source, root)
+        assembler_low_disk_prewrite_rejection(source, root)
+        assembler_double_slash_disjoint_rejection(source, root)
+        tree_entry_count_boundary_rejection(root)
+        ancestor_swap_controls(root)
 
         reject(
             positive,
@@ -858,6 +1175,34 @@ def main() -> None:
             "trailing-json",
             trailing_manifest,
             "trailing bytes",
+        )
+        reject(
+            positive,
+            root,
+            "outer-schema-bool",
+            lambda bundle: outer_schema(bundle, True),
+            "scoped direct-seven identity",
+        )
+        reject(
+            positive,
+            root,
+            "outer-schema-float",
+            lambda bundle: outer_schema(bundle, 1.0),
+            "scoped direct-seven identity",
+        )
+        reject(
+            positive,
+            root,
+            "runner-schema-bool",
+            lambda bundle: runner_schema(bundle, True),
+            "schema_version must be the exact integer 1",
+        )
+        reject(
+            positive,
+            root,
+            "runner-schema-float",
+            lambda bundle: runner_schema(bundle, 1.0),
+            "schema_version must be the exact integer 1",
         )
         reject(
             positive,
@@ -934,16 +1279,23 @@ def main() -> None:
             root,
             "completion-inflation",
             completion_inflation,
-            "cannot inspect runner output manifest",
+            "cannot open runner output manifest",
         )
     print(
         "poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false "
         "fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 "
-        "symlink=blocked duplicate_json=blocked trailing=blocked toctou_pinned=true "
+        "symlink=blocked duplicate_json=blocked trailing=blocked "
+        "ancestor_dirfd_swap=blocked foreign_cleanup_inode=preserved "
+        "double_slash_disjoint=blocked public_secret_prewrite=blocked "
+        "oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked "
+        "tree_entries_4096_plus_one=blocked tree_depth_64_plus_one=blocked "
+        "stage0_profile_max_file_bytes=134217728 "
+        "runner_generic_512m_compatibility_claim=false exact_json_integers=blocked "
         "manifest_complete=true roles_unique=true failure=blocked cleanup=blocked "
         "observer_set=7 replay_sets=7 raw_replay_substitution=blocked "
         "raw_replay_hash_chain=blocked terminal_seal_signature=verified "
         "terminal_seal_signature_mutation=blocked terminal_agreement=exact "
+        "proposal_qc_finality_semantics_independently_decoded=false "
         "runner_validator_run_completed=false stage0_direct_seven_observed=scoped "
         "validator_run_7_completed_observed=true "
         "fault_matrix=false performance=false g3_lan=false geo_wan=false production=false"
