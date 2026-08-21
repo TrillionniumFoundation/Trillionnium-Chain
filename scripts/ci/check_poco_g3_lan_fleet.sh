@@ -27,6 +27,7 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/assemble_reproducible_build_report_test.py"
   "scripts/poco-fleet/assemble_run_bundle_v1.py"
   "scripts/poco-fleet/assemble_run_bundle_v1_test.py"
+  "scripts/poco-fleet/assemble_stage0_direct_seven_bundle_v1.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2.py"
@@ -48,6 +49,7 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/check_source_candidate_test.py"
   "scripts/poco-fleet/check_stage0_observation_status.py"
   "scripts/poco-fleet/check_stage0_observation_status_test.py"
+  "scripts/poco-fleet/check_stage0_direct_seven_bundle_v1.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence_test.py"
   "scripts/poco-fleet/check_topology.py"
@@ -79,6 +81,7 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/run_network_smoke_fleet_test.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1_test.py"
+  "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
   "scripts/poco-fleet/validate_inventory.py"
   "trillionnium/crates/trnm-poco-lab-validator/Cargo.toml"
   "trillionnium/crates/trnm-poco-lab-validator/src/bin/trnm-poco-lab-material-builder.rs"
@@ -93,6 +96,7 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/assemble_reproducible_build_report_test.py"
   "scripts/poco-fleet/assemble_run_bundle_v1.py"
   "scripts/poco-fleet/assemble_run_bundle_v1_test.py"
+  "scripts/poco-fleet/assemble_stage0_direct_seven_bundle_v1.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_test.py"
   "scripts/poco-fleet/build_reproducible_lab_candidate_v2.py"
@@ -114,6 +118,7 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/check_source_candidate_test.py"
   "scripts/poco-fleet/check_stage0_observation_status.py"
   "scripts/poco-fleet/check_stage0_observation_status_test.py"
+  "scripts/poco-fleet/check_stage0_direct_seven_bundle_v1.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence.py"
   "scripts/poco-fleet/check_stage0_reproducible_build_evidence_test.py"
   "scripts/poco-fleet/check_topology.py"
@@ -145,6 +150,7 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/run_network_smoke_fleet_test.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1.py"
   "scripts/poco-fleet/sealed_artifact_transport_v1_test.py"
+  "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
   "scripts/poco-fleet/validate_inventory.py"
 )
 
@@ -172,6 +178,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/check_run_bundle_test.py"
   "scripts/poco-fleet/check_signed_runtime_evidence_test.py"
   "scripts/poco-fleet/collect_no_fault_run_bundle_v1_test.py"
+  "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
 )
 
 readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
@@ -198,6 +205,7 @@ readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58 topologies=7,31,100 content_addressed=true raw_summary_derived=true unique_json_keys=true exact_validator_set_hash=true ordered_recovery_state_machines=true'
   'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'
   'poco_g3_no_fault_bundle_collector_v1_test=passed positive_fixture_only=true production_active=blocked plan_only=no_outputs signed_observer_profile=plan-only external_load_profile=plan-only independent_anchor=required active_bounds=exact prestart_schema=exact real_public_inventory=exact symlink_ancestor=blocked input_overlap=blocked missing_pid=blocked external_window=blocked qc_n=blocked invalid_signature_control=blocked nonempty_workload=blocked mac_signature_fact=blocked validator_signature=blocked missing_artifact=blocked replay_export=required replay_observer=required replay_hash_join=exact truth_bits_changed=false fault_gate_released=false'
+  'poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 symlink=blocked duplicate_json=blocked trailing=blocked toctou_pinned=true manifest_complete=true roles_unique=true failure=blocked cleanup=blocked observer_set=7 replay_sets=7 raw_replay_substitution=blocked raw_replay_hash_chain=blocked terminal_seal_signature=verified terminal_seal_signature_mutation=blocked terminal_agreement=exact runner_validator_run_completed=false stage0_direct_seven_observed=scoped validator_run_7_completed_observed=true fault_matrix=false performance=false g3_lan=false geo_wan=false production=false'
 )
 
 for relative in "${REQUIRED_FILES[@]}"; do
@@ -312,6 +320,33 @@ require_all(
         'report.get("source_profile") != "clean-commit-v1"',
         'report.get("schema_version") != 3',
         *strict_report_fields,
+    ),
+)
+require_all(
+    "scripts/poco-fleet/check_stage0_direct_seven_bundle_v1.py",
+    (
+        'PROFILE = "poco-g3-stage0-direct-seven-observation-bundle-v1"',
+        '"validator_run_7_completed_observed": True',
+        '"runner_legacy_validator_run_completed": False',
+        "validate_raw_replay_archives(",
+        "signed_evidence.verify_ed25519(",
+        "REPLAY_TERMINAL_SIGNATURE_DOMAIN",
+        '"stage0_deep_reverification_bundle_available": True',
+        '"validator_run_7_completed": True',
+        '"fault_matrix_completed": False',
+        '"performance_evidence": False',
+        '"g3_lan_multihost_evidence": False',
+        '"geo_wan_evidence": False',
+        '"production_activation": False',
+        '"production_candidate": False',
+    ),
+)
+require_all(
+    "scripts/poco-fleet/assemble_stage0_direct_seven_bundle_v1.py",
+    (
+        "checker.cargo_lock_bytes(output / \"candidate/source.tar\")",
+        "private_keys_bundled=false runner_truth_bits_changed=false",
+        "checker.validate(output, emit=False)",
     ),
 )
 

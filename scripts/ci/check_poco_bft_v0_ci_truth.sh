@@ -421,6 +421,8 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'
 require_literal "$G3_LAN_FLEET_GATE" \
+  'poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 symlink=blocked duplicate_json=blocked trailing=blocked toctou_pinned=true manifest_complete=true roles_unique=true failure=blocked cleanup=blocked observer_set=7 replay_sets=7 raw_replay_substitution=blocked raw_replay_hash_chain=blocked terminal_seal_signature=verified terminal_seal_signature_mutation=blocked terminal_agreement=exact runner_validator_run_completed=false stage0_direct_seven_observed=scoped validator_run_7_completed_observed=true fault_matrix=false performance=false g3_lan=false geo_wan=false production=false'
+require_literal "$G3_LAN_FLEET_GATE" \
   'poco_fault_restart_handoff_v1_test=passed target_only=true exit75_exact=true exit75_ssh_preserved=true schema2_exact=true p1_locator_digest_unlink=true peer_liveness=true single_p2_launch=true normal_artifacts_absent=true truth_bits_unchanged=true'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_lan_fleet_contract_self_test_gate=passed stage0_observation_complete=false observation_status_evaluated=false required_files='
