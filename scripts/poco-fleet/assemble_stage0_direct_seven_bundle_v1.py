@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble one immutable, public-only Stage0 direct-seven observation bundle.
+"""Assemble one create-once, public-only Stage0 direct-seven observation bundle.
 
 The assembler copies exact already-produced evidence.  It never runs Cargo,
 starts validators, creates signatures, changes runner truth bits, or copies the
@@ -178,6 +178,7 @@ class OutputTree:
         self.staging_name = staging_name
         self.descriptor = descriptor
         self.identity = identity
+        self._binding: checker.PinnedBundleRootBinding | None = None
         self._verified = False
         self.published = False
         self.closed = False
@@ -215,7 +216,7 @@ class OutputTree:
             except FileNotFoundError:
                 pass
             else:
-                fail("output already exists; observation bundles are immutable")
+                fail("output already exists; observation bundles are create-once")
 
             staging_name = ""
             for _attempt in range(16):
@@ -325,21 +326,29 @@ class OutputTree:
         if self._verified:
             fail("staged output is already sealed against further writes")
         self.validate()
-        checker.validate(self.path, emit=False)
+        manifest = checker.validate(self.path, emit=False)
         os.fsync(self.descriptor)
+        binding = checker.bind_pinned_bundle_root(self.descriptor, manifest)
         self.validate()
+        self._binding = binding
         self._verified = True
 
     def publish(self) -> pathlib.Path:
-        """Atomically expose the validated bundle at its immutable final name."""
+        """Atomically expose the validated bundle at its create-once final name."""
 
         if not self._verified:
             fail("refusing to publish an output that has not passed deep verification")
         self.validate()
         # Re-run the checker at the commit boundary.  The private staging path
         # is no longer writable through this API once ``verify`` seals it.
-        checker.validate(self.path, emit=False)
+        manifest = checker.validate(self.path, emit=False)
         os.fsync(self.descriptor)
+        binding = checker.bind_pinned_bundle_root(self.descriptor, manifest)
+        if self._binding is None or binding != self._binding:
+            fail(
+                "held bundle root changed after verification or differs from "
+                "the path-validated artifact bytes"
+            )
         self.validate()
         try:
             _RENAME_NOREPLACE_V1(
@@ -505,7 +514,7 @@ def disjoint_output(raw: pathlib.Path, inputs: tuple[pathlib.Path, ...]) -> path
         except FileNotFoundError:
             pass
         else:
-            fail("output already exists; observation bundles are immutable")
+            fail("output already exists; observation bundles are create-once")
     source_root = checker.absolute_path(SOURCE_ROOT)
     if output == source_root or source_root in output.parents or output in source_root.parents:
         fail("output must remain outside and disjoint from the source tree")
@@ -1073,6 +1082,9 @@ def main() -> None:
         "private_keys_bundled=false runner_truth_bits_changed=false "
         "publish=linux-renameat2-noreplace failure_cleanup=close-only "
         "private_quarantine_retained_on_failure=true crash_durable_bundle=false "
+        "cryptographic_content_equivalence_binding=true "
+        "checker_itself_fd_rooted=false hostile_same_euid_postbinding=false "
+        "postrename_inode_match=required "
         "raw_replay_hash_chain=recomputed terminal_seal_signature=verified "
         "proposal_qc_finality_semantics_independently_decoded=false "
         "stage0_profile_max_file_bytes=134217728 "

@@ -11,6 +11,7 @@ import json
 import os
 import pathlib
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -948,6 +949,17 @@ def tree_entry_count_boundary_rejection(root: pathlib.Path) -> None:
         lambda: checker.tree_files(tree),
         "file/directory entry-count bound",
     )
+    tree_descriptor = os.open(tree, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+    try:
+        assert_system_exit(
+            lambda: checker.bind_pinned_bundle_root(
+                tree_descriptor,
+                {"artifacts": []},
+            ),
+            "held bundle root crosses its entry-count bound",
+        )
+    finally:
+        os.close(tree_descriptor)
     deep_root = root / "tree-depth-boundary"
     cursor = deep_root
     for index in range(checker.MAXIMUM_TREE_DEPTH + 1):
@@ -957,6 +969,39 @@ def tree_entry_count_boundary_rejection(root: pathlib.Path) -> None:
         lambda: checker.tree_files(deep_root),
         "directory-depth bound",
     )
+    depth_descriptor = os.open(
+        deep_root,
+        os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC,
+    )
+    try:
+        assert_system_exit(
+            lambda: checker.bind_pinned_bundle_root(
+                depth_descriptor,
+                {"artifacts": []},
+            ),
+            "held bundle root crosses its directory-depth bound",
+        )
+    finally:
+        os.close(depth_descriptor)
+
+    manifest_root = root / "held-manifest-byte-boundary"
+    manifest_root.mkdir()
+    with (manifest_root / "manifest.json").open("wb") as stream:
+        stream.truncate(checker.MAXIMUM_JSON_BYTES + 1)
+    manifest_descriptor = os.open(
+        manifest_root,
+        os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC,
+    )
+    try:
+        assert_system_exit(
+            lambda: checker.bind_pinned_bundle_root(
+                manifest_descriptor,
+                {"artifacts": []},
+            ),
+            "held bundle manifest crosses its JSON byte bound",
+        )
+    finally:
+        os.close(manifest_descriptor)
 
 
 def assert_descriptors_closed(descriptors: list[int], label: str) -> None:
@@ -1106,6 +1151,276 @@ def unverified_publish_control(root: pathlib.Path) -> None:
         raise AssertionError("unsafe publication parent received a final path")
 
 
+def pinned_root_decoy_binding_control(
+    positive: pathlib.Path,
+    root: pathlib.Path,
+) -> None:
+    baseline = len(os.listdir("/proc/self/fd"))
+    invalid_verify_final = root / "pinned-root-invalid-verify-final"
+    invalid_verify = assembler.OutputTree.create(invalid_verify_final)
+    shutil.copytree(positive, invalid_verify.path, dirs_exist_ok=True)
+    invalid_artifact = invalid_verify.path / "preflight/probe-fleet-v1.json"
+    invalid_artifact.chmod(0o600)
+    invalid_artifact.write_bytes(b"invalid original behind valid decoy\n")
+    invalid_held = root / "held-invalid-verify-original"
+    original_validate = checker.validate
+
+    def validate_initial_decoy(bundle: pathlib.Path, *, emit: bool = True):
+        path = pathlib.Path(bundle)
+        path.rename(invalid_held)
+        shutil.copytree(positive, path)
+        try:
+            return original_validate(path, emit=emit)
+        finally:
+            shutil.rmtree(path)
+            invalid_held.rename(path)
+
+    checker.validate = validate_initial_decoy
+    try:
+        assert_system_exit(
+            invalid_verify.verify,
+            "held bundle artifact",
+        )
+    finally:
+        checker.validate = original_validate
+        invalid_verify.close()
+    if invalid_verify_final.exists():
+        raise AssertionError("valid decoy verified an invalid held root")
+
+    final_path = root / "pinned-root-decoy-final"
+    output = assembler.OutputTree.create(final_path)
+    assert_system_exit(
+        lambda: checker.pin_directory(
+            pathlib.Path(f"/proc/self/fd/{output.descriptor}"),
+            "generic procfd",
+        ),
+        "cannot pin generic procfd ancestor",
+    )
+    shutil.copytree(positive, output.path, dirs_exist_ok=True)
+    binding_manifest = original_validate(output.path, emit=False)
+    binding_baseline = len(os.listdir("/proc/self/fd"))
+    binding_seen: list[int] = []
+    original_binding_fstat = checker._BIND_FSTAT_V1
+
+    def fail_binding_child_fstat(descriptor: int):
+        binding_seen.append(descriptor)
+        if len(binding_seen) == 3:
+            raise OSError(errno.EIO, "injected held-root child fstat failure")
+        return original_binding_fstat(descriptor)
+
+    checker._BIND_FSTAT_V1 = fail_binding_child_fstat
+    try:
+        try:
+            checker.bind_pinned_bundle_root(output.descriptor, binding_manifest)
+        except OSError as error:
+            if "injected held-root child fstat failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("held-root child fstat fault unexpectedly passed")
+    finally:
+        checker._BIND_FSTAT_V1 = original_binding_fstat
+    assert_descriptors_closed(
+        list(set(binding_seen)),
+        "bind_pinned_bundle_root",
+    )
+    if len(os.listdir("/proc/self/fd")) != binding_baseline:
+        raise AssertionError("held-root binding changed the fd baseline")
+
+    original_binding_open = checker._BIND_OPEN_V1
+
+    def fail_binding_open(*_args, **_kwargs):
+        raise OSError(errno.EIO, "injected held-root open failure")
+
+    checker._BIND_OPEN_V1 = fail_binding_open
+    try:
+        try:
+            checker.bind_pinned_bundle_root(output.descriptor, binding_manifest)
+        except OSError as error:
+            if "injected held-root open failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("held-root open fault unexpectedly passed")
+    finally:
+        checker._BIND_OPEN_V1 = original_binding_open
+    if len(os.listdir("/proc/self/fd")) != binding_baseline:
+        raise AssertionError("held-root open fault leaked a descriptor")
+
+    original_binding_scandir = checker._BIND_SCANDIR_V1
+
+    def fail_binding_scandir(_descriptor: int):
+        raise OSError(errno.EIO, "injected held-root scandir failure")
+
+    checker._BIND_SCANDIR_V1 = fail_binding_scandir
+    try:
+        try:
+            checker.bind_pinned_bundle_root(output.descriptor, binding_manifest)
+        except OSError as error:
+            if "injected held-root scandir failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("held-root scandir fault unexpectedly passed")
+    finally:
+        checker._BIND_SCANDIR_V1 = original_binding_scandir
+    if len(os.listdir("/proc/self/fd")) != binding_baseline:
+        raise AssertionError("held-root scandir fault leaked a descriptor")
+
+    original_binding_read = checker._BIND_READ_V1
+
+    def fail_binding_read(_descriptor: int, _count: int):
+        raise OSError(errno.EIO, "injected held-root read failure")
+
+    checker._BIND_READ_V1 = fail_binding_read
+    try:
+        try:
+            checker.bind_pinned_bundle_root(output.descriptor, binding_manifest)
+        except OSError as error:
+            if "injected held-root read failure" not in str(error):
+                raise
+        else:
+            raise AssertionError("held-root read fault unexpectedly passed")
+    finally:
+        checker._BIND_READ_V1 = original_binding_read
+    if len(os.listdir("/proc/self/fd")) != binding_baseline:
+        raise AssertionError("held-root read fault leaked a descriptor")
+    output.verify()
+
+    corrupted = output.path / "preflight/probe-fleet-v1.json"
+    corrupted.chmod(0o600)
+    corrupted.write_bytes(b"bad pinned original\n")
+    held = root / "held-pinned-original"
+    original_rename = assembler._RENAME_NOREPLACE_V1
+    rename_called = False
+
+    def validate_decoy(bundle: pathlib.Path, *, emit: bool = True):
+        path = pathlib.Path(bundle)
+        path.rename(held)
+        shutil.copytree(positive, path)
+        try:
+            return original_validate(path, emit=emit)
+        finally:
+            shutil.rmtree(path)
+            held.rename(path)
+
+    def reject_unexpected_rename(*_args, **_kwargs) -> None:
+        nonlocal rename_called
+        rename_called = True
+        raise AssertionError("invalid pinned root reached publication")
+
+    checker.validate = validate_decoy
+    assembler._RENAME_NOREPLACE_V1 = reject_unexpected_rename
+    try:
+        assert_system_exit(
+            output.publish,
+            "held bundle artifact",
+        )
+    finally:
+        checker.validate = original_validate
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+        output.close()
+    if rename_called or final_path.exists():
+        raise AssertionError("path-valid decoy caused an invalid pinned root publish")
+    if corrupted.read_bytes() != b"bad pinned original\n":
+        raise AssertionError("decoy control did not restore the pinned original")
+
+    valid_original_final = root / "valid-original-invalid-decoy-final"
+    valid_original = assembler.OutputTree.create(valid_original_final)
+    shutil.copytree(positive, valid_original.path, dirs_exist_ok=True)
+    valid_held = root / "held-valid-original"
+    mirror_rename_called = False
+
+    def validate_invalid_decoy(bundle: pathlib.Path, *, emit: bool = True):
+        path = pathlib.Path(bundle)
+        path.rename(valid_held)
+        shutil.copytree(positive, path)
+        invalid_decoy_artifact = path / "preflight/probe-fleet-v1.json"
+        invalid_decoy_artifact.chmod(0o600)
+        invalid_decoy_artifact.write_bytes(b"invalid pathname decoy\n")
+        try:
+            return original_validate(path, emit=emit)
+        finally:
+            shutil.rmtree(path)
+            valid_held.rename(path)
+
+    checker.validate = validate_invalid_decoy
+    assembler._RENAME_NOREPLACE_V1 = reject_unexpected_rename
+    try:
+        assert_system_exit(
+            valid_original.verify,
+            "content address differs",
+        )
+    finally:
+        checker.validate = original_validate
+        mirror_rename_called = rename_called
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+        valid_original.close()
+    if mirror_rename_called or valid_original_final.exists():
+        raise AssertionError("invalid pathname decoy produced a final output")
+
+    def prepared_output(label: str) -> tuple[assembler.OutputTree, pathlib.Path]:
+        prepared_final = root / f"{label}-final"
+        prepared = assembler.OutputTree.create(prepared_final)
+        shutil.copytree(positive, prepared.path, dirs_exist_ok=True)
+        prepared.verify()
+        return prepared, prepared_final
+
+    def reject_changed_binding(
+        prepared: assembler.OutputTree,
+        prepared_final: pathlib.Path,
+        expected: str,
+    ) -> None:
+        calls: list[str] = []
+
+        def unexpected_rename(*_args, **_kwargs) -> None:
+            calls.append("rename")
+            raise AssertionError("changed held binding reached renameat2")
+
+        assembler._RENAME_NOREPLACE_V1 = unexpected_rename
+        try:
+            assert_system_exit(prepared.publish, expected)
+        finally:
+            assembler._RENAME_NOREPLACE_V1 = original_rename
+            prepared.close()
+        if calls or prepared_final.exists():
+            raise AssertionError("changed held binding produced a final output")
+
+    extra_output, extra_final = prepared_output("held-extra-empty-directory")
+    (extra_output.path / "extra-empty-directory").mkdir()
+    reject_changed_binding(
+        extra_output,
+        extra_final,
+        "directory inventory is not the exact required closure",
+    )
+
+    file_output, file_final = prepared_output("held-identical-file-replacement")
+    file_target = file_output.path / "preflight/probe-fleet-v1.json"
+    file_payload = file_target.read_bytes()
+    held_file = root / "held-original-probe-file"
+    file_target.rename(held_file)
+    file_target.write_bytes(file_payload)
+    file_target.chmod(stat.S_IMODE(held_file.stat().st_mode))
+    reject_changed_binding(
+        file_output,
+        file_final,
+        "held bundle root changed after verification",
+    )
+
+    directory_output, directory_final = prepared_output(
+        "held-identical-subdirectory-replacement"
+    )
+    directory_target = directory_output.path / "preflight"
+    held_directory = root / "held-original-preflight-directory"
+    directory_target.rename(held_directory)
+    shutil.copytree(positive / "preflight", directory_target)
+    reject_changed_binding(
+        directory_output,
+        directory_final,
+        "held bundle root changed after verification",
+    )
+
+    if len(os.listdir("/proc/self/fd")) != baseline:
+        raise AssertionError("pinned-root decoy control leaked file descriptors")
+
+
 def prepublish_failure_and_atomic_collision_controls(
     source: dict[str, pathlib.Path | str], root: pathlib.Path
 ) -> None:
@@ -1233,6 +1548,46 @@ def prepublish_failure_and_atomic_collision_controls(
     if not committed_then_raised_final.is_dir():
         raise AssertionError("committed-then-raised rename lost the final inode")
     checker.validate(committed_then_raised_final, emit=False)
+
+    source_swap_final = root / "same-euid-source-swap-final"
+    held_source_swap = root / "held-source-before-rename"
+    foreign_source_bytes = b"foreign unverified source directory"
+
+    def swap_source_before_rename(
+        source_directory: int,
+        source_name: str,
+        target_directory: int,
+        target_name: str,
+    ) -> None:
+        staging = root / source_name
+        staging.rename(held_source_swap)
+        staging.mkdir(mode=0o700)
+        (staging / "foreign-secret").write_bytes(foreign_source_bytes)
+        original_rename(
+            source_directory,
+            source_name,
+            target_directory,
+            target_name,
+        )
+
+    assembler._RENAME_NOREPLACE_V1 = swap_source_before_rename
+    try:
+        assert_system_exit(
+            lambda: assemble_case(source, source_swap_final),
+            "publication is indeterminate after renameat2 succeeded",
+        )
+    finally:
+        assembler._RENAME_NOREPLACE_V1 = original_rename
+    if (
+        (source_swap_final / "foreign-secret").read_bytes()
+        != foreign_source_bytes
+        or not (held_source_swap / "manifest.json").is_file()
+    ):
+        raise AssertionError("source-name swap lost the foreign or verified inode")
+    assert_system_exit(
+        lambda: checker.validate(source_swap_final, emit=False),
+        "manifest.json is missing",
+    )
 
     indeterminate_final = root / "post-rename-fsync-failure-final"
     original_publish_fsync = assembler._PUBLISH_PARENT_FSYNC_V1
@@ -1466,6 +1821,7 @@ def main() -> None:
         fstat_fault_fd_controls(root)
         foreign_leaf_close_only_control(root)
         unverified_publish_control(root)
+        pinned_root_decoy_binding_control(positive, root)
         prepublish_failure_and_atomic_collision_controls(source, root)
         ancestor_swap_controls(root)
 
@@ -1612,6 +1968,12 @@ def main() -> None:
         "prepublish_failure_final_absent=true "
         "publish_collision_foreign=preserved postrename_failure=indeterminate "
         "rename_exception_identity_recheck=true "
+        "pinned_root_decoy=blocked cryptographic_content_equivalence_binding=true "
+        "checker_itself_fd_rooted=false path_alias_authority=false "
+        "binding_extra_directory=blocked binding_identical_inode_swap=blocked "
+        "binding_fault_fd_baseline=true binding_manifest_16m_plus_one=blocked "
+        "hostile_same_euid_postbinding=false "
+        "same_euid_source_swap=indeterminate postrename_inode_match=required "
         "successful_publish_inode=preserved successful_quarantine=absent "
         "double_slash_disjoint=blocked public_secret_prewrite=blocked "
         "oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked "

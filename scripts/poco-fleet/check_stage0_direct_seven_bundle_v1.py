@@ -55,6 +55,10 @@ import run_consensus_fleet as consensus_runner  # noqa: E402
 # ``fstat`` failure immediately after a child fd is opened and verifies that
 # ownership has already transferred to the enclosing pin.
 _FSTAT_V1 = os.fstat
+_BIND_FSTAT_V1 = os.fstat
+_BIND_OPEN_V1 = os.open
+_BIND_READ_V1 = os.read
+_BIND_SCANDIR_V1 = os.scandir
 
 
 PROFILE = "poco-g3-stage0-direct-seven-observation-bundle-v1"
@@ -323,6 +327,28 @@ class DirectoryIdentity:
     device: int
     inode: int
     mode: int
+
+
+@dataclass(frozen=True)
+class PinnedBundleEntryBinding:
+    path: str
+    kind: str
+    device: int
+    inode: int
+    mode: int
+    links: int
+    uid: int
+    gid: int
+    size: int
+    modified_ns: int
+    changed_ns: int
+    sha256: str | None
+
+
+@dataclass(frozen=True)
+class PinnedBundleRootBinding:
+    entries: tuple[PinnedBundleEntryBinding, ...]
+    manifest_sha256: str
 
 
 class PinnedDirectory:
@@ -999,6 +1025,237 @@ def tree_files(
         walk(pinned.descriptor, ())
         pinned.validate()
     return files
+
+
+def bind_pinned_bundle_root(
+    root_descriptor: int,
+    validated_manifest: dict[str, Any],
+) -> PinnedBundleRootBinding:
+    """Bind one path-validated result to every byte under a held root fd.
+
+    Some retained validators accept only ordinary pathnames.  Their complete
+    result is therefore accepted for staged publication only when the held
+    root contains the exact same canonical manifest, exact closed inventory,
+    and content-addressed artifact bytes.  Traversal and reads in this binding
+    step are exclusively ``openat``/``O_NOFOLLOW`` relative to a duplicated
+    root fd, so a temporary pathname replacement cannot select a decoy tree.
+    """
+
+    descriptor = os.dup(root_descriptor)
+    entries: list[PinnedBundleEntryBinding] = []
+    file_bindings: dict[str, PinnedBundleEntryBinding] = {}
+    manifest_bytes: bytes | None = None
+    entry_count = 0
+    total_bytes = 0
+
+    def identity(metadata: os.stat_result) -> tuple[int, ...]:
+        return (
+            metadata.st_dev,
+            metadata.st_ino,
+            metadata.st_mode,
+            metadata.st_nlink,
+            metadata.st_uid,
+            metadata.st_gid,
+            metadata.st_size,
+            metadata.st_mtime_ns,
+            metadata.st_ctime_ns,
+        )
+
+    def binding(
+        relative: str,
+        kind: str,
+        metadata: os.stat_result,
+        digest: str | None,
+    ) -> PinnedBundleEntryBinding:
+        return PinnedBundleEntryBinding(
+            path=relative,
+            kind=kind,
+            device=metadata.st_dev,
+            inode=metadata.st_ino,
+            mode=metadata.st_mode,
+            links=metadata.st_nlink,
+            uid=metadata.st_uid,
+            gid=metadata.st_gid,
+            size=metadata.st_size,
+            modified_ns=metadata.st_mtime_ns,
+            changed_ns=metadata.st_ctime_ns,
+            sha256=digest,
+        )
+
+    def walk(directory: int, prefix: tuple[str, ...]) -> None:
+        nonlocal entry_count, manifest_bytes, total_bytes
+        if len(prefix) > MAXIMUM_TREE_DEPTH:
+            fail("held bundle root crosses its directory-depth bound")
+        directory_before = _BIND_FSTAT_V1(directory)
+        if not stat.S_ISDIR(directory_before.st_mode):
+            fail("held bundle root contains a non-directory traversal fd")
+        observed: list[tuple[str, os.stat_result]] = []
+        with _BIND_SCANDIR_V1(directory) as iterator:
+            for entry in iterator:
+                entry_count += 1
+                if entry_count > MAXIMUM_FILE_COUNT:
+                    fail("held bundle root crosses its entry-count bound")
+                observed.append(
+                    (entry.name, entry.stat(follow_symlinks=False))
+                )
+        observed.sort(key=lambda item: item[0])
+        for name, before in observed:
+            relative_parts = (*prefix, name)
+            relative = pathlib.PurePosixPath(*relative_parts).as_posix()
+            if stat.S_ISLNK(before.st_mode):
+                fail(f"held bundle root contains symbolic link {relative!r}")
+            if stat.S_ISREG(before.st_mode):
+                if before.st_nlink != 1 or before.st_size > MAXIMUM_FILE_BYTES:
+                    fail(
+                        f"held bundle file {relative!r} is hardlinked or oversized"
+                    )
+                if total_bytes + before.st_size > MAXIMUM_BUNDLE_BYTES:
+                    fail("held bundle root crosses its aggregate-byte bound")
+                leaf = _BIND_OPEN_V1(
+                    name,
+                    os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                    dir_fd=directory,
+                )
+                try:
+                    opened = _BIND_FSTAT_V1(leaf)
+                    if identity(opened) != identity(before):
+                        fail(f"held bundle file {relative!r} changed while opening")
+                    digest = hashlib.sha256()
+                    captured: list[bytes] | None = (
+                        [] if relative == "manifest.json" else None
+                    )
+                    size = 0
+                    while chunk := _BIND_READ_V1(leaf, 1024 * 1024):
+                        size += len(chunk)
+                        if size > MAXIMUM_FILE_BYTES:
+                            fail(f"held bundle file {relative!r} grew past its bound")
+                        if captured is not None and size > MAXIMUM_JSON_BYTES:
+                            fail("held bundle manifest crosses its JSON byte bound")
+                        digest.update(chunk)
+                        if captured is not None:
+                            captured.append(chunk)
+                    after = _BIND_FSTAT_V1(leaf)
+                    linked = os.stat(name, dir_fd=directory, follow_symlinks=False)
+                    if (
+                        identity(after) != identity(before)
+                        or identity(linked) != identity(before)
+                        or size != before.st_size
+                    ):
+                        fail(f"held bundle file {relative!r} changed while hashing")
+                    if captured is not None:
+                        manifest_bytes = b"".join(captured)
+                finally:
+                    os.close(leaf)
+                item = binding(relative, "file", before, digest.hexdigest())
+                entries.append(item)
+                file_bindings[relative] = item
+                total_bytes += size
+                if total_bytes > MAXIMUM_BUNDLE_BYTES:
+                    fail("held bundle root crosses its aggregate-byte bound")
+            elif stat.S_ISDIR(before.st_mode):
+                child = _BIND_OPEN_V1(
+                    name,
+                    os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_DIRECTORY,
+                    dir_fd=directory,
+                )
+                try:
+                    opened = _BIND_FSTAT_V1(child)
+                    if identity(opened) != identity(before):
+                        fail(
+                            f"held bundle directory {relative!r} changed while opening"
+                        )
+                    walk(child, relative_parts)
+                    after = _BIND_FSTAT_V1(child)
+                    linked = os.stat(name, dir_fd=directory, follow_symlinks=False)
+                    if (
+                        identity(after) != identity(before)
+                        or identity(linked) != identity(before)
+                    ):
+                        fail(
+                            f"held bundle directory {relative!r} changed during traversal"
+                        )
+                finally:
+                    os.close(child)
+                entries.append(binding(relative, "directory", before, None))
+            else:
+                fail(f"held bundle root contains non-file entry {relative!r}")
+        directory_after = _BIND_FSTAT_V1(directory)
+        if identity(directory_after) != identity(directory_before):
+            fail("held bundle directory changed during its fd-relative traversal")
+
+    try:
+        root_before = _BIND_FSTAT_V1(descriptor)
+        if not stat.S_ISDIR(root_before.st_mode):
+            fail("held bundle root fd is not a directory")
+        walk(descriptor, ())
+        root_after = _BIND_FSTAT_V1(descriptor)
+        if identity(root_after) != identity(root_before):
+            fail("held bundle root changed during its fd-relative binding")
+        entries.append(binding(".", "directory", root_before, None))
+    finally:
+        os.close(descriptor)
+
+    artifacts = validated_manifest.get("artifacts")
+    if not isinstance(artifacts, list) or not artifacts:
+        fail("validated manifest lost its artifact inventory before fd binding")
+    expected_files = {"manifest.json"}
+    for index, artifact in enumerate(artifacts):
+        if not isinstance(artifact, dict):
+            fail(f"validated manifest artifact {index} is not an object")
+        relative = safe_relative(
+            artifact.get("path"), f"validated manifest artifacts[{index}].path"
+        ).as_posix()
+        if relative in expected_files:
+            fail("validated manifest artifact inventory is not unique")
+        expected_files.add(relative)
+        observed = file_bindings.get(relative)
+        expected_size = artifact.get("bytes")
+        expected_digest = artifact.get("sha256")
+        if (
+            observed is None
+            or isinstance(expected_size, bool)
+            or not isinstance(expected_size, int)
+            or observed.size != expected_size
+            or not isinstance(expected_digest, str)
+            or HEX64.fullmatch(expected_digest) is None
+            or observed.sha256 != expected_digest
+        ):
+            fail(
+                f"held bundle artifact {relative!r} differs from the "
+                "path-validated content address"
+            )
+    if set(file_bindings) != expected_files:
+        fail("held bundle file inventory differs from the validated manifest")
+    expected_directories = {"."}
+    for relative in expected_files:
+        parts = pathlib.PurePosixPath(relative).parts[:-1]
+        for length in range(1, len(parts) + 1):
+            expected_directories.add(
+                pathlib.PurePosixPath(*parts[:length]).as_posix()
+            )
+    observed_directories = {
+        item.path for item in entries if item.kind == "directory"
+    }
+    if observed_directories != expected_directories:
+        fail("held bundle directory inventory is not the exact required closure")
+    canonical_manifest = canonical_json(validated_manifest)
+    manifest_binding = file_bindings["manifest.json"]
+    manifest_digest = hashlib.sha256(canonical_manifest).hexdigest()
+    if (
+        manifest_bytes != canonical_manifest
+        or validated_manifest.get("ordered_artifact_root")
+        != ordered_artifact_root(artifacts)
+        or manifest_binding.size != len(canonical_manifest)
+        or manifest_binding.sha256 != manifest_digest
+    ):
+        fail(
+            "held bundle manifest bytes or ordered artifact root differ from "
+            "the path-validated result"
+        )
+    return PinnedBundleRootBinding(
+        entries=tuple(sorted(entries, key=lambda item: (item.path, item.kind))),
+        manifest_sha256=manifest_digest,
+    )
 
 
 def verify_ref(
