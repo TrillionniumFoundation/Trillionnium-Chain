@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import importlib.util
 import pathlib
@@ -37,14 +38,42 @@ def expect_system_exit(action, contains: str) -> None:
         raise AssertionError("negative control unexpectedly succeeded")
 
 
-def process(host_id: str, management: str) -> object:
+def process(
+    host_id: str,
+    management: str,
+    *,
+    runtime_alias: str = "v000",
+    validator_id: str | None = None,
+) -> object:
     return fleet.ValidatorProcess(
-        validator_id=hashlib.sha256(host_id.encode("ascii")).hexdigest(),
+        validator_id=validator_id
+        or hashlib.sha256(host_id.encode("ascii")).hexdigest(),
         host_id=host_id,
         management=management,
         deployment=pathlib.Path("/tmp") / host_id,
         config_relative=pathlib.PurePosixPath("public/config.json"),
+        runtime_alias=runtime_alias,
     )
+
+
+def process_set(routes: list[tuple[str, str]]) -> list[object]:
+    identities = {
+        host_id: hashlib.sha256(host_id.encode("ascii")).hexdigest()
+        for host_id, _management in routes
+    }
+    aliases = {
+        validator_id: f"v{ordinal:03d}"
+        for ordinal, validator_id in enumerate(sorted(identities.values()))
+    }
+    return [
+        process(
+            host_id,
+            management,
+            runtime_alias=aliases[identities[host_id]],
+            validator_id=identities[host_id],
+        )
+        for host_id, management in routes
+    ]
 
 
 def test_unique_json_and_remote_path() -> None:
@@ -54,11 +83,9 @@ def test_unique_json_and_remote_path() -> None:
         lambda: fleet.strict_json_bytes(b'{"a":1,"a":2}', "fixture"),
         "duplicate JSON key",
     )
-    assert fleet.shell_path(
-        "/tmp/trnm-poco-g3-network-smoke-safe/path-1"
-    ) == "/tmp/trnm-poco-g3-network-smoke-safe/path-1"
+    assert fleet.shell_path("/tmp/tp3-safe/path-1") == "/tmp/tp3-safe/path-1"
     expect_system_exit(
-        lambda: fleet.shell_path("/tmp/trnm-poco-g3-network-smoke-x;touch-bad"),
+        lambda: fleet.shell_path("/tmp/tp3-x;touch-bad"),
         "unsafe",
     )
 
@@ -121,14 +148,16 @@ def test_partial_stage_creation_cleans_exact_prior_root() -> None:
             raise subprocess.CalledProcessError(1, arguments)
         return completed()
 
-    fixtures = [process("alpha", "alpha-route"), process("beta", "beta-route")]
+    fixtures = process_set([("alpha", "alpha-route"), ("beta", "beta-route")])
+    plan = fleet.preflight_runtime_layout(
+        fixtures,
+        "poco-g3-7-20260813T120000Z-00000000",
+        pathlib.Path("/evidence/run"),
+    )
+    plan.pop("mac")
     with mock.patch.object(fleet, "run_checked", side_effect=fake_run):
         try:
-            fleet.create_stages(
-                fixtures,
-                "poco-g3-7-20260813T120000Z-00000000",
-                pathlib.Path("/evidence/run"),
-            )
+            fleet._materialize_stages(plan)
         except subprocess.CalledProcessError:
             pass
         else:
@@ -137,29 +166,30 @@ def test_partial_stage_creation_cleans_exact_prior_root() -> None:
     cleanup = calls[2:]
     assert all(call[0] == "ssh" and "rm -rf --" in call[-1] for call in cleanup)
     assert {call[-2] for call in cleanup} == {"alpha-route", "beta-route"}
-    assert any("alpha" in call[-1] for call in cleanup)
-    assert any("beta" in call[-1] for call in cleanup)
+    assert {call[-1].split("rm -rf -- ", 1)[1] for call in cleanup} == {
+        plan["alpha"].root,
+        plan["beta"].root,
+    }
 
 
 def test_local_stage_creates_private_deployment_directories() -> None:
     with tempfile.TemporaryDirectory(prefix="poco-g3-local-stage-test-") as raw:
-        prefix = pathlib.Path(raw) / "stage"
         fixture = process("local", "local")
-        with mock.patch.object(fleet, "REMOTE_STAGE_PREFIX", str(prefix)):
-            stages = fleet.create_stages(
-                [fixture],
-                "poco-g3-7-20260813T120000Z-00000000",
-                pathlib.Path(raw) / "evidence",
-            )
-            stage = stages["local"]
-            assert stage.local_path is not None
-            assert stage.local_path.stat().st_mode & 0o777 == 0o700
-            for relative in ("bin", "validators"):
-                child = stage.local_path / relative
-                assert child.is_dir()
-                assert child.stat().st_mode & 0o777 == 0o700
-            fleet.clean_stages(stages)
-            assert not stage.local_path.exists()
+        plan = fleet.preflight_runtime_layout(
+            [fixture],
+            "poco-g3-7-20260813T120000Z-00000000",
+            pathlib.Path(raw) / "evidence",
+        )
+        stages = fleet._materialize_stages({"local": plan["local"]})
+        stage = stages["local"]
+        assert stage.local_path is not None
+        assert stage.local_path.stat().st_mode & 0o777 == 0o700
+        for relative in ("bin", "v"):
+            child = stage.local_path / relative
+            assert child.is_dir()
+            assert child.stat().st_mode & 0o777 == 0o700
+        fleet.clean_stages(stages)
+        assert not stage.local_path.exists()
 
 
 def test_remote_binary_hash_mismatch_is_rejected() -> None:
@@ -171,7 +201,7 @@ def test_remote_binary_hash_mismatch_is_rejected() -> None:
         stage = fleet.HostStage(
             "remote",
             "remote-route",
-            "/tmp/trnm-poco-g3-network-smoke-test",
+            "/tmp/tp3-test",
             None,
         )
         with mock.patch.object(
@@ -185,22 +215,26 @@ def test_remote_binary_hash_mismatch_is_rejected() -> None:
             )
 
 
-def test_observer_stage_is_registered_before_later_copy_failure() -> None:
-    stages = {
-        "local": fleet.HostStage(
-            "local",
-            "local",
-            "/tmp/trnm-poco-g3-network-smoke-local",
-            pathlib.Path("/tmp/trnm-poco-g3-network-smoke-local"),
-        )
-    }
+def test_deploy_uses_frozen_alias_and_observer_stage() -> None:
     fixtures = [process("local", "local")]
+    stages = fleet.preflight_runtime_layout(
+        fixtures,
+        "poco-g3-7-20260813T120000Z-00000000",
+        pathlib.Path("/evidence/deploy"),
+    )
+    copied: list[tuple[str, str]] = []
     with mock.patch.object(fleet, "run_checked", return_value=completed()), mock.patch.object(
         fleet, "require_binary", side_effect=lambda path, _expected, _field: path
     ), mock.patch.object(
         fleet,
         "copy_binary",
         side_effect=("/tmp/linux-validator", OSError("observer copy failed")),
+    ), mock.patch.object(
+        fleet,
+        "copy_directory_as",
+        side_effect=lambda _source, _stage, relative, name: copied.append(
+            (relative, name)
+        ),
     ), mock.patch.object(fleet, "copy_directory"):
         try:
             fleet.deploy(
@@ -218,6 +252,198 @@ def test_observer_stage_is_registered_before_later_copy_failure() -> None:
             raise AssertionError("observer copy negative control succeeded")
     assert "mac" in stages
     assert stages["mac"].management == "p4-mac"
+    assert copied == [("v", "v000")]
+
+
+def test_public_projection_and_remote_scp_land_at_exact_alias() -> None:
+    fixture = process("alpha", "alpha-route")
+    projection = fleet.public_process_projection(fixture)
+    assert set(projection) == {
+        "validator_id",
+        "host_id",
+        "management",
+        "deployment",
+        "config_relative",
+    }
+    assert "runtime_alias" not in projection
+    with tempfile.TemporaryDirectory(prefix="poco-g3-scp-alias-test-") as raw:
+        source = pathlib.Path(raw) / fixture.validator_id
+        source.mkdir()
+        (source / "manifest.json").write_text("{}", encoding="utf-8")
+        stage = fleet.HostStage(
+            "alpha",
+            "alpha-route",
+            "/tmp/tp3-0123456789abcdef0123",
+            None,
+        )
+        calls: list[list[str]] = []
+
+        def fake_run(arguments: list[str], **_kwargs) -> subprocess.CompletedProcess[bytes]:
+            calls.append(arguments)
+            return completed()
+
+        with mock.patch.object(fleet, "run_checked", side_effect=fake_run):
+            fleet.copy_directory_as(source, stage, "v", fixture.runtime_alias)
+        exact = f"{stage.root}/v/{fixture.runtime_alias}"
+        assert calls[0][-1] == f"set -eu; test ! -e {exact}"
+        assert calls[1] == [
+            "scp",
+            "-q",
+            "-r",
+            str(source),
+            f"alpha-route:{exact}",
+        ]
+        assert f"test -f {exact}/manifest.json" in calls[2][-1]
+        assert f"test ! -e {exact}/{fixture.validator_id}" in calls[2][-1]
+
+
+def test_runtime_layout_exact_bounds_aliases_and_old_207_bytes() -> None:
+    fixtures = [
+        process(
+            "alpha",
+            "alpha-route",
+            runtime_alias=f"v{index:03d}",
+            validator_id=f"{index:064x}",
+        )
+        for index in range(100)
+    ]
+    run_id = "poco-g3-100-20260813T120000Z-00000000"
+    plan = fleet.preflight_runtime_layout(
+        fixtures, run_id, pathlib.Path("/evidence/hundred")
+    )
+    assert fixtures[0].runtime_alias == "v000"
+    assert fixtures[-1].runtime_alias == "v099"
+    assert len({fleet.validator_stage_root(item, plan["alpha"]) for item in fixtures}) == 100
+    assert run_id not in plan["alpha"].root
+    maximum = fleet.runtime_control_socket_path(
+        fleet.validator_stage_root(fixtures[-1], plan["alpha"]),
+        2,
+        fleet.MAX_RUNTIME_CONTROL_GENERATION,
+    )
+    assert len(maximum.encode("utf-8")) == 100
+    assert len(
+        fleet.runtime_control_socket_path(
+            fleet.validator_stage_root(fixtures[-1], plan["alpha"]), 2, 17
+        ).encode("utf-8")
+    ) <= 100
+
+    old_prefix = "/tmp/trnm-poco-g3-network-smoke"
+    old_stage = (
+        f"{old_prefix}-poco-g3-7-20260821T000000Z-1234abcd-"
+        f"x230a-{'0' * 12}"
+    )
+    old_root = f"{old_stage}/validators/{'0' * 64}"
+    old_socket = f"{old_root}/runtime-control.instance-1.generation-1.sock"
+    assert len(old_socket.encode("utf-8")) == 207
+    with mock.patch.object(fleet, "REMOTE_STAGE_PREFIX", old_prefix), mock.patch.object(
+        fleet.pathlib.Path, "mkdir", side_effect=AssertionError("mkdir effect")
+    ), mock.patch.object(
+        fleet, "run_checked", side_effect=AssertionError("SSH/SCP effect")
+    ), mock.patch.object(
+        fleet, "write_new", side_effect=AssertionError("output effect")
+    ), mock.patch.object(
+        fleet.subprocess, "Popen", side_effect=AssertionError("Popen effect")
+    ):
+        expect_system_exit(
+            lambda: fleet.runtime_control_socket_path(old_root, 1, 1),
+            "portable bound",
+        )
+
+    fleet.require_runtime_control_socket_path_bound("a" * 100)
+    expect_system_exit(
+        lambda: fleet.require_runtime_control_socket_path_bound("a" * 101),
+        "portable bound",
+    )
+    assert len(("é" * 50).encode("utf-8")) == 100
+    fleet.require_runtime_control_socket_path_bound("é" * 50)
+    expect_system_exit(
+        lambda: fleet.require_runtime_control_socket_path_bound("é" * 51),
+        "portable bound",
+    )
+    source = (HERE / "run_network_smoke_fleet.py").read_text(encoding="utf-8")
+    layout = "stage_plan = preflight_runtime_layout("
+    assert source.index(layout) < source.index("if args.plan_only:")
+    assert source.index(layout) < source.index("output.mkdir(")
+    assert source.index(layout) < source.index("stages = create_stages(")
+
+
+def test_layout_tamper_collision_and_negative_preflight_have_no_effects() -> None:
+    first = process("alpha", "alpha-route")
+    tampered = process(
+        "alpha",
+        "alpha-route",
+        runtime_alias="v001",
+        validator_id=first.validator_id,
+    )
+    with mock.patch.object(
+        fleet.pathlib.Path, "mkdir", side_effect=AssertionError("mkdir effect")
+    ), mock.patch.object(
+        fleet, "run_checked", side_effect=AssertionError("SSH/SCP effect")
+    ), mock.patch.object(
+        fleet, "write_new", side_effect=AssertionError("output effect")
+    ), mock.patch.object(
+        fleet.subprocess, "Popen", side_effect=AssertionError("Popen effect")
+    ):
+        expect_system_exit(
+            lambda: fleet.preflight_runtime_layout(
+                [tampered],
+                "poco-g3-7-20260813T120000Z-00000000",
+                pathlib.Path("/evidence/tampered"),
+            ),
+            "sorted fixed-width mapping",
+        )
+
+    duplicates = [first, first]
+    expect_system_exit(
+        lambda: fleet.preflight_runtime_layout(
+            duplicates,
+            "poco-g3-7-20260813T120000Z-00000000",
+            pathlib.Path("/evidence/duplicate"),
+        ),
+        "duplicate validator IDs",
+    )
+    run_id = "poco-g3-7-20260813T120000Z-00000000"
+    output = pathlib.Path("/evidence/frozen")
+    frozen = fleet.preflight_runtime_layout([first], run_id, output)
+    try:
+        frozen["alpha"].root = "/tmp/tp3-ffffffffffffffffffff"
+    except dataclasses.FrozenInstanceError:
+        pass
+    else:
+        raise AssertionError("frozen host stage accepted mutation")
+    tampered_plan = dict(frozen)
+    tampered_plan["alpha"] = dataclasses.replace(
+        frozen["alpha"], root="/tmp/tp3-ffffffffffffffffffff"
+    )
+    with mock.patch.object(
+        fleet, "_materialize_stages", side_effect=AssertionError("materialized tamper")
+    ):
+        expect_system_exit(
+            lambda: fleet.create_stages(
+                tampered_plan, processes=[first], run_id=run_id, output=output
+            ),
+            "differs from the frozen runtime layout",
+        )
+    fixtures = process_set([("alpha", "alpha-route"), ("beta", "beta-route")])
+
+    def colliding_stage(**values) -> object:
+        return fleet.HostStage(
+            values["host_id"],
+            values["management"],
+            f"{fleet.REMOTE_STAGE_PREFIX}-{'0' * fleet.REMOTE_STAGE_TOKEN_HEX}",
+            None,
+            values["children"],
+        )
+
+    with mock.patch.object(fleet, "_host_stage", side_effect=colliding_stage):
+        expect_system_exit(
+            lambda: fleet.preflight_runtime_layout(
+                fixtures,
+                "poco-g3-7-20260813T120000Z-00000000",
+                pathlib.Path("/evidence/collision"),
+            ),
+            "roots collide",
+        )
 
 
 def main() -> None:
@@ -227,12 +453,19 @@ def main() -> None:
     test_partial_stage_creation_cleans_exact_prior_root()
     test_local_stage_creates_private_deployment_directories()
     test_remote_binary_hash_mismatch_is_rejected()
-    test_observer_stage_is_registered_before_later_copy_failure()
+    test_deploy_uses_frozen_alias_and_observer_stage()
+    test_public_projection_and_remote_scp_land_at_exact_alias()
+    test_runtime_layout_exact_bounds_aliases_and_old_207_bytes()
+    test_layout_tamper_collision_and_negative_preflight_have_no_effects()
     print(
-        "poco_g3_network_smoke_fleet_test=passed positives=6 negatives=7 "
+        "poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15 "
         "unique_json=true safe_remote_paths=true input_symlinks_rejected=true file_backed_process_io=true partial_cleanup=true "
-        "local_stage_directories=true remote_binary_hash=true observer_stage_cleanup_registered=true "
-        "validator_run_completed=false g3_complete=false geo_wan=false"
+        "local_stage_directories=true remote_binary_hash=true frozen_alias_deploy=true exact_scp_alias=true public_schema_unchanged=true "
+        "runtime_stage_short=true aliases_100_unique=true socket_bytes_100_accepted=true "
+        "socket_bytes_101_rejected=true generation_u64_max_bound=true old_207_rejected=true "
+        "layout_collision_rejected=true frozen_stage_plan=true preflight_effects_zero=true plan_only_layout_frozen=true "
+        "validator_run_completed=false fault_matrix_completed=false performance_evidence=false "
+        "g3_complete=false geo_wan=false production_activation=false"
     )
 
 

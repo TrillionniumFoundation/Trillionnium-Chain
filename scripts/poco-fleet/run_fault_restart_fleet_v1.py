@@ -195,7 +195,7 @@ def exact_remote_root(value: str) -> str:
 
 
 def validator_root(process: base.ValidatorProcess, stage: base.HostStage) -> str:
-    return exact_remote_root(f"{stage.root}/validators/{process.validator_id}")
+    return exact_remote_root(base.validator_stage_root(process, stage))
 
 
 def validator_config(process: base.ValidatorProcess, stage: base.HostStage) -> str:
@@ -1969,7 +1969,13 @@ def execute_campaign(
     max_blocks: int,
     fault_window_seconds: int,
     plan: dict[str, Any],
+    stage_plan: dict[str, base.HostStage],
 ) -> None:
+    expected_stage_plan = base.preflight_runtime_layout(
+        processes, manifest["run_id"], output
+    )
+    if stage_plan != expected_stage_plan:
+        fail("fault runner stage plan differs from the frozen runtime layout")
     # This check deliberately precedes output creation, deployment, process
     # launch, and driver pinning.  A vocabulary entry is not permission to
     # inject a fault whose authoritative observation path does not yet exist.
@@ -2031,7 +2037,9 @@ def execute_campaign(
     )
     started_ns = time.monotonic_ns()
     try:
-        stages = base.create_stages(processes, run_id, output)
+        stages = base.create_stages(
+            stage_plan, processes=processes, run_id=run_id, output=output
+        )
         linux_paths, mac_binary, observer_root = base.deploy(
             stages,
             processes,
@@ -2338,6 +2346,8 @@ def main() -> None:
     coordinator = base.require_private_directory(args.coordinator_root, "coordinator root")
     deployments = base.require_private_directory(args.deployment_root, "deployment root")
     manifest, _topology, processes = base.load_contract(coordinator, deployments, 7)
+    output = pathlib.Path(os.path.abspath(args.output))
+    stage_plan = base.preflight_runtime_layout(processes, manifest["run_id"], output)
     candidate = manifest["candidate"]
     linux_binary = base.require_binary(
         args.linux_binary, candidate["linux_x86_64_sha256"], "Linux binary"
@@ -2359,7 +2369,6 @@ def main() -> None:
     if args.plan_only:
         print(json.dumps(plan, indent=2, sort_keys=True))
         return
-    output = args.output.absolute()
     if output.exists() or output.is_symlink():
         fail("output root already exists; fault observations are immutable")
     try:
@@ -2381,6 +2390,7 @@ def main() -> None:
         max_blocks=args.max_blocks,
         fault_window_seconds=args.fault_window_seconds,
         plan=plan,
+        stage_plan=stage_plan,
     )
 
 

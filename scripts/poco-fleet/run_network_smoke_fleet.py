@@ -37,7 +37,22 @@ RUN_ID = re.compile(r"^poco-g3-(7|31|100)-[0-9]{8}T[0-9]{6}Z-[0-9a-f]{8}$")
 VALIDATOR_ID = re.compile(r"^[0-9a-f]{64}$")
 HOST_ID = re.compile(r"^[a-z][a-z0-9-]{0,31}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
-REMOTE_STAGE_PREFIX = "/tmp/trnm-poco-g3-network-smoke"
+# Runtime-control uses an AF_UNIX pathname with a portable 100-byte ceiling.
+# Keep the host stage intentionally short; identity remains in signed material,
+# not in the filesystem spelling.  The 80-bit token is bound to the complete
+# run/host/output tuple and every existing/colliding root is rejected before
+# use.
+REMOTE_STAGE_PREFIX = "/tmp/tp3"
+REMOTE_STAGE_TOKEN_HEX = 20
+VALIDATOR_RUNTIME_DIRECTORY = "v"
+VALIDATOR_RUNTIME_ALIAS = re.compile(r"^v[0-9]{3}$")
+MAX_RUNTIME_CONTROL_SOCKET_PATH_BYTES = 100
+MAX_RUNTIME_CONTROL_PROCESS_INSTANCE = 2
+MAX_SUPPORTED_RESTART_GENERATION = 1_024
+MAX_RUNTIME_CONTROL_GENERATION = (1 << 64) - 1
+RUNTIME_CONTROL_SOCKET_PREFIX = "runtime-control"
+OBSERVER_HOST_ID = "mac"
+OBSERVER_MANAGEMENT = "p4-mac"
 MAX_REPORT_BYTES = 8 * 1024 * 1024
 MAX_PROCESS_IO_BYTES = 16 * 1024 * 1024
 
@@ -147,14 +162,16 @@ class ValidatorProcess:
     management: str
     deployment: pathlib.Path
     config_relative: pathlib.PurePosixPath
+    runtime_alias: str
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class HostStage:
     host_id: str
     management: str
     root: str
     local_path: pathlib.Path | None
+    children: tuple[str, ...] = ("bin", VALIDATOR_RUNTIME_DIRECTORY)
 
     @property
     def remote(self) -> bool:
@@ -167,6 +184,18 @@ class ProcessCapture:
     stderr_path: pathlib.Path
     stdout: Any
     stderr: Any
+
+
+def public_process_projection(process: ValidatorProcess) -> dict[str, str]:
+    """Project the frozen public runner schema without local locator aliases."""
+
+    return {
+        "validator_id": process.validator_id,
+        "host_id": process.host_id,
+        "management": process.management,
+        "deployment": str(process.deployment),
+        "config_relative": process.config_relative.as_posix(),
+    }
 
 
 def open_process_capture(root: pathlib.Path, validator_id: str) -> ProcessCapture:
@@ -299,7 +328,7 @@ def load_contract(
         ):
             fail("topology management inventory is non-canonical")
         management[host_id] = selected
-    processes: list[ValidatorProcess] = []
+    records: list[tuple[str, str, pathlib.Path, pathlib.PurePosixPath]] = []
     for record in validators:
         if not isinstance(record, dict):
             fail("topology validator is not an object")
@@ -315,71 +344,273 @@ def load_contract(
         root = deployments / validator_id
         if root.resolve(strict=True).parent != deployments:
             fail("validator deployment escapes deployment root")
-        processes.append(
-            ValidatorProcess(
-                validator_id=validator_id,
-                host_id=host_id,
-                management=management[host_id],
-                deployment=root,
-                config_relative=pathlib.PurePosixPath(
-                    f"public/configs/{validator_id}.json"
-                ),
+        records.append(
+            (
+                validator_id,
+                host_id,
+                root,
+                pathlib.PurePosixPath(f"public/configs/{validator_id}.json"),
             )
         )
-    if len(processes) != validator_count:
+    if len(records) != validator_count:
         fail("topology process count differs from command")
+    validator_ids = [validator_id for validator_id, _host, _root, _config in records]
+    if len(set(validator_ids)) != validator_count:
+        fail("topology validator identities are duplicated")
+    alias_by_validator = {
+        validator_id: f"v{ordinal:03d}"
+        for ordinal, validator_id in enumerate(sorted(validator_ids))
+    }
+    if (
+        len(set(alias_by_validator.values())) != validator_count
+        or any(
+            VALIDATOR_RUNTIME_ALIAS.fullmatch(alias) is None
+            for alias in alias_by_validator.values()
+        )
+    ):
+        fail("validator runtime alias mapping is outside its fixed-width profile")
+    processes = [
+        ValidatorProcess(
+            validator_id=validator_id,
+            host_id=host_id,
+            management=management[host_id],
+            deployment=root,
+            config_relative=config_relative,
+            runtime_alias=alias_by_validator[validator_id],
+        )
+        for validator_id, host_id, root, config_relative in records
+    ]
     return manifest, topology, processes
 
 
 def shell_path(value: str) -> str:
-    if not value.startswith(f"{REMOTE_STAGE_PREFIX}-") or any(
-        character not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/_-."
-        for character in value
+    prefix = f"{REMOTE_STAGE_PREFIX}-"
+    path = pathlib.PurePosixPath(value)
+    if (
+        not REMOTE_STAGE_PREFIX.startswith("/")
+        or not value.startswith(prefix)
+        or not path.is_absolute()
+        or path.as_posix() != value
+        or any(part in {"", ".", ".."} for part in path.parts)
+        or any(
+            character
+            not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/_-."
+            for character in value
+        )
     ):
         fail("generated remote stage path is unsafe")
     return shlex.quote(value)
 
 
-def create_stages(
+def runtime_control_socket_path(
+    run_root: str,
+    process_instance: int,
+    generation: int,
+) -> str:
+    """Mirror Rust's exact AF_UNIX locator and its portable byte bound."""
+
+    if (
+        isinstance(process_instance, bool)
+        or not isinstance(process_instance, int)
+        or not 1 <= process_instance <= MAX_RUNTIME_CONTROL_PROCESS_INSTANCE
+        or isinstance(generation, bool)
+        or not isinstance(generation, int)
+        or not 1 <= generation <= MAX_RUNTIME_CONTROL_GENERATION
+    ):
+        fail("runtime control instance/generation is outside its bounded profile")
+    shell_path(run_root)
+    path = (
+        f"{run_root}/{RUNTIME_CONTROL_SOCKET_PREFIX}.instance-{process_instance}."
+        f"generation-{generation}.sock"
+    )
+    require_runtime_control_socket_path_bound(path)
+    return path
+
+
+def require_runtime_control_socket_path_bound(path: str) -> None:
+    if len(path.encode("utf-8")) > MAX_RUNTIME_CONTROL_SOCKET_PATH_BYTES:
+        fail("runtime control socket path exceeds its portable bound")
+
+
+def validator_stage_root(process: ValidatorProcess, stage: HostStage) -> str:
+    """Return the sole deployed/runtime/replay root for one validator."""
+
+    if VALIDATOR_RUNTIME_ALIAS.fullmatch(process.runtime_alias) is None:
+        fail("validator runtime alias is non-canonical")
+    root = f"{stage.root}/{VALIDATOR_RUNTIME_DIRECTORY}/{process.runtime_alias}"
+    shell_path(root)
+    return root
+
+
+def _validate_runtime_aliases(processes: list[ValidatorProcess]) -> None:
+    if not processes or len(processes) > 100:
+        fail("validator runtime alias set crosses its 1..100 profile")
+    validator_ids = [process.validator_id for process in processes]
+    if (
+        any(VALIDATOR_ID.fullmatch(value) is None for value in validator_ids)
+        or len(set(validator_ids)) != len(validator_ids)
+    ):
+        fail("validator runtime alias set has invalid or duplicate validator IDs")
+    expected = {
+        validator_id: f"v{ordinal:03d}"
+        for ordinal, validator_id in enumerate(sorted(validator_ids))
+    }
+    aliases = [process.runtime_alias for process in processes]
+    if (
+        len(set(aliases)) != len(aliases)
+        or any(VALIDATOR_RUNTIME_ALIAS.fullmatch(value) is None for value in aliases)
+        or any(
+            process.runtime_alias != expected[process.validator_id]
+            for process in processes
+        )
+    ):
+        fail("validator runtime aliases differ from the sorted fixed-width mapping")
+
+
+def _host_stage(
+    *,
+    run_id: str,
+    host_id: str,
+    management: str,
+    output: pathlib.Path,
+    children: tuple[str, ...],
+) -> HostStage:
+    digest = hashlib.sha256(b"trnm-poco-g3-host-stage-v2")
+    for component in (
+        run_id.encode("ascii"),
+        host_id.encode("ascii"),
+        management.encode("utf-8"),
+        os.fsencode(output),
+    ):
+        digest.update(len(component).to_bytes(8, "big"))
+        digest.update(component)
+    token = digest.hexdigest()[:REMOTE_STAGE_TOKEN_HEX]
+    root = f"{REMOTE_STAGE_PREFIX}-{token}"
+    shell_path(root)
+    if len(token) != REMOTE_STAGE_TOKEN_HEX or re.fullmatch(r"[0-9a-f]+", token) is None:
+        fail("generated host stage token is non-canonical")
+    return HostStage(
+        host_id=host_id,
+        management=management,
+        root=root,
+        local_path=pathlib.Path(root) if management == "local" else None,
+        children=children,
+    )
+
+
+def preflight_runtime_layout(
     processes: list[ValidatorProcess],
     run_id: str,
     output: pathlib.Path,
 ) -> dict[str, HostStage]:
+    """Freeze one effect-free stage/alias/socket layout for all fleet runners."""
+
+    if RUN_ID.fullmatch(run_id) is None:
+        fail("runtime layout run_id is non-canonical")
+    if not output.is_absolute():
+        fail("runtime layout output root must be absolute")
+    _validate_runtime_aliases(processes)
+    stages: dict[str, HostStage] = {}
+    for process in processes:
+        if process.host_id == OBSERVER_HOST_ID:
+            fail("validator host collides with the reserved observer host")
+        prior = stages.get(process.host_id)
+        if prior is not None:
+            if prior.management != process.management:
+                fail("one host has conflicting management routes")
+            continue
+        stages[process.host_id] = _host_stage(
+            run_id=run_id,
+            host_id=process.host_id,
+            management=process.management,
+            output=output,
+            children=("bin", VALIDATOR_RUNTIME_DIRECTORY),
+        )
+    stages[OBSERVER_HOST_ID] = _host_stage(
+        run_id=run_id,
+        host_id=OBSERVER_HOST_ID,
+        management=OBSERVER_MANAGEMENT,
+        output=output,
+        children=("bin", "observer", "reports"),
+    )
+    roots = [stage.root for stage in stages.values()]
+    if len(set(roots)) != len(roots):
+        fail("generated host stage roots collide")
+    for process in processes:
+        root = validator_stage_root(process, stages[process.host_id])
+        # Ordinary process1, the currently exercised restart generation, the
+        # Python restart admission ceiling, and Rust's complete u64 spelling
+        # are all checked before any output, mkdir, SSH, SCP, or Popen effect.
+        for process_instance, generation in (
+            (1, 1),
+            (2, 17),
+            (2, MAX_SUPPORTED_RESTART_GENERATION),
+            (2, MAX_RUNTIME_CONTROL_GENERATION),
+        ):
+            runtime_control_socket_path(root, process_instance, generation)
+    return stages
+
+
+def create_stages(
+    stage_plan: dict[str, HostStage],
+    *,
+    processes: list[ValidatorProcess],
+    run_id: str,
+    output: pathlib.Path,
+) -> dict[str, HostStage]:
+    """Rebind and materialize the exact effect-free frozen stage plan."""
+
+    expected = preflight_runtime_layout(processes, run_id, output)
+    if stage_plan != expected:
+        fail("host stage plan differs from the frozen runtime layout")
+    return _materialize_stages(stage_plan)
+
+
+def _materialize_stages(stage_plan: dict[str, HostStage]) -> dict[str, HostStage]:
+    """Materialize a layout after ``create_stages`` has rebound it."""
+
     stages: dict[str, HostStage] = {}
     try:
-        for process in processes:
-            if process.host_id in stages:
-                if stages[process.host_id].management != process.management:
-                    fail("one host has conflicting management routes")
-                continue
-            nonce = hashlib.sha256(
-                f"{run_id}\0{process.host_id}\0{output}".encode("utf-8")
-            ).hexdigest()[:12]
-            name = f"{REMOTE_STAGE_PREFIX}-{run_id}-{process.host_id}-{nonce}"
-            if process.management == "local":
-                path = pathlib.Path(name)
+        for host_id in sorted(stage_plan):
+            planned = stage_plan[host_id]
+            if planned.host_id != host_id or not planned.children:
+                fail("host stage plan is non-canonical")
+            shell_path(planned.root)
+            if planned.management == "local":
+                path = pathlib.Path(planned.root)
                 if path.exists() or path.is_symlink():
                     fail("local stage already exists")
                 path.mkdir(mode=0o700)
                 stage = HostStage(
-                    process.host_id, process.management, str(path), path
+                    planned.host_id,
+                    planned.management,
+                    str(path),
+                    path,
+                    planned.children,
                 )
                 # Register the root before creating children so any partial
                 # local stage is removed by the shared exception cleanup.
-                stages[process.host_id] = stage
-                (path / "bin").mkdir(mode=0o700)
-                (path / "validators").mkdir(mode=0o700)
+                stages[host_id] = stage
+                for child in planned.children:
+                    (path / child).mkdir(mode=0o700)
             else:
-                quoted = shell_path(name)
+                quoted = shell_path(planned.root)
                 # Register the attempted root before the remote mutation. A
                 # failed compound mkdir may still have created its first
                 # directory, so the outer exception handler must clean it.
-                stages[process.host_id] = HostStage(
-                    process.host_id, process.management, name, None
+                stages[host_id] = HostStage(
+                    planned.host_id,
+                    planned.management,
+                    planned.root,
+                    None,
+                    planned.children,
+                )
+                children = " ".join(
+                    shell_path(f"{planned.root}/{child}") for child in planned.children
                 )
                 command = (
                     f"set -eu; umask 077; test ! -e {quoted}; "
-                    f"mkdir -m 700 {quoted}; mkdir -m 700 {quoted}/bin {quoted}/validators"
+                    f"mkdir -m 700 {quoted}; mkdir -m 700 {children}"
                 )
                 run_checked(
                     [
@@ -388,7 +619,7 @@ def create_stages(
                         "BatchMode=yes",
                         "-o",
                         "ConnectTimeout=15",
-                        process.management,
+                        planned.management,
                         command,
                     ],
                     timeout=30,
@@ -400,16 +631,75 @@ def create_stages(
 
 
 def copy_directory(source: pathlib.Path, stage: HostStage, relative: str) -> None:
+    destination_name = source.name
+    copy_directory_as(source, stage, relative, destination_name)
+
+
+def copy_directory_as(
+    source: pathlib.Path,
+    stage: HostStage,
+    relative: str,
+    destination_name: str,
+) -> None:
+    if (
+        not relative
+        or "/" in relative
+        or relative in {".", ".."}
+        or not destination_name
+        or "/" in destination_name
+        or destination_name in {".", ".."}
+    ):
+        fail("deployed directory destination is unsafe")
+    destination_path = f"{stage.root}/{relative}/{destination_name}"
+    shell_path(destination_path)
     if stage.remote:
-        destination = f"{stage.management}:{stage.root}/{relative}"
+        quoted_destination = shell_path(destination_path)
+        run_checked(
+            [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                stage.management,
+                f"set -eu; test ! -e {quoted_destination}",
+            ],
+            timeout=30,
+        )
+        destination = f"{stage.management}:{destination_path}"
         run_checked(
             ["scp", "-q", "-r", str(source), destination],
             timeout=300,
         )
+        manifest = shell_path(f"{destination_path}/manifest.json")
+        nested_basename = shell_path(f"{destination_path}/{source.name}")
+        run_checked(
+            [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                stage.management,
+                (
+                    f"set -eu; test -d {quoted_destination}; "
+                    f"test ! -L {quoted_destination}; test -f {manifest}; "
+                    f"test ! -L {manifest}; test ! -e {nested_basename}"
+                ),
+            ],
+            timeout=30,
+        )
     else:
         assert stage.local_path is not None
-        destination = stage.local_path / relative / source.name
+        destination = stage.local_path / relative / destination_name
         shutil.copytree(source, destination, symlinks=True)
+        manifest = destination / "manifest.json"
+        nested_basename = destination / source.name
+        if (
+            destination.is_symlink()
+            or not destination.is_dir()
+            or manifest.is_symlink()
+            or not manifest.is_file()
+            or nested_basename.exists()
+            or nested_basename.is_symlink()
+        ):
+            fail("deployed directory did not land at its exact alias root")
 
 
 def copy_binary(
@@ -471,7 +761,11 @@ def deploy(
         macos_binary, macos_expected_sha256, "macOS binary at deployment"
     )
     linux_paths: dict[str, str] = {}
-    for host_id, stage in stages.items():
+    validator_host_ids = {process.host_id for process in processes}
+    if set(stages) != validator_host_ids | {OBSERVER_HOST_ID}:
+        fail("materialized host stages differ from the frozen runtime layout")
+    for host_id in sorted(validator_host_ids):
+        stage = stages[host_id]
         linux_paths[host_id] = copy_binary(
             linux_binary,
             stage,
@@ -479,33 +773,19 @@ def deploy(
             linux_expected_sha256,
         )
     for process in processes:
-        copy_directory(process.deployment, stages[process.host_id], "validators")
+        copy_directory_as(
+            process.deployment,
+            stages[process.host_id],
+            VALIDATOR_RUNTIME_DIRECTORY,
+            process.runtime_alias,
+        )
 
-    mac_stage = HostStage(
-        "mac",
-        "p4-mac",
-        f"{REMOTE_STAGE_PREFIX}-observer-{hashlib.sha256(str(deployments).encode()).hexdigest()[:16]}",
-        None,
-    )
-    # Register the attempted observer root before its compound remote mkdir;
-    # partial remote creation must still be cleaned by the caller.
-    stages["mac"] = mac_stage
-    quoted = shell_path(mac_stage.root)
-    run_checked(
-        [
-            "ssh",
-            "-o",
-            "BatchMode=yes",
-            "-o",
-            "ConnectTimeout=15",
-            mac_stage.management,
-            (
-                f"set -eu; umask 077; test ! -e {quoted}; mkdir -m 700 {quoted}; "
-                f"mkdir -m 700 {quoted}/bin {quoted}/observer {quoted}/reports"
-            ),
-        ],
-        timeout=30,
-    )
+    mac_stage = stages[OBSERVER_HOST_ID]
+    if (
+        mac_stage.management != OBSERVER_MANAGEMENT
+        or mac_stage.children != ("bin", "observer", "reports")
+    ):
+        fail("observer stage differs from the frozen runtime layout")
     mac_binary_path = copy_binary(
         macos_binary,
         mac_stage,
@@ -524,7 +804,7 @@ def command_for(
     rounds: int,
     timeout_seconds: int,
 ) -> list[str]:
-    root = f"{stage.root}/validators/{process.validator_id}"
+    root = validator_stage_root(process, stage)
     config = f"{root}/{process.config_relative.as_posix()}"
     arguments = [
         binary,
@@ -610,6 +890,8 @@ def main() -> None:
     )
     coordinator_anchor = sha256_file(coordinator / "manifest.json")
     run_id = manifest["run_id"]
+    output = pathlib.Path(os.path.abspath(args.output))
+    stage_plan = preflight_runtime_layout(processes, run_id, output)
     plan = {
         "schema_version": 1,
         "profile": "frozen-v0-authenticated-network-smoke",
@@ -620,7 +902,7 @@ def main() -> None:
         "coordinator_manifest_sha256": coordinator_anchor,
         "rounds": args.rounds,
         "timeout_seconds": args.timeout_seconds,
-        "validators": [dataclasses.asdict(value) | {"deployment": str(value.deployment), "config_relative": value.config_relative.as_posix()} for value in processes],
+        "validators": [public_process_projection(value) for value in processes],
         "validator_run_completed": False,
         "fault_matrix_completed": False,
         "performance_evidence": False,
@@ -631,7 +913,6 @@ def main() -> None:
         print(json.dumps(plan, indent=2, sort_keys=True))
         return
 
-    output = args.output.absolute()
     if output.exists() or output.is_symlink():
         fail("output root already exists; run observations are immutable")
     try:
@@ -663,7 +944,9 @@ def main() -> None:
     failure: str | None = None
     cleanup_failures: list[str] = []
     try:
-        stages = create_stages(processes, run_id, output)
+        stages = create_stages(
+            stage_plan, processes=processes, run_id=run_id, output=output
+        )
         linux_paths, mac_binary_path, observer_root = deploy(
             stages,
             processes,

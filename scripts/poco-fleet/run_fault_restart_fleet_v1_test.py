@@ -54,6 +54,7 @@ def processes() -> list[fleet.base.ValidatorProcess]:
             config_relative=pathlib.PurePosixPath(
                 f"public/configs/{index + 1:064x}.json"
             ),
+            runtime_alias=f"v{index:03d}",
         )
         for index in range(7)
     ]
@@ -307,9 +308,13 @@ def main() -> None:
 
     assert fleet.validate_management("p4-desktop") == "p4-desktop"
     expect_failure(lambda: fleet.validate_management("-ProxyCommand=x"), "unsafe")
-    safe_root = "/tmp/trnm-poco-g3-network-smoke-run-host-abcdef"
+    safe_root = "/tmp/tp3-0123456789abcdef0123"
     assert fleet.exact_remote_root(safe_root) == safe_root
     expect_failure(lambda: fleet.exact_remote_root("/tmp/../../escape"), "unsafe")
+    safe_stage = fleet.base.HostStage("local", "local", safe_root, pathlib.Path(safe_root))
+    assert fleet.validator_root(validators[0], safe_stage) == (
+        fleet.base.validator_stage_root(validators[0], safe_stage)
+    )
 
     accepted_status = fleet.exact_status(
         status(),
@@ -587,11 +592,12 @@ def main() -> None:
             config_relative=pathlib.PurePosixPath(
                 f"public/configs/{certificate['selected_validator_id']}.json"
             ),
+            runtime_alias="v000",
         )
         observer_stage = fleet.base.HostStage(
             "mac",
             "p4-mac",
-            "/tmp/trnm-poco-g3-network-smoke-run-host-abcdef",
+            "/tmp/tp3-0123456789abcdef0123",
             None,
         )
         observer_calls: list[list[str]] = []
@@ -624,7 +630,7 @@ def main() -> None:
                 source=root / "fleet-start-certificate.bin",
                 mac_binary="/observer/trnm-poco-lab-validator",
                 observer_root=(
-                    "/tmp/trnm-poco-g3-network-smoke-run-host-abcdef/observer-public"
+                    "/tmp/tp3-0123456789abcdef0123/observer-public"
                 ),
                 observer_stage=observer_stage,
                 coordinator_anchor=certificate["coordinator_manifest_sha256"],
@@ -718,6 +724,9 @@ def main() -> None:
                 max_blocks=3,
                 fault_window_seconds=2,
                 plan=plan,
+                stage_plan=fleet.base.preflight_runtime_layout(
+                    validators, plan["run_id"], blocked_output
+                ),
             ),
             "no fault effect was applied",
         )
@@ -747,6 +756,13 @@ def main() -> None:
         assert cleanup_failures == []
         assert order == [steps[2].kind, steps[1].kind, steps[0].kind]
         assert active == []
+
+    source = (HERE / "run_fault_restart_fleet_v1.py").read_text(encoding="utf-8")
+    main_layout = "stage_plan = base.preflight_runtime_layout("
+    execute_layout = "expected_stage_plan = base.preflight_runtime_layout("
+    assert source.index(main_layout) < source.index("if args.plan_only:")
+    assert source.index(execute_layout) < source.index("output.mkdir(")
+    assert source.index(execute_layout) < source.index("fault_driver = pin_fault_driver(")
 
     print(
         "poco_g3_fault_restart_fleet_v1_test=passed positives=36 negatives=19 "

@@ -64,6 +64,7 @@ def process(management: str) -> object:
         management=management,
         deployment=pathlib.Path("/coordinator/deployments") / ("11" * 32),
         config_relative=pathlib.PurePosixPath("public/configs/local.json"),
+        runtime_alias="v000",
     )
 
 
@@ -289,7 +290,7 @@ def replay_archive_verification() -> tuple[
 
 def test_local_and_remote_commands() -> None:
     local_stage = fleet.base.HostStage(
-        "desktop", "local", "/tmp/trnm-poco-g3-network-smoke-local", pathlib.Path("/tmp")
+        "desktop", "local", "/tmp/tp3-local", pathlib.Path("/tmp")
     )
     local, report, journal, metrics, final_state, certificate = fleet.command_for(
         process("local"), local_stage, "/bin/v", 60, 100
@@ -303,7 +304,7 @@ def test_local_and_remote_commands() -> None:
     assert certificate.endswith("/fleet-start-certificate.bin")
 
     remote_stage = fleet.base.HostStage(
-        "desktop", "p4-desktop", "/tmp/trnm-poco-g3-network-smoke-remote", None
+        "desktop", "p4-desktop", "/tmp/tp3-remote", None
     )
     remote, remote_report, _, _, _, remote_certificate = fleet.command_for(
         process("p4-desktop"), remote_stage, "/stage/validator", 60, 100
@@ -313,6 +314,14 @@ def test_local_and_remote_commands() -> None:
     assert "run-consensus" in remote[-1]
     assert remote_report.endswith("/consensus-report.json")
     assert remote_certificate.endswith("/fleet-start-certificate.bin")
+    expected_root = fleet.base.validator_stage_root(
+        process("p4-desktop"), remote_stage
+    )
+    assert remote_report == f"{expected_root}/consensus-report.json"
+    replay_sources = fleet.replay_archive_sources_v1(
+        process("p4-desktop"), remote_stage
+    )
+    assert all(source.startswith(f"{expected_root}/") for source in replay_sources.values())
 
 
 def test_observer_fleet_certificate_command_and_strict_summary() -> None:
@@ -320,7 +329,7 @@ def test_observer_fleet_certificate_command_and_strict_summary() -> None:
     observer_stage = fleet.base.HostStage(
         "p4-mac",
         "p4-mac",
-        "/tmp/trnm-poco-g3-network-smoke-observer",
+        "/tmp/tp3-observer",
         None,
     )
     calls: list[list[str]] = []
@@ -861,11 +870,11 @@ def test_replay_archive_observer_contract() -> None:
     mac_stage = fleet.base.HostStage(
         "mac",
         "p4-mac",
-        "/tmp/trnm-poco-g3-network-smoke-run-mac-abcdef",
+        "/tmp/tp3-0123456789abcdef0123",
         None,
     )
     assert fleet.observer_sealed_reports_root_v1(mac_stage) == (
-        "/private/tmp/trnm-poco-g3-network-smoke-run-mac-abcdef/reports"
+        "/private/tmp/tp3-0123456789abcdef0123/reports"
     )
     expect_failure(
         lambda: fleet.observer_sealed_reports_root_v1(
@@ -1031,12 +1040,16 @@ def test_independent_anchor_and_output_boundary() -> None:
     topology = "runtime_topology_supported = validate_runtime_topology("
     coordinator_input = "coordinator = base.require_private_directory("
     preflight = "mesh_resources.preflight_mesh_fleet_resources_v1("
+    runtime_layout = "stage_plan = base.preflight_runtime_layout("
     output_effect = "output.mkdir("
     deployment_effect = "base.create_stages("
     assert '"--coordinator-manifest-sha256"' in source
     assert source.index(bounds) < source.index(coordinator_input)
     assert source.index(anchor) < source.index(preflight)
     assert source.index(topology) < source.index(coordinator_input)
+    assert source.index(runtime_layout) < source.index("if args.plan_only:")
+    assert source.index(runtime_layout) < source.index(output_effect)
+    assert source.index(runtime_layout) < source.index(deployment_effect)
     assert source.index(anchor) < source.index(output_effect)
     assert source.index(anchor) < source.index(deployment_effect)
     rust_config = (

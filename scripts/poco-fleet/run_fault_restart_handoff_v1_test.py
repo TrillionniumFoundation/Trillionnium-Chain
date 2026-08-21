@@ -40,6 +40,7 @@ def processes() -> list[fleet.base.ValidatorProcess]:
             config_relative=pathlib.PurePosixPath(
                 f"public/configs/{index + 1:064x}.json"
             ),
+            runtime_alias=f"v{index:03d}",
         )
         for index in range(7)
     ]
@@ -284,11 +285,11 @@ def main() -> None:
     )
 
     with tempfile.TemporaryDirectory(
-        prefix="trnm-poco-g3-network-smoke-handoff-test-", dir="/tmp"
+        prefix="tp3-handoff-test-", dir="/tmp"
     ) as raw:
         root = pathlib.Path(raw)
-        stage_root = root / "stage"
-        validator_private = stage_root / "validators" / target.validator_id
+        stage_root = root
+        validator_private = stage_root / "v" / target.runtime_alias
         validator_private.mkdir(parents=True, mode=0o700)
         stage = fleet.base.HostStage("local", "local", str(stage_root), stage_root)
         status_path = validator_private / fleet.CONTROL_STATUS_FILE
@@ -495,11 +496,12 @@ def main() -> None:
             management="p4-x230",
             deployment=validators[6].deployment,
             config_relative=validators[6].config_relative,
+            runtime_alias=validators[6].runtime_alias,
         )
         remote_stage = fleet.base.HostStage(
             "x230",
             "p4-x230",
-            "/tmp/trnm-poco-g3-network-smoke-handoff-remote",
+            "/tmp/tp3-0123456789abcdef0123",
             None,
         )
         spawned_commands: list[list[str]] = []

@@ -1040,7 +1040,7 @@ def command_for(
     duration_seconds: int,
     max_blocks: int,
 ) -> tuple[list[str], str, str, str, str, str]:
-    root = f"{stage.root}/validators/{process.validator_id}"
+    root = base.validator_stage_root(process, stage)
     config = f"{root}/{process.config_relative.as_posix()}"
     report = f"{root}/consensus-report.json"
     journal = f"{root}/runtime-events.jsonl"
@@ -1120,7 +1120,7 @@ def replay_archive_sources_v1(
     process: base.ValidatorProcess,
     stage: base.HostStage,
 ) -> dict[str, str]:
-    validator_root = f"{stage.root}/validators/{process.validator_id}"
+    validator_root = base.validator_stage_root(process, stage)
     return {
         label: f"{validator_root}/{source_relative}"
         for label, source_relative, _directory, _suffix, _maximum in (
@@ -2257,6 +2257,8 @@ def main() -> None:
         args.macos_binary, candidate["macos_arm64_sha256"], "macOS binary"
     )
     run_id = manifest["run_id"]
+    planned_output = pathlib.Path(os.path.abspath(args.output))
+    stage_plan = base.preflight_runtime_layout(processes, run_id, planned_output)
     plan = {
         "schema_version": 1,
         "profile": "frozen-v0-continuous-consensus-candidate",
@@ -2313,14 +2315,7 @@ def main() -> None:
         "process_completion_allowance_seconds": run_bounds[
             "process_completion_allowance_seconds"
         ],
-        "validators": [
-            dataclasses.asdict(value)
-            | {
-                "deployment": str(value.deployment),
-                "config_relative": value.config_relative.as_posix(),
-            }
-            for value in processes
-        ],
+        "validators": [base.public_process_projection(value) for value in processes],
         "requires_signed_terminal_evidence_chain_per_validator": True,
         "requires_macos_independent_verification": True,
         "requires_macos_full_fleet_certificate_verification": True,
@@ -2342,9 +2337,11 @@ def main() -> None:
         return
 
     output = validate_output_root(
-        args.output,
+        planned_output,
         input_paths=(coordinator, deployments, linux_binary, macos_binary),
     )
+    if output != planned_output:
+        base.fail("validated output root differs from the frozen runtime layout")
     try:
         plan["mesh_resource_preflight"] = (
             mesh_resources.preflight_mesh_fleet_resources_v1(
@@ -2415,7 +2412,9 @@ def main() -> None:
     started_ns = time.monotonic_ns()
     try:
         record_lifecycle_event(lifecycle_events, "deployment_started")
-        stages = base.create_stages(processes, run_id, output)
+        stages = base.create_stages(
+            stage_plan, processes=processes, run_id=run_id, output=output
+        )
         linux_paths, mac_binary, observer_root = base.deploy(
             stages,
             processes,
