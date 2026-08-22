@@ -1,0 +1,144 @@
+# PoCO G3 Stage0 freeze ledger — 2026-08-22
+
+This is a documentation-only freeze note for the current chain-consensus
+worktree. It records the claim boundary; it does not create, upgrade, or
+replace runtime evidence.
+
+## Assessed tree and savepoint lineage
+
+The audit was run from the canonical linked worktree:
+
+```text
+root:   /home/alex/projects/worktrees/trillionnium-chain/poco-bft-v0-phase0
+branch: feature/chain-poco-bft-v0
+HEAD:   d0c886c997ec162278d99b521b8da32e45e2ea8b
+status: clean
+tree:   9ad57373bd3f9f3c165f8c22d24e7369352a4919
+```
+
+The relevant committed lineage is:
+
+```text
+d0c886c997  ci(stage0): register planned P2P admission contract
+└─ 6da6840380  test(stage0): define planned P2P connectivity admission
+   └─ ffa2b8799a  fix(poco): bound fleet runtime control paths
+      └─ 422654b0b6  evidence: bind Stage0 publication to held bytes
+```
+
+`6da6840380` adds a planned admission contract and fixture tests. `d0c886c997`
+registers those tests in the local contract gates. Neither commit performs
+network admission, copies a validator binary or secret, starts a validator,
+or supplies a production authority.
+
+`bash scripts/project-preflight.sh --audit` passed on this tree (with the
+existing linked-worktree and `PROJECT_TOPIC` warnings). No SSH or remote
+runner action was performed for this ledger.
+
+## The d6 record is historical and non-reusable
+
+`docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/` is an immutable,
+historical observation for a different source candidate:
+
+```text
+source commit:       d6bb34c149edd07d6412b169c471dbb017eb301e
+source Git tree:     d14ed7015b13f487738451e4243b8ec962db0f87
+Cargo.lock:          50,286 bytes
+Cargo.lock SHA-256:  3e2352127ef45a35f808a549cf459959b17054f615744382c0f00a3a6a29b6da
+candidate tar SHA:   bf1f77a229d6eae8e975481728e157e87c6bb9e923ec0e3c2f8f422918e4ae58
+evidence id:         trnm-poco-g3-stage0-linux-x86_64-repro-d6bb34c1-20260820
+```
+
+The current `HEAD` has a different Git tree and a different lockfile
+(`trillionnium/Cargo.lock`: 50,318 bytes,
+`72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b`). The
+historical d6 candidate also does not contain the committed rust-src remap
+fix. Consequently, do not relabel, copy, or reuse its source archive,
+`Cargo.lock`, tool hashes, build reports, or binary hashes as evidence for
+`d0c886c997` (or any later savepoint). A new candidate and a new evidence ID
+must be generated after the candidate commit is deliberately frozen.
+
+The later committed-tool remap control is useful only as a scoped historical
+control: it does not retroactively change the d6 candidate, does not provide
+cryptographic runner attestation, and does not bind a fresh current-candidate
+source/archive/binary bundle.
+
+## Current truth boundary
+
+The release-relevant observation and runtime truth bits remain false. In
+particular:
+
+```text
+stage0_observation_complete=false
+committed_candidate_rust_src_remap_fix_observed=false
+current_fleet_probe_observed=false
+current_run_readiness_observed=false
+stage0_deep_reverification_bundle_available=false
+validator_runtime_started=false
+validator_run_completed=false
+validator_run_7_completed=false
+signed_runtime_evidence_multihost_observed=false
+multihost_consensus_observed=false
+fault_restart_fleet_multihost_observed=false
+fault_matrix_completed=false
+performance_evidence=false
+g3_lan_multihost_evidence=false
+g3_geo_wan_evidence=false
+production_activation=false
+production_candidate=false
+successful_process2_restart_observed=false
+authenticated_process2_catchup_operational=false
+recovery_ready_operational=false
+recovery_start_operational=false
+```
+
+The current status checker reports the remaining Stage0 blockers as:
+
+```text
+committed_candidate_rust_src_remap_fix_observed
+current_fleet_probe_observed
+current_run_readiness_observed
+stage0_deep_reverification_bundle_available
+validator_run_7_completed
+```
+
+Contract/self-test positives are not observations. The local G3 contract gate
+reports `cargo_executed=false`, `ssh_executed=false`,
+`evidence_generated=false`, and `validator_run=false`. The planned P2P test is
+fixture-only (`firewall_mutated=false`, `p2p_identity_authenticated=false`,
+`validator_run=false`). The direct-seven test is also a bounded fixture and
+reports no completed validator run. ParkedAck remains an inert handoff
+savepoint, not a successful restart or RecoveryReady/RecoveryStart path.
+
+## Preconditions for the next X230 campaign
+
+Keep every false bit false until all of the following are satisfied and
+accepted by the current checkers:
+
+1. Choose and commit the candidate savepoint; verify the canonical root,
+   chain-consensus lane, branch, and empty status with `project-preflight`.
+2. Produce a fresh clean-commit source candidate for that exact commit. Bind
+   its Git tree/blob/mode records, exact `Cargo.lock` bytes and SHA-256, source
+   archive hash, and a new evidence ID. Never use the d6 directory as the
+   current bundle.
+3. Include the rust-src remap fix in the candidate/tool boundary and bind the
+   tool source commit, wrapper/tool hashes, and complete transport bundle to
+   the build reports. Re-run the deep byte rehash; do not rely on an
+   invocation-local `reproducible_build=true` field.
+4. Use a fresh X230 clone and the self-hosted runner only (no paid CI). Capture
+   the runner/toolchain/cache facts and bundle fmt, check, and key-test logs;
+   make the formal rerun offline after its cache is explicitly prepared.
+5. Generate fresh fleet and run-readiness observations for this campaign.
+   Historical 2026-08-13 JSON and contract fixtures cannot satisfy either
+   acceptor.
+6. Before copying any validator binary or secret, run a bounded, authenticated
+   bidirectional P2P admission helper. Bind its plan/nonce, helper/tool hash,
+   both-endpoint results, identity/authentication facts, and cleanup result to
+   the prestart/direct-seven bundle. A fixture join is insufficient.
+7. Only after those gates pass, run the real seven-validator campaign and
+   collect signed runtime/finality/replay artifacts. Bind commit, lockfile,
+   source archive, and binary hashes in the resulting evidence; then evaluate
+   `check_stage0_observation_status.py --require-complete`.
+
+Until that sequence completes, this savepoint is a clean contract/freeze
+boundary only. It is not Stage0 complete, G3 LAN evidence, a restart proof, or
+a production candidate.

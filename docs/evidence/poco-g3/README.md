@@ -1,5 +1,10 @@
 # PoCO G3 Stage0 evidence truth
 
+The current freeze ledger (tree lineage, non-reusable historical d6 boundary,
+false runtime truth bits, and next X230 entry conditions) is recorded in
+[`STAGE0_FREEZE_2026-08-22.md`](STAGE0_FREEZE_2026-08-22.md). Read it before
+using any record under this directory.
+
 This directory records the claim boundary for the bounded PoCO G3 lab lane.
 It now contains content-addressed native build records, an X230 fresh-clone
 fmt/check/key-test record, and a rust-src cross-time drift/control record for
