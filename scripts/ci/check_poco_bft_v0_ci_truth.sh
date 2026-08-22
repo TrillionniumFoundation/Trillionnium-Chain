@@ -417,6 +417,8 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15'
 require_literal "$G3_LAN_FLEET_GATE" \
+  'planned_p2p_connectivity_admission_v1_test=passed source_hosts=5 endpoints=7 physical_edges=35 logical_edges=42 strict_frames=true double_sided_join=true bounded_retry=true icmp_green_tcp_edge_failure=blocked helper_ttl=true rebind_cleanup=true firewall_mutated=false firewall_policy_attested=false p2p_identity_metadata_bound=true p2p_identity_authenticated=false validator_binary_deployed=false validator_secret_deployed=false validator_run=false production=false g3=false fault=false performance=false geo_wan=false'
+require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'

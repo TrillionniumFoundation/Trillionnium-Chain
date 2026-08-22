@@ -63,6 +63,8 @@ readonly -a REQUIRED_FILES=(
   "scripts/poco-fleet/mesh_resource_preflight_v1.py"
   "scripts/poco-fleet/mesh_resource_preflight_v1_test.py"
   "scripts/poco-fleet/plan_topology.py"
+  "scripts/poco-fleet/planned_p2p_connectivity_admission_v1.py"
+  "scripts/poco-fleet/planned_p2p_connectivity_admission_v1_test.py"
   "scripts/poco-fleet/poco_consensus_contract.py"
   "scripts/poco-fleet/poco_consensus_contract_test.py"
   "scripts/poco-fleet/prepare_run_material.py"
@@ -132,6 +134,8 @@ readonly -a PYTHON_FILES=(
   "scripts/poco-fleet/mesh_resource_preflight_v1.py"
   "scripts/poco-fleet/mesh_resource_preflight_v1_test.py"
   "scripts/poco-fleet/plan_topology.py"
+  "scripts/poco-fleet/planned_p2p_connectivity_admission_v1.py"
+  "scripts/poco-fleet/planned_p2p_connectivity_admission_v1_test.py"
   "scripts/poco-fleet/poco_consensus_contract.py"
   "scripts/poco-fleet/poco_consensus_contract_test.py"
   "scripts/poco-fleet/prepare_run_material.py"
@@ -178,6 +182,7 @@ readonly -a NO_CARGO_SELF_TESTS=(
   "scripts/poco-fleet/check_run_bundle_test.py"
   "scripts/poco-fleet/check_signed_runtime_evidence_test.py"
   "scripts/poco-fleet/collect_no_fault_run_bundle_v1_test.py"
+  "scripts/poco-fleet/planned_p2p_connectivity_admission_v1_test.py"
   "scripts/poco-fleet/stage0_direct_seven_bundle_v1_test.py"
 )
 
@@ -205,6 +210,7 @@ readonly -a NO_CARGO_EXPECTED_SUMMARIES=(
   'poco_g3_run_bundle_self_test=passed positives=3 negatives=58 topologies=7,31,100 content_addressed=true raw_summary_derived=true unique_json_keys=true exact_validator_set_hash=true ordered_recovery_state_machines=true'
   'poco_g3_signed_runtime_evidence_tests=passed positives=1 negatives=27 unsigned_observation_authority=false g3_complete=false'
   'poco_g3_no_fault_bundle_collector_v1_test=passed positive_fixture_only=true production_active=blocked plan_only=no_outputs signed_observer_profile=plan-only external_load_profile=plan-only independent_anchor=required active_bounds=exact prestart_schema=exact real_public_inventory=exact symlink_ancestor=blocked input_overlap=blocked missing_pid=blocked external_window=blocked qc_n=blocked invalid_signature_control=blocked nonempty_workload=blocked mac_signature_fact=blocked validator_signature=blocked missing_artifact=blocked replay_export=required replay_observer=required replay_hash_join=exact truth_bits_changed=false fault_gate_released=false'
+  'planned_p2p_connectivity_admission_v1_test=passed source_hosts=5 endpoints=7 physical_edges=35 logical_edges=42 strict_frames=true double_sided_join=true bounded_retry=true icmp_green_tcp_edge_failure=blocked helper_ttl=true rebind_cleanup=true firewall_mutated=false firewall_policy_attested=false p2p_identity_metadata_bound=true p2p_identity_authenticated=false validator_binary_deployed=false validator_secret_deployed=false validator_run=false production=false g3=false fault=false performance=false geo_wan=false'
   'poco_g3_stage0_direct_seven_bundle_v1_test=passed cargo_executed=false fixture_only=true deep_candidate=true cargo_lock_member=true dual_arch_binaries=4 symlink=blocked duplicate_json=blocked trailing=blocked ancestor_dirfd_swap=blocked failure_cleanup=close-only private_quarantine_retained=true foreign_nested_secret=preserved foreign_leaf=preserved fstat_fault_fd_baseline=true linux_renameat2_noreplace=verified unverified_publish=blocked quarantine_rng_alias=blocked unsafe_publish_parent=blocked prepublish_failure_final_absent=true publish_collision_foreign=preserved postrename_failure=indeterminate rename_exception_identity_recheck=true pinned_root_decoy=blocked cryptographic_content_equivalence_binding=true checker_itself_fd_rooted=false path_alias_authority=false binding_extra_directory=blocked binding_identical_inode_swap=blocked binding_fault_fd_baseline=true binding_manifest_16m_plus_one=blocked hostile_same_euid_postbinding=false same_euid_source_swap=indeterminate postrename_inode_match=required successful_publish_inode=preserved successful_quarantine=absent double_slash_disjoint=blocked public_secret_prewrite=blocked oversized_128m_plus_one_prewrite=blocked low_disk_prewrite=blocked tree_entries_4096_plus_one=blocked tree_depth_64_plus_one=blocked stage0_profile_max_file_bytes=134217728 runner_generic_512m_compatibility_claim=false exact_json_integers=blocked manifest_complete=true roles_unique=true failure=blocked cleanup=blocked observer_set=7 replay_sets=7 raw_replay_substitution=blocked raw_replay_hash_chain=blocked terminal_seal_signature=verified terminal_seal_signature_mutation=blocked terminal_agreement=exact proposal_qc_finality_semantics_independently_decoded=false runner_validator_run_completed=false stage0_direct_seven_observed=scoped validator_run_7_completed_observed=true fault_matrix=false performance=false g3_lan=false geo_wan=false production=false'
 )
 
