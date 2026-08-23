@@ -1783,6 +1783,7 @@ dependencies = [
  "trnm-consensus-safety-store",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
+ "trnm-consensus-unix-fleet-signer",
  "trnm-consensus-unix-remote-signer",
  "trnm-finality-types",
  "trnm-native-application",

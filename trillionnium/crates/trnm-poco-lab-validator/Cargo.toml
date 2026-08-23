@@ -105,6 +105,7 @@ trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-saf
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 trnm-consensus-peer-lease = { version = "0.1.0", path = "../trnm-consensus-peer-lease" }
+trnm-consensus-unix-fleet-signer = { version = "0.1.0", path = "../trnm-consensus-unix-fleet-signer" }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }

@@ -39,6 +39,9 @@ use trnm_consensus_types::{
     RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1, RecoveryZeroDeltaCutV1Fields,
     StateRoot, TimeoutCertificateV0, ValidatorId, View, RECOVERY_PROCESS_INSTANCE_V1,
 };
+use trnm_consensus_unix_fleet_signer::{
+    FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
+};
 use trnm_poco_node::{
     validate_deployed_lab_core_record_envelope_v0, PocoNodeDeployedLabZeroDeltaCaughtUpFactsV1,
     PocoNodeDeployedLabZeroDeltaRestartCutFieldsV1, PocoNodeDeployedLabZeroDeltaRestartCutV1,
@@ -200,6 +203,80 @@ impl FleetSignatureRequestV1 {
 
     pub const fn signing_root(self) -> [u8; 32] {
         self.signing_root
+    }
+}
+
+const UNIX_FLEET_REQUEST_NONCE_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.runtime.unix-fleet-request-nonce.v1\0";
+
+fn unix_fleet_request_nonce_v1(request: FleetSignatureRequestV1) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(UNIX_FLEET_REQUEST_NONCE_DOMAIN_V1);
+    hasher.update([match request.purpose() {
+        FleetSignaturePurposeV1::Ready => 1,
+        FleetSignaturePurposeV1::Start => 2,
+        FleetSignaturePurposeV1::Relay => 3,
+        FleetSignaturePurposeV1::Restart => 4,
+        FleetSignaturePurposeV1::RestartCut => 5,
+        FleetSignaturePurposeV1::RestartPark => 6,
+    }]);
+    let origin_id = request.origin();
+    let origin = origin_id.as_bytes();
+    hasher.update((origin.len() as u16).to_be_bytes());
+    hasher.update(origin);
+    hasher.update(request.validator_set_id());
+    hasher.update(request.signing_root());
+    hasher.finalize().into()
+}
+
+/// Runtime adapter for the strict Unix fleet-root transport.
+///
+/// The adapter owns no private key.  It derives a deterministic nonce from
+/// the complete purpose/origin/set/root request so an exact retry after a
+/// crash is replayable, while any changed intent receives a different nonce
+/// and is rejected by a durable signer authority.  The transport crate is
+/// intentionally only a signer seam: this type does not claim watermark,
+/// lease, SafetyRules, or Core authority.
+#[derive(Debug)]
+pub struct UnixFleetSignatureProducerV1 {
+    producer: UnixFleetRootSignerProducerV1,
+}
+
+impl UnixFleetSignatureProducerV1 {
+    pub fn new(config: UnixFleetRootSignerConfig) -> Result<Self> {
+        let producer = UnixFleetRootSignerProducerV1::new(config)
+            .map_err(|error| anyhow!("construct Unix fleet signer producer: {error}"))?;
+        Ok(Self { producer })
+    }
+
+    pub fn preflight(&self) -> Result<()> {
+        self.producer
+            .preflight()
+            .map_err(|error| anyhow!("preflight Unix fleet signer producer: {error}"))
+    }
+
+    pub const fn config(&self) -> &UnixFleetRootSignerConfig {
+        self.producer.config()
+    }
+}
+
+impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
+    fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> Result<[u8; 64]> {
+        let purpose = match request.purpose() {
+            FleetSignaturePurposeV1::Ready => FleetRootPurposeV1::Ready,
+            FleetSignaturePurposeV1::Start => FleetRootPurposeV1::Start,
+            FleetSignaturePurposeV1::Relay => FleetRootPurposeV1::Relay,
+            FleetSignaturePurposeV1::Restart => FleetRootPurposeV1::Restart,
+            FleetSignaturePurposeV1::RestartCut => FleetRootPurposeV1::RestartCut,
+            FleetSignaturePurposeV1::RestartPark => FleetRootPurposeV1::RestartPark,
+        };
+        self.producer
+            .sign_fleet_root_v1(
+                purpose,
+                request.signing_root(),
+                unix_fleet_request_nonce_v1(request),
+            )
+            .map_err(|error| anyhow!("external Unix fleet signature request failed: {error}"))
     }
 }
 
