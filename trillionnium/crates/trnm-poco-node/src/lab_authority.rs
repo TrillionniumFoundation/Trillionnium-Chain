@@ -4409,8 +4409,6 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
                 }
             }
         }
-        clear_marker_v0(&self.proposal_journal.store_path, marker)
-            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
         self.pending_executions.remove(&target.id());
         self.application_head = new_head;
         self.application_overlay = None;
@@ -4423,6 +4421,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
             &mut self.application_overlay,
             &mut self.pending_executions,
         )?;
+        // Keep the intent marker until the in-memory owner has also been
+        // rebased to the authenticated checkpoint.  If rebase fails, the
+        // marker remains a recovery fence instead of being cleared after only
+        // the storage acknowledgement.
+        clear_marker_v0(&self.proposal_journal.store_path, marker)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
         if let Some(finalization) = next_finalization {
             if self.core.safety_state().pending_finalization() != Some(&finalization) {
                 return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
