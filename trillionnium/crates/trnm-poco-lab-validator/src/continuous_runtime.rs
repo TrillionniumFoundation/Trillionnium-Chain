@@ -33,7 +33,8 @@ use trnm_consensus_core::leader_for;
 use trnm_consensus_core::{CoreConfig, SafetyStateRecordLimitsV0};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_signer_journal::{
-    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerV0,
+    ExternalMonotonicWatermarkV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
+    SignatureProducerV0,
 };
 #[cfg(test)]
 use trnm_consensus_types::GenesisQcV0;
@@ -1416,6 +1417,39 @@ impl ContinuousValidatorAuthorityV0 {
         )
     }
 
+    /// Installs an independently administered monotonic watermark behind the
+    /// already commissioned Ready signer journal.
+    ///
+    /// This method is intentionally Ready-only and does not alter the normal
+    /// local-fixture constructor or `run_bounded_consensus`.  The Node journal
+    /// claims its exact existing head through the injected CAS object before
+    /// refreshing the authority's authenticated inventory.  A failed claim,
+    /// fork, or replay therefore leaves the authority unusable rather than
+    /// silently falling back to the local file watermark.
+    pub fn install_external_monotonic_watermark_v0(
+        &mut self,
+        external: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    ) -> Result<()> {
+        let runtime = match self.phase.as_mut() {
+            Some(ContinuousAuthorityPhaseV0::Ready(runtime)) => runtime,
+            Some(ContinuousAuthorityPhaseV0::VoteSigned(_)) => {
+                bail!("external watermark installation requires a Ready authority")
+            }
+            Some(ContinuousAuthorityPhaseV0::TimeoutSigned(_)) => {
+                bail!("external watermark installation requires a Ready authority")
+            }
+            None => bail!("external watermark installation requires a live authority"),
+        };
+        runtime
+            .install_external_monotonic_watermark_v0(external)
+            .map_err(|error| anyhow!("install external monotonic watermark: {error}"))?;
+        let inventory = fresh_node_ready_signer_inventory_v1(runtime)
+            .context("audit signer inventory after external watermark installation")?;
+        self.signer_lifetime
+            .refresh_authenticated_inventory_v1(inventory)?;
+        Ok(())
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn from_takeover_parts_v0(
         local_validator: ValidatorId,
@@ -2792,7 +2826,7 @@ mod tests {
         os::unix::fs::PermissionsExt,
         sync::{
             atomic::{AtomicUsize, Ordering},
-            Arc,
+            Arc, Mutex,
         },
         thread,
     };
@@ -2879,10 +2913,68 @@ mod tests {
         }
     }
 
+    #[derive(Clone, Default)]
+    struct CountingExternalWatermarkV0 {
+        state: Arc<Mutex<Option<trnm_consensus_signer_journal::SignerWatermarkV0>>>,
+    }
+
+    impl CountingExternalWatermarkV0 {
+        fn current(&self) -> Option<trnm_consensus_signer_journal::SignerWatermarkV0> {
+            *self.state.lock().expect("external watermark mutex")
+        }
+    }
+
+    impl ExternalMonotonicWatermarkV0 for CountingExternalWatermarkV0 {
+        fn load(
+            &mut self,
+            scope: [u8; 32],
+        ) -> std::result::Result<
+            Option<trnm_consensus_signer_journal::SignerWatermarkV0>,
+            trnm_consensus_signer_journal::ExternalWatermarkErrorV0,
+        > {
+            let value = *self.state.lock().expect("external watermark mutex");
+            if value.is_some_and(|watermark| watermark.scope() != scope) {
+                return Err(trnm_consensus_signer_journal::ExternalWatermarkErrorV0::CompareFailed);
+            }
+            Ok(value)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            expected: Option<trnm_consensus_signer_journal::SignerWatermarkV0>,
+            target: trnm_consensus_signer_journal::SignerWatermarkV0,
+        ) -> std::result::Result<(), trnm_consensus_signer_journal::ExternalWatermarkErrorV0>
+        {
+            let mut value = self.state.lock().expect("external watermark mutex");
+            if *value != expected {
+                return Err(trnm_consensus_signer_journal::ExternalWatermarkErrorV0::CompareFailed);
+            }
+            if let Some(previous) = expected {
+                if previous.scope() != target.scope()
+                    || previous.journal_id() != target.journal_id()
+                    || previous.sequence().checked_add(1) != Some(target.sequence())
+                {
+                    return Err(
+                        trnm_consensus_signer_journal::ExternalWatermarkErrorV0::CompareFailed,
+                    );
+                }
+            } else if target.sequence() != 0 {
+                return Err(trnm_consensus_signer_journal::ExternalWatermarkErrorV0::CompareFailed);
+            }
+            *value = Some(target);
+            Ok(())
+        }
+    }
+
     #[test]
     fn injected_signature_producer_owns_vote_and_timeout_boundaries() {
         on_bounded_takeover_owner_stack_v0(|| {
             let mut harness = takeover_phase_harness_v0(4);
+            let external = CountingExternalWatermarkV0::default();
+            let external_observer = external.clone();
+            harness.authorities[0]
+                .install_external_monotonic_watermark_v0(Box::new(external))
+                .expect("install external watermark behind the Ready journal");
             let calls = Arc::new(AtomicUsize::new(0));
             let key = harness.keys[0].clone();
             harness.authorities[0].producer =
@@ -2898,6 +2990,14 @@ mod tests {
                 .begin_local_timeout_v0()
                 .expect("injected producer signs the exact TimeoutVote intent");
             assert_eq!(calls.load(Ordering::SeqCst), 2);
+            assert_eq!(
+                external_observer
+                    .current()
+                    .expect("external head after Vote and TimeoutVote")
+                    .sequence(),
+                4,
+                "external CAS advanced for intent and signature events"
+            );
         });
     }
 

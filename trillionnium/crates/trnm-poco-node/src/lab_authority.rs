@@ -41,8 +41,9 @@ use trnm_consensus_safety_store::{
     SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
 };
 use trnm_consensus_signer_journal::{
-    ConfirmedSignerNodeCheckpointFactsV0, ExternalMonotonicWatermarkV0, SignatureProducerV0,
-    SignerJournalErrorV0, SignerJournalLifetimeInventoryV1, SqliteSignerJournalV0,
+    ConfirmedSignerNodeCheckpointFactsV0, ExternalMonotonicWatermarkInjectionV0,
+    ExternalMonotonicWatermarkV0, SignatureProducerV0, SignerJournalErrorV0,
+    SignerJournalLifetimeInventoryV1, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, CanonicalSignPreimageV0, CanonicalSignable, CertificateId,
@@ -1498,6 +1499,22 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
 
     pub const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {
         &self.checkpoint
+    }
+
+    /// Installs an independently administered watermark behind the existing
+    /// Ready signer journal.  The journal first confirms its current local
+    /// head, then lets `W` claim that exact head, and finally rechecks the
+    /// external value before this runtime remains usable.
+    pub fn install_external_monotonic_watermark_v0(
+        &mut self,
+        external: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    ) -> Result<(), PocoNodeLabAuthorityErrorV0>
+    where
+        W: ExternalMonotonicWatermarkInjectionV0,
+    {
+        self.signer_journal
+            .install_external_monotonic_watermark_v0(external)
+            .map_err(PocoNodeLabAuthorityErrorV0::Signer)
     }
 
     /// Freshly audits the live Ready signer's complete Vote/TimeoutVote
