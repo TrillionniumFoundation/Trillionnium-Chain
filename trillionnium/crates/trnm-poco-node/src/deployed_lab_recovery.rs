@@ -2129,7 +2129,8 @@ mod tests {
         )
         .expect("construct exact h4 QC");
         let mut producer = ExactProducerV0(bundle.signing_key_v0().clone());
-        let (core_config, application_config, runtime) = bundle.into_recovery_test_parts_v0();
+        let (core_config, application_config, reopen_application_config, runtime) =
+            bundle.into_reopen_test_parts_v0();
         let signed = runtime
             .drive_one_to_inert_request_v0(proposal)
             .expect("drive exact h4 through P/D/C/K")
@@ -2158,14 +2159,15 @@ mod tests {
         );
         drop(runtime);
 
+        let first_core_config = core_config.clone();
         let recovered = reopen_deployed_lab_ordinary_cut_v0(
             directory.path(),
             core_config,
             application_config,
-            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark),
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark.clone()),
         )
         .expect("reopen exact post-h4 ordinary cut");
-        let facts = recovered.facts_v0();
+        let facts = recovered.facts_v0().clone();
         assert!(facts.safety_revision_v0() > 5);
         assert_eq!(facts.high_qc_v0().block_id(), h4_id);
         assert_eq!(facts.finalized_height_v0(), live.finalized_height_v0());
@@ -2202,6 +2204,21 @@ mod tests {
         );
         assert_eq!(authenticated.signed_replay_v0().len(), 1);
         assert_ne!(authenticated.facts_v0().challenge_sha256_v0(), [0; 32]);
+
+        // A second fresh host must observe the same committed application and
+        // checkpoint heads after the first recovery owner is dropped.  This
+        // is the bounded duplicate-apply/restart assertion for the real
+        // native P/D/C/K -> finalization path: reopening is read-only and
+        // cannot create a second committed application row.
+        drop(authenticated);
+        let reopened_again = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            first_core_config,
+            reopen_application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark),
+        )
+        .expect("second fresh reopen of the exact post-h4 ordinary cut");
+        assert_eq!(reopened_again.facts_v0(), &facts);
     }
 
     #[test]
