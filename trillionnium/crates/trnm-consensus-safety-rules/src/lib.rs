@@ -16,6 +16,13 @@
 
 extern crate alloc;
 
+mod authority;
+
+pub use authority::{
+    DurableSafetyRulesAuthorityErrorV1, DurableSafetyRulesAuthorityV1,
+    SafetyRulesDurableTransitionStoreV1,
+};
+
 use alloc::collections::BTreeSet;
 use core::fmt;
 
@@ -488,7 +495,7 @@ impl SafetyRulesStateV1 {
         Ok(())
     }
 
-    fn validate_fresh<V: SignatureVerifier>(
+    pub(crate) fn validate_fresh<V: SignatureVerifier>(
         &self,
         context: &SafetyRulesContextV1,
         verifier: &V,

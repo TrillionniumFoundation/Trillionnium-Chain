@@ -26,6 +26,34 @@ impl SignatureVerifier for RootSignatures {
     }
 }
 
+#[derive(Debug, Default)]
+struct RecordingTransitionStore {
+    persisted: Vec<(
+        SafetyRulesStateDigestV1,
+        SafetyRulesStateDigestV1,
+        SafetyCandidateDigestV1,
+    )>,
+    fail: bool,
+}
+
+impl SafetyRulesDurableTransitionStoreV1 for RecordingTransitionStore {
+    type Error = &'static str;
+
+    fn persist_transition_v1(
+        &mut self,
+        predecessor: SafetyRulesStateDigestV1,
+        successor: &SafetyRulesStateV1,
+        candidate: SafetyCandidateDigestV1,
+    ) -> Result<(), Self::Error> {
+        if self.fail {
+            return Err("simulated durable I/O failure");
+        }
+        self.persisted
+            .push((predecessor, successor.digest(), candidate));
+        Ok(())
+    }
+}
+
 fn parameters() -> ConsensusParametersV0 {
     ConsensusParametersV0::reference_shadow_v0()
 }
@@ -314,6 +342,60 @@ fn first_proposal(context: &SafetyRulesContextV1, payload_tag: u8) -> SignedProp
         payload_tag,
         true,
     )
+}
+
+#[test]
+fn durable_authority_persists_before_releasing_vote_and_installs_successor() {
+    let context = context();
+    let state = genesis_state(&context);
+    let predecessor = state.digest();
+    let target = first_proposal(&context, 0x61);
+    let mut authority = DurableSafetyRulesAuthorityV1::new(
+        context,
+        state,
+        RecordingTransitionStore::default(),
+        RootSignatures,
+    )
+    .expect("open durable SafetyRules owner");
+
+    let transition = authority
+        .prepare_vote_and_persist(&[], &target)
+        .expect("persist exact Vote successor before release");
+    assert_eq!(transition.predecessor_state_digest(), predecessor);
+    assert_eq!(
+        authority.state().digest(),
+        transition.successor_state().digest()
+    );
+    assert_eq!(authority.state().revision(), 1);
+    assert!(!authority.is_poisoned());
+}
+
+#[test]
+fn durable_authority_poisoned_on_uncertain_persistence_and_never_signals_again() {
+    let context = context();
+    let state = genesis_state(&context);
+    let predecessor = state.digest();
+    let target = first_proposal(&context, 0x62);
+    let store = RecordingTransitionStore {
+        fail: true,
+        ..RecordingTransitionStore::default()
+    };
+    let mut authority = DurableSafetyRulesAuthorityV1::new(context, state, store, RootSignatures)
+        .expect("open durable SafetyRules owner");
+
+    let error = authority
+        .prepare_vote_and_persist(&[], &target)
+        .expect_err("uncertain persistence must fail closed");
+    assert!(matches!(
+        error,
+        DurableSafetyRulesAuthorityErrorV1::Persistence("simulated durable I/O failure")
+    ));
+    assert!(authority.is_poisoned());
+    assert_eq!(authority.state().digest(), predecessor);
+    assert!(matches!(
+        authority.prepare_vote_and_persist(&[], &target),
+        Err(DurableSafetyRulesAuthorityErrorV1::Poisoned)
+    ));
 }
 
 fn timeout_vote(
