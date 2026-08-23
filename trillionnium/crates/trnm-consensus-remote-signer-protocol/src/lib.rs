@@ -3,10 +3,10 @@
 //! Data-only protocol boundary for a future independent consensus signer.
 //!
 //! The crate owns no socket, credential, journal, monotonic store, private
-//! key, signature producer, or runtime activation.  It admits only complete
-//! canonical PoCO-BFT vote and timeout-vote intents.  Proposal and epoch
-//! handoff tags are deliberately absent from the command enum and rejected by
-//! the exact decoder.
+//! key, signature producer, or runtime activation. It admits complete
+//! canonical PoCO-BFT vote/timeout intents plus an explicitly separate,
+//! proposal-purpose witness envelope. Proposal bytes use a distinct magic and
+//! purpose profile; the old command decoder still rejects them.
 //!
 //! Profile, generation, lease, checkpoint, and nonce values in this crate are
 //! public protocol facts.  Constructing or decoding them grants no lease and
@@ -21,17 +21,25 @@ extern crate alloc;
 
 mod command;
 mod ids;
+mod proposal;
 mod wire;
 
 pub use command::{
     RemoteConsensusCommandKindV1, RemoteConsensusCommandV1, RemoteConsensusCommandValidationErrorV1,
 };
 pub use ids::{
-    vote_timeout_purpose_profile_digest_v1, ProcessGenerationV1, RemoteSignerCheckpointWitnessV1,
-    RemoteSignerClientProfileRefV1, RemoteSignerIdErrorV1, RemoteSignerLeaseIdV1,
-    RemoteSignerPurposeProfileDigestV1, RemoteSignerRequestFingerprintV1,
-    RemoteSignerRequestNonceV1, RemoteSignerResponseFingerprintV1, RemoteSignerRoleProfileRefV1,
+    proposal_purpose_profile_digest_v1, vote_timeout_purpose_profile_digest_v1,
+    ProcessGenerationV1, RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1,
+    RemoteSignerIdErrorV1, RemoteSignerLeaseIdV1, RemoteSignerPurposeProfileDigestV1,
+    RemoteSignerRequestFingerprintV1, RemoteSignerRequestNonceV1,
+    RemoteSignerResponseFingerprintV1, RemoteSignerRoleProfileRefV1,
     RemoteSignerServiceProfileRefV1, MAX_REMOTE_SIGNER_PUBLIC_DESCRIPTOR_BYTES_V1,
+};
+pub use proposal::{
+    decode_remote_proposal_signer_request_v1_exact,
+    decode_unverified_remote_proposal_signer_response_v1_exact, is_remote_proposal_request_v1,
+    RemoteProposalSignatureRequestV1, UnverifiedRemoteProposalSignerResponseV1,
+    MAX_REMOTE_PROPOSAL_SIGNER_REQUEST_BYTES_V1, MAX_REMOTE_PROPOSAL_SIGNER_RESPONSE_BYTES_V1,
 };
 pub use wire::{
     decode_remote_signer_request_v1_exact, decode_unverified_remote_signer_response_v1_exact,
@@ -90,6 +98,7 @@ mod source_contract_tests {
             include_str!("command.rs"),
             include_str!("ids.rs"),
             include_str!("wire.rs"),
+            include_str!("proposal.rs"),
         ]
         .concat();
         let manifest = include_str!("../Cargo.toml");

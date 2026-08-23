@@ -83,14 +83,46 @@ impl RemoteSignerRequestBindingV1 {
         lease_id: RemoteSignerLeaseIdV1,
         checkpoint_witness: RemoteSignerCheckpointWitnessV1,
     ) -> Result<Self, RemoteSignerProtocolErrorV1> {
+        Self::new_with_purpose_profile_v1(
+            validator_set,
+            author,
+            role_profile_ref,
+            service_profile_ref,
+            client_profile_ref,
+            process_generation,
+            lease_id,
+            checkpoint_witness,
+            vote_timeout_purpose_profile_digest_v1(),
+        )
+    }
+
+    /// Constructs a binding for an explicitly provisioned purpose profile.
+    /// Existing callers should continue using [`Self::new`]; proposal callers
+    /// must opt into the separate proposal profile so an old Vote/Timeout
+    /// service cannot accidentally accept a new signing surface.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_with_purpose_profile_v1(
+        validator_set: &ValidatorSet,
+        author: ValidatorId,
+        role_profile_ref: RemoteSignerRoleProfileRefV1,
+        service_profile_ref: RemoteSignerServiceProfileRefV1,
+        client_profile_ref: RemoteSignerClientProfileRefV1,
+        process_generation: ProcessGenerationV1,
+        lease_id: RemoteSignerLeaseIdV1,
+        checkpoint_witness: RemoteSignerCheckpointWitnessV1,
+        purpose_profile_digest: RemoteSignerPurposeProfileDigestV1,
+    ) -> Result<Self, RemoteSignerProtocolErrorV1> {
         validator_set
             .validate_shape()
             .map_err(|_| RemoteSignerProtocolErrorV1::InvalidValidatorSet)?;
         if validator_set.validator(author).is_none() {
             return Err(RemoteSignerProtocolErrorV1::UnknownAuthor);
         }
+        if purpose_profile_digest.as_bytes() == &[0; 32] {
+            return Err(RemoteSignerProtocolErrorV1::PurposeProfileMismatch);
+        }
         Ok(Self {
-            purpose_profile_digest: vote_timeout_purpose_profile_digest_v1(),
+            purpose_profile_digest,
             role_profile_ref,
             service_profile_ref,
             client_profile_ref,
@@ -162,10 +194,18 @@ impl RemoteSignerRequestBindingV1 {
         self,
         validator_set: &ValidatorSet,
     ) -> Result<(), RemoteSignerProtocolErrorV1> {
+        self.validate_against_profile(validator_set, vote_timeout_purpose_profile_digest_v1())
+    }
+
+    pub(crate) fn validate_against_profile(
+        self,
+        validator_set: &ValidatorSet,
+        expected_profile: RemoteSignerPurposeProfileDigestV1,
+    ) -> Result<(), RemoteSignerProtocolErrorV1> {
         validator_set
             .validate_shape()
             .map_err(|_| RemoteSignerProtocolErrorV1::InvalidValidatorSet)?;
-        if self.purpose_profile_digest != vote_timeout_purpose_profile_digest_v1() {
+        if self.purpose_profile_digest != expected_profile {
             return Err(RemoteSignerProtocolErrorV1::PurposeProfileMismatch);
         }
         if self.genesis_hash != validator_set.genesis_hash()
@@ -492,7 +532,7 @@ pub fn decode_unverified_remote_signer_response_v1_exact(
     Ok(value)
 }
 
-fn encode_binding_v1(
+pub(crate) fn encode_binding_v1(
     encoded: &mut Vec<u8>,
     binding: RemoteSignerRequestBindingV1,
     nonce: RemoteSignerRequestNonceV1,
@@ -516,7 +556,7 @@ fn encode_binding_v1(
     Ok(())
 }
 
-fn decode_binding_v1(
+pub(crate) fn decode_binding_v1(
     cursor: &mut CursorV1<'_>,
 ) -> Result<(RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1), RemoteSignerProtocolErrorV1>
 {
@@ -625,6 +665,7 @@ pub enum RemoteSignerProtocolErrorV1 {
     InvalidCanonicalIntent,
     InvalidCanonicalIntentEncoding,
     CommandKindMismatch,
+    ProposalBindingMismatch,
     RequestBindingMismatch,
     RequestFingerprintMismatch,
     ResponseRequestMismatch,
@@ -678,6 +719,9 @@ impl fmt::Display for RemoteSignerProtocolErrorV1 {
             Self::CommandKindMismatch => {
                 formatter.write_str("command tag differs from canonical intent kind")
             }
+            Self::ProposalBindingMismatch => {
+                formatter.write_str("remote signer proposal binding differs")
+            }
             Self::RequestBindingMismatch => {
                 formatter.write_str("remote signer request binding differs")
             }
@@ -728,17 +772,17 @@ impl From<RemoteConsensusCommandValidationErrorV1> for RemoteSignerProtocolError
     }
 }
 
-struct CursorV1<'a> {
+pub(crate) struct CursorV1<'a> {
     encoded: &'a [u8],
     offset: usize,
 }
 
 impl<'a> CursorV1<'a> {
-    const fn new(encoded: &'a [u8]) -> Self {
+    pub(crate) const fn new(encoded: &'a [u8]) -> Self {
         Self { encoded, offset: 0 }
     }
 
-    fn take(&mut self, length: usize) -> Result<&'a [u8], RemoteSignerProtocolErrorV1> {
+    pub(crate) fn take(&mut self, length: usize) -> Result<&'a [u8], RemoteSignerProtocolErrorV1> {
         let end = self
             .offset
             .checked_add(length)
@@ -751,11 +795,11 @@ impl<'a> CursorV1<'a> {
         Ok(value)
     }
 
-    fn u8(&mut self) -> Result<u8, RemoteSignerProtocolErrorV1> {
+    pub(crate) fn u8(&mut self) -> Result<u8, RemoteSignerProtocolErrorV1> {
         Ok(self.take(1)?[0])
     }
 
-    fn u16(&mut self) -> Result<u16, RemoteSignerProtocolErrorV1> {
+    pub(crate) fn u16(&mut self) -> Result<u16, RemoteSignerProtocolErrorV1> {
         let bytes: [u8; 2] = self
             .take(2)?
             .try_into()
@@ -763,7 +807,7 @@ impl<'a> CursorV1<'a> {
         Ok(u16::from_be_bytes(bytes))
     }
 
-    fn u32(&mut self) -> Result<u32, RemoteSignerProtocolErrorV1> {
+    pub(crate) fn u32(&mut self) -> Result<u32, RemoteSignerProtocolErrorV1> {
         let bytes: [u8; 4] = self
             .take(4)?
             .try_into()
@@ -771,7 +815,7 @@ impl<'a> CursorV1<'a> {
         Ok(u32::from_be_bytes(bytes))
     }
 
-    fn u64(&mut self) -> Result<u64, RemoteSignerProtocolErrorV1> {
+    pub(crate) fn u64(&mut self) -> Result<u64, RemoteSignerProtocolErrorV1> {
         let bytes: [u8; 8] = self
             .take(8)?
             .try_into()
@@ -779,13 +823,16 @@ impl<'a> CursorV1<'a> {
         Ok(u64::from_be_bytes(bytes))
     }
 
-    fn array32(&mut self) -> Result<[u8; 32], RemoteSignerProtocolErrorV1> {
+    pub(crate) fn array32(&mut self) -> Result<[u8; 32], RemoteSignerProtocolErrorV1> {
         self.take(32)?
             .try_into()
             .map_err(|_| RemoteSignerProtocolErrorV1::TruncatedEncoding)
     }
 
-    fn bounded_u16(&mut self, maximum: usize) -> Result<&'a [u8], RemoteSignerProtocolErrorV1> {
+    pub(crate) fn bounded_u16(
+        &mut self,
+        maximum: usize,
+    ) -> Result<&'a [u8], RemoteSignerProtocolErrorV1> {
         let length = usize::from(self.u16()?);
         if length == 0 || length > maximum {
             return Err(RemoteSignerProtocolErrorV1::LengthLimitExceeded);
@@ -793,7 +840,7 @@ impl<'a> CursorV1<'a> {
         self.take(length)
     }
 
-    fn finish(self) -> Result<(), RemoteSignerProtocolErrorV1> {
+    pub(crate) fn finish(self) -> Result<(), RemoteSignerProtocolErrorV1> {
         if self.offset != self.encoded.len() {
             return Err(RemoteSignerProtocolErrorV1::TrailingBytes);
         }

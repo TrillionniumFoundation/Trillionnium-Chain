@@ -9,10 +9,10 @@ use std::path::Path;
 
 use ed25519_dalek::SigningKey;
 use trnm_consensus_remote_signer_protocol::{
-    ProcessGenerationV1, RemoteConsensusCommandV1, RemoteSignerCheckpointWitnessV1,
-    RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1, RemoteSignerRequestBindingV1,
-    RemoteSignerRequestNonceV1, RemoteSignerRequestV1, RemoteSignerRoleProfileRefV1,
-    RemoteSignerServiceProfileRefV1,
+    proposal_purpose_profile_digest_v1, ProcessGenerationV1, RemoteConsensusCommandV1,
+    RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1,
+    RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1, RemoteSignerRequestV1,
+    RemoteSignerRoleProfileRefV1, RemoteSignerServiceProfileRefV1,
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, CertificateId, ChainId, ConsensusParametersHash,
@@ -104,6 +104,24 @@ impl Fixture {
         )
         .map_err(|error| error.to_string())
     }
+
+    /// Returns the same deterministic fixture context under the isolated
+    /// proposal purpose profile. This is test material only; proposal
+    /// production authority remains disabled.
+    pub fn proposal_binding(&self) -> Result<RemoteSignerRequestBindingV1, String> {
+        RemoteSignerRequestBindingV1::new_with_purpose_profile_v1(
+            &self.validator_set,
+            self.binding.author(),
+            self.binding.role_profile_ref(),
+            self.binding.service_profile_ref(),
+            self.binding.client_profile_ref(),
+            self.binding.process_generation(),
+            self.binding.lease_id(),
+            self.binding.checkpoint_witness(),
+            proposal_purpose_profile_digest_v1(),
+        )
+        .map_err(|error| error.to_string())
+    }
 }
 
 impl Default for Fixture {
@@ -144,6 +162,22 @@ pub fn fixture_service_config_with_binding(
         watermark_path: watermark_path.to_path_buf(),
         purpose_policy,
     }
+}
+
+/// Builds a proposal-purpose fixture config. The separate binding/profile is
+/// intentional: an old Vote/Timeout service must reject proposal bytes.
+pub fn fixture_proposal_service_config(
+    watermark_path: &Path,
+) -> Result<RemoteSignerServiceConfig, String> {
+    let fixture = Fixture::new();
+    let binding = fixture.proposal_binding()?;
+    Ok(RemoteSignerServiceConfig {
+        validator_set: fixture.validator_set,
+        binding,
+        signing_key: fixture.signing_key,
+        watermark_path: watermark_path.to_path_buf(),
+        purpose_policy: PurposePolicyV1::proposal_only(),
+    })
 }
 
 /// Builds one exact protocol request.  `kind` accepts only `vote` or

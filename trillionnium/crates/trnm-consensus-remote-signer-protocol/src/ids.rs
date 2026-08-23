@@ -13,10 +13,13 @@ const CHECKPOINT_WITNESS_DOMAIN_V1: &[u8] =
     b"trnm.remote-signer.protocol.whole-node-checkpoint-witness.v1\0";
 const PURPOSE_PROFILE_DOMAIN_V1: &[u8] =
     b"trnm.remote-signer.protocol.vote-timeout-purpose-profile.v1\0";
+const PROPOSAL_PURPOSE_PROFILE_DOMAIN_V1: &[u8] =
+    b"trnm.remote-signer.protocol.proposal-purpose-profile.v1\0";
 
 const CONSENSUS_ROLE_TAG_V1: u8 = 1;
 const VOTE_PURPOSE_TAG_V1: u8 = 0;
 const TIMEOUT_VOTE_PURPOSE_TAG_V1: u8 = 1;
+const PROPOSAL_PURPOSE_TAG_V1: u8 = 2;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RemoteSignerIdErrorV1 {
@@ -241,6 +244,22 @@ pub fn vote_timeout_purpose_profile_digest_v1() -> RemoteSignerPurposeProfileDig
     hash.update([CONSENSUS_ROLE_TAG_V1]);
     hash.update(2u16.to_be_bytes());
     hash.update([VOTE_PURPOSE_TAG_V1, TIMEOUT_VOTE_PURPOSE_TAG_V1]);
+    RemoteSignerPurposeProfileDigestV1(hash.finalize().into())
+}
+
+/// Frozen digest for the separately versioned proposal-witness purpose.
+///
+/// This is intentionally a different profile from Vote/TimeoutVote. Existing
+/// signer namespaces therefore reject a proposal request unless the caller
+/// explicitly provisions the proposal profile; adding this purpose cannot
+/// silently widen an already deployed vote/timeout service.
+pub fn proposal_purpose_profile_digest_v1() -> RemoteSignerPurposeProfileDigestV1 {
+    let mut hash = Sha256::new();
+    hash.update(PROPOSAL_PURPOSE_PROFILE_DOMAIN_V1);
+    hash.update(1u16.to_be_bytes());
+    hash.update([CONSENSUS_ROLE_TAG_V1]);
+    hash.update(1u16.to_be_bytes());
+    hash.update([PROPOSAL_PURPOSE_TAG_V1]);
     RemoteSignerPurposeProfileDigestV1(hash.finalize().into())
 }
 

@@ -40,15 +40,18 @@ use trnm_consensus_external_watermark::{
     ReplayBindingErrorV1, ReplayBindingStoreV1, UnixWatermarkClient,
 };
 use trnm_consensus_remote_signer_protocol::{
-    decode_remote_signer_request_v1_exact, RemoteConsensusCommandKindV1,
-    RemoteSignerProtocolErrorV1, RemoteSignerRequestBindingV1, UnverifiedRemoteSignerResponseV1,
+    decode_remote_proposal_signer_request_v1_exact, decode_remote_signer_request_v1_exact,
+    is_remote_proposal_request_v1, RemoteConsensusCommandKindV1, RemoteProposalSignatureRequestV1,
+    RemoteSignerProtocolErrorV1, RemoteSignerRequestBindingV1,
+    UnverifiedRemoteProposalSignerResponseV1, UnverifiedRemoteSignerResponseV1,
     MAX_REMOTE_SIGNER_REQUEST_BYTES_V1,
 };
 use trnm_consensus_signer_journal::SignerWatermarkV0;
 use trnm_consensus_types::{SignatureBytes, ValidatorSet};
 
 pub use fixture::{
-    fixture_request, fixture_service_config, fixture_service_config_with_binding, Fixture,
+    fixture_proposal_service_config, fixture_request, fixture_service_config,
+    fixture_service_config_with_binding, Fixture,
 };
 
 /// Runtime activation is deliberately closed for this P0 slice.
@@ -72,6 +75,7 @@ pub const MAX_REMOTE_SIGNER_SERVICE_FRAME_BYTES_V1: usize = MAX_SERVICE_FRAME_BY
 pub struct PurposePolicyV1 {
     allow_vote: bool,
     allow_timeout_vote: bool,
+    allow_proposal: bool,
 }
 
 impl PurposePolicyV1 {
@@ -79,6 +83,7 @@ impl PurposePolicyV1 {
         Self {
             allow_vote: true,
             allow_timeout_vote: true,
+            allow_proposal: false,
         }
     }
 
@@ -86,6 +91,7 @@ impl PurposePolicyV1 {
         Self {
             allow_vote: true,
             allow_timeout_vote: false,
+            allow_proposal: false,
         }
     }
 
@@ -93,7 +99,22 @@ impl PurposePolicyV1 {
         Self {
             allow_vote: false,
             allow_timeout_vote: true,
+            allow_proposal: false,
         }
+    }
+
+    /// Explicit proposal-only policy. Existing `both`, `vote_only`, and
+    /// `timeout_vote_only` policies remain proposal-disabled for compatibility.
+    pub const fn proposal_only() -> Self {
+        Self {
+            allow_vote: false,
+            allow_timeout_vote: false,
+            allow_proposal: true,
+        }
+    }
+
+    pub const fn allows_proposal(self) -> bool {
+        self.allow_proposal
     }
 
     pub const fn allows(self, kind: RemoteConsensusCommandKindV1) -> bool {
@@ -1187,6 +1208,7 @@ enum ServiceFailure {
     Sqlite(&'static str, rusqlite::Error),
     Protocol(RemoteSignerProtocolErrorV1),
     WrongPurpose(RemoteConsensusCommandKindV1),
+    ProposalPurposeDisabled,
     DuplicateNonce,
     DuplicateRequest,
     DuplicateRoundPurpose,
@@ -1213,6 +1235,9 @@ impl fmt::Display for ServiceFailure {
             Self::Sqlite(stage, source) => write!(f, "signer service SQLite at {stage}: {source}"),
             Self::Protocol(source) => write!(f, "signer protocol rejected request: {source}"),
             Self::WrongPurpose(kind) => write!(f, "signer purpose is not enabled: {kind:?}"),
+            Self::ProposalPurposeDisabled => {
+                f.write_str("signer proposal purpose is not enabled")
+            }
             Self::DuplicateNonce => f.write_str("signer request nonce was already used"),
             Self::DuplicateRequest => f.write_str("signer request fingerprint was already used"),
             Self::DuplicateRoundPurpose => {
@@ -1323,6 +1348,7 @@ struct ReservationInputV1 {
 
 type ExistingReservationRowV1 = (Vec<u8>, i64, i64, i64, i64, Vec<u8>);
 type PersistedWatermarkRowV1 = (Vec<u8>, i64, i64, i64, i64, i64, Vec<u8>, Vec<u8>);
+type ExistingProposalReservationRowV1 = (Vec<u8>, i64, i64, i64, Vec<u8>);
 
 impl RemoteSignerService {
     /// Opens or creates the independent watermark namespace.
@@ -1352,9 +1378,20 @@ impl RemoteSignerService {
             )
             .into());
         }
-        if config.binding.purpose_profile_digest()
-            != trnm_consensus_remote_signer_protocol::vote_timeout_purpose_profile_digest_v1()
-        {
+        let expected_profile = if config.purpose_policy.allow_proposal {
+            // Proposal signing is an explicitly separate fixture purpose. Do
+            // not let a policy bit reinterpret an old Vote/Timeout binding.
+            if config.purpose_policy.allow_vote || config.purpose_policy.allow_timeout_vote {
+                return Err(ServiceFailure::InvalidConfig(
+                    "proposal purpose cannot be combined with vote/timeout purpose",
+                )
+                .into());
+            }
+            trnm_consensus_remote_signer_protocol::proposal_purpose_profile_digest_v1()
+        } else {
+            trnm_consensus_remote_signer_protocol::vote_timeout_purpose_profile_digest_v1()
+        };
+        if config.binding.purpose_profile_digest() != expected_profile {
             return Err(ServiceFailure::InvalidConfig("unsupported purpose profile").into());
         }
         let scope = watermark_scope_v1(&config.binding);
@@ -1425,6 +1462,35 @@ impl RemoteSignerService {
                      CHECK (purpose IN (0, 1)),
                      CHECK (state IN (0, 1)),
                      CHECK (length(signing_root) = 32),
+                     FOREIGN KEY (scope) REFERENCES signer_watermark(scope)
+                 );
+                 CREATE TABLE IF NOT EXISTS proposal_reservation (
+                     scope BLOB NOT NULL,
+                     nonce BLOB NOT NULL,
+                     request_fingerprint BLOB NOT NULL,
+                     proposal_id BLOB NOT NULL,
+                     parent_id BLOB NOT NULL,
+                     validator_set_id BLOB NOT NULL,
+                     epoch INTEGER NOT NULL,
+                     view INTEGER NOT NULL,
+                     height INTEGER NOT NULL,
+                     state INTEGER NOT NULL,
+                     signing_root BLOB NOT NULL,
+                     signer_profile_ref BLOB NOT NULL,
+                     PRIMARY KEY (scope, nonce),
+                     UNIQUE (scope, request_fingerprint),
+                     UNIQUE (scope, proposal_id),
+                     CHECK (length(nonce) = 32),
+                     CHECK (length(request_fingerprint) = 32),
+                     CHECK (length(proposal_id) = 32),
+                     CHECK (length(parent_id) = 32),
+                     CHECK (length(validator_set_id) = 32),
+                     CHECK (epoch >= 0),
+                     CHECK (view > 0),
+                     CHECK (height > 0),
+                     CHECK (state IN (0, 1)),
+                     CHECK (length(signing_root) = 32),
+                     CHECK (length(signer_profile_ref) = 32),
                      FOREIGN KEY (scope) REFERENCES signer_watermark(scope)
                  );",
             )
@@ -1608,6 +1674,41 @@ impl RemoteSignerService {
         .map_err(|error| ServiceFailure::Protocol(error).into())
     }
 
+    /// Processes one explicitly provisioned proposal-purpose request. Proposal
+    /// reservations use a separate table so enabling this purpose cannot
+    /// reinterpret or migrate existing Vote/Timeout rows. The default policy
+    /// keeps this path closed.
+    pub fn process_proposal_request(
+        &mut self,
+        encoded_request: &[u8],
+    ) -> Result<Vec<u8>, RemoteSignerServiceError> {
+        if self.external_authority.is_some() {
+            return Err(ServiceFailure::ExternalAuthorityRequired.into());
+        }
+        if !self.purpose_policy.allow_proposal {
+            return Err(ServiceFailure::ProposalPurposeDisabled.into());
+        }
+        self.ensure_file_identity_v1()?;
+        let request = decode_remote_proposal_signer_request_v1_exact(
+            encoded_request,
+            &self.validator_set,
+            self.binding,
+        )
+        .map_err(ServiceFailure::Protocol)?;
+        let revision = request.height().get();
+        let nonce = *request.nonce().as_bytes();
+        let fingerprint = *request.fingerprint().as_bytes();
+        self.reserve_proposal_v1(&request, revision)?;
+        let signature = self.sign_and_verify_v1(request.signing_root().as_bytes())?;
+        self.complete_proposal_v1(nonce, fingerprint)?;
+        UnverifiedRemoteProposalSignerResponseV1::from_unverified_signature_bytes(
+            &request,
+            SignatureBytes::from_array(signature),
+        )
+        .and_then(|response| response.try_exact_bytes())
+        .map_err(|error| ServiceFailure::Protocol(error).into())
+    }
+
     /// Processes one exact protocol request and returns an exact protocol
     /// response.  This method is the smallest in-process adapter used by the
     /// Unix transport and intentionally does not call Core or SafetyRules.
@@ -1743,7 +1844,9 @@ impl RemoteSignerService {
             }
             Err(error) => return Err(error.into()),
         };
-        let result = if self.external_authority.is_some() {
+        let result = if is_remote_proposal_request_v1(&request) {
+            self.process_proposal_request(&request)
+        } else if self.external_authority.is_some() {
             // Temporarily move the adapter out to satisfy Rust's aliasing
             // rules while the service validates and reconstructs the exact
             // response. It is restored even when the request fails closed.
@@ -1991,6 +2094,203 @@ impl RemoteSignerService {
         Ok(())
     }
 
+    fn reserve_proposal_v1(
+        &mut self,
+        request: &RemoteProposalSignatureRequestV1,
+        safety_revision: u64,
+    ) -> Result<ReservationDispositionV1, RemoteSignerServiceError> {
+        let nonce = *request.nonce().as_bytes();
+        let fingerprint = *request.fingerprint().as_bytes();
+        let epoch_sql = to_sql_i64(request.epoch().get(), "proposal epoch")?;
+        let view_sql = to_sql_i64(request.view().get(), "proposal view")?;
+        let height_sql = to_sql_i64(request.height().get(), "proposal height")?;
+        let revision_sql = to_sql_i64(safety_revision, "proposal safety revision")?;
+        let tx = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(|error| ServiceFailure::Sqlite("begin proposal watermark CAS", error))?;
+        let existing: Option<ExistingProposalReservationRowV1> = tx
+            .query_row(
+                "SELECT request_fingerprint, epoch, view, state, signing_root
+                 FROM proposal_reservation
+                 WHERE scope = ?1 AND nonce = ?2",
+                params![self.scope.as_slice(), nonce.as_slice()],
+                |row| {
+                    Ok((
+                        row.get(0)?,
+                        row.get(1)?,
+                        row.get(2)?,
+                        row.get(3)?,
+                        row.get(4)?,
+                    ))
+                },
+            )
+            .optional()
+            .map_err(|error| ServiceFailure::Sqlite("check proposal nonce replay", error))?;
+        if let Some((existing_fp, existing_epoch, existing_view, state, existing_root)) = existing {
+            if existing_fp.as_slice() == fingerprint
+                && existing_epoch == epoch_sql
+                && existing_view == view_sql
+                && existing_root.as_slice() == request.signing_root().as_bytes()
+                && state == 0
+            {
+                return Ok(ReservationDispositionV1::Pending);
+            }
+            if existing_fp.as_slice() == fingerprint {
+                return Err(ServiceFailure::DuplicateRequest.into());
+            }
+            return Err(ServiceFailure::DuplicateNonce.into());
+        }
+        let duplicate_fingerprint: Option<Vec<u8>> = tx
+            .query_row(
+                "SELECT nonce FROM proposal_reservation
+                 WHERE scope = ?1 AND request_fingerprint = ?2",
+                params![self.scope.as_slice(), fingerprint.as_slice()],
+                |row| row.get(0),
+            )
+            .optional()
+            .map_err(|error| ServiceFailure::Sqlite("check proposal request replay", error))?;
+        if duplicate_fingerprint.is_some() {
+            return Err(ServiceFailure::DuplicateRequest.into());
+        }
+        let duplicate_proposal: Option<Vec<u8>> = tx
+            .query_row(
+                "SELECT nonce FROM proposal_reservation
+                 WHERE scope = ?1 AND proposal_id = ?2",
+                params![self.scope.as_slice(), request.proposal_id().as_bytes()],
+                |row| row.get(0),
+            )
+            .optional()
+            .map_err(|error| ServiceFailure::Sqlite("check proposal identity replay", error))?;
+        if duplicate_proposal.is_some() {
+            return Err(ServiceFailure::DuplicateRequest.into());
+        }
+        let state = tx
+            .query_row(
+                "SELECT sequence, has_round, maximum_epoch, maximum_view,
+                        maximum_safety_revision
+                 FROM signer_watermark WHERE scope = ?1",
+                params![self.scope.as_slice()],
+                |row| {
+                    Ok((
+                        decode_i64_u64(row.get::<_, i64>(0)?, "sequence")?,
+                        row.get::<_, i64>(1)? != 0,
+                        decode_i64_u64(row.get::<_, i64>(2)?, "maximum epoch")?,
+                        decode_i64_u64(row.get::<_, i64>(3)?, "maximum view")?,
+                        decode_i64_u64(row.get::<_, i64>(4)?, "maximum Safety revision")?,
+                    ))
+                },
+            )
+            .map_err(|error| ServiceFailure::Sqlite("read proposal watermark", error))?;
+        if state.1
+            && (request.epoch().get() < state.2
+                || (request.epoch().get() == state.2 && request.view().get() < state.3))
+        {
+            return Err(ServiceFailure::Rollback {
+                maximum_epoch: state.2,
+                maximum_view: state.3,
+            }
+            .into());
+        }
+        if safety_revision <= state.4 {
+            return Err(ServiceFailure::SafetyRevisionRollback {
+                maximum: state.4,
+                incoming: safety_revision,
+            }
+            .into());
+        }
+        let next_sequence = state
+            .0
+            .checked_add(1)
+            .ok_or(ServiceFailure::WatermarkExhausted)?;
+        let next_sequence_sql = to_sql_i64(next_sequence, "sequence")?;
+        let (next_epoch, next_view) = if !state.1
+            || request.epoch().get() > state.2
+            || (request.epoch().get() == state.2 && request.view().get() > state.3)
+        {
+            (epoch_sql, view_sql)
+        } else {
+            (
+                to_sql_i64(state.2, "maximum epoch")?,
+                to_sql_i64(state.3, "maximum view")?,
+            )
+        };
+        let updated = tx
+            .execute(
+                "UPDATE signer_watermark
+                 SET sequence = ?2, has_round = 1, maximum_epoch = ?3,
+                     maximum_view = ?4, maximum_safety_revision = ?5,
+                     last_nonce = ?6, last_fingerprint = ?7
+                 WHERE scope = ?1 AND sequence = ?8",
+                params![
+                    self.scope.as_slice(),
+                    next_sequence_sql,
+                    next_epoch,
+                    next_view,
+                    revision_sql,
+                    nonce.as_slice(),
+                    fingerprint.as_slice(),
+                    to_sql_i64(state.0, "sequence")?,
+                ],
+            )
+            .map_err(|error| ServiceFailure::Sqlite("advance proposal watermark", error))?;
+        if updated != 1 {
+            return Err(ServiceFailure::Sqlite(
+                "advance proposal watermark",
+                rusqlite::Error::QueryReturnedNoRows,
+            )
+            .into());
+        }
+        tx.execute(
+            "INSERT INTO proposal_reservation
+             (scope, nonce, request_fingerprint, proposal_id, parent_id,
+              validator_set_id, epoch, view, height, state, signing_root,
+              signer_profile_ref)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 0, ?10, ?11)",
+            params![
+                self.scope.as_slice(),
+                nonce.as_slice(),
+                fingerprint.as_slice(),
+                request.proposal_id().as_bytes(),
+                request.parent_id().as_bytes(),
+                request.validator_set_id().as_bytes(),
+                epoch_sql,
+                view_sql,
+                height_sql,
+                request.signing_root().as_bytes(),
+                request.signer_profile_ref().as_slice(),
+            ],
+        )
+        .map_err(|error| ServiceFailure::Sqlite("persist proposal reservation", error))?;
+        tx.commit()
+            .map_err(|error| ServiceFailure::Sqlite("commit proposal watermark", error))?;
+        Ok(ReservationDispositionV1::New)
+    }
+
+    fn complete_proposal_v1(
+        &mut self,
+        nonce: [u8; 32],
+        fingerprint: [u8; 32],
+    ) -> Result<(), RemoteSignerServiceError> {
+        self.ensure_file_identity_v1()?;
+        let changed = self
+            .connection
+            .execute(
+                "UPDATE proposal_reservation SET state = 1
+                 WHERE scope = ?1 AND nonce = ?2 AND request_fingerprint = ?3 AND state = 0",
+                params![
+                    self.scope.as_slice(),
+                    nonce.as_slice(),
+                    fingerprint.as_slice()
+                ],
+            )
+            .map_err(|error| ServiceFailure::Sqlite("complete proposal reservation", error))?;
+        if changed != 1 {
+            return Err(ServiceFailure::ReservationFailure.into());
+        }
+        Ok(())
+    }
+
     fn sign_and_verify_v1(&self, signing_root: &[u8; 32]) -> Result<[u8; 64], ServiceFailure> {
         let signing_key = self
             .signing_key
@@ -2166,6 +2466,23 @@ fn validate_schema_v1(connection: &Connection) -> Result<(), RemoteSignerService
                 "signing_root",
             ][..],
         ),
+        (
+            "proposal_reservation",
+            &[
+                "scope",
+                "nonce",
+                "request_fingerprint",
+                "proposal_id",
+                "parent_id",
+                "validator_set_id",
+                "epoch",
+                "view",
+                "height",
+                "state",
+                "signing_root",
+                "signer_profile_ref",
+            ][..],
+        ),
     ] {
         let mut statement = connection
             .prepare(&format!("PRAGMA table_info({table})"))
@@ -2256,10 +2573,18 @@ fn ensure_metadata_v1(
         ("binding_digest", binding_digest_v1(binding).to_vec()),
         (
             "purpose_policy",
-            vec![
-                u8::from(purpose_policy.allow_vote),
-                u8::from(purpose_policy.allow_timeout_vote),
-            ],
+            if purpose_policy.allow_proposal {
+                vec![
+                    u8::from(purpose_policy.allow_vote),
+                    u8::from(purpose_policy.allow_timeout_vote),
+                    1,
+                ]
+            } else {
+                vec![
+                    u8::from(purpose_policy.allow_vote),
+                    u8::from(purpose_policy.allow_timeout_vote),
+                ]
+            },
         ),
     ];
     for (key, value) in values {
@@ -2393,6 +2718,70 @@ fn validate_persisted_state_v1(
             );
         }
     }
+    let mut proposal_statement = connection
+        .prepare(
+            "SELECT scope, nonce, request_fingerprint, proposal_id, parent_id,
+                    validator_set_id, epoch, view, height, state, signing_root,
+                    signer_profile_ref
+             FROM proposal_reservation",
+        )
+        .map_err(|error| ServiceFailure::Sqlite("read persisted proposal reservations", error))?;
+    let proposal_rows = proposal_statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, Vec<u8>>(0)?,
+                row.get::<_, Vec<u8>>(1)?,
+                row.get::<_, Vec<u8>>(2)?,
+                row.get::<_, Vec<u8>>(3)?,
+                row.get::<_, Vec<u8>>(4)?,
+                row.get::<_, Vec<u8>>(5)?,
+                row.get::<_, i64>(6)?,
+                row.get::<_, i64>(7)?,
+                row.get::<_, i64>(8)?,
+                row.get::<_, i64>(9)?,
+                row.get::<_, Vec<u8>>(10)?,
+                row.get::<_, Vec<u8>>(11)?,
+            ))
+        })
+        .map_err(|error| {
+            ServiceFailure::Sqlite("iterate persisted proposal reservations", error)
+        })?;
+    for row in proposal_rows {
+        let (
+            row_scope,
+            row_nonce,
+            row_fingerprint,
+            proposal_id,
+            parent_id,
+            validator_set_id,
+            epoch,
+            view,
+            height,
+            state,
+            root,
+            profile,
+        ) = row.map_err(|error| {
+            ServiceFailure::Sqlite("decode persisted proposal reservation", error)
+        })?;
+        if row_scope.as_slice() != scope
+            || row_nonce.len() != 32
+            || row_fingerprint.len() != 32
+            || proposal_id.len() != 32
+            || parent_id.len() != 32
+            || validator_set_id.len() != 32
+            || epoch < 0
+            || view <= 0
+            || height <= 0
+            || !matches!(state, 0 | 1)
+            || root.len() != 32
+            || profile.len() != 32
+        {
+            return Err(ServiceFailure::InvalidConfig(
+                "persisted proposal reservation row is malformed",
+            )
+            .into());
+        }
+    }
     Ok(())
 }
 
@@ -2466,7 +2855,9 @@ fn decode_i64_u64(value: i64, _field: &'static str) -> rusqlite::Result<u64> {
 fn classify_reject_v1(error: &ServiceFailure) -> ServiceRejectCodeV1 {
     match error {
         ServiceFailure::Protocol(_) => ServiceRejectCodeV1::InvalidProtocol,
-        ServiceFailure::WrongPurpose(_) => ServiceRejectCodeV1::WrongPurpose,
+        ServiceFailure::WrongPurpose(_) | ServiceFailure::ProposalPurposeDisabled => {
+            ServiceRejectCodeV1::WrongPurpose
+        }
         ServiceFailure::DuplicateNonce => ServiceRejectCodeV1::DuplicateNonce,
         ServiceFailure::DuplicateRequest => ServiceRejectCodeV1::DuplicateRequest,
         ServiceFailure::DuplicateRoundPurpose => ServiceRejectCodeV1::DuplicateRoundPurpose,
@@ -2556,7 +2947,12 @@ mod tests {
     use ed25519_dalek::{Signature, Verifier};
     use std::{fs, os::unix::net::UnixStream, thread};
     use tempfile::TempDir;
-    use trnm_consensus_remote_signer_protocol::decode_unverified_remote_signer_response_v1_exact;
+    use trnm_consensus_remote_signer_protocol::{
+        decode_unverified_remote_proposal_signer_response_v1_exact,
+        decode_unverified_remote_signer_response_v1_exact, RemoteProposalSignatureRequestV1,
+        RemoteSignerRequestNonceV1,
+    };
+    use trnm_consensus_signer_journal::ProposalSignatureRequestV0;
 
     #[test]
     fn service_binds_round_purpose_nonce_and_persists_cas_watermark() {
@@ -2632,6 +3028,86 @@ mod tests {
             )))
         ));
         assert_eq!(service.watermark_snapshot().unwrap().sequence, 0);
+    }
+
+    #[test]
+    fn proposal_purpose_isolated_and_replays_exactly() {
+        let temporary = TempDir::new().expect("temporary signer directory");
+        let path = temporary.path().join("proposal-watermark.sqlite3");
+        let fixture = Fixture::new();
+        let proposal = ProposalSignatureRequestV0::new(
+            trnm_consensus_types::BlockId::new([0x81; 32]),
+            trnm_consensus_types::BlockId::new([0x82; 32]),
+            fixture.validator_set.id(),
+            fixture.binding.author(),
+            fixture.validator_set.epoch(),
+            trnm_consensus_types::View::new(1),
+            trnm_consensus_types::Height::new(1),
+            trnm_consensus_types::SigningRoot::new([0x83; 32]),
+            *fixture
+                .validator_set
+                .validator(fixture.binding.author())
+                .unwrap()
+                .consensus_key()
+                .as_bytes(),
+            [0x84; 32],
+        )
+        .expect("proposal request shape");
+        let binding = fixture.proposal_binding().expect("proposal binding");
+        let wire = RemoteProposalSignatureRequestV1::new(
+            binding,
+            proposal.proposal_id(),
+            proposal.parent_id(),
+            proposal.validator_set_id(),
+            proposal.author(),
+            proposal.epoch(),
+            proposal.view(),
+            proposal.height(),
+            proposal.signing_root(),
+            proposal.expected_consensus_public_key(),
+            proposal.signer_profile_ref(),
+            RemoteSignerRequestNonceV1::from_public_nonce_material(b"proposal-service-test")
+                .unwrap(),
+            &fixture.validator_set,
+        )
+        .expect("wire proposal request");
+        let encoded = wire.try_exact_bytes().unwrap();
+        decode_remote_proposal_signer_request_v1_exact(&encoded, &fixture.validator_set, binding)
+            .expect("proposal request decodes before service");
+        let mut service = RemoteSignerService::open(
+            fixture_proposal_service_config(&path).expect("proposal config"),
+        )
+        .expect("open proposal-only fixture service");
+        let response = service
+            .process_proposal_request(&encoded)
+            .expect("proposal signature response");
+        let decoded = decode_unverified_remote_proposal_signer_response_v1_exact(&response, &wire)
+            .expect("exact proposal response");
+        fixture
+            .signing_key
+            .verifying_key()
+            .verify(
+                proposal.signing_root().as_bytes(),
+                &Signature::from_bytes(decoded.unverified_signature_bytes().as_bytes()),
+            )
+            .expect("proposal signature verifies");
+        assert!(matches!(
+            service.process_proposal_request(&encoded),
+            Err(RemoteSignerServiceError(ServiceFailure::DuplicateRequest))
+        ));
+
+        // An old Vote/Timeout service must not reinterpret the proposal magic
+        // or accept the separate purpose profile.
+        let old_path = temporary.path().join("old-watermark.sqlite3");
+        let mut old_service =
+            RemoteSignerService::open(fixture_service_config(&old_path, PurposePolicyV1::both()))
+                .expect("open old-purpose fixture service");
+        assert!(matches!(
+            old_service.process_proposal_request(&encoded),
+            Err(RemoteSignerServiceError(
+                ServiceFailure::ProposalPurposeDisabled
+            )) | Err(RemoteSignerServiceError(ServiceFailure::Protocol(_)))
+        ));
     }
 
     #[test]

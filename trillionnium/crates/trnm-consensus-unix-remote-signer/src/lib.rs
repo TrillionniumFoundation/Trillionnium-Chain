@@ -19,14 +19,18 @@ use std::{
 
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_remote_signer_protocol::{
-    decode_unverified_remote_signer_response_v1_exact, RemoteConsensusCommandV1,
-    RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1,
-    RemoteSignerProtocolErrorV1, RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1,
-    RemoteSignerRequestV1, RemoteSignerRoleProfileRefV1, RemoteSignerServiceProfileRefV1,
+    decode_unverified_remote_proposal_signer_response_v1_exact,
+    decode_unverified_remote_signer_response_v1_exact, proposal_purpose_profile_digest_v1,
+    RemoteConsensusCommandV1, RemoteProposalSignatureRequestV1, RemoteSignerCheckpointWitnessV1,
+    RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1, RemoteSignerProtocolErrorV1,
+    RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1, RemoteSignerRequestV1,
+    RemoteSignerRoleProfileRefV1, RemoteSignerServiceProfileRefV1,
+    MAX_REMOTE_PROPOSAL_SIGNER_REQUEST_BYTES_V1, MAX_REMOTE_PROPOSAL_SIGNER_RESPONSE_BYTES_V1,
     MAX_REMOTE_SIGNER_REQUEST_BYTES_V1, MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1,
 };
 use trnm_consensus_signer_journal::{
-    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
+    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerErrorV0,
+    SignatureProducerV0, SignatureRequestV0,
 };
 use trnm_consensus_types::{
     CanonicalSignIntentV0, SignatureBytes, SignatureVerifier, ValidatorId, ValidatorSet,
@@ -279,7 +283,11 @@ impl UnixRemoteSignerProducer {
         let request =
             RemoteSignerRequestV1::new(command, &self.config.validator_set, binding, nonce)?;
         let request_bytes = request.try_exact_bytes()?;
-        let response_bytes = self.call(&request_bytes)?;
+        let response_bytes = self.call(
+            &request_bytes,
+            MAX_REMOTE_SIGNER_REQUEST_BYTES_V1,
+            MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1,
+        )?;
         let response =
             decode_unverified_remote_signer_response_v1_exact(&response_bytes, &request)?;
         let signature = response.unverified_signature_bytes();
@@ -296,11 +304,96 @@ impl UnixRemoteSignerProducer {
         Ok(signature)
     }
 
-    fn call(&self, request_bytes: &[u8]) -> Result<Vec<u8>, UnixRemoteSignerError> {
-        if request_bytes.len() > MAX_REMOTE_SIGNER_REQUEST_BYTES_V1 {
+    /// Sends one exact proposal witness request through the independently
+    /// provisioned proposal-purpose wire. This is a separate trait surface
+    /// from Vote/Timeout and is disabled by old signer services because the
+    /// purpose profile and magic are distinct.
+    pub fn sign_proposal_exact(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, UnixRemoteSignerError> {
+        if request.author() != self.config.author {
+            return Err(UnixRemoteSignerError::AuthorMismatch);
+        }
+        if request.signer_profile_ref() != self.config.signer_profile_ref {
+            return Err(UnixRemoteSignerError::InvalidSignerProfile);
+        }
+        if request.validator_set_id() != self.config.validator_set.id() {
+            return Err(UnixRemoteSignerError::InvalidConfig(
+                "proposal validator-set differs from client config",
+            ));
+        }
+        let validator = self
+            .config
+            .validator_set
+            .validator(self.config.author)
+            .ok_or(UnixRemoteSignerError::InvalidConfig(
+                "configured author disappeared",
+            ))?;
+        if request.expected_consensus_public_key() != *validator.consensus_key().as_bytes() {
+            return Err(UnixRemoteSignerError::InvalidConfig(
+                "proposal public key differs from validator set",
+            ));
+        }
+        let binding = RemoteSignerRequestBindingV1::new_with_purpose_profile_v1(
+            &self.config.validator_set,
+            self.config.author,
+            self.config.role_profile_ref,
+            self.config.service_profile_ref,
+            self.config.client_profile_ref,
+            self.config.process_generation,
+            self.config.lease_id,
+            self.config.checkpoint_witness,
+            proposal_purpose_profile_digest_v1(),
+        )
+        .map_err(|_| UnixRemoteSignerError::InvalidConfig("proposal signer binding"))?;
+        let nonce = derive_proposal_request_nonce(&request, binding);
+        let wire_request = RemoteProposalSignatureRequestV1::new(
+            binding,
+            request.proposal_id(),
+            request.parent_id(),
+            request.validator_set_id(),
+            request.author(),
+            request.epoch(),
+            request.view(),
+            request.height(),
+            request.signing_root(),
+            request.expected_consensus_public_key(),
+            request.signer_profile_ref(),
+            nonce,
+            &self.config.validator_set,
+        )
+        .map_err(UnixRemoteSignerError::Protocol)?;
+        let request_bytes = wire_request
+            .try_exact_bytes()
+            .map_err(UnixRemoteSignerError::Protocol)?;
+        let response_bytes = self.call(
+            &request_bytes,
+            MAX_REMOTE_PROPOSAL_SIGNER_REQUEST_BYTES_V1,
+            MAX_REMOTE_PROPOSAL_SIGNER_RESPONSE_BYTES_V1,
+        )?;
+        let response = decode_unverified_remote_proposal_signer_response_v1_exact(
+            &response_bytes,
+            &wire_request,
+        )
+        .map_err(UnixRemoteSignerError::Protocol)?;
+        let signature = response.unverified_signature_bytes();
+        if !StrictEd25519Verifier.verify(validator, &request.signing_root(), &signature) {
+            return Err(UnixRemoteSignerError::InvalidSignature);
+        }
+        Ok(signature)
+    }
+
+    fn call(
+        &self,
+        request_bytes: &[u8],
+        maximum_request: usize,
+        maximum_response: usize,
+    ) -> Result<Vec<u8>, UnixRemoteSignerError> {
+        if request_bytes.len() > maximum_request {
             return Err(UnixRemoteSignerError::FrameTooLarge {
                 actual: request_bytes.len(),
-                maximum: MAX_REMOTE_SIGNER_REQUEST_BYTES_V1,
+                maximum: maximum_request,
             });
         }
         self.preflight()?;
@@ -325,7 +418,7 @@ impl UnixRemoteSignerProducer {
         write_frame(&mut stream, request_bytes)?;
         let framed = read_frame(
             &mut stream,
-            MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1
+            maximum_response
                 .checked_add(1)
                 .expect("response frame bound does not overflow"),
         )?;
@@ -340,6 +433,38 @@ impl UnixRemoteSignerProducer {
             return Err(UnixRemoteSignerError::ServiceRejected(code));
         }
         Ok(framed)
+    }
+}
+
+impl ProposalSignatureProducerV0 for UnixRemoteSignerProducer {
+    fn sign_proposal(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        self.sign_proposal_exact(request)
+            .map_err(|error| match error {
+                UnixRemoteSignerError::Io { source, .. }
+                    if matches!(
+                        source.kind(),
+                        io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
+                    ) =>
+                {
+                    SignatureProducerErrorV0::Unavailable
+                }
+                UnixRemoteSignerError::Io { .. } | UnixRemoteSignerError::SocketNotFound => {
+                    SignatureProducerErrorV0::Unavailable
+                }
+                UnixRemoteSignerError::InvalidConfig(_)
+                | UnixRemoteSignerError::SocketNotPrivate
+                | UnixRemoteSignerError::FrameTooLarge { .. }
+                | UnixRemoteSignerError::TruncatedFrame
+                | UnixRemoteSignerError::EmptyFrame
+                | UnixRemoteSignerError::Protocol(_)
+                | UnixRemoteSignerError::InvalidSignerProfile
+                | UnixRemoteSignerError::AuthorMismatch
+                | UnixRemoteSignerError::InvalidSignature
+                | UnixRemoteSignerError::ServiceRejected(_) => SignatureProducerErrorV0::Rejected,
+            })
     }
 }
 
@@ -388,6 +513,29 @@ fn derive_request_nonce(
     material.extend_from_slice(binding.lease_id().as_bytes());
     RemoteSignerRequestNonceV1::from_public_nonce_material(&material)
         .expect("bounded deterministic nonce material must be valid")
+}
+
+fn derive_proposal_request_nonce(
+    request: &ProposalSignatureRequestV0,
+    binding: RemoteSignerRequestBindingV1,
+) -> RemoteSignerRequestNonceV1 {
+    const DOMAIN: &[u8] = b"trnm.consensus.unix-remote-signer.proposal-request-nonce.v1\0";
+    let mut material = Vec::with_capacity(DOMAIN.len() + 32 * 8 + 8 * 3);
+    material.extend_from_slice(DOMAIN);
+    material.extend_from_slice(request.proposal_id().as_bytes());
+    material.extend_from_slice(request.parent_id().as_bytes());
+    material.extend_from_slice(request.validator_set_id().as_bytes());
+    material.extend_from_slice(request.author().as_bytes());
+    material.extend_from_slice(&request.epoch().get().to_be_bytes());
+    material.extend_from_slice(&request.view().get().to_be_bytes());
+    material.extend_from_slice(&request.height().get().to_be_bytes());
+    material.extend_from_slice(request.signing_root().as_bytes());
+    material.extend_from_slice(&request.expected_consensus_public_key());
+    material.extend_from_slice(&request.signer_profile_ref());
+    material.extend_from_slice(&binding.process_generation().get().to_be_bytes());
+    material.extend_from_slice(binding.lease_id().as_bytes());
+    RemoteSignerRequestNonceV1::from_public_nonce_material(&material)
+        .expect("bounded deterministic proposal nonce material must be valid")
 }
 
 fn write_frame(stream: &mut UnixStream, body: &[u8]) -> Result<(), UnixRemoteSignerError> {

@@ -4910,6 +4910,37 @@ mod tests {
         .expect("construct focused Vote")
     }
 
+    fn receive_mesh_frame_v0(
+        mesh: &PersistentAuthenticatedPeerMeshV0,
+    ) -> (ValidatorId, AuthenticatedFrame) {
+        let deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            let remaining = deadline.saturating_duration_since(Instant::now());
+            assert!(
+                !remaining.is_zero(),
+                "authenticated mesh did not deliver a consensus frame before the bounded deadline"
+            );
+            let event = mesh
+                .receive_timeout(remaining.min(Duration::from_millis(100)))
+                .expect("receive authenticated mesh event");
+            match event {
+                Some(MeshIngressEventV0::Frame(frame)) => {
+                    let remote = frame.remote();
+                    return (remote, frame.into_frame());
+                }
+                Some(MeshIngressEventV0::SessionUnavailable(facts)) => panic!(
+                    "authenticated mesh session unexpectedly became unavailable: {:?}",
+                    facts
+                ),
+                Some(MeshIngressEventV0::SessionReestablished(facts)) => panic!(
+                    "authenticated mesh session unexpectedly reestablished: {:?}",
+                    facts
+                ),
+                None => {}
+            }
+        }
+    }
+
     fn drive_parallel_deployed_authority_round_v0(
         authorities: &mut [ContinuousValidatorAuthorityV0],
         proposal: SignedProposalV0,
@@ -5438,7 +5469,7 @@ mod tests {
         // not commission a production validator, start Core, or contribute
         // any Stage-0/7-node observation.
         on_bounded_takeover_owner_stack_v0(|| {
-            let mut harness = fresh_test_harness_v0(4, 1);
+            let mut harness = takeover_phase_harness_v0(4);
             let validator_set = harness.validator_set.clone();
             let local = validator_set.validators()[0].id();
             let remote = validator_set.validators()[1].id();
@@ -5581,6 +5612,267 @@ mod tests {
             remote_mesh
                 .close()
                 .expect("close remote authenticated mesh worker");
+        });
+    }
+
+    #[test]
+    fn authenticated_mesh_four_validator_votes_and_timeouts_form_qc_and_tc() {
+        // This is the first bounded composition that carries more than one
+        // authenticated frame into the live authority collector. It is still
+        // a loopback fixture: no deployed node, public network, or activation
+        // flag is involved.
+        on_bounded_takeover_owner_stack_v0(|| {
+            let temp = private_temp_v0();
+            let authority_root = temp.path().join("mesh-qc-authority");
+            let watermark_root = temp.path().join("mesh-qc-watermark");
+            let lifetime = ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(1, 1, 2, 1)
+                .expect("bound mesh signer lifetime");
+            let commissioned = commission_takeover_harness_authority_v0(
+                authority_root,
+                watermark_root,
+                4,
+                3,
+                lifetime,
+                1,
+            );
+            let validator_set = commissioned.validator_set.clone();
+            let mut authority = commissioned.authority;
+            let consensus_keys = (0..4)
+                .map(|index| {
+                    let marker = u8::try_from(index + 41).expect("bounded consensus key marker");
+                    SigningKey::from_bytes(&[marker; 32])
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(
+                consensus_keys[3].verifying_key().to_bytes(),
+                validator_set
+                    .validator(commissioned.validator_set.validators()[3].id())
+                    .expect("commissioned local validator exists")
+                    .consensus_key()
+                    .into_bytes()
+            );
+            let count = validator_set.validators().len();
+            let authority_index = 3;
+            let p2p_keys = (0..count)
+                .map(|index| {
+                    SigningKey::from_bytes(
+                        &[u8::try_from(0xd1 + index).expect("bounded p2p key marker"); 32],
+                    )
+                })
+                .collect::<Vec<_>>();
+            let operator_keys = (0..count)
+                .map(|index| {
+                    SigningKey::from_bytes(
+                        &[u8::try_from(0xe1 + index).expect("bounded operator key marker"); 32],
+                    )
+                })
+                .collect::<Vec<_>>();
+            let role_bindings = validator_set
+                .validators()
+                .iter()
+                .enumerate()
+                .map(|(index, validator)| {
+                    ValidatorKeyRoleBindingV1::new(
+                        validator.id(),
+                        validator.consensus_key().into_bytes(),
+                        p2p_keys[index].verifying_key().to_bytes(),
+                        operator_keys[index].verifying_key().to_bytes(),
+                    )
+                    .expect("construct mesh key-role binding")
+                })
+                .collect::<Vec<_>>();
+            let roles = ValidatorKeyRoleRegistryV1::new(&validator_set, role_bindings)
+                .expect("construct mesh key-role registry");
+            let mut addresses = Vec::with_capacity(count);
+            for _ in 0..count {
+                addresses.push(
+                    TcpListener::bind("127.0.0.1:0")
+                        .expect("allocate mesh endpoint")
+                        .local_addr()
+                        .expect("read mesh endpoint"),
+                );
+            }
+            let context = RunTransportContext::new([0xf1; 32], [0xf2; 32], [0xf3; 32], [0xf4; 32])
+                .with_validator_set_binding(
+                    validator_set.epoch().get(),
+                    validator_set.id().into_bytes(),
+                );
+            let lease_authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(
+                PeerAdmissionContextV1::from_validator_set(&validator_set),
+            ));
+            let mut setup = Vec::with_capacity(count);
+            for index in 0..count {
+                let local = validator_set.validators()[index].id();
+                let outgoing = validator_set
+                    .validators()
+                    .iter()
+                    .enumerate()
+                    .filter(|(peer_index, _)| {
+                        *peer_index == authority_index || index == authority_index
+                    })
+                    .filter(|(peer_index, _)| *peer_index != index)
+                    .map(|(peer_index, validator)| (validator.id(), addresses[peer_index]))
+                    .collect::<BTreeMap<_, _>>();
+                let incoming = outgoing.clone();
+                let config = MeshFixtureConfigV1::new(
+                    "poco-g3-four-validator-qc-tc",
+                    local,
+                    p2p_keys[index].clone(),
+                    validator_set.clone(),
+                    roles.clone(),
+                    context,
+                    addresses[index],
+                    outgoing,
+                    incoming,
+                )
+                .expect("construct four-validator mesh config");
+                let authority = Arc::clone(&lease_authority);
+                setup.push(thread::spawn(move || {
+                    PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
+                        &config,
+                        Duration::from_secs(5),
+                        Duration::from_millis(500),
+                        16,
+                        Duration::from_secs(5),
+                        authority,
+                    )
+                    .expect("establish four-validator mesh")
+                }));
+            }
+            let meshes = setup
+                .into_iter()
+                .map(|thread| thread.join().expect("mesh setup thread"))
+                .collect::<Vec<_>>();
+
+            let proposal = authority
+                .proposal_preimage_for_test_v0(
+                    commissioned.ordinary_start_height,
+                    commissioned.workloads[0].1,
+                    commissioned.workloads[0].2.clone(),
+                )
+                .expect("commissioned leader builds exact mesh proposal")
+                .seal_with_key_v0(&consensus_keys[3])
+                .expect("commissioned leader signs exact mesh proposal");
+            let header = proposal.block().header();
+            let signing_root = Vote::signing_root_for_set(
+                &validator_set,
+                header.view(),
+                header.height(),
+                header.id(),
+            )
+            .expect("derive mesh Vote signing root");
+            let votes = (0..count)
+                .map(|index| {
+                    Vote::new(
+                        validator_set.chain_id(),
+                        validator_set.protocol_version(),
+                        validator_set.epoch(),
+                        header.view(),
+                        header.height(),
+                        header.id(),
+                        validator_set.id(),
+                        validator_set.validators()[index].id(),
+                        SignatureBytes::from_array(
+                            consensus_keys[index]
+                                .sign(signing_root.as_bytes())
+                                .to_bytes(),
+                        ),
+                        &validator_set,
+                    )
+                    .expect("construct exact mesh Vote")
+                })
+                .collect::<Vec<_>>();
+            let local_vote = authority
+                .vote_proposal_v0(proposal)
+                .expect("commissioned local authority produces exact Vote");
+            // Three equal-weight validators are sufficient for a >2/3
+            // quorum. Keep the fourth validator in the authenticated mesh,
+            // but stop after the first two remote frames so the collector
+            // cannot advance before the local statement is admitted.
+            for index in 1..=2 {
+                meshes[index]
+                    .send_to(
+                        validator_set.validators()[authority_index].id(),
+                        FrameKind::Vote,
+                        encode_vote(&votes[index]),
+                    )
+                    .expect("queue authenticated remote Vote");
+                let (remote, frame) = receive_mesh_frame_v0(&meshes[authority_index]);
+                assert_eq!(remote, validator_set.validators()[index].id());
+                let action = authority
+                    .admit_authenticated_consensus_frame_v0(&frame)
+                    .expect("admit authenticated remote Vote");
+                let Some(RoutedConsensusActionV0::Vote { vote, formed_qc }) = action else {
+                    panic!("authenticated Vote reached wrong authority action");
+                };
+                assert_eq!(*vote, votes[index]);
+                assert!(formed_qc.is_none());
+            }
+            let qc = authority
+                .admit_local_vote_v0(local_vote)
+                .expect("admit local Vote after mesh ingress")
+                .expect("two remote plus local Vote form quorum");
+            assert_eq!(qc.votes().len(), 3);
+            authority
+                .advance_quorum_certificate_v0(qc.clone())
+                .expect("advance local authority to mesh-formed QC");
+            let local_timeout = authority
+                .begin_local_timeout_v0()
+                .expect("begin local TimeoutVote");
+            let high_qc = QcRef::from(&qc);
+            let timeout_root =
+                TimeoutVote::signing_root_for_set(&validator_set, local_timeout.view(), high_qc)
+                    .expect("derive mesh TimeoutVote signing root");
+            let timeout_votes = (0..count)
+                .map(|index| {
+                    TimeoutVote::new(
+                        validator_set.chain_id(),
+                        validator_set.protocol_version(),
+                        validator_set.epoch(),
+                        local_timeout.view(),
+                        validator_set.id(),
+                        high_qc,
+                        validator_set.validators()[index].id(),
+                        SignatureBytes::from_array(
+                            consensus_keys[index]
+                                .sign(timeout_root.as_bytes())
+                                .to_bytes(),
+                        ),
+                        &validator_set,
+                    )
+                    .expect("construct exact mesh TimeoutVote")
+                })
+                .collect::<Vec<_>>();
+            for index in 1..=2 {
+                meshes[index]
+                    .send_to(
+                        validator_set.validators()[authority_index].id(),
+                        FrameKind::TimeoutVote,
+                        encode_timeout_vote(&timeout_votes[index]),
+                    )
+                    .expect("queue authenticated remote TimeoutVote");
+                let (remote, frame) = receive_mesh_frame_v0(&meshes[authority_index]);
+                assert_eq!(remote, validator_set.validators()[index].id());
+                let action = authority
+                    .admit_authenticated_consensus_frame_v0(&frame)
+                    .expect("admit authenticated remote TimeoutVote");
+                let Some(RoutedConsensusActionV0::TimeoutVote { vote, formed_tc }) = action else {
+                    panic!("authenticated TimeoutVote reached wrong authority action");
+                };
+                assert_eq!(*vote, timeout_votes[index]);
+                assert!(formed_tc.is_none());
+            }
+            let tc = authority
+                .admit_local_timeout_vote_v0(local_timeout)
+                .expect("admit local TimeoutVote after mesh ingress")
+                .expect("two remote plus local TimeoutVote form quorum");
+            assert_eq!(tc.entries().len(), 3);
+            assert_eq!(tc.selected_high_qc_digest(), qc.id());
+
+            for mesh in meshes {
+                mesh.close()
+                    .expect("close authenticated four-validator mesh");
+            }
         });
     }
 

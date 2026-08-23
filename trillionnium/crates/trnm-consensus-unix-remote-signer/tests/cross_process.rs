@@ -12,11 +12,12 @@ use std::{
 
 use tempfile::TempDir;
 use trnm_consensus_remote_signer_service::{
-    fixture_service_config, Fixture as ServiceFixture, PurposePolicyV1, RemoteSignerService,
+    fixture_proposal_service_config, fixture_service_config, Fixture as ServiceFixture,
+    PurposePolicyV1, RemoteSignerService,
 };
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignerJournalProfileV0,
-    SignerWatermarkV0, SqliteSignerJournalV0,
+    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, ProposalSignatureRequestV0,
+    SignerJournalProfileV0, SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::SignatureVerifier;
 use trnm_consensus_unix_remote_signer::{
@@ -289,4 +290,66 @@ fn client_accepts_signature_from_real_service_process_boundary() {
         .join()
         .expect("service thread")
         .expect("service request");
+}
+
+#[test]
+fn client_accepts_isolated_proposal_signature_from_real_service_boundary() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
+        .expect("protect service namespace");
+    let socket = temp.path().join("proposal-signer.sock");
+    let watermark = temp.path().join("proposal-watermark.sqlite3");
+    let service_fixture = ServiceFixture::new();
+    let mut service = RemoteSignerService::open(
+        fixture_proposal_service_config(&watermark).expect("proposal service config"),
+    )
+    .expect("open proposal-only service");
+    let server_socket = socket.clone();
+    let server = thread::spawn(move || service.serve_unix_once(&server_socket));
+    wait_for_socket(&socket);
+
+    let binding = service_fixture.binding;
+    let config = UnixRemoteSignerProducerConfig {
+        socket_path: socket,
+        validator_set: service_fixture.validator_set.clone(),
+        author: binding.author(),
+        signer_profile_ref: [0xA4; 32],
+        role_profile_ref: binding.role_profile_ref(),
+        service_profile_ref: binding.service_profile_ref(),
+        client_profile_ref: binding.client_profile_ref(),
+        process_generation: binding.process_generation(),
+        lease_id: binding.lease_id(),
+        checkpoint_witness: binding.checkpoint_witness(),
+        timeout: Duration::from_secs(2),
+    };
+    let mut producer = UnixRemoteSignerProducer::new(config).expect("proposal client config");
+    let validator = service_fixture
+        .validator_set
+        .validator(binding.author())
+        .expect("service fixture author");
+    let request = ProposalSignatureRequestV0::new(
+        trnm_consensus_types::BlockId::new([0xE1; 32]),
+        trnm_consensus_types::BlockId::new([0xE2; 32]),
+        service_fixture.validator_set.id(),
+        binding.author(),
+        service_fixture.validator_set.epoch(),
+        trnm_consensus_types::View::new(1),
+        trnm_consensus_types::Height::new(1),
+        trnm_consensus_types::SigningRoot::new([0xE3; 32]),
+        *validator.consensus_key().as_bytes(),
+        [0xA4; 32],
+    )
+    .expect("proposal request shape");
+    let signature = producer
+        .sign_proposal_exact(request)
+        .expect("isolated proposal response must verify");
+    assert!(trnm_consensus_crypto::StrictEd25519Verifier.verify(
+        validator,
+        &request.signing_root(),
+        &signature
+    ));
+    server
+        .join()
+        .expect("proposal service thread")
+        .expect("proposal request");
 }
