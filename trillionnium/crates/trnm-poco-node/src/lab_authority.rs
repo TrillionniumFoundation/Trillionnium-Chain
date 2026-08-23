@@ -76,6 +76,9 @@ use crate::{
         ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0,
         ExternalNodeCheckpointV0, SqliteExternalNodeCheckpointStoreV0,
     },
+    finalization_intent_wal::{
+        clear_marker_v0, load_marker_v0, write_marker_v0, FinalizationIntentMarkerV0,
+    },
     native_h1_ordinary_takeover::PocoNodeNativeH1OrdinaryRuntimePartsV0,
     native_proposal_p_host::{
         PocoNodeNativeAnchoredSuccessorCompletedV0, PocoNodeNativeCoreDOutcomeV0,
@@ -2604,6 +2607,21 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             ));
         }
 
+        // A finalization intent surviving a process crash cannot be silently
+        // ignored at a fully-applied restart.  The positive-height recovery
+        // path has no retained execution/source artifact with which to prove
+        // an exact replay yet, so fail closed and leave the marker for an
+        // explicit recovery owner rather than guessing that the application
+        // commit did or did not land.
+        if load_marker_v0(&proposal_journal.store_path)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?
+            .is_some()
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "finalization intent marker requires an explicit replay owner at recovery",
+            ));
+        }
+
         let seal_authority = core
             .issue_application_seal_authority_v0()
             .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
@@ -4130,7 +4148,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
             ));
         }
         let target = self.finalization.proof().finalized_block().header();
-        let retained = self.pending_executions.remove(&target.id()).ok_or(
+        let retained = self.pending_executions.get(&target.id()).cloned().ok_or(
             PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
                 "finalization target has no retained execution artifact",
             ),
@@ -4164,22 +4182,54 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
             .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
                 "finalization target has no exact durable Valid completion",
             ))?;
-        let prior_head = self
+        let observed_head = self
             .application
             .confirmed_committed_head_v0()
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
-        if prior_head.block_id().as_bytes()
-            != self
-                .finalization
-                .authenticated_parent()
-                .block_id()
-                .as_bytes()
-            || prior_head.height().get() != self.finalization.authenticated_parent().height().get()
-        {
-            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "native committed head differs from the finalization parent",
+        let expected_parent = retained.executed.request().parent().clone();
+        let expected_target = retained.speculative_head.clone();
+        let marker = FinalizationIntentMarkerV0::from_finalization(
+            &self.finalization,
+            *self.proposal_journal.scope.as_bytes(),
+            *self.proposal_journal.owner_id.as_bytes(),
+            retained.source_artifact_checksum,
+            *expected_parent.state_root().as_bytes(),
+            *expected_parent.commit_id().as_bytes(),
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        let existing_marker = load_marker_v0(&self.proposal_journal.store_path)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        if existing_marker.as_ref().is_some_and(|existing| {
+            !existing.matches_finalization(
+                &self.finalization,
+                *self.proposal_journal.scope.as_bytes(),
+                *self.proposal_journal.owner_id.as_bytes(),
+                retained.source_artifact_checksum,
+                *expected_parent.state_root().as_bytes(),
+                *expected_parent.commit_id().as_bytes(),
+            )
+        }) {
+            return Err(PocoNodeLabAuthorityErrorV0::AuthorityChain(
+                "finalization intent marker belongs to a different operation".to_owned(),
             ));
         }
+        let replayed_application_commit = observed_head == expected_target;
+        if observed_head != expected_parent && !replayed_application_commit {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "native committed head differs from the finalization parent or exact replay target",
+            ));
+        }
+        if replayed_application_commit && existing_marker != Some(marker) {
+            return Err(PocoNodeLabAuthorityErrorV0::AuthorityChain(
+                "finalization target is committed without its exact intent marker".to_owned(),
+            ));
+        }
+        // Publish the complete operation intent before the first application
+        // write.  An exact existing marker is an idempotent retry after a
+        // process crash; a foreign marker was rejected above.
+        write_marker_v0(&self.proposal_journal.store_path, marker)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        let prior_head = expected_parent;
         let permit = self
             .core
             .issue_application_finalization_permit_v0()
@@ -4359,6 +4409,9 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
                 }
             }
         }
+        clear_marker_v0(&self.proposal_journal.store_path, marker)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        self.pending_executions.remove(&target.id());
         self.application_head = new_head;
         self.application_overlay = None;
         rebase_to_authoritative_high_qc_v0(

@@ -671,12 +671,9 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             let core_config = self.core.config().clone();
             let epoch = predecessor.epoch();
             let view = predecessor.current_view();
-            let mut evaluator = Core::recover(
-                core_config,
-                predecessor.clone(),
-                &StrictEd25519Verifier,
-            )
-            .map_err(PocoNodeHostErrorV0::core)?;
+            let mut evaluator =
+                Core::recover(core_config, predecessor.clone(), &StrictEd25519Verifier)
+                    .map_err(PocoNodeHostErrorV0::core)?;
             let evaluated_effects = evaluator
                 .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
                 .map_err(PocoNodeHostErrorV0::core)?;

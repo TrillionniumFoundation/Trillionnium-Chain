@@ -177,6 +177,8 @@ mod deployed_lab_recovery;
 mod external_node_checkpoint;
 #[cfg(feature = "external-signer-runtime")]
 mod external_signer_runtime;
+#[cfg(feature = "lab-validator-runtime")]
+mod finalization_intent_wal;
 mod g2_manifest_bound_process_v2;
 #[allow(dead_code)]
 mod g2_manifest_bound_v2;
@@ -195,6 +197,8 @@ mod native_h1_ordinary_test_support;
 mod native_h1_state_sync_commissioning;
 #[allow(dead_code)]
 mod native_proposal_p_host;
+#[cfg(feature = "node-event-wal")]
+mod node_event_wal;
 mod ordinary_timeout;
 #[cfg(feature = "legacy-consensus-app")]
 mod process_host;
@@ -312,6 +316,12 @@ pub use native_h1_state_sync_commissioning::{
     PocoNodeNativeH1StateSyncCommissionedFactsV0, PocoNodeNativeH1StateSyncCommissionedHostV0,
     PocoNodeNativeH1StateSyncCommissioningConfigV0, PocoNodeNativeH1StateSyncCommissioningErrorV0,
     PocoNodeNativeH1StateSyncPromotionSourceV0,
+};
+#[cfg(feature = "node-event-wal")]
+pub use node_event_wal::{
+    NodeEventCommitDriverV1, NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1,
+    NodeEventWalErrorV1, NodeEventWalV1, PocoNodeHostEventCommitWalV1,
+    NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1, NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
 };
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
@@ -3360,7 +3370,9 @@ mod tests {
             "the live Core must remain at its predecessor when external CAS fails"
         );
         assert_eq!(
-            host.safety_head().expect("read unchanged SafetyStore head").revision(),
+            host.safety_head()
+                .expect("read unchanged SafetyStore head")
+                .revision(),
             0,
             "the local SQLite state must not install a successor before CAS"
         );

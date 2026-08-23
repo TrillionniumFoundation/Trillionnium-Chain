@@ -10,12 +10,13 @@ publish = false
 
 [features]
 default = []
+node-event-wal = ["dep:libc"]
 # Raw consensus signing keys are available only to explicitly named fixture and
 # process-test builds.  The default node/library build has no direct
 # `ed25519-dalek` dependency edge and therefore cannot load or expose a
 # `SigningKey`.
 fixture-raw-key = ["dep:ed25519-dalek"]
-lab-validator-runtime = []
+lab-validator-runtime = ["dep:libc"]
 lab-validator-runtime-test-support = [
   "lab-validator-runtime",
   "fixture-raw-key",
