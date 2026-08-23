@@ -13,8 +13,13 @@ The first X230 invocation used the frozen v1 builder and completed two
 independent offline Cargo release builds. A second independent invocation is
 preserved as build-b; both invocations agree on the validator and
 material-builder hashes and the directory passes the deep verifier. This
-record proves current-candidate native build identity only; it does not by
-itself prove the separate v2 rust-src remap control. The runner used Rust 1.95.0,
+record proves current-candidate native build identity only. A tracked v2
+wrapper was also run against the same candidate; its schema-3 report is
+preserved as v2-build-report.json and produced the same role hashes
+(ea895802… / 1fa700c5…) in this environment. Because the v1 and v2 outputs
+matched here, this campaign does not claim a differential rust-src drift
+observation; the typed remap-fix bit therefore remains false. The runner used
+Rust 1.95.0,
 manual SSH, and no paid CI. Host identity is not cryptographically attested.
 
 The current reports deliberately keep production_activation=false,
