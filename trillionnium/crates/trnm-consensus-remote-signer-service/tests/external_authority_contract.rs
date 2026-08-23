@@ -90,7 +90,10 @@ fn external_entrypoint_fails_closed_without_local_sqlite_fallback() {
         .process_request_with_external_authority_v1(&request, &mut authority)
         .expect_err("unwired external authority must fail closed");
     assert!(error.is_external_authority_required());
-    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    // The timeout-only external bridge must consult the independent adapter
+    // before failing closed.  It must never fall back to the local SQLite
+    // reservation path after that adapter rejects the request.
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
     assert_eq!(
         service
             .watermark_snapshot()
