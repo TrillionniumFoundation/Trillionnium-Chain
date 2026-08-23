@@ -697,12 +697,15 @@ where
 
     fn persist_transition_v1(
         &mut self,
-        predecessor: SafetyRulesStateDigestV1,
         transition: &InertSafetyTransitionV1,
     ) -> Result<(), Self::Error> {
         if self.poisoned {
             return Err(SafetyRulesSemanticSidecarErrorV1::Poisoned);
         }
+        // The transition is the sole source of the predecessor binding.  Do
+        // not accept a second caller-supplied digest: that would allow the
+        // local CAS argument and the semantic transition tuple to diverge.
+        let predecessor = transition.predecessor_state_digest();
         let successor = transition.successor_state();
         let safety_revision = successor.revision();
         let intent = transition.canonical_intent();
@@ -1073,7 +1076,7 @@ mod tests {
         )
         .expect("semantic sidecar opens");
         sidecar
-            .persist_transition_v1(state.digest(), &transition)
+            .persist_transition_v1(&transition)
             .expect("first transition persists");
         assert_eq!(
             sidecar.expected_watermark().map(|head| head.sequence()),
@@ -1082,17 +1085,20 @@ mod tests {
         // The exact same transition is an idempotent retry after the local
         // owner has already installed the successor digest.  No second
         // external reservation is needed.
-        let replay = sidecar.persist_transition_v1(state.digest(), &transition);
+        let replay = sidecar.persist_transition_v1(&transition);
         assert_eq!(replay, Ok(()));
         assert!(!sidecar.is_poisoned());
 
-        // A caller-supplied predecessor that does not bind to the transition
-        // is still a fork, even though the target watermark/facts match.
-        let fork =
-            sidecar.persist_transition_v1(transition.successor_state().digest(), &transition);
+        // A stale local owner is still a fork, even though the target
+        // watermark/facts match.  The trait has no second predecessor
+        // argument that could be substituted by the caller; rebinding the
+        // authenticated local state to an unrelated digest exercises the
+        // same fail-closed check.
+        sidecar.rebind_state_digest(state.digest());
+        let fork = sidecar.persist_transition_v1(&transition);
         assert_eq!(
             fork,
-            Err(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch)
+            Err(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch)
         );
         assert!(sidecar.is_poisoned());
     }
@@ -1156,7 +1162,7 @@ mod tests {
         )
         .expect("reopen against observed successor");
         reopened
-            .persist_transition_v1(state.digest(), &transition)
+            .persist_transition_v1(&transition)
             .expect("exact crash retry is idempotent");
         assert!(!reopened.is_poisoned());
     }
@@ -1213,7 +1219,7 @@ mod tests {
         )
         .expect("fresh semantic authority opens");
         sidecar
-            .persist_transition_v1(elevated_state.digest(), &transition)
+            .persist_transition_v1(&transition)
             .expect("revision jump does not jump external sequence");
         assert_eq!(
             sidecar.expected_watermark().map(|head| head.sequence()),
@@ -1263,7 +1269,7 @@ mod tests {
         )
         .expect("open semantic sidecar");
         sidecar
-            .persist_transition_v1(state.digest(), &first)
+            .persist_transition_v1(&first)
             .expect("persist first transition");
         assert!(!sidecar.observed_transition_matches_v1(&second));
 
@@ -1273,7 +1279,7 @@ mod tests {
         // as an exact retry would poison this valid recovery.
         sidecar.rebind_state_digest(advanced_state.digest());
         sidecar
-            .persist_transition_v1(advanced_state.digest(), &second)
+            .persist_transition_v1(&second)
             .expect("advance after a prior, nonmatching sequence");
         assert_eq!(
             sidecar

@@ -28,29 +28,35 @@ impl SignatureVerifier for RootSignatures {
 
 #[derive(Debug, Default)]
 struct RecordingTransitionStore {
-    persisted: Vec<(
-        SafetyRulesStateDigestV1,
-        SafetyRulesStateDigestV1,
-        SafetyCandidateDigestV1,
-    )>,
+    persisted: Vec<PersistedTransitionV1>,
     fail: bool,
 }
+
+type PersistedTransitionV1 = (
+    SafetyRulesStateDigestV1,
+    SafetyRulesStateDigestV1,
+    SafetyCandidateDigestV1,
+    [u8; 32],
+    [u8; 32],
+);
 
 impl SafetyRulesDurableTransitionStoreV1 for RecordingTransitionStore {
     type Error = &'static str;
 
     fn persist_transition_v1(
         &mut self,
-        predecessor: SafetyRulesStateDigestV1,
         transition: &InertSafetyTransitionV1,
     ) -> Result<(), Self::Error> {
         if self.fail {
             return Err("simulated durable I/O failure");
         }
+        let predecessor = transition.predecessor_state_digest();
         self.persisted.push((
             predecessor,
             transition.successor_state().digest(),
             transition.candidate_digest(),
+            transition.canonical_intent().fingerprint().into_bytes(),
+            transition.canonical_intent().signing_root().into_bytes(),
         ));
         Ok(())
     }

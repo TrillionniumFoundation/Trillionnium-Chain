@@ -490,7 +490,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             sidecar.rebind_state_digest(predecessor_digest);
         }
         sidecar
-            .persist_transition_v1(predecessor_digest, transition)
+            .persist_transition_v1(transition)
             .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
 
         let core = if local_is_predecessor {
@@ -1145,7 +1145,7 @@ where
     write_pending_timeout_marker_v1(safety_store_path, marker)
         .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
     sidecar
-        .persist_transition_v1(transition.predecessor_state_digest(), transition)
+        .persist_transition_v1(transition)
         .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
     Ok(marker)
 }

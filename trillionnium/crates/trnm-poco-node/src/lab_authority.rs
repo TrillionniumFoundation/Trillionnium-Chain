@@ -3131,13 +3131,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                     "Proposal SafetyRules transition differs from the Core persistence state",
                 ));
             }
-            sidecar
-                .persist_transition_v1(transition.predecessor_state_digest(), transition)
-                .map_err(|error| {
-                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
-                        "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
-                    ))
-                })?;
+            sidecar.persist_transition_v1(transition).map_err(|error| {
+                PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                    "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
+                ))
+            })?;
             Ok(true)
         })
     }
@@ -3174,9 +3172,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             proposal,
             |persistence| {
                 let transition = validate_vote_persistence_transition_v1(persistence)?;
-                let external = external.take().ok_or(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
-                    "SafetyRules external authority was consumed more than once",
-                ))?;
+                let external =
+                    external
+                        .take()
+                        .ok_or(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                            "SafetyRules external authority was consumed more than once",
+                        ))?;
                 let mut sidecar = SafetyRulesSemanticSidecarV1::open(
                     external,
                     scope,
@@ -3189,13 +3190,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                         "open SafetyRules semantic sidecar at Core predecessor: {error}"
                     ))
                 })?;
-                sidecar
-                    .persist_transition_v1(transition.predecessor_state_digest(), transition)
-                    .map_err(|error| {
-                        PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
-                            "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
-                        ))
-                    })?;
+                sidecar.persist_transition_v1(transition).map_err(|error| {
+                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                        "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
+                    ))
+                })?;
                 opened_sidecar = Some(sidecar);
                 Ok(true)
             },
@@ -3607,13 +3606,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
                 // skipping it.
                 return Ok(());
             }
-            sidecar
-                .persist_transition_v1(transition.predecessor_state_digest(), transition)
-                .map_err(|error| {
-                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
-                        "SafetyRules semantic sidecar rejected Vote transition: {error}"
-                    ))
-                })
+            sidecar.persist_transition_v1(transition).map_err(|error| {
+                PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                    "SafetyRules semantic sidecar rejected Vote transition: {error}"
+                ))
+            })
         })
     }
 

@@ -9,25 +9,26 @@
 
 use crate::{
     InertSafetyTransitionV1, PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesErrorV1,
-    SafetyRulesStateDigestV1, SafetyRulesStateV1,
+    SafetyRulesStateV1,
 };
 use trnm_consensus_types::{SignatureVerifier, SignedProposalV0};
 
 /// Store boundary used by [`DurableSafetyRulesAuthorityV1`].
 ///
-/// Implementations must compare-and-set the supplied predecessor digest and
-/// persist the complete transition before returning `Ok(())`.  Passing the
-/// complete transition (rather than only its successor/candidate digests) is
-/// deliberate: an external semantic watermark must bind the exact canonical
-/// intent, fingerprint, and signing root, not merely an opaque hash selected
-/// by the caller.  The trait intentionally does not expose a signing key or a
-/// mutable Core.
+/// Implementations must compare-and-set the predecessor carried by the
+/// transition and persist the complete transition before returning `Ok(())`.
+/// The transition is the only input on purpose: accepting a second,
+/// caller-supplied predecessor digest would create two CAS authorities that
+/// an adapter could accidentally (or maliciously) bind differently.  An
+/// external semantic watermark must bind the exact predecessor, successor,
+/// canonical intent, fingerprint, signing root, and candidate digest as one
+/// tuple, not merely an opaque hash selected by the caller.  The trait
+/// intentionally does not expose a signing key or a mutable Core.
 pub trait SafetyRulesDurableTransitionStoreV1 {
     type Error;
 
     fn persist_transition_v1(
         &mut self,
-        predecessor: SafetyRulesStateDigestV1,
         transition: &InertSafetyTransitionV1,
     ) -> Result<(), Self::Error>;
 }
@@ -144,8 +145,7 @@ where
             self.poisoned = true;
             return Err(DurableSafetyRulesAuthorityErrorV1::StaleInMemoryState);
         }
-        let predecessor = self.state.digest();
-        if let Err(error) = self.store.persist_transition_v1(predecessor, &transition) {
+        if let Err(error) = self.store.persist_transition_v1(&transition) {
             self.poisoned = true;
             return Err(DurableSafetyRulesAuthorityErrorV1::Persistence(error));
         }
