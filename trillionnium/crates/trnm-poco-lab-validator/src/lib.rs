@@ -37,6 +37,10 @@ pub mod network;
 /// Active D0 peer-admission helper.  This is bounded handshake/lease
 /// authority only; it does not drive consensus transport or a validator loop.
 pub mod p2p_admission;
+/// Typed external P2P identity-signature producer boundary.  The transport
+/// verifies each returned signature against the committed role key before
+/// emitting a handshake or frame; no activation authority is implied.
+pub mod p2p_identity;
 pub mod pacemaker;
 pub mod process_event;
 pub mod relay;
@@ -120,6 +124,10 @@ pub const AUTHENTICATED_FRESH_SESSION_RUNTIME: bool = true;
 /// The live handshake and authenticated frame envelope use only the committed
 /// P2P identity role, never the consensus public key.
 pub const P2P_IDENTITY_KEY_ROLE_RUNTIME_WIRED: bool = true;
+/// A typed external P2P identity-signature producer can drive the bounded
+/// handshake/frame transport.  No deployed runtime selects it yet.
+pub const EXTERNAL_P2P_IDENTITY_SIGNATURE_API: bool = true;
+pub const EXTERNAL_P2P_IDENTITY_SIGNATURE_RUNTIME_WIRED: bool = false;
 /// Operator/recovery statements still use explicitly named consensus signing
 /// in this slice; migrating them requires a separately versioned protocol.
 pub const OPERATOR_RECOVERY_KEY_ROLE_RUNTIME_WIRED: bool = false;

@@ -17,9 +17,13 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_types::{ValidatorId, ValidatorSet};
 
 use crate::frame::{
-    read_framed, validate_run_id_bytes, write_framed, AuthenticatedFrame, FrameError, FrameKind,
+    read_framed, run_id_sha256_v1, validate_run_id_bytes, write_framed,
+    write_framed_with_external_identity, AuthenticatedFrame, FrameError, FrameKind,
 };
 use crate::key_roles::ValidatorKeyRoleRegistryV1;
+use crate::p2p_identity::{
+    P2pIdentitySignatureProducerV1, P2pIdentitySignaturePurposeV1, P2pIdentitySignatureRequestV1,
+};
 
 const HANDSHAKE_MAGIC: &[u8; 8] = b"TRNMG3H2";
 const HANDSHAKE_VERSION: u16 = 2;
@@ -293,6 +297,190 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
     }
 }
 
+/// Authenticated transport connection backed by an externally owned P2P
+/// identity producer.  This parallel type intentionally does not expose a
+/// constructor accepting a local secret; the caller must provide the public
+/// role key through the producer and the constructor checks it against the
+/// committed key-role registry before touching the handshake stream.
+pub struct ExternallySignedAuthenticatedConnectionV1<T> {
+    io: T,
+    local: ValidatorId,
+    session: ConnectionSession,
+    run_id: String,
+    producer: Box<dyn P2pIdentitySignatureProducerV1>,
+    key_roles: ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+    network_context_digest: [u8; 32],
+    expected_public_key: [u8; 32],
+    next_send: u64,
+    next_receive: u64,
+    poisoned: bool,
+}
+
+impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
+    #[allow(clippy::too_many_arguments)]
+    pub fn connect(
+        mut io: T,
+        run_id: &str,
+        local: ValidatorId,
+        expected_remote: ValidatorId,
+        mut producer: Box<dyn P2pIdentitySignatureProducerV1>,
+        validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
+        transport_context: RunTransportContext,
+    ) -> Result<Self, FrameError> {
+        require_external_identity(local, producer.as_ref(), key_roles)?;
+        let expected_public_key = key_roles
+            .p2p_identity_public_key(local)
+            .ok_or(FrameError::UnknownSender)?;
+        let network_context_digest =
+            network_context_digest(validator_set, key_roles, transport_context);
+        let session = client_handshake_with_external_identity(
+            &mut io,
+            run_id,
+            local,
+            expected_remote,
+            producer.as_mut(),
+            validator_set,
+            key_roles,
+            transport_context,
+        )?;
+        Ok(Self {
+            io,
+            local,
+            session,
+            run_id: run_id.to_owned(),
+            producer,
+            key_roles: key_roles.clone(),
+            transport_context,
+            network_context_digest,
+            expected_public_key,
+            next_send: 0,
+            next_receive: 0,
+            poisoned: false,
+        })
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn accept(
+        mut io: T,
+        run_id: &str,
+        local: ValidatorId,
+        mut producer: Box<dyn P2pIdentitySignatureProducerV1>,
+        validator_set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
+        transport_context: RunTransportContext,
+    ) -> Result<Self, FrameError> {
+        require_external_identity(local, producer.as_ref(), key_roles)?;
+        let expected_public_key = key_roles
+            .p2p_identity_public_key(local)
+            .ok_or(FrameError::UnknownSender)?;
+        let network_context_digest =
+            network_context_digest(validator_set, key_roles, transport_context);
+        let session = server_handshake_with_external_identity(
+            &mut io,
+            run_id,
+            local,
+            producer.as_mut(),
+            validator_set,
+            key_roles,
+            transport_context,
+        )?;
+        Ok(Self {
+            io,
+            local,
+            session,
+            run_id: run_id.to_owned(),
+            producer,
+            key_roles: key_roles.clone(),
+            transport_context,
+            network_context_digest,
+            expected_public_key,
+            next_send: 0,
+            next_receive: 0,
+            poisoned: false,
+        })
+    }
+
+    pub const fn remote(&self) -> ValidatorId {
+        self.session.remote
+    }
+
+    pub const fn session_id(&self) -> [u8; 32] {
+        self.session.session
+    }
+
+    pub const fn handshake_nonce_binding(&self) -> [u8; 32] {
+        self.session.nonce_binding
+    }
+
+    pub const fn validator_set_binding(&self) -> Option<(u64, [u8; 32])> {
+        self.transport_context.validator_set_binding()
+    }
+
+    pub const fn is_poisoned(&self) -> bool {
+        self.poisoned
+    }
+
+    pub fn send(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<(), FrameError> {
+        if self.poisoned {
+            return Err(FrameError::Poisoned);
+        }
+        let next_send = self.next_send.checked_add(1).ok_or_else(|| {
+            self.poisoned = true;
+            FrameError::Replay
+        })?;
+        let frame = AuthenticatedFrame {
+            sender: self.local,
+            session: self.session.session,
+            sequence: self.next_send,
+            kind,
+            payload,
+        };
+        if let Err(error) = write_framed_with_external_identity(
+            &mut self.io,
+            &frame,
+            &self.run_id,
+            self.session.remote,
+            self.network_context_digest,
+            self.session.nonce_binding,
+            self.expected_public_key,
+            self.producer.as_mut(),
+        ) {
+            self.poisoned = true;
+            return Err(error);
+        }
+        self.next_send = next_send;
+        Ok(())
+    }
+
+    pub fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
+        if self.poisoned {
+            return Err(FrameError::Poisoned);
+        }
+        let next_receive = self.next_receive.checked_add(1).ok_or_else(|| {
+            self.poisoned = true;
+            FrameError::Replay
+        })?;
+        let frame = match read_framed(&mut self.io, &self.run_id, &self.key_roles) {
+            Ok(frame) => frame,
+            Err(error) => {
+                self.poisoned = true;
+                return Err(error);
+            }
+        };
+        if frame.sender != self.session.remote
+            || frame.session != self.session.session
+            || frame.sequence != self.next_receive
+        {
+            self.poisoned = true;
+            return Err(FrameError::Replay);
+        }
+        self.next_receive = next_receive;
+        Ok(frame)
+    }
+}
+
 pub fn server_handshake(
     io: &mut (impl Read + Write),
     run_id: &str,
@@ -397,6 +585,253 @@ pub fn client_handshake(
         transport_context,
     )?;
     Ok(session)
+}
+
+/// Receiver side of the typed external P2P identity handshake.  The producer
+/// key is authenticated against the committed role registry before the
+/// challenge is generated or written.
+pub fn server_handshake_with_external_identity(
+    io: &mut (impl Read + Write),
+    run_id: &str,
+    local: ValidatorId,
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+) -> Result<ConnectionSession, FrameError> {
+    require_external_identity(local, producer, key_roles)?;
+    let expected_public_key = key_roles
+        .p2p_identity_public_key(local)
+        .ok_or(FrameError::UnknownSender)?;
+    let context_digest = network_context_digest(validator_set, key_roles, transport_context);
+    let mut receiver_nonce = [0u8; 32];
+    getrandom::getrandom(&mut receiver_nonce)
+        .map_err(|_| FrameError::Malformed("receiver entropy unavailable"))?;
+    let challenge = encode_challenge_with_external_identity(
+        run_id,
+        local,
+        context_digest,
+        receiver_nonce,
+        expected_public_key,
+        producer,
+    )?;
+    write_record(io, &challenge)?;
+    let hello = read_record(io)?;
+    let session = decode_hello(
+        &hello,
+        run_id,
+        local,
+        receiver_nonce,
+        validator_set,
+        key_roles,
+        transport_context,
+    )?;
+    let finished = encode_finished_with_external_identity(
+        run_id,
+        local,
+        session.remote,
+        context_digest,
+        session,
+        &challenge,
+        &hello,
+        expected_public_key,
+        producer,
+    )?;
+    write_record(io, &finished)?;
+    Ok(session)
+}
+
+/// Initiator side of the typed external P2P identity handshake.
+#[allow(clippy::too_many_arguments)]
+pub fn client_handshake_with_external_identity(
+    io: &mut (impl Read + Write),
+    run_id: &str,
+    local: ValidatorId,
+    expected_remote: ValidatorId,
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+) -> Result<ConnectionSession, FrameError> {
+    require_external_identity(local, producer, key_roles)?;
+    let expected_public_key = key_roles
+        .p2p_identity_public_key(local)
+        .ok_or(FrameError::UnknownSender)?;
+    let challenge = read_record(io)?;
+    let receiver_nonce = decode_challenge(
+        &challenge,
+        run_id,
+        expected_remote,
+        validator_set,
+        key_roles,
+        transport_context,
+    )?;
+    let mut sender_nonce = [0u8; 32];
+    getrandom::getrandom(&mut sender_nonce)
+        .map_err(|_| FrameError::Malformed("initiator entropy unavailable"))?;
+    let context_digest = network_context_digest(validator_set, key_roles, transport_context);
+    let session = ConnectionSession {
+        remote: expected_remote,
+        session: derive_session(
+            run_id,
+            local,
+            expected_remote,
+            context_digest,
+            receiver_nonce,
+            sender_nonce,
+        ),
+        nonce_binding: derive_nonce_binding(receiver_nonce, sender_nonce),
+    };
+    let hello = encode_hello_with_external_identity(
+        run_id,
+        local,
+        expected_remote,
+        context_digest,
+        receiver_nonce,
+        sender_nonce,
+        session,
+        expected_public_key,
+        producer,
+    )?;
+    write_record(io, &hello)?;
+    let finished = read_record(io)?;
+    decode_finished(
+        &finished,
+        run_id,
+        expected_remote,
+        local,
+        session.session,
+        &challenge,
+        &hello,
+        validator_set,
+        key_roles,
+        transport_context,
+    )?;
+    Ok(session)
+}
+
+fn encode_challenge_with_external_identity(
+    run_id: &str,
+    receiver: ValidatorId,
+    network_context_digest: [u8; 32],
+    receiver_nonce: [u8; 32],
+    expected_public_key: [u8; 32],
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+) -> Result<Vec<u8>, FrameError> {
+    let mut body = handshake_prefix(CHALLENGE_TAG, run_id)?;
+    body.extend_from_slice(receiver.as_bytes());
+    body.extend_from_slice(&network_context_digest);
+    body.extend_from_slice(&receiver_nonce);
+    let root = signing_root(CHALLENGE_DOMAIN, &body);
+    let request = P2pIdentitySignatureRequestV1::new(
+        P2pIdentitySignaturePurposeV1::Challenge,
+        receiver,
+        None,
+        run_id_sha256_v1(run_id),
+        network_context_digest,
+        [0; 32],
+        receiver_nonce,
+        root,
+    )
+    .map_err(FrameError::ExternalIdentity)?;
+    body.extend_from_slice(&sign_external_identity_request(
+        producer,
+        request,
+        expected_public_key,
+    )?);
+    Ok(body)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn encode_hello_with_external_identity(
+    run_id: &str,
+    sender: ValidatorId,
+    receiver: ValidatorId,
+    network_context_digest: [u8; 32],
+    receiver_nonce: [u8; 32],
+    sender_nonce: [u8; 32],
+    session: ConnectionSession,
+    expected_public_key: [u8; 32],
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+) -> Result<Vec<u8>, FrameError> {
+    let mut body = handshake_prefix(HELLO_TAG, run_id)?;
+    body.extend_from_slice(sender.as_bytes());
+    body.extend_from_slice(receiver.as_bytes());
+    body.extend_from_slice(&network_context_digest);
+    body.extend_from_slice(&receiver_nonce);
+    body.extend_from_slice(&sender_nonce);
+    let root = signing_root(HELLO_DOMAIN, &body);
+    let request = P2pIdentitySignatureRequestV1::new(
+        P2pIdentitySignaturePurposeV1::Hello,
+        sender,
+        Some(receiver),
+        run_id_sha256_v1(run_id),
+        network_context_digest,
+        session.session,
+        session.nonce_binding,
+        root,
+    )
+    .map_err(FrameError::ExternalIdentity)?;
+    body.extend_from_slice(&sign_external_identity_request(
+        producer,
+        request,
+        expected_public_key,
+    )?);
+    Ok(body)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn encode_finished_with_external_identity(
+    run_id: &str,
+    sender: ValidatorId,
+    receiver: ValidatorId,
+    network_context_digest: [u8; 32],
+    session: ConnectionSession,
+    challenge: &[u8],
+    hello: &[u8],
+    expected_public_key: [u8; 32],
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+) -> Result<Vec<u8>, FrameError> {
+    let mut body = handshake_prefix(FINISHED_TAG, run_id)?;
+    body.extend_from_slice(sender.as_bytes());
+    body.extend_from_slice(receiver.as_bytes());
+    body.extend_from_slice(&network_context_digest);
+    body.extend_from_slice(&session.session);
+    body.extend_from_slice(&transcript_hash(challenge, hello));
+    let root = signing_root(FINISHED_DOMAIN, &body);
+    let request = P2pIdentitySignatureRequestV1::new(
+        P2pIdentitySignaturePurposeV1::Finished,
+        sender,
+        Some(receiver),
+        run_id_sha256_v1(run_id),
+        network_context_digest,
+        session.session,
+        session.nonce_binding,
+        root,
+    )
+    .map_err(FrameError::ExternalIdentity)?;
+    body.extend_from_slice(&sign_external_identity_request(
+        producer,
+        request,
+        expected_public_key,
+    )?);
+    Ok(body)
+}
+
+fn sign_external_identity_request(
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+    request: P2pIdentitySignatureRequestV1,
+    expected_public_key: [u8; 32],
+) -> Result<[u8; 64], FrameError> {
+    let signature = producer
+        .sign_v1(request)
+        .map_err(FrameError::ExternalIdentity)?;
+    let public_key =
+        VerifyingKey::from_bytes(&expected_public_key).map_err(|_| FrameError::InvalidSignature)?;
+    public_key
+        .verify_strict(&request.signing_root(), &Signature::from_bytes(&signature))
+        .map_err(|_| FrameError::InvalidSignature)?;
+    Ok(signature)
 }
 
 fn encode_challenge(
@@ -584,6 +1019,20 @@ fn require_local_key(
     Ok(())
 }
 
+fn require_external_identity(
+    local: ValidatorId,
+    producer: &dyn P2pIdentitySignatureProducerV1,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+) -> Result<(), FrameError> {
+    let expected = key_roles
+        .p2p_identity_public_key(local)
+        .ok_or(FrameError::UnknownSender)?;
+    if expected != producer.public_key_v1() {
+        return Err(FrameError::InvalidSignature);
+    }
+    Ok(())
+}
+
 fn verify_record(
     domain: &[u8],
     body: &[u8],
@@ -766,9 +1215,11 @@ impl<'a> HandshakeCursor<'a> {
 mod tests {
     use std::io::{self, Cursor, Read, Write};
     use std::net::{TcpListener, TcpStream};
+    use std::sync::{Arc, Mutex};
     use std::thread;
 
     use crate::key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1};
+    use crate::p2p_identity::P2pIdentityErrorV1;
     use sha2::{Digest, Sha256};
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
@@ -779,6 +1230,31 @@ mod tests {
 
     const TEST_TRANSPORT_CONTEXT: RunTransportContext =
         RunTransportContext::new([0x74; 32], [0x75; 32], [0x76; 32], [0x77; 32]);
+
+    struct RecordingExternalIdentityProducerV1 {
+        key: SigningKey,
+        requests: Arc<Mutex<Vec<P2pIdentitySignatureRequestV1>>>,
+    }
+
+    impl RecordingExternalIdentityProducerV1 {
+        fn new(key: SigningKey, requests: Arc<Mutex<Vec<P2pIdentitySignatureRequestV1>>>) -> Self {
+            Self { key, requests }
+        }
+    }
+
+    impl P2pIdentitySignatureProducerV1 for RecordingExternalIdentityProducerV1 {
+        fn public_key_v1(&self) -> [u8; 32] {
+            self.key.verifying_key().to_bytes()
+        }
+
+        fn sign_v1(
+            &mut self,
+            request: P2pIdentitySignatureRequestV1,
+        ) -> Result<[u8; 64], P2pIdentityErrorV1> {
+            self.requests.lock().unwrap().push(request);
+            Ok(self.key.sign(&request.signing_root()).to_bytes())
+        }
+    }
 
     fn fixture() -> (
         SigningKey,
@@ -896,6 +1372,119 @@ mod tests {
             .unwrap();
         assert_eq!(connection.receive().unwrap().payload, b"server-ready");
         assert_eq!(connection.session_id(), server_thread.join().unwrap());
+    }
+
+    #[test]
+    fn external_identity_producer_binds_challenge_session_and_frame() {
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
+        let client_requests = Arc::new(Mutex::new(Vec::new()));
+        let server_requests = Arc::new(Mutex::new(Vec::new()));
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server_set = set.clone();
+        let server_key_roles = key_roles.clone();
+        let server_requests_for_thread = Arc::clone(&server_requests);
+        let run_id = "poco-g3-7-20260813T000000Z-1234abcd";
+        let server_thread = thread::spawn(move || {
+            let (stream, _) = listener.accept().unwrap();
+            let mut connection = ExternallySignedAuthenticatedConnectionV1::accept(
+                stream,
+                run_id,
+                server,
+                Box::new(RecordingExternalIdentityProducerV1::new(
+                    server_key,
+                    server_requests_for_thread,
+                )),
+                &server_set,
+                &server_key_roles,
+                TEST_TRANSPORT_CONTEXT,
+            )
+            .unwrap();
+            let frame = connection.receive().unwrap();
+            assert_eq!(frame.kind, FrameKind::Health);
+            assert_eq!(frame.payload, b"client-ready");
+            connection
+                .send(FrameKind::Health, b"server-ready".to_vec())
+                .unwrap();
+            (
+                connection.session_id(),
+                connection.handshake_nonce_binding(),
+            )
+        });
+        let stream = TcpStream::connect(address).unwrap();
+        let mut connection = ExternallySignedAuthenticatedConnectionV1::connect(
+            stream,
+            run_id,
+            client,
+            server,
+            Box::new(RecordingExternalIdentityProducerV1::new(
+                client_key,
+                Arc::clone(&client_requests),
+            )),
+            &set,
+            &key_roles,
+            TEST_TRANSPORT_CONTEXT,
+        )
+        .unwrap();
+        connection
+            .send(FrameKind::Health, b"client-ready".to_vec())
+            .unwrap();
+        assert_eq!(connection.receive().unwrap().payload, b"server-ready");
+        let (server_session, server_nonce_binding) = server_thread.join().unwrap();
+        assert_eq!(connection.session_id(), server_session);
+        assert_eq!(connection.handshake_nonce_binding(), server_nonce_binding);
+        assert_ne!(connection.session_id(), [0; 32]);
+        assert_ne!(connection.handshake_nonce_binding(), [0; 32]);
+
+        let client_requests = client_requests.lock().unwrap();
+        assert!(client_requests.iter().any(|request| {
+            request.purpose() == P2pIdentitySignaturePurposeV1::Hello
+                && request.peer() == Some(server)
+                && request.session() == connection.session_id()
+                && request.nonce_binding() == connection.handshake_nonce_binding()
+        }));
+        assert!(client_requests.iter().any(|request| {
+            request.purpose() == P2pIdentitySignaturePurposeV1::Frame
+                && request.peer() == Some(server)
+                && request.session() == connection.session_id()
+                && request.nonce_binding() == connection.handshake_nonce_binding()
+        }));
+        let server_requests = server_requests.lock().unwrap();
+        assert!(server_requests.iter().any(|request| {
+            request.purpose() == P2pIdentitySignaturePurposeV1::Challenge
+                && request.peer().is_none()
+                && request.session() == [0; 32]
+                && request.nonce_binding() != [0; 32]
+        }));
+        assert!(server_requests.iter().any(|request| {
+            request.purpose() == P2pIdentitySignaturePurposeV1::Finished
+                && request.peer() == Some(client)
+                && request.session() == connection.session_id()
+                && request.nonce_binding() == connection.handshake_nonce_binding()
+        }));
+    }
+
+    #[test]
+    fn external_identity_constructor_rejects_foreign_role_before_io() {
+        let (client_key, _, _, client, server, set, key_roles) = fixture();
+        let foreign_key = SigningKey::from_bytes(&[0x7f; 32]);
+        let result = ExternallySignedAuthenticatedConnectionV1::connect(
+            Cursor::new(Vec::<u8>::new()),
+            "poco-g3-7-20260813T000000Z-1234abcd",
+            client,
+            server,
+            Box::new(RecordingExternalIdentityProducerV1::new(
+                foreign_key,
+                Arc::new(Mutex::new(Vec::new())),
+            )),
+            &set,
+            &key_roles,
+            TEST_TRANSPORT_CONTEXT,
+        );
+        assert!(matches!(result, Err(FrameError::InvalidSignature)));
+        // Keep the fixture key used by the surrounding tests type-checked and
+        // make the no-I/O intent explicit: this branch never consumes it.
+        assert_ne!(client_key.verifying_key().to_bytes(), [0; 32]);
     }
 
     #[test]

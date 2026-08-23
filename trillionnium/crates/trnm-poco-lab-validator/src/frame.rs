@@ -8,6 +8,10 @@ use trnm_consensus_types::ValidatorId;
 use trnm_consensus_types::ValidatorSet;
 
 use crate::key_roles::ValidatorKeyRoleRegistryV1;
+use crate::p2p_identity::{
+    P2pIdentityErrorV1, P2pIdentitySignatureProducerV1, P2pIdentitySignaturePurposeV1,
+    P2pIdentitySignatureRequestV1,
+};
 
 pub trait P2pIdentityKeyResolverV1 {
     fn p2p_identity_public_key_v1(&self, validator_id: ValidatorId) -> Option<[u8; 32]>;
@@ -120,6 +124,7 @@ pub enum FrameError {
     InvalidSignature,
     Replay,
     Poisoned,
+    ExternalIdentity(P2pIdentityErrorV1),
 }
 
 impl std::fmt::Display for FrameError {
@@ -137,6 +142,7 @@ impl std::fmt::Display for FrameError {
             Self::Poisoned => {
                 formatter.write_str("authenticated connection is permanently poisoned")
             }
+            Self::ExternalIdentity(error) => write!(formatter, "external P2P identity: {error}"),
         }
     }
 }
@@ -238,6 +244,74 @@ impl AuthenticatedFrame {
         Ok(body)
     }
 
+    /// Encodes a frame with a typed external P2P identity producer.  The
+    /// producer receives the exact frame signing root plus the authenticated
+    /// peer/session context; a returned signature is checked against the
+    /// producer's public role key before the bytes are returned.
+    pub fn encode_with_external_identity(
+        &self,
+        run_id: &str,
+        remote: ValidatorId,
+        network_context_digest: [u8; 32],
+        nonce_binding: [u8; 32],
+        expected_public_key: [u8; 32],
+        producer: &mut dyn P2pIdentitySignatureProducerV1,
+    ) -> Result<Vec<u8>, FrameError> {
+        validate_run_id_bytes(run_id.as_bytes())?;
+        if self.sender.as_bytes().len() != 32 || remote.is_zero() {
+            return Err(FrameError::Malformed("G3 frame identity is invalid"));
+        }
+        if self.payload.len() > MAX_FRAME_PAYLOAD_BYTES {
+            return Err(FrameError::TooLarge);
+        }
+        let run_len = u16::try_from(run_id.len()).map_err(|_| FrameError::TooLarge)?;
+        let payload_len = u32::try_from(self.payload.len()).map_err(|_| FrameError::TooLarge)?;
+        let body_len = 8usize
+            .checked_add(2)
+            .and_then(|value| value.checked_add(2))
+            .and_then(|value| value.checked_add(run_id.len()))
+            .and_then(|value| value.checked_add(32 + 32 + 8 + 1 + 4))
+            .and_then(|value| value.checked_add(self.payload.len()))
+            .and_then(|value| value.checked_add(SIGNATURE_BYTES))
+            .ok_or(FrameError::TooLarge)?;
+        if body_len > MAX_FRAME_BODY_BYTES {
+            return Err(FrameError::TooLarge);
+        }
+        let mut body = Vec::with_capacity(body_len);
+        body.extend_from_slice(FRAME_MAGIC);
+        body.extend_from_slice(&FRAME_VERSION.to_be_bytes());
+        body.extend_from_slice(&run_len.to_be_bytes());
+        body.extend_from_slice(run_id.as_bytes());
+        body.extend_from_slice(self.sender.as_bytes());
+        body.extend_from_slice(&self.session);
+        body.extend_from_slice(&self.sequence.to_be_bytes());
+        body.push(self.kind as u8);
+        body.extend_from_slice(&payload_len.to_be_bytes());
+        body.extend_from_slice(&self.payload);
+        let root = frame_signing_root(&body);
+        let request = P2pIdentitySignatureRequestV1::new(
+            P2pIdentitySignaturePurposeV1::Frame,
+            self.sender,
+            Some(remote),
+            run_id_sha256_v1(run_id),
+            network_context_digest,
+            self.session,
+            nonce_binding,
+            root,
+        )
+        .map_err(FrameError::ExternalIdentity)?;
+        let signature = producer
+            .sign_v1(request)
+            .map_err(FrameError::ExternalIdentity)?;
+        let public_key = VerifyingKey::from_bytes(&expected_public_key)
+            .map_err(|_| FrameError::InvalidSignature)?;
+        public_key
+            .verify_strict(&root, &Signature::from_bytes(&signature))
+            .map_err(|_| FrameError::InvalidSignature)?;
+        body.extend_from_slice(&signature);
+        Ok(body)
+    }
+
     pub fn decode(
         body: &[u8],
         expected_run_id: &str,
@@ -334,6 +408,31 @@ pub fn write_framed(
     Ok(())
 }
 
+pub fn write_framed_with_external_identity(
+    writer: &mut impl Write,
+    frame: &AuthenticatedFrame,
+    run_id: &str,
+    remote: ValidatorId,
+    network_context_digest: [u8; 32],
+    nonce_binding: [u8; 32],
+    expected_public_key: [u8; 32],
+    producer: &mut dyn P2pIdentitySignatureProducerV1,
+) -> Result<(), FrameError> {
+    let body = frame.encode_with_external_identity(
+        run_id,
+        remote,
+        network_context_digest,
+        nonce_binding,
+        expected_public_key,
+        producer,
+    )?;
+    let length = u32::try_from(body.len()).map_err(|_| FrameError::TooLarge)?;
+    writer.write_all(&length.to_be_bytes())?;
+    writer.write_all(&body)?;
+    writer.flush()?;
+    Ok(())
+}
+
 pub fn read_framed(
     reader: &mut impl Read,
     expected_run_id: &str,
@@ -355,6 +454,14 @@ fn frame_signing_root(signed_body: &[u8]) -> [u8; 32] {
     hasher.update(FRAME_SIGNING_DOMAIN);
     hasher.update((signed_body.len() as u64).to_be_bytes());
     hasher.update(signed_body);
+    hasher.finalize().into()
+}
+
+pub(crate) fn run_id_sha256_v1(run_id: &str) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.poco-g3.external-p2p-run-id.v1");
+    hasher.update((run_id.len() as u64).to_be_bytes());
+    hasher.update(run_id.as_bytes());
     hasher.finalize().into()
 }
 
