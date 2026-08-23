@@ -5679,6 +5679,7 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use tempfile::{tempdir, TempDir};
     use trnm_consensus_core::leader_for;
+    use trnm_consensus_external_watermark::ReplayBoundTimeoutProducer;
     use trnm_consensus_signer_journal::{
         ExternalWatermarkErrorV0, SignatureProducerErrorV0, SignatureProducerV0,
         SignatureRequestV0, SignerWatermarkV0,
@@ -6834,6 +6835,7 @@ mod tests {
             &validator_set,
         )
         .expect("construct exact post-h4 timeout certificate");
+        let timeout_signing_key = bundle.signing_key_v0().clone();
         let mut producer = ExactProducerV0(bundle.signing_key_v0().clone());
         let (core_config, _application_config, runtime) = bundle.into_recovery_test_parts_v0();
         if leave_pending_sign {
@@ -6886,11 +6888,31 @@ mod tests {
                 timeout_view,
                 "timeout fixture must target Core's exact post-QC view",
             );
+            // This is deliberately a test-only/inert integration.  The Lab
+            // owner still owns Core, SafetyStore, and the signer journal, but
+            // the producer boundary is the durable response-replay wrapper
+            // from the external-watermark slice.  The response namespace is
+            // kept outside the seven deployed authority namespaces so the
+            // process-2 recovery inventory remains exact.
+            let response_binding_directory =
+                tempdir().expect("create timeout response-binding namespace");
+            std::fs::set_permissions(
+                response_binding_directory.path(),
+                std::fs::Permissions::from_mode(0o700),
+            )
+            .expect("protect timeout response-binding namespace");
+            let mut replay_bound_timeout = ReplayBoundTimeoutProducer::open(
+                response_binding_directory
+                    .path()
+                    .join("timeout-response-binding.log"),
+                ExactProducerV0(timeout_signing_key),
+            )
+            .expect("open durable timeout response-binding wrapper");
             let signed_timeout = runtime
                 .begin_local_timeout_v0()
                 .expect("persist exact post-h4 timeout intent")
-                .sign_exact_timeout_v0(&mut producer)
-                .expect("journal and release exact post-h4 TimeoutVote");
+                .sign_exact_timeout_v0(&mut replay_bound_timeout)
+                .expect("journal and release exact post-h4 TimeoutVote through replay binding");
             let mut advance = signed_timeout
                 .advance_timeout_certificate_v0(timeout_certificate)
                 .expect("advance exact post-h4 timeout certificate");

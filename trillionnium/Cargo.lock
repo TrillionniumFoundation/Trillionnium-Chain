@@ -1758,6 +1758,7 @@ dependencies = [
  "tempfile",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
+ "trnm-consensus-external-watermark",
  "trnm-consensus-remote-signer-protocol",
  "trnm-consensus-safety-store",
  "trnm-consensus-signer-journal",

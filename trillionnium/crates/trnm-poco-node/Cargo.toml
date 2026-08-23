@@ -210,5 +210,6 @@ trnm-protocol = { version = "0.1.0", path = "../trnm-protocol", optional = true 
 ed25519-dalek = "2"
 serde_json = "1"
 tempfile = "3"
+trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
