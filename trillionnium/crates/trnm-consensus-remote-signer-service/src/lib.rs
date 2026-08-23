@@ -264,11 +264,25 @@ pub struct UnixExternalTimeoutAuthorityV1 {
     lease_id: [u8; 32],
     signer_profile_ref: [u8; 32],
     journal_id: [u8; 32],
+    capability: [u8; 32],
     pending: BTreeMap<[u8; 32], PendingExternalReservationV1>,
     poisoned: bool,
 }
 
 impl UnixExternalTimeoutAuthorityV1 {
+    pub fn scope_for_binding(binding: RemoteSignerRequestBindingV1) -> [u8; 32] {
+        watermark_scope_v1(&binding)
+    }
+
+    pub fn journal_id_for_binding(binding: RemoteSignerRequestBindingV1) -> [u8; 32] {
+        external_adapter_journal_id_v1(
+            watermark_scope_v1(&binding),
+            binding.process_generation().get(),
+            *binding.lease_id().as_bytes(),
+            *binding.service_profile_ref().as_bytes(),
+        )
+    }
+
     /// Opens an adapter bound to one immutable process-generation/lease
     /// namespace. Changing either value requires a newly provisioned external
     /// watermark namespace; silently attaching to an old head is rejected.
@@ -301,9 +315,17 @@ impl UnixExternalTimeoutAuthorityV1 {
             lease_id,
             signer_profile_ref,
             journal_id,
+            capability: [0; 32],
             pending: BTreeMap::new(),
             poisoned: false,
         })
+    }
+
+    /// Binds this adapter to the immutable capability provisioned by the
+    /// semantic watermark daemon. A zero token is never accepted on the wire.
+    pub const fn with_capability(mut self, capability: [u8; 32]) -> Self {
+        self.capability = capability;
+        self
     }
 
     /// Constructs the adapter from the exact public binding used by the
@@ -347,6 +369,7 @@ impl UnixExternalTimeoutAuthorityV1 {
             || request.request_fingerprint == [0; 32]
             || request.signing_root == [0; 32]
             || request.nonce == [0; 32]
+            || self.capability == [0; 32]
         {
             return Err(ExternalAuthorityErrorV1::InvalidState);
         }
@@ -360,15 +383,15 @@ impl UnixExternalTimeoutAuthorityV1 {
     /// sequence zero; every response record increments the replay count, so a
     /// healthy head satisfies `replay_count == external_sequence + 1`.
     fn reconcile_heads_v1(&self) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
-        let head = self
+        let semantic_head = self
             .watermark
-            .load_checked(self.scope)
+            .load_semantic_checked(self.scope)
             .map_err(map_external_watermark_error_v1)?;
         let records = self.replay.record_count_v1();
-        match head {
+        match semantic_head {
             None if records == 0 => Ok(None),
             None => Err(ExternalAuthorityErrorV1::InvalidState),
-            Some(value) => {
+            Some((value, facts)) => {
                 if value.scope() != self.scope || value.journal_id() != self.journal_id {
                     return Err(ExternalAuthorityErrorV1::InvalidState);
                 }
@@ -377,6 +400,16 @@ impl UnixExternalTimeoutAuthorityV1 {
                     .checked_add(1)
                     .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
                 if records != expected_records {
+                    return Err(ExternalAuthorityErrorV1::InvalidState);
+                }
+                let Some((fingerprint, profile, root)) = self.replay.latest_binding_v1() else {
+                    return Err(ExternalAuthorityErrorV1::InvalidState);
+                };
+                if fingerprint != facts.request_fingerprint
+                    || profile != self.signer_profile_ref
+                    || root != facts.signing_root
+                    || facts.capability == [0; 32]
+                {
                     return Err(ExternalAuthorityErrorV1::InvalidState);
                 }
                 Ok(Some(value))
@@ -436,6 +469,14 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
             request.view,
             request.safety_revision,
         )
+        .and_then(|facts| {
+            facts.with_request(
+                request.nonce,
+                request.request_fingerprint,
+                request.signing_root,
+                self.capability,
+            )
+        })
         .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
         self.watermark
             .compare_and_advance_semantic_checked(previous, target, facts)
@@ -494,20 +535,52 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
                 signature,
             )
             .map_err(map_replay_binding_error_v1)?;
-        match self
+        // The semantic sidecar is the authority record for this adapter.  Do
+        // not use the opaque load path here: an opaque response can hide a
+        // scope/journal mismatch and, more importantly, cannot prove that the
+        // CAS head still describes the exact request whose response we just
+        // appended.  A response-log append without a matching semantic head
+        // is ambiguous and permanently poisons this process.
+        let Some((current, facts)) = self
             .watermark
-            .load_checked(self.scope)
+            .load_semantic_checked(self.scope)
             .map_err(map_external_watermark_error_v1)?
-        {
-            Some(current) if current == pending.target => {
-                self.pending.remove(&reservation.token_digest());
-                Ok(())
-            }
-            _ => {
-                self.poisoned = true;
-                Err(ExternalAuthorityErrorV1::InvalidState)
-            }
+        else {
+            self.poisoned = true;
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        };
+        let request = pending.request;
+        let Some((replay_fingerprint, replay_profile, replay_root)) =
+            self.replay.latest_binding_v1()
+        else {
+            self.poisoned = true;
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        };
+        let expected_records = current
+            .sequence()
+            .checked_add(1)
+            .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+        let valid = current == pending.target
+            && current.scope() == self.scope
+            && current.journal_id() == self.journal_id
+            && self.replay.record_count_v1() == expected_records
+            && facts.epoch == request.epoch
+            && facts.view == request.view
+            && facts.safety_revision == request.safety_revision
+            && facts.request_nonce == request.nonce
+            && facts.request_fingerprint == request.request_fingerprint
+            && facts.signing_root == request.signing_root
+            && facts.capability == self.capability
+            && facts.capability != [0; 32]
+            && replay_fingerprint == request.request_fingerprint
+            && replay_profile == request.signer_profile_ref
+            && replay_root == request.signing_root;
+        if !valid {
+            self.poisoned = true;
+            return Err(ExternalAuthorityErrorV1::InvalidState);
         }
+        self.pending.remove(&reservation.token_digest());
+        Ok(())
     }
 }
 
@@ -729,13 +802,17 @@ impl From<ServiceFailure> for RemoteSignerServiceError {
 pub struct RemoteSignerService {
     validator_set: ValidatorSet,
     binding: RemoteSignerRequestBindingV1,
-    signing_key: SigningKey,
+    signing_key: Option<SigningKey>,
     purpose_policy: PurposePolicyV1,
     scope: [u8; 32],
     watermark_path: PathBuf,
     watermark_identity: FileIdentityV1,
     watermark_directory_identity: FileIdentityV1,
     connection: Connection,
+    /// When present, Unix transport is permanently in external-authority
+    /// mode. The local SQLite request path is rejected rather than used as a
+    /// fallback, even if a caller holds the service object in-process.
+    external_authority: Option<Box<dyn ExternalAuthorityAdapterV1>>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -900,14 +977,54 @@ impl RemoteSignerService {
         Ok(Self {
             validator_set: config.validator_set,
             binding: config.binding,
-            signing_key: config.signing_key,
+            signing_key: Some(config.signing_key),
             purpose_policy: config.purpose_policy,
             scope,
             watermark_path,
             watermark_identity,
             watermark_directory_identity: directory_identity,
             connection,
+            external_authority: None,
         })
+    }
+
+    /// Opens the timeout-only Unix service in explicit external-authority
+    /// mode. The service still owns its local namespace for identity and
+    /// startup checks, but every request is routed through the independent
+    /// external CAS/response adapter; the local SQLite reservation path is
+    /// permanently unavailable for this instance.
+    pub fn open_with_external_timeout_authority(
+        config: RemoteSignerServiceConfig,
+        authority_socket: impl AsRef<Path>,
+        response_log_path: impl AsRef<Path>,
+        capability: [u8; 32],
+    ) -> Result<Self, RemoteSignerServiceError> {
+        if config.purpose_policy != PurposePolicyV1::timeout_vote_only() {
+            return Err(ServiceFailure::InvalidConfig(
+                "external timeout service requires timeout-only purpose policy",
+            )
+            .into());
+        }
+        let binding = config.binding;
+        let mut service = Self::open(config)?;
+        let adapter = UnixExternalTimeoutAuthorityV1::from_binding(
+            binding,
+            authority_socket,
+            response_log_path,
+        )
+        .map_err(external_authority_failure_v1)?
+        .with_capability(capability);
+        if capability == [0; 32] {
+            return Err(ServiceFailure::InvalidConfig("external authority capability").into());
+        }
+        // This process is the dedicated remote-signer boundary: the node and
+        // consensus runtime never receive this key.  The external authority
+        // fences every request before this process reaches the key, while the
+        // validator-set public key is used for response verification.  Do not
+        // confuse this isolated signer process with a node carrying a raw
+        // consensus key.
+        service.external_authority = Some(Box::new(adapter));
+        Ok(service)
     }
 
     pub const fn binding(&self) -> RemoteSignerRequestBindingV1 {
@@ -1015,6 +1132,9 @@ impl RemoteSignerService {
         &mut self,
         encoded_request: &[u8],
     ) -> Result<Vec<u8>, RemoteSignerServiceError> {
+        if self.external_authority.is_some() {
+            return Err(ServiceFailure::ExternalAuthorityRequired.into());
+        }
         self.ensure_file_identity_v1()?;
         let request = decode_remote_signer_request_v1_exact(
             encoded_request,
@@ -1140,7 +1260,21 @@ impl RemoteSignerService {
             }
             Err(error) => return Err(error.into()),
         };
-        match self.process_request(&request) {
+        let result = if self.external_authority.is_some() {
+            // Temporarily move the adapter out to satisfy Rust's aliasing
+            // rules while the service validates and reconstructs the exact
+            // response. It is restored even when the request fails closed.
+            let mut authority = self
+                .external_authority
+                .take()
+                .ok_or(ServiceFailure::ExternalAuthorityRequired)?;
+            let result = self.process_request_with_external_authority_v1(&request, &mut *authority);
+            self.external_authority = Some(authority);
+            result
+        } else {
+            self.process_request(&request)
+        };
+        match result {
             Ok(response) => write_ok_frame_v1(stream, &response)?,
             Err(error) => write_reject_frame_v1(stream, classify_reject_v1(&error.0))?,
         }
@@ -1375,8 +1509,12 @@ impl RemoteSignerService {
     }
 
     fn sign_and_verify_v1(&self, signing_root: &[u8; 32]) -> Result<[u8; 64], ServiceFailure> {
-        let signature = self.signing_key.sign(signing_root);
-        self.signing_key
+        let signing_key = self
+            .signing_key
+            .as_ref()
+            .ok_or(ServiceFailure::ExternalAuthorityRequired)?;
+        let signature = signing_key.sign(signing_root);
+        signing_key
             .verifying_key()
             .verify(signing_root, &signature)
             .map_err(|_| ServiceFailure::SignatureFailure)?;
@@ -1388,8 +1526,14 @@ impl RemoteSignerService {
         request: &trnm_consensus_remote_signer_protocol::RemoteSignerRequestV1,
         signature: [u8; 64],
     ) -> Result<(), RemoteSignerServiceError> {
-        self.signing_key
-            .verifying_key()
+        let validator = self
+            .validator_set
+            .validator(self.binding.author())
+            .ok_or(ServiceFailure::InvalidConfig("binding author is absent"))?;
+        let verifying_key =
+            ed25519_dalek::VerifyingKey::from_bytes(validator.consensus_key().as_bytes())
+                .map_err(|_| ServiceFailure::SignatureFailure)?;
+        verifying_key
             .verify(
                 request.command().intent().signing_root().as_bytes(),
                 &ed25519_dalek::Signature::from_bytes(&signature),

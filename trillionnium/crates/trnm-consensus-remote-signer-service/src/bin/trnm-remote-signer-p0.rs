@@ -309,10 +309,12 @@ mod tests {
     #[test]
     fn external_timeout_args_reject_missing_or_ambiguous_authority() {
         let mut missing = required_args();
-        missing
+        if let Some(value) = missing
             .iter_mut()
             .find(|value| value.as_str() == "--capability")
-            .map(|value| *value = "--unknown".into());
+        {
+            *value = "--unknown".into();
+        }
         assert!(parse_external_timeout_args(&missing).is_err());
 
         let mut duplicate = required_args();

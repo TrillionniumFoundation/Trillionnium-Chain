@@ -21,10 +21,13 @@ use trnm_consensus_remote_signer_service::{
     RemoteSignerService, UnixExternalTimeoutAuthorityV1,
 };
 
+const CAPABILITY: [u8; 32] = [0x33; 32];
+
 struct AuthorityProcess {
     child: Child,
     socket: PathBuf,
     log: PathBuf,
+    binding: trnm_consensus_remote_signer_protocol::RemoteSignerRequestBindingV1,
 }
 
 impl AuthorityProcess {
@@ -35,19 +38,36 @@ impl AuthorityProcess {
         Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/debug/trnm-external-watermark-v0")
     }
 
-    fn start(root: &Path) -> Self {
+    fn start(
+        root: &Path,
+        binding: trnm_consensus_remote_signer_protocol::RemoteSignerRequestBindingV1,
+    ) -> Self {
         let socket = root.join("authority.sock");
         let log = root.join("authority.log");
+        let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(binding);
+        let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
         let child = Command::new(Self::binary())
             .args([
+                "semantic",
                 "--socket",
                 socket.to_str().expect("authority socket path"),
                 "--log",
                 log.to_str().expect("authority log path"),
+                "--scope",
+                &hex32(scope),
+                "--journal-id",
+                &hex32(journal),
+                "--capability",
+                &hex32(CAPABILITY),
             ])
             .spawn()
             .expect("spawn external watermark daemon");
-        let process = Self { child, socket, log };
+        let process = Self {
+            child,
+            socket,
+            log,
+            binding,
+        };
         let client = UnixWatermarkClient::new(&process.socket).expect("authority client");
         for _ in 0..100 {
             match client.load_checked([0x99; 32]) {
@@ -62,18 +82,35 @@ impl AuthorityProcess {
         panic!("timed out waiting for external watermark daemon");
     }
 
+    fn restart(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
+        let replacement = Self::start(
+            self.socket.parent().expect("authority parent"),
+            self.binding,
+        );
+        self.child = replacement.child;
+        self.socket = replacement.socket;
+        self.log = replacement.log;
+        self.binding = replacement.binding;
+    }
+
     fn stop(&mut self) {
         let _ = self.child.kill();
         let _ = self.child.wait();
     }
 }
 
+fn hex32(bytes: [u8; 32]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
 #[test]
 fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
     let root = TempDir::new().expect("temporary bridge root");
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
-    let mut authority = AuthorityProcess::start(root.path());
     let fixture = Fixture::new();
+    let mut authority = AuthorityProcess::start(root.path(), fixture.binding);
     let local_db = root.path().join("local.sqlite3");
     let mut service = RemoteSignerService::open(fixture_service_config(
         &local_db,
@@ -89,7 +126,8 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
         &authority.socket,
         &response_log,
     )
-    .expect("open external adapter");
+    .expect("open external adapter")
+    .with_capability(CAPABILITY);
     let first = service
         .process_request_with_external_authority_v1(&request, &mut adapter)
         .expect("external timeout request");
@@ -119,13 +157,14 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
     drop(adapter);
 
     authority.stop();
-    authority = AuthorityProcess::start(root.path());
+    authority.restart();
     let mut reopened = UnixExternalTimeoutAuthorityV1::from_binding(
         fixture.binding,
         &authority.socket,
         &response_log,
     )
-    .expect("reopen external adapter after daemon restart");
+    .expect("reopen external adapter after daemon restart")
+    .with_capability(CAPABILITY);
     let replay_after_restart = service
         .process_request_with_external_authority_v1(&request, &mut reopened)
         .expect("replay after authority restart");
@@ -158,10 +197,21 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
     fs::write(&authority.log, &bytes[..bytes.len() - 1]).expect("truncate authority log");
     let failed = Command::new(AuthorityProcess::binary())
         .args([
+            "semantic",
             "--socket",
             authority.socket.to_str().unwrap(),
             "--log",
             authority.log.to_str().unwrap(),
+            "--scope",
+            &hex32(UnixExternalTimeoutAuthorityV1::scope_for_binding(
+                fixture.binding,
+            )),
+            "--journal-id",
+            &hex32(UnixExternalTimeoutAuthorityV1::journal_id_for_binding(
+                fixture.binding,
+            )),
+            "--capability",
+            &hex32(CAPABILITY),
         ])
         .output()
         .expect("spawn tampered authority");
@@ -172,8 +222,8 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
 fn timeout_bridge_rejects_vote_and_ambiguous_reservation() {
     let root = TempDir::new().expect("temporary bridge root");
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
-    let mut authority = AuthorityProcess::start(root.path());
     let fixture = Fixture::new();
+    let mut authority = AuthorityProcess::start(root.path(), fixture.binding);
     let local_db = root.path().join("local.sqlite3");
     let mut service =
         RemoteSignerService::open(fixture_service_config(&local_db, PurposePolicyV1::both()))
@@ -182,7 +232,8 @@ fn timeout_bridge_rejects_vote_and_ambiguous_reservation() {
     let response_log = root.path().join("responses.log");
     let mut adapter =
         UnixExternalTimeoutAuthorityV1::from_binding(fixture.binding, &socket, &response_log)
-            .unwrap();
+            .unwrap()
+            .with_capability(CAPABILITY);
     let vote = fixture_request(&fixture, "vote", 3, b"vote-disabled")
         .unwrap()
         .try_exact_bytes()
@@ -202,7 +253,8 @@ fn timeout_bridge_rejects_vote_and_ambiguous_reservation() {
     drop(adapter);
     let mut reopened =
         UnixExternalTimeoutAuthorityV1::from_binding(fixture.binding, &socket, &response_log)
-            .expect("reopen adapter before ambiguity check");
+            .expect("reopen adapter before ambiguity check")
+            .with_capability(CAPABILITY);
     assert!(
         reopened.reserve_v1(facts).is_err(),
         "unbound external reservation is ambiguous"

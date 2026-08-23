@@ -30,20 +30,42 @@ const SCOPE: [u8; 32] = [0x11; 32];
 const JOURNAL: [u8; 32] = [0x22; 32];
 const MAXIMUM_DATABASE_BYTES: usize = 32 * 1024 * 1024;
 const TEST_SEED: [u8; 32] = [0x19; 32];
+const CAPABILITY: [u8; 32] = [0x33; 32];
 
 struct AuthorityProcess {
     child: Child,
     socket: PathBuf,
     log: PathBuf,
     client: UnixWatermarkClient,
+    semantic: bool,
 }
 
 impl AuthorityProcess {
     fn start(root: &Path) -> Self {
+        Self::start_with_mode(root, false)
+    }
+
+    fn start_semantic(root: &Path) -> Self {
+        Self::start_with_mode(root, true)
+    }
+
+    fn start_with_mode(root: &Path, semantic: bool) -> Self {
         let socket = root.join("authority.sock");
         let log = root.join("authority.log");
         let binary = env!("CARGO_BIN_EXE_trnm-external-watermark-v0");
-        let child = Command::new(binary)
+        let mut command = Command::new(binary);
+        if semantic {
+            command.args([
+                "semantic",
+                "--scope",
+                &hex32(SCOPE),
+                "--journal-id",
+                &hex32(JOURNAL),
+                "--capability",
+                &hex32(CAPABILITY),
+            ]);
+        }
+        let child = command
             .args([
                 "--socket",
                 socket.to_str().expect("socket path"),
@@ -58,6 +80,7 @@ impl AuthorityProcess {
             socket,
             log,
             client,
+            semantic,
         };
         process.wait_ready();
         process
@@ -80,17 +103,39 @@ impl AuthorityProcess {
     fn restart(&mut self) {
         self.child.kill().expect("kill authority");
         let _ = self.child.wait();
-        let replacement = Self::start(self.socket.parent().expect("authority parent"));
+        let replacement = Self::start_with_mode(
+            self.socket.parent().expect("authority parent"),
+            self.semantic,
+        );
         self.child = replacement.child;
         self.socket = replacement.socket;
         self.log = replacement.log;
         self.client = replacement.client;
+        self.semantic = replacement.semantic;
     }
 
     fn stop(&mut self) {
         let _ = self.child.kill();
         let _ = self.child.wait();
     }
+}
+
+fn hex32(bytes: [u8; 32]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn semantic_facts(
+    epoch: u64,
+    view: u64,
+    revision: u64,
+    nonce: u8,
+    fingerprint: u8,
+) -> ExternalWatermarkSemanticFactsV1 {
+    ExternalWatermarkSemanticFactsV1::new(epoch, view, revision)
+        .and_then(|facts| {
+            facts.with_request([nonce; 32], [fingerprint; 32], [0x66; 32], CAPABILITY)
+        })
+        .expect("valid semantic facts")
 }
 
 fn mark(sequence: u64, checksum: u8) -> SignerWatermarkV0 {
@@ -187,9 +232,9 @@ fn two_process_restart_rejects_stale_cas_and_log_tamper() {
 fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper() {
     let root = tempdir().expect("private semantic test directory");
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
-    let mut authority = AuthorityProcess::start(root.path());
+    let mut authority = AuthorityProcess::start_semantic(root.path());
     let first = mark(0, 0x41);
-    let first_facts = ExternalWatermarkSemanticFactsV1::new(7, 3, 5).unwrap();
+    let first_facts = semantic_facts(7, 3, 5, 1, 0x51);
     authority
         .client
         .compare_and_advance_semantic_checked(None, first, first_facts)
@@ -202,7 +247,7 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
         authority.client.compare_and_advance_semantic_checked(
             Some(first),
             lower_view,
-            ExternalWatermarkSemanticFactsV1::new(7, 2, 6).unwrap(),
+            semantic_facts(7, 2, 6, 2, 0x52),
         ),
         Err(ExternalWatermarkAuthorityError::CompareFailed)
     ));
@@ -211,7 +256,7 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
         authority.client.compare_and_advance_semantic_checked(
             Some(first),
             lower_revision,
-            ExternalWatermarkSemanticFactsV1::new(7, 4, 5).unwrap(),
+            semantic_facts(7, 4, 5, 3, 0x53),
         ),
         Err(ExternalWatermarkAuthorityError::CompareFailed)
     ));
@@ -221,7 +266,7 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
         .compare_and_advance_semantic_checked(
             Some(first),
             next_epoch,
-            ExternalWatermarkSemanticFactsV1::new(8, 0, 6).unwrap(),
+            semantic_facts(8, 0, 6, 4, 0x54),
         )
         .expect("higher epoch may reset view");
     authority.stop();
@@ -232,10 +277,17 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
     let binary = env!("CARGO_BIN_EXE_trnm-external-watermark-v0");
     let failed = Command::new(binary)
         .args([
+            "semantic",
             "--socket",
             authority.socket.to_str().unwrap(),
             "--log",
             authority.log.to_str().unwrap(),
+            "--scope",
+            &hex32(SCOPE),
+            "--journal-id",
+            &hex32(JOURNAL),
+            "--capability",
+            &hex32(CAPABILITY),
         ])
         .output()
         .expect("restart tampered semantic authority");
@@ -243,6 +295,43 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
         !failed.status.success(),
         "semantic sidecar rollback must fail closed"
     );
+}
+
+#[test]
+fn semantic_namespace_cannot_downgrade_or_rebind_capability() {
+    let root = tempdir().expect("private semantic mode directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_semantic(root.path());
+    let first = mark(0, 0x71);
+    authority
+        .client
+        .compare_and_advance_semantic_checked(None, first, semantic_facts(1, 1, 1, 0x71, 0x81))
+        .expect("bound semantic reservation");
+    let wrong_capability = ExternalWatermarkSemanticFactsV1::new(1, 2, 2)
+        .and_then(|facts| facts.with_request([0x72; 32], [0x82; 32], [0x66; 32], [0x44; 32]))
+        .expect("wrong capability facts");
+    assert!(matches!(
+        authority.client.compare_and_advance_semantic_checked(
+            Some(first),
+            mark(1, 0x72),
+            wrong_capability,
+        ),
+        Err(ExternalWatermarkAuthorityError::InvalidLog(_))
+    ));
+    authority.stop();
+
+    // The immutable semantic mode marker rejects the legacy opaque opener,
+    // even though the caller can still see the same Unix socket/log paths.
+    let failed = Command::new(env!("CARGO_BIN_EXE_trnm-external-watermark-v0"))
+        .args([
+            "--socket",
+            root.path().join("opaque.sock").to_str().unwrap(),
+            "--log",
+            root.path().join("authority.log").to_str().unwrap(),
+        ])
+        .output()
+        .expect("spawn attempted opaque downgrade");
+    assert!(!failed.status.success(), "semantic mode must not downgrade");
 }
 
 #[derive(Clone)]
