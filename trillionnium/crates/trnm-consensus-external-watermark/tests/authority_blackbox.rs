@@ -187,6 +187,17 @@ impl AuthorityProcess {
     }
 }
 
+fn assert_authority_exited(authority: &mut AuthorityProcess) {
+    for _ in 0..200 {
+        if let Some(status) = authority.child.try_wait().expect("poll authority process") {
+            assert!(!status.success(), "tampered authority must fail closed");
+            return;
+        }
+        thread::sleep(Duration::from_millis(10));
+    }
+    panic!("tampered authority stayed alive instead of poisoning");
+}
+
 fn hex32(bytes: [u8; 32]) -> String {
     bytes.iter().map(|byte| format!("{byte:02x}")).collect()
 }
@@ -580,6 +591,96 @@ fn semantic_journal_lifecycle_accepts_prepared_signed_pair_and_rejects_third_eve
         Some(signed)
     );
     authority.stop();
+}
+
+#[test]
+fn live_log_tamper_poison_fails_before_next_request() {
+    let root = tempdir().expect("private live-tamper directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start(root.path());
+    authority
+        .client
+        .compare_and_advance_checked(None, mark(0, 0xa1))
+        .expect("initial watermark");
+
+    // Mutating the authenticated tail while the daemon is still serving must
+    // not be deferred until restart: the next Unix request must poison the
+    // process before it can return a watermark.
+    let mut bytes = fs::read(&authority.log).expect("read live authority log");
+    let last = bytes.last_mut().expect("non-empty authority log");
+    *last ^= 0x01;
+    fs::write(&authority.log, bytes).expect("tamper live authority log");
+    assert!(
+        authority.client.load_checked(SCOPE).is_err(),
+        "live log tamper must not receive a successful response"
+    );
+    assert_authority_exited(&mut authority);
+}
+
+#[test]
+fn live_semantic_log_append_poison_fails_before_next_request() {
+    let root = tempdir().expect("private live semantic-tamper directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_semantic(root.path());
+    authority
+        .client
+        .compare_and_advance_semantic_checked(
+            None,
+            mark(0, 0xb1),
+            semantic_facts(2, 1, 1, 0xb1, 0xc1),
+        )
+        .expect("initial semantic watermark");
+    let semantic_log = root.path().join(".authority.log.semantic-v1");
+    let mut log = fs::OpenOptions::new()
+        .append(true)
+        .open(&semantic_log)
+        .expect("open semantic log for live append");
+    log.write_all(&[0u8; 1]).expect("append semantic byte");
+    log.sync_all().expect("sync semantic append");
+    assert!(
+        authority
+            .client
+            .load_semantic_checked(semantic_binding())
+            .is_err(),
+        "live semantic append must not receive a successful response"
+    );
+    assert_authority_exited(&mut authority);
+}
+
+#[test]
+fn live_semantic_log_interior_tamper_poison_fails_before_next_request() {
+    let root = tempdir().expect("private live semantic interior directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_semantic(root.path());
+    let first = mark(0, 0xd1);
+    authority
+        .client
+        .compare_and_advance_semantic_checked(None, first, semantic_facts(4, 1, 1, 0xd1, 0xe1))
+        .expect("first semantic watermark");
+    authority
+        .client
+        .compare_and_advance_semantic_checked(
+            Some(first),
+            mark(1, 0xd2),
+            semantic_facts(4, 2, 2, 0xd2, 0xe2),
+        )
+        .expect("second semantic watermark");
+    let semantic_log = root.path().join(".authority.log.semantic-v1");
+    let mut bytes = fs::read(&semantic_log).expect("read semantic log");
+    // The first record is no longer the tail.  Full online chain replay is
+    // required so an interior rewrite cannot hide behind an unchanged head.
+    let record_len = bytes.len() / 2;
+    let interior_index = record_len / 2;
+    bytes[interior_index] ^= 0x01;
+    fs::write(&semantic_log, bytes).expect("tamper semantic interior");
+    assert!(
+        authority
+            .client
+            .load_semantic_checked(semantic_binding())
+            .is_err(),
+        "live semantic interior tamper must not receive a successful response"
+    );
+    assert_authority_exited(&mut authority);
 }
 
 #[derive(Clone)]
