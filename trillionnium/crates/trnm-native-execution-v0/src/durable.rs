@@ -847,6 +847,56 @@ impl ConfirmedDurableExecutionHistoryRowV0 {
     }
 }
 
+/// Fresh, authenticated readback of one application-finalized block.
+///
+/// The read is intentionally narrower than a network RPC response: it is
+/// backed by the application's fully validated committed-chain inventory and
+/// carries the exact durable-P history row plus the decoded execution artifact
+/// (including receipt commitments).  A prepared row can never be returned.
+/// The carrier is inert and does not mint a Core/Safety permit or a consensus
+/// finality proof; a Node/RPC host must still join `confirmed_head_v0()` to its
+/// independently authenticated Core finalized head before serving it.
+#[derive(Debug)]
+#[must_use = "the finalized application read must remain joined to its owner"]
+pub struct FinalizedNativeApplicationReadV0 {
+    confirmed_head: ApplicationHeadV0,
+    row: ConfirmedDurableExecutionHistoryRowV0,
+    executed: NativeExecutedBlockV0,
+    receipt_commitments: Vec<Hash32V0>,
+}
+
+impl FinalizedNativeApplicationReadV0 {
+    /// The freshly validated application head observed in the same read.
+    pub const fn confirmed_head_v0(&self) -> &ApplicationHeadV0 {
+        &self.confirmed_head
+    }
+
+    /// The exact durable-P row, including its committed status and digests.
+    pub const fn durable_row_v0(&self) -> &ConfirmedDurableExecutionHistoryRowV0 {
+        &self.row
+    }
+
+    /// The exact target head represented by the committed durable-P row.
+    pub fn finalized_head_v0(&self) -> DurableResult<ApplicationHeadV0> {
+        self.row.target_head_v0()
+    }
+
+    /// The canonical execution artifact freshly decoded from durable P.
+    pub const fn executed_v0(&self) -> &NativeExecutedBlockV0 {
+        &self.executed
+    }
+
+    /// Per-transaction receipt commitments in canonical transaction order.
+    pub fn receipt_commitments_v0(&self) -> &[Hash32V0] {
+        &self.receipt_commitments
+    }
+
+    /// The receipt root bound by the finalized execution header.
+    pub const fn receipts_root_v0(&self) -> trnm_native_application::ReceiptsRootV0 {
+        self.executed.request().expected().receipts_root()
+    }
+}
+
 impl std::fmt::Debug for ConfirmedDurableExecutionPV0 {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         formatter
@@ -1007,6 +1057,204 @@ impl DurableNativeApplicationV0 {
         let _guard = self.lock_operation()?;
         let metadata = fresh_validate_v0(&self.path, &self.config)?;
         Ok(metadata.head)
+    }
+
+    /// Reads one exact committed application block by `BlockId`.
+    ///
+    /// This is a local authenticated read seam, not a network RPC or a
+    /// replacement for Core's finality proof. The complete SQLite store is
+    /// freshly validated before and after the row read; the row must be a
+    /// committed member of the contiguous authenticated application chain,
+    /// and its artifact/receipt commitments must decode and bind exactly.
+    pub fn read_finalized_by_block_id_v0(
+        &self,
+        block_id: BlockIdV0,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        let _guard = self.lock_operation()?;
+        self.read_finalized_v0(*block_id.as_bytes(), None)
+    }
+
+    /// Reads one exact committed application block by target height.
+    ///
+    /// Genesis has no durable-P row and therefore is rejected. A prepared
+    /// future row, missing height, or any key/height mismatch fails closed.
+    pub fn read_finalized_by_height_v0(
+        &self,
+        height: HeightV0,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        let _guard = self.lock_operation()?;
+        self.read_finalized_by_height_locked_v0(height.get())
+    }
+
+    /// Reads a block and additionally joins it to an independently
+    /// authenticated PoCO `FinalityProofV0`.
+    ///
+    /// Unlike the local committed-read seam, this method rejects a row that
+    /// cannot be bound to the supplied three-chain proof, including any
+    /// BlockId/height/parent/root/timestamp mismatch. The proof is verified
+    /// against this store's committed validator set and parameters before the
+    /// read is returned.
+    pub fn read_finalized_by_block_id_with_proof_v0(
+        &self,
+        block_id: BlockIdV0,
+        finality_proof: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        let read = self.read_finalized_by_block_id_v0(block_id)?;
+        self.bind_finality_proof_to_read_v0(read, finality_proof, authenticated_parent_timestamp_ms)
+    }
+
+    /// Height-keyed counterpart to
+    /// [`Self::read_finalized_by_block_id_with_proof_v0`].
+    pub fn read_finalized_by_height_with_proof_v0(
+        &self,
+        height: HeightV0,
+        finality_proof: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        let read = self.read_finalized_by_height_v0(height)?;
+        self.bind_finality_proof_to_read_v0(read, finality_proof, authenticated_parent_timestamp_ms)
+    }
+
+    fn bind_finality_proof_to_read_v0(
+        &self,
+        read: FinalizedNativeApplicationReadV0,
+        finality_proof: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        finality_proof
+            .verify(
+                &self.config.validator_set,
+                None,
+                &self.config.parameters,
+                authenticated_parent_timestamp_ms,
+                &StrictEd25519Verifier,
+            )
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                    "read_finalized.finality_proof",
+                )
+            })?;
+        ensure_finalized_header_binding_v0(
+            finality_proof.finalized_block().header(),
+            read.executed.request(),
+        )?;
+        Ok(read)
+    }
+
+    fn read_finalized_by_height_locked_v0(
+        &self,
+        height: u64,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        if height == 0 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::NonContiguous,
+                "read_finalized.genesis",
+            ));
+        }
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let p = load_p_by_height_v0(&connection, height)?.ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::NonContiguous,
+                "read_finalized.missing_height",
+            )
+        })?;
+        self.finish_finalized_read_v0(metadata, p, Some(height))
+    }
+
+    fn read_finalized_v0(
+        &self,
+        block_id: [u8; 32],
+        expected_height: Option<u64>,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        reject_sqlite_sidecars_v0(&self.path)?;
+        let connection = open_immutable_connection_v0(&self.path)?;
+        verify_schema_v0(&connection)?;
+        let metadata = load_metadata_v0(&connection, &self.config)?;
+        validate_metadata_v0(&connection, &self.config, &metadata)?;
+        let p = load_p_by_block_v0(&connection, block_id)?.ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::NonContiguous,
+                "read_finalized.missing_block",
+            )
+        })?;
+        self.finish_finalized_read_v0(metadata, p, expected_height)
+    }
+
+    fn finish_finalized_read_v0(
+        &self,
+        metadata: MetadataV0,
+        p: DurablePV0,
+        expected_height: Option<u64>,
+    ) -> DurableResult<FinalizedNativeApplicationReadV0> {
+        validate_p_v0(&self.config, &p)?;
+        validate_target_snapshot_v0(&self.config, &p)?;
+        if expected_height.is_some_and(|height| height != p.target_height) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "read_finalized.height_block_mismatch",
+            ));
+        }
+        if p.status != P_STATUS_COMMITTED
+            || p.commit_sequence.is_none()
+            || p.commit_id.is_none()
+            || p.commit_id != Some(application_commit_id_v0(&p))
+            || p.target_height > metadata.head.height().get()
+        {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::NonContiguous,
+                "read_finalized.not_committed",
+            ));
+        }
+        let executed = decode_native_executed_block_artifact_v0(&p.artifact).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "read_finalized.artifact",
+            )
+        })?;
+        let receipt_commitments = executed
+            .receipts()
+            .iter()
+            .map(|receipt| Hash32V0::new(*receipt.commitment().as_bytes()))
+            .collect::<Vec<_>>();
+        let row = ConfirmedDurableExecutionHistoryRowV0 {
+            owner_affinity: Arc::clone(&self.owner_affinity),
+            store_id: p.store_id,
+            p_sequence: p.p_sequence,
+            status: DurableExecutionHistoryStatusV0::Committed,
+            parent_height: p.parent_height,
+            parent_block_id: p.parent_block_id,
+            parent_state_root: p.parent_state_root,
+            parent_commit_id: p.parent_commit_id,
+            target_height: p.target_height,
+            block_id: p.block_id,
+            target_state_root: *executed.request().expected().post_state_root().as_bytes(),
+            application_commit_id: application_commit_id_v0(&p),
+            artifact_digest: p.artifact_digest,
+            overlay_digest: p.target_snapshot_digest,
+            p_digest: p.p_digest,
+            commit_sequence: p.commit_sequence,
+        };
+        // A second immutable validation closes the read's TOCTOU window. Any
+        // head/sequence change means this response is not a coherent read.
+        let after = fresh_validate_v0(&self.path, &self.config)?;
+        if after != metadata {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "read_finalized.concurrent_mutation",
+            ));
+        }
+        Ok(FinalizedNativeApplicationReadV0 {
+            confirmed_head: metadata.head,
+            row,
+            executed,
+            receipt_commitments,
+        })
     }
 
     /// Reopens and fully revalidates one exact prepared durable-P row without
@@ -2038,6 +2286,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
     }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 struct MetadataV0 {
     durable_sequence: u64,
     head: ApplicationHeadV0,
@@ -3156,6 +3405,48 @@ fn load_p_by_block_v0(
         })
     })
     .transpose()
+}
+
+fn load_p_by_height_v0(
+    connection: &Connection,
+    target_height: u64,
+) -> DurableResult<Option<DurablePV0>> {
+    let mut statement = connection
+        .prepare("SELECT block_id FROM native_durable_execution_p_v0 WHERE target_height=?")
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::Storage,
+                "p.height_prepare",
+            )
+        })?;
+    let block_ids = statement
+        .query_map(params![u64_bytes_v0(target_height).as_slice()], |row| {
+            row.get::<_, Vec<u8>>(0)
+        })
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::Storage,
+                "p.height_query",
+            )
+        })?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::Storage,
+                "p.height_rows",
+            )
+        })?;
+    if block_ids.len() > 1 {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+            "p.height_duplicate",
+        ));
+    }
+    let Some(bytes) = block_ids.into_iter().next() else {
+        return Ok(None);
+    };
+    let block_id = array32_v0(&bytes, "p.height_block")?;
+    load_p_by_block_v0(connection, block_id)
 }
 
 fn load_all_p_v0(connection: &Connection) -> DurableResult<Vec<DurablePV0>> {
@@ -4779,6 +5070,117 @@ mod tests {
     }
 
     #[test]
+    fn finalized_read_by_block_and_height_returns_fresh_p_row_and_receipts_v0() {
+        let temporary = TempDir::new().unwrap();
+        let (path, application, _genesis_head, request) = initialized(&temporary);
+        let executed = match application.execute_block(request.clone()).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("expected valid execution, got {other:?}"),
+        };
+        let expected_receipts = executed
+            .receipts()
+            .iter()
+            .map(|receipt| Hash32V0::new(*receipt.commitment().as_bytes()))
+            .collect::<Vec<_>>();
+        let committed = application
+            .commit_block(NativeApplicationCommitRequestV0::new(executed.clone()))
+            .unwrap();
+
+        let by_block = application
+            .read_finalized_by_block_id_v0(request.block_id())
+            .unwrap();
+        assert_eq!(by_block.confirmed_head_v0(), committed.head());
+        assert_eq!(by_block.finalized_head_v0().unwrap(), *committed.head());
+        assert_eq!(
+            by_block.durable_row_v0().status_v0(),
+            DurableExecutionHistoryStatusV0::Committed
+        );
+        assert_eq!(
+            by_block.durable_row_v0().target_head_v0().unwrap(),
+            *committed.head()
+        );
+        assert_eq!(by_block.executed_v0(), &executed);
+        assert_eq!(
+            by_block.receipt_commitments_v0(),
+            expected_receipts.as_slice()
+        );
+        assert_eq!(
+            by_block.receipts_root_v0(),
+            request.expected().receipts_root()
+        );
+
+        let by_height = application
+            .read_finalized_by_height_v0(request.height())
+            .unwrap();
+        assert_eq!(by_height.confirmed_head_v0(), by_block.confirmed_head_v0());
+        assert_eq!(
+            by_height.durable_row_v0().p_digest_v0(),
+            by_block.durable_row_v0().p_digest_v0()
+        );
+        assert_eq!(
+            by_height.receipt_commitments_v0(),
+            expected_receipts.as_slice()
+        );
+
+        drop(application);
+        let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+        let reopened_read = reopened
+            .read_finalized_by_block_id_v0(request.block_id())
+            .unwrap();
+        assert_eq!(reopened_read.confirmed_head_v0(), committed.head());
+        assert_eq!(
+            reopened_read.receipt_commitments_v0(),
+            expected_receipts.as_slice()
+        );
+    }
+
+    #[test]
+    fn finalized_read_rejects_prepared_and_missing_or_mismatched_keys_v0() {
+        let temporary = TempDir::new().unwrap();
+        let (_path, application, _genesis_head, request) = initialized(&temporary);
+        let _executed = match application.execute_block(request.clone()).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("expected valid execution, got {other:?}"),
+        };
+
+        let prepared = application
+            .read_finalized_by_block_id_v0(request.block_id())
+            .expect_err("prepared P must not be exposed as finalized");
+        assert_eq!(
+            prepared.code(),
+            NativeApplicationExecutionErrorCodeV0::NonContiguous
+        );
+        assert_eq!(prepared.field(), "read_finalized.not_committed");
+
+        let missing_block = application
+            .read_finalized_by_block_id_v0(BlockIdV0::new([0xee; 32]).unwrap())
+            .expect_err("unknown BlockId must fail closed");
+        assert_eq!(
+            missing_block.code(),
+            NativeApplicationExecutionErrorCodeV0::NonContiguous
+        );
+        assert_eq!(missing_block.field(), "read_finalized.missing_block");
+
+        let missing_height = application
+            .read_finalized_by_height_v0(HeightV0::new(request.height().get() + 1))
+            .expect_err("unknown height must fail closed");
+        assert_eq!(
+            missing_height.code(),
+            NativeApplicationExecutionErrorCodeV0::NonContiguous
+        );
+        assert_eq!(missing_height.field(), "read_finalized.missing_height");
+
+        let genesis = application
+            .read_finalized_by_height_v0(HeightV0::GENESIS)
+            .expect_err("genesis has no durable P row");
+        assert_eq!(
+            genesis.code(),
+            NativeApplicationExecutionErrorCodeV0::NonContiguous
+        );
+        assert_eq!(genesis.field(), "read_finalized.genesis");
+    }
+
+    #[test]
     fn finalized_commit_adapter_runs_signed_tx_to_state_proof_and_reopen_v0() {
         let temporary = TempDir::new().unwrap();
         let path = temporary.path().join("finality-application.sqlite");
@@ -4831,12 +5233,47 @@ mod tests {
         let committed = application
             .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
                 executed,
-                proof,
+                proof.clone(),
                 template.timestamp_ms() - 1_000,
             ))
             .unwrap();
         assert_eq!(committed.head().height().get(), 1);
         assert_eq!(committed.head().block_id(), request.block_id());
+
+        let proof_read = application
+            .read_finalized_by_block_id_with_proof_v0(
+                request.block_id(),
+                &proof,
+                template.timestamp_ms() - 1_000,
+            )
+            .unwrap();
+        assert_eq!(proof_read.confirmed_head_v0(), committed.head());
+        assert_eq!(
+            proof_read.durable_row_v0().target_head_v0().unwrap(),
+            *committed.head()
+        );
+        let proof_height_read = application
+            .read_finalized_by_height_with_proof_v0(
+                request.height(),
+                &proof,
+                template.timestamp_ms() - 1_000,
+            )
+            .unwrap();
+        assert_eq!(
+            proof_height_read.receipts_root_v0(),
+            request.expected().receipts_root()
+        );
+        let rejected_timestamp = application
+            .read_finalized_by_block_id_with_proof_v0(
+                request.block_id(),
+                &proof,
+                template.timestamp_ms(),
+            )
+            .expect_err("a mismatched authenticated parent timestamp must fail closed");
+        assert_eq!(
+            rejected_timestamp.code(),
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch
+        );
 
         let state_proof = application
             .state_proof(

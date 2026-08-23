@@ -13,6 +13,7 @@ use std::{
     time::Duration,
 };
 
+use ed25519_dalek::Signer;
 use tempfile::TempDir;
 use trnm_consensus_external_watermark::{
     ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1, UnixWatermarkClient,
@@ -249,7 +250,7 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
 }
 
 #[test]
-fn timeout_bridge_rejects_vote_and_ambiguous_reservation() {
+fn timeout_bridge_rejects_vote_and_recovers_pending_reservation() {
     let root = TempDir::new().expect("temporary bridge root");
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
     let fixture = Fixture::new();
@@ -285,9 +286,19 @@ fn timeout_bridge_rejects_vote_and_ambiguous_reservation() {
         UnixExternalTimeoutAuthorityV1::from_binding(fixture.binding, &socket, &response_log)
             .expect("reopen adapter before ambiguity check")
             .with_capability(CAPABILITY);
+    let resumed = reopened
+        .reserve_v1(facts)
+        .expect("durable pending reservation must be retryable after restart");
+    let signature = fixture.signing_key.sign(&facts.signing_root).to_bytes();
+    reopened
+        .bind_response_v1(resumed, &signature)
+        .expect("recovered reservation must bind its exact response");
     assert!(
-        reopened.reserve_v1(facts).is_err(),
-        "unbound external reservation is ambiguous"
+        reopened
+            .replay_response_v1(facts)
+            .expect("replay lookup after recovery")
+            .is_some(),
+        "recovered response must be available without another CAS"
     );
     authority.stop();
 }

@@ -1497,6 +1497,7 @@ name = "trnm-consensus-remote-signer-service"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
+ "libc",
  "rusqlite",
  "sha2",
  "tempfile",

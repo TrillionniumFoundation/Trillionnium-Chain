@@ -22,9 +22,9 @@ use std::{
     collections::BTreeMap,
     error::Error,
     fmt, fs,
-    io::{self, Read},
+    io::{self, Read, Write},
     os::unix::{
-        fs::{FileTypeExt, MetadataExt, PermissionsExt},
+        fs::{FileTypeExt, MetadataExt, OpenOptionsExt, PermissionsExt},
         net::{UnixListener, UnixStream},
     },
     path::{Path, PathBuf},
@@ -242,10 +242,311 @@ const EXTERNAL_ADAPTER_CHECKSUM_DOMAIN_V1: &[u8] =
 const EXTERNAL_ADAPTER_TOKEN_DOMAIN_V1: &[u8] =
     b"trnm.remote-signer.external-timeout-adapter.reservation-token.v1\0";
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct PendingExternalReservationV1 {
     request: ExternalAuthorityRequestV1,
     target: SignerWatermarkV0,
+}
+
+/// A reservation is written to a separate, private intent sidecar before the
+/// external CAS is attempted.  This closes the otherwise ambiguous window in
+/// which the authority has advanced but the signer process died before its
+/// response log was bound.  The sidecar is never a signature or an authority
+/// grant; it only makes the exact request retryable after a process restart.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct DurablePendingExternalReservationV1 {
+    pending: PendingExternalReservationV1,
+    previous: Option<SignerWatermarkV0>,
+}
+
+const PENDING_RESERVATION_MAGIC_V1: &[u8; 8] = b"TRNMPD01";
+const PENDING_RESERVATION_DOMAIN_V1: &[u8] = b"trnm.remote-signer.external-timeout.pending.v1\0";
+const PENDING_RESERVATION_VERSION_V1: u8 = 1;
+
+fn pending_reservation_path_v1(
+    response_log_path: &Path,
+) -> Result<PathBuf, ExternalAuthorityErrorV1> {
+    let parent = response_log_path
+        .parent()
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    let name = response_log_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    Ok(parent.join(format!(".{name}.pending")))
+}
+
+fn pending_put_bytes_v1(output: &mut Vec<u8>, value: &[u8]) {
+    output.extend_from_slice(value);
+}
+
+fn pending_put_u64_v1(output: &mut Vec<u8>, value: u64) {
+    output.extend_from_slice(&value.to_be_bytes());
+}
+
+fn pending_take_v1<'a>(
+    bytes: &'a [u8],
+    offset: &mut usize,
+    length: usize,
+) -> Result<&'a [u8], ExternalAuthorityErrorV1> {
+    let end = offset
+        .checked_add(length)
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    let value = bytes
+        .get(*offset..end)
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    *offset = end;
+    Ok(value)
+}
+
+fn pending_take_u8_v1(bytes: &[u8], offset: &mut usize) -> Result<u8, ExternalAuthorityErrorV1> {
+    Ok(pending_take_v1(bytes, offset, 1)?[0])
+}
+
+fn pending_take_u64_v1(bytes: &[u8], offset: &mut usize) -> Result<u64, ExternalAuthorityErrorV1> {
+    Ok(u64::from_be_bytes(
+        pending_take_v1(bytes, offset, 8)?
+            .try_into()
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?,
+    ))
+}
+
+fn pending_checksum_v1(bytes: &[u8]) -> [u8; 32] {
+    let mut hash = Sha256::new();
+    hash.update(PENDING_RESERVATION_DOMAIN_V1);
+    hash.update(bytes);
+    hash.finalize().into()
+}
+
+fn encode_pending_reservation_v1(
+    pending: DurablePendingExternalReservationV1,
+) -> Result<Vec<u8>, ExternalAuthorityErrorV1> {
+    let request = pending.pending.request;
+    let target = pending.pending.target;
+    if request.command_kind != RemoteConsensusCommandKindV1::TimeoutVote
+        || request.scope == [0; 32]
+        || request.lease_id == [0; 32]
+        || request.signer_profile_ref == [0; 32]
+        || request.request_fingerprint == [0; 32]
+        || request.signing_root == [0; 32]
+        || request.nonce == [0; 32]
+        || target.scope() != request.scope
+        || target.journal_id() == [0; 32]
+        || target.chain_checksum() == [0; 32]
+        || request.process_generation == 0
+        || request.safety_revision == 0
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    if let Some(previous) = pending.previous {
+        if previous.scope() != target.scope()
+            || previous.journal_id() != target.journal_id()
+            || previous.sequence().checked_add(1) != Some(target.sequence())
+        {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+    } else if target.sequence() != 0 {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let mut bytes = Vec::with_capacity(512);
+    pending_put_bytes_v1(&mut bytes, PENDING_RESERVATION_MAGIC_V1);
+    pending_put_bytes_v1(&mut bytes, &[PENDING_RESERVATION_VERSION_V1, 0, 0, 0]);
+    pending_put_bytes_v1(&mut bytes, &request.scope);
+    pending_put_u64_v1(&mut bytes, request.process_generation);
+    pending_put_bytes_v1(&mut bytes, &request.lease_id);
+    pending_put_bytes_v1(&mut bytes, &request.signer_profile_ref);
+    pending_put_bytes_v1(&mut bytes, &request.request_fingerprint);
+    pending_put_bytes_v1(&mut bytes, &request.signing_root);
+    pending_put_bytes_v1(&mut bytes, &request.nonce);
+    pending_put_bytes_v1(&mut bytes, &[1]); // TimeoutVote only in this sidecar.
+    pending_put_u64_v1(&mut bytes, request.epoch);
+    pending_put_u64_v1(&mut bytes, request.view);
+    pending_put_u64_v1(&mut bytes, request.safety_revision);
+    pending_put_bytes_v1(&mut bytes, &target.scope());
+    pending_put_bytes_v1(&mut bytes, &target.journal_id());
+    pending_put_u64_v1(&mut bytes, target.sequence());
+    pending_put_bytes_v1(&mut bytes, &target.chain_checksum());
+    match pending.previous {
+        Some(previous) => {
+            pending_put_bytes_v1(&mut bytes, &[1]);
+            pending_put_bytes_v1(&mut bytes, &previous.scope());
+            pending_put_bytes_v1(&mut bytes, &previous.journal_id());
+            pending_put_u64_v1(&mut bytes, previous.sequence());
+            pending_put_bytes_v1(&mut bytes, &previous.chain_checksum());
+        }
+        None => pending_put_bytes_v1(&mut bytes, &[0]),
+    }
+    let checksum = pending_checksum_v1(&bytes);
+    pending_put_bytes_v1(&mut bytes, &checksum);
+    Ok(bytes)
+}
+
+fn decode_pending_reservation_v1(
+    bytes: &[u8],
+) -> Result<DurablePendingExternalReservationV1, ExternalAuthorityErrorV1> {
+    let mut offset = 0;
+    if pending_take_v1(bytes, &mut offset, PENDING_RESERVATION_MAGIC_V1.len())?
+        != PENDING_RESERVATION_MAGIC_V1
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    if pending_take_u8_v1(bytes, &mut offset)? != PENDING_RESERVATION_VERSION_V1
+        || pending_take_v1(bytes, &mut offset, 3)? != [0, 0, 0]
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let scope = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let process_generation = pending_take_u64_v1(bytes, &mut offset)?;
+    let lease_id = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let signer_profile_ref = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let request_fingerprint = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let signing_root = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let nonce = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    if pending_take_u8_v1(bytes, &mut offset)? != 1 {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let epoch = pending_take_u64_v1(bytes, &mut offset)?;
+    let view = pending_take_u64_v1(bytes, &mut offset)?;
+    let safety_revision = pending_take_u64_v1(bytes, &mut offset)?;
+    let target_scope = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let target_journal = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let target_sequence = pending_take_u64_v1(bytes, &mut offset)?;
+    let target_checksum = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+    let previous = if pending_take_u8_v1(bytes, &mut offset)? == 1 {
+        let previous_scope = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+        let previous_journal = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+        let previous_sequence = pending_take_u64_v1(bytes, &mut offset)?;
+        let previous_checksum = pending_take_v1(bytes, &mut offset, 32)?.try_into().unwrap();
+        Some(
+            SignerWatermarkV0::from_persisted_parts(
+                previous_scope,
+                previous_journal,
+                previous_sequence,
+                previous_checksum,
+            )
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?,
+        )
+    } else {
+        None
+    };
+    let checksum_offset = offset;
+    let stored_checksum = pending_take_v1(bytes, &mut offset, 32)?;
+    if offset != bytes.len() || pending_checksum_v1(&bytes[..checksum_offset]) != stored_checksum {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let target = SignerWatermarkV0::from_persisted_parts(
+        target_scope,
+        target_journal,
+        target_sequence,
+        target_checksum,
+    )
+    .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    let pending = DurablePendingExternalReservationV1 {
+        pending: PendingExternalReservationV1 {
+            request: ExternalAuthorityRequestV1 {
+                scope,
+                process_generation,
+                lease_id,
+                signer_profile_ref,
+                request_fingerprint,
+                signing_root,
+                nonce,
+                command_kind: RemoteConsensusCommandKindV1::TimeoutVote,
+                epoch,
+                view,
+                safety_revision,
+            },
+            target,
+        },
+        previous,
+    };
+    // Re-encode performs all structural and namespace-independent checks.
+    encode_pending_reservation_v1(pending)?;
+    Ok(pending)
+}
+
+fn load_pending_reservation_v1(
+    path: &Path,
+) -> Result<Option<DurablePendingExternalReservationV1>, ExternalAuthorityErrorV1> {
+    let metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+        Err(_) => return Err(ExternalAuthorityErrorV1::InvalidState),
+    };
+    if metadata.file_type().is_symlink()
+        || !metadata.is_file()
+        || metadata.permissions().mode() & 0o777 != 0o600
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let bytes = fs::read(path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    Ok(Some(decode_pending_reservation_v1(&bytes)?))
+}
+
+fn persist_pending_reservation_v1(
+    path: &Path,
+    pending: DurablePendingExternalReservationV1,
+) -> Result<(), ExternalAuthorityErrorV1> {
+    let bytes = encode_pending_reservation_v1(pending)?;
+    let parent = path
+        .parent()
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    let temporary = parent.join(format!(".{name}.tmp-{}", std::process::id()));
+    if temporary.exists() {
+        let metadata =
+            fs::symlink_metadata(&temporary).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        if metadata.file_type().is_symlink() || !metadata.is_file() {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        fs::remove_file(&temporary).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    }
+    let result = (|| {
+        let mut file = fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+            .open(&temporary)
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        file.write_all(&bytes)
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        file.sync_all()
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        fs::rename(&temporary, path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        fs::File::open(parent)
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?
+            .sync_data()
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        Ok::<(), ExternalAuthorityErrorV1>(())
+    })();
+    if result.is_err() {
+        let _ = fs::remove_file(&temporary);
+    }
+    result
+}
+
+fn clear_pending_reservation_v1(path: &Path) -> Result<(), ExternalAuthorityErrorV1> {
+    match fs::symlink_metadata(path) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink() || !metadata.is_file() {
+                return Err(ExternalAuthorityErrorV1::InvalidState);
+            }
+            fs::remove_file(path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+            if let Some(parent) = path.parent() {
+                fs::File::open(parent)
+                    .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?
+                    .sync_data()
+                    .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+            }
+            Ok(())
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
+        Err(_) => Err(ExternalAuthorityErrorV1::InvalidState),
+    }
 }
 
 /// Minimal Unix adapter for the external CAS and independent response log.
@@ -254,12 +555,14 @@ struct PendingExternalReservationV1 {
 /// bounded process-boundary test and for proving the ordering of the two
 /// independent durable authorities; it is not a Core/SafetyRules signer and
 /// carries no production activation. A request is accepted only when the
-/// response log count and external watermark head agree. Any CAS reservation
-/// without a durable response is treated as ambiguous after restart and
-/// permanently fails closed until an operator reconciles the namespace.
+/// response log count and external watermark head agree. A CAS reservation is
+/// first recorded in a private pending-intent sidecar, so a process restart
+/// can retry that exact request; any head that does not match the sidecar is
+/// still treated as ambiguous and fails closed.
 pub struct UnixExternalTimeoutAuthorityV1 {
     watermark: UnixWatermarkClient,
     replay: ReplayBindingStoreV1,
+    pending_path: PathBuf,
     scope: [u8; 32],
     process_generation: u64,
     lease_id: [u8; 32],
@@ -268,6 +571,8 @@ pub struct UnixExternalTimeoutAuthorityV1 {
     capability: [u8; 32],
     semantic_lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     pending: BTreeMap<[u8; 32], PendingExternalReservationV1>,
+    durable_pending: Option<DurablePendingExternalReservationV1>,
+    pending_external_reserved: bool,
     poisoned: bool,
 }
 
@@ -305,13 +610,17 @@ impl UnixExternalTimeoutAuthorityV1 {
         }
         let watermark =
             UnixWatermarkClient::new(authority_socket).map_err(map_external_watermark_error_v1)?;
+        let response_log_path = response_log_path.as_ref();
         let replay =
             ReplayBindingStoreV1::open(response_log_path).map_err(map_replay_binding_error_v1)?;
+        let pending_path = pending_reservation_path_v1(response_log_path)?;
+        let durable_pending = load_pending_reservation_v1(&pending_path)?;
         let journal_id =
             external_adapter_journal_id_v1(scope, process_generation, lease_id, signer_profile_ref);
         Ok(Self {
             watermark,
             replay,
+            pending_path,
             scope,
             process_generation,
             lease_id,
@@ -320,6 +629,8 @@ impl UnixExternalTimeoutAuthorityV1 {
             capability: [0; 32],
             semantic_lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair,
             pending: BTreeMap::new(),
+            durable_pending,
+            pending_external_reserved: false,
             poisoned: false,
         })
     }
@@ -415,12 +726,61 @@ impl UnixExternalTimeoutAuthorityV1 {
     /// Reconciles the two independent durable heads. The first CAS value is
     /// sequence zero; every response record increments the replay count, so a
     /// healthy head satisfies `replay_count == external_sequence + 1`.
-    fn reconcile_heads_v1(&self) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
+    ///
+    /// A durable pending sidecar permits exactly one additional state: the
+    /// external head may be one reservation ahead of the response log. The
+    /// request and target are authenticated by the sidecar checksum and must
+    /// match the semantic authority head byte-for-byte. Any other gap remains
+    /// an ambiguity and fails closed.
+    fn reconcile_heads_v1(
+        &mut self,
+    ) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
+        self.pending_external_reserved = false;
         let semantic_head = self
             .watermark
             .load_semantic_checked(self.semantic_binding_v1()?)
             .map_err(map_external_watermark_error_v1)?;
         let records = self.replay.record_count_v1();
+
+        if let Some(durable) = self.durable_pending {
+            let request = durable.pending.request;
+            self.validate_request_v1(request)?;
+            let target = durable.pending.target;
+            let target_facts_match = semantic_head.is_some_and(|(value, facts)| {
+                value == target
+                    && facts.epoch == request.epoch
+                    && facts.view == request.view
+                    && facts.safety_revision == request.safety_revision
+                    && facts.request_nonce == request.nonce
+                    && facts.request_fingerprint == request.request_fingerprint
+                    && facts.signing_root == request.signing_root
+                    && facts.capability == self.capability
+            });
+            let previous_matches = match (semantic_head, durable.previous) {
+                (None, None) => records == 0,
+                (Some((value, _)), Some(previous)) => value == previous,
+                _ => false,
+            };
+            let response_complete = target.sequence().checked_add(1) == Some(records)
+                && target_facts_match
+                && self.replay.latest_binding_v1()
+                    == Some((
+                        request.request_fingerprint,
+                        request.signer_profile_ref,
+                        request.signing_root,
+                    ));
+            if response_complete {
+                clear_pending_reservation_v1(&self.pending_path)?;
+                self.durable_pending = None;
+            } else if records == target.sequence() && target_facts_match {
+                self.pending_external_reserved = true;
+                return Ok(Some(target));
+            } else if records == target.sequence() && previous_matches {
+                return Ok(durable.previous);
+            } else {
+                return Err(ExternalAuthorityErrorV1::InvalidState);
+            }
+        }
         match semantic_head {
             None if records == 0 => Ok(None),
             None => Err(ExternalAuthorityErrorV1::InvalidState),
@@ -497,7 +857,41 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
     ) -> Result<ExternalAuthorityReservationV1, ExternalAuthorityErrorV1> {
         self.validate_request_v1(request)?;
         let previous = self.reconcile_heads_v1()?;
-        let target = self.target_for_v1(previous, request)?;
+        let durable = self.durable_pending;
+        if let Some(durable) = durable {
+            if durable.pending.request != request {
+                return Err(ExternalAuthorityErrorV1::InvalidState);
+            }
+            if self.pending_external_reserved {
+                let token_digest = external_adapter_token_v1(durable.pending.target, request);
+                if self
+                    .pending
+                    .insert(
+                        token_digest,
+                        PendingExternalReservationV1 {
+                            request,
+                            target: durable.pending.target,
+                        },
+                    )
+                    .is_some()
+                {
+                    self.poisoned = true;
+                    return Err(ExternalAuthorityErrorV1::InvalidState);
+                }
+                return Ok(ExternalAuthorityReservationV1::from_parts(
+                    durable.pending.target.sequence(),
+                    request.request_fingerprint,
+                    token_digest,
+                ));
+            }
+            if previous != durable.previous {
+                self.poisoned = true;
+                return Err(ExternalAuthorityErrorV1::InvalidState);
+            }
+        }
+        let target = durable
+            .map(|pending| pending.pending.target)
+            .unwrap_or(self.target_for_v1(previous, request)?);
         let facts = ExternalWatermarkSemanticFactsV1::new(
             request.epoch,
             request.view,
@@ -516,9 +910,46 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
             .watermark
             .clone()
             .with_semantic_binding(self.semantic_binding_v1()?);
-        watermark
-            .compare_and_advance_semantic_checked(previous, target, facts)
-            .map_err(map_external_watermark_error_v1)?;
+        if durable.is_none() {
+            persist_pending_reservation_v1(
+                &self.pending_path,
+                DurablePendingExternalReservationV1 {
+                    pending: PendingExternalReservationV1 { request, target },
+                    previous,
+                },
+            )?;
+            self.durable_pending = Some(DurablePendingExternalReservationV1 {
+                pending: PendingExternalReservationV1 { request, target },
+                previous,
+            });
+        }
+        if let Err(error) = watermark.compare_and_advance_semantic_checked(previous, target, facts)
+        {
+            // A normal semantic CompareFailed (for example, a caller's
+            // lower round) is a policy rejection and must not poison a
+            // healthy namespace; higher independent requests remain
+            // admissible.  Corruption, scope changes, I/O, or unavailable
+            // authorities are ambiguity and permanently fail closed.
+            if matches!(error, ExternalWatermarkAuthorityError::CompareFailed) {
+                let current = watermark
+                    .load_semantic_checked(self.semantic_binding_v1()?)
+                    .map_err(|load_error| {
+                        self.poisoned = true;
+                        map_external_watermark_error_v1(load_error)
+                    })?
+                    .map(|(value, _)| value);
+                if current != previous {
+                    self.poisoned = true;
+                } else {
+                    clear_pending_reservation_v1(&self.pending_path)?;
+                    self.durable_pending = None;
+                }
+            } else {
+                self.poisoned = true;
+            }
+            return Err(map_external_watermark_error_v1(error));
+        }
+        self.pending_external_reserved = true;
         let token_digest = external_adapter_token_v1(target, request);
         if self
             .pending
@@ -617,6 +1048,20 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
             self.poisoned = true;
             return Err(ExternalAuthorityErrorV1::InvalidState);
         }
+        let durable = self.durable_pending.ok_or_else(|| {
+            self.poisoned = true;
+            ExternalAuthorityErrorV1::InvalidState
+        })?;
+        if durable.pending != pending {
+            self.poisoned = true;
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        if let Err(error) = clear_pending_reservation_v1(&self.pending_path) {
+            self.poisoned = true;
+            return Err(error);
+        }
+        self.durable_pending = None;
+        self.pending_external_reserved = false;
         self.pending.remove(&reservation.token_digest());
         Ok(())
     }
