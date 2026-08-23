@@ -10,21 +10,26 @@ publish = false
 
 [features]
 default = []
+# Raw consensus signing keys are available only to explicitly named fixture and
+# process-test builds.  The default node/library build has no direct
+# `ed25519-dalek` dependency edge and therefore cannot load or expose a
+# `SigningKey`.
+fixture-raw-key = ["dep:ed25519-dalek"]
 lab-validator-runtime = []
 lab-validator-runtime-test-support = [
   "lab-validator-runtime",
-  "dep:ed25519-dalek",
+  "fixture-raw-key",
   "dep:serde_json",
   "dep:trnm-finality-types",
   "dep:trnm-protocol",
   "trnm-native-application-sqlite/test-support",
 ]
 recovery-process-test-support = [
-  "dep:ed25519-dalek",
+  "fixture-raw-key",
   "dep:fs2",
 ]
 g2-process-test-support = [
-  "dep:ed25519-dalek",
+  "fixture-raw-key",
   "dep:tempfile",
 ]
 
@@ -48,6 +53,9 @@ zero_comet_production_dependency_achieved = true
 legacy_comet_migration_residue_present = false
 production_candidate = false
 production_consensus_activation = false
+fixture_raw_key_feature_only = true
+production_raw_key_dependency = false
+lab_raw_key_split_complete = false
 incomplete = true
 effect_driver = false
 bounded_timeout_signing_effect_loop = true
@@ -162,6 +170,10 @@ required-features = ["recovery-process-test-support"]
 [[test]]
 name = "g2_manifest_bound_process_v2"
 path = "tests/g2_manifest_bound_process_v2.rs"
+
+[[test]]
+name = "raw_key_boundary"
+path = "tests/raw_key_boundary.rs"
 
 [dependencies]
 borsh = { version = "1.5", features = ["derive"] }

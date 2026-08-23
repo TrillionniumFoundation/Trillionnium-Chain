@@ -71,6 +71,15 @@
 //! frozen production contracts have real adapters; they must not be bypassed
 //! with the private CometBFT application fixture.
 //!
+//! Consensus private-key material is not part of the default host surface.
+//! The direct `ed25519-dalek` dependency is available only through the
+//! explicitly named `fixture-raw-key` feature (which is transitively selected
+//! by process-test helper features).  The raw-key code below is confined to
+//! `#[cfg(test)]` or those fixture/test-support paths; production constructors
+//! accept only the typed signer-journal/remote-signer boundaries.  This is a
+//! compile boundary, not a claim that the laboratory validator crate has
+//! already been split into a production crate and a fixture crate.
+//!
 //! An operator-pinned authenticated genesis application parent is also outside
 //! every ordinary or generic owner in this package. The separate
 //! feature-gated `PocoNodeAuthenticatedGenesisCommissioningHostV0` can own only its inert
@@ -140,6 +149,18 @@ use trnm_consensus_signer_journal::{
     SqliteSignerJournalV0,
 };
 use trnm_consensus_types::RolloutPhase;
+
+/// Raw consensus keys are intentionally unavailable to the default host.
+///
+/// This constant is kept public so release/preflight tooling can assert the
+/// boundary without importing any private-key type.  `true` means that the
+/// caller deliberately opted into a fixture/process-test build.
+pub const FIXTURE_RAW_KEY_FEATURE_ONLY_V0: bool = cfg!(feature = "fixture-raw-key");
+
+/// The production host has no raw private-key dependency or constructor.
+/// This remains false even in fixture builds; opting into a fixture never
+/// changes the production activation claim.
+pub const PRODUCTION_RAW_KEY_DEPENDENCY_V0: bool = false;
 
 #[cfg(feature = "legacy-consensus-app")]
 mod authenticated_genesis_commissioning;
