@@ -52,7 +52,8 @@ use crate::{
     bootstrap_material::VerifiedPublicBootstrapInitialCutV1,
     config::{LoadedValidatorConfig, DEPLOYED_CORE_MAX_BLOCKS_V1},
     consensus_mesh::{
-        MeshIngressEventV0, PeerDirectionV0, PeerSessionFactsV0, PersistentAuthenticatedPeerMeshV0,
+        MeshInboundFrameV0, MeshIngressEventV0, PeerDirectionV0, PeerSessionFactsV0,
+        PersistentAuthenticatedPeerMeshV0,
     },
     consensus_report::{
         sign_consensus_run_report_v1, sign_consensus_run_report_with_signer_v1,
@@ -2498,6 +2499,13 @@ struct BoundedConsensusOwnerV1 {
     /// restart statements cannot silently fall back to the config raw key.
     /// `None` is permitted only for fixture composition.
     fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
+    /// Latest authenticated inbound mesh session observed by the authority
+    /// owner, keyed by remote validator.  The transport worker authenticates
+    /// each frame, but its frame and lifecycle events are produced by
+    /// independent threads; the owner must therefore fence an old-generation
+    /// frame that was queued across a reconnect before routing it into the
+    /// continuous consensus authority.
+    active_inbound_mesh_sessions: BTreeMap<ValidatorId, (u64, [u8; 32])>,
     restart_ingress: BoundedRestartProtocolIngressV1,
     restart_relay_window: RestartRelayAdmissionWindowV1,
     restart_round: RestartCutRoundV1,
@@ -3771,6 +3779,25 @@ impl BoundedConsensusOwnerV1 {
             .start_certificate
             .verify(config.validator_set())
             .map_err(|error| anyhow!("verify retained fleet StartCertificate: {error}"))?;
+        let mut active_inbound_mesh_sessions = BTreeMap::new();
+        for session in mesh.initial_sessions() {
+            if session.direction() != PeerDirectionV0::Inbound {
+                continue;
+            }
+            ensure!(
+                session.generation() == 1,
+                "initial inbound mesh session generation is not one"
+            );
+            ensure!(
+                active_inbound_mesh_sessions
+                    .insert(
+                        session.remote(),
+                        (session.generation(), session.session_id()),
+                    )
+                    .is_none(),
+                "initial inbound mesh session inventory contains a duplicate remote"
+            );
+        }
         let restart_ingress = BoundedRestartProtocolIngressV1::new(
             config.run_id(),
             config.local_validator(),
@@ -3789,6 +3816,7 @@ impl BoundedConsensusOwnerV1 {
             fleet_barrier: barrier.admission,
             fleet_start_certificate: barrier.start_certificate,
             fleet_producer: barrier.fleet_producer,
+            active_inbound_mesh_sessions,
             restart_ingress,
             restart_relay_window,
             restart_round: RestartCutRoundV1::default(),
@@ -4310,9 +4338,58 @@ impl BoundedConsensusOwnerV1 {
         Ok(())
     }
 
+    /// Authenticated transport workers can enqueue a frame and a lifecycle
+    /// event from different threads.  Re-check the frame's exact inbound
+    /// session generation at the continuous-authority owner boundary before
+    /// any collector, restart protocol, or Core-facing route sees it.
+    fn admit_inbound_mesh_frame_session_v1(&mut self, inbound: &MeshInboundFrameV0) -> Result<()> {
+        ensure!(
+            inbound.frame().sender == inbound.remote()
+                && inbound.frame().session == inbound.session_id(),
+            "authenticated mesh frame differs from its inbound session owner"
+        );
+        observe_inbound_mesh_frame_session_v1(
+            &mut self.active_inbound_mesh_sessions,
+            &mut self.unavailable_sessions,
+            inbound.remote(),
+            inbound.session_generation(),
+            inbound.session_id(),
+        )
+    }
+
+    fn observe_inbound_mesh_reestablished_v1(
+        &mut self,
+        session: PeerSessionFactsV0,
+    ) -> Result<bool> {
+        if session.direction() != PeerDirectionV0::Inbound {
+            return Ok(false);
+        }
+        observe_inbound_mesh_reestablished_v1(
+            &mut self.active_inbound_mesh_sessions,
+            &mut self.unavailable_sessions,
+            session.remote(),
+            session.generation(),
+            session.session_id(),
+        )
+    }
+
+    fn observe_inbound_mesh_unavailable_v1(&mut self, session: PeerSessionFactsV0) -> Result<bool> {
+        if session.direction() != PeerDirectionV0::Inbound {
+            return Ok(false);
+        }
+        observe_inbound_mesh_unavailable_v1(
+            &self.active_inbound_mesh_sessions,
+            &mut self.unavailable_sessions,
+            session.remote(),
+            session.generation(),
+            session.session_id(),
+        )
+    }
+
     fn handle_mesh_event_v1(&mut self, event: MeshIngressEventV0) -> Result<bool> {
         match event {
             MeshIngressEventV0::Frame(inbound) => {
+                self.admit_inbound_mesh_frame_session_v1(&inbound)?;
                 let remote = inbound.remote();
                 let received = authenticated_frame_wire_bytes_v1(
                     self.config.run_id(),
@@ -4424,18 +4501,29 @@ impl BoundedConsensusOwnerV1 {
                 }
             }
             MeshIngressEventV0::SessionUnavailable(session) => {
-                self.unavailable_sessions
-                    .insert((session.direction(), session.remote()));
+                let current = self.observe_inbound_mesh_unavailable_v1(session)?;
+                if session.direction() != PeerDirectionV0::Inbound || current {
+                    self.unavailable_sessions
+                        .insert((session.direction(), session.remote()));
+                }
                 if !self.restart_lifecycle.is_prepared_v1() {
                     self.reconcile_expected_connectivity_fault_v1()?;
                 }
                 Ok(true)
             }
             MeshIngressEventV0::SessionReestablished(session) => {
-                self.unavailable_sessions
-                    .remove(&(session.direction(), session.remote()));
+                let current = self.observe_inbound_mesh_reestablished_v1(session)?;
+                if session.direction() != PeerDirectionV0::Inbound || current {
+                    self.unavailable_sessions
+                        .remove(&(session.direction(), session.remote()));
+                }
                 if !self.restart_lifecycle.is_prepared_v1() {
-                    record_peer_session_v1(&mut self.event_journal, session)?;
+                    // A stale lifecycle event can arrive after a newer frame
+                    // advanced the owner-side session fence.  It is harmless
+                    // and must not rewrite the durable peer-session history.
+                    if session.direction() != PeerDirectionV0::Inbound || current {
+                        record_peer_session_v1(&mut self.event_journal, session)?;
+                    }
                     self.reconcile_expected_connectivity_fault_v1()?;
                 }
                 Ok(true)
@@ -6911,6 +6999,181 @@ fn record_peer_session_v1(
     Ok(())
 }
 
+/// Applies the owner-side fence for one authenticated inbound frame.  The
+/// mesh transport already verifies the frame signature/session counter, but a
+/// reconnect can leave old frames and lifecycle notifications in one bounded
+/// queue with no cross-thread ordering guarantee.  Only the current session
+/// (or the immediately next generation, which also repairs a lifecycle event
+/// that arrived later) may enter the continuous authority.
+fn observe_inbound_mesh_frame_session_v1(
+    active: &mut BTreeMap<ValidatorId, (u64, [u8; 32])>,
+    unavailable: &mut BTreeSet<(PeerDirectionV0, ValidatorId)>,
+    remote: ValidatorId,
+    generation: u64,
+    session_id: [u8; 32],
+) -> Result<()> {
+    ensure!(
+        !remote.is_zero(),
+        "authenticated mesh frame has a zero remote"
+    );
+    ensure!(
+        generation != 0,
+        "authenticated mesh frame has a zero session generation"
+    );
+    ensure!(
+        session_id != [0; 32],
+        "authenticated mesh frame has a zero session identifier"
+    );
+    let advanced = match active.get(&remote).copied() {
+        None => bail!(
+            "inbound mesh frame has no initially authenticated session for remote {}",
+            hex::encode(remote.as_bytes())
+        ),
+        Some((current_generation, current_session_id)) => {
+            match generation.cmp(&current_generation) {
+                std::cmp::Ordering::Less => {
+                    bail!(
+                        "stale inbound mesh frame generation {} is behind current {}",
+                        generation,
+                        current_generation
+                    );
+                }
+                std::cmp::Ordering::Equal => {
+                    ensure!(
+                        session_id == current_session_id,
+                        "inbound mesh frame changed session identifier within one generation"
+                    );
+                    false
+                }
+                std::cmp::Ordering::Greater => {
+                    let expected = current_generation
+                        .checked_add(1)
+                        .context("inbound mesh session generation overflows")?;
+                    ensure!(
+                        generation == expected,
+                        "inbound mesh frame skips a session generation"
+                    );
+                    true
+                }
+            }
+        }
+    };
+    if advanced {
+        active.insert(remote, (generation, session_id));
+        // A frame from the new generation may race its SessionReestablished
+        // notification.  Advancing the exact session fence is sufficient to
+        // clear the old generation's unavailable marker.
+        unavailable.remove(&(PeerDirectionV0::Inbound, remote));
+    }
+    ensure!(
+        !unavailable.contains(&(PeerDirectionV0::Inbound, remote)),
+        "inbound mesh frame arrived for an unavailable session"
+    );
+    Ok(())
+}
+
+/// Observes an inbound reconnect notification without allowing an old
+/// notification to mark a newer session unavailable.  `true` means the event
+/// is current (new or exact replay); `false` means it was stale and should not
+/// be written to the durable peer-session journal.
+fn observe_inbound_mesh_reestablished_v1(
+    active: &mut BTreeMap<ValidatorId, (u64, [u8; 32])>,
+    unavailable: &mut BTreeSet<(PeerDirectionV0, ValidatorId)>,
+    remote: ValidatorId,
+    generation: u64,
+    session_id: [u8; 32],
+) -> Result<bool> {
+    ensure!(
+        !remote.is_zero(),
+        "reestablished mesh session has a zero remote"
+    );
+    ensure!(
+        generation != 0,
+        "reestablished mesh session has a zero generation"
+    );
+    ensure!(
+        session_id != [0; 32],
+        "reestablished mesh session has a zero identifier"
+    );
+    let current = match active.get(&remote).copied() {
+        None => bail!(
+            "reestablished mesh session has no initially authenticated remote {}",
+            hex::encode(remote.as_bytes())
+        ),
+        Some((current_generation, current_session_id)) => {
+            match generation.cmp(&current_generation) {
+                std::cmp::Ordering::Less => return Ok(false),
+                std::cmp::Ordering::Equal => {
+                    ensure!(
+                        session_id == current_session_id,
+                        "reestablished mesh session changed identifier within one generation"
+                    );
+                    true
+                }
+                std::cmp::Ordering::Greater => {
+                    let expected = current_generation
+                        .checked_add(1)
+                        .context("reestablished mesh session generation overflows")?;
+                    ensure!(
+                        generation == expected,
+                        "reestablished mesh session skips a generation"
+                    );
+                    active.insert(remote, (generation, session_id));
+                    true
+                }
+            }
+        }
+    };
+    if current {
+        unavailable.remove(&(PeerDirectionV0::Inbound, remote));
+    }
+    Ok(current)
+}
+
+/// Marks only the currently fenced inbound generation unavailable.  A stale
+/// loss notification is ignored because a newer session may already be live.
+fn observe_inbound_mesh_unavailable_v1(
+    active: &BTreeMap<ValidatorId, (u64, [u8; 32])>,
+    unavailable: &mut BTreeSet<(PeerDirectionV0, ValidatorId)>,
+    remote: ValidatorId,
+    generation: u64,
+    session_id: [u8; 32],
+) -> Result<bool> {
+    ensure!(
+        !remote.is_zero(),
+        "mesh loss notification has a zero remote"
+    );
+    ensure!(
+        generation != 0,
+        "mesh loss notification has a zero session generation"
+    );
+    ensure!(
+        session_id != [0; 32],
+        "mesh loss notification has a zero session identifier"
+    );
+    let Some((current_generation, current_session_id)) = active.get(&remote).copied() else {
+        bail!(
+            "inbound mesh loss notification has no active session for remote {}",
+            hex::encode(remote.as_bytes())
+        );
+    };
+    match generation.cmp(&current_generation) {
+        std::cmp::Ordering::Less => Ok(false),
+        std::cmp::Ordering::Equal => {
+            ensure!(
+                session_id == current_session_id,
+                "inbound mesh loss notification changed identifier within one generation"
+            );
+            unavailable.insert((PeerDirectionV0::Inbound, remote));
+            Ok(true)
+        }
+        std::cmp::Ordering::Greater => bail!(
+            "inbound mesh loss notification is ahead of active generation {}",
+            current_generation
+        ),
+    }
+}
+
 #[derive(Debug, Clone)]
 struct RuntimeOsSampleV1 {
     observed_at: SystemTime,
@@ -7129,7 +7392,11 @@ fn civil_date_from_unix_days_v1(days: i64) -> Result<(i64, i64, i64)> {
 
 #[cfg(test)]
 mod tests {
-    use std::{fs, os::unix::fs::PermissionsExt};
+    use std::{
+        collections::{BTreeMap, BTreeSet},
+        fs,
+        os::unix::fs::PermissionsExt,
+    };
 
     use ed25519_dalek::{Signer, SigningKey};
     use tempfile::TempDir;
@@ -7152,6 +7419,103 @@ mod tests {
 
     fn restart_intent_fixture_v1() -> RuntimeRestartPrepareIntentV1 {
         RuntimeRestartPrepareIntentV1::test_only_v1(1, 9, 17, [0x31; 32])
+    }
+
+    #[test]
+    fn inbound_mesh_generation_gate_rejects_stale_frames_after_reconnect_v1() {
+        let remote = ValidatorId::new([0x71; 32]);
+        let first_session = [0x81; 32];
+        let second_session = [0x82; 32];
+        let mut active = BTreeMap::new();
+        let mut unavailable = BTreeSet::new();
+        active.insert(remote, (1, first_session));
+
+        observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            1,
+            first_session,
+        )
+        .expect("initial authenticated frame is admitted");
+        assert_eq!(active.get(&remote), Some(&(1, first_session)));
+
+        observe_inbound_mesh_unavailable_v1(&active, &mut unavailable, remote, 1, first_session)
+            .expect("current session loss is recorded");
+        assert!(unavailable.contains(&(PeerDirectionV0::Inbound, remote)));
+
+        // A frame from the reconnect may race its lifecycle notification. It
+        // advances the exact owner-side fence and clears the old unavailable
+        // marker without opening a generation gap.
+        observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            2,
+            second_session,
+        )
+        .expect("next authenticated generation is admitted");
+        assert_eq!(active.get(&remote), Some(&(2, second_session)));
+        assert!(!unavailable.contains(&(PeerDirectionV0::Inbound, remote)));
+
+        // The old frame was already authenticated at the transport layer, but
+        // it is no longer current at the continuous-authority boundary.
+        assert!(observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            1,
+            first_session,
+        )
+        .is_err());
+
+        // A late loss notification from generation one must not take the live
+        // generation-two session offline.
+        assert!(!observe_inbound_mesh_unavailable_v1(
+            &active,
+            &mut unavailable,
+            remote,
+            1,
+            first_session,
+        )
+        .expect("stale lifecycle event is ignored"));
+        assert!(!unavailable.contains(&(PeerDirectionV0::Inbound, remote)));
+    }
+
+    #[test]
+    fn inbound_mesh_generation_gate_rejects_id_conflicts_and_skips_v1() {
+        let remote = ValidatorId::new([0x72; 32]);
+        let first_session = [0x91; 32];
+        let conflicting_session = [0x92; 32];
+        let mut active = BTreeMap::new();
+        let mut unavailable = BTreeSet::new();
+        active.insert(remote, (1, first_session));
+        observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            1,
+            first_session,
+        )
+        .unwrap();
+
+        assert!(observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            1,
+            conflicting_session,
+        )
+        .is_err());
+        assert!(observe_inbound_mesh_frame_session_v1(
+            &mut active,
+            &mut unavailable,
+            remote,
+            3,
+            [0x93; 32],
+        )
+        .is_err());
+        assert_eq!(active.get(&remote), Some(&(1, first_session)));
     }
 
     #[test]
