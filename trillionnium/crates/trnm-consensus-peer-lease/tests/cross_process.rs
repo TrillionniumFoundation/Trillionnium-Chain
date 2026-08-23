@@ -4,6 +4,7 @@
 use std::{
     fs,
     os::unix::fs::FileTypeExt,
+    os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
     process::{Child, Command},
     thread,
@@ -57,6 +58,12 @@ fn start_daemon(directory: &Path) -> (Child, PathBuf, PathBuf) {
     panic!("peer lease daemon did not become ready");
 }
 
+fn private_tempdir() -> tempfile::TempDir {
+    let directory = tempfile::tempdir().unwrap();
+    fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    directory
+}
+
 fn stop_daemon(mut child: Child) {
     let _ = child.kill();
     let _ = child.wait();
@@ -78,7 +85,7 @@ fn wait_for_exit(mut child: Child) -> std::process::ExitStatus {
 
 #[test]
 fn separate_daemon_process_survives_restart_and_fences_old_generation() {
-    let directory = tempfile::tempdir().unwrap();
+    let directory = private_tempdir();
     let (child, socket, journal) = start_daemon(directory.path());
     let client = UnixPeerLeaseClientV1::connect(&socket);
     client.preflight().unwrap();
@@ -116,7 +123,7 @@ fn separate_daemon_process_survives_restart_and_fences_old_generation() {
 
 #[test]
 fn separate_daemon_process_refuses_tampered_and_partial_journals() {
-    let directory = tempfile::tempdir().unwrap();
+    let directory = private_tempdir();
     let (child, socket, journal) = start_daemon(directory.path());
     UnixPeerLeaseClientV1::connect(&socket)
         .acquire(scope(), [0x77; 32], 1, 1_000)
@@ -139,7 +146,7 @@ fn separate_daemon_process_refuses_tampered_and_partial_journals() {
 
     // Build a valid second journal, then truncate its final record. Startup
     // must fail closed instead of silently repairing or replaying a prefix.
-    let partial_dir = tempfile::tempdir().unwrap();
+    let partial_dir = private_tempdir();
     let (child, _socket, partial_journal) = start_daemon(partial_dir.path());
     let client = UnixPeerLeaseClientV1::connect(partial_dir.path().join("authority.sock"));
     client.acquire(scope(), [0x66; 32], 1, 1_000).unwrap();

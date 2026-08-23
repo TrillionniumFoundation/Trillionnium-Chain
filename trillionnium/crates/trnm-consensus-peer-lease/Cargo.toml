@@ -22,6 +22,7 @@ production_candidate = false
 
 [dependencies]
 fs2 = "0.4"
+libc = "0.2"
 sha2 = { version = "0.10", default-features = false }
 
 [dev-dependencies]
