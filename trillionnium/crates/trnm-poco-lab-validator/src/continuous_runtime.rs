@@ -2822,7 +2822,9 @@ fn authority_hash_v0(domain: &[u8], local_validator: ValidatorId, binding: &[u8]
 #[cfg(test)]
 mod tests {
     use std::{
+        collections::BTreeMap,
         fs,
+        net::TcpListener,
         os::unix::{
             fs::{FileTypeExt, PermissionsExt},
             net::UnixListener,
@@ -2861,8 +2863,14 @@ mod tests {
 
     use super::*;
     use crate::{
+        consensus_mesh::{
+            MeshFixtureConfigV1, MeshIngressEventV0, PersistentAuthenticatedPeerMeshV0,
+        },
         frame::FrameKind,
+        key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
+        p2p_admission::{PeerAdmissionContextV1, TestExternalPeerLeaseAuthorityV1},
         relay::{ConsensusRelayEnvelopeV0, ConsensusRelayErrorV0},
+        transport::RunTransportContext,
         wire::{encode_timeout_vote, encode_vote},
         workload_corpus::{build_public_workload_corpus_v1, VerifiedWorkloadCorpusV1},
     };
@@ -4600,6 +4608,158 @@ mod tests {
             assert!(same_total_swapped
                 .require_authenticated_inventory_v1(inventory)
                 .is_err());
+        });
+    }
+
+    #[test]
+    fn authenticated_mesh_ingress_routes_directly_into_live_authority_admission() {
+        // This is a bounded unit/loopback composition proof only.  It does
+        // not commission a production validator, start Core, or contribute
+        // any Stage-0/7-node observation.
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = fresh_test_harness_v0(4, 1);
+            let validator_set = harness.validator_set.clone();
+            let local = validator_set.validators()[0].id();
+            let remote = validator_set.validators()[1].id();
+            let p2p_keys = (0..validator_set.validators().len())
+                .map(|index| {
+                    let marker = u8::try_from(0xa1 + index).expect("bounded p2p key marker");
+                    SigningKey::from_bytes(&[marker; 32])
+                })
+                .collect::<Vec<_>>();
+            let operator_keys = (0..validator_set.validators().len())
+                .map(|index| {
+                    let marker = u8::try_from(0xb1 + index).expect("bounded operator key marker");
+                    SigningKey::from_bytes(&[marker; 32])
+                })
+                .collect::<Vec<_>>();
+            let role_bindings = validator_set
+                .validators()
+                .iter()
+                .enumerate()
+                .map(|(index, validator)| {
+                    ValidatorKeyRoleBindingV1::new(
+                        validator.id(),
+                        validator.consensus_key().into_bytes(),
+                        p2p_keys[index].verifying_key().to_bytes(),
+                        operator_keys[index].verifying_key().to_bytes(),
+                    )
+                    .expect("construct fixture key-role binding")
+                })
+                .collect::<Vec<_>>();
+            let roles = ValidatorKeyRoleRegistryV1::new(&validator_set, role_bindings)
+                .expect("construct complete fixture key-role registry");
+            let local_addr = TcpListener::bind("127.0.0.1:0")
+                .expect("allocate local mesh listener address")
+                .local_addr()
+                .expect("read local mesh listener address");
+            let remote_addr = TcpListener::bind("127.0.0.1:0")
+                .expect("allocate remote mesh listener address")
+                .local_addr()
+                .expect("read remote mesh listener address");
+            let context = RunTransportContext::new([0xc1; 32], [0xc2; 32], [0xc3; 32], [0xc4; 32])
+                .with_validator_set_binding(
+                    validator_set.epoch().get(),
+                    validator_set.id().into_bytes(),
+                );
+            let mut local_outgoing = BTreeMap::new();
+            local_outgoing.insert(remote, remote_addr);
+            let mut local_incoming = BTreeMap::new();
+            local_incoming.insert(remote, remote_addr);
+            let mut remote_outgoing = BTreeMap::new();
+            remote_outgoing.insert(local, local_addr);
+            let mut remote_incoming = BTreeMap::new();
+            remote_incoming.insert(local, local_addr);
+            let local_config = MeshFixtureConfigV1::new(
+                "poco-g3-authority-admission-route",
+                local,
+                p2p_keys[0].clone(),
+                validator_set.clone(),
+                roles.clone(),
+                context,
+                local_addr,
+                local_outgoing,
+                local_incoming,
+            )
+            .expect("construct local authenticated mesh fixture");
+            let remote_config = MeshFixtureConfigV1::new(
+                "poco-g3-authority-admission-route",
+                remote,
+                p2p_keys[1].clone(),
+                validator_set.clone(),
+                roles,
+                context,
+                remote_addr,
+                remote_outgoing,
+                remote_incoming,
+            )
+            .expect("construct remote authenticated mesh fixture");
+            let lease_authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(
+                PeerAdmissionContextV1::from_validator_set(&validator_set),
+            ));
+            let local_lease = Arc::clone(&lease_authority);
+            let remote_lease = Arc::clone(&lease_authority);
+            let local_thread = thread::spawn(move || {
+                PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
+                    &local_config,
+                    Duration::from_secs(5),
+                    Duration::from_millis(500),
+                    8,
+                    Duration::from_secs(2),
+                    local_lease,
+                )
+                .expect("establish local authenticated mesh worker")
+            });
+            let remote_thread = thread::spawn(move || {
+                PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
+                    &remote_config,
+                    Duration::from_secs(5),
+                    Duration::from_millis(500),
+                    8,
+                    Duration::from_secs(2),
+                    remote_lease,
+                )
+                .expect("establish remote authenticated mesh worker")
+            });
+            let local_mesh = local_thread.join().expect("local mesh setup thread");
+            let remote_mesh = remote_thread.join().expect("remote mesh setup thread");
+
+            let remote_vote = signed_vote_v0(&harness.validator_set, &harness.keys[1], 1, 1);
+            remote_mesh
+                .send_to(local, FrameKind::Vote, encode_vote(&remote_vote))
+                .expect("queue signed Vote on authenticated mesh");
+
+            let deadline = Instant::now() + Duration::from_secs(2);
+            let mut admitted = None;
+            while Instant::now() < deadline {
+                let Some(event) = local_mesh
+                    .receive_timeout(Duration::from_millis(100))
+                    .expect("receive authenticated mesh event")
+                else {
+                    continue;
+                };
+                let MeshIngressEventV0::Frame(frame) = event else {
+                    continue;
+                };
+                assert_eq!(frame.remote(), remote);
+                let authenticated = frame.into_frame();
+                let action = harness.authorities[0]
+                    .admit_authenticated_consensus_frame_v0(&authenticated)
+                    .expect("authority admission accepts mesh-authenticated Vote");
+                admitted = Some(action);
+                break;
+            }
+            let Some(Some(RoutedConsensusActionV0::Vote { vote, formed_qc })) = admitted else {
+                panic!("mesh ingress did not route a Vote into authority admission");
+            };
+            assert_eq!(*vote, remote_vote);
+            assert!(formed_qc.is_none(), "one remote Vote cannot form a QC");
+            local_mesh
+                .close()
+                .expect("close local authenticated mesh worker");
+            remote_mesh
+                .close()
+                .expect("close remote authenticated mesh worker");
         });
     }
 
