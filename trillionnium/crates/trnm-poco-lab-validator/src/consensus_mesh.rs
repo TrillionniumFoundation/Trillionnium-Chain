@@ -429,6 +429,20 @@ struct MeshTerminalFailureV0 {
     reason: String,
 }
 
+#[derive(Debug)]
+struct MeshFencePeerFailureV1 {
+    remote: ValidatorId,
+    direction: PeerDirectionV0,
+    reason: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum MeshFenceRenewalOutcomeV1 {
+    Missing,
+    NotDue,
+    Renewed,
+}
+
 impl MeshTerminalFailureV0 {
     fn render(&self) -> String {
         format!(
@@ -810,6 +824,89 @@ impl MeshFenceRegistryV1 {
         Ok(())
     }
 
+    /// Renews a lease only when its local cadence says it is due.  Idle
+    /// worker polls and the mesh supervisor use this path so a no-frame
+    /// period cannot let a lease expire or turn into an RPC busy loop.
+    fn renew_if_due(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
+        match self.renew_if_due_inner(direction, remote)? {
+            MeshFenceRenewalOutcomeV1::Missing => {
+                bail!("mesh frame path has no admitted external lease")
+            }
+            MeshFenceRenewalOutcomeV1::NotDue | MeshFenceRenewalOutcomeV1::Renewed => Ok(()),
+        }
+    }
+
+    fn renew_if_due_inner(
+        &self,
+        direction: PeerDirectionV0,
+        remote: ValidatorId,
+    ) -> Result<MeshFenceRenewalOutcomeV1> {
+        let key = (direction, remote);
+        let mut tokens = self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
+        let Some(entry) = tokens.get(&key).copied() else {
+            return Ok(MeshFenceRenewalOutcomeV1::Missing);
+        };
+        if entry.token.scope().local() != self.local
+            || entry.token.scope().context() != self.context
+        {
+            bail!("mesh external lease scope changed")
+        }
+        if Instant::now() < entry.next_renew_at {
+            return Ok(MeshFenceRenewalOutcomeV1::NotDue);
+        }
+        let renewed = self
+            .authority
+            .renew(entry.token)
+            .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+        if renewed.scope() != entry.token.scope() {
+            bail!("external fence renewal changed the lease scope")
+        }
+        tokens.insert(
+            key,
+            ActiveFenceEntryV1 {
+                token: renewed,
+                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+            },
+        );
+        Ok(MeshFenceRenewalOutcomeV1::Renewed)
+    }
+
+    /// Runs the due-only path for every currently admitted edge and retains
+    /// the exact edge that failed. A worker can legitimately release a token
+    /// while this snapshot is being walked, so a disappeared edge is ignored
+    /// here; the next generation will acquire a fresh token on reconnect.
+    fn renew_due_all(&self) -> std::result::Result<(), MeshFencePeerFailureV1> {
+        let keys = self
+            .tokens
+            .lock()
+            .map_err(|_| MeshFencePeerFailureV1 {
+                remote: self.local,
+                direction: PeerDirectionV0::Outbound,
+                reason: "mesh fence token map poisoned".to_owned(),
+            })?
+            .keys()
+            .copied()
+            .collect::<Vec<_>>();
+        for (direction, remote) in keys {
+            match self.renew_if_due_inner(direction, remote) {
+                Ok(MeshFenceRenewalOutcomeV1::Missing)
+                | Ok(MeshFenceRenewalOutcomeV1::NotDue)
+                | Ok(MeshFenceRenewalOutcomeV1::Renewed) => {}
+                Err(error) => {
+                    return Err(MeshFencePeerFailureV1 {
+                        remote,
+                        direction,
+                        reason: error.to_string(),
+                    })
+                }
+            }
+        }
+        Ok(())
+    }
+
     fn revalidate_all(&self) -> Result<()> {
         let keys = self
             .tokens
@@ -1055,6 +1152,46 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 )
             })
             .collect::<BTreeMap<_, _>>();
+        // Lease renewal is an independent mesh worker rather than a side
+        // effect of consensus traffic.  An idle authenticated edge must not
+        // lose its external generation merely because no frame was sent or
+        // received during one TTL window.
+        {
+            let stop = Arc::clone(&stop);
+            let terminal = Arc::clone(&terminal);
+            let controls = Arc::clone(&controls);
+            let fences = fences.clone();
+            let worker = thread::Builder::new()
+                .name("trnm-g3-mesh-fence-renew".to_owned())
+                .stack_size(MESH_WORKER_STACK_BYTES)
+                .spawn(move || loop {
+                    if stop.load(Ordering::Acquire) {
+                        return;
+                    }
+                    if let Err(failure) = fences.renew_due_all() {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote: failure.remote,
+                                direction: failure.direction,
+                                reason: format!(
+                                    "external fence renewal supervisor failed: {}",
+                                    failure.reason
+                                ),
+                            },
+                        );
+                        shutdown_all(&controls);
+                        return;
+                    }
+                    // Polling at the worker bound makes shutdown independent
+                    // of the configured lease TTL while each token retains
+                    // its own TTL/3 renewal cadence.
+                    thread::sleep(WORKER_POLL);
+                })
+                .context("spawn mesh external-fence renewal worker")?;
+            workers.push(worker);
+        }
         {
             let worker = thread::Builder::new()
                 .name("trnm-g3-mesh-accept".to_owned())
@@ -1430,7 +1567,25 @@ fn outgoing_loop(
         }
         let message = match receiver.recv_timeout(WORKER_POLL) {
             Ok(message) => message,
-            Err(RecvTimeoutError::Timeout) => continue,
+            Err(RecvTimeoutError::Timeout) => {
+                // A quiet outbound edge still gets a bounded fence check;
+                // the registry performs the external RPC only at TTL/3.
+                if let Err(error) = fences.renew_if_due(PeerDirectionV0::Outbound, remote) {
+                    set_terminal(
+                        &terminal,
+                        &stop,
+                        MeshTerminalFailureV0 {
+                            remote,
+                            direction: PeerDirectionV0::Outbound,
+                            reason: format!("idle external fence revalidation failed: {error}"),
+                        },
+                    );
+                    shutdown_all(&controls);
+                    let _ = fences.release(PeerDirectionV0::Outbound, remote);
+                    return;
+                }
+                continue;
+            }
             Err(RecvTimeoutError::Disconnected) => {
                 let _ = fences.release(PeerDirectionV0::Outbound, remote);
                 if !stop.load(Ordering::Acquire) {
@@ -1868,6 +2023,7 @@ fn accept_loop(
                     return;
                 }
                 let cancel = Arc::new(AtomicBool::new(false));
+                let inbound_idle_timeout = fence_renew_interval(fences.ttl);
                 let child = thread::Builder::new()
                     .name(format!("trnm-g3-mesh-recv-{}", short_id(remote)))
                     .stack_size(MESH_WORKER_STACK_BYTES)
@@ -1897,6 +2053,59 @@ fn accept_loop(
                                 );
                                 let _ = fences.release(PeerDirectionV0::Inbound, remote);
                                 return;
+                            }
+                            match connection
+                                .io_mut()
+                                .wait_readable(inbound_idle_timeout, io_timeout)
+                            {
+                                Ok(false) => continue,
+                                Ok(true) => {}
+                                Err(error)
+                                    if matches!(
+                                        error.kind(),
+                                        io::ErrorKind::UnexpectedEof
+                                            | io::ErrorKind::ConnectionReset
+                                            | io::ErrorKind::ConnectionAborted
+                                            | io::ErrorKind::BrokenPipe
+                                            | io::ErrorKind::NotConnected
+                                            | io::ErrorKind::TimedOut
+                                            | io::ErrorKind::WouldBlock
+                                    ) =>
+                                {
+                                    if !cancel.load(Ordering::Acquire)
+                                        && !stop.load(Ordering::Acquire)
+                                    {
+                                        let _ = emit_inbound_lifecycle(
+                                            &lifecycle_tx,
+                                            InboundLifecycleV0::TransientLoss(facts),
+                                            &terminal,
+                                            &stop,
+                                            facts,
+                                            &cancel,
+                                        );
+                                    }
+                                    let _ = fences.release(PeerDirectionV0::Inbound, remote);
+                                    return;
+                                }
+                                Err(error) => {
+                                    if !stop.load(Ordering::Acquire)
+                                        && !cancel.load(Ordering::Acquire)
+                                    {
+                                        set_terminal(
+                                            &terminal,
+                                            &stop,
+                                            MeshTerminalFailureV0 {
+                                                remote,
+                                                direction: PeerDirectionV0::Inbound,
+                                                reason: format!(
+                                                    "inbound readiness probe failed: {error}"
+                                                ),
+                                            },
+                                        );
+                                    }
+                                    let _ = fences.release(PeerDirectionV0::Inbound, remote);
+                                    return;
+                                }
                             }
                             match connection.receive() {
                                 Ok(frame) => {
@@ -2583,6 +2792,38 @@ impl DeadlineIo {
         self.stream
             .try_clone()
             .context("clone session shutdown handle")
+    }
+
+    /// Waits for the first byte of a frame without consuming it.  Keeping the
+    /// probe separate from `AuthenticatedConnection::receive` is important:
+    /// a read timeout in the middle of a length-prefixed frame poisons that
+    /// connection, while an idle timeout must merely wake the worker so it
+    /// can renew its external lease.
+    fn wait_readable(
+        &mut self,
+        idle_timeout: Duration,
+        frame_timeout: Duration,
+    ) -> io::Result<bool> {
+        self.stream.set_read_timeout(Some(idle_timeout))?;
+        let mut probe = [0u8; 1];
+        let readiness = match self.stream.peek(&mut probe) {
+            Ok(0) => Err(io::Error::new(
+                io::ErrorKind::UnexpectedEof,
+                "peer closed the authenticated stream",
+            )),
+            Ok(_) => Ok(true),
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
+                ) =>
+            {
+                Ok(false)
+            }
+            Err(error) => Err(error),
+        };
+        self.stream.set_read_timeout(Some(frame_timeout))?;
+        readiness
     }
 
     fn refresh(&self, read: bool) -> io::Result<()> {

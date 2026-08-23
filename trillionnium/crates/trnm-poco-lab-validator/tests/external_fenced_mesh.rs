@@ -7,6 +7,7 @@
 use std::{
     collections::BTreeMap,
     net::{SocketAddr, TcpListener},
+    path::Path,
     process::{Child, Command, Stdio},
     sync::Arc,
     thread,
@@ -162,21 +163,31 @@ fn start_daemon(root: &TempDir) -> (Child, std::path::PathBuf) {
     (child, socket)
 }
 
-#[test]
-fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
-    let root = TempDir::new().unwrap();
-    let (mut daemon, socket) = start_daemon(&root);
-    let (a_config, b_config) = fixture_configs();
-    let admission_context = a_config.admission_context_v1();
-    let a_socket = socket.clone();
-    let b_socket = socket.clone();
+fn stop_daemon(child: &mut Child) {
+    if child.try_wait().expect("poll peer-lease daemon").is_none() {
+        let _ = child.kill();
+    }
+    let _ = child.wait();
+}
+
+fn establish_pair(
+    socket: &Path,
+    a_config: MeshFixtureConfigV1,
+    b_config: MeshFixtureConfigV1,
+    fence_ttl: Duration,
+) -> (
+    PersistentAuthenticatedPeerMeshV0,
+    PersistentAuthenticatedPeerMeshV0,
+) {
+    let a_socket = socket.to_path_buf();
+    let b_socket = socket.to_path_buf();
     let a_thread = thread::spawn(move || {
         PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
             &a_config,
             Duration::from_secs(5),
             Duration::from_millis(500),
             8,
-            Duration::from_secs(1),
+            fence_ttl,
             Arc::new(UnixExternalPeerLeaseAuthorityV1::connect(a_socket)),
         )
         .expect("establish A behind external daemon")
@@ -187,23 +198,27 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
             Duration::from_secs(5),
             Duration::from_millis(500),
             8,
-            Duration::from_secs(1),
+            fence_ttl,
             Arc::new(UnixExternalPeerLeaseAuthorityV1::connect(b_socket)),
         )
         .expect("establish B behind external daemon")
     });
-    let a_mesh = a_thread.join().unwrap();
-    let b_mesh = b_thread.join().unwrap();
+    (a_thread.join().unwrap(), b_thread.join().unwrap())
+}
+
+#[test]
+fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
+    let root = TempDir::new().unwrap();
+    let (mut daemon, socket) = start_daemon(&root);
+    let (a_config, b_config) = fixture_configs();
+    let admission_context = a_config.admission_context_v1();
+    let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(1));
     assert_eq!(a_mesh.initial_sessions().len(), 2);
     assert_eq!(b_mesh.initial_sessions().len(), 2);
-    // The fixture TTL is one second.  The first health check forces a renew
-    // at roughly TTL/3; the second occurs after the original lease would have
-    // expired and therefore proves the daemon-backed renewal path, rather
-    // than merely a cached-token revalidation.
-    thread::sleep(Duration::from_millis(400));
-    a_mesh.ensure_healthy().unwrap();
-    b_mesh.ensure_healthy().unwrap();
-    thread::sleep(Duration::from_millis(800));
+    // No health call or consensus frame occurs during this interval.  The
+    // mesh-level supervisor (and idle receive/send polls) must renew every
+    // directed lease before the one-second authority TTL expires.
+    thread::sleep(Duration::from_millis(1_300));
     a_mesh.ensure_healthy().unwrap();
     b_mesh.ensure_healthy().unwrap();
     a_mesh
@@ -235,8 +250,13 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
         })
         .expect("outbound session exists")
         .session_id();
+    let close_started = Instant::now();
     b_mesh.close().unwrap();
     a_mesh.close().unwrap();
+    assert!(
+        close_started.elapsed() < Duration::from_millis(750),
+        "idle mesh close exceeded bounded shutdown window"
+    );
     // The daemon retains the monotonic generation after both mesh workers
     // release their leases.  Replaying generation one with the old session
     // must be rejected across the process boundary.
@@ -254,6 +274,49 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
         .acquire(ExternalPeerLeaseRequestV1::new(replay_scope, Duration::from_secs(1)).unwrap())
         .unwrap_err();
     assert_eq!(replay_error, ExternalFenceError::StaleGeneration);
-    daemon.kill().unwrap();
-    daemon.wait().unwrap();
+    stop_daemon(&mut daemon);
+}
+
+#[test]
+fn idle_mesh_shutdown_is_bounded_independently_of_lease_ttl() {
+    let root = TempDir::new().unwrap();
+    let (mut daemon, socket) = start_daemon(&root);
+    let (a_config, b_config) = fixture_configs();
+    let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(30));
+
+    // A 30-second lease has a ten-second renewal cadence.  Closing both
+    // meshes must still wake the supervisor promptly instead of joining on
+    // that sleep interval.
+    let started = Instant::now();
+    let a_close = thread::spawn(move || a_mesh.close());
+    let b_close = thread::spawn(move || b_mesh.close());
+    a_close.join().unwrap().unwrap();
+    b_close.join().unwrap().unwrap();
+    assert!(
+        started.elapsed() < Duration::from_millis(750),
+        "mesh shutdown waited on the lease renewal interval"
+    );
+    stop_daemon(&mut daemon);
+}
+
+#[test]
+fn idle_external_lease_renewal_failure_terminates_mesh() {
+    let root = TempDir::new().unwrap();
+    let (mut daemon, socket) = start_daemon(&root);
+    let (a_config, b_config) = fixture_configs();
+    let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(1));
+
+    // No health call or frame is made after the authority disappears.  The
+    // supervisor must observe the failed renewal itself and put both meshes
+    // into a terminal fail-closed state.
+    stop_daemon(&mut daemon);
+    thread::sleep(Duration::from_millis(550));
+    let a_error = a_mesh.ensure_healthy().unwrap_err().to_string();
+    let b_error = b_mesh.ensure_healthy().unwrap_err().to_string();
+    assert!(
+        a_error.contains("external fence") && b_error.contains("external fence"),
+        "idle renewal failure did not terminate either mesh: A={a_error}; B={b_error}"
+    );
+    drop(a_mesh);
+    drop(b_mesh);
 }
