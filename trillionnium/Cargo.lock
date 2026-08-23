@@ -1449,6 +1449,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-external-watermark"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "libc",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-consensus-remote-signer-protocol"
 version = "0.1.0"
 dependencies = [
