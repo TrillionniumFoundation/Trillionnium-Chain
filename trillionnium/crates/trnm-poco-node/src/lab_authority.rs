@@ -33,12 +33,12 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
     ClaimedPayloadValidationRequestV0, Core, CoreError,
     CoreIssuedApplicationFinalizationApplyAuthorityV0, CoreIssuedApplicationSealAuthorityV0,
-    DurableFinalizationV0, Effect, Input, OutboundMessage, SignId,
+    DurableFinalizationV0, Effect, Input, OutboundMessage, SafetyStatePersistenceV0, SignId,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(feature = "safety-rules-sidecar")]
 use trnm_consensus_safety_rules::{
-    InertSafetyTransitionKindV1, SafetyRulesDurableTransitionStoreV1, SafetyRulesStateDigestV1,
+    InertSafetyTransitionKindV1, InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1,
 };
 use trnm_consensus_safety_store::{
     ConfirmedSafetyNodeCheckpointFactsV0, SafetyPersistDispositionV0, SafetyStoreErrorV0,
@@ -3090,9 +3090,130 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
     /// private inert signing request.  The method consumes the runtime so no
     /// failed or partially advanced owner can be accidentally reused.
     pub fn drive_one_to_inert_request_v0(
-        mut self,
+        self,
         proposal: SignedProposalV0,
     ) -> Result<PocoNodeLabInertRequestOwnerV0<W>, PocoNodeLabAuthorityErrorV0> {
+        self.drive_one_to_inert_request_with_pre_safety_store_hook_v0(proposal, |_obligation| {
+            Ok(false)
+        })
+    }
+
+    /// Drives one Proposal through the same inert authority chain while
+    /// allowing an explicitly composed SafetyRules sidecar to durably bind
+    /// the Core-produced Vote transition immediately before the final local
+    /// SQLite Safety-C write.
+    ///
+    /// This is deliberately feature-gated and does not alter the default
+    /// host.  The hook receives the opaque Core persistence request only after
+    /// Core has produced it; callers cannot synthesize a transition or bypass
+    /// the Core-owned predecessor/candidate binding.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn drive_one_to_inert_request_with_safety_rules_sidecar_v1<SW>(
+        self,
+        proposal: SignedProposalV0,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+    ) -> Result<PocoNodeLabInertRequestOwnerV0<W>, PocoNodeLabAuthorityErrorV0>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        self.drive_one_to_inert_request_with_pre_safety_store_hook_v0(proposal, |persistence| {
+            let transition = persistence.safety_rules_shadow_transition_v1().ok_or(
+                PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                    "Proposal persistence has no exact SafetyRules shadow transition",
+                ),
+            )?;
+            if transition.kind() != InertSafetyTransitionKindV1::Vote
+                || transition.successor_state().revision() != persistence.state().revision()
+                || transition.canonical_intent().authorizing_safety_revision()
+                    != persistence.state().revision()
+            {
+                return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                    "Proposal SafetyRules transition differs from the Core persistence state",
+                ));
+            }
+            sidecar
+                .persist_transition_v1(transition.predecessor_state_digest(), transition)
+                .map_err(|error| {
+                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                        "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
+                    ))
+                })?;
+            Ok(true)
+        })
+    }
+
+    /// Opens the semantic sidecar only after Core has produced the complete
+    /// Vote transition.  Ordinary Proposal admission first persists a
+    /// validation obligation, which is a separate non-signing SafetyState
+    /// revision; opening a Vote sidecar against the pre-Proposal digest would
+    /// therefore bind the wrong predecessor.  This entry point keeps the
+    /// external authority opaque until the exact Core-D transition supplies
+    /// its authenticated predecessor, then returns the sidecar for the
+    /// subsequent inert signer release.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn drive_one_to_inert_request_with_safety_rules_external_v1<SW>(
+        self,
+        proposal: SignedProposalV0,
+        external: SW,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+    ) -> Result<
+        (
+            PocoNodeLabInertRequestOwnerV0<W>,
+            SafetyRulesSemanticSidecarV1<SW>,
+        ),
+        PocoNodeLabAuthorityErrorV0,
+    >
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        let mut external = Some(external);
+        let mut opened_sidecar = None;
+        let owner = self.drive_one_to_inert_request_with_pre_safety_store_hook_v0(
+            proposal,
+            |persistence| {
+                let transition = validate_vote_persistence_transition_v1(persistence)?;
+                let external = external.take().ok_or(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                    "SafetyRules external authority was consumed more than once",
+                ))?;
+                let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+                    external,
+                    scope,
+                    journal_id,
+                    capability,
+                    transition.predecessor_state_digest(),
+                )
+                .map_err(|error| {
+                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                        "open SafetyRules semantic sidecar at Core predecessor: {error}"
+                    ))
+                })?;
+                sidecar
+                    .persist_transition_v1(transition.predecessor_state_digest(), transition)
+                    .map_err(|error| {
+                        PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                            "SafetyRules semantic sidecar rejected pre-store Vote transition: {error}"
+                        ))
+                    })?;
+                opened_sidecar = Some(sidecar);
+                Ok(true)
+            },
+        )?;
+        let sidecar = opened_sidecar.ok_or(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "SafetyRules sidecar was not opened for the Core Vote transition",
+        ))?;
+        Ok((owner, sidecar))
+    }
+
+    fn drive_one_to_inert_request_with_pre_safety_store_hook_v0<F>(
+        mut self,
+        proposal: SignedProposalV0,
+        mut before_safety_store: F,
+    ) -> Result<PocoNodeLabInertRequestOwnerV0<W>, PocoNodeLabAuthorityErrorV0>
+    where
+        F: FnMut(&SafetyStatePersistenceV0) -> Result<bool, PocoNodeLabAuthorityErrorV0>,
+    {
         let run_started = Instant::now();
         let block_id = proposal.block().id();
         let view = proposal.block().header().view();
@@ -3198,6 +3319,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         };
         let native_valid_revision = accepted_d.core_accepted_v0().completion_revision_v0();
         mark_stage(4);
+        // Core-D now carries the complete SafetyRules Vote transition.  The
+        // external semantic CAS must commit that exact transition before the
+        // host performs its final Safety-C SQLite write.  The initial
+        // Proposal persistence above is only a validation obligation and
+        // intentionally does not invoke this hook.
+        #[cfg(feature = "safety-rules-sidecar")]
+        let safety_rules_sidecar_precommitted =
+            before_safety_store(accepted_d.core_accepted_v0().persistence_request_v0())?;
+        #[cfg(not(feature = "safety-rules-sidecar"))]
+        let _ = before_safety_store(accepted_d.core_accepted_v0().persistence_request_v0())?;
         let safety_path = self.safety_store.path().to_path_buf();
         let acked_k = match host
             .persist_safety_c_and_ack_k_observed_v0(
@@ -3303,6 +3434,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             pending_executions: self.pending_executions,
             proposal_journal: self.proposal_journal,
             facts,
+            #[cfg(feature = "safety-rules-sidecar")]
+            safety_rules_sidecar_precommitted,
         })
     }
 }
@@ -3409,6 +3542,12 @@ pub struct PocoNodeLabInertRequestOwnerV0<W: ExternalMonotonicWatermarkV0> {
     pending_executions: BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
     proposal_journal: PocoNodeLabProposalJournalConfigV0,
     facts: PocoNodeLabInertRequestFactsV0,
+    /// True only when the feature-gated drive path has already committed the
+    /// exact Core transition to the independent SafetyRules sidecar before
+    /// local SQLite persistence.  This marker is private and linear; it is
+    /// never accepted from a caller or reconstructed from scalar facts.
+    #[cfg(feature = "safety-rules-sidecar")]
+    safety_rules_sidecar_precommitted: bool,
 }
 
 impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
@@ -3425,17 +3564,6 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
         self.inert
             .overlay_parent_head_v0()
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))
-    }
-
-    /// Returns the authenticated predecessor digest carried by the exact
-    /// inert Core shadow transition.  This is a read-only composition seam:
-    /// it grants no persistence or signing authority and is only available
-    /// when the explicit SafetyRules semantic sidecar feature is enabled.
-    #[cfg(feature = "safety-rules-sidecar")]
-    pub fn safety_rules_shadow_predecessor_digest_v1(&self) -> Option<SafetyRulesStateDigestV1> {
-        self.inert
-            .safety_rules_shadow_transition_v1()
-            .map(|transition| transition.predecessor_state_digest())
     }
 
     /// Journals and verifies the exact Vote signature, advances a second
@@ -3468,29 +3596,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
         P: SignatureProducerV0,
         SW: ExternalMonotonicWatermarkV0,
     {
+        let sidecar_precommitted = self.safety_rules_sidecar_precommitted;
         self.sign_exact_vote_with_pre_sign_hook_v0(producer, |inert| {
-            let transition = inert.safety_rules_shadow_transition_v1().ok_or(
-                PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
-                    "Vote inert request has no exact SafetyRules shadow transition",
-                ),
-            )?;
-            let block_id = match inert.intent_v0().preimage() {
-                CanonicalSignPreimageV0::Vote(preimage) => preimage.block_id(),
-                CanonicalSignPreimageV0::TimeoutVote(_) => {
-                    return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
-                        "Vote inert request carries a timeout preimage",
-                    ));
-                }
-            };
-            if transition.kind() != InertSafetyTransitionKindV1::Vote
-                || transition.vote_block_id() != Some(block_id)
-                || transition.successor_state().revision()
-                    != inert.intent_v0().authorizing_safety_revision()
-                || transition.canonical_intent() != inert.intent_v0()
-            {
-                return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
-                    "Vote inert request differs from its exact SafetyRules transition",
-                ));
+            let transition = validate_exact_vote_safety_rules_transition_v1(inert)?;
+            if sidecar_precommitted {
+                // The drive seam already committed this exact transition
+                // before SQLite persistence.  Reissuing the CAS here would
+                // turn a valid one-shot path into a replay and poison the
+                // sidecar; the private marker is the only proof accepted for
+                // skipping it.
+                return Ok(());
             }
             sidecar
                 .persist_transition_v1(transition.predecessor_state_digest(), transition)
@@ -3700,6 +3815,57 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
             facts,
         })
     }
+}
+
+#[cfg(feature = "safety-rules-sidecar")]
+fn validate_exact_vote_safety_rules_transition_v1(
+    inert: &PocoNodeNativeInertRequestSignatureV0,
+) -> Result<&InertSafetyTransitionV1, PocoNodeLabAuthorityErrorV0> {
+    let transition = inert.safety_rules_shadow_transition_v1().ok_or(
+        PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "Vote inert request has no exact SafetyRules shadow transition",
+        ),
+    )?;
+    let block_id = match inert.intent_v0().preimage() {
+        CanonicalSignPreimageV0::Vote(preimage) => preimage.block_id(),
+        CanonicalSignPreimageV0::TimeoutVote(_) => {
+            return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                "Vote inert request carries a timeout preimage",
+            ));
+        }
+    };
+    if transition.kind() != InertSafetyTransitionKindV1::Vote
+        || transition.vote_block_id() != Some(block_id)
+        || transition.successor_state().revision()
+            != inert.intent_v0().authorizing_safety_revision()
+        || transition.canonical_intent() != inert.intent_v0()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "Vote inert request differs from its exact SafetyRules transition",
+        ));
+    }
+    Ok(transition)
+}
+
+#[cfg(feature = "safety-rules-sidecar")]
+fn validate_vote_persistence_transition_v1(
+    persistence: &SafetyStatePersistenceV0,
+) -> Result<&InertSafetyTransitionV1, PocoNodeLabAuthorityErrorV0> {
+    let transition = persistence.safety_rules_shadow_transition_v1().ok_or(
+        PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "Core Vote persistence has no exact SafetyRules shadow transition",
+        ),
+    )?;
+    if transition.kind() != InertSafetyTransitionKindV1::Vote
+        || transition.successor_state().revision() != persistence.state().revision()
+        || transition.canonical_intent().authorizing_safety_revision()
+            != persistence.state().revision()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "Core Vote persistence differs from its SafetyRules transition",
+        ));
+    }
+    Ok(transition)
 }
 
 impl<W: ExternalMonotonicWatermarkV0> fmt::Debug for PocoNodeLabInertRequestOwnerV0<W> {

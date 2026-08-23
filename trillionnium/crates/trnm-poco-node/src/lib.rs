@@ -362,7 +362,6 @@ pub use safety_rules_sidecar::{
     SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
     SAFETY_RULES_SEMANTIC_SIDECAR_RUNTIME_COMPOSITION_V1,
 };
-
 /// This package must not be interpreted as a deployable consensus candidate.
 pub const PRODUCTION_CANDIDATE_V0: bool = false;
 

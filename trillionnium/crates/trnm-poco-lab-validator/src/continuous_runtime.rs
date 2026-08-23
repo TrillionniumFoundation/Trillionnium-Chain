@@ -2149,12 +2149,14 @@ impl ContinuousValidatorAuthorityV0 {
         self.vote_unbound_proposal_v0(unbound)
     }
 
-    /// Runs the continuous Vote path with an explicitly supplied semantic
-    /// SafetyRules authority.  The sidecar is not discovered, cloned, or
-    /// silently replaced: the caller must have opened it against a freshly
-    /// authenticated SafetyRules predecessor.  The exact Core transition is
-    /// then handed to the Node owner, which performs the sidecar CAS before
-    /// the signer journal is allowed to mutate.
+    /// Runs the continuous Vote path with an already-open semantic SafetyRules
+    /// sidecar.  The caller must have rebound it to the exact predecessor that
+    /// Core will expose *after* the non-signing Proposal obligation.  A
+    /// sidecar opened at the Ready-state digest is intentionally rejected at
+    /// the Core-D boundary; callers that do not already own that post-obligation
+    /// binding should use [`Self::vote_proposal_with_safety_rules_external_v1`],
+    /// which opens the sidecar only after Core has produced the complete Vote
+    /// transition.
     #[cfg(feature = "safety-rules-sidecar")]
     pub fn vote_proposal_with_safety_rules_sidecar_v1<SW>(
         &mut self,
@@ -2167,6 +2169,34 @@ impl ContinuousValidatorAuthorityV0 {
         let unbound = UnboundProposalV0::from_signed(&proposal)
             .map_err(|error| anyhow!("project proposal into unbound ingress: {error}"))?;
         self.vote_unbound_proposal_with_safety_rules_sidecar_v1(unbound, sidecar)
+    }
+
+    /// Runs the continuous Vote path with an explicitly supplied external
+    /// semantic SafetyRules authority.  Unlike the pre-open sidecar entry,
+    /// this method accepts the external authority by value and opens it only
+    /// after Core-D has produced the complete Vote transition.  This matters
+    /// because Core first persists a non-signing Proposal validation
+    /// obligation, advancing the SafetyRules predecessor revision before the
+    /// Vote transition is available.  The external CAS therefore occurs
+    /// immediately before local Safety-C persistence, and the returned owner
+    /// carries the private proof that the sidecar was already committed.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn vote_proposal_with_safety_rules_external_v1<SW>(
+        &mut self,
+        proposal: SignedProposalV0,
+        external: SW,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+    ) -> Result<Vote>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        let unbound = UnboundProposalV0::from_signed(&proposal)
+            .map_err(|error| anyhow!("project proposal into unbound ingress: {error}"))?;
+        self.vote_unbound_proposal_with_safety_rules_external_v1(
+            unbound, external, scope, journal_id, capability,
+        )
     }
 
     fn vote_bound_proposal_v0(&mut self, proposal: SignedProposalV0) -> Result<Vote> {
@@ -2254,10 +2284,91 @@ impl ContinuousValidatorAuthorityV0 {
             unreachable!("phase checked above")
         };
         let inert = (*runtime)
-            .drive_one_to_inert_request_v0(proposal)
+            .drive_one_to_inert_request_with_safety_rules_sidecar_v1(proposal, sidecar)
             .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?;
         let signed = inert
             .sign_exact_vote_with_safety_rules_sidecar_v1(sidecar, &mut self.producer)
+            .map_err(|error| anyhow!("semantic SafetyRules CAS and exact Vote: {error}"))?;
+        let vote = signed.outbound_v0().vote_v0().clone();
+        self.signer_lifetime.record_vote_v0()?;
+        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(Box::new(signed)));
+        Ok(vote)
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    fn vote_unbound_proposal_with_safety_rules_external_v1<SW>(
+        &mut self,
+        proposal: UnboundProposalV0,
+        external: SW,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+    ) -> Result<Vote>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        // Keep the external-authority path byte-for-byte aligned with the
+        // existing sidecar ingress gates.  Proposer authentication must
+        // precede any carried QC/TC advancement in both paths.
+        proposal
+            .verify_proposer_signature(&self.validator_set)
+            .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        if let Some(certificate) = proposal.timeout_certificate().cloned() {
+            self.advance_timeout_certificate_v0(certificate)?;
+        } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
+            self.advance_quorum_certificate_v0(certificate)?;
+        }
+        let binding = self
+            .ready_runtime_v0()?
+            .proposal_binding_v0()
+            .map_err(|error| anyhow!("read authoritative proposal binding: {error}"))?;
+        let header = proposal.block().header();
+        ensure!(
+            header.view() == binding.current_view_v0(),
+            "proposal view differs from authoritative current_view"
+        );
+        ensure!(
+            proposal.justify_qc() == binding.high_qc_v0(),
+            "proposal justify differs from authoritative high QC"
+        );
+        ensure!(
+            header.parent_id().as_bytes()
+                == binding
+                    .parent_v0()
+                    .application_head_v0()
+                    .block_id()
+                    .as_bytes()
+                && header.height().get()
+                    == binding
+                        .parent_v0()
+                        .application_head_v0()
+                        .height()
+                        .get()
+                        .checked_add(1)
+                        .context("authoritative proposal-parent height overflows")?,
+            "proposal parent differs from authoritative native parent"
+        );
+        let proposal = proposal
+            .bind_authenticated_parent(
+                &self.validator_set,
+                &self.consensus_parameters,
+                binding.parent_v0().authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| anyhow!("bind authenticated proposal parent: {error}"))?;
+        if !matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_))) {
+            bail!("continuous authority is not ready for a proposal");
+        }
+        self.signer_lifetime.require_vote_available_v0()?;
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
+            unreachable!("phase checked above")
+        };
+        let (inert, mut sidecar) = (*runtime)
+            .drive_one_to_inert_request_with_safety_rules_external_v1(
+                proposal, external, scope, journal_id, capability,
+            )
+            .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?;
+        let signed = inert
+            .sign_exact_vote_with_safety_rules_sidecar_v1(&mut sidecar, &mut self.producer)
             .map_err(|error| anyhow!("semantic SafetyRules CAS and exact Vote: {error}"))?;
         let vote = signed.outbound_v0().vote_v0().clone();
         self.signer_lifetime.record_vote_v0()?;
@@ -3310,10 +3421,11 @@ mod tests {
 
     #[cfg(feature = "safety-rules-sidecar")]
     #[test]
-    fn active_vote_safety_rules_sidecar_cas_precedes_signer_journal_v1() {
+    fn active_vote_safety_rules_sidecar_cas_precedes_safety_store_and_signer_v1() {
         on_bounded_takeover_owner_stack_v0(|| {
             let mut harness = takeover_phase_harness_v0(4);
             let proposal = proposal_for_takeover_v0(&harness);
+            let proposal_view = proposal.block().header().view();
             let leader = proposal.block().header().proposer_id();
             let leader_index = harness
                 .validator_set
@@ -3322,33 +3434,16 @@ mod tests {
                 .position(|validator| validator.id() == leader)
                 .expect("proposal leader belongs to the takeover validator set");
 
-            // Enter the same Node inert owner used by the continuous Vote
-            // path.  The sidecar is opened against the exact predecessor
-            // digest carried by that owner; no digest or transition is
-            // reconstructed from scalar test facts.
-            let phase = harness.authorities[leader_index]
-                .phase
-                .take()
-                .expect("leader starts in Ready phase");
-            let runtime = match phase {
-                ContinuousAuthorityPhaseV0::Ready(runtime) => runtime,
-                ContinuousAuthorityPhaseV0::VoteSigned(_) => {
-                    panic!("leader unexpectedly starts VoteSigned")
-                }
-                ContinuousAuthorityPhaseV0::TimeoutSigned(_) => {
-                    panic!("leader unexpectedly starts TimeoutSigned")
-                }
-            };
-            let inert = (*runtime)
-                .drive_one_to_inert_request_v0(proposal)
-                .expect("drive exact Proposal to inert Vote request");
-            let successor_revision = inert.facts_v0().authorizing_safety_revision();
-            let predecessor_revision = successor_revision
-                .checked_sub(1)
-                .expect("takeover Vote has a positive predecessor revision");
-            let predecessor_digest = inert
-                .safety_rules_shadow_predecessor_digest_v1()
-                .expect("inert Vote retains its exact SafetyRules shadow transition");
+            // The Proposal obligation is a non-signing SafetyState revision.
+            // The external sidecar therefore opens only after Core has
+            // produced the exact Vote transition; seed the test authority at
+            // that authenticated predecessor revision.
+            let predecessor_revision = harness.authorities[leader_index]
+                .facts_v0()
+                .expect("read exact Ready authority facts")
+                .safety_revision_v0()
+                .checked_add(1)
+                .expect("Vote obligation revision does not overflow");
 
             let scope = [0x81; 32];
             let journal_id = [0x82; 32];
@@ -3360,27 +3455,27 @@ mod tests {
                 predecessor_revision,
             );
             let external_observer = external.clone();
-            let mut sidecar = trnm_poco_node::SafetyRulesSemanticSidecarV1::open(
-                external,
-                scope,
-                journal_id,
-                capability,
-                predecessor_digest,
-            )
-            .expect("open semantic sidecar against the exact inert predecessor");
             let observed_external_sequence = Arc::new(Mutex::new(None));
             let calls = Arc::new(AtomicUsize::new(0));
-            let mut producer = SidecarOrderingSignatureProducerV0 {
-                inner: LabEd25519SignatureProducer::new(harness.keys[leader_index].clone()),
-                external: external_observer.clone(),
-                observed_external_sequence: Arc::clone(&observed_external_sequence),
-                calls: Arc::clone(&calls),
-            };
-            let signed = inert
-                .sign_exact_vote_with_safety_rules_sidecar_v1(&mut sidecar, &mut producer)
+            // Exercise the public ContinuousValidatorAuthority path.  The
+            // external factory opens its sidecar only after Core-D, so the
+            // proposal obligation's intermediate Safety revision cannot make
+            // the pre-open API fail with a predecessor mismatch.
+            harness.authorities[leader_index].producer =
+                ContinuousSignatureProducerV0(Box::new(SidecarOrderingSignatureProducerV0 {
+                    inner: LabEd25519SignatureProducer::new(harness.keys[leader_index].clone()),
+                    external: external_observer.clone(),
+                    observed_external_sequence: Arc::clone(&observed_external_sequence),
+                    calls: Arc::clone(&calls),
+                }));
+            let vote = harness.authorities[leader_index]
+                .vote_proposal_with_safety_rules_external_v1(
+                    proposal, external, scope, journal_id, capability,
+                )
                 .expect("semantic CAS and exact Vote signer release succeed");
 
             assert_eq!(calls.load(Ordering::SeqCst), 1);
+            let successor_revision = predecessor_revision.saturating_add(1);
             assert_eq!(
                 *observed_external_sequence
                     .lock()
@@ -3389,15 +3484,13 @@ mod tests {
                 "the signer producer observed the sidecar CAS before journal release"
             );
             assert_eq!(external_observer.sequence(), Some(successor_revision));
-            assert_eq!(
-                sidecar.expected_watermark().map(|head| head.sequence()),
-                Some(successor_revision)
-            );
-            assert_eq!(
-                signed.facts_v0().signer_exact_watermark().sequence(),
-                2,
-                "the local signer journal remains an independent post-sidecar fence"
-            );
+            assert_eq!(vote.view(), proposal_view);
+            let facts = harness.authorities[leader_index]
+                .facts_v0()
+                .expect("project post-vote authority facts");
+            assert_eq!(facts.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
+            assert_eq!(facts.signed_vote_intents_v0(), 1);
+            assert_eq!(facts.signer_watermark_sequence_v0(), 2);
         });
     }
 
