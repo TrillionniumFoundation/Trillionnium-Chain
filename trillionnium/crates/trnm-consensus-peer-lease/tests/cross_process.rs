@@ -144,13 +144,30 @@ fn separate_daemon_process_refuses_tampered_and_partial_journals() {
     assert!(!wait_for_exit(tampered).success());
     assert!(!tamper_ready.exists());
 
-    // Build a valid second journal, then truncate its final record. Startup
-    // must fail closed instead of silently repairing or replaying a prefix.
+    // Build a valid second journal, then remove its complete final record.
+    // Startup must fail closed instead of silently replaying a valid prefix;
+    // the independent head anchor supplies the missing evidence a bare hash
+    // chain cannot provide.
     let partial_dir = private_tempdir();
     let (child, _socket, partial_journal) = start_daemon(partial_dir.path());
     let client = UnixPeerLeaseClientV1::connect(partial_dir.path().join("authority.sock"));
     client.acquire(scope(), [0x66; 32], 1, 1_000).unwrap();
     stop_daemon(child);
+    let complete = fs::read(&partial_journal).unwrap();
+    fs::write(&partial_journal, &complete[..0]).unwrap();
+    let rollback_ready = partial_dir.path().join("rollback.ready");
+    let rollback_child = daemon_command(
+        &partial_dir.path().join("rollback.sock"),
+        &partial_journal,
+        &rollback_ready,
+    )
+    .spawn()
+    .unwrap();
+    assert!(!wait_for_exit(rollback_child).success());
+    assert!(!rollback_ready.exists());
+
+    // Restore the complete journal and exercise a genuine partial tail too.
+    fs::write(&partial_journal, complete).unwrap();
     let mut partial = fs::read(&partial_journal).unwrap();
     partial.truncate(partial.len() - 2);
     fs::write(&partial_journal, partial).unwrap();
