@@ -2036,6 +2036,8 @@ mod tests {
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
     use trnm_consensus_safety_rules::{SafetyRulesContextV1, SafetyRulesStateV1};
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_safety_store::SqliteSafetyStateStoreV0;
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
     use trnm_consensus_signer_journal::{
         ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0,
     };
@@ -2534,6 +2536,60 @@ mod tests {
             protected_store_namespace(root, "safety").join("safety.sqlite3"),
             protected_store_namespace(root, "signer").join("signer.sqlite3"),
         )
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    fn timeout_sidecar_fixture_v1(
+        core_config: &CoreConfig,
+        genesis_qc: &GenesisQcV0,
+        semantic_watermark: SharedMemorySemanticWatermarkV0,
+    ) -> (
+        SafetyRulesSemanticSidecarV1<SharedMemorySemanticWatermarkV0>,
+        [u8; 32],
+        [u8; 32],
+        [u8; 32],
+    ) {
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let shadow_state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact genesis shadow state");
+        let scope = [0x11; 32];
+        let journal_id = [0x22; 32];
+        let capability = [0x09; 32];
+        let sidecar = SafetyRulesSemanticSidecarV1::open(
+            semantic_watermark,
+            scope,
+            journal_id,
+            capability,
+            shadow_state.digest(),
+        )
+        .expect("open semantic sidecar against genesis");
+        (sidecar, scope, journal_id, capability)
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    fn read_safety_head_for_test_v1(
+        safety_path: &Path,
+        core_config: CoreConfig,
+    ) -> RecoveredSafetyStateV0 {
+        let profile = SafetyStateStoreProfileV0::new(
+            core_config,
+            STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+        )
+        .expect("construct SafetyStore profile for inspection");
+        let store =
+            SqliteSafetyStateStoreV0::open_existing(safety_path, profile, StrictEd25519Verifier)
+                .expect("open SafetyStore for inspection");
+        store.head().expect("read SafetyStore head")
     }
 
     #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
@@ -3431,6 +3487,185 @@ mod tests {
                 if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
         ));
         assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
+    fn explicit_timeout_sidecar_recovery_authenticates_signer_profile_before_mutation() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout recovery config");
+        let signer_watermark = MemoryWatermark::default();
+        let semantic_watermark = SharedMemorySemanticWatermarkV0::default();
+        let (mut sidecar, scope, journal_id, capability) =
+            timeout_sidecar_fixture_v1(&core_config, &genesis_qc, semantic_watermark.clone());
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc.clone(),
+            signer_watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize bounded timeout host");
+        host.prepare_timeout_sidecar_crash_for_test_v1(&mut sidecar)
+            .expect("publish marker and external CAS");
+        let marker = crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+            .expect("inspect pending marker")
+            .expect("marker is present");
+        assert!(marker.signer_journal_id().is_some());
+        assert_eq!(host.safety_head().expect("predecessor head").revision(), 0);
+        drop(host);
+        drop(sidecar);
+
+        // The signer SQLite file exists and is shape-valid, but this profile
+        // differs from the authenticated journal metadata.  Recovery must
+        // reject here, before opening the semantic sidecar or persisting the
+        // regenerated Safety transition.
+        let mismatched_config = PocoNodeStartConfigV0::new(
+            &safety_path,
+            &signer_path,
+            core_config.clone(),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS + 1,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect("construct profile-mismatch recovery config");
+        let error = match PocoNodeHostV0::open_existing_with_safety_rules_external_v1(
+            mismatched_config,
+            signer_watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+            semantic_watermark.clone(),
+            scope,
+            journal_id,
+            capability,
+        ) {
+            Ok(_) => panic!("profile mismatch must fail before recovery mutation"),
+            Err(error) => error,
+        };
+        assert!(matches!(error, PocoNodeHostErrorV0::SignerJournal(_)));
+        assert_eq!(
+            read_safety_head_for_test_v1(&safety_path, core_config.clone()).revision(),
+            0,
+            "SafetyStore must remain at its predecessor when signer auth fails"
+        );
+        assert_eq!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect retained marker"),
+            Some(marker)
+        );
+        assert_eq!(
+            semantic_watermark
+                .inner
+                .lock()
+                .expect("semantic watermark lock")
+                .head
+                .map(|head| head.sequence()),
+            Some(1),
+            "sidecar head must remain exactly at the crash-time CAS"
+        );
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
+    fn explicit_timeout_sidecar_recovery_rejects_foreign_signer_identity_before_mutation() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let foreign_safety_path =
+            protected_store_namespace(&directory, "foreign-safety").join("safety.sqlite3");
+        let foreign_signer_path =
+            protected_store_namespace(&directory, "foreign-signer").join("signer.sqlite3");
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout recovery config");
+        let signer_watermark = MemoryWatermark::default();
+        let semantic_watermark = SharedMemorySemanticWatermarkV0::default();
+        let (mut sidecar, scope, journal_id, capability) =
+            timeout_sidecar_fixture_v1(&core_config, &genesis_qc, semantic_watermark.clone());
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc.clone(),
+            signer_watermark,
+            UnavailableProducerV0,
+        )
+        .expect("initialize original timeout host");
+        host.prepare_timeout_sidecar_crash_for_test_v1(&mut sidecar)
+            .expect("publish marker and external CAS");
+        let marker = crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+            .expect("inspect pending marker")
+            .expect("marker is present");
+        drop(host);
+        drop(sidecar);
+
+        // Initialize an independent, empty signer namespace with the exact
+        // same profile.  Its independent journal identity must not be able to
+        // consume the original SafetyStore's pending marker.
+        let foreign_config = start_config(
+            &foreign_safety_path,
+            &foreign_signer_path,
+            core_config.clone(),
+        )
+        .expect("valid foreign signer host config");
+        let foreign_watermark = MemoryWatermark::default();
+        let foreign_host = PocoNodeHostV0::initialize_new(
+            foreign_config,
+            genesis_qc,
+            foreign_watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize independent signer namespace");
+        drop(foreign_host);
+
+        let mixed_config = start_config(&safety_path, &foreign_signer_path, core_config.clone())
+            .expect("mixed safety/foreign-signer paths retain distinct namespaces");
+        let error = match PocoNodeHostV0::open_existing_with_safety_rules_external_v1(
+            mixed_config,
+            foreign_watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+            semantic_watermark.clone(),
+            scope,
+            journal_id,
+            capability,
+        ) {
+            Ok(_) => panic!("foreign signer identity must fail closed"),
+            Err(error) => error,
+        };
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SafetyRulesSemanticSidecar(
+                SafetyRulesSemanticSidecarErrorV1::PendingMarkerSignerIdentityMismatch
+            )
+        ));
+        assert_eq!(
+            read_safety_head_for_test_v1(&safety_path, core_config).revision(),
+            0,
+            "foreign signer rejection must not advance SafetyStore"
+        );
+        assert_eq!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect retained marker"),
+            Some(marker)
+        );
+        assert_eq!(
+            semantic_watermark
+                .inner
+                .lock()
+                .expect("semantic watermark lock")
+                .head
+                .map(|head| head.sequence()),
+            Some(1),
+            "foreign signer rejection must not advance sidecar"
+        );
     }
 
     #[cfg(target_os = "linux")]

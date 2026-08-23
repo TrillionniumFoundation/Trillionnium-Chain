@@ -349,6 +349,33 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         }
         validate_bounded_timeout_bootstrap_v0(&head)?;
 
+        // Authenticate the signer namespace, profile, external watermark,
+        // and durable journal identity before touching either recovery
+        // authority.  A shape-valid but foreign signer database must never be
+        // able to consume this marker and leave the sidecar/SafetyStore
+        // advanced under a different signing owner.
+        let mut signer_journal = SqliteSignerJournalV0::open_existing(
+            signer_journal_path,
+            signer_journal_profile,
+            external_watermark,
+        )
+        .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        signer_journal
+            .external_head()
+            .map_err(PocoNodeHostErrorV0::signer_journal)?;
+        let signer_journal_id = signer_journal.journal_id();
+        if marker.signer_journal_id().is_none() {
+            return Err(PocoNodeHostErrorV0::safety_rules_sidecar(
+                crate::safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1::PendingMarkerSignerIdentityUnavailable,
+            ));
+        }
+        if !marker.matches_signer_journal(signer_journal_id) {
+            return Err(PocoNodeHostErrorV0::safety_rules_sidecar(
+                crate::safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1::PendingMarkerSignerIdentityMismatch,
+            ));
+        }
+        validate_signer_safety_revision_v0(&signer_journal, &head)?;
+
         // A marker can survive either side of the local SQLite boundary.  If
         // the authenticated head is already the marker's successor, obtain
         // the journal's retained predecessor and regenerate the transition
@@ -511,15 +538,6 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             successor_core
         };
 
-        let mut signer_journal = SqliteSignerJournalV0::open_existing(
-            signer_journal_path,
-            signer_journal_profile,
-            external_watermark,
-        )
-        .map_err(PocoNodeHostErrorV0::signer_journal)?;
-        signer_journal
-            .external_head()
-            .map_err(PocoNodeHostErrorV0::signer_journal)?;
         let recovered_head = safety_store
             .head()
             .map_err(PocoNodeHostErrorV0::safety_store)?;
@@ -652,6 +670,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
                 self.safety_store.path(),
                 self.safety_store.journal_id_v0(),
+                self.signer_journal.journal_id(),
                 &effects,
                 sidecar,
             )?;
@@ -684,6 +703,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
             self.safety_store.path(),
             self.safety_store.journal_id_v0(),
+            self.signer_journal.journal_id(),
             &effects,
             sidecar,
         )?;
@@ -713,6 +733,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
             self.safety_store.path(),
             self.safety_store.journal_id_v0(),
+            self.signer_journal.journal_id(),
             &effects,
             sidecar,
         )?;
@@ -1069,6 +1090,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
 fn persist_timeout_shadow_sidecar_before_sqlite_v1<SW>(
     safety_store_path: &Path,
     safety_journal_id: [u8; 32],
+    signer_journal_id: [u8; 32],
     effects: &[Effect],
     sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
 ) -> Result<PendingTimeoutMarkerV1, PocoNodeHostErrorV0>
@@ -1117,6 +1139,7 @@ where
         transition,
         sidecar.namespace_digest_v1(),
         safety_journal_id,
+        signer_journal_id,
     )
     .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
     write_pending_timeout_marker_v1(safety_store_path, marker)

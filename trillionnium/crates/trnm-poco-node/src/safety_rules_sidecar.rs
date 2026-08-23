@@ -42,8 +42,12 @@ const PENDING_TIMEOUT_NAMESPACE_DOMAIN_V1: &[u8] =
     b"trnm.poco-node.safety-rules-sidecar.pending-timeout-namespace.v1\0";
 const PENDING_TIMEOUT_MARKER_DOMAIN_V1: &[u8] =
     b"trnm.poco-node.safety-rules-sidecar.pending-timeout.v1\0";
+const PENDING_TIMEOUT_MARKER_DOMAIN_V2: &[u8] =
+    b"trnm.poco-node.safety-rules-sidecar.pending-timeout.v2\0";
 const PENDING_TIMEOUT_MARKER_MAGIC_V1: &[u8; 8] = b"TRNMSCP1";
+const PENDING_TIMEOUT_MARKER_MAGIC_V2: &[u8; 8] = b"TRNMSCP2";
 const PENDING_TIMEOUT_MARKER_BYTES_V1: usize = 8 + (3 * 8) + (7 * 32) + 32;
+const PENDING_TIMEOUT_MARKER_BYTES_V2: usize = 8 + (3 * 8) + (8 * 32) + 32;
 
 /// Fail-closed errors from the composition adapter.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -58,6 +62,8 @@ pub enum SafetyRulesSemanticSidecarErrorV1 {
     PendingMarkerIo,
     PendingMarkerMalformed,
     PendingMarkerConflict,
+    PendingMarkerSignerIdentityUnavailable,
+    PendingMarkerSignerIdentityMismatch,
 }
 
 impl fmt::Display for SafetyRulesSemanticSidecarErrorV1 {
@@ -88,6 +94,12 @@ impl fmt::Display for SafetyRulesSemanticSidecarErrorV1 {
             Self::PendingMarkerConflict => formatter.write_str(
                 "SafetyRules pending-transition marker conflicts with the requested transition",
             ),
+            Self::PendingMarkerSignerIdentityUnavailable => formatter.write_str(
+                "SafetyRules pending-transition marker has no authenticated signer-journal identity",
+            ),
+            Self::PendingMarkerSignerIdentityMismatch => formatter.write_str(
+                "SafetyRules pending-transition marker is bound to a different signer journal",
+            ),
         }
     }
 }
@@ -111,6 +123,11 @@ pub(crate) struct PendingTimeoutMarkerV1 {
     candidate: [u8; 32],
     fingerprint: [u8; 32],
     signing_root: [u8; 32],
+    // `None` is retained only when decoding the legacy V1 encoding.  New
+    // markers are always V2 and carry the independent signer-journal
+    // identity; recovery rejects an unbound legacy marker before mutating any
+    // sidecar or SQLite state.
+    signer_journal_id: Option<[u8; 32]>,
     epoch: u64,
     view: u64,
     revision: u64,
@@ -121,7 +138,11 @@ impl PendingTimeoutMarkerV1 {
         transition: &InertSafetyTransitionV1,
         namespace_digest: [u8; 32],
         safety_journal_id: [u8; 32],
+        signer_journal_id: [u8; 32],
     ) -> Result<Self, SafetyRulesSemanticSidecarErrorV1> {
+        if signer_journal_id == [0; 32] {
+            return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerSignerIdentityUnavailable);
+        }
         let intent = transition.canonical_intent();
         let Some((epoch, view)) = timeout_coordinates_v1(intent) else {
             return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
@@ -142,6 +163,7 @@ impl PendingTimeoutMarkerV1 {
             candidate: transition.candidate_digest().into_bytes(),
             fingerprint: intent.fingerprint().into_bytes(),
             signing_root: intent.signing_root().into_bytes(),
+            signer_journal_id: Some(signer_journal_id),
             epoch,
             view,
             revision,
@@ -156,6 +178,15 @@ impl PendingTimeoutMarkerV1 {
     #[allow(dead_code)]
     pub(crate) const fn safety_journal_id(self) -> [u8; 32] {
         self.safety_journal_id
+    }
+
+    #[allow(dead_code)]
+    pub(crate) const fn signer_journal_id(self) -> Option<[u8; 32]> {
+        self.signer_journal_id
+    }
+
+    pub(crate) fn matches_signer_journal(self, signer_journal_id: [u8; 32]) -> bool {
+        self.signer_journal_id == Some(signer_journal_id)
     }
 
     #[allow(dead_code)]
@@ -198,8 +229,13 @@ impl PendingTimeoutMarkerV1 {
         namespace_digest: [u8; 32],
         safety_journal_id: [u8; 32],
     ) -> bool {
-        Self::from_transition(transition, namespace_digest, safety_journal_id)
-            .is_ok_and(|other| other == self)
+        Self::from_transition(
+            transition,
+            namespace_digest,
+            safety_journal_id,
+            self.signer_journal_id.unwrap_or([0; 32]),
+        )
+        .is_ok_and(|other| other == self)
     }
 }
 
@@ -232,16 +268,28 @@ fn pending_timeout_marker_temp_path_v1(safety_store_path: &Path) -> PathBuf {
     PathBuf::from(name)
 }
 
-fn pending_timeout_marker_bytes_v1(
-    marker: PendingTimeoutMarkerV1,
-) -> [u8; PENDING_TIMEOUT_MARKER_BYTES_V1] {
-    let mut bytes = [0_u8; PENDING_TIMEOUT_MARKER_BYTES_V1];
-    let mut offset = 0;
-    bytes[offset..offset + 8].copy_from_slice(PENDING_TIMEOUT_MARKER_MAGIC_V1);
-    offset += 8;
+/// Encodes either the legacy V1 marker (when no signer identity is present)
+/// or the current V2 marker.  Keeping the legacy encoder here lets the
+/// decoder and tamper tests exercise the compatibility path without allowing
+/// production marker publication to emit an unbound record.
+fn pending_timeout_marker_bytes_v1(marker: PendingTimeoutMarkerV1) -> Vec<u8> {
+    let (magic, domain, capacity) = if marker.signer_journal_id.is_some() {
+        (
+            PENDING_TIMEOUT_MARKER_MAGIC_V2,
+            PENDING_TIMEOUT_MARKER_DOMAIN_V2,
+            PENDING_TIMEOUT_MARKER_BYTES_V2,
+        )
+    } else {
+        (
+            PENDING_TIMEOUT_MARKER_MAGIC_V1,
+            PENDING_TIMEOUT_MARKER_DOMAIN_V1,
+            PENDING_TIMEOUT_MARKER_BYTES_V1,
+        )
+    };
+    let mut bytes = Vec::with_capacity(capacity);
+    bytes.extend_from_slice(magic);
     for value in [marker.epoch, marker.view, marker.revision] {
-        bytes[offset..offset + 8].copy_from_slice(&value.to_be_bytes());
-        offset += 8;
+        bytes.extend_from_slice(&value.to_be_bytes());
     }
     for value in [
         marker.namespace_digest,
@@ -252,27 +300,36 @@ fn pending_timeout_marker_bytes_v1(
         marker.fingerprint,
         marker.signing_root,
     ] {
-        bytes[offset..offset + 32].copy_from_slice(&value);
-        offset += 32;
+        bytes.extend_from_slice(&value);
     }
-    let checksum = digest_parts(PENDING_TIMEOUT_MARKER_DOMAIN_V1, &[&bytes[..offset]]);
-    bytes[offset..].copy_from_slice(&checksum);
+    if let Some(signer_journal_id) = marker.signer_journal_id {
+        bytes.extend_from_slice(&signer_journal_id);
+    }
+    let checksum = digest_parts(domain, &[&bytes]);
+    bytes.extend_from_slice(&checksum);
+    debug_assert_eq!(bytes.len(), capacity);
     bytes
 }
 
 fn decode_pending_timeout_marker_v1(
     bytes: &[u8],
 ) -> Result<PendingTimeoutMarkerV1, SafetyRulesSemanticSidecarErrorV1> {
-    if bytes.len() != PENDING_TIMEOUT_MARKER_BYTES_V1
-        || &bytes[..8] != PENDING_TIMEOUT_MARKER_MAGIC_V1
-    {
+    if bytes.len() < 8 {
         return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
     }
-    let checksum_offset = PENDING_TIMEOUT_MARKER_BYTES_V1 - 32;
-    let expected = digest_parts(
-        PENDING_TIMEOUT_MARKER_DOMAIN_V1,
-        &[&bytes[..checksum_offset]],
-    );
+    let (domain, v2) = if bytes.len() == PENDING_TIMEOUT_MARKER_BYTES_V1
+        && &bytes[..8] == PENDING_TIMEOUT_MARKER_MAGIC_V1
+    {
+        (PENDING_TIMEOUT_MARKER_DOMAIN_V1, false)
+    } else if bytes.len() == PENDING_TIMEOUT_MARKER_BYTES_V2
+        && &bytes[..8] == PENDING_TIMEOUT_MARKER_MAGIC_V2
+    {
+        (PENDING_TIMEOUT_MARKER_DOMAIN_V2, true)
+    } else {
+        return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
+    };
+    let checksum_offset = bytes.len() - 32;
+    let expected = digest_parts(domain, &[&bytes[..checksum_offset]]);
     if &bytes[checksum_offset..] != expected.as_slice() {
         return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
     }
@@ -300,11 +357,21 @@ fn decode_pending_timeout_marker_v1(
         candidate: read_fixed(bytes, &mut offset),
         fingerprint: read_fixed(bytes, &mut offset),
         signing_root: read_fixed(bytes, &mut offset),
+        signer_journal_id: if v2 {
+            Some(read_fixed(bytes, &mut offset))
+        } else {
+            None
+        },
         epoch,
         view,
         revision,
     };
-    if marker.revision == 0 {
+    if marker.revision == 0
+        || marker
+            .signer_journal_id
+            .is_some_and(|signer_journal_id| signer_journal_id == [0; 32])
+        || offset != checksum_offset
+    {
         return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
     }
     Ok(marker)
@@ -317,7 +384,10 @@ fn validate_pending_marker_file_v1(
     let metadata = file
         .metadata()
         .map_err(|_| SafetyRulesSemanticSidecarErrorV1::PendingMarkerIo)?;
-    if !metadata.is_file() || metadata.len() != PENDING_TIMEOUT_MARKER_BYTES_V1 as u64 {
+    if !metadata.is_file()
+        || (metadata.len() != PENDING_TIMEOUT_MARKER_BYTES_V1 as u64
+            && metadata.len() != PENDING_TIMEOUT_MARKER_BYTES_V2 as u64)
+    {
         return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerMalformed);
     }
     #[cfg(unix)]
@@ -374,7 +444,7 @@ pub(crate) fn load_pending_timeout_marker_v1(
     }
     let mut file = open_pending_marker_read_v1(&path)?;
     validate_pending_marker_file_v1(&file, &path)?;
-    let mut bytes = Vec::with_capacity(PENDING_TIMEOUT_MARKER_BYTES_V1);
+    let mut bytes = Vec::with_capacity(PENDING_TIMEOUT_MARKER_BYTES_V2);
     file.read_to_end(&mut bytes)
         .map_err(|_| SafetyRulesSemanticSidecarErrorV1::PendingMarkerIo)?;
     Ok(Some(decode_pending_timeout_marker_v1(&bytes)?))
@@ -384,6 +454,12 @@ pub(crate) fn write_pending_timeout_marker_v1(
     safety_store_path: &Path,
     marker: PendingTimeoutMarkerV1,
 ) -> Result<(), SafetyRulesSemanticSidecarErrorV1> {
+    if marker.signer_journal_id.is_none() {
+        // Legacy V1 markers remain readable for explicit quarantine/cleanup,
+        // but no new recovery fence may be published without the signer
+        // journal identity that binds it to the durable signing authority.
+        return Err(SafetyRulesSemanticSidecarErrorV1::PendingMarkerSignerIdentityUnavailable);
+    }
     if let Some(existing) = load_pending_timeout_marker_v1(safety_store_path)? {
         if existing == marker {
             return Ok(());
@@ -1233,10 +1309,12 @@ mod tests {
                 .expect("timeout transition");
         let namespace_digest = namespace_digest_v1([0x11; 32], [0x22; 32], [0x33; 32]);
         let safety_journal_id = [0x44; 32];
+        let signer_journal_id = [0x55; 32];
         let marker = PendingTimeoutMarkerV1::from_transition(
             &transition,
             namespace_digest,
             safety_journal_id,
+            signer_journal_id,
         )
         .expect("timeout marker derives from the complete transition");
         let bytes = pending_timeout_marker_bytes_v1(marker);
@@ -1249,6 +1327,19 @@ mod tests {
         );
         assert!(marker.matches_transition(&transition, namespace_digest, safety_journal_id,));
         assert!(!marker.matches_namespace([0x99; 32], safety_journal_id));
+        assert!(marker.matches_signer_journal(signer_journal_id));
+        assert!(!marker.matches_signer_journal([0x99; 32]));
+
+        // A legacy V1 marker remains decodable for quarantine/inspection, but
+        // has no signer identity and therefore cannot satisfy a recovery
+        // owner binding.
+        let legacy = PendingTimeoutMarkerV1 {
+            signer_journal_id: None,
+            ..marker
+        };
+        let legacy_bytes = pending_timeout_marker_bytes_v1(legacy);
+        assert_eq!(decode_pending_timeout_marker_v1(&legacy_bytes), Ok(legacy));
+        assert!(!legacy.matches_signer_journal(signer_journal_id));
 
         let root = tempfile::tempdir().expect("private marker directory");
         let safety_path = root.path().join("safety.sqlite3");

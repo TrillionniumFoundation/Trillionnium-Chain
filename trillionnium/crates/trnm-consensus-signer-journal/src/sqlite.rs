@@ -718,6 +718,16 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         &self.profile
     }
 
+    /// Returns the authenticated durable identity of this signer journal.
+    ///
+    /// The identity is generated when the SQLite namespace is initialized and
+    /// is authenticated again by `open_existing`.  Callers may bind other
+    /// recovery fences to this value without exposing any mutable journal
+    /// capability.
+    pub const fn journal_id(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
     /// Consumes an operational owner into the read-only startup form without
     /// changing the journal or external watermark.
     ///
