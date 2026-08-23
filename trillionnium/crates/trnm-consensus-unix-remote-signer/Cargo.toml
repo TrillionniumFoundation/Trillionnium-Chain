@@ -1,0 +1,49 @@
+[package]
+name = "trnm-consensus-unix-remote-signer"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-remote-signer-client-p0"
+protocol = "poco-bft-v0"
+unix_socket_transport = true
+bounded_length_prefixed_frames = true
+response_request_binding = true
+response_signature_verification = true
+signature_producer_adapter = true
+fixture_private_key = false
+production_credential_source = false
+external_monotonic_watermark = false
+safety_rules_evaluation = false
+safe_vote_authority = false
+consensus_runtime_integration = false
+runtime_activation = false
+production_activation = false
+production_candidate = false
+
+[features]
+default = []
+# Enables only the subprocess test server. It is deliberately not part of the
+# default build and is never a node credential/configuration feature.
+test-fixture = ["dep:ed25519-dalek"]
+
+[dependencies]
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dependencies.ed25519-dalek]
+version = "2.2"
+optional = true
+
+[dev-dependencies]
+tempfile = "3"
+
+[[bin]]
+name = "trnm-remote-signer-test-fixture"
+path = "src/bin/test_fixture.rs"
+required-features = ["test-fixture"]

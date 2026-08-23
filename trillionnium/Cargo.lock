@@ -1548,6 +1548,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-unix-remote-signer"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-core-restart-v0"
 version = "0.1.0"
 dependencies = [
