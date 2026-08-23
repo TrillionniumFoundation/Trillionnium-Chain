@@ -235,8 +235,12 @@ fn client_accepts_signature_from_real_service_process_boundary() {
     let temp = tempfile::tempdir().expect("tempdir");
     fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
         .expect("protect service namespace");
-    let socket = temp.path().join("service").join("signer.sock");
-    let watermark = temp.path().join("service").join("watermark.bin");
+    let service_directory = temp.path().join("service");
+    fs::create_dir(&service_directory).expect("create service namespace");
+    fs::set_permissions(&service_directory, fs::Permissions::from_mode(0o700))
+        .expect("protect service namespace");
+    let socket = service_directory.join("signer.sock");
+    let watermark = service_directory.join("watermark.bin");
     let service_fixture = ServiceFixture::new();
     let mut service = RemoteSignerService::open(fixture_service_config(
         &watermark,
@@ -275,14 +279,12 @@ fn client_accepts_signature_from_real_service_process_boundary() {
         .sign_intent_exact(&intent)
         .expect("real service response must verify");
     let verifier = trnm_consensus_crypto::StrictEd25519Verifier;
-    let key = service_fixture
+    let validator = service_fixture
         .validator_set
         .validator(binding.author())
         .expect("service fixture author")
-        .consensus_key();
-    verifier
-        .verify(key, &intent.signing_root(), &signature)
-        .expect("service signature verifies against exact intent");
+        .clone();
+    assert!(verifier.verify(&validator, &intent.signing_root(), &signature));
     server
         .join()
         .expect("service thread")

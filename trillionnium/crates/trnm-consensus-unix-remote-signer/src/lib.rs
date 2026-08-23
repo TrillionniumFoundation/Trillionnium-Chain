@@ -42,6 +42,11 @@ pub const UNIX_REMOTE_SIGNER_SAFETY_RULES_AUTHORITY_V1: bool = false;
 pub const UNIX_REMOTE_SIGNER_PRODUCTION_CANDIDATE_V1: bool = false;
 
 const FRAME_HEADER_BYTES: usize = 4;
+// The standalone service wraps an exact protocol response in one status byte;
+// the older fixture server returns the exact response directly. Both forms
+// are accepted only because the protocol magic makes the framing unambiguous.
+const SERVICE_FRAME_OK: u8 = 0;
+const SERVICE_FRAME_REJECT: u8 = 1;
 const NONCE_DOMAIN: &[u8] = b"trnm.consensus.unix-remote-signer.request-nonce.v1\0";
 const MAX_TIMEOUT: Duration = Duration::from_secs(30);
 
@@ -115,6 +120,7 @@ pub enum UnixRemoteSignerError {
     InvalidSignerProfile,
     AuthorMismatch,
     InvalidSignature,
+    ServiceRejected(u8),
 }
 
 impl fmt::Display for UnixRemoteSignerError {
@@ -148,6 +154,12 @@ impl fmt::Display for UnixRemoteSignerError {
             }
             Self::InvalidSignature => {
                 formatter.write_str("remote signer signature failed strict verification")
+            }
+            Self::ServiceRejected(code) => {
+                write!(
+                    formatter,
+                    "remote signer service rejected request with code {code}"
+                )
             }
         }
     }
@@ -311,7 +323,23 @@ impl UnixRemoteSignerProducer {
                 source,
             })?;
         write_frame(&mut stream, request_bytes)?;
-        read_frame(&mut stream, MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1)
+        let framed = read_frame(
+            &mut stream,
+            MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1
+                .checked_add(1)
+                .expect("response frame bound does not overflow"),
+        )?;
+        if framed.first() == Some(&SERVICE_FRAME_OK) {
+            if framed.len() == 1 {
+                return Err(UnixRemoteSignerError::EmptyFrame);
+            }
+            return Ok(framed[1..].to_vec());
+        }
+        if framed.first() == Some(&SERVICE_FRAME_REJECT) {
+            let code = framed.get(1).copied().unwrap_or_default();
+            return Err(UnixRemoteSignerError::ServiceRejected(code));
+        }
+        Ok(framed)
     }
 }
 
@@ -341,7 +369,8 @@ impl SignatureProducerV0 for UnixRemoteSignerProducer {
                 | UnixRemoteSignerError::Protocol(_)
                 | UnixRemoteSignerError::InvalidSignerProfile
                 | UnixRemoteSignerError::AuthorMismatch
-                | UnixRemoteSignerError::InvalidSignature => SignatureProducerErrorV0::Rejected,
+                | UnixRemoteSignerError::InvalidSignature
+                | UnixRemoteSignerError::ServiceRejected(_) => SignatureProducerErrorV0::Rejected,
             })
     }
 }
