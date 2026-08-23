@@ -1433,6 +1433,40 @@ mod tests {
     }
 
     #[test]
+    fn service_migrates_existing_single_scope_namespace() {
+        let temporary = TempDir::new().expect("temporary signer directory");
+        let path = temporary.path().join("watermark.sqlite3");
+        let fixture = Fixture::new();
+        drop(
+            RemoteSignerService::open(fixture_service_config(&path, PurposePolicyV1::both()))
+                .expect("create one-scope fixture namespace"),
+        );
+
+        // A pre-metadata fixture still has exactly one durable scope.  The
+        // migration may fill the immutable metadata key, but it must not
+        // create a second scope row or silently switch bindings.
+        let connection = Connection::open(&path).expect("open fixture database");
+        connection
+            .execute("DELETE FROM signer_metadata WHERE key = 'scope'", [])
+            .expect("remove legacy scope metadata");
+        drop(connection);
+
+        let reopened =
+            RemoteSignerService::open(fixture_service_config(&path, PurposePolicyV1::both()))
+                .expect("single-scope fixture migration succeeds");
+        assert_eq!(reopened.scope(), watermark_scope_v1(&fixture.binding));
+        let connection = Connection::open(&path).expect("reopen migrated database");
+        let metadata_scope: Vec<u8> = connection
+            .query_row(
+                "SELECT value FROM signer_metadata WHERE key = 'scope'",
+                [],
+                |row| row.get(0),
+            )
+            .expect("migrated scope metadata");
+        assert_eq!(metadata_scope.as_slice(), reopened.scope().as_slice());
+    }
+
+    #[test]
     fn pending_reservation_retries_after_restart_without_advancing_twice() {
         let temporary = TempDir::new().expect("temporary signer directory");
         let path = temporary.path().join("watermark.sqlite3");
