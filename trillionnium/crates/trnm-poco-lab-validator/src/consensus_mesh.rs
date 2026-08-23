@@ -3201,6 +3201,29 @@ mod tests {
     }
 
     #[test]
+    fn lease_renewal_error_fails_closed_before_frame_admission_v1() {
+        let remote = ValidatorId::new([0x67; 32]);
+        let local = ValidatorId::new([0x68; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x69; 32]).unwrap();
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let fences =
+            MeshFenceRegistryV1::new(authority.clone(), local, context, Duration::from_secs(1))
+                .unwrap();
+        fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x6a; 32], 1)
+            .unwrap();
+        // Force the authority-side lease to expire before the local renewal
+        // cadence.  The next frame-path check must attempt renew and fail;
+        // it may not silently fall back to a cached token.
+        thread::sleep(Duration::from_millis(350));
+        authority.advance_clock_millis(2_000);
+        let error = fences
+            .revalidate(PeerDirectionV0::Outbound, remote)
+            .unwrap_err();
+        assert!(error.to_string().contains("renewal"));
+    }
+
+    #[test]
     fn only_explicit_transport_loss_is_recoverable() {
         assert!(transient_frame_error(&FrameError::Io(io::Error::new(
             io::ErrorKind::ConnectionReset,
