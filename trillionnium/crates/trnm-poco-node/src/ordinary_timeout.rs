@@ -1,5 +1,8 @@
 use std::{collections::VecDeque, path::Path};
 
+#[cfg(feature = "node-event-wal")]
+use sha2::{Digest, Sha256};
+
 use trnm_consensus_core::{
     Core, CoreConfig, Effect, Input, OutboundMessage, SafetyHalt, SafetyState, SignId, SignIntent,
 };
@@ -28,6 +31,12 @@ use crate::{
     effect_name_v0, head_has_current_invalid_completion_v0, reject_activation_request,
     validate_signer_safety_revision_v0, HostBootstrapModeV0, HostLifecyclePhaseV0,
     PocoNodeHostErrorV0, PocoNodeStartConfigV0, ProductionActivationBlockedV0,
+};
+
+#[cfg(feature = "node-event-wal")]
+use crate::node_event_wal::{
+    NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1, NodeEventWalV1,
+    PocoNodeHostEventWalErrorV1,
 };
 
 const MAXIMUM_BOUNDED_HOST_EFFECTS_PER_CALL_V0: usize = 16;
@@ -109,6 +118,37 @@ struct PendingSignedOutboundV0 {
     authorizing_safety_revision: u64,
     signing_root: SigningRoot,
     signature: SignatureBytes,
+}
+
+#[cfg(feature = "node-event-wal")]
+const HOST_TIMEOUT_EVENT_DOMAIN_V1: &[u8] = b"trnm.poco-node.timeout-event.v1\0";
+
+/// Exact projection used to bind one timeout event to the host's authenticated
+/// SafetyStore predecessor.  It is deliberately private: callers obtain an
+/// intent only through [`PocoNodeHostV0::prepare_timeout_event_v1`], after the
+/// host has re-derived the transition from its own Core state.
+#[cfg(feature = "node-event-wal")]
+#[derive(Debug, Clone)]
+struct TimeoutEventProjectionV1 {
+    predecessor_record_checksum: [u8; 32],
+    event_id: [u8; 32],
+    payload_digest: [u8; 32],
+    expected_revision: u64,
+    expected_successor_state: SafetyState,
+}
+
+#[cfg(feature = "node-event-wal")]
+fn timeout_event_id_v1(
+    predecessor_record_checksum: [u8; 32],
+    payload_digest: [u8; 32],
+    expected_revision: u64,
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(HOST_TIMEOUT_EVENT_DOMAIN_V1);
+    hasher.update(predecessor_record_checksum);
+    hasher.update(payload_digest);
+    hasher.update(expected_revision.to_be_bytes());
+    hasher.finalize().into()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -605,6 +645,225 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         self.safety_store
             .head()
             .map_err(PocoNodeHostErrorV0::safety_store)
+    }
+
+    /// Derive the timeout event tuple from the authenticated SafetyStore
+    /// predecessor and a throw-away Core evaluator.  The live Core is not
+    /// mutated while an event intent is being prepared; the returned tuple is
+    /// therefore comparison material for the WAL, not an effect capability.
+    #[cfg(feature = "node-event-wal")]
+    fn timeout_event_projection_from_state_v1(
+        &self,
+        predecessor_state: &SafetyState,
+        predecessor_record_checksum: [u8; 32],
+    ) -> Result<TimeoutEventProjectionV1, PocoNodeHostEventWalErrorV1> {
+        let mut evaluator = Core::recover(
+            self.core.config().clone(),
+            predecessor_state.clone(),
+            &StrictEd25519Verifier,
+        )
+        .map_err(PocoNodeHostErrorV0::core)
+        .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let epoch = predecessor_state.epoch();
+        let view = predecessor_state.current_view();
+        let effects = evaluator
+            .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
+            .map_err(PocoNodeHostErrorV0::core)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let request = match effects.as_slice() {
+            [Effect::PersistSafetyState(request)] => request,
+            _ => return Err(PocoNodeHostEventWalErrorV1::BindingMismatch),
+        };
+        let transition = request
+            .safety_rules_shadow_transition_v1()
+            .ok_or(PocoNodeHostEventWalErrorV1::BindingMismatch)?;
+        let Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision,
+            view: pending_view,
+            signing_root,
+            ..
+        }) = request.state().pending_sign()
+        else {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        };
+        let canonical = transition.canonical_intent();
+        let expected_revision = request.barrier().get();
+        if transition.successor_state().revision() != expected_revision
+            || transition.successor_state().last_timeout_view() != Some(*pending_view)
+            || canonical.authorizing_safety_revision() != *authorizing_safety_revision
+            || canonical.preimage().context().view() != *pending_view
+            || canonical.signing_root() != *signing_root
+            || !matches!(
+                canonical.preimage(),
+                CanonicalSignPreimageV0::TimeoutVote(_)
+            )
+        {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        let payload_digest = transition.candidate_digest().into_bytes();
+        let event_id = timeout_event_id_v1(
+            predecessor_record_checksum,
+            payload_digest,
+            expected_revision,
+        );
+        Ok(TimeoutEventProjectionV1 {
+            predecessor_record_checksum,
+            event_id,
+            payload_digest,
+            expected_revision,
+            expected_successor_state: request.state().clone(),
+        })
+    }
+
+    #[cfg(feature = "node-event-wal")]
+    fn timeout_event_projection_v1(
+        &self,
+    ) -> Result<TimeoutEventProjectionV1, PocoNodeHostEventWalErrorV1> {
+        let head = self
+            .safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        if !matches!(
+            head.transition_context(),
+            SafetyTransitionContextV0::Ordinary
+        ) || head.state() != self.core.safety_state()
+            || head.state().pending_sign().is_some()
+        {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        validate_bounded_timeout_bootstrap_v0(&head).map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        self.timeout_event_projection_from_state_v1(head.state(), head.state_record_checksum())
+    }
+
+    #[cfg(feature = "node-event-wal")]
+    fn validate_timeout_event_intent_v1(
+        &self,
+        intent: NodeEventIntentV1,
+        projection: &TimeoutEventProjectionV1,
+    ) -> Result<(), PocoNodeHostEventWalErrorV1> {
+        if intent.event_id() != projection.event_id
+            || intent.predecessor_digest() != projection.predecessor_record_checksum
+            || intent.payload_digest() != projection.payload_digest
+        {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        Ok(())
+    }
+
+    #[cfg(feature = "node-event-wal")]
+    fn timeout_event_readback_v1(
+        &self,
+        projection: &TimeoutEventProjectionV1,
+    ) -> Result<[u8; 32], PocoNodeHostEventWalErrorV1> {
+        let head = self
+            .safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        if !matches!(
+            head.transition_context(),
+            SafetyTransitionContextV0::Ordinary
+        ) || head.revision() != projection.expected_revision
+            || head.state() != &projection.expected_successor_state
+        {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        Ok(head.state_record_checksum())
+    }
+
+    /// Prepare a timeout intent in the node-event WAL from the host's current
+    /// authenticated predecessor.  No Core effect is driven until the caller
+    /// invokes [`Self::on_local_timeout_with_event_wal_v1`].
+    #[cfg(feature = "node-event-wal")]
+    pub fn prepare_timeout_event_v1(
+        &self,
+        wal: &mut NodeEventWalV1,
+    ) -> Result<NodeEventIntentV1, PocoNodeHostEventWalErrorV1> {
+        self.require_active_runtime_v0()
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let projection = self.timeout_event_projection_v1()?;
+        wal.prepare_event_v1(
+            projection.event_id,
+            projection.predecessor_record_checksum,
+            projection.payload_digest,
+        )
+        .map_err(Into::into)
+    }
+
+    /// Run one timeout through the real bounded host while enforcing
+    /// `event-WAL intent -> Core/SafetyStore effect -> exact SafetyStore
+    /// readback -> event-WAL commit` ordering.
+    #[cfg(feature = "node-event-wal")]
+    pub fn on_local_timeout_with_event_wal_v1(
+        &mut self,
+        wal: &mut NodeEventWalV1,
+    ) -> Result<NodeEventCommitReceiptV1, PocoNodeHostEventWalErrorV1> {
+        self.require_active_runtime_v0()
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let projection = self.timeout_event_projection_v1()?;
+        let intent = wal
+            .prepare_event_v1(
+                projection.event_id,
+                projection.predecessor_record_checksum,
+                projection.payload_digest,
+            )
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
+        self.on_local_timeout_v0()
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let commit_digest = self.timeout_event_readback_v1(&projection)?;
+        self.validate_timeout_event_intent_v1(intent, &projection)?;
+        wal.commit_event_v1(intent, commit_digest)
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)
+    }
+
+    /// Reconcile a pending timeout event after reopening the host and WAL.
+    /// A successor is accepted only when the retained authenticated
+    /// predecessor regenerates the exact event tuple and the current head is
+    /// an exact successor readback.  If the head is still the predecessor,
+    /// the effect remains uncertain and the WAL is deliberately left pending.
+    #[cfg(feature = "node-event-wal")]
+    pub fn recover_pending_timeout_event_with_wal_v1(
+        &mut self,
+        wal: &mut NodeEventWalV1,
+    ) -> Result<Option<NodeEventCommitReceiptV1>, PocoNodeHostEventWalErrorV1> {
+        self.require_active_runtime_v0()
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let recovery = wal
+            .revalidate_v1()
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
+        let NodeEventRecoveryV1::Pending(intent) = recovery else {
+            return Ok(None);
+        };
+        let head = self
+            .safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        if head.state_record_checksum() == intent.predecessor_digest() {
+            return Err(PocoNodeHostEventWalErrorV1::RecoveryReadbackRequired);
+        }
+        let predecessor = self
+            .safety_store
+            .authenticated_predecessor_v0()
+            .map_err(PocoNodeHostErrorV0::safety_store)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?
+            .ok_or(PocoNodeHostEventWalErrorV1::RecoveryReadbackRequired)?;
+        if predecessor.state_record_checksum() != intent.predecessor_digest() {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        if predecessor.revision().checked_add(1) != Some(head.revision()) {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        let projection = self.timeout_event_projection_from_state_v1(
+            predecessor.state(),
+            predecessor.state_record_checksum(),
+        )?;
+        self.validate_timeout_event_intent_v1(intent, &projection)?;
+        let commit_digest = self.timeout_event_readback_v1(&projection)?;
+        wal.commit_event_v1(intent, commit_digest)
+            .map(Some)
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)
     }
 
     /// Resumes only the authenticated durable outbox already owned by Core.

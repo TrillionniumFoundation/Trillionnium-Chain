@@ -321,8 +321,8 @@ pub use native_h1_state_sync_commissioning::{
 pub use node_event_wal::{
     NodeEventCommitDriverV1, NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1,
     NodeEventWalErrorV1, NodeEventWalV1, PocoNodeHostEventCommitOwnerV1,
-    PocoNodeHostEventCommitWalV1, NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1,
-    NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
+    PocoNodeHostEventCommitWalV1, PocoNodeHostEventWalErrorV1,
+    NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1, NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
 };
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
@@ -3241,6 +3241,106 @@ mod tests {
             .expect("replayed signer capacity");
         assert_eq!(replay_capacity.intent_count(), 1);
         assert_eq!(replay_capacity.event_count(), 2);
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
+    fn bounded_host_timeout_event_wal_commits_exact_safety_readback() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path = protected_store_namespace(&directory, "events").join("node-events.wal");
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let config =
+            start_config(&safety_path, &signer_path, core_config.clone()).expect("host config");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc(&core_config),
+            MemoryWatermark::default(),
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+        )
+        .expect("initialize bounded host");
+        host.resume_v0().expect("arm the first timeout view");
+
+        let mut wal = NodeEventWalV1::open(&event_path, [0x71; 32]).expect("open event WAL");
+        let receipt = host
+            .on_local_timeout_with_event_wal_v1(&mut wal)
+            .expect("timeout and exact event commit");
+        let head = host.safety_head().expect("read authenticated safety head");
+        assert_eq!(receipt.commit_digest(), head.state_record_checksum());
+        assert_ne!(receipt.event_id(), [0; 32]);
+        assert!(wal.pending().is_none());
+        assert_eq!(wal.last_commit(), Some(receipt));
+        assert!(host.production_activation_check().is_err());
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
+    fn bounded_host_timeout_event_wal_preserves_uncertain_effect_until_reopen_readback() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path = protected_store_namespace(&directory, "events").join("node-events.wal");
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config =
+            start_config(&safety_path, &signer_path, core_config.clone()).expect("host config");
+        let watermark = MemoryWatermark::default();
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc,
+            watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize bounded host");
+        host.resume_v0().expect("arm the first timeout view");
+        let mut wal = NodeEventWalV1::open(&event_path, [0x72; 32]).expect("open event WAL");
+        let intent = host
+            .prepare_timeout_event_v1(&mut wal)
+            .expect("prepare authenticated timeout intent");
+
+        assert!(matches!(
+            host.recover_pending_timeout_event_with_wal_v1(&mut wal),
+            Err(PocoNodeHostEventWalErrorV1::RecoveryReadbackRequired)
+        ));
+        assert_eq!(wal.pending(), Some(intent));
+
+        let error = host
+            .on_local_timeout_v0()
+            .expect_err("unavailable signer leaves an uncertain durable effect");
+        assert!(matches!(error, PocoNodeHostErrorV0::SignerJournal(_)));
+        assert_eq!(
+            host.safety_head().expect("read successor head").revision(),
+            1
+        );
+        drop(host);
+
+        let mut recovered = PocoNodeHostV0::open_existing(
+            config,
+            watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+        )
+        .expect("reopen exact host after uncertain signer result");
+        let receipt = recovered
+            .recover_pending_timeout_event_with_wal_v1(&mut wal)
+            .expect("fresh SafetyStore readback closes the pending event")
+            .expect("WAL was pending");
+        assert_eq!(receipt.event_id(), intent.event_id());
+        assert_eq!(
+            receipt.commit_digest(),
+            recovered.safety_head().unwrap().state_record_checksum()
+        );
+        assert!(wal.pending().is_none());
+        let actions = recovered.resume_v0().expect("replay the persisted timeout");
+        assert!(matches!(
+            actions.as_slice(),
+            [PocoNodeHostActionV0::Broadcast(outbound)]
+                if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
+        ));
     }
 
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]

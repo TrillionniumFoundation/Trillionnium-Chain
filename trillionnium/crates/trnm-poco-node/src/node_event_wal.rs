@@ -26,6 +26,8 @@ use std::{
 
 use sha2::{Digest, Sha256};
 
+use crate::PocoNodeHostErrorV0;
+
 #[cfg(unix)]
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 
@@ -70,6 +72,50 @@ pub enum NodeEventWalErrorV1 {
     RecoveryReadbackRequired,
     Poisoned,
     TooLarge,
+}
+
+/// Error boundary for the concrete, feature-gated adapter which binds this
+/// WAL to [`crate::PocoNodeHostV0`].  The WAL itself remains usable without the
+/// adapter; keeping host errors in a separate arm prevents a caller from
+/// mistaking an application/consensus failure for a successfully committed
+/// event.
+#[derive(Debug)]
+pub enum PocoNodeHostEventWalErrorV1 {
+    Wal(NodeEventWalErrorV1),
+    Host(PocoNodeHostErrorV0),
+    BindingMismatch,
+    RecoveryReadbackRequired,
+}
+
+impl fmt::Display for PocoNodeHostEventWalErrorV1 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Wal(error) => write!(formatter, "node-event WAL error: {error}"),
+            Self::Host(error) => write!(formatter, "PocoNodeHost event boundary failed: {error}"),
+            Self::BindingMismatch => formatter.write_str(
+                "PocoNodeHost event tuple does not match the authenticated durable predecessor",
+            ),
+            Self::RecoveryReadbackRequired => formatter.write_str(
+                "PocoNodeHost event effect is uncertain and requires an explicit durable readback",
+            ),
+        }
+    }
+}
+
+impl Error for PocoNodeHostEventWalErrorV1 {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            Self::Wal(error) => Some(error),
+            Self::Host(error) => Some(error),
+            Self::BindingMismatch | Self::RecoveryReadbackRequired => None,
+        }
+    }
+}
+
+impl From<NodeEventWalErrorV1> for PocoNodeHostEventWalErrorV1 {
+    fn from(error: NodeEventWalErrorV1) -> Self {
+        Self::Wal(error)
+    }
 }
 
 impl fmt::Display for NodeEventWalErrorV1 {
