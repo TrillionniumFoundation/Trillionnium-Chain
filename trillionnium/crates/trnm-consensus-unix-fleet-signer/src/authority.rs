@@ -31,6 +31,8 @@ const LOG_MAGIC_V1: &[u8; 8] = b"TRNMFH01";
 const LOG_DOMAIN_V1: &[u8] = b"trnm.consensus.unix-fleet-root.authority-record.v1\0";
 const ANCHOR_MAGIC_V1: &[u8; 8] = b"TRNMFA01";
 const CHECKSUM_DOMAIN_V1: &[u8] = b"trnm.consensus.unix-fleet-root.authority-anchor.v1\0";
+const PENDING_MAGIC_V1: &[u8; 8] = b"TRNMFP01";
+const PENDING_DOMAIN_V1: &[u8] = b"trnm.consensus.unix-fleet-root.authority-pending.v1\0";
 const SCHEMA_V1: u8 = 1;
 const MAX_LOG_BYTES_V1: u64 = 64 * 1024 * 1024;
 const MAX_ORIGIN_BYTES_V1: usize = 128;
@@ -40,6 +42,11 @@ const RECORD_BYTES_V1: usize = 8 + 4 + 8 + 4 + 2 + MAX_ORIGIN_BYTES_V1 + 32 * 4 
 // magic + schema/reserved + sequence + origin length + fixed origin + set id + head.
 const ANCHOR_BODY_BYTES_V1: usize = 8 + 4 + 8 + 2 + MAX_ORIGIN_BYTES_V1 + 32 + 32;
 const ANCHOR_BYTES_V1: usize = ANCHOR_BODY_BYTES_V1 + 32;
+// magic + schema/reserved + next sequence + predecessor hash + request length
+// + fixed request bytes + checksum.  The request itself is the canonical
+// length/checksum-bound wire envelope, padded only inside this private marker.
+const PENDING_BODY_BYTES_V1: usize = 8 + 4 + 8 + 32 + 2 + crate::MAX_REQUEST_BYTES_V1;
+const PENDING_BYTES_V1: usize = PENDING_BODY_BYTES_V1 + 32;
 
 /// Fail-closed authority failures. A poisoned authority never signs another
 /// request in its process lifetime.
@@ -114,11 +121,19 @@ struct AuthorityRecordV1 {
     record_hash: [u8; 32],
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct PendingSigningIntentV1 {
+    sequence: u64,
+    previous_hash: [u8; 32],
+    request: FleetRootRequestV1,
+}
+
 /// One process-owned durable authority namespace. Opening a second process on
 /// the same log fails at the exclusive lock boundary.
 pub struct DurableFleetRootSignerAuthorityV1<S> {
     log_path: PathBuf,
     anchor_path: PathBuf,
+    pending_path: PathBuf,
     directory: File,
     log: File,
     _lock: File,
@@ -129,6 +144,7 @@ pub struct DurableFleetRootSignerAuthorityV1<S> {
     by_fingerprint: BTreeMap<[u8; 32], ([u8; 32], [u8; 64])>,
     by_nonce: BTreeMap<[u8; 32], [u8; 32]>,
     head_hash: [u8; 32],
+    last_record_previous_hash: [u8; 32],
     sequence: u64,
     poisoned: bool,
 }
@@ -190,6 +206,7 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
         )?;
         let lock_path = parent.join(format!(".{file_name}.lock"));
         let anchor_path = parent.join(format!(".{file_name}.anchor"));
+        let pending_path = parent.join(format!(".{file_name}.pending"));
         let lock = open_private_file(&lock_path, true, false).map_err(|source| {
             FleetRootAuthorityErrorV1::Io {
                 stage: "open authority namespace lock",
@@ -212,6 +229,7 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
         let mut authority = Self {
             log_path: log_path.to_path_buf(),
             anchor_path,
+            pending_path,
             directory,
             log,
             _lock: lock,
@@ -222,11 +240,13 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
             by_fingerprint: BTreeMap::new(),
             by_nonce: BTreeMap::new(),
             head_hash: [0; 32],
+            last_record_previous_hash: [0; 32],
             sequence: 0,
             poisoned: false,
         };
         authority.replay_log()?;
         authority.reconcile_anchor()?;
+        authority.reconcile_pending_intent()?;
         Ok(authority)
     }
 
@@ -277,9 +297,44 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
                 return Err(FleetRootAuthorityErrorV1::ReplayConflict);
             }
         }
-        let signature = self.signer.sign_fleet_root_authority_v1(request)?;
-        self.verify_signature(request, signature)?;
-        self.append_record(*request, fingerprint, signature)?;
+        let sequence = self
+            .sequence
+            .checked_add(1)
+            .ok_or(FleetRootAuthorityErrorV1::InvalidLog("sequence exhausted"))?;
+        let pending = PendingSigningIntentV1 {
+            sequence,
+            previous_hash: self.head_hash,
+            request: *request,
+        };
+        if let Err(error) = self.persist_pending_intent(pending) {
+            self.poisoned = true;
+            return Err(error);
+        }
+
+        // The external signer is called only after the exact request and
+        // predecessor have reached a durable prepared marker.  Any signer,
+        // verification, append, or marker-retirement failure leaves that
+        // marker behind and poisons this owner; a later open can therefore
+        // distinguish an uncommitted/ambiguous signature from a clean head.
+        let signature = match self.signer.sign_fleet_root_authority_v1(request) {
+            Ok(signature) => signature,
+            Err(error) => {
+                self.poisoned = true;
+                return Err(error);
+            }
+        };
+        if let Err(error) = self.verify_signature(request, signature) {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if let Err(error) = self.append_record(*request, fingerprint, signature) {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if let Err(error) = self.retire_pending_intent(pending) {
+            self.poisoned = true;
+            return Err(error);
+        }
         Ok(signature)
     }
 
@@ -367,6 +422,7 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
         }
         self.sequence = sequence;
         self.head_hash = record.record_hash;
+        self.last_record_previous_hash = previous_hash;
         self.by_fingerprint
             .insert(fingerprint, (request.signing_root(), signature));
         self.by_nonce.insert(request.nonce(), fingerprint);
@@ -457,6 +513,7 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
                 .insert(record.request.nonce(), record.fingerprint);
             self.sequence = record.sequence;
             self.head_hash = record.record_hash;
+            self.last_record_previous_hash = record.previous_hash;
         }
         Ok(())
     }
@@ -533,6 +590,193 @@ impl<S: FleetRootAuthoritySignerV1> DurableFleetRootSignerAuthorityV1<S> {
                 source,
             }),
         }
+    }
+
+    /// Resolves a prepared signing marker only when the exact request is now
+    /// the durable log head.  Any marker that cannot be tied to that one
+    /// complete record is an ambiguous external-signature outcome and keeps
+    /// the namespace fail-closed.
+    fn reconcile_pending_intent(&mut self) -> Result<(), FleetRootAuthorityErrorV1> {
+        let Some(pending) = self.read_pending_intent()? else {
+            return Ok(());
+        };
+        if pending.request.origin() != self.origin {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "pending request origin differs from namespace",
+            ));
+        }
+        if pending.request.validator_set_id() != self.validator_set_id {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "pending request validator-set differs from namespace",
+            ));
+        }
+        let fingerprint = pending.request.fingerprint()?;
+        let committed = pending.sequence == self.sequence
+            && pending.previous_hash == self.last_record_previous_hash
+            && self
+                .by_fingerprint
+                .get(&fingerprint)
+                .is_some_and(|(root, _signature)| *root == pending.request.signing_root());
+        if !committed {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "unresolved prepared signing intent",
+            ));
+        }
+        self.retire_pending_intent(pending)
+    }
+
+    fn read_pending_intent(
+        &self,
+    ) -> Result<Option<PendingSigningIntentV1>, FleetRootAuthorityErrorV1> {
+        let metadata = match fs::symlink_metadata(&self.pending_path) {
+            Ok(metadata) => metadata,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => return Ok(None),
+            Err(source) => {
+                return Err(FleetRootAuthorityErrorV1::Io {
+                    stage: "inspect pending signing intent",
+                    source,
+                })
+            }
+        };
+        if metadata.file_type().is_symlink()
+            || !metadata.is_file()
+            || metadata.permissions().mode() & 0o7777 != 0o600
+        {
+            return Err(FleetRootAuthorityErrorV1::InvalidConfig(
+                "pending signing intent must be a 0600 regular file",
+            ));
+        }
+        let bytes =
+            fs::read(&self.pending_path).map_err(|source| FleetRootAuthorityErrorV1::Io {
+                stage: "read pending signing intent",
+                source,
+            })?;
+        Ok(Some(decode_pending_intent(&bytes)?))
+    }
+
+    /// Publishes the exact request/predecessor marker before an external
+    /// signer is called.  The marker is atomically renamed and directory-
+    /// synced, so a crash cannot erase the fact that an ambiguous signature
+    /// may have escaped the private signer.
+    fn persist_pending_intent(
+        &self,
+        pending: PendingSigningIntentV1,
+    ) -> Result<(), FleetRootAuthorityErrorV1> {
+        let expected_sequence = self
+            .sequence
+            .checked_add(1)
+            .ok_or(FleetRootAuthorityErrorV1::InvalidLog("sequence exhausted"))?;
+        if pending.sequence != expected_sequence || pending.previous_hash != self.head_hash {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "prepared signing predecessor differs from authority head",
+            ));
+        }
+        pending.request.validate()?;
+        match fs::symlink_metadata(&self.pending_path) {
+            Ok(_) => {
+                return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                    "prepared signing intent already exists",
+                ))
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+            Err(source) => {
+                return Err(FleetRootAuthorityErrorV1::Io {
+                    stage: "inspect pending signing intent before publish",
+                    source,
+                })
+            }
+        }
+
+        let temporary = self
+            .pending_path
+            .with_extension(format!("pending.tmp-{}", std::process::id()));
+        if let Ok(metadata) = fs::symlink_metadata(&temporary) {
+            if metadata.file_type().is_symlink()
+                || !metadata.is_file()
+                || metadata.permissions().mode() & 0o7777 != 0o600
+            {
+                return Err(FleetRootAuthorityErrorV1::InvalidConfig(
+                    "pending signing temporary must be a 0600 regular file",
+                ));
+            }
+            fs::remove_file(&temporary).map_err(|source| FleetRootAuthorityErrorV1::Io {
+                stage: "remove stale pending signing temporary",
+                source,
+            })?;
+        }
+        let bytes = encode_pending_intent(pending)?;
+        let result = (|| {
+            let mut file = open_private_pending_new(&temporary)?;
+            file.write_all(&bytes)
+                .map_err(|source| FleetRootAuthorityErrorV1::Io {
+                    stage: "write pending signing intent",
+                    source,
+                })?;
+            file.sync_all()
+                .map_err(|source| FleetRootAuthorityErrorV1::Io {
+                    stage: "sync pending signing intent",
+                    source,
+                })?;
+            let readback =
+                fs::read(&temporary).map_err(|source| FleetRootAuthorityErrorV1::Io {
+                    stage: "read back pending signing intent",
+                    source,
+                })?;
+            if readback != bytes {
+                return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                    "pending signing intent readback differs",
+                ));
+            }
+            fs::rename(&temporary, &self.pending_path).map_err(|source| {
+                FleetRootAuthorityErrorV1::Io {
+                    stage: "publish pending signing intent",
+                    source,
+                }
+            })?;
+            self.directory
+                .sync_data()
+                .map_err(|source| FleetRootAuthorityErrorV1::Io {
+                    stage: "sync pending signing intent directory",
+                    source,
+                })?;
+            if self.read_pending_intent()? != Some(pending) {
+                return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                    "published pending signing intent differs",
+                ));
+            }
+            Ok(())
+        })();
+        if result.is_err() {
+            let _ = fs::remove_file(&temporary);
+        }
+        result
+    }
+
+    fn retire_pending_intent(
+        &self,
+        expected: PendingSigningIntentV1,
+    ) -> Result<(), FleetRootAuthorityErrorV1> {
+        if self.read_pending_intent()? != Some(expected) {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "pending signing intent changed before retirement",
+            ));
+        }
+        fs::remove_file(&self.pending_path).map_err(|source| FleetRootAuthorityErrorV1::Io {
+            stage: "retire pending signing intent",
+            source,
+        })?;
+        self.directory
+            .sync_data()
+            .map_err(|source| FleetRootAuthorityErrorV1::Io {
+                stage: "sync retired pending signing intent directory",
+                source,
+            })?;
+        if self.read_pending_intent()?.is_some() {
+            return Err(FleetRootAuthorityErrorV1::InvalidLog(
+                "retired pending signing intent remains",
+            ));
+        }
+        Ok(())
     }
 
     fn persist_anchor(&self) -> Result<(), FleetRootAuthorityErrorV1> {
@@ -656,6 +900,99 @@ fn open_private_new(path: &Path) -> Result<File, FleetRootAuthorityErrorV1> {
             stage: "create authority anchor temporary",
             source,
         })
+}
+
+fn open_private_pending_new(path: &Path) -> Result<File, FleetRootAuthorityErrorV1> {
+    OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+        .open(path)
+        .map_err(|source| FleetRootAuthorityErrorV1::Io {
+            stage: "create pending signing intent temporary",
+            source,
+        })
+}
+
+fn encode_pending_intent(
+    pending: PendingSigningIntentV1,
+) -> Result<Vec<u8>, FleetRootAuthorityErrorV1> {
+    pending.request.validate()?;
+    if pending.sequence == 0 {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing sequence is zero",
+        ));
+    }
+    let request = pending.request.try_exact_bytes()?;
+    if request.is_empty() || request.len() > crate::MAX_REQUEST_BYTES_V1 {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing request length",
+        ));
+    }
+    let mut bytes = vec![0u8; PENDING_BODY_BYTES_V1];
+    bytes[..8].copy_from_slice(PENDING_MAGIC_V1);
+    bytes[8..12].copy_from_slice(&[SCHEMA_V1, 0, 0, 0]);
+    bytes[12..20].copy_from_slice(&pending.sequence.to_be_bytes());
+    bytes[20..52].copy_from_slice(&pending.previous_hash);
+    let request_length = u16::try_from(request.len()).map_err(|_| {
+        FleetRootAuthorityErrorV1::InvalidLog("pending signing request length overflows u16")
+    })?;
+    bytes[52..54].copy_from_slice(&request_length.to_be_bytes());
+    bytes[54..54 + request.len()].copy_from_slice(&request);
+    let checksum = checksum_pending(&bytes);
+    bytes.extend_from_slice(&checksum);
+    debug_assert_eq!(bytes.len(), PENDING_BYTES_V1);
+    Ok(bytes)
+}
+
+fn decode_pending_intent(
+    bytes: &[u8],
+) -> Result<PendingSigningIntentV1, FleetRootAuthorityErrorV1> {
+    if bytes.len() != PENDING_BYTES_V1
+        || &bytes[..8] != PENDING_MAGIC_V1
+        || bytes[8..12] != [SCHEMA_V1, 0, 0, 0]
+        || checksum_pending(&bytes[..PENDING_BODY_BYTES_V1]) != bytes[PENDING_BODY_BYTES_V1..]
+    {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing intent envelope differs",
+        ));
+    }
+    let sequence = u64::from_be_bytes(bytes[12..20].try_into().unwrap());
+    if sequence == 0 {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing sequence is zero",
+        ));
+    }
+    let previous_hash: [u8; 32] = bytes[20..52].try_into().unwrap();
+    let request_length = u16::from_be_bytes(bytes[52..54].try_into().unwrap()) as usize;
+    if request_length == 0 || request_length > crate::MAX_REQUEST_BYTES_V1 {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing request length differs",
+        ));
+    }
+    let request_end = 54 + request_length;
+    if bytes[request_end..PENDING_BODY_BYTES_V1]
+        .iter()
+        .any(|byte| *byte != 0)
+    {
+        return Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "pending signing request padding differs",
+        ));
+    }
+    let request = FleetRootRequestV1::decode_exact(&bytes[54..request_end])?;
+    Ok(PendingSigningIntentV1 {
+        sequence,
+        previous_hash,
+        request,
+    })
+}
+
+fn checksum_pending(bytes: &[u8]) -> [u8; 32] {
+    let mut hash = Sha256::new();
+    hash.update(PENDING_DOMAIN_V1);
+    hash.update(bytes);
+    hash.finalize().into()
 }
 
 fn encode_record_without_hash(

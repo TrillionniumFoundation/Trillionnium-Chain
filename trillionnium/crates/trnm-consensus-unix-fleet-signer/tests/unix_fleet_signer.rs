@@ -15,8 +15,8 @@ use trnm_consensus_types::ValidatorId;
 use trnm_consensus_unix_fleet_signer::{
     test_fixture::{fixture_public_key_v1, FixtureModeV1},
     DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
-    FleetRootPurposeV1, UnixFleetRootAuthorityServerV1, UnixFleetRootSignerConfig,
-    UnixFleetRootSignerProducerV1, UnixFleetSignerErrorV1,
+    FleetRootPurposeV1, FleetRootRequestV1, UnixFleetRootAuthorityServerV1,
+    UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1, UnixFleetSignerErrorV1,
 };
 
 fn origin() -> ValidatorId {
@@ -140,6 +140,19 @@ impl FleetRootAuthoritySignerV1 for GenericAuthoritySignerV1 {
         request: &trnm_consensus_unix_fleet_signer::FleetRootRequestV1,
     ) -> Result<[u8; 64], FleetRootAuthorityErrorV1> {
         Ok(self.key.sign(&request.signing_root()).to_bytes())
+    }
+}
+
+struct FailingAuthoritySignerV1;
+
+impl FleetRootAuthoritySignerV1 for FailingAuthoritySignerV1 {
+    fn sign_fleet_root_authority_v1(
+        &mut self,
+        _request: &FleetRootRequestV1,
+    ) -> Result<[u8; 64], FleetRootAuthorityErrorV1> {
+        Err(FleetRootAuthorityErrorV1::Conflict(
+            "synthetic signer failure after preparation",
+        ))
     }
 }
 
@@ -272,6 +285,14 @@ fn durable_authority_exact_replay_does_not_append_or_resign() {
     let first = authority_request(&mut producer, FleetRootPurposeV1::Ready, 0x91, 0x11)
         .expect("first durable signature");
     let first_len = fs::metadata(&log).expect("authority log metadata").len();
+    let pending = log.parent().expect("log parent").join(format!(
+        ".{}.pending",
+        log.file_name().unwrap().to_string_lossy()
+    ));
+    assert!(
+        !pending.exists(),
+        "successful append must retire preparation marker"
+    );
     let replay = authority_request(&mut producer, FleetRootPurposeV1::Ready, 0x91, 0x11)
         .expect("exact durable replay");
     assert_eq!(
@@ -283,7 +304,66 @@ fn durable_authority_exact_replay_does_not_append_or_resign() {
         first_len,
         "exact replay must not append a second authority record"
     );
+    assert!(
+        !pending.exists(),
+        "exact replay must not recreate preparation marker"
+    );
     assert!(child.wait().expect("authority wait").success());
+}
+
+#[test]
+fn durable_authority_prepares_before_signer_and_reopens_fail_closed() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let log = dir.path().join("prepared-authority.log");
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        &log,
+        origin(),
+        [0x31; 32],
+        fixture_public_key_v1(),
+        FailingAuthoritySignerV1,
+    )
+    .expect("open failing authority");
+    let request = FleetRootRequestV1::new(
+        FleetRootPurposeV1::Ready,
+        origin(),
+        [0x31; 32],
+        [0xd1; 32],
+        [0xe1; 32],
+    )
+    .expect("request");
+    let mut authority = authority;
+    let error = authority
+        .sign_fleet_root_v1(&request)
+        .expect_err("synthetic signer must fail after preparation");
+    assert!(matches!(
+        error,
+        FleetRootAuthorityErrorV1::Conflict("synthetic signer failure after preparation")
+    ));
+    let pending = log.parent().expect("log parent").join(format!(
+        ".{}.pending",
+        log.file_name().unwrap().to_string_lossy()
+    ));
+    assert!(
+        pending.is_file(),
+        "prepared marker must survive signer failure"
+    );
+    drop(authority);
+
+    let reopened = DurableFleetRootSignerAuthorityV1::open(
+        &log,
+        origin(),
+        [0x31; 32],
+        fixture_public_key_v1(),
+        GenericAuthoritySignerV1 {
+            key: SigningKey::from_bytes(&[0x4a; 32]),
+        },
+    );
+    assert!(matches!(
+        reopened,
+        Err(FleetRootAuthorityErrorV1::InvalidLog(
+            "unresolved prepared signing intent"
+        ))
+    ));
 }
 
 #[test]
