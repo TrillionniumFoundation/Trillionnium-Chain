@@ -122,6 +122,9 @@ struct PendingSignedOutboundV0 {
 
 #[cfg(feature = "node-event-wal")]
 const HOST_TIMEOUT_EVENT_DOMAIN_V1: &[u8] = b"trnm.poco-node.timeout-event.v1\0";
+#[cfg(feature = "node-event-wal")]
+const HOST_TIMEOUT_EVENT_WAL_NAMESPACE_DOMAIN_V1: &[u8] =
+    b"trnm.poco-node.timeout-event-wal-namespace.v1\0";
 
 /// Exact projection used to bind one timeout event to the host's authenticated
 /// SafetyStore predecessor.  It is deliberately private: callers obtain an
@@ -647,6 +650,47 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             .map_err(PocoNodeHostErrorV0::safety_store)
     }
 
+    /// Derive the only namespace accepted by the concrete timeout-event WAL
+    /// seam.  The namespace is tied to the authenticated Core identity and
+    /// the two durable safety/signing journal identities, rather than being a
+    /// caller-selected constant.  Per-event predecessor and successor
+    /// checksums remain the dynamic head binding; this stable namespace lets a
+    /// restarted host reopen the same WAL while rejecting accidental reuse by
+    /// an unrelated validator or journal pair.
+    #[cfg(feature = "node-event-wal")]
+    pub fn timeout_event_wal_namespace_v1(&self) -> [u8; 32] {
+        let config = self.core.config();
+        let validator_set = config.validator_set();
+        let mut hasher = Sha256::new();
+        hasher.update(HOST_TIMEOUT_EVENT_WAL_NAMESPACE_DOMAIN_V1);
+        hasher.update(validator_set.genesis_hash().as_bytes());
+        hasher.update((validator_set.chain_id().as_bytes().len() as u64).to_be_bytes());
+        hasher.update(validator_set.chain_id().as_bytes());
+        hasher.update(validator_set.protocol_version().get().to_be_bytes());
+        hasher.update(validator_set.epoch().get().to_be_bytes());
+        hasher.update(validator_set.consensus_parameters_hash().as_bytes());
+        hasher.update(validator_set.id().as_bytes());
+        hasher.update((config.local_validator().as_bytes().len() as u64).to_be_bytes());
+        hasher.update(config.local_validator().as_bytes());
+        hasher.update(config.trusted_genesis_timestamp_ms().to_be_bytes());
+        hasher.update(self.safety_store.journal_id_v0());
+        hasher.update(self.safety_store.verifier_profile_ref_v0());
+        hasher.update(self.signer_journal.journal_id());
+        hasher.update(self.signer_journal.profile().profile_checksum());
+        hasher.finalize().into()
+    }
+
+    #[cfg(feature = "node-event-wal")]
+    fn require_timeout_event_wal_namespace_v1(
+        &self,
+        wal: &NodeEventWalV1,
+    ) -> Result<(), PocoNodeHostEventWalErrorV1> {
+        if wal.namespace() != self.timeout_event_wal_namespace_v1() {
+            return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+        }
+        Ok(())
+    }
+
     /// Derive the timeout event tuple from the authenticated SafetyStore
     /// predecessor and a throw-away Core evaluator.  The live Core is not
     /// mutated while an event intent is being prepared; the returned tuple is
@@ -782,6 +826,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     ) -> Result<NodeEventIntentV1, PocoNodeHostEventWalErrorV1> {
         self.require_active_runtime_v0()
             .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        self.require_timeout_event_wal_namespace_v1(wal)?;
         let projection = self.timeout_event_projection_v1()?;
         wal.prepare_event_v1(
             projection.event_id,
@@ -801,6 +846,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     ) -> Result<NodeEventCommitReceiptV1, PocoNodeHostEventWalErrorV1> {
         self.require_active_runtime_v0()
             .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        self.require_timeout_event_wal_namespace_v1(wal)?;
         let projection = self.timeout_event_projection_v1()?;
         let intent = wal
             .prepare_event_v1(
@@ -829,6 +875,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     ) -> Result<Option<NodeEventCommitReceiptV1>, PocoNodeHostEventWalErrorV1> {
         self.require_active_runtime_v0()
             .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        self.require_timeout_event_wal_namespace_v1(wal)?;
         let recovery = wal
             .revalidate_v1()
             .map_err(PocoNodeHostEventWalErrorV1::Wal)?;

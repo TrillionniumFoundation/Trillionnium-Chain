@@ -3264,7 +3264,18 @@ mod tests {
         .expect("initialize bounded host");
         host.resume_v0().expect("arm the first timeout view");
 
-        let mut wal = NodeEventWalV1::open(&event_path, [0x71; 32]).expect("open event WAL");
+        let foreign_event_path =
+            protected_store_namespace(&directory, "foreign-events").join("node-events.wal");
+        let mut foreign_wal =
+            NodeEventWalV1::open(&foreign_event_path, [0x73; 32]).expect("open foreign WAL");
+        assert!(matches!(
+            host.prepare_timeout_event_v1(&mut foreign_wal),
+            Err(PocoNodeHostEventWalErrorV1::BindingMismatch)
+        ));
+        assert!(foreign_wal.pending().is_none());
+
+        let mut wal = NodeEventWalV1::open(&event_path, host.timeout_event_wal_namespace_v1())
+            .expect("open host-bound event WAL");
         let receipt = host
             .on_local_timeout_with_event_wal_v1(&mut wal)
             .expect("timeout and exact event commit");
@@ -3295,7 +3306,8 @@ mod tests {
         )
         .expect("initialize bounded host");
         host.resume_v0().expect("arm the first timeout view");
-        let mut wal = NodeEventWalV1::open(&event_path, [0x72; 32]).expect("open event WAL");
+        let mut wal = NodeEventWalV1::open(&event_path, host.timeout_event_wal_namespace_v1())
+            .expect("open host-bound event WAL");
         let intent = host
             .prepare_timeout_event_v1(&mut wal)
             .expect("prepare authenticated timeout intent");
