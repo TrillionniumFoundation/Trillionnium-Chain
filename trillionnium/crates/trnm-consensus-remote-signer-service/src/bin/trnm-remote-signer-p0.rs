@@ -8,7 +8,8 @@ use std::{env, path::PathBuf, process::ExitCode};
 
 use trnm_consensus_remote_signer_service::{
     fixture_request, fixture_service_config_with_binding, Fixture, PurposePolicyV1,
-    RemoteSignerService, REMOTE_SIGNER_SERVICE_CONSENSUS_RUNTIME_INTEGRATION_V1,
+    RemoteSignerService, UnixExternalTimeoutAuthorityV1,
+    REMOTE_SIGNER_SERVICE_CONSENSUS_RUNTIME_INTEGRATION_V1,
     REMOTE_SIGNER_SERVICE_PRODUCTION_SIGNATURE_PRODUCER_V1,
     REMOTE_SIGNER_SERVICE_RUNTIME_ACTIVATION_V1,
 };
@@ -50,6 +51,12 @@ fn serve_external_timeout(args: Vec<String>) -> Result<(), String> {
     let fixture = Fixture::new();
     let binding = fixture
         .binding_for_generation_and_lease(parsed.generation, parsed.lease_material.as_bytes())?;
+    if let Some(expected_journal_id) = parsed.journal_id {
+        let derived_journal_id = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding);
+        if expected_journal_id != derived_journal_id {
+            return Err("--journal-id does not match the derived signer binding".to_owned());
+        }
+    }
     let config = fixture_service_config_with_binding(
         &parsed.watermark,
         PurposePolicyV1::timeout_vote_only(),
@@ -83,6 +90,7 @@ struct ExternalTimeoutArgs {
     generation: u64,
     lease_material: String,
     scope: Option<[u8; 32]>,
+    journal_id: Option<[u8; 32]>,
 }
 
 fn parse_external_timeout_args(args: &[String]) -> Result<ExternalTimeoutArgs, String> {
@@ -94,6 +102,7 @@ fn parse_external_timeout_args(args: &[String]) -> Result<ExternalTimeoutArgs, S
     let mut generation = None;
     let mut lease_material = None;
     let mut scope = None;
+    let mut journal_id = None;
     let mut index = 0;
     while index < args.len() {
         let flag = args[index].as_str();
@@ -118,6 +127,7 @@ fn parse_external_timeout_args(args: &[String]) -> Result<ExternalTimeoutArgs, S
             }
             "--lease-material" => set_once(&mut lease_material, value, flag)?,
             "--scope" => set_once(&mut scope, decode_hex32(&value)?, flag)?,
+            "--journal-id" => set_once(&mut journal_id, decode_hex32(&value)?, flag)?,
             _ => return Err(format!("unsupported argument {flag}")),
         }
         index += 2;
@@ -136,6 +146,7 @@ fn parse_external_timeout_args(args: &[String]) -> Result<ExternalTimeoutArgs, S
         generation: generation.unwrap_or(1),
         lease_material: lease_material.unwrap_or_else(|| "p0-lease".to_owned()),
         scope,
+        journal_id,
     })
 }
 
@@ -284,12 +295,15 @@ mod tests {
             "lease-seven".into(),
             "--scope".into(),
             "22".repeat(32),
+            "--journal-id".into(),
+            "33".repeat(32),
         ]);
         let parsed = parse_external_timeout_args(&args).expect("parse explicit mode");
         assert_eq!(parsed.generation, 7);
         assert_eq!(parsed.lease_material, "lease-seven");
         assert_eq!(parsed.capability, [0x11; 32]);
         assert_eq!(parsed.scope, Some([0x22; 32]));
+        assert_eq!(parsed.journal_id, Some([0x33; 32]));
     }
 
     #[test]
