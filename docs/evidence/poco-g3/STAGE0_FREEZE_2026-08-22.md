@@ -2,7 +2,9 @@
 
 This is a documentation-only freeze note for the current chain-consensus
 worktree. It records the claim boundary; it does not create, upgrade, or
-replace runtime evidence.
+replace runtime evidence. A fresh read-only fleet/readiness observation was
+added on 2026-08-23; it does not change any build, validator, multihost, or
+production bit.
 
 ## Assessed tree and savepoint lineage
 
@@ -11,18 +13,19 @@ The audit was run from the canonical linked worktree:
 ```text
 root:   /home/alex/projects/worktrees/trillionnium-chain/poco-bft-v0-phase0
 branch: feature/chain-poco-bft-v0
-HEAD:   d0c886c997ec162278d99b521b8da32e45e2ea8b
-status: clean
-tree:   9ad57373bd3f9f3c165f8c22d24e7369352a4919
+HEAD:   af6c2737e1bf9d770076f8cb8b5a61887df619c7
+status: clean before the current-observation docs-only follow-up
+tree:   03bbc502b9fc716990806968f44da05805db6a39
 ```
 
 The relevant committed lineage is:
 
 ```text
-d0c886c997  ci(stage0): register planned P2P admission contract
-└─ 6da6840380  test(stage0): define planned P2P connectivity admission
-   └─ ffa2b8799a  fix(poco): bound fleet runtime control paths
-      └─ 422654b0b6  evidence: bind Stage0 publication to held bytes
+af6c2737e1  docs(evidence): freeze Stage0 d0 claim boundary
+└─ d0c886c997  ci(stage0): register planned P2P admission contract
+   └─ 6da6840380  test(stage0): define planned P2P connectivity admission
+      └─ ffa2b8799a  fix(poco): bound fleet runtime control paths
+         └─ 422654b0b6  evidence: bind Stage0 publication to held bytes
 ```
 
 `6da6840380` adds a planned admission contract and fixture tests. `d0c886c997`
@@ -31,8 +34,10 @@ network admission, copies a validator binary or secret, starts a validator,
 or supplies a production authority.
 
 `bash scripts/project-preflight.sh --audit` passed on this tree (with the
-existing linked-worktree and `PROJECT_TOPIC` warnings). No SSH or remote
-runner action was performed for this ledger.
+existing linked-worktree and `PROJECT_TOPIC` warnings). The original ledger
+itself performed no SSH action. On 2026-08-23, the current read-only probes
+were run separately through ordinary SSH on `p4-x230` and are recorded under
+`current-observation-2026-08-23/`.
 
 ## The d6 record is historical and non-reusable
 
@@ -70,8 +75,8 @@ particular:
 ```text
 stage0_observation_complete=false
 committed_candidate_rust_src_remap_fix_observed=false
-current_fleet_probe_observed=false
-current_run_readiness_observed=false
+current_fleet_probe_observed=true
+current_run_readiness_observed=true
 stage0_deep_reverification_bundle_available=false
 validator_runtime_started=false
 validator_run_completed=false
@@ -95,8 +100,6 @@ The current status checker reports the remaining Stage0 blockers as:
 
 ```text
 committed_candidate_rust_src_remap_fix_observed
-current_fleet_probe_observed
-current_run_readiness_observed
 stage0_deep_reverification_bundle_available
 validator_run_7_completed
 ```
@@ -142,3 +145,24 @@ accepted by the current checkers:
 Until that sequence completes, this savepoint is a clean contract/freeze
 boundary only. It is not Stage0 complete, G3 LAN evidence, a restart proof, or
 a production candidate.
+
+## Fresh read-only observation (2026-08-23)
+
+The current `probe-fleet-v1` and `run-readiness-v2` producers were run from
+the canonical tree through `p4-x230`. Both current acceptors passed with six
+hosts and zero probe failures. The exact raw reports are content-addressed in
+`current-observation-2026-08-23/` and bound in `status.toml`:
+
+```text
+source commit:       af6c2737e1bf9d770076f8cb8b5a61887df619c7
+source Git tree:     03bbc502b9fc716990806968f44da05805db6a39
+Cargo.lock SHA-256:  72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b
+fleet report SHA-256: 1a4083c655298011b7d167bc9bf3127a3f1d5bba804566342966716bf0b7405d
+readiness SHA-256:    be1e4041a0d7a760b8386204de948bb359410d0b5b83302d8931ac6471bc0be0
+transport:            manual SSH via p4-x230
+```
+
+These are infrastructure observations only. They keep `build=false`,
+`validator_run=false`, `multihost_run=false`, `geo_wan=false`, and
+`production=false`; they do not satisfy the deep bundle, P2P admission, or
+seven-validator requirements.

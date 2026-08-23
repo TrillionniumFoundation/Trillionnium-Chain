@@ -7,8 +7,9 @@ using any record under this directory.
 
 This directory records the claim boundary for the bounded PoCO G3 lab lane.
 It now contains content-addressed native build records, an X230 fresh-clone
-fmt/check/key-test record, and a rust-src cross-time drift/control record for
-the exact `d6bb34c1` source candidate. The build records prove identity within
+fmt/check/key-test record, a rust-src cross-time drift/control record for the
+exact `d6bb34c1` source candidate, and a fresh read-only fleet/readiness
+observation for the `af6c2737e` savepoint. The build records prove identity within
 individual builder invocations, but the later rust-src observation disproves
 cross-time reproducibility for unpatched v1. The final remap control kept the
 evidence-bound v1 builder byte-for-byte frozen and restored the historical
@@ -94,7 +95,12 @@ Passing `check_baseline_test.py` or
 `check_run_readiness_evidence_test.py` proves only the producer/acceptor
 contract. It is not an on-fleet observation and does not prove reachability,
 tooling, capacity, fault authority, a build, or a validator run. No current
-readiness observation is claimed here.
+readiness observation was previously claimed here. The fresh current reports
+are now recorded under
+[`current-observation-2026-08-23/`](current-observation-2026-08-23/); both
+acceptors passed over ordinary SSH through `p4-x230`. They remain
+infrastructure-only observations: build, validator execution, multihost
+consensus, geo-WAN, and production are false.
 
 ## Restart boundary
 
