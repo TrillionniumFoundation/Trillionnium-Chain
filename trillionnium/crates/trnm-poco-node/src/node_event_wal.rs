@@ -67,6 +67,7 @@ pub enum NodeEventWalErrorV1 {
     CommitMismatch,
     PredecessorMismatch,
     AlreadyCommitted,
+    RecoveryReadbackRequired,
     Poisoned,
     TooLarge,
 }
@@ -90,6 +91,9 @@ impl fmt::Display for NodeEventWalErrorV1 {
                 "node-event WAL predecessor does not follow the last commit"
             }
             Self::AlreadyCommitted => "node-event WAL event is already committed",
+            Self::RecoveryReadbackRequired => {
+                "node-event WAL pending event requires an explicit durable readback"
+            }
             Self::Poisoned => "node-event WAL is poisoned",
             Self::TooLarge => "node-event WAL exceeds its bounded record count",
         })
@@ -152,6 +156,18 @@ pub trait NodeEventCommitDriverV1 {
         &mut self,
         intent: NodeEventIntentV1,
     ) -> Result<[u8; 32], NodeEventWalErrorV1>;
+
+    /// Read back an event after a restart without assuming that the write was
+    /// lost.  A pending intent is never auto-cleared: the host must provide a
+    /// fresh digest from its durable store, and only that digest may advance
+    /// the WAL.  Drivers which cannot perform restart readback remain usable
+    /// for the forward path but fail closed on recovery.
+    fn readback_event_v1(
+        &mut self,
+        _intent: NodeEventIntentV1,
+    ) -> Result<[u8; 32], NodeEventWalErrorV1> {
+        Err(NodeEventWalErrorV1::RecoveryReadbackRequired)
+    }
 }
 
 impl NodeEventCommitReceiptV1 {
@@ -554,6 +570,100 @@ impl NodeEventWalV1 {
     }
 }
 
+/// Feature-gated bounded host composition for the event/commit boundary.
+///
+/// This owner is the first caller-facing path that actually owns the WAL and
+/// the durable commit driver together.  A new event is ordered as:
+///
+/// `prepare intent + WAL fsync → driver durable write/readback → commit WAL
+/// fsync`.
+///
+/// Reopening the owner performs a fresh WAL validation.  A pending intent is
+/// surfaced as [`NodeEventRecoveryV1::Pending`] and can only be closed by the
+/// driver's explicit durable readback; no guessed success, local cache, or
+/// caller-supplied replacement digest is accepted.  This is a bounded
+/// composition seam, not a Core effect driver or a production activation.
+pub struct PocoNodeHostEventCommitOwnerV1<D> {
+    wal: NodeEventWalV1,
+    driver: D,
+}
+
+impl<D: NodeEventCommitDriverV1> PocoNodeHostEventCommitOwnerV1<D> {
+    /// Open one exclusive host event namespace and retain its commit driver.
+    /// The returned owner is the sole object that can advance this WAL in the
+    /// composed path.
+    pub fn open(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        driver: D,
+    ) -> Result<Self, NodeEventWalErrorV1> {
+        Ok(Self {
+            wal: NodeEventWalV1::open(path, namespace)?,
+            driver,
+        })
+    }
+
+    /// Freshly revalidate the WAL and classify the restart state.
+    pub fn restart_recovery_v1(&mut self) -> Result<NodeEventRecoveryV1, NodeEventWalErrorV1> {
+        self.wal.revalidate_v1()
+    }
+
+    /// Return the cached classification from the last successful open or
+    /// revalidation.  Call [`Self::restart_recovery_v1`] at a restart boundary
+    /// when the application store has also been reopened.
+    pub const fn recovery(&self) -> NodeEventRecoveryV1 {
+        self.wal.recovery()
+    }
+
+    /// Expose only an immutable WAL view for evidence and readback binding;
+    /// callers cannot replace the owner or mutate the journal behind it.
+    pub const fn wal(&self) -> &NodeEventWalV1 {
+        &self.wal
+    }
+
+    /// Prepare an intent before an externally controlled effect.  This small
+    /// method is useful when the host needs to hand the exact tuple to a
+    /// lower-level bounded driver; normal callers should prefer
+    /// [`Self::apply_and_commit_event_v1`].
+    pub fn prepare_event_v1(
+        &mut self,
+        event_id: [u8; 32],
+        predecessor_digest: [u8; 32],
+        payload_digest: [u8; 32],
+    ) -> Result<NodeEventIntentV1, NodeEventWalErrorV1> {
+        self.wal
+            .prepare_event_v1(event_id, predecessor_digest, payload_digest)
+    }
+
+    /// Execute one bounded host event through the durable ordering contract.
+    pub fn apply_and_commit_event_v1(
+        &mut self,
+        event_id: [u8; 32],
+        predecessor_digest: [u8; 32],
+        payload_digest: [u8; 32],
+    ) -> Result<NodeEventCommitReceiptV1, NodeEventWalErrorV1> {
+        let intent = self
+            .wal
+            .prepare_event_v1(event_id, predecessor_digest, payload_digest)?;
+        self.wal.commit_with_driver_v1(intent, &mut self.driver)
+    }
+
+    /// Resolve a pending intent after restart using only a fresh durable
+    /// readback from the owned driver.  If the driver reports uncertainty or a
+    /// different digest, the intent remains pending and the owner fails
+    /// closed; it is never silently replaced.
+    pub fn recover_pending_event_v1(
+        &mut self,
+    ) -> Result<Option<NodeEventCommitReceiptV1>, NodeEventWalErrorV1> {
+        let recovery = self.wal.revalidate_v1()?;
+        let NodeEventRecoveryV1::Pending(intent) = recovery else {
+            return Ok(None);
+        };
+        let commit_digest = self.driver.readback_event_v1(intent)?;
+        self.wal.commit_event_v1(intent, commit_digest).map(Some)
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 struct DecodedFrameV1 {
     kind: u8,
@@ -567,6 +677,7 @@ struct DecodedFrameV1 {
     checksum: [u8; 32],
 }
 
+#[allow(clippy::too_many_arguments)]
 fn encode_frame_v1(
     kind: u8,
     sequence: u64,
@@ -665,6 +776,40 @@ mod tests {
         }
     }
 
+    struct OwnerCommitDriver {
+        digest: [u8; 32],
+        readback_digest: Option<[u8; 32]>,
+        fail_readback: bool,
+        wal_path: PathBuf,
+        observed_wal_len_during_apply: u64,
+        calls: Vec<&'static str>,
+    }
+
+    impl NodeEventCommitDriverV1 for OwnerCommitDriver {
+        fn apply_and_readback_event_v1(
+            &mut self,
+            _intent: NodeEventIntentV1,
+        ) -> Result<[u8; 32], NodeEventWalErrorV1> {
+            self.calls.push("apply-and-readback");
+            self.observed_wal_len_during_apply = fs::metadata(&self.wal_path)
+                .map_err(|_| NodeEventWalErrorV1::Io)?
+                .len();
+            Ok(self.digest)
+        }
+
+        fn readback_event_v1(
+            &mut self,
+            _intent: NodeEventIntentV1,
+        ) -> Result<[u8; 32], NodeEventWalErrorV1> {
+            self.calls.push("restart-readback");
+            if self.fail_readback {
+                return Err(NodeEventWalErrorV1::Io);
+            }
+            self.readback_digest
+                .ok_or(NodeEventWalErrorV1::RecoveryReadbackRequired)
+        }
+    }
+
     fn digest(byte: u8) -> [u8; 32] {
         [byte; 32]
     }
@@ -724,6 +869,138 @@ mod tests {
         let receipt = wal.commit_with_driver_v1(intent, &mut failing).unwrap();
         assert_eq!(receipt.commit_digest(), digest(5));
         assert!(wal.pending().is_none());
+    }
+
+    #[test]
+    fn bounded_owner_orders_durable_intent_before_driver_and_classifies_restart_pending() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("owner-events.wal");
+        let mut owner = PocoNodeHostEventCommitOwnerV1::open(
+            &path,
+            digest(1),
+            OwnerCommitDriver {
+                digest: digest(5),
+                readback_digest: Some(digest(5)),
+                fail_readback: false,
+                wal_path: path.clone(),
+                observed_wal_len_during_apply: 0,
+                calls: Vec::new(),
+            },
+        )
+        .unwrap();
+        assert!(matches!(
+            owner.recovery(),
+            NodeEventRecoveryV1::Clean { last_commit: None }
+        ));
+        let receipt = owner
+            .apply_and_commit_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        assert_eq!(receipt.commit_digest(), digest(5));
+        assert_eq!(owner.wal().pending(), None);
+        assert_eq!(owner.wal().last_commit(), Some(receipt));
+        assert_eq!(owner.wal().path(), path.as_path());
+        assert_eq!(owner.wal().head(), receipt.commit_checksum());
+        // Genesis + intent are already durable when the actual driver runs;
+        // the commit frame is appended only after the callback returns.
+        assert_eq!(
+            owner.driver.observed_wal_len_during_apply,
+            (FRAME_BYTES_V1 * 2) as u64
+        );
+        assert_eq!(owner.driver.calls, vec!["apply-and-readback"]);
+        assert_eq!(
+            fs::metadata(&path).unwrap().len(),
+            (FRAME_BYTES_V1 * 3) as u64
+        );
+
+        let pending_path = temp.path().join("pending-owner-events.wal");
+        let intent = {
+            let mut pending_owner = PocoNodeHostEventCommitOwnerV1::open(
+                &pending_path,
+                digest(1),
+                OwnerCommitDriver {
+                    digest: digest(5),
+                    readback_digest: Some(digest(5)),
+                    fail_readback: false,
+                    wal_path: pending_path.clone(),
+                    observed_wal_len_during_apply: 0,
+                    calls: Vec::new(),
+                },
+            )
+            .unwrap();
+            pending_owner
+                .prepare_event_v1(digest(6), digest(7), digest(8))
+                .unwrap()
+        };
+        let mut reopened = PocoNodeHostEventCommitOwnerV1::open(
+            &pending_path,
+            digest(1),
+            OwnerCommitDriver {
+                digest: digest(9),
+                readback_digest: Some(digest(9)),
+                fail_readback: false,
+                wal_path: pending_path.clone(),
+                observed_wal_len_during_apply: 0,
+                calls: Vec::new(),
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            reopened.restart_recovery_v1().unwrap(),
+            NodeEventRecoveryV1::Pending(intent)
+        );
+        let recovered = reopened.recover_pending_event_v1().unwrap().unwrap();
+        assert_eq!(recovered.event_id(), digest(6));
+        assert_eq!(recovered.commit_digest(), digest(9));
+        assert_eq!(reopened.driver.calls, vec!["restart-readback"]);
+        assert!(matches!(
+            reopened.restart_recovery_v1().unwrap(),
+            NodeEventRecoveryV1::Clean {
+                last_commit: Some(_)
+            }
+        ));
+    }
+
+    #[test]
+    fn bounded_owner_keeps_pending_when_restart_readback_is_uncertain() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("uncertain-owner-events.wal");
+        let intent = {
+            let mut owner = PocoNodeHostEventCommitOwnerV1::open(
+                &path,
+                digest(1),
+                OwnerCommitDriver {
+                    digest: digest(5),
+                    readback_digest: None,
+                    fail_readback: false,
+                    wal_path: path.clone(),
+                    observed_wal_len_during_apply: 0,
+                    calls: Vec::new(),
+                },
+            )
+            .unwrap();
+            owner
+                .prepare_event_v1(digest(2), digest(3), digest(4))
+                .unwrap()
+        };
+        let mut reopened = PocoNodeHostEventCommitOwnerV1::open(
+            &path,
+            digest(1),
+            OwnerCommitDriver {
+                digest: digest(5),
+                readback_digest: Some(digest(5)),
+                fail_readback: true,
+                wal_path: path.clone(),
+                observed_wal_len_during_apply: 0,
+                calls: Vec::new(),
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            reopened.recover_pending_event_v1(),
+            Err(NodeEventWalErrorV1::Io)
+        );
+        assert_eq!(reopened.wal().pending(), Some(intent));
+        assert_eq!(reopened.driver.calls, vec!["restart-readback"]);
     }
 
     #[test]

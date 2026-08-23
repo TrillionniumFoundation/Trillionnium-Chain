@@ -320,8 +320,9 @@ pub use native_h1_state_sync_commissioning::{
 #[cfg(feature = "node-event-wal")]
 pub use node_event_wal::{
     NodeEventCommitDriverV1, NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1,
-    NodeEventWalErrorV1, NodeEventWalV1, PocoNodeHostEventCommitWalV1,
-    NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1, NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
+    NodeEventWalErrorV1, NodeEventWalV1, PocoNodeHostEventCommitOwnerV1,
+    PocoNodeHostEventCommitWalV1, NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1,
+    NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
 };
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
