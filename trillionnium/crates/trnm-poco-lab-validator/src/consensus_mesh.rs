@@ -508,6 +508,11 @@ impl MeshFixtureConfigV1 {
             incoming,
         })
     }
+
+    #[doc(hidden)]
+    pub fn admission_context_v1(&self) -> PeerAdmissionContextV1 {
+        PeerAdmissionContextV1::from_validator_set(&self.validator_set)
+    }
 }
 
 impl MeshIdentityV0 {

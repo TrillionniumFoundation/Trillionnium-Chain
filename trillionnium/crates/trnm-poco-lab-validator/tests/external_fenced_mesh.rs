@@ -22,7 +22,10 @@ use trnm_consensus_types::{
 use trnm_poco_lab_validator::{
     consensus_mesh::{MeshFixtureConfigV1, PersistentAuthenticatedPeerMeshV0},
     key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
-    p2p_admission::UnixExternalPeerLeaseAuthorityV1,
+    p2p_admission::{
+        ExternalFenceError, ExternalPeerDirectionV1, ExternalPeerLeaseAuthorityV1,
+        ExternalPeerLeaseRequestV1, ExternalPeerLeaseScopeV1, UnixExternalPeerLeaseAuthorityV1,
+    },
     transport::RunTransportContext,
 };
 
@@ -164,6 +167,7 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let root = TempDir::new().unwrap();
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
+    let admission_context = a_config.admission_context_v1();
     let a_socket = socket.clone();
     let b_socket = socket.clone();
     let a_thread = thread::spawn(move || {
@@ -223,8 +227,33 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
         }
     }
     assert!(received, "fenced mesh did not deliver authenticated frame");
+    let outbound_session = a_mesh
+        .initial_sessions()
+        .iter()
+        .find(|facts| {
+            facts.direction() == trnm_poco_lab_validator::consensus_mesh::PeerDirectionV0::Outbound
+        })
+        .expect("outbound session exists")
+        .session_id();
     b_mesh.close().unwrap();
     a_mesh.close().unwrap();
+    // The daemon retains the monotonic generation after both mesh workers
+    // release their leases.  Replaying generation one with the old session
+    // must be rejected across the process boundary.
+    let replay_scope = ExternalPeerLeaseScopeV1::new(
+        ValidatorId::new([0x71; 32]),
+        ValidatorId::new([0x72; 32]),
+        ExternalPeerDirectionV1::Outbound,
+        admission_context,
+        outbound_session,
+        1,
+    )
+    .unwrap();
+    let replay_authority = UnixExternalPeerLeaseAuthorityV1::connect(&socket);
+    let replay_error = replay_authority
+        .acquire(ExternalPeerLeaseRequestV1::new(replay_scope, Duration::from_secs(1)).unwrap())
+        .unwrap_err();
+    assert_eq!(replay_error, ExternalFenceError::StaleGeneration);
     daemon.kill().unwrap();
     daemon.wait().unwrap();
 }
