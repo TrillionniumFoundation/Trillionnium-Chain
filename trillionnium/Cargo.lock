@@ -1535,6 +1535,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-core-restart-v0"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "fs2",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-types",
+ "trnm-native-application",
+]
+
+[[package]]
 name = "trnm-executor"
 version = "0.1.0"
 dependencies = [
