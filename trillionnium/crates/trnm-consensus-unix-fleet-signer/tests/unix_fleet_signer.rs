@@ -22,10 +22,18 @@ fn origin() -> ValidatorId {
 }
 
 fn config(socket: &Path) -> UnixFleetRootSignerConfig {
+    config_with(socket, origin(), [0x31; 32])
+}
+
+fn config_with(
+    socket: &Path,
+    request_origin: ValidatorId,
+    validator_set_id: [u8; 32],
+) -> UnixFleetRootSignerConfig {
     UnixFleetRootSignerConfig {
         socket_path: socket.to_path_buf(),
-        origin: origin(),
-        validator_set_id: [0x31; 32],
+        origin: request_origin,
+        validator_set_id,
         verifying_key: fixture_public_key_v1(),
         timeout: Duration::from_secs(2),
     }
@@ -60,6 +68,64 @@ fn wait_for_socket(socket: &Path) {
         thread::sleep(Duration::from_millis(5));
     }
     panic!("fixture did not create socket: {}", socket.display());
+}
+
+fn spawn_authority(dir: &TempDir, count: usize) -> (Child, std::path::PathBuf, std::path::PathBuf) {
+    let socket = dir.path().join("fleet-root-authority.sock");
+    let log = dir.path().join("fleet-root-authority.log");
+    let binary = env!("CARGO_BIN_EXE_trnm-fleet-root-signer-authority-fixture");
+    let mut child = Command::new(binary)
+        .arg(&socket)
+        .arg(&log)
+        .arg(count.to_string())
+        .spawn()
+        .expect("spawn durable fleet authority fixture");
+    for _ in 0..400 {
+        if socket.exists() {
+            return (child, socket, log);
+        }
+        if let Some(status) = child.try_wait().expect("poll durable fixture") {
+            panic!("durable fixture exited before socket: {status}");
+        }
+        thread::sleep(Duration::from_millis(5));
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+    panic!(
+        "durable fixture did not create socket: {}",
+        socket.display()
+    );
+}
+
+fn assert_authority_start_fails(socket: &Path, log: &Path) {
+    let binary = env!("CARGO_BIN_EXE_trnm-fleet-root-signer-authority-fixture");
+    let mut child = Command::new(binary)
+        .arg(socket)
+        .arg(log)
+        .arg("1")
+        .spawn()
+        .expect("spawn tampered durable authority fixture");
+    for _ in 0..400 {
+        if let Some(status) = child.try_wait().expect("poll tampered fixture") {
+            assert!(!status.success(), "tampered authority unexpectedly started");
+            assert!(!socket.exists(), "tampered authority exposed a socket");
+            return;
+        }
+        assert!(!socket.exists(), "tampered authority exposed a socket");
+        thread::sleep(Duration::from_millis(5));
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+    panic!("tampered authority stayed alive");
+}
+
+fn authority_request(
+    producer: &mut UnixFleetRootSignerProducerV1,
+    purpose: FleetRootPurposeV1,
+    root: u8,
+    nonce: u8,
+) -> Result<[u8; 64], UnixFleetSignerErrorV1> {
+    producer.sign_fleet_root_v1(purpose, [root; 32], [nonce; 32])
 }
 
 #[test]
@@ -137,4 +203,182 @@ fn socket_and_frame_boundaries_are_private_and_fail_closed() {
     ));
     child.kill().expect("stop fixture");
     let _ = child.wait();
+}
+
+#[test]
+fn durable_authority_exact_replay_does_not_append_or_resign() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, log) = spawn_authority(&dir, 2);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    let first = authority_request(&mut producer, FleetRootPurposeV1::Ready, 0x91, 0x11)
+        .expect("first durable signature");
+    let first_len = fs::metadata(&log).expect("authority log metadata").len();
+    let replay = authority_request(&mut producer, FleetRootPurposeV1::Ready, 0x91, 0x11)
+        .expect("exact durable replay");
+    assert_eq!(
+        first, replay,
+        "replay must return persisted signature bytes"
+    );
+    assert_eq!(
+        fs::metadata(&log).expect("authority log metadata").len(),
+        first_len,
+        "exact replay must not append a second authority record"
+    );
+    assert!(child.wait().expect("authority wait").success());
+}
+
+#[test]
+fn durable_authority_survives_sigkill_and_reopen() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, log) = spawn_authority(&dir, 1);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    let first = authority_request(&mut producer, FleetRootPurposeV1::Ready, 0x92, 0x21)
+        .expect("first durable signature");
+    child.kill().expect("kill authority");
+    let _ = child.wait();
+
+    let (mut reopened, socket, _) = spawn_authority(&dir, 1);
+    let mut replay_producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    let replay = authority_request(&mut replay_producer, FleetRootPurposeV1::Ready, 0x92, 0x21)
+        .expect("replayed signature after reopen");
+    assert_eq!(first, replay);
+    assert!(reopened.wait().expect("reopen wait").success());
+
+    let (mut next, socket, _) = spawn_authority(&dir, 1);
+    let mut next_producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut next_producer, FleetRootPurposeV1::Start, 0x93, 0x22)
+        .expect("new post-reopen signature");
+    assert!(next.wait().expect("next wait").success());
+    assert!(fs::metadata(log).expect("log remains").len() > 0);
+}
+
+#[test]
+fn durable_authority_conflicting_nonce_is_rejected() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, _) = spawn_authority(&dir, 2);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut producer, FleetRootPurposeV1::Start, 0xa0, 0x31)
+        .expect("first durable signature");
+    let error = authority_request(&mut producer, FleetRootPurposeV1::Start, 0xa1, 0x31)
+        .expect_err("conflicting nonce must reject");
+    assert!(matches!(
+        error,
+        UnixFleetSignerErrorV1::Protocol(
+            trnm_consensus_unix_fleet_signer::FleetSignerProtocolErrorV1::Rejected(9)
+        )
+    ));
+    assert!(child.wait().expect("authority wait").success());
+}
+
+#[test]
+fn durable_authority_origin_and_set_bindings_are_immutable() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, _) = spawn_authority(&dir, 3);
+    let mut good = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut good, FleetRootPurposeV1::Ready, 0xa2, 0x32).expect("bound request");
+
+    let other_origin = ValidatorId::from_bytes(b"other-fleet-validator").expect("origin");
+    let mut wrong_origin =
+        UnixFleetRootSignerProducerV1::new(config_with(&socket, other_origin, [0x31; 32]))
+            .expect("wrong-origin client");
+    let origin_error = authority_request(&mut wrong_origin, FleetRootPurposeV1::Ready, 0xa3, 0x33)
+        .expect_err("wrong origin must reject");
+    assert!(matches!(
+        origin_error,
+        UnixFleetSignerErrorV1::Protocol(
+            trnm_consensus_unix_fleet_signer::FleetSignerProtocolErrorV1::Rejected(7)
+        )
+    ));
+
+    let mut wrong_set =
+        UnixFleetRootSignerProducerV1::new(config_with(&socket, origin(), [0x32; 32]))
+            .expect("wrong-set client");
+    let set_error = authority_request(&mut wrong_set, FleetRootPurposeV1::Ready, 0xa4, 0x34)
+        .expect_err("wrong validator set must reject");
+    assert!(matches!(
+        set_error,
+        UnixFleetSignerErrorV1::Protocol(
+            trnm_consensus_unix_fleet_signer::FleetSignerProtocolErrorV1::Rejected(7)
+        )
+    ));
+    assert!(child.wait().expect("authority wait").success());
+}
+
+#[test]
+fn durable_authority_rejects_log_anchor_and_tail_tamper_before_bind() {
+    // A changed record must fail before the fixture creates a socket.
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, log) = spawn_authority(&dir, 1);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut producer, FleetRootPurposeV1::Ready, 0xb0, 0x41)
+        .expect("seed authority log");
+    assert!(child.wait().expect("authority wait").success());
+    let mut bytes = fs::read(&log).expect("read authority log");
+    let last = bytes.len() - 1;
+    bytes[last] ^= 1;
+    fs::write(&log, bytes).expect("tamper authority log");
+    assert_authority_start_fails(&socket, &log);
+
+    // An anchor mismatch is independently rejected.
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, log) = spawn_authority(&dir, 1);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut producer, FleetRootPurposeV1::Ready, 0xb1, 0x42)
+        .expect("seed authority anchor");
+    assert!(child.wait().expect("authority wait").success());
+    let anchor = log.parent().expect("log parent").join(format!(
+        ".{}.anchor",
+        log.file_name().unwrap().to_string_lossy()
+    ));
+    let mut anchor_bytes = fs::read(&anchor).expect("read authority anchor");
+    let last = anchor_bytes.len() - 1;
+    anchor_bytes[last] ^= 1;
+    fs::write(&anchor, anchor_bytes).expect("tamper authority anchor");
+    assert_authority_start_fails(&socket, &log);
+
+    // A partial record tail is not recoverable and must fail closed.
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut child, socket, log) = spawn_authority(&dir, 1);
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut producer, FleetRootPurposeV1::Ready, 0xb2, 0x43)
+        .expect("seed authority tail");
+    assert!(child.wait().expect("authority wait").success());
+    let length = fs::metadata(&log).expect("authority log metadata").len();
+    let file = fs::OpenOptions::new()
+        .write(true)
+        .open(&log)
+        .expect("open authority log for truncation");
+    file.set_len(length - 1).expect("truncate authority log");
+    assert_authority_start_fails(&socket, &log);
+}
+
+#[test]
+fn durable_authority_namespace_lock_is_private_and_exclusive() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let (mut first, socket, log) = spawn_authority(&dir, 1);
+    let binary = env!("CARGO_BIN_EXE_trnm-fleet-root-signer-authority-fixture");
+    let mut second = Command::new(binary)
+        .arg(&socket)
+        .arg(&log)
+        .arg("1")
+        .spawn()
+        .expect("spawn second authority");
+    let status = second.wait().expect("second authority wait");
+    assert!(
+        !status.success(),
+        "second authority acquired namespace lock"
+    );
+    let mut producer = UnixFleetRootSignerProducerV1::new(config(&socket)).expect("client");
+    authority_request(&mut producer, FleetRootPurposeV1::Ready, 0xc1, 0x51)
+        .expect("first authority remains available");
+    assert!(first.wait().expect("first authority wait").success());
+
+    // A pre-existing lock with a broad mode is rejected before locking.
+    let dir = tempfile::tempdir().expect("tempdir");
+    let log = dir.path().join("fleet-root-authority.log");
+    let lock = dir.path().join(".fleet-root-authority.log.lock");
+    fs::write(&lock, []).expect("create broad lock");
+    fs::set_permissions(&lock, fs::Permissions::from_mode(0o640)).expect("broaden lock");
+    let socket = dir.path().join("fleet-root-authority.sock");
+    assert_authority_start_fails(&socket, &log);
 }

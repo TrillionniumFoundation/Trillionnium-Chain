@@ -17,6 +17,9 @@ request_validator_set_binding = true
 request_signing_root_binding = true
 request_nonce_binding = true
 exact_response_replay = true
+durable_append_only_hash_chain = true
+exclusive_namespace_lock = true
+cross_process_authority = true
 private_key_handling = false
 fixture_private_key = false
 external_monotonic_watermark = false
@@ -33,6 +36,8 @@ default = []
 test-fixture = ["dep:ed25519-dalek"]
 
 [dependencies]
+fs2 = "0.4"
+libc = "0.2"
 sha2 = { version = "0.10", default-features = false }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
@@ -47,4 +52,9 @@ tempfile = "3"
 [[bin]]
 name = "trnm-fleet-root-signer-test-fixture"
 path = "src/bin/test_fixture.rs"
+required-features = ["test-fixture"]
+
+[[bin]]
+name = "trnm-fleet-root-signer-authority-fixture"
+path = "src/bin/authority_fixture.rs"
 required-features = ["test-fixture"]

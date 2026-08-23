@@ -14,8 +14,12 @@ use std::{
 };
 
 use ed25519_dalek::{Signer, SigningKey};
+use trnm_consensus_types::ValidatorId;
 
-use crate::{FleetRootRequestV1, FleetRootResponseV1, MAX_REQUEST_BYTES_V1};
+use crate::{
+    DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
+    FleetRootRequestV1, FleetRootResponseV1, MAX_REQUEST_BYTES_V1,
+};
 
 /// Fixture seed is compiled only under `test-fixture` and never enters the
 /// default client build.
@@ -24,6 +28,126 @@ pub fn fixture_public_key_v1() -> [u8; 32] {
     SigningKey::from_bytes(&FIXTURE_SEED_V1)
         .verifying_key()
         .to_bytes()
+}
+
+struct FixtureAuthoritySignerV1 {
+    key: SigningKey,
+}
+
+impl FleetRootAuthoritySignerV1 for FixtureAuthoritySignerV1 {
+    fn sign_fleet_root_authority_v1(
+        &mut self,
+        request: &FleetRootRequestV1,
+    ) -> Result<[u8; 64], FleetRootAuthorityErrorV1> {
+        Ok(self.key.sign(&request.signing_root()).to_bytes())
+    }
+}
+
+/// Runs a bounded durable authority subprocess fixture. The authority opens
+/// and authenticates the log/anchor before binding its socket, so startup
+/// tamper/truncation errors never expose a signing endpoint. The fixture key
+/// is deterministic test material and is unavailable without `test-fixture`.
+pub fn serve_durable_fixture(
+    socket_path: impl AsRef<Path>,
+    log_path: impl AsRef<Path>,
+    request_count: usize,
+) -> Result<(), String> {
+    if request_count == 0 {
+        return Err("request count must be positive".to_owned());
+    }
+    let requested_socket = socket_path.as_ref();
+    let requested_log = log_path.as_ref();
+    if !requested_socket.is_absolute() || !requested_log.is_absolute() {
+        return Err("durable fixture paths must be absolute".to_owned());
+    }
+
+    // Acquire and replay the authority before creating a reachable socket.
+    let mut authority = DurableFleetRootSignerAuthorityV1::open(
+        requested_log,
+        ValidatorId::from_bytes(b"fleet-fixture-validator")
+            .map_err(|_| "invalid fixture origin".to_owned())?,
+        [0x31; 32],
+        fixture_public_key_v1(),
+        FixtureAuthoritySignerV1 {
+            key: SigningKey::from_bytes(&FIXTURE_SEED_V1),
+        },
+    )
+    .map_err(|error| format!("open durable authority: {error}"))?;
+
+    if let Ok(metadata) = fs::symlink_metadata(requested_socket) {
+        if metadata.file_type().is_symlink() || !metadata.file_type().is_socket() {
+            return Err("durable fixture socket is not a plain socket".to_owned());
+        }
+        fs::remove_file(requested_socket).map_err(|error| error.to_string())?;
+    }
+    let socket_parent = requested_socket
+        .parent()
+        .ok_or_else(|| "socket has no parent".to_owned())?;
+    fs::create_dir_all(socket_parent).map_err(|error| error.to_string())?;
+    fs::set_permissions(socket_parent, fs::Permissions::from_mode(0o700))
+        .map_err(|error| error.to_string())?;
+    let socket_parent = fs::canonicalize(socket_parent).map_err(|error| error.to_string())?;
+    let filename = requested_socket
+        .file_name()
+        .ok_or_else(|| "socket has no filename".to_owned())?;
+    let socket = socket_parent.join(filename);
+    let listener = UnixListener::bind(&socket).map_err(|error| error.to_string())?;
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600))
+        .map_err(|error| error.to_string())?;
+
+    let result = (|| {
+        for incoming in listener.incoming().take(request_count) {
+            let mut stream = incoming.map_err(|error| error.to_string())?;
+            let body =
+                read_frame(&mut stream, MAX_REQUEST_BYTES_V1).map_err(|error| error.to_string())?;
+            let request = match FleetRootRequestV1::decode_exact(&body) {
+                Ok(request) => request,
+                Err(error) => {
+                    write_reject(&mut stream, 7).map_err(|io_error| io_error.to_string())?;
+                    let _ = error;
+                    continue;
+                }
+            };
+            let signature = match authority.sign_fleet_root_v1(&request) {
+                Ok(signature) => signature,
+                Err(error) if is_fatal_authority_error(&error) => {
+                    return Err(format!("durable authority stopped: {error}"));
+                }
+                Err(FleetRootAuthorityErrorV1::ReplayConflict) => {
+                    write_reject(&mut stream, 9).map_err(|io_error| io_error.to_string())?;
+                    continue;
+                }
+                Err(FleetRootAuthorityErrorV1::Protocol(_)) => {
+                    write_reject(&mut stream, 7).map_err(|io_error| io_error.to_string())?;
+                    continue;
+                }
+                Err(FleetRootAuthorityErrorV1::BindingMismatch(_)) => {
+                    write_reject(&mut stream, 7).map_err(|io_error| io_error.to_string())?;
+                    continue;
+                }
+                Err(error) => return Err(format!("durable authority stopped: {error}")),
+            };
+            let response = FleetRootResponseV1::from_request_signature(&request, signature)
+                .map_err(|error| error.to_string())?;
+            write_ok(&mut stream, &response.try_exact_bytes())
+                .map_err(|error| error.to_string())?;
+        }
+        Ok(())
+    })();
+    let _ = fs::remove_file(&socket);
+    result
+}
+
+fn is_fatal_authority_error(error: &FleetRootAuthorityErrorV1) -> bool {
+    matches!(
+        error,
+        FleetRootAuthorityErrorV1::InvalidConfig(_)
+            | FleetRootAuthorityErrorV1::InvalidLog(_)
+            | FleetRootAuthorityErrorV1::Io { .. }
+            | FleetRootAuthorityErrorV1::Conflict(_)
+            | FleetRootAuthorityErrorV1::SignatureInvalid
+            | FleetRootAuthorityErrorV1::Poisoned
+    )
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

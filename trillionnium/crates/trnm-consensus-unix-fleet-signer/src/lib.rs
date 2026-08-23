@@ -12,6 +12,8 @@
 #[cfg(not(unix))]
 compile_error!("trnm-consensus-unix-fleet-signer requires a Unix host");
 
+mod authority;
+
 use std::{
     fmt, fs,
     io::{self, Read, Write},
@@ -28,6 +30,10 @@ use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     ConsensusPublicKey, SignatureBytes, SignatureVerifier, SigningRoot, Validator, ValidatorId,
     VotingPower,
+};
+
+pub use authority::{
+    DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
 };
 
 /// Runtime activation is intentionally closed for this transport seam.
