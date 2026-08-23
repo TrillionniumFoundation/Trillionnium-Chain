@@ -91,6 +91,7 @@ pub struct PocoNodeNativeH1OrdinaryLabTestBundleV0<W: ExternalMonotonicWatermark
     runtime: PocoNodeLabOrdinaryProposalRuntimeV0<W>,
     core_config: CoreConfig,
     application_config: NativeApplicationConfigV0,
+    reopen_application_config: NativeApplicationConfigV0,
     local_validator: ValidatorId,
     validator_set: ValidatorSet,
     consensus_parameters: ConsensusParametersV0,
@@ -260,6 +261,27 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeNativeH1OrdinaryLabTestBundleV0<W>
     ) {
         (self.core_config, self.application_config, self.runtime)
     }
+
+    /// Test-only consuming shape for an exact process drop followed by a
+    /// second reopen of the same durable root.  A fresh immutable config is
+    /// retained for the second host so the production config type does not
+    /// become cloneable merely to support a test fixture.
+    #[allow(clippy::type_complexity)]
+    pub fn into_reopen_test_parts_v0(
+        self,
+    ) -> (
+        CoreConfig,
+        NativeApplicationConfigV0,
+        NativeApplicationConfigV0,
+        PocoNodeLabOrdinaryProposalRuntimeV0<W>,
+    ) {
+        (
+            self.core_config,
+            self.application_config,
+            self.reopen_application_config,
+            self.runtime,
+        )
+    }
 }
 
 /// Authors and consumes one exact fresh h1 takeover under an empty protected
@@ -283,6 +305,8 @@ pub fn commission_native_h1_ordinary_lab_test_bundle_v0<W: ExternalMonotonicWate
     let application_config =
         native_application_config_v0(validator_set.clone(), parameters, local_validator)?;
     let recovery_application_config =
+        native_application_config_v0(validator_set.clone(), parameters, local_validator)?;
+    let reopen_application_config =
         native_application_config_v0(validator_set.clone(), parameters, local_validator)?;
     let (proof, [h1, h2, h3]) = canonical_empty_prefix_v0(&keys, parameters, &validator_set)?;
     let core_config = support_try!(
@@ -320,6 +344,7 @@ pub fn commission_native_h1_ordinary_lab_test_bundle_v0<W: ExternalMonotonicWate
         runtime,
         core_config,
         application_config: recovery_application_config,
+        reopen_application_config,
         local_validator,
         validator_set,
         consensus_parameters: parameters,

@@ -602,6 +602,114 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
     }
 }
 
+/// Test-support host boundary for an already authenticated deployed cut.
+///
+/// The ordinary recovery owner above deliberately predates a real node host:
+/// it owns Core and all durable namespaces but exposes no lifecycle surface.
+/// This wrapper is the smallest safe integration point for host reopen tests.
+/// It does not install an effect driver, activate a signer, or release a
+/// timer.  Opening it performs the existing Core anchor-recovery coordinator
+/// and then performs one more owner-affinity read immediately before the host
+/// is returned.  The extra read closes the otherwise untested gap between the
+/// recovery coordinator returning and a host retaining the owner.
+#[cfg(feature = "lab-validator-runtime-test-support")]
+#[must_use = "the test host pins the authenticated recovery owner"]
+pub struct PocoNodeDeployedLabRecoveryHostV0<W: ExternalMonotonicWatermarkV0> {
+    owner: PocoNodeDeployedLabOrdinaryRecoveryOwnerV0<W>,
+}
+
+#[cfg(feature = "lab-validator-runtime-test-support")]
+impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
+    pub const fn facts_v0(&self) -> &PocoNodeDeployedLabRecoveryFactsV0 {
+        self.owner.facts_v0()
+    }
+
+    /// Re-read the Core/Safety/signer/checkpoint join while the host is held.
+    ///
+    /// This is intentionally read-only.  Any disagreement fail-stops the
+    /// host and prevents a caller from treating a post-open mutation as a
+    /// valid recovery result.
+    pub fn revalidate_durable_boundary_v0(
+        &mut self,
+    ) -> Result<(), PocoNodeDeployedLabRecoveryErrorV0> {
+        let expected = self.owner.facts.checkpoint;
+        let safety = self.owner._safety_store.head().map_err(|error| {
+            PocoNodeDeployedLabRecoveryErrorV0::from_debug("host.safety_readback", error)
+        })?;
+        if safety.state() != self.owner._core.safety_state() {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.core_safety_join",
+                "host reopen observed a Safety head different from the recovered Core",
+            ));
+        }
+        let signer = self
+            .owner
+            ._signer
+            .confirm_node_checkpoint_head_exact_v0()
+            .map_err(|error| {
+                PocoNodeDeployedLabRecoveryErrorV0::from_debug("host.signer_readback", error)
+            })?;
+        if signer.exact_watermark() != expected.signer_exact_watermark() {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.signer_checkpoint_join",
+                "host reopen observed a signer watermark different from the checkpoint",
+            ));
+        }
+        let observed = self
+            .owner
+            ._checkpoint_store
+            .load(expected.scope())
+            .map_err(|error| {
+                PocoNodeDeployedLabRecoveryErrorV0::from_debug("host.checkpoint_readback", error)
+            })?;
+        if observed != Some(expected) {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.checkpoint_join",
+                "host reopen observed a changed or missing external checkpoint",
+            ));
+        }
+        Ok(())
+    }
+}
+
+#[cfg(feature = "lab-validator-runtime-test-support")]
+impl<W: ExternalMonotonicWatermarkV0> fmt::Debug for PocoNodeDeployedLabRecoveryHostV0<W> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("PocoNodeDeployedLabRecoveryHostV0")
+            .field("facts", self.owner.facts_v0())
+            .finish_non_exhaustive()
+    }
+}
+
+/// Open the existing deployed cut through the test-only host boundary.
+///
+/// The underlying recovery coordinator remains the sole constructor of the
+/// Core owner.  This function only adds a final, read-only host admission
+/// check; it cannot commission a fresh namespace or enable production flags.
+#[cfg(feature = "lab-validator-runtime-test-support")]
+pub fn reopen_deployed_lab_ordinary_host_v0<W, F, E>(
+    authority_root: impl AsRef<Path>,
+    core_config: CoreConfig,
+    application_config: NativeApplicationConfigV0,
+    open_watermark: F,
+) -> Result<PocoNodeDeployedLabRecoveryHostV0<W>, PocoNodeDeployedLabRecoveryErrorV0>
+where
+    W: ExternalMonotonicWatermarkV0,
+    F: FnOnce(&Path) -> Result<W, E>,
+    E: fmt::Debug,
+{
+    let owner = reopen_deployed_lab_ordinary_cut_v0(
+        authority_root,
+        core_config,
+        application_config,
+        open_watermark,
+    )?;
+    let mut host = PocoNodeDeployedLabRecoveryHostV0 { owner };
+    host.revalidate_durable_boundary_v0()?;
+    Ok(host)
+}
+
 /// Non-cloneable output of exact signed-ancestry authentication.
 ///
 /// It pins all underlying durable owners and retains the verified signed
@@ -2075,5 +2183,79 @@ mod tests {
         );
         assert_eq!(authenticated.signed_replay_v0().len(), 1);
         assert_ne!(authenticated.facts_v0().challenge_sha256_v0(), [0; 32]);
+    }
+
+    #[test]
+    fn host_reopen_detects_external_checkpoint_tamper_after_core_recovery_v0() {
+        let result = std::thread::Builder::new()
+            .name("deployed-lab-host-reopen-checkpoint-tamper".to_owned())
+            .stack_size(64 * 1024 * 1024)
+            .spawn(assert_host_reopen_detects_external_checkpoint_tamper_after_core_recovery_v0)
+            .expect("spawn bounded large-stack host reopen test")
+            .join();
+        if let Err(payload) = result {
+            std::panic::resume_unwind(payload);
+        }
+    }
+
+    fn assert_host_reopen_detects_external_checkpoint_tamper_after_core_recovery_v0() {
+        let directory = tempdir().expect("create host reopen test root");
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("protect host reopen test root");
+        let watermark = SharedWatermarkV0::default();
+        let bundle = crate::commission_native_h1_ordinary_lab_test_bundle_v0(
+            directory.path(),
+            watermark.clone(),
+            4,
+            0,
+        )
+        .expect("commission exact deployed h1-h3 host reopen cut");
+        let (core_config, application_config, reopen_application_config, runtime) =
+            bundle.into_reopen_test_parts_v0();
+        drop(runtime);
+
+        let first_watermark = watermark.clone();
+        let first_host = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            core_config.clone(),
+            application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(first_watermark),
+        )
+        .expect("open exact cut through the host recovery boundary");
+        let expected_facts = first_host.facts_v0().clone();
+        let checkpoint = expected_facts.checkpoint_v0();
+        drop(first_host);
+
+        let second_watermark = watermark.clone();
+        let mut host = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            core_config,
+            reopen_application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(second_watermark),
+        )
+        .expect("reopen the same durable cut through a fresh host");
+        assert_eq!(host.facts_v0(), &expected_facts);
+        host.revalidate_durable_boundary_v0()
+            .expect("reopened host readback must match the recovered Core/checkpoint join");
+
+        let path = directory.path().join("checkpoint/checkpoint.sqlite3");
+        let mut corrupted = checkpoint.encode_canonical();
+        corrupted[352] ^= 1;
+        let connection = rusqlite::Connection::open(&path).expect("open checkpoint for tamper");
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE trnm_external_node_checkpoint_v0 SET record = ?1 WHERE scope = ?2",
+                    rusqlite::params![&corrupted[..], checkpoint.scope().as_slice()],
+                )
+                .expect("tamper only the canonical checkpoint record"),
+            1
+        );
+        drop(connection);
+
+        let error = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("host must fail closed after external checkpoint tamper");
+        assert_eq!(error.stage_v0(), "host.checkpoint_readback");
     }
 }

@@ -250,6 +250,10 @@ pub use deployed_lab_recovery::{
     PocoNodeDeployedLabReplayBlockV0, PocoNodeDeployedLabSignedAncestryReplayChallengeV0,
     PocoNodeDeployedLabSignedReplayEntryV0, DEPLOYED_LAB_COHERENT_WHOLE_ROOT_ROLLBACK_AUTHORITY_V0,
 };
+#[cfg(feature = "lab-validator-runtime-test-support")]
+pub use deployed_lab_recovery::{
+    reopen_deployed_lab_ordinary_host_v0, PocoNodeDeployedLabRecoveryHostV0,
+};
 pub use external_node_checkpoint::{
     reconcile_development_only_external_node_checkpoint_startup_v0,
     ConfirmedNodeCheckpointCandidateV0, ExternalNodeCheckpointDecodeErrorV0,
