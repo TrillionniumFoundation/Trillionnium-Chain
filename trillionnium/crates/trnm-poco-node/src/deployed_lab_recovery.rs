@@ -2157,6 +2157,48 @@ mod tests {
             live.application_applied_height_v0(),
             live.finalized_height_v0()
         );
+
+        // The h4 QC drives the three-chain finalization of the older
+        // finalized tip (h4 itself remains the high-QC/speculative head).
+        // Exercise the real Ready-runtime query boundary against the native
+        // P row committed by `apply_and_ack_finalization_v0`, rather than the
+        // h1-h3 trusted-base fixture which intentionally has no committed P.
+        let finalized_block_id = live.finalized_block_id_v0();
+        let finalized_height = live.finalized_height_v0();
+        let finalized_proof = runtime
+            .finalized_proof_v0()
+            .expect("expose the exact post-h4 finalized proof");
+        assert_eq!(finalized_proof.finalized_block_id_v0(), finalized_block_id);
+        assert_eq!(finalized_proof.finalized_height_v0(), finalized_height);
+        let by_block = runtime
+            .read_finalized_by_block_id_v0(finalized_block_id)
+            .expect("read the committed finalized P row by proof-named BlockId");
+        assert_eq!(by_block.proof_v0(), &finalized_proof);
+        let by_block_head = by_block
+            .read_v0()
+            .finalized_head_v0()
+            .expect("decode the committed finalized application head");
+        assert_eq!(by_block_head.height().get(), finalized_height);
+        assert_eq!(
+            by_block_head.block_id().as_bytes(),
+            finalized_block_id.as_bytes()
+        );
+        assert_eq!(
+            by_block_head.state_root().as_bytes(),
+            finalized_proof.state_root_v0().as_bytes()
+        );
+        assert_eq!(
+            by_block.read_v0().receipts_root_v0().as_bytes(),
+            finalized_proof.receipts_root_v0().as_bytes()
+        );
+        let by_height = runtime
+            .read_finalized_by_height_v0(finalized_height)
+            .expect("read the same committed finalized P row by height");
+        assert_eq!(by_height.proof_v0(), by_block.proof_v0());
+        assert_eq!(
+            by_height.read_v0().durable_row_v0().p_digest_v0(),
+            by_block.read_v0().durable_row_v0().p_digest_v0()
+        );
         drop(runtime);
 
         let first_core_config = core_config.clone();
