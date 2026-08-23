@@ -702,8 +702,10 @@ mod tests {
     use tempfile::tempdir;
     use trnm_consensus_crypto::StrictEd25519Verifier;
     use trnm_consensus_signer_journal::{ExternalWatermarkErrorV0, SignerWatermarkV0};
+    use trnm_consensus_types::BlockId;
 
     use super::*;
+    use crate::PocoNodeLabFinalizedQueryErrorV0;
 
     #[derive(Debug, Default)]
     struct MemoryWatermarkV0 {
@@ -830,6 +832,32 @@ mod tests {
                         &StrictEd25519Verifier,
                     )
                     .is_err());
+                assert!(matches!(
+                    bundle
+                        .runtime_v0()
+                        .read_finalized_by_block_id_v0(finalized.finalized_block_id_v0()),
+                    Err(PocoNodeLabFinalizedQueryErrorV0::Application(error))
+                        if error.contains("read_finalized.missing_block")
+                ));
+                assert!(matches!(
+                    bundle
+                        .runtime_v0()
+                        .read_finalized_by_height_v0(finalized.finalized_height_v0()),
+                    Err(PocoNodeLabFinalizedQueryErrorV0::Application(error))
+                        if error.contains("read_finalized.missing_height")
+                ));
+                assert!(matches!(
+                    bundle
+                        .runtime_v0()
+                        .read_finalized_by_height_v0(finalized.finalized_height_v0() + 1),
+                    Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(_))
+                ));
+                assert!(matches!(
+                    bundle
+                        .runtime_v0()
+                        .read_finalized_by_block_id_v0(BlockId::new([0xee; 32])),
+                    Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(_))
+                ));
             })
             .expect("spawn bounded deployed commissioning owner")
             .join()

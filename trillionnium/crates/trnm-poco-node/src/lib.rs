@@ -283,15 +283,16 @@ pub use g2_order_commit_v1::real_e2e_tests::PocoNodeG2ProcessFixtureV2;
 pub use lab_authority::{
     PocoNodeLabAuthorityErrorV0, PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,
     PocoNodeLabCheckpointComparisonClassV0, PocoNodeLabCheckpointComparisonErrorV0,
-    PocoNodeLabFinalizedProofV0, PocoNodeLabFreshOrdinaryGenesisConfigV0,
-    PocoNodeLabInertRequestFactsV0, PocoNodeLabInertRequestOwnerV0, PocoNodeLabInertTimeoutFactsV0,
-    PocoNodeLabInertTimeoutOwnerV0, PocoNodeLabOrdinaryProposalRuntimeV0,
-    PocoNodeLabPendingFinalizationOwnerV0, PocoNodeLabPhaseFactsV0, PocoNodeLabProposalBindingV0,
-    PocoNodeLabProposalJournalConfigV0, PocoNodeLabProposalParentV0, PocoNodeLabRuntimeFactsV0,
-    PocoNodeLabSignedTimeoutFactsV0, PocoNodeLabSignedTimeoutOutboundV0,
-    PocoNodeLabSignedTimeoutOwnerV0, PocoNodeLabSignedVoteFactsV0, PocoNodeLabSignedVoteOutboundV0,
-    PocoNodeLabSignedVoteOwnerV0, PocoNodeLabTerminalCheckpointApplicationV0,
-    PocoNodeLabTerminalCutV0, PocoNodeLabTerminalOwnerV0,
+    PocoNodeLabFinalizedProofV0, PocoNodeLabFinalizedQueryErrorV0, PocoNodeLabFinalizedQueryV0,
+    PocoNodeLabFreshOrdinaryGenesisConfigV0, PocoNodeLabInertRequestFactsV0,
+    PocoNodeLabInertRequestOwnerV0, PocoNodeLabInertTimeoutFactsV0, PocoNodeLabInertTimeoutOwnerV0,
+    PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabPendingFinalizationOwnerV0,
+    PocoNodeLabPhaseFactsV0, PocoNodeLabProposalBindingV0, PocoNodeLabProposalJournalConfigV0,
+    PocoNodeLabProposalParentV0, PocoNodeLabRuntimeFactsV0, PocoNodeLabSignedTimeoutFactsV0,
+    PocoNodeLabSignedTimeoutOutboundV0, PocoNodeLabSignedTimeoutOwnerV0,
+    PocoNodeLabSignedVoteFactsV0, PocoNodeLabSignedVoteOutboundV0, PocoNodeLabSignedVoteOwnerV0,
+    PocoNodeLabTerminalCheckpointApplicationV0, PocoNodeLabTerminalCutV0,
+    PocoNodeLabTerminalOwnerV0,
 };
 #[cfg(feature = "lab-validator-runtime")]
 pub use lab_epoch_handoff::{

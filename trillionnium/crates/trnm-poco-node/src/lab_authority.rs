@@ -51,7 +51,7 @@ use trnm_consensus_types::{
     SignedProposalV0, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorSetId, View, Vote,
 };
 use trnm_native_application::{
-    ApplicationHeadV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0,
+    ApplicationHeadV0, BlockIdV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0,
     NativeApplicationCommitRequestV0, NativeApplicationGenesisRequestV0,
     NativeApplicationRecoveryRequestV0, NativeApplicationV0, NativeExecutedBlockV0,
     NativeRecoveryDispositionV0, NativeRecoveryWatermarksV0, StateRootV0, ValidatorSetIdV0,
@@ -61,8 +61,8 @@ use trnm_native_application_sqlite::{
     ProposalValidationOwnerIdV0, ProposalValidationStoreScopeV0, SqliteProposalValidationStoreV0,
 };
 use trnm_native_execution_v0::{
-    DurableNativeApplicationV0, NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0,
-    NativeBlockPreviewV0,
+    DurableNativeApplicationV0, FinalizedNativeApplicationReadV0,
+    NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
 };
 
 use crate::{
@@ -736,6 +736,55 @@ impl PocoNodeLabFinalizedProofV0 {
         self.finalized_chain_root
     }
 }
+
+/// Proof-carrying readback of the current finalized application block.
+///
+/// The native application read is returned only after its immutable durable
+/// row, state root, and receipt root are joined to the Ready Core proof above.
+/// It is intentionally a local query adapter, not an HTTP/RPC activation.
+#[derive(Debug)]
+pub struct PocoNodeLabFinalizedQueryV0 {
+    proof: PocoNodeLabFinalizedProofV0,
+    read: FinalizedNativeApplicationReadV0,
+}
+
+impl PocoNodeLabFinalizedQueryV0 {
+    pub const fn proof_v0(&self) -> &PocoNodeLabFinalizedProofV0 {
+        &self.proof
+    }
+
+    pub const fn read_v0(&self) -> &FinalizedNativeApplicationReadV0 {
+        &self.read
+    }
+
+    pub fn into_parts_v0(
+        self,
+    ) -> (
+        PocoNodeLabFinalizedProofV0,
+        FinalizedNativeApplicationReadV0,
+    ) {
+        (self.proof, self.read)
+    }
+}
+
+#[derive(Debug)]
+pub enum PocoNodeLabFinalizedQueryErrorV0 {
+    Proof(PocoNodeLabAuthorityErrorV0),
+    Application(String),
+    QueryMismatch(&'static str),
+}
+
+impl fmt::Display for PocoNodeLabFinalizedQueryErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Proof(error) => write!(formatter, "finalized proof: {error}"),
+            Self::Application(error) => write!(formatter, "finalized application read: {error}"),
+            Self::QueryMismatch(reason) => write!(formatter, "finalized query mismatch: {reason}"),
+        }
+    }
+}
+
+impl Error for PocoNodeLabFinalizedQueryErrorV0 {}
 
 impl PocoNodeLabPhaseFactsV0 {
     pub const fn phase_v0(self) -> PocoNodeLabAuthorityPhaseV0 {
@@ -1567,6 +1616,64 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         &self,
     ) -> Result<PocoNodeLabFinalizedProofV0, PocoNodeLabAuthorityErrorV0> {
         finalized_proof_from_core_v0(&self.core)
+    }
+
+    /// Reads the exact current finalized application row by BlockId and
+    /// returns it only when the native store revalidates the same proof.
+    /// Historical/future keys are rejected instead of being answered with a
+    /// proof for a different tip.
+    pub fn read_finalized_by_block_id_v0(
+        &self,
+        block_id: BlockId,
+    ) -> Result<PocoNodeLabFinalizedQueryV0, PocoNodeLabFinalizedQueryErrorV0> {
+        let proof = self
+            .finalized_proof_v0()
+            .map_err(PocoNodeLabFinalizedQueryErrorV0::Proof)?;
+        if block_id != proof.finalized_block_id_v0() {
+            return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+                "BlockId is not the current Core finalized tip",
+            ));
+        }
+        let application_block_id = BlockIdV0::new(*block_id.as_bytes()).map_err(|_| {
+            PocoNodeLabFinalizedQueryErrorV0::QueryMismatch("BlockId has invalid native shape")
+        })?;
+        let read = self
+            .application
+            .read_finalized_by_block_id_with_proof_v0(
+                application_block_id,
+                proof.proof_v0(),
+                proof.authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| PocoNodeLabFinalizedQueryErrorV0::Application(error.to_string()))?;
+        bind_finalized_query_v0(&proof, &read)?;
+        Ok(PocoNodeLabFinalizedQueryV0 { proof, read })
+    }
+
+    /// Height-keyed counterpart to
+    /// [`Self::read_finalized_by_block_id_v0`]. Only the current finalized
+    /// height is answerable until historical proof storage is wired.
+    pub fn read_finalized_by_height_v0(
+        &self,
+        height: u64,
+    ) -> Result<PocoNodeLabFinalizedQueryV0, PocoNodeLabFinalizedQueryErrorV0> {
+        let proof = self
+            .finalized_proof_v0()
+            .map_err(PocoNodeLabFinalizedQueryErrorV0::Proof)?;
+        if height != proof.finalized_height_v0() {
+            return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+                "height is not the current Core finalized tip",
+            ));
+        }
+        let read = self
+            .application
+            .read_finalized_by_height_with_proof_v0(
+                HeightV0::new(height),
+                proof.proof_v0(),
+                proof.authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| PocoNodeLabFinalizedQueryErrorV0::Application(error.to_string()))?;
+        bind_finalized_query_v0(&proof, &read)?;
+        Ok(PocoNodeLabFinalizedQueryV0 { proof, read })
     }
 
     pub const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {
@@ -4952,6 +5059,25 @@ fn finalized_proof_from_core_v0(
         finalized_chain_root,
         proof,
     })
+}
+
+fn bind_finalized_query_v0(
+    proof: &PocoNodeLabFinalizedProofV0,
+    read: &FinalizedNativeApplicationReadV0,
+) -> Result<(), PocoNodeLabFinalizedQueryErrorV0> {
+    let head = read
+        .finalized_head_v0()
+        .map_err(|error| PocoNodeLabFinalizedQueryErrorV0::Application(error.to_string()))?;
+    if head.block_id().as_bytes() != proof.finalized_block_id_v0().as_bytes()
+        || head.height().get() != proof.finalized_height_v0()
+        || head.state_root().as_bytes() != proof.state_root_v0().as_bytes()
+        || read.receipts_root_v0().as_bytes() != proof.receipts_root_v0().as_bytes()
+    {
+        return Err(PocoNodeLabFinalizedQueryErrorV0::QueryMismatch(
+            "application readback roots or coordinates differ from FinalityProofV0",
+        ));
+    }
+    Ok(())
 }
 
 fn require_checkpoint_heads_v0(
