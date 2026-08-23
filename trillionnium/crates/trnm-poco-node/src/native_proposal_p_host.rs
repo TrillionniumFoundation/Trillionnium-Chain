@@ -29,6 +29,8 @@ use trnm_consensus_core::{
     PayloadValidationParentProvenanceV0, PayloadValidationRouteV0,
     StateSyncAnchorSuccessorReplayV0, ValidatedPayloadArtifactRefV0, ValidationId,
 };
+#[cfg(feature = "safety-rules-sidecar")]
+use trnm_consensus_safety_rules::InertSafetyTransitionV1;
 use trnm_consensus_safety_store::{
     SafetyPersistDispositionV0, SafetyStoreErrorV0, SqliteSafetyStateStoreV0,
 };
@@ -300,6 +302,19 @@ impl PocoNodeNativeInertRequestSignatureV0 {
 
     pub(super) const fn intent_v0(&self) -> &CanonicalSignIntentV0 {
         &self.intent
+    }
+
+    /// Returns the exact Core shadow transition which authorized this
+    /// ordinary Vote persistence request.  The carrier remains joined to the
+    /// private Core/Safety owner; exposing a borrow here grants no signer or
+    /// persistence capability by itself.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub(super) fn safety_rules_shadow_transition_v1(&self) -> Option<&InertSafetyTransitionV1> {
+        self.checkpointed
+            .acked
+            .core_accepted
+            .persistence_request_v0()
+            .safety_rules_shadow_transition_v1()
     }
 
     pub(super) const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {

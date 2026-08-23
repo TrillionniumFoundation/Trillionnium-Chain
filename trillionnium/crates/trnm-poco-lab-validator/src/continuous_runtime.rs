@@ -47,6 +47,8 @@ use trnm_consensus_types::{
 };
 #[cfg(test)]
 use trnm_native_execution_v0::{DurableNativeApplicationV0, NativeApplicationConfigV0};
+#[cfg(feature = "safety-rules-sidecar")]
+use trnm_poco_node::SafetyRulesSemanticSidecarV1;
 use trnm_poco_node::{
     PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,
     PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabPhaseFactsV0, PocoNodeLabSignedTimeoutOwnerV0,
@@ -2147,6 +2149,26 @@ impl ContinuousValidatorAuthorityV0 {
         self.vote_unbound_proposal_v0(unbound)
     }
 
+    /// Runs the continuous Vote path with an explicitly supplied semantic
+    /// SafetyRules authority.  The sidecar is not discovered, cloned, or
+    /// silently replaced: the caller must have opened it against a freshly
+    /// authenticated SafetyRules predecessor.  The exact Core transition is
+    /// then handed to the Node owner, which performs the sidecar CAS before
+    /// the signer journal is allowed to mutate.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn vote_proposal_with_safety_rules_sidecar_v1<SW>(
+        &mut self,
+        proposal: SignedProposalV0,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+    ) -> Result<Vote>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        let unbound = UnboundProposalV0::from_signed(&proposal)
+            .map_err(|error| anyhow!("project proposal into unbound ingress: {error}"))?;
+        self.vote_unbound_proposal_with_safety_rules_sidecar_v1(unbound, sidecar)
+    }
+
     fn vote_bound_proposal_v0(&mut self, proposal: SignedProposalV0) -> Result<Vote> {
         if !matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_))) {
             bail!("continuous authority is not ready for a proposal");
@@ -2161,6 +2183,82 @@ impl ContinuousValidatorAuthorityV0 {
         let signed = inert
             .sign_exact_vote_v0(&mut self.producer)
             .map_err(|error| anyhow!("journal and release exact Vote: {error}"))?;
+        let vote = signed.outbound_v0().vote_v0().clone();
+        self.signer_lifetime.record_vote_v0()?;
+        self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(Box::new(signed)));
+        Ok(vote)
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    fn vote_unbound_proposal_with_safety_rules_sidecar_v1<SW>(
+        &mut self,
+        proposal: UnboundProposalV0,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+    ) -> Result<Vote>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        // Keep this composition path byte-for-byte aligned with the ordinary
+        // ingress gates.  In particular, no certificate is advanced until
+        // the proposer witness has been authenticated.
+        proposal
+            .verify_proposer_signature(&self.validator_set)
+            .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
+        if let Some(certificate) = proposal.timeout_certificate().cloned() {
+            self.advance_timeout_certificate_v0(certificate)?;
+        } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
+            self.advance_quorum_certificate_v0(certificate)?;
+        }
+        let binding = self
+            .ready_runtime_v0()?
+            .proposal_binding_v0()
+            .map_err(|error| anyhow!("read authoritative proposal binding: {error}"))?;
+        let header = proposal.block().header();
+        ensure!(
+            header.view() == binding.current_view_v0(),
+            "proposal view differs from authoritative current_view"
+        );
+        ensure!(
+            proposal.justify_qc() == binding.high_qc_v0(),
+            "proposal justify differs from authoritative high QC"
+        );
+        ensure!(
+            header.parent_id().as_bytes()
+                == binding
+                    .parent_v0()
+                    .application_head_v0()
+                    .block_id()
+                    .as_bytes()
+                && header.height().get()
+                    == binding
+                        .parent_v0()
+                        .application_head_v0()
+                        .height()
+                        .get()
+                        .checked_add(1)
+                        .context("authoritative proposal-parent height overflows")?,
+            "proposal parent differs from authoritative native parent"
+        );
+        let proposal = proposal
+            .bind_authenticated_parent(
+                &self.validator_set,
+                &self.consensus_parameters,
+                binding.parent_v0().authenticated_parent_timestamp_ms_v0(),
+            )
+            .map_err(|error| anyhow!("bind authenticated proposal parent: {error}"))?;
+        if !matches!(self.phase, Some(ContinuousAuthorityPhaseV0::Ready(_))) {
+            bail!("continuous authority is not ready for a proposal");
+        }
+        self.signer_lifetime.require_vote_available_v0()?;
+        let Some(ContinuousAuthorityPhaseV0::Ready(runtime)) = self.phase.take() else {
+            unreachable!("phase checked above")
+        };
+        let inert = (*runtime)
+            .drive_one_to_inert_request_v0(proposal)
+            .map_err(|error| anyhow!("drive proposal authority chain: {error}"))?;
+        let signed = inert
+            .sign_exact_vote_with_safety_rules_sidecar_v1(sidecar, &mut self.producer)
+            .map_err(|error| anyhow!("semantic SafetyRules CAS and exact Vote: {error}"))?;
         let vote = signed.outbound_v0().vote_v0().clone();
         self.signer_lifetime.record_vote_v0()?;
         self.phase = Some(ContinuousAuthorityPhaseV0::VoteSigned(Box::new(signed)));
@@ -2972,6 +3070,11 @@ mod tests {
         PurposePolicyV1, RemoteSignerService, RemoteSignerServiceConfig,
         UnixExternalTimeoutAuthorityV1,
     };
+    #[cfg(feature = "safety-rules-sidecar")]
+    use trnm_consensus_signer_journal::{
+        ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0, SignatureProducerErrorV0,
+        SignerWatermarkV0,
+    };
     use trnm_consensus_types::{
         decode_validator_set_v0_exact, ChainId, ConsensusPublicKey, Epoch, GenesisHash,
         ProtocolVersion, SigningRoot, Validator, VotingPower,
@@ -3042,6 +3145,260 @@ mod tests {
             self.calls.fetch_add(1, Ordering::SeqCst);
             self.inner.sign(request)
         }
+    }
+
+    /// Semantic-only test authority used by the active Vote sidecar seam.
+    /// It intentionally exposes the same one-reservation CAS shape as the
+    /// production adapter while keeping the test deterministic and in-memory.
+    #[cfg(feature = "safety-rules-sidecar")]
+    #[derive(Clone)]
+    struct RecordingSemanticWatermarkV0 {
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+        head: Arc<Mutex<Option<SignerWatermarkV0>>>,
+        facts: Arc<Mutex<Option<ExternalWatermarkSemanticFactsV0>>>,
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    impl RecordingSemanticWatermarkV0 {
+        fn seeded(
+            scope: [u8; 32],
+            journal_id: [u8; 32],
+            capability: [u8; 32],
+            revision: u64,
+        ) -> Self {
+            let head =
+                SignerWatermarkV0::from_persisted_parts(scope, journal_id, revision, [0x71; 32])
+                    .expect("shape-valid semantic test head");
+            let facts = ExternalWatermarkSemanticFactsV0::new(
+                0, 0, revision, [0x72; 32], [0x73; 32], [0x74; 32], capability,
+            )
+            .expect("shape-valid semantic test facts");
+            Self {
+                scope,
+                journal_id,
+                capability,
+                head: Arc::new(Mutex::new(Some(head))),
+                facts: Arc::new(Mutex::new(Some(facts))),
+            }
+        }
+
+        fn sequence(&self) -> Option<u64> {
+            self.head
+                .lock()
+                .expect("semantic test head mutex")
+                .map(|head| head.sequence())
+        }
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    impl ExternalMonotonicWatermarkV0 for RecordingSemanticWatermarkV0 {
+        fn load(
+            &mut self,
+            _scope: [u8; 32],
+        ) -> std::result::Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            _expected: Option<SignerWatermarkV0>,
+            _target: SignerWatermarkV0,
+        ) -> std::result::Result<(), ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            true
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            scope: [u8; 32],
+            journal_id: [u8; 32],
+        ) -> std::result::Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            if scope != self.scope || journal_id != self.journal_id {
+                return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+            }
+            let head = *self.head.lock().expect("semantic test head mutex");
+            let facts = *self.facts.lock().expect("semantic test facts mutex");
+            Ok(head.zip(facts))
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> std::result::Result<(), ExternalWatermarkErrorV0> {
+            let mut head = self.head.lock().expect("semantic test head mutex");
+            if *head != expected
+                || target.scope() != self.scope
+                || target.journal_id() != self.journal_id
+                || target.sequence() != 0
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            let facts = ExternalWatermarkSemanticFactsV0::new(
+                0,
+                0,
+                1,
+                [0x75; 32],
+                [0x76; 32],
+                [0x77; 32],
+                self.capability,
+            )
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+            *head = Some(target);
+            *self.facts.lock().expect("semantic test facts mutex") = Some(facts);
+            Ok(())
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> std::result::Result<(), ExternalWatermarkErrorV0> {
+            let mut head = self.head.lock().expect("semantic test head mutex");
+            let Some(previous) = *head else {
+                return Err(ExternalWatermarkErrorV0::Unavailable);
+            };
+            if *head != expected
+                || target.scope() != self.scope
+                || target.journal_id() != self.journal_id
+                || target.sequence() != previous.sequence().saturating_add(1)
+                || facts.capability != self.capability
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            *head = Some(target);
+            *self.facts.lock().expect("semantic test facts mutex") = Some(facts);
+            Ok(())
+        }
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    struct SidecarOrderingSignatureProducerV0 {
+        inner: LabEd25519SignatureProducer,
+        external: RecordingSemanticWatermarkV0,
+        observed_external_sequence: Arc<Mutex<Option<u64>>>,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    impl SignatureProducerV0 for SidecarOrderingSignatureProducerV0 {
+        fn sign(
+            &mut self,
+            request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<SignatureBytes, SignatureProducerErrorV0> {
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            *self
+                .observed_external_sequence
+                .lock()
+                .expect("sidecar ordering observer mutex") = self.external.sequence();
+            self.inner.sign(request)
+        }
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    #[test]
+    fn active_vote_safety_rules_sidecar_cas_precedes_signer_journal_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let proposal = proposal_for_takeover_v0(&harness);
+            let leader = proposal.block().header().proposer_id();
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == leader)
+                .expect("proposal leader belongs to the takeover validator set");
+
+            // Enter the same Node inert owner used by the continuous Vote
+            // path.  The sidecar is opened against the exact predecessor
+            // digest carried by that owner; no digest or transition is
+            // reconstructed from scalar test facts.
+            let phase = harness.authorities[leader_index]
+                .phase
+                .take()
+                .expect("leader starts in Ready phase");
+            let runtime = match phase {
+                ContinuousAuthorityPhaseV0::Ready(runtime) => runtime,
+                ContinuousAuthorityPhaseV0::VoteSigned(_) => {
+                    panic!("leader unexpectedly starts VoteSigned")
+                }
+                ContinuousAuthorityPhaseV0::TimeoutSigned(_) => {
+                    panic!("leader unexpectedly starts TimeoutSigned")
+                }
+            };
+            let inert = (*runtime)
+                .drive_one_to_inert_request_v0(proposal)
+                .expect("drive exact Proposal to inert Vote request");
+            let successor_revision = inert.facts_v0().authorizing_safety_revision();
+            let predecessor_revision = successor_revision
+                .checked_sub(1)
+                .expect("takeover Vote has a positive predecessor revision");
+            let predecessor_digest = inert
+                .safety_rules_shadow_predecessor_digest_v1()
+                .expect("inert Vote retains its exact SafetyRules shadow transition");
+
+            let scope = [0x81; 32];
+            let journal_id = [0x82; 32];
+            let capability = [0x83; 32];
+            let external = RecordingSemanticWatermarkV0::seeded(
+                scope,
+                journal_id,
+                capability,
+                predecessor_revision,
+            );
+            let external_observer = external.clone();
+            let mut sidecar = trnm_poco_node::SafetyRulesSemanticSidecarV1::open(
+                external,
+                scope,
+                journal_id,
+                capability,
+                predecessor_digest,
+            )
+            .expect("open semantic sidecar against the exact inert predecessor");
+            let observed_external_sequence = Arc::new(Mutex::new(None));
+            let calls = Arc::new(AtomicUsize::new(0));
+            let mut producer = SidecarOrderingSignatureProducerV0 {
+                inner: LabEd25519SignatureProducer::new(harness.keys[leader_index].clone()),
+                external: external_observer.clone(),
+                observed_external_sequence: Arc::clone(&observed_external_sequence),
+                calls: Arc::clone(&calls),
+            };
+            let signed = inert
+                .sign_exact_vote_with_safety_rules_sidecar_v1(&mut sidecar, &mut producer)
+                .expect("semantic CAS and exact Vote signer release succeed");
+
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+            assert_eq!(
+                *observed_external_sequence
+                    .lock()
+                    .expect("read sidecar ordering observation"),
+                Some(successor_revision),
+                "the signer producer observed the sidecar CAS before journal release"
+            );
+            assert_eq!(external_observer.sequence(), Some(successor_revision));
+            assert_eq!(
+                sidecar.expected_watermark().map(|head| head.sequence()),
+                Some(successor_revision)
+            );
+            assert_eq!(
+                signed.facts_v0().signer_exact_watermark().sequence(),
+                2,
+                "the local signer journal remains an independent post-sidecar fence"
+            );
+        });
     }
 
     /// Test-only wrapper that proves the continuous authority hands the exact

@@ -6,6 +6,12 @@ license.workspace = true
 authors.workspace = true
 publish = false
 
+[features]
+default = []
+# Explicit composition-only SafetyRules semantic sidecar seam.  The normal
+# laboratory runtime remains unchanged and keeps activation false.
+safety-rules-sidecar = ["trnm-poco-node/safety-rules-sidecar"]
+
 [package.metadata.trnm]
 lane = "poco-g3-real-lan-lab-validator"
 protocol = "poco-bft-v0"

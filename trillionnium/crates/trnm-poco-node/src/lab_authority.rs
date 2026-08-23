@@ -36,6 +36,10 @@ use trnm_consensus_core::{
     DurableFinalizationV0, Effect, Input, OutboundMessage, SignId,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
+#[cfg(feature = "safety-rules-sidecar")]
+use trnm_consensus_safety_rules::{
+    InertSafetyTransitionKindV1, SafetyRulesDurableTransitionStoreV1, SafetyRulesStateDigestV1,
+};
 use trnm_consensus_safety_store::{
     ConfirmedSafetyNodeCheckpointFactsV0, SafetyPersistDispositionV0, SafetyStoreErrorV0,
     SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
@@ -65,6 +69,8 @@ use trnm_native_execution_v0::{
     NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
 };
 
+#[cfg(feature = "safety-rules-sidecar")]
+use crate::safety_rules_sidecar::SafetyRulesSemanticSidecarV1;
 use crate::{
     external_node_checkpoint::{
         ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0,
@@ -3421,6 +3427,17 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))
     }
 
+    /// Returns the authenticated predecessor digest carried by the exact
+    /// inert Core shadow transition.  This is a read-only composition seam:
+    /// it grants no persistence or signing authority and is only available
+    /// when the explicit SafetyRules semantic sidecar feature is enabled.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn safety_rules_shadow_predecessor_digest_v1(&self) -> Option<SafetyRulesStateDigestV1> {
+        self.inert
+            .safety_rules_shadow_transition_v1()
+            .map(|transition| transition.predecessor_state_digest())
+    }
+
     /// Journals and verifies the exact Vote signature, advances a second
     /// whole-node checkpoint which commits the new signer watermark, freshly
     /// rechecks Safety, and only then feeds `SignatureReady` to Core.
@@ -3430,9 +3447,70 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
     /// exposed. Success returns a non-forgeable outbound carrier joined to the
     /// retained node owner.
     pub fn sign_exact_vote_v0<P: SignatureProducerV0>(
-        mut self,
+        self,
         producer: &mut P,
     ) -> Result<PocoNodeLabSignedVoteOwnerV0<W>, PocoNodeLabAuthorityErrorV0> {
+        self.sign_exact_vote_with_pre_sign_hook_v0(producer, |_inert| Ok(()))
+    }
+
+    /// Journals the exact Vote only after the independently durable semantic
+    /// SafetyRules sidecar has accepted the full Core transition carrier.
+    /// The sidecar CAS is intentionally immediately before signer-journal
+    /// mutation; a sidecar failure consumes this owner and therefore leaves
+    /// the active vote authority fail-closed.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn sign_exact_vote_with_safety_rules_sidecar_v1<P, SW>(
+        self,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+        producer: &mut P,
+    ) -> Result<PocoNodeLabSignedVoteOwnerV0<W>, PocoNodeLabAuthorityErrorV0>
+    where
+        P: SignatureProducerV0,
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        self.sign_exact_vote_with_pre_sign_hook_v0(producer, |inert| {
+            let transition = inert.safety_rules_shadow_transition_v1().ok_or(
+                PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                    "Vote inert request has no exact SafetyRules shadow transition",
+                ),
+            )?;
+            let block_id = match inert.intent_v0().preimage() {
+                CanonicalSignPreimageV0::Vote(preimage) => preimage.block_id(),
+                CanonicalSignPreimageV0::TimeoutVote(_) => {
+                    return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                        "Vote inert request carries a timeout preimage",
+                    ));
+                }
+            };
+            if transition.kind() != InertSafetyTransitionKindV1::Vote
+                || transition.vote_block_id() != Some(block_id)
+                || transition.successor_state().revision()
+                    != inert.intent_v0().authorizing_safety_revision()
+                || transition.canonical_intent() != inert.intent_v0()
+            {
+                return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+                    "Vote inert request differs from its exact SafetyRules transition",
+                ));
+            }
+            sidecar
+                .persist_transition_v1(transition.predecessor_state_digest(), transition)
+                .map_err(|error| {
+                    PocoNodeLabAuthorityErrorV0::AuthorityChain(format!(
+                        "SafetyRules semantic sidecar rejected Vote transition: {error}"
+                    ))
+                })
+        })
+    }
+
+    fn sign_exact_vote_with_pre_sign_hook_v0<P, F>(
+        mut self,
+        producer: &mut P,
+        mut before_sign: F,
+    ) -> Result<PocoNodeLabSignedVoteOwnerV0<W>, PocoNodeLabAuthorityErrorV0>
+    where
+        P: SignatureProducerV0,
+        F: FnMut(&PocoNodeNativeInertRequestSignatureV0) -> Result<(), PocoNodeLabAuthorityErrorV0>,
+    {
         let next_application_parent = self
             .inert
             .overlay_parent_head_v0()
@@ -3498,6 +3576,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
             ));
         }
 
+        before_sign(&self.inert)?;
         let signature = self
             .signer_journal
             .sign_exact_v0(&intent, producer)
