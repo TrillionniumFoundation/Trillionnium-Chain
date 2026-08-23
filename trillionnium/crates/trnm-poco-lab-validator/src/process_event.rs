@@ -104,7 +104,7 @@ impl RuntimeEventContextV1 {
         self.coordinator_manifest_sha256
     }
 
-    fn validate(&self, key: &SigningKey) -> Result<(), RuntimeEventErrorV1> {
+    fn validate_public_key(&self, public_key: [u8; 32]) -> Result<(), RuntimeEventErrorV1> {
         if crate::frame::validate_run_id_bytes(self.run_id.as_bytes()).is_err()
             || self.validator_id.as_bytes().len() != 32
             || self.coordinator_manifest_sha256 == [0; 32]
@@ -121,12 +121,113 @@ impl RuntimeEventContextV1 {
                 .ok_or(RuntimeEventErrorV1::Invalid(
                     "event author is absent from validator set",
                 ))?;
-        if validator.consensus_key().as_bytes() != &key.verifying_key().to_bytes() {
+        if validator.consensus_key().as_bytes() != &public_key {
             return Err(RuntimeEventErrorV1::Invalid(
                 "event signing key differs from validator set",
             ));
         }
         Ok(())
+    }
+
+    fn validate(&self, key: &SigningKey) -> Result<(), RuntimeEventErrorV1> {
+        self.validate_public_key(key.verifying_key().to_bytes())
+    }
+}
+
+/// Exact domain identity handed to the runtime-event signature authority.
+/// Producers receive a typed intent rather than an arbitrary byte slice; the
+/// journal constructs the canonical root and verifies the returned signature
+/// before writing any bytes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct RuntimeEventSignatureRequestV1 {
+    origin: ValidatorId,
+    validator_set_id: [u8; 32],
+    process_instance: u64,
+    sequence: u64,
+    event_sha256: [u8; 32],
+    signing_root: [u8; 32],
+}
+
+impl RuntimeEventSignatureRequestV1 {
+    pub(crate) fn new(
+        origin: ValidatorId,
+        validator_set_id: [u8; 32],
+        process_instance: u64,
+        sequence: u64,
+        event_sha256: [u8; 32],
+    ) -> Result<Self, RuntimeEventErrorV1> {
+        if validator_set_id == [0; 32] || process_instance == 0 || event_sha256 == [0; 32] {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "runtime-event signature request identity",
+            ));
+        }
+        Ok(Self {
+            origin,
+            validator_set_id,
+            process_instance,
+            sequence,
+            event_sha256,
+            signing_root: signature_root(event_sha256),
+        })
+    }
+
+    pub const fn origin(self) -> ValidatorId {
+        self.origin
+    }
+
+    pub const fn validator_set_id(self) -> [u8; 32] {
+        self.validator_set_id
+    }
+
+    pub const fn process_instance(self) -> u64 {
+        self.process_instance
+    }
+
+    pub const fn sequence(self) -> u64 {
+        self.sequence
+    }
+
+    pub const fn event_sha256(self) -> [u8; 32] {
+        self.event_sha256
+    }
+
+    pub const fn signing_root_v1(self) -> [u8; 32] {
+        self.signing_root
+    }
+}
+
+/// External authority seam for signed runtime-event evidence.
+pub trait RuntimeEventSignatureProducerV1: Send {
+    fn public_key_v1(&self) -> [u8; 32];
+
+    fn sign_runtime_event_v1(
+        &mut self,
+        request: RuntimeEventSignatureRequestV1,
+    ) -> Result<[u8; 64], RuntimeEventErrorV1>;
+}
+
+/// Compatibility adapter for the existing fixture/local-secret path. The
+/// external constructor never creates this adapter.
+struct LocalRuntimeEventSignatureProducerV1 {
+    signing_key: SigningKey,
+}
+
+impl LocalRuntimeEventSignatureProducerV1 {
+    fn new(signing_key: SigningKey) -> Self {
+        Self { signing_key }
+    }
+}
+
+impl RuntimeEventSignatureProducerV1 for LocalRuntimeEventSignatureProducerV1 {
+    fn public_key_v1(&self) -> [u8; 32] {
+        self.signing_key.verifying_key().to_bytes()
+    }
+
+    fn sign_runtime_event_v1(
+        &mut self,
+        request: RuntimeEventSignatureRequestV1,
+    ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+        Ok(self.signing_key.sign(&request.signing_root_v1()).to_bytes())
     }
 }
 
@@ -717,6 +818,24 @@ impl SignedRuntimeEventV1 {
         expected_previous: [u8; 32],
         previous_monotonic_ns: Option<u64>,
     ) -> Result<(), RuntimeEventErrorV1> {
+        let event_hash = self.validate_unsigned(
+            context,
+            expected_sequence,
+            expected_instance,
+            expected_previous,
+            previous_monotonic_ns,
+        )?;
+        self.validate_signature(context, event_hash)
+    }
+
+    fn validate_unsigned(
+        &self,
+        context: &RuntimeEventContextV1,
+        expected_sequence: u64,
+        expected_instance: u64,
+        expected_previous: [u8; 32],
+        previous_monotonic_ns: Option<u64>,
+    ) -> Result<[u8; 32], RuntimeEventErrorV1> {
         if self.schema_version != EVENT_SCHEMA_VERSION
             || self.run_id != context.run_id
             || self.validator_id != hex::encode(context.validator_id.as_bytes())
@@ -751,6 +870,14 @@ impl SignedRuntimeEventV1 {
         if event_hash != self.computed_hash()? {
             return Err(RuntimeEventErrorV1::Invalid("event hash"));
         }
+        Ok(event_hash)
+    }
+
+    fn validate_signature(
+        &self,
+        context: &RuntimeEventContextV1,
+        event_hash: [u8; 32],
+    ) -> Result<(), RuntimeEventErrorV1> {
         let signature = Signature::from_bytes(&decode_hex::<64>(&self.signature, "signature")?);
         let validator = context
             .validator_set
@@ -2228,7 +2355,7 @@ pub struct RuntimeEventJournalV1 {
     file: File,
     file_identity: RuntimeEventJournalFileIdentityV1,
     context: RuntimeEventContextV1,
-    signing_key: SigningKey,
+    producer: Box<dyn RuntimeEventSignatureProducerV1>,
     process_instance: u64,
     next_sequence: u64,
     previous_event_sha256: [u8; 32],
@@ -2517,7 +2644,7 @@ impl Process2JournalStartedFromRestartCutV1 {
     fn start_with_context_v1(
         path: &Path,
         context: RuntimeEventContextV1,
-        signing_key: SigningKey,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
         stored: ReopenedRestartCutParkAckCertificatesV1,
     ) -> Result<Self, RuntimeEventErrorV1> {
         stored.revalidate_fresh_v1()?;
@@ -2532,7 +2659,7 @@ impl Process2JournalStartedFromRestartCutV1 {
         let journal = RuntimeEventJournalV1::start_with_context_gate(
             path,
             context,
-            signing_key,
+            producer,
             ProcessStartGateV1::StoredRestartCutParkAck(&stored),
         )?;
         let journal_start_head = journal
@@ -3030,7 +3157,45 @@ impl RuntimeEventJournalV1 {
         Self::start_with_context_gate(
             path.as_ref(),
             context,
-            config.consensus_signing_key().clone(),
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(
+                config.consensus_signing_key().clone(),
+            )),
+            ProcessStartGateV1::InitialProcessOnly,
+        )
+    }
+
+    /// Starts an event journal using an independently provisioned
+    /// consensus-key producer.  No private key is loaded from the config on
+    /// this path; the returned public key is checked against the committed
+    /// validator set before the journal is opened.
+    pub fn start_with_external_signature_producer_v1(
+        path: impl AsRef<Path>,
+        config: &PublicReportVerifierContext,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    ) -> Result<Self, RuntimeEventErrorV1> {
+        let context = RuntimeEventContextV1::from_public_context(config);
+        Self::start_with_context_gate(
+            path.as_ref(),
+            context,
+            producer,
+            ProcessStartGateV1::InitialProcessOnly,
+        )
+    }
+
+    /// Runtime-facing variant for a loaded deployment config.  It only reads
+    /// authenticated public deployment facts from the config; in particular,
+    /// it never calls the private-key accessor.  The producer remains the
+    /// sole signing authority for every appended event.
+    pub fn start_with_loaded_config_external_signature_producer_v1(
+        path: impl AsRef<Path>,
+        config: &LoadedValidatorConfig,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    ) -> Result<Self, RuntimeEventErrorV1> {
+        let context = RuntimeEventContextV1::from_loaded_config(config);
+        Self::start_with_context_gate(
+            path.as_ref(),
+            context,
+            producer,
             ProcessStartGateV1::InitialProcessOnly,
         )
     }
@@ -3062,7 +3227,29 @@ impl RuntimeEventJournalV1 {
         Process2JournalStartedFromRestartCutV1::start_with_context_v1(
             path.as_ref(),
             context,
-            config.consensus_signing_key().clone(),
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(
+                config.consensus_signing_key().clone(),
+            )),
+            stored,
+        )
+    }
+
+    /// External-producer process-2 counterpart.  It consumes the same
+    /// authenticated Cut/Park/ParkedAck witness as the fixture path while
+    /// retaining the typed producer across the process-2 start boundary.
+    pub(crate) fn start_process2_with_stored_restart_cut_park_ack_external_v1(
+        path: impl AsRef<Path>,
+        config: &LoadedValidatorConfig,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    ) -> Result<Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1> {
+        let context = RuntimeEventContextV1::from_loaded_config(config);
+        let journal_witness =
+            read_process1_target_parked_ack_journal_witness_v1(path.as_ref(), &context)?;
+        let stored = load_target_restart_cut_park_ack_certificates_v1(config, journal_witness)?;
+        Process2JournalStartedFromRestartCutV1::start_with_context_v1(
+            path.as_ref(),
+            context,
+            producer,
             stored,
         )
     }
@@ -3080,7 +3267,7 @@ impl RuntimeEventJournalV1 {
         Self::start_with_context_gate(
             path,
             context,
-            signing_key,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(signing_key)),
             ProcessStartGateV1::UnverifiedTestRestart,
         )
     }
@@ -3106,10 +3293,10 @@ impl RuntimeEventJournalV1 {
     fn start_with_context_gate(
         path: &Path,
         context: RuntimeEventContextV1,
-        signing_key: SigningKey,
+        producer: Box<dyn RuntimeEventSignatureProducerV1>,
         gate: ProcessStartGateV1<'_>,
     ) -> Result<Self, RuntimeEventErrorV1> {
-        context.validate(&signing_key)?;
+        context.validate_public_key(producer.public_key_v1())?;
         match gate {
             ProcessStartGateV1::StoredRestartCutParkAck(stored) => {
                 stored.revalidate_fresh_v1()?;
@@ -3201,7 +3388,7 @@ impl RuntimeEventJournalV1 {
             file,
             file_identity,
             context,
-            signing_key,
+            producer,
             process_instance,
             next_sequence: recovered.next_sequence,
             previous_event_sha256: recovered.previous_event_sha256,
@@ -4468,12 +4655,10 @@ impl RuntimeEventJournalV1 {
         };
         let event_hash = event.computed_hash()?;
         event.event_sha256 = hex::encode(event_hash);
-        event.signature = hex::encode(
-            self.signing_key
-                .sign(&signature_root(event_hash))
-                .to_bytes(),
-        );
-        event.validate(
+        // Validate every locally-derived field and the state-machine effect
+        // before invoking an external signer.  A malformed request must not
+        // consume remote signer sequence/capability state.
+        let unsigned_hash = event.validate_unsigned(
             &self.context,
             self.next_sequence,
             self.process_instance,
@@ -4481,7 +4666,35 @@ impl RuntimeEventJournalV1 {
             Some(self.last_monotonic_ns),
         )?;
         let mut candidate_state = self.state.clone();
+        // State-machine admission is also unsigned and deterministic.  Run
+        // it before touching the external signer so invalid event subjects or
+        // lifecycle transitions cannot consume remote signer state.
         candidate_state.observe(&event, &self.context)?;
+        let request = RuntimeEventSignatureRequestV1::new(
+            self.context.validator_id,
+            *self.context.validator_set.id().as_bytes(),
+            self.process_instance,
+            self.next_sequence,
+            unsigned_hash,
+        )?;
+        let expected_public_key = self
+            .context
+            .validator_set
+            .validator(self.context.validator_id)
+            .ok_or(RuntimeEventErrorV1::Invalid("event author"))?
+            .consensus_key()
+            .as_bytes()
+            .to_owned();
+        if request.signing_root_v1() != signature_root(event_hash)
+            || self.producer.public_key_v1() != expected_public_key
+        {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "runtime-event producer identity",
+            ));
+        }
+        let signature = self.producer.sign_runtime_event_v1(request)?;
+        event.signature = hex::encode(signature);
+        event.validate_signature(&self.context, event_hash)?;
         let mut line = serde_json::to_vec(&event).map_err(RuntimeEventErrorV1::Json)?;
         line.push(b'\n');
         let current_size = self.file.metadata().map_err(RuntimeEventErrorV1::Io)?.len();
@@ -4945,6 +5158,7 @@ impl std::error::Error for RuntimeEventErrorV1 {}
 #[cfg(test)]
 mod tests {
     use std::os::unix::fs::MetadataExt;
+    use std::sync::{Arc, Mutex};
     use tempfile::TempDir;
     use trnm_consensus_signer_journal::SignerWatermarkV0;
     use trnm_consensus_types::{
@@ -5023,6 +5237,88 @@ mod tests {
             binary_sha256: [0x65; 32],
         };
         (temporary, context, key)
+    }
+
+    struct RecordingRuntimeEventProducerV1 {
+        key: SigningKey,
+        requests: Arc<Mutex<Vec<RuntimeEventSignatureRequestV1>>>,
+    }
+
+    impl RuntimeEventSignatureProducerV1 for RecordingRuntimeEventProducerV1 {
+        fn public_key_v1(&self) -> [u8; 32] {
+            self.key.verifying_key().to_bytes()
+        }
+
+        fn sign_runtime_event_v1(
+            &mut self,
+            request: RuntimeEventSignatureRequestV1,
+        ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+            self.requests
+                .lock()
+                .map_err(|_| RuntimeEventErrorV1::Invalid("producer request lock"))?
+                .push(request);
+            Ok(self.key.sign(&request.signing_root_v1()).to_bytes())
+        }
+    }
+
+    #[test]
+    fn typed_external_runtime_event_producer_binds_root_before_journal_write() {
+        let (temporary, context, key) = fixture();
+        let path = temporary.path().join("external-events.jsonl");
+        let requests = Arc::new(Mutex::new(Vec::new()));
+        let mut journal = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context.clone(),
+            Box::new(RecordingRuntimeEventProducerV1 {
+                key: key.clone(),
+                requests: Arc::clone(&requests),
+            }),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect("typed producer starts the journal");
+        journal
+            .append(RuntimeEventKindV1::PeerSessionEstablished, "peer-1", 1)
+            .expect("typed producer signs the exact event");
+        let requests = requests.lock().unwrap();
+        let request = requests.last().copied().expect("event request recorded");
+        assert_eq!(request.origin(), context.validator_id);
+        assert_eq!(
+            request.validator_set_id(),
+            *context.validator_set.id().as_bytes()
+        );
+        assert_eq!(request.process_instance(), 1);
+        assert_eq!(request.sequence(), 1);
+        assert_eq!(
+            request.signing_root_v1(),
+            signature_root(request.event_sha256())
+        );
+        drop(requests);
+        drop(journal);
+        let events = read_exact_events(&File::open(path).unwrap()).unwrap();
+        assert_eq!(events.len(), 2);
+        assert!(events[1].signature.len() == 128);
+    }
+
+    #[test]
+    fn typed_external_runtime_event_producer_wrong_key_fails_before_file_creation() {
+        let (temporary, context, key) = fixture();
+        let path = temporary.path().join("wrong-external-events.jsonl");
+        let error = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context,
+            Box::new(RecordingRuntimeEventProducerV1 {
+                key: SigningKey::from_bytes(&[0xa1; 32]),
+                requests: Arc::new(Mutex::new(Vec::new())),
+            }),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect_err("wrong producer public key must fail closed");
+        assert!(matches!(
+            error,
+            RuntimeEventErrorV1::Invalid("event signing key differs from validator set")
+        ));
+        assert!(!path.exists());
+        let _ = key;
     }
 
     fn process2_validator_fixture() -> (ValidatorSet, Vec<SigningKey>) {
@@ -6717,7 +7013,7 @@ mod tests {
             RuntimeEventJournalV1::start_with_context_gate(
                 &legacy_path,
                 context,
-                key,
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
                 ProcessStartGateV1::InitialProcessOnly,
             ),
             Err(RuntimeEventErrorV1::Invalid(
@@ -6772,7 +7068,7 @@ mod tests {
         let error = RuntimeEventJournalV1::start_with_context_gate(
             &path,
             context.clone(),
-            key.clone(),
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
             ProcessStartGateV1::InitialProcessOnly,
         )
         .unwrap_err();
@@ -6796,7 +7092,7 @@ mod tests {
         let corruption_error = RuntimeEventJournalV1::start_with_context_gate(
             &corrupt_path,
             context,
-            key,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
             ProcessStartGateV1::InitialProcessOnly,
         )
         .unwrap_err();
@@ -7086,7 +7382,7 @@ mod tests {
         let started = Process2JournalStartedFromRestartCutV1::start_with_context_v1(
             &journal_path,
             context,
-            key,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
             reopened,
         )
         .unwrap();
@@ -7143,7 +7439,7 @@ mod tests {
                 Process2JournalStartedFromRestartCutV1::start_with_context_v1(
                     &journal_path,
                     context,
-                    key,
+                    Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
                     reopened,
                 )
                 .is_err()
@@ -7185,7 +7481,7 @@ mod tests {
                 Process2JournalStartedFromRestartCutV1::start_with_context_v1(
                     &journal_path,
                     context,
-                    key,
+                    Box::new(LocalRuntimeEventSignatureProducerV1::new(key.clone())),
                     reopened,
                 )
                 .is_err()
@@ -7422,7 +7718,7 @@ mod tests {
             RuntimeEventJournalV1::start_with_context_gate(
                 &path,
                 context,
-                key,
+                Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
                 ProcessStartGateV1::InitialProcessOnly,
             ),
             Err(RuntimeEventErrorV1::Invalid(

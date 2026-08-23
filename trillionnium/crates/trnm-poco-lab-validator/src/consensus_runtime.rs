@@ -20,7 +20,7 @@ use std::{
     io::{Read, Write},
     os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     path::{Path, PathBuf},
-    sync::Arc,
+    sync::{Arc, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -80,8 +80,8 @@ use crate::{
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
-        Process2JournalStartedFromRestartCutV1, RuntimeEventJournalV1, RuntimeEventKindV1,
-        RuntimeRestartPhaseV1,
+        Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1, RuntimeEventJournalV1,
+        RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
     recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
     relay::{required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0},
@@ -1009,6 +1009,48 @@ const fn is_restart_protocol_kind_v1(kind: FrameKind) -> bool {
     )
 }
 
+/// Cloneable owner-side handle for one externally provisioned runtime-event
+/// signer.  The initial process-start probe can return
+/// `RestartCutRequiredForProcess2`; keeping the producer behind this shared
+/// handle lets the same signer authority be passed to the process-2 retry
+/// without moving or recreating its private transport/session.
+#[derive(Clone)]
+struct SharedRuntimeEventSignatureProducerV1 {
+    inner: Arc<Mutex<Box<dyn RuntimeEventSignatureProducerV1>>>,
+}
+
+impl SharedRuntimeEventSignatureProducerV1 {
+    fn new(producer: Box<dyn RuntimeEventSignatureProducerV1>) -> Self {
+        Self {
+            inner: Arc::new(Mutex::new(producer)),
+        }
+    }
+
+    fn boxed(&self) -> Box<dyn RuntimeEventSignatureProducerV1> {
+        Box::new(self.clone())
+    }
+}
+
+impl RuntimeEventSignatureProducerV1 for SharedRuntimeEventSignatureProducerV1 {
+    fn public_key_v1(&self) -> [u8; 32] {
+        self.inner
+            .lock()
+            .map(|producer| producer.public_key_v1())
+            .unwrap_or([0; 32])
+    }
+
+    fn sign_runtime_event_v1(
+        &mut self,
+        request: crate::process_event::RuntimeEventSignatureRequestV1,
+    ) -> std::result::Result<[u8; 64], RuntimeEventErrorV1> {
+        let mut producer = self
+            .inner
+            .lock()
+            .map_err(|_| RuntimeEventErrorV1::Invalid("runtime-event producer lock"))?;
+        producer.sign_runtime_event_v1(request)
+    }
+}
+
 /// Runs one bounded seven-validator Stage0 consensus process.
 ///
 /// `commission` must consume the already authenticated public bootstrap
@@ -1080,17 +1122,10 @@ where
     )
 }
 
-/// Explicit authority-composition entry for the bounded runtime.
-///
-/// The caller must provide both the external peer-lease gate and an authority
-/// builder.  The builder is invoked only after the authenticated mesh is
-/// established and the h1-h3 runtime has been commissioned, but before the
-/// fleet Ready/Start barrier.  This is the narrow seam used to compose an
-/// independently administered watermark and remote signer into the real
-/// owner; the default deployed wrapper above deliberately installs the
-/// fixture producer and remains a separate, closed path.
+/// Explicit authority-composition entry for the bounded runtime.  The legacy
+/// local runtime-event signer path remains unchanged at this boundary.
 pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(
-    mut config: LoadedValidatorConfig,
+    config: LoadedValidatorConfig,
     duration: Duration,
     max_blocks: u64,
     report_path: PathBuf,
@@ -1114,26 +1149,122 @@ where
         + Send
         + 'static,
 {
+    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        commission,
+        authority_builder,
+        fleet_producer,
+        None,
+    )
+}
+
+/// Explicit authority-composition sibling for a separately provisioned
+/// runtime-event signer.  The signer is retained behind a shared owner handle
+/// so a process-1 `RestartCutRequiredForProcess2` result can retry process 2
+/// with the same external authority/session.
+pub fn run_bounded_consensus_with_authority_builder_and_runtime_event_producer_v1<C, A>(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    commission: C,
+    authority_builder: A,
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
+    runtime_event_producer: Box<dyn RuntimeEventSignatureProducerV1>,
+) -> Result<BoundedConsensusRunOutcomeV1>
+where
+    C: FnOnce(
+            &mut LoadedValidatorConfig,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>>
+        + Send
+        + 'static,
+    A: FnOnce(
+            &LoadedValidatorConfig,
+            PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<ContinuousValidatorAuthorityV0>
+        + Send
+        + 'static,
+{
+    run_bounded_consensus_with_optional_runtime_event_producer_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        commission,
+        authority_builder,
+        fleet_producer,
+        Some(runtime_event_producer),
+    )
+}
+
+fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(
+    mut config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    commission: C,
+    authority_builder: A,
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
+    runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
+) -> Result<BoundedConsensusRunOutcomeV1>
+where
+    C: FnOnce(
+            &mut LoadedValidatorConfig,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>>
+        + Send
+        + 'static,
+    A: FnOnce(
+            &LoadedValidatorConfig,
+            PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<ContinuousValidatorAuthorityV0>
+        + Send
+        + 'static,
+{
     require_fleet_signing_authority_for_builder_v1(
         config.has_local_consensus_secret(),
         fleet_producer.is_some(),
     )?;
     let preflight = ConsensusRuntimePreflightV1::new(&config, duration, max_blocks, &report_path)?;
+    let runtime_event_producer =
+        runtime_event_producer.map(SharedRuntimeEventSignatureProducerV1::new);
     let owner = thread::Builder::new()
         .name("trnm-g3-consensus-owner-v1".to_owned())
         .stack_size(CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0)
         .spawn(move || {
             let event_journal_path = config.run_root().join("runtime-events.jsonl");
-            let mut event_journal = match RuntimeEventJournalV1::start(
-                &event_journal_path,
-                &config,
-            ) {
+            let initial_event_journal = match runtime_event_producer.as_ref() {
+                Some(producer) => RuntimeEventJournalV1::start_with_loaded_config_external_signature_producer_v1(
+                    &event_journal_path,
+                    &config,
+                    producer.boxed(),
+                ),
+                None => RuntimeEventJournalV1::start(&event_journal_path, &config),
+            };
+            let mut event_journal = match initial_event_journal {
                 Ok(event_journal) => event_journal,
                 Err(error) if error.requires_stored_restart_cut_v1() => {
-                    let started = RuntimeEventJournalV1::start_process2_with_stored_restart_cut_v1(
-                        &event_journal_path,
-                        &config,
-                    )
+                    let started = match runtime_event_producer.as_ref() {
+                        Some(producer) => RuntimeEventJournalV1::start_process2_with_stored_restart_cut_park_ack_external_v1(
+                            &event_journal_path,
+                            &config,
+                            producer.boxed(),
+                        ),
+                        None => RuntimeEventJournalV1::start_process2_with_stored_restart_cut_v1(
+                            &event_journal_path,
+                            &config,
+                        ),
+                    }
                     .map_err(|error| anyhow!("start authenticated process2 event journal: {error}"))?;
                     let archive = SignedReplayArchiveV1::open_existing_v1(
                         &config,
@@ -1354,7 +1485,7 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    compose_deployed_external_authority_v1(
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
         config,
         duration,
         max_blocks,
@@ -1364,6 +1495,42 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v
         producer,
         proposal_producer,
         fleet_producer,
+        None,
+    )
+}
+
+/// Explicit deployed composition sibling carrying a typed external
+/// runtime-event signer in addition to the fleet Ready/Start/relay/restart
+/// signer and the Vote/Timeout and proposal producers.
+///
+/// The runtime-event producer is retained behind the same shared owner used
+/// by the bounded process-1/process-2 retry path.  This API does not relax
+/// the existing P2P/operator-role guard below: those roles are still required
+/// until their own external producers are wired, and activation flags remain
+/// unchanged.
+pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_producer_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    fleet_producer: Box<dyn FleetSignatureProducerV1>,
+    runtime_event_producer: Box<dyn RuntimeEventSignatureProducerV1>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        external_watermark,
+        producer,
+        proposal_producer,
+        fleet_producer,
+        Some(runtime_event_producer),
     )
 }
 
@@ -1432,7 +1599,7 @@ fn fleet_signing_authority_guard_is_precommission_and_preserves_fixture_v1() {
 /// owner.  The function is deliberately private: callers must use the
 /// explicit public entry above so the complete authority graph is visible at
 /// the API boundary.
-fn compose_deployed_external_authority_v1(
+fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
     max_blocks: u64,
@@ -1442,6 +1609,7 @@ fn compose_deployed_external_authority_v1(
     producer: Box<dyn SignatureProducerV0 + Send>,
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
+    runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
     ensure!(
         !config.has_local_consensus_secret(),
@@ -1457,14 +1625,11 @@ fn compose_deployed_external_authority_v1(
             && config.has_local_operator_recovery_secret(),
         "ExternalAuthorityRequired: P2P identity, runtime-event, and replay/recovery signing producers are not wired"
     );
-    run_bounded_consensus_with_authority_builder_v1(
-        config,
-        duration,
-        max_blocks,
-        report_path,
-        external_fence,
-        |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
-        move |config, takeover, signer_lifetime| {
+    let authority_builder =
+        move |config: &LoadedValidatorConfig,
+              takeover: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+              signer_lifetime: ContinuousSignerLifetimeBoundsV0|
+              -> Result<ContinuousValidatorAuthorityV0> {
             let mut authority =
                 ContinuousValidatorAuthorityV0::from_takeover_runtime_with_producers_v0(
                     config,
@@ -1475,9 +1640,32 @@ fn compose_deployed_external_authority_v1(
                 )?;
             authority.install_external_monotonic_watermark_v0(external_watermark)?;
             Ok(authority)
-        },
-        Some(fleet_producer),
-    )
+        };
+    match runtime_event_producer {
+        Some(runtime_event_producer) => {
+            run_bounded_consensus_with_authority_builder_and_runtime_event_producer_v1(
+                config,
+                duration,
+                max_blocks,
+                report_path,
+                external_fence,
+                |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
+                authority_builder,
+                Some(fleet_producer),
+                runtime_event_producer,
+            )
+        }
+        None => run_bounded_consensus_with_authority_builder_v1(
+            config,
+            duration,
+            max_blocks,
+            report_path,
+            external_fence,
+            |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
+            authority_builder,
+            Some(fleet_producer),
+        ),
+    }
 }
 
 /// Normal deployed entry. The once-taken bootstrap carrier is consumed by
@@ -7406,6 +7594,10 @@ mod tests {
         collections::{BTreeMap, BTreeSet},
         fs,
         os::unix::fs::PermissionsExt,
+        sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        },
     };
 
     use ed25519_dalek::{Signer, SigningKey};
@@ -7425,10 +7617,68 @@ mod tests {
     use crate::{
         collector::ConsensusCertificateCollectorV0,
         continuous_runtime::ContinuousValidatorAuthorityV0, frame::AuthenticatedFrame,
+        process_event::RuntimeEventSignatureRequestV1,
     };
 
     fn restart_intent_fixture_v1() -> RuntimeRestartPrepareIntentV1 {
         RuntimeRestartPrepareIntentV1::test_only_v1(1, 9, 17, [0x31; 32])
+    }
+
+    #[test]
+    fn shared_runtime_event_producer_preserves_one_authority_across_retry_v1() {
+        struct CountingProducer {
+            calls: Arc<AtomicUsize>,
+        }
+
+        impl RuntimeEventSignatureProducerV1 for CountingProducer {
+            fn public_key_v1(&self) -> [u8; 32] {
+                [0x91; 32]
+            }
+
+            fn sign_runtime_event_v1(
+                &mut self,
+                _request: RuntimeEventSignatureRequestV1,
+            ) -> std::result::Result<[u8; 64], RuntimeEventErrorV1> {
+                self.calls.fetch_add(1, Ordering::SeqCst);
+                Ok([0xa1; 64])
+            }
+        }
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let shared = SharedRuntimeEventSignatureProducerV1::new(Box::new(CountingProducer {
+            calls: Arc::clone(&calls),
+        }));
+        let mut process1 = shared.boxed();
+        let mut process2 = shared.boxed();
+        assert_eq!(process1.public_key_v1(), [0x91; 32]);
+        assert_eq!(process2.public_key_v1(), [0x91; 32]);
+        let request = RuntimeEventSignatureRequestV1::new(
+            ValidatorId::new([0x11; 32]),
+            [0x12; 32],
+            1,
+            0,
+            [0x13; 32],
+        )
+        .expect("test request has a typed identity");
+        process1
+            .sign_runtime_event_v1(request)
+            .expect("process-1 producer call succeeds");
+        process2
+            .sign_runtime_event_v1(request)
+            .expect("process-2 retry reuses the producer");
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+
+        let source = include_str!("consensus_runtime.rs");
+        let sibling = source
+            .find(
+                "pub fn run_bounded_consensus_with_authority_builder_and_runtime_event_producer_v1",
+            )
+            .expect("runtime-event producer sibling remains public");
+        let body = &source[sibling..];
+        assert!(body.contains("Some(runtime_event_producer)"));
+        assert!(body.contains("SharedRuntimeEventSignatureProducerV1::new"));
+        assert!(body.contains("start_process2_with_stored_restart_cut_park_ack_external_v1"));
+        assert!(body.contains("producer.boxed()"));
     }
 
     #[test]
@@ -7602,10 +7852,26 @@ mod tests {
             .map(|offset| complete_entry + offset)
             .expect("complete external authority entry has a following guard helper");
         let complete_body = &source[complete_entry..complete_end];
-        assert!(complete_body.contains("compose_deployed_external_authority_v1("));
+        assert!(complete_body
+            .contains("compose_deployed_external_authority_with_runtime_event_producer_v1("));
         assert!(!complete_body.contains("require_deployed_fleet_signing_authority_v1"));
         assert!(source.contains("Some(fleet_producer),"));
         assert!(source.contains("production_activation: false"));
+
+        let runtime_entry = source
+            .find(
+                "pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_producer_v1(",
+            )
+            .expect("deployed runtime-event producer sibling remains public");
+        let runtime_end = source[runtime_entry..]
+            .find("fn require_deployed_fleet_signing_authority_v1")
+            .map(|offset| runtime_entry + offset)
+            .expect("deployed runtime-event producer sibling has a following guard helper");
+        let runtime_body = &source[runtime_entry..runtime_end];
+        assert!(runtime_body.contains("runtime_event_producer:"));
+        assert!(runtime_body
+            .contains("compose_deployed_external_authority_with_runtime_event_producer_v1("));
+        assert!(runtime_body.contains("Some(runtime_event_producer)"));
     }
 
     #[test]
@@ -8180,7 +8446,8 @@ mod tests {
             .expect("process2 operational branch remains bounded");
         let branch = &source[start..end];
         let journal_start = branch
-            .find("let started = RuntimeEventJournalV1::start_process2_with_stored_restart_cut_v1")
+            .find("start_process2_with_stored_restart_cut_v1")
+            .or_else(|| branch.find("start_process2_with_stored_restart_cut_park_ack_external_v1"))
             .expect("branch reopens the journal-selected pair into the journal-start owner");
         let full = branch
             .find(".recover_full_process2_inert_v1")
