@@ -66,6 +66,7 @@ use crate::{
     },
     frame::FrameKind,
     loop_driver::RoutedConsensusActionV0,
+    p2p_admission::{ExternalPeerLeaseAuthorityV1, RejectingExternalPeerLeaseAuthorityV1},
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
@@ -811,11 +812,42 @@ const fn is_restart_protocol_kind_v1(kind: FrameKind) -> bool {
 /// It is called once, inside the bounded owner thread, before the first
 /// network effect.  No test fixture is reachable through this normal-build
 /// boundary.
+/// Normal bounded entry. The default authority remains rejecting until an
+/// operator explicitly injects a separately provisioned external fence.
 pub fn run_bounded_consensus_v1<C>(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    commission: C,
+) -> Result<BoundedConsensusRunOutcomeV1>
+where
+    C: FnOnce(
+            &mut LoadedValidatorConfig,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>>
+        + Send
+        + 'static,
+{
+    run_bounded_consensus_with_external_fence_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        Arc::new(RejectingExternalPeerLeaseAuthorityV1),
+        commission,
+    )
+}
+
+/// Explicit-injection bounded entry. The injected authority is consumed only
+/// by the mesh's `establish_with_fence` gate; no default/deployed wrapper can
+/// reach this path without an explicit caller argument.
+pub fn run_bounded_consensus_with_external_fence_v1<C>(
     mut config: LoadedValidatorConfig,
     duration: Duration,
     max_blocks: u64,
     report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
 ) -> Result<BoundedConsensusRunOutcomeV1>
 where
@@ -885,11 +917,12 @@ where
             // the authenticated mesh (and acquiring each directed lease) must
             // precede h1-h3 commissioning so a missing/stale fencing backend
             // cannot reach SafetyStore, signer, or Core mutation.
-            let mesh = match PersistentAuthenticatedPeerMeshV0::establish(
+            let mesh = match PersistentAuthenticatedPeerMeshV0::establish_with_fence(
                 &config,
                 MESH_SETUP_TIMEOUT_V1,
                 MESH_IO_TIMEOUT_V1,
                 MESH_QUEUE_CAPACITY_V1,
+                external_fence,
             )
             .context("establish externally fenced consensus mesh")
             {
@@ -6407,6 +6440,29 @@ mod tests {
             .expect("runtime commissioning call remains explicit");
         assert!(gate < commission);
         assert!(source.contains("bounded-consensus-external-fence-gate-failed"));
+        assert!(source.contains("production_activation: false"));
+    }
+
+    #[test]
+    fn explicit_external_fence_is_only_injection_path_and_default_stays_rejecting_v1() {
+        let source = include_str!("consensus_runtime.rs");
+        let default_entry = source
+            .find("pub fn run_bounded_consensus_v1<C>")
+            .expect("default bounded runtime entry remains present");
+        let explicit_entry = source
+            .find("pub fn run_bounded_consensus_with_external_fence_v1<C>")
+            .expect("explicit external-fence entry remains present");
+        assert!(default_entry < explicit_entry);
+
+        let default_body = &source[default_entry..explicit_entry];
+        assert!(default_body.contains("Arc::new(RejectingExternalPeerLeaseAuthorityV1)"));
+        assert!(!default_body.contains("PersistentAuthenticatedPeerMeshV0::establish_with_fence"));
+
+        let explicit_body = &source[explicit_entry..];
+        assert!(explicit_body.contains("external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>"));
+        assert!(explicit_body.contains("PersistentAuthenticatedPeerMeshV0::establish_with_fence"));
+        let direct_mesh_establish = concat!("PersistentAuthenticatedPeerMeshV0::", "establish(");
+        assert!(!source.contains(direct_mesh_establish));
         assert!(source.contains("production_activation: false"));
     }
 
