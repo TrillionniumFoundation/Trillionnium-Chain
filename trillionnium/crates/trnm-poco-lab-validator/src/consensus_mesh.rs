@@ -1065,7 +1065,8 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .with_validator_set_binding(
                 config.validator_set().epoch().get(),
                 config.validator_set().id().into_bytes(),
-            ),
+            )
+            .with_node_config_binding(config.config_sha256()),
             config.listen_addr(),
             outgoing,
             incoming,

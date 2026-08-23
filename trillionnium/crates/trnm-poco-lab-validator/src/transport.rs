@@ -34,6 +34,7 @@ const SESSION_DOMAIN: &[u8] = b"trnm.poco-g3.connection-session.v2";
 const TRANSCRIPT_DOMAIN: &[u8] = b"trnm.poco-g3.handshake-transcript.v2";
 const NETWORK_CONTEXT_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.v2";
 const EPOCH_SET_BINDING_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.epoch-set-binding.v1";
+const NODE_CONFIG_BINDING_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.node-config-binding.v1";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RunTransportContext {
@@ -48,6 +49,11 @@ pub struct RunTransportContext {
     /// the transport digest then signs them as part of the handshake.
     epoch: Option<u64>,
     validator_set_id: Option<[u8; 32]>,
+    /// Optional hash of the exact validator configuration admitted by the
+    /// deployment manifest.  This is a node-identity binding, not host
+    /// attestation; an independent attestor is still required before signer
+    /// or consensus commissioning.
+    node_config_sha256: Option<[u8; 32]>,
 }
 
 impl RunTransportContext {
@@ -64,6 +70,7 @@ impl RunTransportContext {
             coordinator_manifest_sha256,
             epoch: None,
             validator_set_id: None,
+            node_config_sha256: None,
         }
     }
 
@@ -85,6 +92,19 @@ impl RunTransportContext {
             (Some(epoch), Some(set_id)) => Some((epoch, set_id)),
             _ => None,
         }
+    }
+
+    /// Adds the exact public validator-config digest to the authenticated
+    /// handshake context.  This prevents one validator's signed transport
+    /// session from being replayed under another deployment configuration.
+    /// It does not claim a cryptographic host/TEE attestation.
+    pub const fn with_node_config_binding(mut self, config_sha256: [u8; 32]) -> Self {
+        self.node_config_sha256 = Some(config_sha256);
+        self
+    }
+
+    pub const fn node_config_binding(&self) -> Option<[u8; 32]> {
+        self.node_config_sha256
     }
 }
 
@@ -652,6 +672,10 @@ fn network_context_digest(
             hasher.update(set_id);
         }
         None => {}
+    }
+    if let Some(config_sha256) = context.node_config_binding() {
+        hasher.update(NODE_CONFIG_BINDING_DOMAIN);
+        hasher.update(config_sha256);
     }
     hasher.finalize().into()
 }
@@ -1295,5 +1319,8 @@ mod tests {
         let bound = TEST_TRANSPORT_CONTEXT
             .with_validator_set_binding(set.epoch().get(), set.id().into_bytes());
         assert_ne!(actual, network_context_digest(&set, &key_roles, bound));
+
+        let node_bound = TEST_TRANSPORT_CONTEXT.with_node_config_binding([0x88; 32]);
+        assert_ne!(actual, network_context_digest(&set, &key_roles, node_bound));
     }
 }

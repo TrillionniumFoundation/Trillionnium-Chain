@@ -422,6 +422,14 @@ pub fn run_network_smoke(
     rounds: u64,
     timeout: Duration,
 ) -> Result<SignedNetworkSmokeReport> {
+    // Network-smoke currently signs its infrastructure-only report with the
+    // explicitly loaded fixture consensus key.  An external-authority config
+    // must never reach the accessor (which deliberately refuses raw-key
+    // fallback); fail closed before binding a listener or creating sessions.
+    ensure!(
+        config.has_local_consensus_secret(),
+        "network-smoke report signing requires the explicit fixture consensus key; external-authority signing is not wired"
+    );
     if rounds == 0 || rounds > MAX_ROUNDS {
         bail!("network-smoke rounds must be in 1..={MAX_ROUNDS}");
     }
@@ -683,6 +691,7 @@ fn transport_context(config: &LoadedValidatorConfig) -> RunTransportContext {
         config.candidate_source_sha256(),
         config.binary_sha256(),
         config.coordinator_manifest_sha256(),
+        config.config_sha256(),
         config.validator_set(),
     )
 }
@@ -699,6 +708,7 @@ fn transport_context_for_validator_set(
     candidate_source_sha256: [u8; 32],
     binary_sha256: [u8; 32],
     coordinator_manifest_sha256: [u8; 32],
+    config_sha256: [u8; 32],
     validator_set: &ValidatorSet,
 ) -> RunTransportContext {
     RunTransportContext::new(
@@ -708,6 +718,7 @@ fn transport_context_for_validator_set(
         coordinator_manifest_sha256,
     )
     .with_validator_set_binding(validator_set.epoch().get(), validator_set.id().into_bytes())
+    .with_node_config_binding(config_sha256)
 }
 
 fn connect_until(address: SocketAddr, deadline: Instant) -> Result<TcpStream> {
@@ -946,12 +957,14 @@ mod tests {
             [0x75; 32],
             [0x76; 32],
             [0x77; 32],
+            [0x78; 32],
             &validator_set,
         );
         assert_eq!(
             context.validator_set_binding(),
             Some((validator_set.epoch().get(), validator_set.id().into_bytes()))
         );
+        assert_eq!(context.node_config_binding(), Some([0x78; 32]));
     }
 
     #[test]
