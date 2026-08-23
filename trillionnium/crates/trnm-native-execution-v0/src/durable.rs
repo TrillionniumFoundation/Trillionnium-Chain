@@ -3716,19 +3716,20 @@ fn decode_borsh_v0<T: BorshDeserialize>(bytes: &[u8], field: &'static str) -> Du
 
 #[cfg(test)]
 mod tests {
-    use ed25519_dalek::SigningKey;
+    use ed25519_dalek::{Signer as _, SigningKey};
     use std::{process::Command, thread, time::Instant};
     use tempfile::TempDir;
     use trnm_consensus_types::{
         BlockHeader, BlockId, BlockKind, CertifiedHeaderV0, ChainId, ConsensusPublicKey, Epoch,
-        EvidenceRoot, FinalityProofV0, GenesisQcV0, Height, PayloadDigest, ProtocolVersion,
-        QcReferenceV0, QuorumCertificate, ReceiptsRoot, Signature64, SignatureBytes, StateRoot,
-        Validator, ValidatorId, View, Vote, VotingPower,
+        EvidenceRoot, FinalityProofV0, GenesisQcV0, Height, PayloadDigest, ProposalWitnessV0,
+        ProtocolVersion, QcReferenceV0, QuorumCertificate, ReceiptsRoot, Signature64,
+        SignatureBytes, StateRoot, Validator, ValidatorId, View, Vote, VotingPower,
     };
     use trnm_finality_types::{crypto::public_key_hex, SignedCommandEnvelopeV1};
     use trnm_native_application::{
         ChainIdV0, GenesisHashV0, NativeApplicationRecoveryRequestV0, NativeBlockExecutionResultV0,
-        NativeExpectedBlockCommitmentsV0, NativeRecoveryDispositionV0,
+        NativeExpectedBlockCommitmentsV0, NativeRecoveryDispositionV0, NativeRecoveryWatermarksV0,
+        NativeStateProofRequestV0,
     };
     use trnm_protocol::{
         account_key, CanonicalCommandV1, CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1,
@@ -3751,6 +3752,7 @@ mod tests {
     const INITIAL_BLOCK: [u8; 32] = [9; 32];
     const INITIAL_COMMIT: [u8; 32] = [10; 32];
     const STORE_A: [u8; 32] = [11; 32];
+    const STORE_FINALITY: [u8; 32] = [13; 32];
 
     fn signing_key(seed: u8) -> SigningKey {
         SigningKey::from_bytes(&[seed; 32])
@@ -3940,6 +3942,226 @@ mod tests {
         FinalityProofV0::new(c1, c2, c3, set, None, parameters, parent_timestamp_ms).unwrap()
     }
 
+    fn header_for_execution_v0(
+        execution: &NativeBlockExecutionRequestV0,
+        set: &ValidatorSet,
+        view: u64,
+        timestamp_ms: u64,
+    ) -> BlockHeader {
+        let expected = execution.expected();
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(execution.height().get()),
+            BlockKind::Regular,
+            BlockId::new(*execution.parent().block_id().as_bytes()),
+            set.validators()[(view.saturating_sub(1) as usize) % set.validators().len()].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new(*expected.payload_root().as_bytes()),
+            StateRoot::new(*expected.post_state_root().as_bytes()),
+            ReceiptsRoot::new(*expected.receipts_root().as_bytes()),
+            EvidenceRoot::new(*expected.evidence_root().as_bytes()),
+            timestamp_ms,
+            None,
+        )
+        .unwrap()
+    }
+
+    /// Build the smallest strict-Ed25519 three-chain that can carry one
+    /// application execution header.  The native application deliberately
+    /// does not manufacture this proof; this helper is test-only evidence that
+    /// the finalized-commit adapter consumes the same authenticated proposal
+    /// and QC objects as the consensus verifier.
+    fn signed_finality_proof_for_execution_v0(
+        execution: &NativeBlockExecutionRequestV0,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> FinalityProofV0 {
+        fn consensus_key(index: usize) -> SigningKey {
+            signing_key(20 + index as u8)
+        }
+
+        fn signed_qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+            let votes = set
+                .validators()
+                .iter()
+                .take(3)
+                .enumerate()
+                .map(|(index, validator)| {
+                    let root = Vote::signing_root_for_set(
+                        set,
+                        header.view(),
+                        header.height(),
+                        header.id(),
+                    )
+                    .unwrap();
+                    let signature = SignatureBytes::from_array(
+                        consensus_key(index).sign(root.as_bytes()).to_bytes(),
+                    );
+                    Vote::new(
+                        set.chain_id(),
+                        set.protocol_version(),
+                        set.epoch(),
+                        header.view(),
+                        header.height(),
+                        header.id(),
+                        set.id(),
+                        validator.id(),
+                        signature,
+                        set,
+                    )
+                    .unwrap()
+                })
+                .collect();
+            QuorumCertificate::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                header.view(),
+                header.height(),
+                header.id(),
+                set.id(),
+                votes,
+                set,
+            )
+            .unwrap()
+        }
+
+        fn certified(
+            header: BlockHeader,
+            justify: QcReferenceV0,
+            qc: QuorumCertificate,
+            set: &ValidatorSet,
+            parameters: &ConsensusParametersV0,
+            authenticated_parent_timestamp_ms: u64,
+        ) -> CertifiedHeaderV0 {
+            let root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None).unwrap();
+            let proposer_index = set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == header.proposer_id())
+                .unwrap();
+            let signature = Signature64::from_array(
+                consensus_key(proposer_index)
+                    .sign(root.as_bytes())
+                    .to_bytes(),
+            );
+            CertifiedHeaderV0::new(
+                header,
+                justify,
+                None,
+                None,
+                signature,
+                qc,
+                set,
+                None,
+                parameters,
+                authenticated_parent_timestamp_ms,
+            )
+            .unwrap()
+        }
+
+        let h1 = header_for_execution_v0(execution, set, 1, execution.timestamp_ms());
+        assert_eq!(h1.id().as_bytes(), execution.block_id().as_bytes());
+        let q1 = signed_qc(set, &h1);
+        let c1 = certified(
+            h1.clone(),
+            QcReferenceV0::genesis_anchor(
+                GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap(),
+            ),
+            q1.clone(),
+            set,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        );
+
+        let h2 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(2),
+            Height::new(2),
+            BlockKind::Regular,
+            h1.id(),
+            set.validators()[1].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x61; 32]),
+            StateRoot::new([0x62; 32]),
+            ReceiptsRoot::new([0x63; 32]),
+            EvidenceRoot::new([0x64; 32]),
+            execution.timestamp_ms() + 1,
+            None,
+        )
+        .unwrap();
+        let q2 = signed_qc(set, &h2);
+        let c2 = certified(
+            h2.clone(),
+            QcReferenceV0::ordinary(q1),
+            q2.clone(),
+            set,
+            parameters,
+            h1.timestamp_ms(),
+        );
+
+        let h3 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(3),
+            Height::new(3),
+            BlockKind::Regular,
+            h2.id(),
+            set.validators()[2].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x71; 32]),
+            StateRoot::new([0x72; 32]),
+            ReceiptsRoot::new([0x73; 32]),
+            EvidenceRoot::new([0x74; 32]),
+            execution.timestamp_ms() + 2,
+            None,
+        )
+        .unwrap();
+        let q3 = signed_qc(set, &h3);
+        let c3 = certified(
+            h3,
+            QcReferenceV0::ordinary(q2),
+            q3,
+            set,
+            parameters,
+            h2.timestamp_ms(),
+        );
+
+        let proof = FinalityProofV0::new(
+            c1,
+            c2,
+            c3,
+            set,
+            None,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        )
+        .unwrap();
+        proof
+            .verify(
+                set,
+                None,
+                parameters,
+                authenticated_parent_timestamp_ms,
+                &trnm_consensus_crypto::StrictEd25519Verifier,
+            )
+            .unwrap();
+        proof
+    }
+
     fn canonical_lab_inputs(
         validator_set: ValidatorSet,
         parameters: ConsensusParametersV0,
@@ -4101,6 +4323,13 @@ mod tests {
     }
 
     fn config(store_id: [u8; 32]) -> NativeApplicationConfigV0 {
+        config_with_initial_block(store_id, INITIAL_BLOCK)
+    }
+
+    fn config_with_initial_block(
+        store_id: [u8; 32],
+        initial_block_id: [u8; 32],
+    ) -> NativeApplicationConfigV0 {
         let parameters = ConsensusParametersV0::reference_shadow_v0();
         let set = consensus_set(&parameters);
         let signers = application_signers();
@@ -4128,7 +4357,7 @@ mod tests {
             GENESIS,
             DESCRIPTOR,
             store_id,
-            INITIAL_BLOCK,
+            initial_block_id,
             INITIAL_COMMIT,
             set,
             parameters,
@@ -4547,6 +4776,105 @@ mod tests {
             .unwrap();
         assert_eq!(result.disposition(), NativeRecoveryDispositionV0::Exact);
         assert_eq!(result.head(), committed.head());
+    }
+
+    #[test]
+    fn finalized_commit_adapter_runs_signed_tx_to_state_proof_and_reopen_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("finality-application.sqlite");
+        // The consensus genesis anchor is also the authenticated application
+        // parent in this one-node seam.  Real deployments will obtain this
+        // parent from Core/Safety commissioning rather than this test helper.
+        let config = config_with_initial_block(STORE_FINALITY, GENESIS);
+        let genesis_request = genesis_request(&config);
+        let validator_set = config.validator_set.clone();
+        let parameters = config.parameters;
+        let signer_policy_commitment = config.signer_policy_commitment_v0();
+        let parent = ApplicationHeadV0::new(
+            HeightV0::GENESIS,
+            BlockIdV0::new(GENESIS).unwrap(),
+            StateRootV0::new(config.initial_state_root).unwrap(),
+            ApplicationCommitIdV0::new(INITIAL_COMMIT).unwrap(),
+        );
+        let template = execution_request(&config, &parent);
+        let finalized_header =
+            header_for_execution_v0(&template, &config.validator_set, 1, template.timestamp_ms());
+        let request = NativeBlockExecutionRequestV0::new(
+            template.chain_id().clone(),
+            template.genesis_hash(),
+            parent.clone(),
+            BlockIdV0::new(*finalized_header.id().as_bytes()).unwrap(),
+            template.height(),
+            template.timestamp_ms(),
+            template.active_validator_set_id(),
+            template.transactions().to_vec(),
+            template.expected(),
+        )
+        .unwrap();
+        let application = DurableNativeApplicationV0::open(&path, config).unwrap();
+        let genesis = application.initialize(genesis_request).unwrap();
+        assert_eq!(genesis.head().block_id(), parent.block_id());
+
+        // The body is made of the same SignedCommandEnvelopeV1 fixtures used
+        // by the durable execution vector; no unsigned transaction shortcut
+        // is involved in this path.
+        let executed = match application.execute_block(request.clone()).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("signed transaction execution was not valid: {other:?}"),
+        };
+        let proof = signed_finality_proof_for_execution_v0(
+            executed.request(),
+            &validator_set,
+            &parameters,
+            template.timestamp_ms() - 1_000,
+        );
+        let committed = application
+            .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                executed,
+                proof,
+                template.timestamp_ms() - 1_000,
+            ))
+            .unwrap();
+        assert_eq!(committed.head().height().get(), 1);
+        assert_eq!(committed.head().block_id(), request.block_id());
+
+        let state_proof = application
+            .state_proof(
+                NativeStateProofRequestV0::new(
+                    committed.head().clone(),
+                    stored_object_key_v0(&account_key("did:client:1")).unwrap(),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        assert!(state_proof.value().is_some());
+        assert!(!state_proof.proof_bytes().is_empty());
+        drop(application);
+
+        let reopened = DurableNativeApplicationV0::open(
+            &path,
+            config_with_initial_block(STORE_FINALITY, GENESIS),
+        )
+        .unwrap();
+        assert_eq!(
+            reopened.confirmed_committed_head_v0().unwrap(),
+            *committed.head()
+        );
+        let recovery = reopened
+            .recover(
+                NativeApplicationRecoveryRequestV0::new(
+                    ChainIdV0::new(CHAIN).unwrap(),
+                    GenesisHashV0::new(GENESIS).unwrap(),
+                    Hash32V0::new(DESCRIPTOR),
+                    Hash32V0::new(signer_policy_commitment),
+                    committed.head().clone(),
+                    NativeRecoveryWatermarksV0::new(3, 0, 0),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        assert_eq!(recovery.disposition(), NativeRecoveryDispositionV0::Exact);
+        assert_eq!(recovery.head(), committed.head());
     }
 
     #[test]
