@@ -1499,16 +1499,11 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .preflight()
             .map_err(|error| anyhow!("external fencing preflight failed: {error}"))?;
         validate_directed_plan_maps(identity.local, &outgoing, &incoming)?;
-        let listener = TcpListener::bind(listen_addr)
-            .with_context(|| format!("bind consensus listener {listen_addr}"))?;
-        listener
-            .set_nonblocking(true)
-            .context("set consensus listener nonblocking")?;
 
-        let setup_deadline = Instant::now()
-            .checked_add(setup_timeout)
-            .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
-        let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
+        // Build and validate the independent host-attestation registry before
+        // binding any network listener.  A failed platform/authority
+        // preflight must not leave a briefly bound consensus socket behind;
+        // commissioning is an all-or-nothing boundary.
         let host_attestation = identity
             .host_attestation
             .as_ref()
@@ -1534,6 +1529,16 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 )
             })
             .transpose()?;
+        let listener = TcpListener::bind(listen_addr)
+            .with_context(|| format!("bind consensus listener {listen_addr}"))?;
+        listener
+            .set_nonblocking(true)
+            .context("set consensus listener nonblocking")?;
+
+        let setup_deadline = Instant::now()
+            .checked_add(setup_timeout)
+            .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
+        let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
         let fences = MeshFenceRegistryV1::new_with_host_attestation(
             authority,
             identity.local,
