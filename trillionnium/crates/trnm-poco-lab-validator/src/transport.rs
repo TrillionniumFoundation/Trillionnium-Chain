@@ -21,8 +21,11 @@ use crate::frame::{
     write_framed_with_external_identity, AuthenticatedFrame, FrameError, FrameKind,
 };
 use crate::key_roles::ValidatorKeyRoleRegistryV1;
+use crate::p2p_admission::ExternalPeerDirectionV1;
+use crate::p2p_host_attestation::HostAttestationAdmissionV1;
 use crate::p2p_identity::{
-    P2pIdentitySignatureProducerV1, P2pIdentitySignaturePurposeV1, P2pIdentitySignatureRequestV1,
+    P2pIdentityErrorV1, P2pIdentitySignatureProducerV1, P2pIdentitySignaturePurposeV1,
+    P2pIdentitySignatureRequestV1,
 };
 
 const HANDSHAKE_MAGIC: &[u8; 8] = b"TRNMG3H2";
@@ -314,6 +317,10 @@ pub struct ExternallySignedAuthenticatedConnectionV1<T> {
     expected_public_key: [u8; 32],
     next_send: u64,
     next_receive: u64,
+    validator_genesis_hash: [u8; 32],
+    validator_epoch: u64,
+    validator_set_id: [u8; 32],
+    host_attestation_admission: Option<HostAttestationAdmissionV1>,
     poisoned: bool,
 }
 
@@ -357,6 +364,10 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
             expected_public_key,
             next_send: 0,
             next_receive: 0,
+            validator_genesis_hash: *validator_set.genesis_hash().as_bytes(),
+            validator_epoch: validator_set.epoch().get(),
+            validator_set_id: validator_set.id().into_bytes(),
+            host_attestation_admission: None,
             poisoned: false,
         })
     }
@@ -398,6 +409,10 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
             expected_public_key,
             next_send: 0,
             next_receive: 0,
+            validator_genesis_hash: *validator_set.genesis_hash().as_bytes(),
+            validator_epoch: validator_set.epoch().get(),
+            validator_set_id: validator_set.id().into_bytes(),
+            host_attestation_admission: None,
             poisoned: false,
         })
     }
@@ -422,6 +437,38 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
         self.poisoned
     }
 
+    /// Marks the connection usable only after the mesh has admitted the
+    /// typed receipt for this exact session/generation.  Every immutable
+    /// transport and validator-set coordinate is checked again here, so a
+    /// caller cannot attach a receipt from another socket or reconnect.
+    pub(crate) fn mark_host_attestation_admitted(
+        &mut self,
+        admission: HostAttestationAdmissionV1,
+        direction: ExternalPeerDirectionV1,
+        generation: u64,
+    ) -> Result<(), FrameError> {
+        let binding = admission.binding();
+        let expected_run_id = run_id_sha256_v1(&self.run_id);
+        let valid = binding.local() == self.local
+            && binding.remote() == self.session.remote
+            && binding.direction() == direction
+            && binding.p2p_identity_public_key() == self.expected_public_key
+            && binding.genesis_hash() == self.validator_genesis_hash
+            && binding.epoch() == self.validator_epoch
+            && binding.validator_set_id() == self.validator_set_id
+            && binding.session_id() == self.session.session
+            && binding.generation() == generation
+            && binding.run_id_sha256() == expected_run_id
+            && binding.network_context_digest() == self.network_context_digest
+            && admission.token().binding_digest() == binding.digest();
+        if !valid {
+            self.poisoned = true;
+            return Err(FrameError::ExternalIdentity(P2pIdentityErrorV1::Rejected));
+        }
+        self.host_attestation_admission = Some(admission);
+        Ok(())
+    }
+
     /// Borrows the underlying stream for the mesh's bounded shutdown/control
     /// bookkeeping.  This does not expose the external signer or any key
     /// material; it is the same narrow socket seam available on the fixture
@@ -433,6 +480,10 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
     pub fn send(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<(), FrameError> {
         if self.poisoned {
             return Err(FrameError::Poisoned);
+        }
+        if self.host_attestation_admission.is_none() {
+            self.poisoned = true;
+            return Err(FrameError::ExternalIdentity(P2pIdentityErrorV1::Rejected));
         }
         let next_send = self.next_send.checked_add(1).ok_or_else(|| {
             self.poisoned = true;
@@ -465,6 +516,10 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
     pub fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
         if self.poisoned {
             return Err(FrameError::Poisoned);
+        }
+        if self.host_attestation_admission.is_none() {
+            self.poisoned = true;
+            return Err(FrameError::ExternalIdentity(P2pIdentityErrorV1::Rejected));
         }
         let next_receive = self.next_receive.checked_add(1).ok_or_else(|| {
             self.poisoned = true;
@@ -1137,6 +1192,17 @@ fn network_context_digest(
     hasher.finalize().into()
 }
 
+/// Returns the exact digest carried by the authenticated handshake.  The
+/// host-attestation seam uses this same digest so evidence cannot be detached
+/// from the transport campaign or key-role registry.
+pub(crate) fn network_context_digest_v1(
+    validator_set: &ValidatorSet,
+    key_roles: &ValidatorKeyRoleRegistryV1,
+    context: RunTransportContext,
+) -> [u8; 32] {
+    network_context_digest(validator_set, key_roles, context)
+}
+
 fn signing_root(domain: &[u8], body: &[u8]) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(domain);
@@ -1227,6 +1293,10 @@ mod tests {
     use std::thread;
 
     use crate::key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1};
+    use crate::p2p_host_attestation::{
+        HostAttestationAdmissionV1, HostAttestationBindingV1, HostAttestationMaterialV1,
+        HostAttestationTokenV1,
+    };
     use crate::p2p_identity::P2pIdentityErrorV1;
     use sha2::{Digest, Sha256};
     use trnm_consensus_types::{
@@ -1335,6 +1405,37 @@ mod tests {
         )
     }
 
+    fn host_admission(
+        local: ValidatorId,
+        remote: ValidatorId,
+        direction: ExternalPeerDirectionV1,
+        p2p_key: [u8; 32],
+        set: &ValidatorSet,
+        key_roles: &ValidatorKeyRoleRegistryV1,
+        run_id: &str,
+        context: RunTransportContext,
+        session_id: [u8; 32],
+        generation: u64,
+    ) -> HostAttestationAdmissionV1 {
+        let binding = HostAttestationBindingV1::new(
+            local,
+            remote,
+            direction,
+            p2p_key,
+            *set.genesis_hash().as_bytes(),
+            set.epoch().get(),
+            set.id().into_bytes(),
+            session_id,
+            generation,
+            run_id_sha256_v1(run_id),
+            network_context_digest(set, key_roles, context),
+        )
+        .unwrap();
+        let material = HostAttestationMaterialV1::from_bytes(vec![0xa5, 0x5a]).unwrap();
+        let token = HostAttestationTokenV1::new(binding, &material, generation).unwrap();
+        HostAttestationAdmissionV1::from_verified(binding, &material, token).unwrap()
+    }
+
     #[test]
     fn fresh_challenge_authenticates_both_ends_and_frames() {
         let (client_key, server_key, _, client, server, set, key_roles) = fixture();
@@ -1408,6 +1509,21 @@ mod tests {
                 TEST_TRANSPORT_CONTEXT,
             )
             .unwrap();
+            let admission = host_admission(
+                server,
+                client,
+                ExternalPeerDirectionV1::Inbound,
+                server_key_roles.p2p_identity_public_key(server).unwrap(),
+                &server_set,
+                &server_key_roles,
+                run_id,
+                TEST_TRANSPORT_CONTEXT,
+                connection.session_id(),
+                1,
+            );
+            connection
+                .mark_host_attestation_admitted(admission, ExternalPeerDirectionV1::Inbound, 1)
+                .unwrap();
             let frame = connection.receive().unwrap();
             assert_eq!(frame.kind, FrameKind::Health);
             assert_eq!(frame.payload, b"client-ready");
@@ -1434,6 +1550,21 @@ mod tests {
             TEST_TRANSPORT_CONTEXT,
         )
         .unwrap();
+        let admission = host_admission(
+            client,
+            server,
+            ExternalPeerDirectionV1::Outbound,
+            key_roles.p2p_identity_public_key(client).unwrap(),
+            &set,
+            &key_roles,
+            run_id,
+            TEST_TRANSPORT_CONTEXT,
+            connection.session_id(),
+            1,
+        );
+        connection
+            .mark_host_attestation_admitted(admission, ExternalPeerDirectionV1::Outbound, 1)
+            .unwrap();
         connection
             .send(FrameKind::Health, b"client-ready".to_vec())
             .unwrap();

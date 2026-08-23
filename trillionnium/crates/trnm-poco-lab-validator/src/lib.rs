@@ -37,6 +37,10 @@ pub mod network;
 /// Active D0 peer-admission helper.  This is bounded handshake/lease
 /// authority only; it does not drive consensus transport or a validator loop.
 pub mod p2p_admission;
+/// Typed, fail-closed external host-attestation gate for P2P session
+/// commissioning.  This is an authority seam, not a claim that the current
+/// laboratory runner has a TEE or platform verifier.
+pub mod p2p_host_attestation;
 /// Typed external P2P identity-signature producer boundary.  The transport
 /// verifies each returned signature against the committed role key before
 /// emitting a handshake or frame; no activation authority is implied.

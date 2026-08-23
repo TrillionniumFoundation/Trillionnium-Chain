@@ -45,6 +45,10 @@ use crate::{
         ExternalPeerLeaseScopeV1, ExternalPeerLeaseTokenV1, PeerAdmissionContextV1,
         RejectingExternalPeerLeaseAuthorityV1,
     },
+    p2p_host_attestation::{
+        HostAttestationAdmissionV1, HostAttestationAuthorityV1, HostAttestationErrorV1,
+        HostAttestationMaterialV1, HostAttestationSessionRegistryV1,
+    },
     p2p_identity::{
         P2pIdentityErrorV1, P2pIdentitySignatureProducerV1, P2pIdentitySignatureRequestV1,
     },
@@ -531,6 +535,24 @@ impl<T: Read + Write> MeshAuthenticatedConnectionV1<T> {
         }
     }
 
+    fn mark_host_attestation_admitted(
+        &mut self,
+        admission: Option<HostAttestationAdmissionV1>,
+        direction: ExternalPeerDirectionV1,
+        generation: u64,
+    ) -> Result<()> {
+        if let Self::External(connection) = self {
+            let admission = admission
+                .ok_or_else(|| anyhow!("external connection has no host-attestation receipt"))?;
+            connection
+                .mark_host_attestation_admitted(admission, direction, generation)
+                .map_err(|error| {
+                    anyhow!("host-attestation receipt does not match connection: {error}")
+                })?;
+        }
+        Ok(())
+    }
+
     fn send(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<(), FrameError> {
         match self {
             Self::Local(connection) => connection.send(kind, payload),
@@ -554,6 +576,16 @@ struct MeshIdentityV0 {
     validator_set: ValidatorSet,
     key_roles: ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
+    host_attestation: Option<MeshHostAttestationConfigV1>,
+}
+
+/// Explicit host-attestation composition for one deployed mesh.  Keeping the
+/// authority and opaque evidence together prevents a caller from supplying
+/// evidence for one host while commissioning another identity/context.
+#[derive(Clone)]
+struct MeshHostAttestationConfigV1 {
+    authority: Arc<dyn HostAttestationAuthorityV1>,
+    material: HostAttestationMaterialV1,
 }
 
 /// Secret-bearing fixture description used by the cross-process fencing
@@ -641,6 +673,7 @@ impl MeshIdentityV0 {
             validator_set: config.validator_set.clone(),
             key_roles: config.key_roles.clone(),
             transport_context: config.transport_context,
+            host_attestation: None,
         }
     }
 }
@@ -817,15 +850,27 @@ struct MeshFenceRegistryV1 {
     local: ValidatorId,
     context: PeerAdmissionContextV1,
     ttl: Duration,
+    host_attestation: Option<HostAttestationSessionRegistryV1>,
     tokens: Arc<Mutex<BTreeMap<ActiveFenceKeyV0, ActiveFenceEntryV1>>>,
 }
 
 impl MeshFenceRegistryV1 {
+    #[cfg(test)]
     fn new(
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
         local: ValidatorId,
         context: PeerAdmissionContextV1,
         ttl: Duration,
+    ) -> Result<Self> {
+        Self::new_with_host_attestation(authority, local, context, ttl, None)
+    }
+
+    fn new_with_host_attestation(
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+        local: ValidatorId,
+        context: PeerAdmissionContextV1,
+        ttl: Duration,
+        host_attestation: Option<HostAttestationSessionRegistryV1>,
     ) -> Result<Self> {
         let ttl_millis = ttl.as_millis();
         if !(1_000..=120_000).contains(&ttl_millis) {
@@ -836,8 +881,42 @@ impl MeshFenceRegistryV1 {
             local,
             context,
             ttl,
+            host_attestation,
             tokens: Arc::new(Mutex::new(BTreeMap::new())),
         })
+    }
+
+    fn preflight_host_attestation(&self) -> Result<()> {
+        // The registry constructor already performs the authority preflight;
+        // keeping this method explicit makes the commissioning gate visible
+        // at the mesh owner boundary and gives future authorities a second
+        // fresh check immediately before listener/worker creation.
+        if let Some(host_attestation) = &self.host_attestation {
+            host_attestation
+                .preflight()
+                .map_err(|error| anyhow!("host attestation preflight failed: {error}"))?;
+        }
+        Ok(())
+    }
+
+    fn host_attestation_admission(
+        &self,
+        direction: PeerDirectionV0,
+        remote: ValidatorId,
+        session_id: [u8; 32],
+        generation: u64,
+    ) -> Result<Option<HostAttestationAdmissionV1>> {
+        let Some(host_attestation) = &self.host_attestation else {
+            return Ok(None);
+        };
+        let direction = match direction {
+            PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
+            PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
+        };
+        host_attestation
+            .admission(direction, remote, session_id, generation)
+            .map(Some)
+            .map_err(|error| anyhow!("host attestation receipt lookup failed: {error}"))
     }
 
     fn acquire(
@@ -847,6 +926,15 @@ impl MeshFenceRegistryV1 {
         session_id: [u8; 32],
         generation: u64,
     ) -> Result<ExternalPeerLeaseTokenV1> {
+        let host_direction = match direction {
+            PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
+            PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
+        };
+        if let Some(host_attestation) = &self.host_attestation {
+            host_attestation
+                .acquire(host_direction, remote, session_id, generation)
+                .map_err(|error| anyhow!("host attestation rejected session: {error}"))?;
+        }
         let scope = ExternalPeerLeaseScopeV1::new(
             self.local,
             remote,
@@ -861,12 +949,17 @@ impl MeshFenceRegistryV1 {
         .map_err(|error| anyhow!("external fence scope rejected: {error}"))?;
         let request = ExternalPeerLeaseRequestV1::new(scope, self.ttl)
             .map_err(|error| anyhow!("external fence request rejected: {error}"))?;
-        let token = self
-            .authority
-            .acquire(request)
-            .map_err(|error| anyhow!("external fence acquire failed: {error}"))?;
+        let token = self.authority.acquire(request).map_err(|error| {
+            if let Some(host_attestation) = &self.host_attestation {
+                let _ = host_attestation.release(host_direction, remote);
+            }
+            anyhow!("external fence acquire failed: {error}")
+        })?;
         if token.scope() != scope {
             let _ = self.authority.release(token);
+            if let Some(host_attestation) = &self.host_attestation {
+                let _ = host_attestation.release(host_direction, remote);
+            }
             bail!("external fence returned a scope-mismatched token")
         }
         let key = (direction, remote);
@@ -885,6 +978,9 @@ impl MeshFenceRegistryV1 {
             .is_some()
         {
             let _ = self.authority.release(token);
+            if let Some(host_attestation) = &self.host_attestation {
+                let _ = host_attestation.release(host_direction, remote);
+            }
             bail!("external fence key already has a live token")
         }
         Ok(token)
@@ -903,6 +999,17 @@ impl MeshFenceRegistryV1 {
         let mut token = entry.token;
         if token.scope().local() != self.local || token.scope().context() != self.context {
             bail!("mesh external lease scope changed")
+        }
+        if let Some(host_attestation) = &self.host_attestation {
+            host_attestation
+                .revalidate(
+                    match direction {
+                        PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
+                        PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
+                    },
+                    remote,
+                )
+                .map_err(|error| anyhow!("host attestation revalidation failed: {error}"))?;
         }
         if Instant::now() >= entry.next_renew_at {
             token = self
@@ -1063,6 +1170,17 @@ impl MeshFenceRegistryV1 {
             self.authority
                 .release(entry.token)
                 .map_err(|error| anyhow!("external fence release failed: {error}"))?;
+        }
+        if let Some(host_attestation) = &self.host_attestation {
+            host_attestation
+                .release(
+                    match direction {
+                        PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
+                        PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
+                    },
+                    remote,
+                )
+                .map_err(|error| anyhow!("host attestation release failed: {error}"))?;
         }
         Ok(())
     }
@@ -1225,6 +1343,74 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 config.validator_set().id().into_bytes(),
             )
             .with_node_config_binding(config.config_sha256()),
+            host_attestation: None,
+        };
+        Self::establish_identity_with_fence_ttl_v1(
+            identity,
+            config.listen_addr(),
+            peer_map(config.peers())?,
+            peer_map(config.incoming_peers())?,
+            setup_timeout,
+            io_timeout,
+            queue_capacity,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            authority,
+        )
+    }
+
+    /// Establishes the external-identity mesh only after an independent host
+    /// attestation authority and exact opaque evidence bytes are supplied.
+    /// The authority is called once per session generation before the peer
+    /// lease is acquired, and again on every frame-path revalidation.  This is
+    /// still a bounded transport seam; it does not claim a hardware/TEE
+    /// verifier or enable production activation.
+    #[allow(clippy::too_many_arguments)]
+    pub fn establish_with_external_identity_host_attestation_and_fence(
+        config: &LoadedValidatorConfig,
+        setup_timeout: Duration,
+        io_timeout: Duration,
+        queue_capacity: usize,
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+        producer: Box<dyn P2pIdentitySignatureProducerV1>,
+        host_attestation_authority: Arc<dyn HostAttestationAuthorityV1>,
+        host_attestation_material: HostAttestationMaterialV1,
+    ) -> Result<Self> {
+        validate_directed_plan(
+            config.local_validator(),
+            config.peers(),
+            config.incoming_peers(),
+        )?;
+        let expected_public_key = config
+            .key_role_registry()
+            .p2p_identity_public_key(config.local_validator())
+            .ok_or_else(|| anyhow!("local validator has no committed P2P identity role"))?;
+        ensure!(
+            producer.public_key_v1() == expected_public_key,
+            "external P2P identity producer key does not match committed validator role"
+        );
+        let identity = MeshIdentityV0 {
+            run_id: config.run_id().to_owned(),
+            local: config.local_validator(),
+            p2p_identity_signer: MeshIdentitySignerV1::External(SharedP2pIdentityProducerV1::new(
+                producer,
+            )),
+            validator_set: config.validator_set().clone(),
+            key_roles: config.key_role_registry().clone(),
+            transport_context: RunTransportContext::new(
+                config.topology_sha256(),
+                config.candidate_source_sha256(),
+                config.binary_sha256(),
+                config.coordinator_manifest_sha256(),
+            )
+            .with_validator_set_binding(
+                config.validator_set().epoch().get(),
+                config.validator_set().id().into_bytes(),
+            )
+            .with_node_config_binding(config.config_sha256()),
+            host_attestation: Some(MeshHostAttestationConfigV1 {
+                authority: host_attestation_authority,
+                material: host_attestation_material,
+            }),
         };
         Self::establish_identity_with_fence_ttl_v1(
             identity,
@@ -1300,6 +1486,15 @@ impl PersistentAuthenticatedPeerMeshV0 {
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     ) -> Result<Self> {
         validate_limits(setup_timeout, io_timeout, queue_capacity)?;
+        if matches!(
+            &identity.p2p_identity_signer,
+            MeshIdentitySignerV1::External(_)
+        ) && identity.host_attestation.is_none()
+        {
+            bail!(
+                "HostAttestationRequired: external P2P identity cannot commission a mesh without an independent host-attestation authority"
+            );
+        }
         authority
             .preflight()
             .map_err(|error| anyhow!("external fencing preflight failed: {error}"))?;
@@ -1314,8 +1509,39 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .checked_add(setup_timeout)
             .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
         let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
-        let fences =
-            MeshFenceRegistryV1::new(authority, identity.local, admission_context, fence_ttl)?;
+        let host_attestation = identity
+            .host_attestation
+            .as_ref()
+            .map(|config| {
+                let p2p_key = identity
+                    .key_roles
+                    .p2p_identity_public_key(identity.local)
+                    .ok_or(HostAttestationErrorV1::InvalidBinding)?;
+                HostAttestationSessionRegistryV1::new(
+                    Arc::clone(&config.authority),
+                    identity.local,
+                    p2p_key,
+                    *identity.validator_set.genesis_hash().as_bytes(),
+                    identity.validator_set.epoch().get(),
+                    identity.validator_set.id().into_bytes(),
+                    crate::frame::run_id_sha256_v1(&identity.run_id),
+                    crate::transport::network_context_digest_v1(
+                        &identity.validator_set,
+                        &identity.key_roles,
+                        identity.transport_context,
+                    ),
+                    config.material.clone(),
+                )
+            })
+            .transpose()?;
+        let fences = MeshFenceRegistryV1::new_with_host_attestation(
+            authority,
+            identity.local,
+            admission_context,
+            fence_ttl,
+            host_attestation,
+        )?;
+        fences.preflight_host_attestation()?;
         let stop = Arc::new(AtomicBool::new(false));
         let terminal = Arc::new(Mutex::new(None));
         let controls = Arc::new(Mutex::new(BTreeMap::new()));
@@ -2165,6 +2391,46 @@ fn accept_loop(
                     join_children(children, &controls, &terminal, &stop, &fences);
                     return;
                 }
+                let host_attestation = match fences.host_attestation_admission(
+                    PeerDirectionV0::Inbound,
+                    remote,
+                    connection.session_id(),
+                    generation,
+                ) {
+                    Ok(admission) => admission,
+                    Err(error) => {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote,
+                                direction: PeerDirectionV0::Inbound,
+                                reason: error.to_string(),
+                            },
+                        );
+                        let _ = fences.release(PeerDirectionV0::Inbound, remote);
+                        join_children(children, &controls, &terminal, &stop, &fences);
+                        return;
+                    }
+                };
+                if let Err(error) = connection.mark_host_attestation_admitted(
+                    host_attestation,
+                    ExternalPeerDirectionV1::Inbound,
+                    generation,
+                ) {
+                    set_terminal(
+                        &terminal,
+                        &stop,
+                        MeshTerminalFailureV0 {
+                            remote,
+                            direction: PeerDirectionV0::Inbound,
+                            reason: error.to_string(),
+                        },
+                    );
+                    let _ = fences.release(PeerDirectionV0::Inbound, remote);
+                    join_children(children, &controls, &terminal, &stop, &fences);
+                    return;
+                }
                 let control = match connection.io_mut().try_clone() {
                     Ok(control) => control,
                     Err(error) => {
@@ -2565,6 +2831,29 @@ fn connect_authenticated_until(
                 "external fence rejected outbound session: {error}"
             )));
         }
+        let host_attestation = fences
+            .host_attestation_admission(
+                PeerDirectionV0::Outbound,
+                remote,
+                connection.session_id(),
+                generation,
+            )
+            .map_err(|error| {
+                remove_control(controls, PeerDirectionV0::Outbound, remote);
+                let _ = fences.release(PeerDirectionV0::Outbound, remote);
+                ConnectAttemptFailureV0::Terminal(error.to_string())
+            })?;
+        connection
+            .mark_host_attestation_admitted(
+                host_attestation,
+                ExternalPeerDirectionV1::Outbound,
+                generation,
+            )
+            .map_err(|error| {
+                remove_control(controls, PeerDirectionV0::Outbound, remote);
+                let _ = fences.release(PeerDirectionV0::Outbound, remote);
+                ConnectAttemptFailureV0::Terminal(error.to_string())
+            })?;
         return Ok(connection);
     }
 }
@@ -3195,6 +3484,7 @@ mod tests {
                 validator_set: validator_set.clone(),
                 key_roles: key_roles.clone(),
                 transport_context: context,
+                host_attestation: None,
             },
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
@@ -3203,6 +3493,7 @@ mod tests {
                 validator_set,
                 key_roles,
                 transport_context: context,
+                host_attestation: None,
             },
         )
     }
@@ -3225,6 +3516,55 @@ mod tests {
             },
             _reservation: reservation,
         })
+    }
+
+    struct NoopExternalIdentityProducerV1 {
+        public_key: [u8; 32],
+    }
+
+    impl P2pIdentitySignatureProducerV1 for NoopExternalIdentityProducerV1 {
+        fn public_key_v1(&self) -> [u8; 32] {
+            self.public_key
+        }
+
+        fn sign_v1(
+            &mut self,
+            _request: P2pIdentitySignatureRequestV1,
+        ) -> Result<[u8; 64], P2pIdentityErrorV1> {
+            Err(P2pIdentityErrorV1::Unavailable)
+        }
+    }
+
+    #[test]
+    fn external_identity_without_host_attestation_fails_before_listener() {
+        let (mut identity, _) = authenticated_identity_fixture_v0();
+        let public_key = match &identity.p2p_identity_signer {
+            MeshIdentitySignerV1::Local(key) => key.verifying_key().to_bytes(),
+            MeshIdentitySignerV1::External(_) => unreachable!("fixture starts in local mode"),
+        };
+        identity.p2p_identity_signer =
+            MeshIdentitySignerV1::External(SharedP2pIdentityProducerV1::new(Box::new(
+                NoopExternalIdentityProducerV1 { public_key },
+            )));
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(
+            PeerAdmissionContextV1::new(0, [0x99; 32]).unwrap(),
+        ));
+
+        let result = PersistentAuthenticatedPeerMeshV0::establish_identity_with_fence_ttl_v1(
+            identity,
+            SocketAddr::from(([127, 0, 0, 1], 0)),
+            BTreeMap::new(),
+            BTreeMap::new(),
+            Duration::from_secs(1),
+            Duration::from_millis(100),
+            1,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            authority,
+        );
+        let error = result
+            .err()
+            .expect("external identity must be rejected without host attestation");
+        assert!(error.to_string().contains("HostAttestationRequired"));
     }
 
     #[test]
