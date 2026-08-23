@@ -1485,6 +1485,7 @@ impl ContinuousValidatorAuthorityV0 {
         runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
         producer: Box<dyn SignatureProducerV0 + Send>,
+        proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     ) -> Result<Self> {
         Self::from_takeover_parts_with_producers_v0(
             config.local_validator(),
@@ -1495,9 +1496,7 @@ impl ContinuousValidatorAuthorityV0 {
             runtime,
             signer_lifetime,
             ContinuousSignatureProducerV0(producer),
-            ContinuousProposalSignatureProducerV0(Box::new(
-                LabEd25519ProposalSignatureProducerV0::new(config.consensus_signing_key().clone()),
-            )),
+            ContinuousProposalSignatureProducerV0(proposal_producer),
         )
     }
 
@@ -3003,6 +3002,23 @@ mod tests {
 
     const PROPOSED_BLOCKS: u64 = 6;
     const REQUIRED_FINALIZED_BLOCKS: u64 = 4;
+
+    #[test]
+    fn injected_vote_constructor_cannot_reintroduce_a_raw_proposal_key_v1() {
+        let source = include_str!("continuous_runtime.rs");
+        let start = source
+            .find("pub fn from_takeover_runtime_with_producer_v0(")
+            .expect("injected Vote constructor remains explicit");
+        let end = source[start..]
+            .find("    /// Explicit deployed composition entry")
+            .map(|offset| start + offset)
+            .expect("injected Vote constructor has a bounded body");
+        let body = &source[start..end];
+        assert!(body.contains("proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>"));
+        assert!(body.contains("ContinuousProposalSignatureProducerV0(proposal_producer)"));
+        assert!(!body.contains("config.consensus_signing_key()"));
+        assert!(!body.contains("LabEd25519ProposalSignatureProducerV0::new"));
+    }
 
     struct CountingSignatureProducerV0 {
         inner: LabEd25519SignatureProducer,
