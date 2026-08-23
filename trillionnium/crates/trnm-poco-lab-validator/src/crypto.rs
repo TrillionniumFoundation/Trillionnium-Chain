@@ -316,7 +316,15 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
     ) -> Result<(), ExternalWatermarkErrorV0> {
         self.ensure_healthy()?;
         let current = self.read_record()?;
-        if current != expected {
+        let external_installed = self.external.is_some();
+        // With an injected authority, a local head that is already `target`
+        // is the recoverable inverse of the normal external-first ordering:
+        // the process may have crashed after a remote CAS but before its
+        // local atomic rename.  In that case the journal's one-event repair
+        // path replays the same external CAS and only needs local readback.
+        if (!external_installed && current != expected)
+            || (external_installed && current != expected && current != Some(target))
+        {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
         }
         match expected {
@@ -353,6 +361,13 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
             if let Err(error) = external_result {
                 self.poisoned = true;
                 return Err(error);
+            }
+            if current == Some(target) {
+                if self.read_record()? != Some(target) {
+                    self.poisoned = true;
+                    return Err(ExternalWatermarkErrorV0::CompareFailed);
+                }
+                return Ok(());
             }
             if let Err(error) = self.write_record(target) {
                 // The external CAS may already have committed.  Retaining a
@@ -483,6 +498,10 @@ mod tests {
                 .fail_compare
                 .lock()
                 .expect("external watermark failure mutex") = value;
+        }
+
+        fn set_value(&self, value: Option<SignerWatermarkV0>) {
+            self.state.lock().expect("external watermark mutex").0 = value;
         }
     }
 
@@ -645,5 +664,26 @@ mod tests {
             Err(ExternalWatermarkErrorV0::Unavailable),
             "failed adoption poisons the local owner"
         );
+    }
+
+    #[test]
+    fn external_watermark_repairs_one_event_remote_lag_without_local_rewrite() {
+        let temporary = private_temp();
+        let path = temporary.path().join("watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open fresh watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        let external = MemoryExternalWatermark::default();
+        let control = external.clone();
+        store
+            .install_external_monotonic_watermark_v0(Box::new(external))
+            .expect("claim genesis in the external register");
+        store
+            .compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32))
+            .unwrap();
+        control.set_value(Some(mark(0, 0x31)));
+        store
+            .compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32))
+            .expect("repair one-event external lag without rewriting local head");
+        assert_eq!(store.load([0x11; 32]).unwrap(), Some(mark(1, 0x32)));
     }
 }
