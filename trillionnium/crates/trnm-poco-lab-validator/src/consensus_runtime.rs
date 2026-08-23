@@ -1369,6 +1369,10 @@ fn compose_deployed_external_authority_v1(
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
+    ensure!(
+        !config.has_local_consensus_secret(),
+        "external-authority composition refuses a config that loaded a local consensus secret"
+    );
     run_bounded_consensus_with_authority_builder_v1(
         config,
         duration,
@@ -7092,6 +7096,16 @@ mod tests {
         assert!(!complete_body.contains("require_deployed_fleet_signing_authority_v1"));
         assert!(source.contains("Some(fleet_producer),"));
         assert!(source.contains("production_activation: false"));
+    }
+
+    #[test]
+    fn external_composition_requires_secret_free_config_loader_v1() {
+        let config_source = include_str!("config.rs");
+        let runtime_source = include_str!("consensus_runtime.rs");
+        assert!(config_source.contains("pub fn load_external_authority("));
+        assert!(config_source.contains("open_consensus_secret: bool"));
+        assert!(config_source.contains("refusing raw-key fallback"));
+        assert!(runtime_source.contains("!config.has_local_consensus_secret()"));
     }
 
     fn restart_qc_ref_fixture_v1(

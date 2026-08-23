@@ -358,7 +358,10 @@ pub struct LoadedValidatorConfig {
     consensus_parameters: ConsensusParametersV0,
     peers: Vec<PeerConfig>,
     incoming_peers: Vec<PeerConfig>,
-    consensus_signing_key: SigningKey,
+    /// Present only for the explicitly fixture/local-key loading path.  The
+    /// external-authority loader never opens this secret; any accidental
+    /// fallback to it therefore fails closed at the accessor boundary.
+    consensus_signing_key: Option<SigningKey>,
     p2p_identity_signing_key: SigningKey,
     operator_recovery_signing_key: SigningKey,
     key_role_registry: ValidatorKeyRoleRegistryV1,
@@ -411,6 +414,29 @@ impl LoadedValidatorConfig {
         run_root: impl AsRef<Path>,
         config_path: impl AsRef<Path>,
         binary_path: impl AsRef<Path>,
+    ) -> Result<Self> {
+        Self::load_with_consensus_secret(run_root, config_path, binary_path, true)
+    }
+
+    /// Loads a deployment for an independently provisioned consensus
+    /// authority.  The manifest and public consensus key are still verified,
+    /// but the consensus secret path is deliberately never opened or retained
+    /// in this process.  The external runtime composition must provide every
+    /// signing surface explicitly; a missed surface fails closed instead of
+    /// falling back to a locally loaded key.
+    pub fn load_external_authority(
+        run_root: impl AsRef<Path>,
+        config_path: impl AsRef<Path>,
+        binary_path: impl AsRef<Path>,
+    ) -> Result<Self> {
+        Self::load_with_consensus_secret(run_root, config_path, binary_path, false)
+    }
+
+    fn load_with_consensus_secret(
+        run_root: impl AsRef<Path>,
+        config_path: impl AsRef<Path>,
+        binary_path: impl AsRef<Path>,
+        open_consensus_secret: bool,
     ) -> Result<Self> {
         let run_root = canonical_private_directory(run_root.as_ref())?;
         let config_path = canonical_regular_file(config_path.as_ref())?;
@@ -574,14 +600,18 @@ impl LoadedValidatorConfig {
         let incoming_peers =
             derive_incoming_peers(&topology, &descriptor, config.validator_id.as_str())?;
 
-        let consensus_signing_key = load_validator_role_secret(
-            &run_root,
-            &manifest,
-            &config.consensus_secret_key_path,
-            "consensus",
-            &config.validator_id,
-            local_roles.consensus_public_key(),
-        )?;
+        let consensus_signing_key = if open_consensus_secret {
+            Some(load_validator_role_secret(
+                &run_root,
+                &manifest,
+                &config.consensus_secret_key_path,
+                "consensus",
+                &config.validator_id,
+                local_roles.consensus_public_key(),
+            )?)
+        } else {
+            None
+        };
         let p2p_identity_signing_key = load_validator_role_secret(
             &run_root,
             &manifest,
@@ -698,8 +728,17 @@ impl LoadedValidatorConfig {
         &self.incoming_peers
     }
 
-    pub const fn consensus_signing_key(&self) -> &SigningKey {
-        &self.consensus_signing_key
+    pub fn consensus_signing_key(&self) -> &SigningKey {
+        self.consensus_signing_key.as_ref().expect(
+            "consensus signing key is unavailable in external-authority mode; refusing raw-key fallback",
+        )
+    }
+
+    /// Returns whether this config intentionally opened a local consensus
+    /// secret.  External-authority callers should assert this is false before
+    /// constructing their producer graph.
+    pub const fn has_local_consensus_secret(&self) -> bool {
+        self.consensus_signing_key.is_some()
     }
 
     pub const fn p2p_identity_signing_key(&self) -> &SigningKey {
