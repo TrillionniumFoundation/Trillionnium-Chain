@@ -41,8 +41,8 @@ Focused tests cover:
   re-verification;
 - missing-state recovery and exact state-sync import; and
 - stale CAS, truncated log, and checksum tampering fail-closed behavior; and
-- a child-process abort immediately after a durable commit, followed by parent
-  reopen and strict QC re-verification (`tests/process_crash_reopen.rs`).
+- a child-process SIGKILL immediately after a durable commit, followed by
+  parent reopen and strict QC re-verification (`tests/process_crash_reopen.rs`).
 
 The process-boundary test is evidence for this checkpoint store only. It does
 not imply that `trnm-poco-node` has a live Core/SafetyRules restart owner,

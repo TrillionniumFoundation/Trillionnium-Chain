@@ -1,14 +1,16 @@
 //! Process-boundary evidence for the durable checkpoint/restart slice.
 //!
 //! The unit tests exercise the store in one process.  This integration test
-//! deliberately commits from a child and aborts that process immediately
-//! after `commit` returns.  The parent then reopens the same namespace and
-//! re-verifies the retained QC.  It proves the documented durable-boundary
+//! deliberately commits from a child and sends SIGKILL immediately after
+//! `commit` returns. The parent then reopens the same namespace and
+//! re-verifies the retained QC. It proves the documented durable-boundary
 //! contract without claiming Core/SafetyRules or validator activation.
 
 use std::{
-    env,
+    env, fs,
     process::{Command, Stdio},
+    thread,
+    time::{Duration, Instant},
 };
 
 use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
@@ -27,6 +29,7 @@ use trnm_native_application::{
 
 const CHILD_ENV: &str = "TRNM_CORE_RESTART_PROCESS_CRASH_CHILD_V0";
 const DIRECTORY_ENV: &str = "TRNM_CORE_RESTART_PROCESS_CRASH_DIRECTORY_V0";
+const READY_ENV: &str = "TRNM_CORE_RESTART_PROCESS_CRASH_READY_V0";
 
 struct StrictTestVerifier;
 
@@ -144,23 +147,45 @@ fn checkpoint_commit_survives_child_abort_and_reopen() {
                 .expect("child commits checkpoint"),
             CheckpointCommitOutcomeV0::Committed
         );
-        // Simulate kill -9 immediately after the durable boundary.  The
-        // parent must recover from the append-only record and synced snapshot.
-        std::process::abort();
+        // Tell the parent that commit returned, then remain alive until the
+        // parent sends Child::kill (SIGKILL on Unix).  This exercises the
+        // actual process-loss boundary rather than a graceful drop path.
+        let ready = env::var_os(READY_ENV).expect("child ready marker");
+        fs::write(ready, b"durable-commit-returned\n").expect("write child ready marker");
+        loop {
+            thread::sleep(Duration::from_secs(60));
+        }
     }
 
     let directory = tempdir().expect("directory");
-    let status = Command::new(env::current_exe().expect("test executable"))
+    let ready = directory.path().join("child-ready");
+    let mut child = Command::new(env::current_exe().expect("test executable"))
         .arg("--exact")
         .arg("checkpoint_commit_survives_child_abort_and_reopen")
         .arg("--nocapture")
         .env(CHILD_ENV, "1")
         .env(DIRECTORY_ENV, directory.path())
+        .env(READY_ENV, &ready)
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
-        .status()
+        .spawn()
         .expect("spawn child checkpoint writer");
-    assert!(!status.success(), "child must terminate by abort");
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while !ready.exists() && Instant::now() < deadline {
+        if let Some(status) = child.try_wait().expect("poll child checkpoint writer") {
+            panic!("child exited before durable commit marker: {status}");
+        }
+        thread::sleep(Duration::from_millis(10));
+    }
+    assert!(
+        ready.exists(),
+        "child did not report durable commit within bound"
+    );
+    child
+        .kill()
+        .expect("kill child at durable checkpoint boundary");
+    let status = child.wait().expect("wait for killed checkpoint writer");
+    assert!(!status.success(), "child must terminate by SIGKILL");
 
     let (set, qc, _head) = fixture();
     let reopened = CheckpointStoreV0::open(directory.path()).expect("reopen after child abort");
