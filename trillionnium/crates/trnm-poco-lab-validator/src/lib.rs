@@ -126,6 +126,16 @@ pub const OPERATOR_RECOVERY_KEY_ROLE_RUNTIME_WIRED: bool = false;
 /// No production remote consensus signer is activated by laboratory key-role
 /// material or transport separation.
 pub const REMOTE_CONSENSUS_SIGNER_ACTIVATION: bool = false;
+/// `ContinuousValidatorAuthorityV0` exposes an explicit producer-injection
+/// composition seam for Vote/TimeoutVote owners. The normal runtime does not
+/// construct one from this seam yet.
+pub const REMOTE_CONSENSUS_SIGNER_INJECTION_API: bool = true;
+/// The deployed bounded loop still uses its fixture producer unless a caller
+/// explicitly composes the authority through the injection API.
+pub const REMOTE_CONSENSUS_SIGNER_RUNTIME_WIRED: bool = false;
+/// The continuous authority remains parameterized over the laboratory local
+/// watermark; external whole-node watermark injection is a separate gate.
+pub const EXTERNAL_MONOTONIC_WATERMARK_RUNTIME_INJECTED: bool = false;
 /// Exact directed peer sessions are owned by the bounded continuous authority.
 /// This is an implementation fact, not multihost observation evidence.
 pub const PERSISTENT_AUTHENTICATED_PEER_MESH_CANDIDATE: bool = true;

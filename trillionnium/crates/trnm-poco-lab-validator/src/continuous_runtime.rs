@@ -32,6 +32,7 @@ use trnm_consensus_core::leader_for;
 #[cfg(test)]
 use trnm_consensus_core::{CoreConfig, SafetyStateRecordLimitsV0};
 use trnm_consensus_crypto::StrictEd25519Verifier;
+use trnm_consensus_signer_journal::SignatureProducerV0;
 #[cfg(test)]
 use trnm_consensus_types::GenesisQcV0;
 use trnm_consensus_types::{
@@ -106,6 +107,22 @@ pub const CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0: usize = 32 * 1024 * 1024;
 type LabRuntimeV0 = PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>;
 type LabSignedVoteOwnerV0 = PocoNodeLabSignedVoteOwnerV0<LabFileWatermark>;
 type LabSignedTimeoutOwnerV0 = PocoNodeLabSignedTimeoutOwnerV0<LabFileWatermark>;
+
+/// Object-safe carrier used by the non-generic continuous authority. The
+/// signer-journal trait intentionally has no blanket `Box<T>` implementation,
+/// so this private wrapper keeps the public authority surface small while
+/// preserving an injected producer's exact error semantics.
+struct ContinuousSignatureProducerV0(Box<dyn SignatureProducerV0 + Send>);
+
+impl SignatureProducerV0 for ContinuousSignatureProducerV0 {
+    fn sign(
+        &mut self,
+        request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+    ) -> std::result::Result<SignatureBytes, trnm_consensus_signer_journal::SignatureProducerErrorV0>
+    {
+        self.0.sign(request)
+    }
+}
 
 /// Crate-local inert copy of the Node's freshly owner-authenticated signer
 /// inventory. Its fields are private and its only normal constructor consumes
@@ -855,7 +872,14 @@ pub struct ContinuousValidatorAuthorityV0 {
     signer_lifetime: ContinuousSignerLifetimeStateV0,
     protocol_violations: ContinuousProtocolViolationCountersV0,
     consensus_windows: ContinuousConsensusWindowsV0,
-    producer: LabEd25519SignatureProducer,
+    /// Injected consensus signature boundary for Vote/TimeoutVote owners.
+    ///
+    /// The normal laboratory constructors install the fixture-only
+    /// `LabEd25519SignatureProducer`; an operator-facing composition entry can
+    /// instead supply a bounded remote/HSM producer.  This authority never
+    /// calls a producer for arbitrary bytes: the Node signer journal has
+    /// already durably issued the exact intent before this field is reached.
+    producer: ContinuousSignatureProducerV0,
     phase: Option<ContinuousAuthorityPhaseV0>,
 }
 
@@ -1328,7 +1352,9 @@ impl ContinuousValidatorAuthorityV0 {
             signer_lifetime,
             protocol_violations: ContinuousProtocolViolationCountersV0::default(),
             consensus_windows,
-            producer: LabEd25519SignatureProducer::new(signing_key),
+            producer: ContinuousSignatureProducerV0(Box::new(LabEd25519SignatureProducer::new(
+                signing_key,
+            ))),
             phase: Some(ContinuousAuthorityPhaseV0::Ready(Box::new(runtime))),
         })
     }
@@ -1355,6 +1381,35 @@ impl ContinuousValidatorAuthorityV0 {
         )
     }
 
+    /// Binds an already commissioned native takeover runtime to an injected
+    /// Vote/TimeoutVote signature producer.
+    ///
+    /// This is a composition seam, not a production activation path.  The
+    /// takeover runtime still contains the laboratory `LabFileWatermark` and
+    /// the loaded config still supplies the local consensus public-key
+    /// identity check; only the final signature operation is delegated to the
+    /// supplied producer.  Callers that need a remote/HSM signer can therefore
+    /// exercise the real timeout/vote owner without making the owner know about
+    /// a private key.  External watermark, host attestation, and full
+    /// Core/SafetyRules signer authority remain separate gates.
+    pub fn from_takeover_runtime_with_producer_v0(
+        config: &LoadedValidatorConfig,
+        runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+        producer: Box<dyn SignatureProducerV0 + Send>,
+    ) -> Result<Self> {
+        Self::from_takeover_parts_with_producer_v0(
+            config.local_validator(),
+            config.validator_set().clone(),
+            *config.consensus_parameters(),
+            config.consensus_signing_key().clone(),
+            config.ordinary_start_height(),
+            runtime,
+            signer_lifetime,
+            ContinuousSignatureProducerV0(producer),
+        )
+    }
+
     #[allow(clippy::too_many_arguments)]
     fn from_takeover_parts_v0(
         local_validator: ValidatorId,
@@ -1362,8 +1417,31 @@ impl ContinuousValidatorAuthorityV0 {
         consensus_parameters: ConsensusParametersV0,
         signing_key: SigningKey,
         ordinary_start_height: u64,
+        runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+    ) -> Result<Self> {
+        Self::from_takeover_parts_with_producer_v0(
+            local_validator,
+            validator_set,
+            consensus_parameters,
+            signing_key.clone(),
+            ordinary_start_height,
+            runtime,
+            signer_lifetime,
+            ContinuousSignatureProducerV0(Box::new(LabEd25519SignatureProducer::new(signing_key))),
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn from_takeover_parts_with_producer_v0(
+        local_validator: ValidatorId,
+        validator_set: ValidatorSet,
+        consensus_parameters: ConsensusParametersV0,
+        signing_key: SigningKey,
+        ordinary_start_height: u64,
         mut runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+        producer: ContinuousSignatureProducerV0,
     ) -> Result<Self> {
         ensure!(
             runtime.matches_consensus_context_v0(
@@ -1427,7 +1505,7 @@ impl ContinuousValidatorAuthorityV0 {
             signer_lifetime,
             protocol_violations: ContinuousProtocolViolationCountersV0::default(),
             consensus_windows,
-            producer: LabEd25519SignatureProducer::new(signing_key),
+            producer,
             phase: Some(ContinuousAuthorityPhaseV0::Ready(Box::new(runtime))),
         })
     }
@@ -2651,7 +2729,15 @@ fn authority_hash_v0(domain: &[u8], local_validator: ValidatorId, binding: &[u8]
 
 #[cfg(test)]
 mod tests {
-    use std::{fs, os::unix::fs::PermissionsExt, thread};
+    use std::{
+        fs,
+        os::unix::fs::PermissionsExt,
+        sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc,
+        },
+        thread,
+    };
 
     use tempfile::TempDir;
     use trnm_consensus_types::{
@@ -2672,6 +2758,46 @@ mod tests {
 
     const PROPOSED_BLOCKS: u64 = 6;
     const REQUIRED_FINALIZED_BLOCKS: u64 = 4;
+
+    struct CountingSignatureProducerV0 {
+        inner: LabEd25519SignatureProducer,
+        calls: Arc<AtomicUsize>,
+    }
+
+    impl SignatureProducerV0 for CountingSignatureProducerV0 {
+        fn sign(
+            &mut self,
+            request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            self.inner.sign(request)
+        }
+    }
+
+    #[test]
+    fn injected_signature_producer_owns_vote_and_timeout_boundaries() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let calls = Arc::new(AtomicUsize::new(0));
+            let key = harness.keys[0].clone();
+            harness.authorities[0].producer =
+                ContinuousSignatureProducerV0(Box::new(CountingSignatureProducerV0 {
+                    inner: LabEd25519SignatureProducer::new(key),
+                    calls: Arc::clone(&calls),
+                }));
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0]
+                .vote_proposal_v0(proposal)
+                .expect("injected producer signs the exact Vote intent");
+            harness.authorities[0]
+                .begin_local_timeout_v0()
+                .expect("injected producer signs the exact TimeoutVote intent");
+            assert_eq!(calls.load(Ordering::SeqCst), 2);
+        });
+    }
 
     #[test]
     fn protocol_violation_counters_classify_only_typed_conflicts() {
