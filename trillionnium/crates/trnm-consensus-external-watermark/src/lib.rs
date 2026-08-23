@@ -419,6 +419,9 @@ impl ExternalWatermarkAuthority {
         if scope == [0; 32] {
             return Err(ExternalWatermarkAuthorityError::InvalidConfig("zero scope"));
         }
+        if self.semantic_binding.is_some() {
+            return Err(ExternalWatermarkAuthorityError::ScopeConflict);
+        }
         Ok(self.current.get(&scope).copied())
     }
 
@@ -429,6 +432,9 @@ impl ExternalWatermarkAuthority {
     ) -> Result<(), ExternalWatermarkAuthorityError> {
         if self.poisoned {
             return Err(ExternalWatermarkAuthorityError::Unavailable);
+        }
+        if self.semantic_binding.is_some() {
+            return Err(ExternalWatermarkAuthorityError::ScopeConflict);
         }
         if self.semantic_record_count != 0 {
             return Err(ExternalWatermarkAuthorityError::ScopeConflict);
@@ -1031,11 +1037,11 @@ impl ExternalWatermarkAuthority {
                 Ok(None) => encode_empty_response(STATUS_NONE),
                 Err(_) => encode_empty_response(STATUS_INVALID_STATE),
             },
-            RequestV1::LoadSemantic { scope } => {
-                if self.semantic_binding.map(|binding| binding.scope) != Some(scope) {
+            RequestV1::LoadSemantic { binding } => {
+                if self.semantic_binding != Some(binding) {
                     encode_empty_response(STATUS_INVALID_STATE)
-                } else if let Some(value) = self.current.get(&scope).copied() {
-                    match self.semantic_current.get(&scope).copied() {
+                } else if let Some(value) = self.current.get(&binding.scope).copied() {
+                    match self.semantic_current.get(&binding.scope).copied() {
                         Some(facts) => encode_semantic_value_response(value, facts),
                         None => encode_empty_response(STATUS_INVALID_STATE),
                     }
@@ -1049,7 +1055,8 @@ impl ExternalWatermarkAuthority {
                     Err(ExternalWatermarkAuthorityError::CompareFailed) => {
                         encode_empty_response(STATUS_COMPARE_FAILED)
                     }
-                    Err(ExternalWatermarkAuthorityError::InvalidConfig(_)) => {
+                    Err(ExternalWatermarkAuthorityError::InvalidConfig(_))
+                    | Err(ExternalWatermarkAuthorityError::ScopeConflict) => {
                         encode_empty_response(STATUS_INVALID_STATE)
                     }
                     Err(_) => encode_empty_response(STATUS_UNAVAILABLE),
@@ -1193,12 +1200,12 @@ impl UnixWatermarkClient {
 
     pub fn load_semantic_checked(
         &self,
-        scope: [u8; 32],
+        binding: ExternalWatermarkSemanticBindingV1,
     ) -> Result<
         Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV1)>,
         ExternalWatermarkAuthorityError,
     > {
-        match self.request(RequestV1::LoadSemantic { scope })? {
+        match self.request(RequestV1::LoadSemantic { binding })? {
             ResponseV1::None => Ok(None),
             ResponseV1::SemanticValue(value, facts) => Ok(Some((value, facts))),
             ResponseV1::Value(_) => Err(ExternalWatermarkAuthorityError::Protocol(
@@ -1344,6 +1351,7 @@ const REPLAY_VERSION: u8 = 1;
 const REPLAY_RECORD_BYTES: usize = 8 + 1 + 1 + 2 + 8 + 32 + 32 + 32 + 64 + 32 + 32;
 const REPLAY_ANCHOR_BODY_BYTES: usize = 8 + 1 + 3 + 8 + 32;
 const REPLAY_ANCHOR_BYTES: usize = REPLAY_ANCHOR_BODY_BYTES + 32;
+const MAX_REPLAY_LOG_BYTES: u64 = 64 * 1024 * 1024;
 
 #[derive(Debug)]
 pub enum ReplayBindingErrorV1 {
@@ -1645,24 +1653,43 @@ impl ReplayBindingStoreV1 {
             previous_record_hash,
             record_hash,
         };
-        self.log
-            .write_all(&encode_replay_record(record))
-            .map_err(|source| ReplayBindingErrorV1::Io {
+        let encoded = encode_replay_record(record);
+        let current_len = match self.log.metadata() {
+            Ok(metadata) => metadata.len(),
+            Err(source) => {
+                self.poisoned = true;
+                return Err(ReplayBindingErrorV1::Io {
+                    stage: "stat response binding log before append",
+                    source,
+                });
+            }
+        };
+        if current_len.saturating_add(encoded.len() as u64) > MAX_REPLAY_LOG_BYTES {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "response binding log capacity exhausted",
+            ));
+        }
+        if let Err(source) = self.log.write_all(&encoded) {
+            self.poisoned = true;
+            return Err(ReplayBindingErrorV1::Io {
                 stage: "append response binding record",
                 source,
-            })?;
-        self.log
-            .sync_data()
-            .map_err(|source| ReplayBindingErrorV1::Io {
+            });
+        }
+        if let Err(source) = self.log.sync_data() {
+            self.poisoned = true;
+            return Err(ReplayBindingErrorV1::Io {
                 stage: "sync response binding record",
                 source,
-            })?;
-        self.directory
-            .sync_data()
-            .map_err(|source| ReplayBindingErrorV1::Io {
+            });
+        }
+        if let Err(source) = self.directory.sync_data() {
+            self.poisoned = true;
+            return Err(ReplayBindingErrorV1::Io {
                 stage: "sync response binding directory",
                 source,
-            })?;
+            });
+        }
         self.entries.insert(
             fingerprint,
             ReplayEntryV1 {
@@ -1682,20 +1709,45 @@ impl ReplayBindingStoreV1 {
     }
 
     fn replay_log(&mut self) -> Result<(), ReplayBindingErrorV1> {
+        let metadata = match self.log.metadata() {
+            Ok(metadata) => metadata,
+            Err(source) => {
+                self.poisoned = true;
+                return Err(ReplayBindingErrorV1::Io {
+                    stage: "stat response binding log before replay",
+                    source,
+                });
+            }
+        };
+        if metadata.len() > MAX_REPLAY_LOG_BYTES {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "response binding log exceeds configured bound",
+            ));
+        }
         let mut bytes = Vec::new();
-        let mut reader = self
-            .log
-            .try_clone()
-            .map_err(|source| ReplayBindingErrorV1::Io {
-                stage: "clone response binding log",
-                source,
-            })?;
-        reader
-            .read_to_end(&mut bytes)
-            .map_err(|source| ReplayBindingErrorV1::Io {
+        let reader = match self.log.try_clone() {
+            Ok(reader) => reader,
+            Err(source) => {
+                self.poisoned = true;
+                return Err(ReplayBindingErrorV1::Io {
+                    stage: "clone response binding log",
+                    source,
+                });
+            }
+        };
+        let mut bounded_reader = reader.take(MAX_REPLAY_LOG_BYTES.saturating_add(1));
+        if let Err(source) = bounded_reader.read_to_end(&mut bytes) {
+            self.poisoned = true;
+            return Err(ReplayBindingErrorV1::Io {
                 stage: "read response binding log",
                 source,
-            })?;
+            });
+        }
+        if bytes.len() as u64 > MAX_REPLAY_LOG_BYTES {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "response binding log exceeds configured bound",
+            ));
+        }
         if bytes.len() % REPLAY_RECORD_BYTES != 0 {
             return Err(ReplayBindingErrorV1::InvalidLog(
                 "trailing partial response record",
@@ -2064,7 +2116,7 @@ enum RequestV1 {
         scope: [u8; 32],
     },
     LoadSemantic {
-        scope: [u8; 32],
+        binding: ExternalWatermarkSemanticBindingV1,
     },
     CompareAndAdvance {
         expected: Option<SignerWatermarkV0>,
@@ -2621,11 +2673,13 @@ fn encode_request(request: RequestV1) -> Vec<u8> {
             body.extend_from_slice(&[0, 0]);
             body.extend_from_slice(&scope);
         }
-        RequestV1::LoadSemantic { scope } => {
+        RequestV1::LoadSemantic { binding } => {
             body.push(OP_LOAD_SEMANTIC);
             body.push(0);
             body.extend_from_slice(&[0, 0]);
-            body.extend_from_slice(&scope);
+            body.extend_from_slice(&binding.scope);
+            body.extend_from_slice(&binding.journal_id);
+            body.extend_from_slice(&binding.capability);
         }
         RequestV1::CompareAndAdvance { expected, target } => {
             body.push(OP_COMPARE_AND_ADVANCE);
@@ -2676,9 +2730,15 @@ fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityEr
             let scope = body[9..41].try_into().expect("load scope");
             Ok(RequestV1::Load { scope })
         }
-        OP_LOAD_SEMANTIC if expected_present == 0 && body.len() == 41 => {
+        OP_LOAD_SEMANTIC if expected_present == 0 && body.len() == 105 => {
             let scope = body[9..41].try_into().expect("semantic load scope");
-            Ok(RequestV1::LoadSemantic { scope })
+            let journal_id = body[41..73].try_into().expect("semantic load journal");
+            let capability = body[73..105].try_into().expect("semantic load capability");
+            let binding = ExternalWatermarkSemanticBindingV1::new(scope, journal_id, capability)
+                .ok_or(ExternalWatermarkAuthorityError::Protocol(
+                    "semantic load binding",
+                ))?;
+            Ok(RequestV1::LoadSemantic { binding })
         }
         OP_COMPARE_AND_ADVANCE if expected_present <= 1 => {
             let expected_len = if expected_present == 1 {

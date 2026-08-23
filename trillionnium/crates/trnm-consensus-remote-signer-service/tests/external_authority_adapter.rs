@@ -14,7 +14,9 @@ use std::{
 };
 
 use tempfile::TempDir;
-use trnm_consensus_external_watermark::{ExternalWatermarkAuthorityError, UnixWatermarkClient};
+use trnm_consensus_external_watermark::{
+    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1, UnixWatermarkClient,
+};
 use trnm_consensus_remote_signer_protocol::decode_unverified_remote_signer_response_v1_exact;
 use trnm_consensus_remote_signer_service::{
     fixture_request, fixture_service_config, ExternalAuthorityAdapterV1, Fixture, PurposePolicyV1,
@@ -69,13 +71,15 @@ impl AuthorityProcess {
             binding,
         };
         let client = UnixWatermarkClient::new(&process.socket).expect("authority client");
+        let semantic_binding = ExternalWatermarkSemanticBindingV1::new(scope, journal, CAPABILITY)
+            .expect("semantic authority binding");
         for _ in 0..100 {
-            match client.load_checked([0x99; 32]) {
+            match client.load_semantic_checked(semantic_binding) {
                 Err(ExternalWatermarkAuthorityError::Io { .. })
                 | Err(ExternalWatermarkAuthorityError::Unavailable) => {
                     thread::sleep(Duration::from_millis(10));
                 }
-                Ok(None) => return process,
+                Ok(None) | Ok(Some(_)) => return process,
                 other => panic!("authority startup probe unexpected: {other:?}"),
             }
         }
@@ -146,15 +150,38 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
         .expect_err("semantic rollback must fail closed")
         .is_external_authority_required());
     let client = UnixWatermarkClient::new(&authority.socket).unwrap();
+    let semantic_binding =
+        ExternalWatermarkSemanticBindingV1::new(adapter.scope(), adapter.journal_id(), CAPABILITY)
+            .expect("semantic adapter binding");
+    assert!(
+        client.load_checked(adapter.scope()).is_err(),
+        "semantic authority must reject the opaque load wire path"
+    );
     assert_eq!(
         client
-            .load_checked(adapter.scope())
+            .load_semantic_checked(semantic_binding)
             .unwrap()
             .unwrap()
+            .0
             .sequence(),
         0
     );
     drop(adapter);
+
+    let mut wrong_capability = UnixExternalTimeoutAuthorityV1::from_binding(
+        fixture.binding,
+        &authority.socket,
+        &response_log,
+    )
+    .expect("reopen adapter with wrong capability")
+    .with_capability([0x44; 32]);
+    assert!(
+        service
+            .process_request_with_external_authority_v1(&request, &mut wrong_capability)
+            .is_err(),
+        "exact replay must not bypass immutable capability binding"
+    );
+    drop(wrong_capability);
 
     authority.stop();
     authority.restart();

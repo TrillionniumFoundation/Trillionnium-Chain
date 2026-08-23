@@ -12,9 +12,9 @@ use std::{
 use ed25519_dalek::{Signer, SigningKey};
 use tempfile::tempdir;
 use trnm_consensus_external_watermark::{
-    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1,
-    ReplayBindingStoreV1, ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter,
-    UnixWatermarkClient,
+    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1,
+    ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1, ReplayBindingStoreV1,
+    ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter, UnixWatermarkClient,
 };
 use trnm_consensus_signer_journal::{
     SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalConflictV0,
@@ -31,6 +31,11 @@ const JOURNAL: [u8; 32] = [0x22; 32];
 const MAXIMUM_DATABASE_BYTES: usize = 32 * 1024 * 1024;
 const TEST_SEED: [u8; 32] = [0x19; 32];
 const CAPABILITY: [u8; 32] = [0x33; 32];
+
+fn semantic_binding() -> ExternalWatermarkSemanticBindingV1 {
+    ExternalWatermarkSemanticBindingV1::new(SCOPE, JOURNAL, CAPABILITY)
+        .expect("valid semantic test binding")
+}
 
 struct AuthorityProcess {
     child: Child,
@@ -88,7 +93,14 @@ impl AuthorityProcess {
 
     fn wait_ready(&self) {
         for _ in 0..100 {
-            match self.client.load_checked(SCOPE) {
+            let result = if self.semantic {
+                self.client
+                    .load_semantic_checked(semantic_binding())
+                    .map(|value| value.map(|(watermark, _)| watermark))
+            } else {
+                self.client.load_checked(SCOPE)
+            };
+            match result {
                 Err(ExternalWatermarkAuthorityError::Io { .. })
                 | Err(ExternalWatermarkAuthorityError::Unavailable) => {
                     thread::sleep(Duration::from_millis(10));
@@ -234,13 +246,45 @@ fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper()
     fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
     let mut authority = AuthorityProcess::start_semantic(root.path());
     let first = mark(0, 0x41);
+    let wrong_binding = ExternalWatermarkSemanticBindingV1::new(SCOPE, JOURNAL, [0x44; 32])
+        .expect("valid alternate semantic binding");
+    assert!(
+        authority
+            .client
+            .load_semantic_checked(wrong_binding)
+            .is_err(),
+        "semantic head reads must require the exact immutable binding"
+    );
+    assert!(
+        authority.client.load_checked(SCOPE).is_err(),
+        "semantic namespaces reject the opaque load operation"
+    );
+    assert!(
+        authority
+            .client
+            .compare_and_advance_checked(None, first)
+            .is_err(),
+        "semantic namespaces reject the opaque CAS operation"
+    );
+    assert_eq!(
+        fs::metadata(&authority.log).unwrap().len(),
+        0,
+        "opaque downgrade must not write the main log"
+    );
     let first_facts = semantic_facts(7, 3, 5, 1, 0x51);
     authority
         .client
         .compare_and_advance_semantic_checked(None, first, first_facts)
         .expect("first semantic reservation");
     authority.restart();
-    assert_eq!(authority.client.load_checked(SCOPE).unwrap(), Some(first));
+    assert_eq!(
+        authority
+            .client
+            .load_semantic_checked(semantic_binding())
+            .unwrap()
+            .map(|(watermark, _)| watermark),
+        Some(first)
+    );
 
     let lower_view = mark(1, 0x42);
     assert!(matches!(
@@ -685,5 +729,24 @@ fn durable_timeout_response_binding_survives_restart_and_fails_closed_on_rollbac
     assert!(matches!(
         ReplayBindingStoreV1::open(&response_log),
         Err(ReplayBindingErrorV1::InvalidLog(_)) | Err(ReplayBindingErrorV1::InvalidConfig(_))
+    ));
+}
+
+#[test]
+fn response_binding_log_rejects_oversized_file_before_replay() {
+    let root = tempdir().expect("private test directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let response_log = root.path().join("oversized-response.log");
+    let file = fs::File::create(&response_log).expect("create response binding log");
+    file.set_len(64 * 1024 * 1024 + 1)
+        .expect("sparsely extend response binding log");
+    drop(file);
+    fs::set_permissions(&response_log, fs::Permissions::from_mode(0o600))
+        .expect("private response log mode");
+
+    assert!(matches!(
+        ReplayBindingStoreV1::open(&response_log),
+        Err(ReplayBindingErrorV1::InvalidLog(reason))
+            if reason == "response binding log exceeds configured bound"
     ));
 }

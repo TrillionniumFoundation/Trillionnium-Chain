@@ -35,8 +35,9 @@ use ed25519_dalek::{Signer, SigningKey, Verifier};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_consensus_external_watermark::{
-    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1,
-    ReplayBindingStoreV1, UnixWatermarkClient,
+    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1,
+    ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1, ReplayBindingStoreV1,
+    UnixWatermarkClient,
 };
 use trnm_consensus_remote_signer_protocol::{
     decode_remote_signer_request_v1_exact, RemoteConsensusCommandKindV1,
@@ -355,6 +356,13 @@ impl UnixExternalTimeoutAuthorityV1 {
         self.scope
     }
 
+    fn semantic_binding_v1(
+        &self,
+    ) -> Result<ExternalWatermarkSemanticBindingV1, ExternalAuthorityErrorV1> {
+        ExternalWatermarkSemanticBindingV1::new(self.scope, self.journal_id, self.capability)
+            .ok_or(ExternalAuthorityErrorV1::InvalidState)
+    }
+
     fn validate_request_v1(
         &self,
         request: ExternalAuthorityRequestV1,
@@ -385,7 +393,7 @@ impl UnixExternalTimeoutAuthorityV1 {
     fn reconcile_heads_v1(&self) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
         let semantic_head = self
             .watermark
-            .load_semantic_checked(self.scope)
+            .load_semantic_checked(self.semantic_binding_v1()?)
             .map_err(map_external_watermark_error_v1)?;
         let records = self.replay.record_count_v1();
         match semantic_head {
@@ -408,6 +416,7 @@ impl UnixExternalTimeoutAuthorityV1 {
                 if fingerprint != facts.request_fingerprint
                     || profile != self.signer_profile_ref
                     || root != facts.signing_root
+                    || facts.capability != self.capability
                     || facts.capability == [0; 32]
                 {
                     return Err(ExternalAuthorityErrorV1::InvalidState);
@@ -543,7 +552,7 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
         // is ambiguous and permanently poisons this process.
         let Some((current, facts)) = self
             .watermark
-            .load_semantic_checked(self.scope)
+            .load_semantic_checked(self.semantic_binding_v1()?)
             .map_err(map_external_watermark_error_v1)?
         else {
             self.poisoned = true;
