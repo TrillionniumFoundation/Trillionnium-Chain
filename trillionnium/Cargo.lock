@@ -1564,6 +1564,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-unix-fleet-signer"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-crypto",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-consensus-unix-remote-signer"
 version = "0.1.0"
 dependencies = [
