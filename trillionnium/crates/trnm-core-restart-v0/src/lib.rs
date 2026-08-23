@@ -41,6 +41,10 @@ pub const CORE_RESTART_CHECKPOINT_CAS_V0: bool = true;
 pub const CORE_RESTART_RESTART_READBACK_V0: bool = true;
 /// A missing snapshot is represented as a state-sync requirement, not guessed.
 pub const CORE_RESTART_STATE_SYNC_IMPORT_V0: bool = true;
+/// State-sync installation requires a live, signature-verified quorum proof
+/// bound to the exact retained checkpoint.  A bundle digest alone is never
+/// sufficient to activate a restarted node.
+pub const CORE_RESTART_STATE_SYNC_QUORUM_RECHECK_V0: bool = true;
 /// Cross-epoch checkpoint admission is intentionally closed until an active
 /// epoch-anchor/joint-handoff witness is wired into this store.  A checkpoint
 /// log must never silently jump to a new validator set on height alone.
@@ -413,6 +417,42 @@ pub enum RestartDispositionV0 {
     NeedsStateSync(CheckpointRecordV0),
 }
 
+/// Capability returned only after the retained checkpoint's QC has been
+/// decoded and re-verified against the caller's live validator set.  The
+/// private fields intentionally prevent callers from manufacturing a proof;
+/// `install_state_sync` requires this value so a state-sync payload cannot be
+/// installed from a local hash/digest check alone.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct QuorumCheckpointProofV0 {
+    checkpoint_record_hash: [u8; 32],
+    quorum_certificate_id: [u8; 32],
+    epoch: u64,
+    height: u64,
+    validator_set_id: [u8; 32],
+}
+
+impl QuorumCheckpointProofV0 {
+    pub const fn checkpoint_record_hash(&self) -> [u8; 32] {
+        self.checkpoint_record_hash
+    }
+
+    pub const fn quorum_certificate_id(&self) -> [u8; 32] {
+        self.quorum_certificate_id
+    }
+
+    pub const fn epoch(&self) -> u64 {
+        self.epoch
+    }
+
+    pub const fn height(&self) -> u64 {
+        self.height
+    }
+
+    pub const fn validator_set_id(&self) -> [u8; 32] {
+        self.validator_set_id
+    }
+}
+
 /// A state-sync payload tied to an already admitted checkpoint.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StateSyncBundleV0 {
@@ -602,13 +642,31 @@ impl CheckpointStoreV0 {
     }
 
     /// Installs a missing snapshot only after matching the exact retained
-    /// checkpoint.  This is a state-sync import, not a new consensus commit.
-    pub fn install_state_sync(&mut self, bundle: StateSyncBundleV0) -> Result<()> {
+    /// checkpoint and a live quorum proof issued by
+    /// [`Self::verify_current_quorum_certificate`].  This is a state-sync
+    /// import, not a new consensus commit.  Requiring the capability at the
+    /// API boundary prevents a caller from accidentally treating a local
+    /// checkpoint/digest as finality evidence.
+    pub fn install_state_sync(
+        &mut self,
+        bundle: StateSyncBundleV0,
+        quorum_proof: &QuorumCheckpointProofV0,
+    ) -> Result<()> {
         self.ensure_healthy()?;
         let checkpoint = self
             .current
             .as_ref()
             .ok_or(CoreRestartError::MissingCheckpoint)?;
+        if quorum_proof.checkpoint_record_hash != checkpoint.record_hash
+            || quorum_proof.quorum_certificate_id != checkpoint.quorum_certificate_id
+            || quorum_proof.epoch != checkpoint.epoch
+            || quorum_proof.height != checkpoint.height
+            || quorum_proof.validator_set_id != checkpoint.validator_set_id
+        {
+            return Err(CoreRestartError::InvalidCertificate(
+                "state-sync quorum proof does not match retained checkpoint".to_owned(),
+            ));
+        }
         if bundle.checkpoint_record_hash != checkpoint.record_hash {
             return Err(CoreRestartError::StateSyncMismatch("checkpoint record"));
         }
@@ -625,6 +683,22 @@ impl CheckpointStoreV0 {
         )
     }
 
+    /// Convenience path that obtains the proof and installs the bundle in one
+    /// operation.  The QC is re-decoded and re-verified before any snapshot
+    /// bytes are written.
+    pub fn install_state_sync_after_quorum_recheck<V: SignatureVerifier>(
+        &mut self,
+        bundle: StateSyncBundleV0,
+        certificate: &QuorumCertificate,
+        validator_set: &ValidatorSet,
+        verifier: &V,
+    ) -> Result<()> {
+        let proof = self.verify_current_quorum_certificate(certificate, validator_set, verifier)?;
+        self.install_state_sync(bundle, &proof)
+    }
+
+    /// Returns the proof capability used by state-sync installation after
+    /// authenticating the retained QC against the live validator set.
     /// Re-verifies the current checkpoint's QC against the live validator set
     /// after restart.  The stored CEV0 bytes are compared to the exact caller
     /// supplied certificate; no unauthenticated metadata is enough.
@@ -633,7 +707,7 @@ impl CheckpointStoreV0 {
         certificate: &QuorumCertificate,
         validator_set: &ValidatorSet,
         verifier: &V,
-    ) -> Result<()> {
+    ) -> Result<QuorumCheckpointProofV0> {
         self.ensure_healthy()?;
         let checkpoint = self
             .current
@@ -664,7 +738,13 @@ impl CheckpointStoreV0 {
                 "replayed QC differs from retained checkpoint".to_owned(),
             ));
         }
-        Ok(())
+        Ok(QuorumCheckpointProofV0 {
+            checkpoint_record_hash: checkpoint.record_hash,
+            quorum_certificate_id: checkpoint.quorum_certificate_id,
+            epoch: checkpoint.epoch,
+            height: checkpoint.height,
+            validator_set_id: checkpoint.validator_set_id,
+        })
     }
 
     fn snapshot_path(&self, generation: u64) -> PathBuf {
@@ -1033,7 +1113,10 @@ mod tests {
         let bundle =
             StateSyncBundleV0::new(record.record_hash(), record.state_root(), digest, bytes)
                 .expect("bundle");
-        store.install_state_sync(bundle).expect("install");
+        let proof = store
+            .verify_current_quorum_certificate(&qc, &set, &StrictTestVerifier)
+            .expect("live quorum proof");
+        store.install_state_sync(bundle, &proof).expect("install");
         assert!(matches!(
             store.restart_disposition().expect("ready"),
             RestartDispositionV0::Ready(_)
@@ -1046,7 +1129,7 @@ mod tests {
         )
         .expect("well-formed but foreign state-sync bundle");
         assert!(matches!(
-            store.install_state_sync(wrong),
+            store.install_state_sync(wrong, &proof),
             Err(CoreRestartError::StateSyncMismatch("state root"))
         ));
     }
@@ -1166,11 +1249,71 @@ mod tests {
             b"state".to_vec(),
         )
         .expect("bundle");
+        let proof = QuorumCheckpointProofV0 {
+            checkpoint_record_hash: [1; 32],
+            quorum_certificate_id: [2; 32],
+            epoch: 0,
+            height: 1,
+            validator_set_id: [3; 32],
+        };
         assert!(matches!(
-            store.install_state_sync(bundle),
+            store.install_state_sync(bundle, &proof),
             Err(CoreRestartError::InvalidLog(
                 "checkpoint store is poisoned after commit I/O failure"
             ))
+        ));
+    }
+
+    #[test]
+    fn state_sync_requires_live_quorum_proof_before_writing_snapshot() {
+        let (set, qc, head) = fixture();
+        let bytes = b"authenticated-state-v1".to_vec();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            bytes.clone(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        store.commit(&candidate, None).expect("commit");
+        let record = store.current().expect("record").clone();
+        fs::remove_file(store.snapshot_path(record.generation())).expect("remove snapshot");
+        let digest = digest(SNAPSHOT_DOMAIN, &bytes);
+        let bundle =
+            StateSyncBundleV0::new(record.record_hash(), record.state_root(), digest, bytes)
+                .expect("bundle");
+
+        // A proof with plausible-looking fields cannot be manufactured by a
+        // caller; an incorrect proof is rejected before the missing snapshot
+        // is recreated.
+        let forged = QuorumCheckpointProofV0 {
+            checkpoint_record_hash: record.record_hash(),
+            quorum_certificate_id: record.quorum_certificate_id(),
+            epoch: record.epoch(),
+            height: record.height(),
+            validator_set_id: [0xAA; 32],
+        };
+        assert!(matches!(
+            store.install_state_sync(bundle.clone(), &forged),
+            Err(CoreRestartError::InvalidCertificate(message))
+                if message == "state-sync quorum proof does not match retained checkpoint"
+        ));
+        assert!(matches!(
+            store.restart_disposition().expect("still needs sync"),
+            RestartDispositionV0::NeedsStateSync(_)
+        ));
+
+        // The only way to obtain the capability is a strict live-set QC
+        // recheck; the atomic import then succeeds.
+        store
+            .install_state_sync_after_quorum_recheck(bundle, &qc, &set, &StrictTestVerifier)
+            .expect("verified state-sync import");
+        assert!(matches!(
+            store.restart_disposition().expect("ready"),
+            RestartDispositionV0::Ready(_)
         ));
     }
 
