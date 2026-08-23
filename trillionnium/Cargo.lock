@@ -1462,6 +1462,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-peer-lease"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
 name = "trnm-consensus-remote-signer-protocol"
 version = "0.1.0"
 dependencies = [
