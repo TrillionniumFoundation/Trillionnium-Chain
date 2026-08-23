@@ -1449,6 +1449,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-external-node-checkpoint"
+version = "0.1.0"
+dependencies = [
+ "fs2",
+ "libc",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-signer-journal",
+ "trnm-consensus-types",
+ "trnm-poco-node",
+]
+
+[[package]]
 name = "trnm-consensus-external-watermark"
 version = "0.1.0"
 dependencies = [
