@@ -661,20 +661,52 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     {
         self.require_active_runtime_v0()?;
         let result = (|| {
-            let epoch = self.core.safety_state().epoch();
-            let view = self.core.safety_state().current_view();
-            let effects = self
-                .core
+            // Evaluate the transition on a freshly recovered, throw-away
+            // Core first.  The live Core must not mutate its SafetyState
+            // until the independently administered semantic CAS has accepted
+            // the exact transition tuple.  The scratch owner carries no
+            // persistence affinity that can be installed into the live owner;
+            // its effects are comparison material only.
+            let predecessor = self.core.safety_state().clone();
+            let core_config = self.core.config().clone();
+            let epoch = predecessor.epoch();
+            let view = predecessor.current_view();
+            let mut evaluator = Core::recover(
+                core_config,
+                predecessor.clone(),
+                &StrictEd25519Verifier,
+            )
+            .map_err(PocoNodeHostErrorV0::core)?;
+            let evaluated_effects = evaluator
                 .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
                 .map_err(PocoNodeHostErrorV0::core)?;
             let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
                 self.safety_store.path(),
                 self.safety_store.journal_id_v0(),
                 self.signer_journal.journal_id(),
-                &effects,
+                &evaluated_effects,
                 sidecar,
             )?;
             self.pending_timeout_marker = Some(marker);
+
+            // Re-check the live owner immediately before installation.  A
+            // concurrent caller cannot normally obtain this non-Clone host,
+            // but treating any divergence as a hard fence keeps the CAS and
+            // Core state affine even if a future owner wrapper changes.
+            if self.core.safety_state() != &predecessor {
+                return Err(PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch {
+                    revision: predecessor.revision().saturating_add(1),
+                });
+            }
+            let effects = self
+                .core
+                .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
+                .map_err(PocoNodeHostErrorV0::core)?;
+            if effects != evaluated_effects {
+                return Err(PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch {
+                    revision: predecessor.revision().saturating_add(1),
+                });
+            }
             self.drive_bounded_effects_v0(effects)
         })();
         self.finish_runtime_call_v0(result)

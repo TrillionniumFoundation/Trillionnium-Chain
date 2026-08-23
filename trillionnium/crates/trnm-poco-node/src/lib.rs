@@ -3304,6 +3304,76 @@ mod tests {
 
     #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
     #[test]
+    fn bounded_timeout_sidecar_failure_does_not_mutate_live_core_before_cas_v1() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout host config");
+
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact genesis shadow state");
+        // The fixture watermark's genesis anchor is valid, but it rejects a
+        // transition whose semantic capability differs from that anchor.
+        // This gives us a deterministic CAS failure after the marker write.
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            MemorySemanticWatermarkV0::default(),
+            [0x11; 32],
+            [0x22; 32],
+            [0x08; 32],
+            state.digest(),
+        )
+        .expect("open semantic sidecar against the authenticated genesis state");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc,
+            MemoryWatermark::default(),
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+        )
+        .expect("initialize bounded timeout host");
+        let predecessor = host.safety_state().clone();
+
+        let error = host
+            .on_local_timeout_with_safety_rules_sidecar_v1(&mut sidecar)
+            .expect_err("semantic CAS failure must stop before live Core installation");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SafetyRulesSemanticSidecar(_)
+        ));
+        assert!(sidecar.is_poisoned());
+        assert_eq!(
+            host.safety_state(),
+            &predecessor,
+            "the live Core must remain at its predecessor when external CAS fails"
+        );
+        assert_eq!(
+            host.safety_head().expect("read unchanged SafetyStore head").revision(),
+            0,
+            "the local SQLite state must not install a successor before CAS"
+        );
+        assert!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect pending marker after CAS failure")
+                .is_some(),
+            "the marker remains as an explicit recovery fence"
+        );
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
     fn explicit_timeout_sidecar_recovery_repairs_external_cas_before_sqlite() {
         let directory = protected_temp_dir();
         let (safety_path, signer_path) = dual_store_paths(&directory);
