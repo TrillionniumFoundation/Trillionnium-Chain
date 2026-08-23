@@ -27,7 +27,7 @@ use std::{
 use sha2::{Digest, Sha256};
 
 #[cfg(unix)]
-use std::os::unix::fs::{OpenOptionsExt, PermissionsExt};
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt};
 
 /// The WAL is a runnable composition seam, not a production authority.
 pub const NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1: bool = true;
@@ -230,6 +230,7 @@ impl NodeEventWalV1 {
             .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
         let mut file = options.open(&path).map_err(|_| NodeEventWalErrorV1::Io)?;
         let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
+        validate_open_file_v1(&file, &path, metadata.len() == 0)?;
         if metadata.len() == 0 {
             let frame = encode_frame_v1(
                 KIND_GENESIS_V1,
@@ -245,10 +246,6 @@ impl NodeEventWalV1 {
                 .map_err(|_| NodeEventWalErrorV1::Io)?;
             file.sync_all().map_err(|_| NodeEventWalErrorV1::Io)?;
             sync_parent_v1(&path)?;
-        } else {
-            #[cfg(unix)]
-            file.set_permissions(fs::Permissions::from_mode(0o600))
-                .map_err(|_| NodeEventWalErrorV1::Io)?;
         }
         drop(file);
         let mut wal = Self {
@@ -457,12 +454,13 @@ impl NodeEventWalV1 {
     fn append_frame_v1(&mut self, frame: &[u8; FRAME_BYTES_V1]) -> Result<(), NodeEventWalErrorV1> {
         let result = (|| {
             let mut options = OpenOptions::new();
-            options.append(true);
+            options.write(true).append(true);
             #[cfg(unix)]
             options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
             let mut file = options
                 .open(&self.path)
                 .map_err(|_| NodeEventWalErrorV1::Io)?;
+            validate_open_file_v1(&file, &self.path, false)?;
             file.write_all(frame).map_err(|_| NodeEventWalErrorV1::Io)?;
             file.sync_all().map_err(|_| NodeEventWalErrorV1::Io)?;
             sync_parent_v1(&self.path)
@@ -474,7 +472,7 @@ impl NodeEventWalV1 {
     }
 
     fn reload_v1(&mut self) -> Result<(), NodeEventWalErrorV1> {
-        let mut file = File::open(&self.path).map_err(|_| NodeEventWalErrorV1::Io)?;
+        let mut file = open_read_wal_v1(&self.path)?;
         let mut bytes = Vec::new();
         file.read_to_end(&mut bytes)
             .map_err(|_| NodeEventWalErrorV1::Io)?;
@@ -743,6 +741,36 @@ fn validate_path_v1(path: &Path) -> Result<(), NodeEventWalErrorV1> {
         }
     }
     Ok(())
+}
+
+/// Re-opening through an unchecked path would let a same-UID replacement or
+/// symlink redirect the WAL after the initial admission.  Every descriptor
+/// used for reload/append is therefore checked as a unique, private regular
+/// file; aliases and permissive modes fail closed instead of being repaired.
+fn validate_open_file_v1(
+    file: &File,
+    path: &Path,
+    allow_empty: bool,
+) -> Result<(), NodeEventWalErrorV1> {
+    let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
+    if !metadata.is_file() || (!allow_empty && metadata.len() == 0) || !path.is_absolute() {
+        return Err(NodeEventWalErrorV1::InvalidPath);
+    }
+    #[cfg(unix)]
+    if metadata.nlink() != 1 || metadata.mode() & 0o077 != 0 {
+        return Err(NodeEventWalErrorV1::InvalidPath);
+    }
+    Ok(())
+}
+
+fn open_read_wal_v1(path: &Path) -> Result<File, NodeEventWalErrorV1> {
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_NONBLOCK);
+    let file = options.open(path).map_err(|_| NodeEventWalErrorV1::Io)?;
+    validate_open_file_v1(&file, path, false)?;
+    Ok(file)
 }
 
 fn sync_parent_v1(path: &Path) -> Result<(), NodeEventWalErrorV1> {
@@ -1113,5 +1141,34 @@ mod tests {
             wal.prepare_event_v1(digest(6), digest(7), digest(8)),
             Err(NodeEventWalErrorV1::Poisoned)
         );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn hard_link_alias_and_path_replacement_fail_closed() {
+        use std::os::unix::fs::symlink;
+
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("node-events.wal");
+        let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let intent = wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        wal.commit_event_v1(intent, digest(5)).unwrap();
+
+        let alias = temp.path().join("node-events.alias.wal");
+        std::fs::hard_link(&path, &alias).unwrap();
+        assert_eq!(
+            NodeEventWalV1::open(&alias, digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::InvalidPath
+        );
+
+        let moved = temp.path().join("node-events.moved.wal");
+        std::fs::rename(&path, &moved).unwrap();
+        symlink(&moved, &path).unwrap();
+        assert!(matches!(
+            wal.revalidate_v1(),
+            Err(NodeEventWalErrorV1::Io | NodeEventWalErrorV1::InvalidPath)
+        ));
     }
 }
