@@ -68,6 +68,15 @@ const WORKER_POLL: Duration = Duration::from_millis(50);
 const MAX_HANDSHAKE_ATTEMPT: Duration = Duration::from_secs(2);
 const MESH_EXTERNAL_FENCE_TTL_V1: Duration = Duration::from_secs(30);
 
+fn fence_renew_interval(ttl: Duration) -> Duration {
+    // Renew well before the authority-side expiry.  The lower bound keeps a
+    // short deterministic fixture TTL from turning every frame into an RPC,
+    // while the saturating arithmetic keeps malformed caller durations from
+    // producing a zero-length busy loop.
+    let third = ttl / 3;
+    third.max(Duration::from_millis(250))
+}
+
 /// Host facts supplied by the fleet readiness probe. This type deliberately
 /// does not query `/proc` or platform-specific sysctls: the signed campaign
 /// owner must bind the same observed limits that were admitted by the fleet
@@ -670,6 +679,12 @@ type ActiveControlsV0 = Arc<Mutex<BTreeMap<(PeerDirectionV0, ValidatorId), TcpSt
 
 type ActiveFenceKeyV0 = (PeerDirectionV0, ValidatorId);
 
+#[derive(Clone, Copy)]
+struct ActiveFenceEntryV1 {
+    token: ExternalPeerLeaseTokenV1,
+    next_renew_at: Instant,
+}
+
 /// The mesh-owned view of externally fenced sessions.  Workers must acquire a
 /// token before they publish a generation, and every frame path revalidates
 /// the exact token.  The authority itself remains injectable and is expected
@@ -680,7 +695,7 @@ struct MeshFenceRegistryV1 {
     local: ValidatorId,
     context: PeerAdmissionContextV1,
     ttl: Duration,
-    tokens: Arc<Mutex<BTreeMap<ActiveFenceKeyV0, ExternalPeerLeaseTokenV1>>>,
+    tokens: Arc<Mutex<BTreeMap<ActiveFenceKeyV0, ActiveFenceEntryV1>>>,
 }
 
 impl MeshFenceRegistryV1 {
@@ -737,7 +752,16 @@ impl MeshFenceRegistryV1 {
             .tokens
             .lock()
             .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
-        if tokens.insert(key, token).is_some() {
+        if tokens
+            .insert(
+                key,
+                ActiveFenceEntryV1 {
+                    token,
+                    next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                },
+            )
+            .is_some()
+        {
             let _ = self.authority.release(token);
             bail!("external fence key already has a live token")
         }
@@ -746,19 +770,39 @@ impl MeshFenceRegistryV1 {
 
     fn revalidate(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
         let key = (direction, remote);
-        let token = self
+        let mut tokens = self
             .tokens
             .lock()
-            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
+        let entry = tokens
             .get(&key)
             .copied()
             .ok_or_else(|| anyhow!("mesh frame path has no admitted external lease"))?;
+        let mut token = entry.token;
         if token.scope().local() != self.local || token.scope().context() != self.context {
             bail!("mesh external lease scope changed")
         }
-        self.authority
-            .revalidate(token)
-            .map_err(|error| anyhow!("external fence revalidation failed: {error}"))
+        if Instant::now() >= entry.next_renew_at {
+            token = self
+                .authority
+                .renew(token)
+                .map_err(|error| anyhow!("external fence renewal failed: {error}"))?;
+            if token.scope() != entry.token.scope() {
+                bail!("external fence renewal changed the lease scope")
+            }
+            tokens.insert(
+                key,
+                ActiveFenceEntryV1 {
+                    token,
+                    next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                },
+            );
+        } else {
+            self.authority
+                .revalidate(token)
+                .map_err(|error| anyhow!("external fence revalidation failed: {error}"))?;
+        }
+        Ok(())
     }
 
     fn revalidate_all(&self) -> Result<()> {
@@ -778,24 +822,28 @@ impl MeshFenceRegistryV1 {
     #[allow(dead_code)]
     fn renew(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
         let key = (direction, remote);
-        let token = self
+        let mut tokens = self
             .tokens
             .lock()
-            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
+        let entry = tokens
             .get(&key)
             .copied()
             .ok_or_else(|| anyhow!("mesh renew has no admitted external lease"))?;
         let renewed = self
             .authority
-            .renew(token)
+            .renew(entry.token)
             .map_err(|error| anyhow!("external fence renew failed: {error}"))?;
-        if renewed.scope() != token.scope() {
+        if renewed.scope() != entry.token.scope() {
             bail!("external fence renew changed the lease scope")
         }
-        self.tokens
-            .lock()
-            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
-            .insert(key, renewed);
+        tokens.insert(
+            key,
+            ActiveFenceEntryV1 {
+                token: renewed,
+                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+            },
+        );
         Ok(())
     }
 
@@ -806,9 +854,9 @@ impl MeshFenceRegistryV1 {
             .lock()
             .map_err(|_| anyhow!("mesh fence token map poisoned"))?
             .remove(&key);
-        if let Some(token) = token {
+        if let Some(entry) = token {
             self.authority
-                .release(token)
+                .release(entry.token)
                 .map_err(|error| anyhow!("external fence release failed: {error}"))?;
         }
         Ok(())
@@ -932,6 +980,28 @@ impl PersistentAuthenticatedPeerMeshV0 {
         queue_capacity: usize,
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     ) -> Result<Self> {
+        Self::establish_fixture_with_fence_ttl_v1(
+            config,
+            setup_timeout,
+            io_timeout,
+            queue_capacity,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            authority,
+        )
+    }
+
+    /// Same fixture path with an explicitly bounded TTL for deterministic
+    /// renewal tests.  Deployed callers remain on the fixed 30-second profile
+    /// above; this does not enable a production or consensus transport flag.
+    #[doc(hidden)]
+    pub fn establish_fixture_with_fence_ttl_v1(
+        config: &MeshFixtureConfigV1,
+        setup_timeout: Duration,
+        io_timeout: Duration,
+        queue_capacity: usize,
+        fence_ttl: Duration,
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    ) -> Result<Self> {
         validate_limits(setup_timeout, io_timeout, queue_capacity)?;
         authority
             .preflight()
@@ -948,12 +1018,8 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
         let identity = MeshIdentityV0::from_fixture(config);
         let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
-        let fences = MeshFenceRegistryV1::new(
-            authority,
-            identity.local,
-            admission_context,
-            MESH_EXTERNAL_FENCE_TTL_V1,
-        )?;
+        let fences =
+            MeshFenceRegistryV1::new(authority, identity.local, admission_context, fence_ttl)?;
         let stop = Arc::new(AtomicBool::new(false));
         let terminal = Arc::new(Mutex::new(None));
         let controls = Arc::new(Mutex::new(BTreeMap::new()));

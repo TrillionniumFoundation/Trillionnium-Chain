@@ -167,21 +167,23 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let a_socket = socket.clone();
     let b_socket = socket.clone();
     let a_thread = thread::spawn(move || {
-        PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_v1(
+        PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
             &a_config,
             Duration::from_secs(5),
             Duration::from_millis(500),
             8,
+            Duration::from_secs(1),
             Arc::new(UnixExternalPeerLeaseAuthorityV1::connect(a_socket)),
         )
         .expect("establish A behind external daemon")
     });
     let b_thread = thread::spawn(move || {
-        PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_v1(
+        PersistentAuthenticatedPeerMeshV0::establish_fixture_with_fence_ttl_v1(
             &b_config,
             Duration::from_secs(5),
             Duration::from_millis(500),
             8,
+            Duration::from_secs(1),
             Arc::new(UnixExternalPeerLeaseAuthorityV1::connect(b_socket)),
         )
         .expect("establish B behind external daemon")
@@ -190,6 +192,14 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let b_mesh = b_thread.join().unwrap();
     assert_eq!(a_mesh.initial_sessions().len(), 2);
     assert_eq!(b_mesh.initial_sessions().len(), 2);
+    // The fixture TTL is one second.  The first health check forces a renew
+    // at roughly TTL/3; the second occurs after the original lease would have
+    // expired and therefore proves the daemon-backed renewal path, rather
+    // than merely a cached-token revalidation.
+    thread::sleep(Duration::from_millis(400));
+    a_mesh.ensure_healthy().unwrap();
+    b_mesh.ensure_healthy().unwrap();
+    thread::sleep(Duration::from_millis(800));
     a_mesh.ensure_healthy().unwrap();
     b_mesh.ensure_healthy().unwrap();
     a_mesh
