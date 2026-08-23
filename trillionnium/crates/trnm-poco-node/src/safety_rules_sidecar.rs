@@ -80,6 +80,11 @@ pub struct SafetyRulesSemanticSidecarV1<W> {
     journal_id: [u8; 32],
     capability: [u8; 32],
     expected: Option<SignerWatermarkV0>,
+    // Keep the semantic facts alongside the opaque watermark.  A watermark
+    // alone is insufficient to recognize a crash retry: the same sequence
+    // may only be replayed when its intent coordinates, nonce, root, and
+    // capability are the exact facts already observed at that head.
+    expected_facts: Option<ExternalWatermarkSemanticFactsV0>,
     state_digest: SafetyRulesStateDigestV1,
     poisoned: bool,
 }
@@ -124,8 +129,8 @@ where
         let head = external
             .load_semantic_v0(scope, journal_id)
             .map_err(SafetyRulesSemanticSidecarErrorV1::External)?;
-        let expected = match head {
-            None => None,
+        let (expected, expected_facts) = match head {
+            None => (None, None),
             Some((watermark, facts)) => {
                 let genesis_facts = watermark.sequence() == 0 && facts.safety_revision == 1;
                 if watermark.scope() != scope
@@ -139,7 +144,7 @@ where
                 {
                     return Err(SafetyRulesSemanticSidecarErrorV1::ExternalHeadMismatch);
                 }
-                Some(watermark)
+                (Some(watermark), Some(facts))
             }
         };
         Ok(Self {
@@ -148,6 +153,7 @@ where
             journal_id,
             capability,
             expected,
+            expected_facts,
             state_digest,
             poisoned: false,
         })
@@ -190,44 +196,18 @@ where
         if self.poisoned {
             return Err(SafetyRulesSemanticSidecarErrorV1::Poisoned);
         }
-        if predecessor != self.state_digest || transition.predecessor_state_digest() != predecessor
-        {
-            return self.poison(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch);
-        }
-
         let successor = transition.successor_state();
         let sequence = successor.revision();
         let intent = transition.canonical_intent();
         if sequence == 0 || intent.authorizing_safety_revision() != sequence {
             return self.poison(SafetyRulesSemanticSidecarErrorV1::SemanticIntentMismatch);
         }
-        let expected_sequence = self.expected.map_or(0, |watermark| watermark.sequence());
-        if sequence != expected_sequence.saturating_add(1) {
-            return self.poison(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch);
-        }
 
-        if self.expected.is_none() {
-            let genesis_checksum = digest_parts(
-                GENESIS_CHAIN_DOMAIN_V1,
-                &[&self.scope, &self.journal_id, &self.capability],
-            );
-            let genesis = SignerWatermarkV0::from_persisted_parts(
-                self.scope,
-                self.journal_id,
-                0,
-                genesis_checksum,
-            )
-            .map_err(SafetyRulesSemanticSidecarErrorV1::External)?;
-            if let Err(error) = self
-                .external
-                .compare_and_advance_semantic_genesis_v0(None, genesis)
-            {
-                self.poisoned = true;
-                return Err(SafetyRulesSemanticSidecarErrorV1::External(error));
-            }
-            self.expected = Some(genesis);
-        }
-
+        // Build the exact semantic target before checking the in-memory
+        // predecessor.  After a process crash the external CAS may already
+        // have committed this target while the local owner has only recovered
+        // the successor Safety digest.  In that narrow state, an identical
+        // transition is an idempotent replay, not a predecessor regression.
         let checksum = transition_checksum_v1(self.scope, self.journal_id, transition);
         let target = SignerWatermarkV0::from_persisted_parts(
             self.scope,
@@ -256,6 +236,64 @@ where
             self.capability,
         )
         .ok_or(SafetyRulesSemanticSidecarErrorV1::SemanticIntentMismatch)?;
+
+        let exact_retry = self.expected == Some(target)
+            && self.expected_facts == Some(facts)
+            && successor.digest() == self.state_digest;
+        if exact_retry {
+            // The caller still has to bind the trait argument to the
+            // transition.  A caller-supplied successor (or any other digest)
+            // must never turn a target match into a successful replay.
+            if predecessor != transition.predecessor_state_digest() {
+                return self.poison(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch);
+            }
+            // A cached target is not enough: another owner may have advanced
+            // the independently administered namespace after the crash.  A
+            // retry is idempotent only while a fresh authenticated read still
+            // returns the exact watermark *and* semantic facts.
+            let observed = match self.external.load_semantic_v0(self.scope, self.journal_id) {
+                Ok(observed) => observed,
+                Err(error) => {
+                    self.poisoned = true;
+                    return Err(SafetyRulesSemanticSidecarErrorV1::External(error));
+                }
+            };
+            if observed != Some((target, facts)) {
+                return self.poison(SafetyRulesSemanticSidecarErrorV1::ExternalHeadMismatch);
+            }
+            return Ok(());
+        }
+
+        if predecessor != self.state_digest || transition.predecessor_state_digest() != predecessor
+        {
+            return self.poison(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch);
+        }
+        let expected_sequence = self.expected.map_or(0, |watermark| watermark.sequence());
+        if sequence != expected_sequence.saturating_add(1) {
+            return self.poison(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch);
+        }
+
+        if self.expected.is_none() {
+            let genesis_checksum = digest_parts(
+                GENESIS_CHAIN_DOMAIN_V1,
+                &[&self.scope, &self.journal_id, &self.capability],
+            );
+            let genesis = SignerWatermarkV0::from_persisted_parts(
+                self.scope,
+                self.journal_id,
+                0,
+                genesis_checksum,
+            )
+            .map_err(SafetyRulesSemanticSidecarErrorV1::External)?;
+            if let Err(error) = self
+                .external
+                .compare_and_advance_semantic_genesis_v0(None, genesis)
+            {
+                self.poisoned = true;
+                return Err(SafetyRulesSemanticSidecarErrorV1::External(error));
+            }
+            self.expected = Some(genesis);
+        }
         let expected = self.expected;
         if let Err(error) = self
             .external
@@ -265,6 +303,7 @@ where
             return Err(SafetyRulesSemanticSidecarErrorV1::External(error));
         }
         self.expected = Some(target);
+        self.expected_facts = Some(facts);
         self.state_digest = successor.digest();
         Ok(())
     }
@@ -456,7 +495,7 @@ mod tests {
     }
 
     #[test]
-    fn semantic_sidecar_binds_transition_and_rejects_replay_or_predecessor_fork() {
+    fn semantic_sidecar_binds_exact_retry_and_rejects_predecessor_fork() {
         let (context, state) = context_and_state();
         let transition =
             PureHotStuffSafetyKernelV1::prepare_timeout(&context, &state, &RootSignatures)
@@ -477,12 +516,82 @@ mod tests {
             sidecar.expected_watermark().map(|head| head.sequence()),
             Some(1)
         );
+        // The exact same transition is an idempotent retry after the local
+        // owner has already installed the successor digest.  No second
+        // external reservation is needed.
         let replay = sidecar.persist_transition_v1(state.digest(), &transition);
+        assert_eq!(replay, Ok(()));
+        assert!(!sidecar.is_poisoned());
+
+        // A caller-supplied predecessor that does not bind to the transition
+        // is still a fork, even though the target watermark/facts match.
+        let fork =
+            sidecar.persist_transition_v1(transition.successor_state().digest(), &transition);
         assert_eq!(
-            replay,
+            fork,
             Err(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch)
         );
         assert!(sidecar.is_poisoned());
+    }
+
+    #[test]
+    fn semantic_sidecar_accepts_reopen_retry_only_for_observed_successor() {
+        let (context, state) = context_and_state();
+        let transition =
+            PureHotStuffSafetyKernelV1::prepare_timeout(&context, &state, &RootSignatures)
+                .expect("timeout transition");
+        let scope = [0x31; 32];
+        let journal_id = [0x32; 32];
+        let capability = [0x09; 32];
+        let sequence = transition.successor_state().revision();
+        let target = SignerWatermarkV0::from_persisted_parts(
+            scope,
+            journal_id,
+            sequence,
+            transition_checksum_v1(scope, journal_id, &transition),
+        )
+        .expect("valid transition watermark");
+        let intent = transition.canonical_intent();
+        let fingerprint = intent.fingerprint().into_bytes();
+        let signing_root = intent.signing_root().into_bytes();
+        let facts = ExternalWatermarkSemanticFactsV0::new(
+            intent.epoch().get(),
+            intent.preimage().context().view().get(),
+            sequence,
+            signer_journal_lifecycle_nonce_v0(
+                intent.epoch().get(),
+                intent.preimage().context().view().get(),
+                sequence,
+                fingerprint,
+                signing_root,
+                sequence,
+            ),
+            fingerprint,
+            signing_root,
+            capability,
+        )
+        .expect("valid transition facts");
+
+        // Model a restart after the target CAS: the external authority has
+        // the exact target/facts and the caller has authenticated the
+        // successor Safety digest, but the retry still carries the original
+        // predecessor in the trait call.
+        let mut reopened = SafetyRulesSemanticSidecarV1::open(
+            MemorySemanticAuthority {
+                head: Some(target),
+                facts: Some(facts),
+                poisoned: false,
+            },
+            scope,
+            journal_id,
+            capability,
+            transition.successor_state().digest(),
+        )
+        .expect("reopen against observed successor");
+        reopened
+            .persist_transition_v1(state.digest(), &transition)
+            .expect("exact crash retry is idempotent");
+        assert!(!reopened.is_poisoned());
     }
 
     #[test]
