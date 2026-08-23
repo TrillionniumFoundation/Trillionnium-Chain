@@ -31,6 +31,13 @@ that parent is later finalized. Committing is permitted only for the exact
 child of the current committed head; it atomically promotes that finalized
 prefix, retains its prepared descendants, and prunes losing siblings.
 A QC is never interpreted as an application commit or finality instruction.
+An explicit `commit_finalized_block_v0` adapter is available for integration
+tests: it requires a complete `FinalityProofV0`, verifies that proof with the
+strict Ed25519 verifier, binds its finalized header (BlockId, height, state
+root, parent, timestamp, and committed roots) to the exact executed block, and
+then delegates to the existing atomic commit. This adapter is not a Core
+callback, does not mint Safety/signer authority, and does not enable
+`qc_as_application_commit` or production activation.
 
 The schema-v3 journal also contains one separate fresh-genesis state-sync
 import path. Given an exact h1 execution request and a nonzero proof identifier,
@@ -88,8 +95,9 @@ protocol:
 
 Accordingly, `durable_artifact_p=true` and
 `native_application_v0_implementation=true` do not imply Core/Safety authority
-or production activation. Those truth values remain false in package and
-project status metadata.
+or production activation. The finalized-commit adapter is an integration seam
+only; `qc_as_application_commit`, `core_application_seal_eligible`, and
+`production_candidate` remain false in package and project status metadata.
 
 ## Fixed differential corpus and historical audit
 

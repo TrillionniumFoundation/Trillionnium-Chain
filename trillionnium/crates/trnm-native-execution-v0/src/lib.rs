@@ -69,7 +69,8 @@ pub use complete::{NativeBlockPreviewRequestV0, NativeBlockPreviewV0};
 pub use durable::{
     CanonicalLabNativeApplicationConfigInputsV0, ConfirmedDurableExecutionHistoryRowV0,
     ConfirmedDurableExecutionPV0, ConfirmedNativeH1StateSyncTrustedBaseV0,
-    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0, NativeApplicationConfigV0,
+    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0,
+    FinalizedNativeApplicationCommitRequestV0, NativeApplicationConfigV0,
     NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
     NativeH1StateSyncTrustedBaseRequestV0,
 };

@@ -20,7 +20,10 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use fs2::FileExt;
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
-use trnm_consensus_types::{ConsensusParametersV0, GenesisHash, ValidatorId, ValidatorSet};
+use trnm_consensus_crypto::StrictEd25519Verifier;
+use trnm_consensus_types::{
+    BlockHeader, ConsensusParametersV0, FinalityProofV0, GenesisHash, ValidatorId, ValidatorSet,
+};
 use trnm_finality_types::hash_domain;
 use trnm_native_application::{
     decode_native_executed_block_artifact_v0, encode_native_executed_block_artifact_v0,
@@ -196,6 +199,52 @@ fn error(
     field: &'static str,
 ) -> NativeApplicationExecutionErrorV0 {
     NativeApplicationExecutionErrorV0::new(code, field)
+}
+
+fn ensure_finalized_header_binding_v0(
+    header: &BlockHeader,
+    execution: &NativeBlockExecutionRequestV0,
+) -> DurableResult<()> {
+    let expected = execution.expected();
+    if header.id().as_bytes() != execution.block_id().as_bytes() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.block_id",
+        ));
+    }
+    if header.height().get() != execution.height().get()
+        || header.parent_id().as_bytes() != execution.parent().block_id().as_bytes()
+    {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.height_or_parent",
+        ));
+    }
+    if header.state_root().as_bytes() != expected.post_state_root().as_bytes() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.state_root",
+        ));
+    }
+    if header.payload_root().as_bytes() != expected.payload_root().as_bytes()
+        || header.receipts_root().as_bytes() != expected.receipts_root().as_bytes()
+        || header.evidence_root().as_bytes() != expected.evidence_root().as_bytes()
+    {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.other_roots",
+        ));
+    }
+    if header.chain_id().as_str() != execution.chain_id().as_str()
+        || header.genesis_hash().as_bytes() != execution.genesis_hash().as_bytes()
+        || header.timestamp_ms() != execution.timestamp_ms()
+    {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.header_context",
+        ));
+    }
+    Ok(())
 }
 
 /// Closed, secret-free inputs for one deterministic G3 laboratory
@@ -503,6 +552,48 @@ pub struct DurableNativeApplicationV0 {
 pub struct NativeH1StateSyncTrustedBaseRequestV0 {
     proof_id: [u8; 32],
     execution: NativeBlockExecutionRequestV0,
+}
+
+/// Explicit adapter request for committing one already executed block whose
+/// finalized header is independently carried by `FinalityProofV0`.
+///
+/// This request is deliberately narrower than a Core callback: it verifies
+/// the proof against the store's authenticated validator/parameter set, binds
+/// the proof's finalized header to the exact `NativeExecutedBlockV0`, and then
+/// delegates to the existing atomic application commit. It does not interpret
+/// a bare QC as an application commit, mint a Core/Safety permit, activate a
+/// validator, or enable any production flag.
+#[derive(Debug, Clone)]
+pub struct FinalizedNativeApplicationCommitRequestV0 {
+    executed: NativeExecutedBlockV0,
+    finality_proof: FinalityProofV0,
+    authenticated_parent_timestamp_ms: u64,
+}
+
+impl FinalizedNativeApplicationCommitRequestV0 {
+    pub fn new(
+        executed: NativeExecutedBlockV0,
+        finality_proof: FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> Self {
+        Self {
+            executed,
+            finality_proof,
+            authenticated_parent_timestamp_ms,
+        }
+    }
+
+    pub const fn executed(&self) -> &NativeExecutedBlockV0 {
+        &self.executed
+    }
+
+    pub const fn finality_proof(&self) -> &FinalityProofV0 {
+        &self.finality_proof
+    }
+
+    pub const fn authenticated_parent_timestamp_ms(&self) -> u64 {
+        self.authenticated_parent_timestamp_ms
+    }
 }
 
 impl NativeH1StateSyncTrustedBaseRequestV0 {
@@ -1249,6 +1340,45 @@ impl DurableNativeApplicationV0 {
             request,
             Arc::clone(&self.owner_affinity),
         )
+    }
+
+    /// Verifies one complete PoCO finality proof, binds its finalized header
+    /// to the exact executed block, and delegates to the existing atomic
+    /// application commit path.
+    ///
+    /// This is an explicit adapter seam for a future Core host. It does not
+    /// turn QC/finality into a standalone application authority, and it does
+    /// not change `qc_as_application_commit`, Core/Safety, signer, or
+    /// production activation flags.
+    pub fn commit_finalized_block_v0(
+        &self,
+        request: FinalizedNativeApplicationCommitRequestV0,
+    ) -> DurableResult<NativeApplicationCommitResultV0> {
+        let FinalizedNativeApplicationCommitRequestV0 {
+            executed,
+            finality_proof,
+            authenticated_parent_timestamp_ms,
+        } = request;
+        let execution = executed.request();
+        let finalized_header = finality_proof.finalized_block().header();
+
+        ensure_finalized_header_binding_v0(finalized_header, execution)?;
+        finality_proof
+            .verify(
+                &self.config.validator_set,
+                None,
+                &self.config.parameters,
+                authenticated_parent_timestamp_ms,
+                &StrictEd25519Verifier,
+            )
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                    "finalized_commit.finality_proof",
+                )
+            })?;
+
+        NativeApplicationV0::commit_block(self, NativeApplicationCommitRequestV0::new(executed))
     }
 
     fn lock_operation(&self) -> DurableResult<std::sync::MutexGuard<'_, ()>> {
@@ -3590,7 +3720,10 @@ mod tests {
     use std::{process::Command, thread, time::Instant};
     use tempfile::TempDir;
     use trnm_consensus_types::{
-        ChainId, ConsensusPublicKey, Epoch, ProtocolVersion, Validator, ValidatorId, VotingPower,
+        BlockHeader, BlockId, BlockKind, CertifiedHeaderV0, ChainId, ConsensusPublicKey, Epoch,
+        EvidenceRoot, FinalityProofV0, GenesisQcV0, Height, PayloadDigest, ProtocolVersion,
+        QcReferenceV0, QuorumCertificate, ReceiptsRoot, Signature64, SignatureBytes, StateRoot,
+        Validator, ValidatorId, View, Vote, VotingPower,
     };
     use trnm_finality_types::{crypto::public_key_hex, SignedCommandEnvelopeV1};
     use trnm_native_application::{
@@ -3657,6 +3790,154 @@ mod tests {
             validators,
         )
         .unwrap()
+    }
+
+    fn structurally_valid_finality_proof_v0(
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+    ) -> FinalityProofV0 {
+        fn qc_for(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+            let votes = set
+                .validators()
+                .iter()
+                .take(3)
+                .map(|validator| {
+                    Vote::new(
+                        set.chain_id(),
+                        set.protocol_version(),
+                        set.epoch(),
+                        header.view(),
+                        header.height(),
+                        header.id(),
+                        set.id(),
+                        validator.id(),
+                        SignatureBytes::from_array([1; 64]),
+                        set,
+                    )
+                    .unwrap()
+                })
+                .collect();
+            QuorumCertificate::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                header.view(),
+                header.height(),
+                header.id(),
+                set.id(),
+                votes,
+                set,
+            )
+            .unwrap()
+        }
+
+        let parent_timestamp_ms = 1_700_000_000_000;
+        let genesis_qc = GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap();
+        let h1 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(1),
+            Height::new(1),
+            BlockKind::Regular,
+            BlockId::new(GENESIS),
+            set.validators()[0].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x31; 32]),
+            StateRoot::new([0x32; 32]),
+            ReceiptsRoot::new([0x33; 32]),
+            EvidenceRoot::new([0x34; 32]),
+            parent_timestamp_ms + 1,
+            None,
+        )
+        .unwrap();
+        let qc1 = qc_for(set, &h1);
+        let c1 = CertifiedHeaderV0::new(
+            h1.clone(),
+            QcReferenceV0::genesis_anchor(genesis_qc),
+            None,
+            None,
+            Signature64::from_array([2; 64]),
+            qc1.clone(),
+            set,
+            None,
+            parameters,
+            parent_timestamp_ms,
+        )
+        .unwrap();
+
+        let h2 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(2),
+            Height::new(2),
+            BlockKind::Regular,
+            h1.id(),
+            set.validators()[1].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x41; 32]),
+            StateRoot::new([0x42; 32]),
+            ReceiptsRoot::new([0x43; 32]),
+            EvidenceRoot::new([0x44; 32]),
+            parent_timestamp_ms + 2,
+            None,
+        )
+        .unwrap();
+        let qc2 = qc_for(set, &h2);
+        let c2 = CertifiedHeaderV0::new(
+            h2.clone(),
+            QcReferenceV0::ordinary(qc1),
+            None,
+            None,
+            Signature64::from_array([3; 64]),
+            qc2.clone(),
+            set,
+            None,
+            parameters,
+            h1.timestamp_ms(),
+        )
+        .unwrap();
+
+        let h3 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(3),
+            Height::new(3),
+            BlockKind::Regular,
+            h2.id(),
+            set.validators()[2].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x51; 32]),
+            StateRoot::new([0x52; 32]),
+            ReceiptsRoot::new([0x53; 32]),
+            EvidenceRoot::new([0x54; 32]),
+            parent_timestamp_ms + 3,
+            None,
+        )
+        .unwrap();
+        let qc3 = qc_for(set, &h3);
+        let c3 = CertifiedHeaderV0::new(
+            h3,
+            QcReferenceV0::ordinary(qc2),
+            None,
+            None,
+            Signature64::from_array([4; 64]),
+            qc3,
+            set,
+            None,
+            parameters,
+            h2.timestamp_ms(),
+        )
+        .unwrap();
+        FinalityProofV0::new(c1, c2, c3, set, None, parameters, parent_timestamp_ms).unwrap()
     }
 
     fn canonical_lab_inputs(
@@ -4266,6 +4547,52 @@ mod tests {
             .unwrap();
         assert_eq!(result.disposition(), NativeRecoveryDispositionV0::Exact);
         assert_eq!(result.head(), committed.head());
+    }
+
+    #[test]
+    fn finalized_commit_adapter_rejects_header_mismatch_before_atomic_commit_v0() {
+        let temporary = TempDir::new().unwrap();
+        let (_path, application, genesis_head, request) = initialized(&temporary);
+        let executed = match application.execute_block(request).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("expected valid execution, got {other:?}"),
+        };
+        let proof = structurally_valid_finality_proof_v0(
+            application.config_v0().validator_set_v0(),
+            application.config_v0().consensus_parameters_v0(),
+        );
+        let result = application.commit_finalized_block_v0(
+            FinalizedNativeApplicationCommitRequestV0::new(executed, proof, 1_700_000_000_000),
+        );
+        let error = result.expect_err("header mismatch must fail before application commit");
+        assert_eq!(
+            error.code(),
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch
+        );
+        assert_eq!(error.field(), "finalized_commit.block_id");
+        assert_eq!(
+            application.confirmed_committed_head_v0().unwrap(),
+            genesis_head,
+            "a rejected finalized proof must not advance the application head"
+        );
+    }
+
+    #[test]
+    fn finalized_commit_adapter_source_contract_keeps_finality_and_atomicity_explicit_v0() {
+        let source = include_str!("durable.rs");
+        let start = source
+            .find("pub fn commit_finalized_block_v0(")
+            .expect("finalized commit adapter remains explicit");
+        let end = source[start..]
+            .find("    fn lock_operation(")
+            .map(|offset| start + offset)
+            .expect("finalized commit adapter has a bounded body");
+        let body = &source[start..end];
+        assert!(body.contains("finality_proof\n            .verify("));
+        assert!(body.contains("StrictEd25519Verifier"));
+        assert!(body.contains("NativeApplicationV0::commit_block"));
+        assert!(!body.contains("qc_as_application_commit = true"));
+        assert!(!body.contains("production_activation: true"));
     }
 
     /// Child-process entry point for the real SIGKILL boundary test below.
