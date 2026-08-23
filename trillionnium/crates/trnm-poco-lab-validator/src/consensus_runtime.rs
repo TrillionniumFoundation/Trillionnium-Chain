@@ -77,6 +77,7 @@ use crate::{
     frame::FrameKind,
     loop_driver::RoutedConsensusActionV0,
     p2p_admission::{ExternalPeerLeaseAuthorityV1, RejectingExternalPeerLeaseAuthorityV1},
+    p2p_identity::P2pIdentitySignatureProducerV1,
     pacemaker::GenerationAwarePacemakerV0,
     process_event::{
         LocalRestartParkJournalCommitV1, Process1TargetParkedJournalCutV1,
@@ -1170,6 +1171,7 @@ where
         authority_builder,
         fleet_producer,
         None,
+        None,
     )
 }
 
@@ -1213,9 +1215,11 @@ where
         authority_builder,
         fleet_producer,
         Some(runtime_event_producer),
+        None,
     )
 }
 
+#[allow(clippy::too_many_arguments)]
 fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(
     mut config: LoadedValidatorConfig,
     duration: Duration,
@@ -1226,6 +1230,7 @@ fn run_bounded_consensus_with_optional_runtime_event_producer_v1<C, A>(
     authority_builder: A,
     fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
     runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
+    p2p_identity_producer: Option<Box<dyn P2pIdentitySignatureProducerV1>>,
 ) -> Result<BoundedConsensusRunOutcomeV1>
 where
     C: FnOnce(
@@ -1319,13 +1324,26 @@ where
             // the authenticated mesh (and acquiring each directed lease) must
             // precede h1-h3 commissioning so a missing/stale fencing backend
             // cannot reach SafetyStore, signer, or Core mutation.
-            let mesh = match PersistentAuthenticatedPeerMeshV0::establish_with_fence(
-                &config,
-                MESH_SETUP_TIMEOUT_V1,
-                MESH_IO_TIMEOUT_V1,
-                MESH_QUEUE_CAPACITY_V1,
-                external_fence,
-            )
+            let mesh_result = match p2p_identity_producer {
+                Some(producer) => {
+                    PersistentAuthenticatedPeerMeshV0::establish_with_external_identity_and_fence(
+                        &config,
+                        MESH_SETUP_TIMEOUT_V1,
+                        MESH_IO_TIMEOUT_V1,
+                        MESH_QUEUE_CAPACITY_V1,
+                        external_fence,
+                        producer,
+                    )
+                }
+                None => PersistentAuthenticatedPeerMeshV0::establish_with_fence(
+                    &config,
+                    MESH_SETUP_TIMEOUT_V1,
+                    MESH_IO_TIMEOUT_V1,
+                    MESH_QUEUE_CAPACITY_V1,
+                    external_fence,
+                ),
+            };
+            let mesh = match mesh_result
             .context("establish externally fenced consensus mesh")
             {
                 Ok(mesh) => mesh,
@@ -1507,6 +1525,7 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v
         proposal_producer,
         fleet_producer,
         None,
+        None,
     )
 }
 
@@ -1542,6 +1561,71 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runt
         proposal_producer,
         fleet_producer,
         Some(runtime_event_producer),
+        None,
+    )
+}
+
+/// Explicit deployed composition carrying an external P2P identity producer.
+/// The producer is passed to the authenticated mesh before commissioning; a
+/// secret-free config therefore cannot silently fall back to a local key.
+/// This remains a transport/authority seam only and does not change any
+/// activation or production truth bit.
+#[allow(clippy::too_many_arguments)]
+pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_p2p_identity_producer_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    fleet_producer: Box<dyn FleetSignatureProducerV1>,
+    p2p_identity_producer: Box<dyn P2pIdentitySignatureProducerV1>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        external_watermark,
+        producer,
+        proposal_producer,
+        fleet_producer,
+        None,
+        Some(p2p_identity_producer),
+    )
+}
+
+/// Full external deployed composition with both runtime-event and P2P
+/// identity producers explicitly supplied.
+#[allow(clippy::too_many_arguments)]
+pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_runtime_event_and_p2p_identity_producer_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    fleet_producer: Box<dyn FleetSignatureProducerV1>,
+    runtime_event_producer: Box<dyn RuntimeEventSignatureProducerV1>,
+    p2p_identity_producer: Box<dyn P2pIdentitySignatureProducerV1>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    compose_deployed_external_authority_with_runtime_event_producer_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        external_watermark,
+        producer,
+        proposal_producer,
+        fleet_producer,
+        Some(runtime_event_producer),
+        Some(p2p_identity_producer),
     )
 }
 
@@ -1610,6 +1694,7 @@ fn fleet_signing_authority_guard_is_precommission_and_preserves_fixture_v1() {
 /// owner.  The function is deliberately private: callers must use the
 /// explicit public entry above so the complete authority graph is visible at
 /// the API boundary.
+#[allow(clippy::too_many_arguments)]
 fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
@@ -1621,6 +1706,7 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
     runtime_event_producer: Option<Box<dyn RuntimeEventSignatureProducerV1>>,
+    p2p_identity_producer: Option<Box<dyn P2pIdentitySignatureProducerV1>>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
     ensure!(
         !config.has_local_consensus_secret(),
@@ -1632,9 +1718,9 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
     // thread or opening a journal, rather than allowing an unavailable raw-key
     // accessor to panic after a partial authority graph has been built.
     ensure!(
-        config.has_local_p2p_identity_secret()
+        (config.has_local_p2p_identity_secret() || p2p_identity_producer.is_some())
             && config.has_local_operator_recovery_secret(),
-        "ExternalAuthorityRequired: P2P identity, runtime-event, and replay/recovery signing producers are not wired"
+        "ExternalAuthorityRequired: P2P identity producer (or fixture secret), runtime-event, and replay/recovery signing producers are not wired"
     );
     let authority_builder =
         move |config: &LoadedValidatorConfig,
@@ -1654,7 +1740,7 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
         };
     match runtime_event_producer {
         Some(runtime_event_producer) => {
-            run_bounded_consensus_with_authority_builder_and_runtime_event_producer_v1(
+            run_bounded_consensus_with_optional_runtime_event_producer_v1(
                 config,
                 duration,
                 max_blocks,
@@ -1663,10 +1749,11 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
                 |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
                 authority_builder,
                 Some(fleet_producer),
-                runtime_event_producer,
+                Some(runtime_event_producer),
+                p2p_identity_producer,
             )
         }
-        None => run_bounded_consensus_with_authority_builder_v1(
+        None => run_bounded_consensus_with_optional_runtime_event_producer_v1(
             config,
             duration,
             max_blocks,
@@ -1675,6 +1762,8 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
             |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
             authority_builder,
             Some(fleet_producer),
+            None,
+            p2p_identity_producer,
         ),
     }
 }
@@ -7893,6 +7982,28 @@ mod tests {
         assert!(config_source.contains("open_consensus_secret: bool"));
         assert!(config_source.contains("refusing raw-key fallback"));
         assert!(runtime_source.contains("!config.has_local_consensus_secret()"));
+    }
+
+    #[test]
+    fn external_p2p_identity_composition_is_explicit_and_no_raw_fallback_v1() {
+        let source = include_str!("consensus_runtime.rs");
+        let entry = source
+            .find("pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_and_p2p_identity_producer_v1(")
+            .expect("external P2P identity composition entry remains present");
+        let body_end = source[entry..]
+            .find("fn require_deployed_fleet_signing_authority_v1")
+            .map(|offset| entry + offset)
+            .expect("external P2P identity entry has a following guard helper");
+        let body = &source[entry..body_end];
+        assert!(body.contains("p2p_identity_producer: Box<dyn P2pIdentitySignatureProducerV1>"));
+        assert!(body.contains("Some(p2p_identity_producer)"));
+        assert!(source.contains(
+            "PersistentAuthenticatedPeerMeshV0::establish_with_external_identity_and_fence"
+        ));
+        assert!(source
+            .contains("p2p_identity_producer: Option<Box<dyn P2pIdentitySignatureProducerV1>>"));
+        assert!(source
+            .contains("config.has_local_p2p_identity_secret() || p2p_identity_producer.is_some()"));
     }
 
     fn restart_qc_ref_fixture_v1(

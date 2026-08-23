@@ -45,7 +45,12 @@ use crate::{
         ExternalPeerLeaseScopeV1, ExternalPeerLeaseTokenV1, PeerAdmissionContextV1,
         RejectingExternalPeerLeaseAuthorityV1,
     },
-    transport::{AuthenticatedConnection, RunTransportContext},
+    p2p_identity::{
+        P2pIdentityErrorV1, P2pIdentitySignatureProducerV1, P2pIdentitySignatureRequestV1,
+    },
+    transport::{
+        AuthenticatedConnection, ExternallySignedAuthenticatedConnectionV1, RunTransportContext,
+    },
 };
 
 const MAX_DIRECTED_PEERS: usize = 16;
@@ -454,11 +459,98 @@ impl MeshTerminalFailureV0 {
     }
 }
 
+/// A producer shared by the bounded mesh workers.  The external signer API
+/// is stateful (nonce/replay state belongs to the signer), while each
+/// directed session is owned by a separate worker.  Serializing only the
+/// producer call keeps that authority single-owner without copying a secret
+/// into any worker or falling back to a local key.
+#[derive(Clone)]
+struct SharedP2pIdentityProducerV1 {
+    inner: Arc<Mutex<Box<dyn P2pIdentitySignatureProducerV1>>>,
+}
+
+impl SharedP2pIdentityProducerV1 {
+    fn new(producer: Box<dyn P2pIdentitySignatureProducerV1>) -> Self {
+        Self {
+            inner: Arc::new(Mutex::new(producer)),
+        }
+    }
+}
+
+impl P2pIdentitySignatureProducerV1 for SharedP2pIdentityProducerV1 {
+    fn public_key_v1(&self) -> [u8; 32] {
+        self.inner
+            .lock()
+            .map(|producer| producer.public_key_v1())
+            .unwrap_or([0u8; 32])
+    }
+
+    fn sign_v1(
+        &mut self,
+        request: P2pIdentitySignatureRequestV1,
+    ) -> Result<[u8; 64], P2pIdentityErrorV1> {
+        self.inner
+            .lock()
+            .map_err(|_| P2pIdentityErrorV1::Unavailable)?
+            .sign_v1(request)
+    }
+}
+
+#[derive(Clone)]
+enum MeshIdentitySignerV1 {
+    /// Secret-bearing fixture mode only.  Deployed external composition must
+    /// use [`Self::External`].
+    Local(SigningKey),
+    External(SharedP2pIdentityProducerV1),
+}
+
+enum MeshAuthenticatedConnectionV1<T> {
+    Local(AuthenticatedConnection<T>),
+    External(ExternallySignedAuthenticatedConnectionV1<T>),
+}
+
+impl<T: Read + Write> MeshAuthenticatedConnectionV1<T> {
+    fn remote(&self) -> ValidatorId {
+        match self {
+            Self::Local(connection) => connection.remote(),
+            Self::External(connection) => connection.remote(),
+        }
+    }
+
+    fn session_id(&self) -> [u8; 32] {
+        match self {
+            Self::Local(connection) => connection.session_id(),
+            Self::External(connection) => connection.session_id(),
+        }
+    }
+
+    fn io_mut(&mut self) -> &mut T {
+        match self {
+            Self::Local(connection) => connection.io_mut(),
+            Self::External(connection) => connection.io_mut(),
+        }
+    }
+
+    fn send(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<(), FrameError> {
+        match self {
+            Self::Local(connection) => connection.send(kind, payload),
+            Self::External(connection) => connection.send(kind, payload),
+        }
+    }
+
+    fn receive(&mut self) -> Result<AuthenticatedFrame, FrameError> {
+        match self {
+            Self::Local(connection) => connection.receive(),
+            Self::External(connection) => connection.receive(),
+        }
+    }
+}
+
 #[derive(Clone)]
 struct MeshIdentityV0 {
     run_id: String,
     local: ValidatorId,
-    p2p_identity_signing_key: SigningKey,
+    p2p_identity_signer: MeshIdentitySignerV1,
     validator_set: ValidatorSet,
     key_roles: ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
@@ -543,7 +635,9 @@ impl MeshIdentityV0 {
         Self {
             run_id: config.run_id.clone(),
             local: config.local,
-            p2p_identity_signing_key: config.p2p_identity_signing_key.clone(),
+            p2p_identity_signer: MeshIdentitySignerV1::Local(
+                config.p2p_identity_signing_key.clone(),
+            ),
             validator_set: config.validator_set.clone(),
             key_roles: config.key_roles.clone(),
             transport_context: config.transport_context,
@@ -1084,6 +1178,67 @@ impl PersistentAuthenticatedPeerMeshV0 {
         )
     }
 
+    /// Establishes the deployed mesh with an explicitly owned external P2P
+    /// identity producer.  This path never reads or clones the local P2P
+    /// secret; the producer's public role key is checked against the committed
+    /// validator binding before the listener is opened or any worker starts.
+    /// It is intentionally an explicit seam and does not alter activation or
+    /// production flags.
+    #[allow(clippy::too_many_arguments)]
+    pub fn establish_with_external_identity_and_fence(
+        config: &LoadedValidatorConfig,
+        setup_timeout: Duration,
+        io_timeout: Duration,
+        queue_capacity: usize,
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+        producer: Box<dyn P2pIdentitySignatureProducerV1>,
+    ) -> Result<Self> {
+        validate_directed_plan(
+            config.local_validator(),
+            config.peers(),
+            config.incoming_peers(),
+        )?;
+        let expected_public_key = config
+            .key_role_registry()
+            .p2p_identity_public_key(config.local_validator())
+            .ok_or_else(|| anyhow!("local validator has no committed P2P identity role"))?;
+        ensure!(
+            producer.public_key_v1() == expected_public_key,
+            "external P2P identity producer key does not match committed validator role"
+        );
+        let identity = MeshIdentityV0 {
+            run_id: config.run_id().to_owned(),
+            local: config.local_validator(),
+            p2p_identity_signer: MeshIdentitySignerV1::External(SharedP2pIdentityProducerV1::new(
+                producer,
+            )),
+            validator_set: config.validator_set().clone(),
+            key_roles: config.key_role_registry().clone(),
+            transport_context: RunTransportContext::new(
+                config.topology_sha256(),
+                config.candidate_source_sha256(),
+                config.binary_sha256(),
+                config.coordinator_manifest_sha256(),
+            )
+            .with_validator_set_binding(
+                config.validator_set().epoch().get(),
+                config.validator_set().id().into_bytes(),
+            )
+            .with_node_config_binding(config.config_sha256()),
+        };
+        Self::establish_identity_with_fence_ttl_v1(
+            identity,
+            config.listen_addr(),
+            peer_map(config.peers())?,
+            peer_map(config.incoming_peers())?,
+            setup_timeout,
+            io_timeout,
+            queue_capacity,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            authority,
+        )
+    }
+
     /// Transport-only fixture entry used by the cross-process external-fence
     /// integration test.  It follows the exact same worker/generation path as
     /// [`Self::establish_with_fence`], but does not require a deployment bundle
@@ -1118,13 +1273,39 @@ impl PersistentAuthenticatedPeerMeshV0 {
         fence_ttl: Duration,
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     ) -> Result<Self> {
+        let identity = MeshIdentityV0::from_fixture(config);
+        Self::establish_identity_with_fence_ttl_v1(
+            identity,
+            config.listen_addr,
+            config.outgoing.clone(),
+            config.incoming.clone(),
+            setup_timeout,
+            io_timeout,
+            queue_capacity,
+            fence_ttl,
+            authority,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn establish_identity_with_fence_ttl_v1(
+        identity: MeshIdentityV0,
+        listen_addr: SocketAddr,
+        outgoing: BTreeMap<ValidatorId, SocketAddr>,
+        incoming: BTreeMap<ValidatorId, SocketAddr>,
+        setup_timeout: Duration,
+        io_timeout: Duration,
+        queue_capacity: usize,
+        fence_ttl: Duration,
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    ) -> Result<Self> {
         validate_limits(setup_timeout, io_timeout, queue_capacity)?;
         authority
             .preflight()
             .map_err(|error| anyhow!("external fencing preflight failed: {error}"))?;
-        validate_directed_plan_maps(config.local, &config.outgoing, &config.incoming)?;
-        let listener = TcpListener::bind(config.listen_addr)
-            .with_context(|| format!("bind consensus listener {}", config.listen_addr))?;
+        validate_directed_plan_maps(identity.local, &outgoing, &incoming)?;
+        let listener = TcpListener::bind(listen_addr)
+            .with_context(|| format!("bind consensus listener {listen_addr}"))?;
         listener
             .set_nonblocking(true)
             .context("set consensus listener nonblocking")?;
@@ -1132,7 +1313,6 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let setup_deadline = Instant::now()
             .checked_add(setup_timeout)
             .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
-        let identity = MeshIdentityV0::from_fixture(config);
         let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
         let fences =
             MeshFenceRegistryV1::new(authority, identity.local, admission_context, fence_ttl)?;
@@ -1145,10 +1325,9 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let mut outbound = BTreeMap::new();
         let outbound_peer_budget_bytes = outbound_queue_byte_budget_v0(queue_capacity)?;
         let global_outbound_budget = Arc::new(MeshQueueByteBudgetV0::new(
-            outbound_global_queue_byte_budget_v0(queue_capacity, config.outgoing.len())?,
+            outbound_global_queue_byte_budget_v0(queue_capacity, outgoing.len())?,
         ));
 
-        let incoming = config.incoming.clone();
         let inbound_peer_budget_bytes = inbound_queue_byte_budget_v0(queue_capacity)?;
         let global_inbound_budget = Arc::new(MeshQueueByteBudgetV0::new(
             inbound_global_queue_byte_budget_v0(queue_capacity, incoming.len())?,
@@ -1207,6 +1386,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
             workers.push(worker);
         }
         {
+            let accept_incoming = incoming.clone();
             let worker = thread::Builder::new()
                 .name("trnm-g3-mesh-accept".to_owned())
                 .stack_size(MESH_WORKER_STACK_BYTES)
@@ -1221,7 +1401,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                     move || {
                         accept_loop(
                             listener,
-                            incoming,
+                            accept_incoming,
                             identity,
                             setup_deadline,
                             io_timeout,
@@ -1240,7 +1420,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
             workers.push(worker);
         }
 
-        for (&remote, &remote_addr) in &config.outgoing {
+        for (&remote, &remote_addr) in &outgoing {
             let (sender, receiver) = mpsc::sync_channel(queue_capacity);
             let byte_budget = Arc::new(MeshQueueByteBudgetV0::new(outbound_peer_budget_bytes));
             if outbound
@@ -1297,10 +1477,9 @@ impl PersistentAuthenticatedPeerMeshV0 {
         drop(setup_tx);
         drop(ingress_tx);
 
-        let expected = config
-            .outgoing
+        let expected = outgoing
             .len()
-            .checked_add(config.incoming.len())
+            .checked_add(incoming.len())
             .ok_or_else(|| anyhow!("mesh session count overflow"))?;
         let mut seen = BTreeSet::new();
         let mut initial_sessions = Vec::with_capacity(expected);
@@ -1339,7 +1518,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
         });
 
         Ok(Self {
-            local: config.local,
+            local: identity.local,
             outbound,
             ingress,
             stop,
@@ -2296,7 +2475,7 @@ fn connect_authenticated_until(
     controls: &ActiveControlsV0,
     fences: &MeshFenceRegistryV1,
     generation: u64,
-) -> std::result::Result<AuthenticatedConnection<DeadlineIo>, ConnectAttemptFailureV0> {
+) -> std::result::Result<MeshAuthenticatedConnectionV1<DeadlineIo>, ConnectAttemptFailureV0> {
     loop {
         if stop.load(Ordering::Acquire) {
             return Err(ConnectAttemptFailureV0::Stopped);
@@ -2326,16 +2505,32 @@ fn connect_authenticated_until(
         let io = DeadlineIo::new(stream, handshake_deadline).map_err(|error| {
             ConnectAttemptFailureV0::Terminal(format!("prepare handshake socket: {error}"))
         })?;
-        let mut connection = match AuthenticatedConnection::connect(
-            io,
-            &identity.run_id,
-            identity.local,
-            remote,
-            &identity.p2p_identity_signing_key,
-            &identity.validator_set,
-            &identity.key_roles,
-            identity.transport_context,
-        ) {
+        let mut connection = match match &identity.p2p_identity_signer {
+            MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::connect(
+                io,
+                &identity.run_id,
+                identity.local,
+                remote,
+                signing_key,
+                &identity.validator_set,
+                &identity.key_roles,
+                identity.transport_context,
+            )
+            .map(MeshAuthenticatedConnectionV1::Local),
+            MeshIdentitySignerV1::External(producer) => {
+                ExternallySignedAuthenticatedConnectionV1::connect(
+                    io,
+                    &identity.run_id,
+                    identity.local,
+                    remote,
+                    Box::new(producer.clone()),
+                    &identity.validator_set,
+                    &identity.key_roles,
+                    identity.transport_context,
+                )
+                .map(MeshAuthenticatedConnectionV1::External)
+            }
+        } {
             Ok(connection) => connection,
             Err(error) if transient_frame_error(&error) => {
                 thread::sleep(CONNECT_POLL);
@@ -2381,19 +2576,34 @@ fn authenticate_incoming(
     identity: &MeshIdentityV0,
     deadline: Instant,
     io_timeout: Duration,
-) -> std::result::Result<AuthenticatedConnection<DeadlineIo>, IncomingAuthFailureV0> {
+) -> std::result::Result<MeshAuthenticatedConnectionV1<DeadlineIo>, IncomingAuthFailureV0> {
     let io = DeadlineIo::new(stream, deadline).map_err(|error| {
         IncomingAuthFailureV0::Terminal(format!("prepare inbound handshake socket: {error}"))
     })?;
-    let mut connection = match AuthenticatedConnection::accept(
-        io,
-        &identity.run_id,
-        identity.local,
-        &identity.p2p_identity_signing_key,
-        &identity.validator_set,
-        &identity.key_roles,
-        identity.transport_context,
-    ) {
+    let mut connection = match match &identity.p2p_identity_signer {
+        MeshIdentitySignerV1::Local(signing_key) => AuthenticatedConnection::accept(
+            io,
+            &identity.run_id,
+            identity.local,
+            signing_key,
+            &identity.validator_set,
+            &identity.key_roles,
+            identity.transport_context,
+        )
+        .map(MeshAuthenticatedConnectionV1::Local),
+        MeshIdentitySignerV1::External(producer) => {
+            ExternallySignedAuthenticatedConnectionV1::accept(
+                io,
+                &identity.run_id,
+                identity.local,
+                Box::new(producer.clone()),
+                &identity.validator_set,
+                &identity.key_roles,
+                identity.transport_context,
+            )
+            .map(MeshAuthenticatedConnectionV1::External)
+        }
+    } {
         Ok(connection) => connection,
         Err(error) => return Err(classify_incoming_auth_failure_v0(error)),
     };
@@ -2981,7 +3191,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: client,
-                p2p_identity_signing_key: client_key,
+                p2p_identity_signer: MeshIdentitySignerV1::Local(client_key),
                 validator_set: validator_set.clone(),
                 key_roles: key_roles.clone(),
                 transport_context: context,
@@ -2989,7 +3199,7 @@ mod tests {
             MeshIdentityV0 {
                 run_id: TEST_RUN_ID.to_owned(),
                 local: server,
-                p2p_identity_signing_key: server_key,
+                p2p_identity_signer: MeshIdentitySignerV1::Local(server_key),
                 validator_set,
                 key_roles,
                 transport_context: context,
@@ -3607,7 +3817,10 @@ mod tests {
                 &client.run_id,
                 client.local,
                 server_thread_remote_v0(&client.validator_set, client.local),
-                &client.p2p_identity_signing_key,
+                match &client.p2p_identity_signer {
+                    MeshIdentitySignerV1::Local(signing_key) => signing_key,
+                    MeshIdentitySignerV1::External(_) => unreachable!("fixture uses local key"),
+                },
                 &client.validator_set,
                 &client.key_roles,
                 client.transport_context,

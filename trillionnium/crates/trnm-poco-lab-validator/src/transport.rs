@@ -422,6 +422,14 @@ impl<T: Read + Write> ExternallySignedAuthenticatedConnectionV1<T> {
         self.poisoned
     }
 
+    /// Borrows the underlying stream for the mesh's bounded shutdown/control
+    /// bookkeeping.  This does not expose the external signer or any key
+    /// material; it is the same narrow socket seam available on the fixture
+    /// connection.
+    pub(crate) fn io_mut(&mut self) -> &mut T {
+        &mut self.io
+    }
+
     pub fn send(&mut self, kind: FrameKind, payload: Vec<u8>) -> Result<(), FrameError> {
         if self.poisoned {
             return Err(FrameError::Poisoned);
