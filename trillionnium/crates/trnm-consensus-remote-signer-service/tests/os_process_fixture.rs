@@ -5,9 +5,9 @@
 //! This deliberately targets the standalone `trnm-remote-signer-p0` binary,
 //! not the continuous validator authority.  It proves only that the fixture
 //! service's Unix transport and local SQLite reservation survive a SIGKILL,
-//! reject an exact replay after restart, and fail closed when its local
-//! namespace is corrupted.  It is not external watermark, HSM, or production
-//! consensus-signer evidence.
+//! reject an exact replay after restart, reject a stale generation/lease
+//! binding, and fail closed when its local namespace is corrupted.  It is not
+//! external watermark, HSM, or production consensus-signer evidence.
 
 use std::{
     env, fs,
@@ -28,7 +28,12 @@ const FRAME_OK: u8 = 0;
 const FRAME_REJECT: u8 = 1;
 const REJECT_DUPLICATE_REQUEST: u8 = 5;
 
-fn service_command(socket: &Path, watermark: &Path) -> Command {
+fn service_command(
+    socket: &Path,
+    watermark: &Path,
+    generation: u64,
+    lease_material: &str,
+) -> Command {
     let binary = env::var_os("CARGO_BIN_EXE_trnm_remote_signer_p0")
         .map(PathBuf::from)
         .or_else(|| {
@@ -55,14 +60,18 @@ fn service_command(socket: &Path, watermark: &Path) -> Command {
         .arg(watermark)
         .arg("--purpose")
         .arg("both")
+        .arg("--generation")
+        .arg(generation.to_string())
+        .arg("--lease-material")
+        .arg(lease_material)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
         .stderr(Stdio::piped());
     command
 }
 
-fn spawn_service(socket: &Path, watermark: &Path) -> Child {
-    let mut child = service_command(socket, watermark)
+fn spawn_service(socket: &Path, watermark: &Path, generation: u64, lease_material: &str) -> Child {
+    let mut child = service_command(socket, watermark, generation, lease_material)
         .spawn()
         .expect("spawn remote-signer fixture OS process");
     wait_for_socket(&mut child, socket);
@@ -170,7 +179,7 @@ fn fixture_service_os_process_restart_replay_and_tamper_fail_stop() {
 
     // First child: commit one request, then terminate it without a graceful
     // socket shutdown.  SQLite FULL/WAL persistence must retain the request.
-    let mut first_child = spawn_service(&socket, &watermark);
+    let mut first_child = spawn_service(&socket, &watermark, 1, "p0-lease");
     let response = send_frame(&socket, &first).expect("first OS-process request succeeds");
     assert!(response.starts_with(b"TRNMRS01"));
     let first_status = kill_and_wait(&mut first_child);
@@ -181,7 +190,7 @@ fn fixture_service_os_process_restart_replay_and_tamper_fail_stop() {
 
     // Second child reopens the same namespace.  The exact request is rejected
     // as a durable duplicate, while a strictly newer round is accepted.
-    let mut restarted_child = spawn_service(&socket, &watermark);
+    let mut restarted_child = spawn_service(&socket, &watermark, 1, "p0-lease");
     assert_eq!(
         send_frame(&socket, &first).expect_err("replayed request must reject"),
         REJECT_DUPLICATE_REQUEST
@@ -211,7 +220,7 @@ fn fixture_service_os_process_restart_replay_and_tamper_fail_stop() {
     bytes[0] ^= 0x01;
     fs::write(&watermark, bytes).expect("tamper fixture SQLite namespace");
     let _ = fs::remove_file(&socket);
-    let mut tampered_child = service_command(&socket, &watermark)
+    let mut tampered_child = service_command(&socket, &watermark, 1, "p0-lease")
         .spawn()
         .expect("spawn tampered fixture process");
     let deadline = Instant::now() + Duration::from_secs(5);
@@ -237,4 +246,64 @@ fn fixture_service_os_process_restart_replay_and_tamper_fail_stop() {
             || stderr.contains("database"),
         "tampered fixture must identify persisted-state failure: {stderr}"
     );
+}
+
+#[test]
+fn fixture_service_rejects_stale_generation_and_lease_across_processes() {
+    let temp = TempDir::new().expect("create binding-fence temp root");
+    let socket = temp.path().join("signer.sock");
+    let watermark = temp.path().join("watermark.sqlite3");
+    let fixture = Fixture::new();
+    let request = request_bytes(&fixture, "vote", 20, b"binding-fence");
+
+    // Establish local durable state under one process generation and lease.
+    // The second process must not be allowed to reinterpret that namespace
+    // under either a stale generation or a different lease descriptor.
+    let mut owner = spawn_service(&socket, &watermark, 1, "p0-lease");
+    assert!(send_frame(&socket, &request)
+        .map(|response| response.starts_with(b"TRNMRS01"))
+        .expect("initial bound request succeeds"));
+    let owner_status = kill_and_wait(&mut owner);
+    assert!(!owner_status.success(), "SIGKILL owner must be non-success");
+
+    for (generation, lease_material, expected_label) in [
+        (2_u64, "p0-lease", "generation"),
+        (1_u64, "p0-lease-next", "lease"),
+    ] {
+        // The killed owner leaves a stale socket inode.  The candidate must
+        // remove only that socket, then fail before binding a new one because
+        // the persisted binding metadata is not interchangeable.
+        let _ = fs::remove_file(&socket);
+        let mut candidate = service_command(&socket, &watermark, generation, lease_material)
+            .spawn()
+            .expect("spawn stale-binding candidate");
+        let deadline = Instant::now() + Duration::from_secs(5);
+        let status = loop {
+            if let Some(status) = candidate.try_wait().expect("poll stale-binding candidate") {
+                break status;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "{expected_label}-mismatched candidate did not fail closed"
+            );
+            thread::sleep(Duration::from_millis(10));
+        };
+        assert!(
+            !status.success(),
+            "{expected_label}-mismatched binding must not start signer service"
+        );
+        let stderr = child_stderr(&mut candidate);
+        assert!(
+            stderr.contains("metadata mismatch")
+                || stderr.contains("invalid signer service config")
+                || stderr.contains("scope"),
+            "{expected_label}-mismatched binding failure must identify binding rejection: {stderr}"
+        );
+        assert!(
+            !fs::symlink_metadata(&socket)
+                .map(|metadata| metadata.file_type().is_socket())
+                .unwrap_or(false),
+            "{expected_label}-mismatched service must not publish a socket"
+        );
+    }
 }

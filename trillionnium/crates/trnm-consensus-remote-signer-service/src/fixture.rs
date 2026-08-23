@@ -79,6 +79,31 @@ impl Fixture {
             signing_key,
         }
     }
+
+    /// Returns the same deterministic fixture binding with an explicitly
+    /// selected process generation and public lease descriptor.  This is
+    /// test-only shaping: neither value is an authority grant.  Keeping the
+    /// constructor here lets an OS-process test prove that a restarted
+    /// service cannot attach a local watermark namespace under a stale or
+    /// unrelated binding.
+    pub fn binding_for_generation_and_lease(
+        &self,
+        generation: u64,
+        lease_descriptor: &[u8],
+    ) -> Result<RemoteSignerRequestBindingV1, String> {
+        RemoteSignerRequestBindingV1::new(
+            &self.validator_set,
+            self.binding.author(),
+            self.binding.role_profile_ref(),
+            self.binding.service_profile_ref(),
+            self.binding.client_profile_ref(),
+            ProcessGenerationV1::new(generation).map_err(|error| error.to_string())?,
+            RemoteSignerLeaseIdV1::from_public_grant_descriptor(lease_descriptor)
+                .map_err(|error| error.to_string())?,
+            self.binding.checkpoint_witness(),
+        )
+        .map_err(|error| error.to_string())
+    }
 }
 
 impl Default for Fixture {
@@ -93,10 +118,29 @@ pub fn fixture_service_config(
     purpose_policy: PurposePolicyV1,
 ) -> RemoteSignerServiceConfig {
     let fixture = Fixture::new();
+    fixture_service_config_with_binding(
+        watermark_path,
+        purpose_policy,
+        fixture.validator_set,
+        fixture.binding,
+        fixture.signing_key,
+    )
+}
+
+/// Builds a fixture service config with an explicitly selected binding.  The
+/// helper is used only by process-boundary tests; production code must obtain
+/// generation/lease facts from an independent authority.
+pub fn fixture_service_config_with_binding(
+    watermark_path: &Path,
+    purpose_policy: PurposePolicyV1,
+    validator_set: ValidatorSet,
+    binding: RemoteSignerRequestBindingV1,
+    signing_key: SigningKey,
+) -> RemoteSignerServiceConfig {
     RemoteSignerServiceConfig {
-        validator_set: fixture.validator_set,
-        binding: fixture.binding,
-        signing_key: fixture.signing_key,
+        validator_set,
+        binding,
+        signing_key,
         watermark_path: watermark_path.to_path_buf(),
         purpose_policy,
     }

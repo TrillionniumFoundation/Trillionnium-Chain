@@ -7,8 +7,8 @@
 use std::{env, path::PathBuf, process::ExitCode};
 
 use trnm_consensus_remote_signer_service::{
-    fixture_request, fixture_service_config, Fixture, PurposePolicyV1, RemoteSignerService,
-    REMOTE_SIGNER_SERVICE_CONSENSUS_RUNTIME_INTEGRATION_V1,
+    fixture_request, fixture_service_config_with_binding, Fixture, PurposePolicyV1,
+    RemoteSignerService, REMOTE_SIGNER_SERVICE_CONSENSUS_RUNTIME_INTEGRATION_V1,
     REMOTE_SIGNER_SERVICE_PRODUCTION_SIGNATURE_PRODUCER_V1,
     REMOTE_SIGNER_SERVICE_RUNTIME_ACTIVATION_V1,
 };
@@ -37,14 +37,33 @@ fn main() -> ExitCode {
 fn serve_fixture(args: Vec<String>) -> Result<(), String> {
     let socket = required_path(&args, "--socket")?;
     let watermark = required_path(&args, "--watermark")?;
+    let generation = optional_value(&args, "--generation")
+        .map(|value| {
+            value
+                .parse::<u64>()
+                .map_err(|error| format!("invalid --generation: {error}"))
+        })
+        .transpose()?
+        .unwrap_or(1);
+    let lease_material =
+        optional_value(&args, "--lease-material").unwrap_or_else(|| "p0-lease".to_owned());
     let policy = match optional_value(&args, "--purpose").as_deref() {
         None | Some("both") => PurposePolicyV1::both(),
         Some("vote") => PurposePolicyV1::vote_only(),
         Some("timeout") => PurposePolicyV1::timeout_vote_only(),
         Some(other) => return Err(format!("unsupported --purpose {other}")),
     };
-    let mut service = RemoteSignerService::open(fixture_service_config(&watermark, policy))
-        .map_err(|error| error.to_string())?;
+    let fixture = Fixture::new();
+    let binding =
+        fixture.binding_for_generation_and_lease(generation, lease_material.as_bytes())?;
+    let mut service = RemoteSignerService::open(fixture_service_config_with_binding(
+        &watermark,
+        policy,
+        fixture.validator_set,
+        binding,
+        fixture.signing_key,
+    ))
+    .map_err(|error| error.to_string())?;
     service
         .serve_unix(&socket)
         .map_err(|error| error.to_string())

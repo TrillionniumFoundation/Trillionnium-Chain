@@ -19,6 +19,12 @@ and request fingerprint, and rejects:
 - a purpose disabled by the process policy; and
 - malformed or differently bound protocol bytes.
 
+The SQLite namespace is immutable with respect to its configured binding:
+opening a non-empty file with a different process generation or lease fails
+before the Unix socket is published, and a file containing more than one
+watermark scope is rejected before migration can insert another row. This is
+local fail-stop validation, not an externally administered fencing authority.
+
 The response is the existing exact protocol response envelope. The service
 verifies the generated signature against the request signing root before
 returning it; a future Node client must verify the response again before any
@@ -61,3 +67,8 @@ The Python test launches trnm-remote-signer-p0 serve-fixture, sends real
 schema-1 request bytes through the Unix socket, checks success/rejection
 frames, restarts the process with the same watermark path, and checks that a
 lower round remains rejected.
+
+The Rust OS-process test additionally SIGKILLs the owner and starts candidates
+with altered generation and lease bindings; both fail before publishing a
+socket. It does not turn the local SQLite file into a trusted anti-rollback
+authority; an external append-only CAS/HSM boundary remains required.

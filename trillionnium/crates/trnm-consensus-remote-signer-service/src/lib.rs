@@ -40,7 +40,9 @@ use trnm_consensus_remote_signer_protocol::{
 };
 use trnm_consensus_types::{SignatureBytes, ValidatorSet};
 
-pub use fixture::{fixture_request, fixture_service_config, Fixture};
+pub use fixture::{
+    fixture_request, fixture_service_config, fixture_service_config_with_binding, Fixture,
+};
 
 /// Runtime activation is deliberately closed for this P0 slice.
 pub const REMOTE_SIGNER_SERVICE_RUNTIME_ACTIVATION_V1: bool = false;
@@ -369,6 +371,12 @@ impl RemoteSignerService {
             )
             .map_err(|error| ServiceFailure::Sqlite("initialize watermark schema", error))?;
         validate_schema_v1(&connection)?;
+        // A watermark file is one immutable signer namespace.  Before any
+        // migration/INSERT, reject a non-empty database whose existing scope
+        // differs from this process binding.  Without this preflight a
+        // changed generation/lease could add a second scope row and appear
+        // to start cleanly until a later invariant check.
+        validate_namespace_scope_v1(&connection, scope)?;
         ensure_metadata_v1(
             &connection,
             scope,
@@ -944,6 +952,44 @@ fn validate_schema_v1(connection: &Connection) -> Result<(), RemoteSignerService
     Ok(())
 }
 
+fn validate_namespace_scope_v1(
+    connection: &Connection,
+    expected_scope: [u8; 32],
+) -> Result<(), RemoteSignerServiceError> {
+    let mut statement = connection
+        .prepare("SELECT scope FROM signer_watermark")
+        .map_err(|error| ServiceFailure::Sqlite("read watermark namespace scopes", error))?;
+    let scopes = statement
+        .query_map([], |row| row.get::<_, Vec<u8>>(0))
+        .map_err(|error| ServiceFailure::Sqlite("iterate watermark namespace scopes", error))?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|error| ServiceFailure::Sqlite("decode watermark namespace scope", error))?;
+    if scopes.len() > 1 {
+        return Err(
+            ServiceFailure::InvalidConfig("watermark namespace contains multiple scopes").into(),
+        );
+    }
+    if let Some(scope) = scopes.first() {
+        if scope.as_slice() != expected_scope {
+            return Err(ServiceFailure::InvalidConfig("watermark namespace scope mismatch").into());
+        }
+    }
+    if let Some(scope) = connection
+        .query_row(
+            "SELECT value FROM signer_metadata WHERE key = 'scope'",
+            [],
+            |row| row.get::<_, Vec<u8>>(0),
+        )
+        .optional()
+        .map_err(|error| ServiceFailure::Sqlite("read watermark metadata scope", error))?
+    {
+        if scope.as_slice() != expected_scope {
+            return Err(ServiceFailure::InvalidConfig("watermark metadata scope mismatch").into());
+        }
+    }
+    Ok(())
+}
+
 fn ensure_metadata_v1(
     connection: &Connection,
     scope: [u8; 32],
@@ -1341,6 +1387,49 @@ mod tests {
             )))
         ));
         assert_eq!(service.watermark_snapshot().unwrap().sequence, 0);
+    }
+
+    #[test]
+    fn service_rejects_multiple_watermark_scopes_before_namespace_migration() {
+        let temporary = TempDir::new().expect("temporary signer directory");
+        let path = temporary.path().join("watermark.sqlite3");
+        let fixture = Fixture::new();
+        // Create the normal one-scope fixture first.  Reopening that exact
+        // namespace is the supported migration shape (covered above).
+        drop(
+            RemoteSignerService::open(fixture_service_config(&path, PurposePolicyV1::both()))
+                .expect("create one-scope fixture namespace"),
+        );
+
+        // Simulate a legacy/operator-modified file containing a second scope.
+        // The service must reject before INSERT OR IGNORE can make the new
+        // binding appear valid; accepting it would permit generation/lease
+        // confusion inside one local SQLite file.
+        let connection = Connection::open(&path).expect("open fixture database");
+        connection
+            .execute(
+                "INSERT INTO signer_watermark
+                 (scope, sequence, has_round, maximum_epoch, maximum_view,
+                  maximum_safety_revision, last_nonce, last_fingerprint)
+                 VALUES (?1, 0, 0, 0, 0, 0, zeroblob(32), zeroblob(32))",
+                params![[0xa5_u8; 32].as_slice()],
+            )
+            .expect("insert second fixture scope");
+        drop(connection);
+
+        let error =
+            match RemoteSignerService::open(fixture_service_config(&path, PurposePolicyV1::both()))
+            {
+                Ok(_) => panic!("multiple watermark scopes must fail closed"),
+                Err(error) => error,
+            };
+        assert!(
+            error.to_string().contains("multiple scopes"),
+            "unexpected namespace rejection: {error}"
+        );
+        // Keep the fixture referenced so this test documents that the
+        // expected binding is the original one-scope namespace.
+        assert_eq!(fixture.binding.process_generation().get(), 1);
     }
 
     #[test]
