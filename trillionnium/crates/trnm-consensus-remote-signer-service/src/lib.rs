@@ -106,6 +106,122 @@ pub struct RemoteSignerServiceConfig {
     pub purpose_policy: PurposePolicyV1,
 }
 
+/// Request facts an independently administered authority must bind before a
+/// private key can be reached.
+///
+/// This is deliberately a data-only seam.  The service's current SQLite
+/// reservation schema cannot atomically share a head with the external
+/// authority, so the external-mode entry point below fails closed until an
+/// adapter implements this contract.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalAuthorityRequestV1 {
+    pub scope: [u8; 32],
+    pub process_generation: u64,
+    pub lease_id: [u8; 32],
+    pub request_fingerprint: [u8; 32],
+    pub signing_root: [u8; 32],
+    pub epoch: u64,
+    pub view: u64,
+    pub safety_revision: u64,
+}
+
+/// Opaque external reservation returned by a compare-and-advance authority.
+/// The token must be bound to the exact request and must not be reconstructed
+/// from the local SQLite sequence after a crash.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalAuthorityReservationV1 {
+    sequence: u64,
+    request_fingerprint: [u8; 32],
+    token_digest: [u8; 32],
+}
+
+impl ExternalAuthorityReservationV1 {
+    pub const fn sequence(self) -> u64 {
+        self.sequence
+    }
+
+    pub const fn request_fingerprint(self) -> [u8; 32] {
+        self.request_fingerprint
+    }
+
+    pub const fn token_digest(self) -> [u8; 32] {
+        self.token_digest
+    }
+
+    /// Constructs a token for an adapter implementation after its durable CAS
+    /// has succeeded.  Calling this constructor grants no signer authority.
+    pub const fn from_parts(
+        sequence: u64,
+        request_fingerprint: [u8; 32],
+        token_digest: [u8; 32],
+    ) -> Self {
+        Self {
+            sequence,
+            request_fingerprint,
+            token_digest,
+        }
+    }
+}
+
+/// Stable failure classes for the future external authority bridge.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExternalAuthorityErrorV1 {
+    Required,
+    Unavailable,
+    CompareFailed,
+    ReplayConflict,
+    InvalidState,
+    Protocol,
+}
+
+impl fmt::Display for ExternalAuthorityErrorV1 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::Required => "external authority is required but not wired",
+            Self::Unavailable => "external authority is unavailable",
+            Self::CompareFailed => "external authority compare-and-advance failed",
+            Self::ReplayConflict => "external response replay binding conflicted",
+            Self::InvalidState => "external authority persisted state is invalid",
+            Self::Protocol => "external authority protocol was invalid",
+        })
+    }
+}
+
+impl Error for ExternalAuthorityErrorV1 {}
+
+/// Adapter contract for an external watermark/fencing authority.
+///
+/// Implementations must be a different failure domain from the service's
+/// SQLite file and must provide cross-process durable CAS semantics.  The
+/// service integration order is intentionally fixed:
+///
+/// 1. `replay_response_v1` is checked first; an exact durable response must be
+///    returned without touching the private key.
+/// 2. `reserve_v1` performs an external compare-and-advance bound to every
+///    request fact above (including generation and lease) before signing.
+/// 3. `bind_response_v1` durably records the exact response before local
+///    reservation completion.
+///
+/// Any unavailable, stale, corrupt, or ambiguous result must fail closed.
+/// This trait does not itself grant Core/SafetyRules authority.
+pub trait ExternalAuthorityAdapterV1: Send {
+    fn replay_response_v1(
+        &mut self,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<Option<Vec<u8>>, ExternalAuthorityErrorV1>;
+
+    fn reserve_v1(
+        &mut self,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<ExternalAuthorityReservationV1, ExternalAuthorityErrorV1>;
+
+    fn bind_response_v1(
+        &mut self,
+        reservation: ExternalAuthorityReservationV1,
+        response: &[u8],
+    ) -> Result<(), ExternalAuthorityErrorV1>;
+}
+
 /// Durable state exposed for diagnostics and tests.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct WatermarkSnapshotV1 {
@@ -155,6 +271,7 @@ enum ServiceFailure {
     WatermarkExhausted,
     SignatureFailure,
     ReservationFailure,
+    ExternalAuthorityRequired,
     SafetyRevisionRollback {
         maximum: u64,
         incoming: u64,
@@ -185,6 +302,9 @@ impl fmt::Display for ServiceFailure {
             Self::WatermarkExhausted => f.write_str("signer watermark sequence is exhausted"),
             Self::SignatureFailure => f.write_str("signer key produced an invalid signature"),
             Self::ReservationFailure => f.write_str("signer reservation is not in pending state"),
+            Self::ExternalAuthorityRequired => {
+                f.write_str("external authority bridge is required but not wired")
+            }
             Self::SafetyRevisionRollback { maximum, incoming } => write!(
                 f,
                 "signer Safety revision regresses watermark (maximum {maximum}, incoming {incoming})"
@@ -211,6 +331,15 @@ pub struct RemoteSignerServiceError(ServiceFailure);
 impl fmt::Display for RemoteSignerServiceError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
+    }
+}
+
+impl RemoteSignerServiceError {
+    /// Returns true only for the deliberate fail-closed external bridge seam.
+    /// Callers must not fall back to [`RemoteSignerService::process_request`]
+    /// when this is true; that path is local fixture state by design.
+    pub fn is_external_authority_required(&self) -> bool {
+        matches!(self.0, ServiceFailure::ExternalAuthorityRequired)
     }
 }
 
@@ -417,6 +546,49 @@ impl RemoteSignerService {
 
     pub const fn scope(&self) -> [u8; 32] {
         self.scope
+    }
+
+    /// Decodes an exact request into the facts an external authority must
+    /// fence.  No local reservation, key access, or response side effect is
+    /// performed by this method.
+    pub fn external_authority_request_v1(
+        &self,
+        encoded_request: &[u8],
+    ) -> Result<ExternalAuthorityRequestV1, RemoteSignerServiceError> {
+        let request = decode_remote_signer_request_v1_exact(
+            encoded_request,
+            &self.validator_set,
+            self.binding,
+        )
+        .map_err(ServiceFailure::Protocol)?;
+        let intent = request.command().intent();
+        let (epoch, view) = intent_round_v1(intent);
+        Ok(ExternalAuthorityRequestV1 {
+            scope: self.scope,
+            process_generation: self.binding.process_generation().get(),
+            lease_id: *self.binding.lease_id().as_bytes(),
+            request_fingerprint: *request.fingerprint().as_bytes(),
+            signing_root: *intent.signing_root().as_bytes(),
+            epoch,
+            view,
+            safety_revision: intent.authorizing_safety_revision(),
+        })
+    }
+
+    /// External-authority entry point reserved for the future production
+    /// bridge.  The current service schema performs local SQLite reservation
+    /// and direct fixture-key signing in one process; it cannot safely combine
+    /// that transaction with an independently administered CAS and response
+    /// log.  Therefore this method deliberately fails closed after exact
+    /// request decoding.  It must be replaced by a real adapter before any
+    /// caller can claim external watermark-backed service authority.
+    pub fn process_request_with_external_authority_v1(
+        &mut self,
+        encoded_request: &[u8],
+        _authority: &mut dyn ExternalAuthorityAdapterV1,
+    ) -> Result<Vec<u8>, RemoteSignerServiceError> {
+        let _request = self.external_authority_request_v1(encoded_request)?;
+        Err(ServiceFailure::ExternalAuthorityRequired.into())
     }
 
     /// Processes one exact protocol request and returns an exact protocol
@@ -1232,6 +1404,7 @@ fn classify_reject_v1(error: &ServiceFailure) -> ServiceRejectCodeV1 {
         ServiceFailure::WatermarkExhausted => ServiceRejectCodeV1::WatermarkExhausted,
         ServiceFailure::SignatureFailure => ServiceRejectCodeV1::SignatureFailure,
         ServiceFailure::ReservationFailure => ServiceRejectCodeV1::ReservationFailure,
+        ServiceFailure::ExternalAuthorityRequired => ServiceRejectCodeV1::DurableStoreFailure,
         ServiceFailure::InvalidFrame => ServiceRejectCodeV1::InvalidFrame,
         ServiceFailure::InvalidConfig(_)
         | ServiceFailure::Io(_, _)

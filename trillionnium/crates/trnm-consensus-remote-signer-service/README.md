@@ -25,6 +25,23 @@ before the Unix socket is published, and a file containing more than one
 watermark scope is rejected before migration can insert another row. This is
 local fail-stop validation, not an externally administered fencing authority.
 
+## External authority seam
+
+`ExternalAuthorityAdapterV1` and
+`RemoteSignerService::external_authority_request_v1` define the facts and
+ordering required for a future bridge: durable response replay first,
+cross-process compare-and-advance before key access, then durable response
+binding before local completion. The corresponding
+`process_request_with_external_authority_v1` entry point currently returns an
+explicit `external authority bridge is required but not wired` error. It does
+not fall back to the local SQLite path. The public black-box contract test
+asserts that no local sequence advances and no adapter side effect runs.
+
+Cross-process CAS, append-only authority recovery, response replay binding,
+and crash reconciliation remain evidenced by the independent
+`trnm-consensus-external-watermark` black-box tests; wiring those stores into
+this service is intentionally not claimed yet.
+
 The response is the existing exact protocol response envelope. The service
 verifies the generated signature against the request signing root before
 returning it; a future Node client must verify the response again before any
