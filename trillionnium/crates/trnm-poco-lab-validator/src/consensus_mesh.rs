@@ -3425,6 +3425,7 @@ mod tests {
 
     use super::*;
     use crate::p2p_admission::TestExternalPeerLeaseAuthorityV1;
+    use crate::p2p_host_attestation::RejectingHostAttestationAuthorityV1;
 
     const TEST_RUN_ID: &str = "poco-g3-7-20260814T000000Z-mesh0001";
 
@@ -3570,6 +3571,56 @@ mod tests {
             .err()
             .expect("external identity must be rejected without host attestation");
         assert!(error.to_string().contains("HostAttestationRequired"));
+    }
+
+    #[test]
+    fn host_attestation_preflight_failure_does_not_bind_listener() {
+        let (mut identity, server_identity) = authenticated_identity_fixture_v0();
+        let public_key = match &identity.p2p_identity_signer {
+            MeshIdentitySignerV1::Local(key) => key.verifying_key().to_bytes(),
+            MeshIdentitySignerV1::External(_) => unreachable!("fixture starts in local mode"),
+        };
+        identity.p2p_identity_signer =
+            MeshIdentitySignerV1::External(SharedP2pIdentityProducerV1::new(Box::new(
+                NoopExternalIdentityProducerV1 { public_key },
+            )));
+        identity.host_attestation = Some(MeshHostAttestationConfigV1 {
+            authority: Arc::new(RejectingHostAttestationAuthorityV1),
+            material: HostAttestationMaterialV1::from_bytes(vec![0x91, 0x92]).unwrap(),
+        });
+        let occupied = TcpListener::bind(("127.0.0.1", 0)).expect("allocate listener address");
+        let listen_addr = occupied.local_addr().unwrap();
+        drop(occupied);
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(
+            PeerAdmissionContextV1::new(0, [0x9a; 32]).unwrap(),
+        ));
+
+        let result = PersistentAuthenticatedPeerMeshV0::establish_identity_with_fence_ttl_v1(
+            identity,
+            listen_addr,
+            BTreeMap::from([(
+                server_identity.local,
+                SocketAddr::from(([127, 0, 0, 1], 41_001)),
+            )]),
+            BTreeMap::from([(
+                server_identity.local,
+                SocketAddr::from(([127, 0, 0, 1], 41_002)),
+            )]),
+            Duration::from_secs(1),
+            Duration::from_millis(100),
+            1,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            authority,
+        );
+        let error = result
+            .err()
+            .expect("rejecting host authority must stop commissioning");
+        assert!(error.to_string().contains("host attestation"));
+
+        // The failed authority gate occurs before TcpListener::bind; the
+        // address must remain available to a subsequent owner.
+        let rebound = TcpListener::bind(listen_addr).expect("failed gate leaked listener bind");
+        drop(rebound);
     }
 
     #[test]
