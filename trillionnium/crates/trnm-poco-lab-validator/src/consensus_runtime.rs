@@ -5146,9 +5146,22 @@ impl BoundedConsensusOwnerV1 {
                                 "freshly revalidate peer rpk1 before ParkedAck signing: {error}"
                             )
                         })?;
+                    let mut restart_producer = self.fleet_producer.as_deref_mut().map(|producer| {
+                        FleetRestartSignatureAdapter {
+                            producer,
+                            origin: self.config.local_validator(),
+                            validator_set_id: *self.config.validator_set().id().as_bytes(),
+                        }
+                    });
                     let declaration = owner
                         .parked
-                        .into_parked_ack_declaration_v1(owner.journal_commit, &self.config)
+                        .into_parked_ack_declaration_v1(
+                            owner.journal_commit,
+                            &self.config,
+                            restart_producer
+                                .as_mut()
+                                .map(|producer| producer as &mut dyn RestartSignatureProducerV1),
+                        )
                         .context("issue sole peer RestartParkedAck after durable rpk1")?;
                     self.event_journal
                         .revalidate_local_restart_park_commit_v1(declaration.journal_commit_v1())
@@ -5179,9 +5192,22 @@ impl BoundedConsensusOwnerV1 {
                                 "freshly revalidate target rpk1 before ParkedAck signing: {error}"
                             )
                         })?;
+                    let mut restart_producer = self.fleet_producer.as_deref_mut().map(|producer| {
+                        FleetRestartSignatureAdapter {
+                            producer,
+                            origin: self.config.local_validator(),
+                            validator_set_id: *self.config.validator_set().id().as_bytes(),
+                        }
+                    });
                     let declaration = owner
                         .parked
-                        .into_parked_ack_declaration_v1(owner.journal_commit, &self.config)
+                        .into_parked_ack_declaration_v1(
+                            owner.journal_commit,
+                            &self.config,
+                            restart_producer
+                                .as_mut()
+                                .map(|producer| producer as &mut dyn RestartSignatureProducerV1),
+                        )
                         .context("issue sole target RestartParkedAck after durable rpk1")?;
                     self.event_journal
                         .revalidate_local_restart_park_commit_v1(declaration.journal_commit_v1())
@@ -7521,7 +7547,8 @@ mod tests {
             .expect("ParkedAck runtime transition remains bounded");
         let ack = &runtime[ack_start..ack_end];
         for required in [
-            ".into_parked_ack_declaration_v1(owner.journal_commit, &self.config)",
+            ".into_parked_ack_declaration_v1(",
+            "restart_producer",
             "RestartProtocolPhaseV1::ParkedAck",
             "VerifiedRestartParkedAckBarrierV1::new_with_originated_v1",
             ".persist_v1(&self.config)",

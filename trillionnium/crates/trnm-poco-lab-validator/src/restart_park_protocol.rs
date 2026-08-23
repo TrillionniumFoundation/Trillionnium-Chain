@@ -1036,6 +1036,7 @@ impl DurablyParkedTargetRestartOwnerV1 {
         self,
         journal_commit: LocalRestartParkJournalCommitV1,
         config: &LoadedValidatorConfig,
+        restart_producer: Option<&mut dyn crate::continuous_runtime::RestartSignatureProducerV1>,
     ) -> AnyResult<DeclaredRestartParkedAckV1> {
         issue_local_restart_parked_ack_v1(
             self.stored,
@@ -1043,6 +1044,7 @@ impl DurablyParkedTargetRestartOwnerV1 {
             journal_commit,
             config,
             RestartParkRoleV1::Target,
+            restart_producer,
         )
     }
 }
@@ -1088,6 +1090,7 @@ impl DurablyParkedPeerRestartOwnerV1 {
         self,
         journal_commit: LocalRestartParkJournalCommitV1,
         config: &LoadedValidatorConfig,
+        restart_producer: Option<&mut dyn crate::continuous_runtime::RestartSignatureProducerV1>,
     ) -> AnyResult<DeclaredRestartParkedAckV1> {
         issue_local_restart_parked_ack_v1(
             self.stored,
@@ -1095,6 +1098,7 @@ impl DurablyParkedPeerRestartOwnerV1 {
             journal_commit,
             config,
             RestartParkRoleV1::Peer,
+            restart_producer,
         )
     }
 }

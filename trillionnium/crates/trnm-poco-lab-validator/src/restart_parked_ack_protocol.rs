@@ -22,7 +22,10 @@ use trnm_consensus_types::ValidatorId;
 
 use crate::{
     config::LoadedValidatorConfig,
-    continuous_runtime::{ContinuousRestartDeclaredParkAuthorityV1, ContinuousRuntimeFactsV0},
+    continuous_runtime::{
+        ContinuousRestartDeclaredParkAuthorityV1, ContinuousRuntimeFactsV0,
+        RestartSignatureProducerV1, RestartSignaturePurposeV1,
+    },
     process_event::LocalRestartParkJournalCommitV1,
     restart_cut::{
         restart_parked_ack_admission_set_sha256_for_ids_v1, RestartParkRoleV1,
@@ -127,6 +130,7 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
     journal_commit: LocalRestartParkJournalCommitV1,
     config: &LoadedValidatorConfig,
     expected_role: RestartParkRoleV1,
+    mut restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
 ) -> AnyResult<DeclaredRestartParkedAckV1> {
     stored
         .revalidate_fresh_v1()
@@ -170,7 +174,13 @@ pub(crate) fn issue_local_restart_parked_ack_v1(
         stored.validator_set_v1(),
     )
     .map_err(|error| anyhow::anyhow!("form exact ParkedAck signing digest: {error}"))?;
-    let signature = config.consensus_signing_key().sign(&digest).to_bytes();
+    let signature = if let Some(producer) = restart_producer.as_deref_mut() {
+        producer
+            .sign_restart_v1(RestartSignaturePurposeV1::Park, digest)
+            .context("produce external RestartParkedAck signature")?
+    } else {
+        config.consensus_signing_key().sign(&digest).to_bytes()
+    };
     let statement = SignedRestartParkedAckV1::from_parts(
         common,
         stored.local_validator_v1(),
