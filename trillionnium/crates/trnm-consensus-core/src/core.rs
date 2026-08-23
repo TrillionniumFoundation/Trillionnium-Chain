@@ -3,8 +3,8 @@ use core::sync::atomic::{AtomicBool, Ordering};
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::{
-    FinalizedBlockRefV1, InertSafetyTransitionKindV1, PureHotStuffSafetyKernelV1,
-    SafetyRulesContextV1, SafetyRulesStateSeedV1, SafetyRulesStateV1,
+    FinalizedBlockRefV1, InertSafetyTransitionKindV1, InertSafetyTransitionV1,
+    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateSeedV1, SafetyRulesStateV1,
 };
 use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
@@ -7039,6 +7039,7 @@ impl Core {
             Box::new(self.safety.clone()),
             None,
             None,
+            None,
             Arc::clone(&self.persistence_affinity.0),
             CorePersistenceSealV0::new(),
         ))
@@ -9020,22 +9021,26 @@ impl Core {
         proposal: &SignedProposalV0,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
-        if !self.stage_vote_validated_proposal(proposal, verifier)? {
+        let Some(shadow_transition) = self.stage_vote_validated_proposal(proposal, verifier)?
+        else {
             return Ok(Vec::new());
-        }
-        self.persist(vec![DeferredEffect::RequestSignature])
+        };
+        self.persist_with_safety_rules_shadow_transition(
+            vec![DeferredEffect::RequestSignature],
+            Some(shadow_transition),
+        )
     }
 
     fn stage_vote_validated_proposal<V: SignatureVerifier>(
         &mut self,
         proposal: &SignedProposalV0,
         verifier: &V,
-    ) -> Result<bool> {
+    ) -> Result<Option<InertSafetyTransitionV1>> {
         if self.safety.pending_standalone_qc_sync().is_some() {
-            return Ok(false);
+            return Ok(None);
         }
         if proposal.block().header().view() != self.safety.current_view() {
-            return Ok(false);
+            return Ok(None);
         }
         if self.replay_required {
             return Err(CoreError::Busy(
@@ -9047,16 +9052,16 @@ impl Core {
             .last_voted_view()
             .is_some_and(|view| view >= proposal.block().header().view())
         {
-            return Ok(false);
+            return Ok(None);
         }
         if self.safety.pending_sign().is_some() {
             return Err(CoreError::ConcurrentSignIntent);
         }
         if !self.validated_overlay_gate_v0(proposal)? {
-            return Ok(false);
+            return Ok(None);
         }
         if !self.is_exact_observed_proposal(proposal) {
-            return Ok(false);
+            return Ok(None);
         }
 
         let justify = proposal.witness().justify_qc().qc_ref();
@@ -9065,7 +9070,7 @@ impl Core {
         {
             // A QC proves votes for an identifier, not availability or the
             // certified parent's header. Never unlock/vote across that gap.
-            return Ok(false);
+            return Ok(None);
         }
         match self.blocks.validated_ancestry(
             proposal.block().id(),
@@ -9073,7 +9078,7 @@ impl Core {
             self.config.max_block_time_step_ms(),
         ) {
             Ancestry::Descends => {}
-            Ancestry::Unknown | Ancestry::Conflicts => return Ok(false),
+            Ancestry::Unknown | Ancestry::Conflicts => return Ok(None),
         }
         let extends_lock = self.blocks.extends(
             proposal.block().id(),
@@ -9081,7 +9086,7 @@ impl Core {
         );
         let unlocks = justify.view() > self.safety.locked_qc().qc_ref().view();
         if !extends_lock && !unlocks {
-            return Ok(false);
+            return Ok(None);
         }
 
         let header = proposal.block().header();
@@ -9104,10 +9109,11 @@ impl Core {
             block_id: proposal.block().id(),
             signing_root: root,
         };
-        self.verify_vote_safety_shadow_v1(proposal, &legacy_intent, verifier)?;
+        let shadow_transition =
+            self.verify_vote_safety_shadow_v1(proposal, &legacy_intent, verifier)?;
         self.safety.set_last_voted(header.view());
         self.safety.set_pending_sign(Some(legacy_intent));
-        Ok(true)
+        Ok(Some(shadow_transition))
     }
 
     /// Final route-independent application gate before a Vote intent exists.
@@ -9281,7 +9287,7 @@ impl Core {
         proposal: &SignedProposalV0,
         legacy_intent: &SignIntent,
         verifier: &V,
-    ) -> Result<()> {
+    ) -> Result<InertSafetyTransitionV1> {
         let context = self.safety_rules_shadow_context_v1()?;
         let state = self.safety_rules_shadow_state_v1(&context, verifier)?;
         let mut ancestry = self
@@ -9359,7 +9365,7 @@ impl Core {
                 "pure and legacy Vote successors differ",
             ));
         }
-        Ok(())
+        Ok(transition)
     }
 
     /// Freshly verifies both retained QCs and rebuilds the exact timeout
@@ -9368,7 +9374,7 @@ impl Core {
         &self,
         legacy_intent: &SignIntent,
         verifier: &V,
-    ) -> Result<()> {
+    ) -> Result<InertSafetyTransitionV1> {
         let context = self.safety_rules_shadow_context_v1()?;
         let state = self.safety_rules_shadow_state_v1(&context, verifier)?;
         let (authorizing_safety_revision, view, high_qc, legacy_signing_root) = match legacy_intent
@@ -9418,7 +9424,7 @@ impl Core {
                 "pure and legacy TimeoutVote successors differ",
             ));
         }
-        Ok(())
+        Ok(transition)
     }
 
     /// Test-only entry to the real pre-persistence Vote staging boundary.
@@ -9431,6 +9437,7 @@ impl Core {
         verifier: &V,
     ) -> Result<bool> {
         self.stage_vote_validated_proposal(proposal, verifier)
+            .map(|transition| transition.is_some())
     }
 
     #[cfg(test)]
@@ -9444,9 +9451,9 @@ impl Core {
     fn try_stage_finalization_blocked_vote<V: SignatureVerifier>(
         &mut self,
         verifier: &V,
-    ) -> Result<bool> {
+    ) -> Result<Option<InertSafetyTransitionV1>> {
         let Some(proposal) = self.finalization_blocked_vote.take() else {
-            return Ok(false);
+            return Ok(None);
         };
         if self.replay_required
             || self.awaiting_signature
@@ -9461,7 +9468,7 @@ impl Core {
             || !self.validated_overlay_gate_v0(&proposal).unwrap_or(false)
             || !self.is_exact_observed_proposal(&proposal)
         {
-            return Ok(false);
+            return Ok(None);
         }
 
         // Finality may have advanced the authenticated parent context or made
@@ -9470,7 +9477,7 @@ impl Core {
         // A failed re-check only drops this volatile liveness hint; it must not
         // roll back an already-applied application finalization.
         let Ok(parent_timestamp_ms) = self.verify_proposal(&proposal, verifier) else {
-            return Ok(false);
+            return Ok(None);
         };
         let header = proposal.block().header();
         let key = (header.epoch(), header.view(), proposal.proposer());
@@ -9478,7 +9485,7 @@ impl Core {
             observed.proposal != proposal
                 || observed.authenticated_parent_timestamp_ms != parent_timestamp_ms
         }) {
-            return Ok(false);
+            return Ok(None);
         }
         self.stage_vote_validated_proposal(&proposal, verifier)
     }
@@ -9671,10 +9678,13 @@ impl Core {
             high_qc,
             signing_root: root,
         };
-        self.verify_timeout_safety_shadow_v1(&legacy_intent, verifier)?;
+        let shadow_transition = self.verify_timeout_safety_shadow_v1(&legacy_intent, verifier)?;
         self.safety.set_last_timeout(view);
         self.safety.set_pending_sign(Some(legacy_intent));
-        self.persist(vec![DeferredEffect::RequestSignature])
+        self.persist_with_safety_rules_shadow_transition(
+            vec![DeferredEffect::RequestSignature],
+            Some(shadow_transition),
+        )
     }
 
     fn handle_storage_ack(&mut self, barrier: BarrierId) -> Result<Vec<Effect>> {
@@ -9796,17 +9806,28 @@ impl Core {
         } else if self.safety.pending_standalone_qc_sync().is_some() {
             self.finalization_blocked_vote = None;
             deferred.push(DeferredEffect::RequestStandaloneQcSync);
-        } else if self.try_stage_finalization_blocked_vote(verifier)? {
+        }
+        let shadow_transition = if self.safety.pending_finalize().is_none()
+            && self.safety.pending_tc_high_qc_sync().is_none()
+            && self.safety.pending_standalone_qc_sync().is_none()
+        {
             // Clearing the finalization outbox and creating the vote intent
             // share one safety-state write. The signer is requested only by
             // the resulting StorageAck.
-            deferred.push(DeferredEffect::RequestSignature);
-        }
+            let transition = self.try_stage_finalization_blocked_vote(verifier)?;
+            if transition.is_some() {
+                deferred.push(DeferredEffect::RequestSignature);
+            }
+            transition
+        } else {
+            None
+        };
         self.persist_native_finalization_applied_v0(
             receipt.application_store_readback_v0().clone(),
             predecessor,
             exact_target,
             deferred,
+            shadow_transition,
         )
     }
 
@@ -11549,6 +11570,14 @@ impl Core {
     }
 
     fn persist(&mut self, deferred: Vec<DeferredEffect>) -> Result<Vec<Effect>> {
+        self.persist_with_safety_rules_shadow_transition(deferred, None)
+    }
+
+    fn persist_with_safety_rules_shadow_transition(
+        &mut self,
+        deferred: Vec<DeferredEffect>,
+        safety_rules_shadow_transition: Option<InertSafetyTransitionV1>,
+    ) -> Result<Vec<Effect>> {
         if self.pending_persistence.is_some() {
             return Err(CoreError::Busy("a safety-state write is already pending"));
         }
@@ -11558,6 +11587,7 @@ impl Core {
             crate::SafetyStatePersistenceV0::new(
                 barrier,
                 Box::new(self.safety.clone()),
+                safety_rules_shadow_transition,
                 None,
                 None,
                 Arc::clone(&self.persistence_affinity.0),
@@ -11609,13 +11639,17 @@ impl Core {
         predecessor: FinalizedTip,
         successor: FinalizedTip,
         deferred: Vec<DeferredEffect>,
+        safety_rules_shadow_transition: Option<InertSafetyTransitionV1>,
     ) -> Result<Vec<Effect>> {
         let action = NativeFinalizationAppliedPostAckActionV0::from_deferred_v0(&deferred).ok_or(
             CoreError::InvalidRecovery(
                 "application-finalization receipt has an unsupported post-ack action",
             ),
         )?;
-        let mut effects = self.persist(deferred)?;
+        let mut effects = self.persist_with_safety_rules_shadow_transition(
+            deferred,
+            safety_rules_shadow_transition,
+        )?;
         let pending = self
             .pending_persistence
             .as_ref()

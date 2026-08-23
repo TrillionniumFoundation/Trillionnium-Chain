@@ -1113,6 +1113,10 @@ where
         + Send
         + 'static,
 {
+    require_fleet_signing_authority_for_builder_v1(
+        config.has_local_consensus_secret(),
+        fleet_producer.is_some(),
+    )?;
     let preflight = ConsensusRuntimePreflightV1::new(&config, duration, max_blocks, &report_path)?;
     let owner = thread::Builder::new()
         .name("trnm-g3-consensus-owner-v1".to_owned())
@@ -1368,10 +1372,58 @@ fn require_deployed_fleet_signing_authority_v1<T>() -> Result<T> {
     )
 }
 
+/// Every path below the public deployed composition boundary has a fixture-only
+/// fallback for fleet Ready/Start, relay, restart, and terminal-evidence
+/// signatures.  A secret-free config must therefore carry the complete fleet
+/// producer before commissioning; otherwise one of those fallbacks would reach
+/// the unavailable raw-key accessor later in the owner thread.
+fn require_fleet_signing_authority_for_builder_v1(
+    has_local_consensus_secret: bool,
+    fleet_producer_present: bool,
+) -> Result<()> {
+    ensure!(
+        has_local_consensus_secret || fleet_producer_present,
+        "ExternalAuthorityRequired: secret-free config requires an injected fleet signature producer"
+    );
+    Ok(())
+}
+
 #[cfg(test)]
 #[test]
 fn external_authority_guard_is_fail_closed_v1() {
     assert!(require_deployed_fleet_signing_authority_v1::<()>().is_err());
+}
+
+#[cfg(test)]
+#[test]
+fn fleet_signing_authority_guard_is_precommission_and_preserves_fixture_v1() {
+    let error = require_fleet_signing_authority_for_builder_v1(false, false)
+        .expect_err("secret-free builder without a fleet producer must fail closed");
+    assert!(error
+        .to_string()
+        .contains("secret-free config requires an injected fleet signature producer"));
+    assert!(require_fleet_signing_authority_for_builder_v1(true, false).is_ok());
+    assert!(require_fleet_signing_authority_for_builder_v1(false, true).is_ok());
+
+    let source = include_str!("consensus_runtime.rs");
+    let entry = source
+        .find("pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(")
+        .expect("authority-builder entry remains present");
+    let body = &source[entry..];
+    let guard = body
+        .find("require_fleet_signing_authority_for_builder_v1(")
+        .expect("authority-builder guard remains present");
+    let preflight = body
+        .find("let preflight = ConsensusRuntimePreflightV1::new")
+        .expect("authority-builder preflight remains explicit");
+    let commission = body
+        .find("commission(&mut config")
+        .expect("authority-builder commission remains explicit");
+    assert!(
+        guard < preflight,
+        "guard must run before preflight/commission"
+    );
+    assert!(guard < commission, "guard must run before commissioning");
 }
 
 /// Composes the externally provisioned fence, watermark, Vote/Timeout

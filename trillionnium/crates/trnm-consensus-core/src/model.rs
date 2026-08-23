@@ -6,6 +6,7 @@ use core::{
 };
 
 use sha2::{Digest, Sha256};
+use trnm_consensus_safety_rules::InertSafetyTransitionV1;
 use trnm_consensus_types::{
     Block, BlockHeader, BlockId, CanonicalSignIntentV0, CertificateId, ChainId,
     ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height,
@@ -3669,6 +3670,12 @@ impl StateSyncAnchorOrdinaryPromotionPersistenceV0 {
 pub struct SafetyStatePersistenceV0 {
     barrier: BarrierId,
     state: Box<SafetyState>,
+    /// Exact comparison-only SafetyRules shadow transition which authorized
+    /// this Core persistence request, when the request is a Vote or
+    /// TimeoutVote intent.  The transition is never authority by itself;
+    /// hosts may bind it to an independently durable sidecar before
+    /// releasing the corresponding signer effect.
+    safety_rules_shadow_transition: Option<InertSafetyTransitionV1>,
     native_valid_post_ack_action: Option<NativeValidPostAckActionV0>,
     native_finalization_applied: Option<NativeFinalizationAppliedPersistenceV0>,
     state_sync_anchor_ordinary_promotion: Option<StateSyncAnchorOrdinaryPromotionPersistenceV0>,
@@ -3679,6 +3686,7 @@ impl PartialEq for SafetyStatePersistenceV0 {
     fn eq(&self, other: &Self) -> bool {
         self.barrier == other.barrier
             && self.state == other.state
+            && self.safety_rules_shadow_transition == other.safety_rules_shadow_transition
             && self.native_valid_post_ack_action == other.native_valid_post_ack_action
             && self.native_finalization_applied == other.native_finalization_applied
             && self.state_sync_anchor_ordinary_promotion
@@ -3692,6 +3700,7 @@ impl SafetyStatePersistenceV0 {
     pub(crate) fn new(
         barrier: BarrierId,
         state: Box<SafetyState>,
+        safety_rules_shadow_transition: Option<InertSafetyTransitionV1>,
         native_valid_post_ack_action: Option<NativeValidPostAckActionV0>,
         native_finalization_applied: Option<NativeFinalizationAppliedPersistenceV0>,
         affinity: Arc<()>,
@@ -3700,6 +3709,7 @@ impl SafetyStatePersistenceV0 {
         Self {
             barrier,
             state,
+            safety_rules_shadow_transition,
             native_valid_post_ack_action,
             native_finalization_applied,
             state_sync_anchor_ordinary_promotion: None,
@@ -3713,6 +3723,14 @@ impl SafetyStatePersistenceV0 {
 
     pub fn state(&self) -> &SafetyState {
         &self.state
+    }
+
+    /// Returns the exact pure SafetyRules transition compared at Core's
+    /// pre-persistence boundary, if this request authorizes a Vote or
+    /// TimeoutVote.  This is comparison material only; it does not grant a
+    /// signer, persistence, or Core transition capability.
+    pub fn safety_rules_shadow_transition_v1(&self) -> Option<&InertSafetyTransitionV1> {
+        self.safety_rules_shadow_transition.as_ref()
     }
 
     /// Exact Core-owned Valid-callback post-ack manifest, when this

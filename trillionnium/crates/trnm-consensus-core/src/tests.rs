@@ -1,5 +1,6 @@
 use alloc::{boxed::Box, vec, vec::Vec};
 
+use trnm_consensus_safety_rules::InertSafetyTransitionKindV1;
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact,
     decode_finality_proof_v0_exact_with_trusted_genesis, ApplicationPayloadV0, Block, BlockBodyV0,
@@ -8885,6 +8886,15 @@ fn vote_signing_is_persist_ack_sign_verify_broadcast() {
         )
         .expect("valid payload accepted");
     let (barrier, persisted) = persistence_effect(&effects);
+    let transition = persistence_request(&effects)
+        .safety_rules_shadow_transition_v1()
+        .expect("vote persistence carries the exact SafetyRules shadow transition");
+    assert_eq!(transition.kind(), InertSafetyTransitionKindV1::Vote);
+    assert_eq!(transition.successor_state().revision(), barrier.get());
+    assert_eq!(
+        transition.canonical_intent().authorizing_safety_revision(),
+        barrier.get()
+    );
     assert!(persisted.pending_sign().is_some());
     let completion = persisted
         .payload_validation_completions()
@@ -15169,6 +15179,17 @@ fn last_pre_checkpoint_regular_block_keeps_the_durable_vote_pipeline() {
         )
         .expect("height checkpoint-1 payload is valid");
     let (barrier, persisted) = persistence_effect(&effects);
+    let transition = persistence_request(&effects)
+        .safety_rules_shadow_transition_v1()
+        .expect("vote persistence carries the exact SafetyRules transition");
+    assert_eq!(transition.successor_state().revision(), barrier.get());
+    assert_eq!(
+        transition.canonical_intent().signing_root(),
+        persisted
+            .pending_sign()
+            .expect("vote persistence retains its sign intent")
+            .signing_root()
+    );
     assert!(matches!(
         persisted.pending_sign(),
         Some(SignIntent::Vote { height, block_id, .. })
@@ -16194,6 +16215,17 @@ fn safety_rules_shadow_timeout_uses_the_exact_complete_high_qc() {
         .step(Input::LocalTimeout { epoch, view }, &RootSignatures)
         .expect("pure and legacy TimeoutVote candidates match");
     let (barrier, persisted) = persistence_effect(&effects);
+    let transition = persistence_request(&effects)
+        .safety_rules_shadow_transition_v1()
+        .expect("timeout persistence carries the exact SafetyRules transition");
+    assert_eq!(transition.successor_state().revision(), barrier.get());
+    assert_eq!(
+        transition.canonical_intent().signing_root(),
+        persisted
+            .pending_sign()
+            .expect("timeout persistence retains its sign intent")
+            .signing_root()
+    );
     assert!(matches!(
         persisted.pending_sign(),
         Some(SignIntent::TimeoutVote {
@@ -16217,6 +16249,46 @@ fn safety_rules_shadow_timeout_uses_the_exact_complete_high_qc() {
                     if preimage.view() == view && preimage.high_qc() == expected_high_qc
             )
     ));
+}
+
+#[test]
+fn safety_rules_shadow_vote_transition_is_carried_by_persistence_request() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"shadow vote carrier");
+    let proposal_effects = core
+        .step(Input::Proposal(Box::new(proposed)), &RootSignatures)
+        .expect("proposal enters validation");
+    let validation_effects = release_persisted_effects(&mut core, proposal_effects);
+    let validation = validation_effect(&validation_effects);
+    let result = valid_result_for_effect(&core, &validation_effects, validation);
+    let vote_persistence = core
+        .step(
+            Input::PayloadValidated {
+                id: validation,
+                result,
+            },
+            &RootSignatures,
+        )
+        .expect("valid proposal stages its vote persistence");
+    let request = persistence_request(&vote_persistence);
+    let transition = request
+        .safety_rules_shadow_transition_v1()
+        .expect("vote persistence carries the exact SafetyRules shadow transition");
+    assert_eq!(transition.kind(), InertSafetyTransitionKindV1::Vote);
+    assert_eq!(
+        transition.successor_state().revision(),
+        request.barrier().get()
+    );
+    assert_eq!(
+        transition.canonical_intent().authorizing_safety_revision(),
+        request.barrier().get()
+    );
+    let pending_block_id = match request.state().pending_sign().expect("pending vote") {
+        SignIntent::Vote { block_id, .. } => *block_id,
+        SignIntent::TimeoutVote { .. } => panic!("vote persistence carried a timeout intent"),
+    };
+    assert_eq!(transition.vote_block_id(), Some(pending_block_id));
 }
 
 #[test]
