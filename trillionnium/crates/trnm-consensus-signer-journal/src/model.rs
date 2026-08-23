@@ -1,6 +1,7 @@
 use trnm_consensus_types::{
-    CanonicalSignIntentV0, ChainId, Epoch, ProtocolVersion, SignIntentFingerprintV0,
-    SignatureBytes, SigningRoot, ValidatorId, ValidatorSet, ValidatorSetId,
+    BlockId, CanonicalSignIntentV0, ChainId, Epoch, Height, ProtocolVersion,
+    SignIntentFingerprintV0, SignatureBytes, SigningRoot, ValidatorId, ValidatorSet,
+    ValidatorSetId, View,
 };
 
 use crate::{
@@ -131,6 +132,194 @@ pub trait SignatureProducerV0 {
         &mut self,
         request: SignatureRequestV0<'_>,
     ) -> Result<SignatureBytes, SignatureProducerErrorV0>;
+}
+
+/// Exact, bounded identity of one proposal witness that is eligible for a
+/// separately injected proposal signer.
+///
+/// Proposal signing is intentionally not folded into [`CanonicalSignIntentV0`]
+/// or [`SignatureProducerV0`]: the v0 signer journal only journals Vote and
+/// TimeoutVote intents.  This request carries the block identity and all
+/// consensus coordinates in addition to the proposal signing root, so a
+/// producer can bind an external request to the exact proposal rather than
+/// accepting caller-selected arbitrary bytes.  Constructing this value is
+/// still only protocol data; it does not prove Core/SafetyRules authorization,
+/// reserve a nonce, or advance an external watermark.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProposalSignatureRequestV0 {
+    proposal_id: BlockId,
+    parent_id: BlockId,
+    validator_set_id: ValidatorSetId,
+    author: ValidatorId,
+    epoch: Epoch,
+    view: View,
+    height: Height,
+    signing_root: SigningRoot,
+    expected_consensus_public_key: [u8; 32],
+    signer_profile_ref: [u8; 32],
+}
+
+impl ProposalSignatureRequestV0 {
+    /// Builds a request only when all identity fields are nonzero and the
+    /// network coordinates are positive.  This shape check is deliberately
+    /// weaker than Core/SafetyRules admission and must not be treated as it.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        proposal_id: BlockId,
+        parent_id: BlockId,
+        validator_set_id: ValidatorSetId,
+        author: ValidatorId,
+        epoch: Epoch,
+        view: View,
+        height: Height,
+        signing_root: SigningRoot,
+        expected_consensus_public_key: [u8; 32],
+        signer_profile_ref: [u8; 32],
+    ) -> Option<Self> {
+        if proposal_id.is_zero()
+            || parent_id.is_zero()
+            || validator_set_id.is_zero()
+            || author.is_zero()
+            || view.get() == 0
+            || height.get() == 0
+            || signing_root.is_zero()
+            || expected_consensus_public_key == [0; 32]
+            || signer_profile_ref == [0; 32]
+        {
+            return None;
+        }
+        Some(Self {
+            proposal_id,
+            parent_id,
+            validator_set_id,
+            author,
+            epoch,
+            view,
+            height,
+            signing_root,
+            expected_consensus_public_key,
+            signer_profile_ref,
+        })
+    }
+
+    pub const fn proposal_id(&self) -> BlockId {
+        self.proposal_id
+    }
+
+    pub const fn parent_id(&self) -> BlockId {
+        self.parent_id
+    }
+
+    pub const fn validator_set_id(&self) -> ValidatorSetId {
+        self.validator_set_id
+    }
+
+    pub const fn author(&self) -> ValidatorId {
+        self.author
+    }
+
+    pub const fn epoch(&self) -> Epoch {
+        self.epoch
+    }
+
+    pub const fn view(&self) -> View {
+        self.view
+    }
+
+    pub const fn height(&self) -> Height {
+        self.height
+    }
+
+    pub const fn signing_root(&self) -> SigningRoot {
+        self.signing_root
+    }
+
+    pub const fn expected_consensus_public_key(&self) -> [u8; 32] {
+        self.expected_consensus_public_key
+    }
+
+    pub const fn signer_profile_ref(&self) -> [u8; 32] {
+        self.signer_profile_ref
+    }
+}
+
+/// Separate proposal-witness signing seam.
+///
+/// Implementations must deterministically replay the same signature for the
+/// same request identity.  The trait is not wired into the normal continuous
+/// runtime and does not replace the Vote/TimeoutVote signer journal.
+pub trait ProposalSignatureProducerV0 {
+    fn sign_proposal(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0>;
+}
+
+#[cfg(test)]
+mod proposal_request_tests {
+    use super::*;
+
+    fn request() -> ProposalSignatureRequestV0 {
+        ProposalSignatureRequestV0::new(
+            BlockId::new([1; 32]),
+            BlockId::new([2; 32]),
+            ValidatorSetId::new([3; 32]),
+            ValidatorId::new([4; 32]),
+            Epoch::new(7),
+            View::new(8),
+            Height::new(9),
+            SigningRoot::new([5; 32]),
+            [6; 32],
+            [7; 32],
+        )
+        .expect("strictly shaped proposal request")
+    }
+
+    #[test]
+    fn proposal_request_rejects_zero_identity_or_network_coordinates() {
+        let valid = request();
+        assert_eq!(valid.proposal_id(), BlockId::new([1; 32]));
+        assert_eq!(valid.signing_root(), SigningRoot::new([5; 32]));
+        assert!(ProposalSignatureRequestV0::new(
+            BlockId::ZERO,
+            valid.parent_id(),
+            valid.validator_set_id(),
+            valid.author(),
+            valid.epoch(),
+            valid.view(),
+            valid.height(),
+            valid.signing_root(),
+            valid.expected_consensus_public_key(),
+            valid.signer_profile_ref(),
+        )
+        .is_none());
+        assert!(ProposalSignatureRequestV0::new(
+            valid.proposal_id(),
+            valid.parent_id(),
+            valid.validator_set_id(),
+            valid.author(),
+            valid.epoch(),
+            View::new(0),
+            valid.height(),
+            valid.signing_root(),
+            valid.expected_consensus_public_key(),
+            valid.signer_profile_ref(),
+        )
+        .is_none());
+        assert!(ProposalSignatureRequestV0::new(
+            valid.proposal_id(),
+            valid.parent_id(),
+            valid.validator_set_id(),
+            valid.author(),
+            valid.epoch(),
+            valid.view(),
+            valid.height(),
+            valid.signing_root(),
+            valid.expected_consensus_public_key(),
+            [0; 32],
+        )
+        .is_none());
+    }
 }
 
 /// Immutable profile for one validator and one frozen validator-set epoch.

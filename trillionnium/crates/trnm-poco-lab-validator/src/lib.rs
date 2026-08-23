@@ -133,6 +133,12 @@ pub const REMOTE_CONSENSUS_SIGNER_INJECTION_API: bool = true;
 /// The deployed bounded loop still uses its fixture producer unless a caller
 /// explicitly composes the authority through the injection API.
 pub const REMOTE_CONSENSUS_SIGNER_RUNTIME_WIRED: bool = false;
+/// A separate proposal-witness producer seam exists for bounded tests; the
+/// continuous runtime still uses the fixture compatibility helper and does
+/// not commission an external proposal signer.
+pub const PROPOSAL_SIGNER_INJECTION_API: bool = true;
+pub const PROPOSAL_SIGNER_RUNTIME_WIRED: bool = false;
+pub const PROPOSAL_SIGNER_PRODUCTION_ACTIVATION: bool = false;
 /// The continuous authority remains parameterized over the laboratory local
 /// watermark; external whole-node watermark injection is a separate gate.
 pub const EXTERNAL_MONOTONIC_WATERMARK_RUNTIME_INJECTED: bool = false;

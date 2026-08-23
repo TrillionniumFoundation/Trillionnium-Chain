@@ -32,14 +32,17 @@ use trnm_consensus_core::leader_for;
 #[cfg(test)]
 use trnm_consensus_core::{CoreConfig, SafetyStateRecordLimitsV0};
 use trnm_consensus_crypto::StrictEd25519Verifier;
-use trnm_consensus_signer_journal::SignatureProducerV0;
+use trnm_consensus_signer_journal::{
+    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerV0,
+};
 #[cfg(test)]
 use trnm_consensus_types::GenesisQcV0;
 use trnm_consensus_types::{
     ApplicationPayloadV0, Block, BlockHeader, BlockId, BlockKind, CertificateId,
     ConsensusParametersV0, EvidenceRoot, Height, PayloadDigest, ProposalWitnessV0, QcRef,
-    QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SignedProposalV0, StateRoot,
-    TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet,
+    View, Vote,
 };
 #[cfg(test)]
 use trnm_native_execution_v0::{DurableNativeApplicationV0, NativeApplicationConfigV0};
@@ -61,7 +64,9 @@ use crate::{
         ConsensusIngressErrorV0,
     },
     config::LoadedValidatorConfig,
-    crypto::{LabEd25519SignatureProducer, LabFileWatermark},
+    crypto::{
+        LabEd25519ProposalSignatureProducerV0, LabEd25519SignatureProducer, LabFileWatermark,
+    },
     fleet_barrier::FleetStartCertificateV1,
     frame::AuthenticatedFrame,
     loop_driver::{
@@ -2285,18 +2290,68 @@ impl ContinuousProposalPreimageV0 {
         self.expected_post_state_root
     }
 
+    /// Derives the exact request identity presented to an injected proposal
+    /// signer.  The request binds the canonical block ID, parent, epoch/view/
+    /// height, scheduled proposer key, and already-derived proposal root.
+    /// Constructing it does not authorize a proposal or advance signer state.
+    pub fn proposal_signature_request_v0(
+        &self,
+        signer_profile_ref: [u8; 32],
+    ) -> Result<ProposalSignatureRequestV0> {
+        let proposer = self.block.header().proposer_id();
+        let validator = self
+            .validator_set
+            .validator(proposer)
+            .ok_or_else(|| anyhow!("proposal leader is absent from validator set"))?;
+        ProposalSignatureRequestV0::new(
+            self.block.id(),
+            self.block.header().parent_id(),
+            self.block.header().validator_set_id(),
+            proposer,
+            self.block.header().epoch(),
+            self.block.header().view(),
+            self.block.header().height(),
+            self.signing_root,
+            validator.consensus_key().into_bytes(),
+            signer_profile_ref,
+        )
+        .ok_or_else(|| anyhow!("proposal signature request has invalid identity fields"))
+    }
+
+    /// Signs and strictly verifies one exact proposal witness through an
+    /// injected producer.  This is a composition seam only: the producer is
+    /// not journaled here, and Core/SafetyRules/whole-node fencing remain
+    /// separate authorities.
+    pub fn seal_with_producer_v0(
+        self,
+        producer: &mut dyn ProposalSignatureProducerV0,
+        signer_profile_ref: [u8; 32],
+    ) -> Result<SignedProposalV0> {
+        let request = self.proposal_signature_request_v0(signer_profile_ref)?;
+        let signature = producer
+            .sign_proposal(request)
+            .map_err(|error| anyhow!("proposal signer rejected exact request: {error:?}"))?;
+        self.finish_with_signature_v0(signature)
+    }
+
+    /// Fixture-only compatibility helper.  Normal runtime code must use an
+    /// injected producer; this method remains for deterministic test material
+    /// and is intentionally not a production activation path.
     pub fn seal_with_key_v0(self, key: &SigningKey) -> Result<SignedProposalV0> {
+        let mut producer = LabEd25519ProposalSignatureProducerV0::new(key.clone());
+        self.seal_with_producer_v0(&mut producer, [0x51; 32])
+    }
+
+    fn finish_with_signature_v0(self, signature: SignatureBytes) -> Result<SignedProposalV0> {
         let proposer = self.block.header().proposer_id();
         let validator = self
             .validator_set
             .validator(proposer)
             .ok_or_else(|| anyhow!("proposal leader is absent from validator set"))?;
         ensure!(
-            key.verifying_key().to_bytes() == validator.consensus_key().into_bytes(),
-            "proposal witness key differs from scheduled leader"
+            StrictEd25519Verifier.verify(validator, &self.signing_root, &signature),
+            "proposal signer returned a signature for a different root or key"
         );
-        let signature =
-            SignatureBytes::from_array(key.sign(self.signing_root.as_bytes()).to_bytes());
         let witness = ProposalWitnessV0::new(
             self.block.header(),
             self.justify,
@@ -2744,7 +2799,8 @@ mod tests {
 
     use tempfile::TempDir;
     use trnm_consensus_types::{
-        ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, Validator, VotingPower,
+        ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, SigningRoot, Validator,
+        VotingPower,
     };
     use trnm_native_execution_v0::{
         AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0, NativeApplicationConfigV0,
@@ -2780,6 +2836,49 @@ mod tests {
         }
     }
 
+    struct CapturingProposalProducerV0 {
+        key: SigningKey,
+        request: Option<ProposalSignatureRequestV0>,
+    }
+
+    impl ProposalSignatureProducerV0 for CapturingProposalProducerV0 {
+        fn sign_proposal(
+            &mut self,
+            request: ProposalSignatureRequestV0,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            if self.key.verifying_key().to_bytes() != request.expected_consensus_public_key() {
+                return Err(trnm_consensus_signer_journal::SignatureProducerErrorV0::Rejected);
+            }
+            self.request = Some(request);
+            Ok(SignatureBytes::from_array(
+                self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+            ))
+        }
+    }
+
+    struct WrongRootProposalProducerV0 {
+        key: SigningKey,
+    }
+
+    impl ProposalSignatureProducerV0 for WrongRootProposalProducerV0 {
+        fn sign_proposal(
+            &mut self,
+            _request: ProposalSignatureRequestV0,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            Ok(SignatureBytes::from_array(
+                self.key
+                    .sign(SigningRoot::new([0xa5; 32]).as_bytes())
+                    .to_bytes(),
+            ))
+        }
+    }
+
     #[test]
     fn injected_signature_producer_owns_vote_and_timeout_boundaries() {
         on_bounded_takeover_owner_stack_v0(|| {
@@ -2799,6 +2898,90 @@ mod tests {
                 .begin_local_timeout_v0()
                 .expect("injected producer signs the exact TimeoutVote intent");
             assert_eq!(calls.load(Ordering::SeqCst), 2);
+        });
+    }
+
+    #[test]
+    fn injected_proposal_producer_is_bound_to_exact_witness_identity() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let harness = takeover_phase_harness_v0(4);
+            let view = harness
+                .authorities
+                .iter()
+                .filter_map(|authority| authority.facts_v0().ok())
+                .find(|facts| facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready)
+                .expect("at least one ready takeover authority")
+                .current_view_v0();
+            let leader = leader_for(&harness.validator_set, view);
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == leader)
+                .expect("scheduled leader belongs to validator set");
+            let preimage = harness.authorities[leader_index]
+                .proposal_preimage_for_test_v0(
+                    harness.ordinary_start_height,
+                    harness.timestamp_ms,
+                    harness.transactions.clone(),
+                )
+                .expect("leader builds exact proposal preimage");
+            let profile = [0x91; 32];
+            let expected_request = preimage
+                .proposal_signature_request_v0(profile)
+                .expect("proposal request has complete identity");
+            let expected_root = expected_request.signing_root();
+            let expected_block = expected_request.proposal_id();
+            let expected_key = expected_request.expected_consensus_public_key();
+            let mut producer = CapturingProposalProducerV0 {
+                key: harness.keys[leader_index].clone(),
+                request: None,
+            };
+            let proposal = preimage
+                .seal_with_producer_v0(&mut producer, profile)
+                .expect("injected producer signs and strict verifier accepts witness");
+            let observed = producer.request.expect("producer observed one request");
+            assert_eq!(observed.signing_root(), expected_root);
+            assert_eq!(observed.proposal_id(), expected_block);
+            assert_eq!(observed.author(), leader);
+            assert_eq!(observed.expected_consensus_public_key(), expected_key);
+            assert_eq!(observed.signer_profile_ref(), profile);
+            assert_eq!(proposal.block().id(), expected_block);
+        });
+    }
+
+    #[test]
+    fn injected_proposal_producer_wrong_root_fails_closed() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let harness = takeover_phase_harness_v0(4);
+            let view = harness
+                .authorities
+                .iter()
+                .filter_map(|authority| authority.facts_v0().ok())
+                .find(|facts| facts.phase_v0() == PocoNodeLabAuthorityPhaseV0::Ready)
+                .expect("at least one ready takeover authority")
+                .current_view_v0();
+            let leader = leader_for(&harness.validator_set, view);
+            let leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == leader)
+                .expect("scheduled leader belongs to validator set");
+            let preimage = harness.authorities[leader_index]
+                .proposal_preimage_for_test_v0(
+                    harness.ordinary_start_height,
+                    harness.timestamp_ms,
+                    harness.transactions.clone(),
+                )
+                .expect("leader builds exact proposal preimage");
+            let mut producer = WrongRootProposalProducerV0 {
+                key: harness.keys[leader_index].clone(),
+            };
+            let error = preimage
+                .seal_with_producer_v0(&mut producer, [0x92; 32])
+                .expect_err("wrong proposal root must fail strict verification");
+            assert!(error.to_string().contains("different root or key"));
         });
     }
 

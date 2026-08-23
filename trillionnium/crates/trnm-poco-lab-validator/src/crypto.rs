@@ -9,8 +9,9 @@ use ed25519_dalek::{Signer, SigningKey};
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignatureProducerErrorV0,
-    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
+    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, ProposalSignatureProducerV0,
+    ProposalSignatureRequestV0, SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
+    SignerWatermarkV0,
 };
 use trnm_consensus_types::SignatureBytes;
 
@@ -41,6 +42,36 @@ impl SignatureProducerV0 for LabEd25519SignatureProducer {
     ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
         let signature = self.key.sign(request.signing_root().as_bytes()).to_bytes();
         Ok(SignatureBytes::from_array(signature))
+    }
+}
+
+/// Fixture-only proposal witness producer for the bounded continuous lane.
+///
+/// This adapter exists to exercise the proposal-signature injection seam while
+/// the production remote protocol still deliberately admits only Vote and
+/// TimeoutVote.  The caller remains responsible for strict verification of
+/// the returned bytes against the request's expected public key and root.
+pub struct LabEd25519ProposalSignatureProducerV0 {
+    key: SigningKey,
+}
+
+impl LabEd25519ProposalSignatureProducerV0 {
+    pub fn new(key: SigningKey) -> Self {
+        Self { key }
+    }
+}
+
+impl ProposalSignatureProducerV0 for LabEd25519ProposalSignatureProducerV0 {
+    fn sign_proposal(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        if self.key.verifying_key().to_bytes() != request.expected_consensus_public_key() {
+            return Err(SignatureProducerErrorV0::Rejected);
+        }
+        Ok(SignatureBytes::from_array(
+            self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+        ))
     }
 }
 

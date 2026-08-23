@@ -17,6 +17,9 @@ safety_rules_evaluation = false
 safe_vote_authority = false
 production_activation = false
 hotstuff_lock_state = false
+proposal_signer_injection_api = true
+proposal_signer_runtime_wired = false
+proposal_signer_production_activation = false
 
 [dependencies]
 fs2 = "0.4"

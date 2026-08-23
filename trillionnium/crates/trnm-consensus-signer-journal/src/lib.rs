@@ -34,6 +34,12 @@
 //! unforgeable, durably persisted SafetyRules admission in the same trust
 //! domain before this journal may reach a signer producer.
 //!
+//! Proposal witnesses use the separate [`ProposalSignatureProducerV0`] seam.
+//! They are not journaled by this crate and are not admitted by the current
+//! Unix remote-signer protocol; callers must keep that seam disabled until a
+//! proposal-specific durable conflict key and SafetyRules authorization are
+//! implemented.
+//!
 //! Schema1 also has no atomic migration of a schema0 external-watermark scope.
 //! It therefore cannot claim to prevent the same key from signing concurrently
 //! through an old journal or another scope. Schema0 remains read-only to the
@@ -75,8 +81,8 @@ pub use handoff_sqlite_v1::{
     SqliteHandoffSignerJournalV1,
 };
 pub use model::{
-    ExternalMonotonicWatermarkV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
-    SignerWatermarkV0,
+    ExternalMonotonicWatermarkV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
+    SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
 };
 pub use sqlite::{
     ConfirmedSignerNodeCheckpointFactsV0, JournalCapacityV0, PinnedSqliteSignerJournalV0,
