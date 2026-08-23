@@ -843,7 +843,7 @@ where
 /// by the mesh's `establish_with_fence` gate; no default/deployed wrapper can
 /// reach this path without an explicit caller argument.
 pub fn run_bounded_consensus_with_external_fence_v1<C>(
-    mut config: LoadedValidatorConfig,
+    config: LoadedValidatorConfig,
     duration: Duration,
     max_blocks: u64,
     report_path: PathBuf,
@@ -855,6 +855,56 @@ where
             &mut LoadedValidatorConfig,
             ContinuousSignerLifetimeBoundsV0,
         ) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>>
+        + Send
+        + 'static,
+{
+    run_bounded_consensus_with_authority_builder_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        commission,
+        |config, takeover, signer_lifetime| {
+            ContinuousValidatorAuthorityV0::from_takeover_runtime_v0(
+                config,
+                takeover,
+                signer_lifetime,
+            )
+        },
+    )
+}
+
+/// Explicit authority-composition entry for the bounded runtime.
+///
+/// The caller must provide both the external peer-lease gate and an authority
+/// builder.  The builder is invoked only after the authenticated mesh is
+/// established and the h1-h3 runtime has been commissioned, but before the
+/// fleet Ready/Start barrier.  This is the narrow seam used to compose an
+/// independently administered watermark and remote signer into the real
+/// owner; the default deployed wrapper above deliberately installs the
+/// fixture producer and remains a separate, closed path.
+pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(
+    mut config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    commission: C,
+    authority_builder: A,
+) -> Result<BoundedConsensusRunOutcomeV1>
+where
+    C: FnOnce(
+            &mut LoadedValidatorConfig,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>>
+        + Send
+        + 'static,
+    A: FnOnce(
+            &LoadedValidatorConfig,
+            PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+            ContinuousSignerLifetimeBoundsV0,
+        ) -> Result<ContinuousValidatorAuthorityV0>
         + Send
         + 'static,
 {
@@ -961,11 +1011,7 @@ where
                 );
                 bail!("bounded consensus commissioning allowance exhausted");
             }
-            let authority = match ContinuousValidatorAuthorityV0::from_takeover_runtime_v0(
-                &config,
-                takeover,
-                preflight.signer_lifetime,
-            )
+            let authority = match authority_builder(&config, takeover, preflight.signer_lifetime)
             .context("bind commissioned runtime to continuous authority")
             {
                 Ok(authority) => authority,
