@@ -507,48 +507,58 @@ impl ExternalMonotonicWatermarkInjectionV0 for LabFileWatermark {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
         }
         let local = self.read_record()?;
-        if let Some(local) = local {
-            let observed = match if external.semantic_mode_v0() {
-                external
-                    .load_semantic_v0(local.scope(), local.journal_id())
-                    .map(|value| value.map(|(watermark, _facts)| watermark))
-            } else {
-                external.load(local.scope())
-            } {
-                Ok(value) => value,
-                Err(error) => {
-                    self.poisoned = true;
-                    return Err(error);
-                }
-            };
-            match observed {
-                None => {
-                    // A fresh sequence-zero head has no prior signer event
-                    // history and may be claimed by a newly started external
-                    // authority.  Once any intent/signature event exists,
-                    // silently claiming a missing external head would turn a
-                    // local-only history into retroactive "evidence"; require
-                    // the independently administered log to already contain
-                    // the exact head instead.
-                    if local.sequence() != 0 {
-                        self.poisoned = true;
-                        return Err(ExternalWatermarkErrorV0::CompareFailed);
-                    }
-                    let result = if external.semantic_mode_v0() {
-                        external.compare_and_advance_semantic_genesis_v0(None, local)
-                    } else {
-                        external.compare_and_advance(None, local)
-                    };
-                    if let Err(error) = result {
-                        self.poisoned = true;
-                        return Err(error);
-                    }
-                }
-                Some(value) if value == local => {}
-                Some(_) => {
+        let Some(local) = local else {
+            // Installation is an identity-binding operation, not a generic
+            // setter.  A fresh file has no authenticated `(scope,
+            // journal_id, sequence, checksum)` to compare with the remote
+            // authority, so accepting the delegate here would report a
+            // successful install while leaving its namespace unbound.  The
+            // signer-journal constructor establishes the sequence-zero local
+            // head before this injection seam is reachable; any other caller
+            // must fail closed and provision a bound owner first.
+            self.poisoned = true;
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        };
+        let observed = match if external.semantic_mode_v0() {
+            external
+                .load_semantic_v0(local.scope(), local.journal_id())
+                .map(|value| value.map(|(watermark, _facts)| watermark))
+        } else {
+            external.load(local.scope())
+        } {
+            Ok(value) => value,
+            Err(error) => {
+                self.poisoned = true;
+                return Err(error);
+            }
+        };
+        match observed {
+            None => {
+                // A fresh sequence-zero head has no prior signer event
+                // history and may be claimed by a newly started external
+                // authority.  Once any intent/signature event exists,
+                // silently claiming a missing external head would turn a
+                // local-only history into retroactive "evidence"; require
+                // the independently administered log to already contain
+                // the exact head instead.
+                if local.sequence() != 0 {
                     self.poisoned = true;
                     return Err(ExternalWatermarkErrorV0::CompareFailed);
                 }
+                let result = if external.semantic_mode_v0() {
+                    external.compare_and_advance_semantic_genesis_v0(None, local)
+                } else {
+                    external.compare_and_advance(None, local)
+                };
+                if let Err(error) = result {
+                    self.poisoned = true;
+                    return Err(error);
+                }
+            }
+            Some(value) if value == local => {}
+            Some(_) => {
+                self.poisoned = true;
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
             }
         }
         self.external = Some(external);
@@ -732,6 +742,26 @@ mod tests {
         let state = observer.lock().expect("external watermark mutex");
         assert_eq!(state.0, Some(mark(1, 0x32)));
         assert_eq!(state.1, 2, "claim plus one journal event");
+    }
+
+    #[test]
+    fn external_watermark_install_requires_authenticated_local_head() {
+        let temporary = private_temp();
+        let path = temporary.path().join("watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open fresh watermark");
+        let external = MemoryExternalWatermark::default();
+        external.set_value(Some(mark(0, 0x31)));
+
+        assert_eq!(
+            store.install_external_monotonic_watermark_v0(Box::new(external)),
+            Err(ExternalWatermarkErrorV0::CompareFailed),
+            "a fresh local file cannot bind an external head without local identity"
+        );
+        assert_eq!(
+            store.load([0x11; 32]),
+            Err(ExternalWatermarkErrorV0::Unavailable),
+            "failed namespace binding poisons the local owner"
+        );
     }
 
     #[test]
