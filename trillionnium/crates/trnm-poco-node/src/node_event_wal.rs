@@ -86,7 +86,9 @@ impl fmt::Display for NodeEventWalErrorV1 {
             Self::NoPending => "node-event WAL has no pending intent",
             Self::PendingMismatch => "node-event WAL pending intent differs",
             Self::CommitMismatch => "node-event WAL commit differs from its intent",
-            Self::PredecessorMismatch => "node-event WAL predecessor does not follow the last commit",
+            Self::PredecessorMismatch => {
+                "node-event WAL predecessor does not follow the last commit"
+            }
             Self::AlreadyCommitted => "node-event WAL event is already committed",
             Self::Poisoned => "node-event WAL is poisoned",
             Self::TooLarge => "node-event WAL exceeds its bounded record count",
@@ -469,8 +471,8 @@ impl NodeEventWalV1 {
         }
         let mut expected_sequence = 0_u64;
         let mut previous_checksum = [0_u8; 32];
-        let mut pending = None;
-        let mut last_commit = None;
+        let mut pending: Option<NodeEventIntentV1> = None;
+        let mut last_commit: Option<NodeEventCommitReceiptV1> = None;
         for chunk in bytes.chunks_exact(FRAME_BYTES_V1) {
             let frame: &[u8; FRAME_BYTES_V1] = chunk.try_into().expect("fixed frame");
             let decoded = decode_frame_v1(frame)?;
@@ -505,9 +507,9 @@ impl NodeEventWalV1 {
                         {
                             return Err(NodeEventWalErrorV1::PendingConflict);
                         }
-                        if last_commit
-                            .is_some_and(|receipt| receipt.commit_digest != decoded.predecessor_digest)
-                        {
+                        if last_commit.is_some_and(|receipt| {
+                            receipt.commit_digest != decoded.predecessor_digest
+                        }) {
                             return Err(NodeEventWalErrorV1::PredecessorMismatch);
                         }
                         pending = Some(NodeEventIntentV1 {
@@ -747,14 +749,16 @@ mod tests {
         );
         wal.commit_event_v1(intent, digest(5)).unwrap();
         assert_eq!(
-            wal.prepare_event_v1(digest(2), digest(3), digest(4)),
+            wal.prepare_event_v1(digest(2), digest(5), digest(4)),
             Err(NodeEventWalErrorV1::AlreadyCommitted)
         );
         assert_eq!(
             wal.prepare_event_v1(digest(6), digest(7), digest(8)),
             Err(NodeEventWalErrorV1::PredecessorMismatch)
         );
-        let next = wal.prepare_event_v1(digest(6), digest(5), digest(8)).unwrap();
+        let next = wal
+            .prepare_event_v1(digest(6), digest(5), digest(8))
+            .unwrap();
         wal.commit_event_v1(next, digest(9)).unwrap();
     }
 
