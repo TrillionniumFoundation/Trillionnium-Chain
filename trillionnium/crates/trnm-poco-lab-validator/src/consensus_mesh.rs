@@ -441,24 +441,75 @@ struct MeshIdentityV0 {
     transport_context: RunTransportContext,
 }
 
+/// Secret-bearing fixture description used by the cross-process fencing
+/// integration test.  This is deliberately a narrow transport-only seam: it
+/// does not construct Core, SafetyStore, a signer, or a validator loop.  The
+/// normal deployed path must continue to use [`LoadedValidatorConfig`] and
+/// the default production flags remain false.
+#[doc(hidden)]
+#[derive(Clone)]
+pub struct MeshFixtureConfigV1 {
+    run_id: String,
+    local: ValidatorId,
+    p2p_identity_signing_key: SigningKey,
+    validator_set: ValidatorSet,
+    key_roles: ValidatorKeyRoleRegistryV1,
+    transport_context: RunTransportContext,
+    listen_addr: SocketAddr,
+    outgoing: BTreeMap<ValidatorId, SocketAddr>,
+    incoming: BTreeMap<ValidatorId, SocketAddr>,
+}
+
+impl MeshFixtureConfigV1 {
+    /// Builds a two-sided fixture plan.  The caller supplies already
+    /// authenticated validator identities and explicit directed endpoints;
+    /// no files, consensus keys, or production configuration are loaded.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        run_id: impl Into<String>,
+        local: ValidatorId,
+        p2p_identity_signing_key: SigningKey,
+        validator_set: ValidatorSet,
+        key_roles: ValidatorKeyRoleRegistryV1,
+        transport_context: RunTransportContext,
+        listen_addr: SocketAddr,
+        outgoing: BTreeMap<ValidatorId, SocketAddr>,
+        incoming: BTreeMap<ValidatorId, SocketAddr>,
+    ) -> Result<Self> {
+        let run_id = run_id.into();
+        if run_id.is_empty() {
+            bail!("mesh fixture run id is empty");
+        }
+        validate_directed_plan_maps(local, &outgoing, &incoming)?;
+        if validator_set.validator(local).is_none() {
+            bail!("mesh fixture local validator is absent from validator set");
+        }
+        if key_roles.binding(local).is_none() {
+            bail!("mesh fixture local key-role binding is absent");
+        }
+        Ok(Self {
+            run_id,
+            local,
+            p2p_identity_signing_key,
+            validator_set,
+            key_roles,
+            transport_context,
+            listen_addr,
+            outgoing,
+            incoming,
+        })
+    }
+}
+
 impl MeshIdentityV0 {
-    fn from_config(config: &LoadedValidatorConfig) -> Self {
+    fn from_fixture(config: &MeshFixtureConfigV1) -> Self {
         Self {
-            run_id: config.run_id().to_owned(),
-            local: config.local_validator(),
-            p2p_identity_signing_key: config.p2p_identity_signing_key().clone(),
-            validator_set: config.validator_set().clone(),
-            key_roles: config.key_role_registry().clone(),
-            transport_context: RunTransportContext::new(
-                config.topology_sha256(),
-                config.candidate_source_sha256(),
-                config.binary_sha256(),
-                config.coordinator_manifest_sha256(),
-            )
-            .with_validator_set_binding(
-                config.validator_set().epoch().get(),
-                config.validator_set().id().into_bytes(),
-            ),
+            run_id: config.run_id.clone(),
+            local: config.local,
+            p2p_identity_signing_key: config.p2p_identity_signing_key.clone(),
+            validator_set: config.validator_set.clone(),
+            key_roles: config.key_roles.clone(),
+            transport_context: config.transport_context,
         }
     }
 }
@@ -833,17 +884,61 @@ impl PersistentAuthenticatedPeerMeshV0 {
         queue_capacity: usize,
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     ) -> Result<Self> {
-        validate_limits(setup_timeout, io_timeout, queue_capacity)?;
-        authority
-            .preflight()
-            .map_err(|error| anyhow!("external fencing preflight failed: {error}"))?;
         validate_directed_plan(
             config.local_validator(),
             config.peers(),
             config.incoming_peers(),
         )?;
-        let listener = TcpListener::bind(config.listen_addr())
-            .with_context(|| format!("bind consensus listener {}", config.listen_addr()))?;
+        let outgoing = peer_map(config.peers())?;
+        let incoming = peer_map(config.incoming_peers())?;
+        let fixture = MeshFixtureConfigV1::new(
+            config.run_id().to_owned(),
+            config.local_validator(),
+            config.p2p_identity_signing_key().clone(),
+            config.validator_set().clone(),
+            config.key_role_registry().clone(),
+            RunTransportContext::new(
+                config.topology_sha256(),
+                config.candidate_source_sha256(),
+                config.binary_sha256(),
+                config.coordinator_manifest_sha256(),
+            )
+            .with_validator_set_binding(
+                config.validator_set().epoch().get(),
+                config.validator_set().id().into_bytes(),
+            ),
+            config.listen_addr(),
+            outgoing,
+            incoming,
+        )?;
+        Self::establish_fixture_with_fence_v1(
+            &fixture,
+            setup_timeout,
+            io_timeout,
+            queue_capacity,
+            authority,
+        )
+    }
+
+    /// Transport-only fixture entry used by the cross-process external-fence
+    /// integration test.  It follows the exact same worker/generation path as
+    /// [`Self::establish_with_fence`], but does not require a deployment bundle
+    /// or secret-bearing `LoadedValidatorConfig`.
+    #[doc(hidden)]
+    pub fn establish_fixture_with_fence_v1(
+        config: &MeshFixtureConfigV1,
+        setup_timeout: Duration,
+        io_timeout: Duration,
+        queue_capacity: usize,
+        authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    ) -> Result<Self> {
+        validate_limits(setup_timeout, io_timeout, queue_capacity)?;
+        authority
+            .preflight()
+            .map_err(|error| anyhow!("external fencing preflight failed: {error}"))?;
+        validate_directed_plan_maps(config.local, &config.outgoing, &config.incoming)?;
+        let listener = TcpListener::bind(config.listen_addr)
+            .with_context(|| format!("bind consensus listener {}", config.listen_addr))?;
         listener
             .set_nonblocking(true)
             .context("set consensus listener nonblocking")?;
@@ -851,7 +946,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let setup_deadline = Instant::now()
             .checked_add(setup_timeout)
             .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
-        let identity = MeshIdentityV0::from_config(config);
+        let identity = MeshIdentityV0::from_fixture(config);
         let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
         let fences = MeshFenceRegistryV1::new(
             authority,
@@ -868,10 +963,10 @@ impl PersistentAuthenticatedPeerMeshV0 {
         let mut outbound = BTreeMap::new();
         let outbound_peer_budget_bytes = outbound_queue_byte_budget_v0(queue_capacity)?;
         let global_outbound_budget = Arc::new(MeshQueueByteBudgetV0::new(
-            outbound_global_queue_byte_budget_v0(queue_capacity, config.peers().len())?,
+            outbound_global_queue_byte_budget_v0(queue_capacity, config.outgoing.len())?,
         ));
 
-        let incoming = peer_map(config.incoming_peers())?;
+        let incoming = config.incoming.clone();
         let inbound_peer_budget_bytes = inbound_queue_byte_budget_v0(queue_capacity)?;
         let global_inbound_budget = Arc::new(MeshQueueByteBudgetV0::new(
             inbound_global_queue_byte_budget_v0(queue_capacity, incoming.len())?,
@@ -923,9 +1018,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
             workers.push(worker);
         }
 
-        for peer in config.peers() {
-            let remote = peer.validator_id()?;
-            let remote_addr = peer.socket_addr()?;
+        for (&remote, &remote_addr) in &config.outgoing {
             let (sender, receiver) = mpsc::sync_channel(queue_capacity);
             let byte_budget = Arc::new(MeshQueueByteBudgetV0::new(outbound_peer_budget_bytes));
             if outbound
@@ -983,9 +1076,9 @@ impl PersistentAuthenticatedPeerMeshV0 {
         drop(ingress_tx);
 
         let expected = config
-            .peers()
+            .outgoing
             .len()
-            .checked_add(config.incoming_peers().len())
+            .checked_add(config.incoming.len())
             .ok_or_else(|| anyhow!("mesh session count overflow"))?;
         let mut seen = BTreeSet::new();
         let mut initial_sessions = Vec::with_capacity(expected);
@@ -1024,7 +1117,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
         });
 
         Ok(Self {
-            local: config.local_validator(),
+            local: config.local,
             outbound,
             ingress,
             stop,
@@ -2344,6 +2437,30 @@ fn validate_directed_plan(
             let remote = peer.validator_id()?;
             let endpoint = peer.socket_addr()?;
             if remote == local || !identities.insert(remote) || !endpoints.insert(endpoint) {
+                bail!("mesh {label} directed plan is non-canonical");
+            }
+        }
+    }
+    let outgoing = peer_map(outgoing)?;
+    let incoming = peer_map(incoming)?;
+    validate_directed_plan_maps(local, &outgoing, &incoming)
+}
+
+fn validate_directed_plan_maps(
+    local: ValidatorId,
+    outgoing: &BTreeMap<ValidatorId, SocketAddr>,
+    incoming: &BTreeMap<ValidatorId, SocketAddr>,
+) -> Result<()> {
+    if outgoing.is_empty()
+        || outgoing.len() != incoming.len()
+        || outgoing.len() > MAX_DIRECTED_PEERS
+    {
+        bail!("mesh directed degree is empty, asymmetric, or unbounded");
+    }
+    for (label, peers) in [("outgoing", outgoing), ("incoming", incoming)] {
+        let mut endpoints = BTreeSet::new();
+        for (&remote, &endpoint) in peers {
+            if remote == local || !endpoints.insert(endpoint) {
                 bail!("mesh {label} directed plan is non-canonical");
             }
         }
