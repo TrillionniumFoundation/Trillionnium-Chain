@@ -26,8 +26,8 @@ use std::{
 use rusqlite::{params, Connection, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
-    RecoveryReadySetV1, RecoveryStartCertificateV1, SignatureVerifier, ValidatorId, ValidatorSet,
-    ValidatorSetId,
+    Epoch, RecoveryReadySetV1, RecoveryStartCertificateV1, SignatureVerifier, ValidatorId,
+    ValidatorSet, ValidatorSetId,
 };
 
 use crate::external_node_checkpoint::ExternalNodeCheckpointV0;
@@ -45,7 +45,7 @@ const JOURNAL_USER_VERSION_V1: i64 = 1;
 const JOURNAL_BUSY_TIMEOUT_MS_V1: u64 = 5_000;
 // magic + schema + phase + sequence + predecessor, eleven fixed 32-byte
 // binding/digest fields, generation, and the record checksum.
-const JOURNAL_RECORD_BYTES_V1: usize = 8 + 2 + 1 + 8 + 32 + (32 * 11) + 8 + 32;
+const JOURNAL_RECORD_BYTES_V1: usize = 8 + 2 + 1 + 8 + 32 + (32 * 11) + (8 * 3) + 32;
 
 /// This journal is a real durable boundary.  It is not an activation claim.
 pub const PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1: bool = true;
@@ -70,7 +70,7 @@ const CREATE_EVENTS_V1: &str = concat!(
     "phase INTEGER NOT NULL CHECK(phase IN (1, 2)),",
     "predecessor_checksum BLOB NOT NULL CHECK(typeof(predecessor_checksum) = 'blob' AND length(predecessor_checksum) = 32),",
     "checksum BLOB NOT NULL CHECK(typeof(checksum) = 'blob' AND length(checksum) = 32),",
-    "record BLOB NOT NULL CHECK(typeof(record) = 'blob' AND length(record) = 443)",
+    "record BLOB NOT NULL CHECK(typeof(record) = 'blob' AND length(record) = 459)",
     ") STRICT, WITHOUT ROWID;"
 );
 
@@ -113,6 +113,8 @@ pub struct Process2RecoveryTransitionBindingV1 {
     node_facts_digest: [u8; 32],
     validator_set_id: ValidatorSetId,
     target_validator: ValidatorId,
+    epoch: Epoch,
+    process_generation: u64,
     checkpoint_scope: [u8; 32],
     checkpoint_generation: u64,
     checkpoint_checksum: [u8; 32],
@@ -124,12 +126,15 @@ impl Process2RecoveryTransitionBindingV1 {
     /// Construct a binding from exact, already-audited process-2 facts and a
     /// whole-node checkpoint.  The fence token is supplied by the external
     /// owner process; it is intentionally opaque to this crate.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         session_id: [u8; 32],
         caught_up_cut_digest: [u8; 32],
         node_facts_digest: [u8; 32],
         validator_set_id: ValidatorSetId,
         target_validator: ValidatorId,
+        epoch: Epoch,
+        process_generation: u64,
         checkpoint: ExternalNodeCheckpointV0,
         fence_token_digest: [u8; 32],
     ) -> Result<Self, RecoveryTransitionJournalErrorV1> {
@@ -138,8 +143,10 @@ impl Process2RecoveryTransitionBindingV1 {
             || node_facts_digest == [0; 32]
             || validator_set_id.as_bytes() == &[0; 32]
             || target_validator.is_zero()
+            || process_generation == 0
             || checkpoint.scope() == [0; 32]
             || checkpoint.generation() == 0
+            || checkpoint.generation() != process_generation
             || checkpoint.checkpoint_checksum() == [0; 32]
             || fence_token_digest == [0; 32]
         {
@@ -153,6 +160,8 @@ impl Process2RecoveryTransitionBindingV1 {
             node_facts_digest,
             validator_set_id,
             target_validator,
+            epoch,
+            process_generation,
             checkpoint_scope: checkpoint.scope(),
             checkpoint_generation: checkpoint.generation(),
             checkpoint_checksum: checkpoint.checkpoint_checksum(),
@@ -179,6 +188,14 @@ impl Process2RecoveryTransitionBindingV1 {
 
     pub const fn target_validator_v1(self) -> ValidatorId {
         self.target_validator
+    }
+
+    pub const fn epoch_v1(self) -> Epoch {
+        self.epoch
+    }
+
+    pub const fn process_generation_v1(self) -> u64 {
+        self.process_generation
     }
 
     pub const fn checkpoint_scope_v1(self) -> [u8; 32] {
@@ -209,6 +226,8 @@ impl Process2RecoveryTransitionBindingV1 {
         bytes.extend_from_slice(&self.node_facts_digest);
         bytes.extend_from_slice(self.validator_set_id.as_bytes());
         bytes.extend_from_slice(self.target_validator.as_bytes());
+        bytes.extend_from_slice(&self.epoch.get().to_be_bytes());
+        bytes.extend_from_slice(&self.process_generation.to_be_bytes());
         bytes.extend_from_slice(&self.checkpoint_scope);
         bytes.extend_from_slice(&self.checkpoint_generation.to_be_bytes());
         bytes.extend_from_slice(&self.checkpoint_checksum);
@@ -337,6 +356,8 @@ impl TransitionRecordV1 {
         bytes.extend_from_slice(&self.binding.node_facts_digest);
         bytes.extend_from_slice(self.binding.validator_set_id.as_bytes());
         bytes.extend_from_slice(self.binding.target_validator.as_bytes());
+        bytes.extend_from_slice(&self.binding.epoch.get().to_be_bytes());
+        bytes.extend_from_slice(&self.binding.process_generation.to_be_bytes());
         bytes.extend_from_slice(&self.binding.checkpoint_scope);
         bytes.extend_from_slice(&self.binding.checkpoint_generation.to_be_bytes());
         bytes.extend_from_slice(&self.binding.checkpoint_checksum);
@@ -376,6 +397,8 @@ impl TransitionRecordV1 {
         let node_facts_digest = read_array_v1(bytes, &mut offset)?;
         let validator_set_id = ValidatorSetId::new(read_array_v1(bytes, &mut offset)?);
         let target_validator = ValidatorId::new(read_array_v1(bytes, &mut offset)?);
+        let epoch = Epoch::new(read_u64_v1(bytes, &mut offset)?);
+        let process_generation = read_u64_v1(bytes, &mut offset)?;
         let checkpoint_scope = read_array_v1(bytes, &mut offset)?;
         let checkpoint_generation = read_u64_v1(bytes, &mut offset)?;
         let checkpoint_checksum = read_array_v1(bytes, &mut offset)?;
@@ -395,6 +418,8 @@ impl TransitionRecordV1 {
             node_facts_digest,
             validator_set_id,
             target_validator,
+            epoch,
+            process_generation,
             checkpoint_scope,
             checkpoint_generation,
             checkpoint_checksum,
@@ -643,6 +668,7 @@ impl Process2RecoveryTransitionJournalV1 {
             ));
         }
         let record = target.encode_v1();
+        debug_assert_eq!(record.len(), JOURNAL_RECORD_BYTES_V1);
         let changed = transaction
             .execute(
                 "INSERT INTO process2_recovery_transition_events_v1(sequence, phase, predecessor_checksum, checksum, record) VALUES(?1, ?2, ?3, ?4, ?5)",
@@ -925,6 +951,9 @@ fn validate_ready_binding_v1(
         || context.fields().caught_up_cut_artifact_sha256 != binding.caught_up_cut_digest
         || context.node_facts_sha256() != binding.node_facts_digest
         || context.validator_set_id() != validator_set.id()
+        || context.fields().restart_cut_epoch != binding.epoch
+        || context.fields().terminal_epoch != binding.epoch
+        || validator_set.epoch() != binding.epoch
     {
         return Err(RecoveryTransitionJournalErrorV1::Stale(
             "RecoveryReady context does not bind the exact process2 cut",
@@ -965,6 +994,8 @@ fn binding_from_caught_up_owner_v1<W: ExternalMonotonicWatermarkV0>(
         facts.node_facts_sha256_v1(),
         cut.validator_set_id,
         cut.local_validator,
+        cut.epoch,
+        process2.final_checkpoint_generation_v0(),
         checkpoint,
         fence_token_digest,
     )
@@ -1292,6 +1323,8 @@ mod tests {
             [seed.wrapping_add(2); 32],
             ValidatorSetId::new([seed.wrapping_add(3); 32]),
             ValidatorId::new([seed.wrapping_add(4); 32]),
+            Epoch::new(4),
+            3,
             checkpoint(seed),
             [seed.wrapping_add(5); 32],
         )
@@ -1314,6 +1347,8 @@ mod tests {
                     [0xA2; 32],
                     set.id(),
                     set.validators()[0].id(),
+                    set.epoch(),
+                    3,
                     checkpoint(1),
                     [0xA3; 32],
                 )
@@ -1336,6 +1371,8 @@ mod tests {
                     [0xA2; 32],
                     set.id(),
                     set.validators()[0].id(),
+                    set.epoch(),
+                    3,
                     checkpoint(1),
                     [0xA3; 32],
                 )
