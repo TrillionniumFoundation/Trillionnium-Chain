@@ -886,7 +886,8 @@ mod tests {
         rollback.apply(acquire([9; 32], 1), 1_000).unwrap();
         drop(rollback);
         let bytes = std::fs::read(&rollback_path).unwrap();
-        let record_bytes = RECORD_HEADER_BYTES_V1 + RECORD_PAYLOAD_BYTES_V1 + RECORD_DIGEST_BYTES_V1;
+        let record_bytes =
+            RECORD_HEADER_BYTES_V1 + RECORD_PAYLOAD_BYTES_V1 + RECORD_DIGEST_BYTES_V1;
         std::fs::write(&rollback_path, &bytes[..bytes.len() - record_bytes]).unwrap();
         assert!(matches!(
             PeerLeaseStoreV1::open(&rollback_path),
