@@ -700,6 +700,7 @@ mod tests {
     };
 
     use tempfile::tempdir;
+    use trnm_consensus_crypto::StrictEd25519Verifier;
     use trnm_consensus_signer_journal::{ExternalWatermarkErrorV0, SignerWatermarkV0};
 
     use super::*;
@@ -796,6 +797,39 @@ mod tests {
                     bundle.validator_set_v0(),
                     bundle.consensus_parameters_v0(),
                 ));
+                let finalized = bundle
+                    .runtime_v0()
+                    .finalized_proof_v0()
+                    .expect("Ready runtime exposes one strictly verified proof");
+                assert_eq!(
+                    finalized.finalized_block_id_v0(),
+                    facts.finalized_block_id_v0()
+                );
+                assert_eq!(finalized.finalized_height_v0(), facts.finalized_height_v0());
+                assert_eq!(
+                    finalized.validator_set_id_v0(),
+                    bundle.validator_set_v0().id()
+                );
+                assert_ne!(
+                    finalized.proof_id_v0(),
+                    trnm_consensus_types::CertificateId::new([0; 32])
+                );
+                assert_eq!(
+                    finalized.proof_v0().finalized_block().header().id(),
+                    finalized.finalized_block_id_v0()
+                );
+                assert!(finalized
+                    .proof_v0()
+                    .verify(
+                        bundle.validator_set_v0(),
+                        None,
+                        bundle.consensus_parameters_v0(),
+                        finalized.authenticated_parent_timestamp_ms_v0()
+                            + bundle.consensus_parameters_v0().max_block_time_step_ms()
+                            + 1,
+                        &StrictEd25519Verifier,
+                    )
+                    .is_err());
             })
             .expect("spawn bounded deployed commissioning owner")
             .join()

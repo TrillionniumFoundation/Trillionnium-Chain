@@ -47,8 +47,8 @@ use trnm_consensus_signer_journal::{
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, CanonicalSignPreimageV0, CanonicalSignable, CertificateId,
-    Epoch, QcRef, QcReferenceV0, QuorumCertificate, SignedProposalV0, TimeoutCertificateV0,
-    TimeoutVote, View, Vote,
+    Epoch, FinalityProofV0, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
+    SignedProposalV0, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatorSetId, View, Vote,
 };
 use trnm_native_application::{
     ApplicationHeadV0, ChainIdV0, GenesisHashV0, Hash32V0, HeightV0,
@@ -677,6 +677,64 @@ pub struct PocoNodeLabPhaseFactsV0 {
     safety_record_checksum: [u8; 32],
     safety_chain_checksum: [u8; 32],
     signer_exact_watermark: trnm_consensus_signer_journal::SignerWatermarkV0,
+}
+
+/// Authenticated finalized proof exposed by a Ready laboratory runtime.
+///
+/// The proof is copied only after the live Core revalidates its complete
+/// three-chain against the configured validator set/parameter preimage and
+/// the exact durable parent timestamp.  The scalar coordinates and roots are
+/// retained alongside the proof so an RPC adapter cannot accidentally return
+/// an unbound proof or a phase-facts-only claim.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PocoNodeLabFinalizedProofV0 {
+    proof: FinalityProofV0,
+    proof_id: CertificateId,
+    finalized_block_id: BlockId,
+    finalized_height: u64,
+    validator_set_id: ValidatorSetId,
+    state_root: StateRoot,
+    receipts_root: ReceiptsRoot,
+    authenticated_parent_timestamp_ms: u64,
+    finalized_chain_root: [u8; 32],
+}
+
+impl PocoNodeLabFinalizedProofV0 {
+    pub const fn proof_v0(&self) -> &FinalityProofV0 {
+        &self.proof
+    }
+
+    pub const fn proof_id_v0(&self) -> CertificateId {
+        self.proof_id
+    }
+
+    pub const fn finalized_block_id_v0(&self) -> BlockId {
+        self.finalized_block_id
+    }
+
+    pub const fn finalized_height_v0(&self) -> u64 {
+        self.finalized_height
+    }
+
+    pub const fn validator_set_id_v0(&self) -> ValidatorSetId {
+        self.validator_set_id
+    }
+
+    pub const fn state_root_v0(&self) -> StateRoot {
+        self.state_root
+    }
+
+    pub const fn receipts_root_v0(&self) -> ReceiptsRoot {
+        self.receipts_root
+    }
+
+    pub const fn authenticated_parent_timestamp_ms_v0(&self) -> u64 {
+        self.authenticated_parent_timestamp_ms
+    }
+
+    pub const fn finalized_chain_root_v0(&self) -> [u8; 32] {
+        self.finalized_chain_root
+    }
 }
 
 impl PocoNodeLabPhaseFactsV0 {
@@ -1495,6 +1553,20 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             self.checkpoint,
             &self.application_head,
         )
+    }
+
+    /// Returns the exact authenticated proof for the current finalized tip.
+    ///
+    /// This is deliberately Ready-only and performs a fresh strict
+    /// verification on every call.  A caller cannot turn the scalar phase
+    /// projection into a proof: the proof must still be present in Core's
+    /// durable finalization/state-sync provenance and must bind to the live
+    /// validator set, parameter preimage, parent timestamp, finalized
+    /// coordinates, and chain-root projection.
+    pub fn finalized_proof_v0(
+        &self,
+    ) -> Result<PocoNodeLabFinalizedProofV0, PocoNodeLabAuthorityErrorV0> {
+        finalized_proof_from_core_v0(&self.core)
     }
 
     pub const fn checkpoint_v0(&self) -> &ExternalNodeCheckpointV0 {
@@ -4804,6 +4876,82 @@ fn phase_facts_from_parts_v0(
         safety_chain_checksum: fields.safety_record_chain_checksum,
         signer_exact_watermark: fields.signer_exact_watermark,
     }
+}
+
+fn finalized_proof_from_core_v0(
+    core: &Core,
+) -> Result<PocoNodeLabFinalizedProofV0, PocoNodeLabAuthorityErrorV0> {
+    let safety = core.safety_state();
+    let (proof, authenticated_parent_timestamp_ms) =
+        if let Some(finalization) = safety.last_finalization() {
+            (
+                finalization.proof().clone(),
+                finalization.authenticated_parent().timestamp_ms(),
+            )
+        } else if let Some(anchor) = safety.state_sync_anchor() {
+            (
+                anchor.proof().clone(),
+                anchor.authenticated_parent().timestamp_ms(),
+            )
+        } else {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "Ready runtime has no durable finalized proof provenance",
+            ));
+        };
+
+    proof
+        .verify(
+            core.config().validator_set(),
+            None,
+            core.config().consensus_parameters(),
+            authenticated_parent_timestamp_ms,
+            &StrictEd25519Verifier,
+        )
+        .map_err(|_| {
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "durable finalized proof failed strict signature/context verification",
+            )
+        })?;
+
+    let header = proof.finalized_block().header();
+    let finalized = safety.finalized();
+    let configured_validator_set = core.config().validator_set();
+    if header.id() != finalized.block_id()
+        || header.height() != finalized.height()
+        || header.view() != finalized.view()
+        || header.timestamp_ms() != finalized.timestamp_ms()
+        || header.validator_set_id() != configured_validator_set.id()
+        || header.genesis_hash() != configured_validator_set.genesis_hash()
+        || header.chain_id() != configured_validator_set.chain_id()
+        || header.protocol_version() != configured_validator_set.protocol_version()
+        || header.consensus_parameters_hash() != core.config().consensus_parameters().hash()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "durable finalized proof differs from the live finalized tip or validator scope",
+        ));
+    }
+
+    let finalized_chain_root = *core.finalized_chain_root_v0().as_bytes();
+    if finalized_chain_root == [0; 32]
+        || header.state_root().as_bytes() == &[0; 32]
+        || header.receipts_root().as_bytes() == &[0; 32]
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "durable finalized proof has an empty state, receipt, or chain root",
+        ));
+    }
+
+    Ok(PocoNodeLabFinalizedProofV0 {
+        proof_id: proof.id(),
+        finalized_block_id: header.id(),
+        finalized_height: header.height().get(),
+        validator_set_id: header.validator_set_id(),
+        state_root: header.state_root(),
+        receipts_root: header.receipts_root(),
+        authenticated_parent_timestamp_ms,
+        finalized_chain_root,
+        proof,
+    })
 }
 
 fn require_checkpoint_heads_v0(
