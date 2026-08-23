@@ -2823,15 +2823,19 @@ fn authority_hash_v0(domain: &[u8], local_validator: ValidatorId, binding: &[u8]
 mod tests {
     use std::{
         fs,
-        os::unix::fs::PermissionsExt,
+        os::unix::{fs::PermissionsExt, net::UnixListener},
         sync::{
             atomic::{AtomicUsize, Ordering},
-            Arc, Mutex,
+            mpsc, Arc, Mutex,
         },
         thread,
+        time::Duration,
     };
 
     use tempfile::TempDir;
+    use trnm_consensus_external_watermark::{
+        serve_connection, ExternalWatermarkAuthority, UnixWatermarkClient,
+    };
     use trnm_consensus_types::{
         ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, SigningRoot, Validator,
         VotingPower,
@@ -2997,6 +3001,95 @@ mod tests {
                     .sequence(),
                 4,
                 "external CAS advanced for intent and signature events"
+            );
+        });
+    }
+
+    #[test]
+    fn unix_external_watermark_fences_vote_timeout_restart_and_tamper() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let authority_dir = harness._temp.path().join("unix-external-authority");
+            create_private_directory_v0(&authority_dir)
+                .expect("create private Unix external authority directory");
+            let log_path = authority_dir.join("watermark.log");
+            let socket_path = authority_dir.join("watermark.sock");
+            let (stop, daemon) =
+                spawn_unix_watermark_daemon_v0(log_path.clone(), socket_path.clone());
+
+            let client = UnixWatermarkClient::new(&socket_path)
+                .expect("construct Unix external watermark client");
+            harness.authorities[0]
+                .install_external_monotonic_watermark_v0(Box::new(client.clone()))
+                .expect("Ready authority claims the external watermark head");
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0]
+                .vote_proposal_v0(proposal)
+                .expect("Unix external producer boundary signs the exact Vote intent");
+            harness.authorities[0]
+                .begin_local_timeout_v0()
+                .expect("Unix external producer boundary signs the exact TimeoutVote intent");
+
+            let scope = harness.authorities[0]
+                .facts_v0()
+                .expect("read authority facts after Vote and TimeoutVote")
+                .signer_exact_watermark_v1()
+                .scope();
+            let observed = client
+                .load_checked(scope)
+                .expect("read external watermark after Vote and TimeoutVote")
+                .expect("external watermark has a durable head");
+            assert_eq!(observed.sequence(), 4);
+
+            stop.send(()).expect("stop first external watermark daemon");
+            daemon
+                .join()
+                .expect("join first external watermark daemon")
+                .expect("first external watermark daemon exits cleanly");
+            assert!(!socket_path.exists(), "daemon cleanup removes its socket");
+
+            // A fresh daemon process/thread must authenticate and serve the
+            // exact append-only head; this is the restart boundary outside
+            // the validator's local SQLite namespace.
+            let (restart_stop, restart_daemon) =
+                spawn_unix_watermark_daemon_v0(log_path.clone(), socket_path.clone());
+            let restarted_client = UnixWatermarkClient::new(&socket_path)
+                .expect("construct restarted Unix watermark client");
+            let restarted = restarted_client
+                .load_checked(scope)
+                .expect("restarted authority serves the authenticated head")
+                .expect("restarted authority retains the exact head");
+            assert_eq!(restarted, observed);
+            restart_stop
+                .send(())
+                .expect("stop restarted external watermark daemon");
+            restart_daemon
+                .join()
+                .expect("join restarted external watermark daemon")
+                .expect("restarted external watermark daemon exits cleanly");
+
+            // Mutating a durable record must prevent a new authority from
+            // serving any client.  This is deliberately a fail-stop check,
+            // not a best-effort repair or a local-watermark fallback.
+            let mut bytes = fs::read(&log_path).expect("read external watermark log for tamper");
+            assert!(!bytes.is_empty(), "Vote/TimeoutVote produced a log record");
+            bytes[0] ^= 0x01;
+            fs::write(&log_path, bytes).expect("tamper external watermark log");
+            let rejected = match ExternalWatermarkAuthority::open(&log_path) {
+                Ok(_) => panic!("tampered external watermark log must fail closed"),
+                Err(error) => error,
+            };
+            assert!(
+                rejected.to_string().contains("rejected")
+                    || rejected.to_string().contains("invalid"),
+                "tampered authority failure must identify invalid persisted state: {rejected}"
+            );
+            assert!(
+                UnixWatermarkClient::new(&socket_path)
+                    .expect("construct offline client")
+                    .load_checked(scope)
+                    .is_err(),
+                "no daemon may serve a tampered authority namespace"
             );
         });
     }
@@ -3199,6 +3292,87 @@ mod tests {
         fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
             .expect("make continuous-runtime test root private");
         temp
+    }
+
+    /// Starts a bounded Unix daemon thread around the real external
+    /// watermark authority.  The production `serve_unix` loop intentionally
+    /// has process lifetime semantics and no shutdown API; this test harness
+    /// keeps the same socket/framing/authority implementation while adding a
+    /// private stop channel so it can prove a clean restart against one log.
+    fn spawn_unix_watermark_daemon_v0(
+        log_path: PathBuf,
+        socket_path: PathBuf,
+    ) -> (
+        mpsc::Sender<()>,
+        thread::JoinHandle<std::result::Result<(), String>>,
+    ) {
+        let (stop_sender, stop_receiver) = mpsc::channel::<()>();
+        let (ready_sender, ready_receiver) =
+            mpsc::sync_channel::<std::result::Result<(), String>>(1);
+        let daemon = thread::Builder::new()
+            .name("trnm-external-watermark-daemon-test".to_owned())
+            .spawn(move || {
+                let mut authority = match ExternalWatermarkAuthority::open(&log_path) {
+                    Ok(authority) => authority,
+                    Err(error) => {
+                        let message = error.to_string();
+                        let _ = ready_sender.send(Err(message.clone()));
+                        return Err(message);
+                    }
+                };
+                let _ = fs::remove_file(&socket_path);
+                let listener = match UnixListener::bind(&socket_path) {
+                    Ok(listener) => listener,
+                    Err(error) => {
+                        let message = format!("bind test authority socket: {error}");
+                        let _ = ready_sender.send(Err(message.clone()));
+                        return Err(message);
+                    }
+                };
+                if let Err(error) =
+                    fs::set_permissions(&socket_path, fs::Permissions::from_mode(0o600))
+                {
+                    let message = format!("protect test authority socket: {error}");
+                    let _ = ready_sender.send(Err(message.clone()));
+                    return Err(message);
+                }
+                listener
+                    .set_nonblocking(true)
+                    .map_err(|error| format!("set test authority nonblocking: {error}"))?;
+                ready_sender
+                    .send(Ok(()))
+                    .map_err(|_| "test authority readiness receiver dropped".to_owned())?;
+                loop {
+                    match stop_receiver.try_recv() {
+                        Ok(()) | Err(mpsc::TryRecvError::Disconnected) => break,
+                        Err(mpsc::TryRecvError::Empty) => {}
+                    }
+                    match listener.accept() {
+                        Ok((stream, _)) => serve_connection(&mut authority, stream)
+                            .map_err(|error| format!("serve test authority request: {error}"))?,
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            thread::sleep(Duration::from_millis(2));
+                        }
+                        Err(error) => {
+                            return Err(format!("accept test authority connection: {error}"));
+                        }
+                    }
+                }
+                drop(listener);
+                let _ = fs::remove_file(&socket_path);
+                Ok(())
+            })
+            .expect("spawn external watermark daemon thread");
+        match ready_receiver
+            .recv_timeout(Duration::from_secs(5))
+            .expect("external watermark daemon readiness")
+        {
+            Ok(()) => (stop_sender, daemon),
+            Err(error) => {
+                let _ = daemon.join();
+                panic!("external watermark daemon failed to start: {error}");
+            }
+        }
     }
 
     fn on_bounded_takeover_owner_stack_v0<T: Send + 'static>(
