@@ -43,9 +43,11 @@ use crate::{
 const EVENT_SCHEMA_VERSION: u32 = 1;
 const EVENT_HASH_DOMAIN: &[u8] = b"trnm.poco-g3.runtime-event.v1";
 const EVENT_SIGNATURE_DOMAIN: &[u8] = b"trnm.poco-g3.runtime-event-signature.v1";
+const PENDING_EVENT_SCHEMA_VERSION: u32 = 1;
 const MAX_EVENT_JOURNAL_BYTES: u64 = 32 * 1024 * 1024;
 const MAX_EVENT_COUNT: usize = 262_144;
 const MAX_SUBJECT_BYTES: usize = 512;
+const MAX_PENDING_EVENT_BYTES: u64 = 16 * 1024;
 
 #[derive(Debug, Clone)]
 pub struct RuntimeEventContextV1 {
@@ -138,14 +140,40 @@ impl RuntimeEventContextV1 {
 /// Producers receive a typed intent rather than an arbitrary byte slice; the
 /// journal constructs the canonical root and verifies the returned signature
 /// before writing any bytes.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RuntimeEventSignatureRequestV1 {
+    #[serde(with = "runtime_event_validator_id_serde_v1")]
     origin: ValidatorId,
     validator_set_id: [u8; 32],
     process_instance: u64,
     sequence: u64,
     event_sha256: [u8; 32],
     signing_root: [u8; 32],
+}
+
+mod runtime_event_validator_id_serde_v1 {
+    use super::*;
+    use serde::{Deserializer, Serializer};
+
+    pub fn serialize<S>(value: &ValidatorId, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&hex::encode(value.as_bytes()))
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<ValidatorId, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let encoded = String::deserialize(deserializer)?;
+        let bytes = hex::decode(&encoded).map_err(serde::de::Error::custom)?;
+        let bytes: [u8; 32] = bytes
+            .try_into()
+            .map_err(|_| serde::de::Error::custom("runtime event validator id"))?;
+        Ok(ValidatorId::new(bytes))
+    }
 }
 
 impl RuntimeEventSignatureRequestV1 {
@@ -204,6 +232,17 @@ pub trait RuntimeEventSignatureProducerV1: Send {
         &mut self,
         request: RuntimeEventSignatureRequestV1,
     ) -> Result<[u8; 64], RuntimeEventErrorV1>;
+
+    /// Returns the exact response for a previously submitted request without
+    /// advancing external signing state a second time. Implementations which
+    /// cannot durably replay an exact request must keep the default fail-closed
+    /// behavior; ordinary signing is never used as a recovery fallback.
+    fn replay_runtime_event_v1(
+        &mut self,
+        _request: RuntimeEventSignatureRequestV1,
+    ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+        Err(RuntimeEventErrorV1::PendingSignatureRecoveryRequired)
+    }
 }
 
 /// Compatibility adapter for the existing fixture/local-secret path. The
@@ -228,6 +267,13 @@ impl RuntimeEventSignatureProducerV1 for LocalRuntimeEventSignatureProducerV1 {
         request: RuntimeEventSignatureRequestV1,
     ) -> Result<[u8; 64], RuntimeEventErrorV1> {
         Ok(self.signing_key.sign(&request.signing_root_v1()).to_bytes())
+    }
+
+    fn replay_runtime_event_v1(
+        &mut self,
+        request: RuntimeEventSignatureRequestV1,
+    ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+        self.sign_runtime_event_v1(request)
     }
 }
 
@@ -761,6 +807,20 @@ pub struct SignedRuntimeEventV1 {
     pub event_sha256: String,
     pub signature: String,
     pub production_activation: bool,
+}
+
+/// Durable intent/response bridge around the external runtime-event signer.
+/// The unsigned event and typed request are persisted before the signer is
+/// contacted. The optional signature is persisted before the journal append.
+/// On reopen, a signed marker can be completed without another signer call;
+/// an unsigned marker requires the producer's explicit exact-replay method.
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct PendingRuntimeEventV1 {
+    schema_version: u32,
+    request: RuntimeEventSignatureRequestV1,
+    unsigned_event: SignedRuntimeEventV1,
+    signature: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -3293,7 +3353,7 @@ impl RuntimeEventJournalV1 {
     fn start_with_context_gate(
         path: &Path,
         context: RuntimeEventContextV1,
-        producer: Box<dyn RuntimeEventSignatureProducerV1>,
+        mut producer: Box<dyn RuntimeEventSignatureProducerV1>,
         gate: ProcessStartGateV1<'_>,
     ) -> Result<Self, RuntimeEventErrorV1> {
         context.validate_public_key(producer.public_key_v1())?;
@@ -3314,7 +3374,15 @@ impl RuntimeEventJournalV1 {
             &file.metadata().map_err(RuntimeEventErrorV1::Io)?,
         )?;
         let events = read_exact_events(&file)?;
-        let recovered = validate_event_chain(&events, &context)?;
+        let mut recovered = validate_event_chain(&events, &context)?;
+        recovered = recover_pending_runtime_event_v1(
+            &path,
+            &parent,
+            &file,
+            &context,
+            producer.as_mut(),
+            recovered,
+        )?;
         let process_instance = recovered
             .process_instance
             .checked_add(1)
@@ -4692,7 +4760,22 @@ impl RuntimeEventJournalV1 {
                 "runtime-event producer identity",
             ));
         }
+        let pending_path = pending_runtime_event_path_v1(&self.path)?;
+        if read_pending_runtime_event_v1(&pending_path, &self.parent)?.is_some() {
+            return Err(RuntimeEventErrorV1::Invalid(
+                "runtime event pending marker already exists",
+            ));
+        }
+        let mut pending = PendingRuntimeEventV1 {
+            schema_version: PENDING_EVENT_SCHEMA_VERSION,
+            request,
+            unsigned_event: event.clone(),
+            signature: None,
+        };
+        write_pending_runtime_event_v1(&pending_path, &self.parent, &pending)?;
         let signature = self.producer.sign_runtime_event_v1(request)?;
+        pending.signature = Some(hex::encode(signature));
+        write_pending_runtime_event_v1(&pending_path, &self.parent, &pending)?;
         event.signature = hex::encode(signature);
         event.validate_signature(&self.context, event_hash)?;
         let mut line = serde_json::to_vec(&event).map_err(RuntimeEventErrorV1::Json)?;
@@ -4728,6 +4811,7 @@ impl RuntimeEventJournalV1 {
         {
             return Err(RuntimeEventErrorV1::Invalid("event fresh readback"));
         }
+        clear_pending_runtime_event_v1(&pending_path, &self.parent)?;
         self.next_sequence = recovered.next_sequence;
         self.previous_event_sha256 = recovered.previous_event_sha256;
         self.last_monotonic_ns = recovered.last_monotonic_ns;
@@ -4743,6 +4827,133 @@ struct RecoveredJournalV1 {
     previous_event_sha256: [u8; 32],
     last_monotonic_ns: u64,
     state: RuntimeJournalStateV1,
+}
+
+fn recover_pending_runtime_event_v1(
+    journal_path: &Path,
+    parent: &File,
+    file: &File,
+    context: &RuntimeEventContextV1,
+    producer: &mut dyn RuntimeEventSignatureProducerV1,
+    recovered: RecoveredJournalV1,
+) -> Result<RecoveredJournalV1, RuntimeEventErrorV1> {
+    let marker_path = pending_runtime_event_path_v1(journal_path)?;
+    let Some(mut marker) = read_pending_runtime_event_v1(&marker_path, parent)? else {
+        return Ok(recovered);
+    };
+    if marker.schema_version != PENDING_EVENT_SCHEMA_VERSION
+        || !marker.unsigned_event.signature.is_empty()
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker schema",
+        ));
+    }
+
+    let events = read_exact_events(file)?;
+    if let Some(last) = events.last() {
+        let mut unsigned_last = last.clone();
+        unsigned_last.signature.clear();
+        if unsigned_last == marker.unsigned_event {
+            let expected_request = RuntimeEventSignatureRequestV1::new(
+                context.validator_id,
+                *context.validator_set.id().as_bytes(),
+                last.process_instance,
+                last.sequence,
+                decode_hex::<32>(&last.event_sha256, "pending event hash")?,
+            )?;
+            if marker.request != expected_request {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "runtime event pending request differs from committed event",
+                ));
+            }
+            // The journal append won the race with marker cleanup. The
+            // complete signed chain is authoritative; only remove the marker.
+            clear_pending_runtime_event_v1(&marker_path, parent)?;
+            return Ok(recovered);
+        }
+    }
+
+    let expected_process_instance = if recovered.next_sequence == 0 {
+        recovered
+            .process_instance
+            .checked_add(1)
+            .ok_or(RuntimeEventErrorV1::Invalid("process instance overflow"))?
+    } else {
+        recovered.process_instance
+    };
+    if marker.request.origin() != context.validator_id
+        || marker.request.validator_set_id() != *context.validator_set.id().as_bytes()
+        || marker.request.process_instance() != expected_process_instance
+        || marker.request.sequence() != recovered.next_sequence
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending request identity",
+        ));
+    }
+    let unsigned_hash = marker.unsigned_event.validate_unsigned(
+        context,
+        recovered.next_sequence,
+        expected_process_instance,
+        recovered.previous_event_sha256,
+        Some(recovered.last_monotonic_ns),
+    )?;
+    let expected_request = RuntimeEventSignatureRequestV1::new(
+        context.validator_id,
+        *context.validator_set.id().as_bytes(),
+        expected_process_instance,
+        recovered.next_sequence,
+        unsigned_hash,
+    )?;
+    if marker.request != expected_request
+        || marker.request.signing_root_v1() != signature_root(unsigned_hash)
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending request binding",
+        ));
+    }
+    let mut candidate_state = recovered.state.clone();
+    candidate_state.observe(&marker.unsigned_event, context)?;
+
+    let signature = match marker.signature.as_deref() {
+        Some(encoded) => decode_hex::<64>(encoded, "pending event signature")?,
+        None => {
+            let signature = producer.replay_runtime_event_v1(marker.request)?;
+            marker.signature = Some(hex::encode(signature));
+            write_pending_runtime_event_v1(&marker_path, parent, &marker)?;
+            signature
+        }
+    };
+    let mut event = marker.unsigned_event.clone();
+    event.signature = hex::encode(signature);
+    event.validate_signature(context, unsigned_hash)?;
+    let mut line = serde_json::to_vec(&event).map_err(RuntimeEventErrorV1::Json)?;
+    line.push(b'\n');
+    let current_size = file.metadata().map_err(RuntimeEventErrorV1::Io)?.len();
+    let target_size = current_size
+        .checked_add(u64::try_from(line.len()).map_err(|_| RuntimeEventErrorV1::TooLarge)?)
+        .ok_or(RuntimeEventErrorV1::TooLarge)?;
+    if target_size > MAX_EVENT_JOURNAL_BYTES
+        || usize::try_from(recovered.next_sequence)
+            .ok()
+            .is_none_or(|sequence| sequence >= MAX_EVENT_COUNT)
+    {
+        return Err(RuntimeEventErrorV1::TooLarge);
+    }
+    let mut writer = file.try_clone().map_err(RuntimeEventErrorV1::Io)?;
+    writer
+        .seek(SeekFrom::End(0))
+        .map_err(RuntimeEventErrorV1::Io)?;
+    writer.write_all(&line).map_err(RuntimeEventErrorV1::Io)?;
+    writer.sync_all().map_err(RuntimeEventErrorV1::Io)?;
+    let events = read_exact_events(file)?;
+    let recovered_after = validate_event_chain(&events, context)?;
+    if events.last() != Some(&event) || recovered_after.state != candidate_state {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending recovery readback",
+        ));
+    }
+    clear_pending_runtime_event_v1(&marker_path, parent)?;
+    Ok(recovered_after)
 }
 
 fn validate_event_chain(
@@ -5048,6 +5259,163 @@ fn open_locked_journal(
     Ok((target, parent, file))
 }
 
+fn pending_runtime_event_path_v1(journal_path: &Path) -> Result<PathBuf, RuntimeEventErrorV1> {
+    let mut file_name = journal_path
+        .file_name()
+        .ok_or(RuntimeEventErrorV1::Invalid("journal file name"))?
+        .to_os_string();
+    file_name.push(".pending");
+    Ok(journal_path.with_file_name(file_name))
+}
+
+fn pending_runtime_event_temp_path_v1(marker_path: &Path) -> Result<PathBuf, RuntimeEventErrorV1> {
+    let mut file_name = marker_path
+        .file_name()
+        .ok_or(RuntimeEventErrorV1::Invalid("pending event file name"))?
+        .to_os_string();
+    file_name.push(".tmp");
+    Ok(marker_path.with_file_name(file_name))
+}
+
+fn validate_pending_runtime_event_metadata_v1(
+    metadata: &fs::Metadata,
+    parent: &File,
+) -> Result<(), RuntimeEventErrorV1> {
+    let parent_metadata = parent.metadata().map_err(RuntimeEventErrorV1::Io)?;
+    if !metadata.is_file()
+        || metadata.permissions().mode() & 0o777 != 0o600
+        || metadata.nlink() != 1
+        || metadata.uid() != parent_metadata.uid()
+        || metadata.len() == 0
+        || metadata.len() > MAX_PENDING_EVENT_BYTES
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker metadata",
+        ));
+    }
+    Ok(())
+}
+
+fn read_pending_runtime_event_v1(
+    marker_path: &Path,
+    parent: &File,
+) -> Result<Option<PendingRuntimeEventV1>, RuntimeEventErrorV1> {
+    let temporary_path = pending_runtime_event_temp_path_v1(marker_path)?;
+    if fs::symlink_metadata(&temporary_path).is_ok() {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker has an interrupted temporary file",
+        ));
+    }
+    let initial_metadata = match fs::symlink_metadata(marker_path) {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(error) => return Err(RuntimeEventErrorV1::Io(error)),
+    };
+    validate_pending_runtime_event_metadata_v1(&initial_metadata, parent)?;
+    let mut file = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_NONBLOCK)
+        .open(marker_path)
+        .map_err(RuntimeEventErrorV1::Io)?;
+    let opened_metadata = file.metadata().map_err(RuntimeEventErrorV1::Io)?;
+    validate_pending_runtime_event_metadata_v1(&opened_metadata, parent)?;
+    if opened_metadata.dev() != initial_metadata.dev()
+        || opened_metadata.ino() != initial_metadata.ino()
+        || opened_metadata.len() != initial_metadata.len()
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker changed while opened",
+        ));
+    }
+    let capacity =
+        usize::try_from(opened_metadata.len()).map_err(|_| RuntimeEventErrorV1::TooLarge)?;
+    let mut bytes = Vec::with_capacity(capacity);
+    file.read_to_end(&mut bytes)
+        .map_err(RuntimeEventErrorV1::Io)?;
+    if bytes.len() != capacity || !bytes.ends_with(b"\n") {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker bytes",
+        ));
+    }
+    let marker: PendingRuntimeEventV1 =
+        serde_json::from_slice(&bytes[..bytes.len() - 1]).map_err(RuntimeEventErrorV1::Json)?;
+    let mut canonical = serde_json::to_vec(&marker).map_err(RuntimeEventErrorV1::Json)?;
+    canonical.push(b'\n');
+    if canonical != bytes {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "non-canonical runtime event pending marker",
+        ));
+    }
+    let final_metadata = file.metadata().map_err(RuntimeEventErrorV1::Io)?;
+    if final_metadata.dev() != opened_metadata.dev()
+        || final_metadata.ino() != opened_metadata.ino()
+        || final_metadata.len() != opened_metadata.len()
+    {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker changed while read",
+        ));
+    }
+    Ok(Some(marker))
+}
+
+fn write_pending_runtime_event_v1(
+    marker_path: &Path,
+    parent: &File,
+    marker: &PendingRuntimeEventV1,
+) -> Result<(), RuntimeEventErrorV1> {
+    let temporary_path = pending_runtime_event_temp_path_v1(marker_path)?;
+    if let Ok(metadata) = fs::symlink_metadata(marker_path) {
+        validate_pending_runtime_event_metadata_v1(&metadata, parent)?;
+    }
+    let mut bytes = serde_json::to_vec(marker).map_err(RuntimeEventErrorV1::Json)?;
+    bytes.push(b'\n');
+    if u64::try_from(bytes.len()).map_err(|_| RuntimeEventErrorV1::TooLarge)?
+        > MAX_PENDING_EVENT_BYTES
+    {
+        return Err(RuntimeEventErrorV1::TooLarge);
+    }
+    let mut temporary = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+        .open(&temporary_path)
+        .map_err(RuntimeEventErrorV1::Io)?;
+    temporary
+        .write_all(&bytes)
+        .map_err(RuntimeEventErrorV1::Io)?;
+    temporary.sync_all().map_err(RuntimeEventErrorV1::Io)?;
+    let temporary_metadata = temporary.metadata().map_err(RuntimeEventErrorV1::Io)?;
+    validate_pending_runtime_event_metadata_v1(&temporary_metadata, parent)?;
+    fs::rename(&temporary_path, marker_path).map_err(RuntimeEventErrorV1::Io)?;
+    parent.sync_all().map_err(RuntimeEventErrorV1::Io)?;
+    if read_pending_runtime_event_v1(marker_path, parent)?.as_ref() != Some(marker) {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker fresh readback",
+        ));
+    }
+    Ok(())
+}
+
+fn clear_pending_runtime_event_v1(
+    marker_path: &Path,
+    parent: &File,
+) -> Result<(), RuntimeEventErrorV1> {
+    if read_pending_runtime_event_v1(marker_path, parent)?.is_none() {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker missing at clear",
+        ));
+    }
+    fs::remove_file(marker_path).map_err(RuntimeEventErrorV1::Io)?;
+    parent.sync_all().map_err(RuntimeEventErrorV1::Io)?;
+    if fs::symlink_metadata(marker_path).is_ok() {
+        return Err(RuntimeEventErrorV1::Invalid(
+            "runtime event pending marker survived clear",
+        ));
+    }
+    Ok(())
+}
+
 fn read_exact_events(file: &File) -> Result<Vec<SignedRuntimeEventV1>, RuntimeEventErrorV1> {
     let metadata = file.metadata().map_err(RuntimeEventErrorV1::Io)?;
     if metadata.len() > MAX_EVENT_JOURNAL_BYTES {
@@ -5122,6 +5490,7 @@ pub enum RuntimeEventErrorV1 {
     Invalid(&'static str),
     TooLarge,
     FailStopped,
+    PendingSignatureRecoveryRequired,
     RestartCutRequiredForProcess2,
     ExternalAuthorityRequired,
 }
@@ -5143,6 +5512,9 @@ impl fmt::Display for RuntimeEventErrorV1 {
             Self::Invalid(reason) => write!(formatter, "invalid runtime event: {reason}"),
             Self::TooLarge => formatter.write_str("runtime event journal exceeds its bound"),
             Self::FailStopped => formatter.write_str("runtime event journal is fail-stopped"),
+            Self::PendingSignatureRecoveryRequired => formatter.write_str(
+                "runtime event pending signature requires explicit exact-replay authority",
+            ),
             Self::RestartCutRequiredForProcess2 => formatter.write_str(
                 "verified Cut/Park/ParkedAck authority is required before process-2 journal start",
             ),
@@ -5259,6 +5631,81 @@ mod tests {
                 .push(request);
             Ok(self.key.sign(&request.signing_root_v1()).to_bytes())
         }
+    }
+
+    struct FailOnceAfterProcessStartProducerV1 {
+        key: SigningKey,
+        calls: usize,
+    }
+
+    impl RuntimeEventSignatureProducerV1 for FailOnceAfterProcessStartProducerV1 {
+        fn public_key_v1(&self) -> [u8; 32] {
+            self.key.verifying_key().to_bytes()
+        }
+
+        fn sign_runtime_event_v1(
+            &mut self,
+            request: RuntimeEventSignatureRequestV1,
+        ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+            self.calls = self.calls.saturating_add(1);
+            if self.calls == 2 {
+                return Err(RuntimeEventErrorV1::Invalid(
+                    "injected signer response loss",
+                ));
+            }
+            Ok(self.key.sign(&request.signing_root_v1()).to_bytes())
+        }
+
+        fn replay_runtime_event_v1(
+            &mut self,
+            request: RuntimeEventSignatureRequestV1,
+        ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+            Ok(self.key.sign(&request.signing_root_v1()).to_bytes())
+        }
+    }
+
+    #[test]
+    fn pending_runtime_event_intent_replays_before_new_process_start() {
+        let (temporary, context, key) = fixture();
+        let path = temporary.path().join("pending-events.jsonl");
+        let mut journal = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context.clone(),
+            Box::new(FailOnceAfterProcessStartProducerV1 {
+                key: key.clone(),
+                calls: 0,
+            }),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect("initial process starts before injected response loss");
+        assert!(matches!(
+            journal.append(RuntimeEventKindV1::PeerSessionEstablished, "peer-1", 1),
+            Err(RuntimeEventErrorV1::Invalid(
+                "injected signer response loss"
+            ))
+        ));
+        let pending_path = pending_runtime_event_path_v1(&path).unwrap();
+        assert!(pending_path.exists());
+        drop(journal);
+
+        let restart_error = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context,
+            Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect_err("process-2 gate must remain closed before FleetStarted");
+        assert!(matches!(
+            restart_error,
+            RuntimeEventErrorV1::Invalid("second process starts before fleet Started")
+        ));
+        assert!(!pending_path.exists());
+        let events = read_exact_events(&File::open(path).unwrap()).unwrap();
+        assert_eq!(events.len(), 2);
+        assert_eq!(
+            events[1].kind,
+            RuntimeEventKindV1::PeerSessionEstablished.as_str()
+        );
     }
 
     #[test]

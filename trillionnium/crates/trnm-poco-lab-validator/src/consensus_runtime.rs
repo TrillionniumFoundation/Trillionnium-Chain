@@ -1049,6 +1049,17 @@ impl RuntimeEventSignatureProducerV1 for SharedRuntimeEventSignatureProducerV1 {
             .map_err(|_| RuntimeEventErrorV1::Invalid("runtime-event producer lock"))?;
         producer.sign_runtime_event_v1(request)
     }
+
+    fn replay_runtime_event_v1(
+        &mut self,
+        request: crate::process_event::RuntimeEventSignatureRequestV1,
+    ) -> std::result::Result<[u8; 64], RuntimeEventErrorV1> {
+        let mut producer = self
+            .inner
+            .lock()
+            .map_err(|_| RuntimeEventErrorV1::Invalid("runtime-event producer lock"))?;
+        producer.replay_runtime_event_v1(request)
+    }
 }
 
 /// Runs one bounded seven-validator Stage0 consensus process.
