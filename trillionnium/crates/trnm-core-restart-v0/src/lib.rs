@@ -1125,4 +1125,38 @@ mod tests {
             ))
         ));
     }
+
+    #[cfg(unix)]
+    #[test]
+    fn actual_checkpoint_log_write_failure_enters_terminal_poison_state() {
+        let (set, qc, head) = fixture();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            b"state".to_vec(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        let full = OpenOptions::new()
+            .write(true)
+            .open("/dev/full")
+            .expect("Linux /dev/full");
+        let _original_log = std::mem::replace(&mut store.log, full);
+        assert!(matches!(
+            store.commit(&candidate, None),
+            Err(CoreRestartError::Io {
+                stage: "append checkpoint record",
+                ..
+            })
+        ));
+        assert!(matches!(
+            store.restart_disposition(),
+            Err(CoreRestartError::InvalidLog(
+                "checkpoint store is poisoned after commit I/O failure"
+            ))
+        ));
+    }
 }
