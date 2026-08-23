@@ -9,6 +9,7 @@ current_fleet_probe_profile = "probe-fleet-v1"
 current_run_readiness_profile = "run-readiness-v2"
 current_observation_source_commit = "af6c2737e1bf9d770076f8cb8b5a61887df619c7"
 current_observation_source_tree_oid = "03bbc502b9fc716990806968f44da05805db6a39"
+current_observation_source_relation = "prior-commit-observation"
 current_observation_cargo_lock_sha256 = "72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b"
 current_observation_fleet_probe_path = "docs/evidence/poco-g3/current-observation-2026-08-23/current-fleet-probe.json"
 current_observation_fleet_probe_sha256 = "1a4083c655298011b7d167bc9bf3127a3f1d5bba804566342966716bf0b7405d"
@@ -19,7 +20,13 @@ current_observation_control_host = "p4-x230"
 current_observation_fleet_report_bytes = 2526
 current_observation_readiness_report_bytes = 5453
 current_build_evidence_profile = "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1"
-current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820"
+current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-ac5880d2-20260823"
+current_build_evidence_source_commit = "ac5880d2c9cadfbdbcf04bb294f499ad16ccecb6"
+current_build_evidence_source_tree_oid = "f6e6079ba172ed3454e93402dba37d8659f32719"
+current_build_evidence_source_candidate_sha256 = "36491b5b4070f30aa1904e0ed5d0d219598abb06e4121b43581a7f2cf989ff89"
+current_build_evidence_manifest_sha256 = "492bc6b526ccd32647ea845bb6a9678be6efd6e9388c7f3f3e0eaa80fa0bd563"
+current_build_evidence_deep_verified = true
+current_build_evidence_source_relation = "prior-commit-observation"
 current_fresh_clone_gates_evidence_profile = "poco-g3-stage0-x230-fresh-clone-gates-observation-v1"
 current_fresh_clone_gates_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
 current_fresh_clone_gates_evidence_sha256 = "77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21"
@@ -109,7 +116,7 @@ fresh_clone_gates_formal_rerun_offline = true
 fresh_clone_gates_paid_ci_used = false
 fresh_clone_gates_runner_identity_cryptographically_attested = false
 fresh_clone_gates_logs_bundled = false
-stage0_deep_reverification_bundle_available = false
+stage0_deep_reverification_bundle_available = true
 
 # Operational and release claims remain false until fresh external evidence is
 # produced and accepted by the exact current contracts.

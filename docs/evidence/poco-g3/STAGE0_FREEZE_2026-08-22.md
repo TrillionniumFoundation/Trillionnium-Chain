@@ -13,16 +13,19 @@ The audit was run from the canonical linked worktree:
 ```text
 root:   /home/alex/projects/worktrees/trillionnium-chain/poco-bft-v0-phase0
 branch: feature/chain-poco-bft-v0
-HEAD:   af6c2737e1bf9d770076f8cb8b5a61887df619c7
-status: clean before the current-observation docs-only follow-up
-tree:   03bbc502b9fc716990806968f44da05805db6a39
+HEAD:   47a70581397dff47aeae118f6be4bf1baed4d6e6
+status: clean after the current X230 evidence follow-up
+tree:   1db3333a8b24b08b382fd726adc427b38b9842bd
 ```
 
 The relevant committed lineage is:
 
 ```text
-af6c2737e1  docs(evidence): freeze Stage0 d0 claim boundary
-└─ d0c886c997  ci(stage0): register planned P2P admission contract
+47a7058139  docs(evidence): bind current X230 reproducible build
+└─ ac5880d2c9  ci(stage0): track current observation truth
+   └─ 1808240d9  docs(evidence): bind current fleet readiness observation
+      └─ af6c2737e1  docs(evidence): freeze Stage0 d0 claim boundary
+         └─ d0c886c997  ci(stage0): register planned P2P admission contract
    └─ 6da6840380  test(stage0): define planned P2P connectivity admission
       └─ ffa2b8799a  fix(poco): bound fleet runtime control paths
          └─ 422654b0b6  evidence: bind Stage0 publication to held bytes
@@ -63,9 +66,12 @@ fix. Consequently, do not relabel, copy, or reuse its source archive,
 must be generated after the candidate commit is deliberately frozen.
 
 The later committed-tool remap control is useful only as a scoped historical
-control: it does not retroactively change the d6 candidate, does not provide
-cryptographic runner attestation, and does not bind a fresh current-candidate
-source/archive/binary bundle.
+control: it does not retroactively change the d6 candidate and does not
+provide cryptographic runner attestation. A separate current-candidate X230
+build record is now present under
+`stage0-repro-ac5880d2-20260823/`; it binds the prior `ac5880d2c9` source
+candidate and has passed deep source/report/ELF rehashing. It is explicitly a
+prior-commit observation, not evidence for this later documentation commit.
 
 ## Current truth boundary
 
@@ -77,7 +83,7 @@ stage0_observation_complete=false
 committed_candidate_rust_src_remap_fix_observed=false
 current_fleet_probe_observed=true
 current_run_readiness_observed=true
-stage0_deep_reverification_bundle_available=false
+stage0_deep_reverification_bundle_available=true
 validator_runtime_started=false
 validator_run_completed=false
 validator_run_7_completed=false
@@ -100,7 +106,6 @@ The current status checker reports the remaining Stage0 blockers as:
 
 ```text
 committed_candidate_rust_src_remap_fix_observed
-stage0_deep_reverification_bundle_available
 validator_run_7_completed
 ```
 
