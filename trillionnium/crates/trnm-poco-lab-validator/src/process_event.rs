@@ -5664,6 +5664,30 @@ mod tests {
         }
     }
 
+    struct RejectUnexpectedReplayProducerV1 {
+        key: SigningKey,
+    }
+
+    impl RuntimeEventSignatureProducerV1 for RejectUnexpectedReplayProducerV1 {
+        fn public_key_v1(&self) -> [u8; 32] {
+            self.key.verifying_key().to_bytes()
+        }
+
+        fn sign_runtime_event_v1(
+            &mut self,
+            request: RuntimeEventSignatureRequestV1,
+        ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+            Ok(self.key.sign(&request.signing_root_v1()).to_bytes())
+        }
+
+        fn replay_runtime_event_v1(
+            &mut self,
+            _request: RuntimeEventSignatureRequestV1,
+        ) -> Result<[u8; 64], RuntimeEventErrorV1> {
+            Err(RuntimeEventErrorV1::Invalid("unexpected signer replay"))
+        }
+    }
+
     #[test]
     fn pending_runtime_event_intent_replays_before_new_process_start() {
         let (temporary, context, key) = fixture();
@@ -5692,6 +5716,53 @@ mod tests {
             &path,
             context,
             Box::new(LocalRuntimeEventSignatureProducerV1::new(key)),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect_err("process-2 gate must remain closed before FleetStarted");
+        assert!(matches!(
+            restart_error,
+            RuntimeEventErrorV1::Invalid("second process starts before fleet Started")
+        ));
+        assert!(!pending_path.exists());
+        let events = read_exact_events(&File::open(path).unwrap()).unwrap();
+        assert_eq!(events.len(), 2);
+        assert_eq!(
+            events[1].kind,
+            RuntimeEventKindV1::PeerSessionEstablished.as_str()
+        );
+    }
+
+    #[test]
+    fn signed_pending_runtime_event_response_is_recovered_without_resigning() {
+        let (temporary, context, key) = fixture();
+        let path = temporary.path().join("signed-pending-events.jsonl");
+        let mut journal = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context.clone(),
+            Box::new(FailOnceAfterProcessStartProducerV1 {
+                key: key.clone(),
+                calls: 0,
+            }),
+            ProcessStartGateV1::UnverifiedTestRestart,
+        )
+        .expect("initial process starts before injected response loss");
+        assert!(journal
+            .append(RuntimeEventKindV1::PeerSessionEstablished, "peer-1", 1)
+            .is_err());
+        let pending_path = pending_runtime_event_path_v1(&path).unwrap();
+        let mut marker = read_pending_runtime_event_v1(&pending_path, &journal.parent)
+            .unwrap()
+            .expect("pending intent remains durable");
+        marker.signature = Some(hex::encode(
+            key.sign(&marker.request.signing_root_v1()).to_bytes(),
+        ));
+        write_pending_runtime_event_v1(&pending_path, &journal.parent, &marker).unwrap();
+        drop(journal);
+
+        let restart_error = RuntimeEventJournalV1::start_with_context_gate(
+            &path,
+            context,
+            Box::new(RejectUnexpectedReplayProducerV1 { key }),
             ProcessStartGateV1::UnverifiedTestRestart,
         )
         .expect_err("process-2 gate must remain closed before FleetStarted");
