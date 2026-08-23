@@ -39,7 +39,7 @@ external-signer-runtime = [
 # not wire the sidecar into Core or open any activation gate; it exists so a
 # node owner can bind a pure SafetyRules transition to an independently
 # administered semantic watermark in focused tests.
-safety-rules-sidecar = ["dep:trnm-consensus-safety-rules"]
+safety-rules-sidecar = ["dep:libc", "dep:trnm-consensus-safety-rules"]
 g2-process-test-support = [
   "fixture-raw-key",
   "dep:tempfile",
@@ -205,6 +205,7 @@ required-features = ["external-signer-runtime"]
 borsh = { version = "1.5", features = ["derive"] }
 ed25519-dalek = { version = "2", optional = true }
 fs2 = { version = "0.4", optional = true }
+libc = { version = "0.2", optional = true }
 rusqlite = { version = "0.32", features = ["bundled"] }
 serde_json = { version = "1", optional = true }
 sha2 = "0.10"

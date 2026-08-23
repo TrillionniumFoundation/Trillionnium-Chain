@@ -1690,6 +1690,10 @@ pub enum PocoNodeHostErrorV0 {
     SafetyRulesShadowTransitionMismatch {
         revision: u64,
     },
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSidecarPendingRecoveryRequired {
+        revision: u64,
+    },
     #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
     #[cfg(feature = "legacy-consensus-app")]
@@ -1963,6 +1967,11 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::SafetyRulesShadowTransitionMismatch { revision } => write!(
                 formatter,
                 "Core SafetyRules shadow transition does not bind timeout persistence revision {revision}",
+            ),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSidecarPendingRecoveryRequired { revision } => write!(
+                formatter,
+                "SafetyRules sidecar has an unresolved pending timeout transition at revision {revision}; ordinary reopen is fail-closed",
             ),
             #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => {
@@ -3147,6 +3156,12 @@ mod tests {
                 .revision(),
             1,
             "the local SafetyStore reaches the same transition after the sidecar"
+        );
+        assert_eq!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect completed sidecar marker"),
+            None,
+            "the pending marker is removed only after the local SQLite barrier succeeds"
         );
     }
 

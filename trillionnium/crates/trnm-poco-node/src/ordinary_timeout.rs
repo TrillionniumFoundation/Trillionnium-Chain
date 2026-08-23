@@ -20,7 +20,10 @@ use trnm_consensus_types::{
 };
 
 #[cfg(feature = "safety-rules-sidecar")]
-use crate::safety_rules_sidecar::SafetyRulesSemanticSidecarV1;
+use crate::safety_rules_sidecar::{
+    clear_pending_timeout_marker_v1, load_pending_timeout_marker_v1,
+    write_pending_timeout_marker_v1, PendingTimeoutMarkerV1, SafetyRulesSemanticSidecarV1,
+};
 use crate::{
     effect_name_v0, head_has_current_invalid_completion_v0, reject_activation_request,
     validate_signer_safety_revision_v0, HostBootstrapModeV0, HostLifecyclePhaseV0,
@@ -128,6 +131,8 @@ pub struct PocoNodeHostV0<W, P> {
     signature_producer: P,
     bootstrap_mode: HostBootstrapModeV0,
     runtime_status: BoundedTimeoutRuntimeStatusV0,
+    #[cfg(feature = "safety-rules-sidecar")]
+    pending_timeout_marker: Option<PendingTimeoutMarkerV1>,
 }
 
 impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, P> {
@@ -186,6 +191,8 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             signature_producer,
             bootstrap_mode: HostBootstrapModeV0::InitializedGenesis,
             runtime_status: BoundedTimeoutRuntimeStatusV0::Active,
+            #[cfg(feature = "safety-rules-sidecar")]
+            pending_timeout_marker: None,
         })
     }
 
@@ -218,6 +225,16 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         let head = safety_store
             .head()
             .map_err(PocoNodeHostErrorV0::safety_store)?;
+        #[cfg(feature = "safety-rules-sidecar")]
+        if let Some(marker) = load_pending_timeout_marker_v1(safety_store.path())
+            .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?
+        {
+            return Err(
+                PocoNodeHostErrorV0::SafetyRulesSidecarPendingRecoveryRequired {
+                    revision: marker.revision(),
+                },
+            );
+        }
         if !matches!(
             head.transition_context(),
             SafetyTransitionContextV0::Ordinary
@@ -262,6 +279,8 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             signature_producer,
             bootstrap_mode: HostBootstrapModeV0::RecoveredExisting,
             runtime_status: BoundedTimeoutRuntimeStatusV0::Active,
+            #[cfg(feature = "safety-rules-sidecar")]
+            pending_timeout_marker: None,
         })
     }
 
@@ -373,7 +392,13 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
                 .core
                 .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
                 .map_err(PocoNodeHostErrorV0::core)?;
-            persist_timeout_shadow_sidecar_before_sqlite_v1(&effects, sidecar)?;
+            let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
+                self.safety_store.path(),
+                self.safety_store.journal_id_v0(),
+                &effects,
+                sidecar,
+            )?;
+            self.pending_timeout_marker = Some(marker);
             self.drive_bounded_effects_v0(effects)
         })();
         self.finish_runtime_call_v0(result)
@@ -432,6 +457,16 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     fn require_active_runtime_v0(&self) -> Result<(), PocoNodeHostErrorV0> {
         if self.runtime_status == BoundedTimeoutRuntimeStatusV0::FailStopped {
             return Err(PocoNodeHostErrorV0::BoundedTimeoutHostFailStopped);
+        }
+        #[cfg(feature = "safety-rules-sidecar")]
+        if let Some(marker) = load_pending_timeout_marker_v1(self.safety_store.path())
+            .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?
+        {
+            return Err(
+                PocoNodeHostErrorV0::SafetyRulesSidecarPendingRecoveryRequired {
+                    revision: marker.revision(),
+                },
+            );
         }
         Ok(())
     }
@@ -511,6 +546,8 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
                     validate_bounded_timeout_bootstrap_v0(&confirmed)?;
                     validate_signer_safety_revision_v0(&self.signer_journal, &confirmed)?;
                     freshly_persisted_signing_revision = Some(confirmed.revision());
+                    #[cfg(feature = "safety-rules-sidecar")]
+                    self.clear_pending_timeout_marker_after_safety_persist_v1()?;
                     #[cfg(feature = "recovery-process-test-support")]
                     if let Some(observer) = checkpoint.as_deref_mut() {
                         observer(
@@ -676,6 +713,17 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         Ok(actions)
     }
 
+    #[cfg(feature = "safety-rules-sidecar")]
+    fn clear_pending_timeout_marker_after_safety_persist_v1(
+        &mut self,
+    ) -> Result<(), PocoNodeHostErrorV0> {
+        let Some(marker) = self.pending_timeout_marker.take() else {
+            return Ok(());
+        };
+        clear_pending_timeout_marker_v1(self.safety_store.path(), marker)
+            .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)
+    }
+
     /// No production-running state is constructible in this slice.
     pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
         Err(ProductionActivationBlockedV0::new())
@@ -684,9 +732,11 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
 
 #[cfg(feature = "safety-rules-sidecar")]
 fn persist_timeout_shadow_sidecar_before_sqlite_v1<SW>(
+    safety_store_path: &Path,
+    safety_journal_id: [u8; 32],
     effects: &[Effect],
     sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
-) -> Result<(), PocoNodeHostErrorV0>
+) -> Result<PendingTimeoutMarkerV1, PocoNodeHostErrorV0>
 where
     SW: ExternalMonotonicWatermarkV0,
 {
@@ -728,9 +778,18 @@ where
             revision: request.barrier().get(),
         });
     }
+    let marker = PendingTimeoutMarkerV1::from_transition(
+        transition,
+        sidecar.namespace_digest_v1(),
+        safety_journal_id,
+    )
+    .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
+    write_pending_timeout_marker_v1(safety_store_path, marker)
+        .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
     sidecar
         .persist_transition_v1(transition.predecessor_state_digest(), transition)
-        .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)
+        .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
+    Ok(marker)
 }
 
 fn is_retryable_exact_timeout_error_v0(error: &PocoNodeHostErrorV0) -> bool {
