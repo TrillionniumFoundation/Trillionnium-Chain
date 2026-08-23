@@ -448,6 +448,7 @@ pub struct CheckpointStoreV0 {
     log: File,
     _lock: File,
     current: Option<CheckpointRecordV0>,
+    poisoned: bool,
 }
 
 impl CheckpointStoreV0 {
@@ -482,6 +483,7 @@ impl CheckpointStoreV0 {
             log,
             _lock: lock,
             current: None,
+            poisoned: false,
         };
         value.replay_log()?;
         Ok(value)
@@ -492,6 +494,7 @@ impl CheckpointStoreV0 {
     }
 
     pub fn restart_disposition(&self) -> Result<RestartDispositionV0> {
+        self.ensure_healthy()?;
         let Some(checkpoint) = self.current.clone() else {
             return Ok(RestartDispositionV0::Empty);
         };
@@ -518,6 +521,7 @@ impl CheckpointStoreV0 {
         candidate: &CheckpointCandidateV0,
         expected_predecessor: Option<[u8; 32]>,
     ) -> Result<CheckpointCommitOutcomeV0> {
+        self.ensure_healthy()?;
         let predecessor = self.current.as_ref().map(CheckpointRecordV0::record_hash);
         if expected_predecessor != predecessor {
             return Err(CoreRestartError::CasConflict);
@@ -570,15 +574,18 @@ impl CheckpointStoreV0 {
             predecessor.unwrap_or([0; 32]),
         );
         record.validate(predecessor.unwrap_or([0; 32]))?;
-        self.log
-            .write_all(&record.encode())
-            .map_err(|source| io_error("append checkpoint record", source))?;
-        self.log
-            .sync_all()
-            .map_err(|source| io_error("sync checkpoint record", source))?;
-        self.directory
-            .sync_all()
-            .map_err(|source| io_error("sync checkpoint directory", source))?;
+        if let Err(source) = self.log.write_all(&record.encode()) {
+            self.poisoned = true;
+            return Err(io_error("append checkpoint record", source));
+        }
+        if let Err(source) = self.log.sync_all() {
+            self.poisoned = true;
+            return Err(io_error("sync checkpoint record", source));
+        }
+        if let Err(source) = self.directory.sync_all() {
+            self.poisoned = true;
+            return Err(io_error("sync checkpoint directory", source));
+        }
         self.current = Some(record);
         Ok(CheckpointCommitOutcomeV0::Committed)
     }
@@ -586,6 +593,7 @@ impl CheckpointStoreV0 {
     /// Installs a missing snapshot only after matching the exact retained
     /// checkpoint.  This is a state-sync import, not a new consensus commit.
     pub fn install_state_sync(&mut self, bundle: StateSyncBundleV0) -> Result<()> {
+        self.ensure_healthy()?;
         let checkpoint = self
             .current
             .as_ref()
@@ -615,6 +623,7 @@ impl CheckpointStoreV0 {
         validator_set: &ValidatorSet,
         verifier: &V,
     ) -> Result<()> {
+        self.ensure_healthy()?;
         let checkpoint = self
             .current
             .as_ref()
@@ -650,6 +659,15 @@ impl CheckpointStoreV0 {
     fn snapshot_path(&self, generation: u64) -> PathBuf {
         self.directory_path
             .join(format!("state-{generation:020}.bin"))
+    }
+
+    fn ensure_healthy(&self) -> Result<()> {
+        if self.poisoned {
+            return Err(CoreRestartError::InvalidLog(
+                "checkpoint store is poisoned after commit I/O failure",
+            ));
+        }
+        Ok(())
     }
 
     fn replay_log(&mut self) -> Result<()> {
@@ -1065,5 +1083,46 @@ mod tests {
         bytes[index] ^= 0x01;
         fs::write(&log_path, bytes).expect("tamper");
         assert!(CheckpointStoreV0::open(directory.path()).is_err());
+    }
+
+    #[test]
+    fn commit_io_poison_fences_same_process_follow_up_operations() {
+        let (set, qc, head) = fixture();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            b"state".to_vec(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        store.poisoned = true;
+        assert!(matches!(
+            store.commit(&candidate, None),
+            Err(CoreRestartError::InvalidLog(
+                "checkpoint store is poisoned after commit I/O failure"
+            ))
+        ));
+        assert!(matches!(
+            store.restart_disposition(),
+            Err(CoreRestartError::InvalidLog(
+                "checkpoint store is poisoned after commit I/O failure"
+            ))
+        ));
+        let bundle = StateSyncBundleV0::new(
+            [1; 32],
+            [2; 32],
+            digest(SNAPSHOT_DOMAIN, b"state"),
+            b"state".to_vec(),
+        )
+        .expect("bundle");
+        assert!(matches!(
+            store.install_state_sync(bundle),
+            Err(CoreRestartError::InvalidLog(
+                "checkpoint store is poisoned after commit I/O failure"
+            ))
+        ));
     }
 }
