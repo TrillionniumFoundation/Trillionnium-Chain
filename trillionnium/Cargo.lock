@@ -1812,6 +1812,7 @@ dependencies = [
  "borsh",
  "ed25519-dalek",
  "fs2",
+ "libc",
  "rusqlite",
  "serde_json",
  "sha2",

@@ -372,24 +372,30 @@ fn run() -> Result<ExitCode> {
             bail!(usage());
         }
         // This is the only CLI path that intentionally opens a deployment
-        // without the local consensus secret.  It is a preflight projection,
+        // without any validator role secret.  It is a preflight projection,
         // not a hidden fallback to the fixture signer and not a production
         // activation switch.  A future caller must supply every authority
-        // object to `run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1`
+        // object (including P2P, event/replay, proposal, Vote/Timeout, and
+        // fleet producers) to
+        // `run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1`
         // explicitly; this command merely proves that the public bundle can
-        // be authenticated without importing the secret into this process.
+        // be authenticated without importing private key material here.
         let binary = env::current_exe().context("resolve current executable")?;
         let loaded = LoadedValidatorConfig::load_external_authority(run_root, config, binary)?;
         ensure!(
             !loaded.has_local_consensus_secret(),
             "external-authority loader unexpectedly retained a local consensus secret"
         );
+        ensure!(
+            !loaded.has_local_p2p_identity_secret() && !loaded.has_local_operator_recovery_secret(),
+            "external-authority loader unexpectedly retained a non-consensus role secret"
+        );
         let core = loaded.core_config()?;
         println!(
             "{}",
             serde_json::to_string(&json!({
                 "schema_version": 1,
-                "status": "external-authority-config-secret-free",
+                "status": "external-consensus-authority-config-secret-free",
                 "run_id": loaded.run_id(),
                 "host_id": loaded.host_id(),
                 "validator_id": hex::encode(loaded.local_validator().as_bytes()),
@@ -402,6 +408,11 @@ fn run() -> Result<ExitCode> {
                 "binary_sha256": hex::encode(loaded.binary_sha256()),
                 "core_max_blocks": core.max_blocks(),
                 "consensus_secret_loaded": false,
+                "p2p_identity_secret_loaded": loaded.has_local_p2p_identity_secret(),
+                "operator_recovery_secret_loaded": loaded.has_local_operator_recovery_secret(),
+                "all_local_role_secrets_loaded": loaded.has_local_consensus_secret()
+                    || loaded.has_local_p2p_identity_secret()
+                    || loaded.has_local_operator_recovery_secret(),
                 "external_peer_lease_required": true,
                 "external_monotonic_watermark_required": true,
                 "external_vote_timeout_producer_required": true,

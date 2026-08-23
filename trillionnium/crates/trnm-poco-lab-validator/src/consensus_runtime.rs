@@ -1447,6 +1447,16 @@ fn compose_deployed_external_authority_v1(
         !config.has_local_consensus_secret(),
         "external-authority composition refuses a config that loaded a local consensus secret"
     );
+    // The current event journal, replay archive, and authenticated mesh still
+    // require typed role-specific producers that are not parameters of this
+    // compatibility entry.  Reject synchronously, before spawning the owner
+    // thread or opening a journal, rather than allowing an unavailable raw-key
+    // accessor to panic after a partial authority graph has been built.
+    ensure!(
+        config.has_local_p2p_identity_secret()
+            && config.has_local_operator_recovery_secret(),
+        "ExternalAuthorityRequired: P2P identity, runtime-event, and replay/recovery signing producers are not wired"
+    );
     run_bounded_consensus_with_authority_builder_v1(
         config,
         duration,

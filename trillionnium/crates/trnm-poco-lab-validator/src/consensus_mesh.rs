@@ -30,7 +30,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{anyhow, bail, ensure, Context, Result};
 use ed25519_dalek::SigningKey;
 use trnm_consensus_types::{ValidatorId, ValidatorSet};
 
@@ -1043,6 +1043,10 @@ impl PersistentAuthenticatedPeerMeshV0 {
         queue_capacity: usize,
         authority: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     ) -> Result<Self> {
+        ensure!(
+            config.has_local_p2p_identity_secret(),
+            "ExternalAuthorityRequired: authenticated mesh P2P identity producer is not injected"
+        );
         validate_directed_plan(
             config.local_validator(),
             config.peers(),

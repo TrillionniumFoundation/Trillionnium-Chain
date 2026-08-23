@@ -3023,6 +3023,9 @@ impl RuntimeEventJournalV1 {
         path: impl AsRef<Path>,
         config: &LoadedValidatorConfig,
     ) -> Result<Self, RuntimeEventErrorV1> {
+        if !config.has_local_consensus_secret() {
+            return Err(RuntimeEventErrorV1::ExternalAuthorityRequired);
+        }
         let context = RuntimeEventContextV1::from_loaded_config(config);
         Self::start_with_context_gate(
             path.as_ref(),
@@ -3049,6 +3052,9 @@ impl RuntimeEventJournalV1 {
         path: impl AsRef<Path>,
         config: &LoadedValidatorConfig,
     ) -> Result<Process2JournalStartedFromRestartCutV1, RuntimeEventErrorV1> {
+        if !config.has_local_consensus_secret() {
+            return Err(RuntimeEventErrorV1::ExternalAuthorityRequired);
+        }
         let context = RuntimeEventContextV1::from_loaded_config(config);
         let journal_witness =
             read_process1_target_parked_ack_journal_witness_v1(path.as_ref(), &context)?;
@@ -4904,6 +4910,7 @@ pub enum RuntimeEventErrorV1 {
     TooLarge,
     FailStopped,
     RestartCutRequiredForProcess2,
+    ExternalAuthorityRequired,
 }
 
 impl RuntimeEventErrorV1 {
@@ -4925,6 +4932,9 @@ impl fmt::Display for RuntimeEventErrorV1 {
             Self::FailStopped => formatter.write_str("runtime event journal is fail-stopped"),
             Self::RestartCutRequiredForProcess2 => formatter.write_str(
                 "verified Cut/Park/ParkedAck authority is required before process-2 journal start",
+            ),
+            Self::ExternalAuthorityRequired => formatter.write_str(
+                "ExternalAuthorityRequired: runtime-event signing producer is not injected",
             ),
         }
     }

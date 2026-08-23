@@ -362,8 +362,12 @@ pub struct LoadedValidatorConfig {
     /// external-authority loader never opens this secret; any accidental
     /// fallback to it therefore fails closed at the accessor boundary.
     consensus_signing_key: Option<SigningKey>,
-    p2p_identity_signing_key: SigningKey,
-    operator_recovery_signing_key: SigningKey,
+    /// Role secrets are present only for the explicit fixture/local-key
+    /// loader.  An external-authority load must not import *any* private key
+    /// into the validator process; the corresponding runtime producers have
+    /// to be injected out-of-process.
+    p2p_identity_signing_key: Option<SigningKey>,
+    operator_recovery_signing_key: Option<SigningKey>,
     key_role_registry: ValidatorKeyRoleRegistryV1,
     validator_set_sha256: [u8; 32],
     topology_sha256: [u8; 32],
@@ -612,22 +616,28 @@ impl LoadedValidatorConfig {
         } else {
             None
         };
-        let p2p_identity_signing_key = load_validator_role_secret(
-            &run_root,
-            &manifest,
-            &config.p2p_identity_secret_key_path,
-            "p2p-identity",
-            &config.validator_id,
-            local_roles.p2p_identity_public_key(),
-        )?;
-        let operator_recovery_signing_key = load_validator_role_secret(
-            &run_root,
-            &manifest,
-            &config.operator_recovery_secret_key_path,
-            "operator-recovery",
-            &config.validator_id,
-            local_roles.operator_recovery_public_key(),
-        )?;
+        let (p2p_identity_signing_key, operator_recovery_signing_key) = if open_consensus_secret {
+            (
+                Some(load_validator_role_secret(
+                    &run_root,
+                    &manifest,
+                    &config.p2p_identity_secret_key_path,
+                    "p2p-identity",
+                    &config.validator_id,
+                    local_roles.p2p_identity_public_key(),
+                )?),
+                Some(load_validator_role_secret(
+                    &run_root,
+                    &manifest,
+                    &config.operator_recovery_secret_key_path,
+                    "operator-recovery",
+                    &config.validator_id,
+                    local_roles.operator_recovery_public_key(),
+                )?),
+            )
+        } else {
+            (None, None)
+        };
 
         let binary_path = canonical_regular_file(binary_path.as_ref())?;
         let binary_sha256 = sha256_running_image(&binary_path)?;
@@ -741,12 +751,29 @@ impl LoadedValidatorConfig {
         self.consensus_signing_key.is_some()
     }
 
+    /// Returns whether the explicit fixture loader imported the P2P identity
+    /// secret.  External-authority mode must keep this false and use an
+    /// injected identity producer instead.
+    pub const fn has_local_p2p_identity_secret(&self) -> bool {
+        self.p2p_identity_signing_key.is_some()
+    }
+
+    /// Returns whether the explicit fixture loader imported the operator /
+    /// recovery secret.  External-authority mode must keep this false.
+    pub const fn has_local_operator_recovery_secret(&self) -> bool {
+        self.operator_recovery_signing_key.is_some()
+    }
+
     pub const fn p2p_identity_signing_key(&self) -> &SigningKey {
-        &self.p2p_identity_signing_key
+        self.p2p_identity_signing_key.as_ref().expect(
+            "P2P identity signing key is unavailable in external-authority mode; refusing raw-key fallback",
+        )
     }
 
     pub const fn operator_recovery_signing_key(&self) -> &SigningKey {
-        &self.operator_recovery_signing_key
+        self.operator_recovery_signing_key.as_ref().expect(
+            "operator recovery signing key is unavailable in external-authority mode; refusing raw-key fallback",
+        )
     }
 
     pub const fn key_role_registry(&self) -> &ValidatorKeyRoleRegistryV1 {
