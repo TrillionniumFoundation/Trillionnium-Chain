@@ -72,6 +72,10 @@ build record is now present under
 `stage0-repro-ac5880d2-20260823/`; it binds the prior `ac5880d2c9` source
 candidate and has passed deep source/report/ELF rehashing. It is explicitly a
 prior-commit observation, not evidence for this later documentation commit.
+The tracked v2 wrapper was also run on that candidate. Its report is preserved
+beside the v1 records; v1 and v2 produced identical role hashes in this
+environment, so no differential rust-src drift was observed and the typed
+candidate-remap bit remains false.
 
 ## Current truth boundary
 
