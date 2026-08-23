@@ -3958,6 +3958,43 @@ mod tests {
                 .exact_watermark(),
             exact_signer_watermark
         );
+
+        // Repeat the same terminal-K coordinator against the real hardened
+        // SQLite checkpoint backend.  The earlier memory fixture proves the
+        // coordinator's branch logic; this path proves that the canonical
+        // record survives an uncertain commit acknowledgement, a fresh
+        // connection, and an exact CAS readback.
+        let sqlite_checkpoint_path = root.path().join("whole-node-checkpoint.sqlite3");
+        let mut sqlite_checkpoint_store =
+            SqliteExternalNodeCheckpointStoreV0::initialize_new(&sqlite_checkpoint_path)
+                .expect("initialize real SQLite checkpoint namespace");
+        sqlite_checkpoint_store
+            .compare_and_advance(None, source)
+            .expect("persist SQLite predecessor checkpoint");
+        sqlite_checkpoint_store.report_unavailable_after_next_commit_v0();
+        let sqlite_confirmed = advance_native_k_whole_node_checkpoint_v0(
+            &mut sqlite_checkpoint_store,
+            source,
+            &safety,
+            &safety_path,
+            &mut application,
+            &application_path,
+            &binding,
+            &mut signer,
+            &signer_path,
+        )
+        .expect("fresh SQLite readback resolves applied-but-ack-lost CAS");
+        assert_eq!(*sqlite_confirmed.checkpoint_v0(), target);
+        drop(sqlite_checkpoint_store);
+        let mut sqlite_reopened =
+            SqliteExternalNodeCheckpointStoreV0::open_existing(&sqlite_checkpoint_path)
+                .expect("reopen SQLite checkpoint namespace");
+        assert_eq!(
+            sqlite_reopened
+                .load(source.scope())
+                .expect("load reopened SQLite checkpoint"),
+            Some(target)
+        );
     }
 
     #[test]
