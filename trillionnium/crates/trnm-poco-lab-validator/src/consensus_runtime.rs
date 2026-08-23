@@ -1651,6 +1651,27 @@ fn require_fleet_signing_authority_for_builder_v1(
     Ok(())
 }
 
+/// Guards the remaining role-specific seams at the secret-free deployed
+/// composition boundary.  Fleet signing is a required argument to the
+/// composition itself and covers Restart plus terminal replay/evidence roots;
+/// this helper therefore checks only the runtime-event and P2P roles that are
+/// optional at the Rust API boundary.
+fn require_external_role_authority_for_composition_v1(
+    has_local_p2p_identity_secret: bool,
+    p2p_identity_producer_present: bool,
+    runtime_event_producer_present: bool,
+) -> Result<()> {
+    ensure!(
+        has_local_p2p_identity_secret || p2p_identity_producer_present,
+        "ExternalAuthorityRequired: secret-free composition requires an injected P2P identity producer"
+    );
+    ensure!(
+        runtime_event_producer_present,
+        "ExternalAuthorityRequired: secret-free composition requires an injected runtime-event producer"
+    );
+    Ok(())
+}
+
 #[cfg(test)]
 #[test]
 fn external_authority_guard_is_fail_closed_v1() {
@@ -1689,6 +1710,42 @@ fn fleet_signing_authority_guard_is_precommission_and_preserves_fixture_v1() {
     assert!(guard < commission, "guard must run before commissioning");
 }
 
+#[cfg(test)]
+#[test]
+fn secret_free_role_guard_requires_runtime_event_and_p2p_only_v1() {
+    let missing_p2p = require_external_role_authority_for_composition_v1(false, false, true)
+        .expect_err("secret-free composition without P2P authority must fail closed");
+    assert!(missing_p2p
+        .to_string()
+        .contains("injected P2P identity producer"));
+
+    let missing_runtime_event =
+        require_external_role_authority_for_composition_v1(false, true, false)
+            .expect_err("secret-free composition without runtime-event authority must fail closed");
+    assert!(missing_runtime_event
+        .to_string()
+        .contains("injected runtime-event producer"));
+
+    assert!(require_external_role_authority_for_composition_v1(false, true, true).is_ok());
+    // A fixture/local P2P role remains compatible, but the runtime-event
+    // producer is still mandatory because the external composition never
+    // opens a local consensus secret as a hidden journal fallback.
+    assert!(require_external_role_authority_for_composition_v1(true, false, true).is_ok());
+
+    let source = include_str!("consensus_runtime.rs");
+    let compose = source
+        .find("fn compose_deployed_external_authority_with_runtime_event_producer_v1(")
+        .expect("external composition helper remains present");
+    let finish = source
+        .find("fn finish_v1(&mut self) -> Result<PathBuf>")
+        .expect("bounded terminal finisher remains present");
+    let body = &source[compose..finish];
+    assert!(body.contains("require_external_role_authority_for_composition_v1("));
+    assert!(!body.contains("has_local_operator_recovery_secret()"));
+    assert!(source.contains("write_terminal_seal_with_signer_v1"));
+    assert!(source.contains("sign_external_fleet_evidence_v1"));
+}
+
 /// Composes the externally provisioned fence, watermark, Vote/Timeout
 /// producer, proposal producer, and fleet-root producer into the real bounded
 /// owner.  The function is deliberately private: callers must use the
@@ -1712,16 +1769,16 @@ fn compose_deployed_external_authority_with_runtime_event_producer_v1(
         !config.has_local_consensus_secret(),
         "external-authority composition refuses a config that loaded a local consensus secret"
     );
-    // The current event journal, replay archive, and authenticated mesh still
-    // require typed role-specific producers that are not parameters of this
-    // compatibility entry.  Reject synchronously, before spawning the owner
-    // thread or opening a journal, rather than allowing an unavailable raw-key
-    // accessor to panic after a partial authority graph has been built.
-    ensure!(
-        (config.has_local_p2p_identity_secret() || p2p_identity_producer.is_some())
-            && config.has_local_operator_recovery_secret(),
-        "ExternalAuthorityRequired: P2P identity producer (or fixture secret), runtime-event, and replay/recovery signing producers are not wired"
-    );
+    // Reject synchronously, before spawning the owner or opening a journal,
+    // unless every secret-free role used by this composition has an explicit
+    // authority.  The fleet producer is already required by the function
+    // signature and is also the replay/terminal-evidence signer (Evidence
+    // purpose); an operator/recovery secret is not a hidden fallback here.
+    require_external_role_authority_for_composition_v1(
+        config.has_local_p2p_identity_secret(),
+        p2p_identity_producer.is_some(),
+        runtime_event_producer.is_some(),
+    )?;
     let authority_builder =
         move |config: &LoadedValidatorConfig,
               takeover: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
