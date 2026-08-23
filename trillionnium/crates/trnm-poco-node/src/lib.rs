@@ -3344,6 +3344,95 @@ mod tests {
         assert_eq!(calls.load(Ordering::SeqCst), 1);
     }
 
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
+    fn explicit_timeout_sidecar_recovery_reopens_after_sqlite_before_marker_clear() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout recovery config");
+        let signer_watermark = MemoryWatermark::default();
+        let semantic_watermark = SharedMemorySemanticWatermarkV0::default();
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let shadow_state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact shadow genesis state");
+        let scope = [0x11; 32];
+        let journal_id = [0x22; 32];
+        let capability = [0x09; 32];
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            semantic_watermark.clone(),
+            scope,
+            journal_id,
+            capability,
+            shadow_state.digest(),
+        )
+        .expect("open semantic sidecar against genesis");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc,
+            signer_watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize bounded timeout host");
+        host.prepare_timeout_sidecar_sqlite_before_clear_for_test_v1(&mut sidecar)
+            .expect("publish marker, CAS, and SQLite successor");
+        assert_eq!(host.safety_head().expect("successor head").revision(), 1);
+        assert_eq!(
+            sidecar
+                .expected_watermark()
+                .map(|watermark| watermark.sequence()),
+            Some(1)
+        );
+        drop(host);
+        drop(sidecar);
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut recovered = PocoNodeHostV0::open_existing_with_safety_rules_external_v1(
+            config,
+            signer_watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&calls),
+            },
+            semantic_watermark,
+            scope,
+            journal_id,
+            capability,
+        )
+        .expect("explicit recovery owner must use retained predecessor");
+        assert_eq!(
+            recovered
+                .safety_head()
+                .expect("reopened successor head")
+                .revision(),
+            1
+        );
+        assert_eq!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect cleared marker"),
+            None
+        );
+        let actions = recovered
+            .resume_v0()
+            .expect("resume the already persisted timeout exactly once");
+        assert!(matches!(
+            actions.as_slice(),
+            [PocoNodeHostActionV0::Broadcast(outbound)]
+                if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+    }
+
     #[cfg(target_os = "linux")]
     #[test]
     fn unavailable_producer_leaves_exact_prepared_tail_for_same_intent_retry() {

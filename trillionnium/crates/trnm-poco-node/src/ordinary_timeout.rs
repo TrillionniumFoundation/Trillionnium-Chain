@@ -349,11 +349,44 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         }
         validate_bounded_timeout_bootstrap_v0(&head)?;
 
+        // A marker can survive either side of the local SQLite boundary.  If
+        // the authenticated head is already the marker's successor, obtain
+        // the journal's retained predecessor and regenerate the transition
+        // from that state.  Calling LocalTimeout on the successor itself
+        // would be rejected as a concurrent sign intent and would make the
+        // recovery owner unable to handle the SQLite-before-clear window.
+        let retained_predecessor = if head.revision() == marker.revision()
+            && matches!(
+                head.state().pending_sign(),
+                Some(SignIntent::TimeoutVote { .. })
+            ) {
+            let predecessor = safety_store
+                .authenticated_predecessor_v0()
+                .map_err(PocoNodeHostErrorV0::safety_store)?
+                .ok_or(PocoNodeHostErrorV0::RecoveredTransitionHeadMismatch)?;
+            if !matches!(
+                predecessor.transition_context(),
+                SafetyTransitionContextV0::Ordinary
+            ) || head_has_current_invalid_completion_v0(predecessor.state())
+            {
+                return Err(PocoNodeHostErrorV0::ValidationRecoveryAwareOpenRequired {
+                    revision: predecessor.revision(),
+                });
+            }
+            validate_bounded_timeout_bootstrap_v0(&predecessor)?;
+            Some(predecessor)
+        } else {
+            None
+        };
+        let predecessor_state = retained_predecessor
+            .as_ref()
+            .map_or(head.state(), RecoveredSafetyStateV0::state);
+
         // Recompute the exact Core transition from the authenticated local
         // predecessor.  No marker field is trusted as a substitute for this
         // deterministic reconstruction.
         let mut predecessor_core =
-            Core::recover(core_config.clone(), head.state().clone(), &verifier)
+            Core::recover(core_config.clone(), predecessor_state.clone(), &verifier)
                 .map_err(PocoNodeHostErrorV0::core)?;
         // Capture the binding for the authenticated local predecessor before
         // LocalTimeout mutates this Core into its successor. The SafetyStore
@@ -404,8 +437,9 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
 
         let predecessor_digest = transition.predecessor_state_digest();
         let successor_state = request.state();
-        let local_is_successor = head.state() == successor_state;
-        let local_is_predecessor = !local_is_successor
+        let local_is_successor = retained_predecessor.is_some() && head.state() == successor_state;
+        let local_is_predecessor = retained_predecessor.is_none()
+            && head.state() != successor_state
             && head
                 .revision()
                 .checked_add(1)
@@ -413,14 +447,14 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         if !local_is_predecessor && !local_is_successor {
             return Err(PocoNodeHostErrorV0::RecoveredTransitionHeadMismatch);
         }
-        let external_sequence = sidecar.expected_watermark().map(|head| head.sequence());
-        if local_is_successor && external_sequence.unwrap_or(0) == 0 {
+        let external_exact = sidecar.observed_transition_matches_v1(transition);
+        if local_is_successor && !external_exact {
             // The write order is marker -> sidecar -> SQLite.  A successor
-            // local head with no sidecar transition is therefore an
+            // local head without this exact external target is therefore an
             // impossible or tampered combination.
             return Err(PocoNodeHostErrorV0::RecoveredTransitionHeadMismatch);
         }
-        if external_sequence.is_some_and(|sequence| sequence > 0) {
+        if external_exact {
             // Exact retry after an external CAS: sidecar's in-memory binding
             // must name the regenerated successor before it re-reads the
             // external target/facts.
@@ -477,8 +511,6 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             successor_core
         };
 
-        clear_pending_timeout_marker_v1(safety_store.path(), marker)
-            .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
         let mut signer_journal = SqliteSignerJournalV0::open_existing(
             signer_journal_path,
             signer_journal_profile,
@@ -492,6 +524,12 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             .head()
             .map_err(PocoNodeHostErrorV0::safety_store)?;
         validate_signer_safety_revision_v0(&signer_journal, &recovered_head)?;
+        // Keep the fence in place until every local authority needed by the
+        // returned owner has been authenticated.  If signer-journal reopen or
+        // the final revision join fails, a later explicit recovery can retry
+        // against the same marker and exact sidecar target.
+        clear_pending_timeout_marker_v1(safety_store.path(), marker)
+            .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)?;
         Ok(Self {
             core,
             safety_store,
@@ -650,6 +688,54 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             sidecar,
         )?;
         self.pending_timeout_marker = Some(marker);
+        Ok(())
+    }
+
+    /// Test-only crash injection point after both the semantic sidecar and
+    /// SQLite barriers, but before the marker is removed.  This models a
+    /// process dying after a durable local successor write and exercises the
+    /// retained-predecessor recovery branch.
+    #[cfg(all(test, feature = "safety-rules-sidecar"))]
+    pub(crate) fn prepare_timeout_sidecar_sqlite_before_clear_for_test_v1<SW>(
+        &mut self,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+    ) -> Result<(), PocoNodeHostErrorV0>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        self.require_active_runtime_v0()?;
+        let epoch = self.core.safety_state().epoch();
+        let view = self.core.safety_state().current_view();
+        let effects = self
+            .core
+            .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
+            .map_err(PocoNodeHostErrorV0::core)?;
+        let marker = persist_timeout_shadow_sidecar_before_sqlite_v1(
+            self.safety_store.path(),
+            self.safety_store.journal_id_v0(),
+            &effects,
+            sidecar,
+        )?;
+        self.pending_timeout_marker = Some(marker);
+        let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+            return Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffectSet {
+                expected: 1,
+                actual: effects.len(),
+            });
+        };
+        self.safety_store
+            .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        let confirmed = self
+            .safety_store
+            .head()
+            .map_err(PocoNodeHostErrorV0::safety_store)?;
+        if confirmed.state() != request.state() || confirmed.revision() != request.barrier().get() {
+            return Err(PocoNodeHostErrorV0::OrdinaryPersistenceReadbackMismatch {
+                expected_revision: request.barrier().get(),
+                actual_revision: confirmed.revision(),
+            });
+        }
         Ok(())
     }
 

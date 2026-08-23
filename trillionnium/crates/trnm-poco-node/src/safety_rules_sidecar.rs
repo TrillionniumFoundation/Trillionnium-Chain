@@ -553,6 +553,57 @@ where
         self.state_digest = state_digest;
     }
 
+    /// Reports whether the external authority currently contains the exact
+    /// semantic target for `transition` at its observed sequence.  Sequence
+    /// alone is not sufficient: a marker can be published before a new CAS
+    /// while the namespace already contains older transitions.  Recovery uses
+    /// this predicate to distinguish that normal advance from an exact retry
+    /// after the current transition was externally committed.
+    pub(crate) fn observed_transition_matches_v1(
+        &self,
+        transition: &InertSafetyTransitionV1,
+    ) -> bool {
+        let Some(expected) = self.expected else {
+            return false;
+        };
+        let intent = transition.canonical_intent();
+        let safety_revision = transition.successor_state().revision();
+        if safety_revision == 0 || intent.authorizing_safety_revision() != safety_revision {
+            return false;
+        }
+        let fingerprint = intent.fingerprint().into_bytes();
+        let signing_root = intent.signing_root().into_bytes();
+        let sequence = expected.sequence();
+        let checksum = transition_checksum_v1(self.scope, self.journal_id, transition);
+        let Ok(target) = SignerWatermarkV0::from_persisted_parts(
+            self.scope,
+            self.journal_id,
+            sequence,
+            checksum,
+        ) else {
+            return false;
+        };
+        let Some(facts) = ExternalWatermarkSemanticFactsV0::new(
+            intent.epoch().get(),
+            intent.preimage().context().view().get(),
+            safety_revision,
+            signer_journal_lifecycle_nonce_v0(
+                intent.epoch().get(),
+                intent.preimage().context().view().get(),
+                safety_revision,
+                fingerprint,
+                signing_root,
+                sequence,
+            ),
+            fingerprint,
+            signing_root,
+            self.capability,
+        ) else {
+            return false;
+        };
+        self.expected == Some(target) && self.expected_facts == Some(facts)
+    }
+
     fn poison<E>(&mut self, error: SafetyRulesSemanticSidecarErrorV1) -> Result<(), E>
     where
         E: From<SafetyRulesSemanticSidecarErrorV1>,
@@ -1091,6 +1142,68 @@ mod tests {
         assert_eq!(
             sidecar.expected_watermark().map(|head| head.sequence()),
             Some(1)
+        );
+        assert!(!sidecar.is_poisoned());
+    }
+
+    #[test]
+    fn semantic_sidecar_distinguishes_prior_sequence_from_exact_retry() {
+        let (context, state) = context_and_state();
+        let first = PureHotStuffSafetyKernelV1::prepare_timeout(&context, &state, &RootSignatures)
+            .expect("first timeout transition");
+        // Model a non-signing Core view advance between sidecar reservations.
+        // The external sequence remains one while the next timeout is
+        // evaluated from this freshly authenticated state.
+        let advanced_state = SafetyRulesStateV1::new(
+            &context,
+            SafetyRulesStateSeedV1::new(
+                first
+                    .successor_state()
+                    .current_view()
+                    .checked_next()
+                    .expect("next view"),
+                first.successor_state().last_voted_view(),
+                first.successor_state().last_timeout_view(),
+                first.successor_state().high_qc().clone(),
+                first.successor_state().locked_qc().clone(),
+                first.successor_state().finalized(),
+                first.successor_state().revision(),
+            ),
+            &RootSignatures,
+        )
+        .expect("authenticated advanced state");
+        let second =
+            PureHotStuffSafetyKernelV1::prepare_timeout(&context, &advanced_state, &RootSignatures)
+                .expect("second timeout transition");
+        let scope = [0x51; 32];
+        let journal_id = [0x52; 32];
+        let capability = [0x09; 32];
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            MemorySemanticAuthority::default(),
+            scope,
+            journal_id,
+            capability,
+            state.digest(),
+        )
+        .expect("open semantic sidecar");
+        sidecar
+            .persist_transition_v1(state.digest(), &first)
+            .expect("persist first transition");
+        assert!(!sidecar.observed_transition_matches_v1(&second));
+
+        // The sidecar already has sequence one, but the second marker was
+        // published before its CAS.  Rebinding to the predecessor allows a
+        // normal sequence-one-to-two advance; treating any nonzero sequence
+        // as an exact retry would poison this valid recovery.
+        sidecar.rebind_state_digest(advanced_state.digest());
+        sidecar
+            .persist_transition_v1(advanced_state.digest(), &second)
+            .expect("advance after a prior, nonmatching sequence");
+        assert_eq!(
+            sidecar
+                .expected_watermark()
+                .map(|watermark| watermark.sequence()),
+            Some(2)
         );
         assert!(!sidecar.is_poisoned());
     }

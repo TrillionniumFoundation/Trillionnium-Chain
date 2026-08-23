@@ -3424,6 +3424,32 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
             .map(|(head, _retained)| head)
     }
 
+    /// Returns the immediately retained predecessor of the authenticated
+    /// head, when this journal has one.
+    ///
+    /// The SafetyStore validates the complete retained chain, record
+    /// checksums, profile, and Core successor relation before returning this
+    /// comparison-only state.  It never reconstructs or installs Core and it
+    /// grants no persistence or signing capability.  Revision-zero journals
+    /// legitimately have no predecessor; any later head is required by the
+    /// journal schema to retain exactly one predecessor row.
+    pub fn authenticated_predecessor_v0(
+        &self,
+    ) -> Result<Option<RecoveredSafetyStateV0>, SafetyStoreErrorV0> {
+        let (_head, retained) = self.authenticated_head_with_retained_records_v0()?;
+        Ok(match retained.recovered_records.as_slice() {
+            [_predecessor, current] if current.revision() > 0 => {
+                Some(retained.recovered_records[0].clone())
+            }
+            [_revision_zero] => None,
+            _ => {
+                return Err(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                    "authenticated predecessor retention shape",
+                ))
+            }
+        })
+    }
+
     /// Confirms the current authenticated head for a future external
     /// Safety/App/signer checkpoint join.
     ///
