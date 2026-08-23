@@ -38,6 +38,8 @@ ed25519-dalek = "2"
 rusqlite = { version = "0.32", features = ["bundled"] }
 sha2 = "0.10"
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
+trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
+trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]

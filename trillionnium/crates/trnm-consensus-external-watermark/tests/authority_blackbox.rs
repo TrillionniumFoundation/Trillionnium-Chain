@@ -12,8 +12,9 @@ use std::{
 use ed25519_dalek::{Signer, SigningKey};
 use tempfile::tempdir;
 use trnm_consensus_external_watermark::{
-    ExternalWatermarkAuthorityError, ReplayBindingErrorV1, ReplayBindingStoreV1,
-    ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter, UnixWatermarkClient,
+    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1,
+    ReplayBindingStoreV1, ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter,
+    UnixWatermarkClient,
 };
 use trnm_consensus_signer_journal::{
     SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalConflictV0,
@@ -180,6 +181,68 @@ fn two_process_restart_rejects_stale_cas_and_log_tamper() {
         .output()
         .expect("restart authority after tamper");
     assert!(!failed.status.success(), "tampered log must fail closed");
+}
+
+#[test]
+fn semantic_cas_persists_round_order_across_restart_and_rejects_sidecar_tamper() {
+    let root = tempdir().expect("private semantic test directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start(root.path());
+    let first = mark(0, 0x41);
+    let first_facts = ExternalWatermarkSemanticFactsV1::new(7, 3, 5).unwrap();
+    authority
+        .client
+        .compare_and_advance_semantic_checked(None, first, first_facts)
+        .expect("first semantic reservation");
+    authority.restart();
+    assert_eq!(authority.client.load_checked(SCOPE).unwrap(), Some(first));
+
+    let lower_view = mark(1, 0x42);
+    assert!(matches!(
+        authority.client.compare_and_advance_semantic_checked(
+            Some(first),
+            lower_view,
+            ExternalWatermarkSemanticFactsV1::new(7, 2, 6).unwrap(),
+        ),
+        Err(ExternalWatermarkAuthorityError::CompareFailed)
+    ));
+    let lower_revision = mark(1, 0x43);
+    assert!(matches!(
+        authority.client.compare_and_advance_semantic_checked(
+            Some(first),
+            lower_revision,
+            ExternalWatermarkSemanticFactsV1::new(7, 4, 5).unwrap(),
+        ),
+        Err(ExternalWatermarkAuthorityError::CompareFailed)
+    ));
+    let next_epoch = mark(1, 0x44);
+    authority
+        .client
+        .compare_and_advance_semantic_checked(
+            Some(first),
+            next_epoch,
+            ExternalWatermarkSemanticFactsV1::new(8, 0, 6).unwrap(),
+        )
+        .expect("higher epoch may reset view");
+    authority.stop();
+
+    let semantic_log = root.path().join(".authority.log.semantic-v1");
+    let bytes = fs::read(&semantic_log).expect("read semantic sidecar");
+    fs::write(&semantic_log, &bytes[..bytes.len() - 1]).expect("truncate semantic sidecar");
+    let binary = env!("CARGO_BIN_EXE_trnm-external-watermark-v0");
+    let failed = Command::new(binary)
+        .args([
+            "--socket",
+            authority.socket.to_str().unwrap(),
+            "--log",
+            authority.log.to_str().unwrap(),
+        ])
+        .output()
+        .expect("restart tampered semantic authority");
+    assert!(
+        !failed.status.success(),
+        "semantic sidecar rollback must fail closed"
+    );
 }
 
 #[derive(Clone)]

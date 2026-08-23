@@ -3,9 +3,10 @@
 //! This crate deliberately owns the *external* side of the signer boundary.
 //! The local signer journal remains a separate SQLite namespace and the
 //! authority process never receives a private key or arbitrary bytes to sign.
-//! The authority log is a fixed-record append-only hash chain.  A restart
-//! authenticates the complete chain before serving a request; a partial,
-//! reordered, truncated, or checksum-modified record therefore fails closed.
+//! The authority log and its optional semantic round sidecar are fixed-record
+//! append-only hash chains. A restart authenticates both complete chains
+//! before serving a request; a partial, reordered, truncated, or
+//! checksum-modified record therefore fails closed.
 //! Compare-and-advance is served over a length-delimited Unix socket so the
 //! journal and authority are different processes and different failure
 //! domains.
@@ -13,7 +14,7 @@
 #![forbid(unsafe_code)]
 
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
@@ -55,6 +56,7 @@ const RESPONSE_MAGIC: &[u8; 4] = b"EWR1";
 const PROTOCOL_VERSION: u8 = 1;
 const OP_LOAD: u8 = 0;
 const OP_COMPARE_AND_ADVANCE: u8 = 1;
+const OP_COMPARE_AND_ADVANCE_SEMANTIC: u8 = 2;
 const STATUS_NONE: u8 = 0;
 const STATUS_VALUE: u8 = 1;
 const STATUS_COMPARE_FAILED: u8 = 2;
@@ -67,6 +69,37 @@ const ANCHOR_MAGIC: &[u8; 8] = b"TRNMEH01";
 const ANCHOR_BODY_BYTES: usize = 8 + 1 + 3 + 8 + 32;
 const ANCHOR_BYTES: usize = ANCHOR_BODY_BYTES + 32;
 const MAX_FRAME_BYTES: usize = 512;
+const SEMANTIC_MAGIC: &[u8; 8] = b"TRNMES01";
+const SEMANTIC_DOMAIN: &[u8] = b"trnm.consensus.external-watermark.semantic.v1\0";
+const SEMANTIC_ANCHOR_MAGIC: &[u8; 8] = b"TRNMET01";
+const SEMANTIC_RECORD_BYTES: usize = 8 + 1 + 1 + 2 + 8 + 32 + 32 + 32 + 8 + 8 + 8 + 32 + 32;
+const SEMANTIC_ANCHOR_BODY_BYTES: usize = 8 + 1 + 3 + 8 + 32;
+const SEMANTIC_ANCHOR_BYTES: usize = SEMANTIC_ANCHOR_BODY_BYTES + 32;
+
+/// Semantic round facts carried by the narrow external timeout CAS.
+///
+/// These facts are persisted in an independent hash-chained sidecar and are
+/// checked before a new watermark reservation. They do not represent a full
+/// Core/SafetyRules state or authorize a vote.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalWatermarkSemanticFactsV1 {
+    pub epoch: u64,
+    pub view: u64,
+    pub safety_revision: u64,
+}
+
+impl ExternalWatermarkSemanticFactsV1 {
+    pub const fn new(epoch: u64, view: u64, safety_revision: u64) -> Option<Self> {
+        if safety_revision == 0 {
+            return None;
+        }
+        Some(Self {
+            epoch,
+            view,
+            safety_revision,
+        })
+    }
+}
 
 /// Public authority failure surface.  The Unix client maps these into the
 /// deliberately small `ExternalWatermarkErrorV0` trait enum.
@@ -114,17 +147,32 @@ struct LogRecordV1 {
     record_hash: [u8; 32],
 }
 
+#[derive(Debug, Clone, Copy)]
+struct SemanticRecordV1 {
+    value: SignerWatermarkV0,
+    facts: ExternalWatermarkSemanticFactsV1,
+    previous_record_hash: [u8; 32],
+    record_hash: [u8; 32],
+}
+
 /// One process-owned append-only authority.  The process holds an exclusive
 /// lock beside the log; another process cannot serve the same namespace.
 pub struct ExternalWatermarkAuthority {
     log_path: PathBuf,
     anchor_path: PathBuf,
+    semantic_anchor_path: PathBuf,
     directory: File,
     log: File,
+    semantic_log: File,
     _lock: File,
     current: BTreeMap<[u8; 32], SignerWatermarkV0>,
+    semantic_current: BTreeMap<[u8; 32], ExternalWatermarkSemanticFactsV1>,
+    semantic_last_sequence: BTreeMap<[u8; 32], u64>,
     head_hash: [u8; 32],
     record_count: u64,
+    semantic_head_hash: [u8; 32],
+    semantic_record_count: u64,
+    history: BTreeSet<([u8; 32], u64, [u8; 32])>,
     poisoned: bool,
 }
 
@@ -135,6 +183,8 @@ impl ExternalWatermarkAuthority {
         let (directory, log_path) = private_path(log_path.as_ref())?;
         let lock_path = lock_path_for(&log_path)?;
         let anchor_path = anchor_path_for(&log_path)?;
+        let semantic_log_path = semantic_log_path_for(&log_path)?;
+        let semantic_anchor_path = semantic_anchor_path_for(&log_path)?;
         let lock = OpenOptions::new()
             .read(true)
             .write(true)
@@ -189,19 +239,58 @@ impl ExternalWatermarkAuthority {
                 "log must be a private regular file",
             ));
         }
+        let semantic_log = OpenOptions::new()
+            .read(true)
+            .create(true)
+            .append(true)
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+            .open(&semantic_log_path)
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "open semantic watermark log",
+                source,
+            })?;
+        let semantic_metadata =
+            semantic_log
+                .metadata()
+                .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                    stage: "stat semantic watermark log",
+                    source,
+                })?;
+        if semantic_metadata.permissions().mode() & 0o777 != 0o600 || !semantic_metadata.is_file() {
+            return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+                "semantic watermark log must be a private regular file",
+            ));
+        }
         let mut authority = Self {
             log_path,
             anchor_path,
+            semantic_anchor_path,
             directory,
             log,
+            semantic_log,
             _lock: lock,
             current: BTreeMap::new(),
+            semantic_current: BTreeMap::new(),
+            semantic_last_sequence: BTreeMap::new(),
             head_hash: [0; 32],
             record_count: 0,
+            semantic_head_hash: [0; 32],
+            semantic_record_count: 0,
+            history: BTreeSet::new(),
             poisoned: false,
         };
         authority.replay_log()?;
         authority.reconcile_anchor()?;
+        authority.replay_semantic_log()?;
+        authority.reconcile_semantic_anchor()?;
+        if authority.semantic_record_count != 0
+            && authority.semantic_record_count != authority.record_count
+        {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic and watermark logs have different lengths",
+            ));
+        }
         Ok(authority)
     }
 
@@ -226,6 +315,9 @@ impl ExternalWatermarkAuthority {
     ) -> Result<(), ExternalWatermarkAuthorityError> {
         if self.poisoned {
             return Err(ExternalWatermarkAuthorityError::Unavailable);
+        }
+        if self.semantic_record_count != 0 {
+            return Err(ExternalWatermarkAuthorityError::ScopeConflict);
         }
         let scope = target.scope();
         if scope == [0; 32] || target.journal_id() == [0; 32] || target.chain_checksum() == [0; 32]
@@ -273,6 +365,8 @@ impl ExternalWatermarkAuthority {
                 source,
             })?;
         self.current.insert(scope, target);
+        self.history
+            .insert((scope, target.sequence(), target.chain_checksum()));
         self.record_count =
             self.record_count
                 .checked_add(1)
@@ -281,6 +375,139 @@ impl ExternalWatermarkAuthority {
                 ))?;
         self.head_hash = record_hash;
         if let Err(error) = self.persist_anchor() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    /// Compare-and-advance variant that durably binds the semantic round and
+    /// Safety revision outside the signer process. A legacy opaque CAS history
+    /// cannot be upgraded implicitly; callers must provision a fresh semantic
+    /// namespace instead of assuming that a checksum proves ordering.
+    pub fn compare_and_advance_semantic(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV1,
+    ) -> Result<(), ExternalWatermarkAuthorityError> {
+        if self.poisoned {
+            return Err(ExternalWatermarkAuthorityError::Unavailable);
+        }
+        if facts.safety_revision == 0 {
+            return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+                "semantic Safety revision must be positive",
+            ));
+        }
+        if self.record_count != self.semantic_record_count {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic and watermark logs are not aligned",
+            ));
+        }
+        if self.record_count != 0 && self.semantic_record_count == 0 {
+            return Err(ExternalWatermarkAuthorityError::ScopeConflict);
+        }
+        let scope = target.scope();
+        if scope == [0; 32] || target.journal_id() == [0; 32] || target.chain_checksum() == [0; 32]
+        {
+            return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+                "target contains a zero identity/checksum",
+            ));
+        }
+        let current = self.current.get(&scope).copied();
+        if current != expected {
+            return Err(ExternalWatermarkAuthorityError::CompareFailed);
+        }
+        match (current, expected) {
+            (None, None) if target.sequence() == 0 => {}
+            (Some(previous), Some(expected))
+                if expected == previous
+                    && previous.journal_id() == target.journal_id()
+                    && previous.sequence().checked_add(1) == Some(target.sequence()) => {}
+            _ => return Err(ExternalWatermarkAuthorityError::CompareFailed),
+        }
+        if let Some(previous_facts) = self.semantic_current.get(&scope).copied() {
+            if facts.epoch < previous_facts.epoch
+                || (facts.epoch == previous_facts.epoch && facts.view <= previous_facts.view)
+                || facts.safety_revision <= previous_facts.safety_revision
+            {
+                return Err(ExternalWatermarkAuthorityError::CompareFailed);
+            }
+        } else if current.is_some() {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic head is missing for an existing watermark",
+            ));
+        }
+
+        let previous_record_hash = self.head_hash;
+        let record_hash = record_hash(target, previous_record_hash);
+        let record = LogRecordV1 {
+            value: target,
+            previous_record_hash,
+            record_hash,
+        };
+        let previous_semantic_hash = self.semantic_head_hash;
+        let semantic_hash = semantic_record_hash(target, facts, previous_semantic_hash);
+        let semantic_record = SemanticRecordV1 {
+            value: target,
+            facts,
+            previous_record_hash: previous_semantic_hash,
+            record_hash: semantic_hash,
+        };
+        // The two records are deliberately separate failure domains. If a
+        // process dies between either append, replay sees unequal lengths and
+        // refuses the namespace; it never guesses which side was authoritative.
+        self.log
+            .write_all(&encode_record(record))
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "append semantic watermark record",
+                source,
+            })?;
+        self.log
+            .sync_data()
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "sync semantic watermark record",
+                source,
+            })?;
+        self.semantic_log
+            .write_all(&encode_semantic_record(semantic_record))
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "append semantic facts record",
+                source,
+            })?;
+        self.semantic_log
+            .sync_data()
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "sync semantic facts record",
+                source,
+            })?;
+        self.directory
+            .sync_data()
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "sync semantic authority directory",
+                source,
+            })?;
+        self.current.insert(scope, target);
+        self.semantic_current.insert(scope, facts);
+        self.semantic_last_sequence.insert(scope, target.sequence());
+        self.history
+            .insert((scope, target.sequence(), target.chain_checksum()));
+        self.record_count =
+            self.record_count
+                .checked_add(1)
+                .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
+                    "record count exhausted",
+                ))?;
+        self.semantic_record_count = self.semantic_record_count.checked_add(1).ok_or(
+            ExternalWatermarkAuthorityError::InvalidLog("semantic record count exhausted"),
+        )?;
+        self.head_hash = record_hash;
+        self.semantic_head_hash = semantic_hash;
+        if let Err(error) = self.persist_anchor() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if let Err(error) = self.persist_semantic_anchor() {
             self.poisoned = true;
             return Err(error);
         }
@@ -332,6 +559,11 @@ impl ExternalWatermarkAuthority {
                 }
             }
             self.current.insert(scope, record.value);
+            self.history.insert((
+                scope,
+                record.value.sequence(),
+                record.value.chain_checksum(),
+            ));
             self.head_hash = record.record_hash;
             self.record_count = self.record_count.checked_add(1).ok_or(
                 ExternalWatermarkAuthorityError::InvalidLog("record count exhausted"),
@@ -375,6 +607,154 @@ impl ExternalWatermarkAuthority {
         // the inverse (anchor ahead of log) is always a hard failure above.
         if anchored_count < self.record_count {
             self.persist_anchor()?;
+        }
+        Ok(())
+    }
+
+    fn replay_semantic_log(&mut self) -> Result<(), ExternalWatermarkAuthorityError> {
+        let mut bytes = Vec::new();
+        let mut reader = self.semantic_log.try_clone().map_err(|source| {
+            ExternalWatermarkAuthorityError::Io {
+                stage: "clone semantic log for replay",
+                source,
+            }
+        })?;
+        reader
+            .read_to_end(&mut bytes)
+            .map_err(|source| ExternalWatermarkAuthorityError::Io {
+                stage: "read semantic watermark log",
+                source,
+            })?;
+        if bytes.len() % SEMANTIC_RECORD_BYTES != 0 {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "trailing partial semantic record",
+            ));
+        }
+        for chunk in bytes.chunks_exact(SEMANTIC_RECORD_BYTES) {
+            let record = decode_semantic_record(chunk)?;
+            if record.previous_record_hash != self.semantic_head_hash {
+                return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                    "semantic hash chain predecessor mismatch",
+                ));
+            }
+            if record.record_hash
+                != semantic_record_hash(record.value, record.facts, self.semantic_head_hash)
+            {
+                return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                    "semantic record checksum mismatch",
+                ));
+            }
+            let scope = record.value.scope();
+            if !self.history.contains(&(
+                scope,
+                record.value.sequence(),
+                record.value.chain_checksum(),
+            )) {
+                return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                    "semantic record has no matching watermark record",
+                ));
+            }
+            match self.semantic_current.get(&scope).copied() {
+                None if record.value.sequence() == 0 => {}
+                Some(previous)
+                    if self.current.get(&scope).map(|value| value.journal_id())
+                        == Some(record.value.journal_id())
+                        && self
+                            .semantic_last_sequence
+                            .get(&scope)
+                            .and_then(|sequence| sequence.checked_add(1))
+                            == Some(record.value.sequence())
+                        && (record.facts.epoch > previous.epoch
+                            || (record.facts.epoch == previous.epoch
+                                && record.facts.view > previous.view))
+                        && record.facts.safety_revision > previous.safety_revision => {}
+                _ => {
+                    return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                        "semantic scope sequence/order fork",
+                    ))
+                }
+            }
+            self.semantic_current.insert(scope, record.facts);
+            self.semantic_last_sequence
+                .insert(scope, record.value.sequence());
+            self.semantic_head_hash = record.record_hash;
+            self.semantic_record_count = self.semantic_record_count.checked_add(1).ok_or(
+                ExternalWatermarkAuthorityError::InvalidLog("semantic record count exhausted"),
+            )?;
+        }
+        Ok(())
+    }
+
+    fn reconcile_semantic_anchor(&mut self) -> Result<(), ExternalWatermarkAuthorityError> {
+        let bytes = match fs::read(&self.semantic_anchor_path) {
+            Ok(bytes) => bytes,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                if self.semantic_record_count != 0 {
+                    return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                        "non-empty semantic log has no durable head anchor",
+                    ));
+                }
+                self.persist_semantic_anchor()?;
+                return Ok(());
+            }
+            Err(source) => {
+                return Err(ExternalWatermarkAuthorityError::Io {
+                    stage: "read semantic head anchor",
+                    source,
+                })
+            }
+        };
+        let (anchored_count, anchored_head) = decode_semantic_anchor(&bytes)?;
+        if anchored_count > self.semantic_record_count {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic log is shorter than durable head anchor",
+            ));
+        }
+        if anchored_count == self.semantic_record_count && anchored_head != self.semantic_head_hash
+        {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic durable head anchor differs from log head",
+            ));
+        }
+        if anchored_count < self.semantic_record_count {
+            self.persist_semantic_anchor()?;
+        }
+        Ok(())
+    }
+
+    fn persist_semantic_anchor(&self) -> Result<(), ExternalWatermarkAuthorityError> {
+        let name = self
+            .semantic_anchor_path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .ok_or(ExternalWatermarkAuthorityError::InvalidConfig(
+                "semantic anchor filename",
+            ))?;
+        let temporary = self.semantic_anchor_path.with_file_name(format!(
+            ".{name}.tmp-{}-{}",
+            process::id(),
+            self.semantic_record_count
+        ));
+        let bytes = encode_semantic_anchor(self.semantic_record_count, self.semantic_head_hash);
+        let result = (|| {
+            let mut file = OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+                .open(&temporary)?;
+            file.write_all(&bytes)?;
+            file.sync_all()?;
+            fs::rename(&temporary, &self.semantic_anchor_path)?;
+            self.directory.sync_data()?;
+            Ok::<(), io::Error>(())
+        })();
+        if let Err(source) = result {
+            let _ = fs::remove_file(&temporary);
+            return Err(ExternalWatermarkAuthorityError::Io {
+                stage: "persist semantic head anchor",
+                source,
+            });
         }
         Ok(())
     }
@@ -455,6 +835,22 @@ impl ExternalWatermarkAuthority {
                     Err(_) => encode_empty_response(STATUS_UNAVAILABLE),
                 }
             }
+            RequestV1::CompareAndAdvanceSemantic {
+                expected,
+                target,
+                facts,
+            } => match self.compare_and_advance_semantic(expected, target, facts) {
+                Ok(()) => encode_empty_response(STATUS_NONE),
+                Err(ExternalWatermarkAuthorityError::CompareFailed) => {
+                    encode_empty_response(STATUS_COMPARE_FAILED)
+                }
+                Err(ExternalWatermarkAuthorityError::InvalidConfig(_))
+                | Err(ExternalWatermarkAuthorityError::InvalidLog(_))
+                | Err(ExternalWatermarkAuthorityError::ScopeConflict) => {
+                    encode_empty_response(STATUS_INVALID_STATE)
+                }
+                Err(_) => encode_empty_response(STATUS_UNAVAILABLE),
+            },
         };
         write_frame(&mut stream, &response)
     }
@@ -586,6 +982,29 @@ impl UnixWatermarkClient {
             ResponseV1::Unavailable => Err(ExternalWatermarkAuthorityError::Unavailable),
             ResponseV1::Value(_) => Err(ExternalWatermarkAuthorityError::Protocol(
                 "compare response unexpectedly carried a value",
+            )),
+        }
+    }
+
+    pub fn compare_and_advance_semantic_checked(
+        &self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV1,
+    ) -> Result<(), ExternalWatermarkAuthorityError> {
+        match self.request(RequestV1::CompareAndAdvanceSemantic {
+            expected,
+            target,
+            facts,
+        })? {
+            ResponseV1::None => Ok(()),
+            ResponseV1::CompareFailed => Err(ExternalWatermarkAuthorityError::CompareFailed),
+            ResponseV1::InvalidState => Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "authority rejected semantic persisted state",
+            )),
+            ResponseV1::Unavailable => Err(ExternalWatermarkAuthorityError::Unavailable),
+            ResponseV1::Value(_) => Err(ExternalWatermarkAuthorityError::Protocol(
+                "semantic compare response unexpectedly carried a value",
             )),
         }
     }
@@ -726,6 +1145,18 @@ struct ReplayRecordV1 {
     record_hash: [u8; 32],
 }
 
+/// The exact request identity carried by one response-binding record.
+///
+/// This deliberately contains no caller-supplied message bytes or private-key
+/// material; it is only the tuple authenticated by the append-only response
+/// log and used by the narrow external-signer bridge for replay lookup.
+#[derive(Debug, Clone, Copy)]
+struct ResponseBindingFactsV1 {
+    fingerprint: [u8; 32],
+    signer_profile_ref: [u8; 32],
+    signing_root: [u8; 32],
+}
+
 #[derive(Debug, Clone, Copy)]
 struct ReplayEntryV1 {
     signer_profile_ref: [u8; 32],
@@ -807,20 +1238,40 @@ impl ReplayBindingStoreV1 {
         &self.log_path
     }
 
-    fn lookup_request(
+    /// Number of durably bound responses in this namespace.
+    ///
+    /// The count is diagnostic state, not signer authority.  The narrow
+    /// remote-signer bridge uses it only to reconcile the external CAS head:
+    /// an external reservation that has no corresponding response record is
+    /// ambiguous after a crash and must fail closed.
+    pub const fn record_count_v1(&self) -> u64 {
+        self.record_count
+    }
+
+    /// Looks up a previously bound signature without constructing a
+    /// signer-journal request object.
+    ///
+    /// This is intentionally limited to the exact tuple already authenticated
+    /// by the response log.  It accepts no caller-selected message bytes and
+    /// never invokes a producer or private key.
+    pub fn lookup_signature_v1(
         &self,
-        request: &SignatureRequestV0<'_>,
+        fingerprint: [u8; 32],
+        signer_profile_ref: [u8; 32],
+        signing_root: [u8; 32],
     ) -> Result<Option<SignatureBytes>, ReplayBindingErrorV1> {
+        if fingerprint == [0; 32] || signer_profile_ref == [0; 32] || signing_root == [0; 32] {
+            return Err(ReplayBindingErrorV1::Conflict(
+                "response lookup identity contains zero bytes",
+            ));
+        }
         if self.poisoned {
             return Err(ReplayBindingErrorV1::Poisoned);
         }
-        let fingerprint = request.fingerprint().into_bytes();
         let Some(entry) = self.entries.get(&fingerprint).copied() else {
             return Ok(None);
         };
-        if entry.signer_profile_ref != request.signer_profile_ref()
-            || entry.signing_root != request.signing_root().into_bytes()
-        {
+        if entry.signer_profile_ref != signer_profile_ref || entry.signing_root != signing_root {
             return Err(ReplayBindingErrorV1::Conflict(
                 "fingerprint is bound to a different signer request",
             ));
@@ -828,22 +1279,76 @@ impl ReplayBindingStoreV1 {
         Ok(Some(entry.signature))
     }
 
+    /// Durably binds one exact response signature to its request identity.
+    ///
+    /// The response log remains independent from the local SQLite journal and
+    /// is append-only/hash-chained.  A conflicting duplicate is rejected;
+    /// exact idempotent repetition is accepted.
+    pub fn record_signature_v1(
+        &mut self,
+        fingerprint: [u8; 32],
+        signer_profile_ref: [u8; 32],
+        signing_root: [u8; 32],
+        signature: SignatureBytes,
+    ) -> Result<(), ReplayBindingErrorV1> {
+        let request = ResponseBindingFactsV1 {
+            fingerprint,
+            signer_profile_ref,
+            signing_root,
+        };
+        self.record_facts_v1(request, signature)
+    }
+
+    fn lookup_request(
+        &self,
+        request: &SignatureRequestV0<'_>,
+    ) -> Result<Option<SignatureBytes>, ReplayBindingErrorV1> {
+        self.lookup_signature_v1(
+            request.fingerprint().into_bytes(),
+            request.signer_profile_ref(),
+            request.signing_root().into_bytes(),
+        )
+    }
+
     fn record_request(
         &mut self,
         request: &SignatureRequestV0<'_>,
         signature: SignatureBytes,
     ) -> Result<(), ReplayBindingErrorV1> {
+        self.record_facts_v1(
+            ResponseBindingFactsV1 {
+                fingerprint: request.fingerprint().into_bytes(),
+                signer_profile_ref: request.signer_profile_ref(),
+                signing_root: request.signing_root().into_bytes(),
+            },
+            signature,
+        )
+    }
+
+    fn record_facts_v1(
+        &mut self,
+        request: ResponseBindingFactsV1,
+        signature: SignatureBytes,
+    ) -> Result<(), ReplayBindingErrorV1> {
         if self.poisoned {
             return Err(ReplayBindingErrorV1::Poisoned);
+        }
+        if request.fingerprint == [0; 32]
+            || request.signer_profile_ref == [0; 32]
+            || request.signing_root == [0; 32]
+        {
+            return Err(ReplayBindingErrorV1::Conflict(
+                "response binding identity contains zero bytes",
+            ));
         }
         if signature.as_bytes() == &[0; 64] {
             return Err(ReplayBindingErrorV1::Conflict(
                 "zero response cannot be bound",
             ));
         }
-        let fingerprint = request.fingerprint().into_bytes();
-        let signer_profile_ref = request.signer_profile_ref();
-        let signing_root = request.signing_root().into_bytes();
+        let fingerprint = request.fingerprint;
+        let signer_profile_ref = request.signer_profile_ref;
+        let signing_root = request.signing_root;
         if let Some(existing) = self.entries.get(&fingerprint).copied() {
             if existing.signer_profile_ref != signer_profile_ref
                 || existing.signing_root != signing_root
@@ -1293,6 +1798,11 @@ enum RequestV1 {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
     },
+    CompareAndAdvanceSemantic {
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV1,
+    },
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -1372,6 +1882,20 @@ fn anchor_path_for(log_path: &Path) -> Result<PathBuf, ExternalWatermarkAuthorit
     Ok(log_path.with_file_name(format!(".{name}.head-v1")))
 }
 
+fn semantic_log_path_for(log_path: &Path) -> Result<PathBuf, ExternalWatermarkAuthorityError> {
+    let name = log_path.file_name().and_then(|name| name.to_str()).ok_or(
+        ExternalWatermarkAuthorityError::InvalidConfig("semantic log filename"),
+    )?;
+    Ok(log_path.with_file_name(format!(".{name}.semantic-v1")))
+}
+
+fn semantic_anchor_path_for(log_path: &Path) -> Result<PathBuf, ExternalWatermarkAuthorityError> {
+    let name = log_path.file_name().and_then(|name| name.to_str()).ok_or(
+        ExternalWatermarkAuthorityError::InvalidConfig("semantic anchor filename"),
+    )?;
+    Ok(log_path.with_file_name(format!(".{name}.semantic-head-v1")))
+}
+
 fn remove_stale_socket(path: &Path) -> Result<(), ExternalWatermarkAuthorityError> {
     match fs::symlink_metadata(path) {
         Ok(metadata) if metadata.file_type().is_socket() => {
@@ -1404,6 +1928,24 @@ fn record_hash(value: SignerWatermarkV0, previous: [u8; 32]) -> [u8; 32] {
     hasher.update(value.journal_id());
     hasher.update(value.sequence().to_be_bytes());
     hasher.update(value.chain_checksum());
+    hasher.finalize().into()
+}
+
+fn semantic_record_hash(
+    value: SignerWatermarkV0,
+    facts: ExternalWatermarkSemanticFactsV1,
+    previous: [u8; 32],
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(SEMANTIC_DOMAIN);
+    hasher.update(previous);
+    hasher.update(value.scope());
+    hasher.update(value.journal_id());
+    hasher.update(value.sequence().to_be_bytes());
+    hasher.update(value.chain_checksum());
+    hasher.update(facts.epoch.to_be_bytes());
+    hasher.update(facts.view.to_be_bytes());
+    hasher.update(facts.safety_revision.to_be_bytes());
     hasher.finalize().into()
 }
 
@@ -1451,6 +1993,82 @@ fn decode_record(bytes: &[u8]) -> Result<LogRecordV1, ExternalWatermarkAuthority
             .map_err(|_| ExternalWatermarkAuthorityError::InvalidLog("record watermark fields"))?;
     Ok(LogRecordV1 {
         value,
+        previous_record_hash,
+        record_hash,
+    })
+}
+
+fn encode_semantic_record(record: SemanticRecordV1) -> [u8; SEMANTIC_RECORD_BYTES] {
+    let mut bytes = [0u8; SEMANTIC_RECORD_BYTES];
+    let mut offset = 0;
+    bytes[offset..offset + 8].copy_from_slice(SEMANTIC_MAGIC);
+    offset += 8;
+    bytes[offset] = PROTOCOL_VERSION;
+    offset += 1;
+    bytes[offset] = 1;
+    offset += 1;
+    offset += 2;
+    bytes[offset..offset + 8].copy_from_slice(&record.value.sequence().to_be_bytes());
+    offset += 8;
+    bytes[offset..offset + 32].copy_from_slice(&record.value.scope());
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.value.journal_id());
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.value.chain_checksum());
+    offset += 32;
+    bytes[offset..offset + 8].copy_from_slice(&record.facts.epoch.to_be_bytes());
+    offset += 8;
+    bytes[offset..offset + 8].copy_from_slice(&record.facts.view.to_be_bytes());
+    offset += 8;
+    bytes[offset..offset + 8].copy_from_slice(&record.facts.safety_revision.to_be_bytes());
+    offset += 8;
+    bytes[offset..offset + 32].copy_from_slice(&record.previous_record_hash);
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.record_hash);
+    bytes
+}
+
+fn decode_semantic_record(
+    bytes: &[u8],
+) -> Result<SemanticRecordV1, ExternalWatermarkAuthorityError> {
+    if bytes.len() != SEMANTIC_RECORD_BYTES
+        || &bytes[..8] != SEMANTIC_MAGIC
+        || bytes[8] != PROTOCOL_VERSION
+        || bytes[9] != 1
+        || bytes[10..12] != [0, 0]
+    {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "semantic record header",
+        ));
+    }
+    let sequence = u64::from_be_bytes(bytes[12..20].try_into().expect("semantic sequence"));
+    let scope = bytes[20..52].try_into().expect("semantic scope");
+    let journal_id = bytes[52..84].try_into().expect("semantic journal");
+    let chain_checksum = bytes[84..116].try_into().expect("semantic checksum");
+    let epoch = u64::from_be_bytes(bytes[116..124].try_into().expect("semantic epoch"));
+    let view = u64::from_be_bytes(bytes[124..132].try_into().expect("semantic view"));
+    let safety_revision =
+        u64::from_be_bytes(bytes[132..140].try_into().expect("semantic revision"));
+    if safety_revision == 0 {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "semantic revision is zero",
+        ));
+    }
+    // The journal identity and checksum are authenticated by the paired main
+    // record. The semantic sidecar carries the scope/sequence and is joined
+    // against that exact tuple during replay.
+    let previous_record_hash = bytes[140..172].try_into().expect("semantic predecessor");
+    let record_hash = bytes[172..204].try_into().expect("semantic hash");
+    let value =
+        SignerWatermarkV0::from_persisted_parts(scope, journal_id, sequence, chain_checksum)
+            .map_err(|_| ExternalWatermarkAuthorityError::InvalidLog("semantic value fields"))?;
+    Ok(SemanticRecordV1 {
+        value,
+        facts: ExternalWatermarkSemanticFactsV1 {
+            epoch,
+            view,
+            safety_revision,
+        },
         previous_record_hash,
         record_hash,
     })
@@ -1506,6 +2124,55 @@ fn decode_anchor(bytes: &[u8]) -> Result<(u64, [u8; 32]), ExternalWatermarkAutho
     Ok((count, head))
 }
 
+fn semantic_anchor_checksum(bytes: &[u8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(SEMANTIC_ANCHOR_MAGIC);
+    hasher.update((bytes.len() as u64).to_be_bytes());
+    hasher.update(bytes);
+    hasher.finalize().into()
+}
+
+fn encode_semantic_anchor(record_count: u64, head_hash: [u8; 32]) -> [u8; SEMANTIC_ANCHOR_BYTES] {
+    let mut bytes = [0u8; SEMANTIC_ANCHOR_BYTES];
+    bytes[..8].copy_from_slice(SEMANTIC_ANCHOR_MAGIC);
+    bytes[8] = PROTOCOL_VERSION;
+    bytes[9..12].copy_from_slice(&[0, 0, 0]);
+    bytes[12..20].copy_from_slice(&record_count.to_be_bytes());
+    bytes[20..52].copy_from_slice(&head_hash);
+    let checksum = semantic_anchor_checksum(&bytes[..SEMANTIC_ANCHOR_BODY_BYTES]);
+    bytes[SEMANTIC_ANCHOR_BODY_BYTES..].copy_from_slice(&checksum);
+    bytes
+}
+
+fn decode_semantic_anchor(
+    bytes: &[u8],
+) -> Result<(u64, [u8; 32]), ExternalWatermarkAuthorityError> {
+    if bytes.len() != SEMANTIC_ANCHOR_BYTES
+        || &bytes[..8] != SEMANTIC_ANCHOR_MAGIC
+        || bytes[8] != PROTOCOL_VERSION
+        || bytes[9..12] != [0, 0, 0]
+    {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "semantic anchor header",
+        ));
+    }
+    if bytes[SEMANTIC_ANCHOR_BODY_BYTES..]
+        != semantic_anchor_checksum(&bytes[..SEMANTIC_ANCHOR_BODY_BYTES])
+    {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "semantic anchor checksum",
+        ));
+    }
+    let count = u64::from_be_bytes(bytes[12..20].try_into().expect("semantic anchor count"));
+    let head = bytes[20..52].try_into().expect("semantic anchor head");
+    if (count == 0) != (head == [0; 32]) {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "semantic anchor empty state",
+        ));
+    }
+    Ok((count, head))
+}
+
 fn encode_watermark(value: SignerWatermarkV0, output: &mut Vec<u8>) {
     output.extend_from_slice(&value.scope());
     output.extend_from_slice(&value.journal_id());
@@ -1545,6 +2212,23 @@ fn encode_request(request: RequestV1) -> Vec<u8> {
                 encode_watermark(expected, &mut body);
             }
             encode_watermark(target, &mut body);
+        }
+        RequestV1::CompareAndAdvanceSemantic {
+            expected,
+            target,
+            facts,
+        } => {
+            body.push(OP_COMPARE_AND_ADVANCE_SEMANTIC);
+            body.push(u8::from(expected.is_some()));
+            body.extend_from_slice(&[0, 0]);
+            body.extend_from_slice(&target.scope());
+            if let Some(expected) = expected {
+                encode_watermark(expected, &mut body);
+            }
+            encode_watermark(target, &mut body);
+            body.extend_from_slice(&facts.epoch.to_be_bytes());
+            body.extend_from_slice(&facts.view.to_be_bytes());
+            body.extend_from_slice(&facts.safety_revision.to_be_bytes());
         }
     }
     body
@@ -1590,6 +2274,55 @@ fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityEr
                 ));
             }
             Ok(RequestV1::CompareAndAdvance { expected, target })
+        }
+        OP_COMPARE_AND_ADVANCE_SEMANTIC if expected_present <= 1 => {
+            let expected_len = if expected_present == 1 {
+                WATERMARK_BYTES
+            } else {
+                0
+            };
+            let expected_start = 41;
+            let target_start = expected_start + expected_len;
+            if body.len() != target_start + WATERMARK_BYTES + 24 {
+                return Err(ExternalWatermarkAuthorityError::Protocol(
+                    "semantic compare request length",
+                ));
+            }
+            let scope: [u8; 32] = body[9..41].try_into().expect("semantic compare scope");
+            let expected = if expected_present == 1 {
+                Some(decode_watermark(&body[expected_start..target_start])?)
+            } else {
+                None
+            };
+            let target = decode_watermark(&body[target_start..target_start + WATERMARK_BYTES])?;
+            if target.scope() != scope {
+                return Err(ExternalWatermarkAuthorityError::Protocol(
+                    "semantic target scope differs",
+                ));
+            }
+            let facts_start = target_start + WATERMARK_BYTES;
+            let facts = ExternalWatermarkSemanticFactsV1 {
+                epoch: u64::from_be_bytes(
+                    body[facts_start..facts_start + 8]
+                        .try_into()
+                        .expect("semantic epoch"),
+                ),
+                view: u64::from_be_bytes(
+                    body[facts_start + 8..facts_start + 16]
+                        .try_into()
+                        .expect("semantic view"),
+                ),
+                safety_revision: u64::from_be_bytes(
+                    body[facts_start + 16..facts_start + 24]
+                        .try_into()
+                        .expect("semantic revision"),
+                ),
+            };
+            Ok(RequestV1::CompareAndAdvanceSemantic {
+                expected,
+                target,
+                facts,
+            })
         }
         _ => Err(ExternalWatermarkAuthorityError::Protocol(
             "unsupported request operation",

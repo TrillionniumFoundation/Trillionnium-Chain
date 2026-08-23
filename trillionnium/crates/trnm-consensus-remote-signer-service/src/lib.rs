@@ -19,6 +19,7 @@
 mod fixture;
 
 use std::{
+    collections::BTreeMap,
     error::Error,
     fmt, fs,
     io::{self, Read},
@@ -33,11 +34,16 @@ use std::{
 use ed25519_dalek::{Signer, SigningKey, Verifier};
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
+use trnm_consensus_external_watermark::{
+    ExternalWatermarkAuthorityError, ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1,
+    ReplayBindingStoreV1, UnixWatermarkClient,
+};
 use trnm_consensus_remote_signer_protocol::{
     decode_remote_signer_request_v1_exact, RemoteConsensusCommandKindV1,
     RemoteSignerProtocolErrorV1, RemoteSignerRequestBindingV1, UnverifiedRemoteSignerResponseV1,
     MAX_REMOTE_SIGNER_REQUEST_BYTES_V1,
 };
+use trnm_consensus_signer_journal::SignerWatermarkV0;
 use trnm_consensus_types::{SignatureBytes, ValidatorSet};
 
 pub use fixture::{
@@ -109,17 +115,19 @@ pub struct RemoteSignerServiceConfig {
 /// Request facts an independently administered authority must bind before a
 /// private key can be reached.
 ///
-/// This is deliberately a data-only seam.  The service's current SQLite
-/// reservation schema cannot atomically share a head with the external
-/// authority, so the external-mode entry point below fails closed until an
-/// adapter implements this contract.
+/// This is deliberately a data-only seam. The bounded timeout-mode entry
+/// point below passes these facts to an independently durable adapter; Core,
+/// SafetyRules, and production vote authority remain outside this crate.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExternalAuthorityRequestV1 {
     pub scope: [u8; 32],
     pub process_generation: u64,
     pub lease_id: [u8; 32],
+    pub signer_profile_ref: [u8; 32],
     pub request_fingerprint: [u8; 32],
     pub signing_root: [u8; 32],
+    pub nonce: [u8; 32],
+    pub command_kind: RemoteConsensusCommandKindV1,
     pub epoch: u64,
     pub view: u64,
     pub safety_revision: u64,
@@ -163,7 +171,7 @@ impl ExternalAuthorityReservationV1 {
     }
 }
 
-/// Stable failure classes for the future external authority bridge.
+/// Stable failure classes for the bounded external timeout authority bridge.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ExternalAuthorityErrorV1 {
     Required,
@@ -177,7 +185,7 @@ pub enum ExternalAuthorityErrorV1 {
 impl fmt::Display for ExternalAuthorityErrorV1 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
-            Self::Required => "external authority is required but not wired",
+            Self::Required => "external authority is required for this command",
             Self::Unavailable => "external authority is unavailable",
             Self::CompareFailed => "external authority compare-and-advance failed",
             Self::ReplayConflict => "external response replay binding conflicted",
@@ -205,6 +213,10 @@ impl Error for ExternalAuthorityErrorV1 {}
 /// Any unavailable, stale, corrupt, or ambiguous result must fail closed.
 /// This trait does not itself grant Core/SafetyRules authority.
 pub trait ExternalAuthorityAdapterV1: Send {
+    /// Returns the exact 64-byte signature payload for a previously bound
+    /// request. The service reconstructs and verifies the protocol response
+    /// envelope from the original request; an adapter must never return a
+    /// caller-selected or partially decoded response.
     fn replay_response_v1(
         &mut self,
         request: ExternalAuthorityRequestV1,
@@ -220,6 +232,364 @@ pub trait ExternalAuthorityAdapterV1: Send {
         reservation: ExternalAuthorityReservationV1,
         response: &[u8],
     ) -> Result<(), ExternalAuthorityErrorV1>;
+}
+
+const EXTERNAL_ADAPTER_JOURNAL_DOMAIN_V1: &[u8] =
+    b"trnm.remote-signer.external-timeout-adapter.journal.v1\0";
+const EXTERNAL_ADAPTER_CHECKSUM_DOMAIN_V1: &[u8] =
+    b"trnm.remote-signer.external-timeout-adapter.checksum.v1\0";
+const EXTERNAL_ADAPTER_TOKEN_DOMAIN_V1: &[u8] =
+    b"trnm.remote-signer.external-timeout-adapter.reservation-token.v1\0";
+
+#[derive(Debug, Clone, Copy)]
+struct PendingExternalReservationV1 {
+    request: ExternalAuthorityRequestV1,
+    target: SignerWatermarkV0,
+}
+
+/// Minimal Unix adapter for the external CAS and independent response log.
+///
+/// This adapter intentionally admits timeout votes only. It is useful for a
+/// bounded process-boundary test and for proving the ordering of the two
+/// independent durable authorities; it is not a Core/SafetyRules signer and
+/// carries no production activation. A request is accepted only when the
+/// response log count and external watermark head agree. Any CAS reservation
+/// without a durable response is treated as ambiguous after restart and
+/// permanently fails closed until an operator reconciles the namespace.
+pub struct UnixExternalTimeoutAuthorityV1 {
+    watermark: UnixWatermarkClient,
+    replay: ReplayBindingStoreV1,
+    scope: [u8; 32],
+    process_generation: u64,
+    lease_id: [u8; 32],
+    signer_profile_ref: [u8; 32],
+    journal_id: [u8; 32],
+    pending: BTreeMap<[u8; 32], PendingExternalReservationV1>,
+    poisoned: bool,
+}
+
+impl UnixExternalTimeoutAuthorityV1 {
+    /// Opens an adapter bound to one immutable process-generation/lease
+    /// namespace. Changing either value requires a newly provisioned external
+    /// watermark namespace; silently attaching to an old head is rejected.
+    pub fn open(
+        authority_socket: impl AsRef<Path>,
+        response_log_path: impl AsRef<Path>,
+        scope: [u8; 32],
+        process_generation: u64,
+        lease_id: [u8; 32],
+        signer_profile_ref: [u8; 32],
+    ) -> Result<Self, ExternalAuthorityErrorV1> {
+        if scope == [0; 32]
+            || process_generation == 0
+            || lease_id == [0; 32]
+            || signer_profile_ref == [0; 32]
+        {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        let watermark =
+            UnixWatermarkClient::new(authority_socket).map_err(map_external_watermark_error_v1)?;
+        let replay =
+            ReplayBindingStoreV1::open(response_log_path).map_err(map_replay_binding_error_v1)?;
+        let journal_id =
+            external_adapter_journal_id_v1(scope, process_generation, lease_id, signer_profile_ref);
+        Ok(Self {
+            watermark,
+            replay,
+            scope,
+            process_generation,
+            lease_id,
+            signer_profile_ref,
+            journal_id,
+            pending: BTreeMap::new(),
+            poisoned: false,
+        })
+    }
+
+    /// Constructs the adapter from the exact public binding used by the
+    /// protocol request. This does not grant or validate the lease; the
+    /// external authority remains responsible for its own process/host
+    /// admission.
+    pub fn from_binding(
+        binding: RemoteSignerRequestBindingV1,
+        authority_socket: impl AsRef<Path>,
+        response_log_path: impl AsRef<Path>,
+    ) -> Result<Self, ExternalAuthorityErrorV1> {
+        Self::open(
+            authority_socket,
+            response_log_path,
+            watermark_scope_v1(&binding),
+            binding.process_generation().get(),
+            *binding.lease_id().as_bytes(),
+            *binding.service_profile_ref().as_bytes(),
+        )
+    }
+
+    pub const fn journal_id(&self) -> [u8; 32] {
+        self.journal_id
+    }
+
+    pub const fn scope(&self) -> [u8; 32] {
+        self.scope
+    }
+
+    fn validate_request_v1(
+        &self,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<(), ExternalAuthorityErrorV1> {
+        if self.poisoned {
+            return Err(ExternalAuthorityErrorV1::Unavailable);
+        }
+        if request.scope != self.scope
+            || request.process_generation != self.process_generation
+            || request.lease_id != self.lease_id
+            || request.signer_profile_ref != self.signer_profile_ref
+            || request.request_fingerprint == [0; 32]
+            || request.signing_root == [0; 32]
+            || request.nonce == [0; 32]
+        {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        if request.command_kind != RemoteConsensusCommandKindV1::TimeoutVote {
+            return Err(ExternalAuthorityErrorV1::Protocol);
+        }
+        Ok(())
+    }
+
+    /// Reconciles the two independent durable heads. The first CAS value is
+    /// sequence zero; every response record increments the replay count, so a
+    /// healthy head satisfies `replay_count == external_sequence + 1`.
+    fn reconcile_heads_v1(&self) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
+        let head = self
+            .watermark
+            .load_checked(self.scope)
+            .map_err(map_external_watermark_error_v1)?;
+        let records = self.replay.record_count_v1();
+        match head {
+            None if records == 0 => Ok(None),
+            None => Err(ExternalAuthorityErrorV1::InvalidState),
+            Some(value) => {
+                if value.scope() != self.scope || value.journal_id() != self.journal_id {
+                    return Err(ExternalAuthorityErrorV1::InvalidState);
+                }
+                let expected_records = value
+                    .sequence()
+                    .checked_add(1)
+                    .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+                if records != expected_records {
+                    return Err(ExternalAuthorityErrorV1::InvalidState);
+                }
+                Ok(Some(value))
+            }
+        }
+    }
+
+    fn target_for_v1(
+        &self,
+        previous: Option<SignerWatermarkV0>,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<SignerWatermarkV0, ExternalAuthorityErrorV1> {
+        let (sequence, previous_checksum) = previous
+            .map(|value| {
+                value
+                    .sequence()
+                    .checked_add(1)
+                    .map(|next| (next, value.chain_checksum()))
+                    .ok_or(ExternalAuthorityErrorV1::InvalidState)
+            })
+            .unwrap_or(Ok((0, [0; 32])))?;
+        let checksum =
+            external_adapter_checksum_v1(self.journal_id, previous_checksum, sequence, request);
+        SignerWatermarkV0::from_persisted_parts(self.scope, self.journal_id, sequence, checksum)
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)
+    }
+}
+
+impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
+    fn replay_response_v1(
+        &mut self,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<Option<Vec<u8>>, ExternalAuthorityErrorV1> {
+        self.validate_request_v1(request)?;
+        // Reconcile before lookup as well: a tampered/ambiguous external head
+        // must not be bypassed merely because a response entry is present.
+        self.reconcile_heads_v1()?;
+        self.replay
+            .lookup_signature_v1(
+                request.request_fingerprint,
+                request.signer_profile_ref,
+                request.signing_root,
+            )
+            .map_err(map_replay_binding_error_v1)
+            .map(|signature| signature.map(|value| value.as_bytes().to_vec()))
+    }
+
+    fn reserve_v1(
+        &mut self,
+        request: ExternalAuthorityRequestV1,
+    ) -> Result<ExternalAuthorityReservationV1, ExternalAuthorityErrorV1> {
+        self.validate_request_v1(request)?;
+        let previous = self.reconcile_heads_v1()?;
+        let target = self.target_for_v1(previous, request)?;
+        let facts = ExternalWatermarkSemanticFactsV1::new(
+            request.epoch,
+            request.view,
+            request.safety_revision,
+        )
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+        self.watermark
+            .compare_and_advance_semantic_checked(previous, target, facts)
+            .map_err(map_external_watermark_error_v1)?;
+        let token_digest = external_adapter_token_v1(target, request);
+        if self
+            .pending
+            .insert(
+                token_digest,
+                PendingExternalReservationV1 { request, target },
+            )
+            .is_some()
+        {
+            self.poisoned = true;
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        Ok(ExternalAuthorityReservationV1::from_parts(
+            target.sequence(),
+            request.request_fingerprint,
+            token_digest,
+        ))
+    }
+
+    fn bind_response_v1(
+        &mut self,
+        reservation: ExternalAuthorityReservationV1,
+        response: &[u8],
+    ) -> Result<(), ExternalAuthorityErrorV1> {
+        if self.poisoned {
+            return Err(ExternalAuthorityErrorV1::Unavailable);
+        }
+        let pending = self
+            .pending
+            .get(&reservation.token_digest())
+            .copied()
+            .ok_or(ExternalAuthorityErrorV1::ReplayConflict)?;
+        if pending.target.sequence() != reservation.sequence()
+            || pending.request.request_fingerprint != reservation.request_fingerprint()
+            || response.len() != 64
+        {
+            return Err(ExternalAuthorityErrorV1::Protocol);
+        }
+        let signature = SignatureBytes::from_array(
+            response
+                .try_into()
+                .map_err(|_| ExternalAuthorityErrorV1::Protocol)?,
+        );
+        if signature.as_bytes() == &[0; 64] {
+            return Err(ExternalAuthorityErrorV1::Protocol);
+        }
+        self.replay
+            .record_signature_v1(
+                pending.request.request_fingerprint,
+                pending.request.signer_profile_ref,
+                pending.request.signing_root,
+                signature,
+            )
+            .map_err(map_replay_binding_error_v1)?;
+        match self
+            .watermark
+            .load_checked(self.scope)
+            .map_err(map_external_watermark_error_v1)?
+        {
+            Some(current) if current == pending.target => {
+                self.pending.remove(&reservation.token_digest());
+                Ok(())
+            }
+            _ => {
+                self.poisoned = true;
+                Err(ExternalAuthorityErrorV1::InvalidState)
+            }
+        }
+    }
+}
+
+fn map_external_watermark_error_v1(
+    error: ExternalWatermarkAuthorityError,
+) -> ExternalAuthorityErrorV1 {
+    match error {
+        ExternalWatermarkAuthorityError::CompareFailed
+        | ExternalWatermarkAuthorityError::ScopeConflict => ExternalAuthorityErrorV1::CompareFailed,
+        ExternalWatermarkAuthorityError::InvalidLog(_) => ExternalAuthorityErrorV1::InvalidState,
+        ExternalWatermarkAuthorityError::InvalidConfig(_) => ExternalAuthorityErrorV1::InvalidState,
+        ExternalWatermarkAuthorityError::Protocol(_) => ExternalAuthorityErrorV1::Protocol,
+        ExternalWatermarkAuthorityError::Io { .. }
+        | ExternalWatermarkAuthorityError::Unavailable => ExternalAuthorityErrorV1::Unavailable,
+    }
+}
+
+fn map_replay_binding_error_v1(error: ReplayBindingErrorV1) -> ExternalAuthorityErrorV1 {
+    match error {
+        ReplayBindingErrorV1::InvalidLog(_) | ReplayBindingErrorV1::InvalidConfig(_) => {
+            ExternalAuthorityErrorV1::InvalidState
+        }
+        ReplayBindingErrorV1::Io { .. } | ReplayBindingErrorV1::Poisoned => {
+            ExternalAuthorityErrorV1::Unavailable
+        }
+        ReplayBindingErrorV1::Conflict(_) => ExternalAuthorityErrorV1::ReplayConflict,
+    }
+}
+
+fn external_adapter_journal_id_v1(
+    scope: [u8; 32],
+    process_generation: u64,
+    lease_id: [u8; 32],
+    signer_profile_ref: [u8; 32],
+) -> [u8; 32] {
+    let mut hash = Sha256::new();
+    hash.update(EXTERNAL_ADAPTER_JOURNAL_DOMAIN_V1);
+    hash.update(scope);
+    hash.update(process_generation.to_be_bytes());
+    hash.update(lease_id);
+    hash.update(signer_profile_ref);
+    hash.finalize().into()
+}
+
+fn external_adapter_checksum_v1(
+    journal_id: [u8; 32],
+    previous_checksum: [u8; 32],
+    sequence: u64,
+    request: ExternalAuthorityRequestV1,
+) -> [u8; 32] {
+    let mut hash = Sha256::new();
+    hash.update(EXTERNAL_ADAPTER_CHECKSUM_DOMAIN_V1);
+    hash.update(journal_id);
+    hash.update(previous_checksum);
+    hash.update(sequence.to_be_bytes());
+    hash.update(request.scope);
+    hash.update(request.process_generation.to_be_bytes());
+    hash.update(request.lease_id);
+    hash.update(request.signer_profile_ref);
+    hash.update(request.request_fingerprint);
+    hash.update(request.signing_root);
+    hash.update(request.nonce);
+    hash.update([request.command_kind as u8]);
+    hash.update(request.epoch.to_be_bytes());
+    hash.update(request.view.to_be_bytes());
+    hash.update(request.safety_revision.to_be_bytes());
+    hash.finalize().into()
+}
+
+fn external_adapter_token_v1(
+    target: SignerWatermarkV0,
+    request: ExternalAuthorityRequestV1,
+) -> [u8; 32] {
+    let mut hash = Sha256::new();
+    hash.update(EXTERNAL_ADAPTER_TOKEN_DOMAIN_V1);
+    hash.update(target.scope());
+    hash.update(target.journal_id());
+    hash.update(target.sequence().to_be_bytes());
+    hash.update(target.chain_checksum());
+    hash.update(request.request_fingerprint);
+    hash.update(request.signing_root);
+    hash.finalize().into()
 }
 
 /// Durable state exposed for diagnostics and tests.
@@ -303,7 +673,7 @@ impl fmt::Display for ServiceFailure {
             Self::SignatureFailure => f.write_str("signer key produced an invalid signature"),
             Self::ReservationFailure => f.write_str("signer reservation is not in pending state"),
             Self::ExternalAuthorityRequired => {
-                f.write_str("external authority bridge is required but not wired")
+                f.write_str("external authority is required for this command")
             }
             Self::SafetyRevisionRollback { maximum, incoming } => write!(
                 f,
@@ -335,7 +705,7 @@ impl fmt::Display for RemoteSignerServiceError {
 }
 
 impl RemoteSignerServiceError {
-    /// Returns true only for the deliberate fail-closed external bridge seam.
+    /// Returns true when the external authority path rejected the request.
     /// Callers must not fall back to [`RemoteSignerService::process_request`]
     /// when this is true; that path is local fixture state by design.
     pub fn is_external_authority_required(&self) -> bool {
@@ -567,28 +937,75 @@ impl RemoteSignerService {
             scope: self.scope,
             process_generation: self.binding.process_generation().get(),
             lease_id: *self.binding.lease_id().as_bytes(),
+            signer_profile_ref: *self.binding.service_profile_ref().as_bytes(),
             request_fingerprint: *request.fingerprint().as_bytes(),
             signing_root: *intent.signing_root().as_bytes(),
+            nonce: *request.nonce().as_bytes(),
+            command_kind: request.command().kind(),
             epoch,
             view,
             safety_revision: intent.authorizing_safety_revision(),
         })
     }
 
-    /// External-authority entry point reserved for the future production
-    /// bridge.  The current service schema performs local SQLite reservation
-    /// and direct fixture-key signing in one process; it cannot safely combine
-    /// that transaction with an independently administered CAS and response
-    /// log.  Therefore this method deliberately fails closed after exact
-    /// request decoding.  It must be replaced by a real adapter before any
-    /// caller can claim external watermark-backed service authority.
+    /// Bounded external-authority entry point for timeout votes. The external
+    /// CAS and semantic sidecar reserve the exact request before the fixture
+    /// key is reached; the independent response log is bound before bytes are
+    /// returned. Vote/Core/SafetyRules authority remains deliberately absent.
     pub fn process_request_with_external_authority_v1(
         &mut self,
         encoded_request: &[u8],
-        _authority: &mut dyn ExternalAuthorityAdapterV1,
+        authority: &mut dyn ExternalAuthorityAdapterV1,
     ) -> Result<Vec<u8>, RemoteSignerServiceError> {
-        let _request = self.external_authority_request_v1(encoded_request)?;
-        Err(ServiceFailure::ExternalAuthorityRequired.into())
+        self.ensure_file_identity_v1()?;
+        let request = decode_remote_signer_request_v1_exact(
+            encoded_request,
+            &self.validator_set,
+            self.binding,
+        )
+        .map_err(ServiceFailure::Protocol)?;
+        let kind = request.command().kind();
+        if !self.purpose_policy.allows(kind) {
+            return Err(ServiceFailure::WrongPurpose(kind).into());
+        }
+        // Core/SafetyRules are not wired into this service. Keep the only
+        // executable external bridge timeout-only until an unforgeable safe
+        // vote authorization is present.
+        if kind != RemoteConsensusCommandKindV1::TimeoutVote {
+            return Err(ServiceFailure::ExternalAuthorityRequired.into());
+        }
+        let facts = self.external_authority_request_v1(encoded_request)?;
+        if let Some(response_bytes) = authority
+            .replay_response_v1(facts)
+            .map_err(external_authority_failure_v1)?
+        {
+            let signature = signature_from_external_response_v1(&response_bytes)?;
+            self.verify_external_signature_v1(&request, signature)?;
+            return UnverifiedRemoteSignerResponseV1::from_unverified_signature_bytes(
+                &request,
+                SignatureBytes::from_array(signature),
+            )
+            .and_then(|response| response.try_exact_bytes())
+            .map_err(|error| ServiceFailure::Protocol(error).into());
+        }
+        let reservation = authority
+            .reserve_v1(facts)
+            .map_err(external_authority_failure_v1)?;
+        if reservation.request_fingerprint() != facts.request_fingerprint {
+            return Err(ServiceFailure::ReservationFailure.into());
+        }
+        let signature = self.sign_and_verify_v1(&facts.signing_root)?;
+        // The adapter durably binds before this method returns. Any error is
+        // deliberately surfaced; callers must not retry through local mode.
+        authority
+            .bind_response_v1(reservation, &signature)
+            .map_err(external_authority_failure_v1)?;
+        UnverifiedRemoteSignerResponseV1::from_unverified_signature_bytes(
+            &request,
+            SignatureBytes::from_array(signature),
+        )
+        .and_then(|response| response.try_exact_bytes())
+        .map_err(|error| ServiceFailure::Protocol(error).into())
     }
 
     /// Processes one exact protocol request and returns an exact protocol
@@ -966,6 +1383,20 @@ impl RemoteSignerService {
         Ok(signature.to_bytes())
     }
 
+    fn verify_external_signature_v1(
+        &self,
+        request: &trnm_consensus_remote_signer_protocol::RemoteSignerRequestV1,
+        signature: [u8; 64],
+    ) -> Result<(), RemoteSignerServiceError> {
+        self.signing_key
+            .verifying_key()
+            .verify(
+                request.command().intent().signing_root().as_bytes(),
+                &ed25519_dalek::Signature::from_bytes(&signature),
+            )
+            .map_err(|_| ServiceFailure::SignatureFailure.into())
+    }
+
     fn ensure_file_identity_v1(&self) -> Result<(), RemoteSignerServiceError> {
         if file_identity_v1(&self.watermark_path)? != self.watermark_identity
             || file_identity_v1(
@@ -980,6 +1411,20 @@ impl RemoteSignerService {
         }
         Ok(())
     }
+}
+
+fn signature_from_external_response_v1(
+    response: &[u8],
+) -> Result<[u8; 64], RemoteSignerServiceError> {
+    response
+        .try_into()
+        .map_err(|_| ServiceFailure::Protocol(RemoteSignerProtocolErrorV1::InvalidSignature).into())
+}
+
+fn external_authority_failure_v1(_error: ExternalAuthorityErrorV1) -> RemoteSignerServiceError {
+    // Every external bridge failure is deliberately collapsed to the
+    // fail-closed class. Callers must not fall back to the local SQLite path.
+    ServiceFailure::ExternalAuthorityRequired.into()
 }
 
 fn canonical_watermark_path(

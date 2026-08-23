@@ -29,18 +29,20 @@ local fail-stop validation, not an externally administered fencing authority.
 
 `ExternalAuthorityAdapterV1` and
 `RemoteSignerService::external_authority_request_v1` define the facts and
-ordering required for a future bridge: durable response replay first,
-cross-process compare-and-advance before key access, then durable response
-binding before local completion. The corresponding
-`process_request_with_external_authority_v1` entry point currently returns an
-explicit `external authority bridge is required but not wired` error. It does
-not fall back to the local SQLite path. The public black-box contract test
-asserts that no local sequence advances and no adapter side effect runs.
+ordering for the bounded timeout bridge. The
+`process_request_with_external_authority_v1` entry point now performs durable
+response replay, cross-process semantic compare-and-advance, fixture-key
+access only after the reservation, and durable response binding before local
+completion. It never falls back to the local SQLite path. Vote requests remain
+fail-closed because this slice does not provide Core/SafetyRules authority.
 
-Cross-process CAS, append-only authority recovery, response replay binding,
-and crash reconciliation remain evidenced by the independent
-`trnm-consensus-external-watermark` black-box tests; wiring those stores into
-this service is intentionally not claimed yet.
+The bridge uses the independent
+`trnm-consensus-external-watermark` process and its semantic sidecar to persist
+epoch/view/Safety-revision ordering. Its append-only response journal binds the
+exact request facts and signature across restart and rejects ambiguous
+reservation/response state. The external-watermark black-box tests and the
+remote-signer OS-process integration test provide the crash, restart, replay,
+and tamper evidence for this narrow path.
 
 The response is the existing exact protocol response envelope. The service
 verifies the generated signature against the request signing root before
@@ -55,13 +57,14 @@ authority. It does not provide:
 - Core/SafetyRules admission or locked-QC evaluation;
 - a lease, process-generation, or checkpoint resolver;
 - HSM/KMS key custody;
-- an externally administered monotonic watermark or whole-node rollback
-  protection (the SQLite namespace is local state);
+- a production HSM/KMS or whole-node rollback authority; the external
+  watermark process is a tested local boundary, not host attestation or an
+  operator-independent anti-rollback service;
 - peer-credential/lease attestation beyond the Unix socket's 0600 same-UID
   filesystem permission;
-- full crash/power-loss recovery proof: a matching pending reservation can be
-  retried deterministically, but the slice does not persist/replay the final
-  response or an append-only signature event;
+- full Core crash/power-loss recovery proof: this slice persists and replays
+  timeout responses, but it is not connected to block/QC/finality commit or a
+  production signature-event journal;
 - WAL/SHM identity pinning or protection from a trusted-filesystem operator
   replacing the local database between process starts; or
 - proposal, handoff, P2P, or operator-purpose signing.
@@ -77,7 +80,8 @@ validator credential source.
 
 ## Local checks
 
-    cargo test -p trnm-consensus-remote-signer-service
+    cargo test --locked -p trnm-consensus-remote-signer-service
+    cargo test --locked -p trnm-consensus-remote-signer-service --test external_authority_adapter
     python3 scripts/remote_signer_p0_test.py
 
 The Python test launches trnm-remote-signer-p0 serve-fixture, sends real

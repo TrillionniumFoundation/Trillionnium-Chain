@@ -1,12 +1,10 @@
-//! Public black-box contract for the not-yet-wired external authority seam.
+//! Public black-box contract for the bounded external authority seam.
 //!
 //! The service's local fixture path must never be silently reused when a
-//! caller asks for external watermark authority.  This test proves the
-//! external entry point decodes request facts but fails closed before local
-//! reservation, signing, or adapter side effects.  Cross-process CAS,
-//! response replay, and crash reconciliation are supplied by the independent
-//! `trnm-consensus-external-watermark` authority tests; this crate deliberately
-//! does not claim that integration yet.
+//! caller asks for external watermark authority. This test proves an adapter
+//! failure is surfaced before local reservation/signing and never triggers a
+//! SQLite fallback. Cross-process CAS, response replay, and crash
+//! reconciliation are supplied by the adjacent integration tests.
 
 use std::sync::{
     atomic::{AtomicUsize, Ordering},
@@ -88,7 +86,7 @@ fn external_entrypoint_fails_closed_without_local_sqlite_fallback() {
     let mut authority = authority;
     let error = service
         .process_request_with_external_authority_v1(&request, &mut authority)
-        .expect_err("unwired external authority must fail closed");
+        .expect_err("unavailable external authority must fail closed");
     assert!(error.is_external_authority_required());
     // The timeout-only external bridge must consult the independent adapter
     // before failing closed.  It must never fall back to the local SQLite

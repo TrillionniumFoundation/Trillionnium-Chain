@@ -10,6 +10,13 @@ truncation failure observed at restart.  Each accepted record is written,
 `sync_data`'d, and followed by a directory sync before the process reports
 success.
 
+The timeout-only bridge uses the additional semantic CAS operation. It stores
+`(epoch, view, Safety revision)` in a separately locked, fixed-record,
+hash-chained sidecar and rejects lower rounds or non-increasing revisions even
+after the authority process restarts. The main watermark log and semantic
+sidecar must advance together; a crash between their durable writes leaves
+unequal lengths and is a startup fail-stop, never an inferred repair.
+
 `UnixWatermarkClient` implements the existing
 `ExternalMonotonicWatermarkV0` trait.  The local signer journal therefore
 remains a separate SQLite/WAL namespace: its durable intent event must advance

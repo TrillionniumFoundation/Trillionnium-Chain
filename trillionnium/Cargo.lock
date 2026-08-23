@@ -1499,7 +1499,9 @@ dependencies = [
  "rusqlite",
  "sha2",
  "tempfile",
+ "trnm-consensus-external-watermark",
  "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-signer-journal",
  "trnm-consensus-types",
 ]
 
