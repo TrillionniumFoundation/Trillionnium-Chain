@@ -1093,14 +1093,68 @@ where
 /// Explicit deployed-runtime composition entry for independently provisioned
 /// peer fencing, signer watermark, and Vote/TimeoutVote production.
 ///
-/// The ordinary deployed runtime is commissioned inside the bounded owner
-/// thread.  Only after the authenticated mesh gate has passed is the
-/// commissioned Ready authority rebuilt with the supplied signature producer
-/// and fenced with the supplied external watermark.  The ordinary
-/// [`run_deployed_bounded_consensus_v1`] entry remains on its rejecting-fence /
-/// fixture-producer path; this function is an opt-in seam and does not change
-/// any production or activation truth bit.
+/// This entry is deliberately fail-closed until the *fleet* signing seam is
+/// external as well.  The bounded Ready/Start barrier and the later relay /
+/// restart statements still have legacy `LoadedValidatorConfig` signing-key
+/// call sites.  Allowing this function to commission the external Vote/Timeout
+/// authority while those statements silently use a raw key would create a
+/// split authority graph (and make the external signer look stronger than it
+/// is).  Keep the guard here, at the public deployed boundary, rather than
+/// relying on a caller or a metadata flag to remember this invariant.
+///
+/// Once a `FleetSignatureProducerV1`-style seam replaces those call sites, the
+/// guard is the only line that needs to move; the external fence, watermark,
+/// and Vote/Timeout producer composition below are retained as the narrow
+/// implementation seam.  The ordinary [`run_deployed_bounded_consensus_v1`]
+/// entry remains on its rejecting-fence / fixture-producer path, and no
+/// production or activation truth bit is changed by this guard.
 pub fn run_deployed_bounded_consensus_with_external_authority_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    // Do not let an external Vote/Timeout signer appear to close P0 while the
+    // deployed fleet barrier / relay / restart paths can still reach the raw
+    // consensus key held by `LoadedValidatorConfig`.  This is intentionally a
+    // runtime error (rather than a debug assertion or a report-only flag): an
+    // operator cannot accidentally start a partially externalized authority.
+    let _ = (
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        external_watermark,
+        producer,
+        proposal_producer,
+    );
+    require_deployed_fleet_signing_authority_v1()
+}
+
+fn require_deployed_fleet_signing_authority_v1<T>() -> Result<T> {
+    bail!(
+        "ExternalAuthorityRequired: deployed fleet Ready/Start, relay, and restart signing must be externally provisioned before this entry can commission"
+    )
+}
+
+#[cfg(test)]
+#[test]
+fn external_authority_guard_is_fail_closed_v1() {
+    assert!(require_deployed_fleet_signing_authority_v1::<()>().is_err());
+}
+
+/*
+ * Keep the intended composition below in the source while the guard is
+ * active.  It is useful as a compile-checked seam for the next tranche and
+ * makes the exact owner wiring reviewable without making it executable.
+ */
+#[allow(dead_code)]
+fn compose_deployed_external_authority_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
     max_blocks: u64,
