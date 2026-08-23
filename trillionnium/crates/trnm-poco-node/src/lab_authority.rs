@@ -2678,31 +2678,29 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         Ok(true)
     }
 
-    #[cfg(test)]
+    #[cfg(all(test, feature = "lab-validator-runtime-test-support"))]
     pub(crate) fn install_and_recover_finalization_intent_marker_for_test_v0(
         &self,
     ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
-        let finalization = self
-            .core
-            .safety_state()
-            .last_finalization()
-            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+        let finalization = self.core.safety_state().last_finalization().ok_or(
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
                 "test recovery marker requires a durable Core finalization",
-            ))?;
-        let source = self
-            .core
-            .safety_state()
-            .payload_validation_completions()
-            .iter()
-            .find(|completion| {
-                completion.result().artifact_ref().is_some_and(|artifact| {
-                    artifact.overlay() == finalization.target_overlay_ref()
+            ),
+        )?;
+        let source =
+            self.core
+                .safety_state()
+                .payload_validation_completions()
+                .iter()
+                .find(|completion| {
+                    completion.result().artifact_ref().is_some_and(|artifact| {
+                        artifact.overlay() == finalization.target_overlay_ref()
+                    })
                 })
-            })
-            .and_then(|completion| completion.result().artifact_ref())
-            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "test recovery marker has no retained Valid source",
-            ))?;
+                .and_then(|completion| completion.result().artifact_ref())
+                .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                    "test recovery marker has no retained Valid source",
+                ))?;
         let parent_timestamp_ms = finalization.authenticated_parent().timestamp_ms();
         let read = self
             .application
