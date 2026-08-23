@@ -3273,25 +3273,13 @@ mod tests {
 
     #[cfg(feature = "safety-rules-sidecar")]
     impl RecordingSemanticWatermarkV0 {
-        fn seeded(
-            scope: [u8; 32],
-            journal_id: [u8; 32],
-            capability: [u8; 32],
-            revision: u64,
-        ) -> Self {
-            let head =
-                SignerWatermarkV0::from_persisted_parts(scope, journal_id, revision, [0x71; 32])
-                    .expect("shape-valid semantic test head");
-            let facts = ExternalWatermarkSemanticFactsV0::new(
-                0, 0, revision, [0x72; 32], [0x73; 32], [0x74; 32], capability,
-            )
-            .expect("shape-valid semantic test facts");
+        fn fresh(scope: [u8; 32], journal_id: [u8; 32], capability: [u8; 32]) -> Self {
             Self {
                 scope,
                 journal_id,
                 capability,
-                head: Arc::new(Mutex::new(Some(head))),
-                facts: Arc::new(Mutex::new(Some(facts))),
+                head: Arc::new(Mutex::new(None)),
+                facts: Arc::new(Mutex::new(None)),
             }
         }
 
@@ -3448,12 +3436,7 @@ mod tests {
             let scope = [0x81; 32];
             let journal_id = [0x82; 32];
             let capability = [0x83; 32];
-            let external = RecordingSemanticWatermarkV0::seeded(
-                scope,
-                journal_id,
-                capability,
-                predecessor_revision,
-            );
+            let external = RecordingSemanticWatermarkV0::fresh(scope, journal_id, capability);
             let external_observer = external.clone();
             let observed_external_sequence = Arc::new(Mutex::new(None));
             let calls = Arc::new(AtomicUsize::new(0));
@@ -3475,21 +3458,25 @@ mod tests {
                 .expect("semantic CAS and exact Vote signer release succeed");
 
             assert_eq!(calls.load(Ordering::SeqCst), 1);
-            let successor_revision = predecessor_revision.saturating_add(1);
             assert_eq!(
                 *observed_external_sequence
                     .lock()
                     .expect("read sidecar ordering observation"),
-                Some(successor_revision),
+                Some(1),
                 "the signer producer observed the sidecar CAS before journal release"
             );
-            assert_eq!(external_observer.sequence(), Some(successor_revision));
+            assert_eq!(external_observer.sequence(), Some(1));
             assert_eq!(vote.view(), proposal_view);
             let facts = harness.authorities[leader_index]
                 .facts_v0()
                 .expect("project post-vote authority facts");
             assert_eq!(facts.phase_v0(), PocoNodeLabAuthorityPhaseV0::VoteSigned);
             assert_eq!(facts.signed_vote_intents_v0(), 1);
+            assert_eq!(
+                facts.safety_revision_v0(),
+                predecessor_revision.saturating_add(1),
+                "Core Safety revision may advance independently of the external reservation sequence"
+            );
             assert_eq!(facts.signer_watermark_sequence_v0(), 2);
         });
     }

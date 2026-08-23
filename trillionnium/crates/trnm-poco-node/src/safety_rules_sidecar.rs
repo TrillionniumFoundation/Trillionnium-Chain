@@ -52,9 +52,9 @@ impl fmt::Display for SafetyRulesSemanticSidecarErrorV1 {
             Self::PredecessorMismatch => {
                 formatter.write_str("SafetyRules predecessor digest mismatch")
             }
-            Self::RevisionMismatch => {
-                formatter.write_str("SafetyRules revision is not the next external sequence")
-            }
+            Self::RevisionMismatch => formatter.write_str(
+                "SafetyRules semantic revision/order cannot advance the external sequence",
+            ),
             Self::SemanticIntentMismatch => {
                 formatter.write_str("canonical intent does not match successor Safety revision")
             }
@@ -140,7 +140,13 @@ where
                     // would turn namespace authentication into an optional
                     // check on reopen.
                     || facts.capability != capability
-                    || (!genesis_facts && facts.safety_revision != watermark.sequence())
+                    || facts.safety_revision == 0
+                    // Sequence is the sidecar's transition count, while
+                    // safety_revision is Core's state revision.  Proposal
+                    // obligations and other non-signing state writes may
+                    // advance the latter without producing a sidecar record;
+                    // the two values must therefore not be conflated.
+                    || (!genesis_facts && watermark.sequence() == 0)
                 {
                     return Err(SafetyRulesSemanticSidecarErrorV1::ExternalHeadMismatch);
                 }
@@ -197,11 +203,23 @@ where
             return Err(SafetyRulesSemanticSidecarErrorV1::Poisoned);
         }
         let successor = transition.successor_state();
-        let sequence = successor.revision();
+        let safety_revision = successor.revision();
         let intent = transition.canonical_intent();
-        if sequence == 0 || intent.authorizing_safety_revision() != sequence {
+        if safety_revision == 0 || intent.authorizing_safety_revision() != safety_revision {
             return self.poison(SafetyRulesSemanticSidecarErrorV1::SemanticIntentMismatch);
         }
+
+        // The external watermark sequence counts complete SafetyRules
+        // transitions, not every Core SafetyState persistence.  In
+        // particular, a non-signing Proposal obligation can advance
+        // `safety_revision` between two sidecar records.  Keep that scalar
+        // jump in the semantic facts and advance the independent watermark by
+        // exactly one as required by ExternalMonotonicWatermarkV0.
+        let expected_sequence = self.expected.map_or(0, |watermark| watermark.sequence());
+        let next_sequence = match expected_sequence.checked_add(1) {
+            Some(sequence) => sequence,
+            None => return self.poison(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch),
+        };
 
         // Build the exact semantic target before checking the in-memory
         // predecessor.  After a process crash the external CAS may already
@@ -212,7 +230,7 @@ where
         let target = SignerWatermarkV0::from_persisted_parts(
             self.scope,
             self.journal_id,
-            sequence,
+            next_sequence,
             checksum,
         )
         .map_err(SafetyRulesSemanticSidecarErrorV1::External)?;
@@ -221,15 +239,15 @@ where
         let nonce = signer_journal_lifecycle_nonce_v0(
             intent.epoch().get(),
             intent.preimage().context().view().get(),
-            sequence,
+            safety_revision,
             fingerprint,
             signing_root,
-            sequence,
+            next_sequence,
         );
         let facts = ExternalWatermarkSemanticFactsV0::new(
             intent.epoch().get(),
             intent.preimage().context().view().get(),
-            sequence,
+            safety_revision,
             nonce,
             fingerprint,
             signing_root,
@@ -237,9 +255,45 @@ where
         )
         .ok_or(SafetyRulesSemanticSidecarErrorV1::SemanticIntentMismatch)?;
 
-        let exact_retry = self.expected == Some(target)
-            && self.expected_facts == Some(facts)
-            && successor.digest() == self.state_digest;
+        let retry_binding = if let Some(expected) = self.expected {
+            let retry_sequence = expected.sequence();
+            let retry_target = SignerWatermarkV0::from_persisted_parts(
+                self.scope,
+                self.journal_id,
+                retry_sequence,
+                checksum,
+            )
+            .map_err(SafetyRulesSemanticSidecarErrorV1::External)?;
+            let retry_nonce = signer_journal_lifecycle_nonce_v0(
+                intent.epoch().get(),
+                intent.preimage().context().view().get(),
+                safety_revision,
+                fingerprint,
+                signing_root,
+                retry_sequence,
+            );
+            let retry_facts = ExternalWatermarkSemanticFactsV0::new(
+                intent.epoch().get(),
+                intent.preimage().context().view().get(),
+                safety_revision,
+                retry_nonce,
+                fingerprint,
+                signing_root,
+                self.capability,
+            )
+            .ok_or(SafetyRulesSemanticSidecarErrorV1::SemanticIntentMismatch)?;
+            Some((expected, retry_target, retry_facts))
+        } else {
+            None
+        };
+        let exact_retry =
+            retry_binding
+                .as_ref()
+                .is_some_and(|(expected, retry_target, retry_facts)| {
+                    expected == retry_target
+                        && self.expected_facts == Some(*retry_facts)
+                        && successor.digest() == self.state_digest
+                });
         if exact_retry {
             // The caller still has to bind the trait argument to the
             // transition.  A caller-supplied successor (or any other digest)
@@ -258,7 +312,9 @@ where
                     return Err(SafetyRulesSemanticSidecarErrorV1::External(error));
                 }
             };
-            if observed != Some((target, facts)) {
+            let (_, retry_target, retry_facts) =
+                retry_binding.expect("exact retry binding exists when retry predicate is true");
+            if observed != Some((retry_target, retry_facts)) {
                 return self.poison(SafetyRulesSemanticSidecarErrorV1::ExternalHeadMismatch);
             }
             return Ok(());
@@ -268,9 +324,14 @@ where
         {
             return self.poison(SafetyRulesSemanticSidecarErrorV1::PredecessorMismatch);
         }
-        let expected_sequence = self.expected.map_or(0, |watermark| watermark.sequence());
-        if sequence != expected_sequence.saturating_add(1) {
-            return self.poison(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch);
+        if let Some(previous_facts) = self.expected_facts {
+            // Genesis facts are an adapter-owned anchor and may carry the
+            // same Safety revision as the first real timeout transition.  For
+            // every later record, however, a stale/replayed Safety revision
+            // must fail closed even though the independent sequence advances.
+            if expected_sequence != 0 && safety_revision <= previous_facts.safety_revision {
+                return self.poison(SafetyRulesSemanticSidecarErrorV1::RevisionMismatch);
+            }
         }
 
         if self.expected.is_none() {
@@ -348,7 +409,8 @@ fn transition_checksum_v1(
 mod tests {
     use super::*;
     use trnm_consensus_safety_rules::{
-        PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateV1,
+        PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateSeedV1,
+        SafetyRulesStateV1,
     };
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, GenesisQcV0,
@@ -543,7 +605,11 @@ mod tests {
         let scope = [0x31; 32];
         let journal_id = [0x32; 32];
         let capability = [0x09; 32];
-        let sequence = transition.successor_state().revision();
+        // The external sequence counts sidecar transitions.  It is not the
+        // successor SafetyRules revision (those can diverge when Core writes
+        // a non-signing Proposal obligation between sidecar records).
+        let sequence = 1;
+        let safety_revision = transition.successor_state().revision();
         let target = SignerWatermarkV0::from_persisted_parts(
             scope,
             journal_id,
@@ -557,11 +623,11 @@ mod tests {
         let facts = ExternalWatermarkSemanticFactsV0::new(
             intent.epoch().get(),
             intent.preimage().context().view().get(),
-            sequence,
+            safety_revision,
             signer_journal_lifecycle_nonce_v0(
                 intent.epoch().get(),
                 intent.preimage().context().view().get(),
-                sequence,
+                safety_revision,
                 fingerprint,
                 signing_root,
                 sequence,
@@ -609,6 +675,50 @@ mod tests {
             error,
             SafetyRulesSemanticSidecarErrorV1::InvalidConfiguration
         );
+    }
+
+    #[test]
+    fn semantic_sidecar_sequence_is_independent_of_safety_revision() {
+        let (context, genesis_state) = context_and_state();
+        // Simulate a fresh process whose authenticated Core/SafetyRules state
+        // has already crossed several non-signing persistence revisions.  The
+        // first sidecar transition must still reserve sequence 1, rather than
+        // trying to jump the external monotonic sequence to revision 8.
+        let elevated_state = SafetyRulesStateV1::new(
+            &context,
+            SafetyRulesStateSeedV1::new(
+                genesis_state.current_view(),
+                genesis_state.last_voted_view(),
+                genesis_state.last_timeout_view(),
+                genesis_state.high_qc().clone(),
+                genesis_state.locked_qc().clone(),
+                genesis_state.finalized(),
+                7,
+            ),
+            &RootSignatures,
+        )
+        .expect("authenticated elevated SafetyRules state");
+        let transition =
+            PureHotStuffSafetyKernelV1::prepare_timeout(&context, &elevated_state, &RootSignatures)
+                .expect("timeout transition from elevated state");
+        assert_eq!(transition.successor_state().revision(), 8);
+
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            MemorySemanticAuthority::default(),
+            [0x41; 32],
+            [0x42; 32],
+            [0x09; 32],
+            elevated_state.digest(),
+        )
+        .expect("fresh semantic authority opens");
+        sidecar
+            .persist_transition_v1(elevated_state.digest(), &transition)
+            .expect("revision jump does not jump external sequence");
+        assert_eq!(
+            sidecar.expected_watermark().map(|head| head.sequence()),
+            Some(1)
+        );
+        assert!(!sidecar.is_poisoned());
     }
 
     #[test]
