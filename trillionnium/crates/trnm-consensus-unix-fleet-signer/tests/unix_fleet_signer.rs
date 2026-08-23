@@ -15,8 +15,8 @@ use trnm_consensus_types::ValidatorId;
 use trnm_consensus_unix_fleet_signer::{
     test_fixture::{fixture_public_key_v1, FixtureModeV1},
     DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
-    FleetRootPurposeV1, UnixFleetRootAuthorityServerV1,
-    UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1, UnixFleetSignerErrorV1,
+    FleetRootPurposeV1, UnixFleetRootAuthorityServerV1, UnixFleetRootSignerConfig,
+    UnixFleetRootSignerProducerV1, UnixFleetSignerErrorV1,
 };
 
 fn origin() -> ValidatorId {
