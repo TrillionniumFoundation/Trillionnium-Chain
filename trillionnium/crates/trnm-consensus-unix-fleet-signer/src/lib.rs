@@ -477,7 +477,7 @@ impl UnixFleetRootSignerProducerV1 {
                 }
             }
         })?;
-        if !metadata.file_type().is_socket() || metadata.permissions().mode() & 0o077 != 0 {
+        if !metadata.file_type().is_socket() || metadata.permissions().mode() & 0o777 != 0o600 {
             return Err(UnixFleetSignerErrorV1::SocketNotPrivate);
         }
         let parent =
