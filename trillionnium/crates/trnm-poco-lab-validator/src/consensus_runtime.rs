@@ -881,6 +881,29 @@ where
             )
             .context("initialize process1 signed replay archive")?;
 
+            // External fencing is the first live authority gate.  Establishing
+            // the authenticated mesh (and acquiring each directed lease) must
+            // precede h1-h3 commissioning so a missing/stale fencing backend
+            // cannot reach SafetyStore, signer, or Core mutation.
+            let mesh = match PersistentAuthenticatedPeerMeshV0::establish(
+                &config,
+                MESH_SETUP_TIMEOUT_V1,
+                MESH_IO_TIMEOUT_V1,
+                MESH_QUEUE_CAPACITY_V1,
+            )
+            .context("establish externally fenced consensus mesh")
+            {
+                Ok(mesh) => mesh,
+                Err(error) => {
+                    let _ = event_journal.append(
+                        RuntimeEventKindV1::SafetyHalted,
+                        "bounded-consensus-external-fence-gate-failed",
+                        0,
+                    );
+                    return Err(error);
+                }
+            };
+
             let commissioning_started_at = Instant::now();
             let takeover = match commission(&mut config, preflight.signer_lifetime)
                 .context("commission authenticated h1-h3 ordinary runtime")
@@ -917,24 +940,6 @@ where
                     let _ = event_journal.append(
                         RuntimeEventKindV1::SafetyHalted,
                         "bounded-consensus-authority-binding-failed",
-                        0,
-                    );
-                    return Err(error);
-                }
-            };
-            let mesh = match PersistentAuthenticatedPeerMeshV0::establish(
-                &config,
-                MESH_SETUP_TIMEOUT_V1,
-                MESH_IO_TIMEOUT_V1,
-                MESH_QUEUE_CAPACITY_V1,
-            )
-            .context("establish exact bounded consensus mesh")
-            {
-                Ok(mesh) => mesh,
-                Err(error) => {
-                    let _ = event_journal.append(
-                        RuntimeEventKindV1::SafetyHalted,
-                        "bounded-consensus-mesh-establishment-failed",
                         0,
                     );
                     return Err(error);
@@ -6389,6 +6394,20 @@ mod tests {
 
     fn restart_intent_fixture_v1() -> RuntimeRestartPrepareIntentV1 {
         RuntimeRestartPrepareIntentV1::test_only_v1(1, 9, 17, [0x31; 32])
+    }
+
+    #[test]
+    fn external_fence_gate_precedes_commission_and_signer_authority_v1() {
+        let source = include_str!("consensus_runtime.rs");
+        let gate = source
+            .find("establish externally fenced consensus mesh")
+            .expect("runtime has an external fencing mesh gate");
+        let commission = source
+            .find("commission(&mut config")
+            .expect("runtime commissioning call remains explicit");
+        assert!(gate < commission);
+        assert!(source.contains("bounded-consensus-external-fence-gate-failed"));
+        assert!(source.contains("production_activation: false"));
     }
 
     fn restart_qc_ref_fixture_v1(

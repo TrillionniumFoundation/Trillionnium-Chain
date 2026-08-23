@@ -17,9 +17,11 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,
     io::{Read, Write},
+    sync::Mutex,
     time::{Duration, Instant},
 };
 
+use sha2::Digest;
 use trnm_consensus_types::{ValidatorId, ValidatorSet};
 
 use crate::transport::AuthenticatedConnection;
@@ -30,6 +32,21 @@ pub const P2P_ADMISSION_CONSENSUS_TRANSPORT_V1: bool = false;
 pub const P2P_ADMISSION_VALIDATOR_RUNTIME_V1: bool = false;
 pub const P2P_ADMISSION_PRODUCTION_ACTIVATION_V1: bool = false;
 pub const P2P_ADMISSION_HOST_ATTESTATION_V1: bool = false;
+/// The external fencing seam is deliberately present, but no production
+/// authority is selected by this laboratory crate.  A caller must inject an
+/// implementation that stores the CAS/append-only record outside the node
+/// before any consensus worker can be commissioned.
+pub const P2P_ADMISSION_EXTERNAL_FENCING_AUTHORITY_V1: bool = false;
+pub const P2P_ADMISSION_EXTERNAL_FENCING_HARD_GATE_V1: bool = true;
+
+/// Direction is part of the external CAS scope.  A node pair may legitimately
+/// own one inbound and one outbound directed session; those leases must never
+/// alias in an authority shared by both hosts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ExternalPeerDirectionV1 {
+    Inbound,
+    Outbound,
+}
 
 const MAX_LEASE_PEERS: usize = 1_024;
 const MAX_SESSION_REPLAY_ENTRIES: usize = 4_096;
@@ -38,7 +55,7 @@ const MIN_LEASE_TTL: Duration = Duration::from_secs(1);
 const MAX_LEASE_TTL: Duration = Duration::from_secs(120);
 
 /// Exact context that a peer lease is allowed to serve.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PeerAdmissionContextV1 {
     epoch: u64,
     validator_set_id: [u8; 32],
@@ -155,6 +172,426 @@ impl fmt::Display for AdmissionError {
 }
 
 impl std::error::Error for AdmissionError {}
+
+/// The exact identity tuple fenced by an external authority.  Every field is
+/// part of the CAS key; a token for one socket/session/epoch cannot be used by
+/// another worker, validator, or validator-set incarnation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ExternalPeerLeaseScopeV1 {
+    local: ValidatorId,
+    remote: ValidatorId,
+    direction: ExternalPeerDirectionV1,
+    context: PeerAdmissionContextV1,
+    session_id: [u8; 32],
+    generation: u64,
+}
+
+impl ExternalPeerLeaseScopeV1 {
+    pub fn new(
+        local: ValidatorId,
+        remote: ValidatorId,
+        direction: ExternalPeerDirectionV1,
+        context: PeerAdmissionContextV1,
+        session_id: [u8; 32],
+        generation: u64,
+    ) -> Result<Self, ExternalFenceError> {
+        if local.is_zero() || remote.is_zero() || local == remote {
+            return Err(ExternalFenceError::InvalidScope);
+        }
+        if session_id == [0; 32] || generation == 0 {
+            return Err(ExternalFenceError::InvalidScope);
+        }
+        Ok(Self {
+            local,
+            remote,
+            direction,
+            context,
+            session_id,
+            generation,
+        })
+    }
+
+    pub const fn local(self) -> ValidatorId {
+        self.local
+    }
+
+    pub const fn remote(self) -> ValidatorId {
+        self.remote
+    }
+
+    pub const fn direction(self) -> ExternalPeerDirectionV1 {
+        self.direction
+    }
+
+    pub const fn context(self) -> PeerAdmissionContextV1 {
+        self.context
+    }
+
+    pub const fn session_id(self) -> [u8; 32] {
+        self.session_id
+    }
+
+    pub const fn generation(self) -> u64 {
+        self.generation
+    }
+}
+
+/// Acquire request passed to the external fencing service.  The service owns
+/// the clock and must return an expiry in its own monotonic domain.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalPeerLeaseRequestV1 {
+    scope: ExternalPeerLeaseScopeV1,
+    ttl_millis: u64,
+}
+
+impl ExternalPeerLeaseRequestV1 {
+    pub fn new(scope: ExternalPeerLeaseScopeV1, ttl: Duration) -> Result<Self, ExternalFenceError> {
+        let ttl_millis =
+            u64::try_from(ttl.as_millis()).map_err(|_| ExternalFenceError::InvalidRequest)?;
+        if !(1_000..=120_000).contains(&ttl_millis) {
+            return Err(ExternalFenceError::InvalidRequest);
+        }
+        Ok(Self { scope, ttl_millis })
+    }
+
+    pub const fn scope(self) -> ExternalPeerLeaseScopeV1 {
+        self.scope
+    }
+
+    pub const fn ttl_millis(self) -> u64 {
+        self.ttl_millis
+    }
+}
+
+/// Opaque grant returned by an external fencing authority.  The scope and
+/// expiry are copied into the value solely so the mesh can fail closed before
+/// making an authority call; the `opaque` field is what the authority must
+/// authenticate.  Callers cannot manufacture a valid grant for the test
+/// authority because every operation rechecks the authority-side CAS record.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct ExternalPeerLeaseTokenV1 {
+    scope: ExternalPeerLeaseScopeV1,
+    expires_at_millis: u64,
+    opaque: [u8; 32],
+}
+
+impl fmt::Debug for ExternalPeerLeaseTokenV1 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("ExternalPeerLeaseTokenV1")
+            .field("scope", &self.scope)
+            .field("expires_at_millis", &self.expires_at_millis)
+            .field("opaque", &"<redacted>")
+            .finish()
+    }
+}
+
+impl ExternalPeerLeaseTokenV1 {
+    /// Constructor for an authority implementation.  The opaque value must
+    /// be non-zero and is never interpreted by the mesh.
+    pub fn from_authority_parts(
+        scope: ExternalPeerLeaseScopeV1,
+        expires_at_millis: u64,
+        opaque: [u8; 32],
+    ) -> Result<Self, ExternalFenceError> {
+        if expires_at_millis == 0 || opaque == [0; 32] {
+            return Err(ExternalFenceError::InvalidGrant);
+        }
+        Ok(Self {
+            scope,
+            expires_at_millis,
+            opaque,
+        })
+    }
+
+    pub const fn scope(self) -> ExternalPeerLeaseScopeV1 {
+        self.scope
+    }
+
+    pub const fn expires_at_millis(self) -> u64 {
+        self.expires_at_millis
+    }
+
+    pub const fn opaque(self) -> [u8; 32] {
+        self.opaque
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExternalFenceError {
+    InvalidScope,
+    InvalidRequest,
+    InvalidGrant,
+    Unavailable,
+    ContextMismatch,
+    LeaseConflict,
+    StaleGeneration,
+    TokenMismatch,
+    LeaseNotFound,
+    LeaseExpired,
+}
+
+impl fmt::Display for ExternalFenceError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let message = match self {
+            Self::InvalidScope => "external fence scope is invalid",
+            Self::InvalidRequest => "external fence request is invalid",
+            Self::InvalidGrant => "external fence grant is invalid",
+            Self::Unavailable => "external fencing authority is unavailable",
+            Self::ContextMismatch => "external fence epoch/set context mismatch",
+            Self::LeaseConflict => "external fence lease conflicts with a live generation",
+            Self::StaleGeneration => "external fence generation is stale",
+            Self::TokenMismatch => "external fence token does not match its CAS record",
+            Self::LeaseNotFound => "external fence lease is not present",
+            Self::LeaseExpired => "external fence lease expired",
+        };
+        formatter.write_str(message)
+    }
+}
+
+impl std::error::Error for ExternalFenceError {}
+
+/// Injectable external fencing authority.  Implementations must make each
+/// operation a durable compare-and-swap against an append-only or equivalent
+/// non-rollbackable record.  The mesh treats every error as fail-stop.
+pub trait ExternalPeerLeaseAuthorityV1: Send + Sync {
+    /// Cheap fail-closed availability probe executed before sockets, workers,
+    /// commissioning, or signer authority are created.  Implementations
+    /// should verify that their durable backend is reachable and append-only.
+    fn preflight(&self) -> Result<(), ExternalFenceError> {
+        Ok(())
+    }
+
+    fn acquire(
+        &self,
+        request: ExternalPeerLeaseRequestV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError>;
+
+    fn renew(
+        &self,
+        token: ExternalPeerLeaseTokenV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError>;
+
+    fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError>;
+
+    fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError>;
+}
+
+/// A deliberately unavailable authority used by the normal bounded runtime.
+/// This prevents accidental commissioning until an operator injects a real
+/// external fence implementation.  It is not a production authority.
+#[derive(Debug, Default)]
+pub struct RejectingExternalPeerLeaseAuthorityV1;
+
+impl ExternalPeerLeaseAuthorityV1 for RejectingExternalPeerLeaseAuthorityV1 {
+    fn preflight(&self) -> Result<(), ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+
+    fn acquire(
+        &self,
+        _request: ExternalPeerLeaseRequestV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+
+    fn renew(
+        &self,
+        _token: ExternalPeerLeaseTokenV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+
+    fn revalidate(&self, _token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+
+    fn release(&self, _token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        Err(ExternalFenceError::Unavailable)
+    }
+}
+
+/// Process-local deterministic authority used only by unit/loopback tests.
+/// The `advance_clock_millis` method simulates expiry and restart without
+/// claiming durable anti-rollback semantics.
+#[derive(Debug)]
+pub struct TestExternalPeerLeaseAuthorityV1 {
+    context: PeerAdmissionContextV1,
+    now_millis: std::sync::atomic::AtomicU64,
+    state: Mutex<TestExternalFenceStateV1>,
+}
+
+#[derive(Debug, Default)]
+struct TestExternalFenceStateV1 {
+    next_generation: BTreeMap<(ValidatorId, ValidatorId, ExternalPeerDirectionV1), u64>,
+    leases: BTreeMap<
+        (ValidatorId, ValidatorId, ExternalPeerDirectionV1),
+        (ExternalPeerLeaseTokenV1, u64),
+    >,
+}
+
+impl TestExternalPeerLeaseAuthorityV1 {
+    pub fn new(context: PeerAdmissionContextV1) -> Self {
+        Self {
+            context,
+            now_millis: std::sync::atomic::AtomicU64::new(1),
+            state: Mutex::new(TestExternalFenceStateV1::default()),
+        }
+    }
+
+    pub fn advance_clock_millis(&self, millis: u64) {
+        self.now_millis
+            .fetch_add(millis, std::sync::atomic::Ordering::AcqRel);
+    }
+
+    fn now(&self) -> u64 {
+        self.now_millis.load(std::sync::atomic::Ordering::Acquire)
+    }
+
+    fn key(scope: ExternalPeerLeaseScopeV1) -> (ValidatorId, ValidatorId, ExternalPeerDirectionV1) {
+        (scope.local(), scope.remote(), scope.direction())
+    }
+
+    fn grant(
+        &self,
+        scope: ExternalPeerLeaseScopeV1,
+        expires_at_millis: u64,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        let mut bytes = Vec::with_capacity(8 + 32 * 4);
+        bytes.extend_from_slice(&scope.generation().to_be_bytes());
+        bytes.extend_from_slice(scope.local().as_bytes());
+        bytes.extend_from_slice(scope.remote().as_bytes());
+        bytes.push(match scope.direction() {
+            ExternalPeerDirectionV1::Inbound => 0,
+            ExternalPeerDirectionV1::Outbound => 1,
+        });
+        bytes.extend_from_slice(&scope.session_id());
+        bytes.extend_from_slice(&scope.context().epoch().to_be_bytes());
+        bytes.extend_from_slice(&scope.context().validator_set_id());
+        bytes.extend_from_slice(&expires_at_millis.to_be_bytes());
+        let digest = sha2::Sha256::digest(bytes);
+        let mut opaque = [0; 32];
+        opaque.copy_from_slice(&digest);
+        ExternalPeerLeaseTokenV1::from_authority_parts(scope, expires_at_millis, opaque)
+    }
+}
+
+impl ExternalPeerLeaseAuthorityV1 for TestExternalPeerLeaseAuthorityV1 {
+    fn preflight(&self) -> Result<(), ExternalFenceError> {
+        Ok(())
+    }
+
+    fn acquire(
+        &self,
+        request: ExternalPeerLeaseRequestV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        if request.scope().context() != self.context {
+            return Err(ExternalFenceError::ContextMismatch);
+        }
+        let now = self.now();
+        let key = Self::key(request.scope());
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| ExternalFenceError::Unavailable)?;
+        if let Some((existing, _)) = state.leases.get(&key).copied() {
+            if existing.expires_at_millis() > now {
+                return Err(ExternalFenceError::LeaseConflict);
+            }
+            state.leases.remove(&key);
+        }
+        let expected = state
+            .next_generation
+            .get(&key)
+            .copied()
+            .unwrap_or(0)
+            .checked_add(1)
+            .ok_or(ExternalFenceError::StaleGeneration)?;
+        if request.scope().generation() != expected {
+            return Err(ExternalFenceError::StaleGeneration);
+        }
+        let expires = now
+            .checked_add(request.ttl_millis())
+            .ok_or(ExternalFenceError::InvalidRequest)?;
+        let token = self.grant(request.scope(), expires)?;
+        state.next_generation.insert(key, expected);
+        state.leases.insert(key, (token, request.ttl_millis()));
+        Ok(token)
+    }
+
+    fn renew(
+        &self,
+        token: ExternalPeerLeaseTokenV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        if token.scope().context() != self.context {
+            return Err(ExternalFenceError::ContextMismatch);
+        }
+        let now = self.now();
+        let key = Self::key(token.scope());
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| ExternalFenceError::Unavailable)?;
+        let (current, ttl_millis) = state
+            .leases
+            .get(&key)
+            .copied()
+            .ok_or(ExternalFenceError::LeaseNotFound)?;
+        if current != token {
+            return Err(ExternalFenceError::TokenMismatch);
+        }
+        if current.expires_at_millis() <= now {
+            state.leases.remove(&key);
+            return Err(ExternalFenceError::LeaseExpired);
+        }
+        let renewed = self.grant(token.scope(), now.saturating_add(ttl_millis.max(1_000)))?;
+        state.leases.insert(key, (renewed, ttl_millis));
+        Ok(renewed)
+    }
+
+    fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        if token.scope().context() != self.context {
+            return Err(ExternalFenceError::ContextMismatch);
+        }
+        let now = self.now();
+        let key = Self::key(token.scope());
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| ExternalFenceError::Unavailable)?;
+        let (current, _) = state
+            .leases
+            .get(&key)
+            .copied()
+            .ok_or(ExternalFenceError::LeaseNotFound)?;
+        if current != token {
+            return Err(ExternalFenceError::TokenMismatch);
+        }
+        if current.expires_at_millis() <= now {
+            state.leases.remove(&key);
+            return Err(ExternalFenceError::LeaseExpired);
+        }
+        Ok(())
+    }
+
+    fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        let key = Self::key(token.scope());
+        let mut state = self
+            .state
+            .lock()
+            .map_err(|_| ExternalFenceError::Unavailable)?;
+        let (current, _) = state
+            .leases
+            .get(&key)
+            .copied()
+            .ok_or(ExternalFenceError::LeaseNotFound)?;
+        if current != token {
+            return Err(ExternalFenceError::TokenMismatch);
+        }
+        state.leases.remove(&key);
+        Ok(())
+    }
+}
 
 /// A bounded process-local peer lease/fencing authority.
 ///
@@ -379,6 +816,7 @@ impl PeerLeaseAuthorityV1 {
 #[cfg(test)]
 mod tests {
     use std::net::{TcpListener, TcpStream};
+    use std::sync::Arc;
     use std::thread;
     use std::time::Duration;
 
@@ -635,6 +1073,109 @@ mod tests {
         assert_eq!(
             wrong_authority.admit_authenticated_connection(&connection, server, Instant::now()),
             Err(AdmissionError::ContextMismatch)
+        );
+    }
+
+    #[test]
+    fn external_fence_cas_rejects_old_worker_expiry_and_context_mismatch() {
+        let context = context();
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let local = ValidatorId::new([0x81; 32]);
+        let remote = ValidatorId::new([0x82; 32]);
+        let first_scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Outbound,
+            context,
+            [0x91; 32],
+            1,
+        )
+        .unwrap();
+        let first_request =
+            ExternalPeerLeaseRequestV1::new(first_scope, Duration::from_secs(1)).unwrap();
+        let first = authority.acquire(first_request).unwrap();
+        assert_eq!(
+            authority.acquire(first_request),
+            Err(ExternalFenceError::LeaseConflict)
+        );
+        let inbound_scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Inbound,
+            context,
+            [0x95; 32],
+            1,
+        )
+        .unwrap();
+        let inbound = authority
+            .acquire(
+                ExternalPeerLeaseRequestV1::new(inbound_scope, Duration::from_secs(1)).unwrap(),
+            )
+            .unwrap();
+        assert_ne!(first.scope().direction(), inbound.scope().direction());
+        authority.release(inbound).unwrap();
+
+        // A process restart/rebind retains the external generation counter;
+        // an old worker cannot renew or release the replacement generation.
+        authority.advance_clock_millis(500);
+        let renewed = authority.renew(first).unwrap();
+        assert!(renewed.expires_at_millis() > first.expires_at_millis());
+        authority.release(renewed).unwrap();
+        let second_scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Outbound,
+            context,
+            [0x92; 32],
+            2,
+        )
+        .unwrap();
+        let second = authority
+            .acquire(ExternalPeerLeaseRequestV1::new(second_scope, Duration::from_secs(1)).unwrap())
+            .unwrap();
+        assert_eq!(
+            authority.revalidate(first),
+            Err(ExternalFenceError::TokenMismatch)
+        );
+        assert_eq!(
+            authority.release(first),
+            Err(ExternalFenceError::TokenMismatch)
+        );
+
+        authority.advance_clock_millis(2_000);
+        assert_eq!(
+            authority.revalidate(second),
+            Err(ExternalFenceError::LeaseExpired)
+        );
+        let third_scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Outbound,
+            context,
+            [0x93; 32],
+            3,
+        )
+        .unwrap();
+        assert!(authority
+            .acquire(ExternalPeerLeaseRequestV1::new(third_scope, Duration::from_secs(1),).unwrap())
+            .is_ok());
+
+        let wrong_context =
+            PeerAdmissionContextV1::new(context.epoch() + 1, context.validator_set_id()).unwrap();
+        let wrong_scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Outbound,
+            wrong_context,
+            [0x94; 32],
+            4,
+        )
+        .unwrap();
+        assert_eq!(
+            authority.acquire(
+                ExternalPeerLeaseRequestV1::new(wrong_scope, Duration::from_secs(1),).unwrap()
+            ),
+            Err(ExternalFenceError::ContextMismatch)
         );
     }
 }

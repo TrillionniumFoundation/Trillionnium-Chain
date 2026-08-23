@@ -130,6 +130,11 @@ pub const REMOTE_CONSENSUS_SIGNER_ACTIVATION: bool = false;
 /// This is an implementation fact, not multihost observation evidence.
 pub const PERSISTENT_AUTHENTICATED_PEER_MESH_CANDIDATE: bool = true;
 pub const PERSISTENT_AUTHENTICATED_PEER_MESH_RUNTIME_WIRED: bool = true;
+/// Every directed mesh worker now requires an injected external lease seam;
+/// the default runtime deliberately supplies a rejecting authority.
+pub const EXTERNAL_P2P_FENCING_TRAIT: bool = true;
+pub const EXTERNAL_P2P_FENCING_AUTHORITY: bool = false;
+pub const EXTERNAL_P2P_FENCING_HARD_GATE: bool = true;
 pub const GENERATION_AWARE_PACEMAKER_CANDIDATE: bool = true;
 pub const GENERATION_AWARE_PACEMAKER_RUNTIME_WIRED: bool = true;
 pub const PRIVATE_RUNTIME_CONTROL_CANDIDATE: bool = true;
