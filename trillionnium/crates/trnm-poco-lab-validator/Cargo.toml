@@ -114,4 +114,7 @@ trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 [dev-dependencies]
 tempfile = "3"
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
+trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
+trnm-consensus-remote-signer-service = { version = "0.1.0", path = "../trnm-consensus-remote-signer-service" }
+trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer" }
 trnm-poco-node = { version = "0.1.0", path = "../trnm-poco-node", features = ["lab-validator-runtime-test-support"] }

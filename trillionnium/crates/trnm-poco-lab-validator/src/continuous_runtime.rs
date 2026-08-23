@@ -2823,22 +2823,36 @@ fn authority_hash_v0(domain: &[u8], local_validator: ValidatorId, binding: &[u8]
 mod tests {
     use std::{
         fs,
-        os::unix::{fs::PermissionsExt, net::UnixListener},
+        os::unix::{
+            fs::{FileTypeExt, PermissionsExt},
+            net::UnixListener,
+        },
         sync::{
             atomic::{AtomicUsize, Ordering},
             mpsc, Arc, Mutex,
         },
         thread,
-        time::Duration,
+        time::{Duration, Instant},
     };
 
     use tempfile::TempDir;
     use trnm_consensus_external_watermark::{
         serve_connection, ExternalWatermarkAuthority, UnixWatermarkClient,
     };
+    use trnm_consensus_remote_signer_protocol::{
+        ProcessGenerationV1, RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1,
+        RemoteSignerLeaseIdV1, RemoteSignerRequestBindingV1, RemoteSignerRoleProfileRefV1,
+        RemoteSignerServiceProfileRefV1,
+    };
+    use trnm_consensus_remote_signer_service::{
+        PurposePolicyV1, RemoteSignerService, RemoteSignerServiceConfig,
+    };
     use trnm_consensus_types::{
         ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, SigningRoot, Validator,
         VotingPower,
+    };
+    use trnm_consensus_unix_remote_signer::{
+        UnixRemoteSignerError, UnixRemoteSignerProducer, UnixRemoteSignerProducerConfig,
     };
     use trnm_native_execution_v0::{
         AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0, NativeApplicationConfigV0,
@@ -2870,6 +2884,32 @@ mod tests {
             trnm_consensus_signer_journal::SignatureProducerErrorV0,
         > {
             self.calls.fetch_add(1, Ordering::SeqCst);
+            self.inner.sign(request)
+        }
+    }
+
+    /// Test-only wrapper that proves the continuous authority hands the exact
+    /// Core-produced intent to the Unix transport producer.  Capturing the
+    /// immutable intent also lets the test issue an exact duplicate after the
+    /// remote service has been restarted, without reconstructing a request
+    /// from guessed SafetyState revisions.
+    struct CapturingUnixRemoteSignerProducerV0 {
+        inner: UnixRemoteSignerProducer,
+        requests: Arc<Mutex<Vec<trnm_consensus_types::CanonicalSignIntentV0>>>,
+    }
+
+    impl SignatureProducerV0 for CapturingUnixRemoteSignerProducerV0 {
+        fn sign(
+            &mut self,
+            request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            self.requests
+                .lock()
+                .expect("remote signer capture mutex")
+                .push(request.intent().clone());
             self.inner.sign(request)
         }
     }
@@ -3090,6 +3130,171 @@ mod tests {
                     .load_checked(scope)
                     .is_err(),
                 "no daemon may serve a tampered authority namespace"
+            );
+        });
+    }
+
+    #[test]
+    fn unix_remote_signer_producer_drives_continuous_vote_timeout_restart_and_tamper() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let remote_dir = harness._temp.path().join("unix-remote-signer-authority");
+            create_private_directory_v0(&remote_dir)
+                .expect("create private Unix remote signer directory");
+            let watermark_path = remote_dir.join("signer.sqlite3");
+            let socket_path = remote_dir.join("signer.sock");
+            let author = harness.validator_set.validators()[0].id();
+            let binding = RemoteSignerRequestBindingV1::new(
+                &harness.validator_set,
+                author,
+                RemoteSignerRoleProfileRefV1::from_public_descriptor(b"lab-consensus-role")
+                    .expect("remote signer role profile"),
+                RemoteSignerServiceProfileRefV1::from_public_descriptor(b"lab-signer-service")
+                    .expect("remote signer service profile"),
+                RemoteSignerClientProfileRefV1::from_public_descriptor(b"lab-node-client")
+                    .expect("remote signer client profile"),
+                ProcessGenerationV1::new(1).expect("remote signer process generation"),
+                RemoteSignerLeaseIdV1::from_public_grant_descriptor(b"lab-signer-lease")
+                    .expect("remote signer lease"),
+                RemoteSignerCheckpointWitnessV1::new(1, [0x53; 32])
+                    .expect("remote signer checkpoint witness"),
+            )
+            .expect("construct remote signer request binding");
+            let producer_config = UnixRemoteSignerProducerConfig {
+                socket_path: socket_path.clone(),
+                validator_set: harness.validator_set.clone(),
+                author,
+                signer_profile_ref: trnm_poco_node::SIGNER_JOURNAL_PROFILE_REF_V0,
+                role_profile_ref: binding.role_profile_ref(),
+                service_profile_ref: binding.service_profile_ref(),
+                client_profile_ref: binding.client_profile_ref(),
+                process_generation: binding.process_generation(),
+                lease_id: binding.lease_id(),
+                checkpoint_witness: binding.checkpoint_witness(),
+                timeout: Duration::from_secs(2),
+            };
+            let producer = UnixRemoteSignerProducer::new(producer_config.clone())
+                .expect("construct Unix remote signer producer");
+            let mut duplicate_producer = producer.clone();
+            let requests = Arc::new(Mutex::new(Vec::new()));
+            harness.authorities[0].producer =
+                ContinuousSignatureProducerV0(Box::new(CapturingUnixRemoteSignerProducerV0 {
+                    inner: producer,
+                    requests: Arc::clone(&requests),
+                }));
+
+            // A fresh service instance handles each request.  This makes the
+            // durable SQLite reservation and Unix protocol boundary cross a
+            // restart between Vote and Timeout rather than being hidden in a
+            // long-lived in-process fixture.
+            let service_handle = spawn_remote_signer_service_once_v0(
+                remote_signer_service_config_v0(
+                    &harness.validator_set,
+                    binding,
+                    &harness.keys[0],
+                    &watermark_path,
+                ),
+                socket_path.clone(),
+            );
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0]
+                .vote_proposal_v0(proposal)
+                .expect("continuous authority Vote uses the Unix remote signer producer");
+            service_handle
+                .join()
+                .expect("join Vote remote signer service")
+                .expect("Vote remote signer service exits cleanly");
+
+            let captured_vote = requests
+                .lock()
+                .expect("read captured Vote intent")
+                .first()
+                .cloned()
+                .expect("continuous authority passed a Vote intent to Unix producer");
+
+            // Replaying the exact immutable intent after a service restart is
+            // rejected by the service's durable request fingerprint CAS.
+            let duplicate_service = spawn_remote_signer_service_once_v0(
+                remote_signer_service_config_v0(
+                    &harness.validator_set,
+                    binding,
+                    &harness.keys[0],
+                    &watermark_path,
+                ),
+                socket_path.clone(),
+            );
+            let duplicate_error = duplicate_producer
+                .sign_intent_exact(&captured_vote)
+                .expect_err("exact Vote replay must be rejected after service restart");
+            assert!(matches!(
+                duplicate_error,
+                UnixRemoteSignerError::ServiceRejected(_)
+            ));
+            duplicate_service
+                .join()
+                .expect("join duplicate remote signer service")
+                .expect("duplicate remote signer service exits cleanly");
+
+            let timeout_service = spawn_remote_signer_service_once_v0(
+                remote_signer_service_config_v0(
+                    &harness.validator_set,
+                    binding,
+                    &harness.keys[0],
+                    &watermark_path,
+                ),
+                socket_path.clone(),
+            );
+            harness.authorities[0]
+                .begin_local_timeout_v0()
+                .expect("continuous authority TimeoutVote uses the Unix remote signer producer");
+            timeout_service
+                .join()
+                .expect("join TimeoutVote remote signer service")
+                .expect("TimeoutVote remote signer service exits cleanly");
+
+            let captured = requests.lock().expect("read captured signer intents");
+            assert_eq!(
+                captured.len(),
+                2,
+                "Vote and TimeoutVote each cross Unix producer"
+            );
+            assert!(matches!(
+                captured[0].preimage(),
+                trnm_consensus_types::CanonicalSignPreimageV0::Vote(_)
+            ));
+            assert!(matches!(
+                captured[1].preimage(),
+                trnm_consensus_types::CanonicalSignPreimageV0::TimeoutVote(_)
+            ));
+            drop(captured);
+
+            let snapshot = RemoteSignerService::open(remote_signer_service_config_v0(
+                &harness.validator_set,
+                binding,
+                &harness.keys[0],
+                &watermark_path,
+            ))
+            .expect("reopen remote signer watermark after Vote and TimeoutVote")
+            .watermark_snapshot()
+            .expect("read remote signer watermark after restart");
+            assert_eq!(snapshot.sequence, 2);
+
+            // Corrupt the durable signer namespace.  A new service must fail
+            // closed instead of silently creating a fresh watermark or using
+            // a local fallback key.
+            let mut bytes = fs::read(&watermark_path).expect("read remote signer database");
+            assert!(!bytes.is_empty(), "remote signer database is non-empty");
+            bytes[0] ^= 0x01;
+            fs::write(&watermark_path, bytes).expect("tamper remote signer database");
+            assert!(
+                RemoteSignerService::open(remote_signer_service_config_v0(
+                    &harness.validator_set,
+                    binding,
+                    &harness.keys[0],
+                    &watermark_path,
+                ))
+                .is_err(),
+                "tampered remote signer database must fail closed"
             );
         });
     }
@@ -3373,6 +3578,57 @@ mod tests {
                 panic!("external watermark daemon failed to start: {error}");
             }
         }
+    }
+
+    fn remote_signer_service_config_v0(
+        validator_set: &ValidatorSet,
+        binding: RemoteSignerRequestBindingV1,
+        signing_key: &SigningKey,
+        watermark_path: &Path,
+    ) -> RemoteSignerServiceConfig {
+        RemoteSignerServiceConfig {
+            validator_set: validator_set.clone(),
+            binding,
+            signing_key: signing_key.clone(),
+            watermark_path: watermark_path.to_path_buf(),
+            purpose_policy: PurposePolicyV1::both(),
+        }
+    }
+
+    fn wait_for_remote_signer_socket_v0(path: &Path) {
+        let deadline = Instant::now() + Duration::from_secs(5);
+        loop {
+            if let Ok(metadata) = fs::symlink_metadata(path) {
+                if metadata.file_type().is_socket() && metadata.permissions().mode() & 0o077 == 0 {
+                    return;
+                }
+            }
+            assert!(
+                Instant::now() < deadline,
+                "remote signer Unix socket did not become ready: {}",
+                path.display()
+            );
+            thread::sleep(Duration::from_millis(2));
+        }
+    }
+
+    fn spawn_remote_signer_service_once_v0(
+        config: RemoteSignerServiceConfig,
+        socket_path: PathBuf,
+    ) -> thread::JoinHandle<std::result::Result<(), String>> {
+        let mut service =
+            RemoteSignerService::open(config).expect("open remote signer service fixture");
+        let socket_for_thread = socket_path.clone();
+        let handle = thread::Builder::new()
+            .name("trnm-remote-signer-service-test".to_owned())
+            .spawn(move || {
+                service
+                    .serve_unix_once(&socket_for_thread)
+                    .map_err(|error| error.to_string())
+            })
+            .expect("spawn remote signer service fixture");
+        wait_for_remote_signer_socket_v0(&socket_path);
+        handle
     }
 
     fn on_bounded_takeover_owner_stack_v0<T: Send + 'static>(
