@@ -1821,6 +1821,7 @@ dependencies = [
  "trnm-consensus-external-watermark",
  "trnm-consensus-remote-signer-protocol",
  "trnm-consensus-remote-signer-service",
+ "trnm-consensus-safety-rules",
  "trnm-consensus-safety-store",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",

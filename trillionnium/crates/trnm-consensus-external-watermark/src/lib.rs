@@ -813,6 +813,18 @@ impl ExternalWatermarkAuthority {
         {
             return Err("semantic scope sequence/order fork");
         }
+        // The synthetic sequence-zero record carries revision one so that a
+        // semantic head is never represented with a zero Safety revision.  A
+        // first real reservation is therefore allowed to carry revision one
+        // as well; subsequent reservations must advance strictly.  This is
+        // the one-CAS analogue of the strict signer-journal pair's explicit
+        // genesis -> prepared transition below.
+        if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation
+            && previous_is_genesis
+            && target.sequence() == 1
+        {
+            return Ok(());
+        }
         if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation {
             if facts.request_fingerprint == previous_facts.request_fingerprint {
                 return Err("semantic per-reservation fingerprint reuse");
@@ -1724,6 +1736,12 @@ impl ExternalMonotonicWatermarkV0 for UnixWatermarkClient {
 
     fn semantic_mode_v0(&self) -> bool {
         self.semantic_binding.is_some()
+    }
+
+    fn semantic_per_reservation_v0(&self) -> bool {
+        self.semantic_binding.is_some_and(|binding| {
+            binding.lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation
+        })
     }
 
     fn load_semantic_v0(
@@ -3915,6 +3933,48 @@ pub fn run_per_reservation_daemon(
     let binding =
         binding.with_lifecycle_mode(ExternalWatermarkSemanticLifecycleModeV1::PerReservation);
     ExternalWatermarkAuthority::open_semantic(log_path, binding)?.serve_unix(socket_path)
+}
+
+#[cfg(test)]
+mod semantic_transition_tests {
+    use super::*;
+
+    #[test]
+    fn per_reservation_admits_first_revision_one_after_synthetic_genesis() {
+        let binding = ExternalWatermarkSemanticBindingV1::new_per_reservation(
+            [0x11; 32], [0x22; 32], [0x33; 32],
+        )
+        .expect("nonzero semantic binding");
+        let genesis = SignerWatermarkV0::from_persisted_parts(
+            binding.scope,
+            binding.journal_id,
+            0,
+            [0x44; 32],
+        )
+        .expect("valid genesis watermark");
+        let genesis_facts = semantic_genesis_facts_v1(binding, genesis);
+        let target = SignerWatermarkV0::from_persisted_parts(
+            binding.scope,
+            binding.journal_id,
+            1,
+            [0x55; 32],
+        )
+        .expect("valid first watermark");
+        let facts = ExternalWatermarkSemanticFactsV1::new(0, 1, 1)
+            .and_then(|facts| {
+                facts.with_request([0x66; 32], [0x77; 32], [0x88; 32], binding.capability)
+            })
+            .expect("valid first reservation facts");
+        assert!(ExternalWatermarkAuthority::validate_semantic_transition(
+            binding.lifecycle_mode,
+            Some(genesis),
+            Some(genesis_facts),
+            true,
+            target,
+            facts,
+        )
+        .is_ok());
+    }
 }
 
 #[cfg(test)]

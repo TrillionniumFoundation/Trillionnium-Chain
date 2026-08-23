@@ -35,6 +35,11 @@ external-signer-runtime = [
   "dep:trnm-consensus-external-watermark",
   "dep:trnm-consensus-unix-remote-signer",
 ]
+# Explicit composition-only SafetyRules semantic sidecar.  This feature does
+# not wire the sidecar into Core or open any activation gate; it exists so a
+# node owner can bind a pure SafetyRules transition to an independently
+# administered semantic watermark in focused tests.
+safety-rules-sidecar = ["dep:trnm-consensus-safety-rules"]
 g2-process-test-support = [
   "fixture-raw-key",
   "dep:tempfile",
@@ -209,6 +214,7 @@ trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark", optional = true }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
+trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules", optional = true }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer", optional = true }

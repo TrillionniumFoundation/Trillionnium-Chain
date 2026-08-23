@@ -201,6 +201,8 @@ mod process_host;
 mod recovery_ready_start;
 mod remote_signer_protocol_adapter_v1;
 mod remote_signer_roles_v1;
+#[cfg(feature = "safety-rules-sidecar")]
+mod safety_rules_sidecar;
 
 #[cfg(feature = "legacy-consensus-app")]
 pub use authenticated_genesis_commissioning::{
@@ -353,6 +355,12 @@ pub use remote_signer_roles_v1::{
     REMOTE_SIGNER_ROLE_BINDINGS_SCHEMA_V1, REMOTE_SIGNER_RUNTIME_ACTIVATION_V1,
     REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1, REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1,
     REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1,
+};
+#[cfg(feature = "safety-rules-sidecar")]
+pub use safety_rules_sidecar::{
+    SafetyRulesSemanticSidecarErrorV1, SafetyRulesSemanticSidecarV1,
+    SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
+    SAFETY_RULES_SEMANTIC_SIDECAR_RUNTIME_COMPOSITION_V1,
 };
 
 /// This package must not be interpreted as a deployable consensus candidate.

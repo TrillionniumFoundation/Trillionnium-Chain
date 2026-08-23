@@ -4978,7 +4978,7 @@ mod tests {
     }
 
     #[test]
-    fn archived_proposal_signature_bitflip_is_rejected_at_parent_binding_v1() {
+    fn archived_proposal_signature_bitflip_is_rejected_before_archive_v1() {
         let (set, keys) = qc_fixture_v1();
         let proposal = signed_proposal_fixture_v1(&set, &keys[0]);
         let parameters = ConsensusParametersV0::reference_shadow_v0();
@@ -4991,10 +4991,7 @@ mod tests {
         let mut corrupt = encoded;
         let last = corrupt.len() - 1;
         corrupt[last] ^= 1;
-        let decoded = UnboundProposalV0::decode(&corrupt, &set, &parameters).unwrap();
-        assert!(decoded
-            .bind_authenticated_parent(&set, &parameters, 0)
-            .is_err());
+        assert!(UnboundProposalV0::decode(&corrupt, &set, &parameters).is_err());
     }
 
     #[test]

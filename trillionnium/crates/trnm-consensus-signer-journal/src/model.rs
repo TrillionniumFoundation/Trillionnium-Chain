@@ -220,6 +220,16 @@ pub trait ExternalMonotonicWatermarkV0 {
         false
     }
 
+    /// Returns whether this semantic authority uses one CAS record for each
+    /// complete reservation.  The strict signer-journal-pair lifecycle uses
+    /// two records per intent and is not interchangeable with a transition
+    /// store that emits one record per SafetyRules transition.  A semantic
+    /// adapter must reject an authority that does not explicitly identify the
+    /// compatible lifecycle; `false` is deliberately fail-closed/unknown.
+    fn semantic_per_reservation_v0(&self) -> bool {
+        false
+    }
+
     /// Loads a semantic head after authenticating the exact namespace.  The
     /// default is unreachable for legacy opaque authorities.
     fn load_semantic_v0(

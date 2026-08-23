@@ -5793,6 +5793,11 @@ impl BoundedConsensusOwnerV1 {
     /// this method is the sole runtime point immediately preceding the
     /// authority call.
     fn archive_proposal_before_authority_v1(&mut self, proposal: &UnboundProposalV0) -> Result<()> {
+        proposal
+            .verify_proposer_signature(self.config.validator_set())
+            .map_err(|error| {
+                anyhow!("reject unauthenticated proposer witness before replay archive: {error}")
+            })?;
         self.require_archivable_view_v1(proposal.block().header().view().get(), true, "Proposal")?;
         self.replay_archive
             .append_proposal_v1(proposal)
