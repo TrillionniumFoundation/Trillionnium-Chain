@@ -285,10 +285,10 @@ impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
     }
 }
 
-/// External fleet-barrier signing seam.  Implementations own their private
+/// External fleet-barrier signing seam. Implementations own their private
 /// key / HSM transport and must provide deterministic exact replay for the
-/// complete request identity.  The deployed entry remains guarded until all
-/// post-barrier relay/restart call sites consume this same seam.
+/// complete request identity. The explicit fleet-signer deployed entry wires
+/// this seam through the post-barrier relay/restart call sites as well.
 pub trait FleetSignatureProducerV1: Send {
     fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> Result<[u8; 64]>;
 }
@@ -1275,21 +1275,10 @@ where
 /// Explicit deployed-runtime composition entry for independently provisioned
 /// peer fencing, signer watermark, and Vote/TimeoutVote production.
 ///
-/// This entry is deliberately fail-closed until the *fleet* signing seam is
-/// external as well.  The bounded Ready/Start barrier and the later relay /
-/// restart statements still have legacy `LoadedValidatorConfig` signing-key
-/// call sites.  Allowing this function to commission the external Vote/Timeout
-/// authority while those statements silently use a raw key would create a
-/// split authority graph (and make the external signer look stronger than it
-/// is).  Keep the guard here, at the public deployed boundary, rather than
-/// relying on a caller or a metadata flag to remember this invariant.
-///
-/// Once a `FleetSignatureProducerV1`-style seam replaces those call sites, the
-/// guard is the only line that needs to move; the external fence, watermark,
-/// and Vote/Timeout producer composition below are retained as the narrow
-/// implementation seam.  The ordinary [`run_deployed_bounded_consensus_v1`]
-/// entry remains on its rejecting-fence / fixture-producer path, and no
-/// production or activation truth bit is changed by this guard.
+/// This entry deliberately remains fail-closed because it does not carry the
+/// fleet Ready/Start/relay/restart producer. Callers that want an executable
+/// external authority must use the sibling entry that carries the complete
+/// fleet signer; otherwise a split authority graph could be assembled.
 pub fn run_deployed_bounded_consensus_with_external_authority_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
@@ -1300,11 +1289,9 @@ pub fn run_deployed_bounded_consensus_with_external_authority_v1(
     producer: Box<dyn SignatureProducerV0 + Send>,
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    // Do not let an external Vote/Timeout signer appear to close P0 while the
-    // deployed fleet barrier / relay / restart paths can still reach the raw
-    // consensus key held by `LoadedValidatorConfig`.  This is intentionally a
-    // runtime error (rather than a debug assertion or a report-only flag): an
-    // operator cannot accidentally start a partially externalized authority.
+    // Do not let a caller accidentally commission a partially externalized
+    // authority graph. The complete fleet-signer entry below is the executable
+    // path; this compatibility-shaped API stays an explicit error.
     let _ = (
         config,
         duration,
@@ -1323,9 +1310,13 @@ pub fn run_deployed_bounded_consensus_with_external_authority_v1(
 ///
 /// Keeping this as a separate API makes the authority graph impossible to
 /// under-specify at the call site: an external watermark alone is not enough
-/// to commission a node whose fleet barrier still needs signatures.  The
-/// entry remains guarded by the same fail-closed barrier until every legacy
-/// raw-key path (including restart park declarations) is removed.
+/// to commission a node whose fleet barrier still needs signatures.  This is
+/// the first executable external-authority composition: every fleet signing
+/// surface is handed the same producer and the default deployed wrapper below
+/// remains on its rejecting/fixture path.  The production and activation truth
+/// bits are intentionally unchanged; callers still need a real peer-fence,
+/// signer, watermark, and proposal authority before this can be a network
+/// launch.
 pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
@@ -1337,10 +1328,6 @@ pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
     fleet_producer: Box<dyn FleetSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
-    // Keep the compiler checking the complete intended composition while the
-    // public deployed gate is closed.  No external caller can accidentally
-    // commission a partially externalized authority graph.
-    require_deployed_fleet_signing_authority_v1::<()>()?;
     compose_deployed_external_authority_v1(
         config,
         duration,
@@ -1366,12 +1353,11 @@ fn external_authority_guard_is_fail_closed_v1() {
     assert!(require_deployed_fleet_signing_authority_v1::<()>().is_err());
 }
 
-/*
- * Keep the intended composition below in the source while the guard is
- * active.  It is useful as a compile-checked seam for the next tranche and
- * makes the exact owner wiring reviewable without making it executable.
- */
-#[allow(dead_code)]
+/// Composes the externally provisioned fence, watermark, Vote/Timeout
+/// producer, proposal producer, and fleet-root producer into the real bounded
+/// owner.  The function is deliberately private: callers must use the
+/// explicit public entry above so the complete authority graph is visible at
+/// the API boundary.
 fn compose_deployed_external_authority_v1(
     config: LoadedValidatorConfig,
     duration: Duration,
@@ -7094,6 +7080,17 @@ mod tests {
         assert!(default_body.contains("run_bounded_consensus_v1("));
         assert!(!default_body.contains("external_watermark"));
         assert!(!default_body.contains("SignatureProducerV0"));
+        let complete_entry = source
+            .find("pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1(")
+            .expect("complete external authority entry remains present");
+        let complete_end = source[complete_entry..]
+            .find("fn require_deployed_fleet_signing_authority_v1")
+            .map(|offset| complete_entry + offset)
+            .expect("complete external authority entry has a following guard helper");
+        let complete_body = &source[complete_entry..complete_end];
+        assert!(complete_body.contains("compose_deployed_external_authority_v1("));
+        assert!(!complete_body.contains("require_deployed_fleet_signing_authority_v1"));
+        assert!(source.contains("Some(fleet_producer),"));
         assert!(source.contains("production_activation: false"));
     }
 
