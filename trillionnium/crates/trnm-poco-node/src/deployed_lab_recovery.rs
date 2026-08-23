@@ -2199,6 +2199,11 @@ mod tests {
             by_height.read_v0().durable_row_v0().p_digest_v0(),
             by_block.read_v0().durable_row_v0().p_digest_v0()
         );
+        assert!(
+            runtime
+                .install_and_recover_finalization_intent_marker_for_test_v0()
+                .expect("exact finalization intent readback")
+        );
         drop(runtime);
 
         let first_core_config = core_config.clone();
