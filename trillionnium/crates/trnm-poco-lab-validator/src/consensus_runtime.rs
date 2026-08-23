@@ -26,6 +26,7 @@ use std::{
 };
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
+use ed25519_dalek::Signer;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::leader_for;
@@ -142,6 +143,70 @@ pub const MINIMUM_CONSENSUS_RUN_BLOCKS_V1: u64 = 3;
 /// handoff. It is intentionally distinct from both a completed report (`0`)
 /// and an error (`2`).
 pub const PROCESS1_TARGET_PARKED_EXIT_STATUS_V1: u8 = 75;
+
+/// Purpose carried to an independently provisioned signer for the fleet
+/// barrier.  Ready/Start and origin relay signatures are deliberately kept
+/// outside the Vote/Timeout signer-journal protocol until their own durable
+/// replay/nonce authority is wired into the deployed node.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FleetSignaturePurposeV1 {
+    Ready,
+    Start,
+    Relay,
+    Restart,
+}
+
+/// Exact identity handed to a fleet-barrier signer.  The signing root is
+/// computed by the canonical wire primitive (`fleet_barrier` or `relay`), so
+/// a caller cannot ask this seam to sign arbitrary bytes.  `validator_set_id`
+/// and `origin` make cross-network / cross-validator replay explicit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FleetSignatureRequestV1 {
+    purpose: FleetSignaturePurposeV1,
+    origin: ValidatorId,
+    validator_set_id: [u8; 32],
+    signing_root: [u8; 32],
+}
+
+impl FleetSignatureRequestV1 {
+    pub const fn new(
+        purpose: FleetSignaturePurposeV1,
+        origin: ValidatorId,
+        validator_set_id: [u8; 32],
+        signing_root: [u8; 32],
+    ) -> Self {
+        Self {
+            purpose,
+            origin,
+            validator_set_id,
+            signing_root,
+        }
+    }
+
+    pub const fn purpose(self) -> FleetSignaturePurposeV1 {
+        self.purpose
+    }
+
+    pub const fn origin(self) -> ValidatorId {
+        self.origin
+    }
+
+    pub const fn validator_set_id(self) -> [u8; 32] {
+        self.validator_set_id
+    }
+
+    pub const fn signing_root(self) -> [u8; 32] {
+        self.signing_root
+    }
+}
+
+/// External fleet-barrier signing seam.  Implementations own their private
+/// key / HSM transport and must provide deterministic exact replay for the
+/// complete request identity.  The deployed entry remains guarded until all
+/// post-barrier relay/restart call sites consume this same seam.
+pub trait FleetSignatureProducerV1: Send {
+    fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> Result<[u8; 64]>;
+}
 
 /// Public bounded-runtime outcome. A parked handoff is a successful resource
 /// shutdown boundary, not a normal terminal consensus report.
@@ -875,6 +940,7 @@ where
                 signer_lifetime,
             )
         },
+        None,
     )
 }
 
@@ -895,6 +961,7 @@ pub fn run_bounded_consensus_with_authority_builder_v1<C, A>(
     external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
     commission: C,
     authority_builder: A,
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
 ) -> Result<BoundedConsensusRunOutcomeV1>
 where
     C: FnOnce(
@@ -1048,6 +1115,7 @@ where
                 &replay_archive,
                 &mut runtime_control,
                 &preflight,
+                fleet_producer,
             )
             .context("complete N/N fleet Ready/Start barrier")
             {
@@ -1136,6 +1204,42 @@ pub fn run_deployed_bounded_consensus_with_external_authority_v1(
     require_deployed_fleet_signing_authority_v1()
 }
 
+/// Explicit deployed composition entry carrying the fleet Ready/Start/relay/
+/// restart signer together with the Vote/Timeout and proposal producers.
+///
+/// Keeping this as a separate API makes the authority graph impossible to
+/// under-specify at the call site: an external watermark alone is not enough
+/// to commission a node whose fleet barrier still needs signatures.  The
+/// entry remains guarded by the same fail-closed barrier until every legacy
+/// raw-key path (including restart park declarations) is removed.
+pub fn run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    fleet_producer: Box<dyn FleetSignatureProducerV1>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    // Keep the compiler checking the complete intended composition while the
+    // public deployed gate is closed.  No external caller can accidentally
+    // commission a partially externalized authority graph.
+    require_deployed_fleet_signing_authority_v1::<()>()?;
+    compose_deployed_external_authority_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        external_watermark,
+        producer,
+        proposal_producer,
+        fleet_producer,
+    )
+}
+
 fn require_deployed_fleet_signing_authority_v1<T>() -> Result<T> {
     bail!(
         "ExternalAuthorityRequired: deployed fleet Ready/Start, relay, and restart signing must be externally provisioned before this entry can commission"
@@ -1163,6 +1267,7 @@ fn compose_deployed_external_authority_v1(
     external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
     producer: Box<dyn SignatureProducerV0 + Send>,
     proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    fleet_producer: Box<dyn FleetSignatureProducerV1>,
 ) -> Result<BoundedConsensusRunOutcomeV1> {
     run_bounded_consensus_with_authority_builder_v1(
         config,
@@ -1183,6 +1288,7 @@ fn compose_deployed_external_authority_v1(
             authority.install_external_monotonic_watermark_v0(external_watermark)?;
             Ok(authority)
         },
+        Some(fleet_producer),
     )
 }
 
@@ -1396,6 +1502,95 @@ fn validate_active_validator_count_v1(validator_count: usize) -> Result<()> {
     Ok(())
 }
 
+fn sign_local_fleet_ready_v1(
+    context: CommonCampaignContextV1,
+    local_cut: LocalReadyCutV1,
+    mesh_sessions: FleetMeshSessionSetV1,
+    config: &LoadedValidatorConfig,
+    mut fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
+) -> Result<SignedFleetReadyV1> {
+    let signature = if let Some(producer) = fleet_producer.as_deref_mut() {
+        let signing_root = SignedFleetReadyV1::signing_root_for_parts_v1(
+            &context,
+            local_cut,
+            &mesh_sessions,
+            config.validator_set(),
+        )
+        .map_err(|error| anyhow!("construct local fleet Ready signing root: {error}"))?;
+        producer
+            .sign_fleet_v1(FleetSignatureRequestV1::new(
+                FleetSignaturePurposeV1::Ready,
+                config.local_validator(),
+                *config.validator_set().id().as_bytes(),
+                signing_root,
+            ))
+            .context("produce external fleet Ready signature")?
+    } else {
+        config
+            .consensus_signing_key()
+            .sign(
+                &SignedFleetReadyV1::signing_root_for_parts_v1(
+                    &context,
+                    local_cut,
+                    &mesh_sessions,
+                    config.validator_set(),
+                )
+                .map_err(|error| anyhow!("construct local fleet Ready signing root: {error}"))?,
+            )
+            .to_bytes()
+    };
+    SignedFleetReadyV1::new_with_signature(
+        context,
+        local_cut,
+        mesh_sessions,
+        config.validator_set(),
+        signature,
+    )
+    .map_err(|error| anyhow!("admit local fleet Ready signature: {error}"))
+}
+
+fn sign_local_fleet_start_v1(
+    ready: &SignedFleetReadyV1,
+    ready_set: &crate::fleet_barrier::FleetReadySetV1,
+    ready_event_sequence: u64,
+    ready_event_sha256: [u8; 32],
+    config: &LoadedValidatorConfig,
+    mut fleet_producer: Option<&mut (dyn FleetSignatureProducerV1 + 'static)>,
+) -> Result<SignedFleetStartV1> {
+    let signing_root = SignedFleetStartV1::signing_root_for_parts_v1(
+        ready,
+        ready_set,
+        ready_event_sequence,
+        ready_event_sha256,
+        config.validator_set(),
+    )
+    .map_err(|error| anyhow!("construct local fleet Start signing root: {error}"))?;
+    let signature = if let Some(producer) = fleet_producer.as_deref_mut() {
+        producer
+            .sign_fleet_v1(FleetSignatureRequestV1::new(
+                FleetSignaturePurposeV1::Start,
+                config.local_validator(),
+                *config.validator_set().id().as_bytes(),
+                signing_root,
+            ))
+            .context("produce external fleet Start signature")?
+    } else {
+        config
+            .consensus_signing_key()
+            .sign(&signing_root)
+            .to_bytes()
+    };
+    SignedFleetStartV1::new_with_signature(
+        ready,
+        ready_set,
+        ready_event_sequence,
+        ready_event_sha256,
+        config.validator_set(),
+        signature,
+    )
+    .map_err(|error| anyhow!("admit local fleet Start signature: {error}"))
+}
+
 fn run_fleet_barrier_v1(
     config: &LoadedValidatorConfig,
     authority: &ContinuousValidatorAuthorityV0,
@@ -1404,6 +1599,7 @@ fn run_fleet_barrier_v1(
     replay_archive: &SignedReplayArchiveV1,
     runtime_control: &mut RuntimeControlServerV1,
     preflight: &ConsensusRuntimePreflightV1,
+    mut fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
 ) -> Result<CompletedFleetBarrierV1> {
     let initial_facts = authority.facts_v0()?;
     require_prestart_authority_cut_v1(initial_facts, replay_archive)?;
@@ -1432,14 +1628,13 @@ fn run_fleet_barrier_v1(
         archive_facts.record_sha256_v1(),
     )
     .map_err(|error| anyhow!("construct local fleet Ready cut: {error}"))?;
-    let local_ready = SignedFleetReadyV1::new(
+    let local_ready = sign_local_fleet_ready_v1(
         context.clone(),
         local_cut,
         mesh_sessions,
-        config.validator_set(),
-        config.consensus_signing_key(),
-    )
-    .map_err(|error| anyhow!("sign local fleet Ready: {error}"))?;
+        config,
+        fleet_producer.as_deref_mut(),
+    )?;
     let mut admission =
         FleetBarrierAdmissionMapV1::new(context.clone(), config.validator_set().clone())
             .map_err(|error| anyhow!("initialize fleet barrier admission map: {error}"))?;
@@ -1464,6 +1659,7 @@ fn run_fleet_barrier_v1(
         outbox: OrderedConsensusOutboxV1::new(preflight.peers.clone()),
         prestarted_ingress: VecDeque::new(),
         deadline,
+        fleet_producer,
     };
     barrier.enqueue_originated_v1(FrameKind::FleetReady, local_ready.encode())?;
     barrier.wait_for_ready_set_v1()?;
@@ -1489,15 +1685,14 @@ fn run_fleet_barrier_v1(
         .runtime_control
         .refresh_from_journal(barrier.event_journal)
         .context("publish fleet Ready to runtime control")?;
-    let local_start = SignedFleetStartV1::new(
+    let local_start = sign_local_fleet_start_v1(
         &local_ready,
         &ready_set,
         ready_event_sequence,
         ready_event_sha256,
-        config.validator_set(),
-        config.consensus_signing_key(),
-    )
-    .map_err(|error| anyhow!("sign local fleet Start: {error}"))?;
+        config,
+        barrier.fleet_producer.as_deref_mut(),
+    )?;
     ensure!(
         barrier
             .admission
@@ -1548,6 +1743,7 @@ fn run_fleet_barrier_v1(
         admission: barrier.admission,
         start_certificate: certificate,
         prestarted_ingress: barrier.prestarted_ingress,
+        fleet_producer: barrier.fleet_producer,
     })
 }
 
@@ -1726,6 +1922,7 @@ struct FleetBarrierOwnerV1<'a> {
     outbox: OrderedConsensusOutboxV1,
     prestarted_ingress: VecDeque<MeshIngressEventV0>,
     deadline: Instant,
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
 }
 
 impl FleetBarrierOwnerV1<'_> {
@@ -1931,14 +2128,43 @@ impl FleetBarrierOwnerV1<'_> {
         match self.preflight.transport {
             ConsensusTransportProfileV1::Direct => self.outbox.enqueue(kind, payload),
             ConsensusTransportProfileV1::SparseRelay { hop_budget } => {
-                let envelope = ConsensusRelayEnvelopeV0::new(
-                    self.config.local_validator(),
-                    kind,
-                    hop_budget,
-                    payload,
-                    self.config.validator_set(),
-                    self.config.consensus_signing_key(),
-                )
+                let envelope = if let Some(producer) = self.fleet_producer.as_deref_mut() {
+                    let signing_root = ConsensusRelayEnvelopeV0::origin_signing_root_v0(
+                        self.config.local_validator(),
+                        kind,
+                        hop_budget,
+                        &payload,
+                        self.config.validator_set(),
+                    )
+                    .map_err(|error| {
+                        anyhow!("construct originated fleet barrier relay signing root: {error}")
+                    })?;
+                    let signature = producer
+                        .sign_fleet_v1(FleetSignatureRequestV1::new(
+                            FleetSignaturePurposeV1::Relay,
+                            self.config.local_validator(),
+                            *self.config.validator_set().id().as_bytes(),
+                            signing_root,
+                        ))
+                        .context("produce external fleet relay signature")?;
+                    ConsensusRelayEnvelopeV0::new_with_signature(
+                        self.config.local_validator(),
+                        kind,
+                        hop_budget,
+                        payload,
+                        self.config.validator_set(),
+                        signature,
+                    )
+                } else {
+                    ConsensusRelayEnvelopeV0::new(
+                        self.config.local_validator(),
+                        kind,
+                        hop_budget,
+                        payload,
+                        self.config.validator_set(),
+                        self.config.consensus_signing_key(),
+                    )
+                }
                 .map_err(|error| anyhow!("construct originated fleet barrier relay: {error}"))?;
                 self.outbox
                     .enqueue(FrameKind::ConsensusRelay, envelope.encode())
@@ -2091,6 +2317,10 @@ struct BoundedConsensusOwnerV1 {
     runtime_control: Option<RuntimeControlServerV1>,
     fleet_barrier: FleetBarrierAdmissionMapV1,
     fleet_start_certificate: FleetStartCertificateV1,
+    /// External fleet signer retained after Ready/Start so later relay and
+    /// restart statements cannot silently fall back to the config raw key.
+    /// `None` is permitted only for fixture composition.
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
     restart_ingress: BoundedRestartProtocolIngressV1,
     restart_relay_window: RestartRelayAdmissionWindowV1,
     restart_round: RestartCutRoundV1,
@@ -2127,6 +2357,7 @@ struct CompletedFleetBarrierV1 {
     admission: FleetBarrierAdmissionMapV1,
     start_certificate: FleetStartCertificateV1,
     prestarted_ingress: VecDeque<MeshIngressEventV0>,
+    fleet_producer: Option<Box<dyn FleetSignatureProducerV1>>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -3101,10 +3332,11 @@ impl LocalRestartPreparedOwnerV1 {
     /// Consumes the linear prepared owner into a distinct carrier while
     /// issuing exactly one target-authored declaration. The returned carrier
     /// has no method that can sign a second declaration.
-    fn into_signed_target_prepare_v1(
+    fn into_signed_target_prepare_v1<'a>(
         self,
         config: &LoadedValidatorConfig,
         fleet_start_certificate: &FleetStartCertificateV1,
+        mut fleet_producer: Option<&'a mut (dyn FleetSignatureProducerV1 + 'static)>,
     ) -> Result<LocalRestartTargetPreparedOwnerV1> {
         ensure!(
             self.facts.local_validator == config.local_validator()
@@ -3155,12 +3387,35 @@ impl LocalRestartPreparedOwnerV1 {
             config.validator_set(),
         )
         .map_err(|error| anyhow!("construct target restart cut body: {error}"))?;
-        let declaration = SignedRestartCutV1::new(
+        let signing_root = SignedRestartCutV1::signing_root_for_parts_v1(
             self.facts.local_validator,
-            body,
+            &body,
             config.validator_set(),
-            config.consensus_signing_key(),
         )
+        .map_err(|error| anyhow!("construct target RestartPrepare signing root: {error}"))?;
+        let declaration = if let Some(producer) = fleet_producer.as_deref_mut() {
+            let signature = producer
+                .sign_fleet_v1(FleetSignatureRequestV1::new(
+                    FleetSignaturePurposeV1::Restart,
+                    self.facts.local_validator,
+                    *config.validator_set().id().as_bytes(),
+                    signing_root,
+                ))
+                .context("produce external target RestartPrepare signature")?;
+            SignedRestartCutV1::new_with_signature(
+                self.facts.local_validator,
+                body,
+                config.validator_set(),
+                signature,
+            )
+        } else {
+            SignedRestartCutV1::new(
+                self.facts.local_validator,
+                body,
+                config.validator_set(),
+                config.consensus_signing_key(),
+            )
+        }
         .map_err(|error| anyhow!("sign target RestartPrepare: {error}"))?;
         ensure!(
             declaration.origin() == declaration.body().target_validator()
@@ -3356,6 +3611,7 @@ impl BoundedConsensusOwnerV1 {
             runtime_control: Some(runtime_control),
             fleet_barrier: barrier.admission,
             fleet_start_certificate: barrier.start_certificate,
+            fleet_producer: barrier.fleet_producer,
             restart_ingress,
             restart_relay_window,
             restart_round: RestartCutRoundV1::default(),
@@ -3630,14 +3886,43 @@ impl BoundedConsensusOwnerV1 {
         let Some(hop_budget) = self.preflight.transport.relay_hop_budget_v1() else {
             return self.outbox.enqueue(kind, payload);
         };
-        let envelope = ConsensusRelayEnvelopeV0::new(
-            self.config.local_validator(),
-            kind,
-            hop_budget,
-            payload,
-            self.config.validator_set(),
-            self.config.consensus_signing_key(),
-        )
+        let envelope = if let Some(producer) = self.fleet_producer.as_deref_mut() {
+            let signing_root = ConsensusRelayEnvelopeV0::origin_signing_root_v0(
+                self.config.local_validator(),
+                kind,
+                hop_budget,
+                &payload,
+                self.config.validator_set(),
+            )
+            .map_err(|error| {
+                anyhow!("construct originated consensus relay signing root: {error}")
+            })?;
+            let signature = producer
+                .sign_fleet_v1(FleetSignatureRequestV1::new(
+                    FleetSignaturePurposeV1::Relay,
+                    self.config.local_validator(),
+                    *self.config.validator_set().id().as_bytes(),
+                    signing_root,
+                ))
+                .context("produce external consensus relay signature")?;
+            ConsensusRelayEnvelopeV0::new_with_signature(
+                self.config.local_validator(),
+                kind,
+                hop_budget,
+                payload,
+                self.config.validator_set(),
+                signature,
+            )
+        } else {
+            ConsensusRelayEnvelopeV0::new(
+                self.config.local_validator(),
+                kind,
+                hop_budget,
+                payload,
+                self.config.validator_set(),
+                self.config.consensus_signing_key(),
+            )
+        }
         .map_err(|error| anyhow!("construct originated consensus relay: {error}"))?;
         self.authority_v1()?
             .reserve_originated_consensus_relay_v0(&envelope)?;
@@ -4270,8 +4555,11 @@ impl BoundedConsensusOwnerV1 {
             "restart prepare journal fresh readback differs"
         );
         let prepared = quiesced.into_prepared_v1(journal_successor.0, journal_successor.1)?;
-        let prepared =
-            prepared.into_signed_target_prepare_v1(&self.config, &self.fleet_start_certificate)?;
+        let prepared = prepared.into_signed_target_prepare_v1(
+            &self.config,
+            &self.fleet_start_certificate,
+            self.fleet_producer.as_deref_mut(),
+        )?;
         let target_prepare = prepared.target_prepare_v1().clone();
         ensure!(
             self.restart_round

@@ -44,6 +44,63 @@ pub struct ConsensusRelayEnvelopeV0 {
 }
 
 impl ConsensusRelayEnvelopeV0 {
+    /// Builds an origin-authenticated relay envelope from already-produced
+    /// signature bytes.  Deployed callers must use this path with an
+    /// independently provisioned signer; no private key is accepted here.
+    pub fn new_with_signature(
+        origin: ValidatorId,
+        inner_kind: FrameKind,
+        remaining_hops: u8,
+        payload: Vec<u8>,
+        validator_set: &ValidatorSet,
+        origin_signature: [u8; ORIGIN_SIGNATURE_BYTES],
+    ) -> Result<Self, ConsensusRelayErrorV0> {
+        validate_fields(origin, inner_kind, remaining_hops, &payload, validator_set)?;
+        verify_origin_signature(
+            validator_set,
+            origin,
+            inner_kind,
+            &payload,
+            &origin_signature,
+        )?;
+        Ok(Self {
+            origin,
+            inner_kind,
+            remaining_hops,
+            payload,
+            origin_signature,
+        })
+    }
+
+    /// Exact origin-signing preimage root for [`Self::new_with_signature`].
+    /// The returned digest commits the validator-set namespace, origin,
+    /// inner frame kind, and complete payload (but not the mutable hop
+    /// budget).  It is intentionally public so a remote signer can bind its
+    /// request without receiving a raw `SigningKey`.
+    pub fn origin_signing_root_v0(
+        origin: ValidatorId,
+        inner_kind: FrameKind,
+        remaining_hops: u8,
+        payload: &[u8],
+        validator_set: &ValidatorSet,
+    ) -> Result<[u8; 32], ConsensusRelayErrorV0> {
+        // The hop budget is deliberately excluded from the signed root (it is
+        // mutable at each forwarding hop), but the caller must still present
+        // the actual budget it will put on the envelope.  Validating that
+        // value here prevents a root-only signer seam from accidentally
+        // bypassing the envelope's zero/overflow hop checks.
+        validate_fields(origin, inner_kind, remaining_hops, payload, validator_set)?;
+        Ok(relay_origin_signing_root(
+            validator_set,
+            origin,
+            inner_kind,
+            payload,
+        ))
+    }
+
+    /// Fixture-only compatibility constructor.  Deployed composition must
+    /// migrate to [`Self::new_with_signature`] before its raw-key guard is
+    /// removed.
     pub fn new(
         origin: ValidatorId,
         inner_kind: FrameKind,
@@ -60,13 +117,14 @@ impl ConsensusRelayEnvelopeV0 {
             return Err(ConsensusRelayErrorV0::OriginKeyMismatch);
         }
         let root = relay_origin_signing_root(validator_set, origin, inner_kind, &payload);
-        Ok(Self {
+        Self::new_with_signature(
             origin,
             inner_kind,
             remaining_hops,
             payload,
-            origin_signature: origin_key.sign(&root).to_bytes(),
-        })
+            validator_set,
+            origin_key.sign(&root).to_bytes(),
+        )
     }
 
     pub const fn origin(&self) -> ValidatorId {
@@ -797,6 +855,44 @@ mod tests {
         assert_eq!(
             ConsensusRelayEnvelopeV0::decode(&wrong_domain.encode(), &set),
             Err(ConsensusRelayErrorV0::InvalidOriginSignature)
+        );
+    }
+
+    #[test]
+    fn externally_produced_origin_signature_roundtrips_v0() {
+        let (set, first, _) = fixture();
+        let first_key = SigningKey::from_bytes(&[0x31; 32]);
+        let payload = b"remote-signed-relay-payload".to_vec();
+        let root = ConsensusRelayEnvelopeV0::origin_signing_root_v0(
+            first,
+            FrameKind::Vote,
+            2,
+            &payload,
+            &set,
+        )
+        .unwrap();
+        assert_eq!(
+            ConsensusRelayEnvelopeV0::origin_signing_root_v0(
+                first,
+                FrameKind::Vote,
+                0,
+                &payload,
+                &set,
+            ),
+            Err(ConsensusRelayErrorV0::InvalidHopBudget)
+        );
+        let envelope = ConsensusRelayEnvelopeV0::new_with_signature(
+            first,
+            FrameKind::Vote,
+            2,
+            payload,
+            &set,
+            first_key.sign(&root).to_bytes(),
+        )
+        .unwrap();
+        assert_eq!(
+            ConsensusRelayEnvelopeV0::decode(&envelope.encode(), &set).unwrap(),
+            envelope
         );
     }
 

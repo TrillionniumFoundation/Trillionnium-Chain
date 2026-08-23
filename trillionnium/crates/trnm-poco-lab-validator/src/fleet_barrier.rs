@@ -1284,6 +1284,48 @@ pub struct SignedFleetReadyV1 {
 }
 
 impl SignedFleetReadyV1 {
+    /// Constructs a Ready statement from externally produced signature bytes.
+    /// This is the deployed-safe constructor: callers can obtain the exact
+    /// signing root with [`Self::signing_root_for_parts_v1`] and ask a remote
+    /// signer/HSM to sign it without copying a `SigningKey` into runtime.
+    pub fn new_with_signature(
+        context: CommonCampaignContextV1,
+        local_cut: LocalReadyCutV1,
+        mesh_session_set: FleetMeshSessionSetV1,
+        validator_set: &ValidatorSet,
+        signature: [u8; SIGNATURE_BYTES_V1],
+    ) -> Result<Self, FleetBarrierErrorV1> {
+        context.validate_for_set(validator_set)?;
+        local_cut.validate()?;
+        validate_ready_mesh_binding(&context, local_cut, &mesh_session_set)?;
+        let value = Self {
+            context,
+            local_cut,
+            mesh_session_set,
+            signature,
+        };
+        value.verify(validator_set)?;
+        Ok(value)
+    }
+
+    /// Returns the exact Ready signing root for external signature
+    /// production.  All fields are validated and encoded identically to the
+    /// normal fixture constructor.
+    pub fn signing_root_for_parts_v1(
+        context: &CommonCampaignContextV1,
+        local_cut: LocalReadyCutV1,
+        mesh_session_set: &FleetMeshSessionSetV1,
+        validator_set: &ValidatorSet,
+    ) -> Result<[u8; 32], FleetBarrierErrorV1> {
+        context.validate_for_set(validator_set)?;
+        local_cut.validate()?;
+        validate_ready_mesh_binding(context, local_cut, mesh_session_set)?;
+        let unsigned = encode_ready_unsigned(context, local_cut, mesh_session_set)?;
+        Ok(signing_root(READY_SIGNING_DOMAIN_V1, &unsigned))
+    }
+
+    /// Fixture-only compatibility constructor.  Deployed composition should
+    /// use [`Self::new_with_signature`] instead.
     pub fn new(
         context: CommonCampaignContextV1,
         local_cut: LocalReadyCutV1,
@@ -1296,14 +1338,14 @@ impl SignedFleetReadyV1 {
         validate_ready_mesh_binding(&context, local_cut, &mesh_session_set)?;
         require_origin_key(local_cut.validator_id, validator_set, key)?;
         let unsigned = encode_ready_unsigned(&context, local_cut, &mesh_session_set)?;
-        Ok(Self {
+        Self::new_with_signature(
             context,
             local_cut,
             mesh_session_set,
-            signature: key
-                .sign(&signing_root(READY_SIGNING_DOMAIN_V1, &unsigned))
+            validator_set,
+            key.sign(&signing_root(READY_SIGNING_DOMAIN_V1, &unsigned))
                 .to_bytes(),
-        })
+        )
     }
 
     pub const fn origin(&self) -> ValidatorId {
@@ -1403,6 +1445,85 @@ pub struct SignedFleetStartV1 {
 }
 
 impl SignedFleetStartV1 {
+    /// Constructs a Start statement from externally produced signature bytes.
+    /// The Ready/ReadySet relationship is revalidated before the supplied
+    /// signature is admitted, so a remote signer receives only a canonical
+    /// start root and never a raw consensus key.
+    pub fn new_with_signature(
+        ready: &SignedFleetReadyV1,
+        ready_set: &FleetReadySetV1,
+        fleet_ready_event_sequence: u64,
+        fleet_ready_event_sha256: [u8; 32],
+        validator_set: &ValidatorSet,
+        signature: [u8; SIGNATURE_BYTES_V1],
+    ) -> Result<Self, FleetBarrierErrorV1> {
+        ready.verify(validator_set)?;
+        ready_set.verify(validator_set)?;
+        if ready.context != ready_set.context {
+            return Err(FleetBarrierErrorV1::WrongContext);
+        }
+        let canonical_ready = ready_set
+            .statement(ready.origin())
+            .ok_or(FleetBarrierErrorV1::Incomplete)?;
+        if canonical_ready.statement_sha256() != ready.statement_sha256() {
+            return Err(FleetBarrierErrorV1::Malformed(
+                "Start source differs from canonical ReadySet",
+            ));
+        }
+        let value = Self {
+            context: ready.context.clone(),
+            local_ready_cut: ready.local_cut,
+            ready_statement_sha256: ready.statement_sha256(),
+            ready_set_sha256: ready_set.digest(),
+            fleet_ready_event_sequence,
+            fleet_ready_event_sha256,
+            signature,
+        };
+        value.validate_fields()?;
+        value.verify(validator_set)?;
+        Ok(value)
+    }
+
+    /// Returns the exact Start signing root for external signature
+    /// production after validating the canonical Ready/ReadySet relationship.
+    pub fn signing_root_for_parts_v1(
+        ready: &SignedFleetReadyV1,
+        ready_set: &FleetReadySetV1,
+        fleet_ready_event_sequence: u64,
+        fleet_ready_event_sha256: [u8; 32],
+        validator_set: &ValidatorSet,
+    ) -> Result<[u8; 32], FleetBarrierErrorV1> {
+        ready.verify(validator_set)?;
+        ready_set.verify(validator_set)?;
+        if ready.context != ready_set.context {
+            return Err(FleetBarrierErrorV1::WrongContext);
+        }
+        let canonical_ready = ready_set
+            .statement(ready.origin())
+            .ok_or(FleetBarrierErrorV1::Incomplete)?;
+        if canonical_ready.statement_sha256() != ready.statement_sha256() {
+            return Err(FleetBarrierErrorV1::Malformed(
+                "Start source differs from canonical ReadySet",
+            ));
+        }
+        let value = Self {
+            context: ready.context.clone(),
+            local_ready_cut: ready.local_cut,
+            ready_statement_sha256: ready.statement_sha256(),
+            ready_set_sha256: ready_set.digest(),
+            fleet_ready_event_sequence,
+            fleet_ready_event_sha256,
+            signature: [0; SIGNATURE_BYTES_V1],
+        };
+        value.validate_fields()?;
+        Ok(signing_root(
+            START_SIGNING_DOMAIN_V1,
+            &encode_start_unsigned(&value)?,
+        ))
+    }
+
+    /// Fixture-only compatibility constructor.  Deployed composition should
+    /// use [`Self::new_with_signature`] instead.
     pub fn new(
         ready: &SignedFleetReadyV1,
         ready_set: &FleetReadySetV1,
@@ -1425,23 +1546,21 @@ impl SignedFleetStartV1 {
             ));
         }
         require_origin_key(ready.origin(), validator_set, key)?;
-        let mut value = Self {
-            context: ready.context.clone(),
-            local_ready_cut: ready.local_cut,
-            ready_statement_sha256: ready.statement_sha256(),
-            ready_set_sha256: ready_set.digest(),
+        let signing_root = Self::signing_root_for_parts_v1(
+            ready,
+            ready_set,
             fleet_ready_event_sequence,
             fleet_ready_event_sha256,
-            signature: [0; SIGNATURE_BYTES_V1],
-        };
-        value.validate_fields()?;
-        value.signature = key
-            .sign(&signing_root(
-                START_SIGNING_DOMAIN_V1,
-                &encode_start_unsigned(&value)?,
-            ))
-            .to_bytes();
-        Ok(value)
+            validator_set,
+        )?;
+        Self::new_with_signature(
+            ready,
+            ready_set,
+            fleet_ready_event_sequence,
+            fleet_ready_event_sha256,
+            validator_set,
+            key.sign(&signing_root).to_bytes(),
+        )
     }
 
     pub const fn origin(&self) -> ValidatorId {
@@ -2639,6 +2758,52 @@ mod tests {
         assert_eq!(
             collector.admit_start(starts[0].clone()).unwrap(),
             FleetBarrierAdmissionV1::ExactReplay
+        );
+    }
+
+    #[test]
+    fn externally_produced_ready_and_start_signatures_roundtrip_v1() {
+        let (set, keys) = fixture();
+        let context = context(&set);
+        let (local_cut, mesh_session_set) = local(&set, 0, 10);
+        let ready_root = SignedFleetReadyV1::signing_root_for_parts_v1(
+            &context,
+            local_cut,
+            &mesh_session_set,
+            &set,
+        )
+        .unwrap();
+        let externally_produced_ready = SignedFleetReadyV1::new_with_signature(
+            context.clone(),
+            local_cut,
+            mesh_session_set,
+            &set,
+            keys[0].sign(&ready_root).to_bytes(),
+        )
+        .unwrap();
+        let mut ready = ready_statements(&set, &keys, &context);
+        ready[0] = externally_produced_ready;
+        let ready_set = FleetReadySetV1::new(context, ready, &set).unwrap();
+        let start_root = SignedFleetStartV1::signing_root_for_parts_v1(
+            &ready_set.statement(set.validators()[0].id()).unwrap(),
+            &ready_set,
+            11,
+            [0xd1; 32],
+            &set,
+        )
+        .unwrap();
+        let start = SignedFleetStartV1::new_with_signature(
+            ready_set.statement(set.validators()[0].id()).unwrap(),
+            &ready_set,
+            11,
+            [0xd1; 32],
+            &set,
+            keys[0].sign(&start_root).to_bytes(),
+        )
+        .unwrap();
+        assert_eq!(
+            SignedFleetStartV1::decode(&start.encode(), &set).unwrap(),
+            start
         );
     }
 
