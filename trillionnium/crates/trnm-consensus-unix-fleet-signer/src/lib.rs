@@ -13,6 +13,7 @@
 compile_error!("trnm-consensus-unix-fleet-signer requires a Unix host");
 
 mod authority;
+mod server;
 
 use std::{
     fmt, fs,
@@ -35,6 +36,7 @@ use trnm_consensus_types::{
 pub use authority::{
     DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
 };
+pub use server::{UnixFleetAuthorityServerErrorV1, UnixFleetRootAuthorityServerV1};
 
 /// Runtime activation is intentionally closed for this transport seam.
 pub const UNIX_FLEET_SIGNER_RUNTIME_ACTIVATION_V1: bool = false;
@@ -55,9 +57,10 @@ const FRAME_HEADER_BYTES: usize = 4;
 const RESPONSE_STATUS_OK_V1: u8 = 0;
 const RESPONSE_STATUS_REJECT_V1: u8 = 1;
 const MAX_ORIGIN_BYTES_V1: usize = 128;
-const MAX_REQUEST_BYTES_V1: usize = 8 + 4 + 1 + 2 + MAX_ORIGIN_BYTES_V1 + 32 + 32 + 32 + 32;
-const MAX_RESPONSE_BYTES_V1: usize = 8 + 4 + 32 + 64 + 32;
-const MAX_FRAME_BYTES_V1: usize = MAX_REQUEST_BYTES_V1 + 2;
+pub(crate) const MAX_REQUEST_BYTES_V1: usize =
+    8 + 4 + 1 + 2 + MAX_ORIGIN_BYTES_V1 + 32 + 32 + 32 + 32;
+pub(crate) const MAX_RESPONSE_BYTES_V1: usize = 8 + 4 + 32 + 64 + 32;
+pub(crate) const MAX_FRAME_BYTES_V1: usize = MAX_REQUEST_BYTES_V1 + 2;
 const MAX_TIMEOUT_V1: Duration = Duration::from_secs(30);
 
 /// The purpose domain is intentionally closed; arbitrary sign-bytes cannot
@@ -630,7 +633,10 @@ fn put_u16(output: &mut Vec<u8>, value: u16) {
     output.extend_from_slice(&value.to_be_bytes());
 }
 
-fn write_frame_v1(stream: &mut UnixStream, body: &[u8]) -> Result<(), UnixFleetSignerErrorV1> {
+pub(crate) fn write_frame_v1(
+    stream: &mut UnixStream,
+    body: &[u8],
+) -> Result<(), UnixFleetSignerErrorV1> {
     if body.is_empty() {
         return Err(FleetSignerProtocolErrorV1::EmptyFrame.into());
     }
@@ -649,7 +655,7 @@ fn write_frame_v1(stream: &mut UnixStream, body: &[u8]) -> Result<(), UnixFleetS
         })
 }
 
-fn read_frame_v1(
+pub(crate) fn read_frame_v1(
     stream: &mut UnixStream,
     maximum: usize,
 ) -> Result<Vec<u8>, UnixFleetSignerErrorV1> {

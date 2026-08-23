@@ -9,12 +9,14 @@ use std::{
     time::Duration,
 };
 
+use ed25519_dalek::{Signer, SigningKey};
 use tempfile::TempDir;
 use trnm_consensus_types::ValidatorId;
 use trnm_consensus_unix_fleet_signer::{
     test_fixture::{fixture_public_key_v1, FixtureModeV1},
-    FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
-    UnixFleetSignerErrorV1,
+    DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
+    FleetRootPurposeV1, UnixFleetRootAuthorityServerV1,
+    UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1, UnixFleetSignerErrorV1,
 };
 
 fn origin() -> ValidatorId {
@@ -126,6 +128,63 @@ fn authority_request(
     nonce: u8,
 ) -> Result<[u8; 64], UnixFleetSignerErrorV1> {
     producer.sign_fleet_root_v1(purpose, [root; 32], [nonce; 32])
+}
+
+struct GenericAuthoritySignerV1 {
+    key: SigningKey,
+}
+
+impl FleetRootAuthoritySignerV1 for GenericAuthoritySignerV1 {
+    fn sign_fleet_root_authority_v1(
+        &mut self,
+        request: &trnm_consensus_unix_fleet_signer::FleetRootRequestV1,
+    ) -> Result<[u8; 64], FleetRootAuthorityErrorV1> {
+        Ok(self.key.sign(&request.signing_root()).to_bytes())
+    }
+}
+
+#[test]
+fn generic_authority_server_routes_durable_exact_replay() {
+    let dir = tempfile::tempdir().expect("tempdir");
+    let socket = dir.path().join("generic-authority.sock");
+    let log = dir.path().join("generic-authority.log");
+    let origin = origin();
+    let validator_set_id = [0x31; 32];
+    let key = SigningKey::from_bytes(&[0x4a; 32]);
+    let authority = DurableFleetRootSignerAuthorityV1::open(
+        &log,
+        origin,
+        validator_set_id,
+        key.verifying_key().to_bytes(),
+        GenericAuthoritySignerV1 { key: key.clone() },
+    )
+    .expect("open generic durable authority");
+    let mut server = UnixFleetRootAuthorityServerV1::new(authority, &socket)
+        .expect("construct generic authority server");
+    let join = std::thread::spawn(move || {
+        let result = server.serve_n(2);
+        (result, server)
+    });
+    wait_for_socket(&socket);
+    let mut producer = UnixFleetRootSignerProducerV1::new(UnixFleetRootSignerConfig {
+        socket_path: socket.clone(),
+        origin,
+        validator_set_id,
+        verifying_key: key.verifying_key().to_bytes(),
+        timeout: Duration::from_secs(2),
+    })
+    .expect("construct generic authority client");
+    let first = producer
+        .sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x91; 32], [0xa1; 32])
+        .expect("first generic authority signature");
+    let replay = producer
+        .sign_fleet_root_v1(FleetRootPurposeV1::Ready, [0x91; 32], [0xa1; 32])
+        .expect("exact generic authority replay");
+    assert_eq!(first, replay);
+    let (result, server) = join.join().expect("generic authority server join");
+    result.expect("generic authority server success");
+    assert_eq!(server.authority().sequence(), 1);
+    assert!(!socket.exists());
 }
 
 #[test]
