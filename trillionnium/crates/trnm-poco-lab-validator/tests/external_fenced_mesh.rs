@@ -14,20 +14,23 @@ use std::{
     time::{Duration, Instant},
 };
 
-use ed25519_dalek::SigningKey;
+use ed25519_dalek::{Signer, SigningKey};
 use tempfile::TempDir;
 use trnm_consensus_types::{
-    ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
-    Validator, ValidatorId, ValidatorSet, VotingPower,
+    BlockId, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, Height,
+    ProtocolVersion, SignatureBytes, Validator, ValidatorId, ValidatorSet, View, Vote, VotingPower,
 };
 use trnm_poco_lab_validator::{
+    collector::decode_authenticated_consensus_frame_v0,
     consensus_mesh::{MeshFixtureConfigV1, PersistentAuthenticatedPeerMeshV0},
+    frame::FrameKind,
     key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
     p2p_admission::{
         ExternalFenceError, ExternalPeerDirectionV1, ExternalPeerLeaseAuthorityV1,
         ExternalPeerLeaseRequestV1, ExternalPeerLeaseScopeV1, UnixExternalPeerLeaseAuthorityV1,
     },
     transport::RunTransportContext,
+    wire::encode_vote,
 };
 
 fn free_addr() -> SocketAddr {
@@ -211,6 +214,8 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let root = TempDir::new().unwrap();
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
+    let transport_validator_set = a_config.validator_set_v1().clone();
+    let consensus_parameters = ConsensusParametersV0::reference_shadow_v0();
     let admission_context = a_config.admission_context_v1();
     let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(1));
     assert_eq!(a_mesh.initial_sessions().len(), 2);
@@ -221,11 +226,37 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     thread::sleep(Duration::from_millis(1_300));
     a_mesh.ensure_healthy().unwrap();
     b_mesh.ensure_healthy().unwrap();
+    // Carry a real, strictly signed PoCO Vote through the authenticated
+    // cross-process mesh.  This is deliberately one statement (not a QC and
+    // not a validator loop), but it proves the transport does not stop at an
+    // arbitrary health/test payload: wire decoding and Ed25519 admission run
+    // on the receiving side with the frozen validator-set context.
+    let a_consensus = SigningKey::from_bytes(&[0x31; 32]);
+    let vote_block = BlockId::new([0x91; 32]);
+    let vote_view = View::new(1);
+    let vote_height = Height::new(1);
+    let vote_root =
+        Vote::signing_root_for_set(&transport_validator_set, vote_view, vote_height, vote_block)
+            .unwrap();
+    let a_id = ValidatorId::new([0x71; 32]);
+    let vote = Vote::new(
+        transport_validator_set.chain_id(),
+        transport_validator_set.protocol_version(),
+        transport_validator_set.epoch(),
+        vote_view,
+        vote_height,
+        vote_block,
+        transport_validator_set.id(),
+        a_id,
+        SignatureBytes::from_array(a_consensus.sign(vote_root.as_bytes()).to_bytes()),
+        &transport_validator_set,
+    )
+    .unwrap();
     a_mesh
         .send_to(
             ValidatorId::new([0x72; 32]),
-            trnm_poco_lab_validator::frame::FrameKind::Vote,
-            vec![0xa5, 0x5a],
+            FrameKind::Vote,
+            encode_vote(&vote),
         )
         .unwrap();
     let b_mesh = b_mesh;
@@ -236,7 +267,19 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
             b_mesh.receive_timeout(Duration::from_millis(100)).unwrap()
         {
             assert_eq!(frame.remote(), ValidatorId::new([0x71; 32]));
-            assert_eq!(frame.into_frame().payload, vec![0xa5, 0x5a]);
+            let authenticated = frame.into_frame();
+            let decoded = decode_authenticated_consensus_frame_v0(
+                &authenticated,
+                &transport_validator_set,
+                &consensus_parameters,
+            )
+            .unwrap();
+            let trnm_poco_lab_validator::collector::AdmittedConsensusMessageV0::Vote(decoded_vote) =
+                decoded
+            else {
+                panic!("mesh delivered a non-Vote consensus message");
+            };
+            assert_eq!(decoded_vote, vote);
             received = true;
             break;
         }

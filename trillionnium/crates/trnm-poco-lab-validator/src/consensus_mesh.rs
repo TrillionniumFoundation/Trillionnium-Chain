@@ -527,6 +527,15 @@ impl MeshFixtureConfigV1 {
     pub fn admission_context_v1(&self) -> PeerAdmissionContextV1 {
         PeerAdmissionContextV1::from_validator_set(&self.validator_set)
     }
+
+    /// Returns the immutable validator-set context used by this transport
+    /// fixture.  This exposes no key material and exists only so a test can
+    /// run the same strict consensus-wire decoder after a frame crosses the
+    /// authenticated socket boundary.
+    #[doc(hidden)]
+    pub fn validator_set_v1(&self) -> &ValidatorSet {
+        &self.validator_set
+    }
 }
 
 impl MeshIdentityV0 {
