@@ -14,6 +14,7 @@ members = [
   "crates/trnm-consensus-external-watermark",
   "crates/trnm-consensus-peer-lease",
   "crates/trnm-consensus-external-node-checkpoint",
+  "crates/trnm-consensus-remote-signer-service",
   "crates/trnm-whole-node-checkpoint-types",
   "crates/trnm-native-application",
   "crates/trnm-native-application-sqlite",

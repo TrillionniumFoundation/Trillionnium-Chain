@@ -1492,6 +1492,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-remote-signer-service"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "rusqlite",
+ "sha2",
+ "tempfile",
+ "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-types",
+]
+
+[[package]]
 name = "trnm-consensus-safety-rules"
 version = "0.1.0"
 dependencies = [
