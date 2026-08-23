@@ -1529,15 +1529,6 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 )
             })
             .transpose()?;
-        let listener = TcpListener::bind(listen_addr)
-            .with_context(|| format!("bind consensus listener {listen_addr}"))?;
-        listener
-            .set_nonblocking(true)
-            .context("set consensus listener nonblocking")?;
-
-        let setup_deadline = Instant::now()
-            .checked_add(setup_timeout)
-            .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
         let admission_context = PeerAdmissionContextV1::from_validator_set(&identity.validator_set);
         let fences = MeshFenceRegistryV1::new_with_host_attestation(
             authority,
@@ -1547,6 +1538,15 @@ impl PersistentAuthenticatedPeerMeshV0 {
             host_attestation,
         )?;
         fences.preflight_host_attestation()?;
+        let listener = TcpListener::bind(listen_addr)
+            .with_context(|| format!("bind consensus listener {listen_addr}"))?;
+        listener
+            .set_nonblocking(true)
+            .context("set consensus listener nonblocking")?;
+
+        let setup_deadline = Instant::now()
+            .checked_add(setup_timeout)
+            .ok_or_else(|| anyhow!("mesh setup deadline overflow"))?;
         let stop = Arc::new(AtomicBool::new(false));
         let terminal = Arc::new(Mutex::new(None));
         let controls = Arc::new(Mutex::new(BTreeMap::new()));
