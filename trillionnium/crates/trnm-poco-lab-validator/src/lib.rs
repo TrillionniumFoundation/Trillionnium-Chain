@@ -141,6 +141,7 @@ pub const PROPOSAL_SIGNER_RUNTIME_WIRED: bool = false;
 pub const PROPOSAL_SIGNER_PRODUCTION_ACTIVATION: bool = false;
 /// The continuous authority remains parameterized over the laboratory local
 /// watermark; external whole-node watermark injection is a separate gate.
+pub const EXTERNAL_MONOTONIC_WATERMARK_INJECTION_API: bool = true;
 pub const EXTERNAL_MONOTONIC_WATERMARK_RUNTIME_INJECTED: bool = false;
 /// Exact directed peer sessions are owned by the bounded continuous authority.
 /// This is an implementation fact, not multihost observation evidence.

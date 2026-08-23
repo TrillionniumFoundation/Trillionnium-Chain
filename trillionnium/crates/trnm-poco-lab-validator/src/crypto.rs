@@ -9,9 +9,9 @@ use ed25519_dalek::{Signer, SigningKey};
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, ProposalSignatureProducerV0,
-    ProposalSignatureRequestV0, SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
-    SignerWatermarkV0,
+    ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0,
+    ExternalWatermarkErrorV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
+    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::SignatureBytes;
 
@@ -88,6 +88,8 @@ pub struct LabFileWatermark {
     lock_path: PathBuf,
     directory: File,
     lock: File,
+    external: Option<Box<dyn ExternalMonotonicWatermarkV0 + Send>>,
+    poisoned: bool,
 }
 
 impl LabFileWatermark {
@@ -141,6 +143,8 @@ impl LabFileWatermark {
             lock_path,
             directory,
             lock,
+            external: None,
+            poisoned: false,
         };
         value.ensure_paths()?;
         let _ = value.read_record()?;
@@ -149,6 +153,13 @@ impl LabFileWatermark {
 
     pub fn record_path(&self) -> &Path {
         &self.record_path
+    }
+
+    fn ensure_healthy(&self) -> Result<(), ExternalWatermarkErrorV0> {
+        if self.poisoned {
+            return Err(ExternalWatermarkErrorV0::Unavailable);
+        }
+        Ok(())
     }
 
     fn ensure_paths(&self) -> Result<(), ExternalWatermarkErrorV0> {
@@ -273,6 +284,7 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         &mut self,
         scope: [u8; 32],
     ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        self.ensure_healthy()?;
         if scope == [0; 32] {
             return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
         }
@@ -280,7 +292,21 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         if current.is_some_and(|value| value.scope() != scope) {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
         }
-        Ok(current)
+        let Some(external) = self.external.as_mut() else {
+            return Ok(current);
+        };
+        let observed = match external.load(scope) {
+            Ok(value) => value,
+            Err(error) => {
+                self.poisoned = true;
+                return Err(error);
+            }
+        };
+        if observed.is_some_and(|value| value.scope() != scope) {
+            self.poisoned = true;
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        Ok(observed)
     }
 
     fn compare_and_advance(
@@ -288,6 +314,7 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
     ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.ensure_healthy()?;
         let current = self.read_record()?;
         if current != expected {
             return Err(ExternalWatermarkErrorV0::CompareFailed);
@@ -307,7 +334,85 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
                 }
             }
         }
+        if self.external.is_some() {
+            let external_result = {
+                let external = self
+                    .external
+                    .as_mut()
+                    .expect("external watermark presence checked");
+                let observed = external.load(target.scope()).map_err(|error| {
+                    self.poisoned = true;
+                    error
+                })?;
+                if observed != expected {
+                    self.poisoned = true;
+                    return Err(ExternalWatermarkErrorV0::CompareFailed);
+                }
+                external.compare_and_advance(expected, target)
+            };
+            if let Err(error) = external_result {
+                self.poisoned = true;
+                return Err(error);
+            }
+            if let Err(error) = self.write_record(target) {
+                // The external CAS may already have committed.  Retaining a
+                // usable local owner here would permit a second authority to
+                // sign against an uncertain head, so fail closed permanently.
+                self.poisoned = true;
+                return Err(error);
+            }
+            return Ok(());
+        }
         self.write_record(target)
+    }
+}
+
+impl ExternalMonotonicWatermarkInjectionV0 for LabFileWatermark {
+    fn install_external_monotonic_watermark_v0(
+        &mut self,
+        mut external: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.ensure_healthy()?;
+        if self.external.is_some() {
+            self.poisoned = true;
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        let local = self.read_record()?;
+        if let Some(local) = local {
+            let observed = match external.load(local.scope()) {
+                Ok(value) => value,
+                Err(error) => {
+                    self.poisoned = true;
+                    return Err(error);
+                }
+            };
+            match observed {
+                None => {
+                    // A fresh sequence-zero head has no prior signer event
+                    // history and may be claimed by a newly started external
+                    // authority.  Once any intent/signature event exists,
+                    // silently claiming a missing external head would turn a
+                    // local-only history into retroactive "evidence"; require
+                    // the independently administered log to already contain
+                    // the exact head instead.
+                    if local.sequence() != 0 {
+                        self.poisoned = true;
+                        return Err(ExternalWatermarkErrorV0::CompareFailed);
+                    }
+                    if let Err(error) = external.compare_and_advance(None, local) {
+                        self.poisoned = true;
+                        return Err(error);
+                    }
+                }
+                Some(value) if value == local => {}
+                Some(_) => {
+                    self.poisoned = true;
+                    return Err(ExternalWatermarkErrorV0::CompareFailed);
+                }
+            }
+        }
+        self.external = Some(external);
+        Ok(())
     }
 }
 
@@ -359,7 +464,61 @@ fn watermark_checksum(bytes: &[u8]) -> [u8; 32] {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::{Arc, Mutex};
     use tempfile::TempDir;
+
+    #[derive(Debug, Clone, Default)]
+    struct MemoryExternalWatermark {
+        state: Arc<Mutex<(Option<SignerWatermarkV0>, u64)>>,
+        fail_compare: Arc<Mutex<bool>>,
+    }
+
+    impl MemoryExternalWatermark {
+        fn observer(&self) -> Arc<Mutex<(Option<SignerWatermarkV0>, u64)>> {
+            Arc::clone(&self.state)
+        }
+
+        fn set_fail_compare(&self, value: bool) {
+            *self
+                .fail_compare
+                .lock()
+                .expect("external watermark failure mutex") = value;
+        }
+    }
+
+    impl ExternalMonotonicWatermarkV0 for MemoryExternalWatermark {
+        fn load(
+            &mut self,
+            scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            let value = self.state.lock().expect("external watermark mutex").0;
+            if value.is_some_and(|value| value.scope() != scope) {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            Ok(value)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            let mut state = self.state.lock().expect("external watermark mutex");
+            state.1 = state.1.saturating_add(1);
+            if *self
+                .fail_compare
+                .lock()
+                .expect("external watermark failure mutex")
+            {
+                return Err(ExternalWatermarkErrorV0::Unavailable);
+            }
+            if state.0 != expected {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            state.0 = Some(target);
+            Ok(())
+        }
+    }
 
     fn private_temp() -> TempDir {
         let temporary = TempDir::new().expect("temporary directory");
@@ -410,5 +569,81 @@ mod tests {
             LabFileWatermark::open(&path),
             Err(ExternalWatermarkErrorV0::InvalidPersistedState)
         ));
+    }
+
+    #[test]
+    fn external_watermark_injection_fences_each_local_advance() {
+        let temporary = private_temp();
+        let path = temporary.path().join("watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open fresh watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        let external = MemoryExternalWatermark::default();
+        let observer = external.observer();
+        store
+            .install_external_monotonic_watermark_v0(Box::new(external))
+            .expect("claim the existing local head in the external register");
+        store
+            .compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32))
+            .expect("advance external and local heads together");
+        let state = observer.lock().expect("external watermark mutex");
+        assert_eq!(state.0, Some(mark(1, 0x32)));
+        assert_eq!(state.1, 2, "claim plus one journal event");
+    }
+
+    #[test]
+    fn external_watermark_failure_poison_fails_closed() {
+        let temporary = private_temp();
+        let path = temporary.path().join("watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open fresh watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        let external = MemoryExternalWatermark::default();
+        store
+            .install_external_monotonic_watermark_v0(Box::new(external))
+            .expect("installation itself claims the local head");
+        // The delegate is owned by the local adapter after installation, but
+        // this Arc-backed test double lets us inject a later CAS failure.
+        let mut failing_store = LabFileWatermark::open(temporary.path().join("failing.bin"))
+            .expect("open second watermark");
+        failing_store
+            .compare_and_advance(None, mark(0, 0x31))
+            .unwrap();
+        let failing_external = MemoryExternalWatermark::default();
+        let failure_control = failing_external.clone();
+        failing_store
+            .install_external_monotonic_watermark_v0(Box::new(failing_external))
+            .expect("installation itself claims the local head");
+        failure_control.set_fail_compare(true);
+        assert_eq!(
+            failing_store.compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32)),
+            Err(ExternalWatermarkErrorV0::Unavailable)
+        );
+        assert_eq!(
+            failing_store.load([0x11; 32]),
+            Err(ExternalWatermarkErrorV0::Unavailable),
+            "an uncertain installation leaves the local owner poisoned"
+        );
+    }
+
+    #[test]
+    fn external_watermark_install_does_not_adopt_unfenced_history() {
+        let temporary = private_temp();
+        let path = temporary.path().join("watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open fresh watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        store
+            .compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32))
+            .unwrap();
+        assert_eq!(
+            store.install_external_monotonic_watermark_v0(Box::new(
+                MemoryExternalWatermark::default(),
+            )),
+            Err(ExternalWatermarkErrorV0::CompareFailed),
+            "a remote authority must already contain non-genesis history"
+        );
+        assert_eq!(
+            store.load([0x11; 32]),
+            Err(ExternalWatermarkErrorV0::Unavailable),
+            "failed adoption poisons the local owner"
+        );
     }
 }
