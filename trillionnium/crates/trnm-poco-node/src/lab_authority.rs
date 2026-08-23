@@ -65,7 +65,7 @@ use trnm_native_application_sqlite::{
     ProposalValidationOwnerIdV0, ProposalValidationStoreScopeV0, SqliteProposalValidationStoreV0,
 };
 use trnm_native_execution_v0::{
-    DurableNativeApplicationV0, FinalizedNativeApplicationReadV0,
+    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0, FinalizedNativeApplicationReadV0,
     NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
 };
 
@@ -2608,17 +2608,17 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         }
 
         // A finalization intent surviving a process crash cannot be silently
-        // ignored at a fully-applied restart.  The positive-height recovery
-        // path has no retained execution/source artifact with which to prove
-        // an exact replay yet, so fail closed and leave the marker for an
-        // explicit recovery owner rather than guessing that the application
-        // commit did or did not land.
+        // ignored at a fully-applied restart.  The caller must explicitly
+        // perform the readback seam below before constructing this Ready
+        // owner.  Do not clear a marker here: this constructor deliberately
+        // remains a fail-closed guard for callers which did not perform that
+        // explicit recovery step.
         if load_marker_v0(&proposal_journal.store_path)
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?
             .is_some()
         {
             return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "finalization intent marker requires an explicit replay owner at recovery",
+                "finalization intent marker requires explicit recovery readback before Ready",
             ));
         }
 
@@ -2646,6 +2646,104 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             pending_executions: BTreeMap::new(),
             proposal_journal,
         })
+    }
+
+    /// Explicitly revalidates and clears one finalization intent left by a
+    /// process crash after the durable application/Core/checkpoint boundary.
+    ///
+    /// This is intentionally a separate, feature-gated recovery step rather
+    /// than an implicit constructor side effect.  It clears the marker only
+    /// when the live Core carries the exact finality proof and retained Valid
+    /// source, and the application store independently returns the same
+    /// committed row (including parent commit/root, target roots, overlay,
+    /// and durable status).  A missing, foreign, stale, or partially applied
+    /// operation is rejected and the marker remains in place.
+    #[cfg(feature = "lab-validator-runtime")]
+    pub fn recover_finalization_intent_readback_v0(
+        core: &Core,
+        application: &DurableNativeApplicationV0,
+        proposal_journal: &PocoNodeLabProposalJournalConfigV0,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        let Some(marker) = load_marker_v0(&proposal_journal.store_path)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?
+        else {
+            return Ok(false);
+        };
+        recover_finalization_intent_marker_readback_v0(
+            core,
+            application,
+            proposal_journal,
+            marker,
+        )?;
+        Ok(true)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn install_and_recover_finalization_intent_marker_for_test_v0(
+        &self,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        let finalization = self
+            .core
+            .safety_state()
+            .last_finalization()
+            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "test recovery marker requires a durable Core finalization",
+            ))?;
+        let source = self
+            .core
+            .safety_state()
+            .payload_validation_completions()
+            .iter()
+            .find(|completion| {
+                completion.result().artifact_ref().is_some_and(|artifact| {
+                    artifact.overlay() == finalization.target_overlay_ref()
+                })
+            })
+            .and_then(|completion| completion.result().artifact_ref())
+            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "test recovery marker has no retained Valid source",
+            ))?;
+        let parent_timestamp_ms = finalization.authenticated_parent().timestamp_ms();
+        let read = self
+            .application
+            .read_finalized_by_block_id_with_proof_v0(
+                BlockIdV0::new(
+                    *finalization
+                        .proof()
+                        .finalized_block()
+                        .header()
+                        .id()
+                        .as_bytes(),
+                )
+                .map_err(|_| {
+                    PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                        "test recovery marker target BlockId is malformed",
+                    )
+                })?,
+                finalization.proof(),
+                parent_timestamp_ms,
+            )
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        let parent = read
+            .durable_row_v0()
+            .parent_head_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        let marker = FinalizationIntentMarkerV0::from_finalization(
+            finalization,
+            *self.proposal_journal.scope.as_bytes(),
+            *self.proposal_journal.owner_id.as_bytes(),
+            source.source_artifact_checksum(),
+            *parent.state_root().as_bytes(),
+            *parent.commit_id().as_bytes(),
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        write_marker_v0(&self.proposal_journal.store_path, marker)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        Self::recover_finalization_intent_readback_v0(
+            &self.core,
+            &self.application,
+            &self.proposal_journal,
+        )
     }
 
     /// Returns the exact application parent and authenticated parent timestamp
@@ -5358,6 +5456,124 @@ fn finalized_proof_from_core_v0(
         finalized_chain_root,
         proof,
     })
+}
+
+fn recover_finalization_intent_marker_readback_v0(
+    core: &Core,
+    application: &DurableNativeApplicationV0,
+    proposal_journal: &PocoNodeLabProposalJournalConfigV0,
+    marker: FinalizationIntentMarkerV0,
+) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    if marker.scope != *proposal_journal.scope.as_bytes()
+        || marker.owner_id != *proposal_journal.owner_id.as_bytes()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::AuthorityChain(
+            "finalization recovery marker is outside the supplied proposal namespace".to_owned(),
+        ));
+    }
+
+    let safety = core.safety_state();
+    let finalization = safety.last_finalization().ok_or_else(|| {
+        PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery marker has no durable Core finalization proof",
+        )
+    })?;
+    let proof = finalization.proof();
+    let header = proof.finalized_block().header();
+    let parent = finalization.authenticated_parent();
+    if marker.proof_id != proof.id().into_bytes()
+        || marker.target_block_id != *header.id().as_bytes()
+        || marker.parent_block_id != *header.parent_id().as_bytes()
+        || marker.target_state_root != *header.state_root().as_bytes()
+        || marker.target_receipts_root != *header.receipts_root().as_bytes()
+        || marker.target_height != header.height().get()
+        || marker.target_view != header.view().get()
+        || marker.target_timestamp_ms != header.timestamp_ms()
+        || marker.parent_height != parent.height().get()
+        || marker.parent_view != parent.view().get()
+        || marker.parent_timestamp_ms != parent.timestamp_ms()
+        || safety.finalized().block_id() != header.id()
+        || safety.finalized().height() != header.height()
+        || safety.application_applied().block_id() != header.id()
+        || safety.application_applied().height() != header.height()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery marker differs from the live Core proof or applied tip",
+        ));
+    }
+
+    // Re-run the same strict proof/context checks used by the Ready query
+    // boundary before touching the marker.  This also rejects an old proof
+    // which happens to share only the target BlockId.
+    let proof_facts = finalized_proof_from_core_v0(core)?;
+    if proof_facts.proof_id_v0().into_bytes() != marker.proof_id {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery proof id failed strict revalidation",
+        ));
+    }
+    let block_id = BlockIdV0::new(marker.target_block_id).map_err(|_| {
+        PocoNodeLabAuthorityErrorV0::AuthorityChain(
+            "finalization recovery marker target BlockId is malformed".to_owned(),
+        )
+    })?;
+    let read = application
+        .read_finalized_by_block_id_with_proof_v0(block_id, proof, parent.timestamp_ms())
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    let row = read.durable_row_v0();
+    if row.status_v0() != DurableExecutionHistoryStatusV0::Committed
+        || row.commit_sequence_v0().is_none()
+        || read.confirmed_head_v0()
+            != &read
+                .finalized_head_v0()
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?
+        || row.overlay_digest_v0() != marker.target_overlay_checksum
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery application row is not one exact committed target",
+        ));
+    }
+    let target = read
+        .finalized_head_v0()
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    let app_parent = row
+        .parent_head_v0()
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    if target.block_id().as_bytes() != &marker.target_block_id
+        || target.height().get() != marker.target_height
+        || target.state_root().as_bytes() != &marker.target_state_root
+        || target.commit_id().as_bytes() == &[0; 32]
+        || app_parent.block_id().as_bytes() != &marker.parent_block_id
+        || app_parent.height().get() != marker.parent_height
+        || app_parent.state_root().as_bytes() != &marker.parent_state_root
+        || app_parent.commit_id().as_bytes() != &marker.parent_commit_id
+        || read.receipts_root_v0().as_bytes() != &marker.target_receipts_root
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery application row geometry differs from the marker",
+        ));
+    }
+
+    let source_matches = safety
+        .payload_validation_completions()
+        .iter()
+        .any(|completion| {
+            completion.result().artifact_ref().is_some_and(|artifact| {
+                artifact.overlay().block_id().as_bytes() == &marker.target_block_id
+                    && artifact.overlay().parent_block_id().as_bytes() == &marker.parent_block_id
+                    && artifact.overlay().overlay_checksum() == marker.target_overlay_checksum
+                    && artifact.source_artifact_checksum() == marker.source_artifact_checksum
+            })
+        });
+    if !source_matches {
+        return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+            "finalization recovery marker has no exact durable Valid source completion",
+        ));
+    }
+
+    // Only this exact tuple may clear the marker.  Any error above leaves it
+    // untouched for operator/recovery handling; no guessed remove is allowed.
+    clear_marker_v0(&proposal_journal.store_path, marker)
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))
 }
 
 fn bind_finalized_query_v0(
