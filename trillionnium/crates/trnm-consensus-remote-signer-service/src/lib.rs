@@ -712,6 +712,19 @@ impl UnixExternalTimeoutAuthorityV1 {
         self.scope
     }
 
+    /// Performs the external-authority startup handshake before a signer
+    /// socket is published.
+    ///
+    /// The adapter must be able to read the exact semantic namespace that it
+    /// was provisioned for, and both durable heads must already agree.  This
+    /// is intentionally read/reconcile-only: it does not reserve a round and
+    /// cannot advance the authority.  A missing, mismatched, or ambiguous
+    /// authority is therefore a process-start failure instead of a service
+    /// which appears ready and only fails on its first signing request.
+    pub fn preflight_v1(&mut self) -> Result<(), ExternalAuthorityErrorV1> {
+        self.reconcile_heads_v1().map(|_| ())
+    }
+
     fn semantic_binding_v1(
         &self,
     ) -> Result<ExternalWatermarkSemanticBindingV1, ExternalAuthorityErrorV1> {
@@ -1555,17 +1568,26 @@ impl RemoteSignerService {
             .into());
         }
         let binding = config.binding;
-        let mut service = Self::open(config)?;
-        let adapter = UnixExternalTimeoutAuthorityV1::from_binding_per_reservation(
+        if capability == [0; 32] {
+            return Err(ServiceFailure::InvalidConfig("external authority capability").into());
+        }
+        // Establish the independent authority binding before opening the
+        // local signer namespace or publishing a Unix socket.  A process
+        // which cannot prove the exact semantic `(scope, journal, capability)`
+        // namespace must fail during startup; otherwise a supervisor could
+        // mistake a socket-ready fixture for an admitted signer and only
+        // discover the mismatch after the first consensus request.
+        let mut adapter = UnixExternalTimeoutAuthorityV1::from_binding_per_reservation(
             binding,
             authority_socket,
             response_log_path,
         )
         .map_err(external_authority_failure_v1)?
         .with_capability(capability);
-        if capability == [0; 32] {
-            return Err(ServiceFailure::InvalidConfig("external authority capability").into());
-        }
+        adapter
+            .preflight_v1()
+            .map_err(external_authority_failure_v1)?;
+        let mut service = Self::open(config)?;
         // This process is the dedicated remote-signer boundary: the node and
         // consensus runtime never receive this key.  The external authority
         // fences every request before this process reaches the key, while the

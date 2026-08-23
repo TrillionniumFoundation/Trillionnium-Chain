@@ -11,7 +11,7 @@ use std::{
     os::unix::fs::PermissionsExt,
     os::unix::net::UnixStream,
     path::{Path, PathBuf},
-    process::{Child, Command},
+    process::{Child, Command, ExitStatus},
     thread,
     time::Duration,
 };
@@ -130,6 +130,18 @@ fn wait_socket(path: &Path) {
     panic!("timed out waiting for socket {}", path.display());
 }
 
+fn wait_exit(child: &mut Child) -> ExitStatus {
+    for _ in 0..200 {
+        if let Some(status) = child.try_wait().expect("poll child status") {
+            return status;
+        }
+        thread::sleep(Duration::from_millis(10));
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+    panic!("child did not fail closed during startup");
+}
+
 fn request(socket: &Path, bytes: &[u8]) -> Vec<u8> {
     let mut stream = UnixStream::connect(socket).expect("connect signer");
     stream
@@ -199,4 +211,97 @@ fn external_timeout_service_is_two_process_and_replays_exactly() {
 
     let _ = daemons.signer.kill();
     let _ = daemons.signer.wait();
+}
+
+#[test]
+fn external_timeout_service_rejects_unbound_authority_before_socket_ready() {
+    let root = TempDir::new().expect("temporary startup preflight root");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700))
+        .expect("private startup root");
+    let fixture = Fixture::new();
+    let authority_socket = root.path().join("authority.sock");
+    let authority_log = root.path().join("authority.log");
+    let scope = UnixExternalTimeoutAuthorityV1::scope_for_binding(fixture.binding);
+    let journal = UnixExternalTimeoutAuthorityV1::journal_id_for_binding(fixture.binding);
+    let authority = Command::new(binary("trnm-external-watermark-v0"))
+        .args([
+            "semantic",
+            "--per-reservation",
+            "--socket",
+            authority_socket.to_str().unwrap(),
+            "--log",
+            authority_log.to_str().unwrap(),
+            "--scope",
+            &hex32(scope),
+            "--journal-id",
+            &hex32(journal),
+            "--capability",
+            &hex32(CAPABILITY),
+        ])
+        .spawn()
+        .expect("spawn startup authority");
+    let mut authority = authority;
+    wait_socket(&authority_socket);
+
+    let wrong_capability = [0x44_u8; 32];
+    let wrong_capability_hex = hex32(wrong_capability);
+    let wrong_socket = root.path().join("wrong-signer.sock");
+    let mut wrong_signer = Command::new(binary("trnm-remote-signer-p0"))
+        .args([
+            "serve-external-timeout",
+            "--socket",
+            wrong_socket.to_str().unwrap(),
+            "--watermark",
+            root.path().join("wrong.sqlite3").to_str().unwrap(),
+            "--authority-socket",
+            authority_socket.to_str().unwrap(),
+            "--response-log",
+            root.path().join("wrong-responses.log").to_str().unwrap(),
+            "--capability",
+            &wrong_capability_hex,
+        ])
+        .spawn()
+        .expect("spawn wrong-capability signer");
+    let wrong_status = wait_exit(&mut wrong_signer);
+    assert!(
+        !wrong_status.success(),
+        "wrong authority binding must fail closed"
+    );
+    assert!(
+        !wrong_socket.exists(),
+        "a signer must not publish a socket before authority preflight"
+    );
+    assert!(
+        !root.path().join("wrong.sqlite3").exists(),
+        "failed authority preflight must happen before local signer state is opened"
+    );
+
+    let unavailable_socket = root.path().join("unavailable-signer.sock");
+    let missing_authority = root.path().join("missing-authority.sock");
+    let mut unavailable_signer = Command::new(binary("trnm-remote-signer-p0"))
+        .args([
+            "serve-external-timeout",
+            "--socket",
+            unavailable_socket.to_str().unwrap(),
+            "--watermark",
+            root.path().join("unavailable.sqlite3").to_str().unwrap(),
+            "--authority-socket",
+            missing_authority.to_str().unwrap(),
+            "--response-log",
+            root.path()
+                .join("unavailable-responses.log")
+                .to_str()
+                .unwrap(),
+            "--capability",
+            &hex32(CAPABILITY),
+        ])
+        .spawn()
+        .expect("spawn unavailable-authority signer");
+    let unavailable_status = wait_exit(&mut unavailable_signer);
+    assert!(!unavailable_status.success());
+    assert!(!unavailable_socket.exists());
+    assert!(!root.path().join("unavailable.sqlite3").exists());
+
+    let _ = authority.kill();
+    let _ = authority.wait();
 }
