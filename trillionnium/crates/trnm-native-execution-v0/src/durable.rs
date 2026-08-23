@@ -4277,20 +4277,19 @@ mod tests {
             signing_key(20 + index as u8)
         }
 
-        fn signed_qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+        fn signed_qc_for_coordinates(
+            set: &ValidatorSet,
+            view: View,
+            height: Height,
+            block_id: BlockId,
+        ) -> QuorumCertificate {
             let votes = set
                 .validators()
                 .iter()
                 .take(3)
                 .enumerate()
                 .map(|(index, validator)| {
-                    let root = Vote::signing_root_for_set(
-                        set,
-                        header.view(),
-                        header.height(),
-                        header.id(),
-                    )
-                    .unwrap();
+                    let root = Vote::signing_root_for_set(set, view, height, block_id).unwrap();
                     let signature = SignatureBytes::from_array(
                         consensus_key(index).sign(root.as_bytes()).to_bytes(),
                     );
@@ -4298,9 +4297,9 @@ mod tests {
                         set.chain_id(),
                         set.protocol_version(),
                         set.epoch(),
-                        header.view(),
-                        header.height(),
-                        header.id(),
+                        view,
+                        height,
+                        block_id,
                         set.id(),
                         validator.id(),
                         signature,
@@ -4313,14 +4312,18 @@ mod tests {
                 set.chain_id(),
                 set.protocol_version(),
                 set.epoch(),
-                header.view(),
-                header.height(),
-                header.id(),
+                view,
+                height,
+                block_id,
                 set.id(),
                 votes,
                 set,
             )
             .unwrap()
+        }
+
+        fn signed_qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+            signed_qc_for_coordinates(set, header.view(), header.height(), header.id())
         }
 
         fn certified(
@@ -4357,30 +4360,57 @@ mod tests {
             .unwrap()
         }
 
-        let h1 = header_for_execution_v0(execution, set, 1, execution.timestamp_ms());
+        let first_view = execution.height().get();
+        let h1 = header_for_execution_v0(execution, set, first_view, execution.timestamp_ms());
         assert_eq!(h1.id().as_bytes(), execution.block_id().as_bytes());
         let q1 = signed_qc(set, &h1);
-        let c1 = certified(
-            h1.clone(),
+        let first_justify = if execution.height().get() == 1 {
             QcReferenceV0::genesis_anchor(
                 GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap(),
-            ),
+            )
+        } else {
+            let parent_height = execution.parent().height();
+            let parent_view = View::new(
+                first_view
+                    .checked_sub(1)
+                    .expect("execution proof parent view"),
+            );
+            let parent_block_id = BlockId::new(*execution.parent().block_id().as_bytes());
+            QcReferenceV0::ordinary(signed_qc_for_coordinates(
+                set,
+                parent_view,
+                Height::new(parent_height.get()),
+                parent_block_id,
+            ))
+        };
+        let c1 = certified(
+            h1.clone(),
+            first_justify,
             q1.clone(),
             set,
             parameters,
             authenticated_parent_timestamp_ms,
         );
 
+        let h2_height = execution
+            .height()
+            .get()
+            .checked_add(1)
+            .expect("execution proof second height");
         let h2 = BlockHeader::new(
             set.genesis_hash(),
             set.chain_id(),
             set.protocol_version(),
             set.epoch(),
-            View::new(2),
-            Height::new(2),
+            View::new(
+                first_view
+                    .checked_add(1)
+                    .expect("execution proof second view"),
+            ),
+            Height::new(h2_height),
             BlockKind::Regular,
             h1.id(),
-            set.validators()[1].id(),
+            set.validators()[(first_view as usize) % set.validators().len()].id(),
             set.id(),
             set.consensus_parameters_hash(),
             PayloadDigest::new([0x61; 32]),
@@ -4401,16 +4431,23 @@ mod tests {
             h1.timestamp_ms(),
         );
 
+        let h3_height = h2_height
+            .checked_add(1)
+            .expect("execution proof third height");
         let h3 = BlockHeader::new(
             set.genesis_hash(),
             set.chain_id(),
             set.protocol_version(),
             set.epoch(),
-            View::new(3),
-            Height::new(3),
+            View::new(
+                first_view
+                    .checked_add(2)
+                    .expect("execution proof third view"),
+            ),
+            Height::new(h3_height),
             BlockKind::Regular,
             h2.id(),
-            set.validators()[2].id(),
+            set.validators()[((first_view + 1) as usize) % set.validators().len()].id(),
             set.id(),
             set.consensus_parameters_hash(),
             PayloadDigest::new([0x71; 32]),
@@ -5948,7 +5985,30 @@ mod tests {
             0x2a,
             2,
         );
-        let child = match reopened.execute_block(child_request).unwrap() {
+        // Rebind the child request to the canonical BlockId derived by the
+        // same header constructor used by the proof helper.  The preview
+        // fixture intentionally uses a placeholder ID; a proof-bound commit
+        // must name the exact header ID instead of accepting that shortcut.
+        let child_config = config(STORE_A);
+        let canonical_child_header = header_for_execution_v0(
+            &child_request,
+            &child_config.validator_set,
+            2,
+            child_request.timestamp_ms(),
+        );
+        let canonical_child_request = NativeBlockExecutionRequestV0::new(
+            child_request.chain_id().clone(),
+            child_request.genesis_hash(),
+            child_request.parent().clone(),
+            BlockIdV0::new(*canonical_child_header.id().as_bytes()).unwrap(),
+            child_request.height(),
+            child_request.timestamp_ms(),
+            child_request.active_validator_set_id(),
+            child_request.transactions().to_vec(),
+            child_request.expected(),
+        )
+        .unwrap();
+        let child = match reopened.execute_block(canonical_child_request).unwrap() {
             NativeBlockExecutionResultV0::Valid(value) => *value,
             other => panic!("expected valid first child of imported h1, got {other:?}"),
         };
@@ -5968,19 +6028,59 @@ mod tests {
                 .target_height_v0(),
             2
         );
+        let reopened_config = child_config;
+        let authenticated_parent_timestamp_ms = request.execution_v0().timestamp_ms();
+        let child_proof = signed_finality_proof_for_execution_v0(
+            child.request(),
+            &reopened_config.validator_set,
+            &reopened_config.parameters,
+            authenticated_parent_timestamp_ms,
+        );
+        let child_block_id =
+            BlockIdV0::new(*child_proof.finalized_block().header().id().as_bytes()).unwrap();
         let committed_child = reopened_with_child
-            .commit_block(NativeApplicationCommitRequestV0::new(child))
+            .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                child,
+                child_proof.clone(),
+                authenticated_parent_timestamp_ms,
+            ))
             .unwrap();
         assert_eq!(committed_child.head().height().get(), 2);
         drop(reopened_with_child);
 
         let reopened_after_child_commit =
-            DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            DurableNativeApplicationV0::open(&path, reopened_config).unwrap();
         let committed_head = reopened_after_child_commit
             .confirmed_committed_head_v0()
             .unwrap();
         assert_eq!(committed_head, committed_child.head().clone());
         assert_eq!(committed_head.height().get(), 2);
+        let proof_read = reopened_after_child_commit
+            .read_finalized_by_block_id_with_proof_v0(
+                child_block_id,
+                &child_proof,
+                authenticated_parent_timestamp_ms,
+            )
+            .unwrap();
+        assert_eq!(proof_read.confirmed_head_v0(), &committed_head);
+        assert_eq!(proof_read.finalized_head_v0().unwrap(), committed_head);
+        assert_eq!(
+            proof_read.receipts_root_v0().as_bytes(),
+            child_proof
+                .finalized_block()
+                .header()
+                .receipts_root()
+                .as_bytes()
+        );
+        assert_eq!(
+            proof_read
+                .durable_row_v0()
+                .target_head_v0()
+                .unwrap()
+                .height()
+                .get(),
+            committed_head.height().get()
+        );
     }
 
     #[test]
