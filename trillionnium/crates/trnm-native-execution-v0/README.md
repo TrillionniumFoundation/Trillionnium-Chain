@@ -49,8 +49,11 @@ is non-`Clone`, the durable-P record is private, a second process is excluded by
 an owner lock, and reopen validates the complete committed-prefix/overlay DAG.
 Store substitution,
 sequence rollback, artifact/snapshot/lifecycle/replay substitution, schema
-drift, SQLite sidecars, broken ancestry, duplicate sequences, and non-exact
-commit requests fail closed.
+drift, malformed/WAL SQLite sidecars, broken ancestry, duplicate sequences,
+and non-exact commit requests fail closed. A regular hot rollback journal left
+by a killed writer is repaired only through SQLite's own write-transaction
+rollback path, followed by database-and-directory fsync and immutable
+readback; WAL/SHM or unverifiable sidecars remain fail-closed.
 An applied-but-acknowledgment-lost commit is recovered by exact idempotent
 readback; either metadata-only or P-only partial-commit third states are
 permanently fenced. Unresolved prepared P records yield
@@ -73,8 +76,13 @@ protocol:
   are not implemented;
 - a local SQLite sequence detects in-file rollback but is not an external
   whole-machine anti-rollback authority;
-- no SIGKILL/power-loss matrix, directory-fsync proof, file-descriptor pinning,
-  remote signer, or multi-process takeover evidence is claimed; and
+- a three-boundary SIGKILL matrix (before SQLite commit, after commit, and
+  after directory fsync) plus critical-page short-write tests now prove the
+  local commit coordinator's atomic/replay behavior; this is not a full
+  power-loss, filesystem, or multi-process takeover campaign;
+- directory fsync is attempted at the application commit boundary, but no
+  external anti-rollback, file-descriptor pinning, remote signer, or whole-node
+  checkpoint evidence is claimed; and
 - deterministic invalid executions currently use one closed rejection code;
   production-grade typed invalid classifications remain future work.
 

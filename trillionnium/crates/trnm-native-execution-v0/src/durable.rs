@@ -876,6 +876,9 @@ impl DurableNativeApplicationV0 {
             initialize_schema_v0(&connection)?;
             verify_schema_v0(&connection)?;
         } else {
+            if sqlite_sidecars_present_v0(&path)? {
+                recover_sqlite_rollback_journal_v0(&path)?;
+            }
             reject_sqlite_sidecars_v0(&path)?;
             let connection = open_immutable_connection_v0(&path)?;
             verify_schema_v0(&connection)?;
@@ -1731,12 +1734,26 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 ));
             }
         }
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("before_commit");
+        // SQLite's FULL synchronous mode orders the database journal, but a
+        // successful transaction does not by itself make the directory entry
+        // durable across a sudden power loss. Sync the database and its
+        // containing directory before doing the fresh readback. A sync error
+        // is deliberately reported as CommitUncertain: the transaction may
+        // already be durable and the caller must recover by exact readback,
+        // never by issuing a second write.
         transaction.commit().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
                 "commit.commit",
             )
         })?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("after_commit");
+        sync_store_commit_boundary_v0(&self.path)?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("after_fsync");
         let fresh = fresh_validate_v0(&self.path, &self.config)?;
         p = fresh_load_p_by_block_v0(&self.path, p.block_id)?;
         validate_p_v0(&self.config, &p)?;
@@ -3274,11 +3291,126 @@ fn open_immutable_connection_v0(path: &Path) -> DurableResult<Connection> {
     })
 }
 
+fn sqlite_auxiliary_path_v0(path: &Path, suffix: &str) -> PathBuf {
+    let mut value = path.as_os_str().to_os_string();
+    value.push(suffix);
+    PathBuf::from(value)
+}
+
+fn sqlite_sidecars_present_v0(path: &Path) -> DurableResult<bool> {
+    for suffix in ["-journal", "-wal", "-shm"] {
+        match sqlite_auxiliary_path_v0(path, suffix).symlink_metadata() {
+            Ok(_) => return Ok(true),
+            Err(value) if value.kind() == std::io::ErrorKind::NotFound => {}
+            Err(_) => {
+                return Err(error(
+                    NativeApplicationExecutionErrorCodeV0::Storage,
+                    "sqlite.sidecar_metadata",
+                ))
+            }
+        }
+    }
+    Ok(false)
+}
+
+/// Performs the one safe startup repair that SQLite itself can provide after a
+/// process dies with a hot rollback journal. WAL/SHM images are intentionally
+/// not auto-recovered: they require a separate checkpoint/state-sync owner.
+/// The metadata page is dirtied and restored in one transaction so SQLite
+/// rolls back the hot journal and removes it atomically; all canonical store
+/// validation still runs on the immutable connection afterwards.
+fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
+    let journal_path = sqlite_auxiliary_path_v0(path, "-journal");
+    let wal_path = sqlite_auxiliary_path_v0(path, "-wal");
+    let shm_path = sqlite_auxiliary_path_v0(path, "-shm");
+    if wal_path.exists() || shm_path.exists() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "sqlite.wal_sidecar",
+        ));
+    }
+    let journal_metadata = journal_path.symlink_metadata().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "sqlite.journal_metadata",
+        )
+    })?;
+    if !journal_metadata.file_type().is_file()
+        || journal_metadata.file_type().is_symlink()
+        || journal_metadata.len() < 512
+    {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "sqlite.journal_unverifiable",
+        ));
+    }
+
+    let mut connection = open_writable_connection_v0(path)?;
+    verify_schema_v0(&connection)?;
+    let transaction = connection
+        .transaction_with_behavior(TransactionBehavior::Immediate)
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "sqlite.journal_recovery_transaction",
+            )
+        })?;
+    let original: Vec<u8> = transaction
+        .query_row(
+            "SELECT durable_sequence FROM native_application_metadata_v0
+             WHERE singleton=1",
+            [],
+            |row| row.get(0),
+        )
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "sqlite.journal_recovery_metadata",
+            )
+        })?;
+    let temporary = if original == vec![0xff_u8; 8] {
+        vec![0_u8; 8]
+    } else {
+        vec![0xff_u8; 8]
+    };
+    transaction
+        .execute(
+            "UPDATE native_application_metadata_v0 SET durable_sequence=?1
+             WHERE singleton=1",
+            params![temporary],
+        )
+        .and_then(|_| {
+            transaction.execute(
+                "UPDATE native_application_metadata_v0 SET durable_sequence=?1
+                 WHERE singleton=1",
+                params![original],
+            )
+        })
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "sqlite.journal_recovery_write",
+            )
+        })?;
+    transaction.commit().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "sqlite.journal_recovery_commit",
+        )
+    })?;
+    sync_store_commit_boundary_v0(path)?;
+    if journal_path.exists() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "sqlite.journal_persisted",
+        ));
+    }
+    Ok(())
+}
+
 fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
     for suffix in ["-wal", "-shm", "-journal"] {
-        let mut sidecar = path.as_os_str().to_os_string();
-        sidecar.push(suffix);
-        match fs::symlink_metadata(PathBuf::from(sidecar)) {
+        match sqlite_auxiliary_path_v0(path, suffix).symlink_metadata() {
             Ok(_) => {
                 return Err(error(
                     NativeApplicationExecutionErrorCodeV0::CommitUncertain,
@@ -3295,6 +3427,72 @@ fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
         }
     }
     Ok(())
+}
+
+/// Flushes the commit image and its directory entry before the caller does a
+/// fresh-connection readback.  SQLite already runs in `synchronous=FULL`
+/// mode; the explicit file/directory sync closes the remaining host durability
+/// boundary (journal rename and directory metadata) without pretending that a
+/// local filesystem is an external anti-rollback authority.
+fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
+    let database = OpenOptions::new().read(true).open(path).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "commit.fsync",
+        )
+    })?;
+    database.sync_all().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "commit.fsync",
+        )
+    })?;
+
+    #[cfg(unix)]
+    {
+        let parent = path.parent().ok_or_else(|| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.directory_fsync",
+            )
+        })?;
+        let directory = File::open(parent).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.directory_fsync",
+            )
+        })?;
+        directory.sync_all().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.directory_fsync",
+            )
+        })?;
+    }
+
+    Ok(())
+}
+
+/// Test-only crash injector used by the subprocess SIGKILL matrix below. It
+/// is compiled out of every non-test build and therefore cannot become a
+/// runtime control surface. The parent process kills the child while it is
+/// parked at one exact SQLite boundary, then reopens the store and validates
+/// the only two legal outcomes (pre-commit P or fully committed head).
+#[cfg(test)]
+fn park_for_sigkill_commit_boundary_v0(stage: &str) {
+    const STAGE_ENV: &str = "TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE";
+    const MARKER_ENV: &str = "TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER";
+    let Ok(expected) = std::env::var(STAGE_ENV) else {
+        return;
+    };
+    if expected != stage {
+        return;
+    }
+    let marker = std::env::var(MARKER_ENV).expect("SIGKILL test marker is set");
+    fs::write(marker, stage.as_bytes()).expect("write SIGKILL test marker");
+    loop {
+        std::thread::sleep(Duration::from_millis(10));
+    }
 }
 
 fn prepare_store_file_v0(path: &Path) -> DurableResult<(PathBuf, bool)> {
@@ -3389,6 +3587,7 @@ fn decode_borsh_v0<T: BorshDeserialize>(bytes: &[u8], field: &'static str) -> Du
 #[cfg(test)]
 mod tests {
     use ed25519_dalek::SigningKey;
+    use std::{process::Command, thread, time::Instant};
     use tempfile::TempDir;
     use trnm_consensus_types::{
         ChainId, ConsensusPublicKey, Epoch, ProtocolVersion, Validator, ValidatorId, VotingPower,
@@ -4067,6 +4266,186 @@ mod tests {
             .unwrap();
         assert_eq!(result.disposition(), NativeRecoveryDispositionV0::Exact);
         assert_eq!(result.head(), committed.head());
+    }
+
+    /// Child-process entry point for the real SIGKILL boundary test below.
+    /// The test harness invokes this exact test with a path and stage in its
+    /// environment; ordinary `cargo test` discovery runs it as a no-op.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_commit_boundary_child_v0() {
+        let Ok(path) = std::env::var("TRNM_NATIVE_EXECUTION_TEST_STORE") else {
+            return;
+        };
+        let config = config(STORE_A);
+        let parent = ApplicationHeadV0::new(
+            HeightV0::GENESIS,
+            BlockIdV0::new(INITIAL_BLOCK).unwrap(),
+            StateRootV0::new(config.initial_state_root).unwrap(),
+            ApplicationCommitIdV0::new(INITIAL_COMMIT).unwrap(),
+        );
+        let request = execution_request(&config, &parent);
+        let application = DurableNativeApplicationV0::open(PathBuf::from(path), config)
+            .expect("SIGKILL child opens prepared application");
+        let executed = match application
+            .execute_block(request)
+            .expect("SIGKILL child reloads exact durable P")
+        {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("SIGKILL child expected valid P, got {other:?}"),
+        };
+        // The commit hook parks this process before/after SQLite commit. The
+        // parent test sends SIGKILL; reaching this line means the hook failed.
+        let _ = application.commit_block(NativeApplicationCommitRequestV0::new(executed));
+        panic!("SIGKILL child unexpectedly returned from the parked boundary");
+    }
+
+    /// Kill a separate process at each commit boundary and prove that reopen
+    /// sees either the untouched prepared P or the complete committed head.
+    /// No mixed metadata/P state is accepted, and retry is exact/idempotent.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_commit_boundaries_are_atomic_and_replay_safe_v0() {
+        const STAGES: [&str; 3] = ["before_commit", "after_commit", "after_fsync"];
+        for stage in STAGES {
+            let temporary = TempDir::new().unwrap();
+            let (path, application, genesis_head, request) = initialized(&temporary);
+            let _executed = match application.execute_block(request.clone()).unwrap() {
+                NativeBlockExecutionResultV0::Valid(value) => *value,
+                other => panic!("expected valid P before {stage}, got {other:?}"),
+            };
+            drop(application);
+
+            let marker = temporary.path().join(format!("sigkill-{stage}.ready"));
+            let mut child = Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "durable::tests::sigkill_commit_boundary_child_v0",
+                    "--nocapture",
+                ])
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+                .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", &marker)
+                .env("TRNM_NATIVE_EXECUTION_TEST_STORE", &path)
+                .spawn()
+                .expect("spawn SIGKILL commit child");
+            let deadline = Instant::now() + Duration::from_secs(10);
+            while !marker.exists() && Instant::now() < deadline {
+                thread::sleep(Duration::from_millis(10));
+            }
+            assert!(
+                marker.exists(),
+                "SIGKILL child did not reach {stage}; status={:?}",
+                child.try_wait().unwrap()
+            );
+            let kill_status = Command::new("kill")
+                .args(["-KILL", &child.id().to_string()])
+                .status()
+                .expect("invoke kill -KILL for SIGKILL boundary");
+            assert!(kill_status.success(), "kill -KILL failed for {stage}");
+            let status = child.wait().expect("wait for SIGKILL child");
+            assert!(!status.success(), "SIGKILL child survived {stage}");
+
+            // A killed SQLite writer may leave its rollback journal. Startup
+            // recognizes only the regular SQLite rollback-journal shape,
+            // performs the atomic SQLite repair, fsyncs the image/directory,
+            // then runs the immutable application audit. WAL/SHM or malformed
+            // sidecars remain fail-closed.
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A))
+                .expect("reopen after automatic SQLite rollback-journal recovery");
+            let expected_head = if stage == "before_commit" {
+                genesis_head.clone()
+            } else {
+                reopened
+                    .confirmed_committed_head_v0()
+                    .expect("post-commit SIGKILL retains a readable committed head")
+            };
+            let recovery = reopened
+                .recover(
+                    NativeApplicationRecoveryRequestV0::new(
+                        ChainIdV0::new(CHAIN).unwrap(),
+                        GenesisHashV0::new(GENESIS).unwrap(),
+                        Hash32V0::new(DESCRIPTOR),
+                        Hash32V0::new(
+                            crate::signer_policy_commitment_v0(&application_signers()).unwrap(),
+                        ),
+                        expected_head,
+                        NativeRecoveryWatermarksV0::new(0, 0, 0),
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
+            if stage == "before_commit" {
+                assert_eq!(
+                    recovery.disposition(),
+                    NativeRecoveryDispositionV0::ValidationReplayRequired { pending_records: 1 }
+                );
+                let replay = match reopened.execute_block(request.clone()).unwrap() {
+                    NativeBlockExecutionResultV0::Valid(value) => *value,
+                    other => panic!("prepared P was not replayable after {stage}: {other:?}"),
+                };
+                let committed = reopened
+                    .commit_block(NativeApplicationCommitRequestV0::new(replay.clone()))
+                    .unwrap();
+                let duplicate = reopened
+                    .commit_block(NativeApplicationCommitRequestV0::new(replay))
+                    .unwrap();
+                assert_eq!(duplicate.head(), committed.head());
+                assert_eq!(duplicate.durable_sequence(), committed.durable_sequence());
+            } else {
+                assert_eq!(
+                    recovery.disposition(),
+                    NativeRecoveryDispositionV0::Exact,
+                    "post-commit SIGKILL must leave one complete committed head",
+                );
+                let replay = match reopened.execute_block(request).unwrap() {
+                    NativeBlockExecutionResultV0::Valid(value) => *value,
+                    other => panic!("committed P was not replayable after {stage}: {other:?}"),
+                };
+                let duplicate = reopened
+                    .commit_block(NativeApplicationCommitRequestV0::new(replay))
+                    .unwrap();
+                assert_eq!(duplicate.head().height().get(), 1);
+            }
+        }
+    }
+
+    #[test]
+    fn short_write_database_images_fail_closed_v0() {
+        let temporary = TempDir::new().unwrap();
+        let (path, application, _head, request) = initialized(&temporary);
+        let _ = application.execute_block(request).unwrap();
+        drop(application);
+        let bytes = fs::read(&path).unwrap();
+        assert!(
+            bytes.len() > 64,
+            "fixture SQLite image is unexpectedly tiny"
+        );
+        let page_size = open_immutable_connection_v0(&path)
+            .unwrap()
+            .query_row("PRAGMA page_size", [], |row| row.get::<_, u64>(0))
+            .unwrap() as usize;
+        // These cuts remove the SQLite header or an entire occupied page.
+        // Truncating only unused trailing pages is not a corruption signal in
+        // SQLite and is therefore intentionally outside this assertion.
+        for cut in [0, 1, page_size, page_size + 1] {
+            if cut >= bytes.len() {
+                continue;
+            }
+            let short_path = temporary.path().join(format!("short-write-{cut}.sqlite"));
+            fs::write(&short_path, &bytes[..cut]).unwrap();
+            let result = DurableNativeApplicationV0::open(&short_path, config(STORE_A));
+            let error = result.expect_err("short SQLite image must not be normalized");
+            assert!(
+                matches!(
+                    error.code(),
+                    NativeApplicationExecutionErrorCodeV0::CorruptStore
+                        | NativeApplicationExecutionErrorCodeV0::Storage
+                        | NativeApplicationExecutionErrorCodeV0::CommitUncertain
+                ),
+                "short image at {cut} returned unexpected {:?}",
+                error.code()
+            );
+        }
     }
 
     #[test]
