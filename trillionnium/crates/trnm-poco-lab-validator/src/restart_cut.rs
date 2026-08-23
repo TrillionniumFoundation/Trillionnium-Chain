@@ -1942,6 +1942,39 @@ pub struct SignedRestartCutV1 {
 }
 
 impl SignedRestartCutV1 {
+    /// Constructs a RestartCut from a signature produced outside the node.
+    /// The body is fully validated and the public validator key verifies the
+    /// supplied bytes before the statement becomes usable.  No private key is
+    /// accepted on this path.
+    pub(crate) fn new_with_signature(
+        origin: ValidatorId,
+        body: RestartCutBodyV1,
+        validator_set: &ValidatorSet,
+        signature: [u8; SIGNATURE_BYTES_V1],
+    ) -> Result<Self, RestartCutErrorV1> {
+        body.validate_for_set(validator_set)?;
+        let value = Self {
+            origin,
+            body,
+            signature,
+        };
+        value.verify(validator_set)?;
+        Ok(value)
+    }
+
+    /// Returns the canonical RestartCut signing root for an external signer.
+    /// Validation occurs before the root is exposed so malformed bodies cannot
+    /// be turned into signer requests.
+    pub(crate) fn signing_root_for_parts_v1(
+        origin: ValidatorId,
+        body: &RestartCutBodyV1,
+        validator_set: &ValidatorSet,
+    ) -> Result<[u8; 32], RestartCutErrorV1> {
+        body.validate_for_set(validator_set)?;
+        let unsigned = encode_signed_cut_unsigned(origin, body)?;
+        Ok(hash_canonical(CUT_SIGNING_DOMAIN_V1, &unsigned))
+    }
+
     pub(crate) fn new(
         origin: ValidatorId,
         body: RestartCutBodyV1,
@@ -1950,14 +1983,13 @@ impl SignedRestartCutV1 {
     ) -> Result<Self, RestartCutErrorV1> {
         body.validate_for_set(validator_set)?;
         require_origin_key(origin, validator_set, key)?;
-        let unsigned = encode_signed_cut_unsigned(origin, &body)?;
-        Ok(Self {
+        let signing_root = Self::signing_root_for_parts_v1(origin, &body, validator_set)?;
+        Self::new_with_signature(
             origin,
             body,
-            signature: key
-                .sign(&hash_canonical(CUT_SIGNING_DOMAIN_V1, &unsigned))
-                .to_bytes(),
-        })
+            validator_set,
+            key.sign(&signing_root).to_bytes(),
+        )
     }
 
     pub const fn origin(&self) -> ValidatorId {
@@ -4695,6 +4727,30 @@ mod tests {
         let expected_artifact_sha256: [u8; 32] = Sha256::digest(&encoded).into();
         assert_eq!(verified.artifact_sha256(), expected_artifact_sha256);
         assert_ne!(verified.artifact_sha256(), certificate.digest());
+    }
+
+    #[test]
+    fn externally_produced_restart_cut_signature_roundtrips_v1() {
+        let (set, keys) = validator_fixture();
+        let campaign = campaign(&set);
+        let start = fleet_start_certificate(&set, &keys, &campaign, 0xd0);
+        let body = restart_body(&set, &campaign, &start);
+        let origin = set.validators()[0].id();
+        let root = SignedRestartCutV1::signing_root_for_parts_v1(origin, &body, &set).unwrap();
+        let signature = keys[0].sign(&root).to_bytes();
+        let statement =
+            SignedRestartCutV1::new_with_signature(origin, body.clone(), &set, signature).unwrap();
+        assert_eq!(statement.body(), &body);
+        assert_eq!(
+            SignedRestartCutV1::decode(&statement.encode(), &set).unwrap(),
+            statement
+        );
+
+        let mut wrong_signature = signature;
+        wrong_signature[0] ^= 1;
+        assert!(
+            SignedRestartCutV1::new_with_signature(origin, body, &set, wrong_signature).is_err()
+        );
     }
 
     #[test]
