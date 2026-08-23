@@ -100,6 +100,12 @@ impl AuthorityProcess {
                 "--capability",
                 &hex32(CAPABILITY),
             ]);
+        } else {
+            // Opaque CAS is retained only as an explicit fixture path.  The
+            // production-shaped CLI refuses to start it without this marker,
+            // preventing a semantic authority from being downgraded by a
+            // stale supervisor command line.
+            command.args(["opaque", "--fixture-opaque"]);
         }
         let child = command
             .args([

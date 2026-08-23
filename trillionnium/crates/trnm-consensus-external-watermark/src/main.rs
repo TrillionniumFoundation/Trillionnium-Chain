@@ -5,7 +5,8 @@ use trnm_consensus_external_watermark::{
 };
 
 fn usage() -> ! {
-    eprintln!("usage: trnm-external-watermark-v0 <opaque|semantic> --socket ABS_PATH --log ABS_PATH [--per-reservation] [--scope HEX32 --journal-id HEX32 --capability HEX32]");
+    eprintln!("usage: trnm-external-watermark-v0 semantic --socket ABS_PATH --log ABS_PATH --scope HEX32 --journal-id HEX32 --capability HEX32 [--per-reservation]");
+    eprintln!("       opaque --fixture-opaque --socket ABS_PATH --log ABS_PATH");
     std::process::exit(2);
 }
 
@@ -28,6 +29,7 @@ fn main() -> ExitCode {
     let mut journal_id = None;
     let mut capability = None;
     let mut per_reservation = false;
+    let mut fixture_opaque = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--socket" => set_once(&mut socket, args.next(), "--socket"),
@@ -62,6 +64,12 @@ fn main() -> ExitCode {
                 }
                 per_reservation = true;
             }
+            "--fixture-opaque" => {
+                if fixture_opaque {
+                    usage();
+                }
+                fixture_opaque = true;
+            }
             "--help" => usage(),
             _ => usage(),
         }
@@ -69,6 +77,9 @@ fn main() -> ExitCode {
     let socket = socket.unwrap_or_else(|| usage());
     let log = log.unwrap_or_else(|| usage());
     let result = if mode {
+        if fixture_opaque {
+            usage();
+        }
         let binding = ExternalWatermarkSemanticBindingV1::new(
             scope.unwrap_or_else(|| usage()),
             journal_id.unwrap_or_else(|| usage()),
@@ -81,7 +92,12 @@ fn main() -> ExitCode {
             run_semantic_daemon(socket, log, binding)
         }
     } else {
-        if per_reservation || scope.is_some() || journal_id.is_some() || capability.is_some() {
+        if !fixture_opaque
+            || per_reservation
+            || scope.is_some()
+            || journal_id.is_some()
+            || capability.is_some()
+        {
             usage();
         }
         run_daemon(socket, log)

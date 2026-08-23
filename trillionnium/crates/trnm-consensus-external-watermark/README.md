@@ -41,11 +41,23 @@ store, HSM, SafetyRules authorization, or Core admission path. It does not
 claim whole-node clone/rollback detection; that remains an external watermark
 and future host-fencing responsibility.
 
-Example (development only):
+The executable refuses the legacy opaque mode unless the caller supplies the
+explicit `--fixture-opaque` marker.  This keeps an old supervisor command from
+silently starting an authority without the semantic scope/journal/capability
+binding required by the timeout bridge.  A production-shaped invocation is:
 
 ```text
-trnm-external-watermark-v0 --socket /private/run/trnm/ew.sock \
-  --log /private/run/trnm/ew.log
+trnm-external-watermark-v0 semantic \
+  --socket /private/run/trnm/ew.sock \
+  --log /private/run/trnm/ew.log \
+  --scope HEX32 --journal-id HEX32 --capability HEX32
+```
+
+The opaque path is test-only and must be explicit:
+
+```text
+trnm-external-watermark-v0 opaque --fixture-opaque \
+  --socket /tmp/trnm-fixture.sock --log /tmp/trnm-fixture.log
 ```
 
 The black-box tests exercise two independent processes, restart, stale CAS,
