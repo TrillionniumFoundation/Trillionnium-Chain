@@ -58,6 +58,7 @@ use crate::{
     },
     continuous_runtime::{
         ContinuousRuntimeFactsV0, ContinuousSignerLifetimeBoundsV0, ContinuousValidatorAuthorityV0,
+        RestartSignatureProducerV1, RestartSignaturePurposeV1,
         CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0, CONTINUOUS_RUNTIME_OWNER_STACK_BYTES_V0,
     },
     crypto::LabFileWatermark,
@@ -154,6 +155,8 @@ pub enum FleetSignaturePurposeV1 {
     Start,
     Relay,
     Restart,
+    RestartCut,
+    RestartPark,
 }
 
 /// Exact identity handed to a fleet-barrier signer.  The signing root is
@@ -206,6 +209,35 @@ impl FleetSignatureRequestV1 {
 /// post-barrier relay/restart call sites consume this same seam.
 pub trait FleetSignatureProducerV1: Send {
     fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> Result<[u8; 64]>;
+}
+
+/// Short-lived adapter used only while a restart owner emits its one Cut/Park
+/// declaration.  The continuous layer does not depend on the bounded fleet
+/// runtime type; this adapter carries the validator identity/set namespace
+/// into the common FleetSignatureRequestV1 and preserves the purpose split.
+struct FleetRestartSignatureAdapter<'a> {
+    producer: &'a mut dyn FleetSignatureProducerV1,
+    origin: ValidatorId,
+    validator_set_id: [u8; 32],
+}
+
+impl RestartSignatureProducerV1 for FleetRestartSignatureAdapter<'_> {
+    fn sign_restart_v1(
+        &mut self,
+        purpose: RestartSignaturePurposeV1,
+        signing_root: [u8; 32],
+    ) -> Result<[u8; 64]> {
+        let purpose = match purpose {
+            RestartSignaturePurposeV1::Cut => FleetSignaturePurposeV1::RestartCut,
+            RestartSignaturePurposeV1::Park => FleetSignaturePurposeV1::RestartPark,
+        };
+        self.producer.sign_fleet_v1(FleetSignatureRequestV1::new(
+            purpose,
+            self.origin,
+            self.validator_set_id,
+            signing_root,
+        ))
+    }
 }
 
 /// Public bounded-runtime outcome. A parked handoff is a successful resource
@@ -4600,16 +4632,29 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .take()
             .ok_or_else(|| anyhow!("target restart parking lacks continuous authority"))?;
-        let declared = authority
-            .into_restart_parked_authority_v1()
-            .context("consume target continuous authority into restart park")?
-            .into_target_restart_cut_park_v1(
-                &self.config,
-                target_prepare,
-                local_park,
-                &self.fleet_start_certificate,
-            )
-            .context("issue sole target Cut/Park declaration")?;
+        let declared = {
+            let mut restart_producer =
+                self.fleet_producer
+                    .as_deref_mut()
+                    .map(|producer| FleetRestartSignatureAdapter {
+                        producer,
+                        origin: self.config.local_validator(),
+                        validator_set_id: *self.config.validator_set().id().as_bytes(),
+                    });
+            authority
+                .into_restart_parked_authority_v1()
+                .context("consume target continuous authority into restart park")?
+                .into_target_restart_cut_park_v1(
+                    &self.config,
+                    target_prepare,
+                    local_park,
+                    &self.fleet_start_certificate,
+                    restart_producer
+                        .as_mut()
+                        .map(|producer| producer as &mut dyn RestartSignatureProducerV1),
+                )
+                .context("issue sole target Cut/Park declaration")?
+        };
         let cut_park_payload = declared.statement_v1().encode();
         let cut_park_reservation =
             self.enqueue_restart_statement_v1(RestartProtocolPhaseV1::Cut, cut_park_payload)?;
@@ -4722,16 +4767,29 @@ impl BoundedConsensusOwnerV1 {
             .authority
             .take()
             .ok_or_else(|| anyhow!("peer restart parking lacks continuous authority"))?;
-        let declared = authority
-            .into_restart_parked_authority_v1()
-            .context("consume peer continuous authority into restart park")?
-            .into_peer_restart_cut_park_v1(
-                &self.config,
-                prepared.admitted_prepare.declaration_v1(),
-                local_park,
-                &self.fleet_start_certificate,
-            )
-            .context("issue sole peer Cut/Park declaration")?;
+        let declared = {
+            let mut restart_producer =
+                self.fleet_producer
+                    .as_deref_mut()
+                    .map(|producer| FleetRestartSignatureAdapter {
+                        producer,
+                        origin: self.config.local_validator(),
+                        validator_set_id: *self.config.validator_set().id().as_bytes(),
+                    });
+            authority
+                .into_restart_parked_authority_v1()
+                .context("consume peer continuous authority into restart park")?
+                .into_peer_restart_cut_park_v1(
+                    &self.config,
+                    prepared.admitted_prepare.declaration_v1(),
+                    local_park,
+                    &self.fleet_start_certificate,
+                    restart_producer
+                        .as_mut()
+                        .map(|producer| producer as &mut dyn RestartSignatureProducerV1),
+                )
+                .context("issue sole peer Cut/Park declaration")?
+        };
         let payload = declared.statement_v1().encode();
         let reservation =
             self.enqueue_restart_statement_v1(RestartProtocolPhaseV1::Cut, payload)?;

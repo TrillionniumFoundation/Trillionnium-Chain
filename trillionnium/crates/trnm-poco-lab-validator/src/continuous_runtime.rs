@@ -120,6 +120,29 @@ type LabRuntimeV0 = PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>;
 type LabSignedVoteOwnerV0 = PocoNodeLabSignedVoteOwnerV0<LabFileWatermark>;
 type LabSignedTimeoutOwnerV0 = PocoNodeLabSignedTimeoutOwnerV0<LabFileWatermark>;
 
+/// Purpose passed to the restart-cut/park signing seam.  The continuous
+/// layer keeps this small protocol-local enum instead of depending on the
+/// bounded runtime's fleet producer type; the owner adapts it to its
+/// externally provisioned signer and can therefore keep this module usable
+/// by the fixture-only authority tests.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum RestartSignaturePurposeV1 {
+    Cut,
+    Park,
+}
+
+/// External restart statement signer.  The caller supplies only a validated,
+/// domain-separated signing digest; implementations must not receive or
+/// retain the node's raw consensus key. `None` at the owner boundary is the
+/// explicit fixture fallback and is never used by the guarded deployed entry.
+pub(crate) trait RestartSignatureProducerV1 {
+    fn sign_restart_v1(
+        &mut self,
+        purpose: RestartSignaturePurposeV1,
+        signing_root: [u8; 32],
+    ) -> Result<[u8; 64]>;
+}
+
 /// Object-safe carrier used by the non-generic continuous authority. The
 /// signer-journal trait intentionally has no blanket `Box<T>` implementation,
 /// so this private wrapper keeps the public authority surface small while
@@ -971,6 +994,7 @@ impl ContinuousRestartParkedAuthorityV1 {
         target_prepare: SignedRestartCutV1,
         local_park: LocalRestartParkV1,
         fleet_start_certificate: &FleetStartCertificateV1,
+        mut restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
     ) -> Result<ContinuousRestartDeclaredParkAuthorityV1> {
         self.require_restart_park_parts_v1(
             config,
@@ -984,6 +1008,7 @@ impl ContinuousRestartParkedAuthorityV1 {
             target_prepare.body(),
             local_park,
             fleet_start_certificate,
+            &mut restart_producer,
         )?;
         let statement = RestartCutParkStatementV1::new(
             target_prepare,
@@ -1007,6 +1032,7 @@ impl ContinuousRestartParkedAuthorityV1 {
         target_prepare: &SignedRestartCutV1,
         local_park: LocalRestartParkV1,
         fleet_start_certificate: &FleetStartCertificateV1,
+        mut restart_producer: Option<&mut dyn RestartSignatureProducerV1>,
     ) -> Result<ContinuousRestartDeclaredParkAuthorityV1> {
         self.require_restart_park_parts_v1(
             config,
@@ -1015,18 +1041,38 @@ impl ContinuousRestartParkedAuthorityV1 {
             RestartParkRoleV1::Peer,
             fleet_start_certificate,
         )?;
-        let cut = SignedRestartCutV1::new(
-            config.local_validator(),
-            target_prepare.body().clone(),
-            config.validator_set(),
-            config.consensus_signing_key(),
-        )
+        let cut_body = target_prepare.body().clone();
+        let cut = if let Some(producer) = restart_producer.as_mut() {
+            let signing_root = SignedRestartCutV1::signing_root_for_parts_v1(
+                config.local_validator(),
+                &cut_body,
+                config.validator_set(),
+            )
+            .map_err(|error| anyhow!("construct peer RestartCut signing root: {error}"))?;
+            let signature = (**producer)
+                .sign_restart_v1(RestartSignaturePurposeV1::Cut, signing_root)
+                .context("produce external peer RestartCut signature")?;
+            SignedRestartCutV1::new_with_signature(
+                config.local_validator(),
+                cut_body,
+                config.validator_set(),
+                signature,
+            )
+        } else {
+            SignedRestartCutV1::new(
+                config.local_validator(),
+                cut_body,
+                config.validator_set(),
+                config.consensus_signing_key(),
+            )
+        }
         .map_err(|error| anyhow!("sign peer RestartCut declaration: {error}"))?;
         let park = sign_local_restart_park_v1(
             config,
             target_prepare.body(),
             local_park,
             fleet_start_certificate,
+            &mut restart_producer,
         )?;
         let statement = RestartCutParkStatementV1::new(
             cut,
@@ -1136,6 +1182,7 @@ fn sign_local_restart_park_v1(
     restart_cut_body: &crate::restart_cut::RestartCutBodyV1,
     local_park: LocalRestartParkV1,
     fleet_start_certificate: &FleetStartCertificateV1,
+    restart_producer: &mut Option<&mut dyn RestartSignatureProducerV1>,
 ) -> Result<SignedLocalRestartParkV1> {
     let digest = SignedLocalRestartParkV1::signing_digest_for_parts(
         config.local_validator(),
@@ -1145,7 +1192,13 @@ fn sign_local_restart_park_v1(
         config.validator_set(),
     )
     .map_err(|error| anyhow!("construct exact local-park signing digest: {error}"))?;
-    let signature = config.consensus_signing_key().sign(&digest).to_bytes();
+    let signature = if let Some(producer) = restart_producer.as_mut() {
+        (**producer)
+            .sign_restart_v1(RestartSignaturePurposeV1::Park, digest)
+            .context("produce external local RestartPark signature")?
+    } else {
+        config.consensus_signing_key().sign(&digest).to_bytes()
+    };
     SignedLocalRestartParkV1::from_parts(
         config.local_validator(),
         restart_cut_body,
