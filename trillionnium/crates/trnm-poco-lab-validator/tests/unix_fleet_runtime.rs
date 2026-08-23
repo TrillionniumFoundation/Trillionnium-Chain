@@ -94,3 +94,32 @@ fn runtime_unix_fleet_adapter_binds_and_verifies_subprocess_style_response() {
     assert_eq!(signature, signing_key.sign(&signing_root).to_bytes());
     server.join().expect("signer server join");
 }
+
+#[test]
+fn runtime_unix_fleet_adapter_rejects_context_identity_mismatch_before_socket() {
+    let directory = tempdir().expect("temporary signer directory");
+    fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700))
+        .expect("private signer directory");
+    let configured_origin = ValidatorId::from_bytes(b"configured-origin").expect("origin");
+    let request_origin = ValidatorId::from_bytes(b"different-origin").expect("origin");
+    let validator_set_id = [0x61; 32];
+    let signing_key = SigningKey::from_bytes(&[0x45; 32]);
+    let config = trnm_consensus_unix_fleet_signer::UnixFleetRootSignerConfig {
+        socket_path: directory.path().join("does-not-exist.sock"),
+        origin: configured_origin,
+        validator_set_id,
+        verifying_key: signing_key.verifying_key().to_bytes(),
+        timeout: Duration::from_secs(1),
+    };
+    let mut producer = UnixFleetSignatureProducerV1::new(config).expect("construct adapter");
+    let request = FleetSignatureRequestV1::new(
+        FleetSignaturePurposeV1::Ready,
+        request_origin,
+        validator_set_id,
+        [0x73; 32],
+    );
+    let error = producer
+        .sign_fleet_v1(request)
+        .expect_err("identity mismatch must fail before socket access");
+    assert!(error.to_string().contains("configured origin/set"));
+}

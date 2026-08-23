@@ -262,6 +262,11 @@ impl UnixFleetSignatureProducerV1 {
 
 impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
     fn sign_fleet_v1(&mut self, request: FleetSignatureRequestV1) -> Result<[u8; 64]> {
+        ensure!(
+            request.origin() == self.config().origin
+                && request.validator_set_id() == self.config().validator_set_id,
+            "Unix fleet signer request identity differs from its configured origin/set"
+        );
         let purpose = match request.purpose() {
             FleetSignaturePurposeV1::Ready => FleetRootPurposeV1::Ready,
             FleetSignaturePurposeV1::Start => FleetRootPurposeV1::Start,
