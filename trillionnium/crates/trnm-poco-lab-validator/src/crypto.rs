@@ -9,9 +9,9 @@ use ed25519_dalek::{Signer, SigningKey};
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0,
-    ExternalWatermarkErrorV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
-    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
+    ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0,
+    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerErrorV0,
+    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::SignatureBytes;
 
