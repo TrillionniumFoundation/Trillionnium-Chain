@@ -41,6 +41,10 @@ pub const CORE_RESTART_CHECKPOINT_CAS_V0: bool = true;
 pub const CORE_RESTART_RESTART_READBACK_V0: bool = true;
 /// A missing snapshot is represented as a state-sync requirement, not guessed.
 pub const CORE_RESTART_STATE_SYNC_IMPORT_V0: bool = true;
+/// Cross-epoch checkpoint admission is intentionally closed until an active
+/// epoch-anchor/joint-handoff witness is wired into this store.  A checkpoint
+/// log must never silently jump to a new validator set on height alone.
+pub const CORE_RESTART_CROSS_EPOCH_TRANSITION_V0: bool = false;
 /// This crate does not issue a Core/SafetyRules permit.
 pub const CORE_RESTART_CORE_SAFETY_AUTHORITY_V0: bool = false;
 /// This crate does not own a signer or emit signatures.
@@ -67,6 +71,7 @@ pub enum CoreRestartError {
     CasConflict,
     MissingCheckpoint,
     StateSyncMismatch(&'static str),
+    EpochTransitionRequired,
     Io {
         stage: &'static str,
         source: io::Error,
@@ -89,6 +94,9 @@ impl fmt::Display for CoreRestartError {
             Self::StateSyncMismatch(field) => {
                 write!(formatter, "state-sync bundle does not match {field}")
             }
+            Self::EpochTransitionRequired => formatter.write_str(
+                "cross-epoch checkpoint requires an authenticated epoch-anchor/joint-handoff witness",
+            ),
             Self::Io { stage, source } => write!(formatter, "checkpoint I/O at {stage}: {source}"),
         }
     }
@@ -547,6 +555,9 @@ impl CheckpointStoreV0 {
                     "checkpoint successor geometry",
                 ));
             }
+            if candidate.epoch != previous.epoch {
+                return Err(CoreRestartError::EpochTransitionRequired);
+            }
             if candidate.epoch == previous.epoch
                 && candidate.validator_set_id != previous.validator_set_id
             {
@@ -704,6 +715,9 @@ impl CheckpointStoreV0 {
                     return Err(CoreRestartError::InvalidLog(
                         "checkpoint successor geometry",
                     ));
+                }
+                if record.epoch != prior.epoch {
+                    return Err(CoreRestartError::EpochTransitionRequired);
                 }
             }
             expected_previous = record.record_hash;
@@ -1035,6 +1049,40 @@ mod tests {
             store.install_state_sync(wrong),
             Err(CoreRestartError::StateSyncMismatch("state root"))
         ));
+    }
+
+    #[test]
+    fn cross_epoch_checkpoint_requires_explicit_handoff_witness() {
+        let (set, qc, head) = fixture();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            b"state-epoch-0".to_vec(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        store.commit(&candidate, None).expect("commit epoch 0");
+
+        // A caller cannot turn a normal QC checkpoint into a new-epoch
+        // checkpoint by editing only the metadata.  The authenticated
+        // epoch-anchor/joint-handoff witness API is intentionally absent until
+        // the active Core path is wired, so this must fail closed.
+        let mut next_epoch = candidate;
+        next_epoch.epoch = 1;
+        next_epoch.height = 5;
+        next_epoch.snapshot_bytes = b"state-epoch-1".to_vec();
+        next_epoch.snapshot_digest = digest(SNAPSHOT_DOMAIN, &next_epoch.snapshot_bytes);
+        assert!(matches!(
+            store.commit(
+                &next_epoch,
+                store.current().map(CheckpointRecordV0::record_hash)
+            ),
+            Err(CoreRestartError::EpochTransitionRequired)
+        ));
+        assert_eq!(store.current().expect("retained epoch 0").epoch(), 0);
     }
 
     #[test]

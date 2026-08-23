@@ -20,6 +20,12 @@ checkpoint and checks checkpoint hash, state-root binding, and snapshot digest.
 The caller remains responsible for the application/JMT proof that produced
 the state-root attestation.
 
+Normal checkpoint admission is deliberately same-epoch only. A caller cannot
+advance the log into a new epoch until an authenticated epoch-anchor/joint-
+handoff witness is added to the API; cross-epoch transition is therefore
+fail-closed rather than inferred from a higher height or a changed validator
+set.
+
 This is intentionally not a complete node. It does not implement a three-chain
 `FinalityProofV0`, Core/SafetyRules transitions, signer or HSM access, host
 attestation, consensus transport, epoch activation, or validator runtime.

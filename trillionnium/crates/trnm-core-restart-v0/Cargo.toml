@@ -15,6 +15,7 @@ checkpoint_hash_chain = true
 checkpoint_cas = true
 restart_replay_readback = true
 state_sync_import = true
+cross_epoch_transition = false
 core_safety_rules_authority = false
 core_runtime_activation = false
 consensus_signing = false
