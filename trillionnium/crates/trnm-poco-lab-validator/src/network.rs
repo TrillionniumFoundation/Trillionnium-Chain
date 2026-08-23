@@ -19,7 +19,7 @@ use std::{
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
-use anyhow::{anyhow, bail, Context, Result};
+use anyhow::{anyhow, bail, ensure, Context, Result};
 use ed25519_dalek::{Signature, Signer, VerifyingKey};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -428,6 +428,15 @@ pub fn run_network_smoke(
     if timeout < Duration::from_secs(1) || timeout > Duration::from_secs(300) {
         bail!("network-smoke timeout must be between 1 and 300 seconds");
     }
+    let transport_context = transport_context(config);
+    ensure!(
+        transport_context.validator_set_binding()
+            == Some((
+                config.validator_set().epoch().get(),
+                config.validator_set().id().into_bytes()
+            )),
+        "network-smoke transport context lacks the live epoch/validator-set binding"
+    );
     let started_unix_ms = unix_ms()?;
     let listener = TcpListener::bind(config.listen_addr())
         .with_context(|| format!("bind network-smoke listener {}", config.listen_addr()))?;
@@ -669,12 +678,36 @@ fn connect_expected(
 }
 
 fn transport_context(config: &LoadedValidatorConfig) -> RunTransportContext {
-    RunTransportContext::new(
+    transport_context_for_validator_set(
         config.topology_sha256(),
         config.candidate_source_sha256(),
         config.binary_sha256(),
         config.coordinator_manifest_sha256(),
+        config.validator_set(),
     )
+}
+
+/// Build the network-smoke handshake context from the same epoch and
+/// validator-set namespace that the authenticated admission helper consumes.
+///
+/// Keeping this in one pure helper prevents the smoke path from silently
+/// falling back to the legacy unbound transport profile.  The binding is
+/// still only transport admission; it does not grant consensus or signer
+/// authority.
+fn transport_context_for_validator_set(
+    topology_sha256: [u8; 32],
+    candidate_source_sha256: [u8; 32],
+    binary_sha256: [u8; 32],
+    coordinator_manifest_sha256: [u8; 32],
+    validator_set: &ValidatorSet,
+) -> RunTransportContext {
+    RunTransportContext::new(
+        topology_sha256,
+        candidate_source_sha256,
+        binary_sha256,
+        coordinator_manifest_sha256,
+    )
+    .with_validator_set_binding(validator_set.epoch().get(), validator_set.id().into_bytes())
 }
 
 fn connect_until(address: SocketAddr, deadline: Instant) -> Result<TcpStream> {
@@ -903,6 +936,22 @@ mod tests {
         assert!(validate_health(FrameKind::Health, &payload, client, server, 8).is_err());
         assert!(validate_health(FrameKind::Health, &payload, server, client, 7).is_err());
         assert!(validate_health(FrameKind::Vote, &payload, client, server, 7).is_err());
+    }
+
+    #[test]
+    fn network_smoke_context_carries_epoch_and_validator_set_binding() {
+        let (_, _, _, _, validator_set) = fixture();
+        let context = transport_context_for_validator_set(
+            [0x74; 32],
+            [0x75; 32],
+            [0x76; 32],
+            [0x77; 32],
+            &validator_set,
+        );
+        assert_eq!(
+            context.validator_set_binding(),
+            Some((validator_set.epoch().get(), validator_set.id().into_bytes()))
+        );
     }
 
     #[test]
