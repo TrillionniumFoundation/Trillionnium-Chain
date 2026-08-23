@@ -559,8 +559,11 @@ require_literal "$NODE_SOURCE" \
 require_literal "$NODE_RECOVERY_TESTS" \
   'fn strict_three_store_recovery_matrix_closes_o_p_o_d_c_d_and_c_k()'
 require_literal "$NODE_CARGO" 'recovery-process-test-support = ['
-require_literal "$NODE_CARGO" '  "dep:ed25519-dalek",'
+require_literal "$NODE_CARGO" 'fixture-raw-key = ["dep:ed25519-dalek"]'
+require_literal "$NODE_CARGO" '  "fixture-raw-key",'
 require_literal "$NODE_CARGO" '  "dep:fs2",'
+require_literal "$NODE_CARGO" 'fixture_raw_key_feature_only = true'
+require_literal "$NODE_CARGO" 'production_raw_key_dependency = false'
 reject_literal "$NODE_CARGO" '  "recovery-test-support",'
 reject_literal "$NODE_CARGO" 'name = "trnm-poco-recovery-kill-helper"'
 require_literal "$NODE_CARGO" 'name = "trnm-poco-timeout-signing-kill-helper"'
