@@ -15,8 +15,8 @@ use trnm_consensus_types::{
     decode_qc_reference_v0_exact_with_trusted_genesis,
     decode_timeout_certificate_v0_exact_with_trusted_genesis, Block, BlockId,
     ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, Height, ProposalWitnessV0, QcRef,
-    QcReferenceV0, QuorumCertificate, SignatureBytes, SignedProposalV0, TimeoutCertificateV0,
-    TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
+    QcReferenceV0, QuorumCertificate, SignatureBytes, SignatureVerifier, SignedProposalV0,
+    TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
 };
 
 const PROPOSAL_MAGIC: &[u8; 8] = b"TRNMPPV1";
@@ -89,6 +89,40 @@ impl UnboundProposalV0 {
 
     pub fn timeout_certificate(&self) -> Option<&TimeoutCertificateV0> {
         self.timeout_certificate.as_ref()
+    }
+
+    /// Verifies the proposer witness before this carrier is allowed to drive
+    /// any certificate/state transition.  Parent time is intentionally not a
+    /// part of the proposal signing root, so this check is safe to perform at
+    /// the wire boundary before local parent binding.
+    pub fn verify_proposer_signature(
+        &self,
+        validator_set: &ValidatorSet,
+    ) -> Result<(), ConsensusWireError> {
+        let proposer = validator_set
+            .validator(self.block.header().proposer_id())
+            .ok_or(ConsensusWireError::Invalid(
+                "proposal proposer is absent from validator set".to_owned(),
+            ))?;
+        let signing_root = ProposalWitnessV0::signing_root_for(
+            self.block.header(),
+            &self.justify_qc,
+            self.timeout_certificate.as_ref(),
+            None,
+        )
+        .map_err(invalid_debug)?;
+        if !StrictEd25519Verifier.verify(proposer, &signing_root, &self.proposer_signature) {
+            return Err(ConsensusWireError::Invalid(
+                "proposal proposer signature failed strict verification".to_owned(),
+            ));
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    pub(crate) fn with_proposer_signature_for_test(mut self, signature: SignatureBytes) -> Self {
+        self.proposer_signature = signature;
+        self
     }
 
     pub fn bind_authenticated_parent(
@@ -254,12 +288,14 @@ impl UnboundProposalV0 {
         cursor.finish()?;
         let block =
             Block::new(header, application_payload, evidence_objects).map_err(invalid_debug)?;
-        Ok(Self {
+        let proposal = Self {
             block,
             justify_qc,
             timeout_certificate,
             proposer_signature,
-        })
+        };
+        proposal.verify_proposer_signature(validator_set)?;
+        Ok(proposal)
     }
 }
 
@@ -707,8 +743,6 @@ mod tests {
             &set,
             &parameters,
         )
-        .unwrap()
-        .bind_authenticated_parent(&set, &parameters, 0)
         .is_err());
     }
 }

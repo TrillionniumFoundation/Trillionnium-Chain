@@ -42,14 +42,16 @@ impl SafetyRulesDurableTransitionStoreV1 for RecordingTransitionStore {
     fn persist_transition_v1(
         &mut self,
         predecessor: SafetyRulesStateDigestV1,
-        successor: &SafetyRulesStateV1,
-        candidate: SafetyCandidateDigestV1,
+        transition: &InertSafetyTransitionV1,
     ) -> Result<(), Self::Error> {
         if self.fail {
             return Err("simulated durable I/O failure");
         }
-        self.persisted
-            .push((predecessor, successor.digest(), candidate));
+        self.persisted.push((
+            predecessor,
+            transition.successor_state().digest(),
+            transition.candidate_digest(),
+        ));
         Ok(())
     }
 }

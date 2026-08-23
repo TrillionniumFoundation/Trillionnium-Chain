@@ -2088,6 +2088,12 @@ impl ContinuousValidatorAuthorityV0 {
     /// binds the locally authenticated parent timestamp, and only then enters
     /// the Vote authority chain.
     pub fn vote_unbound_proposal_v0(&mut self, proposal: UnboundProposalV0) -> Result<Vote> {
+        // Authenticate the proposer witness before consuming any carried
+        // timeout/QC. A forged proposer signature must not be able to advance
+        // view/high-QC/finality and only fail later during parent binding.
+        proposal
+            .verify_proposer_signature(&self.validator_set)
+            .map_err(|error| anyhow!("reject unauthenticated proposer witness: {error}"))?;
         if let Some(certificate) = proposal.timeout_certificate().cloned() {
             self.advance_timeout_certificate_v0(certificate)?;
         } else if let Some(certificate) = proposal.justify_qc().as_ordinary().cloned() {
@@ -6120,6 +6126,126 @@ mod tests {
                 assert_eq!(facts.high_qc_v0(), QcRef::from(&certificate));
                 assert!(facts.pending_timeout_certificate_id_v0().is_none());
             }
+        });
+    }
+
+    #[test]
+    fn forged_proposer_witness_cannot_advance_carried_timeout_certificate_v0() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let signer_lifetime =
+                ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(1, 1, 2, 1)
+                    .expect("bound forged-Proposal signer lifetime");
+            let mut harness = takeover_phase_harness_with_signer_lifetime_v0(4, signer_lifetime);
+            let initial_reference = harness.authorities[0].justify_v0().clone();
+            let original = proposal_for_takeover_v0(&harness);
+            let original_view = original.block().header().view();
+            let next_view = View::new(
+                original_view
+                    .get()
+                    .checked_add(1)
+                    .expect("forged-Proposal successor view"),
+            );
+
+            let original_votes = harness.authorities[..3]
+                .iter_mut()
+                .map(|authority| {
+                    authority
+                        .vote_proposal_v0(original.clone())
+                        .expect("release forged-Proposal setup Vote")
+                })
+                .collect::<Vec<_>>();
+            let _original_qc = quorum_certificate_from_votes_v0(
+                &harness.validator_set,
+                &original,
+                original_votes.iter().cloned(),
+            );
+            let timeout_votes = harness.authorities[..3]
+                .iter_mut()
+                .map(|authority| {
+                    authority
+                        .begin_local_timeout_v0()
+                        .expect("start forged-Proposal setup timeout")
+                })
+                .collect::<Vec<_>>();
+            let mut timeout_collector = ConsensusCertificateCollectorV0::new(
+                harness.validator_set.clone(),
+                MAXIMUM_COLLECTOR_COORDINATES_V0,
+            )
+            .expect("construct forged-Proposal TC collector");
+            timeout_collector
+                .register_qc_reference(initial_reference)
+                .expect("register forged-Proposal high-QC reference");
+            for vote in timeout_votes {
+                timeout_collector
+                    .admit_timeout_vote(vote)
+                    .expect("admit forged-Proposal TimeoutVote");
+            }
+            let certificate = timeout_collector
+                .try_timeout_certificate(original_view)
+                .expect("form forged-Proposal TC")
+                .expect("forged-Proposal timeouts reach quorum");
+
+            let next_leader = leader_for(&harness.validator_set, next_view);
+            let next_leader_index = harness
+                .validator_set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == next_leader)
+                .expect("forged-Proposal successor leader belongs to validator set");
+            let target_index = (0..harness.authorities.len())
+                .find(|index| *index != next_leader_index)
+                .expect("one non-leader forged-Proposal target exists");
+            for index in 0..harness.authorities.len() {
+                if index != target_index {
+                    harness.authorities[index]
+                        .advance_timeout_certificate_v0(certificate.clone())
+                        .expect("advance TC on non-target authority");
+                }
+            }
+
+            let valid_rebound = harness.authorities[next_leader_index]
+                .proposal_preimage_for_test_v0(
+                    harness.ordinary_start_height,
+                    harness.timestamp_ms,
+                    harness.transactions.clone(),
+                )
+                .expect("successor leader builds TC-carried Proposal")
+                .seal_with_key_v0(&harness.keys[next_leader_index])
+                .expect("successor leader signs TC-carried Proposal");
+            assert_eq!(
+                valid_rebound
+                    .witness()
+                    .timeout_certificate()
+                    .map(TimeoutCertificateV0::id),
+                Some(certificate.id())
+            );
+            let forged = UnboundProposalV0::from_signed(&valid_rebound)
+                .expect("project TC-carried Proposal into ingress")
+                .with_proposer_signature_for_test(SignatureBytes::from_array([0xA5; 64]));
+            let before = harness.authorities[target_index]
+                .facts_v0()
+                .expect("read pre-forgery authority facts");
+            let rejection = harness.authorities[target_index]
+                .vote_unbound_proposal_v0(forged)
+                .expect_err("forged proposer witness must fail before TC advancement");
+            assert!(
+                rejection
+                    .to_string()
+                    .contains("reject unauthenticated proposer witness"),
+                "forged proposer witness must have a typed rejection: {rejection:#}"
+            );
+            assert_eq!(
+                harness.authorities[target_index]
+                    .facts_v0()
+                    .expect("read post-forgery authority facts"),
+                before,
+                "forged proposer witness changed authority state before rejection"
+            );
+
+            let accepted = harness.authorities[target_index]
+                .advance_timeout_certificate_v0(certificate)
+                .expect("the same authenticated TC remains admissible after rejection");
+            assert_eq!(accepted.current_view_v0(), next_view);
         });
     }
 

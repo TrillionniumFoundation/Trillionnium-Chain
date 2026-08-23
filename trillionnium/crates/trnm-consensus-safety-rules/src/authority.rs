@@ -8,24 +8,27 @@
 //! the external write reached durable media.
 
 use crate::{
-    InertSafetyTransitionV1, PureHotStuffSafetyKernelV1, SafetyCandidateDigestV1,
-    SafetyRulesContextV1, SafetyRulesErrorV1, SafetyRulesStateDigestV1, SafetyRulesStateV1,
+    InertSafetyTransitionV1, PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesErrorV1,
+    SafetyRulesStateDigestV1, SafetyRulesStateV1,
 };
 use trnm_consensus_types::{SignatureVerifier, SignedProposalV0};
 
 /// Store boundary used by [`DurableSafetyRulesAuthorityV1`].
 ///
 /// Implementations must compare-and-set the supplied predecessor digest and
-/// persist the complete successor/candidate tuple before returning `Ok(())`.
-/// The trait intentionally does not expose a signing key or a mutable Core.
+/// persist the complete transition before returning `Ok(())`.  Passing the
+/// complete transition (rather than only its successor/candidate digests) is
+/// deliberate: an external semantic watermark must bind the exact canonical
+/// intent, fingerprint, and signing root, not merely an opaque hash selected
+/// by the caller.  The trait intentionally does not expose a signing key or a
+/// mutable Core.
 pub trait SafetyRulesDurableTransitionStoreV1 {
     type Error;
 
     fn persist_transition_v1(
         &mut self,
         predecessor: SafetyRulesStateDigestV1,
-        successor: &SafetyRulesStateV1,
-        candidate: SafetyCandidateDigestV1,
+        transition: &InertSafetyTransitionV1,
     ) -> Result<(), Self::Error>;
 }
 
@@ -142,16 +145,11 @@ where
             return Err(DurableSafetyRulesAuthorityErrorV1::StaleInMemoryState);
         }
         let predecessor = self.state.digest();
-        let successor = transition.successor_state().clone();
-        let candidate = transition.candidate_digest();
-        if let Err(error) = self
-            .store
-            .persist_transition_v1(predecessor, &successor, candidate)
-        {
+        if let Err(error) = self.store.persist_transition_v1(predecessor, &transition) {
             self.poisoned = true;
             return Err(DurableSafetyRulesAuthorityErrorV1::Persistence(error));
         }
-        self.state = successor;
+        self.state = transition.successor_state().clone();
         Ok(transition)
     }
 }
