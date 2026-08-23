@@ -33,6 +33,7 @@ const FINISHED_DOMAIN: &[u8] = b"trnm.poco-g3.receiver-finished.v2";
 const SESSION_DOMAIN: &[u8] = b"trnm.poco-g3.connection-session.v2";
 const TRANSCRIPT_DOMAIN: &[u8] = b"trnm.poco-g3.handshake-transcript.v2";
 const NETWORK_CONTEXT_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.v2";
+const EPOCH_SET_BINDING_DOMAIN: &[u8] = b"trnm.poco-g3.network-context.epoch-set-binding.v1";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RunTransportContext {
@@ -40,6 +41,13 @@ pub struct RunTransportContext {
     pub candidate_source_sha256: [u8; 32],
     pub binary_sha256: [u8; 32],
     pub coordinator_manifest_sha256: [u8; 32],
+    /// Optional explicit consensus epoch binding for the D0 admission
+    /// helper.  The legacy `new` constructor leaves this unset so existing
+    /// laboratory fixtures remain byte-compatible at the API boundary.  A
+    /// helper admission context MUST set both this and `validator_set_id`;
+    /// the transport digest then signs them as part of the handshake.
+    epoch: Option<u64>,
+    validator_set_id: Option<[u8; 32]>,
 }
 
 impl RunTransportContext {
@@ -54,6 +62,28 @@ impl RunTransportContext {
             candidate_source_sha256,
             binary_sha256,
             coordinator_manifest_sha256,
+            epoch: None,
+            validator_set_id: None,
+        }
+    }
+
+    /// Adds an explicit epoch and validator-set binding to the authenticated
+    /// handshake.  This is a transport admission fact only; it does not
+    /// authorize consensus, signing, recovery, or validator activation.
+    pub const fn with_validator_set_binding(
+        mut self,
+        epoch: u64,
+        validator_set_id: [u8; 32],
+    ) -> Self {
+        self.epoch = Some(epoch);
+        self.validator_set_id = Some(validator_set_id);
+        self
+    }
+
+    pub const fn validator_set_binding(&self) -> Option<(u64, [u8; 32])> {
+        match (self.epoch, self.validator_set_id) {
+            (Some(epoch), Some(set_id)) => Some((epoch, set_id)),
+            _ => None,
         }
     }
 }
@@ -62,6 +92,7 @@ impl RunTransportContext {
 pub struct ConnectionSession {
     remote: ValidatorId,
     session: [u8; 32],
+    nonce_binding: [u8; 32],
 }
 
 impl ConnectionSession {
@@ -71,6 +102,10 @@ impl ConnectionSession {
 
     pub const fn session(self) -> [u8; 32] {
         self.session
+    }
+
+    pub const fn nonce_binding(self) -> [u8; 32] {
+        self.nonce_binding
     }
 }
 
@@ -162,8 +197,22 @@ impl<T: Read + Write> AuthenticatedConnection<T> {
         self.session.session
     }
 
+    /// Digest of the receiver challenge and initiator hello.  It is a
+    /// transport-level freshness witness; callers must still keep a bounded
+    /// replay window before granting a process-local lease.
+    pub const fn handshake_nonce_binding(&self) -> [u8; 32] {
+        self.session.nonce_binding
+    }
+
     pub const fn topology_sha256(&self) -> [u8; 32] {
         self.transport_context.topology_sha256
+    }
+
+    /// Returns the explicit epoch/set binding carried by the handshake
+    /// context.  `None` denotes a legacy fixture context and is rejected by
+    /// the D0 admission helper.
+    pub const fn validator_set_binding(&self) -> Option<(u64, [u8; 32])> {
+        self.transport_context.validator_set_binding()
     }
 
     pub const fn is_poisoned(&self) -> bool {
@@ -312,6 +361,7 @@ pub fn client_handshake(
             receiver_nonce,
             sender_nonce,
         ),
+        nonce_binding: derive_nonce_binding(receiver_nonce, sender_nonce),
     };
     let finished = read_record(io)?;
     decode_finished(
@@ -436,6 +486,7 @@ fn decode_hello(
             receiver_nonce,
             sender_nonce,
         ),
+        nonce_binding: derive_nonce_binding(receiver_nonce, sender_nonce),
     })
 }
 
@@ -573,6 +624,14 @@ fn derive_session(
     hasher.finalize().into()
 }
 
+fn derive_nonce_binding(receiver_nonce: [u8; 32], sender_nonce: [u8; 32]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.poco-g3.handshake-nonce-binding.v1");
+    hasher.update(receiver_nonce);
+    hasher.update(sender_nonce);
+    hasher.finalize().into()
+}
+
 fn network_context_digest(
     validator_set: &ValidatorSet,
     key_roles: &ValidatorKeyRoleRegistryV1,
@@ -586,6 +645,14 @@ fn network_context_digest(
     hasher.update(context.candidate_source_sha256);
     hasher.update(context.binary_sha256);
     hasher.update(context.coordinator_manifest_sha256);
+    match context.validator_set_binding() {
+        Some((epoch, set_id)) => {
+            hasher.update(EPOCH_SET_BINDING_DOMAIN);
+            hasher.update(epoch.to_be_bytes());
+            hasher.update(set_id);
+        }
+        None => {}
+    }
     hasher.finalize().into()
 }
 
@@ -678,6 +745,7 @@ mod tests {
     use std::thread;
 
     use crate::key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1};
+    use sha2::{Digest, Sha256};
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
         Validator, VotingPower,
@@ -1146,6 +1214,7 @@ mod tests {
             session: ConnectionSession {
                 remote,
                 session: [0xa5; 32],
+                nonce_binding: [0xa6; 32],
             },
             run_id: "poco-g3-7-20260813T000000Z-1234abcd".to_owned(),
             signing_key: key,
@@ -1206,5 +1275,25 @@ mod tests {
         ));
         assert_eq!(connection.io.position(), 0);
         assert!(connection.is_poisoned());
+    }
+
+    #[test]
+    fn legacy_context_digest_is_byte_stable_while_bound_profile_changes() {
+        let (_, _, _, _, _, set, key_roles) = fixture();
+        let actual = network_context_digest(&set, &key_roles, TEST_TRANSPORT_CONTEXT);
+        let mut legacy = Sha256::new();
+        legacy.update(NETWORK_CONTEXT_DOMAIN);
+        legacy.update(set.id().as_bytes());
+        legacy.update(key_roles.digest_v1());
+        legacy.update(TEST_TRANSPORT_CONTEXT.topology_sha256);
+        legacy.update(TEST_TRANSPORT_CONTEXT.candidate_source_sha256);
+        legacy.update(TEST_TRANSPORT_CONTEXT.binary_sha256);
+        legacy.update(TEST_TRANSPORT_CONTEXT.coordinator_manifest_sha256);
+        let expected: [u8; 32] = legacy.finalize().into();
+        assert_eq!(actual, expected);
+
+        let bound = TEST_TRANSPORT_CONTEXT
+            .with_validator_set_binding(set.epoch().get(), set.id().into_bytes());
+        assert_ne!(actual, network_context_digest(&set, &key_roles, bound));
     }
 }

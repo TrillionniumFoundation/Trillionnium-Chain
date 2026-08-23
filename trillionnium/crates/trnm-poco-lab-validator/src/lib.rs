@@ -34,6 +34,9 @@ pub mod frame;
 pub mod key_roles;
 pub mod loop_driver;
 pub mod network;
+/// Active D0 peer-admission helper.  This is bounded handshake/lease
+/// authority only; it does not drive consensus transport or a validator loop.
+pub mod p2p_admission;
 pub mod pacemaker;
 pub mod process_event;
 pub mod relay;
