@@ -11,13 +11,17 @@ use std::{
 };
 
 use tempfile::TempDir;
+use trnm_consensus_remote_signer_service::{
+    fixture_service_config, Fixture as ServiceFixture, PurposePolicyV1, RemoteSignerService,
+};
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignerJournalProfileV0,
     SignerWatermarkV0, SqliteSignerJournalV0,
 };
+use trnm_consensus_types::SignatureVerifier;
 use trnm_consensus_unix_remote_signer::{
     test_fixture::{fixture_config, fixture_intent},
-    UnixRemoteSignerError, UnixRemoteSignerProducer,
+    UnixRemoteSignerError, UnixRemoteSignerProducer, UnixRemoteSignerProducerConfig,
 };
 
 fn spawn_server(temp: &TempDir, mode: &str, requests: usize) -> (Child, std::path::PathBuf) {
@@ -224,4 +228,63 @@ fn socket_symlink_and_non_private_parent_are_rejected_before_connect() {
         Err(UnixRemoteSignerError::SocketNotPrivate)
     ));
     stop(child);
+}
+
+#[test]
+fn client_accepts_signature_from_real_service_process_boundary() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
+        .expect("protect service namespace");
+    let socket = temp.path().join("service").join("signer.sock");
+    let watermark = temp.path().join("service").join("watermark.bin");
+    let service_fixture = ServiceFixture::new();
+    let mut service = RemoteSignerService::open(fixture_service_config(
+        &watermark,
+        PurposePolicyV1::vote_only(),
+    ))
+    .expect("open real signer service");
+    let server_socket = socket.clone();
+    let server = thread::spawn(move || service.serve_unix_once(&server_socket));
+    wait_for_socket(&socket);
+
+    let binding = service_fixture.binding;
+    let config = UnixRemoteSignerProducerConfig {
+        socket_path: socket,
+        validator_set: service_fixture.validator_set.clone(),
+        author: binding.author(),
+        signer_profile_ref: [0xA1; 32],
+        role_profile_ref: binding.role_profile_ref(),
+        service_profile_ref: binding.service_profile_ref(),
+        client_profile_ref: binding.client_profile_ref(),
+        process_generation: binding.process_generation(),
+        lease_id: binding.lease_id(),
+        checkpoint_witness: binding.checkpoint_witness(),
+        timeout: Duration::from_secs(2),
+    };
+    let mut producer = UnixRemoteSignerProducer::new(config).expect("client config");
+    let intent = trnm_consensus_types::CanonicalSignIntentV0::vote(
+        &service_fixture.validator_set,
+        binding.author(),
+        1,
+        trnm_consensus_types::View::new(0),
+        trnm_consensus_types::Height::new(1),
+        trnm_consensus_types::BlockId::new([0xD1; 32]),
+    )
+    .expect("service-compatible intent");
+    let signature = producer
+        .sign_intent_exact(&intent)
+        .expect("real service response must verify");
+    let verifier = trnm_consensus_crypto::StrictEd25519Verifier;
+    let key = service_fixture
+        .validator_set
+        .validator(binding.author())
+        .expect("service fixture author")
+        .consensus_key();
+    verifier
+        .verify(key, &intent.signing_root(), &signature)
+        .expect("service signature verifies against exact intent");
+    server
+        .join()
+        .expect("service thread")
+        .expect("service request");
 }

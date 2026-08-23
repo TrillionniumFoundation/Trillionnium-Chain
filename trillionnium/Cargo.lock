@@ -1567,6 +1567,7 @@ dependencies = [
  "tempfile",
  "trnm-consensus-crypto",
  "trnm-consensus-remote-signer-protocol",
+ "trnm-consensus-remote-signer-service",
  "trnm-consensus-signer-journal",
  "trnm-consensus-types",
 ]
