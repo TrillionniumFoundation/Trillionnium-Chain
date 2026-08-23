@@ -196,6 +196,7 @@ mod native_proposal_p_host;
 mod ordinary_timeout;
 #[cfg(feature = "legacy-consensus-app")]
 mod process_host;
+mod recovery_ready_start;
 mod remote_signer_protocol_adapter_v1;
 mod remote_signer_roles_v1;
 
@@ -304,6 +305,13 @@ pub use process_host::{
     PocoNodeInertEffectKindV0, PocoNodeProcessBootstrapFactsV0, PocoNodeProcessBootstrapModeV0,
     PocoNodeProcessConfigV0, PocoNodeProcessHostErrorV0, PocoNodeProcessHostV0,
     PocoNodeProcessLifecyclePhaseV0,
+};
+pub use recovery_ready_start::{
+    Process2RecoveryReadyStartCoordinatorV1, Process2RecoveryTransitionBindingV1,
+    Process2RecoveryTransitionFactsV1, Process2RecoveryTransitionJournalV1,
+    Process2RecoveryTransitionPhaseV1, RecoveryTransitionJournalErrorV1,
+    PROCESS2_RECOVERY_READY_START_COORDINATOR_V1, PROCESS2_RECOVERY_RUNTIME_WIRING_V1,
+    PROCESS2_RECOVERY_START_ACTIVATION_V1, PROCESS2_RECOVERY_TRANSITION_JOURNAL_V1,
 };
 pub use remote_signer_protocol_adapter_v1::{
     decode_remote_signer_protocol_adapter_v1_exact,
