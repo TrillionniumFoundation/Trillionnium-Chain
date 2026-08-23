@@ -1385,12 +1385,13 @@ impl ContinuousValidatorAuthorityV0 {
     /// Vote/TimeoutVote signature producer.
     ///
     /// This is a composition seam, not a production activation path.  The
-    /// takeover runtime still contains the laboratory `LabFileWatermark` and
-    /// the loaded config still supplies the local consensus public-key
-    /// identity check; only the final signature operation is delegated to the
-    /// supplied producer.  Callers that need a remote/HSM signer can therefore
-    /// exercise the real timeout/vote owner without making the owner know about
-    /// a private key.  External watermark, host attestation, and full
+    /// takeover runtime still contains the laboratory `LabFileWatermark`;
+    /// this entry does not copy a consensus `SigningKey` into the continuous
+    /// authority. The Node signer journal and the exact Vote/TimeoutVote
+    /// verification performed by the inert owners remain the identity and
+    /// signature gates. Callers that need a remote/HSM signer can therefore
+    /// exercise the real timeout/vote owner without making this owner know
+    /// about a private key. External watermark, host attestation, and full
     /// Core/SafetyRules signer authority remain separate gates.
     pub fn from_takeover_runtime_with_producer_v0(
         config: &LoadedValidatorConfig,
@@ -1402,7 +1403,7 @@ impl ContinuousValidatorAuthorityV0 {
             config.local_validator(),
             config.validator_set().clone(),
             *config.consensus_parameters(),
-            config.consensus_signing_key().clone(),
+            None,
             config.ordinary_start_height(),
             runtime,
             signer_lifetime,
@@ -1424,7 +1425,7 @@ impl ContinuousValidatorAuthorityV0 {
             local_validator,
             validator_set,
             consensus_parameters,
-            signing_key.clone(),
+            Some(signing_key.clone()),
             ordinary_start_height,
             runtime,
             signer_lifetime,
@@ -1437,7 +1438,7 @@ impl ContinuousValidatorAuthorityV0 {
         local_validator: ValidatorId,
         validator_set: ValidatorSet,
         consensus_parameters: ConsensusParametersV0,
-        signing_key: SigningKey,
+        signing_key: Option<SigningKey>,
         ordinary_start_height: u64,
         mut runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
@@ -1454,10 +1455,12 @@ impl ContinuousValidatorAuthorityV0 {
         let local = validator_set
             .validator(local_validator)
             .ok_or_else(|| anyhow!("local validator is absent from takeover validator set"))?;
-        ensure!(
-            signing_key.verifying_key().to_bytes() == local.consensus_key().into_bytes(),
-            "loaded signing key differs from takeover local validator"
-        );
+        if let Some(signing_key) = signing_key {
+            ensure!(
+                signing_key.verifying_key().to_bytes() == local.consensus_key().into_bytes(),
+                "loaded signing key differs from takeover local validator"
+            );
+        }
 
         let facts = runtime.phase_facts_v0();
         let binding = runtime
