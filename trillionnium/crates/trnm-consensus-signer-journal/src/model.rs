@@ -79,6 +79,25 @@ pub trait ExternalMonotonicWatermarkV0 {
     ) -> Result<(), ExternalWatermarkErrorV0>;
 }
 
+/// Composition seam for installing an independently administered watermark
+/// after a local journal owner has been constructed.
+///
+/// Implementations must make installation transactional from the caller's
+/// point of view: either all subsequent [`ExternalMonotonicWatermarkV0`]
+/// operations are fenced by `external`, or the local owner is failed closed.
+/// A missing external value may only be claimed for a sequence-zero genesis
+/// head; non-genesis local history must already be present and exact in the
+/// independently administered authority.
+/// The injected object is deliberately trait-based so a Unix client, HSM
+/// adapter, TPM bridge, or test register can be supplied without making this
+/// crate depend on one transport or device implementation.
+pub trait ExternalMonotonicWatermarkInjectionV0 {
+    fn install_external_monotonic_watermark_v0(
+        &mut self,
+        external: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    ) -> Result<(), ExternalWatermarkErrorV0>;
+}
+
 /// Authorized input passed to an external private-key/HSM/KMS adapter.
 #[derive(Debug, Clone, Copy)]
 pub struct SignatureRequestV0<'a> {

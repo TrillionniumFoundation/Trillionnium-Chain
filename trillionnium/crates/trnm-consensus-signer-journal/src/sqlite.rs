@@ -24,8 +24,8 @@ use crate::{
     error::{SignerJournalConflictV0, SignerJournalErrorV0},
     hash::hash_domain,
     model::{
-        ExternalMonotonicWatermarkV0, SignatureProducerV0, SignatureRequestV0,
-        SignerJournalProfileV0, SignerWatermarkV0,
+        ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0, SignatureProducerV0,
+        SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
     },
     schema::{
         validate_canonical_schema, JOURNAL_SCHEMA_SQL_V0, JOURNAL_SCHEMA_VERSION_V0,
@@ -908,6 +908,34 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         self.ensure_operational()?;
         self.synchronize_external_head()?;
         self.watermark_for(self.observed_head)
+    }
+
+    /// Installs an independently administered watermark behind an already
+    /// operational local journal.
+    ///
+    /// The existing local watermark must first be an exact, checkpoint-ready
+    /// head.  A delegate may claim a sequence-zero genesis head; for any
+    /// non-genesis head it must already expose the exact value.  Subsequent
+    /// intent and signature events use the injected CAS boundary through `W`;
+    /// there is no window in which the caller can observe a partially
+    /// installed authority.
+    pub fn install_external_monotonic_watermark_v0(
+        &mut self,
+        external: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    ) -> Result<(), SignerJournalErrorV0>
+    where
+        W: ExternalMonotonicWatermarkInjectionV0,
+    {
+        let existing = self.confirm_node_checkpoint_head_exact_v0()?;
+        self.external_watermark
+            .install_external_monotonic_watermark_v0(external)
+            .map_err(|error| {
+                SignerJournalErrorV0::external("install external watermark authority", error)
+            })?;
+        self.require_external_exact(
+            existing.exact_watermark(),
+            "confirm installed external watermark authority",
+        )
     }
 
     /// Validates, journals, signs, verifies, persists, and only then returns.

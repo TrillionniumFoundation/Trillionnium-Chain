@@ -12,6 +12,7 @@ protocol = "poco-bft-v0"
 production_signer = false
 private_key_api = false
 external_monotonic_watermark_required = true
+external_monotonic_watermark_injection_api = true
 safety_rules = false
 safety_rules_evaluation = false
 safe_vote_authority = false
