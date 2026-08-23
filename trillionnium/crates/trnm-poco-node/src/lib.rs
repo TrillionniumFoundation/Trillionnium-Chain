@@ -1685,6 +1685,12 @@ pub enum PocoNodeHostErrorV0 {
     Core(Box<trnm_consensus_core::CoreError>),
     SafetyStore(Box<SafetyStoreErrorV0>),
     SignerJournal(Box<SignerJournalErrorV0>),
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSemanticSidecar(safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1),
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesShadowTransitionMismatch {
+        revision: u64,
+    },
     #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
     #[cfg(feature = "legacy-consensus-app")]
@@ -1704,6 +1710,13 @@ impl PocoNodeHostErrorV0 {
 
     fn signer_journal(error: SignerJournalErrorV0) -> Self {
         Self::SignerJournal(Box::new(error))
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    fn safety_rules_sidecar(
+        error: safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1,
+    ) -> Self {
+        Self::SafetyRulesSemanticSidecar(error)
     }
 
     fn safety_store_parent(error: io::Error) -> Self {
@@ -1943,6 +1956,15 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             Self::SignerJournal(error) => {
                 write!(formatter, "PoCO signer-journal startup failed: {error}")
             }
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSemanticSidecar(error) => {
+                write!(formatter, "PoCO SafetyRules semantic sidecar failed: {error}")
+            }
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesShadowTransitionMismatch { revision } => write!(
+                formatter,
+                "Core SafetyRules shadow transition does not bind timeout persistence revision {revision}",
+            ),
             #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => {
                 write!(formatter, "application recovery open failed: {error}")
@@ -1967,6 +1989,8 @@ impl Error for PocoNodeHostErrorV0 {
             Self::ApplicationStoreParentIo(error) => Some(error.as_ref()),
             Self::SafetyStore(error) => Some(error.as_ref()),
             Self::SignerJournal(error) => Some(error.as_ref()),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSemanticSidecar(error) => Some(error),
             #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => Some(error),
             _ => None,
@@ -1995,6 +2019,12 @@ mod tests {
     #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     use trnm_consensus_core::AuthenticatedGenesisApplicationParentV0;
     use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_safety_rules::{SafetyRulesContextV1, SafetyRulesStateV1};
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_signer_journal::{
+        ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0,
+    };
     #[cfg(target_os = "linux")]
     use trnm_consensus_signer_journal::{
         SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
@@ -2080,6 +2110,86 @@ mod tests {
                 _ => return Err(ExternalWatermarkErrorV0::InvalidPersistedState),
             }
             *value = Some(target);
+            Ok(())
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[derive(Debug, Default)]
+    struct MemorySemanticWatermarkV0 {
+        head: Option<SignerWatermarkV0>,
+        facts: Option<ExternalWatermarkSemanticFactsV0>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    impl ExternalMonotonicWatermarkV0 for MemorySemanticWatermarkV0 {
+        fn load(
+            &mut self,
+            _scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            _expected: Option<SignerWatermarkV0>,
+            _target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            true
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            _scope: [u8; 32],
+            _journal_id: [u8; 32],
+        ) -> Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            Ok(self.head.zip(self.facts))
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            if self.head != expected || target.sequence() != 0 {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            let facts =
+                ExternalWatermarkSemanticFactsV0::new(0, 0, 1, [1; 32], [2; 32], [3; 32], [9; 32])
+                    .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+            self.head = Some(target);
+            self.facts = Some(facts);
+            Ok(())
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            let Some(previous) = self.head else {
+                return Err(ExternalWatermarkErrorV0::Unavailable);
+            };
+            if self.head != expected
+                || target.sequence() != previous.sequence().saturating_add(1)
+                || facts.capability != [9; 32]
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            self.head = Some(target);
+            self.facts = Some(facts);
             Ok(())
         }
     }
@@ -2975,6 +3085,70 @@ mod tests {
             .expect("replayed signer capacity");
         assert_eq!(replay_capacity.intent_count(), 1);
         assert_eq!(replay_capacity.event_count(), 2);
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
+    fn bounded_timeout_sidecar_cas_precedes_sqlite_and_releases_exact_vote() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout host config");
+
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact genesis shadow state");
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            MemorySemanticWatermarkV0::default(),
+            [0x11; 32],
+            [0x22; 32],
+            [0x09; 32],
+            state.digest(),
+        )
+        .expect("open semantic sidecar against the authenticated genesis state");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc,
+            MemoryWatermark::default(),
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::new(AtomicUsize::new(0)),
+            },
+        )
+        .expect("initialize bounded timeout host");
+
+        let actions = host
+            .on_local_timeout_with_safety_rules_sidecar_v1(&mut sidecar)
+            .expect("sidecar CAS, SQLite persistence, and exact timeout signing succeed");
+        assert!(matches!(
+            actions.as_slice(),
+            [PocoNodeHostActionV0::Broadcast(outbound)]
+                if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
+        ));
+        assert_eq!(
+            sidecar
+                .expected_watermark()
+                .map(|watermark| watermark.sequence()),
+            Some(1),
+            "the semantic CAS must complete before the host releases the timeout"
+        );
+        assert_eq!(
+            host.safety_head()
+                .expect("authenticated SQLite head")
+                .revision(),
+            1,
+            "the local SafetyStore reaches the same transition after the sidecar"
+        );
     }
 
     #[cfg(target_os = "linux")]

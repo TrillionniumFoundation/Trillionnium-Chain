@@ -4,6 +4,8 @@ use trnm_consensus_core::{
     Core, CoreConfig, Effect, Input, OutboundMessage, SafetyHalt, SafetyState, SignId, SignIntent,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
+#[cfg(feature = "safety-rules-sidecar")]
+use trnm_consensus_safety_rules::SafetyRulesDurableTransitionStoreV1;
 use trnm_consensus_safety_store::{
     RecoveredSafetyStateV0, SafetyTransitionContextV0, SqliteSafetyStateStoreV0,
 };
@@ -17,6 +19,8 @@ use trnm_consensus_types::{
     SignatureBytes, SigningRoot, View,
 };
 
+#[cfg(feature = "safety-rules-sidecar")]
+use crate::safety_rules_sidecar::SafetyRulesSemanticSidecarV1;
 use crate::{
     effect_name_v0, head_has_current_invalid_completion_v0, reject_activation_request,
     validate_signer_safety_revision_v0, HostBootstrapModeV0, HostLifecyclePhaseV0,
@@ -344,6 +348,37 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         self.finish_runtime_call_v0(result)
     }
 
+    /// Drives one local timeout while binding Core's exact comparison-only
+    /// SafetyRules transition to an independently durable semantic sidecar.
+    ///
+    /// The sidecar CAS is deliberately performed before the local SQLite
+    /// SafetyStore write.  If either boundary fails, this host call is
+    /// terminally fail-stopped; a caller must not retry because the sidecar
+    /// may already have advanced even when the local write did not.  This is
+    /// an explicit composition seam only: it does not enable production
+    /// activation or make the inert SafetyRules kernel authoritative.
+    #[cfg(feature = "safety-rules-sidecar")]
+    pub fn on_local_timeout_with_safety_rules_sidecar_v1<SW>(
+        &mut self,
+        sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+    ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostErrorV0>
+    where
+        SW: ExternalMonotonicWatermarkV0,
+    {
+        self.require_active_runtime_v0()?;
+        let result = (|| {
+            let epoch = self.core.safety_state().epoch();
+            let view = self.core.safety_state().current_view();
+            let effects = self
+                .core
+                .step(Input::LocalTimeout { epoch, view }, &StrictEd25519Verifier)
+                .map_err(PocoNodeHostErrorV0::core)?;
+            persist_timeout_shadow_sidecar_before_sqlite_v1(&effects, sidecar)?;
+            self.drive_bounded_effects_v0(effects)
+        })();
+        self.finish_runtime_call_v0(result)
+    }
+
     /// Required-feature-only observation of exact process-SIGKILL boundaries.
     ///
     /// The observer cannot alter an input, persistence request, sign intent,
@@ -645,6 +680,57 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
         Err(ProductionActivationBlockedV0::new())
     }
+}
+
+#[cfg(feature = "safety-rules-sidecar")]
+fn persist_timeout_shadow_sidecar_before_sqlite_v1<SW>(
+    effects: &[Effect],
+    sidecar: &mut SafetyRulesSemanticSidecarV1<SW>,
+) -> Result<(), PocoNodeHostErrorV0>
+where
+    SW: ExternalMonotonicWatermarkV0,
+{
+    validate_bounded_effect_batch_v0(effects)?;
+    let mut request = None;
+    for effect in effects {
+        if let Effect::PersistSafetyState(candidate) = effect {
+            if request.replace(candidate).is_some() {
+                return Err(PocoNodeHostErrorV0::MultipleBoundedPersistenceEffects);
+            }
+        }
+    }
+    let request =
+        request.ok_or(PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch { revision: 0 })?;
+    let transition = request.safety_rules_shadow_transition_v1().ok_or(
+        PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch {
+            revision: request.barrier().get(),
+        },
+    )?;
+    let Some(SignIntent::TimeoutVote {
+        authorizing_safety_revision,
+        view,
+        signing_root,
+        ..
+    }) = request.state().pending_sign()
+    else {
+        return Err(PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch {
+            revision: request.barrier().get(),
+        });
+    };
+    let canonical = transition.canonical_intent();
+    if transition.kind() != trnm_consensus_safety_rules::InertSafetyTransitionKindV1::TimeoutVote
+        || transition.successor_state().revision() != request.barrier().get()
+        || transition.successor_state().last_timeout_view() != Some(*view)
+        || canonical.authorizing_safety_revision() != *authorizing_safety_revision
+        || canonical.signing_root() != *signing_root
+    {
+        return Err(PocoNodeHostErrorV0::SafetyRulesShadowTransitionMismatch {
+            revision: request.barrier().get(),
+        });
+    }
+    sidecar
+        .persist_transition_v1(transition.predecessor_state_digest(), transition)
+        .map_err(PocoNodeHostErrorV0::safety_rules_sidecar)
 }
 
 fn is_retryable_exact_timeout_error_v0(error: &PocoNodeHostErrorV0) -> bool {
