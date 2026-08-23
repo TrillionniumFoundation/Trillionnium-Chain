@@ -2938,12 +2938,13 @@ fn authority_hash_v0(domain: &[u8], local_validator: ValidatorId, binding: &[u8]
 mod tests {
     use std::{
         collections::BTreeMap,
-        fs,
+        env, fs,
         net::TcpListener,
         os::unix::{
             fs::{FileTypeExt, PermissionsExt},
             net::UnixListener,
         },
+        process::{Child, Command},
         sync::{
             atomic::{AtomicUsize, Ordering},
             mpsc, Arc, Mutex,
@@ -2954,8 +2955,8 @@ mod tests {
 
     use tempfile::TempDir;
     use trnm_consensus_external_watermark::{
-        serve_connection, ExternalWatermarkAuthority, ExternalWatermarkSemanticBindingV1,
-        UnixWatermarkClient,
+        run_per_reservation_daemon, serve_connection, ExternalWatermarkAuthority,
+        ExternalWatermarkSemanticBindingV1, UnixWatermarkClient,
     };
     use trnm_consensus_remote_signer_protocol::{
         ProcessGenerationV1, RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1,
@@ -2967,8 +2968,12 @@ mod tests {
         UnixExternalTimeoutAuthorityV1,
     };
     use trnm_consensus_types::{
-        ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, SigningRoot, Validator,
-        VotingPower,
+        decode_validator_set_v0_exact, ChainId, ConsensusPublicKey, Epoch, GenesisHash,
+        ProtocolVersion, SigningRoot, Validator, VotingPower,
+    };
+    use trnm_consensus_unix_fleet_signer::{
+        DurableFleetRootSignerAuthorityV1, FleetRootAuthorityErrorV1, FleetRootAuthoritySignerV1,
+        UnixFleetRootAuthorityServerV1, UnixFleetRootSignerConfig,
     };
     use trnm_consensus_unix_remote_signer::{
         UnixRemoteSignerError, UnixRemoteSignerProducer, UnixRemoteSignerProducerConfig,
@@ -2982,6 +2987,10 @@ mod tests {
     use crate::{
         consensus_mesh::{
             MeshFixtureConfigV1, MeshIngressEventV0, PersistentAuthenticatedPeerMeshV0,
+        },
+        consensus_runtime::{
+            FleetSignatureProducerV1, FleetSignaturePurposeV1, FleetSignatureRequestV1,
+            UnixFleetSignatureProducerV1,
         },
         frame::FrameKind,
         key_roles::{ValidatorKeyRoleBindingV1, ValidatorKeyRoleRegistryV1},
@@ -3033,6 +3042,22 @@ mod tests {
         remote: UnixRemoteSignerProducer,
     }
 
+    /// Deterministic signer used only by the child-process fleet transport
+    /// helper below.  It is deliberately local to this test module; the
+    /// default fleet-signer crate has no private key or fixture feature.
+    struct CompositionFleetFixtureSignerV0 {
+        key: SigningKey,
+    }
+
+    impl FleetRootAuthoritySignerV1 for CompositionFleetFixtureSignerV0 {
+        fn sign_fleet_root_authority_v1(
+            &mut self,
+            request: &trnm_consensus_unix_fleet_signer::FleetRootRequestV1,
+        ) -> std::result::Result<[u8; 64], FleetRootAuthorityErrorV1> {
+            Ok(self.key.sign(&request.signing_root()).to_bytes())
+        }
+    }
+
     impl SignatureProducerV0 for TimeoutExternalMuxProducerV0 {
         fn sign(
             &mut self,
@@ -3046,6 +3071,41 @@ mod tests {
                 trnm_consensus_types::CanonicalSignPreimageV0::TimeoutVote(_)
             ) {
                 self.remote.sign(request)
+            } else {
+                self.local.sign(request)
+            }
+        }
+    }
+
+    struct TimeoutCapturingExternalMuxProducerV0 {
+        local: LabEd25519SignatureProducer,
+        remote: UnixRemoteSignerProducer,
+        intents: Arc<Mutex<Vec<trnm_consensus_types::CanonicalSignIntentV0>>>,
+        signatures: Arc<Mutex<Vec<SignatureBytes>>>,
+    }
+
+    impl SignatureProducerV0 for TimeoutCapturingExternalMuxProducerV0 {
+        fn sign(
+            &mut self,
+            request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            if matches!(
+                request.intent().preimage(),
+                trnm_consensus_types::CanonicalSignPreimageV0::TimeoutVote(_)
+            ) {
+                self.intents
+                    .lock()
+                    .expect("capture timeout intent mutex")
+                    .push(request.intent().clone());
+                let signature = self.remote.sign(request)?;
+                self.signatures
+                    .lock()
+                    .expect("capture timeout signature mutex")
+                    .push(signature);
+                Ok(signature)
             } else {
                 self.local.sign(request)
             }
@@ -3563,6 +3623,277 @@ mod tests {
     }
 
     #[test]
+    fn deployed_external_authority_and_fleet_signer_cross_process_composition_v1() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let root = harness._temp.path().join("cross-process-composition");
+            create_private_directory_v0(&root).expect("create composition root");
+            // Keep a stable executable inode for all children.  Cargo may
+            // rebuild this test binary concurrently in another workspace
+            // process and unlink the path returned by `current_exe()` while
+            // this long-running composition test is between child spawns.
+            // A hard link survives that unlink; the copy fallback covers
+            // filesystems that do not permit hard links.
+            let child_executable = root.join("composition-child");
+            let current_executable =
+                env::current_exe().expect("resolve composition test executable");
+            fs::hard_link(&current_executable, &child_executable)
+                .or_else(|_| fs::copy(&current_executable, &child_executable).map(|_| ()))
+                .expect("pin composition child executable");
+            fs::set_permissions(&child_executable, fs::Permissions::from_mode(0o700))
+                .expect("restrict composition child executable");
+            let author = harness.validator_set.validators()[0].id();
+            let binding = composition_remote_binding_v0(&harness.validator_set, author);
+            let capability = [0x33; 32];
+            let semantic_binding = ExternalWatermarkSemanticBindingV1::new_per_reservation(
+                UnixExternalTimeoutAuthorityV1::scope_for_binding(binding),
+                UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding),
+                capability,
+            )
+            .expect("construct composition semantic binding");
+
+            let authority_socket = root.join("watermark.sock");
+            let authority_log = root.join("watermark.log");
+            let mut children = CompositionChildrenV0 {
+                children: vec![composition_child_v0(
+                    &child_executable,
+                    "watermark",
+                    &[
+                        (
+                            "TRNM_COMPOSITION_AUTHORITY_SOCKET",
+                            authority_socket.display().to_string(),
+                        ),
+                        (
+                            "TRNM_COMPOSITION_AUTHORITY_LOG",
+                            authority_log.display().to_string(),
+                        ),
+                        (
+                            "TRNM_COMPOSITION_SCOPE",
+                            composition_hex32_v0(semantic_binding.scope),
+                        ),
+                        (
+                            "TRNM_COMPOSITION_JOURNAL_ID",
+                            composition_hex32_v0(semantic_binding.journal_id),
+                        ),
+                        (
+                            "TRNM_COMPOSITION_CAPABILITY",
+                            composition_hex32_v0(capability),
+                        ),
+                    ],
+                )],
+            };
+            wait_for_composition_socket_v0(&authority_socket);
+
+            let signer_socket = root.join("signer.sock");
+            let signer_watermark = root.join("signer.sqlite3");
+            let response_log = root.join("responses.log");
+            let validator_set_hex = hex::encode(
+                harness
+                    .validator_set
+                    .try_cev0_bytes()
+                    .expect("encode composition validator set"),
+            );
+            let signing_key_hex = hex::encode(harness.keys[0].to_bytes());
+            children.children.push(composition_child_v0(
+                &child_executable,
+                "signer",
+                &[
+                    (
+                        "TRNM_COMPOSITION_AUTHORITY_SOCKET",
+                        authority_socket.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_SIGNER_SOCKET",
+                        signer_socket.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_SIGNER_WATERMARK",
+                        signer_watermark.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_RESPONSE_LOG",
+                        response_log.display().to_string(),
+                    ),
+                    ("TRNM_COMPOSITION_VALIDATOR_SET", validator_set_hex),
+                    ("TRNM_COMPOSITION_SIGNING_KEY", signing_key_hex),
+                ],
+            ));
+            wait_for_composition_socket_v0(&signer_socket);
+
+            let fleet_socket = root.join("fleet.sock");
+            let fleet_log = root.join("fleet.log");
+            children.children.push(composition_child_v0(
+                &child_executable,
+                "fleet",
+                &[
+                    (
+                        "TRNM_COMPOSITION_FLEET_SOCKET",
+                        fleet_socket.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_FLEET_LOG",
+                        fleet_log.display().to_string(),
+                    ),
+                ],
+            ));
+            wait_for_composition_socket_v0(&fleet_socket);
+
+            let remote = UnixRemoteSignerProducer::new(UnixRemoteSignerProducerConfig {
+                socket_path: signer_socket.clone(),
+                validator_set: harness.validator_set.clone(),
+                author,
+                signer_profile_ref: trnm_poco_node::SIGNER_JOURNAL_PROFILE_REF_V0,
+                role_profile_ref: binding.role_profile_ref(),
+                service_profile_ref: binding.service_profile_ref(),
+                client_profile_ref: binding.client_profile_ref(),
+                process_generation: binding.process_generation(),
+                lease_id: binding.lease_id(),
+                checkpoint_witness: binding.checkpoint_witness(),
+                timeout: Duration::from_secs(2),
+            })
+            .expect("construct Unix remote timeout producer");
+            let intents = Arc::new(Mutex::new(Vec::new()));
+            let signatures = Arc::new(Mutex::new(Vec::new()));
+            harness.authorities[0].producer =
+                ContinuousSignatureProducerV0(Box::new(TimeoutCapturingExternalMuxProducerV0 {
+                    local: LabEd25519SignatureProducer::new(harness.keys[0].clone()),
+                    remote,
+                    intents: Arc::clone(&intents),
+                    signatures: Arc::clone(&signatures),
+                }));
+
+            // This is the same owner path used by the complete deployed
+            // composition: local Vote/Safety progress, then timeout request
+            // over the external semantic CAS and independent signer process.
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0]
+                .vote_proposal_v0(proposal)
+                .expect("local Vote remains available before timeout bridge");
+            harness.authorities[0]
+                .begin_local_timeout_v0()
+                .expect("TimeoutVote crosses external watermark and signer processes");
+            let captured_intent = intents
+                .lock()
+                .expect("read captured timeout intent")
+                .first()
+                .cloned()
+                .expect("runtime passed timeout intent to external producer");
+            let first_signature = signatures
+                .lock()
+                .expect("read captured timeout signature")
+                .first()
+                .copied()
+                .expect("external signer returned timeout signature");
+
+            // Reopen the signer OS process and replay the exact immutable
+            // intent.  The response journal must return identical bytes,
+            // without a second semantic CAS reservation.
+            let signer = children.children.get_mut(1).expect("signer child");
+            signer.kill().expect("stop first signer child");
+            signer.wait().expect("join first signer child");
+            // `serve_unix` intentionally leaves its path behind on SIGKILL;
+            // remove that stale socket before readiness probing the new
+            // process, otherwise the probe can observe the old inode and the
+            // first reconnect races into ECONNREFUSED.
+            fs::remove_file(&signer_socket).expect("remove stale signer socket");
+            children.children[1] = composition_child_v0(
+                &child_executable,
+                "signer",
+                &[
+                    (
+                        "TRNM_COMPOSITION_AUTHORITY_SOCKET",
+                        authority_socket.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_SIGNER_SOCKET",
+                        signer_socket.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_SIGNER_WATERMARK",
+                        signer_watermark.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_RESPONSE_LOG",
+                        response_log.display().to_string(),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_VALIDATOR_SET",
+                        hex::encode(
+                            harness
+                                .validator_set
+                                .try_cev0_bytes()
+                                .expect("encode replay composition validator set"),
+                        ),
+                    ),
+                    (
+                        "TRNM_COMPOSITION_SIGNING_KEY",
+                        hex::encode(harness.keys[0].to_bytes()),
+                    ),
+                ],
+            );
+            wait_for_composition_socket_v0(&signer_socket);
+            let mut replay_remote = UnixRemoteSignerProducer::new(UnixRemoteSignerProducerConfig {
+                socket_path: signer_socket.clone(),
+                validator_set: harness.validator_set.clone(),
+                author,
+                signer_profile_ref: trnm_poco_node::SIGNER_JOURNAL_PROFILE_REF_V0,
+                role_profile_ref: binding.role_profile_ref(),
+                service_profile_ref: binding.service_profile_ref(),
+                client_profile_ref: binding.client_profile_ref(),
+                process_generation: binding.process_generation(),
+                lease_id: binding.lease_id(),
+                checkpoint_witness: binding.checkpoint_witness(),
+                timeout: Duration::from_secs(2),
+            })
+            .expect("construct replay Unix remote producer");
+            let replay_signature = replay_remote
+                .sign_intent_exact(&captured_intent)
+                .expect("exact timeout replay after signer process restart");
+            assert_eq!(replay_signature, first_signature);
+
+            // A live signer with its independent watermark unavailable must
+            // reject even an otherwise valid replay; no local SQLite fallback
+            // may turn an authority outage into a signature.
+            let authority = children.children.first_mut().expect("watermark child");
+            authority.kill().expect("stop watermark child");
+            authority.wait().expect("join watermark child");
+            assert!(
+                replay_remote.sign_intent_exact(&captured_intent).is_err(),
+                "authority loss must fail closed through the runtime producer"
+            );
+
+            // Exercise the fleet Ready/Start transport seam from the same
+            // composition test. The fixture authority is a separate OS
+            // process with a durable log and exact request replay.
+            let fleet_origin =
+                ValidatorId::from_bytes(b"fleet-fixture-validator").expect("fleet fixture origin");
+            let fleet_set = [0x31; 32];
+            let fleet_key = SigningKey::from_bytes(&[0x4a; 32]);
+            let mut fleet = UnixFleetSignatureProducerV1::new(UnixFleetRootSignerConfig {
+                socket_path: fleet_socket,
+                origin: fleet_origin,
+                validator_set_id: fleet_set,
+                verifying_key: fleet_key.verifying_key().to_bytes(),
+                timeout: Duration::from_secs(2),
+            })
+            .expect("construct Unix fleet producer");
+            let fleet_request = FleetSignatureRequestV1::new(
+                FleetSignaturePurposeV1::Ready,
+                fleet_origin,
+                fleet_set,
+                [0x61; 32],
+            );
+            let first_fleet_signature = fleet
+                .sign_fleet_v1(fleet_request)
+                .expect("fleet Ready request crosses Unix authority process");
+            let replay_fleet_signature = fleet
+                .sign_fleet_v1(fleet_request)
+                .expect("fleet Ready exact replay crosses Unix authority process");
+            assert_eq!(first_fleet_signature, replay_fleet_signature);
+        });
+    }
+
+    #[test]
     fn injected_proposal_producer_is_bound_to_exact_witness_identity() {
         on_bounded_takeover_owner_stack_v0(|| {
             let harness = takeover_phase_harness_v0(4);
@@ -3883,6 +4214,167 @@ mod tests {
         }
     }
 
+    struct CompositionChildrenV0 {
+        children: Vec<Child>,
+    }
+
+    impl Drop for CompositionChildrenV0 {
+        fn drop(&mut self) {
+            for child in &mut self.children {
+                let _ = child.kill();
+                let _ = child.wait();
+            }
+        }
+    }
+
+    fn composition_hex32_v0(value: [u8; 32]) -> String {
+        value.iter().map(|byte| format!("{byte:02x}")).collect()
+    }
+
+    fn composition_child_v0(executable: &Path, mode: &str, values: &[(&str, String)]) -> Child {
+        let mut command = Command::new(executable);
+        // The test harness names this function with its module path.  Use a
+        // substring filter instead of `--exact` with the bare function name;
+        // the latter silently runs zero child tests and makes the parent wait
+        // until the socket-readiness timeout.
+        command.args(["external_authority_composition_os_child_v0", "--nocapture"]);
+        command.env("TRNM_COMPOSITION_CHILD_MODE", mode);
+        for (key, value) in values {
+            command.env(key, value);
+        }
+        command.spawn().expect("spawn composition child process")
+    }
+
+    fn wait_for_composition_socket_v0(path: &Path) {
+        let deadline = Instant::now() + Duration::from_secs(30);
+        loop {
+            if let Ok(metadata) = fs::symlink_metadata(path) {
+                if metadata.file_type().is_socket() && metadata.permissions().mode() & 0o077 == 0 {
+                    return;
+                }
+            }
+            assert!(
+                Instant::now() < deadline,
+                "composition child Unix socket did not become ready: {}",
+                path.display()
+            );
+            thread::sleep(Duration::from_millis(5));
+        }
+    }
+
+    /// Child-process entry points for the bounded composition test.  Keeping
+    /// these helpers in the test binary gives the test real OS process
+    /// boundaries without depending on a separately installed fixture
+    /// binary.  Every child owns one socket and is killed by the parent after
+    /// the request/replay assertions; none is a production daemon.
+    #[test]
+    fn external_authority_composition_os_child_v0() {
+        let Some(mode) = env::var_os("TRNM_COMPOSITION_CHILD_MODE") else {
+            return;
+        };
+        let mode = mode.to_str().expect("composition child mode");
+        match mode {
+            "watermark" => {
+                let socket = PathBuf::from(
+                    env::var_os("TRNM_COMPOSITION_AUTHORITY_SOCKET")
+                        .expect("composition authority socket"),
+                );
+                let log = PathBuf::from(
+                    env::var_os("TRNM_COMPOSITION_AUTHORITY_LOG")
+                        .expect("composition authority log"),
+                );
+                let binding = ExternalWatermarkSemanticBindingV1::new_per_reservation(
+                    decode_hash32_v0(
+                        &env::var("TRNM_COMPOSITION_SCOPE").expect("composition scope"),
+                    ),
+                    decode_hash32_v0(
+                        &env::var("TRNM_COMPOSITION_JOURNAL_ID").expect("composition journal ID"),
+                    ),
+                    decode_hash32_v0(
+                        &env::var("TRNM_COMPOSITION_CAPABILITY").expect("composition capability"),
+                    ),
+                )
+                .expect("construct composition semantic binding");
+                run_per_reservation_daemon(socket, log, binding)
+                    .expect("semantic external authority child exits only on process stop");
+            }
+            "signer" => {
+                // Reconstruct only the immutable validator-set/key material
+                // needed by the signer protocol.  Do not commission a full
+                // takeover harness in this child: that would add unrelated
+                // runtime work before the Unix socket is even bound.
+                let validator_set = decode_validator_set_v0_exact(
+                    &hex::decode(
+                        env::var("TRNM_COMPOSITION_VALIDATOR_SET")
+                            .expect("composition validator set"),
+                    )
+                    .expect("decode composition validator set bytes"),
+                )
+                .expect("validate composition validator set");
+                let signing_key = SigningKey::from_bytes(&decode_hash32_v0(
+                    &env::var("TRNM_COMPOSITION_SIGNING_KEY").expect("composition signing key"),
+                ));
+                let author = validator_set.validators()[0].id();
+                let binding = composition_remote_binding_v0(&validator_set, author);
+                let watermark = PathBuf::from(
+                    env::var_os("TRNM_COMPOSITION_SIGNER_WATERMARK")
+                        .expect("composition signer watermark"),
+                );
+                let mut config = remote_signer_service_config_v0(
+                    &validator_set,
+                    binding,
+                    &signing_key,
+                    &watermark,
+                );
+                config.purpose_policy = PurposePolicyV1::timeout_vote_only();
+                let mut service = RemoteSignerService::open_with_external_timeout_authority(
+                    config,
+                    PathBuf::from(
+                        env::var_os("TRNM_COMPOSITION_AUTHORITY_SOCKET")
+                            .expect("composition authority socket"),
+                    ),
+                    PathBuf::from(
+                        env::var_os("TRNM_COMPOSITION_RESPONSE_LOG")
+                            .expect("composition response log"),
+                    ),
+                    [0x33; 32],
+                )
+                .expect("open external timeout signer child");
+                service
+                    .serve_unix(&PathBuf::from(
+                        env::var_os("TRNM_COMPOSITION_SIGNER_SOCKET")
+                            .expect("composition signer socket"),
+                    ))
+                    .expect("external timeout signer child serves Unix requests");
+            }
+            "fleet" => {
+                let socket = PathBuf::from(
+                    env::var_os("TRNM_COMPOSITION_FLEET_SOCKET").expect("composition fleet socket"),
+                );
+                let log = PathBuf::from(
+                    env::var_os("TRNM_COMPOSITION_FLEET_LOG").expect("composition fleet log"),
+                );
+                let origin = ValidatorId::from_bytes(b"fleet-fixture-validator")
+                    .expect("composition fleet origin");
+                let key = SigningKey::from_bytes(&[0x4a; 32]);
+                let authority = DurableFleetRootSignerAuthorityV1::open(
+                    log,
+                    origin,
+                    [0x31; 32],
+                    key.verifying_key().to_bytes(),
+                    CompositionFleetFixtureSignerV0 { key },
+                )
+                .expect("open durable fleet authority child");
+                let mut server = UnixFleetRootAuthorityServerV1::new(authority, socket)
+                    .expect("construct fleet authority Unix server");
+                server
+                    .serve()
+                    .expect("fleet authority child serves requests");
+            }
+            other => panic!("unknown composition child mode {other}"),
+        }
+    }
+
     fn wait_for_remote_signer_socket_v0(path: &Path) {
         let deadline = Instant::now() + Duration::from_secs(5);
         loop {
@@ -4102,6 +4594,28 @@ mod tests {
             ContinuousSignerLifetimeBoundsV0::from_exact_test_bounds_v0(1, 1, 2, 1)
                 .expect("bound focused takeover signer lifetime");
         takeover_phase_harness_with_profile_v0(validator_count, signer_lifetime, 1)
+    }
+
+    fn composition_remote_binding_v0(
+        validator_set: &ValidatorSet,
+        author: ValidatorId,
+    ) -> RemoteSignerRequestBindingV1 {
+        RemoteSignerRequestBindingV1::new(
+            validator_set,
+            author,
+            RemoteSignerRoleProfileRefV1::from_public_descriptor(b"lab-consensus-role")
+                .expect("composition role profile"),
+            RemoteSignerServiceProfileRefV1::from_public_descriptor(b"lab-signer-service")
+                .expect("composition service profile"),
+            RemoteSignerClientProfileRefV1::from_public_descriptor(b"lab-node-client")
+                .expect("composition client profile"),
+            ProcessGenerationV1::new(1).expect("composition process generation"),
+            RemoteSignerLeaseIdV1::from_public_grant_descriptor(b"lab-signer-lease")
+                .expect("composition lease"),
+            RemoteSignerCheckpointWitnessV1::new(1, [0x53; 32])
+                .expect("composition checkpoint witness"),
+        )
+        .expect("composition remote signer binding")
     }
 
     fn takeover_phase_harness_with_signer_lifetime_v0(

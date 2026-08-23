@@ -74,6 +74,10 @@ pub enum FleetRootPurposeV1 {
     Restart = 4,
     RestartCut = 5,
     RestartPark = 6,
+    /// Terminal runtime evidence is signed by the same independently
+    /// provisioned fleet authority, but remains a distinct replay domain from
+    /// consensus relay/restart statements.
+    Evidence = 7,
 }
 
 impl FleetRootPurposeV1 {
@@ -89,6 +93,7 @@ impl FleetRootPurposeV1 {
             4 => Ok(Self::Restart),
             5 => Ok(Self::RestartCut),
             6 => Ok(Self::RestartPark),
+            7 => Ok(Self::Evidence),
             _ => Err(FleetSignerProtocolErrorV1::InvalidPurpose(value)),
         }
     }

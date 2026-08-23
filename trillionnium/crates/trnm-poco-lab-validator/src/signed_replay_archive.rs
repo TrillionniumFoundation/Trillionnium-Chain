@@ -1389,6 +1389,31 @@ impl SignedReplayArchiveV1 {
         clean_stop: &CleanStoppedJournalCutV1,
         bootstrap_initial_cut: VerifiedPublicBootstrapInitialCutV1,
     ) -> Result<PathBuf> {
+        let signing_key = config.consensus_signing_key();
+        let validator = config
+            .validator_set()
+            .validator(config.local_validator())
+            .ok_or_else(|| anyhow!("terminal seal validator is absent from validator set"))?;
+        ensure!(
+            validator.consensus_key().as_bytes() == &signing_key.verifying_key().to_bytes(),
+            "terminal seal signing key differs from validator set"
+        );
+        self.write_terminal_seal_with_signer_v1(
+            config,
+            clean_stop,
+            bootstrap_initial_cut,
+            &mut |root| Ok(signing_key.sign(&root).to_bytes()),
+        )
+    }
+
+    #[allow(private_bounds)]
+    pub(crate) fn write_terminal_seal_with_signer_v1<C: ReplayArchiveTerminalConfigV1 + ?Sized>(
+        &self,
+        config: &C,
+        clean_stop: &CleanStoppedJournalCutV1,
+        bootstrap_initial_cut: VerifiedPublicBootstrapInitialCutV1,
+        signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
+    ) -> Result<PathBuf> {
         let run_directory = open_directory_pinned_v1(config.run_root())?;
         let run_directory_identity = FileIdentityV1::from_file_v1(&run_directory)?;
         ensure!(
@@ -1462,9 +1487,8 @@ impl SignedReplayArchiveV1 {
             .validator(config.local_validator())
             .ok_or_else(|| anyhow!("terminal seal validator is absent from validator set"))?;
         ensure!(
-            validator.consensus_key().as_bytes()
-                == &config.consensus_signing_key().verifying_key().to_bytes(),
-            "terminal seal signing key differs from validator set"
+            validator.consensus_key().as_bytes() != &[0; 32],
+            "terminal seal validator has an empty consensus public key"
         );
         let mut seal = ReplayArchiveTerminalSealV1 {
             schema_version: TERMINAL_SEAL_SCHEMA_VERSION_V1,
@@ -1507,12 +1531,13 @@ impl SignedReplayArchiveV1 {
         let body_sha256 = seal.computed_body_sha256_v1()?;
         seal.body_sha256 = hex::encode(body_sha256);
         let signature_root = hash_parts_v1(TERMINAL_SEAL_SIGNATURE_DOMAIN_V1, &[&body_sha256]);
-        let signature = config.consensus_signing_key().sign(&signature_root);
-        config
-            .consensus_signing_key()
-            .verifying_key()
+        let signature = signer(signature_root)?;
+        let signature = Signature::from_bytes(&signature);
+        let verifying_key = VerifyingKey::from_bytes(validator.consensus_key().as_bytes())
+            .context("decode terminal seal validator public key")?;
+        verifying_key
             .verify_strict(&signature_root, &signature)
-            .context("self-verify terminal replay archive seal signature")?;
+            .context("verify terminal replay archive seal signature")?;
         seal.signature = hex::encode(signature.to_bytes());
 
         ensure!(

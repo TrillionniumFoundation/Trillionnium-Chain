@@ -372,6 +372,23 @@ pub(crate) fn sign_runtime_metrics_v1(
     consensus_report: &SignedConsensusRunReportV1,
     facts: RuntimeMetricsFactsV1,
 ) -> Result<SignedRuntimeMetricsV1> {
+    let signing_key = config.consensus_signing_key();
+    sign_runtime_metrics_with_signer_v1(
+        config,
+        clean_stopped_journal,
+        consensus_report,
+        facts,
+        &mut |root| Ok(signing_key.sign(&root).to_bytes()),
+    )
+}
+
+pub(crate) fn sign_runtime_metrics_with_signer_v1(
+    config: &LoadedValidatorConfig,
+    clean_stopped_journal: &CleanStoppedJournalCutV1,
+    consensus_report: &SignedConsensusRunReportV1,
+    facts: RuntimeMetricsFactsV1,
+    signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
+) -> Result<SignedRuntimeMetricsV1> {
     consensus_report.verify_for_config(config)?;
     if consensus_report.process_id != clean_stopped_journal.process_id()
         || consensus_report.process_instance != clean_stopped_journal.process_instance()
@@ -424,15 +441,10 @@ pub(crate) fn sign_runtime_metrics_v1(
         &serde_json::to_vec(&evidence.body()).context("encode runtime metrics body")?,
     );
     evidence.body_sha256 = hex::encode(body_hash);
-    evidence.signature = hex::encode(
-        config
-            .consensus_signing_key()
-            .sign(&domain_hash(
-                RUNTIME_METRICS_SIGNATURE_DOMAIN_V1,
-                &body_hash,
-            ))
-            .to_bytes(),
-    );
+    evidence.signature = hex::encode(signer(domain_hash(
+        RUNTIME_METRICS_SIGNATURE_DOMAIN_V1,
+        &body_hash,
+    ))?);
     evidence.verify_for_config(config)?;
     Ok(evidence)
 }
@@ -443,6 +455,25 @@ pub(crate) fn sign_runtime_final_state_v1(
     consensus_report: &SignedConsensusRunReportV1,
     runtime_metrics: &SignedRuntimeMetricsV1,
     facts: RuntimeFinalStateFactsV1,
+) -> Result<SignedRuntimeFinalStateV1> {
+    let signing_key = config.consensus_signing_key();
+    sign_runtime_final_state_with_signer_v1(
+        config,
+        clean_stopped_journal,
+        consensus_report,
+        runtime_metrics,
+        facts,
+        &mut |root| Ok(signing_key.sign(&root).to_bytes()),
+    )
+}
+
+pub(crate) fn sign_runtime_final_state_with_signer_v1(
+    config: &LoadedValidatorConfig,
+    clean_stopped_journal: &CleanStoppedJournalCutV1,
+    consensus_report: &SignedConsensusRunReportV1,
+    runtime_metrics: &SignedRuntimeMetricsV1,
+    facts: RuntimeFinalStateFactsV1,
+    signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
 ) -> Result<SignedRuntimeFinalStateV1> {
     consensus_report.verify_for_config(config)?;
     runtime_metrics.verify_for_config(config)?;
@@ -515,15 +546,10 @@ pub(crate) fn sign_runtime_final_state_v1(
         &serde_json::to_vec(&evidence.body()).context("encode runtime final-state body")?,
     );
     evidence.body_sha256 = hex::encode(body_hash);
-    evidence.signature = hex::encode(
-        config
-            .consensus_signing_key()
-            .sign(&domain_hash(
-                RUNTIME_FINAL_STATE_SIGNATURE_DOMAIN_V1,
-                &body_hash,
-            ))
-            .to_bytes(),
-    );
+    evidence.signature = hex::encode(signer(domain_hash(
+        RUNTIME_FINAL_STATE_SIGNATURE_DOMAIN_V1,
+        &body_hash,
+    ))?);
     evidence.verify_for_config(config)?;
     Ok(evidence)
 }

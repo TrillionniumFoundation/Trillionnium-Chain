@@ -15,7 +15,9 @@ use std::{
 };
 
 use anyhow::{anyhow, bail, Context, Result};
-use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
+#[cfg(test)]
+use ed25519_dalek::SigningKey;
+use ed25519_dalek::{Signature, Signer, VerifyingKey};
 use fs2::FileExt;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -602,16 +604,46 @@ pub(crate) fn sign_consensus_run_report_v1(
     facts: ConsensusRunTerminalFactsV1,
     clean_stopped_journal: &CleanStoppedJournalCutV1,
 ) -> Result<SignedConsensusRunReportV1> {
-    sign_with_context(
+    let signing_key = config.consensus_signing_key();
+    let validator = config
+        .validator_set()
+        .validator(config.local_validator())
+        .ok_or_else(|| anyhow!("consensus report author is absent from validator set"))?;
+    if validator.consensus_key().as_bytes() != &signing_key.verifying_key().to_bytes() {
+        bail!("consensus report signing key differs from validator set");
+    }
+    sign_with_context_and_signer(
         ConsensusReportContextV1::from_loaded(config),
         config.validator_set(),
-        config.consensus_signing_key(),
+        |root| Ok(signing_key.sign(&root).to_bytes()),
         bounds,
         facts,
         clean_stopped_journal,
     )
 }
 
+/// Builds the same terminal report with a signature obtained from an
+/// independently provisioned authority.  The authority signs only the
+/// canonical report signature root supplied by this function; all report
+/// semantics and public-key verification remain local and fail closed.
+pub(crate) fn sign_consensus_run_report_with_signer_v1(
+    config: &LoadedValidatorConfig,
+    bounds: ConsensusRunBoundsV1,
+    facts: ConsensusRunTerminalFactsV1,
+    clean_stopped_journal: &CleanStoppedJournalCutV1,
+    signer: &mut dyn FnMut([u8; 32]) -> Result<[u8; 64]>,
+) -> Result<SignedConsensusRunReportV1> {
+    sign_with_context_and_signer(
+        ConsensusReportContextV1::from_loaded(config),
+        config.validator_set(),
+        signer,
+        bounds,
+        facts,
+        clean_stopped_journal,
+    )
+}
+
+#[cfg(test)]
 fn sign_with_context(
     context: ConsensusReportContextV1,
     validator_set: &ValidatorSet,
@@ -627,6 +659,31 @@ fn sign_with_context(
     if validator.consensus_key().as_bytes() != &signing_key.verifying_key().to_bytes() {
         bail!("consensus report signing key differs from validator set");
     }
+    sign_with_context_and_signer(
+        context,
+        validator_set,
+        |root| Ok(signing_key.sign(&root).to_bytes()),
+        bounds,
+        facts,
+        clean_stopped_journal,
+    )
+}
+
+fn sign_with_context_and_signer<F>(
+    context: ConsensusReportContextV1,
+    validator_set: &ValidatorSet,
+    mut signer: F,
+    bounds: ConsensusRunBoundsV1,
+    facts: ConsensusRunTerminalFactsV1,
+    clean_stopped_journal: &CleanStoppedJournalCutV1,
+) -> Result<SignedConsensusRunReportV1>
+where
+    F: FnMut([u8; 32]) -> Result<[u8; 64]>,
+{
+    let author = ValidatorId::new(canonical_hex::<32>(&context.validator_id, "validator ID")?);
+    validator_set
+        .validator(author)
+        .ok_or_else(|| anyhow!("consensus report author is absent from validator set"))?;
     if clean_stopped_journal.finalized_height() != facts.finalized_height
         || clean_stopped_journal.finalized_height() != facts.application_committed_height
         || clean_stopped_journal.finalized_block_id() != facts.application_head_block_id
@@ -723,7 +780,7 @@ fn sign_with_context(
     };
     let report_hash = report.computed_report_sha256()?;
     report.report_sha256 = hex::encode(report_hash);
-    report.signature = hex::encode(signing_key.sign(&signature_root(report_hash)).to_bytes());
+    report.signature = hex::encode(signer(signature_root(report_hash))?);
     report.verify_with_context(
         validator_set,
         &ConsensusReportContextV1 {

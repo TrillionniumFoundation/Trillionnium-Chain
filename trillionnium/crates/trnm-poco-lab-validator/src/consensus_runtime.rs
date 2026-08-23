@@ -55,9 +55,10 @@ use crate::{
         MeshIngressEventV0, PeerDirectionV0, PeerSessionFactsV0, PersistentAuthenticatedPeerMeshV0,
     },
     consensus_report::{
-        sign_consensus_run_report_v1, validate_consensus_run_report_target_v1,
-        write_consensus_run_report_v1, ConsensusRunBoundsV1, ConsensusRunTerminalFactsV1,
-        MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
+        sign_consensus_run_report_v1, sign_consensus_run_report_with_signer_v1,
+        validate_consensus_run_report_target_v1, write_consensus_run_report_v1,
+        ConsensusRunBoundsV1, ConsensusRunTerminalFactsV1, MAX_CONSENSUS_RUN_BLOCKS_V1,
+        MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
     },
     continuous_runtime::{
         ContinuousRuntimeFactsV0, ContinuousSignerLifetimeBoundsV0, ContinuousValidatorAuthorityV0,
@@ -106,7 +107,8 @@ use crate::{
         RuntimeRestartPrepareIntentV1,
     },
     runtime_evidence::{
-        sign_runtime_final_state_v1, sign_runtime_metrics_v1, write_runtime_final_state_v1,
+        sign_runtime_final_state_v1, sign_runtime_final_state_with_signer_v1,
+        sign_runtime_metrics_v1, sign_runtime_metrics_with_signer_v1, write_runtime_final_state_v1,
         write_runtime_metrics_v1, RuntimeFinalStateFactsV1, RuntimeMetricsFactsV1,
     },
     signed_replay_archive::{
@@ -160,6 +162,7 @@ pub enum FleetSignaturePurposeV1 {
     Restart,
     RestartCut,
     RestartPark,
+    Evidence,
 }
 
 /// Exact identity handed to a fleet-barrier signer.  The signing root is
@@ -219,6 +222,7 @@ fn unix_fleet_request_nonce_v1(request: FleetSignatureRequestV1) -> [u8; 32] {
         FleetSignaturePurposeV1::Restart => 4,
         FleetSignaturePurposeV1::RestartCut => 5,
         FleetSignaturePurposeV1::RestartPark => 6,
+        FleetSignaturePurposeV1::Evidence => 7,
     }]);
     let origin_id = request.origin();
     let origin = origin_id.as_bytes();
@@ -274,6 +278,7 @@ impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
             FleetSignaturePurposeV1::Restart => FleetRootPurposeV1::Restart,
             FleetSignaturePurposeV1::RestartCut => FleetRootPurposeV1::RestartCut,
             FleetSignaturePurposeV1::RestartPark => FleetRootPurposeV1::RestartPark,
+            FleetSignaturePurposeV1::Evidence => FleetRootPurposeV1::Evidence,
         };
         self.producer
             .sign_fleet_root_v1(
@@ -283,6 +288,22 @@ impl FleetSignatureProducerV1 for UnixFleetSignatureProducerV1 {
             )
             .map_err(|error| anyhow!("external Unix fleet signature request failed: {error}"))
     }
+}
+
+fn sign_external_fleet_evidence_v1(
+    producer: &mut dyn FleetSignatureProducerV1,
+    origin: ValidatorId,
+    validator_set_id: [u8; 32],
+    signing_root: [u8; 32],
+) -> Result<[u8; 64]> {
+    producer
+        .sign_fleet_v1(FleetSignatureRequestV1::new(
+            FleetSignaturePurposeV1::Evidence,
+            origin,
+            validator_set_id,
+            signing_root,
+        ))
+        .context("produce external terminal evidence signature")
 }
 
 /// External fleet-barrier signing seam. Implementations own their private
@@ -6207,58 +6228,90 @@ impl BoundedConsensusOwnerV1 {
                 .event_journal
                 .clean_stopped_cut()
                 .map_err(|error| anyhow!("read clean-stopped event cut: {error}"))?;
-            let _archive_terminal_seal_path = self
-                .replay_archive
-                .write_terminal_seal_v1(
-                    &self.config,
-                    &journal_cut,
-                    self.preflight.bootstrap_initial_cut,
-                )
-                .context("write validator-signed terminal replay archive seal")?;
+            let _archive_terminal_seal_path =
+                if let Some(producer) = self.fleet_producer.as_deref_mut() {
+                    let origin = self.config.local_validator();
+                    let validator_set_id = *self.config.validator_set().id().as_bytes();
+                    let mut signer = |root| {
+                        sign_external_fleet_evidence_v1(producer, origin, validator_set_id, root)
+                    };
+                    self.replay_archive
+                        .write_terminal_seal_with_signer_v1(
+                            &self.config,
+                            &journal_cut,
+                            self.preflight.bootstrap_initial_cut,
+                            &mut signer,
+                        )
+                        .context("write externally signed terminal replay archive seal")?
+                } else {
+                    self.replay_archive
+                        .write_terminal_seal_v1(
+                            &self.config,
+                            &journal_cut,
+                            self.preflight.bootstrap_initial_cut,
+                        )
+                        .context("write validator-signed terminal replay archive seal")?
+                };
             let terminal_facts = ConsensusRunTerminalFactsV1::from_continuous_terminal(&facts)?;
-            let report = sign_consensus_run_report_v1(
-                &self.config,
-                ConsensusRunBoundsV1 {
-                    requested_duration_seconds: self.preflight.duration_seconds,
-                    requested_max_blocks: self.preflight.requested_max_blocks,
-                    pacemaker_base_timeout_seconds: PACEMAKER_BASE_TIMEOUT_V1.as_secs(),
-                    terminal_drain_allowance_seconds: TERMINAL_DRAIN_GRACE_V1.as_secs(),
-                    timeout_view_budget_allowance_seconds:
-                        CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
-                    signer_journal_capacity: CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0,
-                    maximum_timeout_view_advances: self
-                        .preflight
-                        .signer_lifetime
-                        .maximum_timeout_view_advances_v0(),
-                    maximum_local_vote_intents: self
-                        .preflight
-                        .signer_lifetime
-                        .maximum_local_vote_intents_v0(),
-                    maximum_local_timeout_intents: self
-                        .preflight
-                        .signer_lifetime
-                        .maximum_local_timeout_intents_v0(),
-                    maximum_total_signer_intents: self
-                        .preflight
-                        .signer_lifetime
-                        .maximum_total_intents_v0(),
-                    signed_replay_archive_capacity: MAXIMUM_ENTRY_COUNT_V1,
-                    maximum_proposal_archive_entries: self
-                        .preflight
-                        .archive_bounds
-                        .maximum_proposal_entries_v1(),
-                    maximum_quorum_certificate_archive_entries: self
-                        .preflight
-                        .archive_bounds
-                        .maximum_quorum_certificate_entries_v1(),
-                    maximum_signed_replay_archive_entries: self
-                        .preflight
-                        .archive_bounds
-                        .maximum_archive_entries_v1(),
-                },
-                terminal_facts,
-                &journal_cut,
-            )?;
+            let report_bounds = ConsensusRunBoundsV1 {
+                requested_duration_seconds: self.preflight.duration_seconds,
+                requested_max_blocks: self.preflight.requested_max_blocks,
+                pacemaker_base_timeout_seconds: PACEMAKER_BASE_TIMEOUT_V1.as_secs(),
+                terminal_drain_allowance_seconds: TERMINAL_DRAIN_GRACE_V1.as_secs(),
+                timeout_view_budget_allowance_seconds:
+                    CONSENSUS_RUNTIME_TIMEOUT_VIEW_BUDGET_ALLOWANCE_SECONDS_V1,
+                signer_journal_capacity: CONTINUOUS_RUNTIME_MAXIMUM_SIGNER_INTENTS_V0,
+                maximum_timeout_view_advances: self
+                    .preflight
+                    .signer_lifetime
+                    .maximum_timeout_view_advances_v0(),
+                maximum_local_vote_intents: self
+                    .preflight
+                    .signer_lifetime
+                    .maximum_local_vote_intents_v0(),
+                maximum_local_timeout_intents: self
+                    .preflight
+                    .signer_lifetime
+                    .maximum_local_timeout_intents_v0(),
+                maximum_total_signer_intents: self
+                    .preflight
+                    .signer_lifetime
+                    .maximum_total_intents_v0(),
+                signed_replay_archive_capacity: MAXIMUM_ENTRY_COUNT_V1,
+                maximum_proposal_archive_entries: self
+                    .preflight
+                    .archive_bounds
+                    .maximum_proposal_entries_v1(),
+                maximum_quorum_certificate_archive_entries: self
+                    .preflight
+                    .archive_bounds
+                    .maximum_quorum_certificate_entries_v1(),
+                maximum_signed_replay_archive_entries: self
+                    .preflight
+                    .archive_bounds
+                    .maximum_archive_entries_v1(),
+            };
+            let report = if let Some(producer) = self.fleet_producer.as_deref_mut() {
+                let origin = self.config.local_validator();
+                let validator_set_id = *self.config.validator_set().id().as_bytes();
+                let mut signer = |root| {
+                    sign_external_fleet_evidence_v1(producer, origin, validator_set_id, root)
+                };
+                sign_consensus_run_report_with_signer_v1(
+                    &self.config,
+                    report_bounds,
+                    terminal_facts,
+                    &journal_cut,
+                    &mut signer,
+                )?
+            } else {
+                sign_consensus_run_report_v1(
+                    &self.config,
+                    report_bounds,
+                    terminal_facts,
+                    &journal_cut,
+                )?
+            };
             let path =
                 write_consensus_run_report_v1(&self.preflight.report_path, &report, &self.config)?;
             let os_end = RuntimeOsSampleV1::capture_v1()?;
@@ -6278,45 +6331,71 @@ impl BoundedConsensusOwnerV1 {
                 .and_then(|event_count| event_count.checked_add(1))
                 .and_then(|journal_syncs| journal_syncs.checked_add(2))
                 .context("runtime durable-sync counter overflows")?;
-            let metrics = sign_runtime_metrics_v1(
-                &self.config,
-                &journal_cut,
-                &report,
-                RuntimeMetricsFactsV1 {
-                    measurement_started_at: os_metrics.measurement_started_at,
-                    measurement_ended_at: os_metrics.measurement_ended_at,
-                    finality_samples_ms: self.finality_samples_ms.clone(),
-                    fsync_count,
-                    cpu_seconds: os_metrics.cpu_seconds,
-                    peak_rss_bytes: os_metrics.peak_rss_bytes,
-                    disk_bytes: os_metrics.disk_bytes,
-                    network_tx_bytes: self.network_tx_bytes,
-                    network_rx_bytes: self.network_rx_bytes,
-                },
-            )?;
+            let metrics_facts = RuntimeMetricsFactsV1 {
+                measurement_started_at: os_metrics.measurement_started_at,
+                measurement_ended_at: os_metrics.measurement_ended_at,
+                finality_samples_ms: self.finality_samples_ms.clone(),
+                fsync_count,
+                cpu_seconds: os_metrics.cpu_seconds,
+                peak_rss_bytes: os_metrics.peak_rss_bytes,
+                disk_bytes: os_metrics.disk_bytes,
+                network_tx_bytes: self.network_tx_bytes,
+                network_rx_bytes: self.network_rx_bytes,
+            };
+            let metrics = if let Some(producer) = self.fleet_producer.as_deref_mut() {
+                let origin = self.config.local_validator();
+                let validator_set_id = *self.config.validator_set().id().as_bytes();
+                let mut signer = |root| {
+                    sign_external_fleet_evidence_v1(producer, origin, validator_set_id, root)
+                };
+                sign_runtime_metrics_with_signer_v1(
+                    &self.config,
+                    &journal_cut,
+                    &report,
+                    metrics_facts,
+                    &mut signer,
+                )?
+            } else {
+                sign_runtime_metrics_v1(&self.config, &journal_cut, &report, metrics_facts)?
+            };
             write_runtime_metrics_v1(&self.config, &metrics)?;
             let double_sign_events = facts
                 .double_vote_count_v0()
                 .checked_add(facts.double_timeout_count_v0())
                 .context("terminal double-sign counter overflows")?;
-            let final_state = sign_runtime_final_state_v1(
-                &self.config,
-                &journal_cut,
-                &report,
-                &metrics,
-                RuntimeFinalStateFactsV1 {
-                    finalized_nonempty_ordinary_block_count: report.finalized_ordinary_block_count,
-                    double_sign_events,
-                    // Successful typed terminal construction and the exact clean
-                    // journal cut are the authority for these zero violation
-                    // projections; caller-selected campaign claims never enter.
-                    duplicate_apply_events: 0,
-                    state_drift_events: 0,
-                    safety_halt_violations: u64::from(
-                        self.event_journal.observation().safety_halted,
-                    ),
-                },
-            )?;
+            let final_state_facts = RuntimeFinalStateFactsV1 {
+                finalized_nonempty_ordinary_block_count: report.finalized_ordinary_block_count,
+                double_sign_events,
+                // Successful typed terminal construction and the exact clean
+                // journal cut are the authority for these zero violation
+                // projections; caller-selected campaign claims never enter.
+                duplicate_apply_events: 0,
+                state_drift_events: 0,
+                safety_halt_violations: u64::from(self.event_journal.observation().safety_halted),
+            };
+            let final_state = if let Some(producer) = self.fleet_producer.as_deref_mut() {
+                let origin = self.config.local_validator();
+                let validator_set_id = *self.config.validator_set().id().as_bytes();
+                let mut signer = |root| {
+                    sign_external_fleet_evidence_v1(producer, origin, validator_set_id, root)
+                };
+                sign_runtime_final_state_with_signer_v1(
+                    &self.config,
+                    &journal_cut,
+                    &report,
+                    &metrics,
+                    final_state_facts,
+                    &mut signer,
+                )?
+            } else {
+                sign_runtime_final_state_v1(
+                    &self.config,
+                    &journal_cut,
+                    &report,
+                    &metrics,
+                    final_state_facts,
+                )?
+            };
             write_runtime_final_state_v1(&self.config, &final_state)?;
             path
         };
