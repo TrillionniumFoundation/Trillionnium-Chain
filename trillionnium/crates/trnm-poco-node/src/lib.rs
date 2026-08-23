@@ -1694,6 +1694,8 @@ pub enum PocoNodeHostErrorV0 {
     SafetyRulesSidecarPendingRecoveryRequired {
         revision: u64,
     },
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSidecarRecoveryNotPending,
     #[cfg(feature = "legacy-consensus-app")]
     ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
     #[cfg(feature = "legacy-consensus-app")]
@@ -1973,6 +1975,10 @@ impl fmt::Display for PocoNodeHostErrorV0 {
                 formatter,
                 "SafetyRules sidecar has an unresolved pending timeout transition at revision {revision}; ordinary reopen is fail-closed",
             ),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSidecarRecoveryNotPending => formatter.write_str(
+                "explicit SafetyRules sidecar recovery was requested without a durable pending marker",
+            ),
             #[cfg(feature = "legacy-consensus-app")]
             Self::ApplicationRecoveryOpen(error) => {
                 write!(formatter, "application recovery open failed: {error}")
@@ -2199,6 +2205,81 @@ mod tests {
             self.head = Some(target);
             self.facts = Some(facts);
             Ok(())
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[derive(Debug, Clone, Default)]
+    struct SharedMemorySemanticWatermarkV0 {
+        inner: Arc<Mutex<MemorySemanticWatermarkV0>>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    impl ExternalMonotonicWatermarkV0 for SharedMemorySemanticWatermarkV0 {
+        fn load(
+            &mut self,
+            scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .load(scope)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance(expected, target)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            true
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            scope: [u8; 32],
+            journal_id: [u8; 32],
+        ) -> Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .load_semantic_v0(scope, journal_id)
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance_semantic_genesis_v0(expected, target)
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance_semantic_v0(expected, target, facts)
         }
     }
 
@@ -3163,6 +3244,104 @@ mod tests {
             None,
             "the pending marker is removed only after the local SQLite barrier succeeds"
         );
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[test]
+    fn explicit_timeout_sidecar_recovery_repairs_external_cas_before_sqlite() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let genesis_qc = genesis_qc(&core_config);
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded timeout recovery config");
+        let signer_watermark = MemoryWatermark::default();
+        let semantic_watermark = SharedMemorySemanticWatermarkV0::default();
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let shadow_state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact shadow genesis state");
+        let scope = [0x11; 32];
+        let journal_id = [0x22; 32];
+        let capability = [0x09; 32];
+        let mut sidecar = SafetyRulesSemanticSidecarV1::open(
+            semantic_watermark.clone(),
+            scope,
+            journal_id,
+            capability,
+            shadow_state.digest(),
+        )
+        .expect("open semantic sidecar against genesis");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config.clone(),
+            genesis_qc,
+            signer_watermark.clone(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize bounded timeout host");
+
+        // This is the exact crash window: the authenticated Core has emitted
+        // its timeout transition and the external semantic CAS has advanced,
+        // but SQLite has not received the successor state yet.
+        host.prepare_timeout_sidecar_crash_for_test_v1(&mut sidecar)
+            .expect("publish marker and perform external CAS");
+        assert_eq!(host.safety_head().expect("predecessor head").revision(), 0);
+        assert_eq!(
+            sidecar
+                .expected_watermark()
+                .map(|watermark| watermark.sequence()),
+            Some(1)
+        );
+        assert!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect pending marker")
+                .is_some()
+        );
+        drop(host);
+        drop(sidecar);
+
+        let calls = Arc::new(AtomicUsize::new(0));
+        let mut recovered = PocoNodeHostV0::open_existing_with_safety_rules_external_v1(
+            config,
+            signer_watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&calls),
+            },
+            semantic_watermark,
+            scope,
+            journal_id,
+            capability,
+        )
+        .expect("explicit recovery owner repairs the exact transition");
+        assert_eq!(
+            recovered
+                .safety_head()
+                .expect("recovered successor head")
+                .revision(),
+            1
+        );
+        assert_eq!(
+            crate::safety_rules_sidecar::load_pending_timeout_marker_v1(&safety_path)
+                .expect("inspect cleared marker"),
+            None
+        );
+        let actions = recovered
+            .resume_v0()
+            .expect("resume the recovered timeout without a second CAS");
+        assert!(matches!(
+            actions.as_slice(),
+            [PocoNodeHostActionV0::Broadcast(outbound)]
+                if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
+        ));
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
     }
 
     #[cfg(target_os = "linux")]
