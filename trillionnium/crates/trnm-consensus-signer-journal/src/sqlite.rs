@@ -21,10 +21,11 @@ use trnm_consensus_types::{
 };
 
 use crate::{
-    error::{SignerJournalConflictV0, SignerJournalErrorV0},
+    error::{ExternalWatermarkErrorV0, SignerJournalConflictV0, SignerJournalErrorV0},
     hash::hash_domain,
     model::{
-        ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0, SignatureProducerV0,
+        signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkInjectionV0,
+        ExternalMonotonicWatermarkV0, ExternalWatermarkSemanticFactsV0, SignatureProducerV0,
         SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
     },
     schema::{
@@ -586,10 +587,11 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         mut external_watermark: W,
     ) -> Result<Self, SignerJournalErrorV0> {
         ensure_supported_platform()?;
-        if external_watermark
-            .load(profile.external_watermark_scope())
-            .map_err(|error| SignerJournalErrorV0::external("preflight new scope", error))?
-            .is_some()
+        if !external_watermark.semantic_mode_v0()
+            && external_watermark
+                .load(profile.external_watermark_scope())
+                .map_err(|error| SignerJournalErrorV0::external("preflight new scope", error))?
+                .is_some()
         {
             return Err(SignerJournalErrorV0::Conflict(
                 SignerJournalConflictV0::ExternalWatermarkAhead,
@@ -661,12 +663,28 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         };
         store.validate_database()?;
         let initial = store.watermark_for(store.observed_head)?;
-        store
-            .external_watermark
-            .compare_and_advance(None, initial)
-            .map_err(|error| {
-                SignerJournalErrorV0::external("claim new external watermark scope", error)
-            })?;
+        if load_external_head_v0(
+            &mut store.external_watermark,
+            store.profile.external_watermark_scope(),
+            store.journal_id,
+        )
+        .map_err(|error| SignerJournalErrorV0::external("preflight new semantic scope", error))?
+        .is_some()
+        {
+            return Err(SignerJournalErrorV0::Conflict(
+                SignerJournalConflictV0::ExternalWatermarkAhead,
+            ));
+        }
+        compare_and_advance_external_head_v0(
+            &mut store.external_watermark,
+            &store.connection,
+            store.journal_id,
+            None,
+            initial,
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::external("claim new external watermark scope", error)
+        })?;
         store.require_external_exact(initial, "confirm new external watermark")?;
         store.ensure_file_identity()?;
         Ok(store)
@@ -723,15 +741,17 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         validate_capacity(&capacity, &self.profile)?;
         let tail = read_tail_facts(&self.connection, operational_head)?;
         let pending_intent = read_pending_intent_facts(&self.connection)?;
-        let observed_external_watermark = self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-            .map_err(|error| {
-                SignerJournalErrorV0::external("pin operational external watermark", error)
-            })?
-            .ok_or(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkMissing,
-            ))?;
+        let observed_external_watermark = load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::external("pin operational external watermark", error)
+        })?
+        .ok_or(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkMissing,
+        ))?;
         if observed_external_watermark != local_watermark {
             return Err(SignerJournalErrorV0::Conflict(
                 SignerJournalConflictV0::ExternalWatermarkRepairRequired,
@@ -852,18 +872,20 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             ));
         }
         let local = self.watermark_for(before_head)?;
-        let external = self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-            .map_err(|error| {
-                SignerJournalErrorV0::external(
-                    "confirm operational node-checkpoint external watermark",
-                    error,
-                )
-            })?
-            .ok_or(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkMissing,
-            ))?;
+        let external = load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::external(
+                "confirm operational node-checkpoint external watermark",
+                error,
+            )
+        })?
+        .ok_or(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkMissing,
+        ))?;
         if external != local {
             return Err(SignerJournalErrorV0::Conflict(
                 SignerJournalConflictV0::ExternalWatermarkRepairRequired,
@@ -1319,22 +1341,29 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
     }
 
     fn synchronize_external_head(&mut self) -> Result<(), SignerJournalErrorV0> {
-        let external = self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-            .map_err(|error| SignerJournalErrorV0::external("read external watermark", error))?
-            .ok_or(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkMissing,
-            ))?;
+        let external = load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        )
+        .map_err(|error| SignerJournalErrorV0::external("read external watermark", error))?
+        .ok_or(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkMissing,
+        ))?;
         let local = self.watermark_for(self.observed_head)?;
         if validate_external_relation(&self.connection, external, local)?
             == SignerExternalWatermarkRelationV0::Exact
         {
             return Ok(());
         }
-        self.external_watermark
-            .compare_and_advance(Some(external), local)
-            .map_err(|error| SignerJournalErrorV0::external("advance external watermark", error))?;
+        compare_and_advance_external_head_v0(
+            &mut self.external_watermark,
+            &self.connection,
+            self.journal_id,
+            Some(external),
+            local,
+        )
+        .map_err(|error| SignerJournalErrorV0::external("advance external watermark", error))?;
         self.require_external_exact(local, "confirm external watermark advance")
     }
 
@@ -1343,10 +1372,12 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         expected: SignerWatermarkV0,
         stage: &'static str,
     ) -> Result<(), SignerJournalErrorV0> {
-        let observed = self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-            .map_err(|error| SignerJournalErrorV0::external(stage, error))?;
+        let observed = load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        )
+        .map_err(|error| SignerJournalErrorV0::external(stage, error))?;
         if observed != Some(expected) {
             return Err(SignerJournalErrorV0::Conflict(
                 SignerJournalConflictV0::ExternalWatermarkFork,
@@ -1456,14 +1487,17 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
         let lifetime_inventory =
             validate_pinned_database_connection(&connection, &database_path, &profile, journal_id)?;
         let local_watermark = watermark_for_parts(&profile, journal_id, observed_head)?;
-        let observed_external_watermark = external_watermark
-            .load(profile.external_watermark_scope())
-            .map_err(|error| {
-                SignerJournalErrorV0::external("observe pinned external watermark", error)
-            })?
-            .ok_or(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkMissing,
-            ))?;
+        let observed_external_watermark = load_external_head_v0(
+            &mut external_watermark,
+            profile.external_watermark_scope(),
+            journal_id,
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::external("observe pinned external watermark", error)
+        })?
+        .ok_or(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkMissing,
+        ))?;
         let external_relation =
             validate_external_relation(&connection, observed_external_watermark, local_watermark)?;
         let capacity = read_capacity(&connection)?;
@@ -1526,15 +1560,17 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
         &mut self,
     ) -> Result<ConfirmedSignerNodeCheckpointFactsV0, SignerJournalErrorV0> {
         let before_inventory = self.revalidate_pinned()?;
-        let external = self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-            .map_err(|error| {
-                SignerJournalErrorV0::external("confirm node-checkpoint external watermark", error)
-            })?
-            .ok_or(SignerJournalErrorV0::Conflict(
-                SignerJournalConflictV0::ExternalWatermarkMissing,
-            ))?;
+        let external = load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        )
+        .map_err(|error| {
+            SignerJournalErrorV0::external("confirm node-checkpoint external watermark", error)
+        })?
+        .ok_or(SignerJournalErrorV0::Conflict(
+            SignerJournalConflictV0::ExternalWatermarkMissing,
+        ))?;
         let relation =
             validate_external_relation(&self.connection, external, self.facts.local_watermark)?;
         if relation != SignerExternalWatermarkRelationV0::Exact {
@@ -1571,10 +1607,11 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             return Err(SignerJournalActivationFailureV0::new(self, error));
         }
 
-        let external = match self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-        {
+        let external = match load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        ) {
             Ok(Some(value)) => value,
             Ok(None) => {
                 return Err(SignerJournalActivationFailureV0::new(
@@ -1616,10 +1653,13 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
         }
 
         if relation == SignerExternalWatermarkRelationV0::LocalOneAhead {
-            if let Err(error) = self
-                .external_watermark
-                .compare_and_advance(Some(external), self.facts.local_watermark)
-            {
+            if let Err(error) = compare_and_advance_external_head_v0(
+                &mut self.external_watermark,
+                &self.connection,
+                self.journal_id,
+                Some(external),
+                self.facts.local_watermark,
+            ) {
                 return Err(SignerJournalActivationFailureV0::new(
                     self,
                     SignerJournalErrorV0::external("activate pinned external watermark", error),
@@ -1628,10 +1668,11 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             self.facts.observed_external_watermark = self.facts.local_watermark;
             self.facts.external_relation = SignerExternalWatermarkRelationV0::Exact;
         }
-        let confirmed = match self
-            .external_watermark
-            .load(self.profile.external_watermark_scope())
-        {
+        let confirmed = match load_external_head_v0(
+            &mut self.external_watermark,
+            self.profile.external_watermark_scope(),
+            self.journal_id,
+        ) {
             Ok(value) => value,
             Err(error) => {
                 return Err(SignerJournalActivationFailureV0::new(
@@ -1818,6 +1859,71 @@ fn watermark_for_parts(
         head.chain_checksum,
     )
     .map_err(|error| SignerJournalErrorV0::external("construct local watermark", error))
+}
+
+/// Reads one external head through either the legacy opaque protocol or the
+/// explicitly opted-in semantic protocol.  The capability never crosses the
+/// signer-journal boundary: semantic implementations authenticate their own
+/// immutable `(scope, journal, capability)` namespace.
+fn load_external_head_v0<W: ExternalMonotonicWatermarkV0>(
+    external: &mut W,
+    scope: [u8; 32],
+    journal_id: [u8; 32],
+) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+    if external.semantic_mode_v0() {
+        external
+            .load_semantic_v0(scope, journal_id)
+            .map(|value| value.map(|(watermark, _facts)| watermark))
+    } else {
+        external.load(scope)
+    }
+}
+
+/// Advances one external head through the semantic protocol when explicitly
+/// enabled.  For non-genesis records, facts are read from the exact local
+/// intent event at the target sequence; a semantic authority therefore sees
+/// the same epoch/view/revision/fingerprint/root that the local journal has
+/// durably committed.  Sequence-zero claims use the adapter-owned genesis
+/// binding and never invent signer-intent facts in this crate.
+fn compare_and_advance_external_head_v0<W: ExternalMonotonicWatermarkV0>(
+    external: &mut W,
+    connection: &Connection,
+    journal_id: [u8; 32],
+    expected: Option<SignerWatermarkV0>,
+    target: SignerWatermarkV0,
+) -> Result<(), ExternalWatermarkErrorV0> {
+    if !external.semantic_mode_v0() {
+        return external.compare_and_advance(expected, target);
+    }
+    if target.journal_id() != journal_id {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    if target.sequence() == 0 {
+        return external.compare_and_advance_semantic_genesis_v0(expected, target);
+    }
+    let event = read_event(connection, target.sequence())
+        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
+        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    let intent = read_intent(connection, event.fingerprint)
+        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
+        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    let facts = ExternalWatermarkSemanticFactsV0::from_journal_intent(
+        intent.epoch,
+        intent.view,
+        intent.safety_revision,
+        signer_journal_lifecycle_nonce_v0(
+            intent.epoch,
+            intent.view,
+            intent.safety_revision,
+            intent.fingerprint,
+            intent.signing_root,
+            target.sequence(),
+        ),
+        intent.fingerprint,
+        intent.signing_root,
+    )
+    .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    external.compare_and_advance_semantic_v0(expected, target, facts)
 }
 
 fn validate_external_relation(

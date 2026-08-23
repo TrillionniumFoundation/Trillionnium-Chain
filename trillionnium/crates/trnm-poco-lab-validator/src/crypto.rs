@@ -10,8 +10,8 @@ use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0,
-    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerErrorV0,
-    SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
+    ExternalWatermarkSemanticFactsV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
+    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::SignatureBytes;
 
@@ -380,6 +380,120 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
         }
         self.write_record(target)
     }
+
+    fn semantic_mode_v0(&self) -> bool {
+        self.external
+            .as_ref()
+            .is_some_and(|external| external.semantic_mode_v0())
+    }
+
+    fn load_semantic_v0(
+        &mut self,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+    ) -> Result<
+        Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+        ExternalWatermarkErrorV0,
+    > {
+        self.ensure_healthy()?;
+        let current = self.read_record()?;
+        if current.is_some_and(|value| value.scope() != scope) {
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        let Some(external) = self.external.as_mut() else {
+            return Err(ExternalWatermarkErrorV0::Unavailable);
+        };
+        let result = external.load_semantic_v0(scope, journal_id);
+        if result.is_err() {
+            self.poisoned = true;
+        }
+        result
+    }
+
+    fn compare_and_advance_semantic_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.ensure_healthy()?;
+        let current = self.read_record()?;
+        let Some(external) = self.external.as_mut() else {
+            return Err(ExternalWatermarkErrorV0::Unavailable);
+        };
+        if current != expected && current != Some(target) {
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        match expected {
+            None if target.sequence() != 0 => return Err(ExternalWatermarkErrorV0::CompareFailed),
+            Some(previous)
+                if target.scope() != previous.scope()
+                    || target.journal_id() != previous.journal_id()
+                    || previous.sequence().checked_add(1) != Some(target.sequence()) =>
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed)
+            }
+            _ => {}
+        }
+        // A crash may have committed the external semantic CAS before the
+        // local atomic watermark rename.  Re-read the semantic head and
+        // repair only when both the value and exact facts already match; do
+        // not issue a second CAS with the stale predecessor.
+        if current == Some(target) {
+            let observed = external
+                .load_semantic_v0(target.scope(), target.journal_id())
+                .map_err(|error| {
+                    self.poisoned = true;
+                    error
+                })?;
+            if observed == Some((target, facts)) {
+                return Ok(());
+            }
+            self.poisoned = true;
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        let external_result = external.compare_and_advance_semantic_v0(expected, target, facts);
+        let result = external_result.and_then(|()| self.write_record(target));
+        if result.is_err() {
+            self.poisoned = true;
+        }
+        result
+    }
+
+    fn compare_and_advance_semantic_genesis_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        self.ensure_healthy()?;
+        let current = self.read_record()?;
+        let Some(external) = self.external.as_mut() else {
+            return Err(ExternalWatermarkErrorV0::Unavailable);
+        };
+        if current != expected || target.sequence() != 0 {
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        if current == Some(target) {
+            let observed = external
+                .load_semantic_v0(target.scope(), target.journal_id())
+                .map_err(|error| {
+                    self.poisoned = true;
+                    error
+                })?;
+            if observed.is_some_and(|(watermark, _)| watermark == target) {
+                return Ok(());
+            }
+            self.poisoned = true;
+            return Err(ExternalWatermarkErrorV0::CompareFailed);
+        }
+        let result = external
+            .compare_and_advance_semantic_genesis_v0(expected, target)
+            .and_then(|()| self.write_record(target));
+        if result.is_err() {
+            self.poisoned = true;
+        }
+        result
+    }
 }
 
 impl ExternalMonotonicWatermarkInjectionV0 for LabFileWatermark {
@@ -394,7 +508,13 @@ impl ExternalMonotonicWatermarkInjectionV0 for LabFileWatermark {
         }
         let local = self.read_record()?;
         if let Some(local) = local {
-            let observed = match external.load(local.scope()) {
+            let observed = match if external.semantic_mode_v0() {
+                external
+                    .load_semantic_v0(local.scope(), local.journal_id())
+                    .map(|value| value.map(|(watermark, _facts)| watermark))
+            } else {
+                external.load(local.scope())
+            } {
                 Ok(value) => value,
                 Err(error) => {
                     self.poisoned = true;
@@ -414,7 +534,12 @@ impl ExternalMonotonicWatermarkInjectionV0 for LabFileWatermark {
                         self.poisoned = true;
                         return Err(ExternalWatermarkErrorV0::CompareFailed);
                     }
-                    if let Err(error) = external.compare_and_advance(None, local) {
+                    let result = if external.semantic_mode_v0() {
+                        external.compare_and_advance_semantic_genesis_v0(None, local)
+                    } else {
+                        external.compare_and_advance(None, local)
+                    };
+                    if let Err(error) = result {
                         self.poisoned = true;
                         return Err(error);
                     }

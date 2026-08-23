@@ -29,7 +29,10 @@ use anyhow::{anyhow, bail, ensure, Context, Result};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use trnm_consensus_core::leader_for;
-use trnm_consensus_signer_journal::SignerWatermarkV0;
+use trnm_consensus_signer_journal::{
+    ExternalMonotonicWatermarkV0, ProposalSignatureProducerV0, SignatureProducerV0,
+    SignerWatermarkV0,
+};
 use trnm_consensus_types::{
     BlockId, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate, RecoveryContextV1,
     RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1, RecoveryZeroDeltaCutV1Fields,
@@ -1085,6 +1088,48 @@ where
     owner
         .join()
         .map_err(|_| anyhow!("bounded consensus owner thread panicked"))?
+}
+
+/// Explicit deployed-runtime composition entry for independently provisioned
+/// peer fencing, signer watermark, and Vote/TimeoutVote production.
+///
+/// The ordinary deployed runtime is commissioned inside the bounded owner
+/// thread.  Only after the authenticated mesh gate has passed is the
+/// commissioned Ready authority rebuilt with the supplied signature producer
+/// and fenced with the supplied external watermark.  The ordinary
+/// [`run_deployed_bounded_consensus_v1`] entry remains on its rejecting-fence /
+/// fixture-producer path; this function is an opt-in seam and does not change
+/// any production or activation truth bit.
+pub fn run_deployed_bounded_consensus_with_external_authority_v1(
+    config: LoadedValidatorConfig,
+    duration: Duration,
+    max_blocks: u64,
+    report_path: PathBuf,
+    external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>,
+    external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>,
+    producer: Box<dyn SignatureProducerV0 + Send>,
+    proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+) -> Result<BoundedConsensusRunOutcomeV1> {
+    run_bounded_consensus_with_authority_builder_v1(
+        config,
+        duration,
+        max_blocks,
+        report_path,
+        external_fence,
+        |config, _signer_lifetime| config.commission_deployed_ordinary_runtime_v1(),
+        move |config, takeover, signer_lifetime| {
+            let mut authority =
+                ContinuousValidatorAuthorityV0::from_takeover_runtime_with_producers_v0(
+                    config,
+                    takeover,
+                    signer_lifetime,
+                    producer,
+                    proposal_producer,
+                )?;
+            authority.install_external_monotonic_watermark_v0(external_watermark)?;
+            Ok(authority)
+        },
+    )
 }
 
 /// Normal deployed entry. The once-taken bootstrap carrier is consumed by
@@ -3487,7 +3532,7 @@ impl BoundedConsensusOwnerV1 {
 
         let authority = self
             .authority
-            .as_ref()
+            .as_mut()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?;
         let proposal =
             authority.signed_workload_proposal_from_loaded_config_v0(&mut self.config)?;
@@ -6509,6 +6554,38 @@ mod tests {
         assert!(explicit_body.contains("PersistentAuthenticatedPeerMeshV0::establish_with_fence"));
         let direct_mesh_establish = concat!("PersistentAuthenticatedPeerMeshV0::", "establish(");
         assert!(!source.contains(direct_mesh_establish));
+        assert!(source.contains("production_activation: false"));
+    }
+
+    #[test]
+    fn deployed_external_authority_composition_is_explicit_and_default_stays_fixture_v1() {
+        let source = include_str!("consensus_runtime.rs");
+        let explicit_entry = source
+            .find("pub fn run_deployed_bounded_consensus_with_external_authority_v1(")
+            .expect("deployed external-authority composition entry remains present");
+        let default_entry = source
+            .find("pub fn run_deployed_bounded_consensus_v1(")
+            .expect("normal deployed entry remains present");
+        assert!(explicit_entry < default_entry);
+
+        let explicit_body = &source[explicit_entry..default_entry];
+        assert!(explicit_body.contains("external_fence: Arc<dyn ExternalPeerLeaseAuthorityV1>"));
+        assert!(explicit_body
+            .contains("external_watermark: Box<dyn ExternalMonotonicWatermarkV0 + Send>"));
+        assert!(explicit_body.contains("producer: Box<dyn SignatureProducerV0 + Send>"));
+        assert!(explicit_body
+            .contains("proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>"));
+        assert!(explicit_body.contains("from_takeover_runtime_with_producers_v0"));
+        assert!(explicit_body.contains("install_external_monotonic_watermark_v0"));
+
+        let default_end = source[default_entry..]
+            .find("#[derive(Debug, Clone)]\nstruct ConsensusRuntimePreflightV1")
+            .map(|offset| default_entry + offset)
+            .expect("normal deployed entry has a bounded body");
+        let default_body = &source[default_entry..default_end];
+        assert!(default_body.contains("run_bounded_consensus_v1("));
+        assert!(!default_body.contains("external_watermark"));
+        assert!(!default_body.contains("SignatureProducerV0"));
         assert!(source.contains("production_activation: false"));
     }
 

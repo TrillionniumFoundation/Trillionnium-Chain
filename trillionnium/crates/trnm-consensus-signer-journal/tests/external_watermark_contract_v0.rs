@@ -16,9 +16,9 @@ use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 use tempfile::TempDir;
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignatureProducerErrorV0,
-    SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
-    SqliteSignerJournalV0,
+    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0,
+    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0,
+    SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersHash, ConsensusPublicKey, Epoch,
@@ -148,6 +148,104 @@ impl ExternalMonotonicWatermarkV0 for AppendOnlyRegister {
         // or service here; this assignment is only the test model.
         state.committed_head = Some((target, digest));
         Ok(())
+    }
+}
+
+/// Semantic test authority used to prove the journal dispatch boundary.  It
+/// deliberately rejects every legacy opaque operation; the journal must use
+/// the semantic methods for both genesis claim and each intent head.
+#[derive(Debug, Clone, Default)]
+struct SemanticRegister {
+    state: Arc<Mutex<RegisterState>>,
+    observations: Arc<Mutex<Vec<ExternalWatermarkSemanticFactsV0>>>,
+    genesis_claims: Arc<Mutex<u64>>,
+}
+
+impl SemanticRegister {
+    fn current(
+        &self,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+    ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        let state = self.state.lock().unwrap();
+        let current = AppendOnlyRegister::validate_locked(&state, scope)?;
+        if current.is_some_and(|value| value.journal_id() != journal_id) {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+        Ok(current)
+    }
+}
+
+impl ExternalMonotonicWatermarkV0 for SemanticRegister {
+    fn load(
+        &mut self,
+        _scope: [u8; 32],
+    ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+    }
+
+    fn compare_and_advance(
+        &mut self,
+        _expected: Option<SignerWatermarkV0>,
+        _target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+    }
+
+    fn semantic_mode_v0(&self) -> bool {
+        true
+    }
+
+    fn load_semantic_v0(
+        &mut self,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+    ) -> Result<
+        Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+        ExternalWatermarkErrorV0,
+    > {
+        let Some(value) = self.current(scope, journal_id)? else {
+            return Ok(None);
+        };
+        let facts = ExternalWatermarkSemanticFactsV0::new(
+            0,
+            value.sequence(),
+            value.sequence().saturating_add(1),
+            [0x61; 32],
+            [0x62; 32],
+            [0x63; 32],
+            [0x64; 32],
+        )
+        .expect("valid semantic test facts");
+        Ok(Some((value, facts)))
+    }
+
+    fn compare_and_advance_semantic_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        assert_eq!(facts.capability, [0; 32]);
+        self.observations.lock().unwrap().push(facts);
+        let mut register = AppendOnlyRegister {
+            state: Arc::clone(&self.state),
+        };
+        register.compare_and_advance(expected, target)
+    }
+
+    fn compare_and_advance_semantic_genesis_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        assert_eq!(expected, None);
+        assert_eq!(target.sequence(), 0);
+        *self.genesis_claims.lock().unwrap() += 1;
+        let mut register = AppendOnlyRegister {
+            state: Arc::clone(&self.state),
+        };
+        register.compare_and_advance(expected, target)
     }
 }
 
@@ -323,4 +421,40 @@ fn journal_replays_without_hsm_and_fails_closed_after_external_tamper() {
     let next = vote(&profile, 2, 2, 0x62);
     assert!(journal.sign_exact_v0(&next, &mut producer).is_err());
     assert_eq!(producer.calls(), calls);
+}
+
+#[test]
+fn semantic_journal_dispatch_binds_exact_intent_facts_and_never_opaque() {
+    let (profile, key) = fixture();
+    let temp = TempDir::new().unwrap();
+    let register = SemanticRegister::default();
+    let observations = Arc::clone(&register.observations);
+    let genesis_claims = Arc::clone(&register.genesis_claims);
+    let mut journal =
+        SqliteSignerJournalV0::initialize_new(db_path(&temp), profile.clone(), register)
+            .expect("initialize semantic signer journal");
+    assert_eq!(*genesis_claims.lock().unwrap(), 1);
+
+    let mut producer = ReplayBoundProducer::new(key);
+    let intent = vote(&profile, 7, 3, 0x73);
+    journal
+        .sign_exact_v0(&intent, &mut producer)
+        .expect("semantic signer intent");
+    let facts = observations.lock().unwrap();
+    assert_eq!(
+        facts.len(),
+        2,
+        "intent and signed head each use semantic CAS"
+    );
+    assert!(facts.iter().all(|facts| facts.capability == [0; 32]));
+    assert!(facts
+        .iter()
+        .all(|facts| facts.epoch == intent.epoch().get()));
+    assert!(facts.iter().all(|facts| facts.view == 3));
+    assert!(facts
+        .iter()
+        .all(|facts| facts.request_fingerprint == intent.fingerprint().into_bytes()));
+    assert!(facts
+        .iter()
+        .all(|facts| facts.signing_root == intent.signing_root().into_bytes()));
 }

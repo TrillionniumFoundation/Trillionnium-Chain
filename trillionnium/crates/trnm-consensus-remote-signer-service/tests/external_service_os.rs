@@ -57,6 +57,7 @@ impl Daemons {
         let authority = Command::new(binary("trnm-external-watermark-v0"))
             .args([
                 "semantic",
+                "--per-reservation",
                 "--socket",
                 authority_socket.to_str().unwrap(),
                 "--log",
@@ -171,6 +172,14 @@ fn external_timeout_service_is_two_process_and_replays_exactly() {
     let higher_bytes = higher.try_exact_bytes().expect("encode higher");
     let higher_response = request(&daemons.signer_socket, &higher_bytes);
     assert_eq!(higher_response[0], FRAME_OK);
+
+    // Explicit external mode uses one semantic CAS reservation per timeout;
+    // a third distinct request must advance the same durable namespace rather
+    // than being mistaken for the even half of a signer-journal pair.
+    let third = fixture_request(&fixture, "timeout", 7, b"os-timeout-third").expect("third");
+    let third_bytes = third.try_exact_bytes().expect("encode third");
+    let third_response = request(&daemons.signer_socket, &third_bytes);
+    assert_eq!(third_response[0], FRAME_OK);
 
     // The explicit service mode must not fall back to its local SQLite path
     // when the independent authority disappears. A fresh timeout therefore

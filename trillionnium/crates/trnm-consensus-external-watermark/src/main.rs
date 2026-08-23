@@ -1,11 +1,11 @@
 use std::{env, process::ExitCode};
 
 use trnm_consensus_external_watermark::{
-    run_daemon, run_semantic_daemon, ExternalWatermarkSemanticBindingV1,
+    run_daemon, run_per_reservation_daemon, run_semantic_daemon, ExternalWatermarkSemanticBindingV1,
 };
 
 fn usage() -> ! {
-    eprintln!("usage: trnm-external-watermark-v0 <opaque|semantic> --socket ABS_PATH --log ABS_PATH [--scope HEX32 --journal-id HEX32 --capability HEX32]");
+    eprintln!("usage: trnm-external-watermark-v0 <opaque|semantic> --socket ABS_PATH --log ABS_PATH [--per-reservation] [--scope HEX32 --journal-id HEX32 --capability HEX32]");
     std::process::exit(2);
 }
 
@@ -27,6 +27,7 @@ fn main() -> ExitCode {
     let mut scope = None;
     let mut journal_id = None;
     let mut capability = None;
+    let mut per_reservation = false;
     while let Some(arg) = args.next() {
         match arg.as_str() {
             "--socket" => set_once(&mut socket, args.next(), "--socket"),
@@ -55,6 +56,12 @@ fn main() -> ExitCode {
                     "--capability",
                 );
             }
+            "--per-reservation" => {
+                if per_reservation {
+                    usage();
+                }
+                per_reservation = true;
+            }
             "--help" => usage(),
             _ => usage(),
         }
@@ -68,9 +75,13 @@ fn main() -> ExitCode {
             capability.unwrap_or_else(|| usage()),
         )
         .unwrap_or_else(|| usage());
-        run_semantic_daemon(socket, log, binding)
+        if per_reservation {
+            run_per_reservation_daemon(socket, log, binding)
+        } else {
+            run_semantic_daemon(socket, log, binding)
+        }
     } else {
-        if scope.is_some() || journal_id.is_some() || capability.is_some() {
+        if per_reservation || scope.is_some() || journal_id.is_some() || capability.is_some() {
             usage();
         }
         run_daemon(socket, log)

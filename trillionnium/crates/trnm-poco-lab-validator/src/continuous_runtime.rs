@@ -99,6 +99,12 @@ const MAXIMUM_SIGNER_INTENT_BYTES_V0: usize = 4_096;
 const MAXIMUM_SIGNER_DATABASE_BYTES_V0: usize = 64 * 1024 * 1024;
 const MAXIMUM_COLLECTOR_COORDINATES_V0: usize = 64;
 
+/// Profile used by the explicit proposal-witness producer seam.  Proposal
+/// signatures are not part of the v0 Vote/TimeoutVote journal, so keeping a
+/// distinct, stable profile prevents a caller from accidentally presenting a
+/// proposal request to the vote signer endpoint.
+pub const PROPOSAL_SIGNER_PROFILE_REF_V0: [u8; 32] = [0x51; 32];
+
 /// Number of consecutive views retained by the process-local consensus
 /// collector and relay replay window. The current view and its five immediate
 /// predecessors fit in this tail; older authenticated statements are stale.
@@ -127,6 +133,21 @@ impl SignatureProducerV0 for ContinuousSignatureProducerV0 {
     ) -> std::result::Result<SignatureBytes, trnm_consensus_signer_journal::SignatureProducerErrorV0>
     {
         self.0.sign(request)
+    }
+}
+
+/// Object-safe carrier for proposal-witness signing. Proposal signatures are
+/// deliberately separate from the Vote/Timeout signer journal, but deployed
+/// composition still must not reach a raw consensus key implicitly.
+struct ContinuousProposalSignatureProducerV0(Box<dyn ProposalSignatureProducerV0 + Send>);
+
+impl ProposalSignatureProducerV0 for ContinuousProposalSignatureProducerV0 {
+    fn sign_proposal(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> std::result::Result<SignatureBytes, trnm_consensus_signer_journal::SignatureProducerErrorV0>
+    {
+        self.0.sign_proposal(request)
     }
 }
 
@@ -886,6 +907,10 @@ pub struct ContinuousValidatorAuthorityV0 {
     /// calls a producer for arbitrary bytes: the Node signer journal has
     /// already durably issued the exact intent before this field is reached.
     producer: ContinuousSignatureProducerV0,
+    /// Separate proposal-witness signing boundary. The default laboratory
+    /// constructor supplies a fixture producer; deployed composition must
+    /// provide this explicitly instead of copying a raw key into the owner.
+    proposal_producer: ContinuousProposalSignatureProducerV0,
     phase: Option<ContinuousAuthorityPhaseV0>,
 }
 
@@ -1359,8 +1384,11 @@ impl ContinuousValidatorAuthorityV0 {
             protocol_violations: ContinuousProtocolViolationCountersV0::default(),
             consensus_windows,
             producer: ContinuousSignatureProducerV0(Box::new(LabEd25519SignatureProducer::new(
-                signing_key,
+                signing_key.clone(),
             ))),
+            proposal_producer: ContinuousProposalSignatureProducerV0(Box::new(
+                LabEd25519ProposalSignatureProducerV0::new(signing_key),
+            )),
             phase: Some(ContinuousAuthorityPhaseV0::Ready(Box::new(runtime))),
         })
     }
@@ -1405,7 +1433,7 @@ impl ContinuousValidatorAuthorityV0 {
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
         producer: Box<dyn SignatureProducerV0 + Send>,
     ) -> Result<Self> {
-        Self::from_takeover_parts_with_producer_v0(
+        Self::from_takeover_parts_with_producers_v0(
             config.local_validator(),
             config.validator_set().clone(),
             *config.consensus_parameters(),
@@ -1414,6 +1442,33 @@ impl ContinuousValidatorAuthorityV0 {
             runtime,
             signer_lifetime,
             ContinuousSignatureProducerV0(producer),
+            ContinuousProposalSignatureProducerV0(Box::new(
+                LabEd25519ProposalSignatureProducerV0::new(config.consensus_signing_key().clone()),
+            )),
+        )
+    }
+
+    /// Explicit deployed composition entry with independent Vote/TimeoutVote
+    /// and proposal-witness producers.  Supplying this API is the only way a
+    /// non-fixture runtime can construct a continuous authority without
+    /// copying a raw consensus key into the owner.
+    pub fn from_takeover_runtime_with_producers_v0(
+        config: &LoadedValidatorConfig,
+        runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
+        signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+        producer: Box<dyn SignatureProducerV0 + Send>,
+        proposal_producer: Box<dyn ProposalSignatureProducerV0 + Send>,
+    ) -> Result<Self> {
+        Self::from_takeover_parts_with_producers_v0(
+            config.local_validator(),
+            config.validator_set().clone(),
+            *config.consensus_parameters(),
+            None,
+            config.ordinary_start_height(),
+            runtime,
+            signer_lifetime,
+            ContinuousSignatureProducerV0(producer),
+            ContinuousProposalSignatureProducerV0(proposal_producer),
         )
     }
 
@@ -1460,7 +1515,7 @@ impl ContinuousValidatorAuthorityV0 {
         runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
     ) -> Result<Self> {
-        Self::from_takeover_parts_with_producer_v0(
+        Self::from_takeover_parts_with_producers_v0(
             local_validator,
             validator_set,
             consensus_parameters,
@@ -1468,12 +1523,17 @@ impl ContinuousValidatorAuthorityV0 {
             ordinary_start_height,
             runtime,
             signer_lifetime,
-            ContinuousSignatureProducerV0(Box::new(LabEd25519SignatureProducer::new(signing_key))),
+            ContinuousSignatureProducerV0(Box::new(LabEd25519SignatureProducer::new(
+                signing_key.clone(),
+            ))),
+            ContinuousProposalSignatureProducerV0(Box::new(
+                LabEd25519ProposalSignatureProducerV0::new(signing_key),
+            )),
         )
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn from_takeover_parts_with_producer_v0(
+    fn from_takeover_parts_with_producers_v0(
         local_validator: ValidatorId,
         validator_set: ValidatorSet,
         consensus_parameters: ConsensusParametersV0,
@@ -1482,6 +1542,7 @@ impl ContinuousValidatorAuthorityV0 {
         mut runtime: PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>,
         signer_lifetime: ContinuousSignerLifetimeBoundsV0,
         producer: ContinuousSignatureProducerV0,
+        proposal_producer: ContinuousProposalSignatureProducerV0,
     ) -> Result<Self> {
         ensure!(
             runtime.matches_consensus_context_v0(
@@ -1548,6 +1609,7 @@ impl ContinuousValidatorAuthorityV0 {
             protocol_violations: ContinuousProtocolViolationCountersV0::default(),
             consensus_windows,
             producer,
+            proposal_producer,
             phase: Some(ContinuousAuthorityPhaseV0::Ready(Box::new(runtime))),
         })
     }
@@ -1828,11 +1890,11 @@ impl ContinuousValidatorAuthorityV0 {
     /// those roots remain inaccessible until Core and Safety authorize the
     /// signer journal.
     pub fn signed_workload_proposal_from_loaded_config_v0(
-        &self,
+        &mut self,
         config: &mut LoadedValidatorConfig,
     ) -> Result<SignedProposalV0> {
         let preimage = self.proposal_preimage_from_loaded_config_v0(config)?;
-        preimage.seal_with_key_v0(config.consensus_signing_key())
+        preimage.seal_with_producer_v0(&mut self.proposal_producer, PROPOSAL_SIGNER_PROFILE_REF_V0)
     }
 
     pub fn proposal_preimage_v0(
@@ -3368,7 +3430,7 @@ mod tests {
                     .expect("remote signer checkpoint witness"),
             )
             .expect("construct remote signer request binding");
-            let semantic_binding = ExternalWatermarkSemanticBindingV1::new(
+            let semantic_binding = ExternalWatermarkSemanticBindingV1::new_per_reservation(
                 UnixExternalTimeoutAuthorityV1::scope_for_binding(binding),
                 UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding),
                 capability,

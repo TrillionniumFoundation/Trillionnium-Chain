@@ -31,8 +31,9 @@ use std::{
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
-    ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignatureProducerV0,
-    SignatureRequestV0, SignerJournalErrorV0, SignerWatermarkV0,
+    signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0,
+    ExternalWatermarkSemanticFactsV0, SignatureProducerV0, SignatureRequestV0,
+    SignerJournalErrorV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::{CanonicalSignIntentV0, CanonicalSignPreimageV0, SignatureBytes};
 
@@ -83,6 +84,33 @@ const MAX_AUTHORITY_LOG_BYTES: u64 = 64 * 1024 * 1024;
 
 type WatermarkHistoryKeyV1 = ([u8; 32], u64, [u8; 32], [u8; 32]);
 
+/// The lifecycle validation mode for a semantic authority namespace.
+///
+/// `SignerJournalPair` is the strict default: every logical intent occupies
+/// an odd prepared record followed by an even signed record.  The
+/// `PerReservation` mode is deliberately narrower: one external CAS record
+/// represents one complete reservation, so sequential reservations are
+/// allowed without manufacturing a second (signed) CAS record.  The mode is
+/// persisted in the namespace marker and is never negotiated by a request.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum ExternalWatermarkSemanticLifecycleModeV1 {
+    SignerJournalPair = 0,
+    PerReservation = 1,
+}
+
+impl ExternalWatermarkSemanticLifecycleModeV1 {
+    fn from_wire(value: u8) -> Result<Self, ExternalWatermarkAuthorityError> {
+        match value {
+            0 => Ok(Self::SignerJournalPair),
+            1 => Ok(Self::PerReservation),
+            _ => Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "unknown semantic lifecycle mode",
+            )),
+        }
+    }
+}
+
 /// Immutable binding for a semantic authority namespace.  The capability is
 /// deliberately not a signing key; it is a local process/daemon admission
 /// secret that prevents an unrelated same-UID client from claiming a scope.
@@ -91,6 +119,7 @@ pub struct ExternalWatermarkSemanticBindingV1 {
     pub scope: [u8; 32],
     pub journal_id: [u8; 32],
     pub capability: [u8; 32],
+    pub lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
 }
 
 impl ExternalWatermarkSemanticBindingV1 {
@@ -102,7 +131,44 @@ impl ExternalWatermarkSemanticBindingV1 {
             scope,
             journal_id,
             capability,
+            lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair,
         })
+    }
+
+    /// Constructs the explicit one-CAS-per-reservation binding used by the
+    /// narrow Unix timeout adapter.  It is opt-in; the strict signer-journal
+    /// pair mode remains the default for all existing callers.
+    pub fn new_per_reservation(
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+    ) -> Option<Self> {
+        Self::new(scope, journal_id, capability).map(|mut binding| {
+            binding.lifecycle_mode = ExternalWatermarkSemanticLifecycleModeV1::PerReservation;
+            binding
+        })
+    }
+
+    pub fn new_with_lifecycle_mode(
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+        capability: [u8; 32],
+        lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
+    ) -> Option<Self> {
+        Self::new(scope, journal_id, capability)
+            .map(|binding| binding.with_lifecycle_mode(lifecycle_mode))
+    }
+
+    pub const fn with_lifecycle_mode(
+        mut self,
+        lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
+    ) -> Self {
+        self.lifecycle_mode = lifecycle_mode;
+        self
+    }
+
+    pub const fn lifecycle_mode(self) -> ExternalWatermarkSemanticLifecycleModeV1 {
+        self.lifecycle_mode
     }
 }
 
@@ -210,6 +276,7 @@ struct LogRecordV1 {
 struct SemanticRecordV1 {
     value: SignerWatermarkV0,
     facts: ExternalWatermarkSemanticFactsV1,
+    lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     previous_record_hash: [u8; 32],
     record_hash: [u8; 32],
 }
@@ -226,7 +293,7 @@ pub struct ExternalWatermarkAuthority {
     _lock: File,
     current: BTreeMap<[u8; 32], SignerWatermarkV0>,
     semantic_current: BTreeMap<[u8; 32], ExternalWatermarkSemanticFactsV1>,
-    semantic_last_sequence: BTreeMap<[u8; 32], u64>,
+    semantic_last_watermark: BTreeMap<[u8; 32], SignerWatermarkV0>,
     head_hash: [u8; 32],
     record_count: u64,
     semantic_head_hash: [u8; 32],
@@ -384,7 +451,7 @@ impl ExternalWatermarkAuthority {
             _lock: lock,
             current: BTreeMap::new(),
             semantic_current: BTreeMap::new(),
-            semantic_last_sequence: BTreeMap::new(),
+            semantic_last_watermark: BTreeMap::new(),
             head_hash: [0; 32],
             record_count: 0,
             semantic_head_hash: [0; 32],
@@ -576,18 +643,41 @@ impl ExternalWatermarkAuthority {
                     && previous.sequence().checked_add(1) == Some(target.sequence()) => {}
             _ => return Err(ExternalWatermarkAuthorityError::CompareFailed),
         }
-        if let Some(previous_facts) = self.semantic_current.get(&scope).copied() {
-            if facts.epoch < previous_facts.epoch
-                || (facts.epoch == previous_facts.epoch && facts.view <= previous_facts.view)
-                || facts.safety_revision <= previous_facts.safety_revision
-            {
-                return Err(ExternalWatermarkAuthorityError::CompareFailed);
-            }
-        } else if current.is_some() {
-            return Err(ExternalWatermarkAuthorityError::InvalidLog(
-                "semantic head is missing for an existing watermark",
-            ));
+        let same_intent_lifecycle = binding.lifecycle_mode
+            == ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair
+            && current.is_some_and(|previous| previous.sequence() % 2 == 1)
+            && target.sequence().is_multiple_of(2);
+        if same_intent_lifecycle
+            && facts.request_nonce
+                != signer_journal_lifecycle_nonce_v0(
+                    facts.epoch,
+                    facts.view,
+                    facts.safety_revision,
+                    facts.request_fingerprint,
+                    facts.signing_root,
+                    target.sequence(),
+                )
+        {
+            return Err(ExternalWatermarkAuthorityError::CompareFailed);
         }
+        Self::validate_semantic_transition(
+            binding.lifecycle_mode,
+            current,
+            self.semantic_current.get(&scope).copied(),
+            current.is_some_and(|previous| {
+                previous.sequence() == 0
+                    && self
+                        .semantic_current
+                        .get(&scope)
+                        .copied()
+                        .is_some_and(|previous_facts| {
+                            semantic_genesis_facts_v1(binding, previous) == previous_facts
+                        })
+            }),
+            target,
+            facts,
+        )
+        .map_err(|_| ExternalWatermarkAuthorityError::CompareFailed)?;
 
         let previous_record_hash = self.head_hash;
         let record_hash = record_hash(target, previous_record_hash);
@@ -597,10 +687,16 @@ impl ExternalWatermarkAuthority {
             record_hash,
         };
         let previous_semantic_hash = self.semantic_head_hash;
-        let semantic_hash = semantic_record_hash(target, facts, previous_semantic_hash);
+        let semantic_hash = semantic_record_hash(
+            target,
+            facts,
+            binding.lifecycle_mode,
+            previous_semantic_hash,
+        );
         let semantic_record = SemanticRecordV1 {
             value: target,
             facts,
+            lifecycle_mode: binding.lifecycle_mode,
             previous_record_hash: previous_semantic_hash,
             record_hash: semantic_hash,
         };
@@ -656,7 +752,7 @@ impl ExternalWatermarkAuthority {
         })?;
         self.current.insert(scope, target);
         self.semantic_current.insert(scope, facts);
-        self.semantic_last_sequence.insert(scope, target.sequence());
+        self.semantic_last_watermark.insert(scope, target);
         self.history.insert((
             scope,
             target.sequence(),
@@ -685,6 +781,92 @@ impl ExternalWatermarkAuthority {
             return Err(error);
         }
         Ok(())
+    }
+
+    /// Validates the semantic lifecycle represented by two adjacent external
+    /// heads. Sequence zero is the authority baseline; sequence one is the first
+    /// local prepared event and is deliberately admitted without comparing its
+    /// round against the synthetic baseline facts. Thereafter each intent has
+    /// exactly two records: odd prepared, then even signed. A new intent can only
+    /// begin at an odd sequence after an even predecessor and must advance the
+    /// round and Safety revision.
+    fn validate_semantic_transition(
+        lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
+        previous_value: Option<SignerWatermarkV0>,
+        previous_facts: Option<ExternalWatermarkSemanticFactsV1>,
+        previous_is_genesis: bool,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV1,
+    ) -> Result<(), &'static str> {
+        let Some(previous_value) = previous_value else {
+            return if target.sequence() == 0 {
+                Ok(())
+            } else {
+                Err("semantic lifecycle must begin at sequence zero")
+            };
+        };
+        let Some(previous_facts) = previous_facts else {
+            return Err("semantic head is missing for an existing watermark");
+        };
+        if previous_value.journal_id() != target.journal_id()
+            || previous_value.sequence().checked_add(1) != Some(target.sequence())
+        {
+            return Err("semantic scope sequence/order fork");
+        }
+        if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation {
+            if facts.request_fingerprint == previous_facts.request_fingerprint {
+                return Err("semantic per-reservation fingerprint reuse");
+            }
+            if facts.safety_revision <= previous_facts.safety_revision
+                || facts.epoch < previous_facts.epoch
+                || (facts.epoch == previous_facts.epoch && facts.view < previous_facts.view)
+            {
+                return Err("semantic per-reservation intent is not monotonic");
+            }
+            return Ok(());
+        }
+        if previous_value.sequence() == 0 {
+            return if previous_is_genesis && target.sequence() == 1 {
+                Ok(())
+            } else {
+                Self::validate_new_semantic_intent(previous_facts, target, facts)
+            };
+        }
+        if previous_value.sequence() % 2 == 1 && target.sequence().is_multiple_of(2) {
+            if facts.epoch == previous_facts.epoch
+                && facts.view == previous_facts.view
+                && facts.safety_revision == previous_facts.safety_revision
+                && facts.request_fingerprint == previous_facts.request_fingerprint
+                && facts.signing_root == previous_facts.signing_root
+            {
+                return Ok(());
+            }
+            return Err("semantic signed lifecycle does not match prepared intent");
+        }
+        if previous_value.sequence() % 2 == 0 && target.sequence() % 2 == 1 {
+            return Self::validate_new_semantic_intent(previous_facts, target, facts);
+        }
+        Err("semantic lifecycle parity/order fork")
+    }
+
+    fn validate_new_semantic_intent(
+        previous_facts: ExternalWatermarkSemanticFactsV1,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV1,
+    ) -> Result<(), &'static str> {
+        if target.sequence() % 2 != 1 {
+            return Err("semantic new intent must occupy an odd sequence");
+        }
+        if facts.request_fingerprint == previous_facts.request_fingerprint {
+            return Err("semantic new intent reuses previous fingerprint");
+        }
+        let round_advanced = facts.epoch > previous_facts.epoch
+            || (facts.epoch == previous_facts.epoch && facts.view > previous_facts.view);
+        if round_advanced && facts.safety_revision > previous_facts.safety_revision {
+            Ok(())
+        } else {
+            Err("semantic new intent is not strictly monotonic")
+        }
     }
 
     fn replay_log(&mut self) -> Result<(), ExternalWatermarkAuthorityError> {
@@ -824,7 +1006,8 @@ impl ExternalWatermarkAuthority {
         }
         for chunk in bytes.chunks_exact(SEMANTIC_RECORD_BYTES) {
             let record = decode_semantic_record(chunk)?;
-            if record.value.scope() != binding.scope
+            if record.lifecycle_mode != binding.lifecycle_mode
+                || record.value.scope() != binding.scope
                 || record.value.journal_id() != binding.journal_id
                 || record.facts.capability != binding.capability
                 || record.facts.request_nonce == [0; 32]
@@ -841,7 +1024,12 @@ impl ExternalWatermarkAuthority {
                 ));
             }
             if record.record_hash
-                != semantic_record_hash(record.value, record.facts, self.semantic_head_hash)
+                != semantic_record_hash(
+                    record.value,
+                    record.facts,
+                    record.lifecycle_mode,
+                    self.semantic_head_hash,
+                )
             {
                 return Err(ExternalWatermarkAuthorityError::InvalidLog(
                     "semantic record checksum mismatch",
@@ -858,39 +1046,53 @@ impl ExternalWatermarkAuthority {
                     "semantic record has no matching watermark record",
                 ));
             }
-            match self.semantic_current.get(&scope).copied() {
-                None if record.value.sequence() == 0 => {}
-                Some(previous)
-                    if self.current.get(&scope).map(|value| value.journal_id())
-                        == Some(record.value.journal_id())
-                        && self
-                            .semantic_last_sequence
-                            .get(&scope)
-                            .and_then(|sequence| sequence.checked_add(1))
-                            == Some(record.value.sequence())
-                        && (record.facts.epoch > previous.epoch
-                            || (record.facts.epoch == previous.epoch
-                                && record.facts.view > previous.view))
-                        && record.facts.safety_revision > previous.safety_revision => {}
-                _ => {
-                    return Err(ExternalWatermarkAuthorityError::InvalidLog(
-                        "semantic scope sequence/order fork",
-                    ))
-                }
+            let previous_value = self.semantic_last_watermark.get(&scope).copied();
+            let same_intent_lifecycle = binding.lifecycle_mode
+                == ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair
+                && previous_value.is_some_and(|previous| previous.sequence() % 2 == 1)
+                && record.value.sequence() % 2 == 0;
+            if same_intent_lifecycle
+                && record.facts.request_nonce
+                    != signer_journal_lifecycle_nonce_v0(
+                        record.facts.epoch,
+                        record.facts.view,
+                        record.facts.safety_revision,
+                        record.facts.request_fingerprint,
+                        record.facts.signing_root,
+                        record.value.sequence(),
+                    )
+            {
+                return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                    "semantic lifecycle nonce mismatch",
+                ));
             }
+            Self::validate_semantic_transition(
+                binding.lifecycle_mode,
+                previous_value,
+                self.semantic_current.get(&scope).copied(),
+                previous_value.is_some_and(|previous| {
+                    previous.sequence() == 0
+                        && self.semantic_current.get(&scope).copied().is_some_and(
+                            |previous_facts| {
+                                semantic_genesis_facts_v1(binding, previous) == previous_facts
+                            },
+                        )
+                }),
+                record.value,
+                record.facts,
+            )
+            .map_err(ExternalWatermarkAuthorityError::InvalidLog)?;
             self.semantic_current.insert(scope, record.facts);
-            if let Some(previous_fingerprint) = self
+            if self
                 .semantic_nonce_history
                 .insert(record.facts.request_nonce, record.facts.request_fingerprint)
+                .is_some()
             {
-                if previous_fingerprint != record.facts.request_fingerprint {
-                    return Err(ExternalWatermarkAuthorityError::InvalidLog(
-                        "semantic request nonce was rebound",
-                    ));
-                }
+                return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                    "semantic request nonce was reused",
+                ));
             }
-            self.semantic_last_sequence
-                .insert(scope, record.value.sequence());
+            self.semantic_last_watermark.insert(scope, record.value);
             self.semantic_head_hash = record.record_hash;
             self.semantic_record_count = self.semantic_record_count.checked_add(1).ok_or(
                 ExternalWatermarkAuthorityError::InvalidLog("semantic record count exhausted"),
@@ -1066,18 +1268,28 @@ impl ExternalWatermarkAuthority {
                 expected,
                 target,
                 facts,
-            } => match self.compare_and_advance_semantic(expected, target, facts) {
-                Ok(()) => encode_empty_response(STATUS_NONE),
-                Err(ExternalWatermarkAuthorityError::CompareFailed) => {
-                    encode_empty_response(STATUS_COMPARE_FAILED)
-                }
-                Err(ExternalWatermarkAuthorityError::InvalidConfig(_))
-                | Err(ExternalWatermarkAuthorityError::InvalidLog(_))
-                | Err(ExternalWatermarkAuthorityError::ScopeConflict) => {
+                lifecycle_mode,
+            } => {
+                if self
+                    .semantic_binding
+                    .is_none_or(|binding| binding.lifecycle_mode != lifecycle_mode)
+                {
                     encode_empty_response(STATUS_INVALID_STATE)
+                } else {
+                    match self.compare_and_advance_semantic(expected, target, facts) {
+                        Ok(()) => encode_empty_response(STATUS_NONE),
+                        Err(ExternalWatermarkAuthorityError::CompareFailed) => {
+                            encode_empty_response(STATUS_COMPARE_FAILED)
+                        }
+                        Err(ExternalWatermarkAuthorityError::InvalidConfig(_))
+                        | Err(ExternalWatermarkAuthorityError::InvalidLog(_))
+                        | Err(ExternalWatermarkAuthorityError::ScopeConflict) => {
+                            encode_empty_response(STATUS_INVALID_STATE)
+                        }
+                        Err(_) => encode_empty_response(STATUS_UNAVAILABLE),
+                    }
                 }
-                Err(_) => encode_empty_response(STATUS_UNAVAILABLE),
-            },
+            }
         };
         write_frame(&mut stream, &response)
     }
@@ -1132,6 +1344,7 @@ impl ExternalWatermarkAuthority {
 pub struct UnixWatermarkClient {
     socket_path: PathBuf,
     timeout: Duration,
+    semantic_binding: Option<ExternalWatermarkSemanticBindingV1>,
 }
 
 impl UnixWatermarkClient {
@@ -1145,11 +1358,23 @@ impl UnixWatermarkClient {
         Ok(Self {
             socket_path: socket_path.to_path_buf(),
             timeout: Duration::from_secs(5),
+            semantic_binding: None,
         })
     }
 
     pub fn with_timeout(mut self, timeout: Duration) -> Self {
         self.timeout = timeout;
+        self
+    }
+
+    /// Opts this client into the semantic authority protocol.  The daemon
+    /// then receives the complete immutable `(scope, journal, capability)`
+    /// binding on every head read and rejects legacy opaque operations.
+    pub const fn with_semantic_binding(
+        mut self,
+        binding: ExternalWatermarkSemanticBindingV1,
+    ) -> Self {
+        self.semantic_binding = Some(binding);
         self
     }
 
@@ -1250,6 +1475,10 @@ impl UnixWatermarkClient {
             expected,
             target,
             facts,
+            lifecycle_mode: self
+                .semantic_binding
+                .map(|binding| binding.lifecycle_mode)
+                .unwrap_or(ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair),
         })? {
             ResponseV1::None => Ok(()),
             ResponseV1::CompareFailed => Err(ExternalWatermarkAuthorityError::CompareFailed),
@@ -1272,6 +1501,9 @@ impl ExternalMonotonicWatermarkV0 for UnixWatermarkClient {
         &mut self,
         scope: [u8; 32],
     ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+        if self.semantic_binding.is_some() {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
         self.load_checked(scope).map_err(map_client_error)
     }
 
@@ -1280,9 +1512,127 @@ impl ExternalMonotonicWatermarkV0 for UnixWatermarkClient {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
     ) -> Result<(), ExternalWatermarkErrorV0> {
+        if self.semantic_binding.is_some() {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
         self.compare_and_advance_checked(expected, target)
             .map_err(map_client_error)
     }
+
+    fn semantic_mode_v0(&self) -> bool {
+        self.semantic_binding.is_some()
+    }
+
+    fn load_semantic_v0(
+        &mut self,
+        scope: [u8; 32],
+        journal_id: [u8; 32],
+    ) -> Result<
+        Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+        ExternalWatermarkErrorV0,
+    > {
+        let expected = self
+            .semantic_binding
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+        if expected.scope != scope || expected.journal_id != journal_id {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+        self.load_semantic_checked(expected)
+            .map_err(map_client_error)?
+            .map(|(value, facts)| {
+                let facts = ExternalWatermarkSemanticFactsV0::new(
+                    facts.epoch,
+                    facts.view,
+                    facts.safety_revision,
+                    facts.request_nonce,
+                    facts.request_fingerprint,
+                    facts.signing_root,
+                    facts.capability,
+                )
+                .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+                Ok((value, facts))
+            })
+            .transpose()
+    }
+
+    fn compare_and_advance_semantic_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+        facts: ExternalWatermarkSemanticFactsV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        let binding = self
+            .semantic_binding
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+        if (facts.capability != [0; 32] && facts.capability != binding.capability)
+            || target.scope() != binding.scope
+            || target.journal_id() != binding.journal_id
+        {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+        let facts =
+            ExternalWatermarkSemanticFactsV1::new(facts.epoch, facts.view, facts.safety_revision)
+                .and_then(|facts_v1| {
+                    facts_v1.with_request(
+                        facts.request_nonce,
+                        facts.request_fingerprint,
+                        facts.signing_root,
+                        binding.capability,
+                    )
+                })
+                .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+        self.compare_and_advance_semantic_checked(expected, target, facts)
+            .map_err(map_client_error)
+    }
+
+    fn compare_and_advance_semantic_genesis_v0(
+        &mut self,
+        expected: Option<SignerWatermarkV0>,
+        target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        let binding = self
+            .semantic_binding
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+        if target.scope() != binding.scope || target.journal_id() != binding.journal_id {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+        let facts = semantic_genesis_facts_v1(binding, target);
+        self.compare_and_advance_semantic_checked(expected, target, facts)
+            .map_err(map_client_error)
+    }
+}
+
+fn semantic_genesis_facts_v1(
+    binding: ExternalWatermarkSemanticBindingV1,
+    target: SignerWatermarkV0,
+) -> ExternalWatermarkSemanticFactsV1 {
+    fn digest(
+        label: &[u8],
+        binding: ExternalWatermarkSemanticBindingV1,
+        target: SignerWatermarkV0,
+    ) -> [u8; 32] {
+        let mut hasher = Sha256::new();
+        hasher.update(b"trnm.consensus.external-watermark.semantic-genesis.v1\0");
+        hasher.update(label);
+        hasher.update(binding.scope);
+        hasher.update(binding.journal_id);
+        hasher.update(binding.capability);
+        hasher.update(target.scope());
+        hasher.update(target.journal_id());
+        hasher.update(target.sequence().to_be_bytes());
+        hasher.update(target.chain_checksum());
+        hasher.finalize().into()
+    }
+    ExternalWatermarkSemanticFactsV1::new(0, 0, 1)
+        .and_then(|facts| {
+            facts.with_request(
+                digest(b"nonce", binding, target),
+                digest(b"fingerprint", binding, target),
+                digest(b"root", binding, target),
+                binding.capability,
+            )
+        })
+        .expect("semantic genesis facts are nonzero by construction")
 }
 
 /// Timeout-only adapter around the existing append-only local signer journal.
@@ -2126,6 +2476,7 @@ enum RequestV1 {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
         facts: ExternalWatermarkSemanticFactsV1,
+        lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     },
 }
 
@@ -2224,6 +2575,7 @@ fn semantic_anchor_path_for(log_path: &Path) -> Result<PathBuf, ExternalWatermar
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct ModeMarkerV1 {
     semantic: bool,
+    lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     binding: Option<ExternalWatermarkSemanticBindingV1>,
 }
 
@@ -2257,7 +2609,7 @@ fn read_mode_marker(path: &Path) -> Result<Option<ModeMarkerV1>, ExternalWaterma
     if bytes.len() != SEMANTIC_MODE_BYTES
         || &bytes[..8] != SEMANTIC_MODE_MAGIC
         || bytes[8] != PROTOCOL_VERSION
-        || bytes[10..12] != [0, 0]
+        || bytes[11..12] != [0]
     {
         return Err(ExternalWatermarkAuthorityError::InvalidLog(
             "authority mode marker header",
@@ -2269,6 +2621,7 @@ fn read_mode_marker(path: &Path) -> Result<Option<ModeMarkerV1>, ExternalWaterma
             "authority mode marker mode",
         ));
     }
+    let lifecycle_mode = ExternalWatermarkSemanticLifecycleModeV1::from_wire(bytes[10])?;
     let scope: [u8; 32] = bytes[12..44].try_into().expect("mode scope");
     let journal_id: [u8; 32] = bytes[44..76].try_into().expect("mode journal");
     let capability: [u8; 32] = bytes[76..108].try_into().expect("mode capability");
@@ -2283,31 +2636,60 @@ fn read_mode_marker(path: &Path) -> Result<Option<ModeMarkerV1>, ExternalWaterma
             .ok_or(ExternalWatermarkAuthorityError::InvalidLog(
                 "semantic mode marker binding",
             ))
+            .map(|binding| binding.with_lifecycle_mode(lifecycle_mode))
             .map(Some)?
     } else {
-        if scope != [0; 32] || journal_id != [0; 32] || capability != [0; 32] {
+        if lifecycle_mode != ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair
+            || scope != [0; 32]
+            || journal_id != [0; 32]
+            || capability != [0; 32]
+        {
             return Err(ExternalWatermarkAuthorityError::InvalidLog(
                 "opaque mode marker binding",
             ));
         }
         None
     };
-    Ok(Some(ModeMarkerV1 { semantic, binding }))
+    if let Some(binding) = binding {
+        if binding.lifecycle_mode != lifecycle_mode {
+            return Err(ExternalWatermarkAuthorityError::InvalidLog(
+                "semantic mode marker binding mode",
+            ));
+        }
+    }
+    Ok(Some(ModeMarkerV1 {
+        semantic,
+        lifecycle_mode,
+        binding,
+    }))
 }
 
 fn write_mode_marker(
     path: &Path,
     binding: Option<ExternalWatermarkSemanticBindingV1>,
 ) -> Result<(), ExternalWatermarkAuthorityError> {
-    let (semantic, scope, journal_id, capability) = match binding {
-        Some(binding) => (1_u8, binding.scope, binding.journal_id, binding.capability),
-        None => (0_u8, [0; 32], [0; 32], [0; 32]),
+    let (semantic, lifecycle_mode, scope, journal_id, capability) = match binding {
+        Some(binding) => (
+            1_u8,
+            binding.lifecycle_mode as u8,
+            binding.scope,
+            binding.journal_id,
+            binding.capability,
+        ),
+        None => (
+            0_u8,
+            ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair as u8,
+            [0; 32],
+            [0; 32],
+            [0; 32],
+        ),
     };
     let mut bytes = [0_u8; SEMANTIC_MODE_BYTES];
     bytes[..8].copy_from_slice(SEMANTIC_MODE_MAGIC);
     bytes[8] = PROTOCOL_VERSION;
     bytes[9] = semantic;
-    bytes[10..12].copy_from_slice(&[0, 0]);
+    bytes[10] = lifecycle_mode;
+    bytes[11] = 0;
     bytes[12..44].copy_from_slice(&scope);
     bytes[44..76].copy_from_slice(&journal_id);
     bytes[76..108].copy_from_slice(&capability);
@@ -2384,6 +2766,7 @@ fn record_hash(value: SignerWatermarkV0, previous: [u8; 32]) -> [u8; 32] {
 fn semantic_record_hash(
     value: SignerWatermarkV0,
     facts: ExternalWatermarkSemanticFactsV1,
+    lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     previous: [u8; 32],
 ) -> [u8; 32] {
     let mut hasher = Sha256::new();
@@ -2393,6 +2776,13 @@ fn semantic_record_hash(
     hasher.update(value.journal_id());
     hasher.update(value.sequence().to_be_bytes());
     hasher.update(value.chain_checksum());
+    // Keep the strict/default hash byte-for-byte compatible with v1 records;
+    // the reserved header byte and marker still authenticate that mode.  The
+    // explicit per-reservation mode commits its marker byte into the hash so
+    // a copied record cannot cross namespaces.
+    if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation {
+        hasher.update([lifecycle_mode as u8]);
+    }
     hasher.update(facts.epoch.to_be_bytes());
     hasher.update(facts.view.to_be_bytes());
     hasher.update(facts.safety_revision.to_be_bytes());
@@ -2461,7 +2851,9 @@ fn encode_semantic_record(record: SemanticRecordV1) -> [u8; SEMANTIC_RECORD_BYTE
     offset += 1;
     bytes[offset] = 1;
     offset += 1;
-    offset += 2;
+    bytes[offset] = record.lifecycle_mode as u8;
+    offset += 1;
+    offset += 1;
     bytes[offset..offset + 8].copy_from_slice(&record.value.sequence().to_be_bytes());
     offset += 8;
     bytes[offset..offset + 32].copy_from_slice(&record.value.scope());
@@ -2497,12 +2889,13 @@ fn decode_semantic_record(
         || &bytes[..8] != SEMANTIC_MAGIC
         || bytes[8] != PROTOCOL_VERSION
         || bytes[9] != 1
-        || bytes[10..12] != [0, 0]
+        || bytes[11..12] != [0]
     {
         return Err(ExternalWatermarkAuthorityError::InvalidLog(
             "semantic record header",
         ));
     }
+    let lifecycle_mode = ExternalWatermarkSemanticLifecycleModeV1::from_wire(bytes[10])?;
     let sequence = u64::from_be_bytes(bytes[12..20].try_into().expect("semantic sequence"));
     let scope = bytes[20..52].try_into().expect("semantic scope");
     let journal_id = bytes[52..84].try_into().expect("semantic journal");
@@ -2539,6 +2932,7 @@ fn decode_semantic_record(
             signing_root,
             capability,
         },
+        lifecycle_mode,
         previous_record_hash,
         record_hash,
     })
@@ -2676,7 +3070,8 @@ fn encode_request(request: RequestV1) -> Vec<u8> {
         RequestV1::LoadSemantic { binding } => {
             body.push(OP_LOAD_SEMANTIC);
             body.push(0);
-            body.extend_from_slice(&[0, 0]);
+            body.push(binding.lifecycle_mode as u8);
+            body.push(0);
             body.extend_from_slice(&binding.scope);
             body.extend_from_slice(&binding.journal_id);
             body.extend_from_slice(&binding.capability);
@@ -2695,10 +3090,12 @@ fn encode_request(request: RequestV1) -> Vec<u8> {
             expected,
             target,
             facts,
+            lifecycle_mode,
         } => {
             body.push(OP_COMPARE_AND_ADVANCE_SEMANTIC);
             body.push(u8::from(expected.is_some()));
-            body.extend_from_slice(&[0, 0]);
+            body.push(lifecycle_mode as u8);
+            body.push(0);
             body.extend_from_slice(&target.scope());
             if let Some(expected) = expected {
                 encode_watermark(expected, &mut body);
@@ -2722,25 +3119,32 @@ fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityEr
     }
     let operation = body[5];
     let expected_present = body[6];
-    if body[7..9] != [0, 0] || body.len() > MAX_FRAME_BYTES {
+    if body[8] != 0 || body.len() > MAX_FRAME_BYTES {
         return Err(ExternalWatermarkAuthorityError::Protocol("request flags"));
     }
     match operation {
-        OP_LOAD if expected_present == 0 && body.len() == 41 => {
+        OP_LOAD if expected_present == 0 && body[7] == 0 && body.len() == 41 => {
             let scope = body[9..41].try_into().expect("load scope");
             Ok(RequestV1::Load { scope })
         }
         OP_LOAD_SEMANTIC if expected_present == 0 && body.len() == 105 => {
+            let lifecycle_mode = ExternalWatermarkSemanticLifecycleModeV1::from_wire(body[7])?;
+            if body[8] != 0 {
+                return Err(ExternalWatermarkAuthorityError::Protocol(
+                    "semantic load reserved flags",
+                ));
+            }
             let scope = body[9..41].try_into().expect("semantic load scope");
             let journal_id = body[41..73].try_into().expect("semantic load journal");
             let capability = body[73..105].try_into().expect("semantic load capability");
             let binding = ExternalWatermarkSemanticBindingV1::new(scope, journal_id, capability)
                 .ok_or(ExternalWatermarkAuthorityError::Protocol(
                     "semantic load binding",
-                ))?;
+                ))?
+                .with_lifecycle_mode(lifecycle_mode);
             Ok(RequestV1::LoadSemantic { binding })
         }
-        OP_COMPARE_AND_ADVANCE if expected_present <= 1 => {
+        OP_COMPARE_AND_ADVANCE if expected_present <= 1 && body[7] == 0 => {
             let expected_len = if expected_present == 1 {
                 WATERMARK_BYTES
             } else {
@@ -2778,6 +3182,12 @@ fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityEr
             if body.len() != target_start + WATERMARK_BYTES + 152 {
                 return Err(ExternalWatermarkAuthorityError::Protocol(
                     "semantic compare request length",
+                ));
+            }
+            let lifecycle_mode = ExternalWatermarkSemanticLifecycleModeV1::from_wire(body[7])?;
+            if body[8] != 0 {
+                return Err(ExternalWatermarkAuthorityError::Protocol(
+                    "semantic compare reserved flags",
                 ));
             }
             let scope: [u8; 32] = body[9..41].try_into().expect("semantic compare scope");
@@ -2826,6 +3236,7 @@ fn decode_request(body: &[u8]) -> Result<RequestV1, ExternalWatermarkAuthorityEr
                 expected,
                 target,
                 facts,
+                lifecycle_mode,
             })
         }
         _ => Err(ExternalWatermarkAuthorityError::Protocol(
@@ -2985,6 +3396,19 @@ pub fn run_semantic_daemon(
     log_path: impl AsRef<Path>,
     binding: ExternalWatermarkSemanticBindingV1,
 ) -> Result<(), ExternalWatermarkAuthorityError> {
+    ExternalWatermarkAuthority::open_semantic(log_path, binding)?.serve_unix(socket_path)
+}
+
+/// Runs the explicitly provisioned one-CAS-per-reservation daemon.  This is
+/// separate from `run_semantic_daemon` so a strict signer-journal namespace
+/// cannot be changed by a command-line toggle after it has been created.
+pub fn run_per_reservation_daemon(
+    socket_path: impl AsRef<Path>,
+    log_path: impl AsRef<Path>,
+    binding: ExternalWatermarkSemanticBindingV1,
+) -> Result<(), ExternalWatermarkAuthorityError> {
+    let binding =
+        binding.with_lifecycle_mode(ExternalWatermarkSemanticLifecycleModeV1::PerReservation);
     ExternalWatermarkAuthority::open_semantic(log_path, binding)?.serve_unix(socket_path)
 }
 

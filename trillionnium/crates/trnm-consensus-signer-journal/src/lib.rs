@@ -81,9 +81,10 @@ pub use handoff_sqlite_v1::{
     SqliteHandoffSignerJournalV1,
 };
 pub use model::{
-    ExternalMonotonicWatermarkInjectionV0, ExternalMonotonicWatermarkV0,
-    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerV0,
-    SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
+    signer_journal_lifecycle_nonce_v0, ExternalMonotonicWatermarkInjectionV0,
+    ExternalMonotonicWatermarkV0, ExternalWatermarkSemanticBindingV0,
+    ExternalWatermarkSemanticFactsV0, ProposalSignatureProducerV0, ProposalSignatureRequestV0,
+    SignatureProducerV0, SignatureRequestV0, SignerJournalProfileV0, SignerWatermarkV0,
 };
 pub use sqlite::{
     ConfirmedSignerNodeCheckpointFactsV0, JournalCapacityV0, PinnedSqliteSignerJournalV0,

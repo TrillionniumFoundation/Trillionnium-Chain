@@ -13,12 +13,14 @@ use ed25519_dalek::{Signer, SigningKey};
 use tempfile::tempdir;
 use trnm_consensus_external_watermark::{
     ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1,
-    ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1, ReplayBindingStoreV1,
-    ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter, UnixWatermarkClient,
+    ExternalWatermarkSemanticFactsV1, ExternalWatermarkSemanticLifecycleModeV1,
+    ReplayBindingErrorV1, ReplayBindingStoreV1, ReplayBoundTimeoutProducer,
+    TimeoutOnlySignerAdapter, UnixWatermarkClient,
 };
 use trnm_consensus_signer_journal::{
-    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalConflictV0,
-    SignerJournalErrorV0, SignerJournalProfileV0, SignerWatermarkV0, SqliteSignerJournalV0,
+    signer_journal_lifecycle_nonce_v0, SignatureProducerErrorV0, SignatureProducerV0,
+    SignatureRequestV0, SignerJournalConflictV0, SignerJournalErrorV0, SignerJournalProfileV0,
+    SignerWatermarkV0, SqliteSignerJournalV0,
 };
 use trnm_consensus_types::{
     BlockId, CanonicalSignIntentV0, CertificateId, ChainId, ConsensusParametersHash,
@@ -37,31 +39,60 @@ fn semantic_binding() -> ExternalWatermarkSemanticBindingV1 {
         .expect("valid semantic test binding")
 }
 
+fn per_reservation_binding() -> ExternalWatermarkSemanticBindingV1 {
+    ExternalWatermarkSemanticBindingV1::new_per_reservation(SCOPE, JOURNAL, CAPABILITY)
+        .expect("valid per-reservation test binding")
+}
+
 struct AuthorityProcess {
     child: Child,
     socket: PathBuf,
     log: PathBuf,
     client: UnixWatermarkClient,
     semantic: bool,
+    lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
 }
 
 impl AuthorityProcess {
     fn start(root: &Path) -> Self {
-        Self::start_with_mode(root, false)
+        Self::start_with_mode(
+            root,
+            false,
+            ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair,
+        )
     }
 
     fn start_semantic(root: &Path) -> Self {
-        Self::start_with_mode(root, true)
+        Self::start_with_mode(
+            root,
+            true,
+            ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair,
+        )
     }
 
-    fn start_with_mode(root: &Path, semantic: bool) -> Self {
+    fn start_per_reservation(root: &Path) -> Self {
+        Self::start_with_mode(
+            root,
+            true,
+            ExternalWatermarkSemanticLifecycleModeV1::PerReservation,
+        )
+    }
+
+    fn start_with_mode(
+        root: &Path,
+        semantic: bool,
+        lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
+    ) -> Self {
         let socket = root.join("authority.sock");
         let log = root.join("authority.log");
         let binary = env!("CARGO_BIN_EXE_trnm-external-watermark-v0");
         let mut command = Command::new(binary);
         if semantic {
+            command.arg("semantic");
+            if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation {
+                command.arg("--per-reservation");
+            }
             command.args([
-                "semantic",
                 "--scope",
                 &hex32(SCOPE),
                 "--journal-id",
@@ -80,22 +111,44 @@ impl AuthorityProcess {
             .spawn()
             .expect("spawn external authority");
         let client = UnixWatermarkClient::new(&socket).expect("authority client");
+        let client = if semantic {
+            let binding =
+                if lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation {
+                    per_reservation_binding()
+                } else {
+                    semantic_binding()
+                };
+            client.with_semantic_binding(binding)
+        } else {
+            client
+        };
         let process = Self {
             child,
             socket,
             log,
             client,
             semantic,
+            lifecycle_mode,
         };
         process.wait_ready();
         process
     }
 
     fn wait_ready(&self) {
-        for _ in 0..100 {
+        // Parallel Rust test processes can briefly contend for the build
+        // machine's filesystem and scheduler.  Readiness is still bounded,
+        // but a one-second window made an otherwise healthy daemon flaky.
+        for _ in 0..500 {
             let result = if self.semantic {
+                let binding = if self.lifecycle_mode
+                    == ExternalWatermarkSemanticLifecycleModeV1::PerReservation
+                {
+                    per_reservation_binding()
+                } else {
+                    semantic_binding()
+                };
                 self.client
-                    .load_semantic_checked(semantic_binding())
+                    .load_semantic_checked(binding)
                     .map(|value| value.map(|(watermark, _)| watermark))
             } else {
                 self.client.load_checked(SCOPE)
@@ -118,12 +171,14 @@ impl AuthorityProcess {
         let replacement = Self::start_with_mode(
             self.socket.parent().expect("authority parent"),
             self.semantic,
+            self.lifecycle_mode,
         );
         self.child = replacement.child;
         self.socket = replacement.socket;
         self.log = replacement.log;
         self.client = replacement.client;
         self.semantic = replacement.semantic;
+        self.lifecycle_mode = replacement.lifecycle_mode;
     }
 
     fn stop(&mut self) {
@@ -148,6 +203,22 @@ fn semantic_facts(
             facts.with_request([nonce; 32], [fingerprint; 32], [0x66; 32], CAPABILITY)
         })
         .expect("valid semantic facts")
+}
+
+fn semantic_lifecycle_facts(
+    epoch: u64,
+    view: u64,
+    revision: u64,
+    sequence: u64,
+    fingerprint: u8,
+) -> ExternalWatermarkSemanticFactsV1 {
+    let fingerprint = [fingerprint; 32];
+    let root = [0x66; 32];
+    let nonce =
+        signer_journal_lifecycle_nonce_v0(epoch, view, revision, fingerprint, root, sequence);
+    ExternalWatermarkSemanticFactsV1::new(epoch, view, revision)
+        .and_then(|facts| facts.with_request(nonce, fingerprint, root, CAPABILITY))
+        .expect("valid lifecycle semantic facts")
 }
 
 fn mark(sequence: u64, checksum: u8) -> SignerWatermarkV0 {
@@ -376,6 +447,139 @@ fn semantic_namespace_cannot_downgrade_or_rebind_capability() {
         .output()
         .expect("spawn attempted opaque downgrade");
     assert!(!failed.status.success(), "semantic mode must not downgrade");
+}
+
+#[test]
+fn per_reservation_mode_accepts_three_cas_records_across_restart_and_tamper() {
+    let root = tempdir().expect("private per-reservation directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_per_reservation(root.path());
+    let binding = per_reservation_binding();
+    let mut expected = None;
+    for (sequence, epoch, view, revision, nonce, fingerprint, checksum) in [
+        (0, 1, 1, 1, 0x81, 0x91, 0x41),
+        (1, 1, 1, 2, 0x82, 0x92, 0x42),
+        (2, 1, 2, 3, 0x83, 0x93, 0x43),
+    ] {
+        let target = mark(sequence, checksum);
+        authority
+            .client
+            .compare_and_advance_semantic_checked(
+                expected,
+                target,
+                ExternalWatermarkSemanticFactsV1::new(epoch, view, revision)
+                    .and_then(|facts| {
+                        facts.with_request([nonce; 32], [fingerprint; 32], [0x66; 32], CAPABILITY)
+                    })
+                    .expect("per-reservation facts"),
+            )
+            .unwrap_or_else(|error| panic!("per-reservation CAS sequence={sequence}: {error:?}"));
+        expected = Some(target);
+        if sequence == 1 {
+            authority.restart();
+            assert_eq!(
+                authority
+                    .client
+                    .load_semantic_checked(binding)
+                    .expect("reopen per-reservation head")
+                    .map(|(watermark, _)| watermark),
+                Some(target)
+            );
+        }
+    }
+    authority.stop();
+    let semantic_log = root.path().join(".authority.log.semantic-v1");
+    let bytes = fs::read(&semantic_log).expect("read per-reservation sidecar");
+    fs::write(&semantic_log, &bytes[..bytes.len() - 1]).expect("tamper sidecar tail");
+    let failed = Command::new(env!("CARGO_BIN_EXE_trnm-external-watermark-v0"))
+        .args([
+            "semantic",
+            "--per-reservation",
+            "--socket",
+            authority.socket.to_str().unwrap(),
+            "--log",
+            authority.log.to_str().unwrap(),
+            "--scope",
+            &hex32(SCOPE),
+            "--journal-id",
+            &hex32(JOURNAL),
+            "--capability",
+            &hex32(CAPABILITY),
+        ])
+        .output()
+        .expect("restart tampered per-reservation authority");
+    assert!(
+        !failed.status.success(),
+        "tampered sidecar must fail closed"
+    );
+}
+
+#[test]
+fn semantic_journal_lifecycle_accepts_prepared_signed_pair_and_rejects_third_event() {
+    let root = tempdir().expect("private semantic lifecycle directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_semantic(root.path());
+
+    // A direct sequence-zero semantic reservation models a service-owned
+    // first request (the explicit journal-genesis path uses its own synthetic
+    // facts).  The next odd sequence is a new intent and must advance the
+    // authenticated round/revision.
+    let first = mark(0, 0x91);
+    authority
+        .client
+        .compare_and_advance_semantic_checked(None, first, semantic_facts(3, 1, 1, 0x91, 0xa1))
+        .expect("first semantic reservation");
+    let prepared = mark(1, 0x92);
+    authority
+        .client
+        .compare_and_advance_semantic_checked(
+            Some(first),
+            prepared,
+            semantic_facts(3, 2, 2, 0x92, 0xa2),
+        )
+        .expect("prepared lifecycle event");
+
+    // Reusing the intent facts with an arbitrary nonce is not a valid signed
+    // lifecycle transition; the nonce must be derived from the target event
+    // sequence and exact intent identity.
+    let signed = mark(2, 0x93);
+    assert!(matches!(
+        authority.client.compare_and_advance_semantic_checked(
+            Some(prepared),
+            signed,
+            semantic_facts(3, 2, 2, 0x93, 0xa2),
+        ),
+        Err(ExternalWatermarkAuthorityError::CompareFailed)
+    ));
+    authority
+        .client
+        .compare_and_advance_semantic_checked(
+            Some(prepared),
+            signed,
+            semantic_lifecycle_facts(3, 2, 2, 2, 0xa2),
+        )
+        .expect("exact prepared-to-signed lifecycle event");
+
+    // A third event for the same intent would violate the journal's two-event
+    // lifecycle and must fail closed even with a fresh nonce.
+    assert!(matches!(
+        authority.client.compare_and_advance_semantic_checked(
+            Some(signed),
+            mark(3, 0x94),
+            semantic_facts(3, 3, 3, 0x94, 0xa2),
+        ),
+        Err(ExternalWatermarkAuthorityError::CompareFailed)
+    ));
+    authority.restart();
+    assert_eq!(
+        authority
+            .client
+            .load_semantic_checked(semantic_binding())
+            .expect("reopen semantic lifecycle authority")
+            .map(|(watermark, _)| watermark),
+        Some(signed)
+    );
+    authority.stop();
 }
 
 #[derive(Clone)]

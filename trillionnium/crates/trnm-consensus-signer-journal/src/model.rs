@@ -13,6 +13,38 @@ pub(crate) const MAXIMUM_INTENTS_HARD_V0: u64 = 1_000_000;
 pub(crate) const MAXIMUM_INTENT_BYTES_HARD_V0: usize = 16 * 1024;
 pub(crate) const DATABASE_OVERHEAD_BYTES_V0: usize = 16 * 1024 * 1024;
 const PROFILE_DOMAIN_V0: &str = "trnm.consensus-signer-journal.profile.v0";
+const LIFECYCLE_NONCE_DOMAIN_V0: &str = "trnm.consensus-signer-journal.lifecycle-nonce.v0";
+
+/// Derives the nonce used for one durable signer-journal lifecycle event.
+///
+/// A canonical intent has two externally fenced lifecycle heads: the odd
+/// `prepared` event and the following even `signed` event.  The nonce must
+/// therefore include the target external sequence; reusing the intent
+/// checksum for both events would make a semantic authority mistake the
+/// legitimate second CAS for a replay.  This helper is public so every
+/// external authority implementation uses the same domain-separated
+/// derivation rather than inventing a transport-local nonce scheme.
+#[must_use]
+pub fn signer_journal_lifecycle_nonce_v0(
+    epoch: u64,
+    view: u64,
+    safety_revision: u64,
+    request_fingerprint: [u8; 32],
+    signing_root: [u8; 32],
+    target_sequence: u64,
+) -> [u8; 32] {
+    hash_domain(
+        LIFECYCLE_NONCE_DOMAIN_V0,
+        &[
+            &epoch.to_be_bytes(),
+            &view.to_be_bytes(),
+            &safety_revision.to_be_bytes(),
+            &request_fingerprint,
+            &signing_root,
+            &target_sequence.to_be_bytes(),
+        ],
+    )
+}
 
 /// Exact external anti-rollback head corresponding to one local journal head.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -21,6 +53,109 @@ pub struct SignerWatermarkV0 {
     journal_id: [u8; 32],
     sequence: u64,
     chain_checksum: [u8; 32],
+}
+
+/// Immutable namespace binding for a semantic external watermark authority.
+///
+/// The capability is an admission secret held by the independently
+/// provisioned authority client/daemon; it is never a signing key.  The
+/// signer-journal crate carries this small protocol type so the journal can
+/// opt into semantic CAS without depending on a concrete Unix/HSM transport.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalWatermarkSemanticBindingV0 {
+    pub scope: [u8; 32],
+    pub journal_id: [u8; 32],
+    pub capability: [u8; 32],
+}
+
+impl ExternalWatermarkSemanticBindingV0 {
+    pub fn new(scope: [u8; 32], journal_id: [u8; 32], capability: [u8; 32]) -> Option<Self> {
+        if scope == [0; 32] || journal_id == [0; 32] || capability == [0; 32] {
+            return None;
+        }
+        Some(Self {
+            scope,
+            journal_id,
+            capability,
+        })
+    }
+}
+
+/// Semantic round facts bound to one external watermark reservation.
+///
+/// These are intentionally narrower than Core/SafetyRules state.  They bind
+/// the signer-journal intent coordinates and request identity so an opted-in
+/// external authority cannot be used through the legacy opaque CAS path.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ExternalWatermarkSemanticFactsV0 {
+    pub epoch: u64,
+    pub view: u64,
+    pub safety_revision: u64,
+    pub request_nonce: [u8; 32],
+    pub request_fingerprint: [u8; 32],
+    pub signing_root: [u8; 32],
+    pub capability: [u8; 32],
+}
+
+impl ExternalWatermarkSemanticFactsV0 {
+    pub fn new(
+        epoch: u64,
+        view: u64,
+        safety_revision: u64,
+        request_nonce: [u8; 32],
+        request_fingerprint: [u8; 32],
+        signing_root: [u8; 32],
+        capability: [u8; 32],
+    ) -> Option<Self> {
+        if safety_revision == 0
+            || request_nonce == [0; 32]
+            || request_fingerprint == [0; 32]
+            || signing_root == [0; 32]
+            || capability == [0; 32]
+        {
+            return None;
+        }
+        Some(Self {
+            epoch,
+            view,
+            safety_revision,
+            request_nonce,
+            request_fingerprint,
+            signing_root,
+            capability,
+        })
+    }
+
+    /// Constructs facts from a local journal intent.  The capability is
+    /// intentionally left zero: it is private to the semantic authority
+    /// adapter and is filled there after the adapter authenticates its bound
+    /// namespace.  A nonzero capability supplied by a caller is still
+    /// carried and must match that adapter exactly.
+    pub fn from_journal_intent(
+        epoch: u64,
+        view: u64,
+        safety_revision: u64,
+        request_nonce: [u8; 32],
+        request_fingerprint: [u8; 32],
+        signing_root: [u8; 32],
+    ) -> Option<Self> {
+        if safety_revision == 0
+            || request_nonce == [0; 32]
+            || request_fingerprint == [0; 32]
+            || signing_root == [0; 32]
+        {
+            return None;
+        }
+        Some(Self {
+            epoch,
+            view,
+            safety_revision,
+            request_nonce,
+            request_fingerprint,
+            signing_root,
+            capability: [0; 32],
+        })
+    }
 }
 
 impl SignerWatermarkV0 {
@@ -77,6 +212,49 @@ pub trait ExternalMonotonicWatermarkV0 {
         expected: Option<SignerWatermarkV0>,
         target: SignerWatermarkV0,
     ) -> Result<(), ExternalWatermarkErrorV0>;
+
+    /// Returns whether this authority requires semantic CAS.  Legacy
+    /// implementations remain opaque by default; an opted-in implementation
+    /// must reject the legacy methods on its own transport.
+    fn semantic_mode_v0(&self) -> bool {
+        false
+    }
+
+    /// Loads a semantic head after authenticating the exact namespace.  The
+    /// default is unreachable for legacy opaque authorities.
+    fn load_semantic_v0(
+        &mut self,
+        _scope: [u8; 32],
+        _journal_id: [u8; 32],
+    ) -> Result<
+        Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+        ExternalWatermarkErrorV0,
+    > {
+        Err(ExternalWatermarkErrorV0::Unavailable)
+    }
+
+    /// Advances a semantic head using facts from the exact local signer
+    /// intent.  The default is unreachable for legacy opaque authorities.
+    fn compare_and_advance_semantic_v0(
+        &mut self,
+        _expected: Option<SignerWatermarkV0>,
+        _target: SignerWatermarkV0,
+        _facts: ExternalWatermarkSemanticFactsV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::Unavailable)
+    }
+
+    /// Claims a sequence-zero semantic namespace.  Genesis has no signer
+    /// intent from which to derive facts, so the authority creates and binds
+    /// its own deterministic genesis record.  Legacy authorities never call
+    /// this method.
+    fn compare_and_advance_semantic_genesis_v0(
+        &mut self,
+        _expected: Option<SignerWatermarkV0>,
+        _target: SignerWatermarkV0,
+    ) -> Result<(), ExternalWatermarkErrorV0> {
+        Err(ExternalWatermarkErrorV0::Unavailable)
+    }
 }
 
 /// Composition seam for installing an independently administered watermark

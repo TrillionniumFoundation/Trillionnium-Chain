@@ -36,8 +36,8 @@ use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBeha
 use sha2::{Digest, Sha256};
 use trnm_consensus_external_watermark::{
     ExternalWatermarkAuthorityError, ExternalWatermarkSemanticBindingV1,
-    ExternalWatermarkSemanticFactsV1, ReplayBindingErrorV1, ReplayBindingStoreV1,
-    UnixWatermarkClient,
+    ExternalWatermarkSemanticFactsV1, ExternalWatermarkSemanticLifecycleModeV1,
+    ReplayBindingErrorV1, ReplayBindingStoreV1, UnixWatermarkClient,
 };
 use trnm_consensus_remote_signer_protocol::{
     decode_remote_signer_request_v1_exact, RemoteConsensusCommandKindV1,
@@ -266,6 +266,7 @@ pub struct UnixExternalTimeoutAuthorityV1 {
     signer_profile_ref: [u8; 32],
     journal_id: [u8; 32],
     capability: [u8; 32],
+    semantic_lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1,
     pending: BTreeMap<[u8; 32], PendingExternalReservationV1>,
     poisoned: bool,
 }
@@ -317,6 +318,7 @@ impl UnixExternalTimeoutAuthorityV1 {
             signer_profile_ref,
             journal_id,
             capability: [0; 32],
+            semantic_lifecycle_mode: ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair,
             pending: BTreeMap::new(),
             poisoned: false,
         })
@@ -326,6 +328,16 @@ impl UnixExternalTimeoutAuthorityV1 {
     /// semantic watermark daemon. A zero token is never accepted on the wire.
     pub const fn with_capability(mut self, capability: [u8; 32]) -> Self {
         self.capability = capability;
+        self
+    }
+
+    /// Selects the explicit one-CAS-per-reservation semantic protocol.  The
+    /// default remains the strict signer-journal pair mode.
+    pub const fn with_semantic_lifecycle_mode(
+        mut self,
+        mode: ExternalWatermarkSemanticLifecycleModeV1,
+    ) -> Self {
+        self.semantic_lifecycle_mode = mode;
         self
     }
 
@@ -348,6 +360,18 @@ impl UnixExternalTimeoutAuthorityV1 {
         )
     }
 
+    pub fn from_binding_per_reservation(
+        binding: RemoteSignerRequestBindingV1,
+        authority_socket: impl AsRef<Path>,
+        response_log_path: impl AsRef<Path>,
+    ) -> Result<Self, ExternalAuthorityErrorV1> {
+        Self::from_binding(binding, authority_socket, response_log_path).map(|adapter| {
+            adapter.with_semantic_lifecycle_mode(
+                ExternalWatermarkSemanticLifecycleModeV1::PerReservation,
+            )
+        })
+    }
+
     pub const fn journal_id(&self) -> [u8; 32] {
         self.journal_id
     }
@@ -360,6 +384,7 @@ impl UnixExternalTimeoutAuthorityV1 {
         &self,
     ) -> Result<ExternalWatermarkSemanticBindingV1, ExternalAuthorityErrorV1> {
         ExternalWatermarkSemanticBindingV1::new(self.scope, self.journal_id, self.capability)
+            .map(|binding| binding.with_lifecycle_mode(self.semantic_lifecycle_mode))
             .ok_or(ExternalAuthorityErrorV1::InvalidState)
     }
 
@@ -487,7 +512,11 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
             )
         })
         .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
-        self.watermark
+        let watermark = self
+            .watermark
+            .clone()
+            .with_semantic_binding(self.semantic_binding_v1()?);
+        watermark
             .compare_and_advance_semantic_checked(previous, target, facts)
             .map_err(map_external_watermark_error_v1)?;
         let token_digest = external_adapter_token_v1(target, request);
@@ -1016,7 +1045,7 @@ impl RemoteSignerService {
         }
         let binding = config.binding;
         let mut service = Self::open(config)?;
-        let adapter = UnixExternalTimeoutAuthorityV1::from_binding(
+        let adapter = UnixExternalTimeoutAuthorityV1::from_binding_per_reservation(
             binding,
             authority_socket,
             response_log_path,

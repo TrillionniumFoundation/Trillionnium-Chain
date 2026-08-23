@@ -73,7 +73,10 @@ impl AuthorityProcess {
         let client = UnixWatermarkClient::new(&process.socket).expect("authority client");
         let semantic_binding = ExternalWatermarkSemanticBindingV1::new(scope, journal, CAPABILITY)
             .expect("semantic authority binding");
-        for _ in 0..100 {
+        // Concurrent package tests may delay the freshly spawned daemon for a
+        // few scheduler ticks; keep readiness bounded without making the
+        // process-boundary evidence flaky on a loaded host.
+        for _ in 0..500 {
             match client.load_semantic_checked(semantic_binding) {
                 Err(ExternalWatermarkAuthorityError::Io { .. })
                 | Err(ExternalWatermarkAuthorityError::Unavailable) => {
