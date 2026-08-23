@@ -2839,7 +2839,8 @@ mod tests {
 
     use tempfile::TempDir;
     use trnm_consensus_external_watermark::{
-        serve_connection, ExternalWatermarkAuthority, UnixWatermarkClient,
+        serve_connection, ExternalWatermarkAuthority, ExternalWatermarkSemanticBindingV1,
+        UnixWatermarkClient,
     };
     use trnm_consensus_remote_signer_protocol::{
         ProcessGenerationV1, RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1,
@@ -2848,6 +2849,7 @@ mod tests {
     };
     use trnm_consensus_remote_signer_service::{
         PurposePolicyV1, RemoteSignerService, RemoteSignerServiceConfig,
+        UnixExternalTimeoutAuthorityV1,
     };
     use trnm_consensus_types::{
         ChainId, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion, SigningRoot, Validator,
@@ -2904,6 +2906,35 @@ mod tests {
     struct CapturingUnixRemoteSignerProducerV0 {
         inner: UnixRemoteSignerProducer,
         requests: Arc<Mutex<Vec<trnm_consensus_types::CanonicalSignIntentV0>>>,
+    }
+
+    /// Narrow P0 composition used by the runtime test below: ordinary Vote
+    /// remains on the local fixture producer, while TimeoutVote crosses the
+    /// independent semantic watermark plus Unix remote-signer process. This
+    /// keeps the external bridge timeout-only until Core/SafetyRules vote
+    /// authority is fully wired.
+    struct TimeoutExternalMuxProducerV0 {
+        local: LabEd25519SignatureProducer,
+        remote: UnixRemoteSignerProducer,
+    }
+
+    impl SignatureProducerV0 for TimeoutExternalMuxProducerV0 {
+        fn sign(
+            &mut self,
+            request: trnm_consensus_signer_journal::SignatureRequestV0<'_>,
+        ) -> std::result::Result<
+            SignatureBytes,
+            trnm_consensus_signer_journal::SignatureProducerErrorV0,
+        > {
+            if matches!(
+                request.intent().preimage(),
+                trnm_consensus_types::CanonicalSignPreimageV0::TimeoutVote(_)
+            ) {
+                self.remote.sign(request)
+            } else {
+                self.local.sign(request)
+            }
+        }
     }
 
     impl SignatureProducerV0 for CapturingUnixRemoteSignerProducerV0 {
@@ -3308,6 +3339,115 @@ mod tests {
     }
 
     #[test]
+    fn semantic_external_timeout_authority_composes_with_continuous_timeout_owner() {
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = takeover_phase_harness_v0(4);
+            let remote_dir = harness._temp.path().join("semantic-timeout-authority");
+            create_private_directory_v0(&remote_dir)
+                .expect("create private semantic timeout directory");
+            let authority_log = remote_dir.join("watermark.log");
+            let authority_socket = remote_dir.join("watermark.sock");
+            let signer_socket = remote_dir.join("signer.sock");
+            let response_log = remote_dir.join("responses.log");
+            let signer_watermark = remote_dir.join("signer.sqlite3");
+            let capability = [0x33; 32];
+            let author = harness.validator_set.validators()[0].id();
+            let binding = RemoteSignerRequestBindingV1::new(
+                &harness.validator_set,
+                author,
+                RemoteSignerRoleProfileRefV1::from_public_descriptor(b"lab-consensus-role")
+                    .expect("remote signer role profile"),
+                RemoteSignerServiceProfileRefV1::from_public_descriptor(b"lab-signer-service")
+                    .expect("remote signer service profile"),
+                RemoteSignerClientProfileRefV1::from_public_descriptor(b"lab-node-client")
+                    .expect("remote signer client profile"),
+                ProcessGenerationV1::new(1).expect("remote signer process generation"),
+                RemoteSignerLeaseIdV1::from_public_grant_descriptor(b"lab-signer-lease")
+                    .expect("remote signer lease"),
+                RemoteSignerCheckpointWitnessV1::new(1, [0x53; 32])
+                    .expect("remote signer checkpoint witness"),
+            )
+            .expect("construct remote signer request binding");
+            let semantic_binding = ExternalWatermarkSemanticBindingV1::new(
+                UnixExternalTimeoutAuthorityV1::scope_for_binding(binding),
+                UnixExternalTimeoutAuthorityV1::journal_id_for_binding(binding),
+                capability,
+            )
+            .expect("construct immutable semantic authority binding");
+            let (stop_authority, authority_thread) = spawn_semantic_unix_watermark_daemon_v0(
+                authority_log,
+                authority_socket.clone(),
+                semantic_binding,
+            );
+            let remote = UnixRemoteSignerProducer::new(UnixRemoteSignerProducerConfig {
+                socket_path: signer_socket.clone(),
+                validator_set: harness.validator_set.clone(),
+                author,
+                signer_profile_ref: trnm_poco_node::SIGNER_JOURNAL_PROFILE_REF_V0,
+                role_profile_ref: binding.role_profile_ref(),
+                service_profile_ref: binding.service_profile_ref(),
+                client_profile_ref: binding.client_profile_ref(),
+                process_generation: binding.process_generation(),
+                lease_id: binding.lease_id(),
+                checkpoint_witness: binding.checkpoint_witness(),
+                timeout: Duration::from_secs(2),
+            })
+            .expect("construct external timeout producer");
+            harness.authorities[0].producer =
+                ContinuousSignatureProducerV0(Box::new(TimeoutExternalMuxProducerV0 {
+                    local: LabEd25519SignatureProducer::new(harness.keys[0].clone()),
+                    remote,
+                }));
+
+            // The local Vote proves ordinary Core/Safety journal progress;
+            // only the subsequent TimeoutVote is routed through semantic CAS
+            // and the independent Unix signer process.
+            let proposal = proposal_for_takeover_v0(&harness);
+            harness.authorities[0]
+                .vote_proposal_v0(proposal)
+                .expect("local Vote remains available before timeout bridge");
+            let mut external_config = remote_signer_service_config_v0(
+                &harness.validator_set,
+                binding,
+                &harness.keys[0],
+                &signer_watermark,
+            );
+            external_config.purpose_policy = PurposePolicyV1::timeout_vote_only();
+            let signer_thread = spawn_external_timeout_signer_service_once_v0(
+                external_config,
+                signer_socket,
+                authority_socket,
+                response_log,
+                capability,
+            );
+            harness.authorities[0]
+                .begin_local_timeout_v0()
+                .expect("TimeoutVote crosses semantic CAS then remote signer");
+            signer_thread
+                .join()
+                .expect("join external timeout signer")
+                .expect("external timeout signer exits cleanly");
+
+            let client = UnixWatermarkClient::new(remote_dir.join("watermark.sock"))
+                .expect("construct semantic authority client");
+            let head = client
+                .load_semantic_checked(semantic_binding)
+                .expect("read semantic timeout head")
+                .expect("timeout CAS produced a semantic head");
+            assert_eq!(head.0.sequence(), 0);
+            assert_eq!(head.1.capability, capability);
+            assert_ne!(head.1.request_fingerprint, [0; 32]);
+            assert_ne!(head.1.signing_root, [0; 32]);
+
+            stop_authority.send(()).expect("stop semantic authority");
+            authority_thread
+                .join()
+                .expect("join semantic authority")
+                .expect("semantic authority exits cleanly");
+        });
+    }
+
+    #[test]
     fn injected_proposal_producer_is_bound_to_exact_witness_identity() {
         on_bounded_takeover_owner_stack_v0(|| {
             let harness = takeover_phase_harness_v0(4);
@@ -3519,13 +3659,38 @@ mod tests {
         mpsc::Sender<()>,
         thread::JoinHandle<std::result::Result<(), String>>,
     ) {
+        spawn_unix_watermark_daemon_mode_v0(log_path, socket_path, None)
+    }
+
+    fn spawn_semantic_unix_watermark_daemon_v0(
+        log_path: PathBuf,
+        socket_path: PathBuf,
+        binding: ExternalWatermarkSemanticBindingV1,
+    ) -> (
+        mpsc::Sender<()>,
+        thread::JoinHandle<std::result::Result<(), String>>,
+    ) {
+        spawn_unix_watermark_daemon_mode_v0(log_path, socket_path, Some(binding))
+    }
+
+    fn spawn_unix_watermark_daemon_mode_v0(
+        log_path: PathBuf,
+        socket_path: PathBuf,
+        semantic_binding: Option<ExternalWatermarkSemanticBindingV1>,
+    ) -> (
+        mpsc::Sender<()>,
+        thread::JoinHandle<std::result::Result<(), String>>,
+    ) {
         let (stop_sender, stop_receiver) = mpsc::channel::<()>();
         let (ready_sender, ready_receiver) =
             mpsc::sync_channel::<std::result::Result<(), String>>(1);
         let daemon = thread::Builder::new()
             .name("trnm-external-watermark-daemon-test".to_owned())
             .spawn(move || {
-                let mut authority = match ExternalWatermarkAuthority::open(&log_path) {
+                let mut authority = match match semantic_binding {
+                    Some(binding) => ExternalWatermarkAuthority::open_semantic(&log_path, binding),
+                    None => ExternalWatermarkAuthority::open(&log_path),
+                } {
                     Ok(authority) => authority,
                     Err(error) => {
                         let message = error.to_string();
@@ -3635,6 +3800,33 @@ mod tests {
                     .map_err(|error| error.to_string())
             })
             .expect("spawn remote signer service fixture");
+        wait_for_remote_signer_socket_v0(&socket_path);
+        handle
+    }
+
+    fn spawn_external_timeout_signer_service_once_v0(
+        config: RemoteSignerServiceConfig,
+        socket_path: PathBuf,
+        authority_socket: PathBuf,
+        response_log: PathBuf,
+        capability: [u8; 32],
+    ) -> thread::JoinHandle<std::result::Result<(), String>> {
+        let mut service = RemoteSignerService::open_with_external_timeout_authority(
+            config,
+            &authority_socket,
+            &response_log,
+            capability,
+        )
+        .expect("open external timeout signer service");
+        let socket_for_thread = socket_path.clone();
+        let handle = thread::Builder::new()
+            .name("trnm-remote-signer-external-timeout-test".to_owned())
+            .spawn(move || {
+                service
+                    .serve_unix_once(&socket_for_thread)
+                    .map_err(|error| error.to_string())
+            })
+            .expect("spawn external timeout signer service");
         wait_for_remote_signer_socket_v0(&socket_path);
         handle
     }
