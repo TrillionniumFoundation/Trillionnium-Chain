@@ -1,5 +1,5 @@
 use std::{
-    fs,
+    env, fs,
     io::Write,
     os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
@@ -12,7 +12,8 @@ use std::{
 use ed25519_dalek::{Signer, SigningKey};
 use tempfile::tempdir;
 use trnm_consensus_external_watermark::{
-    ExternalWatermarkAuthorityError, TimeoutOnlySignerAdapter, UnixWatermarkClient,
+    ExternalWatermarkAuthorityError, ReplayBindingErrorV1, ReplayBindingStoreV1,
+    ReplayBoundTimeoutProducer, TimeoutOnlySignerAdapter, UnixWatermarkClient,
 };
 use trnm_consensus_signer_journal::{
     SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0, SignerJournalConflictV0,
@@ -342,4 +343,195 @@ fn timeout_adapter_orders_external_cas_before_fixture_key_and_replays_exactly() 
         ))
     ));
     authority.stop();
+}
+
+#[derive(Clone)]
+struct CountingProducer {
+    key: Arc<SigningKey>,
+    calls: Arc<Mutex<u64>>,
+}
+
+impl SignatureProducerV0 for CountingProducer {
+    fn sign(
+        &mut self,
+        request: SignatureRequestV0<'_>,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        *self.calls.lock().expect("producer calls") += 1;
+        Ok(SignatureBytes::from_array(
+            self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+        ))
+    }
+}
+
+struct RejectingProducer {
+    calls: Arc<Mutex<u64>>,
+}
+
+impl SignatureProducerV0 for RejectingProducer {
+    fn sign(
+        &mut self,
+        _request: SignatureRequestV0<'_>,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        *self.calls.lock().expect("rejecting producer calls") += 1;
+        Err(SignatureProducerErrorV0::Rejected)
+    }
+}
+
+struct CrashAfterResponseProducer<P> {
+    inner: P,
+}
+
+impl<P: SignatureProducerV0> SignatureProducerV0 for CrashAfterResponseProducer<P> {
+    fn sign(
+        &mut self,
+        request: SignatureRequestV0<'_>,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        let _signature = self.inner.sign(request)?;
+        // Test-only crash boundary: ReplayBoundTimeoutProducer has durably
+        // recorded the response, while the outer journal has not appended its
+        // signature event yet.
+        std::process::abort();
+        #[allow(unreachable_code)]
+        Ok(_signature)
+    }
+}
+
+#[test]
+fn durable_timeout_response_binding_recovers_after_process_kill() {
+    let root = tempdir().expect("private test directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start(root.path());
+    let client = authority.client.clone();
+    let (profile, _key) = signer_fixture();
+    let database = root.path().join("crash-signer.sqlite3");
+    let response_log = root.path().join("crash-timeout-response.log");
+    let journal = SqliteSignerJournalV0::initialize_new(&database, profile.clone(), client.clone())
+        .expect("initialize crash signer journal");
+    drop(journal);
+
+    let child = Command::new(env::current_exe().expect("current authority test executable"))
+        .arg("--exact")
+        .arg("durable_timeout_response_binding_crash_child")
+        .arg("--nocapture")
+        .env("TRNM_TIMEOUT_CRASH_ROOT", root.path())
+        .env("TRNM_TIMEOUT_CRASH_DATABASE", &database)
+        .env("TRNM_TIMEOUT_CRASH_RESPONSE_LOG", &response_log)
+        .spawn()
+        .expect("spawn timeout crash child");
+    let output = child.wait_with_output().expect("wait timeout crash child");
+    assert!(
+        !output.status.success(),
+        "child must die after response binding and before journal signature event"
+    );
+
+    let journal = SqliteSignerJournalV0::open_existing(&database, profile.clone(), client.clone())
+        .expect("reopen signer journal after child kill");
+    let replay_calls = Arc::new(Mutex::new(0));
+    let producer = ReplayBoundTimeoutProducer::open(
+        &response_log,
+        RejectingProducer {
+            calls: Arc::clone(&replay_calls),
+        },
+    )
+    .expect("reopen response binding after child kill");
+    let mut adapter = TimeoutOnlySignerAdapter::new(journal, producer);
+    let timeout = timeout_intent(&profile);
+    adapter
+        .sign_timeout_only(&timeout)
+        .expect("recover exact response after child kill");
+    assert_eq!(*replay_calls.lock().unwrap(), 0);
+    drop(adapter);
+    authority.stop();
+}
+
+#[test]
+fn durable_timeout_response_binding_crash_child() {
+    let Ok(root) = env::var("TRNM_TIMEOUT_CRASH_ROOT") else {
+        return;
+    };
+    let database = env::var("TRNM_TIMEOUT_CRASH_DATABASE").expect("crash database");
+    let response_log = env::var("TRNM_TIMEOUT_CRASH_RESPONSE_LOG").expect("crash response log");
+    let socket = PathBuf::from(root).join("authority.sock");
+    let client = UnixWatermarkClient::new(&socket).expect("crash authority client");
+    let (profile, key) = signer_fixture();
+    let journal = SqliteSignerJournalV0::open_existing(&database, profile.clone(), client)
+        .expect("open child signer journal");
+    let producer = ReplayBoundTimeoutProducer::open(
+        response_log,
+        OrderingProducer {
+            key: Arc::new(key),
+            client: UnixWatermarkClient::new(&socket).expect("child producer client"),
+            calls: Arc::new(Mutex::new(0)),
+        },
+    )
+    .expect("open child response binding");
+    let producer = CrashAfterResponseProducer { inner: producer };
+    let mut adapter = TimeoutOnlySignerAdapter::new(journal, producer);
+    let timeout = timeout_intent(&profile);
+    let _ = adapter.sign_timeout_only(&timeout);
+}
+
+#[test]
+fn durable_timeout_response_binding_survives_restart_and_fails_closed_on_rollback() {
+    let root = tempdir().expect("private test directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start(root.path());
+    let client = authority.client.clone();
+    let (profile, key) = signer_fixture();
+    let database = root.path().join("restart-signer.sqlite3");
+    let response_log = root.path().join("timeout-response.log");
+    let journal = SqliteSignerJournalV0::initialize_new(&database, profile.clone(), client.clone())
+        .expect("initialize signer journal");
+    let first_calls = Arc::new(Mutex::new(0));
+    let producer = ReplayBoundTimeoutProducer::open(
+        &response_log,
+        CountingProducer {
+            key: Arc::new(key),
+            calls: Arc::clone(&first_calls),
+        },
+    )
+    .expect("open durable response binding");
+    let mut adapter = TimeoutOnlySignerAdapter::new(journal, producer);
+    let timeout = timeout_intent(&profile);
+    let first_signature = adapter
+        .sign_timeout_only(&timeout)
+        .expect("first timeout response");
+    assert_eq!(*first_calls.lock().unwrap(), 1);
+    drop(adapter);
+
+    // A fresh journal owner and a fresh response producer process can resume
+    // the pending/replay path. The rejecting producer proves the response was
+    // recovered from the durable binding rather than regenerated.
+    let journal = SqliteSignerJournalV0::open_existing(&database, profile.clone(), client.clone())
+        .expect("reopen signer journal after process restart");
+    let replay_calls = Arc::new(Mutex::new(0));
+    let producer = ReplayBoundTimeoutProducer::open(
+        &response_log,
+        RejectingProducer {
+            calls: Arc::clone(&replay_calls),
+        },
+    )
+    .expect("reopen durable response binding");
+    let mut adapter = TimeoutOnlySignerAdapter::new(journal, producer);
+    let replayed_signature = adapter
+        .sign_timeout_only(&timeout)
+        .expect("exact response replay after restart");
+    assert_eq!(replayed_signature, first_signature);
+    assert_eq!(
+        *replay_calls.lock().unwrap(),
+        0,
+        "duplicate response must not reach the producer"
+    );
+    drop(adapter);
+    authority.stop();
+
+    // The independent response log has its own durable anchor. Rewinding its
+    // tail while retaining the anchor is a hard startup failure.
+    let bytes = fs::read(&response_log).expect("read response binding log");
+    assert!(bytes.len() > 1);
+    fs::write(&response_log, &bytes[..bytes.len() - 1]).expect("truncate response binding log");
+    assert!(matches!(
+        ReplayBindingStoreV1::open(&response_log),
+        Err(ReplayBindingErrorV1::InvalidLog(_)) | Err(ReplayBindingErrorV1::InvalidConfig(_))
+    ));
 }

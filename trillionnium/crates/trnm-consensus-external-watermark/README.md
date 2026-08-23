@@ -23,6 +23,17 @@ host attestation, HSM/KMS implementation, validator loop, or production
 activation. All such metadata remains `false`; the Ed25519 key in the
 integration test is fixture-only.
 
+`ReplayBoundTimeoutProducer` adds the missing producer-response boundary for
+the narrow slice. It records `(intent fingerprint, signer profile, signing
+root, signature)` in a second append-only hash-chain log with its own lock and
+durable head anchor. After a producer response is returned, a restart can
+replay that exact response without calling the producer again; a duplicate
+fingerprint with a different binding, partial tail, or anchor-ahead rollback
+fails closed. The response log is still test infrastructure: it is not a key
+store, HSM, SafetyRules authorization, or Core admission path. It does not
+claim whole-node clone/rollback detection; that remains an external watermark
+and future host-fencing responsibility.
+
 Example (development only):
 
 ```text
@@ -32,4 +43,5 @@ trnm-external-watermark-v0 --socket /private/run/trnm/ew.sock \
 
 The black-box tests exercise two independent processes, restart, stale CAS,
 partial-tail and byte-tamper fail-stop, local signer DB rollback while the
-external head is ahead, producer ordering, and exact response replay.
+external head is ahead, producer ordering, durable response replay after a
+fresh adapter owner, and response-log rollback fail-stop.

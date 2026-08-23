@@ -31,7 +31,7 @@ use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, ExternalWatermarkErrorV0, SignatureProducerV0,
-    SignerJournalErrorV0, SignerWatermarkV0,
+    SignatureRequestV0, SignerJournalErrorV0, SignerWatermarkV0,
 };
 use trnm_consensus_types::{CanonicalSignIntentV0, CanonicalSignPreimageV0, SignatureBytes};
 
@@ -630,6 +630,21 @@ where
         Self { journal, producer }
     }
 
+    /// Builds the narrow timeout adapter with an independent durable response
+    /// binding. The returned adapter still has no Core/SafetyRules authority;
+    /// this constructor only closes the producer crash/replay window.
+    pub fn with_durable_response_binding(
+        journal: trnm_consensus_signer_journal::SqliteSignerJournalV0<W>,
+        response_log_path: impl AsRef<Path>,
+        producer: P,
+    ) -> Result<TimeoutOnlySignerAdapter<W, ReplayBoundTimeoutProducer<P>>, ReplayBindingErrorV1>
+    {
+        Ok(TimeoutOnlySignerAdapter::new(
+            journal,
+            ReplayBoundTimeoutProducer::open(response_log_path, producer)?,
+        ))
+    }
+
     pub fn sign_timeout_only(
         &mut self,
         intent: &CanonicalSignIntentV0,
@@ -645,6 +660,628 @@ where
     pub fn journal(&self) -> &trnm_consensus_signer_journal::SqliteSignerJournalV0<W> {
         &self.journal
     }
+}
+
+// The signer journal makes the local intent and signature events durable, but
+// a process can still die after an injected producer returns and before the
+// journal's signature event is committed.  A retry must therefore have a
+// durable response binding outside the SQLite namespace.  This store is a
+// deliberately small, append-only response cache for the timeout-only slice;
+// it never accepts arbitrary bytes or owns a key.
+const REPLAY_LOG_MAGIC: &[u8; 8] = b"TRNMSR01";
+const REPLAY_LOG_DOMAIN: &[u8] = b"trnm.consensus.timeout-response-binding.v1\0";
+const REPLAY_ANCHOR_MAGIC: &[u8; 8] = b"TRNMSH01";
+const REPLAY_VERSION: u8 = 1;
+const REPLAY_RECORD_BYTES: usize = 8 + 1 + 1 + 2 + 8 + 32 + 32 + 32 + 64 + 32 + 32;
+const REPLAY_ANCHOR_BODY_BYTES: usize = 8 + 1 + 3 + 8 + 32;
+const REPLAY_ANCHOR_BYTES: usize = REPLAY_ANCHOR_BODY_BYTES + 32;
+
+#[derive(Debug)]
+pub enum ReplayBindingErrorV1 {
+    InvalidConfig(&'static str),
+    InvalidLog(&'static str),
+    Io {
+        stage: &'static str,
+        source: io::Error,
+    },
+    Conflict(&'static str),
+    Poisoned,
+}
+
+impl fmt::Display for ReplayBindingErrorV1 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::InvalidConfig(reason) => {
+                write!(formatter, "invalid response binding config: {reason}")
+            }
+            Self::InvalidLog(reason) => {
+                write!(formatter, "response binding log rejected: {reason}")
+            }
+            Self::Io { stage, source } => {
+                write!(formatter, "response binding I/O at {stage}: {source}")
+            }
+            Self::Conflict(reason) => write!(formatter, "response binding conflict: {reason}"),
+            Self::Poisoned => formatter.write_str("response binding store is poisoned"),
+        }
+    }
+}
+
+impl Error for ReplayBindingErrorV1 {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            Self::Io { source, .. } => Some(source),
+            _ => None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+struct ReplayRecordV1 {
+    sequence: u64,
+    fingerprint: [u8; 32],
+    signer_profile_ref: [u8; 32],
+    signing_root: [u8; 32],
+    signature: [u8; 64],
+    previous_record_hash: [u8; 32],
+    record_hash: [u8; 32],
+}
+
+#[derive(Debug, Clone, Copy)]
+struct ReplayEntryV1 {
+    signer_profile_ref: [u8; 32],
+    signing_root: [u8; 32],
+    signature: SignatureBytes,
+}
+
+/// Durable response binding for one timeout-only signer process.
+///
+/// The log is independent from the SQLite signer journal and is protected by
+/// its own lifetime lock.  A complete hash-chain and a durable head anchor are
+/// authenticated before a caller can use it.  This catches stale/rewound
+/// response state, partial tails, and byte edits as a fail-stop condition.
+pub struct ReplayBindingStoreV1 {
+    log_path: PathBuf,
+    anchor_path: PathBuf,
+    directory: File,
+    log: File,
+    _lock: File,
+    entries: BTreeMap<[u8; 32], ReplayEntryV1>,
+    head_hash: [u8; 32],
+    record_count: u64,
+    poisoned: bool,
+}
+
+impl ReplayBindingStoreV1 {
+    pub fn open(log_path: impl AsRef<Path>) -> Result<Self, ReplayBindingErrorV1> {
+        let (directory, log_path) =
+            private_path(log_path.as_ref()).map_err(map_replay_path_error)?;
+        let lock_path = replay_lock_path_for(&log_path)?;
+        let anchor_path = replay_anchor_path_for(&log_path)?;
+        let lock = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+            .open(&lock_path)
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "open response binding lock",
+                source,
+            })?;
+        ensure_private_regular(&lock, "response binding lock")?;
+        lock.try_lock_exclusive()
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "lock response binding namespace",
+                source,
+            })?;
+
+        let log = OpenOptions::new()
+            .read(true)
+            .create(true)
+            .append(true)
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+            .open(&log_path)
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "open response binding log",
+                source,
+            })?;
+        ensure_private_regular(&log, "response binding log")?;
+        let mut store = Self {
+            log_path,
+            anchor_path,
+            directory,
+            log,
+            _lock: lock,
+            entries: BTreeMap::new(),
+            head_hash: [0; 32],
+            record_count: 0,
+            poisoned: false,
+        };
+        store.replay_log()?;
+        store.reconcile_anchor()?;
+        Ok(store)
+    }
+
+    pub fn log_path(&self) -> &Path {
+        &self.log_path
+    }
+
+    fn lookup_request(
+        &self,
+        request: &SignatureRequestV0<'_>,
+    ) -> Result<Option<SignatureBytes>, ReplayBindingErrorV1> {
+        if self.poisoned {
+            return Err(ReplayBindingErrorV1::Poisoned);
+        }
+        let fingerprint = request.fingerprint().into_bytes();
+        let Some(entry) = self.entries.get(&fingerprint).copied() else {
+            return Ok(None);
+        };
+        if entry.signer_profile_ref != request.signer_profile_ref()
+            || entry.signing_root != request.signing_root().into_bytes()
+        {
+            return Err(ReplayBindingErrorV1::Conflict(
+                "fingerprint is bound to a different signer request",
+            ));
+        }
+        Ok(Some(entry.signature))
+    }
+
+    fn record_request(
+        &mut self,
+        request: &SignatureRequestV0<'_>,
+        signature: SignatureBytes,
+    ) -> Result<(), ReplayBindingErrorV1> {
+        if self.poisoned {
+            return Err(ReplayBindingErrorV1::Poisoned);
+        }
+        if signature.as_bytes() == &[0; 64] {
+            return Err(ReplayBindingErrorV1::Conflict(
+                "zero response cannot be bound",
+            ));
+        }
+        let fingerprint = request.fingerprint().into_bytes();
+        let signer_profile_ref = request.signer_profile_ref();
+        let signing_root = request.signing_root().into_bytes();
+        if let Some(existing) = self.entries.get(&fingerprint).copied() {
+            if existing.signer_profile_ref != signer_profile_ref
+                || existing.signing_root != signing_root
+                || existing.signature != signature
+            {
+                return Err(ReplayBindingErrorV1::Conflict(
+                    "duplicate response differs from the original binding",
+                ));
+            }
+            return Ok(());
+        }
+        let sequence = self
+            .record_count
+            .checked_add(1)
+            .ok_or(ReplayBindingErrorV1::InvalidLog("record count exhausted"))?;
+        let previous_record_hash = self.head_hash;
+        let record_hash = replay_record_hash(
+            sequence,
+            fingerprint,
+            signer_profile_ref,
+            signing_root,
+            *signature.as_bytes(),
+            previous_record_hash,
+        );
+        let record = ReplayRecordV1 {
+            sequence,
+            fingerprint,
+            signer_profile_ref,
+            signing_root,
+            signature: *signature.as_bytes(),
+            previous_record_hash,
+            record_hash,
+        };
+        self.log
+            .write_all(&encode_replay_record(record))
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "append response binding record",
+                source,
+            })?;
+        self.log
+            .sync_data()
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "sync response binding record",
+                source,
+            })?;
+        self.directory
+            .sync_data()
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "sync response binding directory",
+                source,
+            })?;
+        self.entries.insert(
+            fingerprint,
+            ReplayEntryV1 {
+                signer_profile_ref,
+                signing_root,
+                signature,
+            },
+        );
+        self.record_count = sequence;
+        self.head_hash = record_hash;
+        if let Err(error) = self.persist_anchor() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    fn replay_log(&mut self) -> Result<(), ReplayBindingErrorV1> {
+        let mut bytes = Vec::new();
+        let mut reader = self
+            .log
+            .try_clone()
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "clone response binding log",
+                source,
+            })?;
+        reader
+            .read_to_end(&mut bytes)
+            .map_err(|source| ReplayBindingErrorV1::Io {
+                stage: "read response binding log",
+                source,
+            })?;
+        if bytes.len() % REPLAY_RECORD_BYTES != 0 {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "trailing partial response record",
+            ));
+        }
+        for chunk in bytes.chunks_exact(REPLAY_RECORD_BYTES) {
+            let record = decode_replay_record(chunk)?;
+            let expected_sequence = self
+                .record_count
+                .checked_add(1)
+                .ok_or(ReplayBindingErrorV1::InvalidLog("record count exhausted"))?;
+            if record.sequence != expected_sequence {
+                return Err(ReplayBindingErrorV1::InvalidLog(
+                    "response sequence gap or rollback",
+                ));
+            }
+            if record.previous_record_hash != self.head_hash
+                || record.record_hash
+                    != replay_record_hash(
+                        record.sequence,
+                        record.fingerprint,
+                        record.signer_profile_ref,
+                        record.signing_root,
+                        record.signature,
+                        self.head_hash,
+                    )
+            {
+                return Err(ReplayBindingErrorV1::InvalidLog(
+                    "response hash-chain mismatch",
+                ));
+            }
+            if self.entries.contains_key(&record.fingerprint) {
+                return Err(ReplayBindingErrorV1::InvalidLog(
+                    "duplicate response fingerprint",
+                ));
+            }
+            self.entries.insert(
+                record.fingerprint,
+                ReplayEntryV1 {
+                    signer_profile_ref: record.signer_profile_ref,
+                    signing_root: record.signing_root,
+                    signature: SignatureBytes::from_array(record.signature),
+                },
+            );
+            self.record_count = record.sequence;
+            self.head_hash = record.record_hash;
+        }
+        Ok(())
+    }
+
+    fn reconcile_anchor(&mut self) -> Result<(), ReplayBindingErrorV1> {
+        match fs::symlink_metadata(&self.anchor_path) {
+            Ok(metadata) => {
+                if metadata.file_type().is_symlink() || !metadata.is_file() {
+                    return Err(ReplayBindingErrorV1::InvalidConfig(
+                        "response binding anchor must be a regular file",
+                    ));
+                }
+                if metadata.permissions().mode() & 0o777 != 0o600 {
+                    return Err(ReplayBindingErrorV1::InvalidConfig(
+                        "response binding anchor must have mode 0600",
+                    ));
+                }
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                if self.record_count != 0 {
+                    return Err(ReplayBindingErrorV1::InvalidLog(
+                        "non-empty response log has no durable anchor",
+                    ));
+                }
+                self.persist_anchor()?;
+                return Ok(());
+            }
+            Err(source) => {
+                return Err(ReplayBindingErrorV1::Io {
+                    stage: "inspect response binding anchor",
+                    source,
+                })
+            }
+        }
+        let bytes = fs::read(&self.anchor_path).map_err(|source| ReplayBindingErrorV1::Io {
+            stage: "read response binding anchor",
+            source,
+        })?;
+        let (anchored_count, anchored_head) = decode_replay_anchor(&bytes)?;
+        if anchored_count > self.record_count {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "response binding anchor is ahead of log",
+            ));
+        }
+        if anchored_count == self.record_count && anchored_head != self.head_hash {
+            return Err(ReplayBindingErrorV1::InvalidLog(
+                "response binding anchor differs from log head",
+            ));
+        }
+        if anchored_count < self.record_count {
+            self.persist_anchor()?;
+        }
+        Ok(())
+    }
+
+    fn persist_anchor(&self) -> Result<(), ReplayBindingErrorV1> {
+        let name = self
+            .anchor_path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .ok_or(ReplayBindingErrorV1::InvalidConfig(
+                "response anchor filename",
+            ))?;
+        let temporary = self.anchor_path.with_file_name(format!(
+            ".{name}.tmp-{}-{}",
+            process::id(),
+            self.record_count
+        ));
+        let bytes = encode_replay_anchor(self.record_count, self.head_hash);
+        let result = (|| {
+            let mut file = OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .mode(0o600)
+                .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+                .open(&temporary)?;
+            file.write_all(&bytes)?;
+            file.sync_all()?;
+            fs::rename(&temporary, &self.anchor_path)?;
+            self.directory.sync_data()?;
+            Ok::<(), io::Error>(())
+        })();
+        if let Err(source) = result {
+            let _ = fs::remove_file(&temporary);
+            return Err(ReplayBindingErrorV1::Io {
+                stage: "persist response binding anchor",
+                source,
+            });
+        }
+        Ok(())
+    }
+}
+
+/// Producer wrapper that turns an injected timeout signer into an exact,
+/// durable response-replay boundary.  A second call for the same canonical
+/// request is served from the response log and never reaches the producer.
+/// Proposal, vote, and epoch intents are rejected before any side effect.
+pub struct ReplayBoundTimeoutProducer<P> {
+    producer: P,
+    store: ReplayBindingStoreV1,
+}
+
+impl<P> ReplayBoundTimeoutProducer<P> {
+    pub fn open(
+        response_log_path: impl AsRef<Path>,
+        producer: P,
+    ) -> Result<Self, ReplayBindingErrorV1> {
+        Ok(Self {
+            producer,
+            store: ReplayBindingStoreV1::open(response_log_path)?,
+        })
+    }
+
+    pub fn store(&self) -> &ReplayBindingStoreV1 {
+        &self.store
+    }
+
+    pub fn into_inner(self) -> P {
+        self.producer
+    }
+}
+
+impl<P: SignatureProducerV0> SignatureProducerV0 for ReplayBoundTimeoutProducer<P> {
+    fn sign(
+        &mut self,
+        request: SignatureRequestV0<'_>,
+    ) -> Result<SignatureBytes, trnm_consensus_signer_journal::SignatureProducerErrorV0> {
+        if !matches!(
+            request.intent().preimage(),
+            CanonicalSignPreimageV0::TimeoutVote(_)
+        ) {
+            return Err(trnm_consensus_signer_journal::SignatureProducerErrorV0::Rejected);
+        }
+        if let Some(signature) = self
+            .store
+            .lookup_request(&request)
+            .map_err(|_| trnm_consensus_signer_journal::SignatureProducerErrorV0::Internal)?
+        {
+            return Ok(signature);
+        }
+        let signature = self.producer.sign(request)?;
+        self.store
+            .record_request(&request, signature)
+            .map_err(|_| trnm_consensus_signer_journal::SignatureProducerErrorV0::Internal)?;
+        Ok(signature)
+    }
+}
+
+fn map_replay_path_error(error: ExternalWatermarkAuthorityError) -> ReplayBindingErrorV1 {
+    match error {
+        ExternalWatermarkAuthorityError::InvalidConfig(reason) => {
+            ReplayBindingErrorV1::InvalidConfig(reason)
+        }
+        ExternalWatermarkAuthorityError::Io { stage, source } => {
+            ReplayBindingErrorV1::Io { stage, source }
+        }
+        _ => ReplayBindingErrorV1::InvalidConfig("response binding path"),
+    }
+}
+
+fn ensure_private_regular(file: &File, label: &'static str) -> Result<(), ReplayBindingErrorV1> {
+    let metadata = file.metadata().map_err(|source| ReplayBindingErrorV1::Io {
+        stage: "stat response binding file",
+        source,
+    })?;
+    if !metadata.is_file() || metadata.permissions().mode() & 0o777 != 0o600 {
+        return Err(ReplayBindingErrorV1::InvalidConfig(label));
+    }
+    Ok(())
+}
+
+fn replay_lock_path_for(path: &Path) -> Result<PathBuf, ReplayBindingErrorV1> {
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(ReplayBindingErrorV1::InvalidConfig("response log filename"))?;
+    Ok(path.with_file_name(format!(".{name}.response-lock-v1")))
+}
+
+fn replay_anchor_path_for(path: &Path) -> Result<PathBuf, ReplayBindingErrorV1> {
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(ReplayBindingErrorV1::InvalidConfig("response log filename"))?;
+    Ok(path.with_file_name(format!(".{name}.response-head-v1")))
+}
+
+fn replay_record_hash(
+    sequence: u64,
+    fingerprint: [u8; 32],
+    signer_profile_ref: [u8; 32],
+    signing_root: [u8; 32],
+    signature: [u8; 64],
+    previous_record_hash: [u8; 32],
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(REPLAY_LOG_DOMAIN);
+    hasher.update(sequence.to_be_bytes());
+    hasher.update(fingerprint);
+    hasher.update(signer_profile_ref);
+    hasher.update(signing_root);
+    hasher.update(signature);
+    hasher.update(previous_record_hash);
+    hasher.finalize().into()
+}
+
+fn encode_replay_record(record: ReplayRecordV1) -> [u8; REPLAY_RECORD_BYTES] {
+    let mut bytes = [0u8; REPLAY_RECORD_BYTES];
+    let mut offset = 0;
+    bytes[offset..offset + 8].copy_from_slice(REPLAY_LOG_MAGIC);
+    offset += 8;
+    bytes[offset] = REPLAY_VERSION;
+    offset += 1;
+    bytes[offset] = 1;
+    offset += 1;
+    offset += 2;
+    bytes[offset..offset + 8].copy_from_slice(&record.sequence.to_be_bytes());
+    offset += 8;
+    bytes[offset..offset + 32].copy_from_slice(&record.fingerprint);
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.signer_profile_ref);
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.signing_root);
+    offset += 32;
+    bytes[offset..offset + 64].copy_from_slice(&record.signature);
+    offset += 64;
+    bytes[offset..offset + 32].copy_from_slice(&record.previous_record_hash);
+    offset += 32;
+    bytes[offset..offset + 32].copy_from_slice(&record.record_hash);
+    bytes
+}
+
+fn decode_replay_record(bytes: &[u8]) -> Result<ReplayRecordV1, ReplayBindingErrorV1> {
+    if bytes.len() != REPLAY_RECORD_BYTES
+        || &bytes[..8] != REPLAY_LOG_MAGIC
+        || bytes[8] != REPLAY_VERSION
+        || bytes[9] != 1
+        || bytes[10..12] != [0, 0]
+    {
+        return Err(ReplayBindingErrorV1::InvalidLog("response record header"));
+    }
+    let sequence = u64::from_be_bytes(bytes[12..20].try_into().expect("response sequence"));
+    let fingerprint = bytes[20..52].try_into().expect("response fingerprint");
+    let signer_profile_ref = bytes[52..84].try_into().expect("response profile");
+    let signing_root = bytes[84..116].try_into().expect("response signing root");
+    let signature = bytes[116..180].try_into().expect("response signature");
+    let previous_record_hash = bytes[180..212].try_into().expect("response predecessor");
+    let record_hash = bytes[212..244].try_into().expect("response hash");
+    if fingerprint == [0; 32]
+        || signer_profile_ref == [0; 32]
+        || signing_root == [0; 32]
+        || signature == [0; 64]
+    {
+        return Err(ReplayBindingErrorV1::InvalidLog(
+            "zero response binding field",
+        ));
+    }
+    Ok(ReplayRecordV1 {
+        sequence,
+        fingerprint,
+        signer_profile_ref,
+        signing_root,
+        signature,
+        previous_record_hash,
+        record_hash,
+    })
+}
+
+fn replay_anchor_checksum(body: &[u8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(REPLAY_ANCHOR_MAGIC);
+    hasher.update((body.len() as u64).to_be_bytes());
+    hasher.update(body);
+    hasher.finalize().into()
+}
+
+fn encode_replay_anchor(record_count: u64, head_hash: [u8; 32]) -> [u8; REPLAY_ANCHOR_BYTES] {
+    let mut bytes = [0u8; REPLAY_ANCHOR_BYTES];
+    bytes[..8].copy_from_slice(REPLAY_ANCHOR_MAGIC);
+    bytes[8] = REPLAY_VERSION;
+    bytes[9..12].copy_from_slice(&[0, 0, 0]);
+    bytes[12..20].copy_from_slice(&record_count.to_be_bytes());
+    bytes[20..52].copy_from_slice(&head_hash);
+    let checksum = replay_anchor_checksum(&bytes[..REPLAY_ANCHOR_BODY_BYTES]);
+    bytes[REPLAY_ANCHOR_BODY_BYTES..].copy_from_slice(&checksum);
+    bytes
+}
+
+fn decode_replay_anchor(bytes: &[u8]) -> Result<(u64, [u8; 32]), ReplayBindingErrorV1> {
+    if bytes.len() != REPLAY_ANCHOR_BYTES
+        || &bytes[..8] != REPLAY_ANCHOR_MAGIC
+        || bytes[8] != REPLAY_VERSION
+        || bytes[9..12] != [0, 0, 0]
+    {
+        return Err(ReplayBindingErrorV1::InvalidLog("response anchor header"));
+    }
+    if bytes[REPLAY_ANCHOR_BODY_BYTES..]
+        != replay_anchor_checksum(&bytes[..REPLAY_ANCHOR_BODY_BYTES])
+    {
+        return Err(ReplayBindingErrorV1::InvalidLog("response anchor checksum"));
+    }
+    let count = u64::from_be_bytes(bytes[12..20].try_into().expect("response anchor count"));
+    let head = bytes[20..52].try_into().expect("response anchor head");
+    if (count == 0) != (head == [0; 32]) {
+        return Err(ReplayBindingErrorV1::InvalidLog(
+            "response anchor empty state",
+        ));
+    }
+    Ok((count, head))
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -1069,6 +1706,8 @@ mod source_contract_tests {
         for required in [
             "append_only_hash_chain = true",
             "cross_process_cas = true",
+            "durable_response_replay_binding = true",
+            "response_binding_append_only_hash_chain = true",
             "private_key_handling = false",
             "consensus_runtime = false",
             "core_admission = false",
