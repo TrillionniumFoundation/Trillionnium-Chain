@@ -183,7 +183,7 @@ impl FleetRootRequestV1 {
     /// Decodes one exact canonical request. Every length and checksum is
     /// checked before any field is projected, and trailing bytes are rejected.
     pub fn decode_exact(bytes: &[u8]) -> Result<Self, FleetSignerProtocolErrorV1> {
-        const MINIMUM: usize = 8 + 4 + 1 + 2 + 32 + 32 + 32 + 32;
+        const MINIMUM: usize = 8 + 4 + 1 + 2 + 1 + 32 + 32 + 32 + 32;
         if bytes.len() < MINIMUM {
             return Err(FleetSignerProtocolErrorV1::TruncatedOrTrailing);
         }
