@@ -3,7 +3,7 @@
 
 use std::{env, path::PathBuf, process::ExitCode, time::Duration};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{bail, ensure, Context, Result};
 use serde_json::json;
 use trnm_poco_lab_validator::{
     config::{LoadedValidatorConfig, PublicReportVerifierContext},
@@ -367,6 +367,55 @@ fn run() -> Result<ExitCode> {
             }
         };
     }
+    if command == "verify-external-config" {
+        if arguments.next().is_some() {
+            bail!(usage());
+        }
+        // This is the only CLI path that intentionally opens a deployment
+        // without the local consensus secret.  It is a preflight projection,
+        // not a hidden fallback to the fixture signer and not a production
+        // activation switch.  A future caller must supply every authority
+        // object to `run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1`
+        // explicitly; this command merely proves that the public bundle can
+        // be authenticated without importing the secret into this process.
+        let binary = env::current_exe().context("resolve current executable")?;
+        let loaded = LoadedValidatorConfig::load_external_authority(run_root, config, binary)?;
+        ensure!(
+            !loaded.has_local_consensus_secret(),
+            "external-authority loader unexpectedly retained a local consensus secret"
+        );
+        let core = loaded.core_config()?;
+        println!(
+            "{}",
+            serde_json::to_string(&json!({
+                "schema_version": 1,
+                "status": "external-authority-config-secret-free",
+                "run_id": loaded.run_id(),
+                "host_id": loaded.host_id(),
+                "validator_id": hex::encode(loaded.local_validator().as_bytes()),
+                "validator_count": loaded.validator_set().validators().len(),
+                "validator_set_id": hex::encode(loaded.validator_set().id().as_bytes()),
+                "validator_set_sha256": hex::encode(loaded.validator_set_sha256()),
+                "topology_sha256": hex::encode(loaded.topology_sha256()),
+                "config_sha256": hex::encode(loaded.config_sha256()),
+                "coordinator_manifest_sha256": hex::encode(loaded.coordinator_manifest_sha256()),
+                "binary_sha256": hex::encode(loaded.binary_sha256()),
+                "core_max_blocks": core.max_blocks(),
+                "consensus_secret_loaded": false,
+                "external_peer_lease_required": true,
+                "external_monotonic_watermark_required": true,
+                "external_vote_timeout_producer_required": true,
+                "external_proposal_producer_required": true,
+                "external_fleet_signer_required": true,
+                "complete_composition_api": "run_deployed_bounded_consensus_with_external_authority_and_fleet_signer_v1",
+                "production_candidate": PRODUCTION_CANDIDATE,
+                "production_consensus_activation": PRODUCTION_CONSENSUS_ACTIVATION,
+                "validator_runtime_started": VALIDATOR_RUNTIME_STARTED,
+                "g3_evidence_complete": false,
+            }))?
+        );
+        return Ok(ExitCode::SUCCESS);
+    }
     let binary = env::current_exe().context("resolve current executable")?;
     let loaded = LoadedValidatorConfig::load(run_root, config, binary)?;
     if command == "attempt-isolated-startup-rejection" {
@@ -632,5 +681,20 @@ fn parse_canonical_hex32(value: Option<std::ffi::OsString>, field: &str) -> Resu
 }
 
 fn usage() -> &'static str {
-    "usage: trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
+    "usage: trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn external_config_command_is_explicit_and_keeps_activation_closed() {
+        let source = include_str!("main.rs");
+        assert!(source.contains("verify-external-config"));
+        assert!(source.contains("LoadedValidatorConfig::load_external_authority"));
+        assert!(source.contains("\"consensus_secret_loaded\": false"));
+        assert!(source.contains("complete_composition_api"));
+        assert!(
+            source.contains("\"production_consensus_activation\": PRODUCTION_CONSENSUS_ACTIVATION")
+        );
+    }
 }
