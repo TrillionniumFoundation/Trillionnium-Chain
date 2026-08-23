@@ -175,6 +175,8 @@ mod deployed_lab_process2_recovery;
 #[cfg(feature = "lab-validator-runtime")]
 mod deployed_lab_recovery;
 mod external_node_checkpoint;
+#[cfg(feature = "external-signer-runtime")]
+mod external_signer_runtime;
 mod g2_manifest_bound_process_v2;
 #[allow(dead_code)]
 mod g2_manifest_bound_v2;
@@ -257,6 +259,13 @@ pub use external_node_checkpoint::{
     SqliteExternalNodeCheckpointStoreV0, EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0,
     EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0, EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0,
     EXTERNAL_NODE_CHECKPOINT_SCHEMA_V0,
+};
+#[cfg(feature = "external-signer-runtime")]
+pub use external_signer_runtime::{
+    initialize_unix_external_timeout_host_v0, open_unix_external_timeout_host_v0,
+    UnixExternalTimeoutHostV0, UNIX_EXTERNAL_TIMEOUT_LOCKED_QC_AUTHORITY_V0,
+    UNIX_EXTERNAL_TIMEOUT_PRODUCTION_ACTIVATION_V0, UNIX_EXTERNAL_TIMEOUT_PROPOSAL_SIGNING_V0,
+    UNIX_EXTERNAL_TIMEOUT_RUNTIME_COMPOSITION_V0,
 };
 pub use g2_manifest_bound_process_v2::{
     prepare_g2_manifest_bound_candidate_process_v2, run_g2_manifest_bound_candidate_process_v2,

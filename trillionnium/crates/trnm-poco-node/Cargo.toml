@@ -28,6 +28,13 @@ recovery-process-test-support = [
   "fixture-raw-key",
   "dep:fs2",
 ]
+ # This is a composition-only seam for the bounded timeout host. It brings
+ # the cross-process watermark and Unix signer clients into an explicitly
+ # named feature; the default node build remains free of those runtime edges.
+external-signer-runtime = [
+  "dep:trnm-consensus-external-watermark",
+  "dep:trnm-consensus-unix-remote-signer",
+]
 g2-process-test-support = [
   "fixture-raw-key",
   "dep:tempfile",
@@ -80,6 +87,11 @@ remote_signer_safe_vote_authority = false
 remote_signer_authenticated_profile_resolver = false
 remote_signer_strict_public_key_parsing = false
 remote_signer_runtime_activation = false
+external_timeout_host_composition = true
+external_timeout_host_runtime_wired = true
+external_timeout_host_production_activation = false
+external_timeout_host_proposal_signing = false
+external_timeout_host_locked_qc_authority = false
 remote_signer_raw_private_key_config = false
 remote_signer_generic_sign_bytes = false
 p2p_identity_key_runtime_separated = false
@@ -179,6 +191,11 @@ path = "tests/g2_manifest_bound_process_v2.rs"
 name = "raw_key_boundary"
 path = "tests/raw_key_boundary.rs"
 
+[[test]]
+name = "external_signer_runtime"
+path = "tests/external_signer_runtime.rs"
+required-features = ["external-signer-runtime"]
+
 [dependencies]
 borsh = { version = "1.5", features = ["derive"] }
 ed25519-dalek = { version = "2", optional = true }
@@ -189,10 +206,12 @@ sha2 = "0.10"
 tempfile = { version = "3", optional = true }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark", optional = true }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer", optional = true }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types", optional = true }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
@@ -215,5 +234,8 @@ ed25519-dalek = "2"
 serde_json = "1"
 tempfile = "3"
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }
+trnm-consensus-remote-signer-service = { version = "0.1.0", path = "../trnm-consensus-remote-signer-service" }
+trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
+trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer" }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
