@@ -624,6 +624,25 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
         self.owner.facts_v0()
     }
 
+    /// Read-only identity of the permanent h1 state-sync anchor retained by
+    /// the recovered Core.  This is deliberately a scalar projection: it
+    /// exposes no proof, store, signer, or successor authority.
+    pub fn state_sync_anchor_proof_id_v0(&self) -> Option<CertificateId> {
+        match self.owner._core.safety_state().state_sync_anchor() {
+            Some(anchor) => Some(anchor.proof_id()),
+            None => None,
+        }
+    }
+
+    /// Height of the permanent h1 state-sync anchor, if the recovered Core
+    /// retained one.  A deployed ordinary cut must report height one.
+    pub fn state_sync_anchor_height_v0(&self) -> Option<u64> {
+        match self.owner._core.safety_state().state_sync_anchor() {
+            Some(anchor) => Some(anchor.proof().finalized_block().header().height().get()),
+            None => None,
+        }
+    }
+
     /// Re-read the Core/Safety/signer/checkpoint join while the host is held.
     ///
     /// This is intentionally read-only.  Any disagreement fail-stops the
@@ -2222,6 +2241,12 @@ mod tests {
             |_path| Ok::<_, ExternalWatermarkErrorV0>(first_watermark),
         )
         .expect("open exact cut through the host recovery boundary");
+        assert!(
+            first_host.state_sync_anchor_proof_id_v0().is_some(),
+            "reopened Core must retain the permanent h1 state-sync anchor"
+        );
+        assert_eq!(first_host.state_sync_anchor_height_v0(), Some(1));
+        let expected_anchor_proof_id = first_host.state_sync_anchor_proof_id_v0();
         let expected_facts = first_host.facts_v0().clone();
         let checkpoint = expected_facts.checkpoint_v0();
         drop(first_host);
@@ -2234,6 +2259,11 @@ mod tests {
             |_path| Ok::<_, ExternalWatermarkErrorV0>(second_watermark),
         )
         .expect("reopen the same durable cut through a fresh host");
+        assert_eq!(
+            host.state_sync_anchor_proof_id_v0(),
+            expected_anchor_proof_id
+        );
+        assert_eq!(host.state_sync_anchor_height_v0(), Some(1));
         assert_eq!(host.facts_v0(), &expected_facts);
         host.revalidate_durable_boundary_v0()
             .expect("reopened host readback must match the recovered Core/checkpoint join");
