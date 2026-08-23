@@ -24,6 +24,13 @@ use std::{
 use sha2::Digest;
 use trnm_consensus_types::{ValidatorId, ValidatorSet};
 
+#[cfg(unix)]
+use trnm_consensus_peer_lease::{
+    ExternalPeerLeaseAuthorityV1 as UnixPeerLeaseAuthorityV1, LeaseRejectCodeV1,
+    PeerLeaseDirectionV1, PeerLeaseScopeV1, PeerLeaseTokenV1 as UnixPeerLeaseTokenV1,
+    UnixPeerLeaseClientV1,
+};
+
 use crate::transport::AuthenticatedConnection;
 
 pub const P2P_ADMISSION_PROFILE_V1: &str = "active-p2p-admission-helper-v1";
@@ -375,6 +382,173 @@ pub trait ExternalPeerLeaseAuthorityV1: Send + Sync {
     fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError>;
 
     fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError>;
+}
+
+/// Adapter from the durable cross-process Unix authority to the lab mesh's
+/// authority seam.  It is intentionally injectable and is not selected by
+/// any default runtime constructor; callers must opt in explicitly after
+/// provisioning the daemon socket and journal.
+#[cfg(unix)]
+#[derive(Debug, Clone)]
+pub struct UnixExternalPeerLeaseAuthorityV1 {
+    client: UnixPeerLeaseClientV1,
+}
+
+#[cfg(unix)]
+impl UnixExternalPeerLeaseAuthorityV1 {
+    pub fn connect(path: impl AsRef<std::path::Path>) -> Self {
+        Self {
+            client: UnixPeerLeaseClientV1::connect(path),
+        }
+    }
+
+    pub fn with_timeout(mut self, timeout: Duration) -> Self {
+        self.client = self.client.with_timeout(timeout);
+        self
+    }
+
+    pub fn socket_path(&self) -> &std::path::Path {
+        self.client.socket_path()
+    }
+}
+
+#[cfg(unix)]
+impl ExternalPeerLeaseAuthorityV1 for UnixExternalPeerLeaseAuthorityV1 {
+    fn preflight(&self) -> Result<(), ExternalFenceError> {
+        self.client.preflight().map_err(map_unix_lease_error)
+    }
+
+    fn acquire(
+        &self,
+        request: ExternalPeerLeaseRequestV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        let local_scope = request.scope();
+        let wire_scope = wire_scope(local_scope)?;
+        let token = UnixPeerLeaseAuthorityV1::acquire(
+            &self.client,
+            wire_scope,
+            local_scope.session_id(),
+            local_scope.generation(),
+            request.ttl_millis(),
+        )
+        .map_err(map_unix_lease_error)?;
+        local_token(local_scope, token)
+    }
+
+    fn renew(
+        &self,
+        token: ExternalPeerLeaseTokenV1,
+    ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+        let local_scope = token.scope();
+        let wire = wire_token(token)?;
+        // The mesh seam carries no TTL on its renew call. Keep one bounded,
+        // explicit profile instead of accepting an unbounded caller value.
+        let renewed = UnixPeerLeaseAuthorityV1::renew(&self.client, wire, 30_000)
+            .map_err(map_unix_lease_error)?;
+        local_token(local_scope, renewed)
+    }
+
+    fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        let wire = wire_token(token)?;
+        let returned = UnixPeerLeaseAuthorityV1::revalidate(&self.client, wire)
+            .map_err(map_unix_lease_error)?;
+        if returned != wire {
+            return Err(ExternalFenceError::TokenMismatch);
+        }
+        Ok(())
+    }
+
+    fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+        let wire = wire_token(token)?;
+        UnixPeerLeaseAuthorityV1::release(&self.client, wire).map_err(map_unix_lease_error)
+    }
+}
+
+#[cfg(unix)]
+fn validator_id32(id: ValidatorId) -> Result<[u8; 32], ExternalFenceError> {
+    let bytes = id.as_bytes();
+    if bytes.len() != 32 {
+        return Err(ExternalFenceError::InvalidScope);
+    }
+    let mut output = [0; 32];
+    output.copy_from_slice(bytes);
+    Ok(output)
+}
+
+#[cfg(unix)]
+fn wire_scope(scope: ExternalPeerLeaseScopeV1) -> Result<PeerLeaseScopeV1, ExternalFenceError> {
+    let direction = match scope.direction() {
+        ExternalPeerDirectionV1::Inbound => PeerLeaseDirectionV1::Inbound,
+        ExternalPeerDirectionV1::Outbound => PeerLeaseDirectionV1::Outbound,
+    };
+    PeerLeaseScopeV1::new(
+        validator_id32(scope.local())?,
+        validator_id32(scope.remote())?,
+        direction,
+        scope.context().epoch(),
+        scope.context().validator_set_id(),
+    )
+    .map_err(|_| ExternalFenceError::InvalidScope)
+}
+
+#[cfg(unix)]
+fn wire_token(token: ExternalPeerLeaseTokenV1) -> Result<UnixPeerLeaseTokenV1, ExternalFenceError> {
+    let scope = token.scope();
+    let wire_scope = wire_scope(scope)?;
+    UnixPeerLeaseTokenV1::from_parts(
+        wire_scope,
+        scope.session_id(),
+        scope.generation(),
+        token.expires_at_millis(),
+        token.opaque(),
+    )
+    .map_err(|_| ExternalFenceError::InvalidGrant)
+}
+
+#[cfg(unix)]
+fn local_token(
+    scope: ExternalPeerLeaseScopeV1,
+    token: UnixPeerLeaseTokenV1,
+) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+    let expected = wire_scope(scope)?;
+    if token.scope() != expected
+        || token.session_id() != scope.session_id()
+        || token.generation() != scope.generation()
+    {
+        return Err(ExternalFenceError::TokenMismatch);
+    }
+    ExternalPeerLeaseTokenV1::from_authority_parts(
+        scope,
+        token.expires_at_ms(),
+        token.record_hash(),
+    )
+    .map_err(|_| ExternalFenceError::InvalidGrant)
+}
+
+#[cfg(unix)]
+fn map_unix_lease_error(error: trnm_consensus_peer_lease::PeerLeaseErrorV1) -> ExternalFenceError {
+    match error {
+        trnm_consensus_peer_lease::PeerLeaseErrorV1::InvalidRequest(_) => {
+            ExternalFenceError::InvalidRequest
+        }
+        trnm_consensus_peer_lease::PeerLeaseErrorV1::Rejected(code) => match code {
+            LeaseRejectCodeV1::AlreadyLeased => ExternalFenceError::LeaseConflict,
+            LeaseRejectCodeV1::StaleGeneration => ExternalFenceError::StaleGeneration,
+            LeaseRejectCodeV1::LeaseNotFound => ExternalFenceError::LeaseNotFound,
+            LeaseRejectCodeV1::LeaseExpired => ExternalFenceError::LeaseExpired,
+            LeaseRejectCodeV1::Fenced => ExternalFenceError::TokenMismatch,
+            LeaseRejectCodeV1::ContextMismatch => ExternalFenceError::ContextMismatch,
+            LeaseRejectCodeV1::InvalidRequest => ExternalFenceError::InvalidRequest,
+            LeaseRejectCodeV1::AuthorityUnavailable
+            | LeaseRejectCodeV1::ClockRollback
+            | LeaseRejectCodeV1::AuthorityCorrupt
+            | LeaseRejectCodeV1::Unsupported => ExternalFenceError::Unavailable,
+        },
+        trnm_consensus_peer_lease::PeerLeaseErrorV1::Io(_)
+        | trnm_consensus_peer_lease::PeerLeaseErrorV1::Protocol(_) => {
+            ExternalFenceError::Unavailable
+        }
+    }
 }
 
 /// A deliberately unavailable authority used by the normal bounded runtime.
@@ -1176,6 +1350,53 @@ mod tests {
                 ExternalPeerLeaseRequestV1::new(wrong_scope, Duration::from_secs(1),).unwrap()
             ),
             Err(ExternalFenceError::ContextMismatch)
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn unix_external_authority_mapping_preserves_direction_and_generation() {
+        let context = context();
+        let local = ValidatorId::new([0xa1; 32]);
+        let remote = ValidatorId::new([0xa2; 32]);
+        let scope = ExternalPeerLeaseScopeV1::new(
+            local,
+            remote,
+            ExternalPeerDirectionV1::Inbound,
+            context,
+            [0xa3; 32],
+            7,
+        )
+        .unwrap();
+        let wire = wire_scope(scope).unwrap();
+        assert_eq!(wire.local_id(), [0xa1; 32]);
+        assert_eq!(wire.remote_id(), [0xa2; 32]);
+        assert_eq!(wire.direction(), PeerLeaseDirectionV1::Inbound);
+        assert_eq!(wire.epoch(), context.epoch());
+        assert_eq!(wire.validator_set_id(), context.validator_set_id());
+
+        let external =
+            ExternalPeerLeaseTokenV1::from_authority_parts(scope, 123_456, [0xa4; 32]).unwrap();
+        let round_trip = wire_token(external).unwrap();
+        assert_eq!(round_trip.scope(), wire);
+        assert_eq!(round_trip.session_id(), [0xa3; 32]);
+        assert_eq!(round_trip.generation(), 7);
+        assert_eq!(round_trip.expires_at_ms(), 123_456);
+        assert_eq!(round_trip.record_hash(), [0xa4; 32]);
+
+        let short_id = ValidatorId::from_bytes(&[0xa5; 31]).unwrap();
+        let invalid_scope = ExternalPeerLeaseScopeV1::new(
+            short_id,
+            remote,
+            ExternalPeerDirectionV1::Outbound,
+            context,
+            [0xa6; 32],
+            1,
+        )
+        .unwrap();
+        assert_eq!(
+            wire_scope(invalid_scope),
+            Err(ExternalFenceError::InvalidScope)
         );
     }
 }
