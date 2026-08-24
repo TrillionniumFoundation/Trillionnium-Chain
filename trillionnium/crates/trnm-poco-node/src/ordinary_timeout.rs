@@ -110,10 +110,27 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostEventW
         Ok(Self { host, wal })
     }
 
-    /// Resume the host's already-durable bounded outbox.  No mutable Core or
-    /// WAL is exposed to the caller.
-    pub fn resume_v0(&mut self) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostErrorV0> {
-        self.host.resume_v0()
+    /// Resume the host's already-durable bounded outbox only after a fresh
+    /// event-WAL recovery check.  A pending intent means that the previous
+    /// host effect is uncertain; replaying Core's outbox first could emit a
+    /// vote (or advance the timer) before the event owner has established
+    /// whether that exact effect committed.  The caller must use
+    /// [`Self::recover_pending_v1`] and obtain an exact durable readback
+    /// before trying again.
+    pub fn resume_v0(&mut self) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostEventWalErrorV1> {
+        match self
+            .wal
+            .revalidate_v1()
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?
+        {
+            NodeEventRecoveryV1::Clean { .. } => self
+                .host
+                .resume_v0()
+                .map_err(PocoNodeHostEventWalErrorV1::Host),
+            NodeEventRecoveryV1::Pending(_) => {
+                Err(PocoNodeHostEventWalErrorV1::RecoveryReadbackRequired)
+            }
+        }
     }
 
     /// Run one timeout through the single-owner event ordering.

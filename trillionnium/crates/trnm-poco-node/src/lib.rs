@@ -3506,6 +3506,94 @@ mod tests {
 
     #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
     #[test]
+    fn single_owner_resume_requires_pending_event_recovery_before_host_actions() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path =
+            protected_store_namespace(&directory, "pending-owned-events").join("node-events.wal");
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded host config");
+        let watermark = MemoryWatermark::default();
+        let producer_calls = Arc::new(AtomicUsize::new(0));
+
+        // Leave the exact event intent durable while the host effect has
+        // already advanced SafetyStore.  This is the crash window in which
+        // Core's outbox is otherwise replayable but the event WAL has not
+        // established the matching commit readback.
+        let mut owner = PocoNodeHostEventWalOwnerV1::initialize_new(
+            config.clone(),
+            genesis_qc(&core_config),
+            watermark.clone(),
+            UnavailableProducerV0,
+            &event_path,
+        )
+        .expect("initialize single owner");
+        owner.resume_v0().expect("arm first timeout view");
+        assert!(matches!(
+            owner.on_local_timeout_v1(),
+            Err(PocoNodeHostEventWalErrorV1::Host(_))
+        ));
+        let pending = owner.wal().pending().expect("timeout intent is pending");
+        let advanced_head = owner
+            .safety_head()
+            .expect("read effect-side SafetyStore head");
+        assert_eq!(advanced_head.revision(), 1);
+        drop(owner);
+
+        let mut reopened = PocoNodeHostEventWalOwnerV1::open_existing(
+            config,
+            watermark,
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&producer_calls),
+            },
+            &event_path,
+        )
+        .expect("reopen owner with the pending WAL");
+        let before_resume = reopened
+            .safety_head()
+            .expect("read authenticated head before gated resume");
+        let error = reopened
+            .resume_v0()
+            .expect_err("pending event must gate all host actions");
+        assert!(matches!(
+            error,
+            PocoNodeHostEventWalErrorV1::RecoveryReadbackRequired
+        ));
+        assert_eq!(reopened.wal().pending(), Some(pending));
+        assert_eq!(
+            reopened
+                .safety_head()
+                .expect("read head after gated resume"),
+            before_resume,
+            "resume must not advance the host while event recovery is pending"
+        );
+        assert_eq!(
+            producer_calls.load(Ordering::SeqCst),
+            0,
+            "gated resume must not invoke the signer or emit a broadcast"
+        );
+
+        let receipt = reopened
+            .recover_pending_v1()
+            .expect("fresh durable readback resolves the pending event")
+            .expect("the WAL was pending");
+        assert_eq!(receipt.event_id(), pending.event_id());
+        assert!(reopened.wal().pending().is_none());
+        let actions = reopened
+            .resume_v0()
+            .expect("resume after exact event recovery");
+        assert!(matches!(
+            actions.as_slice(),
+            [PocoNodeHostActionV0::Broadcast(outbound)]
+                if matches!(outbound.message(), OutboundMessage::TimeoutVote(_))
+        ));
+        assert_eq!(producer_calls.load(Ordering::SeqCst), 1);
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
     fn startup_and_single_owner_paths_reject_non_ed25519_validator_keys_before_store_creation() {
         let directory = protected_temp_dir();
         let (safety_path, signer_path) = dual_store_paths(&directory);
