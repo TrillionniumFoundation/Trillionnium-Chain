@@ -120,7 +120,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostEventW
     pub fn resume_v0(&mut self) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostEventWalErrorV1> {
         match self
             .wal
-            .revalidate_v1()
+            .revalidate_owner_v1()
             .map_err(PocoNodeHostEventWalErrorV1::Wal)?
         {
             NodeEventRecoveryV1::Clean { .. } => self
@@ -150,7 +150,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostEventW
 
     /// Freshly revalidate the event WAL at a restart boundary.
     pub fn restart_recovery_v1(&mut self) -> Result<NodeEventRecoveryV1, NodeEventWalErrorV1> {
-        self.wal.revalidate_v1()
+        self.wal.revalidate_owner_v1()
     }
 
     /// Borrow-only evidence view; callers cannot replace the owned WAL.
@@ -981,6 +981,13 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
                 projection.payload_digest,
             )
             .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
+        // The timeout effect below is owned by Core/SafetyStore rather than a
+        // `NodeEventCommitDriverV1`.  Re-authenticate the exact pending WAL
+        // tail immediately before driving that external effect so a same-inode
+        // rewrite/append cannot turn the later commit readback into a stale
+        // owner acknowledgement.
+        wal.revalidate_pending_event_v1(intent)
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
         self.on_local_timeout_v0()
             .map_err(PocoNodeHostEventWalErrorV1::Host)?;
         let commit_digest = self.timeout_event_readback_v1(&projection)?;
@@ -1003,7 +1010,7 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             .map_err(PocoNodeHostEventWalErrorV1::Host)?;
         self.require_timeout_event_wal_namespace_v1(wal)?;
         let recovery = wal
-            .revalidate_v1()
+            .revalidate_owner_v1()
             .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
         let NodeEventRecoveryV1::Pending(intent) = recovery else {
             return Ok(None);

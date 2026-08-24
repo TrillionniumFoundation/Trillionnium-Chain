@@ -17,6 +17,7 @@
 #![cfg(feature = "node-event-wal")]
 
 use std::{
+    collections::BTreeSet,
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
@@ -70,6 +71,7 @@ pub enum NodeEventWalErrorV1 {
     CommitMismatch,
     PredecessorMismatch,
     AlreadyCommitted,
+    DuplicateEventId,
     RecoveryReadbackRequired,
     Poisoned,
     TooLarge,
@@ -144,6 +146,7 @@ impl fmt::Display for NodeEventWalErrorV1 {
                 "node-event WAL predecessor does not follow the last commit"
             }
             Self::AlreadyCommitted => "node-event WAL event is already committed",
+            Self::DuplicateEventId => "node-event WAL event id is duplicated in history",
             Self::RecoveryReadbackRequired => {
                 "node-event WAL pending event requires an explicit durable readback"
             }
@@ -298,6 +301,11 @@ pub struct NodeEventWalV1 {
     next_sequence: u64,
     pending: Option<NodeEventIntentV1>,
     last_commit: Option<NodeEventCommitReceiptV1>,
+    /// Every committed or pending event id observed in the authenticated
+    /// history.  Keeping the bounded set in the owner makes the forward path
+    /// reject an A/B/A replay instead of only comparing against the immediate
+    /// predecessor.
+    event_ids: BTreeSet<[u8; 32]>,
     poisoned: bool,
 }
 
@@ -388,6 +396,7 @@ impl NodeEventWalV1 {
             next_sequence: 0,
             pending: None,
             last_commit: None,
+            event_ids: BTreeSet::new(),
             poisoned: false,
         };
         wal.reload_v1()?;
@@ -433,6 +442,12 @@ impl NodeEventWalV1 {
         payload_digest: [u8; 32],
     ) -> Result<NodeEventIntentV1, NodeEventWalErrorV1> {
         self.ensure_live_v1()?;
+        // A cached head/pending/ID set is not an append authority.  Refresh
+        // the complete bounded chain before making any semantic admission
+        // decision.  Keep the cheap capacity check first so an already-full
+        // owner fails closed without needlessly rereading a huge file.
+        self.ensure_append_capacity_v1(2)?;
+        self.revalidate_unchanged_v1()?;
         if event_id == [0; 32] || predecessor_digest == [0; 32] || payload_digest == [0; 32] {
             return Err(NodeEventWalErrorV1::InvalidField);
         }
@@ -450,6 +465,9 @@ impl NodeEventWalV1 {
             .is_some_and(|receipt| receipt.event_id == event_id)
         {
             return Err(NodeEventWalErrorV1::AlreadyCommitted);
+        }
+        if self.event_ids.contains(&event_id) {
+            return Err(NodeEventWalErrorV1::DuplicateEventId);
         }
         // A prepare always needs a second frame for its eventual commit.  Do
         // this preflight after semantic validation but before writing the
@@ -476,11 +494,19 @@ impl NodeEventWalV1 {
             payload_digest,
             intent_checksum: checksum,
         };
-        self.pending = Some(intent);
-        self.next_sequence = sequence
-            .checked_add(1)
-            .ok_or(NodeEventWalErrorV1::SequenceMismatch)?;
-        self.head = checksum;
+        // `append_frame_v1` has already performed the durable post-append
+        // reload. Keep that observation authoritative instead of writing the
+        // cached fields back over a concurrently changed tail.
+        if self.pending != Some(intent)
+            || self.next_sequence
+                != sequence
+                    .checked_add(1)
+                    .ok_or(NodeEventWalErrorV1::SequenceMismatch)?
+            || self.head != checksum
+        {
+            self.poisoned = true;
+            return Err(NodeEventWalErrorV1::ChainMismatch);
+        }
         Ok(intent)
     }
 
@@ -491,6 +517,8 @@ impl NodeEventWalV1 {
         commit_digest: [u8; 32],
     ) -> Result<NodeEventCommitReceiptV1, NodeEventWalErrorV1> {
         self.ensure_live_v1()?;
+        self.ensure_append_capacity_v1(1)?;
+        self.revalidate_unchanged_v1()?;
         if commit_digest == [0; 32] {
             return Err(NodeEventWalErrorV1::InvalidField);
         }
@@ -523,12 +551,19 @@ impl NodeEventWalV1 {
             commit_digest,
             commit_checksum: checksum,
         };
-        self.pending = None;
-        self.last_commit = Some(receipt);
-        self.next_sequence = sequence
-            .checked_add(1)
-            .ok_or(NodeEventWalErrorV1::SequenceMismatch)?;
-        self.head = checksum;
+        // As with prepare, retain the exact state obtained by the durable
+        // post-append reload. Never overwrite it from pre-append cache facts.
+        if self.pending.is_some()
+            || self.last_commit != Some(receipt)
+            || self.next_sequence
+                != sequence
+                    .checked_add(1)
+                    .ok_or(NodeEventWalErrorV1::SequenceMismatch)?
+            || self.head != checksum
+        {
+            self.poisoned = true;
+            return Err(NodeEventWalErrorV1::ChainMismatch);
+        }
         Ok(receipt)
     }
 
@@ -546,8 +581,46 @@ impl NodeEventWalV1 {
         intent: NodeEventIntentV1,
         driver: &mut D,
     ) -> Result<NodeEventCommitReceiptV1, NodeEventWalErrorV1> {
+        // Do not let a stale owner execute an irreversible driver effect.  A
+        // later commit append check is still required because the driver can
+        // return after an external same-inode mutation, but this preflight
+        // closes the deterministic stale-owner/capacity ordering hole.
+        self.ensure_live_v1()?;
+        self.ensure_append_capacity_v1(1)?;
+        self.revalidate_unchanged_v1()?;
+        let Some(pending) = self.pending else {
+            return Err(NodeEventWalErrorV1::NoPending);
+        };
+        if pending != intent {
+            return Err(NodeEventWalErrorV1::PendingMismatch);
+        }
+        self.ensure_append_capacity_v1(1)?;
         let commit_digest = driver.apply_and_readback_event_v1(intent)?;
+        // Re-read after the callback as well.  If a same-UID writer altered or
+        // appended the WAL while the external effect was in flight, poison
+        // the owner and leave the intent pending for explicit recovery rather
+        // than appending a receipt onto a forked chain.
+        self.revalidate_unchanged_v1()?;
         self.commit_event_v1(intent, commit_digest)
+    }
+
+    /// Freshly authenticate that an intent is still the exact pending tail
+    /// immediately before an external effect is driven.  This is the narrow
+    /// bridge used by host paths whose effect is not expressed through
+    /// [`NodeEventCommitDriverV1`].  A coherent same-inode rewrite is rejected
+    /// too: the owner must still observe the exact head/sequence it held after
+    /// preparing this intent.
+    pub fn revalidate_pending_event_v1(
+        &mut self,
+        intent: NodeEventIntentV1,
+    ) -> Result<(), NodeEventWalErrorV1> {
+        self.ensure_live_v1()?;
+        self.revalidate_unchanged_v1()?;
+        match self.pending {
+            Some(pending) if pending == intent => Ok(()),
+            Some(_) => Err(NodeEventWalErrorV1::PendingMismatch),
+            None => Err(NodeEventWalErrorV1::NoPending),
+        }
     }
 
     /// Exact replay check used after a crash where the commit append may have
@@ -562,10 +635,11 @@ impl NodeEventWalV1 {
         // crash or that the admitted inode still contains the same chain.  A
         // caller may invoke this method precisely after an uncertain commit
         // return, so force a fresh bounded frame/path validation before
-        // exposing any receipt.  `revalidate_v1` poisons the owner on every
-        // readback failure; subsequent retries therefore cannot use stale
-        // in-memory facts after a rewrite or replacement.
-        self.revalidate_v1()?;
+        // exposing any receipt.  Strict owner revalidation poisons the owner
+        // on every readback or tail-identity failure; subsequent retries
+        // therefore cannot use stale in-memory facts after a rewrite or
+        // replacement.
+        self.revalidate_owner_v1()?;
         let Some(receipt) = self.last_commit else {
             return Err(NodeEventWalErrorV1::NoPending);
         };
@@ -587,6 +661,39 @@ impl NodeEventWalV1 {
             self.poisoned = true;
             return Err(error);
         }
+        Ok(self.recovery())
+    }
+
+    /// Re-read the bounded chain while requiring the owner's previously
+    /// authenticated tail to remain byte-for-byte represented by the same
+    /// `(head, sequence, pending, last-commit)` facts.  Public restart
+    /// recovery intentionally adopts a fresh chain; append/effect paths use
+    /// this stricter form so a self-consistent external rewrite cannot become
+    /// the new authority merely because it has a valid checksum chain.
+    fn revalidate_unchanged_v1(&mut self) -> Result<(), NodeEventWalErrorV1> {
+        let expected_head = self.head;
+        let expected_sequence = self.next_sequence;
+        let expected_pending = self.pending;
+        let expected_last_commit = self.last_commit;
+        self.revalidate_v1()?;
+        if self.head != expected_head
+            || self.next_sequence != expected_sequence
+            || self.pending != expected_pending
+            || self.last_commit != expected_last_commit
+        {
+            self.poisoned = true;
+            return Err(NodeEventWalErrorV1::ChainMismatch);
+        }
+        Ok(())
+    }
+
+    /// Strict live-owner revalidation for composed host wrappers.  Unlike the
+    /// public restart observation, this cannot adopt a changed but internally
+    /// coherent chain while the current owner is still alive.
+    pub(crate) fn revalidate_owner_v1(
+        &mut self,
+    ) -> Result<NodeEventRecoveryV1, NodeEventWalErrorV1> {
+        self.revalidate_unchanged_v1()?;
         Ok(self.recovery())
     }
 
@@ -617,7 +724,26 @@ impl NodeEventWalV1 {
             // prepare/commit paths reserve their full frame needs above, but
             // this invariant prevents a future caller from bypassing the
             // bounded record count after a refactor.
+            // Revalidate immediately before writing.  This catches same-inode
+            // rewrites/appends which do not change the admitted path or inode
+            // and refreshes the cached sequence/head used by the frame check
+            // below.  A frame built from stale owner facts is rejected rather
+            // than appended to a valid-but-different tail.
+            self.revalidate_unchanged_v1()?;
             self.ensure_append_capacity_v1(1)?;
+            let decoded = decode_frame_v1(frame)?;
+            if decoded.namespace != self.namespace {
+                return Err(NodeEventWalErrorV1::NamespaceMismatch);
+            }
+            if decoded.sequence != self.next_sequence {
+                return Err(NodeEventWalErrorV1::SequenceMismatch);
+            }
+            if decoded.previous != self.head {
+                return Err(NodeEventWalErrorV1::ChainMismatch);
+            }
+            if frame_checksum_v1(frame) != decoded.checksum {
+                return Err(NodeEventWalErrorV1::Malformed);
+            }
             self.validate_path_binding_v1()?;
             let mut file = self.file.try_clone().map_err(|_| NodeEventWalErrorV1::Io)?;
             validate_open_file_v1(&file, &self.path, false)?;
@@ -630,7 +756,23 @@ impl NodeEventWalV1 {
             self.parent_file
                 .sync_all()
                 .map_err(|_| NodeEventWalErrorV1::Io)?;
-            self.validate_path_binding_v1()
+            self.validate_path_binding_v1()?;
+            // Read back the complete chain after fsync. A concurrent writer
+            // may have appended a syntactically valid continuation between
+            // our write and this read; accepting it would let the caller
+            // overwrite its state with stale pre-append facts. Require the
+            // supplied frame to remain the exact durable tail.
+            self.revalidate_v1()?;
+            if self.next_sequence
+                != decoded
+                    .sequence
+                    .checked_add(1)
+                    .ok_or(NodeEventWalErrorV1::SequenceMismatch)?
+                || self.head != decoded.checksum
+            {
+                return Err(NodeEventWalErrorV1::ChainMismatch);
+            }
+            Ok(())
         })();
         if result.is_err() {
             self.poisoned = true;
@@ -684,6 +826,7 @@ impl NodeEventWalV1 {
         let mut previous_checksum = [0_u8; 32];
         let mut pending: Option<NodeEventIntentV1> = None;
         let mut last_commit: Option<NodeEventCommitReceiptV1> = None;
+        let mut event_ids = BTreeSet::new();
         for chunk in bytes.chunks_exact(FRAME_BYTES_V1) {
             let frame: &[u8; FRAME_BYTES_V1] = chunk.try_into().expect("fixed frame");
             let decoded = decode_frame_v1(frame)?;
@@ -703,6 +846,8 @@ impl NodeEventWalV1 {
             if expected_sequence == 0 {
                 if decoded.kind != KIND_GENESIS_V1
                     || decoded.event_id != [0; 32]
+                    || decoded.predecessor_digest != [0; 32]
+                    || decoded.payload_digest != [0; 32]
                     || decoded.commit_digest != [0; 32]
                 {
                     return Err(NodeEventWalErrorV1::Malformed);
@@ -717,6 +862,9 @@ impl NodeEventWalV1 {
                             || decoded.commit_digest != [0; 32]
                         {
                             return Err(NodeEventWalErrorV1::PendingConflict);
+                        }
+                        if !event_ids.insert(decoded.event_id) {
+                            return Err(NodeEventWalErrorV1::DuplicateEventId);
                         }
                         if last_commit.is_some_and(|receipt| {
                             receipt.commit_digest != decoded.predecessor_digest
@@ -761,6 +909,7 @@ impl NodeEventWalV1 {
         self.next_sequence = expected_sequence;
         self.pending = pending;
         self.last_commit = last_commit;
+        self.event_ids = event_ids;
         self.validate_path_binding_v1()
     }
 
@@ -804,7 +953,7 @@ impl<D: NodeEventCommitDriverV1> PocoNodeHostEventCommitOwnerV1<D> {
 
     /// Freshly revalidate the WAL and classify the restart state.
     pub fn restart_recovery_v1(&mut self) -> Result<NodeEventRecoveryV1, NodeEventWalErrorV1> {
-        self.wal.revalidate_v1()
+        self.wal.revalidate_owner_v1()
     }
 
     /// Return the cached classification from the last successful open or
@@ -854,7 +1003,7 @@ impl<D: NodeEventCommitDriverV1> PocoNodeHostEventCommitOwnerV1<D> {
     pub fn recover_pending_event_v1(
         &mut self,
     ) -> Result<Option<NodeEventCommitReceiptV1>, NodeEventWalErrorV1> {
-        let recovery = self.wal.revalidate_v1()?;
+        let recovery = self.wal.revalidate_owner_v1()?;
         let NodeEventRecoveryV1::Pending(intent) = recovery else {
             return Ok(None);
         };
@@ -1364,6 +1513,215 @@ mod tests {
                 last_commit: Some(receipt)
             } if receipt.event_id() == digest(9) && receipt.commit_digest() == digest(11)
         ));
+    }
+
+    #[test]
+    fn historical_event_id_replay_is_rejected_before_append_and_after_reopen() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("historical-replay-events.wal");
+        let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let first = wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        let first_receipt = wal.commit_event_v1(first, digest(5)).unwrap();
+        let second = wal
+            .prepare_event_v1(digest(6), first_receipt.commit_digest(), digest(7))
+            .unwrap();
+        let second_receipt = wal.commit_event_v1(second, digest(8)).unwrap();
+        let bytes_before = fs::read(&path).unwrap();
+        let head_before = wal.head();
+
+        // The immediate predecessor is B, but reusing A must still be
+        // rejected.  A digest-only tail check would incorrectly admit this
+        // A/B/A sequence.
+        assert_eq!(
+            wal.prepare_event_v1(digest(2), second_receipt.commit_digest(), digest(9)),
+            Err(NodeEventWalErrorV1::DuplicateEventId)
+        );
+        assert_eq!(wal.head(), head_before);
+        assert_eq!(fs::read(&path).unwrap(), bytes_before);
+
+        // Also exercise the restart decoder directly with a validly
+        // checksummed A/B/A tail, rather than relying only on the forward
+        // admission guard above.
+        let replay_path = temp.path().join("historical-replay-tail.wal");
+        let replay_intent = encode_frame_v1(
+            KIND_INTENT_V1,
+            5,
+            second_receipt.commit_checksum(),
+            digest(1),
+            digest(2),
+            second_receipt.commit_digest(),
+            digest(9),
+            [0; 32],
+        );
+        let replay_commit = encode_frame_v1(
+            KIND_COMMIT_V1,
+            6,
+            frame_checksum_v1(&replay_intent),
+            digest(1),
+            digest(2),
+            second_receipt.commit_digest(),
+            digest(9),
+            digest(10),
+        );
+        let mut replay_bytes = bytes_before.clone();
+        replay_bytes.extend_from_slice(&replay_intent);
+        replay_bytes.extend_from_slice(&replay_commit);
+        fs::write(&replay_path, replay_bytes).unwrap();
+        #[cfg(unix)]
+        fs::set_permissions(&replay_path, fs::Permissions::from_mode(0o600)).unwrap();
+        assert_eq!(
+            NodeEventWalV1::open(&replay_path, digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::DuplicateEventId
+        );
+
+        drop(wal);
+        let mut reopened = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        assert_eq!(
+            reopened.prepare_event_v1(digest(2), second_receipt.commit_digest(), digest(9)),
+            Err(NodeEventWalErrorV1::DuplicateEventId)
+        );
+        let third = reopened
+            .prepare_event_v1(digest(10), second_receipt.commit_digest(), digest(11))
+            .unwrap();
+        reopened.commit_event_v1(third, digest(12)).unwrap();
+    }
+
+    #[test]
+    fn stale_owner_revalidates_before_append_and_driver_effect() {
+        let temp = TempDir::new().unwrap();
+
+        // Same-inode interior mutation must be detected by prepare; the owner
+        // may not append onto bytes which it has not freshly authenticated.
+        let rewrite_path = temp.path().join("stale-rewrite-events.wal");
+        let mut rewrite_wal = NodeEventWalV1::open(&rewrite_path, digest(1)).unwrap();
+        let original_len = fs::metadata(&rewrite_path).unwrap().len();
+        let mut rewrite = OpenOptions::new().write(true).open(&rewrite_path).unwrap();
+        rewrite.seek(SeekFrom::Start(100)).unwrap();
+        rewrite.write_all(&[0x80]).unwrap();
+        rewrite.sync_all().unwrap();
+        drop(rewrite);
+        assert!(matches!(
+            rewrite_wal.prepare_event_v1(digest(2), digest(3), digest(4)),
+            Err(NodeEventWalErrorV1::Malformed | NodeEventWalErrorV1::ChainMismatch)
+        ));
+        assert_eq!(fs::metadata(&rewrite_path).unwrap().len(), original_len);
+        assert_eq!(
+            rewrite_wal.prepare_event_v1(digest(6), digest(7), digest(8)),
+            Err(NodeEventWalErrorV1::Poisoned)
+        );
+
+        // Even a fully self-consistent rewrite (all downstream checksums
+        // recomputed) must not become the authority of an already-open owner.
+        // The strict unchanged-tail check rejects it before admission.
+        let coherent_path = temp.path().join("coherent-rewrite-events.wal");
+        let mut coherent_wal = NodeEventWalV1::open(&coherent_path, digest(1)).unwrap();
+        let coherent_intent = coherent_wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        coherent_wal
+            .commit_event_v1(coherent_intent, digest(5))
+            .unwrap();
+        let original = fs::read(&coherent_path).unwrap();
+        let old_intent: &[u8; FRAME_BYTES_V1] = original[FRAME_BYTES_V1..(2 * FRAME_BYTES_V1)]
+            .try_into()
+            .unwrap();
+        let old_commit: &[u8; FRAME_BYTES_V1] = original
+            [(2 * FRAME_BYTES_V1)..(3 * FRAME_BYTES_V1)]
+            .try_into()
+            .unwrap();
+        let decoded_intent = decode_frame_v1(old_intent).unwrap();
+        let decoded_commit = decode_frame_v1(old_commit).unwrap();
+        let rewritten_intent = encode_frame_v1(
+            KIND_INTENT_V1,
+            decoded_intent.sequence,
+            decoded_intent.previous,
+            decoded_intent.namespace,
+            decoded_intent.event_id,
+            decoded_intent.predecessor_digest,
+            digest(44),
+            [0; 32],
+        );
+        let rewritten_intent_checksum = frame_checksum_v1(&rewritten_intent);
+        let rewritten_commit = encode_frame_v1(
+            KIND_COMMIT_V1,
+            decoded_commit.sequence,
+            rewritten_intent_checksum,
+            decoded_commit.namespace,
+            decoded_commit.event_id,
+            decoded_commit.predecessor_digest,
+            digest(44),
+            decoded_commit.commit_digest,
+        );
+        let mut coherent_bytes = original[..FRAME_BYTES_V1].to_vec();
+        coherent_bytes.extend_from_slice(&rewritten_intent);
+        coherent_bytes.extend_from_slice(&rewritten_commit);
+        fs::write(&coherent_path, coherent_bytes).unwrap();
+        assert_eq!(
+            coherent_wal.prepare_event_v1(digest(6), digest(5), digest(7)),
+            Err(NodeEventWalErrorV1::ChainMismatch)
+        );
+        assert_eq!(
+            coherent_wal.prepare_event_v1(digest(6), digest(5), digest(7)),
+            Err(NodeEventWalErrorV1::Poisoned)
+        );
+
+        // A partial external append is also rejected before a driver callback
+        // can make an irreversible application effect.
+        let append_path = temp.path().join("stale-append-events.wal");
+        let mut append_wal = NodeEventWalV1::open(&append_path, digest(1)).unwrap();
+        let intent = append_wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        let valid_len = fs::metadata(&append_path).unwrap().len();
+        let mut external = OpenOptions::new().append(true).open(&append_path).unwrap();
+        external.write_all(&[0xaa]).unwrap();
+        external.sync_all().unwrap();
+        drop(external);
+        let mut driver = OwnerCommitDriver {
+            digest: digest(5),
+            readback_digest: Some(digest(5)),
+            fail_readback: false,
+            wal_path: append_path.clone(),
+            observed_wal_len_during_apply: 0,
+            calls: Vec::new(),
+        };
+        assert_eq!(
+            append_wal.commit_with_driver_v1(intent, &mut driver),
+            Err(NodeEventWalErrorV1::Truncated)
+        );
+        assert!(driver.calls.is_empty(), "stale WAL must block the driver");
+        assert_eq!(
+            fs::metadata(&append_path).unwrap().len(),
+            valid_len + 1,
+            "failed admission must not append a commit frame"
+        );
+        assert_eq!(
+            append_wal.commit_with_driver_v1(intent, &mut driver),
+            Err(NodeEventWalErrorV1::Poisoned)
+        );
+    }
+
+    #[test]
+    fn noncanonical_genesis_digest_fields_are_rejected() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("noncanonical-genesis.wal");
+        {
+            let _wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        }
+        let mut bytes = fs::read(&path).unwrap();
+        let mut frame: [u8; FRAME_BYTES_V1] = bytes.as_slice().try_into().unwrap();
+        frame[120] = 1;
+        frame[152] = 1;
+        let checksum = frame_checksum_v1(&frame);
+        frame[CHECKSUM_OFFSET_V1..].copy_from_slice(&checksum);
+        bytes.copy_from_slice(&frame);
+        fs::write(&path, bytes).unwrap();
+        assert_eq!(
+            NodeEventWalV1::open(&path, digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::Malformed
+        );
     }
 
     #[test]
