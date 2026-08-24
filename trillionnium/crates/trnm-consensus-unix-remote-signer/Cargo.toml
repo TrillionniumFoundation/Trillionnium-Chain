@@ -26,9 +26,13 @@ production_candidate = false
 
 [features]
 default = []
+# Compiles the explicitly separate proposal-purpose client surface.  This is
+# intentionally opt-in: the default client only exposes Vote/Timeout and the
+# proposal path is not a production or runtime activation feature.
+proposal-purpose-client = []
 # Enables only the subprocess test server. It is deliberately not part of the
 # default build and is never a node credential/configuration feature.
-test-fixture = ["dep:ed25519-dalek"]
+test-fixture = ["dep:ed25519-dalek", "proposal-purpose-client"]
 
 [dependencies]
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }

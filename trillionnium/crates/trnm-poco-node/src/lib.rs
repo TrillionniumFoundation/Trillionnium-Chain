@@ -175,6 +175,8 @@ mod deployed_lab_process2_recovery;
 #[cfg(feature = "lab-validator-runtime")]
 mod deployed_lab_recovery;
 mod external_node_checkpoint;
+#[cfg(feature = "external-proposal-signer")]
+mod external_proposal_signer_runtime;
 #[cfg(feature = "external-signer-runtime")]
 mod external_signer_runtime;
 #[cfg(feature = "lab-validator-runtime")]
@@ -269,6 +271,13 @@ pub use external_node_checkpoint::{
     SqliteExternalNodeCheckpointStoreV0, EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0,
     EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0, EXTERNAL_NODE_CHECKPOINT_RECORD_BYTES_V0,
     EXTERNAL_NODE_CHECKPOINT_SCHEMA_V0,
+};
+#[cfg(feature = "external-proposal-signer")]
+pub use external_proposal_signer_runtime::{
+    initialize_unix_external_proposal_signer_v0, UnixExternalProposalSignerV0,
+    UNIX_EXTERNAL_PROPOSAL_SIGNER_CLIENT_COMPOSITION_V0,
+    UNIX_EXTERNAL_PROPOSAL_SIGNER_PRODUCTION_CANDIDATE_V0,
+    UNIX_EXTERNAL_PROPOSAL_SIGNER_RUNTIME_ACTIVATION_V0,
 };
 #[cfg(feature = "external-signer-runtime")]
 pub use external_signer_runtime::{

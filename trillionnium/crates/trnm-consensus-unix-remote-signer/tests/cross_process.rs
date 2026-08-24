@@ -22,6 +22,7 @@ use trnm_consensus_signer_journal::{
 use trnm_consensus_types::SignatureVerifier;
 use trnm_consensus_unix_remote_signer::{
     test_fixture::{fixture_config, fixture_intent},
+    UnixRemoteProposalSignerProducer, UnixRemoteProposalSignerProducerConfig,
     UnixRemoteSignerError, UnixRemoteSignerProducer, UnixRemoteSignerProducerConfig,
 };
 
@@ -309,7 +310,7 @@ fn client_accepts_isolated_proposal_signature_from_real_service_boundary() {
     wait_for_socket(&socket);
 
     let binding = service_fixture.binding;
-    let config = UnixRemoteSignerProducerConfig {
+    let config = UnixRemoteProposalSignerProducerConfig {
         socket_path: socket,
         validator_set: service_fixture.validator_set.clone(),
         author: binding.author(),
@@ -322,7 +323,8 @@ fn client_accepts_isolated_proposal_signature_from_real_service_boundary() {
         checkpoint_witness: binding.checkpoint_witness(),
         timeout: Duration::from_secs(2),
     };
-    let mut producer = UnixRemoteSignerProducer::new(config).expect("proposal client config");
+    let mut producer =
+        UnixRemoteProposalSignerProducer::new(config).expect("proposal client config");
     let validator = service_fixture
         .validator_set
         .validator(binding.author())
@@ -352,4 +354,55 @@ fn client_accepts_isolated_proposal_signature_from_real_service_boundary() {
         .join()
         .expect("proposal service thread")
         .expect("proposal request");
+}
+
+#[test]
+fn vote_timeout_client_cannot_cross_into_proposal_service() {
+    let temp = tempfile::tempdir().expect("tempdir");
+    fs::set_permissions(temp.path(), fs::Permissions::from_mode(0o700))
+        .expect("protect service namespace");
+    let socket = temp.path().join("proposal-only.sock");
+    let watermark = temp.path().join("proposal-only.sqlite3");
+    let service_fixture = ServiceFixture::new();
+    let mut service = RemoteSignerService::open(
+        fixture_proposal_service_config(&watermark).expect("proposal service config"),
+    )
+    .expect("open proposal-only service");
+    let server_socket = socket.clone();
+    let server = thread::spawn(move || service.serve_unix_once(&server_socket));
+    wait_for_socket(&socket);
+
+    // The ordinary client carries the Vote/Timeout binding profile.  It must
+    // be rejected by the proposal-only service before any proposal table or
+    // signer path is touched; there is no purpose downgrade or fallback.
+    let mut config = fixture_config(&socket);
+    config.validator_set = service_fixture.validator_set.clone();
+    config.author = service_fixture.binding.author();
+    config.role_profile_ref = service_fixture.binding.role_profile_ref();
+    config.service_profile_ref = service_fixture.binding.service_profile_ref();
+    config.client_profile_ref = service_fixture.binding.client_profile_ref();
+    config.process_generation = service_fixture.binding.process_generation();
+    config.lease_id = service_fixture.binding.lease_id();
+    config.checkpoint_witness = service_fixture.binding.checkpoint_witness();
+    let mut producer = UnixRemoteSignerProducer::new(config).expect("ordinary client config");
+    let intent = trnm_consensus_types::CanonicalSignIntentV0::vote(
+        &service_fixture.validator_set,
+        service_fixture.binding.author(),
+        1,
+        trnm_consensus_types::View::new(0),
+        trnm_consensus_types::Height::new(1),
+        trnm_consensus_types::BlockId::new([0xD4; 32]),
+    )
+    .expect("service-compatible intent");
+    let error = producer
+        .sign_intent_exact(&intent)
+        .expect_err("Vote/Timeout client must not reach proposal-only service");
+    assert!(matches!(
+        error,
+        UnixRemoteSignerError::ServiceRejected(_) | UnixRemoteSignerError::Protocol(_)
+    ));
+    server
+        .join()
+        .expect("proposal-only service thread")
+        .expect("proposal-only request handling");
 }

@@ -18,19 +18,23 @@ use std::{
 };
 
 use trnm_consensus_crypto::StrictEd25519Verifier;
+#[cfg(feature = "proposal-purpose-client")]
 use trnm_consensus_remote_signer_protocol::{
-    decode_unverified_remote_proposal_signer_response_v1_exact,
-    decode_unverified_remote_signer_response_v1_exact, proposal_purpose_profile_digest_v1,
-    RemoteConsensusCommandV1, RemoteProposalSignatureRequestV1, RemoteSignerCheckpointWitnessV1,
-    RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1, RemoteSignerProtocolErrorV1,
-    RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1, RemoteSignerRequestV1,
-    RemoteSignerRoleProfileRefV1, RemoteSignerServiceProfileRefV1,
-    MAX_REMOTE_PROPOSAL_SIGNER_REQUEST_BYTES_V1, MAX_REMOTE_PROPOSAL_SIGNER_RESPONSE_BYTES_V1,
+    decode_unverified_remote_proposal_signer_response_v1_exact, proposal_purpose_profile_digest_v1,
+    RemoteProposalSignatureRequestV1, MAX_REMOTE_PROPOSAL_SIGNER_REQUEST_BYTES_V1,
+    MAX_REMOTE_PROPOSAL_SIGNER_RESPONSE_BYTES_V1,
+};
+use trnm_consensus_remote_signer_protocol::{
+    decode_unverified_remote_signer_response_v1_exact, RemoteConsensusCommandV1,
+    RemoteSignerCheckpointWitnessV1, RemoteSignerClientProfileRefV1, RemoteSignerLeaseIdV1,
+    RemoteSignerProtocolErrorV1, RemoteSignerRequestBindingV1, RemoteSignerRequestNonceV1,
+    RemoteSignerRequestV1, RemoteSignerRoleProfileRefV1, RemoteSignerServiceProfileRefV1,
     MAX_REMOTE_SIGNER_REQUEST_BYTES_V1, MAX_REMOTE_SIGNER_RESPONSE_BYTES_V1,
 };
+#[cfg(feature = "proposal-purpose-client")]
+use trnm_consensus_signer_journal::{ProposalSignatureProducerV0, ProposalSignatureRequestV0};
 use trnm_consensus_signer_journal::{
-    ProposalSignatureProducerV0, ProposalSignatureRequestV0, SignatureProducerErrorV0,
-    SignatureProducerV0, SignatureRequestV0,
+    SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
 };
 use trnm_consensus_types::{
     CanonicalSignIntentV0, SignatureBytes, SignatureVerifier, ValidatorId, ValidatorSet,
@@ -44,6 +48,15 @@ pub const UNIX_REMOTE_SIGNER_PRIVATE_KEY_HANDLING_V1: bool = false;
 pub const UNIX_REMOTE_SIGNER_SAFETY_RULES_AUTHORITY_V1: bool = false;
 /// The adapter is not a production candidate by itself.
 pub const UNIX_REMOTE_SIGNER_PRODUCTION_CANDIDATE_V1: bool = false;
+/// Whether the explicitly separate proposal-purpose client surface is
+/// compiled into this build.  This is a compile-time capability indicator,
+/// not runtime or production activation.
+pub const UNIX_REMOTE_SIGNER_PROPOSAL_CLIENT_COMPILED_V1: bool =
+    cfg!(feature = "proposal-purpose-client");
+/// The proposal-purpose client never activates a consensus runtime.
+pub const UNIX_REMOTE_SIGNER_PROPOSAL_RUNTIME_ACTIVATION_V1: bool = false;
+/// The proposal-purpose client is not a production signer candidate.
+pub const UNIX_REMOTE_SIGNER_PROPOSAL_PRODUCTION_CANDIDATE_V1: bool = false;
 
 const FRAME_HEADER_BYTES: usize = 4;
 // The standalone service wraps an exact protocol response in one status byte;
@@ -306,8 +319,10 @@ impl UnixRemoteSignerProducer {
 
     /// Sends one exact proposal witness request through the independently
     /// provisioned proposal-purpose wire. This is a separate trait surface
-    /// from Vote/Timeout and is disabled by old signer services because the
-    /// purpose profile and magic are distinct.
+    /// from Vote/Timeout and is compiled only when the explicit
+    /// `proposal-purpose-client` feature is selected. Old/default clients
+    /// therefore cannot accidentally issue a proposal request.
+    #[cfg(feature = "proposal-purpose-client")]
     pub fn sign_proposal_exact(
         &mut self,
         request: ProposalSignatureRequestV0,
@@ -436,6 +451,90 @@ impl UnixRemoteSignerProducer {
     }
 }
 
+/// Explicit proposal-only client configuration.  Keeping this configuration
+/// and producer type separate from [`UnixRemoteSignerProducer`] prevents a
+/// caller from accidentally composing the proposal socket as a Vote/Timeout
+/// producer (or vice versa).  The type is available only with the
+/// `proposal-purpose-client` feature; it carries no private key or lease
+/// authority and does not activate a node runtime.
+#[cfg(feature = "proposal-purpose-client")]
+#[derive(Debug, Clone)]
+pub struct UnixRemoteProposalSignerProducerConfig {
+    pub socket_path: PathBuf,
+    pub validator_set: ValidatorSet,
+    pub author: ValidatorId,
+    pub signer_profile_ref: [u8; 32],
+    pub role_profile_ref: RemoteSignerRoleProfileRefV1,
+    pub service_profile_ref: RemoteSignerServiceProfileRefV1,
+    pub client_profile_ref: RemoteSignerClientProfileRefV1,
+    pub process_generation: trnm_consensus_remote_signer_protocol::ProcessGenerationV1,
+    pub lease_id: RemoteSignerLeaseIdV1,
+    pub checkpoint_witness: RemoteSignerCheckpointWitnessV1,
+    pub timeout: Duration,
+}
+
+#[cfg(feature = "proposal-purpose-client")]
+impl UnixRemoteProposalSignerProducerConfig {
+    fn into_base(self) -> UnixRemoteSignerProducerConfig {
+        UnixRemoteSignerProducerConfig {
+            socket_path: self.socket_path,
+            validator_set: self.validator_set,
+            author: self.author,
+            signer_profile_ref: self.signer_profile_ref,
+            role_profile_ref: self.role_profile_ref,
+            service_profile_ref: self.service_profile_ref,
+            client_profile_ref: self.client_profile_ref,
+            process_generation: self.process_generation,
+            lease_id: self.lease_id,
+            checkpoint_witness: self.checkpoint_witness,
+            timeout: self.timeout,
+        }
+    }
+}
+
+/// Proposal-only Unix signer client.  It intentionally implements only
+/// [`ProposalSignatureProducerV0`], never [`SignatureProducerV0`], so the
+/// proposal-purpose socket cannot be substituted into Vote/Timeout host
+/// composition by type inference.
+#[cfg(feature = "proposal-purpose-client")]
+#[derive(Debug, Clone)]
+pub struct UnixRemoteProposalSignerProducer {
+    inner: UnixRemoteSignerProducer,
+}
+
+#[cfg(feature = "proposal-purpose-client")]
+impl UnixRemoteProposalSignerProducer {
+    pub fn new(
+        config: UnixRemoteProposalSignerProducerConfig,
+    ) -> Result<Self, UnixRemoteSignerError> {
+        Ok(Self {
+            inner: UnixRemoteSignerProducer::new(config.into_base())?,
+        })
+    }
+
+    pub fn preflight(&self) -> Result<(), UnixRemoteSignerError> {
+        self.inner.preflight()
+    }
+
+    pub fn sign_proposal_exact(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, UnixRemoteSignerError> {
+        self.inner.sign_proposal_exact(request)
+    }
+}
+
+#[cfg(feature = "proposal-purpose-client")]
+impl ProposalSignatureProducerV0 for UnixRemoteProposalSignerProducer {
+    fn sign_proposal(
+        &mut self,
+        request: ProposalSignatureRequestV0,
+    ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+        self.inner.sign_proposal(request)
+    }
+}
+
+#[cfg(feature = "proposal-purpose-client")]
 impl ProposalSignatureProducerV0 for UnixRemoteSignerProducer {
     fn sign_proposal(
         &mut self,
@@ -515,6 +614,7 @@ fn derive_request_nonce(
         .expect("bounded deterministic nonce material must be valid")
 }
 
+#[cfg(feature = "proposal-purpose-client")]
 fn derive_proposal_request_nonce(
     request: &ProposalSignatureRequestV0,
     binding: RemoteSignerRequestBindingV1,

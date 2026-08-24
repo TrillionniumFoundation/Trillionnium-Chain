@@ -36,6 +36,13 @@ external-signer-runtime = [
   "dep:trnm-consensus-external-watermark",
   "dep:trnm-consensus-unix-remote-signer",
 ]
+# Explicitly compiles only the proposal-purpose signer client composition.
+# It is separate from the bounded timeout host and carries no Core/runtime
+# activation or production credential path.
+external-proposal-signer = [
+  "external-signer-runtime",
+  "trnm-consensus-unix-remote-signer/proposal-purpose-client",
+]
 # Explicit composition-only SafetyRules semantic sidecar.  This feature does
 # not wire the sidecar into Core or open any activation gate; it exists so a
 # node owner can bind a pure SafetyRules transition to an independently
