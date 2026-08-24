@@ -310,7 +310,18 @@ impl NodeEventWalV1 {
             Err(_) => return Err(NodeEventWalErrorV1::InvalidPath),
         };
         let mut options = OpenOptions::new();
-        options.read(true).write(true).append(true).create(true);
+        options.read(true).write(true).append(true);
+        if existing_file_identity.is_some() {
+            // An already admitted WAL must never be recreated if it
+            // disappears between lstat and open; that would turn deletion
+            // into a silent genesis/rollback on restart.
+            options.create(false);
+        } else {
+            // A virgin path is claimed atomically.  A competing creator
+            // loses with an error instead of having its bytes adopted as the
+            // authority journal.
+            options.create_new(true);
+        }
         #[cfg(unix)]
         options
             .mode(0o600)
