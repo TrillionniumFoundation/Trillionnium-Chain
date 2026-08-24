@@ -21,7 +21,7 @@ use crate::{
         ConsensusRelayAdmissionWindowV0, ConsensusRelayEnvelopeV0, ConsensusRelayErrorV0,
         RelayAdmissionV0,
     },
-    wire::UnboundProposalV0,
+    wire::{ConsensusWireError, UnboundProposalV0},
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -109,6 +109,7 @@ impl BoundedConsensusIngressLoopV0 {
         &mut self,
         frame: &AuthenticatedFrame,
     ) -> Result<RoutedConsensusActionV0, ConsensusIngressErrorV0> {
+        require_authenticated_session_v0(frame)?;
         let message = decode_authenticated_consensus_frame_v0(
             frame,
             &self.validator_set,
@@ -224,6 +225,7 @@ impl BoundedConsensusIngressLoopV0 {
         outer: &AuthenticatedFrame,
         relay_window: &mut ConsensusRelayAdmissionWindowV0,
     ) -> Result<RoutedConsensusRelayV0, ConsensusRelayIngressErrorV0> {
+        require_authenticated_session_v0(outer).map_err(ConsensusRelayIngressErrorV0::Consensus)?;
         if outer.kind != crate::frame::FrameKind::ConsensusRelay
             || self.validator_set.validator(outer.sender).is_none()
         {
@@ -274,6 +276,22 @@ impl BoundedConsensusIngressLoopV0 {
             forward,
         })
     }
+}
+
+/// The lower-level collector APIs receive a plain frame value rather than a
+/// transport-owned connection.  The real mesh path validates the session in
+/// `frame::decode`, but retaining this check at the collector boundary keeps a
+/// synthetic/partially-authenticated zero-session frame from being mistaken
+/// for a live consensus ingress when a caller bypasses that path.
+fn require_authenticated_session_v0(
+    frame: &AuthenticatedFrame,
+) -> Result<(), ConsensusIngressErrorV0> {
+    if frame.session == [0; 32] {
+        return Err(ConsensusIngressErrorV0::Wire(
+            ConsensusWireError::Malformed("zero authenticated session"),
+        ));
+    }
+    Ok(())
 }
 
 fn decoded_message_view_v0(message: &AdmittedConsensusMessageV0) -> View {
@@ -558,6 +576,54 @@ mod tests {
                 assert_eq!(certificate.block_id(), block);
             }
         }
+    }
+
+    #[test]
+    fn zero_session_transport_frames_fail_closed_before_admission() {
+        let (keys, set, parameters) = fixture();
+        let block = BlockId::new([0x70; 32]);
+        let vote = vote(&keys, &set, 0, block);
+        let direct = AuthenticatedFrame {
+            sender: vote.author(),
+            session: [0; 32],
+            sequence: 0,
+            kind: FrameKind::Vote,
+            payload: encode_vote(&vote),
+        };
+        let mut router = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+        assert!(matches!(
+            router.admit_authenticated_frame(&direct),
+            Err(ConsensusIngressErrorV0::Wire(
+                ConsensusWireError::Malformed("zero authenticated session")
+            ))
+        ));
+
+        let envelope = ConsensusRelayEnvelopeV0::new(
+            vote.author(),
+            FrameKind::Vote,
+            1,
+            encode_vote(&vote),
+            &set,
+            &keys[0],
+        )
+        .unwrap();
+        let relay = AuthenticatedFrame {
+            sender: set.validators()[1].id(),
+            session: [0; 32],
+            sequence: 0,
+            kind: FrameKind::ConsensusRelay,
+            payload: envelope.encode(),
+        };
+        let mut relay_window = ConsensusRelayAdmissionWindowV0::new(16).unwrap();
+        assert!(matches!(
+            router.admit_consensus_relay_frame(&relay, &mut relay_window),
+            Err(ConsensusRelayIngressErrorV0::Consensus(
+                ConsensusIngressErrorV0::Wire(ConsensusWireError::Malformed(
+                    "zero authenticated session"
+                ))
+            ))
+        ));
+        assert!(relay_window.is_empty());
     }
 
     #[test]
