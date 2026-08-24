@@ -20,8 +20,8 @@ use trnm_consensus_external_watermark::{
 };
 use trnm_consensus_remote_signer_protocol::decode_unverified_remote_signer_response_v1_exact;
 use trnm_consensus_remote_signer_service::{
-    fixture_request, fixture_service_config, ExternalAuthorityAdapterV1, Fixture, PurposePolicyV1,
-    RemoteSignerService, UnixExternalTimeoutAuthorityV1,
+    fixture_request, fixture_service_config, ExternalAuthorityAdapterV1, ExternalAuthorityErrorV1,
+    Fixture, PurposePolicyV1, RemoteSignerService, UnixExternalTimeoutAuthorityV1,
 };
 
 const CAPABILITY: [u8; 32] = [0x33; 32];
@@ -308,5 +308,105 @@ fn timeout_bridge_rejects_vote_and_recovers_pending_reservation() {
             .is_some(),
         "recovered response must be available without another CAS"
     );
+    authority.stop();
+}
+
+#[test]
+fn live_response_log_tamper_poisoned_before_replay_projection_use() {
+    let root = TempDir::new().expect("temporary bridge root");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    let fixture = Fixture::new();
+    let mut authority = AuthorityProcess::start(root.path(), fixture.binding);
+    let local_db = root.path().join("local.sqlite3");
+    let mut service = RemoteSignerService::open(fixture_service_config(
+        &local_db,
+        PurposePolicyV1::timeout_vote_only(),
+    ))
+    .expect("open fixture service");
+    let request_value =
+        fixture_request(&fixture, "timeout", 3, b"live-log-tamper").expect("timeout request");
+    let request = request_value.try_exact_bytes().expect("encode request");
+    let facts = service
+        .external_authority_request_v1(&request)
+        .expect("decode external facts");
+    let response_log = root.path().join("responses.log");
+    let mut adapter = UnixExternalTimeoutAuthorityV1::from_binding(
+        fixture.binding,
+        &authority.socket,
+        &response_log,
+    )
+    .expect("open external adapter")
+    .with_capability(CAPABILITY);
+    service
+        .process_request_with_external_authority_v1(&request, &mut adapter)
+        .expect("bind initial response");
+    let original = fs::read(&response_log).expect("read response log");
+    assert!(
+        !original.is_empty(),
+        "initial response must append a record"
+    );
+    let anchor_path = root.path().join(".responses.log.response-head-v1");
+    let original_anchor = fs::read(&anchor_path).expect("read response anchor");
+
+    // Same-inode, same-length interior edits must not be served from the
+    // adapter's already-replayed BTreeMap projection.
+    let mut edited = original.clone();
+    edited[0] ^= 0x01;
+    fs::write(&response_log, &edited).expect("edit response log in place");
+    assert!(matches!(
+        adapter
+            .replay_response_v1(facts)
+            .expect_err("edited response log must fail closed"),
+        ExternalAuthorityErrorV1::InvalidState
+    ));
+    assert!(
+        adapter.replay_response_v1(facts).is_err(),
+        "a tamper detection must poison the live adapter"
+    );
+    drop(adapter);
+
+    // Reopen the authenticated image, then tamper with the separately
+    // persisted head anchor.  The in-memory replay projection must not be
+    // usable while its anti-rollback anchor has changed underneath it.
+    fs::write(&response_log, &original).expect("restore response log for reopen");
+    let mut anchor_adapter = UnixExternalTimeoutAuthorityV1::from_binding(
+        fixture.binding,
+        &authority.socket,
+        &response_log,
+    )
+    .expect("reopen external adapter for anchor check")
+    .with_capability(CAPABILITY);
+    let mut edited_anchor = original_anchor.clone();
+    edited_anchor[0] ^= 0x01;
+    fs::write(&anchor_path, &edited_anchor).expect("edit response anchor in place");
+    assert!(matches!(
+        anchor_adapter
+            .replay_response_v1(facts)
+            .expect_err("edited response anchor must fail closed"),
+        ExternalAuthorityErrorV1::InvalidState
+    ));
+    drop(anchor_adapter);
+    fs::write(&anchor_path, &original_anchor).expect("restore response anchor");
+
+    // Reopen the authenticated image, then replace the pathname with an
+    // equal-length copy.  The pinned inode/path identity must reject it even
+    // though a plain length check would be unchanged.
+    let mut replaced_adapter = UnixExternalTimeoutAuthorityV1::from_binding(
+        fixture.binding,
+        &authority.socket,
+        &response_log,
+    )
+    .expect("reopen external adapter for path check")
+    .with_capability(CAPABILITY);
+    let moved = root.path().join("responses.moved");
+    fs::rename(&response_log, &moved).expect("move original response log");
+    fs::write(&response_log, &original).expect("write replacement response log");
+    fs::set_permissions(&response_log, fs::Permissions::from_mode(0o600)).unwrap();
+    assert!(matches!(
+        replaced_adapter
+            .replay_response_v1(facts)
+            .expect_err("replaced response log must fail closed"),
+        ExternalAuthorityErrorV1::InvalidState
+    ));
     authority.stop();
 }

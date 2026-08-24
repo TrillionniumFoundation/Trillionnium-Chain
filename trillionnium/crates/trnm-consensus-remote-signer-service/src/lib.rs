@@ -280,6 +280,118 @@ struct DurablePendingExternalReservationV1 {
     previous: Option<SignerWatermarkV0>,
 }
 
+// Keep the service-side scan bounded to the same hard ceiling enforced by
+// ReplayBindingStoreV1.  The external-store constant is intentionally private
+// to its crate, so this mirror is part of the service guard's local contract.
+const MAX_REPLAY_LOG_BYTES_V1: u64 = 64 * 1024 * 1024;
+
+/// A live integrity snapshot for the response-binding log.
+///
+/// `ReplayBindingStoreV1` authenticates and replays its log when it opens, but
+/// its lookup/count APIs intentionally expose only the in-memory projection.
+/// The external adapter must not continue using that projection after the
+/// pathname has been replaced or the file has been edited while the process
+/// remains alive.  Keep this guard in the service crate so the current topic
+/// can close that process-lifetime seam without changing the external-store
+/// API.  Both the response log and its durable response-head anchor are
+/// pinned. The digest is over the raw file image (not caller data), and the
+/// descriptor/path checks make replacement and same-length edits fail closed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct ReplayLogSnapshotV1 {
+    device: u64,
+    inode: u64,
+    length: u64,
+    digest: [u8; 32],
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ReplayLogGuardV1 {
+    path: PathBuf,
+    parent: PathBuf,
+    parent_device: u64,
+    parent_inode: u64,
+    snapshot: ReplayLogSnapshotV1,
+    anchor_path: PathBuf,
+    anchor_snapshot: ReplayLogSnapshotV1,
+    record_count: u64,
+}
+
+impl ReplayLogGuardV1 {
+    fn open(replay: &ReplayBindingStoreV1) -> Result<Self, ExternalAuthorityErrorV1> {
+        let path = replay.log_path().to_path_buf();
+        let parent = path
+            .parent()
+            .ok_or(ExternalAuthorityErrorV1::InvalidState)?
+            .to_path_buf();
+        let (parent_device, parent_inode) = replay_directory_identity_v1(&parent)?;
+        let snapshot = replay_log_snapshot_v1(&path)?;
+        let anchor_path = replay_anchor_path_v1(&path)?;
+        let anchor_snapshot = replay_log_snapshot_v1(&anchor_path)?;
+        Ok(Self {
+            path,
+            parent,
+            parent_device,
+            parent_inode,
+            snapshot,
+            anchor_path,
+            anchor_snapshot,
+            record_count: replay.record_count_v1(),
+        })
+    }
+
+    fn preflight(&self, replay: &ReplayBindingStoreV1) -> Result<(), ExternalAuthorityErrorV1> {
+        if replay.log_path() != self.path || replay.record_count_v1() != self.record_count {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        let (parent_device, parent_inode) = replay_directory_identity_v1(&self.parent)?;
+        if parent_device != self.parent_device || parent_inode != self.parent_inode {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        if replay_log_snapshot_v1(&self.path)? != self.snapshot {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        if replay_log_snapshot_v1(&self.anchor_path)? != self.anchor_snapshot {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        Ok(())
+    }
+
+    fn refresh_after_record(
+        &mut self,
+        replay: &ReplayBindingStoreV1,
+    ) -> Result<(), ExternalAuthorityErrorV1> {
+        let old_count = self.record_count;
+        let new_count = replay.record_count_v1();
+        if new_count < old_count || new_count > old_count.saturating_add(1) {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        let (parent_device, parent_inode) = replay_directory_identity_v1(&self.parent)?;
+        if parent_device != self.parent_device || parent_inode != self.parent_inode {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        let snapshot = replay_log_snapshot_v1(&self.path)?;
+        let anchor_snapshot = replay_log_snapshot_v1(&self.anchor_path)?;
+        if new_count == old_count {
+            // An idempotent duplicate must not alter the durable image.
+            if snapshot != self.snapshot || anchor_snapshot != self.anchor_snapshot {
+                return Err(ExternalAuthorityErrorV1::InvalidState);
+            }
+        } else if snapshot.device != self.snapshot.device
+            || snapshot.inode != self.snapshot.inode
+            || snapshot.length <= self.snapshot.length
+            || snapshot.digest == self.snapshot.digest
+            || anchor_snapshot.length != self.anchor_snapshot.length
+            || anchor_snapshot.digest == self.anchor_snapshot.digest
+        {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        self.snapshot = snapshot;
+        self.anchor_snapshot = anchor_snapshot;
+        self.record_count = new_count;
+        Ok(())
+    }
+}
+
 const PENDING_RESERVATION_MAGIC_V1: &[u8; 8] = b"TRNMPD01";
 const PENDING_RESERVATION_DOMAIN_V1: &[u8] = b"trnm.remote-signer.external-timeout.pending.v1\0";
 const PENDING_RESERVATION_VERSION_V1: u8 = 1;
@@ -295,6 +407,107 @@ fn pending_reservation_path_v1(
         .and_then(|value| value.to_str())
         .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
     Ok(parent.join(format!(".{name}.pending")))
+}
+
+fn replay_anchor_path_v1(response_log_path: &Path) -> Result<PathBuf, ExternalAuthorityErrorV1> {
+    // This mirrors ReplayBindingStoreV1's private path convention.  A future
+    // public integrity-preflight API in that crate should replace this local
+    // derivation so the two namespaces cannot drift independently.
+    let parent = response_log_path
+        .parent()
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    let name = response_log_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+    Ok(parent.join(format!(".{name}.response-head-v1")))
+}
+
+fn replay_directory_identity_v1(path: &Path) -> Result<(u64, u64), ExternalAuthorityErrorV1> {
+    let metadata =
+        fs::symlink_metadata(path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    Ok((metadata.dev(), metadata.ino()))
+}
+
+fn replay_log_snapshot_v1(path: &Path) -> Result<ReplayLogSnapshotV1, ExternalAuthorityErrorV1> {
+    let path_metadata =
+        fs::symlink_metadata(path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    if path_metadata.file_type().is_symlink()
+        || !path_metadata.is_file()
+        || path_metadata.nlink() != 1
+        || path_metadata.mode() & 0o777 != 0o600
+        || path_metadata.len() > MAX_REPLAY_LOG_BYTES_V1
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    let file = fs::OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+        .open(path)
+        .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    let before = file
+        .metadata()
+        .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    if !before.is_file()
+        || before.nlink() != 1
+        || before.mode() & 0o777 != 0o600
+        || before.len() > MAX_REPLAY_LOG_BYTES_V1
+        || before.dev() != path_metadata.dev()
+        || before.ino() != path_metadata.ino()
+        || before.len() != path_metadata.len()
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+
+    let mut reader = file
+        .try_clone()
+        .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    let mut hasher = Sha256::new();
+    let mut bytes_read = 0u64;
+    let mut buffer = [0u8; 16 * 1024];
+    loop {
+        let read = reader
+            .read(&mut buffer)
+            .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+        if read == 0 {
+            break;
+        }
+        bytes_read = bytes_read
+            .checked_add(read as u64)
+            .ok_or(ExternalAuthorityErrorV1::InvalidState)?;
+        if bytes_read > before.len() {
+            return Err(ExternalAuthorityErrorV1::InvalidState);
+        }
+        hasher.update(&buffer[..read]);
+    }
+    let after = file
+        .metadata()
+        .map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    let final_path_metadata =
+        fs::symlink_metadata(path).map_err(|_| ExternalAuthorityErrorV1::InvalidState)?;
+    if bytes_read != before.len()
+        || after.dev() != before.dev()
+        || after.ino() != before.ino()
+        || after.len() != before.len()
+        || final_path_metadata.file_type().is_symlink()
+        || !final_path_metadata.is_file()
+        || final_path_metadata.nlink() != 1
+        || final_path_metadata.mode() & 0o777 != 0o600
+        || final_path_metadata.dev() != before.dev()
+        || final_path_metadata.ino() != before.ino()
+        || final_path_metadata.len() != before.len()
+    {
+        return Err(ExternalAuthorityErrorV1::InvalidState);
+    }
+    Ok(ReplayLogSnapshotV1 {
+        device: before.dev(),
+        inode: before.ino(),
+        length: before.len(),
+        digest: hasher.finalize().into(),
+    })
 }
 
 fn pending_put_bytes_v1(output: &mut Vec<u8>, value: &[u8]) {
@@ -583,6 +796,7 @@ fn clear_pending_reservation_v1(path: &Path) -> Result<(), ExternalAuthorityErro
 pub struct UnixExternalTimeoutAuthorityV1 {
     watermark: UnixWatermarkClient,
     replay: ReplayBindingStoreV1,
+    replay_log_guard: ReplayLogGuardV1,
     pending_path: PathBuf,
     scope: [u8; 32],
     process_generation: u64,
@@ -634,6 +848,7 @@ impl UnixExternalTimeoutAuthorityV1 {
         let response_log_path = response_log_path.as_ref();
         let replay =
             ReplayBindingStoreV1::open(response_log_path).map_err(map_replay_binding_error_v1)?;
+        let replay_log_guard = ReplayLogGuardV1::open(&replay)?;
         let pending_path = pending_reservation_path_v1(response_log_path)?;
         let durable_pending = load_pending_reservation_v1(&pending_path)?;
         let journal_id =
@@ -641,6 +856,7 @@ impl UnixExternalTimeoutAuthorityV1 {
         Ok(Self {
             watermark,
             replay,
+            replay_log_guard,
             pending_path,
             scope,
             process_generation,
@@ -733,6 +949,17 @@ impl UnixExternalTimeoutAuthorityV1 {
             .ok_or(ExternalAuthorityErrorV1::InvalidState)
     }
 
+    fn ensure_replay_integrity_v1(&mut self) -> Result<(), ExternalAuthorityErrorV1> {
+        if let Err(error) = self.replay_log_guard.preflight(&self.replay) {
+            // A live journal image change is ambiguity, even if the file is
+            // later restored.  Keep this adapter poisoned for its lifetime;
+            // callers must reopen against a freshly authenticated namespace.
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
+    }
+
     fn validate_request_v1(
         &self,
         request: ExternalAuthorityRequestV1,
@@ -769,6 +996,7 @@ impl UnixExternalTimeoutAuthorityV1 {
     fn reconcile_heads_v1(
         &mut self,
     ) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
+        self.ensure_replay_integrity_v1()?;
         self.pending_external_reserved = false;
         // `open` deliberately starts with an unbound client because the
         // capability is provisioned by the later `with_capability` step.
@@ -885,14 +1113,19 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
         // Reconcile before lookup as well: a tampered/ambiguous external head
         // must not be bypassed merely because a response entry is present.
         self.reconcile_heads_v1()?;
-        self.replay
+        let signature = self
+            .replay
             .lookup_signature_v1(
                 request.request_fingerprint,
                 request.signer_profile_ref,
                 request.signing_root,
             )
-            .map_err(map_replay_binding_error_v1)
-            .map(|signature| signature.map(|value| value.as_bytes().to_vec()))
+            .map_err(map_replay_binding_error_v1)?;
+        // Check again after the projection lookup so a replacement/edit that
+        // happens during the external reconciliation window cannot yield a
+        // stale in-memory response.
+        self.ensure_replay_integrity_v1()?;
+        Ok(signature.map(|value| value.as_bytes().to_vec()))
     }
 
     fn reserve_v1(
@@ -1021,6 +1254,7 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
         if self.poisoned {
             return Err(ExternalAuthorityErrorV1::Unavailable);
         }
+        self.ensure_replay_integrity_v1()?;
         let pending = self
             .pending
             .get(&reservation.token_digest())
@@ -1048,6 +1282,10 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
                 signature,
             )
             .map_err(map_replay_binding_error_v1)?;
+        if let Err(error) = self.replay_log_guard.refresh_after_record(&self.replay) {
+            self.poisoned = true;
+            return Err(error);
+        }
         // The semantic sidecar is the authority record for this adapter.  Do
         // not use the opaque load path here: an opaque response can hide a
         // scope/journal mismatch and, more importantly, cannot prove that the

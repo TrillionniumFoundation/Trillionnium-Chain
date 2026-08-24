@@ -3,7 +3,7 @@ use std::collections::{HashSet, VecDeque};
 mod typed_admission;
 
 pub use typed_admission::{
-    AdmissionReject, CanonicalTxDigest, ResourceLimits, SignedAdmissionHooks,
+    AdmissionReject, CanonicalSignerId, CanonicalTxDigest, ResourceLimits, SignedAdmissionHooks,
     SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate, TypedAdmitOutcome,
     DEFAULT_MAX_ADMISSION_BODY_BYTES,
 };

@@ -8,8 +8,9 @@
 //! inventing a wire format in the mempool crate.  A canonical transaction crate
 //! implements [`SignedEnvelopeView`], and an owner of the canonical signature
 //! authority implements [`SignedAdmissionHooks`].  The mempool receives only the
-//! exact digest/body and bounded fee/resource metadata.  It never receives a raw
-//! private key and it does not persist a durable consensus decision.
+//! exact digest/body, signer identity, and bounded fee/resource metadata.  It
+//! never receives a raw private key and it does not persist a durable consensus
+//! decision.
 
 use std::collections::HashMap;
 
@@ -35,6 +36,29 @@ impl CanonicalTxDigest {
     }
 
     /// Return the exact digest bytes supplied by the canonical adapter.
+    pub const fn as_bytes(self) -> [u8; 32] {
+        self.0
+    }
+}
+
+/// Opaque canonical signer/account identity used to scope replay and sequence
+/// checks.  The mempool does not derive this value from a body, public key, or
+/// private key: the canonical transaction adapter must supply the exact identity
+/// that its signature/replay authority uses.
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+pub struct CanonicalSignerId([u8; 32]);
+
+impl CanonicalSignerId {
+    /// Construct an identity, rejecting the all-zero value used for absent or
+    /// unbound sequence evidence.
+    pub fn from_bytes(bytes: [u8; 32]) -> Result<Self, AdmissionReject> {
+        if bytes == [0; 32] {
+            return Err(AdmissionReject::ZeroSignerId);
+        }
+        Ok(Self(bytes))
+    }
+
+    /// Return the exact identity bytes supplied by the canonical adapter.
     pub const fn as_bytes(self) -> [u8; 32] {
         self.0
     }
@@ -75,6 +99,8 @@ pub enum AdmissionReject {
     /// The source's canonical validation rejected its body/field binding.
     CanonicalValidationFailed,
     ZeroDigest,
+    ZeroSignerId,
+    SignerIdentityUnavailable,
     EmptyBody,
     BodyTooLarge,
     InvalidNonce,
@@ -97,6 +123,13 @@ pub enum AdmissionReject {
 pub trait SignedEnvelopeView {
     /// Exact digest of the complete signed transaction/envelope.
     fn canonical_digest(&self) -> CanonicalTxDigest;
+
+    /// Exact canonical signer/account identity used to scope nonce/replay
+    /// protection.  A missing adapter must remain fail-closed rather than
+    /// silently collapsing all signers into one global nonce domain.
+    fn canonical_signer_id(&self) -> Result<CanonicalSignerId, AdmissionReject> {
+        Err(AdmissionReject::SignerIdentityUnavailable)
+    }
 
     /// Exact canonical transaction body bytes, without normalization.
     fn canonical_body(&self) -> &[u8];
@@ -135,8 +168,10 @@ pub trait SignedAdmissionHooks<E: ?Sized> {
         metadata: &SignedEnvelopeMetadata,
     ) -> Result<(), AdmissionReject>;
 
-    /// Check durable or epoch-scoped nonce/replay state.  The default rejects;
-    /// callers must explicitly install a replay authority rather than silently
+    /// Check durable or epoch-scoped nonce/replay state.  The metadata exposes a
+    /// signer-scoped [`SignedEnvelopeMetadata::sequence_key`]; the caller still
+    /// owns its chain/epoch domain and persistence.  The default rejects, so a
+    /// caller must explicitly install a replay authority rather than silently
     /// treating an in-memory queue as durable nonce protection.
     fn check_replay(&mut self, _metadata: &SignedEnvelopeMetadata) -> Result<(), AdmissionReject> {
         Err(AdmissionReject::ReplayCheckUnavailable)
@@ -154,6 +189,7 @@ pub trait SignedAdmissionHooks<E: ?Sized> {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SignedEnvelopeMetadata {
     digest: CanonicalTxDigest,
+    signer_id: CanonicalSignerId,
     body: Vec<u8>,
     nonce: u64,
     fee_limit: u128,
@@ -163,6 +199,18 @@ pub struct SignedEnvelopeMetadata {
 impl SignedEnvelopeMetadata {
     pub const fn digest(&self) -> CanonicalTxDigest {
         self.digest
+    }
+
+    /// Canonical signer/account identity for replay and sequence scoping.
+    pub const fn signer_id(&self) -> CanonicalSignerId {
+        self.signer_id
+    }
+
+    /// Canonical sequence key that a durable replay authority must fence.
+    /// Keeping the signer and nonce together prevents adapters from accidentally
+    /// treating a nonce as a chain-wide/global counter.
+    pub const fn sequence_key(&self) -> (CanonicalSignerId, u64) {
+        (self.signer_id, self.nonce)
     }
 
     pub fn body(&self) -> &[u8] {
@@ -315,6 +363,7 @@ impl TypedAdmissionGate {
         // Re-check here because a caller-provided view can be backed by mutable
         // state; all-zero is reserved for absent/unbound digest evidence.
         CanonicalTxDigest::from_bytes(digest.as_bytes())?;
+        let signer_id = envelope.canonical_signer_id()?;
 
         let body = envelope.canonical_body();
         if body.is_empty() {
@@ -333,6 +382,7 @@ impl TypedAdmissionGate {
 
         Ok(SignedEnvelopeMetadata {
             digest,
+            signer_id,
             body: body.to_vec(),
             nonce,
             fee_limit: envelope.fee_limit(),
@@ -361,6 +411,7 @@ mod tests {
     #[derive(Debug)]
     struct FixtureEnvelope {
         digest: CanonicalTxDigest,
+        signer_id: Option<CanonicalSignerId>,
         body: Vec<u8>,
         nonce: u64,
         fee_limit: u128,
@@ -371,6 +422,11 @@ mod tests {
     impl SignedEnvelopeView for FixtureEnvelope {
         fn canonical_digest(&self) -> CanonicalTxDigest {
             self.digest
+        }
+
+        fn canonical_signer_id(&self) -> Result<CanonicalSignerId, AdmissionReject> {
+            self.signer_id
+                .ok_or(AdmissionReject::SignerIdentityUnavailable)
         }
 
         fn canonical_body(&self) -> &[u8] {
@@ -438,9 +494,14 @@ mod tests {
         CanonicalTxDigest::from_bytes([byte; 32]).unwrap()
     }
 
+    fn signer(byte: u8) -> CanonicalSignerId {
+        CanonicalSignerId::from_bytes([byte; 32]).unwrap()
+    }
+
     fn envelope(byte: u8) -> FixtureEnvelope {
         FixtureEnvelope {
             digest: digest(byte),
+            signer_id: Some(signer(1)),
             body: b"exact-canonical-body".to_vec(),
             nonce: 1,
             fee_limit: 17,
@@ -482,6 +543,7 @@ mod tests {
 
         let ready = gate.pop_ready().expect("accepted metadata");
         assert_eq!(ready.digest(), first.digest);
+        assert_eq!(ready.signer_id(), first.signer_id.unwrap());
         assert_eq!(ready.body(), first.body.as_slice());
         assert_eq!(ready.nonce(), first.nonce);
         assert_eq!(ready.fee_limit(), first.fee_limit);
@@ -502,6 +564,81 @@ mod tests {
         );
         assert_eq!(hooks.verify_calls, 0);
         assert_eq!(gate.queued_counts(), (0, 0, 0));
+    }
+
+    #[test]
+    fn missing_signer_identity_fails_closed_before_signature_hook() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut candidate = envelope(21);
+        candidate.signer_id = None;
+        let mut hooks = accepting_hooks();
+
+        assert_eq!(
+            gate.admit_signed(&candidate, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::SignerIdentityUnavailable)
+        );
+        assert_eq!(hooks.verify_calls, 0);
+        assert_eq!(gate.queued_counts(), (0, 0, 0));
+    }
+
+    #[test]
+    fn replay_hook_can_scope_nonce_to_canonical_signer_identity() {
+        use std::collections::HashSet;
+
+        #[derive(Default)]
+        struct SequenceHooks {
+            seen: HashSet<(CanonicalSignerId, u64)>,
+        }
+
+        impl SignedAdmissionHooks<FixtureEnvelope> for SequenceHooks {
+            fn verify_signature(
+                &mut self,
+                _envelope: &FixtureEnvelope,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                Ok(())
+            }
+
+            fn check_replay(
+                &mut self,
+                metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                self.seen
+                    .insert(metadata.sequence_key())
+                    .then_some(())
+                    .ok_or(AdmissionReject::Replay)
+            }
+
+            fn recheck(
+                &mut self,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                Ok(())
+            }
+        }
+
+        let mut gate = TypedAdmissionGate::with_default_body_limit(3, 0);
+        let mut first = envelope(22);
+        first.signer_id = Some(signer(1));
+        let mut other_signer = envelope(23);
+        other_signer.signer_id = Some(signer(2));
+        let mut same_signer_replay = envelope(24);
+        same_signer_replay.signer_id = Some(signer(1));
+        let mut hooks = SequenceHooks::default();
+
+        assert_eq!(
+            gate.admit_signed(&first, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(
+            gate.admit_signed(&other_signer, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(
+            gate.admit_signed(&same_signer_replay, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        assert_eq!(gate.queued_counts(), (2, 0, 2));
     }
 
     #[test]

@@ -101,6 +101,28 @@ impl RunTransportContext {
         }
     }
 
+    /// Validate the optional binding against the validator set that is about
+    /// to authenticate the handshake.  A bound context is an assertion about
+    /// the *exact* epoch/set namespace, not an arbitrary label supplied by a
+    /// caller.  Keep the legacy unbound constructor valid for old fixtures;
+    /// the D0 admission helper still rejects an unbound connection before it
+    /// can issue a peer lease.
+    pub(crate) fn validate_validator_set_binding(
+        &self,
+        validator_set: &ValidatorSet,
+    ) -> Result<(), FrameError> {
+        if let Some((epoch, validator_set_id)) = self.validator_set_binding() {
+            if epoch != validator_set.epoch().get()
+                || validator_set_id != validator_set.id().into_bytes()
+            {
+                return Err(FrameError::Malformed(
+                    "transport context validator-set binding mismatch",
+                ));
+            }
+        }
+        Ok(())
+    }
+
     /// Adds the exact public validator-config digest to the authenticated
     /// handshake context.  This prevents one validator's signed transport
     /// session from being replayed under another deployment configuration.
@@ -553,6 +575,7 @@ pub fn server_handshake(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    transport_context.validate_validator_set_binding(validator_set)?;
     require_local_key(local, signing_key, key_roles)?;
     let mut receiver_nonce = [0u8; 32];
     getrandom::getrandom(&mut receiver_nonce)
@@ -599,6 +622,7 @@ pub fn client_handshake(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    transport_context.validate_validator_set_binding(validator_set)?;
     require_local_key(local, signing_key, key_roles)?;
     let challenge = read_record(io)?;
     let receiver_nonce = decode_challenge(
@@ -662,6 +686,7 @@ pub fn server_handshake_with_external_identity(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    transport_context.validate_validator_set_binding(validator_set)?;
     require_external_identity(local, producer, key_roles)?;
     let expected_public_key = key_roles
         .p2p_identity_public_key(local)
@@ -716,6 +741,7 @@ pub fn client_handshake_with_external_identity(
     key_roles: &ValidatorKeyRoleRegistryV1,
     transport_context: RunTransportContext,
 ) -> Result<ConnectionSession, FrameError> {
+    transport_context.validate_validator_set_binding(validator_set)?;
     require_external_identity(local, producer, key_roles)?;
     let expected_public_key = key_roles
         .p2p_identity_public_key(local)
@@ -2050,5 +2076,48 @@ mod tests {
 
         let node_bound = TEST_TRANSPORT_CONTEXT.with_node_config_binding([0x88; 32]);
         assert_ne!(actual, network_context_digest(&set, &key_roles, node_bound));
+    }
+
+    #[test]
+    fn bound_transport_context_must_match_live_validator_set_before_io() {
+        let (client_key, server_key, _, client, server, set, key_roles) = fixture();
+        let wrong_epoch = TEST_TRANSPORT_CONTEXT
+            .with_validator_set_binding(set.epoch().get() + 1, set.id().into_bytes());
+        let mut server_io = Cursor::new(Vec::<u8>::new());
+        assert!(matches!(
+            server_handshake(
+                &mut server_io,
+                "poco-g3-7-20260813T000000Z-1234abcd",
+                server,
+                &server_key,
+                &set,
+                &key_roles,
+                wrong_epoch,
+            ),
+            Err(FrameError::Malformed(
+                "transport context validator-set binding mismatch"
+            ))
+        ));
+        assert_eq!(server_io.position(), 0);
+
+        let wrong_set_id =
+            TEST_TRANSPORT_CONTEXT.with_validator_set_binding(set.epoch().get(), [0x99; 32]);
+        let mut client_io = Cursor::new(Vec::<u8>::new());
+        assert!(matches!(
+            client_handshake(
+                &mut client_io,
+                "poco-g3-7-20260813T000000Z-1234abcd",
+                client,
+                server,
+                &client_key,
+                &set,
+                &key_roles,
+                wrong_set_id,
+            ),
+            Err(FrameError::Malformed(
+                "transport context validator-set binding mismatch"
+            ))
+        ));
+        assert_eq!(client_io.position(), 0);
     }
 }

@@ -288,6 +288,7 @@ pub struct PocoNodeDeployedLabRecoveryFactsV0 {
     finalized_height: u64,
     application_applied_block_id: BlockId,
     application_applied_height: u64,
+    application_committed_head: ApplicationHeadV0,
     application_commit_sequence: u64,
     safety_revision: u64,
     safety_state_record_checksum: [u8; 32],
@@ -332,6 +333,16 @@ impl PocoNodeDeployedLabRecoveryFactsV0 {
 
     pub const fn application_applied_height_v0(&self) -> u64 {
         self.application_applied_height
+    }
+
+    /// Exact committed native-application head captured during recovery.
+    ///
+    /// This baseline is independent of the checkpoint's projection mode: a
+    /// timeout checkpoint may name a retained prepared row while the durable
+    /// application owner still points at its committed parent.  Host reopen
+    /// must compare the fresh application readback to this exact baseline.
+    pub const fn application_committed_head_v0(&self) -> &ApplicationHeadV0 {
+        &self.application_committed_head
     }
 
     pub const fn application_commit_sequence_v0(&self) -> u64 {
@@ -661,6 +672,47 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
                 "host reopen observed a Safety head different from the recovered Core",
             ));
         }
+
+        // The host retains the native application and proposal-validation
+        // owners alongside Core/Safety.  Re-reading only the checkpoint and
+        // signer leaves a cross-store replay hole: an in-place application
+        // head or validation journal rollback can keep the same external
+        // checkpoint while the returned owner no longer names the durable
+        // execution cut which was authenticated at open.  Bind the native
+        // application to its captured committed baseline and the validation
+        // owner to its exact sequence before reporting a clean boundary; the
+        // checkpoint readback below then protects whichever projection mode
+        // (committed or retained prepared) was authenticated at open.
+        let application = self
+            .owner
+            ._application
+            .confirmed_committed_head_v0()
+            .map_err(|error| {
+                PocoNodeDeployedLabRecoveryErrorV0::from_debug("host.application_readback", error)
+            })?;
+        if application != *self.owner.facts.application_committed_head_v0() {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.application_checkpoint_join",
+                "host reopen observed a native application head different from the recovered cut",
+            ));
+        }
+        let validation_sequence =
+            self.owner
+                ._validation_store
+                .durable_sequence_v0()
+                .map_err(|error| {
+                    PocoNodeDeployedLabRecoveryErrorV0::from_debug(
+                        "host.validation_readback",
+                        error,
+                    )
+                })?;
+        if validation_sequence != self.owner.facts.proposal_validation_sequence {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.validation_checkpoint_join",
+                "host reopen observed a proposal-validation sequence different from the recovered cut",
+            ));
+        }
+
         let signer = self
             .owner
             ._signer
@@ -1316,6 +1368,7 @@ where
         finalized_height: finalized.height().get(),
         application_applied_block_id: applied.block_id(),
         application_applied_height: applied.height().get(),
+        application_committed_head: committed.clone(),
         application_commit_sequence: application_recovery.watermarks().application_commit(),
         safety_revision: safety_facts.revision_v0(),
         safety_state_record_checksum: safety_facts.state_record_checksum_v0(),
@@ -2329,6 +2382,116 @@ mod tests {
         assert_eq!(host.facts_v0(), &expected_facts);
         host.revalidate_durable_boundary_v0()
             .expect("reopened host readback must match the recovered Core/checkpoint join");
+
+        // The application owner is held by the host but its SQLite payload is
+        // still an independent durable namespace.  Mutating the committed
+        // head behind the retained owner must make the next boundary read
+        // fail closed; otherwise a stale Core/checkpoint could continue with
+        // an execution head that was never part of the authenticated cut.
+        let application_path = directory.path().join("application/application.sqlite3");
+        let connection =
+            rusqlite::Connection::open(&application_path).expect("open application for tamper");
+        let original_state_root: Vec<u8> = connection
+            .query_row(
+                "SELECT head_state_root FROM native_application_metadata_v0 WHERE singleton = 1",
+                [],
+                |row| row.get(0),
+            )
+            .expect("read the committed application state root");
+        assert_eq!(original_state_root.len(), 32);
+        let mut corrupted_state_root = original_state_root.clone();
+        corrupted_state_root[0] ^= 1;
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE native_application_metadata_v0 SET head_state_root = ?1 WHERE singleton = 1",
+                    rusqlite::params![&corrupted_state_root],
+                )
+                .expect("tamper only the application head root"),
+            1
+        );
+        drop(connection);
+        let error = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("host must fail closed after application-head tamper");
+        assert!(
+            matches!(
+                error.stage_v0(),
+                "host.application_readback" | "host.application_checkpoint_join"
+            ),
+            "unexpected application tamper stage: {}",
+            error.stage_v0()
+        );
+
+        let connection =
+            rusqlite::Connection::open(&application_path).expect("reopen application to restore");
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE native_application_metadata_v0 SET head_state_root = ?1 WHERE singleton = 1",
+                    rusqlite::params![&original_state_root],
+                )
+                .expect("restore the application head root"),
+            1
+        );
+        drop(connection);
+        host.revalidate_durable_boundary_v0()
+            .expect("restored application owner must rejoin the exact checkpoint");
+
+        // The proposal-validation owner is another durable namespace retained
+        // by the host.  A sequence rollback/advance that leaves Safety,
+        // signer, and the external checkpoint untouched must not be accepted
+        // as a clean reopen.
+        let validation_path = directory.path().join("validation/validation.sqlite3");
+        let connection =
+            rusqlite::Connection::open(&validation_path).expect("open validation for tamper");
+        let original_validation_sequence: Vec<u8> = connection
+            .query_row(
+                "SELECT sequence FROM validation_store_metadata_v0 WHERE singleton = 1",
+                [],
+                |row| row.get(0),
+            )
+            .expect("read the proposal-validation sequence");
+        assert_eq!(original_validation_sequence.len(), 8);
+        let mut corrupted_validation_sequence = original_validation_sequence.clone();
+        corrupted_validation_sequence[0] ^= 1;
+        assert_ne!(corrupted_validation_sequence, original_validation_sequence);
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE validation_store_metadata_v0 SET sequence = ?1 WHERE singleton = 1",
+                    rusqlite::params![&corrupted_validation_sequence],
+                )
+                .expect("tamper only the validation sequence"),
+            1
+        );
+        drop(connection);
+        let error = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("host must fail closed after validation-sequence tamper");
+        assert!(
+            matches!(
+                error.stage_v0(),
+                "host.validation_readback" | "host.validation_checkpoint_join"
+            ),
+            "unexpected validation tamper stage: {}",
+            error.stage_v0()
+        );
+
+        let connection =
+            rusqlite::Connection::open(&validation_path).expect("reopen validation to restore");
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE validation_store_metadata_v0 SET sequence = ?1 WHERE singleton = 1",
+                    rusqlite::params![&original_validation_sequence],
+                )
+                .expect("restore the validation sequence"),
+            1
+        );
+        drop(connection);
+        host.revalidate_durable_boundary_v0()
+            .expect("restored validation owner must rejoin the exact checkpoint");
 
         let path = directory.path().join("checkpoint/checkpoint.sqlite3");
         let mut corrupted = checkpoint.encode_canonical();
