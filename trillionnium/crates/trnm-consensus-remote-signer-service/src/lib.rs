@@ -770,8 +770,18 @@ impl UnixExternalTimeoutAuthorityV1 {
         &mut self,
     ) -> Result<Option<SignerWatermarkV0>, ExternalAuthorityErrorV1> {
         self.pending_external_reserved = false;
-        let semantic_head = self
+        // `open` deliberately starts with an unbound client because the
+        // capability is provisioned by the later `with_capability` step.
+        // Every semantic read must nevertheless carry the exact challenge
+        // binding; otherwise the daemon waits for EWA1 authentication while
+        // this client sends a request frame and the authority looks
+        // unavailable.  Bind a short-lived clone for each read so startup,
+        // replay, and recovery all use the same fail-closed seam.
+        let watermark = self
             .watermark
+            .clone()
+            .with_semantic_binding(self.semantic_binding_v1()?);
+        let semantic_head = watermark
             .load_semantic_checked(self.semantic_binding_v1()?)
             .map_err(map_external_watermark_error_v1)?;
         let records = self.replay.record_count_v1();
@@ -1044,8 +1054,11 @@ impl ExternalAuthorityAdapterV1 for UnixExternalTimeoutAuthorityV1 {
         // CAS head still describes the exact request whose response we just
         // appended.  A response-log append without a matching semantic head
         // is ambiguous and permanently poisons this process.
-        let Some((current, facts)) = self
+        let watermark = self
             .watermark
+            .clone()
+            .with_semantic_binding(self.semantic_binding_v1()?);
+        let Some((current, facts)) = watermark
             .load_semantic_checked(self.semantic_binding_v1()?)
             .map_err(map_external_watermark_error_v1)?
         else {

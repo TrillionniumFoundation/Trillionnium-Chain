@@ -71,9 +71,16 @@ impl AuthorityProcess {
             log,
             binding,
         };
-        let client = UnixWatermarkClient::new(&process.socket).expect("authority client");
         let semantic_binding = ExternalWatermarkSemanticBindingV1::new(scope, journal, CAPABILITY)
             .expect("semantic authority binding");
+        // Semantic daemons require the capability challenge before they will
+        // read even a harmless head probe.  Keep the readiness client bound
+        // to the exact immutable namespace; an unbound client would send a
+        // request frame where the daemon expects the EWA1 handshake and would
+        // spin until the timeout, masking a healthy authority as unavailable.
+        let client = UnixWatermarkClient::new(&process.socket)
+            .expect("authority client")
+            .with_semantic_binding(semantic_binding);
         // Concurrent package tests may delay the freshly spawned daemon for a
         // few scheduler ticks; keep readiness bounded without making the
         // process-boundary evidence flaky on a loaded host.
@@ -157,6 +164,7 @@ fn timeout_bridge_orders_cas_sign_bind_and_replays_after_daemon_restart() {
     let semantic_binding =
         ExternalWatermarkSemanticBindingV1::new(adapter.scope(), adapter.journal_id(), CAPABILITY)
             .expect("semantic adapter binding");
+    let client = client.with_semantic_binding(semantic_binding);
     assert!(
         client.load_checked(adapter.scope()).is_err(),
         "semantic authority must reject the opaque load wire path"
