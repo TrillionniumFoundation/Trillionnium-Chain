@@ -22,6 +22,7 @@ G3_RUST_SRC_REMAP_CONTROL_REPORT="$ROOT/docs/evidence/poco-g3/stage0-remap-obser
 G3_FAULT_RESTART_RUNNER="$ROOT/scripts/poco-fleet/run_fault_restart_fleet_v1.py"
 G3_FAULT_RESTART_HANDOFF_TEST="$ROOT/scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
 G3_LAB_CONSENSUS_RUNTIME="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
+G3_LAB_CONSENSUS_MESH="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/consensus_mesh.rs"
 LEGACY_PREFLIGHT="$ROOT/trillionnium/scripts/testnet_preflight.sh"
 CORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-core/src/core.rs"
 CORE_TESTS="$ROOT/trillionnium/crates/trnm-consensus-core/src/tests.rs"
@@ -239,6 +240,7 @@ for required in \
   "$G3_RUST_SRC_CROSS_TIME_REPORT" \
   "$G3_RUST_SRC_DRIFT_REPORT" \
   "$G3_RUST_SRC_REMAP_CONTROL_REPORT" \
+  "$G3_LAB_CONSENSUS_MESH" \
   "$LEGACY_PREFLIGHT" \
   "$CORE_SOURCE" \
   "$CORE_TESTS" \
@@ -311,6 +313,7 @@ require_tracked "$G3_FRESH_CLONE_GATES_REPORT"
 require_tracked "$G3_RUST_SRC_CROSS_TIME_REPORT"
 require_tracked "$G3_RUST_SRC_DRIFT_REPORT"
 require_tracked "$G3_RUST_SRC_REMAP_CONTROL_REPORT"
+require_tracked "$G3_LAB_CONSENSUS_MESH"
 require_legacy_recovery_archive_guard
 
 # A SafetyStore change must trigger both pull-request and main-push PoCO gates.
@@ -982,13 +985,14 @@ done
 # The fail-closed node scaffold must compile and lint wherever its source can
 # trigger this workflow, while remaining explicitly incomplete and outside the
 # uploaded library archive.
-require_literal "$NODE_CARGO" 'node-event-wal = ["dep:libc"]'
+require_literal "$NODE_CARGO" 'node-event-wal = ["dep:libc", "dep:fs2"]'
 for node_event_wal_test in \
   intent_reopen_and_exact_commit_replay \
   driver_order_keeps_intent_when_commit_readback_is_uncertain \
   foreign_namespace_and_partial_tail_never_auto_repair \
   hard_link_alias_and_path_replacement_fail_closed \
   preexisting_empty_wal_is_not_reinitialized_as_genesis \
+  live_owner_rejects_second_open_until_drop \
   sigkill_after_intent_leaves_pending_for_exact_recovery; do
   require_literal "$NODE_EVENT_WAL_SOURCE" "fn ${node_event_wal_test}()"
 done
@@ -998,6 +1002,14 @@ require_literal "$POCO_WORKFLOW" \
   "cargo test --locked -p trnm-poco-node --lib --features node-event-wal 'node_event_wal::tests::'"
 require_literal "$POCO_WORKFLOW" \
   'cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings'
+for mesh_release_test in \
+  failed_external_release_retains_token_for_retry_v1 \
+  host_release_failure_keeps_confirmed_peer_token_for_host_retry_v1; do
+  require_literal "$G3_LAB_CONSENSUS_MESH" "fn ${mesh_release_test}()"
+done
+require_literal "$G3_LAB_CONSENSUS_MESH" 'external_release_confirmed: bool'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-poco-lab-validator --all-targets'
 require_literal_count "$POCO_WORKFLOW" '--features recovery-process-test-support' 2
 require_literal "$POCO_WORKFLOW" \
   '            -p trnm-poco-node \'

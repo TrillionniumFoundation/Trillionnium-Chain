@@ -10,7 +10,7 @@ publish = false
 
 [features]
 default = []
-node-event-wal = ["dep:libc"]
+node-event-wal = ["dep:libc", "dep:fs2"]
 # Raw consensus signing keys are available only to explicitly named fixture and
 # process-test builds.  The default node/library build has no direct
 # `ed25519-dalek` dependency edge and therefore cannot load or expose a

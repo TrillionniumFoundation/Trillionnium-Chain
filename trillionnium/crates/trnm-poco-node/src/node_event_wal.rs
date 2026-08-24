@@ -24,6 +24,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use fs2::FileExt;
 use sha2::{Digest, Sha256};
 
 use crate::PocoNodeHostErrorV0;
@@ -339,6 +340,18 @@ impl NodeEventWalV1 {
         if existing_file_identity.is_some_and(|identity| identity != file_identity) {
             return Err(NodeEventWalErrorV1::InvalidPath);
         }
+        // Non-Clone ownership is only a Rust-level guarantee.  Hold an
+        // exclusive advisory lock on the admitted WAL descriptor so a second
+        // process cannot independently reload and append the same namespace.
+        // The lock is released automatically when this owner (or a SIGKILLed
+        // process) drops the descriptor.
+        validate_path_binding_v1(&path, parent_identity, file_identity)?;
+        file.try_lock_exclusive()
+            .map_err(|_| NodeEventWalErrorV1::Io)?;
+        // Re-check the path after acquiring the lock: a replacement between
+        // open and lock must not turn the held descriptor into an authority
+        // for a different textual path.
+        validate_path_binding_v1(&path, parent_identity, file_identity)?;
         // An existing empty regular file is never a virgin WAL.  Treating it
         // as genesis would turn a truncated/recreated journal into a silent
         // rollback and erase the only durable replay classification.  Only a
@@ -346,7 +359,6 @@ impl NodeEventWalV1 {
         if existing_file_identity.is_some() && metadata.len() == 0 {
             return Err(NodeEventWalErrorV1::Truncated);
         }
-        validate_path_binding_v1(&path, parent_identity, file_identity)?;
         if metadata.len() == 0 {
             let frame = encode_frame_v1(
                 KIND_GENESIS_V1,
@@ -1348,12 +1360,36 @@ mod tests {
     }
 
     #[test]
+    fn live_owner_rejects_second_open_until_drop() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("locked-events.wal");
+        let namespace = digest(1);
+        let mut owner = NodeEventWalV1::open(&path, namespace).unwrap();
+        let intent = owner
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        let length = fs::metadata(&path).unwrap().len();
+
+        assert_eq!(
+            NodeEventWalV1::open(&path, namespace).unwrap_err(),
+            NodeEventWalErrorV1::Io,
+            "a second process/owner must not obtain an append authority"
+        );
+        assert_eq!(fs::metadata(&path).unwrap().len(), length);
+
+        drop(owner);
+        let reopened = NodeEventWalV1::open(&path, namespace).unwrap();
+        assert_eq!(reopened.pending(), Some(intent));
+    }
+
+    #[test]
     fn foreign_namespace_and_partial_tail_never_auto_repair() {
         let temp = TempDir::new().unwrap();
         let path = temp.path().join("node-events.wal");
         let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
         wal.prepare_event_v1(digest(2), digest(3), digest(4))
             .unwrap();
+        drop(wal);
         let mut bytes = fs::read(&path).unwrap();
         bytes.extend_from_slice(&[0xaa, 0xbb]);
         let mut file = OpenOptions::new()

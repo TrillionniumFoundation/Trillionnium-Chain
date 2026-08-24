@@ -14,8 +14,15 @@ effect path; and a key-free typed signed-envelope mempool admission gate whose
 replay/recheck hooks default to rejection.  CI now runs a weekly development-
 The WAL also rejects an existing zero-length regular file as `Truncated` on
 reopen, so a crash/device truncation cannot be mistaken for a virgin genesis
-and silently erase replay classification.  These slices are not authenticated
-transport, a production signer/HSM, durable mempool replay,
+and silently erase replay classification.  The WAL owner now also holds a
+lifetime exclusive inode lock, so a second process cannot independently append
+the same namespace; SIGKILL releases the advisory lock for exact pending
+recovery.  The lab mesh now also retains an
+exact peer token across external-release failure, and retains a two-stage
+`external_release_confirmed` entry while independent host-attestation cleanup
+is pending; new admission, revalidation, and renewal remain fail-closed until
+both authorities confirm release.  These slices are not a complete
+authenticated node transport, a production signer/HSM, durable mempool replay,
 runtime/JMT execution, state sync, or real-node evidence.  Therefore
 `validator_run_7_completed` and production activation remain false.
 
