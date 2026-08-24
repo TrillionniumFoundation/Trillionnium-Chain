@@ -554,11 +554,18 @@ impl NodeEventWalV1 {
     /// succeeded but the caller did not observe the return value.  It never
     /// advances the WAL and rejects a same-event/different-result substitution.
     pub fn confirm_committed_event_v1(
-        &self,
+        &mut self,
         event_id: [u8; 32],
         commit_digest: [u8; 32],
     ) -> Result<NodeEventCommitReceiptV1, NodeEventWalErrorV1> {
-        self.ensure_live_v1()?;
+        // A cached receipt is not evidence that the durable append survived a
+        // crash or that the admitted inode still contains the same chain.  A
+        // caller may invoke this method precisely after an uncertain commit
+        // return, so force a fresh bounded frame/path validation before
+        // exposing any receipt.  `revalidate_v1` poisons the owner on every
+        // readback failure; subsequent retries therefore cannot use stale
+        // in-memory facts after a rewrite or replacement.
+        self.revalidate_v1()?;
         let Some(receipt) = self.last_commit else {
             return Err(NodeEventWalErrorV1::NoPending);
         };
@@ -1111,7 +1118,7 @@ mod tests {
         let receipt = reopened.commit_event_v1(intent, digest(5)).unwrap();
         assert_eq!(receipt.intent_sequence(), intent.sequence());
         drop(reopened);
-        let reopened = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let mut reopened = NodeEventWalV1::open(&path, digest(1)).unwrap();
         assert!(matches!(
             reopened.recovery(),
             NodeEventRecoveryV1::Clean {
@@ -1584,6 +1591,42 @@ mod tests {
         ));
         assert_eq!(
             wal.prepare_event_v1(digest(6), digest(7), digest(8)),
+            Err(NodeEventWalErrorV1::Poisoned)
+        );
+    }
+
+    #[test]
+    fn committed_confirmation_revalidates_same_inode_and_poison_retries() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("confirm-rewrite-events.wal");
+        {
+            let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+            let intent = wal
+                .prepare_event_v1(digest(2), digest(3), digest(4))
+                .unwrap();
+            wal.commit_event_v1(intent, digest(5)).unwrap();
+        }
+        let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        #[cfg(unix)]
+        let original_inode = fs::metadata(&path).unwrap().ino();
+
+        // Rewrite one byte in place.  This keeps the admitted inode and file
+        // length unchanged, so a cached-receipt-only confirmation would miss
+        // the corruption.
+        let mut file = OpenOptions::new().write(true).open(&path).unwrap();
+        file.seek(SeekFrom::Start(100)).unwrap();
+        file.write_all(&[0x80]).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        #[cfg(unix)]
+        assert_eq!(fs::metadata(&path).unwrap().ino(), original_inode);
+
+        assert!(matches!(
+            wal.confirm_committed_event_v1(digest(2), digest(5)),
+            Err(NodeEventWalErrorV1::Malformed | NodeEventWalErrorV1::ChainMismatch)
+        ));
+        assert_eq!(
+            wal.confirm_committed_event_v1(digest(2), digest(5)),
             Err(NodeEventWalErrorV1::Poisoned)
         );
     }
