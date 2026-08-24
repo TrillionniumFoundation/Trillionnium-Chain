@@ -50,11 +50,11 @@ pub const NATIVE_FINALIZATION_APPLIED_POST_ACK_REQUEST_STANDALONE_QC_SYNC_V0: u3
 pub const NATIVE_FINALIZATION_APPLIED_POST_ACK_ARM_VIEW_TIMER_THEN_STANDALONE_QC_SYNC_V0: u32 = 8;
 
 /// Canonical comparison facts for the sole revision-zero, fresh-validator h1
-/// state-sync initialization accepted by journal v6.
+/// state-sync initialization accepted by journal v7.
 ///
 /// The anchor checksum binds the full proof through its canonical proof ID and
 /// the exact authenticated parent/target coordinates. The independent state
-/// record checksum binds the complete schema-v12 SafetyState bytes installed
+/// record checksum binds the complete schema-v13 SafetyState bytes installed
 /// in the same journal row. Decoding these facts grants no Core, application,
 /// signer, or state-sync authority. Core never prepares this tag for a config
 /// carrying an authenticated genesis application parent; the two bootstrap
@@ -293,7 +293,7 @@ impl StateSyncAnchorOrdinaryPromotionTransitionV0 {
 /// The complete carrier remains an explicit second trust root: it is not a
 /// block header and is not authenticated by GenesisQC. The independent
 /// carrier binding reference prevents a field-spliced representation, while
-/// the state-record checksum joins these facts to the complete schema-v12
+/// the state-record checksum joins these facts to the complete schema-v13
 /// SafetyState record and its exact Core/verifier/limits configuration.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AuthenticatedGenesisApplicationBootstrapTransitionV0 {

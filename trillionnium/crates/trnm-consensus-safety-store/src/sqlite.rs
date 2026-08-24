@@ -49,8 +49,8 @@ use crate::{
     error::{SafetyStoreConflictV0, SafetyStoreErrorV0},
     hash::hash_domain,
     schema::{
-        validate_canonical_schema, JOURNAL_SAFETY_SCHEMA_VERSION_V6, JOURNAL_SCHEMA_SQL_V6,
-        JOURNAL_SCHEMA_VERSION_V6, MAXIMUM_SQL_STATE_RECORD_BYTES,
+        validate_canonical_schema, JOURNAL_SAFETY_SCHEMA_VERSION_V7, JOURNAL_SCHEMA_SQL_V7,
+        JOURNAL_SCHEMA_VERSION_V7, MAXIMUM_SQL_STATE_RECORD_BYTES,
         MAXIMUM_TRANSITION_CONTEXT_BYTES_V0, TRANSITION_CONTEXT_CODEC_V0,
     },
     state_sync_anchor_checksum_v0, transition_context_checksum_v0,
@@ -116,9 +116,9 @@ impl SafetyStateStoreProfileV0 {
         record_limits: SafetyStateRecordLimitsV0,
         maximum_database_bytes: usize,
     ) -> Result<Self, SafetyStoreErrorV0> {
-        if SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0 != JOURNAL_SAFETY_SCHEMA_VERSION_V6 {
+        if SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0 != JOURNAL_SAFETY_SCHEMA_VERSION_V7 {
             return Err(SafetyStoreErrorV0::InvalidProfile(
-                "Core safety schema is incompatible with journal v6",
+                "Core safety schema is incompatible with journal v7",
             ));
         }
         SafetyStateRecordContextV0::new(&core_config, verifier_profile_ref, record_limits)
@@ -1059,7 +1059,7 @@ impl ConfirmedAuthenticatedGenesisApplicationH1StableNativeValidHeadV0 {
 /// transition is the exact preimage committed by a current anchored rev4
 /// journal chain.
 ///
-/// Journal v6 retains only the current record and its immediate predecessor.
+/// Journal v7 retains only the current record and its immediate predecessor.
 /// At rev4 that means rev3/rev4, so the rev2 transition row is no longer
 /// present. The rev3 record nevertheless permanently names rev2's chain
 /// checksum. This capability reconstructs canonical rev0, rev1, and rev2
@@ -1718,10 +1718,10 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         )
     }
 
-    /// Initializes journal v6 from Core's sole fresh-validator h1 state-sync
+    /// Initializes journal v7 from Core's sole fresh-validator h1 state-sync
     /// bootstrap carrier.
     ///
-    /// This path authenticates the complete schema-v12 anchor using Core's
+    /// This path authenticates the complete schema-v13 anchor using Core's
     /// dedicated recovery entry point, then stores revision zero with the
     /// canonical tag-4 context. It does not activate the returned recovery
     /// session and therefore grants no Core, application, signer, or network
@@ -1774,7 +1774,7 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         )
     }
 
-    /// Initializes journal v6/schema 12 with the exact inert authenticated-
+    /// Initializes journal v7/schema 13 with the exact inert authenticated-
     /// genesis application bootstrap facts prepared by Core.
     ///
     /// This path never calls generic `Core::recover`, never writes Ordinary or
@@ -2519,7 +2519,7 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         // committed WAL shadow before opening the live namespace through
         // SQLite read-write or applying any PRAGMA which can rewrite the
         // database header/WAL/SHM. Journal v2/v3/v4/v5 records encode older
-        // Core safety schemas and have no implicit migration to v6/schema 12.
+        // Core safety schemas and have no implicit migration to v7/schema 13.
         preflight_current_journal_namespace_v0(
             &database_path,
             &database_file,
@@ -5922,7 +5922,7 @@ fn initialize_schema(
         .transaction_with_behavior(TransactionBehavior::Immediate)
         .map_err(|error| SafetyStoreErrorV0::sqlite("begin initialization", error))?;
     transaction
-        .execute_batch(JOURNAL_SCHEMA_SQL_V6)
+        .execute_batch(JOURNAL_SCHEMA_SQL_V7)
         .map_err(|error| SafetyStoreErrorV0::sqlite("install safety-store schema", error))?;
     let metadata = metadata_values(profile, journal_id)?;
     if transaction
@@ -5934,7 +5934,7 @@ fn initialize_schema(
                 maximum_database_bytes_be, transition_codec, metadata_checksum
              ) VALUES (1, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
             params![
-                i64::from(JOURNAL_SCHEMA_VERSION_V6),
+                i64::from(JOURNAL_SCHEMA_VERSION_V7),
                 journal_id.as_slice(),
                 i64::from(SAFETY_STATE_RECORD_CODEC_VERSION_V0),
                 i64::from(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0),
@@ -6070,7 +6070,7 @@ fn metadata_values(
     journal_id: [u8; 32],
 ) -> Result<MetadataValuesV0, SafetyStoreErrorV0> {
     let core_config_ref = profile.core_config_ref()?;
-    let journal_schema = JOURNAL_SCHEMA_VERSION_V6.to_be_bytes();
+    let journal_schema = JOURNAL_SCHEMA_VERSION_V7.to_be_bytes();
     let record_codec = SAFETY_STATE_RECORD_CODEC_VERSION_V0.to_be_bytes();
     let safety_schema = SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0.to_be_bytes();
     let record_limit = usize_to_u64(
@@ -6141,7 +6141,7 @@ fn validate_metadata(
         })
         .map_err(|error| SafetyStoreErrorV0::sqlite("count safety-store metadata", error))?;
     if metadata_count != 1
-        || row.0 != i64::from(JOURNAL_SCHEMA_VERSION_V6)
+        || row.0 != i64::from(JOURNAL_SCHEMA_VERSION_V7)
         || row.1.as_slice() != journal_id.as_slice()
         || row.2 != i64::from(SAFETY_STATE_RECORD_CODEC_VERSION_V0)
         || row.3 != i64::from(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0)
@@ -10207,13 +10207,14 @@ mod native_finalization_applied_pair_tests {
         revision: u64,
         application_applied: FinalizedTip,
     ) -> SafetyState {
-        SafetyState::from_persisted_parts_v11(
+        SafetyState::from_persisted_parts_v13(
             state.schema_version(),
             state.chain_id(),
             state.protocol_version(),
             state.epoch(),
             state.validator_set_id(),
             state.genesis_block_id(),
+            state.authenticated_genesis_application_parent_v0().copied(),
             state.current_view(),
             state.last_voted_view(),
             state.last_timeout_view(),
@@ -10221,6 +10222,7 @@ mod native_finalization_applied_pair_tests {
             state.locked_qc().clone(),
             state.finalized(),
             revision,
+            state.durable_observed_qcs().to_vec(),
             state.payload_terminal_facts().to_vec(),
             state.payload_validation_obligations().to_vec(),
             state.payload_validation_completions().to_vec(),
@@ -12489,7 +12491,7 @@ mod state_sync_checkpoint_store_tests {
             .execute_batch(&format!(
                 "PRAGMA foreign_keys=OFF;
                  BEGIN IMMEDIATE;
-                 ALTER TABLE safety_store_metadata_v0 RENAME TO safety_store_metadata_v6_source;
+                 ALTER TABLE safety_store_metadata_v0 RENAME TO safety_store_metadata_v7_source;
                  {metadata_ddl}
                  INSERT INTO safety_store_metadata_v0(
                     singleton, journal_schema, journal_id, core_record_codec,
@@ -12501,8 +12503,8 @@ mod state_sync_checkpoint_store_tests {
                     core_config_ref, verifier_profile_ref, maximum_record_bytes_be,
                     maximum_blob_bytes_be, maximum_database_bytes_be,
                     transition_codec, metadata_checksum
-                 FROM safety_store_metadata_v6_source;
-                 DROP TABLE safety_store_metadata_v6_source;
+                 FROM safety_store_metadata_v7_source;
+                 DROP TABLE safety_store_metadata_v7_source;
                  COMMIT;
                  PRAGMA wal_checkpoint(TRUNCATE);"
             ))
@@ -13298,7 +13300,7 @@ mod state_sync_checkpoint_store_tests {
             RootSignatures,
             &bootstrap,
         )
-        .expect("initialize anchored journal v6");
+        .expect("initialize anchored journal v7");
         let confirmed = store
             .confirmed_state_sync_checkpoint_bootstrap_head_exact_v0(bootstrap.safety_state())
             .expect("exact tag-4 readback");
@@ -13335,7 +13337,7 @@ mod state_sync_checkpoint_store_tests {
             profile(&config),
             RootSignatures,
         )
-        .expect("reopen anchored journal v6");
+        .expect("reopen anchored journal v7");
         let reopened_confirmation = reopened
             .confirmed_state_sync_checkpoint_bootstrap_head_exact_v0(bootstrap.safety_state())
             .expect("exact reopened tag-4 readback");
@@ -13826,7 +13828,7 @@ mod state_sync_checkpoint_store_tests {
                 RootSignatures,
                 &bootstrap,
             )
-            .expect("initialize source journal v6");
+            .expect("initialize source journal v7");
             let journal_id = store.journal_id_v0();
             drop(store);
             rewrite_h1_database_as_historical_v0(

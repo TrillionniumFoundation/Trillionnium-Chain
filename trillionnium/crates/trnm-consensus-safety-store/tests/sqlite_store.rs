@@ -866,7 +866,7 @@ fn initializes_reads_head_and_reopens_exactly() {
     drop(store);
 
     let metadata = Connection::open_with_flags(&path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
-        .expect("open journal-v6 metadata readback");
+        .expect("open journal-v7 metadata readback");
     let versions: (i64, i64) = metadata
         .query_row(
             "SELECT journal_schema, safety_schema
@@ -874,8 +874,8 @@ fn initializes_reads_head_and_reopens_exactly() {
             [],
             |row| Ok((row.get(0)?, row.get(1)?)),
         )
-        .expect("read journal-v6 metadata versions");
-    assert_eq!(versions, (6, 12));
+        .expect("read journal-v7 metadata versions");
+    assert_eq!(versions, (7, 13));
     drop(metadata);
 
     let reopened = SqliteSafetyStateStoreV0::open_existing(&path, profile, AcceptSignatures)

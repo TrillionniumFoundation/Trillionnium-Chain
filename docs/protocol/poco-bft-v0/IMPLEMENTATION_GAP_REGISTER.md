@@ -1069,12 +1069,14 @@ epoch prune, and Core transition remain open.
    replay after full authentication. The remaining catch-up contract has two
    release blockers: gaps beyond `max_blocks` require trusted checkpoint/state
    sync, and coalesced finality must deliver the complete ordered ancestor
-   sequence rather than only the latest proof. The historical observed-QC
-   pairing cache is also bounded and volatile: a finalized-subsumed certificate
-   retained only for diagnostics is not evidence-continuous across crash and
-   must be replayed to reconstruct a later same-view conflict pair. Durable
-   finality and signing state remain monotonic, but permanent cross-crash
-   evidence/audit continuity is not implemented.
+   sequence rather than only the latest proof. Schema-v13 now persists the
+   bounded complete ordinary-QC observation set used for same-view pairing;
+   every retained authenticated witness crosses a SafetyState barrier, is
+   rehydrated on recovery, and is checked before a later carrier can advance.
+   When the bound has no safely subsumable prefix, admission fails closed rather
+   than dropping evidence. This closes continuity for retained QC witnesses,
+   but is not a permanent unbounded evidence archive and does not close the
+   remaining catch-up, network, or host-replay gaps.
 2. Signed inputs are now preauthenticated before the transactional core clone,
    and immutable payload storage is shared across clones with `Arc<[u8]>`.
    A process-local, exact-input/configuration-bound verifier cache now removes

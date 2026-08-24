@@ -1033,6 +1033,15 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
             predecessor.state_record_checksum(),
         )?;
         self.validate_timeout_event_intent_v1(intent, &projection)?;
+        // Unlike the forward path, recovery's projection is rebuilt from the
+        // retained SafetyStore predecessor while this owner holds a live
+        // Core.  Require that Core to have the exact durable successor before
+        // the pending WAL intent can be marked committed; otherwise a stale
+        // or divergent Core could be joined only after the fact.
+        validate_timeout_event_core_successor_binding_v1(
+            self.core.safety_state(),
+            &projection.expected_successor_state,
+        )?;
         let commit_digest = self.timeout_event_readback_v1(&projection)?;
         wal.commit_event_v1(intent, commit_digest)
             .map(Some)
@@ -1255,6 +1264,16 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
         effects: Vec<Effect>,
     ) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostErrorV0> {
         self.drive_bounded_effects_v0(effects)
+    }
+
+    /// Test-only fault injection for the event-WAL recovery invariant.  A
+    /// fixture may replace the held Core with a stale authenticated instance
+    /// after the SafetyStore has advanced, proving that recovery leaves the
+    /// WAL pending instead of claiming a commit.  This method is absent from
+    /// every non-test build and is not a runtime recovery capability.
+    #[cfg(all(test, feature = "node-event-wal"))]
+    pub(crate) fn replace_core_for_event_recovery_test_v1(&mut self, core: Core) {
+        self.core = core;
     }
 
     fn drive_bounded_effects_v0(
@@ -1545,6 +1564,24 @@ impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostV0<W, 
     pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
         Err(ProductionActivationBlockedV0::new())
     }
+}
+
+/// Require the live Core to be joined to the exact successor which a timeout
+/// event projection expects before the event-WAL commit is written.
+///
+/// This is kept as a small pure predicate so the recovery invariant can be
+/// regression-tested without opening a second owner for the same locked
+/// SafetyStore.  The event-WAL path remains fail-closed on any Core/Safety
+/// divergence.
+#[cfg(feature = "node-event-wal")]
+pub(crate) fn validate_timeout_event_core_successor_binding_v1(
+    live_core_state: &SafetyState,
+    expected_successor_state: &SafetyState,
+) -> Result<(), PocoNodeHostEventWalErrorV1> {
+    if live_core_state != expected_successor_state {
+        return Err(PocoNodeHostEventWalErrorV1::BindingMismatch);
+    }
+    Ok(())
 }
 
 #[cfg(feature = "safety-rules-sidecar")]

@@ -3450,6 +3450,102 @@ mod tests {
 
     #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
     #[test]
+    fn timeout_event_recovery_rejects_live_core_successor_mismatch() {
+        let (core_config, _) = strict_core_config_and_local_key();
+        let mut evaluator = trnm_consensus_core::Core::new(
+            core_config.clone(),
+            genesis_qc(&core_config),
+            &StrictEd25519Verifier,
+        )
+        .expect("construct exact timeout evaluator");
+        let predecessor = evaluator.safety_state().clone();
+        let epoch = predecessor.epoch();
+        let view = predecessor.current_view();
+        evaluator
+            .step(
+                trnm_consensus_core::Input::LocalTimeout { epoch, view },
+                &StrictEd25519Verifier,
+            )
+            .expect("derive exact timeout successor");
+        let successor = evaluator.safety_state().clone();
+
+        assert!(
+            ordinary_timeout::validate_timeout_event_core_successor_binding_v1(
+                &successor, &successor,
+            )
+            .is_ok(),
+            "an exact live Core successor must be accepted"
+        );
+        assert!(matches!(
+            ordinary_timeout::validate_timeout_event_core_successor_binding_v1(
+                &predecessor,
+                &successor,
+            ),
+            Err(PocoNodeHostEventWalErrorV1::BindingMismatch)
+        ));
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
+    fn timeout_event_recovery_rejects_stale_live_core_and_keeps_wal_pending() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path =
+            protected_store_namespace(&directory, "stale-core-events").join("node-events.wal");
+        let (core_config, _) = strict_core_config_and_local_key();
+        let config =
+            start_config(&safety_path, &signer_path, core_config.clone()).expect("host config");
+        let mut host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc(&core_config),
+            MemoryWatermark::default(),
+            UnavailableProducerV0,
+        )
+        .expect("initialize bounded host");
+        host.resume_v0().expect("arm the first timeout view");
+        let mut wal = NodeEventWalV1::open(&event_path, host.timeout_event_wal_namespace_v1())
+            .expect("open host-bound event WAL");
+        let intent = host
+            .prepare_timeout_event_v1(&mut wal)
+            .expect("prepare authenticated timeout intent");
+
+        assert!(matches!(
+            host.on_local_timeout_v0(),
+            Err(PocoNodeHostErrorV0::SignerJournal(_))
+        ));
+        assert_eq!(
+            host.safety_head().expect("read successor head").revision(),
+            1
+        );
+
+        // Leave the durable SafetyStore at the exact successor while
+        // deliberately restoring a stale live Core.  Recovery must reject
+        // this mixed authority and must not commit the pending event.
+        let stale_core = trnm_consensus_core::Core::new(
+            core_config.clone(),
+            genesis_qc(&core_config),
+            &StrictEd25519Verifier,
+        )
+        .expect("construct stale predecessor Core");
+        host.replace_core_for_event_recovery_test_v1(stale_core);
+        let error = host
+            .recover_pending_timeout_event_with_wal_v1(&mut wal)
+            .expect_err("stale Core must block event recovery");
+        assert!(matches!(
+            error,
+            PocoNodeHostEventWalErrorV1::BindingMismatch
+        ));
+        assert_eq!(wal.pending(), Some(intent));
+        assert_eq!(
+            host.safety_head()
+                .expect("read unchanged successor")
+                .revision(),
+            1
+        );
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
     fn single_owner_timeout_host_retains_the_authenticated_event_wal() {
         let directory = protected_temp_dir();
         let (safety_path, signer_path) = dual_store_paths(&directory);

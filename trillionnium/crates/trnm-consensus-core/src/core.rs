@@ -2889,7 +2889,7 @@ pub fn reconstruct_h1_state_sync_anchor_successor_prefix_v0<V: SignatureVerifier
             "successor prefix reconstruction h2 completion is not Valid",
         ))?
         .overlay();
-    let revision_two = SafetyState::from_persisted_parts_v12(
+    let revision_two = SafetyState::from_persisted_parts_v13(
         revision_zero.schema_version(),
         revision_zero.chain_id(),
         revision_zero.protocol_version(),
@@ -2906,6 +2906,12 @@ pub fn reconstruct_h1_state_sync_anchor_successor_prefix_v0<V: SignatureVerifier
         revision_zero.locked_qc().clone(),
         revision_zero.finalized(),
         2,
+        // The rev1 successor is the first reconstructed durable transition
+        // and may have authenticated/observed QCs while restoring the
+        // anchored proposal.  Carry that exact persisted cache into rev2;
+        // rebasing to rev0 would look like an unbounded historical deletion
+        // during successor validation after the schema-v13 restart proof.
+        revision_one.durable_observed_qcs().to_vec(),
         vec![PayloadTerminalFact::new_valid(h2_overlay, 2)],
         Vec::new(),
         vec![h2_completion.clone()],
@@ -6458,6 +6464,19 @@ impl Core {
         &self.safety
     }
 
+    #[cfg(test)]
+    pub(crate) fn observe_qc_for_test(
+        &mut self,
+        certificate: &QuorumCertificate,
+    ) -> Result<Option<crate::SafetyHalt>> {
+        self.observe_qc(certificate)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn observed_qc_views_for_test(&self) -> Vec<View> {
+        self.observed_qcs.keys().copied().collect()
+    }
+
     /// Commits the complete hash-linked prefix ending at Core's exact durable
     /// finalized tip. Core admits that tip only after validating the complete
     /// ancestor-ordered finalization suffix; recovery authenticates the same
@@ -7198,7 +7217,17 @@ impl Core {
         state: &SafetyState,
         revision: u64,
     ) -> SafetyState {
-        SafetyState::from_persisted_parts_v12(
+        // The virgin H1 cut predates every QC observed while replaying the
+        // successor bundle.  Do not backdate those durable observations into
+        // revision zero; the replayed transition must observe and persist
+        // them at the same boundary as the original owner.  Later cuts are
+        // allowed to carry the evidence already durable at that cut.
+        let durable_observed_qcs = if revision == 0 {
+            Vec::new()
+        } else {
+            state.durable_observed_qcs().to_vec()
+        };
+        SafetyState::from_persisted_parts_v13(
             state.schema_version(),
             state.chain_id(),
             state.protocol_version(),
@@ -7213,6 +7242,7 @@ impl Core {
             state.locked_qc().clone(),
             state.finalized(),
             revision,
+            durable_observed_qcs,
             state.payload_terminal_facts().to_vec(),
             Vec::new(),
             state.payload_validation_completions().to_vec(),
@@ -8407,28 +8437,13 @@ impl Core {
             .map(|id| id.generation())
             .fold(safety.revision(), core::cmp::max);
         let mut observed_qcs: BTreeMap<View, QuorumCertificate> = BTreeMap::new();
-        for certificate in [safety.locked_qc(), safety.high_qc()]
-            .into_iter()
-            .filter_map(QcReferenceV0::as_ordinary)
-        {
+        for certificate in safety.durable_observed_qcs() {
             match observed_qcs.get(&certificate.view()) {
                 Some(existing)
                     if existing.block_id() == certificate.block_id()
                         && existing.id() >= certificate.id() => {}
                 _ => {
                     observed_qcs.insert(certificate.view(), certificate.clone());
-                }
-            }
-        }
-        if let Some(pending) = safety.pending_standalone_qc_sync() {
-            for certificate in core::iter::once(pending.active()).chain(pending.backlog()) {
-                match observed_qcs.get(&certificate.view()) {
-                    Some(existing)
-                        if existing.block_id() == certificate.block_id()
-                            && existing.id() >= certificate.id() => {}
-                    _ => {
-                        observed_qcs.insert(certificate.view(), certificate.clone());
-                    }
                 }
             }
         }
@@ -8460,7 +8475,7 @@ impl Core {
     }
 
     fn apply<V: SignatureVerifier>(&mut self, input: Input, verifier: &V) -> Result<Vec<Effect>> {
-        match input {
+        let mut effects = match input {
             Input::Resume => self.resume(verifier),
             Input::Proposal(proposal) => self.handle_proposal(*proposal, verifier),
             Input::SyncedProposal(proposal) => self.handle_synced_proposal(*proposal, verifier),
@@ -8483,7 +8498,17 @@ impl Core {
             Input::SignatureReady { id, signature } => {
                 self.handle_signature(id, signature, verifier)
             }
+        }?;
+        // Every newly authenticated QC observation must cross a SafetyState
+        // persistence barrier before any caller-visible side effect.  Paths
+        // which already persisted use `persist`, which snapshots this cache;
+        // no-op/stale paths are forced through one empty durable revision here.
+        if self.observed_qcs_needs_persistence_v0()? {
+            let mut persistence = self.persist(Vec::new())?;
+            persistence.append(&mut effects);
+            effects = persistence;
         }
+        Ok(effects)
     }
 
     fn preauthenticate_input<V: SignatureVerifier>(
@@ -8587,35 +8612,49 @@ impl Core {
         let durable_conflict_probe = match input {
             Input::QuorumCertificate(certificate) => {
                 self.payload_is_deterministically_invalid(certificate.block_id())
-                    || self.durable_qcs().into_iter().any(|durable| {
-                        durable.view() == certificate.view()
-                            && durable.block_id() != certificate.block_id()
-                    })
+                    || self
+                        .durable_qcs()
+                        .into_iter()
+                        .chain(self.safety.durable_observed_qcs().iter())
+                        .any(|durable| {
+                            durable.view() == certificate.view()
+                                && durable.block_id() != certificate.block_id()
+                        })
             }
             Input::TimeoutCertificate(certificate) => {
                 let durable_qcs = self.durable_qcs();
+                let durable_observed_qcs = self.safety.durable_observed_qcs();
                 certificate
                     .referenced_qcs()
                     .iter()
                     .filter_map(QcReferenceV0::as_ordinary)
                     .any(|referenced| {
                         self.payload_is_deterministically_invalid(referenced.block_id())
-                            || durable_qcs.iter().any(|durable| {
-                                durable.view() == referenced.view()
-                                    && durable.block_id() != referenced.block_id()
-                            })
+                            || durable_qcs
+                                .iter()
+                                .copied()
+                                .chain(durable_observed_qcs.iter())
+                                .any(|durable| {
+                                    durable.view() == referenced.view()
+                                        && durable.block_id() != referenced.block_id()
+                                })
                     })
             }
             Input::Proposal(proposal) | Input::SyncedProposal(proposal) => {
                 let durable_qcs = self.durable_qcs();
+                let durable_observed_qcs = self.safety.durable_observed_qcs();
                 proposal_referenced_qcs(proposal)
                     .into_iter()
                     .any(|referenced| {
                         self.payload_is_deterministically_invalid(referenced.block_id())
-                            || durable_qcs.iter().any(|durable| {
-                                durable.view() == referenced.view()
-                                    && durable.block_id() != referenced.block_id()
-                            })
+                            || durable_qcs
+                                .iter()
+                                .copied()
+                                .chain(durable_observed_qcs.iter())
+                                .any(|durable| {
+                                    durable.view() == referenced.view()
+                                        && durable.block_id() != referenced.block_id()
+                                })
                     })
             }
             _ => false,
@@ -11641,7 +11680,17 @@ impl Core {
     }
 
     fn observe_qc(&mut self, certificate: &QuorumCertificate) -> Result<Option<crate::SafetyHalt>> {
-        for durable in self.durable_qcs() {
+        // `durable_qcs()` covers contextual references (high/lock, pending
+        // syncs, anchors, and finality proofs).  Schema-v13 also retains the
+        // bounded ordinary observation set specifically for same-view
+        // conflict continuity; it is not a contextual reference and must be
+        // checked explicitly before a post-restart ingress can replace or
+        // ignore its witness.
+        for durable in self
+            .durable_qcs()
+            .into_iter()
+            .chain(self.safety.durable_observed_qcs().iter())
+        {
             if durable.view() == certificate.view() && durable.block_id() != certificate.block_id()
             {
                 return Ok(Some(crate::SafetyHalt::from_conflicting_qcs(
@@ -11663,13 +11712,80 @@ impl Core {
             }
             return Ok(None);
         }
-        bounded_insert(
-            &mut self.observed_qcs,
-            certificate.view(),
-            certificate.clone(),
-            self.config.max_observed_messages(),
-        );
+        // Historical certificates at or below finalized height are already
+        // covered by the durable finalized prefix.  They still pass through
+        // the conflict checks above (including schema-v13 observations), and
+        // the first witness is retained in the bounded cache.  That witness
+        // is safety evidence: the apply wrapper must persist it before the
+        // ingress returns, otherwise a crash between two same-view carriers
+        // would erase the only pair from which a halt can be reconstructed.
+        // A full cache may still evict a lowest-view entry which finality now
+        // subsumes.  If no such safe prefix exists, admission is fail-closed;
+        // silently dropping the new witness would reintroduce the exact
+        // cross-restart evidence hole schema-v13 closes.
+        let durably_subsumed = self.qc_is_durably_subsumed(certificate)?;
+        if durably_subsumed {
+            let maximum = self.config.max_observed_messages();
+            while self.observed_qcs.len() >= maximum {
+                let Some((&oldest_view, oldest)) = self.observed_qcs.first_key_value() else {
+                    return Err(CoreError::ObservedQcRetentionFull);
+                };
+                if !self.qc_is_durably_subsumed(oldest)? {
+                    return Err(CoreError::ObservedQcRetentionFull);
+                }
+                self.observed_qcs.remove(&oldest_view);
+            }
+            self.observed_qcs
+                .insert(certificate.view(), certificate.clone());
+            return Ok(None);
+        }
+
+        // Unlike proposals/votes, an ordinary QC observation is safety
+        // evidence: silently dropping an active lowest-view witness lets a
+        // later same-view competitor arrive after restart without a pair to
+        // halt on.  Only a lowest-view *prefix* which finality now subsumes
+        // may be removed.  If that prefix is not available, reject the new
+        // authenticated message and leave the Core unchanged (the public
+        // step wrapper is transactional).
+        let maximum = self.config.max_observed_messages();
+        while self.observed_qcs.len() >= maximum {
+            let Some((&oldest_view, oldest)) = self.observed_qcs.first_key_value() else {
+                return Err(CoreError::ObservedQcRetentionFull);
+            };
+            if !self.qc_is_durably_subsumed(oldest)? {
+                return Err(CoreError::ObservedQcRetentionFull);
+            }
+            self.observed_qcs.remove(&oldest_view);
+        }
+        self.observed_qcs
+            .insert(certificate.view(), certificate.clone());
         Ok(None)
+    }
+
+    fn observed_qcs_needs_persistence_v0(&self) -> Result<bool> {
+        let durable = self.safety.durable_observed_qcs();
+        let changed = self.observed_qcs.len() != durable.len()
+            || self
+                .observed_qcs
+                .iter()
+                .zip(durable)
+                .any(|((view, certificate), previous)| {
+                    *view != previous.view() || certificate != previous
+                });
+        if !changed {
+            return Ok(false);
+        }
+
+        // Every retained witness, including one below irreversible finality,
+        // is part of the durable same-view conflict evidence.  Do not filter
+        // "subsumed" entries here: doing so makes the first historical QC
+        // volatile again and lets a crash erase the conflict pair.
+        Ok(true)
+    }
+
+    fn snapshot_observed_qcs_v0(&mut self) {
+        let certificates = self.observed_qcs.values().cloned().collect();
+        self.safety.set_durable_observed_qcs(certificates);
     }
 
     fn learn_qc(&mut self, certificate: QuorumCertificate) -> Result<()> {
@@ -11860,6 +11976,7 @@ impl Core {
             .durable_qcs()
             .into_iter()
             .chain(self.observed_qcs.values())
+            .chain(self.safety.durable_observed_qcs().iter())
             .filter(|certificate| certificate.block_id() == block_id)
             .min_by_key(|certificate| qc_order_key(certificate))
             .cloned();
@@ -11958,6 +12075,7 @@ impl Core {
         if self.pending_persistence.is_some() {
             return Err(CoreError::Busy("a safety-state write is already pending"));
         }
+        self.snapshot_observed_qcs_v0();
         let barrier = self.safety.next_revision()?;
         self.pending_persistence = Some(PendingPersistence { barrier, deferred });
         Ok(vec![Effect::PersistSafetyState(
@@ -12255,6 +12373,9 @@ impl Core {
             self.require_pre_checkpoint_height(reference.qc_ref().height())?;
         }
         for certificate in self.durable_qcs() {
+            self.require_pre_checkpoint_height(certificate.height())?;
+        }
+        for certificate in self.safety.durable_observed_qcs() {
             self.require_pre_checkpoint_height(certificate.height())?;
         }
 
@@ -13125,7 +13246,7 @@ impl Core {
     }
 
     fn state_sync_anchor_state_at_revision_v0(state: &SafetyState, revision: u64) -> SafetyState {
-        SafetyState::from_persisted_parts_v12(
+        SafetyState::from_persisted_parts_v13(
             state.schema_version(),
             state.chain_id(),
             state.protocol_version(),
@@ -13140,6 +13261,7 @@ impl Core {
             state.locked_qc().clone(),
             state.finalized(),
             revision,
+            state.durable_observed_qcs().to_vec(),
             state.payload_terminal_facts().to_vec(),
             state.payload_validation_obligations().to_vec(),
             state.payload_validation_completions().to_vec(),
@@ -13369,6 +13491,32 @@ impl Core {
         }
 
         self.validate_epoch_boundary_fence()?;
+
+        let durable_observed_qcs = self.safety.durable_observed_qcs();
+        if durable_observed_qcs.len() > self.config.max_observed_messages() {
+            return Err(CoreError::InvalidRecovery(
+                "durable observed QC set exceeds the configured bound",
+            ));
+        }
+        if durable_observed_qcs
+            .windows(2)
+            .any(|pair| pair[0].view() >= pair[1].view())
+        {
+            return Err(CoreError::InvalidRecovery(
+                "durable observed QC set is not strictly ordered by view",
+            ));
+        }
+        for certificate in durable_observed_qcs {
+            self.require_epoch(certificate.epoch())?;
+            if certificate.view().get() == 0 || certificate.height().get() == 0 {
+                return Err(CoreError::InvalidRecovery(
+                    "durable observed QC has an invalid ordinary coordinate",
+                ));
+            }
+            if verify_durable_crypto {
+                self.verify_ordinary_qc(certificate, verifier)?;
+            }
+        }
 
         // Every durable contextual reference is checked in its own trust
         // domain. Ordinary certificates receive full signature verification;
@@ -13601,6 +13749,45 @@ impl Core {
                 {
                     return Err(CoreError::InvalidRecovery(
                         "durable QCs assign different coordinates to one block",
+                    ));
+                }
+            }
+        }
+        for (index, first) in self.safety.durable_observed_qcs().iter().enumerate() {
+            for second in self.safety.durable_observed_qcs().iter().skip(index + 1) {
+                if first.view() == second.view() && first.block_id() != second.block_id() {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable observed QCs contain conflicting blocks at one view",
+                    ));
+                }
+                if first.block_id() == second.block_id()
+                    && (first.view() != second.view() || first.height() != second.height())
+                {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable observed QCs assign different coordinates to one block",
+                    ));
+                }
+            }
+        }
+        // Schema-v13 carries two independently durable ordinary-QC domains:
+        // contextual references (high/lock, sync targets, finality proofs,
+        // and anchors) and the bounded observation cache.  Each domain is
+        // checked above, but a spliced record can otherwise put a conflicting
+        // witness in the other domain and pass those per-domain checks.  The
+        // domains must therefore be cross-checked before recovery; runtime
+        // observation is too late to make such a record safe.
+        for durable in durable_qcs.iter() {
+            for observed in self.safety.durable_observed_qcs() {
+                if durable.view() == observed.view() && durable.block_id() != observed.block_id() {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable contextual and observed QCs conflict at one view",
+                    ));
+                }
+                if durable.block_id() == observed.block_id()
+                    && (durable.view() != observed.view() || durable.height() != observed.height())
+                {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable contextual and observed QCs assign different coordinates to one block",
                     ));
                 }
             }
@@ -14470,6 +14657,99 @@ impl Core {
             if removed[0].block_id() != expected {
                 return Err(CoreError::InvalidRecovery(
                     "payload terminal replacement did not evict the canonical oldest fact",
+                ));
+            }
+        }
+        // The observation cache is allowed to learn several certificates in
+        // one authenticated carrier (for example, a TC), and a stronger
+        // encoding for an already-known coordinate may replace the prior
+        // witness.  Validate the durable delta as the exact bounded-BTreeMap
+        // operation rather than assuming one QC per input.  In particular,
+        // removals may only be the lowest-view prefix evicted by the bound;
+        // no arbitrary historical entry can disappear across a restart.
+        let previous_observed = previous.durable_observed_qcs();
+        let current_observed = self.safety.durable_observed_qcs();
+        if previous_observed != current_observed {
+            if self.safety.revision() != previous.revision().saturating_add(1) {
+                return Err(CoreError::InvalidRecovery(
+                    "durable observed QC set changed without one durable transition",
+                ));
+            }
+            let maximum = self.config.max_observed_messages();
+            if current_observed.len() > maximum
+                || current_observed
+                    .windows(2)
+                    .any(|pair| pair[0].view() >= pair[1].view())
+            {
+                return Err(CoreError::InvalidRecovery(
+                    "durable observed QC set is not a bounded ordered set",
+                ));
+            }
+
+            let mut removed_count = 0usize;
+            let mut added_count = 0usize;
+            for (index, previous_certificate) in previous_observed.iter().enumerate() {
+                match current_observed
+                    .iter()
+                    .find(|candidate| candidate.view() == previous_certificate.view())
+                {
+                    Some(current_certificate) => {
+                        if index < removed_count {
+                            return Err(CoreError::InvalidRecovery(
+                                "durable observed QC removed a non-prefix entry",
+                            ));
+                        }
+                        if current_certificate.block_id() != previous_certificate.block_id()
+                            || current_certificate.height() != previous_certificate.height()
+                            || current_certificate.epoch() != previous_certificate.epoch()
+                            || current_certificate.id() < previous_certificate.id()
+                            || (current_certificate.id() == previous_certificate.id()
+                                && current_certificate != previous_certificate)
+                        {
+                            return Err(CoreError::InvalidRecovery(
+                                "durable observed QC changed coordinates or regressed its digest",
+                            ));
+                        }
+                    }
+                    None => removed_count = removed_count.saturating_add(1),
+                }
+            }
+            for current_certificate in current_observed {
+                if !previous_observed
+                    .iter()
+                    .any(|candidate| candidate.view() == current_certificate.view())
+                {
+                    added_count = added_count.saturating_add(1);
+                }
+            }
+            if removed_count > 0 {
+                if previous_observed.len() != maximum
+                    || current_observed.len() != maximum
+                    || removed_count > added_count
+                {
+                    return Err(CoreError::InvalidRecovery(
+                        "durable observed QC eviction was not a bounded replacement",
+                    ));
+                }
+                for previous_certificate in previous_observed.iter().skip(removed_count) {
+                    if !current_observed
+                        .iter()
+                        .any(|candidate| candidate.view() == previous_certificate.view())
+                    {
+                        return Err(CoreError::InvalidRecovery(
+                            "durable observed QC eviction removed a non-prefix entry",
+                        ));
+                    }
+                }
+            }
+            if current_observed.len()
+                != previous_observed
+                    .len()
+                    .saturating_sub(removed_count)
+                    .saturating_add(added_count)
+            {
+                return Err(CoreError::InvalidRecovery(
+                    "durable observed QC delta does not match bounded insertion",
                 ));
             }
         }

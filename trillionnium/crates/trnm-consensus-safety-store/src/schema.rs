@@ -4,19 +4,19 @@ use rusqlite::Connection;
 
 use crate::SafetyStoreErrorV0;
 
-pub(crate) const JOURNAL_SCHEMA_VERSION_V6: u16 = 6;
-pub(crate) const JOURNAL_SAFETY_SCHEMA_VERSION_V6: u16 = 12;
+pub(crate) const JOURNAL_SCHEMA_VERSION_V7: u16 = 7;
+pub(crate) const JOURNAL_SAFETY_SCHEMA_VERSION_V7: u16 = 13;
 pub(crate) const TRANSITION_CONTEXT_CODEC_V0: u16 = 0;
 pub(crate) const MAXIMUM_SQL_STATE_RECORD_BYTES: usize = 64 * 1024 * 1024;
 pub(crate) const MAXIMUM_TRANSITION_CONTEXT_BYTES_V0: usize = 328;
 
-pub(crate) const JOURNAL_SCHEMA_SQL_V6: &str = "
+pub(crate) const JOURNAL_SCHEMA_SQL_V7: &str = "
     CREATE TABLE safety_store_metadata_v0 (
         singleton INTEGER PRIMARY KEY NOT NULL CHECK(singleton=1),
-        journal_schema INTEGER NOT NULL CHECK(journal_schema=6),
+        journal_schema INTEGER NOT NULL CHECK(journal_schema=7),
         journal_id BLOB NOT NULL CHECK(length(journal_id)=32),
         core_record_codec INTEGER NOT NULL CHECK(core_record_codec=0),
-        safety_schema INTEGER NOT NULL CHECK(safety_schema=12),
+        safety_schema INTEGER NOT NULL CHECK(safety_schema=13),
         core_config_ref BLOB NOT NULL CHECK(length(core_config_ref)=32),
         verifier_profile_ref BLOB NOT NULL CHECK(length(verifier_profile_ref)=32),
         maximum_record_bytes_be BLOB NOT NULL CHECK(length(maximum_record_bytes_be)=8),
@@ -74,7 +74,7 @@ pub(crate) fn validate_canonical_schema(connection: &Connection) -> Result<(), S
     let canonical = Connection::open_in_memory()
         .map_err(|error| SafetyStoreErrorV0::sqlite("open canonical schema", error))?;
     canonical
-        .execute_batch(JOURNAL_SCHEMA_SQL_V6)
+        .execute_batch(JOURNAL_SCHEMA_SQL_V7)
         .map_err(|error| SafetyStoreErrorV0::sqlite("install canonical schema", error))?;
     if schema_objects(connection)? != schema_objects(&canonical)? {
         return Err(SafetyStoreErrorV0::SchemaMismatch);
@@ -130,8 +130,8 @@ mod tests {
         hasher.update(b"trnm.domain.hash.v1");
         for frame in [
             JOURNAL_SCHEMA_OBJECTS_DIGEST_DOMAIN_V0,
-            &JOURNAL_SCHEMA_VERSION_V6.to_be_bytes(),
-            &JOURNAL_SAFETY_SCHEMA_VERSION_V6.to_be_bytes(),
+            &JOURNAL_SCHEMA_VERSION_V7.to_be_bytes(),
+            &JOURNAL_SAFETY_SCHEMA_VERSION_V7.to_be_bytes(),
             &u64::try_from(objects.len())
                 .expect("schema object count fits u64")
                 .to_be_bytes(),
@@ -400,30 +400,48 @@ mod tests {
     ";
 
     #[test]
-    fn journal_v6_with_safety_schema_v12_is_the_only_canonical_schema() {
+    fn journal_v7_with_safety_schema_v13_is_the_only_canonical_schema() {
         let connection = Connection::open_in_memory().expect("open current schema fixture");
         connection
-            .execute_batch(JOURNAL_SCHEMA_SQL_V6)
-            .expect("install current journal-v6 schema");
+            .execute_batch(JOURNAL_SCHEMA_SQL_V7)
+            .expect("install current journal-v7 schema");
 
         assert!(validate_canonical_schema(&connection).is_ok());
-        assert_eq!(JOURNAL_SCHEMA_VERSION_V6, 6);
-        assert_eq!(JOURNAL_SAFETY_SCHEMA_VERSION_V6, 12);
+        assert_eq!(JOURNAL_SCHEMA_VERSION_V7, 7);
+        assert_eq!(JOURNAL_SAFETY_SCHEMA_VERSION_V7, 13);
     }
 
     #[test]
-    fn journal_v6_sqlite_schema_objects_have_a_frozen_digest() {
+    fn journal_v7_sqlite_schema_objects_have_a_frozen_digest() {
         let connection = Connection::open_in_memory().expect("open frozen schema fixture");
         connection
-            .execute_batch(JOURNAL_SCHEMA_SQL_V6)
-            .expect("install frozen journal-v6 schema");
+            .execute_batch(JOURNAL_SCHEMA_SQL_V7)
+            .expect("install frozen journal-v7 schema");
         assert_eq!(
             canonical_schema_objects_digest_v0(&connection),
             [
-                244, 143, 230, 111, 99, 95, 50, 87, 237, 242, 154, 240, 24, 237, 167, 198, 183,
-                196, 214, 146, 210, 183, 138, 135, 107, 41, 157, 167, 161, 46, 188, 145,
+                174, 178, 116, 194, 232, 79, 253, 177, 134, 74, 219, 238, 46, 108, 8, 207, 224,
+                158, 61, 102, 27, 113, 137, 35, 205, 153, 236, 15, 94, 81, 158, 132,
             ],
         );
+    }
+
+    #[test]
+    fn journal_v6_with_safety_schema_v12_is_not_implicitly_migrated() {
+        // Keep the pre-v7 shape executable without treating it as current
+        // DDL: a v6/schema-12 image must fail the exact object allowlist
+        // before any caller can open it as a v7 journal.
+        let connection = Connection::open_in_memory().expect("open historical schema fixture");
+        let historical = JOURNAL_SCHEMA_SQL_V7
+            .replace("journal_schema=7", "journal_schema=6")
+            .replace("safety_schema=13", "safety_schema=12");
+        connection
+            .execute_batch(&historical)
+            .expect("install historical journal-v6 schema");
+        assert!(matches!(
+            validate_canonical_schema(&connection),
+            Err(SafetyStoreErrorV0::SchemaMismatch)
+        ));
     }
 
     #[test]

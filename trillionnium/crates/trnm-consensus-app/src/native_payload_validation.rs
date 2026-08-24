@@ -15049,7 +15049,7 @@ mod tests {
             "self.insert_payload_validation_obligation(PayloadValidationRouteV0::Synced,"
         ));
         assert!(!synced_registration_body.contains("PayloadValidationRouteV0::Proposal"));
-        assert!(core_model_source.contains("pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 12;"));
+        assert!(core_model_source.contains("pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 13;"));
         assert_eq!(
             item_attribute_lines(
                 core_model_source,

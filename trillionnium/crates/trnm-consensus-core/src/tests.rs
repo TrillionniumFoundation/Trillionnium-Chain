@@ -1072,13 +1072,14 @@ fn anchored_state_from_test_parts(
     revision: u64,
     payload_terminal_facts: Vec<PayloadTerminalFact>,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts_v11(
+    SafetyState::from_persisted_parts_v13(
         base.schema_version(),
         base.chain_id(),
         base.protocol_version(),
         base.epoch(),
         base.validator_set_id(),
         base.genesis_block_id(),
+        base.authenticated_genesis_application_parent_v0().copied(),
         current_view,
         base.last_voted_view(),
         base.last_timeout_view(),
@@ -1086,6 +1087,7 @@ fn anchored_state_from_test_parts(
         locked_qc,
         base.finalized(),
         revision,
+        base.durable_observed_qcs().to_vec(),
         payload_terminal_facts,
         base.payload_validation_obligations().to_vec(),
         base.payload_validation_completions().to_vec(),
@@ -1108,13 +1110,14 @@ fn anchored_state_with_validation_parts_v0(
     completions: Vec<DurablePayloadValidationCompletionV0>,
     facts: Vec<PayloadTerminalFact>,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts_v11(
+    SafetyState::from_persisted_parts_v13(
         base.schema_version(),
         base.chain_id(),
         base.protocol_version(),
         base.epoch(),
         base.validator_set_id(),
         base.genesis_block_id(),
+        base.authenticated_genesis_application_parent_v0().copied(),
         base.current_view(),
         base.last_voted_view(),
         base.last_timeout_view(),
@@ -1122,6 +1125,7 @@ fn anchored_state_with_validation_parts_v0(
         base.locked_qc().clone(),
         base.finalized(),
         revision,
+        base.durable_observed_qcs().to_vec(),
         facts,
         obligations,
         completions,
@@ -3338,7 +3342,7 @@ fn fresh_h1_state_sync_bootstrap_is_anchor_only_and_resumes_with_safety_replay()
     let prepared = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
         .expect("the complete h1 proof prepares an inert bootstrap");
     let state = prepared.safety_state();
-    assert_eq!(state.schema_version(), 12);
+    assert_eq!(state.schema_version(), 13);
     assert_eq!(state.revision(), 0);
     assert_eq!(state.finalized(), state.application_applied());
     assert_eq!(state.finalized().block_id(), h1.block().id());
@@ -3353,7 +3357,7 @@ fn fresh_h1_state_sync_bootstrap_is_anchor_only_and_resumes_with_safety_replay()
     assert!(state.payload_validation_completions().is_empty());
     let anchor = state
         .state_sync_anchor()
-        .expect("schema v12 keeps permanent h1 provenance");
+        .expect("schema v13 keeps permanent h1 provenance");
     assert_eq!(
         anchor.proof().finalized_block().header(),
         h1.block().header()
@@ -3747,7 +3751,7 @@ fn anchored_ordinary_rehydrate_fixture_v0() -> AnchoredOrdinaryRehydrateFixtureV
             .expect("anchored h3 has a permanent Valid overlay"),
     )
     .expect("construct exact replay finalization");
-    let safety = SafetyState::from_persisted_parts_v12(
+    let safety = SafetyState::from_persisted_parts_v13(
         revision_five.schema_version(),
         revision_five.chain_id(),
         revision_five.protocol_version(),
@@ -3764,6 +3768,7 @@ fn anchored_ordinary_rehydrate_fixture_v0() -> AnchoredOrdinaryRehydrateFixtureV
         QcReferenceV0::ordinary(q4.clone()),
         h3_tip,
         13,
+        revision_five.durable_observed_qcs().to_vec(),
         terminal_facts,
         Vec::new(),
         completions,
@@ -7337,8 +7342,8 @@ fn authenticated_genesis_application_parent_and_h1_state_sync_anchor_are_mutuall
         Some(parent),
         anchor,
     )
-    .expect("schema-v12 decoder model can represent the unsupported mixed state");
-    assert_eq!(mixed.schema_version(), 12);
+    .expect("schema-v13 decoder model can represent the unsupported mixed state");
+    assert_eq!(mixed.schema_version(), 13);
     assert_eq!(
         mixed.authenticated_genesis_application_parent_v0(),
         Some(&parent)
@@ -7361,7 +7366,7 @@ fn authenticated_genesis_application_parent_and_h1_state_sync_anchor_are_mutuall
         Err(CoreError::InvalidRecovery(
             "authenticated genesis application bootstrap and h1 state-sync bootstrap are mutually exclusive",
         )),
-        "a canonical schema-v12 record cannot combine the two bootstrap trust roots",
+        "a canonical schema-v13 record cannot combine the two bootstrap trust roots",
     );
 }
 
@@ -8316,13 +8321,16 @@ fn obligation_recovery_rejects_tampered_duplicate_and_concurrent_records() {
         PayloadValidationRouteV0::Proposal,
         b"terminal fact recovery conflict",
     );
-    let terminal_state = SafetyState::from_persisted_parts(
+    let terminal_state = SafetyState::from_persisted_parts_v13(
         terminal_durable.schema_version(),
         terminal_durable.chain_id(),
         terminal_durable.protocol_version(),
         terminal_durable.epoch(),
         terminal_durable.validator_set_id(),
         terminal_durable.genesis_block_id(),
+        terminal_durable
+            .authenticated_genesis_application_parent_v0()
+            .copied(),
         terminal_durable.current_view(),
         terminal_durable.last_voted_view(),
         terminal_durable.last_timeout_view(),
@@ -8330,6 +8338,7 @@ fn obligation_recovery_rejects_tampered_duplicate_and_concurrent_records() {
         terminal_durable.locked_qc().clone(),
         terminal_durable.finalized(),
         terminal_durable.revision(),
+        terminal_durable.durable_observed_qcs().to_vec(),
         vec![PayloadTerminalFact::new_valid(
             artifact_ref_for_ids(
                 terminal_id.block_id(),
@@ -8348,6 +8357,9 @@ fn obligation_recovery_rejects_tampered_duplicate_and_concurrent_records() {
         terminal_durable.pending_standalone_qc_sync().cloned(),
         terminal_durable.pending_sign().cloned(),
         terminal_durable.last_finalization().cloned(),
+        terminal_durable.state_sync_anchor().cloned(),
+        terminal_durable.application_applied(),
+        terminal_durable.finalization_queue().to_vec(),
         terminal_durable.pending_finalize(),
         terminal_durable.safety_halt().cloned(),
     );
@@ -8397,13 +8409,14 @@ fn persisted_state_with_qcs<H: IntoQcReference, L: IntoQcReference>(
     high_qc: H,
     locked_qc: L,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts(
+    SafetyState::from_persisted_parts_v13(
         state.schema_version(),
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         state.current_view(),
         state.last_voted_view(),
         state.last_timeout_view(),
@@ -8411,6 +8424,7 @@ fn persisted_state_with_qcs<H: IntoQcReference, L: IntoQcReference>(
         locked_qc.into_qc_reference(),
         state.finalized(),
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         state.payload_validation_obligations().to_vec(),
         state.payload_validation_completions().to_vec(),
@@ -8418,6 +8432,9 @@ fn persisted_state_with_qcs<H: IntoQcReference, L: IntoQcReference>(
         state.pending_standalone_qc_sync().cloned(),
         state.pending_sign().cloned(),
         state.last_finalization().cloned(),
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         state.pending_finalize(),
         state.safety_halt().cloned(),
     )
@@ -8433,13 +8450,22 @@ fn persisted_state_with_outbox_fields(
     pending_sign: Option<SignIntent>,
     pending_finalize: Option<CertificateId>,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts(
+    let (application_applied, finalization_queue) =
+        match (pending_finalize.is_some(), state.last_finalization()) {
+            (true, Some(finalization)) => (
+                finalization.authenticated_parent(),
+                vec![finalization.clone()],
+            ),
+            _ => (state.finalized(), Vec::new()),
+        };
+    SafetyState::from_persisted_parts_v13(
         state.schema_version(),
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         current_view,
         last_voted_view,
         last_timeout_view,
@@ -8447,6 +8473,7 @@ fn persisted_state_with_outbox_fields(
         state.locked_qc().clone(),
         state.finalized(),
         revision,
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         state.payload_validation_obligations().to_vec(),
         state.payload_validation_completions().to_vec(),
@@ -8454,6 +8481,9 @@ fn persisted_state_with_outbox_fields(
         state.pending_standalone_qc_sync().cloned(),
         pending_sign,
         state.last_finalization().cloned(),
+        state.state_sync_anchor().cloned(),
+        application_applied,
+        finalization_queue,
         pending_finalize,
         state.safety_halt().cloned(),
     )
@@ -8570,13 +8600,16 @@ fn persisted_successor_rejects_changed_finalization_carrier_without_finality_adv
     assert_ne!(&tampered, durable);
     assert_eq!(tampered.proof(), durable.proof());
 
-    let current = SafetyState::from_persisted_parts_v10(
+    let current = SafetyState::from_persisted_parts_v13(
         previous.schema_version(),
         previous.chain_id(),
         previous.protocol_version(),
         previous.epoch(),
         previous.validator_set_id(),
         previous.genesis_block_id(),
+        previous
+            .authenticated_genesis_application_parent_v0()
+            .copied(),
         previous.current_view(),
         previous.last_voted_view(),
         previous.last_timeout_view(),
@@ -8584,6 +8617,7 @@ fn persisted_successor_rejects_changed_finalization_carrier_without_finality_adv
         previous.locked_qc().clone(),
         previous.finalized(),
         previous.revision().checked_add(1).unwrap(),
+        previous.durable_observed_qcs().to_vec(),
         previous.payload_terminal_facts().to_vec(),
         previous.payload_validation_obligations().to_vec(),
         previous.payload_validation_completions().to_vec(),
@@ -8591,6 +8625,7 @@ fn persisted_successor_rejects_changed_finalization_carrier_without_finality_adv
         previous.pending_standalone_qc_sync().cloned(),
         previous.pending_sign().cloned(),
         Some(tampered),
+        previous.state_sync_anchor().cloned(),
         previous.application_applied(),
         previous.finalization_queue().to_vec(),
         previous.pending_finalize(),
@@ -8611,13 +8646,14 @@ fn decoded_state_with_validation_records(
     obligations: Vec<DurablePayloadValidationObligationV0>,
     completions: Vec<DurablePayloadValidationCompletionV0>,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts(
+    SafetyState::from_persisted_parts_v13(
         state.schema_version(),
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         state.current_view(),
         state.last_voted_view(),
         state.last_timeout_view(),
@@ -8625,6 +8661,7 @@ fn decoded_state_with_validation_records(
         state.locked_qc().clone(),
         state.finalized(),
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         obligations,
         completions,
@@ -8632,6 +8669,9 @@ fn decoded_state_with_validation_records(
         state.pending_standalone_qc_sync().cloned(),
         state.pending_sign().cloned(),
         state.last_finalization().cloned(),
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         state.pending_finalize(),
         state.safety_halt().cloned(),
     )
@@ -8652,13 +8692,14 @@ fn decoded_state_with_obligations(
     last_finalization: Option<DurableFinalizationV0>,
     pending_finalize: Option<CertificateId>,
 ) -> SafetyState {
-    SafetyState::from_persisted_parts(
+    SafetyState::from_persisted_parts_v13(
         state.schema_version(),
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         current_view,
         last_voted_view,
         last_timeout_view,
@@ -8666,6 +8707,7 @@ fn decoded_state_with_obligations(
         locked_qc,
         finalized,
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         vec![],
         state.payload_validation_completions().to_vec(),
@@ -8673,6 +8715,9 @@ fn decoded_state_with_obligations(
         pending_standalone_qc_sync,
         pending_sign,
         last_finalization,
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         pending_finalize,
         state.safety_halt().cloned(),
     )
@@ -8695,13 +8740,14 @@ fn decoded_halted_state_with_invalid_reference(
     facts.sort_by_key(|fact| fact.block_id());
     let halt = SafetyHalt::deterministically_invalid_payload(block_id, reference)
         .expect("canonical invalid-payload halt witness");
-    SafetyState::from_persisted_parts(
+    SafetyState::from_persisted_parts_v13(
         state.schema_version(),
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         current_view,
         last_voted_view,
         last_timeout_view,
@@ -8709,6 +8755,7 @@ fn decoded_halted_state_with_invalid_reference(
         state.locked_qc().clone(),
         state.finalized(),
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         facts,
         vec![],
         state.payload_validation_completions().to_vec(),
@@ -8716,6 +8763,9 @@ fn decoded_halted_state_with_invalid_reference(
         None,
         None,
         state.last_finalization().cloned(),
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         None,
         Some(halt),
     )
@@ -9593,7 +9643,14 @@ fn a_qc_never_finalizes_without_a_complete_verified_three_chain() {
     let (barrier, state) = persistence_effect(&effects);
     assert_eq!(state.finalized().block_id(), committed_id);
     assert!(state.pending_finalize().is_some());
-    assert_safety_state_record_roundtrip_and_validate(&config, &state);
+    let decoded_roundtrip = roundtrip_safety_state_record(&config, &state);
+    assert_eq!(
+        decoded_roundtrip.durable_observed_qcs(),
+        state.durable_observed_qcs(),
+        "nonempty ordinary-QC observations survive the canonical record roundtrip",
+    );
+    Core::validate_persisted_state_v0(&config, &decoded_roundtrip, &RootSignatures)
+        .expect("the roundtripped three-chain state remains valid");
     let effects = core
         .step(Input::StorageAck { barrier }, &RootSignatures)
         .expect("commit state durable");
@@ -9689,18 +9746,25 @@ fn same_height_different_view_qc_is_finalized_subsumed_and_idempotent() {
     let stale = qc(&set, 7, 1, BlockId::new([0xD7; 32]));
     let before = core.safety_state().clone();
 
-    assert!(core
-        .step(Input::QuorumCertificate(stale.clone()), &RootSignatures,)
-        .expect("different-view historical QC is operationally subsumed")
-        .is_empty());
-    assert_eq!(core.safety_state(), &before);
-    assert!(core.safety_state().pending_standalone_qc_sync().is_none());
+    let effects = core
+        .step(Input::QuorumCertificate(stale.clone()), &RootSignatures)
+        .expect("different-view historical QC is operationally subsumed");
+    let (barrier, durable) = persistence_effect(&effects);
+    assert_ne!(&durable, &before);
+    assert!(durable
+        .durable_observed_qcs()
+        .iter()
+        .any(|certificate| certificate.id() == stale.id()));
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("historical QC observation is durable");
+    let after_first = core.safety_state().clone();
+    assert!(after_first.pending_standalone_qc_sync().is_none());
 
     assert!(core
         .step(Input::QuorumCertificate(stale), &RootSignatures)
         .expect("the same subsumed QC is idempotent")
         .is_empty());
-    assert_eq!(core.safety_state(), &before);
+    assert_eq!(core.safety_state(), &after_first);
 }
 
 #[test]
@@ -9764,16 +9828,33 @@ fn same_view_competitor_at_finalized_height_halts_before_subsumption_and_recover
 
 #[test]
 fn two_historical_qcs_from_one_later_view_halt_on_the_second_arrival() {
-    let (_config, mut core) = configured_core();
+    let (config, mut core) = configured_core();
     let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let first = qc(&set, 7, 1, BlockId::new([0x71; 32]));
     let second = qc(&set, 7, 1, BlockId::new([0x72; 32]));
 
-    assert!(core
+    let first_effects = core
         .step(Input::QuorumCertificate(first.clone()), &RootSignatures)
-        .expect("first different-view historical QC is subsumed")
-        .is_empty());
-    let effects = core
+        .expect("first different-view historical QC is retained durably");
+    let (first_barrier, first_state) = persistence_effect(&first_effects);
+    assert!(first_state
+        .durable_observed_qcs()
+        .iter()
+        .any(|certificate| certificate.id() == first.id()));
+    core.step(
+        Input::StorageAck {
+            barrier: first_barrier,
+        },
+        &RootSignatures,
+    )
+    .expect("first historical QC persistence is acknowledged");
+
+    // The second carrier is deliberately admitted by a fresh Core.  This is
+    // the crash boundary that used to erase the first witness from the
+    // volatile observed-QC map.
+    let mut recovered = Core::recover(config, first_state, &RootSignatures)
+        .expect("durable historical QC observation recovers");
+    let effects = recovered
         .step(Input::QuorumCertificate(second.clone()), &RootSignatures)
         .expect("second QC in that same historical view detects the conflict");
     let halted = effects
@@ -9790,6 +9871,34 @@ fn two_historical_qcs_from_one_later_view_halt_on_the_second_arrival() {
     let ids = [retained_first.id(), retained_second.id()];
     assert!(ids.contains(&first.id()));
     assert!(ids.contains(&second.id()));
+}
+
+#[test]
+fn active_qc_conflict_retention_fails_closed_at_capacity() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let maximum = core.config().max_observed_messages();
+
+    for view in 1..=maximum as u64 {
+        let mut block_id = [0xC8; 32];
+        block_id[..8].copy_from_slice(&view.to_be_bytes());
+        let certificate = qc(&set, view, 1, BlockId::new(block_id));
+        assert!(core
+            .observe_qc_for_test(&certificate)
+            .expect("active QC fits the conflict-retention budget")
+            .is_none());
+    }
+    assert_eq!(core.observed_qc_views_for_test().len(), maximum);
+
+    let mut overflow_id = [0xC9; 32];
+    overflow_id[..8].copy_from_slice(&(maximum as u64 + 1).to_be_bytes());
+    let overflow = qc(&set, maximum as u64 + 1, 1, BlockId::new(overflow_id));
+    let before = core.observed_qc_views_for_test();
+    assert_eq!(
+        core.observe_qc_for_test(&overflow),
+        Err(CoreError::ObservedQcRetentionFull)
+    );
+    assert_eq!(core.observed_qc_views_for_test(), before);
 }
 
 #[test]
@@ -9888,12 +9997,25 @@ fn unrelated_subsumed_qc_does_not_join_an_active_tc_obligation() {
     let before = core.safety_state().clone();
 
     let unrelated = qc(&set, 8, 1, BlockId::new([0xB8; 32]));
-    assert!(core
-        .step(Input::QuorumCertificate(unrelated), &RootSignatures)
-        .expect("unrelated historical QC is already subsumed")
-        .is_empty());
-    assert_eq!(core.safety_state(), &before);
+    let effects = core
+        .step(Input::QuorumCertificate(unrelated.clone()), &RootSignatures)
+        .expect("unrelated historical QC is already subsumed");
+    let (unrelated_barrier, durable) = persistence_effect(&effects);
+    assert_ne!(&durable, &before);
+    assert!(durable.pending_tc_high_qc_sync().is_some());
+    core.step(
+        Input::StorageAck {
+            barrier: unrelated_barrier,
+        },
+        &RootSignatures,
+    )
+    .expect("unrelated historical QC observation is durable");
     assert!(core.safety_state().pending_standalone_qc_sync().is_none());
+    assert!(core
+        .safety_state()
+        .durable_observed_qcs()
+        .iter()
+        .any(|candidate| candidate.block_id() == unrelated.block_id()));
     assert_eq!(
         core.safety_state()
             .pending_tc_high_qc_sync()
@@ -9941,14 +10063,20 @@ fn proposal_carried_finalized_subsumed_qc_is_dropped_without_sync_or_error() {
     let (_config, mut core) = configured_core();
     let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let stale = qc(&set, 7, 1, BlockId::new([0xB7; 32]));
-    let carrier = proposal(&set, stale, 8, b"subsumed carrier child");
+    let carrier = proposal(&set, stale.clone(), 8, b"subsumed carrier child");
     let before = core.safety_state().clone();
 
-    assert!(core
+    let effects = core
         .step(Input::Proposal(Box::new(carrier)), &RootSignatures)
-        .expect("missing stale parent is subsumed without a fetch loop")
-        .is_empty());
-    assert_eq!(core.safety_state(), &before);
+        .expect("missing stale parent is subsumed without a fetch loop");
+    let (barrier, durable) = persistence_effect(&effects);
+    assert_ne!(&durable, &before);
+    assert!(durable
+        .durable_observed_qcs()
+        .iter()
+        .any(|candidate| candidate.block_id() == stale.block_id()));
+    core.step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("carried historical QC observation is durable");
     assert_eq!(core.pending_validation_count(), 0);
     assert!(core.safety_state().pending_tc_high_qc_sync().is_none());
     assert!(core.safety_state().pending_standalone_qc_sync().is_none());
@@ -9960,10 +10088,17 @@ fn tc_reference_conflict_halts_before_subsumed_view_progress() {
     let (set, _finalized_qc, _finalization_authority) = finalize_height_one(&mut core);
     let first = qc(&set, 7, 1, BlockId::new([0xE1; 32]));
     let second = qc(&set, 7, 1, BlockId::new([0xE2; 32]));
-    assert!(core
+    let first_effects = core
         .step(Input::QuorumCertificate(first), &RootSignatures)
-        .expect("first historical QC is observed and subsumed")
-        .is_empty());
+        .expect("first historical QC is observed and subsumed");
+    let (first_barrier, _) = persistence_effect(&first_effects);
+    core.step(
+        Input::StorageAck {
+            barrier: first_barrier,
+        },
+        &RootSignatures,
+    )
+    .expect("first historical QC observation is durable");
     let before_view = core.safety_state().current_view();
 
     let effects = core
@@ -12329,13 +12464,16 @@ fn recovered_invalid_fact_rejects_a_vote_outbox_without_a_durable_halt() {
         valid_fact.block_id(),
         valid_fact.first_recorded_revision(),
     );
-    let tampered = SafetyState::from_persisted_parts(
+    let tampered = SafetyState::from_persisted_parts_v13(
         vote_state.schema_version(),
         vote_state.chain_id(),
         vote_state.protocol_version(),
         vote_state.epoch(),
         vote_state.validator_set_id(),
         vote_state.genesis_block_id(),
+        vote_state
+            .authenticated_genesis_application_parent_v0()
+            .copied(),
         vote_state.current_view(),
         vote_state.last_voted_view(),
         vote_state.last_timeout_view(),
@@ -12343,6 +12481,7 @@ fn recovered_invalid_fact_rejects_a_vote_outbox_without_a_durable_halt() {
         vote_state.locked_qc().clone(),
         vote_state.finalized(),
         vote_state.revision(),
+        vote_state.durable_observed_qcs().to_vec(),
         vec![invalid_fact],
         vec![],
         vote_state.payload_validation_completions().to_vec(),
@@ -12350,6 +12489,9 @@ fn recovered_invalid_fact_rejects_a_vote_outbox_without_a_durable_halt() {
         vote_state.pending_standalone_qc_sync().cloned(),
         vote_state.pending_sign().cloned(),
         vote_state.last_finalization().cloned(),
+        vote_state.state_sync_anchor().cloned(),
+        vote_state.application_applied(),
+        vote_state.finalization_queue().to_vec(),
         vote_state.pending_finalize(),
         None,
     );
@@ -12778,13 +12920,14 @@ fn recovery_rejects_a_finalized_tip_without_its_permanent_proof() {
     let set = core.config().validator_set();
     let proposed = proposal(set, genesis_qc(set), 1, b"unproven finalized tip");
     let certificate = qc(set, 1, 1, proposed.block().id());
-    let decoded = SafetyState::from_persisted_parts(
+    let decoded = SafetyState::from_persisted_parts_v13(
         SAFETY_STATE_SCHEMA_VERSION,
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         state.current_view(),
         state.last_voted_view(),
         state.last_timeout_view(),
@@ -12797,6 +12940,7 @@ fn recovery_rejects_a_finalized_tip_without_its_permanent_proof() {
             proposed.block().header().timestamp_ms(),
         ),
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         vec![],
         state.payload_validation_completions().to_vec(),
@@ -12804,6 +12948,9 @@ fn recovery_rejects_a_finalized_tip_without_its_permanent_proof() {
         state.pending_standalone_qc_sync().cloned(),
         state.pending_sign().cloned(),
         None,
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         state.pending_finalize(),
         state.safety_halt().cloned(),
     );
@@ -12997,7 +13144,7 @@ fn recovery_rejects_noncanonical_durable_payload_validation_completions() {
 fn recovery_rejects_pre_v12_safety_state_without_genesis_application_parent_layout() {
     let (config, core) = configured_core();
     let state = core.safety_state();
-    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 12);
+    assert_eq!(SAFETY_STATE_SCHEMA_VERSION, 13);
     for legacy_schema in [5, 6, 7, 8, 9, 10, 11] {
         let legacy = SafetyState::from_persisted_parts(
             legacy_schema,
@@ -15893,7 +16040,14 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
     let halt = state.safety_halt().expect("durable safety halt");
     let (halt_first, halt_second) = halt.conflicting_qcs().expect("conflicting QC halt");
     assert_ne!(halt_first.block_id(), halt_second.block_id());
-    assert_safety_state_record_roundtrip_and_validate(&config, &state);
+    let decoded_roundtrip = roundtrip_safety_state_record(&config, &state);
+    assert_eq!(
+        decoded_roundtrip.durable_observed_qcs(),
+        state.durable_observed_qcs(),
+        "nonempty ordinary-QC observations survive the canonical record roundtrip",
+    );
+    Core::validate_persisted_state_v0(&config, &decoded_roundtrip, &RootSignatures)
+        .expect("the roundtripped halt state remains valid");
     assert!(matches!(
         core.step(Input::StorageAck { barrier }, &RootSignatures)
             .expect("halt state durable")
@@ -15913,13 +16067,14 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
 
     let decoded_halt =
         SafetyHalt::from_conflicting_qcs(first, second).expect("canonical halt reconstruction");
-    let decoded = SafetyState::from_persisted_parts(
+    let decoded = SafetyState::from_persisted_parts_v13(
         SAFETY_STATE_SCHEMA_VERSION,
         state.chain_id(),
         state.protocol_version(),
         state.epoch(),
         state.validator_set_id(),
         state.genesis_block_id(),
+        state.authenticated_genesis_application_parent_v0().copied(),
         state.current_view(),
         state.last_voted_view(),
         state.last_timeout_view(),
@@ -15927,6 +16082,7 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
         state.locked_qc().clone(),
         state.finalized(),
         state.revision(),
+        state.durable_observed_qcs().to_vec(),
         state.payload_terminal_facts().to_vec(),
         vec![],
         state.payload_validation_completions().to_vec(),
@@ -15934,6 +16090,9 @@ fn conflicting_qcs_persist_a_recoverable_fail_stop() {
         state.pending_standalone_qc_sync().cloned(),
         state.pending_sign().cloned(),
         state.last_finalization().cloned(),
+        state.state_sync_anchor().cloned(),
+        state.application_applied(),
+        state.finalization_queue().to_vec(),
         state.pending_finalize(),
         Some(decoded_halt),
     );

@@ -90,6 +90,7 @@ pub enum CoreError {
     InvalidOrdinaryCertificate,
     ConflictingTcHighQcSyncTarget,
     TooManyPendingStandaloneQcs,
+    ObservedQcRetentionFull,
     FinalizationQueueFull,
     ConflictingCertificate,
     ConflictingBlock(BlockId),
@@ -290,6 +291,9 @@ impl fmt::Display for CoreError {
             Self::TooManyPendingStandaloneQcs => {
                 formatter.write_str("standalone QC sync backlog is full")
             }
+            Self::ObservedQcRetentionFull => formatter.write_str(
+                "ordinary QC conflict-retention cache is full without a safe prefix eviction",
+            ),
             Self::FinalizationQueueFull => {
                 formatter.write_str("durable application-finalization queue is full")
             }

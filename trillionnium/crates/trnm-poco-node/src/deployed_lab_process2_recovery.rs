@@ -4201,7 +4201,7 @@ fn reconstruct_initial_safety_v0(
             "Safety contains an obligation outside the exact process2 frontier",
         ));
     }
-    let initial = SafetyState::from_persisted_parts_v12(
+    let initial = SafetyState::from_persisted_parts_v13(
         current.schema_version(),
         current.chain_id(),
         current.protocol_version(),
@@ -4218,6 +4218,7 @@ fn reconstruct_initial_safety_v0(
         current.locked_qc().clone(),
         current.finalized(),
         initial_revision,
+        current.durable_observed_qcs().to_vec(),
         current.payload_terminal_facts().to_vec(),
         obligations,
         completions,

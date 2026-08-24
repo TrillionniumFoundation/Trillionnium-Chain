@@ -31,14 +31,14 @@ use crate::model::{
 };
 
 pub const SAFETY_STATE_RECORD_CODEC_VERSION_V0: u16 = 0;
-pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 12;
+pub const SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0: u16 = 13;
 
-const MAGIC: &[u8; 8] = b"TRNMSF12";
+const MAGIC: &[u8; 8] = b"TRNMSF13";
 const CONFIG_DOMAIN: &str = "trnm.consensus-core.safety-state-config.v0";
 const RECORD_DOMAIN: &str = "trnm.consensus-core.safety-state-record.v0";
 const LAYOUT_DOMAIN: &str = "trnm.consensus-core.safety-state-layout.v0";
 const LAYOUT_DESCRIPTION: &[u8] =
-    b"schema12;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;valid-artifact-overlay-ref;three-state-parent-carrier;authenticated-genesis-application-parent;exact-parent-provenance;ordered-finalization-queue;finalization-target-overlay-ref;durable-state-sync-anchor;application-applied-watermark;sha256-domain-framed";
+    b"schema13;epoch0;be;closed-tags;u16-ids;u32-blobs;nested-cev0;valid-artifact-overlay-ref;three-state-parent-carrier;authenticated-genesis-application-parent;exact-parent-provenance;durable-observed-qc-set;ordered-finalization-queue;finalization-target-overlay-ref;durable-state-sync-anchor;application-applied-watermark;sha256-domain-framed";
 
 const TAG_NONE: u8 = 0;
 const TAG_SOME: u8 = 1;
@@ -73,6 +73,7 @@ const MIN_VALIDATION_COMPLETION_BYTES: usize = 58;
 const MIN_BLOB_ITEM_BYTES: usize = 4;
 const MIN_NONEMPTY_BLOB_ITEM_BYTES: usize = 5;
 const MIN_DURABLE_FINALIZATION_BYTES: usize = 157;
+const MIN_OBSERVED_QC_BYTES: usize = 4;
 
 /// Host-selected resource bounds for one exact record.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -332,6 +333,10 @@ pub fn minimum_safety_state_record_limits_v0(
         .max(maximum_finality_bytes);
 
     let high_and_lock = checked_capacity_mul(2, checked_capacity_add(4, maximum_qc_bytes)?)?;
+    let observed_qcs = checked_capacity_add(
+        4,
+        checked_capacity_mul(observed_slots, checked_capacity_add(4, maximum_qc_bytes)?)?,
+    )?;
     let terminal_facts = checked_capacity_mul(observed_slots, MAX_TERMINAL_FACT_BYTES)?;
     let obligations = checked_capacity_add(
         maximum_message_bytes,
@@ -374,6 +379,7 @@ pub fn minimum_safety_state_record_limits_v0(
         chain_id_bytes,
         145, // optional authenticated genesis application parent
         high_and_lock,
+        observed_qcs,
         terminal_facts,
         obligations,
         completions,
@@ -589,6 +595,16 @@ fn encode_state_payload(
     encoder.u64(state.revision())?;
 
     encode_count(
+        state.durable_observed_qcs().len(),
+        context.core_config.max_observed_messages(),
+        "durable observed QCs",
+        encoder,
+    )?;
+    for certificate in state.durable_observed_qcs() {
+        encode_ordinary_qc(certificate, context, encoder)?;
+    }
+
+    encode_count(
         state.payload_terminal_facts().len(),
         context.core_config.max_observed_messages(),
         "payload terminal facts",
@@ -713,6 +729,25 @@ fn decode_state_payload(
     let finalized = decode_finalized_tip(decoder)?;
     let revision = decoder.u64("revision")?;
 
+    let observed_qc_count = decoder.count(
+        "durable observed QCs",
+        context.core_config.max_observed_messages(),
+        MIN_OBSERVED_QC_BYTES,
+    )?;
+    let mut durable_observed_qcs = Vec::new();
+    for _ in 0..observed_qc_count {
+        // Do not reserve the attacker-controlled count up front.  The
+        // compact lower-bound used by `Decoder::count` is intentionally
+        // conservative; a forged count can fit in the remaining byte budget
+        // while each real QC is much larger.  Reserving one slot per decoded
+        // item keeps allocation proportional to bytes actually consumed and
+        // matches the bounded terminal-fact decoder below.
+        durable_observed_qcs
+            .try_reserve(1)
+            .map_err(|_| SafetyStateRecordErrorV0::AllocationFailed("durable observed QCs"))?;
+        durable_observed_qcs.push(decode_ordinary_qc(decoder, context)?);
+    }
+
     let terminal_count = decoder.count(
         "payload terminal facts",
         context.core_config.max_observed_messages(),
@@ -816,7 +851,7 @@ fn decode_state_payload(
         decode_safety_halt(decoder, context)
     })?;
 
-    let state = SafetyState::from_persisted_parts_v12(
+    let state = SafetyState::from_persisted_parts_v13(
         SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
         chain_id,
         protocol_version,
@@ -831,6 +866,7 @@ fn decode_state_payload(
         locked_qc,
         finalized,
         revision,
+        durable_observed_qcs,
         payload_terminal_facts,
         payload_validation_obligations,
         payload_validation_completions,
@@ -2133,21 +2169,21 @@ mod tests {
         assert_eq!(
             safety_state_record_config_ref_v0(&context).expect("config reference"),
             [
-                0x74, 0xf2, 0x01, 0x6d, 0xaf, 0xf3, 0x9e, 0xe2, 0x7a, 0x0e, 0x01, 0x68, 0x17, 0xb9,
-                0x44, 0x35, 0xee, 0x36, 0x73, 0x0f, 0x71, 0x7d, 0xc4, 0xb6, 0xaf, 0x0d, 0x78, 0x5d,
-                0xb2, 0xa4, 0x84, 0x6c,
+                0xfe, 0x3d, 0xfd, 0xe3, 0x76, 0xcd, 0x27, 0xfe, 0x9c, 0x31, 0xd6, 0x0c, 0x96, 0x2c,
+                0x76, 0xc2, 0x4c, 0x2f, 0x1c, 0x28, 0x64, 0xb0, 0x01, 0x6b, 0x55, 0xcc, 0x5e, 0xdc,
+                0xd6, 0x8a, 0x22, 0xd0,
             ],
-            "the schema-v12 configuration reference is frozen"
+            "the schema-v13 configuration reference is frozen"
         );
-        assert_eq!(encoded.len(), 653, "the Genesis record layout is frozen");
+        assert_eq!(encoded.len(), 657, "the Genesis record layout is frozen");
         assert_eq!(
             decoded.record_checksum(),
             [
-                0xbc, 0x8b, 0x99, 0x80, 0xed, 0x04, 0x01, 0x76, 0xb0, 0xb4, 0x71, 0x79, 0xcc, 0x53,
-                0xfd, 0xeb, 0x5a, 0x87, 0xec, 0x1c, 0x1d, 0xbd, 0xc9, 0x75, 0x82, 0xf6, 0x77, 0x34,
-                0x38, 0x7f, 0x42, 0x0c,
+                0x61, 0x71, 0xcd, 0x27, 0xfc, 0x19, 0x85, 0x7c, 0xdf, 0xbd, 0x08, 0xf3, 0xc6, 0x65,
+                0x5a, 0x57, 0x01, 0x18, 0xef, 0x75, 0x1e, 0xd1, 0x79, 0x6f, 0xb4, 0x1a, 0x80, 0x94,
+                0x6b, 0xc5, 0x97, 0x43,
             ],
-            "the Genesis record checksum is frozen"
+            "the schema-v13 Genesis record checksum is frozen"
         );
 
         assert_eq!(decoded.state(), &state);
@@ -2180,26 +2216,26 @@ mod tests {
         );
         assert_eq!(
             encoded.len(),
-            797,
-            "schema-v12 genesis-parent record length"
+            801,
+            "schema-v13 genesis-parent record length"
         );
         assert_eq!(
             safety_state_record_config_ref_v0(&context).expect("config ref"),
             [
-                0x3b, 0xfe, 0x9f, 0xbe, 0xe0, 0x2f, 0x5a, 0xd2, 0x43, 0x9b, 0xb1, 0xbf, 0x25, 0xa7,
-                0x47, 0x32, 0xaf, 0x14, 0x9b, 0x05, 0x86, 0x17, 0x4e, 0x72, 0xf7, 0x6b, 0x40, 0x56,
-                0x56, 0x78, 0x4d, 0x07,
+                0xcf, 0x00, 0xc7, 0xb7, 0x57, 0xf0, 0xd1, 0x66, 0x96, 0x6e, 0x01, 0x46, 0x8e, 0xaa,
+                0xf1, 0x0b, 0xd7, 0xf9, 0xf8, 0x99, 0xbb, 0x53, 0xbd, 0xec, 0xcf, 0x66, 0xf9, 0x8c,
+                0x4e, 0x42, 0xaa, 0x84,
             ],
-            "schema-v12 genesis-parent configuration vector is frozen",
+            "schema-v13 genesis-parent configuration vector is frozen",
         );
         assert_eq!(
             decoded.record_checksum(),
             [
-                0x06, 0xd4, 0x76, 0x28, 0x65, 0xf1, 0x13, 0xb7, 0x18, 0xb0, 0xbe, 0x57, 0x12, 0xc9,
-                0xfd, 0x5e, 0x9c, 0x51, 0xd7, 0x53, 0x55, 0x56, 0x47, 0xcc, 0x09, 0x20, 0x6a, 0xd6,
-                0x0c, 0xd0, 0x50, 0x1f,
+                0xf6, 0x65, 0xdf, 0x38, 0x6e, 0x5a, 0xc6, 0x9a, 0x32, 0x47, 0x7c, 0x59, 0xe7, 0x20,
+                0xfe, 0xda, 0x9d, 0xa7, 0x46, 0x30, 0x75, 0x37, 0x15, 0xaf, 0xcb, 0x46, 0x8e, 0xda,
+                0xf0, 0x7b, 0x37, 0x92,
             ],
-            "schema-v12 genesis-parent record checksum is frozen",
+            "schema-v13 genesis-parent record checksum is frozen",
         );
 
         let mut legacy_schema = encoded.clone();
@@ -2292,7 +2328,7 @@ mod tests {
             decode_safety_state_record_v0_exact(&unknown_schema, &context).unwrap_err(),
             SafetyStateRecordErrorV0::UnsupportedSafetySchema(6)
         );
-        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 12);
+        assert_eq!(SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0, 13);
     }
 
     #[test]

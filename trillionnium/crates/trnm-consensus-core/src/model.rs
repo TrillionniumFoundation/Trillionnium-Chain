@@ -764,6 +764,11 @@ impl FinalizedTip {
 /// a fabricated network block header. The complete carrier is bound by both
 /// CoreConfig and every h1 validation obligation issued from synthetic
 /// genesis.
+/// Version thirteen adds the bounded, canonical set of fully authenticated
+/// ordinary QCs retained for same-view conflict pairing. The complete
+/// certificates survive process restart; they remain diagnostic evidence and
+/// never authorize lock, high-QC, finality, or signing transitions by
+/// themselves.
 ///
 /// Version-five records omit completion tombstones, version-six records retain
 /// opaque live validation capabilities, and version-seven records do not bind
@@ -772,7 +777,7 @@ impl FinalizedTip {
 /// schemas must fail closed in
 /// `Core::recover`; there is deliberately no implicit migration in this model
 /// layer.
-pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 12;
+pub const SAFETY_STATE_SCHEMA_VERSION: u16 = 13;
 
 /// A verified timeout certificate whose selected high QC cannot yet be
 /// adopted because its block, ancestry, or payload is unavailable locally.
@@ -2002,6 +2007,7 @@ pub struct SafetyState {
     locked_qc: QcReferenceV0,
     finalized: FinalizedTip,
     revision: u64,
+    durable_observed_qcs: Vec<QuorumCertificate>,
     payload_terminal_facts: Vec<PayloadTerminalFact>,
     payload_validation_obligations: Vec<DurablePayloadValidationObligationV0>,
     payload_validation_completions: Vec<DurablePayloadValidationCompletionV0>,
@@ -2239,6 +2245,70 @@ impl SafetyState {
         pending_finalize: Option<CertificateId>,
         safety_halt: Option<SafetyHalt>,
     ) -> Self {
+        Self::from_persisted_parts_v13(
+            schema_version,
+            chain_id,
+            protocol_version,
+            epoch,
+            validator_set_id,
+            genesis_block_id,
+            authenticated_genesis_application_parent,
+            current_view,
+            last_voted_view,
+            last_timeout_view,
+            high_qc,
+            locked_qc,
+            finalized,
+            revision,
+            Vec::new(),
+            payload_terminal_facts,
+            payload_validation_obligations,
+            payload_validation_completions,
+            pending_tc_high_qc_sync,
+            pending_standalone_qc_sync,
+            pending_sign,
+            last_finalization,
+            state_sync_anchor,
+            application_applied,
+            finalization_queue,
+            pending_finalize,
+            safety_halt,
+        )
+    }
+
+    /// Reconstructs the complete schema-v13 state, including the bounded
+    /// canonical ordinary-QC observation set used only for durable conflict
+    /// pairing and audit continuity.
+    #[allow(clippy::too_many_arguments)]
+    pub fn from_persisted_parts_v13(
+        schema_version: u16,
+        chain_id: ChainId,
+        protocol_version: ProtocolVersion,
+        epoch: Epoch,
+        validator_set_id: ValidatorSetId,
+        genesis_block_id: BlockId,
+        authenticated_genesis_application_parent: Option<AuthenticatedGenesisApplicationParentV0>,
+        current_view: View,
+        last_voted_view: Option<View>,
+        last_timeout_view: Option<View>,
+        high_qc: QcReferenceV0,
+        locked_qc: QcReferenceV0,
+        finalized: FinalizedTip,
+        revision: u64,
+        durable_observed_qcs: Vec<QuorumCertificate>,
+        payload_terminal_facts: Vec<PayloadTerminalFact>,
+        payload_validation_obligations: Vec<DurablePayloadValidationObligationV0>,
+        payload_validation_completions: Vec<DurablePayloadValidationCompletionV0>,
+        pending_tc_high_qc_sync: Option<PendingTcHighQcSync>,
+        pending_standalone_qc_sync: Option<PendingStandaloneQcSync>,
+        pending_sign: Option<SignIntent>,
+        last_finalization: Option<DurableFinalizationV0>,
+        state_sync_anchor: Option<DurableStateSyncAnchorV0>,
+        application_applied: FinalizedTip,
+        finalization_queue: Vec<DurableFinalizationV0>,
+        pending_finalize: Option<CertificateId>,
+        safety_halt: Option<SafetyHalt>,
+    ) -> Self {
         Self {
             schema_version,
             chain_id,
@@ -2254,6 +2324,7 @@ impl SafetyState {
             locked_qc,
             finalized,
             revision,
+            durable_observed_qcs,
             payload_terminal_facts,
             payload_validation_obligations,
             payload_validation_completions,
@@ -2309,6 +2380,7 @@ impl SafetyState {
             locked_qc,
             finalized,
             revision,
+            durable_observed_qcs,
             payload_terminal_facts,
             payload_validation_obligations,
             payload_validation_completions,
@@ -2351,6 +2423,7 @@ impl SafetyState {
             || locked_qc != &genesis_reference
             || *finalized != genesis_tip
             || *revision != 0
+            || !durable_observed_qcs.is_empty()
             || !payload_terminal_facts.is_empty()
             || !payload_validation_obligations.is_empty()
             || !payload_validation_completions.is_empty()
@@ -2426,6 +2499,13 @@ impl SafetyState {
 
     pub const fn revision(&self) -> u64 {
         self.revision
+    }
+
+    /// Fully authenticated ordinary QCs retained solely for durable
+    /// same-view conflict pairing and audit continuity. Entries are bounded
+    /// by `CoreConfig::max_observed_messages` and strictly ordered by view.
+    pub fn durable_observed_qcs(&self) -> &[QuorumCertificate] {
+        &self.durable_observed_qcs
     }
 
     pub fn payload_terminal_facts(&self) -> &[PayloadTerminalFact] {
@@ -2563,6 +2643,7 @@ impl SafetyState {
             locked_qc: genesis_reference.clone(),
             high_qc: genesis_reference,
             revision: 0,
+            durable_observed_qcs: Vec::new(),
             payload_terminal_facts: Vec::new(),
             payload_validation_obligations: Vec::new(),
             payload_validation_completions: Vec::new(),
@@ -2628,6 +2709,7 @@ impl SafetyState {
             locked_qc,
             finalized,
             revision: 0,
+            durable_observed_qcs: Vec::new(),
             payload_terminal_facts: Vec::new(),
             payload_validation_obligations: Vec::new(),
             payload_validation_completions: Vec::new(),
@@ -2683,6 +2765,10 @@ impl SafetyState {
 
     pub(crate) fn set_payload_terminal_facts(&mut self, facts: Vec<PayloadTerminalFact>) {
         self.payload_terminal_facts = facts;
+    }
+
+    pub(crate) fn set_durable_observed_qcs(&mut self, certificates: Vec<QuorumCertificate>) {
+        self.durable_observed_qcs = certificates;
     }
 
     pub(crate) fn set_payload_validation_obligations(

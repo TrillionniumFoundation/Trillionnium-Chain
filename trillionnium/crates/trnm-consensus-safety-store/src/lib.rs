@@ -4,8 +4,8 @@
 //! snapshots, and state-sync replacement. It adds an explicit lifetime writer
 //! lock, SQLite WAL transactions with `synchronous=FULL`, a monotonic revision
 //! chain, exact active-head readback, and two-revision retention around Core's
-//! inert schema-12 record codec. Journal v6 is the first and only journal
-//! schema which accepts Core safety schema 12; v2/v3/v4/v5 images are rejected
+//! inert schema-13 record codec. Journal v7 is the first and only journal
+//! schema which accepts Core safety schema 13; v2/v3/v4/v5/v6 images are rejected
 //! without implicit migration.
 //!
 //! Stored records and transition contexts remain comparison facts. Dedicated
@@ -18,7 +18,7 @@
 //! self-consistent image; a production host must cross-check an independent
 //! monotonic signer/host watermark.
 //!
-//! Journal v6 is Linux-only and assumes a local filesystem with reliable
+//! Journal v7 is Linux-only and assumes a local filesystem with reliable
 //! SQLite POSIX byte locks, `flock`, `fsync`, and atomic namespace operations.
 //! NFS, SMB, FUSE, overlay filesystems, fork-after-open, and an untrusted
 //! same-EUID process are not certified. Neither is a second raw/SQLite

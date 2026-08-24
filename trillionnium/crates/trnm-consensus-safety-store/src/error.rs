@@ -300,7 +300,7 @@ impl fmt::Display for SafetyStoreErrorV0 {
                 )
             }
             Self::SchemaMismatch => {
-                formatter.write_str("safety-store schema differs from journal v6")
+                formatter.write_str("safety-store schema differs from journal v7")
             }
             Self::MetadataMismatch => {
                 formatter.write_str("safety-store metadata or binding differs")
