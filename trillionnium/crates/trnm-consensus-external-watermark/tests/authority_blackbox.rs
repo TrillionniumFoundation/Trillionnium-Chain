@@ -1,7 +1,10 @@
 use std::{
     env, fs,
-    io::Write,
-    os::unix::fs::PermissionsExt,
+    io::{Read, Write},
+    os::unix::{
+        fs::PermissionsExt,
+        net::{UnixListener, UnixStream},
+    },
     path::{Path, PathBuf},
     process::{Child, Command},
     sync::{Arc, Mutex},
@@ -241,6 +244,103 @@ fn semantic_lifecycle_facts(
 fn mark(sequence: u64, checksum: u8) -> SignerWatermarkV0 {
     SignerWatermarkV0::from_persisted_parts(SCOPE, JOURNAL, sequence, [checksum; 32])
         .expect("valid watermark")
+}
+
+fn read_raw_frame(stream: &mut UnixStream) -> Vec<u8> {
+    let mut length = [0_u8; 4];
+    stream
+        .read_exact(&mut length)
+        .expect("fake socket frame length");
+    let mut body = vec![0_u8; u32::from_be_bytes(length) as usize];
+    stream
+        .read_exact(&mut body)
+        .expect("fake socket frame body");
+    body
+}
+
+fn write_raw_frame(stream: &mut UnixStream, body: &[u8]) {
+    stream
+        .write_all(&(body.len() as u32).to_be_bytes())
+        .and_then(|_| stream.write_all(body))
+        .and_then(|_| stream.flush())
+        .expect("fake socket frame");
+}
+
+#[test]
+fn same_uid_fake_semantic_socket_cannot_answer_capability_challenge() {
+    let root = tempdir().expect("private fake socket directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let socket = root.path().join("authority.sock");
+    let listener = UnixListener::bind(&socket).expect("bind fake authority socket");
+    fs::set_permissions(&socket, fs::Permissions::from_mode(0o600)).expect("socket mode");
+    let thread = thread::spawn(move || {
+        let (mut stream, _) = listener.accept().expect("accept fake authority client");
+        let hello = read_raw_frame(&mut stream);
+        assert_eq!(&hello[..4], b"EWA1");
+        assert_eq!(hello[5], 0, "client must begin with a hello challenge");
+        let mut challenge = vec![0_u8; 40];
+        challenge[..4].copy_from_slice(b"EWA1");
+        challenge[4] = 1;
+        challenge[5] = 1;
+        challenge[8..].fill(0x44);
+        write_raw_frame(&mut stream, &challenge);
+        let proof = read_raw_frame(&mut stream);
+        assert_eq!(
+            proof[5], 2,
+            "client must prove possession, not send capability"
+        );
+        let mut fake_ack = vec![0_u8; 40];
+        fake_ack[..4].copy_from_slice(b"EWA1");
+        fake_ack[4] = 1;
+        fake_ack[5] = 3;
+        fake_ack[8..].fill(0xaa);
+        write_raw_frame(&mut stream, &fake_ack);
+    });
+    let binding = semantic_binding();
+    let client = UnixWatermarkClient::new(&socket)
+        .expect("fake socket client")
+        .with_semantic_binding(binding);
+    let error = client
+        .load_semantic_checked(binding)
+        .expect_err("same-UID fake socket must not authenticate");
+    assert!(
+        matches!(error, ExternalWatermarkAuthorityError::Protocol(_)),
+        "unexpected fake socket error: {error:?}"
+    );
+    thread.join().expect("fake socket thread");
+}
+
+#[test]
+fn replacing_bound_socket_path_poison_daemon_on_next_original_connection() {
+    let root = tempdir().expect("private socket replacement directory");
+    fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).expect("private mode");
+    let mut authority = AuthorityProcess::start_semantic(root.path());
+    let original_socket = root.path().join("authority.original.sock");
+    fs::rename(&authority.socket, &original_socket).expect("rename bound socket path");
+
+    // A same-UID process can now bind the old public pathname, but the daemon
+    // must not continue advertising that replacement as its authority.
+    let fake_listener = UnixListener::bind(&authority.socket).expect("bind replacement socket");
+    fs::set_permissions(&authority.socket, fs::Permissions::from_mode(0o600))
+        .expect("replacement socket mode");
+    let fake_thread = thread::spawn(move || {
+        let _ = fake_listener.accept();
+    });
+    let fake_client = UnixWatermarkClient::new(&authority.socket)
+        .expect("replacement socket client")
+        .with_semantic_binding(semantic_binding());
+    assert!(
+        fake_client
+            .load_semantic_checked(semantic_binding())
+            .is_err(),
+        "replacement socket must not answer semantic authority requests"
+    );
+
+    // Connect to the held original listener so its accept loop observes the
+    // pathname/inode mismatch and exits fail-closed.
+    let _ = UnixStream::connect(&original_socket).expect("connect original listener");
+    assert_authority_exited(&mut authority);
+    fake_thread.join().expect("replacement socket thread");
 }
 
 #[test]

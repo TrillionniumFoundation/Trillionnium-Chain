@@ -64,3 +64,22 @@ The black-box tests exercise two independent processes, restart, stale CAS,
 partial-tail and byte-tamper fail-stop, local signer DB rollback while the
 external head is ahead, producer ordering, durable response replay after a
 fresh adapter owner, and response-log rollback fail-stop.
+
+## Unix socket boundary
+
+The daemon pins the socket pathname to the device/inode observed immediately
+after bind and rechecks that identity before and after every accepted request.
+A same-UID rename/rebind of the public pathname therefore poisons the original
+daemon instead of silently changing its endpoint. Semantic clients additionally
+run a nonce-bound capability challenge/response before sending a request; the
+capability is never sent as a raw frame, and a fake same-UID socket without the
+capability cannot answer the server acknowledgement. The challenge is a
+process-boundary check, not HSM/TPM/TEE attestation.
+
+The capability is deliberately provisioned out of band but is currently also
+authenticated by the semantic mode marker and request facts in the namespace.
+Consequently this challenge does **not** protect against a same-UID process
+that can read the authority directory and recover the capability, nor does it
+claim protection from a compromised host or root. Opaque mode remains an
+explicit fixture path and has no capability challenge; it must not be treated
+as a production authority.

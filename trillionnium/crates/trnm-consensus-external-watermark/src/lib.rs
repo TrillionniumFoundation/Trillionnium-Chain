@@ -82,6 +82,20 @@ const SEMANTIC_ANCHOR_BODY_BYTES: usize = 8 + 1 + 3 + 8 + 32;
 const SEMANTIC_ANCHOR_BYTES: usize = SEMANTIC_ANCHOR_BODY_BYTES + 32;
 const MAX_AUTHORITY_LOG_BYTES: u64 = 64 * 1024 * 1024;
 
+// Semantic namespaces use a short capability challenge before the ordinary
+// request frame.  The capability is never sent over the socket: both sides
+// prove possession by hashing it with fresh nonces.  Opaque mode remains an
+// explicit fixture path and intentionally does not claim this server-auth
+// boundary.
+const SOCKET_AUTH_MAGIC: &[u8; 4] = b"EWA1";
+const SOCKET_AUTH_VERSION: u8 = 1;
+const SOCKET_AUTH_HELLO: u8 = 0;
+const SOCKET_AUTH_CHALLENGE: u8 = 1;
+const SOCKET_AUTH_PROOF: u8 = 2;
+const SOCKET_AUTH_ACK: u8 = 3;
+const SOCKET_AUTH_FRAME_BYTES: usize = 4 + 1 + 1 + 2 + 32;
+const SOCKET_AUTH_DOMAIN: &[u8] = b"trnm.consensus.external-watermark.socket-auth.v1\0";
+
 type WatermarkHistoryKeyV1 = ([u8; 32], u64, [u8; 32], [u8; 32]);
 
 /// The lifecycle validation mode for a semantic authority namespace.
@@ -1441,6 +1455,9 @@ impl ExternalWatermarkAuthority {
                 stage: "set response timeout",
                 source,
             })?;
+        if let Some(binding) = self.semantic_binding {
+            authenticate_semantic_server_v1(&mut stream, binding)?;
+        }
         let body = read_frame(&mut stream)?;
         let request = decode_request(&body)?;
         let response = match request {
@@ -1517,6 +1534,7 @@ impl ExternalWatermarkAuthority {
         socket_path: impl AsRef<Path>,
     ) -> Result<(), ExternalWatermarkAuthorityError> {
         let socket_path = socket_path.as_ref();
+        validate_socket_parent_v1(socket_path)?;
         remove_stale_socket(socket_path)?;
         let listener = UnixListener::bind(socket_path).map_err(|source| {
             ExternalWatermarkAuthorityError::Io {
@@ -1530,7 +1548,17 @@ impl ExternalWatermarkAuthority {
                 source,
             }
         })?;
+        let socket_identity = socket_path_identity_v1(socket_path)?;
         for stream in listener.incoming() {
+            // The listener descriptor remains attached to the original
+            // socket even if a same-UID process replaces the pathname.  Pin
+            // the public name as well, so the daemon terminates instead of
+            // continuing to advertise a different endpoint after restart.
+            validate_socket_path_identity_v1(
+                socket_path,
+                socket_identity,
+                "validate authority socket before request",
+            )?;
             match stream {
                 Ok(stream) => {
                     // A malformed client frame is rejected without taking the
@@ -1541,6 +1569,11 @@ impl ExternalWatermarkAuthority {
                             return Err(error);
                         }
                     }
+                    validate_socket_path_identity_v1(
+                        socket_path,
+                        socket_identity,
+                        "validate authority socket after request",
+                    )?;
                 }
                 Err(source) => {
                     return Err(ExternalWatermarkAuthorityError::Io {
@@ -1598,12 +1631,18 @@ impl UnixWatermarkClient {
     }
 
     fn request(&self, request: RequestV1) -> Result<ResponseV1, ExternalWatermarkAuthorityError> {
+        let socket_identity = socket_path_identity_v1(&self.socket_path)?;
         let mut stream = UnixStream::connect(&self.socket_path).map_err(|source| {
             ExternalWatermarkAuthorityError::Io {
                 stage: "connect authority socket",
                 source,
             }
         })?;
+        validate_socket_path_identity_v1(
+            &self.socket_path,
+            socket_identity,
+            "validate authority socket after connect",
+        )?;
         stream
             .set_read_timeout(Some(self.timeout))
             .map_err(|source| ExternalWatermarkAuthorityError::Io {
@@ -1616,8 +1655,17 @@ impl UnixWatermarkClient {
                 stage: "set client write timeout",
                 source,
             })?;
+        if let Some(binding) = self.semantic_binding {
+            authenticate_semantic_client_v1(&mut stream, binding.capability)?;
+        }
         write_frame(&mut stream, &encode_request(request))?;
-        decode_response(&read_frame(&mut stream)?)
+        let response = decode_response(&read_frame(&mut stream)?)?;
+        validate_socket_path_identity_v1(
+            &self.socket_path,
+            socket_identity,
+            "validate authority socket after response",
+        )?;
+        Ok(response)
     }
 
     pub fn load_checked(
@@ -3252,6 +3300,7 @@ fn mode_marker_checksum(bytes: &[u8]) -> [u8; 32] {
 }
 
 fn remove_stale_socket(path: &Path) -> Result<(), ExternalWatermarkAuthorityError> {
+    validate_socket_parent_v1(path)?;
     match fs::symlink_metadata(path) {
         Ok(metadata) if metadata.file_type().is_socket() => {
             fs::remove_file(path).map_err(|source| ExternalWatermarkAuthorityError::Io {
@@ -3271,6 +3320,92 @@ fn remove_stale_socket(path: &Path) -> Result<(), ExternalWatermarkAuthorityErro
                 source,
             })
         }
+    }
+    Ok(())
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct UnixSocketPathIdentityV1 {
+    device: u64,
+    inode: u64,
+}
+
+fn validate_socket_parent_v1(path: &Path) -> Result<(), ExternalWatermarkAuthorityError> {
+    if !path.is_absolute() || path.file_name().is_none() {
+        return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+            "authority socket must be an absolute path",
+        ));
+    }
+    let parent = path
+        .parent()
+        .ok_or(ExternalWatermarkAuthorityError::InvalidConfig(
+            "authority socket parent",
+        ))?;
+    let named =
+        fs::symlink_metadata(parent).map_err(|source| ExternalWatermarkAuthorityError::Io {
+            stage: "stat authority socket parent",
+            source,
+        })?;
+    let canonical =
+        fs::canonicalize(parent).map_err(|source| ExternalWatermarkAuthorityError::Io {
+            stage: "canonicalize authority socket parent",
+            source,
+        })?;
+    if named.file_type().is_symlink()
+        || !named.is_dir()
+        || named.permissions().mode() & 0o077 != 0
+        || canonical != parent
+    {
+        return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+            "authority socket parent must be a private canonical directory",
+        ));
+    }
+    Ok(())
+}
+
+fn socket_path_identity_v1(
+    path: &Path,
+) -> Result<UnixSocketPathIdentityV1, ExternalWatermarkAuthorityError> {
+    validate_socket_parent_v1(path)?;
+    let metadata =
+        fs::symlink_metadata(path).map_err(|source| ExternalWatermarkAuthorityError::Io {
+            stage: "stat authority socket",
+            source,
+        })?;
+    if !metadata.file_type().is_socket()
+        || metadata.permissions().mode() & 0o777 != 0o600
+        || metadata.nlink() != 1
+    {
+        return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+            "authority socket must be a private single-link Unix socket",
+        ));
+    }
+    Ok(UnixSocketPathIdentityV1 {
+        device: metadata.dev(),
+        inode: metadata.ino(),
+    })
+}
+
+fn validate_socket_path_identity_v1(
+    path: &Path,
+    expected: UnixSocketPathIdentityV1,
+    stage: &'static str,
+) -> Result<(), ExternalWatermarkAuthorityError> {
+    let actual = socket_path_identity_v1(path).map_err(|error| match error {
+        ExternalWatermarkAuthorityError::Io { source, .. } => {
+            ExternalWatermarkAuthorityError::Io { stage, source }
+        }
+        ExternalWatermarkAuthorityError::InvalidConfig(_) => {
+            ExternalWatermarkAuthorityError::InvalidLog(
+                "authority socket path is no longer the bound private socket",
+            )
+        }
+        other => other,
+    })?;
+    if actual != expected {
+        return Err(ExternalWatermarkAuthorityError::InvalidLog(
+            "authority socket path identity changed",
+        ));
     }
     Ok(())
 }
@@ -3850,6 +3985,143 @@ fn decode_response(body: &[u8]) -> Result<ResponseV1, ExternalWatermarkAuthority
         )),
         _ => Err(ExternalWatermarkAuthorityError::Protocol("response shape")),
     }
+}
+
+fn fresh_socket_nonce_v1() -> Result<[u8; 32], ExternalWatermarkAuthorityError> {
+    // `/dev/urandom` is opened through safe std I/O; no raw descriptor or
+    // unsafe syscall is needed.  A fresh challenge makes a captured semantic
+    // proof unusable on the next connection.
+    let mut random =
+        File::open("/dev/urandom").map_err(|source| ExternalWatermarkAuthorityError::Io {
+            stage: "open socket authentication randomness",
+            source,
+        })?;
+    let mut nonce = [0_u8; 32];
+    random
+        .read_exact(&mut nonce)
+        .map_err(|source| ExternalWatermarkAuthorityError::Io {
+            stage: "read socket authentication randomness",
+            source,
+        })?;
+    if nonce == [0; 32] {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication challenge was zero",
+        ));
+    }
+    Ok(nonce)
+}
+
+fn encode_socket_auth_frame(kind: u8, payload: [u8; 32]) -> [u8; SOCKET_AUTH_FRAME_BYTES] {
+    let mut frame = [0_u8; SOCKET_AUTH_FRAME_BYTES];
+    frame[..4].copy_from_slice(SOCKET_AUTH_MAGIC);
+    frame[4] = SOCKET_AUTH_VERSION;
+    frame[5] = kind;
+    frame[6..8].copy_from_slice(&[0, 0]);
+    frame[8..].copy_from_slice(&payload);
+    frame
+}
+
+fn decode_socket_auth_frame(
+    body: &[u8],
+) -> Result<(u8, [u8; 32]), ExternalWatermarkAuthorityError> {
+    if body.len() != SOCKET_AUTH_FRAME_BYTES
+        || &body[..4] != SOCKET_AUTH_MAGIC
+        || body[4] != SOCKET_AUTH_VERSION
+        || body[6..8] != [0, 0]
+    {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication frame",
+        ));
+    }
+    Ok((
+        body[5],
+        body[8..].try_into().expect("socket authentication payload"),
+    ))
+}
+
+fn socket_auth_mac_v1(
+    role: u8,
+    capability: [u8; 32],
+    client_nonce: [u8; 32],
+    server_nonce: [u8; 32],
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(SOCKET_AUTH_DOMAIN);
+    hasher.update([role]);
+    hasher.update(capability);
+    hasher.update(client_nonce);
+    hasher.update(server_nonce);
+    hasher.finalize().into()
+}
+
+fn authenticate_semantic_server_v1(
+    stream: &mut UnixStream,
+    binding: ExternalWatermarkSemanticBindingV1,
+) -> Result<(), ExternalWatermarkAuthorityError> {
+    let (kind, client_nonce) = decode_socket_auth_frame(&read_frame(stream)?)?;
+    if kind != SOCKET_AUTH_HELLO || client_nonce == [0; 32] {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication hello",
+        ));
+    }
+    let server_nonce = fresh_socket_nonce_v1()?;
+    write_frame(
+        stream,
+        &encode_socket_auth_frame(SOCKET_AUTH_CHALLENGE, server_nonce),
+    )?;
+    let (kind, proof) = decode_socket_auth_frame(&read_frame(stream)?)?;
+    if kind != SOCKET_AUTH_PROOF
+        || proof != socket_auth_mac_v1(b'C', binding.capability, client_nonce, server_nonce)
+    {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication proof",
+        ));
+    }
+    write_frame(
+        stream,
+        &encode_socket_auth_frame(
+            SOCKET_AUTH_ACK,
+            socket_auth_mac_v1(b'S', binding.capability, client_nonce, server_nonce),
+        ),
+    )
+}
+
+fn authenticate_semantic_client_v1(
+    stream: &mut UnixStream,
+    capability: [u8; 32],
+) -> Result<(), ExternalWatermarkAuthorityError> {
+    if capability == [0; 32] {
+        return Err(ExternalWatermarkAuthorityError::InvalidConfig(
+            "semantic socket capability is zero",
+        ));
+    }
+    let client_nonce = fresh_socket_nonce_v1()?;
+    write_frame(
+        stream,
+        &encode_socket_auth_frame(SOCKET_AUTH_HELLO, client_nonce),
+    )?;
+    let (kind, server_nonce) = decode_socket_auth_frame(&read_frame(stream)?)?;
+    if kind != SOCKET_AUTH_CHALLENGE || server_nonce == [0; 32] {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication challenge",
+        ));
+    }
+    write_frame(
+        stream,
+        &encode_socket_auth_frame(
+            SOCKET_AUTH_PROOF,
+            socket_auth_mac_v1(b'C', capability, client_nonce, server_nonce),
+        ),
+    )?;
+    let (kind, server_proof) = decode_socket_auth_frame(&read_frame(stream)?)?;
+    if kind != SOCKET_AUTH_ACK
+        || server_proof != socket_auth_mac_v1(b'S', capability, client_nonce, server_nonce)
+    {
+        return Err(ExternalWatermarkAuthorityError::Protocol(
+            "socket authentication acknowledgement",
+        ));
+    }
+    Ok(())
 }
 
 fn read_frame(stream: &mut UnixStream) -> Result<Vec<u8>, ExternalWatermarkAuthorityError> {
