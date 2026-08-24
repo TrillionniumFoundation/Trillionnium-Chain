@@ -5536,6 +5536,8 @@ fn recover_finalization_intent_marker_readback_v0(
     let app_parent = row
         .parent_head_v0()
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+    let execution = read.executed_v0().request();
+    let expected = execution.expected();
     if target.block_id().as_bytes() != &marker.target_block_id
         || target.height().get() != marker.target_height
         || target.state_root().as_bytes() != &marker.target_state_root
@@ -5545,26 +5547,40 @@ fn recover_finalization_intent_marker_readback_v0(
         || app_parent.state_root().as_bytes() != &marker.parent_state_root
         || app_parent.commit_id().as_bytes() != &marker.parent_commit_id
         || read.receipts_root_v0().as_bytes() != &marker.target_receipts_root
+        // Join the marker to the decoded immutable execution request as
+        // well as to the application row.  A row that happens to share the
+        // target coordinates but carries a substituted parent/commitment
+        // must not be enough to clear a crash fence.
+        || execution.block_id().as_bytes() != &marker.target_block_id
+        || execution.height().get() != marker.target_height
+        || execution.timestamp_ms() != marker.target_timestamp_ms
+        || execution.parent().block_id().as_bytes() != &marker.parent_block_id
+        || execution.parent().height().get() != marker.parent_height
+        || execution.parent().state_root().as_bytes() != &marker.parent_state_root
+        || execution.parent().commit_id().as_bytes() != &marker.parent_commit_id
+        || expected.post_state_root().as_bytes() != &marker.target_state_root
+        || expected.receipts_root().as_bytes() != &marker.target_receipts_root
     {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
             "finalization recovery application row geometry differs from the marker",
         ));
     }
 
-    let source_matches = safety
+    let source_match_count = safety
         .payload_validation_completions()
         .iter()
-        .any(|completion| {
+        .filter(|completion| {
             completion.result().artifact_ref().is_some_and(|artifact| {
                 artifact.overlay().block_id().as_bytes() == &marker.target_block_id
                     && artifact.overlay().parent_block_id().as_bytes() == &marker.parent_block_id
                     && artifact.overlay().overlay_checksum() == marker.target_overlay_checksum
                     && artifact.source_artifact_checksum() == marker.source_artifact_checksum
             })
-        });
-    if !source_matches {
+        })
+        .count();
+    if source_match_count != 1 {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-            "finalization recovery marker has no exact durable Valid source completion",
+            "finalization recovery marker does not have exactly one durable Valid source completion",
         ));
     }
 

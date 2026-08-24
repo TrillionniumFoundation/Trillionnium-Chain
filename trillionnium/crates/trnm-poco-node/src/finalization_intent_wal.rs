@@ -29,6 +29,37 @@ const MARKER_SUFFIX_V0: &str = ".finalization.pending.v0";
 const TEMP_SUFFIX_V0: &str = ".finalization.pending.v0.tmp";
 const FIXED_BYTES_V0: usize = 8 + (6 * 8) + (11 * 32) + 32;
 
+/// Stable identity of one filesystem object admitted by the marker owner.
+///
+/// Marker paths are derived from a SQLite path, but a path is not an
+/// authority: a same-UID process can replace a parent directory or the store
+/// file between two operations.  Keeping the device/inode pair lets every
+/// path-based operation reject that replacement before accepting a marker.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct PathIdentityV0 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+}
+
+#[cfg(unix)]
+impl PathIdentityV0 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+        }
+    }
+}
+
+#[cfg(not(unix))]
+impl PathIdentityV0 {
+    fn from_metadata(_metadata: &fs::Metadata) -> Self {
+        Self {}
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct FinalizationIntentMarkerV0 {
     pub(crate) scope: [u8; 32],
@@ -243,16 +274,62 @@ fn marker_temp_path_v0(store_path: &Path) -> PathBuf {
     PathBuf::from(value)
 }
 
-fn sync_parent_v0(path: &Path) -> Result<(), &'static str> {
+fn validate_parent_path_v0(path: &Path) -> Result<&Path, &'static str> {
     let parent = path.parent().ok_or("finalization intent has no parent")?;
+    if !path.is_absolute() || path.file_name().is_none() {
+        return Err("finalization intent path is not absolute");
+    }
+    let metadata =
+        fs::symlink_metadata(parent).map_err(|_| "finalization intent parent lookup failed")?;
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err("finalization intent parent is not a directory");
+    }
+    // Reject an indirect symlink or an unresolved `..` in the parent.  The
+    // descriptor/identity checks below then refer to exactly this directory,
+    // rather than an arbitrary directory reached through the textual path.
+    if fs::canonicalize(parent).map_err(|_| "finalization intent parent canonicalize failed")?
+        != parent
+    {
+        return Err("finalization intent parent is not canonical");
+    }
+    Ok(parent)
+}
+
+fn open_parent_v0(path: &Path) -> Result<(File, PathIdentityV0), &'static str> {
+    let parent = validate_parent_path_v0(path)?;
     let mut options = OpenOptions::new();
     options.read(true);
     #[cfg(unix)]
     options.custom_flags(libc::O_CLOEXEC | libc::O_DIRECTORY | libc::O_NOFOLLOW);
-    options
+    let directory = options
         .open(parent)
-        .and_then(|directory| directory.sync_all())
-        .map_err(|_| "finalization intent parent fsync failed")
+        .map_err(|_| "finalization intent parent open failed")?;
+    let metadata = directory
+        .metadata()
+        .map_err(|_| "finalization intent parent metadata failed")?;
+    if !metadata.is_dir() {
+        return Err("finalization intent parent is not a directory");
+    }
+    Ok((directory, PathIdentityV0::from_metadata(&metadata)))
+}
+
+fn ensure_parent_identity_v0(path: &Path, expected: PathIdentityV0) -> Result<(), &'static str> {
+    let (_directory, observed) = open_parent_v0(path)?;
+    if observed != expected {
+        return Err("finalization intent parent directory was replaced");
+    }
+    Ok(())
+}
+
+fn sync_parent_v0(path: &Path, expected: PathIdentityV0) -> Result<(), &'static str> {
+    let (directory, observed) = open_parent_v0(path)?;
+    if observed != expected {
+        return Err("finalization intent parent directory was replaced");
+    }
+    directory
+        .sync_all()
+        .map_err(|_| "finalization intent parent fsync failed")?;
+    ensure_parent_identity_v0(path, expected)
 }
 
 fn open_read_v0(path: &Path) -> Result<File, &'static str> {
@@ -263,6 +340,97 @@ fn open_read_v0(path: &Path) -> Result<File, &'static str> {
     options
         .open(path)
         .map_err(|_| "finalization intent marker open failed")
+}
+
+fn validate_store_v0(store_path: &Path) -> Result<(PathIdentityV0, PathIdentityV0), &'static str> {
+    let (_parent_file, parent_identity) = open_parent_v0(store_path)?;
+    let metadata =
+        fs::symlink_metadata(store_path).map_err(|_| "finalization intent store lookup failed")?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err("finalization intent store is not a regular file");
+    }
+    #[cfg(unix)]
+    if metadata.nlink() != 1 {
+        return Err("finalization intent store has unexpected hard links");
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+    let store = options
+        .open(store_path)
+        .map_err(|_| "finalization intent store open failed")?;
+    let observed = store
+        .metadata()
+        .map_err(|_| "finalization intent store metadata failed")?;
+    if !observed.is_file() {
+        return Err("finalization intent store is not a regular file");
+    }
+    #[cfg(unix)]
+    if observed.nlink() != 1 {
+        return Err("finalization intent store has unexpected hard links");
+    }
+    let store_identity = PathIdentityV0::from_metadata(&observed);
+    if PathIdentityV0::from_metadata(&metadata) != store_identity {
+        return Err("finalization intent store was replaced during open");
+    }
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    Ok((store_identity, parent_identity))
+}
+
+fn ensure_store_identity_v0(
+    store_path: &Path,
+    expected_store: PathIdentityV0,
+    expected_parent: PathIdentityV0,
+) -> Result<(), &'static str> {
+    ensure_parent_identity_v0(store_path, expected_parent)?;
+    let metadata =
+        fs::symlink_metadata(store_path).map_err(|_| "finalization intent store lookup failed")?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err("finalization intent store is not a regular file");
+    }
+    #[cfg(unix)]
+    if metadata.nlink() != 1 {
+        return Err("finalization intent store has unexpected hard links");
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+    let store = options
+        .open(store_path)
+        .map_err(|_| "finalization intent store open failed")?;
+    let observed = store
+        .metadata()
+        .map_err(|_| "finalization intent store metadata failed")?;
+    if !observed.is_file() {
+        return Err("finalization intent store is not a regular file");
+    }
+    #[cfg(unix)]
+    if observed.nlink() != 1 {
+        return Err("finalization intent store has unexpected hard links");
+    }
+    if PathIdentityV0::from_metadata(&metadata) != expected_store
+        || PathIdentityV0::from_metadata(&observed) != expected_store
+    {
+        return Err("finalization intent store was replaced");
+    }
+    ensure_parent_identity_v0(store_path, expected_parent)
+}
+
+fn validate_path_identity_v0(
+    path: &Path,
+    expected: PathIdentityV0,
+    label: &'static str,
+) -> Result<(), &'static str> {
+    let metadata = fs::symlink_metadata(path).map_err(|_| label)?;
+    if metadata.file_type().is_symlink() || !metadata.is_file() {
+        return Err(label);
+    }
+    if PathIdentityV0::from_metadata(&metadata) != expected {
+        return Err(label);
+    }
+    Ok(())
 }
 
 fn validate_file_v0(file: &File, path: &Path) -> Result<(), &'static str> {
@@ -282,8 +450,11 @@ fn validate_file_v0(file: &File, path: &Path) -> Result<(), &'static str> {
 pub(crate) fn load_marker_v0(
     store_path: &Path,
 ) -> Result<Option<FinalizationIntentMarkerV0>, &'static str> {
+    let (store_identity, parent_identity) = validate_store_v0(store_path)?;
     let path = marker_path_v0(store_path);
     let temp = marker_temp_path_v0(store_path);
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
     match fs::symlink_metadata(&temp) {
         Ok(_) => return Err("finalization intent temporary marker exists"),
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
@@ -299,9 +470,21 @@ pub(crate) fn load_marker_v0(
     }
     let mut file = open_read_v0(&path)?;
     validate_file_v0(&file, &path)?;
+    let marker_identity = PathIdentityV0::from_metadata(
+        &file
+            .metadata()
+            .map_err(|_| "finalization intent marker metadata failed")?,
+    );
+    validate_path_identity_v0(
+        &path,
+        marker_identity,
+        "finalization intent marker was replaced during open",
+    )?;
     let mut bytes = Vec::with_capacity(FIXED_BYTES_V0);
     file.read_to_end(&mut bytes)
         .map_err(|_| "finalization intent marker read failed")?;
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
     Ok(Some(FinalizationIntentMarkerV0::decode(&bytes)?))
 }
 
@@ -309,7 +492,10 @@ pub(crate) fn write_marker_v0(
     store_path: &Path,
     marker: FinalizationIntentMarkerV0,
 ) -> Result<(), &'static str> {
+    let (store_identity, parent_identity) = validate_store_v0(store_path)?;
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
     if let Some(existing) = load_marker_v0(store_path)? {
+        ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
         return if existing == marker {
             Ok(())
         } else {
@@ -327,27 +513,74 @@ pub(crate) fn write_marker_v0(
     let mut file = options
         .open(&temp)
         .map_err(|_| "finalization intent temporary marker create failed")?;
+    let temp_identity = PathIdentityV0::from_metadata(
+        &file
+            .metadata()
+            .map_err(|_| "finalization intent temporary marker metadata failed")?,
+    );
     file.write_all(&marker.encode())
         .and_then(|()| file.sync_all())
         .map_err(|_| "finalization intent temporary marker fsync failed")?;
     drop(file);
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
+    validate_path_identity_v0(
+        &temp,
+        temp_identity,
+        "finalization intent temporary marker was replaced before publish",
+    )?;
     fs::hard_link(&temp, &path)
         .map_err(|_| "finalization intent marker publish raced or failed")?;
-    sync_parent_v0(&path)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
+    validate_path_identity_v0(
+        &path,
+        temp_identity,
+        "finalization intent marker publish identity mismatch",
+    )?;
+    sync_parent_v0(&path, parent_identity)?;
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    validate_path_identity_v0(
+        &temp,
+        temp_identity,
+        "finalization intent temporary marker was replaced before cleanup",
+    )?;
     fs::remove_file(&temp).map_err(|_| "finalization intent temporary marker cleanup failed")?;
-    sync_parent_v0(&path)
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
+    sync_parent_v0(&path, parent_identity)
 }
 
 pub(crate) fn clear_marker_v0(
     store_path: &Path,
     expected: FinalizationIntentMarkerV0,
 ) -> Result<(), &'static str> {
+    let (store_identity, parent_identity) = validate_store_v0(store_path)?;
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
     let path = marker_path_v0(store_path);
     if load_marker_v0(store_path)? != Some(expected) {
         return Err("finalization intent marker is absent or differs on clear");
     }
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    let marker_file = open_read_v0(&path)?;
+    validate_file_v0(&marker_file, &path)?;
+    let marker_identity = PathIdentityV0::from_metadata(
+        &marker_file
+            .metadata()
+            .map_err(|_| "finalization intent marker metadata failed")?,
+    );
+    validate_path_identity_v0(
+        &path,
+        marker_identity,
+        "finalization intent marker was replaced before clear",
+    )?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
     fs::remove_file(&path).map_err(|_| "finalization intent marker remove failed")?;
-    sync_parent_v0(&path)
+    ensure_store_identity_v0(store_path, store_identity, parent_identity)?;
+    ensure_parent_identity_v0(&path, parent_identity)?;
+    if fs::symlink_metadata(&path).is_ok() {
+        return Err("finalization intent marker reappeared during clear");
+    }
+    sync_parent_v0(&path, parent_identity)
 }
 
 #[cfg(test)]
@@ -385,6 +618,7 @@ mod tests {
     fn marker_roundtrip_and_exact_clear_v0() {
         let directory = tempdir().expect("tempdir");
         let store = directory.path().join("proposal.sqlite");
+        File::create(&store).expect("create store identity");
         let expected = marker(1);
         write_marker_v0(&store, expected).expect("publish marker");
         assert_eq!(load_marker_v0(&store).expect("load marker"), Some(expected));
@@ -397,6 +631,7 @@ mod tests {
     fn marker_conflict_tamper_and_temp_are_fail_closed_v0() {
         let directory = tempdir().expect("tempdir");
         let store = directory.path().join("proposal.sqlite");
+        File::create(&store).expect("create store identity");
         let expected = marker(11);
         write_marker_v0(&store, expected).expect("publish marker");
         assert!(write_marker_v0(&store, marker(12)).is_err());
@@ -415,9 +650,61 @@ mod tests {
     fn marker_clear_rejects_foreign_expected_tuple_v0() {
         let directory = tempdir().expect("tempdir");
         let store = directory.path().join("proposal.sqlite");
+        File::create(&store).expect("create store identity");
         let expected = marker(21);
         write_marker_v0(&store, expected).expect("publish marker");
         assert!(clear_marker_v0(&store, marker(22)).is_err());
         assert_eq!(load_marker_v0(&store).expect("load marker"), Some(expected));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn marker_rejects_parent_or_store_path_replacement_v0() {
+        use std::os::unix::fs::symlink;
+
+        let directory = tempdir().expect("tempdir");
+        let parent = directory.path().join("node");
+        fs::create_dir(&parent).expect("create canonical parent");
+        let store = parent.join("proposal.sqlite");
+        File::create(&store).expect("create store identity");
+        let expected = marker(31);
+        write_marker_v0(&store, expected).expect("publish marker");
+
+        // A replaced parent must not redirect a marker read to a different
+        // directory, even when the replacement is a symlink to the old one.
+        let moved_parent = directory.path().join("moved-node");
+        fs::rename(&parent, &moved_parent).expect("move original parent");
+        symlink(&moved_parent, &parent).expect("replace parent with symlink");
+        assert!(load_marker_v0(&store).is_err());
+
+        // Restore the canonical parent and then replace the store path itself
+        // with a symlink.  Marker authority is tied to the exact regular store
+        // object, not merely to a textual filename.
+        fs::remove_file(&parent).expect("remove parent symlink");
+        fs::rename(&moved_parent, &parent).expect("restore original parent");
+        let moved_store = parent.join("proposal.moved.sqlite");
+        fs::rename(&store, &moved_store).expect("move original store");
+        symlink(&moved_store, &store).expect("replace store with symlink");
+        assert!(load_marker_v0(&store).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn marker_rejects_store_or_marker_aliases_v0() {
+        use std::fs::hard_link;
+
+        let directory = tempdir().expect("tempdir");
+        let store = directory.path().join("proposal.sqlite");
+        File::create(&store).expect("create store identity");
+        let store_alias = directory.path().join("proposal.alias.sqlite");
+        hard_link(&store, &store_alias).expect("create store alias");
+        assert!(load_marker_v0(&store).is_err());
+        fs::remove_file(&store_alias).expect("remove store alias");
+
+        let expected = marker(41);
+        write_marker_v0(&store, expected).expect("publish marker");
+        let marker_alias = directory.path().join("marker.alias");
+        hard_link(marker_path_v0(&store), &marker_alias).expect("create marker alias");
+        assert!(load_marker_v0(&store).is_err());
     }
 }
