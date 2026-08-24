@@ -451,6 +451,11 @@ impl NodeEventWalV1 {
         {
             return Err(NodeEventWalErrorV1::AlreadyCommitted);
         }
+        // A prepare always needs a second frame for its eventual commit.  Do
+        // this preflight after semantic validation but before writing the
+        // intent so reaching the bounded WAL limit can never strand an
+        // uncommittable pending event.
+        self.ensure_append_capacity_v1(2)?;
         let sequence = self.next_sequence;
         let frame = encode_frame_v1(
             KIND_INTENT_V1,
@@ -495,6 +500,10 @@ impl NodeEventWalV1 {
         if pending != intent {
             return Err(NodeEventWalErrorV1::PendingMismatch);
         }
+        // A commit consumes one final frame.  Refuse it after exact pending
+        // validation but before touching the file when the bounded record
+        // count has already been exhausted.
+        self.ensure_append_capacity_v1(1)?;
         let sequence = self.next_sequence;
         let frame = encode_frame_v1(
             KIND_COMMIT_V1,
@@ -584,8 +593,24 @@ impl NodeEventWalV1 {
         Ok(())
     }
 
+    fn ensure_append_capacity_v1(&self, required_frames: u64) -> Result<(), NodeEventWalErrorV1> {
+        let maximum_frames = MAX_FRAMES_V1 as u64;
+        let available_frames = maximum_frames
+            .checked_sub(self.next_sequence)
+            .ok_or(NodeEventWalErrorV1::TooLarge)?;
+        if available_frames < required_frames {
+            return Err(NodeEventWalErrorV1::TooLarge);
+        }
+        Ok(())
+    }
+
     fn append_frame_v1(&mut self, frame: &[u8; FRAME_BYTES_V1]) -> Result<(), NodeEventWalErrorV1> {
         let result = (|| {
+            // Keep the lower-level append guarded as well.  The public
+            // prepare/commit paths reserve their full frame needs above, but
+            // this invariant prevents a future caller from bypassing the
+            // bounded record count after a refactor.
+            self.ensure_append_capacity_v1(1)?;
             self.validate_path_binding_v1()?;
             let mut file = self.file.try_clone().map_err(|_| NodeEventWalErrorV1::Io)?;
             validate_open_file_v1(&file, &self.path, false)?;
@@ -612,19 +637,41 @@ impl NodeEventWalV1 {
         file.seek(SeekFrom::Start(0))
             .map_err(|_| NodeEventWalErrorV1::Io)?;
         validate_open_file_v1(&file, &self.path, false)?;
-        let mut bytes = Vec::new();
-        file.read_to_end(&mut bytes)
-            .map_err(|_| NodeEventWalErrorV1::Io)?;
         let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
         if NodeEventPathIdentityV1::from_metadata(&metadata) != self.file_identity {
             return Err(NodeEventWalErrorV1::InvalidPath);
         }
-        if bytes.is_empty() || bytes.len() % FRAME_BYTES_V1 != 0 {
+        let expected_length = metadata.len();
+        let frame_bytes = FRAME_BYTES_V1 as u64;
+        if expected_length == 0 || expected_length % frame_bytes != 0 {
             return Err(NodeEventWalErrorV1::Truncated);
         }
-        let frame_count = bytes.len() / FRAME_BYTES_V1;
-        if frame_count > MAX_FRAMES_V1 {
+        let frame_count = expected_length / frame_bytes;
+        if frame_count > MAX_FRAMES_V1 as u64 {
             return Err(NodeEventWalErrorV1::TooLarge);
+        }
+        let expected_length_usize =
+            usize::try_from(expected_length).map_err(|_| NodeEventWalErrorV1::TooLarge)?;
+        let maximum_length = (MAX_FRAMES_V1 as u64)
+            .checked_mul(frame_bytes)
+            .ok_or(NodeEventWalErrorV1::TooLarge)?;
+        // Bound the read as well as the post-read parse.  A same-UID writer
+        // which grows the inode after the metadata preflight must not turn a
+        // bounded WAL reopen into an unbounded allocation.
+        let mut bytes = Vec::with_capacity(expected_length_usize);
+        (&mut file)
+            .take(maximum_length.saturating_add(1))
+            .read_to_end(&mut bytes)
+            .map_err(|_| NodeEventWalErrorV1::Io)?;
+        if bytes.len() as u64 > maximum_length {
+            return Err(NodeEventWalErrorV1::TooLarge);
+        }
+        let post_metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
+        if NodeEventPathIdentityV1::from_metadata(&post_metadata) != self.file_identity {
+            return Err(NodeEventWalErrorV1::InvalidPath);
+        }
+        if post_metadata.len() != expected_length || bytes.len() != expected_length_usize {
+            return Err(NodeEventWalErrorV1::Truncated);
         }
         let mut expected_sequence = 0_u64;
         let mut previous_checksum = [0_u8; 32];
@@ -1269,6 +1316,115 @@ mod tests {
             .prepare_event_v1(digest(6), digest(5), digest(8))
             .unwrap();
         wal.commit_event_v1(next, digest(9)).unwrap();
+    }
+
+    #[test]
+    fn multiple_commits_reopen_with_contiguous_sequence_and_predecessor() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("multi-events.wal");
+        {
+            let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+            let first = wal
+                .prepare_event_v1(digest(2), digest(3), digest(4))
+                .unwrap();
+            let first_receipt = wal.commit_event_v1(first, digest(5)).unwrap();
+            assert_eq!(first.sequence(), 1);
+            assert_eq!(first_receipt.intent_sequence(), 1);
+            let second = wal
+                .prepare_event_v1(digest(6), digest(5), digest(7))
+                .unwrap();
+            let second_receipt = wal.commit_event_v1(second, digest(8)).unwrap();
+            assert_eq!(second.sequence(), 3);
+            assert_eq!(second_receipt.intent_sequence(), 3);
+        }
+
+        let mut reopened = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        assert!(matches!(
+            reopened.recovery(),
+            NodeEventRecoveryV1::Clean {
+                last_commit: Some(receipt)
+            } if receipt.event_id() == digest(6) && receipt.commit_digest() == digest(8)
+        ));
+        let third = reopened
+            .prepare_event_v1(digest(9), digest(8), digest(10))
+            .unwrap();
+        assert_eq!(third.sequence(), 5);
+        reopened.commit_event_v1(third, digest(11)).unwrap();
+        drop(reopened);
+        assert!(matches!(
+            NodeEventWalV1::open(&path, digest(1)).unwrap().recovery(),
+            NodeEventRecoveryV1::Clean {
+                last_commit: Some(receipt)
+            } if receipt.event_id() == digest(9) && receipt.commit_digest() == digest(11)
+        ));
+    }
+
+    #[test]
+    fn frame_limit_reserves_commit_slot_and_never_mutates_on_exhaustion() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("bounded-events.wal");
+        let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let initial_length = fs::metadata(&path).unwrap().len();
+        let initial_head = wal.head();
+        let maximum_frames = MAX_FRAMES_V1 as u64;
+
+        // One slot remains at MAX-1, but a new event needs both an intent and
+        // a commit.  Reject before writing the intent rather than creating an
+        // unrecoverable pending tail.
+        wal.next_sequence = maximum_frames - 1;
+        assert_eq!(wal.ensure_append_capacity_v1(1), Ok(()));
+        assert_eq!(
+            wal.ensure_append_capacity_v1(2),
+            Err(NodeEventWalErrorV1::TooLarge)
+        );
+        assert_eq!(
+            wal.prepare_event_v1(digest(2), digest(3), digest(4)),
+            Err(NodeEventWalErrorV1::TooLarge)
+        );
+        assert_eq!(fs::metadata(&path).unwrap().len(), initial_length);
+        assert_eq!(wal.head(), initial_head);
+        assert!(wal.pending().is_none());
+
+        // A pending event at the exact frame limit cannot append its commit;
+        // the error must leave the exact intent and file bytes untouched.
+        let pending_path = temp.path().join("bounded-pending-events.wal");
+        let mut pending_wal = NodeEventWalV1::open(&pending_path, digest(1)).unwrap();
+        let intent = pending_wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        let pending_length = fs::metadata(&pending_path).unwrap().len();
+        let pending_head = pending_wal.head();
+        pending_wal.next_sequence = maximum_frames;
+        assert_eq!(
+            pending_wal.commit_event_v1(intent, digest(5)),
+            Err(NodeEventWalErrorV1::TooLarge)
+        );
+        assert_eq!(fs::metadata(&pending_path).unwrap().len(), pending_length);
+        assert_eq!(pending_wal.head(), pending_head);
+        assert_eq!(pending_wal.pending(), Some(intent));
+    }
+
+    #[test]
+    fn oversized_wal_is_rejected_before_read_allocation() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("oversized-events.wal");
+        let oversized_length = (MAX_FRAMES_V1 as u64 + 1) * FRAME_BYTES_V1 as u64;
+        let file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .unwrap();
+        file.set_len(oversized_length).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        #[cfg(unix)]
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert_eq!(
+            NodeEventWalV1::open(&path, digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::TooLarge
+        );
+        assert_eq!(fs::metadata(&path).unwrap().len(), oversized_length);
     }
 
     #[test]
