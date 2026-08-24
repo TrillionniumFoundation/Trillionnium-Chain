@@ -79,7 +79,9 @@ fn host_raw_key_feature_has_no_production_dependency_claim() {
         trnm_poco_node::FIXTURE_RAW_KEY_FEATURE_ONLY_V0,
         cfg!(feature = "fixture-raw-key")
     );
-    assert!(!trnm_poco_node::PRODUCTION_RAW_KEY_DEPENDENCY_V0);
+    const {
+        assert!(!trnm_poco_node::PRODUCTION_RAW_KEY_DEPENDENCY_V0);
+    }
 
     let manifest = fs::read_to_string(manifest_dir().join("Cargo.toml"))
         .expect("read trnm-poco-node manifest");

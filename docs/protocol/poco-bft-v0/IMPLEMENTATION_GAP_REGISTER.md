@@ -4,6 +4,19 @@ Status: **release-blocking register**
 
 Last audited: 2026-08-11
 
+## 2026-08-24 bounded composition update
+
+This branch adds three deliberately non-production slices without changing the
+promotion boundary: strict Ed25519 admission of every committed validator-set
+member at the public host-start and strict epoch-transition wrappers; a
+single-owner, host-derived node-event WAL around the bounded local-timeout
+effect path; and a key-free typed signed-envelope mempool admission gate whose
+replay/recheck hooks default to rejection.  CI now runs a weekly development-
+only trigger and binds these seams to source-truth checks.  These slices are
+not authenticated transport, a production signer/HSM, durable mempool replay,
+runtime/JMT execution, state sync, or real-node evidence.  Therefore
+`validator_run_7_completed` and production activation remain false.
+
 ## Recoverability-first integration reset (2026-08-08)
 
 The six production integration contracts are frozen in
@@ -2190,9 +2203,10 @@ epoch prune, and Core transition remain open.
 
 ### P2 real-node gaps
 
-P2 has not started. The append-only canonical signer journal and bounded G1f
-timeout path exist, but there is no node event WAL, authenticated network,
-production remote-signer custody/watermark implementation, catch-up/state sync,
+P2 has not started. The append-only canonical signer journal, bounded G1f
+timeout path, and a development-only single-owner node-event WAL composition
+now exist.  There is still no authenticated network, production remote-signer
+custody/watermark implementation, durable mempool replay, catch-up/state sync,
 or runtime/JMT execution adapter around this core. Consequently no 4-/7-node
 crash, equivocation, or partition/heal result is a real-node result yet.
 
@@ -2219,9 +2233,11 @@ does not waive them.
    scripted simulator outcomes with source/body-aware crash/replay campaigns.
 4. Implement the complete epoch transition, pacemaker, evidence, decoder,
    reference light-client, and legacy-API isolation gates.
-5. Only then add the P2 node shell, authenticated transport, append-only
-   journal, remote signer, sync, and runtime/JMT adapters and run the remote
-   X230 ladder.
+5. Complete the bounded owner into the P2 node shell: authenticated
+   transport, production remote signer/watermark, durable mempool replay,
+   catch-up/state sync, and runtime/JMT adapters; then run the remote X230
+   ladder.  The current WAL and typed-ingress slices are prerequisites, not
+   substitutes for that gate.
 6. Reproduce every remaining vector in an implementation independent from the
    Rust node before changing package metadata to `wire_conformance = true`.
 

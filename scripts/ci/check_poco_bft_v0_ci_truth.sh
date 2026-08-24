@@ -4,6 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 POCO_WORKFLOW="$ROOT/.github/workflows/trnm-poco-bft-v0.yml"
+WORKFLOW_TRIGGER_TRUTH="$ROOT/scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
+CI_RUNNER_POLICY="$ROOT/scripts/check_ci_runner_policy.sh"
 LEGACY_WORKFLOW="$ROOT/.github/workflows/rust-l1-testnet-preflight.yml"
 RECOVERY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_recovery_smoke.sh"
 G3_LAN_FLEET_GATE="$ROOT/scripts/ci/check_poco_g3_lan_fleet.sh"
@@ -23,6 +25,9 @@ G3_LAB_CONSENSUS_RUNTIME="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/
 LEGACY_PREFLIGHT="$ROOT/trillionnium/scripts/testnet_preflight.sh"
 CORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-core/src/core.rs"
 CORE_TESTS="$ROOT/trillionnium/crates/trnm-consensus-core/src/tests.rs"
+CONSENSUS_CRYPTO_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-crypto/src/lib.rs"
+CONSENSUS_CRYPTO_EPOCH_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-crypto/src/epoch_transition.rs"
+CONSENSUS_CRYPTO_STRICT_TEST="$ROOT/trillionnium/crates/trnm-consensus-crypto/tests/joint_handoff_composition_kernel_vectors.rs"
 APP_RECOVERY="$ROOT/trillionnium/crates/trnm-consensus-app/src/native_validation_recovery.rs"
 APP_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-consensus-app/src/store.rs"
 LEGACY_APP_CARGO="$ROOT/trillionnium/crates/trnm-consensus-app/Cargo.toml"
@@ -37,6 +42,10 @@ NODE_TIMEOUT_PROCESS_KILL_HELPER="$ROOT/trillionnium/crates/trnm-poco-node/src/b
 NODE_TIMEOUT_PROCESS_KILL_TEST="$ROOT/trillionnium/crates/trnm-poco-node/tests/timeout_signing_process_kill_matrix.rs"
 NODE_PROCESS_WATERMARK="$ROOT/trillionnium/crates/trnm-poco-node/src/recovery_process_watermark.rs"
 NODE_CARGO="$ROOT/trillionnium/crates/trnm-poco-node/Cargo.toml"
+NODE_EVENT_WAL_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/node_event_wal.rs"
+MEMPOOL_CARGO="$ROOT/trillionnium/crates/trnm-mempool/Cargo.toml"
+MEMPOOL_TYPED_ADMISSION_SOURCE="$ROOT/trillionnium/crates/trnm-mempool/src/typed_admission.rs"
+MEMPOOL_TYPED_ADMISSION_TEST="$ROOT/trillionnium/crates/trnm-mempool/tests/typed_admission_contract.rs"
 G1C_TRUTH="$ROOT/docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md"
 ROOT_README="$ROOT/README.md"
 RELEASE_TRUTH="$ROOT/RELEASE_READINESS.md"
@@ -212,6 +221,8 @@ reject_literal() {
 
 for required in \
   "$POCO_WORKFLOW" \
+  "$WORKFLOW_TRIGGER_TRUTH" \
+  "$CI_RUNNER_POLICY" \
   "$LEGACY_WORKFLOW" \
   "$RECOVERY_GATE" \
   "$G3_STAGE0_OBSERVATION_STATUS" \
@@ -223,6 +234,9 @@ for required in \
   "$LEGACY_PREFLIGHT" \
   "$CORE_SOURCE" \
   "$CORE_TESTS" \
+  "$CONSENSUS_CRYPTO_SOURCE" \
+  "$CONSENSUS_CRYPTO_EPOCH_SOURCE" \
+  "$CONSENSUS_CRYPTO_STRICT_TEST" \
   "$APP_RECOVERY" \
   "$APP_STORE_SOURCE" \
   "$LEGACY_APP_CARGO" \
@@ -237,6 +251,10 @@ for required in \
   "$NODE_TIMEOUT_PROCESS_KILL_TEST" \
   "$NODE_PROCESS_WATERMARK" \
   "$NODE_CARGO" \
+  "$NODE_EVENT_WAL_SOURCE" \
+  "$MEMPOOL_CARGO" \
+  "$MEMPOOL_TYPED_ADMISSION_SOURCE" \
+  "$MEMPOOL_TYPED_ADMISSION_TEST" \
   "$G1C_TRUTH" \
   "$ROOT_README" \
   "$RELEASE_TRUTH" \
@@ -255,6 +273,15 @@ done
 # byte-identical to the candidate index. This prevents a dirty local fixture
 # from validating truth that the candidate commit would not ship.
 require_g3_gate_authority_index
+require_tracked "$WORKFLOW_TRIGGER_TRUTH"
+require_tracked "$CI_RUNNER_POLICY"
+require_tracked "$MEMPOOL_CARGO"
+require_tracked "$MEMPOOL_TYPED_ADMISSION_SOURCE"
+require_tracked "$MEMPOOL_TYPED_ADMISSION_TEST"
+require_tracked "$NODE_EVENT_WAL_SOURCE"
+require_tracked "$CONSENSUS_CRYPTO_SOURCE"
+require_tracked "$CONSENSUS_CRYPTO_EPOCH_SOURCE"
+require_tracked "$CONSENSUS_CRYPTO_STRICT_TEST"
 require_tracked "$G3_STAGE0_STATUS"
 require_tracked "$G3_FRESH_CLONE_GATES_REPORT"
 require_tracked "$G3_RUST_SRC_CROSS_TIME_REPORT"
@@ -268,7 +295,15 @@ require_literal_count "$POCO_WORKFLOW" \
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-consensus-signer-journal/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
+  '      - "trillionnium/crates/trnm-mempool/**"' 2
+require_literal_count "$POCO_WORKFLOW" \
   '      - ".github/workflows/rust-l1-testnet-preflight.yml"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "scripts/check_ci_runner_policy.sh"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "scripts/check_ci_runner_policy_test.sh"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/scripts/testnet_preflight.sh"' 2
 require_literal_count "$POCO_WORKFLOW" \
@@ -323,6 +358,10 @@ require_literal "$POCO_WORKFLOW" \
 # they change independently of the broader workspace packages. Integration-
 # heavy crates are linted with --no-deps to bound this job's runtime.
 require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-mempool --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-consensus-external-watermark --all-targets'
 require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-consensus-peer-lease --all-targets'
@@ -354,6 +393,9 @@ require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh'
+require_literal "$POCO_WORKFLOW" \
+  'run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test'
+require_literal "$CI_RUNNER_POLICY" 'poco_bft_trust_guard='
 require_literal "$RECOVERY_GATE" 'require_one_executed_test() {'
 require_literal_count "$RECOVERY_GATE" \
   'grep -Fc -- "$filter: test"' 4
@@ -811,11 +853,49 @@ reject_literal "$ROOT_README" \
   'grants no public callback, Core, or application transition authority'
 reject_literal "$G1C_TRUTH" 'grants only authenticated comparison facts'
 
+# Strict Ed25519 admission must cover the complete committed validator sets,
+# not only keys which happen to sign one supplied certificate.  Keep the
+# startup and epoch-transition boundaries tied to the same source contract.
+require_literal "$CONSENSUS_CRYPTO_SOURCE" \
+  'pub fn validate_validator_set_strict_ed25519_v0'
+require_literal "$CONSENSUS_CRYPTO_SOURCE" 'CompressedEdwardsY'
+require_literal "$CONSENSUS_CRYPTO_SOURCE" 'verifying_key.is_weak()'
+require_literal "$CONSENSUS_CRYPTO_EPOCH_SOURCE" \
+  'validate_validator_set_strict_ed25519_v0(old_validator_set)'
+require_literal "$CONSENSUS_CRYPTO_EPOCH_SOURCE" \
+  'validate_validator_set_strict_ed25519_v0(new_validator_set)'
+require_literal "$CONSENSUS_CRYPTO_STRICT_TEST" \
+  'strict_activation_rejects_unreferenced_invalid_and_weak_validator_keys'
+require_literal "$NODE_SOURCE" \
+  'validate_validator_set_strict_ed25519_v0(core_config.validator_set())'
+require_literal "$NODE_SOURCE" 'StrictValidatorSetAdmission'
+
+# Typed mempool admission remains a key-free, non-durable boundary until the
+# canonical node owner wires persistence and replay authority explicitly.
+require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'trait SignedEnvelopeView'
+require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'trait SignedAdmissionHooks'
+require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'ReplayCheckUnavailable'
+require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'RecheckUnavailable'
+require_literal "$MEMPOOL_TYPED_ADMISSION_TEST" 'typed_admission_stays_key_free_and_explicitly_non_durable'
+reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'SigningKey'
+reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'PrivateKey'
+
 # The fail-closed node scaffold must compile and lint wherever its source can
 # trigger this workflow, while remaining explicitly incomplete and outside the
 # uploaded library archive.
+require_literal "$NODE_CARGO" 'node-event-wal = ["dep:libc"]'
+for node_event_wal_test in \
+  intent_reopen_and_exact_commit_replay \
+  driver_order_keeps_intent_when_commit_readback_is_uncertain \
+  foreign_namespace_and_partial_tail_never_auto_repair \
+  hard_link_alias_and_path_replacement_fail_closed \
+  sigkill_after_intent_leaves_pending_for_exact_recovery; do
+  require_literal "$NODE_EVENT_WAL_SOURCE" "fn ${node_event_wal_test}()"
+done
 require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support'
+require_literal "$POCO_WORKFLOW" \
+  "cargo test --locked -p trnm-poco-node --lib --features node-event-wal 'node_event_wal::tests::'"
 require_literal "$POCO_WORKFLOW" \
   'cargo clippy --locked -p trnm-poco-node --all-targets --features recovery-process-test-support --no-deps -- -D warnings'
 require_literal_count "$POCO_WORKFLOW" '--features recovery-process-test-support' 2

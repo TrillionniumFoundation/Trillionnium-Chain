@@ -54,6 +54,20 @@ impl JointHandoffKernelError {
         Self { code }
     }
 
+    /// Returns the stable old-set context failure used by strict admission
+    /// wrappers when an otherwise shape-valid set contains a key that is not
+    /// valid under the selected cryptographic profile.
+    pub const fn invalid_old_context() -> Self {
+        Self::new(JointHandoffKernelErrorCode::InvalidOldContext)
+    }
+
+    /// Returns the stable new-set context failure used by strict admission
+    /// wrappers when an otherwise shape-valid set contains a key that is not
+    /// valid under the selected cryptographic profile.
+    pub const fn invalid_new_context() -> Self {
+        Self::new(JointHandoffKernelErrorCode::InvalidNewContext)
+    }
+
     pub const fn code(self) -> JointHandoffKernelErrorCode {
         self.code
     }
@@ -110,6 +124,18 @@ pub struct SameVersionEpochTransitionKernelError {
 impl SameVersionEpochTransitionKernelError {
     const fn new(code: SameVersionEpochTransitionKernelErrorCode) -> Self {
         Self { code }
+    }
+
+    /// Returns the stable joint-handoff failure used when strict admission
+    /// rejects an old validator set before transition verification begins.
+    pub const fn invalid_joint_handoff() -> Self {
+        Self::new(SameVersionEpochTransitionKernelErrorCode::InvalidJointHandoff)
+    }
+
+    /// Returns the stable new-finality failure used when strict admission
+    /// rejects a new validator set before transition verification begins.
+    pub const fn invalid_new_epoch_finality() -> Self {
+        Self::new(SameVersionEpochTransitionKernelErrorCode::InvalidNewEpochFinality)
     }
 
     pub const fn code(self) -> SameVersionEpochTransitionKernelErrorCode {

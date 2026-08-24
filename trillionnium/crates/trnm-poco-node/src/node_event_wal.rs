@@ -83,6 +83,7 @@ pub enum NodeEventWalErrorV1 {
 pub enum PocoNodeHostEventWalErrorV1 {
     Wal(NodeEventWalErrorV1),
     Host(PocoNodeHostErrorV0),
+    StrictValidatorSetAdmission,
     BindingMismatch,
     RecoveryReadbackRequired,
 }
@@ -92,6 +93,9 @@ impl fmt::Display for PocoNodeHostEventWalErrorV1 {
         match self {
             Self::Wal(error) => write!(formatter, "node-event WAL error: {error}"),
             Self::Host(error) => write!(formatter, "PocoNodeHost event boundary failed: {error}"),
+            Self::StrictValidatorSetAdmission => formatter.write_str(
+                "PocoNodeHost event owner requires strict Ed25519 validator-set admission",
+            ),
             Self::BindingMismatch => formatter.write_str(
                 "PocoNodeHost event tuple does not match the authenticated durable predecessor",
             ),
@@ -107,7 +111,9 @@ impl Error for PocoNodeHostEventWalErrorV1 {
         match self {
             Self::Wal(error) => Some(error),
             Self::Host(error) => Some(error),
-            Self::BindingMismatch | Self::RecoveryReadbackRequired => None,
+            Self::StrictValidatorSetAdmission
+            | Self::BindingMismatch
+            | Self::RecoveryReadbackRequired => None,
         }
     }
 }

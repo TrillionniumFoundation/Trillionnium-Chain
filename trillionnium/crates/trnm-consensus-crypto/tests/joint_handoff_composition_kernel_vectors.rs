@@ -7,9 +7,10 @@ use trnm_consensus_types::{
     decode_block_header_v0_exact, decode_checkpoint_finality_proof_v0_exact,
     decode_consensus_parameters_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
     decode_next_epoch_commitment_v0_exact, decode_validator_set_v0_exact,
-    verify_same_version_joint_handoff_kernel_v0, BlockHeader, ConsensusParametersV0, DecodeError,
-    EpochAnchorAuthorizationKernelV0, FinalityProofV0, JointHandoffKernelErrorCode,
-    JointHandoffKernelV0, NextEpochCommitmentV0, StateRoot, ValidatorSet,
+    verify_same_version_joint_handoff_kernel_v0, BlockHeader, ConsensusParametersV0,
+    ConsensusPublicKey, DecodeError, EpochAnchorAuthorizationKernelV0, FinalityProofV0,
+    JointHandoffKernelErrorCode, JointHandoffKernelV0, NextEpochCommitmentV0, StateRoot, Validator,
+    ValidatorSet,
 };
 
 const VECTOR: &str = include_str!(
@@ -406,6 +407,86 @@ fn strict_authority_rejects_parent_timestamp_and_header_substitution() {
         identity_failure.code(),
         JointHandoffKernelErrorCode::CheckpointParentMismatch
     );
+}
+
+#[test]
+fn strict_activation_rejects_unreferenced_invalid_and_weak_validator_keys() {
+    let root: Value = serde_json::from_str(AUTHORITY_VECTOR)
+        .expect("valid authenticated checkpoint/handoff vector JSON");
+    let decoded = decode_authority_bundle(object(&root, "positive"));
+
+    // The substituted member is deliberately the last validator.  It need
+    // not contribute a signature to this certificate: strict activation must
+    // authenticate the complete committed set before counting any shares.
+    let invalid_old = replace_validator_key(&decoded.old_set, [0x02; 32]);
+    let failure = verify_same_version_epoch_activation_authority_strict_v0(
+        &decoded.finality,
+        &decoded.commitment,
+        &decoded.anchor_kernel,
+        &invalid_old,
+        &decoded.old_parameters,
+        &decoded.new_set,
+        &decoded.new_parameters,
+        &decoded.checkpoint_parent_header,
+    )
+    .expect_err("an undecodable unreferenced old-set key must fail closed");
+    assert_eq!(
+        failure.code(),
+        JointHandoffKernelErrorCode::InvalidOldContext
+    );
+
+    let weak_new = replace_validator_key(
+        &decoded.new_set,
+        [
+            0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0,
+        ],
+    );
+    let failure = verify_same_version_epoch_activation_authority_strict_v0(
+        &decoded.finality,
+        &decoded.commitment,
+        &decoded.anchor_kernel,
+        &decoded.old_set,
+        &decoded.old_parameters,
+        &weak_new,
+        &decoded.new_parameters,
+        &decoded.checkpoint_parent_header,
+    )
+    .expect_err("a weak unreferenced new-set key must fail closed");
+    assert_eq!(
+        failure.code(),
+        JointHandoffKernelErrorCode::InvalidNewContext
+    );
+}
+
+fn replace_validator_key(set: &ValidatorSet, replacement: [u8; 32]) -> ValidatorSet {
+    let last = set.validators().len() - 1;
+    let validators = set
+        .validators()
+        .iter()
+        .enumerate()
+        .map(|(index, validator)| {
+            Validator::new(
+                validator.id(),
+                ConsensusPublicKey::new(if index == last {
+                    replacement
+                } else {
+                    *validator.consensus_key().as_bytes()
+                }),
+                validator.voting_power(),
+            )
+            .expect("substituted validator remains shape-valid")
+        })
+        .collect();
+    ValidatorSet::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        set.consensus_parameters_hash(),
+        validators,
+    )
+    .expect("substituted validator set remains shape-valid")
 }
 
 #[test]

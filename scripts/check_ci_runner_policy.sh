@@ -4,6 +4,10 @@ set -euo pipefail
 source_mode="${1:---worktree}"
 expected='runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]'
 standard_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))"
+# The PoCO-BFT workflow has a first-class weekly schedule. Its scheduled
+# branch is intentionally narrower than the historical shared guard: only the
+# canonical default branch may execute it.
+poco_bft_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || (github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))"
 p1_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')"
 root=$(git rev-parse --show-toplevel)
 
@@ -25,6 +29,7 @@ validate_workflow_jobs() {
   awk -v workflow="$workflow" \
     -v expected="$expected" \
     -v standard_trust_guard="$standard_trust_guard" \
+    -v poco_bft_trust_guard="$poco_bft_trust_guard" \
     -v p1_trust_guard="$p1_trust_guard" '
     function report(message) {
       printf "ERROR: %s: %s\n", workflow, message > "/dev/stderr"
@@ -52,6 +57,9 @@ validate_workflow_jobs() {
         sub(/ $/, "", normalized_guard)
 
         required_guard = standard_trust_guard
+        if (workflow == "trnm-poco-bft-v0.yml") {
+          required_guard = poco_bft_trust_guard
+        }
         if (workflow == "p1-rust-sidecar.yml") {
           required_guard = p1_trust_guard
         }

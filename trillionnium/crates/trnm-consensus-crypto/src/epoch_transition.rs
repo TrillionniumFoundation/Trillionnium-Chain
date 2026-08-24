@@ -10,7 +10,7 @@ use trnm_consensus_types::{
     SameVersionEpochTransitionKernelV0, StateRoot, ValidatorSet, View,
 };
 
-use crate::StrictEd25519Verifier;
+use crate::{validate_validator_set_strict_ed25519_v0, StrictEd25519Verifier};
 
 const STRICT_EPOCH_ACTIVATION_BINDING_DOMAIN_V0: &[u8] =
     b"trnm.poco-bft.strict-epoch-activation-binding-ref.v0";
@@ -200,6 +200,14 @@ pub fn verify_same_version_epoch_activation_authority_strict_v0(
     new_consensus_parameters: &ConsensusParametersV0,
     authenticated_checkpoint_parent_header: &BlockHeader,
 ) -> Result<StrictSameVersionEpochActivationAuthorityV0, JointHandoffKernelError> {
+    // The generic CEV0 constructor intentionally admits algorithm-neutral
+    // nonzero key bytes.  This strict activation boundary must reject every
+    // invalid/weak key, including a member whose signature is not present in
+    // the particular handoff certificate being verified.
+    validate_validator_set_strict_ed25519_v0(old_validator_set)
+        .map_err(|_| JointHandoffKernelError::invalid_old_context())?;
+    validate_validator_set_strict_ed25519_v0(new_validator_set)
+        .map_err(|_| JointHandoffKernelError::invalid_new_context())?;
     validate_checkpoint_parent_header_v0(
         old_checkpoint_finality,
         authenticated_checkpoint_parent_header,
@@ -393,6 +401,13 @@ pub fn verify_same_version_epoch_transition_strict_v0(
     authenticated_checkpoint_parent_timestamp_ms: u64,
     first_new_epoch_finality: &FinalityProofV0,
 ) -> Result<StrictSameVersionEpochTransitionV0, SameVersionEpochTransitionKernelError> {
+    // Keep the strict transition wrapper stronger than the generic kernel:
+    // all keys in both committed sets must parse, not only signers observed
+    // in the supplied finality proof.
+    validate_validator_set_strict_ed25519_v0(old_validator_set)
+        .map_err(|_| SameVersionEpochTransitionKernelError::invalid_joint_handoff())?;
+    validate_validator_set_strict_ed25519_v0(new_validator_set)
+        .map_err(|_| SameVersionEpochTransitionKernelError::invalid_new_epoch_finality())?;
     let kernel = verify_same_version_epoch_transition_proof_kernel_v0(
         old_checkpoint_finality,
         next_epoch_commitment,

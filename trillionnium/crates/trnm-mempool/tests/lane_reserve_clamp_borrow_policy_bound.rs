@@ -12,8 +12,8 @@ fn oversized_reserve_clamp_keeps_last_free_shared_slot_borrowable_under_active_b
         AdmitOutcome::Accepted
     );
     assert_eq!(gate.queued_counts(), (0, 1, 1));
-    assert_eq!(gate.qos_snapshot().fresh_normal_admissible, true);
-    assert_eq!(gate.qos_snapshot().fresh_critical_admissible, true);
+    assert!(gate.qos_snapshot().fresh_normal_admissible);
+    assert!(gate.qos_snapshot().fresh_critical_admissible);
 
     assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
     let saturated = LaneQosSnapshot {

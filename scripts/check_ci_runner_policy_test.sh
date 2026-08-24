@@ -31,6 +31,7 @@ workflow_dir="$repo/.github/workflows"
 policy_workflow="$workflow_dir/policy.yml"
 companion_workflow="$workflow_dir/companion.yaml"
 p1_workflow="$workflow_dir/p1-rust-sidecar.yml"
+poco_workflow="$workflow_dir/trnm-poco-bft-v0.yml"
 mkdir -p "$workflow_dir"
 git init -q "$repo"
 git -C "$repo" config user.name ci-runner-policy-test
@@ -64,6 +65,24 @@ write_p1_workflow() {
     '      - run: true' >"$p1_workflow"
 }
 
+write_poco_workflow() {
+  printf '%s\n' \
+    'name: trnm-poco-bft-v0' \
+    'on: [schedule]' \
+    'jobs:' \
+    '  scheduled-main-only:' \
+    '    if: >-' \
+    "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&" \
+    "      (github.event_name == 'schedule' && github.ref == 'refs/heads/main' ||" \
+    "       (github.actor == 'ProfAlexQI' &&" \
+    "        github.triggering_actor == 'ProfAlexQI' &&" \
+    "        (github.event_name != 'pull_request' ||" \
+    '         github.event.pull_request.head.repo.full_name == github.repository)))' \
+    "    $expected" \
+    '    steps:' \
+    '      - run: true' >"$poco_workflow"
+}
+
 run_policy() {
   (
     cd "$repo"
@@ -74,12 +93,13 @@ run_policy() {
 expect_pass() {
   local name=$1
   local source_mode=$2
+  local expected_jobs="${3:-3}"
   local output
   if ! output=$(run_policy "$source_mode" 2>&1); then
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  if [[ "$output" != *'jobs=3 '* ]]; then
+  if [[ "$output" != *"jobs=${expected_jobs} "* ]]; then
     printf 'FAIL: %s returned an unexpected job count\n%s\n' "$name" "$output" >&2
     exit 1
   fi
@@ -99,6 +119,7 @@ expect_fail() {
 
 write_companion_workflow
 write_p1_workflow
+write_poco_workflow
 write_policy_workflow \
   'name: policy' \
   'on: [push]' \
@@ -111,11 +132,11 @@ write_policy_workflow \
   '          # Nested scalar content must not be interpreted as a job runner.' \
   '          runs-on: ubuntu-latest'
 
-expect_pass worktree-positive --worktree
+expect_pass worktree-positive --worktree 4
 git -C "$repo" add .github/workflows
-expect_pass staged-positive --staged
+expect_pass staged-positive --staged 4
 git -C "$repo" commit -qm 'baseline runner policy fixture'
-expect_pass head-positive --head
+expect_pass head-positive --head 4
 
 write_policy_workflow \
   'name: policy' \

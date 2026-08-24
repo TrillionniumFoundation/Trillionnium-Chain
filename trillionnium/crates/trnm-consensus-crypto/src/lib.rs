@@ -8,8 +8,12 @@
 
 extern crate alloc;
 
+use curve25519_dalek::edwards::CompressedEdwardsY;
 use ed25519_dalek::{Signature, VerifyingKey};
-use trnm_consensus_types::{SignatureBytes, SignatureVerifier, SigningRoot, Validator};
+use trnm_consensus_types::{
+    ConsensusPublicKey, Result, SignatureBytes, SignatureVerifier, SigningRoot, ValidationError,
+    Validator, ValidatorSet,
+};
 
 mod epoch_transition;
 
@@ -27,6 +31,108 @@ pub use epoch_transition::{
 /// fails closed.
 #[derive(Debug, Clone, Copy, Default)]
 pub struct StrictEd25519Verifier;
+
+/// Production admission wrapper for a validator set whose consensus keys have
+/// all passed the strict Ed25519 key-shape boundary.
+///
+/// `trnm-consensus-types::ValidatorSet::new` intentionally remains an
+/// algorithm-neutral CEV0 constructor: it rejects zero/duplicate keys, while
+/// the protocol's generic decoder leaves curve-point interpretation to the
+/// selected cryptographic profile.  A node which is about to commission or
+/// activate an Ed25519 validator set must consume this wrapper (or call
+/// [`validate_validator_set_strict_ed25519_v0`]) before handing the set to
+/// Core or an epoch-transition authority.
+///
+/// This is an admission proof, not a new wire/protocol type.  It carries the
+/// exact original set and does not grant signing, epoch, or Core authority.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StrictValidatorSetV0(ValidatorSet);
+
+impl StrictValidatorSetV0 {
+    /// Validates every consensus key using the strict Ed25519 profile and
+    /// retains the exact set only after all keys pass.
+    pub fn new(validator_set: ValidatorSet) -> Result<Self> {
+        validate_validator_set_strict_ed25519_v0(&validator_set)?;
+        Ok(Self(validator_set))
+    }
+
+    /// Borrows the exact admitted validator set.
+    pub const fn validator_set(&self) -> &ValidatorSet {
+        &self.0
+    }
+
+    /// Releases the exact admitted set.  The caller must keep this value on
+    /// the same strict-admission path when constructing a live node.
+    pub fn into_validator_set(self) -> ValidatorSet {
+        self.0
+    }
+}
+
+impl StrictEd25519Verifier {
+    /// Admits one validator set for an Ed25519 production boundary.
+    ///
+    /// This method is deliberately explicit instead of being hidden behind
+    /// the generic [`SignatureVerifier`] trait.  A permissive test verifier
+    /// therefore cannot accidentally claim strict key admission.
+    pub fn admit_validator_set_v0(
+        &self,
+        validator_set: ValidatorSet,
+    ) -> Result<StrictValidatorSetV0> {
+        StrictValidatorSetV0::new(validator_set)
+    }
+
+    /// Checks all consensus public keys in an existing set without taking
+    /// ownership of it.
+    pub fn validate_validator_set_v0(&self, validator_set: &ValidatorSet) -> Result<()> {
+        validate_validator_set_strict_ed25519_v0(validator_set)
+    }
+}
+
+const INVALID_ED25519_PUBLIC_KEY: &str =
+    "consensus public key is not a decodable Ed25519 compressed point";
+const WEAK_ED25519_PUBLIC_KEY: &str = "consensus public key is a weak/small-order Ed25519 point";
+
+/// Validates the exact CEV0 validator set against the production Ed25519
+/// admission profile.
+///
+/// The generic CEV0 constructor intentionally does not depend on a concrete
+/// cryptographic backend.  This function is the corresponding explicit
+/// profile boundary: it first rechecks the set's shape and then rejects every
+/// undecodable or weak public key, including keys which happen not to appear
+/// in a particular QC.
+pub fn validate_validator_set_strict_ed25519_v0(validator_set: &ValidatorSet) -> Result<()> {
+    validator_set.validate_shape()?;
+    for validator in validator_set.validators() {
+        validate_consensus_public_key_strict_ed25519_v0(&validator.consensus_key())?;
+    }
+    Ok(())
+}
+
+/// Validates one consensus public key under the strict Ed25519 profile.
+pub fn validate_consensus_public_key_strict_ed25519_v0(
+    public_key: &ConsensusPublicKey,
+) -> Result<()> {
+    let bytes = *public_key.as_bytes();
+    let compressed = CompressedEdwardsY(bytes);
+    let point = compressed
+        .decompress()
+        .ok_or(ValidationError::InvalidValidatorSet(
+            INVALID_ED25519_PUBLIC_KEY,
+        ))?;
+    if point.compress().to_bytes() != bytes {
+        return Err(ValidationError::InvalidValidatorSet(
+            INVALID_ED25519_PUBLIC_KEY,
+        ));
+    }
+    let verifying_key = VerifyingKey::from_bytes(&bytes)
+        .map_err(|_| ValidationError::InvalidValidatorSet(INVALID_ED25519_PUBLIC_KEY))?;
+    if point.is_small_order() || verifying_key.is_weak() {
+        return Err(ValidationError::InvalidValidatorSet(
+            WEAK_ED25519_PUBLIC_KEY,
+        ));
+    }
+    Ok(())
+}
 
 impl SignatureVerifier for StrictEd25519Verifier {
     fn verify(
@@ -50,11 +156,15 @@ impl SignatureVerifier for StrictEd25519Verifier {
 mod tests {
     use ed25519_dalek::{Signer, SigningKey, VerifyingKey};
     use trnm_consensus_types::{
-        ConsensusPublicKey, SignatureBytes, SignatureVerifier, SigningRoot, Validator, ValidatorId,
+        ChainId, ConsensusParametersHash, ConsensusPublicKey, Epoch, GenesisHash, ProtocolVersion,
+        SignatureBytes, SignatureVerifier, SigningRoot, Validator, ValidatorId, ValidatorSet,
         VotingPower,
     };
 
-    use super::StrictEd25519Verifier;
+    use super::{
+        validate_consensus_public_key_strict_ed25519_v0, validate_validator_set_strict_ed25519_v0,
+        StrictEd25519Verifier, StrictValidatorSetV0,
+    };
 
     // RFC 8032 section 7.1, TEST 1. This fixture seed never leaves test code.
     const RFC8032_TEST_1_SEED: [u8; 32] = [
@@ -111,6 +221,30 @@ mod tests {
         .expect("shape-valid fixture validator")
     }
 
+    fn validator_set(public_keys: &[[u8; 32]]) -> ValidatorSet {
+        let validators = public_keys
+            .iter()
+            .enumerate()
+            .map(|(index, public_key)| {
+                Validator::new(
+                    ValidatorId::new([(index + 1) as u8; 32]),
+                    ConsensusPublicKey::new(*public_key),
+                    VotingPower::new(1).expect("positive fixture power"),
+                )
+                .expect("shape-valid fixture validator")
+            })
+            .collect();
+        ValidatorSet::new(
+            GenesisHash::new([0xA5; 32]),
+            ChainId::from_static("trnm-crypto-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            ConsensusParametersHash::new([0x5A; 32]),
+            validators,
+        )
+        .expect("shape-valid fixture validator set")
+    }
+
     #[test]
     fn rfc8032_seed_signs_the_protocol_vote_root() {
         let signing_key = SigningKey::from_bytes(&RFC8032_TEST_1_SEED);
@@ -159,5 +293,88 @@ mod tests {
             &SigningRoot::new(VOTE_ROOT),
             &SignatureBytes::from_array(EXPECTED_SIGNATURE),
         ));
+    }
+
+    #[test]
+    fn strict_validator_set_admission_checks_every_key_before_activation() {
+        let valid_set = validator_set(&[EXPECTED_PUBLIC_KEY]);
+        assert!(validate_validator_set_strict_ed25519_v0(&valid_set).is_ok());
+        let admitted = StrictValidatorSetV0::new(valid_set.clone()).expect("strict set admission");
+        assert_eq!(admitted.validator_set(), &valid_set);
+        assert_eq!(
+            StrictEd25519Verifier
+                .admit_validator_set_v0(valid_set.clone())
+                .expect("strict verifier admission")
+                .validator_set(),
+            &valid_set
+        );
+
+        let undecodable = validator_set(&[EXPECTED_PUBLIC_KEY, UNDECODABLE_PUBLIC_KEY]);
+        assert!(matches!(
+            validate_validator_set_strict_ed25519_v0(&undecodable),
+            Err(trnm_consensus_types::ValidationError::InvalidValidatorSet(
+                "consensus public key is not a decodable Ed25519 compressed point"
+            ))
+        ));
+        assert!(StrictValidatorSetV0::new(undecodable).is_err());
+
+        let weak = validator_set(&[EXPECTED_PUBLIC_KEY, SMALL_ORDER_PUBLIC_KEY]);
+        assert!(matches!(
+            validate_validator_set_strict_ed25519_v0(&weak),
+            Err(trnm_consensus_types::ValidationError::InvalidValidatorSet(
+                "consensus public key is a weak/small-order Ed25519 point"
+            ))
+        ));
+    }
+
+    #[test]
+    fn strict_public_key_admission_rejects_zero_and_weak_points() {
+        assert!(
+            validate_consensus_public_key_strict_ed25519_v0(&ConsensusPublicKey::new(
+                EXPECTED_PUBLIC_KEY
+            ))
+            .is_ok()
+        );
+        assert!(
+            validate_consensus_public_key_strict_ed25519_v0(&ConsensusPublicKey::new(
+                UNDECODABLE_PUBLIC_KEY
+            ))
+            .is_err()
+        );
+        assert!(
+            validate_consensus_public_key_strict_ed25519_v0(&ConsensusPublicKey::new(
+                SMALL_ORDER_PUBLIC_KEY
+            ))
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn strict_admission_source_contract_is_explicit() {
+        let source = include_str!("lib.rs");
+        let activation_source = include_str!("epoch_transition.rs");
+        for required in [
+            "pub struct StrictValidatorSetV0",
+            "validate_validator_set_strict_ed25519_v0",
+            "VerifyingKey::from_bytes",
+            "verifying_key.is_weak()",
+            "admit_validator_set_v0",
+        ] {
+            assert!(
+                source.contains(required),
+                "missing strict admission token: {required}"
+            );
+        }
+        for required in [
+            "validate_validator_set_strict_ed25519_v0(old_validator_set)",
+            "validate_validator_set_strict_ed25519_v0(new_validator_set)",
+            "JointHandoffKernelError::invalid_old_context()",
+            "SameVersionEpochTransitionKernelError::invalid_new_epoch_finality()",
+        ] {
+            assert!(
+                activation_source.contains(required),
+                "strict activation lost admission preflight: {required}"
+            );
+        }
     }
 }

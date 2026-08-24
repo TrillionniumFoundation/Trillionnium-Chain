@@ -128,6 +128,7 @@ use trnm_consensus_core::{
 use trnm_consensus_core::{
     CoreConfig, DurablePayloadValidationResultV1, Effect, SafetyState, SafetyStateRecordLimitsV0,
 };
+use trnm_consensus_crypto::validate_validator_set_strict_ed25519_v0;
 #[cfg(any(feature = "legacy-consensus-app", test))]
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(feature = "legacy-consensus-app")]
@@ -148,7 +149,7 @@ use trnm_consensus_signer_journal::{
     ExternalMonotonicWatermarkV0, SignerJournalErrorV0, SignerJournalProfileV0,
     SqliteSignerJournalV0,
 };
-use trnm_consensus_types::RolloutPhase;
+use trnm_consensus_types::{RolloutPhase, ValidationError};
 
 /// Raw consensus keys are intentionally unavailable to the default host.
 ///
@@ -333,6 +334,8 @@ pub use node_event_wal::{
     PocoNodeHostEventCommitWalV1, PocoNodeHostEventWalErrorV1,
     NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1, NODE_EVENT_WAL_RUNTIME_COMPOSITION_V1,
 };
+#[cfg(feature = "node-event-wal")]
+pub use ordinary_timeout::PocoNodeHostEventWalOwnerV1;
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
 pub use ordinary_timeout::{PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0};
@@ -487,6 +490,14 @@ impl PocoNodeStartConfigV0 {
         maximum_signer_database_bytes: usize,
     ) -> Result<Self, PocoNodeHostErrorV0> {
         reject_authenticated_genesis_commissioning_v0(&core_config)?;
+        // `ValidatorSet::new` is intentionally algorithm-neutral for CEV0
+        // fixtures.  This host is an Ed25519 boundary, so perform the strict
+        // all-member key admission before any path canonicalization or store
+        // profile construction.  Private fields keep production callers from
+        // bypassing this constructor; test-only unchecked fixtures remain
+        // explicitly outside the startup surface.
+        validate_validator_set_strict_ed25519_v0(core_config.validator_set())
+            .map_err(PocoNodeHostErrorV0::strict_validator_set)?;
         let safety_store_path = safety_store_path.as_ref();
         if !safety_store_path.is_absolute() {
             return Err(PocoNodeHostErrorV0::RelativeSafetyStorePath);
@@ -1599,6 +1610,9 @@ pub enum PocoNodeHostErrorV0 {
     SharedApplicationStoreParentNamespace,
     AuthenticatedGenesisCommissioningRequiresDedicatedHost,
     ProductionActivationRequested,
+    StrictValidatorSetAdmission {
+        reason: &'static str,
+    },
     NonShadowRolloutRequested {
         rollout_phase: RolloutPhase,
     },
@@ -1737,6 +1751,14 @@ impl PocoNodeHostErrorV0 {
         Self::SignerJournal(Box::new(error))
     }
 
+    fn strict_validator_set(error: ValidationError) -> Self {
+        let reason = match error {
+            ValidationError::InvalidValidatorSet(reason) => reason,
+            _ => "validator set shape is not admissible for strict Ed25519",
+        };
+        Self::StrictValidatorSetAdmission { reason }
+    }
+
     #[cfg(feature = "safety-rules-sidecar")]
     fn safety_rules_sidecar(
         error: safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1,
@@ -1810,6 +1832,10 @@ impl fmt::Display for PocoNodeHostErrorV0 {
             ),
             Self::ProductionActivationRequested => formatter.write_str(
                 "incomplete PoCO host refuses production-activated consensus parameters",
+            ),
+            Self::StrictValidatorSetAdmission { reason } => write!(
+                formatter,
+                "strict Ed25519 validator-set admission failed: {reason}",
             ),
             Self::NonShadowRolloutRequested { rollout_phase } => write!(
                 formatter,
@@ -2086,6 +2112,32 @@ mod tests {
     const MAXIMUM_SIGNER_INTENTS: u64 = 64;
     const MAXIMUM_SIGNER_INTENT_BYTES: usize = 4096;
     const MAXIMUM_SIGNER_DATABASE_BYTES: usize = 32 * 1024 * 1024;
+
+    // Public keys derived from deterministic test seeds 101..104.  The
+    // generic Core fixtures may still use synthetic signatures, but startup
+    // configuration now exercises the real strict Ed25519 key-shape gate.
+    const TEST_VALID_CONSENSUS_PUBLIC_KEYS: [[u8; 32]; 4] = [
+        [
+            0xd6, 0x2f, 0x01, 0x6a, 0x1e, 0xfd, 0x1e, 0x4f, 0xdf, 0x79, 0x3e, 0xb4, 0x2c, 0xd8,
+            0x44, 0x71, 0xe1, 0xba, 0x9f, 0x0c, 0xf0, 0x4d, 0x12, 0x87, 0xb5, 0xcc, 0x71, 0xf6,
+            0x16, 0x28, 0x7c, 0xb8,
+        ],
+        [
+            0x34, 0xb4, 0xd9, 0x04, 0x31, 0x56, 0xcb, 0x6d, 0xcf, 0x0b, 0xeb, 0x0a, 0x29, 0x49,
+            0xb7, 0x55, 0x9c, 0x94, 0x0d, 0x2b, 0xcb, 0x6d, 0xbe, 0x8c, 0x53, 0xa9, 0xb3, 0x02,
+            0x78, 0xe3, 0xa7, 0x46,
+        ],
+        [
+            0x12, 0xa4, 0x15, 0x92, 0xc8, 0xb7, 0xc1, 0x7d, 0x40, 0x59, 0xe7, 0xb2, 0x9b, 0x61,
+            0xe8, 0xff, 0x96, 0xc7, 0x41, 0x5f, 0x2f, 0x80, 0x33, 0x48, 0xf2, 0xf0, 0x17, 0xe0,
+            0x5b, 0x9e, 0xa1, 0xda,
+        ],
+        [
+            0x54, 0xb0, 0xd8, 0x1d, 0x0f, 0xa7, 0xd0, 0x0e, 0x4a, 0x7d, 0x60, 0x0d, 0xfa, 0xba,
+            0x6f, 0x2b, 0x22, 0x03, 0x5b, 0x22, 0xfe, 0x33, 0x5e, 0x17, 0xed, 0xf5, 0xf9, 0xaa,
+            0x5b, 0xb0, 0x50, 0x74,
+        ],
+    ];
 
     #[cfg(target_os = "linux")]
     #[derive(Debug, Clone, Default)]
@@ -2387,7 +2439,7 @@ mod tests {
             .map(|index| {
                 Validator::new(
                     validator_id(index),
-                    ConsensusPublicKey::new([index.saturating_add(100); 32]),
+                    ConsensusPublicKey::new(TEST_VALID_CONSENSUS_PUBLIC_KEYS[(index - 1) as usize]),
                     VotingPower::new(1).expect("positive voting power"),
                 )
                 .expect("valid validator")
@@ -2402,6 +2454,38 @@ mod tests {
             validators,
         )
         .expect("valid validator set");
+        CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
+            .expect("valid Core config")
+    }
+
+    fn core_config_with_first_consensus_key(
+        parameters: ConsensusParametersV0,
+        first_key: [u8; 32],
+    ) -> CoreConfig {
+        let validators = (1u8..=4)
+            .map(|index| {
+                let key = if index == 1 {
+                    first_key
+                } else {
+                    TEST_VALID_CONSENSUS_PUBLIC_KEYS[(index - 1) as usize]
+                };
+                Validator::new(
+                    validator_id(index),
+                    ConsensusPublicKey::new(key),
+                    VotingPower::new(1).expect("positive voting power"),
+                )
+                .expect("shape-valid validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0xa5; 32]),
+            ChainId::from_static("trnm-poco-node-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("shape-valid validator set");
         CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
             .expect("valid Core config")
     }
@@ -2941,6 +3025,74 @@ mod tests {
     }
 
     #[test]
+    fn startup_config_rejects_undecodable_consensus_key_before_filesystem_work() {
+        let error = PocoNodeStartConfigV0::new(
+            "relative-safety.sqlite3",
+            "relative-signer.sqlite3",
+            core_config_with_first_consensus_key(
+                ConsensusParametersV0::reference_shadow_v0(),
+                [0x02; 32],
+            ),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("startup must reject an undecodable consensus key");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::StrictValidatorSetAdmission { reason }
+                if reason.contains("decodable Ed25519")
+        ));
+    }
+
+    #[test]
+    fn startup_config_rejects_small_order_consensus_key_before_filesystem_work() {
+        let error = PocoNodeStartConfigV0::new(
+            "relative-safety.sqlite3",
+            "relative-signer.sqlite3",
+            core_config_with_first_consensus_key(
+                ConsensusParametersV0::reference_shadow_v0(),
+                [
+                    0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0,
+                ],
+            ),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("startup must reject a weak consensus key");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::StrictValidatorSetAdmission { reason }
+                if reason.contains("weak/small-order")
+        ));
+    }
+
+    #[test]
+    fn startup_source_contract_keeps_strict_validator_admission_before_store_setup() {
+        let source = include_str!("lib.rs");
+        let admission = source
+            .find("validate_validator_set_strict_ed25519_v0(core_config.validator_set())")
+            .expect("startup must retain strict validator-set admission");
+        let path_validation = source
+            .find("let safety_store_path = safety_store_path.as_ref();")
+            .expect("startup path validation marker");
+        assert!(
+            admission < path_validation,
+            "strict key admission must run before path/store setup"
+        );
+        assert!(
+            source.contains("StrictValidatorSetAdmission { reason }")
+                || source.contains("StrictValidatorSetAdmission {")
+        );
+    }
+
+    #[test]
     fn startup_config_rejects_relative_signer_journal_path() {
         let error = start_config(
             "/tmp/trnm-poco-node-relative-signer-safety.sqlite3",
@@ -3294,6 +3446,93 @@ mod tests {
         assert!(wal.pending().is_none());
         assert_eq!(wal.last_commit(), Some(receipt));
         assert!(host.production_activation_check().is_err());
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
+    fn single_owner_timeout_host_retains_the_authenticated_event_wal() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path =
+            protected_store_namespace(&directory, "owned-events").join("node-events.wal");
+        let (core_config, local_key) = strict_core_config_and_local_key();
+        let config = start_config(&safety_path, &signer_path, core_config.clone())
+            .expect("valid bounded host config");
+        let watermark = MemoryWatermark::default();
+        let producer_calls = Arc::new(AtomicUsize::new(0));
+        let mut owner = PocoNodeHostEventWalOwnerV1::initialize_new(
+            config.clone(),
+            genesis_qc(&core_config),
+            watermark.clone(),
+            StrictProducerV0 {
+                key: local_key,
+                calls: Arc::clone(&producer_calls),
+            },
+            &event_path,
+        )
+        .expect("single owner opens authenticated event WAL");
+        assert_ne!(owner.wal().namespace(), [0; 32]);
+        owner.resume_v0().expect("arm first timeout view");
+        let receipt = owner
+            .on_local_timeout_v1()
+            .expect("timeout commits through owned WAL");
+        assert_eq!(
+            receipt.commit_digest(),
+            owner.safety_head().unwrap().state_record_checksum()
+        );
+        assert!(owner.wal().pending().is_none());
+        assert!(owner.production_activation_check().is_err());
+        drop(owner);
+
+        let mut reopened = PocoNodeHostEventWalOwnerV1::open_existing(
+            config,
+            watermark,
+            StrictProducerV0 {
+                key: SigningKey::from_bytes(&[41; 32]),
+                calls: Arc::clone(&producer_calls),
+            },
+            &event_path,
+        )
+        .expect("reopen single owner and exact WAL namespace");
+        assert!(matches!(
+            reopened
+                .restart_recovery_v1()
+                .expect("revalidate owned WAL"),
+            NodeEventRecoveryV1::Clean {
+                last_commit: Some(_)
+            }
+        ));
+    }
+
+    #[cfg(all(target_os = "linux", feature = "node-event-wal"))]
+    #[test]
+    fn startup_and_single_owner_paths_reject_non_ed25519_validator_keys_before_store_creation() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let event_path =
+            protected_store_namespace(&directory, "rejected-events").join("node-events.wal");
+        let core_config = core_config_with_first_consensus_key(
+            ConsensusParametersV0::reference_shadow_v0(),
+            [0x02; 32],
+        );
+        let error = PocoNodeStartConfigV0::new(
+            &safety_path,
+            &signer_path,
+            core_config,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("startup must require strict Ed25519 admission");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::StrictValidatorSetAdmission { .. }
+        ));
+        assert!(!safety_path.exists());
+        assert!(!signer_path.exists());
+        assert!(!event_path.exists());
     }
 
     #[cfg(all(target_os = "linux", feature = "node-event-wal"))]

@@ -1,6 +1,11 @@
 name: TRNM PoCO-BFT v0 gates
 
 on:
+  # Weekly bounded protocol/authority regression.  This workflow is
+  # development-only: it never starts validators, deploys artifacts, or
+  # changes activation/readiness truth.
+  schedule:
+    - cron: "17 3 * * 1"
   workflow_dispatch:
   pull_request:
     paths:
@@ -18,6 +23,7 @@ on:
       - "proto/trnm/poco/**"
       - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
       - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
       - "scripts/poco-fleet/**"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
@@ -25,6 +31,8 @@ on:
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
       - "scripts/ci/install_cargo_deny.sh"
       - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/check_ci_runner_policy.sh"
+      - "scripts/check_ci_runner_policy_test.sh"
       - "scripts/project-preflight.sh"
       - "deny.toml"
       - "rust-toolchain.toml"
@@ -45,6 +53,7 @@ on:
       - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
       - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-mempool/**"
       - "trillionnium/crates/trnm-poco-lab-validator/**"
       - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
@@ -68,6 +77,7 @@ on:
       - "proto/trnm/poco/**"
       - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
       - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
       - "scripts/poco-fleet/**"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
@@ -75,6 +85,8 @@ on:
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
       - "scripts/ci/install_cargo_deny.sh"
       - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/check_ci_runner_policy.sh"
+      - "scripts/check_ci_runner_policy_test.sh"
       - "scripts/project-preflight.sh"
       - "deny.toml"
       - "rust-toolchain.toml"
@@ -95,6 +107,7 @@ on:
       - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
       - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-mempool/**"
       - "trillionnium/crates/trnm-poco-lab-validator/**"
       - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
@@ -128,7 +141,8 @@ jobs:
     name: Frozen vectors, schemas, and protobuf projection
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||
@@ -164,6 +178,10 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify workflow trigger and safety truth
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
 
       - name: Verify CI coverage and readiness-truth boundaries
         working-directory: trillionnium-chain
@@ -242,7 +260,8 @@ jobs:
     name: Rust tests, Clippy, and formatting
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||
@@ -283,6 +302,7 @@ jobs:
           set -euo pipefail
           cargo test --locked -p trnm-consensus-types
           cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-mempool --all-targets
           cargo test --locked -p trnm-consensus-external-watermark --all-targets
           cargo test --locked -p trnm-consensus-peer-lease --all-targets
           cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets
@@ -300,6 +320,10 @@ jobs:
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
+      - name: Focused node-event WAL feature tests
+        working-directory: trillionnium-chain/trillionnium
+        run: cargo test --locked -p trnm-poco-node --lib --features node-event-wal 'node_event_wal::tests::'
+
       - name: Active native bounded-timeout SIGKILL recovery gate
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh
@@ -310,6 +334,7 @@ jobs:
           set -euo pipefail
           cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-consensus-peer-lease --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-consensus-remote-signer-service --all-targets --no-deps -- -D warnings
@@ -346,7 +371,8 @@ jobs:
     name: Quint invariants, witnesses, and retained mutants
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||
@@ -382,7 +408,8 @@ jobs:
     needs: [rust, vectors-schema-proto]
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||
@@ -613,7 +640,8 @@ jobs:
     name: Cargo dependency policy
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||
@@ -673,7 +701,8 @@ jobs:
     name: Bounded canonical-input fuzz smoke
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' &&
+       github.ref == 'refs/heads/main' ||
         (github.actor == 'ProfAlexQI' &&
          github.triggering_actor == 'ProfAlexQI' &&
          (github.event_name != 'pull_request' ||

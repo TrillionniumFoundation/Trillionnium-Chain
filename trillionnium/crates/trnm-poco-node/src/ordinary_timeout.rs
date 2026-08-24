@@ -35,11 +35,120 @@ use crate::{
 
 #[cfg(feature = "node-event-wal")]
 use crate::node_event_wal::{
-    NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1, NodeEventWalV1,
-    PocoNodeHostEventWalErrorV1,
+    NodeEventCommitReceiptV1, NodeEventIntentV1, NodeEventRecoveryV1, NodeEventWalErrorV1,
+    NodeEventWalV1, PocoNodeHostEventWalErrorV1,
 };
 
 const MAXIMUM_BOUNDED_HOST_EFFECTS_PER_CALL_V0: usize = 16;
+
+/// A single-owner composition of the bounded timeout host and its
+/// authenticated node-event WAL.
+//
+// `PocoNodeHostV0` deliberately keeps the WAL out of its generic constructor
+// while the seam is being proven.  Passing a WAL separately, however, leaves
+// a caller responsible for retaining the exact namespace and for making sure
+// that a second object does not race the same journal.  This wrapper closes
+// that ownership gap for the local vertical slice: it derives the namespace
+// from the fully authenticated host, opens exactly one WAL, and exposes only
+// the timeout/recovery operations that preserve the intent -> host effect ->
+// readback -> commit ordering.
+//
+// It remains a bounded development composition.  It is intentionally not a
+// Core effect driver, network node, signer authority, or production activation
+// path; the production gate below stays false.
+#[cfg(feature = "node-event-wal")]
+pub struct PocoNodeHostEventWalOwnerV1<W, P> {
+    host: PocoNodeHostV0<W, P>,
+    wal: NodeEventWalV1,
+}
+
+#[cfg(feature = "node-event-wal")]
+impl<W: ExternalMonotonicWatermarkV0, P: SignatureProducerV0> PocoNodeHostEventWalOwnerV1<W, P> {
+    /// Development-only constructor for a fresh bounded host plus its sole
+    /// event WAL.  The WAL namespace is derived after host authentication;
+    /// callers cannot supply an unrelated namespace.
+    pub fn initialize_new(
+        config: PocoNodeStartConfigV0,
+        genesis_qc: GenesisQcV0,
+        external_watermark: W,
+        signature_producer: P,
+        event_wal_path: impl AsRef<Path>,
+    ) -> Result<Self, PocoNodeHostEventWalErrorV1> {
+        StrictEd25519Verifier
+            .validate_validator_set_v0(config.core_config().validator_set())
+            .map_err(|_| PocoNodeHostEventWalErrorV1::StrictValidatorSetAdmission)?;
+        let host = PocoNodeHostV0::initialize_new(
+            config,
+            genesis_qc,
+            external_watermark,
+            signature_producer,
+        )
+        .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let namespace = host.timeout_event_wal_namespace_v1();
+        let wal = NodeEventWalV1::open(event_wal_path, namespace)
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
+        Ok(Self { host, wal })
+    }
+
+    /// Reopen an existing bounded host and its previously admitted event WAL.
+    /// Both stores are independently authenticated before the owner is
+    /// returned; a mismatch leaves startup failed closed.
+    pub fn open_existing(
+        config: PocoNodeStartConfigV0,
+        external_watermark: W,
+        signature_producer: P,
+        event_wal_path: impl AsRef<Path>,
+    ) -> Result<Self, PocoNodeHostEventWalErrorV1> {
+        StrictEd25519Verifier
+            .validate_validator_set_v0(config.core_config().validator_set())
+            .map_err(|_| PocoNodeHostEventWalErrorV1::StrictValidatorSetAdmission)?;
+        let host = PocoNodeHostV0::open_existing(config, external_watermark, signature_producer)
+            .map_err(PocoNodeHostEventWalErrorV1::Host)?;
+        let namespace = host.timeout_event_wal_namespace_v1();
+        let wal = NodeEventWalV1::open(event_wal_path, namespace)
+            .map_err(PocoNodeHostEventWalErrorV1::Wal)?;
+        Ok(Self { host, wal })
+    }
+
+    /// Resume the host's already-durable bounded outbox.  No mutable Core or
+    /// WAL is exposed to the caller.
+    pub fn resume_v0(&mut self) -> Result<Vec<PocoNodeHostActionV0>, PocoNodeHostErrorV0> {
+        self.host.resume_v0()
+    }
+
+    /// Run one timeout through the single-owner event ordering.
+    pub fn on_local_timeout_v1(
+        &mut self,
+    ) -> Result<NodeEventCommitReceiptV1, PocoNodeHostEventWalErrorV1> {
+        self.host.on_local_timeout_with_event_wal_v1(&mut self.wal)
+    }
+
+    /// Reconcile a pending timeout only from a fresh SafetyStore readback.
+    pub fn recover_pending_v1(
+        &mut self,
+    ) -> Result<Option<NodeEventCommitReceiptV1>, PocoNodeHostEventWalErrorV1> {
+        self.host
+            .recover_pending_timeout_event_with_wal_v1(&mut self.wal)
+    }
+
+    /// Freshly revalidate the event WAL at a restart boundary.
+    pub fn restart_recovery_v1(&mut self) -> Result<NodeEventRecoveryV1, NodeEventWalErrorV1> {
+        self.wal.revalidate_v1()
+    }
+
+    /// Borrow-only evidence view; callers cannot replace the owned WAL.
+    pub const fn wal(&self) -> &NodeEventWalV1 {
+        &self.wal
+    }
+
+    pub fn safety_head(&self) -> Result<RecoveredSafetyStateV0, PocoNodeHostErrorV0> {
+        self.host.safety_head()
+    }
+
+    pub fn production_activation_check(&self) -> Result<(), ProductionActivationBlockedV0> {
+        self.host.production_activation_check()
+    }
+}
 
 /// Caller-visible actions emitted by the bounded ordinary host.
 ///

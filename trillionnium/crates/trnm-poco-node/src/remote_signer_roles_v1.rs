@@ -1138,11 +1138,13 @@ mod tests {
             &encoded[PURPOSE_PROFILE_OFFSET..VALIDATOR_SET_OFFSET],
             &PURPOSE_PROFILE_DIGEST_V1
         );
-        assert!(!REMOTE_SIGNER_RUNTIME_ACTIVATION_V1);
-        assert!(!REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1);
-        assert!(!REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1);
-        assert!(!REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1);
-        assert!(!REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1);
+        const {
+            assert!(!REMOTE_SIGNER_RUNTIME_ACTIVATION_V1);
+            assert!(!REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1);
+            assert!(!REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1);
+            assert!(!REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1);
+            assert!(!REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1);
+        }
     }
 
     #[test]
