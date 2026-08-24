@@ -563,6 +563,17 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
         }
 
         let safety = recover_try!("replay.final_safety", self._safety_store.head());
+        // Signed ancestry authentication is deliberately performed before the
+        // durable owner readback below.  Re-read the complete authenticated
+        // Safety head after that work, rather than relying on the earlier
+        // semantic state comparison alone: a same-state rewrite can otherwise
+        // leave the returned owner joined to a different journal record or
+        // chain identity.
+        let safety_facts = recover_try!(
+            "replay.final_safety_facts",
+            self._safety_store
+                .confirm_node_checkpoint_head_exact_v0(self._core.safety_state())
+        );
         let application = recover_try!(
             "replay.final_application",
             self._application.confirmed_committed_head_v0()
@@ -579,11 +590,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
             "replay.final_validation",
             self._validation_store.durable_sequence_v0()
         );
+        let checkpoint_fields = self.facts.checkpoint.fields();
         if safety.state() != self._core.safety_state()
             || safety.revision() != self.facts.safety_revision
-            || application.block_id().as_bytes()
-                != self.facts.application_applied_block_id.as_bytes()
-            || application.height().get() != self.facts.application_applied_height
+            || safety_facts.journal_id_v0() != checkpoint_fields.safety_journal_id
+            || safety_facts.verifier_profile_ref_v0()
+                != checkpoint_fields.safety_verifier_profile_ref
+            || safety_facts.revision_v0() != self.facts.safety_revision
+            || safety_facts.state_record_checksum_v0() != self.facts.safety_state_record_checksum
+            || safety_facts.chain_checksum_v0() != self.facts.safety_chain_checksum
+            || application != *self.facts.application_committed_head_v0()
             || signer.exact_watermark() != self.facts.signer_exact_watermark
             || checkpoint != Some(self.facts.checkpoint)
             || validation_sequence != self.facts.proposal_validation_sequence
@@ -703,6 +719,25 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
             return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
                 "host.core_safety_join",
                 "host reopen observed a Safety head different from the recovered Core",
+            ));
+        }
+        // `SafetyState` equality alone is not enough here.  A same-semantic
+        // row can be rewritten in a self-consistent journal image while its
+        // authenticated record/chain identity (or journal/profile namespace)
+        // no longer belongs to the checkpoint joined at open.  The initial
+        // checkpoint admission binds all of these fields; the retained host
+        // must enforce the same binding on every later readback.
+        let safety_fields = expected.fields();
+        if self.owner._safety_store.journal_id_v0() != safety_fields.safety_journal_id
+            || self.owner._safety_store.verifier_profile_ref_v0()
+                != safety_fields.safety_verifier_profile_ref
+            || safety.revision() != safety_fields.safety_revision
+            || safety.state_record_checksum() != safety_fields.safety_state_record_checksum
+            || safety.chain_checksum() != safety_fields.safety_record_chain_checksum
+        {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.safety_checkpoint_join",
+                "host reopen observed Safety record/chain identity different from the checkpoint",
             ));
         }
 
