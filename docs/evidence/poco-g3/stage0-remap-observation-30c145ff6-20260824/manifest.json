@@ -6,7 +6,7 @@
     "candidate_archives_byte_identical": true,
     "candidate_checker_passed": true,
     "candidate_v2_remap_run_observed": true,
-    "comparison_baseline": "frozen_candidate_v1",
+    "comparison_baseline": "frozen_candidate_v1_baseline",
     "cross_time_stage0_gate_closed": false,
     "geo_wan_evidence": false,
     "historical_d6_hashes_restored": false,
@@ -109,7 +109,7 @@
     "remote_path": "/home/qian/poco-stage0-current-30c145ff6/remap-observation-30c.tar.gz",
     "local_operator_path": "/tmp/poco-stage0-current-aoqkGV/remap-observation-30c.tar.gz",
     "retrieval_receipt_path": "raw-bundle-retrieval-receipt.json",
-    "retrieval_receipt_sha256": "072872dc681c90ad9a7cd56b253ef345449cb7520385895e60b8dfcd7e0e4d9c",
+    "retrieval_receipt_sha256": "172a96d28d638f85da99510193862e7359be9c1882bce442d48c85dbdd3e1068",
     "contents": [
       "incoming/source.tar",
       "out-a/build-report.json",

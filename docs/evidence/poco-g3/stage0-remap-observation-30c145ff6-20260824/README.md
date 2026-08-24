@@ -53,3 +53,7 @@ recorded in `manifest.json`, `raw-bundle.sha256`, and
 `raw-bundle-retrieval-receipt.json`.  The receipt records that the advertised
 remote path was absent and no SSH host-key fingerprint was captured; this
 artifact is therefore not treated as durable deployment evidence.
+The receipt also records a tracked replay correction to the unbundled
+cross-time-control JSON's empty-status digest (65 characters in the operator
+copy, canonical 64 in the replay); the build-report `source_git_status_sha256`
+fields were not edited, and the archive hash was not changed by that correction.

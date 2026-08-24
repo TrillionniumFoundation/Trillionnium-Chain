@@ -1733,12 +1733,17 @@ fn secret_free_role_guard_requires_runtime_event_and_p2p_only_v1() {
     assert!(require_external_role_authority_for_composition_v1(true, false, true).is_ok());
 
     let source = include_str!("consensus_runtime.rs");
+    // The test body itself contains the function-name string above, so use
+    // the final occurrence to inspect the implementation rather than this
+    // source-contract assertion.  Otherwise the slice also includes this
+    // test's deliberate `has_local_operator_recovery_secret()` rejection.
     let compose = source
-        .find("fn compose_deployed_external_authority_with_runtime_event_producer_v1(")
+        .rfind("fn compose_deployed_external_authority_with_runtime_event_producer_v1(")
         .expect("external composition helper remains present");
-    let finish = source
-        .find("fn finish_v1(&mut self) -> Result<PathBuf>")
-        .expect("bounded terminal finisher remains present");
+    let finish = compose
+        + source[compose..]
+            .find("fn finish_v1(&mut self) -> Result<PathBuf>")
+            .expect("bounded terminal finisher remains present");
     let body = &source[compose..finish];
     assert!(body.contains("require_external_role_authority_for_composition_v1("));
     assert!(!body.contains("has_local_operator_recovery_secret()"));

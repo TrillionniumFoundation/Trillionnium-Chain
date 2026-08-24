@@ -244,6 +244,20 @@ def write_status(
         "rust_src_remap_in_stage0_truth_base": False,
         "rust_src_remap_tool_source_bound_to_raw_report": False,
         "rust_src_remap_runner_identity_cryptographically_attested": False,
+        "validator_runtime_started": False,
+        "validator_run_completed": False,
+        "validator_run_31_completed": False,
+        "validator_run_100_completed": False,
+        "signed_runtime_evidence_multihost_observed": False,
+        "multihost_consensus_observed": False,
+        "fault_restart_fleet_multihost_observed": False,
+        "fault_matrix_completed": False,
+        "performance_evidence": False,
+        "g3_lan_multihost_evidence": False,
+        "successful_process2_restart_observed": False,
+        "authenticated_process2_catchup_operational": False,
+        "recovery_ready_operational": False,
+        "recovery_start_operational": False,
         "production_activation": False,
         "production_candidate": False,
         "g3_geo_wan_evidence": False,
@@ -356,9 +370,11 @@ def main() -> None:
             complete_cross_time_sha256,
         )
         accepted = run(complete, root, "--require-complete")
-        assert accepted.returncode == 0, accepted.stderr
-        assert "stage0_observation_complete=true" in accepted.stdout
-        assert "missing=none" in accepted.stdout
+        # A descriptive report and a recomputed status hash are not runtime
+        # evidence.  Until an independently bound seven-validator receipt is
+        # admitted by this checker, the completion bit is immutable-false.
+        assert accepted.returncode == 2
+        assert "validator_run_7_completed=false" in accepted.stderr
 
         missing = root / "missing.toml"
         write_status(
@@ -403,6 +419,19 @@ def main() -> None:
         forbidden = run(activated, root)
         assert forbidden.returncode == 2
         assert "production_activation=false" in forbidden.stderr
+
+        forged_runtime = root / "forged-runtime-boundary.toml"
+        write_status(
+            forged_runtime,
+            {**current_observations, "validator_runtime_started": True},
+            report_path.name,
+            report_sha256,
+            cross_time_path.name,
+            cross_time_sha256,
+        )
+        forged_runtime_result = run(forged_runtime, root)
+        assert forged_runtime_result.returncode == 2
+        assert "validator_runtime_started=false" in forged_runtime_result.stderr
 
         wrong_hash = root / "wrong-hash.toml"
         write_status(
@@ -450,7 +479,7 @@ def main() -> None:
         assert "committed v2 control must use a tracked wrapper" in invalid_v2_result.stderr
 
     print(
-        "poco_g3_stage0_observation_status_test=passed positives=2 negatives=7 "
+        "poco_g3_stage0_observation_status_test=passed positives=1 negatives=9 "
         "structured_incomplete=true require_complete_fail_closed=true "
         "contract_self_tests_not_observations=true production_activation_blocked=true "
         "report_hash_bound=true cross_time_control_bound=true "

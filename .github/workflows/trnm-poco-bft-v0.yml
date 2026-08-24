@@ -33,11 +33,19 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-external-watermark/**"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-service/**"
+      - "trillionnium/crates/trnm-consensus-safety-rules/**"
       - "trillionnium/crates/trnm-consensus-safety-store/**"
       - "trillionnium/crates/trnm-consensus-signer-journal/**"
       - "trillionnium/crates/trnm-consensus-sim/**"
       - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
+      - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-poco-lab-validator/**"
       - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
       - "trillionnium/crates/trnm-runtime/**"
@@ -75,11 +83,19 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-external-watermark/**"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
+      - "trillionnium/crates/trnm-consensus-remote-signer-service/**"
+      - "trillionnium/crates/trnm-consensus-safety-rules/**"
       - "trillionnium/crates/trnm-consensus-safety-store/**"
       - "trillionnium/crates/trnm-consensus-signer-journal/**"
       - "trillionnium/crates/trnm-consensus-sim/**"
       - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-consensus-unix-fleet-signer/**"
+      - "trillionnium/crates/trnm-consensus-unix-remote-signer/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-poco-lab-validator/**"
       - "trillionnium/crates/trnm-poco-node/**"
       - "trillionnium/crates/trnm-protocol/**"
       - "trillionnium/crates/trnm-runtime/**"
@@ -267,11 +283,19 @@ jobs:
           set -euo pipefail
           cargo test --locked -p trnm-consensus-types
           cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-consensus-external-watermark --all-targets
+          cargo test --locked -p trnm-consensus-peer-lease --all-targets
+          cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets
+          cargo test --locked -p trnm-consensus-remote-signer-service --all-targets
+          cargo test --locked -p trnm-consensus-safety-rules --all-targets
+          cargo test --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture
+          cargo test --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture
           cargo test --locked -p trnm-consensus-core
           cargo test --locked -p trnm-consensus-safety-store --lib --tests
           cargo test --locked -p trnm-consensus-signer-journal --all-targets
           cargo test --locked -p trnm-consensus-sim
           cargo test --locked -p trnm-finality-types
+          cargo test --locked -p trnm-poco-lab-validator --all-targets
           cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
@@ -286,10 +310,18 @@ jobs:
           set -euo pipefail
           cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-peer-lease --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-remote-signer-service --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-safety-rules --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture --no-deps -- -D warnings
           cargo clippy --locked -p trnm-consensus-core --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-safety-store --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-signer-journal --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-sim --all-targets -- -D warnings
+          # These two packages retain Rust 1.95 baseline lint debt; their
+          # all-target tests above remain mandatory until the debt is isolated.
           # These integration crates retain legacy workspace dependencies.
           # --no-deps keeps strictness on the selected package without
           # turning unrelated retained warnings into PoCO tranche failures.

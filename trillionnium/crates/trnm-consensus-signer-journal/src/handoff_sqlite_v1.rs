@@ -1286,7 +1286,7 @@ fn configure_connection_v1(
     let journal_mode: String = connection
         .query_row("PRAGMA journal_mode", [], |row| row.get(0))
         .map_err(|error| HandoffSignerJournalErrorV1::sqlite("read schema1 journal mode", error))?;
-    if journal_mode.to_ascii_lowercase() != "delete" {
+    if !journal_mode.eq_ignore_ascii_case("delete") {
         return Err(
             HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
                 "schema1 requires SQLite DELETE journal mode",
@@ -1737,6 +1737,7 @@ fn read_head_v1(
     Ok(head)
 }
 
+#[allow(clippy::type_complexity)]
 fn read_accounting_v1(
     connection: &Connection,
 ) -> Result<AccountingV1, HandoffSignerJournalErrorV1> {
@@ -1799,6 +1800,7 @@ fn require_capacity_for_v1(
     Ok(())
 }
 
+#[allow(clippy::type_complexity)]
 fn insert_intent_v1(
     transaction: &Transaction<'_>,
     intent: &PreparedIntentV1,
@@ -2280,6 +2282,7 @@ fn update_accounting_signed_v1(
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn fence_checksum_v1(
     profile: &HandoffSignerJournalProfileV1,
     genesis_hash: [u8; 32],
@@ -2394,6 +2397,7 @@ fn terminal_fence_exists_v1(connection: &Connection) -> Result<bool, HandoffSign
     }
 }
 
+#[allow(clippy::type_complexity)]
 fn raw_event_from_row_v1(
     row: &rusqlite::Row<'_>,
 ) -> rusqlite::Result<(
@@ -2418,6 +2422,7 @@ fn raw_event_from_row_v1(
     ))
 }
 
+#[allow(clippy::type_complexity)]
 fn admit_raw_event_v1(
     raw: (
         Vec<u8>,
@@ -2766,6 +2771,7 @@ struct TerminalFenceV1 {
     fence_checksum: [u8; 32],
 }
 
+#[allow(clippy::type_complexity)]
 fn read_terminal_fence_v1(
     connection: &Connection,
 ) -> Result<Option<TerminalFenceV1>, HandoffSignerJournalErrorV1> {
@@ -2953,17 +2959,15 @@ fn validate_database_v1(
                         role,
                         ..
                     } if *role == HandoffSignerRoleV1::OldSet as u8
-                ) {
-                    if signed_old_handoff
-                        .replace((event.fingerprint, event.sequence))
-                        .is_some()
-                    {
-                        return Err(
-                            HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
-                                "multiple signed old-set handoffs",
-                            ),
-                        );
-                    }
+                ) && signed_old_handoff
+                    .replace((event.fingerprint, event.sequence))
+                    .is_some()
+                {
+                    return Err(
+                        HandoffSignerJournalErrorV1::PersistedRepresentationMalformed(
+                            "multiple signed old-set handoffs",
+                        ),
+                    );
                 }
             }
             _ => {
@@ -3159,7 +3163,7 @@ fn validate_transaction_environment_v1(
     let page_count: i64 = connection
         .query_row("PRAGMA page_count", [], |row| row.get(0))
         .map_err(|error| HandoffSignerJournalErrorV1::sqlite("audit schema1 page count", error))?;
-    if journal_mode.to_ascii_lowercase() != "delete"
+    if !journal_mode.eq_ignore_ascii_case("delete")
         || synchronous != 2
         || foreign_keys != 1
         || trusted_schema != 0

@@ -3895,6 +3895,13 @@ impl SafetyStatePersistenceBindingV0 {
 /// permits an idempotent retry of those exact bytes, but cannot forge another
 /// persistence request. Hosts additionally bind it to their designated Core
 /// through [`SafetyStatePersistenceBindingV0`].
+// This enum is the stable Core effect carrier.  The persistence obligation is
+// intentionally kept inline so callers can inspect/clone the exact opaque
+// request without an allocation or an ABI change; boxing it would ripple
+// through every host and replay boundary.  Keep the layout choice explicit
+// rather than letting a toolchain-version clippy gate become a false CI
+// blocker.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Effect {
     PersistSafetyState(SafetyStatePersistenceV0),

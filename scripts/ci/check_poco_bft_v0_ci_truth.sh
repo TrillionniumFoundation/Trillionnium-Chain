@@ -288,6 +288,22 @@ require_literal_count "$POCO_WORKFLOW" \
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-poco-node/**"' 2
 
+# Authority-adjacent crates must trigger both pull-request and main-push PoCO
+# gates. Keep these path filters explicit so a newly split signer/lease seam
+# cannot silently fall outside the workflow boundary.
+for authority_path in \
+  trnm-consensus-external-watermark \
+  trnm-consensus-peer-lease \
+  trnm-consensus-remote-signer-protocol \
+  trnm-consensus-remote-signer-service \
+  trnm-consensus-safety-rules \
+  trnm-consensus-unix-fleet-signer \
+  trnm-consensus-unix-remote-signer \
+  trnm-poco-lab-validator; do
+  require_literal_count "$POCO_WORKFLOW" \
+    "      - \"trillionnium/crates/${authority_path}/**\"" 2
+done
+
 # SafetyStore is a first-class package in the complete test, strict lint,
 # recovery, and release-profile compilation boundaries.
 require_literal "$POCO_WORKFLOW" \
@@ -302,6 +318,38 @@ require_literal "$POCO_WORKFLOW" \
   'cargo clippy --locked -p trnm-consensus-signer-journal --all-targets -- -D warnings'
 require_literal "$POCO_WORKFLOW" \
   '            -p trnm-consensus-signer-journal \'
+
+# Focused all-target checks keep the authority dependency seams covered when
+# they change independently of the broader workspace packages. Integration-
+# heavy crates are linted with --no-deps to bound this job's runtime.
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-external-watermark --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-peer-lease --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-remote-signer-service --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-safety-rules --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-poco-lab-validator --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-peer-lease --all-targets --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-remote-signer-service --all-targets --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-safety-rules --all-targets --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-unix-remote-signer --all-targets --features test-fixture --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-consensus-unix-fleet-signer --all-targets --features test-fixture --no-deps -- -D warnings'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh'
 require_literal "$POCO_WORKFLOW" \
@@ -413,7 +461,7 @@ require_literal "$G3_LAN_FLEET_GATE" \
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_stage0_reproducible_build_evidence_test=passed positives=3 negatives=51 shallow_binary_bytes_rehashed=false deep_binary_bytes_rehashed=true operator_recorded_execution=true cryptographic_execution_attestation=false'
 require_literal "$G3_LAN_FLEET_GATE" \
-  'poco_g3_stage0_observation_status_test=passed positives=2 negatives=7 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
+  'poco_g3_stage0_observation_status_test=passed positives=1 negatives=9 structured_incomplete=true require_complete_fail_closed=true contract_self_tests_not_observations=true production_activation_blocked=true report_hash_bound=true cross_time_control_bound=true rust_src_drift_not_reproducible=true committed_v2_remap_control=true committed_clean_tool_boundary_fail_closed=true initial_cache_miss_preserved=true'
 require_literal "$G3_LAN_FLEET_GATE" \
   'poco_g3_network_smoke_fleet_test=passed positives=19 negatives=15'
 require_literal "$G3_LAN_FLEET_GATE" \

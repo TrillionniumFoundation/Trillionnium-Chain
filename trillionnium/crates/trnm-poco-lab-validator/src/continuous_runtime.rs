@@ -4063,7 +4063,8 @@ mod tests {
                 .expect("external timeout signer exits cleanly");
 
             let client = UnixWatermarkClient::new(remote_dir.join("watermark.sock"))
-                .expect("construct semantic authority client");
+                .expect("construct semantic authority client")
+                .with_semantic_binding(semantic_binding);
             let head = client
                 .load_semantic_checked(semantic_binding)
                 .expect("read semantic timeout head")

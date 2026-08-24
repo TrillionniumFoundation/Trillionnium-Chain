@@ -49,6 +49,32 @@ MUST_REMAIN_FALSE_FIELDS = (
     "g3_geo_wan_evidence",
 )
 
+# Runtime/release claims are a separate fail-closed boundary from the
+# observation bits above.  A fixture or self-test must never be able to turn
+# one of these claims green by editing status.toml alone.
+RELEASE_BOUNDARY_FALSE_FIELDS = (
+    # No accepted runtime receipt exists in this evidence set.  Keep the
+    # seven-validator completion bit immutable-false until a future checker
+    # version adds an independently bound, process-level receipt; a caller
+    # must not manufacture Stage0 completion by editing status.toml and the
+    # descriptive cross-time report together.
+    "validator_run_7_completed",
+    "validator_runtime_started",
+    "validator_run_completed",
+    "validator_run_31_completed",
+    "validator_run_100_completed",
+    "signed_runtime_evidence_multihost_observed",
+    "multihost_consensus_observed",
+    "fault_restart_fleet_multihost_observed",
+    "fault_matrix_completed",
+    "performance_evidence",
+    "g3_lan_multihost_evidence",
+    "successful_process2_restart_observed",
+    "authenticated_process2_catchup_operational",
+    "recovery_ready_operational",
+    "recovery_start_operational",
+)
+
 REPORT_BOOLEAN_FIELDS = (
     "reproducible_build_executed",
     "native_linux_x86_64_reproducible_build_observed",
@@ -574,12 +600,15 @@ def load_status(path: pathlib.Path, evidence_root: pathlib.Path) -> dict[str, An
     for field in (
         *REQUIRED_OBSERVATION_FIELDS,
         *MUST_REMAIN_FALSE_FIELDS,
+        *RELEASE_BOUNDARY_FALSE_FIELDS,
         *REPORT_BOOLEAN_FIELDS,
     ):
         boolean(status, field)
-    for field in MUST_REMAIN_FALSE_FIELDS:
+    for field in (*MUST_REMAIN_FALSE_FIELDS, *RELEASE_BOUNDARY_FALSE_FIELDS):
         if boolean(status, field):
-            raise ObservationStatusError(f"Stage0 status must keep {field}=false")
+            raise ObservationStatusError(
+                f"Stage0 release boundary must keep {field}=false"
+            )
     validate_fresh_clone_report(status, evidence_root)
     validate_rust_src_cross_time_control(status, evidence_root)
     return status
