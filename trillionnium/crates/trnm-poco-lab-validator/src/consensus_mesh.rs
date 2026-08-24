@@ -365,6 +365,24 @@ impl PeerSessionFactsV0 {
     pub const fn generation(&self) -> u64 {
         self.generation
     }
+
+    /// Builds session facts for a unit test that exercises a consumer of the
+    /// authenticated mesh owner.  Production code receives these facts only
+    /// from the mesh lifecycle events, never from caller-supplied scalars.
+    #[cfg(test)]
+    pub(crate) const fn for_test(
+        remote: ValidatorId,
+        direction: PeerDirectionV0,
+        session_id: [u8; 32],
+        generation: u64,
+    ) -> Self {
+        Self {
+            remote,
+            direction,
+            session_id,
+            generation,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -395,6 +413,30 @@ impl MeshInboundFrameV0 {
 
     pub fn into_frame(self) -> AuthenticatedFrame {
         self.frame
+    }
+
+    /// Mints a queue owner for tests in sibling modules.  The real mesh is
+    /// the only production constructor; this helper remains behind the test
+    /// configuration so cloneable frame data cannot forge an owner in a
+    /// normal build.
+    #[cfg(test)]
+    pub(crate) fn for_test(facts: PeerSessionFactsV0, frame: AuthenticatedFrame) -> Self {
+        let reserved_bytes = frame
+            .payload
+            .len()
+            .saturating_add(QUEUED_FRAME_OVERHEAD_BYTES);
+        let peer_budget = Arc::new(MeshQueueByteBudgetV0::new(MAX_INBOUND_QUEUE_BYTES_PER_PEER));
+        let global_budget = Arc::new(MeshQueueByteBudgetV0::new(MAX_INBOUND_QUEUE_BYTES_GLOBAL));
+        let reservation =
+            InboundQueueReservationV0::try_new(&peer_budget, &global_budget, reserved_bytes)
+                .expect("test inbound frame fits the bounded queue");
+        Self {
+            remote: facts.remote,
+            session_id: facts.session_id,
+            session_generation: facts.generation,
+            frame,
+            _reservation: reservation,
+        }
     }
 }
 

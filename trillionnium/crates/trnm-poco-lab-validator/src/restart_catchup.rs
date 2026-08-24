@@ -34,6 +34,7 @@ use trnm_native_application::{
 
 use crate::{
     config::validate_run_id,
+    consensus_mesh::{MeshInboundFrameV0, PeerDirectionV0, PeerSessionFactsV0},
     frame::{AuthenticatedFrame, FrameKind, MAX_FRAME_PAYLOAD_BYTES},
     relay::ConsensusRelayEnvelopeV0,
     wire::{decode_quorum_certificate, UnboundProposalV0},
@@ -1038,10 +1039,60 @@ impl SignedRestartCatchupMessageV1 {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum RestartCatchupTransportSourceV1 {
+    DirectMesh,
+    SparseRelayMesh,
+    #[cfg(test)]
+    VerifiedSignedBytes,
+}
+
+impl RestartCatchupTransportSourceV1 {
+    const fn permits_direct(self) -> bool {
+        match self {
+            Self::DirectMesh => true,
+            Self::SparseRelayMesh => false,
+            #[cfg(test)]
+            Self::VerifiedSignedBytes => true,
+        }
+    }
+
+    const fn permits_relay(self) -> bool {
+        match self {
+            Self::DirectMesh => false,
+            Self::SparseRelayMesh => true,
+            #[cfg(test)]
+            Self::VerifiedSignedBytes => true,
+        }
+    }
+
+    const fn is_mesh(self) -> bool {
+        match self {
+            Self::DirectMesh | Self::SparseRelayMesh => true,
+            #[cfg(test)]
+            Self::VerifiedSignedBytes => false,
+        }
+    }
+}
+
+/// Exact transport facts minted by consuming the non-Clone mesh queue owner.
+/// A cloneable [`AuthenticatedFrame`] cannot recreate this receipt in a
+/// normal build, and every downstream catch-up carrier retains the outer
+/// fingerprint alongside the session generation.
+#[derive(Debug)]
+struct AuthenticatedRestartCatchupTransportV1 {
+    source: RestartCatchupTransportSourceV1,
+    remote: ValidatorId,
+    session_id: [u8; 32],
+    session_generation: u64,
+    outer_frame_fingerprint: [u8; 32],
+}
+
 /// Verified inner carrier.  It is intentionally non-Clone and exposes only
 /// read-only facts; admission must consume it before chunk bytes are released.
 pub struct VerifiedRestartCatchupCarrierV1 {
     message: SignedRestartCatchupMessageV1,
+    transport: AuthenticatedRestartCatchupTransportV1,
 }
 
 impl VerifiedRestartCatchupCarrierV1 {
@@ -1099,22 +1150,72 @@ impl VerifiedRestartCatchupCarrierV1 {
     }
 }
 
-/// Decodes a directly delivered catch-up frame after outer transport
-/// authentication. Direct delivery is accepted only when the authenticated
-/// hop sender is the independently signed inner origin.
-pub fn decode_authenticated_restart_catchup_frame_v1(
+fn validate_authenticated_catchup_transport_v1(
+    frame: &AuthenticatedFrame,
+    transport: &AuthenticatedRestartCatchupTransportV1,
+    run_id: &str,
+    direct: bool,
+) -> Result<(), RestartCatchupErrorV1> {
+    let source_allowed = if direct {
+        transport.source.permits_direct()
+    } else {
+        transport.source.permits_relay()
+    };
+    if !source_allowed
+        || transport.session_id == [0; 32]
+        || transport.remote != frame.sender
+        || transport.session_id != frame.session
+        || (transport.source.is_mesh() && transport.session_generation == 0)
+        || transport.outer_frame_fingerprint != frame.fingerprint(run_id)
+    {
+        return Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch);
+    }
+    Ok(())
+}
+
+fn take_authenticated_catchup_mesh_frame_v1(
+    inbound: MeshInboundFrameV0,
+    expected_session: PeerSessionFactsV0,
+    run_id: &str,
+) -> Result<(AuthenticatedFrame, AuthenticatedRestartCatchupTransportV1), RestartCatchupErrorV1> {
+    let remote = inbound.remote();
+    let session_id = inbound.session_id();
+    let session_generation = inbound.session_generation();
+    let frame = inbound.into_frame();
+    if expected_session.direction() != PeerDirectionV0::Inbound
+        || expected_session.remote() != remote
+        || expected_session.session_id() != session_id
+        || expected_session.generation() != session_generation
+        || session_id == [0; 32]
+        || session_generation == 0
+        || remote != frame.sender
+        || session_id != frame.session
+    {
+        return Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch);
+    }
+    let transport = AuthenticatedRestartCatchupTransportV1 {
+        source: RestartCatchupTransportSourceV1::DirectMesh,
+        remote,
+        session_id,
+        session_generation,
+        outer_frame_fingerprint: frame.fingerprint(run_id),
+    };
+    Ok((frame, transport))
+}
+
+fn decode_authenticated_restart_catchup_frame_with_transport_v1(
     frame: &AuthenticatedFrame,
     expected_context: &RestartCatchupContextV1,
     validator_set: &ValidatorSet,
+    transport: AuthenticatedRestartCatchupTransportV1,
 ) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
     expected_context.validate_for_set(validator_set)?;
-    // This helper is independently callable below the mesh replay window.
-    // Require a real authenticated outer session here; the relayed helper
-    // below uses a separate synthetic embedded frame whose session is
-    // intentionally zero and must remain accepted by the inner decoder.
-    if frame.session == [0; 32] {
-        return Err(RestartCatchupErrorV1::Malformed("session ID"));
-    }
+    validate_authenticated_catchup_transport_v1(
+        frame,
+        &transport,
+        expected_context.run_id(),
+        true,
+    )?;
     if frame.kind != FrameKind::RestartCatchup {
         return Err(RestartCatchupErrorV1::UnsupportedFrameKind);
     }
@@ -1128,24 +1229,22 @@ pub fn decode_authenticated_restart_catchup_frame_v1(
     if frame.sender != message.origin {
         return Err(RestartCatchupErrorV1::OuterOriginMismatch);
     }
-    Ok(VerifiedRestartCatchupCarrierV1 { message })
+    Ok(VerifiedRestartCatchupCarrierV1 { message, transport })
 }
 
-/// Decodes a catch-up message carried by an authenticated relay hop. The
-/// current hop may differ from the origin, but the strictly verified relay
-/// origin and the independently signed catch-up origin must be identical.
-pub fn decode_authenticated_relayed_restart_catchup_frame_v1(
+fn decode_authenticated_relayed_restart_catchup_frame_with_transport_v1(
     frame: &AuthenticatedFrame,
     expected_context: &RestartCatchupContextV1,
     validator_set: &ValidatorSet,
+    transport: AuthenticatedRestartCatchupTransportV1,
 ) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
     expected_context.validate_for_set(validator_set)?;
-    // Only the actual relay hop is a transport identity.  The envelope's
-    // embedded statement is decoded from a synthetic comparison frame and
-    // deliberately carries session=[0;32].
-    if frame.session == [0; 32] {
-        return Err(RestartCatchupErrorV1::Malformed("session ID"));
-    }
+    validate_authenticated_catchup_transport_v1(
+        frame,
+        &transport,
+        expected_context.run_id(),
+        false,
+    )?;
     if frame.kind != FrameKind::ConsensusRelay {
         return Err(RestartCatchupErrorV1::UnsupportedFrameKind);
     }
@@ -1168,7 +1267,106 @@ pub fn decode_authenticated_relayed_restart_catchup_frame_v1(
     if envelope.origin() != message.origin {
         return Err(RestartCatchupErrorV1::RelayOriginMismatch);
     }
-    Ok(VerifiedRestartCatchupCarrierV1 { message })
+    Ok(VerifiedRestartCatchupCarrierV1 { message, transport })
+}
+
+/// Decodes a directly delivered catch-up frame by consuming the authenticated
+/// mesh queue owner and joining it to the current inbound session facts. The
+/// caller must supply facts from the live mesh lifecycle owner; stale
+/// `(remote, session, generation)` tuples are rejected before inner decoding.
+pub(crate) fn decode_authenticated_restart_catchup_mesh_frame_v1(
+    inbound: MeshInboundFrameV0,
+    expected_session: PeerSessionFactsV0,
+    expected_context: &RestartCatchupContextV1,
+    validator_set: &ValidatorSet,
+) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
+    expected_context.validate_for_set(validator_set)?;
+    let (frame, transport) = take_authenticated_catchup_mesh_frame_v1(
+        inbound,
+        expected_session,
+        expected_context.run_id(),
+    )?;
+    decode_authenticated_restart_catchup_frame_with_transport_v1(
+        &frame,
+        expected_context,
+        validator_set,
+        transport,
+    )
+}
+
+/// Decodes a relayed catch-up frame by consuming the authenticated mesh queue
+/// owner. The outer hop remains bound to the live mesh session while the
+/// inner envelope is checked against its independently signed origin.
+pub(crate) fn decode_authenticated_relayed_restart_catchup_mesh_frame_v1(
+    inbound: MeshInboundFrameV0,
+    expected_session: PeerSessionFactsV0,
+    expected_context: &RestartCatchupContextV1,
+    validator_set: &ValidatorSet,
+) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
+    expected_context.validate_for_set(validator_set)?;
+    let (frame, mut transport) = take_authenticated_catchup_mesh_frame_v1(
+        inbound,
+        expected_session,
+        expected_context.run_id(),
+    )?;
+    transport.source = RestartCatchupTransportSourceV1::SparseRelayMesh;
+    decode_authenticated_relayed_restart_catchup_frame_with_transport_v1(
+        &frame,
+        expected_context,
+        validator_set,
+        transport,
+    )
+}
+
+/// Test-only signed-byte adapters. Release builds expose no raw
+/// `AuthenticatedFrame` catch-up decoder, so callers cannot bypass the mesh
+/// owner/session/generation boundary with a cloneable frame.
+#[cfg(test)]
+fn decode_authenticated_restart_catchup_frame_v1(
+    frame: &AuthenticatedFrame,
+    expected_context: &RestartCatchupContextV1,
+    validator_set: &ValidatorSet,
+) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
+    if frame.session == [0; 32] {
+        return Err(RestartCatchupErrorV1::Malformed("session ID"));
+    }
+    let transport = AuthenticatedRestartCatchupTransportV1 {
+        source: RestartCatchupTransportSourceV1::VerifiedSignedBytes,
+        remote: frame.sender,
+        session_id: frame.session,
+        session_generation: 0,
+        outer_frame_fingerprint: frame.fingerprint(expected_context.run_id()),
+    };
+    decode_authenticated_restart_catchup_frame_with_transport_v1(
+        frame,
+        expected_context,
+        validator_set,
+        transport,
+    )
+}
+
+#[cfg(test)]
+fn decode_authenticated_relayed_restart_catchup_frame_v1(
+    frame: &AuthenticatedFrame,
+    expected_context: &RestartCatchupContextV1,
+    validator_set: &ValidatorSet,
+) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
+    if frame.session == [0; 32] {
+        return Err(RestartCatchupErrorV1::Malformed("session ID"));
+    }
+    let transport = AuthenticatedRestartCatchupTransportV1 {
+        source: RestartCatchupTransportSourceV1::VerifiedSignedBytes,
+        remote: frame.sender,
+        session_id: frame.session,
+        session_generation: 0,
+        outer_frame_fingerprint: frame.fingerprint(expected_context.run_id()),
+    };
+    decode_authenticated_relayed_restart_catchup_frame_with_transport_v1(
+        frame,
+        expected_context,
+        validator_set,
+        transport,
+    )
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1392,7 +1590,14 @@ impl RestartCatchupAdmissionWindowV1 {
         carrier: VerifiedRestartCatchupCarrierV1,
     ) -> Result<RestartCatchupAdmissionResultV1, RestartCatchupErrorV1> {
         self.ensure_live()?;
-        let message = carrier.message;
+        let VerifiedRestartCatchupCarrierV1 { message, transport } = carrier;
+        if !self.origins.contains(&transport.remote)
+            || transport.session_id == [0; 32]
+            || transport.outer_frame_fingerprint == [0; 32]
+            || (transport.source.is_mesh() && transport.session_generation == 0)
+        {
+            return Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch);
+        }
         if message.context != self.context {
             return Err(RestartCatchupErrorV1::WrongContext);
         }
@@ -3691,6 +3896,7 @@ pub enum RestartCatchupErrorV1 {
     UnknownProvider,
     UnknownOrigin,
     UnknownOuterSender,
+    AuthenticatedTransportMismatch,
     OuterOriginMismatch,
     InvalidRelayEnvelope,
     RelayOriginMismatch,
@@ -3734,6 +3940,8 @@ impl fmt::Display for RestartCatchupErrorV1 {
             Self::UnknownOuterSender => {
                 formatter.write_str("restart catch-up outer sender is unknown")
             }
+            Self::AuthenticatedTransportMismatch => formatter
+                .write_str("restart catch-up frame differs from its authenticated mesh owner"),
             Self::OuterOriginMismatch => {
                 formatter.write_str("restart catch-up direct sender differs from signed origin")
             }
@@ -4264,6 +4472,108 @@ mod tests {
             &set,
         )
         .is_ok());
+    }
+
+    #[test]
+    fn mesh_catchup_decoder_rejects_stale_session_generation_and_owner_substitution() {
+        let (set, keys) = fixture(7);
+        let context = context(&set);
+        let provider = set.validators()[1].id();
+        let request = signed_request(&context, provider, &set, &keys[0], 1, 1, 3);
+
+        let direct = frame(request.origin, &request);
+        let current_direct = PeerSessionFactsV0::for_test(
+            request.origin,
+            PeerDirectionV0::Inbound,
+            direct.session,
+            2,
+        );
+        let carrier = decode_authenticated_restart_catchup_mesh_frame_v1(
+            MeshInboundFrameV0::for_test(current_direct, direct.clone()),
+            current_direct,
+            &context,
+            &set,
+        )
+        .unwrap();
+        assert_eq!(carrier.origin(), request.origin);
+
+        // A frame retained from the old connection cannot be admitted under
+        // the replacement session, even when all inner bytes and signatures
+        // remain valid.
+        let old_session = PeerSessionFactsV0::for_test(
+            request.origin,
+            PeerDirectionV0::Inbound,
+            direct.session,
+            1,
+        );
+        let new_session =
+            PeerSessionFactsV0::for_test(request.origin, PeerDirectionV0::Inbound, [0x63; 32], 2);
+        assert!(matches!(
+            decode_authenticated_restart_catchup_mesh_frame_v1(
+                MeshInboundFrameV0::for_test(old_session, direct.clone()),
+                new_session,
+                &context,
+                &set,
+            ),
+            Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch)
+        ));
+
+        // A same-session frame from an obsolete worker generation is equally
+        // stale; the semantic catch-up digest is not a replay authority.
+        let current_generation = PeerSessionFactsV0::for_test(
+            request.origin,
+            PeerDirectionV0::Inbound,
+            direct.session,
+            3,
+        );
+        assert!(matches!(
+            decode_authenticated_restart_catchup_mesh_frame_v1(
+                MeshInboundFrameV0::for_test(old_session, direct),
+                current_generation,
+                &context,
+                &set,
+            ),
+            Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch)
+        ));
+
+        let relay = ConsensusRelayEnvelopeV0::new(
+            request.origin,
+            FrameKind::RestartCatchup,
+            1,
+            request.encode().unwrap(),
+            &set,
+            &keys[0],
+        )
+        .unwrap();
+        let relayed = relay_frame(set.validators()[3].id(), &relay);
+        let current_relay = PeerSessionFactsV0::for_test(
+            set.validators()[3].id(),
+            PeerDirectionV0::Inbound,
+            relayed.session,
+            4,
+        );
+        assert!(decode_authenticated_relayed_restart_catchup_mesh_frame_v1(
+            MeshInboundFrameV0::for_test(current_relay, relayed.clone()),
+            current_relay,
+            &context,
+            &set,
+        )
+        .is_ok());
+        let stale_relay = PeerSessionFactsV0::for_test(
+            set.validators()[3].id(),
+            PeerDirectionV0::Inbound,
+            relayed.session,
+            5,
+        );
+        assert!(matches!(
+            decode_authenticated_relayed_restart_catchup_mesh_frame_v1(
+                MeshInboundFrameV0::for_test(current_relay, relayed),
+                stale_relay,
+                &context,
+                &set,
+            ),
+            Err(RestartCatchupErrorV1::AuthenticatedTransportMismatch)
+        ));
     }
 
     #[test]
@@ -5283,6 +5593,22 @@ mod tests {
         let forbidden_public_sign = ["pub fn ", "sign_"].concat();
         assert!(!source.contains(&forbidden_public_payload));
         assert!(!source.contains(&forbidden_public_sign));
+        for raw_decoder in [
+            [
+                "pub ",
+                "fn ",
+                "decode_authenticated_restart_catchup_frame_v1",
+            ]
+            .concat(),
+            [
+                "pub ",
+                "fn ",
+                "decode_authenticated_relayed_restart_catchup_frame_v1",
+            ]
+            .concat(),
+        ] {
+            assert!(!source.contains(&raw_decoder));
+        }
         for operational in [
             include_str!("main.rs"),
             include_str!("consensus_runtime.rs"),
