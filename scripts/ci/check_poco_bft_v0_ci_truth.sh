@@ -46,6 +46,11 @@ NODE_EVENT_WAL_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/node_event_w
 MEMPOOL_CARGO="$ROOT/trillionnium/crates/trnm-mempool/Cargo.toml"
 MEMPOOL_TYPED_ADMISSION_SOURCE="$ROOT/trillionnium/crates/trnm-mempool/src/typed_admission.rs"
 MEMPOOL_TYPED_ADMISSION_TEST="$ROOT/trillionnium/crates/trnm-mempool/tests/typed_admission_contract.rs"
+NATIVE_APPLICATION_CARGO="$ROOT/trillionnium/crates/trnm-native-application/Cargo.toml"
+NATIVE_APPLICATION_SOURCE="$ROOT/trillionnium/crates/trnm-native-application/src/application.rs"
+NATIVE_APPLICATION_SQLITE_CARGO="$ROOT/trillionnium/crates/trnm-native-application-sqlite/Cargo.toml"
+NATIVE_APPLICATION_SQLITE_SOURCE="$ROOT/trillionnium/crates/trnm-native-application-sqlite/src/lib.rs"
+NATIVE_APPLICATION_SQLITE_STORE_SOURCE="$ROOT/trillionnium/crates/trnm-native-application-sqlite/src/store.rs"
 NATIVE_EXECUTION_CARGO="$ROOT/trillionnium/crates/trnm-native-execution-v0/Cargo.toml"
 NATIVE_EXECUTION_SOURCE="$ROOT/trillionnium/crates/trnm-native-execution-v0/src/lib.rs"
 NATIVE_EXECUTION_DURABLE_SOURCE="$ROOT/trillionnium/crates/trnm-native-execution-v0/src/durable.rs"
@@ -258,6 +263,11 @@ for required in \
   "$MEMPOOL_CARGO" \
   "$MEMPOOL_TYPED_ADMISSION_SOURCE" \
   "$MEMPOOL_TYPED_ADMISSION_TEST" \
+  "$NATIVE_APPLICATION_CARGO" \
+  "$NATIVE_APPLICATION_SOURCE" \
+  "$NATIVE_APPLICATION_SQLITE_CARGO" \
+  "$NATIVE_APPLICATION_SQLITE_SOURCE" \
+  "$NATIVE_APPLICATION_SQLITE_STORE_SOURCE" \
   "$NATIVE_EXECUTION_CARGO" \
   "$NATIVE_EXECUTION_SOURCE" \
   "$NATIVE_EXECUTION_DURABLE_SOURCE" \
@@ -284,6 +294,11 @@ require_tracked "$CI_RUNNER_POLICY"
 require_tracked "$MEMPOOL_CARGO"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_SOURCE"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_TEST"
+require_tracked "$NATIVE_APPLICATION_CARGO"
+require_tracked "$NATIVE_APPLICATION_SOURCE"
+require_tracked "$NATIVE_APPLICATION_SQLITE_CARGO"
+require_tracked "$NATIVE_APPLICATION_SQLITE_SOURCE"
+require_tracked "$NATIVE_APPLICATION_SQLITE_STORE_SOURCE"
 require_tracked "$NATIVE_EXECUTION_CARGO"
 require_tracked "$NATIVE_EXECUTION_SOURCE"
 require_tracked "$NATIVE_EXECUTION_DURABLE_SOURCE"
@@ -305,6 +320,10 @@ require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-consensus-signer-journal/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-mempool/**"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "trillionnium/crates/trnm-native-application/**"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "trillionnium/crates/trnm-native-application-sqlite/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-native-execution-v0/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
@@ -372,6 +391,14 @@ require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-mempool --all-targets'
 require_literal "$POCO_WORKFLOW" \
   'cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-native-application --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-native-application-sqlite --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-native-application --all-targets --no-deps -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-native-application-sqlite --all-targets --no-deps -- -D warnings'
 require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-native-execution-v0 --all-targets'
 require_literal "$POCO_WORKFLOW" \
@@ -894,6 +921,30 @@ require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'RecheckUnavailable'
 require_literal "$MEMPOOL_TYPED_ADMISSION_TEST" 'typed_admission_stays_key_free_and_explicitly_non_durable'
 reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'SigningKey'
 reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'PrivateKey'
+
+# The canonical node directly depends on the native application boundary and
+# its SQLite validation store. Keep both packages in the same trigger/test/lint
+# contract while preserving their explicit non-production status.
+require_literal "$NODE_CARGO" \
+  'trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }'
+require_literal "$NODE_CARGO" \
+  'trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }'
+require_literal "$NATIVE_APPLICATION_SOURCE" 'pub trait NativeApplicationV0'
+require_literal "$NATIVE_APPLICATION_CARGO" \
+  'implementation_status = "boundary-scaffold"'
+require_literal "$NATIVE_APPLICATION_CARGO" \
+  'node_application_engine_integration = false'
+require_literal "$NATIVE_APPLICATION_CARGO" 'production_candidate = false'
+require_literal "$NATIVE_APPLICATION_SQLITE_STORE_SOURCE" \
+  'pub struct ProposalValidationStoreScopeV0'
+require_literal "$NATIVE_APPLICATION_SQLITE_CARGO" \
+  'native_application_v0_implementation = false'
+require_literal "$NATIVE_APPLICATION_SQLITE_CARGO" \
+  'node_process_integration = false'
+require_literal "$NATIVE_APPLICATION_SQLITE_CARGO" \
+  'complete_crash_recovery = false'
+require_literal "$NATIVE_APPLICATION_SQLITE_CARGO" \
+  'production_candidate = false'
 
 # Native execution is the canonical state-root/JMT candidate dependency of the
 # node scaffold.  Keep it in the same CI boundary while preserving its explicit

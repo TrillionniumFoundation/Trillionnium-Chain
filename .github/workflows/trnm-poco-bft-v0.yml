@@ -41,6 +41,8 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-application/**"
+      - "trillionnium/crates/trnm-native-application-sqlite/**"
       - "trillionnium/crates/trnm-native-execution-v0/**"
       - "trillionnium/crates/trnm-consensus-external-watermark/**"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
@@ -96,6 +98,8 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-application/**"
+      - "trillionnium/crates/trnm-native-application-sqlite/**"
       - "trillionnium/crates/trnm-native-execution-v0/**"
       - "trillionnium/crates/trnm-consensus-external-watermark/**"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
@@ -304,6 +308,8 @@ jobs:
           set -euo pipefail
           cargo test --locked -p trnm-consensus-types
           cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-native-application --all-targets
+          cargo test --locked -p trnm-native-application-sqlite --all-targets
           cargo test --locked -p trnm-native-execution-v0 --all-targets
           cargo test --locked -p trnm-mempool --all-targets
           cargo test --locked -p trnm-consensus-external-watermark --all-targets
@@ -337,6 +343,8 @@ jobs:
           set -euo pipefail
           cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-native-application --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-native-application-sqlite --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-native-execution-v0 --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings
