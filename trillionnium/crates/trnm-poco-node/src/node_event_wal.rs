@@ -1427,6 +1427,7 @@ mod tests {
                 break;
             }
             if let Some(status) = child.try_wait().expect("poll WAL crash child") {
+                let _ = child.kill();
                 panic!("WAL crash child exited before readiness: {status}");
             }
             thread::sleep(Duration::from_millis(10));
