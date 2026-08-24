@@ -838,6 +838,12 @@ type ActiveFenceKeyV0 = (PeerDirectionV0, ValidatorId);
 struct ActiveFenceEntryV1 {
     token: ExternalPeerLeaseTokenV1,
     next_renew_at: Instant,
+    /// Set only after the external peer authority confirms release.  A
+    /// session with this bit set is kept until the independent host
+    /// attestation receipt is released as well; otherwise a failed host
+    /// cleanup would strand that receipt while allowing a new generation to
+    /// race into the same key.
+    external_release_confirmed: bool,
 }
 
 /// The mesh-owned view of externally fenced sessions.  Workers must acquire a
@@ -926,10 +932,23 @@ impl MeshFenceRegistryV1 {
         session_id: [u8; 32],
         generation: u64,
     ) -> Result<ExternalPeerLeaseTokenV1> {
+        let key = (direction, remote);
         let host_direction = match direction {
             PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
             PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
         };
+        // A pending host-attestation cleanup is still an occupied edge.  Do
+        // not call host.acquire for a new generation while the prior receipt
+        // is unresolved; doing so could overwrite the authority's active
+        // receipt before the old one is released.
+        if self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .contains_key(&key)
+        {
+            bail!("external fence key already has a live or pending token")
+        }
         if let Some(host_attestation) = &self.host_attestation {
             host_attestation
                 .acquire(host_direction, remote, session_id, generation)
@@ -962,27 +981,28 @@ impl MeshFenceRegistryV1 {
             }
             bail!("external fence returned a scope-mismatched token")
         }
-        let key = (direction, remote);
         let mut tokens = self
             .tokens
             .lock()
             .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
-        if tokens
-            .insert(
-                key,
-                ActiveFenceEntryV1 {
-                    token,
-                    next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
-                },
-            )
-            .is_some()
-        {
+        if tokens.contains_key(&key) {
+            drop(tokens);
             let _ = self.authority.release(token);
-            if let Some(host_attestation) = &self.host_attestation {
-                let _ = host_attestation.release(host_direction, remote);
-            }
-            bail!("external fence key already has a live token")
+            // The host receipt returned by the attempted admission is not
+            // retained as an exact token here.  A key-only cleanup could
+            // tear down the incumbent generation that won the race, so leave
+            // this ambiguous host state fail-closed for operator/process
+            // cleanup instead of releasing by direction alone.
+            bail!("external fence key already has a live or pending token")
         }
+        tokens.insert(
+            key,
+            ActiveFenceEntryV1 {
+                token,
+                next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                external_release_confirmed: false,
+            },
+        );
         Ok(token)
     }
 
@@ -996,6 +1016,9 @@ impl MeshFenceRegistryV1 {
             .get(&key)
             .copied()
             .ok_or_else(|| anyhow!("mesh frame path has no admitted external lease"))?;
+        if entry.external_release_confirmed {
+            bail!("mesh external lease is pending host-attestation release")
+        }
         let mut token = entry.token;
         if token.scope().local() != self.local || token.scope().context() != self.context {
             bail!("mesh external lease scope changed")
@@ -1024,6 +1047,7 @@ impl MeshFenceRegistryV1 {
                 ActiveFenceEntryV1 {
                     token,
                     next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                    external_release_confirmed: false,
                 },
             );
         } else {
@@ -1059,6 +1083,9 @@ impl MeshFenceRegistryV1 {
         let Some(entry) = tokens.get(&key).copied() else {
             return Ok(MeshFenceRenewalOutcomeV1::Missing);
         };
+        if entry.external_release_confirmed {
+            bail!("mesh external lease is pending host-attestation release")
+        }
         if entry.token.scope().local() != self.local
             || entry.token.scope().context() != self.context
         {
@@ -1079,6 +1106,7 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                external_release_confirmed: false,
             },
         );
         Ok(MeshFenceRenewalOutcomeV1::Renewed)
@@ -1142,6 +1170,9 @@ impl MeshFenceRegistryV1 {
             .get(&key)
             .copied()
             .ok_or_else(|| anyhow!("mesh renew has no admitted external lease"))?;
+        if entry.external_release_confirmed {
+            bail!("mesh external lease is pending host-attestation release")
+        }
         let renewed = self
             .authority
             .renew(entry.token)
@@ -1154,6 +1185,7 @@ impl MeshFenceRegistryV1 {
             ActiveFenceEntryV1 {
                 token: renewed,
                 next_renew_at: Instant::now() + fence_renew_interval(self.ttl),
+                external_release_confirmed: false,
             },
         );
         Ok(())
@@ -1161,27 +1193,81 @@ impl MeshFenceRegistryV1 {
 
     fn release(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
         let key = (direction, remote);
-        let token = self
+        // Keep the token in the local map until both authority boundaries
+        // confirm release.  Removing it first makes a transient authority
+        // failure unrecoverable: `release_all` can report the error, but a
+        // retry no longer has the token needed to clear the external lease.
+        let entry = self
             .tokens
             .lock()
             .map_err(|_| anyhow!("mesh fence token map poisoned"))?
-            .remove(&key);
-        if let Some(entry) = token {
-            self.authority
-                .release(entry.token)
-                .map_err(|error| anyhow!("external fence release failed: {error}"))?;
+            .get(&key)
+            .copied();
+        if let Some(entry) = entry {
+            if !entry.external_release_confirmed {
+                self.authority
+                    .release(entry.token)
+                    .map_err(|error| anyhow!("external fence release failed: {error}"))?;
+                // Do not hold the local mutex across the authority call.  If
+                // a reconnect replaced this key while the release was in
+                // flight, compare the token before changing state so the new
+                // generation is never accidentally discarded.
+                let mut tokens = self
+                    .tokens
+                    .lock()
+                    .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
+                let Some(current) = tokens.get_mut(&key) else {
+                    return Ok(());
+                };
+                if current.token != entry.token {
+                    return Ok(());
+                }
+                current.external_release_confirmed = true;
+            }
+
+            // A host receipt is an independent authority.  Only the exact
+            // entry whose peer lease was confirmed released may ask that
+            // authority to release; a replacement generation must never be
+            // torn down by a late cleanup callback.
+            let still_current = self
+                .tokens
+                .lock()
+                .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+                .get(&key)
+                .map(|current| current.token == entry.token && current.external_release_confirmed)
+                .unwrap_or(false);
+            if !still_current {
+                return Ok(());
+            }
+            if let Some(host_attestation) = &self.host_attestation {
+                host_attestation
+                    .release(
+                        match direction {
+                            PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
+                            PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
+                        },
+                        remote,
+                    )
+                    .map_err(|error| anyhow!("host attestation release failed: {error}"))?;
+            }
+
+            let mut tokens = self
+                .tokens
+                .lock()
+                .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
+            if tokens
+                .get(&key)
+                .map(|current| current.token == entry.token && current.external_release_confirmed)
+                .unwrap_or(false)
+            {
+                tokens.remove(&key);
+            }
+            return Ok(());
         }
-        if let Some(host_attestation) = &self.host_attestation {
-            host_attestation
-                .release(
-                    match direction {
-                        PeerDirectionV0::Inbound => ExternalPeerDirectionV1::Inbound,
-                        PeerDirectionV0::Outbound => ExternalPeerDirectionV1::Outbound,
-                    },
-                    remote,
-                )
-                .map_err(|error| anyhow!("host attestation release failed: {error}"))?;
-        }
+
+        // Without the retained peer token there is no authenticated
+        // generation with which to authorize a host-receipt release.  A
+        // key-only cleanup could tear down a newer generation's receipt.
         Ok(())
     }
 
@@ -3424,8 +3510,10 @@ mod tests {
     };
 
     use super::*;
-    use crate::p2p_admission::TestExternalPeerLeaseAuthorityV1;
-    use crate::p2p_host_attestation::RejectingHostAttestationAuthorityV1;
+    use crate::p2p_admission::{ExternalFenceError, TestExternalPeerLeaseAuthorityV1};
+    use crate::p2p_host_attestation::{
+        HostAttestationRequestV1, HostAttestationTokenV1, RejectingHostAttestationAuthorityV1,
+    };
 
     const TEST_RUN_ID: &str = "poco-g3-7-20260814T000000Z-mesh0001";
 
@@ -3538,6 +3626,111 @@ mod tests {
             _request: P2pIdentitySignatureRequestV1,
         ) -> Result<[u8; 64], P2pIdentityErrorV1> {
             Err(P2pIdentityErrorV1::Unavailable)
+        }
+    }
+
+    struct FailOnceReleaseAuthorityV1 {
+        inner: Arc<TestExternalPeerLeaseAuthorityV1>,
+        fail_next_release: AtomicBool,
+        release_calls: AtomicUsize,
+    }
+
+    impl FailOnceReleaseAuthorityV1 {
+        fn new(inner: Arc<TestExternalPeerLeaseAuthorityV1>) -> Self {
+            Self {
+                inner,
+                fail_next_release: AtomicBool::new(true),
+                release_calls: AtomicUsize::new(0),
+            }
+        }
+
+        fn release_calls(&self) -> usize {
+            self.release_calls.load(Ordering::Acquire)
+        }
+    }
+
+    impl ExternalPeerLeaseAuthorityV1 for FailOnceReleaseAuthorityV1 {
+        fn preflight(&self) -> Result<(), ExternalFenceError> {
+            self.inner.preflight()
+        }
+
+        fn acquire(
+            &self,
+            request: ExternalPeerLeaseRequestV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            self.inner.acquire(request)
+        }
+
+        fn renew(
+            &self,
+            token: ExternalPeerLeaseTokenV1,
+        ) -> Result<ExternalPeerLeaseTokenV1, ExternalFenceError> {
+            self.inner.renew(token)
+        }
+
+        fn revalidate(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.inner.revalidate(token)
+        }
+
+        fn release(&self, token: ExternalPeerLeaseTokenV1) -> Result<(), ExternalFenceError> {
+            self.release_calls.fetch_add(1, Ordering::AcqRel);
+            if self
+                .fail_next_release
+                .swap(false, std::sync::atomic::Ordering::AcqRel)
+            {
+                return Err(ExternalFenceError::Unavailable);
+            }
+            self.inner.release(token)
+        }
+    }
+
+    struct FailOnceHostReleaseAuthorityV1 {
+        fail_next_release: AtomicBool,
+        release_calls: AtomicUsize,
+    }
+
+    impl FailOnceHostReleaseAuthorityV1 {
+        fn new() -> Self {
+            Self {
+                fail_next_release: AtomicBool::new(true),
+                release_calls: AtomicUsize::new(0),
+            }
+        }
+
+        fn release_calls(&self) -> usize {
+            self.release_calls.load(Ordering::Acquire)
+        }
+    }
+
+    impl HostAttestationAuthorityV1 for FailOnceHostReleaseAuthorityV1 {
+        fn preflight_v1(&self) -> Result<(), HostAttestationErrorV1> {
+            Ok(())
+        }
+
+        fn admit_v1(
+            &self,
+            request: HostAttestationRequestV1,
+        ) -> Result<HostAttestationTokenV1, HostAttestationErrorV1> {
+            HostAttestationTokenV1::new(request.binding(), request.material(), 1)
+        }
+
+        fn revalidate_v1(
+            &self,
+            _token: HostAttestationTokenV1,
+        ) -> Result<(), HostAttestationErrorV1> {
+            Ok(())
+        }
+
+        fn release_v1(&self, _token: HostAttestationTokenV1) -> Result<(), HostAttestationErrorV1> {
+            self.release_calls.fetch_add(1, Ordering::AcqRel);
+            if self
+                .fail_next_release
+                .swap(false, std::sync::atomic::Ordering::AcqRel)
+            {
+                Err(HostAttestationErrorV1::AuthorityUnavailable)
+            } else {
+                Ok(())
+            }
         }
     }
 
@@ -4012,6 +4205,111 @@ mod tests {
         );
         assert!(result.is_err());
         assert_eq!(fences.active_count().unwrap(), 0);
+    }
+
+    #[test]
+    fn failed_external_release_retains_token_for_retry_v1() {
+        let remote = ValidatorId::new([0x55; 32]);
+        let local = ValidatorId::new([0x56; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x57; 32]).unwrap();
+        let backing = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let authority_impl = Arc::new(FailOnceReleaseAuthorityV1::new(Arc::clone(&backing)));
+        let authority: Arc<dyn ExternalPeerLeaseAuthorityV1> = authority_impl.clone();
+        let fences =
+            MeshFenceRegistryV1::new(authority, local, context, MESH_EXTERNAL_FENCE_TTL_V1)
+                .unwrap();
+        let token = fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x58; 32], 1)
+            .unwrap();
+
+        let error = fences
+            .release(PeerDirectionV0::Outbound, remote)
+            .unwrap_err();
+        assert!(error.to_string().contains("external fence release"));
+        assert_eq!(authority_impl.release_calls(), 1);
+        assert_eq!(fences.active_count().unwrap(), 1);
+        // The failed call did not clear the authority-side lease, so the
+        // retained token must remain usable for a retry.
+        backing.revalidate(token).unwrap();
+
+        fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+        assert_eq!(authority_impl.release_calls(), 2);
+        assert_eq!(fences.active_count().unwrap(), 0);
+        assert!(matches!(
+            backing.revalidate(token),
+            Err(ExternalFenceError::LeaseNotFound)
+        ));
+    }
+
+    #[test]
+    fn host_release_failure_keeps_confirmed_peer_token_for_host_retry_v1() {
+        let remote = ValidatorId::new([0x59; 32]);
+        let local = ValidatorId::new([0x5a; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x5b; 32]).unwrap();
+        let backing = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let host_authority = Arc::new(FailOnceHostReleaseAuthorityV1::new());
+        let host_registry = HostAttestationSessionRegistryV1::new(
+            host_authority.clone(),
+            local,
+            [0x5c; 32],
+            [0x5d; 32],
+            0,
+            context.validator_set_id(),
+            [0x5e; 32],
+            [0x5f; 32],
+            HostAttestationMaterialV1::from_bytes(vec![0x60]).unwrap(),
+        )
+        .unwrap();
+        let fences = MeshFenceRegistryV1::new_with_host_attestation(
+            backing.clone(),
+            local,
+            context,
+            MESH_EXTERNAL_FENCE_TTL_V1,
+            Some(host_registry.clone()),
+        )
+        .unwrap();
+        let session = [0x61; 32];
+        let generation = 1;
+        let token = fences
+            .acquire(PeerDirectionV0::Outbound, remote, session, generation)
+            .unwrap();
+
+        let error = fences
+            .release(PeerDirectionV0::Outbound, remote)
+            .unwrap_err();
+        assert!(error.to_string().contains("host attestation release"));
+        assert_eq!(host_authority.release_calls(), 1);
+        assert_eq!(fences.active_count().unwrap(), 1);
+        // The peer lease is already gone, but the host receipt remains and
+        // must keep this edge occupied until its own authority succeeds.
+        assert!(matches!(
+            backing.revalidate(token),
+            Err(ExternalFenceError::LeaseNotFound)
+        ));
+        assert!(host_registry
+            .admission(
+                ExternalPeerDirectionV1::Outbound,
+                remote,
+                session,
+                generation,
+            )
+            .is_ok());
+        assert!(fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x62; 32], 2)
+            .is_err());
+
+        fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+        assert_eq!(host_authority.release_calls(), 2);
+        assert_eq!(fences.active_count().unwrap(), 0);
+        assert!(matches!(
+            host_registry.admission(
+                ExternalPeerDirectionV1::Outbound,
+                remote,
+                session,
+                generation,
+            ),
+            Err(HostAttestationErrorV1::LeaseNotFound)
+        ));
     }
 
     #[test]
