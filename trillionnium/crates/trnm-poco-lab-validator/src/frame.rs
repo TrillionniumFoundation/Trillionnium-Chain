@@ -177,6 +177,7 @@ impl FrameReplayWindow {
     }
 
     pub fn admit(&mut self, frame: &AuthenticatedFrame) -> Result<(), FrameError> {
+        validate_session_id(&frame.session)?;
         let key = (frame.sender, frame.session);
         if let Some(head) = self.heads.get_mut(&key) {
             if frame.sequence <= *head {
@@ -209,6 +210,7 @@ impl From<io::Error> for FrameError {
 impl AuthenticatedFrame {
     pub fn encode(&self, run_id: &str, key: &SigningKey) -> Result<Vec<u8>, FrameError> {
         validate_run_id_bytes(run_id.as_bytes())?;
+        validate_session_id(&self.session)?;
         if self.sender.as_bytes().len() != 32 {
             return Err(FrameError::Malformed("G3 validator ID must be 32 bytes"));
         }
@@ -258,6 +260,7 @@ impl AuthenticatedFrame {
         producer: &mut dyn P2pIdentitySignatureProducerV1,
     ) -> Result<Vec<u8>, FrameError> {
         validate_run_id_bytes(run_id.as_bytes())?;
+        validate_session_id(&self.session)?;
         if self.sender.as_bytes().len() != 32 || remote.is_zero() {
             return Err(FrameError::Malformed("G3 frame identity is invalid"));
         }
@@ -344,6 +347,7 @@ impl AuthenticatedFrame {
             .p2p_identity_public_key_v1(sender)
             .ok_or(FrameError::UnknownSender)?;
         let session = take_array(body, &mut cursor, "session")?;
+        validate_session_id(&session)?;
         let sequence = u64::from_be_bytes(take_array(body, &mut cursor, "sequence")?);
         let kind = FrameKind::try_from(
             *take_exact(body, &mut cursor, 1, "kind")?
@@ -503,6 +507,13 @@ pub(crate) fn validate_run_id_bytes(value: &[u8]) -> Result<(), FrameError> {
     Ok(())
 }
 
+fn validate_session_id(value: &[u8; 32]) -> Result<(), FrameError> {
+    if value == &[0; 32] {
+        return Err(FrameError::Malformed("zero session ID"));
+    }
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -658,6 +669,19 @@ mod tests {
         assert!(matches!(
             oversize.encode("poco-g3-7-20260813T160000Z-0123abcd", &key),
             Err(FrameError::TooLarge)
+        ));
+        let zero_session = AuthenticatedFrame {
+            session: [0; 32],
+            ..frame
+        };
+        assert!(matches!(
+            zero_session.encode("poco-g3-7-20260813T160000Z-0123abcd", &key),
+            Err(FrameError::Malformed("zero session ID"))
+        ));
+        let mut replay_window = FrameReplayWindow::new(1).unwrap();
+        assert!(matches!(
+            replay_window.admit(&zero_session),
+            Err(FrameError::Malformed("zero session ID"))
         ));
     }
 
