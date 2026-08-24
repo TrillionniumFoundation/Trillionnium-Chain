@@ -36,6 +36,14 @@ impl ValidatorKeyRoleBindingV1 {
         p2p_identity_public_key: [u8; 32],
         operator_recovery_public_key: [u8; 32],
     ) -> Result<Self, ValidatorKeyRoleErrorV1> {
+        // The v1 role-binding wire format has a fixed 32-byte identity slot.
+        // ValidatorId itself also supports bounded variable-length CEV0
+        // bytes, so reject those values at this constructor boundary instead
+        // of allowing encode_exact/registry_digest to panic or silently
+        // produce a differently scoped record.
+        if validator_id.as_bytes().len() != 32 {
+            return Err(ValidatorKeyRoleErrorV1::InvalidValidatorId);
+        }
         for key in [
             consensus_public_key,
             p2p_identity_public_key,
@@ -209,6 +217,7 @@ pub enum ValidatorKeyRoleErrorV1 {
     WrongLength,
     WrongMagic,
     WrongSchema,
+    InvalidValidatorId,
     InvalidEd25519Key,
     WeakEd25519Key,
     RoleKeyReuse,
@@ -224,6 +233,9 @@ impl fmt::Display for ValidatorKeyRoleErrorV1 {
             Self::WrongLength => "validator key-role binding has the wrong length",
             Self::WrongMagic => "validator key-role binding has the wrong magic",
             Self::WrongSchema => "validator key-role binding has the wrong schema",
+            Self::InvalidValidatorId => {
+                "validator key-role binding requires a 32-byte validator ID"
+            }
             Self::InvalidEd25519Key => "validator key-role binding contains a non-Ed25519 key",
             Self::WeakEd25519Key => "validator key-role binding contains a weak Ed25519 key",
             Self::RoleKeyReuse => "validator key-role registry reuses a public key",
@@ -352,6 +364,21 @@ mod tests {
         assert_eq!(
             ValidatorKeyRoleBindingV1::decode_exact(&mutated),
             Err(ValidatorKeyRoleErrorV1::ChecksumMismatch)
+        );
+    }
+
+    #[test]
+    fn variable_length_validator_id_is_rejected_before_fixed_wire_encoding() {
+        let (_, bindings, _) = fixture();
+        let short_id = ValidatorId::from_bytes(&[0x99; 31]).unwrap();
+        assert_eq!(
+            ValidatorKeyRoleBindingV1::new(
+                short_id,
+                bindings[0].consensus_public_key(),
+                bindings[0].p2p_identity_public_key(),
+                bindings[0].operator_recovery_public_key(),
+            ),
+            Err(ValidatorKeyRoleErrorV1::InvalidValidatorId)
         );
     }
 
