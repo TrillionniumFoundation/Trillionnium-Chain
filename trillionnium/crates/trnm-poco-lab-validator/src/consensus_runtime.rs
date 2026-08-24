@@ -85,7 +85,9 @@ use crate::{
         RuntimeEventKindV1, RuntimeEventSignatureProducerV1, RuntimeRestartPhaseV1,
     },
     recovery_zero_delta_store::{persist_recovery_zero_delta_cut_v1, StoredRecoveryZeroDeltaCutV1},
-    relay::{required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0},
+    relay::{
+        required_ring_relay_hops_v0, ConsensusRelayEnvelopeV0, MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
+    },
     restart_cut::{
         LocalRestartParkV1, RestartCutBodyV1, RestartCutStateV1, RestartParkRoleV1,
         RestartSharedCutV1, SignedRestartCutV1,
@@ -102,7 +104,7 @@ use crate::{
     restart_protocol::{
         AdmittedRestartProtocolMessageV1, BoundedRestartProtocolIngressV1,
         RestartProtocolOriginReservationV1, RestartProtocolPhaseV1, RestartRelayAdmissionWindowV1,
-        RoutedRestartProtocolActionV1,
+        RoutedRestartProtocolActionV1, MAX_RESTART_PROTOCOL_PAYLOAD_BYTES_V1,
     },
     runtime_control::{
         write_runtime_control_status_v1, RuntimeControlPollV1, RuntimeControlServerV1,
@@ -4802,9 +4804,18 @@ impl BoundedConsensusOwnerV1 {
                             frame.kind == FrameKind::ConsensusRelay,
                             "sparse consensus runtime rejects direct consensus frames"
                         );
-                        let envelope = ConsensusRelayEnvelopeV0::decode(
+                        let inner_kind = ConsensusRelayEnvelopeV0::inner_kind_hint(&frame.payload)
+                            .map_err(|error| anyhow!("peek sparse relay kind: {error}"))?;
+                        let maximum_inner_payload_bytes = if is_restart_protocol_kind_v1(inner_kind)
+                        {
+                            MAX_RESTART_PROTOCOL_PAYLOAD_BYTES_V1
+                        } else {
+                            MAX_RELAY_INNER_PAYLOAD_BYTES_V0
+                        };
+                        let envelope = ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(
                             &frame.payload,
                             self.config.validator_set(),
+                            maximum_inner_payload_bytes,
                         )
                         .map_err(|error| anyhow!("decode sparse consensus relay: {error}"))?;
                         if matches!(

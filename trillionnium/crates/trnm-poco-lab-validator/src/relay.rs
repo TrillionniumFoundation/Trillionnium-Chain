@@ -168,10 +168,59 @@ impl ConsensusRelayEnvelopeV0 {
         output
     }
 
+    /// Reads the authenticated relay header's inner kind without copying its
+    /// payload.  Sparse runtimes use this bounded hint to select a
+    /// kind-specific decode ceiling before the generic envelope decoder can
+    /// allocate any inner bytes.
+    pub fn inner_kind_hint(bytes: &[u8]) -> Result<FrameKind, ConsensusRelayErrorV0> {
+        if bytes.len() < FIXED_BYTES || bytes.len() > MAX_FRAME_PAYLOAD_BYTES {
+            return Err(ConsensusRelayErrorV0::PayloadSize);
+        }
+        if &bytes[..RELAY_MAGIC.len()] != RELAY_MAGIC {
+            return Err(ConsensusRelayErrorV0::Malformed("magic"));
+        }
+        let version_start = RELAY_MAGIC.len();
+        let version_end = version_start + std::mem::size_of::<u16>();
+        if u16::from_be_bytes(
+            bytes[version_start..version_end]
+                .try_into()
+                .expect("fixed relay version width"),
+        ) != RELAY_VERSION
+        {
+            return Err(ConsensusRelayErrorV0::Malformed("version"));
+        }
+        let kind_offset = RELAY_MAGIC.len() + std::mem::size_of::<u16>() + 32;
+        FrameKind::try_from(bytes[kind_offset])
+            .map_err(|_| ConsensusRelayErrorV0::Malformed("inner kind"))
+    }
+
     pub fn decode(
         bytes: &[u8],
         validator_set: &ValidatorSet,
     ) -> Result<Self, ConsensusRelayErrorV0> {
+        Self::decode_with_inner_payload_limit(
+            bytes,
+            validator_set,
+            MAX_RELAY_INNER_PAYLOAD_BYTES_V0,
+        )
+    }
+
+    /// Decodes an envelope while applying a caller-supplied inner-payload
+    /// ceiling before copying the payload out of the input frame.  Generic
+    /// relay framing permits the full transport budget, but restart/fleet
+    /// sub-protocols have materially smaller limits; those callers must pass
+    /// their kind-specific bound here so a valid outer signature cannot force
+    /// an oversized allocation before deterministic rejection.
+    pub fn decode_with_inner_payload_limit(
+        bytes: &[u8],
+        validator_set: &ValidatorSet,
+        maximum_inner_payload_bytes: usize,
+    ) -> Result<Self, ConsensusRelayErrorV0> {
+        if maximum_inner_payload_bytes == 0
+            || maximum_inner_payload_bytes > MAX_RELAY_INNER_PAYLOAD_BYTES_V0
+        {
+            return Err(ConsensusRelayErrorV0::PayloadSize);
+        }
         if bytes.len() < FIXED_BYTES || bytes.len() > MAX_FRAME_PAYLOAD_BYTES {
             return Err(ConsensusRelayErrorV0::PayloadSize);
         }
@@ -189,6 +238,9 @@ impl ConsensusRelayEnvelopeV0 {
         let payload_len = u32::from_be_bytes(cursor.array()?) as usize;
         if payload_len == 0 || payload_len.checked_add(FIXED_BYTES) != Some(bytes.len()) {
             return Err(ConsensusRelayErrorV0::Malformed("payload length"));
+        }
+        if payload_len > maximum_inner_payload_bytes {
+            return Err(ConsensusRelayErrorV0::PayloadSize);
         }
         let payload = cursor.take(payload_len)?.to_vec();
         let origin_signature = cursor.array()?;
@@ -653,6 +705,34 @@ mod tests {
             RelayAdmissionV0::ExactReplay
         );
         assert_eq!(window.len(), 1);
+    }
+
+    #[test]
+    fn kind_specific_decode_rejects_payload_before_copying_inner_bytes() {
+        let (set, first, _) = fixture();
+        let key = SigningKey::from_bytes(&[0x31; 32]);
+        let envelope = ConsensusRelayEnvelopeV0::new(
+            first,
+            FrameKind::RestartPrepare,
+            1,
+            vec![0x5a; 4],
+            &set,
+            &key,
+        )
+        .unwrap();
+        let encoded = envelope.encode();
+        assert_eq!(
+            ConsensusRelayEnvelopeV0::inner_kind_hint(&encoded).unwrap(),
+            FrameKind::RestartPrepare
+        );
+        assert_eq!(
+            ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(&encoded, &set, 3),
+            Err(ConsensusRelayErrorV0::PayloadSize)
+        );
+        assert_eq!(
+            ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(&encoded, &set, 4).unwrap(),
+            envelope
+        );
     }
 
     #[test]

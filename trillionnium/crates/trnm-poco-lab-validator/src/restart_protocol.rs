@@ -842,7 +842,11 @@ impl BoundedRestartProtocolIngressV1 {
         if self.validator_set.validator(outer.sender).is_none() {
             return Err(RestartProtocolIngressErrorV1::UnknownSender);
         }
-        let envelope = ConsensusRelayEnvelopeV0::decode(&outer.payload, &self.validator_set)?;
+        let envelope = ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(
+            &outer.payload,
+            &self.validator_set,
+            MAX_RESTART_PROTOCOL_PAYLOAD_BYTES_V1,
+        )?;
         let embedded = envelope.embedded_statement_frame();
         let message = decode_authenticated_restart_frame_v1(&embedded, &self.validator_set)?;
         let message_id = message.message_id();

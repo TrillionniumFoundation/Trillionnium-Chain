@@ -1152,8 +1152,12 @@ pub fn decode_authenticated_relayed_restart_catchup_frame_v1(
     if validator_set.validator(frame.sender).is_none() {
         return Err(RestartCatchupErrorV1::UnknownOuterSender);
     }
-    let envelope = ConsensusRelayEnvelopeV0::decode(&frame.payload, validator_set)
-        .map_err(|_| RestartCatchupErrorV1::InvalidRelayEnvelope)?;
+    let envelope = ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(
+        &frame.payload,
+        validator_set,
+        MAX_RESTART_CATCHUP_WIRE_BYTES_V1,
+    )
+    .map_err(|_| RestartCatchupErrorV1::InvalidRelayEnvelope)?;
     if envelope.inner_kind() != FrameKind::RestartCatchup {
         return Err(RestartCatchupErrorV1::UnsupportedFrameKind);
     }
