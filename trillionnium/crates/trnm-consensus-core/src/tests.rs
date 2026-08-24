@@ -1,4 +1,8 @@
-use alloc::{boxed::Box, vec, vec::Vec};
+use ::core::{
+    cell::{Cell, RefCell},
+    sync::atomic::{AtomicUsize, Ordering},
+};
+use alloc::{boxed::Box, collections::BTreeSet, vec, vec::Vec};
 
 use trnm_consensus_safety_rules::InertSafetyTransitionKindV1;
 use trnm_consensus_types::{
@@ -76,6 +80,67 @@ impl SignatureVerifier for RejectSignatures {
         _signature: &SignatureBytes,
     ) -> bool {
         false
+    }
+}
+
+/// Records every delegated crypto call while retaining the deterministic test
+/// signature semantics. The admission-cache tests assert that raw calls are
+/// exactly the number of unique `(validator, root, signature)` tuples.
+type RecordedSignatureKey = (ValidatorId, [u8; 32], [u8; 64]);
+
+#[derive(Debug, Default)]
+struct RecordingSignatures {
+    calls: AtomicUsize,
+    unique: RefCell<BTreeSet<RecordedSignatureKey>>,
+    accept: Cell<bool>,
+}
+
+impl RecordingSignatures {
+    fn accepting() -> Self {
+        Self {
+            calls: AtomicUsize::new(0),
+            unique: RefCell::new(BTreeSet::new()),
+            accept: Cell::new(true),
+        }
+    }
+
+    fn rejecting() -> Self {
+        Self {
+            calls: AtomicUsize::new(0),
+            unique: RefCell::new(BTreeSet::new()),
+            accept: Cell::new(false),
+        }
+    }
+
+    fn calls(&self) -> usize {
+        self.calls.load(Ordering::Relaxed)
+    }
+
+    fn unique_calls(&self) -> usize {
+        self.unique.borrow().len()
+    }
+}
+
+impl SignatureVerifier for RecordingSignatures {
+    fn verify(
+        &self,
+        validator: &Validator,
+        signing_root: &SigningRoot,
+        signature: &SignatureBytes,
+    ) -> bool {
+        self.calls.fetch_add(1, Ordering::Relaxed);
+        let valid = signature.as_bytes()[..32] == signing_root.as_bytes()[..]
+            && signature.as_bytes()[32..] == signing_root.as_bytes()[..];
+        if self.accept.get() && valid {
+            self.unique.borrow_mut().insert((
+                validator.id(),
+                *signing_root.as_bytes(),
+                *signature.as_bytes(),
+            ));
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -612,6 +677,122 @@ fn configured_core_with_parameters(parameters: ConsensusParametersV0) -> (CoreCo
     let core =
         Core::new(config.clone(), genesis_qc(&set), &RootSignatures).expect("valid bootstrap");
     (config, core)
+}
+
+fn assert_one_crypto_pass(input: Input) {
+    let (_config, mut core) = configured_core();
+    let verifier = RecordingSignatures::accepting();
+    let result = core.step(input, &verifier);
+    assert!(
+        result.is_ok(),
+        "authenticated input was rejected: {result:?}"
+    );
+    assert_eq!(
+        verifier.calls(),
+        verifier.unique_calls(),
+        "one input caused duplicate underlying signature verification"
+    );
+}
+
+#[test]
+fn preauthentication_cache_covers_all_peer_message_kinds() {
+    let (config, _core) = configured_core();
+    let set = config.validator_set();
+    let parent = BlockId::new([0x31; 32]);
+    let ordinary_qc = qc(set, 1, 1, parent);
+
+    assert_one_crypto_pass(Input::Proposal(Box::new(proposal(
+        set,
+        genesis_qc(set),
+        1,
+        b"preauth-proposal",
+    ))));
+    assert_one_crypto_pass(Input::SyncedProposal(Box::new(proposal(
+        set,
+        genesis_qc(set),
+        1,
+        b"preauth-synced",
+    ))));
+    assert_one_crypto_pass(Input::Vote(signed_vote(set, 1, 1, parent, validator_id(1))));
+    assert_one_crypto_pass(Input::TimeoutVote(timeout_vote(
+        set,
+        2,
+        QcRef::from(&ordinary_qc),
+        validator_id(1),
+    )));
+    assert_one_crypto_pass(Input::QuorumCertificate(ordinary_qc.clone()));
+    assert_one_crypto_pass(Input::TimeoutCertificate(timeout_certificate(
+        set,
+        2,
+        ordinary_qc,
+    )));
+}
+
+#[test]
+fn preauthentication_token_is_exact_and_process_local() {
+    let (config, core) = configured_core();
+    let set = config.validator_set();
+    let first = Input::Vote(signed_vote(
+        set,
+        1,
+        1,
+        BlockId::new([0x41; 32]),
+        validator_id(1),
+    ));
+    let altered = Input::Vote(signed_vote(
+        set,
+        1,
+        1,
+        BlockId::new([0x42; 32]),
+        validator_id(1),
+    ));
+    let token = core
+        .preauthentication_token_v0(&first)
+        .expect("token digest should be computable")
+        .expect("vote must be a peer input");
+    assert!(core
+        .validate_preauthentication_token_v0(&first, &token)
+        .is_ok());
+    assert!(
+        core.validate_preauthentication_token_v0(&altered, &token)
+            .is_err(),
+        "changing the signed input must invalidate the old token"
+    );
+    let public_clone = core.clone();
+    assert!(
+        public_clone
+            .validate_preauthentication_token_v0(&first, &token)
+            .is_err(),
+        "a public Core clone must not accept another Core's token"
+    );
+    let transactional_clone = core.transactional_clone_v0();
+    assert!(
+        transactional_clone
+            .validate_preauthentication_token_v0(&first, &token)
+            .is_ok(),
+        "the private transactional clone must preserve the admission affinity"
+    );
+}
+
+#[test]
+fn failed_preauthentication_does_not_authorize_a_later_retry() {
+    let (config, mut core) = configured_core();
+    let vote = Input::Vote(signed_vote(
+        config.validator_set(),
+        1,
+        1,
+        BlockId::new([0x51; 32]),
+        validator_id(1),
+    ));
+    let verifier = RecordingSignatures::rejecting();
+    assert!(core.step(vote.clone(), &verifier).is_err());
+    let failed_calls = verifier.calls();
+    verifier.accept.set(true);
+    assert!(core.step(vote, &verifier).is_ok());
+    assert!(
+        verifier.calls() > failed_calls,
+        "a failed admission must not reuse a cached positive verification"
+    );
 }
 
 fn canonical_sign_intent_for_test(

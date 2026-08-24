@@ -1068,10 +1068,13 @@ epoch prune, and Core transition remain open.
    evidence/audit continuity is not implemented.
 2. Signed inputs are now preauthenticated before the transactional core clone,
    and immutable payload storage is shared across clones with `Arc<[u8]>`.
-   Production handlers nevertheless repeat the same cryptographic verification
-   after admission. Remove that duplicate CPU work without allowing an
-   unverified value to enter a safety transition, and finish bounded decode and
-   authenticated-cache admission for the node boundary.
+   A process-local, exact-input/configuration-bound verifier cache now removes
+   duplicate successful signature work across admission and the production
+   handlers. The cache is positive-only, capped, non-serializable, and never
+   supplies structural, ancestry, or safety authority; a full cache falls back
+   to the underlying verifier. Bounded wire decode and authenticated-cache
+   admission at the node boundary, plus the broader host validation contract,
+   remain open.
 3. The specification now freezes `Valid`, retryable `Unavailable`, and
    terminal `DeterministicallyInvalid`, including non-poisoning alternate-
    source retry and durable fail-stop on authenticated/durable or terminal-

@@ -642,8 +642,18 @@ reject_literal "$G3_LAN_FLEET_GATE" 'RestartCut-joined process2'
 # Keep the implementation/test anchors and exact claim boundary machine-checked.
 require_literal "$CORE_SOURCE" \
   'pub fn begin_payload_validation_obligation_recovery_v0<V: SignatureVerifier>('
+require_literal "$CORE_SOURCE" \
+  'const PREAUTHENTICATION_CACHE_MAX_ENTRIES_V0: usize = 256;'
+require_literal "$CORE_SOURCE" 'struct PreauthenticationVerifierV0<'
+require_literal "$CORE_SOURCE" 'fn step_with_preauthenticated_token_v0<V: SignatureVerifier>('
 require_literal "$CORE_TESTS" \
   'fn recovery_with_a_claimed_durable_validation_fails_closed_without_reopening_it()'
+require_literal "$CORE_TESTS" \
+  'fn preauthentication_cache_covers_all_peer_message_kinds()'
+require_literal "$CORE_TESTS" \
+  'fn preauthentication_token_is_exact_and_process_local()'
+require_literal "$CORE_TESTS" \
+  'fn failed_preauthentication_does_not_authorize_a_later_retry()'
 require_literal "$CORE_TESTS" \
   'fn proposal_obligation_recovery_rebuilds_the_exact_target_before_invalid_callback()'
 require_literal "$CORE_TESTS" \

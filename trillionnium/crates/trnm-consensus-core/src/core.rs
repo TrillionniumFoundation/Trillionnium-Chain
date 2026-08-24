@@ -1,5 +1,14 @@
-use alloc::{boxed::Box, collections::BTreeMap, sync::Arc, vec, vec::Vec};
-use core::sync::atomic::{AtomicBool, Ordering};
+use alloc::{
+    boxed::Box,
+    collections::{BTreeMap, BTreeSet},
+    sync::Arc,
+    vec,
+    vec::Vec,
+};
+use core::{
+    cell::RefCell,
+    sync::atomic::{AtomicBool, Ordering},
+};
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::{
@@ -8,10 +17,11 @@ use trnm_consensus_safety_rules::{
 };
 use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
-    CanonicalSignIntentV0, CertificateId, ConsensusParametersV0, ContextAuthorizedQcV0, Epoch,
-    EpochGeometryV0, EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height, QcRef,
-    QcReferenceV0, QuorumCertificate, RootBoundRegularBodyV0, SignatureVerifier, SignedProposalV0,
-    TimeoutCertificateV0, TimeoutVote, ValidationError, ValidatorId, ValidatorSet, View, Vote,
+    CanonicalSignIntentV0, CanonicalSignable, CertificateId, ConsensusParametersV0,
+    ContextAuthorizedQcV0, Epoch, EpochGeometryV0, EquivocationEvidence, FinalityProofV0,
+    GenesisQcV0, Height, QcRef, QcReferenceV0, QuorumCertificate, RootBoundRegularBodyV0,
+    SignatureVerifier, SignedProposalV0, TimeoutCertificateV0, TimeoutVote, ValidationError,
+    ValidatorId, ValidatorSet, View, Vote,
 };
 
 use crate::{
@@ -45,6 +55,26 @@ const FINALIZED_PREFIX_CHAIN_ROOT_DOMAIN_V0: &str =
     "trnm.consensus-core.finalized-prefix-chain-root.v0";
 const ANCHORED_ORDINARY_REHYDRATE_DIGEST_DOMAIN_V0: &str =
     "trnm.consensus-core.anchored-ordinary-rehydrate.v0";
+const PREAUTHENTICATION_CONTEXT_DIGEST_DOMAIN_V0: &str =
+    "trnm.consensus-core.preauthentication-context.v0";
+const PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0: &str =
+    "trnm.consensus-core.preauthentication-input.v0";
+// This is a performance bound only. If one message contains more distinct
+// signatures, the verifier safely falls back to the underlying verifier after
+// the bound is reached; no acceptance decision depends on cache residency.
+const PREAUTHENTICATION_CACHE_MAX_ENTRIES_V0: usize = 256;
+
+fn preauthentication_hash_v0(domain: &str, parts: &[&[u8]]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.domain.hash.v1");
+    hasher.update((domain.len() as u64).to_be_bytes());
+    hasher.update(domain.as_bytes());
+    for part in parts {
+        hasher.update((part.len() as u64).to_be_bytes());
+        hasher.update(part);
+    }
+    hasher.finalize().into()
+}
 
 /// Recovery-stable commitment to the exact Core-authenticated finalized
 /// prefix. This is not a per-block Merkle accumulator: the finalized block ID
@@ -160,6 +190,123 @@ impl PartialEq for CorePersistenceAffinityV0 {
 }
 
 impl Eq for CorePersistenceAffinityV0 {}
+
+/// Process-local identity for one live Core's admission boundary.
+///
+/// A preauthentication token carries this identity in addition to its
+/// content digests. Public Core clones and recovered Cores receive a fresh
+/// identity; only the private transactional clone preserves it. Consequently
+/// a token cannot become a cross-Core or cross-restart authority even when the
+/// input and configuration bytes happen to be identical.
+#[derive(Debug)]
+struct CorePreauthenticationAffinityV0(Arc<()>);
+
+impl CorePreauthenticationAffinityV0 {
+    fn new() -> Self {
+        Self(Arc::new(()))
+    }
+
+    fn preserve(&self) -> Self {
+        Self(Arc::clone(&self.0))
+    }
+}
+
+impl Clone for CorePreauthenticationAffinityV0 {
+    fn clone(&self) -> Self {
+        Self::new()
+    }
+}
+
+impl PartialEq for CorePreauthenticationAffinityV0 {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+impl Eq for CorePreauthenticationAffinityV0 {}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PreauthenticatedInputKindV0 {
+    Proposal,
+    SyncedProposal,
+    Vote,
+    TimeoutVote,
+    QuorumCertificate,
+    TimeoutCertificate,
+}
+
+/// Private, one-step admission evidence. It is deliberately not serializable,
+/// not stored in `Core`/`SafetyState`, and not cloneable by callers.
+#[derive(Debug)]
+pub(crate) struct PreauthenticatedInputV0 {
+    affinity: Arc<()>,
+    kind: PreauthenticatedInputKindV0,
+    context_digest: [u8; 32],
+    input_digest: [u8; 32],
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct AuthenticationCacheKeyV0 {
+    context_digest: [u8; 32],
+    input_digest: [u8; 32],
+    validator_id: ValidatorId,
+    signing_root: [u8; 32],
+    signature: [u8; 64],
+}
+
+/// A per-step verifier wrapper. It memoizes only successful cryptographic
+/// checks, and only inside the exact token namespace. All structural,
+/// ancestry, epoch, lock, and state checks continue to execute in handlers.
+struct PreauthenticationVerifierV0<'a, V> {
+    verifier: &'a V,
+    context_digest: [u8; 32],
+    input_digest: [u8; 32],
+    max_entries: usize,
+    verified: RefCell<BTreeSet<AuthenticationCacheKeyV0>>,
+}
+
+impl<'a, V> PreauthenticationVerifierV0<'a, V> {
+    fn new(verifier: &'a V, token: &PreauthenticatedInputV0, max_entries: usize) -> Self {
+        Self {
+            verifier,
+            context_digest: token.context_digest,
+            input_digest: token.input_digest,
+            max_entries: max_entries.max(1),
+            verified: RefCell::new(BTreeSet::new()),
+        }
+    }
+}
+
+impl<V: SignatureVerifier> SignatureVerifier for PreauthenticationVerifierV0<'_, V> {
+    fn verify(
+        &self,
+        validator: &trnm_consensus_types::Validator,
+        signing_root: &trnm_consensus_types::SigningRoot,
+        signature: &trnm_consensus_types::SignatureBytes,
+    ) -> bool {
+        let key = AuthenticationCacheKeyV0 {
+            context_digest: self.context_digest,
+            input_digest: self.input_digest,
+            validator_id: validator.id(),
+            signing_root: *signing_root.as_bytes(),
+            signature: *signature.as_bytes(),
+        };
+        if self.verified.borrow().contains(&key) {
+            return true;
+        }
+        if !self.verifier.verify(validator, signing_root, signature) {
+            return false;
+        }
+        let mut verified = self.verified.borrow_mut();
+        if verified.len() < self.max_entries {
+            // A full cache is a performance boundary only. Returning the
+            // successful result without retaining it safely falls back to a
+            // fresh underlying verification on the next duplicate.
+            verified.insert(key);
+        }
+        true
+    }
+}
 
 /// Volatile identity of one exact Core-owned validation slot.
 ///
@@ -4909,6 +5056,7 @@ pub struct Core {
     recovered_validation_pending: Option<RecoveredPayloadValidationFenceV0>,
     recovered_native_finalization_applied: Option<RecoveredNativeFinalizationAppliedFenceV0>,
     persistence_affinity: CorePersistenceAffinityV0,
+    preauthentication_affinity: CorePreauthenticationAffinityV0,
     application_seal_affinity: CoreApplicationSealAffinityV0,
     application_finalization_affinity: CoreApplicationFinalizationAffinityV0,
 }
@@ -5015,9 +5163,10 @@ impl Core {
         ))
     }
 
-    fn transactional_clone_v0(&self) -> Self {
+    pub(crate) fn transactional_clone_v0(&self) -> Self {
         let mut cloned = self.clone();
         cloned.persistence_affinity = self.persistence_affinity.preserve();
+        cloned.preauthentication_affinity = self.preauthentication_affinity.preserve();
         cloned.application_seal_affinity = self.application_seal_affinity.preserve();
         cloned.application_finalization_affinity =
             self.application_finalization_affinity.preserve();
@@ -7290,6 +7439,227 @@ impl Core {
     }
 
     /// Applies one deterministic input and returns ordered effects.
+    fn preauthentication_context_digest_v0(&self) -> Result<[u8; 32]> {
+        let validator_set = self.config.validator_set().try_cev0_bytes()?;
+        let parameters_hash = self.config.consensus_parameters().hash();
+        let local_validator = self.config.local_validator();
+        let trusted_timestamp = self.config.trusted_genesis_timestamp_ms().to_be_bytes();
+        let max_blocks = (self.config.max_blocks() as u64).to_be_bytes();
+        let max_observed = (self.config.max_observed_messages() as u64).to_be_bytes();
+        let max_block_bytes = (self.config.max_block_bytes() as u64).to_be_bytes();
+        let max_time_step = self.config.max_block_time_step_ms().to_be_bytes();
+        let parent_binding = self
+            .config
+            .authenticated_genesis_application_parent_v0()
+            .map(|parent| parent.binding_ref_v0())
+            .unwrap_or([0; 32]);
+        let parent_present = [u8::from(
+            self.config
+                .authenticated_genesis_application_parent_v0()
+                .is_some(),
+        )];
+        Ok(preauthentication_hash_v0(
+            PREAUTHENTICATION_CONTEXT_DIGEST_DOMAIN_V0,
+            &[
+                &validator_set,
+                self.config.validator_set().chain_id().as_bytes(),
+                self.config.validator_set().genesis_hash().as_bytes(),
+                self.config.validator_set().id().as_bytes(),
+                self.config
+                    .validator_set()
+                    .protocol_version()
+                    .get()
+                    .to_be_bytes()
+                    .as_slice(),
+                parameters_hash.as_bytes(),
+                local_validator.as_bytes(),
+                &trusted_timestamp,
+                &max_blocks,
+                &max_observed,
+                &max_block_bytes,
+                &max_time_step,
+                &parent_present,
+                &parent_binding,
+            ],
+        ))
+    }
+
+    fn preauthentication_descriptor_v0(
+        &self,
+        input: &Input,
+    ) -> Result<Option<(PreauthenticatedInputKindV0, [u8; 32])>> {
+        let descriptor = match input {
+            Input::Proposal(proposal) => {
+                let kind = [0_u8];
+                let block_id = proposal.block().id();
+                let signing_root = proposal.proposal_signing_root();
+                let proposer = proposal.proposer();
+                (
+                    PreauthenticatedInputKindV0::Proposal,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[
+                            &kind,
+                            block_id.as_bytes(),
+                            signing_root.as_bytes(),
+                            proposer.as_bytes(),
+                            proposal.witness().proposer_signature().as_bytes(),
+                        ],
+                    ),
+                )
+            }
+            Input::SyncedProposal(proposal) => {
+                let kind = [1_u8];
+                let block_id = proposal.block().id();
+                let signing_root = proposal.proposal_signing_root();
+                let proposer = proposal.proposer();
+                (
+                    PreauthenticatedInputKindV0::SyncedProposal,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[
+                            &kind,
+                            block_id.as_bytes(),
+                            signing_root.as_bytes(),
+                            proposer.as_bytes(),
+                            proposal.witness().proposer_signature().as_bytes(),
+                        ],
+                    ),
+                )
+            }
+            Input::Vote(vote) => {
+                let kind = [2_u8];
+                (
+                    PreauthenticatedInputKindV0::Vote,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[
+                            &kind,
+                            vote.signing_root().as_bytes(),
+                            vote.author().as_bytes(),
+                            vote.signature().as_bytes(),
+                        ],
+                    ),
+                )
+            }
+            Input::TimeoutVote(vote) => {
+                let kind = [3_u8];
+                (
+                    PreauthenticatedInputKindV0::TimeoutVote,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[
+                            &kind,
+                            vote.signing_root().as_bytes(),
+                            vote.author().as_bytes(),
+                            vote.signature().as_bytes(),
+                        ],
+                    ),
+                )
+            }
+            Input::QuorumCertificate(certificate) => {
+                let kind = [4_u8];
+                (
+                    PreauthenticatedInputKindV0::QuorumCertificate,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[&kind, certificate.id().as_bytes()],
+                    ),
+                )
+            }
+            Input::TimeoutCertificate(certificate) => {
+                let kind = [5_u8];
+                (
+                    PreauthenticatedInputKindV0::TimeoutCertificate,
+                    preauthentication_hash_v0(
+                        PREAUTHENTICATION_INPUT_DIGEST_DOMAIN_V0,
+                        &[&kind, certificate.id().as_bytes()],
+                    ),
+                )
+            }
+            Input::Resume
+            | Input::LocalTimeout { .. }
+            | Input::PayloadValidated { .. }
+            | Input::SyncedPayloadValidated { .. }
+            | Input::CancelSyncedPayloadValidation { .. }
+            | Input::StorageAck { .. }
+            | Input::SafetyReplayComplete
+            | Input::SignatureReady { .. } => return Ok(None),
+        };
+        Ok(Some(descriptor))
+    }
+
+    pub(crate) fn preauthentication_token_v0(
+        &self,
+        input: &Input,
+    ) -> Result<Option<PreauthenticatedInputV0>> {
+        let Some((kind, input_digest)) = self.preauthentication_descriptor_v0(input)? else {
+            return Ok(None);
+        };
+        Ok(Some(PreauthenticatedInputV0 {
+            affinity: Arc::clone(&self.preauthentication_affinity.0),
+            kind,
+            context_digest: self.preauthentication_context_digest_v0()?,
+            input_digest,
+        }))
+    }
+
+    pub(crate) fn validate_preauthentication_token_v0(
+        &self,
+        input: &Input,
+        token: &PreauthenticatedInputV0,
+    ) -> Result<()> {
+        let Some((kind, input_digest)) = self.preauthentication_descriptor_v0(input)? else {
+            return Err(CoreError::InvalidRecovery(
+                "preauthentication token supplied for a non-peer input",
+            ));
+        };
+        if !Arc::ptr_eq(&token.affinity, &self.preauthentication_affinity.0)
+            || token.kind != kind
+            || token.input_digest != input_digest
+            || token.context_digest != self.preauthentication_context_digest_v0()?
+        {
+            return Err(CoreError::InvalidRecovery(
+                "preauthentication token does not bind this Core, input, and configuration",
+            ));
+        }
+        Ok(())
+    }
+
+    fn apply_authenticated<V: SignatureVerifier>(
+        &mut self,
+        input: Input,
+        verifier: &V,
+        token: &PreauthenticatedInputV0,
+    ) -> Result<Vec<Effect>> {
+        self.validate_preauthentication_token_v0(&input, token)?;
+        self.apply(input, verifier)
+    }
+
+    fn step_with_preauthenticated_token_v0<V: SignatureVerifier>(
+        &mut self,
+        input: Input,
+        verifier: &V,
+        token: &PreauthenticatedInputV0,
+    ) -> Result<Vec<Effect>> {
+        let cached = PreauthenticationVerifierV0::new(
+            verifier,
+            token,
+            PREAUTHENTICATION_CACHE_MAX_ENTRIES_V0,
+        );
+        // Keep the original admission-before-clone boundary. A malformed or
+        // unauthenticated peer message never causes a transactional snapshot
+        // or any bounded-state clone.
+        self.preauthenticate_input(&input, &cached)?;
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let effects = next.apply_authenticated(input, &cached, token)?;
+        next.validate_runtime(&cached, false)?;
+        next.validate_monotonic_transition(&previous_safety)?;
+        *self = next;
+        Ok(effects)
+    }
+
     pub fn step<V: SignatureVerifier>(
         &mut self,
         input: Input,
@@ -7301,17 +7671,23 @@ impl Core {
         // cannot perturb volatile observation caches.
         self.reject_while_busy(&input)?;
         // Authenticate peer-supplied consensus messages before cloning the
-        // transactional state snapshot. Handlers deliberately repeat these
-        // checks after the clone so this admission boundary does not change
-        // their validation order or semantics.
-        self.preauthenticate_input(&input, verifier)?;
-        let previous_safety = self.safety.clone();
-        let mut next = self.transactional_clone_v0();
-        let effects = next.apply(input, verifier)?;
-        next.validate_runtime(verifier, false)?;
-        next.validate_monotonic_transition(&previous_safety)?;
-        *self = next;
-        Ok(effects)
+        // transactional state snapshot. Handlers still repeat all structural,
+        // ancestry, and state checks after the clone; the private verifier
+        // wrapper only suppresses duplicate successful crypto calls.
+        let token = self.preauthentication_token_v0(&input)?;
+        match token.as_ref() {
+            Some(token) => self.step_with_preauthenticated_token_v0(input, verifier, token),
+            None => {
+                self.preauthenticate_input(&input, verifier)?;
+                let previous_safety = self.safety.clone();
+                let mut next = self.transactional_clone_v0();
+                let effects = next.apply(input, verifier)?;
+                next.validate_runtime(verifier, false)?;
+                next.validate_monotonic_transition(&previous_safety)?;
+                *self = next;
+                Ok(effects)
+            }
+        }
     }
 
     /// Transactional step used only by the narrow anchored-successor owner.
@@ -8077,6 +8453,7 @@ impl Core {
             recovered_validation_pending: None,
             recovered_native_finalization_applied: None,
             persistence_affinity: CorePersistenceAffinityV0::new(),
+            preauthentication_affinity: CorePreauthenticationAffinityV0::new(),
             application_seal_affinity: CoreApplicationSealAffinityV0::new(),
             application_finalization_affinity: CoreApplicationFinalizationAffinityV0::new(),
         }
