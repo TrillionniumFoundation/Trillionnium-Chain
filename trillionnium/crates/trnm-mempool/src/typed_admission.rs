@@ -98,6 +98,9 @@ pub enum AdmissionReject {
     CanonicalValidationUnavailable,
     /// The source's canonical validation rejected its body/field binding.
     CanonicalValidationFailed,
+    /// A mutable adapter view returned a different digest between the
+    /// duplicate probe and metadata snapshot.
+    CanonicalDigestChanged,
     ZeroDigest,
     ZeroSignerId,
     SignerIdentityUnavailable,
@@ -304,7 +307,21 @@ impl TypedAdmissionGate {
             return TypedAdmitOutcome::Duplicate;
         }
 
-        let metadata = match self.metadata_from(envelope) {
+        // Capacity is a pure queue-state decision.  Resolve it before copying
+        // the body or invoking any caller hook: a saturated fresh retry must
+        // be a cheap, side-effect-free Backpressured result.  In particular,
+        // replay authorities must not reserve a nonce that this in-memory gate
+        // cannot enqueue and therefore cannot commit or roll back.
+        let snapshot = self.lanes.qos_snapshot();
+        let fresh_admissible = match class {
+            IngressClass::Normal => snapshot.fresh_normal_admissible,
+            IngressClass::Critical => snapshot.fresh_critical_admissible,
+        };
+        if !fresh_admissible {
+            return TypedAdmitOutcome::Backpressured;
+        }
+
+        let metadata = match self.metadata_from(envelope, digest) {
             Ok(metadata) => metadata,
             Err(reason) => return TypedAdmitOutcome::Rejected(reason),
         };
@@ -317,17 +334,6 @@ impl TypedAdmissionGate {
         }
         if let Err(reason) = hooks.recheck(&metadata) {
             return TypedAdmitOutcome::Rejected(reason);
-        }
-
-        // Do not allocate a synthetic slot or mutate retry bookkeeping when the
-        // lane is already closed.  Duplicate classification above remains stable.
-        let snapshot = self.lanes.qos_snapshot();
-        let fresh_admissible = match class {
-            IngressClass::Normal => snapshot.fresh_normal_admissible,
-            IngressClass::Critical => snapshot.fresh_critical_admissible,
-        };
-        if !fresh_admissible {
-            return TypedAdmitOutcome::Backpressured;
         }
 
         let slot = match self.allocate_slot() {
@@ -357,9 +363,13 @@ impl TypedAdmissionGate {
     fn metadata_from<E: SignedEnvelopeView + ?Sized>(
         &self,
         envelope: &E,
+        probed_digest: CanonicalTxDigest,
     ) -> Result<SignedEnvelopeMetadata, AdmissionReject> {
         envelope.validate_canonical()?;
         let digest = envelope.canonical_digest();
+        if digest != probed_digest {
+            return Err(AdmissionReject::CanonicalDigestChanged);
+        }
         // Re-check here because a caller-provided view can be backed by mutable
         // state; all-zero is reserved for absent/unbound digest evidence.
         CanonicalTxDigest::from_bytes(digest.as_bytes())?;
@@ -582,6 +592,83 @@ mod tests {
     }
 
     #[test]
+    fn mutable_envelope_digest_cannot_change_between_probe_and_snapshot() {
+        use std::cell::Cell;
+
+        struct RotatingDigestEnvelope {
+            inner: FixtureEnvelope,
+            digest_calls: Cell<usize>,
+        }
+
+        impl SignedEnvelopeView for RotatingDigestEnvelope {
+            fn canonical_digest(&self) -> CanonicalTxDigest {
+                let call = self.digest_calls.get();
+                self.digest_calls.set(call.saturating_add(1));
+                if call == 0 {
+                    digest(31)
+                } else {
+                    digest(32)
+                }
+            }
+
+            fn canonical_signer_id(&self) -> Result<CanonicalSignerId, AdmissionReject> {
+                self.inner.canonical_signer_id()
+            }
+
+            fn canonical_body(&self) -> &[u8] {
+                self.inner.canonical_body()
+            }
+
+            fn nonce(&self) -> u64 {
+                self.inner.nonce()
+            }
+
+            fn fee_limit(&self) -> u128 {
+                self.inner.fee_limit()
+            }
+
+            fn resource_limits(&self) -> ResourceLimits {
+                self.inner.resource_limits()
+            }
+
+            fn validate_canonical(&self) -> Result<(), AdmissionReject> {
+                self.inner.validate_canonical()
+            }
+        }
+
+        #[derive(Default)]
+        struct RotatingHooks {
+            verify_calls: usize,
+        }
+
+        impl SignedAdmissionHooks<RotatingDigestEnvelope> for RotatingHooks {
+            fn verify_signature(
+                &mut self,
+                _envelope: &RotatingDigestEnvelope,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                self.verify_calls += 1;
+                Ok(())
+            }
+        }
+
+        let candidate = RotatingDigestEnvelope {
+            inner: envelope(31),
+            digest_calls: Cell::new(0),
+        };
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut hooks = RotatingHooks::default();
+        assert_eq!(
+            gate.admit_signed(&candidate, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::CanonicalDigestChanged)
+        );
+        assert_eq!(hooks.verify_calls, 0);
+        assert_eq!(gate.queued_counts(), (0, 0, 0));
+        assert!(!gate.contains_digest(digest(31)));
+        assert!(!gate.contains_digest(digest(32)));
+    }
+
+    #[test]
     fn replay_hook_can_scope_nonce_to_canonical_signer_identity() {
         use std::collections::HashSet;
 
@@ -720,6 +807,79 @@ mod tests {
         );
         assert!(!gate.contains_digest(second.digest));
         assert_eq!(gate.queued_counts(), (1, 0, 1));
+    }
+
+    #[test]
+    fn saturated_retry_does_not_reserve_replay_state_before_capacity_reopens() {
+        use std::collections::HashSet;
+
+        #[derive(Default)]
+        struct ReservingHooks {
+            seen: HashSet<(CanonicalSignerId, u64)>,
+            verify_calls: usize,
+            replay_calls: usize,
+            recheck_calls: usize,
+        }
+
+        impl SignedAdmissionHooks<FixtureEnvelope> for ReservingHooks {
+            fn verify_signature(
+                &mut self,
+                _envelope: &FixtureEnvelope,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                self.verify_calls += 1;
+                Ok(())
+            }
+
+            fn check_replay(
+                &mut self,
+                metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                self.replay_calls += 1;
+                self.seen
+                    .insert(metadata.sequence_key())
+                    .then_some(())
+                    .ok_or(AdmissionReject::Replay)
+            }
+
+            fn recheck(
+                &mut self,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                self.recheck_calls += 1;
+                Ok(())
+            }
+        }
+
+        let mut gate = TypedAdmissionGate::with_default_body_limit(1, 0);
+        let first = envelope(80);
+        let mut second = envelope(81);
+        second.nonce = 2;
+        let mut hooks = ReservingHooks::default();
+
+        assert_eq!(
+            gate.admit_signed(&first, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        let calls_before_retry = (hooks.verify_calls, hooks.replay_calls, hooks.recheck_calls);
+        assert_eq!(
+            gate.admit_signed(&second, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            (hooks.verify_calls, hooks.replay_calls, hooks.recheck_calls),
+            calls_before_retry
+        );
+        assert_eq!(hooks.seen.len(), 1);
+
+        assert!(gate.pop_ready().is_some());
+        assert_eq!(
+            gate.admit_signed(&second, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        assert!(hooks
+            .seen
+            .contains(&(second.signer_id.expect("fixture signer"), second.nonce)));
     }
 
     struct SignatureOnlyHooks;
