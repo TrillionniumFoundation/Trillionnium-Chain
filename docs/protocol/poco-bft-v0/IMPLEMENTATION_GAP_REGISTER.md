@@ -12,8 +12,10 @@ member at the public host-start and strict epoch-transition wrappers; a
 single-owner, host-derived node-event WAL around the bounded local-timeout
 effect path; and a key-free typed signed-envelope mempool admission gate whose
 replay/recheck hooks default to rejection.  CI now runs a weekly development-
-only trigger and binds these seams to source-truth checks.  These slices are
-not authenticated transport, a production signer/HSM, durable mempool replay,
+The WAL also rejects an existing zero-length regular file as `Truncated` on
+reopen, so a crash/device truncation cannot be mistaken for a virgin genesis
+and silently erase replay classification.  These slices are not authenticated
+transport, a production signer/HSM, durable mempool replay,
 runtime/JMT execution, state sync, or real-node evidence.  Therefore
 `validator_run_7_completed` and production activation remain false.
 

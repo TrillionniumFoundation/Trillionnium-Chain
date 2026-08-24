@@ -988,6 +988,7 @@ for node_event_wal_test in \
   driver_order_keeps_intent_when_commit_readback_is_uncertain \
   foreign_namespace_and_partial_tail_never_auto_repair \
   hard_link_alias_and_path_replacement_fail_closed \
+  preexisting_empty_wal_is_not_reinitialized_as_genesis \
   sigkill_after_intent_leaves_pending_for_exact_recovery; do
   require_literal "$NODE_EVENT_WAL_SOURCE" "fn ${node_event_wal_test}()"
 done

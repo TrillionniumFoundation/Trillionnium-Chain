@@ -339,6 +339,13 @@ impl NodeEventWalV1 {
         if existing_file_identity.is_some_and(|identity| identity != file_identity) {
             return Err(NodeEventWalErrorV1::InvalidPath);
         }
+        // An existing empty regular file is never a virgin WAL.  Treating it
+        // as genesis would turn a truncated/recreated journal into a silent
+        // rollback and erase the only durable replay classification.  Only a
+        // path atomically created by this open may start with an empty file.
+        if existing_file_identity.is_some() && metadata.len() == 0 {
+            return Err(NodeEventWalErrorV1::Truncated);
+        }
         validate_path_binding_v1(&path, parent_identity, file_identity)?;
         if metadata.len() == 0 {
             let frame = encode_frame_v1(
@@ -964,7 +971,13 @@ mod tests {
     use tempfile::TempDir;
 
     #[cfg(unix)]
-    use std::{env, os::unix::fs::PermissionsExt, process::Command, thread, time::Duration};
+    use std::{
+        env,
+        os::unix::fs::{MetadataExt, PermissionsExt},
+        process::Command,
+        thread,
+        time::Duration,
+    };
 
     struct FakeCommitDriver {
         digest: [u8; 32],
@@ -1257,6 +1270,7 @@ mod tests {
                 .unwrap();
             wal.commit_event_v1(intent, digest(5)).unwrap();
         }
+
         let original = fs::read(&path).unwrap();
         fs::write(&path, &original[..original.len() - 1]).unwrap();
         assert_eq!(
@@ -1271,6 +1285,66 @@ mod tests {
             NodeEventWalV1::open(&path, digest(1)),
             Err(NodeEventWalErrorV1::Malformed | NodeEventWalErrorV1::ChainMismatch)
         ));
+    }
+
+    #[test]
+    fn preexisting_empty_wal_is_not_reinitialized_as_genesis() {
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("empty-events.wal");
+        {
+            let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+            let intent = wal
+                .prepare_event_v1(digest(2), digest(3), digest(4))
+                .unwrap();
+            wal.commit_event_v1(intent, digest(5)).unwrap();
+        }
+
+        #[cfg(unix)]
+        let original_file_identity = {
+            let metadata = fs::metadata(&path).unwrap();
+            (metadata.dev(), metadata.ino())
+        };
+        #[cfg(unix)]
+        let original_parent_identity = {
+            let metadata = fs::metadata(temp.path()).unwrap();
+            (metadata.dev(), metadata.ino())
+        };
+
+        // A crash/device failure may leave a same-name regular file with no
+        // durable bytes. Reopening it must not silently write a new genesis
+        // frame and make the old event history look clean.
+        let truncated = OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(&path)
+            .unwrap();
+        truncated.sync_all().unwrap();
+        drop(truncated);
+        assert_eq!(fs::metadata(&path).unwrap().len(), 0);
+        assert_eq!(
+            NodeEventWalV1::open(&path, digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::Truncated
+        );
+        assert_eq!(
+            fs::metadata(&path).unwrap().len(),
+            0,
+            "fail-closed reopen must not materialize a replacement genesis"
+        );
+        #[cfg(unix)]
+        {
+            let file_metadata = fs::metadata(&path).unwrap();
+            assert_eq!(
+                (file_metadata.dev(), file_metadata.ino()),
+                original_file_identity,
+                "reopen failure must not replace the WAL inode"
+            );
+            let parent_metadata = fs::metadata(temp.path()).unwrap();
+            assert_eq!(
+                (parent_metadata.dev(), parent_metadata.ino()),
+                original_parent_identity,
+                "reopen failure must not replace the WAL parent"
+            );
+        }
     }
 
     #[test]
