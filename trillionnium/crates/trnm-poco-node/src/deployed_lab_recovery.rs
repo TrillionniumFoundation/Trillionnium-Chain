@@ -296,6 +296,7 @@ pub struct PocoNodeDeployedLabRecoveryFactsV0 {
     signer_exact_watermark: trnm_consensus_signer_journal::SignerWatermarkV0,
     proposal_validation_sequence: u64,
     proposal_validation_terminal_rows: u64,
+    proposal_validation_terminal_audit_digest: [u8; 32],
     committed_application_records: u64,
     prepared_application_records: u64,
     application_history_records: u64,
@@ -373,6 +374,16 @@ impl PocoNodeDeployedLabRecoveryFactsV0 {
 
     pub const fn proposal_validation_terminal_rows_v0(&self) -> u64 {
         self.proposal_validation_terminal_rows
+    }
+
+    /// Digest of the complete terminal-K inventory captured at recovery open.
+    ///
+    /// A sequence/count readback alone does not detect a self-consistent
+    /// rewrite of a validation row while the owner is held.  The terminal
+    /// audit digest commits every row revision, row checksum, and artifact
+    /// digest, so a later host/replay readback must match this exact cut.
+    pub const fn proposal_validation_terminal_audit_digest_v0(&self) -> [u8; 32] {
+        self.proposal_validation_terminal_audit_digest
     }
 
     pub const fn prepared_application_records_v0(&self) -> u64 {
@@ -578,6 +589,29 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
             "replay.final_application",
             self._application.confirmed_committed_head_v0()
         );
+        let application_config = self._application.config_v0();
+        let application_recovery_request = recover_try!(
+            "replay.final_application_recovery_request",
+            NativeApplicationRecoveryRequestV0::new(
+                recover_try!(
+                    "replay.final_application_chain_id",
+                    ChainIdV0::new(application_config.chain_id_v0())
+                ),
+                recover_try!(
+                    "replay.final_application_genesis_hash",
+                    GenesisHashV0::new(application_config.genesis_hash_v0())
+                ),
+                Hash32V0::new(application_config.chain_descriptor_hash_v0()),
+                Hash32V0::new(application_config.signer_policy_commitment_v0()),
+                application.clone(),
+                NativeRecoveryWatermarksV0::new(0, 0, 0),
+            )
+        );
+        let application_recovery = recover_try!(
+            "replay.final_application_recovery",
+            self._application.recover(application_recovery_request)
+        );
+        let application_commit_sequence = application_recovery.watermarks().application_commit();
         let signer = recover_try!(
             "replay.final_signer",
             self._signer.confirm_node_checkpoint_head_exact_v0()
@@ -586,10 +620,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
             "replay.final_checkpoint",
             self._checkpoint_store.load(self.facts.checkpoint.scope())
         );
-        let validation_sequence = recover_try!(
+        let validation_path = self._validation_store.path().to_path_buf();
+        let validation_audit = recover_try!(
             "replay.final_validation",
-            self._validation_store.durable_sequence_v0()
+            self._validation_store.confirm_terminal_k_audit_v0()
         );
+        let validation_sequence = validation_audit.store_sequence_v0();
         let checkpoint_fields = self.facts.checkpoint.fields();
         if safety.state() != self._core.safety_state()
             || safety.revision() != self.facts.safety_revision
@@ -600,9 +636,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
             || safety_facts.state_record_checksum_v0() != self.facts.safety_state_record_checksum
             || safety_facts.chain_checksum_v0() != self.facts.safety_chain_checksum
             || application != *self.facts.application_committed_head_v0()
+            || application_commit_sequence != self.facts.application_commit_sequence
             || signer.exact_watermark() != self.facts.signer_exact_watermark
             || checkpoint != Some(self.facts.checkpoint)
             || validation_sequence != self.facts.proposal_validation_sequence
+            || validation_audit.terminal_row_count_v0()
+                != self.facts.proposal_validation_terminal_rows
+            || validation_audit.terminal_audit_digest_v0().as_bytes()
+                != &self.facts.proposal_validation_terminal_audit_digest
+            || !validation_audit
+                .belongs_to_store_at_path_v0(&self._validation_store, &validation_path)
         {
             return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
                 "replay.final_owner_join",
@@ -764,20 +807,57 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
                 "host reopen observed a native application head different from the recovered cut",
             ));
         }
-        let validation_sequence =
+        let application_config = self.owner._application.config_v0();
+        let application_recovery_request = recover_try!(
+            "host.application_recovery_request",
+            NativeApplicationRecoveryRequestV0::new(
+                recover_try!(
+                    "host.application_chain_id",
+                    ChainIdV0::new(application_config.chain_id_v0())
+                ),
+                recover_try!(
+                    "host.application_genesis_hash",
+                    GenesisHashV0::new(application_config.genesis_hash_v0())
+                ),
+                Hash32V0::new(application_config.chain_descriptor_hash_v0()),
+                Hash32V0::new(application_config.signer_policy_commitment_v0()),
+                application.clone(),
+                NativeRecoveryWatermarksV0::new(0, 0, 0),
+            )
+        );
+        let application_recovery = recover_try!(
+            "host.application_recovery_readback",
             self.owner
-                ._validation_store
-                .durable_sequence_v0()
-                .map_err(|error| {
-                    PocoNodeDeployedLabRecoveryErrorV0::from_debug(
-                        "host.validation_readback",
-                        error,
-                    )
-                })?;
-        if validation_sequence != self.owner.facts.proposal_validation_sequence {
+                ._application
+                .recover(application_recovery_request)
+        );
+        if application_recovery.watermarks().application_commit()
+            != self.owner.facts.application_commit_sequence
+        {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.application_recovery_checkpoint_join",
+                "host reopen observed a native application commit sequence different from the recovered cut",
+            ));
+        }
+        let validation_path = self.owner._validation_store.path().to_path_buf();
+        let validation_audit = self
+            .owner
+            ._validation_store
+            .confirm_terminal_k_audit_v0()
+            .map_err(|error| {
+                PocoNodeDeployedLabRecoveryErrorV0::from_debug("host.validation_readback", error)
+            })?;
+        if validation_audit.store_sequence_v0() != self.owner.facts.proposal_validation_sequence
+            || validation_audit.terminal_row_count_v0()
+                != self.owner.facts.proposal_validation_terminal_rows
+            || validation_audit.terminal_audit_digest_v0().as_bytes()
+                != &self.owner.facts.proposal_validation_terminal_audit_digest
+            || !validation_audit
+                .belongs_to_store_at_path_v0(&self.owner._validation_store, &validation_path)
+        {
             return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
                 "host.validation_checkpoint_join",
-                "host reopen observed a proposal-validation sequence different from the recovered cut",
+                "host reopen observed proposal-validation terminal K different from the recovered cut",
             ));
         }
 
@@ -1448,6 +1528,9 @@ where
         signer_exact_watermark: signer_facts.exact_watermark(),
         proposal_validation_sequence: terminal_audit.store_sequence_v0(),
         proposal_validation_terminal_rows: terminal_audit.terminal_row_count_v0(),
+        proposal_validation_terminal_audit_digest: *terminal_audit
+            .terminal_audit_digest_v0()
+            .as_bytes(),
         committed_application_records: committed_count,
         prepared_application_records: prepared_count,
         application_history_records: history_count,
@@ -2423,6 +2506,9 @@ mod tests {
         let validation_application_config = bundle
             .fresh_reopen_application_config_v0()
             .expect("derive a fresh validation-reopen config");
+        let validation_sequence_application_config = bundle
+            .fresh_reopen_application_config_v0()
+            .expect("derive a fresh validation-sequence-reopen config");
         let checkpoint_application_config = bundle
             .fresh_reopen_application_config_v0()
             .expect("derive a fresh checkpoint-reopen config");
@@ -2525,6 +2611,62 @@ mod tests {
         // owner may re-authenticate the whole cross-store cut.
         drop(host);
 
+        // A raw K artifact mutation must be caught by the complete terminal
+        // audit, even when the metadata sequence and all cross-store heads
+        // remain unchanged.  A scalar durable-sequence read would accept this
+        // stale owner and could later replay the old in-memory bindings.
+        let mut host = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            core_config.clone(),
+            validation_application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark.clone()),
+        )
+        .expect("reopen a fresh host before validation-artifact tamper");
+        let validation_path = directory.path().join("validation/validation.sqlite3");
+        let connection =
+            rusqlite::Connection::open(&validation_path).expect("open validation artifact store");
+        let (validation_id, original_artifact): (Vec<u8>, Vec<u8>) = connection
+            .query_row(
+                "SELECT validation_id, artifact FROM proposal_validation_jobs_v0 LIMIT 1",
+                [],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )
+            .expect("read a terminal K artifact");
+        assert!(!original_artifact.is_empty());
+        let mut corrupted_artifact = original_artifact.clone();
+        corrupted_artifact[0] ^= 1;
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE proposal_validation_jobs_v0 SET artifact = ?1 WHERE validation_id = ?2",
+                    rusqlite::params![&corrupted_artifact, &validation_id],
+                )
+                .expect("tamper only the terminal K artifact"),
+            1
+        );
+        drop(connection);
+        let error = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("host must fail closed after terminal K artifact tamper");
+        assert_eq!(error.stage_v0(), "host.validation_readback");
+        let connection =
+            rusqlite::Connection::open(&validation_path).expect("restore validation artifact");
+        assert_eq!(
+            connection
+                .execute(
+                    "UPDATE proposal_validation_jobs_v0 SET artifact = ?1 WHERE validation_id = ?2",
+                    rusqlite::params![&original_artifact, &validation_id],
+                )
+                .expect("restore the terminal K artifact"),
+            1
+        );
+        drop(connection);
+        let poisoned = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("a poisoned host must not be reusable after artifact repair");
+        assert_eq!(poisoned.stage_v0(), "host.poisoned");
+        drop(host);
+
         // The proposal-validation owner is another durable namespace retained
         // by the host.  A sequence rollback/advance that leaves Safety,
         // signer, and the external checkpoint untouched must not be accepted
@@ -2532,11 +2674,10 @@ mod tests {
         let mut host = reopen_deployed_lab_ordinary_host_v0(
             directory.path(),
             core_config.clone(),
-            validation_application_config,
+            validation_sequence_application_config,
             |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark.clone()),
         )
         .expect("reopen a fresh host before validation tamper");
-        let validation_path = directory.path().join("validation/validation.sqlite3");
         let connection =
             rusqlite::Connection::open(&validation_path).expect("open validation for tamper");
         let original_validation_sequence: Vec<u8> = connection
