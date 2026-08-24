@@ -627,6 +627,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
 #[must_use = "the test host pins the authenticated recovery owner"]
 pub struct PocoNodeDeployedLabRecoveryHostV0<W: ExternalMonotonicWatermarkV0> {
     owner: PocoNodeDeployedLabOrdinaryRecoveryOwnerV0<W>,
+    boundary_status: PocoNodeDeployedLabRecoveryHostBoundaryStatusV0,
+}
+
+#[cfg(feature = "lab-validator-runtime-test-support")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PocoNodeDeployedLabRecoveryHostBoundaryStatusV0 {
+    Active,
+    Poisoned,
 }
 
 #[cfg(feature = "lab-validator-runtime-test-support")]
@@ -639,19 +647,21 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
     /// the recovered Core.  This is deliberately a scalar projection: it
     /// exposes no proof, store, signer, or successor authority.
     pub fn state_sync_anchor_proof_id_v0(&self) -> Option<CertificateId> {
-        match self.owner._core.safety_state().state_sync_anchor() {
-            Some(anchor) => Some(anchor.proof_id()),
-            None => None,
-        }
+        self.owner
+            ._core
+            .safety_state()
+            .state_sync_anchor()
+            .map(|anchor| anchor.proof_id())
     }
 
     /// Height of the permanent h1 state-sync anchor, if the recovered Core
     /// retained one.  A deployed ordinary cut must report height one.
     pub fn state_sync_anchor_height_v0(&self) -> Option<u64> {
-        match self.owner._core.safety_state().state_sync_anchor() {
-            Some(anchor) => Some(anchor.proof().finalized_block().header().height().get()),
-            None => None,
-        }
+        self.owner
+            ._core
+            .safety_state()
+            .state_sync_anchor()
+            .map(|anchor| anchor.proof().finalized_block().header().height().get())
     }
 
     /// Re-read the Core/Safety/signer/checkpoint join while the host is held.
@@ -660,6 +670,29 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
     /// host and prevents a caller from treating a post-open mutation as a
     /// valid recovery result.
     pub fn revalidate_durable_boundary_v0(
+        &mut self,
+    ) -> Result<(), PocoNodeDeployedLabRecoveryErrorV0> {
+        if matches!(
+            self.boundary_status,
+            PocoNodeDeployedLabRecoveryHostBoundaryStatusV0::Poisoned
+        ) {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "host.poisoned",
+                "host durable-boundary revalidation is permanently poisoned",
+            ));
+        }
+        let result = self.revalidate_durable_boundary_inner_v0();
+        if result.is_err() {
+            // A readback error is indistinguishable from an in-place rollback
+            // at this owner boundary.  The retained Core is therefore never
+            // reusable after uncertainty, even if an operator later restores
+            // the bytes; a fresh host must reopen and reauthenticate all stores.
+            self.boundary_status = PocoNodeDeployedLabRecoveryHostBoundaryStatusV0::Poisoned;
+        }
+        result
+    }
+
+    fn revalidate_durable_boundary_inner_v0(
         &mut self,
     ) -> Result<(), PocoNodeDeployedLabRecoveryErrorV0> {
         let expected = self.owner.facts.checkpoint;
@@ -749,6 +782,7 @@ impl<W: ExternalMonotonicWatermarkV0> fmt::Debug for PocoNodeDeployedLabRecovery
         formatter
             .debug_struct("PocoNodeDeployedLabRecoveryHostV0")
             .field("facts", self.owner.facts_v0())
+            .field("boundary_status", &self.boundary_status)
             .finish_non_exhaustive()
     }
 }
@@ -776,7 +810,10 @@ where
         application_config,
         open_watermark,
     )?;
-    let mut host = PocoNodeDeployedLabRecoveryHostV0 { owner };
+    let mut host = PocoNodeDeployedLabRecoveryHostV0 {
+        owner,
+        boundary_status: PocoNodeDeployedLabRecoveryHostBoundaryStatusV0::Active,
+    };
     host.revalidate_durable_boundary_v0()?;
     Ok(host)
 }
@@ -2344,6 +2381,16 @@ mod tests {
             0,
         )
         .expect("commission exact deployed h1-h3 host reopen cut");
+        // Keep two additional freshly constructed immutable configs for the
+        // post-tamper fresh-owner reopens.  The production config remains
+        // deliberately non-cloneable; these are regenerated from the bundle's
+        // public consensus facts before it is consumed.
+        let validation_application_config = bundle
+            .fresh_reopen_application_config_v0()
+            .expect("derive a fresh validation-reopen config");
+        let checkpoint_application_config = bundle
+            .fresh_reopen_application_config_v0()
+            .expect("derive a fresh checkpoint-reopen config");
         let (core_config, application_config, reopen_application_config, runtime) =
             bundle.into_reopen_test_parts_v0();
         drop(runtime);
@@ -2369,7 +2416,7 @@ mod tests {
         let second_watermark = watermark.clone();
         let mut host = reopen_deployed_lab_ordinary_host_v0(
             directory.path(),
-            core_config,
+            core_config.clone(),
             reopen_application_config,
             |_path| Ok::<_, ExternalWatermarkErrorV0>(second_watermark),
         )
@@ -2435,13 +2482,25 @@ mod tests {
             1
         );
         drop(connection);
-        host.revalidate_durable_boundary_v0()
-            .expect("restored application owner must rejoin the exact checkpoint");
+        let poisoned = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("a poisoned host must not be reusable after application repair");
+        assert_eq!(poisoned.stage_v0(), "host.poisoned");
+        // Repairing bytes is not an in-place recovery contract: only a fresh
+        // owner may re-authenticate the whole cross-store cut.
+        drop(host);
 
         // The proposal-validation owner is another durable namespace retained
         // by the host.  A sequence rollback/advance that leaves Safety,
         // signer, and the external checkpoint untouched must not be accepted
         // as a clean reopen.
+        let mut host = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            core_config.clone(),
+            validation_application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark.clone()),
+        )
+        .expect("reopen a fresh host before validation tamper");
         let validation_path = directory.path().join("validation/validation.sqlite3");
         let connection =
             rusqlite::Connection::open(&validation_path).expect("open validation for tamper");
@@ -2490,9 +2549,19 @@ mod tests {
             1
         );
         drop(connection);
-        host.revalidate_durable_boundary_v0()
-            .expect("restored validation owner must rejoin the exact checkpoint");
+        let poisoned = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("a poisoned host must not be reusable after validation repair");
+        assert_eq!(poisoned.stage_v0(), "host.poisoned");
+        drop(host);
 
+        let mut host = reopen_deployed_lab_ordinary_host_v0(
+            directory.path(),
+            core_config,
+            checkpoint_application_config,
+            |_path| Ok::<_, ExternalWatermarkErrorV0>(watermark),
+        )
+        .expect("reopen a fresh host before checkpoint tamper");
         let path = directory.path().join("checkpoint/checkpoint.sqlite3");
         let mut corrupted = checkpoint.encode_canonical();
         corrupted[352] ^= 1;
@@ -2512,5 +2581,9 @@ mod tests {
             .revalidate_durable_boundary_v0()
             .expect_err("host must fail closed after external checkpoint tamper");
         assert_eq!(error.stage_v0(), "host.checkpoint_readback");
+        let poisoned = host
+            .revalidate_durable_boundary_v0()
+            .expect_err("a poisoned host must reject every later revalidation");
+        assert_eq!(poisoned.stage_v0(), "host.poisoned");
     }
 }

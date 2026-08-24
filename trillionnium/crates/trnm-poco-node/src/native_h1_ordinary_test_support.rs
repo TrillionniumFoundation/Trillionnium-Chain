@@ -135,6 +135,21 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeNativeH1OrdinaryLabTestBundleV0<W>
         self.ordinary_start_height
     }
 
+    /// Regenerates one immutable reopen configuration from the bundle's
+    /// public consensus facts without making `NativeApplicationConfigV0`
+    /// cloneable.  Reopen tests may need several fresh owners after a
+    /// readback failure; each owner must receive a newly constructed config,
+    /// while the production config type remains deliberately non-cloneable.
+    pub fn fresh_reopen_application_config_v0(
+        &self,
+    ) -> Result<NativeApplicationConfigV0, PocoNodeNativeH1OrdinaryLabTestSupportErrorV0> {
+        native_application_config_v0(
+            self.validator_set.clone(),
+            self.consensus_parameters,
+            self.local_validator,
+        )
+    }
+
     pub const fn validator_count_v0(&self) -> usize {
         self.validator_count
     }
