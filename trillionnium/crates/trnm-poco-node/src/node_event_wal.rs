@@ -861,8 +861,8 @@ fn validate_path_v1(path: &Path) -> Result<(), NodeEventWalErrorV1> {
         return Err(NodeEventWalErrorV1::InvalidPath);
     }
     // Reject an indirect symlink (or an unresolved `..`) in the parent path
-    // as well.  Descriptor-relative opens below then keep the admitted
-    // directory stable for the lifetime of the WAL owner.
+    // as well.  The held parent/file descriptors below then keep the admitted
+    // directory and inode stable for the lifetime of the WAL owner.
     if fs::canonicalize(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)? != parent {
         return Err(NodeEventWalErrorV1::InvalidPath);
     }
