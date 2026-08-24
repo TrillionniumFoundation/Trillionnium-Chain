@@ -1,11 +1,10 @@
 # TRNM PoCO G3 Stage0 LAN evidence runbook
 
 Status: **unsigned native build and X230 fresh-clone observations are tracked,
-but rust-src cross-time drift disproves reproducibility for the committed
-builder; a clean committed-tool v2 remap control kept v1 frozen and restored
-native Linux cross-time reproducibility without placing the fix in
-d6bb34c1/c971f1b0f; readiness, real validator runs, and production observations
-remain false**
+and the 2026-08-24 frozen `30c145ff6` candidate observation records the
+committed v2 remap seam; the older d6 candidate remains unchanged and the
+runner is unattested; readiness, real validator runs, and production
+observations remain false**
 
 The tracked build-only observation is recorded in
 `docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/`. It covers two manual
@@ -29,15 +28,15 @@ still said `reproducible_build=true`, but both binary hashes and sizes drifted
 from the 2026-08-20 baseline because the physical rust-src sysroot path entered
 `.rodata`. Treat `reproducible_build=true` as invocation-local identity only.
 
-The final control cloned a complete tool bundle with `git clone --no-local`,
-detached at exact clean commit `08efb8f4`, required empty status, and executed
-the tracked v2 wrapper while keeping the evidence-bound v1 bytes frozen. V2
-replaced only the native build seam, canonically remapped rust-src, and restored
-both historical hashes in two independent builds. This supports native Linux
-cross-time reproducibility through committed tool code. The unsigned manual-SSH
-runner is not cryptographically attested, the bundle is recorded but unbundled,
-the raw schema-3 report does not self-bind the tool hashes, and the fix remains
-absent from d6bb34c1/c971f1b0f.
+The original d6 control cloned a complete tool bundle with `git clone --no-local`,
+detached at exact clean commit `08efb8f4`, and restored the d6 historical
+hashes. The newer 30c control is recorded under
+`docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/`; it keeps
+the evidence-bound v1 bytes frozen, canonically remaps rust-src, and restores
+the explicitly bound frozen-candidate-v1 hashes in two independent builds.
+Both remain unsigned manual-SSH observations, bundles are recorded but
+unbundled, and schema-3 reports do not self-bind tool hashes. The fix remains
+absent from the d6bb34c1 candidate and c971f1b0f Stage0 truth base.
 
 This runbook deliberately omits physical addresses, host identities,
 management routes, and machine-local paths. Those belong only in the
@@ -230,11 +229,11 @@ the exact content-addressed `d6bb34c1` inputs. They do not make native
 cross-time reproducibility true. The first offline cache was not ready; public
 dependency fetch occurred; only the formal rerun was offline. The clean
 committed v2 tool control keeps v1 frozen and makes the scoped native Linux
-cross-time observation true. Until the fix is present in the exact source
-candidate and fresh candidate-contained evidence is independently accepted,
-keep all of these false: committed candidate remap fix; current
-fleet/readiness; complete deep-reverification
-bundle availability; real 7-, 31-, and 100-validator runs; signed multihost
+cross-time observation true. The current ledger accepts the 30c candidate
+remap observation and retains the read-only fleet/readiness probes, but not
+operational closure; keep these false: fleet/readiness activation; durable/
+attested runtime bundle availability; real 7-, 31-, and 100-validator runs;
+signed multihost
 consensus; restart/fault completion; performance; LAN multihost evidence;
 geo-WAN evidence; and production activation/candidacy.
 

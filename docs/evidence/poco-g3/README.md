@@ -6,20 +6,18 @@ false runtime truth bits, and next X230 entry conditions) is recorded in
 using any record under this directory.
 
 This directory records the claim boundary for the bounded PoCO G3 lab lane.
-It now contains content-addressed native build records, an X230 fresh-clone
-fmt/check/key-test record, a rust-src cross-time drift/control record for the
-exact `d6bb34c1` source candidate, and a fresh read-only fleet/readiness
-observation for the `af6c2737e` savepoint. The build records prove identity within
-individual builder invocations, but the later rust-src observation disproves
-cross-time reproducibility for unpatched v1. The final remap control kept the
-evidence-bound v1 builder byte-for-byte frozen and restored the historical
-hashes through the tracked v2 wrapper in clean tool commit `08efb8f4`. This
-supports scoped native Linux cross-time reproducibility, but the fix is still
-absent from d6bb34c1 and c971f1b0f. There is no validator run, formal
-multihost evidence, complete
-deep-reverification bundle, performance evidence, or production claim. The
-machine-readable boundary is [`status.toml`](status.toml), and raw records are under
-[`stage0-repro-d6bb34c1-20260820`](stage0-repro-d6bb34c1-20260820/README.md).
+It contains content-addressed native build records, an X230 fresh-clone
+fmt/check/key-test record, the historical rust-src drift/control record for
+`d6bb34c1`, a prior-commit `ac5880d2` build record, and a fresh read-only
+fleet/readiness observation for `af6c2737e`. The newer
+[`stage0-remap-observation-30c145ff6-20260824`](stage0-remap-observation-30c145ff6-20260824/README.md)
+record binds a frozen `30c145ff6` candidate and observes the committed v2
+remap seam; the status ledger promotes only its candidate-remap bit. The d6
+record remains immutable historical context, and the fix is still absent from
+that d6 candidate and the Stage0 truth base. There is no validator run, formal
+multihost evidence, durable/attested runtime bundle, performance evidence, or
+production claim. The machine-readable boundary is
+[`status.toml`](status.toml).
 
 ## Strict source and build contract
 
@@ -64,16 +62,13 @@ installed rust-src produced different Linux hashes while still reporting
 Thus that field proves only invocation-local identity, not cross-time output
 stability.
 
-The final X230 control cloned a complete content-addressed Git bundle without a
-local-object shortcut, detached at exact clean tool commit `08efb8f4`, and
-executed the tracked v2 wrapper with empty checkout status. The evidence-bound
-v1 builder retained its historical SHA-256; v2 replaced only the native build
-seam, mapped the physical rust-src root to rustc's canonical `/rustc/<commit>`
-root, and restored both historical Linux hashes. This supports scoped native
-Linux cross-time reproducibility. The control remains unsigned manual-SSH
-evidence, its bundle is recorded but unbundled here, and the raw schema-3 build
-report does not self-bind the tool commit or wrapper hashes. The fix is also
-absent from the d6bb34c1 source candidate and c971f1b0f Stage0 truth base.
+The X230 controls cloned complete content-addressed Git bundles without a
+local-object shortcut and executed tracked v2 wrappers with empty checkout
+status. The original d6 control restored the d6 historical hashes; the newer
+30c control restores its explicitly recorded frozen-candidate-v1 hashes. Both
+controls remain unsigned manual-SSH evidence, their raw bundles are recorded
+but unbundled, and schema-3 reports do not self-bind tool hashes. The fix is
+still absent from the d6bb34c1 source candidate and c971f1b0f Stage0 truth base.
 
 These remain unsigned operator observations. The fresh-clone record preserves
 that its first offline cache was incomplete, public dependency fetch was used,
@@ -128,8 +123,8 @@ Positive statements are limited to the retained contracts/self-tests, the
 invocation-local native binary-identity observation, the fresh-clone gate
 record, the rust-src drift observation, and the unsigned committed-tool v2
 control. The drift disproves unpatched v1 cross-time stability; the clean
-committed v2 control restores it for native Linux. The raw build report still
-does not bind the tool source, and the d6bb34c1 candidate does not contain the
-repair. Validator execution, signed multihost runtime evidence, fault
+committed v2 control restores it for the bound frozen candidate. The raw build
+report still does not bind the tool source, and the d6bb34c1 candidate does not
+contain the repair. Validator execution, signed multihost runtime evidence, fault
 completion, performance, LAN multihost, geo-WAN, and production claims remain
 false.

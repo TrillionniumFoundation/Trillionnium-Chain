@@ -59,6 +59,7 @@ REPORT_BOOLEAN_FIELDS = (
     "rust_src_remap_control_observed",
     "committed_rust_src_remap_builder_control_observed",
     "rust_src_remap_control_restored_historical_hashes",
+    "rust_src_remap_control_restored_frozen_candidate_v1_hashes",
     "rust_src_remap_control_exit_zero",
     "rust_src_remap_control_report_claims_reproducible_build",
     "rust_src_remap_code_under_test_committed",
@@ -257,6 +258,75 @@ def validate_rust_src_cross_time_control(
     historical = report_mapping(
         report.get("historical_2026_08_20_baseline"), "historical baseline"
     )
+    claims = report_mapping(report.get("claims"), "claims")
+    # Newer observations may compare the drift/control pair against a
+    # freshly frozen candidate baseline rather than the original 2026-08-20
+    # d6 baseline.  Keep the legacy field required for backwards-compatible
+    # reports, but make the comparison baseline explicit when present.
+    comparison_baseline = historical
+    candidate_baseline = report.get("frozen_candidate_v1_baseline")
+    source_commit = source.get("base_commit")
+    requires_candidate_baseline = (
+        source_commit != "d6bb34c149edd07d6412b169c471dbb017eb301e"
+        or claims.get("committed_candidate_contains_remap_fix") is True
+    )
+    if requires_candidate_baseline and candidate_baseline is None:
+        raise ObservationStatusError(
+            "current candidate remap observation must bind frozen_candidate_v1_baseline"
+        )
+    if candidate_baseline is not None:
+        comparison_baseline = report_mapping(
+            candidate_baseline, "frozen candidate v1 baseline"
+        )
+        for field in (
+            "source_base_commit",
+            "source_candidate_sha256",
+            "validator_binary_sha256",
+            "validator_binary_bytes",
+            "material_builder_binary_sha256",
+            "material_builder_binary_bytes",
+        ):
+            if field not in comparison_baseline:
+                raise ObservationStatusError(
+                    f"frozen candidate v1 baseline is missing {field}"
+                )
+        if comparison_baseline.get("source_base_commit") != source_commit:
+            raise ObservationStatusError(
+                "frozen candidate v1 baseline commit differs from the control source"
+            )
+        if comparison_baseline.get("source_candidate_sha256") != source.get(
+            "source_candidate_sha256"
+        ):
+            raise ObservationStatusError(
+                "frozen candidate v1 baseline archive differs from the control source"
+            )
+        for field in (
+            "source_base_commit",
+            "validator_binary_sha256",
+            "material_builder_binary_sha256",
+        ):
+            value = comparison_baseline.get(field)
+            pattern = HEX40 if field == "source_base_commit" else HEX64
+            if not isinstance(value, str) or pattern.fullmatch(value) is None:
+                raise ObservationStatusError(
+                    f"frozen candidate v1 baseline {field} must be canonical"
+                )
+        if HEX64.fullmatch(comparison_baseline["source_candidate_sha256"]) is None:
+            raise ObservationStatusError(
+                "frozen candidate v1 baseline source_candidate_sha256 must be canonical"
+            )
+        for field in ("validator_binary_bytes", "material_builder_binary_bytes"):
+            if type(comparison_baseline.get(field)) is not int or comparison_baseline[field] <= 0:
+                raise ObservationStatusError(
+                    f"frozen candidate v1 baseline {field} must be positive"
+                )
+        if candidate_baseline is not None and claims.get("comparison_baseline") not in (
+            None,
+            "frozen_candidate_v1_baseline",
+        ):
+            raise ObservationStatusError(
+                "rust-src control claims an unknown comparison baseline"
+            )
     drift = report_mapping(
         report.get("unpatched_rust_src_drift_observation"), "drift observation"
     )
@@ -264,9 +334,7 @@ def validate_rust_src_cross_time_control(
         report.get("committed_v2_remap_control_observation"),
         "committed v2 remap control",
     )
-    claims = report_mapping(report.get("claims"), "claims")
-
-    status_facts = (
+    status_facts = [
         (claims, "committed_tool_control_native_linux_cross_time_reproducible", "native_cross_time_reproducible_build_observed"),
         (claims, "committed_tool_control_native_linux_cross_time_reproducible", "native_linux_x86_64_reproducible_build_observed"),
         (claims, "cross_time_drift_observed", "rust_src_cross_time_drift_observed"),
@@ -283,7 +351,19 @@ def validate_rust_src_cross_time_control(
         (control, "stage0_truth_base_contains_remap_fix", "rust_src_remap_in_stage0_truth_base"),
         (control, "tool_source_cryptographically_bound_to_raw_report", "rust_src_remap_tool_source_bound_to_raw_report"),
         (runner, "runner_identity_cryptographically_attested", "rust_src_remap_runner_identity_cryptographically_attested"),
-    )
+    ]
+    if candidate_baseline is not None:
+        status_facts.append(
+            (
+                claims,
+                "remap_control_restores_frozen_candidate_v1_hashes",
+                "rust_src_remap_control_restored_frozen_candidate_v1_hashes",
+            )
+        )
+    elif boolean(status, "rust_src_remap_control_restored_frozen_candidate_v1_hashes"):
+        raise ObservationStatusError(
+            "frozen candidate v1 remap bit requires a bound candidate baseline"
+        )
     for report_parent, report_field, status_field in status_facts:
         if report_parent.get(report_field) is not boolean(status, status_field):
             raise ObservationStatusError(
@@ -332,6 +412,15 @@ def validate_rust_src_cross_time_control(
         raise ObservationStatusError("committed v2 control must use a tracked wrapper")
     if control.get("code_under_test_committed") is not True:
         raise ObservationStatusError("committed v2 control lost its tool commit boundary")
+    if candidate_baseline is not None and claims.get("committed_candidate_contains_remap_fix") is True:
+        if control.get("observation_input_candidate_contains_remap_fix") is not True:
+            raise ObservationStatusError(
+                "current candidate remap observation lost its candidate-fix marker"
+            )
+        if control.get("restores_frozen_candidate_v1_hashes") is not True:
+            raise ObservationStatusError(
+                "current candidate remap control did not restore its frozen baseline"
+            )
     for field in (
         "builder_tool_bundle_complete_history",
         "builder_tool_checkout_clone_no_local",
@@ -403,6 +492,11 @@ def validate_rust_src_cross_time_control(
             or raw.get("independent_build_count") != 2
             or raw.get("reproducible_build") is not True
             or raw.get("production_activation") is not False
+            or raw.get("geo_wan_evidence") is not False
+            or raw.get("source_candidate_profile") != "clean-commit-v1"
+            or raw.get("source_git_object_format") != "sha1"
+            or raw.get("source_git_status_sha256")
+            != hashlib.sha256(b"").hexdigest()
             or raw.get("host_triple") != runner.get("host_triple")
         ):
             raise ObservationStatusError(f"{label} lost its schema-3 build boundary")
@@ -430,6 +524,18 @@ def validate_rust_src_cross_time_control(
                 raise ObservationStatusError(
                     f"{label} {output_field} differs from the typed control"
                 )
+        for hash_field in (
+            "validator_binary_sha256",
+            "material_builder_binary_sha256",
+        ):
+            if HEX64.fullmatch(raw.get(hash_field, "")) is None:
+                raise ObservationStatusError(f"{label} {hash_field} must be canonical")
+        for bytes_field in (
+            "validator_binary_bytes",
+            "material_builder_binary_bytes",
+        ):
+            if type(raw.get(bytes_field)) is not int or raw[bytes_field] <= 0:
+                raise ObservationStatusError(f"{label} {bytes_field} must be positive")
 
     drift_raw, control_raw = raw_values
     output_fields = (
@@ -438,10 +544,16 @@ def validate_rust_src_cross_time_control(
         "material_builder_binary_sha256",
         "material_builder_binary_bytes",
     )
-    if all(drift_raw.get(field) == historical.get(field) for field in output_fields):
-        raise ObservationStatusError("rust-src drift unexpectedly matches the historical baseline")
-    if any(control_raw.get(field) != historical.get(field) for field in output_fields):
-        raise ObservationStatusError("rust-src remap control did not restore the baseline")
+    if all(
+        drift_raw.get(field) == comparison_baseline.get(field)
+        for field in output_fields
+    ):
+        raise ObservationStatusError("rust-src drift unexpectedly matches the comparison baseline")
+    if any(
+        control_raw.get(field) != comparison_baseline.get(field)
+        for field in output_fields
+    ):
+        raise ObservationStatusError("rust-src remap control did not restore the comparison baseline")
     for field in (
         "builder_tool_commit",
         "builder_tool_bundle_sha256",
@@ -499,6 +611,8 @@ def render_status(status: Mapping[str, Any]) -> tuple[str, bool]:
         f"{str(boolean(status, 'rust_src_cross_time_drift_observed')).lower()} "
         "rust_src_remap_control_restored_historical_hashes="
         f"{str(boolean(status, 'rust_src_remap_control_restored_historical_hashes')).lower()} "
+        "rust_src_remap_control_restored_frozen_candidate_v1_hashes="
+        f"{str(boolean(status, 'rust_src_remap_control_restored_frozen_candidate_v1_hashes')).lower()} "
         "rust_src_remap_code_under_test_committed="
         f"{str(boolean(status, 'rust_src_remap_code_under_test_committed')).lower()} "
         "committed_rust_src_remap_builder_control_observed="

@@ -6,6 +6,15 @@ replace runtime evidence. A fresh read-only fleet/readiness observation was
 added on 2026-08-23; it does not change any build, validator, multihost, or
 production bit.
 
+This note is an immutable dated snapshot of the 2026-08-22 boundary.  A later
+2026-08-24 frozen-candidate observation is recorded under
+`stage0-remap-observation-30c145ff6-20260824/` and is bound by the current
+`status.toml`; its candidate-remap bit supersedes the snapshot's
+`committed_candidate_rust_src_remap_fix_observed=false` line.  The only
+remaining Stage0 observation blocker in the current ledger is
+`validator_run_7_completed`; runtime, multihost, and production boundaries
+remain unchanged.
+
 ## Assessed tree and savepoint lineage
 
 The audit was run from the canonical linked worktree:
@@ -84,7 +93,7 @@ particular:
 
 ```text
 stage0_observation_complete=false
-committed_candidate_rust_src_remap_fix_observed=false
+committed_candidate_rust_src_remap_fix_observed=false  # 2026-08-22 snapshot
 current_fleet_probe_observed=true
 current_run_readiness_observed=true
 stage0_deep_reverification_bundle_available=true
@@ -106,12 +115,16 @@ recovery_ready_operational=false
 recovery_start_operational=false
 ```
 
-The current status checker reports the remaining Stage0 blockers as:
+The 2026-08-22 snapshot's status checker reported the remaining Stage0
+blockers as:
 
 ```text
 committed_candidate_rust_src_remap_fix_observed
 validator_run_7_completed
 ```
+
+The current 2026-08-24 ledger has promoted the first bit from the new frozen
+candidate record and therefore reports only `validator_run_7_completed`.
 
 Contract/self-test positives are not observations. The local G3 contract gate
 reports `cargo_executed=false`, `ssh_executed=false`,

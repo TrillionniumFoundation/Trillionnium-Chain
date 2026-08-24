@@ -36,13 +36,20 @@ source and output bindings remain reviewable without copying deployment
 secrets or starting a validator.
 
 This is only a scoped remap/build observation.  It does **not** satisfy the
-Stage0 truth gate by itself: `status.toml` is intentionally unchanged,
-`validator_run_7_completed` remains false, no validator binary was executed,
-and all runtime/production/multihost flags remain false.  In particular, the
-report's `reproducible_build=true` is invocation-local; the remap-active
-environment fact is bound here by the tool hash, rustc identity, and raw
-operator bundle, not by an attested host.
+Stage0 truth gate by itself: `validator_run_7_completed` remains false, no
+validator binary was executed, and all runtime/production/multihost flags
+remain false.  The status ledger binds this report only for the
+`committed_candidate_rust_src_remap_fix_observed` bit; the missing Stage0
+blocker is still `validator_run_7_completed`.  The report preserves the real
+2026-08-20 d6 hashes for historical context and compares this run against the
+separately named `frozen_candidate_v1_baseline`; it does not claim that the d6
+hashes were restored.  In particular, `reproducible_build=true` is
+invocation-local; the remap-active environment fact is bound here by the tool
+hash, rustc identity, and raw operator bundle, not by an attested host.
 
 The raw bundle is intentionally unbundled from Git.  Its exact hash, remote
-path, local operator path, and contents are recorded in `manifest.json` and
-`raw-bundle.sha256`.
+path, local operator path, contents, and the local-only retention boundary are
+recorded in `manifest.json`, `raw-bundle.sha256`, and
+`raw-bundle-retrieval-receipt.json`.  The receipt records that the advertised
+remote path was absent and no SSH host-key fingerprint was captured; this
+artifact is therefore not treated as durable deployment evidence.

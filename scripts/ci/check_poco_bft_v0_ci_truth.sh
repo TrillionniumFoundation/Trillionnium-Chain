@@ -14,9 +14,9 @@ G3_REPRODUCIBLE_BUILD_REPORT_ASSEMBLER="$ROOT/scripts/poco-fleet/assemble_reprod
 G3_STAGE0_OBSERVATION_STATUS="$ROOT/scripts/poco-fleet/check_stage0_observation_status.py"
 G3_STAGE0_STATUS="$ROOT/docs/evidence/poco-g3/status.toml"
 G3_FRESH_CLONE_GATES_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
-G3_RUST_SRC_CROSS_TIME_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-cross-time-control-report.json"
-G3_RUST_SRC_DRIFT_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-drift-build-report.json"
-G3_RUST_SRC_REMAP_CONTROL_REPORT="$ROOT/docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-remapped-v2-committed-control-build-report.json"
+G3_RUST_SRC_CROSS_TIME_REPORT="$ROOT/docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/cross-time-control-report.json"
+G3_RUST_SRC_DRIFT_REPORT="$ROOT/docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/unpatched-drift-build-report.json"
+G3_RUST_SRC_REMAP_CONTROL_REPORT="$ROOT/docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/build-b.json"
 G3_FAULT_RESTART_RUNNER="$ROOT/scripts/poco-fleet/run_fault_restart_fleet_v1.py"
 G3_FAULT_RESTART_HANDOFF_TEST="$ROOT/scripts/poco-fleet/run_fault_restart_handoff_v1_test.py"
 G3_LAB_CONSENSUS_RUNTIME="$ROOT/trillionnium/crates/trnm-poco-lab-validator/src/consensus_runtime.rs"
@@ -460,10 +460,14 @@ require_literal "$G3_STAGE0_STATUS" \
   'current_rust_src_cross_time_control_profile = "poco-g3-stage0-rust-src-cross-time-control-v3"'
 require_literal "$G3_RUST_SRC_CROSS_TIME_REPORT" \
   '"committed_v2_remap_control_observation": {'
+require_literal "$G3_RUST_SRC_CROSS_TIME_REPORT" \
+  '"frozen_candidate_v1_baseline": {'
+require_literal "$G3_RUST_SRC_CROSS_TIME_REPORT" \
+  '"observation_input_candidate_contains_remap_fix": true'
 if ! g3_stage0_observation_status="$(python3 "$G3_STAGE0_OBSERVATION_STATUS")"; then
   fail "typed G3 Stage0 observation status is invalid"
 fi
-expected_g3_stage0_observation_status='poco_g3_stage0_observation_status=reported stage0_observation_complete=false native_build_records_present=true within_invocation_binary_identity_observed=true native_reproducible_build=true native_build_cryptographically_attested=false rust_src_cross_time_control_bound=true rust_src_cross_time_control_sha256=a00870446ea027a95786ee567c466b05339359ddd0261b10fc1eac1d4681ae63 rust_src_drift_observed=true rust_src_remap_control_restored_historical_hashes=true rust_src_remap_code_under_test_committed=true committed_rust_src_remap_builder_control_observed=true committed_candidate_rust_src_remap_fix_observed=false rust_src_remap_in_d6bb_candidate=false rust_src_remap_tool_source_bound_to_raw_report=false fresh_clone_report_bound=true fresh_clone_report_sha256=77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21 fresh_clone_fmt_observed=true fresh_clone_check_observed=true key_tests_observed=true initial_offline_cache_ready=false public_dependency_fetch_used=true formal_rerun_offline=true fresh_clone_runner_cryptographically_attested=false fresh_clone_logs_bundled=false deep_reverification_bundle_available=true validator_run_7_completed=false contract_self_tests_are_observations=false missing=committed_candidate_rust_src_remap_fix_observed,validator_run_7_completed'
+expected_g3_stage0_observation_status='poco_g3_stage0_observation_status=reported stage0_observation_complete=false native_build_records_present=true within_invocation_binary_identity_observed=true native_reproducible_build=true native_build_cryptographically_attested=false rust_src_cross_time_control_bound=true rust_src_cross_time_control_sha256=a18ee984eaba0250815ad941c4c54948e66c5cff94a5a689d3abaa20f598fefc rust_src_drift_observed=true rust_src_remap_control_restored_historical_hashes=false rust_src_remap_control_restored_frozen_candidate_v1_hashes=true rust_src_remap_code_under_test_committed=true committed_rust_src_remap_builder_control_observed=true committed_candidate_rust_src_remap_fix_observed=true rust_src_remap_in_d6bb_candidate=false rust_src_remap_tool_source_bound_to_raw_report=false fresh_clone_report_bound=true fresh_clone_report_sha256=77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21 fresh_clone_fmt_observed=true fresh_clone_check_observed=true key_tests_observed=true initial_offline_cache_ready=false public_dependency_fetch_used=true formal_rerun_offline=true fresh_clone_runner_cryptographically_attested=false fresh_clone_logs_bundled=false deep_reverification_bundle_available=true validator_run_7_completed=false contract_self_tests_are_observations=false missing=validator_run_7_completed'
 [[ "$g3_stage0_observation_status" == "$expected_g3_stage0_observation_status" ]] \
   || fail "typed G3 Stage0 observation truth differs from the expected incomplete boundary"
 require_literal "$G3_SOURCE_CANDIDATE_PREPARE" \
@@ -902,4 +906,4 @@ reject_literal "$LEGACY_PREFLIGHT" \
   'truth_source=$ROOT/RELEASE_READINESS.md'
 
 printf '%s\n' \
-  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=unavailable_non_buildable_archive_source power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0_contract=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert g3_stage0_observation=unsigned-build-records,fresh-clone-gates,rust-src-cross-time-drift,committed-v2-remap-control,native-linux-cross-time-reproducible,candidate-remap-fix-absent,incomplete readiness=development_only,no_legacy_go'
+  'poco_bft_ci_truth=passed safety_store=triggered,tested,clippy,recovery,artifact signer_journal=triggered,tested,clippy,recovery,artifact,incomplete bounded_timeout_signing=default_build_tested,exact_replay timeout_path_sigkill=active_native_exact_one node_scaffold=triggered,tested,clippy,release-built,incomplete validation_recovery_sigkill=unavailable_non_buildable_archive_source power_loss_fsync=not_evaluated legacy_recovery_helper_target=false g3_stage0_contract=tracked,index-bound,no-cargo,current-fixtures-only,clean-commit-v1,schema3,parked-triple-inert g3_stage0_observation=unsigned-build-records,fresh-clone-gates,rust-src-cross-time-drift,committed-v2-remap-control,native-linux-cross-time-reproducible,candidate-remap-fix-observed,incomplete readiness=development_only,no_legacy_go'

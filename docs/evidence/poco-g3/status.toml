@@ -19,6 +19,10 @@ current_observation_transport = "manual-ssh"
 current_observation_control_host = "p4-x230"
 current_observation_fleet_report_bytes = 2526
 current_observation_readiness_report_bytes = 5453
+# These current_build_* bindings are retained as the separately deep-verified
+# ac5880d2 prior-commit build record. The current 30c remap observation is
+# bound by current_rust_src_cross_time_control_* below and must not inherit
+# this record's no-drift result.
 current_build_evidence_profile = "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1"
 current_build_evidence_path = "docs/evidence/poco-g3/stage0-repro-ac5880d2-20260823"
 current_build_evidence_source_commit = "ac5880d2c9cadfbdbcf04bb294f499ad16ccecb6"
@@ -36,8 +40,8 @@ current_fresh_clone_gates_evidence_profile = "poco-g3-stage0-x230-fresh-clone-ga
 current_fresh_clone_gates_evidence_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/fresh-clone-gates-report.json"
 current_fresh_clone_gates_evidence_sha256 = "77389a6a70942c8bc076882b27a9c555134a08eb24f0568fcc7a49dde6a89b21"
 current_rust_src_cross_time_control_profile = "poco-g3-stage0-rust-src-cross-time-control-v3"
-current_rust_src_cross_time_control_path = "docs/evidence/poco-g3/stage0-repro-d6bb34c1-20260820/rust-src-cross-time-control-report.json"
-current_rust_src_cross_time_control_sha256 = "a00870446ea027a95786ee567c466b05339359ddd0261b10fc1eac1d4681ae63"
+current_rust_src_cross_time_control_path = "docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/cross-time-control-report.json"
+current_rust_src_cross_time_control_sha256 = "a18ee984eaba0250815ad941c4c54948e66c5cff94a5a689d3abaa20f598fefc"
 
 # Contract and self-test truth retained by the observed native-build record.
 # These booleans do not imply a validator run or production claim.
@@ -73,7 +77,8 @@ recovery_start_operational = false
 # and rustc, but with rust-src installed, drifted from the historical Linux
 # hashes because the physical rust-src sysroot path entered .rodata. Therefore
 # invocation-local identity remains observed and exposes the unpatched v1
-# drift. A later clean committed v2 tool control restores the historical bytes.
+# drift. The d6 historical hashes are preserved in that report; the current
+# 30c145ff6 observation separately binds its frozen candidate-v1 baseline.
 reproducible_builder_invocation_executed = true
 within_invocation_binary_identity_observed = true
 reproducible_build_executed = true
@@ -87,20 +92,22 @@ rust_src_physical_sysroot_path_in_rodata_observed = true
 rust_src_drift_report_claims_reproducible_build = true
 
 # An unsigned X230 control cloned the complete committed-tool bundle without a
-# local-object shortcut, detached at exact commit 08efb8f4 with empty status,
-# and executed the tracked v2 wrapper. The evidence-bound v1 builder remained
-# byte-for-byte frozen; v2 replaced only its native build seam, canonically
-# remapped rust-src, and restored both historical Linux hashes. The committed
-# tool control supports native Linux cross-time reproducibility, but d6bb34c1
-# and c971f1b0f do not contain the fix, and raw schema 3 does not bind tool
-# source or cryptographically attest the runner.
+# local-object shortcut, detached at exact commit c8b8c8977 with empty status,
+# and executed the tracked v2 wrapper against the frozen 30c145ff6 candidate.
+# The evidence-bound v1 builder remained byte-for-byte frozen; v2 replaced only
+# its native build seam, canonically remapped rust-src, and restored the
+# frozen candidate-v1 hashes. It does not restore the separate d6bb34c1
+# historical hashes, and neither d6bb34c1 nor the Stage0 truth base contains
+# the fix. Raw schema 3 still does not bind tool source or cryptographically
+# attest the runner.
 rust_src_remap_control_observed = true
 committed_rust_src_remap_builder_control_observed = true
-rust_src_remap_control_restored_historical_hashes = true
+rust_src_remap_control_restored_historical_hashes = false
+rust_src_remap_control_restored_frozen_candidate_v1_hashes = true
 rust_src_remap_control_exit_zero = true
 rust_src_remap_control_report_claims_reproducible_build = true
 rust_src_remap_code_under_test_committed = true
-committed_candidate_rust_src_remap_fix_observed = false
+committed_candidate_rust_src_remap_fix_observed = true
 rust_src_remap_in_d6bb_candidate = false
 rust_src_remap_in_stage0_truth_base = false
 rust_src_remap_tool_source_bound_to_raw_report = false

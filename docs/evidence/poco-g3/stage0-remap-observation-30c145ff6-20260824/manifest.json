@@ -6,11 +6,15 @@
     "candidate_archives_byte_identical": true,
     "candidate_checker_passed": true,
     "candidate_v2_remap_run_observed": true,
+    "comparison_baseline": "frozen_candidate_v1",
     "cross_time_stage0_gate_closed": false,
     "geo_wan_evidence": false,
+    "historical_d6_hashes_restored": false,
     "multihost_consensus_observed": false,
     "production_activation": false,
-    "status_toml_updated": false,
+    "raw_bundle_durable": false,
+    "status_toml_updated": true,
+    "frozen_candidate_v1_hashes_restored": true,
     "validator_run_7_completed": false,
     "validator_runtime_started": false
   },
@@ -104,6 +108,8 @@
     "sha256": "a0310582952ce41e7b492cf07814cc26ba3c88e04dfe6268f59f74823be91c40",
     "remote_path": "/home/qian/poco-stage0-current-30c145ff6/remap-observation-30c.tar.gz",
     "local_operator_path": "/tmp/poco-stage0-current-aoqkGV/remap-observation-30c.tar.gz",
+    "retrieval_receipt_path": "raw-bundle-retrieval-receipt.json",
+    "retrieval_receipt_sha256": "072872dc681c90ad9a7cd56b253ef345449cb7520385895e60b8dfcd7e0e4d9c",
     "contents": [
       "incoming/source.tar",
       "out-a/build-report.json",
@@ -116,5 +122,11 @@
       "out-b/trnm-poco-lab-material-builder",
       "tool/poco-fleet/*"
     ]
+  },
+  "status_binding": {
+    "path": "docs/evidence/poco-g3/status.toml",
+    "profile": "poco-g3-stage0-rust-src-cross-time-control-v3",
+    "cross_time_control_path": "docs/evidence/poco-g3/stage0-remap-observation-30c145ff6-20260824/cross-time-control-report.json",
+    "cross_time_control_sha256": "a18ee984eaba0250815ad941c4c54948e66c5cff94a5a689d3abaa20f598fefc"
   }
 }

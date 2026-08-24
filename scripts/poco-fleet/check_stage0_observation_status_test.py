@@ -101,6 +101,10 @@ def write_cross_time_reports(
             "independent_build_count": 2,
             "reproducible_build": True,
             "production_activation": False,
+            "geo_wan_evidence": False,
+            "source_candidate_profile": "clean-commit-v1",
+            "source_git_object_format": "sha1",
+            "source_git_status_sha256": hashlib.sha256(b"").hexdigest(),
             "host_triple": "x86_64-unknown-linux-gnu",
         }
 
@@ -132,6 +136,10 @@ def write_cross_time_reports(
             "rustc_vv_sha256": source["rustc_vv_sha256"],
         },
         "historical_2026_08_20_baseline": historical,
+        "frozen_candidate_v1_baseline": {
+            **source,
+            **historical,
+        },
         "unpatched_rust_src_drift_observation": {
             **drift_outputs,
             "committed_builder_sha256": historical["committed_builder_sha256"],
@@ -161,6 +169,9 @@ def write_cross_time_reports(
             "code_under_test_committed": True,
             "committed_builder_control_observed": True,
             "candidate_contains_remap_fix": complete,
+            "observation_input_candidate_contains_remap_fix": complete,
+            "restores_frozen_candidate_v1_hashes": True,
+            "restores_historical_baseline_hashes": False,
             "stage0_truth_base_contains_remap_fix": complete,
             "tool_source_cryptographically_bound_to_raw_report": False,
             "control_exit_code": 0,
@@ -181,7 +192,8 @@ def write_cross_time_reports(
             "committed_tool_control_native_linux_cross_time_reproducible": True,
             "cross_time_drift_observed": True,
             "remap_tool_fix_committed": True,
-            "remap_control_restores_historical_hashes": True,
+            "remap_control_restores_historical_hashes": False,
+            "remap_control_restores_frozen_candidate_v1_hashes": True,
             "control_observation_promotes_native_linux_cross_time_reproducibility": True,
             "stage0_observation_complete": complete,
         },
@@ -223,7 +235,8 @@ def write_status(
         "rust_src_drift_report_claims_reproducible_build": True,
         "rust_src_remap_control_observed": True,
         "committed_rust_src_remap_builder_control_observed": True,
-        "rust_src_remap_control_restored_historical_hashes": True,
+        "rust_src_remap_control_restored_historical_hashes": False,
+        "rust_src_remap_control_restored_frozen_candidate_v1_hashes": True,
         "rust_src_remap_control_exit_zero": True,
         "rust_src_remap_control_report_claims_reproducible_build": True,
         "rust_src_remap_code_under_test_committed": True,
@@ -314,6 +327,8 @@ def main() -> None:
         assert "rust_src_drift_observed=true" in report.stdout
         assert "rust_src_remap_code_under_test_committed=true" in report.stdout
         assert "committed_rust_src_remap_builder_control_observed=true" in report.stdout
+        assert "rust_src_remap_control_restored_historical_hashes=false" in report.stdout
+        assert "rust_src_remap_control_restored_frozen_candidate_v1_hashes=true" in report.stdout
         assert "committed_candidate_rust_src_remap_fix_observed=false" in report.stdout
         assert "rust_src_remap_in_d6bb_candidate=false" in report.stdout
         assert "fresh_clone_report_bound=true" in report.stdout
