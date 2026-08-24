@@ -620,7 +620,7 @@ impl BoundedRestartProtocolIngressV1 {
         let session_id = inbound.session_id();
         let session_generation = inbound.session_generation();
         let frame = inbound.into_frame();
-        if remote != frame.sender || session_id != frame.session {
+        if session_id == [0; 32] || remote != frame.sender || session_id != frame.session {
             return Err(RestartProtocolIngressErrorV1::AuthenticatedTransportMismatch);
         }
         let message = decode_authenticated_restart_frame_v1(&frame, &self.validator_set)?;
@@ -778,7 +778,7 @@ impl BoundedRestartProtocolIngressV1 {
         let session_id = inbound.session_id();
         let session_generation = inbound.session_generation();
         let outer = inbound.into_frame();
-        if remote != outer.sender || session_id != outer.session {
+        if session_id == [0; 32] || remote != outer.sender || session_id != outer.session {
             return Err(RestartProtocolIngressErrorV1::AuthenticatedTransportMismatch);
         }
         let transport = AuthenticatedRestartTransportV1 {
@@ -815,6 +815,27 @@ impl BoundedRestartProtocolIngressV1 {
         transport: AuthenticatedRestartTransportV1,
         relay_window: &mut RestartRelayAdmissionWindowV1,
     ) -> Result<RoutedRestartProtocolRelayV1, RestartProtocolIngressErrorV1> {
+        // This helper is the last boundary before a relay envelope is
+        // decoded.  Its callers normally derive `transport` from an
+        // authenticated mesh owner, but keeping the exact owner/frame join
+        // here prevents a direct helper call from treating a synthetic or
+        // zero-session identity as a real relay hop.  The embedded statement
+        // frame below intentionally has a zero synthetic session and is not
+        // checked by this boundary.
+        let source_allowed = match transport.source {
+            RestartTransportSourceV1::SparseRelayMesh => true,
+            RestartTransportSourceV1::DirectMesh => false,
+            #[cfg(test)]
+            RestartTransportSourceV1::VerifiedSignedBytes => true,
+        };
+        if transport.session_id == [0; 32]
+            || transport.remote != outer.sender
+            || transport.session_id != outer.session
+            || transport.outer_frame_fingerprint != outer.fingerprint(&self.run_id)
+            || !source_allowed
+        {
+            return Err(RestartProtocolIngressErrorV1::AuthenticatedTransportMismatch);
+        }
         if outer.kind != FrameKind::ConsensusRelay {
             return Err(RestartProtocolIngressErrorV1::UnsupportedFrameKind);
         }
@@ -1378,6 +1399,65 @@ mod tests {
         );
         assert_ne!(alternate_route.message_id, first.message_id);
         assert_eq!(window.len(), 2);
+    }
+
+    #[test]
+    fn direct_relay_decoder_rejects_zero_outer_session_before_inner_admission() {
+        let (set, keys) = fixture();
+        let origin = set.validators()[0].id();
+        let relay = set.validators()[1].id();
+        let envelope = ConsensusRelayEnvelopeV0::new(
+            origin,
+            FrameKind::RestartPrepare,
+            1,
+            b"valid-inner-restart".to_vec(),
+            &set,
+            &keys[0],
+        )
+        .unwrap();
+        let mut ingress = ingress(&set, set.validators()[6].id());
+        let mut window = RestartRelayAdmissionWindowV1::new(&set).unwrap();
+        let outer = AuthenticatedFrame {
+            sender: relay,
+            session: [0; 32],
+            sequence: 0,
+            kind: FrameKind::ConsensusRelay,
+            payload: envelope.encode(),
+        };
+        let transport = AuthenticatedRestartTransportV1 {
+            source: RestartTransportSourceV1::VerifiedSignedBytes,
+            remote: relay,
+            session_id: [0; 32],
+            session_generation: 0,
+            outer_frame_fingerprint: outer.fingerprint(TEST_RUN_ID),
+        };
+        assert!(matches!(
+            ingress.admit_restart_relay_decoded_v1(outer, transport, &mut window),
+            Err(RestartProtocolIngressErrorV1::AuthenticatedTransportMismatch)
+        ));
+        assert!(window.is_empty());
+        assert!(ingress.collector().is_empty());
+
+        let outer = AuthenticatedFrame {
+            sender: relay,
+            session: [0x61; 32],
+            sequence: 0,
+            kind: FrameKind::ConsensusRelay,
+            payload: envelope.encode(),
+        };
+        let transport = AuthenticatedRestartTransportV1 {
+            source: RestartTransportSourceV1::VerifiedSignedBytes,
+            remote: relay,
+            session_id: [0x61; 32],
+            session_generation: 0,
+            outer_frame_fingerprint: [0x91; 32],
+        };
+        assert!(matches!(
+            ingress.admit_restart_relay_decoded_v1(outer, transport, &mut window),
+            Err(RestartProtocolIngressErrorV1::AuthenticatedTransportMismatch)
+        ));
+        assert!(window.is_empty());
+        assert!(ingress.collector().is_empty());
     }
 
     #[test]

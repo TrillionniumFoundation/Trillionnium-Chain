@@ -1108,6 +1108,13 @@ pub fn decode_authenticated_restart_catchup_frame_v1(
     validator_set: &ValidatorSet,
 ) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
     expected_context.validate_for_set(validator_set)?;
+    // This helper is independently callable below the mesh replay window.
+    // Require a real authenticated outer session here; the relayed helper
+    // below uses a separate synthetic embedded frame whose session is
+    // intentionally zero and must remain accepted by the inner decoder.
+    if frame.session == [0; 32] {
+        return Err(RestartCatchupErrorV1::Malformed("session ID"));
+    }
     if frame.kind != FrameKind::RestartCatchup {
         return Err(RestartCatchupErrorV1::UnsupportedFrameKind);
     }
@@ -1133,6 +1140,12 @@ pub fn decode_authenticated_relayed_restart_catchup_frame_v1(
     validator_set: &ValidatorSet,
 ) -> Result<VerifiedRestartCatchupCarrierV1, RestartCatchupErrorV1> {
     expected_context.validate_for_set(validator_set)?;
+    // Only the actual relay hop is a transport identity.  The envelope's
+    // embedded statement is decoded from a synthetic comparison frame and
+    // deliberately carries session=[0;32].
+    if frame.session == [0; 32] {
+        return Err(RestartCatchupErrorV1::Malformed("session ID"));
+    }
     if frame.kind != FrameKind::ConsensusRelay {
         return Err(RestartCatchupErrorV1::UnsupportedFrameKind);
     }
@@ -4207,6 +4220,46 @@ mod tests {
             ),
             Err(RestartCatchupErrorV1::InvalidSignature)
         ));
+    }
+
+    #[test]
+    fn direct_and_relay_decoders_reject_zero_outer_session_but_keep_relay_inner_synthetic() {
+        let (set, keys) = fixture(7);
+        let context = context(&set);
+        let provider = set.validators()[1].id();
+        let request = signed_request(&context, provider, &set, &keys[0], 1, 1, 3);
+
+        let mut direct = frame(request.origin, &request);
+        direct.session = [0; 32];
+        assert!(matches!(
+            decode_authenticated_restart_catchup_frame_v1(&direct, &context, &set),
+            Err(RestartCatchupErrorV1::Malformed("session ID"))
+        ));
+
+        let relay = ConsensusRelayEnvelopeV0::new(
+            request.origin,
+            FrameKind::RestartCatchup,
+            1,
+            request.encode().unwrap(),
+            &set,
+            &keys[0],
+        )
+        .unwrap();
+        let mut relayed = relay_frame(set.validators()[3].id(), &relay);
+        relayed.session = [0; 32];
+        assert!(matches!(
+            decode_authenticated_relayed_restart_catchup_frame_v1(&relayed, &context, &set),
+            Err(RestartCatchupErrorV1::Malformed("session ID"))
+        ));
+
+        // The relay's embedded comparison frame still has its intentional
+        // zero session; a real nonzero outer hop must continue to decode it.
+        assert!(decode_authenticated_relayed_restart_catchup_frame_v1(
+            &relay_frame(set.validators()[3].id(), &relay),
+            &context,
+            &set,
+        )
+        .is_ok());
     }
 
     #[test]

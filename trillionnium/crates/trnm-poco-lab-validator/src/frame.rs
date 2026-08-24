@@ -3,9 +3,9 @@ use std::io::{self, Read, Write};
 
 use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use sha2::{Digest, Sha256};
-use trnm_consensus_types::ValidatorId;
 #[cfg(test)]
 use trnm_consensus_types::ValidatorSet;
+use trnm_consensus_types::{ValidatorId, MAX_VALIDATORS};
 
 use crate::key_roles::ValidatorKeyRoleRegistryV1;
 use crate::p2p_identity::{
@@ -149,28 +149,50 @@ impl std::fmt::Display for FrameError {
 
 /// Process-local, bounded replay admission for authenticated transport frames.
 ///
-/// A validator may start a fresh random session after restart.  For each
-/// sender the receiver retains at most `max_sessions_per_sender` sessions and
-/// accepts only a strictly increasing sequence within each session. The
-/// window fails closed when that bound is exhausted; it never evicts a session
-/// and therefore never re-admits an old signed frame inside one process. This
-/// is process-local ingress/DoS state, not consensus state. A validator runtime
+/// A validator may start a fresh random session after restart. For each sender
+/// the receiver retains at most `max_sessions_per_sender` sessions, while the
+/// window as a whole retains at most `max_senders` distinct senders, and
+/// accepts only a strictly increasing sequence within each session. The legacy
+/// [`FrameReplayWindow::new`] constructor uses the consensus `MAX_VALIDATORS`
+/// limit; callers with a narrower topology can use
+/// [`FrameReplayWindow::with_max_senders`]. Both limits
+/// fail closed when exhausted: the window never evicts a sender or session and
+/// therefore never re-admits an old signed frame inside one process. This is
+/// process-local ingress/DoS state, not consensus state. A validator runtime
 /// MUST durably recover retired sessions or complete a receiver-authenticated
-/// fresh-session handshake before accepting frames after restart. That
-/// restart authority is intentionally absent from the current scaffold.
+/// fresh-session handshake before accepting frames after restart. That restart
+/// authority is intentionally absent from the current scaffold.
 pub struct FrameReplayWindow {
     max_sessions_per_sender: usize,
+    max_senders: usize,
     heads: BTreeMap<(ValidatorId, [u8; 32]), u64>,
     session_order: BTreeMap<ValidatorId, Vec<[u8; 32]>>,
 }
 
 impl FrameReplayWindow {
     pub fn new(max_sessions_per_sender: usize) -> Result<Self, FrameError> {
+        Self::with_max_senders(max_sessions_per_sender, MAX_VALIDATORS)
+    }
+
+    /// Construct a replay window with an explicit global sender bound.
+    ///
+    /// `max_senders` is capped by the consensus validator-set maximum so a
+    /// caller cannot accidentally turn this process-local DoS guard into an
+    /// unbounded allocation surface. The bound applies only to distinct sender
+    /// identities; existing sessions for admitted senders remain active.
+    pub fn with_max_senders(
+        max_sessions_per_sender: usize,
+        max_senders: usize,
+    ) -> Result<Self, FrameError> {
         if max_sessions_per_sender == 0 || max_sessions_per_sender > 8 {
             return Err(FrameError::Malformed("invalid replay-session bound"));
         }
+        if max_senders == 0 || max_senders > MAX_VALIDATORS {
+            return Err(FrameError::Malformed("invalid replay-sender bound"));
+        }
         Ok(Self {
             max_sessions_per_sender,
+            max_senders,
             heads: BTreeMap::new(),
             session_order: BTreeMap::new(),
         })
@@ -189,8 +211,13 @@ impl FrameReplayWindow {
         if frame.sequence != 0 {
             return Err(FrameError::Replay);
         }
+        if !self.session_order.contains_key(&frame.sender)
+            && self.session_order.len() >= self.max_senders
+        {
+            return Err(FrameError::Replay);
+        }
         let sessions = self.session_order.entry(frame.sender).or_default();
-        if sessions.len() == self.max_sessions_per_sender {
+        if sessions.len() >= self.max_sessions_per_sender {
             return Err(FrameError::Replay);
         }
         sessions.push(frame.session);
@@ -722,6 +749,64 @@ mod tests {
         frame.session = [7; 32];
         frame.sequence = 0;
         assert!(matches!(window.admit(&frame), Err(FrameError::Replay)));
+    }
+
+    #[test]
+    fn replay_window_sender_bound_rejects_without_eviction() {
+        let (_key, _consensus_key, set, _key_roles, _) = fixture();
+        assert!(matches!(
+            FrameReplayWindow::with_max_senders(1, 0),
+            Err(FrameError::Malformed("invalid replay-sender bound"))
+        ));
+        assert!(matches!(
+            FrameReplayWindow::with_max_senders(1, MAX_VALIDATORS + 1),
+            Err(FrameError::Malformed("invalid replay-sender bound"))
+        ));
+
+        let mut window = FrameReplayWindow::with_max_senders(2, 2).unwrap();
+        let mut frame = AuthenticatedFrame {
+            sender: set.validators()[0].id(),
+            session: [0x70; 32],
+            sequence: 0,
+            kind: FrameKind::Health,
+            payload: b"health".to_vec(),
+        };
+        window.admit(&frame).unwrap();
+        frame.sender = set.validators()[1].id();
+        frame.session = [0x71; 32];
+        window.admit(&frame).unwrap();
+
+        // A third distinct sender cannot consume an unbounded map entry.
+        frame.sender = set.validators()[2].id();
+        frame.session = [0x72; 32];
+        assert!(matches!(window.admit(&frame), Err(FrameError::Replay)));
+        assert_eq!(window.session_order.len(), 2);
+        assert!(!window.session_order.contains_key(&frame.sender));
+        assert!(!window.heads.contains_key(&(frame.sender, frame.session)));
+
+        // The bound is only for distinct senders: admitted sessions continue
+        // to make progress, and an admitted sender may still use its second
+        // configured session slot.
+        frame.sender = set.validators()[0].id();
+        frame.session = [0x70; 32];
+        frame.sequence = 1;
+        window.admit(&frame).unwrap();
+        frame.session = [0x73; 32];
+        frame.sequence = 0;
+        window.admit(&frame).unwrap();
+        frame.session = [0x74; 32];
+        assert!(matches!(window.admit(&frame), Err(FrameError::Replay)));
+
+        // Rejection does not evict either admitted sender or partially insert
+        // the rejected sender; retries for the third sender remain rejected.
+        frame.sender = set.validators()[2].id();
+        frame.session = [0x72; 32];
+        frame.sequence = 0;
+        assert!(matches!(window.admit(&frame), Err(FrameError::Replay)));
+        frame.sender = set.validators()[1].id();
+        frame.session = [0x71; 32];
+        frame.sequence = 1;
+        window.admit(&frame).unwrap();
     }
 
     #[test]
