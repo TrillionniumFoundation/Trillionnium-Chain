@@ -116,6 +116,7 @@ pub enum AdmissionReject {
     RecheckUnavailable,
     RecheckFailed,
     SlotIdExhausted,
+    InconsistentState,
 }
 
 /// A read-only view implemented by the canonical signed-envelope type.
@@ -303,8 +304,11 @@ impl TypedAdmissionGate {
         H: SignedAdmissionHooks<E>,
     {
         let digest = envelope.canonical_digest();
-        if self.slot_by_digest.contains_key(&digest) {
-            return TypedAdmitOutcome::Duplicate;
+        if let Some(&slot) = self.slot_by_digest.get(&digest) {
+            return match self.validate_duplicate(envelope, digest, slot) {
+                Ok(()) => TypedAdmitOutcome::Duplicate,
+                Err(reason) => TypedAdmitOutcome::Rejected(reason),
+            };
         }
 
         // Capacity is a pure queue-state decision.  Resolve it before copying
@@ -398,6 +402,55 @@ impl TypedAdmissionGate {
             fee_limit: envelope.fee_limit(),
             resource_limits,
         })
+    }
+
+    /// Revalidate an exact duplicate without invoking signature/replay hooks or
+    /// cloning a second body.  A digest hit is not permission to skip the
+    /// canonical adapter boundary: mutable or forged views must not turn a
+    /// queued digest into a blanket acceptance path.
+    fn validate_duplicate<E: SignedEnvelopeView + ?Sized>(
+        &self,
+        envelope: &E,
+        probed_digest: CanonicalTxDigest,
+        slot: u64,
+    ) -> Result<(), AdmissionReject> {
+        envelope.validate_canonical()?;
+        let digest = envelope.canonical_digest();
+        if digest != probed_digest {
+            return Err(AdmissionReject::CanonicalDigestChanged);
+        }
+        CanonicalTxDigest::from_bytes(digest.as_bytes())?;
+        let signer_id = envelope.canonical_signer_id()?;
+        let queued = self
+            .by_slot
+            .get(&slot)
+            .ok_or(AdmissionReject::InconsistentState)?;
+        if queued.digest != digest || queued.signer_id != signer_id {
+            return Err(AdmissionReject::CanonicalValidationFailed);
+        }
+
+        let body = envelope.canonical_body();
+        if body.is_empty() {
+            return Err(AdmissionReject::EmptyBody);
+        }
+        let body_len = u64::try_from(body.len()).map_err(|_| AdmissionReject::BodyTooLarge)?;
+        if body_len > self.max_body_bytes {
+            return Err(AdmissionReject::BodyTooLarge);
+        }
+        let nonce = envelope.nonce();
+        if nonce == 0 {
+            return Err(AdmissionReject::InvalidNonce);
+        }
+        let resource_limits = envelope.resource_limits();
+        resource_limits.validate(body_len, self.max_body_bytes)?;
+        if queued.body != body
+            || queued.nonce != nonce
+            || queued.fee_limit != envelope.fee_limit()
+            || queued.resource_limits != resource_limits
+        {
+            return Err(AdmissionReject::CanonicalValidationFailed);
+        }
+        Ok(())
     }
 
     fn allocate_slot(&mut self) -> Result<u64, AdmissionReject> {
@@ -666,6 +719,116 @@ mod tests {
         assert_eq!(gate.queued_counts(), (0, 0, 0));
         assert!(!gate.contains_digest(digest(31)));
         assert!(!gate.contains_digest(digest(32)));
+    }
+
+    #[test]
+    fn duplicate_probe_revalidates_canonical_identity_and_queued_metadata() {
+        use std::cell::Cell;
+
+        struct DuplicateRotatingDigestEnvelope {
+            inner: FixtureEnvelope,
+            digest_calls: Cell<usize>,
+        }
+
+        impl SignedEnvelopeView for DuplicateRotatingDigestEnvelope {
+            fn canonical_digest(&self) -> CanonicalTxDigest {
+                let call = self.digest_calls.get();
+                self.digest_calls.set(call.saturating_add(1));
+                if call == 0 {
+                    self.inner.digest
+                } else {
+                    digest(33)
+                }
+            }
+
+            fn canonical_signer_id(&self) -> Result<CanonicalSignerId, AdmissionReject> {
+                self.inner.canonical_signer_id()
+            }
+
+            fn canonical_body(&self) -> &[u8] {
+                self.inner.canonical_body()
+            }
+
+            fn nonce(&self) -> u64 {
+                self.inner.nonce()
+            }
+
+            fn fee_limit(&self) -> u128 {
+                self.inner.fee_limit()
+            }
+
+            fn resource_limits(&self) -> ResourceLimits {
+                self.inner.resource_limits()
+            }
+
+            fn validate_canonical(&self) -> Result<(), AdmissionReject> {
+                self.inner.validate_canonical()
+            }
+        }
+
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let first = envelope(32);
+        let mut hooks = accepting_hooks();
+        assert_eq!(
+            gate.admit_signed(&first, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+
+        let rotating = DuplicateRotatingDigestEnvelope {
+            inner: first,
+            digest_calls: Cell::new(0),
+        };
+        struct DuplicateHooks;
+        impl SignedAdmissionHooks<DuplicateRotatingDigestEnvelope> for DuplicateHooks {
+            fn verify_signature(
+                &mut self,
+                _envelope: &DuplicateRotatingDigestEnvelope,
+                _metadata: &SignedEnvelopeMetadata,
+            ) -> Result<(), AdmissionReject> {
+                Ok(())
+            }
+        }
+        let mut duplicate_hooks = DuplicateHooks;
+        assert_eq!(
+            gate.admit_signed(&rotating, IngressClass::Normal, &mut duplicate_hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::CanonicalDigestChanged)
+        );
+        assert_eq!(gate.queued_counts(), (1, 0, 1));
+
+        let mut missing_signer = envelope(32);
+        missing_signer.signer_id = None;
+        assert_eq!(
+            gate.admit_signed(&missing_signer, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::SignerIdentityUnavailable)
+        );
+
+        let mut changed_body = envelope(32);
+        changed_body.body = b"different-body".to_vec();
+        assert_eq!(
+            gate.admit_signed(&changed_body, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::CanonicalValidationFailed)
+        );
+        assert_eq!(gate.queued_counts(), (1, 0, 1));
+    }
+
+    #[test]
+    fn duplicate_index_ghost_fails_closed_instead_of_returning_duplicate() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let first = envelope(34);
+        let mut hooks = accepting_hooks();
+        assert_eq!(
+            gate.admit_signed(&first, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        let slot = *gate
+            .slot_by_digest
+            .get(&first.digest)
+            .expect("digest index entry");
+        gate.by_slot.remove(&slot);
+        assert_eq!(
+            gate.admit_signed(&first, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState)
+        );
     }
 
     #[test]
