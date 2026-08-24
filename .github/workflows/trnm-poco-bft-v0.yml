@@ -41,6 +41,7 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-execution-v0/**"
       - "trillionnium/crates/trnm-consensus-external-watermark/**"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
       - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
@@ -95,6 +96,7 @@ on:
       - "trillionnium/crates/trnm-consensus-core/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-native-execution-v0/**"
       - "trillionnium/crates/trnm-consensus-external-watermark/**"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
       - "trillionnium/crates/trnm-consensus-remote-signer-protocol/**"
@@ -302,6 +304,7 @@ jobs:
           set -euo pipefail
           cargo test --locked -p trnm-consensus-types
           cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-native-execution-v0 --all-targets
           cargo test --locked -p trnm-mempool --all-targets
           cargo test --locked -p trnm-consensus-external-watermark --all-targets
           cargo test --locked -p trnm-consensus-peer-lease --all-targets
@@ -334,6 +337,7 @@ jobs:
           set -euo pipefail
           cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-native-execution-v0 --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings
           cargo clippy --locked -p trnm-consensus-external-watermark --all-targets --no-deps -- -D warnings
           cargo clippy --locked -p trnm-consensus-peer-lease --all-targets --no-deps -- -D warnings

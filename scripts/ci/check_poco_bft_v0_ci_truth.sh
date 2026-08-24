@@ -46,6 +46,9 @@ NODE_EVENT_WAL_SOURCE="$ROOT/trillionnium/crates/trnm-poco-node/src/node_event_w
 MEMPOOL_CARGO="$ROOT/trillionnium/crates/trnm-mempool/Cargo.toml"
 MEMPOOL_TYPED_ADMISSION_SOURCE="$ROOT/trillionnium/crates/trnm-mempool/src/typed_admission.rs"
 MEMPOOL_TYPED_ADMISSION_TEST="$ROOT/trillionnium/crates/trnm-mempool/tests/typed_admission_contract.rs"
+NATIVE_EXECUTION_CARGO="$ROOT/trillionnium/crates/trnm-native-execution-v0/Cargo.toml"
+NATIVE_EXECUTION_SOURCE="$ROOT/trillionnium/crates/trnm-native-execution-v0/src/lib.rs"
+NATIVE_EXECUTION_DURABLE_SOURCE="$ROOT/trillionnium/crates/trnm-native-execution-v0/src/durable.rs"
 G1C_TRUTH="$ROOT/docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md"
 ROOT_README="$ROOT/README.md"
 RELEASE_TRUTH="$ROOT/RELEASE_READINESS.md"
@@ -255,6 +258,9 @@ for required in \
   "$MEMPOOL_CARGO" \
   "$MEMPOOL_TYPED_ADMISSION_SOURCE" \
   "$MEMPOOL_TYPED_ADMISSION_TEST" \
+  "$NATIVE_EXECUTION_CARGO" \
+  "$NATIVE_EXECUTION_SOURCE" \
+  "$NATIVE_EXECUTION_DURABLE_SOURCE" \
   "$G1C_TRUTH" \
   "$ROOT_README" \
   "$RELEASE_TRUTH" \
@@ -278,6 +284,9 @@ require_tracked "$CI_RUNNER_POLICY"
 require_tracked "$MEMPOOL_CARGO"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_SOURCE"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_TEST"
+require_tracked "$NATIVE_EXECUTION_CARGO"
+require_tracked "$NATIVE_EXECUTION_SOURCE"
+require_tracked "$NATIVE_EXECUTION_DURABLE_SOURCE"
 require_tracked "$NODE_EVENT_WAL_SOURCE"
 require_tracked "$CONSENSUS_CRYPTO_SOURCE"
 require_tracked "$CONSENSUS_CRYPTO_EPOCH_SOURCE"
@@ -296,6 +305,8 @@ require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-consensus-signer-journal/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "trillionnium/crates/trnm-mempool/**"' 2
+require_literal_count "$POCO_WORKFLOW" \
+  '      - "trillionnium/crates/trnm-native-execution-v0/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - ".github/workflows/rust-l1-testnet-preflight.yml"' 2
 require_literal_count "$POCO_WORKFLOW" \
@@ -361,6 +372,10 @@ require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-mempool --all-targets'
 require_literal "$POCO_WORKFLOW" \
   'cargo clippy --locked -p trnm-mempool --all-targets -- -D warnings'
+require_literal "$POCO_WORKFLOW" \
+  'cargo test --locked -p trnm-native-execution-v0 --all-targets'
+require_literal "$POCO_WORKFLOW" \
+  'cargo clippy --locked -p trnm-native-execution-v0 --all-targets --no-deps -- -D warnings'
 require_literal "$POCO_WORKFLOW" \
   'cargo test --locked -p trnm-consensus-external-watermark --all-targets'
 require_literal "$POCO_WORKFLOW" \
@@ -879,6 +894,29 @@ require_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'RecheckUnavailable'
 require_literal "$MEMPOOL_TYPED_ADMISSION_TEST" 'typed_admission_stays_key_free_and_explicitly_non_durable'
 reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'SigningKey'
 reject_literal "$MEMPOOL_TYPED_ADMISSION_SOURCE" 'PrivateKey'
+
+# Native execution is the canonical state-root/JMT candidate dependency of the
+# node scaffold.  Keep it in the same CI boundary while preserving its explicit
+# non-authority status: this package has no Core permit, signer, broadcast, or
+# production activation capability yet.
+require_literal "$NATIVE_EXECUTION_SOURCE" \
+  'pub fn execute_authenticated_block_candidate_v0'
+require_literal "$NATIVE_EXECUTION_DURABLE_SOURCE" \
+  'pub struct DurableNativeApplicationV0'
+require_literal "$NODE_CARGO" \
+  'trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }'
+require_literal "$NODE_CARGO" \
+  'native_application_boundary_dependency = true'
+for native_execution_marker in \
+  'production_authority = false' \
+  'core_valid_callback = false' \
+  'safety_authority_integration = false' \
+  'request_signature_emission = false' \
+  'signing_or_broadcast = false' \
+  'whole_node_checkpoint_cas = false' \
+  'production_candidate = false'; do
+  require_literal "$NATIVE_EXECUTION_CARGO" "$native_execution_marker"
+done
 
 # The fail-closed node scaffold must compile and lint wherever its source can
 # trigger this workflow, while remaining explicitly incomplete and outside the
