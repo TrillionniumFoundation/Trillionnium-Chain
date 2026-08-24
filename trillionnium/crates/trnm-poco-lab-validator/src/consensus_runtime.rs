@@ -72,7 +72,8 @@ use crate::{
         FleetBarrierAdmissionV1, FleetBarrierTransportV1, FleetCampaignCapacitiesV1,
         FleetCampaignIdentityV1, FleetCampaignRequestV1, FleetMeshSessionDirectionV1,
         FleetMeshSessionSetV1, FleetMeshSessionV1, FleetStartCertificateV1, LocalReadyCutV1,
-        SignedFleetReadyV1, SignedFleetStartV1, MAX_FLEET_START_CERTIFICATE_BYTES_V1,
+        SignedFleetReadyV1, SignedFleetStartV1, MAX_FLEET_BARRIER_PAYLOAD_BYTES_V1,
+        MAX_FLEET_START_CERTIFICATE_BYTES_V1,
     },
     frame::FrameKind,
     loop_driver::RoutedConsensusActionV0,
@@ -1878,6 +1879,14 @@ impl ConsensusTransportProfileV1 {
     }
 }
 
+fn fleet_barrier_relay_inner_payload_limit_v1(kind: FrameKind) -> usize {
+    if matches!(kind, FrameKind::FleetReady | FrameKind::FleetStart) {
+        MAX_FLEET_BARRIER_PAYLOAD_BYTES_V1
+    } else {
+        MAX_RELAY_INNER_PAYLOAD_BYTES_V0
+    }
+}
+
 impl ConsensusRuntimePreflightV1 {
     fn new(
         config: &LoadedValidatorConfig,
@@ -2547,9 +2556,13 @@ impl FleetBarrierOwnerV1<'_> {
                         inbound.frame().kind == FrameKind::ConsensusRelay,
                         "sparse fleet barrier rejects direct statements"
                     );
-                    let envelope = ConsensusRelayEnvelopeV0::decode(
+                    let inner_kind =
+                        ConsensusRelayEnvelopeV0::inner_kind_hint(&inbound.frame().payload)
+                            .map_err(|error| anyhow!("peek fleet barrier relay kind: {error}"))?;
+                    let envelope = ConsensusRelayEnvelopeV0::decode_with_inner_payload_limit(
                         &inbound.frame().payload,
                         self.config.validator_set(),
+                        fleet_barrier_relay_inner_payload_limit_v1(inner_kind),
                     )
                     .map_err(|error| anyhow!("decode fleet barrier relay: {error}"))?;
                     if matches!(
@@ -9394,6 +9407,18 @@ mod tests {
 
     #[test]
     fn transport_profiles_and_forward_outbox_are_bounded_before_socket_effects() {
+        assert_eq!(
+            fleet_barrier_relay_inner_payload_limit_v1(FrameKind::FleetReady),
+            MAX_FLEET_BARRIER_PAYLOAD_BYTES_V1
+        );
+        assert_eq!(
+            fleet_barrier_relay_inner_payload_limit_v1(FrameKind::FleetStart),
+            MAX_FLEET_BARRIER_PAYLOAD_BYTES_V1
+        );
+        assert_eq!(
+            fleet_barrier_relay_inner_payload_limit_v1(FrameKind::Vote),
+            MAX_RELAY_INNER_PAYLOAD_BYTES_V0
+        );
         assert_eq!(
             ConsensusTransportProfileV1::Direct.relay_hop_budget_v1(),
             None
