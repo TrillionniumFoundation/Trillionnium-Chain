@@ -681,18 +681,42 @@ impl HostAttestationSessionRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?;
-        // A loser token from an earlier admission race is independent of the
-        // currently active winner.  Clear it by its exact token first; a
-        // key-only release would be allowed to tear down the winner.
-        self.retry_pending_releases_for_key_v1(key)?;
-        let admission = self
+        let active_admission = self
             .active
             .lock()
             .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?
             .get(&key)
             .copied()
             .map(|entry| entry.admission);
-        if let Some(admission) = admission {
+        // A previous release attempt may have retained this exact active
+        // token in the pending queue.  Remember that fact before draining the
+        // queue: a successful retry already consumed the authority lease, so
+        // issuing a second release below would turn a recoverable cleanup into
+        // a false failure on non-idempotent authorities.
+        let active_was_pending = active_admission
+            .map(|admission| self.pending_contains_token_v1(key, admission.token()))
+            .transpose()?
+            .unwrap_or(false);
+        // A loser token from an earlier admission race is independent of the
+        // currently active winner.  Clear it by its exact token first; a
+        // key-only release would be allowed to tear down the winner.
+        self.retry_pending_releases_for_key_v1(key)?;
+        if let Some(admission) = active_admission {
+            if active_was_pending {
+                let mut active = self
+                    .active
+                    .lock()
+                    .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?;
+                if active
+                    .get(&key)
+                    .copied()
+                    .map(|entry| entry.admission == admission)
+                    .unwrap_or(false)
+                {
+                    active.remove(&key);
+                }
+                return Ok(());
+            }
             // Keep the active receipt installed until the external authority
             // confirms release.  A release failure must not create a window
             // in which a second generation can overlap the first one.
@@ -727,7 +751,6 @@ impl HostAttestationSessionRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?;
-        self.retry_pending_releases_for_key_v1(key)?;
         let expected = self.binding(
             binding.direction(),
             binding.remote(),
@@ -739,6 +762,29 @@ impl HostAttestationSessionRegistryV1 {
         }
         if admission.token().evidence_digest() != self.material.digest() {
             return Err(HostAttestationErrorV1::EvidenceMismatch);
+        }
+        // If this exact receipt is already retained for a prior uncertain
+        // release, the retry below is the authority operation for this call.
+        // Do not issue a second release after it succeeds: many authorities
+        // consume a token on the first successful call and report
+        // `LeaseNotFound` for a duplicate rather than treating release as
+        // idempotent.
+        let was_pending = self.pending_contains_token_v1(key, admission.token())?;
+        self.retry_pending_releases_for_key_v1(key)?;
+        if was_pending {
+            let mut active = self
+                .active
+                .lock()
+                .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?;
+            if active
+                .get(&key)
+                .copied()
+                .map(|entry| entry.admission == admission)
+                .unwrap_or(false)
+            {
+                active.remove(&key);
+            }
+            return Ok(());
         }
         // The exact token, not the bare key, authorizes cleanup.  A newer
         // winner may already occupy the local key while this loser callback
@@ -758,6 +804,19 @@ impl HostAttestationSessionRegistryV1 {
             active.remove(&key);
         }
         Ok(())
+    }
+
+    fn pending_contains_token_v1(
+        &self,
+        key: HostSessionKeyV1,
+        token: HostAttestationTokenV1,
+    ) -> Result<bool, HostAttestationErrorV1> {
+        Ok(self
+            .pending_releases
+            .lock()
+            .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?
+            .get(&key)
+            .is_some_and(|tokens| tokens.contains(&token)))
     }
 
     pub fn release_all(&self) -> Result<(), HostAttestationErrorV1> {
@@ -954,6 +1013,8 @@ mod tests {
         fail_release: AtomicBool,
         release_failures: AtomicUsize,
         revalidate_calls: AtomicUsize,
+        released_tokens: Mutex<Vec<HostAttestationTokenV1>>,
+        reject_duplicate_release: AtomicBool,
         wrong_binding: AtomicBool,
         admit_started: Option<Arc<Barrier>>,
         admit_continue: Option<Arc<Barrier>>,
@@ -1000,7 +1061,7 @@ mod tests {
             Ok(())
         }
 
-        fn release_v1(&self, _token: HostAttestationTokenV1) -> Result<(), HostAttestationErrorV1> {
+        fn release_v1(&self, token: HostAttestationTokenV1) -> Result<(), HostAttestationErrorV1> {
             let fail_once = self
                 .release_failures
                 .fetch_update(Ordering::AcqRel, Ordering::Acquire, |remaining| {
@@ -1014,6 +1075,16 @@ mod tests {
             if self.fail_release.load(Ordering::Acquire) || fail_once {
                 Err(HostAttestationErrorV1::AuthorityRejected)
             } else {
+                let mut released = self
+                    .released_tokens
+                    .lock()
+                    .map_err(|_| HostAttestationErrorV1::AuthorityUnavailable)?;
+                if self.reject_duplicate_release.load(Ordering::Acquire)
+                    && released.contains(&token)
+                {
+                    return Err(HostAttestationErrorV1::LeaseNotFound);
+                }
+                released.push(token);
                 Ok(())
             }
         }
@@ -1503,6 +1574,50 @@ mod tests {
         );
         registry.release_exact_v1(winner).unwrap();
         assert!(!registry.active.lock().unwrap().contains_key(&key));
+    }
+
+    #[test]
+    fn pending_active_token_is_released_once_for_non_idempotent_authority() {
+        let b = binding();
+        let authority = Arc::new(TestAuthority::default());
+        authority
+            .reject_duplicate_release
+            .store(true, Ordering::Release);
+        let registry = HostAttestationSessionRegistryV1::new(
+            authority.clone(),
+            b.local(),
+            b.p2p_identity_public_key(),
+            b.genesis_hash(),
+            b.epoch(),
+            b.validator_set_id(),
+            b.run_id_sha256(),
+            b.network_context_digest(),
+            HostAttestationMaterialV1::from_bytes(vec![0x58]).unwrap(),
+        )
+        .unwrap();
+        let admission = registry
+            .acquire(
+                ExternalPeerDirectionV1::Outbound,
+                b.remote(),
+                b.session_id(),
+                b.generation(),
+            )
+            .unwrap();
+        let key = (ExternalPeerDirectionV1::Outbound, b.remote());
+        registry
+            .pending_releases
+            .lock()
+            .unwrap()
+            .entry(key)
+            .or_default()
+            .push(admission.token());
+
+        registry
+            .release(ExternalPeerDirectionV1::Outbound, b.remote())
+            .unwrap();
+        assert_eq!(authority.released_tokens.lock().unwrap().len(), 1);
+        assert!(!registry.active.lock().unwrap().contains_key(&key));
+        assert!(!registry.pending_releases.lock().unwrap().contains_key(&key));
     }
 
     // Ensure the authority trait remains object-safe for mesh composition.
