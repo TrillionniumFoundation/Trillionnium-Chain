@@ -20,7 +20,7 @@ use std::{
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
-    io::{Read, Write},
+    io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
 };
 
@@ -243,6 +243,36 @@ pub enum NodeEventRecoveryV1 {
     Pending(NodeEventIntentV1),
 }
 
+/// Stable identity of the directory and WAL inode admitted at open.  The
+/// path is intentionally not treated as an authority: a same-UID caller can
+/// rename a directory or replace a regular file while retaining the textual
+/// path.  On Unix, device/inode binding plus held directory/file descriptors
+/// prevents that replacement from becoming an invisible new journal.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct NodeEventPathIdentityV1 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+}
+
+#[cfg(unix)]
+impl NodeEventPathIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+        }
+    }
+}
+
+#[cfg(not(unix))]
+impl NodeEventPathIdentityV1 {
+    fn from_metadata(_metadata: &fs::Metadata) -> Self {
+        Self {}
+    }
+}
+
 /// A linear owner of one append-only host event WAL.
 ///
 /// The owner is intentionally non-`Clone`; two owners must not race the same
@@ -252,6 +282,10 @@ pub enum NodeEventRecoveryV1 {
 #[derive(Debug)]
 pub struct NodeEventWalV1 {
     path: PathBuf,
+    parent_file: File,
+    file: File,
+    parent_identity: NodeEventPathIdentityV1,
+    file_identity: NodeEventPathIdentityV1,
     namespace: [u8; 32],
     head: [u8; 32],
     next_sequence: u64,
@@ -268,8 +302,15 @@ impl NodeEventWalV1 {
         }
         let path = path.as_ref().to_path_buf();
         validate_path_v1(&path)?;
+        let parent_file = open_parent_v1(&path)?;
+        let parent_identity = path_identity_from_file_v1(&parent_file)?;
+        let existing_file_identity = match fs::symlink_metadata(&path) {
+            Ok(metadata) => Some(NodeEventPathIdentityV1::from_metadata(&metadata)),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+            Err(_) => return Err(NodeEventWalErrorV1::InvalidPath),
+        };
         let mut options = OpenOptions::new();
-        options.read(true).write(true).create(true);
+        options.read(true).write(true).append(true).create(true);
         #[cfg(unix)]
         options
             .mode(0o600)
@@ -277,6 +318,11 @@ impl NodeEventWalV1 {
         let mut file = options.open(&path).map_err(|_| NodeEventWalErrorV1::Io)?;
         let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
         validate_open_file_v1(&file, &path, metadata.len() == 0)?;
+        let file_identity = NodeEventPathIdentityV1::from_metadata(&metadata);
+        if existing_file_identity.is_some_and(|identity| identity != file_identity) {
+            return Err(NodeEventWalErrorV1::InvalidPath);
+        }
+        validate_path_binding_v1(&path, parent_identity, file_identity)?;
         if metadata.len() == 0 {
             let frame = encode_frame_v1(
                 KIND_GENESIS_V1,
@@ -291,11 +337,16 @@ impl NodeEventWalV1 {
             file.write_all(&frame)
                 .map_err(|_| NodeEventWalErrorV1::Io)?;
             file.sync_all().map_err(|_| NodeEventWalErrorV1::Io)?;
-            sync_parent_v1(&path)?;
+            parent_file
+                .sync_all()
+                .map_err(|_| NodeEventWalErrorV1::Io)?;
         }
-        drop(file);
         let mut wal = Self {
             path,
+            parent_file,
+            file,
+            parent_identity,
+            file_identity,
             namespace,
             head: [0; 32],
             next_sequence: 0,
@@ -499,17 +550,19 @@ impl NodeEventWalV1 {
 
     fn append_frame_v1(&mut self, frame: &[u8; FRAME_BYTES_V1]) -> Result<(), NodeEventWalErrorV1> {
         let result = (|| {
-            let mut options = OpenOptions::new();
-            options.write(true).append(true);
-            #[cfg(unix)]
-            options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
-            let mut file = options
-                .open(&self.path)
-                .map_err(|_| NodeEventWalErrorV1::Io)?;
+            self.validate_path_binding_v1()?;
+            let mut file = self.file.try_clone().map_err(|_| NodeEventWalErrorV1::Io)?;
             validate_open_file_v1(&file, &self.path, false)?;
+            let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
+            if NodeEventPathIdentityV1::from_metadata(&metadata) != self.file_identity {
+                return Err(NodeEventWalErrorV1::InvalidPath);
+            }
             file.write_all(frame).map_err(|_| NodeEventWalErrorV1::Io)?;
             file.sync_all().map_err(|_| NodeEventWalErrorV1::Io)?;
-            sync_parent_v1(&self.path)
+            self.parent_file
+                .sync_all()
+                .map_err(|_| NodeEventWalErrorV1::Io)?;
+            self.validate_path_binding_v1()
         })();
         if result.is_err() {
             self.poisoned = true;
@@ -518,10 +571,18 @@ impl NodeEventWalV1 {
     }
 
     fn reload_v1(&mut self) -> Result<(), NodeEventWalErrorV1> {
-        let mut file = open_read_wal_v1(&self.path)?;
+        self.validate_path_binding_v1()?;
+        let mut file = self.file.try_clone().map_err(|_| NodeEventWalErrorV1::Io)?;
+        file.seek(SeekFrom::Start(0))
+            .map_err(|_| NodeEventWalErrorV1::Io)?;
+        validate_open_file_v1(&file, &self.path, false)?;
         let mut bytes = Vec::new();
         file.read_to_end(&mut bytes)
             .map_err(|_| NodeEventWalErrorV1::Io)?;
+        let metadata = file.metadata().map_err(|_| NodeEventWalErrorV1::Io)?;
+        if NodeEventPathIdentityV1::from_metadata(&metadata) != self.file_identity {
+            return Err(NodeEventWalErrorV1::InvalidPath);
+        }
         if bytes.is_empty() || bytes.len() % FRAME_BYTES_V1 != 0 {
             return Err(NodeEventWalErrorV1::Truncated);
         }
@@ -610,7 +671,11 @@ impl NodeEventWalV1 {
         self.next_sequence = expected_sequence;
         self.pending = pending;
         self.last_commit = last_commit;
-        Ok(())
+        self.validate_path_binding_v1()
+    }
+
+    fn validate_path_binding_v1(&self) -> Result<(), NodeEventWalErrorV1> {
+        validate_path_binding_v1(&self.path, self.parent_identity, self.file_identity)
     }
 }
 
@@ -777,14 +842,80 @@ fn validate_path_v1(path: &Path) -> Result<(), NodeEventWalErrorV1> {
     let Some(parent) = path.parent() else {
         return Err(NodeEventWalErrorV1::InvalidPath);
     };
-    let metadata = fs::metadata(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
-    if !metadata.is_dir() || path.file_name().is_none() {
+    if !path.is_absolute() || path.file_name().is_none() {
+        return Err(NodeEventWalErrorV1::InvalidPath);
+    }
+    let metadata = fs::symlink_metadata(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err(NodeEventWalErrorV1::InvalidPath);
+    }
+    // Reject an indirect symlink (or an unresolved `..`) in the parent path
+    // as well.  Descriptor-relative opens below then keep the admitted
+    // directory stable for the lifetime of the WAL owner.
+    if fs::canonicalize(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)? != parent {
         return Err(NodeEventWalErrorV1::InvalidPath);
     }
     if let Ok(existing) = fs::symlink_metadata(path) {
         if existing.file_type().is_symlink() || !existing.file_type().is_file() {
             return Err(NodeEventWalErrorV1::InvalidPath);
         }
+    }
+    Ok(())
+}
+
+fn open_parent_v1(path: &Path) -> Result<File, NodeEventWalErrorV1> {
+    let parent = path.parent().ok_or(NodeEventWalErrorV1::InvalidPath)?;
+    #[cfg(unix)]
+    {
+        let mut options = OpenOptions::new();
+        options
+            .read(true)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_DIRECTORY);
+        let file = options
+            .open(parent)
+            .map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+        let metadata = file
+            .metadata()
+            .map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+        if !metadata.is_dir() {
+            return Err(NodeEventWalErrorV1::InvalidPath);
+        }
+        Ok(file)
+    }
+    #[cfg(not(unix))]
+    {
+        let file = File::open(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+        if !file
+            .metadata()
+            .map_err(|_| NodeEventWalErrorV1::InvalidPath)?
+            .is_dir()
+        {
+            return Err(NodeEventWalErrorV1::InvalidPath);
+        }
+        Ok(file)
+    }
+}
+
+fn path_identity_from_file_v1(file: &File) -> Result<NodeEventPathIdentityV1, NodeEventWalErrorV1> {
+    file.metadata()
+        .map(|metadata| NodeEventPathIdentityV1::from_metadata(&metadata))
+        .map_err(|_| NodeEventWalErrorV1::Io)
+}
+
+fn validate_path_binding_v1(
+    path: &Path,
+    parent_identity: NodeEventPathIdentityV1,
+    file_identity: NodeEventPathIdentityV1,
+) -> Result<(), NodeEventWalErrorV1> {
+    validate_path_v1(path)?;
+    let parent = path.parent().ok_or(NodeEventWalErrorV1::InvalidPath)?;
+    let parent_metadata = fs::metadata(parent).map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+    if NodeEventPathIdentityV1::from_metadata(&parent_metadata) != parent_identity {
+        return Err(NodeEventWalErrorV1::InvalidPath);
+    }
+    let file_metadata = fs::metadata(path).map_err(|_| NodeEventWalErrorV1::InvalidPath)?;
+    if NodeEventPathIdentityV1::from_metadata(&file_metadata) != file_identity {
+        return Err(NodeEventWalErrorV1::InvalidPath);
     }
     Ok(())
 }
@@ -809,29 +940,14 @@ fn validate_open_file_v1(
     Ok(())
 }
 
-fn open_read_wal_v1(path: &Path) -> Result<File, NodeEventWalErrorV1> {
-    let mut options = OpenOptions::new();
-    options.read(true);
-    #[cfg(unix)]
-    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_NONBLOCK);
-    let file = options.open(path).map_err(|_| NodeEventWalErrorV1::Io)?;
-    validate_open_file_v1(&file, path, false)?;
-    Ok(file)
-}
-
-fn sync_parent_v1(path: &Path) -> Result<(), NodeEventWalErrorV1> {
-    let parent = path.parent().ok_or(NodeEventWalErrorV1::InvalidPath)?;
-    File::open(parent)
-        .map_err(|_| NodeEventWalErrorV1::Io)?
-        .sync_all()
-        .map_err(|_| NodeEventWalErrorV1::Io)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::io::Write;
     use tempfile::TempDir;
+
+    #[cfg(unix)]
+    use std::{env, os::unix::fs::PermissionsExt, process::Command, thread, time::Duration};
 
     struct FakeCommitDriver {
         digest: [u8; 32],
@@ -1216,5 +1332,109 @@ mod tests {
             wal.revalidate_v1(),
             Err(NodeEventWalErrorV1::Io | NodeEventWalErrorV1::InvalidPath)
         ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn parent_symlink_and_inode_replacement_fail_closed() {
+        use std::os::unix::fs::symlink;
+
+        let temp = TempDir::new().unwrap();
+        let real_parent = temp.path().join("real-events");
+        fs::create_dir(&real_parent).unwrap();
+        let parent_alias = temp.path().join("events-alias");
+        symlink(&real_parent, &parent_alias).unwrap();
+        assert_eq!(
+            NodeEventWalV1::open(parent_alias.join("node-events.wal"), digest(1)).unwrap_err(),
+            NodeEventWalErrorV1::InvalidPath
+        );
+
+        let path = real_parent.join("node-events.wal");
+        let mut wal = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let intent = wal
+            .prepare_event_v1(digest(2), digest(3), digest(4))
+            .unwrap();
+        wal.commit_event_v1(intent, digest(5)).unwrap();
+        let moved_parent = temp.path().join("real-events-moved");
+        fs::rename(&real_parent, &moved_parent).unwrap();
+        fs::create_dir(&real_parent).unwrap();
+        assert_eq!(wal.revalidate_v1(), Err(NodeEventWalErrorV1::InvalidPath));
+
+        let replacement_parent = temp.path().join("replacement-events");
+        fs::create_dir(&replacement_parent).unwrap();
+        let replacement_path = replacement_parent.join("node-events.wal");
+        let mut replaced_wal = NodeEventWalV1::open(&replacement_path, digest(1)).unwrap();
+        let intent = replaced_wal
+            .prepare_event_v1(digest(6), digest(7), digest(8))
+            .unwrap();
+        replaced_wal.commit_event_v1(intent, digest(9)).unwrap();
+        let original = fs::read(&replacement_path).unwrap();
+        let displaced = replacement_parent.join("node-events.displaced.wal");
+        fs::rename(&replacement_path, &displaced).unwrap();
+        fs::write(&replacement_path, original).unwrap();
+        fs::set_permissions(&replacement_path, fs::Permissions::from_mode(0o600)).unwrap();
+        assert_eq!(
+            replaced_wal.revalidate_v1(),
+            Err(NodeEventWalErrorV1::InvalidPath)
+        );
+    }
+
+    /// Kill a real child after the intent frame has been synced, before any
+    /// application effect.  Reopening must expose the exact pending tuple;
+    /// it may not infer success from process death or silently repair it.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_after_intent_leaves_pending_for_exact_recovery() {
+        const CHILD_WAL_ENV_V1: &str = "TRNM_NODE_EVENT_WAL_SIGKILL_CHILD_V1";
+        const CHILD_READY_ENV_V1: &str = "TRNM_NODE_EVENT_WAL_SIGKILL_READY_V1";
+        if let Ok(path) = env::var(CHILD_WAL_ENV_V1) {
+            let ready = PathBuf::from(env::var(CHILD_READY_ENV_V1).expect("child readiness path"));
+            let mut wal = NodeEventWalV1::open(path, digest(1)).expect("child WAL open");
+            wal.prepare_event_v1(digest(2), digest(3), digest(4))
+                .expect("child intent prepare");
+            let marker = File::create(ready).expect("child readiness marker");
+            marker.sync_all().expect("child readiness sync");
+            loop {
+                thread::sleep(Duration::from_millis(25));
+            }
+        }
+
+        let temp = TempDir::new().unwrap();
+        let path = temp.path().join("sigkill-events.wal");
+        let ready = temp.path().join("sigkill-ready");
+        let mut child = Command::new(env::current_exe().unwrap())
+            .arg("--exact")
+            .arg("node_event_wal::tests::sigkill_after_intent_leaves_pending_for_exact_recovery")
+            .env(CHILD_WAL_ENV_V1, &path)
+            .env(CHILD_READY_ENV_V1, &ready)
+            .spawn()
+            .expect("spawn WAL crash child");
+        let mut ready_seen = false;
+        for _ in 0..200 {
+            if ready.exists() {
+                ready_seen = true;
+                break;
+            }
+            if let Some(status) = child.try_wait().expect("poll WAL crash child") {
+                panic!("WAL crash child exited before readiness: {status}");
+            }
+            thread::sleep(Duration::from_millis(10));
+        }
+        if !ready_seen {
+            let _ = child.kill();
+            let _ = child.wait();
+            panic!("WAL crash child did not reach synced intent");
+        }
+        child.kill().expect("SIGKILL WAL crash child");
+        let _ = child.wait().expect("wait WAL crash child");
+
+        let reopened = NodeEventWalV1::open(&path, digest(1)).unwrap();
+        let NodeEventRecoveryV1::Pending(intent) = reopened.recovery() else {
+            panic!("SIGKILL after intent must leave a pending WAL intent");
+        };
+        assert_eq!(intent.sequence(), 1);
+        assert_eq!(intent.event_id(), digest(2));
+        assert_eq!(intent.predecessor_digest(), digest(3));
+        assert_eq!(intent.payload_digest(), digest(4));
     }
 }

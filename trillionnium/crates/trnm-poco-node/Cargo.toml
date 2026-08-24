@@ -40,7 +40,7 @@ external-signer-runtime = [
 # It is separate from the bounded timeout host and carries no Core/runtime
 # activation or production credential path.
 external-proposal-signer = [
-  "external-signer-runtime",
+  "dep:trnm-consensus-unix-remote-signer",
   "trnm-consensus-unix-remote-signer/proposal-purpose-client",
 ]
 # Explicit composition-only SafetyRules semantic sidecar.  This feature does
