@@ -1553,6 +1553,23 @@ mod tests {
             let _ = child.wait();
             panic!("WAL crash child did not reach synced intent");
         }
+
+        // The live child must own the WAL for its whole process lifetime;
+        // opening a second descriptor in the parent must fail before it can
+        // observe or append the child's pending frame.  This is the
+        // cross-process counterpart to the same-process lifetime-lock test.
+        let length_while_child_alive = fs::metadata(&path).expect("inspect child-owned WAL").len();
+        assert!(matches!(
+            NodeEventWalV1::open(&path, digest(1)),
+            Err(NodeEventWalErrorV1::Io)
+        ));
+        assert_eq!(
+            fs::metadata(&path)
+                .expect("reinspect child-owned WAL")
+                .len(),
+            length_while_child_alive,
+            "a rejected cross-process owner must not mutate the WAL",
+        );
         child.kill().expect("SIGKILL WAL crash child");
         let _ = child.wait().expect("wait WAL crash child");
 
