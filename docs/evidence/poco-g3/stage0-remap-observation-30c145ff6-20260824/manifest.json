@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "evidence_id": "trnm-poco-g3-stage0-remap-observation-30c145ff6-20260824",
+  "evidence_profile": "poco-g3-stage0-frozen-candidate-rust-src-remap-observation-v1",
+  "claims": {
+    "candidate_archives_byte_identical": true,
+    "candidate_checker_passed": true,
+    "candidate_v2_remap_run_observed": true,
+    "cross_time_stage0_gate_closed": false,
+    "geo_wan_evidence": false,
+    "multihost_consensus_observed": false,
+    "production_activation": false,
+    "status_toml_updated": false,
+    "validator_run_7_completed": false,
+    "validator_runtime_started": false
+  },
+  "source_candidate": {
+    "observation_input_commit": "30c145ff69adbbf5d9ef94569ed2e4425e94f2d7",
+    "observation_input_parent": "04a139ae4114b76280ccbea59e76d83c71a39bb6",
+    "git_tree_oid": "8233640ab97b6cb9b5bd7adf2a0e96a74cc1aa86",
+    "git_object_format": "sha1",
+    "git_status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source_profile": "clean-commit-v1",
+    "archive_bytes": 75847680,
+    "source_bytes": 71697952,
+    "file_count": 3373,
+    "source_candidate_sha256": "672b9332b8069c98265adf27a1f52890607be924aa690720436a9072b21f6fc5",
+    "cargo_lock_path": "trillionnium/Cargo.lock",
+    "cargo_lock_bytes": 52221,
+    "cargo_lock_sha256": "89ec87a67f299182785989e8815f72cda2c12382ed4fed0e4b033c16f1451fb9",
+    "clone_a_archive_sha256": "672b9332b8069c98265adf27a1f52890607be924aa690720436a9072b21f6fc5",
+    "clone_b_archive_sha256": "672b9332b8069c98265adf27a1f52890607be924aa690720436a9072b21f6fc5",
+    "candidate_checker_sha256": "ed224c823d2fa0c28c45c43e81f0d4dc12d49706ec57d409fdf5972d783922d7"
+  },
+  "tooling": {
+    "remap_fix_commit": "c8b8c8977c5e6b9c4c1ad542756a7918a779c0ac",
+    "remap_fix_tree": "7d573daf2aff7a9aec623c41d79522397b1a8e58",
+    "builder_v1_path": "scripts/poco-fleet/build_reproducible_lab_candidate.py",
+    "builder_v1_sha256": "f6e86e72934d29a3f7015be4ca5b3d5c595941aef4c7aa75cb712f4c0cc80bde",
+    "builder_v2_path": "scripts/poco-fleet/build_reproducible_lab_candidate_v2.py",
+    "builder_v2_sha256": "59138ea5a3a3deb3dc46a9f90ec4f01002c579fc4771856c707ad2c8f4a14468",
+    "candidate_checker_path": "scripts/poco-fleet/check_source_candidate.py",
+    "candidate_checker_tool_sha256": "2c9222dd65448fa89558c8c25873adf6ca6f1ad157a90655539c14da0864d4e6"
+  },
+  "runner": {
+    "runner_label": "x230-self-hosted",
+    "host": "qian-ThinkPad-X230",
+    "transport": "manual-ssh",
+    "host_triple": "x86_64-unknown-linux-gnu",
+    "kernel": "Linux 6.8.0-138-generic x86_64",
+    "rustc_version": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "rustc_commit": "59807616e1fa2540724bfbac14d7976d7e4a3860",
+    "rustc_vv_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "paid_ci_used": false,
+    "host_attestation": false,
+    "cargo_mode": "offline",
+    "validator_executed": false
+  },
+  "observations": [
+    {
+      "id": "out-a-native-no-rust-src",
+      "toolchain_root": "/home/trnm-ci",
+      "rust_src_present": false,
+      "report_path": "build-a.json",
+      "report_sha256": "24232a857c02e1e1b42a071938cb9a39fa0b56bfb466d22a35bce8b802f05e9a",
+      "build_log_sha256": "95380ea4bc72c03339687d6983e0034888f96f21af04778673f58decd08e88a8",
+      "independent_build_count": 2,
+      "validator_binary_sha256": "957bdcf9684fa78a90d7a93505a1457a6dc1943f749e3d98e32e05c8123041bb",
+      "material_builder_binary_sha256": "62f1ebaca17a4b2b804b94a9f7e57b74723ba21955524b0b2ca0de1ce0502af8"
+    },
+    {
+      "id": "out-b-v2-remap-active",
+      "toolchain_root": "/home/qian",
+      "rust_src_present": true,
+      "canonical_remap_root": "/rustc/59807616e1fa2540724bfbac14d7976d7e4a3860",
+      "report_path": "build-b.json",
+      "report_sha256": "784adc4363cf22283d2139143ba1b89eee8b7709ca94e8e80dbc0e3121100855",
+      "build_log_sha256": "5d8fe0f3389a54f4a87efe28234203d5214906b00f2ce6891234ec81927af75a",
+      "independent_build_count": 2,
+      "validator_binary_sha256": "957bdcf9684fa78a90d7a93505a1457a6dc1943f749e3d98e32e05c8123041bb",
+      "material_builder_binary_sha256": "62f1ebaca17a4b2b804b94a9f7e57b74723ba21955524b0b2ca0de1ce0502af8"
+    }
+  ],
+  "binary_outputs": [
+    {
+      "role": "validator",
+      "bytes": 15516144,
+      "sha256": "957bdcf9684fa78a90d7a93505a1457a6dc1943f749e3d98e32e05c8123041bb",
+      "out_a_out_b_cmp": true,
+      "bundled": true
+    },
+    {
+      "role": "material_builder",
+      "bytes": 5428304,
+      "sha256": "62f1ebaca17a4b2b804b94a9f7e57b74723ba21955524b0b2ca0de1ce0502af8",
+      "out_a_out_b_cmp": true,
+      "bundled": true
+    }
+  ],
+  "raw_bundle": {
+    "bundled_in_git": false,
+    "artifact_name": "remap-observation-30c.tar.gz",
+    "bytes": 28614852,
+    "sha256": "a0310582952ce41e7b492cf07814cc26ba3c88e04dfe6268f59f74823be91c40",
+    "remote_path": "/home/qian/poco-stage0-current-30c145ff6/remap-observation-30c.tar.gz",
+    "local_operator_path": "/tmp/poco-stage0-current-aoqkGV/remap-observation-30c.tar.gz",
+    "contents": [
+      "incoming/source.tar",
+      "out-a/build-report.json",
+      "out-a/build.log",
+      "out-a/trnm-poco-lab-validator",
+      "out-a/trnm-poco-lab-material-builder",
+      "out-b/build-report.json",
+      "out-b/build.log",
+      "out-b/trnm-poco-lab-validator",
+      "out-b/trnm-poco-lab-material-builder",
+      "tool/poco-fleet/*"
+    ]
+  }
+}
