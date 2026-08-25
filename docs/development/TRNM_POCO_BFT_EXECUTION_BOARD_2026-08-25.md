@@ -47,17 +47,20 @@ downstream gate inherits completion from an incomplete predecessor.
   digest, signer identity, nonce and resource claims into the pending-nonce
   admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
   (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`,
-  `fecca250b`, and `1ad718fd2`)
+  `fecca250b`, `1ad718fd2`, `d0cc52e2e`, `01b378560`, `6611ef07f`, and
+  `72f89abe6`)
   now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
   retained-row bounds, a typed builder-to-boundary API, exact restart retry for
   `Reserved`, and fail-closed `HandedOff` ambiguity. Insert failures now
   distinguish constraint replay from disk/IO/busy errors while remaining
   fail-closed.
-  It is not compiled by the default node and does not yet provide
-  CheckTx-equivalent ingress, a production signer, commit receipt/AppHash
-  binding, broadcast, handoff readback resolution, or tombstone GC; native
-  transaction integration remains a G2 blocker.
+  It is not compiled by the default node and does not yet provide production
+  CheckTx ingress, a production signer/broadcast loop, or tombstone GC. The
+  candidate now has a signature-checked CheckTx seam, a typed commit-receipt
+  gate, authority-affined lifecycle tokens, and explicit candidate receipt
+  binding; ambiguous HandedOff recovery and production AppHash/readback
+  integration remain G2 blockers.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. A new private
@@ -66,9 +69,11 @@ downstream gate inherits completion from an incomplete predecessor.
   directory's descriptor/path identity, and has adversarial rename/recreate
   coverage. Selected native P/K mutation windows (P execute/reserve, P anchor
   reopen, K acknowledgement/retry, and lab finalization application commit)
-  now take the corresponding exclusive lock. This is an advisory,
-  cooperating-owner fence: all writer adoption and the full cross-database
-  atomicity proof remain open under MIG-004.
+  now take the corresponding exclusive lock; H1 takeover requires a derived
+  common root and process2 activation acquires its lock before the first paired
+  read, with a final identity check at successful commit boundaries. This is
+  still an advisory, cooperating-owner fence: all writer adoption and the full
+  cross-database atomicity proof remain open under MIG-004.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
@@ -303,13 +308,14 @@ downstream gate inherits completion from an incomplete predecessor.
    signing, application adapter and process integration are absent.
 2. The canonical tx-builder candidate now reaches the typed mempool admission
    boundary, and a feature-gated candidate node-owned SQLite pending-nonce WAL
-   (`tx-admission-wal`, `5891e9c8f`, hardened through `1ad718fd2`) covers
+   (`tx-admission-wal`, through `72f89abe6`) covers
    durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests, a
    typed builder-to-boundary API, and a
    bounded retained-row admission cap. It is not a
-   production path: the default node does not compile or activate it, and
-   CheckTx-equivalent ingress, production signing, commit receipt/AppHash
-   binding, broadcast, ambiguous-handoff readback, and tombstone GC remain
+   production path: the default node does not compile or activate it. The
+   candidate has a signature-checked CheckTx seam, typed commit-receipt gate,
+   and owner-affined lifecycle tokens; production signing/broadcast, AppHash
+   readback recovery, ambiguous-handoff resolution, and tombstone GC remain
    open. CLI transfer/receipt paths remain development-only shell/template
    adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
@@ -319,11 +325,13 @@ downstream gate inherits completion from an incomplete predecessor.
 5. K/P dual-store audit now takes a descriptor-bound shared lock for the final
    paired inventory, rechecks root identity, and fails closed on observed
    digest/head drift. Selected native P/K writer windows take an exclusive
-   lock, with mutual-exclusion and rename/recreate tests. This is still an
-   advisory cooperating-owner fence: every mutation path must adopt the
-   exclusive hook before the cross-database atomicity blocker can close. The
-   candidate admission WAL's separate sidecar identity hardening does not
-   substitute for this K/P proof.
+   lock, with mutual-exclusion and rename/recreate tests. H1 takeover now
+   requires a derived common root, and process2 activation locks before its
+   first paired read and validates identity at successful commit boundaries.
+   This is still an advisory cooperating-owner fence: every mutation path must
+   adopt the exclusive hook before the cross-database atomicity blocker can
+   close. The candidate admission WAL's separate sidecar identity hardening
+   does not substitute for this K/P proof.
 
 ### Immediate execution queue (next dependency-ordered slices)
 

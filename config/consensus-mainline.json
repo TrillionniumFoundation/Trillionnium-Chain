@@ -13,7 +13,9 @@
       "native-proposal-p-execute-and-reserve",
       "native-proposal-p-anchor-reopen",
       "native-proposal-k-ack-and-retry",
-      "lab-finalization-application-commit"
+      "lab-finalization-application-commit",
+      "h1-takeover-root-required",
+      "process2-activation-lock-before-paired-read"
     ],
     "descriptor_and_path_identity_fence": true,
     "advisory_only": true,
@@ -23,7 +25,7 @@
   "tx_admission": {
     "candidate_node_owned_wal": true,
     "feature": "tx-admission-wal",
-    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2"],
+    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2", "d0cc52e2e", "01b378560", "6611ef07f", "72f89abe6"],
     "sqlite_wal_full": true,
     "namespace_and_path_identity_fences": true,
     "sidecar_lock_fd_identity_fence": true,
@@ -32,6 +34,9 @@
     "retained_row_cap": true,
     "boundary_api": true,
     "boundary_runtime_composition": true,
+    "candidate_checktx_signature_gate": true,
+    "candidate_commit_receipt_gate": true,
+    "candidate_token_owner_binding": true,
     "boundary_production_activation": false,
     "boundary_checktx": false,
     "boundary_signing": false,
