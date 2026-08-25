@@ -27,7 +27,7 @@ use std::{
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
-    decode_ordinary_qc_v0_exact, QuorumCertificate, SignatureVerifier, ValidatorSet,
+    decode_ordinary_qc_v0_exact, ChainId, QuorumCertificate, SignatureVerifier, ValidatorSet,
 };
 use trnm_native_application::ApplicationHeadV0;
 
@@ -425,6 +425,7 @@ pub enum RestartDispositionV0 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct QuorumCheckpointProofV0 {
     checkpoint_record_hash: [u8; 32],
+    chain_id: ChainId,
     quorum_certificate_id: [u8; 32],
     epoch: u64,
     height: u64,
@@ -434,6 +435,10 @@ pub struct QuorumCheckpointProofV0 {
 impl QuorumCheckpointProofV0 {
     pub const fn checkpoint_record_hash(&self) -> [u8; 32] {
         self.checkpoint_record_hash
+    }
+
+    pub const fn chain_id(&self) -> ChainId {
+        self.chain_id
     }
 
     pub const fn quorum_certificate_id(&self) -> [u8; 32] {
@@ -657,7 +662,8 @@ impl CheckpointStoreV0 {
             .current
             .as_ref()
             .ok_or(CoreRestartError::MissingCheckpoint)?;
-        if quorum_proof.checkpoint_record_hash != checkpoint.record_hash
+        if quorum_proof.chain_id.as_str() != checkpoint.chain_id
+            || quorum_proof.checkpoint_record_hash != checkpoint.record_hash
             || quorum_proof.quorum_certificate_id != checkpoint.quorum_certificate_id
             || quorum_proof.epoch != checkpoint.epoch
             || quorum_proof.height != checkpoint.height
@@ -713,6 +719,16 @@ impl CheckpointStoreV0 {
             .current
             .as_ref()
             .ok_or(CoreRestartError::MissingCheckpoint)?;
+        if certificate.chain_id() != validator_set.chain_id() {
+            return Err(CoreRestartError::InvalidCertificate(
+                "QC chain id differs from validator set".to_owned(),
+            ));
+        }
+        if certificate.chain_id().as_str() != checkpoint.chain_id {
+            return Err(CoreRestartError::InvalidCertificate(
+                "replayed QC chain id differs from retained checkpoint".to_owned(),
+            ));
+        }
         let decoded =
             decode_ordinary_qc_v0_exact(&checkpoint.quorum_certificate_bytes, validator_set)
                 .map_err(|error| CoreRestartError::InvalidCertificate(format!("{error:?}")))?;
@@ -740,6 +756,7 @@ impl CheckpointStoreV0 {
         }
         Ok(QuorumCheckpointProofV0 {
             checkpoint_record_hash: checkpoint.record_hash,
+            chain_id: certificate.chain_id(),
             quorum_certificate_id: checkpoint.quorum_certificate_id,
             epoch: checkpoint.epoch,
             height: checkpoint.height,
@@ -1251,6 +1268,7 @@ mod tests {
         .expect("bundle");
         let proof = QuorumCheckpointProofV0 {
             checkpoint_record_hash: [1; 32],
+            chain_id: set.chain_id(),
             quorum_certificate_id: [2; 32],
             epoch: 0,
             height: 1,
@@ -1291,6 +1309,7 @@ mod tests {
         // is recreated.
         let forged = QuorumCheckpointProofV0 {
             checkpoint_record_hash: record.record_hash(),
+            chain_id: set.chain_id(),
             quorum_certificate_id: record.quorum_certificate_id(),
             epoch: record.epoch(),
             height: record.height(),
@@ -1314,6 +1333,112 @@ mod tests {
         assert!(matches!(
             store.restart_disposition().expect("ready"),
             RestartDispositionV0::Ready(_)
+        ));
+    }
+
+    #[test]
+    fn checksum_valid_tampered_chain_id_rejects_quorum_recheck_and_state_sync() {
+        let (set, qc, head) = fixture();
+        let bytes = b"authenticated-state-v1".to_vec();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            bytes.clone(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        store.commit(&candidate, None).expect("commit");
+        let record = store.current().expect("record").clone();
+        fs::remove_file(store.snapshot_path(record.generation())).expect("remove snapshot");
+        drop(store);
+
+        // The append-only checksum authenticates the rewritten bytes, but it
+        // does not independently bind record metadata to a live validator
+        // identity.  A checksum-valid record with a foreign chain id must
+        // therefore still be rejected when its QC is re-bound to the live
+        // validator set.
+        let mut tampered = record;
+        tampered.chain_id = "foreign-chain".to_owned();
+        tampered.record_hash = tampered.compute_hash();
+        fs::write(directory.path().join("checkpoint.log"), tampered.encode())
+            .expect("rewrite checksum-valid tampered record");
+
+        let mut reopened = CheckpointStoreV0::open(directory.path()).expect("reopen");
+        let retained = reopened.current().expect("retained record").clone();
+        assert_eq!(retained.chain_id(), "foreign-chain");
+        assert!(matches!(
+            reopened.verify_current_quorum_certificate(&qc, &set, &StrictTestVerifier),
+            Err(CoreRestartError::InvalidCertificate(message))
+                if message == "replayed QC chain id differs from retained checkpoint"
+        ));
+
+        let bundle = StateSyncBundleV0::new(
+            retained.record_hash(),
+            retained.state_root(),
+            digest(SNAPSHOT_DOMAIN, &bytes),
+            bytes,
+        )
+        .expect("bundle for tampered checkpoint");
+        assert!(matches!(
+            reopened.install_state_sync_after_quorum_recheck(
+                bundle,
+                &qc,
+                &set,
+                &StrictTestVerifier,
+            ),
+            Err(CoreRestartError::InvalidCertificate(message))
+                if message == "replayed QC chain id differs from retained checkpoint"
+        ));
+        assert!(matches!(
+            reopened.restart_disposition().expect("still needs sync"),
+            RestartDispositionV0::NeedsStateSync(_)
+        ));
+    }
+
+    #[test]
+    fn state_sync_proof_binds_retained_chain_id() {
+        let (set, qc, head) = fixture();
+        let bytes = b"authenticated-state-v1".to_vec();
+        let candidate = CheckpointCandidateV0::admit_quorum_certificate(
+            &qc,
+            &set,
+            &StrictTestVerifier,
+            &head,
+            bytes.clone(),
+        )
+        .expect("admit");
+        let directory = tempdir().expect("directory");
+        let mut store = CheckpointStoreV0::open(directory.path()).expect("open");
+        store.commit(&candidate, None).expect("commit");
+        let record = store.current().expect("record").clone();
+        fs::remove_file(store.snapshot_path(record.generation())).expect("remove snapshot");
+        let proof = store
+            .verify_current_quorum_certificate(&qc, &set, &StrictTestVerifier)
+            .expect("proof");
+        assert_eq!(proof.chain_id(), set.chain_id());
+        let bundle = StateSyncBundleV0::new(
+            record.record_hash(),
+            record.state_root(),
+            digest(SNAPSHOT_DOMAIN, &bytes),
+            bytes,
+        )
+        .expect("bundle");
+
+        // Exercise the capability-consuming path independently of the QC
+        // recheck: a proof issued for one namespace cannot install bytes into
+        // a retained record that now names another namespace.
+        store.current.as_mut().expect("current record").chain_id = "foreign-chain".to_owned();
+        assert!(matches!(
+            store.install_state_sync(bundle, &proof),
+            Err(CoreRestartError::InvalidCertificate(message))
+                if message == "state-sync quorum proof does not match retained checkpoint"
+        ));
+        assert!(matches!(
+            store.restart_disposition().expect("still needs sync"),
+            RestartDispositionV0::NeedsStateSync(_)
         ));
     }
 
