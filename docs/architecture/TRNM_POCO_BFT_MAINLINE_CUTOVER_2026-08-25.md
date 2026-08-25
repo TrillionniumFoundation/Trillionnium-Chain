@@ -61,7 +61,13 @@ The native node remains a fail-closed scaffold:
   compiled by the default node and does not yet provide production ingress,
   signer/broadcast, AppHash readback recovery, or tombstone GC; low-level
   admission and caller-context compatibility APIs remain candidate-only, and
-  the CLI remains a development/template adapter;
+  the CLI remains a development/template adapter. Ordinary startup remains
+  fail-closed when a durable `HandedOff` row is unresolved; the explicit
+  candidate `recover_handed_off_with_receipt` seam (`51a1954d8`) accepts only
+  exact authenticated metadata plus a `VerifiedNativeCommitReceiptV0` token
+  and commits the matching row transactionally. It never guesses, deletes,
+  or rewrites an ambiguous row, and automatic/production recovery remains
+  disabled;
 - public laboratory Vote/TimeoutVote/QC/TC/proposal decoders derive their
   admission budgets only after the supplied consensus-parameter hash matches
   the active validator-set hash (`5b28425df`, `cd7602693`, `b1e3f3528`,

@@ -68,8 +68,12 @@ downstream gate inherits completion from an incomplete predecessor.
   `72f89abe6`, `3f5432682`, `4d16d42ae`, `c68500676`, and `d97ec3ee8`)
   now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
-  retained-row bounds, a typed builder-to-boundary API, exact restart retry for
-  `Reserved`, and fail-closed `HandedOff` ambiguity. Insert failures now
+  retained-row bounds, a typed builder-to-boundary API, and exact restart retry
+  for `Reserved`. Ordinary startup remains fail-closed on `HandedOff`; the
+  explicit candidate `recover_handed_off_with_receipt` path (`51a1954d8`) now
+  accepts only exact authenticated metadata paired with a
+  `VerifiedNativeCommitReceiptV0` token and commits that row transactionally.
+  It never guesses, deletes, or rewrites an ambiguous row. Insert failures now
   distinguish constraint replay from disk/IO/busy errors while remaining
   fail-closed.
   It is not compiled by the default node and does not yet provide production
@@ -78,9 +82,10 @@ downstream gate inherits completion from an incomplete predecessor.
   signer resolver with mismatch/no-resolver fail-closed tests, a node-owned
   chain/time context seam, a typed commit-receipt gate, authority-affined
   lifecycle tokens, and explicit candidate receipt binding; low-level typed
-  admission remains a composition escape hatch, while ambiguous HandedOff
-  recovery, production AppHash/readback integration, and production context
-  ownership remain G2 blockers.
+  admission remains a composition escape hatch, while automatic/production
+  HandedOff resolution, production AppHash/readback integration, and
+  production context ownership remain G2 blockers; the explicit recovery seam
+  is candidate-only and production activation remains false.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. A new private
@@ -154,11 +159,13 @@ downstream gate inherits completion from an incomplete predecessor.
 - Integrate the development-only canonical transaction-builder candidate with
   the node-owned external signer, pending-nonce reservation, epoch resource
   policy, and durable replay. A candidate node-owned SQLite WAL boundary now
-  exists behind `tx-admission-wal`, but its `HandedOff` state intentionally
-  fails closed on restart and has no application readback resolver. The exit
-  path is exact inner/outer envelope bytes -> reservation -> CheckTx-equivalent
-  admission -> commit receipt/AppHash replay; the builder or WAL slice alone
-  is not this gate.
+  exists behind `tx-admission-wal`: ordinary startup intentionally fails
+  closed on `HandedOff`, while `recover_handed_off_with_receipt` accepts only
+  exact authenticated metadata plus a verified receipt token (`51a1954d8`) and
+  performs the `Committed` transition transactionally. This explicit seam is
+  not automatic or production-integrated. The exit path is exact inner/outer
+  envelope bytes -> reservation -> CheckTx-equivalent admission -> commit
+  receipt/AppHash replay; the builder or WAL slice alone is not this gate.
 - Execute `ingress -> proposal -> validate -> Safety persist -> sign -> QC/TC ->
   ordered finalize -> JMT/App commit -> acknowledgement` with one source of
   truth for block, receipt and state roots.
@@ -337,8 +344,10 @@ downstream gate inherits completion from an incomplete predecessor.
    resolver seams (with mismatch/no-resolver and caller-context compatibility
    tests), typed commit-receipt gate, and owner-affined lifecycle tokens;
    production resolver/context ownership, signing/broadcast, AppHash readback
-   recovery, ambiguous-handoff resolution, and tombstone GC remain open. CLI
-   transfer/receipt paths remain development-only shell/template adapters.
+   integration, automatic/ambiguous-handoff resolution, and tombstone GC remain
+   open. The explicit exact-metadata/verified-receipt recovery seam is
+   candidate-only; ordinary startup stays fail-closed. CLI transfer/receipt
+   paths remain development-only shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
