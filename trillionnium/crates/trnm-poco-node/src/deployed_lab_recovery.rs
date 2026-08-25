@@ -998,6 +998,105 @@ pub(super) struct RecoveredHistoryKV0 {
     pub(super) history_row: ConfirmedDurableExecutionHistoryRowV0,
 }
 
+/// Re-read the complete terminal `K` inventory and its paired application `P`
+/// rows immediately before a recovered owner is returned.
+///
+/// The initial recovery pass intentionally reads the two SQLite namespaces
+/// independently.  A metadata/sequence check alone cannot prove that a
+/// concurrent P-only rewrite did not occur between those reads.  This final
+/// paired pass therefore reopens every K row, decodes its exact artifact, and
+/// freshly confirms the corresponding P row, comparing all immutable
+/// digests/heads with the first authenticated cut.  It narrows the race to
+/// the return boundary and makes any mutation observed during the join fail
+/// closed.  A process-wide shared lock is still required for a production
+/// atomic authority (tracked by MIG-004); this helper is deliberately an
+/// additional readback fence, not a claim of cross-database atomicity.
+fn final_paired_k_p_readback_v0(
+    validation_store: &mut SqliteProposalValidationStoreV0,
+    application: &DurableNativeApplicationV0,
+    terminal_audit: &trnm_native_application_sqlite::ConfirmedProposalValidationTerminalAuditV0,
+    history: &BTreeMap<BlockId, RecoveredHistoryKV0>,
+    validation_scope: ProposalValidationStoreScopeV0,
+    validation_owner: ProposalValidationOwnerIdV0,
+    validation_path: &Path,
+    application_path: &Path,
+) -> Result<(), PocoNodeDeployedLabRecoveryErrorV0> {
+    let fresh_audit = recover_try!(
+        "validation.final_pair.audit",
+        validation_store.confirm_terminal_k_audit_v0()
+    );
+    if !fresh_audit.belongs_to_store_at_path_v0(validation_store, validation_path)
+        || fresh_audit.scope_v0() != validation_scope
+        || fresh_audit.owner_id_v0() != validation_owner
+        || fresh_audit.store_id_v0() != terminal_audit.store_id_v0()
+        || fresh_audit.store_sequence_v0() != terminal_audit.store_sequence_v0()
+        || fresh_audit.terminal_row_count_v0() != terminal_audit.terminal_row_count_v0()
+        || fresh_audit.maximum_terminal_height_v0() != terminal_audit.maximum_terminal_height_v0()
+        || fresh_audit.terminal_audit_digest_v0() != terminal_audit.terminal_audit_digest_v0()
+        || fresh_audit.terminal_bindings_v0() != terminal_audit.terminal_bindings_v0()
+    {
+        return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+            "validation.final_pair.audit_join",
+            "terminal K inventory changed while the paired application readback was running",
+        ));
+    }
+
+    for binding in fresh_audit.terminal_bindings_v0() {
+        let block_id = BlockId::new(*binding.block_id().as_bytes());
+        let expected = history.get(&block_id).ok_or_else(|| {
+            PocoNodeDeployedLabRecoveryErrorV0::message(
+                "validation.final_pair.binding",
+                "terminal K binding is absent from the first authenticated application map",
+            )
+        })?;
+        let k = recover_try!(
+            "validation.final_pair.k_row",
+            validation_store.confirm_proposal_validation_checkpoint_facts_exact_v0(binding)
+        );
+        let executed = recover_try!(
+            "validation.final_pair.artifact",
+            validation_store.read_artifact_exact_v0(binding)
+        );
+        let p = recover_try!(
+            "application.final_pair.p_row",
+            application.confirm_durable_execution_history_row_v0(&executed)
+        );
+        let parent = recover_try!("application.final_pair.parent", p.parent_head_v0());
+        let target = recover_try!("application.final_pair.target", p.target_head_v0());
+        let expected_parent = recover_try!(
+            "application.final_pair.expected_parent",
+            expected.history_row.parent_head_v0()
+        );
+        let expected_target = recover_try!(
+            "application.final_pair.expected_target",
+            expected.history_row.target_head_v0()
+        );
+        if !k.belongs_to_store_at_path_v0(validation_store, validation_path)
+            || k.binding_v0() != binding
+            || k.scope_v0() != validation_scope
+            || k.owner_id_v0() != validation_owner
+            || *k.row_checksum_v0().as_bytes() != expected.validation_row_checksum
+            || *k.artifact_digest_v0().as_bytes() != expected.history_row.artifact_digest_v0()
+            || !p.belongs_to_application_at_path_v0(application, application_path)
+            || p.store_id_v0() != application.config_v0().store_id()
+            || p.p_sequence_v0() != expected.history_row.p_sequence_v0()
+            || p.status_v0() != expected.status
+            || p.artifact_digest_v0() != expected.history_row.artifact_digest_v0()
+            || p.overlay_digest_v0() != expected.history_row.overlay_digest_v0()
+            || p.p_digest_v0() != expected.history_row.p_digest_v0()
+            || p.commit_sequence_v0() != expected.history_row.commit_sequence_v0()
+            || parent != expected_parent
+            || target != expected_target
+        {
+            return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
+                "validation.final_pair.join",
+                "terminal K and durable application P differ from the first authenticated cut",
+            ));
+        }
+    }
+    Ok(())
+}
+
 struct ExactDeployedAnchorOrdinaryReconcilerV0 {
     expected_safety: SafetyState,
     expected_child: SignedProposalV0,
@@ -1494,6 +1593,21 @@ where
             "one durable namespace changed during the recovery join",
         ));
     }
+
+    // The scalar/full-K audit above closes the validation namespace boundary;
+    // now re-read every K row and its exact durable P artifact as one final
+    // paired cut.  This is intentionally the last cross-store audit before
+    // the recovered owner is assembled.
+    final_paired_k_p_readback_v0(
+        &mut validation_store,
+        &application,
+        &terminal_audit,
+        &history,
+        validation_scope,
+        validation_owner,
+        &paths.validation,
+        &paths.application,
+    )?;
 
     let replay_bindings = high_qc_path
         .iter()

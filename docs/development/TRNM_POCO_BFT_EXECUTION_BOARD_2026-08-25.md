@@ -45,6 +45,11 @@ downstream gate inherits completion from an incomplete predecessor.
   exact inner/outer bytes and uses an external signer boundary. It deliberately
   does not reserve nonces, write WAL, query a node or broadcast; native-node
   integration remains a G2 blocker.
+- The deployed recovery owner now performs a final paired K/P readback over
+  every terminal validation row and its exact durable application artifact
+  immediately before returning the inert owner. This narrows the observed
+  mutation window and fails closed on any digest/head drift; it is not yet a
+  cross-database atomic lock, so MIG-004 remains open.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
@@ -118,8 +123,10 @@ downstream gate inherits completion from an incomplete predecessor.
 - Add independently administered remote signer/HSM/KMS and monotonic watermark;
   never reconstruct signing state from an application snapshot.
 - Close file identity/TOCTOU, clone, namespace, WAL/SHM, fsync, power-loss,
-  disk-full and commit-uncertain cases. The current K/P audit must be shared-
-  locked or re-read as a final pair; path identity alone is not atomic authority.
+  disk-full and commit-uncertain cases. The current K/P audit now has a final
+  paired readback, but must still become shared-locked (and use fd-bound
+  identity where required); path identity plus a readback is not atomic
+  authority.
 
 ### MIG-005 — extract execution and authenticated state (G2)
 
@@ -212,8 +219,10 @@ downstream gate inherits completion from an incomplete predecessor.
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
    clock-skew or long-soak evidence; current G3 ledger remains false.
-5. K/P dual-store audit still has a non-atomic TOCTOU boundary under concurrent
-   P-only rewrite; close with a shared lock or final paired read.
+5. K/P dual-store audit now re-reads the complete paired K/P inventory at the
+   return boundary and fails closed on observed drift. It still has a
+   non-atomic window under a rewrite after that read; close with one shared
+   cross-store lock and fd-bound identity where required.
 
 ### P3/P4 — promotion and economics blockers
 
