@@ -230,7 +230,7 @@ impl Drop for CrossStoreLockGuardV0 {
 }
 
 #[allow(dead_code)] // only the lab recovery paired-reader boundary needs path joining
-fn common_authority_root_v0(
+pub(crate) fn common_authority_root_v0(
     application_path: &Path,
     validation_path: &Path,
 ) -> Result<PathBuf, CrossStoreLockErrorV0> {

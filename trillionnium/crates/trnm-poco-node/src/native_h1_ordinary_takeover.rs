@@ -48,6 +48,7 @@ use crate::lab_authority::{
     PocoNodeLabProposalJournalConfigV0,
 };
 use crate::{
+    cross_store_lock::{common_authority_root_v0, CrossStoreLockErrorV0},
     native_h1_state_sync_commissioning::{
         PocoNodeNativeH1StateSyncCommissionedHostV0, PocoNodeNativeH1StateSyncNextOwnerV0,
     },
@@ -259,6 +260,7 @@ pub(crate) enum PocoNodeNativeH1OrdinaryTakeoverErrorV0<W> {
     SignerActivation(SignerJournalActivationFailureV0<W>),
     Checkpoint(ExternalNodeCheckpointStoreErrorV0),
     CheckpointRecord(ExternalNodeCheckpointDecodeErrorV0),
+    CrossStoreLock(String),
     Rejected(&'static str),
 }
 
@@ -278,6 +280,10 @@ impl<W> fmt::Debug for PocoNodeNativeH1OrdinaryTakeoverErrorV0<W> {
             Self::Checkpoint(error) => formatter.debug_tuple("Checkpoint").field(error).finish(),
             Self::CheckpointRecord(error) => formatter
                 .debug_tuple("CheckpointRecord")
+                .field(error)
+                .finish(),
+            Self::CrossStoreLock(error) => formatter
+                .debug_tuple("CrossStoreLock")
                 .field(error)
                 .finish(),
             Self::Rejected(reason) => formatter.debug_tuple("Rejected").field(reason).finish(),
@@ -313,6 +319,10 @@ impl<W> fmt::Display for PocoNodeNativeH1OrdinaryTakeoverErrorV0<W> {
             Self::CheckpointRecord(error) => {
                 write!(formatter, "invalid whole-node checkpoint: {error}")
             }
+            Self::CrossStoreLock(error) => write!(
+                formatter,
+                "cross-store authority lock rejected takeover: {error}"
+            ),
             Self::Rejected(reason) => write!(formatter, "h1 ordinary takeover rejected: {reason}"),
         }
     }
@@ -361,6 +371,11 @@ impl<W> From<ExternalNodeCheckpointStoreErrorV0> for PocoNodeNativeH1OrdinaryTak
 impl<W> From<ExternalNodeCheckpointDecodeErrorV0> for PocoNodeNativeH1OrdinaryTakeoverErrorV0<W> {
     fn from(value: ExternalNodeCheckpointDecodeErrorV0) -> Self {
         Self::CheckpointRecord(value)
+    }
+}
+impl<W> From<CrossStoreLockErrorV0> for PocoNodeNativeH1OrdinaryTakeoverErrorV0<W> {
+    fn from(value: CrossStoreLockErrorV0) -> Self {
+        Self::CrossStoreLock(value.to_string())
     }
 }
 
@@ -467,6 +482,11 @@ fn complete_native_h1_ordinary_takeover_v0<W: ExternalMonotonicWatermarkV0>(
     target_safety_store.bind_core_v0(replay.safety_state_persistence_binding_v0())?;
 
     let application_head = application.confirmed_committed_head_v0()?;
+    // H1 takeover is a deployed writer path, not an isolated host fixture.
+    // Derive the authenticated common root from the exact P and K paths before
+    // moving either store into the host; `from_open_store_v0` requires this
+    // capability and therefore cannot silently opt out of the K/P fence.
+    let cross_store_root = common_authority_root_v0(application.path(), validation_store.path())?;
     let consensus_parameters = *replay.config().consensus_parameters();
     let validator_set = replay.config().validator_set().clone();
     let seal_authority = replay.issue_application_seal_authority_v0()?;
@@ -476,6 +496,7 @@ fn complete_native_h1_ordinary_takeover_v0<W: ExternalMonotonicWatermarkV0>(
         validation_owner,
         application_head,
         None,
+        cross_store_root,
         consensus_parameters,
         validator_set,
     );
@@ -696,6 +717,7 @@ fn recover_native_h1_ordinary_takeover_v0<W: ExternalMonotonicWatermarkV0>(
     } = recovered;
     let consensus_parameters = *replay.config().consensus_parameters();
     let validator_set = replay.config().validator_set().clone();
+    let cross_store_root = common_authority_root_v0(application.path(), validation_store.path())?;
     let seal_authority = replay.issue_application_seal_authority_v0()?;
     let mut host = PocoNodeNativeProposalPHostV0::from_open_store_v0(
         application,
@@ -703,6 +725,7 @@ fn recover_native_h1_ordinary_takeover_v0<W: ExternalMonotonicWatermarkV0>(
         validation_owner,
         application_head,
         application_overlay,
+        cross_store_root,
         consensus_parameters,
         validator_set,
     );

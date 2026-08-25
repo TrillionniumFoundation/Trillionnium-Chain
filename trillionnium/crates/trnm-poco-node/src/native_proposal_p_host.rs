@@ -442,19 +442,21 @@ pub(crate) struct PocoNodeNativeProposalPHostConfigV0 {
 }
 
 impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
+    #[allow(clippy::too_many_arguments)]
     pub(super) fn from_open_store_v0(
         application: A,
         store: SqliteProposalValidationStoreV0,
         owner_id: ProposalValidationOwnerIdV0,
         authenticated_application_head: ApplicationHeadV0,
         authenticated_application_overlay: Option<BlockIdOverlayRefV0>,
+        cross_store_root: PathBuf,
         consensus_parameters: ConsensusParametersV0,
         validator_set: ValidatorSet,
     ) -> Self {
         Self {
             application,
             store,
-            cross_store_root: None,
+            cross_store_root: Some(cross_store_root),
             owner_id,
             authenticated_application_head,
             authenticated_application_overlay,
