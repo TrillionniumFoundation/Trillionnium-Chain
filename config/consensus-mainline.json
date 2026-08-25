@@ -9,9 +9,10 @@
   "tx_admission": {
     "candidate_node_owned_wal": true,
     "feature": "tx-admission-wal",
-    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b"],
+    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2"],
     "sqlite_wal_full": true,
     "namespace_and_path_identity_fences": true,
+    "sidecar_lock_fd_identity_fence": true,
     "reserved_restart_retry": true,
     "handed_off_restart_fail_closed": true,
     "retained_row_cap": true,

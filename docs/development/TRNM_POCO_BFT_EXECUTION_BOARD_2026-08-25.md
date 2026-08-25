@@ -46,8 +46,8 @@ downstream gate inherits completion from an incomplete predecessor.
   exact typed `trnm-mempool` view. The view passes the builder's immutable body,
   digest, signer identity, nonce and resource claims into the pending-nonce
   admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
-  (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`, and
-  `fecca250b`)
+  (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`,
+  `fecca250b`, and `1ad718fd2`)
   now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
   retained-row bounds, a typed builder-to-boundary API, exact restart retry for
@@ -273,7 +273,7 @@ downstream gate inherits completion from an incomplete predecessor.
    signing, application adapter and process integration are absent.
 2. The canonical tx-builder candidate now reaches the typed mempool admission
    boundary, and a feature-gated candidate node-owned SQLite pending-nonce WAL
-   (`tx-admission-wal`, `5891e9c8f`, hardened through `fecca250b`) covers
+   (`tx-admission-wal`, `5891e9c8f`, hardened through `1ad718fd2`) covers
    durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests, a
    typed builder-to-boundary API, and a
    bounded retained-row admission cap. It is not a
@@ -289,10 +289,10 @@ downstream gate inherits completion from an incomplete predecessor.
 5. K/P dual-store audit now re-reads the complete paired K/P inventory at the
    return boundary and fails closed on observed drift. It still has a
    non-atomic window under a rewrite after that read; close with one shared
-   cross-store lock and fd-bound identity where required. The candidate WAL
-   also still needs to fence the sidecar lock inode itself against
-   same-user rename/recreate, so two local owners cannot appear with separate
-   in-memory capacity accounting.
+   cross-store lock and fd-bound identity where required. The candidate
+   admission WAL now also fences the sidecar lock fd/path identity against
+   same-user rename/recreate; that hardening does not close the separate K/P
+   cross-database atomicity gap.
 
 ### Immediate execution queue (next dependency-ordered slices)
 

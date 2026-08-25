@@ -53,9 +53,10 @@ The native node remains a fail-closed scaffold:
   provide a production signing or broadcast path. A separate, feature-gated
   `trnm-poco-node` `tx-admission-wal` candidate (including the typed
   NodeOwnedTxAdmissionBoundaryV0 wrapper) now owns a durable pending-nonce
-  reservation lifecycle with bounded retained rows, but it is not compiled by
-  the default node and does not yet provide CheckTx-equivalent ingress, commit
-  receipt/AppHash binding, or ambiguous-handoff readback; the CLI remains a
+  reservation lifecycle with bounded retained rows and sidecar lock
+  fd/path-identity fencing, but it is not compiled by the default node and
+  does not yet provide CheckTx-equivalent ingress, commit receipt/AppHash
+  binding, or ambiguous-handoff readback; the CLI remains a
   development/template adapter;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
