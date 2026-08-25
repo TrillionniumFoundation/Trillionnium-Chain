@@ -25,7 +25,7 @@ M0 truth/branch freeze
 Execution may parallelize specification, tooling, and observability, but no
 downstream gate inherits completion from an incomplete predecessor.
 
-### Current machine evidence (2026-08-25)
+### Current machine evidence (2026-08-26)
 
 - `trnm-poco-node` is intentionally fail-closed: the default binary still
   reports missing signer, SafetyRules, application, finalization, P2P and state
@@ -39,8 +39,9 @@ downstream gate inherits completion from an incomplete predecessor.
   WAL/SHM recovery.
 - CEV0 admission now has root-byte, signature-work and validator-set TC-share
   budgets, with explicit limits clamped to intrinsic hard caps (`5b28425df`,
-  `cd7602693`). The normative wire/conformance review and independent second
-  implementation are still open.
+  `cd7602693`) and public derivation bound to run/validator context
+  (`b1e3f3528`, `cba106bd8`, `488e015f9`). The normative wire/conformance
+  review and independent second implementation are still open.
 - The laboratory wire surface no longer exposes a protocol-default budget as
   a public decode entry: `decode_*_with_context` and the proposal budgeted
   decoder derive the CEV0 ceiling from
@@ -48,8 +49,8 @@ downstream gate inherits completion from an incomplete predecessor.
   the intrinsic `protocol_v0` helpers are crate-private and explicitly limited
   to pinned local replay. Before deriving any public budget, the supplied
   consensus-parameter hash must equal the active validator-set hash (the
-  fail-closed checks landed in `cba106bd8` and `488e015f9`); a
-  mismatched profile therefore cannot widen the byte, signature, or nested-TC
+  fail-closed checks landed in `b1e3f3528`, `cba106bd8`, and `488e015f9`); a
+  mismatched parameter hash therefore cannot widen the byte, signature, or nested-TC
   limits. Authenticated network ingress continues to consume one shared
   derived budget in the collector. This closes the API-level budget bypass
   only; CPU/fuzz/formal coverage and production activation remain open.
@@ -60,7 +61,7 @@ downstream gate inherits completion from an incomplete predecessor.
   admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
   (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`,
   `fecca250b`, `1ad718fd2`, `d0cc52e2e`, `01b378560`, `6611ef07f`,
-  `72f89abe6`, `3f5432682`, `4d16d42ae`, and `c68500676`)
+  `72f89abe6`, `3f5432682`, `4d16d42ae`, `c68500676`, and `d97ec3ee8`)
   now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
   retained-row bounds, a typed builder-to-boundary API, exact restart retry for
@@ -323,15 +324,16 @@ downstream gate inherits completion from an incomplete predecessor.
    signing, application adapter and process integration are absent.
 2. The canonical tx-builder candidate now reaches the typed mempool admission
    boundary, and a feature-gated candidate node-owned SQLite pending-nonce WAL
-   (`tx-admission-wal`, through `72f89abe6`) covers
+   (`tx-admission-wal`, through `d97ec3ee8`) covers
    durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests, a
    typed builder-to-boundary API, and a
    bounded retained-row admission cap. It is not a
    production path: the default node does not compile or activate it. The
    candidate has a signature-checked CheckTx seam, node-owned signer/context
-   resolver seams, typed commit-receipt gate, and owner-affined lifecycle
-   tokens; production signing/broadcast, AppHash readback recovery,
-   ambiguous-handoff resolution, and tombstone GC remain open. CLI
+   resolver seams (with mismatch/no-resolver and caller-context compatibility
+   tests), typed commit-receipt gate, and owner-affined lifecycle tokens;
+   production resolver/context ownership, signing/broadcast, AppHash readback
+   recovery, ambiguous-handoff resolution, and tombstone GC remain open. CLI
    transfer/receipt paths remain development-only shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.

@@ -55,7 +55,8 @@ The native node remains a fail-closed scaffold:
   NodeOwnedTxAdmissionBoundaryV0 wrapper) now owns a durable pending-nonce
   reservation lifecycle with bounded retained rows, sidecar lock
   fd/path-identity fencing, a signature-checked candidate CheckTx seam, an
-  authority-owned signer resolver and node-owned chain/time context seam, a
+  authority-owned signer resolver and node-owned chain/time context seam
+  (latest candidate binding in `c68500676`/`d97ec3ee8`), a
   typed commit-receipt gate, and authority-affined lifecycle tokens. It is not
   compiled by the default node and does not yet provide production ingress,
   signer/broadcast, AppHash readback recovery, or tombstone GC; low-level
@@ -63,8 +64,10 @@ The native node remains a fail-closed scaffold:
   the CLI remains a development/template adapter;
 - public laboratory Vote/TimeoutVote/QC/TC/proposal decoders derive their
   admission budgets only after the supplied consensus-parameter hash matches
-  the active validator-set hash; trusted-local replay decoders are not network
-  ingress and remain explicitly crate-private;
+  the active validator-set hash (`5b28425df`, `cd7602693`, `b1e3f3528`,
+  `cba106bd8`, `488e015f9`); a mismatched hash is rejected before any public
+  ceiling is derived. Trusted-local replay decoders are not network ingress
+  and remain explicitly crate-private;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
 
