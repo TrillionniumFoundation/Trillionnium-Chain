@@ -333,7 +333,32 @@ pub fn encode_vote(vote: &Vote) -> Vec<u8> {
     output
 }
 
-pub fn decode_vote(bytes: &[u8], validator_set: &ValidatorSet) -> Result<Vote, ConsensusWireError> {
+/// Decodes a Vote under the authenticated run context.
+///
+/// The parameter profile and active validator-set cardinality derive the
+/// admission ceiling before any exact decoder or signature verifier runs.
+/// Network/transport callers must use this context-aware entry (or the shared
+/// `*_with_budget` path used by the authenticated collector), never a
+/// protocol-wide default.
+pub fn decode_vote_with_context(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+) -> Result<Vote, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    decode_vote_with_budget(bytes, validator_set, &mut budget)
+}
+
+/// Local replay/revalidation helper with the intrinsic protocol ceiling.
+///
+/// This is crate-private on purpose: it is not a network admission API. Any
+/// externally supplied or transport-carried statement must go through
+/// [`decode_vote_with_context`] or the collector's shared budget.
+#[cfg(test)]
+pub(crate) fn decode_vote_trusted_local_v0(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+) -> Result<Vote, ConsensusWireError> {
     let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
     decode_vote_with_budget(bytes, validator_set, &mut budget)
 }
@@ -389,7 +414,18 @@ pub fn encode_timeout_vote(vote: &TimeoutVote) -> Vec<u8> {
     output
 }
 
-pub fn decode_timeout_vote(
+/// Decodes a TimeoutVote under the authenticated run context.
+pub fn decode_timeout_vote_with_context(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+) -> Result<TimeoutVote, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    decode_timeout_vote_with_budget(bytes, validator_set, &mut budget)
+}
+
+/// Crate-private intrinsic-ceiling helper for pinned local replay only.
+pub(crate) fn decode_timeout_vote_trusted_local_v0(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<TimeoutVote, ConsensusWireError> {
@@ -448,7 +484,18 @@ pub fn encode_quorum_certificate(
     certificate.try_cev0_bytes().map_err(invalid_debug)
 }
 
-pub fn decode_quorum_certificate(
+/// Decodes a QC under the authenticated parameter and validator-set profile.
+pub fn decode_quorum_certificate_with_context(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+) -> Result<QuorumCertificate, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    decode_quorum_certificate_with_budget(bytes, validator_set, &mut budget)
+}
+
+/// Crate-private intrinsic-ceiling helper for pinned local replay only.
+pub(crate) fn decode_quorum_certificate_trusted_local_v0(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<QuorumCertificate, ConsensusWireError> {
@@ -489,7 +536,18 @@ pub fn encode_timeout_certificate(
     certificate.try_cev0_bytes().map_err(invalid_debug)
 }
 
-pub fn decode_timeout_certificate(
+/// Decodes a TC under the authenticated parameter and validator-set profile.
+pub fn decode_timeout_certificate_with_context(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+) -> Result<TimeoutCertificateV0, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    decode_timeout_certificate_with_budget(bytes, validator_set, &mut budget)
+}
+
+/// Crate-private intrinsic-ceiling helper for pinned local replay only.
+pub(crate) fn decode_timeout_certificate_trusted_local_v0(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<TimeoutCertificateV0, ConsensusWireError> {
@@ -768,7 +826,15 @@ mod tests {
         let (keys, set) = fixture();
         let block = BlockId::new([0x33; 32]);
         let vote = signed_vote(&keys, &set, 0, 1, 1, block);
-        assert_eq!(decode_vote(&encode_vote(&vote), &set).unwrap(), vote);
+        assert_eq!(
+            decode_vote_with_context(
+                &encode_vote(&vote),
+                &set,
+                &ConsensusParametersV0::reference_shadow_v0(),
+            )
+            .unwrap(),
+            vote
+        );
 
         let votes = (0..3)
             .map(|index| signed_vote(&keys, &set, index, 1, 1, block))
@@ -786,11 +852,41 @@ mod tests {
         )
         .unwrap();
         let bytes = encode_quorum_certificate(&qc).unwrap();
-        assert_eq!(decode_quorum_certificate(&bytes, &set).unwrap(), qc);
+        assert_eq!(
+            decode_quorum_certificate_with_context(
+                &bytes,
+                &set,
+                &ConsensusParametersV0::reference_shadow_v0(),
+            )
+            .unwrap(),
+            qc
+        );
         let mut corrupt = bytes;
         let last = corrupt.len() - 1;
         corrupt[last] ^= 1;
-        assert!(decode_quorum_certificate(&corrupt, &set).is_err());
+        assert!(decode_quorum_certificate_with_context(
+            &corrupt,
+            &set,
+            &ConsensusParametersV0::reference_shadow_v0(),
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn public_context_decode_uses_authenticated_parameter_byte_ceiling() {
+        let (keys, set) = fixture();
+        let vote = signed_vote(&keys, &set, 0, 1, 1, BlockId::new([0x37; 32]));
+        let bytes = encode_vote(&vote);
+        // Keep the validator-set shape valid while deliberately supplying a
+        // tiny authenticated message profile. The public context API must
+        // reject before exact decoding; the crate-private local replay helper
+        // is intentionally the only path that retains the intrinsic default.
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = 1;
+        fields.max_consensus_message_bytes = 1;
+        let constrained = ConsensusParametersV0::new(fields).unwrap();
+        assert!(decode_vote_with_context(&bytes, &set, &constrained).is_err());
+        assert_eq!(decode_vote_trusted_local_v0(&bytes, &set).unwrap(), vote);
     }
 
     #[test]
@@ -893,7 +989,12 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            decode_timeout_vote(&encode_timeout_vote(&vote), &set).unwrap(),
+            decode_timeout_vote_with_context(
+                &encode_timeout_vote(&vote),
+                &set,
+                &ConsensusParametersV0::reference_shadow_v0(),
+            )
+            .unwrap(),
             vote
         );
     }

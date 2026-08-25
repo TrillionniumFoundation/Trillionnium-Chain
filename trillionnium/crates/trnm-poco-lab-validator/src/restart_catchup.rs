@@ -37,7 +37,7 @@ use crate::{
     consensus_mesh::{MeshInboundFrameV0, PeerDirectionV0, PeerSessionFactsV0},
     frame::{AuthenticatedFrame, FrameKind, MAX_FRAME_PAYLOAD_BYTES},
     relay::ConsensusRelayEnvelopeV0,
-    wire::{decode_quorum_certificate, UnboundProposalV0},
+    wire::{decode_quorum_certificate_with_context, UnboundProposalV0},
 };
 
 const WIRE_MAGIC_V1: &[u8; 8] = b"TRNMRCU1";
@@ -2662,7 +2662,11 @@ fn decode_restart_catchup_bundle_entry_v1(
         parent.timestamp_ms,
     )?;
     let header = signed.block().header();
-    let certificate = decode_quorum_certificate(&quorum_certificate_bytes, validator_set)?;
+    let certificate = decode_quorum_certificate_with_context(
+        &quorum_certificate_bytes,
+        validator_set,
+        consensus_parameters,
+    )?;
     let executed = decode_native_executed_block_artifact_v0(&native_executed_artifact_bytes)
         .map_err(|_| RestartCatchupErrorV1::BundleMalformed("native execution artifact"))?;
     if encode_native_executed_block_artifact_v0(&executed)

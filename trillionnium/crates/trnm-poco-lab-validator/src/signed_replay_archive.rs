@@ -44,7 +44,10 @@ use crate::{
     crypto::LabFileWatermark,
     frame::MAX_FRAME_PAYLOAD_BYTES,
     process_event::CleanStoppedJournalCutV1,
-    wire::{decode_quorum_certificate, encode_quorum_certificate, UnboundProposalV0},
+    wire::{
+        decode_quorum_certificate_trusted_local_v0, decode_quorum_certificate_with_context,
+        encode_quorum_certificate, UnboundProposalV0,
+    },
     workload_corpus::{WORKLOAD_BLOCK_TIME_STEP_MS_V1, WORKLOAD_GENESIS_TIMESTAMP_MS_V1},
 };
 
@@ -1653,8 +1656,12 @@ impl SignedReplayArchiveV1 {
                 view: target.view().get(),
                 block_id: *target.block_id().as_bytes(),
             })?;
-            let certificate = decode_quorum_certificate(&payload, config.validator_set())
-                .map_err(|error| anyhow!("decode archived quorum certificate: {error}"))?;
+            let certificate = decode_quorum_certificate_with_context(
+                &payload,
+                config.validator_set(),
+                config.consensus_parameters(),
+            )
+            .map_err(|error| anyhow!("decode archived quorum certificate: {error}"))?;
             ensure!(
                 QcRef::from(&certificate) == target,
                 "archived quorum certificate differs from exact replay chain"
@@ -2283,8 +2290,9 @@ fn decode_strict_archive_semantics_v1(
                 unbound_proposals.push((entry_index.coordinate, proposal));
             }
             ReplayArchiveEntryKindV1::QuorumCertificate => {
-                let certificate = decode_quorum_certificate(&payload, validator_set)
-                    .map_err(|error| anyhow!("strictly decode archived QC: {error}"))?;
+                let certificate =
+                    decode_quorum_certificate_with_context(&payload, validator_set, parameters)
+                        .map_err(|error| anyhow!("strictly decode archived QC: {error}"))?;
                 ensure!(
                     certificate.height().get() == entry_index.coordinate.height
                         && certificate.view().get() == entry_index.coordinate.view
@@ -2528,7 +2536,7 @@ fn verify_qc_signature_negative_control_v1(
     let bytes = encode_quorum_certificate(&corrupted_certificate)
         .map_err(|error| anyhow!("encode in-memory QC negative control: {error}"))?;
     ensure!(
-        decode_quorum_certificate(&bytes, validator_set).is_err(),
+        decode_quorum_certificate_trusted_local_v0(&bytes, validator_set).is_err(),
         "strict QC decoder accepted the deterministic non-canonical signature control"
     );
     Ok((

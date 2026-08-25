@@ -27,8 +27,8 @@ use trnm_consensus_types::{TimeoutCertificateV0, TimeoutVote, ValidatorId, Valid
 use crate::{
     fleet_barrier::{CommonCampaignContextV1, FleetStartCertificateV1},
     wire::{
-        decode_timeout_certificate, decode_timeout_vote, encode_timeout_certificate,
-        encode_timeout_vote,
+        decode_timeout_certificate_trusted_local_v0, decode_timeout_vote_trusted_local_v0,
+        encode_timeout_certificate, encode_timeout_vote,
     },
 };
 
@@ -401,7 +401,7 @@ impl DegradedWindowTimeoutObservationV1 {
         validator_set: &ValidatorSet,
     ) -> Result<Self, DegradedWindowErrorV1> {
         let artifact = encode_timeout_vote(timeout_vote);
-        let verified = decode_timeout_vote(&artifact, validator_set)
+        let verified = decode_timeout_vote_trusted_local_v0(&artifact, validator_set)
             .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
         if &verified != timeout_vote {
             return Err(DegradedWindowErrorV1::InvalidTimeoutArtifact);
@@ -428,7 +428,7 @@ impl DegradedWindowTimeoutObservationV1 {
     ) -> Result<Self, DegradedWindowErrorV1> {
         let artifact = encode_timeout_certificate(timeout_certificate)
             .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
-        let verified = decode_timeout_certificate(&artifact, validator_set)
+        let verified = decode_timeout_certificate_trusted_local_v0(&artifact, validator_set)
             .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
         if &verified != timeout_certificate {
             return Err(DegradedWindowErrorV1::InvalidTimeoutArtifact);
@@ -480,7 +480,7 @@ impl DegradedWindowTimeoutObservationV1 {
     ) -> Result<Option<ValidatorId>, DegradedWindowErrorV1> {
         match self.kind {
             DegradedWindowTimeoutAuthorityKindV1::LocalTimeoutVote => {
-                let vote = decode_timeout_vote(&self.artifact, validator_set)
+                let vote = decode_timeout_vote_trusted_local_v0(&self.artifact, validator_set)
                     .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
                 Ok(Some(vote.author()))
             }
@@ -502,7 +502,7 @@ impl DegradedWindowTimeoutObservationV1 {
         }
         match self.kind {
             DegradedWindowTimeoutAuthorityKindV1::LocalTimeoutVote => {
-                let vote = decode_timeout_vote(&self.artifact, validator_set)
+                let vote = decode_timeout_vote_trusted_local_v0(&self.artifact, validator_set)
                     .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
                 if vote.view().get() != self.timed_out_view
                     || self.authority_id != self.artifact_sha256
@@ -511,8 +511,9 @@ impl DegradedWindowTimeoutObservationV1 {
                 }
             }
             DegradedWindowTimeoutAuthorityKindV1::VerifiedTimeoutCertificate => {
-                let certificate = decode_timeout_certificate(&self.artifact, validator_set)
-                    .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
+                let certificate =
+                    decode_timeout_certificate_trusted_local_v0(&self.artifact, validator_set)
+                        .map_err(|_| DegradedWindowErrorV1::InvalidTimeoutArtifact)?;
                 if certificate.timed_out_view().get() != self.timed_out_view
                     || certificate.id().as_bytes() != &self.authority_id
                 {
