@@ -218,7 +218,10 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
     validate_parent_v0(path)?;
     match fs::symlink_metadata(path) {
         Ok(metadata) => {
-            if metadata.file_type().is_symlink() || !metadata.is_file() {
+            if metadata.file_type().is_symlink()
+                || !metadata.is_file()
+                || !is_private_mode_v0(&metadata)
+            {
                 return Err(TxAdmissionWalErrorV0::InvalidPath);
             }
             Ok(PathIdentityV0::from_metadata(&metadata))
@@ -240,7 +243,10 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
                 .sync_data()
                 .map_err(|_| TxAdmissionWalErrorV0::Io)?;
             let metadata = fs::symlink_metadata(path).map_err(|_| TxAdmissionWalErrorV0::Io)?;
-            if metadata.file_type().is_symlink() || !metadata.is_file() {
+            if metadata.file_type().is_symlink()
+                || !metadata.is_file()
+                || !is_private_mode_v0(&metadata)
+            {
                 return Err(TxAdmissionWalErrorV0::InvalidPath);
             }
             Ok(PathIdentityV0::from_metadata(&metadata))
@@ -252,7 +258,10 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
 fn open_lock_v0(path: &Path) -> Result<Rc<File>, TxAdmissionWalErrorV0> {
     let lock_path = lock_path_v0(path)?;
     if let Ok(metadata) = fs::symlink_metadata(&lock_path) {
-        if metadata.file_type().is_symlink() || !metadata.is_file() {
+        if metadata.file_type().is_symlink()
+            || !metadata.is_file()
+            || !is_private_mode_v0(&metadata)
+        {
             return Err(TxAdmissionWalErrorV0::InvalidPath);
         }
     }
@@ -270,6 +279,17 @@ fn open_lock_v0(path: &Path) -> Result<Rc<File>, TxAdmissionWalErrorV0> {
     file.try_lock_exclusive()
         .map_err(|_| TxAdmissionWalErrorV0::LockUnavailable)?;
     Ok(Rc::new(file))
+}
+
+#[cfg(unix)]
+fn is_private_mode_v0(metadata: &fs::Metadata) -> bool {
+    use std::os::unix::fs::PermissionsExt;
+    metadata.permissions().mode() & 0o077 == 0
+}
+
+#[cfg(not(unix))]
+fn is_private_mode_v0(_metadata: &fs::Metadata) -> bool {
+    true
 }
 
 fn ensure_identity_v0(path: &Path, expected: PathIdentityV0) -> Result<(), TxAdmissionWalErrorV0> {
