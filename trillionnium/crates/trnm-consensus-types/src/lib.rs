@@ -27,6 +27,7 @@ mod epoch;
 mod error;
 mod evidence;
 mod finality;
+mod genesis_application;
 mod handoff;
 mod handoff_sign_intent;
 mod ids;
@@ -61,13 +62,18 @@ pub use cev0_decode::{
     decode_finality_proof_v0_exact_with_trusted_genesis, decode_handoff_certificate_v0_exact,
     decode_handoff_descriptor_v0_exact, decode_next_epoch_commitment_v0_exact,
     decode_ordinary_certified_header_v0_exact, decode_ordinary_qc_v0_exact,
-    decode_ordinary_timeout_certificate_v0_exact,
+    decode_ordinary_qc_v0_exact_with_budget, decode_ordinary_timeout_certificate_v0_exact,
+    decode_ordinary_timeout_certificate_v0_exact_with_budget,
     decode_qc_reference_v0_exact_with_trusted_genesis,
-    decode_timeout_certificate_v0_exact_with_trusted_genesis, decode_validator_set_v0_exact,
-    DecodeError, DecodeErrorCode, DecodeResult, EpochAnchorAuthorizationKernelV0,
+    decode_qc_reference_v0_exact_with_trusted_genesis_and_budget,
+    decode_timeout_certificate_v0_exact_with_trusted_genesis,
+    decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget,
+    decode_validator_set_v0_exact, Cev0AdmissionBudgetV0, DecodeError, DecodeErrorCode,
+    DecodeResult, EpochAnchorAuthorizationKernelV0, MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0,
     MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1, MAX_CEV0_CANONICAL_SIGN_INTENT_BYTES,
     MAX_CEV0_CERTIFICATE_ITEMS, MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES,
-    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0, MAX_CEV0_ROOT_BYTES_V0,
+    MAX_CEV0_SIGNATURE_WORK_UNITS_V0, MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
 };
 #[doc(hidden)]
 pub use commit::CommitProof;
@@ -85,6 +91,11 @@ pub use epoch::{
 pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;
 pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0};
+pub use genesis_application::{
+    GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0,
+    GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
+    GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0, GENESIS_QC_APPLICATION_BINDING_DOMAIN_V0,
+};
 pub use handoff::{
     EpochAnchorAuthorizationV0, HandoffCertificateV0, HandoffDescriptorV0,
     HandoffDescriptorV0Fields, SignatureShareV0,

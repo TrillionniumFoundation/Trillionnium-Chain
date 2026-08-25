@@ -46,6 +46,205 @@ pub const MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES: usize =
 /// The maximum old-plus-new signature shares in one handoff certificate.
 pub const MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES: usize = MAX_CEV0_CERTIFICATE_ITEMS * 2;
 
+/// Maximum bytes accepted for one complete CEV0 logical root at an ingress
+/// boundary.  The bound is deliberately aligned with the reference
+/// `max_consensus_message_bytes` profile.  Individual transport profiles may
+/// choose a lower ceiling, but no CEV0 admission path should accept a larger
+/// root merely because its outer length field is u32-wide.
+pub const MAX_CEV0_ROOT_BYTES_V0: usize = 8 * 1024 * 1024;
+
+/// Intrinsic upper envelope of signature-verification work for one currently
+/// composed v0 consensus statement. This is a structural reference only; an
+/// authenticated transport budget should normally be lower.
+pub const MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0: usize =
+    3 * (MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES + (MAX_CEV0_CERTIFICATE_ITEMS * 3) + 1);
+
+/// Default authenticated TC share ceiling. It leaves one list slot below the
+/// intrinsic 100x100 nested-QC product; callers that have an explicitly
+/// authenticated reason to use the intrinsic allowance can opt in via
+/// [`Cev0AdmissionBudgetV0::with_limits`].
+pub const MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0: usize =
+    MAX_CEV0_CERTIFICATE_ITEMS * (MAX_CEV0_CERTIFICATE_ITEMS - 1);
+
+/// Default authenticated work envelope derived from the default TC ceiling.
+pub const MAX_CEV0_SIGNATURE_WORK_UNITS_V0: usize =
+    3 * (MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0 + (MAX_CEV0_CERTIFICATE_ITEMS * 3) + 1);
+
+/// Centralized per-message resource accounting used by bounded transport
+/// admission.  Exact CEV0 decoders remain cryptographically inert; callers
+/// charge the decoded certificate before invoking a strict verifier.  Keeping
+/// the meter in this crate makes every transport profile use the same QC/TC
+/// share accounting instead of inventing independent limits.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Cev0AdmissionBudgetV0 {
+    maximum_root_bytes: usize,
+    maximum_signature_work: usize,
+    maximum_tc_aggregate_signature_shares: usize,
+    signature_work: usize,
+}
+
+impl Cev0AdmissionBudgetV0 {
+    /// Builds an explicit budget.  A zero limit is valid and intentionally
+    /// rejects every non-empty root/work charge; this is useful for fail-closed
+    /// caller configuration and boundary tests.
+    pub const fn new(maximum_root_bytes: usize, maximum_signature_work: usize) -> Self {
+        Self {
+            maximum_root_bytes,
+            maximum_signature_work,
+            maximum_tc_aggregate_signature_shares: MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0,
+            signature_work: 0,
+        }
+    }
+
+    /// Builds a budget with an explicit nested-TC share ceiling. The caller
+    /// may set it to the intrinsic 10,000-share decoder cap, but that choice
+    /// must be deliberate and authenticated by its transport profile.
+    pub const fn with_limits(
+        maximum_root_bytes: usize,
+        maximum_signature_work: usize,
+        maximum_tc_aggregate_signature_shares: usize,
+    ) -> Self {
+        Self {
+            maximum_root_bytes,
+            maximum_signature_work,
+            maximum_tc_aggregate_signature_shares,
+            signature_work: 0,
+        }
+    }
+
+    /// Reference v0 budget for callers that do not have a narrower
+    /// authenticated parameter profile available.
+    pub const fn protocol_v0() -> Self {
+        Self::with_limits(
+            MAX_CEV0_ROOT_BYTES_V0,
+            MAX_CEV0_SIGNATURE_WORK_UNITS_V0,
+            MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0,
+        )
+    }
+
+    /// Derives the root ceiling from authenticated parameters while retaining
+    /// the intrinsic CEV0 hard maximum.  A future profile may lower the
+    /// parameter value; it cannot turn a u32 length field into an unbounded
+    /// allocation.
+    pub fn for_parameters(parameters: &ConsensusParametersV0) -> Self {
+        Self::for_validator_count(parameters, MAX_VALIDATORS)
+    }
+
+    /// Derives an authenticated budget from the active parameter profile and
+    /// validator-set cardinality. The nested TC allowance is `N*(N-1)` (with
+    /// a one-validator floor), below the intrinsic `N*N` product for the
+    /// normal 100-validator profile.
+    pub fn for_validator_set(
+        parameters: &ConsensusParametersV0,
+        validator_set: &ValidatorSet,
+    ) -> Self {
+        Self::for_validator_count(parameters, validator_set.validators().len())
+    }
+
+    fn for_validator_count(parameters: &ConsensusParametersV0, validator_count: usize) -> Self {
+        let configured = usize::try_from(parameters.max_consensus_message_bytes())
+            .unwrap_or(MAX_CEV0_ROOT_BYTES_V0);
+        let validator_count = validator_count.min(MAX_CEV0_CERTIFICATE_ITEMS);
+        let maximum_tc_references = validator_count.saturating_sub(1).max(1);
+        let maximum_tc_aggregate_signature_shares = validator_count
+            .saturating_mul(maximum_tc_references)
+            .min(MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES);
+        let maximum_signature_work = 3usize
+            .saturating_mul(
+                maximum_tc_aggregate_signature_shares
+                    .saturating_add(validator_count.saturating_mul(3))
+                    .saturating_add(1),
+            )
+            .min(MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0);
+        Self::with_limits(
+            configured.min(MAX_CEV0_ROOT_BYTES_V0),
+            maximum_signature_work,
+            maximum_tc_aggregate_signature_shares,
+        )
+    }
+
+    pub const fn maximum_root_bytes(&self) -> usize {
+        self.maximum_root_bytes
+    }
+
+    pub const fn maximum_signature_work(&self) -> usize {
+        self.maximum_signature_work
+    }
+
+    pub const fn maximum_tc_aggregate_signature_shares(&self) -> usize {
+        self.maximum_tc_aggregate_signature_shares
+    }
+
+    pub const fn signature_work(&self) -> usize {
+        self.signature_work
+    }
+
+    /// Checks one complete logical root before its decoder is allowed to
+    /// allocate/copy nested fields.
+    pub fn admit_root_bytes(&self, actual: usize) -> DecodeResult<()> {
+        if actual > self.maximum_root_bytes {
+            return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+        }
+        Ok(())
+    }
+
+    /// Charges signature checks atomically.  The counter is advanced only when
+    /// the complete charge fits, so a failed admission cannot leave a caller
+    /// with a partially consumed token.
+    pub fn charge_signature_work(&mut self, additional: usize) -> DecodeResult<()> {
+        let total = self
+            .signature_work
+            .checked_add(additional)
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))?;
+        if total > self.maximum_signature_work {
+            return Err(DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0));
+        }
+        self.signature_work = total;
+        Ok(())
+    }
+
+    /// Charges all ordinary QC shares in one QC reference.  Contextual
+    /// synthetic anchors carry no signatures and therefore cost zero units.
+    pub fn charge_qc_reference(&mut self, reference: &QcReferenceV0) -> DecodeResult<()> {
+        let shares = reference
+            .as_ordinary()
+            .map_or(0, |certificate| certificate.votes().len());
+        self.charge_signature_work(shares)
+    }
+
+    pub fn charge_qc(&mut self, certificate: &QuorumCertificate) -> DecodeResult<()> {
+        self.charge_signature_work(certificate.votes().len())
+    }
+
+    /// Charges every nested ordinary QC share and every timeout-entry
+    /// signature in one corrected v0 TC.  The total is computed first so a
+    /// rejected aggregate cannot partially consume the budget.
+    pub fn charge_timeout_certificate(
+        &mut self,
+        certificate: &TimeoutCertificateV0,
+    ) -> DecodeResult<()> {
+        let nested_shares =
+            certificate
+                .referenced_qcs()
+                .iter()
+                .try_fold(0usize, |total, reference| {
+                    let shares = reference
+                        .as_ordinary()
+                        .map_or(0, |ordinary| ordinary.votes().len());
+                    total
+                        .checked_add(shares)
+                        .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))
+                })?;
+        if nested_shares > self.maximum_tc_aggregate_signature_shares {
+            return Err(DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0));
+        }
+        let total = nested_shares
+            .checked_add(certificate.entries().len())
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))?;
+        self.charge_signature_work(total)
+    }
+}
+
 /// Maximum exact CEV0 bytes in one canonical Core-to-signer intent.
 ///
 /// The bound covers two maximum-width chain IDs, one maximum-width validator
@@ -1167,6 +1366,21 @@ pub fn decode_ordinary_qc_v0_exact(
     admit_raw_ordinary_qc(raw, validator_set)
 }
 
+/// Bounded-admission variant of [`decode_ordinary_qc_v0_exact`].  The exact
+/// shape decoder remains unchanged; this wrapper performs the root-size check
+/// and charges the decoded signature shares before a caller invokes strict
+/// cryptographic verification.
+pub fn decode_ordinary_qc_v0_exact_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<QuorumCertificate> {
+    budget.admit_root_bytes(bytes.len())?;
+    let certificate = decode_ordinary_qc_v0_exact(bytes, validator_set)?;
+    budget.charge_qc(&certificate)?;
+    Ok(certificate)
+}
+
 /// Decodes one complete QC reference in an authenticated epoch-zero context.
 ///
 /// Ordinary, positive-view QCs retain the exact admission rules of
@@ -1196,6 +1410,20 @@ pub fn decode_qc_reference_v0_exact_with_trusted_genesis(
     Ok(reference)
 }
 
+/// Bounded-admission variant of
+/// [`decode_qc_reference_v0_exact_with_trusted_genesis`].
+pub fn decode_qc_reference_v0_exact_with_trusted_genesis_and_budget(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<QcReferenceV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let reference =
+        decode_qc_reference_v0_exact_with_trusted_genesis(bytes, epoch_zero_validator_set)?;
+    budget.charge_qc_reference(&reference)?;
+    Ok(reference)
+}
+
 /// Decodes one complete TC whose referenced QCs are all ordinary QCs.
 ///
 /// The synthetic-anchor form requires separate trusted authorization and is
@@ -1208,6 +1436,18 @@ pub fn decode_ordinary_timeout_certificate_v0_exact(
     let raw = parse_raw_timeout_certificate(&mut cursor)?;
     cursor.finish()?;
     admit_raw_timeout_certificate(raw, validator_set)
+}
+
+/// Bounded-admission variant of [`decode_ordinary_timeout_certificate_v0_exact`].
+pub fn decode_ordinary_timeout_certificate_v0_exact_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<TimeoutCertificateV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let certificate = decode_ordinary_timeout_certificate_v0_exact(bytes, validator_set)?;
+    budget.charge_timeout_certificate(&certificate)?;
+    Ok(certificate)
 }
 
 /// Decodes one complete epoch-zero TC with trusted GenesisQC references.
@@ -1230,6 +1470,20 @@ pub fn decode_timeout_certificate_v0_exact_with_trusted_genesis(
         QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
     )?;
     require_exact_canonical_reencoding(bytes, certificate.try_cev0_bytes(), 0)?;
+    Ok(certificate)
+}
+
+/// Bounded-admission variant of
+/// [`decode_timeout_certificate_v0_exact_with_trusted_genesis`].
+pub fn decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<TimeoutCertificateV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let certificate =
+        decode_timeout_certificate_v0_exact_with_trusted_genesis(bytes, epoch_zero_validator_set)?;
+    budget.charge_timeout_certificate(&certificate)?;
     Ok(certificate)
 }
 
@@ -6305,5 +6559,29 @@ mod tests {
         .unwrap_err();
         assert_eq!(short_error.code(), DecodeErrorCode::CountLimitExceeded);
         assert_eq!(short_error.byte_offset(), 0);
+    }
+
+    #[test]
+    fn admission_budget_rejects_root_before_any_decode_work() {
+        let budget = Cev0AdmissionBudgetV0::new(8, 16);
+        let error = budget.admit_root_bytes(9).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
+        assert_eq!(error.byte_offset(), 0);
+    }
+
+    #[test]
+    fn admission_budget_keeps_authenticated_tc_ceiling_below_intrinsic_cap() {
+        let budget = Cev0AdmissionBudgetV0::protocol_v0();
+        assert!(
+            budget.maximum_tc_aggregate_signature_shares() < MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        );
+        assert!(budget.maximum_signature_work() < MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0);
+
+        let set = sample_set();
+        let tc = sample_tc(&set);
+        let mut constrained = Cev0AdmissionBudgetV0::with_limits(4096, 128, 1);
+        let error = constrained.charge_timeout_certificate(&tc).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
+        assert_eq!(constrained.signature_work(), 0);
     }
 }

@@ -13,16 +13,17 @@ use std::{
 
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
-    BlockId, CertificateId, ConsensusParametersV0, ContextAuthorizedQcV0, Height, QcRef,
-    QcReferenceV0, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
-    ValidatorId, ValidatorSet, View, Vote,
+    BlockId, CertificateId, Cev0AdmissionBudgetV0, ConsensusParametersV0, ContextAuthorizedQcV0,
+    Height, QcRef, QcReferenceV0, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0,
+    TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
 };
 
 use crate::{
     frame::{AuthenticatedFrame, FrameKind},
     wire::{
-        decode_quorum_certificate, decode_timeout_certificate, decode_timeout_vote, decode_vote,
-        ConsensusWireError, UnboundProposalV0,
+        decode_quorum_certificate_with_budget, decode_timeout_certificate_with_budget,
+        decode_timeout_vote_with_budget, decode_vote_with_budget, ConsensusWireError,
+        UnboundProposalV0,
     },
 };
 
@@ -113,34 +114,42 @@ pub fn decode_authenticated_consensus_frame_v0(
     if validator_set.validator(frame.sender).is_none() {
         return Err(ConsensusIngressErrorV0::UnknownSender);
     }
+    // One shared meter covers the complete logical statement.  The strict
+    // verifier is reached only after the selected decoder has charged its
+    // root bytes and signature work.
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
     match frame.kind {
         FrameKind::Proposal => {
-            let proposal =
-                UnboundProposalV0::decode(&frame.payload, validator_set, consensus_parameters)?;
+            let proposal = UnboundProposalV0::decode_with_budget(
+                &frame.payload,
+                validator_set,
+                consensus_parameters,
+                &mut budget,
+            )?;
             if proposal.block().header().proposer_id() != frame.sender {
                 return Err(ConsensusIngressErrorV0::SenderStatementMismatch);
             }
             Ok(AdmittedConsensusMessageV0::Proposal(Box::new(proposal)))
         }
         FrameKind::Vote => {
-            let vote = decode_vote(&frame.payload, validator_set)?;
+            let vote = decode_vote_with_budget(&frame.payload, validator_set, &mut budget)?;
             if vote.author() != frame.sender {
                 return Err(ConsensusIngressErrorV0::SenderStatementMismatch);
             }
             Ok(AdmittedConsensusMessageV0::Vote(vote))
         }
         FrameKind::TimeoutVote => {
-            let vote = decode_timeout_vote(&frame.payload, validator_set)?;
+            let vote = decode_timeout_vote_with_budget(&frame.payload, validator_set, &mut budget)?;
             if vote.author() != frame.sender {
                 return Err(ConsensusIngressErrorV0::SenderStatementMismatch);
             }
             Ok(AdmittedConsensusMessageV0::TimeoutVote(vote))
         }
         FrameKind::QuorumCertificate => Ok(AdmittedConsensusMessageV0::QuorumCertificate(
-            decode_quorum_certificate(&frame.payload, validator_set)?,
+            decode_quorum_certificate_with_budget(&frame.payload, validator_set, &mut budget)?,
         )),
         FrameKind::TimeoutCertificate => Ok(AdmittedConsensusMessageV0::TimeoutCertificate(
-            decode_timeout_certificate(&frame.payload, validator_set)?,
+            decode_timeout_certificate_with_budget(&frame.payload, validator_set, &mut budget)?,
         )),
         FrameKind::SubmitBatch | FrameKind::Health | FrameKind::ConsensusRelay => {
             Err(ConsensusIngressErrorV0::UnsupportedFrameKind)

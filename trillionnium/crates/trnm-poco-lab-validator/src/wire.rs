@@ -11,12 +11,12 @@ use std::fmt;
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_block_header_v0_exact,
-    decode_double_vote_evidence_v0_exact, decode_ordinary_qc_v0_exact,
-    decode_qc_reference_v0_exact_with_trusted_genesis,
-    decode_timeout_certificate_v0_exact_with_trusted_genesis, Block, BlockId,
-    ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, Height, ProposalWitnessV0, QcRef,
-    QcReferenceV0, QuorumCertificate, SignatureBytes, SignatureVerifier, SignedProposalV0,
-    TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
+    decode_double_vote_evidence_v0_exact, decode_ordinary_qc_v0_exact_with_budget,
+    decode_qc_reference_v0_exact_with_trusted_genesis_and_budget,
+    decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget, Block, BlockId,
+    Cev0AdmissionBudgetV0, ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, Height,
+    ProposalWitnessV0, QcRef, QcReferenceV0, QuorumCertificate, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, TimeoutCertificateV0, TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
 };
 
 const PROPOSAL_MAGIC: &[u8; 8] = b"TRNMPPV1";
@@ -208,6 +208,24 @@ impl UnboundProposalV0 {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
     ) -> Result<Self, ConsensusWireError> {
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+        Self::decode_with_budget(bytes, validator_set, consensus_parameters, &mut budget)
+    }
+
+    /// Decodes and strictly verifies one proposal while consuming the shared
+    /// CEV0 admission budget.  The root ceiling is checked before any framed
+    /// field is copied; nested certificate/evidence work is charged before its
+    /// strict signature verifier is called.
+    pub fn decode_with_budget(
+        bytes: &[u8],
+        validator_set: &ValidatorSet,
+        consensus_parameters: &ConsensusParametersV0,
+        budget: &mut Cev0AdmissionBudgetV0,
+    ) -> Result<Self, ConsensusWireError> {
+        budget
+            .admit_root_bytes(bytes.len())
+            .map_err(invalid_debug)?;
         if bytes.len() > MAX_PROPOSAL_PAYLOAD_BYTES {
             return Err(ConsensusWireError::TooLarge);
         }
@@ -249,6 +267,8 @@ impl UnboundProposalV0 {
             let evidence_bytes = cursor.bytes("evidence object")?.to_vec();
             let evidence = decode_double_vote_evidence_v0_exact(&evidence_bytes, validator_set)
                 .map_err(invalid_debug)?;
+            // Double-vote evidence carries two independently signed records.
+            budget.charge_signature_work(2).map_err(invalid_debug)?;
             evidence
                 .verify(validator_set, &StrictEd25519Verifier)
                 .map_err(invalid_debug)?;
@@ -259,18 +279,20 @@ impl UnboundProposalV0 {
             }
             evidence_objects.push(evidence_bytes);
         }
-        let justify_qc = decode_qc_reference_v0_exact_with_trusted_genesis(
+        let justify_qc = decode_qc_reference_v0_exact_with_trusted_genesis_and_budget(
             cursor.bytes("justify QC")?,
             validator_set,
+            budget,
         )
         .map_err(invalid_debug)?;
         verify_qc_reference(&justify_qc, validator_set)?;
         let timeout_certificate = match cursor.u8("timeout presence")? {
             0 => None,
             1 => {
-                let value = decode_timeout_certificate_v0_exact_with_trusted_genesis(
+                let value = decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget(
                     cursor.bytes("timeout certificate")?,
                     validator_set,
+                    budget,
                 )
                 .map_err(invalid_debug)?;
                 value
@@ -285,6 +307,7 @@ impl UnboundProposalV0 {
             }
         };
         let proposer_signature = SignatureBytes::from_array(cursor.array("proposer signature")?);
+        budget.charge_signature_work(1).map_err(invalid_debug)?;
         cursor.finish()?;
         let block =
             Block::new(header, application_payload, evidence_objects).map_err(invalid_debug)?;
@@ -311,6 +334,18 @@ pub fn encode_vote(vote: &Vote) -> Vec<u8> {
 }
 
 pub fn decode_vote(bytes: &[u8], validator_set: &ValidatorSet) -> Result<Vote, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+    decode_vote_with_budget(bytes, validator_set, &mut budget)
+}
+
+pub(crate) fn decode_vote_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<Vote, ConsensusWireError> {
+    budget
+        .admit_root_bytes(bytes.len())
+        .map_err(invalid_debug)?;
     if bytes.len() != VOTE_WIRE_BYTES {
         return Err(ConsensusWireError::Malformed("wrong vote payload length"));
     }
@@ -332,6 +367,7 @@ pub fn decode_vote(bytes: &[u8], validator_set: &ValidatorSet) -> Result<Vote, C
     )
     .map_err(invalid_debug)?;
     cursor.finish()?;
+    budget.charge_signature_work(1).map_err(invalid_debug)?;
     vote.verify(validator_set, &StrictEd25519Verifier)
         .map_err(invalid_debug)?;
     Ok(vote)
@@ -357,6 +393,18 @@ pub fn decode_timeout_vote(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<TimeoutVote, ConsensusWireError> {
+    let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+    decode_timeout_vote_with_budget(bytes, validator_set, &mut budget)
+}
+
+pub(crate) fn decode_timeout_vote_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<TimeoutVote, ConsensusWireError> {
+    budget
+        .admit_root_bytes(bytes.len())
+        .map_err(invalid_debug)?;
     if bytes.len() != TIMEOUT_VOTE_WIRE_BYTES {
         return Err(ConsensusWireError::Malformed(
             "wrong timeout-vote payload length",
@@ -388,6 +436,7 @@ pub fn decode_timeout_vote(
     )
     .map_err(invalid_debug)?;
     cursor.finish()?;
+    budget.charge_signature_work(1).map_err(invalid_debug)?;
     vote.verify(validator_set, &StrictEd25519Verifier)
         .map_err(invalid_debug)?;
     Ok(vote)
@@ -403,9 +452,33 @@ pub fn decode_quorum_certificate(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<QuorumCertificate, ConsensusWireError> {
-    let certificate = decode_ordinary_qc_v0_exact(bytes, validator_set).map_err(invalid_debug)?;
+    let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+    decode_quorum_certificate_with_budget(bytes, validator_set, &mut budget)
+}
+
+pub(crate) fn decode_quorum_certificate_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<QuorumCertificate, ConsensusWireError> {
+    decode_quorum_certificate_with_budget_and_verifier(
+        bytes,
+        validator_set,
+        budget,
+        &StrictEd25519Verifier,
+    )
+}
+
+fn decode_quorum_certificate_with_budget_and_verifier<V: SignatureVerifier>(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+    verifier: &V,
+) -> Result<QuorumCertificate, ConsensusWireError> {
+    let certificate = decode_ordinary_qc_v0_exact_with_budget(bytes, validator_set, budget)
+        .map_err(invalid_debug)?;
     certificate
-        .verify(validator_set, &StrictEd25519Verifier)
+        .verify(validator_set, verifier)
         .map_err(invalid_debug)?;
     Ok(certificate)
 }
@@ -420,11 +493,37 @@ pub fn decode_timeout_certificate(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> Result<TimeoutCertificateV0, ConsensusWireError> {
-    let certificate =
-        decode_timeout_certificate_v0_exact_with_trusted_genesis(bytes, validator_set)
-            .map_err(invalid_debug)?;
+    let mut budget = Cev0AdmissionBudgetV0::protocol_v0();
+    decode_timeout_certificate_with_budget(bytes, validator_set, &mut budget)
+}
+
+pub(crate) fn decode_timeout_certificate_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> Result<TimeoutCertificateV0, ConsensusWireError> {
+    decode_timeout_certificate_with_budget_and_verifier(
+        bytes,
+        validator_set,
+        budget,
+        &StrictEd25519Verifier,
+    )
+}
+
+fn decode_timeout_certificate_with_budget_and_verifier<V: SignatureVerifier>(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    budget: &mut Cev0AdmissionBudgetV0,
+    verifier: &V,
+) -> Result<TimeoutCertificateV0, ConsensusWireError> {
+    let certificate = decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget(
+        bytes,
+        validator_set,
+        budget,
+    )
+    .map_err(invalid_debug)?;
     certificate
-        .verify(validator_set, None, &StrictEd25519Verifier)
+        .verify(validator_set, None, verifier)
         .map_err(invalid_debug)?;
     Ok(certificate)
 }
@@ -545,11 +644,13 @@ impl<'a> Cursor<'a> {
 
 #[cfg(test)]
 mod tests {
+    use std::cell::Cell;
+
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_types::{
         ApplicationPayloadV0, BlockHeader, BlockKind, ChainId, ConsensusPublicKey, EvidenceRoot,
         GenesisHash, PayloadDigest, ProtocolVersion, ReceiptsRoot, SignatureBytes, StateRoot,
-        Validator, VotingPower,
+        TimeoutEntryV0, Validator, VotingPower,
     };
 
     use super::*;
@@ -608,6 +709,60 @@ mod tests {
         .unwrap()
     }
 
+    struct CountingVerifier {
+        calls: Cell<usize>,
+    }
+
+    impl SignatureVerifier for CountingVerifier {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &trnm_consensus_types::SigningRoot,
+            _signature: &SignatureBytes,
+        ) -> bool {
+            self.calls.set(self.calls.get() + 1);
+            true
+        }
+    }
+
+    fn signed_timeout_certificate(keys: &[SigningKey], set: &ValidatorSet) -> TimeoutCertificateV0 {
+        let block = BlockId::new([0x44; 32]);
+        let votes = (0..3)
+            .map(|index| signed_vote(keys, set, index, 1, 1, block))
+            .collect();
+        let qc = QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(1),
+            Height::new(1),
+            block,
+            set.id(),
+            votes,
+            set,
+        )
+        .unwrap();
+        let high_qc = QcRef::from(&qc);
+        let entries = (0..3)
+            .map(|index| {
+                TimeoutEntryV0::new(
+                    set.validators()[index].id(),
+                    high_qc,
+                    SignatureBytes::from_array([0x70 + index as u8; 64]),
+                )
+                .unwrap()
+            })
+            .collect();
+        TimeoutCertificateV0::new(
+            View::new(2),
+            entries,
+            vec![QcReferenceV0::ordinary(qc.clone())],
+            qc.id(),
+            set,
+        )
+        .unwrap()
+    }
+
     #[test]
     fn vote_and_qc_roundtrip_are_strict() {
         let (keys, set) = fixture();
@@ -636,6 +791,81 @@ mod tests {
         let last = corrupt.len() - 1;
         corrupt[last] ^= 1;
         assert!(decode_quorum_certificate(&corrupt, &set).is_err());
+    }
+
+    #[test]
+    fn oversized_root_is_rejected_before_strict_verifier() {
+        let (_, set) = fixture();
+        let verifier = CountingVerifier {
+            calls: Cell::new(0),
+        };
+        let mut budget = Cev0AdmissionBudgetV0::with_limits(8, 128, 128);
+        let error = decode_timeout_certificate_with_budget_and_verifier(
+            &[0; 9],
+            &set,
+            &mut budget,
+            &verifier,
+        )
+        .unwrap_err();
+        assert!(matches!(error, ConsensusWireError::Invalid(_)));
+        assert_eq!(verifier.calls.get(), 0);
+    }
+
+    #[test]
+    fn tc_aggregate_budget_is_checked_before_strict_verifier() {
+        let (keys, set) = fixture();
+        let certificate = signed_timeout_certificate(&keys, &set);
+        let bytes = encode_timeout_certificate(&certificate).unwrap();
+        let verifier = CountingVerifier {
+            calls: Cell::new(0),
+        };
+        // The nested QC has three shares; a two-share authenticated budget
+        // must reject before any QC or timeout-entry signature is checked.
+        let mut budget = Cev0AdmissionBudgetV0::with_limits(4096, 128, 2);
+        let error = decode_timeout_certificate_with_budget_and_verifier(
+            &bytes,
+            &set,
+            &mut budget,
+            &verifier,
+        )
+        .unwrap_err();
+        assert!(matches!(error, ConsensusWireError::Invalid(_)));
+        assert_eq!(verifier.calls.get(), 0);
+    }
+
+    #[test]
+    fn qc_work_budget_rejects_before_any_signature_call() {
+        let (keys, set) = fixture();
+        let block = BlockId::new([0x55; 32]);
+        let votes = (0..3)
+            .map(|index| signed_vote(&keys, &set, index, 1, 1, block))
+            .collect();
+        let certificate = QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(1),
+            Height::new(1),
+            block,
+            set.id(),
+            votes,
+            &set,
+        )
+        .unwrap();
+        let bytes = encode_quorum_certificate(&certificate).unwrap();
+        let verifier = CountingVerifier {
+            calls: Cell::new(0),
+        };
+        let mut budget = Cev0AdmissionBudgetV0::with_limits(4096, 2, 128);
+        let error = decode_quorum_certificate_with_budget_and_verifier(
+            &bytes,
+            &set,
+            &mut budget,
+            &verifier,
+        )
+        .unwrap_err();
+        assert!(matches!(error, ConsensusWireError::Invalid(_)));
+        assert_eq!(verifier.calls.get(), 0);
     }
 
     #[test]
