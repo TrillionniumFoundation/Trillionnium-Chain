@@ -48,6 +48,7 @@ python3 - "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$TX_BUILDER_MANIFEST" "$
   "$MAINLINE_DOC" "$EXECUTION_BOARD" "$DUAL_TRACK_DOC" "$MODE" <<'PY'
 import json
 import pathlib
+import re
 import sys
 import tomllib
 
@@ -188,6 +189,68 @@ if not pre_cutover:
     present = [str(path) for path in residue if (config_path.parent.parent / path).exists()]
     if present:
         fail("post-cutover Comet residue remains: " + ", ".join(present))
+
+    # C1 is a negative scan of executable/dependency/CI surfaces, not a
+    # substring check over the entire checkout.  Migration decision documents
+    # and this gate necessarily mention the retired implementation; they are
+    # retained as explicit, reviewable allowlist entries.  Any historical
+    # material that survives C0 must live below an archive prefix, never in an
+    # active crate, script, packaging or workflow tree.
+    active_roots = (
+        config_path.parent.parent / "trillionnium" / "crates",
+        config_path.parent.parent / "trillionnium" / "scripts",
+        config_path.parent.parent / "trillionnium" / "packaging",
+        config_path.parent.parent / "trillionnium" / "Cargo.toml",
+        config_path.parent.parent / "trillionnium" / "Cargo.lock",
+        config_path.parent.parent / "scripts",
+        config_path.parent.parent / ".github" / "workflows",
+        config_path.parent.parent / "deny.toml",
+    )
+    allowlisted_files = {
+        # The machine truth manifest and this checker encode the migration
+        # state and rejection vocabulary by design.
+        config_path,
+        config_path.parent.parent / "scripts" / "ci" / "check_poco_bft_mainline_truth.sh",
+    }
+    allowlisted_prefixes = tuple(
+        config_path.parent.parent / prefix
+        for prefix in (
+            "docs/archive/cometbft",
+            "docs/archive/tendermint",
+            "docs/archive/consensus-migration",
+        )
+    )
+    term = re.compile(rb"(?i)(?:cometbft|tendermint|abci)")
+    findings = []
+
+    def is_allowlisted(path: pathlib.Path) -> bool:
+        if path in allowlisted_files:
+            return True
+        return any(path == prefix or prefix in path.parents for prefix in allowlisted_prefixes)
+
+    for active_root in active_roots:
+        if not active_root.exists():
+            continue
+        candidates = (active_root,) if active_root.is_file() else active_root.rglob("*")
+        for path in candidates:
+            if not path.is_file() or is_allowlisted(path):
+                continue
+            try:
+                data = path.read_bytes()
+            except OSError as error:
+                fail(f"post-cutover residue scan cannot read {path.relative_to(config_path.parent.parent)}: {error}")
+            # Ignore binary payloads; source/manifests/scripts are text and
+            # are still checked by both filename and content below.
+            if b"\x00" in data[:4096]:
+                continue
+            relative = path.relative_to(config_path.parent.parent)
+            if term.search(str(relative).encode("utf-8")) or term.search(data):
+                findings.append(str(relative))
+    if findings:
+        fail(
+            "post-cutover active Comet residue remains: "
+            + ", ".join(sorted(set(findings)))
+        )
 PY
 
 if rg -n -i 'cometbft|tendermint|abci' "$ROOT/trillionnium/Cargo.lock" >/dev/null 2>&1; then
