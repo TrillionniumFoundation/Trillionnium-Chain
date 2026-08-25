@@ -216,7 +216,15 @@ impl UnboundProposalV0 {
     /// CEV0 admission budget.  The root ceiling is checked before any framed
     /// field is copied; nested certificate/evidence work is charged before its
     /// strict signature verifier is called.
-    pub fn decode_with_budget(
+    ///
+    /// This is an internal collector seam, not a public admission API.  The
+    /// caller must pass the one budget derived for the authenticated
+    /// validator-set/parameter context; keeping the shared-meter entry
+    /// crate-private prevents an external caller from constructing a wider
+    /// `protocol_v0` budget and bypassing a narrower active profile.  External
+    /// callers must use [`Self::decode`], which derives and owns its context
+    /// budget before parsing.
+    pub(crate) fn decode_with_budget(
         bytes: &[u8],
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
