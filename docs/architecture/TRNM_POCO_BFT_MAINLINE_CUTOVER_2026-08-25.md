@@ -50,8 +50,12 @@ The native node remains a fail-closed scaffold:
   4/7-node or public-testnet evidence;
 - a development-only `trnm-application-tx-builder-v0` now provides one
   external-signer, byte-stable envelope construction surface. It does not yet
-  own nonce reservation, WAL replay, CheckTx-equivalent admission, or
-  broadcast; the CLI remains a development/template adapter;
+  provide a production signing or broadcast path. A separate, feature-gated
+  `trnm-poco-node` `tx-admission-wal` candidate now owns a durable pending-nonce
+  reservation lifecycle with bounded retained rows, but it is not compiled by
+  the default node and does not yet provide CheckTx-equivalent ingress, commit
+  receipt/AppHash binding, or ambiguous-handoff readback; the CLI remains a
+  development/template adapter;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
 
@@ -73,6 +77,11 @@ native migration contract is implemented:
    provenance/ceremony envelope is required before activation. Live
    WAL/SHM, blockstore, `priv_validator_state`, snapshots, pending blocks, and
    mempool are never copied.
+   The export specification must freeze the representation of every fixed
+   32-byte legacy digest: a source AppHash is either proven to be exactly
+   32 bytes or is converted with an explicitly named digest algorithm and
+   preimage. No exporter or importer may silently truncate, pad, or treat a
+   variable-width Comet AppHash as a native root.
 4. Import the manifest into a **new** PoCO data directory and recompute the
    native JMT/state root. The old AppHash is recorded only as a signed
    `legacy_app_hash_attestation`; it is not assumed equal to the PoCO root.

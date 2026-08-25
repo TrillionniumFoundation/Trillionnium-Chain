@@ -173,9 +173,12 @@ impl CometFinalizedBlockIdentityV1 {
     }
 }
 
-/// A legacy Comet AppHash attestation.  It is intentionally distinct from a
+/// A legacy Comet AppHash attestation. It is intentionally distinct from a
 /// native PoCO `StateRoot`; the old value can be recorded and signed but can
-/// never be passed as the new application root by type substitution.
+/// never be passed as the new application root by type substitution. The v1
+/// exporter contract must separately freeze whether the source value is
+/// exactly 32 bytes or is a documented digest (for example SHA-256); this
+/// shape does not truncate, pad, or convert a source AppHash.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct LegacyCometAppHashV1([u8; 32]);
 
@@ -718,6 +721,48 @@ impl PocoGenesisV1 {
         })
     }
 
+    /// Assemble a migration descriptor from the exact typed source export.
+    ///
+    /// This is a **shape/commitment-only** boundary. The export commitment is
+    /// computed from canonical bytes rather than accepted as an operator
+    /// supplied digest, and copied source fields are rechecked before the
+    /// descriptor is returned. It does not verify the source finality proof,
+    /// export roots, mapping preimages, or target state-root recomputation;
+    /// activation must require a future verified-export/GenesisQC ceremony
+    /// result instead of calling this constructor directly.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_from_unverified_export_v1(
+        export: &CometStateExportV1,
+        target_chain_id: ChainId,
+        target_genesis_hash: GenesisHash,
+        target_genesis_manifest_digest: [u8; 32],
+        new_state_root: StateRoot,
+        target_validator_set_digest: ValidatorSetId,
+        target_protocol_version: ProtocolVersion,
+    ) -> Result<Self> {
+        let export_manifest_digest = export.commitment_digest_v1()?;
+        let descriptor = Self::new(
+            export.source_chain_id(),
+            *export.source_genesis_document_digest(),
+            export.source_application_id(),
+            export.source_store_id(),
+            export.finalized_height(),
+            *export.finalized_block_identity(),
+            export.source_finality_proof_digest(),
+            *export.legacy_app_hash(),
+            export_manifest_digest,
+            export.mapping_profile_digest(),
+            target_chain_id,
+            target_genesis_hash,
+            target_genesis_manifest_digest,
+            new_state_root,
+            target_validator_set_digest,
+            target_protocol_version,
+        )?;
+        export.validate_against_genesis(&descriptor)?;
+        Ok(descriptor)
+    }
+
     pub const fn source_chain_id(&self) -> ChainId {
         self.source_chain_id
     }
@@ -1204,17 +1249,16 @@ mod tests {
             crate::DecodeErrorCode::ContextMismatch
         );
 
-        let descriptor = PocoGenesisV1::new(
-            export.source_chain_id(),
-            *export.source_genesis_document_digest(),
-            export.source_application_id(),
-            export.source_store_id(),
-            export.finalized_height(),
-            *export.finalized_block_identity(),
-            export.source_finality_proof_digest(),
-            *export.legacy_app_hash(),
-            export.commitment_digest_v1().unwrap(),
-            export.mapping_profile_digest(),
+        let oversized = vec![0u8; MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1 + 1];
+        assert_eq!(
+            crate::decode_comet_state_export_v1_exact(&oversized)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::LengthLimitExceeded
+        );
+
+        let descriptor = PocoGenesisV1::new_from_unverified_export_v1(
+            &export,
             CHAIN,
             GenesisHash::new([0x71; 32]),
             [0x72; 32],
@@ -1226,6 +1270,29 @@ mod tests {
         export
             .validate_against_genesis(&descriptor)
             .expect("export fields match descriptor source");
+
+        let changed_export = CometStateExportV1::new(
+            export.source_chain_id(),
+            *export.source_genesis_document_digest(),
+            export.source_application_id(),
+            export.source_store_id(),
+            export.finalized_height(),
+            *export.finalized_block_identity(),
+            export.source_finality_proof_digest(),
+            *export.legacy_app_hash(),
+            [0x59; 32],
+            export.exported_index_root(),
+            export.exported_receipts_root(),
+            export.rejected_objects_root(),
+            export.source_validator_set_digest(),
+            export.source_application_schema_digest(),
+            export.source_runtime_profile_digest(),
+            export.mapping_profile_digest(),
+        )
+        .unwrap();
+        assert!(changed_export
+            .validate_against_genesis(&descriptor)
+            .is_err());
     }
 
     #[test]

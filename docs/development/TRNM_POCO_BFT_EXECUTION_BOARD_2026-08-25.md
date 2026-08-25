@@ -45,9 +45,16 @@ downstream gate inherits completion from an incomplete predecessor.
   exact inner/outer bytes, uses an external signer boundary, and exposes an
   exact typed `trnm-mempool` view. The view passes the builder's immutable body,
   digest, signer identity, nonce and resource claims into the pending-nonce
-  admission API. It still deliberately does not own the node reservation/WAL,
-  CheckTx, commit receipt or broadcast path; native-node integration remains a
-  G2 blocker.
+  admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
+  (`5891e9c8f`, hardened by `5c736d998`, `541110990`, `d6d67f929`, and
+  `e48376dfa`) now provides a node-owned SQLite WAL/FULL pending-nonce
+  reservation lifecycle with namespace/path fences, private-file checks,
+  retained-row bounds, exact restart retry for `Reserved`, and fail-closed
+  `HandedOff` ambiguity.
+  It is not compiled by the default node and does not yet provide
+  CheckTx-equivalent ingress, a production signer, commit receipt/AppHash
+  binding, broadcast, handoff readback resolution, or tombstone GC; native
+  transaction integration remains a G2 blocker.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. This narrows the observed
@@ -112,9 +119,12 @@ downstream gate inherits completion from an incomplete predecessor.
   mempool, pacemaker and effect driver.
 - Integrate the development-only canonical transaction-builder candidate with
   the node-owned external signer, pending-nonce reservation, epoch resource
-  policy, and durable replay. The exit path is exact inner/outer envelope bytes
-  -> reservation -> CheckTx-equivalent admission -> commit receipt/AppHash
-  replay; the builder alone is not this gate.
+  policy, and durable replay. A candidate node-owned SQLite WAL boundary now
+  exists behind `tx-admission-wal`, but its `HandedOff` state intentionally
+  fails closed on restart and has no application readback resolver. The exit
+  path is exact inner/outer envelope bytes -> reservation -> CheckTx-equivalent
+  admission -> commit receipt/AppHash replay; the builder or WAL slice alone
+  is not this gate.
 - Execute `ingress -> proposal -> validate -> Safety persist -> sign -> QC/TC ->
   ordered finalize -> JMT/App commit -> acknowledgement` with one source of
   truth for block, receipt and state roots.
@@ -165,6 +175,13 @@ downstream gate inherits completion from an incomplete predecessor.
   refusal). The QC ceremony envelope has a separate bounded exact decoder and
   importer-owned trusted-set recheck, so a second importer can replay the same
   bytes without trusting a local JSON/YAML interpretation.
+- `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
+  shape/commitment assembly helper. It computes the typed export commitment
+  and rechecks copied fields, but does not verify source finality, export-root
+  preimages, mapping data, or the recomputed target root; no activation path
+  may treat it as a verified import proof. The eventual activation API must
+  consume an independently verified export plus a quorum/cross-peer
+  GenesisQC ceremony.
 - Include source AppHash only as `legacy_app_hash_attestation`; bind export,
   mapping/profile, new root, source namespace and complete migration-instance
   digest into the ceremony descriptor commitment. A signed/quorum ceremony is
@@ -245,10 +262,15 @@ downstream gate inherits completion from an incomplete predecessor.
 1. `trnm-poco-node` default startup intentionally fails; effect driver, Vote
    signing, application adapter and process integration are absent.
 2. The canonical tx-builder candidate now reaches the typed mempool admission
-   boundary, but is not yet connected to a node-owned durable pending-nonce
-   reservation/WAL replay, CheckTx-equivalent ingress, commit receipt/AppHash,
-   or production signer; CLI transfer/receipt paths remain development-only
-   shell/template adapters.
+   boundary, and a feature-gated candidate node-owned SQLite pending-nonce WAL
+   (`tx-admission-wal`, `5891e9c8f`, hardened through `e48376dfa`) covers
+   durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests and a
+   bounded retained-row admission cap. It is not a
+   production path: the default node does not compile or activate it, and
+   CheckTx-equivalent ingress, production signing, commit receipt/AppHash
+   binding, broadcast, ambiguous-handoff readback, and tombstone GC remain
+   open. CLI transfer/receipt paths remain development-only shell/template
+   adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
@@ -257,6 +279,28 @@ downstream gate inherits completion from an incomplete predecessor.
    return boundary and fails closed on observed drift. It still has a
    non-atomic window under a rewrite after that read; close with one shared
    cross-store lock and fd-bound identity where required.
+
+### Immediate execution queue (next dependency-ordered slices)
+
+1. **P0-PROTOCOL / P0-TC:** freeze the complete normative vectors and
+   independent replay, then close the remaining weighted TC, epoch, envelope,
+   upgrade and light-client bounds. No network signing is enabled before this
+   gate.
+2. **P1-CORE:** make Core/SafetyRules the sole authoritative Vote/Timeout
+   owner; persist-before-sign, pacemaker, epoch handoff, ordered finalization,
+   and 100,000-block exact replay are the acceptance line.
+3. **P2-NODE + P2-TX:** wire the candidate WAL to real node ingress and an
+   external/remote signer, add CheckTx-equivalent admission, commit-uncertain
+   recovery and receipt/AppHash readback, then prove clean restart replay.
+4. **P2-NET / P2-STORE:** add authenticated encrypted P2P, effect driver,
+   state sync, remote signer/HSM watermark, and one shared K/P lock with
+   fd-bound identity where needed.
+5. **MIG-ROOT / G3:** implement source export/finality and target-root
+   verifiers, cross-peer GenesisQC/quorum ceremony, then run two clean
+   export/import rehearsals before any C0 decision.
+6. **G3/G4:** run 4 -> 7 cross-host crash/partition/equivocation/WAN campaigns,
+   upgrade/rollback drills, independent replay/light client, and 7--30 day
+   soak. Only after these gates may C1 remove Comet residue.
 
 ### P3/P4 — promotion and economics blockers
 
