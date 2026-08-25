@@ -60,9 +60,15 @@ downstream gate inherits completion from an incomplete predecessor.
   transaction integration remains a G2 blocker.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
-  immediately before returning the inert owner. This narrows the observed
-  mutation window and fails closed on any digest/head drift; it is not yet a
-  cross-database atomic lock, so MIG-004 remains open.
+  immediately before returning the inert owner. A new private
+  `cross_store_lock` helper holds a descriptor-bound shared lock on the
+  canonical private authority directory for that paired pass, rechecks the
+  directory's descriptor/path identity, and has adversarial rename/recreate
+  coverage. Selected native P/K mutation windows (P execute/reserve, P anchor
+  reopen, K acknowledgement/retry, and lab finalization application commit)
+  now take the corresponding exclusive lock. This is an advisory,
+  cooperating-owner fence: all writer adoption and the full cross-database
+  atomicity proof remain open under MIG-004.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
@@ -139,10 +145,12 @@ downstream gate inherits completion from an incomplete predecessor.
 - Add independently administered remote signer/HSM/KMS and monotonic watermark;
   never reconstruct signing state from an application snapshot.
 - Close file identity/TOCTOU, clone, namespace, WAL/SHM, fsync, power-loss,
-  disk-full and commit-uncertain cases. The current K/P audit now has a final
-  paired readback, but must still become shared-locked (and use fd-bound
-  identity where required); path identity plus a readback is not atomic
-  authority.
+  disk-full and commit-uncertain cases. The current K/P audit has a
+  descriptor-bound shared reader lock, pathname/descriptor identity fence, and
+  selected exclusive native-writer hooks, but the lock is advisory and not all
+  P/K mutation paths are proven to adopt it. Path identity plus a readback is
+  not, by itself, atomic authority; complete the writer matrix and use
+  fd-bound identity where required.
 
 ### MIG-005 — extract execution and authenticated state (G2)
 
@@ -295,13 +303,14 @@ downstream gate inherits completion from an incomplete predecessor.
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
    clock-skew or long-soak evidence; current G3 ledger remains false.
-5. K/P dual-store audit now re-reads the complete paired K/P inventory at the
-   return boundary and fails closed on observed drift. It still has a
-   non-atomic window under a rewrite after that read; close with one shared
-   cross-store lock and fd-bound identity where required. The candidate
-   admission WAL now also fences the sidecar lock fd/path identity against
-   same-user rename/recreate; that hardening does not close the separate K/P
-   cross-database atomicity gap.
+5. K/P dual-store audit now takes a descriptor-bound shared lock for the final
+   paired inventory, rechecks root identity, and fails closed on observed
+   digest/head drift. Selected native P/K writer windows take an exclusive
+   lock, with mutual-exclusion and rename/recreate tests. This is still an
+   advisory cooperating-owner fence: every mutation path must adopt the
+   exclusive hook before the cross-database atomicity blocker can close. The
+   candidate admission WAL's separate sidecar identity hardening does not
+   substitute for this K/P proof.
 
 ### Immediate execution queue (next dependency-ordered slices)
 
@@ -316,8 +325,9 @@ downstream gate inherits completion from an incomplete predecessor.
    external/remote signer, add CheckTx-equivalent admission, commit-uncertain
    recovery and receipt/AppHash readback, then prove clean restart replay.
 4. **P2-NET / P2-STORE:** add authenticated encrypted P2P, effect driver,
-   state sync, remote signer/HSM watermark, and one shared K/P lock with
-   fd-bound identity where needed.
+   state sync, remote signer/HSM watermark, and complete the shared K/P lock
+   adoption matrix with fd-bound identity where needed. The current lock
+   helper and selected native writer hooks are evidence, not a closed gate.
 5. **MIG-ROOT / G3:** implement source export/finality and target-root
    verifiers, cross-peer GenesisQC/quorum ceremony, then run two clean
    export/import rehearsals before any C0 decision.

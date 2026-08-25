@@ -169,6 +169,7 @@ mod authenticated_genesis_commissioning;
 mod authenticated_genesis_h1_takeover;
 #[allow(dead_code)]
 mod cross_plane_checkpoint_v1;
+mod cross_store_lock;
 #[cfg(feature = "lab-validator-runtime")]
 mod deployed_lab_commissioning;
 #[cfg(feature = "lab-validator-runtime")]

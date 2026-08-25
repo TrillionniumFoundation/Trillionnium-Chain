@@ -49,9 +49,9 @@ use trnm_native_execution_v0::{
 };
 
 use crate::{
-    derive_signer_watermark_scope_v0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
-    SqliteExternalNodeCheckpointStoreV0, SIGNER_JOURNAL_PROFILE_REF_V0,
-    STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+    cross_store_lock::CrossStoreLockGuardV0, derive_signer_watermark_scope_v0,
+    ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0, SqliteExternalNodeCheckpointStoreV0,
+    SIGNER_JOURNAL_PROFILE_REF_V0, STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
 };
 
 pub(super) const MAXIMUM_RECORD_BYTES_V0: usize = 64 * 1024 * 1024;
@@ -1011,6 +1011,7 @@ pub(super) struct RecoveredHistoryKV0 {
 /// closed.  A process-wide shared lock is still required for a production
 /// atomic authority (tracked by MIG-004); this helper is deliberately an
 /// additional readback fence, not a claim of cross-database atomicity.
+#[allow(clippy::too_many_arguments)]
 fn final_paired_k_p_readback_v0(
     validation_store: &mut SqliteProposalValidationStoreV0,
     application: &DurableNativeApplicationV0,
@@ -1021,6 +1022,15 @@ fn final_paired_k_p_readback_v0(
     validation_path: &Path,
     application_path: &Path,
 ) -> Result<(), PocoNodeDeployedLabRecoveryErrorV0> {
+    // Hold one descriptor-bound shared lock for the complete final join. The
+    // initial independent reads remain intentionally outside this guard; any
+    // mutation in that window is rejected by the immutable digest/head checks
+    // below. Cooperative P/K writers take the corresponding exclusive root
+    // lock, so no rewrite can interleave once this paired pass starts.
+    let cross_store_lock = recover_try!(
+        "validation.final_pair.shared_lock",
+        CrossStoreLockGuardV0::acquire_shared_for_paths_v0(application_path, validation_path)
+    );
     let fresh_audit = recover_try!(
         "validation.final_pair.audit",
         validation_store.confirm_terminal_k_audit_v0()
@@ -1094,6 +1104,10 @@ fn final_paired_k_p_readback_v0(
             ));
         }
     }
+    recover_try!(
+        "validation.final_pair.shared_lock_identity",
+        cross_store_lock.validate_identity_v0()
+    );
     Ok(())
 }
 

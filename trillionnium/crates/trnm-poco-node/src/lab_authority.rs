@@ -72,6 +72,7 @@ use trnm_native_execution_v0::{
 #[cfg(feature = "safety-rules-sidecar")]
 use crate::safety_rules_sidecar::SafetyRulesSemanticSidecarV1;
 use crate::{
+    cross_store_lock::CrossStoreLockGuardV0,
     external_node_checkpoint::{
         ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0,
         ExternalNodeCheckpointV0, SqliteExternalNodeCheckpointStoreV0,
@@ -3394,6 +3395,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             self.application,
             PocoNodeNativeProposalPHostConfigV0 {
                 store_path: self.proposal_journal.store_path.clone(),
+                cross_store_root: self
+                    .proposal_journal
+                    .store_path
+                    .parent()
+                    .and_then(|path| path.parent())
+                    .map(PathBuf::from),
                 scope: self.proposal_journal.scope,
                 minimum_durable_sequence: self.proposal_journal.minimum_durable_sequence,
                 owner_id: self.proposal_journal.owner_id,
@@ -4238,6 +4245,21 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
     pub fn apply_and_ack_finalization_v0(
         mut self,
     ) -> Result<PocoNodeLabCertificateAdvanceV0<W>, PocoNodeLabAuthorityErrorV0> {
+        let cross_store_root = self
+            .proposal_journal
+            .store_path
+            .parent()
+            .and_then(|path| path.parent())
+            .ok_or(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "proposal-validation namespace has no cross-store authority root",
+            ))?;
+        // Native application commit and the subsequent durable K/readback
+        // closure are one cross-store mutation window. The root-bound lock is
+        // advisory and writer adoption remains explicitly audited by the
+        // migration ledger; no consensus activation is implied here.
+        let _cross_store_lock =
+            CrossStoreLockGuardV0::acquire_exclusive_for_root_v0(cross_store_root)
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         if self.core.safety_state().pending_finalization() != Some(&self.finalization) {
             return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
                 "pending finalization differs from the durable Core queue front",

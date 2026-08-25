@@ -6,6 +6,20 @@
   "stage": "G1-native-host-incomplete",
   "production_candidate": false,
   "production_consensus_activation": false,
+  "cross_store_k_p_lock": {
+    "authority": "canonical-private-root-directory-fd",
+    "reader_shared_lock": true,
+    "writer_exclusive_hooks": [
+      "native-proposal-p-execute-and-reserve",
+      "native-proposal-p-anchor-reopen",
+      "native-proposal-k-ack-and-retry",
+      "lab-finalization-application-commit"
+    ],
+    "descriptor_and_path_identity_fence": true,
+    "advisory_only": true,
+    "all_writer_adoption_verified": false,
+    "production_activation": false
+  },
   "tx_admission": {
     "candidate_node_owned_wal": true,
     "feature": "tx-admission-wal",
@@ -77,7 +91,7 @@
     {"id": "P2-TX-001", "severity": "P2", "status": "open", "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83d, 617cbb15a) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry and fail-closed HandedOff restart; default node and production activation remain false; CheckTx ingress, signer, commit receipt/AppHash, broadcast, handoff readback and tombstone GC remain absent", "exit": "canonical envelope builder -> node-owned pending nonce/WAL -> CheckTx-equivalent admission -> committed receipt/AppHash replay with signer/broadcast and ambiguous-handoff resolution; CLI remains dev-only"},
     {"id": "P2-NET-001", "severity": "P2", "status": "open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
     {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
-    {"id": "P2-STORE-001", "severity": "P2", "status": "open", "evidence": "final paired K/P readback is landed and fails closed on observed digest/head drift", "exit": "K/P audit is atomic under concurrent rewrite using one shared cross-store lock plus fd-bound identity where required; final paired readback alone is insufficient"},
+    {"id": "P2-STORE-001", "severity": "P2", "status": "open", "evidence": "descriptor-bound shared cross-store reader lock and selected native P/K writer hooks are landed; final paired readback still fails closed on observed digest/head drift, but advisory-lock adoption is not yet complete across every writer", "exit": "K/P audit is atomic under concurrent rewrite using one shared cross-store lock plus fd-bound identity where required; all P/K mutation paths must adopt the exclusive hook and pass adversarial replacement tests"},
     {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "evidence": "PocoGenesisV1 now separates legacy Comet genesis/block/AppHash types and binds source namespace plus complete migration-instance inputs; PocoGenesisQcBindingV1 has profile-tagged exact decoding and local trusted-set recheck while GenesisQC v0 wire remains unchanged. Typed source/target manifest verification and cross-peer authority are still false", "exit": "export/import binds source manifest, mapping digest, new JMT root, and GenesisQC/ceremony across peers with signed rehearsal"},
     {"id": "P3-HISTORY-001", "severity": "P3", "status": "open", "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"},
     {"id": "MIG-CLEAN-001", "severity": "P3", "status": "blocked-by-cutover", "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"}

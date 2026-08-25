@@ -19,9 +19,7 @@
 //! binding-stage comparison input and are rejected before the P-to-D authority
 //! transition.
 
-#[cfg(any(test, feature = "lab-validator-runtime"))]
-use std::path::PathBuf;
-use std::{error::Error, fmt};
+use std::{error::Error, fmt, path::PathBuf};
 
 use trnm_consensus_core::{
     BlockIdOverlayRefV0, ClaimedPayloadValidationRequestV0, Core, CoreAcceptedApplicationValidDV0,
@@ -58,6 +56,7 @@ use trnm_native_application_sqlite::{
 };
 use trnm_native_execution_v0::{ConfirmedDurableExecutionPV0, DurableNativeApplicationV0};
 
+use crate::cross_store_lock::CrossStoreLockGuardV0;
 use crate::external_node_checkpoint::{
     advance_native_k_whole_node_checkpoint_v0, ConfirmedNativeKNodeCheckpointV0,
     ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0, NativeKNodeCheckpointAdvanceErrorV0,
@@ -413,6 +412,7 @@ impl PocoNodeNativePersistedProposalPV0 {
 pub(super) struct PocoNodeNativeProposalPHostV0<A> {
     application: A,
     store: SqliteProposalValidationStoreV0,
+    cross_store_root: Option<PathBuf>,
     owner_id: ProposalValidationOwnerIdV0,
     authenticated_application_head: ApplicationHeadV0,
     authenticated_application_overlay: Option<BlockIdOverlayRefV0>,
@@ -424,6 +424,10 @@ pub(super) struct PocoNodeNativeProposalPHostV0<A> {
 #[cfg(any(test, feature = "lab-validator-runtime"))]
 pub(crate) struct PocoNodeNativeProposalPHostConfigV0 {
     pub(crate) store_path: PathBuf,
+    /// Canonical authority root shared by the native application `P` and
+    /// validation `K` stores. `None` is retained only for isolated unit
+    /// fixtures; deployed lab owners must provide it.
+    pub(crate) cross_store_root: Option<PathBuf>,
     pub(crate) scope: ProposalValidationStoreScopeV0,
     pub(crate) minimum_durable_sequence: u64,
     pub(crate) owner_id: ProposalValidationOwnerIdV0,
@@ -450,6 +454,7 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         Self {
             application,
             store,
+            cross_store_root: None,
             owner_id,
             authenticated_application_head,
             authenticated_application_overlay,
@@ -491,6 +496,7 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         Ok(Self {
             application,
             store,
+            cross_store_root: config.cross_store_root,
             owner_id: config.owner_id,
             authenticated_application_head: config.authenticated_application_head,
             authenticated_application_overlay: config.authenticated_application_overlay,
@@ -502,6 +508,16 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
 
     pub(super) const fn status_v0(&self) -> PocoNodeNativeProposalPHostStatusV0 {
         self.status
+    }
+
+    fn acquire_cross_store_exclusive_lock_v0(
+        &self,
+    ) -> Result<Option<CrossStoreLockGuardV0>, PocoNodeNativeProposalPHostErrorV0<A::Error>> {
+        self.cross_store_root
+            .as_deref()
+            .map(CrossStoreLockGuardV0::acquire_exclusive_for_root_v0)
+            .transpose()
+            .map_err(|error| PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string()))
     }
 
     /// Executes and durably stores exactly one ordinary non-empty Proposal.
@@ -520,6 +536,11 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         // path fail-closed; only a fully read-back durable P transitions this
         // owner to `Persisted` below.
         self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
+
+        // P execution and K reservation/readback form one cross-store
+        // mutation window. The deployed host supplies the root-bound
+        // exclusive lock; isolated unit fixtures intentionally leave it off.
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
 
         let (route, core_id, block, parent, core_valid_permit) = claimed.into_parts();
         let header = block.header();
@@ -722,6 +743,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
         self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let (route, core_id, block, parent, core_valid_permit) = claimed.into_parts();
         let header = block.header();
         let expected_route = ProposalRouteV0::Synced;
@@ -1128,6 +1150,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         if safety_store.path() != expected_safety_path {
             return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::SafetyPathMismatch);
         }
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let context = self
             .store
             .native_valid_transition_context_exact_v0(
@@ -1280,6 +1303,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let outcome = match closure_mode {
             PocoNodeNativeSafetyClosureModeV0::OrdinaryVote => {
                 self.store.acknowledge_confirmed_safety_v0(
@@ -1712,6 +1736,7 @@ pub(super) enum PocoNodeNativeProposalPHostErrorV0<E> {
     Application(E),
     Store(ValidationStoreErrorV0),
     Safety(SafetyStoreErrorV0),
+    CrossStoreLock(String),
     Core(CoreError),
 }
 
@@ -1768,6 +1793,9 @@ impl<E: fmt::Display> fmt::Display for PocoNodeNativeProposalPHostErrorV0<E> {
             Self::Application(error) => write!(formatter, "native application failed: {error}"),
             Self::Store(error) => write!(formatter, "native proposal-P store failed: {error}"),
             Self::Safety(error) => write!(formatter, "SafetyStore failed: {error}"),
+            Self::CrossStoreLock(error) => {
+                write!(formatter, "cross-store P/K lock failed: {error}")
+            }
             Self::Core(error) => {
                 write!(formatter, "Core rejected application-sealed Valid: {error}")
             }
@@ -2101,6 +2129,7 @@ mod tests {
             application,
             PocoNodeNativeProposalPHostConfigV0 {
                 store_path: path.clone(),
+                cross_store_root: None,
                 scope,
                 minimum_durable_sequence: 0,
                 owner_id: owner,
@@ -2169,6 +2198,7 @@ mod tests {
             },
             PocoNodeNativeProposalPHostConfigV0 {
                 store_path: path,
+                cross_store_root: None,
                 scope: ProposalValidationStoreScopeV0::new([0xa1; 32]).expect("scope"),
                 minimum_durable_sequence: 0,
                 owner_id: ProposalValidationOwnerIdV0::new([0xa2; 32]).expect("owner"),

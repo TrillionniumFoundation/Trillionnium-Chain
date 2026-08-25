@@ -10,11 +10,11 @@ publish = false
 
 [features]
 default = []
-node-event-wal = ["dep:libc", "dep:fs2"]
+node-event-wal = ["dep:libc"]
 # Candidate-only node-owned transaction admission WAL.  This feature composes
 # the durable nonce boundary but does not activate CheckTx, execution, or
 # broadcast in the default node.
-tx-admission-wal = ["dep:fs2", "dep:libc", "dep:trnm-mempool"]
+tx-admission-wal = ["dep:libc", "dep:trnm-mempool"]
 # Raw consensus signing keys are available only to explicitly named fixture and
 # process-test builds.  The default node/library build has no direct
 # `ed25519-dalek` dependency edge and therefore cannot load or expose a
@@ -31,7 +31,6 @@ lab-validator-runtime-test-support = [
 ]
 recovery-process-test-support = [
   "fixture-raw-key",
-  "dep:fs2",
 ]
  # This is a composition-only seam for the bounded timeout host. It brings
  # the cross-process watermark and Unix signer clients into an explicitly
@@ -228,7 +227,7 @@ required-features = ["external-signer-runtime"]
 [dependencies]
 borsh = { version = "1.5", features = ["derive"] }
 ed25519-dalek = { version = "2", optional = true }
-fs2 = { version = "0.4", optional = true }
+fs2 = "0.4"
 libc = { version = "0.2", optional = true }
 rusqlite = { version = "0.32", features = ["bundled"] }
 serde_json = { version = "1", optional = true }
