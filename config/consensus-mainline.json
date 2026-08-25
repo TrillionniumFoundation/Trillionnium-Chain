@@ -32,7 +32,7 @@
   "tx_admission": {
     "candidate_node_owned_wal": true,
     "feature": "tx-admission-wal",
-    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2", "d0cc52e2e", "01b378560", "6611ef07f", "72f89abe6", "d9f31f96e", "167dfbba4", "3f5432682", "4d16d42ae", "c68500676", "d97ec3ee8", "51a1954d8"],
+    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2", "d0cc52e2e", "01b378560", "6611ef07f", "72f89abe6", "d9f31f96e", "167dfbba4", "3f5432682", "4d16d42ae", "c68500676", "d97ec3ee8", "51a1954d8", "286ae09a9"],
     "sqlite_wal_full": true,
     "namespace_and_path_identity_fences": true,
     "sidecar_lock_fd_identity_fence": true,
@@ -60,7 +60,10 @@
     "commit_receipt_apphash": false,
     "broadcast": false,
     "ambiguous_handoff_readback_resolver": false,
-    "tombstone_gc": false
+    "tombstone_gc": false,
+    "activation_manifest_test": "286ae09a9",
+    "activation_manifest_requires_all_flags_false": true,
+    "activation_manifest_requires_named_blockers": true
   },
   "cometbft": {
     "role": "migration-residue-only",
@@ -107,6 +110,15 @@
       "cross_peer_genesis_qc_activation": false,
       "import_rehearsal": false
     }
+  },
+  "restart_state_sync": {
+    "chain_identity_binding": true,
+    "qc_validator_set_chain_binding": true,
+    "retained_checkpoint_chain_binding": true,
+    "typed_state_sync_proof_chain_id": true,
+    "tamper_and_proof_consumption_tests": true,
+    "implementation_commit": "d69063fe9",
+    "production_state_sync": false
   },
   "blockers": [
     {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},

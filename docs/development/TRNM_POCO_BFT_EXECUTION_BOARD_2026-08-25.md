@@ -131,6 +131,19 @@ downstream gate inherits completion from an incomplete predecessor.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
+- `286ae09a9` adds a static activation-manifest test that enumerates every
+  currently exposed node/checkpoint/recovery/remote-signer/WAL/sidecar/lab
+  activation or candidate flag. It requires all of them to remain false and
+  requires the production gate to retain named blockers, including under the
+  feature combination used by the lab/runtime candidates. This closes a
+  capability-accounting gap only; it does not create an effect driver, vote
+  loop, network ingress, or production authority.
+- `d69063fe9` closes a concrete restart/state-sync namespace gap: retained
+  checkpoints, the live validator-set QC, and the state-sync proof now share
+  one typed chain-id binding. A checksum-valid record rewritten into a foreign
+  namespace is rejected before QC recheck or state installation, with focused
+  durable-tamper and proof-consumption tests. This hardens the boundary but
+  does not make production state sync live.
 
 ## 2. Gate board
 
