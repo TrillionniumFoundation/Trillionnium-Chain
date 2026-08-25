@@ -208,8 +208,7 @@ impl UnboundProposalV0 {
         validator_set: &ValidatorSet,
         consensus_parameters: &ConsensusParametersV0,
     ) -> Result<Self, ConsensusWireError> {
-        let mut budget =
-            Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+        let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
         Self::decode_with_budget(bytes, validator_set, consensus_parameters, &mut budget)
     }
 
@@ -223,6 +222,7 @@ impl UnboundProposalV0 {
         consensus_parameters: &ConsensusParametersV0,
         budget: &mut Cev0AdmissionBudgetV0,
     ) -> Result<Self, ConsensusWireError> {
+        ensure_context_matches(consensus_parameters, validator_set)?;
         budget
             .admit_root_bytes(bytes.len())
             .map_err(invalid_debug)?;
@@ -555,15 +555,23 @@ pub(crate) fn admission_budget_for_context(
     consensus_parameters: &ConsensusParametersV0,
     validator_set: &ValidatorSet,
 ) -> Result<Cev0AdmissionBudgetV0, ConsensusWireError> {
+    ensure_context_matches(consensus_parameters, validator_set)?;
+    Ok(Cev0AdmissionBudgetV0::for_validator_set(
+        consensus_parameters,
+        validator_set,
+    ))
+}
+
+fn ensure_context_matches(
+    consensus_parameters: &ConsensusParametersV0,
+    validator_set: &ValidatorSet,
+) -> Result<(), ConsensusWireError> {
     if consensus_parameters.hash() != validator_set.consensus_parameters_hash() {
         return Err(ConsensusWireError::Malformed(
             "consensus parameters differ from validator-set context",
         ));
     }
-    Ok(Cev0AdmissionBudgetV0::for_validator_set(
-        consensus_parameters,
-        validator_set,
-    ))
+    Ok(())
 }
 
 /// Crate-private intrinsic-ceiling helper for pinned local replay only.
@@ -1114,6 +1122,16 @@ mod tests {
                 .unwrap(),
             proposal
         );
+        let mut unbound_fields = parameters.fields();
+        unbound_fields.max_block_bytes = 1;
+        unbound_fields.max_consensus_message_bytes = 1;
+        let unbound_parameters = ConsensusParametersV0::new(unbound_fields).unwrap();
+        assert!(matches!(
+            UnboundProposalV0::decode(&encoded, &set, &unbound_parameters),
+            Err(ConsensusWireError::Malformed(
+                "consensus parameters differ from validator-set context"
+            ))
+        ));
         assert!(UnboundProposalV0::decode(
             &{
                 let mut corrupt = encoded;
