@@ -201,6 +201,19 @@ downstream gate inherits completion from an incomplete predecessor.
   activation capability. No concrete Comet reader/finality verifier is wired
   yet, so the machine truth `source_export_and_finality_verifier` remains
   `false`.
+- Only a `VerifiedCometStateExportV1` can construct the new inert
+  `PocoTargetProjectionV1` statement. It rebinds the source export commitment
+  and mapping profile to a fresh target chain/genesis, target manifest digest
+  (whose preimage must include target validator/protocol coordinates), and a
+  claimed native `StateRoot`; the legacy AppHash is absent from this
+  target type and an explicit guard rejects byte-for-byte AppHash reuse. The
+  bounded exact decoder requires the verified source token. Its
+  `PocoTargetProjectionVerifierV1` manifest/recompute interface passes target
+  identity and mapping context, but deliberately withholds the claimed root
+  from the recomputation callback; only a successful independent replay
+  returns an inert `VerifiedPocoTargetProjectionV1` token. No target replay,
+  genesis/QC conversion, or activation is wired, so
+  `target_projection_root_recomputed` remains `false`.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root

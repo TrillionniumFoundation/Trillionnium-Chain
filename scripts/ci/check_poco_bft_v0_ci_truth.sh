@@ -710,7 +710,7 @@ require_literal "$NODE_RECOVERY_TESTS" \
 require_literal "$NODE_CARGO" 'recovery-process-test-support = ['
 require_literal "$NODE_CARGO" 'fixture-raw-key = ["dep:ed25519-dalek"]'
 require_literal "$NODE_CARGO" '  "fixture-raw-key",'
-require_literal "$NODE_CARGO" '  "dep:fs2",'
+require_literal "$NODE_CARGO" 'fs2 = "0.4"'
 require_literal "$NODE_CARGO" 'fixture_raw_key_feature_only = true'
 require_literal "$NODE_CARGO" 'production_raw_key_dependency = false'
 reject_literal "$NODE_CARGO" '  "recovery-test-support",'
@@ -985,7 +985,7 @@ done
 # The fail-closed node scaffold must compile and lint wherever its source can
 # trigger this workflow, while remaining explicitly incomplete and outside the
 # uploaded library archive.
-require_literal "$NODE_CARGO" 'node-event-wal = ["dep:libc", "dep:fs2"]'
+require_literal "$NODE_CARGO" 'node-event-wal = ["dep:libc"]'
 for node_event_wal_test in \
   intent_reopen_and_exact_commit_replay \
   driver_order_keeps_intent_when_commit_readback_is_uncertain \

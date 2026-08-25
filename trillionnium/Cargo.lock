@@ -1824,14 +1824,17 @@ dependencies = [
 name = "trnm-poco-node"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "borsh",
  "ed25519-dalek",
  "fs2",
+ "hex",
  "libc",
  "rusqlite",
  "serde_json",
  "sha2",
  "tempfile",
+ "trnm-application-tx-builder-v0",
  "trnm-consensus-core",
  "trnm-consensus-crypto",
  "trnm-consensus-external-watermark",

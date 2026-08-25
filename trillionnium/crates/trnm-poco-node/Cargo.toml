@@ -14,7 +14,11 @@ node-event-wal = ["dep:libc"]
 # Candidate-only node-owned transaction admission WAL.  This feature composes
 # the durable nonce boundary but does not activate CheckTx, execution, or
 # broadcast in the default node.
-tx-admission-wal = ["dep:libc", "dep:trnm-mempool"]
+tx-admission-wal = [
+  "dep:libc",
+  "dep:trnm-mempool",
+  "dep:trnm-application-tx-builder-v0",
+]
 # Raw consensus signing keys are available only to explicitly named fixture and
 # process-test builds.  The default node/library build has no direct
 # `ed25519-dalek` dependency edge and therefore cannot load or expose a
@@ -241,6 +245,7 @@ trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-saf
 trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules", optional = true }
 trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-signer-journal" }
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+trnm-application-tx-builder-v0 = { version = "0.1.0", path = "../trnm-application-tx-builder-v0", optional = true }
 trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer", optional = true }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types", optional = true }
 trnm-mempool = { version = "0.1.0", path = "../trnm-mempool", optional = true }
@@ -261,7 +266,9 @@ trnm-poco-verify-challenge-v1 = { version = "0.1.0", path = "../trnm-poco-verify
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol", optional = true }
 
 [dev-dependencies]
+anyhow = "1"
 ed25519-dalek = "2"
+hex = "0.4"
 serde_json = "1"
 tempfile = "3"
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark" }

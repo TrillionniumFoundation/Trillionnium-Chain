@@ -40,10 +40,13 @@ use std::{
 use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
+use trnm_application_tx_builder_v0::{BuiltCanonicalTxAdmissionViewV0, BuiltCanonicalTxV0};
+use trnm_consensus_types::{BlockId, Height, StateRoot};
 use trnm_mempool::{
     AdmissionReject, IngressClass, PendingNonceAdmission, PendingNonceAuthority,
-    PendingNonceReservation, SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView,
-    TypedAdmissionGate, TypedAdmitOutcome, DEFAULT_MAX_ADMISSION_BODY_BYTES,
+    PendingNonceReservation, PendingNonceReservationState, SignedAdmissionHooks,
+    SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate, TypedAdmitOutcome,
+    DEFAULT_MAX_ADMISSION_BODY_BYTES,
 };
 
 /// This is a runnable composition seam only.  It does not imply a node
@@ -57,8 +60,20 @@ pub const TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_CHECKTX_V0: bool = false;
+/// The candidate owner now exposes a real, signature-checked CheckTx seam.
+/// This is deliberately distinct from the production activation flag above:
+/// it still requires an explicit node owner, durable WAL, and later execution
+/// readback before it can be considered a production contract.
+#[allow(dead_code)]
+pub const TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_SIGNING_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_BROADCAST_V0: bool = false;
+/// A typed application/finality readback boundary exists behind the candidate
+/// feature. It is not wired into CheckTx, broadcast, or production startup.
+#[allow(dead_code)]
+pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_V0: bool = true;
+#[allow(dead_code)]
+pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
 
 const SCHEMA_VERSION_V0: i64 = 1;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
@@ -69,6 +84,7 @@ const STATE_RESERVED_V0: i64 = 0;
 const STATE_HANDED_OFF_V0: i64 = 1;
 const STATE_COMMITTED_V0: i64 = 2;
 const STATE_RELEASED_V0: i64 = 3;
+const COMMIT_RECEIPT_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-commit-receipt.v0";
 
 type RawAdmissionRowV0 = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, i64);
 
@@ -89,6 +105,9 @@ pub enum TxAdmissionWalErrorV0 {
     Replay,
     ReservationConflict,
     AmbiguousHandoff,
+    CommitReceiptMismatch,
+    CommitReceiptConflict,
+    CommitReadbackUnavailable,
 }
 
 impl fmt::Display for TxAdmissionWalErrorV0 {
@@ -108,6 +127,11 @@ impl fmt::Display for TxAdmissionWalErrorV0 {
             Self::ReservationConflict => "transaction admission reservation state conflict",
             Self::AmbiguousHandoff => {
                 "transaction admission WAL has an unresolved handed-off reservation"
+            }
+            Self::CommitReceiptMismatch => "transaction commit receipt does not match admission",
+            Self::CommitReceiptConflict => "transaction commit receipt conflicts with durable row",
+            Self::CommitReadbackUnavailable => {
+                "transaction commit requires an authenticated application/finality readback"
             }
         })
     }
@@ -197,6 +221,180 @@ impl AdmissionRecordV0 {
             max_gas: limits.max_gas,
             max_bytes: limits.max_bytes,
         })
+    }
+}
+
+/// Candidate-only application/finality evidence for one admitted transaction.
+/// The distinct consensus types prevent a legacy Comet AppHash or an
+/// untyped height from being silently used as native commit evidence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct NativeCommitReceiptEvidenceV0 {
+    tx_digest: [u8; 32],
+    block_id: BlockId,
+    block_height: Height,
+    state_root: StateRoot,
+    receipt_digest: [u8; 32],
+    finality_proof_digest: [u8; 32],
+}
+
+impl NativeCommitReceiptEvidenceV0 {
+    /// Construct an unverified candidate statement. It becomes usable for a
+    /// durable commit only after [`Self::verify_with`] returns the private
+    /// type-state token.
+    pub fn new(
+        tx_digest: [u8; 32],
+        block_id: BlockId,
+        block_height: Height,
+        state_root: StateRoot,
+        receipt_digest: [u8; 32],
+        finality_proof_digest: [u8; 32],
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
+        if tx_digest == [0; 32]
+            || block_id.is_zero()
+            || block_height.get() == 0
+            || state_root.is_zero()
+            || receipt_digest == [0; 32]
+            || finality_proof_digest == [0; 32]
+        {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+        Ok(Self {
+            tx_digest,
+            block_id,
+            block_height,
+            state_root,
+            receipt_digest,
+            finality_proof_digest,
+        })
+    }
+
+    pub const fn tx_digest(&self) -> [u8; 32] {
+        self.tx_digest
+    }
+
+    pub const fn block_id(&self) -> BlockId {
+        self.block_id
+    }
+
+    pub const fn block_height(&self) -> Height {
+        self.block_height
+    }
+
+    pub const fn state_root(&self) -> StateRoot {
+        self.state_root
+    }
+
+    pub const fn receipt_digest(&self) -> [u8; 32] {
+        self.receipt_digest
+    }
+
+    pub const fn finality_proof_digest(&self) -> [u8; 32] {
+        self.finality_proof_digest
+    }
+
+    fn canonical_commitment(&self) -> [u8; 32] {
+        let mut hasher = Sha256::new();
+        hasher.update(COMMIT_RECEIPT_DOMAIN_V0);
+        hasher.update(self.tx_digest);
+        hasher.update(self.block_id.as_bytes());
+        hasher.update(self.block_height.get().to_be_bytes());
+        hasher.update(self.state_root.as_bytes());
+        hasher.update(self.receipt_digest);
+        hasher.update(self.finality_proof_digest);
+        hasher.finalize().into()
+    }
+
+    /// Authenticate the statement against the exact admitted metadata and an
+    /// importer/application-owned verifier. There is intentionally no default
+    /// verifier: shape-valid bytes alone never authorize a durable commit.
+    pub fn verify_with<V: NativeCommitReceiptVerifierV0>(
+        &self,
+        metadata: &SignedEnvelopeMetadata,
+        verifier: &V,
+    ) -> Result<VerifiedNativeCommitReceiptV0, TxAdmissionWalErrorV0> {
+        if self.tx_digest != metadata.digest().as_bytes() {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+        }
+        verifier.verify_application_and_finality_v0(metadata, self)?;
+        Ok(VerifiedNativeCommitReceiptV0 {
+            evidence: *self,
+            commitment: self.canonical_commitment(),
+        })
+    }
+}
+
+/// Explicit verifier boundary for the application store and native PoCO
+/// finality proof. A production implementation must read back the exact
+/// transaction/result from durable application state and independently verify
+/// the finalized block/QC before returning `Ok(())`.
+pub trait NativeCommitReceiptVerifierV0 {
+    fn verify_application_and_finality_v0(
+        &self,
+        metadata: &SignedEnvelopeMetadata,
+        evidence: &NativeCommitReceiptEvidenceV0,
+    ) -> Result<(), TxAdmissionWalErrorV0>;
+}
+
+/// Type-state token returned only after the explicit verifier succeeds. The
+/// token is still candidate-only: it does not activate a node or provide a
+/// network/broadcast capability.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct VerifiedNativeCommitReceiptV0 {
+    evidence: NativeCommitReceiptEvidenceV0,
+    commitment: [u8; 32],
+}
+
+impl VerifiedNativeCommitReceiptV0 {
+    pub const fn evidence(&self) -> &NativeCommitReceiptEvidenceV0 {
+        &self.evidence
+    }
+
+    pub const fn commitment(&self) -> [u8; 32] {
+        self.commitment
+    }
+}
+
+/// Strict CheckTx hooks for the canonical builder carrier.
+///
+/// The builder has already produced byte-stable inner/outer envelopes, but a
+/// node must still authenticate the exact envelope at ingress time.  Keeping
+/// this check in the node owner closes the common gap where a caller validates
+/// a builder result once and later admits a different time/chain context.  No
+/// private key crosses this hook: `validate_at_strict` verifies the Ed25519
+/// signature carried by the envelope.
+#[derive(Debug, Clone)]
+struct CanonicalCheckTxHooksV0 {
+    chain_id: String,
+    now_unix_ms: u64,
+}
+
+impl<'a> SignedAdmissionHooks<BuiltCanonicalTxAdmissionViewV0<'a>> for CanonicalCheckTxHooksV0 {
+    fn verify_signature(
+        &mut self,
+        envelope: &BuiltCanonicalTxAdmissionViewV0<'a>,
+        metadata: &SignedEnvelopeMetadata,
+    ) -> Result<(), AdmissionReject> {
+        let transaction = envelope.transaction();
+        transaction
+            .envelope()
+            .validate_at_strict(&self.chain_id, self.now_unix_ms)
+            .map_err(|_| AdmissionReject::SignatureRejected)?;
+        if transaction.protocol_tx_hash_v1() != metadata.digest().as_bytes()
+            || transaction.exact_inner_bytes() != metadata.body()
+        {
+            return Err(AdmissionReject::SignatureRejected);
+        }
+        Ok(())
+    }
+
+    fn recheck(&mut self, metadata: &SignedEnvelopeMetadata) -> Result<(), AdmissionReject> {
+        if metadata.nonce() == 0
+            || metadata.fee_limit() == 0
+            || metadata.resource_limits().max_gas == 0
+        {
+            return Err(AdmissionReject::RecheckFailed);
+        }
+        Ok(())
     }
 }
 
@@ -446,6 +644,29 @@ fn row_matches_v0(row: AdmissionRecordV0, expected: AdmissionRecordV0) -> bool {
     row == expected
 }
 
+fn read_receipt_commitment_v0(
+    connection: &Connection,
+    namespace: [u8; 32],
+    signer: [u8; 32],
+    nonce: u64,
+) -> Result<Option<[u8; 32]>, TxAdmissionWalErrorV0> {
+    let nonce_blob = to_blob_u64(nonce);
+    let raw: Option<Vec<u8>> = connection
+        .query_row(
+            "SELECT commitment FROM tx_commit_receipt_v0
+             WHERE namespace = ?1 AND signer = ?2 AND nonce = ?3",
+            params![
+                namespace.as_slice(),
+                signer.as_slice(),
+                nonce_blob.as_slice()
+            ],
+            |row| row.get(0),
+        )
+        .optional()
+        .map_err(sqlite_error)?;
+    raw.map_or(Ok(None), |value| decode_fixed::<32>(value).map(Some))
+}
+
 /// A node-owned SQLite pending-nonce authority.
 ///
 /// The authority is intentionally not `Clone` and its lock is held for its
@@ -540,9 +761,53 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             .admit_signed_with_pending_nonce(envelope, class, hooks, &mut self.authority)
     }
 
+    /// Run the concrete candidate CheckTx path for one builder-produced
+    /// canonical transaction.
+    ///
+    /// The operation authenticates the exact signed outer envelope against the
+    /// supplied chain/time context, re-checks the builder's inner bytes and
+    /// protocol hash, and only then reserves `(canonical signer, nonce)` in the
+    /// durable WAL.  It therefore closes the builder -> signature-check ->
+    /// pending-nonce boundary without pretending to execute or broadcast the
+    /// transaction.  `TX_ADMISSION_BOUNDARY_CHECKTX_V0` remains false because
+    /// this is still an explicitly feature-gated candidate owner.
+    pub fn check_tx_candidate(
+        &mut self,
+        transaction: &BuiltCanonicalTxV0,
+        signer_id: trnm_mempool::CanonicalSignerId,
+        class: IngressClass,
+        chain_id: &str,
+        now_unix_ms: u64,
+    ) -> TypedAdmitOutcome {
+        let view = transaction.admission_view_v0(signer_id);
+        let mut hooks = CanonicalCheckTxHooksV0 {
+            chain_id: chain_id.to_owned(),
+            now_unix_ms,
+        };
+        self.admit_signed_candidate(&view, class, &mut hooks)
+    }
+
     /// Return the next item with its node-owned handoff/commit/release token.
     pub fn pop_ready_with_lifecycle(&mut self) -> Option<PendingNonceAdmission> {
         self.gate.pop_ready_with_lifecycle()
+    }
+
+    /// Commit a handed-off candidate only after an application/finality
+    /// verifier has produced the private receipt token. The durable receipt
+    /// write and WAL state transition are one SQLite transaction; resolving
+    /// the erased in-memory token afterwards is a separate fail-closed step.
+    pub fn commit_candidate_with_receipt(
+        &mut self,
+        admission: &mut PendingNonceAdmission,
+        receipt: &VerifiedNativeCommitReceiptV0,
+    ) -> Result<(), AdmissionReject> {
+        if admission.reservation_state()? != PendingNonceReservationState::HandedOff {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
+        self.authority
+            .commit_handed_off_with_receipt(admission.metadata(), receipt)
+            .map_err(map_reject_v0)?;
+        admission.commit()
     }
 
     pub fn queued_counts(&self) -> (usize, usize, usize) {
@@ -612,6 +877,20 @@ impl SqlitePendingNonceAuthorityV0 {
                      state INTEGER NOT NULL CHECK(state IN (0, 1, 2, 3)),
                      PRIMARY KEY(namespace, signer, nonce),
                      UNIQUE(namespace, digest)
+                 );
+                 CREATE TABLE IF NOT EXISTS tx_commit_receipt_v0 (
+                     namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+                     signer BLOB NOT NULL CHECK(length(signer) = 32),
+                     nonce BLOB NOT NULL CHECK(length(nonce) = 8),
+                     tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
+                     block_id BLOB NOT NULL CHECK(length(block_id) = 32),
+                     block_height BLOB NOT NULL CHECK(length(block_height) = 8),
+                     state_root BLOB NOT NULL CHECK(length(state_root) = 32),
+                     receipt_digest BLOB NOT NULL CHECK(length(receipt_digest) = 32),
+                     finality_proof_digest BLOB NOT NULL CHECK(length(finality_proof_digest) = 32),
+                     commitment BLOB NOT NULL CHECK(length(commitment) = 32),
+                     PRIMARY KEY(namespace, signer, nonce),
+                     UNIQUE(namespace, tx_digest)
                  );
                  PRAGMA user_version = 1;",
             )
@@ -814,6 +1093,119 @@ impl SqlitePendingNonceAuthorityV0 {
             state: STATE_RESERVED_V0,
         })
     }
+
+    /// Persist an authenticated application/finality readback and advance the
+    /// exact handed-off row in one SQLite transaction. This method is a
+    /// candidate boundary; it does not invoke execution, networking, signing,
+    /// or broadcast. A caller must still resolve the in-memory admission token
+    /// after this durable operation returns.
+    pub fn commit_handed_off_with_receipt(
+        &mut self,
+        metadata: &SignedEnvelopeMetadata,
+        receipt: &VerifiedNativeCommitReceiptV0,
+    ) -> Result<(), TxAdmissionWalErrorV0> {
+        self.ensure_identity()?;
+        let expected = AdmissionRecordV0::from_metadata(metadata)?;
+        if receipt.evidence.tx_digest != expected.digest {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+        }
+        let mut connection = self
+            .connection
+            .try_borrow_mut()
+            .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        let transaction = connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)
+            .map_err(sqlite_error)?;
+        let Some((existing, state)) = read_row_v0(
+            &transaction,
+            self.namespace,
+            expected.signer,
+            expected.nonce,
+        )?
+        else {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+        };
+        if !row_matches_v0(existing, expected) {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+        }
+        if state == STATE_COMMITTED_V0 {
+            let Some(commitment) = read_receipt_commitment_v0(
+                &transaction,
+                self.namespace,
+                expected.signer,
+                expected.nonce,
+            )?
+            else {
+                return Err(TxAdmissionWalErrorV0::CommitReceiptConflict);
+            };
+            if commitment != receipt.commitment {
+                return Err(TxAdmissionWalErrorV0::CommitReceiptConflict);
+            }
+            transaction.commit().map_err(sqlite_error)?;
+            self.ensure_identity()?;
+            return Ok(());
+        }
+        if state != STATE_HANDED_OFF_V0 {
+            return Err(TxAdmissionWalErrorV0::ReservationConflict);
+        }
+        if read_receipt_commitment_v0(
+            &transaction,
+            self.namespace,
+            expected.signer,
+            expected.nonce,
+        )?
+        .is_some()
+        {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptConflict);
+        }
+        let evidence = receipt.evidence;
+        let nonce_blob = to_blob_u64(expected.nonce);
+        let height_blob = to_blob_u64(evidence.block_height.get());
+        transaction
+            .execute(
+                "INSERT INTO tx_commit_receipt_v0
+                 (namespace, signer, nonce, tx_digest, block_id, block_height,
+                  state_root, receipt_digest, finality_proof_digest, commitment)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+                params![
+                    self.namespace.as_slice(),
+                    expected.signer.as_slice(),
+                    nonce_blob.as_slice(),
+                    evidence.tx_digest.as_slice(),
+                    evidence.block_id.as_bytes(),
+                    height_blob.as_slice(),
+                    evidence.state_root.as_bytes(),
+                    evidence.receipt_digest.as_slice(),
+                    evidence.finality_proof_digest.as_slice(),
+                    receipt.commitment.as_slice(),
+                ],
+            )
+            .map_err(|error| match error.sqlite_error_code() {
+                Some(rusqlite::ffi::ErrorCode::ConstraintViolation) => {
+                    TxAdmissionWalErrorV0::CommitReceiptConflict
+                }
+                _ => sqlite_error(error),
+            })?;
+        let changed = transaction
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4 AND state = ?5",
+                params![
+                    STATE_COMMITTED_V0,
+                    self.namespace.as_slice(),
+                    expected.signer.as_slice(),
+                    nonce_blob.as_slice(),
+                    STATE_HANDED_OFF_V0,
+                ],
+            )
+            .map_err(sqlite_error)?;
+        if changed != 1 {
+            return Err(TxAdmissionWalErrorV0::ReservationConflict);
+        }
+        transaction.commit().map_err(sqlite_error)?;
+        self.ensure_identity()?;
+        Ok(())
+    }
 }
 
 impl<E: ?Sized> PendingNonceAuthority<E> for SqlitePendingNonceAuthorityV0 {
@@ -949,6 +1341,9 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
         TxAdmissionWalErrorV0::Replay => AdmissionReject::Replay,
         TxAdmissionWalErrorV0::ReservationConflict => AdmissionReject::ReservationStateConflict,
         TxAdmissionWalErrorV0::AmbiguousHandoff => AdmissionReject::InconsistentState,
+        TxAdmissionWalErrorV0::CommitReceiptMismatch
+        | TxAdmissionWalErrorV0::CommitReceiptConflict
+        | TxAdmissionWalErrorV0::CommitReadbackUnavailable => AdmissionReject::InconsistentState,
         TxAdmissionWalErrorV0::InvalidPath
         | TxAdmissionWalErrorV0::InvalidNamespace
         | TxAdmissionWalErrorV0::LockUnavailable
@@ -965,15 +1360,21 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use ed25519_dalek::{Signer, SigningKey};
     use std::{
         sync::atomic::{AtomicU64, Ordering},
         time::{SystemTime, UNIX_EPOCH},
+    };
+    use trnm_application_tx_builder_v0::{
+        build_signed_canonical_tx_v0, ApplicationSignerV0, CanonicalTxBuildContextV0,
+        TxBuilderLimitsV0,
     };
     use trnm_mempool::{
         CanonicalSignerId, CanonicalTxDigest, IngressClass, PendingNonceReservationState,
         ResourceLimits, SignedAdmissionHooks, SignedEnvelopeView, TypedAdmissionGate,
         TypedAdmitOutcome,
     };
+    use trnm_protocol::CanonicalCommandV1;
 
     static NEXT_PATH_V0: AtomicU64 = AtomicU64::new(0);
 
@@ -1034,6 +1435,57 @@ mod tests {
         }
     }
 
+    struct BuilderFixtureSigner {
+        key: SigningKey,
+        id: String,
+        public_key: String,
+    }
+
+    impl ApplicationSignerV0 for BuilderFixtureSigner {
+        fn signer_id(&self) -> &str {
+            &self.id
+        }
+
+        fn signer_role(&self) -> &str {
+            "account"
+        }
+
+        fn public_key_hex(&self) -> &str {
+            &self.public_key
+        }
+
+        fn sign(&self, preimage: &[u8]) -> anyhow::Result<[u8; 64]> {
+            Ok(self.key.sign(preimage).to_bytes())
+        }
+    }
+
+    struct AcceptingCommitVerifier;
+
+    impl NativeCommitReceiptVerifierV0 for AcceptingCommitVerifier {
+        fn verify_application_and_finality_v0(
+            &self,
+            _metadata: &SignedEnvelopeMetadata,
+            evidence: &NativeCommitReceiptEvidenceV0,
+        ) -> Result<(), TxAdmissionWalErrorV0> {
+            if evidence.block_height.get() == 0 {
+                return Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable);
+            }
+            Ok(())
+        }
+    }
+
+    struct RejectingCommitVerifier;
+
+    impl NativeCommitReceiptVerifierV0 for RejectingCommitVerifier {
+        fn verify_application_and_finality_v0(
+            &self,
+            _metadata: &SignedEnvelopeMetadata,
+            _evidence: &NativeCommitReceiptEvidenceV0,
+        ) -> Result<(), TxAdmissionWalErrorV0> {
+            Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable)
+        }
+    }
+
     fn fixture() -> FixtureEnvelope {
         FixtureEnvelope {
             digest: CanonicalTxDigest::from_bytes([0x11; 32]).unwrap(),
@@ -1041,6 +1493,46 @@ mod tests {
             body: b"canonical-body".to_vec(),
             nonce: 7,
         }
+    }
+
+    fn builder_fixture_transaction() -> BuiltCanonicalTxV0 {
+        let key = SigningKey::from_bytes(&[0x47; 32]);
+        let signer = BuilderFixtureSigner {
+            public_key: hex::encode(key.verifying_key().to_bytes()),
+            key,
+            id: "did:trnm:alice".to_owned(),
+        };
+        build_signed_canonical_tx_v0(
+            CanonicalTxBuildContextV0 {
+                chain_id: "trnm-devnet".to_owned(),
+                sender: signer.id.clone(),
+                command_id: None,
+                nonce: 7,
+                issued_at_unix_ms: 1_000,
+                expires_at_unix_ms: 2_000,
+                max_gas: 10_000,
+                fee_limit: 17,
+                limits: TxBuilderLimitsV0::candidate_v0(),
+            },
+            CanonicalCommandV1::CreditAccount {
+                account: signer.id.clone(),
+                amount: 1,
+            },
+            &signer,
+        )
+        .unwrap()
+    }
+
+    fn commit_evidence_for(envelope: &FixtureEnvelope) -> NativeCommitReceiptEvidenceV0 {
+        NativeCommitReceiptEvidenceV0::new(
+            envelope.digest.as_bytes(),
+            BlockId::new([0x31; 32]),
+            Height::new(12),
+            StateRoot::new([0x32; 32]),
+            [0x33; 32],
+            [0x34; 32],
+        )
+        .unwrap()
     }
 
     fn temp_path() -> PathBuf {
@@ -1316,6 +1808,8 @@ mod tests {
             assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
             assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
             assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
+            assert!(TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0);
         }
         assert_eq!(boundary.namespace(), [0x88; 32]);
         assert_eq!(
@@ -1353,6 +1847,152 @@ mod tests {
         assert_eq!(
             boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
             TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        drop(ready);
+        drop(boundary);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn builder_check_tx_authenticates_before_wal_and_commit_receipt() {
+        let path = temp_path();
+        let transaction = builder_fixture_transaction();
+        let signer_id = CanonicalSignerId::from_bytes([0xA5; 32]).unwrap();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x8C; 32], 2, 0)
+                .unwrap();
+
+        const {
+            assert!(TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
+        }
+        assert_eq!(
+            boundary.check_tx_candidate(
+                &transaction,
+                signer_id,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        assert_eq!(ready.metadata().nonce(), 7);
+        ready.handoff().unwrap();
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            transaction.protocol_tx_hash_v1(),
+            BlockId::new([0x51; 32]),
+            Height::new(1),
+            StateRoot::new([0x52; 32]),
+            [0x53; 32],
+            [0x54; 32],
+        )
+        .unwrap();
+        let verified = evidence
+            .verify_with(ready.metadata(), &AcceptingCommitVerifier)
+            .unwrap();
+        boundary
+            .commit_candidate_with_receipt(&mut ready, &verified)
+            .unwrap();
+        assert_eq!(boundary.retained_rows().unwrap(), 1);
+        drop(ready);
+        drop(boundary);
+
+        // A wrong chain context fails before the nonce authority is touched.
+        let bad_path = temp_path();
+        let mut bad_boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&bad_path, [0x8D; 32], 2, 0)
+                .unwrap();
+        assert_eq!(
+            bad_boundary.check_tx_candidate(
+                &transaction,
+                signer_id,
+                IngressClass::Normal,
+                "trnm-wrong-chain",
+                1_000,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::SignatureRejected)
+        );
+        assert_eq!(bad_boundary.retained_rows().unwrap(), 0);
+        drop(bad_boundary);
+        cleanup(&bad_path);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn verified_commit_receipt_binds_and_persists_before_token_resolution() {
+        let path = temp_path();
+        let envelope = fixture();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x8A; 32], 2, 0)
+                .unwrap();
+        let mut hooks = Hooks;
+        assert_eq!(
+            boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        let evidence = commit_evidence_for(&envelope);
+        let verified = evidence
+            .verify_with(ready.metadata(), &AcceptingCommitVerifier)
+            .unwrap();
+        assert_ne!(verified.commitment(), [0; 32]);
+        boundary
+            .commit_candidate_with_receipt(&mut ready, &verified)
+            .unwrap();
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::Committed)
+        );
+        assert_eq!(boundary.retained_rows().unwrap(), 1);
+        drop(ready);
+        drop(boundary);
+        assert!(SqlitePendingNonceAuthorityV0::open(&path, [0x8A; 32]).is_ok());
+        cleanup(&path);
+    }
+
+    #[test]
+    fn unverified_or_foreign_receipt_never_advances_handoff() {
+        let path = temp_path();
+        let envelope = fixture();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x8B; 32], 2, 0)
+                .unwrap();
+        let mut hooks = Hooks;
+        assert_eq!(
+            boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        let mut foreign = commit_evidence_for(&envelope);
+        foreign.tx_digest = [0xFE; 32];
+        assert_eq!(
+            foreign.verify_with(ready.metadata(), &AcceptingCommitVerifier),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
+        let rejected = NativeCommitReceiptEvidenceV0::new(
+            envelope.digest.as_bytes(),
+            BlockId::new([0x41; 32]),
+            Height::new(13),
+            StateRoot::new([0x42; 32]),
+            [0x43; 32],
+            [0x44; 32],
+        )
+        .unwrap()
+        .verify_with(ready.metadata(), &RejectingCommitVerifier);
+        assert_eq!(
+            rejected,
+            Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable)
+        );
+        // The verifier rejection path above cannot produce a token; the
+        // handed-off row remains unresolved and therefore blocks restart.
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::HandedOff)
         );
         drop(ready);
         drop(boundary);

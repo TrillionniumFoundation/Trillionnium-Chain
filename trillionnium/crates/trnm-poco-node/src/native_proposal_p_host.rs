@@ -520,6 +520,16 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
             .map_err(|error| PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string()))
     }
 
+    fn acquire_cross_store_shared_lock_v0(
+        &self,
+    ) -> Result<Option<CrossStoreLockGuardV0>, PocoNodeNativeProposalPHostErrorV0<A::Error>> {
+        self.cross_store_root
+            .as_deref()
+            .map(CrossStoreLockGuardV0::acquire_shared_for_root_v0)
+            .transpose()
+            .map_err(|error| PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string()))
+    }
+
     /// Executes and durably stores exactly one ordinary non-empty Proposal.
     ///
     /// Success stops at `P`. The returned carrier cannot be converted into a
@@ -863,6 +873,13 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::IncompleteParentAuthority);
         }
 
+        // Core's seal is followed immediately by the durable K delivery.  A
+        // P-only rewrite cannot interleave between those two operations, or a
+        // paired recovery reader could observe a Core-D carrier that does not
+        // describe the same K row.  Hold the authority fence across the whole
+        // P -> seal -> D window.
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+
         let confirmed_p = self
             .application
             .confirm_durable_p_v0(&persisted.executed)
@@ -927,6 +944,10 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::IncompleteParentAuthority);
         }
+        // Same atomic P -> Core-D window as the ordinary proposal path.  The
+        // replay owner is still a K writer and must cooperate with paired
+        // recovery readers.
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let confirmed_p = self
             .application
             .confirm_durable_p_v0(&persisted.executed)
@@ -1029,6 +1050,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         if self.status != PocoNodeNativeProposalPHostStatusV0::CoreAcceptedDeliveryPending {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
+        // Retry is itself a K mutation.  It must not bypass the same
+        // authority-root fence used by the first delivery attempt.
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         match self.store.deliver_core_accepted_v0(
             pending.reserved,
             &pending.binding,
@@ -1367,6 +1391,10 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
+        // Checkpoint facts join the K row to the application P history.  Keep
+        // the read self-consistent with any cooperating writer while the
+        // caller retains the resulting checkpoint input.
+        let _cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
         self.store
             .confirm_proposal_validation_checkpoint_facts_exact_v0(&acked.binding)
             .map_err(PocoNodeNativeProposalPHostErrorV0::Store)
@@ -1386,6 +1414,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
+        let _cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
         self.store
             .confirm_proposal_validation_checkpoint_facts_exact_v0(binding)
             .map_err(PocoNodeNativeProposalPHostErrorV0::Store)
@@ -1520,6 +1549,10 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
+        // The checkpoint CAS consumes a K row and fresh-confirms P, Safety,
+        // and signer heads.  Keep the complete join/CAS under the same
+        // exclusive authority fence as proposal delivery and finalization.
+        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let application_path = self.store.path().to_path_buf();
         match advance_native_k_whole_node_checkpoint_v0(
             checkpoint_store,

@@ -108,6 +108,23 @@ impl CrossStoreLockGuardV0 {
         Self::acquire_shared_for_root_v0(&root)
     }
 
+    /// Acquire an exclusive lock after resolving the common authority root of
+    /// the application and validation namespaces.
+    ///
+    /// Recovery/replay callers generally have the two canonical store paths,
+    /// rather than a separately carried root capability.  Keeping root
+    /// resolution in this module makes those callers use exactly the same
+    /// canonical-path, namespace-separation and descriptor identity fence as
+    /// the paired reader.
+    #[allow(dead_code)] // used by the feature-gated process-2 replay owner
+    pub(crate) fn acquire_exclusive_for_paths_v0(
+        application_path: &Path,
+        validation_path: &Path,
+    ) -> Result<Self, CrossStoreLockErrorV0> {
+        let root = common_authority_root_v0(application_path, validation_path)?;
+        Self::acquire_exclusive_for_root_v0(&root)
+    }
+
     /// Acquire an exclusive lock for a writer whose caller already owns the
     /// canonical authority-root path.
     pub(crate) fn acquire_exclusive_for_root_v0(

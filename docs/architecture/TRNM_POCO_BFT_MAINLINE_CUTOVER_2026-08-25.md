@@ -108,6 +108,18 @@ native migration contract is implemented:
    identity, source finality, and mapping checks must each be supplied by an
    importer-owned implementation before a verified-export token exists. This
    is an interface/type-state gate only; no concrete Comet reader is enabled.
+   Only that verified source token can construct the inert
+   `PocoTargetProjectionV1` statement. It rebinds the exact source-export
+   commitment and mapping profile to a fresh target chain/genesis and target
+   manifest digest (whose preimage must include target validator/protocol
+   coordinates) plus a **claimed** native `StateRoot`; it contains no
+   legacy AppHash field. Its exact decoder requires the verified source token,
+   and `PocoTargetProjectionVerifierV1` has separate target-manifest and root
+   replay callbacks. The root callback is not given the claimed root, so an
+   implementation must independently recompute it before a
+   `VerifiedPocoTargetProjectionV1` token can exist. That token remains inert:
+   it cannot create a genesis/QC or activate the chain, and the concrete
+   target-manifest/JMT replay is still disabled.
 6. Generate fresh PoCO SafetyState, signer journal, external watermark, node
    WAL, chain ID, network magic, and validator key IDs. Old validator signing
    state is not trusted or imported.

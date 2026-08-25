@@ -53,6 +53,7 @@ use trnm_native_execution_v0::{
 };
 
 use crate::{
+    cross_store_lock::CrossStoreLockGuardV0,
     deployed_lab_recovery::{
         existing_paths_v0, hash_v0, reconstruct_empty_anchor_successor_v0,
         reconstruct_high_qc_path_v0, validate_binding_context_v0, validate_checkpoint_join_v0,
@@ -1144,6 +1145,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
                 nonzero_v0(selected_replay_digest)?,
             )
         );
+        let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+        .map_err(|error| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "activation.cross_store_lock",
+                error.to_string(),
+            )
+        })?;
         #[cfg(feature = "lab-validator-runtime-test-support")]
         if crash_hook == Some(Process2CrashHookV0::ActivationReadyCommitted) {
             validation_store.inject_replay_activation_applied_ack_loss_for_test_v0();
@@ -3132,6 +3143,7 @@ where
 
     let (mut frontier, already_checkpointed) = open_or_resume_session_v0(
         &mut validation_store,
+        &paths.application,
         &paths.validation,
         replay_plan,
         existing_inventory.as_ref(),
@@ -4330,10 +4342,22 @@ fn nonzero_v0(
 
 fn open_or_resume_session_v0(
     store: &mut SqliteProposalValidationStoreV0,
+    application_path: &Path,
     validation_path: &Path,
     plan: ReplaySessionPlanV0,
     inventory: Option<&ConfirmedReplayInventoryV0>,
 ) -> Result<(Process2FrontierV0, u64), PocoNodeDeployedLabProcess2RecoveryErrorV0> {
+    // Session O/resume is a K-side mutation even before the first replay
+    // cursor.  Resolve and lock the common root from both canonical paths so
+    // this opening CAS cannot race a native P writer.
+    let _cross_store_lock =
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(application_path, validation_path)
+            .map_err(|error| {
+                PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                    "validation.session_cross_store_lock",
+                    error.to_string(),
+                )
+            })?;
     let already_checkpointed = inventory
         .map(|value| value.session_v0().next_cursor_v0())
         .unwrap_or(0);
@@ -4903,6 +4927,23 @@ fn drive_live_cursor_v0<W: ExternalMonotonicWatermarkV0>(
     application_history_digest: [u8; 32],
     crash_hook: Option<Process2CrashHookV0>,
 ) -> Result<Process2FrontierV0, PocoNodeDeployedLabProcess2RecoveryErrorV0> {
+    // Process-2 replay mutates the validation K sidecar through several
+    // monotonic stages (reserve -> deliver -> safety-close -> alias-close ->
+    // checkpoint).  Keep the entire cursor transaction under one authority
+    // root lock so no P-only rewrite can interleave between those stages or
+    // between the final K/checkpoint readbacks.  This is deliberately a
+    // cooperating-owner fence; it does not claim a distributed lock or turn
+    // the laboratory replay into a production activation path.
+    let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+        &paths.application,
+        &paths.validation,
+    )
+    .map_err(|error| {
+        PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+            "replay.cross_store_lock",
+            error.to_string(),
+        )
+    })?;
     let source_k = process2_try!(
         "replay.live_source_k",
         validation_store.confirm_proposal_validation_checkpoint_facts_exact_v0(&source.binding)

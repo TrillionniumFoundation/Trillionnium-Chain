@@ -29,11 +29,11 @@ use crate::{
     HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1, HandoffSignerRoleV1, Height,
     LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1, MessageKind,
     NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest,
-    PocoGenesisQcBindingV1, PocoGenesisV1, ProtocolVersion, QcRef, QcReferenceV0,
-    QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0, Signature64,
-    SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
+    PocoGenesisQcBindingV1, PocoGenesisV1, PocoTargetProjectionV1, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0,
+    Signature64, SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
     TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
-    ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    ValidatorSetId, VerifiedCometStateExportV1, View, Vote, VoteEvidenceRecordV0, VotingPower,
     CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
     COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
     COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1,
@@ -41,9 +41,10 @@ use crate::{
     HANDOFF_SIGNER_PROFILE_V1, MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1,
     MAX_CONSENSUS_STRING_BYTES, MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1,
     MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
-    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
-    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
-    SCHEMA_VERSION_V0,
+    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1,
+    MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, POCO_GENESIS_PROFILE_V1,
+    POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
+    POCO_TARGET_PROJECTION_PROFILE_V1, POCO_TARGET_PROJECTION_SCHEMA_VERSION_V1, SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -252,6 +253,36 @@ impl Cev0AdmissionBudgetV0 {
         &mut self,
         certificate: &TimeoutCertificateV0,
     ) -> DecodeResult<()> {
+        self.charge_signature_work(self.timeout_certificate_signature_work(certificate)?)
+    }
+
+    /// Charges every signature-bearing nested object in one certified header.
+    /// This is intentionally atomic: a rejected certifying QC must not leave
+    /// the caller's budget partially consumed by the justify QC or timeout
+    /// certificate that preceded it.
+    pub fn charge_certified_header(&mut self, header: &CertifiedHeaderV0) -> DecodeResult<()> {
+        self.charge_signature_work(self.certified_header_signature_work(header)?)
+    }
+
+    /// Charges all three certified headers in a finality proof as one unit.
+    /// A finality proof is a common wire ingress boundary, so charging only
+    /// its individual QC/TC decoders would leave the aggregate three-chain
+    /// signature workload unbounded by the caller's authenticated budget.
+    pub fn charge_finality_proof(&mut self, proof: &FinalityProofV0) -> DecodeResult<()> {
+        let first = self.certified_header_signature_work(proof.finalized_block())?;
+        let second = self.certified_header_signature_work(proof.child())?;
+        let third = self.certified_header_signature_work(proof.grandchild())?;
+        let total = first
+            .checked_add(second)
+            .and_then(|value| value.checked_add(third))
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))?;
+        self.charge_signature_work(total)
+    }
+
+    fn timeout_certificate_signature_work(
+        &self,
+        certificate: &TimeoutCertificateV0,
+    ) -> DecodeResult<usize> {
         let nested_shares =
             certificate
                 .referenced_qcs()
@@ -267,10 +298,25 @@ impl Cev0AdmissionBudgetV0 {
         if nested_shares > self.maximum_tc_aggregate_signature_shares {
             return Err(DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0));
         }
-        let total = nested_shares
+        nested_shares
             .checked_add(certificate.entries().len())
-            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))?;
-        self.charge_signature_work(total)
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))
+    }
+
+    fn certified_header_signature_work(&self, header: &CertifiedHeaderV0) -> DecodeResult<usize> {
+        let justify = header
+            .justify_qc()
+            .as_ordinary()
+            .map_or(0, |certificate| certificate.votes().len());
+        let timeout = header
+            .timeout_certificate()
+            .map(|certificate| self.timeout_certificate_signature_work(certificate))
+            .transpose()?
+            .unwrap_or(0);
+        justify
+            .checked_add(timeout)
+            .and_then(|value| value.checked_add(header.certifying_qc().votes().len()))
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, 0))
     }
 }
 
@@ -416,6 +462,69 @@ pub fn decode_comet_state_export_v1_exact(bytes: &[u8]) -> DecodeResult<CometSta
         return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
     }
     Ok(export)
+}
+
+/// Decode an exact target projection statement against an importer-owned
+/// verified source token. A raw `CometStateExportV1` is deliberately not
+/// accepted here: source identity/finality/mapping verification must already
+/// have produced `VerifiedCometStateExportV1`. The result is still inert; a
+/// target replay verifier must separately call `PocoTargetProjectionV1::verify_with`.
+pub fn decode_poco_target_projection_v1_exact(
+    bytes: &[u8],
+    verified_source: &VerifiedCometStateExportV1,
+) -> DecodeResult<PocoTargetProjectionV1> {
+    if bytes.len() > MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != POCO_TARGET_PROJECTION_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(POCO_TARGET_PROJECTION_PROFILE_V1.len())?;
+    if profile.bytes != POCO_TARGET_PROJECTION_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let source_commitment = cursor.fixed()?;
+    let mapping_profile_digest = cursor.fixed()?;
+    let target_chain_offset = cursor.offset();
+    let target_chain_id =
+        ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, target_chain_offset)
+        })?;
+    let target_genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let target_genesis_manifest_digest = cursor.fixed()?;
+    let claimed_state_root = StateRoot::new(cursor.fixed()?);
+    cursor.finish()?;
+
+    if source_commitment != verified_source.export_commitment()
+        || mapping_profile_digest != verified_source.export().mapping_profile_digest()
+    {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    let projection = verified_source
+        .bind_target_projection_v1(
+            target_chain_id,
+            target_genesis_hash,
+            target_genesis_manifest_digest,
+            claimed_state_root,
+        )
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = projection
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(projection)
 }
 
 /// Decode exact, bounded target-validator genesis quorum evidence against an
@@ -2336,6 +2445,27 @@ pub fn decode_ordinary_certified_header_v0_exact(
     )
 }
 
+/// Bounded-admission variant of [`decode_ordinary_certified_header_v0_exact`].
+/// The complete header is charged after semantic admission so nested justify,
+/// timeout, and certifying QC shares all consume one authenticated budget.
+pub fn decode_ordinary_certified_header_v0_exact_with_budget(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<CertifiedHeaderV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let header = decode_ordinary_certified_header_v0_exact(
+        bytes,
+        validator_set,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+    )?;
+    budget.charge_certified_header(&header)?;
+    Ok(header)
+}
+
 /// Decodes one complete epoch-zero certified header with trusted GenesisQC.
 ///
 /// The proposal justify and optional TC references may contain the exact
@@ -2364,6 +2494,26 @@ pub fn decode_certified_header_v0_exact_with_trusted_genesis(
     Ok(certified)
 }
 
+/// Bounded-admission variant of
+/// [`decode_certified_header_v0_exact_with_trusted_genesis`].
+pub fn decode_certified_header_v0_exact_with_trusted_genesis_and_budget(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<CertifiedHeaderV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let header = decode_certified_header_v0_exact_with_trusted_genesis(
+        bytes,
+        epoch_zero_validator_set,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+    )?;
+    budget.charge_certified_header(&header)?;
+    Ok(header)
+}
+
 /// Decodes one complete same-epoch `FinalityProofV0` against authenticated
 /// validator/parameter context.
 ///
@@ -2387,6 +2537,28 @@ pub fn decode_finality_proof_v0_exact(
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
     )
+}
+
+/// Bounded-admission variant of [`decode_finality_proof_v0_exact`].
+/// Finality proofs contain three certified headers; this wrapper charges the
+/// complete aggregate rather than relying on callers to budget each nested
+/// certificate manually.
+pub fn decode_finality_proof_v0_exact_with_budget(
+    bytes: &[u8],
+    active_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<FinalityProofV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let proof = decode_finality_proof_v0_exact(
+        bytes,
+        active_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+    )?;
+    budget.charge_finality_proof(&proof)?;
+    Ok(proof)
 }
 
 /// Decodes one complete epoch-zero finality proof with trusted GenesisQC.
@@ -2414,6 +2586,26 @@ pub fn decode_finality_proof_v0_exact_with_trusted_genesis(
         QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
     )?;
     require_exact_canonical_reencoding(bytes, proof.try_cev0_bytes(), 0)?;
+    Ok(proof)
+}
+
+/// Bounded-admission variant of
+/// [`decode_finality_proof_v0_exact_with_trusted_genesis`].
+pub fn decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
+    bytes: &[u8],
+    epoch_zero_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<FinalityProofV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let proof = decode_finality_proof_v0_exact_with_trusted_genesis(
+        bytes,
+        epoch_zero_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+    )?;
+    budget.charge_finality_proof(&proof)?;
     Ok(proof)
 }
 
@@ -2450,6 +2642,28 @@ pub fn decode_checkpoint_finality_proof_v0_exact(
             authenticated_checkpoint_parent_timestamp_ms,
         )
         .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidCheckpointTwoSeal, object_offset))?;
+    Ok(proof)
+}
+
+/// Bounded-admission variant of
+/// [`decode_checkpoint_finality_proof_v0_exact`].
+pub fn decode_checkpoint_finality_proof_v0_exact_with_budget(
+    bytes: &[u8],
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    authenticated_checkpoint_parent_timestamp_ms: u64,
+    budget: &mut Cev0AdmissionBudgetV0,
+) -> DecodeResult<FinalityProofV0> {
+    budget.admit_root_bytes(bytes.len())?;
+    let proof = decode_checkpoint_finality_proof_v0_exact(
+        bytes,
+        old_validator_set,
+        old_consensus_parameters,
+        next_epoch_commitment,
+        authenticated_checkpoint_parent_timestamp_ms,
+    )?;
+    budget.charge_finality_proof(&proof)?;
     Ok(proof)
 }
 
@@ -6993,5 +7207,50 @@ mod tests {
         let error = constrained.charge_timeout_certificate(&tc).unwrap_err();
         assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
         assert_eq!(constrained.signature_work(), 0);
+    }
+
+    #[test]
+    fn finality_budget_charges_all_three_headers_atomically() {
+        let (set, parameters, genesis_timestamp_ms, proof) = trusted_genesis_finality_fixture();
+        let bytes = proof.try_cev0_bytes().unwrap();
+
+        let mut accepted = Cev0AdmissionBudgetV0::protocol_v0();
+        let decoded = decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
+            &bytes,
+            &set,
+            &parameters,
+            genesis_timestamp_ms,
+            &mut accepted,
+        )
+        .unwrap();
+        assert_eq!(decoded, proof);
+        assert!(accepted.signature_work() > 0);
+
+        // The proof is fully shape/semantic-checked before this aggregate
+        // charge. A too-small budget must reject without charging the first
+        // header's shares and thereby making retries order-dependent.
+        let mut constrained = Cev0AdmissionBudgetV0::with_limits(bytes.len(), 1, 1);
+        let error = decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
+            &bytes,
+            &set,
+            &parameters,
+            genesis_timestamp_ms,
+            &mut constrained,
+        )
+        .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
+        assert_eq!(constrained.signature_work(), 0);
+
+        let mut too_large = Cev0AdmissionBudgetV0::with_limits(bytes.len() - 1, usize::MAX, 1);
+        let error = decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
+            &bytes,
+            &set,
+            &parameters,
+            genesis_timestamp_ms,
+            &mut too_large,
+        )
+        .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
+        assert_eq!(too_large.signature_work(), 0);
     }
 }
