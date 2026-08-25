@@ -63,7 +63,8 @@ pub use cev0_decode::{
     decode_handoff_descriptor_v0_exact, decode_next_epoch_commitment_v0_exact,
     decode_ordinary_certified_header_v0_exact, decode_ordinary_qc_v0_exact,
     decode_ordinary_qc_v0_exact_with_budget, decode_ordinary_timeout_certificate_v0_exact,
-    decode_ordinary_timeout_certificate_v0_exact_with_budget, decode_poco_genesis_v1_exact,
+    decode_ordinary_timeout_certificate_v0_exact_with_budget,
+    decode_poco_genesis_qc_binding_v1_exact, decode_poco_genesis_v1_exact,
     decode_qc_reference_v0_exact_with_trusted_genesis,
     decode_qc_reference_v0_exact_with_trusted_genesis_and_budget,
     decode_timeout_certificate_v0_exact_with_trusted_genesis,
@@ -92,11 +93,14 @@ pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;
 pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0};
 pub use genesis_application::{
-    GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0, PocoGenesisQcBindingV1,
-    PocoGenesisV1, GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
+    CometFinalizedBlockIdentityV1, GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0,
+    LegacyCometAppHashV1, LegacyCometGenesisHashV1, PocoGenesisQcBindingV1, PocoGenesisV1,
+    COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1, GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
     GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0, GENESIS_QC_APPLICATION_BINDING_DOMAIN_V0,
-    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, POCO_GENESIS_COMMITMENT_DOMAIN_V1,
-    POCO_GENESIS_QC_BINDING_DOMAIN_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
+    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
+    POCO_GENESIS_COMMITMENT_DOMAIN_V1, POCO_GENESIS_MIGRATION_INSTANCE_DOMAIN_V1,
+    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_DOMAIN_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1,
+    POCO_GENESIS_SCHEMA_VERSION_V1, POCO_GENESIS_SOURCE_NAMESPACE_DOMAIN_V1,
 };
 pub use handoff::{
     EpochAnchorAuthorizationV0, HandoffCertificateV0, HandoffDescriptorV0,

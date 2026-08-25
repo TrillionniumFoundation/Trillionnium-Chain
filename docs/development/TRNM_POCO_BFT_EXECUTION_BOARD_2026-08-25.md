@@ -146,22 +146,28 @@ downstream gate inherits completion from an incomplete predecessor.
 - Implement deterministic `PoCOGenesisV1` import with a fresh chain ID/data
   directory and synthetic GenesisQC/validator set.
 - A typed `PocoGenesisV1` ceremony descriptor now exists in
-  `trnm-consensus-types`. It binds source chain/application/store identity,
-  finalized source height/block, legacy AppHash attestation, export and
-  mapping/profile digests, fresh target chain/genesis, independently computed
-  native root, target validator-set digest and protocol version. Its
-  `PocoGenesisQcBindingV1` is content-addressed while preserving the frozen
-  GenesisQC v0 wire bytes.
-- The descriptor also has a bounded exact decoder (`1 KiB` pre-parse ceiling,
-  canonical re-encoding check, source-identity check and trailing-byte refusal)
-  so a second importer can replay the same bytes without trusting a local
-  JSON/YAML interpretation.
+  `trnm-consensus-types`. Legacy Comet genesis-document digest, finalized
+  BlockID/part-set identity, and AppHash are separate types and cannot be
+  substituted for native PoCO `GenesisHash`/`BlockId`/`StateRoot`. The
+  descriptor binds source namespace, cutoff/migration-instance inputs, export
+  and mapping/profile digests, fresh target chain/genesis, independently
+  computed native root, target validator-set digest and protocol version. Its
+  `PocoGenesisQcBindingV1` is profile-tagged and content-addressed while
+  preserving the frozen GenesisQC v0 wire bytes.
+- The descriptor has a bounded exact decoder (`1 KiB` pre-parse ceiling,
+  canonical re-encoding, namespace/instance rechecks and trailing-byte
+  refusal). The QC ceremony envelope has a separate bounded exact decoder and
+  importer-owned trusted-set recheck, so a second importer can replay the same
+  bytes without trusting a local JSON/YAML interpretation.
 - Include source AppHash only as `legacy_app_hash_attestation`; bind export,
-  mapping/profile, new root and source identity into the signed genesis
+  mapping/profile, new root, source namespace and complete migration-instance
+  digest into the signed genesis
   descriptor. Never import Comet WAL/blockstore/validator signing state.
-- This is a typed commitment slice, not an import implementation or a
-  cross-peer GenesisQC activation. `MIG-ROOT-001` remains open until two clean
-  export/import rehearsals reproduce the descriptor and native root.
+- This is still a typed commitment/decoder slice, not an export verifier,
+  import implementation, quorum-signed GenesisQC v1, or cross-peer activation.
+  `MIG-ROOT-001` remains open until source/target manifests are independently
+  verified and two clean export/import rehearsals reproduce the descriptor and
+  native root.
 
 ### MIG-008/009 — production network and signer ladder (G2/G3)
 
@@ -220,10 +226,12 @@ downstream gate inherits completion from an incomplete predecessor.
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
    closed; current bounded facts cannot reconstruct every post-crash input.
-4. The additive authenticated-genesis ceremony now rejects foreign application
-   commitments, but the GenesisQC wire/hash itself still does not carry a
-   cross-peer application-root commitment. Migration provenance and imported
-   root must be committed into a versioned GenesisQC/ceremony before G1/C0.
+4. The additive migration ceremony now separates legacy evidence types and
+   rechecks a caller-supplied trusted validator set, but the GenesisQC wire/hash
+   itself still does not carry a quorum-signed cross-peer application-root
+   commitment. Source finality/export and target-genesis manifest digests are
+   opaque until typed verifiers exist; migration provenance and imported root
+   must be committed into a versioned GenesisQC/ceremony before G1/C0.
 
 ### P2 — real-node blockers
 
