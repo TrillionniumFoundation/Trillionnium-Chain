@@ -210,6 +210,8 @@ mod remote_signer_protocol_adapter_v1;
 mod remote_signer_roles_v1;
 #[cfg(feature = "safety-rules-sidecar")]
 mod safety_rules_sidecar;
+#[cfg(feature = "tx-admission-wal")]
+mod tx_admission_wal;
 
 #[cfg(feature = "legacy-consensus-app")]
 pub use authenticated_genesis_commissioning::{
@@ -384,6 +386,11 @@ pub use safety_rules_sidecar::{
     SafetyRulesSemanticSidecarErrorV1, SafetyRulesSemanticSidecarV1,
     SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
     SAFETY_RULES_SEMANTIC_SIDECAR_RUNTIME_COMPOSITION_V1,
+};
+#[cfg(feature = "tx-admission-wal")]
+pub use tx_admission_wal::{
+    SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0,
+    TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0, TX_ADMISSION_WAL_RUNTIME_COMPOSITION_V0,
 };
 /// This package must not be interpreted as a deployable consensus candidate.
 pub const PRODUCTION_CANDIDATE_V0: bool = false;

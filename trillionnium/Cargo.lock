@@ -1843,6 +1843,7 @@ dependencies = [
  "trnm-consensus-types",
  "trnm-consensus-unix-remote-signer",
  "trnm-finality-types",
+ "trnm-mempool",
  "trnm-native-application",
  "trnm-native-application-sqlite",
  "trnm-native-execution-v0",

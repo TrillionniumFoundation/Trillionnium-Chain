@@ -11,6 +11,10 @@ publish = false
 [features]
 default = []
 node-event-wal = ["dep:libc", "dep:fs2"]
+# Candidate-only node-owned transaction admission WAL.  This feature composes
+# the durable nonce boundary but does not activate CheckTx, execution, or
+# broadcast in the default node.
+tx-admission-wal = ["dep:fs2", "dep:libc", "dep:trnm-mempool"]
 # Raw consensus signing keys are available only to explicitly named fixture and
 # process-test builds.  The default node/library build has no direct
 # `ed25519-dalek` dependency edge and therefore cannot load or expose a
@@ -230,6 +234,7 @@ trnm-consensus-signer-journal = { version = "0.1.0", path = "../trnm-consensus-s
 trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 trnm-consensus-unix-remote-signer = { version = "0.1.0", path = "../trnm-consensus-unix-remote-signer", optional = true }
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types", optional = true }
+trnm-mempool = { version = "0.1.0", path = "../trnm-mempool", optional = true }
 trnm-native-application = { version = "0.1.0", path = "../trnm-native-application" }
 trnm-native-application-sqlite = { version = "0.1.0", path = "../trnm-native-application-sqlite" }
 trnm-native-execution-v0 = { version = "0.1.0", path = "../trnm-native-execution-v0" }
