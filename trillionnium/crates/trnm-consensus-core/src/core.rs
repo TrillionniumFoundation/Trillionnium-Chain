@@ -13,7 +13,8 @@ use core::{
 use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::{
     FinalizedBlockRefV1, InertSafetyTransitionKindV1, InertSafetyTransitionV1,
-    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateSeedV1, SafetyRulesStateV1,
+    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateDigestV1,
+    SafetyRulesStateSeedV1, SafetyRulesStateV1,
 };
 use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
@@ -5676,7 +5677,12 @@ impl Core {
                     ));
                 }
                 match self.pending_persistence.as_ref() {
-                    Some(PendingPersistence { barrier, deferred })
+                    Some(PendingPersistence {
+                        barrier,
+                        deferred,
+                        safety_rules_shadow_transition: None,
+                        safety_rules_shadow_predecessor_digest: None,
+                    })
                         if barrier.get() == 1
                             && deferred.as_slice()
                                 == [DeferredEffect::ValidateSyncedPayload(validation_id)] =>
@@ -5747,7 +5753,12 @@ impl Core {
                     );
                 }
                 match self.pending_persistence.as_ref() {
-                    Some(PendingPersistence { barrier, deferred })
+                    Some(PendingPersistence {
+                        barrier,
+                        deferred,
+                        safety_rules_shadow_transition: None,
+                        safety_rules_shadow_predecessor_digest: None,
+                    })
                         if barrier.get() == 2 && deferred.is_empty() =>
                     {
                         Ok(AuthenticatedGenesisApplicationH1OfflinePhaseV0::CompletionPersistencePendingRev2)
@@ -9592,8 +9603,7 @@ impl Core {
         };
         let shadow_transition =
             self.verify_vote_safety_shadow_v1(proposal, &legacy_intent, verifier)?;
-        self.safety.set_last_voted(header.view());
-        self.safety.set_pending_sign(Some(legacy_intent));
+        self.install_safety_rules_transition_v1(&shadow_transition, &legacy_intent, verifier)?;
         Ok(Some(shadow_transition))
     }
 
@@ -9758,6 +9768,236 @@ impl Core {
             )
             .map_err(CoreError::from),
         }
+    }
+
+    /// Checks and installs the exact successor produced by the pure
+    /// SafetyRules kernel at the live Vote/Timeout pre-persistence boundary.
+    ///
+    /// The legacy Core gates still decide whether an evaluation is attempted,
+    /// but they no longer supply the watermark which is installed.  That
+    /// watermark is taken from the already-verified transition successor and
+    /// every immutable successor field is compared against the live Core
+    /// state.  Keeping this operation in one helper prevents Vote and
+    /// Timeout paths from acquiring subtly different authority semantics.
+    fn install_safety_rules_transition_v1<V: SignatureVerifier>(
+        &mut self,
+        transition: &InertSafetyTransitionV1,
+        legacy_intent: &SignIntent,
+        verifier: &V,
+    ) -> Result<()> {
+        let expected_revision = self
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
+        let predecessor =
+            self.validate_safety_rules_transition_predecessor_v1(transition, verifier)?;
+        self.validate_safety_rules_transition_shape_v1(
+            transition,
+            legacy_intent,
+            expected_revision,
+        )?;
+        self.validate_safety_rules_transition_successor_v1(
+            transition,
+            &predecessor,
+            expected_revision,
+            verifier,
+        )?;
+
+        // All checks above are side-effect free.  Only after the complete
+        // successor has matched do we install its watermark and retain the
+        // legacy intent for the existing signer adapter.
+        match transition.kind() {
+            InertSafetyTransitionKindV1::Vote => {
+                let view = transition.successor_state().last_voted_view().ok_or(
+                    CoreError::SafetyRulesShadowMismatch(
+                        "Vote transition successor omitted its vote watermark",
+                    ),
+                )?;
+                self.safety.set_last_voted(view);
+            }
+            InertSafetyTransitionKindV1::TimeoutVote => {
+                let view = transition.successor_state().last_timeout_view().ok_or(
+                    CoreError::SafetyRulesShadowMismatch(
+                        "TimeoutVote transition successor omitted its timeout watermark",
+                    ),
+                )?;
+                self.safety.set_last_timeout(view);
+            }
+        }
+        self.safety.set_pending_sign(Some(legacy_intent.clone()));
+        Ok(())
+    }
+
+    /// Reconstructs the pure predecessor from the live Core context and binds
+    /// the transition's predecessor digest to it.  A candidate produced for a
+    /// different state is rejected before its watermark is installed.
+    fn validate_safety_rules_transition_predecessor_v1<V: SignatureVerifier>(
+        &self,
+        transition: &InertSafetyTransitionV1,
+        verifier: &V,
+    ) -> Result<SafetyRulesStateV1> {
+        let context = self.safety_rules_shadow_context_v1()?;
+        let predecessor = self.safety_rules_shadow_state_v1(&context, verifier)?;
+        if transition.predecessor_state_digest() != predecessor.digest() {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition predecessor differs from the live Core state",
+            ));
+        }
+        Ok(predecessor)
+    }
+
+    /// Rebuilds the complete pure successor from the authenticated
+    /// predecessor and checks its digest, including every immutable context
+    /// field.  Core only installs the transition after this exact value
+    /// equals the kernel output; a partially matching watermark is not enough.
+    fn validate_safety_rules_transition_successor_v1<V: SignatureVerifier>(
+        &self,
+        transition: &InertSafetyTransitionV1,
+        predecessor: &SafetyRulesStateV1,
+        expected_revision: u64,
+        verifier: &V,
+    ) -> Result<()> {
+        let context = self.safety_rules_shadow_context_v1()?;
+        let successor = transition.successor_state();
+        let (last_voted_view, last_timeout_view) = match transition.kind() {
+            InertSafetyTransitionKindV1::Vote => {
+                (successor.last_voted_view(), predecessor.last_timeout_view())
+            }
+            InertSafetyTransitionKindV1::TimeoutVote => {
+                (predecessor.last_voted_view(), successor.last_timeout_view())
+            }
+        };
+        let expected = SafetyRulesStateV1::new(
+            &context,
+            SafetyRulesStateSeedV1::new(
+                predecessor.current_view(),
+                last_voted_view,
+                last_timeout_view,
+                predecessor.high_qc().clone(),
+                predecessor.locked_qc().clone(),
+                predecessor.finalized(),
+                expected_revision,
+            ),
+            verifier,
+        )
+        .map_err(|_| {
+            CoreError::SafetyRulesShadowMismatch(
+                "the pure SafetyRules successor could not be reconstructed",
+            )
+        })?;
+        if successor != &expected {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules successor digest or immutable context differs",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Validates the transition successor against the exact in-memory Core
+    /// predecessor and its legacy intent.  This is intentionally exhaustive
+    /// over the fields represented by the v1 pure state; a mismatch fails
+    /// closed before a persistence request or signer effect can be exposed.
+    fn validate_safety_rules_transition_shape_v1(
+        &self,
+        transition: &InertSafetyTransitionV1,
+        legacy_intent: &SignIntent,
+        expected_revision: u64,
+    ) -> Result<()> {
+        let canonical = self
+            .canonical_sign_intent_for_legacy_v1(legacy_intent)
+            .map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "legacy signing intent has no canonical SafetyRules representation",
+                )
+            })?;
+        let successor = transition.successor_state();
+        let finalized = self.safety.finalized();
+        let successor_finalized = successor.finalized();
+        let kind_matches = match legacy_intent {
+            SignIntent::Vote { view, block_id, .. } => {
+                transition.kind() == InertSafetyTransitionKindV1::Vote
+                    && transition.vote_block_id() == Some(*block_id)
+                    && successor.last_voted_view() == Some(*view)
+                    && successor.last_timeout_view() == self.safety.last_timeout_view()
+            }
+            SignIntent::TimeoutVote { view, high_qc, .. } => {
+                transition.kind() == InertSafetyTransitionKindV1::TimeoutVote
+                    && transition.vote_block_id().is_none()
+                    && *view == self.safety.current_view()
+                    && *high_qc == self.safety.high_qc().qc_ref()
+                    && successor.last_timeout_view() == Some(*view)
+                    && successor.last_voted_view() == self.safety.last_voted_view()
+            }
+        };
+        if !kind_matches
+            || transition.canonical_intent() != &canonical
+            || successor.current_view() != self.safety.current_view()
+            || successor.high_qc() != self.safety.high_qc()
+            || successor.locked_qc() != self.safety.locked_qc()
+            || successor_finalized.height() != finalized.height()
+            || successor_finalized.view() != finalized.view()
+            || successor_finalized.block_id() != finalized.block_id()
+            || successor_finalized.timestamp_ms() != finalized.timestamp_ms()
+            || successor.revision() != expected_revision
+            || legacy_intent.authorizing_safety_revision() != expected_revision
+        {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition successor differs from the Core successor",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Re-checks a pending transition immediately before releasing any
+    /// post-persistence effect.  The numeric barrier alone is insufficient:
+    /// the exact Vote/Timeout transition and pending intent must still name
+    /// the same Core successor at the StorageAck boundary.
+    fn validate_safety_rules_transition_binding_v1(
+        &self,
+        transition: &InertSafetyTransitionV1,
+        barrier: BarrierId,
+    ) -> Result<()> {
+        if self.safety.revision() != barrier.get() {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition barrier differs from the Core revision",
+            ));
+        }
+        let intent = self
+            .safety
+            .pending_sign()
+            .ok_or(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition has no matching pending signing intent",
+            ))?;
+        self.validate_safety_rules_transition_shape_v1(transition, intent, barrier.get())
+    }
+
+    fn validate_safety_rules_transition_manifest_v1(
+        transition: Option<&InertSafetyTransitionV1>,
+        deferred: &[DeferredEffect],
+    ) -> Result<()> {
+        let requests_signature = deferred
+            .iter()
+            .any(|effect| matches!(effect, DeferredEffect::RequestSignature));
+        if requests_signature != transition.is_some() {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition and signer post-ack action are not paired",
+            ));
+        }
+        Ok(())
+    }
+
+    fn validate_safety_rules_transition_predecessor_binding_v1(
+        transition: Option<&InertSafetyTransitionV1>,
+        predecessor_digest: Option<SafetyRulesStateDigestV1>,
+    ) -> Result<()> {
+        let transition_digest = transition.map(InertSafetyTransitionV1::predecessor_state_digest);
+        if transition_digest != predecessor_digest {
+            return Err(CoreError::SafetyRulesShadowMismatch(
+                "SafetyRules transition predecessor binding changed before StorageAck",
+            ));
+        }
+        Ok(())
     }
 
     /// Runs only after the existing application-Valid, observation, ancestry,
@@ -9927,6 +10167,22 @@ impl Core {
         block_id: BlockId,
     ) -> Result<bool> {
         self.blocks.forget_validated_proposal_for_test(block_id)
+    }
+
+    /// Test-only fault-injection seam for proving that StorageAck rechecks the
+    /// transition carried by its private pending slot.  Production callers
+    /// cannot replace or construct that slot.
+    #[cfg(test)]
+    pub(crate) fn replace_pending_safety_rules_transition_for_test_v1(
+        &mut self,
+        transition: Option<InertSafetyTransitionV1>,
+    ) -> Result<()> {
+        let pending = self
+            .pending_persistence
+            .as_mut()
+            .ok_or(CoreError::UnexpectedStorageAck)?;
+        pending.safety_rules_shadow_transition = transition;
+        Ok(())
     }
 
     fn try_stage_finalization_blocked_vote<V: SignatureVerifier>(
@@ -10160,8 +10416,7 @@ impl Core {
             signing_root: root,
         };
         let shadow_transition = self.verify_timeout_safety_shadow_v1(&legacy_intent, verifier)?;
-        self.safety.set_last_timeout(view);
-        self.safety.set_pending_sign(Some(legacy_intent));
+        self.install_safety_rules_transition_v1(&shadow_transition, &legacy_intent, verifier)?;
         self.persist_with_safety_rules_shadow_transition(
             vec![DeferredEffect::RequestSignature],
             Some(shadow_transition),
@@ -10169,13 +10424,28 @@ impl Core {
     }
 
     fn handle_storage_ack(&mut self, barrier: BarrierId) -> Result<Vec<Effect>> {
+        let pending_ref = self
+            .pending_persistence
+            .as_ref()
+            .ok_or(CoreError::UnexpectedStorageAck)?;
+        if pending_ref.barrier != barrier {
+            return Err(CoreError::UnexpectedStorageAck);
+        }
+        Self::validate_safety_rules_transition_manifest_v1(
+            pending_ref.safety_rules_shadow_transition.as_ref(),
+            &pending_ref.deferred,
+        )?;
+        Self::validate_safety_rules_transition_predecessor_binding_v1(
+            pending_ref.safety_rules_shadow_transition.as_ref(),
+            pending_ref.safety_rules_shadow_predecessor_digest,
+        )?;
+        if let Some(transition) = pending_ref.safety_rules_shadow_transition.as_ref() {
+            self.validate_safety_rules_transition_binding_v1(transition, barrier)?;
+        }
         let pending = self
             .pending_persistence
             .take()
             .ok_or(CoreError::UnexpectedStorageAck)?;
-        if pending.barrier != barrier {
-            return Err(CoreError::UnexpectedStorageAck);
-        }
         let mut effects = Vec::with_capacity(pending.deferred.len());
         for effect in pending.deferred {
             match effect {
@@ -12151,9 +12421,35 @@ impl Core {
         if self.pending_persistence.is_some() {
             return Err(CoreError::Busy("a safety-state write is already pending"));
         }
+        Self::validate_safety_rules_transition_manifest_v1(
+            safety_rules_shadow_transition.as_ref(),
+            &deferred,
+        )?;
+        let expected_revision = self
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
+        if let Some(transition) = safety_rules_shadow_transition.as_ref() {
+            let intent = self
+                .safety
+                .pending_sign()
+                .ok_or(CoreError::SafetyRulesShadowMismatch(
+                    "SafetyRules transition has no matching pending signing intent",
+                ))?;
+            self.validate_safety_rules_transition_shape_v1(transition, intent, expected_revision)?;
+        }
         self.snapshot_observed_qcs_v0();
         let barrier = self.safety.next_revision()?;
-        self.pending_persistence = Some(PendingPersistence { barrier, deferred });
+        debug_assert_eq!(barrier.get(), expected_revision);
+        self.pending_persistence = Some(PendingPersistence {
+            barrier,
+            deferred,
+            safety_rules_shadow_transition: safety_rules_shadow_transition.clone(),
+            safety_rules_shadow_predecessor_digest: safety_rules_shadow_transition
+                .as_ref()
+                .map(InertSafetyTransitionV1::predecessor_state_digest),
+        });
         Ok(vec![Effect::PersistSafetyState(
             crate::SafetyStatePersistenceV0::new(
                 barrier,

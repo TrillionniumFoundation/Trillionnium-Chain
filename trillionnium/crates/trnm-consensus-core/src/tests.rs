@@ -16582,6 +16582,62 @@ fn safety_rules_shadow_core_bound_admits_64_and_fails_closed_at_65() {
 }
 
 #[test]
+fn safety_rules_transition_binding_is_rechecked_before_storage_ack() {
+    let (_config_a, mut core_a) = configured_core();
+    let (_config_b, mut core_b) = configured_core();
+    let set_a = core_a.config().validator_set().clone();
+    let set_b = core_b.config().validator_set().clone();
+
+    let stage_vote_persistence = |core: &mut Core, proposal: SignedProposalV0| {
+        let proposal_effects = core
+            .step(Input::Proposal(Box::new(proposal)), &RootSignatures)
+            .expect("proposal enters validation");
+        let validation_effects = release_persisted_effects(core, proposal_effects);
+        let validation = validation_effect(&validation_effects);
+        let result = valid_result_for_effect(core, &validation_effects, validation);
+        core.step(
+            Input::PayloadValidated {
+                id: validation,
+                result,
+            },
+            &RootSignatures,
+        )
+        .expect("valid proposal stages a Vote persistence request")
+    };
+
+    let effects_a = stage_vote_persistence(
+        &mut core_a,
+        proposal(&set_a, genesis_qc(&set_a), 1, b"transition binding A"),
+    );
+    let barrier_a = persistence_request(&effects_a).barrier();
+    let transition_b = {
+        let effects_b = stage_vote_persistence(
+            &mut core_b,
+            proposal(&set_b, genesis_qc(&set_b), 1, b"transition binding B"),
+        );
+        persistence_request(&effects_b)
+            .safety_rules_shadow_transition_v1()
+            .expect("second Vote request carries its SafetyRules transition")
+            .clone()
+    };
+
+    core_a
+        .replace_pending_safety_rules_transition_for_test_v1(Some(transition_b))
+        .expect("first Core has a pending persistence slot");
+    let before = core_a.clone();
+    assert_eq!(
+        core_a.step(Input::StorageAck { barrier: barrier_a }, &RootSignatures,),
+        Err(CoreError::SafetyRulesShadowMismatch(
+            "SafetyRules transition successor differs from the Core successor",
+        ))
+    );
+    assert_eq!(
+        core_a, before,
+        "a detached transition cannot consume the persistence barrier"
+    );
+}
+
+#[test]
 fn safety_rules_shadow_core_accepts_a_view_stronger_shallower_high_qc() {
     let (config, bootstrap) = configured_core();
     let set = config.validator_set().clone();

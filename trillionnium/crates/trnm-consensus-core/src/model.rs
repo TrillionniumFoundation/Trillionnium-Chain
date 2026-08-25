@@ -6,7 +6,7 @@ use core::{
 };
 
 use sha2::{Digest, Sha256};
-use trnm_consensus_safety_rules::InertSafetyTransitionV1;
+use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesStateDigestV1};
 use trnm_consensus_types::{
     Block, BlockHeader, BlockId, CanonicalSignIntentV0, CertificateId, ChainId,
     ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0,
@@ -4061,4 +4061,16 @@ pub(crate) enum DeferredEffect {
 pub(crate) struct PendingPersistence {
     pub(crate) barrier: BarrierId,
     pub(crate) deferred: Vec<DeferredEffect>,
+    /// The exact SafetyRules transition which authorized this persistence
+    /// request, when the request carries a newly-created Vote or TimeoutVote
+    /// intent.  Keeping the transition in the private pending slot binds the
+    /// pre-persistence authority check to the later StorageAck boundary; a
+    /// caller cannot acknowledge a different or detached transition by merely
+    /// supplying the numeric barrier.
+    pub(crate) safety_rules_shadow_transition: Option<InertSafetyTransitionV1>,
+    /// Digest of the live pure predecessor reconstructed before the transition
+    /// was installed.  This second copy makes the predecessor binding
+    /// explicit at StorageAck instead of trusting a transition's self-carried
+    /// digest alone.
+    pub(crate) safety_rules_shadow_predecessor_digest: Option<SafetyRulesStateDigestV1>,
 }
