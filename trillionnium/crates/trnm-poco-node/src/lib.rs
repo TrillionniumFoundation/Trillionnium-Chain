@@ -2754,6 +2754,188 @@ mod tests {
             .contains(",application_validation_recovery,"));
     }
 
+    /// Keep every currently exposed node/runtime activation claim closed in
+    /// one executable manifest.  Composition flags are intentionally omitted:
+    /// compiling a bounded WAL, adapter, or recovery coordinator is not the
+    /// same thing as enabling a production authority.  This is a release
+    /// boundary test, not a runtime switch; adding a new activation constant
+    /// must come with an explicit entry here before it can be considered in a
+    /// candidate build.
+    #[test]
+    fn static_activation_manifest_is_closed_across_enabled_boundaries() {
+        #[allow(unused_mut)]
+        let mut manifest = vec![
+            ("node.production_candidate", PRODUCTION_CANDIDATE_V0),
+            (
+                "node.host_implementation_complete",
+                HOST_IMPLEMENTATION_COMPLETE_V0,
+            ),
+            (
+                "node.production_raw_key_dependency",
+                PRODUCTION_RAW_KEY_DEPENDENCY_V0,
+            ),
+            (
+                "external_node_checkpoint.operational_integration",
+                EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0,
+            ),
+            (
+                "external_node_checkpoint.production_activation",
+                EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "remote_signer_protocol_adapter.runtime_activation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_RUNTIME_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.production_activation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_PRODUCTION_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.request_authority",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_REQUEST_AUTHORITY_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.lease_authority",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_LEASE_AUTHORITY_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.safety_rules",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_SAFETY_RULES_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.resolver_attestation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_RESOLVER_ATTESTATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.descriptor_equivalence",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_DESCRIPTOR_EQUIVALENCE_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.bare_ref_binding_source",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_BARE_REF_BINDING_SOURCE_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.direct_constructor",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_DIRECT_CONSTRUCTOR_V1,
+            ),
+            (
+                "remote_signer_roles.runtime_activation",
+                REMOTE_SIGNER_RUNTIME_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_roles.private_key_config",
+                REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1,
+            ),
+            (
+                "remote_signer_roles.generic_sign_bytes",
+                REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1,
+            ),
+            (
+                "remote_signer_roles.safety_rules_evaluation",
+                REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1,
+            ),
+            (
+                "remote_signer_roles.safe_vote_authority",
+                REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1,
+            ),
+            (
+                "recovery_ready_start.runtime_wiring",
+                PROCESS2_RECOVERY_RUNTIME_WIRING_V1,
+            ),
+            (
+                "recovery_ready_start.start_activation",
+                PROCESS2_RECOVERY_START_ACTIVATION_V1,
+            ),
+        ];
+
+        #[cfg(feature = "node-event-wal")]
+        manifest.push((
+            "node_event_wal.production_activation",
+            NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1,
+        ));
+        #[cfg(feature = "tx-admission-wal")]
+        manifest.extend([
+            (
+                "tx_admission_wal.production_activation",
+                TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "tx_admission_boundary.production_activation",
+                TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "tx_admission_boundary.signer_resolver_production",
+                TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.context_resolver_production",
+                TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.handoff_recovery_production",
+                TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.commit_receipt_production",
+                tx_admission_wal::TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0,
+            ),
+        ]);
+        #[cfg(feature = "external-signer-runtime")]
+        manifest.extend([
+            (
+                "external_timeout_host.production_activation",
+                UNIX_EXTERNAL_TIMEOUT_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "external_timeout_host.proposal_signing",
+                UNIX_EXTERNAL_TIMEOUT_PROPOSAL_SIGNING_V0,
+            ),
+            (
+                "external_timeout_host.locked_qc_authority",
+                UNIX_EXTERNAL_TIMEOUT_LOCKED_QC_AUTHORITY_V0,
+            ),
+        ]);
+        #[cfg(feature = "external-proposal-signer")]
+        manifest.extend([
+            (
+                "external_proposal_signer.runtime_activation",
+                UNIX_EXTERNAL_PROPOSAL_SIGNER_RUNTIME_ACTIVATION_V0,
+            ),
+            (
+                "external_proposal_signer.production_candidate",
+                UNIX_EXTERNAL_PROPOSAL_SIGNER_PRODUCTION_CANDIDATE_V0,
+            ),
+        ]);
+        #[cfg(feature = "safety-rules-sidecar")]
+        manifest.push((
+            "safety_rules_sidecar.production_activation",
+            SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
+        ));
+        #[cfg(feature = "lab-validator-runtime")]
+        manifest.extend([
+            (
+                "deployed_lab_process2_recovery.activation",
+                DEPLOYED_LAB_PROCESS2_ACTIVATION_V0,
+            ),
+            (
+                "deployed_lab_recovery.coherent_whole_root_rollback_authority",
+                DEPLOYED_LAB_COHERENT_WHOLE_ROOT_ROLLBACK_AUTHORITY_V0,
+            ),
+        ]);
+
+        assert!(!manifest.is_empty());
+        for (name, enabled) in manifest {
+            assert!(!enabled, "activation boundary unexpectedly open: {name}");
+        }
+        let blockers = production_activation_gate_v0()
+            .expect_err("the static activation gate must remain closed")
+            .blockers();
+        assert!(!blockers.is_empty());
+        assert!(blockers
+            .iter()
+            .all(|contract| !contract.as_str().is_empty()));
+    }
+
     #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
     #[test]
     fn ordinary_config_surfaces_fence_authenticated_genesis_before_path_validation_v0() {
