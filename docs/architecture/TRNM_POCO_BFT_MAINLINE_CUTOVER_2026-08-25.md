@@ -137,6 +137,12 @@ native migration contract is implemented:
    `VerifiedPocoTargetProjectionV1` token can exist. That token remains inert:
    it cannot create a genesis/QC or activate the chain, and the concrete
    target-manifest/JMT replay is still disabled.
+   Commit `8bee224b6` adds an inert composition verifier which accepts only
+   that verified projection, checks exact export/mapping/manifest/chain/
+   genesis/root and projection-commitment equality, then verifies the target
+   validator quorum and supplied Ed25519 shares. It creates no startup,
+   GenesisQC, or activation capability; source/target readers and cross-peer
+   ceremony remain separate gates.
 6. Generate fresh PoCO SafetyState, signer journal, external watermark, node
    WAL, chain ID, network magic, and validator key IDs. Old validator signing
    state is not trusted or imported.

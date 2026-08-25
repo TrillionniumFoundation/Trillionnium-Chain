@@ -246,6 +246,14 @@ downstream gate inherits completion from an incomplete predecessor.
   returns an inert `VerifiedPocoTargetProjectionV1` token. No target replay,
   genesis/QC conversion, or activation is wired, so
   `target_projection_root_recomputed` remains `false`.
+- Commit `8bee224b6` adds the next inert composition gate:
+  `verify_against_target_projection_v1` checks exact export/mapping/
+  target-manifest/chain/genesis/root commitments and the projection
+  commitment, then re-runs trusted-set weighted quorum and the supplied
+  Ed25519 verifier. It rejects cross-descriptor/projection substitution but
+  creates no startup, GenesisQC, or activation authority; source readers,
+  target-manifest/JMT replay, dual authority and cross-peer rehearsal remain
+  open.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root
