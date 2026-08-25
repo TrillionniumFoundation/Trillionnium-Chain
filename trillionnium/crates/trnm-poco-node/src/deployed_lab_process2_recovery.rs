@@ -861,7 +861,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
         // read—not only before the final ActivationReady CAS—so a cooperating
         // native P writer cannot replace the application head after the
         // binding digest was computed and before the sidecar commit.
-        let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+        let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
             &paths.application,
             &paths.validation,
         )
@@ -1294,6 +1294,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
             startup_timer_epoch: startup_timer.epoch_v0(),
             startup_timer_view: startup_timer.view_v0(),
         };
+        cross_store_lock.validate_identity_v0().map_err(|error| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "activation.cross_store_lock_final_identity",
+                error.to_string(),
+            )
+        })?;
         Ok(PocoNodeDeployedLabProcess2PassiveCatchupOwnerV1 {
             facts: passive_facts,
             paths,
@@ -4356,7 +4362,7 @@ fn open_or_resume_session_v0(
     // Session O/resume is a K-side mutation even before the first replay
     // cursor.  Resolve and lock the common root from both canonical paths so
     // this opening CAS cannot race a native P writer.
-    let _cross_store_lock =
+    let cross_store_lock =
         CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(application_path, validation_path)
             .map_err(|error| {
                 PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
@@ -4400,6 +4406,12 @@ fn open_or_resume_session_v0(
                     "ActivationReady session lost its complete predecessor closure",
                 ));
             }
+            cross_store_lock.validate_identity_v0().map_err(|error| {
+                PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                    "validation.session_cross_store_lock_final_identity",
+                    error.to_string(),
+                )
+            })?;
             return Ok((
                 Process2FrontierV0::ActivationReady {
                     expected_count: session.expected_count_v0(),
@@ -4408,7 +4420,14 @@ fn open_or_resume_session_v0(
                 already_checkpointed,
             ));
         }
-        return Ok((resume_frontier_v0(store, plan)?, already_checkpointed));
+        let frontier = resume_frontier_v0(store, plan)?;
+        cross_store_lock.validate_identity_v0().map_err(|error| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "validation.session_cross_store_lock_final_identity",
+                error.to_string(),
+            )
+        })?;
+        return Ok((frontier, already_checkpointed));
     }
     for _ in 0..4 {
         let terminal = process2_try!(
@@ -4421,6 +4440,12 @@ fn open_or_resume_session_v0(
         ) {
             ReplaySessionOpenOutcomeV0::Applied(session)
             | ReplaySessionOpenOutcomeV0::Existing(session) => {
+                cross_store_lock.validate_identity_v0().map_err(|error| {
+                    PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                        "validation.session_cross_store_lock_final_identity",
+                        error.to_string(),
+                    )
+                })?;
                 return Ok((Process2FrontierV0::Ready(session), 0));
             }
             ReplaySessionOpenOutcomeV0::NotApplied => {}
