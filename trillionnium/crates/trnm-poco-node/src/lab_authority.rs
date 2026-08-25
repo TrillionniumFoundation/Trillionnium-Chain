@@ -1858,6 +1858,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                 "terminal native application store identity is zero",
             ));
         }
+        // Native recovery may reconcile prepared P rows.  Keep that mutation
+        // and the terminal K/P authentication under one exclusive root fence;
+        // K is reopened below while this same guard remains held.
+        let terminal_cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            self.application.path(),
+            &self.proposal_journal.store_path,
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         let recovery_request = NativeApplicationRecoveryRequestV0::new(
             ChainIdV0::new(application_config.chain_id_v0())
                 .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?,
@@ -1934,6 +1942,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         }
         require_checkpoint_heads_v0(self.checkpoint, &safety_facts, &signer_facts)?;
 
+        // Terminalization reopens K for a final P/K join. K open may create
+        // schema/metadata; the terminal root fence above remains held.
         let mut proposal_validation_store = SqliteProposalValidationStoreV0::open(
             &self.proposal_journal.store_path,
             self.proposal_journal.scope,
@@ -2112,6 +2122,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             prepared_application_record_count,
         };
 
+        terminal_cross_store_lock
+            .validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        drop(terminal_cross_store_lock);
+
         let Self {
             core,
             seal_authority,
@@ -2280,9 +2295,21 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             app_config.initial_validator_set().clone(),
         )
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        // Plain-genesis P initialization is a bootstrap writer: the K store
+        // does not exist yet, so a pair lock cannot be acquired at this
+        // boundary.  Fence the application namespace's authority root for the
+        // complete initialize/readback cut; all later P/K mutations use the
+        // split-path lock in the proposal host.
+        let application_lock =
+            CrossStoreLockGuardV0::acquire_exclusive_for_store_path_v0(application.path())
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         application
             .initialize(genesis_request)
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        application_lock
+            .validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        drop(application_lock);
         let application_head = application
             .confirmed_committed_head_v0()
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
@@ -3036,6 +3063,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
                 &self.application_head,
                 &self.pending_executions,
                 None,
+                None,
             )?;
         }
         let effects = self
@@ -3134,6 +3162,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             &mut self.application_head,
             &mut self.application_overlay,
             &mut self.pending_executions,
+            None,
         )?;
         if let Some(finalization) = finalization {
             if self.core.safety_state().pending_finalization() != Some(&finalization) {
@@ -4538,6 +4567,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
             &mut self.application_head,
             &mut self.application_overlay,
             &mut self.pending_executions,
+            Some(&cross_store_lock),
         )?;
         // Keep the intent marker until the in-memory owner has also been
         // rebased to the authenticated checkpoint.  If rebase fails, the
@@ -4939,6 +4969,7 @@ enum FreshCheckpointApplicationJoinV0 {
     Prepared { block_id: BlockId, height: u64 },
 }
 
+#[allow(clippy::too_many_arguments)]
 fn require_fresh_checkpoint_application_join_v0(
     application: &DurableNativeApplicationV0,
     committed: &ApplicationHeadV0,
@@ -4947,7 +4978,25 @@ fn require_fresh_checkpoint_application_join_v0(
     application_head: &ApplicationHeadV0,
     pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
     live_proposal_validation_store: Option<&mut SqliteProposalValidationStoreV0>,
+    existing_cross_store_lock: Option<&CrossStoreLockGuardV0>,
 ) -> Result<FreshCheckpointApplicationJoinV0, PocoNodeLabAuthorityErrorV0> {
+    // This helper may reopen K when the caller does not already own the live
+    // validation store.  Keep the complete P/K checkpoint-owner read under an
+    // exclusive root fence because K open can initialize schema/metadata; the
+    // same fence also prevents a cooperating writer from changing the join
+    // while its exact terminal row is being authenticated.
+    let owned_cross_store_lock = if existing_cross_store_lock.is_none() {
+        Some(
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+                application.path(),
+                &proposal_journal.store_path,
+            )
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?,
+        )
+    } else {
+        None
+    };
+    let cross_store_lock = existing_cross_store_lock.or(owned_cross_store_lock.as_ref());
     let fields = checkpoint.fields();
     let checkpoint_matches_committed = fields.application_block_id.as_bytes()
         == committed.block_id().as_bytes()
@@ -4958,6 +5007,10 @@ fn require_fresh_checkpoint_application_join_v0(
             return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
                 "committed application checkpoint remains ambiguously retained as prepared P",
             ));
+        }
+        if let Some(lock) = cross_store_lock {
+            lock.validate_identity_v0()
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         }
         return Ok(FreshCheckpointApplicationJoinV0::Committed);
     }
@@ -5013,6 +5066,10 @@ fn require_fresh_checkpoint_application_join_v0(
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
             "proposal-validation journal advanced during checkpoint-owner readback",
         ));
+    }
+    if let Some(lock) = cross_store_lock {
+        lock.validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     }
     Ok(FreshCheckpointApplicationJoinV0::Prepared {
         block_id: BlockId::new(*retained.speculative_head.block_id().as_bytes()),
@@ -5113,6 +5170,7 @@ fn reconfirm_phase_neutral_exact_high_qc_v0<W: ExternalMonotonicWatermarkV0>(
         application_head,
         pending_executions,
         live_proposal_validation_store,
+        None,
     )?;
     Ok(())
 }
@@ -5131,6 +5189,15 @@ fn preflight_authoritative_high_qc_retained_path_v0(
     proposal_journal: &PocoNodeLabProposalJournalConfigV0,
     pending_executions: &BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
 ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    // The selected high-QC audit opens K and then rejoins every retained P/K
+    // row.  Treat the whole preflight as one exclusive cooperating-owner
+    // window: opening K may initialize metadata, and a split read would allow
+    // a writer to move the application head between authenticated rows.
+    let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+        application.path(),
+        &proposal_journal.store_path,
+    )
+    .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     let safety = core.safety_state();
     if safety.pending_tc_high_qc_sync().is_some() || safety.pending_standalone_qc_sync().is_some() {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
@@ -5152,6 +5219,9 @@ fn preflight_authoritative_high_qc_retained_path_v0(
         ));
     }
     if high_qc.height() == applied.height() {
+        cross_store_lock
+            .validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         return Ok(());
     }
 
@@ -5241,9 +5311,13 @@ fn preflight_authoritative_high_qc_retained_path_v0(
             "TC selected high-QC path does not terminate at the unchanged application/store cut",
         ));
     }
+    cross_store_lock
+        .validate_identity_v0()
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     Ok(())
 }
 
+#[allow(clippy::too_many_arguments)]
 fn rebase_to_authoritative_high_qc_v0(
     core: &Core,
     application: &DurableNativeApplicationV0,
@@ -5252,7 +5326,24 @@ fn rebase_to_authoritative_high_qc_v0(
     application_head: &mut ApplicationHeadV0,
     application_overlay: &mut Option<trnm_consensus_core::BlockIdOverlayRefV0>,
     pending_executions: &mut BTreeMap<BlockId, PocoNodeLabRetainedExecutionV0>,
+    existing_cross_store_lock: Option<&CrossStoreLockGuardV0>,
 ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    // A finalization caller already owns the root fence for its P commit and
+    // must not recursively acquire the same advisory flock. Certificate
+    // callers pass `None`, so this rebase owns one lock for its complete
+    // paired read and in-memory projection update.
+    let owned_cross_store_lock = if existing_cross_store_lock.is_none() {
+        Some(
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+                application.path(),
+                &proposal_journal.store_path,
+            )
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?,
+        )
+    } else {
+        None
+    };
+    let cross_store_lock = existing_cross_store_lock.or(owned_cross_store_lock.as_ref());
     let safety = core.safety_state();
     if safety.pending_tc_high_qc_sync().is_some() || safety.pending_standalone_qc_sync().is_some() {
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
@@ -5280,6 +5371,7 @@ fn rebase_to_authoritative_high_qc_v0(
             application_head,
             pending_executions,
             None,
+            cross_store_lock,
         )?
     {
         if block_id != high_qc.block_id() || height != high_qc.height().get() {
@@ -5372,6 +5464,10 @@ fn rebase_to_authoritative_high_qc_v0(
     } else {
         *application_head = committed;
         *application_overlay = None;
+    }
+    if let Some(lock) = cross_store_lock {
+        lock.validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     }
     Ok(())
 }

@@ -41,10 +41,10 @@ use trnm_native_execution_v0::{
 };
 
 use crate::{
-    derive_signer_watermark_scope_v0, ExternalNodeCheckpointDecodeErrorV0,
-    ExternalNodeCheckpointFieldsV0, ExternalNodeCheckpointStoreErrorV0,
-    ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0, SqliteExternalNodeCheckpointStoreV0,
-    STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+    cross_store_lock::CrossStoreLockGuardV0, derive_signer_watermark_scope_v0,
+    ExternalNodeCheckpointDecodeErrorV0, ExternalNodeCheckpointFieldsV0,
+    ExternalNodeCheckpointStoreErrorV0, ExternalNodeCheckpointStoreV0, ExternalNodeCheckpointV0,
+    SqliteExternalNodeCheckpointStoreV0, STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
 };
 
 const NATIVE_H1_HOST_CONFIG_DOMAIN_V0: &[u8] =
@@ -272,6 +272,7 @@ pub enum PocoNodeNativeH1StateSyncCommissioningErrorV0 {
     Safety(SafetyStoreErrorV0),
     Signer(SignerJournalErrorV0),
     Application(NativeApplicationExecutionErrorV0),
+    CrossStoreLock(String),
     Checkpoint(ExternalNodeCheckpointStoreErrorV0),
     CheckpointRecord(ExternalNodeCheckpointDecodeErrorV0),
 }
@@ -298,6 +299,12 @@ impl fmt::Display for PocoNodeNativeH1StateSyncCommissioningErrorV0 {
                 formatter,
                 "native application rejected h1 commissioning: {error}"
             ),
+            Self::CrossStoreLock(error) => {
+                write!(
+                    formatter,
+                    "cross-store P/K lock rejected h1 commissioning: {error}"
+                )
+            }
             Self::Checkpoint(error) => write!(
                 formatter,
                 "whole-node checkpoint rejected h1 commissioning: {error}"
@@ -329,6 +336,13 @@ impl From<SignerJournalErrorV0> for PocoNodeNativeH1StateSyncCommissioningErrorV
 impl From<NativeApplicationExecutionErrorV0> for PocoNodeNativeH1StateSyncCommissioningErrorV0 {
     fn from(value: NativeApplicationExecutionErrorV0) -> Self {
         Self::Application(value)
+    }
+}
+impl From<crate::cross_store_lock::CrossStoreLockErrorV0>
+    for PocoNodeNativeH1StateSyncCommissioningErrorV0
+{
+    fn from(value: crate::cross_store_lock::CrossStoreLockErrorV0) -> Self {
+        Self::CrossStoreLock(value.to_string())
     }
 }
 impl From<ExternalNodeCheckpointStoreErrorV0> for PocoNodeNativeH1StateSyncCommissioningErrorV0 {
@@ -405,6 +419,13 @@ fn commission_native_h1_state_sync_v0<W: ExternalMonotonicWatermarkV0>(
         )?;
     drop(target_bootstrap);
 
+    // H1 installs P before the proposal-validation K namespace exists.  It is
+    // still a native authority write and must exclude a cooperating owner from
+    // replacing the common root during the bootstrap cut.  Once K exists,
+    // split P/K paths use `acquire_exclusive_for_paths_v0` at every mutation
+    // window instead.
+    let cross_store_lock =
+        CrossStoreLockGuardV0::acquire_exclusive_for_store_path_v0(application.path())?;
     let installed = application.install_h1_state_sync_trusted_base_v0(&request)?;
     let fresh_installed = application.confirm_h1_state_sync_trusted_base_exact_v0(&request)?;
     if fresh_installed.import_digest_v0() != installed.import_digest_v0() {
@@ -415,6 +436,7 @@ fn commission_native_h1_state_sync_v0<W: ExternalMonotonicWatermarkV0>(
         );
     }
     let installed = fresh_installed;
+    cross_store_lock.validate_identity_v0()?;
 
     let proof_id = candidate.proof_id_v0();
     let source_parent = candidate.source_authenticated_parent_v0();

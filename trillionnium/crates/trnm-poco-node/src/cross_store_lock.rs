@@ -125,6 +125,21 @@ impl CrossStoreLockGuardV0 {
         Self::acquire_exclusive_for_root_v0(&root)
     }
 
+    /// Acquire the exclusive authority lock for a bootstrap writer which has
+    /// only one store path so far.  Fresh P genesis/H1 installation happens
+    /// before the K namespace is materialized, but it must still exclude a
+    /// cooperating owner from replacing the common authority root.  The
+    /// canonical `namespace/filename` layout is checked by deriving the root
+    /// from the store's parent namespace; callers must not use this helper for
+    /// an already split P/K operation (use [`Self::acquire_exclusive_for_paths_v0`]
+    /// there so both paths are checked).
+    pub(crate) fn acquire_exclusive_for_store_path_v0(
+        store_path: &Path,
+    ) -> Result<Self, CrossStoreLockErrorV0> {
+        let root = authority_root_for_store_path_v0(store_path)?;
+        Self::acquire_exclusive_for_root_v0(&root)
+    }
+
     /// Acquire an exclusive lock for a writer whose caller already owns the
     /// canonical authority-root path.
     pub(crate) fn acquire_exclusive_for_root_v0(
@@ -261,6 +276,22 @@ pub(crate) fn common_authority_root_v0(
     Ok(root)
 }
 
+/// Resolve the authority root for one canonical `root/namespace/store` path.
+/// The root is intentionally not accepted from an untrusted basename: it is
+/// derived from the canonical namespace parent and the lock acquisition then
+/// applies the private-directory and descriptor/path identity fence.
+pub(crate) fn authority_root_for_store_path_v0(
+    store_path: &Path,
+) -> Result<PathBuf, CrossStoreLockErrorV0> {
+    let namespace = canonical_parent_v0(store_path, "store")?;
+    namespace
+        .parent()
+        .map(Path::to_path_buf)
+        .ok_or(CrossStoreLockErrorV0::InvalidPath(
+            "store namespace has no authority root",
+        ))
+}
+
 #[allow(dead_code)] // called by the lab-only paired-reader path resolver
 fn canonical_parent_v0(path: &Path, label: &'static str) -> Result<PathBuf, CrossStoreLockErrorV0> {
     let parent = path
@@ -343,5 +374,26 @@ mod tests {
             Err(CrossStoreLockErrorV0::Busy)
         ));
         drop((second_shared, shared));
+    }
+
+    #[test]
+    fn single_store_bootstrap_resolves_the_common_root() {
+        let (root, application, validation) = private_root();
+        let application_root = authority_root_for_store_path_v0(&application)
+            .expect("single application path resolves authority root");
+        assert_eq!(application_root, root.path());
+        let validation_root = authority_root_for_store_path_v0(&validation)
+            .expect("single validation path resolves authority root");
+        assert_eq!(validation_root, root.path());
+
+        let exclusive = CrossStoreLockGuardV0::acquire_exclusive_for_store_path_v0(&application)
+            .expect("single-store bootstrap lock");
+        assert!(matches!(
+            CrossStoreLockGuardV0::acquire_shared_for_paths_v0(&application, &validation),
+            Err(CrossStoreLockErrorV0::Busy)
+        ));
+        exclusive
+            .validate_identity_v0()
+            .expect("single-store bootstrap identity remains pinned");
     }
 }

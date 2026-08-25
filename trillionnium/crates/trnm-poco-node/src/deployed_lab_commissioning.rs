@@ -45,10 +45,11 @@ use trnm_native_application_sqlite::{
 use trnm_native_execution_v0::{DurableNativeApplicationV0, NativeApplicationConfigV0};
 
 use crate::{
-    derive_signer_watermark_scope_v0, PocoNodeLabOrdinaryProposalRuntimeV0,
-    PocoNodeLabProposalJournalConfigV0, PocoNodeNativeH1StateSyncCommissioningConfigV0,
-    PocoNodeNativeH1StateSyncPromotionSourceV0, SqliteExternalNodeCheckpointStoreV0,
-    SIGNER_JOURNAL_PROFILE_REF_V0, STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+    cross_store_lock::CrossStoreLockGuardV0, derive_signer_watermark_scope_v0,
+    PocoNodeLabOrdinaryProposalRuntimeV0, PocoNodeLabProposalJournalConfigV0,
+    PocoNodeNativeH1StateSyncCommissioningConfigV0, PocoNodeNativeH1StateSyncPromotionSourceV0,
+    SqliteExternalNodeCheckpointStoreV0, SIGNER_JOURNAL_PROFILE_REF_V0,
+    STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
 };
 
 pub const DEPLOYED_LAB_MAXIMUM_RECORD_BYTES_V0: usize = 64 * 1024 * 1024;
@@ -287,7 +288,22 @@ where
     let paths = prepare_paths_v0(authority_root.as_ref())?;
     let watermark = deploy_try!("watermark.open", open_watermark(&paths.watermark));
     let chain_facts = application_config.chain_genesis_facts_v0();
+    // Fresh P genesis is a bootstrap mutation before K has been opened.  Hold
+    // the root-bound fence for the complete P initialize/readback cut; the K
+    // open below takes a separate split-path fence after the source ceremony.
+    let application_lock = deploy_try!(
+        "application.cross_store_lock",
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+    );
     let application = initialize_native_application_v0(&paths.application, application_config)?;
+    deploy_try!(
+        "application.cross_store_lock_identity",
+        application_lock.validate_identity_v0()
+    );
+    drop(application_lock);
 
     let projection_profile = hash_v0(
         PROJECTION_PROFILE_DOMAIN_V0,
@@ -579,10 +595,22 @@ where
         "takeover.validation_owner",
         ProposalValidationOwnerIdV0::new(owner_bytes)
     );
+    let validation_lock = deploy_try!(
+        "takeover.validation_cross_store_lock",
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+    );
     let validation_store = deploy_try!(
         "takeover.validation_open",
         SqliteProposalValidationStoreV0::open(&paths.validation, validation_scope, 0)
     );
+    deploy_try!(
+        "takeover.validation_cross_store_lock_identity",
+        validation_lock.validate_identity_v0()
+    );
+    drop(validation_lock);
     let proposal_journal = deploy_try!(
         "takeover.proposal_journal",
         PocoNodeLabProposalJournalConfigV0::new(paths.validation, scope_bytes, owner_bytes, 6,)

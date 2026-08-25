@@ -489,12 +489,30 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         application: A,
         config: PocoNodeNativeProposalPHostConfigV0,
     ) -> Result<Self, PocoNodeNativeProposalPHostErrorV0<A::Error>> {
+        // Opening K is usually a reopen, but the validation store may create
+        // its schema/metadata on first access.  Deployed callers provide the
+        // canonical authority root; fence that open before the host starts
+        // accepting P/K mutation windows.  Isolated unit fixtures deliberately
+        // leave the root capability absent.
+        let cross_store_lock = config
+            .cross_store_root
+            .as_deref()
+            .map(CrossStoreLockGuardV0::acquire_exclusive_for_root_v0)
+            .transpose()
+            .map_err(|error| {
+                PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string())
+            })?;
         let store = SqliteProposalValidationStoreV0::open(
             &config.store_path,
             config.scope,
             config.minimum_durable_sequence,
         )
         .map_err(PocoNodeNativeProposalPHostErrorV0::Store)?;
+        if let Some(lock) = cross_store_lock {
+            lock.validate_identity_v0().map_err(|error| {
+                PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string())
+            })?;
+        }
         Ok(Self {
             application,
             store,

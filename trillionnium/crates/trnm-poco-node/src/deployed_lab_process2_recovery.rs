@@ -2832,6 +2832,17 @@ where
     )
     .map_err(|error| PocoNodeDeployedLabProcess2RecoveryErrorV0::from_debug("core.h3", error))?;
 
+    // Reopening K can initialize a missing schema/metadata row.  Keep the P
+    // and K opens under one exclusive root fence before any process-2 read or
+    // replay session is admitted; later cursor/session writers acquire their
+    // own longer-lived exclusive windows.
+    let store_open_lock = process2_try!(
+        "cross_store.open_lock",
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+    );
     let application = process2_try!(
         "application.open_existing",
         DurableNativeApplicationV0::open(&paths.application, application_config)
@@ -2859,6 +2870,11 @@ where
             MINIMUM_TAKEOVER_VALIDATION_SEQUENCE_V0,
         )
     );
+    process2_try!(
+        "cross_store.open_lock_identity",
+        store_open_lock.validate_identity_v0()
+    );
+    drop(store_open_lock);
     let terminal_audit = process2_try!(
         "validation.terminal_audit",
         validation_store.confirm_terminal_k_audit_v0()

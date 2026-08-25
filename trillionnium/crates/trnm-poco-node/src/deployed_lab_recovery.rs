@@ -607,10 +607,24 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabOrdinaryRecoveryOwnerV0
                 NativeRecoveryWatermarksV0::new(0, 0, 0),
             )
         );
+        // `recover` may reconcile prepared P rows.  Keep the mutation and its
+        // exact readback under the same root fence used by deployed writers.
+        let application_recovery_lock = recover_try!(
+            "replay.final_application_recovery_cross_store_lock",
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+                self._application.path(),
+                self._validation_store.path(),
+            )
+        );
         let application_recovery = recover_try!(
             "replay.final_application_recovery",
             self._application.recover(application_recovery_request)
         );
+        recover_try!(
+            "replay.final_application_recovery_cross_store_lock_identity",
+            application_recovery_lock.validate_identity_v0()
+        );
+        drop(application_recovery_lock);
         let application_commit_sequence = application_recovery.watermarks().application_commit();
         let signer = recover_try!(
             "replay.final_signer",
@@ -825,12 +839,24 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabRecoveryHostV0<W> {
                 NativeRecoveryWatermarksV0::new(0, 0, 0),
             )
         );
+        let application_recovery_lock = recover_try!(
+            "host.application_recovery_cross_store_lock",
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+                self.owner._application.path(),
+                self.owner._validation_store.path(),
+            )
+        );
         let application_recovery = recover_try!(
             "host.application_recovery_readback",
             self.owner
                 ._application
                 .recover(application_recovery_request)
         );
+        recover_try!(
+            "host.application_recovery_cross_store_lock_identity",
+            application_recovery_lock.validate_identity_v0()
+        );
+        drop(application_recovery_lock);
         if application_recovery.watermarks().application_commit()
             != self.owner.facts.application_commit_sequence
         {
@@ -1214,6 +1240,16 @@ where
         safety_store.confirm_node_checkpoint_head_exact_v0(safety)
     );
 
+    // `open` is normally a read-only reopen, but it can still initialize a
+    // missing K schema/metadata row.  Fence both store opens together so a
+    // cooperating P writer cannot race that recovery boundary.
+    let store_open_lock = recover_try!(
+        "cross_store.open_lock",
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+    );
     let application = recover_try!(
         "application.open_existing",
         DurableNativeApplicationV0::open(&paths.application, application_config)
@@ -1263,6 +1299,11 @@ where
             MINIMUM_TAKEOVER_VALIDATION_SEQUENCE_V0,
         )
     );
+    recover_try!(
+        "cross_store.open_lock_identity",
+        store_open_lock.validate_identity_v0()
+    );
+    drop(store_open_lock);
     if !matches!(
         recover_try!(
             "validation.replay_session_presence",
@@ -1407,10 +1448,26 @@ where
             NativeRecoveryWatermarksV0::new(0, 0, 0),
         )
     );
+    // Native recovery can reconcile/delete prepared P rows and therefore is
+    // a writer even when the requested head is already committed.  Fence the
+    // recovery/readback cut against K writers; the final paired audit below
+    // takes its own shared lock after this mutation window closes.
+    let application_recovery_lock = recover_try!(
+        "application.recovery_cross_store_lock",
+        CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+    );
     let application_recovery = recover_try!(
         "application.recovery_readback",
         application.recover(recovery_request)
     );
+    recover_try!(
+        "application.recovery_cross_store_lock_identity",
+        application_recovery_lock.validate_identity_v0()
+    );
+    drop(application_recovery_lock);
     let history_count = u64::try_from(history.len()).map_err(|_| {
         PocoNodeDeployedLabRecoveryErrorV0::message(
             "application.history_count",
