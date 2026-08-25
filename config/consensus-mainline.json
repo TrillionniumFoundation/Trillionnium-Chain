@@ -31,6 +31,7 @@
     {"id": "P1-CORE-001", "severity": "P1", "status": "open", "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"},
     {"id": "P1-EXEC-001", "severity": "P1", "status": "open", "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"},
     {"id": "P2-NODE-001", "severity": "P2", "status": "open", "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"},
+    {"id": "P2-TX-001", "severity": "P2", "status": "open", "exit": "canonical envelope builder -> node-owned pending nonce/WAL -> CheckTx-equivalent admission -> committed receipt/AppHash replay; CLI remains dev-only"},
     {"id": "P2-NET-001", "severity": "P2", "status": "open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
     {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
     {"id": "P2-STORE-001", "severity": "P2", "status": "open", "exit": "K/P audit is atomic under concurrent rewrite using a shared lock or final paired read with fd-bound identity where required"},

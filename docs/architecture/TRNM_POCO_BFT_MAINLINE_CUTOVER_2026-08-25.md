@@ -48,6 +48,10 @@ The native node remains a fail-closed scaffold:
   state sync, and deployable artifact are not complete;
 - current unit and candidate-fleet results are development evidence, not real
   4/7-node or public-testnet evidence;
+- a development-only `trnm-application-tx-builder-v0` now provides one
+  external-signer, byte-stable envelope construction surface. It does not yet
+  own nonce reservation, WAL replay, CheckTx-equivalent admission, or
+  broadcast; the CLI remains a development/template adapter;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
 

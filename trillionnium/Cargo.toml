@@ -50,6 +50,7 @@ members = [
   "crates/trnm-oracle",
   "crates/trnm-research-protocol",
   "crates/trnm-finality-types",
+  "crates/trnm-application-tx-builder-v0",
   "crates/trnm-finality-verifier",
   "crates/trnm-protocol",
   "crates/trnm-runtime",

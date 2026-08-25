@@ -25,11 +25,12 @@ require_file() {
 CONFIG="$ROOT/config/consensus-mainline.json"
 CARGO_MANIFEST="$ROOT/trillionnium/Cargo.toml"
 NODE_MANIFEST="$ROOT/trillionnium/crates/trnm-poco-node/Cargo.toml"
+TX_BUILDER_MANIFEST="$ROOT/trillionnium/crates/trnm-application-tx-builder-v0/Cargo.toml"
 MAINLINE_DOC="$ROOT/docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
 EXECUTION_BOARD="$ROOT/docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md"
 DUAL_TRACK_DOC="$ROOT/docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
 
-for required in "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$MAINLINE_DOC" \
+for required in "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$TX_BUILDER_MANIFEST" "$MAINLINE_DOC" \
   "$EXECUTION_BOARD" "$DUAL_TRACK_DOC"; do
   require_file "$required"
 done
@@ -43,14 +44,14 @@ if ! CARGO_NET_OFFLINE=true cargo metadata \
   fail "cargo metadata --locked --offline failed"
 fi
 
-python3 - "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$metadata_file" \
+python3 - "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$TX_BUILDER_MANIFEST" "$metadata_file" \
   "$MAINLINE_DOC" "$EXECUTION_BOARD" "$DUAL_TRACK_DOC" "$MODE" <<'PY'
 import json
 import pathlib
 import sys
 import tomllib
 
-config_path, cargo_path, node_path, metadata_path, decision_path, board_path, dual_path, mode = map(pathlib.Path, sys.argv[1:])
+config_path, cargo_path, node_path, tx_builder_path, metadata_path, decision_path, board_path, dual_path, mode = map(pathlib.Path, sys.argv[1:])
 
 def fail(message: str) -> None:
     raise SystemExit(message)
@@ -103,11 +104,27 @@ for key, expected in {
     if node_meta.get(key) != expected:
         fail(f"node metadata {key}={node_meta.get(key)!r}, expected {expected!r}")
 
+tx_builder = tomllib.loads(tx_builder_path.read_text(encoding="utf-8"))
+tx_builder_meta = tx_builder.get("package", {}).get("metadata", {}).get("trnm", {})
+for key, expected in {
+    "development_only": True,
+    "production_candidate": False,
+    "signing_runtime": False,
+    "signing_or_broadcast": False,
+    "broadcast": False,
+    "pending_nonce_authority": False,
+    "external_signer_only": True,
+}.items():
+    if tx_builder_meta.get(key) != expected:
+        fail(f"tx-builder metadata {key}={tx_builder_meta.get(key)!r}, expected {expected!r}")
+
 metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
 packages = {package["name"] for package in metadata.get("packages", [])}
 for forbidden in ("trnm-consensus-app", "trnm-node"):
     if forbidden in packages:
         fail(f"legacy package is in the active workspace graph: {forbidden}")
+if "trnm-application-tx-builder-v0" not in packages:
+    fail("canonical tx-builder candidate is missing from the active workspace graph")
 
 decision = decision_path.read_text(encoding="utf-8")
 board = board_path.read_text(encoding="utf-8")

@@ -1399,6 +1399,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-application-tx-builder-v0"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "hex",
+ "serde_json",
+ "sha2",
+ "trnm-finality-types",
+ "trnm-protocol",
+]
+
+[[package]]
 name = "trnm-bench"
 version = "0.1.0"
 dependencies = [

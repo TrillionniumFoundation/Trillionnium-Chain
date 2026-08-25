@@ -31,11 +31,20 @@ downstream gate inherits completion from an incomplete predecessor.
   reports missing signer, SafetyRules, application, finalization, P2P and state
   sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
   not a live-node or production-consensus pass.
-- The formal Quint gate and pinned `protoc` gate are red on this host until
-  their lock-pinned toolchains are installed and reproduced in CI.
-- The native execution boundary gate has metadata/schema drift (new crash/WAL
-  fields are not accepted by the current schema). This is a P0 truth blocker,
-  not permission to weaken the gate.
+- The lock-pinned Quint and `protoc` toolchains are now installed and have
+  passed their local type/protobuf gates; a final clean formal run and CI
+  reproduction remain required for the P0 exit.
+- The native execution crash/WAL metadata boundary drift was closed in
+  `06f1733e6`; the gate remains fail-closed and still does not imply automatic
+  WAL/SHM recovery.
+- CEV0 admission now has root-byte, signature-work and validator-set TC-share
+  budgets, with explicit limits clamped to intrinsic hard caps (`5b28425df`,
+  `cd7602693`). The normative wire/conformance review and independent second
+  implementation are still open.
+- A development-only canonical application tx-builder candidate now emits
+  exact inner/outer bytes and uses an external signer boundary. It deliberately
+  does not reserve nonces, write WAL, query a node or broadcast; native-node
+  integration remains a G2 blocker.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
@@ -70,6 +79,8 @@ downstream gate inherits completion from an incomplete predecessor.
   decoder/allocation bounds, and same-/cross-epoch light-client schemas.
 - Add CPU, byte, signer-count, and admission budgets for large TC/CEV0 inputs;
   a 10,000-share certificate cannot cause unbounded verification work.
+- Keep the CEV0 budgeted decoder on every active wire/collector ingress and
+  freeze the resulting limits in the normative vector/independent replay set.
 - Obtain an independent consensus-engineer review and a second implementation
   that reproduces every normative vector and retained mutant.
 - Do not set `wire_conformance=true` or enable network signing before this exit.
@@ -91,8 +102,11 @@ downstream gate inherits completion from an incomplete predecessor.
 - Replace the fail-closed startup scaffold with a private production constructor
   that owns Core, SafetyStore, signer journal, native application, overlay,
   mempool, pacemaker and effect driver.
-- Implement canonical transaction builder and Ed25519 signer; reserve pending
-  nonces, bound mempool/block gas/TTL, and replay the exact intent after restart.
+- Integrate the development-only canonical transaction-builder candidate with
+  the node-owned external signer, pending-nonce reservation, epoch resource
+  policy, and durable replay. The exit path is exact inner/outer envelope bytes
+  -> reservation -> CheckTx-equivalent admission -> commit receipt/AppHash
+  replay; the builder alone is not this gate.
 - Execute `ingress -> proposal -> validate -> Safety persist -> sign -> QC/TC ->
   ordered finalize -> JMT/App commit -> acknowledgement` with one source of
   truth for block, receipt and state roots.
@@ -182,18 +196,23 @@ downstream gate inherits completion from an incomplete predecessor.
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
    closed; current bounded facts cannot reconstruct every post-crash input.
-4. Genesis application parent/root is still operator/config pinned; migration
-   provenance and imported root must be committed into GenesisQC/ceremony.
+4. The additive authenticated-genesis ceremony now rejects foreign application
+   commitments, but the GenesisQC wire/hash itself still does not carry a
+   cross-peer application-root commitment. Migration provenance and imported
+   root must be committed into a versioned GenesisQC/ceremony before G1/C0.
 
 ### P2 — real-node blockers
 
 1. `trnm-poco-node` default startup intentionally fails; effect driver, Vote
    signing, application adapter and process integration are absent.
-2. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
+2. The canonical tx-builder candidate is not yet connected to a node-owned
+   CheckTx-equivalent ingress, pending-nonce WAL/replay, or production signer;
+   CLI transfer/receipt paths remain development-only shell/template adapters.
+3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.
-3. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
+4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
    clock-skew or long-soak evidence; current G3 ledger remains false.
-4. K/P dual-store audit still has a non-atomic TOCTOU boundary under concurrent
+5. K/P dual-store audit still has a non-atomic TOCTOU boundary under concurrent
    P-only rewrite; close with a shared lock or final paired read.
 
 ### P3/P4 — promotion and economics blockers
