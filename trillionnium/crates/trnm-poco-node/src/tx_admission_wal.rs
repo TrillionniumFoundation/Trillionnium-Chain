@@ -532,7 +532,8 @@ impl SqlitePendingNonceAuthorityV0 {
                 |row| row.get(0),
             )
             .map_err(sqlite_error)?;
-        if row_count < 0 || row_count as usize > MAX_RESERVATION_ROWS_V0 {
+        let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+        if row_count > MAX_RESERVATION_ROWS_V0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
         ensure_identity_v0(&path, path_identity)?;
@@ -622,7 +623,8 @@ impl SqlitePendingNonceAuthorityV0 {
                 |row| row.get(0),
             )
             .map_err(sqlite_error)?;
-        if row_count < 0 || row_count as usize >= MAX_RESERVATION_ROWS_V0 {
+        let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+        if row_count >= MAX_RESERVATION_ROWS_V0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
         let nonce_blob = to_blob_u64(expected.nonce);
