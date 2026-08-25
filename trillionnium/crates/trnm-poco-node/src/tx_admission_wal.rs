@@ -75,6 +75,12 @@ pub const TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0: bool = false;
 /// It is not yet wired to the authoritative block clock in a production node.
 pub const TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0: bool = false;
+/// An explicit, authenticated restart-recovery seam exists for durable
+/// `HandedOff` rows.  It only accepts exact metadata plus a receipt token
+/// minted by [`NativeCommitReceiptEvidenceV0::verify_with`]; it is not a
+/// production activation or an automatic ambiguity resolver.
+pub const TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_V0: bool = true;
+pub const TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_PRODUCTION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_SIGNING_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_BROADCAST_V0: bool = false;
 /// A typed application/finality readback boundary exists behind the candidate
@@ -1070,6 +1076,39 @@ impl SqlitePendingNonceAuthorityV0 {
         path: impl AsRef<Path>,
         namespace: [u8; 32],
     ) -> Result<Self, TxAdmissionWalErrorV0> {
+        Self::open_with_handoff_policy(path, namespace, false)
+    }
+
+    /// Resolve one durable `HandedOff` row after a process restart.
+    ///
+    /// Ordinary [`Self::open`] intentionally refuses to start when a handoff
+    /// is unresolved.  This explicit recovery entry point temporarily opens
+    /// the same sidecar-locked authority, checks the exact authenticated
+    /// metadata against the durable row, and persists the already verified
+    /// application/finality receipt and `Committed` transition in one SQLite
+    /// transaction.  It never guesses, deletes, or rewrites a row, and it
+    /// cannot be used with an unverified receipt token.
+    ///
+    /// The caller must obtain `metadata` from the authenticated transaction
+    /// owner (for example a durable signed-envelope journal) and must run
+    /// [`NativeCommitReceiptEvidenceV0::verify_with`] against that metadata
+    /// before calling this method.  A mismatched metadata/receipt pair leaves
+    /// the ambiguity intact and ordinary startup remains fail-closed.
+    pub fn recover_handed_off_with_receipt(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        metadata: &SignedEnvelopeMetadata,
+        receipt: &VerifiedNativeCommitReceiptV0,
+    ) -> Result<(), TxAdmissionWalErrorV0> {
+        let mut authority = Self::open_with_handoff_policy(path, namespace, true)?;
+        authority.commit_handed_off_with_receipt(metadata, receipt)
+    }
+
+    fn open_with_handoff_policy(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        allow_handed_off: bool,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
         if namespace == [0; 32] {
             return Err(TxAdmissionWalErrorV0::InvalidNamespace);
         }
@@ -1178,7 +1217,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 |row| row.get(0),
             )
             .map_err(sqlite_error)?;
-        if handed_off != 0 {
+        if handed_off != 0 && !allow_handed_off {
             return Err(TxAdmissionWalErrorV0::AmbiguousHandoff);
         }
         let row_count: i64 = connection
@@ -1971,6 +2010,117 @@ mod tests {
             SqlitePendingNonceAuthorityV0::open(&path, [0x66; 32]).unwrap_err(),
             TxAdmissionWalErrorV0::AmbiguousHandoff
         );
+        cleanup(&path);
+    }
+
+    #[test]
+    fn authenticated_restart_recovery_resolves_only_the_exact_handed_off_row() {
+        let path = temp_path();
+        let namespace = [0x67; 32];
+        let envelope = fixture();
+
+        // Obtain the exact key-free metadata from the admission owner, then
+        // emulate a process crash by converting the released row back to the
+        // durable HandedOff state after all live SQLite/sidecar handles close.
+        let metadata = {
+            let mut authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+            let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+            let mut hooks = Hooks;
+            assert_eq!(
+                gate.admit_signed_with_pending_nonce(
+                    &envelope,
+                    IngressClass::Normal,
+                    &mut hooks,
+                    &mut authority,
+                ),
+                TypedAdmitOutcome::Accepted
+            );
+            let ready = gate.pop_ready_with_lifecycle().unwrap();
+            let metadata = ready.metadata().clone();
+            drop(ready);
+            drop(gate);
+            drop(authority);
+            metadata
+        };
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    STATE_HANDED_OFF_V0,
+                    namespace.as_slice(),
+                    metadata.signer_id().as_bytes().as_slice(),
+                    to_blob_u64(metadata.nonce()).as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::AmbiguousHandoff
+        );
+
+        let evidence = commit_evidence_for(&envelope);
+        let verified = evidence
+            .verify_with(&metadata, &AcceptingCommitVerifier)
+            .unwrap();
+
+        // A verified receipt paired with metadata from another reservation is
+        // rejected before any state transition; the ambiguity remains.
+        let foreign_path = temp_path();
+        let foreign_metadata = {
+            let foreign_envelope = FixtureEnvelope {
+                digest: CanonicalTxDigest::from_bytes([0x12; 32]).unwrap(),
+                signer: CanonicalSignerId::from_bytes([0x23; 32]).unwrap(),
+                body: b"foreign-body".to_vec(),
+                nonce: 8,
+            };
+            let mut foreign_authority =
+                SqlitePendingNonceAuthorityV0::open(&foreign_path, namespace).unwrap();
+            let mut foreign_gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+            let mut foreign_hooks = Hooks;
+            assert_eq!(
+                foreign_gate.admit_signed_with_pending_nonce(
+                    &foreign_envelope,
+                    IngressClass::Normal,
+                    &mut foreign_hooks,
+                    &mut foreign_authority,
+                ),
+                TypedAdmitOutcome::Accepted
+            );
+            let foreign_ready = foreign_gate.pop_ready_with_lifecycle().unwrap();
+            let metadata = foreign_ready.metadata().clone();
+            drop(foreign_ready);
+            drop(foreign_gate);
+            drop(foreign_authority);
+            metadata
+        };
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::recover_handed_off_with_receipt(
+                &path,
+                namespace,
+                &foreign_metadata,
+                &verified,
+            )
+            .unwrap_err(),
+            TxAdmissionWalErrorV0::CommitReceiptMismatch
+        );
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::AmbiguousHandoff
+        );
+
+        assert!(
+            SqlitePendingNonceAuthorityV0::recover_handed_off_with_receipt(
+                &path, namespace, &metadata, &verified,
+            )
+            .is_ok()
+        );
+        assert!(SqlitePendingNonceAuthorityV0::open(&path, namespace).is_ok());
+
+        cleanup(&foreign_path);
         cleanup(&path);
     }
 
