@@ -66,16 +66,15 @@ pub const MAX_CEV0_ROOT_BYTES_V0: usize = 8 * 1024 * 1024;
 
 /// Intrinsic upper envelope of signature-verification work for one currently
 /// composed v0 consensus statement. This is a structural reference only; an
-/// authenticated transport budget should normally be lower.
+/// authenticated transport profile may choose a narrower budget.
 pub const MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0: usize =
     3 * (MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES + (MAX_CEV0_CERTIFICATE_ITEMS * 3) + 1);
 
-/// Default authenticated TC share ceiling. It leaves one list slot below the
-/// intrinsic 100x100 nested-QC product; callers that have an explicitly
-/// authenticated reason to use the intrinsic allowance can opt in via
-/// [`Cev0AdmissionBudgetV0::with_limits`].
+/// Default authenticated TC share ceiling. It matches the frozen 100x100
+/// nested-QC product; callers with a narrower authenticated transport profile
+/// can opt into a lower allowance via [`Cev0AdmissionBudgetV0::with_limits`].
 pub const MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0: usize =
-    MAX_CEV0_CERTIFICATE_ITEMS * (MAX_CEV0_CERTIFICATE_ITEMS - 1);
+    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES;
 
 /// Default authenticated work envelope derived from the default TC ceiling.
 pub const MAX_CEV0_SIGNATURE_WORK_UNITS_V0: usize =
@@ -6819,9 +6818,9 @@ mod tests {
             timeout
         );
 
-        // The authenticated context budget must preserve the frozen 10,000-
-        // share boundary. A previous N*(N-1) derivation rejected this valid
-        // certificate at 9,900 shares before any signature verification.
+        // Both the context-derived and default budgets must preserve the
+        // frozen 10,000-share boundary. A previous N*(N-1) derivation rejected
+        // this valid certificate at 9,900 shares before signature work.
         let mut bound_budget = Cev0AdmissionBudgetV0::for_validator_set(&parameters, &set);
         assert_eq!(
             bound_budget.maximum_tc_aggregate_signature_shares(),
@@ -6832,6 +6831,20 @@ mod tests {
                 &bytes,
                 &set,
                 &mut bound_budget,
+            )
+            .unwrap(),
+            timeout
+        );
+        let mut default_budget = Cev0AdmissionBudgetV0::protocol_v0();
+        assert_eq!(
+            default_budget.maximum_tc_aggregate_signature_shares(),
+            MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        );
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact_with_budget(
+                &bytes,
+                &set,
+                &mut default_budget,
             )
             .unwrap(),
             timeout
@@ -7232,12 +7245,16 @@ mod tests {
     }
 
     #[test]
-    fn admission_budget_keeps_authenticated_tc_ceiling_below_intrinsic_cap() {
+    fn admission_budget_default_tc_ceiling_matches_intrinsic_cap() {
         let budget = Cev0AdmissionBudgetV0::protocol_v0();
-        assert!(
-            budget.maximum_tc_aggregate_signature_shares() < MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        assert_eq!(
+            budget.maximum_tc_aggregate_signature_shares(),
+            MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
         );
-        assert!(budget.maximum_signature_work() < MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0);
+        assert_eq!(
+            budget.maximum_signature_work(),
+            MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0
+        );
 
         let set = sample_set();
         let tc = sample_tc(&set);
