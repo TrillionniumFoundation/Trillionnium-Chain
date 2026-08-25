@@ -46,11 +46,14 @@ downstream gate inherits completion from an incomplete predecessor.
   exact typed `trnm-mempool` view. The view passes the builder's immutable body,
   digest, signer identity, nonce and resource claims into the pending-nonce
   admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
-  (`5891e9c8f`, hardened by `5c736d998`, `541110990`, `d6d67f929`, and
-  `e48376dfa`) now provides a node-owned SQLite WAL/FULL pending-nonce
+  (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`, and
+  `fecca250b`)
+  now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
-  retained-row bounds, exact restart retry for `Reserved`, and fail-closed
-  `HandedOff` ambiguity.
+  retained-row bounds, a typed builder-to-boundary API, exact restart retry for
+  `Reserved`, and fail-closed `HandedOff` ambiguity. Insert failures now
+  distinguish constraint replay from disk/IO/busy errors while remaining
+  fail-closed.
   It is not compiled by the default node and does not yet provide
   CheckTx-equivalent ingress, a production signer, commit receipt/AppHash
   binding, broadcast, handoff readback resolution, or tombstone GC; native
@@ -270,8 +273,9 @@ downstream gate inherits completion from an incomplete predecessor.
    signing, application adapter and process integration are absent.
 2. The canonical tx-builder candidate now reaches the typed mempool admission
    boundary, and a feature-gated candidate node-owned SQLite pending-nonce WAL
-   (`tx-admission-wal`, `5891e9c8f`, hardened through `e48376dfa`) covers
-   durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests and a
+   (`tx-admission-wal`, `5891e9c8f`, hardened through `fecca250b`) covers
+   durable `Reserved`/`HandedOff`/`Committed`/`Released` lifecycle tests, a
+   typed builder-to-boundary API, and a
    bounded retained-row admission cap. It is not a
    production path: the default node does not compile or activate it, and
    CheckTx-equivalent ingress, production signing, commit receipt/AppHash
@@ -285,7 +289,10 @@ downstream gate inherits completion from an incomplete predecessor.
 5. K/P dual-store audit now re-reads the complete paired K/P inventory at the
    return boundary and fails closed on observed drift. It still has a
    non-atomic window under a rewrite after that read; close with one shared
-   cross-store lock and fd-bound identity where required.
+   cross-store lock and fd-bound identity where required. The candidate WAL
+   also still needs to fence the sidecar lock inode itself against
+   same-user rename/recreate, so two local owners cannot appear with separate
+   in-memory capacity accounting.
 
 ### Immediate execution queue (next dependency-ordered slices)
 

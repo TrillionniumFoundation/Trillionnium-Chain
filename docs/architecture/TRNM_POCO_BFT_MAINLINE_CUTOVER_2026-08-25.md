@@ -51,7 +51,8 @@ The native node remains a fail-closed scaffold:
 - a development-only `trnm-application-tx-builder-v0` now provides one
   external-signer, byte-stable envelope construction surface. It does not yet
   provide a production signing or broadcast path. A separate, feature-gated
-  `trnm-poco-node` `tx-admission-wal` candidate now owns a durable pending-nonce
+  `trnm-poco-node` `tx-admission-wal` candidate (including the typed
+  NodeOwnedTxAdmissionBoundaryV0 wrapper) now owns a durable pending-nonce
   reservation lifecycle with bounded retained rows, but it is not compiled by
   the default node and does not yet provide CheckTx-equivalent ingress, commit
   receipt/AppHash binding, or ambiguous-handoff readback; the CLI remains a
