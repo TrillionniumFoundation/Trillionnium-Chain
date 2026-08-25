@@ -92,9 +92,11 @@ pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;
 pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0};
 pub use genesis_application::{
-    GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0,
-    GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
+    GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0, PocoGenesisQcBindingV1,
+    PocoGenesisV1, GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
     GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0, GENESIS_QC_APPLICATION_BINDING_DOMAIN_V0,
+    POCO_GENESIS_COMMITMENT_DOMAIN_V1, POCO_GENESIS_QC_BINDING_DOMAIN_V1,
+    POCO_GENESIS_SCHEMA_VERSION_V1,
 };
 pub use handoff::{
     EpochAnchorAuthorizationV0, HandoffCertificateV0, HandoffDescriptorV0,

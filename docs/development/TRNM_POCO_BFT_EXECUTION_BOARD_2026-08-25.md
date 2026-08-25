@@ -145,9 +145,19 @@ downstream gate inherits completion from an incomplete predecessor.
 - Implement the read-only `CometStateExportV1` manifest at finalized height H.
 - Implement deterministic `PoCOGenesisV1` import with a fresh chain ID/data
   directory and synthetic GenesisQC/validator set.
+- A typed `PocoGenesisV1` ceremony descriptor now exists in
+  `trnm-consensus-types`. It binds source chain/application/store identity,
+  finalized source height/block, legacy AppHash attestation, export and
+  mapping/profile digests, fresh target chain/genesis, independently computed
+  native root, target validator-set digest and protocol version. Its
+  `PocoGenesisQcBindingV1` is content-addressed while preserving the frozen
+  GenesisQC v0 wire bytes.
 - Include source AppHash only as `legacy_app_hash_attestation`; bind export,
   mapping/profile, new root and source identity into the signed genesis
   descriptor. Never import Comet WAL/blockstore/validator signing state.
+- This is a typed commitment slice, not an import implementation or a
+  cross-peer GenesisQC activation. `MIG-ROOT-001` remains open until two clean
+  export/import rehearsals reproduce the descriptor and native root.
 
 ### MIG-008/009 — production network and signer ladder (G2/G3)
 

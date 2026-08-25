@@ -79,6 +79,10 @@ native migration contract is implemented:
    height/block ID, validator-set digest, protocol version, and genesis
    descriptor into the PoCO genesis ceremony / GenesisQC. An operator-local
    root or configuration value is insufficient.
+   The current code carries this as the additive `PocoGenesisV1` /
+   `PocoGenesisQcBindingV1` commitment; it deliberately leaves the frozen
+   GenesisQC v0 wire/hash unchanged until the cross-peer v1 ceremony and
+   import rehearsal are independently reviewed.
 6. Generate fresh PoCO SafetyState, signer journal, external watermark, node
    WAL, chain ID, network magic, and validator key IDs. Old validator signing
    state is not trusted or imported.

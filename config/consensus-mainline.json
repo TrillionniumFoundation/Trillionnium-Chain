@@ -21,7 +21,15 @@
     "old_validator_state_import": false,
     "legacy_app_hash_is_poco_state_root": false,
     "legacy_app_hash_role": "signed-provenance-attestation-only",
-    "post_finality_downgrade_to_comet": false
+    "post_finality_downgrade_to_comet": false,
+    "poco_genesis_descriptor_v1": {
+      "typed_commitment": true,
+      "source_identity_bound": true,
+      "export_mapping_root_fields_bound": true,
+      "frozen_genesis_qc_wire_unchanged": true,
+      "cross_peer_genesis_qc_activation": false,
+      "import_rehearsal": false
+    }
   },
   "blockers": [
     {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},
@@ -35,7 +43,7 @@
     {"id": "P2-NET-001", "severity": "P2", "status": "open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
     {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
     {"id": "P2-STORE-001", "severity": "P2", "status": "open", "evidence": "final paired K/P readback is landed and fails closed on observed digest/head drift", "exit": "K/P audit is atomic under concurrent rewrite using one shared cross-store lock plus fd-bound identity where required; final paired readback alone is insufficient"},
-    {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "exit": "export/import binds source manifest, mapping digest, new JMT root, and GenesisQC/ceremony"},
+    {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "evidence": "PocoGenesisV1 now canonically binds source chain/app/store identity, finalized source height/block, legacy AppHash attestation, export/mapping digests, fresh target chain/genesis, native root and validator-set digest; GenesisQC v0 wire remains unchanged", "exit": "export/import binds source manifest, mapping digest, new JMT root, and GenesisQC/ceremony across peers with signed rehearsal"},
     {"id": "P3-HISTORY-001", "severity": "P3", "status": "open", "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"},
     {"id": "MIG-CLEAN-001", "severity": "P3", "status": "blocked-by-cutover", "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"}
   ],
