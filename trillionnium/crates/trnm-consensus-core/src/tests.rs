@@ -1474,9 +1474,8 @@ fn authenticated_genesis_application_strict_prepare_binds_genesis_qc_v0() {
         raw_bytes
     );
     assert_eq!(genesis.id(), raw_id);
-    assert_eq!(
-        config.consensus_parameters().production_activation(),
-        false,
+    assert!(
+        !config.consensus_parameters().production_activation(),
         "strict commissioning remains outside production activation"
     );
 }
