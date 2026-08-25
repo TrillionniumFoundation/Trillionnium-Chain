@@ -345,7 +345,7 @@ pub fn decode_vote_with_context(
     validator_set: &ValidatorSet,
     consensus_parameters: &ConsensusParametersV0,
 ) -> Result<Vote, ConsensusWireError> {
-    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
     decode_vote_with_budget(bytes, validator_set, &mut budget)
 }
 
@@ -420,7 +420,7 @@ pub fn decode_timeout_vote_with_context(
     validator_set: &ValidatorSet,
     consensus_parameters: &ConsensusParametersV0,
 ) -> Result<TimeoutVote, ConsensusWireError> {
-    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
     decode_timeout_vote_with_budget(bytes, validator_set, &mut budget)
 }
 
@@ -490,7 +490,7 @@ pub fn decode_quorum_certificate_with_context(
     validator_set: &ValidatorSet,
     consensus_parameters: &ConsensusParametersV0,
 ) -> Result<QuorumCertificate, ConsensusWireError> {
-    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
     decode_quorum_certificate_with_budget(bytes, validator_set, &mut budget)
 }
 
@@ -542,8 +542,28 @@ pub fn decode_timeout_certificate_with_context(
     validator_set: &ValidatorSet,
     consensus_parameters: &ConsensusParametersV0,
 ) -> Result<TimeoutCertificateV0, ConsensusWireError> {
-    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
     decode_timeout_certificate_with_budget(bytes, validator_set, &mut budget)
+}
+
+/// Binds a caller-supplied parameter preimage to the validator-set context
+/// before deriving any resource ceiling.  A parameter profile that is not the
+/// one committed by the set is not an authenticated admission context: using
+/// it here would allow a caller to widen the configured byte ceiling (or
+/// otherwise derive a budget for the wrong epoch/set).
+pub(crate) fn admission_budget_for_context(
+    consensus_parameters: &ConsensusParametersV0,
+    validator_set: &ValidatorSet,
+) -> Result<Cev0AdmissionBudgetV0, ConsensusWireError> {
+    if consensus_parameters.hash() != validator_set.consensus_parameters_hash() {
+        return Err(ConsensusWireError::Malformed(
+            "consensus parameters differ from validator-set context",
+        ));
+    }
+    Ok(Cev0AdmissionBudgetV0::for_validator_set(
+        consensus_parameters,
+        validator_set,
+    ))
 }
 
 /// Crate-private intrinsic-ceiling helper for pinned local replay only.
@@ -873,20 +893,50 @@ mod tests {
     }
 
     #[test]
-    fn public_context_decode_uses_authenticated_parameter_byte_ceiling() {
+    fn public_context_decode_rejects_unbound_parameter_profile() {
         let (keys, set) = fixture();
         let vote = signed_vote(&keys, &set, 0, 1, 1, BlockId::new([0x37; 32]));
         let bytes = encode_vote(&vote);
-        // Keep the validator-set shape valid while deliberately supplying a
-        // tiny authenticated message profile. The public context API must
-        // reject before exact decoding; the crate-private local replay helper
-        // is intentionally the only path that retains the intrinsic default.
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = 1;
+        fields.max_consensus_message_bytes = 1;
+        let unbound = ConsensusParametersV0::new(fields).unwrap();
+        assert!(matches!(
+            decode_vote_with_context(&bytes, &set, &unbound),
+            Err(ConsensusWireError::Malformed(
+                "consensus parameters differ from validator-set context"
+            ))
+        ));
+    }
+
+    #[test]
+    fn public_context_decode_uses_authenticated_parameter_byte_ceiling() {
+        let (keys, reference_set) = fixture();
         let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
         fields.max_block_bytes = 1;
         fields.max_consensus_message_bytes = 1;
         let constrained = ConsensusParametersV0::new(fields).unwrap();
-        assert!(decode_vote_with_context(&bytes, &set, &constrained).is_err());
-        assert_eq!(decode_vote_trusted_local_v0(&bytes, &set).unwrap(), vote);
+        let constrained_set = ValidatorSet::new(
+            reference_set.genesis_hash(),
+            reference_set.chain_id(),
+            reference_set.protocol_version(),
+            reference_set.epoch(),
+            constrained.hash(),
+            reference_set.validators().to_vec(),
+        )
+        .unwrap();
+        let vote = signed_vote(&keys, &constrained_set, 0, 1, 1, BlockId::new([0x38; 32]));
+        let bytes = encode_vote(&vote);
+        // The profile is genuinely bound to the active set, so rejection is
+        // specifically the derived one-byte ceiling, before exact decoding.
+        assert!(matches!(
+            decode_vote_with_context(&bytes, &constrained_set, &constrained),
+            Err(ConsensusWireError::Invalid(_))
+        ));
+        assert_eq!(
+            decode_vote_trusted_local_v0(&bytes, &constrained_set).unwrap(),
+            vote
+        );
     }
 
     #[test]

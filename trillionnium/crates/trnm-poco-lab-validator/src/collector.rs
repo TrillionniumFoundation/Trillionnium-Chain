@@ -13,17 +13,17 @@ use std::{
 
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
-    BlockId, CertificateId, Cev0AdmissionBudgetV0, ConsensusParametersV0, ContextAuthorizedQcV0,
-    Height, QcRef, QcReferenceV0, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0,
-    TimeoutVote, ValidatorId, ValidatorSet, View, Vote,
+    BlockId, CertificateId, ConsensusParametersV0, ContextAuthorizedQcV0, Height, QcRef,
+    QcReferenceV0, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
+    ValidatorId, ValidatorSet, View, Vote,
 };
 
 use crate::{
     frame::{AuthenticatedFrame, FrameKind},
     wire::{
-        decode_quorum_certificate_with_budget, decode_timeout_certificate_with_budget,
-        decode_timeout_vote_with_budget, decode_vote_with_budget, ConsensusWireError,
-        UnboundProposalV0,
+        admission_budget_for_context, decode_quorum_certificate_with_budget,
+        decode_timeout_certificate_with_budget, decode_timeout_vote_with_budget,
+        decode_vote_with_budget, ConsensusWireError, UnboundProposalV0,
     },
 };
 
@@ -117,7 +117,7 @@ pub fn decode_authenticated_consensus_frame_v0(
     // One shared meter covers the complete logical statement.  The strict
     // verifier is reached only after the selected decoder has charged its
     // root bytes and signature work.
-    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(consensus_parameters, validator_set);
+    let mut budget = admission_budget_for_context(consensus_parameters, validator_set)?;
     match frame.kind {
         FrameKind::Proposal => {
             let proposal = UnboundProposalV0::decode_with_budget(
@@ -592,6 +592,30 @@ mod tests {
                 Err(ConsensusIngressErrorV0::UnsupportedFrameKind)
             ));
         }
+    }
+
+    #[test]
+    fn authenticated_ingress_rejects_unbound_parameter_profile() {
+        let (_, set) = fixture();
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = 1;
+        fields.max_consensus_message_bytes = 1;
+        let unbound = ConsensusParametersV0::new(fields).unwrap();
+        let frame = AuthenticatedFrame {
+            sender: set.validators()[0].id(),
+            session: [0x56; 32],
+            sequence: 0,
+            kind: FrameKind::Vote,
+            payload: Vec::new(),
+        };
+        assert!(matches!(
+            decode_authenticated_consensus_frame_v0(&frame, &set, &unbound),
+            Err(ConsensusIngressErrorV0::Wire(
+                ConsensusWireError::Malformed(
+                    "consensus parameters differ from validator-set context"
+                )
+            ))
+        ));
     }
 
     fn vote(
