@@ -86,24 +86,43 @@ pub struct Cev0AdmissionBudgetV0 {
 impl Cev0AdmissionBudgetV0 {
     /// Builds an explicit budget.  A zero limit is valid and intentionally
     /// rejects every non-empty root/work charge; this is useful for fail-closed
-    /// caller configuration and boundary tests.
+    /// caller configuration and boundary tests. Explicit maxima are still
+    /// clamped to the intrinsic CEV0 hard caps.
     pub const fn new(maximum_root_bytes: usize, maximum_signature_work: usize) -> Self {
-        Self {
+        Self::with_limits(
             maximum_root_bytes,
             maximum_signature_work,
-            maximum_tc_aggregate_signature_shares: MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0,
-            signature_work: 0,
-        }
+            MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0,
+        )
     }
 
     /// Builds a budget with an explicit nested-TC share ceiling. The caller
     /// may set it to the intrinsic 10,000-share decoder cap, but that choice
-    /// must be deliberate and authenticated by its transport profile.
+    /// must be deliberate and authenticated by its transport profile. All
+    /// three maxima are clamped to their intrinsic protocol hard caps, so a
+    /// caller cannot widen this admission boundary accidentally.
     pub const fn with_limits(
         maximum_root_bytes: usize,
         maximum_signature_work: usize,
         maximum_tc_aggregate_signature_shares: usize,
     ) -> Self {
+        let maximum_root_bytes = if maximum_root_bytes > MAX_CEV0_ROOT_BYTES_V0 {
+            MAX_CEV0_ROOT_BYTES_V0
+        } else {
+            maximum_root_bytes
+        };
+        let maximum_signature_work =
+            if maximum_signature_work > MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0 {
+                MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0
+            } else {
+                maximum_signature_work
+            };
+        let maximum_tc_aggregate_signature_shares =
+            if maximum_tc_aggregate_signature_shares > MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES {
+                MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+            } else {
+                maximum_tc_aggregate_signature_shares
+            };
         Self {
             maximum_root_bytes,
             maximum_signature_work,
@@ -6567,6 +6586,31 @@ mod tests {
         let error = budget.admit_root_bytes(9).unwrap_err();
         assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
         assert_eq!(error.byte_offset(), 0);
+    }
+
+    #[test]
+    fn admission_budget_explicit_limits_cannot_widen_intrinsic_caps() {
+        let budget = Cev0AdmissionBudgetV0::with_limits(usize::MAX, usize::MAX, usize::MAX);
+        assert_eq!(budget.maximum_root_bytes(), MAX_CEV0_ROOT_BYTES_V0);
+        assert_eq!(
+            budget.maximum_signature_work(),
+            MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0
+        );
+        assert_eq!(
+            budget.maximum_tc_aggregate_signature_shares(),
+            MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        );
+
+        let default_tc = Cev0AdmissionBudgetV0::new(usize::MAX, usize::MAX);
+        assert_eq!(default_tc.maximum_root_bytes(), MAX_CEV0_ROOT_BYTES_V0);
+        assert_eq!(
+            default_tc.maximum_signature_work(),
+            MAX_CEV0_INTRINSIC_SIGNATURE_WORK_UNITS_V0
+        );
+        assert_eq!(
+            default_tc.maximum_tc_aggregate_signature_shares(),
+            MAX_CEV0_AUTHENTICATED_TC_SIGNATURE_SHARES_V0
+        );
     }
 
     #[test]
