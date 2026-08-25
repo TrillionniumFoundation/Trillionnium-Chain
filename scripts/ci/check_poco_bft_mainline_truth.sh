@@ -114,6 +114,7 @@ for key, expected in {
     "broadcast": False,
     "pending_nonce_authority": False,
     "external_signer_only": True,
+    "mempool_view_adapter": True,
 }.items():
     if tx_builder_meta.get(key) != expected:
         fail(f"tx-builder metadata {key}={tx_builder_meta.get(key)!r}, expected {expected!r}")

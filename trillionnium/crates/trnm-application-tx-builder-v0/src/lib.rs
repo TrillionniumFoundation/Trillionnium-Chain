@@ -12,6 +12,7 @@
 use anyhow::{anyhow, ensure, Context, Result};
 use sha2::{Digest, Sha256};
 use trnm_finality_types::{hash_domain, Hash32, SignedCommandEnvelopeV1};
+use trnm_mempool::{CanonicalSignerId, CanonicalTxDigest, ResourceLimits, SignedEnvelopeView};
 use trnm_protocol::{CanonicalCommandV1, CanonicalTxV1};
 
 pub const BUILDER_SCHEMA_V0: &str = "trnm.application.tx-builder.v0";
@@ -123,6 +124,117 @@ pub struct BuiltCanonicalTxV0 {
     outer_bytes_sha256: Hash32,
 }
 
+/// Exact typed mempool view for one already-built envelope.
+///
+/// The signer/account identity is supplied by the node's canonical identity
+/// authority; this adapter deliberately does not hash a display string or
+/// derive an identity from a public key.  It exposes no nonce reservation or
+/// WAL capability.  The node must still call the lifecycle admission API with
+/// its own [`trnm_mempool::PendingNonceAuthority`].
+#[derive(Debug, Clone, Copy)]
+pub struct BuiltCanonicalTxAdmissionViewV0<'a> {
+    transaction: &'a BuiltCanonicalTxV0,
+    signer_id: CanonicalSignerId,
+}
+
+impl<'a> BuiltCanonicalTxAdmissionViewV0<'a> {
+    pub const fn new(transaction: &'a BuiltCanonicalTxV0, signer_id: CanonicalSignerId) -> Self {
+        Self {
+            transaction,
+            signer_id,
+        }
+    }
+
+    pub const fn transaction(&self) -> &'a BuiltCanonicalTxV0 {
+        self.transaction
+    }
+}
+
+impl SignedEnvelopeView for BuiltCanonicalTxAdmissionViewV0<'_> {
+    fn canonical_digest(&self) -> CanonicalTxDigest {
+        // The builder only constructs this carrier after validating the exact
+        // envelope.  The digest was computed from those immutable bytes, so a
+        // fallible trait surface would only create a silent alternate hash
+        // path here.
+        CanonicalTxDigest::from_bytes(self.transaction.protocol_tx_hash_v1)
+            .expect("builder-produced transaction hash is nonzero")
+    }
+
+    fn canonical_signer_id(&self) -> Result<CanonicalSignerId, trnm_mempool::AdmissionReject> {
+        Ok(self.signer_id)
+    }
+
+    fn canonical_body(&self) -> &[u8] {
+        self.transaction.exact_inner_bytes()
+    }
+
+    fn nonce(&self) -> u64 {
+        self.transaction.envelope().nonce
+    }
+
+    fn fee_limit(&self) -> u128 {
+        self.transaction
+            .envelope()
+            .payload_bytes()
+            .ok()
+            .and_then(|bytes| serde_json::from_slice::<CanonicalTxV1>(&bytes).ok())
+            .map(|transaction| transaction.fee_limit)
+            .unwrap_or_default()
+    }
+
+    fn resource_limits(&self) -> ResourceLimits {
+        ResourceLimits {
+            max_gas: self
+                .transaction
+                .envelope()
+                .payload_bytes()
+                .ok()
+                .and_then(|bytes| serde_json::from_slice::<CanonicalTxV1>(&bytes).ok())
+                .map(|transaction| transaction.max_gas)
+                .unwrap_or_default(),
+            max_bytes: u64::try_from(self.transaction.exact_inner_bytes().len())
+                .unwrap_or(u64::MAX),
+        }
+    }
+
+    fn validate_canonical(&self) -> Result<(), trnm_mempool::AdmissionReject> {
+        self.decode_canonical_transaction().map(|_| ())
+    }
+}
+
+impl BuiltCanonicalTxAdmissionViewV0<'_> {
+    fn decode_canonical_transaction(&self) -> Result<CanonicalTxV1, trnm_mempool::AdmissionReject> {
+        let envelope = self.transaction.envelope();
+        envelope
+            .validate_shape()
+            .map_err(|_| trnm_mempool::AdmissionReject::CanonicalValidationFailed)?;
+        if envelope.payload_type != trnm_protocol::CANONICAL_TX_PAYLOAD_TYPE_V1 {
+            return Err(trnm_mempool::AdmissionReject::CanonicalValidationFailed);
+        }
+        let payload = envelope
+            .payload_bytes()
+            .map_err(|_| trnm_mempool::AdmissionReject::CanonicalValidationFailed)?;
+        if payload != self.transaction.exact_inner_bytes() {
+            return Err(trnm_mempool::AdmissionReject::CanonicalValidationFailed);
+        }
+        let transaction: CanonicalTxV1 =
+            serde_json::from_slice(self.transaction.exact_inner_bytes())
+                .map_err(|_| trnm_mempool::AdmissionReject::CanonicalValidationFailed)?;
+        transaction
+            .validate()
+            .map_err(|_| trnm_mempool::AdmissionReject::CanonicalValidationFailed)?;
+        if transaction.sender != envelope.signer_id
+            || transaction.nonce != envelope.nonce
+            || transaction.max_gas == 0
+            || transaction.fee_limit == 0
+            || self.canonical_digest().as_bytes() != self.transaction.protocol_tx_hash_v1
+        {
+            return Err(trnm_mempool::AdmissionReject::CanonicalValidationFailed);
+        }
+        Ok(transaction)
+    }
+}
+
 impl BuiltCanonicalTxV0 {
     pub fn envelope(&self) -> &SignedCommandEnvelopeV1 {
         &self.envelope
@@ -142,6 +254,17 @@ impl BuiltCanonicalTxV0 {
 
     pub const fn outer_bytes_sha256(&self) -> Hash32 {
         self.outer_bytes_sha256
+    }
+
+    /// Create the exact typed view consumed by `trnm-mempool` admission.
+    ///
+    /// This is intentionally only a view: it does not reserve a nonce, write
+    /// durable state, call CheckTx, or broadcast.
+    pub const fn admission_view_v0(
+        &self,
+        signer_id: CanonicalSignerId,
+    ) -> BuiltCanonicalTxAdmissionViewV0<'_> {
+        BuiltCanonicalTxAdmissionViewV0::new(self, signer_id)
     }
 }
 
@@ -285,6 +408,10 @@ mod tests {
     use super::*;
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_finality_types::crypto::public_key_hex;
+    use trnm_mempool::{
+        AdmissionReject, IngressClass, PendingNonceAuthority, PendingNonceReservation,
+        SignedAdmissionHooks, SignedEnvelopeMetadata, TypedAdmissionGate, TypedAdmitOutcome,
+    };
 
     struct TestSigner {
         key: SigningKey,
@@ -442,5 +569,93 @@ mod tests {
     fn package_flags_keep_builder_inert() {
         assert_eq!(BUILDER_SCHEMA_V0, "trnm.application.tx-builder.v0");
         assert!(!std::hint::black_box(PRODUCTION_CANDIDATE_V0));
+    }
+
+    #[derive(Debug)]
+    struct TestReservation {
+        state: u8,
+    }
+
+    impl PendingNonceReservation for TestReservation {
+        fn handoff(&mut self) -> Result<(), AdmissionReject> {
+            assert_eq!(self.state, 0);
+            self.state = 1;
+            Ok(())
+        }
+
+        fn commit(&mut self) -> Result<(), AdmissionReject> {
+            assert_eq!(self.state, 1);
+            self.state = 2;
+            Ok(())
+        }
+
+        fn release(&mut self) -> Result<(), AdmissionReject> {
+            assert!(self.state < 2);
+            self.state = 3;
+            Ok(())
+        }
+    }
+
+    struct TestHooks;
+
+    impl<'a> SignedAdmissionHooks<BuiltCanonicalTxAdmissionViewV0<'a>> for TestHooks {
+        fn verify_signature(
+            &mut self,
+            envelope: &BuiltCanonicalTxAdmissionViewV0<'a>,
+            _metadata: &SignedEnvelopeMetadata,
+        ) -> Result<(), AdmissionReject> {
+            envelope
+                .transaction()
+                .envelope()
+                .validate_at_strict("trnm-devnet", 1_000)
+                .map_err(|_| AdmissionReject::SignatureRejected)
+        }
+
+        fn recheck(&mut self, _metadata: &SignedEnvelopeMetadata) -> Result<(), AdmissionReject> {
+            Ok(())
+        }
+    }
+
+    struct TestNonceAuthority;
+
+    impl<'a> PendingNonceAuthority<BuiltCanonicalTxAdmissionViewV0<'a>> for TestNonceAuthority {
+        fn reserve_pending_nonce(
+            &mut self,
+            _envelope: &BuiltCanonicalTxAdmissionViewV0<'a>,
+            metadata: &SignedEnvelopeMetadata,
+        ) -> Result<Box<dyn PendingNonceReservation>, AdmissionReject> {
+            assert_eq!(metadata.nonce(), 1);
+            assert_eq!(
+                metadata.body().len(),
+                metadata.resource_limits().max_bytes as usize
+            );
+            Ok(Box::new(TestReservation { state: 0 }))
+        }
+    }
+
+    #[test]
+    fn exact_builder_view_enters_typed_pending_nonce_admission() {
+        let signer = signer();
+        let transaction =
+            build_signed_canonical_tx_v0(context(&signer.id), command(), &signer).unwrap();
+        let signer_id = CanonicalSignerId::from_bytes([0xA1; 32]).unwrap();
+        let view = transaction.admission_view_v0(signer_id);
+        let mut gate = TypedAdmissionGate::with_default_body_limit(4, 0);
+        let mut hooks = TestHooks;
+        let mut authority = TestNonceAuthority;
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &view,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = gate.pop_ready_with_lifecycle().expect("queued transaction");
+        assert_eq!(ready.metadata().signer_id(), signer_id);
+        ready.handoff().unwrap();
+        ready.commit().unwrap();
     }
 }

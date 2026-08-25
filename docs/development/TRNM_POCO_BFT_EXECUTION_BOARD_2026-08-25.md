@@ -42,9 +42,12 @@ downstream gate inherits completion from an incomplete predecessor.
   `cd7602693`). The normative wire/conformance review and independent second
   implementation are still open.
 - A development-only canonical application tx-builder candidate now emits
-  exact inner/outer bytes and uses an external signer boundary. It deliberately
-  does not reserve nonces, write WAL, query a node or broadcast; native-node
-  integration remains a G2 blocker.
+  exact inner/outer bytes, uses an external signer boundary, and exposes an
+  exact typed `trnm-mempool` view. The view passes the builder's immutable body,
+  digest, signer identity, nonce and resource claims into the pending-nonce
+  admission API. It still deliberately does not own the node reservation/WAL,
+  CheckTx, commit receipt or broadcast path; native-node integration remains a
+  G2 blocker.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. This narrows the observed
@@ -212,9 +215,11 @@ downstream gate inherits completion from an incomplete predecessor.
 
 1. `trnm-poco-node` default startup intentionally fails; effect driver, Vote
    signing, application adapter and process integration are absent.
-2. The canonical tx-builder candidate is not yet connected to a node-owned
-   CheckTx-equivalent ingress, pending-nonce WAL/replay, or production signer;
-   CLI transfer/receipt paths remain development-only shell/template adapters.
+2. The canonical tx-builder candidate now reaches the typed mempool admission
+   boundary, but is not yet connected to a node-owned durable pending-nonce
+   reservation/WAL replay, CheckTx-equivalent ingress, commit receipt/AppHash,
+   or production signer; CLI transfer/receipt paths remain development-only
+   shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
