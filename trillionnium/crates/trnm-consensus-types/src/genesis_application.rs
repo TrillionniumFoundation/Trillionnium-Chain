@@ -432,6 +432,40 @@ impl VerifiedPocoTargetProjectionV1 {
     }
 }
 
+/// Inert type-state joining one independently verified target projection to
+/// one cryptographically verified target-validator genesis ceremony.
+///
+/// This closes only the composition boundary: the ceremony descriptor must
+/// carry the exact verified source-export commitment, mapping profile, target
+/// manifest, target genesis identity, and recomputed native state root.  The
+/// token is not a `GenesisQcV0`, consensus anchor, startup capability, or
+/// production activation authorization.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VerifiedPocoTargetGenesisCeremonyV1 {
+    projection: VerifiedPocoTargetProjectionV1,
+    evidence: GenesisQcCeremonyEvidenceV1,
+    projection_commitment: [u8; 32],
+    evidence_commitment: [u8; 32],
+}
+
+impl VerifiedPocoTargetGenesisCeremonyV1 {
+    pub const fn projection(&self) -> &VerifiedPocoTargetProjectionV1 {
+        &self.projection
+    }
+
+    pub const fn evidence(&self) -> &GenesisQcCeremonyEvidenceV1 {
+        &self.evidence
+    }
+
+    pub const fn projection_commitment(&self) -> [u8; 32] {
+        self.projection_commitment
+    }
+
+    pub const fn evidence_commitment(&self) -> [u8; 32] {
+        self.evidence_commitment
+    }
+}
+
 impl PocoTargetProjectionV1 {
     pub const fn source_export_commitment(&self) -> [u8; 32] {
         self.source_export_commitment
@@ -1601,6 +1635,48 @@ impl GenesisQcCeremonyEvidenceV1 {
             &[&bytes],
         ))
     }
+
+    /// Verify the target-validator quorum and bind it to one independently
+    /// verified target projection.
+    ///
+    /// The ordinary [`Self::verify`] method proves only the ceremony evidence
+    /// against the trusted validator set.  This stronger composition seam
+    /// additionally rejects a descriptor whose source export, mapping,
+    /// target-manifest, target genesis identity, or native root differs from
+    /// the verified projection.  The returned token remains inert and grants
+    /// no startup or activation authority.
+    pub fn verify_against_target_projection_v1<V: SignatureVerifier>(
+        &self,
+        projection: &VerifiedPocoTargetProjectionV1,
+        trusted_set: &ValidatorSet,
+        verifier: &V,
+    ) -> Result<VerifiedPocoTargetGenesisCeremonyV1> {
+        let statement = projection.projection();
+        let descriptor = self.binding.descriptor_v1();
+        if descriptor.export_manifest_digest() != statement.source_export_commitment()
+            || descriptor.mapping_profile_digest() != statement.mapping_profile_digest()
+            || descriptor.target_chain_id() != statement.target_chain_id()
+            || descriptor.target_genesis_hash() != statement.target_genesis_hash()
+            || descriptor.target_genesis_manifest_digest()
+                != statement.target_genesis_manifest_digest()
+            || descriptor.new_state_root() != statement.claimed_state_root()
+        {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+
+        let projection_commitment = statement.commitment_digest_v1()?;
+        if projection_commitment != projection.projection_commitment() {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+
+        self.verify(trusted_set, verifier)?;
+        Ok(VerifiedPocoTargetGenesisCeremonyV1 {
+            projection: projection.clone(),
+            evidence: self.clone(),
+            projection_commitment,
+            evidence_commitment: self.commitment_digest_v1()?,
+        })
+    }
 }
 
 fn hash_len_framed(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
@@ -1990,6 +2066,77 @@ mod tests {
         }
     }
 
+    fn target_projection_trusted_set() -> ValidatorSet {
+        ValidatorSet::new(
+            GenesisHash::new([0x71; 32]),
+            ChainId::from_static("trnm-target-chain-0"),
+            ProtocolVersion::V0,
+            crate::Epoch::new(0),
+            crate::ConsensusParametersHash::new([0xC2; 32]),
+            vec![crate::Validator::new(
+                crate::ValidatorId::from_bytes(b"target-validator-a").unwrap(),
+                crate::ConsensusPublicKey::new([0xD3; 32]),
+                crate::VotingPower::new(1).unwrap(),
+            )
+            .unwrap()],
+        )
+        .expect("target projection trusted set")
+    }
+
+    fn descriptor_for_target_projection(
+        source: &VerifiedCometStateExportV1,
+        projection: &VerifiedPocoTargetProjectionV1,
+        trusted_set: &ValidatorSet,
+        new_state_root: StateRoot,
+    ) -> PocoGenesisV1 {
+        let export = source.export();
+        let statement = projection.projection();
+        PocoGenesisV1::new(
+            export.source_chain_id(),
+            *export.source_genesis_document_digest(),
+            export.source_application_id(),
+            export.source_store_id(),
+            export.finalized_height(),
+            *export.finalized_block_identity(),
+            export.source_finality_proof_digest(),
+            *export.legacy_app_hash(),
+            source.export_commitment(),
+            export.mapping_profile_digest(),
+            statement.target_chain_id(),
+            statement.target_genesis_hash(),
+            statement.target_genesis_manifest_digest(),
+            new_state_root,
+            trusted_set.id(),
+            trusted_set.protocol_version(),
+        )
+        .expect("projection-bound migration descriptor")
+    }
+
+    fn ceremony_for_target_projection(
+        source: &VerifiedCometStateExportV1,
+        projection: &VerifiedPocoTargetProjectionV1,
+        trusted_set: &ValidatorSet,
+        new_state_root: StateRoot,
+    ) -> GenesisQcCeremonyEvidenceV1 {
+        let descriptor =
+            descriptor_for_target_projection(source, projection, trusted_set, new_state_root);
+        let qc = GenesisQcV0::new(
+            trusted_set.genesis_hash(),
+            trusted_set.chain_id(),
+            trusted_set,
+        )
+        .unwrap();
+        let binding = descriptor
+            .bind_genesis_qc_v1_with_trusted_set(qc, trusted_set)
+            .unwrap();
+        let share = GenesisQcSignatureShareV1::new(
+            trusted_set.validators()[0].id(),
+            Signature64::from_array([0xA2; SIGNATURE_BYTES]),
+        )
+        .unwrap();
+        GenesisQcCeremonyEvidenceV1::new(binding, vec![share]).unwrap()
+    }
+
     #[test]
     fn target_projection_is_bound_to_verified_source_and_recomputed_root() {
         let source = verified_source_export();
@@ -2057,6 +2204,108 @@ mod tests {
             ))
         ));
         assert_eq!(root_mismatch.calls.get(), 0b011);
+    }
+
+    #[test]
+    fn target_genesis_ceremony_binds_exact_verified_projection_before_quorum_verify() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let projection = source
+            .bind_target_projection_v1(
+                trusted_set.chain_id(),
+                trusted_set.genesis_hash(),
+                [0x72; 32],
+                StateRoot::new([0x73; 32]),
+            )
+            .unwrap()
+            .verify_with(
+                &source,
+                &RecordingTargetProjectionVerifier {
+                    calls: Cell::new(0),
+                    reject_manifest: false,
+                    recomputed_root: StateRoot::new([0x73; 32]),
+                },
+            )
+            .unwrap();
+        let evidence = ceremony_for_target_projection(
+            &source,
+            &projection,
+            &trusted_set,
+            StateRoot::new([0x73; 32]),
+        );
+
+        let verified = evidence
+            .verify_against_target_projection_v1(
+                &projection,
+                &trusted_set,
+                &AcceptAllGenesisCeremonySignatures,
+            )
+            .expect("projection-bound target quorum ceremony");
+        assert_eq!(verified.projection(), &projection);
+        assert_eq!(verified.evidence(), &evidence);
+        assert_eq!(
+            verified.projection_commitment(),
+            projection.projection_commitment()
+        );
+        assert_eq!(
+            verified.evidence_commitment(),
+            evidence.commitment_digest_v1().unwrap()
+        );
+    }
+
+    #[test]
+    fn target_genesis_ceremony_rejects_projection_substitution_and_bad_signature() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let projection = source
+            .bind_target_projection_v1(
+                trusted_set.chain_id(),
+                trusted_set.genesis_hash(),
+                [0x72; 32],
+                StateRoot::new([0x73; 32]),
+            )
+            .unwrap()
+            .verify_with(
+                &source,
+                &RecordingTargetProjectionVerifier {
+                    calls: Cell::new(0),
+                    reject_manifest: false,
+                    recomputed_root: StateRoot::new([0x73; 32]),
+                },
+            )
+            .unwrap();
+
+        let mismatched = ceremony_for_target_projection(
+            &source,
+            &projection,
+            &trusted_set,
+            StateRoot::new([0x74; 32]),
+        );
+        assert_eq!(
+            mismatched
+                .verify_against_target_projection_v1(
+                    &projection,
+                    &trusted_set,
+                    &AcceptAllGenesisCeremonySignatures,
+                )
+                .unwrap_err(),
+            ValidationError::ConsensusContextMismatch
+        );
+
+        let matching = ceremony_for_target_projection(
+            &source,
+            &projection,
+            &trusted_set,
+            StateRoot::new([0x73; 32]),
+        );
+        assert!(matches!(
+            matching.verify_against_target_projection_v1(
+                &projection,
+                &trusted_set,
+                &RejectGenesisCeremonySignatures,
+            ),
+            Err(ValidationError::InvalidSignature(_))
+        ));
     }
 
     #[test]
