@@ -6,14 +6,15 @@
 //! exact application parent used for an authenticated genesis bootstrap to
 //! that anchor without changing the old peer/wire object.
 
-use alloc::vec::Vec;
+use alloc::{boxed::Box, vec::Vec};
 
 use sha2::{Digest, Sha256};
 
 use crate::{
-    canonical::{try_canonical_bytes, Encoder},
-    ChainId, GenesisHash, GenesisQcV0, Height, ProtocolVersion, Result, StateRoot, ValidationError,
-    ValidatorSet, ValidatorSetId,
+    canonical::{signing_root, try_canonical_bytes, Encoder},
+    ChainId, GenesisHash, GenesisQcV0, Height, ProtocolVersion, Result, Signature64,
+    SignatureVerifier, SigningRoot, StateRoot, ValidationError, ValidatorId, ValidatorSet,
+    ValidatorSetId, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 
 /// Domain used by the legacy authenticated-genesis parent comparison digest.
@@ -62,6 +63,27 @@ pub const POCO_GENESIS_MIGRATION_INSTANCE_DOMAIN_V1: &[u8] = b"trnm.poco-bft.mig
 pub const POCO_GENESIS_QC_BINDING_DOMAIN_V1: &[u8] =
     b"trnm.poco-bft.migration.genesis-qc-ceremony.v1";
 
+/// Schema marker for the inert target-validator quorum evidence envelope.
+/// This is additive evidence and is not the frozen GenesisQC v0 wire object.
+pub const GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Explicit object profile for target-validator genesis quorum evidence.
+pub const GENESIS_QC_CEREMONY_PROFILE_V1: &[u8] = b"trnm.poco-bft.migration.genesis-qc-quorum.v1";
+
+/// Domain for the statement signed by each target validator. This must never
+/// be reused for an ordinary QC, handoff vote, or epoch-anchor signature.
+pub const GENESIS_QC_CEREMONY_SIGNING_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.migration.genesis-qc-sign.v1";
+
+/// Domain for the content address of the complete quorum-evidence envelope.
+pub const GENESIS_QC_CEREMONY_COMMITMENT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.migration.genesis-qc-quorum-commitment.v1";
+
+/// Role tag included in the v1 signing root. Source/legacy quorum evidence is
+/// intentionally a future, separately typed extension once source keys and
+/// finality preimages are independently verified.
+pub const GENESIS_QC_CEREMONY_TARGET_ROLE_V1: u8 = 1;
+
 /// Domain for the source namespace identity.  This is intentionally distinct
 /// from the migration-instance digest, which also commits the cutoff.
 pub const POCO_GENESIS_SOURCE_NAMESPACE_DOMAIN_V1: &[u8] =
@@ -74,6 +96,21 @@ pub const MAX_POCO_GENESIS_CANONICAL_BYTES_V1: usize = 1024;
 /// Maximum exact canonical bytes accepted by the descriptor/QC ceremony
 /// decoder, including the bounded embedded QC and descriptor roots.
 pub const MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1: usize = 4096;
+
+/// Maximum signature shares in one target quorum-evidence envelope.
+pub const MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1: usize = MAX_VALIDATORS;
+
+/// Exact pre-parse ceiling for a target quorum-evidence envelope. The bound
+/// is derived from the nested binding, the maximum validator count and the
+/// canonical validator-id/signature widths rather than an arbitrary message
+/// budget.
+pub const MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1: usize = 2
+    + 4
+    + GENESIS_QC_CEREMONY_PROFILE_V1.len()
+    + 4
+    + MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1
+    + 4
+    + MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1 * (4 + MAX_VALIDATOR_ID_BYTES + SIGNATURE_BYTES);
 
 /// Canonical schema marker for the read-only legacy-state export manifest.
 pub const COMET_STATE_EXPORT_SCHEMA_VERSION_V1: u16 = 1;
@@ -1023,6 +1060,213 @@ impl PocoGenesisQcBindingV1 {
     }
 }
 
+/// One target-validator signature in the additive genesis ceremony evidence.
+///
+/// The signature bytes have the same fixed width as a CEV0 Ed25519 signature,
+/// but this wrapper deliberately prevents accidental substitution into an
+/// ordinary QC or handoff certificate. The signature's domain and statement
+/// are supplied by [`GenesisQcCeremonyEvidenceV1::signing_root_v1`].
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GenesisQcSignatureShareV1 {
+    validator_id: ValidatorId,
+    signature: Signature64,
+}
+
+impl GenesisQcSignatureShareV1 {
+    pub fn new(validator_id: ValidatorId, signature: Signature64) -> Result<Self> {
+        signature.validate_shape()?;
+        Ok(Self {
+            validator_id,
+            signature,
+        })
+    }
+
+    pub const fn validator_id(&self) -> ValidatorId {
+        self.validator_id
+    }
+
+    pub const fn signature(&self) -> &Signature64 {
+        &self.signature
+    }
+
+    fn encode_canonical_v1(&self, encoder: &mut Encoder) {
+        encoder.bytes(self.validator_id.as_bytes());
+        encoder.fixed(self.signature.as_bytes());
+    }
+}
+
+/// Inert, target-validator quorum evidence for one exact migration ceremony.
+///
+/// This type is intentionally *not* a `GenesisQcV0`, ordinary
+/// `QuorumCertificate`, or activation authorization. It carries a canonical
+/// [`PocoGenesisQcBindingV1`] and an ordered set of target-validator shares so
+/// independent peers can recompute one evidence digest and weighted quorum.
+/// Source Comet finality, export roots, mapping preimages and target JMT
+/// recomputation remain outside this type. No method converts this value into
+/// a live consensus anchor or enables production activation.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GenesisQcCeremonyEvidenceV1 {
+    binding: PocoGenesisQcBindingV1,
+    signatures: Vec<GenesisQcSignatureShareV1>,
+}
+
+impl GenesisQcCeremonyEvidenceV1 {
+    /// Constructs shape-valid evidence. Trusted-set membership and quorum are
+    /// checked by [`Self::validate_against_trusted_set`], and cryptographic
+    /// validity is a separate explicit [`Self::verify`] operation.
+    pub fn new(
+        binding: PocoGenesisQcBindingV1,
+        signatures: Vec<GenesisQcSignatureShareV1>,
+    ) -> Result<Self> {
+        if signatures.is_empty() {
+            return Err(ValidationError::InvalidCertificate(
+                "genesis ceremony evidence must contain signatures",
+            ));
+        }
+        if signatures.len() > MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1 {
+            return Err(ValidationError::TooManyValidators {
+                actual: signatures.len(),
+                maximum: MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1,
+            });
+        }
+        let mut previous = None;
+        for share in &signatures {
+            share.signature.validate_shape()?;
+            if let Some(previous) = previous {
+                if previous == share.validator_id {
+                    return Err(ValidationError::DuplicateSigner(Box::new(
+                        share.validator_id,
+                    )));
+                }
+                if previous > share.validator_id {
+                    return Err(ValidationError::NonCanonicalSignerOrder);
+                }
+            }
+            previous = Some(share.validator_id);
+        }
+        Ok(Self {
+            binding,
+            signatures,
+        })
+    }
+
+    pub const fn binding(&self) -> &PocoGenesisQcBindingV1 {
+        &self.binding
+    }
+
+    pub fn signatures(&self) -> &[GenesisQcSignatureShareV1] {
+        &self.signatures
+    }
+
+    /// The exact statement digest all target validators sign. Share ordering
+    /// is deliberately absent, so a valid signature cannot be replayed as a
+    /// vote for a different subset or ordinary certificate domain.
+    pub fn statement_digest_v1(&self) -> Result<[u8; 32]> {
+        self.binding.ceremony_digest_v1()
+    }
+
+    /// Computes the distinct v1 signing root for the target genesis quorum.
+    /// The synthetic epoch/view/height coordinates are fixed at zero and are
+    /// not accepted as ordinary block/QC coordinates.
+    pub fn signing_root_v1(&self) -> Result<SigningRoot> {
+        let statement = self.statement_digest_v1()?;
+        let descriptor = self.binding.descriptor_v1();
+        Ok(signing_root(
+            GENESIS_QC_CEREMONY_SIGNING_DOMAIN_V1,
+            |encoder| {
+                encoder.u16(GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1);
+                encoder.bytes(GENESIS_QC_CEREMONY_PROFILE_V1);
+                encoder.fixed(&statement);
+                encoder.consensus_string(descriptor.target_chain_id().as_bytes());
+                encoder.fixed(descriptor.target_genesis_hash().as_bytes());
+                encoder.fixed(descriptor.target_validator_set_digest().as_bytes());
+                encoder.u32(descriptor.target_protocol_version().get());
+                encoder.u64(0); // synthetic genesis epoch
+                encoder.u64(0); // synthetic genesis view
+                encoder.u64(0); // synthetic genesis height
+                encoder.u8(GENESIS_QC_CEREMONY_TARGET_ROLE_V1);
+            },
+        ))
+    }
+
+    /// Rechecks target context, signer membership/order and weighted quorum
+    /// against the importer-owned validator set. This does not verify
+    /// Ed25519 signatures or any source export/finality preimage.
+    pub fn validate_against_trusted_set(&self, trusted_set: &ValidatorSet) -> Result<()> {
+        self.binding.validate_against_trusted_set(trusted_set)?;
+        let mut signed_power = 0u128;
+        for share in &self.signatures {
+            let power = trusted_set
+                .power_of(share.validator_id)
+                .ok_or_else(|| ValidationError::UnknownValidator(Box::new(share.validator_id)))?;
+            signed_power =
+                signed_power
+                    .checked_add(power)
+                    .ok_or(ValidationError::ArithmeticOverflow(
+                        "genesis ceremony signed power",
+                    ))?;
+        }
+        if signed_power < trusted_set.quorum_power() {
+            return Err(ValidationError::InsufficientQuorum {
+                signed: signed_power,
+                required: trusted_set.quorum_power(),
+            });
+        }
+        Ok(())
+    }
+
+    /// Explicit cryptographic verification boundary. Production callers must
+    /// supply the strict Ed25519 verifier; this crate does not attest which
+    /// verifier implementation was used and never turns success into an
+    /// activation authorization.
+    pub fn verify<V: SignatureVerifier>(
+        &self,
+        trusted_set: &ValidatorSet,
+        verifier: &V,
+    ) -> Result<()> {
+        self.validate_against_trusted_set(trusted_set)?;
+        let signing_root = self.signing_root_v1()?;
+        for share in &self.signatures {
+            let validator = trusted_set
+                .validator(share.validator_id)
+                .ok_or_else(|| ValidationError::UnknownValidator(Box::new(share.validator_id)))?;
+            if !verifier.verify(validator, &signing_root, &share.signature) {
+                return Err(ValidationError::InvalidSignature(Box::new(
+                    share.validator_id,
+                )));
+            }
+        }
+        Ok(())
+    }
+
+    /// Canonical bytes for cross-peer evidence exchange. The binding bytes
+    /// already contain the descriptor and frozen empty GenesisQC v0; this
+    /// envelope adds only the ordered target quorum shares.
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        let binding = self.binding.try_canonical_bytes_v1()?;
+        try_canonical_bytes(|encoder| {
+            encoder.u16(GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1);
+            encoder.bytes(GENESIS_QC_CEREMONY_PROFILE_V1);
+            encoder.bytes(&binding);
+            encoder.list_len(self.signatures.len());
+            for share in &self.signatures {
+                share.encode_canonical_v1(encoder);
+            }
+        })
+    }
+
+    /// Content address of the complete evidence envelope. Peers compare this
+    /// digest only after exact bytes, trusted-set context and (where enabled)
+    /// explicit cryptographic verification all succeed.
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        Ok(hash_len_framed(
+            GENESIS_QC_CEREMONY_COMMITMENT_DOMAIN_V1,
+            &[&bytes],
+        ))
+    }
+}
+
 fn hash_len_framed(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
     let mut hasher = Sha256::new();
     hasher.update(b"trnm.domain.hash.v1");
@@ -1040,7 +1284,7 @@ mod tests {
     use alloc::vec;
 
     use super::*;
-    use crate::ChainId;
+    use crate::{ChainId, Validator};
 
     const CHAIN: ChainId = ChainId::from_static("trnm-genesis-binding-test-0");
 
@@ -1068,6 +1312,72 @@ mod tests {
             .unwrap()],
         )
         .expect("trusted epoch-zero validator set")
+    }
+
+    fn trusted_set_two() -> ValidatorSet {
+        ValidatorSet::new(
+            GenesisHash::new([0xA5; 32]),
+            CHAIN,
+            ProtocolVersion::V0,
+            crate::Epoch::new(0),
+            crate::ConsensusParametersHash::new([0xC1; 32]),
+            vec![
+                crate::Validator::new(
+                    crate::ValidatorId::from_bytes(b"validator-a").unwrap(),
+                    crate::ConsensusPublicKey::new([0xD1; 32]),
+                    crate::VotingPower::new(1).unwrap(),
+                )
+                .unwrap(),
+                crate::Validator::new(
+                    crate::ValidatorId::from_bytes(b"validator-b").unwrap(),
+                    crate::ConsensusPublicKey::new([0xD2; 32]),
+                    crate::VotingPower::new(1).unwrap(),
+                )
+                .unwrap(),
+            ],
+        )
+        .expect("two-validator epoch-zero validator set")
+    }
+
+    fn ceremony_evidence(set: &ValidatorSet) -> GenesisQcCeremonyEvidenceV1 {
+        let descriptor = migration_descriptor_for_set(set);
+        let qc = GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap();
+        let binding = descriptor
+            .bind_genesis_qc_v1_with_trusted_set(qc, set)
+            .expect("trusted set-bound ceremony");
+        let share = GenesisQcSignatureShareV1::new(
+            set.validators()[0].id(),
+            Signature64::from_array([0xA1; SIGNATURE_BYTES]),
+        )
+        .unwrap();
+        GenesisQcCeremonyEvidenceV1::new(binding, vec![share])
+            .expect("shape-valid target quorum evidence")
+    }
+
+    struct AcceptAllGenesisCeremonySignatures;
+
+    impl SignatureVerifier for AcceptAllGenesisCeremonySignatures {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &SigningRoot,
+            _signature: &Signature64,
+        ) -> bool {
+            true
+        }
+    }
+
+    struct RejectGenesisCeremonySignatures;
+
+    impl SignatureVerifier for RejectGenesisCeremonySignatures {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &SigningRoot,
+            _signature: &Signature64,
+        ) -> bool {
+            false
+        }
     }
 
     fn migration_descriptor_for_set(set: &ValidatorSet) -> PocoGenesisV1 {
@@ -1422,6 +1732,108 @@ mod tests {
         let error = crate::decode_poco_genesis_qc_binding_v1_exact(&tampered, &set)
             .expect_err("profile mutation must fail closed");
         assert_eq!(error.code(), crate::DecodeErrorCode::ContextMismatch);
+    }
+
+    #[test]
+    fn genesis_qc_ceremony_evidence_is_inert_exact_and_explicitly_verified() {
+        let set = trusted_set();
+        let evidence = ceremony_evidence(&set);
+        let bytes = evidence.try_canonical_bytes_v1().unwrap();
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(&bytes, &set).unwrap(),
+            evidence
+        );
+        assert_ne!(evidence.statement_digest_v1().unwrap(), [0; 32]);
+        assert_ne!(evidence.commitment_digest_v1().unwrap(), [0; 32]);
+        assert_ne!(evidence.signing_root_v1().unwrap().as_bytes(), &[0; 32]);
+        evidence
+            .validate_against_trusted_set(&set)
+            .expect("shape and weighted quorum");
+        evidence
+            .verify(&set, &AcceptAllGenesisCeremonySignatures)
+            .expect("explicit verifier accepts fixture");
+        assert!(matches!(
+            evidence.verify(&set, &RejectGenesisCeremonySignatures),
+            Err(ValidationError::InvalidSignature(_))
+        ));
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(&trailing, &set)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::TrailingBytes
+        );
+        let mut wrong_profile = bytes.clone();
+        wrong_profile[6] ^= 1;
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(&wrong_profile, &set)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+        let oversized = vec![0u8; MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1 + 1];
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(&oversized, &set)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::LengthLimitExceeded
+        );
+    }
+
+    #[test]
+    fn genesis_qc_ceremony_evidence_rejects_below_quorum_and_foreign_set() {
+        let two = trusted_set_two();
+        let evidence = ceremony_evidence(&two);
+        assert_eq!(
+            evidence.validate_against_trusted_set(&two).unwrap_err(),
+            ValidationError::InsufficientQuorum {
+                signed: 1,
+                required: 2,
+            }
+        );
+        let bytes = evidence.try_canonical_bytes_v1().unwrap();
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(&bytes, &two)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::InsufficientQuorum
+        );
+
+        let one = trusted_set();
+        assert_eq!(
+            crate::decode_genesis_qc_ceremony_evidence_v1_exact(
+                &ceremony_evidence(&one)
+                    .try_canonical_bytes_v1()
+                    .expect("canonical evidence"),
+                &two,
+            )
+            .unwrap_err()
+            .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+    }
+
+    #[test]
+    fn genesis_qc_ceremony_signing_root_is_subset_independent_but_commitment_is_not() {
+        let set = trusted_set();
+        let first = ceremony_evidence(&set);
+        let binding = first.binding().clone();
+        let alternate_share = GenesisQcSignatureShareV1::new(
+            set.validators()[0].id(),
+            Signature64::from_array([0xA2; SIGNATURE_BYTES]),
+        )
+        .unwrap();
+        let second = GenesisQcCeremonyEvidenceV1::new(binding, vec![alternate_share]).unwrap();
+        assert_eq!(
+            first.signing_root_v1().unwrap(),
+            second.signing_root_v1().unwrap()
+        );
+        assert_ne!(
+            first.commitment_digest_v1().unwrap(),
+            second.commitment_digest_v1().unwrap()
+        );
     }
 
     #[test]

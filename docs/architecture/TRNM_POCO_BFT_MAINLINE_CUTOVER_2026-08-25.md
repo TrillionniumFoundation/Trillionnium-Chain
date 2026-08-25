@@ -95,9 +95,12 @@ native migration contract is implemented:
    `PocoGenesisQcBindingV1` commitment. Legacy Comet block/AppHash evidence is
    type-separated from native PoCO roots, and both the descriptor and its QC
    envelope have bounded exact decoders with a local trusted-set recheck. This
-   deliberately leaves the frozen GenesisQC v0 wire/hash unchanged until the
-   cross-peer v1 ceremony, typed export verifier, and import rehearsal are
-   independently reviewed.
+   deliberately leaves the frozen GenesisQC v0 wire/hash unchanged. An
+   additive `GenesisQcCeremonyEvidenceV1` envelope now provides a bounded,
+   target-validator-only quorum-evidence shape and trusted-set power recheck;
+   its explicit crypto verifier and any cross-peer activation remain disabled
+   until the source export verifier, dual-authority ceremony and import
+   rehearsal are independently reviewed.
 6. Generate fresh PoCO SafetyState, signer journal, external watermark, node
    WAL, chain ID, network magic, and validator key IDs. Old validator signing
    state is not trusted or imported.

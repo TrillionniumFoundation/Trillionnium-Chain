@@ -175,6 +175,13 @@ downstream gate inherits completion from an incomplete predecessor.
   refusal). The QC ceremony envelope has a separate bounded exact decoder and
   importer-owned trusted-set recheck, so a second importer can replay the same
   bytes without trusting a local JSON/YAML interpretation.
+- An additive `GenesisQcCeremonyEvidenceV1` envelope now carries only ordered,
+  target-validator signature shares over a distinct migration signing domain.
+  Its exact decoder performs bounded parsing, signer-order/duplicate checks,
+  trusted-set membership and weighted-quorum rechecks. A crypto verifier is an
+  explicit caller-supplied trait; source-export quorum, cross-peer authority,
+  and activation remain disabled (`false`) until the independent source
+  verifier and dual-authority ceremony are complete.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root

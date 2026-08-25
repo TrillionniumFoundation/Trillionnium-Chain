@@ -24,22 +24,26 @@ use crate::{
     ConsensusParametersHash, ConsensusParametersV0, ConsensusParametersV0Fields,
     ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch, EpochAnchorAuthorizationV0,
     EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0, ExecutionEventV0,
-    ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0, HandoffCertificateV0,
-    HandoffDescriptorV0, HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1,
-    HandoffSignerRoleV1, Height, LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1,
-    MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
-    PayloadDigest, PocoGenesisQcBindingV1, PocoGenesisV1, ProtocolVersion, QcRef, QcReferenceV0,
+    ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcCeremonyEvidenceV1,
+    GenesisQcSignatureShareV1, GenesisQcV0, HandoffCertificateV0, HandoffDescriptorV0,
+    HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1, HandoffSignerRoleV1, Height,
+    LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1, MessageKind,
+    NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest,
+    PocoGenesisQcBindingV1, PocoGenesisV1, ProtocolVersion, QcRef, QcReferenceV0,
     QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0, Signature64,
     SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
     TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
     ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
     CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
     COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
-    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1, HANDOFF_SIGNER_PROFILE_V1,
-    MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1, MAX_CONSENSUS_STRING_BYTES,
-    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
-    MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, POCO_GENESIS_PROFILE_V1,
-    POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1, SCHEMA_VERSION_V0,
+    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1,
+    GENESIS_QC_CEREMONY_PROFILE_V1, GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1,
+    HANDOFF_SIGNER_PROFILE_V1, MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1,
+    MAX_CONSENSUS_STRING_BYTES, MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1,
+    MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
+    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
+    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
+    SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -412,6 +416,83 @@ pub fn decode_comet_state_export_v1_exact(bytes: &[u8]) -> DecodeResult<CometSta
         return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
     }
     Ok(export)
+}
+
+/// Decode exact, bounded target-validator genesis quorum evidence against an
+/// importer-owned trusted set. The result is inert evidence only: it cannot
+/// become a `GenesisQcV0`, an ordinary QC, or an activation authorization.
+/// Signature verification remains an explicit caller operation through
+/// `GenesisQcCeremonyEvidenceV1::verify`.
+pub fn decode_genesis_qc_ceremony_evidence_v1_exact(
+    bytes: &[u8],
+    trusted_set: &ValidatorSet,
+) -> DecodeResult<GenesisQcCeremonyEvidenceV1> {
+    if bytes.len() > MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(GENESIS_QC_CEREMONY_PROFILE_V1.len())?;
+    if profile.bytes != GENESIS_QC_CEREMONY_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let binding_offset = cursor.offset();
+    let binding_bytes = cursor
+        .bounded_body_bytes(MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1)?
+        .bytes;
+    let binding = decode_poco_genesis_qc_binding_v1_exact(binding_bytes, trusted_set)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, binding_offset))?;
+
+    let signature_count_offset = cursor.offset();
+    let signature_count = cursor.list_len(MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1)?;
+    let mut signatures = Vec::with_capacity(signature_count);
+    for _ in 0..signature_count {
+        let share_offset = cursor.offset();
+        let validator_id = ValidatorId::from_bytes(cursor.bounded_validator_id_bytes()?.bytes)
+            .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, share_offset))?;
+        let signature = Signature64::from_array(cursor.fixed()?);
+        let share = GenesisQcSignatureShareV1::new(validator_id, signature)
+            .map_err(|error| map_genesis_qc_ceremony_validation_error(error, share_offset))?;
+        signatures.push(share);
+    }
+    cursor.finish()?;
+
+    let evidence = GenesisQcCeremonyEvidenceV1::new(binding, signatures)
+        .map_err(|error| map_genesis_qc_ceremony_validation_error(error, signature_count_offset))?;
+    evidence
+        .validate_against_trusted_set(trusted_set)
+        .map_err(|error| map_genesis_qc_ceremony_validation_error(error, signature_count_offset))?;
+    let canonical = evidence
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(evidence)
+}
+
+fn map_genesis_qc_ceremony_validation_error(error: ValidationError, offset: usize) -> DecodeError {
+    let code = match error {
+        ValidationError::UnknownValidator(_) => DecodeErrorCode::UnknownSigner,
+        ValidationError::DuplicateSigner(_) => DecodeErrorCode::DuplicateSigner,
+        ValidationError::NonCanonicalSignerOrder => DecodeErrorCode::NonCanonicalSignerOrder,
+        ValidationError::InsufficientQuorum { .. } => DecodeErrorCode::InsufficientQuorum,
+        ValidationError::TooManyValidators { .. } => DecodeErrorCode::CountLimitExceeded,
+        ValidationError::InvalidSignature(_) => DecodeErrorCode::ContextMismatch,
+        _ => DecodeErrorCode::ContextMismatch,
+    };
+    DecodeError::new(code, offset)
 }
 
 /// Decode the exact canonical bytes of the migration-aware `PocoGenesisV1`
