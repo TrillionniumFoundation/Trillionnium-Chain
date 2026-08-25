@@ -17,6 +17,10 @@ const SCHEMA_PATH = path.join(
   REPO_ROOT,
   "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-checkpoint-finality-v0.json",
 );
+const BASE_SCHEMA_PATH = path.join(
+  REPO_ROOT,
+  "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-v0.json",
+);
 const CORPUS_PATH = path.join(
   REPO_ROOT,
   "docs/protocol/poco-bft-v0/vectors/checkpoint-two-seal-kernel-v0.json",
@@ -1767,7 +1771,7 @@ function extractBracedBody(source, marker, label) {
   fail("schema_drift", 0, `${label} has no closing brace`, "gate");
 }
 
-function validateRustDecoderTaxonomy(manifest) {
+function validateRustDecoderTaxonomy(manifest, base) {
   const decoderPath = path.join(REPO_ROOT, manifest.decoder_error_taxonomy.rust_source);
   const decoderSource = fs.readFileSync(decoderPath, "utf8");
   const rustCodes = extractRustDecodeCodes(decoderSource);
@@ -1775,7 +1779,23 @@ function validateRustDecoderTaxonomy(manifest) {
     fail("schema_drift", 0, "Rust DecodeErrorCode::as_str contains duplicates", "gate");
   }
   const additions = manifest.decoder_error_taxonomy.new_codes;
-  const expectedCodes = [...manifest.decoder_error_taxonomy.reused_codes, ...additions];
+  const expectedNodeLocalCodes = [
+    "invalid_sign_intent_tag",
+    "invalid_sign_intent",
+    "invalid_handoff_sign_intent_role",
+    "invalid_handoff_sign_intent",
+  ];
+  const nodeLocalCodes = (base.rust_decoder_error_exclusions ?? [])
+    .filter((item) => item.scope === "node-local signer-intent endpoint only")
+    .map((item) => item.code);
+  const expectedCodes = [
+    ...manifest.decoder_error_taxonomy.reused_codes,
+    ...additions,
+    ...nodeLocalCodes,
+  ];
+  if (JSON.stringify(nodeLocalCodes) !== JSON.stringify(expectedNodeLocalCodes)) {
+    fail("schema_drift", 0, "node-local signer-intent taxonomy registration drift", "gate");
+  }
   if (JSON.stringify(rustCodes) !== JSON.stringify(expectedCodes)) {
     fail("schema_drift", 0, "Rust decoder taxonomy differs from exact imported+B2-E manifest order", "gate");
   }
@@ -2072,8 +2092,9 @@ function validateProjection(manifest) {
 
 function main() {
   const manifest = readJson(SCHEMA_PATH);
+  const base = readJson(BASE_SCHEMA_PATH);
   validateManifest(manifest);
-  validateRustDecoderTaxonomy(manifest);
+  validateRustDecoderTaxonomy(manifest, base);
   validateRustCapabilitySurface(manifest);
   validateProjection(manifest);
   const expected = buildCorpus();

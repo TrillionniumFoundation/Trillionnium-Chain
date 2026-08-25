@@ -22,6 +22,10 @@ const B2C_SCHEMA_PATH = path.join(
   REPO_ROOT,
   "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-epoch-commitment-v0.json",
 );
+const BASE_SCHEMA_PATH = path.join(
+  REPO_ROOT,
+  "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-v0.json",
+);
 const CORPUS_PATH = path.join(
   REPO_ROOT,
   "docs/protocol/poco-bft-v0/vectors/block-body-kernel-v0.json",
@@ -2895,11 +2899,20 @@ function extractRustAsStr(source) {
   return [];
 }
 
-function validateRustSurface(manifest, b2c) {
+function validateRustSurface(manifest, b2c, base) {
   if (!fs.existsSync(RUST_DECODER_PATH) || !fs.existsSync(RUST_BODY_PATH)) return;
   const decoderSource = fs.readFileSync(RUST_DECODER_PATH, "utf8");
   const bodySource = fs.readFileSync(RUST_BODY_PATH, "utf8");
   const rustDecoderCodes = extractRustAsStr(decoderSource);
+  const nodeLocalCodes = (base.rust_decoder_error_exclusions ?? [])
+    .filter((item) => item.scope === "node-local signer-intent endpoint only")
+    .map((item) => item.code);
+  const expectedNodeLocalCodes = [
+    "invalid_sign_intent_tag",
+    "invalid_sign_intent",
+    "invalid_handoff_sign_intent_role",
+    "invalid_handoff_sign_intent",
+  ];
   const expectedDecoderCodes = [
     ...b2c.decoder_error_codes.map((item) => item.code),
     ...manifest.rust_decoder_error_additions.map((item) => item.code),
@@ -2907,9 +2920,11 @@ function validateRustSurface(manifest, b2c) {
     "invalid_consensus_parameters",
     "invalid_finality_proof",
     "invalid_checkpoint_two_seal",
+    ...nodeLocalCodes,
   ];
   if (
     new Set(rustDecoderCodes).size !== rustDecoderCodes.length ||
+    JSON.stringify(nodeLocalCodes) !== JSON.stringify(expectedNodeLocalCodes) ||
     JSON.stringify(rustDecoderCodes) !== JSON.stringify(expectedDecoderCodes)
   ) {
     fail("schema_manifest_invalid", 0, "Rust DecodeErrorCode B2-A/B/C/D/E partition drift", "gate");
@@ -3165,9 +3180,10 @@ function validateCorpus(corpus) {
 function main() {
   const manifest = readJson(SCHEMA_PATH);
   const b2c = readJson(B2C_SCHEMA_PATH);
+  const base = readJson(BASE_SCHEMA_PATH);
   validateManifest(manifest, b2c);
   validateProjection(manifest);
-  validateRustSurface(manifest, b2c);
+  validateRustSurface(manifest, b2c, base);
   const expected = buildCorpus();
   if (process.argv.includes("--emit-corpus")) {
     process.stdout.write(`${JSON.stringify(expected, null, 2)}\n`);

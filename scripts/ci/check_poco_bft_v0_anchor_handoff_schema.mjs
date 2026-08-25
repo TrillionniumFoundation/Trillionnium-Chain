@@ -1275,38 +1275,48 @@ function validateManifest(base, manifest, index) {
     "invalid_finality_proof",
     "invalid_checkpoint_two_seal",
   ];
+  const expectedNodeLocalAdditions = [
+    "invalid_sign_intent_tag",
+    "invalid_sign_intent",
+    "invalid_handoff_sign_intent_role",
+    "invalid_handoff_sign_intent",
+  ];
   const scopedExclusions = manifest.rust_decoder_error_exclusions ?? [];
-  const b2cAdditions = scopedExclusions.slice(0, 4).map(
-    (item) => item.code,
-  );
+  const b2cAdditions = scopedExclusions.slice(0, 4).map((item) => item.code);
   const b2dAdditions = scopedExclusions.slice(4, 7).map((item) => item.code);
-  const b2eAdditions = scopedExclusions.slice(7).map((item) => item.code);
+  const b2eAdditions = scopedExclusions.slice(7, 11).map((item) => item.code);
+  const nodeLocalAdditions = scopedExclusions.slice(11).map((item) => item.code);
   if (
     JSON.stringify(b2cAdditions) !== JSON.stringify(expectedB2cAdditions) ||
     JSON.stringify(b2dAdditions) !== JSON.stringify(expectedB2dAdditions) ||
     JSON.stringify(b2eAdditions) !== JSON.stringify(expectedB2eAdditions) ||
+    JSON.stringify(nodeLocalAdditions) !== JSON.stringify(expectedNodeLocalAdditions) ||
     scopedExclusions.slice(0, 4).some(
       (item) => item.scope !== "B2-C NextEpochCommitmentV0 endpoint only",
     ) ||
     scopedExclusions.slice(4, 7).some(
       (item) => item.scope !== "B2-D ordinary block body endpoint only",
     ) ||
-    scopedExclusions.slice(7).some(
+    scopedExclusions.slice(7, 11).some(
       (item) => item.scope !== "B2-E checkpoint finality endpoint only",
+    ) ||
+    scopedExclusions.slice(11).some(
+      (item) => item.scope !== "node-local signer-intent endpoint only",
     ) ||
     JSON.stringify(
       rustErrorCodes.filter(
         (code) =>
           !b2cAdditions.includes(code) &&
           !b2dAdditions.includes(code) &&
-          !b2eAdditions.includes(code),
+          !b2eAdditions.includes(code) &&
+          !nodeLocalAdditions.includes(code),
       ),
     ) !== JSON.stringify(manifestCodes)
   ) {
     fail(
       "schema_manifest_invalid",
       0,
-      "B2-B scoped decoder codes plus B2-C/B2-D/B2-E exclusions do not match Rust as_str order",
+      "B2-B scoped decoder codes plus B2-C/B2-D/B2-E and node-local exclusions do not match Rust as_str order",
       "gate",
     );
   }
@@ -1325,24 +1335,28 @@ function validateManifest(base, manifest, index) {
   const b2bAdditions = allBaseExclusions.slice(0, 6);
   const b2cBaseExclusions = allBaseExclusions.slice(6, 10);
   const b2dBaseExclusions = allBaseExclusions.slice(10, 13);
-  const b2eBaseExclusions = allBaseExclusions.slice(13);
+  const b2eBaseExclusions = allBaseExclusions.slice(13, 17);
+  const nodeLocalBaseExclusions = allBaseExclusions.slice(17);
   if (
     JSON.stringify(b2bAdditions) !== JSON.stringify(expectedB2bAdditions) ||
     JSON.stringify(b2cBaseExclusions) !== JSON.stringify(expectedB2cAdditions) ||
     JSON.stringify(b2dBaseExclusions) !== JSON.stringify(expectedB2dAdditions) ||
     JSON.stringify(b2eBaseExclusions) !== JSON.stringify(expectedB2eAdditions) ||
+    JSON.stringify(nodeLocalBaseExclusions) !== JSON.stringify(expectedNodeLocalAdditions) ||
     new Set(baseCodes).size !== baseCodes.length ||
     new Set(b2bAdditions).size !== b2bAdditions.length ||
     new Set(b2cAdditions).size !== b2cAdditions.length ||
     new Set(b2dAdditions).size !== b2dAdditions.length ||
     new Set(b2eAdditions).size !== b2eAdditions.length ||
+    new Set(nodeLocalAdditions).size !== nodeLocalAdditions.length ||
     JSON.stringify(
       rustErrorCodes.filter(
         (code) =>
           !b2bAdditions.includes(code) &&
           !b2cAdditions.includes(code) &&
           !b2dAdditions.includes(code) &&
-          !b2eAdditions.includes(code),
+          !b2eAdditions.includes(code) &&
+          !nodeLocalAdditions.includes(code),
       ),
     ) !== JSON.stringify(baseCodes) ||
     rustErrorCodes.some(
@@ -1351,14 +1365,15 @@ function validateManifest(base, manifest, index) {
           Number(b2bAdditions.includes(code)) +
           Number(b2cAdditions.includes(code)) +
           Number(b2dAdditions.includes(code)) +
-          Number(b2eAdditions.includes(code)) !==
+          Number(b2eAdditions.includes(code)) +
+          Number(nodeLocalAdditions.includes(code)) !==
         1,
     )
   ) {
     fail(
       "schema_manifest_invalid",
       0,
-      "B2-A scoped codes plus B2-B/B2-C/B2-D/B2-E additions do not partition Rust vocabulary",
+      "B2-A scoped codes plus B2-B/B2-C/B2-D/B2-E and node-local additions do not partition Rust vocabulary",
       "gate",
     );
   }

@@ -962,6 +962,10 @@ function validateRustErrorVocabulary(manifest) {
     "invalid_consensus_parameters",
     "invalid_finality_proof",
     "invalid_checkpoint_two_seal",
+    "invalid_sign_intent_tag",
+    "invalid_sign_intent",
+    "invalid_handoff_sign_intent_role",
+    "invalid_handoff_sign_intent",
   ];
   const exclusions = manifest.rust_decoder_error_exclusions ?? [];
   const exclusionCodes = exclusions.map((item) => item.code);
@@ -977,7 +981,9 @@ function validateRustErrorVocabulary(manifest) {
           ? "B2-C NextEpochCommitmentV0 endpoint only"
           : index < 13
             ? "B2-D ordinary block body endpoint only"
-            : "B2-E checkpoint finality endpoint only";
+          : index < 17
+            ? "B2-E checkpoint finality endpoint only"
+            : "node-local signer-intent endpoint only";
       return item.scope !== expectedScope;
     }) ||
     exclusionCodes.some((code) => !rustCodes.includes(code)) ||
@@ -988,7 +994,7 @@ function validateRustErrorVocabulary(manifest) {
     fail(
       "schema_manifest_invalid",
       0,
-      "B2-A scoped error codes plus explicit B2-B/B2-C/B2-D/B2-E exclusions differ from Rust DecodeErrorCode::as_str",
+      "B2-A scoped error codes plus explicit B2-B/B2-C/B2-D/B2-E and node-local exclusions differ from Rust DecodeErrorCode::as_str",
     );
   }
 }

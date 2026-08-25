@@ -883,6 +883,15 @@ function validateRustTaxonomy(base, b2b, manifest) {
     "invalid_finality_proof",
     "invalid_checkpoint_two_seal",
   ];
+  const expectedNodeLocalCodes = [
+    "invalid_sign_intent_tag",
+    "invalid_sign_intent",
+    "invalid_handoff_sign_intent_role",
+    "invalid_handoff_sign_intent",
+  ];
+  const nodeLocalCodes = (base.rust_decoder_error_exclusions ?? [])
+    .filter((item) => item.scope === "node-local signer-intent endpoint only")
+    .map((item) => item.code);
   const manifestCodes = manifest.decoder_error_codes.map((item) => item.code);
   const partitions = [
     ...b2aCodes,
@@ -890,17 +899,20 @@ function validateRustTaxonomy(base, b2b, manifest) {
     ...b2cAdditions,
     ...b2dAdditions,
     ...b2eAdditions,
+    ...nodeLocalCodes,
   ];
   if (
     b2cAdditions.length !== 4 ||
+    JSON.stringify(nodeLocalCodes) !== JSON.stringify(expectedNodeLocalCodes) ||
     new Set(partitions).size !== partitions.length ||
-    JSON.stringify([...manifestCodes, ...b2dAdditions, ...b2eAdditions]) !== JSON.stringify(rustCodes) ||
+    JSON.stringify([...manifestCodes, ...b2dAdditions, ...b2eAdditions, ...nodeLocalCodes]) !== JSON.stringify(rustCodes) ||
     JSON.stringify(
       rustCodes.filter(
         (code) =>
           !b2cAdditions.includes(code) &&
           !b2dAdditions.includes(code) &&
-          !b2eAdditions.includes(code),
+          !b2eAdditions.includes(code) &&
+          !nodeLocalCodes.includes(code),
       ),
     ) !==
       JSON.stringify(b2bCodes) ||
@@ -910,11 +922,12 @@ function validateRustTaxonomy(base, b2b, manifest) {
           !b2bAdditions.includes(code) &&
           !b2cAdditions.includes(code) &&
           !b2dAdditions.includes(code) &&
-          !b2eAdditions.includes(code),
+          !b2eAdditions.includes(code) &&
+          !nodeLocalCodes.includes(code),
       ),
     ) !== JSON.stringify(b2aCodes)
   ) {
-    fail("schema_manifest_invalid", 0, "B2-A/B2-B/B2-C/B2-D/B2-E error sets overlap", "gate");
+    fail("schema_manifest_invalid", 0, "B2-A/B2-B/B2-C/B2-D/B2-E/node-local error sets overlap", "gate");
   }
   for (const code of b2cAdditions) {
     if (!manifestCodes.includes(code)) {

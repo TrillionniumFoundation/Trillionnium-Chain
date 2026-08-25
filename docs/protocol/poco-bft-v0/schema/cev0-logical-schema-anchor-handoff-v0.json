@@ -1373,7 +1373,11 @@
     { "code": "invalid_leader_schedule", "scope": "B2-E checkpoint finality endpoint only" },
     { "code": "invalid_consensus_parameters", "scope": "B2-E checkpoint finality endpoint only" },
     { "code": "invalid_finality_proof", "scope": "B2-E checkpoint finality endpoint only" },
-    { "code": "invalid_checkpoint_two_seal", "scope": "B2-E checkpoint finality endpoint only" }
+    { "code": "invalid_checkpoint_two_seal", "scope": "B2-E checkpoint finality endpoint only" },
+    { "code": "invalid_sign_intent_tag", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_sign_intent", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent_role", "scope": "node-local signer-intent endpoint only" },
+    { "code": "invalid_handoff_sign_intent", "scope": "node-local signer-intent endpoint only" }
   ],
   "node_admission_error_contract": "Independent checker-only fine-grained relation diagnostics; these codes are not claimed to be Rust DecodeErrorCode values.",
   "node_admission_error_codes": [
