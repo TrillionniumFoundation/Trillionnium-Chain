@@ -39,6 +39,11 @@ downstream gate inherits completion from an incomplete predecessor.
   QC/TC, handoff, parameter, and ordered-root reconstructions also pass. CI
   reproduction, independent review, and a second implementation remain
   required for the P0 exit.
+- The five previously failing Rust/schema taxonomy boundaries were corrected
+  in `5a4bfccb8`: the four node-local SignIntent/HandoffSignIntent errors are
+  explicitly scoped outside the B2-A..E peer vocabulary. All 15
+  `check_poco_bft_v0_*_schema.sh` gates now pass; this closes only the local
+  registry drift, not the independent review/second-implementation gate.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.
