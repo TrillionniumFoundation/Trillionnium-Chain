@@ -44,6 +44,9 @@ downstream gate inherits completion from an incomplete predecessor.
   explicitly scoped outside the B2-A..E peer vocabulary. All 15
   `check_poco_bft_v0_*_schema.sh` gates now pass; this closes only the local
   registry drift, not the independent review/second-implementation gate.
+  `bd6d3b148` also corrected the protocol gap-register/conformance wording:
+  48 B2-A..E peer codes plus four node-local signer-intent codes means 52 Rust
+  enum values overall; node-local values remain outside peer wire taxonomy.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.
@@ -96,7 +99,11 @@ downstream gate inherits completion from an incomplete predecessor.
   admission remains a composition escape hatch, while automatic/production
   HandedOff resolution, production AppHash/readback integration, and
   production context ownership remain G2 blockers; the explicit recovery seam
-  is candidate-only and production activation remains false.
+  is candidate-only and production activation remains false. `f1b20e40b`
+  closes a fail-open resolution path in this candidate: a durable `HandedOff`
+  row can no longer be released by an explicit cancel or lease drop; only the
+  exact authenticated receipt-recovery seam may resolve it. Production
+  ingress/integration remains open.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. A new private
@@ -110,8 +117,17 @@ downstream gate inherits completion from an incomplete predecessor.
   read, with a final identity check at successful commit boundaries. The full
   entry-point matrix is recorded in
   `TRNM_POCO_P2_STORE_WRITER_MATRIX_2026-08-26.md` and landed in `6850b57f1`.
-  This is still an advisory, cooperating-owner fence: all writer adoption and
+  `d696ce01d` extends the same fence across finalization-marker load, proof-
+  bound P readback, and marker clear, with a focused mutual-exclusion and
+  rename/recreate test. This is still an advisory, cooperating-owner fence:
+  all writer adoption and
   the full cross-database atomicity proof remain open under MIG-004.
+- The live Core application-finalization receipt path now checks the exact
+  ancestor-ordered queue front before mutating state (`567d24aeb`). Empty or
+  replaced queue fronts return `UnexpectedFinalizationAck` transactionally;
+  two negative tests and the 220-test Core library suite pass. This tightens
+  an execution boundary only; authoritative Core/SafetyRules integration and
+  crash/replay equivalence remain open.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
