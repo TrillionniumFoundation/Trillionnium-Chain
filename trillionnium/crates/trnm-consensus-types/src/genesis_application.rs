@@ -138,6 +138,30 @@ pub const POCO_TARGET_PROJECTION_PROFILE_V1: &[u8] =
 pub const POCO_TARGET_PROJECTION_COMMITMENT_DOMAIN_V1: &[u8] =
     b"trnm.poco-bft.migration.target-projection-commitment.v1";
 
+/// Canonical schema marker for the importer-owned target genesis manifest.
+/// This is an inert manifest preimage; it is not a node-start or activation
+/// instruction.
+pub const POCO_TARGET_GENESIS_MANIFEST_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Explicit profile for the target genesis manifest preimage.
+pub const POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1: &[u8] =
+    b"trnm.poco-bft.migration.target-genesis-manifest.v1";
+
+/// Domain for the content-addressed target genesis manifest commitment.
+pub const POCO_TARGET_GENESIS_MANIFEST_COMMITMENT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.migration.target-genesis-manifest-commitment.v1";
+
+/// Maximum canonical bytes emitted by one target genesis manifest.
+pub const MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1: usize = 2
+    + (4 + POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1.len())
+    + (2 + crate::MAX_CONSENSUS_STRING_BYTES)
+    + 32
+    + 32
+    + 4
+    + 32
+    + 32
+    + 32;
+
 /// Maximum exact canonical bytes accepted by the target projection decoder.
 pub const MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1: usize = 2
     + (4 + POCO_TARGET_PROJECTION_PROFILE_V1.len())
@@ -360,6 +384,179 @@ impl VerifiedCometStateExportV1 {
         projection.validate_against_verified_source(self)?;
         Ok(projection)
     }
+
+    /// Build a target projection from a typed target-manifest preimage.
+    ///
+    /// Unlike [`Self::bind_target_projection_v1`], this entry point computes
+    /// the manifest commitment and carries the manifest's target/root context
+    /// directly into the projection.  It still performs no source mapping or
+    /// JMT replay; those remain the explicit [`PocoTargetProjectionV1::verify_with_manifest_v1`]
+    /// gate.
+    pub fn bind_target_projection_from_manifest_v1(
+        &self,
+        manifest: &PocoTargetGenesisManifestV1,
+    ) -> Result<PocoTargetProjectionV1> {
+        let projection = PocoTargetProjectionV1 {
+            source_export_commitment: self.export_commitment,
+            mapping_profile_digest: self.export.mapping_profile_digest(),
+            target_chain_id: manifest.target_chain_id(),
+            target_genesis_hash: manifest.target_genesis_hash(),
+            target_genesis_manifest_digest: manifest.commitment_digest_v1()?,
+            claimed_state_root: manifest.initial_state_root(),
+        };
+        projection.validate_against_verified_source(self)?;
+        Ok(projection)
+    }
+}
+
+/// Typed, inert preimage for the target genesis manifest referenced by a
+/// migration projection.
+///
+/// The manifest commits the target identity, validator-set/protocol context,
+/// application schema/runtime profiles, and the expected initial native state
+/// root.  It is deliberately only a canonical preimage and commitment API:
+/// it does not read a manifest file, replay JMT, start a node, or authorize
+/// activation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PocoTargetGenesisManifestV1 {
+    target_chain_id: ChainId,
+    target_genesis_hash: GenesisHash,
+    target_validator_set_digest: ValidatorSetId,
+    target_protocol_version: ProtocolVersion,
+    application_schema_digest: [u8; 32],
+    runtime_profile_digest: [u8; 32],
+    initial_state_root: StateRoot,
+}
+
+impl PocoTargetGenesisManifestV1 {
+    /// Construct one shape-valid target manifest preimage.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        target_chain_id: ChainId,
+        target_genesis_hash: GenesisHash,
+        target_validator_set_digest: ValidatorSetId,
+        target_protocol_version: ProtocolVersion,
+        application_schema_digest: [u8; 32],
+        runtime_profile_digest: [u8; 32],
+        initial_state_root: StateRoot,
+    ) -> Result<Self> {
+        if target_genesis_hash.is_zero() {
+            return Err(ValidationError::ZeroGenesisHash);
+        }
+        if target_validator_set_digest.is_zero() {
+            return Err(ValidationError::ValidatorSetMismatch);
+        }
+        if target_protocol_version != ProtocolVersion::V0 {
+            return Err(ValidationError::ProtocolVersionMismatch);
+        }
+        if application_schema_digest == [0; 32] {
+            return Err(ValidationError::InvalidCertificate(
+                "target application schema digest must be nonzero",
+            ));
+        }
+        if runtime_profile_digest == [0; 32] {
+            return Err(ValidationError::InvalidCertificate(
+                "target runtime profile digest must be nonzero",
+            ));
+        }
+        if initial_state_root.is_zero() {
+            return Err(ValidationError::InvalidCertificate(
+                "target manifest initial state root must be nonzero",
+            ));
+        }
+        Ok(Self {
+            target_chain_id,
+            target_genesis_hash,
+            target_validator_set_digest,
+            target_protocol_version,
+            application_schema_digest,
+            runtime_profile_digest,
+            initial_state_root,
+        })
+    }
+
+    pub const fn target_chain_id(&self) -> ChainId {
+        self.target_chain_id
+    }
+
+    pub const fn target_genesis_hash(&self) -> GenesisHash {
+        self.target_genesis_hash
+    }
+
+    pub const fn target_validator_set_digest(&self) -> ValidatorSetId {
+        self.target_validator_set_digest
+    }
+
+    pub const fn target_protocol_version(&self) -> ProtocolVersion {
+        self.target_protocol_version
+    }
+
+    pub const fn application_schema_digest(&self) -> [u8; 32] {
+        self.application_schema_digest
+    }
+
+    pub const fn runtime_profile_digest(&self) -> [u8; 32] {
+        self.runtime_profile_digest
+    }
+
+    /// The expected initial native root carried by this manifest.  This is a
+    /// context value, not an independently verified JMT computation.
+    pub const fn initial_state_root(&self) -> StateRoot {
+        self.initial_state_root
+    }
+
+    /// Alias spelling used by projection callers that treat the root as
+    /// context until the importer-owned replay verifier recomputes it.
+    pub const fn state_root_context(&self) -> StateRoot {
+        self.initial_state_root
+    }
+
+    /// Exact canonical preimage used for cross-peer manifest comparison.
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| {
+            encoder.u16(POCO_TARGET_GENESIS_MANIFEST_SCHEMA_VERSION_V1);
+            encoder.bytes(POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1);
+            encoder.consensus_string(self.target_chain_id.as_bytes());
+            encoder.fixed(self.target_genesis_hash.as_bytes());
+            encoder.fixed(self.target_validator_set_digest.as_bytes());
+            encoder.u32(self.target_protocol_version.get());
+            encoder.fixed(&self.application_schema_digest);
+            encoder.fixed(&self.runtime_profile_digest);
+            encoder.fixed(self.initial_state_root.as_bytes());
+        })
+    }
+
+    /// Content address of the exact target manifest preimage.
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        if bytes.len() > MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1 {
+            return Err(ValidationError::LengthOverflow {
+                field: "PocoTargetGenesisManifestV1 canonical bytes",
+                actual: bytes.len(),
+                maximum: MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1,
+            });
+        }
+        Ok(hash_len_framed(
+            POCO_TARGET_GENESIS_MANIFEST_COMMITMENT_DOMAIN_V1,
+            &[&bytes],
+        ))
+    }
+
+    /// Check that this exact preimage is the manifest commitment referenced by
+    /// a projection and that all target/root context fields agree.
+    pub fn validate_against_projection_v1(
+        &self,
+        projection: &PocoTargetProjectionV1,
+    ) -> Result<()> {
+        if self.commitment_digest_v1()? != projection.target_genesis_manifest_digest()
+            || self.target_chain_id != projection.target_chain_id()
+            || self.target_genesis_hash != projection.target_genesis_hash()
+            || self.initial_state_root != projection.claimed_state_root()
+        {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+        Ok(())
+    }
 }
 
 /// A target projection statement assembled only from a verified source
@@ -374,9 +571,10 @@ pub struct PocoTargetProjectionV1 {
     mapping_profile_digest: [u8; 32],
     target_chain_id: ChainId,
     target_genesis_hash: GenesisHash,
-    // The canonical target-manifest preimage must include validator-set,
-    // protocol and application-schema coordinates; only its digest is carried
-    // here until an importer-owned manifest reader is wired.
+    // The canonical target-manifest preimage includes validator-set, protocol,
+    // application-schema/runtime and initial-root coordinates.  The projection
+    // carries only its commitment on the legacy-compatible shape; callers that
+    // have the typed preimage must use `verify_with_manifest_v1`.
     target_genesis_manifest_digest: [u8; 32],
     claimed_state_root: StateRoot,
 }
@@ -384,8 +582,10 @@ pub struct PocoTargetProjectionV1 {
 /// Importer-owned verification boundary for a target projection.
 ///
 /// Implementations must obtain the exact target-manifest preimage identified
-/// by `target_genesis_manifest_digest`, independently replay the verified
-/// source through the frozen mapping, and recompute the native JMT/state root.
+/// by `target_genesis_manifest_digest` (or let the caller use
+/// [`PocoTargetProjectionV1::verify_with_manifest_v1`] with the typed
+/// [`PocoTargetGenesisManifestV1`]), independently replay the verified source
+/// through the frozen mapping, and recompute the native JMT/state root.
 /// The recomputation method deliberately does **not** receive the statement's
 /// claimed root, so an implementation cannot merely echo that value. A
 /// caller-supplied root or legacy AppHash comparison is not a substitute.
@@ -401,6 +601,27 @@ pub trait PocoTargetProjectionVerifierV1 {
         mapping_profile_digest: [u8; 32],
     ) -> Result<()>;
 
+    /// Typed-preimage variant used by
+    /// [`PocoTargetProjectionV1::verify_with_manifest_v1`]. Implementations
+    /// may override this method to validate application-schema/runtime fields
+    /// directly. The default preserves existing verifiers while ensuring the
+    /// commitment supplied to the legacy digest verifier is recomputed from
+    /// the exact typed manifest bytes.
+    fn verify_target_manifest_preimage_v1(
+        &self,
+        source: &VerifiedCometStateExportV1,
+        manifest: &PocoTargetGenesisManifestV1,
+        mapping_profile_digest: [u8; 32],
+    ) -> Result<()> {
+        self.verify_target_manifest_v1(
+            source,
+            manifest.target_chain_id(),
+            manifest.target_genesis_hash(),
+            manifest.commitment_digest_v1()?,
+            mapping_profile_digest,
+        )
+    }
+
     fn recompute_native_state_root_v1(
         &self,
         source: &VerifiedCometStateExportV1,
@@ -415,11 +636,18 @@ pub trait PocoTargetProjectionVerifierV1 {
 /// exact native-root recomputation have succeeded for one verified source.
 /// It is intentionally not convertible to `PocoGenesisV1`, `GenesisQcV0`, or
 /// any activation capability; quorum and cross-peer ceremony remain separate
-/// gates.
+/// gates.  The complete verified source export is retained internally so a
+/// later GenesisQC composition can bind descriptor source metadata, not only
+/// its content-addressed export digest.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VerifiedPocoTargetProjectionV1 {
     projection: PocoTargetProjectionV1,
     projection_commitment: [u8; 32],
+    /// Retain the complete source-verification token so a later GenesisQC
+    /// composition can recheck every source field copied into its descriptor,
+    /// rather than trusting only the export commitment carried by the
+    /// projection statement.
+    source_export: VerifiedCometStateExportV1,
 }
 
 impl VerifiedPocoTargetProjectionV1 {
@@ -560,6 +788,15 @@ impl PocoTargetProjectionV1 {
         source: &VerifiedCometStateExportV1,
         verifier: &V,
     ) -> Result<VerifiedPocoTargetProjectionV1> {
+        self.verify_with_context_v1(source, verifier, None)
+    }
+
+    fn verify_with_context_v1<V: PocoTargetProjectionVerifierV1>(
+        &self,
+        source: &VerifiedCometStateExportV1,
+        verifier: &V,
+        manifest: Option<&PocoTargetGenesisManifestV1>,
+    ) -> Result<VerifiedPocoTargetProjectionV1> {
         let canonical = self.try_canonical_bytes_v1()?;
         if canonical.len() > MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1 {
             return Err(ValidationError::LengthOverflow {
@@ -569,13 +806,20 @@ impl PocoTargetProjectionV1 {
             });
         }
         self.validate_against_verified_source(source)?;
-        verifier.verify_target_manifest_v1(
-            source,
-            self.target_chain_id,
-            self.target_genesis_hash,
-            self.target_genesis_manifest_digest,
-            self.mapping_profile_digest,
-        )?;
+        match manifest {
+            Some(manifest) => verifier.verify_target_manifest_preimage_v1(
+                source,
+                manifest,
+                self.mapping_profile_digest,
+            )?,
+            None => verifier.verify_target_manifest_v1(
+                source,
+                self.target_chain_id,
+                self.target_genesis_hash,
+                self.target_genesis_manifest_digest,
+                self.mapping_profile_digest,
+            )?,
+        }
         let recomputed = verifier.recompute_native_state_root_v1(
             source,
             self.target_chain_id,
@@ -591,7 +835,29 @@ impl PocoTargetProjectionV1 {
         Ok(VerifiedPocoTargetProjectionV1 {
             projection: self.clone(),
             projection_commitment: self.commitment_digest_v1()?,
+            source_export: source.clone(),
         })
+    }
+
+    /// Verify this projection against the exact typed target-manifest
+    /// preimage before invoking the importer-owned replay verifier. The typed
+    /// verifier callback is dispatched directly; a verifier that overrides
+    /// `verify_target_manifest_preimage_v1` therefore cannot be silently
+    /// bypassed through the legacy digest-only callback.
+    ///
+    /// This is the preferred migration boundary once a manifest reader is
+    /// available: a digest-only projection cannot silently be paired with a
+    /// different validator-set, protocol, application-schema, runtime, or
+    /// initial-root context.  The returned token remains inert and does not
+    /// authorize JMT activation or node startup.
+    pub fn verify_with_manifest_v1<V: PocoTargetProjectionVerifierV1>(
+        &self,
+        source: &VerifiedCometStateExportV1,
+        manifest: &PocoTargetGenesisManifestV1,
+        verifier: &V,
+    ) -> Result<VerifiedPocoTargetProjectionV1> {
+        manifest.validate_against_projection_v1(self)?;
+        self.verify_with_context_v1(source, verifier, Some(manifest))
     }
 }
 
@@ -1653,6 +1919,19 @@ impl GenesisQcCeremonyEvidenceV1 {
     ) -> Result<VerifiedPocoTargetGenesisCeremonyV1> {
         let statement = projection.projection();
         let descriptor = self.binding.descriptor_v1();
+        // The projection token retains the exact source export that passed
+        // identity/finality/mapping verification.  Recheck the complete set
+        // of source coordinates copied into the signed descriptor before
+        // accepting its target GenesisQC ceremony.  Matching only the export
+        // digest would permit a descriptor to pair that digest with forged
+        // source metadata (height, BlockID, AppHash, etc.).
+        if projection.source_export.export_commitment() != statement.source_export_commitment() {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+        projection
+            .source_export
+            .export()
+            .validate_against_genesis(descriptor)?;
         if descriptor.export_manifest_digest() != statement.source_export_commitment()
             || descriptor.mapping_profile_digest() != statement.mapping_profile_digest()
             || descriptor.target_chain_id() != statement.target_chain_id()
@@ -2066,6 +2345,72 @@ mod tests {
         }
     }
 
+    struct RecordingTypedTargetProjectionVerifier {
+        typed_calls: Cell<u8>,
+        legacy_calls: Cell<u8>,
+        root_calls: Cell<u8>,
+        expected_validator_set_digest: ValidatorSetId,
+        recomputed_root: StateRoot,
+        reject_typed: bool,
+    }
+
+    impl PocoTargetProjectionVerifierV1 for RecordingTypedTargetProjectionVerifier {
+        fn verify_target_manifest_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            _target_chain_id: ChainId,
+            _target_genesis_hash: GenesisHash,
+            _target_genesis_manifest_digest: [u8; 32],
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<()> {
+            self.legacy_calls.set(self.legacy_calls.get() + 1);
+            Err(ValidationError::InvalidCertificate(
+                "legacy target manifest callback must not run for typed preimage",
+            ))
+        }
+
+        fn verify_target_manifest_preimage_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            manifest: &PocoTargetGenesisManifestV1,
+            mapping_profile_digest: [u8; 32],
+        ) -> Result<()> {
+            self.typed_calls.set(self.typed_calls.get() + 1);
+            assert_eq!(
+                manifest.target_chain_id(),
+                ChainId::from_static("trnm-target-chain-0")
+            );
+            assert_eq!(manifest.target_genesis_hash(), GenesisHash::new([0x71; 32]));
+            assert_eq!(
+                manifest.target_validator_set_digest(),
+                self.expected_validator_set_digest
+            );
+            assert_eq!(manifest.target_protocol_version(), ProtocolVersion::V0);
+            assert_eq!(manifest.application_schema_digest(), [0x75; 32]);
+            assert_eq!(manifest.runtime_profile_digest(), [0x76; 32]);
+            assert_eq!(manifest.initial_state_root(), StateRoot::new([0x73; 32]));
+            assert_eq!(mapping_profile_digest, [0x58; 32]);
+            if self.reject_typed {
+                return Err(ValidationError::InvalidCertificate(
+                    "typed target manifest verifier rejected manifest",
+                ));
+            }
+            Ok(())
+        }
+
+        fn recompute_native_state_root_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            _target_chain_id: ChainId,
+            _target_genesis_hash: GenesisHash,
+            _target_genesis_manifest_digest: [u8; 32],
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<StateRoot> {
+            self.root_calls.set(self.root_calls.get() + 1);
+            Ok(self.recomputed_root)
+        }
+    }
+
     fn target_projection_trusted_set() -> ValidatorSet {
         ValidatorSet::new(
             GenesisHash::new([0x71; 32]),
@@ -2081,6 +2426,19 @@ mod tests {
             .unwrap()],
         )
         .expect("target projection trusted set")
+    }
+
+    fn target_genesis_manifest(trusted_set: &ValidatorSet) -> PocoTargetGenesisManifestV1 {
+        PocoTargetGenesisManifestV1::new(
+            trusted_set.chain_id(),
+            trusted_set.genesis_hash(),
+            trusted_set.id(),
+            trusted_set.protocol_version(),
+            [0x75; 32],
+            [0x76; 32],
+            StateRoot::new([0x73; 32]),
+        )
+        .expect("shape-valid target genesis manifest")
     }
 
     fn descriptor_for_target_projection(
@@ -2112,14 +2470,10 @@ mod tests {
         .expect("projection-bound migration descriptor")
     }
 
-    fn ceremony_for_target_projection(
-        source: &VerifiedCometStateExportV1,
-        projection: &VerifiedPocoTargetProjectionV1,
+    fn ceremony_for_descriptor(
+        descriptor: PocoGenesisV1,
         trusted_set: &ValidatorSet,
-        new_state_root: StateRoot,
     ) -> GenesisQcCeremonyEvidenceV1 {
-        let descriptor =
-            descriptor_for_target_projection(source, projection, trusted_set, new_state_root);
         let qc = GenesisQcV0::new(
             trusted_set.genesis_hash(),
             trusted_set.chain_id(),
@@ -2135,6 +2489,17 @@ mod tests {
         )
         .unwrap();
         GenesisQcCeremonyEvidenceV1::new(binding, vec![share]).unwrap()
+    }
+
+    fn ceremony_for_target_projection(
+        source: &VerifiedCometStateExportV1,
+        projection: &VerifiedPocoTargetProjectionV1,
+        trusted_set: &ValidatorSet,
+        new_state_root: StateRoot,
+    ) -> GenesisQcCeremonyEvidenceV1 {
+        let descriptor =
+            descriptor_for_target_projection(source, projection, trusted_set, new_state_root);
+        ceremony_for_descriptor(descriptor, trusted_set)
     }
 
     #[test]
@@ -2204,6 +2569,49 @@ mod tests {
             ))
         ));
         assert_eq!(root_mismatch.calls.get(), 0b011);
+    }
+
+    #[test]
+    fn typed_target_manifest_verifier_dispatches_and_fails_closed() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let manifest = target_genesis_manifest(&trusted_set);
+        let projection = source
+            .bind_target_projection_from_manifest_v1(&manifest)
+            .expect("typed target manifest projection");
+
+        let verifier = RecordingTypedTargetProjectionVerifier {
+            typed_calls: Cell::new(0),
+            legacy_calls: Cell::new(0),
+            root_calls: Cell::new(0),
+            expected_validator_set_digest: trusted_set.id(),
+            recomputed_root: StateRoot::new([0x73; 32]),
+            reject_typed: false,
+        };
+        projection
+            .verify_with_manifest_v1(&source, &manifest, &verifier)
+            .expect("typed target manifest and root replay pass");
+        assert_eq!(verifier.typed_calls.get(), 1);
+        assert_eq!(verifier.legacy_calls.get(), 0);
+        assert_eq!(verifier.root_calls.get(), 1);
+
+        let rejecting = RecordingTypedTargetProjectionVerifier {
+            typed_calls: Cell::new(0),
+            legacy_calls: Cell::new(0),
+            root_calls: Cell::new(0),
+            expected_validator_set_digest: trusted_set.id(),
+            recomputed_root: StateRoot::new([0x73; 32]),
+            reject_typed: true,
+        };
+        assert_eq!(
+            projection
+                .verify_with_manifest_v1(&source, &manifest, &rejecting)
+                .unwrap_err(),
+            ValidationError::InvalidCertificate("typed target manifest verifier rejected manifest")
+        );
+        assert_eq!(rejecting.typed_calls.get(), 1);
+        assert_eq!(rejecting.legacy_calls.get(), 0);
+        assert_eq!(rejecting.root_calls.get(), 0);
     }
 
     #[test]
@@ -2306,6 +2714,62 @@ mod tests {
             ),
             Err(ValidationError::InvalidSignature(_))
         ));
+    }
+
+    #[test]
+    fn target_genesis_ceremony_rejects_forged_source_metadata_with_matching_export_digest() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let projection = source
+            .bind_target_projection_v1(
+                trusted_set.chain_id(),
+                trusted_set.genesis_hash(),
+                [0x72; 32],
+                StateRoot::new([0x73; 32]),
+            )
+            .unwrap()
+            .verify_with(
+                &source,
+                &RecordingTargetProjectionVerifier {
+                    calls: Cell::new(0),
+                    reject_manifest: false,
+                    recomputed_root: StateRoot::new([0x73; 32]),
+                },
+            )
+            .unwrap();
+
+        let export = source.export();
+        let forged_descriptor = PocoGenesisV1::new(
+            ChainId::from_static("trnm-forged-source-chain-0"),
+            *export.source_genesis_document_digest(),
+            export.source_application_id(),
+            export.source_store_id(),
+            export.finalized_height(),
+            *export.finalized_block_identity(),
+            export.source_finality_proof_digest(),
+            *export.legacy_app_hash(),
+            source.export_commitment(),
+            export.mapping_profile_digest(),
+            projection.projection().target_chain_id(),
+            projection.projection().target_genesis_hash(),
+            projection.projection().target_genesis_manifest_digest(),
+            projection.projection().claimed_state_root(),
+            trusted_set.id(),
+            trusted_set.protocol_version(),
+        )
+        .expect("shape-valid descriptor with forged source metadata");
+        let evidence = ceremony_for_descriptor(forged_descriptor, &trusted_set);
+
+        assert_eq!(
+            evidence
+                .verify_against_target_projection_v1(
+                    &projection,
+                    &trusted_set,
+                    &AcceptAllGenesisCeremonySignatures,
+                )
+                .unwrap_err(),
+            ValidationError::ConsensusContextMismatch
+        );
     }
 
     #[test]
