@@ -1,10 +1,10 @@
 # TRNM Consensus Engine Decision — 2026-07-27
 
-Status: **Superseded by the 2026-08-04 PoCO-BFT v0 architecture freeze**
+Status: **Superseded by the 2026-08-25 native PoCO-BFT mainline decision**
 
-The references below to `trnm-chain-node` describe the historical comparison
-fixture, not the production candidate. CometBFT is now retained as a development
-differential oracle. The binding target is
+The references below to `trnm-chain-node` and CometBFT describe a historical
+comparison fixture, not a production candidate. The binding target and
+cutover policy are in `TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md` and
 `TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`.
 
 ## Decision

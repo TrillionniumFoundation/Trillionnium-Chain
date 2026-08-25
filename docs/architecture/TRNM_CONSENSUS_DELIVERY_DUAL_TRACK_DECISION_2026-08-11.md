@@ -1,6 +1,14 @@
 # TRNM Consensus Delivery Dual-Track Decision — 2026-08-11
 
-Status: **active delivery decision; no production-readiness claim**
+Status: **SUPERSEDED on 2026-08-25; historical delivery decision only**
+
+The binding route is now native PoCO-BFT as the sole production consensus
+mainline. CometBFT is migration residue only: no new features, release
+artifacts, deployments, readiness evidence, or fallback authority may use it.
+See `TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md` and
+`docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`. The remainder
+of this file is retained so the earlier risk-control rationale and evidence
+remain auditable; it is not an instruction to continue two tracks.
 
 This decision governs delivery sequencing. It does not silently amend the
 PoCO-BFT v0 wire protocol, safety rules, or economic rules. Any such amendment

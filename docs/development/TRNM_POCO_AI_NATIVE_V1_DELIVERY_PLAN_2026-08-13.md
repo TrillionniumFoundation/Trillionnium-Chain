@@ -9,7 +9,7 @@ not amend frozen PoCO-BFT v0 and does not claim a deployable node.
 
 Authoritative inputs:
 
-- [`../architecture/TRNM_POCO_BFT_NATIVE_MAINLINE_DECISION_2026-08-13.md`](../architecture/TRNM_POCO_BFT_NATIVE_MAINLINE_DECISION_2026-08-13.md)
+- [`../architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`](../architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md)
 - [`../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`](../architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md)
 - [`../architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md`](../architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md)
 - [`TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md`](TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md)

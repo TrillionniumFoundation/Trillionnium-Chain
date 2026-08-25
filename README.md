@@ -6,8 +6,11 @@
 - Historical status/archive docs live under `docs/archive/`
 - Current consensus target: deterministic PoCO-BFT v0; see
   `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
-- CometBFT is retained as a development differential oracle, not the target
-  production finality authority.
+- Native PoCO-BFT is the sole future production consensus route; see
+  `docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`.
+- CometBFT is migration residue only and is never a release, deployment,
+  fallback, or readiness authority. It is removed after the signed C0 cutover
+  gate, not before.
 
 ---
 

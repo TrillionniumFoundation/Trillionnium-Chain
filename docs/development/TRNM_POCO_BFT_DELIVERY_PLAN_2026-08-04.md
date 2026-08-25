@@ -1,14 +1,23 @@
 # TRNM PoCO-BFT Delivery Plan — 2026-08-04
 
-Status: **active engineering plan; no phase is complete**
+Status: **SUPERSEDED on 2026-08-25; historical engineering tranche**
+
+The current execution authority is
+`TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`. This file is retained for its
+bounded implementation evidence and gap history. References below to a
+CometBFT delivery track or a dual-track promotion decision are historical and
+must not be read as a second production route.
 
 Working branch: `feature/chain-poco-bft-v0`
 
 ## 2026-08-11 delivery-strategy gate
 
-Delivery now follows the active dual-track decision in
+This historical tranche originally followed the dual-track decision in
 [`../architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md`](../architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md).
-The CometBFT application/JMT path remains an explicitly development-only devnet
+Current delivery follows the PoCO-only execution board
+`TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`; the old wording below is dated
+implementation evidence, not a second route. The CometBFT application/JMT path
+remains an explicitly development-only devnet
 candidate and differential oracle while the custom PoCO-BFT path remains an
 incubator. The tracks do not share validator safety state, signer journals,
 chain IDs, readiness labels, or release artifacts.

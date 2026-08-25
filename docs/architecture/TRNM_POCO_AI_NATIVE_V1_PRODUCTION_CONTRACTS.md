@@ -11,7 +11,7 @@ to activate protocol version 1. The frozen PoCO-BFT v0 rules remain unchanged
 until an explicitly authorized cross-version transition completes.
 
 The binding product decision remains
-[`TRNM_POCO_BFT_NATIVE_MAINLINE_DECISION_2026-08-13.md`](TRNM_POCO_BFT_NATIVE_MAINLINE_DECISION_2026-08-13.md).
+[`TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`](TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md).
 The existing v0 host contracts remain authority for v0 work:
 [`TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`](TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md).
 V1 must preserve the weighted chained-HotStuff safety kernel while adding
@@ -27,9 +27,16 @@ poco_ai_native_v1_status=DESIGN_ONLY
 poco_ai_native_v1_spec_frozen=false
 poco_ai_native_v1_implemented=false
 poco_ai_native_v1_production_activation=false
-zero_comet_production_dependency_achieved=false
+zero_comet_production_dependency_achieved=true
+legacy_comet_migration_residue_present=true
+comet_replacement_complete=false
 production_consensus_activation=false
 ```
+
+`zero_comet_production_dependency_achieved=true` describes only the active
+PoCO Cargo/build closure. It does not mean the repository has been cleaned or
+that PoCO replacement/cutover is complete; the excluded migration residue is
+tracked by `config/consensus-mainline.json` and the C0/C1 gates.
 
 No v1 type, domain, file, test, or prototype may turn any of those values into
 an achieved claim. In particular, this document does not authorize:

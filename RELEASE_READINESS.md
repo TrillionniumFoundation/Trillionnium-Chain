@@ -18,9 +18,25 @@ cached tracking ref contemporaneous.
 
 **Conclusion: Not release-ready; do not claim external readiness.**
 
-### 2026-08-11 delivery strategy truth
+### 2026-08-25 consensus-route truth
 
-- The active delivery strategy is the dual-track decision in
+- Native PoCO-BFT is the sole future production consensus route. The binding
+  decision and staged Comet cleanup gate are in
+  `docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`; the
+  executable sequence is in
+  `docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`.
+- CometBFT and the excluded `trnm-consensus-app`/`trnm-node` tree are
+  migration residue only. They may be used as read-only historical input for
+  the eventual export/import rehearsal, but cannot be built into a release,
+  deployed, used as PoCO evidence, or receive new protocol features.
+- The active PoCO Cargo graph is Comet-free, but C0 replacement is not complete:
+  the native node still fails closed and real multi-host, signer, state-sync,
+  and recovery gates remain open. `production_candidate=false` and
+  `production_consensus_activation=false` remain authoritative.
+
+### 2026-08-11 historical delivery strategy
+
+- The historical delivery strategy was the dual-track decision in
   `docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md`.
 - The CometBFT application/JMT path may produce explicitly development-only
   devnet evidence. It is not a public-testnet or mainnet readiness claim.

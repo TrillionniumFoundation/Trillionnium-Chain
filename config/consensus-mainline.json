@@ -1,0 +1,42 @@
+{
+  "schema": "trnm-consensus-mainline-truth-v1",
+  "as_of": "2026-08-25",
+  "consensus_mainline": "native-poco-bft",
+  "protocol_target": "poco-bft-v0",
+  "stage": "G1-native-host-incomplete",
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "cometbft": {
+    "role": "migration-residue-only",
+    "production_dependency": false,
+    "active_workspace_member": false,
+    "new_features_allowed": false,
+    "historical_replay_allowed": true,
+    "cleanup_eligible": false,
+    "cleanup_gate": "C0-cutover-not-passed"
+  },
+  "migration": {
+    "strategy": "finalized-height-export-to-fresh-poco-genesis",
+    "in_place_database_or_wal_conversion": false,
+    "old_validator_state_import": false,
+    "legacy_app_hash_is_poco_state_root": false,
+    "legacy_app_hash_role": "signed-provenance-attestation-only",
+    "post_finality_downgrade_to_comet": false
+  },
+  "blockers": [
+    {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},
+    {"id": "P0-PROTOCOL-001", "severity": "P0", "status": "open", "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"},
+    {"id": "P1-CORE-001", "severity": "P1", "status": "open", "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"},
+    {"id": "P1-EXEC-001", "severity": "P1", "status": "open", "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"},
+    {"id": "P2-NODE-001", "severity": "P2", "status": "open", "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"},
+    {"id": "P2-NET-001", "severity": "P2", "status": "open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
+    {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
+    {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "exit": "export/import binds source manifest, mapping digest, new JMT root, and GenesisQC/ceremony"},
+    {"id": "MIG-CLEAN-001", "severity": "P3", "status": "blocked-by-cutover", "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"}
+  ],
+  "authoritative_docs": {
+    "decision": "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md",
+    "execution_board": "docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md",
+    "gap_register": "docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md"
+  }
+}
