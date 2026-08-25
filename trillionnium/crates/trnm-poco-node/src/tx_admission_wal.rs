@@ -43,7 +43,7 @@ use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::{BuiltCanonicalTxAdmissionViewV0, BuiltCanonicalTxV0};
 use trnm_consensus_types::{BlockId, Height, StateRoot};
 use trnm_mempool::{
-    AdmissionReject, IngressClass, PendingNonceAdmission, PendingNonceAuthority,
+    AdmissionReject, CanonicalSignerId, IngressClass, PendingNonceAdmission, PendingNonceAuthority,
     PendingNonceReservation, PendingNonceReservationState, SignedAdmissionHooks,
     SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate, TypedAdmitOutcome,
     DEFAULT_MAX_ADMISSION_BODY_BYTES,
@@ -66,6 +66,11 @@ pub const TX_ADMISSION_BOUNDARY_CHECKTX_V0: bool = false;
 /// readback before it can be considered a production contract.
 #[allow(dead_code)]
 pub const TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0: bool = true;
+/// An explicit node-owned signer identity resolver is required for the
+/// candidate CheckTx seam. The resolver is composition-only and does not
+/// imply that a production account registry or signer runtime is wired.
+pub const TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_V0: bool = true;
+pub const TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_SIGNING_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_BROADCAST_V0: bool = false;
 /// A typed application/finality readback boundary exists behind the candidate
@@ -333,6 +338,22 @@ pub trait NativeCommitReceiptVerifierV0 {
         metadata: &SignedEnvelopeMetadata,
         evidence: &NativeCommitReceiptEvidenceV0,
     ) -> Result<(), TxAdmissionWalErrorV0>;
+}
+
+/// Node-owned mapping from the authenticated transaction envelope to the
+/// canonical replay identity used by the pending-nonce authority.
+///
+/// The resolver is intentionally installed when the node boundary is opened,
+/// rather than supplied alongside each transaction. A caller-provided
+/// CanonicalSignerId is therefore only an assertion checked against this
+/// owner; it can never choose the WAL replay key. Implementations must read
+/// an authenticated account/key registry (or an equivalent remote authority)
+/// and must not trust an unverified request parameter.
+pub trait CanonicalSignerIdentityResolverV0: fmt::Debug {
+    fn resolve_canonical_signer_id_v0(
+        &self,
+        transaction: &BuiltCanonicalTxV0,
+    ) -> Result<CanonicalSignerId, AdmissionReject>;
 }
 
 /// Type-state token returned only after the explicit verifier succeeds. The
@@ -705,6 +726,7 @@ pub struct SqlitePendingNonceAuthorityV0 {
 pub struct NodeOwnedTxAdmissionBoundaryV0 {
     gate: TypedAdmissionGate,
     authority: SqlitePendingNonceAuthorityV0,
+    signer_resolver: Option<Box<dyn CanonicalSignerIdentityResolverV0>>,
 }
 
 impl NodeOwnedTxAdmissionBoundaryV0 {
@@ -719,10 +741,47 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         critical_reserve: usize,
         max_body_bytes: u64,
     ) -> Result<Self, TxAdmissionWalErrorV0> {
+        Self::open_inner(path, namespace, total_capacity, critical_reserve, max_body_bytes, None)
+    }
+
+    fn open_inner(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+        max_body_bytes: u64,
+        signer_resolver: Option<Box<dyn CanonicalSignerIdentityResolverV0>>,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
         Ok(Self {
             gate: TypedAdmissionGate::new(total_capacity, critical_reserve, max_body_bytes),
             authority: SqlitePendingNonceAuthorityV0::open(path, namespace)?,
+            signer_resolver,
         })
+    }
+
+    /// Open a boundary with the immutable signer/account resolver owned by the
+    /// node admission authority. Candidate CheckTx calls fail closed until
+    /// this constructor is used; generic typed admission remains available via
+    /// admit_signed_candidate.
+    pub fn open_with_signer_resolver<R>(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+        max_body_bytes: u64,
+        resolver: R,
+    ) -> Result<Self, TxAdmissionWalErrorV0>
+    where
+        R: CanonicalSignerIdentityResolverV0 + 'static,
+    {
+        Self::open_inner(
+            path,
+            namespace,
+            total_capacity,
+            critical_reserve,
+            max_body_bytes,
+            Some(Box::new(resolver)),
+        )
     }
 
     /// Open with the typed mempool's canonical default body bound.
@@ -738,6 +797,28 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             total_capacity,
             critical_reserve,
             DEFAULT_MAX_ADMISSION_BODY_BYTES,
+        )
+    }
+
+    /// Open with the canonical builder body bound and an authority-owned
+    /// signer/account resolver.
+    pub fn with_default_body_limit_and_signer_resolver<R>(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+        resolver: R,
+    ) -> Result<Self, TxAdmissionWalErrorV0>
+    where
+        R: CanonicalSignerIdentityResolverV0 + 'static,
+    {
+        Self::open_with_signer_resolver(
+            path,
+            namespace,
+            total_capacity,
+            critical_reserve,
+            DEFAULT_MAX_ADMISSION_BODY_BYTES,
+            resolver,
         )
     }
 
@@ -761,8 +842,58 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             .admit_signed_with_pending_nonce(envelope, class, hooks, &mut self.authority)
     }
 
+    fn resolve_signer_id_v0(
+        &self,
+        transaction: &BuiltCanonicalTxV0,
+    ) -> Result<CanonicalSignerId, AdmissionReject> {
+        self.signer_resolver
+            .as_ref()
+            .ok_or(AdmissionReject::SignerIdentityUnavailable)?
+            .resolve_canonical_signer_id_v0(transaction)
+    }
+
+    fn check_tx_candidate_resolved_v0(
+        &mut self,
+        transaction: &BuiltCanonicalTxV0,
+        signer_id: CanonicalSignerId,
+        class: IngressClass,
+        chain_id: &str,
+        now_unix_ms: u64,
+    ) -> TypedAdmitOutcome {
+        let view = transaction.admission_view_v0(signer_id);
+        let mut hooks = CanonicalCheckTxHooksV0 {
+            chain_id: chain_id.to_owned(),
+            now_unix_ms,
+        };
+        self.admit_signed_candidate(&view, class, &mut hooks)
+    }
+
     /// Run the concrete candidate CheckTx path for one builder-produced
-    /// canonical transaction.
+    /// canonical transaction using the resolver installed by the node owner.
+    /// No caller-supplied signer identity is accepted by this API.
+    pub fn check_tx_candidate_with_resolver(
+        &mut self,
+        transaction: &BuiltCanonicalTxV0,
+        class: IngressClass,
+        chain_id: &str,
+        now_unix_ms: u64,
+    ) -> TypedAdmitOutcome {
+        let signer_id = match self.resolve_signer_id_v0(transaction) {
+            Ok(signer_id) => signer_id,
+            Err(reason) => return TypedAdmitOutcome::Rejected(reason),
+        };
+        self.check_tx_candidate_resolved_v0(
+            transaction,
+            signer_id,
+            class,
+            chain_id,
+            now_unix_ms,
+        )
+    }
+
+    /// Compatibility assertion for callers migrating from the old API. The
+    /// supplied identity is never used as authority: it must equal the
+    /// resolver-owned result or the candidate is rejected before WAL access.
     ///
     /// The operation authenticates the exact signed outer envelope against the
     /// supplied chain/time context, re-checks the builder's inner bytes and
@@ -774,17 +905,25 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
     pub fn check_tx_candidate(
         &mut self,
         transaction: &BuiltCanonicalTxV0,
-        signer_id: trnm_mempool::CanonicalSignerId,
+        signer_id: CanonicalSignerId,
         class: IngressClass,
         chain_id: &str,
         now_unix_ms: u64,
     ) -> TypedAdmitOutcome {
-        let view = transaction.admission_view_v0(signer_id);
-        let mut hooks = CanonicalCheckTxHooksV0 {
-            chain_id: chain_id.to_owned(),
-            now_unix_ms,
+        let resolved = match self.resolve_signer_id_v0(transaction) {
+            Ok(resolved) => resolved,
+            Err(reason) => return TypedAdmitOutcome::Rejected(reason),
         };
-        self.admit_signed_candidate(&view, class, &mut hooks)
+        if resolved != signer_id {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::CanonicalValidationFailed);
+        }
+        self.check_tx_candidate_resolved_v0(
+            transaction,
+            resolved,
+            class,
+            chain_id,
+            now_unix_ms,
+        )
     }
 
     /// Return the next item with its node-owned handoff/commit/release token.
@@ -1478,6 +1617,23 @@ mod tests {
         }
     }
 
+    #[derive(Debug, Clone, Copy)]
+    struct BuilderFixtureSignerResolver {
+        signer: CanonicalSignerId,
+    }
+
+    impl CanonicalSignerIdentityResolverV0 for BuilderFixtureSignerResolver {
+        fn resolve_canonical_signer_id_v0(
+            &self,
+            transaction: &BuiltCanonicalTxV0,
+        ) -> Result<CanonicalSignerId, AdmissionReject> {
+            if transaction.envelope().signer_id != "did:trnm:alice" {
+                return Err(AdmissionReject::SignerIdentityUnavailable);
+            }
+            Ok(self.signer)
+        }
+    }
+
     struct AcceptingCommitVerifier;
 
     impl NativeCommitReceiptVerifierV0 for AcceptingCommitVerifier {
@@ -1878,19 +2034,26 @@ mod tests {
         let transaction = builder_fixture_transaction();
         let signer_id = CanonicalSignerId::from_bytes([0xA5; 32]).unwrap();
         let mut boundary =
-            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x8C; 32], 2, 0)
-                .unwrap();
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &path,
+                [0x8C; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
 
         const {
             assert!(TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0);
             assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
+            assert!(TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0);
             assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
             assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
         }
         assert_eq!(
-            boundary.check_tx_candidate(
+            boundary.check_tx_candidate_with_resolver(
                 &transaction,
-                signer_id,
                 IngressClass::Normal,
                 "trnm-devnet",
                 1_000,
@@ -1922,12 +2085,17 @@ mod tests {
         // A wrong chain context fails before the nonce authority is touched.
         let bad_path = temp_path();
         let mut bad_boundary =
-            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&bad_path, [0x8D; 32], 2, 0)
-                .unwrap();
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &bad_path,
+                [0x8D; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
         assert_eq!(
-            bad_boundary.check_tx_candidate(
+            bad_boundary.check_tx_candidate_with_resolver(
                 &transaction,
-                signer_id,
                 IngressClass::Normal,
                 "trnm-wrong-chain",
                 1_000,
@@ -1937,6 +2105,86 @@ mod tests {
         assert_eq!(bad_boundary.retained_rows().unwrap(), 0);
         drop(bad_boundary);
         cleanup(&bad_path);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn caller_supplied_signer_mismatch_cannot_choose_wal_replay_key() {
+        let path = temp_path();
+        let transaction = builder_fixture_transaction();
+        let authority_signer = CanonicalSignerId::from_bytes([0xA5; 32]).unwrap();
+        let caller_signer = CanonicalSignerId::from_bytes([0xA6; 32]).unwrap();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &path,
+                [0x8F; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver {
+                    signer: authority_signer,
+                },
+            )
+            .unwrap();
+
+        assert_eq!(
+            boundary.check_tx_candidate(
+                &transaction,
+                caller_signer,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::CanonicalValidationFailed)
+        );
+        assert_eq!(boundary.retained_rows().unwrap(), 0);
+
+        assert_eq!(
+            boundary.check_tx_candidate(
+                &transaction,
+                authority_signer,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        ready.release().unwrap();
+        drop(ready);
+        drop(boundary);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn candidate_checktx_without_authority_resolver_fails_before_wal() {
+        let path = temp_path();
+        let transaction = builder_fixture_transaction();
+        let caller_signer = CanonicalSignerId::from_bytes([0xA5; 32]).unwrap();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x90; 32], 2, 0)
+                .unwrap();
+
+        assert_eq!(
+            boundary.check_tx_candidate_with_resolver(
+                &transaction,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::SignerIdentityUnavailable)
+        );
+        assert_eq!(
+            boundary.check_tx_candidate(
+                &transaction,
+                caller_signer,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::SignerIdentityUnavailable)
+        );
+        assert_eq!(boundary.retained_rows().unwrap(), 0);
+        drop(boundary);
         cleanup(&path);
     }
 
@@ -1980,15 +2228,26 @@ mod tests {
         let transaction = builder_fixture_transaction();
         let signer_id = CanonicalSignerId::from_bytes([0xA6; 32]).unwrap();
         let mut boundary_a =
-            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path_a, [0x8E; 32], 2, 0)
-                .unwrap();
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &path_a,
+                [0x8E; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
         let mut boundary_b =
-            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path_b, [0x8E; 32], 2, 0)
-                .unwrap();
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &path_b,
+                [0x8E; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
         assert_eq!(
-            boundary_a.check_tx_candidate(
+            boundary_a.check_tx_candidate_with_resolver(
                 &transaction,
-                signer_id,
                 IngressClass::Normal,
                 "trnm-devnet",
                 1_000,
