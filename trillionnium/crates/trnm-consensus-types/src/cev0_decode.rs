@@ -20,24 +20,26 @@ use crate::proposal_v0::{validate_scheduled_leader, validate_timestamp_step};
 use crate::{
     ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CanonicalHandoffSignIntentV1,
     CanonicalSignIntentV0, CertificateId, CertifiedHeaderV0, ChainId,
-    CometFinalizedBlockIdentityV1, CommonConsensusContextV0, ConsensusParametersHash,
-    ConsensusParametersV0, ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0,
-    Epoch, EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot,
-    ExecutionEventAttributeV0, ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0,
-    GenesisHash, GenesisQcV0, HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields,
-    HandoffSignIntentFingerprintV1, HandoffSignerRoleV1, Height, LeaderSchedule,
-    LegacyCometAppHashV1, LegacyCometGenesisHashV1, MessageKind, NextEpochCommitmentHash,
-    NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest, PocoGenesisQcBindingV1,
-    PocoGenesisV1, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
-    RolloutPhase, SignIntentFingerprintV0, Signature64, SignatureShareV0, SignatureVerifier,
-    SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError,
-    Validator, ValidatorId, ValidatorSet, ValidatorSetId, View, Vote, VoteEvidenceRecordV0,
-    VotingPower, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
-    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
-    HANDOFF_SIGNER_PROFILE_V1, MAX_CONSENSUS_STRING_BYTES, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
-    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
-    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
-    SCHEMA_VERSION_V0,
+    CometFinalizedBlockIdentityV1, CometStateExportV1, CommonConsensusContextV0,
+    ConsensusParametersHash, ConsensusParametersV0, ConsensusParametersV0Fields,
+    ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch, EpochAnchorAuthorizationV0,
+    EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0, ExecutionEventV0,
+    ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0, HandoffCertificateV0,
+    HandoffDescriptorV0, HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1,
+    HandoffSignerRoleV1, Height, LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1,
+    MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
+    PayloadDigest, PocoGenesisQcBindingV1, PocoGenesisV1, ProtocolVersion, QcRef, QcReferenceV0,
+    QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0, Signature64,
+    SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
+    TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
+    ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
+    COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
+    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1, HANDOFF_SIGNER_PROFILE_V1,
+    MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1, MAX_CONSENSUS_STRING_BYTES,
+    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
+    MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, POCO_GENESIS_PROFILE_V1,
+    POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1, SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -315,6 +317,103 @@ pub const MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1: usize = 2
     + 32
     + 32;
 
+/// Decode the exact bounded canonical bytes of a read-only
+/// `CometStateExportV1` manifest. This parser validates only the manifest's
+/// structural/type boundaries; it does not read a Comet database or treat an
+/// opaque digest as proof until a source/export verifier supplies the
+/// documented preimage.
+pub fn decode_comet_state_export_v1_exact(bytes: &[u8]) -> DecodeResult<CometStateExportV1> {
+    if bytes.len() > MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != COMET_STATE_EXPORT_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(COMET_STATE_EXPORT_PROFILE_V1.len())?;
+    if profile.bytes != COMET_STATE_EXPORT_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let source_chain_offset = cursor.offset();
+    let source_chain =
+        ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, source_chain_offset)
+        })?;
+    let source_genesis_document_digest = LegacyCometGenesisHashV1::new(cursor.fixed()?)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, cursor.offset()))?;
+    let source_application_id = cursor.fixed()?;
+    let source_store_id = cursor.fixed()?;
+    let finalized_height = Height::new(cursor.u64()?);
+    let block_schema_offset = cursor.offset();
+    let block_schema = cursor.u16()?;
+    if block_schema != COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            block_schema_offset,
+        ));
+    }
+    let block_profile_offset = cursor.offset();
+    let block_profile =
+        cursor.bounded_body_bytes(COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1.len())?;
+    if block_profile.bytes != COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            block_profile_offset,
+        ));
+    }
+    let finalized_block_identity =
+        CometFinalizedBlockIdentityV1::new(cursor.fixed()?, cursor.u32()?, cursor.fixed()?)
+            .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, cursor.offset()))?;
+    let source_finality_proof_digest = cursor.fixed()?;
+    let legacy_app_hash = LegacyCometAppHashV1::new(cursor.fixed()?)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, cursor.offset()))?;
+    let exported_object_root = cursor.fixed()?;
+    let exported_index_root = cursor.fixed()?;
+    let exported_receipts_root = cursor.fixed()?;
+    let rejected_objects_root = cursor.fixed()?;
+    let source_validator_set_digest = cursor.fixed()?;
+    let source_application_schema_digest = cursor.fixed()?;
+    let source_runtime_profile_digest = cursor.fixed()?;
+    let mapping_profile_digest = cursor.fixed()?;
+    cursor.finish()?;
+
+    let export = CometStateExportV1::new(
+        source_chain,
+        source_genesis_document_digest,
+        source_application_id,
+        source_store_id,
+        finalized_height,
+        finalized_block_identity,
+        source_finality_proof_digest,
+        legacy_app_hash,
+        exported_object_root,
+        exported_index_root,
+        exported_receipts_root,
+        rejected_objects_root,
+        source_validator_set_digest,
+        source_application_schema_digest,
+        source_runtime_profile_digest,
+        mapping_profile_digest,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = export
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(export)
+}
+
 /// Decode the exact canonical bytes of the migration-aware `PocoGenesisV1`
 /// descriptor.  This object is a ceremony input, not a live consensus
 /// message; it nevertheless uses the same bounded, trailing-byte rejecting
@@ -352,7 +451,7 @@ pub fn decode_poco_genesis_v1_exact(bytes: &[u8]) -> DecodeResult<PocoGenesisV1>
     let source_height = Height::new(cursor.u64()?);
     let source_block_schema_offset = cursor.offset();
     let source_block_schema = cursor.u16()?;
-    if source_block_schema != crate::POCO_GENESIS_SCHEMA_VERSION_V1 {
+    if source_block_schema != COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1 {
         return Err(DecodeError::new(
             DecodeErrorCode::InvalidSchemaVersion,
             source_block_schema_offset,

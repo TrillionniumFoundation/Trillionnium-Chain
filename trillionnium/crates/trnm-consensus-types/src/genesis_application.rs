@@ -46,6 +46,9 @@ pub const POCO_GENESIS_QC_BINDING_PROFILE_V1: &[u8] =
 pub const COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1: &[u8] =
     b"trnm.poco-bft.migration.comet-block-id.v1";
 
+/// Schema marker for the nested legacy Comet block identity object.
+pub const COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1: u16 = 1;
+
 /// Domain for the content-addressed migration descriptor.
 pub const POCO_GENESIS_COMMITMENT_DOMAIN_V1: &[u8] =
     b"trnm.poco-bft.migration.genesis-commitment.v1";
@@ -71,6 +74,19 @@ pub const MAX_POCO_GENESIS_CANONICAL_BYTES_V1: usize = 1024;
 /// Maximum exact canonical bytes accepted by the descriptor/QC ceremony
 /// decoder, including the bounded embedded QC and descriptor roots.
 pub const MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1: usize = 4096;
+
+/// Canonical schema marker for the read-only legacy-state export manifest.
+pub const COMET_STATE_EXPORT_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Explicit object profile for a `CometStateExportV1` manifest.
+pub const COMET_STATE_EXPORT_PROFILE_V1: &[u8] = b"trnm.poco-bft.migration.comet-state-export.v1";
+
+/// Domain for the content-addressed source export manifest.
+pub const COMET_STATE_EXPORT_COMMITMENT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.migration.comet-state-export-commitment.v1";
+
+/// Maximum exact canonical bytes accepted for one source export manifest.
+pub const MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1: usize = 2048;
 
 /// Canonical schema marker for the non-wire application commitment bytes.
 pub const GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0: u16 = 0;
@@ -149,7 +165,7 @@ impl CometFinalizedBlockIdentityV1 {
     }
 
     fn encode_canonical_v1(&self, encoder: &mut Encoder) {
-        encoder.u16(POCO_GENESIS_SCHEMA_VERSION_V1);
+        encoder.u16(COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1);
         encoder.bytes(COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1);
         encoder.fixed(&self.block_hash);
         encoder.u32(self.part_set_total);
@@ -175,6 +191,222 @@ impl LegacyCometAppHashV1 {
 
     pub const fn as_bytes(&self) -> &[u8; 32] {
         &self.0
+    }
+}
+
+/// Read-only, content-addressed evidence exported from a finalized legacy
+/// Comet application. This is a manifest shape, not a reader for Comet's
+/// blockstore or SQLite files. Every digest is an opaque commitment until the
+/// source exporter and the independent importer verify its documented
+/// preimage; no field authorizes a node or imports validator signing state.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CometStateExportV1 {
+    source_chain_id: ChainId,
+    source_genesis_document_digest: LegacyCometGenesisHashV1,
+    source_application_id: [u8; 32],
+    source_store_id: [u8; 32],
+    finalized_height: Height,
+    finalized_block_identity: CometFinalizedBlockIdentityV1,
+    source_finality_proof_digest: [u8; 32],
+    legacy_app_hash: LegacyCometAppHashV1,
+    exported_object_root: [u8; 32],
+    exported_index_root: [u8; 32],
+    exported_receipts_root: [u8; 32],
+    rejected_objects_root: [u8; 32],
+    source_validator_set_digest: [u8; 32],
+    source_application_schema_digest: [u8; 32],
+    source_runtime_profile_digest: [u8; 32],
+    mapping_profile_digest: [u8; 32],
+}
+
+impl CometStateExportV1 {
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        source_chain_id: ChainId,
+        source_genesis_document_digest: LegacyCometGenesisHashV1,
+        source_application_id: [u8; 32],
+        source_store_id: [u8; 32],
+        finalized_height: Height,
+        finalized_block_identity: CometFinalizedBlockIdentityV1,
+        source_finality_proof_digest: [u8; 32],
+        legacy_app_hash: LegacyCometAppHashV1,
+        exported_object_root: [u8; 32],
+        exported_index_root: [u8; 32],
+        exported_receipts_root: [u8; 32],
+        rejected_objects_root: [u8; 32],
+        source_validator_set_digest: [u8; 32],
+        source_application_schema_digest: [u8; 32],
+        source_runtime_profile_digest: [u8; 32],
+        mapping_profile_digest: [u8; 32],
+    ) -> Result<Self> {
+        if source_application_id == [0; 32] {
+            return Err(ValidationError::InvalidCertificate(
+                "source application id must be nonzero",
+            ));
+        }
+        if source_store_id == [0; 32] {
+            return Err(ValidationError::InvalidCertificate(
+                "source store id must be nonzero",
+            ));
+        }
+        if finalized_height.get() == 0 {
+            return Err(ValidationError::InvalidCertificate(
+                "export finalized height must be nonzero",
+            ));
+        }
+        let digest_fields = [
+            source_finality_proof_digest,
+            exported_object_root,
+            exported_index_root,
+            exported_receipts_root,
+            rejected_objects_root,
+            source_validator_set_digest,
+            source_application_schema_digest,
+            source_runtime_profile_digest,
+            mapping_profile_digest,
+        ];
+        if digest_fields.contains(&[0; 32]) {
+            return Err(ValidationError::InvalidCertificate(
+                "source export digest fields must be nonzero",
+            ));
+        }
+        Ok(Self {
+            source_chain_id,
+            source_genesis_document_digest,
+            source_application_id,
+            source_store_id,
+            finalized_height,
+            finalized_block_identity,
+            source_finality_proof_digest,
+            legacy_app_hash,
+            exported_object_root,
+            exported_index_root,
+            exported_receipts_root,
+            rejected_objects_root,
+            source_validator_set_digest,
+            source_application_schema_digest,
+            source_runtime_profile_digest,
+            mapping_profile_digest,
+        })
+    }
+
+    pub const fn source_chain_id(&self) -> ChainId {
+        self.source_chain_id
+    }
+
+    pub const fn source_genesis_document_digest(&self) -> &LegacyCometGenesisHashV1 {
+        &self.source_genesis_document_digest
+    }
+
+    pub const fn source_application_id(&self) -> [u8; 32] {
+        self.source_application_id
+    }
+
+    pub const fn source_store_id(&self) -> [u8; 32] {
+        self.source_store_id
+    }
+
+    pub const fn finalized_height(&self) -> Height {
+        self.finalized_height
+    }
+
+    pub const fn finalized_block_identity(&self) -> &CometFinalizedBlockIdentityV1 {
+        &self.finalized_block_identity
+    }
+
+    pub const fn source_finality_proof_digest(&self) -> [u8; 32] {
+        self.source_finality_proof_digest
+    }
+
+    pub const fn legacy_app_hash(&self) -> &LegacyCometAppHashV1 {
+        &self.legacy_app_hash
+    }
+
+    pub const fn exported_object_root(&self) -> [u8; 32] {
+        self.exported_object_root
+    }
+
+    pub const fn exported_index_root(&self) -> [u8; 32] {
+        self.exported_index_root
+    }
+
+    pub const fn exported_receipts_root(&self) -> [u8; 32] {
+        self.exported_receipts_root
+    }
+
+    pub const fn rejected_objects_root(&self) -> [u8; 32] {
+        self.rejected_objects_root
+    }
+
+    pub const fn source_validator_set_digest(&self) -> [u8; 32] {
+        self.source_validator_set_digest
+    }
+
+    pub const fn source_application_schema_digest(&self) -> [u8; 32] {
+        self.source_application_schema_digest
+    }
+
+    pub const fn source_runtime_profile_digest(&self) -> [u8; 32] {
+        self.source_runtime_profile_digest
+    }
+
+    pub const fn mapping_profile_digest(&self) -> [u8; 32] {
+        self.mapping_profile_digest
+    }
+
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| self.encode_canonical_v1(encoder))
+    }
+
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        Ok(hash_len_framed(
+            COMET_STATE_EXPORT_COMMITMENT_DOMAIN_V1,
+            &[&bytes],
+        ))
+    }
+
+    /// Checks the source-side fields that a `PocoGenesisV1` descriptor copies
+    /// directly. It intentionally does not claim that opaque export/finality
+    /// digests have been cryptographically verified.
+    pub fn validate_against_genesis(&self, descriptor: &PocoGenesisV1) -> Result<()> {
+        if self.source_chain_id != descriptor.source_chain_id()
+            || self.source_genesis_document_digest != *descriptor.source_genesis_hash()
+            || self.source_application_id != descriptor.source_application_id()
+            || self.source_store_id != descriptor.source_store_id()
+            || self.finalized_height != descriptor.source_height()
+            || self.finalized_block_identity != *descriptor.source_block_identity()
+            || self.source_finality_proof_digest != descriptor.source_finality_proof_digest()
+            || self.legacy_app_hash != *descriptor.legacy_app_hash_attestation()
+            || self.mapping_profile_digest != descriptor.mapping_profile_digest()
+        {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+        if self.commitment_digest_v1()? != descriptor.export_manifest_digest() {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+        Ok(())
+    }
+
+    fn encode_canonical_v1(&self, encoder: &mut Encoder) {
+        encoder.u16(COMET_STATE_EXPORT_SCHEMA_VERSION_V1);
+        encoder.bytes(COMET_STATE_EXPORT_PROFILE_V1);
+        encoder.consensus_string(self.source_chain_id.as_bytes());
+        encoder.fixed(self.source_genesis_document_digest.as_bytes());
+        encoder.fixed(&self.source_application_id);
+        encoder.fixed(&self.source_store_id);
+        encoder.u64(self.finalized_height.get());
+        self.finalized_block_identity.encode_canonical_v1(encoder);
+        encoder.fixed(&self.source_finality_proof_digest);
+        encoder.fixed(self.legacy_app_hash.as_bytes());
+        encoder.fixed(&self.exported_object_root);
+        encoder.fixed(&self.exported_index_root);
+        encoder.fixed(&self.exported_receipts_root);
+        encoder.fixed(&self.rejected_objects_root);
+        encoder.fixed(&self.source_validator_set_digest);
+        encoder.fixed(&self.source_application_schema_digest);
+        encoder.fixed(&self.source_runtime_profile_digest);
+        encoder.fixed(&self.mapping_profile_digest);
     }
 }
 
@@ -922,6 +1154,80 @@ mod tests {
         .expect("shape-valid migration descriptor")
     }
 
+    fn state_export() -> CometStateExportV1 {
+        CometStateExportV1::new(
+            ChainId::from_static("trnm-source-chain-0"),
+            LegacyCometGenesisHashV1::new([0x09; 32]).unwrap(),
+            [0x11; 32],
+            [0x22; 32],
+            Height::new(77),
+            CometFinalizedBlockIdentityV1::new([0x33; 32], 1, [0x34; 32]).unwrap(),
+            [0x35; 32],
+            LegacyCometAppHashV1::new([0x44; 32]).unwrap(),
+            [0x51; 32],
+            [0x52; 32],
+            [0x53; 32],
+            [0x54; 32],
+            [0x55; 32],
+            [0x56; 32],
+            [0x57; 32],
+            [0x58; 32],
+        )
+        .expect("shape-valid source export")
+    }
+
+    #[test]
+    fn comet_state_export_decoder_is_exact_and_profile_bound() {
+        let export = state_export();
+        let bytes = export.try_canonical_bytes_v1().unwrap();
+        assert_eq!(
+            crate::decode_comet_state_export_v1_exact(&bytes).unwrap(),
+            export
+        );
+        assert_ne!(export.commitment_digest_v1().unwrap(), [0; 32]);
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_eq!(
+            crate::decode_comet_state_export_v1_exact(&trailing)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::TrailingBytes
+        );
+
+        let mut wrong_profile = bytes;
+        wrong_profile[6] ^= 1;
+        assert_eq!(
+            crate::decode_comet_state_export_v1_exact(&wrong_profile)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+
+        let descriptor = PocoGenesisV1::new(
+            export.source_chain_id(),
+            *export.source_genesis_document_digest(),
+            export.source_application_id(),
+            export.source_store_id(),
+            export.finalized_height(),
+            *export.finalized_block_identity(),
+            export.source_finality_proof_digest(),
+            *export.legacy_app_hash(),
+            export.commitment_digest_v1().unwrap(),
+            export.mapping_profile_digest(),
+            CHAIN,
+            GenesisHash::new([0x71; 32]),
+            [0x72; 32],
+            StateRoot::new([0x73; 32]),
+            crate::ValidatorSetId::new([0x74; 32]),
+            ProtocolVersion::V0,
+        )
+        .unwrap();
+        export
+            .validate_against_genesis(&descriptor)
+            .expect("export fields match descriptor source");
+    }
+
     #[test]
     fn migration_descriptor_binds_source_and_new_native_root_without_root_substitution() {
         let descriptor = migration_descriptor();
@@ -1125,5 +1431,36 @@ mod tests {
             crate::DecodeErrorCode::InvalidSchemaVersion
         );
         assert_eq!(schema_error.byte_offset(), 0);
+    }
+
+    #[test]
+    fn migration_descriptor_max_width_chain_ids_stay_inside_decoder_cap() {
+        let max_chain = ChainId::from_bytes(&[b'x'; crate::MAX_CONSENSUS_STRING_BYTES])
+            .expect("maximum admitted chain id");
+        let descriptor = PocoGenesisV1::new(
+            ChainId::from_static("trnm-source-chain-0"),
+            LegacyCometGenesisHashV1::new([0x61; 32]).unwrap(),
+            [0x62; 32],
+            [0x63; 32],
+            Height::new(9),
+            CometFinalizedBlockIdentityV1::new([0x64; 32], 1, [0x65; 32]).unwrap(),
+            [0x66; 32],
+            LegacyCometAppHashV1::new([0x67; 32]).unwrap(),
+            [0x68; 32],
+            [0x69; 32],
+            max_chain,
+            GenesisHash::new([0x6A; 32]),
+            [0x6B; 32],
+            StateRoot::new([0x6C; 32]),
+            crate::ValidatorSetId::new([0x6D; 32]),
+            ProtocolVersion::V0,
+        )
+        .unwrap();
+        let bytes = descriptor.try_canonical_bytes_v1().unwrap();
+        assert!(bytes.len() <= MAX_POCO_GENESIS_CANONICAL_BYTES_V1);
+        assert_eq!(
+            crate::decode_poco_genesis_v1_exact(&bytes).unwrap(),
+            descriptor
+        );
     }
 }

@@ -145,6 +145,12 @@ downstream gate inherits completion from an incomplete predecessor.
 - Implement the read-only `CometStateExportV1` manifest at finalized height H.
 - Implement deterministic `PoCOGenesisV1` import with a fresh chain ID/data
   directory and synthetic GenesisQC/validator set.
+- A typed `CometStateExportV1` manifest shape and bounded exact decoder now
+  exist. It commits source application/store identity, cutoff block/finality
+  references, legacy AppHash, object/index/receipt/rejected-object roots,
+  source validator-set digest, application-schema/runtime profiles and mapping
+  profile. This is a canonical evidence container only; no Comet store reader,
+  finality verifier or import side effect is enabled yet.
 - A typed `PocoGenesisV1` ceremony descriptor now exists in
   `trnm-consensus-types`. Legacy Comet genesis-document digest, finalized
   BlockID/part-set identity, and AppHash are separate types and cannot be
@@ -161,8 +167,9 @@ downstream gate inherits completion from an incomplete predecessor.
   bytes without trusting a local JSON/YAML interpretation.
 - Include source AppHash only as `legacy_app_hash_attestation`; bind export,
   mapping/profile, new root, source namespace and complete migration-instance
-  digest into the signed genesis
-  descriptor. Never import Comet WAL/blockstore/validator signing state.
+  digest into the ceremony descriptor commitment. A signed/quorum ceremony is
+  still required before activation. Never import Comet WAL/blockstore/validator
+  signing state.
 - This is still a typed commitment/decoder slice, not an export verifier,
   import implementation, quorum-signed GenesisQC v1, or cross-peer activation.
   `MIG-ROOT-001` remains open until source/target manifests are independently

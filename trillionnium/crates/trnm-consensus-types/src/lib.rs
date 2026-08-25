@@ -56,8 +56,9 @@ pub use cev0_decode::{
     decode_application_payload_v0_exact, decode_application_payload_v0_exact_for_root_binding,
     decode_block_header_v0_exact, decode_canonical_handoff_sign_intent_v1_exact,
     decode_canonical_sign_intent_v0_exact, decode_certified_header_v0_exact_with_trusted_genesis,
-    decode_checkpoint_finality_proof_v0_exact, decode_consensus_parameters_v0_exact,
-    decode_double_vote_evidence_v0_exact, decode_epoch_anchor_authorization_kernel_v0_exact,
+    decode_checkpoint_finality_proof_v0_exact, decode_comet_state_export_v1_exact,
+    decode_consensus_parameters_v0_exact, decode_double_vote_evidence_v0_exact,
+    decode_epoch_anchor_authorization_kernel_v0_exact,
     decode_execution_receipt_commitment_v0_exact, decode_finality_proof_v0_exact,
     decode_finality_proof_v0_exact_with_trusted_genesis, decode_handoff_certificate_v0_exact,
     decode_handoff_descriptor_v0_exact, decode_next_epoch_commitment_v0_exact,
@@ -93,13 +94,17 @@ pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;
 pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0};
 pub use genesis_application::{
-    CometFinalizedBlockIdentityV1, GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0,
-    LegacyCometAppHashV1, LegacyCometGenesisHashV1, PocoGenesisQcBindingV1, PocoGenesisV1,
-    COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1, GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
+    CometFinalizedBlockIdentityV1, CometStateExportV1, GenesisApplicationCommitmentV0,
+    GenesisQcApplicationBindingV0, LegacyCometAppHashV1, LegacyCometGenesisHashV1,
+    PocoGenesisQcBindingV1, PocoGenesisV1, COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1,
+    COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1, COMET_STATE_EXPORT_COMMITMENT_DOMAIN_V1,
+    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1,
+    GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,
     GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0, GENESIS_QC_APPLICATION_BINDING_DOMAIN_V0,
-    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
-    POCO_GENESIS_COMMITMENT_DOMAIN_V1, POCO_GENESIS_MIGRATION_INSTANCE_DOMAIN_V1,
-    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_DOMAIN_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1,
+    MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
+    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, POCO_GENESIS_COMMITMENT_DOMAIN_V1,
+    POCO_GENESIS_MIGRATION_INSTANCE_DOMAIN_V1, POCO_GENESIS_PROFILE_V1,
+    POCO_GENESIS_QC_BINDING_DOMAIN_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1,
     POCO_GENESIS_SCHEMA_VERSION_V1, POCO_GENESIS_SOURCE_NAMESPACE_DOMAIN_V1,
 };
 pub use handoff::{

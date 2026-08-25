@@ -69,7 +69,8 @@ native migration contract is implemented:
    and source chain identity.
 3. Emit a content-addressed `CometStateExportV1` manifest. It includes the
    source chain/app/store IDs, `H`, block ID, old AppHash, every exported
-   object/index digest, mapping/profile digest, and operator signatures. Live
+   object/index digest, and mapping/profile digest. A separately signed
+   provenance/ceremony envelope is required before activation. Live
    WAL/SHM, blockstore, `priv_validator_state`, snapshots, pending blocks, and
    mempool are never copied.
 4. Import the manifest into a **new** PoCO data directory and recompute the
@@ -79,7 +80,9 @@ native migration contract is implemented:
    height/block ID, validator-set digest, protocol version, and genesis
    descriptor into the PoCO genesis ceremony / GenesisQC. An operator-local
    root or configuration value is insufficient.
-   The current code carries this as the additive `PocoGenesisV1` /
+   The current code carries the source evidence as a bounded typed
+   `CometStateExportV1` manifest and the target ceremony as the additive
+   `PocoGenesisV1` /
    `PocoGenesisQcBindingV1` commitment. Legacy Comet block/AppHash evidence is
    type-separated from native PoCO roots, and both the descriptor and its QC
    envelope have bounded exact decoders with a local trusted-set recheck. This
