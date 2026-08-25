@@ -4257,7 +4257,7 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
         // closure are one cross-store mutation window. The root-bound lock is
         // advisory and writer adoption remains explicitly audited by the
         // migration ledger; no consensus activation is implied here.
-        let _cross_store_lock =
+        let cross_store_lock =
             CrossStoreLockGuardV0::acquire_exclusive_for_root_v0(cross_store_root)
                 .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         if self.core.safety_state().pending_finalization() != Some(&self.finalization) {
@@ -4553,10 +4553,16 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
             }
             self.finalization = finalization;
             self.checkpoint = target_checkpoint;
+            cross_store_lock
+                .validate_identity_v0()
+                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
             return Ok(PocoNodeLabCertificateAdvanceV0::PendingFinalization(
                 Box::new(self),
             ));
         }
+        cross_store_lock
+            .validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         Ok(PocoNodeLabCertificateAdvanceV0::Ready(Box::new(
             PocoNodeLabOrdinaryProposalRuntimeV0 {
                 core: self.core,

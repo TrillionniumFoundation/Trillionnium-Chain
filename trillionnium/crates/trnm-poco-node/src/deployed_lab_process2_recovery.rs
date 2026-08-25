@@ -4965,7 +4965,7 @@ fn drive_live_cursor_v0<W: ExternalMonotonicWatermarkV0>(
     // between the final K/checkpoint readbacks.  This is deliberately a
     // cooperating-owner fence; it does not claim a distributed lock or turn
     // the laboratory replay into a production activation path.
-    let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+    let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
         &paths.application,
         &paths.validation,
     )
@@ -5168,11 +5168,23 @@ fn drive_live_cursor_v0<W: ExternalMonotonicWatermarkV0>(
                     ReplayLinkCheckpointOutcomeV0::AppliedNext { link, session } => {
                         validate_checkpointed_token_v0(&link, cursor, target_binding)?;
                         trigger_test_crash_v0(crash_hook, Process2CrashHookV0::Checkpointed)?;
+                        cross_store_lock.validate_identity_v0().map_err(|error| {
+                            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                                "replay.cross_store_lock_final_identity",
+                                error.to_string(),
+                            )
+                        })?;
                         return Ok(Process2FrontierV0::Ready(session));
                     }
                     ReplayLinkCheckpointOutcomeV0::AppliedComplete { link, session } => {
                         validate_checkpointed_token_v0(&link, cursor, target_binding)?;
                         trigger_test_crash_v0(crash_hook, Process2CrashHookV0::Checkpointed)?;
+                        cross_store_lock.validate_identity_v0().map_err(|error| {
+                            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                                "replay.cross_store_lock_final_identity",
+                                error.to_string(),
+                            )
+                        })?;
                         return Ok(Process2FrontierV0::Complete(session));
                     }
                     ReplayLinkCheckpointOutcomeV0::NotApplied(link) => {
@@ -5181,6 +5193,12 @@ fn drive_live_cursor_v0<W: ExternalMonotonicWatermarkV0>(
                 }
             }
             Process2FrontierV0::Complete(session) => {
+                cross_store_lock.validate_identity_v0().map_err(|error| {
+                    PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                        "replay.cross_store_lock_final_identity",
+                        error.to_string(),
+                    )
+                })?;
                 return Ok(Process2FrontierV0::Complete(session));
             }
             Process2FrontierV0::ActivationReady { .. } => {
@@ -5191,6 +5209,12 @@ fn drive_live_cursor_v0<W: ExternalMonotonicWatermarkV0>(
             }
         };
     }
+    cross_store_lock.validate_identity_v0().map_err(|error| {
+        PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+            "replay.cross_store_lock_final_identity",
+            error.to_string(),
+        )
+    })?;
     Err(PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
         "replay.live_retry_exhausted",
         "one replay cursor did not close after bounded exact retries",
