@@ -1,10 +1,10 @@
 use alloc::{vec, vec::Vec};
 
 use trnm_consensus_types::{
-    Block, BlockHeader, CanonicalSignPreimageV0, ConsensusPublicKey, EvidenceRoot, PayloadDigest,
-    ProposalWitnessV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SigningRoot, StateRoot,
-    TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote, Validator, Vote, VotingPower,
-    SIGNATURE_BYTES,
+    Block, BlockHeader, CanonicalSignPreimageV0, CanonicalSignable, ConsensusPublicKey,
+    EvidenceRoot, PayloadDigest, ProposalWitnessV0, QuorumCertificate, ReceiptsRoot,
+    SignatureBytes, SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
+    Validator, Vote, VotingPower, SIGNATURE_BYTES,
 };
 
 use super::*;
@@ -59,6 +59,33 @@ impl SafetyRulesDurableTransitionStoreV1 for RecordingTransitionStore {
             transition.canonical_intent().signing_root().into_bytes(),
         ));
         Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+enum TestSigningMode {
+    Valid,
+    InvalidSignature,
+    Error,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct TestSigningAdapter {
+    mode: TestSigningMode,
+}
+
+impl SafetyRulesSigningAdapterV1 for TestSigningAdapter {
+    type Error = &'static str;
+
+    fn sign_intent_v1(
+        &mut self,
+        intent: &CanonicalSignIntentV0,
+    ) -> Result<SignatureBytes, Self::Error> {
+        match self.mode {
+            TestSigningMode::Valid => Ok(root_signature(intent.signing_root())),
+            TestSigningMode::InvalidSignature => Ok(invalid_signature()),
+            TestSigningMode::Error => Err("simulated signer failure"),
+        }
     }
 }
 
@@ -404,6 +431,105 @@ fn durable_authority_poisoned_on_uncertain_persistence_and_never_signals_again()
         authority.prepare_vote_and_persist(&[], &target),
         Err(DurableSafetyRulesAuthorityErrorV1::Poisoned)
     ));
+}
+
+#[test]
+fn durable_authority_signs_only_after_persisting_and_returns_typed_vote() {
+    let context = context();
+    let state = genesis_state(&context);
+    let target = first_proposal(&context, 0x63);
+    let mut authority = DurableSafetyRulesAuthorityV1::new(
+        context,
+        state,
+        RecordingTransitionStore::default(),
+        RootSignatures,
+    )
+    .expect("open durable SafetyRules owner");
+    let mut adapter = TestSigningAdapter {
+        mode: TestSigningMode::Valid,
+    };
+
+    let signed = authority
+        .prepare_vote_and_sign_v1(&[], &target, &mut adapter)
+        .expect("durable transition must precede typed Vote");
+    let vote = signed.message().vote().expect("Vote message");
+    assert_eq!(vote.author(), validator_id(1));
+    assert_eq!(vote.height(), target.block().header().height());
+    assert_eq!(vote.block_id(), target.block().header().id());
+    assert_eq!(signed.transition().successor_state().revision(), 1);
+    assert_eq!(
+        signed.transition().canonical_intent().signing_root(),
+        vote.signing_root()
+    );
+    assert!(!authority.is_poisoned());
+}
+
+#[test]
+fn durable_authority_timeout_signing_and_adapter_failures_are_fail_closed() {
+    let timeout_context = context();
+    let state = genesis_state(&timeout_context);
+    let mut authority = DurableSafetyRulesAuthorityV1::new(
+        timeout_context,
+        state,
+        RecordingTransitionStore::default(),
+        RootSignatures,
+    )
+    .expect("open durable SafetyRules owner");
+    let mut adapter = TestSigningAdapter {
+        mode: TestSigningMode::Valid,
+    };
+    let signed = authority
+        .prepare_timeout_and_sign_v1(&mut adapter)
+        .expect("durable timeout transition must produce a typed TimeoutVote");
+    let timeout = signed
+        .message()
+        .timeout_vote()
+        .expect("TimeoutVote message");
+    assert_eq!(timeout.view(), View::new(1));
+    assert_eq!(
+        signed.transition().canonical_intent().signing_root(),
+        timeout.signing_root()
+    );
+
+    let bad_context = context();
+    let state = genesis_state(&bad_context);
+    let target = first_proposal(&bad_context, 0x64);
+    let mut authority = DurableSafetyRulesAuthorityV1::new(
+        bad_context,
+        state,
+        RecordingTransitionStore::default(),
+        RootSignatures,
+    )
+    .expect("open durable SafetyRules owner");
+    let mut bad_adapter = TestSigningAdapter {
+        mode: TestSigningMode::InvalidSignature,
+    };
+    assert!(matches!(
+        authority.prepare_vote_and_sign_v1(&[], &target, &mut bad_adapter),
+        Err(DurableSafetyRulesSigningErrorV1::InvalidProducedSignature)
+    ));
+    assert!(authority.is_poisoned());
+
+    let error_context = context();
+    let state = genesis_state(&error_context);
+    let target = first_proposal(&error_context, 0x65);
+    let mut authority = DurableSafetyRulesAuthorityV1::new(
+        error_context,
+        state,
+        RecordingTransitionStore::default(),
+        RootSignatures,
+    )
+    .expect("open durable SafetyRules owner");
+    let mut error_adapter = TestSigningAdapter {
+        mode: TestSigningMode::Error,
+    };
+    assert!(matches!(
+        authority.prepare_vote_and_sign_v1(&[], &target, &mut error_adapter),
+        Err(DurableSafetyRulesSigningErrorV1::Adapter(
+            "simulated signer failure"
+        ))
+    ));
+    assert!(authority.is_poisoned());
 }
 
 fn timeout_vote(

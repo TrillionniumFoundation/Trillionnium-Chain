@@ -20,7 +20,8 @@ mod authority;
 
 pub use authority::{
     DurableSafetyRulesAuthorityErrorV1, DurableSafetyRulesAuthorityV1,
-    SafetyRulesDurableTransitionStoreV1,
+    DurableSafetyRulesSigningErrorV1, SafetyRulesDurableTransitionStoreV1,
+    SafetyRulesSigningAdapterV1, SignedSafetyMessageV1, SignedSafetyTransitionV1,
 };
 
 use alloc::collections::BTreeSet;
