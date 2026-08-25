@@ -309,7 +309,9 @@ derived protobuf digest, one projection, required nonzero hashes,
 optional/bool/rollout/fallback discriminants, checked outgoing-epoch geometry,
 and four additional stable Rust decoder errors. The 41-code B2-A/B2-B/B2-C
 Rust decoder prefix is partitioned exactly across those three manifests;
-B2-D and B2-E later extend the complete current taxonomy to 48 codes.
+B2-D and B2-E later complete the 48-code B2-A..E peer taxonomy. Four
+node-local signer-intent endpoint errors are explicitly outside that peer
+partition, so the Rust `DecodeErrorCode` surface contains 52 codes overall.
 
 The independent Node.js implementation consumes three raw CEV0 values,
 round-trips them byte-identically, recomputes their digests, rejects 608
@@ -387,7 +389,9 @@ header, and the complete proof. The proof entry point requires the exact
 caller-supplied old validator set, decoded old parameters, next-epoch
 commitment, and authenticated checkpoint-parent timestamp; decoding does not
 establish the provenance of those inputs. Four B2-E additions extend the
-stable Rust decoder taxonomy from 44 to 48 codes.
+stable B2-A..E peer decoder taxonomy from 44 to 48 codes. Four node-local
+signer-intent endpoint errors are separately scoped outside the peer taxonomy,
+bringing the total Rust `DecodeErrorCode` surface to 52 codes.
 
 After complete ordinary finality validation, the specialized relation requires
 the exact checked old-epoch geometry and block kinds, direct ancestry,

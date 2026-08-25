@@ -456,7 +456,9 @@ ordinary QC and signature-share definitions. The B2-A scoped error taxonomy
 plus six B2-B additions is disjoint, complete, and ordered exactly like the
 37-code B2-A/B2-B Rust decoder prefix. Four B2-C additions extend the complete
 B2-A/B2-B/B2-C prefix to 41 codes; B2-D adds three and B2-E adds four, yielding
-the complete current 48-code Rust decoder taxonomy.
+the complete 48-code B2-A..E peer decoder taxonomy. The Rust enum also carries
+four explicitly scoped node-local signer-intent endpoint codes; they are not
+peer-wire errors, so the complete Rust `DecodeErrorCode` surface is 52 codes.
 
 The independent Node.js structural decoder consumes six exact raw/derived
 objects and rejects 3,435 incomplete prefixes, 13 boundary cases, and 25
@@ -493,8 +495,9 @@ derived protobuf digest, optional/nonzero-hash and fallback discriminants,
 outgoing-schedule geometry, one projection, and four new stable decoder errors.
 The B2-A, B2-B, and B2-C manifests partition their 41-code Rust decoder prefix
 without overlap or omission. B2-D and B2-E extend that prefix with three and
-four disjoint additions respectively; the complete current taxonomy has 48
-codes.
+four disjoint additions respectively, completing the 48-code B2-A..E peer
+taxonomy. Four node-local signer-intent errors remain explicitly outside that
+peer partition, yielding 52 Rust `DecodeErrorCode` values overall.
 
 The independent Node.js decoder consumes three committed raw objects, rejects
 608 non-complete prefixes and all three trailing-byte variants, covers 25
@@ -574,7 +577,9 @@ root-exhausting decoders for all three surfaces. The proof decoder requires an
 exact caller-supplied old validator set, decoded old parameter preimage,
 `NextEpochCommitmentV0`, and authenticated checkpoint-parent timestamp; those
 inputs are not inferred from peer bytes. Four B2-E additions extend the
-complete stable Rust decoder taxonomy from 44 to 48 codes.
+complete B2-A..E peer decoder taxonomy from 44 to 48 codes. Four node-local
+signer-intent endpoint errors are separately scoped outside the peer taxonomy,
+bringing the total Rust `DecodeErrorCode` surface to 52 codes.
 
 The semantic kernel first runs complete ordinary finality admission and then
 requires the exact old-epoch checkpoint/seal geometry and block kinds, direct
