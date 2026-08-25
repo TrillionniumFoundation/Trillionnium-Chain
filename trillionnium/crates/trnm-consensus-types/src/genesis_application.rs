@@ -42,6 +42,10 @@ pub const POCO_GENESIS_COMMITMENT_DOMAIN_V1: &[u8] =
 pub const POCO_GENESIS_QC_BINDING_DOMAIN_V1: &[u8] =
     b"trnm.consensus-types.poco-genesis-qc-ceremony.v1";
 
+/// Maximum exact canonical bytes accepted by the migration descriptor decoder.
+/// This is checked before any field parsing or object construction.
+pub const MAX_POCO_GENESIS_CANONICAL_BYTES_V1: usize = 1024;
+
 /// Canonical schema marker for the non-wire application commitment bytes.
 pub const GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0: u16 = 0;
 
@@ -767,5 +771,32 @@ mod tests {
             zero_height,
             Err(ValidationError::InvalidCertificate(_))
         ));
+    }
+
+    #[test]
+    fn migration_descriptor_decoder_is_exact_and_bounded() {
+        let descriptor = migration_descriptor();
+        let bytes = descriptor
+            .try_canonical_bytes_v1()
+            .expect("canonical migration descriptor");
+        assert_eq!(
+            crate::decode_poco_genesis_v1_exact(&bytes).expect("exact descriptor decode"),
+            descriptor
+        );
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        let trailing_error = crate::decode_poco_genesis_v1_exact(&trailing).unwrap_err();
+        assert_eq!(trailing_error.code(), crate::DecodeErrorCode::TrailingBytes);
+        assert_eq!(trailing_error.byte_offset(), bytes.len());
+
+        let mut wrong_schema = bytes;
+        wrong_schema[1] = 2;
+        let schema_error = crate::decode_poco_genesis_v1_exact(&wrong_schema).unwrap_err();
+        assert_eq!(
+            schema_error.code(),
+            crate::DecodeErrorCode::InvalidSchemaVersion
+        );
+        assert_eq!(schema_error.byte_offset(), 0);
     }
 }

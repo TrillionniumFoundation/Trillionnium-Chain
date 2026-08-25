@@ -26,14 +26,14 @@ use crate::{
     ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcV0, HandoffCertificateV0,
     HandoffDescriptorV0, HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1,
     HandoffSignerRoleV1, Height, LeaderSchedule, MessageKind, NextEpochCommitmentHash,
-    NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest, ProtocolVersion, QcRef,
-    QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0,
-    Signature64, SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
-    TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
-    ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest, PocoGenesisV1,
+    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase,
+    SignIntentFingerprintV0, Signature64, SignatureShareV0, SignatureVerifier, SigningRoot,
+    StateRoot, TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator,
+    ValidatorId, ValidatorSet, ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
     CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
-    HANDOFF_SIGNER_PROFILE_V1, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
-    SCHEMA_VERSION_V0,
+    HANDOFF_SIGNER_PROFILE_V1, MAX_CONSENSUS_STRING_BYTES, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
+    MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
 };
 
 /// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
@@ -310,6 +310,78 @@ pub const MAX_CEV0_CANONICAL_HANDOFF_SIGN_INTENT_BYTES_V1: usize = 2
     + (4 + MAX_CEV0_HANDOFF_DESCRIPTOR_BYTES_V0)
     + 32
     + 32;
+
+/// Decode the exact canonical bytes of the migration-aware `PocoGenesisV1`
+/// descriptor.  This object is a ceremony input, not a live consensus
+/// message; it nevertheless uses the same bounded, trailing-byte rejecting
+/// discipline as the CEV0 decoders so independent importers can replay it.
+pub fn decode_poco_genesis_v1_exact(bytes: &[u8]) -> DecodeResult<PocoGenesisV1> {
+    if bytes.len() > MAX_POCO_GENESIS_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != crate::POCO_GENESIS_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let source_chain_offset = cursor.offset();
+    let source_chain =
+        ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, source_chain_offset)
+        })?;
+    let source_application_id = cursor.fixed()?;
+    let source_store_id = cursor.fixed()?;
+    let source_height = Height::new(cursor.u64()?);
+    let source_block_id = BlockId::new(cursor.fixed()?);
+    let legacy_app_hash_attestation = StateRoot::new(cursor.fixed()?);
+    let export_manifest_digest = cursor.fixed()?;
+    let mapping_profile_digest = cursor.fixed()?;
+    let target_chain_offset = cursor.offset();
+    let target_chain =
+        ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, target_chain_offset)
+        })?;
+    let target_genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let new_state_root = StateRoot::new(cursor.fixed()?);
+    let target_validator_set_digest = ValidatorSetId::new(cursor.fixed()?);
+    let target_protocol_version = ProtocolVersion::new(cursor.u32()?)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidProtocolVersion, cursor.offset()))?;
+    let genesis_descriptor_digest = cursor.fixed()?;
+    let source_identity = cursor.fixed()?;
+    cursor.finish()?;
+
+    let descriptor = PocoGenesisV1::new(
+        source_chain,
+        source_application_id,
+        source_store_id,
+        source_height,
+        source_block_id,
+        legacy_app_hash_attestation,
+        export_manifest_digest,
+        mapping_profile_digest,
+        target_chain,
+        target_genesis_hash,
+        new_state_root,
+        target_validator_set_digest,
+        target_protocol_version,
+        genesis_descriptor_digest,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if descriptor.source_identity_v1() != source_identity {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    let canonical = descriptor
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(descriptor)
+}
 
 pub type DecodeResult<T> = core::result::Result<T, DecodeError>;
 

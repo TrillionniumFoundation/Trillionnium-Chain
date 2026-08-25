@@ -152,6 +152,10 @@ downstream gate inherits completion from an incomplete predecessor.
   native root, target validator-set digest and protocol version. Its
   `PocoGenesisQcBindingV1` is content-addressed while preserving the frozen
   GenesisQC v0 wire bytes.
+- The descriptor also has a bounded exact decoder (`1 KiB` pre-parse ceiling,
+  canonical re-encoding check, source-identity check and trailing-byte refusal)
+  so a second importer can replay the same bytes without trusting a local
+  JSON/YAML interpretation.
 - Include source AppHash only as `legacy_app_hash_attestation`; bind export,
   mapping/profile, new root and source identity into the signed genesis
   descriptor. Never import Comet WAL/blockstore/validator signing state.
