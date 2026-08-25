@@ -19,15 +19,30 @@ fail() {
 check_workflow() {
   local workflow="$1"
   [[ -f "$workflow" ]] || fail "missing workflow: $workflow"
-  python3 - "$workflow" "$EXPECTED_CRON" <<'PY'
+  python3 - "$workflow" "$EXPECTED_CRON" "$ROOT/trillionnium/Cargo.toml" <<'PY'
 import pathlib
 import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
 expected_cron = sys.argv[2]
+workspace_manifest = pathlib.Path(sys.argv[3])
 text = path.read_text(encoding="utf-8")
 lines = text.splitlines()
+
+# The PoCO workflow must not wake up for packages which are explicitly
+# excluded from the active Chain workspace.  Those packages remain available
+# to the migration-residue workflow, but treating their edits as a PoCO
+# protocol change creates a false active-lane signal.  Keep this invariant in
+# the executable gate so a stale trigger cannot quietly return.
+if not workspace_manifest.is_file():
+    raise SystemExit(f"{path}: missing workspace manifest: {workspace_manifest}")
+workspace_text = workspace_manifest.read_text(encoding="utf-8")
+excluded_legacy_package = '"crates/trnm-consensus-app"'
+if excluded_legacy_package not in workspace_text:
+    raise SystemExit(
+        f"{path}: expected excluded migration package marker {excluded_legacy_package!r}"
+    )
 
 def fail(message: str) -> None:
     raise SystemExit(f"{path}: {message}")
@@ -62,6 +77,27 @@ child_names = [name for name, _ in on_children]
 for required in ("schedule", "workflow_dispatch", "pull_request", "push"):
     if child_names.count(required) != 1:
         fail(f"top-level on: must contain exactly one {required}: trigger")
+
+def direct_child_block(name: str) -> str:
+    """Return one direct top-level `on:` child without parsing YAML 1.1."""
+    child_indexes = [index for child, index in on_children if child == name]
+    if len(child_indexes) != 1:
+        fail(f"top-level on: missing unique {name}: trigger")
+    start = child_indexes[0]
+    end = len(lines)
+    for _, index in on_children:
+        if index > start:
+            end = index
+            break
+    return "\n".join(lines[start:end])
+
+for trigger_name in ("pull_request", "push"):
+    trigger_block = direct_child_block(trigger_name)
+    if "trillionnium/crates/trnm-consensus-app/**" in trigger_block:
+        fail(
+            f"{trigger_name}: trigger still watches excluded migration package "
+            "trillionnium/crates/trnm-consensus-app/**"
+        )
 
 schedule_index = next(index for name, index in on_children if name == "schedule")
 dispatch_index = next(index for name, index in on_children if name == "workflow_dispatch")
@@ -197,6 +233,37 @@ PY
   sed -i "0,/github.ref == 'refs\/heads\/main'/s//github.ref == 'refs\/heads\/untrusted'/" "$fixture"
   if check_workflow "$fixture" >/dev/null 2>&1; then
     fail "self-test accepted a weakened schedule branch ref gate"
+  fi
+
+  cp -- "$DEFAULT_WORKFLOW" "$fixture"
+  python3 - "$fixture" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+text = path.read_text(encoding="utf-8")
+for trigger in ("pull_request", "push"):
+    marker = f"  {trigger}:\n"
+    start = text.find(marker)
+    if start < 0:
+        raise SystemExit(f"missing trigger fixture: {trigger}")
+    end_match = re.search(r"\n  [A-Za-z0-9_-]+:\s*\n", text[start + len(marker) :])
+    end = start + len(marker) + (end_match.start() if end_match else len(text))
+    block = text[start:end]
+    needle = '      - "trillionnium/Cargo.lock"\n'
+    if block.count(needle) != 1:
+        raise SystemExit(f"path fixture not found under {trigger}")
+    block = block.replace(
+        needle,
+        '      - "trillionnium/crates/trnm-consensus-app/**"\n' + needle,
+        1,
+    )
+    text = text[:start] + block + text[end:]
+path.write_text(text, encoding="utf-8")
+PY
+  if check_workflow "$fixture" >/dev/null 2>&1; then
+    fail "self-test accepted a PoCO trigger for an excluded migration package"
   fi
 
   cp -- "$DEFAULT_WORKFLOW" "$fixture"
