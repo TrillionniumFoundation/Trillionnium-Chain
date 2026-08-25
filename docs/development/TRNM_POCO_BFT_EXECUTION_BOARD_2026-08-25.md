@@ -25,26 +25,31 @@ M0 truth/branch freeze
 Execution may parallelize specification, tooling, and observability, but no
 downstream gate inherits completion from an incomplete predecessor.
 
-### Current machine evidence (2026-08-25)
+### Current machine evidence (2026-08-26)
 
 - `trnm-poco-node` is intentionally fail-closed: the default binary still
   reports missing signer, SafetyRules, application, finalization, P2P and state
   sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
   not a live-node or production-consensus pass.
-- The lock-pinned Quint and `protoc` toolchains are installed; the clean local
-  formal gate (`scripts/ci/check_poco_bft_v0_formal.sh`) passed all listed
+- The checksum-pinned `protoc` bootstrap (`eaf1db12e`) and lock-pinned Quint
+  toolchains are installed; the clean local formal gate
+  (`scripts/ci/check_poco_bft_v0_formal.sh`) passed all listed
   safety/TC/epoch/partition/upgrade/handoff/light-client/application
-  invariants and mutant witnesses in this worktree. CI reproduction,
-  independent review, and a second implementation remain required for the
-  P0 exit.
+  invariants and mutant witnesses in this worktree. The independent wire,
+  QC/TC, handoff, parameter, and ordered-root reconstructions also pass. CI
+  reproduction, independent review, and a second implementation remain
+  required for the P0 exit.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.
 - CEV0 admission now has root-byte, signature-work and validator-set TC-share
   budgets, with explicit limits clamped to intrinsic hard caps (`5b28425df`,
   `cd7602693`) and public derivation bound to run/validator context
-  (`b1e3f3528`, `cba106bd8`, `488e015f9`, `50b8a0dbd`). The normative wire/conformance
-  review and independent second implementation are still open.
+  (`b1e3f3528`, `cba106bd8`, `488e015f9`, `50b8a0dbd`). `760d60e79` aligns
+  the authenticated validator-set ceiling with the frozen 100x100=10,000
+  share schema bound and rejects a 101st reference before nested allocation.
+  The normative wire/conformance review, fuzz corpus and independent second
+  implementation are still open.
 - The laboratory wire surface no longer exposes a protocol-default budget as
   a public decode entry: `decode_*_with_context` and the proposal budgeted
   decoder derive the CEV0 ceiling from
@@ -97,9 +102,11 @@ downstream gate inherits completion from an incomplete predecessor.
   reopen, K acknowledgement/retry, and lab finalization application commit)
   now take the corresponding exclusive lock; H1 takeover requires a derived
   common root and process2 activation acquires its lock before the first paired
-  read, with a final identity check at successful commit boundaries. This is
-  still an advisory, cooperating-owner fence: all writer adoption and the full
-  cross-database atomicity proof remain open under MIG-004.
+  read, with a final identity check at successful commit boundaries. The full
+  entry-point matrix is recorded in
+  `TRNM_POCO_P2_STORE_WRITER_MATRIX_2026-08-26.md` and landed in `6850b57f1`.
+  This is still an advisory, cooperating-owner fence: all writer adoption and
+  the full cross-database atomicity proof remain open under MIG-004.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
