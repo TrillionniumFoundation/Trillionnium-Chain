@@ -389,8 +389,11 @@ pub use safety_rules_sidecar::{
 };
 #[cfg(feature = "tx-admission-wal")]
 pub use tx_admission_wal::{
-    SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0,
-    TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0, TX_ADMISSION_WAL_RUNTIME_COMPOSITION_V0,
+    NodeOwnedTxAdmissionBoundaryV0, SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0,
+    TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_V0,
+    TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0, TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0,
+    TX_ADMISSION_BOUNDARY_SIGNING_V0, TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
+    TX_ADMISSION_WAL_RUNTIME_COMPOSITION_V0,
 };
 /// This package must not be interpreted as a deployable consensus candidate.
 pub const PRODUCTION_CANDIDATE_V0: bool = false;

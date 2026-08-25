@@ -41,13 +41,24 @@ use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_mempool::{
-    AdmissionReject, PendingNonceAuthority, PendingNonceReservation, SignedEnvelopeMetadata,
+    AdmissionReject, IngressClass, PendingNonceAdmission, PendingNonceAuthority,
+    PendingNonceReservation, SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView,
+    TypedAdmissionGate, TypedAdmitOutcome, DEFAULT_MAX_ADMISSION_BODY_BYTES,
 };
 
 /// This is a runnable composition seam only.  It does not imply a node
 /// runtime or a production admission path.
 pub const TX_ADMISSION_WAL_RUNTIME_COMPOSITION_V0: bool = true;
 pub const TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0: bool = false;
+
+/// The node-owned boundary composes the typed builder view, the in-memory
+/// admission gate, and this durable nonce authority.  It intentionally does
+/// not expose a CheckTx, signer, executor, RPC, or broadcast operation.
+pub const TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0: bool = true;
+pub const TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0: bool = false;
+pub const TX_ADMISSION_BOUNDARY_CHECKTX_V0: bool = false;
+pub const TX_ADMISSION_BOUNDARY_SIGNING_V0: bool = false;
+pub const TX_ADMISSION_BOUNDARY_BROADCAST_V0: bool = false;
 
 const SCHEMA_VERSION_V0: i64 = 1;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
@@ -413,6 +424,101 @@ pub struct SqlitePendingNonceAuthorityV0 {
     path: PathBuf,
     path_identity: PathIdentityV0,
     namespace: [u8; 32],
+}
+
+/// The candidate node-owned transaction-admission boundary.
+///
+/// A canonical builder supplies a [`SignedEnvelopeView`] (the current builder
+/// crate exposes `BuiltCanonicalTxAdmissionViewV0`).  The node owner supplies
+/// read-only signature/recheck hooks, and this boundary then performs the
+/// following ordered, candidate-only operation:
+///
+/// ```text
+/// typed builder view -> canonical metadata -> durable reserve
+///     -> ready item -> handoff -> commit/release
+/// ```
+///
+/// The returned [`PendingNonceAdmission`] owns the durable lifecycle token.
+/// Dropping an unresolved item releases its reservation; callers should use
+/// `handoff` followed by `commit`, or explicitly `release`/`cancel`.
+///
+/// This type is deliberately not a node runtime.  It does not call a signer,
+/// execute a transaction, invoke CheckTx, publish an RPC result, or broadcast
+/// bytes.  Its feature and package activation flags remain false.
+#[derive(Debug)]
+pub struct NodeOwnedTxAdmissionBoundaryV0 {
+    gate: TypedAdmissionGate,
+    authority: SqlitePendingNonceAuthorityV0,
+}
+
+impl NodeOwnedTxAdmissionBoundaryV0 {
+    /// Open the node-owned WAL and create an in-memory typed admission gate.
+    ///
+    /// `namespace` must be bound by the future chain/epoch owner; this method
+    /// does not infer it from a transaction or a local path.
+    pub fn open(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+        max_body_bytes: u64,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
+        Ok(Self {
+            gate: TypedAdmissionGate::new(total_capacity, critical_reserve, max_body_bytes),
+            authority: SqlitePendingNonceAuthorityV0::open(path, namespace)?,
+        })
+    }
+
+    /// Open with the typed mempool's canonical default body bound.
+    pub fn with_default_body_limit(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
+        Self::open(
+            path,
+            namespace,
+            total_capacity,
+            critical_reserve,
+            DEFAULT_MAX_ADMISSION_BODY_BYTES,
+        )
+    }
+
+    pub const fn namespace(&self) -> [u8; 32] {
+        self.authority.namespace()
+    }
+
+    /// Admit one already-authenticated canonical view into the candidate
+    /// queue.  This is an admission-boundary operation, not CheckTx.
+    pub fn admit_signed_candidate<E, H>(
+        &mut self,
+        envelope: &E,
+        class: IngressClass,
+        hooks: &mut H,
+    ) -> TypedAdmitOutcome
+    where
+        E: SignedEnvelopeView + ?Sized,
+        H: SignedAdmissionHooks<E>,
+    {
+        self.gate
+            .admit_signed_with_pending_nonce(envelope, class, hooks, &mut self.authority)
+    }
+
+    /// Return the next item with its node-owned handoff/commit/release token.
+    pub fn pop_ready_with_lifecycle(&mut self) -> Option<PendingNonceAdmission> {
+        self.gate.pop_ready_with_lifecycle()
+    }
+
+    pub fn queued_counts(&self) -> (usize, usize, usize) {
+        self.gate.queued_counts()
+    }
+
+    /// Retained rows include committed/released replay tombstones.  No GC API
+    /// is exposed until an authenticated retention policy exists.
+    pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
+        self.authority.retained_rows()
+    }
 }
 
 impl fmt::Debug for SqlitePendingNonceAuthorityV0 {
@@ -1053,6 +1159,81 @@ mod tests {
             SqlitePendingNonceAuthorityV0::open(&path, [0x78; 32]).unwrap_err(),
             TxAdmissionWalErrorV0::NamespaceMismatch
         );
+        cleanup(&path);
+    }
+
+    #[test]
+    fn node_owned_boundary_routes_typed_admission_and_lifecycle() {
+        let path = temp_path();
+        let envelope = fixture();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x88; 32], 2, 0)
+                .unwrap();
+        let mut hooks = Hooks;
+
+        assert!(TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
+        assert_eq!(boundary.namespace(), [0x88; 32]);
+        assert_eq!(
+            boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(boundary.queued_counts(), (1, 0, 1));
+
+        let mut ready = boundary
+            .pop_ready_with_lifecycle()
+            .expect("ready candidate");
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::Reserved)
+        );
+        assert_eq!(
+            ready.commit(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        ready.handoff().unwrap();
+        assert_eq!(
+            ready.handoff(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        ready.commit().unwrap();
+        assert_eq!(
+            ready.commit(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        assert_eq!(boundary.retained_rows().unwrap(), 1);
+
+        // A committed tombstone is a durable replay rejection, not a second
+        // candidate admission.  The node boundary still has no broadcast or
+        // application-commit readback behavior.
+        assert_eq!(
+            boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        drop(ready);
+        drop(boundary);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn node_owned_boundary_rejects_before_reserving_on_invalid_metadata() {
+        let path = temp_path();
+        let mut envelope = fixture();
+        envelope.body.clear();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path, [0x99; 32], 2, 0)
+                .unwrap();
+        let mut hooks = Hooks;
+        assert_eq!(
+            boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
+            TypedAdmitOutcome::Rejected(AdmissionReject::EmptyBody)
+        );
+        assert_eq!(boundary.queued_counts(), (0, 0, 0));
+        assert_eq!(boundary.retained_rows().unwrap(), 0);
+        drop(boundary);
         cleanup(&path);
     }
 }
