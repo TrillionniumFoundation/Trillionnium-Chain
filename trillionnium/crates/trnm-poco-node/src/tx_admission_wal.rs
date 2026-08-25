@@ -453,6 +453,15 @@ impl SqlitePendingNonceAuthorityV0 {
                  PRAGMA user_version = 1;",
             )
             .map_err(sqlite_error)?;
+        let journal_mode: String = connection
+            .query_row("PRAGMA journal_mode", [], |row| row.get(0))
+            .map_err(sqlite_error)?;
+        let synchronous: i64 = connection
+            .query_row("PRAGMA synchronous", [], |row| row.get(0))
+            .map_err(sqlite_error)?;
+        if !journal_mode.eq_ignore_ascii_case("wal") || synchronous != 2 {
+            return Err(TxAdmissionWalErrorV0::Sqlite);
+        }
         ensure_identity_v0(&path, path_identity)?;
         let persisted: Option<(i64, Vec<u8>)> = connection
             .query_row(
@@ -536,6 +545,8 @@ impl SqlitePendingNonceAuthorityV0 {
                 |row| row.get(0),
             )
             .map_err(sqlite_error)?;
+        drop(connection);
+        self.ensure_identity()?;
         usize::try_from(count).map_err(|_| TxAdmissionWalErrorV0::Malformed)
     }
 
@@ -570,6 +581,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 return Err(TxAdmissionWalErrorV0::Replay);
             }
             transaction.commit().map_err(sqlite_error)?;
+            self.ensure_identity()?;
             return Ok(SqlitePendingNonceReservationV0 {
                 connection: Rc::clone(&self.connection),
                 _lock: Rc::clone(&self.lock),
@@ -613,6 +625,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 }
             })?;
         transaction.commit().map_err(sqlite_error)?;
+        self.ensure_identity()?;
         Ok(SqlitePendingNonceReservationV0 {
             connection: Rc::clone(&self.connection),
             _lock: Rc::clone(&self.lock),
@@ -721,6 +734,9 @@ impl SqlitePendingNonceReservationV0 {
         transaction
             .commit()
             .map_err(|_| AdmissionReject::InconsistentState)?;
+        if ensure_identity_v0(&self.path, self.path_identity).is_err() {
+            return Err(AdmissionReject::InconsistentState);
+        }
         self.state = target_state;
         Ok(())
     }
