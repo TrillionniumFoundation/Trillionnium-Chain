@@ -1466,13 +1466,28 @@ where
         "application.final_readback",
         application.confirmed_committed_head_v0()
     );
+    // Re-audit the complete terminal-K population immediately before handing
+    // the recovered Core back to its owner.  A metadata sequence read alone
+    // cannot detect an in-place artifact/row rewrite that preserves the
+    // sequence; the fresh audit binds every terminal row checksum and
+    // artifact digest to the original authenticated cut.
+    let final_validation_audit = recover_try!(
+        "validation.final_readback",
+        validation_store.confirm_terminal_k_audit_v0()
+    );
     if final_safety.state() != core.safety_state()
         || final_safety.revision() != safety_facts.revision_v0()
         || final_application != committed
-        || recover_try!(
-            "validation.final_sequence",
-            validation_store.durable_sequence_v0()
-        ) != terminal_audit.store_sequence_v0()
+        || !final_validation_audit.belongs_to_store_at_path_v0(&validation_store, &paths.validation)
+        || final_validation_audit.scope_v0() != terminal_audit.scope_v0()
+        || final_validation_audit.owner_id_v0() != terminal_audit.owner_id_v0()
+        || final_validation_audit.store_id_v0() != terminal_audit.store_id_v0()
+        || final_validation_audit.store_sequence_v0() != terminal_audit.store_sequence_v0()
+        || final_validation_audit.terminal_row_count_v0() != terminal_audit.terminal_row_count_v0()
+        || final_validation_audit.maximum_terminal_height_v0()
+            != terminal_audit.maximum_terminal_height_v0()
+        || final_validation_audit.terminal_audit_digest_v0()
+            != terminal_audit.terminal_audit_digest_v0()
     {
         return Err(PocoNodeDeployedLabRecoveryErrorV0::message(
             "terminal.changed",
