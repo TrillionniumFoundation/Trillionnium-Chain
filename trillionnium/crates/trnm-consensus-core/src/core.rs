@@ -6518,6 +6518,15 @@ impl Core {
         self.observed_qcs.keys().copied().collect()
     }
 
+    /// Installs a deliberately malformed finalization queue for the live-ACK
+    /// boundary tests.  Production code can only mutate this queue through
+    /// the ordered Core transition; the test seam lets us model a hostile or
+    /// torn in-memory handoff without exposing a public mutation API.
+    #[cfg(test)]
+    pub(crate) fn set_finalization_queue_for_test_v0(&mut self, queue: Vec<DurableFinalizationV0>) {
+        self.safety.set_finalization_queue(queue);
+    }
+
     /// Commits the complete hash-linked prefix ending at Core's exact durable
     /// finalized tip. Core admits that tip only after validating the complete
     /// ancestor-ordered finalization suffix; recovery authenticates the same
@@ -8367,7 +8376,6 @@ impl Core {
         self.reject_state_sync_anchor_successor_progression_v0()?;
         self.reject_finalization_receipt_while_busy_v0()?;
         let readback = receipt.application_store_readback_v0();
-        let pending = self.safety.pending_finalization();
         let exact_source_count = self
             .safety
             .payload_validation_completions()
@@ -8387,7 +8395,23 @@ impl Core {
                 .application_apply_affinity,
         ) || !receipt
             .matches_front_affinity_v0(&self.application_finalization_affinity.front_affinity)
-            || pending != Some(receipt.finalization())
+        {
+            return Err(CoreError::ApplicationFinalizationReceiptMismatch);
+        }
+        // Check the live queue/front relation before accepting any other
+        // receipt fields.  A queue torn or replaced after permit issuance is
+        // an execution handoff fault, not a retryable application readback
+        // mismatch; fail closed without entering the transactional clone.
+        let Some(queue_front) = self.safety.finalization_queue().first() else {
+            return Err(CoreError::UnexpectedFinalizationAck);
+        };
+        if queue_front != receipt.finalization()
+            || self.safety.pending_finalize() != Some(queue_front.proof_id())
+        {
+            return Err(CoreError::UnexpectedFinalizationAck);
+        }
+        let pending = Some(queue_front);
+        if pending != Some(receipt.finalization())
             || exact_source_count != 1
             || pending.is_none_or(|finalization| {
                 let target = finalization.proof().finalized_block().header();
@@ -10229,6 +10253,17 @@ impl Core {
         }
         let predecessor = self.safety.application_applied();
         if durable.authenticated_parent() != predecessor {
+            return Err(CoreError::UnexpectedFinalizationAck);
+        }
+        // The application receipt is acknowledged only for the exact
+        // ancestor-ordered queue front.  `validate_runtime` enforces this
+        // relation on persisted/recovered state, but the live callback is a
+        // separate execution boundary and must fail closed if an in-memory
+        // queue was altered between permit issuance and acknowledgement.
+        let Some(queue_front) = self.safety.finalization_queue().first() else {
+            return Err(CoreError::UnexpectedFinalizationAck);
+        };
+        if queue_front.proof_id() != pending_id || queue_front != durable {
             return Err(CoreError::UnexpectedFinalizationAck);
         }
         let committed = durable.proof().finalized_block().header();

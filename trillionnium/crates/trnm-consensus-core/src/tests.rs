@@ -1316,6 +1316,14 @@ fn finalization_receipt_for_test(
         .expect("the permit and installed application authority share one live Core")
 }
 
+fn pending_finalization_receipt_for_test() -> (Core, ApplicationFinalizationReceiptV0) {
+    let (_config, core, _validation, _result) =
+        finalization_gated_validation(b"live queue-front guard");
+    let authority = finalization_apply_authority_for_test(&core);
+    let receipt = finalization_receipt_for_test(&core, &authority);
+    (core, receipt)
+}
+
 fn finalization_recovery_transition_for_test(
     consumed: &DurableFinalizationV0,
     readback: &ApplicationFinalizationApplyReadbackV0,
@@ -14412,6 +14420,52 @@ fn already_ready_tc_delivered_qc_runs_the_same_finality_transition() {
         effect,
         Effect::Finalize(proof) if proof.id() == proof_id
     )));
+}
+
+#[test]
+fn application_finalization_receipt_rejects_empty_live_queue_transactionally() {
+    let (mut core, receipt) = pending_finalization_receipt_for_test();
+    core.set_finalization_queue_for_test_v0(Vec::new());
+    let before = core.clone();
+
+    let rejection = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect_err("an empty live queue cannot acknowledge a finalization receipt");
+    assert_eq!(rejection.error(), &CoreError::UnexpectedFinalizationAck);
+    assert_eq!(core, before, "a malformed live ACK is transactional");
+    let _receipt = rejection.into_receipt();
+}
+
+#[test]
+fn application_finalization_receipt_rejects_nonmatching_live_queue_front_transactionally() {
+    let (mut core, receipt) = pending_finalization_receipt_for_test();
+    let front = core
+        .safety_state()
+        .finalization_queue()
+        .first()
+        .expect("the fixture has one pending queue front")
+        .clone();
+    let mut tampered_checksum = front.target_overlay_ref().overlay_checksum();
+    tampered_checksum[0] ^= 1;
+    let tampered_front = DurableFinalizationV0::new(
+        front.authenticated_parent(),
+        front.proof().clone(),
+        BlockIdOverlayRefV0::new(
+            front.target_overlay_ref().block_id(),
+            front.target_overlay_ref().parent_block_id(),
+            tampered_checksum,
+        ),
+    )
+    .expect("the test queue front remains shape-valid but differs exactly");
+    core.set_finalization_queue_for_test_v0(vec![tampered_front]);
+    let before = core.clone();
+
+    let rejection = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect_err("a receipt must name the exact live queue front");
+    assert_eq!(rejection.error(), &CoreError::UnexpectedFinalizationAck);
+    assert_eq!(core, before, "a nonmatching live ACK is transactional");
+    let _receipt = rejection.into_receipt();
 }
 
 #[test]
