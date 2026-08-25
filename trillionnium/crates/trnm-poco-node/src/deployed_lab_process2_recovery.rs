@@ -3877,6 +3877,7 @@ fn build_history_inventory_v0(
                     binding: binding.clone(),
                     application_head: target,
                     validation_row_checksum: *row.row_checksum_v0().as_bytes(),
+                    validation_artifact_digest: *row.artifact_digest_v0().as_bytes(),
                     status: history.status_v0(),
                     history_row: history,
                 },

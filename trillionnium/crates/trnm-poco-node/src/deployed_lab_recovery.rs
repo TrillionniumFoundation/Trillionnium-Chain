@@ -1020,6 +1020,10 @@ pub(super) struct RecoveredHistoryKV0 {
     pub(super) binding: ProposalValidationBindingV0,
     pub(super) application_head: ApplicationHeadV0,
     pub(super) validation_row_checksum: [u8; 32],
+    /// K's authenticated artifact digest.  This is deliberately kept
+    /// separate from the native P history artifact digest: the two stores
+    /// use different digest domains and must never be compared directly.
+    pub(super) validation_artifact_digest: [u8; 32],
     pub(super) status: DurableExecutionHistoryStatusV0,
     pub(super) history_row: ConfirmedDurableExecutionHistoryRowV0,
 }
@@ -1112,7 +1116,7 @@ fn final_paired_k_p_readback_v0(
             || k.scope_v0() != validation_scope
             || k.owner_id_v0() != validation_owner
             || *k.row_checksum_v0().as_bytes() != expected.validation_row_checksum
-            || *k.artifact_digest_v0().as_bytes() != expected.history_row.artifact_digest_v0()
+            || *k.artifact_digest_v0().as_bytes() != expected.validation_artifact_digest
             || !p.belongs_to_application_at_path_v0(application, application_path)
             || p.store_id_v0() != application.config_v0().store_id()
             || p.p_sequence_v0() != expected.history_row.p_sequence_v0()
@@ -1418,6 +1422,7 @@ where
                     binding: binding.clone(),
                     application_head,
                     validation_row_checksum: *row.row_checksum_v0().as_bytes(),
+                    validation_artifact_digest: *row.artifact_digest_v0().as_bytes(),
                     status: history_row.status_v0(),
                     history_row,
                 },
@@ -1463,6 +1468,10 @@ where
         "application.recovery_readback",
         application.recover(recovery_request)
     );
+    // `recover` is a read-only disposition/count check: it does not rewrite
+    // P rows.  The history map above therefore remains the authenticated P
+    // baseline; the final paired pass freshly reconfirms each P row against
+    // that baseline while independently pinning K's own artifact digest.
     recover_try!(
         "application.recovery_cross_store_lock_identity",
         application_recovery_lock.validate_identity_v0()
