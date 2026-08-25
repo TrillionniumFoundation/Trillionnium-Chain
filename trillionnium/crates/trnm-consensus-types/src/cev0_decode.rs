@@ -161,9 +161,10 @@ impl Cev0AdmissionBudgetV0 {
     }
 
     /// Derives an authenticated budget from the active parameter profile and
-    /// validator-set cardinality. The nested TC allowance is `N*(N-1)` (with
-    /// a one-validator floor), below the intrinsic `N*N` product for the
-    /// normal 100-validator profile.
+    /// validator-set cardinality. The nested TC allowance is `N*N`, matching
+    /// the frozen CEV0 reference table's 100-reference/10,000-share ceiling.
+    /// The exact decoder still enforces the intrinsic 100-item list caps, so
+    /// this context-derived budget cannot widen the protocol envelope.
     pub fn for_validator_set(
         parameters: &ConsensusParametersV0,
         validator_set: &ValidatorSet,
@@ -175,7 +176,7 @@ impl Cev0AdmissionBudgetV0 {
         let configured = usize::try_from(parameters.max_consensus_message_bytes())
             .unwrap_or(MAX_CEV0_ROOT_BYTES_V0);
         let validator_count = validator_count.min(MAX_CEV0_CERTIFICATE_ITEMS);
-        let maximum_tc_references = validator_count.saturating_sub(1).max(1);
+        let maximum_tc_references = validator_count.max(1);
         let maximum_tc_aggregate_signature_shares = validator_count
             .saturating_mul(maximum_tc_references)
             .min(MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES);
@@ -6764,13 +6765,14 @@ mod tests {
 
     #[test]
     fn exact_hard_caps_include_one_hundred_by_one_hundred_tc_shares() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
         let validators: Vec<_> = (1u8..=100).map(|id| validator(id, 1)).collect();
         let set = ValidatorSet::new(
             GenesisHash::new([7; 32]),
             ChainId::new("hard-caps").unwrap(),
             ProtocolVersion::V0,
             Epoch::new(3),
-            ConsensusParametersHash::new([6; 32]),
+            parameters.hash(),
             validators,
         )
         .unwrap();
@@ -6815,6 +6817,42 @@ mod tests {
         assert_eq!(
             decode_ordinary_timeout_certificate_v0_exact(&bytes, &set).unwrap(),
             timeout
+        );
+
+        // The authenticated context budget must preserve the frozen 10,000-
+        // share boundary. A previous N*(N-1) derivation rejected this valid
+        // certificate at 9,900 shares before any signature verification.
+        let mut bound_budget = Cev0AdmissionBudgetV0::for_validator_set(&parameters, &set);
+        assert_eq!(
+            bound_budget.maximum_tc_aggregate_signature_shares(),
+            MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        );
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact_with_budget(
+                &bytes,
+                &set,
+                &mut bound_budget,
+            )
+            .unwrap(),
+            timeout
+        );
+
+        // One more referenced QC would exceed the frozen 100-reference /
+        // 10,000-share envelope. Reject the count before nested allocation.
+        let (_, references_offset, _) = tc_offsets(&bytes);
+        let mut over_reference_cap = bytes.clone();
+        over_reference_cap[references_offset..references_offset + 4]
+            .copy_from_slice(&101u32.to_be_bytes());
+        let mut over_budget = Cev0AdmissionBudgetV0::for_validator_set(&parameters, &set);
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact_with_budget(
+                &over_reference_cap,
+                &set,
+                &mut over_budget,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::CountLimitExceeded
         );
     }
 
