@@ -377,6 +377,37 @@ mod tests {
     }
 
     #[test]
+    fn finalization_recovery_window_is_exclusive_and_identity_pinned() {
+        let (root, application, validation) = private_root();
+        let recovery_lock =
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(&application, &validation)
+                .expect("finalization recovery lock");
+
+        // A cooperating P/K writer or paired reader cannot enter while the
+        // marker load, proof readback, and marker clear share this window.
+        assert!(matches!(
+            CrossStoreLockGuardV0::acquire_shared_for_paths_v0(&application, &validation),
+            Err(CrossStoreLockErrorV0::Busy)
+        ));
+        assert!(matches!(
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(&application, &validation),
+            Err(CrossStoreLockErrorV0::Busy)
+        ));
+
+        // Replacing the pathname must not make the held descriptor appear to
+        // authorize a different authority root before the clear boundary.
+        let moved = root.path().with_extension("moved");
+        std::fs::rename(root.path(), &moved).expect("rename locked root");
+        std::fs::create_dir(root.path()).expect("recreate root pathname");
+        std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("recreated root permissions");
+        assert!(matches!(
+            recovery_lock.validate_identity_v0(),
+            Err(CrossStoreLockErrorV0::RootIdentityChanged)
+        ));
+    }
+
+    #[test]
     fn single_store_bootstrap_resolves_the_common_root() {
         let (root, application, validation) = private_root();
         let application_root = authority_root_for_store_path_v0(&application)

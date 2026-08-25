@@ -2692,6 +2692,14 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         application: &DurableNativeApplicationV0,
         proposal_journal: &PocoNodeLabProposalJournalConfigV0,
     ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+        // Keep marker load, proof-named P readback, and marker clear in one
+        // exclusive P/K authority window.  The private verifier receives this
+        // guard so it cannot recursively acquire the same flock.
+        let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            application.path(),
+            &proposal_journal.store_path,
+        )
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         let Some(marker) = load_marker_v0(&proposal_journal.store_path)
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?
         else {
@@ -2702,7 +2710,11 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             application,
             proposal_journal,
             marker,
+            &cross_store_lock,
         )?;
+        cross_store_lock
+            .validate_identity_v0()
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         Ok(true)
     }
 
@@ -5585,7 +5597,11 @@ fn recover_finalization_intent_marker_readback_v0(
     application: &DurableNativeApplicationV0,
     proposal_journal: &PocoNodeLabProposalJournalConfigV0,
     marker: FinalizationIntentMarkerV0,
+    _cross_store_lock: &CrossStoreLockGuardV0,
 ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    // The caller holds the exclusive P/K root fence across marker load,
+    // proof-named P readback, and marker clear; accepting the guard here makes
+    // recursive same-process flock acquisition impossible.
     if marker.scope != *proposal_journal.scope.as_bytes()
         || marker.owner_id != *proposal_journal.owner_id.as_bytes()
     {
@@ -5711,7 +5727,8 @@ fn recover_finalization_intent_marker_readback_v0(
     // Only this exact tuple may clear the marker.  Any error above leaves it
     // untouched for operator/recovery handling; no guessed remove is allowed.
     clear_marker_v0(&proposal_journal.store_path, marker)
-        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+    Ok(())
 }
 
 fn bind_finalized_query_v0(
