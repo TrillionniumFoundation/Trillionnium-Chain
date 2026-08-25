@@ -11,12 +11,12 @@ use trnm_consensus_types::{
     BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, CanonicalSignPreimageV0, CertificateId,
     CertifiedHeaderV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, ContextAuthorizedQcV0,
     Epoch, EpochGeometryV0, EvidenceRoot, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0,
-    FinalityProofV0, GenesisHash, GenesisQcV0, Height, NextEpochCommitmentHash, PayloadDigest,
-    ProposalWitnessV0, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
-    SignatureBytes, SignatureVerifier, SignedProposalV0, SigningRoot, StateRoot,
-    TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote, ValidatedBlockCommitmentsV0,
-    ValidationError, Validator, ValidatorId, ValidatorSet, View, Vote, VotingPower,
-    SIGNATURE_BYTES,
+    FinalityProofV0, GenesisHash, GenesisQcApplicationBindingV0, GenesisQcV0, Height,
+    NextEpochCommitmentHash, PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, SignatureBytes, SignatureVerifier,
+    SignedProposalV0, SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
+    ValidatedBlockCommitmentsV0, ValidationError, Validator, ValidatorId, ValidatorSet, View, Vote,
+    VotingPower, SIGNATURE_BYTES,
 };
 
 use crate::{
@@ -1434,6 +1434,93 @@ fn authenticated_genesis_application_fixture_v0() -> (CoreConfig, SafetyState) {
     )
     .expect("construct inert schema-v12 record fixture");
     (config, state)
+}
+
+#[test]
+fn authenticated_genesis_application_strict_prepare_binds_genesis_qc_v0() {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture has an authenticated application parent");
+    let commitment = parent
+        .genesis_application_commitment_v0()
+        .expect("convert the configured parent to the independent commitment");
+    assert_eq!(
+        parent.binding_ref_v0(),
+        commitment.binding_ref_v0(),
+        "the additive commitment retains the legacy parent binding preimage"
+    );
+
+    let genesis = genesis_qc(config.validator_set());
+    let raw_bytes = genesis.try_cev0_bytes().expect("raw GenesisQC bytes");
+    let raw_id = genesis.id();
+    let binding = GenesisQcApplicationBindingV0::new(genesis.clone(), commitment)
+        .expect("same-hash GenesisQC/application ceremony binding");
+    let prepared = Core::prepare_authenticated_genesis_application_bootstrap_with_genesis_application_commitment_v0(
+        config.clone(),
+        binding,
+        SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+        safety_state_record_test_limits(),
+        &RootSignatures,
+    )
+    .expect("strict binding prepares the exact inert revision-zero facts");
+    assert_eq!(
+        prepared.authenticated_genesis_application_parent_v0(),
+        parent
+    );
+    assert_eq!(
+        genesis.try_cev0_bytes().expect("raw bytes remain stable"),
+        raw_bytes
+    );
+    assert_eq!(genesis.id(), raw_id);
+    assert_eq!(
+        config.consensus_parameters().production_activation(),
+        false,
+        "strict commissioning remains outside production activation"
+    );
+}
+
+#[test]
+fn authenticated_genesis_application_strict_prepare_rejects_foreign_commitment_v0() {
+    let (config, _) = authenticated_genesis_application_fixture_v0();
+    let parent = config
+        .authenticated_genesis_application_parent_v0()
+        .copied()
+        .expect("fixture has an authenticated application parent");
+    let foreign_parent = AuthenticatedGenesisApplicationParentV0::new(
+        parent.genesis_block_id(),
+        parent.timestamp_ms(),
+        parent.state_version(),
+        parent.state_root(),
+        [0xD1; 32],
+        [0xE1; 32],
+    )
+    .expect("shape-valid foreign application provenance");
+    let foreign_commitment = foreign_parent
+        .genesis_application_commitment_v0()
+        .expect("convert the foreign parent");
+    let binding = GenesisQcV0::new(
+        config.validator_set().genesis_hash(),
+        config.validator_set().chain_id(),
+        config.validator_set(),
+    )
+    .expect("trusted GenesisQC")
+    .bind_application_commitment_v0(foreign_commitment)
+    .expect("foreign commitment still names the same genesis hash");
+
+    assert!(matches!(
+        Core::prepare_authenticated_genesis_application_bootstrap_with_genesis_application_commitment_v0(
+            config,
+            binding,
+            SAFETY_STATE_RECORD_TEST_PROFILE_REF,
+            safety_state_record_test_limits(),
+            &RootSignatures,
+        ),
+        Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+            "GenesisQC application commitment differs from the configured application parent"
+        ))
+    ));
 }
 
 fn authenticated_genesis_h1_offline_fixture_v0(

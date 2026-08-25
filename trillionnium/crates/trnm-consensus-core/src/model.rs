@@ -9,10 +9,11 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::InertSafetyTransitionV1;
 use trnm_consensus_types::{
     Block, BlockHeader, BlockId, CanonicalSignIntentV0, CertificateId, ChainId,
-    ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0, GenesisQcV0, Height,
-    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, SignatureBytes, SignedProposalV0,
-    SigningRoot, StateRoot, TimeoutCertificateV0, TimeoutVote, ValidatedBlockCommitmentsV0,
-    ValidatorId, ValidatorSet, ValidatorSetId, View, Vote,
+    ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0,
+    GenesisApplicationCommitmentV0, GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, SignatureBytes, SignedProposalV0, SigningRoot, StateRoot,
+    TimeoutCertificateV0, TimeoutVote, ValidatedBlockCommitmentsV0, ValidatorId, ValidatorSet,
+    ValidatorSetId, View, Vote,
 };
 
 use crate::{CoreError, Result, CORE_MAX_RETAINED_VALIDATED_PROPOSAL_RESOURCE_BYTES_V1};
@@ -254,9 +255,28 @@ impl AuthenticatedGenesisApplicationParentV0 {
         self.projection_profile_ref
     }
 
+    /// Converts the operator/config carrier into the independent commitment
+    /// type used by the strict GenesisQC application-binding ceremony.
+    pub fn genesis_application_commitment_v0(self) -> Result<GenesisApplicationCommitmentV0> {
+        GenesisApplicationCommitmentV0::new(
+            GenesisHash::new(*self.genesis_block_id.as_bytes()),
+            self.timestamp_ms,
+            self.state_version(),
+            self.state_root,
+            self.descriptor_ref,
+            self.projection_profile_ref,
+        )
+        .map_err(CoreError::from)
+    }
+
     /// Canonical request/persistence comparison reference for the complete
     /// tagged carrier. This checksum is not authentication authority.
     pub fn binding_ref_v0(self) -> [u8; 32] {
+        // Keep this infallible comparison helper independent from the
+        // fallible strict-ceremony conversion above.  The byte preimage is
+        // intentionally identical to `GenesisApplicationCommitmentV0`'s
+        // legacy binding reference, so malformed internal data cannot turn a
+        // request fingerprint into a panic boundary.
         let timestamp = self.timestamp_ms.to_be_bytes();
         let state_version = self.state_version().to_be_bytes();
         let parts: [&[u8]; 6] = [

@@ -19,9 +19,9 @@ use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
     CanonicalSignIntentV0, CanonicalSignable, CertificateId, ConsensusParametersV0,
     ContextAuthorizedQcV0, Epoch, EpochGeometryV0, EquivocationEvidence, FinalityProofV0,
-    GenesisQcV0, Height, QcRef, QcReferenceV0, QuorumCertificate, RootBoundRegularBodyV0,
-    SignatureVerifier, SignedProposalV0, TimeoutCertificateV0, TimeoutVote, ValidationError,
-    ValidatorId, ValidatorSet, View, Vote,
+    GenesisQcApplicationBindingV0, GenesisQcV0, Height, QcRef, QcReferenceV0, QuorumCertificate,
+    RootBoundRegularBodyV0, SignatureVerifier, SignedProposalV0, TimeoutCertificateV0, TimeoutVote,
+    ValidationError, ValidatorId, ValidatorSet, View, Vote,
 };
 
 use crate::{
@@ -5289,6 +5289,47 @@ impl Core {
             authenticated_genesis_application_parent: authenticated_parent,
             safety_state_record_config_ref,
         })
+    }
+
+    /// Strict additive commissioning entry point which binds the exact
+    /// configured application parent to the trusted GenesisQC before creating
+    /// revision-zero facts.
+    ///
+    /// The raw [`GenesisQcV0`] CEV0 object and the legacy preparation method
+    /// remain unchanged for fixture and wire compatibility.  Callers which
+    /// need the P1 application-root/provenance check must supply the explicit
+    /// [`GenesisQcApplicationBindingV0`] envelope to this method.
+    pub fn prepare_authenticated_genesis_application_bootstrap_with_genesis_application_commitment_v0<
+        V: SignatureVerifier,
+    >(
+        config: CoreConfig,
+        genesis_binding: GenesisQcApplicationBindingV0,
+        verifier_profile_ref: [u8; 32],
+        record_limits: SafetyStateRecordLimitsV0,
+        verifier: &V,
+    ) -> Result<PreparedAuthenticatedGenesisApplicationBootstrapV0> {
+        config.validate()?;
+        let configured_parent = config
+            .authenticated_genesis_application_parent_v0()
+            .copied()
+            .ok_or(CoreError::InvalidConfig(
+                "authenticated genesis application bootstrap requires its exact application parent",
+            ))?;
+        genesis_binding.validate_against_trusted_set(config.validator_set())?;
+        let expected_commitment = configured_parent.genesis_application_commitment_v0()?;
+        if genesis_binding.application_commitment_v0() != expected_commitment {
+            return Err(CoreError::AuthenticatedGenesisApplicationH1OfflineRejected(
+                "GenesisQC application commitment differs from the configured application parent",
+            ));
+        }
+        let (genesis_qc, _) = genesis_binding.into_parts();
+        Self::prepare_authenticated_genesis_application_bootstrap_v0(
+            config,
+            genesis_qc,
+            verifier_profile_ref,
+            record_limits,
+            verifier,
+        )
     }
 
     /// Prepares the bounded offline h1 owner and its sole seal authority for

@@ -2,9 +2,9 @@ use alloc::{boxed::Box, vec::Vec};
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_QUORUM_CERTIFICATE},
-    BlockId, CertificateId, ChainId, Epoch, GenesisHash, Height, ProtocolVersion, QcRef,
-    QuorumCertificate, Result, ValidationError, ValidatorSet, ValidatorSetId, View,
-    SCHEMA_VERSION_V0,
+    BlockId, CertificateId, ChainId, Epoch, GenesisApplicationCommitmentV0, GenesisHash,
+    GenesisQcApplicationBindingV0, Height, ProtocolVersion, QcRef, QuorumCertificate, Result,
+    ValidationError, ValidatorSet, ValidatorSetId, View, SCHEMA_VERSION_V0,
 };
 
 /// The one trusted, empty-signature QC reconstructed from the genesis
@@ -106,6 +106,17 @@ impl GenesisQcV0 {
             return Err(ValidationError::ValidatorSetMismatch);
         }
         Ok(())
+    }
+
+    /// Pairs this frozen GenesisQC with an exact application commitment for
+    /// an opt-in authenticated-genesis commissioning ceremony.  The wrapper
+    /// is not an ordinary QC and does not alter this value's CEV0 bytes or
+    /// digest.
+    pub fn bind_application_commitment_v0(
+        self,
+        application_commitment: GenesisApplicationCommitmentV0,
+    ) -> Result<GenesisQcApplicationBindingV0> {
+        GenesisQcApplicationBindingV0::new(self, application_commitment)
     }
 
     pub(crate) fn encode_cev0(&self, encoder: &mut Encoder) {

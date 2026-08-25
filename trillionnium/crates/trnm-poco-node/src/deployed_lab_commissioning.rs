@@ -328,11 +328,19 @@ where
             source_core_config.validator_set(),
         )
     );
+    let genesis_application_commitment = deploy_try!(
+        "source.genesis_application_commitment",
+        authenticated_parent.genesis_application_commitment_v0()
+    );
+    let genesis_application_binding = deploy_try!(
+        "source.genesis_application_binding",
+        genesis_qc.bind_application_commitment_v0(genesis_application_commitment)
+    );
     let prepared = deploy_try!(
         "source.prepare",
-        Core::prepare_authenticated_genesis_application_bootstrap_v0(
+        Core::prepare_authenticated_genesis_application_bootstrap_with_genesis_application_commitment_v0(
             source_core_config.clone(),
-            genesis_qc,
+            genesis_application_binding,
             STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
             limits,
             &StrictEd25519Verifier,
