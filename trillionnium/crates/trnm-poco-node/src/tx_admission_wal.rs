@@ -318,6 +318,14 @@ fn sqlite_error(_: rusqlite::Error) -> TxAdmissionWalErrorV0 {
     TxAdmissionWalErrorV0::Sqlite
 }
 
+fn map_insert_error_v0(error: rusqlite::Error) -> TxAdmissionWalErrorV0 {
+    if error.sqlite_error_code() == Some(rusqlite::ffi::ErrorCode::ConstraintViolation) {
+        TxAdmissionWalErrorV0::Replay
+    } else {
+        sqlite_error(error)
+    }
+}
+
 fn to_blob_u64(value: u64) -> [u8; 8] {
     value.to_be_bytes()
 }
@@ -755,13 +763,7 @@ impl SqlitePendingNonceAuthorityV0 {
                     STATE_RESERVED_V0,
                 ],
             )
-            .map_err(|error| {
-                if matches!(error, rusqlite::Error::SqliteFailure(_, _)) {
-                    TxAdmissionWalErrorV0::Replay
-                } else {
-                    TxAdmissionWalErrorV0::Sqlite
-                }
-            })?;
+            .map_err(map_insert_error_v0)?;
         transaction.commit().map_err(sqlite_error)?;
         self.ensure_identity()?;
         Ok(SqlitePendingNonceReservationV0 {
@@ -1160,6 +1162,38 @@ mod tests {
             TxAdmissionWalErrorV0::NamespaceMismatch
         );
         cleanup(&path);
+    }
+
+    #[test]
+    fn insert_error_mapping_only_treats_constraint_as_replay() {
+        fn sqlite_failure(code: rusqlite::ffi::ErrorCode) -> rusqlite::Error {
+            rusqlite::Error::SqliteFailure(
+                rusqlite::ffi::Error {
+                    code,
+                    extended_code: 0,
+                },
+                None,
+            )
+        }
+
+        assert_eq!(
+            map_insert_error_v0(sqlite_failure(
+                rusqlite::ffi::ErrorCode::ConstraintViolation
+            )),
+            TxAdmissionWalErrorV0::Replay
+        );
+        assert_eq!(
+            map_insert_error_v0(sqlite_failure(rusqlite::ffi::ErrorCode::DatabaseBusy)),
+            TxAdmissionWalErrorV0::Sqlite
+        );
+        assert_eq!(
+            map_insert_error_v0(sqlite_failure(rusqlite::ffi::ErrorCode::SystemIoFailure)),
+            TxAdmissionWalErrorV0::Sqlite
+        );
+        assert_eq!(
+            map_insert_error_v0(rusqlite::Error::InvalidQuery),
+            TxAdmissionWalErrorV0::Sqlite
+        );
     }
 
     #[test]
