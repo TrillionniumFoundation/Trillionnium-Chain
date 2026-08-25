@@ -123,7 +123,7 @@ for marker, text, label in (
     if " ".join(marker.split()) not in " ".join(text.split()):
         fail(f"missing {label} marker: {marker}")
 
-if mode.name == "post-cutover":
+if mode.name == "--post-cutover":
     residue = [
         pathlib.Path("trillionnium/crates/trnm-consensus-app"),
         pathlib.Path("trillionnium/crates/trnm-node"),
