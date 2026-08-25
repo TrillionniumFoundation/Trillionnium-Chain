@@ -66,8 +66,9 @@ The native node remains a fail-closed scaffold:
   admission budgets only after the supplied consensus-parameter hash matches
   the active validator-set hash (`5b28425df`, `cd7602693`, `b1e3f3528`,
   `cba106bd8`, `488e015f9`); a mismatched hash is rejected before any public
-  ceiling is derived. Trusted-local replay decoders are not network ingress
-  and remain explicitly crate-private;
+  ceiling is derived. The low-level `protocol_v0` primitive remains public for
+  trusted-local replay only and is not active network ingress; trusted-local
+  lab replay wrappers remain explicitly crate-private;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
 

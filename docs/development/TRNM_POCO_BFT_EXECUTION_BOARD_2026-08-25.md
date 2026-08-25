@@ -49,8 +49,9 @@ downstream gate inherits completion from an incomplete predecessor.
   a public decode entry: `decode_*_with_context` and the proposal budgeted
   decoder derive the CEV0 ceiling from
   the authenticated `ConsensusParametersV0` and active `ValidatorSet`, while
-  the intrinsic `protocol_v0` helpers are crate-private and explicitly limited
-  to pinned local replay. Before deriving any public budget, the supplied
+  the public low-level `protocol_v0` primitive is trusted-local vocabulary only
+  and is not active network ingress; its lab replay wrappers remain explicitly
+  limited to pinned local replay. Before deriving any public budget, the supplied
   consensus-parameter hash must equal the active validator-set hash (the
   fail-closed checks landed in `b1e3f3528`, `cba106bd8`, and `488e015f9`); a
   mismatched parameter hash therefore cannot widen the byte, signature, or nested-TC
