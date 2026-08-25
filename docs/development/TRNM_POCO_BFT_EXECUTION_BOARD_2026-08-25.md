@@ -25,15 +25,18 @@ M0 truth/branch freeze
 Execution may parallelize specification, tooling, and observability, but no
 downstream gate inherits completion from an incomplete predecessor.
 
-### Current machine evidence (2026-08-26)
+### Current machine evidence (2026-08-25)
 
 - `trnm-poco-node` is intentionally fail-closed: the default binary still
   reports missing signer, SafetyRules, application, finalization, P2P and state
   sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
   not a live-node or production-consensus pass.
-- The lock-pinned Quint and `protoc` toolchains are now installed and have
-  passed their local type/protobuf gates; a final clean formal run and CI
-  reproduction remain required for the P0 exit.
+- The lock-pinned Quint and `protoc` toolchains are installed; the clean local
+  formal gate (`scripts/ci/check_poco_bft_v0_formal.sh`) passed all listed
+  safety/TC/epoch/partition/upgrade/handoff/light-client/application
+  invariants and mutant witnesses in this worktree. CI reproduction,
+  independent review, and a second implementation remain required for the
+  P0 exit.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.

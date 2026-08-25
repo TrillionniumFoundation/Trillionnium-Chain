@@ -1,6 +1,6 @@
 {
   "schema": "trnm-consensus-mainline-truth-v1",
-  "as_of": "2026-08-26",
+  "as_of": "2026-08-25",
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
   "stage": "G1-native-host-incomplete",
@@ -100,7 +100,7 @@
   "blockers": [
     {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},
     {"id": "P0-SCHEMA-001", "severity": "P0", "status": "open", "exit": "one generated metadata/schema/error registry consumed consistently by every boundary gate"},
-    {"id": "P0-PROTOCOL-001", "severity": "P0", "status": "open", "evidence": "PocoGenesisV1 has separated legacy Comet evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck; independent protocol review and full vector corpus remain open", "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"},
+    {"id": "P0-PROTOCOL-001", "severity": "P0", "status": "open", "evidence": "PocoGenesisV1 has separated legacy Comet evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck; the lock-pinned local Quint formal gate passed the listed safety/TC/epoch/partition/upgrade/handoff/light-client/application invariants and mutant witnesses, while CI reproduction, independent protocol review and the full normative vector/second-implementation corpus remain open", "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"},
     {"id": "P0-TC-001", "severity": "P0", "status": "open", "evidence": "CEV0AdmissionBudgetV0 (5b28425df, cd7602693, b1e3f3528, cba106bd8, 488e015f9) now derives byte, signature-work, and nested-TC share ceilings only after ConsensusParametersV0.hash() equals the active ValidatorSet consensus_parameters_hash; the laboratory public Vote/TimeoutVote/QC/TC/proposal decode APIs use that context-bound budget, while protocol_v0 is crate-private local-replay vocabulary and authenticated collector ingress keeps one shared derived meter. A supplied context with a mismatched parameter hash is rejected before budget derivation and cannot widen any ceiling. Normative vectors, fuzz/formal coverage, independent replay, and production activation remain open", "exit": "validator-set, CPU, byte, signature-count, and admission budgets for QC/TC/CEV0 are enforced and fuzzed"},
     {"id": "P1-CORE-001", "severity": "P1", "status": "open", "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"},
     {"id": "P1-EXEC-001", "severity": "P1", "status": "open", "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"},
