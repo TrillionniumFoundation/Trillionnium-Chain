@@ -1,0 +1,522 @@
+{
+  "schema": "trnm_poco_bft_decoder_error_registry_v0",
+  "schema_version": 0,
+  "status": "generated-and-gated",
+  "rust_registry_const": "DecodeErrorCode::ALL",
+  "source_paths": {
+    "rust_decoder": "trillionnium/crates/trnm-consensus-types/src/cev0_decode.rs",
+    "base_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-v0.json",
+    "anchor_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-anchor-handoff-v0.json",
+    "epoch_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-epoch-commitment-v0.json",
+    "block_body_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-block-body-v0.json",
+    "checkpoint_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-checkpoint-finality-v0.json"
+  },
+  "source_sha256": {
+    "rust_decoder": "1832e0127074141790117174b9fe9ee514f77add5349cbace9218ebf670d6664",
+    "base_schema": "1130bac8c467baa5fded2105e316799ad01fe1e08625358b9d76c4a9837cd9f7",
+    "anchor_schema": "769653d06de4f9f56b80ef951012fb0e55a0f13cb4ed9338a52469fb7b4a5c3b",
+    "epoch_schema": "0a117b8bdc166be67fd6cd0836a7473e74783528fa2f083e9e20c6470d490166",
+    "block_body_schema": "7ccb53a96492b676b3884f8b049392eef64e63ee4fd2f29f5a1999f1fd5f39f2",
+    "checkpoint_schema": "ec3f02602c36e648cd142898b4771337d3327f1a2777131ce162f389706a88ec"
+  },
+  "scope_order": [
+    "B2-A",
+    "B2-B",
+    "B2-C",
+    "B2-D",
+    "B2-E",
+    "node-local"
+  ],
+  "scopes": [
+    {
+      "scope": "B2-A",
+      "description": "ordinary certificate-kernel exact decoder",
+      "codes": [
+        "unexpected_eof",
+        "trailing_bytes",
+        "length_limit_exceeded",
+        "count_limit_exceeded",
+        "aggregate_limit_exceeded",
+        "invalid_schema_version",
+        "invalid_protocol_version",
+        "invalid_consensus_string",
+        "unauthorized_synthetic_qc",
+        "zero_genesis_hash",
+        "zero_public_key",
+        "zero_voting_power",
+        "empty_validator_set",
+        "duplicate_validator_id",
+        "duplicate_public_key",
+        "noncanonical_validator_order",
+        "context_mismatch",
+        "unknown_signer",
+        "duplicate_signer",
+        "noncanonical_signer_order",
+        "noncanonical_reference_order",
+        "conflicting_same_view_qc",
+        "insufficient_quorum",
+        "invalid_referenced_qc",
+        "empty_tc",
+        "duplicate_reference",
+        "future_reference_view",
+        "same_block_different_coordinates",
+        "reference_summary_mismatch",
+        "unreferenced_qc",
+        "selected_not_maximum"
+      ]
+    },
+    {
+      "scope": "B2-B",
+      "description": "block, handoff, and epoch-anchor exact decoder",
+      "codes": [
+        "invalid_block_kind",
+        "invalid_optional_tag",
+        "invalid_block_header",
+        "invalid_handoff_descriptor",
+        "invalid_handoff_certificate",
+        "invalid_epoch_anchor_relations"
+      ]
+    },
+    {
+      "scope": "B2-C",
+      "description": "NextEpochCommitmentV0 exact decoder",
+      "codes": [
+        "invalid_boolean",
+        "invalid_rollout_phase",
+        "invalid_fallback_reason",
+        "invalid_next_epoch_commitment"
+      ]
+    },
+    {
+      "scope": "B2-D",
+      "description": "ordinary block-body exact decoder",
+      "codes": [
+        "invalid_utf8",
+        "noncanonical_event_attribute_order",
+        "invalid_double_vote_evidence"
+      ]
+    },
+    {
+      "scope": "B2-E",
+      "description": "checkpoint/finality exact decoder",
+      "codes": [
+        "invalid_leader_schedule",
+        "invalid_consensus_parameters",
+        "invalid_finality_proof",
+        "invalid_checkpoint_two_seal"
+      ]
+    },
+    {
+      "scope": "node-local",
+      "description": "node-local signer-intent exact decoder",
+      "codes": [
+        "invalid_sign_intent_tag",
+        "invalid_sign_intent",
+        "invalid_handoff_sign_intent_role",
+        "invalid_handoff_sign_intent"
+      ]
+    }
+  ],
+  "codes": [
+    {
+      "ordinal": 0,
+      "rust_variant": "UnexpectedEof",
+      "code": "unexpected_eof",
+      "scope": "B2-A",
+      "class": "structural"
+    },
+    {
+      "ordinal": 1,
+      "rust_variant": "TrailingBytes",
+      "code": "trailing_bytes",
+      "scope": "B2-A",
+      "class": "structural"
+    },
+    {
+      "ordinal": 2,
+      "rust_variant": "LengthLimitExceeded",
+      "code": "length_limit_exceeded",
+      "scope": "B2-A",
+      "class": "structural"
+    },
+    {
+      "ordinal": 3,
+      "rust_variant": "CountLimitExceeded",
+      "code": "count_limit_exceeded",
+      "scope": "B2-A",
+      "class": "structural"
+    },
+    {
+      "ordinal": 4,
+      "rust_variant": "AggregateLimitExceeded",
+      "code": "aggregate_limit_exceeded",
+      "scope": "B2-A",
+      "class": "structural"
+    },
+    {
+      "ordinal": 5,
+      "rust_variant": "InvalidSchemaVersion",
+      "code": "invalid_schema_version",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 6,
+      "rust_variant": "InvalidProtocolVersion",
+      "code": "invalid_protocol_version",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 7,
+      "rust_variant": "InvalidConsensusString",
+      "code": "invalid_consensus_string",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 8,
+      "rust_variant": "InvalidBlockKind",
+      "code": "invalid_block_kind",
+      "scope": "B2-B",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 9,
+      "rust_variant": "InvalidOptionalTag",
+      "code": "invalid_optional_tag",
+      "scope": "B2-B",
+      "class": "structural"
+    },
+    {
+      "ordinal": 10,
+      "rust_variant": "InvalidBlockHeader",
+      "code": "invalid_block_header",
+      "scope": "B2-B",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 11,
+      "rust_variant": "InvalidHandoffDescriptor",
+      "code": "invalid_handoff_descriptor",
+      "scope": "B2-B",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 12,
+      "rust_variant": "InvalidHandoffCertificate",
+      "code": "invalid_handoff_certificate",
+      "scope": "B2-B",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 13,
+      "rust_variant": "InvalidEpochAnchorRelations",
+      "code": "invalid_epoch_anchor_relations",
+      "scope": "B2-B",
+      "class": "safety"
+    },
+    {
+      "ordinal": 14,
+      "rust_variant": "UnauthorizedSyntheticQc",
+      "code": "unauthorized_synthetic_qc",
+      "scope": "B2-A",
+      "class": "authorization"
+    },
+    {
+      "ordinal": 15,
+      "rust_variant": "ZeroGenesisHash",
+      "code": "zero_genesis_hash",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 16,
+      "rust_variant": "ZeroConsensusPublicKey",
+      "code": "zero_public_key",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 17,
+      "rust_variant": "ZeroVotingPower",
+      "code": "zero_voting_power",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 18,
+      "rust_variant": "EmptyValidatorSet",
+      "code": "empty_validator_set",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 19,
+      "rust_variant": "DuplicateValidatorId",
+      "code": "duplicate_validator_id",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 20,
+      "rust_variant": "DuplicatePublicKey",
+      "code": "duplicate_public_key",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 21,
+      "rust_variant": "NonCanonicalValidatorOrder",
+      "code": "noncanonical_validator_order",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 22,
+      "rust_variant": "ContextMismatch",
+      "code": "context_mismatch",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 23,
+      "rust_variant": "UnknownSigner",
+      "code": "unknown_signer",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 24,
+      "rust_variant": "DuplicateSigner",
+      "code": "duplicate_signer",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 25,
+      "rust_variant": "NonCanonicalSignerOrder",
+      "code": "noncanonical_signer_order",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 26,
+      "rust_variant": "NonCanonicalReferenceOrder",
+      "code": "noncanonical_reference_order",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 27,
+      "rust_variant": "ConflictingSameViewQc",
+      "code": "conflicting_same_view_qc",
+      "scope": "B2-A",
+      "class": "safety"
+    },
+    {
+      "ordinal": 28,
+      "rust_variant": "InsufficientQuorum",
+      "code": "insufficient_quorum",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 29,
+      "rust_variant": "InvalidReferencedQc",
+      "code": "invalid_referenced_qc",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 30,
+      "rust_variant": "EmptyTc",
+      "code": "empty_tc",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 31,
+      "rust_variant": "DuplicateReference",
+      "code": "duplicate_reference",
+      "scope": "B2-A",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 32,
+      "rust_variant": "FutureReferenceView",
+      "code": "future_reference_view",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 33,
+      "rust_variant": "SameBlockDifferentCoordinates",
+      "code": "same_block_different_coordinates",
+      "scope": "B2-A",
+      "class": "safety"
+    },
+    {
+      "ordinal": 34,
+      "rust_variant": "ReferenceSummaryMismatch",
+      "code": "reference_summary_mismatch",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 35,
+      "rust_variant": "UnreferencedQc",
+      "code": "unreferenced_qc",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 36,
+      "rust_variant": "SelectedNotMaximum",
+      "code": "selected_not_maximum",
+      "scope": "B2-A",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 37,
+      "rust_variant": "InvalidBoolean",
+      "code": "invalid_boolean",
+      "scope": "B2-C",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 38,
+      "rust_variant": "InvalidRolloutPhase",
+      "code": "invalid_rollout_phase",
+      "scope": "B2-C",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 39,
+      "rust_variant": "InvalidFallbackReason",
+      "code": "invalid_fallback_reason",
+      "scope": "B2-C",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 40,
+      "rust_variant": "InvalidNextEpochCommitment",
+      "code": "invalid_next_epoch_commitment",
+      "scope": "B2-C",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 41,
+      "rust_variant": "InvalidUtf8",
+      "code": "invalid_utf8",
+      "scope": "B2-D",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 42,
+      "rust_variant": "NonCanonicalEventAttributeOrder",
+      "code": "noncanonical_event_attribute_order",
+      "scope": "B2-D",
+      "class": "canonical"
+    },
+    {
+      "ordinal": 43,
+      "rust_variant": "InvalidDoubleVoteEvidence",
+      "code": "invalid_double_vote_evidence",
+      "scope": "B2-D",
+      "class": "safety"
+    },
+    {
+      "ordinal": 44,
+      "rust_variant": "InvalidLeaderSchedule",
+      "code": "invalid_leader_schedule",
+      "scope": "B2-E",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 45,
+      "rust_variant": "InvalidConsensusParameters",
+      "code": "invalid_consensus_parameters",
+      "scope": "B2-E",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 46,
+      "rust_variant": "InvalidFinalityProof",
+      "code": "invalid_finality_proof",
+      "scope": "B2-E",
+      "class": "safety"
+    },
+    {
+      "ordinal": 47,
+      "rust_variant": "InvalidCheckpointTwoSeal",
+      "code": "invalid_checkpoint_two_seal",
+      "scope": "B2-E",
+      "class": "safety"
+    },
+    {
+      "ordinal": 48,
+      "rust_variant": "InvalidSignIntentTag",
+      "code": "invalid_sign_intent_tag",
+      "scope": "node-local",
+      "class": "semantic"
+    },
+    {
+      "ordinal": 49,
+      "rust_variant": "InvalidSignIntent",
+      "code": "invalid_sign_intent",
+      "scope": "node-local",
+      "class": "safety"
+    },
+    {
+      "ordinal": 50,
+      "rust_variant": "InvalidHandoffSignIntentRole",
+      "code": "invalid_handoff_sign_intent_role",
+      "scope": "node-local",
+      "class": "authorization"
+    },
+    {
+      "ordinal": 51,
+      "rust_variant": "InvalidHandoffSignIntent",
+      "code": "invalid_handoff_sign_intent",
+      "scope": "node-local",
+      "class": "safety"
+    }
+  ],
+  "bounds": {
+    "max_certificate_items": 100,
+    "max_tc_aggregate_signature_shares": 10000,
+    "max_root_bytes": 8388608,
+    "max_intrinsic_signature_work_units": 30903
+  },
+  "entry_points": {
+    "B2-A": [
+      "decode_ordinary_qc_v0_exact",
+      "decode_ordinary_timeout_certificate_v0_exact",
+      "decode_qc_reference_v0_exact_with_trusted_genesis"
+    ],
+    "B2-B": [
+      "decode_block_header_v0_exact",
+      "decode_handoff_descriptor_v0_exact",
+      "decode_handoff_certificate_v0_exact",
+      "decode_epoch_anchor_authorization_kernel_v0_exact"
+    ],
+    "B2-C": [
+      "decode_next_epoch_commitment_v0_exact"
+    ],
+    "B2-D": [
+      "decode_application_payload_v0_exact",
+      "decode_execution_receipt_commitment_v0_exact",
+      "decode_double_vote_evidence_v0_exact"
+    ],
+    "B2-E": [
+      "decode_consensus_parameters_v0_exact",
+      "decode_ordinary_certified_header_v0_exact",
+      "decode_checkpoint_finality_proof_v0_exact"
+    ],
+    "node-local": [
+      "decode_canonical_sign_intent_v0_exact",
+      "decode_canonical_handoff_sign_intent_v1_exact"
+    ]
+  }
+}

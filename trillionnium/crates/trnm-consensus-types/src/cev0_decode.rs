@@ -847,6 +847,67 @@ pub enum DecodeErrorCode {
 }
 
 impl DecodeErrorCode {
+    /// Canonical, machine-readable decoder taxonomy order.
+    ///
+    /// Boundary/schema tooling consumes this single Rust-owned list rather
+    /// than maintaining a second hand-written ordering.  The list is kept in
+    /// the same order as [`Self::as_str`]; adding a decoder class requires
+    /// updating this list and the generated protocol registry together.
+    pub const ALL: &'static [Self] = &[
+        Self::UnexpectedEof,
+        Self::TrailingBytes,
+        Self::LengthLimitExceeded,
+        Self::CountLimitExceeded,
+        Self::AggregateLimitExceeded,
+        Self::InvalidSchemaVersion,
+        Self::InvalidProtocolVersion,
+        Self::InvalidConsensusString,
+        Self::InvalidBlockKind,
+        Self::InvalidOptionalTag,
+        Self::InvalidBlockHeader,
+        Self::InvalidHandoffDescriptor,
+        Self::InvalidHandoffCertificate,
+        Self::InvalidEpochAnchorRelations,
+        Self::UnauthorizedSyntheticQc,
+        Self::ZeroGenesisHash,
+        Self::ZeroConsensusPublicKey,
+        Self::ZeroVotingPower,
+        Self::EmptyValidatorSet,
+        Self::DuplicateValidatorId,
+        Self::DuplicatePublicKey,
+        Self::NonCanonicalValidatorOrder,
+        Self::ContextMismatch,
+        Self::UnknownSigner,
+        Self::DuplicateSigner,
+        Self::NonCanonicalSignerOrder,
+        Self::NonCanonicalReferenceOrder,
+        Self::ConflictingSameViewQc,
+        Self::InsufficientQuorum,
+        Self::InvalidReferencedQc,
+        Self::EmptyTc,
+        Self::DuplicateReference,
+        Self::FutureReferenceView,
+        Self::SameBlockDifferentCoordinates,
+        Self::ReferenceSummaryMismatch,
+        Self::UnreferencedQc,
+        Self::SelectedNotMaximum,
+        Self::InvalidBoolean,
+        Self::InvalidRolloutPhase,
+        Self::InvalidFallbackReason,
+        Self::InvalidNextEpochCommitment,
+        Self::InvalidUtf8,
+        Self::NonCanonicalEventAttributeOrder,
+        Self::InvalidDoubleVoteEvidence,
+        Self::InvalidLeaderSchedule,
+        Self::InvalidConsensusParameters,
+        Self::InvalidFinalityProof,
+        Self::InvalidCheckpointTwoSeal,
+        Self::InvalidSignIntentTag,
+        Self::InvalidSignIntent,
+        Self::InvalidHandoffSignIntentRole,
+        Self::InvalidHandoffSignIntent,
+    ];
+
     /// Returns the stable snake-case code shared by the manifest and corpus.
     pub const fn as_str(self) -> &'static str {
         match self {
@@ -4677,6 +4738,32 @@ mod tests {
 
     use super::*;
     use crate::SIGNATURE_BYTES;
+
+    #[test]
+    fn decoder_error_code_registry_is_unique_and_stable() {
+        assert_eq!(DecodeErrorCode::ALL.len(), 52);
+        assert_eq!(DecodeErrorCode::ALL[0].as_str(), "unexpected_eof");
+        assert_eq!(
+            DecodeErrorCode::ALL[DecodeErrorCode::ALL.len() - 1].as_str(),
+            "invalid_handoff_sign_intent"
+        );
+        assert_eq!(DecodeErrorCode::ALL[8].as_str(), "invalid_block_kind");
+        assert_eq!(DecodeErrorCode::ALL[29].as_str(), "invalid_referenced_qc");
+        assert_eq!(DecodeErrorCode::ALL[30].as_str(), "empty_tc");
+        assert_eq!(
+            DecodeErrorCode::ALL[47].as_str(),
+            "invalid_checkpoint_two_seal"
+        );
+        for (index, code) in DecodeErrorCode::ALL.iter().enumerate() {
+            assert!(
+                DecodeErrorCode::ALL[..index]
+                    .iter()
+                    .all(|previous| previous.as_str() != code.as_str()),
+                "duplicate decoder error code {}",
+                code.as_str()
+            );
+        }
+    }
 
     struct AcceptSignatures;
 

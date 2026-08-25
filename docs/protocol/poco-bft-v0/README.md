@@ -157,6 +157,7 @@ Current local development gates are:
 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
 ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+./scripts/ci/check_poco_bft_v0_registry.sh
 ./scripts/ci/check_poco_bft_v0_logical_schema.sh
 ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
 ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh

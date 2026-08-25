@@ -227,6 +227,7 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
+          bash ./scripts/ci/check_poco_bft_v0_registry.sh
           bash ./scripts/ci/check_poco_bft_v0_logical_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
           bash ./scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh

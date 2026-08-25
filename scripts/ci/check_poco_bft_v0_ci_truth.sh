@@ -5,6 +5,9 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "$SCRIPT_DIR/../.." && pwd)"
 POCO_WORKFLOW="$ROOT/.github/workflows/trnm-poco-bft-v0.yml"
 WORKFLOW_TRIGGER_TRUTH="$ROOT/scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
+POCO_REGISTRY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_registry.sh"
+POCO_REGISTRY_CHECKER="$ROOT/scripts/ci/check_poco_bft_v0_registry.py"
+POCO_REGISTRY_ARTIFACT="$ROOT/docs/protocol/poco-bft-v0/schema/decoder-error-registry-v0.json"
 CI_RUNNER_POLICY="$ROOT/scripts/check_ci_runner_policy.sh"
 LEGACY_WORKFLOW="$ROOT/.github/workflows/rust-l1-testnet-preflight.yml"
 RECOVERY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_recovery_smoke.sh"
@@ -231,6 +234,9 @@ reject_literal() {
 for required in \
   "$POCO_WORKFLOW" \
   "$WORKFLOW_TRIGGER_TRUTH" \
+  "$POCO_REGISTRY_GATE" \
+  "$POCO_REGISTRY_CHECKER" \
+  "$POCO_REGISTRY_ARTIFACT" \
   "$CI_RUNNER_POLICY" \
   "$LEGACY_WORKFLOW" \
   "$RECOVERY_GATE" \
@@ -292,6 +298,9 @@ done
 # from validating truth that the candidate commit would not ship.
 require_g3_gate_authority_index
 require_tracked "$WORKFLOW_TRIGGER_TRUTH"
+require_tracked "$POCO_REGISTRY_GATE"
+require_tracked "$POCO_REGISTRY_CHECKER"
+require_tracked "$POCO_REGISTRY_ARTIFACT"
 require_tracked "$CI_RUNNER_POLICY"
 require_tracked "$MEMPOOL_CARGO"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_SOURCE"
@@ -438,6 +447,8 @@ require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_recovery_smoke.sh'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh'
+require_literal "$POCO_WORKFLOW" \
+  'bash ./scripts/ci/check_poco_bft_v0_registry.sh'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test'
 require_literal "$CI_RUNNER_POLICY" 'poco_bft_trust_guard='
