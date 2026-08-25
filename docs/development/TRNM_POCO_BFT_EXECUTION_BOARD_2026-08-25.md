@@ -43,7 +43,7 @@ downstream gate inherits completion from an incomplete predecessor.
 - CEV0 admission now has root-byte, signature-work and validator-set TC-share
   budgets, with explicit limits clamped to intrinsic hard caps (`5b28425df`,
   `cd7602693`) and public derivation bound to run/validator context
-  (`b1e3f3528`, `cba106bd8`, `488e015f9`). The normative wire/conformance
+  (`b1e3f3528`, `cba106bd8`, `488e015f9`, `50b8a0dbd`). The normative wire/conformance
   review and independent second implementation are still open.
 - The laboratory wire surface no longer exposes a protocol-default budget as
   a public decode entry: `decode_*_with_context` and the proposal budgeted
@@ -53,7 +53,8 @@ downstream gate inherits completion from an incomplete predecessor.
   and is not active network ingress; its lab replay wrappers remain explicitly
   limited to pinned local replay. Before deriving any public budget, the supplied
   consensus-parameter hash must equal the active validator-set hash (the
-  fail-closed checks landed in `b1e3f3528`, `cba106bd8`, and `488e015f9`); a
+  fail-closed checks landed in `b1e3f3528`, `cba106bd8`, `488e015f9`, and
+  `50b8a0dbd`); a
   mismatched parameter hash therefore cannot widen the byte, signature, or nested-TC
   limits. Authenticated network ingress continues to consume one shared
   derived budget in the collector. This closes the API-level budget bypass
