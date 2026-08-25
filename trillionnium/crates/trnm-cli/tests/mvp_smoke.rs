@@ -5,6 +5,8 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+use ed25519_dalek::{Signature, VerifyingKey};
+
 fn bin() -> String {
     if let Ok(v) = std::env::var("CARGO_BIN_EXE_trnm-cli") {
         return v;
@@ -330,7 +332,12 @@ fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
         stdout
     );
     assert!(
-        stdout.contains("message_sha256="),
+        stdout.contains("preimage_domain=trnm.cli.wallet-sign.v1"),
+        "unexpected stdout: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("preimage_sha256="),
         "unexpected stdout: {}",
         stdout
     );
@@ -700,7 +707,7 @@ fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
 }
 
 #[test]
-fn smoke_wallet_sign_emits_message_sha256_hint() {
+fn smoke_wallet_sign_emits_domain_separated_ed25519_signature() {
     let store = tmp_dir("wallet-sign");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     let import = import_wallet(&store, "alice", pk);
@@ -728,11 +735,13 @@ fn smoke_wallet_sign_emits_message_sha256_hint() {
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("wallet_name=alice"));
     assert!(s.contains(&format!("message={message}")));
-    assert!(s.contains(
-        "message_sha256=0921750d68e4f12cb9b90b90e66f3406f4bcf49e1a4a312e693fa5d8236d1cab"
-    ));
+    assert!(s.contains("preimage_domain=trnm.cli.wallet-sign.v1"));
+    assert!(s.contains("signed_bytes=domain-framed-utf8-v1"));
+    assert!(s.contains("preimage_len="));
+    assert!(s.contains("preimage_sha256="));
+    assert!(!s.contains("message_sha256="));
     assert!(s.contains("signature_scheme=ed25519"));
-    assert!(s.contains("signed_bytes=utf8"));
+    assert!(s.contains("signed_bytes=domain-framed-utf8-v1"));
     assert!(s.contains("public_key="));
     let signature = s
         .lines()
@@ -740,6 +749,28 @@ fn smoke_wallet_sign_emits_message_sha256_hint() {
         .expect("wallet sign signature line");
     assert_eq!(signature.len(), 128, "Ed25519 signature is 64 bytes");
     assert!(signature.chars().all(|c| c.is_ascii_hexdigit()));
+
+    let public_key = s
+        .lines()
+        .find_map(|line| line.strip_prefix("public_key="))
+        .expect("wallet sign public key line");
+    let public_key_bytes: [u8; 32] = hex::decode(public_key).unwrap().try_into().unwrap();
+    let signature_bytes: [u8; 64] = hex::decode(signature).unwrap().try_into().unwrap();
+    let verifying_key = VerifyingKey::from_bytes(&public_key_bytes).unwrap();
+    let signature = Signature::from_bytes(&signature_bytes);
+    let domain = b"trnm.cli.wallet-sign.v1";
+    let mut preimage = Vec::new();
+    preimage.extend_from_slice(&(domain.len() as u32).to_be_bytes());
+    preimage.extend_from_slice(domain);
+    preimage.extend_from_slice(&(message.len() as u32).to_be_bytes());
+    preimage.extend_from_slice(message.as_bytes());
+    verifying_key.verify_strict(&preimage, &signature).unwrap();
+    assert!(
+        verifying_key
+            .verify_strict(message.as_bytes(), &signature)
+            .is_err(),
+        "CLI output must not be an unframed raw-text signature"
+    );
 }
 
 #[test]

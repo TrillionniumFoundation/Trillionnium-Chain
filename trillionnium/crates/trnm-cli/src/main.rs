@@ -19,6 +19,12 @@ const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID: u64 = 7_351;
 const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
 const LOCAL_WALLET_WARNING: &str = "WARNING: trnm-cli local wallets are development-only plaintext keystores, not production HSM/KMS signers; never use validator or production funds here.";
 const DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV: &str = "TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE";
+/// Domain for the development-only `wallet sign` surface.
+///
+/// This is deliberately not any PoCO transaction or consensus signing domain.
+/// The CLI signature is an offline text signature only and must never be
+/// accepted by a node as a transaction, vote, timeout, or handoff signature.
+const CLI_WALLET_SIGN_DOMAIN_V1: &[u8] = b"trnm.cli.wallet-sign.v1";
 
 fn warn_development_only_adapter(surface: &str) {
     eprintln!(
@@ -2865,12 +2871,43 @@ fn ed25519_public_key_hex(priv_hex: &str) -> Result<String> {
     Ok(hex::encode(signing_key.verifying_key().as_bytes()))
 }
 
+/// Builds the exact, domain-separated bytes signed by `wallet sign`.
+///
+/// The frozen v1 framing is:
+///
+/// ```text
+/// u32_be(domain_byte_len) || domain_bytes ||
+/// u32_be(message_utf8_byte_len) || message_utf8_bytes
+/// ```
+///
+/// Length framing prevents concatenation ambiguity and keeps this
+/// development-only signature distinct from every protocol signing domain.
+fn wallet_sign_preimage_v1(message: &str) -> Result<Vec<u8>> {
+    ensure_safe_sign_message(message)?;
+    let domain_len = u32::try_from(CLI_WALLET_SIGN_DOMAIN_V1.len())
+        .map_err(|_| anyhow!("wallet sign domain length exceeds u32"))?;
+    let message_len = u32::try_from(message.len())
+        .map_err(|_| anyhow!("wallet sign message length exceeds u32"))?;
+    let capacity = usize::try_from(domain_len)
+        .and_then(|domain_len| {
+            usize::try_from(message_len).map(|message_len| 8 + domain_len + message_len)
+        })
+        .map_err(|_| anyhow!("wallet sign preimage length overflows usize"))?;
+    let mut preimage = Vec::with_capacity(capacity);
+    preimage.extend_from_slice(&domain_len.to_be_bytes());
+    preimage.extend_from_slice(CLI_WALLET_SIGN_DOMAIN_V1);
+    preimage.extend_from_slice(&message_len.to_be_bytes());
+    preimage.extend_from_slice(message.as_bytes());
+    Ok(preimage)
+}
+
 fn sign_message_ed25519(priv_hex: &str, message: &str) -> Result<(String, String)> {
     let signing_key = signing_key_from_priv_hex(priv_hex)?;
+    let preimage = wallet_sign_preimage_v1(message)?;
     let verifying_key = signing_key.verifying_key();
-    let signature = signing_key.sign(message.as_bytes());
+    let signature = signing_key.sign(&preimage);
     verifying_key
-        .verify_strict(message.as_bytes(), &signature)
+        .verify_strict(&preimage, &signature)
         .map_err(|_| anyhow!("internal Ed25519 signature self-verification failed"))?;
     Ok((
         hex::encode(verifying_key.as_bytes()),
@@ -4492,14 +4529,19 @@ fn main() -> Result<()> {
                 let priv_hex = read_key(&store, &name)?;
                 let (public_key, signature) = sign_message_ed25519(&priv_hex, &message)?;
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
-                let message_sha256 = sha256_hex(message.as_bytes());
+                let preimage = wallet_sign_preimage_v1(&message)?;
                 println!("wallet_name={}", name);
                 println!("address={}", addr);
                 println!("signature_scheme=ed25519");
-                println!("signed_bytes=utf8");
+                println!("signed_bytes=domain-framed-utf8-v1");
+                println!(
+                    "preimage_domain={}",
+                    String::from_utf8_lossy(CLI_WALLET_SIGN_DOMAIN_V1)
+                );
+                println!("preimage_len={}", preimage.len());
+                println!("preimage_sha256={}", sha256_hex(&preimage));
                 println!("public_key={}", public_key);
                 println!("message={}", message);
-                println!("message_sha256={}", message_sha256);
                 println!("signature={}", signature);
             }
         },
@@ -8569,9 +8611,10 @@ mod tests {
     }
 
     #[test]
-    fn wallet_sign_uses_verifiable_rfc8032_ed25519_over_exact_utf8_bytes() {
+    fn wallet_sign_uses_verifiable_domain_separated_ed25519_preimage() {
         let seed = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         let message = "rotate signer to cold-key slot b";
+        let preimage = wallet_sign_preimage_v1(message).unwrap();
         let (public_key_hex, signature_hex) = sign_message_ed25519(seed, message).unwrap();
 
         assert_eq!(public_key_hex.len(), 64);
@@ -8580,14 +8623,55 @@ mod tests {
         let signature_bytes: [u8; 64] = hex::decode(signature_hex).unwrap().try_into().unwrap();
         let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(&public_key_bytes).unwrap();
         let signature = ed25519_dalek::Signature::from_bytes(&signature_bytes);
-        verifying_key
-            .verify_strict(message.as_bytes(), &signature)
-            .unwrap();
+        verifying_key.verify_strict(&preimage, &signature).unwrap();
         assert!(
             verifying_key
-                .verify_strict(b"rotate signer to a different slot", &signature)
+                .verify_strict(message.as_bytes(), &signature)
                 .is_err(),
-            "an Ed25519 signature must remain bound to the exact UTF-8 message bytes"
+            "the offline signature must not verify as an unframed raw-text signature"
+        );
+        assert!(
+            verifying_key
+                .verify_strict(
+                    &wallet_sign_preimage_v1("rotate signer to a different slot").unwrap(),
+                    &signature
+                )
+                .is_err(),
+            "an Ed25519 signature must remain bound to the exact framed message bytes"
+        );
+    }
+
+    #[test]
+    fn wallet_sign_preimage_v1_has_exact_length_framing_and_domain() {
+        let message = "approve tx";
+        let preimage = wallet_sign_preimage_v1(message).unwrap();
+        let domain_len = u32::try_from(CLI_WALLET_SIGN_DOMAIN_V1.len()).unwrap();
+        let message_len = u32::try_from(message.len()).unwrap();
+        let mut expected = Vec::new();
+        expected.extend_from_slice(&domain_len.to_be_bytes());
+        expected.extend_from_slice(CLI_WALLET_SIGN_DOMAIN_V1);
+        expected.extend_from_slice(&message_len.to_be_bytes());
+        expected.extend_from_slice(message.as_bytes());
+        assert_eq!(preimage, expected);
+    }
+
+    #[test]
+    fn wallet_sign_signature_rejects_domain_substitution() {
+        let seed = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        let message = "approve tx";
+        let (public_key_hex, signature_hex) = sign_message_ed25519(seed, message).unwrap();
+        let public_key_bytes: [u8; 32] = hex::decode(public_key_hex).unwrap().try_into().unwrap();
+        let signature_bytes: [u8; 64] = hex::decode(signature_hex).unwrap().try_into().unwrap();
+        let verifying_key = ed25519_dalek::VerifyingKey::from_bytes(&public_key_bytes).unwrap();
+        let signature = ed25519_dalek::Signature::from_bytes(&signature_bytes);
+        let mut substituted = wallet_sign_preimage_v1(message).unwrap();
+        let domain_offset = 4;
+        substituted[domain_offset] ^= 1;
+        assert!(
+            verifying_key
+                .verify_strict(&substituted, &signature)
+                .is_err(),
+            "changing the domain must invalidate the offline signature"
         );
     }
 
