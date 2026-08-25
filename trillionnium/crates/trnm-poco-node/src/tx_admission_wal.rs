@@ -615,6 +615,16 @@ impl SqlitePendingNonceAuthorityV0 {
         if read_state_by_digest_v0(&transaction, self.namespace, expected.digest)?.is_some() {
             return Err(TxAdmissionWalErrorV0::Replay);
         }
+        let row_count: i64 = transaction
+            .query_row(
+                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                params![self.namespace.as_slice()],
+                |row| row.get(0),
+            )
+            .map_err(sqlite_error)?;
+        if row_count < 0 || row_count as usize >= MAX_RESERVATION_ROWS_V0 {
+            return Err(TxAdmissionWalErrorV0::TooLarge);
+        }
         let nonce_blob = to_blob_u64(expected.nonce);
         let fee_blob = to_blob_u128(expected.fee_limit);
         let gas_blob = to_blob_u64(expected.max_gas);
