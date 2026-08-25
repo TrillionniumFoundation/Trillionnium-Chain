@@ -20,6 +20,10 @@ cover an uncooperating process.
 * `acquire_shared_for_paths_v0(P, K)` protects a complete paired audit.  A
   shared reader and an exclusive writer are mutually exclusive, and rename /
   recreate of the root fails identity validation.
+* When both concrete SQLite files already exist, paired shared/exclusive
+  acquisition binds one read descriptor for each P/K child for the whole lock
+  window.  The descriptor and canonical pathname must retain the same inode,
+  link count, owner, mode and regular-file/non-symlink shape before return.
 * A helper which is called while an outer exclusive guard is held receives that
   guard rather than recursively acquiring the same OS lock.  In particular,
   finalization passes its guard through the high-QC rebase/readback helper.
@@ -51,17 +55,20 @@ cover an uncooperating process.
   this P2-STORE slice.
 * The fence is not a distributed lock and does not prove cross-database atomic
   commit, SQLite WAL/SHM fsync ordering, power-loss rollback, disk-full
-  recovery, or response-loss resolution.  File-descriptor binding for child
-  database files and all external/uncooperating writers remain MIG-004 work.
+  recovery, or response-loss resolution.  `7e04803cf` binds child descriptors
+  in the selected paired windows, but every mutation path and all
+  external/uncooperating writers remain MIG-004 work.
 * A successful identity check is a fail-closed boundary check, not a claim that
   a concurrent replacement cannot occur after the guard is dropped.
 
 ## Focused evidence
 
-The lock module has four unit tests covering shared/exclusive mutual exclusion,
-single-store bootstrap root derivation, mismatched roots, and rename/recreate
-identity failure.  The feature-gated `trnm-poco-node` library suite exercises
-the deployed host/recovery/anchor paths; the full lab slice currently reports
-111 passing tests.  Formatting and lint commands remain part of the local
+The lock module has seven focused unit tests covering shared/exclusive mutual
+exclusion, single-store bootstrap root derivation, mismatched roots,
+root/child rename-recreate identity failure, and unsafe child ownership or
+permissions; the latest focused run is 7/7.  The feature-gated
+`trnm-poco-node` library suite exercises
+the deployed host/recovery/anchor paths; the latest all-features library slice
+reports 189/189 passing tests.  Formatting and lint commands remain part of the local
 handoff; this document does not convert those local results into a release
 gate.

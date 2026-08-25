@@ -31,6 +31,11 @@ downstream gate inherits completion from an incomplete predecessor.
   reports missing signer, SafetyRules, application, finalization, P2P and state
   sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
   not a live-node or production-consensus pass.
+- The clean all-features node library run
+  (`cargo test --locked -p trnm-poco-node --all-features --lib`) completed
+  189/189 in 620.06 seconds. This is feature-surface evidence only; the
+  default binary, live effect driver, network and production activation remain
+  fail-closed.
 - The checksum-pinned `protoc` bootstrap (`eaf1db12e`) and lock-pinned Quint
   toolchains are installed; the clean local formal gate
   (`scripts/ci/check_poco_bft_v0_formal.sh`) passed all listed
@@ -47,6 +52,12 @@ downstream gate inherits completion from an incomplete predecessor.
   `bd6d3b148` also corrected the protocol gap-register/conformance wording:
   48 B2-A..E peer codes plus four node-local signer-intent codes means 52 Rust
   enum values overall; node-local values remain outside peer wire taxonomy.
+- `7b55fd1bb` now makes the decoder taxonomy machine-checked from the Rust
+  `DecodeErrorCode::ALL` registry and a generated 52-entry
+  `decoder-error-registry-v0.json`; the registry checker and all schema/truth
+  gates pass on this clean candidate. This closes local artifact drift only;
+  independent review, a second implementation, wire conformance and network
+  signing remain open.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.
@@ -122,12 +133,32 @@ downstream gate inherits completion from an incomplete predecessor.
   rename/recreate test. This is still an advisory, cooperating-owner fence:
   all writer adoption and
   the full cross-database atomicity proof remain open under MIG-004.
+- `7e04803cf` extends the selected paired windows with descriptors for both
+  concrete P/K database files. Canonical direct-child paths, inode/link/owner/
+  mode identity and descriptor-versus-path rechecks now fail closed on child
+  rename/recreate or unsafe permissions; the focused lock module is 7/7.
+  This narrows pathname TOCTOU exposure only and does not prove SQLite
+  cross-database atomicity, fsync/power-loss recovery, or adoption by every
+  external writer.
 - The live Core application-finalization receipt path now checks the exact
   ancestor-ordered queue front before mutating state (`567d24aeb`). Empty or
   replaced queue fronts return `UnexpectedFinalizationAck` transactionally;
-  two negative tests and the 220-test Core library suite pass. This tightens
+  two negative tests and the 221-test Core library suite pass. This tightens
   an execution boundary only; authoritative Core/SafetyRules integration and
   crash/replay equivalence remain open.
+- `2ffbb40bd` adds a single Core Vote/Timeout transition-install boundary:
+  predecessor digest, complete successor state/context, canonical intent and
+  revision are checked before the watermark is installed. Pending persistence
+  and `StorageAck` retain the transition/predecessor binding, and a detached
+  transition is rejected transactionally. The Core library suite is now
+  221/221; this remains a legacy/shadow Core slice, not a live signer/effect
+  driver.
+- `5994d07e8` adds an explicit ignored long-horizon SafetyRules test. Two
+  independent kernel executions inside the release test over 100,000
+  genesis-anchored Vote/Timeout views produce byte-identical traces, final
+  state digests and revision 200,000 (18.16 seconds locally). It is kernel-only
+  evidence with a fixed fixture; it does not close the G1 non-empty-block,
+  node, or crash-replay requirement.
 - Remote-signer, checkpoint and state-sync crates currently expose adapters or
   data types; production credential, SafetyRules, validator-runtime and
   activation flags remain false.
@@ -183,8 +214,10 @@ downstream gate inherits completion from an incomplete predecessor.
 
 ### MIG-002 — finish deterministic Core and SafetyRules (G1)
 
-- Promote SafetyRules from inert/shadow evaluation to one authoritative owner
-  for Vote and Timeout, with persist-before-sign and exact lock/QC/TC replay.
+- Keep the `2ffbb40bd` transition-install boundary as the only Vote/Timeout
+  watermark source in the current Core path, then promote the still-shadow
+  Core/SafetyRules state to one production owner with persist-before-sign and
+  exact lock/QC/TC replay.
 - Complete pacemaker inputs/outputs, epoch transitions, trusted-checkpoint
   catch-up beyond `max_blocks`, ordered ancestor finalization, and permanent
   terminal execution records.
@@ -360,14 +393,17 @@ downstream gate inherits completion from an incomplete predecessor.
 2. `wire_conformance=false`; remaining epoch, evidence, network-envelope,
    upgrade, light-client and weighted TC limits are open. CEV0 must be bounded
    by validator-set, CPU, bytes, signature count and admission budgets.
-3. Source-of-truth drift: dirty PoCO worktree, candidate-index mismatch,
-   workspace/CI/schema/error-registry and old dual-track wording. Boundary
-   metadata must be generated/validated from one schema.
+3. Candidate source-of-truth closure is now clean and the decoder registry is
+   generated/gated on this branch. Independent CI reproduction, workspace/old
+   dual-track wording and complete boundary metadata review remain open; all
+   metadata must still be generated/validated from one schema.
 
 ### P1 — deterministic safety/core blockers
 
-1. Core and SafetyRules are prototypes/shadow evaluators, not an authoritative
-   Vote/Timeout signer owner.
+1. The Core transition boundary now rejects detached Vote/Timeout transitions
+   and installs only a fully checked successor, but the surrounding Core and
+   SafetyRules remain prototypes/shadow evaluators rather than an authoritative
+   production signer owner.
 2. Pacemaker, complete epoch transition, checkpoint-scale catch-up, ordered
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
@@ -410,8 +446,10 @@ downstream gate inherits completion from an incomplete predecessor.
    first paired read and validates identity at successful commit boundaries.
    This is still an advisory cooperating-owner fence: every mutation path must
    adopt the exclusive hook before the cross-database atomicity blocker can
-   close. The candidate admission WAL's separate sidecar identity hardening
-   does not substitute for this K/P proof.
+   close. `7e04803cf` additionally pins concrete child-file descriptors in the
+   selected paired windows; fsync/power-loss, WAL/SHM and all-writer coverage
+   remain MIG-004 work. The candidate admission WAL's separate sidecar
+   identity hardening does not substitute for this K/P proof.
 
 ### Immediate execution queue (next dependency-ordered slices)
 
