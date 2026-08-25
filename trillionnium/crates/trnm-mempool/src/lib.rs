@@ -3,9 +3,10 @@ use std::collections::{HashSet, VecDeque};
 mod typed_admission;
 
 pub use typed_admission::{
-    AdmissionReject, CanonicalSignerId, CanonicalTxDigest, ResourceLimits, SignedAdmissionHooks,
-    SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate, TypedAdmitOutcome,
-    DEFAULT_MAX_ADMISSION_BODY_BYTES,
+    AdmissionReject, CanonicalSignerId, CanonicalTxDigest, PendingNonceAdmission,
+    PendingNonceAuthority, PendingNonceReservation, PendingNonceReservationState, ResourceLimits,
+    SignedAdmissionHooks, SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate,
+    TypedAdmitOutcome, DEFAULT_MAX_ADMISSION_BODY_BYTES,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -13,6 +13,7 @@
 //! decision.
 
 use std::collections::HashMap;
+use std::fmt;
 
 use crate::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
@@ -115,8 +116,211 @@ pub enum AdmissionReject {
     Replay,
     RecheckUnavailable,
     RecheckFailed,
+    /// A lifecycle operation was requested for an admission without a
+    /// reservation token (for example, an item admitted through the legacy
+    /// read-only API).
+    ReservationUnavailable,
+    /// A reservation lifecycle operation was requested in the wrong state.
+    ReservationStateConflict,
     SlotIdExhausted,
     InconsistentState,
+}
+
+/// The externally-owned lifecycle state for one pending account nonce.
+///
+/// The mempool only moves a reservation between these states; the authority
+/// behind [`PendingNonceReservation`] owns the durable meaning of each
+/// transition.  In particular, this type is not a persisted replay index.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum PendingNonceReservationState {
+    Reserved,
+    HandedOff,
+    Committed,
+    Released,
+}
+
+/// A key-free lifecycle token returned by a pending-nonce authority.
+///
+/// Implementations must make each operation idempotent at their own durable
+/// boundary.  The typed gate invokes at most one successful transition of each
+/// kind for a token and drops an unresolved token through `release` so a caller
+/// cannot accidentally leave a reservation owned only by the in-memory queue.
+pub trait PendingNonceReservation: fmt::Debug {
+    /// Transfer the queued transaction to the execution owner.
+    fn handoff(&mut self) -> Result<(), AdmissionReject>;
+
+    /// Mark execution as durably committed.
+    fn commit(&mut self) -> Result<(), AdmissionReject>;
+
+    /// Release/cancel the pending nonce reservation.
+    fn release(&mut self) -> Result<(), AdmissionReject>;
+}
+
+/// Authority hook for the opt-in pending-nonce admission path.
+///
+/// The authority receives the exact authenticated metadata and may keep its
+/// reservation in a durable store.  The mempool stores only the opaque token;
+/// it has no signing key, WAL, or consensus-executor role.  The legacy
+/// [`SignedAdmissionHooks::check_replay`] path remains available for callers
+/// that have not migrated to lifecycle tokens, but it is intentionally
+/// read-only and cannot provide this rollback/handoff contract.
+pub trait PendingNonceAuthority<E: ?Sized> {
+    /// Reserve `(signer_id, nonce)` for this exact digest.
+    fn reserve_pending_nonce(
+        &mut self,
+        envelope: &E,
+        metadata: &SignedEnvelopeMetadata,
+    ) -> Result<Box<dyn PendingNonceReservation>, AdmissionReject>;
+}
+
+#[derive(Debug)]
+struct PendingNonceLease {
+    reservation: Option<Box<dyn PendingNonceReservation>>,
+    state: PendingNonceReservationState,
+}
+
+impl PendingNonceLease {
+    fn new(reservation: Box<dyn PendingNonceReservation>) -> Self {
+        Self {
+            reservation: Some(reservation),
+            state: PendingNonceReservationState::Reserved,
+        }
+    }
+
+    fn state(&self) -> PendingNonceReservationState {
+        self.state
+    }
+
+    fn handoff(&mut self) -> Result<(), AdmissionReject> {
+        if self.state != PendingNonceReservationState::Reserved {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
+        let reservation = self
+            .reservation
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?;
+        reservation.handoff()?;
+        self.state = PendingNonceReservationState::HandedOff;
+        Ok(())
+    }
+
+    fn commit(&mut self) -> Result<(), AdmissionReject> {
+        if self.state != PendingNonceReservationState::HandedOff {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
+        let reservation = self
+            .reservation
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?;
+        reservation.commit()?;
+        self.state = PendingNonceReservationState::Committed;
+        self.reservation.take();
+        Ok(())
+    }
+
+    fn release(&mut self) -> Result<(), AdmissionReject> {
+        match self.state {
+            PendingNonceReservationState::Reserved | PendingNonceReservationState::HandedOff => {}
+            PendingNonceReservationState::Committed | PendingNonceReservationState::Released => {
+                return Err(AdmissionReject::ReservationStateConflict)
+            }
+        }
+
+        // Mark the local state before calling out.  A failing authority call is
+        // terminal for this in-memory token; retry/recovery belongs to the
+        // authority's durable idempotency protocol, and Drop must not invoke a
+        // second release callback.
+        self.state = PendingNonceReservationState::Released;
+        let Some(mut reservation) = self.reservation.take() else {
+            return Err(AdmissionReject::ReservationUnavailable);
+        };
+        reservation.release()
+    }
+
+    fn cancel(&mut self) -> Result<(), AdmissionReject> {
+        if self.state != PendingNonceReservationState::Reserved {
+            return Err(AdmissionReject::ReservationStateConflict);
+        }
+        self.release()
+    }
+}
+
+impl Drop for PendingNonceLease {
+    fn drop(&mut self) {
+        if matches!(
+            self.state,
+            PendingNonceReservationState::Reserved | PendingNonceReservationState::HandedOff
+        ) {
+            let _ = self.release();
+        }
+    }
+}
+
+/// A ready queue item carrying its pending-nonce lifecycle token.
+///
+/// Use [`Self::handoff`] before execution and [`Self::commit`] after the
+/// execution owner durably commits.  Dropping an unresolved item releases its
+/// reservation; explicit [`Self::cancel`] is the preferred abort path.
+#[must_use = "drop or resolve the ready admission explicitly"]
+#[derive(Debug)]
+pub struct PendingNonceAdmission {
+    metadata: SignedEnvelopeMetadata,
+    lease: Option<PendingNonceLease>,
+}
+
+impl PendingNonceAdmission {
+    fn new(metadata: SignedEnvelopeMetadata, lease: Option<PendingNonceLease>) -> Self {
+        Self { metadata, lease }
+    }
+
+    /// Return the exact queued metadata without re-encoding its body.
+    pub const fn metadata(&self) -> &SignedEnvelopeMetadata {
+        &self.metadata
+    }
+
+    /// Consume the item and return metadata.  Any unresolved lifecycle token is
+    /// released as the item is dropped.
+    pub fn into_metadata(self) -> SignedEnvelopeMetadata {
+        let Self { metadata, lease } = self;
+        drop(lease);
+        metadata
+    }
+
+    pub fn reservation_state(&self) -> Result<PendingNonceReservationState, AdmissionReject> {
+        self.lease
+            .as_ref()
+            .map(PendingNonceLease::state)
+            .ok_or(AdmissionReject::ReservationUnavailable)
+    }
+
+    pub fn handoff(&mut self) -> Result<(), AdmissionReject> {
+        self.lease
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?
+            .handoff()
+    }
+
+    pub fn commit(&mut self) -> Result<(), AdmissionReject> {
+        self.lease
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?
+            .commit()
+    }
+
+    pub fn release(&mut self) -> Result<(), AdmissionReject> {
+        self.lease
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?
+            .release()
+    }
+
+    /// Cancel a reservation that has not yet been handed to execution.
+    pub fn cancel(&mut self) -> Result<(), AdmissionReject> {
+        self.lease
+            .as_mut()
+            .ok_or(AdmissionReject::ReservationUnavailable)?
+            .cancel()
+    }
 }
 
 /// A read-only view implemented by the canonical signed-envelope type.
@@ -257,6 +461,7 @@ pub struct TypedAdmissionGate {
     next_slot: u64,
     by_slot: HashMap<u64, SignedEnvelopeMetadata>,
     slot_by_digest: HashMap<CanonicalTxDigest, u64>,
+    pending_reservations: HashMap<u64, PendingNonceLease>,
 }
 
 impl TypedAdmissionGate {
@@ -267,6 +472,7 @@ impl TypedAdmissionGate {
             next_slot: 1,
             by_slot: HashMap::with_capacity(total_capacity),
             slot_by_digest: HashMap::with_capacity(total_capacity),
+            pending_reservations: HashMap::with_capacity(total_capacity),
         }
     }
 
@@ -355,13 +561,122 @@ impl TypedAdmissionGate {
         }
     }
 
+    /// Opt-in admission path with an explicit pending-nonce lifecycle.
+    ///
+    /// Capacity is checked before any authority callback.  After strict
+    /// signature verification, the authority reserves the signer/nonce pair;
+    /// every later rejection releases that reservation exactly once.  Accepted
+    /// entries are returned by [`Self::pop_ready_with_lifecycle`], where the
+    /// caller must hand off and commit (or cancel) the opaque reservation.
+    ///
+    /// This method deliberately does not call [`SignedAdmissionHooks::check_replay`]:
+    /// `PendingNonceAuthority::reserve_pending_nonce` is the two-phase replay
+    /// boundary for this opt-in API.  The old `admit_signed` method remains
+    /// source-compatible for read-only hook users.
+    pub fn admit_signed_with_pending_nonce<E, H, A>(
+        &mut self,
+        envelope: &E,
+        class: IngressClass,
+        hooks: &mut H,
+        authority: &mut A,
+    ) -> TypedAdmitOutcome
+    where
+        E: SignedEnvelopeView + ?Sized,
+        H: SignedAdmissionHooks<E>,
+        A: PendingNonceAuthority<E>,
+    {
+        let digest = envelope.canonical_digest();
+        if let Some(&slot) = self.slot_by_digest.get(&digest) {
+            return match self.validate_duplicate(envelope, digest, slot) {
+                Ok(()) => TypedAdmitOutcome::Duplicate,
+                Err(reason) => TypedAdmitOutcome::Rejected(reason),
+            };
+        }
+
+        // Keep the side-effect-free saturation rule identical to the legacy
+        // typed path: a fresh retry must not reserve a nonce for work that
+        // cannot enter this in-memory queue.
+        let snapshot = self.lanes.qos_snapshot();
+        let fresh_admissible = match class {
+            IngressClass::Normal => snapshot.fresh_normal_admissible,
+            IngressClass::Critical => snapshot.fresh_critical_admissible,
+        };
+        if !fresh_admissible {
+            return TypedAdmitOutcome::Backpressured;
+        }
+
+        let metadata = match self.metadata_from(envelope, digest) {
+            Ok(metadata) => metadata,
+            Err(reason) => return TypedAdmitOutcome::Rejected(reason),
+        };
+
+        if let Err(reason) = hooks.verify_signature(envelope, &metadata) {
+            return TypedAdmitOutcome::Rejected(reason);
+        }
+
+        let mut lease = match authority.reserve_pending_nonce(envelope, &metadata) {
+            Ok(reservation) => PendingNonceLease::new(reservation),
+            Err(reason) => return TypedAdmitOutcome::Rejected(reason),
+        };
+
+        if let Err(reason) = hooks.recheck(&metadata) {
+            let _ = lease.release();
+            return TypedAdmitOutcome::Rejected(reason);
+        }
+
+        let slot = match self.allocate_slot() {
+            Ok(slot) => slot,
+            Err(reason) => {
+                let _ = lease.release();
+                return TypedAdmitOutcome::Rejected(reason);
+            }
+        };
+        match self.lanes.admit(slot, class) {
+            AdmitOutcome::Accepted => {
+                self.slot_by_digest.insert(metadata.digest, slot);
+                self.by_slot.insert(slot, metadata);
+                self.pending_reservations.insert(slot, lease);
+                TypedAdmitOutcome::Accepted
+            }
+            AdmitOutcome::Duplicate => {
+                let _ = lease.release();
+                TypedAdmitOutcome::Duplicate
+            }
+            AdmitOutcome::Backpressured => {
+                let _ = lease.release();
+                TypedAdmitOutcome::Backpressured
+            }
+        }
+    }
+
     /// Pop the next ready metadata record.  This is an in-memory handoff only;
-    /// callers must persist/commit it in their own canonical owner.
+    /// callers must persist/commit it in their own canonical owner.  If the
+    /// item came through the lifecycle API, dropping the associated token here
+    /// cancels/releases it; use [`Self::pop_ready_with_lifecycle`] when the
+    /// execution owner needs to hand it off and commit it explicitly.
     pub fn pop_ready(&mut self) -> Option<SignedEnvelopeMetadata> {
-        let slot = self.lanes.pop_ready()?;
-        let metadata = self.by_slot.remove(&slot)?;
-        self.slot_by_digest.remove(&metadata.digest);
+        let (metadata, _lease) = self.pop_ready_parts()?;
         Some(metadata)
+    }
+
+    /// Pop a queue item together with its pending-nonce lifecycle token.
+    ///
+    /// Legacy `admit_signed` entries have no token; lifecycle methods on the
+    /// returned value then fail with [`AdmissionReject::ReservationUnavailable`].
+    pub fn pop_ready_with_lifecycle(&mut self) -> Option<PendingNonceAdmission> {
+        let (metadata, lease) = self.pop_ready_parts()?;
+        Some(PendingNonceAdmission::new(metadata, lease))
+    }
+
+    fn pop_ready_parts(&mut self) -> Option<(SignedEnvelopeMetadata, Option<PendingNonceLease>)> {
+        let slot = self.lanes.pop_ready()?;
+        let metadata = self.by_slot.remove(&slot);
+        // Always remove/drop a reservation even if a restored queue/index
+        // mismatch means the metadata record is absent.
+        let lease = self.pending_reservations.remove(&slot);
+        let metadata = metadata?;
+        self.slot_by_digest.remove(&metadata.digest);
+        Some((metadata, lease))
     }
 
     fn metadata_from<E: SignedEnvelopeView + ?Sized>(
@@ -581,6 +896,93 @@ mod tests {
             signature_ok: true,
             recheck: true,
             ..Hooks::default()
+        }
+    }
+
+    #[derive(Debug, Default)]
+    struct ReservationLog {
+        reserve_calls: usize,
+        handoff_calls: usize,
+        commit_calls: usize,
+        release_calls: usize,
+        active: std::collections::HashSet<(CanonicalSignerId, u64)>,
+        handed_off: std::collections::HashSet<(CanonicalSignerId, u64)>,
+        committed: std::collections::HashSet<(CanonicalSignerId, u64)>,
+    }
+
+    #[derive(Clone, Debug, Default)]
+    struct FixturePendingNonceAuthority {
+        log: std::rc::Rc<std::cell::RefCell<ReservationLog>>,
+        reject_reservation: bool,
+    }
+
+    #[derive(Debug)]
+    struct FixturePendingNonceReservation {
+        log: std::rc::Rc<std::cell::RefCell<ReservationLog>>,
+        key: (CanonicalSignerId, u64),
+    }
+
+    impl PendingNonceReservation for FixturePendingNonceReservation {
+        fn handoff(&mut self) -> Result<(), AdmissionReject> {
+            let mut log = self.log.borrow_mut();
+            log.handoff_calls += 1;
+            if !log.active.remove(&self.key) {
+                return Err(AdmissionReject::InconsistentState);
+            }
+            log.handed_off.insert(self.key);
+            Ok(())
+        }
+
+        fn commit(&mut self) -> Result<(), AdmissionReject> {
+            let mut log = self.log.borrow_mut();
+            log.commit_calls += 1;
+            if !log.handed_off.remove(&self.key) {
+                return Err(AdmissionReject::InconsistentState);
+            }
+            log.committed.insert(self.key);
+            Ok(())
+        }
+
+        fn release(&mut self) -> Result<(), AdmissionReject> {
+            let mut log = self.log.borrow_mut();
+            log.release_calls += 1;
+            let removed = log.active.remove(&self.key) || log.handed_off.remove(&self.key);
+            removed
+                .then_some(())
+                .ok_or(AdmissionReject::InconsistentState)
+        }
+    }
+
+    impl PendingNonceAuthority<FixtureEnvelope> for FixturePendingNonceAuthority {
+        fn reserve_pending_nonce(
+            &mut self,
+            _envelope: &FixtureEnvelope,
+            metadata: &SignedEnvelopeMetadata,
+        ) -> Result<Box<dyn PendingNonceReservation>, AdmissionReject> {
+            let mut log = self.log.borrow_mut();
+            log.reserve_calls += 1;
+            if self.reject_reservation {
+                return Err(AdmissionReject::ReplayCheckUnavailable);
+            }
+            let key = metadata.sequence_key();
+            if log.active.contains(&key)
+                || log.handed_off.contains(&key)
+                || log.committed.contains(&key)
+            {
+                return Err(AdmissionReject::Replay);
+            }
+            log.active.insert(key);
+            Ok(Box::new(FixturePendingNonceReservation {
+                log: std::rc::Rc::clone(&self.log),
+                key,
+            }))
+        }
+    }
+
+    fn lifecycle_authority() -> FixturePendingNonceAuthority {
+        FixturePendingNonceAuthority {
+            log: std::rc::Rc::new(std::cell::RefCell::new(ReservationLog::default())),
+            reject_reservation: false,
         }
     }
 
@@ -1043,6 +1445,257 @@ mod tests {
         assert!(hooks
             .seen
             .contains(&(second.signer_id.expect("fixture signer"), second.nonce)));
+    }
+
+    #[test]
+    fn pending_nonce_capacity_preflight_does_not_reserve() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(1, 0);
+        let first = envelope(90);
+        let mut second = envelope(91);
+        second.nonce = 2;
+        let mut hooks = accepting_hooks();
+        let mut authority = lifecycle_authority();
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &first,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &second,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Backpressured
+        );
+        let log = authority.log.borrow();
+        assert_eq!(log.reserve_calls, 1);
+        assert_eq!(gate.queued_counts(), (1, 0, 1));
+    }
+
+    #[test]
+    fn pending_nonce_recheck_failure_releases_once_and_can_retry() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let candidate = envelope(92);
+        let mut hooks = accepting_hooks();
+        hooks.recheck = false;
+        let mut authority = lifecycle_authority();
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &candidate,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::RecheckFailed)
+        );
+        {
+            let log = authority.log.borrow();
+            assert_eq!(log.reserve_calls, 1);
+            assert_eq!(log.release_calls, 1);
+            assert!(log.active.is_empty());
+        }
+        assert_eq!(gate.queued_counts(), (0, 0, 0));
+
+        hooks.recheck = true;
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &candidate,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(authority.log.borrow().reserve_calls, 2);
+    }
+
+    #[test]
+    fn pending_nonce_duplicate_does_not_reserve_twice_and_scopes_nonce_by_signer() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(4, 0);
+        let first = envelope(93);
+        let mut same_nonce_other_digest = envelope(94);
+        same_nonce_other_digest.signer_id = first.signer_id;
+        let mut other_signer_same_nonce = envelope(95);
+        other_signer_same_nonce.signer_id = Some(signer(2));
+        let mut hooks = accepting_hooks();
+        let mut authority = lifecycle_authority();
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &first,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &first,
+                IngressClass::Critical,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Duplicate
+        );
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &same_nonce_other_digest,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &other_signer_same_nonce,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        assert_eq!(authority.log.borrow().reserve_calls, 3);
+    }
+
+    #[test]
+    fn pending_nonce_handoff_and_commit_are_exactly_once() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let candidate = envelope(96);
+        let mut hooks = accepting_hooks();
+        let mut authority = lifecycle_authority();
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &candidate,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+
+        let mut ready = gate
+            .pop_ready_with_lifecycle()
+            .expect("lifecycle queue item");
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::Reserved)
+        );
+        ready.handoff().expect("handoff reservation");
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::HandedOff)
+        );
+        assert_eq!(
+            ready.handoff(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        ready.commit().expect("commit reservation");
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::Committed)
+        );
+        assert_eq!(
+            ready.commit(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        drop(ready);
+
+        let log = authority.log.borrow();
+        assert_eq!(log.handoff_calls, 1);
+        assert_eq!(log.commit_calls, 1);
+        assert_eq!(log.release_calls, 0);
+        assert!(log
+            .committed
+            .contains(&(candidate.signer_id.unwrap(), candidate.nonce)));
+    }
+
+    #[test]
+    fn pending_nonce_cancel_and_legacy_pop_release_once() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let first = envelope(97);
+        let second = envelope(98);
+        let mut hooks = accepting_hooks();
+        let mut authority = lifecycle_authority();
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &first,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = gate
+            .pop_ready_with_lifecycle()
+            .expect("first lifecycle item");
+        ready.cancel().expect("cancel reservation");
+        assert_eq!(
+            ready.cancel(),
+            Err(AdmissionReject::ReservationStateConflict)
+        );
+        drop(ready);
+        assert_eq!(authority.log.borrow().release_calls, 1);
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &second,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        // The compatibility pop path intentionally cancels the opaque token
+        // rather than silently abandoning an external nonce reservation.
+        assert!(gate.pop_ready().is_some());
+        assert_eq!(authority.log.borrow().release_calls, 2);
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &envelope(99),
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let ready = gate
+            .pop_ready_with_lifecycle()
+            .expect("drop-release lifecycle item");
+        drop(ready);
+        assert_eq!(authority.log.borrow().release_calls, 3);
+    }
+
+    #[test]
+    fn pending_nonce_authority_rejection_is_fail_closed() {
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let candidate = envelope(100);
+        let mut hooks = accepting_hooks();
+        let mut authority = lifecycle_authority();
+        authority.reject_reservation = true;
+
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &candidate,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::ReplayCheckUnavailable)
+        );
+        assert_eq!(gate.queued_counts(), (0, 0, 0));
+        assert_eq!(authority.log.borrow().reserve_calls, 1);
     }
 
     struct SignatureOnlyHooks;
