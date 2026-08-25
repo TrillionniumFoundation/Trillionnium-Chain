@@ -17,7 +17,7 @@
 
 use std::{
     fmt, fs,
-    fs::File,
+    fs::{File, OpenOptions},
     io,
     os::unix::fs::{MetadataExt, PermissionsExt},
     path::{Path, PathBuf},
@@ -54,6 +54,7 @@ pub(crate) enum CrossStoreLockErrorV0 {
     Io(&'static str, io::Error),
     Busy,
     RootIdentityChanged,
+    ChildIdentityChanged,
 }
 
 impl fmt::Display for CrossStoreLockErrorV0 {
@@ -68,6 +69,9 @@ impl fmt::Display for CrossStoreLockErrorV0 {
             }
             Self::RootIdentityChanged => {
                 formatter.write_str("cross-store authority root identity changed")
+            }
+            Self::ChildIdentityChanged => {
+                formatter.write_str("cross-store child store identity changed")
             }
         }
     }
@@ -84,6 +88,26 @@ pub(crate) struct CrossStoreLockGuardV0 {
     root_path: PathBuf,
     root_file: File,
     root_identity: CrossStoreFileIdentityV0,
+    /// Descriptors for concrete P/K database files when a split-store writer
+    /// binds them explicitly. Keeping these descriptors alive closes the
+    /// pathname-to-inode gap a root-directory flock alone cannot cover.
+    bound_store_files: Vec<CrossStoreBoundStoreV0>,
+}
+
+struct CrossStoreBoundStoreV0 {
+    path: PathBuf,
+    file: File,
+    identity: CrossStoreFileIdentityV0,
+}
+
+impl fmt::Debug for CrossStoreBoundStoreV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("CrossStoreBoundStoreV0")
+            .field("path", &self.path)
+            .field("identity", &self.identity)
+            .finish_non_exhaustive()
+    }
 }
 
 impl fmt::Debug for CrossStoreLockGuardV0 {
@@ -92,6 +116,7 @@ impl fmt::Debug for CrossStoreLockGuardV0 {
             .debug_struct("CrossStoreLockGuardV0")
             .field("root_path", &self.root_path)
             .field("root_identity", &self.root_identity)
+            .field("bound_store_files", &self.bound_store_files)
             .finish_non_exhaustive()
     }
 }
@@ -105,7 +130,9 @@ impl CrossStoreLockGuardV0 {
         validation_path: &Path,
     ) -> Result<Self, CrossStoreLockErrorV0> {
         let root = common_authority_root_v0(application_path, validation_path)?;
-        Self::acquire_shared_for_root_v0(&root)
+        let mut guard = Self::acquire_shared_for_root_v0(&root)?;
+        bind_materialized_store_files_v0(&mut guard, application_path, validation_path)?;
+        Ok(guard)
     }
 
     /// Acquire an exclusive lock after resolving the common authority root of
@@ -122,7 +149,9 @@ impl CrossStoreLockGuardV0 {
         validation_path: &Path,
     ) -> Result<Self, CrossStoreLockErrorV0> {
         let root = common_authority_root_v0(application_path, validation_path)?;
-        Self::acquire_exclusive_for_root_v0(&root)
+        let mut guard = Self::acquire_exclusive_for_root_v0(&root)?;
+        bind_materialized_store_files_v0(&mut guard, application_path, validation_path)?;
+        Ok(guard)
     }
 
     /// Acquire the exclusive authority lock for a bootstrap writer which has
@@ -154,8 +183,58 @@ impl CrossStoreLockGuardV0 {
         Self::acquire_for_root_v0(root, true)
     }
 
-    /// Recheck descriptor-bound and pathname-bound root identity.
+    /// Recheck descriptor-bound and pathname-bound root identity, plus any
+    /// concrete P/K descriptors pinned by [`Self::bind_store_files_v0`].
     pub(crate) fn validate_identity_v0(&self) -> Result<(), CrossStoreLockErrorV0> {
+        self.validate_root_identity_v0()?;
+        for store in &self.bound_store_files {
+            validate_bound_store_v0(store, &self.root_path)?;
+        }
+        Ok(())
+    }
+
+    /// Pin the concrete P and K database files to open descriptors for the
+    /// remainder of this lock window. The caller must invoke this after both
+    /// SQLite files exist; bootstrap paths which create the second namespace
+    /// intentionally use the root-only helper until that file is materialized.
+    ///
+    /// Binding is strict: paths must be direct children of two distinct
+    /// namespaces below this authority root, regular non-symlink files, and
+    /// owned by the same uid as the private root. Every later identity check
+    /// validates both the held descriptors and their canonical pathnames.
+    #[allow(dead_code)] // deployed lab finalization/recovery feature only
+    pub(crate) fn bind_store_files_v0(
+        &mut self,
+        application_path: &Path,
+        validation_path: &Path,
+    ) -> Result<(), CrossStoreLockErrorV0> {
+        self.validate_root_identity_v0()?;
+        let application = open_bound_store_v0(
+            &self.root_path,
+            self.root_identity.owner,
+            application_path,
+            "application",
+        )?;
+        let validation = open_bound_store_v0(
+            &self.root_path,
+            self.root_identity.owner,
+            validation_path,
+            "validation",
+        )?;
+        if application.path == validation.path {
+            return Err(CrossStoreLockErrorV0::InvalidPath(
+                "application and validation stores must be distinct",
+            ));
+        }
+        self.bound_store_files = vec![application, validation];
+        if let Err(error) = self.validate_identity_v0() {
+            self.bound_store_files.clear();
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    fn validate_root_identity_v0(&self) -> Result<(), CrossStoreLockErrorV0> {
         let descriptor = self
             .root_file
             .metadata()
@@ -227,6 +306,7 @@ impl CrossStoreLockGuardV0 {
             root_path: root,
             root_file,
             root_identity: identity,
+            bound_store_files: Vec::new(),
         };
         if let Err(error) = guard.validate_identity_v0() {
             // Do not leave a lock held when admission fails during the
@@ -290,6 +370,144 @@ pub(crate) fn authority_root_for_store_path_v0(
         .ok_or(CrossStoreLockErrorV0::InvalidPath(
             "store namespace has no authority root",
         ))
+}
+
+#[allow(dead_code)] // reached through the feature-gated lab owner
+fn bind_materialized_store_files_v0(
+    guard: &mut CrossStoreLockGuardV0,
+    application_path: &Path,
+    validation_path: &Path,
+) -> Result<(), CrossStoreLockErrorV0> {
+    // Fresh P genesis and H1 takeover call the paired-root resolver before K
+    // exists. Preserve that bootstrap cut, but once both concrete files are
+    // present every paired lock automatically upgrades to descriptor binding.
+    let application_exists = match fs::symlink_metadata(application_path) {
+        Ok(_) => true,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => false,
+        Err(error) => return Err(CrossStoreLockErrorV0::Io("stat application store", error)),
+    };
+    let validation_exists = match fs::symlink_metadata(validation_path) {
+        Ok(_) => true,
+        Err(error) if error.kind() == io::ErrorKind::NotFound => false,
+        Err(error) => return Err(CrossStoreLockErrorV0::Io("stat validation store", error)),
+    };
+    if application_exists && validation_exists {
+        guard.bind_store_files_v0(application_path, validation_path)?;
+    }
+    Ok(())
+}
+
+fn open_bound_store_v0(
+    root: &Path,
+    root_owner: u32,
+    store_path: &Path,
+    label: &'static str,
+) -> Result<CrossStoreBoundStoreV0, CrossStoreLockErrorV0> {
+    if !store_path.is_absolute() || store_path.file_name().is_none() {
+        return Err(CrossStoreLockErrorV0::InvalidPath(label));
+    }
+    let parent = store_path
+        .parent()
+        .filter(|parent| !parent.as_os_str().is_empty())
+        .ok_or(CrossStoreLockErrorV0::InvalidPath(label))?;
+    let canonical_parent = fs::canonicalize(parent)
+        .map_err(|error| CrossStoreLockErrorV0::Io("canonicalize child namespace", error))?;
+    // A bound child must be exactly root/<namespace>/<file>; allowing a
+    // deeper or unrelated path would make the root lock unrelated to the
+    // descriptor being authenticated.
+    if canonical_parent.parent() != Some(root) {
+        return Err(CrossStoreLockErrorV0::InvalidPath(
+            "child store namespace is outside authority root",
+        ));
+    }
+    let path_metadata = fs::symlink_metadata(store_path).map_err(|error| {
+        if error.kind() == io::ErrorKind::NotFound {
+            CrossStoreLockErrorV0::InvalidPath("child store does not exist")
+        } else {
+            CrossStoreLockErrorV0::Io("stat child store path", error)
+        }
+    })?;
+    if path_metadata.file_type().is_symlink() || !path_metadata.is_file() {
+        return Err(CrossStoreLockErrorV0::InvalidPath(
+            "child store must be a regular non-symlink file",
+        ));
+    }
+    let canonical_path = fs::canonicalize(store_path)
+        .map_err(|error| CrossStoreLockErrorV0::Io("canonicalize child store", error))?;
+    if canonical_path.parent() != Some(canonical_parent.as_path())
+        || canonical_path.file_name() != store_path.file_name()
+        || canonical_path != store_path
+    {
+        return Err(CrossStoreLockErrorV0::InvalidPath(
+            "child store pathname is not canonical",
+        ));
+    }
+    let identity = CrossStoreFileIdentityV0::from_metadata(&path_metadata);
+    // The root is private, but an other-writable child would still let an
+    // uncooperating same-host writer modify the database. Group-write bits are
+    // tolerated for existing deployments whose umask is 0002; the enclosing
+    // 0700 root keeps that group from reaching the file by pathname. Reject
+    // only the externally reachable writable shape at this boundary and pin
+    // all remaining metadata in the descriptor.
+    if identity.links != 1 || identity.owner != root_owner || identity.mode & 0o002 != 0 {
+        return Err(CrossStoreLockErrorV0::InvalidPath(
+            "child store ownership or permissions are unsafe",
+        ));
+    }
+    let file = OpenOptions::new()
+        .read(true)
+        .open(&canonical_path)
+        .map_err(|error| CrossStoreLockErrorV0::Io("open child store descriptor", error))?;
+    let descriptor = file
+        .metadata()
+        .map_err(|error| CrossStoreLockErrorV0::Io("stat child store descriptor", error))?;
+    let descriptor_identity = CrossStoreFileIdentityV0::from_metadata(&descriptor);
+    if descriptor.file_type().is_symlink()
+        || !descriptor.is_file()
+        || descriptor_identity != identity
+    {
+        return Err(CrossStoreLockErrorV0::ChildIdentityChanged);
+    }
+    let path_after = fs::symlink_metadata(&canonical_path)
+        .map_err(|_| CrossStoreLockErrorV0::ChildIdentityChanged)?;
+    if path_after.file_type().is_symlink()
+        || !path_after.is_file()
+        || CrossStoreFileIdentityV0::from_metadata(&path_after) != identity
+    {
+        return Err(CrossStoreLockErrorV0::ChildIdentityChanged);
+    }
+    Ok(CrossStoreBoundStoreV0 {
+        path: canonical_path,
+        file,
+        identity,
+    })
+}
+
+#[allow(dead_code)] // reached through the feature-gated lab owner
+fn validate_bound_store_v0(
+    store: &CrossStoreBoundStoreV0,
+    root: &Path,
+) -> Result<(), CrossStoreLockErrorV0> {
+    let descriptor = store
+        .file
+        .metadata()
+        .map_err(|_| CrossStoreLockErrorV0::ChildIdentityChanged)?;
+    let path = fs::symlink_metadata(&store.path)
+        .map_err(|_| CrossStoreLockErrorV0::ChildIdentityChanged)?;
+    let canonical =
+        fs::canonicalize(&store.path).map_err(|_| CrossStoreLockErrorV0::ChildIdentityChanged)?;
+    if descriptor.file_type().is_symlink()
+        || path.file_type().is_symlink()
+        || !descriptor.is_file()
+        || !path.is_file()
+        || CrossStoreFileIdentityV0::from_metadata(&descriptor) != store.identity
+        || CrossStoreFileIdentityV0::from_metadata(&path) != store.identity
+        || canonical != store.path
+        || canonical.parent().and_then(Path::parent) != Some(root)
+    {
+        return Err(CrossStoreLockErrorV0::ChildIdentityChanged);
+    }
+    Ok(())
 }
 
 #[allow(dead_code)] // called by the lab-only paired-reader path resolver
@@ -405,6 +623,58 @@ mod tests {
             recovery_lock.validate_identity_v0(),
             Err(CrossStoreLockErrorV0::RootIdentityChanged)
         ));
+    }
+
+    #[test]
+    fn bound_child_descriptors_reject_store_rename_and_recreate() {
+        let (_root, application, validation) = private_root();
+        for path in [&application, &validation] {
+            fs::write(path, b"sqlite-placeholder").expect("create child store");
+            fs::set_permissions(path, fs::Permissions::from_mode(0o600))
+                .expect("private child store");
+        }
+        let guard =
+            CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(&application, &validation)
+                .expect("lock root and bind concrete P/K descriptors");
+        guard
+            .validate_identity_v0()
+            .expect("bound descriptors initially match paths");
+
+        let moved = application.with_extension("moved");
+        fs::rename(&application, &moved).expect("rename application store");
+        fs::write(&application, b"replacement").expect("recreate application pathname");
+        fs::set_permissions(&application, fs::Permissions::from_mode(0o600))
+            .expect("private replacement");
+        assert!(matches!(
+            guard.validate_identity_v0(),
+            Err(CrossStoreLockErrorV0::ChildIdentityChanged)
+        ));
+
+        drop(guard);
+        let _ = fs::remove_file(moved);
+        let _ = fs::remove_file(application);
+        let _ = fs::remove_file(validation);
+    }
+
+    #[test]
+    fn child_binding_rejects_unowned_or_writable_store_shape() {
+        let (root, application, validation) = private_root();
+        for path in [&application, &validation] {
+            fs::write(path, b"sqlite-placeholder").expect("create child store");
+            fs::set_permissions(path, fs::Permissions::from_mode(0o600))
+                .expect("private child store");
+        }
+        fs::set_permissions(&validation, fs::Permissions::from_mode(0o602))
+            .expect("make validation writable by others");
+        let mut guard =
+            CrossStoreLockGuardV0::acquire_exclusive_for_root_v0(root.path()).expect("lock root");
+        assert!(matches!(
+            guard.bind_store_files_v0(&application, &validation),
+            Err(CrossStoreLockErrorV0::InvalidPath(_))
+        ));
+        drop(guard);
+        let _ = fs::remove_file(application);
+        let _ = fs::remove_file(validation);
     }
 
     #[test]

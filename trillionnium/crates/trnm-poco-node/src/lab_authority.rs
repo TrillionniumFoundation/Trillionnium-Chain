@@ -4298,9 +4298,12 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
         // closure are one cross-store mutation window. The root-bound lock is
         // advisory and writer adoption remains explicitly audited by the
         // migration ledger; no consensus activation is implied here.
-        let cross_store_lock =
+        let mut cross_store_lock =
             CrossStoreLockGuardV0::acquire_exclusive_for_root_v0(cross_store_root)
                 .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
+        cross_store_lock
+            .bind_store_files_v0(self.application.path(), &self.proposal_journal.store_path)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         if self.core.safety_state().pending_finalization() != Some(&self.finalization) {
             return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
                 "pending finalization differs from the durable Core queue front",
