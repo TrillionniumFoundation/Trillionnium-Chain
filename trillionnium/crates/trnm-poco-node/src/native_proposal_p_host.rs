@@ -532,6 +532,22 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
             .map_err(|error| PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string()))
     }
 
+    /// Re-check the descriptor and pathname identity while the authority lock
+    /// is still held.  A lock acquired on the original directory descriptor
+    /// is not enough if a cooperating writer replaces the root during the
+    /// P/K window; successful callers must fail closed before returning a
+    /// capability derived from that window.
+    fn validate_cross_store_lock_v0(
+        &self,
+        lock: &Option<CrossStoreLockGuardV0>,
+    ) -> Result<(), PocoNodeNativeProposalPHostErrorV0<A::Error>> {
+        lock.as_ref()
+            .map(CrossStoreLockGuardV0::validate_identity_v0)
+            .transpose()
+            .map_err(|error| PocoNodeNativeProposalPHostErrorV0::CrossStoreLock(error.to_string()))
+            .map(|_| ())
+    }
+
     /// Executes and durably stores exactly one ordinary non-empty Proposal.
     ///
     /// Success stops at `P`. The returned carrier cannot be converted into a
@@ -552,7 +568,7 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         // P execution and K reservation/readback form one cross-store
         // mutation window. The deployed host supplies the root-bound
         // exclusive lock; isolated unit fixtures intentionally leave it off.
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
 
         let (route, core_id, block, parent, core_valid_permit) = claimed.into_parts();
         let header = block.header();
@@ -699,6 +715,7 @@ impl<A: NativeApplicationV0> PocoNodeNativeProposalPHostV0<A> {
         if readback != executed {
             return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::ArtifactReadbackMismatch);
         }
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
         self.status = PocoNodeNativeProposalPHostStatusV0::Persisted;
         Ok(PocoNodeNativePersistedProposalPV0 {
             binding,
@@ -755,7 +772,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
         self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let (route, core_id, block, parent, core_valid_permit) = claimed.into_parts();
         let header = block.header();
         let expected_route = ProposalRouteV0::Synced;
@@ -820,6 +837,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
             .store
             .recover_reserved_exact_v0(&binding, self.owner_id)
             .map_err(PocoNodeNativeProposalPHostErrorV0::Store)?;
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
         self.status = PocoNodeNativeProposalPHostStatusV0::Persisted;
         Ok(PocoNodeNativePersistedProposalPV0 {
             binding,
@@ -880,7 +898,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         // paired recovery reader could observe a Core-D carrier that does not
         // describe the same K row.  Hold the authority fence across the whole
         // P -> seal -> D window.
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
 
         let confirmed_p = self
             .application
@@ -915,13 +933,15 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         let core_accepted = core
             .step_application_sealed_valid_to_delivery_v0(&proof, verifier)
             .map_err(PocoNodeNativeProposalPHostErrorV0::Core)?;
-        self.deliver_core_d_v0(
+        let outcome = self.deliver_core_d_v0(
             persisted.binding,
             persisted.reserved,
             persisted.executed,
             core_accepted,
             confirmed_p,
-        )
+        );
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        outcome
     }
 
     /// Anchored-successor variant of the P-to-D join.  Only the narrow replay
@@ -949,7 +969,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         // Same atomic P -> Core-D window as the ordinary proposal path.  The
         // replay owner is still a K writer and must cooperate with paired
         // recovery readers.
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let confirmed_p = self
             .application
             .confirm_durable_p_v0(&persisted.executed)
@@ -983,13 +1003,15 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         let core_accepted = replay
             .step_application_sealed_valid_to_delivery_v0(&proof, verifier)
             .map_err(PocoNodeNativeProposalPHostErrorV0::Core)?;
-        self.deliver_core_d_v0(
+        let outcome = self.deliver_core_d_v0(
             persisted.binding,
             persisted.reserved,
             persisted.executed,
             core_accepted,
             confirmed_p,
-        )
+        );
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        outcome
     }
 
     fn deliver_core_d_v0(
@@ -1054,8 +1076,8 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         }
         // Retry is itself a K mutation.  It must not bypass the same
         // authority-root fence used by the first delivery attempt.
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
-        match self.store.deliver_core_accepted_v0(
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let outcome = match self.store.deliver_core_accepted_v0(
             pending.reserved,
             &pending.binding,
             &pending.core_accepted,
@@ -1082,7 +1104,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                 self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
                 Err(PocoNodeNativeProposalPHostErrorV0::Store(error))
             }
-        }
+        };
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        outcome
     }
 
     /// Persists the exact Core-owned NativeValid Safety transition, fresh-
@@ -1176,7 +1200,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         if safety_store.path() != expected_safety_path {
             return self.fail_v0(PocoNodeNativeProposalPHostErrorV0::SafetyPathMismatch);
         }
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let context = self
             .store
             .native_valid_transition_context_exact_v0(
@@ -1242,7 +1266,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                 )
             }
         };
-        match outcome {
+        let result = match outcome {
             Ok(AckTransitionOutcomeV0::Applied(acked)) => {
                 self.status = PocoNodeNativeProposalPHostStatusV0::ApplicationAcked;
                 Ok(PocoNodeNativeKOutcomeV0::Applied(Box::new(
@@ -1270,7 +1294,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                 self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
                 Err(PocoNodeNativeProposalPHostErrorV0::Store(error))
             }
-        }
+        };
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        result
     }
 
     /// Retries only a K commit proven not applied. Safety persistence and the
@@ -1329,7 +1355,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let outcome = match closure_mode {
             PocoNodeNativeSafetyClosureModeV0::OrdinaryVote => {
                 self.store.acknowledge_confirmed_safety_v0(
@@ -1350,7 +1376,7 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                 )
             }
         };
-        match outcome {
+        let result = match outcome {
             Ok(AckTransitionOutcomeV0::Applied(acked)) => {
                 self.status = PocoNodeNativeProposalPHostStatusV0::ApplicationAcked;
                 Ok(PocoNodeNativeKOutcomeV0::Applied(Box::new(
@@ -1375,7 +1401,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                 self.status = PocoNodeNativeProposalPHostStatusV0::FailStopped;
                 Err(PocoNodeNativeProposalPHostErrorV0::Store(error))
             }
-        }
+        };
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        result
     }
 
     pub(super) fn confirm_anchor_successor_k_checkpoint_facts_v0(
@@ -1396,10 +1424,13 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         // Checkpoint facts join the K row to the application P history.  Keep
         // the read self-consistent with any cooperating writer while the
         // caller retains the resulting checkpoint input.
-        let _cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
-        self.store
+        let cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
+        let facts = self
+            .store
             .confirm_proposal_validation_checkpoint_facts_exact_v0(&acked.binding)
-            .map_err(PocoNodeNativeProposalPHostErrorV0::Store)
+            .map_err(PocoNodeNativeProposalPHostErrorV0::Store)?;
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        Ok(facts)
     }
 
     pub(super) fn reconfirm_anchor_successor_k_checkpoint_facts_v0(
@@ -1416,10 +1447,13 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         {
             return Err(PocoNodeNativeProposalPHostErrorV0::NotReady);
         }
-        let _cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
-        self.store
+        let cross_store_lock = self.acquire_cross_store_shared_lock_v0()?;
+        let facts = self
+            .store
             .confirm_proposal_validation_checkpoint_facts_exact_v0(binding)
-            .map_err(PocoNodeNativeProposalPHostErrorV0::Store)
+            .map_err(PocoNodeNativeProposalPHostErrorV0::Store)?;
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        Ok(facts)
     }
 
     /// Releases the anchored Core completion ACK only after the caller has
@@ -1554,9 +1588,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
         // The checkpoint CAS consumes a K row and fresh-confirms P, Safety,
         // and signer heads.  Keep the complete join/CAS under the same
         // exclusive authority fence as proposal delivery and finalization.
-        let _cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
+        let cross_store_lock = self.acquire_cross_store_exclusive_lock_v0()?;
         let application_path = self.store.path().to_path_buf();
-        match advance_native_k_whole_node_checkpoint_v0(
+        let outcome = match advance_native_k_whole_node_checkpoint_v0(
             checkpoint_store,
             expected_external,
             safety_store,
@@ -1582,7 +1616,9 @@ impl PocoNodeNativeProposalPHostV0<DurableNativeApplicationV0> {
                     error,
                 ))
             }
-        }
+        };
+        self.validate_cross_store_lock_v0(&cross_store_lock)?;
+        outcome
     }
 
     /// Submits Core StorageAck only after the exact whole-node successor has
