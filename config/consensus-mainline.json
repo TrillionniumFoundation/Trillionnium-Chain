@@ -25,13 +25,17 @@
   },
   "blockers": [
     {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},
+    {"id": "P0-SCHEMA-001", "severity": "P0", "status": "open", "exit": "one generated metadata/schema/error registry consumed consistently by every boundary gate"},
     {"id": "P0-PROTOCOL-001", "severity": "P0", "status": "open", "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"},
+    {"id": "P0-TC-001", "severity": "P0", "status": "open", "exit": "validator-set, CPU, byte, signature-count, and admission budgets for QC/TC/CEV0 are enforced and fuzzed"},
     {"id": "P1-CORE-001", "severity": "P1", "status": "open", "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"},
     {"id": "P1-EXEC-001", "severity": "P1", "status": "open", "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"},
     {"id": "P2-NODE-001", "severity": "P2", "status": "open", "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"},
     {"id": "P2-NET-001", "severity": "P2", "status": "open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
     {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
+    {"id": "P2-STORE-001", "severity": "P2", "status": "open", "exit": "K/P audit is atomic under concurrent rewrite using a shared lock or final paired read with fd-bound identity where required"},
     {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "exit": "export/import binds source manifest, mapping digest, new JMT root, and GenesisQC/ceremony"},
+    {"id": "P3-HISTORY-001", "severity": "P3", "status": "open", "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"},
     {"id": "MIG-CLEAN-001", "severity": "P3", "status": "blocked-by-cutover", "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"}
   ],
   "authoritative_docs": {

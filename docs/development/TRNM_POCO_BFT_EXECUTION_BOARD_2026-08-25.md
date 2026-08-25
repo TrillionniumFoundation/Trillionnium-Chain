@@ -25,6 +25,21 @@ M0 truth/branch freeze
 Execution may parallelize specification, tooling, and observability, but no
 downstream gate inherits completion from an incomplete predecessor.
 
+### Current machine evidence (2026-08-25)
+
+- `trnm-poco-node` is intentionally fail-closed: the default binary still
+  reports missing signer, SafetyRules, application, finalization, P2P and state
+  sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
+  not a live-node or production-consensus pass.
+- The formal Quint gate and pinned `protoc` gate are red on this host until
+  their lock-pinned toolchains are installed and reproduced in CI.
+- The native execution boundary gate has metadata/schema drift (new crash/WAL
+  fields are not accepted by the current schema). This is a P0 truth blocker,
+  not permission to weaken the gate.
+- Remote-signer, checkpoint and state-sync crates currently expose adapters or
+  data types; production credential, SafetyRules, validator-runtime and
+  activation flags remain false.
+
 ## 2. Gate board
 
 | Gate | Scope | Current status | Exit evidence |
@@ -153,9 +168,11 @@ downstream gate inherits completion from an incomplete predecessor.
 1. No independent review of the complete protocol and remaining schema/vector
    corpus; formal/protobuf tooling is not reproducible on every workstation.
 2. `wire_conformance=false`; remaining epoch, evidence, network-envelope,
-   upgrade, light-client and weighted TC limits are open.
+   upgrade, light-client and weighted TC limits are open. CEV0 must be bounded
+   by validator-set, CPU, bytes, signature count and admission budgets.
 3. Source-of-truth drift: dirty PoCO worktree, candidate-index mismatch,
-   workspace/CI/schema/error-registry and old dual-track wording.
+   workspace/CI/schema/error-registry and old dual-track wording. Boundary
+   metadata must be generated/validated from one schema.
 
 ### P1 — deterministic safety/core blockers
 
@@ -184,7 +201,8 @@ downstream gate inherits completion from an incomplete predecessor.
 1. PoCO weights, bonds, staking/jailing/slashing and governance activation are
    shadow-only; no permissionless-account/economic anti-abuse closure.
 2. Terminal TaskV1 rows lack archive/GC/retention/charging policy; long history
-   will grow SQLite, snapshots and full-node replication without bound.
+   will grow SQLite, snapshots and full-node replication without bound. JMT
+   pruning alone does not reclaim business rows.
 3. DA, AI verification profiles, independent light client, resource/network
    attack campaigns, external audits and 7–30 day soak are not complete.
 
