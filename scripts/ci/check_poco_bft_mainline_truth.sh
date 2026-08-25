@@ -57,28 +57,40 @@ def fail(message: str) -> None:
     raise SystemExit(message)
 
 config = json.loads(config_path.read_text(encoding="utf-8"))
+pre_cutover = mode.name == "--pre-cutover"
 if config.get("schema") != "trnm-consensus-mainline-truth-v1":
     fail("unexpected consensus-mainline schema")
 if config.get("consensus_mainline") != "native-poco-bft":
     fail("native PoCO-BFT is not the declared sole mainline")
-if config.get("production_candidate") is not False or config.get("production_consensus_activation") is not False:
-    fail("production truth must remain false before C0")
+if pre_cutover:
+    if config.get("production_candidate") is not False or config.get("production_consensus_activation") is not False:
+        fail("production truth must remain false before C0")
+else:
+    if config.get("production_candidate") is not True or config.get("production_consensus_activation") is not True:
+        fail("post-cutover truth requires reviewed production candidate and activation")
 
 comet = config.get("cometbft", {})
-expected_comet = {
+expected_comet = ({
     "role": "migration-residue-only",
     "production_dependency": False,
     "active_workspace_member": False,
     "new_features_allowed": False,
     "cleanup_eligible": False,
-}
+} if pre_cutover else {
+    "role": "removed",
+    "production_dependency": False,
+    "active_workspace_member": False,
+    "new_features_allowed": False,
+    "historical_replay_allowed": False,
+    "cleanup_eligible": True,
+})
 for key, expected in expected_comet.items():
     if comet.get(key) != expected:
         fail(f"cometbft.{key}={comet.get(key)!r}, expected {expected!r}")
 
 cargo = tomllib.loads(cargo_path.read_text(encoding="utf-8"))
 workspace_meta = cargo.get("workspace", {}).get("metadata", {}).get("trnm", {})
-for key, expected in {
+workspace_expectations = ({
     "consensus_mainline": "native-poco-bft",
     "native_poco_mainline_decision": "adopted",
     "zero_comet_production_dependency_target": True,
@@ -86,13 +98,22 @@ for key, expected in {
     "legacy_comet_migration_residue_present": True,
     "cometbft_role": "migration-residue-only",
     "cometbft_cleanup_eligible": False,
-}.items():
+} if pre_cutover else {
+    "consensus_mainline": "native-poco-bft",
+    "native_poco_mainline_decision": "adopted",
+    "zero_comet_production_dependency_target": True,
+    "zero_comet_production_dependency_achieved": True,
+    "legacy_comet_migration_residue_present": False,
+    "cometbft_role": "removed",
+    "cometbft_cleanup_eligible": True,
+})
+for key, expected in workspace_expectations.items():
     if workspace_meta.get(key) != expected:
         fail(f"workspace metadata {key}={workspace_meta.get(key)!r}, expected {expected!r}")
 
 node = tomllib.loads(node_path.read_text(encoding="utf-8"))
 node_meta = node.get("package", {}).get("metadata", {}).get("trnm", {})
-for key, expected in {
+node_expectations = ({
     "consensus_mainline": "native-poco-bft",
     "zero_comet_production_dependency_achieved": True,
     "legacy_comet_migration_residue_present": True,
@@ -100,13 +121,22 @@ for key, expected in {
     "cometbft_cleanup_eligible": False,
     "production_candidate": False,
     "production_consensus_activation": False,
-}.items():
+} if pre_cutover else {
+    "consensus_mainline": "native-poco-bft",
+    "zero_comet_production_dependency_achieved": True,
+    "legacy_comet_migration_residue_present": False,
+    "cometbft_role": "removed",
+    "cometbft_cleanup_eligible": True,
+    "production_candidate": True,
+    "production_consensus_activation": True,
+})
+for key, expected in node_expectations.items():
     if node_meta.get(key) != expected:
         fail(f"node metadata {key}={node_meta.get(key)!r}, expected {expected!r}")
 
 tx_builder = tomllib.loads(tx_builder_path.read_text(encoding="utf-8"))
 tx_builder_meta = tx_builder.get("package", {}).get("metadata", {}).get("trnm", {})
-for key, expected in {
+tx_builder_expectations = ({
     "development_only": True,
     "production_candidate": False,
     "signing_runtime": False,
@@ -115,7 +145,15 @@ for key, expected in {
     "pending_nonce_authority": False,
     "external_signer_only": True,
     "mempool_view_adapter": True,
-}.items():
+} if pre_cutover else {
+    "development_only": False,
+    "production_candidate": True,
+    "signing_runtime": True,
+    "signing_or_broadcast": True,
+    "broadcast": True,
+    "pending_nonce_authority": True,
+})
+for key, expected in tx_builder_expectations.items():
     if tx_builder_meta.get(key) != expected:
         fail(f"tx-builder metadata {key}={tx_builder_meta.get(key)!r}, expected {expected!r}")
 
@@ -141,7 +179,7 @@ for marker, text, label in (
     if " ".join(marker.split()) not in " ".join(text.split()):
         fail(f"missing {label} marker: {marker}")
 
-if mode.name == "--post-cutover":
+if not pre_cutover:
     residue = [
         pathlib.Path("trillionnium/crates/trnm-consensus-app"),
         pathlib.Path("trillionnium/crates/trnm-node"),
@@ -161,4 +199,8 @@ if rg -n 'cometbft_role = "development-differential-oracle"' \
   fail "old differential-oracle metadata remains in active manifests"
 fi
 
-printf 'poco_bft_mainline_truth=passed mode=%s mainline=native-poco-bft production_dependency=false cleanup_eligible=false activation=false\n' "$MODE"
+if [[ "$MODE" == "--pre-cutover" ]]; then
+  printf 'poco_bft_mainline_truth=passed mode=%s mainline=native-poco-bft production_dependency=false cleanup_eligible=false activation=false\n' "$MODE"
+else
+  printf 'poco_bft_mainline_truth=passed mode=%s mainline=native-poco-bft production_dependency=false cleanup_eligible=true activation=true\n' "$MODE"
+fi
