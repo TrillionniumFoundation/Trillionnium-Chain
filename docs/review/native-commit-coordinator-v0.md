@@ -33,6 +33,28 @@ The branch adds three local durability checks:
 The tests also retry the pre-commit case and issue a duplicate commit after
 each post-commit case, checking exact head/sequence and recovery disposition.
 
+## Machine-readable crash/WAL contract
+
+The active crate manifest's `[package.metadata.trnm]` table is a closed,
+machine-readable inventory. `scripts/ci/check_trnm_native_execution_v0_boundary.sh`
+compares that table exactly; adding, removing, or changing a durability fact
+must update the manifest and this gate together. The current crash/recovery
+fields mean:
+
+- `commit_directory_fsync_attempted=true`: the commit coordinator attempts a
+  database and containing-directory fsync before fresh readback;
+- `sigkill_commit_boundary_matrix=true` and
+  `short_write_reopen_fail_closed=true`: the local SIGKILL and critical-page
+  short-write cases are covered by the Rust test matrix;
+- `automatic_hot_rollback_journal_recovery=true`: only a regular, verifiable
+  SQLite rollback journal may be repaired through SQLite's own transaction
+  rollback path; and
+- `automatic_wal_recovery=false`: WAL/SHM sidecars are not auto-recovered and
+  remain fail-closed until a separately owned checkpoint/state-sync path exists.
+
+These are application/store evidence flags only. They do not grant Core or
+Safety authority and do not change `production_candidate=false`.
+
 This is an application/store authority slice only. It does not install Core or
 Safety permits, verify QC/finality, provide a remote monotonic watermark,
 operate authenticated consensus transport, or activate a validator runtime.

@@ -102,6 +102,14 @@ expected_metadata = {
     "stable_precommit_application_commit_id": True,
     "multi_overlay_restart_readback": True,
     "commit_uncertain_third_state_fenced": True,
+    # Crash/WAL recovery facts are part of the closed machine-readable
+    # metadata contract.  Keep these in exact lockstep with the manifest;
+    # omitting one must fail the gate rather than silently accepting drift.
+    "commit_directory_fsync_attempted": True,
+    "sigkill_commit_boundary_matrix": True,
+    "short_write_reopen_fail_closed": True,
+    "automatic_hot_rollback_journal_recovery": True,
+    "automatic_wal_recovery": False,
     "h1_state_sync_trusted_base_import": True,
     "h1_state_sync_import_has_no_local_p": True,
     "h1_state_sync_import_restart_readback": True,
