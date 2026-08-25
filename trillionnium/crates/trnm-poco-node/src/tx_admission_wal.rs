@@ -22,7 +22,10 @@
 //! handoff and before its commit acknowledgement; opening the authority then
 //! fails closed.  A future node recovery owner must perform an application
 //! readback before adding an explicit resolution API.  This module does not
-//! guess, delete, or rewrite such rows.
+//! guess, delete, or rewrite such rows.  In particular, this WAL rejects a
+//! `HandedOff` -> `Released` transition: dropping a handoff token leaves the
+//! durable ambiguity in place, and only authenticated receipt recovery may
+//! resolve it.
 
 #![cfg(feature = "tx-admission-wal")]
 
@@ -733,7 +736,7 @@ pub struct SqlitePendingNonceAuthorityV0 {
 ///
 /// ```text
 /// typed builder view -> canonical metadata -> durable reserve
-///     -> ready item -> handoff -> commit/release
+///     -> ready item -> handoff -> receipt-commit
 /// ```
 ///
 /// The returned [`PendingNonceAdmission`] owns the durable lifecycle token.
@@ -1019,6 +1022,11 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
     }
 
     /// Return the next item with its node-owned handoff/commit/release token.
+    ///
+    /// For this WAL implementation, `release` is valid only before handoff.
+    /// Once a row is `HandedOff`, explicit release and token drop leave the
+    /// durable ambiguity intact; [`Self::commit_candidate_with_receipt`] or
+    /// the restart recovery entry point must provide authenticated readback.
     pub fn pop_ready_with_lifecycle(&mut self) -> Option<PendingNonceAdmission> {
         self.gate.pop_ready_with_lifecycle()
     }
@@ -1560,7 +1568,10 @@ impl SqlitePendingNonceReservationV0 {
             let allowed = match target_state {
                 STATE_HANDED_OFF_V0 => state == STATE_RESERVED_V0,
                 STATE_COMMITTED_V0 => state == STATE_HANDED_OFF_V0,
-                STATE_RELEASED_V0 => state == STATE_RESERVED_V0 || state == STATE_HANDED_OFF_V0,
+                // A handed-off row is execution-ambiguous.  Only the
+                // authenticated receipt recovery path may resolve it; a
+                // drop/cancel must never turn it into a replay tombstone.
+                STATE_RELEASED_V0 => state == STATE_RESERVED_V0,
                 _ => false,
             };
             if !allowed {
@@ -1612,7 +1623,7 @@ impl PendingNonceReservation for SqlitePendingNonceReservationV0 {
     }
 
     fn release(&mut self) -> Result<(), AdmissionReject> {
-        if self.state != STATE_RESERVED_V0 && self.state != STATE_HANDED_OFF_V0 {
+        if self.state != STATE_RESERVED_V0 {
             return Err(AdmissionReject::ReservationStateConflict);
         }
         self.transition(STATE_RELEASED_V0)
@@ -2011,6 +2022,121 @@ mod tests {
             TxAdmissionWalErrorV0::AmbiguousHandoff
         );
         cleanup(&path);
+    }
+
+    #[test]
+    fn handed_off_release_and_drop_remain_ambiguous_until_receipt_recovery() {
+        // An explicit release after handoff must fail before it can rewrite
+        // the durable row into a replay tombstone.
+        let explicit_path = temp_path();
+        let explicit_namespace = [0x68; 32];
+        {
+            let envelope = fixture();
+            let mut authority =
+                SqlitePendingNonceAuthorityV0::open(&explicit_path, explicit_namespace).unwrap();
+            let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+            let mut hooks = Hooks;
+            assert_eq!(
+                gate.admit_signed_with_pending_nonce(
+                    &envelope,
+                    IngressClass::Normal,
+                    &mut hooks,
+                    &mut authority,
+                ),
+                TypedAdmitOutcome::Accepted
+            );
+            let mut ready = gate.pop_ready_with_lifecycle().unwrap();
+            ready.handoff().unwrap();
+            assert_eq!(
+                ready.release(),
+                Err(AdmissionReject::ReservationStateConflict)
+            );
+            drop(ready);
+            drop(gate);
+            drop(authority);
+        }
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&explicit_path, explicit_namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::AmbiguousHandoff
+        );
+        cleanup(&explicit_path);
+
+        // Drop has the same fail-closed result: the generic mempool lease may
+        // attempt release, but this WAL implementation leaves HandedOff in
+        // place.  The authenticated receipt path is the only resolver.
+        let recovery_path = temp_path();
+        let recovery_namespace = [0x69; 32];
+        let envelope = fixture();
+        let metadata = {
+            let mut authority =
+                SqlitePendingNonceAuthorityV0::open(&recovery_path, recovery_namespace).unwrap();
+            let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+            let mut hooks = Hooks;
+            assert_eq!(
+                gate.admit_signed_with_pending_nonce(
+                    &envelope,
+                    IngressClass::Normal,
+                    &mut hooks,
+                    &mut authority,
+                ),
+                TypedAdmitOutcome::Accepted
+            );
+            let mut ready = gate.pop_ready_with_lifecycle().unwrap();
+            ready.handoff().unwrap();
+            let metadata = ready.metadata().clone();
+            drop(ready);
+            drop(gate);
+            drop(authority);
+            metadata
+        };
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&recovery_path, recovery_namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::AmbiguousHandoff
+        );
+
+        let verified = commit_evidence_for(&envelope)
+            .verify_with(&metadata, &AcceptingCommitVerifier)
+            .unwrap();
+        SqlitePendingNonceAuthorityV0::recover_handed_off_with_receipt(
+            &recovery_path,
+            recovery_namespace,
+            &metadata,
+            &verified,
+        )
+        .unwrap();
+
+        let reopened =
+            SqlitePendingNonceAuthorityV0::open(&recovery_path, recovery_namespace).unwrap();
+        let connection = reopened.connection.borrow();
+        let state: i64 = connection
+            .query_row(
+                "SELECT state FROM pending_nonce
+                 WHERE namespace = ?1 AND signer = ?2 AND nonce = ?3",
+                params![
+                    recovery_namespace.as_slice(),
+                    metadata.signer_id().as_bytes().as_slice(),
+                    to_blob_u64(metadata.nonce()).as_slice(),
+                ],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(state, STATE_COMMITTED_V0);
+        let stored_commitment: Vec<u8> = connection
+            .query_row(
+                "SELECT commitment FROM tx_commit_receipt_v0
+                 WHERE namespace = ?1 AND signer = ?2 AND nonce = ?3",
+                params![
+                    recovery_namespace.as_slice(),
+                    metadata.signer_id().as_bytes().as_slice(),
+                    to_blob_u64(metadata.nonce()).as_slice(),
+                ],
+                |row| row.get(0),
+            )
+            .unwrap();
+        assert_eq!(stored_commitment, verified.commitment().to_vec());
+        drop(connection);
+        drop(reopened);
+        cleanup(&recovery_path);
     }
 
     #[test]
