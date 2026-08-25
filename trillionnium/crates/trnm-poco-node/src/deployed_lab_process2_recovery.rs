@@ -856,6 +856,22 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
             application_history_rows,
         } = self;
 
+        // The activation binding is a paired P/K/Safety/checkpoint/signer
+        // snapshot.  Acquire the common authority lock before the first
+        // read—not only before the final ActivationReady CAS—so a cooperating
+        // native P writer cannot replace the application head after the
+        // binding digest was computed and before the sidecar commit.
+        let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+            &paths.application,
+            &paths.validation,
+        )
+        .map_err(|error| {
+            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
+                "activation.cross_store_lock",
+                error.to_string(),
+            )
+        })?;
+
         validate_config_join_v0(&core_config, application.config_v0())?;
         let core_facts = core.facts_v0();
         let challenge_safety = core.challenge_v0().safety_state_v0().clone();
@@ -1145,16 +1161,6 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeDeployedLabProcess2RecoveryOwnerV0
                 nonzero_v0(selected_replay_digest)?,
             )
         );
-        let _cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
-            &paths.application,
-            &paths.validation,
-        )
-        .map_err(|error| {
-            PocoNodeDeployedLabProcess2RecoveryErrorV0::message(
-                "activation.cross_store_lock",
-                error.to_string(),
-            )
-        })?;
         #[cfg(feature = "lab-validator-runtime-test-support")]
         if crash_hook == Some(Process2CrashHookV0::ActivationReadyCommitted) {
             validation_store.inject_replay_activation_applied_ack_loss_for_test_v0();
