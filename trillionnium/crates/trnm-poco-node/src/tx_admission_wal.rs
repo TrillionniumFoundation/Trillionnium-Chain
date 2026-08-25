@@ -801,6 +801,14 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         admission: &mut PendingNonceAdmission,
         receipt: &VerifiedNativeCommitReceiptV0,
     ) -> Result<(), AdmissionReject> {
+        // `PendingNonceAdmission` is intentionally opaque, but it can still
+        // be passed across two local boundary values. Require the
+        // process-local authority binding before touching this WAL; otherwise
+        // boundary A could persist a receipt while boundary B commits the
+        // token's reservation, leaving split durable state.
+        if admission.owner_binding() != Some(self.authority.owner_binding()) {
+            return Err(AdmissionReject::InconsistentState);
+        }
         if admission.reservation_state()? != PendingNonceReservationState::HandedOff {
             return Err(AdmissionReject::ReservationStateConflict);
         }
@@ -974,6 +982,13 @@ impl SqlitePendingNonceAuthorityV0 {
 
     pub const fn namespace(&self) -> [u8; 32] {
         self.namespace
+    }
+
+    /// Opaque process-local identity for this live SQLite authority. It is
+    /// used only to prevent a lifecycle token from being committed through a
+    /// different boundary instance; it is not a persisted or consensus ID.
+    fn owner_binding(&self) -> u64 {
+        Rc::as_ptr(&self.connection) as usize as u64
     }
 
     /// Number of rows retained for this namespace.  Released/committed rows
@@ -1314,6 +1329,10 @@ impl SqlitePendingNonceReservationV0 {
 }
 
 impl PendingNonceReservation for SqlitePendingNonceReservationV0 {
+    fn owner_binding(&self) -> Option<u64> {
+        Some(Rc::as_ptr(&self.connection) as usize as u64)
+    }
+
     fn handoff(&mut self) -> Result<(), AdmissionReject> {
         if self.state != STATE_RESERVED_V0 {
             return Err(AdmissionReject::ReservationStateConflict);
@@ -1952,6 +1971,58 @@ mod tests {
         drop(boundary);
         assert!(SqlitePendingNonceAuthorityV0::open(&path, [0x8A; 32]).is_ok());
         cleanup(&path);
+    }
+
+    #[test]
+    fn commit_rejects_a_token_owned_by_another_boundary_instance() {
+        let path_a = temp_path();
+        let path_b = temp_path();
+        let transaction = builder_fixture_transaction();
+        let signer_id = CanonicalSignerId::from_bytes([0xA6; 32]).unwrap();
+        let mut boundary_a =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path_a, [0x8E; 32], 2, 0)
+                .unwrap();
+        let mut boundary_b =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit(&path_b, [0x8E; 32], 2, 0)
+                .unwrap();
+        assert_eq!(
+            boundary_a.check_tx_candidate(
+                &transaction,
+                signer_id,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary_a.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            transaction.protocol_tx_hash_v1(),
+            BlockId::new([0x61; 32]),
+            Height::new(2),
+            StateRoot::new([0x62; 32]),
+            [0x63; 32],
+            [0x64; 32],
+        )
+        .unwrap();
+        let verified = evidence
+            .verify_with(ready.metadata(), &AcceptingCommitVerifier)
+            .unwrap();
+        assert_eq!(
+            boundary_b.commit_candidate_with_receipt(&mut ready, &verified),
+            Err(AdmissionReject::InconsistentState)
+        );
+        assert_eq!(boundary_b.retained_rows().unwrap(), 0);
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::HandedOff)
+        );
+        drop(ready);
+        drop(boundary_a);
+        drop(boundary_b);
+        cleanup(&path_a);
+        cleanup(&path_b);
     }
 
     #[test]

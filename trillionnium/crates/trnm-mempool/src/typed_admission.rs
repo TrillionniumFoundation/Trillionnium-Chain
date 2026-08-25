@@ -146,6 +146,16 @@ pub enum PendingNonceReservationState {
 /// kind for a token and drops an unresolved token through `release` so a caller
 /// cannot accidentally leave a reservation owned only by the in-memory queue.
 pub trait PendingNonceReservation: fmt::Debug {
+    /// Return a process-local owner binding for the durable authority that
+    /// created this token.  The value is deliberately opaque and is not a
+    /// consensus identity; it only prevents a node boundary from applying a
+    /// token created by a different local WAL owner.  Implementations which
+    /// cannot provide an owner binding return `None`, and callers that need a
+    /// split-brain-safe commit must reject such tokens.
+    fn owner_binding(&self) -> Option<u64> {
+        None
+    }
+
     /// Transfer the queued transaction to the execution owner.
     fn handoff(&mut self) -> Result<(), AdmissionReject>;
 
@@ -189,6 +199,12 @@ impl PendingNonceLease {
 
     fn state(&self) -> PendingNonceReservationState {
         self.state
+    }
+
+    fn owner_binding(&self) -> Option<u64> {
+        self.reservation
+            .as_ref()
+            .and_then(|reservation| reservation.owner_binding())
     }
 
     fn handoff(&mut self) -> Result<(), AdmissionReject> {
@@ -291,6 +307,16 @@ impl PendingNonceAdmission {
             .as_ref()
             .map(PendingNonceLease::state)
             .ok_or(AdmissionReject::ReservationUnavailable)
+    }
+
+    /// Return the opaque process-local owner binding of the durable
+    /// reservation.  A node owner should compare this with its own authority
+    /// before performing a durable commit; `None` is intentionally not a
+    /// wildcard because an unbound token cannot prove same-owner lifecycle.
+    pub fn owner_binding(&self) -> Option<u64> {
+        self.lease
+            .as_ref()
+            .and_then(PendingNonceLease::owner_binding)
     }
 
     pub fn handoff(&mut self) -> Result<(), AdmissionReject> {
