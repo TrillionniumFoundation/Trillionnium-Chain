@@ -185,6 +185,14 @@ downstream gate inherits completion from an incomplete predecessor.
   explicit caller-supplied trait; source-export quorum, cross-peer authority,
   and activation remain disabled (`false`) until the independent source
   verifier and dual-authority ceremony are complete.
+- `CometStateExportV1::verify_with` now exposes an explicit, fail-closed
+  importer boundary (`CometStateExportVerifierV1`) and returns a distinct
+  `VerifiedCometStateExportV1` token only after source identity, source
+  finality-proof, and mapping checks each return success. The token retains the
+  exact export commitment but cannot be converted into a genesis, QC, or
+  activation capability. No concrete Comet reader/finality verifier is wired
+  yet, so the machine truth `source_export_and_finality_verifier` remains
+  `false`.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root
@@ -197,8 +205,9 @@ downstream gate inherits completion from an incomplete predecessor.
   digest into the ceremony descriptor commitment. A signed/quorum ceremony is
   still required before activation. Never import Comet WAL/blockstore/validator
   signing state.
-- This is still a typed commitment/decoder slice, not an export verifier,
-  import implementation, quorum-signed GenesisQC v1, or cross-peer activation.
+- This is still a typed commitment/decoder plus verifier-interface slice, not
+  an export reader, concrete finality/mapping verifier, import implementation,
+  quorum-signed GenesisQC v1, or cross-peer activation.
   `MIG-ROOT-001` remains open until source/target manifests are independently
   verified and two clean export/import rehearsals reproduce the descriptor and
   native root.

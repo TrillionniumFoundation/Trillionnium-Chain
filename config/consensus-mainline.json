@@ -53,6 +53,7 @@
       "legacy_source_types_separated": true,
       "source_namespace_and_instance_bound": true,
       "export_manifest_and_mapping_commitments_bound": true,
+      "typed_source_export_verifier_boundary": true,
       "frozen_genesis_qc_wire_unchanged": true,
       "qc_binding_exact_decoder": true,
       "trusted_set_recheck": true,

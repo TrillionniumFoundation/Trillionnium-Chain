@@ -103,6 +103,11 @@ native migration contract is implemented:
    its explicit crypto verifier and any cross-peer activation remain disabled
    until the source export verifier, dual-authority ceremony and import
    rehearsal are independently reviewed.
+   The typed export also exposes a separate
+   `CometStateExportVerifierV1`/`VerifiedCometStateExportV1` boundary: source
+   identity, source finality, and mapping checks must each be supplied by an
+   importer-owned implementation before a verified-export token exists. This
+   is an interface/type-state gate only; no concrete Comet reader is enabled.
 6. Generate fresh PoCO SafetyState, signer journal, external watermark, node
    WAL, chain ID, network magic, and validator key IDs. Old validator signing
    state is not trusted or imported.

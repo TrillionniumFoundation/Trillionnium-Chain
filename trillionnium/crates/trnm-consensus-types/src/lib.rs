@@ -95,9 +95,10 @@ pub use error::{Result, ValidationError};
 pub use evidence::EquivocationEvidence;
 pub use finality::{CertifiedHeaderV0, CheckpointTwoSealKernelV0, FinalityProofV0};
 pub use genesis_application::{
-    CometFinalizedBlockIdentityV1, CometStateExportV1, GenesisApplicationCommitmentV0,
-    GenesisQcApplicationBindingV0, GenesisQcCeremonyEvidenceV1, GenesisQcSignatureShareV1,
-    LegacyCometAppHashV1, LegacyCometGenesisHashV1, PocoGenesisQcBindingV1, PocoGenesisV1,
+    CometFinalizedBlockIdentityV1, CometStateExportV1, CometStateExportVerifierV1,
+    GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0, GenesisQcCeremonyEvidenceV1,
+    GenesisQcSignatureShareV1, LegacyCometAppHashV1, LegacyCometGenesisHashV1,
+    PocoGenesisQcBindingV1, PocoGenesisV1, VerifiedCometStateExportV1,
     COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
     COMET_STATE_EXPORT_COMMITMENT_DOMAIN_V1, COMET_STATE_EXPORT_PROFILE_V1,
     COMET_STATE_EXPORT_SCHEMA_VERSION_V1, GENESIS_APPLICATION_COMMITMENT_BINDING_DOMAIN_V0,

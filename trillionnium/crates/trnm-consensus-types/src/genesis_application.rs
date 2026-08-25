@@ -259,6 +259,63 @@ pub struct CometStateExportV1 {
     mapping_profile_digest: [u8; 32],
 }
 
+/// Importer-owned verification boundary for a legacy-state export.
+///
+/// An implementation MUST independently obtain and verify the exact source
+/// preimages before returning `Ok(())`:
+///
+/// * `verify_source_identity_v1` checks the canonical Comet genesis document,
+///   source chain/application/store identities, and the source validator and
+///   runtime profile coordinates;
+/// * `verify_source_finality_v1` parses and cryptographically verifies the
+///   source finality proof at the exact exported height and Comet BlockID,
+///   then checks its digest against `source_finality_proof_digest`; and
+/// * `verify_mapping_v1` independently replays the export projection and
+///   checks the object/index/receipt/rejected roots and mapping profile digest.
+///
+/// The trait deliberately has no default implementation and receives the
+/// complete typed export for every check.  A no-op implementation is therefore
+/// not a protocol verifier; callers must provide the audited source reader and
+/// proof verifier appropriate for the deployed migration.  This boundary
+/// authenticates no target genesis and does not enable activation by itself.
+pub trait CometStateExportVerifierV1 {
+    fn verify_source_identity_v1(&self, export: &CometStateExportV1) -> Result<()>;
+
+    fn verify_source_finality_v1(&self, export: &CometStateExportV1) -> Result<()>;
+
+    fn verify_mapping_v1(&self, export: &CometStateExportV1) -> Result<()>;
+}
+
+/// Type-state token returned only after all three importer-owned source checks
+/// have succeeded for one exact `CometStateExportV1` commitment.
+///
+/// This token is intentionally not convertible to `PocoGenesisV1`, a
+/// `GenesisQcV0`, or an activation capability.  The target-state replay and
+/// GenesisQC ceremony remain separate gates.  Keeping the original export in
+/// the token lets later migration stages bind their own mapping/root proof to
+/// the exact bytes that were verified here.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VerifiedCometStateExportV1 {
+    export: CometStateExportV1,
+    export_commitment: [u8; 32],
+}
+
+impl VerifiedCometStateExportV1 {
+    pub const fn export(&self) -> &CometStateExportV1 {
+        &self.export
+    }
+
+    pub const fn export_commitment(&self) -> [u8; 32] {
+        self.export_commitment
+    }
+
+    /// Consume the token while retaining its source-verification type state.
+    /// No target genesis or consensus object is created by this operation.
+    pub fn into_export(self) -> CometStateExportV1 {
+        self.export
+    }
+}
+
 impl CometStateExportV1 {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
@@ -404,6 +461,40 @@ impl CometStateExportV1 {
             COMET_STATE_EXPORT_COMMITMENT_DOMAIN_V1,
             &[&bytes],
         ))
+    }
+
+    /// Run the explicit source identity/finality/mapping verification gate.
+    ///
+    /// The returned token is the only value in this crate that represents a
+    /// verified source export.  This method still does not verify the target
+    /// state-root recomputation or any target-validator quorum.  In
+    /// particular, [`PocoGenesisV1::new_from_unverified_export_v1`] remains a
+    /// shape/commitment constructor and must not be used as an activation
+    /// proof.
+    pub fn verify_with<V: CometStateExportVerifierV1>(
+        &self,
+        verifier: &V,
+    ) -> Result<VerifiedCometStateExportV1> {
+        let canonical = self.try_canonical_bytes_v1()?;
+        if canonical.len() > MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1 {
+            return Err(ValidationError::LengthOverflow {
+                field: "CometStateExportV1 canonical bytes",
+                actual: canonical.len(),
+                maximum: MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1,
+            });
+        }
+        let export_commitment = self.commitment_digest_v1()?;
+
+        // Keep the calls separate and ordered.  A caller cannot accidentally
+        // treat a source-identity check as a finality or mapping proof.
+        verifier.verify_source_identity_v1(self)?;
+        verifier.verify_source_finality_v1(self)?;
+        verifier.verify_mapping_v1(self)?;
+
+        Ok(VerifiedCometStateExportV1 {
+            export: self.clone(),
+            export_commitment,
+        })
     }
 
     /// Checks the source-side fields that a `PocoGenesisV1` descriptor copies
@@ -1282,6 +1373,7 @@ fn hash_len_framed(domain: &[u8], parts: &[&[u8]]) -> [u8; 32] {
 #[cfg(test)]
 mod tests {
     use alloc::vec;
+    use core::cell::Cell;
 
     use super::*;
     use crate::{ChainId, Validator};
@@ -1529,6 +1621,72 @@ mod tests {
             [0x58; 32],
         )
         .expect("shape-valid source export")
+    }
+
+    struct RecordingSourceExportVerifier {
+        calls: Cell<u8>,
+        reject_finality: bool,
+    }
+
+    impl CometStateExportVerifierV1 for RecordingSourceExportVerifier {
+        fn verify_source_identity_v1(&self, export: &CometStateExportV1) -> Result<()> {
+            assert_eq!(
+                export.source_chain_id(),
+                ChainId::from_static("trnm-source-chain-0")
+            );
+            self.calls.set(self.calls.get() | 0b001);
+            Ok(())
+        }
+
+        fn verify_source_finality_v1(&self, export: &CometStateExportV1) -> Result<()> {
+            assert_eq!(export.finalized_height(), Height::new(77));
+            self.calls.set(self.calls.get() | 0b010);
+            if self.reject_finality {
+                return Err(ValidationError::InvalidFinalityProof(
+                    "test source finality verifier rejected proof",
+                ));
+            }
+            Ok(())
+        }
+
+        fn verify_mapping_v1(&self, export: &CometStateExportV1) -> Result<()> {
+            assert_eq!(export.mapping_profile_digest(), [0x58; 32]);
+            self.calls.set(self.calls.get() | 0b100);
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn verified_source_export_requires_identity_finality_and_mapping_gates() {
+        let export = state_export();
+        let verifier = RecordingSourceExportVerifier {
+            calls: Cell::new(0),
+            reject_finality: false,
+        };
+        let verified = export
+            .verify_with(&verifier)
+            .expect("all explicit source gates pass");
+        assert_eq!(verifier.calls.get(), 0b111);
+        assert_eq!(verified.export(), &export);
+        assert_eq!(
+            verified.export_commitment(),
+            export.commitment_digest_v1().unwrap()
+        );
+        assert_eq!(verified.into_export(), export);
+    }
+
+    #[test]
+    fn verified_source_export_fails_closed_before_mapping_after_finality_rejection() {
+        let export = state_export();
+        let verifier = RecordingSourceExportVerifier {
+            calls: Cell::new(0),
+            reject_finality: true,
+        };
+        assert_eq!(
+            export.verify_with(&verifier).unwrap_err(),
+            ValidationError::InvalidFinalityProof("test source finality verifier rejected proof")
+        );
+        assert_eq!(verifier.calls.get(), 0b011);
     }
 
     #[test]
