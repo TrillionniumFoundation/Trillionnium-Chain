@@ -1205,11 +1205,13 @@ mod tests {
                 .unwrap();
         let mut hooks = Hooks;
 
-        assert!(TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
+        const {
+            assert!(TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_CHECKTX_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_SIGNING_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
+        }
         assert_eq!(boundary.namespace(), [0x88; 32]);
         assert_eq!(
             boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
