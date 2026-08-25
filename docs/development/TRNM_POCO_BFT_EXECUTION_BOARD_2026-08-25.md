@@ -41,14 +41,26 @@ downstream gate inherits completion from an incomplete predecessor.
   budgets, with explicit limits clamped to intrinsic hard caps (`5b28425df`,
   `cd7602693`). The normative wire/conformance review and independent second
   implementation are still open.
+- The laboratory wire surface no longer exposes a protocol-default budget as
+  a public decode entry: `decode_*_with_context` and the proposal budgeted
+  decoder derive the CEV0 ceiling from
+  the authenticated `ConsensusParametersV0` and active `ValidatorSet`, while
+  the intrinsic `protocol_v0` helpers are crate-private and explicitly limited
+  to pinned local replay. Before deriving any public budget, the supplied
+  consensus-parameter hash must equal the active validator-set hash (the
+  fail-closed checks landed in `cba106bd8` and `488e015f9`); a
+  mismatched profile therefore cannot widen the byte, signature, or nested-TC
+  limits. Authenticated network ingress continues to consume one shared
+  derived budget in the collector. This closes the API-level budget bypass
+  only; CPU/fuzz/formal coverage and production activation remain open.
 - A development-only canonical application tx-builder candidate now emits
   exact inner/outer bytes, uses an external signer boundary, and exposes an
   exact typed `trnm-mempool` view. The view passes the builder's immutable body,
   digest, signer identity, nonce and resource claims into the pending-nonce
   admission API. The feature-gated `trnm-poco-node` `tx-admission-wal` slice
   (`5891e9c8f`, hardened through `e48376dfa`, `84bc4f83`, `617cbb15a`,
-  `fecca250b`, `1ad718fd2`, `d0cc52e2e`, `01b378560`, `6611ef07f`, and
-  `72f89abe6`)
+  `fecca250b`, `1ad718fd2`, `d0cc52e2e`, `01b378560`, `6611ef07f`,
+  `72f89abe6`, `3f5432682`, `4d16d42ae`, and `c68500676`)
   now provides a node-owned SQLite WAL/FULL pending-nonce
   reservation lifecycle with namespace/path fences, private-file checks,
   retained-row bounds, a typed builder-to-boundary API, exact restart retry for
@@ -57,10 +69,13 @@ downstream gate inherits completion from an incomplete predecessor.
   fail-closed.
   It is not compiled by the default node and does not yet provide production
   CheckTx ingress, a production signer/broadcast loop, or tombstone GC. The
-  candidate now has a signature-checked CheckTx seam, a typed commit-receipt
-  gate, authority-affined lifecycle tokens, and explicit candidate receipt
-  binding; ambiguous HandedOff recovery and production AppHash/readback
-  integration remain G2 blockers.
+  candidate now has a signature-checked CheckTx seam, an authority-owned
+  signer resolver with mismatch/no-resolver fail-closed tests, a node-owned
+  chain/time context seam, a typed commit-receipt gate, authority-affined
+  lifecycle tokens, and explicit candidate receipt binding; low-level typed
+  admission remains a composition escape hatch, while ambiguous HandedOff
+  recovery, production AppHash/readback integration, and production context
+  ownership remain G2 blockers.
 - The deployed recovery owner now performs a final paired K/P readback over
   every terminal validation row and its exact durable application artifact
   immediately before returning the inert owner. A new private
@@ -313,11 +328,11 @@ downstream gate inherits completion from an incomplete predecessor.
    typed builder-to-boundary API, and a
    bounded retained-row admission cap. It is not a
    production path: the default node does not compile or activate it. The
-   candidate has a signature-checked CheckTx seam, typed commit-receipt gate,
-   and owner-affined lifecycle tokens; production signing/broadcast, AppHash
-   readback recovery, ambiguous-handoff resolution, and tombstone GC remain
-   open. CLI transfer/receipt paths remain development-only shell/template
-   adapters.
+   candidate has a signature-checked CheckTx seam, node-owned signer/context
+   resolver seams, typed commit-receipt gate, and owner-affined lifecycle
+   tokens; production signing/broadcast, AppHash readback recovery,
+   ambiguous-handoff resolution, and tombstone GC remain open. CLI
+   transfer/receipt paths remain development-only shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,

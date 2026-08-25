@@ -54,11 +54,17 @@ The native node remains a fail-closed scaffold:
   `trnm-poco-node` `tx-admission-wal` candidate (including the typed
   NodeOwnedTxAdmissionBoundaryV0 wrapper) now owns a durable pending-nonce
   reservation lifecycle with bounded retained rows, sidecar lock
-  fd/path-identity fencing, a signature-checked candidate CheckTx seam, a
+  fd/path-identity fencing, a signature-checked candidate CheckTx seam, an
+  authority-owned signer resolver and node-owned chain/time context seam, a
   typed commit-receipt gate, and authority-affined lifecycle tokens. It is not
   compiled by the default node and does not yet provide production ingress,
-  signer/broadcast, AppHash readback recovery, or tombstone GC; the CLI
-  remains a development/template adapter;
+  signer/broadcast, AppHash readback recovery, or tombstone GC; low-level
+  admission and caller-context compatibility APIs remain candidate-only, and
+  the CLI remains a development/template adapter;
+- public laboratory Vote/TimeoutVote/QC/TC/proposal decoders derive their
+  admission budgets only after the supplied consensus-parameter hash matches
+  the active validator-set hash; trusted-local replay decoders are not network
+  ingress and remain explicitly crate-private;
 - a dirty worktree or a candidate-index mismatch cannot be used as a release
   candidate.
 
