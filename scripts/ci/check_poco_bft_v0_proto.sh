@@ -2,11 +2,26 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-protoc_bin="${PROTOC:-protoc}"
+protoc_bin="${PROTOC:-}"
 expected_protoc_version="${POCO_BFT_PROTOC_VERSION:-libprotoc 29.3}"
 
-if ! command -v "$protoc_bin" >/dev/null 2>&1; then
-  echo "protoc is required; set PROTOC to a pinned executable" >&2
+if [[ -z "$protoc_bin" ]]; then
+  if command -v protoc >/dev/null 2>&1; then
+    protoc_bin="$(command -v protoc)"
+  else
+    # Local and self-hosted runs use the same checksum-pinned artifact as the
+    # workflow.  Set TRNM_PROTOC_AUTO_INSTALL=0 to require an operator-provided
+    # PROTOC and keep the old fail-closed behavior.
+    if [[ "${TRNM_PROTOC_AUTO_INSTALL:-1}" != "1" ]]; then
+      echo "protoc is required; set PROTOC to a pinned executable" >&2
+      exit 1
+    fi
+    protoc_bin="$($repo_root/scripts/ci/install_pinned_protoc.sh)"
+  fi
+fi
+
+if [[ ! -x "$protoc_bin" || -L "$protoc_bin" ]]; then
+  echo "PROTOC must point to a regular executable" >&2
   exit 1
 fi
 
