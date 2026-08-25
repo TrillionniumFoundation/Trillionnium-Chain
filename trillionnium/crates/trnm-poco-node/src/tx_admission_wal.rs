@@ -138,12 +138,23 @@ impl PathIdentityV0 {
             inode: metadata.ino(),
         }
     }
+
+    fn from_file(file: &File) -> Result<Self, TxAdmissionWalErrorV0> {
+        let metadata = file.metadata().map_err(|_| TxAdmissionWalErrorV0::Io)?;
+        Ok(Self::from_metadata(&metadata))
+    }
 }
 
 #[cfg(not(unix))]
 impl PathIdentityV0 {
     fn from_metadata(_metadata: &fs::Metadata) -> Self {
         Self {}
+    }
+
+    fn from_file(file: &File) -> Result<Self, TxAdmissionWalErrorV0> {
+        file.metadata()
+            .map_err(|_| TxAdmissionWalErrorV0::Io)
+            .map(|_| Self {})
     }
 }
 
@@ -266,7 +277,7 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
     }
 }
 
-fn open_lock_v0(path: &Path) -> Result<Rc<File>, TxAdmissionWalErrorV0> {
+fn open_lock_v0(path: &Path) -> Result<(Rc<File>, PathBuf, PathIdentityV0), TxAdmissionWalErrorV0> {
     let lock_path = lock_path_v0(path)?;
     if let Ok(metadata) = fs::symlink_metadata(&lock_path) {
         if metadata.file_type().is_symlink()
@@ -289,7 +300,9 @@ fn open_lock_v0(path: &Path) -> Result<Rc<File>, TxAdmissionWalErrorV0> {
         .map_err(|_| TxAdmissionWalErrorV0::Io)?;
     file.try_lock_exclusive()
         .map_err(|_| TxAdmissionWalErrorV0::LockUnavailable)?;
-    Ok(Rc::new(file))
+    let lock_identity = PathIdentityV0::from_file(&file)?;
+    ensure_identity_v0(&lock_path, lock_identity)?;
+    Ok((Rc::new(file), lock_path, lock_identity))
 }
 
 #[cfg(unix)]
@@ -312,6 +325,18 @@ fn ensure_identity_v0(path: &Path, expected: PathIdentityV0) -> Result<(), TxAdm
         return Err(TxAdmissionWalErrorV0::PathReplaced);
     }
     Ok(())
+}
+
+fn ensure_open_lock_identity_v0(
+    path: &Path,
+    expected: PathIdentityV0,
+    lock: &File,
+) -> Result<(), TxAdmissionWalErrorV0> {
+    if PathIdentityV0::from_file(lock).map_err(|_| TxAdmissionWalErrorV0::PathReplaced)? != expected
+    {
+        return Err(TxAdmissionWalErrorV0::PathReplaced);
+    }
+    ensure_identity_v0(path, expected)
 }
 
 fn sqlite_error(_: rusqlite::Error) -> TxAdmissionWalErrorV0 {
@@ -429,6 +454,8 @@ fn row_matches_v0(row: AdmissionRecordV0, expected: AdmissionRecordV0) -> bool {
 pub struct SqlitePendingNonceAuthorityV0 {
     connection: Rc<RefCell<Connection>>,
     lock: Rc<File>,
+    lock_path: PathBuf,
+    lock_identity: PathIdentityV0,
     path: PathBuf,
     path_identity: PathIdentityV0,
     namespace: [u8; 32],
@@ -550,13 +577,15 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         let path = path.as_ref().to_path_buf();
         let path_identity = ensure_regular_db_v0(&path)?;
-        let lock = open_lock_v0(&path)?;
+        let (lock, lock_path, lock_identity) = open_lock_v0(&path)?;
         ensure_identity_v0(&path, path_identity)?;
+        ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         let connection = Connection::open(&path).map_err(sqlite_error)?;
         // The first identity check protects the name-to-inode transition around
         // SQLite open. A second fence below catches a replacement which raced
         // that open before any schema/WAL write is attempted.
         ensure_identity_v0(&path, path_identity)?;
+        ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         connection
             .busy_timeout(Duration::from_millis(750))
             .map_err(sqlite_error)?;
@@ -597,6 +626,7 @@ impl SqlitePendingNonceAuthorityV0 {
             return Err(TxAdmissionWalErrorV0::Sqlite);
         }
         ensure_identity_v0(&path, path_identity)?;
+        ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         let persisted: Option<(i64, Vec<u8>)> = connection
             .query_row(
                 "SELECT schema_version, namespace FROM tx_admission_meta WHERE singleton = 1",
@@ -651,9 +681,12 @@ impl SqlitePendingNonceAuthorityV0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
         ensure_identity_v0(&path, path_identity)?;
+        ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         Ok(Self {
             connection: Rc::new(RefCell::new(connection)),
             lock,
+            lock_path,
+            lock_identity,
             path,
             path_identity,
             namespace,
@@ -686,7 +719,8 @@ impl SqlitePendingNonceAuthorityV0 {
     }
 
     fn ensure_identity(&self) -> Result<(), TxAdmissionWalErrorV0> {
-        ensure_identity_v0(&self.path, self.path_identity)
+        ensure_identity_v0(&self.path, self.path_identity)?;
+        ensure_open_lock_identity_v0(&self.lock_path, self.lock_identity, &self.lock)
     }
 
     fn reserve_record<E: ?Sized>(
@@ -720,6 +754,8 @@ impl SqlitePendingNonceAuthorityV0 {
             return Ok(SqlitePendingNonceReservationV0 {
                 connection: Rc::clone(&self.connection),
                 _lock: Rc::clone(&self.lock),
+                lock_path: self.lock_path.clone(),
+                lock_identity: self.lock_identity,
                 path: self.path.clone(),
                 path_identity: self.path_identity,
                 namespace: self.namespace,
@@ -769,6 +805,8 @@ impl SqlitePendingNonceAuthorityV0 {
         Ok(SqlitePendingNonceReservationV0 {
             connection: Rc::clone(&self.connection),
             _lock: Rc::clone(&self.lock),
+            lock_path: self.lock_path.clone(),
+            lock_identity: self.lock_identity,
             path: self.path.clone(),
             path_identity: self.path_identity,
             namespace: self.namespace,
@@ -798,6 +836,8 @@ struct SqlitePendingNonceReservationV0 {
     // Retain the sidecar lock while this token is alive, even if the authority
     // value itself is moved or dropped by its caller.
     _lock: Rc<File>,
+    lock_path: PathBuf,
+    lock_identity: PathIdentityV0,
     path: PathBuf,
     path_identity: PathIdentityV0,
     namespace: [u8; 32],
@@ -806,18 +846,19 @@ struct SqlitePendingNonceReservationV0 {
 }
 
 impl SqlitePendingNonceReservationV0 {
+    fn ensure_identity(&self) -> Result<(), AdmissionReject> {
+        ensure_identity_v0(&self.path, self.path_identity)
+            .and_then(|()| {
+                ensure_open_lock_identity_v0(&self.lock_path, self.lock_identity, &self._lock)
+            })
+            .map_err(|_| AdmissionReject::InconsistentState)
+    }
+
     fn transition(&mut self, target_state: i64) -> Result<(), AdmissionReject> {
         if self.state == target_state {
             return Ok(());
         }
-        let metadata =
-            fs::symlink_metadata(&self.path).map_err(|_| AdmissionReject::InconsistentState)?;
-        if metadata.file_type().is_symlink()
-            || !metadata.is_file()
-            || PathIdentityV0::from_metadata(&metadata) != self.path_identity
-        {
-            return Err(AdmissionReject::InconsistentState);
-        }
+        self.ensure_identity()?;
         let mut connection = self
             .connection
             .try_borrow_mut()
@@ -874,9 +915,7 @@ impl SqlitePendingNonceReservationV0 {
         transaction
             .commit()
             .map_err(|_| AdmissionReject::InconsistentState)?;
-        if ensure_identity_v0(&self.path, self.path_identity).is_err() {
-            return Err(AdmissionReject::InconsistentState);
-        }
+        self.ensure_identity()?;
         self.state = target_state;
         Ok(())
     }
@@ -1023,6 +1062,28 @@ mod tests {
         }
         let _ = fs::remove_file(format!("{}-wal", path.display()));
         let _ = fs::remove_file(format!("{}-shm", path.display()));
+    }
+
+    #[cfg(unix)]
+    fn replace_lock_path_for_test(path: &Path) -> PathBuf {
+        use std::os::unix::fs::OpenOptionsExt;
+
+        let lock_path = lock_path_v0(path).unwrap();
+        let moved_path = lock_path.with_file_name(format!(
+            "{}.moved-{}",
+            lock_path.file_name().unwrap().to_string_lossy(),
+            NEXT_PATH_V0.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::rename(&lock_path, &moved_path).unwrap();
+        let mut options = OpenOptions::new();
+        options
+            .read(true)
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+        options.open(&lock_path).unwrap();
+        moved_path
     }
 
     fn seed_row(path: &Path, namespace: [u8; 32], state: i64) {
@@ -1194,6 +1255,50 @@ mod tests {
             map_insert_error_v0(rusqlite::Error::InvalidQuery),
             TxAdmissionWalErrorV0::Sqlite
         );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn lock_path_replacement_fails_closed_for_authority_and_reservation() {
+        let path = temp_path();
+        let envelope = fixture();
+        let mut authority = SqlitePendingNonceAuthorityV0::open(&path, [0xAB; 32]).unwrap();
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut hooks = Hooks;
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &envelope,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = gate.pop_ready_with_lifecycle().expect("ready candidate");
+        let moved_path = replace_lock_path_for_test(&path);
+
+        assert_eq!(
+            ensure_open_lock_identity_v0(
+                &lock_path_v0(&path).unwrap(),
+                authority.lock_identity,
+                &authority.lock,
+            )
+            .unwrap_err(),
+            TxAdmissionWalErrorV0::PathReplaced
+        );
+        assert_eq!(
+            authority.retained_rows().unwrap_err(),
+            TxAdmissionWalErrorV0::PathReplaced
+        );
+        assert_eq!(
+            ready.handoff().unwrap_err(),
+            AdmissionReject::InconsistentState
+        );
+
+        drop(ready);
+        drop(authority);
+        cleanup(&path);
+        let _ = fs::remove_file(moved_path);
     }
 
     #[test]
