@@ -179,7 +179,7 @@ enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Sign exact UTF-8 text with Ed25519 using the development-only local wallet
+    /// Sign a domain-framed UTF-8 text preimage with Ed25519 using the development-only local wallet
     Sign {
         #[arg(long, default_value = "default")]
         name: String,
@@ -5270,7 +5270,7 @@ mod tests {
         let wallet_help = String::from_utf8(wallet_help).expect("utf8 wallet help");
         assert!(wallet_help.contains("Create a new local wallet"));
         assert!(wallet_help.contains(
-            "Sign exact UTF-8 text with Ed25519 using the development-only local wallet"
+            "Sign a domain-framed UTF-8 text preimage with Ed25519 using the development-only local wallet"
         ));
         assert!(!wallet_help.contains("MVP placeholder"));
         assert!(!wallet_help.contains("MVP deterministic signature"));
