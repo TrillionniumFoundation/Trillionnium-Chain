@@ -5127,6 +5127,19 @@ fn reconfirm_phase_neutral_exact_high_qc_v0<W: ExternalMonotonicWatermarkV0>(
     proposal_journal: &PocoNodeLabProposalJournalConfigV0,
     live_proposal_validation_store: Option<&mut SqliteProposalValidationStoreV0>,
 ) -> Result<(), PocoNodeLabAuthorityErrorV0> {
+    // This audit is a paired P/K read, not merely a Core certificate check.
+    // Keep the authority root exclusively locked before the first durable
+    // read (Safety/signer/checkpoint/application) and through the terminal K
+    // join.  Without this fence a cooperating writer could move P or K after
+    // the initial head read but before `require_fresh_checkpoint_application_join_v0`
+    // reopens/authenticates the selected row, making the replay decision a
+    // split-store snapshot.  Pass the held guard through the join helper so
+    // it does not recursively acquire the same OS lock.
+    let cross_store_lock = CrossStoreLockGuardV0::acquire_exclusive_for_paths_v0(
+        application.path(),
+        &proposal_journal.store_path,
+    )
+    .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     certificate
         .verify(core.config().validator_set(), &StrictEd25519Verifier)
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
@@ -5185,8 +5198,11 @@ fn reconfirm_phase_neutral_exact_high_qc_v0<W: ExternalMonotonicWatermarkV0>(
         application_head,
         pending_executions,
         live_proposal_validation_store,
-        None,
+        Some(&cross_store_lock),
     )?;
+    cross_store_lock
+        .validate_identity_v0()
+        .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
     Ok(())
 }
 
