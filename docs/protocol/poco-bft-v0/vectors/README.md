@@ -2,6 +2,14 @@
 
 Status: **partial P0 conformance evidence**
 
+The decoder taxonomy has an additional bounded cross-check:
+`schema/decoder-error-registry-reference-v0.json` is an independently curated
+52-code/scope/class manifest.  `scripts/ci/check_poco_bft_v0_registry_reference.sh`
+compares the generated registry with that manifest and runs deterministic drift
+mutations.  This catches synchronized Rust/schema/registry edits, but it is
+only registry-drift evidence; it is not a second complete CEV0 implementation
+or an independent protocol review.
+
 The committed vectors in this directory are reconstructed by implementations
 that do not call the Rust consensus crates:
 

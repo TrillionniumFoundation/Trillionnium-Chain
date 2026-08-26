@@ -222,6 +222,7 @@ jobs:
           python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
           bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
           bash ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+          bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
 
       - name: Machine-readable schema and exact-parser gates
         working-directory: trillionnium-chain

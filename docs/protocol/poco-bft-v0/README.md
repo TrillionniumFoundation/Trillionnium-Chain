@@ -158,6 +158,7 @@ Current local development gates are:
 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
 ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
 ./scripts/ci/check_poco_bft_v0_registry.sh
+./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test
 ./scripts/ci/check_poco_bft_v0_logical_schema.sh
 ./scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
 ./scripts/ci/check_poco_bft_v0_handoff_vectors.sh
@@ -216,6 +217,13 @@ with required failing mutants. The proto gate compiles a descriptor for
 transport schemas; it does not make protobuf the
 signed encoding or replace strict semantic validation. Passing these partial
 gates does not satisfy the complete P0 exit criteria above.
+
+The generated decoder registry is also compared with the separately curated
+`schema/decoder-error-registry-reference-v0.json` manifest. This bounded
+cross-language check catches a Rust/schema/generated-artifact change that would
+otherwise move all generated inputs together. It remains registry-drift
+evidence only and does not replace a complete second implementation, an
+external protocol review, or a cryptographic replay corpus.
 
 The exact finalized cutoff-header relation and complete Consumption
 Certificate logical wire/cryptographic-admission kernel are closed as B2-H1.

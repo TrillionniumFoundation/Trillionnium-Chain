@@ -8,6 +8,9 @@ WORKFLOW_TRIGGER_TRUTH="$ROOT/scripts/ci/check_poco_bft_v0_workflow_trigger_trut
 POCO_REGISTRY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_registry.sh"
 POCO_REGISTRY_CHECKER="$ROOT/scripts/ci/check_poco_bft_v0_registry.py"
 POCO_REGISTRY_ARTIFACT="$ROOT/docs/protocol/poco-bft-v0/schema/decoder-error-registry-v0.json"
+POCO_REGISTRY_REFERENCE_GATE="$ROOT/scripts/ci/check_poco_bft_v0_registry_reference.sh"
+POCO_REGISTRY_REFERENCE_CHECKER="$ROOT/scripts/ci/check_poco_bft_v0_registry_reference.py"
+POCO_REGISTRY_REFERENCE_ARTIFACT="$ROOT/docs/protocol/poco-bft-v0/schema/decoder-error-registry-reference-v0.json"
 CI_RUNNER_POLICY="$ROOT/scripts/check_ci_runner_policy.sh"
 LEGACY_WORKFLOW="$ROOT/.github/workflows/rust-l1-testnet-preflight.yml"
 RECOVERY_GATE="$ROOT/scripts/ci/check_poco_bft_v0_recovery_smoke.sh"
@@ -237,6 +240,9 @@ for required in \
   "$POCO_REGISTRY_GATE" \
   "$POCO_REGISTRY_CHECKER" \
   "$POCO_REGISTRY_ARTIFACT" \
+  "$POCO_REGISTRY_REFERENCE_GATE" \
+  "$POCO_REGISTRY_REFERENCE_CHECKER" \
+  "$POCO_REGISTRY_REFERENCE_ARTIFACT" \
   "$CI_RUNNER_POLICY" \
   "$LEGACY_WORKFLOW" \
   "$RECOVERY_GATE" \
@@ -301,6 +307,9 @@ require_tracked "$WORKFLOW_TRIGGER_TRUTH"
 require_tracked "$POCO_REGISTRY_GATE"
 require_tracked "$POCO_REGISTRY_CHECKER"
 require_tracked "$POCO_REGISTRY_ARTIFACT"
+require_tracked "$POCO_REGISTRY_REFERENCE_GATE"
+require_tracked "$POCO_REGISTRY_REFERENCE_CHECKER"
+require_tracked "$POCO_REGISTRY_REFERENCE_ARTIFACT"
 require_tracked "$CI_RUNNER_POLICY"
 require_tracked "$MEMPOOL_CARGO"
 require_tracked "$MEMPOOL_TYPED_ADMISSION_SOURCE"
@@ -449,6 +458,8 @@ require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh'
 require_literal "$POCO_WORKFLOW" \
   'bash ./scripts/ci/check_poco_bft_v0_registry.sh'
+require_literal "$POCO_WORKFLOW" \
+  'bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test'
 require_literal "$CI_RUNNER_POLICY" 'poco_bft_trust_guard='
