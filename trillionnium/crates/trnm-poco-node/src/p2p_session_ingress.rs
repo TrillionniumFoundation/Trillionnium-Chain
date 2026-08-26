@@ -2365,9 +2365,11 @@ mod tests {
 
     #[test]
     fn replay_anchor_remains_candidate_only() {
-        assert!(P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0);
-        assert!(!P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0);
-        assert!(!P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0);
+        const {
+            assert!(P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0);
+            assert!(!P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0);
+            assert!(!P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0);
+        }
     }
 
     #[test]
