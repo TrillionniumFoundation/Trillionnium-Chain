@@ -418,6 +418,18 @@ downstream gate inherits completion from an incomplete predecessor.
   creates no startup, GenesisQC, or activation authority; source readers,
   target-manifest/JMT replay, dual authority and cross-peer rehearsal remain
   open.
+- The target-manifest replay boundary is now split by type: the existing
+  digest-only `PocoTargetProjectionVerifierV1` path remains available only for
+  projections whose manifest preimage is not present, while
+  `PocoTargetProjectionManifestVerifierV1` is required by
+  `verify_with_manifest_v1` and receives the complete typed manifest during
+  native-root recomputation (validator-set, protocol, application-schema,
+  runtime profile and initial-root coordinates). This prevents a digest-only
+  callback from being silently reused for a typed JMT replay. The
+  `trnm-consensus-types` suite remains 161/161 with clippy clean; this is still
+  an importer-owned callback seam, not a concrete JMT implementation or
+  source/export reader, and all migration/production/network activation flags
+  remain false.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root
