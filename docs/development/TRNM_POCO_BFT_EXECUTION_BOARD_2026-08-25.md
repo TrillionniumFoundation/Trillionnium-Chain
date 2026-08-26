@@ -240,6 +240,20 @@ downstream gate inherits completion from an incomplete predecessor.
   The helper returns borrowed opaque body bytes only: nested semantic CEV0
   decoding, authenticated peer context, real P2P ingress, independent wire
   conformance and a second implementation remain open.
+- `194ba333f` adds a deterministic totality gate for that preflight: every
+  strict truncation, every single-byte replacement in the canonical frame,
+  fixed xorshift corpus, and oversized/unsupported boundary cases are checked
+  for no-panic fail-closed behavior. Successful results are asserted to retain
+  only bounded borrowed slices into the input. The reproducible CI script and
+  workflow step pass; this is not a long-running libFuzzer campaign or a
+  second implementation.
+- `93d902934` adds a candidate node-owned `SyncInfo` ingress fence on top of
+  the outer preflight. It binds genesis/chain/protocol/epoch/validator-set/
+  parameter hashes, sender identity, body kind, caller-supplied nested body
+  semantic hash, and a strictly increasing sender sequence before returning a
+  borrowed frame token. Mainline node tests are 108/108 with clippy and
+  all-features check clean; no nested SyncInfo decoder, Core input, P2P lease,
+  durable restart replay, or production activation is provided.
 
 ## 2. Gate board
 
@@ -458,8 +472,10 @@ downstream gate inherits completion from an incomplete predecessor.
 2. `wire_conformance=false`; the new outer `WireEnvelope` preflight is bounded
    and strict, but nested semantic decoders, authenticated peer context,
    runtime ingress, independent wire conformance, and the remaining epoch,
-   evidence, upgrade, light-client and weighted-TC limits are open. CEV0 must
-   be bounded by validator-set, CPU, bytes, signature count and admission
+   evidence, upgrade, light-client and weighted-TC limits are open. The
+   deterministic mutation gate proves totality for a fixed corpus only; real
+   libFuzzer coverage and a second implementation remain open. CEV0 must be
+   bounded by validator-set, CPU, bytes, signature count and admission
    budgets.
 3. Candidate source-of-truth closure is now clean and the decoder registry is
    generated/gated on this branch. Independent CI reproduction, workspace/old
@@ -505,7 +521,10 @@ downstream gate inherits completion from an incomplete predecessor.
    candidate-only; ordinary startup stays fail-closed. CLI transfer/receipt
    paths remain development-only shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
-   durable mempool replay, state sync or native RPC/indexer path.
+   durable mempool replay, state sync or native RPC/indexer path. The new
+   `SyncInfo` ingress fence is only a process-local borrowed-token seam; it
+   does not establish peer leases, nested state-sync semantics, Core effects,
+   or restart-safe sequence replay.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
    clock-skew or long-soak evidence; current G3 ledger remains false.
 5. K/P dual-store audit now takes a descriptor-bound shared lock for the final
