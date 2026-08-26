@@ -72,11 +72,11 @@ the only starting point for a gate run; a local plan copy is an audit input.
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
 - The cumulative candidate source head immediately preceding this revision is
-  `a69618f7ae257e202f42e496d0aae40fdf48c151` (tree
-  `af02ebf4deb7eb6f766598e85a9316a75363b097`). It retains the real-process G1
+  `236a7b50b546caafe9228f056f1697493d14d600` (tree
+  `0070fde2b67394f3a122345dd664367b3c0557d5`). It retains the real-process G1
   fixture, native receipt binding, WAL restart/schema checks, semantic-wire
   mutation evidence and strict nested candidate signatures from
-  `dff1ac5b6`, then adds five separately tested source tranches:
+  `dff1ac5b6`, then adds the following separately tested source tranches:
   `d73ac583e` separates Core's one-shot Safety replay fence from simulator-local
   QC/TC fetch recovery; `a73b606e8` fsyncs genesis and H1 TrustedBase durable
   transitions and requires idempotent retries to re-establish the same fence;
@@ -94,7 +94,11 @@ the only starting point for a gate run; a local plan copy is an audit input.
   cutover, or node-start capability. `a69618f7a` additionally requires the
   source validator set and QC signer list to be strictly ordered by validator
   ID, with unsorted and duplicate negatives; this removes witness-order
-  ambiguity but remains an offline candidate check.
+  ambiguity but remains an offline candidate check. `236a7b50b` rejects an
+  exact-schema application file with a missing metadata singleton unless both
+  durable P and H1 inventories are empty, on both reopen and live initialize;
+  this closes the residual-inventory-as-virgin ambiguity while leaving the
+  indistinguishable all-empty rollback case to external anti-rollback.
   These surfaces remain candidate-only and do not supply a production effect
   driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
   Node/Core/Safety authority, or production activation.
@@ -146,7 +150,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`a69618f7a`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`236a7b50b`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1907,7 +1911,7 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current cumulative source head is `a69618f7a`. Its candidate tranches have
+current cumulative source head is `236a7b50b`. Its candidate tranches have
 reproducible local tests, but none of those tests is a signed gate exit. The
 remaining blockers are concrete engineering boundaries:
 
@@ -1926,7 +1930,10 @@ remaining blockers are concrete engineering boundaries:
    schema with empty metadata/P/H1 inventory; any partial inventory fails
    closed. These are software/process results only;
    `power_loss_fsync_matrix` remains `NOT_EVALUATED`, the 100,000-block corpus
-   has not run, and no whole-node anti-rollback assertion is promoted.
+   has not run, and no whole-node anti-rollback assertion is promoted. The
+   additional metadata-missing/P-or-H1-residual negative is now covered in
+   both live initialize and reopen; a metadata-missing all-empty image remains
+   indistinguishable from a genuinely virgin file without an external anchor.
 3. **G2.0 authenticated nested transport:** semantic wire parsing checks
    scope/shape/bounds/roots, and P2P candidate verifies the outer session frame
    plus nested Vote/TimeoutVote/QC/TC signatures. An opt-in private anchor now
