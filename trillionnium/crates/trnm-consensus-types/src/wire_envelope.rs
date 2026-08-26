@@ -866,6 +866,9 @@ mod tests {
         assert!(value.message_id().len() <= MAX_PROTOBUF_WIRE_MESSAGE_ID_BYTES_V0);
         assert!(!value.body().is_empty());
         assert!(value.body().len() <= MAX_PROTOBUF_WIRE_BODY_BYTES_V0);
+        if let Some(hash) = value.body_semantic_hash() {
+            assert_eq!(hash.len(), HASH_BYTES);
+        }
         assert!(ChainId::from_bytes(value.chain_id()).is_ok());
 
         // A successful preflight only returns borrowed slices into its input.
@@ -889,6 +892,13 @@ mod tests {
                 .checked_add(slice.len())
                 .expect("borrowed slice range does not overflow");
             assert!(slice_start >= start && slice_end <= end);
+        }
+        if let Some(hash) = value.body_semantic_hash() {
+            let hash_start = hash.as_ptr() as usize;
+            let hash_end = hash_start
+                .checked_add(hash.len())
+                .expect("borrowed semantic-hash range does not overflow");
+            assert!(hash_start >= start && hash_end <= end);
         }
 
         match (value.body_kind(), value.consensus_message_kind()) {
