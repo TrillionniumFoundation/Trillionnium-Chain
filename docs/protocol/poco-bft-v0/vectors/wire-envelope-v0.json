@@ -1,0 +1,80 @@
+{
+  "schema": "trnm_poco_bft_wire_envelope_reference_v0",
+  "schema_version": 0,
+  "status": "bounded-reference-only",
+  "wire_conformance": false,
+  "activation": false,
+  "canonical_codec": "protobuf3-wire-envelope-v0",
+  "canonical_frame_length": 193,
+  "canonical_frame_sha256": "d1638f7b5ef9c6e6db15997aa8cbe7850b785cbf09c17dfe646af315c5cb0073",
+  "canonical_frame_hex": "080010001a200101010101010101010101010101010101010101010101010101010101010101220e74726e6d2d776972652d74657374280030003800422002020202020202020202020202020202020202020202020202020202020202024a2003030303030303030303030303030303030303030303030303030303030303035001580060016a2004040404040404040404040404040404040404040404040404040404040404047210050505050505050505050505050505057800820202aabb",
+  "canonical_fields": {
+    "schema_version": 0,
+    "wire_version": 0,
+    "genesis_hash_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+    "chain_id": "trnm-wire-test",
+    "protocol_version": 0,
+    "epoch": 0,
+    "view": 0,
+    "validator_set_hash_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+    "consensus_parameters_hash_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+    "has_consensus_message_kind": true,
+    "consensus_message_kind": 0,
+    "body_kind": 1,
+    "sender_node_id_hex": "0404040404040404040404040404040404040404040404040404040404040404",
+    "message_id_hex": "05050505050505050505050505050505",
+    "sender_sequence": 0,
+    "body_semantic_hash_hex": null,
+    "body_field": 32,
+    "body_hex": "aabb"
+  },
+  "limits": {
+    "max_body_bytes": 8388608,
+    "max_envelope_bytes": 8389632,
+    "max_sender_node_id_bytes": 32,
+    "max_message_id_bytes": 64,
+    "max_chain_id_bytes": 128
+  },
+  "mutation_contract": {
+    "strict_prefix_algorithm": "every_length_0_through_frame_length_minus_1",
+    "strict_prefix_outcome_sha256": "d97bfc92f4328976c69b0a9001ef430be41ff712a3888f5c6aca2ec1ff804933",
+    "single_byte_replacements": {
+      "mode": "every_byte_every_u8",
+      "expected_accepted": 38346,
+      "expected_rejected": 11062,
+      "outcome_sha256": "09b4f8e015361655b1130294d7cb2604e35473db2f2050f2dec601f3236800b8"
+    },
+    "fixed_random": {
+      "algorithm": "xorshift64_triplet",
+      "seed_hex": "54524e4d50524546",
+      "cases": 1024,
+      "max_length_exclusive": 192,
+      "expected_accepted": 0,
+      "expected_rejected": 1024,
+      "outcome_sha256": "537ff7561fe7dd859c76a7dbc0a4877d5d9267aab6e05222fb2cd64490ae1623"
+    },
+    "boundary_outcomes": {
+      "oversized_envelope": "envelope_too_large"
+    }
+  },
+  "targeted_mutations": [
+    {"id": "unknown_field", "expected_code": "unknown_field"},
+    {"id": "duplicate_field", "expected_code": "duplicate_field"},
+    {"id": "body_kind_mismatch", "expected_code": "body_kind_mismatch"},
+    {"id": "noncanonical_key_varint", "expected_code": "noncanonical_varint"},
+    {"id": "unsupported_wire_type", "expected_code": "unsupported_wire_type"},
+    {"id": "invalid_chain_id", "expected_code": "invalid_chain_id"},
+    {"id": "zero_genesis_hash", "expected_code": "invalid_value"},
+    {"id": "invalid_body_kind", "expected_code": "invalid_body_kind"},
+    {"id": "invalid_message_kind", "expected_code": "invalid_consensus_message_kind"},
+    {"id": "message_kind_presence_false", "expected_code": "invalid_consensus_message_kind"},
+    {"id": "zero_sender_node_id", "expected_code": "invalid_value"},
+    {"id": "empty_message_id", "expected_code": "invalid_value"},
+    {"id": "empty_oneof_body", "expected_code": "invalid_value"},
+    {"id": "duplicate_oneof_body", "expected_code": "duplicate_field"},
+    {"id": "missing_body", "expected_code": "missing_field"},
+    {"id": "bad_semantic_hash_length", "expected_code": "invalid_value"},
+    {"id": "oversized_body_length", "expected_code": "field_too_large"}
+  ],
+  "scope": "Outer protobuf shape and bounded admission only; nested CEV0, authenticated P2P, signatures, wire_conformance, and activation remain out of scope."
+}

@@ -21,6 +21,14 @@ that do not call the Rust consensus crates:
   an empty payload, a complete common consensus context, one block header and
   block ID, proposal/vote/timeout signing roots, and a validator-set hash. It
   is checked by `scripts/ci/check_poco_bft_v0_wire_vectors.py`.
+- `wire-envelope-v0.json` freezes one canonical bounded protobuf
+  `WireEnvelope` frame and its independently reconstructed outer admission
+  projection. `scripts/ci/check_poco_bft_v0_wire_reference.sh` is a
+  standard-library-only second implementation: it re-encodes the frame and
+  runs every strict truncation, every single-byte replacement, a fixed
+  xorshift corpus, and bounded malformed/oversized cases. This is only an
+  outer-frame reference slice; nested CEV0 decoding, authenticated P2P,
+  `wire_conformance`, and activation remain false.
 - `ed25519-v0.json` freezes an RFC 8032 public key and signature over the
   foundation vote root, plus wrong-root, mutated-signature, undecodable-key,
   and small-order-key rejection cases. The exact bytes are reproduced by
