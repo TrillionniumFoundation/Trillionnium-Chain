@@ -144,10 +144,17 @@ downstream gate inherits completion from an incomplete predecessor.
   This narrows pathname TOCTOU exposure only and does not prove SQLite
   cross-database atomicity, fsync/power-loss recovery, or adoption by every
   external writer.
+- `ec788a500` closes the remaining un-fenced prefix in the phase-neutral
+  paired-QC replay path: the P/K exclusive root lock is acquired before the
+  first Safety/signer/checkpoint/application read, held through the K join, and
+  its descriptor/path identity is rechecked before returning the inert owner.
+  Mainline `trnm-poco-node` tests pass 105/105 without the lab feature and
+  115/115 with `lab-validator-runtime`; this remains an advisory cooperating
+  writer fence, not cross-database atomicity or power-loss recovery.
 - The live Core application-finalization receipt path now checks the exact
   ancestor-ordered queue front before mutating state (`567d24aeb`). Empty or
   replaced queue fronts return `UnexpectedFinalizationAck` transactionally;
-  two negative tests and the 223-test Core library suite pass. This tightens
+  two negative tests and the 224-test Core library suite pass. This tightens
   an execution boundary only; authoritative Core/SafetyRules integration and
   crash/replay equivalence remain open.
 - `2ffbb40bd` adds a single Core Vote/Timeout transition-install boundary:
@@ -157,6 +164,12 @@ downstream gate inherits completion from an incomplete predecessor.
   transition is rejected transactionally. The Core library suite is now
   223/223; this remains a legacy/shadow Core slice, not a live signer/effect
   driver.
+- `91084c081` requires a live durable replay fence before Core accepts a
+  `SafetyReplayComplete` effect. A repeated caller completion without an
+  outstanding replay is rejected transactionally, so it cannot mint a second
+  startup timer or replace the one-shot replay transition. The Core suite is
+  now 224/224 plus 46 doctests and clippy is clean; the surrounding Core and
+  SafetyRules ownership is still not authoritative production consensus.
 - `5994d07e8` adds an explicit ignored long-horizon SafetyRules test. Two
   independent kernel executions inside the release test over 100,000
   genesis-anchored Vote/Timeout views produce byte-identical traces, final
@@ -192,12 +205,12 @@ downstream gate inherits completion from an incomplete predecessor.
 - `4d30c44ce` enforces the authenticated validator-set aggregate-TC ceiling
   before nested QC/TC allocation in every budgeted certified-header, finality,
   checkpoint, and ordinary/trusted decode path. The consensus-types suite is
-  155/155 after the regression; wire conformance, fuzz coverage, and network
-  signing remain false.
+  now 159/159 after the outer-envelope additions; wire conformance, fuzz
+  coverage, and network signing remain false.
 - `bea0a5d5b` re-verifies the exact `FinalityProofV0` immediately before Core
   consumes an application-finalization acknowledgement. Invalid or substituted
   signatures leave the queue and Core state unchanged; the Core unit/doctest
-  suites (now 223/223 + 46 doctests) and clippy gate are green. Core/SafetyRules are still not the sole
+  suites (now 224/224 + 46 doctests) and clippy gate are green. Core/SafetyRules are still not the sole
   production authority.
 - `16cd45ee9` closes a drained-tag-3 recovery substitution: once the durable
   finalization queue is empty, recovery now requires the consumed transition
@@ -218,6 +231,15 @@ downstream gate inherits completion from an incomplete predecessor.
   `AmbiguousHandoff`. The same test rejects outer/receipt/index cardinality
   drift. This proves a candidate fail-closed readback seam, not a valid-proof
   Core/SafetyRules join or production CheckTx/effect-driver path.
+- `fec64bf86` plus the empty-oneof regression in `8d6712d6d` add a bounded,
+  allocation-free strict outer `WireEnvelope` protobuf preflight. It rejects
+  oversized frames/bodies, unknown or duplicate fields, non-canonical
+  varints, wrong wire types, missing scope, invalid body-kind/consensus-kind
+  relations, and present-but-empty oneof bodies before any nested decode. The
+  consensus-types suite is 159/159 (wire preflight 5/5) with clippy clean.
+  The helper returns borrowed opaque body bytes only: nested semantic CEV0
+  decoding, authenticated peer context, real P2P ingress, independent wire
+  conformance and a second implementation remain open.
 
 ## 2. Gate board
 
@@ -433,9 +455,12 @@ downstream gate inherits completion from an incomplete predecessor.
 
 1. No independent review of the complete protocol and remaining schema/vector
    corpus; formal/protobuf tooling is not reproducible on every workstation.
-2. `wire_conformance=false`; remaining epoch, evidence, network-envelope,
-   upgrade, light-client and weighted TC limits are open. CEV0 must be bounded
-   by validator-set, CPU, bytes, signature count and admission budgets.
+2. `wire_conformance=false`; the new outer `WireEnvelope` preflight is bounded
+   and strict, but nested semantic decoders, authenticated peer context,
+   runtime ingress, independent wire conformance, and the remaining epoch,
+   evidence, upgrade, light-client and weighted-TC limits are open. CEV0 must
+   be bounded by validator-set, CPU, bytes, signature count and admission
+   budgets.
 3. Candidate source-of-truth closure is now clean and the decoder registry is
    generated/gated on this branch. Independent CI reproduction, workspace/old
    dual-track wording and complete boundary metadata review remain open; all
@@ -443,10 +468,10 @@ downstream gate inherits completion from an incomplete predecessor.
 
 ### P1 — deterministic safety/core blockers
 
-1. The Core transition boundary now rejects detached Vote/Timeout transitions
-   and installs only a fully checked successor, but the surrounding Core and
-   SafetyRules remain prototypes/shadow evaluators rather than an authoritative
-   production signer owner.
+1. The Core transition boundary now rejects detached Vote/Timeout transitions,
+   and replay completion requires a live durable fence, but the surrounding
+   Core and SafetyRules remain prototypes/shadow evaluators rather than an
+   authoritative production signer owner.
 2. Pacemaker, complete epoch transition, checkpoint-scale catch-up, ordered
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
@@ -489,7 +514,9 @@ downstream gate inherits completion from an incomplete predecessor.
    lock, with mutual-exclusion and rename/recreate tests. H1 takeover now
    requires a derived common root, and process2 activation locks before its
    first paired read and validates identity at successful commit boundaries.
-   This is still an advisory cooperating-owner fence: every mutation path must
+   The phase-neutral paired replay path now acquires that exclusive fence before
+   its first durable read (`ec788a500`). This is still an advisory
+   cooperating-owner fence: every mutation path must
    adopt the exclusive hook before the cross-database atomicity blocker can
    close. `7e04803cf` additionally pins concrete child-file descriptors in the
    selected paired windows; fsync/power-loss, WAL/SHM and all-writer coverage
