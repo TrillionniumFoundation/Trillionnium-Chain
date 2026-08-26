@@ -867,7 +867,11 @@ fn validate_parent_v0(path: &Path) -> Result<&Path, TxAdmissionWalErrorV0> {
     Ok(parent)
 }
 
-fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErrorV0> {
+/// Validate the database path and report whether this invocation created the
+/// file.  The creation bit is part of the schema fail-closed boundary: an
+/// existing path with an empty/partial schema must never be mistaken for a
+/// virgin database and silently repaired by `CREATE TABLE IF NOT EXISTS`.
+fn ensure_regular_db_v0(path: &Path) -> Result<(PathIdentityV0, bool), TxAdmissionWalErrorV0> {
     validate_parent_v0(path)?;
     match fs::symlink_metadata(path) {
         Ok(metadata) => {
@@ -877,7 +881,7 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
             {
                 return Err(TxAdmissionWalErrorV0::InvalidPath);
             }
-            Ok(PathIdentityV0::from_metadata(&metadata))
+            Ok((PathIdentityV0::from_metadata(&metadata), false))
         }
         Err(error) if error.kind() == io::ErrorKind::NotFound => {
             let mut options = OpenOptions::new();
@@ -902,7 +906,7 @@ fn ensure_regular_db_v0(path: &Path) -> Result<PathIdentityV0, TxAdmissionWalErr
             {
                 return Err(TxAdmissionWalErrorV0::InvalidPath);
             }
-            Ok(PathIdentityV0::from_metadata(&metadata))
+            Ok((PathIdentityV0::from_metadata(&metadata), true))
         }
         Err(_) => Err(TxAdmissionWalErrorV0::Io),
     }
@@ -1011,6 +1015,15 @@ fn sqlite_schema_objects_v0(
     Ok(objects)
 }
 
+fn canonical_sqlite_schema_objects_v0(
+) -> Result<BTreeMap<(String, String), String>, TxAdmissionWalErrorV0> {
+    let canonical = Connection::open_in_memory().map_err(sqlite_error)?;
+    canonical
+        .execute_batch(SQLITE_SCHEMA_DDL_V0)
+        .map_err(sqlite_error)?;
+    sqlite_schema_objects_v0(&canonical)
+}
+
 /// Refuse an existing WAL whose schema is not byte-for-byte equivalent in
 /// SQLite's canonical schema catalog to the v0 authority schema.  Merely
 /// issuing `CREATE TABLE IF NOT EXISTS` is insufficient: an attacker or
@@ -1018,11 +1031,7 @@ fn sqlite_schema_objects_v0(
 /// key/unique constraints that make nonce and receipt lookup deterministic.
 /// The comparison runs before any authority-row read or mutation.
 fn validate_sqlite_schema_v0(connection: &Connection) -> Result<(), TxAdmissionWalErrorV0> {
-    let canonical = Connection::open_in_memory().map_err(sqlite_error)?;
-    canonical
-        .execute_batch(SQLITE_SCHEMA_DDL_V0)
-        .map_err(sqlite_error)?;
-    if sqlite_schema_objects_v0(connection)? != sqlite_schema_objects_v0(&canonical)? {
+    if sqlite_schema_objects_v0(connection)? != canonical_sqlite_schema_objects_v0()? {
         return Err(TxAdmissionWalErrorV0::SchemaMismatch);
     }
     Ok(())
@@ -1877,7 +1886,7 @@ impl SqlitePendingNonceAuthorityV0 {
             return Err(TxAdmissionWalErrorV0::InvalidNamespace);
         }
         let path = path.as_ref().to_path_buf();
-        let path_identity = ensure_regular_db_v0(&path)?;
+        let (path_identity, created_new) = ensure_regular_db_v0(&path)?;
         let (lock, lock_path, lock_identity) = open_lock_v0(&path)?;
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
@@ -1890,47 +1899,39 @@ impl SqlitePendingNonceAuthorityV0 {
         connection
             .busy_timeout(Duration::from_millis(750))
             .map_err(sqlite_error)?;
+        // Audit the catalog before enabling WAL or issuing any CREATE. An
+        // existing path with one authority table missing is not a fresh
+        // database; silently recreating that table would erase replay
+        // tombstones and permit nonce reuse. Only the file created by this
+        // invocation may start with an empty user schema.
+        let pre_schema = sqlite_schema_objects_v0(&connection)?;
+        let canonical_schema = canonical_sqlite_schema_objects_v0()?;
+        let pre_user_version: i64 = connection
+            .query_row("PRAGMA user_version", [], |row| row.get(0))
+            .map_err(sqlite_error)?;
+        if created_new {
+            if !pre_schema.is_empty() || pre_user_version != 0 {
+                return Err(TxAdmissionWalErrorV0::SchemaMismatch);
+            }
+        } else if pre_schema != canonical_schema || pre_user_version != SCHEMA_VERSION_V0 {
+            return Err(TxAdmissionWalErrorV0::SchemaMismatch);
+        }
         connection
             .execute_batch(
                 "PRAGMA journal_mode = WAL;
                  PRAGMA synchronous = FULL;
                  PRAGMA foreign_keys = ON;
-                 PRAGMA wal_autocheckpoint = 1;
-                 CREATE TABLE IF NOT EXISTS tx_admission_meta (
-                     singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
-                     schema_version INTEGER NOT NULL,
-                     namespace BLOB NOT NULL CHECK(length(namespace) = 32)
-                 );
-                 CREATE TABLE IF NOT EXISTS pending_nonce (
-                     namespace BLOB NOT NULL CHECK(length(namespace) = 32),
-                     signer BLOB NOT NULL CHECK(length(signer) = 32),
-                     nonce BLOB NOT NULL CHECK(length(nonce) = 8),
-                     digest BLOB NOT NULL CHECK(length(digest) = 32),
-                     body_digest BLOB NOT NULL CHECK(length(body_digest) = 32),
-                     fee_limit BLOB NOT NULL CHECK(length(fee_limit) = 16),
-                     max_gas BLOB NOT NULL CHECK(length(max_gas) = 8),
-                     max_bytes BLOB NOT NULL CHECK(length(max_bytes) = 8),
-                     state INTEGER NOT NULL CHECK(state IN (0, 1, 2, 3)),
-                     PRIMARY KEY(namespace, signer, nonce),
-                     UNIQUE(namespace, digest)
-                 );
-                 CREATE TABLE IF NOT EXISTS tx_commit_receipt_v0 (
-                     namespace BLOB NOT NULL CHECK(length(namespace) = 32),
-                     signer BLOB NOT NULL CHECK(length(signer) = 32),
-                     nonce BLOB NOT NULL CHECK(length(nonce) = 8),
-                     tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
-                     block_id BLOB NOT NULL CHECK(length(block_id) = 32),
-                     block_height BLOB NOT NULL CHECK(length(block_height) = 8),
-                     state_root BLOB NOT NULL CHECK(length(state_root) = 32),
-                     receipt_digest BLOB NOT NULL CHECK(length(receipt_digest) = 32),
-                     finality_proof_digest BLOB NOT NULL CHECK(length(finality_proof_digest) = 32),
-                     commitment BLOB NOT NULL CHECK(length(commitment) = 32),
-                     PRIMARY KEY(namespace, signer, nonce),
-                     UNIQUE(namespace, tx_digest)
-                 );
-                 PRAGMA user_version = 1;",
+                 PRAGMA wal_autocheckpoint = 1;",
             )
             .map_err(sqlite_error)?;
+        if created_new {
+            connection
+                .execute_batch(SQLITE_SCHEMA_DDL_V0)
+                .map_err(sqlite_error)?;
+            connection
+                .execute_batch("PRAGMA user_version = 1;")
+                .map_err(sqlite_error)?;
+        }
         let journal_mode: String = connection
             .query_row("PRAGMA journal_mode", [], |row| row.get(0))
             .map_err(sqlite_error)?;
@@ -1942,10 +1943,8 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
-        // `CREATE TABLE IF NOT EXISTS` above does not validate an existing
-        // same-named table.  Compare the complete non-internal schema before
-        // reading or mutating any authority rows so removed keys/constraints
-        // and injected triggers/views cannot become live admission state.
+        // Recheck after initialization to bind the exact schema that will be
+        // used by all subsequent authority-row reads and mutations.
         validate_sqlite_schema_v0(&connection)?;
         let persisted: Option<(i64, Vec<u8>)> = connection
             .query_row(
@@ -1963,6 +1962,12 @@ impl SqlitePendingNonceAuthorityV0 {
                 if stored_namespace.as_slice() != namespace {
                     return Err(TxAdmissionWalErrorV0::NamespaceMismatch);
                 }
+            }
+            None if !created_new => {
+                // An initialized path must retain its singleton metadata. A
+                // missing row is corruption, not an invitation to mint a new
+                // namespace over old nonce/receipt state.
+                return Err(TxAdmissionWalErrorV0::SchemaMismatch);
             }
             None => {
                 connection
@@ -3352,6 +3357,46 @@ mod tests {
             TxAdmissionWalErrorV0::SchemaMismatch
         );
         cleanup(&path);
+    }
+
+    #[test]
+    fn missing_wal_authority_table_is_rejected_without_schema_repair() {
+        // Each table is tested in a separate file so the assertion proves
+        // that an existing path is never treated as virgin after one
+        // authority object has been removed.
+        for (index, (table, drop_sql)) in [
+            ("tx_admission_meta", "DROP TABLE tx_admission_meta;"),
+            ("pending_nonce", "DROP TABLE pending_nonce;"),
+            ("tx_commit_receipt_v0", "DROP TABLE tx_commit_receipt_v0;"),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let path = temp_path();
+            let namespace = [0xAC + index as u8; 32];
+            let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+            drop(authority);
+
+            let connection = Connection::open(&path).unwrap();
+            connection.execute_batch(drop_sql).unwrap();
+            drop(connection);
+
+            assert_eq!(
+                SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+                TxAdmissionWalErrorV0::SchemaMismatch,
+                "removed {table} must not be recreated on restart"
+            );
+            let connection = Connection::open(&path).unwrap();
+            let still_missing: i64 = connection
+                .query_row(
+                    "SELECT COUNT(*) FROM sqlite_schema WHERE type = 'table' AND name = ?1",
+                    params![table],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            assert_eq!(still_missing, 0, "failed open must not repair {table}");
+            cleanup(&path);
+        }
     }
 
     #[test]
