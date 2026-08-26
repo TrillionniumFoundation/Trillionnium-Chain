@@ -1703,17 +1703,23 @@ impl DurableNativeApplicationV0 {
                 "h1_state_sync.metadata_cas",
             ));
         }
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("h1_before_commit");
         transaction.commit().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
                 "h1_state_sync.commit",
             )
         })?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("h1_before_fsync");
         sync_store_commit_boundary_named_v0(
             &self.path,
             "h1_state_sync.fsync",
             "h1_state_sync.directory_fsync",
         )?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("h1_after_fsync");
         fresh_confirm_h1_state_sync_trusted_base_v0(
             &self.path,
             &self.config,
@@ -1901,17 +1907,23 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                     "initialize.insert",
                 )
             })?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("initialize_before_commit");
         transaction.commit().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
                 "initialize.commit",
             )
         })?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("initialize_before_fsync");
         sync_store_commit_boundary_named_v0(
             &self.path,
             "initialize.fsync",
             "initialize.directory_fsync",
         )?;
+        #[cfg(test)]
+        park_for_sigkill_commit_boundary_v0("initialize_after_fsync");
         fresh_validate_v0(&self.path, &self.config)?;
         NativeApplicationGenesisResultV0::new(
             &request,
@@ -3901,8 +3913,10 @@ fn sqlite_sidecars_present_v0(path: &Path) -> DurableResult<bool> {
 /// process dies with a hot rollback journal. WAL/SHM images are intentionally
 /// not auto-recovered: they require a separate checkpoint/state-sync owner.
 /// The metadata page is dirtied and restored in one transaction so SQLite
-/// rolls back the hot journal and removes it atomically; all canonical store
-/// validation still runs on the immutable connection afterwards.
+/// rolls back the hot journal and removes it atomically. For the strict virgin
+/// pre-genesis case, the SQLite header is toggled and restored instead because
+/// no metadata singleton exists yet. All canonical store validation still runs
+/// on the immutable connection afterwards.
 fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
     let journal_path = sqlite_auxiliary_path_v0(path, "-journal");
     let wal_path = sqlite_auxiliary_path_v0(path, "-wal");
@@ -3939,19 +3953,102 @@ fn recover_sqlite_rollback_journal_v0(path: &Path) -> DurableResult<()> {
                 "sqlite.journal_recovery_transaction",
             )
         })?;
-    let original: Vec<u8> = transaction
+    let original: Option<Vec<u8>> = transaction
         .query_row(
             "SELECT durable_sequence FROM native_application_metadata_v0
              WHERE singleton=1",
             [],
             |row| row.get(0),
         )
+        .optional()
         .map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
                 "sqlite.journal_recovery_metadata",
             )
         })?;
+    let Some(original) = original else {
+        // A process can die during the very first genesis INSERT, before the
+        // metadata singleton exists. SQLite has already rolled the hot
+        // journal back while opening this writable connection; accept that
+        // state only when every canonical data table is still truly virgin.
+        // A missing metadata row alongside any P or H1 row is a mixed/corrupt
+        // cut and must never be normalized into a fresh store.
+        let p_count: i64 = transaction
+            .query_row(
+                "SELECT COUNT(*) FROM native_durable_execution_p_v0",
+                [],
+                |row| row.get(0),
+            )
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "sqlite.journal_recovery_inventory",
+                )
+            })?;
+        let h1_count: i64 = transaction
+            .query_row(
+                "SELECT COUNT(*) FROM native_h1_state_sync_trusted_base_v0",
+                [],
+                |row| row.get(0),
+            )
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "sqlite.journal_recovery_inventory",
+                )
+            })?;
+        if p_count != 0 || h1_count != 0 {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "sqlite.journal_recovery_inventory",
+            ));
+        }
+        // Force SQLite to complete the hot-journal rollback/cleanup even
+        // though the virgin store has no metadata row that can be toggled.
+        // `user_version` is outside the authenticated schema; restore its
+        // exact prior value in the same transaction before releasing it.
+        let user_version: u32 = transaction
+            .query_row("PRAGMA user_version", [], |row| row.get(0))
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "sqlite.journal_recovery_header",
+                )
+            })?;
+        let temporary_user_version = if user_version == u32::MAX {
+            0
+        } else {
+            user_version + 1
+        };
+        transaction
+            .execute(
+                &format!("PRAGMA user_version = {temporary_user_version}"),
+                [],
+            )
+            .and_then(|_| transaction.execute(&format!("PRAGMA user_version = {user_version}"), []))
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                    "sqlite.journal_recovery_header",
+                )
+            })?;
+        transaction.commit().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "sqlite.journal_recovery_commit",
+            )
+        })?;
+        drop(connection);
+        sync_store_commit_boundary_v0(path)?;
+        if journal_path.exists() {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "sqlite.journal_persisted",
+            ));
+        }
+        return Ok(());
+    };
     let temporary = if original == vec![0xff_u8; 8] {
         vec![0_u8; 8]
     } else {
@@ -6026,6 +6123,172 @@ mod tests {
         // parent test sends SIGKILL; reaching this line means the hook failed.
         let _ = application.commit_block(NativeApplicationCommitRequestV0::new(executed));
         panic!("SIGKILL child unexpectedly returned from the parked boundary");
+    }
+
+    /// Child-process entry point for the initialize SIGKILL matrix below.
+    /// The parent kills this process while the one-time genesis transaction is
+    /// either open, committed but not host-synced, or fully host-synced.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_initialize_boundary_child_v0() {
+        let Ok(path) = std::env::var("TRNM_NATIVE_EXECUTION_TEST_STORE") else {
+            return;
+        };
+        let config = config(STORE_A);
+        let request = genesis_request(&config);
+        let application = DurableNativeApplicationV0::open(PathBuf::from(path), config)
+            .expect("SIGKILL initialize child opens the empty store");
+        let _ = application.initialize(request);
+        panic!("SIGKILL initialize child unexpectedly returned from the parked boundary");
+    }
+
+    /// Child-process entry point for the h1 TrustedBase SIGKILL matrix below.
+    /// The request is rebuilt from the same frozen genesis inputs in the
+    /// parent and child; no serialized or caller-selected authority crosses
+    /// the process boundary.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_h1_boundary_child_v0() {
+        let Ok(path) = std::env::var("TRNM_NATIVE_EXECUTION_TEST_STORE") else {
+            return;
+        };
+        let config = config(STORE_A);
+        let parent = ApplicationHeadV0::new(
+            HeightV0::GENESIS,
+            BlockIdV0::new(INITIAL_BLOCK).unwrap(),
+            StateRootV0::new(config.initial_state_root).unwrap(),
+            ApplicationCommitIdV0::new(INITIAL_COMMIT).unwrap(),
+        );
+        let execution = execution_request(&config, &parent);
+        let request = NativeH1StateSyncTrustedBaseRequestV0::new([0xA1; 32], execution)
+            .expect("SIGKILL h1 child builds the exact genesis successor request");
+        let application = DurableNativeApplicationV0::open(PathBuf::from(path), config)
+            .expect("SIGKILL h1 child opens the initialized store");
+        let _ = application.install_h1_state_sync_trusted_base_v0(&request);
+        panic!("SIGKILL h1 child unexpectedly returned from the parked boundary");
+    }
+
+    /// Kill one child at a named test-only durability boundary and require it
+    /// to have reached the boundary marker first.  This helper intentionally
+    /// uses the same exact-test invocation as the existing commit matrix so a
+    /// future refactor cannot silently turn this into an in-process simulation.
+    #[cfg(unix)]
+    fn kill_sigkill_boundary_child_v0(path: &Path, stage: &str, marker: &Path, child_test: &str) {
+        let mut child = Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", child_test, "--nocapture"])
+            .env("TRNM_NATIVE_EXECUTION_TEST_KILL_STAGE", stage)
+            .env("TRNM_NATIVE_EXECUTION_TEST_KILL_MARKER", marker)
+            .env("TRNM_NATIVE_EXECUTION_TEST_STORE", path)
+            .spawn()
+            .expect("spawn SIGKILL durability child");
+        let deadline = Instant::now() + Duration::from_secs(10);
+        while !marker.exists() && Instant::now() < deadline {
+            thread::sleep(Duration::from_millis(10));
+        }
+        if !marker.exists() {
+            let _ = Command::new("kill")
+                .args(["-KILL", &child.id().to_string()])
+                .status();
+            let status = child.wait().expect("wait failed durability child");
+            panic!("SIGKILL child did not reach {stage}; status={status:?}");
+        }
+        let kill_status = Command::new("kill")
+            .args(["-KILL", &child.id().to_string()])
+            .status()
+            .expect("invoke kill -KILL for durability child");
+        assert!(kill_status.success(), "kill -KILL failed for {stage}");
+        let status = child.wait().expect("wait for SIGKILL durability child");
+        assert!(!status.success(), "SIGKILL child survived {stage}");
+    }
+
+    /// Exercise the three legal initialize crash cuts in a separate process:
+    /// before SQLite commit, after commit but before the explicit host sync,
+    /// and after host sync but before fresh readback.  Reopen must expose only
+    /// the exact genesis source/target (never a fabricated mixed state), and
+    /// repeated initialize calls must remain read-only/idempotent.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_initialize_boundaries_reopen_exactly_v0() {
+        const STAGES: [&str; 3] = [
+            "initialize_before_commit",
+            "initialize_before_fsync",
+            "initialize_after_fsync",
+        ];
+        for stage in STAGES {
+            let temporary = TempDir::new().unwrap();
+            let path = temporary.path().join("application.sqlite");
+            let expected_config = config(STORE_A);
+            let genesis = genesis_request(&expected_config);
+            let marker = temporary.path().join(format!("sigkill-{stage}.ready"));
+            kill_sigkill_boundary_child_v0(
+                &path,
+                stage,
+                &marker,
+                "durable::tests::sigkill_initialize_boundary_child_v0",
+            );
+
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A))
+                .expect("reopen after initialize SIGKILL");
+            let first = reopened
+                .initialize(genesis.clone())
+                .expect("initialize retry must converge to exact genesis");
+            let second = reopened
+                .initialize(genesis)
+                .expect("repeated initialize must be exact and idempotent");
+            assert_eq!(first.head(), second.head());
+            assert_eq!(first.head().height(), HeightV0::GENESIS);
+            let connection = open_immutable_connection_v0(&path).unwrap();
+            let metadata = load_metadata_v0(&connection, &expected_config).unwrap();
+            assert_eq!(metadata.durable_sequence, 1);
+            assert!(load_all_p_v0(&connection).unwrap().is_empty());
+            assert!(load_h1_state_sync_trusted_base_v0(&connection)
+                .unwrap()
+                .is_none());
+        }
+    }
+
+    /// Exercise the three legal h1 TrustedBase crash cuts in a separate
+    /// process and prove that retry/reopen yields one exact install.  This is
+    /// a software SIGKILL/SQLite rollback campaign; it deliberately makes no
+    /// claim about physical power-loss behavior or external CAS authority.
+    #[cfg(unix)]
+    #[test]
+    fn sigkill_h1_boundaries_reopen_exactly_v0() {
+        const STAGES: [&str; 3] = ["h1_before_commit", "h1_before_fsync", "h1_after_fsync"];
+        for stage in STAGES {
+            let temporary = TempDir::new().unwrap();
+            let (path, application, _head, execution) = initialized(&temporary);
+            let request = NativeH1StateSyncTrustedBaseRequestV0::new([0xA1; 32], execution)
+                .expect("build exact h1 request");
+            drop(application);
+            let marker = temporary.path().join(format!("sigkill-{stage}.ready"));
+            kill_sigkill_boundary_child_v0(
+                &path,
+                stage,
+                &marker,
+                "durable::tests::sigkill_h1_boundary_child_v0",
+            );
+
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A))
+                .expect("reopen after h1 SIGKILL");
+            let first = reopened
+                .install_h1_state_sync_trusted_base_v0(&request)
+                .expect("h1 retry must converge to exact TrustedBase");
+            let second = reopened
+                .install_h1_state_sync_trusted_base_v0(&request)
+                .expect("repeated h1 install must be exact and idempotent");
+            assert_eq!(first.head_v0(), second.head_v0());
+            assert_eq!(first.proof_id_v0(), [0xA1; 32]);
+            assert_eq!(first.install_sequence_v0(), 2);
+            let connection = open_immutable_connection_v0(&path).unwrap();
+            let metadata = load_metadata_v0(&connection, &config(STORE_A)).unwrap();
+            assert_eq!(metadata.durable_sequence, 2);
+            assert_eq!(metadata.head.height().get(), 1);
+            assert!(load_all_p_v0(&connection).unwrap().is_empty());
+            assert!(load_h1_state_sync_trusted_base_v0(&connection)
+                .unwrap()
+                .is_some());
+        }
     }
 
     /// Kill a separate process at each commit boundary and prove that reopen
