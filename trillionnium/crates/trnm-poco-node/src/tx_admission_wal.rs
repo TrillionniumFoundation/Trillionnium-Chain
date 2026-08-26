@@ -472,10 +472,10 @@ fn validate_native_readback_binding_v0(
     // per-transaction native receipt commitment.
     let mut matched_index = None;
     for (index, outer_bytes) in facts.outer_transactions.iter().enumerate() {
-        if outer_bytes.as_slice() == transaction.exact_outer_bytes() {
-            if matched_index.replace(index).is_some() {
-                return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
-            }
+        if outer_bytes.as_slice() == transaction.exact_outer_bytes()
+            && matched_index.replace(index).is_some()
+        {
+            return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
         }
     }
     let index = matched_index.ok_or(TxAdmissionWalErrorV0::CommitReceiptMismatch)?;
