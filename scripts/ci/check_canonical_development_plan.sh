@@ -65,6 +65,8 @@ python3 - "$ROOT" "$PLAN" "$PLAN_REL" "$MANIFEST" "$MANIFEST_REL" <<'PY'
 from pathlib import Path
 import hashlib
 import json
+import re
+import subprocess
 import sys
 import tomllib
 
@@ -83,10 +85,10 @@ if docs.get("development_plan_manifest") != "docs/development/plan-manifest-v1.t
     raise SystemExit("config authoritative_docs.development_plan_manifest is not canonical")
 if docs.get("development_evidence_contract") != "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md":
     raise SystemExit("config authoritative_docs.development_evidence_contract is not canonical")
-manifest = tomllib.loads((root / "docs/protocol/poco-ai-native-v1/spec-manifest.toml").read_text())
-if manifest.get("delivery_plan_path") != plan_rel:
+protocol_manifest = tomllib.loads((root / "docs/protocol/poco-ai-native-v1/spec-manifest.toml").read_text())
+if protocol_manifest.get("delivery_plan_path") != plan_rel:
     raise SystemExit("v1 manifest delivery_plan_path is not canonical")
-if plan_rel not in manifest.get("required_files", []):
+if plan_rel not in protocol_manifest.get("required_files", []):
     raise SystemExit("canonical plan is absent from v1 required_files")
 status = tomllib.loads((root / "docs/protocol/poco-ai-native-v1/status.toml").read_text())
 if not status.get("design_only") or status.get("implementation_status") != "not-implemented":
@@ -96,6 +98,59 @@ if manifest.get("plan_path") != plan_rel:
     raise SystemExit("plan manifest plan_path is not canonical")
 if manifest.get("manifest_version") != 1:
     raise SystemExit("unsupported plan manifest version")
+if manifest.get("plan_id") != "trnm-ai-native-blockchain-development-plan-v1":
+    raise SystemExit("plan manifest plan_id is not canonical")
+if manifest.get("canonical_ref") != "refs/heads/docs/chain-poco-bft-mainline-20260825":
+    raise SystemExit("plan manifest canonical_ref is not canonical")
+
+assessed_commit = manifest.get("assessed_commit")
+assessed_tree = manifest.get("assessed_tree")
+if not isinstance(assessed_commit, str) or re.fullmatch(r"[0-9a-f]{40}", assessed_commit) is None:
+    raise SystemExit("plan manifest assessed_commit is not a full lowercase Git object ID")
+if not isinstance(assessed_tree, str) or re.fullmatch(r"[0-9a-f]{40}", assessed_tree) is None:
+    raise SystemExit("plan manifest assessed_tree is not a full lowercase Git object ID")
+try:
+    actual_tree = subprocess.run(
+        ["git", "rev-parse", f"{assessed_commit}^{{tree}}"],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+except subprocess.CalledProcessError as error:
+    raise SystemExit("plan manifest assessed_commit is unavailable in this clone") from error
+if actual_tree != assessed_tree:
+    raise SystemExit(
+        f"plan manifest assessed_tree mismatch: declared={assessed_tree} actual={actual_tree}"
+    )
+ancestor = subprocess.run(
+    ["git", "merge-base", "--is-ancestor", assessed_commit, "HEAD"],
+    cwd=root,
+    check=False,
+    capture_output=True,
+)
+if ancestor.returncode != 0:
+    raise SystemExit("plan manifest assessed_commit is not an ancestor of HEAD")
+
+for path_key, digest_key in (
+    ("machine_truth_path", "machine_truth_sha256"),
+    ("protocol_manifest_path", "protocol_manifest_sha256"),
+    ("evidence_contract_path", "evidence_contract_sha256"),
+    ("toolchain_lock", "toolchain_lock_sha256"),
+):
+    relative = manifest.get(path_key)
+    declared = manifest.get(digest_key)
+    if not isinstance(relative, str) or not relative:
+        raise SystemExit(f"plan manifest {path_key} is missing")
+    bound = (root / relative).resolve()
+    if root.resolve() not in bound.parents or not bound.is_file():
+        raise SystemExit(f"plan manifest {path_key} is outside the repository or missing")
+    actual = hashlib.sha256(bound.read_bytes()).hexdigest()
+    if declared != actual:
+        raise SystemExit(
+            f"plan manifest {digest_key} mismatch: declared={declared} actual={actual}"
+        )
+
 plan_sha = hashlib.sha256(plan.read_bytes()).hexdigest()
 declared_sha = manifest.get("plan_sha256")
 if declared_sha != plan_sha:
@@ -120,5 +175,9 @@ for forbidden in (
 ):
     if forbidden in text:
         raise SystemExit(f"canonical plan contains an unsafe completion phrase: {forbidden}")
-print(f"canonical_development_plan=passed live_plan_count=1 stale_active_paths=0 plan_sha256={plan_sha}")
+print(
+    "canonical_development_plan=passed "
+    f"live_plan_count=1 stale_active_paths=0 plan_sha256={plan_sha} "
+    f"assessed_commit={assessed_commit} assessed_tree={assessed_tree} bound_inputs=4"
+)
 PY
