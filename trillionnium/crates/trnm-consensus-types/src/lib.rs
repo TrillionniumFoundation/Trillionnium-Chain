@@ -40,6 +40,7 @@ mod recovery;
 mod snapshot_candidate;
 mod timeout_v0;
 mod validator;
+mod wire_envelope;
 
 pub use anchor::{ContextAuthorizedQcV0, EpochAnchorQcV0, GenesisQcV0, QcReferenceV0};
 pub use block::{Block, BlockHeader, BlockKind};
@@ -183,6 +184,12 @@ pub use snapshot_candidate::{
 };
 pub use timeout_v0::{TimeoutCertificateV0, TimeoutEntryV0};
 pub use validator::{Validator, ValidatorSet, MAX_VALIDATORS};
+pub use wire_envelope::{
+    decode_wire_envelope_v0_preflight, WireBodyKindV0, WireEnvelopeDecodeError,
+    WireEnvelopeDecodeErrorCode, WireEnvelopePreflight, MAX_PROTOBUF_WIRE_BODY_BYTES_V0,
+    MAX_PROTOBUF_WIRE_ENVELOPE_BYTES_V0, MAX_PROTOBUF_WIRE_MESSAGE_ID_BYTES_V0,
+    MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0,
+};
 
 #[cfg(test)]
 extern crate std;
