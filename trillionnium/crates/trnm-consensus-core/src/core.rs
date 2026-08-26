@@ -6558,6 +6558,14 @@ impl Core {
         &self.safety
     }
 
+    /// Reports whether this live Core still owns the one-shot safety-ancestry
+    /// replay fence.  This is a read-only driver status signal: it grants no
+    /// replay, signer, timer, or networking authority and can only be cleared
+    /// by the authenticated `SafetyReplayComplete` transition.
+    pub const fn safety_replay_required_v0(&self) -> bool {
+        self.replay_required
+    }
+
     #[cfg(test)]
     pub(crate) fn observe_qc_for_test(
         &mut self,

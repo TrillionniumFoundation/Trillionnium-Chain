@@ -2312,6 +2312,38 @@ impl Simulator {
             return Ok(());
         }
 
+        // A duplicate event may still be queued after another exact receipt
+        // has advanced the application watermark.  Drop it only when both
+        // the acknowledged application chain and Core watermark prove this
+        // exact target; a pre-ack speculative map entry is not sufficient.
+        let target = proof.finalized_block().header();
+        let has_matching_receipt = self.nodes[node]
+            .pending_application_finalization_receipt
+            .as_ref()
+            .is_some_and(|receipt| *receipt.finalization() == proof);
+        let already_applied = self.nodes[node]
+            .applied
+            .get(&target.height())
+            .is_some_and(|block_id| *block_id == target.id())
+            && self.nodes[node]
+                .core
+                .as_ref()
+                .expect("current incarnation is online")
+                .safety_state()
+                .application_applied()
+                .height()
+                >= target.height();
+        if already_applied && !has_matching_receipt {
+            self.record(
+                "local-drop",
+                format!(
+                    "duplicate-finalization node={node} proof={}",
+                    hex_certificate(proof.id())
+                ),
+            );
+            return Ok(());
+        }
+
         if let Err(error) = self.prepare_simulated_finalization_receipt_v0(node, &proof) {
             if matches!(&error, SimError::Core(CoreError::Busy(_))) && attempt < MAX_EVENT_RETRIES {
                 self.record(
@@ -2442,6 +2474,34 @@ impl Simulator {
             .safety_state()
             .pending_finalization();
         if exact_front != Some(proof) {
+            // A retry/duplicate finalization event can remain in the event
+            // queue after the exact front was acknowledged by another
+            // idempotent carrier.  It is safe to discard only when the
+            // application watermark and its acknowledged chain both prove
+            // this exact target; every other mismatch remains fail-closed.
+            let target = proof.finalized_block().header();
+            let already_applied = self.nodes[node]
+                .applied
+                .get(&target.height())
+                .is_some_and(|block_id| *block_id == target.id())
+                && self.nodes[node]
+                    .core
+                    .as_ref()
+                    .expect("current incarnation is online")
+                    .safety_state()
+                    .application_applied()
+                    .height()
+                    >= target.height();
+            if already_applied {
+                self.record(
+                    "local-drop",
+                    format!(
+                        "duplicate-finalization node={node} proof={}",
+                        hex_certificate(proof.id())
+                    ),
+                );
+                return Ok(());
+            }
             return Err(SimError::InvalidConfig(
                 "queued finalization event is not the Core's exact authenticated front",
             ));
@@ -2677,6 +2737,89 @@ impl Simulator {
                 }
                 Err(error) => return Err(error.into()),
             }
+            return Ok(());
+        }
+
+        // `SafetyReplayComplete` belongs only to the Core-owned safety
+        // ancestry fence.  Standalone-QC and TC recovery sessions use the
+        // same simulator queue to fetch/validate bodies, but they do not set
+        // that fence; submitting the completion input for those sessions is
+        // now (correctly) rejected by Core.  Keep the two lifecycles
+        // separate: a safety request must still cross Core's one-shot fence,
+        // while a QC/TC request may close its simulator-local fetch session
+        // once all durable callbacks have drained.
+        let replay_request = self.nodes[node].replay_request;
+        let safety_replay_fenced = self.nodes[node]
+            .core
+            .as_ref()
+            .expect("current incarnation is online")
+            .safety_replay_required_v0();
+        if !safety_replay_fenced {
+            if matches!(replay_request, Some(ReplayRequest::Safety { .. })) {
+                return Err(SimError::Core(CoreError::InvalidRecovery(
+                    "simulator safety replay session lost its Core replay fence",
+                )));
+            }
+            // A validation result can leave one final persistence ACK in the
+            // event stream.  Do not release the local replay lifecycle (and
+            // do not gossip) before that durable boundary has completed.
+            let persistence_pending = self.queue.values().any(|event| {
+                matches!(
+                    event,
+                    Event::PersistAck {
+                        node: queued_node,
+                        incarnation: queued_incarnation,
+                        ..
+                    } if *queued_node == node && *queued_incarnation == incarnation
+                )
+            });
+            if persistence_pending {
+                if attempt < MAX_EVENT_RETRIES {
+                    self.schedule_after(
+                        1,
+                        Event::ReplayNext {
+                            node,
+                            incarnation,
+                            replay_generation,
+                            attempt: attempt + 1,
+                        },
+                    );
+                    return Ok(());
+                }
+                return Err(SimError::Core(CoreError::Busy(
+                    "replay-local completion is waiting for durable persistence",
+                )));
+            }
+            let pending_qc_sync = {
+                let core = self.nodes[node]
+                    .core
+                    .as_ref()
+                    .expect("current incarnation is online");
+                core.safety_state().pending_tc_high_qc_sync().is_some()
+                    || core.safety_state().pending_standalone_qc_sync().is_some()
+            };
+            self.nodes[node].advance_replay_generation()?;
+            self.nodes[node].replaying = false;
+            self.nodes[node].recovering = false;
+            self.nodes[node].replay_request = None;
+            self.nodes[node].replay_queue.clear();
+            self.nodes[node].replay_blocks.clear();
+            self.record("replay-complete", format!("node={node} mode=local-qc-sync"));
+            // A QC/TC target can legitimately remain unavailable after the
+            // locally retained ancestry has been replayed.  End this fetch
+            // session so network ingress is no longer held behind the restart
+            // fence, then let Core::Resume reissue its durable sync request.
+            // `process_effects` will open a fresh generation if more bodies
+            // are available; it will never reuse the just-drained queue.
+            if pending_qc_sync {
+                let effects = self.nodes[node]
+                    .core
+                    .as_mut()
+                    .expect("current incarnation is online")
+                    .step(Input::Resume, &MockSignatures)?;
+                self.process_effects(node, effects)?;
+            }
+            self.gossip_to(node);
             return Ok(());
         }
 

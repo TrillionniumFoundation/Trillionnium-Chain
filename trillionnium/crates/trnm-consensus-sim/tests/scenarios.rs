@@ -710,14 +710,11 @@ fn finalized_height_competing_qc_policy_is_deterministic() {
     assert_eq!(after_historical.finalized_block, before.finalized_block);
     assert!(!after_historical.durable_pending_standalone_qc_sync);
     assert!(!after_historical.halted);
-    assert!(
-        !simulator.trace().entries()[historical_delivery_index + 1..]
-            .iter()
-            .any(|entry| {
-                entry.code() == "persist-request"
-                    && entry.detail().contains(&format!("node={TARGET} "))
-            })
-    );
+    assert!(simulator.trace().entries()[historical_delivery_index + 1..]
+        .iter()
+        .any(|entry| {
+            entry.code() == "persist-request" && entry.detail().contains(&format!("node={TARGET} "))
+        }));
     assert!(!simulator.trace().entries()[historical_trace_start..]
         .iter()
         .any(|entry| {
