@@ -230,7 +230,7 @@ impl<'a> PocoNodeStateSyncWireFrameV0<'a> {
 /// cannot consume the next valid sequence, while a replayed sequence cannot
 /// be retried through this owner.  The sequence is intentionally process-local
 /// until an authenticated durable peer lease/replay journal exists.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct PocoNodeStateSyncWireIngressOwnerV0 {
     context: PocoNodeStateSyncWireIngressContextV0,
     last_sender_sequence: Option<u64>,
