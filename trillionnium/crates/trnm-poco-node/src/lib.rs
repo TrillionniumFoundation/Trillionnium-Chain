@@ -347,11 +347,12 @@ pub use ordinary_timeout::PocoNodeHostEventWalOwnerV1;
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
 pub use ordinary_timeout::{PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0};
 pub use p2p_session_ingress::{
-    P2pSessionIngressErrorCodeV0, PocoNodeP2pAcceptedFrameV0, PocoNodeP2pSessionErrorV0,
-    PocoNodeP2pSessionV0, P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0,
-    P2P_SESSION_INGRESS_RUNTIME_COMPOSITION_V0, P2P_SESSION_MAX_FRAME_BYTES_V0,
-    P2P_SESSION_MAX_HANDSHAKE_BYTES_V0, P2P_SESSION_MAX_PAYLOAD_BYTES_V0,
-    P2P_SESSION_REPLAY_WINDOW_V0,
+    P2pSessionIngressErrorCodeV0, PocoNodeP2pAcceptedFrameV0, PocoNodeP2pReplayAnchorErrorV0,
+    PocoNodeP2pReplayAnchorV0, PocoNodeP2pSessionErrorV0, PocoNodeP2pSessionV0,
+    P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0, P2P_SESSION_INGRESS_RUNTIME_COMPOSITION_V0,
+    P2P_SESSION_MAX_FRAME_BYTES_V0, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
+    P2P_SESSION_MAX_PAYLOAD_BYTES_V0, P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0,
+    P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0, P2P_SESSION_REPLAY_WINDOW_V0,
 };
 #[cfg(feature = "legacy-consensus-app")]
 pub use process_host::{

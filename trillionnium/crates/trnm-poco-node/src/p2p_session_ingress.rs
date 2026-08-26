@@ -14,9 +14,20 @@
 //! tranche; a separately administered transport-key profile must replace
 //! that choice before network activation.
 
-use std::{error::Error, fmt};
+use std::{
+    collections::BTreeSet,
+    error::Error,
+    fmt,
+    fs::{self, File, OpenOptions},
+    io::{Read, Seek, SeekFrom, Write},
+    path::{Path, PathBuf},
+};
 
+use fs2::FileExt;
 use sha2::{Digest, Sha256};
+
+#[cfg(unix)]
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
     decode_wire_envelope_v0_preflight, decode_wire_envelope_v0_semantic, Cev0AdmissionBudgetV0,
@@ -46,6 +57,14 @@ pub const P2P_SESSION_MAX_FRAME_BYTES_V0: usize = P2P_SESSION_MAX_PAYLOAD_BYTES_
 /// Number of sequence positions retained by the anti-replay bitmap.
 pub const P2P_SESSION_REPLAY_WINDOW_V0: u64 = 64;
 
+/// Candidate-only durable handshake/session replay anchor.  The anchor is an
+/// opt-in owner for callers which can provision a private persistent path;
+/// `PocoNodeP2pSessionV0::open` remains the process-local compatibility path.
+/// This boundary does not provide a socket, peer lease, Core input, or
+/// production activation.
+pub const P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0: bool = true;
+pub const P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0: bool = false;
+
 const HANDSHAKE_MAGIC: &[u8; 4] = b"TRNH";
 const FRAME_MAGIC: &[u8; 4] = b"TRNF";
 const PROTOCOL_VERSION_V0: u16 = 0;
@@ -58,6 +77,22 @@ const HASH_BYTES_V0: usize = 32;
 const DOMAIN_HANDSHAKE_V0: &[u8] = b"trnm.poco.p2p.handshake.v0\0";
 const DOMAIN_SESSION_ID_V0: &[u8] = b"trnm.poco.p2p.session-id.v0\0";
 const DOMAIN_FRAME_V0: &[u8] = b"trnm.poco.p2p.frame.v0\0";
+const DOMAIN_REPLAY_ANCHOR_CONTEXT_V0: &[u8] = b"trnm.poco.p2p.replay-anchor-context.v0\0";
+const DOMAIN_REPLAY_ANCHOR_FRAME_V0: &[u8] = b"trnm.poco.p2p.replay-anchor-frame.v0\0";
+const DOMAIN_REPLAY_ANCHOR_HEAD_V0: &[u8] = b"trnm.poco.p2p.replay-anchor-head.v0\0";
+
+const REPLAY_ANCHOR_MAGIC_V0: [u8; 8] = *b"TRNMP2RA";
+const REPLAY_ANCHOR_HEAD_MAGIC_V0: [u8; 8] = *b"TRNMP2HD";
+const REPLAY_ANCHOR_VERSION_V0: u8 = 1;
+const REPLAY_ANCHOR_GENESIS_KIND_V0: u8 = 0;
+const REPLAY_ANCHOR_SESSION_KIND_V0: u8 = 1;
+const REPLAY_ANCHOR_FRAME_BYTES_V0: usize = 172;
+const REPLAY_ANCHOR_HEAD_BYTES_V0: usize = 84;
+const REPLAY_ANCHOR_MAX_ENTRIES_V0: u64 = 1_048_576;
+#[cfg(unix)]
+const REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0: u32 = 0o600;
+
+type ReplayAnchorDecodedV0 = ([u8; HASH_BYTES_V0], u64, BTreeSet<[u8; HASH_BYTES_V0]>);
 
 /// Stable machine-readable errors for both handshake and data ingress.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -84,6 +119,8 @@ pub enum P2pSessionIngressErrorCodeV0 {
     SequenceBindingMismatch,
     SequenceReplay,
     SequenceTooOld,
+    SessionReplay,
+    ReplayAnchor,
     UnsupportedBodyKind,
     WirePreflight,
     SemanticDecode,
@@ -114,6 +151,8 @@ impl P2pSessionIngressErrorCodeV0 {
             Self::SequenceBindingMismatch => "sequence_binding_mismatch",
             Self::SequenceReplay => "sequence_replay",
             Self::SequenceTooOld => "sequence_too_old",
+            Self::SessionReplay => "session_replay",
+            Self::ReplayAnchor => "replay_anchor",
             Self::UnsupportedBodyKind => "unsupported_body_kind",
             Self::WirePreflight => "wire_preflight",
             Self::SemanticDecode => "semantic_decode",
@@ -219,6 +258,643 @@ impl fmt::Display for PocoNodeP2pSessionErrorV0 {
 
 impl Error for PocoNodeP2pSessionErrorV0 {}
 
+/// Errors returned by the candidate durable session replay anchor.  The
+/// anchor deliberately has no recovery/repair operation: a damaged or
+/// ambiguous journal is a hard stop for the caller.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PocoNodeP2pReplayAnchorErrorV0 {
+    ContextMismatch,
+    InvalidPath,
+    Io,
+    Corrupt,
+    Truncated,
+    SessionReplay,
+    TooLarge,
+}
+
+impl fmt::Display for PocoNodeP2pReplayAnchorErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str(match self {
+            Self::ContextMismatch => "P2P replay anchor context mismatch",
+            Self::InvalidPath => "P2P replay anchor path is invalid",
+            Self::Io => "P2P replay anchor I/O failure",
+            Self::Corrupt => "P2P replay anchor is corrupt",
+            Self::Truncated => "P2P replay anchor is truncated",
+            Self::SessionReplay => "P2P handshake session was already anchored",
+            Self::TooLarge => "P2P replay anchor exceeds its bound",
+        })
+    }
+}
+
+impl Error for PocoNodeP2pReplayAnchorErrorV0 {}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct ReplayAnchorPathIdentityV0 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+}
+
+impl ReplayAnchorPathIdentityV0 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        #[cfg(unix)]
+        {
+            Self {
+                device: metadata.dev(),
+                inode: metadata.ino(),
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            let _ = metadata;
+            Self {}
+        }
+    }
+}
+
+/// Candidate-only durable fence for authenticated P2P handshake sessions.
+///
+/// `PocoNodeP2pSessionV0::open` intentionally remains process-local for
+/// compatibility.  Callers which need restart/cross-session replay safety
+/// opt into [`PocoNodeP2pSessionV0::open_with_replay_anchor`].  This owner
+/// records every accepted handshake session ID in a private, fsynced
+/// append-only hash chain and publishes a separate fsynced head.  Reopening
+/// after a process restart therefore rejects an old handshake before any data
+/// frame can be admitted.  It does not replace an authenticated peer lease,
+/// socket transport, Core/SafetyRules authority, or whole-node CAS.
+#[derive(Debug)]
+pub struct PocoNodeP2pReplayAnchorV0 {
+    path: PathBuf,
+    head_path: PathBuf,
+    parent_file: File,
+    file: File,
+    parent_identity: ReplayAnchorPathIdentityV0,
+    file_identity: ReplayAnchorPathIdentityV0,
+    context_digest: [u8; HASH_BYTES_V0],
+    peer_id: ValidatorId,
+    head: [u8; HASH_BYTES_V0],
+    record_count: u64,
+    seen_sessions: BTreeSet<[u8; HASH_BYTES_V0]>,
+    poisoned: bool,
+}
+
+impl PocoNodeP2pReplayAnchorV0 {
+    /// Opens or creates a private replay anchor scoped to one validator set
+    /// and one remote peer. Existing files are fully replayed and require a
+    /// matching sidecar head; a prefix is rejected when the sidecar still
+    /// proves the larger journal. This candidate anchor has no external
+    /// monotonic anti-rollback authority if both files are restored together.
+    pub fn open(
+        path: impl AsRef<Path>,
+        validator_set: &ValidatorSet,
+        peer_id: ValidatorId,
+    ) -> Result<Self, PocoNodeP2pReplayAnchorErrorV0> {
+        validator_set
+            .validate_shape()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::ContextMismatch)?;
+        if validator_set.validator(peer_id).is_none() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        // The frozen transport envelope carries a fixed 32-byte node ID.
+        // `ValidatorId` itself is a variable-length consensus identifier, so
+        // reject a valid-but-non-wire-sized member before any fixed-frame
+        // encoding can panic or silently truncate it.
+        if peer_id.as_bytes().len() != MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0 {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        let path = path.as_ref().to_path_buf();
+        let parent = path
+            .parent()
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+        let parent_metadata = fs::symlink_metadata(parent)
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+        if !parent_metadata.is_dir() || !replay_anchor_private_parent_v0(&parent_metadata) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let parent_file = File::open(parent).map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let parent_identity = ReplayAnchorPathIdentityV0::from_metadata(
+            &parent_file
+                .metadata()
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?,
+        );
+        let existing_metadata = match fs::symlink_metadata(&path) {
+            Ok(metadata) => {
+                if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+                    return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+                }
+                Some(metadata)
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+            Err(_) => return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath),
+        };
+        let virgin = existing_metadata.is_none();
+        let mut options = OpenOptions::new();
+        options.read(true).write(true).append(true);
+        if virgin {
+            options.create_new(true);
+            #[cfg(unix)]
+            options.mode(REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0);
+        } else {
+            options.create(false);
+        }
+        let file = options
+            .open(&path)
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if virgin {
+            set_replay_anchor_private_file_v0(&file)?;
+        }
+        file.try_lock_exclusive()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let file_metadata = file
+            .metadata()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if !replay_anchor_private_file_v0(&file_metadata) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let file_identity = ReplayAnchorPathIdentityV0::from_metadata(&file_metadata);
+        if existing_metadata.is_some_and(|metadata| {
+            ReplayAnchorPathIdentityV0::from_metadata(&metadata) != file_identity
+        }) || !replay_anchor_path_binding_matches_v0(&path, parent_identity, file_identity)
+        {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        if !virgin && file_metadata.len() == 0 {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+        }
+        let head_path = replay_anchor_head_path_v0(&path)?;
+        if virgin && fs::symlink_metadata(&head_path).is_ok() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let mut anchor = Self {
+            path,
+            head_path,
+            parent_file,
+            file,
+            parent_identity,
+            file_identity,
+            context_digest: replay_anchor_context_digest_v0(validator_set, peer_id),
+            peer_id,
+            head: [0; HASH_BYTES_V0],
+            record_count: 0,
+            seen_sessions: BTreeSet::new(),
+            poisoned: false,
+        };
+        if virgin {
+            let genesis = encode_replay_anchor_frame_v0(
+                REPLAY_ANCHOR_GENESIS_KIND_V0,
+                anchor.context_digest,
+                peer_id,
+                [0; HASH_BYTES_V0],
+                [0; HASH_BYTES_V0],
+            );
+            anchor
+                .file
+                .write_all(&genesis)
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+            anchor
+                .file
+                .sync_all()
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+            anchor
+                .parent_file
+                .sync_all()
+                .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        }
+        anchor.reload_v0()?;
+        anchor.reconcile_head_v0(virgin)?;
+        Ok(anchor)
+    }
+
+    pub fn path(&self) -> &Path {
+        self.path.as_path()
+    }
+
+    pub const fn peer_id(&self) -> ValidatorId {
+        self.peer_id
+    }
+
+    pub const fn context_digest(&self) -> [u8; HASH_BYTES_V0] {
+        self.context_digest
+    }
+
+    pub const fn head(&self) -> [u8; HASH_BYTES_V0] {
+        self.head
+    }
+
+    pub const fn record_count(&self) -> u64 {
+        self.record_count
+    }
+
+    pub fn contains_session(&self, session_id: [u8; HASH_BYTES_V0]) -> bool {
+        self.seen_sessions.contains(&session_id)
+    }
+
+    /// Durably reserves one authenticated handshake session ID.  A duplicate
+    /// is rejected even if the original process has exited and the owner has
+    /// been reopened by a new process.
+    fn reserve_session(
+        &mut self,
+        session_id: [u8; HASH_BYTES_V0],
+    ) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if self.poisoned {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        // Re-read the authenticated journal before every reservation.  This
+        // closes the in-process TOCTOU where an external rollback/tamper could
+        // otherwise leave a live owner using a stale in-memory head.
+        let expected_head = self.head;
+        let expected_count = self.record_count;
+        if let Err(error) = self.reload_v0() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        if self.head != expected_head || self.record_count != expected_count {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        if session_id == [0; HASH_BYTES_V0] {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        if self.seen_sessions.contains(&session_id) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::SessionReplay);
+        }
+        if self.record_count >= REPLAY_ANCHOR_MAX_ENTRIES_V0 {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        let frame = encode_replay_anchor_frame_v0(
+            REPLAY_ANCHOR_SESSION_KIND_V0,
+            self.context_digest,
+            self.peer_id,
+            session_id,
+            self.head,
+        );
+        if self.file.write_all(&frame).is_err()
+            || self.file.sync_all().is_err()
+            || self.parent_file.sync_all().is_err()
+        {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        if !replay_anchor_path_binding_matches_v0(
+            &self.path,
+            self.parent_identity,
+            self.file_identity,
+        ) {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        self.head = replay_anchor_frame_digest_v0(&frame[..140]);
+        self.record_count = self
+            .record_count
+            .checked_add(1)
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        self.seen_sessions.insert(session_id);
+        if self.persist_head_v0().is_err() {
+            self.poisoned = true;
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        Ok(())
+    }
+
+    fn reload_v0(&mut self) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if !replay_anchor_path_binding_matches_v0(
+            &self.path,
+            self.parent_identity,
+            self.file_identity,
+        ) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        let maximum_bytes = (REPLAY_ANCHOR_MAX_ENTRIES_V0 + 1)
+            .checked_mul(REPLAY_ANCHOR_FRAME_BYTES_V0 as u64)
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        let file_len = self
+            .file
+            .metadata()
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?
+            .len();
+        if file_len > maximum_bytes {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        self.file
+            .seek(SeekFrom::Start(0))
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let mut bytes = Vec::new();
+        std::io::Read::by_ref(&mut self.file)
+            .take(maximum_bytes.saturating_add(1))
+            .read_to_end(&mut bytes)
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        if bytes.len() as u64 > maximum_bytes {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+        }
+        self.file
+            .seek(SeekFrom::End(0))
+            .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+        let (head, record_count, seen_sessions) =
+            parse_replay_anchor_bytes_v0(&bytes, self.context_digest, self.peer_id)?;
+        self.head = head;
+        self.record_count = record_count;
+        self.seen_sessions = seen_sessions;
+        Ok(())
+    }
+
+    fn reconcile_head_v0(&self, virgin: bool) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        let anchored = match read_replay_anchor_head_v0(&self.head_path) {
+            Ok(value) => Some(value),
+            Err(PocoNodeP2pReplayAnchorErrorV0::Io) if !self.head_path.exists() && virgin => None,
+            Err(error) => return Err(error),
+        };
+        match anchored {
+            None if virgin && self.record_count == 0 => self.persist_head_v0(),
+            None => Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt),
+            Some((count, _head)) if count > self.record_count => {
+                Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt)
+            }
+            Some((count, head)) if count == self.record_count && head != self.head => {
+                Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt)
+            }
+            Some((count, _)) if count < self.record_count => self.persist_head_v0(),
+            Some(_) => Ok(()),
+        }
+    }
+
+    fn persist_head_v0(&self) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+        if !replay_anchor_path_binding_matches_v0(
+            &self.path,
+            self.parent_identity,
+            self.file_identity,
+        ) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+        }
+        if let Ok(metadata) = fs::symlink_metadata(&self.head_path) {
+            if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+            }
+        }
+        let name = self
+            .head_path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+        let temporary = self.head_path.with_file_name(format!(
+            ".{name}.tmp-{}-{}",
+            std::process::id(),
+            self.record_count
+        ));
+        let bytes = encode_replay_anchor_head_v0(self.record_count, self.head);
+        let result = (|| {
+            let mut options = OpenOptions::new();
+            options.write(true).create_new(true);
+            #[cfg(unix)]
+            {
+                options.mode(REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0);
+            }
+            let mut file = options.open(&temporary)?;
+            file.write_all(&bytes)?;
+            file.sync_all()?;
+            fs::rename(&temporary, &self.head_path)?;
+            self.parent_file.sync_all()?;
+            Ok::<(), std::io::Error>(())
+        })();
+        if let Err(_error) = result {
+            let _ = fs::remove_file(&temporary);
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Io);
+        }
+        Ok(())
+    }
+}
+
+fn parse_replay_anchor_bytes_v0(
+    bytes: &[u8],
+    context_digest: [u8; HASH_BYTES_V0],
+    peer_id: ValidatorId,
+) -> Result<ReplayAnchorDecodedV0, PocoNodeP2pReplayAnchorErrorV0> {
+    if bytes.is_empty() {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+    }
+    if !bytes.len().is_multiple_of(REPLAY_ANCHOR_FRAME_BYTES_V0) {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Truncated);
+    }
+    let frame_count = bytes.len() / REPLAY_ANCHOR_FRAME_BYTES_V0;
+    if frame_count == 0 || frame_count - 1 > REPLAY_ANCHOR_MAX_ENTRIES_V0 as usize {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::TooLarge);
+    }
+    let mut head = [0; HASH_BYTES_V0];
+    let mut record_count = 0u64;
+    let mut seen_sessions = BTreeSet::new();
+    for (index, frame) in bytes.chunks_exact(REPLAY_ANCHOR_FRAME_BYTES_V0).enumerate() {
+        if frame[..8] != REPLAY_ANCHOR_MAGIC_V0
+            || frame[8] != REPLAY_ANCHOR_VERSION_V0
+            || frame[10..12] != [0, 0]
+        {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        if &frame[12..44] != context_digest.as_slice() || &frame[44..76] != peer_id.as_bytes() {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+        }
+        let stored_digest: [u8; HASH_BYTES_V0] = frame[140..172]
+            .try_into()
+            .expect("fixed replay anchor digest");
+        if stored_digest != replay_anchor_frame_digest_v0(&frame[..140]) {
+            return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+        }
+        let session_id: [u8; HASH_BYTES_V0] = frame[76..108]
+            .try_into()
+            .expect("fixed replay anchor session");
+        let predecessor: [u8; HASH_BYTES_V0] = frame[108..140]
+            .try_into()
+            .expect("fixed replay anchor predecessor");
+        if index == 0 {
+            if frame[9] != REPLAY_ANCHOR_GENESIS_KIND_V0
+                || session_id != [0; HASH_BYTES_V0]
+                || predecessor != [0; HASH_BYTES_V0]
+            {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+            }
+        } else {
+            if frame[9] != REPLAY_ANCHOR_SESSION_KIND_V0
+                || session_id == [0; HASH_BYTES_V0]
+                || predecessor != head
+                || !seen_sessions.insert(session_id)
+            {
+                return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+            }
+            record_count = record_count
+                .checked_add(1)
+                .ok_or(PocoNodeP2pReplayAnchorErrorV0::TooLarge)?;
+        }
+        head = stored_digest;
+    }
+    Ok((head, record_count, seen_sessions))
+}
+
+fn encode_replay_anchor_frame_v0(
+    kind: u8,
+    context_digest: [u8; HASH_BYTES_V0],
+    peer_id: ValidatorId,
+    session_id: [u8; HASH_BYTES_V0],
+    predecessor: [u8; HASH_BYTES_V0],
+) -> [u8; REPLAY_ANCHOR_FRAME_BYTES_V0] {
+    let mut frame = [0u8; REPLAY_ANCHOR_FRAME_BYTES_V0];
+    frame[..8].copy_from_slice(&REPLAY_ANCHOR_MAGIC_V0);
+    frame[8] = REPLAY_ANCHOR_VERSION_V0;
+    frame[9] = kind;
+    frame[12..44].copy_from_slice(&context_digest);
+    frame[44..76].copy_from_slice(peer_id.as_bytes());
+    frame[76..108].copy_from_slice(&session_id);
+    frame[108..140].copy_from_slice(&predecessor);
+    let digest = replay_anchor_frame_digest_v0(&frame[..140]);
+    frame[140..].copy_from_slice(&digest);
+    frame
+}
+
+fn replay_anchor_frame_digest_v0(prefix: &[u8]) -> [u8; HASH_BYTES_V0] {
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_ANCHOR_FRAME_V0);
+    hasher.update((prefix.len() as u64).to_be_bytes());
+    hasher.update(prefix);
+    hasher.finalize().into()
+}
+
+fn encode_replay_anchor_head_v0(
+    record_count: u64,
+    head: [u8; HASH_BYTES_V0],
+) -> [u8; REPLAY_ANCHOR_HEAD_BYTES_V0] {
+    let mut bytes = [0u8; REPLAY_ANCHOR_HEAD_BYTES_V0];
+    bytes[..8].copy_from_slice(&REPLAY_ANCHOR_HEAD_MAGIC_V0);
+    bytes[8] = REPLAY_ANCHOR_VERSION_V0;
+    bytes[12..20].copy_from_slice(&record_count.to_be_bytes());
+    bytes[20..52].copy_from_slice(&head);
+    let digest = replay_anchor_head_digest_v0(&bytes[..52]);
+    bytes[52..].copy_from_slice(&digest);
+    bytes
+}
+
+fn read_replay_anchor_head_v0(
+    path: &Path,
+) -> Result<(u64, [u8; HASH_BYTES_V0]), PocoNodeP2pReplayAnchorErrorV0> {
+    let metadata = fs::symlink_metadata(path).map_err(|error| {
+        if error.kind() == std::io::ErrorKind::NotFound {
+            PocoNodeP2pReplayAnchorErrorV0::Io
+        } else {
+            PocoNodeP2pReplayAnchorErrorV0::InvalidPath
+        }
+    })?;
+    if !metadata.is_file() || !replay_anchor_private_file_v0(&metadata) {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::InvalidPath);
+    }
+    if metadata.len() != REPLAY_ANCHOR_HEAD_BYTES_V0 as u64 {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    let bytes = fs::read(path).map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)?;
+    if bytes.len() != REPLAY_ANCHOR_HEAD_BYTES_V0 {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    if bytes[..8] != REPLAY_ANCHOR_HEAD_MAGIC_V0
+        || bytes[8] != REPLAY_ANCHOR_VERSION_V0
+        || bytes[9..12] != [0, 0, 0]
+        || bytes[52..] != replay_anchor_head_digest_v0(&bytes[..52])
+    {
+        return Err(PocoNodeP2pReplayAnchorErrorV0::Corrupt);
+    }
+    let count = u64::from_be_bytes(bytes[12..20].try_into().expect("fixed replay head count"));
+    let head = bytes[20..52].try_into().expect("fixed replay anchor head");
+    Ok((count, head))
+}
+
+fn replay_anchor_head_digest_v0(prefix: &[u8]) -> [u8; HASH_BYTES_V0] {
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_ANCHOR_HEAD_V0);
+    hasher.update((prefix.len() as u64).to_be_bytes());
+    hasher.update(prefix);
+    hasher.finalize().into()
+}
+
+fn replay_anchor_context_digest_v0(
+    validator_set: &ValidatorSet,
+    peer_id: ValidatorId,
+) -> [u8; HASH_BYTES_V0] {
+    let chain_id_value = validator_set.chain_id();
+    let chain_id = chain_id_value.as_bytes();
+    let mut hasher = Sha256::new();
+    hasher.update(DOMAIN_REPLAY_ANCHOR_CONTEXT_V0);
+    hasher.update(validator_set.protocol_version().get().to_be_bytes());
+    hasher.update(validator_set.genesis_hash().as_bytes());
+    hasher.update((chain_id.len() as u64).to_be_bytes());
+    hasher.update(chain_id);
+    hasher.update(validator_set.id().as_bytes());
+    hasher.update(validator_set.consensus_parameters_hash().as_bytes());
+    hasher.update(validator_set.epoch().get().to_be_bytes());
+    hasher.update(peer_id.as_bytes());
+    hasher.finalize().into()
+}
+
+fn replay_anchor_head_path_v0(path: &Path) -> Result<PathBuf, PocoNodeP2pReplayAnchorErrorV0> {
+    let name = path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(PocoNodeP2pReplayAnchorErrorV0::InvalidPath)?;
+    Ok(path.with_file_name(format!(".{name}.head")))
+}
+
+fn replay_anchor_path_binding_matches_v0(
+    path: &Path,
+    parent_identity: ReplayAnchorPathIdentityV0,
+    file_identity: ReplayAnchorPathIdentityV0,
+) -> bool {
+    let Some(parent) = path.parent() else {
+        return false;
+    };
+    let Ok(parent_metadata) = fs::symlink_metadata(parent) else {
+        return false;
+    };
+    let Ok(file_metadata) = fs::symlink_metadata(path) else {
+        return false;
+    };
+    parent_metadata.is_dir()
+        && replay_anchor_private_parent_v0(&parent_metadata)
+        && file_metadata.is_file()
+        && replay_anchor_private_file_v0(&file_metadata)
+        && ReplayAnchorPathIdentityV0::from_metadata(&parent_metadata) == parent_identity
+        && ReplayAnchorPathIdentityV0::from_metadata(&file_metadata) == file_identity
+}
+
+#[cfg(unix)]
+fn replay_anchor_private_parent_v0(metadata: &fs::Metadata) -> bool {
+    metadata.permissions().mode() & 0o077 == 0
+}
+
+#[cfg(not(unix))]
+fn replay_anchor_private_parent_v0(_metadata: &fs::Metadata) -> bool {
+    true
+}
+
+#[cfg(unix)]
+fn replay_anchor_private_file_v0(metadata: &fs::Metadata) -> bool {
+    metadata.nlink() == 1
+        && metadata.permissions().mode() & 0o7777 == REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0
+}
+
+#[cfg(not(unix))]
+fn replay_anchor_private_file_v0(_metadata: &fs::Metadata) -> bool {
+    true
+}
+
+fn set_replay_anchor_private_file_v0(file: &File) -> Result<(), PocoNodeP2pReplayAnchorErrorV0> {
+    #[cfg(unix)]
+    {
+        file.set_permissions(fs::Permissions::from_mode(
+            REPLAY_ANCHOR_PRIVATE_FILE_MODE_V0,
+        ))
+        .map_err(|_| PocoNodeP2pReplayAnchorErrorV0::Io)
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = file;
+        Ok(())
+    }
+}
+
 /// One accepted, borrowed candidate frame.  Its nested consensus signatures
 /// have passed the strict Ed25519 verifier used by the session, but it still
 /// carries no Core input or network-send capability.
@@ -317,6 +993,31 @@ impl PocoNodeP2pSessionV0 {
             session_id,
             replay: ReplayWindowV0::default(),
         })
+    }
+
+    /// Opens a session and durably reserves its authenticated handshake in a
+    /// caller-owned replay anchor.  This opt-in candidate path is the narrow
+    /// cross-session/restart fence: replaying the exact old handshake after a
+    /// process restart fails before a data frame is exposed.  The anchor must
+    /// have been opened for the same validator set and peer; it does not grant
+    /// socket, lease, Core, SafetyRules, or broadcast authority.
+    pub fn open_with_replay_anchor(
+        handshake: &[u8],
+        validator_set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        replay_anchor: &mut PocoNodeP2pReplayAnchorV0,
+    ) -> Result<Self, PocoNodeP2pSessionErrorV0> {
+        let session = Self::open(handshake, validator_set, parameters)?;
+        if replay_anchor.peer_id != session.peer_id
+            || replay_anchor.context_digest
+                != replay_anchor_context_digest_v0(validator_set, session.peer_id)
+        {
+            return Err(err(P2pSessionIngressErrorCodeV0::ContextMismatch, 0));
+        }
+        replay_anchor
+            .reserve_session(session.session_id)
+            .map_err(map_replay_anchor_error_v0)?;
+        Ok(session)
     }
 
     pub const fn peer_id(&self) -> ValidatorId {
@@ -793,6 +1494,23 @@ fn err(code: P2pSessionIngressErrorCodeV0, offset: usize) -> PocoNodeP2pSessionE
     PocoNodeP2pSessionErrorV0::simple(code, offset)
 }
 
+fn map_replay_anchor_error_v0(error: PocoNodeP2pReplayAnchorErrorV0) -> PocoNodeP2pSessionErrorV0 {
+    let code = match error {
+        PocoNodeP2pReplayAnchorErrorV0::ContextMismatch => {
+            P2pSessionIngressErrorCodeV0::ContextMismatch
+        }
+        PocoNodeP2pReplayAnchorErrorV0::SessionReplay => {
+            P2pSessionIngressErrorCodeV0::SessionReplay
+        }
+        PocoNodeP2pReplayAnchorErrorV0::InvalidPath
+        | PocoNodeP2pReplayAnchorErrorV0::Io
+        | PocoNodeP2pReplayAnchorErrorV0::Corrupt
+        | PocoNodeP2pReplayAnchorErrorV0::Truncated
+        | PocoNodeP2pReplayAnchorErrorV0::TooLarge => P2pSessionIngressErrorCodeV0::ReplayAnchor,
+    };
+    err(code, 0)
+}
+
 fn handshake_signing_root(unsigned: &[u8]) -> SigningRoot {
     let mut hasher = Sha256::new();
     hasher.update(DOMAIN_HANDSHAKE_V0);
@@ -834,6 +1552,8 @@ fn frame_signing_root(
 mod tests {
     use super::*;
     use ed25519_dalek::{Signer, SigningKey};
+    #[cfg(unix)]
+    use std::os::unix::fs::PermissionsExt;
     use trnm_consensus_types::{
         BlockId, CanonicalSignable, ChainId, ConsensusPublicKey, Epoch, Height, MessageKind,
         ProtocolVersion, QcRef, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0,
@@ -890,14 +1610,23 @@ mod tests {
         bytes
     }
 
-    fn signed_handshake(set: &ValidatorSet, key: &SigningKey, peer: ValidatorId) -> Vec<u8> {
-        let unsigned = handshake_unsigned(set, peer, key.verifying_key().to_bytes(), [0xA5; 32]);
+    fn signed_handshake_with_nonce(
+        set: &ValidatorSet,
+        key: &SigningKey,
+        peer: ValidatorId,
+        nonce: [u8; 32],
+    ) -> Vec<u8> {
+        let unsigned = handshake_unsigned(set, peer, key.verifying_key().to_bytes(), nonce);
         let sig = key
             .sign(handshake_signing_root(&unsigned).as_bytes())
             .to_bytes();
         let mut bytes = unsigned;
         tlv(&mut bytes, 9, &sig);
         bytes
+    }
+
+    fn signed_handshake(set: &ValidatorSet, key: &SigningKey, peer: ValidatorId) -> Vec<u8> {
+        signed_handshake_with_nonce(set, key, peer, [0xA5; 32])
     }
 
     fn common_context(set: &ValidatorSet, view: u64, kind: MessageKind) -> Vec<u8> {
@@ -1623,6 +2352,200 @@ mod tests {
                 .unwrap_err()
                 .code(),
             P2pSessionIngressErrorCodeV0::InvalidFrameSignature
+        );
+    }
+
+    fn private_replay_anchor_directory() -> tempfile::TempDir {
+        let directory = tempfile::tempdir().expect("replay anchor directory");
+        #[cfg(unix)]
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private replay anchor directory");
+        directory
+    }
+
+    #[test]
+    fn replay_anchor_remains_candidate_only() {
+        assert!(P2P_SESSION_REPLAY_ANCHOR_CANDIDATE_V0);
+        assert!(!P2P_SESSION_REPLAY_ANCHOR_PRODUCTION_ACTIVATION_V0);
+        assert!(!P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0);
+    }
+
+    #[test]
+    fn replay_anchor_rejects_variable_length_validator_id_before_fixed_encoding() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let peer = ValidatorId::from_bytes(&[0x31; 31]).expect("bounded variable id");
+        let validator = Validator::new(
+            peer,
+            ConsensusPublicKey::new([0x41; 32]),
+            VotingPower::new(1).expect("power"),
+        )
+        .expect("validator");
+        let set = ValidatorSet::new(
+            trnm_consensus_types::GenesisHash::new([0x92; 32]),
+            ChainId::from_static("trnm-p2p-variable-id"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            vec![validator],
+        )
+        .expect("validator set");
+        let directory = private_replay_anchor_directory();
+        let error =
+            PocoNodeP2pReplayAnchorV0::open(directory.path().join("variable.replay"), &set, peer)
+                .unwrap_err();
+        assert_eq!(error, PocoNodeP2pReplayAnchorErrorV0::ContextMismatch);
+    }
+
+    #[test]
+    fn replay_anchor_rejects_old_handshake_after_restart_and_allows_fresh_session() {
+        let fixture = Fixture::new();
+        let directory = private_replay_anchor_directory();
+        let path = directory.path().join("p2p-session.replay");
+        let mut anchor = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer)
+            .expect("fresh replay anchor");
+        let mut session = PocoNodeP2pSessionV0::open_with_replay_anchor(
+            &fixture.handshake,
+            &fixture.set,
+            &fixture.parameters,
+            &mut anchor,
+        )
+        .expect("first anchored session");
+        assert_eq!(anchor.record_count(), 1);
+        let frame = signed_frame(session.session_id(), 1, &fixture.vote_payload, &fixture.key);
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        session
+            .accept_frame(&frame, &mut budget)
+            .expect("first frame");
+        drop(session);
+        drop(anchor);
+
+        // A new process reopening the same durable anchor cannot replay the
+        // old valid handshake, even though the in-memory replay bitmap starts
+        // empty again.
+        let mut reopened = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer)
+            .expect("reopen replay anchor");
+        let error = PocoNodeP2pSessionV0::open_with_replay_anchor(
+            &fixture.handshake,
+            &fixture.set,
+            &fixture.parameters,
+            &mut reopened,
+        )
+        .unwrap_err();
+        assert_eq!(error.code(), P2pSessionIngressErrorCodeV0::SessionReplay);
+        assert_eq!(reopened.record_count(), 1);
+
+        let fresh_handshake =
+            signed_handshake_with_nonce(&fixture.set, &fixture.key, fixture.peer, [0xA6; 32]);
+        let fresh_session = PocoNodeP2pSessionV0::open_with_replay_anchor(
+            &fresh_handshake,
+            &fixture.set,
+            &fixture.parameters,
+            &mut reopened,
+        )
+        .expect("fresh handshake gets a new durable session");
+        assert_ne!(fresh_session.session_id(), session_id(&fixture.handshake));
+        assert_eq!(reopened.record_count(), 2);
+
+        // A frame from the old session cannot cross the fresh session even
+        // after the durable handshake reservation succeeds.
+        let mut fresh_session = fresh_session;
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        assert_eq!(
+            fresh_session
+                .accept_frame(&frame, &mut budget)
+                .unwrap_err()
+                .code(),
+            P2pSessionIngressErrorCodeV0::SessionMismatch
+        );
+    }
+
+    #[test]
+    fn replay_anchor_rejects_tamper_and_valid_prefix_rollback() {
+        let fixture = Fixture::new();
+        let directory = private_replay_anchor_directory();
+        let path = directory.path().join("p2p-session.replay");
+        let mut anchor = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer)
+            .expect("fresh replay anchor");
+        anchor
+            .reserve_session(session_id(&fixture.handshake))
+            .expect("first reservation");
+        let second_handshake =
+            signed_handshake_with_nonce(&fixture.set, &fixture.key, fixture.peer, [0xA6; 32]);
+        anchor
+            .reserve_session(session_id(&second_handshake))
+            .expect("second reservation");
+        assert_eq!(anchor.record_count(), 2);
+        drop(anchor);
+        let original = std::fs::read(&path).expect("read complete replay anchor");
+
+        // The sidecar head is ahead of a valid prefix, so a rollback cannot
+        // silently erase the first durable reservation.
+        let file = OpenOptions::new()
+            .write(true)
+            .open(&path)
+            .expect("open anchor for rollback mutant");
+        file.set_len((REPLAY_ANCHOR_FRAME_BYTES_V0 * 2) as u64)
+            .expect("truncate to valid prefix");
+        drop(file);
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::Corrupt
+        );
+
+        // Restore the complete journal from the fixture's two reservations,
+        // then mutate a committed byte; the hash chain must reject it.
+        std::fs::write(&path, &original).expect("restore complete replay anchor");
+        let mut tampered = original;
+        tampered[REPLAY_ANCHOR_FRAME_BYTES_V0 + 76] ^= 0x01;
+        std::fs::write(&path, tampered).expect("tamper replay anchor");
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::Corrupt
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn replay_anchor_enforces_private_path_lock_and_head_integrity() {
+        let fixture = Fixture::new();
+        let directory = private_replay_anchor_directory();
+        let path = directory.path().join("p2p-session.replay");
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o755))
+            .expect("shared parent mutant");
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::InvalidPath
+        );
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("restore private parent");
+
+        let mut anchor = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer)
+            .expect("private replay anchor");
+        anchor
+            .reserve_session(session_id(&fixture.handshake))
+            .expect("reserve session");
+        let head_path = path.with_file_name(".p2p-session.replay.head");
+        let second_open = PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer);
+        assert_eq!(second_open.unwrap_err(), PocoNodeP2pReplayAnchorErrorV0::Io);
+        drop(anchor);
+
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o640))
+            .expect("shared journal mutant");
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::InvalidPath
+        );
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
+            .expect("restore private journal");
+
+        let mut head = std::fs::read(&head_path).expect("read replay head");
+        head[20] ^= 0x01;
+        std::fs::write(&head_path, head).expect("tamper replay head");
+        assert_eq!(
+            PocoNodeP2pReplayAnchorV0::open(&path, &fixture.set, fixture.peer).unwrap_err(),
+            PocoNodeP2pReplayAnchorErrorV0::Corrupt
         );
     }
 
