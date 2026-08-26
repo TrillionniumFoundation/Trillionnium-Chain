@@ -236,11 +236,12 @@ downstream gate inherits completion from an incomplete predecessor.
   oversized frames/bodies, unknown or duplicate fields, non-canonical
   varints, wrong wire types, missing scope, invalid body-kind/consensus-kind
   relations, and present-but-empty oneof bodies before any nested decode. The
-  consensus-types suite is 159/159 (wire preflight 5/5) with clippy clean.
+  consensus-types suite is 161/161 (wire preflight 6/6) with clippy clean.
   The helper returns borrowed opaque body bytes only: nested semantic CEV0
   decoding, authenticated peer context, real P2P ingress, independent wire
   conformance and a second implementation remain open.
-- `194ba333f` adds a deterministic totality gate for that preflight: every
+- `194ba333f` plus the kind-invariant tightening in `c2334d405` add a
+  deterministic totality gate for that preflight: every
   strict truncation, every single-byte replacement in the canonical frame,
   fixed xorshift corpus, and oversized/unsupported boundary cases are checked
   for no-panic fail-closed behavior. Successful results are asserted to retain
@@ -251,7 +252,9 @@ downstream gate inherits completion from an incomplete predecessor.
   the outer preflight. It binds genesis/chain/protocol/epoch/validator-set/
   parameter hashes, sender identity, body kind, caller-supplied nested body
   semantic hash, and a strictly increasing sender sequence before returning a
-  borrowed frame token. Mainline node tests are 108/108 with clippy and
+  borrowed frame token. `fca760e7e` keeps the owner non-`Clone`, so copying an
+  ingress owner cannot bypass its sequence fence. Mainline node tests are
+  108/108 with clippy and
   all-features check clean; no nested SyncInfo decoder, Core input, P2P lease,
   durable restart replay, or production activation is provided.
 
