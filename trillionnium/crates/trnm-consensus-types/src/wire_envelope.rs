@@ -976,6 +976,7 @@ mod tests {
             rejected > 0,
             "mutation corpus did not exercise fail-closed errors"
         );
+        assert_eq!(accepted + rejected, seed.len() * (usize::from(u8::MAX) + 1));
 
         // Add a fixed pseudo-random corpus to cover combinations that single
         // byte replacement cannot reach.  The seed and iteration count are
