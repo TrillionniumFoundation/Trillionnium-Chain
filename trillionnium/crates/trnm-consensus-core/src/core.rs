@@ -14702,6 +14702,21 @@ impl Core {
             ));
         }
         if self.safety.pending_sign() != previous.pending_sign() {
+            if let (Some(previous_intent), Some(current_intent)) =
+                (previous.pending_sign(), self.safety.pending_sign())
+            {
+                // A durable signer outbox is a one-shot decision boundary.
+                // The live busy gate already prevents staging another Vote or
+                // TimeoutVote while one intent is unresolved, but a decoded
+                // successor pair must enforce the same rule across a crash.
+                // Replacing the intent could authorize a new digest while the
+                // fate of the old signer request is still unknown.
+                if previous_intent != current_intent {
+                    return Err(CoreError::InvalidRecovery(
+                        "pending signing intent was replaced before acknowledgement",
+                    ));
+                }
+            }
             if let Some(intent) = self.safety.pending_sign() {
                 if intent.authorizing_safety_revision() != self.safety.revision() {
                     return Err(CoreError::InvalidRecovery(

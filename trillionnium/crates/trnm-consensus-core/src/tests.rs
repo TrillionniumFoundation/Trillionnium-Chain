@@ -8722,6 +8722,64 @@ fn persisted_successor_rejects_a_reintroduced_signing_outbox() {
 }
 
 #[test]
+fn persisted_successor_rejects_replacing_an_active_signing_outbox() {
+    let (config, core) = configured_core();
+    let genesis = core.safety_state();
+    let view = genesis.current_view();
+    let first_revision = genesis.revision().checked_add(1).unwrap();
+    let first_root =
+        TimeoutVote::signing_root_for_set(config.validator_set(), view, genesis.high_qc().qc_ref())
+            .expect("derive first timeout signing root");
+    let previous = persisted_state_with_outbox_fields(
+        genesis,
+        view,
+        None,
+        Some(view),
+        first_revision,
+        Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision: first_revision,
+            view,
+            high_qc: genesis.high_qc().qc_ref(),
+            signing_root: first_root,
+        }),
+        None,
+    );
+    Core::validate_persisted_state_v0(&config, &previous, &RootSignatures)
+        .expect("the first pending timeout intent is self-consistent");
+
+    let replacement_view = view.checked_next().expect("fixture view advances");
+    let replacement_revision = previous.revision().checked_add(1).unwrap();
+    let replacement_root = TimeoutVote::signing_root_for_set(
+        config.validator_set(),
+        replacement_view,
+        previous.high_qc().qc_ref(),
+    )
+    .expect("derive replacement timeout signing root");
+    let current = persisted_state_with_outbox_fields(
+        &previous,
+        replacement_view,
+        None,
+        Some(replacement_view),
+        replacement_revision,
+        Some(SignIntent::TimeoutVote {
+            authorizing_safety_revision: replacement_revision,
+            view: replacement_view,
+            high_qc: previous.high_qc().qc_ref(),
+            signing_root: replacement_root,
+        }),
+        None,
+    );
+    Core::validate_persisted_state_v0(&config, &current, &RootSignatures)
+        .expect("the replacement is individually self-consistent");
+    assert_eq!(
+        Core::validate_persisted_successor_v0(&config, &previous, &current, &RootSignatures,),
+        Err(CoreError::InvalidRecovery(
+            "pending signing intent was replaced before acknowledgement",
+        ))
+    );
+}
+
+#[test]
 fn persisted_successor_rejects_a_reintroduced_applied_finalization_queue_front() {
     let (config, mut core) = configured_core();
     let (_set, _qc, _finalization_authority) = finalize_height_one(&mut core);
