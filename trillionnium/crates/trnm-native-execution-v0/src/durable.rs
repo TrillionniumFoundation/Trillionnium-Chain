@@ -1159,6 +1159,8 @@ impl DurableNativeApplicationV0 {
             if metadata_exists_v0(&connection)? {
                 let metadata = load_metadata_v0(&connection, &config)?;
                 validate_metadata_v0(&connection, &config, &metadata)?;
+            } else {
+                validate_virgin_inventory_v0(&connection)?;
             }
         }
         Ok(Self {
@@ -1841,6 +1843,7 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 )
             });
         }
+        validate_virgin_inventory_v0(&connection)?;
         let head = ApplicationHeadV0::new(
             HeightV0::GENESIS,
             BlockIdV0::new(self.config.initial_block_id).map_err(|_| {
@@ -3726,6 +3729,44 @@ fn metadata_exists_v0(connection: &Connection) -> DurableResult<bool> {
                 "metadata.exists",
             )
         })
+}
+
+/// A schema-valid file with no metadata singleton is only a virgin store when
+/// both data tables are empty.  Without this check, a deleted metadata row
+/// could make residual prepared/TrustedBase state look like a fresh genesis
+/// and let `initialize` overwrite the authenticated inventory boundary.
+fn validate_virgin_inventory_v0(connection: &Connection) -> DurableResult<()> {
+    let p_count: i64 = connection
+        .query_row(
+            "SELECT COUNT(*) FROM native_durable_execution_p_v0",
+            [],
+            |row| row.get(0),
+        )
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::Storage,
+                "metadata.virgin_p_inventory",
+            )
+        })?;
+    let h1_count: i64 = connection
+        .query_row(
+            "SELECT COUNT(*) FROM native_h1_state_sync_trusted_base_v0",
+            [],
+            |row| row.get(0),
+        )
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::Storage,
+                "metadata.virgin_h1_inventory",
+            )
+        })?;
+    if p_count != 0 || h1_count != 0 {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CorruptStore,
+            "metadata.missing_inventory",
+        ));
+    }
+    Ok(())
 }
 
 fn initialize_schema_v0(connection: &Connection) -> DurableResult<()> {
@@ -6670,6 +6711,56 @@ mod tests {
                 fenced.code(),
                 NativeApplicationExecutionErrorCodeV0::CorruptStore,
                 "partial commit state {partial} must never be normalized"
+            );
+        }
+    }
+
+    #[test]
+    fn missing_metadata_with_residual_inventory_fails_closed_v0() {
+        for inventory in ["p", "h1"] {
+            let temporary = TempDir::new().unwrap();
+            let (path, application, _head, execution) = initialized(&temporary);
+            match inventory {
+                "p" => {
+                    application
+                        .execute_block(execution.clone())
+                        .expect("create one durable prepared P row");
+                }
+                "h1" => {
+                    let request = NativeH1StateSyncTrustedBaseRequestV0::new([0xA1; 32], execution)
+                        .expect("build exact h1 request");
+                    let _ = application
+                        .install_h1_state_sync_trusted_base_v0(&request)
+                        .expect("create one durable H1 row");
+                }
+                _ => unreachable!(),
+            }
+
+            let connection = open_writable_connection_v0(&path).unwrap();
+            connection
+                .execute(
+                    "DELETE FROM native_application_metadata_v0 WHERE singleton=1",
+                    [],
+                )
+                .unwrap();
+            drop(connection);
+
+            let live_error = application
+                .initialize(genesis_request(&config(STORE_A)))
+                .expect_err("live initialize must not overwrite residual inventory");
+            assert_eq!(
+                live_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "live missing-metadata {inventory} inventory must fail closed"
+            );
+            drop(application);
+
+            let reopen_error = DurableNativeApplicationV0::open(&path, config(STORE_A))
+                .expect_err("reopen must not treat residual inventory as virgin");
+            assert_eq!(
+                reopen_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                "reopen missing-metadata {inventory} inventory must fail closed"
             );
         }
     }
