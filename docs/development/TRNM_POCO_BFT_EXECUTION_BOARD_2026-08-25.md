@@ -170,6 +170,13 @@ downstream gate inherits completion from an incomplete predecessor.
   startup timer or replace the one-shot replay transition. The Core suite is
   now 224/224 plus 46 doctests and clippy is clean; the surrounding Core and
   SafetyRules ownership is still not authoritative production consensus.
+- `a8dbb790f` closes a recovery bypass around that fence: generic `Core::recover`
+  now rejects a durable proposal-vote sign intent because the compact record
+  lacks the authenticated full body/parent/runtime replay context. `Resume`
+  requests Safety replay before any signer release, and `SignatureReady` is
+  rejected while the replay fence is live; exact timeout re-request and
+  ordered finalization reissue remain available. This is deliberately
+  fail-closed until the dedicated body/runtime replay protocol exists.
 - `5994d07e8` adds an explicit ignored long-horizon SafetyRules test. Two
   independent kernel executions inside the release test over 100,000
   genesis-anchored Vote/Timeout views produce byte-identical traces, final
@@ -494,7 +501,9 @@ downstream gate inherits completion from an incomplete predecessor.
 2. Pacemaker, complete epoch transition, checkpoint-scale catch-up, ordered
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
-   closed; current bounded facts cannot reconstruct every post-crash input.
+   closed; generic recovery now refuses a pending proposal vote rather than
+   rebroadcasting from a root-only record, and current bounded facts still
+   cannot reconstruct every post-crash input.
 4. The additive migration ceremony now separates legacy evidence types and
    rechecks a caller-supplied trusted validator set, but the GenesisQC wire/hash
    itself still does not carry a quorum-signed cross-peer application-root
