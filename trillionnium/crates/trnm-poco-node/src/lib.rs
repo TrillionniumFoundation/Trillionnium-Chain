@@ -211,6 +211,7 @@ mod remote_signer_protocol_adapter_v1;
 mod remote_signer_roles_v1;
 #[cfg(feature = "safety-rules-sidecar")]
 mod safety_rules_sidecar;
+mod state_sync_wire_ingress;
 #[cfg(feature = "tx-admission-wal")]
 mod tx_admission_wal;
 
@@ -387,6 +388,13 @@ pub use safety_rules_sidecar::{
     SafetyRulesSemanticSidecarErrorV1, SafetyRulesSemanticSidecarV1,
     SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
     SAFETY_RULES_SEMANTIC_SIDECAR_RUNTIME_COMPOSITION_V1,
+};
+pub use state_sync_wire_ingress::{
+    PocoNodeStateSyncWireFrameV0, PocoNodeStateSyncWireIngressContextV0,
+    PocoNodeStateSyncWireIngressErrorV0, PocoNodeStateSyncWireIngressFieldV0,
+    PocoNodeStateSyncWireIngressOwnerV0, STATE_SYNC_WIRE_INGRESS_DURABLE_REPLAY_PROTECTION_V0,
+    STATE_SYNC_WIRE_INGRESS_PRODUCTION_ACTIVATION_V0,
+    STATE_SYNC_WIRE_INGRESS_RUNTIME_COMPOSITION_V0,
 };
 #[cfg(feature = "tx-admission-wal")]
 pub use tx_admission_wal::{
