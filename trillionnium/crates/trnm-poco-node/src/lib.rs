@@ -391,8 +391,11 @@ pub use safety_rules_sidecar::{
 };
 pub use state_sync_wire_ingress::{
     PocoNodeStateSyncWireFrameV0, PocoNodeStateSyncWireIngressContextV0,
+    PocoNodeStateSyncWireIngressDurableErrorV0, PocoNodeStateSyncWireIngressDurableOwnerV0,
     PocoNodeStateSyncWireIngressErrorV0, PocoNodeStateSyncWireIngressFieldV0,
+    PocoNodeStateSyncWireIngressJournalPinV0, PocoNodeStateSyncWireIngressLeaseBindingV0,
     PocoNodeStateSyncWireIngressOwnerV0, STATE_SYNC_WIRE_INGRESS_DURABLE_REPLAY_PROTECTION_V0,
+    STATE_SYNC_WIRE_INGRESS_DURABLE_SEQUENCE_JOURNAL_CANDIDATE_V0,
     STATE_SYNC_WIRE_INGRESS_PRODUCTION_ACTIVATION_V0,
     STATE_SYNC_WIRE_INGRESS_RUNTIME_COMPOSITION_V0,
 };
