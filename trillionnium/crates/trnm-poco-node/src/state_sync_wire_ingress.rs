@@ -1204,6 +1204,37 @@ mod tests {
         directory
     }
 
+    #[cfg(unix)]
+    #[test]
+    fn durable_sequence_rejects_non_private_parent_and_file_modes() {
+        let config = config();
+        let sender = [0x22; 32];
+        let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
+            .expect("context");
+        let directory = tempfile::tempdir().expect("journal directory");
+        let path = directory.path().join("state-sync-sequence.journal");
+        let binding = lease_binding();
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o755))
+            .expect("shared parent fixture");
+        assert!(matches!(
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open(&path, context.clone(), binding, None,),
+            Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath)
+        ));
+
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent fixture");
+        let owner =
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open(&path, context.clone(), binding, None)
+                .expect("private journal");
+        let pin = owner.pin_v0();
+        drop(owner);
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o640)).expect("shared file fixture");
+        assert!(matches!(
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open(&path, context, binding, Some(pin),),
+            Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath)
+        ));
+    }
+
     #[test]
     fn durable_sequence_reopens_only_with_exact_pin_and_rejects_replay() {
         let config = config();
