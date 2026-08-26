@@ -467,6 +467,18 @@ fn validate_native_readback_binding_v0(
         return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
     }
 
+    // The durable decoder currently returns one receipt-index/commitment row
+    // for every outer transaction. Keep that shape an authenticated
+    // invariant at this boundary instead of accepting a prefix with an
+    // ignored suffix (or a sparse index vector). A future application schema
+    // change must update this join explicitly; silently accepting cardinality
+    // drift would let a receipt be attributed to a different execution view.
+    if facts.receipt_indices.len() != facts.outer_transactions.len()
+        || facts.receipt_commitments.len() != facts.outer_transactions.len()
+    {
+        return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+    }
+
     // The application stores exact outer envelope bytes.  Require exactly one
     // occurrence of the admitted bytes and use that position to bind the
     // per-transaction native receipt commitment.
@@ -1883,10 +1895,27 @@ mod tests {
         build_signed_canonical_tx_v0, ApplicationSignerV0, CanonicalTxBuildContextV0,
         TxBuilderLimitsV0,
     };
+    use trnm_consensus_types::{
+        BlockHeader, BlockKind, CertifiedHeaderV0, ChainId, ConsensusParametersV0,
+        ConsensusPublicKey, Epoch, EvidenceRoot, GenesisHash, GenesisQcV0, PayloadDigest,
+        ProtocolVersion, QcReferenceV0, QuorumCertificate, ReceiptsRoot, Signature64,
+        SignatureBytes, StateRoot as ConsensusStateRoot, Validator, ValidatorId, ValidatorSet,
+        View, Vote, VotingPower,
+    };
+    use trnm_finality_types::crypto::public_key_hex;
     use trnm_mempool::{
         CanonicalSignerId, CanonicalTxDigest, IngressClass, PendingNonceReservationState,
         ResourceLimits, SignedAdmissionHooks, SignedEnvelopeView, TypedAdmissionGate,
         TypedAdmitOutcome,
+    };
+    use trnm_native_application::{
+        NativeApplicationCommitRequestV0, NativeApplicationGenesisRequestV0, NativeApplicationV0,
+        NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0,
+        NativeExpectedBlockCommitmentsV0,
+    };
+    use trnm_native_execution_v0::{
+        AuthorizedSignerV0, CanonicalLabNativeApplicationConfigInputsV0, NativeApplicationConfigV0,
+        NativeBlockPreviewRequestV0,
     };
     use trnm_protocol::CanonicalCommandV1;
 
@@ -1962,6 +1991,34 @@ mod tests {
 
         fn signer_role(&self) -> &str {
             "account"
+        }
+
+        fn public_key_hex(&self) -> &str {
+            &self.public_key
+        }
+
+        fn sign(&self, preimage: &[u8]) -> anyhow::Result<[u8; 64]> {
+            Ok(self.key.sign(preimage).to_bytes())
+        }
+    }
+
+    /// The native readback fixture uses the same deterministic envelope shape
+    /// as the builder test, but marks the signer as an operator so the real
+    /// native runtime will execute its `CreditAccount` command. This remains
+    /// test-only key material; no production signer edge is enabled.
+    struct NativeFixtureSigner {
+        key: SigningKey,
+        id: String,
+        public_key: String,
+    }
+
+    impl ApplicationSignerV0 for NativeFixtureSigner {
+        fn signer_id(&self) -> &str {
+            &self.id
+        }
+
+        fn signer_role(&self) -> &str {
+            "operator"
         }
 
         fn public_key_hex(&self) -> &str {
@@ -2066,6 +2123,292 @@ mod tests {
                 amount: 1,
             },
             &signer,
+        )
+        .unwrap()
+    }
+
+    fn native_fixture_transaction() -> BuiltCanonicalTxV0 {
+        let key = SigningKey::from_bytes(&[0x47; 32]);
+        let signer = NativeFixtureSigner {
+            public_key: hex::encode(key.verifying_key().to_bytes()),
+            key,
+            id: "did:operator:1".to_owned(),
+        };
+        build_signed_canonical_tx_v0(
+            CanonicalTxBuildContextV0 {
+                chain_id: "trnm-devnet".to_owned(),
+                sender: signer.id.clone(),
+                command_id: Some("durable-credit-1".to_owned()),
+                nonce: 1,
+                issued_at_unix_ms: 1_700_000_000_000,
+                expires_at_unix_ms: 1_700_000_100_000,
+                max_gas: 10_000,
+                fee_limit: 17,
+                limits: TxBuilderLimitsV0::candidate_v0(),
+            },
+            CanonicalCommandV1::CreditAccount {
+                account: "did:client:1".to_owned(),
+                amount: 10_000,
+            },
+            &signer,
+        )
+        .unwrap()
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    struct NativeFixtureSignerResolver {
+        signer: CanonicalSignerId,
+    }
+
+    impl CanonicalSignerIdentityResolverV0 for NativeFixtureSignerResolver {
+        fn resolve_canonical_signer_id_v0(
+            &self,
+            transaction: &BuiltCanonicalTxV0,
+        ) -> Result<CanonicalSignerId, AdmissionReject> {
+            if transaction.envelope().signer_id != "did:operator:1" {
+                return Err(AdmissionReject::SignerIdentityUnavailable);
+            }
+            Ok(self.signer)
+        }
+    }
+
+    fn native_fixture_validator_set(parameters: &ConsensusParametersV0) -> ValidatorSet {
+        let validators = (0_u8..4)
+            .map(|index| {
+                let key = SigningKey::from_bytes(&[20 + index; 32]);
+                Validator::new(
+                    ValidatorId::from_bytes(format!("p2-validator-{index}").as_bytes()).unwrap(),
+                    ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                    VotingPower::new(1).unwrap(),
+                )
+                .unwrap()
+            })
+            .collect();
+        ValidatorSet::new(
+            GenesisHash::new([0xD0; 32]),
+            ChainId::new("trnm-devnet").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .unwrap()
+    }
+
+    fn native_fixture_config() -> NativeApplicationConfigV0 {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let validator_set = native_fixture_validator_set(&parameters);
+        let application_key = SigningKey::from_bytes(&[0x47; 32]);
+        let client_key = SigningKey::from_bytes(&[0x52; 32]);
+        let application_signers = vec![
+            AuthorizedSignerV0::new(
+                "did:operator:1",
+                "operator",
+                public_key_hex(&application_key),
+            )
+            .unwrap(),
+            AuthorizedSignerV0::new("did:client:1", "hepta", public_key_hex(&client_key)).unwrap(),
+        ];
+        NativeApplicationConfigV0::from_canonical_lab_inputs_v0(
+            CanonicalLabNativeApplicationConfigInputsV0::new(
+                "p2-native-readback-test",
+                [0xD1; 32],
+                [0xD2; 32],
+                [0xD3; 32],
+                [0xD4; 32],
+                validator_set.validators()[0].id(),
+                validator_set,
+                parameters,
+                application_signers,
+                "did:operator:1",
+            )
+            .unwrap(),
+        )
+        .unwrap()
+    }
+
+    fn native_fixture_genesis_request(
+        config: &NativeApplicationConfigV0,
+    ) -> NativeApplicationGenesisRequestV0 {
+        NativeApplicationGenesisRequestV0::new(
+            trnm_native_application::ChainIdV0::new(config.chain_id_v0()).unwrap(),
+            trnm_native_application::GenesisHashV0::new(config.genesis_hash_v0()).unwrap(),
+            trnm_native_application::Hash32V0::new(config.chain_descriptor_hash_v0()),
+            trnm_native_application::Hash32V0::new(config.signer_policy_commitment_v0()),
+            trnm_native_application::StateRootV0::new(config.initial_state_root()).unwrap(),
+            config.initial_validator_set().clone(),
+        )
+        .unwrap()
+    }
+
+    /// Build a shape-valid but cryptographically unauthenticated three-chain
+    /// for the exact executed header. The durable application must reject it
+    /// before the WAL can mint a commit receipt; the proof object itself is
+    /// intentionally not an authority.
+    fn native_fixture_structural_proof(
+        execution: &NativeBlockExecutionRequestV0,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> FinalityProofV0 {
+        fn qc_for(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
+            let votes = set
+                .validators()
+                .iter()
+                .take(3)
+                .map(|validator| {
+                    Vote::new(
+                        set.chain_id(),
+                        set.protocol_version(),
+                        set.epoch(),
+                        header.view(),
+                        header.height(),
+                        header.id(),
+                        set.id(),
+                        validator.id(),
+                        SignatureBytes::from_array([0x11; 64]),
+                        set,
+                    )
+                    .unwrap()
+                })
+                .collect();
+            QuorumCertificate::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                header.view(),
+                header.height(),
+                header.id(),
+                set.id(),
+                votes,
+                set,
+            )
+            .unwrap()
+        }
+
+        fn certified(
+            header: BlockHeader,
+            justify: QcReferenceV0,
+            qc: QuorumCertificate,
+            set: &ValidatorSet,
+            parameters: &ConsensusParametersV0,
+            authenticated_parent_timestamp_ms: u64,
+        ) -> CertifiedHeaderV0 {
+            CertifiedHeaderV0::new(
+                header,
+                justify,
+                None,
+                None,
+                Signature64::from_array([0x22; 64]),
+                qc,
+                set,
+                None,
+                parameters,
+                authenticated_parent_timestamp_ms,
+            )
+            .unwrap()
+        }
+
+        let expected = execution.expected();
+        let h1 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(1),
+            trnm_consensus_types::Height::new(1),
+            BlockKind::Regular,
+            BlockId::new(*execution.parent().block_id().as_bytes()),
+            set.validators()[0].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new(*expected.payload_root().as_bytes()),
+            ConsensusStateRoot::new(*expected.post_state_root().as_bytes()),
+            ReceiptsRoot::new(*expected.receipts_root().as_bytes()),
+            EvidenceRoot::new(*expected.evidence_root().as_bytes()),
+            execution.timestamp_ms(),
+            None,
+        )
+        .unwrap();
+        let q1 = qc_for(set, &h1);
+        let c1 = certified(
+            h1.clone(),
+            QcReferenceV0::genesis_anchor(
+                GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap(),
+            ),
+            q1.clone(),
+            set,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        );
+
+        let h2 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(2),
+            trnm_consensus_types::Height::new(2),
+            BlockKind::Regular,
+            h1.id(),
+            set.validators()[1].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x61; 32]),
+            ConsensusStateRoot::new([0x62; 32]),
+            ReceiptsRoot::new([0x63; 32]),
+            EvidenceRoot::new([0x64; 32]),
+            execution.timestamp_ms() + 1,
+            None,
+        )
+        .unwrap();
+        let q2 = qc_for(set, &h2);
+        let c2 = certified(
+            h2.clone(),
+            QcReferenceV0::ordinary(q1),
+            q2.clone(),
+            set,
+            parameters,
+            h1.timestamp_ms(),
+        );
+
+        let h3 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(3),
+            trnm_consensus_types::Height::new(3),
+            BlockKind::Regular,
+            h2.id(),
+            set.validators()[2].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x71; 32]),
+            ConsensusStateRoot::new([0x72; 32]),
+            ReceiptsRoot::new([0x73; 32]),
+            EvidenceRoot::new([0x74; 32]),
+            execution.timestamp_ms() + 2,
+            None,
+        )
+        .unwrap();
+        let q3 = qc_for(set, &h3);
+        let c3 = certified(
+            h3,
+            QcReferenceV0::ordinary(q2),
+            q3,
+            set,
+            parameters,
+            h2.timestamp_ms(),
+        );
+        FinalityProofV0::new(
+            c1,
+            c2,
+            c3,
+            set,
+            None,
+            parameters,
+            authenticated_parent_timestamp_ms,
         )
         .unwrap()
     }
@@ -2866,9 +3209,149 @@ mod tests {
             ),
             Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
         );
+
+        // A receipt/index prefix or suffix is not an authenticated execution
+        // result. The native application currently emits exact parallel
+        // vectors, so cardinality drift must reject before selecting index 0.
+        let extra_receipt = vec![receipt_digest, [0xBF; 32]];
+        let extra_receipt_facts = NativeCommitReadbackFactsV0 {
+            receipt_commitments: &extra_receipt,
+            ..facts
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                extra_receipt_facts,
+            ),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
         drop(ready);
         drop(boundary);
         cleanup(&path);
+    }
+
+    #[test]
+    fn native_readback_real_store_rejects_unauthenticated_finality_before_wal_commit() {
+        let application_temp = tempfile::tempdir().unwrap();
+        let application_path = application_temp.path().join("native-application.sqlite");
+        let config = native_fixture_config();
+        let set = config.validator_set_v0().clone();
+        let parameters = *config.consensus_parameters_v0();
+        let transaction = native_fixture_transaction();
+        transaction
+            .envelope()
+            .validate_at_strict("trnm-devnet", 1_700_000_001_000)
+            .expect("native fixture envelope must pass strict signature/context checks");
+        let application = DurableNativeApplicationV0::open(&application_path, config).unwrap();
+        let genesis = application
+            .initialize(native_fixture_genesis_request(application.config_v0()))
+            .unwrap();
+        let timestamp_ms = 1_700_000_001_000;
+        let preview_request = NativeBlockPreviewRequestV0::new(
+            trnm_native_application::ChainIdV0::new(application.config_v0().chain_id_v0()).unwrap(),
+            trnm_native_application::GenesisHashV0::new(application.config_v0().genesis_hash_v0())
+                .unwrap(),
+            genesis.head().clone(),
+            trnm_native_application::HeightV0::new(1),
+            timestamp_ms,
+            genesis.active_validator_set_id(),
+            vec![transaction.exact_outer_bytes().to_vec()],
+        )
+        .unwrap();
+        let preview = application
+            .preview_block_v0(&preview_request)
+            .unwrap_or_else(|error| panic!("native fixture preview failed: {error:?}"));
+        let execution = NativeBlockExecutionRequestV0::new(
+            preview_request.chain_id().clone(),
+            preview_request.genesis_hash(),
+            preview_request.parent().clone(),
+            trnm_native_application::BlockIdV0::new([0xD5; 32]).unwrap(),
+            preview_request.height(),
+            timestamp_ms,
+            preview_request.active_validator_set_id(),
+            preview_request.transactions().to_vec(),
+            NativeExpectedBlockCommitmentsV0::new(
+                preview.payload_root(),
+                preview.post_state_root(),
+                preview.receipts_root(),
+                preview.evidence_root(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let executed = match application.execute_block(execution.clone()).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("native fixture execution was not valid: {other:?}"),
+        };
+        let receipt_digest = *executed.receipts()[0].commitment().as_bytes();
+        application
+            .commit_block(NativeApplicationCommitRequestV0::new(executed))
+            .unwrap();
+
+        // The proof carries the exact committed header coordinates, but its
+        // proposal/QC signatures are deliberately bogus. The concrete
+        // DurableNativeApplication verifier must reject it, and the WAL row
+        // must remain HandedOff rather than minting a durable receipt.
+        let parent_timestamp_ms = timestamp_ms - 1_000;
+        let proof =
+            native_fixture_structural_proof(&execution, &set, &parameters, parent_timestamp_ms);
+        let signer_id = CanonicalSignerId::from_bytes([0xD6; 32]).unwrap();
+        let wal_path = temp_path();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &wal_path,
+                [0xD7; 32],
+                2,
+                0,
+                NativeFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
+        assert_eq!(
+            boundary.check_tx_candidate_with_resolver(
+                &transaction,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_700_000_001_000,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            transaction.protocol_tx_hash_v1(),
+            BlockId::new([0xD5; 32]),
+            Height::new(1),
+            StateRoot::new(*execution.expected().post_state_root().as_bytes()),
+            receipt_digest,
+            *proof.id().as_bytes(),
+        )
+        .unwrap();
+        assert_eq!(
+            boundary.commit_candidate_with_native_readback(
+                &mut ready,
+                &transaction,
+                evidence,
+                &application,
+                &proof,
+                parent_timestamp_ms,
+            ),
+            Err(AdmissionReject::InconsistentState)
+        );
+        assert_eq!(
+            ready.reservation_state(),
+            Ok(PendingNonceReservationState::HandedOff)
+        );
+        drop(ready);
+        drop(boundary);
+        drop(application);
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&wal_path, [0xD7; 32]).unwrap_err(),
+            TxAdmissionWalErrorV0::AmbiguousHandoff
+        );
+        cleanup(&wal_path);
     }
 
     #[test]
