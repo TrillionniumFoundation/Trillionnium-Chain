@@ -42,6 +42,12 @@ pub const STATE_SYNC_WIRE_INGRESS_DURABLE_REPLAY_PROTECTION_V0: bool = false;
 /// separate from the production activation flag because the lease authority
 /// and sequence append are not one atomic operation yet.
 pub const STATE_SYNC_WIRE_INGRESS_DURABLE_SEQUENCE_JOURNAL_CANDIDATE_V0: bool = true;
+/// An explicit, trusted-pin-gated recovery path may discard only an
+/// incomplete final journal frame after a power-loss-style torn append.  It is
+/// deliberately separate from durable replay protection and remains
+/// candidate-only until peer-lease ownership and the append are one atomic
+/// authority transaction.
+pub const STATE_SYNC_WIRE_INGRESS_DURABLE_CRASH_RECOVERY_CANDIDATE_V0: bool = true;
 
 /// The exact scope component which failed node-owned ingress binding.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -791,70 +797,195 @@ impl StateSyncSequenceJournalV0 {
         self.file
             .seek(SeekFrom::End(0))
             .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
-        if bytes.is_empty() {
-            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated);
-        }
-        if bytes.len() % STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0 != 0 {
-            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated);
-        }
-        let frame_count = bytes.len() / STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0;
-        if frame_count == 0 || frame_count - 1 > STATE_SYNC_SEQUENCE_JOURNAL_MAX_ENTRIES_V0 as usize
-        {
-            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::TooLarge);
-        }
-        let mut head = [0; 32];
-        let mut last_sequence = None;
-        for (index, chunk) in bytes
-            .chunks_exact(STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0)
-            .enumerate()
-        {
-            let kind = chunk[9];
-            if chunk[..8] != STATE_SYNC_SEQUENCE_JOURNAL_MAGIC_V0
-                || chunk[8] != STATE_SYNC_SEQUENCE_JOURNAL_VERSION_V0
-                || chunk[10..12] != [0, 0]
-            {
-                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
-            }
-            if chunk[12..44] != self.context_digest {
-                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
-            }
-            if chunk[44..76] != self.lease_binding_digest {
-                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::LeaseBindingMismatch);
-            }
-            if chunk[148..180] != head
-                || chunk[180..] != state_sync_sequence_frame_digest_v0(&chunk[..180])
-            {
-                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
-            }
-            let sequence = u64::from_be_bytes(
-                chunk[76..84]
-                    .try_into()
-                    .expect("fixed sequence journal field"),
-            );
-            if index == 0 {
-                if kind != STATE_SYNC_SEQUENCE_JOURNAL_GENESIS_KIND_V0
-                    || sequence != 0
-                    || chunk[84..148] != [0; 64]
-                    || head != [0; 32]
-                {
-                    return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
-                }
-            } else {
-                if kind != STATE_SYNC_SEQUENCE_JOURNAL_ENTRY_KIND_V0
-                    || last_sequence.is_some_and(|previous| sequence <= previous)
-                    || chunk[84..148] == [0; 64]
-                {
-                    return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
-                }
-                last_sequence = Some(sequence);
-            }
-            head = chunk[180..].try_into().expect("fixed frame digest");
-        }
+        let (head, record_count, last_sender_sequence) = parse_state_sync_sequence_bytes_v0(
+            &bytes,
+            self.context_digest,
+            self.lease_binding_digest,
+        )?;
         self.head = head;
-        self.record_count = (frame_count - 1) as u64;
-        self.last_sender_sequence = last_sequence;
+        self.record_count = record_count;
+        self.last_sender_sequence = last_sender_sequence;
         Ok(())
     }
+}
+
+/// Parse one complete sequence journal image without mutating a live owner.
+///
+/// Keeping this parser independent from the file descriptor is important for
+/// crash recovery: the recovery path must authenticate the complete prefix
+/// against the caller's trusted pin before it is allowed to truncate a torn
+/// final frame.
+fn parse_state_sync_sequence_bytes_v0(
+    bytes: &[u8],
+    context_digest: [u8; 32],
+    lease_binding_digest: [u8; 32],
+) -> Result<([u8; 32], u64, Option<u64>), PocoNodeStateSyncWireIngressDurableErrorV0> {
+    if bytes.is_empty() {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated);
+    }
+    if !bytes
+        .len()
+        .is_multiple_of(STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0)
+    {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated);
+    }
+    let frame_count = bytes.len() / STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0;
+    if frame_count == 0 || frame_count - 1 > STATE_SYNC_SEQUENCE_JOURNAL_MAX_ENTRIES_V0 as usize {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::TooLarge);
+    }
+    let mut head = [0; 32];
+    let mut last_sequence = None;
+    for (index, chunk) in bytes
+        .chunks_exact(STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0)
+        .enumerate()
+    {
+        let kind = chunk[9];
+        if chunk[..8] != STATE_SYNC_SEQUENCE_JOURNAL_MAGIC_V0
+            || chunk[8] != STATE_SYNC_SEQUENCE_JOURNAL_VERSION_V0
+            || chunk[10..12] != [0, 0]
+        {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
+        }
+        if chunk[12..44] != context_digest {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
+        }
+        if chunk[44..76] != lease_binding_digest {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::LeaseBindingMismatch);
+        }
+        if chunk[148..180] != head
+            || chunk[180..] != state_sync_sequence_frame_digest_v0(&chunk[..180])
+        {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
+        }
+        let sequence = u64::from_be_bytes(
+            chunk[76..84]
+                .try_into()
+                .expect("fixed sequence journal field"),
+        );
+        if index == 0 {
+            if kind != STATE_SYNC_SEQUENCE_JOURNAL_GENESIS_KIND_V0
+                || sequence != 0
+                || chunk[84..148] != [0; 64]
+                || head != [0; 32]
+            {
+                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
+            }
+        } else {
+            if kind != STATE_SYNC_SEQUENCE_JOURNAL_ENTRY_KIND_V0
+                || last_sequence.is_some_and(|previous| sequence <= previous)
+                || chunk[84..148] == [0; 64]
+            {
+                return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt);
+            }
+            last_sequence = Some(sequence);
+        }
+        head = chunk[180..].try_into().expect("fixed frame digest");
+    }
+    Ok((head, (frame_count - 1) as u64, last_sequence))
+}
+
+/// Remove one torn final frame only after the complete prefix is authenticated
+/// by an exact external pin.  This is a candidate recovery helper, not an
+/// automatic rollback mechanism: callers must deliberately opt into it after
+/// a process-crash/power-loss classification and hold the same trusted pin
+/// that was persisted before the append began.
+fn repair_state_sync_sequence_tail_v0(
+    path: impl AsRef<Path>,
+    context_digest: [u8; 32],
+    lease_binding: PocoNodeStateSyncWireIngressLeaseBindingV0,
+    trusted_pin: PocoNodeStateSyncWireIngressJournalPinV0,
+) -> Result<(), PocoNodeStateSyncWireIngressDurableErrorV0> {
+    if context_digest == [0; 32] {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+    }
+    let path = path.as_ref().to_path_buf();
+    let parent = path
+        .parent()
+        .ok_or(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath)?;
+    let parent_metadata = fs::symlink_metadata(parent)
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath)?;
+    if !parent_metadata.is_dir() || !private_sequence_parent_v0(&parent_metadata) {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+    }
+    let parent_file =
+        File::open(parent).map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    let parent_identity = StateSyncSequencePathIdentityV0::from_metadata(
+        &parent_file
+            .metadata()
+            .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?,
+    );
+    let file_metadata = fs::symlink_metadata(&path)
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath)?;
+    if !file_metadata.is_file() || !private_sequence_file_v0(&file_metadata) {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+    }
+    let file = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(&path)
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    file.try_lock_exclusive()
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    let file_identity = StateSyncSequencePathIdentityV0::from_metadata(
+        &file
+            .metadata()
+            .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?,
+    );
+    if StateSyncSequencePathIdentityV0::from_metadata(&file_metadata) != file_identity
+        || !path_binding_matches_v0(&path, parent_identity, file_identity)
+    {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+    }
+    let maximum_bytes = (STATE_SYNC_SEQUENCE_JOURNAL_MAX_ENTRIES_V0 + 1)
+        .checked_mul(STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0 as u64)
+        .ok_or(PocoNodeStateSyncWireIngressDurableErrorV0::TooLarge)?;
+    let file_len = file
+        .metadata()
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?
+        .len();
+    if file_len > maximum_bytes {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::TooLarge);
+    }
+    let mut bytes = Vec::new();
+    (&file)
+        .take(maximum_bytes.saturating_add(1))
+        .read_to_end(&mut bytes)
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    if bytes.len() as u64 > maximum_bytes {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::TooLarge);
+    }
+    let remainder = bytes.len() % STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0;
+    if remainder == 0 {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated);
+    }
+    let prefix_len = bytes.len() - remainder;
+    let lease_binding_digest = lease_binding.digest_v0();
+    let (head, record_count, last_sender_sequence) = parse_state_sync_sequence_bytes_v0(
+        &bytes[..prefix_len],
+        context_digest,
+        lease_binding_digest,
+    )?;
+    let prefix_pin = PocoNodeStateSyncWireIngressJournalPinV0 {
+        context_digest,
+        lease_binding_digest,
+        record_count,
+        last_sender_sequence,
+        head,
+    };
+    if prefix_pin != trusted_pin {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::PinMismatch);
+    }
+    file.set_len(prefix_len as u64)
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    file.sync_all()
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    parent_file
+        .sync_all()
+        .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+    if !path_binding_matches_v0(&path, parent_identity, file_identity) {
+        return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+    }
+    Ok(())
 }
 
 fn path_binding_matches_v0(
@@ -983,6 +1114,29 @@ impl PocoNodeStateSyncWireIngressDurableOwnerV0 {
             journal,
             lease_binding,
         })
+    }
+
+    /// Reopen after an explicitly classified crash/power-loss boundary.
+    ///
+    /// The normal [`Self::open`] path never repairs bytes.  This opt-in path
+    /// first requires a torn (incomplete) final frame, authenticates every
+    /// complete predecessor against the exact caller-held pin, truncates only
+    /// that uncommitted tail, and fsyncs both the journal and its parent before
+    /// doing a normal pinned reopen.  A complete extra frame, interior
+    /// corruption, lease mismatch, or a stale pin remains fail-closed.
+    pub fn open_after_crash_v0(
+        path: impl AsRef<Path>,
+        context: PocoNodeStateSyncWireIngressContextV0,
+        lease_binding: PocoNodeStateSyncWireIngressLeaseBindingV0,
+        trusted_pin: PocoNodeStateSyncWireIngressJournalPinV0,
+    ) -> Result<Self, PocoNodeStateSyncWireIngressDurableErrorV0> {
+        repair_state_sync_sequence_tail_v0(
+            path.as_ref(),
+            context.digest_v0(),
+            lease_binding,
+            trusted_pin,
+        )?;
+        Self::open(path, context, lease_binding, Some(trusted_pin))
     }
 
     pub const fn context(&self) -> &PocoNodeStateSyncWireIngressContextV0 {
@@ -1391,5 +1545,87 @@ mod tests {
             PocoNodeStateSyncWireIngressDurableOwnerV0::open(&path, context, binding, Some(pin),),
             Err(PocoNodeStateSyncWireIngressDurableErrorV0::Corrupt)
         ));
+    }
+
+    #[test]
+    fn durable_sequence_crash_recovery_discards_only_torn_tail_with_exact_pin() {
+        let config = config();
+        let sender = [0x22; 32];
+        let hash = [0x33; 32];
+        let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
+            .expect("context");
+        let directory = private_journal_directory();
+        let path = directory.path().join("state-sync-sequence.journal");
+        let binding = lease_binding();
+        let mut owner =
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open(&path, context.clone(), binding, None)
+                .expect("fresh durable owner");
+        owner
+            .accept_sync_info_v0(binding, &frame(&config, sender, 7, hash), hash)
+            .expect("committed prefix frame");
+        let trusted_pin = owner.pin_v0();
+        drop(owner);
+
+        // Simulate a power loss after part of the next fixed journal frame
+        // reached stable storage.  The prefix is complete and authenticated,
+        // but the tail is not a record which can be replayed.
+        let next_wire = frame(&config, sender, 8, hash);
+        let next_preflight =
+            decode_wire_envelope_v0_preflight(&next_wire).expect("next wire preflight");
+        let next_message_digest = digest_bytes_v0(
+            b"trnm.poco-node.state-sync-message-id.v0\0",
+            next_preflight.message_id(),
+        );
+        let torn = encode_state_sync_sequence_frame_v0(
+            STATE_SYNC_SEQUENCE_JOURNAL_ENTRY_KIND_V0,
+            context.digest_v0(),
+            binding.digest_v0(),
+            8,
+            next_message_digest,
+            hash,
+            trusted_pin.head(),
+        );
+        let mut file = OpenOptions::new()
+            .append(true)
+            .open(&path)
+            .expect("open journal for torn append");
+        file.write_all(&torn[..73]).expect("write torn tail");
+        file.sync_all().expect("sync torn tail");
+        drop(file);
+
+        assert!(matches!(
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open(
+                &path,
+                context.clone(),
+                binding,
+                Some(trusted_pin),
+            ),
+            Err(PocoNodeStateSyncWireIngressDurableErrorV0::Truncated)
+        ));
+
+        let mut wrong_pin = trusted_pin;
+        wrong_pin.head[0] ^= 1;
+        assert!(matches!(
+            PocoNodeStateSyncWireIngressDurableOwnerV0::open_after_crash_v0(
+                &path,
+                context.clone(),
+                binding,
+                wrong_pin,
+            ),
+            Err(PocoNodeStateSyncWireIngressDurableErrorV0::PinMismatch)
+        ));
+
+        let mut recovered = PocoNodeStateSyncWireIngressDurableOwnerV0::open_after_crash_v0(
+            &path,
+            context,
+            binding,
+            trusted_pin,
+        )
+        .expect("exact pin permits dropping only torn tail");
+        assert_eq!(recovered.pin_v0(), trusted_pin);
+        recovered
+            .accept_sync_info_v0(binding, &next_wire, hash)
+            .expect("next sequence remains admissible after recovery");
+        assert_eq!(recovered.last_sender_sequence(), Some(8));
     }
 }
