@@ -44,13 +44,15 @@ use fs2::FileExt;
 use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::{BuiltCanonicalTxAdmissionViewV0, BuiltCanonicalTxV0};
-use trnm_consensus_types::{BlockId, Height, StateRoot};
+use trnm_consensus_types::{BlockId, FinalityProofV0, Height, StateRoot};
 use trnm_mempool::{
     AdmissionReject, CanonicalSignerId, IngressClass, PendingNonceAdmission, PendingNonceAuthority,
     PendingNonceReservation, PendingNonceReservationState, SignedAdmissionHooks,
     SignedEnvelopeMetadata, SignedEnvelopeView, TypedAdmissionGate, TypedAdmitOutcome,
     DEFAULT_MAX_ADMISSION_BODY_BYTES,
 };
+use trnm_native_application::BlockIdV0;
+use trnm_native_execution_v0::DurableNativeApplicationV0;
 
 /// This is a runnable composition seam only.  It does not imply a node
 /// runtime or a production admission path.
@@ -92,6 +94,13 @@ pub const TX_ADMISSION_BOUNDARY_BROADCAST_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_V0: bool = true;
 #[allow(dead_code)]
 pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
+/// The candidate now has a concrete native-application readback verifier. It
+/// joins the exact admitted outer/inner envelope to a committed native P row,
+/// state root, receipt commitment, and independently verified PoCO proof. It
+/// remains composition-only until a production node owns the application and
+/// finality proof lifetimes.
+pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0: bool = true;
+pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
 
 const SCHEMA_VERSION_V0: i64 = 1;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
@@ -251,6 +260,8 @@ pub struct NativeCommitReceiptEvidenceV0 {
     block_id: BlockId,
     block_height: Height,
     state_root: StateRoot,
+    /// The native execution receipt commitment at this transaction's exact
+    /// block-body index (not an inferred transport or legacy AppHash value).
     receipt_digest: [u8; 32],
     finality_proof_digest: [u8; 32],
 }
@@ -351,6 +362,189 @@ pub trait NativeCommitReceiptVerifierV0 {
         metadata: &SignedEnvelopeMetadata,
         evidence: &NativeCommitReceiptEvidenceV0,
     ) -> Result<(), TxAdmissionWalErrorV0>;
+}
+
+/// Concrete candidate verifier which joins one admitted builder transaction
+/// to the durable native application readback and an independently verified
+/// PoCO finality proof.
+///
+/// The application API intentionally exposes the native state root rather than
+/// a legacy Comet `AppHash`.  The verifier therefore checks the exact native
+/// committed head (`block_id`, height, and state root), the durable execution
+/// artifact's exact outer transaction bytes, and the receipt commitment at the
+/// matching transaction index.  `FinalityProofV0::id()` is bound separately so
+/// a caller cannot substitute a proof with the same block coordinates.
+///
+/// This is a composition-only seam.  It does not own the application, create a
+/// finality proof, sign, broadcast, or activate the node.  A production owner
+/// must retain the application/proof lifetimes and still join this readback to
+/// Core/Safety before resolving a WAL handoff.
+pub struct DurableNativeCommitReceiptVerifierV0<'a> {
+    application: &'a DurableNativeApplicationV0,
+    finality_proof: &'a FinalityProofV0,
+    authenticated_parent_timestamp_ms: u64,
+    transaction: &'a BuiltCanonicalTxV0,
+}
+
+impl<'a> DurableNativeCommitReceiptVerifierV0<'a> {
+    /// Bind the verifier to the exact builder output that was admitted.  The
+    /// constructor performs no I/O; all durable checks occur inside the
+    /// [`NativeCommitReceiptVerifierV0`] implementation immediately before a
+    /// receipt token is minted.
+    pub const fn new(
+        application: &'a DurableNativeApplicationV0,
+        finality_proof: &'a FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+        transaction: &'a BuiltCanonicalTxV0,
+    ) -> Self {
+        Self {
+            application,
+            finality_proof,
+            authenticated_parent_timestamp_ms,
+            transaction,
+        }
+    }
+}
+
+impl fmt::Debug for DurableNativeCommitReceiptVerifierV0<'_> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("DurableNativeCommitReceiptVerifierV0")
+            .field("finality_proof_id", &self.finality_proof.id())
+            .field(
+                "transaction_digest",
+                &self.transaction.protocol_tx_hash_v1(),
+            )
+            .finish_non_exhaustive()
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+struct NativeCommitReadbackFactsV0<'a> {
+    finalized_height: u64,
+    finalized_block_id: [u8; 32],
+    finalized_state_root: [u8; 32],
+    executed_height: u64,
+    executed_block_id: [u8; 32],
+    executed_state_root: [u8; 32],
+    outer_transactions: &'a [Vec<u8>],
+    receipt_indices: &'a [u32],
+    receipt_commitments: &'a [[u8; 32]],
+}
+
+fn validate_native_readback_binding_v0(
+    metadata: &SignedEnvelopeMetadata,
+    evidence: &NativeCommitReceiptEvidenceV0,
+    transaction: &BuiltCanonicalTxV0,
+    expected_finality_proof_digest: [u8; 32],
+    facts: NativeCommitReadbackFactsV0<'_>,
+) -> Result<(), TxAdmissionWalErrorV0> {
+    // Re-check the immutable builder carrier here rather than relying on a
+    // caller to preserve the same transaction between CheckTx and commit.
+    // This closes the common "verified one envelope, committed another"
+    // gap at the final readback boundary.
+    if transaction.protocol_tx_hash_v1() != metadata.digest().as_bytes()
+        || transaction.exact_inner_bytes() != metadata.body()
+        || evidence.tx_digest != transaction.protocol_tx_hash_v1()
+        || evidence.finality_proof_digest != expected_finality_proof_digest
+    {
+        return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+    }
+
+    // The durable row and the authenticated application head must both
+    // describe the exact target claimed by the receipt.  A read of a
+    // committed sibling or a stale state root cannot mint a token.
+    let expected_height = evidence.block_height.get();
+    let expected_block_id = *evidence.block_id.as_bytes();
+    let expected_state_root = *evidence.state_root.as_bytes();
+    if facts.finalized_height != expected_height
+        || facts.finalized_block_id != expected_block_id
+        || facts.finalized_state_root != expected_state_root
+        || facts.executed_height != expected_height
+        || facts.executed_block_id != expected_block_id
+        || facts.executed_state_root != expected_state_root
+    {
+        return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+    }
+
+    // The application stores exact outer envelope bytes.  Require exactly one
+    // occurrence of the admitted bytes and use that position to bind the
+    // per-transaction native receipt commitment.
+    let mut matched_index = None;
+    for (index, outer_bytes) in facts.outer_transactions.iter().enumerate() {
+        if outer_bytes.as_slice() == transaction.exact_outer_bytes() {
+            if matched_index.replace(index).is_some() {
+                return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+            }
+        }
+    }
+    let index = matched_index.ok_or(TxAdmissionWalErrorV0::CommitReceiptMismatch)?;
+    if facts.receipt_indices.get(index).copied() != Some(index as u32)
+        || facts
+            .receipt_commitments
+            .get(index)
+            .is_none_or(|commitment| commitment != &evidence.receipt_digest)
+    {
+        return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+    }
+    Ok(())
+}
+
+impl NativeCommitReceiptVerifierV0 for DurableNativeCommitReceiptVerifierV0<'_> {
+    fn verify_application_and_finality_v0(
+        &self,
+        metadata: &SignedEnvelopeMetadata,
+        evidence: &NativeCommitReceiptEvidenceV0,
+    ) -> Result<(), TxAdmissionWalErrorV0> {
+        let proof_id = self.finality_proof.id();
+        let block_id = BlockIdV0::new(*evidence.block_id.as_bytes())
+            .map_err(|_| TxAdmissionWalErrorV0::CommitReceiptMismatch)?;
+
+        let read = self
+            .application
+            .read_finalized_by_block_id_with_proof_v0(
+                block_id,
+                self.finality_proof,
+                self.authenticated_parent_timestamp_ms,
+            )
+            .map_err(|_| TxAdmissionWalErrorV0::CommitReadbackUnavailable)?;
+        let finalized_head = read
+            .finalized_head_v0()
+            .map_err(|_| TxAdmissionWalErrorV0::CommitReadbackUnavailable)?;
+        let receipt_indices = read
+            .executed_v0()
+            .receipts()
+            .iter()
+            .map(|receipt| receipt.transaction_index())
+            .collect::<Vec<_>>();
+        let receipt_commitments = read
+            .receipt_commitments_v0()
+            .iter()
+            .map(|commitment| *commitment.as_bytes())
+            .collect::<Vec<_>>();
+        validate_native_readback_binding_v0(
+            metadata,
+            evidence,
+            self.transaction,
+            *proof_id.as_bytes(),
+            NativeCommitReadbackFactsV0 {
+                finalized_height: finalized_head.height().get(),
+                finalized_block_id: *finalized_head.block_id().as_bytes(),
+                finalized_state_root: *finalized_head.state_root().as_bytes(),
+                executed_height: read.executed_v0().request().height().get(),
+                executed_block_id: *read.executed_v0().request().block_id().as_bytes(),
+                executed_state_root: *read
+                    .executed_v0()
+                    .request()
+                    .expected()
+                    .post_state_root()
+                    .as_bytes(),
+                outer_transactions: read.executed_v0().request().transactions(),
+                receipt_indices: &receipt_indices,
+                receipt_commitments: &receipt_commitments,
+            },
+        )
+    }
 }
 
 /// Node-owned mapping from the authenticated transaction envelope to the
@@ -1055,6 +1249,32 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             .commit_handed_off_with_receipt(admission.metadata(), receipt)
             .map_err(map_reject_v0)?;
         admission.commit()
+    }
+
+    /// Candidate-only convenience seam for the complete native readback
+    /// boundary.  The caller supplies the exact builder transaction, durable
+    /// native application owner, and independently carried finality proof;
+    /// this method performs readback/authentication first and only then
+    /// advances the WAL row and in-memory lifecycle token.
+    pub fn commit_candidate_with_native_readback(
+        &mut self,
+        admission: &mut PendingNonceAdmission,
+        transaction: &BuiltCanonicalTxV0,
+        evidence: NativeCommitReceiptEvidenceV0,
+        application: &DurableNativeApplicationV0,
+        finality_proof: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> Result<(), AdmissionReject> {
+        let verifier = DurableNativeCommitReceiptVerifierV0::new(
+            application,
+            finality_proof,
+            authenticated_parent_timestamp_ms,
+            transaction,
+        );
+        let verified = evidence
+            .verify_with(admission.metadata(), &verifier)
+            .map_err(map_reject_v0)?;
+        self.commit_candidate_with_receipt(admission, &verified)
     }
 
     pub fn queued_counts(&self) -> (usize, usize, usize) {
@@ -2363,6 +2583,8 @@ mod tests {
             assert!(!TX_ADMISSION_BOUNDARY_BROADCAST_V0);
             assert!(TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_V0);
             assert!(!TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0);
+            assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
         }
         assert_eq!(boundary.namespace(), [0x88; 32]);
         assert_eq!(
@@ -2530,6 +2752,123 @@ mod tests {
         assert_eq!(without_context.retained_rows().unwrap(), 0);
         drop(without_context);
         cleanup(&path_without_context);
+    }
+
+    #[test]
+    fn native_readback_binding_requires_exact_outer_state_and_receipt() {
+        let transaction = builder_fixture_transaction();
+        let signer_id = CanonicalSignerId::from_bytes([0xB7; 32]).unwrap();
+        let path = temp_path();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &path,
+                [0xB8; 32],
+                2,
+                0,
+                BuilderFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
+        assert_eq!(
+            boundary.check_tx_candidate_with_resolver(
+                &transaction,
+                IngressClass::Normal,
+                "trnm-devnet",
+                1_000,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let ready = boundary.pop_ready_with_lifecycle().unwrap();
+        let metadata = ready.metadata().clone();
+        let block_id = [0xB9; 32];
+        let state_root = [0xBA; 32];
+        let receipt_digest = [0xBB; 32];
+        let finality_proof_digest = [0xBC; 32];
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            transaction.protocol_tx_hash_v1(),
+            BlockId::new(block_id),
+            Height::new(7),
+            StateRoot::new(state_root),
+            receipt_digest,
+            finality_proof_digest,
+        )
+        .unwrap();
+        let outer_transactions = vec![transaction.exact_outer_bytes().to_vec()];
+        let receipt_indices = vec![0_u32];
+        let receipt_commitments = vec![receipt_digest];
+        let facts = NativeCommitReadbackFactsV0 {
+            finalized_height: 7,
+            finalized_block_id: block_id,
+            finalized_state_root: state_root,
+            executed_height: 7,
+            executed_block_id: block_id,
+            executed_state_root: state_root,
+            outer_transactions: &outer_transactions,
+            receipt_indices: &receipt_indices,
+            receipt_commitments: &receipt_commitments,
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                facts,
+            ),
+            Ok(())
+        );
+
+        // A different outer envelope with the same metadata cannot be used to
+        // claim that the admitted transaction was applied.
+        let foreign_outer = vec![b"foreign-envelope".to_vec()];
+        let foreign_facts = NativeCommitReadbackFactsV0 {
+            outer_transactions: &foreign_outer,
+            ..facts
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                foreign_facts,
+            ),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
+
+        // A state-root or receipt-commitment substitution is equally
+        // fail-closed even when the exact outer bytes are present.
+        let wrong_root_facts = NativeCommitReadbackFactsV0 {
+            finalized_state_root: [0xBD; 32],
+            ..facts
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                wrong_root_facts,
+            ),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
+        let wrong_receipt = vec![[0xBE; 32]];
+        let wrong_receipt_facts = NativeCommitReadbackFactsV0 {
+            receipt_commitments: &wrong_receipt,
+            ..facts
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                wrong_receipt_facts,
+            ),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
+        drop(ready);
+        drop(boundary);
+        cleanup(&path);
     }
 
     #[test]

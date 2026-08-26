@@ -391,13 +391,15 @@ pub use safety_rules_sidecar::{
 #[cfg(feature = "tx-admission-wal")]
 pub use tx_admission_wal::{
     CanonicalAdmissionContextResolverV0, CanonicalSignerIdentityResolverV0,
-    NativeCommitReceiptEvidenceV0, NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0,
-    SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0,
-    TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0,
-    TX_ADMISSION_BOUNDARY_CHECKTX_V0, TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
+    DurableNativeCommitReceiptVerifierV0, NativeCommitReceiptEvidenceV0,
+    NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, SqlitePendingNonceAuthorityV0,
+    TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0, TX_ADMISSION_BOUNDARY_BROADCAST_V0,
+    TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0, TX_ADMISSION_BOUNDARY_CHECKTX_V0,
+    TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0,
     TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_PRODUCTION_V0,
-    TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_V0, TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0,
+    TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_V0, TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0,
+    TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0, TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0,
     TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0,
     TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0, TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_V0,
     TX_ADMISSION_BOUNDARY_SIGNING_V0, TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
@@ -2878,6 +2880,10 @@ mod tests {
             (
                 "tx_admission_boundary.commit_receipt_production",
                 tx_admission_wal::TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.native_readback_production",
+                TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0,
             ),
         ]);
         #[cfg(feature = "external-signer-runtime")]
