@@ -10659,6 +10659,18 @@ impl Core {
         &mut self,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
+        // Clearing the replay fence is a one-shot Core transition.  A bare
+        // `SafetyReplayComplete` after the fence has already been cleared is
+        // caller input, not an idempotent acknowledgement: accepting it would
+        // mint another startup timer without a fresh authenticated replay
+        // session and would let a host replace the real transition with a
+        // repeated terminal record.  Keep the transition authority tied to
+        // the live fence before validating any replay anchors.
+        if !self.replay_required {
+            return Err(CoreError::InvalidRecovery(
+                "safety replay completion was supplied without a pending replay fence",
+            ));
+        }
         self.validate_replayed_safety_anchors_v0()?;
         self.replay_required = false;
         if self.safety.pending_tc_high_qc_sync().is_some() {

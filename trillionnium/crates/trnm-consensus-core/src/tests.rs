@@ -13539,6 +13539,18 @@ fn recovery_rejects_network_qc_and_tc_until_replay_completes() {
 }
 
 #[test]
+fn replay_completion_requires_a_live_fence_and_is_transactional() {
+    let (_config, mut core) = configured_core();
+    let before = core.safety_state().clone();
+
+    assert!(matches!(
+        core.step(Input::SafetyReplayComplete, &RootSignatures),
+        Err(CoreError::InvalidRecovery(_))
+    ));
+    assert_eq!(core.safety_state(), &before);
+}
+
+#[test]
 fn recovery_replays_stale_verified_headers_before_resuming_finality() {
     let (config, mut original) = configured_core();
     let set = original.config().validator_set().clone();
