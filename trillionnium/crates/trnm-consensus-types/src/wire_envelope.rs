@@ -895,9 +895,21 @@ mod tests {
             (WireBodyKindV0::Proposal, Some(0))
             | (WireBodyKindV0::Vote, Some(1))
             | (WireBodyKindV0::TimeoutVote, Some(2))
-            | (WireBodyKindV0::HandoffVote, Some(3 | 4))
-            | (_, None) => {}
-            (_, Some(_)) => panic!("successful preflight returned an invalid statement kind"),
+            | (WireBodyKindV0::HandoffVote, Some(3 | 4)) => {}
+            (
+                WireBodyKindV0::QuorumCertificate
+                | WireBodyKindV0::TimeoutCertificate
+                | WireBodyKindV0::SyncInfo
+                | WireBodyKindV0::EquivocationEvidence
+                | WireBodyKindV0::JointHandoffCertificate
+                | WireBodyKindV0::ProtocolUpgradePlan
+                | WireBodyKindV0::NextEpochCommitment
+                | WireBodyKindV0::ValidatorSet
+                | WireBodyKindV0::ConsensusParameters
+                | WireBodyKindV0::LightClientProof,
+                None,
+            ) => {}
+            _ => panic!("successful preflight returned an invalid statement kind"),
         }
     }
 
