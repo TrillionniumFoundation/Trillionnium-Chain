@@ -461,6 +461,9 @@ pub fn decode_wire_envelope_v0_preflight(
             return Err(error(WireEnvelopeDecodeErrorCode::InvalidValue, 0));
         }
     }
+    if body.is_empty() {
+        return Err(error(WireEnvelopeDecodeErrorCode::InvalidValue, 0));
+    }
 
     match (body_kind, consensus_message_kind) {
         (WireBodyKindV0::Proposal, Some(0))
@@ -830,5 +833,22 @@ mod tests {
             .expect("non-consensus body may omit message kind");
         assert_eq!(decoded.body_kind(), WireBodyKindV0::SyncInfo);
         assert!(!decoded.has_consensus_message_kind());
+    }
+
+    #[test]
+    fn preflight_rejects_present_but_empty_oneof_body() {
+        let mut bytes = valid_envelope();
+        let body = field_bytes(32, &[0xaa, 0xbb]);
+        let position = bytes
+            .windows(body.len())
+            .position(|window| window == body.as_slice())
+            .expect("body");
+        bytes.splice(position..position + body.len(), field_bytes(32, &[]));
+        assert_eq!(
+            decode_wire_envelope_v0_preflight(&bytes)
+                .unwrap_err()
+                .code(),
+            WireEnvelopeDecodeErrorCode::InvalidValue
+        );
     }
 }
