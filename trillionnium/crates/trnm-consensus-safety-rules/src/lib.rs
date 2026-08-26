@@ -29,10 +29,10 @@ use core::fmt;
 
 use sha2::{Digest, Sha256};
 use trnm_consensus_types::{
-    BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, ChainId, ConsensusParametersHash,
-    ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, GenesisHash, GenesisQcV0, Height,
-    ProtocolVersion, QcRef, QcReferenceV0, SignatureVerifier, SignedProposalV0, ValidatorId,
-    ValidatorSet, ValidatorSetId, View,
+    BlockHeader, BlockId, BlockKind, CanonicalSignIntentV0, CertificateId, ChainId,
+    ConsensusParametersHash, ConsensusParametersV0, ContextAuthorizedQcV0, Epoch, FinalityProofV0,
+    GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcRef, QcReferenceV0, SignatureVerifier,
+    SignedProposalV0, ValidatorId, ValidatorSet, ValidatorSetId, View,
 };
 
 /// Frozen schema for the first inert safety-rules model.
@@ -92,6 +92,7 @@ pub enum SafetyRulesErrorV1 {
     HeightEdgeMismatch,
     JustifyEdgeMismatch,
     InvalidConsensusArtifact,
+    FinalityProofBindingMismatch,
     ResourceLimitExceeded,
     UnsafeLock,
     ArithmeticOverflow,
@@ -119,6 +120,9 @@ impl fmt::Display for SafetyRulesErrorV1 {
             Self::HeightEdgeMismatch => "safety ancestry height edge mismatch",
             Self::JustifyEdgeMismatch => "proposal QC does not certify the exact ancestry parent",
             Self::InvalidConsensusArtifact => "typed consensus artifact failed fresh verification",
+            Self::FinalityProofBindingMismatch => {
+                "finality proof does not bind the exact SafetyRules finalized predecessor"
+            }
             Self::ResourceLimitExceeded => "proposal exceeds committed resource limits",
             Self::UnsafeLock => "proposal neither extends nor unlocks the retained lock",
             Self::ArithmeticOverflow => "safety-rules arithmetic overflow",
@@ -518,6 +522,188 @@ impl SafetyRulesStateV1 {
             && self.author == context.author
             && self.trusted_genesis_timestamp_ms == context.trusted_genesis_timestamp_ms
             && self.max_ancestry_blocks == context.max_ancestry_blocks
+    }
+}
+
+/// Exact compact predecessor coordinates carried by Core's application
+/// finalization queue. The timestamp is retained because it is part of the
+/// authenticated three-chain verification context; no compact coordinate is
+/// finality authority on its own.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SafetyRulesFinalityPredecessorV1 {
+    revision: u64,
+    block_id: BlockId,
+    height: Height,
+    view: View,
+    timestamp_ms: u64,
+}
+
+impl SafetyRulesFinalityPredecessorV1 {
+    pub const fn new(
+        revision: u64,
+        block_id: BlockId,
+        height: Height,
+        view: View,
+        timestamp_ms: u64,
+    ) -> Self {
+        Self {
+            revision,
+            block_id,
+            height,
+            view,
+            timestamp_ms,
+        }
+    }
+
+    pub const fn revision(&self) -> u64 {
+        self.revision
+    }
+
+    pub const fn block_id(&self) -> BlockId {
+        self.block_id
+    }
+
+    pub const fn height(&self) -> Height {
+        self.height
+    }
+
+    pub const fn view(&self) -> View {
+        self.view
+    }
+
+    pub const fn timestamp_ms(&self) -> u64 {
+        self.timestamp_ms
+    }
+}
+
+/// A process-local comparison token joining one exact finality proof to the
+/// SafetyRules predecessor which Core exposed to an application host.
+///
+/// The token is deliberately not `Clone`, serializable, or a signer/persistence
+/// capability.  Core carries it inside its linear finalization permit and the
+/// application receipt path rechecks it against a freshly reconstructed
+/// SafetyRules state and the complete proof signatures.  A proof id or a
+/// finalized coordinate supplied by itself can therefore never stand in for
+/// this join.
+#[derive(Debug, PartialEq, Eq)]
+pub struct SafetyRulesFinalityPermitV1 {
+    predecessor: SafetyRulesFinalityPredecessorV1,
+    proof_id: CertificateId,
+    target_block_id: BlockId,
+    target_height: Height,
+    target_view: View,
+}
+
+impl SafetyRulesFinalityPermitV1 {
+    /// Binds a shape-valid three-chain to one exact SafetyRules finalized
+    /// predecessor.  Signature authentication is intentionally performed by
+    /// [`Self::verify_v1`] at the live Core callback, where the verifier and
+    /// freshly rebuilt SafetyRules state are both available.
+    pub fn bind_v1(
+        proof: &FinalityProofV0,
+        predecessor: SafetyRulesFinalityPredecessorV1,
+        validator_set: &ValidatorSet,
+        _consensus_parameters: &ConsensusParametersV0,
+    ) -> SafetyRulesResultV1<Self> {
+        // The issuance boundary has no signature verifier.  Admit only the
+        // exact typed scope/wire geometry here; `verify_v1` below performs the
+        // full parameter, leader, timestamp, QC, and signature check at the
+        // live Core callback.
+        proof
+            .validate_shape(validator_set, None)
+            .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)?;
+        let first = proof.finalized_block().header();
+        let justify = proof.finalized_block().justify_qc().qc_ref();
+        let expected_height = predecessor
+            .height
+            .checked_next()
+            .map_err(|_| SafetyRulesErrorV1::ArithmeticOverflow)?;
+        if first.parent_id() != predecessor.block_id
+            || first.height() != expected_height
+            || justify.block_id() != predecessor.block_id
+            || justify.height() != predecessor.height
+            || justify.view() != predecessor.view
+        {
+            return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
+        }
+        Ok(Self {
+            predecessor,
+            proof_id: proof.id(),
+            target_block_id: first.id(),
+            target_height: first.height(),
+            target_view: first.view(),
+        })
+    }
+
+    /// Rechecks the exact permit/proof/state join and authenticates all three
+    /// certified headers.  This is the only method which treats the token as
+    /// a valid finality observation; it still returns no Core or signer
+    /// authority.
+    pub fn verify_v1<V: SignatureVerifier>(
+        &self,
+        context: &SafetyRulesContextV1,
+        state: &SafetyRulesStateV1,
+        predecessor: SafetyRulesFinalityPredecessorV1,
+        proof: &FinalityProofV0,
+        verifier: &V,
+    ) -> SafetyRulesResultV1<()> {
+        if state.revision() != self.predecessor.revision || predecessor != self.predecessor {
+            return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
+        }
+        let expected = Self::bind_v1(
+            proof,
+            predecessor,
+            context.validator_set(),
+            context.consensus_parameters(),
+        )?;
+        if self != &expected {
+            return Err(SafetyRulesErrorV1::FinalityProofBindingMismatch);
+        }
+        proof
+            .verify(
+                context.validator_set(),
+                None,
+                context.consensus_parameters(),
+                predecessor.timestamp_ms,
+                verifier,
+            )
+            .map_err(|_| SafetyRulesErrorV1::InvalidConsensusArtifact)
+    }
+
+    pub const fn predecessor_revision(&self) -> u64 {
+        self.predecessor.revision
+    }
+
+    pub const fn predecessor_block_id(&self) -> BlockId {
+        self.predecessor.block_id
+    }
+
+    pub const fn predecessor_height(&self) -> Height {
+        self.predecessor.height
+    }
+
+    pub const fn predecessor_view(&self) -> View {
+        self.predecessor.view
+    }
+
+    pub const fn predecessor_timestamp_ms(&self) -> u64 {
+        self.predecessor.timestamp_ms
+    }
+
+    pub const fn proof_id(&self) -> CertificateId {
+        self.proof_id
+    }
+
+    pub const fn target_block_id(&self) -> BlockId {
+        self.target_block_id
+    }
+
+    pub const fn target_height(&self) -> Height {
+        self.target_height
+    }
+
+    pub const fn target_view(&self) -> View {
+        self.target_view
     }
 }
 

@@ -13,8 +13,9 @@ use core::{
 use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::{
     FinalizedBlockRefV1, InertSafetyTransitionKindV1, InertSafetyTransitionV1,
-    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesStateDigestV1,
-    SafetyRulesStateSeedV1, SafetyRulesStateV1,
+    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesFinalityPermitV1,
+    SafetyRulesFinalityPredecessorV1, SafetyRulesStateDigestV1, SafetyRulesStateSeedV1,
+    SafetyRulesStateV1,
 };
 use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
@@ -5151,6 +5152,36 @@ impl Core {
             .safety
             .pending_finalization()
             .ok_or(CoreError::UnexpectedFinalizationAck)?;
+        // The linear Core permit carries an explicit SafetyRules join.  The
+        // shape/parameter boundary runs before issuance; the live callback
+        // will repeat signature authentication against a freshly rebuilt
+        // SafetyRules predecessor before consuming the permit.
+        let safety_context = self.safety_rules_shadow_context_v1()?;
+        let application_parent = finalization.authenticated_parent();
+        let safety_predecessor = SafetyRulesFinalityPredecessorV1::new(
+            self.safety.revision(),
+            application_parent.block_id(),
+            application_parent.height(),
+            application_parent.view(),
+            application_parent.timestamp_ms(),
+        );
+        let safety_rules_permit = SafetyRulesFinalityPermitV1::bind_v1(
+            finalization.proof(),
+            safety_predecessor,
+            safety_context.validator_set(),
+            safety_context.consensus_parameters(),
+        )
+        .map_err(|error| {
+            CoreError::SafetyRulesShadowMismatch(match error {
+                trnm_consensus_safety_rules::SafetyRulesErrorV1::InvalidConsensusArtifact => {
+                    "finalization queue front proof failed SafetyRules shape validation"
+                }
+                trnm_consensus_safety_rules::SafetyRulesErrorV1::FinalityProofBindingMismatch => {
+                    "finalization queue front proof does not bind the SafetyRules predecessor"
+                }
+                _ => "finalization queue front cannot bind an exact SafetyRules predecessor",
+            })
+        })?;
         if self
             .application_finalization_affinity
             .front_permit_issued
@@ -5161,6 +5192,7 @@ impl Core {
         }
         Ok(CoreIssuedApplicationFinalizationPermitV0::new(
             finalization.clone(),
+            safety_rules_permit,
             Arc::clone(&self.application_finalization_affinity.front_affinity),
             Arc::clone(
                 &self
@@ -6546,6 +6578,11 @@ impl Core {
     #[cfg(test)]
     pub(crate) fn set_finalization_queue_for_test_v0(&mut self, queue: Vec<DurableFinalizationV0>) {
         self.safety.set_finalization_queue(queue);
+    }
+
+    #[cfg(test)]
+    pub(crate) fn advance_safety_revision_for_test_v0(&mut self) -> Result<BarrierId> {
+        self.safety.next_revision()
     }
 
     /// Commits the complete hash-linked prefix ending at Core's exact durable
@@ -8446,6 +8483,43 @@ impl Core {
         {
             return Err(CoreError::ApplicationFinalizationReceiptMismatch);
         }
+
+        // Authenticate the proof before entering the transactional successor
+        // clone, then require the non-reconstructible SafetyRules permit to
+        // match the freshly rebuilt predecessor and the exact three-chain.
+        // This closes the gap where a process-local Core permit could carry a
+        // queue-front proof without a live Core/Safety join.
+        receipt.finalization().proof().verify(
+            self.config.validator_set(),
+            None,
+            self.config.consensus_parameters(),
+            receipt.finalization().authenticated_parent().timestamp_ms(),
+            verifier,
+        )?;
+        let safety_context = self.safety_rules_shadow_context_v1()?;
+        let safety_state = self.safety_rules_shadow_state_v1(&safety_context, verifier)?;
+        let application_parent = receipt.finalization().authenticated_parent();
+        let safety_predecessor = SafetyRulesFinalityPredecessorV1::new(
+            safety_state.revision(),
+            application_parent.block_id(),
+            application_parent.height(),
+            application_parent.view(),
+            application_parent.timestamp_ms(),
+        );
+        receipt
+            .safety_rules_permit_v1()
+            .verify_v1(
+                &safety_context,
+                &safety_state,
+                safety_predecessor,
+                receipt.finalization().proof(),
+                verifier,
+            )
+            .map_err(|_| {
+                CoreError::SafetyRulesShadowMismatch(
+                    "finalization receipt lacks an exact authenticated Core/SafetyRules proof join",
+                )
+            })?;
 
         let previous_safety = self.safety.clone();
         let mut next = self.transactional_clone_v0();

@@ -6,7 +6,9 @@ use core::{
 };
 
 use sha2::{Digest, Sha256};
-use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesStateDigestV1};
+use trnm_consensus_safety_rules::{
+    InertSafetyTransitionV1, SafetyRulesFinalityPermitV1, SafetyRulesStateDigestV1,
+};
 use trnm_consensus_types::{
     Block, BlockHeader, BlockId, CanonicalSignIntentV0, CertificateId, ChainId,
     ConsensusParametersV0, Epoch, EquivocationEvidence, FinalityProofV0,
@@ -1040,6 +1042,7 @@ impl Deref for DurableFinalizationV0 {
 #[must_use = "the exact queue-front permit must remain with its application apply owner"]
 pub struct CoreIssuedApplicationFinalizationPermitV0 {
     finalization: DurableFinalizationV0,
+    safety_rules_permit: SafetyRulesFinalityPermitV1,
     front_affinity: Arc<()>,
     application_apply_affinity: Arc<()>,
 }
@@ -1184,11 +1187,13 @@ impl fmt::Debug for CoreIssuedApplicationFinalizationPermitV0 {
 impl CoreIssuedApplicationFinalizationPermitV0 {
     pub(crate) fn new(
         finalization: DurableFinalizationV0,
+        safety_rules_permit: SafetyRulesFinalityPermitV1,
         front_affinity: Arc<()>,
         application_apply_affinity: Arc<()>,
     ) -> Self {
         Self {
             finalization,
+            safety_rules_permit,
             front_affinity,
             application_apply_affinity,
         }
@@ -1196,6 +1201,14 @@ impl CoreIssuedApplicationFinalizationPermitV0 {
 
     pub const fn finalization(&self) -> &DurableFinalizationV0 {
         &self.finalization
+    }
+
+    /// Exact SafetyRules join carried by this linear queue-front permit.
+    ///
+    /// The token is comparison-only; the Core callback must still re-run its
+    /// complete signature verification before consuming the permit.
+    pub const fn safety_rules_permit_v1(&self) -> &SafetyRulesFinalityPermitV1 {
+        &self.safety_rules_permit
     }
 }
 
@@ -1368,10 +1381,17 @@ impl CoreIssuedApplicationFinalizationApplyAuthorityV0 {
                 Box::new(permit),
             ));
         }
+        let CoreIssuedApplicationFinalizationPermitV0 {
+            finalization,
+            safety_rules_permit,
+            front_affinity,
+            application_apply_affinity: _,
+        } = permit;
         Ok(ApplicationFinalizationReceiptV0 {
-            finalization: permit.finalization,
+            finalization,
+            safety_rules_permit,
             readback,
-            front_affinity: permit.front_affinity,
+            front_affinity,
             application_apply_affinity: Arc::clone(&self.affinity),
         })
     }
@@ -1440,6 +1460,7 @@ impl ApplicationFinalizationPermitRejectionV0 {
 #[must_use = "an application finalization receipt must be submitted to its issuing Core"]
 pub struct ApplicationFinalizationReceiptV0 {
     finalization: DurableFinalizationV0,
+    safety_rules_permit: SafetyRulesFinalityPermitV1,
     readback: ApplicationFinalizationApplyReadbackV0,
     front_affinity: Arc<()>,
     application_apply_affinity: Arc<()>,
@@ -1457,6 +1478,12 @@ impl fmt::Debug for ApplicationFinalizationReceiptV0 {
 impl ApplicationFinalizationReceiptV0 {
     pub const fn finalization(&self) -> &DurableFinalizationV0 {
         &self.finalization
+    }
+
+    /// Exact non-reconstructible SafetyRules join transferred from the
+    /// Core-issued queue-front permit through the trusted application store.
+    pub const fn safety_rules_permit_v1(&self) -> &SafetyRulesFinalityPermitV1 {
+        &self.safety_rules_permit
     }
 
     pub const fn application_store_readback_v0(&self) -> &ApplicationFinalizationApplyReadbackV0 {

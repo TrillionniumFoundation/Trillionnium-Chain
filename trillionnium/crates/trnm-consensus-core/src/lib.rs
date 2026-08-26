@@ -238,6 +238,7 @@ pub use crate::safety_state_record::{
     UnverifiedSafetyStateRecordV0, SAFETY_STATE_RECORD_CODEC_VERSION_V0,
     SAFETY_STATE_RECORD_SAFETY_SCHEMA_VERSION_V0,
 };
+pub use trnm_consensus_safety_rules::SafetyRulesFinalityPermitV1;
 
 #[cfg(test)]
 extern crate std;

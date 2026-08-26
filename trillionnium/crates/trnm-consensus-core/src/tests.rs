@@ -14647,6 +14647,29 @@ fn application_finalization_receipt_rechecks_finality_proof_before_commit() {
 }
 
 #[test]
+fn application_finalization_receipt_rejects_safety_rules_revision_mismatch_transactionally() {
+    let (mut core, receipt) = pending_finalization_receipt_for_test();
+    // Model a torn Core/Safety handoff after the linear permit was issued:
+    // the queue front and proof remain unchanged, but the Safety revision no
+    // longer names the predecessor captured by the permit.
+    core.advance_safety_revision_for_test_v0()
+        .expect("test Safety revision increment");
+    let before = core.clone();
+
+    let rejection = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect_err("a receipt with a stale Core/Safety permit must fail closed");
+    assert!(matches!(
+        rejection.error(),
+        CoreError::SafetyRulesShadowMismatch(
+            "finalization receipt lacks an exact authenticated Core/SafetyRules proof join"
+        )
+    ));
+    assert_eq!(core, before, "a SafetyRules join failure is transactional");
+    let _receipt = rejection.into_receipt();
+}
+
+#[test]
 fn one_tc_queues_every_monotonic_finality_step_in_ancestor_order() {
     let (config, mut core) = configured_core();
     let finalization_authority = finalization_apply_authority_for_test(&core);
