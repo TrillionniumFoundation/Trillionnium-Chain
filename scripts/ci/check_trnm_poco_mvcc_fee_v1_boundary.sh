@@ -20,7 +20,7 @@ CANDIDATE_INVENTORY=(
   "$CRATE/src/lib.rs" "$CRATE/src/store.rs" "$CRATE/src/tests.rs" "$CRATE/src/types.rs"
   "$SCHEMA" "$VECTORS" "$STATUS" "$SPEC_MANIFEST"
   "RELEASE_READINESS.md"
-  "docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md"
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
   "docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md"
   "docs/protocol/poco-ai-native-v1/schema/README.md"
   "docs/protocol/poco-ai-native-v1/vectors/README.md"

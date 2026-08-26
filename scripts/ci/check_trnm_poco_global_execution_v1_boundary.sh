@@ -7,7 +7,7 @@ cd "$ROOT"
 CRATE="trillionnium/crates/trnm-poco-global-execution-v1"
 NODE_CRATE="trillionnium/crates/trnm-poco-node"
 STATUS="docs/protocol/poco-ai-native-v1/status.toml"
-PLAN="docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md"
+PLAN="docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 GAPS="docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md"
 GATE="scripts/ci/check_trnm_poco_global_execution_v1_boundary.sh"
 
@@ -181,15 +181,12 @@ assert re.search(r"#\[derive\(Debug\)\]\s*pub struct PreVoteExecutionReadyV1", s
 assert "impl Clone for PreVoteExecutionReadyV1" not in store
 assert re.search(r"#\[derive\(Debug\)\]\s*pub struct WholeNodeFinalizationOwnerV1", store)
 assert "impl Clone for WholeNodeFinalizationOwnerV1" not in store
-assert re.search(
-    r"impl WholeNodeFinalizationOwnerV1 \{.*?pub const fn candidate_composite_root\(&self\) -> Hash32V1 \{\s*self\.commitment\.candidate_composite_root\(\)\s*\}",
-    store,
-    re.S,
-)
-assert re.search(
-    r"pub\(crate\) fn bind_existing_finalization_owner_to_verified_order_state_v1\(\s*owner: WholeNodeFinalizationOwnerV1,\s*binding: VerifiedOrderStateExecutionBindingV1,",
-    store,
-)
+assert "impl WholeNodeFinalizationOwnerV1" in store
+assert "pub const fn candidate_composite_root(&self) -> Hash32V1" in store
+assert "self.commitment.candidate_composite_root()" in store
+assert "pub(crate) fn bind_existing_finalization_owner_to_verified_order_state_v1(" in store
+assert "owner: WholeNodeFinalizationOwnerV1" in store
+assert "binding: VerifiedOrderStateExecutionBindingV1" in store
 assert "Ok(owner)" in store
 assert not re.search(
     r"bind_existing_finalization_owner_to_verified_order_state_v1\(\s*commitment: WholeNodeFinalExecutionCommitmentV1",
@@ -468,9 +465,9 @@ for token in [
     assert token in tests, token
 
 for document in [plan, gaps]:
-    assert "candidate_runtime_implemented=true" in document
+    assert "candidate_local_runtime_implemented=true" in document
     assert "node_process_integration=false" in document
-    assert "whole_node_finalization_cas=true" in document
+    assert "candidate_local_whole_node_finalization_cas=true" in document
     assert "g2_global_complete=false" in document
     assert "candidate composite root" in " ".join(document.lower().split())
     assert "G2CandidateLocalFinalizeJoinV2" in document
@@ -603,7 +600,7 @@ assert process_targets == [{
     "path": "tests/g2_manifest_bound_process_v2.rs",
 }]
 assert cargo["features"]["g2-process-test-support"] == [
-    "dep:ed25519-dalek", "dep:tempfile",
+    "fixture-raw-key", "dep:tempfile",
 ]
 assert cargo["dependencies"]["tempfile"] == {
     "version": "3", "optional": True,

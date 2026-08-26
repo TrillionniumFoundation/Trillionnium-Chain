@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-08-11
+Updated date: 2026-08-26 (documentation hierarchy consolidation; not a new remote release assessment)
 Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
 `refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
 document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
@@ -11,7 +11,13 @@ cached tracking ref contemporaneous.
 > Release, RC, or handoff evidence is bound to the exact assessed tree above;
 > uncommitted results must not be presented as an `origin/main` repository baseline.
 > - `docs/archive/root-history/STATUS.md`: historical progression log / working journal, not used for current release determination.
-> - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`: scheduling board for development, not release truth.
+> - `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`: the
+>   canonical execution and promotion contract; it cannot override this
+>   release-readiness truth or any machine status flag.
+> - `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md`:
+>   signed evidence schema, replay, benchmark, interop, and gate-invalidation
+>   rules; it is not a second plan.
+> - `docs/audits/TRNM_CHAIN_ALL_VERSIONS_AUDIT_2026-08-26.md`: all-version audit and plan-consolidation record, not release evidence.
 > - `docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md` and `docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`: represent a historical fix/pass batch, not today's global release posture.
 
 ## Current Conclusion
@@ -24,7 +30,7 @@ cached tracking ref contemporaneous.
   decision and staged Comet cleanup gate are in
   `docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`; the
   executable sequence is in
-  `docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`.
+  `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
 - CometBFT and the excluded `trnm-consensus-app`/`trnm-node` tree are
   migration residue only. They may be used as read-only historical input for
   the eventual export/import rehearsal, but cannot be built into a release,
@@ -236,7 +242,10 @@ Current major drift risks include:
 ## Documentation Usage Rules (truth-source hierarchy)
 
 1. **Current release decision**: Start here with `RELEASE_READINESS.md`.
-2. **Development planning / lane scheduling / next execution**: `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`.
+2. **Canonical development execution / gate sequencing / next action**:
+   `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`, with
+   evidence bundles shaped by
+   `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md`.
 3. **ZKP platform boundaries / backend abstraction / payload and error contracts**: `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`.
 4. **Benchmark closeout method, unified outputs, micro-to-system bridge**: `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`.
 5. **Current concurrency architecture, external comparison framing, and 8-week plan**:

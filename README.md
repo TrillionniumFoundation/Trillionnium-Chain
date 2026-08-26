@@ -8,6 +8,13 @@
   `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
 - Native PoCO-BFT is the sole future production consensus route; see
   `docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md`.
+- The only live development plan is
+  `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`; all dated
+  delivery boards and roadmaps under `docs/audits/` are historical evidence.
+- Gate promotion evidence follows
+  `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md`;
+  an untracked, hash-inconsistent, or non-replayable bundle is not release
+  authority.
 - CometBFT is migration residue only and is never a release, deployment,
   fallback, or readiness authority. It is removed after the signed C0 cutover
   gate, not before.

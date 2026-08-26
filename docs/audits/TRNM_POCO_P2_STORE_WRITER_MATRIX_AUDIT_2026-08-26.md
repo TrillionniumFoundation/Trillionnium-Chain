@@ -1,4 +1,7 @@
-# TRNM PoCO P2-STORE K/P writer-adoption matrix — 2026-08-26
+# Historical audit: TRNM PoCO P2-STORE K/P writer-adoption matrix — 2026-08-26
+
+> Archive-only evidence. This is a blocker artifact, not a second execution
+> plan; the canonical plan links to it by evidence ID.
 
 Status: **audit evidence only; MIG-004 remains open**
 

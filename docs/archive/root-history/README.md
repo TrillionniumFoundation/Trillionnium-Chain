@@ -17,5 +17,5 @@ Do **not** use this directory as the current truth-source for release readiness.
 Current entrypoint order:
 1. `RELEASE_READINESS.md`
 2. `README.md`
-3. `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
+3. `docs/audits/legacy/` historical planning records (not a live schedule)
 4. this archive directory for historical context only

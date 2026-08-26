@@ -207,7 +207,7 @@ requires a protocol-versioned mapping and replay vectors.
 
 ## 6. Required references
 
-- `docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`
+- `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
 - `docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md`
 - `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
 - `docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`

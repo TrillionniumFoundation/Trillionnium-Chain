@@ -32,7 +32,7 @@ INVENTORY=(
   docs/protocol/poco-ai-native-v1/schema/README.md
   docs/protocol/poco-ai-native-v1/vectors/README.md
   docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md
-  docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md
+  docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
   RELEASE_READINESS.md
   scripts/ci/check_poco_ai_native_v1_design_truth.sh
   scripts/ci/check_poco_bft_v0_ci_truth.sh

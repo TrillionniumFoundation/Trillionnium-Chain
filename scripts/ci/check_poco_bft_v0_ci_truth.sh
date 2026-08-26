@@ -68,7 +68,7 @@ PROTOCOL_README="$ROOT/docs/protocol/poco-bft-v0/README.md"
 CONSENSUS_SAFETY_DOC="$ROOT/docs/protocol/poco-bft-v0/02-chained-qc-consensus.md"
 WIRE_DOC="$ROOT/docs/protocol/poco-bft-v0/03-wire-crypto-and-domain-separation.md"
 INVARIANTS_DOC="$ROOT/docs/protocol/poco-bft-v0/07-invariants-and-conformance.md"
-DELIVERY_PLAN="$ROOT/docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+V0_AUDIT="$ROOT/docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"
 DUAL_TRACK_DECISION="$ROOT/docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
 PRODUCTION_CONTRACTS="$ROOT/docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
 
@@ -292,7 +292,7 @@ for required in \
   "$CONSENSUS_SAFETY_DOC" \
   "$WIRE_DOC" \
   "$INVARIANTS_DOC" \
-  "$DELIVERY_PLAN" \
+  "$V0_AUDIT" \
   "$DUAL_TRACK_DECISION" \
   "$PRODUCTION_CONTRACTS"; do
   require_file "$required"
@@ -366,7 +366,7 @@ require_literal_count "$POCO_WORKFLOW" \
 require_literal_count "$POCO_WORKFLOW" \
   '      - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"' 2
 require_literal_count "$POCO_WORKFLOW" \
-  '      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"' 2
+  '      - "docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"' 2
 require_literal_count "$POCO_WORKFLOW" \
   '      - "docs/protocol/poco-bft-v0/**"' 2
 require_literal_count "$POCO_WORKFLOW" \
@@ -840,7 +840,7 @@ require_literal "$PROTOCOL_README" \
   'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$INVARIANTS_DOC" \
   'G1e validation-recovery SIGKILL is archive-only.'
-require_literal "$DELIVERY_PLAN" \
+require_literal "$V0_AUDIT" \
   'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$DUAL_TRACK_DECISION" \
   'G1e validation-recovery SIGKILL is archive-only.'
@@ -865,7 +865,7 @@ require_literal "$PROTOCOL_README" \
   'The distinct G1f ordinary owner is active but deliberately bounded.'
 require_literal "$INVARIANTS_DOC" \
   '- the distinct G1f ordinary host MUST own one Core, SafetyStore, signer journal,'
-require_literal "$DELIVERY_PLAN" \
+require_literal "$V0_AUDIT" \
   'G1f now provides the first default-build ordinary vertical effect loop.'
 require_literal "$DUAL_TRACK_DECISION" \
   'G1f separately advances steps 2 and 3 without claiming either complete.'
@@ -881,7 +881,7 @@ require_literal "$PROTOCOL_README" \
   'required-feature timeout matrix now covers six real local Linux child-process'
 require_literal "$INVARIANTS_DOC" \
   '- the required-feature G1f process matrix MUST cover exactly six distinct'
-require_literal "$DELIVERY_PLAN" \
+require_literal "$V0_AUDIT" \
   'matrix now covers six exact child SIGKILL/reap boundaries from SafetyStore'
 require_literal "$DUAL_TRACK_DECISION" \
   'child SIGKILL/reap and two-fresh-process exact replay at six bounded points'
@@ -914,7 +914,7 @@ require_literal "$INVARIANTS_DOC" \
   '- ordinary `Core::recover` MUST validate every schema-v8 obligation and inert'
 require_literal "$INVARIANTS_DOC" \
   'capability MUST NOT implement an authority trait or authorize any callback,'
-require_literal "$DELIVERY_PLAN" \
+require_literal "$V0_AUDIT" \
   'recovery session is the only bounded authenticated-ticket exception and'
 require_literal "$G1C_TRUTH" \
   'native-invalid exact-readback token grants no detached or general'
@@ -924,7 +924,7 @@ reject_literal "$WIRE_DOC" \
   'Recovery validates schema-v8 obligations and inert completions and then rejects'
 reject_literal "$INVARIANTS_DOC" \
   '- recovery MUST validate every schema-v8 obligation and inert completion and then'
-reject_literal "$DELIVERY_PLAN" \
+reject_literal "$V0_AUDIT" \
   'of a pending SignIntent across unrelated callback persistence. Recovery first'
 reject_literal "$ROOT_README" \
   'grants no public callback, Core, or application transition authority'

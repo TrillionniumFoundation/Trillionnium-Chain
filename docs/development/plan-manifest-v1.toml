@@ -1,0 +1,32 @@
+manifest_version = 1
+plan_id = "trnm-ai-native-blockchain-development-plan-v1"
+plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+evidence_contract_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+canonical_ref = "refs/heads/docs/chain-poco-bft-mainline-20260825"
+assessed_commit = "b1c71e189bf6f31ba278f1f0806a13196107b354"
+assessed_tree = "working-tree-dirty-five-consensus-safetyrules-files"
+plan_sha256 = "c88a69725f86ddad7a108c319ce0a7c8f39164d27d4a34c515fca192af5bc811"
+machine_truth_path = "config/consensus-mainline.json"
+protocol_manifest_path = "docs/protocol/poco-ai-native-v1/spec-manifest.toml"
+toolchain_lock = "trillionnium/Cargo.lock"
+audit_date = "2026-08-26"
+authority_status = "provisional-until-committed-and-signed"
+clean_clone_required = true
+tracked_plan_required = true
+signature_required_for_gate_promotion = true
+
+[replay]
+command = "bash scripts/ci/check_canonical_development_plan.sh"
+offline_build_command = "bash scripts/ci/check_poco_bft_mainline_truth.sh"
+evidence_contract = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+
+[gate_dependencies]
+G0 = []
+G1 = ["G0"]
+G1_5 = ["G1"]
+G2_0 = ["G1_5"]
+G2 = ["G1", "G1_5", "G2_0"]
+G3 = ["G1", "G1_5", "G2"]
+G4 = ["G0", "G1", "G1_5", "G2", "G3"]
+G5 = ["G0", "G1", "G1_5", "G2", "G3", "G4"]
+C1 = ["G5"]

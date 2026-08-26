@@ -394,10 +394,11 @@ stale/fork/root substitution, partial/torn rows and logical metadata rollback
 are covered. Verified Order finality for the exact prepared candidate now
 drives recoverable application through all five source planes, backed by
 checksummed direct-successor finalized-block journals, and issues the linear
-terminal owner only after fresh terminal readback. This supports
-`whole_node_finalization_cas=true`,
-`normal_build_finalization_owner_issuer=true`, and
-`source_plane_finalization_apply=true`; it does not mint Node authority or
+terminal owner only after fresh terminal readback. This supports the explicitly
+scoped candidate facts
+`candidate_local_whole_node_finalization_cas=true`,
+`candidate_local_normal_build_finalization_owner_issuer=true`, and
+`candidate_local_source_plane_finalization_apply=true`; it does not mint Node authority or
 prevent rollback of a complete database file.
 
 T0-C/T0-D add a distinct manifest-bound Node-private boundary without
@@ -488,9 +489,10 @@ bounded local path now does establish one exact Order-state membership binding,
 but there is still no multi-level speculative overlay, production Node/process
 owner, state sync, settlement acknowledgement, signing, or broadcast path.
 Therefore
-`candidate_runtime_implemented=true` and
+`candidate_local_runtime_implemented=true` and
 `order_state_membership_binding=true` remain intentionally compatible with
-the manifest-bound candidate-local tranche's `node_process_integration=true`,
+the manifest-bound candidate-local tranche's
+`candidate_local_node_process_integration=true`,
 the aggregate/global `node_process_integration=false`, and
 `g2_global_complete=false`.
 

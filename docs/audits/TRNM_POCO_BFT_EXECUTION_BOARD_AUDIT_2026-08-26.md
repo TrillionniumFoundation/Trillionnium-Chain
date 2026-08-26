@@ -1,4 +1,7 @@
-# TRNM PoCO-BFT Execution Board — 2026-08-25
+# Historical audit: TRNM PoCO-BFT execution board (2026-08-25)
+
+> Archive-only evidence. The live dependency order is in
+> `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`.
 
 Status: **active execution board; no production or public-testnet gate is complete**
 
@@ -132,7 +135,7 @@ downstream gate inherits completion from an incomplete predecessor.
   common root and process2 activation acquires its lock before the first paired
   read, with a final identity check at successful commit boundaries. The full
   entry-point matrix is recorded in
-  `TRNM_POCO_P2_STORE_WRITER_MATRIX_2026-08-26.md` and landed in `6850b57f1`.
+  `TRNM_POCO_P2_STORE_WRITER_MATRIX_AUDIT_2026-08-26.md` and landed in `6850b57f1`.
   `d696ce01d` extends the same fence across finalization-marker load, proof-
   bound P readback, and marker clear, with a focused mutual-exclusion and
   rename/recreate test. This is still an advisory, cooperating-owner fence:

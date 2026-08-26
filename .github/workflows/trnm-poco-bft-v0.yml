@@ -17,15 +17,20 @@ on:
       - "RELEASE_READINESS.md"
       - "config/consensus-mainline.json"
       - "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
-      - "docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      - "docs/development/plan-manifest-v1.toml"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+      - "docs/audits/TRNM_CHAIN_ALL_VERSIONS_AUDIT_2026-08-26.md"
       - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
       - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
-      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+      - "docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
       - "proto/trnm/poco/**"
       - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
       - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
       - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
@@ -77,15 +82,20 @@ on:
       - "RELEASE_READINESS.md"
       - "config/consensus-mainline.json"
       - "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
-      - "docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+      - "docs/development/plan-manifest-v1.toml"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md"
+      - "docs/audits/TRNM_CHAIN_ALL_VERSIONS_AUDIT_2026-08-26.md"
       - "docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
       - "docs/architecture/TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md"
-      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+      - "docs/audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md"
       - "docs/protocol/poco-bft-v0/**"
       - "formal/quint/poco-bft-v0/**"
       - "proto/trnm/poco/**"
       - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
       - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
       - "scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh"
       - "scripts/ci/check_poco_g3_lan_fleet.sh"
@@ -194,6 +204,10 @@ jobs:
       - name: Verify workflow trigger and safety truth
         working-directory: trillionnium-chain
         run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+
+      - name: Verify canonical development plan and anti-pollution boundary
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_canonical_development_plan.sh
 
       - name: Verify native PoCO mainline and migration truth
         working-directory: trillionnium-chain

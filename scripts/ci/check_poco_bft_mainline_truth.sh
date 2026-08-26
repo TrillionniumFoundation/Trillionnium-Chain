@@ -27,11 +27,11 @@ CARGO_MANIFEST="$ROOT/trillionnium/Cargo.toml"
 NODE_MANIFEST="$ROOT/trillionnium/crates/trnm-poco-node/Cargo.toml"
 TX_BUILDER_MANIFEST="$ROOT/trillionnium/crates/trnm-application-tx-builder-v0/Cargo.toml"
 MAINLINE_DOC="$ROOT/docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md"
-EXECUTION_BOARD="$ROOT/docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md"
+DEVELOPMENT_PLAN="$ROOT/docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 DUAL_TRACK_DOC="$ROOT/docs/architecture/TRNM_CONSENSUS_DELIVERY_DUAL_TRACK_DECISION_2026-08-11.md"
 
 for required in "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$TX_BUILDER_MANIFEST" "$MAINLINE_DOC" \
-  "$EXECUTION_BOARD" "$DUAL_TRACK_DOC"; do
+  "$DEVELOPMENT_PLAN" "$DUAL_TRACK_DOC"; do
   require_file "$required"
 done
 
@@ -45,7 +45,7 @@ if ! CARGO_NET_OFFLINE=true cargo metadata \
 fi
 
 python3 - "$CONFIG" "$CARGO_MANIFEST" "$NODE_MANIFEST" "$TX_BUILDER_MANIFEST" "$metadata_file" \
-  "$MAINLINE_DOC" "$EXECUTION_BOARD" "$DUAL_TRACK_DOC" "$MODE" <<'PY'
+  "$MAINLINE_DOC" "$DEVELOPMENT_PLAN" "$DUAL_TRACK_DOC" "$MODE" <<'PY'
 import json
 import pathlib
 import re
@@ -173,8 +173,8 @@ for marker, text, label in (
     ("sole future production consensus route", decision, "mainline decision"),
     ("migration residue and historical replay input only", decision, "mainline decision"),
     ("C1 — Comet tombstone and removal", decision, "mainline decision"),
-    ("MIG-001", board, "execution board"),
-    ("MIG-014/016", board, "execution board"),
+    ("MIG-001", board, "canonical development plan"),
+    ("MIG-014/016", board, "canonical development plan"),
     ("SUPERSEDED on 2026-08-25", dual, "dual-track decision"),
 ):
     if " ".join(marker.split()) not in " ".join(text.split()):

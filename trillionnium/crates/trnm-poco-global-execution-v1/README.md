@@ -66,7 +66,7 @@ Order finality. Raw proof bytes, a bare `post_state_root`, a claim ID, or a
 locally computed root cannot call the seam. The global crate does not issue the
 positive carrier itself, so `order_binding_positive_carrier_issuer=false`
 remains exact; the cross-crate local path supports
-`normal_build_finalization_owner_issuer=true` and
+`candidate_local_normal_build_finalization_owner_issuer=true` and
 `order_state_membership_binding=true`. This does not provide Node
 commissioning, coherent whole-store rollback authority, G2 completion, or
 production activation.

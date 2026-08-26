@@ -11,7 +11,11 @@
 ## Rust L1 quick links
 
 - PoCO-BFT v0 architecture freeze: `architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
-- PoCO-BFT v0 delivery plan/status board: `development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md`
+- Canonical AI-native Chain development plan: `development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
+- Engineering evidence contract (gate records, vertical trace, wire, benchmark,
+  interop, and invalidation):
+  `development/TRNM_AI_NATIVE_BLOCKCHAIN_ENGINEERING_EVIDENCE_CONTRACT_V1.md`
+- Historical PoCO-BFT v0 delivery audit: `audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md`
 - PoCO-BFT v0 normative protocol index: `protocol/poco-bft-v0/README.md`
 - PoCO-BFT v0 X230 deployment boundary: `runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md`
 - Repo layout: `architecture/rust-l1-repo-layout.md`

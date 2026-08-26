@@ -6,7 +6,7 @@ The binding route is now native PoCO-BFT as the sole production consensus
 mainline. CometBFT is migration residue only: no new features, release
 artifacts, deployments, readiness evidence, or fallback authority may use it.
 See `TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md` and
-`docs/development/TRNM_POCO_BFT_EXECUTION_BOARD_2026-08-25.md`. The remainder
+`docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`. The remainder
 of this file is retained so the earlier risk-control rationale and evidence
 remain auditable; it is not an instruction to continue two tracks.
 
@@ -217,5 +217,6 @@ Until a promotion decision is recorded:
 - `TRNM_COMETBFT_SPIKE_2026-07-27.md`
 - `TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
 - `TRNM_POCO_BFT_PRODUCTION_CONTRACTS_V0.md`
-- `../development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md`
+- `../development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md`
+- `../audits/TRNM_POCO_BFT_V0_IMPLEMENTATION_AUDIT_2026-08-26.md`
 - `../protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md`

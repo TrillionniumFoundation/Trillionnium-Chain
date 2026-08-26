@@ -27,7 +27,7 @@ weak_subjectivity_renewal_vectors_path = "docs/protocol/poco-ai-native-v1/vector
 weak_subjectivity_renewal_gate_path = "scripts/ci/check_poco_ai_native_v1_weak_subjectivity_renewal.sh"
 weak_subjectivity_renewal_negative_cases = 45
 production_contracts_path = "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md"
-delivery_plan_path = "docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md"
+delivery_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
 gap_register_path = "docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md"
 formal_plan_path = "formal/quint/poco-ai-native-v1/README.md"
 transport_schema_boundary_path = "proto/trnm/poco/ai/v1/README.md"
@@ -83,7 +83,7 @@ required_files = [
   "docs/protocol/poco-ai-native-v1/vectors/v0-to-v1-activation-kernel-v1.json",
   "docs/protocol/poco-ai-native-v1/IMPLEMENTATION_GAP_REGISTER.md",
   "docs/architecture/TRNM_POCO_AI_NATIVE_V1_PRODUCTION_CONTRACTS.md",
-  "docs/development/TRNM_POCO_AI_NATIVE_V1_DELIVERY_PLAN_2026-08-13.md",
+  "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
   "formal/quint/poco-ai-native-v1/README.md",
   "formal/quint/poco-ai-native-v1/weighted_order_kernel.qnt",
   "formal/quint/poco-ai-native-v1/timeout_lock.qnt",
