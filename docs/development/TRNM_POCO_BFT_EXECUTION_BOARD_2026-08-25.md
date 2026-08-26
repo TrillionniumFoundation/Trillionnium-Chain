@@ -31,11 +31,12 @@ downstream gate inherits completion from an incomplete predecessor.
   reports missing signer, SafetyRules, application, finalization, P2P and state
   sync contracts. Core/SafetyRules/node-library unit suites are local evidence,
   not a live-node or production-consensus pass.
-- The clean all-features node library run
+- The current all-features node library run
   (`cargo test --locked -p trnm-poco-node --all-features --lib`) completed
-  189/189 in 620.06 seconds. This is feature-surface evidence only; the
-  default binary, live effect driver, network and production activation remain
-  fail-closed.
+  199/199 in 505.67 seconds. The default node library is 113/113 after the
+  journal-permission and signer-intent fences; these are feature-surface
+  evidence only. The default binary, live effect driver, network and
+  production activation remain fail-closed.
 - The checksum-pinned `protoc` bootstrap (`eaf1db12e`) and lock-pinned Quint
   toolchains are installed; the clean local formal gate
   (`scripts/ci/check_poco_bft_v0_formal.sh`) passed all listed
