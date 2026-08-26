@@ -87,9 +87,10 @@ protocol:
   after directory fsync) plus critical-page short-write tests now prove the
   local commit coordinator's atomic/replay behavior; this is not a full
   power-loss, filesystem, or multi-process takeover campaign;
-- directory fsync is attempted at the application commit boundary, but no
-  external anti-rollback, file-descriptor pinning, remote signer, or whole-node
-  checkpoint evidence is claimed; and
+- database and containing-directory fsyncs are attempted after genesis, H1
+  TrustedBase, and finalized application commits (and during hot-journal
+  recovery), but no external anti-rollback, file-descriptor pinning, remote
+  signer, or whole-node checkpoint evidence is claimed; and
 - deterministic invalid executions currently use one closed rejection code;
   production-grade typed invalid classifications remain future work.
 

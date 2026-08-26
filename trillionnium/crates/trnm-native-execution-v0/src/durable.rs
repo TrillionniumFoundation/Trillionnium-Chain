@@ -1572,6 +1572,15 @@ impl DurableNativeApplicationV0 {
 
         if load_h1_state_sync_trusted_base_v0(&connection)?.is_some() {
             drop(connection);
+            // A prior install may have returned CommitUncertain after its
+            // SQLite transaction committed but before the host sync.  An
+            // idempotent retry must re-establish the same durability fence
+            // before returning the exact existing TrustedBase.
+            sync_store_commit_boundary_named_v0(
+                &self.path,
+                "h1_state_sync.fsync",
+                "h1_state_sync.directory_fsync",
+            )?;
             return fresh_confirm_h1_state_sync_trusted_base_v0(
                 &self.path,
                 &self.config,
@@ -1700,6 +1709,11 @@ impl DurableNativeApplicationV0 {
                 "h1_state_sync.commit",
             )
         })?;
+        sync_store_commit_boundary_named_v0(
+            &self.path,
+            "h1_state_sync.fsync",
+            "h1_state_sync.directory_fsync",
+        )?;
         fresh_confirm_h1_state_sync_trusted_base_v0(
             &self.path,
             &self.config,
@@ -1793,6 +1807,15 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                     "initialize.committed_head",
                 ));
             }
+            // A prior initialize may have returned CommitUncertain after its
+            // SQLite transaction committed but before the host sync.  An
+            // idempotent retry must re-establish the same durability fence
+            // before returning the exact existing genesis.
+            sync_store_commit_boundary_named_v0(
+                &self.path,
+                "initialize.fsync",
+                "initialize.directory_fsync",
+            )?;
             return NativeApplicationGenesisResultV0::new(
                 &request,
                 metadata.head,
@@ -1884,6 +1907,11 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
                 "initialize.commit",
             )
         })?;
+        sync_store_commit_boundary_named_v0(
+            &self.path,
+            "initialize.fsync",
+            "initialize.directory_fsync",
+        )?;
         fresh_validate_v0(&self.path, &self.config)?;
         NativeApplicationGenesisResultV0::new(
             &request,
@@ -4062,10 +4090,18 @@ fn consume_sync_store_commit_boundary_fault_v0(
 /// boundary (journal rename and directory metadata) without pretending that a
 /// local filesystem is an external anti-rollback authority.
 fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
+    sync_store_commit_boundary_named_v0(path, "commit.fsync", "commit.directory_fsync")
+}
+
+fn sync_store_commit_boundary_named_v0(
+    path: &Path,
+    database_field: &'static str,
+    directory_field: &'static str,
+) -> DurableResult<()> {
     let database = OpenOptions::new().read(true).open(path).map_err(|_| {
         error(
             NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-            "commit.fsync",
+            database_field,
         )
     })?;
     #[cfg(test)]
@@ -4075,13 +4111,13 @@ fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
     ) {
         return Err(error(
             NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-            "commit.fsync",
+            database_field,
         ));
     }
     database.sync_all().map_err(|_| {
         error(
             NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-            "commit.fsync",
+            database_field,
         )
     })?;
 
@@ -4090,13 +4126,13 @@ fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
         let parent = path.parent().ok_or_else(|| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-                "commit.directory_fsync",
+                directory_field,
             )
         })?;
         let directory = File::open(parent).map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-                "commit.directory_fsync",
+                directory_field,
             )
         })?;
         #[cfg(test)]
@@ -4106,13 +4142,13 @@ fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
         ) {
             return Err(error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-                "commit.directory_fsync",
+                directory_field,
             ));
         }
         directory.sync_all().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
-                "commit.directory_fsync",
+                directory_field,
             )
         })?;
     }
@@ -5852,6 +5888,111 @@ mod tests {
             };
             assert_eq!(metadata_after, metadata_before);
             assert_eq!(p_after, p_before);
+        }
+    }
+
+    /// Genesis and H1 TrustedBase are durable state transitions too.  Exercise
+    /// their post-transaction database/directory sync boundary so a reported
+    /// sync failure is recovered by exact readback rather than by re-running a
+    /// second logical write.  This remains a software fault injection test;
+    /// it is not physical power-loss evidence.
+    #[cfg(unix)]
+    #[test]
+    fn initialization_and_h1_sync_uncertainty_reopens_exactly_v0() {
+        const FAULTS: [(SyncStoreCommitBoundaryFaultPointV0, &str, &str); 2] = [
+            (
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+                "initialize.fsync",
+                "h1_state_sync.fsync",
+            ),
+            (
+                SyncStoreCommitBoundaryFaultPointV0::Directory,
+                "initialize.directory_fsync",
+                "h1_state_sync.directory_fsync",
+            ),
+        ];
+
+        for (point, initialize_field, h1_field) in FAULTS {
+            let temporary = TempDir::new().unwrap();
+            let path = temporary.path().join("application.sqlite");
+            let initialize_config = config(STORE_A);
+            let genesis = genesis_request(&initialize_config);
+            let application = DurableNativeApplicationV0::open(&path, initialize_config).unwrap();
+            let fault = arm_sync_store_commit_boundary_fault_v0(application.path(), point);
+            let initialize_error = application
+                .initialize(genesis.clone())
+                .expect_err("initialize sync failure must be reported as uncertain");
+            assert_eq!(
+                initialize_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain
+            );
+            assert_eq!(initialize_error.field(), initialize_field);
+            drop(fault);
+
+            // A retry in the same owner must not bypass the host durability
+            // fence merely because the exact metadata row is now visible.
+            let retry_fault = arm_sync_store_commit_boundary_fault_v0(application.path(), point);
+            let retry_error = application
+                .initialize(genesis.clone())
+                .expect_err("initialize retry must re-attempt its sync fence");
+            assert_eq!(
+                retry_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain
+            );
+            assert_eq!(retry_error.field(), initialize_field);
+            drop(retry_fault);
+
+            let in_process_genesis = application
+                .initialize(genesis.clone())
+                .expect("initialize retry succeeds only after a clean sync");
+            assert_eq!(in_process_genesis.head().height(), HeightV0::GENESIS);
+            drop(application);
+
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            let genesis_result = reopened
+                .initialize(genesis)
+                .expect("reopen must observe the exact committed genesis");
+            assert_eq!(genesis_result.head().height(), HeightV0::GENESIS);
+            drop(reopened);
+
+            let (h1_path, h1_application, _head, execution) = initialized(&temporary);
+            let h1_request =
+                NativeH1StateSyncTrustedBaseRequestV0::new([0xA1; 32], execution).unwrap();
+            let fault = arm_sync_store_commit_boundary_fault_v0(h1_application.path(), point);
+            let h1_error = h1_application
+                .install_h1_state_sync_trusted_base_v0(&h1_request)
+                .expect_err("H1 sync failure must be reported as uncertain");
+            assert_eq!(
+                h1_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain
+            );
+            assert_eq!(h1_error.field(), h1_field);
+            drop(fault);
+
+            // The existing TrustedBase branch is also an idempotent retry
+            // boundary and must not turn a failed sync into a silent success.
+            let retry_fault = arm_sync_store_commit_boundary_fault_v0(h1_application.path(), point);
+            let retry_error = h1_application
+                .install_h1_state_sync_trusted_base_v0(&h1_request)
+                .expect_err("H1 retry must re-attempt its sync fence");
+            assert_eq!(
+                retry_error.code(),
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain
+            );
+            assert_eq!(retry_error.field(), h1_field);
+            drop(retry_fault);
+
+            let in_process_confirmed = h1_application
+                .install_h1_state_sync_trusted_base_v0(&h1_request)
+                .expect("H1 retry succeeds only after a clean sync");
+            assert_eq!(in_process_confirmed.install_sequence_v0(), 2);
+            drop(h1_application);
+
+            let reopened_h1 = DurableNativeApplicationV0::open(&h1_path, config(STORE_A)).unwrap();
+            let confirmed = reopened_h1
+                .install_h1_state_sync_trusted_base_v0(&h1_request)
+                .expect("reopen must observe the exact committed H1 TrustedBase");
+            assert_eq!(confirmed.install_sequence_v0(), 2);
         }
     }
 
