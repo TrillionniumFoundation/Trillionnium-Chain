@@ -1166,6 +1166,7 @@ const PARAMETER_REQUIRE_UNBONDING_RELATION_OFFSET: usize = 340;
 /// The parser consumes all 341 fixed bytes before applying semantic rules, so
 /// a valid root plus any suffix is always classified as `trailing_bytes`.
 pub fn decode_consensus_parameters_v0_exact(bytes: &[u8]) -> DecodeResult<ConsensusParametersV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_consensus_parameters_v0(&mut cursor)?;
     cursor.finish()?;
@@ -1515,6 +1516,7 @@ fn validate_consensus_parameter_offsets(fields: &ConsensusParametersV0Fields) ->
 
 /// Decodes one complete `ValidatorSetV0` CEV0 value.
 pub fn decode_validator_set_v0_exact(bytes: &[u8]) -> DecodeResult<ValidatorSet> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_validator_set(&mut cursor)?;
     cursor.finish()?;
@@ -1977,6 +1979,7 @@ pub fn decode_ordinary_qc_v0_exact(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> DecodeResult<QuorumCertificate> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
     cursor.finish()?;
@@ -2010,6 +2013,7 @@ pub fn decode_qc_reference_v0_exact_with_trusted_genesis(
     bytes: &[u8],
     epoch_zero_validator_set: &ValidatorSet,
 ) -> DecodeResult<QcReferenceV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
     cursor.finish()?;
@@ -2049,6 +2053,7 @@ pub fn decode_ordinary_timeout_certificate_v0_exact(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> DecodeResult<TimeoutCertificateV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_timeout_certificate(&mut cursor)?;
     cursor.finish()?;
@@ -2087,6 +2092,7 @@ pub fn decode_timeout_certificate_v0_exact_with_trusted_genesis(
     bytes: &[u8],
     epoch_zero_validator_set: &ValidatorSet,
 ) -> DecodeResult<TimeoutCertificateV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_timeout_certificate(&mut cursor)?;
     cursor.finish()?;
@@ -2204,10 +2210,25 @@ pub fn decode_double_vote_evidence_v0_exact(
     bytes: &[u8],
     validator_set: &ValidatorSet,
 ) -> DecodeResult<DoubleVoteEvidenceV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_double_vote_evidence(&mut cursor)?;
     cursor.finish()?;
     admit_raw_double_vote_evidence(raw, validator_set)
+}
+
+/// Applies the intrinsic CEV0 root ceiling to exact decoders that do not have
+/// an authenticated transport budget parameter.  These entry points are also
+/// used by trusted-local replay and nested composition, so relying solely on
+/// the budgeted wrappers would leave a caller-controlled `bytes` slice able to
+/// scan an arbitrarily large trailing root before `Cursor::finish` rejects it.
+/// The cap is a hard upper envelope; authenticated callers may still choose a
+/// narrower limit through [`Cev0AdmissionBudgetV0`].
+fn require_cev0_root_size(bytes: &[u8]) -> DecodeResult<()> {
+    if bytes.len() > MAX_CEV0_ROOT_BYTES_V0 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    Ok(())
 }
 
 fn require_body_kernel_size(bytes: &[u8], maximum_bytes: usize) -> DecodeResult<()> {
@@ -2559,6 +2580,7 @@ fn admit_raw_vote_context(
 /// This admits only the frozen header shape. It does not authenticate a block
 /// body, execute the payload, or establish checkpoint/seal ancestry.
 pub fn decode_block_header_v0_exact(bytes: &[u8]) -> DecodeResult<BlockHeader> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_block_header(&mut cursor)?;
     cursor.finish()?;
@@ -2578,6 +2600,7 @@ pub fn decode_ordinary_certified_header_v0_exact(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_parent_timestamp_ms: u64,
 ) -> DecodeResult<CertifiedHeaderV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_ordinary_certified_header(&mut cursor)?;
     cursor.finish()?;
@@ -2629,6 +2652,7 @@ pub fn decode_certified_header_v0_exact_with_trusted_genesis(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_parent_timestamp_ms: u64,
 ) -> DecodeResult<CertifiedHeaderV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_ordinary_certified_header(&mut cursor)?;
     cursor.finish()?;
@@ -2687,6 +2711,7 @@ pub fn decode_finality_proof_v0_exact(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_finalized_parent_timestamp_ms: u64,
 ) -> DecodeResult<FinalityProofV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
     cursor.finish()?;
@@ -2739,6 +2764,7 @@ pub fn decode_finality_proof_v0_exact_with_trusted_genesis(
     consensus_parameters: &ConsensusParametersV0,
     authenticated_finalized_parent_timestamp_ms: u64,
 ) -> DecodeResult<FinalityProofV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
     cursor.finish()?;
@@ -2798,6 +2824,7 @@ pub fn decode_checkpoint_finality_proof_v0_exact(
     next_epoch_commitment: &NextEpochCommitmentV0,
     authenticated_checkpoint_parent_timestamp_ms: u64,
 ) -> DecodeResult<FinalityProofV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
     cursor.finish()?;
@@ -3137,6 +3164,7 @@ fn admit_raw_finality_proof_with_reference_admission(
 /// intrinsic shape admission do not authenticate the snapshot, validator set,
 /// parameter preimage, upgrade plan, checkpoint ancestry, or epoch handoff.
 pub fn decode_next_epoch_commitment_v0_exact(bytes: &[u8]) -> DecodeResult<NextEpochCommitmentV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_next_epoch_commitment(&mut cursor)?;
     cursor.finish()?;
@@ -3330,6 +3358,7 @@ fn admit_raw_next_epoch_commitment(
 /// Decodes one complete handoff descriptor without claiming transition
 /// authorization. Old/new set binding is enforced by the certificate APIs.
 pub fn decode_handoff_descriptor_v0_exact(bytes: &[u8]) -> DecodeResult<HandoffDescriptorV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_handoff_descriptor(&mut cursor)?;
     cursor.finish()?;
@@ -3343,6 +3372,7 @@ pub fn decode_handoff_certificate_v0_exact(
     old_validator_set: &ValidatorSet,
     new_validator_set: &ValidatorSet,
 ) -> DecodeResult<HandoffCertificateV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_handoff_certificate(&mut cursor)?;
     cursor.finish()?;
@@ -3362,6 +3392,7 @@ pub fn decode_epoch_anchor_authorization_kernel_v0_exact(
     old_validator_set: &ValidatorSet,
     new_validator_set: &ValidatorSet,
 ) -> DecodeResult<EpochAnchorAuthorizationKernelV0> {
+    require_cev0_root_size(bytes)?;
     let mut cursor = Cursor::new(bytes);
     let raw = parse_raw_epoch_anchor_authorization_kernel(&mut cursor)?;
     cursor.finish()?;
@@ -7497,6 +7528,50 @@ mod tests {
         let error = budget.admit_root_bytes(9).unwrap_err();
         assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
         assert_eq!(error.byte_offset(), 0);
+    }
+
+    #[test]
+    fn unbudgeted_exact_decoders_reject_intrinsic_root_ceiling_before_parse() {
+        let oversized = vec![0; MAX_CEV0_ROOT_BYTES_V0 + 1];
+        let set = sample_set();
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+
+        assert_eq!(
+            decode_consensus_parameters_v0_exact(&oversized)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+        assert_eq!(
+            decode_validator_set_v0_exact(&oversized)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&oversized, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+        assert_eq!(
+            decode_ordinary_certified_header_v0_exact(&oversized, &set, &parameters, 1,)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+        assert_eq!(
+            decode_finality_proof_v0_exact(&oversized, &set, &parameters, 1)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&oversized)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
     }
 
     #[test]
