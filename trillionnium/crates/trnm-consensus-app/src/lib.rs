@@ -43,6 +43,11 @@ use trnm_runtime::{
 mod auth_tree;
 #[allow(dead_code)]
 mod execution_outcome;
+/// Candidate-local, offline-only Comet -> PoCO migration replay and ceremony
+/// verifier.  This module is deliberately not wired into node startup or
+/// production activation; it closes the concrete MIG-ROOT rehearsal boundary
+/// required by the canonical development plan.
+pub mod migration_rehearsal;
 mod native_consensus_application_host;
 mod native_execution;
 #[allow(dead_code)]

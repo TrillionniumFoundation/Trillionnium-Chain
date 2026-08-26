@@ -10,7 +10,9 @@
 //! false until that integration is independently reviewed.
 
 use anyhow::{anyhow, ensure, Context, Result};
+use serde::de::{DeserializeSeed, Deserializer, MapAccess, SeqAccess, Visitor};
 use sha2::{Digest, Sha256};
+use std::collections::BTreeSet;
 use trnm_finality_types::{hash_domain, Hash32, SignedCommandEnvelopeV1};
 use trnm_mempool::{CanonicalSignerId, CanonicalTxDigest, ResourceLimits, SignedEnvelopeView};
 use trnm_protocol::{CanonicalCommandV1, CanonicalTxV1};
@@ -22,6 +24,199 @@ pub const MAX_TTL_MILLIS_V0: u64 = 30 * 24 * 60 * 60 * 1000;
 pub const MAX_GAS_V0: u64 = 10_000_000_000;
 pub const MAX_FEE_LIMIT_V0: u128 = 1_000_000_000_000_000_000;
 pub const PRODUCTION_CANDIDATE_V0: bool = false;
+const MAX_JSON_DEPTH_V0: usize = 64;
+const MAX_JSON_FIELDS_V0: usize = 4096;
+
+/// Walks a JSON value without materialising it and rejects duplicate object
+/// keys at every nesting level. `serde_json`'s ordinary map deserializer keeps
+/// only the last duplicate, which would make a byte-preserving canonicality
+/// check depend on parser policy instead of an explicit protocol rule.
+fn reject_duplicate_json_keys(bytes: &[u8]) -> Result<()> {
+    let mut deserializer = serde_json::Deserializer::from_slice(bytes);
+    let mut budget = JsonScanBudget { fields: 0 };
+    DuplicateKeySeed {
+        depth: 0,
+        budget: &mut budget,
+        charge_item: false,
+    }
+    .deserialize(&mut deserializer)
+    .map_err(|error| anyhow!("strict JSON parse: {error}"))?;
+    deserializer
+        .end()
+        .map_err(|error| anyhow!("trailing JSON data: {error}"))
+}
+
+/// Validate JSON framing and structure before a caller deserializes a
+/// request/control envelope with `serde_json`.
+///
+/// `serde_json` intentionally follows the usual last-key-wins behaviour for
+/// duplicate object members.  Protocol/control envelopes cannot use that
+/// behaviour because a duplicated discriminator or generation could make the
+/// bytes observed by an ingress boundary differ from the typed value it acts
+/// on.  This helper is public so node process hosts can apply the same
+/// bounded duplicate/depth/field policy to their own envelopes; it does not
+/// authenticate a transaction or establish any node authority.
+pub fn validate_strict_json_structure_v0(bytes: &[u8]) -> Result<()> {
+    ensure!(!bytes.is_empty(), "JSON envelope must not be empty");
+    ensure!(
+        bytes.len() <= MAX_OUTER_BYTES_V0,
+        "JSON envelope exceeds the candidate limit"
+    );
+    reject_duplicate_json_keys(bytes)
+}
+
+struct JsonScanBudget {
+    fields: usize,
+}
+
+impl JsonScanBudget {
+    fn charge_field<E>(&mut self) -> core::result::Result<(), E>
+    where
+        E: serde::de::Error,
+    {
+        self.fields = self
+            .fields
+            .checked_add(1)
+            .ok_or_else(|| E::custom("JSON field budget overflow"))?;
+        if self.fields > MAX_JSON_FIELDS_V0 {
+            return Err(E::custom("JSON field budget exceeded"));
+        }
+        Ok(())
+    }
+}
+
+struct DuplicateKeySeed<'a> {
+    depth: usize,
+    budget: &'a mut JsonScanBudget,
+    charge_item: bool,
+}
+
+impl<'de, 'a> DeserializeSeed<'de> for DuplicateKeySeed<'a> {
+    type Value = ();
+
+    fn deserialize<D>(self, deserializer: D) -> core::result::Result<Self::Value, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if self.charge_item {
+            self.budget.charge_field::<D::Error>()?;
+        }
+        deserializer.deserialize_any(DuplicateKeyVisitor {
+            depth: self.depth,
+            budget: self.budget,
+        })
+    }
+}
+
+struct DuplicateKeyVisitor<'a> {
+    depth: usize,
+    budget: &'a mut JsonScanBudget,
+}
+
+impl<'de, 'a> Visitor<'de> for DuplicateKeyVisitor<'a> {
+    type Value = ();
+
+    fn expecting(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        formatter.write_str("a JSON value")
+    }
+
+    fn visit_bool<E>(self, _value: bool) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_i64<E>(self, _value: i64) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_u64<E>(self, _value: u64) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_f64<E>(self, _value: f64) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_str<E>(self, _value: &str) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_borrowed_str<E>(self, _value: &'de str) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_string<E>(self, _value: String) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_none<E>(self) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_unit<E>(self) -> core::result::Result<Self::Value, E> {
+        Ok(())
+    }
+
+    fn visit_some<D>(self, deserializer: D) -> core::result::Result<Self::Value, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        if self.depth >= MAX_JSON_DEPTH_V0 {
+            return Err(serde::de::Error::custom(
+                "JSON nesting exceeds the candidate limit",
+            ));
+        }
+        DuplicateKeySeed {
+            depth: self.depth + 1,
+            budget: self.budget,
+            charge_item: false,
+        }
+        .deserialize(deserializer)
+    }
+
+    fn visit_seq<A>(self, mut access: A) -> core::result::Result<Self::Value, A::Error>
+    where
+        A: SeqAccess<'de>,
+    {
+        if self.depth >= MAX_JSON_DEPTH_V0 {
+            return Err(serde::de::Error::custom(
+                "JSON nesting exceeds the candidate limit",
+            ));
+        }
+        while access
+            .next_element_seed(DuplicateKeySeed {
+                depth: self.depth + 1,
+                budget: self.budget,
+                charge_item: true,
+            })?
+            .is_some()
+        {}
+        Ok(())
+    }
+
+    fn visit_map<A>(self, mut access: A) -> core::result::Result<Self::Value, A::Error>
+    where
+        A: MapAccess<'de>,
+    {
+        if self.depth >= MAX_JSON_DEPTH_V0 {
+            return Err(serde::de::Error::custom(
+                "JSON nesting exceeds the candidate limit",
+            ));
+        }
+        let mut keys = BTreeSet::new();
+        while let Some(key) = access.next_key::<String>()? {
+            self.budget.charge_field::<A::Error>()?;
+            if !keys.insert(key) {
+                return Err(serde::de::Error::custom("duplicate JSON object key"));
+            }
+            access.next_value_seed(DuplicateKeySeed {
+                depth: self.depth + 1,
+                budget: self.budget,
+                charge_item: false,
+            })?;
+        }
+        Ok(())
+    }
+}
 
 /// Limits supplied by the node-side admission policy.
 ///
@@ -266,6 +461,74 @@ impl BuiltCanonicalTxV0 {
     ) -> BuiltCanonicalTxAdmissionViewV0<'_> {
         BuiltCanonicalTxAdmissionViewV0::new(self, signer_id)
     }
+
+    /// Decode one exact, canonical outer envelope at a node ingress boundary.
+    ///
+    /// The builder normally creates this carrier from typed inputs, but a
+    /// process host receives bytes. This constructor preserves those bytes
+    /// verbatim while re-running the structural and hash checks performed by
+    /// the builder. Signature/context authentication remains the node-owned
+    /// `validate_at_strict`/admission hook; this function never treats an
+    /// untrusted byte string as an authenticated authority by itself.
+    pub fn from_exact_outer_bytes_v0(bytes: &[u8]) -> Result<Self> {
+        ensure!(!bytes.is_empty(), "outer envelope must not be empty");
+        ensure!(
+            bytes.len() <= MAX_OUTER_BYTES_V0,
+            "outer envelope exceeds the candidate limit"
+        );
+        reject_duplicate_json_keys(bytes).context("reject duplicate outer JSON keys")?;
+        let envelope: SignedCommandEnvelopeV1 =
+            serde_json::from_slice(bytes).context("decode signed command envelope")?;
+        envelope
+            .validate_shape()
+            .context("validate signed envelope shape")?;
+        let canonical_outer =
+            serde_json::to_vec(&envelope).context("canonicalize signed command envelope")?;
+        ensure!(
+            canonical_outer == bytes,
+            "outer envelope is not canonical JSON"
+        );
+        let exact_inner_bytes = envelope
+            .payload_bytes()
+            .context("decode envelope payload")?;
+        ensure!(
+            exact_inner_bytes.len() <= MAX_INNER_BYTES_V0,
+            "inner transaction exceeds the candidate limit"
+        );
+        ensure!(
+            envelope.payload_type == trnm_protocol::CANONICAL_TX_PAYLOAD_TYPE_V1,
+            "unsupported canonical transaction payload type"
+        );
+        reject_duplicate_json_keys(&exact_inner_bytes)
+            .context("reject duplicate inner JSON keys")?;
+        let transaction: CanonicalTxV1 =
+            serde_json::from_slice(&exact_inner_bytes).context("decode canonical transaction")?;
+        transaction
+            .validate()
+            .context("validate canonical transaction")?;
+        let canonical_inner =
+            serde_json::to_vec(&transaction).context("canonicalize canonical transaction")?;
+        ensure!(
+            canonical_inner == exact_inner_bytes,
+            "inner transaction is not canonical JSON"
+        );
+        ensure!(
+            transaction.sender == envelope.signer_id
+                && transaction.nonce == envelope.nonce
+                && transaction.max_gas > 0
+                && transaction.fee_limit > 0,
+            "inner transaction and envelope metadata differ"
+        );
+        let protocol_tx_hash_v1 = envelope.tx_hash().context("derive transaction hash")?;
+        let outer_bytes_sha256 = Sha256::digest(bytes).into();
+        Ok(Self {
+            envelope,
+            exact_inner_bytes,
+            exact_outer_bytes: bytes.to_vec(),
+            protocol_tx_hash_v1,
+            outer_bytes_sha256,
+        })
+    }
 }
 
 /// Derive a retry-stable command id from the exact canonical command body.
@@ -407,11 +670,13 @@ pub fn build_signed_canonical_tx_v0(
 mod tests {
     use super::*;
     use ed25519_dalek::{Signer, SigningKey};
+    use std::fmt::Write as _;
     use trnm_finality_types::crypto::public_key_hex;
     use trnm_mempool::{
         AdmissionReject, IngressClass, PendingNonceAuthority, PendingNonceReservation,
         SignedAdmissionHooks, SignedEnvelopeMetadata, TypedAdmissionGate, TypedAdmitOutcome,
     };
+    use trnm_protocol::CANONICAL_TX_SCHEMA_V1;
 
     struct TestSigner {
         key: SigningKey,
@@ -483,6 +748,93 @@ mod tests {
             .envelope()
             .validate_at_strict("trnm-devnet", 1_000)
             .unwrap();
+    }
+
+    #[test]
+    fn exact_outer_decoder_preserves_bytes_and_rejects_noncanonical_or_substituted_payload() {
+        let signer = signer();
+        let built = build_signed_canonical_tx_v0(context(&signer.id), command(), &signer).unwrap();
+        let decoded = BuiltCanonicalTxV0::from_exact_outer_bytes_v0(built.exact_outer_bytes())
+            .expect("builder output must decode at the byte ingress");
+        assert_eq!(decoded, built);
+
+        let mut whitespace = built.exact_outer_bytes().to_vec();
+        whitespace.push(b'\n');
+        assert!(BuiltCanonicalTxV0::from_exact_outer_bytes_v0(&whitespace).is_err());
+
+        let mut forged = built.envelope().clone();
+        forged.payload_hex = hex::encode(braced_payload_for_test());
+        let forged_bytes = serde_json::to_vec(&forged).unwrap();
+        assert!(BuiltCanonicalTxV0::from_exact_outer_bytes_v0(&forged_bytes).is_err());
+    }
+
+    #[test]
+    fn exact_outer_decoder_rejects_duplicate_keys_at_both_json_layers() {
+        let signer = signer();
+        let built = build_signed_canonical_tx_v0(context(&signer.id), command(), &signer).unwrap();
+
+        let outer = String::from_utf8(built.exact_outer_bytes().to_vec()).unwrap();
+        let close = outer.rfind('}').expect("outer object close");
+        let duplicate_outer = format!(
+            "{},\"nonce\":{}{}",
+            &outer[..close],
+            built.envelope().nonce,
+            &outer[close..]
+        );
+        assert!(BuiltCanonicalTxV0::from_exact_outer_bytes_v0(duplicate_outer.as_bytes()).is_err());
+
+        let inner = String::from_utf8(built.exact_inner_bytes().to_vec()).unwrap();
+        let inner_close = inner.rfind('}').expect("inner object close");
+        let duplicate_inner = format!(
+            "{},\"nonce\":{}{}",
+            &inner[..inner_close],
+            built.envelope().nonce,
+            &inner[inner_close..]
+        );
+        let mut forged = built.envelope().clone();
+        forged.payload_hex = hex::encode(duplicate_inner.as_bytes());
+        forged.payload_hash_hex = hex::encode(hash_domain(
+            "trnm.command.payload.v1",
+            &[duplicate_inner.as_bytes()],
+        ));
+        forged.signature_hex.clear();
+        let forged_bytes = serde_json::to_vec(&forged).unwrap();
+        assert!(BuiltCanonicalTxV0::from_exact_outer_bytes_v0(&forged_bytes).is_err());
+    }
+
+    #[test]
+    fn strict_json_scan_rejects_field_and_depth_bombs_before_typed_decode() {
+        let mut object = String::from("{");
+        for index in 0..=MAX_JSON_FIELDS_V0 {
+            if index != 0 {
+                object.push(',');
+            }
+            write!(&mut object, "\"k{index}\":0").expect("string formatting");
+        }
+        object.push('}');
+        assert!(reject_duplicate_json_keys(object.as_bytes()).is_err());
+
+        let deeply_nested = format!(
+            "{}0{}",
+            "[".repeat(MAX_JSON_DEPTH_V0 + 1),
+            "]".repeat(MAX_JSON_DEPTH_V0 + 1)
+        );
+        assert!(reject_duplicate_json_keys(deeply_nested.as_bytes()).is_err());
+    }
+
+    fn braced_payload_for_test() -> Vec<u8> {
+        serde_json::to_vec(&CanonicalTxV1 {
+            schema: CANONICAL_TX_SCHEMA_V1.to_owned(),
+            sender: "did:trnm:alice".to_owned(),
+            nonce: 1,
+            max_gas: 10_000,
+            fee_limit: 10,
+            command: CanonicalCommandV1::Transfer {
+                to: "did:trnm:bob".to_owned(),
+                amount: 8,
+            },
+        })
+        .unwrap()
     }
 
     #[test]

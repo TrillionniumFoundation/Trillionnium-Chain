@@ -183,6 +183,8 @@ mod external_proposal_signer_runtime;
 mod external_signer_runtime;
 #[cfg(feature = "lab-validator-runtime")]
 mod finalization_intent_wal;
+#[cfg(feature = "g1-process-test-support")]
+pub mod g1_process_host;
 mod g2_manifest_bound_process_v2;
 #[allow(dead_code)]
 mod g2_manifest_bound_v2;
@@ -204,6 +206,7 @@ mod native_proposal_p_host;
 #[cfg(feature = "node-event-wal")]
 mod node_event_wal;
 mod ordinary_timeout;
+mod p2p_session_ingress;
 #[cfg(feature = "legacy-consensus-app")]
 mod process_host;
 mod recovery_ready_start;
@@ -343,6 +346,13 @@ pub use ordinary_timeout::PocoNodeHostEventWalOwnerV1;
 #[cfg(feature = "recovery-process-test-support")]
 pub use ordinary_timeout::PocoNodeTimeoutSigningProcessCheckpointPhaseV0;
 pub use ordinary_timeout::{PocoNodeHostActionV0, PocoNodeHostV0, PocoNodeSignedOutboundV0};
+pub use p2p_session_ingress::{
+    P2pSessionIngressErrorCodeV0, PocoNodeP2pAcceptedFrameV0, PocoNodeP2pSessionErrorV0,
+    PocoNodeP2pSessionV0, P2P_SESSION_INGRESS_PRODUCTION_ACTIVATION_V0,
+    P2P_SESSION_INGRESS_RUNTIME_COMPOSITION_V0, P2P_SESSION_MAX_FRAME_BYTES_V0,
+    P2P_SESSION_MAX_HANDSHAKE_BYTES_V0, P2P_SESSION_MAX_PAYLOAD_BYTES_V0,
+    P2P_SESSION_REPLAY_WINDOW_V0,
+};
 #[cfg(feature = "legacy-consensus-app")]
 pub use process_host::{
     PocoNodeInertEffectKindV0, PocoNodeProcessBootstrapFactsV0, PocoNodeProcessBootstrapModeV0,
@@ -405,10 +415,10 @@ pub use state_sync_wire_ingress::{
 pub use tx_admission_wal::{
     CanonicalAdmissionContextResolverV0, CanonicalSignerIdentityResolverV0,
     DurableNativeCommitReceiptVerifierV0, NativeCommitReceiptEvidenceV0,
-    NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, SqlitePendingNonceAuthorityV0,
-    TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0, TX_ADMISSION_BOUNDARY_BROADCAST_V0,
-    TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0, TX_ADMISSION_BOUNDARY_CHECKTX_V0,
-    TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
+    NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, PendingNonceHandoffRecordV0,
+    SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0,
+    TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0,
+    TX_ADMISSION_BOUNDARY_CHECKTX_V0, TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0,
     TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_V0, TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0,

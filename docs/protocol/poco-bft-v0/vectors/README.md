@@ -29,6 +29,16 @@ that do not call the Rust consensus crates:
   xorshift corpus, and bounded malformed/oversized cases. This is only an
   outer-frame reference slice; nested CEV0 decoding, authenticated P2P,
   `wire_conformance`, and activation remain false.
+- `wire-semantic-v0.json` freezes four complete nested transport frames
+  (Vote, TimeoutVote, QuorumCertificate, and TimeoutCertificate), including
+  authenticated validator-set scope, recomputed CEV0 digests, weighted quorum,
+  nested-share accounting, and strict truncation coverage. The
+  standard-library-only `scripts/ci/check_poco_bft_v0_wire_semantic_reference.py`
+  is separately authored from the Rust decoder and is run by the v0 workflow;
+  Rust tests consume the same frame bytes. This closes only the four adapted
+  consensus bodies. Proposal and the remaining body kinds, Ed25519
+  verification, authenticated P2P, `wire_conformance`, and activation remain
+  explicitly rejected or disabled.
 - `ed25519-v0.json` freezes an RFC 8032 public key and signature over the
   foundation vote root, plus wrong-root, mutated-signature, undecodable-key,
   and small-order-key rejection cases. The exact bytes are reproduced by

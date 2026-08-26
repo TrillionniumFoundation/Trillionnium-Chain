@@ -22,7 +22,9 @@ use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBeha
 use sha2::{Digest, Sha256};
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_types::{
-    BlockHeader, ConsensusParametersV0, FinalityProofV0, GenesisHash, ValidatorId, ValidatorSet,
+    ApplicationPayloadV0, BlockHeader, ConsensusParametersV0, ExecutionEventAttributeV0,
+    ExecutionEventV0, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, FinalityProofV0,
+    GenesisHash, ValidatorId, ValidatorSet,
 };
 use trnm_finality_types::hash_domain;
 use trnm_native_application::{
@@ -64,6 +66,7 @@ const H1_STATE_SYNC_COMMIT_ID_DOMAIN_V0: &str =
 const SNAPSHOT_CHUNK_DOMAIN_V0: &str = "trnm.native-application.snapshot-chunk.v0";
 const SNAPSHOT_MANIFEST_DOMAIN_V0: &str = "trnm.native-application.snapshot-manifest.v0";
 const LAB_STORE_ID_DOMAIN_V0: &str = "trnm.native-application.canonical-lab-store-id.v0";
+const NATIVE_RECEIPT_COMMITMENT_DOMAIN_V0: &str = "trnm.native-application.execution-receipt.v0";
 
 const EXPECTED_SCHEMA_V0: &[(&str, &str)] = &[
     (
@@ -199,6 +202,136 @@ fn error(
     field: &'static str,
 ) -> NativeApplicationExecutionErrorV0 {
     NativeApplicationExecutionErrorV0::new(code, field)
+}
+
+/// Reconstructs the canonical payload and every receipt commitment at the
+/// finalization boundary instead of trusting the shape-only native carrier.
+///
+/// `NativeExecutedBlockV0` deliberately permits host-neutral construction and
+/// therefore proves only count/index shape plus caller-supplied root equality.
+/// A finalization owner must additionally bind transaction bytes to payload
+/// leaves, native receipt digests to those leaves, native commitment hashes to
+/// the exact canonical receipt fields, and the reconstructed list to the
+/// finalized receipts root.
+pub fn validate_native_finalized_execution_receipts_v0(
+    executed: &NativeExecutedBlockV0,
+) -> Result<(), NativeApplicationExecutionErrorV0> {
+    let execution = executed.request();
+    let payload = ApplicationPayloadV0::new(execution.transactions().to_vec()).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.payload",
+        )
+    })?;
+    let payload_root = payload.payload_root().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.payload_root",
+        )
+    })?;
+    if payload_root.as_bytes() != execution.expected().payload_root().as_bytes() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.payload_root",
+        ));
+    }
+    if executed.receipts().len() != payload.transactions().len() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.receipt_count",
+        ));
+    }
+
+    let mut commitments = Vec::with_capacity(executed.receipts().len());
+    for (expected_index, receipt) in executed.receipts().iter().enumerate() {
+        let expected_index = u32::try_from(expected_index).map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_index",
+            )
+        })?;
+        if receipt.transaction_index() != expected_index {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_index",
+            ));
+        }
+        let events = receipt
+            .events()
+            .iter()
+            .map(|event| {
+                let attributes = event
+                    .attributes()
+                    .iter()
+                    .map(|attribute| {
+                        ExecutionEventAttributeV0::new(
+                            attribute.key().as_bytes().to_vec(),
+                            attribute.value().as_bytes().to_vec(),
+                        )
+                    })
+                    .collect::<Result<Vec<_>, _>>()?;
+                ExecutionEventV0::new(event.kind().as_bytes().to_vec(), attributes)
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| {
+                error(
+                    NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                    "finalized_commit.receipt_events",
+                )
+            })?;
+        let commitment = ExecutionReceiptCommitmentV0::for_transaction(
+            &payload,
+            expected_index,
+            receipt.gas_used(),
+            receipt.fee_charged(),
+            events,
+        )
+        .map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_payload_leaf",
+            )
+        })?;
+        if receipt.transaction_digest().as_bytes() != commitment.payload_leaf_hash() {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_transaction_digest",
+            ));
+        }
+        let encoded = commitment.try_cev0_bytes().map_err(|_| {
+            error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_encoding",
+            )
+        })?;
+        let expected_commitment = hash_domain(NATIVE_RECEIPT_COMMITMENT_DOMAIN_V0, &[&encoded]);
+        if receipt.commitment().as_bytes() != &expected_commitment {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+                "finalized_commit.receipt_commitment",
+            ));
+        }
+        commitments.push(commitment);
+    }
+    let receipts = ExecutionReceiptsV0::new(&payload, commitments).map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.receipts",
+        )
+    })?;
+    let receipts_root = receipts.receipts_root().map_err(|_| {
+        error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.receipts_root",
+        )
+    })?;
+    if receipts_root.as_bytes() != execution.expected().receipts_root().as_bytes() {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch,
+            "finalized_commit.receipts_root",
+        ));
+    }
+    Ok(())
 }
 
 fn ensure_finalized_header_binding_v0(
@@ -1611,6 +1744,7 @@ impl DurableNativeApplicationV0 {
         let finalized_header = finality_proof.finalized_block().header();
 
         ensure_finalized_header_binding_v0(finalized_header, execution)?;
+        validate_native_finalized_execution_receipts_v0(&executed)?;
         finality_proof
             .verify(
                 &self.config.validator_set,
@@ -4019,8 +4153,8 @@ mod tests {
     use trnm_finality_types::{crypto::public_key_hex, SignedCommandEnvelopeV1};
     use trnm_native_application::{
         ChainIdV0, GenesisHashV0, NativeApplicationRecoveryRequestV0, NativeBlockExecutionResultV0,
-        NativeExpectedBlockCommitmentsV0, NativeRecoveryDispositionV0, NativeRecoveryWatermarksV0,
-        NativeStateProofRequestV0,
+        NativeExecutionReceiptV0, NativeExpectedBlockCommitmentsV0, NativeRecoveryDispositionV0,
+        NativeRecoveryWatermarksV0, NativeStateProofRequestV0,
     };
     use trnm_protocol::{
         account_key, CanonicalCommandV1, CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1,
@@ -5269,13 +5403,21 @@ mod tests {
         );
         let committed = application
             .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
-                executed,
+                executed.clone(),
                 proof.clone(),
                 template.timestamp_ms() - 1_000,
             ))
             .unwrap();
         assert_eq!(committed.head().height().get(), 1);
         assert_eq!(committed.head().block_id(), request.block_id());
+        let replayed = application
+            .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                executed,
+                proof.clone(),
+                template.timestamp_ms() - 1_000,
+            ))
+            .expect("exact finalized commit replay must be idempotent");
+        assert_eq!(replayed, committed);
 
         let proof_read = application
             .read_finalized_by_block_id_with_proof_v0(
@@ -5380,6 +5522,129 @@ mod tests {
     }
 
     #[test]
+    fn finalized_commit_adapter_rejects_substituted_receipt_bindings_and_replays_exactly_v0() {
+        let temporary = TempDir::new().unwrap();
+        let path = temporary.path().join("finality-receipt-bindings.sqlite");
+        let config = config_with_initial_block(STORE_FINALITY, GENESIS);
+        let validator_set = config.validator_set.clone();
+        let parameters = config.parameters;
+        let parent = ApplicationHeadV0::new(
+            HeightV0::GENESIS,
+            BlockIdV0::new(GENESIS).unwrap(),
+            StateRootV0::new(config.initial_state_root).unwrap(),
+            ApplicationCommitIdV0::new(INITIAL_COMMIT).unwrap(),
+        );
+        let template = execution_request(&config, &parent);
+        let header = header_for_execution_v0(&template, &validator_set, 1, template.timestamp_ms());
+        let request = NativeBlockExecutionRequestV0::new(
+            template.chain_id().clone(),
+            template.genesis_hash(),
+            parent.clone(),
+            BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            template.height(),
+            template.timestamp_ms(),
+            template.active_validator_set_id(),
+            template.transactions().to_vec(),
+            template.expected(),
+        )
+        .unwrap();
+        let application = DurableNativeApplicationV0::open(&path, config).unwrap();
+        application
+            .initialize(genesis_request(&config_with_initial_block(
+                STORE_FINALITY,
+                GENESIS,
+            )))
+            .unwrap();
+        let executed = match application.execute_block(request).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("expected valid execution, got {other:?}"),
+        };
+        let authenticated_parent_timestamp_ms = template.timestamp_ms() - 1_000;
+        let proof = signed_finality_proof_for_execution_v0(
+            executed.request(),
+            &validator_set,
+            &parameters,
+            authenticated_parent_timestamp_ms,
+        );
+        let original = executed.receipts()[0].clone();
+        let substituted_digest = NativeExecutionReceiptV0::new(
+            original.transaction_index(),
+            Hash32V0::new([0xe1; 32]),
+            original.gas_used(),
+            original.fee_charged(),
+            original.events().to_vec(),
+            original.commitment(),
+        )
+        .unwrap();
+        let substituted_commitment = NativeExecutionReceiptV0::new(
+            original.transaction_index(),
+            original.transaction_digest(),
+            original.gas_used(),
+            original.fee_charged(),
+            original.events().to_vec(),
+            Hash32V0::new([0xe2; 32]),
+        )
+        .unwrap();
+        for (replacement, field) in [
+            (
+                substituted_digest,
+                "finalized_commit.receipt_transaction_digest",
+            ),
+            (
+                substituted_commitment,
+                "finalized_commit.receipt_commitment",
+            ),
+        ] {
+            let mut receipts = executed.receipts().to_vec();
+            receipts[0] = replacement;
+            let expected = executed.request().expected();
+            let substituted = NativeExecutedBlockV0::new(
+                executed.request().clone(),
+                expected.payload_root(),
+                expected.post_state_root(),
+                expected.receipts_root(),
+                expected.evidence_root(),
+                receipts,
+            )
+            .unwrap();
+            let error = application
+                .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                    substituted,
+                    proof.clone(),
+                    authenticated_parent_timestamp_ms,
+                ))
+                .expect_err("substituted receipt binding must fail closed");
+            assert_eq!(
+                error.code(),
+                NativeApplicationExecutionErrorCodeV0::BindingMismatch
+            );
+            assert_eq!(error.field(), field);
+            assert_eq!(
+                application.confirmed_committed_head_v0().unwrap().height(),
+                HeightV0::GENESIS,
+                "rejected receipt binding must not advance the application head"
+            );
+        }
+
+        let committed = application
+            .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                executed.clone(),
+                proof.clone(),
+                authenticated_parent_timestamp_ms,
+            ))
+            .unwrap();
+        let replayed = application
+            .commit_finalized_block_v0(FinalizedNativeApplicationCommitRequestV0::new(
+                executed,
+                proof,
+                authenticated_parent_timestamp_ms,
+            ))
+            .expect("valid finalized commit retry must be exact");
+        assert_eq!(replayed, committed);
+        assert_eq!(committed.head().height(), HeightV0::new(1));
+    }
+
+    #[test]
     fn finalized_commit_adapter_source_contract_keeps_finality_and_atomicity_explicit_v0() {
         let source = include_str!("durable.rs");
         let start = source
@@ -5392,6 +5657,7 @@ mod tests {
         let body = &source[start..end];
         assert!(body.contains("finality_proof\n            .verify("));
         assert!(body.contains("StrictEd25519Verifier"));
+        assert!(body.contains("validate_native_finalized_execution_receipts_v0"));
         assert!(body.contains("NativeApplicationV0::commit_block"));
         assert!(!body.contains("qc_as_application_commit = true"));
         assert!(!body.contains("production_activation: true"));

@@ -135,6 +135,9 @@ pub enum TxAdmissionWalErrorV0 {
     CommitReceiptMismatch,
     CommitReceiptConflict,
     CommitReadbackUnavailable,
+    /// The caller attempted restart-handoff inspection or resolution through
+    /// a boundary that was not opened with the explicit recovery constructor.
+    HandoffRecoveryUnavailable,
 }
 
 impl fmt::Display for TxAdmissionWalErrorV0 {
@@ -159,6 +162,9 @@ impl fmt::Display for TxAdmissionWalErrorV0 {
             Self::CommitReceiptConflict => "transaction commit receipt conflicts with durable row",
             Self::CommitReadbackUnavailable => {
                 "transaction commit requires an authenticated application/finality readback"
+            }
+            Self::HandoffRecoveryUnavailable => {
+                "transaction admission handoff recovery requires an explicit recovery owner"
             }
         })
     }
@@ -249,6 +255,54 @@ impl AdmissionRecordV0 {
             max_bytes: limits.max_bytes,
         })
     }
+
+    fn from_transaction(
+        transaction: &BuiltCanonicalTxV0,
+        signer: CanonicalSignerId,
+    ) -> Result<Self, TxAdmissionWalErrorV0> {
+        let view = transaction.admission_view_v0(signer);
+        view.validate_canonical()
+            .map_err(|_| TxAdmissionWalErrorV0::Malformed)?;
+        let digest = view.canonical_digest().as_bytes();
+        let body = view.canonical_body();
+        let body_len = u64::try_from(body.len()).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+        let limits = view.resource_limits();
+        let fee_limit = view.fee_limit();
+        if digest == [0; 32]
+            || signer.as_bytes() == [0; 32]
+            || body.is_empty()
+            || view.nonce() == 0
+            || limits.max_gas == 0
+            || limits.max_bytes == 0
+            || body_len > limits.max_bytes
+            || fee_limit == 0
+        {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+        Ok(Self {
+            signer: signer.as_bytes(),
+            nonce: view.nonce(),
+            digest,
+            body_digest: body_digest_v0(body),
+            fee_limit,
+            max_gas: limits.max_gas,
+            max_bytes: limits.max_bytes,
+        })
+    }
+
+    fn handoff_facts(self) -> Result<PendingNonceHandoffRecordV0, TxAdmissionWalErrorV0> {
+        let signer = CanonicalSignerId::from_bytes(self.signer)
+            .map_err(|_| TxAdmissionWalErrorV0::Malformed)?;
+        Ok(PendingNonceHandoffRecordV0 {
+            signer,
+            nonce: self.nonce,
+            digest: self.digest,
+            body_digest: self.body_digest,
+            fee_limit: self.fee_limit,
+            max_gas: self.max_gas,
+            max_bytes: self.max_bytes,
+        })
+    }
 }
 
 /// Candidate-only application/finality evidence for one admitted transaction.
@@ -264,6 +318,69 @@ pub struct NativeCommitReceiptEvidenceV0 {
     /// block-body index (not an inferred transport or legacy AppHash value).
     receipt_digest: [u8; 32],
     finality_proof_digest: [u8; 32],
+}
+
+/// Persisted facts for a durable `HandedOff` reservation discovered during
+/// process restart.  They are untrusted until a recovery owner matches every
+/// field against an exact canonical transaction and an independently read-back
+/// application receipt.  The record contains no executable capability and no
+/// private key.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PendingNonceHandoffRecordV0 {
+    signer: CanonicalSignerId,
+    nonce: u64,
+    digest: [u8; 32],
+    body_digest: [u8; 32],
+    fee_limit: u128,
+    max_gas: u64,
+    max_bytes: u64,
+}
+
+impl PendingNonceHandoffRecordV0 {
+    pub const fn signer_id_v0(&self) -> CanonicalSignerId {
+        self.signer
+    }
+
+    pub const fn nonce_v0(&self) -> u64 {
+        self.nonce
+    }
+
+    pub const fn digest_v0(&self) -> [u8; 32] {
+        self.digest
+    }
+
+    pub const fn body_digest_v0(&self) -> [u8; 32] {
+        self.body_digest
+    }
+
+    pub const fn fee_limit_v0(&self) -> u128 {
+        self.fee_limit
+    }
+
+    pub const fn max_gas_v0(&self) -> u64 {
+        self.max_gas
+    }
+
+    pub const fn max_bytes_v0(&self) -> u64 {
+        self.max_bytes
+    }
+
+    /// Verify that every persisted reservation field describes the supplied
+    /// canonical transaction under the node-owned replay identity.  No
+    /// database state is changed; this is the mandatory precondition for a
+    /// restart recovery owner.
+    pub fn validate_transaction_v0(
+        &self,
+        transaction: &BuiltCanonicalTxV0,
+        signer: CanonicalSignerId,
+    ) -> Result<(), TxAdmissionWalErrorV0> {
+        let expected = AdmissionRecordV0::from_transaction(transaction, signer)?;
+        if expected.handoff_facts()? == *self {
+            Ok(())
+        } else {
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        }
+    }
 }
 
 impl NativeCommitReceiptEvidenceV0 {
@@ -475,6 +592,20 @@ fn validate_native_readback_binding_v0(
     // drift would let a receipt be attributed to a different execution view.
     if facts.receipt_indices.len() != facts.outer_transactions.len()
         || facts.receipt_commitments.len() != facts.outer_transactions.len()
+    {
+        return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
+    }
+    // Authenticate the complete index vector, not just the index selected for
+    // this transaction.  A malformed readback such as `[0, 0]` or `[0, 2]`
+    // must not be accepted merely because the target happens to be at index
+    // zero; otherwise a forged suffix could be hidden behind an apparently
+    // valid receipt prefix.  The native schema's index is the canonical
+    // zero-based body position for every receipt.
+    if facts
+        .receipt_indices
+        .iter()
+        .enumerate()
+        .any(|(index, receipt_index)| u32::try_from(index) != Ok(*receipt_index))
     {
         return Err(TxAdmissionWalErrorV0::CommitReceiptMismatch);
     }
@@ -872,6 +1003,52 @@ fn read_row_v0(
     )
 }
 
+fn validate_pending_rows_v0(
+    connection: &Connection,
+    namespace: [u8; 32],
+) -> Result<(), TxAdmissionWalErrorV0> {
+    let mut statement = connection
+        .prepare(
+            "SELECT signer, nonce FROM pending_nonce
+             WHERE namespace = ?1
+             ORDER BY nonce ASC, signer ASC",
+        )
+        .map_err(sqlite_error)?;
+    let rows = statement
+        .query_map(params![namespace.as_slice()], |row| {
+            Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?))
+        })
+        .map_err(sqlite_error)?;
+    let mut keys = Vec::new();
+    for row in rows {
+        let (signer, nonce) = row.map_err(sqlite_error)?;
+        keys.push((decode_fixed::<32>(signer)?, decode_fixed::<8>(nonce)?));
+    }
+    drop(statement);
+    for (signer, nonce) in keys {
+        let nonce = u64::from_be_bytes(nonce);
+        let Some((record, state)) = read_row_v0(connection, namespace, signer, nonce)? else {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        };
+        // Reuse the same strict state decoder used by every lifecycle
+        // transition, and reject impossible zero/empty reservation facts even
+        // when an attacker has edited the SQLite row into a self-consistent
+        // shape.
+        decode_state(state)?;
+        if record.signer == [0; 32]
+            || record.nonce == 0
+            || record.digest == [0; 32]
+            || record.body_digest == [0; 32]
+            || record.fee_limit == 0
+            || record.max_gas == 0
+            || record.max_bytes == 0
+        {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+    }
+    Ok(())
+}
+
 fn read_state_by_digest_v0(
     connection: &Connection,
     namespace: [u8; 32],
@@ -946,8 +1123,11 @@ pub struct SqlitePendingNonceAuthorityV0 {
 /// ```
 ///
 /// The returned [`PendingNonceAdmission`] owns the durable lifecycle token.
-/// Dropping an unresolved item releases its reservation; callers should use
-/// `handoff` followed by `commit`, or explicitly `release`/`cancel`.
+/// Dropping an item that is still `Reserved` attempts a durable release.  Once
+/// `handoff` succeeds, execution is ambiguous until an authenticated receipt
+/// commit (or explicit restart recovery); dropping that item cannot release the
+/// row and therefore leaves startup fail-closed.  Callers should use `handoff`
+/// followed by `commit`, or explicitly `release`/`cancel` before handoff.
 ///
 /// This type is deliberately not a node runtime.  It does not call a signer,
 /// execute a transaction, invoke CheckTx, publish an RPC result, or broadcast
@@ -958,6 +1138,11 @@ pub struct NodeOwnedTxAdmissionBoundaryV0 {
     authority: SqlitePendingNonceAuthorityV0,
     signer_resolver: Option<Box<dyn CanonicalSignerIdentityResolverV0>>,
     context_resolver: Option<Box<dyn CanonicalAdmissionContextResolverV0>>,
+    /// Recovery inspection/resolution is a distinct owner mode.  Keep this
+    /// bit on the live boundary rather than relying on a documentation-only
+    /// constructor convention, so a normal admission owner cannot accidentally
+    /// invoke the restart path.
+    allow_handed_off_recovery: bool,
 }
 
 impl NodeOwnedTxAdmissionBoundaryV0 {
@@ -980,9 +1165,11 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             max_body_bytes,
             None,
             None,
+            false,
         )
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn open_inner(
         path: impl AsRef<Path>,
         namespace: [u8; 32],
@@ -991,12 +1178,18 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         max_body_bytes: u64,
         signer_resolver: Option<Box<dyn CanonicalSignerIdentityResolverV0>>,
         context_resolver: Option<Box<dyn CanonicalAdmissionContextResolverV0>>,
+        allow_handed_off: bool,
     ) -> Result<Self, TxAdmissionWalErrorV0> {
         Ok(Self {
             gate: TypedAdmissionGate::new(total_capacity, critical_reserve, max_body_bytes),
-            authority: SqlitePendingNonceAuthorityV0::open(path, namespace)?,
+            authority: SqlitePendingNonceAuthorityV0::open_with_handoff_policy(
+                path,
+                namespace,
+                allow_handed_off,
+            )?,
             signer_resolver,
             context_resolver,
+            allow_handed_off_recovery: allow_handed_off,
         })
     }
 
@@ -1023,6 +1216,7 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             max_body_bytes,
             Some(Box::new(resolver)),
             None,
+            false,
         )
     }
 
@@ -1050,6 +1244,7 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             max_body_bytes,
             Some(Box::new(signer_resolver)),
             Some(Box::new(context_resolver)),
+            false,
         )
     }
 
@@ -1116,6 +1311,34 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         )
     }
 
+    /// Candidate-only restart owner that permits inspection of unresolved WAL
+    /// handoffs.  It does not resolve them automatically; the caller must use
+    /// [`Self::recover_handed_off_with_native_readback`] with an exact
+    /// application/proof join, or drop the owner and remain fail-closed.
+    pub fn with_default_body_limit_and_signer_and_context_handoff_recovery<R, C>(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+        total_capacity: usize,
+        critical_reserve: usize,
+        signer_resolver: R,
+        context_resolver: C,
+    ) -> Result<Self, TxAdmissionWalErrorV0>
+    where
+        R: CanonicalSignerIdentityResolverV0 + 'static,
+        C: CanonicalAdmissionContextResolverV0 + 'static,
+    {
+        Self::open_inner(
+            path,
+            namespace,
+            total_capacity,
+            critical_reserve,
+            DEFAULT_MAX_ADMISSION_BODY_BYTES,
+            Some(Box::new(signer_resolver)),
+            Some(Box::new(context_resolver)),
+            true,
+        )
+    }
+
     pub const fn namespace(&self) -> [u8; 32] {
         self.authority.namespace()
     }
@@ -1132,6 +1355,9 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         E: SignedEnvelopeView + ?Sized,
         H: SignedAdmissionHooks<E>,
     {
+        if self.authority.has_unresolved_handoff_v0().unwrap_or(true) {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
+        }
         self.gate
             .admit_signed_with_pending_nonce(envelope, class, hooks, &mut self.authority)
     }
@@ -1172,6 +1398,9 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         chain_id: &str,
         now_unix_ms: u64,
     ) -> TypedAdmitOutcome {
+        if self.authority.has_unresolved_handoff_v0().unwrap_or(true) {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
+        }
         let signer_id = match self.resolve_signer_id_v0(transaction) {
             Ok(signer_id) => signer_id,
             Err(reason) => return TypedAdmitOutcome::Rejected(reason),
@@ -1187,6 +1416,9 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         transaction: &BuiltCanonicalTxV0,
         class: IngressClass,
     ) -> TypedAdmitOutcome {
+        if self.authority.has_unresolved_handoff_v0().unwrap_or(true) {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
+        }
         let signer_id = match self.resolve_signer_id_v0(transaction) {
             Ok(signer_id) => signer_id,
             Err(reason) => return TypedAdmitOutcome::Rejected(reason),
@@ -1196,6 +1428,54 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
             None => return TypedAdmitOutcome::Rejected(AdmissionReject::RecheckUnavailable),
         };
         self.check_tx_candidate_resolved_v0(transaction, signer_id, class, &chain_id, now_unix_ms)
+    }
+
+    /// Reconcile one unresolved durable handoff after a restart.  The caller
+    /// must have opened this boundary with the explicit handoff-recovery
+    /// constructor; this method never releases or guesses a row.  It rebuilds
+    /// key-free metadata from the exact canonical transaction, reruns the
+    /// node-owned signature/context checks, verifies the native application
+    /// and PoCO proof readback, and only then advances the durable row.
+    pub fn recover_handed_off_with_native_readback(
+        &mut self,
+        transaction: &BuiltCanonicalTxV0,
+        evidence: NativeCommitReceiptEvidenceV0,
+        application: &DurableNativeApplicationV0,
+        finality_proof: &FinalityProofV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> Result<(), AdmissionReject> {
+        if !self.allow_handed_off_recovery {
+            return Err(AdmissionReject::InconsistentState);
+        }
+        let signer_id = self.resolve_signer_id_v0(transaction)?;
+        let view = transaction.admission_view_v0(signer_id);
+        let metadata = self
+            .gate
+            .canonical_metadata_v0(&view)
+            .map_err(|_| AdmissionReject::CanonicalValidationFailed)?;
+        let (chain_id, now_unix_ms) = self
+            .context_resolver
+            .as_ref()
+            .map(|context| (context.chain_id_v0().to_owned(), context.now_unix_ms_v0()))
+            .ok_or(AdmissionReject::RecheckUnavailable)?;
+        let mut hooks = CanonicalCheckTxHooksV0 {
+            chain_id,
+            now_unix_ms,
+        };
+        hooks.verify_signature(&view, &metadata)?;
+        hooks.recheck(&metadata)?;
+        let verifier = DurableNativeCommitReceiptVerifierV0::new(
+            application,
+            finality_proof,
+            authenticated_parent_timestamp_ms,
+            transaction,
+        );
+        let verified = evidence
+            .verify_with(&metadata, &verifier)
+            .map_err(map_reject_v0)?;
+        self.authority
+            .commit_handed_off_with_receipt(&metadata, &verified)
+            .map_err(map_reject_v0)
     }
 
     /// Compatibility assertion for callers migrating from the old API. The
@@ -1217,6 +1497,9 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         chain_id: &str,
         now_unix_ms: u64,
     ) -> TypedAdmitOutcome {
+        if self.authority.has_unresolved_handoff_v0().unwrap_or(true) {
+            return TypedAdmitOutcome::Rejected(AdmissionReject::InconsistentState);
+        }
         let resolved = match self.resolve_signer_id_v0(transaction) {
             Ok(resolved) => resolved,
             Err(reason) => return TypedAdmitOutcome::Rejected(reason),
@@ -1293,6 +1576,18 @@ impl NodeOwnedTxAdmissionBoundaryV0 {
         self.gate.queued_counts()
     }
 
+    /// Enumerate unresolved durable handoffs while this owner retains the WAL
+    /// lock.  The facts are inspection-only and must be matched to an exact
+    /// application/proof readback before calling the recovery method.
+    pub fn handed_off_records_v0(
+        &self,
+    ) -> Result<Vec<PendingNonceHandoffRecordV0>, TxAdmissionWalErrorV0> {
+        if !self.allow_handed_off_recovery {
+            return Err(TxAdmissionWalErrorV0::HandoffRecoveryUnavailable);
+        }
+        self.authority.handed_off_records_v0()
+    }
+
     /// Retained rows include committed/released replay tombstones.  No GC API
     /// is exposed until an authenticated retention policy exists.
     pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
@@ -1342,6 +1637,19 @@ impl SqlitePendingNonceAuthorityV0 {
     ) -> Result<(), TxAdmissionWalErrorV0> {
         let mut authority = Self::open_with_handoff_policy(path, namespace, true)?;
         authority.commit_handed_off_with_receipt(metadata, receipt)
+    }
+
+    /// Inspect every unresolved handoff while holding the same exclusive
+    /// sidecar lock used by the live authority.  The returned facts are a
+    /// bounded, key-free inventory only; they do not resolve, release, or
+    /// mutate any row.  A restart owner must match the complete record to an
+    /// exact canonical transaction and authenticated application readback.
+    pub fn inspect_handed_off_v0(
+        path: impl AsRef<Path>,
+        namespace: [u8; 32],
+    ) -> Result<Vec<PendingNonceHandoffRecordV0>, TxAdmissionWalErrorV0> {
+        let authority = Self::open_with_handoff_policy(path, namespace, true)?;
+        authority.handed_off_records_v0()
     }
 
     fn open_with_handoff_policy(
@@ -1450,16 +1758,10 @@ impl SqlitePendingNonceAuthorityV0 {
                 // checkpoint scheduling after this point.
             }
         }
-        let handed_off: i64 = connection
-            .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
-                params![namespace.as_slice(), STATE_HANDED_OFF_V0],
-                |row| row.get(0),
-            )
-            .map_err(sqlite_error)?;
-        if handed_off != 0 && !allow_handed_off {
-            return Err(TxAdmissionWalErrorV0::AmbiguousHandoff);
-        }
+        // Bound the inventory before the validator allocates a key vector or
+        // decodes any attacker-controlled rows.  A copied SQLite file can be
+        // much larger than the live admission capacity; checking the count
+        // first keeps restart cost fail-closed and memory-bounded.
         let row_count: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
@@ -1470,6 +1772,17 @@ impl SqlitePendingNonceAuthorityV0 {
         let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
         if row_count > MAX_RESERVATION_ROWS_V0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
+        }
+        validate_pending_rows_v0(&connection, namespace)?;
+        let handed_off: i64 = connection
+            .query_row(
+                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
+                params![namespace.as_slice(), STATE_HANDED_OFF_V0],
+                |row| row.get(0),
+            )
+            .map_err(sqlite_error)?;
+        if handed_off != 0 && !allow_handed_off {
+            return Err(TxAdmissionWalErrorV0::AmbiguousHandoff);
         }
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
@@ -1514,6 +1827,69 @@ impl SqlitePendingNonceAuthorityV0 {
         drop(connection);
         self.ensure_identity()?;
         usize::try_from(count).map_err(|_| TxAdmissionWalErrorV0::Malformed)
+    }
+
+    /// Inspect unresolved rows through this already-open authority.  Keeping
+    /// the lock live across inspection prevents a second process from racing
+    /// the recovery owner between enumeration and its authenticated commit.
+    pub fn handed_off_records_v0(
+        &self,
+    ) -> Result<Vec<PendingNonceHandoffRecordV0>, TxAdmissionWalErrorV0> {
+        self.ensure_identity()?;
+        let connection = self
+            .connection
+            .try_borrow()
+            .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        let mut statement = connection
+            .prepare(
+                "SELECT signer, nonce FROM pending_nonce
+                 WHERE namespace = ?1 AND state = ?2
+                 ORDER BY nonce ASC, signer ASC",
+            )
+            .map_err(sqlite_error)?;
+        let rows = statement
+            .query_map(
+                params![self.namespace.as_slice(), STATE_HANDED_OFF_V0],
+                |row| Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?)),
+            )
+            .map_err(sqlite_error)?;
+        let mut records = Vec::new();
+        for row in rows {
+            let (signer, nonce) = row.map_err(sqlite_error)?;
+            let signer = decode_fixed::<32>(signer)?;
+            let nonce = u64::from_be_bytes(decode_fixed::<8>(nonce)?);
+            let Some((record, state)) = read_row_v0(&connection, self.namespace, signer, nonce)?
+            else {
+                return Err(TxAdmissionWalErrorV0::Malformed);
+            };
+            if state != STATE_HANDED_OFF_V0 {
+                return Err(TxAdmissionWalErrorV0::Malformed);
+            }
+            records.push(record.handoff_facts()?);
+        }
+        drop(statement);
+        drop(connection);
+        self.ensure_identity()?;
+        Ok(records)
+    }
+
+    fn has_unresolved_handoff_v0(&self) -> Result<bool, TxAdmissionWalErrorV0> {
+        self.ensure_identity()?;
+        let connection = self
+            .connection
+            .try_borrow()
+            .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
+        let count: i64 = connection
+            .query_row(
+                "SELECT COUNT(*) FROM pending_nonce
+                 WHERE namespace = ?1 AND state = ?2",
+                params![self.namespace.as_slice(), STATE_HANDED_OFF_V0],
+                |row| row.get(0),
+            )
+            .map_err(sqlite_error)?;
+        drop(connection);
+        self.ensure_identity()?;
+        Ok(count != 0)
     }
 
     fn ensure_identity(&self) -> Result<(), TxAdmissionWalErrorV0> {
@@ -1869,7 +2245,8 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
         TxAdmissionWalErrorV0::AmbiguousHandoff => AdmissionReject::InconsistentState,
         TxAdmissionWalErrorV0::CommitReceiptMismatch
         | TxAdmissionWalErrorV0::CommitReceiptConflict
-        | TxAdmissionWalErrorV0::CommitReadbackUnavailable => AdmissionReject::InconsistentState,
+        | TxAdmissionWalErrorV0::CommitReadbackUnavailable
+        | TxAdmissionWalErrorV0::HandoffRecoveryUnavailable => AdmissionReject::InconsistentState,
         TxAdmissionWalErrorV0::InvalidPath
         | TxAdmissionWalErrorV0::InvalidNamespace
         | TxAdmissionWalErrorV0::LockUnavailable
@@ -2930,6 +3307,12 @@ mod tests {
             assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
         }
         assert_eq!(boundary.namespace(), [0x88; 32]);
+        // A normal admission owner cannot inspect or resolve restart handoffs;
+        // that capability is reserved for the explicit recovery constructor.
+        assert_eq!(
+            boundary.handed_off_records_v0(),
+            Err(TxAdmissionWalErrorV0::HandoffRecoveryUnavailable)
+        );
         assert_eq!(
             boundary.admit_signed_candidate(&envelope, IngressClass::Normal, &mut hooks),
             TypedAdmitOutcome::Accepted
@@ -3225,6 +3608,29 @@ mod tests {
                 &transaction,
                 finality_proof_digest,
                 extra_receipt_facts,
+            ),
+            Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
+        );
+
+        // A target at index zero must not hide a malformed duplicate/missing
+        // index in the remainder of the durable receipt vector.
+        let second_outer = b"another-canonical-envelope".to_vec();
+        let two_outer_transactions = vec![transaction.exact_outer_bytes().to_vec(), second_outer];
+        let duplicate_indices = vec![0_u32, 0_u32];
+        let two_receipt_commitments = vec![receipt_digest, [0xC0; 32]];
+        let duplicate_index_facts = NativeCommitReadbackFactsV0 {
+            outer_transactions: &two_outer_transactions,
+            receipt_indices: &duplicate_indices,
+            receipt_commitments: &two_receipt_commitments,
+            ..facts
+        };
+        assert_eq!(
+            validate_native_readback_binding_v0(
+                &metadata,
+                &evidence,
+                &transaction,
+                finality_proof_digest,
+                duplicate_index_facts,
             ),
             Err(TxAdmissionWalErrorV0::CommitReceiptMismatch)
         );

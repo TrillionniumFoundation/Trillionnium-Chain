@@ -67,12 +67,13 @@ pub use canonical_lab_bootstrap::{
 };
 pub use complete::{NativeBlockPreviewRequestV0, NativeBlockPreviewV0};
 pub use durable::{
-    CanonicalLabNativeApplicationConfigInputsV0, ConfirmedDurableExecutionHistoryRowV0,
-    ConfirmedDurableExecutionPV0, ConfirmedNativeH1StateSyncTrustedBaseV0,
-    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0,
-    FinalizedNativeApplicationCommitRequestV0, FinalizedNativeApplicationReadV0,
-    NativeApplicationConfigV0, NativeApplicationExecutionErrorCodeV0,
-    NativeApplicationExecutionErrorV0, NativeH1StateSyncTrustedBaseRequestV0,
+    validate_native_finalized_execution_receipts_v0, CanonicalLabNativeApplicationConfigInputsV0,
+    ConfirmedDurableExecutionHistoryRowV0, ConfirmedDurableExecutionPV0,
+    ConfirmedNativeH1StateSyncTrustedBaseV0, DurableExecutionHistoryStatusV0,
+    DurableNativeApplicationV0, FinalizedNativeApplicationCommitRequestV0,
+    FinalizedNativeApplicationReadV0, NativeApplicationConfigV0,
+    NativeApplicationExecutionErrorCodeV0, NativeApplicationExecutionErrorV0,
+    NativeH1StateSyncTrustedBaseRequestV0,
 };
 pub use store::{
     authenticated_key_hash_v0, stored_object_key_v0, AuthenticatedObjectRecordV0,

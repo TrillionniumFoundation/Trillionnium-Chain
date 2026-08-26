@@ -41,6 +41,7 @@ mod snapshot_candidate;
 mod timeout_v0;
 mod validator;
 mod wire_envelope;
+mod wire_semantic;
 
 pub use anchor::{ContextAuthorizedQcV0, EpochAnchorQcV0, GenesisQcV0, QcReferenceV0};
 pub use block::{Block, BlockHeader, BlockKind};
@@ -190,6 +191,11 @@ pub use wire_envelope::{
     WireEnvelopeDecodeErrorCode, WireEnvelopePreflight, MAX_PROTOBUF_WIRE_BODY_BYTES_V0,
     MAX_PROTOBUF_WIRE_ENVELOPE_BYTES_V0, MAX_PROTOBUF_WIRE_MESSAGE_ID_BYTES_V0,
     MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0,
+};
+pub use wire_semantic::{
+    decode_wire_envelope_v0_semantic, WireEnvelopeSemanticProof, WireSemanticBodyKindV0,
+    WireSemanticDecodeError, WireSemanticDecodeErrorCode, MAX_WIRE_NESTED_DEPTH_V0,
+    MAX_WIRE_NESTED_FIELDS_V0, MAX_WIRE_NESTED_LIST_ITEMS_V0,
 };
 
 #[cfg(test)]

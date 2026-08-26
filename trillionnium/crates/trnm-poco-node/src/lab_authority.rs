@@ -65,7 +65,8 @@ use trnm_native_application_sqlite::{
     ProposalValidationOwnerIdV0, ProposalValidationStoreScopeV0, SqliteProposalValidationStoreV0,
 };
 use trnm_native_execution_v0::{
-    DurableExecutionHistoryStatusV0, DurableNativeApplicationV0, FinalizedNativeApplicationReadV0,
+    validate_native_finalized_execution_receipts_v0, DurableExecutionHistoryStatusV0,
+    DurableNativeApplicationV0, FinalizedNativeApplicationReadV0,
     NativeApplicationExecutionErrorV0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
 };
 
@@ -4329,6 +4330,8 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabPendingFinalizationOwnerV0<W> {
                 "retained execution differs from the finalization carrier",
             ));
         }
+        validate_native_finalized_execution_receipts_v0(&retained.executed)
+            .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
         let source = self
             .core
             .safety_state()

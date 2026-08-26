@@ -522,6 +522,23 @@ impl TypedAdmissionGate {
         self.slot_by_digest.contains_key(&digest)
     }
 
+    /// Snapshot the exact key-free metadata for a canonical view without
+    /// reserving capacity, invoking signature hooks, or touching a replay
+    /// authority.  This is used by an authenticated restart owner when it
+    /// reconstructs a durable handoff from an application readback; callers
+    /// must still perform their node-owned signature/context checks before
+    /// treating the result as recovery evidence.
+    pub fn canonical_metadata_v0<E>(
+        &self,
+        envelope: &E,
+    ) -> Result<SignedEnvelopeMetadata, AdmissionReject>
+    where
+        E: SignedEnvelopeView + ?Sized,
+    {
+        let digest = envelope.canonical_digest();
+        self.metadata_from(envelope, digest)
+    }
+
     /// Admit a canonical signed envelope after strict signature/replay/recheck
     /// hooks have run.  The envelope itself is not retained, only exact body
     /// bytes plus typed metadata needed by downstream execution.

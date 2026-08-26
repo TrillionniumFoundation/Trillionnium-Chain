@@ -12514,6 +12514,20 @@ mod state_sync_checkpoint_store_tests {
 
     #[test]
     fn h1_anchor_successor_tag4_and_tag6_anchor_promotion_sequence_reopens_v0() {
+        // This fixture deliberately carries several complete Core/SafetyState
+        // histories and performs a rev0 -> rev5 reopen/promotion proof.  Keep
+        // production code unchanged, but give this large test its own bounded
+        // stack instead of relying on libtest's small worker stack.
+        std::thread::Builder::new()
+            .name("h1-anchor-successor-reopen".to_owned())
+            .stack_size(8 * 1024 * 1024)
+            .spawn(h1_anchor_successor_tag4_and_tag6_anchor_promotion_sequence_reopens_v0_inner)
+            .expect("spawn the bounded-stack anchor successor fixture")
+            .join()
+            .expect("anchor successor fixture must not panic");
+    }
+
+    fn h1_anchor_successor_tag4_and_tag6_anchor_promotion_sequence_reopens_v0_inner() {
         let (config, bootstrap, _h1, h2, h3) = bootstrap_successor_fixture();
         let directory = protected_temp_dir();
         let database_path = directory.path().join("anchor-successors.sqlite");

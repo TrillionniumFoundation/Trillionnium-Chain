@@ -1149,6 +1149,7 @@ dependencies = [
  "trnm-consensus-safety-store",
  "trnm-consensus-types",
  "trnm-finality-types",
+ "trnm-finality-verifier",
  "trnm-node",
  "trnm-protocol",
  "trnm-runtime",

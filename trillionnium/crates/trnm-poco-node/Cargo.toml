@@ -59,6 +59,18 @@ g2-process-test-support = [
   "fixture-raw-key",
   "dep:tempfile",
 ]
+# Candidate-only real-process vertical slice. The feature is intentionally
+# explicit: it enables the bounded stdin host and deterministic fixture
+# material, while all production/activation flags remain false.
+g1-process-test-support = [
+  "tx-admission-wal",
+  "fixture-raw-key",
+  "dep:hex",
+  "dep:serde",
+  "dep:serde_json",
+  "dep:trnm-finality-types",
+  "dep:trnm-protocol",
+]
 
 # The former App-aware recovery modules remain as non-buildable archive source.
 # Keeping their cfg names known avoids warnings without restoring a feature or
@@ -213,6 +225,11 @@ name = "trnm-poco-node"
 path = "src/main.rs"
 
 [[bin]]
+name = "trnm-poco-g1-process-host"
+path = "src/bin/trnm-poco-g1-process-host.rs"
+required-features = ["g1-process-test-support"]
+
+[[bin]]
 name = "trnm-poco-timeout-signing-kill-helper"
 path = "src/bin/trnm-poco-timeout-signing-kill-helper.rs"
 required-features = ["recovery-process-test-support"]
@@ -235,12 +252,19 @@ name = "external_signer_runtime"
 path = "tests/external_signer_runtime.rs"
 required-features = ["external-signer-runtime"]
 
+[[test]]
+name = "g1_process_host_e2e"
+path = "tests/g1_process_host_e2e.rs"
+required-features = ["g1-process-test-support"]
+
 [dependencies]
 borsh = { version = "1.5", features = ["derive"] }
 ed25519-dalek = { version = "2", optional = true }
+hex = { version = "0.4", optional = true }
 fs2 = "0.4"
 libc = { version = "0.2", optional = true }
 rusqlite = { version = "0.32", features = ["bundled"] }
+serde = { version = "1", features = ["derive"], optional = true }
 serde_json = { version = "1", optional = true }
 sha2 = "0.10"
 tempfile = { version = "3", optional = true }

@@ -23,6 +23,7 @@ mempool_view_adapter = true
 anyhow = "1"
 hex = "0.4"
 serde_json = "1"
+serde = "1"
 sha2 = "0.10"
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-mempool = { version = "0.1.0", path = "../trnm-mempool" }

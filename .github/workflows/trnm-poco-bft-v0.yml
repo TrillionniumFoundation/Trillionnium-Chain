@@ -233,6 +233,7 @@ jobs:
           python3 ./scripts/ci/check_poco_bft_v0_parameters.py
           python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
           python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_semantic_reference.py
           python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
           python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
           bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
@@ -348,6 +349,13 @@ jobs:
           cargo test --locked -p trnm-poco-node --all-targets --features recovery-process-test-support
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
+
+      - name: Candidate G1 real-process boundary
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo test --locked -p trnm-poco-node --test g1_process_host_e2e \
+            --features g1-process-test-support
 
       - name: Deterministic WireEnvelope mutation corpus
         working-directory: trillionnium-chain

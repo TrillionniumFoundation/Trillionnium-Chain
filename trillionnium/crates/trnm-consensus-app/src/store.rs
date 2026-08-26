@@ -36146,6 +36146,11 @@ mod native_validation_reservation_tests {
         );
         drop(store);
         fs::remove_dir_all(root).expect("remove schema-v14 frozen-vector fixture");
+        // The Core/Safety finalization-permit join advanced the bound safety
+        // record configuration schema from v12 to v13.  The seven upstream
+        // DDL/carrier vectors remain byte-identical; only the commissioning
+        // row and recovery-closure digests (which include that exact config
+        // reference) are regenerated here for the current canonical source.
         assert_eq!(
             actual,
             (
@@ -36156,8 +36161,8 @@ mod native_validation_reservation_tests {
                 "8cc28cca1bdd4f55407b5c2e7b69be938726545fd53f350224f1445335d271a4".to_string(),
                 "02d6ffa52c5cc09151a11c5527582f41c85d4f222042e09fb2ba3e70a37f3312".to_string(),
                 "c4bf531a908931bc1e19df459d31b9ee36c4277c8a89d59a5560bb4dcb50503a".to_string(),
-                "aa51db837d1f48f698fa1d5ca10f11a18b919c4c1a436faecaf5c8f65b438b5d".to_string(),
-                "b9e47c5354a1754167d18f74ad9ca00adbe4d180b2964b9d32e790d7e65b0e70".to_string(),
+                "ffe074dc6a7230a08ba7c568a003d41aa36ec4dc4587346aa3a3e7965ad7d46b".to_string(),
+                "cfae7495aeba961099ccba71ade784f34c57d855b0d187523e39c5dd21fc36a2".to_string(),
             ),
             "schema-v14 commissioning conformance vectors changed",
         );

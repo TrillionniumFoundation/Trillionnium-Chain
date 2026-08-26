@@ -623,6 +623,23 @@ impl ExternalNodeCheckpointStoreV0 for SqliteExternalNodeCheckpointStoreV0 {
             self.connection = None;
             return Err(ExternalNodeCheckpointStoreErrorV0::Unavailable);
         }
+        // `synchronous=FULL` makes SQLite issue its own durability barriers,
+        // but the checkpoint is an independently administered anti-rollback
+        // authority.  Close the host-level cut explicitly as well: flush the
+        // current WAL/SHM descriptors (when present), the database inode, and
+        // its parent directory before acknowledging the CAS.  If this cut is
+        // unavailable, retain the exact source/target uncertainty and force a
+        // fresh reopen/readback instead of claiming that the checkpoint was
+        // durably observed.
+        if sync_sqlite_checkpoint_commit_v0(&self.database_path).is_err() {
+            self.uncertain_commit = Some(SqliteUncertainCommitV0 {
+                scope,
+                expected,
+                target,
+            });
+            self.connection = None;
+            return Err(ExternalNodeCheckpointStoreErrorV0::Unavailable);
+        }
         #[cfg(test)]
         if report_unavailable {
             // Model an applied commit whose acknowledgement was lost.  The
@@ -917,6 +934,50 @@ fn sync_initialized_sqlite_checkpoint_v0(
     .and_then(|directory| directory.sync_all())
     .map_err(|_| ExternalNodeCheckpointStoreErrorV0::Unavailable)?;
     Ok(())
+}
+
+/// Flush one already-committed checkpoint transaction at the host boundary.
+///
+/// SQLite's FULL mode is necessary but not sufficient for this repository's
+/// evidence contract: the independent CAS must not acknowledge a commit while
+/// its WAL/SHM or directory entry is still only in the kernel page cache.  A
+/// passive checkpoint keeps the operation bounded (it never waits for readers
+/// to disappear), then each materialized inode and the parent directory is
+/// flushed.  A missing sidecar is normal; any other I/O error is surfaced to
+/// the caller, which enters the existing uncertain-commit recovery path.
+fn sync_sqlite_checkpoint_commit_v0(
+    database_path: &Path,
+) -> Result<(), ExternalNodeCheckpointStoreErrorV0> {
+    // Open a short-lived connection so a failed checkpoint never poisons the
+    // live handle that will be discarded on an uncertain result.
+    let connection = open_sqlite_checkpoint_connection_v0(database_path)?;
+    connection
+        .execute_batch("PRAGMA wal_checkpoint(PASSIVE);")
+        .map_err(map_sqlite_checkpoint_error_v0)?;
+    drop(connection);
+
+    File::open(database_path)
+        .and_then(|file| file.sync_all())
+        .map_err(|_| ExternalNodeCheckpointStoreErrorV0::Unavailable)?;
+
+    for suffix in ["-wal", "-shm"] {
+        let sidecar = PathBuf::from(format!("{}{}", database_path.display(), suffix));
+        match OpenOptions::new().read(true).open(&sidecar) {
+            Ok(file) => file
+                .sync_all()
+                .map_err(|_| ExternalNodeCheckpointStoreErrorV0::Unavailable)?,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(_) => return Err(ExternalNodeCheckpointStoreErrorV0::Unavailable),
+        }
+    }
+
+    File::open(
+        database_path
+            .parent()
+            .ok_or(ExternalNodeCheckpointStoreErrorV0::Unavailable)?,
+    )
+    .and_then(|directory| directory.sync_all())
+    .map_err(|_| ExternalNodeCheckpointStoreErrorV0::Unavailable)
 }
 
 fn load_sqlite_checkpoint_row_v0(
