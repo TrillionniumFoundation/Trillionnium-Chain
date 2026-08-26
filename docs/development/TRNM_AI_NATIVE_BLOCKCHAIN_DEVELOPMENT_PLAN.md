@@ -2,6 +2,7 @@
 
 Plan ID: `trnm-ai-native-blockchain-development-plan-v1`
 Effective date: **2026-08-26 (Asia/Shanghai)**
+Execution revision: **2026-08-27 (Asia/Shanghai)**
 Status: **one active engineering plan; implementation and production claims remain gated**
 Canonical branch: `docs/chain-poco-bft-mainline-20260825`
 Canonical worktree: `/home/alex/projects/worktrees/trillionnium-chain/poco-mainline-20260825`
@@ -38,11 +39,10 @@ assessed commit in a clean clone, and byte/hash identical in the worktree,
 index, clean clone, and release source archive. CI MUST reject an untracked
 plan, a hash/tree/ref mismatch, a missing required-file reference, a dirty
 plan/manifest/status path, or a plan that exists only in another worktree.
-The current assessed source worktree may retain explicitly enumerated dirty
-Core/SafetyRules files for review, but those files and their effects are not
-part of a promoted release artifact until committed and independently
-replayed. A working-tree SHA is therefore provisional and never a release
-claim.
+An assessed source worktree may retain explicitly enumerated dirty files for
+review, but those files and their effects are not part of a promoted release
+artifact until committed and independently replayed. A working-tree SHA is
+therefore provisional and never a release claim.
 
 Any normative plan change MUST update the plan ID/version, manifest hashes,
 review record, and dependent machine-truth references in one atomic commit.
@@ -52,14 +52,26 @@ the only starting point for a gate run; a local plan copy is an audit input.
 
 ## 0. Canonical truth, product thesis, and version boundary
 
-### 0.1 Current truth snapshot (2026-08-26)
+### 0.1 Current truth snapshot (2026-08-27)
 
 - The sole future production consensus route is native PoCO-BFT. CometBFT is
   migration residue and historical differential input only; it cannot receive
   new features or provide release authority.
-- Audited commit is `b1c71e189bf6f31ba278f1f0806a13196107b354`. The worktree is
-  intentionally dirty in five consensus/SafetyRules files; those edits are
-  preserved and are not silently included in this plan's release truth.
+- The audit baseline is `b1c71e189bf6f31ba278f1f0806a13196107b354`. The
+  five-file finalization-permit predecessor binding was reviewed as one source
+  graph and committed at `fcdc16104` (tree
+  `c7559225bd40ad08e2f0bdf089888684355b52a0`). The former E0061 missing
+  `SafetyRulesFinalityPredecessorV1` argument is fixed; focused Core,
+  SafetyRules, and all-features node tests pass. This closes a source defect,
+  not the G1 exit.
+- The bounded candidate tranche immediately preceding this revision is
+  committed at `dff1ac5b6ba713a5bafd8f0168251897ed8f6000` (tree
+  `a8aaa61cf4bed9bca16d662aed10f8ea69ae7125`). It adds a real-process G1
+  fixture, native receipt binding, bounded WAL restart/schema checks,
+  semantic-wire mutation evidence, strict nested candidate P2P verification,
+  and software sync-uncertainty recovery. These surfaces remain explicitly
+  candidate-only and do not supply Node/Core/Safety authority or production
+  activation.
 - `stage = G1-native-host-incomplete`, `production_candidate = false`,
   `production_consensus_activation = false`, and Comet cleanup eligibility is
   false. There is no completed validator run and no native PoCO listener
@@ -108,7 +120,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`b1c71e189`) | Canonical execution ref, dirty | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`dff1ac5b6`) | Canonical execution ref; bounded source tranche committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -341,7 +353,7 @@ downstream gates and invalidates their promotion evidence.
 
 ### Scope
 
-- Reduce the current dirty tranche to reviewable, reproducible commits; include
+- Keep the assessed source tranche reviewable and reproducible; include
   every source file referenced by the build and eliminate staged/worktree
   ambiguity.
 - Extract TRNM-owned application request/result, execution receipt, validator
@@ -532,13 +544,13 @@ crate-local owner. The following rows are the minimum signed closure index:
 | `G1-S04` | Arbitrary non-empty v0 execution/finalization | 100,000-block corpus manifest, real-node logs, independent replay, roots/receipts/apply index and ancestor order | No double-sign, duplicate apply, lost obligation, skipped ancestor, or root/receipt drift |
 | `G1-S05` | Frozen v0 semantics and v1 rejection | CEV0 codec/domain vectors, complete-payload-before-vote checks, explicit v1 BatchRef/Agent rejection | v0 remains sequential and cannot silently accept v1 semantics |
 | `G1-S06` | Restart/recovery/state replay for this vertical | Fresh/reopen and restart traces, authenticated state proof, recovery time and rollback-boundary record | Recovery converges to exact source/target without claiming general sync |
-| `G1-S07` | Dirty five-file Core/SafetyRules blocker closure | Clean committed diff for `core.rs`, `lib.rs`, `model.rs`, `tests.rs`, and SafetyRules `lib.rs`; successful compile/test log and independent review | The known `verify_v1` predecessor-argument failure and any related drift are resolved; an unresolved compile/error path may fail closed but leaves this row and G1 open |
+| `G1-S07` | Five-file Core/SafetyRules source closure | Clean committed diff for `core.rs`, `lib.rs`, `model.rs`, `tests.rs`, and SafetyRules `lib.rs`; successful compile/test log and independent review | The former `verify_v1` predecessor-argument defect is closed at `fcdc16104`; independent clean-clone replay and the full G1 exit remain open |
 
 ### Exit gate
 
 - Every `G1-S01` through `G1-S07` row is accepted; in particular, the five
-  pre-existing Core/SafetyRules files are committed, compiled, reviewed, and
-  independently replayed before this exit can be signed.
+  Core/SafetyRules files are committed, compiled, reviewed, and independently
+  replayed before this exit can be signed.
 - At least 100,000 arbitrary non-empty deterministic v0 blocks complete with
   zero double-sign, duplicate apply, lost obligation, skipped ancestor,
   receipt/root drift, or unsafe rollback.
@@ -1865,57 +1877,39 @@ truth-manifest/release mismatch. The affected gate and every descendant are
 reopened under §10.2 after root cause, retained regression mutant,
 remediation, independent review and a fresh signed evidence index.
 
-## 11. Dirty tranche blocker and immediate queue
+## 11. Current blocker board and immediate queue
 
-The five uncommitted SafetyRules/Core files are a review queue, not an implicit
-promotion. A candidate sweep reported reaching the bounded v1 vectors and
-candidate-plane checks, then failing compilation because
-`SafetyRulesFinalityPermitV1::verify_v1` has a five-argument signature while
-`trnm-consensus-core/src/core.rs` supplies four arguments and omits
-`SafetyRulesFinalityPredecessorV1` (`error[E0061]`). This result is reported
-from the dirty tranche and was not independently rerun as part of the final
-documentation-only validation pass.
+The former five-file compile blocker is closed as a source defect by
+`fcdc16104`; it is retained in the dated audit record for provenance. The
+current candidate tranche has reproducible local tests, but none of those
+tests is a signed gate exit. The remaining blockers are concrete engineering
+boundaries:
 
-The affected files are exactly:
+1. **G1 authoritative host/Core/Safety/CAS:** the real-process host is a
+   fixture-only composition. It does not drive the production Node effect
+   loop, Core-owned Vote/Timeout authority, whole-node checkpoint CAS, or
+   network broadcast. `G1-S01` through `G1-S03` remain open.
+2. **G1 arbitrary corpus and fault closure:** required non-empty v0 corpus,
+   physical power-loss campaign, signer/Safety rollback matrix, and
+   independent crash/replay evidence are not complete. Current SIGKILL and
+   injected-sync-error tests cover candidate boundaries only;
+   `power_loss_fsync_matrix` remains `NOT_EVALUATED`.
+3. **G2.0 authenticated nested transport:** semantic wire parsing checks
+   scope/shape/bounds/roots, and P2P candidate verifies the outer session frame
+   plus nested Vote/TimeoutVote/QC/TC signatures. It still lacks socket/lease/
+   Core integration and independent cross-session/restart network replay; P2P
+   remains candidate-only.
+4. **MIG-COMET-POCO provenance and cutover:** rehearsal is offline/deterministic,
+   but no trusted Comet DB reader/finalized source anchor/real target JMT writer/
+   dual quorum/old WAL-key-data-dir rejection/node-start cutover. MIG-ROOT/G4/C0
+   remain open; caller-supplied witnesses cannot close them.
+5. **G3/G4 release evidence:** seven/31/100-validator WAN fleet, independent
+   full/light clients, interop, benchmark manifest, security campaign, public
+   testnet ops have not run. Candidate-local metrics cannot be reported as
+   surpassing a first-line chain.
 
-- `trillionnium/crates/trnm-consensus-core/src/core.rs`;
-- `trillionnium/crates/trnm-consensus-core/src/lib.rs`;
-- `trillionnium/crates/trnm-consensus-core/src/model.rs`;
-- `trillionnium/crates/trnm-consensus-core/src/tests.rs`; and
-- `trillionnium/crates/trnm-consensus-safety-rules/src/lib.rs`.
-
-Until these files are reviewed as one source graph, compiled from the same
-commit and committed atomically, `G1`, `G1.5`, G2A–G2F, G3, G4, G5 and C0 are
-closed to promotion. Any evidence generated from a candidate-local process,
-fixture or prior source tree is retained for diagnosis but is invalid for
-release. In particular, a local `verify_v1` vector, a successful candidate
-binary, or an unscoped `*_true` flag cannot mask the missing predecessor
-argument or establish Node/Safety authority.
-
-The owner must, in order:
-
-1. Decide whether the permit API is the intended versioned boundary and record
-   the decision in the Core/Safety ADR; do not silently add an optional or
-   default predecessor that weakens the safety rule.
-2. Make the call, type, schema and vector changes internally consistent,
-   including the complete `SafetyRulesFinalityPredecessorV1` binding, strict
-   domain/height/parent checks and negative substitution cases.
-3. Run, from the canonical worktree and then a clean clone, formatting, the
-   focused Core/SafetyRules tests, all-features checks, independent
-   wire/finality vectors, and the crash/replay matrix. The exact commands,
-   toolchain and raw output become the G1 evidence index; a compile-only pass
-   is insufficient.
-4. Exercise process restart, power loss, stale/fork/root substitution,
-   signer/Safety rollback, commit-uncertain response loss, state-sync and
-   epoch-handoff cases. Confirm no vote, finality permit or application apply
-   can be forged from a cloneable carrier or fabricated predecessor.
-5. Inspect and remove debug output, regenerate source/protocol/status/plan
-   hashes and evidence manifests, rename any bounded positive to
-   `candidate_local_*` with explicit `scope`/`authority`, and commit the
-   complete source graph atomically. A dirty or partially staged source graph
-   cannot produce a G1 exit.
-6. Only after independent review may the owner reassess P1/P2 and downstream
-   flags. Closing this blocker invalidates and requires rerunning every
-   descendant record whose source/tree, finality API, vector, wire, benchmark,
-   migration or light-client proof consumed the old graph. No plan text can
-   waive this blocker.
+Owner must next commit only independently tested source changes, rerun the
+earliest affected gate from a clean clone, retain mutants/raw traces, and
+update the signed evidence index. Source/protocol/validator/migration/
+benchmark changes invalidate descendants under §10.2; no plan edit or local
+fixture waives that rule. Production flags remain false until signed exits.
