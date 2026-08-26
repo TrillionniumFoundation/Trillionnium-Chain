@@ -218,6 +218,7 @@ jobs:
           set -euo pipefail
           python3 ./scripts/ci/check_poco_bft_v0_parameters.py
           python3 ./scripts/ci/check_poco_bft_v0_wire_vectors.py
+          python3 ./scripts/ci/check_poco_bft_v0_wire_reference.py
           python3 ./scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
           python3 ./scripts/ci/check_poco_bft_v0_ordered_roots.py
           bash ./scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh

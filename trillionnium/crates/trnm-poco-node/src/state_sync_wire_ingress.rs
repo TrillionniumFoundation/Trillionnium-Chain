@@ -26,7 +26,7 @@ use fs2::FileExt;
 use sha2::{Digest, Sha256};
 
 #[cfg(unix)]
-use std::os::unix::fs::MetadataExt;
+use std::os::unix::fs::{MetadataExt, PermissionsExt};
 
 use trnm_consensus_core::CoreConfig;
 use trnm_consensus_types::{
@@ -530,6 +530,8 @@ const STATE_SYNC_SEQUENCE_JOURNAL_GENESIS_KIND_V0: u8 = 0;
 const STATE_SYNC_SEQUENCE_JOURNAL_ENTRY_KIND_V0: u8 = 1;
 const STATE_SYNC_SEQUENCE_JOURNAL_FRAME_BYTES_V0: usize = 212;
 const STATE_SYNC_SEQUENCE_JOURNAL_MAX_ENTRIES_V0: u64 = 1_048_576;
+#[cfg(unix)]
+const STATE_SYNC_SEQUENCE_JOURNAL_PRIVATE_FILE_MODE_V0: u32 = 0o600;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct StateSyncSequencePathIdentityV0 {
@@ -596,6 +598,9 @@ impl StateSyncSequenceJournalV0 {
         if !parent_metadata.is_dir() {
             return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
         }
+        if !private_sequence_parent_v0(&parent_metadata) {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+        }
         let parent_file =
             File::open(parent).map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
         let parent_identity = StateSyncSequencePathIdentityV0::from_metadata(
@@ -624,11 +629,17 @@ impl StateSyncSequenceJournalV0 {
         let file = options
             .open(&path)
             .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+        if virgin {
+            set_private_sequence_file_v0(&file)?;
+        }
         file.try_lock_exclusive()
             .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
         let file_metadata = file
             .metadata()
             .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)?;
+        if !private_sequence_file_v0(&file_metadata) {
+            return Err(PocoNodeStateSyncWireIngressDurableErrorV0::InvalidPath);
+        }
         let file_identity = StateSyncSequencePathIdentityV0::from_metadata(&file_metadata);
         if existing_metadata.is_some_and(|metadata| {
             StateSyncSequencePathIdentityV0::from_metadata(&metadata) != file_identity
@@ -864,6 +875,45 @@ fn path_binding_matches_v0(
         && file_metadata.is_file()
         && StateSyncSequencePathIdentityV0::from_metadata(&parent_metadata) == parent_identity
         && StateSyncSequencePathIdentityV0::from_metadata(&file_metadata) == file_identity
+}
+
+#[cfg(unix)]
+fn private_sequence_parent_v0(metadata: &fs::Metadata) -> bool {
+    metadata.permissions().mode() & 0o077 == 0
+}
+
+#[cfg(not(unix))]
+fn private_sequence_parent_v0(_metadata: &fs::Metadata) -> bool {
+    true
+}
+
+#[cfg(unix)]
+fn private_sequence_file_v0(metadata: &fs::Metadata) -> bool {
+    metadata.nlink() == 1
+        && metadata.permissions().mode() & 0o7777
+            == STATE_SYNC_SEQUENCE_JOURNAL_PRIVATE_FILE_MODE_V0
+}
+
+#[cfg(not(unix))]
+fn private_sequence_file_v0(_metadata: &fs::Metadata) -> bool {
+    true
+}
+
+#[cfg(unix)]
+fn set_private_sequence_file_v0(
+    file: &File,
+) -> Result<(), PocoNodeStateSyncWireIngressDurableErrorV0> {
+    file.set_permissions(fs::Permissions::from_mode(
+        STATE_SYNC_SEQUENCE_JOURNAL_PRIVATE_FILE_MODE_V0,
+    ))
+    .map_err(|_| PocoNodeStateSyncWireIngressDurableErrorV0::Io)
+}
+
+#[cfg(not(unix))]
+fn set_private_sequence_file_v0(
+    _file: &File,
+) -> Result<(), PocoNodeStateSyncWireIngressDurableErrorV0> {
+    Ok(())
 }
 
 fn digest_bytes_v0(domain: &[u8], bytes: &[u8]) -> [u8; 32] {
@@ -1146,6 +1196,14 @@ mod tests {
             .expect("lease binding")
     }
 
+    fn private_journal_directory() -> tempfile::TempDir {
+        let directory = tempfile::tempdir().expect("journal directory");
+        #[cfg(unix)]
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700))
+            .expect("private journal directory");
+        directory
+    }
+
     #[test]
     fn durable_sequence_reopens_only_with_exact_pin_and_rejects_replay() {
         let config = config();
@@ -1153,7 +1211,7 @@ mod tests {
         let hash = [0x33; 32];
         let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
             .expect("context");
-        let directory = tempfile::tempdir().expect("journal directory");
+        let directory = private_journal_directory();
         let path = directory.path().join("state-sync-sequence.journal");
         let binding = lease_binding();
         let mut owner =
@@ -1192,7 +1250,7 @@ mod tests {
         let hash = [0x33; 32];
         let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
             .expect("context");
-        let directory = tempfile::tempdir().expect("journal directory");
+        let directory = private_journal_directory();
         let path = directory.path().join("state-sync-sequence.journal");
         let binding = lease_binding();
         let mut owner =
@@ -1218,7 +1276,7 @@ mod tests {
         let hash = [0x33; 32];
         let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
             .expect("context");
-        let directory = tempfile::tempdir().expect("journal directory");
+        let directory = private_journal_directory();
         let path = directory.path().join("state-sync-sequence.journal");
         let binding = lease_binding();
         let mut owner =
@@ -1279,7 +1337,7 @@ mod tests {
         let hash = [0x33; 32];
         let context = PocoNodeStateSyncWireIngressContextV0::from_core_config(&config, sender)
             .expect("context");
-        let directory = tempfile::tempdir().expect("journal directory");
+        let directory = private_journal_directory();
         let path = directory.path().join("state-sync-sequence.journal");
         let binding = lease_binding();
         let mut owner =
