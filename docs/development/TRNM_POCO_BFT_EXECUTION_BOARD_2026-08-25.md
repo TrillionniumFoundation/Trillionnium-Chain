@@ -211,6 +211,13 @@ downstream gate inherits completion from an incomplete predecessor.
   `Committed`. Mutation tests reject mismatches and the feature-gated node
   target passes `clippy -D warnings`; production CheckTx/AppHash
   integration and the live node owner remain open, and activation stays false.
+- `d73d74bbf` exercises that verifier against a real
+  `DurableNativeApplicationV0` preview -> execute -> commit fixture. A
+  coordinate-correct but bogus-signature three-chain proof is rejected before
+  receipt minting; the WAL remains `HandedOff` and a reopen returns
+  `AmbiguousHandoff`. The same test rejects outer/receipt/index cardinality
+  drift. This proves a candidate fail-closed readback seam, not a valid-proof
+  Core/SafetyRules join or production CheckTx/effect-driver path.
 
 ## 2. Gate board
 
@@ -464,8 +471,10 @@ downstream gate inherits completion from an incomplete predecessor.
    production path: the default node does not compile or activate it. The
    candidate has a signature-checked CheckTx seam, node-owned signer/context
    resolver seams (with mismatch/no-resolver and caller-context compatibility
-   tests), typed commit-receipt gate, and owner-affined lifecycle tokens;
-   production resolver/context ownership, signing/broadcast, AppHash readback
+   tests), typed commit-receipt gate, owner-affined lifecycle tokens, and a
+   real native preview/execute/commit negative fixture (`d73d74bbf`) that keeps
+   bogus-proof rows `HandedOff` across reopen; production resolver/context
+   ownership, signing/broadcast, valid-proof Core/SafetyRules/AppHash readback
    integration, automatic/ambiguous-handoff resolution, and tombstone GC remain
    open. The explicit exact-metadata/verified-receipt recovery seam is
    candidate-only; ordinary startup stays fail-closed. CLI transfer/receipt
