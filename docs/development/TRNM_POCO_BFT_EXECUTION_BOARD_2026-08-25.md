@@ -147,7 +147,7 @@ downstream gate inherits completion from an incomplete predecessor.
 - The live Core application-finalization receipt path now checks the exact
   ancestor-ordered queue front before mutating state (`567d24aeb`). Empty or
   replaced queue fronts return `UnexpectedFinalizationAck` transactionally;
-  two negative tests and the 221-test Core library suite pass. This tightens
+  two negative tests and the 222-test Core library suite pass. This tightens
   an execution boundary only; authoritative Core/SafetyRules integration and
   crash/replay equivalence remain open.
 - `2ffbb40bd` adds a single Core Vote/Timeout transition-install boundary:
@@ -155,7 +155,7 @@ downstream gate inherits completion from an incomplete predecessor.
   revision are checked before the watermark is installed. Pending persistence
   and `StorageAck` retain the transition/predecessor binding, and a detached
   transition is rejected transactionally. The Core library suite is now
-  221/221; this remains a legacy/shadow Core slice, not a live signer/effect
+  222/222; this remains a legacy/shadow Core slice, not a live signer/effect
   driver.
 - `5994d07e8` adds an explicit ignored long-horizon SafetyRules test. Two
   independent kernel executions inside the release test over 100,000
@@ -186,7 +186,7 @@ downstream gate inherits completion from an incomplete predecessor.
 - `4d30c44ce` enforces the authenticated validator-set aggregate-TC ceiling
   before nested QC/TC allocation in every budgeted certified-header, finality,
   checkpoint, and ordinary/trusted decode path. The consensus-types suite is
-  153/153 after the regression; wire conformance, fuzz coverage, and network
+  154/154 after the regression; wire conformance, fuzz coverage, and network
   signing remain false.
 - `bea0a5d5b` re-verifies the exact `FinalityProofV0` immediately before Core
   consumes an application-finalization acknowledgement. Invalid or substituted
@@ -196,7 +196,8 @@ downstream gate inherits completion from an incomplete predecessor.
 - `be7e55e98` adds a candidate-only native readback verifier that binds the
   exact outer/inner transaction, native finalized block/proof/state root,
   occurrence index, and receipt commitment before a WAL row becomes
-  `Committed`. Mutation tests reject mismatches; production CheckTx/AppHash
+  `Committed`. Mutation tests reject mismatches and the feature-gated node
+  target passes `clippy -D warnings`; production CheckTx/AppHash
   integration and the live node owner remain open, and activation stays false.
 
 ## 2. Gate board
