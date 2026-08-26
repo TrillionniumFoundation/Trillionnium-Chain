@@ -65,16 +65,20 @@ the only starting point for a gate run; a local plan copy is an audit input.
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
 - The cumulative candidate source head immediately preceding this revision is
-  `41ccdd8e7939eac3139cf0d8d3efb151f34c8b62` (tree
-  `3e52eeb7871aa18cda3328f7c23355056674b90d`). It retains the real-process G1
+  `8c23c03747619e6d7293e521783c31c1afc0446c` (tree
+  `43b6f298ea9f398832737b1cce65ba5403d63c41`). It retains the real-process G1
   fixture, native receipt binding, WAL restart/schema checks, semantic-wire
   mutation evidence and strict nested candidate signatures from
-  `dff1ac5b6`, then adds three separately tested source tranches:
+  `dff1ac5b6`, then adds four separately tested source tranches:
   `d73ac583e` separates Core's one-shot Safety replay fence from simulator-local
   QC/TC fetch recovery; `a73b606e8` fsyncs genesis and H1 TrustedBase durable
   transitions and requires idempotent retries to re-establish the same fence;
-  and `41ccdd8e7` adds an opt-in private P2P handshake replay journal/head with
-  restart, tamper, retained-sidecar rollback, path/lock and fixed-ID negatives.
+  `41ccdd8e7` adds an opt-in private P2P handshake replay journal/head with
+  restart, tamper, retained-sidecar rollback, path/lock and fixed-ID negatives;
+  and `8c23c0374` repairs the real pre-genesis SIGKILL rollback case by accepting
+  only a schema-valid, completely virgin metadata/P/H1 inventory, then proves
+  initialize and H1 TrustedBase source/target convergence at three independent
+  child-process kill cuts each. Any partial inventory still fails closed.
   These surfaces remain candidate-only and do not supply a production effect
   driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
   Node/Core/Safety authority, or production activation.
@@ -126,7 +130,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`41ccdd8e7`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`8c23c0374`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1887,7 +1891,7 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current cumulative source head is `41ccdd8e7`. Its candidate tranches have
+current cumulative source head is `8c23c0374`. Its candidate tranches have
 reproducible local tests, but none of those tests is a signed gate exit. The
 remaining blockers are concrete engineering boundaries:
 
@@ -1896,13 +1900,17 @@ remaining blockers are concrete engineering boundaries:
    loop, Core-owned Vote/Timeout authority, whole-node checkpoint CAS, or
    network broadcast. `G1-S01` through `G1-S03` remain open.
 2. **G1 arbitrary corpus and fault closure:** required non-empty v0 corpus,
-   physical power-loss campaign, signer/Safety rollback matrix, and
-   independent crash/replay evidence are not complete. Genesis, H1 TrustedBase
+   physical power-loss campaign, signer/Safety rollback matrix, and independent
+   whole-node crash/replay evidence are not complete. Genesis, H1 TrustedBase
    and finalized application commits now retry database-and-directory sync
-   fail-closed under injected uncertainty, and the existing SIGKILL matrix
-   covers candidate-local commit boundaries. These are software/process
-   results only; `power_loss_fsync_matrix` remains `NOT_EVALUATED` and no
-   whole-node anti-rollback assertion is promoted.
+   fail-closed under injected uncertainty. Separate-process SIGKILL matrices
+   cover pre-commit, committed-before-fsync and post-fsync cuts for initialize,
+   H1 TrustedBase and finalized application commit. That campaign exposed and
+   closed the pre-genesis hot-journal bug: recovery accepts only an exact virgin
+   schema with empty metadata/P/H1 inventory; any partial inventory fails
+   closed. These are software/process results only;
+   `power_loss_fsync_matrix` remains `NOT_EVALUATED`, the 100,000-block corpus
+   has not run, and no whole-node anti-rollback assertion is promoted.
 3. **G2.0 authenticated nested transport:** semantic wire parsing checks
    scope/shape/bounds/roots, and P2P candidate verifies the outer session frame
    plus nested Vote/TimeoutVote/QC/TC signatures. An opt-in private anchor now
