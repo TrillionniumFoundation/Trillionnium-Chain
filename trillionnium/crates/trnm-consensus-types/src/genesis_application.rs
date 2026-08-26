@@ -652,12 +652,10 @@ pub trait PocoTargetProjectionVerifierV1 {
         mapping_profile_digest: [u8; 32],
     ) -> Result<()>;
 
-    /// Typed-preimage variant used by
-    /// [`PocoTargetProjectionV1::verify_with_manifest_v1`]. Implementations
-    /// may override this method to validate application-schema/runtime fields
-    /// directly. The default preserves existing verifiers while ensuring the
-    /// commitment supplied to the legacy digest verifier is recomputed from
-    /// the exact typed manifest bytes.
+    /// Optional typed-preimage hook for legacy callers that own a full
+    /// manifest. `verify_with_manifest_v1` deliberately does not dispatch this
+    /// method: the manifest contains the claimed root and must not cross a
+    /// user callback boundary before root recomputation.
     fn verify_target_manifest_preimage_v1(
         &self,
         source: &VerifiedCometStateExportV1,
@@ -685,16 +683,13 @@ pub trait PocoTargetProjectionVerifierV1 {
 
 /// Stronger target replay boundary for a typed target-genesis manifest.
 ///
-/// The digest-only [`PocoTargetProjectionVerifierV1`] callback is retained
-/// for projections whose manifest preimage is not available yet.  Once an
-/// importer has the exact manifest, however, a root replay must receive the
-/// complete typed replay context (validator-set, protocol, application-schema
-/// and runtime-profile coordinates).  The claimed initial root is omitted
-/// from that context so the callback cannot satisfy the check by echoing the
-/// claim. Requiring this separate trait keeps a digest-only implementation
-/// from being silently reused for the manifest path and makes the context
-/// available to an independent JMT replay implementation.
-pub trait PocoTargetProjectionManifestVerifierV1: PocoTargetProjectionVerifierV1 {
+/// This trait is intentionally independent of [`PocoTargetProjectionVerifierV1`].
+/// The typed-manifest path never dispatches a callback that receives the full
+/// manifest (which contains the claimed initial root) before asking for the
+/// recomputed root.  That separation prevents a stateful verifier from
+/// caching the claim in one callback and returning it from another callback
+/// that only appears to receive root-free context.
+pub trait PocoTargetProjectionManifestVerifierV1 {
     fn recompute_native_state_root_from_manifest_v1(
         &self,
         source: &VerifiedCometStateExportV1,
@@ -923,16 +918,16 @@ impl PocoTargetProjectionV1 {
     }
 
     /// Verify this projection against the exact typed target-manifest
-    /// preimage before invoking the importer-owned replay verifier. The typed
-    /// verifier callback is dispatched directly; a verifier that overrides
-    /// `verify_target_manifest_preimage_v1` therefore cannot be silently
-    /// bypassed through the legacy digest-only callback.
+    /// preimage, then invoke an importer-owned replay verifier which receives
+    /// only root-free typed coordinates.  The typed verifier trait is kept
+    /// separate from the digest-only trait so no user callback can observe the
+    /// claimed root and later feed it back as a purported recomputation.
     ///
     /// This is the preferred migration boundary once a manifest reader is
     /// available: a digest-only projection cannot silently be paired with a
-    /// different validator-set, protocol, application-schema, runtime, or
-    /// initial-root context.  The returned token remains inert and does not
-    /// authorize JMT activation or node startup.
+    /// different validator-set, protocol, application-schema, or runtime
+    /// context.  The returned token remains inert and does not authorize JMT
+    /// activation or node startup.
     pub fn verify_with_manifest_v1<V: PocoTargetProjectionManifestVerifierV1>(
         &self,
         source: &VerifiedCometStateExportV1,
@@ -940,22 +935,31 @@ impl PocoTargetProjectionV1 {
         verifier: &V,
     ) -> Result<VerifiedPocoTargetProjectionV1> {
         manifest.validate_against_projection_v1(self)?;
-        self.verify_with_context_v1(
+        let canonical = self.try_canonical_bytes_v1()?;
+        if canonical.len() > MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1 {
+            return Err(ValidationError::LengthOverflow {
+                field: "PocoTargetProjectionV1 canonical bytes",
+                actual: canonical.len(),
+                maximum: MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1,
+            });
+        }
+        self.validate_against_verified_source(source)?;
+        let context = PocoTargetGenesisReplayContextV1::from_manifest(manifest);
+        let recomputed = verifier.recompute_native_state_root_from_manifest_v1(
             source,
-            verifier,
-            Some(manifest),
-            |verifier, source, projection, manifest| {
-                let manifest = manifest.ok_or(ValidationError::InvalidCertificate(
-                    "typed target manifest context was not supplied",
-                ))?;
-                let context = PocoTargetGenesisReplayContextV1::from_manifest(manifest);
-                verifier.recompute_native_state_root_from_manifest_v1(
-                    source,
-                    &context,
-                    projection.mapping_profile_digest,
-                )
-            },
-        )
+            &context,
+            self.mapping_profile_digest,
+        )?;
+        if recomputed.is_zero() || recomputed != self.claimed_state_root {
+            return Err(ValidationError::InvalidCertificate(
+                "recomputed native target state root does not match statement",
+            ));
+        }
+        Ok(VerifiedPocoTargetProjectionV1 {
+            projection: self.clone(),
+            projection_commitment: self.commitment_digest_v1()?,
+            source_export: source.clone(),
+        })
     }
 }
 
@@ -2530,7 +2534,71 @@ mod tests {
             assert_eq!(context.application_schema_digest(), [0x75; 32]);
             assert_eq!(context.runtime_profile_digest(), [0x76; 32]);
             assert_eq!(mapping_profile_digest, [0x58; 32]);
+            if self.reject_typed {
+                return Err(ValidationError::InvalidCertificate(
+                    "typed target manifest verifier rejected manifest",
+                ));
+            }
             Ok(self.recomputed_root)
+        }
+    }
+
+    /// Adversarial verifier used to prove that the typed path never invokes a
+    /// legacy callback which can observe and cache the claimed root.
+    struct StatefulManifestHookVerifier {
+        captured_root: Cell<Option<StateRoot>>,
+        root_calls: Cell<u8>,
+    }
+
+    impl PocoTargetProjectionVerifierV1 for StatefulManifestHookVerifier {
+        fn verify_target_manifest_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            _target_chain_id: ChainId,
+            _target_genesis_hash: GenesisHash,
+            _target_genesis_manifest_digest: [u8; 32],
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<()> {
+            Ok(())
+        }
+
+        fn verify_target_manifest_preimage_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            manifest: &PocoTargetGenesisManifestV1,
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<()> {
+            self.captured_root.set(Some(manifest.initial_state_root()));
+            Ok(())
+        }
+
+        fn recompute_native_state_root_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            _target_chain_id: ChainId,
+            _target_genesis_hash: GenesisHash,
+            _target_genesis_manifest_digest: [u8; 32],
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<StateRoot> {
+            Ok(self
+                .captured_root
+                .get()
+                .unwrap_or(StateRoot::new([0x74; 32])))
+        }
+    }
+
+    impl PocoTargetProjectionManifestVerifierV1 for StatefulManifestHookVerifier {
+        fn recompute_native_state_root_from_manifest_v1(
+            &self,
+            _source: &VerifiedCometStateExportV1,
+            _context: &PocoTargetGenesisReplayContextV1,
+            _mapping_profile_digest: [u8; 32],
+        ) -> Result<StateRoot> {
+            self.root_calls.set(self.root_calls.get() + 1);
+            Ok(self
+                .captured_root
+                .get()
+                .unwrap_or(StateRoot::new([0x74; 32])))
         }
     }
 
@@ -2714,7 +2782,9 @@ mod tests {
         projection
             .verify_with_manifest_v1(&source, &manifest, &verifier)
             .expect("typed target manifest and root replay pass");
-        assert_eq!(verifier.typed_calls.get(), 1);
+        // The full-manifest hook belongs only to the legacy verifier trait and
+        // must never run on this typed path: it can observe the claimed root.
+        assert_eq!(verifier.typed_calls.get(), 0);
         assert_eq!(verifier.legacy_calls.get(), 0);
         assert_eq!(verifier.root_calls.get(), 1);
 
@@ -2732,9 +2802,32 @@ mod tests {
                 .unwrap_err(),
             ValidationError::InvalidCertificate("typed target manifest verifier rejected manifest")
         );
-        assert_eq!(rejecting.typed_calls.get(), 1);
+        assert_eq!(rejecting.typed_calls.get(), 0);
         assert_eq!(rejecting.legacy_calls.get(), 0);
-        assert_eq!(rejecting.root_calls.get(), 0);
+        assert_eq!(rejecting.root_calls.get(), 1);
+    }
+
+    #[test]
+    fn typed_manifest_path_cannot_reuse_claimed_root_from_legacy_hook() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let manifest = target_genesis_manifest(&trusted_set);
+        let projection = source
+            .bind_target_projection_from_manifest_v1(&manifest)
+            .expect("typed target manifest projection");
+        let verifier = StatefulManifestHookVerifier {
+            captured_root: Cell::new(None),
+            root_calls: Cell::new(0),
+        };
+
+        assert!(matches!(
+            projection.verify_with_manifest_v1(&source, &manifest, &verifier),
+            Err(ValidationError::InvalidCertificate(
+                "recomputed native target state root does not match statement"
+            ))
+        ));
+        assert_eq!(verifier.captured_root.get(), None);
+        assert_eq!(verifier.root_calls.get(), 1);
     }
 
     #[test]

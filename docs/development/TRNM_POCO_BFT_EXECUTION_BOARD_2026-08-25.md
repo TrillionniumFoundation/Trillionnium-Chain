@@ -420,17 +420,16 @@ downstream gate inherits completion from an incomplete predecessor.
   open.
 - The target-manifest replay boundary is now split by type: the existing
   digest-only `PocoTargetProjectionVerifierV1` path remains available only for
-  projections whose manifest preimage is not present, while
+  projections whose manifest preimage is not present, while the independent
   `PocoTargetProjectionManifestVerifierV1` is required by
-  `verify_with_manifest_v1` and receives a typed replay context during
-  native-root recomputation (validator-set, protocol, application-schema and
-  runtime profile). The claimed initial root is deliberately omitted so the
-  callback cannot satisfy the check by echoing it. This prevents a digest-only
-  callback from being silently reused for a typed JMT replay. The
-  `trnm-consensus-types` suite remains 161/161 with clippy clean; this is still
-  an importer-owned callback seam, not a concrete JMT implementation or
-  source/export reader, and all migration/production/network activation flags
-  remain false.
+  `verify_with_manifest_v1` and receives only a root-free typed replay context
+  (validator-set, protocol, application-schema and runtime profile). The typed
+  path never dispatches the legacy full-manifest hook, and an adversarial
+  stateful-hook test proves a cached claimed root cannot be reused as a replay
+  result. The `trnm-consensus-types` suite is 162/162 plus its doctest with
+  clippy clean; this is still an importer-owned callback seam, not a concrete
+  JMT implementation or source/export reader, and all
+  migration/production/network activation flags remain false.
 - `PocoGenesisV1::new_from_unverified_export_v1` is deliberately named as a
   shape/commitment assembly helper. It computes the typed export commitment
   and rechecks copied fields, but does not verify source finality, export-root
