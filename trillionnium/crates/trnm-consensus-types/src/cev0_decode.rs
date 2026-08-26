@@ -29,21 +29,23 @@ use crate::{
     HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1, HandoffSignerRoleV1, Height,
     LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1, MessageKind,
     NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest,
-    PocoGenesisQcBindingV1, PocoGenesisV1, PocoTargetProjectionV1, ProtocolVersion, QcRef,
-    QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0,
-    Signature64, SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
-    TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
-    ValidatorSetId, VerifiedCometStateExportV1, View, Vote, VoteEvidenceRecordV0, VotingPower,
-    CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
-    COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
-    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1,
-    GENESIS_QC_CEREMONY_PROFILE_V1, GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1,
-    HANDOFF_SIGNER_PROFILE_V1, MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1,
-    MAX_CONSENSUS_STRING_BYTES, MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1,
-    MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
-    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1, MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1,
-    MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, POCO_GENESIS_PROFILE_V1,
-    POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
+    PocoGenesisQcBindingV1, PocoGenesisV1, PocoTargetGenesisManifestV1, PocoTargetProjectionV1,
+    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase,
+    SignIntentFingerprintV0, Signature64, SignatureShareV0, SignatureVerifier, SigningRoot,
+    StateRoot, TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator,
+    ValidatorId, ValidatorSet, ValidatorSetId, VerifiedCometStateExportV1, View, Vote,
+    VoteEvidenceRecordV0, VotingPower, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
+    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0, COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1,
+    COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1, COMET_STATE_EXPORT_PROFILE_V1,
+    COMET_STATE_EXPORT_SCHEMA_VERSION_V1, GENESIS_QC_CEREMONY_PROFILE_V1,
+    GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1, HANDOFF_SIGNER_PROFILE_V1,
+    MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1, MAX_CONSENSUS_STRING_BYTES,
+    MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1, MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1,
+    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
+    MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1,
+    MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
+    POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
+    POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1, POCO_TARGET_GENESIS_MANIFEST_SCHEMA_VERSION_V1,
     POCO_TARGET_PROJECTION_PROFILE_V1, POCO_TARGET_PROJECTION_SCHEMA_VERSION_V1, SCHEMA_VERSION_V0,
 };
 
@@ -525,6 +527,66 @@ pub fn decode_poco_target_projection_v1_exact(
         return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
     }
     Ok(projection)
+}
+
+/// Decode the exact bounded canonical bytes of a typed target-genesis
+/// manifest. The manifest is an inert migration preimage: this endpoint
+/// checks its schema/profile, target context and canonical re-encoding, but
+/// does not replay application state or authorize startup/activation.
+pub fn decode_poco_target_genesis_manifest_v1_exact(
+    bytes: &[u8],
+) -> DecodeResult<PocoTargetGenesisManifestV1> {
+    if bytes.len() > MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != POCO_TARGET_GENESIS_MANIFEST_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1.len())?;
+    if profile.bytes != POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let target_chain_offset = cursor.offset();
+    let target_chain_id =
+        ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, target_chain_offset)
+        })?;
+    let target_genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let target_validator_set_digest = ValidatorSetId::new(cursor.fixed()?);
+    let target_protocol_version = ProtocolVersion::new(cursor.u32()?)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidProtocolVersion, cursor.offset()))?;
+    let application_schema_digest = cursor.fixed()?;
+    let runtime_profile_digest = cursor.fixed()?;
+    let initial_state_root = StateRoot::new(cursor.fixed()?);
+    cursor.finish()?;
+
+    let manifest = PocoTargetGenesisManifestV1::new(
+        target_chain_id,
+        target_genesis_hash,
+        target_validator_set_digest,
+        target_protocol_version,
+        application_schema_digest,
+        runtime_profile_digest,
+        initial_state_root,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = manifest
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(manifest)
 }
 
 /// Decode exact, bounded target-validator genesis quorum evidence against an

@@ -2615,6 +2615,59 @@ mod tests {
     }
 
     #[test]
+    fn target_genesis_manifest_decoder_is_exact_and_bounded() {
+        let trusted_set = target_projection_trusted_set();
+        let manifest = target_genesis_manifest(&trusted_set);
+        let bytes = manifest
+            .try_canonical_bytes_v1()
+            .expect("canonical target manifest bytes");
+        assert_eq!(
+            crate::decode_poco_target_genesis_manifest_v1_exact(&bytes).unwrap(),
+            manifest
+        );
+        assert_eq!(
+            bytes.len(),
+            MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1
+                - (crate::MAX_CONSENSUS_STRING_BYTES - trusted_set.chain_id().as_bytes().len())
+        );
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_eq!(
+            crate::decode_poco_target_genesis_manifest_v1_exact(&trailing)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::TrailingBytes
+        );
+
+        let mut wrong_schema = bytes.clone();
+        wrong_schema[1] = 2;
+        assert_eq!(
+            crate::decode_poco_target_genesis_manifest_v1_exact(&wrong_schema)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::InvalidSchemaVersion
+        );
+
+        let mut wrong_profile = bytes.clone();
+        wrong_profile[6] ^= 1;
+        assert_eq!(
+            crate::decode_poco_target_genesis_manifest_v1_exact(&wrong_profile)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+
+        let oversized = vec![0; MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1 + 1];
+        assert_eq!(
+            crate::decode_poco_target_genesis_manifest_v1_exact(&oversized)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::LengthLimitExceeded
+        );
+    }
+
+    #[test]
     fn target_genesis_ceremony_binds_exact_verified_projection_before_quorum_verify() {
         let source = verified_source_export();
         let trusted_set = target_projection_trusted_set();
