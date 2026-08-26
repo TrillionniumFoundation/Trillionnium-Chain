@@ -64,14 +64,20 @@ the only starting point for a gate run; a local plan copy is an audit input.
   `SafetyRulesFinalityPredecessorV1` argument is fixed; focused Core,
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
-- The bounded candidate tranche immediately preceding this revision is
-  committed at `dff1ac5b6ba713a5bafd8f0168251897ed8f6000` (tree
-  `a8aaa61cf4bed9bca16d662aed10f8ea69ae7125`). It adds a real-process G1
-  fixture, native receipt binding, bounded WAL restart/schema checks,
-  semantic-wire mutation evidence, strict nested candidate P2P verification,
-  and software sync-uncertainty recovery. These surfaces remain explicitly
-  candidate-only and do not supply Node/Core/Safety authority or production
-  activation.
+- The cumulative candidate source head immediately preceding this revision is
+  `41ccdd8e7939eac3139cf0d8d3efb151f34c8b62` (tree
+  `3e52eeb7871aa18cda3328f7c23355056674b90d`). It retains the real-process G1
+  fixture, native receipt binding, WAL restart/schema checks, semantic-wire
+  mutation evidence and strict nested candidate signatures from
+  `dff1ac5b6`, then adds three separately tested source tranches:
+  `d73ac583e` separates Core's one-shot Safety replay fence from simulator-local
+  QC/TC fetch recovery; `a73b606e8` fsyncs genesis and H1 TrustedBase durable
+  transitions and requires idempotent retries to re-establish the same fence;
+  and `41ccdd8e7` adds an opt-in private P2P handshake replay journal/head with
+  restart, tamper, retained-sidecar rollback, path/lock and fixed-ID negatives.
+  These surfaces remain candidate-only and do not supply a production effect
+  driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
+  Node/Core/Safety authority, or production activation.
 - `stage = G1-native-host-incomplete`, `production_candidate = false`,
   `production_consensus_activation = false`, and Comet cleanup eligibility is
   false. There is no completed validator run and no native PoCO listener
@@ -120,7 +126,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`dff1ac5b6`) | Canonical execution ref; bounded source tranche committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`41ccdd8e7`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1881,9 +1887,9 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current candidate tranche has reproducible local tests, but none of those
-tests is a signed gate exit. The remaining blockers are concrete engineering
-boundaries:
+current cumulative source head is `41ccdd8e7`. Its candidate tranches have
+reproducible local tests, but none of those tests is a signed gate exit. The
+remaining blockers are concrete engineering boundaries:
 
 1. **G1 authoritative host/Core/Safety/CAS:** the real-process host is a
    fixture-only composition. It does not drive the production Node effect
@@ -1891,14 +1897,21 @@ boundaries:
    network broadcast. `G1-S01` through `G1-S03` remain open.
 2. **G1 arbitrary corpus and fault closure:** required non-empty v0 corpus,
    physical power-loss campaign, signer/Safety rollback matrix, and
-   independent crash/replay evidence are not complete. Current SIGKILL and
-   injected-sync-error tests cover candidate boundaries only;
-   `power_loss_fsync_matrix` remains `NOT_EVALUATED`.
+   independent crash/replay evidence are not complete. Genesis, H1 TrustedBase
+   and finalized application commits now retry database-and-directory sync
+   fail-closed under injected uncertainty, and the existing SIGKILL matrix
+   covers candidate-local commit boundaries. These are software/process
+   results only; `power_loss_fsync_matrix` remains `NOT_EVALUATED` and no
+   whole-node anti-rollback assertion is promoted.
 3. **G2.0 authenticated nested transport:** semantic wire parsing checks
    scope/shape/bounds/roots, and P2P candidate verifies the outer session frame
-   plus nested Vote/TimeoutVote/QC/TC signatures. It still lacks socket/lease/
-   Core integration and independent cross-session/restart network replay; P2P
-   remains candidate-only.
+   plus nested Vote/TimeoutVote/QC/TC signatures. An opt-in private anchor now
+   rejects an exact old handshake after process restart and detects journal or
+   retained-sidecar divergence, but both files can still be rolled back
+   together without an external monotonic authority and the frame bitmap is
+   session-object local. Socket/peer lease, a non-cloneable network owner,
+   durable frame replay, Core integration and independent network replay remain
+   open; P2P remains candidate-only.
 4. **MIG-COMET-POCO provenance and cutover:** rehearsal is offline/deterministic,
    but no trusted Comet DB reader/finalized source anchor/real target JMT writer/
    dual quorum/old WAL-key-data-dir rejection/node-start cutover. MIG-ROOT/G4/C0
