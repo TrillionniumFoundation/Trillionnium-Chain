@@ -422,9 +422,10 @@ downstream gate inherits completion from an incomplete predecessor.
   digest-only `PocoTargetProjectionVerifierV1` path remains available only for
   projections whose manifest preimage is not present, while
   `PocoTargetProjectionManifestVerifierV1` is required by
-  `verify_with_manifest_v1` and receives the complete typed manifest during
-  native-root recomputation (validator-set, protocol, application-schema,
-  runtime profile and initial-root coordinates). This prevents a digest-only
+  `verify_with_manifest_v1` and receives a typed replay context during
+  native-root recomputation (validator-set, protocol, application-schema and
+  runtime profile). The claimed initial root is deliberately omitted so the
+  callback cannot satisfy the check by echoing it. This prevents a digest-only
   callback from being silently reused for a typed JMT replay. The
   `trnm-consensus-types` suite remains 161/161 with clippy clean; this is still
   an importer-owned callback seam, not a concrete JMT implementation or

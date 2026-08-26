@@ -428,6 +428,57 @@ pub struct PocoTargetGenesisManifestV1 {
     initial_state_root: StateRoot,
 }
 
+/// Target-manifest coordinates that an importer must feed into a native
+/// replay.  The claimed `initial_state_root` is intentionally absent: a
+/// recomputation callback must derive the root from the source export and
+/// these target coordinates rather than echoing the statement's claim.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PocoTargetGenesisReplayContextV1 {
+    target_chain_id: ChainId,
+    target_genesis_hash: GenesisHash,
+    target_validator_set_digest: ValidatorSetId,
+    target_protocol_version: ProtocolVersion,
+    application_schema_digest: [u8; 32],
+    runtime_profile_digest: [u8; 32],
+}
+
+impl PocoTargetGenesisReplayContextV1 {
+    fn from_manifest(manifest: &PocoTargetGenesisManifestV1) -> Self {
+        Self {
+            target_chain_id: manifest.target_chain_id,
+            target_genesis_hash: manifest.target_genesis_hash,
+            target_validator_set_digest: manifest.target_validator_set_digest,
+            target_protocol_version: manifest.target_protocol_version,
+            application_schema_digest: manifest.application_schema_digest,
+            runtime_profile_digest: manifest.runtime_profile_digest,
+        }
+    }
+
+    pub const fn target_chain_id(&self) -> ChainId {
+        self.target_chain_id
+    }
+
+    pub const fn target_genesis_hash(&self) -> GenesisHash {
+        self.target_genesis_hash
+    }
+
+    pub const fn target_validator_set_digest(&self) -> ValidatorSetId {
+        self.target_validator_set_digest
+    }
+
+    pub const fn target_protocol_version(&self) -> ProtocolVersion {
+        self.target_protocol_version
+    }
+
+    pub const fn application_schema_digest(&self) -> [u8; 32] {
+        self.application_schema_digest
+    }
+
+    pub const fn runtime_profile_digest(&self) -> [u8; 32] {
+        self.runtime_profile_digest
+    }
+}
+
 impl PocoTargetGenesisManifestV1 {
     /// Construct one shape-valid target manifest preimage.
     #[allow(clippy::too_many_arguments)]
@@ -637,16 +688,17 @@ pub trait PocoTargetProjectionVerifierV1 {
 /// The digest-only [`PocoTargetProjectionVerifierV1`] callback is retained
 /// for projections whose manifest preimage is not available yet.  Once an
 /// importer has the exact manifest, however, a root replay must receive the
-/// complete typed context (validator-set, protocol, application-schema,
-/// runtime profile and expected initial-root coordinates).  Requiring this
-/// separate trait keeps a digest-only implementation from being silently
-/// reused for the manifest path and makes the context available to an
-/// independent JMT replay implementation.
+/// complete typed replay context (validator-set, protocol, application-schema
+/// and runtime-profile coordinates).  The claimed initial root is omitted
+/// from that context so the callback cannot satisfy the check by echoing the
+/// claim. Requiring this separate trait keeps a digest-only implementation
+/// from being silently reused for the manifest path and makes the context
+/// available to an independent JMT replay implementation.
 pub trait PocoTargetProjectionManifestVerifierV1: PocoTargetProjectionVerifierV1 {
     fn recompute_native_state_root_from_manifest_v1(
         &self,
         source: &VerifiedCometStateExportV1,
-        manifest: &PocoTargetGenesisManifestV1,
+        context: &PocoTargetGenesisReplayContextV1,
         mapping_profile_digest: [u8; 32],
     ) -> Result<StateRoot>;
 }
@@ -896,9 +948,10 @@ impl PocoTargetProjectionV1 {
                 let manifest = manifest.ok_or(ValidationError::InvalidCertificate(
                     "typed target manifest context was not supplied",
                 ))?;
+                let context = PocoTargetGenesisReplayContextV1::from_manifest(manifest);
                 verifier.recompute_native_state_root_from_manifest_v1(
                     source,
-                    manifest,
+                    &context,
                     projection.mapping_profile_digest,
                 )
             },
@@ -2460,18 +2513,22 @@ mod tests {
         fn recompute_native_state_root_from_manifest_v1(
             &self,
             _source: &VerifiedCometStateExportV1,
-            manifest: &PocoTargetGenesisManifestV1,
+            context: &PocoTargetGenesisReplayContextV1,
             mapping_profile_digest: [u8; 32],
         ) -> Result<StateRoot> {
             self.root_calls.set(self.root_calls.get() + 1);
             assert_eq!(
-                manifest.target_validator_set_digest(),
+                context.target_validator_set_digest(),
                 self.expected_validator_set_digest
             );
-            assert_eq!(manifest.target_protocol_version(), ProtocolVersion::V0);
-            assert_eq!(manifest.application_schema_digest(), [0x75; 32]);
-            assert_eq!(manifest.runtime_profile_digest(), [0x76; 32]);
-            assert_eq!(manifest.initial_state_root(), StateRoot::new([0x73; 32]));
+            assert_eq!(
+                context.target_chain_id(),
+                ChainId::from_static("trnm-target-chain-0")
+            );
+            assert_eq!(context.target_genesis_hash(), GenesisHash::new([0x71; 32]));
+            assert_eq!(context.target_protocol_version(), ProtocolVersion::V0);
+            assert_eq!(context.application_schema_digest(), [0x75; 32]);
+            assert_eq!(context.runtime_profile_digest(), [0x76; 32]);
             assert_eq!(mapping_profile_digest, [0x58; 32]);
             Ok(self.recomputed_root)
         }
