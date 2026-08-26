@@ -58,6 +58,10 @@ downstream gate inherits completion from an incomplete predecessor.
   gates pass on this clean candidate. This closes local artifact drift only;
   independent review, a second implementation, wire conformance and network
   signing remain open.
+- `a9a395421` adds a separately curated, standard-library-only 52-entry
+  registry reference and deterministic drift mutations. Its cross-check and
+  self-test pass; this is independent taxonomy/metadata evidence only, not a
+  second consensus implementation or protocol review.
 - The native execution crash/WAL metadata boundary drift was closed in
   `06f1733e6`; the gate remains fail-closed and still does not imply automatic
   WAL/SHM recovery.
@@ -175,6 +179,25 @@ downstream gate inherits completion from an incomplete predecessor.
   namespace is rejected before QC recheck or state installation, with focused
   durable-tamper and proof-consumption tests. This hardens the boundary but
   does not make production state sync live.
+- `ab16d676f` adds an exact, bounded decoder for the typed target-genesis
+  manifest. It round-trips canonical bytes and rejects trailing, wrong-profile,
+  and oversized inputs; it is still an inert migration-root seam with no source
+  reader, target replay, GenesisQC conversion, or activation side effect.
+- `4d30c44ce` enforces the authenticated validator-set aggregate-TC ceiling
+  before nested QC/TC allocation in every budgeted certified-header, finality,
+  checkpoint, and ordinary/trusted decode path. The consensus-types suite is
+  153/153 after the regression; wire conformance, fuzz coverage, and network
+  signing remain false.
+- `bea0a5d5b` re-verifies the exact `FinalityProofV0` immediately before Core
+  consumes an application-finalization acknowledgement. Invalid or substituted
+  signatures leave the queue and Core state unchanged; the Core unit/doctest
+  suites and clippy gate are green. Core/SafetyRules are still not the sole
+  production authority.
+- `be7e55e98` adds a candidate-only native readback verifier that binds the
+  exact outer/inner transaction, native finalized block/proof/state root,
+  occurrence index, and receipt commitment before a WAL row becomes
+  `Committed`. Mutation tests reject mismatches; production CheckTx/AppHash
+  integration and the live node owner remain open, and activation stays false.
 
 ## 2. Gate board
 
