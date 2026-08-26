@@ -5877,8 +5877,13 @@ impl Core {
     /// recovery boundary deliberately remains stricter: obligations cannot be
     /// reissued until an authenticated replay-ticket protocol exists.
     ///
-    /// If `state.pending_sign()` is present, the caller must feed `Resume` and
-    /// the core will request precisely that already-persisted signing root.
+    /// A persisted timeout-sign intent may be re-requested by feeding
+    /// `Resume` after any required safety-anchor replay. A persisted
+    /// proposal-vote intent is different: the compact SafetyState does not
+    /// retain the complete signed proposal body, parent context, or runtime
+    /// execution handle which authorized that vote. Until the dedicated
+    /// authenticated body/runtime replay protocol exists, generic recovery
+    /// rejects such a state rather than rebroadcasting from a root alone.
     /// The volatile block tree is rebuilt by replaying verified proposals and
     /// certificates from the finalized tip through the durable high QC; stale
     /// replay inputs never cause a vote. The storage/signer integration must
@@ -5916,6 +5921,11 @@ impl Core {
         {
             return Err(CoreError::InvalidRecovery(
                 "a current NativeValid completion requires its dedicated cross-store recovery session",
+            ));
+        }
+        if matches!(state.pending_sign(), Some(SignIntent::Vote { .. })) {
+            return Err(CoreError::InvalidRecovery(
+                "a pending proposal vote requires dedicated authenticated body replay before recovery",
             ));
         }
         let replay_required = safety_replay_required(&state);
@@ -8828,7 +8838,6 @@ impl Core {
                     | Input::SyncedProposal(_)
                     | Input::StorageAck { .. }
                     | Input::SafetyReplayComplete
-                    | Input::SignatureReady { .. }
             )
             && !registered_validation
         {
@@ -8861,19 +8870,26 @@ impl Core {
         if let Some(halt) = self.safety.safety_halt().cloned() {
             return Ok(vec![Effect::SafetyHalted(Box::new(halt))]);
         }
-        if let Some(intent) = self.safety.pending_sign().cloned() {
-            self.awaiting_signature = true;
-            return Ok(vec![self.signature_effect(&intent)?]);
-        }
+        // A durable application-finalization outbox is already an ordered
+        // Core/Safety transition. Reissuing that exact front is safe while
+        // ancestry replay remains fenced; it does not release a signer.
         if let Some(proof_id) = self.safety.pending_finalize() {
             return Ok(vec![self.finalize_effect(proof_id)?]);
         }
+        // A replay fence authenticates the durable high/locked ancestry
+        // before any signer release. In particular, never reissue a pending
+        // intent while the compact restart record has not been joined to its
+        // live replay tree.
         if self.replay_required {
             return Ok(vec![Effect::RequestSafetyReplay {
                 finalized: self.safety.finalized(),
                 high_qc: self.safety.high_qc().qc_ref(),
                 locked_qc: self.safety.locked_qc().qc_ref(),
             }]);
+        }
+        if let Some(intent) = self.safety.pending_sign().cloned() {
+            self.awaiting_signature = true;
+            return Ok(vec![self.signature_effect(&intent)?]);
         }
         if self.safety.pending_tc_high_qc_sync().is_some() {
             let mut effects = self.try_complete_pending_tc_high_qc_sync(verifier)?;
@@ -10691,6 +10707,11 @@ impl Core {
         signature: trnm_consensus_types::SignatureBytes,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
+        if self.replay_required {
+            return Err(CoreError::Busy(
+                "safety ancestry replay must complete before releasing a signature",
+            ));
+        }
         if !self.awaiting_signature {
             return Err(CoreError::UnexpectedSignature);
         }

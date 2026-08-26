@@ -11155,18 +11155,17 @@ fn ready_proposal_justify_runs_complete_qc_processing_before_child_validation() 
         Some(SignIntent::Vote { block_id, .. }) if *block_id == validation.block_id()
     ));
 
-    // A crash after the atomic finalization-clear/vote-intent write resumes
-    // precisely that durable signing root; it does not need a proposal
-    // retransmission or a second safety transition.
-    let mut recovered = Core::recover(core.config().clone(), vote_state.clone(), &RootSignatures)
-        .expect("the atomic vote intent is recoverable");
-    assert!(matches!(
-        recovered
-            .step(Input::Resume, &RootSignatures)
-            .expect("recovery resumes the exact persisted vote")
-            .as_slice(),
-        [Effect::RequestSignature { .. }]
-    ));
+    // A crash after the atomic finalization-clear/vote-intent write must not
+    // rebroadcast from the compact signing root alone. The durable state does
+    // not retain the complete signed proposal body/runtime authorization, so
+    // generic recovery remains closed until the dedicated authenticated
+    // body-replay protocol exists.
+    assert_eq!(
+        Core::recover(core.config().clone(), vote_state.clone(), &RootSignatures),
+        Err(CoreError::InvalidRecovery(
+            "a pending proposal vote requires dedicated authenticated body replay before recovery",
+        ))
+    );
 
     let request = core
         .step(
