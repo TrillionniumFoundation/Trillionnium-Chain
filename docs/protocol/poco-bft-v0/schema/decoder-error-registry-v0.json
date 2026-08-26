@@ -12,7 +12,7 @@
     "checkpoint_schema": "docs/protocol/poco-bft-v0/schema/cev0-logical-schema-checkpoint-finality-v0.json"
   },
   "source_sha256": {
-    "rust_decoder": "99646bb1fed1371b914c0ca2ee8dbfaab08989372edbe7bc58c5c1eb852ee9c5",
+    "rust_decoder": "b575b9ea27ba8152cba599e6d4843182dce088db18d9aa838a03b06d0fbc8da4",
     "base_schema": "1130bac8c467baa5fded2105e316799ad01fe1e08625358b9d76c4a9837cd9f7",
     "anchor_schema": "769653d06de4f9f56b80ef951012fb0e55a0f13cb4ed9338a52469fb7b4a5c3b",
     "epoch_schema": "0a117b8bdc166be67fd6cd0836a7473e74783528fa2f083e9e20c6470d490166",

@@ -183,10 +183,16 @@ downstream gate inherits completion from an incomplete predecessor.
   manifest. It round-trips canonical bytes and rejects trailing, wrong-profile,
   and oversized inputs; it is still an inert migration-root seam with no source
   reader, target replay, GenesisQC conversion, or activation side effect.
+- `d26e30a60` applies the intrinsic `MAX_CEV0_ROOT_BYTES_V0` ceiling before
+  parsing on every unbudgeted exact CEV0 root entry (parameters, validator set,
+  QC/TC, evidence, headers, finality/checkpoint, epoch and handoff kernels).
+  Oversized roots now fail before parser work; application payloads retain their
+  separate authenticated block/message limits. This is a parser hard-cap seam,
+  not a complete network-DoS or wire-envelope solution.
 - `4d30c44ce` enforces the authenticated validator-set aggregate-TC ceiling
   before nested QC/TC allocation in every budgeted certified-header, finality,
   checkpoint, and ordinary/trusted decode path. The consensus-types suite is
-  154/154 after the regression; wire conformance, fuzz coverage, and network
+  155/155 after the regression; wire conformance, fuzz coverage, and network
   signing remain false.
 - `bea0a5d5b` re-verifies the exact `FinalityProofV0` immediately before Core
   consumes an application-finalization acknowledgement. Invalid or substituted
