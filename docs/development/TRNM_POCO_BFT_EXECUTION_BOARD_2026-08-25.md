@@ -509,7 +509,10 @@ downstream gate inherits completion from an incomplete predecessor.
 1. The Core transition boundary now rejects detached Vote/Timeout transitions,
    and replay completion requires a live durable fence, but the surrounding
    Core and SafetyRules remain prototypes/shadow evaluators rather than an
-   authoritative production signer owner.
+   authoritative production signer owner. `73022e8d8` also rejects a persisted
+   successor which replaces an unresolved pending Vote/Timeout intent with a
+   different digest; the Core suite is now 225/225. This is a monotonic
+   recovery fence, not the missing authoritative signer/replay protocol.
 2. Pacemaker, complete epoch transition, checkpoint-scale catch-up, ordered
    ancestor finalization and permanent terminal execution log are incomplete.
 3. Full proposal body/parent/runtime validation and cross-crash replay are not
