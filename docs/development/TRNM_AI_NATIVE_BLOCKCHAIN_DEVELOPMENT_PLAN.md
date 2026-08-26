@@ -65,8 +65,8 @@ the only starting point for a gate run; a local plan copy is an audit input.
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
 - The cumulative candidate source head immediately preceding this revision is
-  `8c23c03747619e6d7293e521783c31c1afc0446c` (tree
-  `43b6f298ea9f398832737b1cce65ba5403d63c41`). It retains the real-process G1
+  `09f0a1955685787709dd9de4949f42ff6f200984` (tree
+  `05b4328e7c3d9565f125f6c620ab338e761de0cb`). It retains the real-process G1
   fixture, native receipt binding, WAL restart/schema checks, semantic-wire
   mutation evidence and strict nested candidate signatures from
   `dff1ac5b6`, then adds four separately tested source tranches:
@@ -79,6 +79,9 @@ the only starting point for a gate run; a local plan copy is an audit input.
   only a schema-valid, completely virgin metadata/P/H1 inventory, then proves
   initialize and H1 TrustedBase source/target convergence at three independent
   child-process kill cuts each. Any partial inventory still fails closed.
+  `09f0a1955` makes the candidate-only replay-anchor guard const-safe under the
+  current `-D warnings` toolchain; it changes no runtime behavior or activation
+  flag.
   These surfaces remain candidate-only and do not supply a production effect
   driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
   Node/Core/Safety authority, or production activation.
@@ -130,7 +133,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`8c23c0374`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`09f0a1955`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1891,7 +1894,7 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current cumulative source head is `8c23c0374`. Its candidate tranches have
+current cumulative source head is `09f0a1955`. Its candidate tranches have
 reproducible local tests, but none of those tests is a signed gate exit. The
 remaining blockers are concrete engineering boundaries:
 
