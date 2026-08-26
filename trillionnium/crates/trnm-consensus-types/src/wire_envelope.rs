@@ -655,6 +655,7 @@ const fn varint_len(value: u64) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::vec;
     use std::vec::Vec;
 
     fn varint(mut value: u64) -> Vec<u8> {
@@ -850,5 +851,159 @@ mod tests {
                 .code(),
             WireEnvelopeDecodeErrorCode::InvalidValue
         );
+    }
+
+    fn assert_borrowed_shape_is_valid(bytes: &[u8], value: WireEnvelopePreflight<'_>) {
+        assert!(bytes.len() <= MAX_PROTOBUF_WIRE_ENVELOPE_BYTES_V0);
+        assert_eq!(value.genesis_hash().len(), HASH_BYTES);
+        assert_eq!(value.validator_set_hash().len(), HASH_BYTES);
+        assert_eq!(value.consensus_parameters_hash().len(), HASH_BYTES);
+        assert_eq!(
+            value.sender_node_id().len(),
+            MAX_PROTOBUF_WIRE_SENDER_NODE_ID_BYTES_V0
+        );
+        assert!(!value.message_id().is_empty());
+        assert!(value.message_id().len() <= MAX_PROTOBUF_WIRE_MESSAGE_ID_BYTES_V0);
+        assert!(!value.body().is_empty());
+        assert!(value.body().len() <= MAX_PROTOBUF_WIRE_BODY_BYTES_V0);
+        assert!(ChainId::from_bytes(value.chain_id()).is_ok());
+
+        // A successful preflight only returns borrowed slices into its input.
+        // Keep this explicit: a future refactor must not accidentally allocate
+        // or manufacture a slice outside the frame being checked.
+        let start = bytes.as_ptr() as usize;
+        let end = start
+            .checked_add(bytes.len())
+            .expect("test input pointer range does not overflow");
+        for slice in [
+            value.genesis_hash(),
+            value.chain_id(),
+            value.validator_set_hash(),
+            value.consensus_parameters_hash(),
+            value.sender_node_id(),
+            value.message_id(),
+            value.body(),
+        ] {
+            let slice_start = slice.as_ptr() as usize;
+            let slice_end = slice_start
+                .checked_add(slice.len())
+                .expect("borrowed slice range does not overflow");
+            assert!(slice_start >= start && slice_end <= end);
+        }
+
+        match (value.body_kind(), value.consensus_message_kind()) {
+            (WireBodyKindV0::Proposal, Some(0))
+            | (WireBodyKindV0::Vote, Some(1))
+            | (WireBodyKindV0::TimeoutVote, Some(2))
+            | (WireBodyKindV0::HandoffVote, Some(3 | 4))
+            | (_, None) => {}
+            (_, Some(_)) => panic!("successful preflight returned an invalid statement kind"),
+        }
+    }
+
+    fn assert_total(bytes: &[u8]) -> bool {
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            decode_wire_envelope_v0_preflight(bytes)
+        }))
+        .expect("WireEnvelope preflight must never panic on a byte corpus");
+        match result {
+            Ok(value) => {
+                assert_borrowed_shape_is_valid(bytes, value);
+                true
+            }
+            Err(_) => false,
+        }
+    }
+
+    fn next_deterministic_byte(state: &mut u64) -> u8 {
+        // xorshift64* keeps the corpus deterministic without adding a property
+        // testing dependency or relying on a host RNG.
+        *state ^= *state << 13;
+        *state ^= *state >> 7;
+        *state ^= *state << 17;
+        (*state >> 24) as u8
+    }
+
+    #[test]
+    fn preflight_deterministic_mutation_corpus_is_total_and_fail_closed() {
+        let seed = valid_envelope();
+        assert!(assert_total(&seed));
+
+        // Every strict prefix is an explicit truncation corpus.  None may be
+        // accepted as a complete envelope, and each one must fail closed.
+        for length in 0..seed.len() {
+            assert!(
+                !assert_total(&seed[..length]),
+                "accepted truncated frame at {length}"
+            );
+        }
+
+        // Exhaustively replace every byte with every possible byte value.  A
+        // body byte is intentionally opaque and may still preflight; an outer
+        // mutation is accepted only when it remains a valid bounded envelope.
+        // In either case the decoder must be total and the returned shape is
+        // checked above.
+        let mut accepted = 0usize;
+        let mut rejected = 0usize;
+        for index in 0..seed.len() {
+            for replacement in 0u8..=u8::MAX {
+                let mut mutated = seed.clone();
+                mutated[index] = replacement;
+                if assert_total(&mutated) {
+                    accepted += 1;
+                } else {
+                    rejected += 1;
+                }
+            }
+        }
+        assert!(
+            accepted > 0,
+            "mutation corpus unexpectedly lost all valid shapes"
+        );
+        assert!(
+            rejected > 0,
+            "mutation corpus did not exercise fail-closed errors"
+        );
+
+        // Add a fixed pseudo-random corpus to cover combinations that single
+        // byte replacement cannot reach.  The seed and iteration count are
+        // part of the test contract, so CI reproduces the exact corpus.
+        let mut state = 0x5452_4e4d_5052_4546u64;
+        for _ in 0..1024usize {
+            let length = usize::from(next_deterministic_byte(&mut state)) % 192;
+            let mut bytes = Vec::with_capacity(length);
+            for _ in 0..length {
+                bytes.push(next_deterministic_byte(&mut state));
+            }
+            assert_total(&bytes);
+        }
+
+        // Boundary inputs are checked before any cursor arithmetic or slice
+        // access.  Keep the oversized body payload absent to prove the limit
+        // is enforced before allocation/copying.
+        let mut oversized_body = seed.clone();
+        let body_start = oversized_body
+            .windows(2)
+            .position(|window| window == [0x82, 0x02])
+            .expect("body field")
+            + 2;
+        oversized_body.splice(
+            body_start..body_start + 1,
+            varint((MAX_PROTOBUF_WIRE_BODY_BYTES_V0 + 1) as u64),
+        );
+        assert!(!assert_total(&oversized_body));
+
+        let oversized_envelope = vec![0u8; MAX_PROTOBUF_WIRE_ENVELOPE_BYTES_V0 + 1];
+        assert!(!assert_total(&oversized_envelope));
+
+        for malformed in [
+            vec![0x80],
+            vec![0xff; 10],
+            vec![0xff; 11],
+            vec![0x09, 0, 0, 0, 0, 0],
+            vec![0],
+        ] {
+            assert!(!assert_total(&malformed));
+        }
     }
 }

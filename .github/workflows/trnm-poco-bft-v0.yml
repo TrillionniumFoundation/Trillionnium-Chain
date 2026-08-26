@@ -334,6 +334,10 @@ jobs:
           cargo test --locked -p trnm-protocol
           cargo test --locked -p trnm-runtime
 
+      - name: Deterministic WireEnvelope mutation corpus
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_v0_wire_mutations.sh
+
       - name: Focused node-event WAL feature tests
         working-directory: trillionnium-chain/trillionnium
         run: cargo test --locked -p trnm-poco-node --lib --features node-event-wal 'node_event_wal::tests::'
