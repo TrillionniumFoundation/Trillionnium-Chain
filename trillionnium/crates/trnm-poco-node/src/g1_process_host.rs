@@ -837,9 +837,7 @@ pub fn run_stdio_v0<R: Read, W: Write>(
                                     // handoff. Keep them request-scoped so a
                                     // malformed/oversized hex value cannot
                                     // terminate the host or strand a WAL row.
-                                    "ingress.decode"
-                                        | "ingress.hex"
-                                        | "ingress.too_large"
+                                    "ingress.decode" | "ingress.hex" | "ingress.too_large"
                                 ) {
                                     host.rejected = host.rejected.saturating_add(1);
                                     let response = G1IngressResponseV0::rejected(

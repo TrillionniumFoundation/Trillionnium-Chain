@@ -4,8 +4,10 @@
 The Rust transport decoder and this checker intentionally have no shared
 parser code.  This implementation uses only the Python standard library and
 reconstructs the CEV0 Vote, TimeoutVote, QC, and TC domains from the protobuf
-projection.  It is a conformance/reference gate, not a production node: Ed25519
-verification and the ten not-yet-adapted body kinds remain explicit blockers.
+projection.  It is a structural conformance/reference gate, not a production
+node: this checker remains crypto-neutral; a separate candidate-only node P2P
+seam performs strict Ed25519 verification, while the ten not-yet-adapted body
+kinds and production network activation remain explicit blockers.
 """
 
 from __future__ import annotations
@@ -1072,7 +1074,7 @@ def build_reference() -> dict[str, Any]:
         "status": "bounded-reference-only",
         "wire_conformance": False,
         "activation": False,
-        "scope": "Vote/TimeoutVote/QC/TC nested protobuf plus authenticated CEV0 reconstruction; other body kinds, P2P, and cryptographic verification remain disabled",
+        "scope": "Vote/TimeoutVote/QC/TC nested protobuf plus authenticated CEV0 reconstruction; this structural reference corpus remains crypto-neutral, while a separate candidate-only P2P seam performs strict nested Ed25519 verification; other body kinds, production authenticated P2P, wire_conformance, and activation remain disabled",
         "context": {
             "genesis_hash_hex": genesis.hex(),
             "chain_id": chain.decode(),

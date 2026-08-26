@@ -4,7 +4,7 @@
   "status": "bounded-reference-only",
   "wire_conformance": false,
   "activation": false,
-  "scope": "Vote/TimeoutVote/QC/TC nested protobuf plus authenticated CEV0 reconstruction; other body kinds, P2P, and cryptographic verification remain disabled",
+  "scope": "Vote/TimeoutVote/QC/TC nested protobuf plus authenticated CEV0 reconstruction; this structural reference corpus remains crypto-neutral, while a separate candidate-only P2P seam performs strict nested Ed25519 verification; other body kinds, production authenticated P2P, wire_conformance, and activation remain disabled",
   "context": {
     "genesis_hash_hex": "9999999999999999999999999999999999999999999999999999999999999999",
     "chain_id": "trnm-wire-semantic",

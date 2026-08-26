@@ -2622,6 +2622,7 @@ fn resolve_parent_store_v0(
     target_store_v0(config, &p)
 }
 
+#[cfg_attr(test, derive(Debug, PartialEq, Eq))]
 struct DurablePV0 {
     target_height: u64,
     store_id: [u8; 32],
@@ -3984,6 +3985,77 @@ fn reject_sqlite_sidecars_v0(path: &Path) -> DurableResult<()> {
     Ok(())
 }
 
+#[cfg(test)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum SyncStoreCommitBoundaryFaultPointV0 {
+    Database,
+    Directory,
+}
+
+#[cfg(test)]
+static SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0: Mutex<
+    Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>,
+> = Mutex::new(None);
+
+#[cfg(test)]
+fn sync_store_commit_boundary_fault_lock_v0(
+) -> std::sync::MutexGuard<'static, Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>> {
+    SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0
+        .lock()
+        .unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
+#[cfg(test)]
+#[must_use = "the fault guard clears an armed sync fault on scope exit"]
+struct SyncStoreCommitBoundaryFaultGuardV0 {
+    path: PathBuf,
+    point: SyncStoreCommitBoundaryFaultPointV0,
+}
+
+#[cfg(test)]
+impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
+    fn drop(&mut self) {
+        let mut fault = sync_store_commit_boundary_fault_lock_v0();
+        if fault.as_ref().is_some_and(|(path, point)| {
+            path.as_path() == self.path.as_path() && *point == self.point
+        }) {
+            *fault = None;
+        }
+    }
+}
+
+#[cfg(test)]
+fn arm_sync_store_commit_boundary_fault_v0(
+    path: &Path,
+    point: SyncStoreCommitBoundaryFaultPointV0,
+) -> SyncStoreCommitBoundaryFaultGuardV0 {
+    let mut fault = sync_store_commit_boundary_fault_lock_v0();
+    assert!(
+        fault.is_none(),
+        "another sync boundary fault is already armed"
+    );
+    *fault = Some((path.to_path_buf(), point));
+    SyncStoreCommitBoundaryFaultGuardV0 {
+        path: path.to_path_buf(),
+        point,
+    }
+}
+
+#[cfg(test)]
+fn consume_sync_store_commit_boundary_fault_v0(
+    path: &Path,
+    point: SyncStoreCommitBoundaryFaultPointV0,
+) -> bool {
+    let mut fault = sync_store_commit_boundary_fault_lock_v0();
+    let matches = fault.as_ref().is_some_and(|(armed_path, armed_point)| {
+        armed_path.as_path() == path && *armed_point == point
+    });
+    if matches {
+        *fault = None;
+    }
+    matches
+}
+
 /// Flushes the commit image and its directory entry before the caller does a
 /// fresh-connection readback.  SQLite already runs in `synchronous=FULL`
 /// mode; the explicit file/directory sync closes the remaining host durability
@@ -3996,6 +4068,16 @@ fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
             "commit.fsync",
         )
     })?;
+    #[cfg(test)]
+    if consume_sync_store_commit_boundary_fault_v0(
+        path,
+        SyncStoreCommitBoundaryFaultPointV0::Database,
+    ) {
+        return Err(error(
+            NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+            "commit.fsync",
+        ));
+    }
     database.sync_all().map_err(|_| {
         error(
             NativeApplicationExecutionErrorCodeV0::CommitUncertain,
@@ -4017,6 +4099,16 @@ fn sync_store_commit_boundary_v0(path: &Path) -> DurableResult<()> {
                 "commit.directory_fsync",
             )
         })?;
+        #[cfg(test)]
+        if consume_sync_store_commit_boundary_fault_v0(
+            path,
+            SyncStoreCommitBoundaryFaultPointV0::Directory,
+        ) {
+            return Err(error(
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain,
+                "commit.directory_fsync",
+            ));
+        }
         directory.sync_all().map_err(|_| {
             error(
                 NativeApplicationExecutionErrorCodeV0::CommitUncertain,
@@ -5661,6 +5753,106 @@ mod tests {
         assert!(body.contains("NativeApplicationV0::commit_block"));
         assert!(!body.contains("qc_as_application_commit = true"));
         assert!(!body.contains("production_activation: true"));
+    }
+
+    /// Injects one software-visible sync error after the SQLite transaction has
+    /// committed, then proves that a fresh owner observes the exact target and
+    /// that an idempotent replay does not create a second logical write. This
+    /// is deliberately narrower than a physical power-loss campaign: the
+    /// latter remains unevaluated and must not inherit this result.
+    #[cfg(unix)]
+    #[test]
+    fn fsync_uncertainty_reopens_exact_and_replay_is_logically_read_only_v0() {
+        const FAULTS: [(SyncStoreCommitBoundaryFaultPointV0, &str); 2] = [
+            (
+                SyncStoreCommitBoundaryFaultPointV0::Database,
+                "commit.fsync",
+            ),
+            (
+                SyncStoreCommitBoundaryFaultPointV0::Directory,
+                "commit.directory_fsync",
+            ),
+        ];
+
+        for (point, expected_field) in FAULTS {
+            let temporary = TempDir::new().unwrap();
+            let (path, application, _genesis_head, request) = initialized(&temporary);
+            let executed = match application.execute_block(request.clone()).unwrap() {
+                NativeBlockExecutionResultV0::Valid(value) => *value,
+                other => panic!("expected valid execution before fsync fault, got {other:?}"),
+            };
+            let expected_head = application
+                .confirm_durable_p_v0(&executed)
+                .unwrap()
+                .overlay_parent_head_v0()
+                .unwrap();
+
+            let _fault = arm_sync_store_commit_boundary_fault_v0(application.path(), point);
+            let uncertain = application
+                .commit_block(NativeApplicationCommitRequestV0::new(executed.clone()))
+                .expect_err("injected sync failure must report an uncertain commit");
+            assert_eq!(
+                uncertain.code(),
+                NativeApplicationExecutionErrorCodeV0::CommitUncertain
+            );
+            assert_eq!(uncertain.field(), expected_field);
+            drop(application);
+
+            let reopened = DurableNativeApplicationV0::open(&path, config(STORE_A)).unwrap();
+            assert_eq!(
+                reopened.confirmed_committed_head_v0().unwrap(),
+                expected_head,
+                "fresh readback must resolve the post-transaction target exactly"
+            );
+            let recovery = reopened
+                .recover(
+                    NativeApplicationRecoveryRequestV0::new(
+                        ChainIdV0::new(CHAIN).unwrap(),
+                        GenesisHashV0::new(GENESIS).unwrap(),
+                        Hash32V0::new(DESCRIPTOR),
+                        Hash32V0::new(
+                            crate::signer_policy_commitment_v0(&application_signers()).unwrap(),
+                        ),
+                        expected_head.clone(),
+                        NativeRecoveryWatermarksV0::new(3, 0, 0),
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
+            assert_eq!(recovery.disposition(), NativeRecoveryDispositionV0::Exact);
+            assert_eq!(recovery.head(), &expected_head);
+
+            let (metadata_before, p_before) = {
+                let connection = open_immutable_connection_v0(&path).unwrap();
+                (
+                    load_metadata_v0(&connection, &config(STORE_A)).unwrap(),
+                    load_p_by_block_v0(&connection, *executed.request().block_id().as_bytes())
+                        .unwrap()
+                        .unwrap(),
+                )
+            };
+            assert_eq!(metadata_before.durable_sequence, 3);
+            assert_eq!(p_before.status, P_STATUS_COMMITTED);
+            assert_eq!(p_before.commit_sequence, Some(3));
+
+            let replay = reopened
+                .commit_block(NativeApplicationCommitRequestV0::new(executed))
+                .expect("committed row replay must be an exact read-only result");
+            assert_eq!(replay.head(), &expected_head);
+            assert_eq!(replay.durable_sequence(), 3);
+
+            let (metadata_after, p_after) = {
+                let connection = open_immutable_connection_v0(&path).unwrap();
+                (
+                    load_metadata_v0(&connection, &config(STORE_A)).unwrap(),
+                    load_p_by_block_v0(&connection, *replay.head().block_id().as_bytes())
+                        .unwrap()
+                        .unwrap(),
+                )
+            };
+            assert_eq!(metadata_after, metadata_before);
+            assert_eq!(p_after, p_before);
+        }
     }
 
     /// Child-process entry point for the real SIGKILL boundary test below.

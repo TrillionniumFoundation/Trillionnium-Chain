@@ -76,5 +76,5 @@
     {"id": "bad_semantic_hash_length", "expected_code": "invalid_value"},
     {"id": "oversized_body_length", "expected_code": "field_too_large"}
   ],
-  "scope": "Outer protobuf shape and bounded admission only; nested CEV0, authenticated P2P, signatures, wire_conformance, and activation remain out of scope."
+  "scope": "Outer protobuf shape and bounded admission only; this vector does not exercise the separate nested semantic decoder or candidate-only strict P2P verifier; production authenticated P2P, full wire_conformance, and activation remain out of scope."
 }

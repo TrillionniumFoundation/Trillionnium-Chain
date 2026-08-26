@@ -31,6 +31,7 @@
 
 use std::{
     cell::RefCell,
+    collections::BTreeMap,
     error::Error,
     fmt,
     fs::{self, File, OpenOptions},
@@ -113,7 +114,57 @@ const STATE_COMMITTED_V0: i64 = 2;
 const STATE_RELEASED_V0: i64 = 3;
 const COMMIT_RECEIPT_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-commit-receipt.v0";
 
+// Keep the durable WAL schema closed over the exact tables and constraints
+// that the authority relies on.  SQLite strips `IF NOT EXISTS` from the
+// stored SQL text, so the canonical form intentionally uses plain CREATE
+// TABLE statements and is compared after whitespace normalization.
+const SQLITE_SCHEMA_DDL_V0: &str = r#"
+CREATE TABLE tx_admission_meta (
+    singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
+    schema_version INTEGER NOT NULL,
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32)
+);
+CREATE TABLE pending_nonce (
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+    signer BLOB NOT NULL CHECK(length(signer) = 32),
+    nonce BLOB NOT NULL CHECK(length(nonce) = 8),
+    digest BLOB NOT NULL CHECK(length(digest) = 32),
+    body_digest BLOB NOT NULL CHECK(length(body_digest) = 32),
+    fee_limit BLOB NOT NULL CHECK(length(fee_limit) = 16),
+    max_gas BLOB NOT NULL CHECK(length(max_gas) = 8),
+    max_bytes BLOB NOT NULL CHECK(length(max_bytes) = 8),
+    state INTEGER NOT NULL CHECK(state IN (0, 1, 2, 3)),
+    PRIMARY KEY(namespace, signer, nonce),
+    UNIQUE(namespace, digest)
+);
+CREATE TABLE tx_commit_receipt_v0 (
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+    signer BLOB NOT NULL CHECK(length(signer) = 32),
+    nonce BLOB NOT NULL CHECK(length(nonce) = 8),
+    tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
+    block_id BLOB NOT NULL CHECK(length(block_id) = 32),
+    block_height BLOB NOT NULL CHECK(length(block_height) = 8),
+    state_root BLOB NOT NULL CHECK(length(state_root) = 32),
+    receipt_digest BLOB NOT NULL CHECK(length(receipt_digest) = 32),
+    finality_proof_digest BLOB NOT NULL CHECK(length(finality_proof_digest) = 32),
+    commitment BLOB NOT NULL CHECK(length(commitment) = 32),
+    PRIMARY KEY(namespace, signer, nonce),
+    UNIQUE(namespace, tx_digest)
+);
+"#;
+
 type RawAdmissionRowV0 = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, i64);
+type RawReceiptRowV0 = (
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+    Vec<u8>,
+);
 
 /// Coarse fail-closed errors for the candidate WAL.  The error text is not an
 /// authority signal; callers should branch on the variant only.
@@ -923,6 +974,60 @@ fn sqlite_error(_: rusqlite::Error) -> TxAdmissionWalErrorV0 {
     TxAdmissionWalErrorV0::Sqlite
 }
 
+/// Return every non-internal SQLite schema object in a deterministic form.
+/// Auto-created indexes are intentionally excluded with SQLite's reserved
+/// `sqlite_` prefix; any user-created index, trigger, view, or table remains
+/// visible and therefore cannot silently extend the authority surface.
+fn sqlite_schema_objects_v0(
+    connection: &Connection,
+) -> Result<BTreeMap<(String, String), String>, TxAdmissionWalErrorV0> {
+    let mut statement = connection
+        .prepare(
+            "SELECT type, name, sql FROM sqlite_schema
+             WHERE name NOT LIKE 'sqlite_%' ORDER BY type ASC, name ASC",
+        )
+        .map_err(sqlite_error)?;
+    let rows = statement
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, Option<String>>(2)?,
+            ))
+        })
+        .map_err(sqlite_error)?;
+    let mut objects = BTreeMap::new();
+    for row in rows {
+        let (kind, name, sql) = row.map_err(sqlite_error)?;
+        let sql = sql
+            .ok_or(TxAdmissionWalErrorV0::SchemaMismatch)?
+            .split_whitespace()
+            .collect::<Vec<_>>()
+            .join(" ");
+        if objects.insert((kind, name), sql).is_some() {
+            return Err(TxAdmissionWalErrorV0::SchemaMismatch);
+        }
+    }
+    Ok(objects)
+}
+
+/// Refuse an existing WAL whose schema is not byte-for-byte equivalent in
+/// SQLite's canonical schema catalog to the v0 authority schema.  Merely
+/// issuing `CREATE TABLE IF NOT EXISTS` is insufficient: an attacker or
+/// damaged restore could preserve the table name while removing the primary
+/// key/unique constraints that make nonce and receipt lookup deterministic.
+/// The comparison runs before any authority-row read or mutation.
+fn validate_sqlite_schema_v0(connection: &Connection) -> Result<(), TxAdmissionWalErrorV0> {
+    let canonical = Connection::open_in_memory().map_err(sqlite_error)?;
+    canonical
+        .execute_batch(SQLITE_SCHEMA_DDL_V0)
+        .map_err(sqlite_error)?;
+    if sqlite_schema_objects_v0(connection)? != sqlite_schema_objects_v0(&canonical)? {
+        return Err(TxAdmissionWalErrorV0::SchemaMismatch);
+    }
+    Ok(())
+}
+
 fn map_insert_error_v0(error: rusqlite::Error) -> TxAdmissionWalErrorV0 {
     if error.sqlite_error_code() == Some(rusqlite::ffi::ErrorCode::ConstraintViolation) {
         TxAdmissionWalErrorV0::Replay
@@ -1046,6 +1151,117 @@ fn validate_pending_rows_v0(
             return Err(TxAdmissionWalErrorV0::Malformed);
         }
     }
+    Ok(())
+}
+
+/// Audit every durable native commit receipt before exposing a reopened WAL
+/// authority.  `pending_nonce.state=Committed` rows are intentionally allowed
+/// to have no receipt: the older lifecycle API can commit a replay tombstone
+/// without application readback.  The stronger receipt table, however, is
+/// only written by the authenticated readback path and therefore must never
+/// contain an orphan, a state-mismatched row, or a caller-substituted
+/// commitment.  Keep this audit one-way so it preserves that existing
+/// lifecycle while still refusing forged receipt evidence at restart.
+fn validate_receipt_rows_v0(
+    connection: &Connection,
+    namespace: [u8; 32],
+) -> Result<(), TxAdmissionWalErrorV0> {
+    let row_count: i64 = connection
+        .query_row(
+            "SELECT COUNT(*) FROM tx_commit_receipt_v0 WHERE namespace = ?1",
+            params![namespace.as_slice()],
+            |row| row.get(0),
+        )
+        .map_err(sqlite_error)?;
+    let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+    if row_count > MAX_RESERVATION_ROWS_V0 {
+        return Err(TxAdmissionWalErrorV0::TooLarge);
+    }
+
+    let mut statement = connection
+        .prepare(
+            "SELECT signer, nonce, tx_digest, block_id, block_height, state_root,
+                    receipt_digest, finality_proof_digest, commitment
+             FROM tx_commit_receipt_v0
+             WHERE namespace = ?1
+             ORDER BY nonce ASC, signer ASC",
+        )
+        .map_err(sqlite_error)?;
+    let rows = statement
+        .query_map(params![namespace.as_slice()], |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                row.get(4)?,
+                row.get(5)?,
+                row.get(6)?,
+                row.get(7)?,
+                row.get(8)?,
+            ))
+        })
+        .map_err(sqlite_error)?;
+
+    for row in rows {
+        let (
+            signer,
+            nonce,
+            tx_digest,
+            block_id,
+            block_height,
+            state_root,
+            receipt_digest,
+            finality_proof_digest,
+            commitment,
+        ): RawReceiptRowV0 = row.map_err(sqlite_error)?;
+        let signer = decode_fixed::<32>(signer)?;
+        let nonce = u64::from_be_bytes(decode_fixed::<8>(nonce)?);
+        let tx_digest = decode_fixed::<32>(tx_digest)?;
+        let block_id = decode_fixed::<32>(block_id)?;
+        let block_height = u64::from_be_bytes(decode_fixed::<8>(block_height)?);
+        let state_root = decode_fixed::<32>(state_root)?;
+        let receipt_digest = decode_fixed::<32>(receipt_digest)?;
+        let finality_proof_digest = decode_fixed::<32>(finality_proof_digest)?;
+        let commitment = decode_fixed::<32>(commitment)?;
+
+        // These checks are deliberately repeated even though the SQLite
+        // schema carries CHECK(length(...)) clauses.  A copied/tampered
+        // database can be opened with check constraints disabled, and restart
+        // must not trust a merely self-consistent byte shape.
+        if signer == [0; 32]
+            || nonce == 0
+            || tx_digest == [0; 32]
+            || block_id == [0; 32]
+            || block_height == 0
+            || state_root == [0; 32]
+            || receipt_digest == [0; 32]
+            || finality_proof_digest == [0; 32]
+            || commitment == [0; 32]
+        {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+
+        let Some((pending, state)) = read_row_v0(connection, namespace, signer, nonce)? else {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        };
+        if state != STATE_COMMITTED_V0 || pending.digest != tx_digest {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+
+        let evidence = NativeCommitReceiptEvidenceV0 {
+            tx_digest,
+            block_id: BlockId::new(block_id),
+            block_height: Height::new(block_height),
+            state_root: StateRoot::new(state_root),
+            receipt_digest,
+            finality_proof_digest,
+        };
+        if evidence.canonical_commitment() != commitment {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
+    }
+    drop(statement);
     Ok(())
 }
 
@@ -1726,6 +1942,11 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
+        // `CREATE TABLE IF NOT EXISTS` above does not validate an existing
+        // same-named table.  Compare the complete non-internal schema before
+        // reading or mutating any authority rows so removed keys/constraints
+        // and injected triggers/views cannot become live admission state.
+        validate_sqlite_schema_v0(&connection)?;
         let persisted: Option<(i64, Vec<u8>)> = connection
             .query_row(
                 "SELECT schema_version, namespace FROM tx_admission_meta WHERE singleton = 1",
@@ -1774,6 +1995,7 @@ impl SqlitePendingNonceAuthorityV0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
         validate_pending_rows_v0(&connection, namespace)?;
+        validate_receipt_rows_v0(&connection, namespace)?;
         let handed_off: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
@@ -2914,6 +3136,221 @@ mod tests {
         let reopened = SqlitePendingNonceAuthorityV0::open(&path, [0x33; 32]).unwrap();
         assert_eq!(reopened.retained_rows().unwrap(), 1);
         drop(reopened);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn receipt_rows_are_reaudited_against_committed_nonce_on_restart() {
+        let path = temp_path();
+        let namespace = [0xA8; 32];
+        seed_row(&path, namespace, STATE_COMMITTED_V0);
+
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            [0x11; 32],
+            BlockId::new([0x41; 32]),
+            Height::new(3),
+            StateRoot::new([0x42; 32]),
+            [0x43; 32],
+            [0x44; 32],
+        )
+        .unwrap();
+        let commitment = evidence.canonical_commitment();
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "INSERT INTO tx_commit_receipt_v0
+                 (namespace, signer, nonce, tx_digest, block_id, block_height,
+                  state_root, receipt_digest, finality_proof_digest, commitment)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+                params![
+                    namespace.as_slice(),
+                    [0x22u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                    evidence.tx_digest.as_slice(),
+                    evidence.block_id.as_bytes(),
+                    to_blob_u64(evidence.block_height.get()).as_slice(),
+                    evidence.state_root.as_bytes(),
+                    evidence.receipt_digest.as_slice(),
+                    evidence.finality_proof_digest.as_slice(),
+                    commitment.as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+
+        // A valid receipt row is accepted and the older committed-without-
+        // receipt lifecycle remains valid for the same namespace.
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        drop(authority);
+
+        // A receipt is only authoritative for a committed pending nonce.  A
+        // rollback/mixed-state edit that leaves the receipt behind must fail
+        // before the authority can hand out any reservation.
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    STATE_HANDED_OFF_V0,
+                    namespace.as_slice(),
+                    [0x22u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::Malformed
+        );
+
+        // Restore the pending row so the independent commitment-tamper check
+        // below remains isolated and deterministic.
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE pending_nonce SET state = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    STATE_COMMITTED_V0,
+                    namespace.as_slice(),
+                    [0x22u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+
+        // A self-consistent but substituted commitment must not survive a
+        // restart.  This is the exact rollback/tamper boundary that the old
+        // pending-row-only audit missed.
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "UPDATE tx_commit_receipt_v0 SET commitment = ?1
+                 WHERE namespace = ?2 AND signer = ?3 AND nonce = ?4",
+                params![
+                    [0xFEu8; 32].as_slice(),
+                    namespace.as_slice(),
+                    [0x22u8; 32].as_slice(),
+                    to_blob_u64(7).as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::Malformed
+        );
+        cleanup(&path);
+    }
+
+    #[test]
+    fn orphan_receipt_row_is_rejected_before_authority_open() {
+        let path = temp_path();
+        let namespace = [0xA9; 32];
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        drop(authority);
+
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            [0x51; 32],
+            BlockId::new([0x61; 32]),
+            Height::new(1),
+            StateRoot::new([0x62; 32]),
+            [0x63; 32],
+            [0x64; 32],
+        )
+        .unwrap();
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute(
+                "INSERT INTO tx_commit_receipt_v0
+                 (namespace, signer, nonce, tx_digest, block_id, block_height,
+                  state_root, receipt_digest, finality_proof_digest, commitment)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+                params![
+                    namespace.as_slice(),
+                    [0x71u8; 32].as_slice(),
+                    to_blob_u64(9).as_slice(),
+                    evidence.tx_digest.as_slice(),
+                    evidence.block_id.as_bytes(),
+                    to_blob_u64(evidence.block_height.get()).as_slice(),
+                    evidence.state_root.as_bytes(),
+                    evidence.receipt_digest.as_slice(),
+                    evidence.finality_proof_digest.as_slice(),
+                    evidence.canonical_commitment().as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(connection);
+
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::Malformed
+        );
+        cleanup(&path);
+    }
+
+    #[test]
+    fn schema_drift_without_pending_primary_or_digest_unique_is_rejected_before_open() {
+        let path = temp_path();
+        let namespace = [0xAA; 32];
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        drop(authority);
+
+        // Keep all queried column names but remove both constraints which make
+        // `(namespace, signer, nonce)` and `(namespace, digest)` authoritative.
+        // Without the schema audit, duplicate legal-looking rows would make
+        // query_row-based replay decisions depend on SQLite row order.
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute_batch(
+                "DROP TABLE pending_nonce;
+                 CREATE TABLE pending_nonce (
+                     namespace BLOB NOT NULL,
+                     signer BLOB NOT NULL,
+                     nonce BLOB NOT NULL,
+                     digest BLOB NOT NULL,
+                     body_digest BLOB NOT NULL,
+                     fee_limit BLOB NOT NULL,
+                     max_gas BLOB NOT NULL,
+                     max_bytes BLOB NOT NULL,
+                     state INTEGER NOT NULL
+                 );",
+            )
+            .unwrap();
+        drop(connection);
+
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::SchemaMismatch
+        );
+        cleanup(&path);
+    }
+
+    #[test]
+    fn injected_wal_schema_objects_are_rejected_before_open() {
+        let path = temp_path();
+        let namespace = [0xAB; 32];
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        drop(authority);
+
+        let connection = Connection::open(&path).unwrap();
+        connection
+            .execute_batch(
+                "CREATE TABLE injected_wal_schema_v0(value INTEGER);
+                 CREATE TRIGGER injected_wal_trigger_v0
+                 AFTER INSERT ON pending_nonce
+                 BEGIN SELECT 1; END;",
+            )
+            .unwrap();
+        drop(connection);
+
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap_err(),
+            TxAdmissionWalErrorV0::SchemaMismatch
+        );
         cleanup(&path);
     }
 

@@ -25,11 +25,11 @@ use sha2::{Digest, Sha256};
 use crate::{
     canonical::CanonicalSignable, decode_wire_envelope_v0_preflight, BlockId, CertificateId,
     Cev0AdmissionBudgetV0, ConsensusParametersV0, Epoch, Height, MessageKind, QcRef, QcReferenceV0,
-    QuorumCertificate, SignatureBytes, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote,
-    ValidatorId, ValidatorSet, View, Vote, WireBodyKindV0, WireEnvelopeDecodeError,
-    WireEnvelopeDecodeErrorCode, WireEnvelopePreflight, MAX_CEV0_CERTIFICATE_ITEMS,
-    MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATOR_ID_BYTES,
-    SIGNATURE_BYTES,
+    QuorumCertificate, SignatureBytes, SignatureVerifier, TimeoutCertificateV0, TimeoutEntryV0,
+    TimeoutVote, ValidationError, ValidatorId, ValidatorSet, View, Vote, WireBodyKindV0,
+    WireEnvelopeDecodeError, WireEnvelopeDecodeErrorCode, WireEnvelopePreflight,
+    MAX_CEV0_CERTIFICATE_ITEMS, MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES, MAX_CONSENSUS_STRING_BYTES,
+    MAX_VALIDATOR_ID_BYTES, SIGNATURE_BYTES,
 };
 
 /// Maximum recursion depth for nested protobuf messages in the v0 transport
@@ -158,6 +158,18 @@ impl fmt::Display for WireSemanticDecodeError {
 
 impl core::error::Error for WireSemanticDecodeError {}
 
+/// The owned typed body retained by a semantic proof.  Keeping the exact
+/// typed value is important: a transport caller must be able to run the
+/// existing CEV0 cryptographic verifier over every nested signature instead
+/// of treating a shape-checked protobuf as an authenticated QC/TC.
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum WireSemanticBodyV0 {
+    Vote(Vote),
+    TimeoutVote(TimeoutVote),
+    QuorumCertificate(QuorumCertificate),
+    TimeoutCertificate(TimeoutCertificateV0),
+}
+
 /// The useful, typed result of semantic body decoding.  `semantic_digest` is
 /// the existing CEV0 signing root (for Vote/TimeoutVote) or certificate ID
 /// (for QC/TC), never a hash of unverified protobuf bytes.
@@ -165,6 +177,7 @@ impl core::error::Error for WireSemanticDecodeError {}
 pub struct WireEnvelopeSemanticProof<'a> {
     preflight: WireEnvelopePreflight<'a>,
     body_kind: WireSemanticBodyKindV0,
+    body: WireSemanticBodyV0,
     semantic_digest: [u8; 32],
     signer_count: usize,
     nested_qc_count: usize,
@@ -197,6 +210,45 @@ impl<'a> WireEnvelopeSemanticProof<'a> {
     /// charged to [`Cev0AdmissionBudgetV0`].
     pub const fn aggregate_signature_shares(&self) -> usize {
         self.aggregate_signature_shares
+    }
+
+    /// Verify every signature-bearing object in the decoded body against the
+    /// supplied validator set.  Semantic decoding intentionally remains
+    /// cryptographically backend-neutral; callers that cross an authenticated
+    /// network boundary must invoke this method with their concrete verifier
+    /// before accepting the proof.  The method re-runs typed shape checks as a
+    /// defensive context binding, then verifies all Vote/TimeoutVote shares,
+    /// including every nested QC and TC timeout entry.
+    pub fn verify_signatures<V: SignatureVerifier>(
+        &self,
+        validator_set: &ValidatorSet,
+        verifier: &V,
+    ) -> core::result::Result<(), WireSemanticDecodeError> {
+        let result = match &self.body {
+            WireSemanticBodyV0::Vote(vote) => vote.verify(validator_set, verifier),
+            WireSemanticBodyV0::TimeoutVote(vote) => vote.verify(validator_set, verifier),
+            WireSemanticBodyV0::QuorumCertificate(certificate) => {
+                certificate.verify(validator_set, verifier)
+            }
+            WireSemanticBodyV0::TimeoutCertificate(certificate) => {
+                certificate.verify(validator_set, None, verifier)
+            }
+        };
+        result.map_err(|error| semantic_error(map_validation_error(error), 0))
+    }
+}
+
+fn map_validation_error(error: ValidationError) -> WireSemanticDecodeErrorCode {
+    match error {
+        ValidationError::InvalidSignature(_) => WireSemanticDecodeErrorCode::InvalidSignature,
+        ValidationError::UnknownValidator(_)
+        | ValidationError::DuplicateSigner(_)
+        | ValidationError::NonCanonicalSignerOrder => WireSemanticDecodeErrorCode::InvalidSigner,
+        ValidationError::InsufficientQuorum { .. }
+        | ValidationError::NonCanonicalQcOrder
+        | ValidationError::ConflictingSameViewQc
+        | ValidationError::InvalidCertificate(_) => WireSemanticDecodeErrorCode::InvalidQuorum,
+        _ => WireSemanticDecodeErrorCode::ValidationFailed,
     }
 }
 
@@ -249,13 +301,15 @@ pub fn decode_wire_envelope_v0_semantic<'a>(
                 validator_set,
                 consensus_parameters,
             )?;
+            let semantic_digest = vote.signing_root().into_bytes();
             budget.charge_signature_work(1).map_err(|_| {
                 semantic_error(WireSemanticDecodeErrorCode::AggregateLimitExceeded, 0)
             })?;
             Ok(WireEnvelopeSemanticProof {
                 preflight,
                 body_kind: WireSemanticBodyKindV0::Vote,
-                semantic_digest: vote.signing_root().into_bytes(),
+                body: WireSemanticBodyV0::Vote(vote),
+                semantic_digest,
                 signer_count: 1,
                 nested_qc_count: 0,
                 aggregate_signature_shares: 1,
@@ -276,13 +330,15 @@ pub fn decode_wire_envelope_v0_semantic<'a>(
                 None,
                 0,
             )?;
+            let semantic_digest = vote.signing_root().into_bytes();
             budget.charge_signature_work(1).map_err(|_| {
                 semantic_error(WireSemanticDecodeErrorCode::AggregateLimitExceeded, 0)
             })?;
             Ok(WireEnvelopeSemanticProof {
                 preflight,
                 body_kind: WireSemanticBodyKindV0::TimeoutVote,
-                semantic_digest: vote.signing_root().into_bytes(),
+                body: WireSemanticBodyV0::TimeoutVote(vote),
+                semantic_digest,
                 signer_count: 1,
                 nested_qc_count: 0,
                 aggregate_signature_shares: 1,
@@ -307,13 +363,15 @@ pub fn decode_wire_envelope_v0_semantic<'a>(
                 Some(preflight.view()),
                 0,
             )?;
+            let semantic_digest = certificate.id().into_bytes();
             budget.charge_qc(&certificate).map_err(|_| {
                 semantic_error(WireSemanticDecodeErrorCode::AggregateLimitExceeded, 0)
             })?;
             Ok(WireEnvelopeSemanticProof {
                 preflight,
                 body_kind: WireSemanticBodyKindV0::QuorumCertificate,
-                semantic_digest: certificate.id().into_bytes(),
+                body: WireSemanticBodyV0::QuorumCertificate(certificate),
+                semantic_digest,
                 signer_count: shares,
                 nested_qc_count: 0,
                 aggregate_signature_shares: shares,
@@ -337,6 +395,7 @@ pub fn decode_wire_envelope_v0_semantic<'a>(
                 &mut tracker,
                 0,
             )?;
+            let semantic_digest = certificate.id().into_bytes();
             budget
                 .charge_timeout_certificate(&certificate)
                 .map_err(|_| {
@@ -346,7 +405,8 @@ pub fn decode_wire_envelope_v0_semantic<'a>(
             Ok(WireEnvelopeSemanticProof {
                 preflight,
                 body_kind: WireSemanticBodyKindV0::TimeoutCertificate,
-                semantic_digest: certificate.id().into_bytes(),
+                body: WireSemanticBodyV0::TimeoutCertificate(certificate),
+                semantic_digest,
                 signer_count: entry_count,
                 nested_qc_count: qc_count,
                 aggregate_signature_shares: work,

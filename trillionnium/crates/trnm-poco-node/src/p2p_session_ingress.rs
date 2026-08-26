@@ -219,8 +219,9 @@ impl fmt::Display for PocoNodeP2pSessionErrorV0 {
 
 impl Error for PocoNodeP2pSessionErrorV0 {}
 
-/// One accepted, borrowed candidate frame.  It carries semantic proof facts
-/// but no Core input or network send capability.
+/// One accepted, borrowed candidate frame.  Its nested consensus signatures
+/// have passed the strict Ed25519 verifier used by the session, but it still
+/// carries no Core input or network-send capability.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PocoNodeP2pAcceptedFrameV0<'a> {
     peer_id: ValidatorId,
@@ -331,8 +332,9 @@ impl PocoNodeP2pSessionV0 {
     }
 
     /// Verifies one exact data frame, checks its sender/sequence binding,
-    /// applies the replay window only after semantic validation succeeds, and
-    /// delegates the payload to the nested Vote/TimeoutVote/QC/TC decoder.
+    /// applies the replay window only after semantic and nested cryptographic
+    /// validation succeeds, and delegates the payload to the nested
+    /// Vote/TimeoutVote/QC/TC decoder.
     pub fn accept_frame<'a>(
         &mut self,
         frame: &'a [u8],
@@ -400,6 +402,15 @@ impl PocoNodeP2pSessionV0 {
             budget,
         )
         .map_err(PocoNodeP2pSessionErrorV0::semantic)?;
+        // The nested semantic decoder is deliberately crypto-backend
+        // neutral.  Crossing this authenticated peer boundary requires the
+        // concrete strict Ed25519 profile to verify every Vote/TimeoutVote
+        // share, including all shares in nested QCs and TC timeout entries,
+        // before replay state can advance or the frame is exposed as
+        // accepted evidence.
+        proof
+            .verify_signatures(&self.validator_set, &StrictEd25519Verifier)
+            .map_err(PocoNodeP2pSessionErrorV0::semantic)?;
         self.replay = next_replay;
         Ok(PocoNodeP2pAcceptedFrameV0 {
             peer_id: self.peer_id,
@@ -824,9 +835,9 @@ mod tests {
     use super::*;
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_types::{
-        BlockId, ChainId, ConsensusPublicKey, Epoch, Height, MessageKind, ProtocolVersion, QcRef,
-        QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0, TimeoutVote, Validator, Vote,
-        VotingPower, WireSemanticBodyKindV0,
+        BlockId, CanonicalSignable, ChainId, ConsensusPublicKey, Epoch, Height, MessageKind,
+        ProtocolVersion, QcRef, QuorumCertificate, TimeoutCertificateV0, TimeoutEntryV0,
+        TimeoutVote, Validator, View, Vote, VotingPower, WireSemanticBodyKindV0,
     };
 
     fn tlv(target: &mut Vec<u8>, tag: u8, value: &[u8]) {
@@ -903,10 +914,10 @@ mod tests {
         bytes
     }
 
-    fn signature_share(author: ValidatorId, byte: u8) -> Vec<u8> {
+    fn signature_share(author: ValidatorId, signature: &[u8; SIGNATURE_BYTES]) -> Vec<u8> {
         let mut bytes = Vec::new();
         pfield_bytes(&mut bytes, 1, author.as_bytes());
-        pfield_bytes(&mut bytes, 2, &[byte; SIGNATURE_BYTES]);
+        pfield_bytes(&mut bytes, 2, signature);
         bytes
     }
 
@@ -922,14 +933,142 @@ mod tests {
         bytes
     }
 
-    fn vote_body(set: &ValidatorSet, view: u64, author: ValidatorId, signature: u8) -> Vec<u8> {
+    fn qc_body(set: &ValidatorSet, certificate: &QuorumCertificate) -> Vec<u8> {
+        let mut bytes = scope_prefix(set);
+        pfield_varint(&mut bytes, 8, certificate.view().get());
+        pfield_varint(&mut bytes, 9, certificate.height().get());
+        pfield_bytes(&mut bytes, 10, certificate.block_id().as_bytes());
+        for vote in certificate.votes() {
+            pfield_bytes(
+                &mut bytes,
+                11,
+                &signature_share(vote.author(), vote.signature().as_bytes()),
+            );
+        }
+        pfield_bytes(&mut bytes, 12, certificate.id().as_bytes());
+        bytes
+    }
+
+    fn tc_body(set: &ValidatorSet, certificate: &TimeoutCertificateV0) -> Vec<u8> {
+        let mut bytes = scope_prefix(set);
+        pfield_varint(&mut bytes, 8, certificate.timed_out_view().get());
+        for entry in certificate.entries() {
+            let mut encoded = Vec::new();
+            pfield_bytes(
+                &mut encoded,
+                1,
+                &common_context(
+                    set,
+                    certificate.timed_out_view().get(),
+                    MessageKind::Timeout,
+                ),
+            );
+            pfield_bytes(&mut encoded, 2, &high_qc_summary(entry.high_qc()));
+            pfield_bytes(&mut encoded, 3, entry.signer_id().as_bytes());
+            pfield_bytes(&mut encoded, 4, entry.signature().as_bytes());
+            pfield_bytes(&mut bytes, 9, &encoded);
+        }
+        for reference in certificate.referenced_qcs() {
+            let ordinary = reference.as_ordinary().expect("ordinary test QC");
+            pfield_bytes(&mut bytes, 10, &qc_body(set, ordinary));
+        }
+        pfield_bytes(
+            &mut bytes,
+            11,
+            certificate.selected_high_qc_digest().as_bytes(),
+        );
+        pfield_bytes(&mut bytes, 12, certificate.id().as_bytes());
+        bytes
+    }
+
+    fn vote_body_with_signature(
+        set: &ValidatorSet,
+        view: u64,
+        author: ValidatorId,
+        signature: &[u8; SIGNATURE_BYTES],
+    ) -> Vec<u8> {
         let mut bytes = Vec::new();
         pfield_bytes(&mut bytes, 1, &common_context(set, view, MessageKind::Vote));
         pfield_varint(&mut bytes, 2, 1);
         pfield_bytes(&mut bytes, 3, &[0x42; 32]);
         pfield_bytes(&mut bytes, 4, author.as_bytes());
-        pfield_bytes(&mut bytes, 5, &[signature; SIGNATURE_BYTES]);
+        pfield_bytes(&mut bytes, 5, signature);
         bytes
+    }
+
+    fn vote_body_pattern(set: &ValidatorSet, view: u64, author: ValidatorId, byte: u8) -> Vec<u8> {
+        vote_body_with_signature(set, view, author, &[byte; SIGNATURE_BYTES])
+    }
+
+    fn signed_vote(
+        set: &ValidatorSet,
+        key: &SigningKey,
+        author: ValidatorId,
+        view: View,
+        height: Height,
+        block_id: BlockId,
+    ) -> Vote {
+        let unsigned = Vote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            view,
+            height,
+            block_id,
+            set.id(),
+            author,
+            SignatureBytes::from_array([0; SIGNATURE_BYTES]),
+            set,
+        )
+        .expect("vote shape");
+        let signature = key.sign(unsigned.signing_root().as_bytes()).to_bytes();
+        Vote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            view,
+            height,
+            block_id,
+            set.id(),
+            author,
+            SignatureBytes::from_array(signature),
+            set,
+        )
+        .expect("signed vote shape")
+    }
+
+    fn signed_timeout_vote(
+        set: &ValidatorSet,
+        key: &SigningKey,
+        author: ValidatorId,
+        view: View,
+        high_qc: QcRef,
+    ) -> TimeoutVote {
+        let unsigned = TimeoutVote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            view,
+            set.id(),
+            high_qc,
+            author,
+            SignatureBytes::from_array([0; SIGNATURE_BYTES]),
+            set,
+        )
+        .expect("timeout vote shape");
+        let signature = key.sign(unsigned.signing_root().as_bytes()).to_bytes();
+        TimeoutVote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            view,
+            set.id(),
+            high_qc,
+            author,
+            SignatureBytes::from_array(signature),
+            set,
+        )
+        .expect("signed timeout vote shape")
     }
 
     fn outer(
@@ -1020,6 +1159,8 @@ mod tests {
         set: ValidatorSet,
         key: SigningKey,
         peer: ValidatorId,
+        qc: QuorumCertificate,
+        tc: TimeoutCertificateV0,
         vote_payload: Vec<u8>,
         qc_payload: Vec<u8>,
         tc_payload: Vec<u8>,
@@ -1054,57 +1195,49 @@ mod tests {
             )
             .expect("set");
             let peer = ValidatorId::new([1; 32]);
+            let vote_height = Height::new(1);
+            let vote_view = View::new(1);
+            let block = BlockId::new([0x42; 32]);
+            let signed_peer_vote = signed_vote(&set, &keys[0], peer, vote_view, vote_height, block);
             let vote_payload = outer(
                 &set,
                 peer,
                 1,
                 WireBodyKindV0::Vote,
-                &vote_body(&set, 1, peer, 0xA1),
+                &vote_body_with_signature(
+                    &set,
+                    vote_view.get(),
+                    peer,
+                    signed_peer_vote.signature().as_bytes(),
+                ),
                 Some(MessageKind::Vote),
             );
 
-            let block = BlockId::new([0x42; 32]);
             let votes = (1u8..=3)
                 .map(|id| {
-                    Vote::new(
-                        set.chain_id(),
-                        ProtocolVersion::V0,
-                        Epoch::new(0),
-                        trnm_consensus_types::View::new(1),
-                        Height::new(1),
-                        block,
-                        set.id(),
-                        ValidatorId::new([id; 32]),
-                        SignatureBytes::from_array([0xA0 + id; SIGNATURE_BYTES]),
+                    signed_vote(
                         &set,
+                        &keys[usize::from(id - 1)],
+                        ValidatorId::new([id; 32]),
+                        vote_view,
+                        vote_height,
+                        block,
                     )
-                    .expect("vote")
                 })
                 .collect();
             let qc = QuorumCertificate::new(
                 set.chain_id(),
                 ProtocolVersion::V0,
                 Epoch::new(0),
-                trnm_consensus_types::View::new(1),
-                Height::new(1),
+                vote_view,
+                vote_height,
                 block,
                 set.id(),
                 votes,
                 &set,
             )
             .expect("qc");
-            let mut qc_body = scope_prefix(&set);
-            pfield_varint(&mut qc_body, 8, 1);
-            pfield_varint(&mut qc_body, 9, 1);
-            pfield_bytes(&mut qc_body, 10, block.as_bytes());
-            for id in 1u8..=3 {
-                pfield_bytes(
-                    &mut qc_body,
-                    11,
-                    &signature_share(ValidatorId::new([id; 32]), 0xA0 + id),
-                );
-            }
-            pfield_bytes(&mut qc_body, 12, qc.id().as_bytes());
+            let qc_body = qc_body(&set, &qc);
             let qc_payload = outer(
                 &set,
                 peer,
@@ -1117,18 +1250,13 @@ mod tests {
             let high = QcRef::from(&qc);
             let timeout_votes: Vec<TimeoutVote> = (1u8..=3)
                 .map(|id| {
-                    TimeoutVote::new(
-                        set.chain_id(),
-                        ProtocolVersion::V0,
-                        Epoch::new(0),
-                        trnm_consensus_types::View::new(2),
-                        set.id(),
-                        high,
-                        ValidatorId::new([id; 32]),
-                        SignatureBytes::from_array([0xD0 + id; SIGNATURE_BYTES]),
+                    signed_timeout_vote(
                         &set,
+                        &keys[usize::from(id - 1)],
+                        ValidatorId::new([id; 32]),
+                        View::new(2),
+                        high,
                     )
-                    .expect("timeout vote")
                 })
                 .collect();
             let entries = timeout_votes
@@ -1146,23 +1274,7 @@ mod tests {
                 &set,
             )
             .expect("tc");
-            let mut tc_body = scope_prefix(&set);
-            pfield_varint(&mut tc_body, 8, 2);
-            for id in 1u8..=3 {
-                let mut entry = Vec::new();
-                pfield_bytes(
-                    &mut entry,
-                    1,
-                    &common_context(&set, 2, MessageKind::Timeout),
-                );
-                pfield_bytes(&mut entry, 2, &high_qc_summary(high));
-                pfield_bytes(&mut entry, 3, ValidatorId::new([id; 32]).as_bytes());
-                pfield_bytes(&mut entry, 4, &[0xD0 + id; SIGNATURE_BYTES]);
-                pfield_bytes(&mut tc_body, 9, &entry);
-            }
-            pfield_bytes(&mut tc_body, 10, &qc_body);
-            pfield_bytes(&mut tc_body, 11, qc.id().as_bytes());
-            pfield_bytes(&mut tc_body, 12, tc.id().as_bytes());
+            let tc_body = tc_body(&set, &tc);
             let tc_payload = outer(
                 &set,
                 peer,
@@ -1177,6 +1289,8 @@ mod tests {
                 set,
                 key: keys[0].clone(),
                 peer,
+                qc,
+                tc,
                 vote_payload,
                 qc_payload,
                 tc_payload,
@@ -1193,6 +1307,83 @@ mod tests {
         pfield_varint(&mut bytes, 4, reference.height().get());
         pfield_bytes(&mut bytes, 5, reference.block_id().as_bytes());
         bytes
+    }
+
+    fn qc_with_one_mutated_signature(
+        set: &ValidatorSet,
+        certificate: &QuorumCertificate,
+    ) -> QuorumCertificate {
+        let votes = certificate
+            .votes()
+            .iter()
+            .enumerate()
+            .map(|(index, vote)| {
+                let mut signature = *vote.signature().as_bytes();
+                if index == 0 {
+                    // Preserve the exact shape while making the signature
+                    // cryptographically invalid for this vote root.
+                    signature[0] ^= 0x01;
+                }
+                Vote::new(
+                    vote.chain_id(),
+                    vote.protocol_version(),
+                    vote.epoch(),
+                    vote.view(),
+                    vote.height(),
+                    vote.block_id(),
+                    vote.validator_set_id(),
+                    vote.author(),
+                    SignatureBytes::from_array(signature),
+                    set,
+                )
+                .expect("mutated vote shape")
+            })
+            .collect();
+        QuorumCertificate::new(
+            certificate.chain_id(),
+            certificate.protocol_version(),
+            certificate.epoch(),
+            certificate.view(),
+            certificate.height(),
+            certificate.block_id(),
+            certificate.validator_set_id(),
+            votes,
+            set,
+        )
+        .expect("mutated QC shape")
+    }
+
+    fn tc_with_one_mutated_entry_signature(
+        set: &ValidatorSet,
+        certificate: &TimeoutCertificateV0,
+    ) -> TimeoutCertificateV0 {
+        let entries = certificate
+            .entries()
+            .iter()
+            .enumerate()
+            .map(|(index, entry)| {
+                let mut signature = *entry.signature().as_bytes();
+                if index == 0 {
+                    // Keep the entry shape and signer intact while making
+                    // only its timeout-vote signature invalid.
+                    signature[0] ^= 0x01;
+                }
+                TimeoutEntryV0::new(
+                    entry.signer_id(),
+                    entry.high_qc(),
+                    SignatureBytes::from_array(signature),
+                )
+                .expect("mutated timeout entry shape")
+            })
+            .collect();
+        TimeoutCertificateV0::new(
+            certificate.timed_out_view(),
+            entries,
+            certificate.referenced_qcs().to_vec(),
+            certificate.selected_high_qc_digest(),
+            set,
+        )
+        .expect("mutated TC shape")
     }
 
     #[test]
@@ -1223,6 +1414,61 @@ mod tests {
             assert_eq!(accepted.proof().body_kind(), kind);
         }
         assert_eq!(session.highest_sequence(), Some(3));
+    }
+
+    #[test]
+    fn nested_qc_signature_is_verified_before_frame_acceptance() {
+        let fixture = Fixture::new();
+        let mut session =
+            PocoNodeP2pSessionV0::open(&fixture.handshake, &fixture.set, &fixture.parameters)
+                .expect("handshake");
+        let invalid_qc = qc_with_one_mutated_signature(&fixture.set, &fixture.qc);
+        let payload = outer(
+            &fixture.set,
+            fixture.peer,
+            4,
+            WireBodyKindV0::QuorumCertificate,
+            &qc_body(&fixture.set, &invalid_qc),
+            None,
+        );
+        let frame = signed_frame(session.session_id(), 4, &payload, &fixture.key);
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        let error = session.accept_frame(&frame, &mut budget).unwrap_err();
+        assert_eq!(error.code(), P2pSessionIngressErrorCodeV0::SemanticDecode);
+        assert_eq!(
+            error.semantic_code(),
+            Some(trnm_consensus_types::WireSemanticDecodeErrorCode::InvalidSignature)
+        );
+        // A failed nested signature must not consume a replay position.
+        assert_eq!(session.highest_sequence(), None);
+    }
+
+    #[test]
+    fn nested_tc_entry_signature_is_verified_before_frame_acceptance() {
+        let fixture = Fixture::new();
+        let mut session =
+            PocoNodeP2pSessionV0::open(&fixture.handshake, &fixture.set, &fixture.parameters)
+                .expect("handshake");
+        let invalid_tc = tc_with_one_mutated_entry_signature(&fixture.set, &fixture.tc);
+        let payload = outer(
+            &fixture.set,
+            fixture.peer,
+            5,
+            WireBodyKindV0::TimeoutCertificate,
+            &tc_body(&fixture.set, &invalid_tc),
+            None,
+        );
+        let frame = signed_frame(session.session_id(), 5, &payload, &fixture.key);
+        let mut budget =
+            Cev0AdmissionBudgetV0::for_validator_set(&fixture.parameters, &fixture.set);
+        let error = session.accept_frame(&frame, &mut budget).unwrap_err();
+        assert_eq!(error.code(), P2pSessionIngressErrorCodeV0::SemanticDecode);
+        assert_eq!(
+            error.semantic_code(),
+            Some(trnm_consensus_types::WireSemanticDecodeErrorCode::InvalidSignature)
+        );
+        assert_eq!(session.highest_sequence(), None);
     }
 
     #[test]
@@ -1330,7 +1576,7 @@ mod tests {
             fixture.peer,
             9,
             WireBodyKindV0::Vote,
-            &vote_body(&fixture.set, 1, fixture.peer, 0xA1),
+            &vote_body_pattern(&fixture.set, 1, fixture.peer, 0xA1),
             Some(MessageKind::Vote),
         );
         let frame = signed_frame(session_mutant.session_id(), 1, &wrong_payload, &fixture.key);
