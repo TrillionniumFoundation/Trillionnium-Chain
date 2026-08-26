@@ -14469,6 +14469,23 @@ fn application_finalization_receipt_rejects_nonmatching_live_queue_front_transac
 }
 
 #[test]
+fn application_finalization_receipt_rechecks_finality_proof_before_commit() {
+    let (mut core, receipt) = pending_finalization_receipt_for_test();
+    let before = core.clone();
+
+    // The receipt and queue-front coordinates are otherwise exact.  A
+    // verifier failure must still stop the callback before the application
+    // watermark or queue can advance; the callback path cannot rely solely on
+    // the earlier proposal/QC admission that created the outbox.
+    let rejection = core
+        .step_application_finalization_receipt_v0(receipt, &RejectSignatures)
+        .expect_err("finalization callback must re-authenticate its three-chain proof");
+    assert!(matches!(rejection.error(), CoreError::Protocol(_)));
+    assert_eq!(core, before, "failed proof recheck is transactional");
+    let _receipt = rejection.into_receipt();
+}
+
+#[test]
 fn one_tc_queues_every_monotonic_finality_step_in_ancestor_order() {
     let (config, mut core) = configured_core();
     let finalization_authority = finalization_apply_authority_for_test(&core);

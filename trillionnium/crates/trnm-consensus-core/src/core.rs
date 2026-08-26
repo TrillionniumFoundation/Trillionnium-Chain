@@ -10536,6 +10536,21 @@ impl Core {
         if queue_front.proof_id() != pending_id || queue_front != durable {
             return Err(CoreError::UnexpectedFinalizationAck);
         }
+        // The queue/front identity and application readback bind the handoff,
+        // but they do not re-authenticate the three-chain proof after a
+        // process-local queue mutation.  `validate_runtime` intentionally
+        // skips expensive certificate verification on this transactional
+        // callback path, so verify the exact front here before advancing the
+        // application-applied watermark.  This keeps a torn or hostile
+        // in-memory finalization carrier from becoming a durable application
+        // commit even when its block/overlay coordinates still look valid.
+        queue_front.proof().verify(
+            self.config.validator_set(),
+            None,
+            self.config.consensus_parameters(),
+            queue_front.authenticated_parent().timestamp_ms(),
+            verifier,
+        )?;
         let committed = durable.proof().finalized_block().header();
         let exact_target = FinalizedTip::new(
             committed.height(),
