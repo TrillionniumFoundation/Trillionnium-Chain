@@ -2062,7 +2062,17 @@ pub fn decode_ordinary_timeout_certificate_v0_exact_with_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<TimeoutCertificateV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let certificate = decode_ordinary_timeout_certificate_v0_exact(bytes, validator_set)?;
+    // Thread the authenticated nested-share ceiling into the parser itself.
+    // Charging only after an intrinsic-cap parse would still bound the final
+    // result, but would allow a peer to allocate/scan the full 10,000-share
+    // product before the active validator-set budget rejects it.
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_timeout_certificate_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let certificate = admit_raw_timeout_certificate(raw, validator_set)?;
     budget.charge_timeout_certificate(&certificate)?;
     Ok(certificate)
 }
@@ -2098,8 +2108,19 @@ pub fn decode_timeout_certificate_v0_exact_with_trusted_genesis_and_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<TimeoutCertificateV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let certificate =
-        decode_timeout_certificate_v0_exact_with_trusted_genesis(bytes, epoch_zero_validator_set)?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_timeout_certificate_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let certificate = admit_raw_timeout_certificate_with_reference_admission(
+        raw,
+        epoch_zero_validator_set,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
+    )?;
+    require_exact_canonical_reencoding(bytes, certificate.try_cev0_bytes(), 0)?;
     budget.charge_timeout_certificate(&certificate)?;
     Ok(certificate)
 }
@@ -2579,8 +2600,14 @@ pub fn decode_ordinary_certified_header_v0_exact_with_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<CertifiedHeaderV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let header = decode_ordinary_certified_header_v0_exact(
-        bytes,
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_ordinary_certified_header_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let header = admit_raw_ordinary_certified_header(
+        raw,
         validator_set,
         consensus_parameters,
         authenticated_parent_timestamp_ms,
@@ -2627,12 +2654,21 @@ pub fn decode_certified_header_v0_exact_with_trusted_genesis_and_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<CertifiedHeaderV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let header = decode_certified_header_v0_exact_with_trusted_genesis(
-        bytes,
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_ordinary_certified_header_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let header = admit_raw_certified_header_with_reference_admission(
+        raw,
         epoch_zero_validator_set,
         consensus_parameters,
         authenticated_parent_timestamp_ms,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
     )?;
+    require_exact_canonical_reencoding(bytes, header.try_cev0_bytes(), 0)?;
     budget.charge_certified_header(&header)?;
     Ok(header)
 }
@@ -2674,8 +2710,14 @@ pub fn decode_finality_proof_v0_exact_with_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<FinalityProofV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let proof = decode_finality_proof_v0_exact(
-        bytes,
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let proof = admit_raw_finality_proof(
+        raw,
         active_validator_set,
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
@@ -2722,12 +2764,21 @@ pub fn decode_finality_proof_v0_exact_with_trusted_genesis_and_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<FinalityProofV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let proof = decode_finality_proof_v0_exact_with_trusted_genesis(
-        bytes,
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let trusted_genesis = trusted_genesis_qc_v0(epoch_zero_validator_set, raw.object_offset)?;
+    let proof = admit_raw_finality_proof_with_reference_admission(
+        raw,
         epoch_zero_validator_set,
         consensus_parameters,
         authenticated_finalized_parent_timestamp_ms,
+        QcReferenceAdmissionV0::TrustedGenesis(&trusted_genesis),
     )?;
+    require_exact_canonical_reencoding(bytes, proof.try_cev0_bytes(), 0)?;
     budget.charge_finality_proof(&proof)?;
     Ok(proof)
 }
@@ -2779,13 +2830,27 @@ pub fn decode_checkpoint_finality_proof_v0_exact_with_budget(
     budget: &mut Cev0AdmissionBudgetV0,
 ) -> DecodeResult<FinalityProofV0> {
     budget.admit_root_bytes(bytes.len())?;
-    let proof = decode_checkpoint_finality_proof_v0_exact(
-        bytes,
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof_with_aggregate_limit(
+        &mut cursor,
+        budget.maximum_tc_aggregate_signature_shares(),
+    )?;
+    cursor.finish()?;
+    let object_offset = raw.object_offset;
+    let proof = admit_raw_finality_proof(
+        raw,
         old_validator_set,
         old_consensus_parameters,
-        next_epoch_commitment,
         authenticated_checkpoint_parent_timestamp_ms,
     )?;
+    proof
+        .validate_checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+            authenticated_checkpoint_parent_timestamp_ms,
+        )
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidCheckpointTwoSeal, object_offset))?;
     budget.charge_finality_proof(&proof)?;
     Ok(proof)
 }
@@ -2793,13 +2858,27 @@ pub fn decode_checkpoint_finality_proof_v0_exact_with_budget(
 fn parse_raw_ordinary_certified_header<'a>(
     cursor: &mut Cursor<'a>,
 ) -> DecodeResult<RawOrdinaryCertifiedHeader<'a>> {
+    parse_raw_ordinary_certified_header_with_aggregate_limit(
+        cursor,
+        MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    )
+}
+
+fn parse_raw_ordinary_certified_header_with_aggregate_limit<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_aggregate_shares: usize,
+) -> DecodeResult<RawOrdinaryCertifiedHeader<'a>> {
     let object_offset = cursor.offset();
     let header = parse_raw_block_header(cursor)?;
-    let justify_qc = parse_raw_qc(cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let maximum_qc_shares = maximum_aggregate_shares.min(MAX_CEV0_CERTIFICATE_ITEMS);
+    let justify_qc = parse_raw_qc(cursor, maximum_qc_shares)?;
     let timeout_tag_offset = cursor.offset();
     let timeout_certificate = match cursor.u8()? {
         0 => None,
-        1 => Some(parse_raw_timeout_certificate(cursor)?),
+        1 => Some(parse_raw_timeout_certificate_with_aggregate_limit(
+            cursor,
+            maximum_aggregate_shares,
+        )?),
         _ => {
             return Err(DecodeError::new(
                 DecodeErrorCode::InvalidOptionalTag,
@@ -2824,7 +2903,7 @@ fn parse_raw_ordinary_certified_header<'a>(
         }
     }
     let proposer_signature = Signature64::from_array(cursor.fixed()?);
-    let certifying_qc = parse_raw_qc(cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let certifying_qc = parse_raw_qc(cursor, maximum_qc_shares)?;
     Ok(RawOrdinaryCertifiedHeader {
         object_offset,
         header,
@@ -2914,6 +2993,16 @@ fn admit_raw_certified_header_with_reference_admission(
 fn parse_raw_checkpoint_finality_proof<'a>(
     cursor: &mut Cursor<'a>,
 ) -> DecodeResult<RawCheckpointFinalityProof<'a>> {
+    parse_raw_checkpoint_finality_proof_with_aggregate_limit(
+        cursor,
+        MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    )
+}
+
+fn parse_raw_checkpoint_finality_proof_with_aggregate_limit<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_aggregate_shares: usize,
+) -> DecodeResult<RawCheckpointFinalityProof<'a>> {
     let object_offset = cursor.offset();
     let schema_version = cursor.u16()?;
     let genesis_offset = cursor.offset();
@@ -2925,9 +3014,12 @@ fn parse_raw_checkpoint_finality_proof<'a>(
     let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
     let parameters_hash_offset = cursor.offset();
     let consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
-    let finalized_block = parse_raw_ordinary_certified_header(cursor)?;
-    let child = parse_raw_ordinary_certified_header(cursor)?;
-    let grandchild = parse_raw_ordinary_certified_header(cursor)?;
+    let finalized_block =
+        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
+    let child =
+        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
+    let grandchild =
+        parse_raw_ordinary_certified_header_with_aggregate_limit(cursor, maximum_aggregate_shares)?;
     Ok(RawCheckpointFinalityProof {
         object_offset,
         schema_version,
@@ -3687,6 +3779,22 @@ fn parse_raw_epoch_anchor_authorization_kernel<'a>(
 fn parse_raw_timeout_certificate<'a>(
     cursor: &mut Cursor<'a>,
 ) -> DecodeResult<RawTimeoutCertificate<'a>> {
+    parse_raw_timeout_certificate_with_aggregate_limit(
+        cursor,
+        MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES,
+    )
+}
+
+/// Parses a TC while applying the caller's authenticated nested-QC share
+/// ceiling before reading or allocating any nested signature list.  The
+/// unbudgeted exact decoder deliberately uses the intrinsic protocol cap;
+/// budgeted ingress must pass its narrower validator-set/profile cap here.
+fn parse_raw_timeout_certificate_with_aggregate_limit<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_aggregate_shares: usize,
+) -> DecodeResult<RawTimeoutCertificate<'a>> {
+    let maximum_aggregate_shares =
+        maximum_aggregate_shares.min(MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES);
     let object_offset = cursor.offset();
     let schema_version = cursor.u16()?;
     let genesis_hash = GenesisHash::new(cursor.fixed()?);
@@ -3717,7 +3825,7 @@ fn parse_raw_timeout_certificate<'a>(
     let mut referenced_qcs = Vec::with_capacity(reference_count);
     let mut aggregate_shares = 0usize;
     for _ in 0..reference_count {
-        let remaining = MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+        let remaining = maximum_aggregate_shares
             .checked_sub(aggregate_shares)
             .ok_or_else(|| {
                 DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, cursor.offset())
@@ -7026,6 +7134,29 @@ mod tests {
         let error = parse_raw_qc(&mut cursor, 1).unwrap_err();
         assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
         assert_eq!(error.byte_offset(), qc_signature_count_offset(&bytes));
+    }
+
+    #[test]
+    fn budgeted_tc_rejects_nested_share_count_before_payload_reads() {
+        let set = sample_set();
+        let bytes = sample_tc(&set).try_cev0_bytes().unwrap();
+        let (_, references_offset, _) = tc_offsets(&bytes);
+        let first_reference = references_offset + 4;
+        let nested_signature_count =
+            first_reference + qc_signature_count_offset(&bytes[first_reference..]);
+
+        // Leave only the nested QC header and its declared two-share count.
+        // A contextual one-share budget must reject that declaration before
+        // attempting to read either signature. Without the threaded parser
+        // ceiling this same prefix would be reported as UnexpectedEof.
+        let truncated = bytes[..nested_signature_count + 4].to_vec();
+        let mut budget = Cev0AdmissionBudgetV0::with_limits(bytes.len(), usize::MAX, 1);
+        let error =
+            decode_ordinary_timeout_certificate_v0_exact_with_budget(&truncated, &set, &mut budget)
+                .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
+        assert_eq!(error.byte_offset(), nested_signature_count);
+        assert_eq!(budget.signature_work(), 0);
     }
 
     #[test]
