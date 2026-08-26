@@ -5963,6 +5963,98 @@ fn current_tag3_recovery_requires_exact_reconciliation_and_remints_only_its_reco
 }
 
 #[test]
+fn drained_tag3_recovery_binds_the_consumed_proof_id_to_the_durable_tail() {
+    let (config, mut core, validation, result) =
+        finalization_gated_validation(b"tag3 drained proof identity");
+    let validation_effects = core
+        .step(
+            Input::PayloadValidated {
+                id: validation,
+                result,
+            },
+            &RootSignatures,
+        )
+        .expect("the exact Valid callback persists before tag-3 recovery");
+    let (validation_barrier, _) = persistence_effect(&validation_effects);
+    core.step(
+        Input::StorageAck {
+            barrier: validation_barrier,
+        },
+        &RootSignatures,
+    )
+    .expect("the Valid callback persistence is acknowledged");
+    let authority = finalization_apply_authority_for_test(&core);
+    let consumed = core
+        .safety_state()
+        .pending_finalization()
+        .expect("the fixture has one finalization queue front")
+        .clone();
+    let permit = core
+        .issue_application_finalization_permit_v0()
+        .expect("the exact queue front has one permit");
+    let readback = finalization_readback_for_test(&core, &authority, &permit);
+    let receipt = authority
+        .receipt_after_application_store_apply_v0(permit, readback.clone())
+        .expect("the exact App readback creates one receipt");
+    let effects = core
+        .step_application_finalization_receipt_v0(receipt, &RootSignatures)
+        .expect("the receipt creates one tag-3 persistence request");
+    let request = persistence_request(&effects);
+    let persisted = request.state().clone();
+    assert!(persisted.finalization_queue().is_empty());
+    assert_eq!(
+        persisted
+            .last_finalization()
+            .expect("the durable tail retains the consumed proof")
+            .proof_id(),
+        consumed.proof_id()
+    );
+
+    let transition = finalization_recovery_transition_for_test(
+        &consumed,
+        &readback,
+        request
+            .native_finalization_applied_v0()
+            .expect("the persistence request carries the tag-3 manifest")
+            .post_ack_action_v0(),
+        persisted.revision(),
+    );
+    let tampered = NativeFinalizationAppliedRecoveryTransitionV0::from_persisted_parts(
+        transition.ordinal(),
+        CertificateId::new([0xabu8; 32]),
+        transition.parent_block_id(),
+        transition.target_block_id(),
+        transition.overlay_checksum(),
+        transition.source_route(),
+        transition.source_validation_id(),
+        transition.application_host_config_ref(),
+        transition.finalization_checksum(),
+        transition.source_artifact_checksum(),
+        transition.accepted_source_checksum(),
+        transition.applied_job_row_checksum(),
+        transition.prior_head_checksum(),
+        transition.new_head_checksum(),
+        transition.application_receipt_row_checksum(),
+        transition.post_ack_action_v0(),
+        transition.transition_revision(),
+    );
+    let session = Core::begin_native_finalization_applied_recovery_v0(
+        config,
+        persisted.clone(),
+        &RootSignatures,
+    )
+    .expect("the exact drained tag-3 state creates an inert recovery session");
+    assert_eq!(
+        session
+            .challenge()
+            .application_store_readback_for_recovery_v0(&persisted, &tampered),
+        Err(CoreError::NativeFinalizationAppliedRecoveryRejected(
+            "tag-3 transition, SafetyState, and ApplicationStore readback are not exactly congruent",
+        ))
+    );
+}
+
+#[test]
 fn native_valid_post_ack_manifest_is_absent_from_ordinary_persistence() {
     let (_config, mut timeout_core) = configured_core();
     let timeout_epoch = timeout_core.safety_state().epoch();

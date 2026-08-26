@@ -15463,6 +15463,22 @@ fn validate_native_finalization_applied_recovery_reconciliation_v0(
                 })
         })
         .count();
+    // When the consumed queue front drained the finalization queue, the
+    // durable tail is the only retained copy of that exact proof.  Bind the
+    // crash-replay marker's proof id to it before allowing a tag-3 recovery
+    // session to proceed.  A nonempty queue intentionally remains a
+    // host-reconciled case: the consumed front is no longer retained in the
+    // current SafetyState, while the authenticated application checksum still
+    // binds its complete proof bytes.
+    let terminal_proof_id = state
+        .finalization_queue()
+        .is_empty()
+        .then(|| {
+            state
+                .last_finalization()
+                .map(DurableFinalizationV0::proof_id)
+        })
+        .flatten();
     if transition.transition_revision() != state.revision()
         || transition.ordinal() != applied.height().get()
         || transition.target_block_id() != applied.block_id()
@@ -15481,6 +15497,7 @@ fn validate_native_finalization_applied_recovery_reconciliation_v0(
         || transition.parent_block_id() == transition.target_block_id()
         || transition.overlay_checksum() == [0; 32]
         || transition.proof_id().is_zero()
+        || terminal_proof_id.is_some_and(|proof_id| proof_id != transition.proof_id())
         || exact_source_count != 1
         || !native_finalization_applied_recovery_action_matches_state_v0(
             transition.post_ack_action_v0(),
