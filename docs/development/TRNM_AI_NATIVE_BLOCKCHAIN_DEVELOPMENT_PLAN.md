@@ -72,8 +72,8 @@ the only starting point for a gate run; a local plan copy is an audit input.
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
 - The cumulative candidate source head immediately preceding this revision is
-  `e2016c8e9d7cd92c42612db2804fa4f587ea2789` (tree
-  `ce581feb4d511741df42b5cdbe42456afb31de4f`). It retains the real-process G1
+  `a69618f7ae257e202f42e496d0aae40fdf48c151` (tree
+  `af02ebf4deb7eb6f766598e85a9316a75363b097`). It retains the real-process G1
   fixture, native receipt binding, WAL restart/schema checks, semantic-wire
   mutation evidence and strict nested candidate signatures from
   `dff1ac5b6`, then adds five separately tested source tranches:
@@ -91,7 +91,10 @@ the only starting point for a gate run; a local plan copy is an audit input.
   flag. `e2016c8e9` makes the offline legacy exporter use the shared strict JSON
   decoder and reject a zero finalized source height, with duplicate/trailing/
   unknown-field and zero-height negatives; it does not add a source reader,
-  cutover, or node-start capability.
+  cutover, or node-start capability. `a69618f7a` additionally requires the
+  source validator set and QC signer list to be strictly ordered by validator
+  ID, with unsorted and duplicate negatives; this removes witness-order
+  ambiguity but remains an offline candidate check.
   These surfaces remain candidate-only and do not supply a production effect
   driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
   Node/Core/Safety authority, or production activation.
@@ -143,7 +146,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`e2016c8e9`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`a69618f7a`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1904,7 +1907,7 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current cumulative source head is `e2016c8e9`. Its candidate tranches have
+current cumulative source head is `a69618f7a`. Its candidate tranches have
 reproducible local tests, but none of those tests is a signed gate exit. The
 remaining blockers are concrete engineering boundaries:
 
@@ -1935,7 +1938,8 @@ remaining blockers are concrete engineering boundaries:
    open; P2P remains candidate-only.
 4. **MIG-COMET-POCO provenance and cutover:** the offline exporter now rejects
    ambiguous duplicate-key/trailing/unknown-field JSON and zero-height source
-   state, and the rehearsal remains deterministic/fail-closed. There is still no
+   state; the rehearsal also requires canonical validator and QC signer order
+   and remains deterministic/fail-closed. There is still no
    trusted Comet DB reader/finalized source anchor/real target JMT writer/dual
    quorum/old WAL-key-data-dir rejection/node-start cutover. MIG-ROOT/G4/C0
    remain open; caller-supplied witnesses cannot close them.
