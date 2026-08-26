@@ -106,6 +106,7 @@ pub use genesis_application::{
     GenesisApplicationCommitmentV0, GenesisQcApplicationBindingV0, GenesisQcCeremonyEvidenceV1,
     GenesisQcSignatureShareV1, LegacyCometAppHashV1, LegacyCometGenesisHashV1,
     PocoGenesisQcBindingV1, PocoGenesisV1, PocoTargetGenesisManifestV1,
+    PocoTargetGenesisReplayContextV1,
     PocoTargetProjectionManifestVerifierV1, PocoTargetProjectionV1, PocoTargetProjectionVerifierV1,
     VerifiedCometStateExportV1, VerifiedPocoTargetGenesisCeremonyV1,
     VerifiedPocoTargetProjectionV1, COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1,
