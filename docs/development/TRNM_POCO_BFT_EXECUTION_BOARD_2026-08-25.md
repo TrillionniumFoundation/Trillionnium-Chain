@@ -147,7 +147,7 @@ downstream gate inherits completion from an incomplete predecessor.
 - The live Core application-finalization receipt path now checks the exact
   ancestor-ordered queue front before mutating state (`567d24aeb`). Empty or
   replaced queue fronts return `UnexpectedFinalizationAck` transactionally;
-  two negative tests and the 222-test Core library suite pass. This tightens
+  two negative tests and the 223-test Core library suite pass. This tightens
   an execution boundary only; authoritative Core/SafetyRules integration and
   crash/replay equivalence remain open.
 - `2ffbb40bd` adds a single Core Vote/Timeout transition-install boundary:
@@ -155,7 +155,7 @@ downstream gate inherits completion from an incomplete predecessor.
   revision are checked before the watermark is installed. Pending persistence
   and `StorageAck` retain the transition/predecessor binding, and a detached
   transition is rejected transactionally. The Core library suite is now
-  222/222; this remains a legacy/shadow Core slice, not a live signer/effect
+  223/223; this remains a legacy/shadow Core slice, not a live signer/effect
   driver.
 - `5994d07e8` adds an explicit ignored long-horizon SafetyRules test. Two
   independent kernel executions inside the release test over 100,000
@@ -197,8 +197,14 @@ downstream gate inherits completion from an incomplete predecessor.
 - `bea0a5d5b` re-verifies the exact `FinalityProofV0` immediately before Core
   consumes an application-finalization acknowledgement. Invalid or substituted
   signatures leave the queue and Core state unchanged; the Core unit/doctest
-  suites and clippy gate are green. Core/SafetyRules are still not the sole
+  suites (now 223/223 + 46 doctests) and clippy gate are green. Core/SafetyRules are still not the sole
   production authority.
+- `16cd45ee9` closes a drained-tag-3 recovery substitution: once the durable
+  finalization queue is empty, recovery now requires the consumed transition
+  proof id to equal the persisted `last_finalization` proof id before handing
+  control back to the host reconciler. A foreign proof-id mutation is rejected
+  transactionally; non-empty queues retain the existing exact host-reconciliation
+  path. This narrows replay ambiguity but does not make Core authoritative.
 - `be7e55e98` adds a candidate-only native readback verifier that binds the
   exact outer/inner transaction, native finalized block/proof/state root,
   occurrence index, and receipt commitment before a WAL row becomes
