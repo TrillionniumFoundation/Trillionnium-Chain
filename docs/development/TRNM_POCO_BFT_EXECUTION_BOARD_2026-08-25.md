@@ -492,13 +492,13 @@ downstream gate inherits completion from an incomplete predecessor.
 1. No independent review of the complete protocol and remaining schema/vector
    corpus; formal/protobuf tooling is not reproducible on every workstation.
 2. `wire_conformance=false`; the new outer `WireEnvelope` preflight is bounded
-   and strict, but nested semantic decoders, authenticated peer context,
-   runtime ingress, independent wire conformance, and the remaining epoch,
-   evidence, upgrade, light-client and weighted-TC limits are open. The
-   deterministic mutation gate proves totality for a fixed corpus only; real
-   libFuzzer coverage and a second implementation remain open. CEV0 must be
-   bounded by validator-set, CPU, bytes, signature count and admission
-   budgets.
+   and strict, and an independent standard-library reference parser now
+   round-trips the canonical frame plus 49,408 single-byte mutations, 1,024
+   fixed-random cases and targeted boundaries. Nested semantic decoders,
+   authenticated peer context, runtime ingress, the remaining epoch/evidence/
+   upgrade/light-client/weighted-TC limits, real libFuzzer coverage and full
+   CI conformance reproduction remain open. CEV0 must be bounded by
+   validator-set, CPU, bytes, signature count and admission budgets.
 3. Candidate source-of-truth closure is now clean and the decoder registry is
    generated/gated on this branch. Independent CI reproduction, workspace/old
    dual-track wording and complete boundary metadata review remain open; all
@@ -546,9 +546,11 @@ downstream gate inherits completion from an incomplete predecessor.
    paths remain development-only shell/template adapters.
 3. No authenticated production P2P/pacemaker, remote signer/HSM/watermark,
    durable mempool replay, state sync or native RPC/indexer path. The new
-   `SyncInfo` ingress fence is only a process-local borrowed-token seam; it
-   does not establish peer leases, nested state-sync semantics, Core effects,
-   or restart-safe sequence replay.
+   `SyncInfo` ingress fence is a process-local borrowed-token seam; its
+   separate candidate journal now adds a fixed-size hash chain, private-path
+   and descriptor checks, fsync and exact trusted-pin reopen/replay tests, but
+   it does not establish peer-lease authority, atomic lease-plus-append,
+   nested state-sync semantics, Core effects, or production activation.
 4. No real 4/7-node cross-host crash, partition, equivocation, reorder, disk,
    clock-skew or long-soak evidence; current G3 ledger remains false.
 5. K/P dual-store audit now takes a descriptor-bound shared lock for the final
