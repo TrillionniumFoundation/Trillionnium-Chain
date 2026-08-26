@@ -619,11 +619,23 @@ impl MigrationSourceFinalityWitnessV1 {
             "source validator set is unreasonably large"
         );
         self.validator_set.validate()?;
+        for pair in self.validator_set.validators.windows(2) {
+            ensure!(
+                pair[0].validator_id < pair[1].validator_id,
+                "source validator set must be strictly ordered by validator_id"
+            );
+        }
         self.receipt.block_header.validate()?;
         ensure!(
             self.receipt.schema == trnm_finality_types::FINALITY_RECEIPT_SCHEMA_V1,
             "unsupported source finality receipt schema"
         );
+        for pair in self.receipt.quorum_certificate.signatures.windows(2) {
+            ensure!(
+                pair[0].validator_id < pair[1].validator_id,
+                "source quorum certificate signatures must be strictly ordered by validator_id"
+            );
+        }
         // Force the old receipt's own canonical hash preimage to be parsed now
         // and bound its allocation before any signature work.
         let receipt_bytes = self.receipt.unsigned_bytes()?;
@@ -1938,6 +1950,33 @@ mod tests {
         let (_, _, mut duplicate) = source_fixture();
         duplicate.objects.push(duplicate.objects[0].clone());
         assert!(mapping_category_roots_v1(&duplicate).is_err());
+    }
+
+    #[test]
+    fn source_validator_and_signer_order_is_canonical() {
+        let (export, mut witness, mapping) = source_fixture();
+        witness.validator_set.validators.swap(0, 1);
+        let error = verify_source_export_rehearsal_v1(&export, &witness, &mapping).unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("validator set must be strictly ordered"));
+
+        let (export, mut witness, mapping) = source_fixture();
+        witness
+            .receipt
+            .quorum_certificate
+            .signatures
+            .swap(0, 1);
+        let error = verify_source_export_rehearsal_v1(&export, &witness, &mapping).unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("quorum certificate signatures must be strictly ordered"));
+
+        let (export, mut witness, mapping) = source_fixture();
+        witness.validator_set.validators[1].validator_id =
+            witness.validator_set.validators[0].validator_id.clone();
+        let error = verify_source_export_rehearsal_v1(&export, &witness, &mapping).unwrap_err();
+        assert!(error.to_string().contains("duplicate validator_id"));
     }
 
     #[test]
