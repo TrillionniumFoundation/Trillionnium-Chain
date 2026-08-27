@@ -17,7 +17,7 @@ use crate::protocol::{
     LeaseRejectCodeV1, LeaseRequestV1, LeaseResponseV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
     MAX_FRAME_BYTES_V1,
 };
-use crate::store::{ensure_private_directory, now_ms, PeerLeaseStoreV1};
+use crate::store::{ensure_private_directory, now_ms, prepare_private_directory, PeerLeaseStoreV1};
 use crate::PeerLeaseErrorV1;
 
 /// Wall-clock budget for socket I/O while servicing one accepted stream.  The
@@ -59,6 +59,11 @@ pub trait ExternalPeerLeaseAuthorityV1 {
 pub struct UnixPeerLeaseClientV1 {
     socket_path: PathBuf,
     timeout: Duration,
+    /// Optional caller-owned absolute deadline shared by every operation on
+    /// this client, including guard-drop release.  Keeping it on the cloned
+    /// capability prevents each fresh Unix connection from silently
+    /// restarting a new timeout budget.
+    deadline: Option<Instant>,
 }
 
 impl UnixPeerLeaseClientV1 {
@@ -66,11 +71,21 @@ impl UnixPeerLeaseClientV1 {
         Self {
             socket_path: path.as_ref().to_path_buf(),
             timeout: Duration::from_secs(5),
+            deadline: None,
         }
     }
 
     pub fn with_timeout(mut self, timeout: Duration) -> Self {
         self.timeout = timeout;
+        self.deadline = None;
+        self
+    }
+
+    /// Bind all subsequent calls (and clones of this client) to one absolute
+    /// deadline.  This is used by the one-shot P2P owner so acquire,
+    /// revalidate, and release cannot each open a fresh timeout window.
+    pub fn with_deadline(mut self, deadline: Instant) -> Self {
+        self.deadline = Some(deadline);
         self
     }
 
@@ -101,9 +116,11 @@ impl UnixPeerLeaseClientV1 {
         // Start the absolute operation deadline before endpoint validation so
         // validation and connect cannot each consume a fresh independent
         // timeout budget.
-        let deadline = Instant::now()
-            .checked_add(self.timeout)
-            .unwrap_or_else(Instant::now);
+        let deadline = self.deadline.unwrap_or_else(|| {
+            Instant::now()
+                .checked_add(self.timeout)
+                .unwrap_or_else(Instant::now)
+        });
         // Validate the endpoint and its private parent before entering the
         // blocking connect syscall.  The constructor remains infallible for
         // API compatibility, so every operation performs this fail-closed
@@ -327,8 +344,7 @@ impl UnixPeerLeaseDaemonV1 {
             .socket_path
             .parent()
             .ok_or(PeerLeaseErrorV1::InvalidRequest("peer-lease socket parent"))?;
-        fs::create_dir_all(socket_parent)?;
-        ensure_private_directory(socket_parent)?;
+        prepare_private_directory(socket_parent)?;
         if self.socket_path.exists() {
             let metadata = fs::symlink_metadata(&self.socket_path)?;
             if !metadata.file_type().is_socket() {
@@ -458,10 +474,13 @@ fn serve_connection(
     // that the caller could mistake for a timely commit; the caller must use
     // its recovery/uncertainty path instead.
     remaining_timeout(deadline)?;
-    let fatal_error = result.as_ref().err().and_then(|error| match error {
+    let fatal_code = result.as_ref().err().and_then(|error| match error {
         PeerLeaseErrorV1::Rejected(
             LeaseRejectCodeV1::ClockRollback | LeaseRejectCodeV1::AuthorityCorrupt,
-        ) => Some(error),
+        ) => match error {
+            PeerLeaseErrorV1::Rejected(code) => Some(*code),
+            _ => None,
+        },
         _ => None,
     });
     let response = match result {
@@ -472,13 +491,15 @@ fn serve_connection(
         }
         Err(error) => return Err(error),
     };
-    write_all_until(stream, &encode_response(response), deadline)?;
-    if let Some(error) = fatal_error {
-        return Err(match error {
-            PeerLeaseErrorV1::Rejected(code) => PeerLeaseErrorV1::Rejected(*code),
-            _ => unreachable!("fatal peer lease error classification"),
-        });
+    let write_result = write_all_until(stream, &encode_response(response), deadline);
+    if let Some(code) = fatal_code {
+        // A fatal authority condition must terminate the daemon even when the
+        // peer disconnects before receiving its rejection.  Letting the write
+        // error escape first would classify a corrupted/rolled-back journal
+        // as a transient timeout and continue serving unsafe state.
+        return Err(PeerLeaseErrorV1::Rejected(code));
     }
+    write_result?;
     Ok(())
 }
 

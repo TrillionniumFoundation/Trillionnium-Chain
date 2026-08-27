@@ -22,7 +22,7 @@ engineering authority only through the following immutable tuple:
 
 ```text
 (plan_id, canonical_ref, assessed_commit, assessed_tree,
- plan_sha256, plan_manifest_sha256)
+ plan_sha256)
 ```
 
 The tuple MUST be recorded in a versioned `plan-manifest-v1` companion (the
@@ -33,16 +33,25 @@ digest, toolchain/container digest, and the deterministic clean-clone replay
 command. The manifest is a pointer and integrity record; it cannot override
 `config/consensus-mainline.json` or any protocol contract.
 
+`assessed_commit` and `assessed_tree` identify the clean source snapshot used
+for code, build, and runtime evidence. They do not require the plan or its
+manifest to exist in that source commit: the canonical plan and manifest may be
+committed in a later descendant documentation commit, provided that the
+assessed source commit remains an ancestor of the canonical ref and the
+source/archive evidence binds the assessed commit/tree explicitly. The
+manifest's tracked Git blob and the exact `plan_sha256` bind the documentation
+authority; there is no separate self-referential manifest-hash field.
+
 Before any gate can be promoted, the plan and its manifest MUST be tracked by
-Git (`git ls-files --error-unmatch` succeeds), present at the manifest's
-assessed commit in a clean clone, and byte/hash identical in the worktree,
-index, clean clone, and release source archive. CI MUST reject an untracked
-plan, a hash/tree/ref mismatch, a missing required-file reference, a dirty
-plan/manifest/status path, or a plan that exists only in another worktree.
-An assessed source worktree may retain explicitly enumerated dirty files for
-review, but those files and their effects are not part of a promoted release
-artifact until committed and independently replayed. A working-tree SHA is
-therefore provisional and never a release claim.
+Git (`git ls-files --error-unmatch` succeeds) and present at the canonical ref
+in a clean clone. They MUST be byte/hash identical there and in any release
+source archive that claims full documentation authority. CI MUST reject an
+untracked plan, a hash/tree/ref mismatch, a missing required-file reference, a
+dirty plan/manifest/status path, or a plan that exists only in another
+worktree. An assessed source worktree may retain explicitly enumerated dirty
+files for review, but those files and their effects are not part of a promoted
+release artifact until committed and independently replayed. A working-tree
+SHA is therefore provisional and never a release claim.
 
 The canonical-plan gate also verifies that `assessed_commit` is a full Git
 object present in the clone, that its tree equals `assessed_tree`, that it is an
@@ -71,9 +80,10 @@ the only starting point for a gate run; a local plan copy is an audit input.
   `SafetyRulesFinalityPredecessorV1` argument is fixed; focused Core,
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
-- The cumulative candidate code head for this revision is the committed
-  `dc501c0bc` source slice (the final full object/tree are bound in
-  `plan-manifest-v1.toml`). It retains the real-process G1
+- The active candidate source baseline is `4a0de0cd0` plus subsequent hardening
+  source changes; the final assessed commit/tree are pending the last clean
+  source commit and will be bound in `plan-manifest-v1.toml`. It retains the
+  real-process G1
   CheckTx/AppHash fixture, native receipt binding, WAL restart/schema checks,
   semantic-wire mutation evidence and strict nested candidate signatures from
   `dff1ac5b6`, then adds the following separately tested source tranches:
@@ -120,10 +130,32 @@ the only starting point for a gate run; a local plan copy is an audit input.
   profile, pacemaker, signer/watermark, recovery owner, cross-restart
   handshake anchor, whole-namespace anti-rollback, trusted Comet
   reader/cutover, or production activation.
+  `7cd53879b` adds an explicit authority-gated ordinary Proposal
+  application-seal -> Core durable Valid-delivery (`D`) seam with carrier and
+  parent binding negatives; it intentionally does not mint a Vote or finality
+  effect. `11c98ef52` changes the live P2P/mesh transport binding to the
+  shared coordinator-manifest commitment, so independent validators no longer
+  reject one another merely because their local config hashes differ. Its
+  focused binding regression passes. The six-host authenticated LAN smoke
+  cited below was run from a later c04 descendant and is predecessor evidence,
+  not an exact-11c98ef52 source result. `bce0cffaa` gives the Unix lease client
+  one absolute operation deadline across request writes, flush, and fragmented
+  response reads, with a
+  slow-fragment regression. `965163f6f`, `59f7177ce`, `e79fc2148`,
+  `fefc9281e`, and `c04bb76c4` then bind daemon streams and lease/socket/root
+  identities, harden private candidate artifacts, and make socket cleanup
+  inode-aware. `4a0de0cd0` adds conservative commit-uncertainty reporting,
+  same-session acquire retry, Linux same-UID peer credentials, an absolute
+  connect/daemon deadline, private path/ancestor checks, and a durable pending
+  replay breadcrumb. A descriptor-anchored namespace owner, cross-platform
+  peer authentication, an external recovery/status owner, replay-to-Core
+  acknowledgement, production socket ownership, and all activation claims
+  remain absent.
 - `stage = G1-native-host-incomplete`, `production_candidate = false`,
   `production_consensus_activation = false`, and Comet cleanup eligibility is
-  false. There is no completed validator run and no native PoCO listener
-  evidence.
+  false. There is no completed consensus/finality validator run and no
+  production or persistent PoCO listener evidence; the candidate one-shot
+  listener and transport smoke are explicitly non-production.
 - The currently exposed `zero_comet_production_dependency_achieved = true`
   bit is **only** an active-Cargo/build-closure bit. For unambiguous plan
   language it is called `zero_comet_active_dependency` below. It does not
@@ -168,7 +200,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`dc501c0bc`) | Canonical execution ref; bounded Core/Safety, process, wire, replay, watermark, migration, and candidate socket tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`4a0de0cd0` plus subsequent hardening; final assessed commit pending) | Canonical execution ref for the bounded Core/Safety, process, wire, replay, watermark, migration, explicit ordinary-D, candidate socket/transport, client-deadline, and socket/root lifecycle tranches; final hardening is not release-bound until cleanly committed and replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -273,7 +305,7 @@ or an explicitly referenced protocol evidence type. The minimum envelope is:
 | Field | Required binding |
 | --- | --- |
 | `gate_id`, `package_id`, `evidence_id`, `status` | Stable ID; status is one of `candidate-non-normative`, `reproducible`, `reviewed`, `accepted`, `superseded`, `invalidated`, or `reopened`; free-text PASS is not a status |
-| `plan_id`, `plan_sha256`, `plan_manifest_sha256` | Exact canonical plan tuple; no timestamp-only association |
+| `plan_id`, `plan_sha256` | Exact canonical plan tuple; no timestamp-only association |
 | `source_commit`, `source_tree`, `worktree_ref`, `machine_truth_sha256` | Assessed code and machine state; dirty paths are enumerated or the bundle is invalid |
 | `protocol_manifest_sha256`, `schema/vector/formal_revision` | Exact protocol inputs, codec/domain registry, vectors, model and mutant revisions |
 | `scope`, `authority`, `data_scope` | `scope` is one of `crate`, `fixture`, `process`, `host`, `network`, or `production`; `authority` is one of `candidate`, `simulation`, `normative`, or `production`; `data_scope` identifies synthetic/replay/private-alpha/public-testnet/mainnet data; no inferred scope |
@@ -1450,7 +1482,8 @@ v1 implementation or production activation.
 The authorized six-host `192.168.0.0/24` fleet first closes a distinct LAN
 campaign. Its frozen 7/31/100 placement, read-only readiness probe,
 content-addressed raw-evidence acceptor, and private ephemeral-key material
-generator exist, but no validator run is yet complete. Every validator must be
+generator exist, but no completed consensus/finality validator run is yet
+complete; the current smoke is transport-only. Every validator must be
 one independently observed OS process using a run-unique Ed25519 key with a
 verified proof of possession. A LAN pass may set only the LAN evidence bit;
 `g3_geo_wan_evidence` remains false until the same signed candidate is run
@@ -1928,11 +1961,16 @@ remediation, independent review and a fresh signed evidence index.
 ## 11. Current blocker board and immediate queue
 
 The former five-file compile blocker is closed as a source defect by
-`fcdc16104`; it remains in the dated audit for provenance. The current
-candidate code head is `dc501c0bc`; the full assessed commit/tree and all
-bound hashes are recorded in `plan-manifest-v1.toml`. Its new process,
-watermark, and migration-writer slices have independently passing focused
-tests, but none is a signed gate exit. The remaining blockers are concrete:
+`fcdc16104`; it remains in the dated audit for provenance. The active
+candidate source is `4a0de0cd0` plus subsequent hardening, with the final
+assessed commit/tree still pending the last clean source commit; the full
+assessed commit/tree and all bound hashes will be recorded in
+`plan-manifest-v1.toml`. Its process,
+watermark, migration-writer, explicit ordinary-D, shared-context transport,
+client-deadline, and socket/root lifecycle slices have independently passing
+focused tests. The predecessor c04 LAN smoke has signed candidate evidence,
+but none of these facts is a signed gate exit or current-source result. The
+remaining blockers are concrete:
 
 1. **G1 authoritative host/Core/Safety/CAS:** `32e00eefa` proves, in a
    feature-gated real OS process, `SyncedProposal -> application seal ->`
@@ -1956,34 +1994,59 @@ tests, but none is a signed gate exit. The remaining blockers are concrete:
    an external anchor.
 3. **G2.0 authenticated transport:** semantic parsing and the independent
    nested corpus remain valid, and `504e4aad0` supplies a durable payload
-   replay WAL with lease revalidation. `dc501c0bc` now supplies a
-   feature-gated, process-scoped Unix socket -> authenticated session/frame
-   -> external peer lease -> durable replay -> private Core-ingress seam;
-   its E2E covers valid Vote, replay, malformed, trailing-record and
-   parameter rejection. Lease and replay remain separate transactions, and
-   the seam uses no persistent handshake replay anchor or independent
-   parser/client. Production socket ownership, pacemaker/Core runtime,
-   signer/watermark fencing, whole-namespace rollback authority and
-   independent LAN replay are still open.
+   replay WAL with lease revalidation. `dc501c0bc` supplies a feature-gated,
+   process-scoped Unix socket/session/frame -> external peer lease -> durable
+   replay -> private Core-ingress seam. `11c98ef52` binds live transport to
+   one shared coordinator-manifest commitment. The seven-validator/six-host
+   smoke described in item 5 is a later c04-descendant predecessor result,
+   not an exact-11c98ef52 or current-4a0 source result. `bce0cffaa` bounds
+   post-connect client I/O; later c04 ancestry pins daemon stream and
+   socket/root identities, and `4a0de0cd0` adds conservative uncertainty
+   responses, same-session acquire retry, Linux same-UID peer credentials, an
+   absolute connect/daemon deadline, private path/ancestor checks, a minimum
+   token-TTL check, and a durable pending replay breadcrumb. Lease and replay
+   remain separate durable transactions. An external status/recovery owner,
+   replay-to-Core acknowledgement, MAC or cross-platform peer authentication,
+   descriptor-anchored namespace ownership, persistent replay anchoring,
+   pacemaker/Core runtime, signer/watermark fencing, and whole-namespace
+   rollback authority remain open.
 4. **MIG-COMET-POCO provenance and cutover:** the strict exporter/rehearsal
-   rejects ambiguous source input, and `4958bbf17`/`e4581a9c1` now persist a
+   rejects ambiguous source input, and `4958bbf17`/`e4581a9c1` persist a
    verified replay into a candidate target-JMT snapshot with fsynced atomic
    record/head sidecars, reopen validation, and divergent-overwrite rejection.
    There is still no trusted Comet DB reader/finalized source anchor, dual
    quorum, cross-peer GenesisQC, old WAL/key/data-dir rejection at node start,
    or cutover; MIG-ROOT/G4/C0 remain open.
-5. **G3/G4 release evidence:** the read-only bundle
-   `artifacts/fleet-observation-20260827T033102Z` reports 6/6 inventory and
-   readiness checks plus an ADB-observed Android phone vector, but no
-   validator service or OpenClaw node (0/0) was started. The desktop is still
-   severely overloaded (load averages observed above 300), so the prior
-   network-smoke SSH timeout has not been retried; no firewall or service was
-   changed. Seven/31/100-validator WAN, independent clients, interop,
-   benchmarks, security campaign, and public-testnet operations remain open.
+5. **G3/G4 release evidence:** the c04 evidence root is predecessor-only. It
+   contains reproducible Linux/macOS binaries, checked seven-validator
+   material, and a candidate-only network smoke with 7/7 signed reports, six
+   participating hosts, macOS cross-verification, the complete 21-pair direct
+   mesh, and no cleanup failures. It explicitly reports
+   `validator_run_completed=false`, `g3_lan_multihost_evidence=false`,
+   `g3_complete=false`, `geo_wan_evidence=false`, and
+   `production_activation=false`; none of those binaries or smoke reports is
+   evidence for the pending 4a0-plus-hardening source until rebuilt. The phone
+   is observer-only. Seven/31/100-validator consensus, fault/restart, WAN,
+   independent clients, interop, benchmarks, security campaign, and
+   public-testnet operations remain open.
+6. **Durability and recovery semantics:** `4a0de0cd0` classifies likely
+   response-loss and post-replay failures conservatively as `uncertain`,
+   retries an exact live acquire idempotently, syncs parent directories, and
+   leaves a private pending breadcrumb that blocks an unsafe fresh owner. The
+   lease and candidate P2P frame/session paths now have absolute bounded I/O
+   deadlines, but that budget does not make replay admission atomic with Core,
+   checkpoint, or all filesystem work. This is not a recovery implementation:
+   there is no externally callable status/ack owner, no replay-to-Core atomic
+   acknowledgement, and a crash between Core delivery and breadcrumb clear
+   requires an explicit recovery decision. Path operations remain pathname-
+   based (not dirfd/openat atomic), hardlink/nlink and socket pre-arm races
+   remain, same-UID/MAC and non-Linux peer trust remain incomplete, and the
+   full crash/tamper/expiry/multi-frame campaign is still mandatory.
 
-The next safe execution order is: finish and review the candidate socket/Core
-seam, rerun affected source gates from a clean clone, rebuild current Linux
-and macOS artifacts, then attempt only an ephemeral LAN smoke when the desktop
-is healthy. Retain raw traces and failed mutants; source/protocol/validator/
-migration/benchmark changes invalidate descendants under §10.2. Production
+The next safe execution order is: add an external recovery/status owner and
+complete durability/path and endpoint-identity checks; join replay admission to
+an explicit Core acknowledgement; bind ordinary delivery to real
+execution and a finality/pacemaker owner; then run the G1 crash/recovery and
+G2/G3 fault matrices. Retain raw traces and failed mutants; source/protocol/
+validator/benchmark changes invalidate descendants under §10.2. Production
 flags remain false until signed exits.

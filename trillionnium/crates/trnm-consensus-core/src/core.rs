@@ -8354,6 +8354,55 @@ impl Core {
         }
     }
 
+    /// Persists the one-revision acknowledgement of a just-released signer
+    /// intent.
+    ///
+    /// `SignatureReady` is deliberately a volatile release: it clears the
+    /// signer outbox and returns the signed broadcast without creating a
+    /// second Safety revision.  A host which wants to start another signing
+    /// transition must nevertheless make that release durable before it can
+    /// replace the old persisted intent.  This method is the narrow bridge
+    /// for that host boundary.  The caller must supply the exact Safety state
+    /// which preceded `SignatureReady`; the live state must differ from it in
+    /// no field other than `pending_sign`.
+    ///
+    /// The returned effect is an ordinary, empty-deferred persistence request
+    /// for the cleared state.  The host must persist it and feed its exact
+    /// barrier back through `Input::StorageAck` before issuing another Core
+    /// transition.  Generic `Core::step(SignatureReady)` remains unchanged so
+    /// existing drivers can retain the volatile release behaviour when their
+    /// surrounding durable protocol already supplies this acknowledgement.
+    pub fn persist_signature_release_v0<V: SignatureVerifier>(
+        &mut self,
+        released_from: &SafetyState,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        if self.pending_persistence.is_some() {
+            return Err(CoreError::Busy(
+                "cannot persist a signer release while another safety-state write is pending",
+            ));
+        }
+        if self.awaiting_signature
+            || !self
+                .safety
+                .matches_signature_released_successor_of_v0(released_from)
+        {
+            return Err(CoreError::InvalidRecovery(
+                "signer release acknowledgement does not match the exact SignatureReady successor",
+            ));
+        }
+
+        // Execute the persistence transition on a transactional clone.  This
+        // keeps the public bridge atomic if revision overflow or a runtime
+        // invariant fails before the request is returned.
+        let mut next = self.transactional_clone_v0();
+        let effects = next.persist(Vec::new())?;
+        next.validate_runtime(verifier, false)?;
+        next.validate_monotonic_transition(released_from)?;
+        *self = next;
+        Ok(effects)
+    }
+
     /// Transactional step used only by the narrow anchored-successor owner.
     /// The generic h1 entry continues to reject every non-Resume input.
     fn step_state_sync_anchor_successor_proposal_v0<V: SignatureVerifier>(

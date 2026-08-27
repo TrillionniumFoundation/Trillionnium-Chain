@@ -66,6 +66,7 @@ g1-process-test-support = [
   "tx-admission-wal",
   "fixture-raw-key",
   "dep:hex",
+  "dep:rustix",
   "dep:serde",
   "dep:serde_json",
   "dep:trnm-finality-types",
@@ -284,6 +285,7 @@ hex = { version = "0.4", optional = true }
 fs2 = "0.4"
 libc = { version = "0.2", optional = true }
 rusqlite = { version = "0.32", features = ["bundled"] }
+rustix = { version = "1.1.4", features = ["process"], optional = true }
 serde = { version = "1", features = ["derive"], optional = true }
 serde_json = { version = "1", optional = true }
 sha2 = "0.10"

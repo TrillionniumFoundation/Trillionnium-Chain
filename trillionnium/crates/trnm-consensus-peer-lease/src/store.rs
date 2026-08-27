@@ -1,13 +1,14 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::{self, File, OpenOptions},
-    io::{Read, Seek, SeekFrom, Write},
+    io::{self, Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
     time::{SystemTime, UNIX_EPOCH},
 };
 
 #[cfg(unix)]
-use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
+use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt, PermissionsExt};
 
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
@@ -29,6 +30,23 @@ const HEAD_MAGIC_V1: [u8; 4] = *b"TPLH";
 const HEAD_VERSION_V1: u8 = 1;
 const HEAD_BODY_BYTES_V1: usize = 4 + 1 + 3 + 8 + 32;
 const HEAD_BYTES_V1: usize = HEAD_BODY_BYTES_V1 + 32;
+// The authority journal is replayed at startup.  Bound the startup read even
+// if a non-cooperating same-UID process grows the file after the metadata
+// check; 256 MiB is over one million fixed-size v1 lease records.
+const MAX_JOURNAL_BYTES_V1: u64 = 256 * 1024 * 1024;
+
+// A failed anchor publication is deliberately retained as recovery evidence.
+// Include a process-local nonce in each temporary name so a later retry in the
+// same process does not collide with that retained evidence forever.
+static ANCHOR_TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
+
+fn next_anchor_temp_path_v1(path: &Path, name: &str, record_count: u64) -> PathBuf {
+    path.with_file_name(format!(
+        ".{name}.tmp-{}-{record_count}-{}",
+        std::process::id(),
+        ANCHOR_TEMP_NONCE_V1.fetch_add(1, Ordering::Relaxed),
+    ))
+}
 
 /// Durable append-only authority state.  Only the daemon owns an instance;
 /// clients never open this file.  A hash chain and strict replay validation
@@ -47,6 +65,7 @@ pub struct PeerLeaseStoreV1 {
     last_hash: [u8; 32],
     record_count: u64,
     last_now_ms: u64,
+    poisoned: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -62,10 +81,15 @@ impl PeerLeaseStoreV1 {
     /// attempted: a partial final record is an explicit fail-stop condition.
     pub fn open(path: impl AsRef<Path>) -> Result<Self, PeerLeaseErrorV1> {
         let path = path.as_ref().to_path_buf();
-        if let Some(parent) = path.parent() {
-            std::fs::create_dir_all(parent)?;
-            ensure_private_directory(parent)?;
+        if !path.is_absolute() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal path must be absolute",
+            ));
         }
+        if let Some(parent) = path.parent() {
+            prepare_private_directory(parent)?;
+        }
+        reject_stale_anchor_temps(&path)?;
         let anchor_path = anchor_path_for(&path);
         let directory = File::open(
             path.parent()
@@ -76,8 +100,20 @@ impl PeerLeaseStoreV1 {
             .try_lock_exclusive()
             .map_err(PeerLeaseErrorV1::Io)?;
         let mut file = open_append_file(&path)?;
+        if file.metadata()?.len() > MAX_JOURNAL_BYTES_V1 {
+            return Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt,
+            ));
+        }
         let mut bytes = Vec::new();
-        file.read_to_end(&mut bytes)?;
+        std::io::Read::by_ref(&mut file)
+            .take(MAX_JOURNAL_BYTES_V1.saturating_add(1))
+            .read_to_end(&mut bytes)?;
+        if bytes.len() as u64 > MAX_JOURNAL_BYTES_V1 {
+            return Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt,
+            ));
+        }
         let mut store = Self {
             path,
             anchor_path,
@@ -90,6 +126,7 @@ impl PeerLeaseStoreV1 {
             last_hash: [0; 32],
             record_count: 0,
             last_now_ms: 0,
+            poisoned: false,
         };
         store.replay(&bytes)?;
         store.file.seek(SeekFrom::End(0))?;
@@ -133,6 +170,11 @@ impl PeerLeaseStoreV1 {
         request: LeaseRequestV1,
         now_ms: u64,
     ) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
+        if self.poisoned {
+            return Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt,
+            ));
+        }
         if now_ms < self.last_now_ms {
             return Err(PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::ClockRollback));
         }
@@ -244,6 +286,16 @@ impl PeerLeaseStoreV1 {
             }
         };
 
+        // Validate the publication counter before writing the record.  This
+        // keeps an arithmetic bound failure definitive rather than reporting
+        // a rejection after durable authority bytes have already landed.
+        let next_record_count =
+            self.record_count
+                .checked_add(1)
+                .ok_or(PeerLeaseErrorV1::Rejected(
+                    LeaseRejectCodeV1::AuthorityCorrupt,
+                ))?;
+
         let record = encode_record(
             request.operation,
             scope,
@@ -254,16 +306,29 @@ impl PeerLeaseStoreV1 {
             self.last_hash,
         );
         let record_hash = record.digest;
-        self.file.write_all(&record.bytes)?;
-        self.file.sync_all()?;
-        sync_parent_dir(&self.path)?;
-        self.last_hash = record_hash;
-        self.record_count = self
-            .record_count
-            .checked_add(1)
-            .ok_or(PeerLeaseErrorV1::Rejected(
+        let current_bytes = self.file.metadata()?.len();
+        let projected_bytes = current_bytes.checked_add(record.bytes.len() as u64).ok_or(
+            PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::AuthorityCorrupt),
+        )?;
+        if projected_bytes > MAX_JOURNAL_BYTES_V1 {
+            return Err(PeerLeaseErrorV1::Rejected(
                 LeaseRejectCodeV1::AuthorityCorrupt,
-            ))?;
+            ));
+        }
+        if let Err(error) = self.file.write_all(&record.bytes) {
+            self.poisoned = true;
+            return Err(PeerLeaseErrorV1::Io(error));
+        }
+        if let Err(error) = self.file.sync_all() {
+            self.poisoned = true;
+            return Err(PeerLeaseErrorV1::Io(error));
+        }
+        if let Err(error) = sync_parent_dir(&self.path) {
+            self.poisoned = true;
+            return Err(error);
+        }
+        self.last_hash = record_hash;
+        self.record_count = next_record_count;
         self.last_now_ms = now_ms;
 
         match request.operation {
@@ -294,7 +359,10 @@ impl PeerLeaseStoreV1 {
             LeaseOperationV1::Revalidate => unreachable!("revalidate returns above"),
         }
 
-        self.persist_anchor()?;
+        if let Err(error) = self.persist_anchor() {
+            self.poisoned = true;
+            return Err(error);
+        }
 
         if request.operation == LeaseOperationV1::Release {
             Ok(PeerLeaseTokenV1::new(
@@ -381,6 +449,11 @@ impl PeerLeaseStoreV1 {
             )?;
             let decoded = decode_record_payload(payload)
                 .map_err(|_| PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::AuthorityCorrupt))?;
+            if decoded.observed_now_ms < self.last_now_ms {
+                return Err(PeerLeaseErrorV1::Rejected(
+                    LeaseRejectCodeV1::AuthorityCorrupt,
+                ));
+            }
             self.apply_replayed(operation, decoded, stored_digest)?;
             self.last_hash = stored_digest;
             self.record_count =
@@ -389,16 +462,16 @@ impl PeerLeaseStoreV1 {
                     .ok_or(PeerLeaseErrorV1::Rejected(
                         LeaseRejectCodeV1::AuthorityCorrupt,
                     ))?;
-            self.last_now_ms = self.last_now_ms.max(decoded.observed_now_ms);
+            self.last_now_ms = decoded.observed_now_ms;
             offset += total;
         }
         Ok(())
     }
 
     fn reconcile_anchor(&mut self) -> Result<(), PeerLeaseErrorV1> {
-        let bytes = match fs::read(&self.anchor_path) {
+        let bytes = match read_private_anchor(&self.anchor_path) {
             Ok(bytes) => bytes,
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            Err(PeerLeaseErrorV1::Io(error)) if error.kind() == std::io::ErrorKind::NotFound => {
                 if self.record_count != 0 {
                     return Err(PeerLeaseErrorV1::Rejected(
                         LeaseRejectCodeV1::AuthorityCorrupt,
@@ -407,7 +480,7 @@ impl PeerLeaseStoreV1 {
                 self.persist_anchor()?;
                 return Ok(());
             }
-            Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
+            Err(error) => return Err(error),
         };
         let (anchored_count, anchored_hash) = decode_head(&bytes)?;
         if anchored_count > self.record_count {
@@ -436,11 +509,7 @@ impl PeerLeaseStoreV1 {
             .file_name()
             .and_then(|value| value.to_str())
             .ok_or(PeerLeaseErrorV1::InvalidRequest("journal anchor filename"))?;
-        let temporary = self.anchor_path.with_file_name(format!(
-            ".{name}.tmp-{}-{}",
-            std::process::id(),
-            self.record_count
-        ));
+        let temporary = next_anchor_temp_path_v1(&self.anchor_path, name, self.record_count);
         let bytes = encode_head(self.record_count, self.last_hash);
         let result = (|| {
             let mut file = OpenOptions::new()
@@ -449,14 +518,33 @@ impl PeerLeaseStoreV1 {
                 .mode(0o600)
                 .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
                 .open(&temporary)?;
+            ensure_private_regular_file(&file)
+                .map_err(|error| std::io::Error::other(error.to_string()))?;
             file.write_all(&bytes)?;
             file.sync_all()?;
+            #[cfg(unix)]
+            let replacement_identity = file.metadata()?;
             fs::rename(&temporary, &self.anchor_path)?;
+            #[cfg(unix)]
+            {
+                let published = fs::symlink_metadata(&self.anchor_path)?;
+                if published.dev() != replacement_identity.dev()
+                    || published.ino() != replacement_identity.ino()
+                {
+                    return Err(std::io::Error::other(
+                        "journal anchor descriptor/path identity changed",
+                    ));
+                }
+            }
             self.directory.sync_all()?;
             Ok::<(), std::io::Error>(())
         })();
         if let Err(error) = result {
-            let _ = fs::remove_file(&temporary);
+            // Leave a failed temporary in place rather than unlinking a
+            // pathname which a same-UID process could have replaced after
+            // the create/write checks.  A recovery owner can inspect the
+            // retained evidence; normal retries use a fresh process-local
+            // nonce rather than reusing this pathname.
             return Err(PeerLeaseErrorV1::Io(error));
         }
         Ok(())
@@ -472,7 +560,10 @@ impl PeerLeaseStoreV1 {
         let latest = self.latest_generation(record.scope);
         match operation {
             LeaseOperationV1::Acquire => {
-                if record.generation != latest.saturating_add(1)
+                let expected_generation = latest.checked_add(1).ok_or(
+                    PeerLeaseErrorV1::Rejected(LeaseRejectCodeV1::AuthorityCorrupt),
+                )?;
+                if record.generation != expected_generation
                     || self
                         .seen_sessions
                         .contains(&(record.scope, record.session_id))
@@ -525,6 +616,7 @@ impl PeerLeaseStoreV1 {
                 if state.session_id != record.session_id
                     || state.generation != record.generation
                     || state.expires_at_ms == 0
+                    || record.observed_now_ms >= state.expires_at_ms
                     || record.expires_at_ms != 0
                 {
                     return Err(PeerLeaseErrorV1::Rejected(
@@ -760,6 +852,35 @@ fn anchor_path_for(path: &Path) -> PathBuf {
     path.with_file_name(format!(".{name}.head-v1"))
 }
 
+/// A failed atomic anchor publication is retained as recovery evidence.  Do
+/// not silently ignore that evidence on restart: a reused PID or pathname
+/// could otherwise make every future publication collide and leave the
+/// authority state ambiguous indefinitely.
+fn reject_stale_anchor_temps(path: &Path) -> Result<(), PeerLeaseErrorV1> {
+    let parent = path
+        .parent()
+        .ok_or(PeerLeaseErrorV1::InvalidRequest("journal parent"))?;
+    let anchor_path = anchor_path_for(path);
+    let anchor_name = anchor_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(PeerLeaseErrorV1::InvalidRequest("journal anchor filename"))?;
+    let prefix = format!(".{anchor_name}.tmp-");
+    for entry in fs::read_dir(parent)? {
+        let entry = entry?;
+        let entry_name = entry.file_name();
+        if entry_name
+            .to_str()
+            .is_some_and(|value| value.starts_with(&prefix))
+        {
+            return Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt,
+            ));
+        }
+    }
+    Ok(())
+}
+
 pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     #[cfg(unix)]
@@ -774,9 +895,14 @@ pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseError
         // Refuse a broad parent instead of trying to chmod a directory owned
         // by another component.  The daemon/CLI creates a dedicated 0700
         // directory before reaching this point.
-        if metadata.permissions().mode() & 0o077 != 0 {
+        if metadata.permissions().mode() & 0o7777 != 0o700 {
             return Err(PeerLeaseErrorV1::InvalidRequest(
                 "journal parent must have private mode 0700",
+            ));
+        }
+        if metadata.uid() != rustix::process::geteuid().as_raw() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must be owned by the effective user",
             ));
         }
         // A lexical path can still name a symlink alias.  Canonical equality
@@ -792,12 +918,18 @@ pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseError
         // sticky directories (notably /tmp) are the only intentional
         // exception because the kernel prevents cross-owner child removal.
         let mut ancestor = path.to_path_buf();
+        let expected_owner = rustix::process::geteuid().as_raw();
         loop {
             let ancestor_metadata = fs::symlink_metadata(&ancestor)?;
             let mode = ancestor_metadata.permissions().mode() & 0o7777;
             if mode & 0o022 != 0 && !(ancestor_metadata.uid() == 0 && mode & 0o1000 != 0) {
                 return Err(PeerLeaseErrorV1::InvalidRequest(
                     "journal parent ancestry must not be group/world writable",
+                ));
+            }
+            if ancestor_metadata.uid() != 0 && ancestor_metadata.uid() != expected_owner {
+                return Err(PeerLeaseErrorV1::InvalidRequest(
+                    "journal parent ancestry must be root- or owner-controlled",
                 ));
             }
             if ancestor == Path::new("/") {
@@ -817,12 +949,100 @@ pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseError
     Ok(())
 }
 
+/// Create a missing journal/socket parent chain with private modes, then run
+/// the strict directory and ancestor checks.  `create_dir_all` applies the
+/// process umask and can leave a broad directory behind before the later
+/// check rejects it; constructing one component at a time lets us tighten
+/// each new component before exposing the authority path.
+pub(crate) fn prepare_private_directory(path: &Path) -> Result<(), PeerLeaseErrorV1> {
+    let mut missing = Vec::new();
+    let mut cursor = path.to_path_buf();
+    loop {
+        match fs::symlink_metadata(&cursor) {
+            Ok(metadata) => {
+                #[cfg(unix)]
+                {
+                    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+                        return Err(PeerLeaseErrorV1::InvalidRequest(
+                            "journal parent must be a real directory",
+                        ));
+                    }
+                    let mode = metadata.permissions().mode() & 0o7777;
+                    if mode & 0o022 != 0 && !(metadata.uid() == 0 && mode & 0o1000 != 0) {
+                        return Err(PeerLeaseErrorV1::InvalidRequest(
+                            "journal parent ancestry must not be group/world writable",
+                        ));
+                    }
+                    let expected_owner = rustix::process::geteuid().as_raw();
+                    if metadata.uid() != 0 && metadata.uid() != expected_owner {
+                        return Err(PeerLeaseErrorV1::InvalidRequest(
+                            "journal parent ancestry must be root- or owner-controlled",
+                        ));
+                    }
+                }
+                #[cfg(not(unix))]
+                if !metadata.is_dir() {
+                    return Err(PeerLeaseErrorV1::InvalidRequest(
+                        "journal parent must be a directory",
+                    ));
+                }
+                break;
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                missing.push(cursor.clone());
+                if !cursor.pop() {
+                    return Err(PeerLeaseErrorV1::InvalidRequest(
+                        "journal parent has no existing ancestor",
+                    ));
+                }
+            }
+            Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
+        }
+    }
+
+    for directory in missing.iter().rev() {
+        #[cfg(unix)]
+        let create_result = {
+            let mut builder = fs::DirBuilder::new();
+            builder.mode(0o700);
+            builder.create(directory)
+        };
+        #[cfg(not(unix))]
+        let create_result = fs::create_dir(directory);
+        let created = match create_result {
+            Ok(()) => true,
+            Err(error) if error.kind() == io::ErrorKind::AlreadyExists => false,
+            Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
+        };
+        let metadata = fs::symlink_metadata(directory)?;
+        #[cfg(unix)]
+        if metadata.file_type().is_symlink() || !metadata.is_dir() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must be a real directory",
+            ));
+        }
+        #[cfg(not(unix))]
+        if !metadata.is_dir() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must be a directory",
+            ));
+        }
+        if created {
+            #[cfg(unix)]
+            fs::set_permissions(directory, fs::Permissions::from_mode(0o700))?;
+        }
+    }
+    ensure_private_directory(path)
+}
+
 fn ensure_private_regular_file(file: &File) -> Result<(), PeerLeaseErrorV1> {
     let metadata = file.metadata()?;
     #[cfg(unix)]
     if metadata.file_type().is_symlink()
         || !metadata.is_file()
-        || metadata.permissions().mode() & 0o077 != 0
+        || metadata.nlink() != 1
+        || metadata.permissions().mode() & 0o7777 != 0o600
+        || metadata.uid() != rustix::process::geteuid().as_raw()
     {
         return Err(PeerLeaseErrorV1::InvalidRequest(
             "journal authority file must be a private regular file",
@@ -835,6 +1055,47 @@ fn ensure_private_regular_file(file: &File) -> Result<(), PeerLeaseErrorV1> {
         ));
     }
     Ok(())
+}
+
+fn read_private_anchor(path: &Path) -> Result<Vec<u8>, PeerLeaseErrorV1> {
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+    let mut file = options.open(path)?;
+    ensure_private_regular_file(&file)?;
+    // The anchor has a fixed wire size.  Check it before allocating, then
+    // cap the descriptor read as well because a same-UID writer may grow the
+    // file after this metadata check.  Oversized/truncated anchors are
+    // authority corruption, not recoverable input validation failures.
+    if file.metadata()?.len() != HEAD_BYTES_V1 as u64 {
+        return Err(PeerLeaseErrorV1::Rejected(
+            LeaseRejectCodeV1::AuthorityCorrupt,
+        ));
+    }
+    #[cfg(unix)]
+    {
+        let descriptor = file.metadata()?;
+        let named = fs::symlink_metadata(path)?;
+        if descriptor.dev() != named.dev()
+            || descriptor.ino() != named.ino()
+            || descriptor.uid() != named.uid()
+        {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal anchor descriptor/path identity changed",
+            ));
+        }
+    }
+    let mut bytes = Vec::with_capacity(HEAD_BYTES_V1);
+    std::io::Read::by_ref(&mut file)
+        .take(HEAD_BYTES_V1 as u64 + 1)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() != HEAD_BYTES_V1 {
+        return Err(PeerLeaseErrorV1::Rejected(
+            LeaseRejectCodeV1::AuthorityCorrupt,
+        ));
+    }
+    Ok(bytes)
 }
 
 fn sync_parent_dir(path: &Path) -> Result<(), PeerLeaseErrorV1> {
@@ -939,6 +1200,173 @@ mod tests {
             store.apply(acquire([5; 32], 1), 1_300),
             Err(PeerLeaseErrorV1::Rejected(
                 LeaseRejectCodeV1::StaleGeneration
+            ))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn open_creates_missing_parent_components_private() {
+        let root = private_tempdir();
+        let parent = root.path().join("new").join("nested");
+        let path = parent.join("leases.log");
+        let _store = PeerLeaseStoreV1::open(&path).expect("missing parent chain is created");
+        for component in [root.path().join("new"), parent] {
+            assert_eq!(
+                fs::symlink_metadata(component)
+                    .expect("created parent metadata")
+                    .permissions()
+                    .mode()
+                    & 0o7777,
+                0o700
+            );
+        }
+    }
+
+    #[test]
+    fn anchor_temp_paths_use_a_process_nonce() {
+        let path = Path::new("/tmp/leases.head-v1");
+        let first = next_anchor_temp_path_v1(path, "leases.head-v1", 3);
+        let second = next_anchor_temp_path_v1(path, "leases.head-v1", 3);
+        assert_ne!(first, second);
+    }
+
+    #[test]
+    fn stale_anchor_publication_requires_recovery() {
+        let root = private_tempdir();
+        let path = root.path().join("leases.log");
+        let anchor = anchor_path_for(&path);
+        let name = anchor.file_name().and_then(|value| value.to_str()).unwrap();
+        let temporary = next_anchor_temp_path_v1(&anchor, name, 0);
+        std::fs::write(&temporary, b"retained").expect("retained anchor evidence");
+        assert!(matches!(
+            PeerLeaseStoreV1::open(&path),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt
+            ))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn authority_files_reject_hardlink_aliases() {
+        let root = private_tempdir();
+        let original = root.path().join("original");
+        std::fs::write(&original, b"").expect("original authority file");
+        std::fs::set_permissions(&original, std::fs::Permissions::from_mode(0o600))
+            .expect("private authority file");
+        let alias = root.path().join("leases.log");
+        std::fs::hard_link(&original, &alias).expect("hardlink alias");
+        assert!(PeerLeaseStoreV1::open(&alias).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn oversized_journal_is_rejected_before_replay_read() {
+        let root = private_tempdir();
+        let path = root.path().join("oversized.log");
+        let file = std::fs::File::create(&path).expect("oversized journal");
+        file.set_len(MAX_JOURNAL_BYTES_V1 + 1)
+            .expect("sparse oversized journal");
+        drop(file);
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
+            .expect("private oversized journal");
+        assert!(matches!(
+            PeerLeaseStoreV1::open(&path),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt
+            ))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn oversized_anchor_is_rejected_before_allocation() {
+        let root = private_tempdir();
+        let path = root.path().join("anchor.log");
+        let store = PeerLeaseStoreV1::open(&path).expect("valid journal");
+        let anchor = anchor_path_for(&path);
+        drop(store);
+        let file = std::fs::OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(&anchor)
+            .expect("anchor replacement");
+        file.set_len(HEAD_BYTES_V1 as u64 + 1)
+            .expect("oversized anchor");
+        std::fs::set_permissions(&anchor, std::fs::Permissions::from_mode(0o600))
+            .expect("private oversized anchor");
+        assert!(matches!(
+            PeerLeaseStoreV1::open(&path),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt
+            ))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn anchor_publication_failure_poisoned_store_cannot_continue() {
+        let root = private_tempdir();
+        let path = root.path().join("poison.log");
+        let mut store = PeerLeaseStoreV1::open(&path).expect("valid journal");
+        let anchor = anchor_path_for(&path);
+        std::fs::remove_file(&anchor).expect("remove anchor");
+        std::fs::create_dir(&anchor).expect("directory replacement");
+
+        assert!(matches!(
+            store.apply(acquire([5; 32], 1), 1_000),
+            Err(PeerLeaseErrorV1::Io(_))
+        ));
+        assert!(matches!(
+            store.apply(acquire([6; 32], 2), 2_000),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt
+            ))
+        ));
+    }
+
+    #[test]
+    fn replay_rejects_observed_clock_rollback() {
+        let root = private_tempdir();
+        let path = root.path().join("clock-rollback.log");
+        let first_scope = scope();
+        let second_scope =
+            PeerLeaseScopeV1::new([1; 32], [3; 32], PeerLeaseDirectionV1::Outbound, 3, [4; 32])
+                .expect("second scope");
+        let first = encode_record(
+            LeaseOperationV1::Acquire,
+            first_scope,
+            [5; 32],
+            1,
+            20_000,
+            2_000,
+            [0; 32],
+        );
+        let second = encode_record(
+            LeaseOperationV1::Acquire,
+            second_scope,
+            [6; 32],
+            1,
+            19_999,
+            1_999,
+            first.digest,
+        );
+        let mut bytes = first.bytes;
+        bytes.extend_from_slice(&second.bytes);
+        std::fs::write(&path, bytes).expect("clock rollback journal");
+        #[cfg(unix)]
+        std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o600))
+            .expect("private clock rollback journal");
+        let anchor = anchor_path_for(&path);
+        std::fs::write(&anchor, encode_head(2, second.digest)).expect("clock rollback anchor");
+        #[cfg(unix)]
+        std::fs::set_permissions(&anchor, std::fs::Permissions::from_mode(0o600))
+            .expect("private clock rollback anchor");
+        assert!(matches!(
+            PeerLeaseStoreV1::open(&path),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::AuthorityCorrupt
             ))
         ));
     }

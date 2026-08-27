@@ -33,7 +33,8 @@ use sha2::{Digest, Sha256};
 use trnm_consensus_core::{
     ClaimedPayloadValidationRequestV0, Core, CoreError,
     CoreIssuedApplicationFinalizationApplyAuthorityV0, CoreIssuedApplicationSealAuthorityV0,
-    DurableFinalizationV0, Effect, Input, OutboundMessage, SafetyStatePersistenceV0, SignId,
+    DurableFinalizationV0, Effect, Input, OutboundMessage, SafetyState, SafetyStatePersistenceV0,
+    SignId,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(feature = "safety-rules-sidecar")]
@@ -1291,6 +1292,10 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertTimeoutOwnerV0<W> {
             Some(source_checkpoint),
             signed_checkpoint,
         )?;
+        // Retain the exact persisted signing cut so the volatile
+        // SignatureReady release can be acknowledged through its own
+        // one-revision Safety barrier below.
+        let signature_release_predecessor = self.core.safety_state().clone();
         let effects = self
             .core
             .step(
@@ -1319,11 +1324,19 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertTimeoutOwnerV0<W> {
                 "released timeout vote differs from the journaled intent",
             ));
         }
+        let released_checkpoint = persist_signature_release_barrier_v0(
+            &mut self.core,
+            &mut self.safety_store,
+            &mut self.checkpoint_store,
+            signed_checkpoint,
+            &signature_release_predecessor,
+            &signer_after,
+        )?;
         let facts = PocoNodeLabSignedTimeoutFactsV0 {
             view: vote.view(),
             high_qc: vote.high_qc(),
             signing_root: *vote.signing_root().as_bytes(),
-            checkpoint: signed_checkpoint,
+            checkpoint: released_checkpoint,
             signer_exact_watermark: signer_after.exact_watermark(),
         };
         Ok(PocoNodeLabSignedTimeoutOwnerV0 {
@@ -3921,6 +3934,10 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
             Some(source_checkpoint),
             signed_checkpoint,
         )?;
+        // Keep the exact persisted signing cut; SignatureReady itself clears
+        // only the volatile Core outbox, so the lab must cross an explicit
+        // durable release barrier before returning a reusable owner.
+        let signature_release_predecessor = self.core.safety_state().clone();
         let effects = self
             .core
             .step(
@@ -3951,12 +3968,20 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabInertRequestOwnerV0<W> {
                 "released Vote differs from the journaled canonical intent",
             ));
         }
+        let released_checkpoint = persist_signature_release_barrier_v0(
+            &mut self.core,
+            &mut self.safety_store,
+            &mut self.checkpoint_store,
+            signed_checkpoint,
+            &signature_release_predecessor,
+            &signer_after,
+        )?;
         let facts = PocoNodeLabSignedVoteFactsV0 {
             block_id: vote.block_id(),
             view: vote.view(),
             height: vote.height().get(),
             signing_root: *vote.signing_root().as_bytes(),
-            checkpoint: signed_checkpoint,
+            checkpoint: released_checkpoint,
             signer_exact_watermark: signer_after.exact_watermark(),
         };
         Ok(PocoNodeLabSignedVoteOwnerV0 {
@@ -5114,6 +5139,70 @@ fn confirm_live_or_signature_released_safety_head_v0(
     safety_store
         .confirm_node_checkpoint_head_exact_v0(durable_safety.state())
         .map_err(PocoNodeLabAuthorityErrorV0::Safety)
+}
+
+/// Makes the volatile `SignatureReady` release durable before the laboratory
+/// owner can stage another signing intent.  Core intentionally keeps the
+/// generic SignatureReady effect as an immediate Broadcast; this helper holds
+/// that broadcast inside the linear lab owner, crosses one empty-deferred
+/// SafetyStore barrier for the cleared `pending_sign`, advances the independent
+/// whole-node checkpoint, and only then acknowledges the Core barrier.
+fn persist_signature_release_barrier_v0(
+    core: &mut Core,
+    safety_store: &mut SqliteSafetyStateStoreV0<StrictEd25519Verifier>,
+    checkpoint_store: &mut SqliteExternalNodeCheckpointStoreV0,
+    predecessor_checkpoint: ExternalNodeCheckpointV0,
+    released_from: &SafetyState,
+    signer: &ConfirmedSignerNodeCheckpointFactsV0,
+) -> Result<ExternalNodeCheckpointV0, PocoNodeLabAuthorityErrorV0> {
+    let effects = core
+        .persist_signature_release_v0(released_from, &StrictEd25519Verifier)
+        .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+    let [Effect::PersistSafetyState(request)] = effects.as_slice() else {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "SignatureReady release did not yield exactly one Safety persistence",
+        ));
+    };
+    if request.state() != core.safety_state()
+        || request.state().pending_sign().is_some()
+        || request.barrier().get() != core.safety_state().revision()
+    {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "SignatureReady release persistence differs from the cleared Core state",
+        ));
+    }
+    match safety_store
+        .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
+        .map_err(PocoNodeLabAuthorityErrorV0::Safety)?
+    {
+        SafetyPersistDispositionV0::Inserted
+        | SafetyPersistDispositionV0::Existing
+        | SafetyPersistDispositionV0::ConfirmedAfterCommitError => {}
+    }
+    let safety_after = safety_store
+        .confirm_node_checkpoint_head_exact_v0(core.safety_state())
+        .map_err(PocoNodeLabAuthorityErrorV0::Safety)?;
+    let target_checkpoint =
+        safety_checkpoint_successor_v0(predecessor_checkpoint, &safety_after, signer)?;
+    compare_and_confirm_checkpoint_v0(
+        checkpoint_store,
+        Some(predecessor_checkpoint),
+        target_checkpoint,
+    )?;
+    let released = core
+        .step(
+            Input::StorageAck {
+                barrier: request.barrier(),
+            },
+            &StrictEd25519Verifier,
+        )
+        .map_err(PocoNodeLabAuthorityErrorV0::Core)?;
+    if !released.is_empty() {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "SignatureReady release acknowledgement exposed an effect",
+        ));
+    }
+    Ok(target_checkpoint)
 }
 
 #[allow(clippy::too_many_arguments)]

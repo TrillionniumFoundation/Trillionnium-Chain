@@ -4644,7 +4644,7 @@ fn ordinary_delivery_only_rejects_mismatched_commitment_and_parent_carriers() {
         .expect("authority rebinds after proposal persistence");
     let wrong_commitment_proof = seal_authority.seal_after_application_store_commit_v0(
         permit,
-        valid_commitments_for_config(core.config(), &other.block()),
+        valid_commitments_for_config(core.config(), other.block()),
         artifact_ref_for_ids(other.block().id(), other.block().header().parent_id()),
     );
     let before = core.safety_state().clone();

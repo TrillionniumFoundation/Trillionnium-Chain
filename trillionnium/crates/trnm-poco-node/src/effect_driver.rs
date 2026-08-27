@@ -828,6 +828,11 @@ where
         ) {
             return Err(CandidateEffectDriverErrorV1::SignIntentMismatch);
         }
+        // `SignatureReady` clears the durable signer outbox in the live Core
+        // but is intentionally a volatile release.  Retain the exact
+        // pre-release state so the host can cross the explicit empty
+        // persistence barrier before another signing intent is staged.
+        let signature_release_predecessor = self.core.safety_state().clone();
         // This call is intentionally before `sign_v1`; a failed/ambiguous
         // whole-node CAS must never reach a signer.
         self.hooks
@@ -854,7 +859,16 @@ where
             signing_root: intent.signing_root(),
             signature,
         });
-        Ok(effects)
+        // Do not expose the broadcast to the hook until the cleared signer
+        // state has crossed its own durable barrier.  The persistence effect
+        // is handled by the same bounded path as every other Core write; its
+        // StorageAck then rebinds the Core-owned SafetyRules authority to the
+        // post-release digest before the broadcast is delivered.
+        let mut release_effects = self
+            .core
+            .persist_signature_release_v0(&signature_release_predecessor, &StrictEd25519Verifier)?;
+        release_effects.extend(effects);
+        Ok(release_effects)
     }
 
     fn ensure_active(&self) -> Result<(), CandidateEffectDriverErrorV1> {

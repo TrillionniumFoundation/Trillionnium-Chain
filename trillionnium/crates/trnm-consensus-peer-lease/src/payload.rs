@@ -19,6 +19,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{self, Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
 };
 
 #[cfg(unix)]
@@ -61,6 +62,19 @@ const RECORD_PREFIX_BYTES_V1: usize = 348;
 const RECORD_BYTES_V1: usize = RECORD_PREFIX_BYTES_V1 + 32;
 const HEAD_PREFIX_BYTES_V1: usize = 8 + 1 + 3 + 8 + 32 + 32;
 const HEAD_BYTES_V1: usize = HEAD_PREFIX_BYTES_V1 + 32;
+
+// A failed head publication is deliberately retained as recovery evidence.
+// Include a process-local nonce in each temporary name so a later retry in the
+// same process does not collide with that retained evidence forever.
+static HEAD_TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
+
+fn next_head_temp_path_v1(path: &Path, name: &str, record_count: u64) -> PathBuf {
+    path.with_file_name(format!(
+        ".{name}.tmp-{}-{record_count}-{}",
+        std::process::id(),
+        HEAD_TEMP_NONCE_V1.fetch_add(1, Ordering::Relaxed),
+    ))
+}
 
 /// Re-export the lease direction under a payload-specific name.  Using the
 /// exact lease enum prevents an inbound and outbound journal key from being
@@ -414,6 +428,7 @@ impl PayloadReplayStoreV1 {
         let (directory, _parent) = private_parent(&path)?;
         let lock_path = sidecar_path(&path, "lock-v1")?;
         let head_path = sidecar_path(&path, "head-v1")?;
+        reject_stale_head_temps(&path)?;
         let lock = open_private_lock(&lock_path)?;
         lock.try_lock_exclusive()
             .map_err(PayloadReplayErrorV1::Io)?;
@@ -430,6 +445,20 @@ impl PayloadReplayStoreV1 {
             Err(error) if error.kind() == io::ErrorKind::NotFound => false,
             Err(error) => return Err(PayloadReplayErrorV1::Io(error)),
         };
+        let head_exists = match fs::symlink_metadata(&head_path) {
+            Ok(_) => true,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => false,
+            Err(error) => return Err(PayloadReplayErrorV1::Io(error)),
+        };
+        // Reject a sidecar for a virgin journal before creating the journal's
+        // genesis record. Otherwise a failed open would leave a misleading
+        // zero-length/partial namespace which permanently changes the next
+        // error from an explicit collision to a generic truncation.
+        if !existing && head_exists {
+            return Err(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay head exists for a virgin journal",
+            ));
+        }
         let mut options = OpenOptions::new();
         options.read(true).write(true).append(true);
         if existing {
@@ -448,12 +477,6 @@ impl PayloadReplayStoreV1 {
         if existing && file.metadata()?.len() == 0 {
             return Err(PayloadReplayErrorV1::Truncated);
         }
-        if !existing && fs::symlink_metadata(&head_path).is_ok() {
-            return Err(PayloadReplayErrorV1::InvalidRequest(
-                "payload replay head exists for a virgin journal",
-            ));
-        }
-
         let namespace_digest = namespace.digest();
         let mut store = Self {
             path,
@@ -556,6 +579,13 @@ impl PayloadReplayStoreV1 {
         if self.record_count >= PAYLOAD_REPLAY_MAX_RECORDS_V1 {
             return Err(PayloadReplayErrorV1::TooLarge);
         }
+        // Compute the publication count before writing anything.  An
+        // arithmetic failure is a definitive local bound violation, never a
+        // post-WAL ambiguity that could be mistaken for a rejected request.
+        let new_count = self
+            .record_count
+            .checked_add(1)
+            .ok_or(PayloadReplayErrorV1::TooLarge)?;
         let index = self.record_count;
         let record = encode_record(
             Some(frame),
@@ -577,15 +607,6 @@ impl PayloadReplayStoreV1 {
             )));
         }
         let record_hash = record_digest(&record[..RECORD_PREFIX_BYTES_V1]);
-        let new_count = match self.record_count.checked_add(1) {
-            Some(value) => value,
-            None => {
-                self.poisoned = true;
-                return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(
-                    PayloadReplayErrorV1::TooLarge,
-                )));
-            }
-        };
         if let Err(error) = persist_head(
             &self.head_path,
             &self.directory,
@@ -685,14 +706,7 @@ impl PayloadReplayStoreV1 {
         {
             return Err(PayloadReplayErrorV1::Corrupt);
         }
-        let head_metadata =
-            fs::symlink_metadata(&self.head_path).map_err(PayloadReplayErrorV1::Io)?;
-        if !head_metadata.is_file() || !private_file_mode(&head_metadata) {
-            return Err(PayloadReplayErrorV1::InvalidRequest(
-                "payload replay head path is not a private regular file",
-            ));
-        }
-        let head_bytes = fs::read(&self.head_path).map_err(PayloadReplayErrorV1::Io)?;
+        let head_bytes = read_private_head(&self.head_path)?;
         let (head_count, head_hash, head_namespace) = decode_head(&head_bytes)?;
         if head_count != self.record_count
             || head_hash != self.last_hash
@@ -735,16 +749,11 @@ impl PayloadReplayStoreV1 {
     }
 
     fn reconcile_head(&self, virgin: bool) -> Result<(), PayloadReplayErrorV1> {
-        if let Ok(metadata) = fs::symlink_metadata(&self.head_path) {
-            if !metadata.is_file() || !private_file_mode(&metadata) {
-                return Err(PayloadReplayErrorV1::InvalidRequest(
-                    "payload replay head path is not a private regular file",
-                ));
-            }
-        }
-        let bytes = match fs::read(&self.head_path) {
+        let bytes = match read_private_head(&self.head_path) {
             Ok(bytes) => bytes,
-            Err(error) if error.kind() == io::ErrorKind::NotFound && virgin => {
+            Err(PayloadReplayErrorV1::Io(error))
+                if error.kind() == io::ErrorKind::NotFound && virgin =>
+            {
                 return persist_head(
                     &self.head_path,
                     &self.directory,
@@ -753,7 +762,7 @@ impl PayloadReplayStoreV1 {
                     self.namespace_digest,
                 )
             }
-            Err(error) => return Err(PayloadReplayErrorV1::Io(error)),
+            Err(error) => return Err(error),
         };
         let (count, hash, namespace_digest) = decode_head(&bytes)?;
         if namespace_digest != self.namespace_digest
@@ -1084,6 +1093,50 @@ fn decode_head(bytes: &[u8]) -> Result<(u64, [u8; 32], [u8; 32]), PayloadReplayE
     ))
 }
 
+/// Read the fixed-size head through an `O_NOFOLLOW` descriptor and pin its
+/// identity before allocating.  A private pathname alone is not enough: a
+/// same-UID writer can replace it with an oversized file or a symlink between
+/// metadata and `read_to_end`.
+fn read_private_head(path: &Path) -> Result<Vec<u8>, PayloadReplayErrorV1> {
+    let metadata = fs::symlink_metadata(path).map_err(PayloadReplayErrorV1::Io)?;
+    if !metadata.is_file() || !private_file_mode(&metadata) {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay head path is not a private regular file",
+        ));
+    }
+    if metadata.len() != HEAD_BYTES_V1 as u64 {
+        return Err(PayloadReplayErrorV1::Corrupt);
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+    let mut file = options.open(path).map_err(PayloadReplayErrorV1::Io)?;
+    validate_private_file(&file)?;
+    #[cfg(unix)]
+    {
+        let descriptor = file.metadata().map_err(PayloadReplayErrorV1::Io)?;
+        let named = fs::symlink_metadata(path).map_err(PayloadReplayErrorV1::Io)?;
+        if descriptor.dev() != named.dev()
+            || descriptor.ino() != named.ino()
+            || descriptor.uid() != named.uid()
+        {
+            return Err(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay head descriptor/path identity changed",
+            ));
+        }
+    }
+    let mut bytes = Vec::with_capacity(HEAD_BYTES_V1);
+    std::io::Read::by_ref(&mut file)
+        .take(HEAD_BYTES_V1 as u64 + 1)
+        .read_to_end(&mut bytes)
+        .map_err(PayloadReplayErrorV1::Io)?;
+    if bytes.len() != HEAD_BYTES_V1 {
+        return Err(PayloadReplayErrorV1::Corrupt);
+    }
+    Ok(bytes)
+}
+
 fn persist_head(
     path: &Path,
     directory: &File,
@@ -1101,8 +1154,7 @@ fn persist_head(
             ));
         }
     }
-    let temporary =
-        path.with_file_name(format!(".{name}.tmp-{}-{record_count}", std::process::id()));
+    let temporary = next_head_temp_path_v1(path, name, record_count);
     let result = (|| {
         let mut options = OpenOptions::new();
         options.write(true).create_new(true);
@@ -1115,7 +1167,10 @@ fn persist_head(
         Ok::<(), io::Error>(())
     })();
     if let Err(error) = result {
-        let _ = fs::remove_file(&temporary);
+        // Do not unlink the temporary by pathname after a failed create/write
+        // operation: a same-UID process could have replaced it.  Retaining
+        // the stale name preserves recovery evidence for an explicit owner;
+        // normal retries use a fresh process-local nonce.
         return Err(PayloadReplayErrorV1::Io(error));
     }
     Ok(())
@@ -1126,6 +1181,35 @@ fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayError
         PayloadReplayErrorV1::InvalidRequest("payload replay path filename"),
     )?;
     Ok(path.with_file_name(format!(".{name}.{suffix}")))
+}
+
+/// Failed head publications are retained for an explicit recovery owner.
+/// Refuse to treat one as invisible on restart: otherwise PID reuse or a
+/// stale pathname can turn a response-loss cut into a permanent liveness or
+/// replay ambiguity.
+fn reject_stale_head_temps(path: &Path) -> Result<(), PayloadReplayErrorV1> {
+    let parent = path.parent().ok_or(PayloadReplayErrorV1::InvalidRequest(
+        "payload replay path has no parent",
+    ))?;
+    let head_path = sidecar_path(path, "head-v1")?;
+    let head_name = head_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay head filename",
+        ))?;
+    let prefix = format!(".{head_name}.tmp-");
+    for entry in fs::read_dir(parent).map_err(PayloadReplayErrorV1::Io)? {
+        let entry = entry.map_err(PayloadReplayErrorV1::Io)?;
+        if entry
+            .file_name()
+            .to_str()
+            .is_some_and(|value| value.starts_with(&prefix))
+        {
+            return Err(PayloadReplayErrorV1::Corrupt);
+        }
+    }
+    Ok(())
 }
 
 fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayErrorV1> {
@@ -1218,7 +1302,9 @@ fn private_parent_mode(metadata: &fs::Metadata) -> bool {
 fn private_file_mode(metadata: &fs::Metadata) -> bool {
     #[cfg(unix)]
     {
-        metadata.nlink() == 1 && metadata.permissions().mode() & 0o7777 == PRIVATE_MODE_V1
+        metadata.nlink() == 1
+            && metadata.permissions().mode() & 0o7777 == PRIVATE_MODE_V1
+            && metadata.uid() == rustix::process::geteuid().as_raw()
     }
     #[cfg(not(unix))]
     {
@@ -1445,6 +1531,31 @@ mod tests {
         store.admit(&outbound).unwrap();
         assert!(store.contains_session([9; 32], PeerLeaseDirectionV1::Inbound, [5; 32]));
         assert!(store.contains_session([9; 32], PeerLeaseDirectionV1::Outbound, [5; 32]));
+    }
+
+    #[test]
+    fn head_temp_paths_use_a_process_nonce() {
+        let path = Path::new("/tmp/frames.head-v1");
+        let first = next_head_temp_path_v1(path, "frames.head-v1", 2);
+        let second = next_head_temp_path_v1(path, "frames.head-v1", 2);
+        assert_ne!(first, second);
+    }
+
+    #[test]
+    fn stale_head_publication_requires_recovery() {
+        let root = tempfile::tempdir().expect("temporary parent");
+        #[cfg(unix)]
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+        let path = root.path().join("frames.wal");
+        let head = sidecar_path(&path, "head-v1").expect("head path");
+        let name = head.file_name().and_then(|value| value.to_str()).unwrap();
+        let temporary = next_head_temp_path_v1(&head, name, 0);
+        fs::write(&temporary, b"retained").expect("retained head evidence");
+        assert!(matches!(
+            PayloadReplayStoreV1::open(&path, namespace()),
+            Err(PayloadReplayErrorV1::Corrupt)
+        ));
     }
 
     #[cfg(unix)]

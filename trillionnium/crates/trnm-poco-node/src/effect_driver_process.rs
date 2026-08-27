@@ -23,6 +23,7 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{self, BufRead, Read, Write},
     path::{Component, Path, PathBuf},
+    sync::atomic::{AtomicU64, Ordering},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
@@ -94,6 +95,10 @@ const APPLICATION_WAL_V1: &str = "application-seal.wal";
 // a subsequent one-shot owner must stop and hand this record to a recovery
 // owner rather than silently retrying the same frame.
 const P2P_REPLAY_PENDING_V1: &str = "p2p-replay.pending";
+// Failed atomic publications are retained as recovery evidence.  A process
+// local nonce prevents a retry in the same owner from colliding forever with
+// the retained temporary pathname.
+static ROOT_TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 const FAIL_CHECKPOINT_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT";
 const LOCAL_KEY_BYTES_V1: [u8; 32] = [41; 32];
 const FIXTURE_PAYLOAD_V1: &[u8] = b"candidate-synced-proposal-v1";
@@ -110,16 +115,26 @@ const P2P_SOCKET_MAX_RECORD_BYTES_V1: usize =
 #[cfg(unix)]
 const P2P_SOCKET_READ_TIMEOUT_V1: Duration = Duration::from_secs(5);
 #[cfg(unix)]
+// One absolute budget covers both authenticated input records, the required
+// half-close, and the bounded response write.  Per-I/O socket timeouts alone
+// permit a peer to drip one byte just before each timeout indefinitely.
+const P2P_SOCKET_OPERATION_TIMEOUT_V1: Duration = Duration::from_secs(30);
+#[cfg(unix)]
 const P2P_SOCKET_ACCEPT_TIMEOUT_V1: Duration = Duration::from_secs(5);
 #[cfg(unix)]
 const P2P_SOCKET_ACCEPT_POLL_V1: Duration = Duration::from_millis(10);
 #[cfg(unix)]
-const P2P_SOCKET_LEASE_TTL_MS_V1: u64 = 30_000;
+// Keep the authority lease wider than the one-shot socket budget so a slow
+// but bounded replay/Core path can be detected before it reaches expiry.
+const P2P_SOCKET_LEASE_TTL_MS_V1: u64 = 120_000;
 // A token which is about to expire cannot safely cover the replay/Core
-// boundary.  Keep a full socket operation budget in reserve and fail closed
-// before exposing an input when the authority returns a nearly-dead token.
+// boundary. Keep the complete 30-second socket budget plus one lease-client
+// round trip in reserve and fail closed before exposing an input when the
+// authority returns a nearly-dead token.
 #[cfg(unix)]
-const P2P_SOCKET_MIN_REMAINING_LEASE_MS_V1: u64 = P2P_SOCKET_READ_TIMEOUT_V1.as_millis() as u64;
+const P2P_SOCKET_MIN_REMAINING_LEASE_MS_V1: u64 = P2P_SOCKET_OPERATION_TIMEOUT_V1.as_millis()
+    as u64
+    + P2P_SOCKET_READ_TIMEOUT_V1.as_millis() as u64;
 #[cfg(unix)]
 const P2P_SOCKET_RUN_ID_MAX_BYTES_V1: usize = 128;
 // macOS has the smallest `sockaddr_un.sun_path` supported by the candidate
@@ -565,7 +580,11 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
         .file_name()
         .and_then(|value| value.to_str())
         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "path has no UTF-8 name"))?;
-    let temp = parent.join(format!(".{name}.tmp-{}", std::process::id()));
+    let temp = parent.join(format!(
+        ".{name}.tmp-{}-{}",
+        std::process::id(),
+        ROOT_TEMP_NONCE_V1.fetch_add(1, Ordering::Relaxed),
+    ));
     let result = (|| {
         let mut options = OpenOptions::new();
         options.write(true).create_new(true);
@@ -587,13 +606,11 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
         sync_parent_directory_v1(path)?;
         Ok::<(), io::Error>(())
     })();
-    if let Err(error) = result {
-        // A failed replacement must not leave a same-name temporary file that
-        // a later owner could accidentally trust.  `create_new` above also
-        // makes a stale temporary an explicit fail-closed condition.
-        let _ = fs::remove_file(&temp);
-        return Err(error);
-    }
+    // Do not unlink the temporary by pathname here: after `create_new` or a
+    // write failure, a same-UID process could have replaced that name.
+    // Leaving it makes the next owner fail closed on the stale create_new
+    // name and preserves the evidence for recovery.
+    result?;
     Ok(())
 }
 
@@ -766,6 +783,15 @@ fn validate_directory_ancestor_metadata_v1(
             ),
         ));
     }
+    if owner != 0 && owner != rustix::process::geteuid().as_raw() {
+        return Err(EffectDriverProcessErrorV1::new(
+            "root",
+            format!(
+                "directory ancestor {} is owned by a different user ({owner})",
+                path.display()
+            ),
+        ));
+    }
     // System-owned components are accepted only when they are not writable;
     // all non-root components in the chain must belong to one uid.  This
     // rejects a path which crosses into a different user's writable tree
@@ -842,7 +868,7 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
     set_private_root_permissions(&directory)?;
     let metadata = directory.metadata()?;
     ensure_private_root_metadata(root, &metadata)?;
-    for name in [
+    let state_names = [
         ROOT_MARKER_V1,
         TRANSITION_WAL_V1,
         SAFETY_STATE_V1,
@@ -851,7 +877,27 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
         TIMER_WAL_V1,
         APPLICATION_WAL_V1,
         P2P_REPLAY_PENDING_V1,
-    ] {
+    ];
+    // A "fresh" root is an exact inventory, not just a set of known files
+    // which happen to be empty.  Reject unknown files, directories and stale
+    // atomic-replace temporaries so a previous/hostile owner cannot smuggle
+    // unreviewed state past the recovery boundary.
+    for entry in fs::read_dir(root)? {
+        let entry = entry?;
+        if !state_names
+            .iter()
+            .any(|name| entry.file_name() == Path::new(name).as_os_str())
+        {
+            return Err(EffectDriverProcessErrorV1::new(
+                "recovery_required",
+                format!(
+                    "unknown candidate state {} requires an explicit recovery owner",
+                    entry.path().display()
+                ),
+            ));
+        }
+    }
+    for name in state_names {
         let path = root.join(name);
         match fs::symlink_metadata(&path) {
             Ok(metadata) => {
@@ -879,6 +925,19 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
                         ),
                     ));
                 }
+                if name == ROOT_MARKER_V1 {
+                    // The marker is created only when an owner starts.  An
+                    // existing empty marker is therefore not an idempotent
+                    // clean state; it is indistinguishable from truncation
+                    // by a same-UID process and must stop for recovery.
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "recovery_required",
+                        format!(
+                            "empty candidate state {} requires an explicit recovery owner",
+                            path.display()
+                        ),
+                    ));
+                }
             }
             Err(error) if error.kind() == io::ErrorKind::NotFound => {}
             Err(error) => return Err(error.into()),
@@ -895,11 +954,12 @@ fn ensure_private_root_metadata(
     {
         if metadata.file_type().is_symlink()
             || !metadata.is_dir()
-            || metadata.permissions().mode() & 0o077 != 0
+            || metadata.permissions().mode() & 0o7777 != 0o700
+            || metadata.uid() != rustix::process::geteuid().as_raw()
         {
             return Err(EffectDriverProcessErrorV1::new(
                 "root",
-                "candidate run root must be a private directory",
+                "candidate run root must be an owner-private 0700 directory",
             ));
         }
     }
@@ -1055,10 +1115,11 @@ fn ensure_private_artifact_metadata(metadata: &fs::Metadata) -> io::Result<()> {
             || !metadata.is_file()
             || metadata.permissions().mode() & 0o7777 != 0o600
             || metadata.nlink() != 1
+            || metadata.uid() != rustix::process::geteuid().as_raw()
         {
             return Err(io::Error::new(
                 io::ErrorKind::PermissionDenied,
-                "candidate artifact must be a private, single-link regular file",
+                "candidate artifact must be an owner-private 0600 single-link regular file",
             ));
         }
     }
@@ -1311,6 +1372,32 @@ fn driver_error_json(error: &CandidateEffectDriverErrorV1) -> Value {
     json!({"status":"fail_stopped","reason":error.to_string(),"candidate_only":true})
 }
 
+fn write_stdio_json_line<W: Write>(
+    writer: &mut W,
+    value: &Value,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    serde_json::to_writer(&mut *writer, value).map_err(|error| {
+        EffectDriverProcessErrorV1::new("stdio", format!("response serialization/write: {error:?}"))
+    })?;
+    writer.write_all(b"\n").map_err(|error| {
+        EffectDriverProcessErrorV1::new("stdio", format!("response write: {error:?}"))
+    })?;
+    writer.flush().map_err(|error| {
+        EffectDriverProcessErrorV1::new("stdio", format!("response flush: {error:?}"))
+    })?;
+    Ok(())
+}
+
+fn write_stdio_json_line_uncertain<W: Write>(
+    writer: &mut W,
+    value: &Value,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    write_stdio_json_line(writer, value).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous("stdio_response_uncertain", error.to_string())
+    })?;
+    Ok(())
+}
+
 type FileEffectDriverV1 = CandidateEffectDriverV1<FileTransitionStoreV1, FileHooksV1>;
 
 fn open_file_effect_driver_v1(
@@ -1338,6 +1425,72 @@ fn open_file_effect_driver_v1(
     .map_err(|error| EffectDriverProcessErrorV1::new("driver", error.to_string()))
 }
 
+enum BoundedStdioLineV1 {
+    Complete(Vec<u8>),
+    TooLarge,
+}
+
+/// Read one line without allowing `BufRead::read_line` to grow a buffer
+/// without bound.  At most `maximum` bytes are retained; an oversized line is
+/// drained (without allocation) through its newline so the next command keeps
+/// its framing.
+fn read_bounded_stdio_line_v1<R: BufRead>(
+    reader: &mut R,
+    maximum: usize,
+) -> io::Result<Option<BoundedStdioLineV1>> {
+    let mut line = Vec::with_capacity(maximum.min(8 * 1024));
+    let mut total = 0usize;
+    loop {
+        let buffer = reader.fill_buf()?;
+        if buffer.is_empty() {
+            if total == 0 {
+                return Ok(None);
+            }
+            return Ok(Some(if total >= maximum {
+                BoundedStdioLineV1::TooLarge
+            } else {
+                BoundedStdioLineV1::Complete(line)
+            }));
+        }
+
+        let newline = buffer.iter().position(|byte| *byte == b'\n');
+        let available = newline.map_or(buffer.len(), |index| index + 1);
+        let remaining = maximum.saturating_sub(total);
+        if available <= remaining {
+            line.extend_from_slice(&buffer[..available]);
+            total += available;
+            reader.consume(available);
+            if newline.is_some() {
+                return Ok(Some(BoundedStdioLineV1::Complete(line)));
+            }
+            continue;
+        }
+
+        // Keep only the bounded prefix, then discard the rest of this line.
+        if remaining > 0 {
+            line.extend_from_slice(&buffer[..remaining]);
+            reader.consume(remaining);
+        }
+        drain_stdio_line_v1(reader)?;
+        return Ok(Some(BoundedStdioLineV1::TooLarge));
+    }
+}
+
+fn drain_stdio_line_v1<R: BufRead>(reader: &mut R) -> io::Result<()> {
+    loop {
+        let buffer = reader.fill_buf()?;
+        if buffer.is_empty() {
+            return Ok(());
+        }
+        if let Some(index) = buffer.iter().position(|byte| *byte == b'\n') {
+            reader.consume(index + 1);
+            return Ok(());
+        }
+        let length = buffer.len();
+        reader.consume(length);
+    }
+}
+
 /// Run the candidate process over line-delimited JSON stdin/stdout.
 pub fn run_stdio_v1<R: BufRead, W: Write>(
     root: PathBuf,
@@ -1354,47 +1507,42 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
     .map_err(|error| EffectDriverProcessErrorV1::new("root", format!("start marker: {error:?}")))?;
     let mut driver = open_file_effect_driver_v1(&root)?;
 
-    let mut line = String::new();
     let mut shutdown = false;
-    loop {
-        line.clear();
-        let bytes = reader.read_line(&mut line)?;
-        if bytes == 0 {
-            break;
-        }
-        if bytes > EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1
-            || (!line.ends_with('\n') && bytes == EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1)
-        {
-            let response =
-                json!({"status":"rejected","reason":"frame_too_large","candidate_only":true});
-            serde_json::to_writer(&mut writer, &response)
-                .map_err(|error| EffectDriverProcessErrorV1::new("json", format!("{error:?}")))?;
-            writer.write_all(b"\n")?;
-            writer.flush()?;
-            continue;
-        }
+    while let Some(line) =
+        read_bounded_stdio_line_v1(&mut reader, EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1)?
+    {
+        let line = match line {
+            BoundedStdioLineV1::Complete(bytes) => String::from_utf8(bytes)
+                .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?,
+            BoundedStdioLineV1::TooLarge => {
+                let response =
+                    json!({"status":"rejected","reason":"frame_too_large","candidate_only":true});
+                write_stdio_json_line(&mut writer, &response)?;
+                continue;
+            }
+        };
         let raw = line.trim_end_matches(['\r', '\n']).as_bytes();
         if let Err(error) = validate_strict_json_structure_v0(raw) {
             let response = json!({"status":"rejected","reason":"malformed_json","detail":error.to_string(),"candidate_only":true});
-            serde_json::to_writer(&mut writer, &response).map_err(|json_error| {
-                EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-            })?;
-            writer.write_all(b"\n")?;
-            writer.flush()?;
+            write_stdio_json_line(&mut writer, &response)?;
             continue;
         }
         let command = match serde_json::from_slice::<CommandV1>(raw) {
             Ok(command) => command,
             Err(error) => {
                 let response = json!({"status":"rejected","reason":"unknown_command","detail":error.to_string(),"candidate_only":true});
-                serde_json::to_writer(&mut writer, &response).map_err(|json_error| {
-                    EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                })?;
-                writer.write_all(b"\n")?;
-                writer.flush()?;
+                write_stdio_json_line(&mut writer, &response)?;
                 continue;
             }
         };
+        let response_may_follow_commit = matches!(
+            &command,
+            CommandV1::EnqueueTimeout { .. }
+                | CommandV1::EnqueueSyncedProposal { .. }
+                | CommandV1::EnqueueProposal { .. }
+                | CommandV1::EnqueueAuthorityVote { .. }
+                | CommandV1::Drive
+        );
 
         let response = match command {
             CommandV1::EnqueueTimeout { generation } => match driver.enqueue_timeout_v1(generation)
@@ -1408,11 +1556,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                 }
                 Err(error) => {
                     let value = driver_error_json(&error);
-                    serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
-                        EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                    })?;
-                    writer.write_all(b"\n")?;
-                    writer.flush()?;
+                    write_stdio_json_line_uncertain(&mut writer, &value)?;
                     return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                 }
             },
@@ -1429,11 +1573,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                     }
                     Err(error) => {
                         let value = driver_error_json(&error);
-                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
-                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                        })?;
-                        writer.write_all(b"\n")?;
-                        writer.flush()?;
+                        write_stdio_json_line_uncertain(&mut writer, &value)?;
                         return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                     }
                 }
@@ -1451,11 +1591,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                     }
                     Err(error) => {
                         let value = driver_error_json(&error);
-                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
-                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                        })?;
-                        writer.write_all(b"\n")?;
-                        writer.flush()?;
+                        write_stdio_json_line_uncertain(&mut writer, &value)?;
                         return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                     }
                 }
@@ -1473,11 +1609,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                     }
                     Err(error) => {
                         let value = driver_error_json(&error);
-                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
-                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                        })?;
-                        writer.write_all(b"\n")?;
-                        writer.flush()?;
+                        write_stdio_json_line_uncertain(&mut writer, &value)?;
                         return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                     }
                 }
@@ -1486,11 +1618,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                 Ok(facts) => facts_json(facts, broadcast_count(&root)),
                 Err(error) => {
                     let value = driver_error_json(&error);
-                    serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
-                        EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
-                    })?;
-                    writer.write_all(b"\n")?;
-                    writer.flush()?;
+                    write_stdio_json_line_uncertain(&mut writer, &value)?;
                     return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                 }
             },
@@ -1504,10 +1632,11 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                 value
             }
         };
-        serde_json::to_writer(&mut writer, &response)
-            .map_err(|error| EffectDriverProcessErrorV1::new("json", format!("{error:?}")))?;
-        writer.write_all(b"\n")?;
-        writer.flush()?;
+        if response_may_follow_commit {
+            write_stdio_json_line_uncertain(&mut writer, &response)?;
+        } else {
+            write_stdio_json_line(&mut writer, &response)?;
+        }
         if shutdown {
             break;
         }
@@ -1583,13 +1712,14 @@ fn validate_p2p_socket_parameters_v1(
         P2P_REPLAY_PENDING_V1,
     ]
     .map(|name| root.join(name));
-    if candidate_paths
-        .iter()
-        .any(|path| path == root || root_artifacts.iter().any(|artifact| artifact == path))
-    {
+    if candidate_paths.iter().any(|path| {
+        path == root
+            || path.starts_with(root)
+            || root_artifacts.iter().any(|artifact| artifact == path)
+    }) {
         return Err(EffectDriverProcessErrorV1::new(
             "p2p",
-            "candidate socket/replay path collides with the run root or a root artifact",
+            "candidate socket/replay path must be outside the run root and its artifacts",
         ));
     }
     if lease_generation == 0 {
@@ -1813,44 +1943,59 @@ pub fn run_p2p_socket_once_v1(
             format!("pin listener: {error:?}"),
         ));
     }
-    let result = (|| {
-        let mut stream = accept_candidate_p2p_v1(&listener)?;
-        stream
-            .set_nonblocking(false)
-            .and_then(|_| stream.set_read_timeout(Some(P2P_SOCKET_READ_TIMEOUT_V1)))
-            .and_then(|_| stream.set_write_timeout(Some(P2P_SOCKET_READ_TIMEOUT_V1)))
-            .map_err(|error| {
-                EffectDriverProcessErrorV1::new("socket", format!("timeout: {error:?}"))
-            })?;
+    let mut stream = accept_candidate_p2p_v1(&listener)?;
+    stream.set_nonblocking(true).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("nonblocking: {error:?}"))
+    })?;
+    let operation_deadline = Instant::now()
+        .checked_add(P2P_SOCKET_OPERATION_TIMEOUT_V1)
+        .unwrap_or_else(Instant::now);
 
-        let outcome = process_one_candidate_p2p_connection_v1(
-            &mut stream,
-            &mut driver,
-            &root,
-            namespace,
-            lease_socket_path,
-            replay_path,
-            lease_generation,
-        );
-        match outcome {
-            Ok((response, summary)) => {
-                write_p2p_socket_response_v1(&mut stream, response).map_err(|error| {
+    let outcome = process_one_candidate_p2p_connection_v1(
+        &mut stream,
+        &mut driver,
+        &root,
+        namespace,
+        lease_socket_path,
+        replay_path,
+        lease_generation,
+        operation_deadline,
+    );
+    // Validate the root before emitting either response.  A namespace change
+    // after durable work is always an uncertainty, so the peer must not see a
+    // stale ordinary rejection that invites a duplicate retry.
+    let outcome = match root_guard.validate_identity() {
+        Ok(()) => outcome,
+        Err(identity_error) => match outcome {
+            Ok(_) => Err(EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_root_identity_uncertain",
+                format!("run-root identity validation failed after operation: {identity_error}"),
+            )),
+            Err(error) if error.is_commit_ambiguous() => Err(error),
+            Err(error) => Err(EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_root_identity_uncertain",
+                format!("{error}; run-root identity validation failed: {identity_error}"),
+            )),
+        },
+    };
+    match outcome {
+        Ok((response, summary)) => {
+            write_p2p_socket_response_v1(&mut stream, response, operation_deadline).map_err(
+                |error| {
                     EffectDriverProcessErrorV1::commit_ambiguous(
                         "p2p_response_uncertain",
                         error.to_string(),
                     )
-                })?;
-                Ok(summary)
-            }
-            Err(error) => {
-                let response = p2p_error_response_v1(&error);
-                let _ = write_p2p_socket_response_v1(&mut stream, response);
-                Err(error)
-            }
+                },
+            )?;
+            Ok(summary)
         }
-    })();
-    root_guard.validate_identity()?;
-    result
+        Err(error) => {
+            let response = p2p_error_response_v1(&error);
+            let _ = write_p2p_socket_response_v1(&mut stream, response, operation_deadline);
+            Err(error)
+        }
+    }
 }
 
 #[cfg(unix)]
@@ -1999,6 +2144,9 @@ fn clear_p2p_replay_pending_v1(root: &Path) -> Result<(), EffectDriverProcessErr
 }
 
 #[cfg(unix)]
+// This candidate boundary keeps every authority/path/deadline input explicit;
+// bundling them would obscure which values are caller-owned capabilities.
+#[allow(clippy::too_many_arguments)]
 fn process_one_candidate_p2p_connection_v1(
     stream: &mut UnixStream,
     driver: &mut FileEffectDriverV1,
@@ -2007,8 +2155,13 @@ fn process_one_candidate_p2p_connection_v1(
     lease_socket_path: PathBuf,
     replay_path: PathBuf,
     lease_generation: u64,
+    operation_deadline: Instant,
 ) -> Result<(Value, EffectDriverProcessSummaryV1), EffectDriverProcessErrorV1> {
-    let handshake = read_p2p_socket_record_v1(stream, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0)?;
+    let handshake = read_p2p_socket_record_v1(
+        stream,
+        P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
+        operation_deadline,
+    )?;
     let session = PocoNodeP2pSessionV0::open(
         &handshake,
         driver.core().config().validator_set(),
@@ -2029,8 +2182,9 @@ fn process_one_candidate_p2p_connection_v1(
     // lease.  A malformed or incomplete peer cannot consume an authority
     // lease, and the mandatory EOF check rejects a third record/trailing byte
     // on this one-shot protocol.
-    let frame_bytes = read_p2p_socket_record_v1(stream, P2P_SOCKET_MAX_RECORD_BYTES_V1)?;
-    require_p2p_socket_eof_v1(stream)?;
+    let frame_bytes =
+        read_p2p_socket_record_v1(stream, P2P_SOCKET_MAX_RECORD_BYTES_V1, operation_deadline)?;
+    require_p2p_socket_eof_v1(stream, operation_deadline)?;
     let mut budget = Cev0AdmissionBudgetV0::for_validator_set(
         driver.core().config().consensus_parameters(),
         driver.core().config().validator_set(),
@@ -2046,8 +2200,9 @@ fn process_one_candidate_p2p_connection_v1(
         (input, frame_kind, sequence)
     };
 
-    let lease_authority =
-        UnixPeerLeaseClientV1::connect(&lease_socket_path).with_timeout(P2P_SOCKET_READ_TIMEOUT_V1);
+    let lease_authority = UnixPeerLeaseClientV1::connect(&lease_socket_path)
+        .with_timeout(P2P_SOCKET_READ_TIMEOUT_V1)
+        .with_deadline(operation_deadline);
     lease_authority
         .preflight()
         .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
@@ -2208,6 +2363,16 @@ fn process_one_candidate_p2p_connection_v1(
             "lease was fenced after durable replay admission",
         ));
     }
+    // Replay admission and Core delivery are separate durable boundaries.  A
+    // slow WAL/fsync or a stalled local scheduler can consume the lease's
+    // remaining TTL after the first check; do not hand an input to Core unless
+    // the exact lease is still valid for the complete enqueue/drive window.
+    validate_p2p_token_remaining_ttl_v1(revalidated_after_append).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
+            format!("lease remaining TTL expired before Core delivery: {error}"),
+        )
+    })?;
     let admission = driver
         .enqueue_authenticated_peer_input_v1(driver_generation, accepted.0)
         .map_err(|error| {
@@ -2222,9 +2387,46 @@ fn process_one_candidate_p2p_connection_v1(
             format!("unexpected Core ingress admission: {admission:?}"),
         ));
     }
+    // Enqueue itself can cross a scheduler/IPC boundary.  Re-check the
+    // authority immediately before driving Core so an expiry or fence in
+    // that interval is surfaced as uncertainty rather than a clean success.
+    let revalidated_before_drive = lease_guard.revalidate().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_post_replay_uncertain", error.to_string())
+    })?;
+    if revalidated_before_drive != token {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
+            "lease was fenced after Core enqueue and before drive",
+        ));
+    }
+    validate_p2p_token_remaining_ttl_v1(revalidated_before_drive).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
+            format!("lease remaining TTL expired before Core drive: {error}"),
+        )
+    })?;
     let facts = driver.drive_v1().map_err(|error| {
         EffectDriverProcessErrorV1::commit_ambiguous("p2p_post_replay_uncertain", error.to_string())
     })?;
+    // The drive call is synchronous but not interruptible by the socket
+    // deadline.  Revalidate once more before releasing the lease so an
+    // expiry/fence during Core processing is surfaced as an uncertain result
+    // and cannot be mistaken for a fully fenced success.
+    let revalidated_after_drive = lease_guard.revalidate().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_post_replay_uncertain", error.to_string())
+    })?;
+    if revalidated_after_drive != token {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
+            "lease was fenced during Core drive",
+        ));
+    }
+    if let Err(error) = validate_p2p_token_remaining_ttl_v1(revalidated_after_drive) {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
+            format!("lease expired during Core drive: {error}"),
+        ));
+    }
     lease_guard.release().map_err(|error| {
         EffectDriverProcessErrorV1::commit_ambiguous(
             "p2p_lease_release_uncertain",
@@ -2288,11 +2490,10 @@ fn core_input_from_p2p_proof_v1(
 fn read_p2p_socket_record_v1(
     stream: &mut UnixStream,
     maximum: usize,
+    deadline: Instant,
 ) -> Result<Vec<u8>, EffectDriverProcessErrorV1> {
     let mut header = [0u8; P2P_SOCKET_RECORD_HEADER_BYTES_V1];
-    stream.read_exact(&mut header).map_err(|error| {
-        EffectDriverProcessErrorV1::new("socket", format!("record header: {error:?}"))
-    })?;
+    read_p2p_exact_until_v1(stream, &mut header, deadline, "record header")?;
     let length = u32::from_be_bytes(header) as usize;
     if length == 0 || length > maximum {
         return Err(EffectDriverProcessErrorV1::new(
@@ -2301,36 +2502,37 @@ fn read_p2p_socket_record_v1(
         ));
     }
     let mut bytes = vec![0u8; length];
-    stream.read_exact(&mut bytes).map_err(|error| {
-        EffectDriverProcessErrorV1::new("socket", format!("record body: {error:?}"))
-    })?;
+    read_p2p_exact_until_v1(stream, &mut bytes, deadline, "record body")?;
     Ok(bytes)
 }
 
 #[cfg(unix)]
-fn require_p2p_socket_eof_v1(stream: &mut UnixStream) -> Result<(), EffectDriverProcessErrorV1> {
+fn require_p2p_socket_eof_v1(
+    stream: &mut UnixStream,
+    deadline: Instant,
+) -> Result<(), EffectDriverProcessErrorV1> {
     let mut trailing = [0u8; 1];
-    match stream.read(&mut trailing) {
-        Ok(0) => Ok(()),
-        Ok(_) => Err(EffectDriverProcessErrorV1::new(
-            "socket",
-            "trailing bytes or records after the single candidate frame",
-        )),
-        Err(error)
-            if matches!(
-                error.kind(),
-                io::ErrorKind::WouldBlock | io::ErrorKind::TimedOut
-            ) =>
-        {
-            Err(EffectDriverProcessErrorV1::new(
-                "socket",
-                "peer did not half-close after the single candidate frame",
-            ))
+    loop {
+        ensure_p2p_deadline_v1(deadline, "peer did not half-close")?;
+        match stream.read(&mut trailing) {
+            Ok(0) => return Ok(()),
+            Ok(_) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    "trailing bytes or records after the single candidate frame",
+                ));
+            }
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                sleep_until_p2p_deadline_v1(deadline, "peer did not half-close")?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("trailing-byte check: {error:?}"),
+                ));
+            }
         }
-        Err(error) => Err(EffectDriverProcessErrorV1::new(
-            "socket",
-            format!("trailing-byte check: {error:?}"),
-        )),
     }
 }
 
@@ -2338,6 +2540,7 @@ fn require_p2p_socket_eof_v1(stream: &mut UnixStream) -> Result<(), EffectDriver
 fn write_p2p_socket_response_v1(
     stream: &mut UnixStream,
     response: Value,
+    deadline: Instant,
 ) -> Result<(), EffectDriverProcessErrorV1> {
     let bytes = serde_json::to_vec(&response).map_err(|error| {
         EffectDriverProcessErrorV1::new("socket", format!("response: {error:?}"))
@@ -2350,9 +2553,118 @@ fn write_p2p_socket_response_v1(
     }
     let length = u32::try_from(bytes.len())
         .map_err(|_| EffectDriverProcessErrorV1::new("socket", "response length overflow"))?;
-    stream.write_all(&length.to_be_bytes())?;
-    stream.write_all(&bytes)?;
-    stream.flush()?;
+    write_p2p_all_until_v1(stream, &length.to_be_bytes(), deadline, "response header")?;
+    write_p2p_all_until_v1(stream, &bytes, deadline, "response body")?;
+    loop {
+        ensure_p2p_deadline_v1(deadline, "response flush")?;
+        match stream.flush() {
+            Ok(()) => break,
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                sleep_until_p2p_deadline_v1(deadline, "response flush")?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("response flush: {error:?}"),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn p2p_timeout_error_v1(detail: &str) -> EffectDriverProcessErrorV1 {
+    EffectDriverProcessErrorV1::new("socket", detail)
+}
+
+#[cfg(unix)]
+fn sleep_until_p2p_deadline_v1(
+    deadline: Instant,
+    detail: &str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let remaining = deadline
+        .checked_duration_since(Instant::now())
+        .ok_or_else(|| p2p_timeout_error_v1(detail))?;
+    std::thread::sleep(remaining.min(Duration::from_millis(10)));
+    Ok(())
+}
+
+#[cfg(unix)]
+fn read_p2p_exact_until_v1(
+    stream: &mut UnixStream,
+    buffer: &mut [u8],
+    deadline: Instant,
+    label: &str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let mut offset = 0;
+    while offset < buffer.len() {
+        ensure_p2p_deadline_v1(deadline, label)?;
+        match stream.read(&mut buffer[offset..]) {
+            Ok(0) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("{label}: unexpected EOF"),
+                ));
+            }
+            Ok(read) => offset += read,
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                sleep_until_p2p_deadline_v1(deadline, label)?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("{label}: {error:?}"),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn write_p2p_all_until_v1(
+    stream: &mut UnixStream,
+    buffer: &[u8],
+    deadline: Instant,
+    label: &str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let mut offset = 0;
+    while offset < buffer.len() {
+        ensure_p2p_deadline_v1(deadline, label)?;
+        match stream.write(&buffer[offset..]) {
+            Ok(0) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("{label}: zero-byte write"),
+                ));
+            }
+            Ok(written) => offset += written,
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                sleep_until_p2p_deadline_v1(deadline, label)?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("{label}: {error:?}"),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn ensure_p2p_deadline_v1(
+    deadline: Instant,
+    detail: &str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    if Instant::now() >= deadline {
+        return Err(p2p_timeout_error_v1(detail));
+    }
     Ok(())
 }
 
@@ -2697,6 +3009,26 @@ mod persistence_security_tests {
     }
 
     #[test]
+    fn fresh_root_rejects_unknown_state_inventory() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+        let root = parent.path().join("run");
+        fs::create_dir(&root).expect("run root");
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).expect("private run root");
+        let unknown = root.join("stale-owner-state");
+        fs::write(&unknown, b"stale").expect("unknown state");
+        fs::set_permissions(&unknown, fs::Permissions::from_mode(0o600))
+            .expect("private unknown state");
+        let error = fresh_root(&root).expect_err("unknown inventory must fail closed");
+        assert!(error.to_string().contains("recovery_required"));
+        assert!(
+            unknown.exists(),
+            "preflight must not destroy recovery evidence"
+        );
+    }
+
+    #[test]
     fn run_root_lock_is_exclusive_and_identity_pinned() {
         let parent = tempfile::tempdir().expect("temporary parent");
         fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
@@ -2758,6 +3090,45 @@ mod persistence_security_tests {
     }
 
     #[test]
+    fn stdio_line_reader_bounds_oversized_input_and_preserves_framing() {
+        use std::io::Cursor;
+
+        let mut input = vec![b'x'; EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1 + 1];
+        input.push(b'\n');
+        input.extend_from_slice(b"{\"command\":\"shutdown\"}\n");
+        let mut reader = Cursor::new(input);
+        assert!(matches!(
+            read_bounded_stdio_line_v1(&mut reader, EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1)
+                .expect("bounded read"),
+            Some(BoundedStdioLineV1::TooLarge)
+        ));
+        let next =
+            read_bounded_stdio_line_v1(&mut reader, EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1)
+                .expect("framed follow-up read");
+        assert!(matches!(
+            next,
+            Some(BoundedStdioLineV1::Complete(bytes))
+                if bytes.as_slice() == b"{\"command\":\"shutdown\"}\n"
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn p2p_frame_io_uses_one_absolute_deadline() {
+        let (mut reader, mut writer) = UnixStream::pair().expect("socket pair");
+        reader.set_nonblocking(true).expect("nonblocking reader");
+        writer.set_nonblocking(true).expect("nonblocking writer");
+        let expired = Instant::now();
+        let mut byte = [0u8; 1];
+        let read_error = read_p2p_exact_until_v1(&mut reader, &mut byte, expired, "drip read")
+            .expect_err("expired frame read must fail closed");
+        assert!(read_error.to_string().contains("drip read"));
+        let write_error = write_p2p_all_until_v1(&mut writer, &[1], expired, "drip write")
+            .expect_err("expired frame write must fail closed");
+        assert!(write_error.to_string().contains("drip write"));
+    }
+
+    #[test]
     fn p2p_parameter_validation_rejects_path_collisions_aliases_and_long_sockets() {
         let root = PathBuf::from("/tmp/trnm-poco-parameter-root");
         let socket = PathBuf::from("/tmp/trnm-poco-candidate.sock");
@@ -2777,6 +3148,17 @@ mod persistence_security_tests {
             &artifact,
             &lease_socket,
             &replay,
+            "run-1",
+            1,
+        )
+        .is_err());
+
+        let nested_replay = root.join("untracked-replay.wal");
+        assert!(validate_p2p_socket_parameters_v1(
+            &root,
+            &socket,
+            &lease_socket,
+            &nested_replay,
             "run-1",
             1,
         )
