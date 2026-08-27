@@ -2,13 +2,13 @@
 
 use std::{
     fs,
-    io::{Read, Write},
+    io::{self, Read, Write},
     os::unix::{
         fs::FileTypeExt,
         net::{UnixListener, UnixStream},
     },
     path::{Path, PathBuf},
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 use crate::protocol::{
@@ -82,13 +82,17 @@ impl UnixPeerLeaseClientV1 {
     }
 
     fn call(&self, request: LeaseRequestV1) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
+        // UnixStream::connect has no stable standard-library deadline API.
+        // Start the operation deadline before connecting so a slow connect
+        // cannot grant a fresh full I/O budget after it eventually returns;
+        // the connect syscall itself remains an explicit platform limitation.
+        let deadline = Instant::now()
+            .checked_add(self.timeout)
+            .unwrap_or_else(Instant::now);
         let mut stream = UnixStream::connect(&self.socket_path)?;
-        stream.set_read_timeout(Some(self.timeout))?;
-        stream.set_write_timeout(Some(self.timeout))?;
         let frame = encode_request(request);
-        stream.write_all(&frame)?;
-        stream.flush()?;
-        let response_frame = read_frame(&mut stream)?;
+        write_all_until(&mut stream, &frame, deadline)?;
+        let response_frame = read_frame_until(&mut stream, deadline)?;
         match decode_response(&response_frame)? {
             LeaseResponseV1::Token(token) => Ok(token),
             LeaseResponseV1::Rejected(code) => Err(PeerLeaseErrorV1::Rejected(code)),
@@ -271,8 +275,25 @@ fn serve_connection(
 }
 
 fn read_frame(stream: &mut UnixStream) -> Result<Vec<u8>, PeerLeaseErrorV1> {
+    read_frame_inner(stream, None)
+}
+
+fn read_frame_until(
+    stream: &mut UnixStream,
+    deadline: Instant,
+) -> Result<Vec<u8>, PeerLeaseErrorV1> {
+    read_frame_inner(stream, Some(deadline))
+}
+
+fn read_frame_inner(
+    stream: &mut UnixStream,
+    deadline: Option<Instant>,
+) -> Result<Vec<u8>, PeerLeaseErrorV1> {
     let mut header = [0u8; 8];
-    stream.read_exact(&mut header)?;
+    match deadline {
+        Some(deadline) => read_exact_until(stream, &mut header, deadline)?,
+        None => stream.read_exact(&mut header)?,
+    }
     if header[..4] != *b"TPLS" {
         return Err(PeerLeaseErrorV1::Protocol("invalid peer-lease frame magic"));
     }
@@ -283,8 +304,70 @@ fn read_frame(stream: &mut UnixStream) -> Result<Vec<u8>, PeerLeaseErrorV1> {
     let mut frame = Vec::with_capacity(8 + body_len);
     frame.extend_from_slice(&header);
     frame.resize(8 + body_len, 0);
-    stream.read_exact(&mut frame[8..])?;
+    match deadline {
+        Some(deadline) => read_exact_until(stream, &mut frame[8..], deadline)?,
+        None => stream.read_exact(&mut frame[8..])?,
+    }
     Ok(frame)
+}
+
+fn read_exact_until(
+    stream: &mut UnixStream,
+    buffer: &mut [u8],
+    deadline: Instant,
+) -> Result<(), PeerLeaseErrorV1> {
+    let mut offset = 0usize;
+    while offset < buffer.len() {
+        stream.set_read_timeout(Some(remaining_timeout(deadline)?))?;
+        match stream.read(&mut buffer[offset..]) {
+            Ok(0) => {
+                return Err(PeerLeaseErrorV1::Io(io::Error::new(
+                    io::ErrorKind::UnexpectedEof,
+                    "peer-lease stream closed before frame completed",
+                )))
+            }
+            Ok(count) => offset += count,
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
+        }
+    }
+    Ok(())
+}
+
+fn write_all_until(
+    stream: &mut UnixStream,
+    buffer: &[u8],
+    deadline: Instant,
+) -> Result<(), PeerLeaseErrorV1> {
+    let mut offset = 0usize;
+    while offset < buffer.len() {
+        stream.set_write_timeout(Some(remaining_timeout(deadline)?))?;
+        match stream.write(&buffer[offset..]) {
+            Ok(0) => {
+                return Err(PeerLeaseErrorV1::Io(io::Error::new(
+                    io::ErrorKind::WriteZero,
+                    "peer-lease stream accepted no frame bytes",
+                )))
+            }
+            Ok(count) => offset += count,
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
+        }
+    }
+    stream.set_write_timeout(Some(remaining_timeout(deadline)?))?;
+    stream.flush()?;
+    Ok(())
+}
+
+fn remaining_timeout(deadline: Instant) -> Result<Duration, PeerLeaseErrorV1> {
+    let remaining = deadline.saturating_duration_since(Instant::now());
+    if remaining.is_zero() {
+        return Err(PeerLeaseErrorV1::Io(io::Error::new(
+            io::ErrorKind::TimedOut,
+            "peer-lease operation deadline exceeded",
+        )));
+    }
+    Ok(remaining)
 }
 
 fn set_socket_permissions(path: &Path) -> Result<(), PeerLeaseErrorV1> {
@@ -300,6 +383,11 @@ fn set_socket_permissions(path: &Path) -> Result<(), PeerLeaseErrorV1> {
 mod tests {
     use super::*;
     use crate::protocol::{PeerLeaseDirectionV1, PeerLeaseScopeV1};
+    use std::{os::unix::net::UnixListener, thread, time::Instant};
+
+    fn test_scope() -> PeerLeaseScopeV1 {
+        PeerLeaseScopeV1::new([1; 32], [2; 32], PeerLeaseDirectionV1::Outbound, 9, [3; 32]).unwrap()
+    }
 
     #[test]
     fn client_request_shape_binds_direction_and_token_fields() {
@@ -320,5 +408,42 @@ mod tests {
             crate::protocol::decode_request(&crate::protocol::encode_request(request)).unwrap();
         assert_eq!(round_trip.scope.direction(), PeerLeaseDirectionV1::Inbound);
         assert_eq!(round_trip.record_hash, [5; 32]);
+    }
+
+    #[test]
+    fn client_deadline_covers_fragmented_response_as_one_operation() {
+        let directory = tempfile::tempdir().unwrap();
+        let socket = directory.path().join("authority.sock");
+        let listener = UnixListener::bind(&socket).unwrap();
+        let response = encode_response(LeaseResponseV1::Rejected(LeaseRejectCodeV1::Unsupported));
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            // Consume the request before dribbling the response.  A byte at a
+            // time keeps each individual read below the old per-I/O timeout,
+            // while the complete operation exceeds the configured deadline.
+            let mut request = [0u8; MAX_FRAME_BYTES_V1];
+            let _ = stream.read(&mut request);
+            for byte in response {
+                if stream.write_all(&[byte]).is_err() {
+                    break;
+                }
+                thread::sleep(Duration::from_millis(20));
+            }
+        });
+        let client =
+            UnixPeerLeaseClientV1::connect(&socket).with_timeout(Duration::from_millis(100));
+        let started = Instant::now();
+        let result = client.acquire(test_scope(), [6; 32], 1, 1_000);
+        let elapsed = started.elapsed();
+        assert!(matches!(
+            result,
+            Err(PeerLeaseErrorV1::Io(error))
+                if error.kind() == io::ErrorKind::TimedOut
+        ));
+        assert!(
+            elapsed < Duration::from_secs(1),
+            "operation exceeded bounded deadline: {elapsed:?}"
+        );
+        server.join().unwrap();
     }
 }
