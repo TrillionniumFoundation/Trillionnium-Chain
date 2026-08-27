@@ -176,6 +176,8 @@ mod deployed_lab_commissioning;
 mod deployed_lab_process2_recovery;
 #[cfg(feature = "lab-validator-runtime")]
 mod deployed_lab_recovery;
+#[cfg(feature = "g1-process-test-support")]
+pub mod effect_driver;
 mod external_node_checkpoint;
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
@@ -269,6 +271,14 @@ pub use deployed_lab_recovery::{
 #[cfg(feature = "lab-validator-runtime-test-support")]
 pub use deployed_lab_recovery::{
     reopen_deployed_lab_ordinary_host_v0, PocoNodeDeployedLabRecoveryHostV0,
+};
+#[cfg(feature = "g1-process-test-support")]
+pub use effect_driver::{
+    CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1, CandidateEffectDriverFactsV1,
+    CandidateEffectDriverHooksV1, CandidateEffectDriverIngressV1, CandidateEffectDriverStatusV1,
+    CandidateEffectDriverV1, CANDIDATE_EFFECT_DRIVER_V1, EFFECT_DRIVER_FINALITY_VERIFIED_V1,
+    EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1, EFFECT_DRIVER_MAX_INGRESS_V1,
+    EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1,
 };
 pub use external_node_checkpoint::{
     reconcile_development_only_external_node_checkpoint_startup_v0,

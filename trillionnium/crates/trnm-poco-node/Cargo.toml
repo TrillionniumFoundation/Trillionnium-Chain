@@ -70,6 +70,7 @@ g1-process-test-support = [
   "dep:serde_json",
   "dep:trnm-finality-types",
   "dep:trnm-protocol",
+  "dep:trnm-consensus-safety-rules",
 ]
 
 # The former App-aware recovery modules remain as non-buildable archive source.
@@ -116,6 +117,12 @@ production_raw_key_dependency = false
 lab_raw_key_split_complete = false
 incomplete = true
 effect_driver = false
+effect_driver_candidate = true
+effect_driver_bounded_ingress = true
+effect_driver_core_safety_rules_authority = true
+effect_driver_whole_node_checkpoint_cas = true
+effect_driver_finality_verified = false
+effect_driver_production_activation = false
 bounded_timeout_signing_effect_loop = true
 vote_signing_effect_loop = false
 production_signature_producer = false
