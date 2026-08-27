@@ -13,10 +13,17 @@
 //! provide a separately signed evidence envelope and pass the G5/C0 gates
 //! before any production cutover can be considered.
 
-use std::collections::BTreeSet;
+use std::{
+    collections::BTreeSet,
+    fs::{self, File, OpenOptions},
+    io::Write,
+    path::{Path, PathBuf},
+};
 
 use anyhow::{anyhow, ensure, Context, Result as AnyResult};
+use borsh::{BorshDeserialize, BorshSerialize};
 use ed25519_dalek::{Signature, VerifyingKey};
+use fs2::FileExt;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use trnm_consensus_types::{
     CometStateExportV1, CometStateExportVerifierV1, GenesisQcCeremonyEvidenceV1,
@@ -35,6 +42,11 @@ pub const MIGRATION_SOURCE_FINALITY_REHEARSAL_V1: bool = true;
 pub const MIGRATION_TARGET_JMT_REPLAY_REHEARSAL_V1: bool = true;
 pub const MIGRATION_GENESIS_QC_CEREMONY_REHEARSAL_V1: bool = true;
 pub const MIGRATION_REHEARSAL_PRODUCTION_ACTIVATION_V1: bool = false;
+/// The rehearsal can persist the independently replayed target JMT snapshot
+/// and reopen it with exact commitment/readback checks.  This is still an
+/// offline candidate writer; it is not a node-start or cutover authority.
+pub const MIGRATION_TARGET_JMT_WRITER_REHEARSAL_V1: bool = true;
+pub const MIGRATION_TARGET_JMT_WRITER_PRODUCTION_ACTIVATION_V1: bool = false;
 
 pub const MIGRATION_SOURCE_FINALITY_WITNESS_SCHEMA_V1: &str =
     "trnm_migration_source_finality_witness_v1";
@@ -66,6 +78,12 @@ const CATEGORY_OBJECTS: &str = "objects";
 const CATEGORY_INDEXES: &str = "indexes";
 const CATEGORY_RECEIPTS: &str = "receipts";
 const CATEGORY_REJECTED_OBJECTS: &str = "rejected_objects";
+
+const TARGET_JMT_RECORD_CODEC_V1: u16 = 1;
+const TARGET_JMT_HEAD_CODEC_V1: u16 = 1;
+const TARGET_JMT_MAX_RECORD_BYTES_V1: usize = 256 * 1024 * 1024;
+const TARGET_JMT_MAX_SNAPSHOT_BYTES_V1: usize = 240 * 1024 * 1024;
+const TARGET_JMT_HASH_DOMAIN_V1: &str = "trnm.migration.target-jmt-record.v1";
 
 /// Parse a migration JSON object while rejecting duplicate keys at every
 /// nesting level. `serde_json::Value` alone is not sufficient here: its map
@@ -1321,6 +1339,25 @@ impl MigrationTargetReplayVerifierV1<'_> {
         coordinates: &MigrationTargetReplayCoordinatesV1,
         mapping_profile_digest: [u8; 32],
     ) -> AnyResult<StateRoot> {
+        let tree =
+            self.replay_tree_any_from_coordinates(source, coordinates, mapping_profile_digest)?;
+        let root = tree
+            .root_hash(0)
+            .ok_or_else(|| anyhow!("target replay produced no authenticated root"))?;
+        ensure!(root.0 != [0; 32], "target replay produced a zero root");
+        Ok(StateRoot::new(root.0))
+    }
+
+    /// Build the exact replay tree used by both the root-only verifier and the
+    /// durable rehearsal writer. Keeping one construction path prevents a
+    /// persisted snapshot from drifting from the root that the typed manifest
+    /// verifier checks.
+    fn replay_tree_any_from_coordinates(
+        &self,
+        source: &VerifiedCometStateExportV1,
+        coordinates: &MigrationTargetReplayCoordinatesV1,
+        mapping_profile_digest: [u8; 32],
+    ) -> AnyResult<InMemoryAuthTree> {
         coordinates.validate()?;
         ensure!(
             coordinates.target_chain_id != source.export().source_chain_id(),
@@ -1418,9 +1455,8 @@ impl MigrationTargetReplayVerifierV1<'_> {
                 .map(|(key, value)| AuthWrite::put(key, value))
                 .collect::<AnyResult<Vec<_>>>()?,
         )?;
-        let root = tree.apply(plan)?;
-        ensure!(root.0 != [0; 32], "target replay produced a zero root");
-        Ok(StateRoot::new(root.0))
+        tree.apply(plan)?;
+        Ok(tree)
     }
 }
 
@@ -1470,6 +1506,408 @@ pub fn recompute_target_state_root_v1(
     coordinates: &MigrationTargetReplayCoordinatesV1,
 ) -> AnyResult<StateRoot> {
     MigrationTargetReplayVerifierV1::new(mapping)?.recompute_for_coordinates(source, coordinates)
+}
+
+/// Durable candidate-only target replay commitment. The snapshot is an exact
+/// Borsh encoding of the JMT state produced by the same replay function used
+/// by the root-only verifier. It is not a node-start or cutover authority.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MigrationTargetJmtCommitmentV1 {
+    pub source_export_commitment: [u8; 32],
+    pub mapping_profile_digest: [u8; 32],
+    pub target_state_root: StateRoot,
+    pub record_digest: [u8; 32],
+}
+
+#[derive(Debug, Clone, BorshSerialize, BorshDeserialize, PartialEq, Eq)]
+struct MigrationTargetJmtRecordV1 {
+    codec_version: u16,
+    source_export_commitment: [u8; 32],
+    mapping_profile_digest: [u8; 32],
+    target_chain_id: Vec<u8>,
+    target_genesis_hash: [u8; 32],
+    target_validator_set_digest: [u8; 32],
+    target_protocol_version: u32,
+    application_schema_digest: [u8; 32],
+    runtime_profile_digest: [u8; 32],
+    target_state_root: [u8; 32],
+    tree_snapshot: Vec<u8>,
+    record_digest: [u8; 32],
+}
+
+#[derive(Debug, Clone, Copy, BorshSerialize, BorshDeserialize, PartialEq, Eq)]
+struct MigrationTargetJmtHeadV1 {
+    codec_version: u16,
+    record_digest: [u8; 32],
+    target_state_root: [u8; 32],
+}
+
+/// Open handle for the candidate target JMT snapshot. The lock is held for
+/// the lifetime of the handle, so a record and its head sidecar cannot race.
+pub struct MigrationTargetJmtWriterV1 {
+    path: PathBuf,
+    head_path: PathBuf,
+    _lock: File,
+    record: MigrationTargetJmtRecordV1,
+}
+
+impl std::fmt::Debug for MigrationTargetJmtWriterV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("MigrationTargetJmtWriterV1")
+            .field("path", &self.path)
+            .field("head_path", &self.head_path)
+            .field("record_digest", &self.record.record_digest)
+            .field("target_state_root", &self.record.target_state_root)
+            .finish_non_exhaustive()
+    }
+}
+
+impl MigrationTargetJmtWriterV1 {
+    /// Replays a verified source into a fresh durable target snapshot.
+    /// Existing byte-identical state is accepted idempotently; divergent
+    /// record/head/context is rejected rather than overwritten.
+    pub fn write_verified_replay_v1(
+        path: impl AsRef<Path>,
+        source: &VerifiedCometStateExportV1,
+        mapping: &MigrationMappingV1,
+        coordinates: &MigrationTargetReplayCoordinatesV1,
+    ) -> AnyResult<Self> {
+        let path = prepare_target_jmt_path_v1(path.as_ref())?;
+        let head_path = target_jmt_sidecar_path_v1(&path, ".head")?;
+        let lock_path = target_jmt_sidecar_path_v1(&path, ".lock")?;
+        let lock = OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .open(&lock_path)
+            .with_context(|| format!("open target JMT lock {}", lock_path.display()))?;
+        ensure!(
+            fs::symlink_metadata(&lock_path)
+                .map(|metadata| metadata.is_file())
+                .unwrap_or(false),
+            "target JMT lock is not a regular file"
+        );
+        lock.try_lock_exclusive()
+            .context("acquire exclusive target JMT rehearsal lock")?;
+
+        let verifier = MigrationTargetReplayVerifierV1::new(mapping)?;
+        let tree = verifier.replay_tree_any_from_coordinates(
+            source,
+            coordinates,
+            mapping_profile_digest_v1(mapping)?,
+        )?;
+        let root = tree
+            .root_hash(0)
+            .ok_or_else(|| anyhow!("target replay produced no authenticated root"))?;
+        ensure!(root.0 != [0; 32], "target replay produced a zero root");
+        let snapshot = tree.encode_snapshot()?;
+        ensure!(
+            snapshot.len() <= TARGET_JMT_MAX_SNAPSHOT_BYTES_V1,
+            "target JMT snapshot exceeds bounded rehearsal size"
+        );
+        let source_export_commitment = source
+            .export()
+            .commitment_digest_v1()
+            .map_err(|error| anyhow!(error.to_string()))?;
+        let mut record = MigrationTargetJmtRecordV1 {
+            codec_version: TARGET_JMT_RECORD_CODEC_V1,
+            source_export_commitment,
+            mapping_profile_digest: mapping_profile_digest_v1(mapping)?,
+            target_chain_id: coordinates.target_chain_id.as_bytes().to_vec(),
+            target_genesis_hash: coordinates.target_genesis_hash.into_bytes(),
+            target_validator_set_digest: coordinates.target_validator_set_digest.into_bytes(),
+            target_protocol_version: coordinates.target_protocol_version.get(),
+            application_schema_digest: coordinates.application_schema_digest,
+            runtime_profile_digest: coordinates.runtime_profile_digest,
+            target_state_root: root.0,
+            tree_snapshot: snapshot,
+            record_digest: [0; 32],
+        };
+        record.record_digest = target_jmt_record_digest_v1(&record)?;
+        validate_target_jmt_record_v1(&record)?;
+
+        if path.exists() {
+            let existing = read_target_jmt_record_v1(&path)?;
+            ensure!(
+                existing == record,
+                "existing target JMT record differs; refusing overwrite"
+            );
+            let head = read_target_jmt_head_v1(&head_path)?;
+            ensure!(
+                head.record_digest == record.record_digest
+                    && head.target_state_root == record.target_state_root,
+                "existing target JMT head differs from record"
+            );
+        } else {
+            ensure!(
+                !head_path.exists(),
+                "target JMT head exists without its record"
+            );
+            let encoded = borsh::to_vec(&record).context("encode target JMT record")?;
+            ensure!(
+                encoded.len() <= TARGET_JMT_MAX_RECORD_BYTES_V1,
+                "target JMT record exceeds bounded rehearsal size"
+            );
+            atomic_create_target_jmt_file_v1(&path, &encoded)?;
+            let head = MigrationTargetJmtHeadV1 {
+                codec_version: TARGET_JMT_HEAD_CODEC_V1,
+                record_digest: record.record_digest,
+                target_state_root: record.target_state_root,
+            };
+            let encoded_head = borsh::to_vec(&head).context("encode target JMT head")?;
+            atomic_create_target_jmt_file_v1(&head_path, &encoded_head)?;
+            ensure!(
+                read_target_jmt_record_v1(&path)? == record,
+                "target JMT record readback mismatch"
+            );
+            ensure!(
+                read_target_jmt_head_v1(&head_path)? == head,
+                "target JMT head readback mismatch"
+            );
+        }
+
+        Ok(Self {
+            path,
+            head_path,
+            _lock: lock,
+            record,
+        })
+    }
+
+    /// Opens an existing rehearsal snapshot and verifies its complete
+    /// record/head/tree binding. No caller-supplied root is trusted.
+    pub fn open_existing_v1(path: impl AsRef<Path>) -> AnyResult<Self> {
+        let path = prepare_target_jmt_path_v1(path.as_ref())?;
+        ensure!(path.is_file(), "target JMT record does not exist");
+        let head_path = target_jmt_sidecar_path_v1(&path, ".head")?;
+        let lock_path = target_jmt_sidecar_path_v1(&path, ".lock")?;
+        let lock = OpenOptions::new()
+            .create(true)
+            .read(true)
+            .write(true)
+            .open(&lock_path)
+            .with_context(|| format!("open target JMT lock {}", lock_path.display()))?;
+        ensure!(
+            fs::symlink_metadata(&lock_path)
+                .map(|metadata| metadata.is_file())
+                .unwrap_or(false),
+            "target JMT lock is not a regular file"
+        );
+        lock.try_lock_exclusive()
+            .context("acquire exclusive target JMT rehearsal lock")?;
+        let record = read_target_jmt_record_v1(&path)?;
+        let head = read_target_jmt_head_v1(&head_path)?;
+        ensure!(
+            head.record_digest == record.record_digest
+                && head.target_state_root == record.target_state_root,
+            "target JMT head does not match record"
+        );
+        Ok(Self {
+            path,
+            head_path,
+            _lock: lock,
+            record,
+        })
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+
+    pub fn head_path(&self) -> &Path {
+        &self.head_path
+    }
+
+    pub const fn commitment_v1(&self) -> MigrationTargetJmtCommitmentV1 {
+        MigrationTargetJmtCommitmentV1 {
+            source_export_commitment: self.record.source_export_commitment,
+            mapping_profile_digest: self.record.mapping_profile_digest,
+            target_state_root: StateRoot::new(self.record.target_state_root),
+            record_digest: self.record.record_digest,
+        }
+    }
+
+    /// Returns a verified clone of the persisted tree, not a general
+    /// mutation handle.
+    pub fn read_tree_v1(&self) -> AnyResult<InMemoryAuthTree> {
+        let record = read_target_jmt_record_v1(&self.path)?;
+        ensure!(
+            record == self.record,
+            "target JMT record changed while open"
+        );
+        InMemoryAuthTree::decode_snapshot(&record.tree_snapshot)
+    }
+}
+
+/// Convenience function for callers that only need the durable commitment.
+pub fn write_target_jmt_rehearsal_v1(
+    path: impl AsRef<Path>,
+    source: &VerifiedCometStateExportV1,
+    mapping: &MigrationMappingV1,
+    coordinates: &MigrationTargetReplayCoordinatesV1,
+) -> AnyResult<MigrationTargetJmtCommitmentV1> {
+    Ok(
+        MigrationTargetJmtWriterV1::write_verified_replay_v1(path, source, mapping, coordinates)?
+            .commitment_v1(),
+    )
+}
+
+fn target_jmt_record_digest_v1(record: &MigrationTargetJmtRecordV1) -> AnyResult<[u8; 32]> {
+    let mut unsigned = record.clone();
+    unsigned.record_digest = [0; 32];
+    let bytes = borsh::to_vec(&unsigned).context("encode target JMT record digest preimage")?;
+    Ok(hash_domain(TARGET_JMT_HASH_DOMAIN_V1, &[&bytes]))
+}
+
+fn validate_target_jmt_record_v1(record: &MigrationTargetJmtRecordV1) -> AnyResult<()> {
+    ensure!(
+        record.codec_version == TARGET_JMT_RECORD_CODEC_V1,
+        "unsupported target JMT record codec"
+    );
+    ensure!(
+        record.source_export_commitment != [0; 32]
+            && record.mapping_profile_digest != [0; 32]
+            && record.target_genesis_hash != [0; 32]
+            && record.target_validator_set_digest != [0; 32]
+            && record.application_schema_digest != [0; 32]
+            && record.runtime_profile_digest != [0; 32]
+            && record.target_state_root != [0; 32]
+            && record.record_digest != [0; 32],
+        "target JMT record contains a zero commitment"
+    );
+    let chain_id = trnm_consensus_types::ChainId::from_bytes(&record.target_chain_id)
+        .map_err(|_| anyhow!("target JMT record chain id is invalid"))?;
+    ensure!(
+        !chain_id.as_bytes().is_empty(),
+        "target JMT chain id is empty"
+    );
+    ensure!(
+        record.target_protocol_version == trnm_consensus_types::ProtocolVersion::V0.get(),
+        "unsupported target JMT protocol version"
+    );
+    ensure!(
+        record.tree_snapshot.len() <= TARGET_JMT_MAX_SNAPSHOT_BYTES_V1,
+        "target JMT snapshot exceeds bound"
+    );
+    ensure!(
+        target_jmt_record_digest_v1(record)? == record.record_digest,
+        "target JMT record digest mismatch"
+    );
+    let tree = InMemoryAuthTree::decode_snapshot(&record.tree_snapshot)?;
+    ensure!(
+        tree.latest_version() == Some(0),
+        "target JMT snapshot version is not zero"
+    );
+    ensure!(
+        tree.root_hash(0)
+            .is_some_and(|root| root.0 == record.target_state_root),
+        "target JMT snapshot root mismatch"
+    );
+    Ok(())
+}
+
+fn prepare_target_jmt_path_v1(path: &Path) -> AnyResult<PathBuf> {
+    ensure!(path.is_absolute(), "target JMT path must be absolute");
+    ensure!(
+        path.components().count() >= 3,
+        "target JMT path is too broad"
+    );
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow!("target JMT path has no parent"))?;
+    fs::create_dir_all(parent)
+        .with_context(|| format!("create target JMT parent {}", parent.display()))?;
+    if let Ok(metadata) = fs::symlink_metadata(path) {
+        ensure!(metadata.is_file(), "target JMT path is not a regular file");
+    }
+    if let Ok(metadata) = fs::symlink_metadata(parent) {
+        ensure!(metadata.is_dir(), "target JMT parent is not a directory");
+    }
+    Ok(path.to_path_buf())
+}
+
+fn target_jmt_sidecar_path_v1(path: &Path, suffix: &str) -> AnyResult<PathBuf> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow!("target JMT path has no parent"))?;
+    let name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| anyhow!("target JMT path has no UTF-8 file name"))?;
+    ensure!(
+        !name.is_empty() && !name.starts_with('.'),
+        "target JMT file name is invalid"
+    );
+    Ok(parent.join(format!(".{name}{suffix}")))
+}
+
+fn read_target_jmt_record_v1(path: &Path) -> AnyResult<MigrationTargetJmtRecordV1> {
+    let metadata = fs::symlink_metadata(path)
+        .with_context(|| format!("stat target JMT record {}", path.display()))?;
+    ensure!(
+        metadata.is_file(),
+        "target JMT record is not a regular file"
+    );
+    ensure!(
+        metadata.len() as usize <= TARGET_JMT_MAX_RECORD_BYTES_V1,
+        "target JMT record exceeds bound"
+    );
+    let bytes =
+        fs::read(path).with_context(|| format!("read target JMT record {}", path.display()))?;
+    let record: MigrationTargetJmtRecordV1 =
+        borsh::from_slice(&bytes).context("decode target JMT record")?;
+    validate_target_jmt_record_v1(&record)?;
+    Ok(record)
+}
+
+fn read_target_jmt_head_v1(path: &Path) -> AnyResult<MigrationTargetJmtHeadV1> {
+    let metadata = fs::symlink_metadata(path)
+        .with_context(|| format!("stat target JMT head {}", path.display()))?;
+    ensure!(metadata.is_file(), "target JMT head is not a regular file");
+    let bytes =
+        fs::read(path).with_context(|| format!("read target JMT head {}", path.display()))?;
+    let head: MigrationTargetJmtHeadV1 =
+        borsh::from_slice(&bytes).context("decode target JMT head")?;
+    ensure!(
+        head.codec_version == TARGET_JMT_HEAD_CODEC_V1,
+        "unsupported target JMT head codec"
+    );
+    ensure!(
+        head.record_digest != [0; 32] && head.target_state_root != [0; 32],
+        "target JMT head contains zero commitment"
+    );
+    Ok(head)
+}
+
+fn atomic_create_target_jmt_file_v1(path: &Path, bytes: &[u8]) -> AnyResult<()> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow!("target JMT file has no parent"))?;
+    let name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| anyhow!("target JMT file has no UTF-8 name"))?;
+    let temporary = parent.join(format!(".{name}.tmp-{}", std::process::id()));
+    let result = (|| -> std::io::Result<()> {
+        let mut file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        fs::rename(&temporary, path)?;
+        if let Ok(directory) = File::open(parent) {
+            let _ = directory.sync_all();
+        }
+        Ok(())
+    })();
+    if let Err(error) = result {
+        let _ = fs::remove_file(&temporary);
+        return Err(error)
+            .with_context(|| format!("atomically write target JMT file {}", path.display()));
+    }
+    Ok(())
 }
 
 /// Full offline rehearsal: source proof -> target root -> target GenesisQC
@@ -1962,11 +2400,7 @@ mod tests {
             .contains("validator set must be strictly ordered"));
 
         let (export, mut witness, mapping) = source_fixture();
-        witness
-            .receipt
-            .quorum_certificate
-            .signatures
-            .swap(0, 1);
+        witness.receipt.quorum_certificate.signatures.swap(0, 1);
         let error = verify_source_export_rehearsal_v1(&export, &witness, &mapping).unwrap_err();
         assert!(error
             .to_string()
@@ -2059,5 +2493,61 @@ mod tests {
         oversized_nodes.push(b']');
         let error = decode_json_strict_v1::<serde_json::Value>(&oversized_nodes).unwrap_err();
         assert!(error.to_string().contains("structural nodes"));
+    }
+
+    #[test]
+    fn target_jmt_writer_persists_reopens_and_rejects_divergence() {
+        let (export, witness, mapping) = source_fixture();
+        let source = verify_source_export_rehearsal_v1(&export, &witness, &mapping).unwrap();
+        let (target_set, _) = target_set_and_keys();
+        let coordinates = MigrationTargetReplayCoordinatesV1 {
+            target_chain_id: target_set.chain_id(),
+            target_genesis_hash: target_set.genesis_hash(),
+            target_validator_set_digest: target_set.id(),
+            target_protocol_version: ProtocolVersion::V0,
+            application_schema_digest: [0x61; 32],
+            runtime_profile_digest: [0x62; 32],
+        };
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let parent = std::env::temp_dir().join(format!(
+            "trnm-migration-target-jmt-{}-{unique}",
+            std::process::id()
+        ));
+        let path = parent.join("target.jmt");
+        let commitment = write_target_jmt_rehearsal_v1(&path, &source, &mapping, &coordinates)
+            .expect("write durable target replay");
+        let reopened =
+            MigrationTargetJmtWriterV1::open_existing_v1(&path).expect("reopen target replay");
+        assert_eq!(reopened.commitment_v1(), commitment);
+        let tree = reopened.read_tree_v1().expect("read back target tree");
+        assert_eq!(
+            tree.root_hash(0).map(|root| StateRoot::new(root.0)),
+            Some(commitment.target_state_root)
+        );
+        drop(reopened);
+
+        // A changed target coordinate cannot overwrite an existing source
+        // commitment, even when the caller uses the same output pathname.
+        let changed = MigrationTargetReplayCoordinatesV1 {
+            target_chain_id: ChainId::new("poco-target-other-v1").unwrap(),
+            ..coordinates
+        };
+        assert!(write_target_jmt_rehearsal_v1(&path, &source, &mapping, &changed).is_err());
+
+        // Corrupting the record is detected by the self-authenticating digest
+        // before the snapshot can be exposed.
+        let mut bytes = fs::read(&path).unwrap();
+        let last = bytes.len() - 1;
+        bytes[last] ^= 1;
+        fs::write(&path, bytes).unwrap();
+        assert!(MigrationTargetJmtWriterV1::open_existing_v1(&path).is_err());
+
+        let _ = fs::remove_file(&path);
+        let _ = fs::remove_file(parent.join(".target.jmt.head"));
+        let _ = fs::remove_file(parent.join(".target.jmt.lock"));
+        let _ = fs::remove_dir(&parent);
     }
 }
