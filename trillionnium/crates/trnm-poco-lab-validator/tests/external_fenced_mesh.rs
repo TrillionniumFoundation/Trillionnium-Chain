@@ -9,7 +9,7 @@ use std::{
     net::{SocketAddr, TcpListener},
     path::Path,
     process::{Child, Command, Stdio},
-    sync::Arc,
+    sync::{Arc, Mutex},
     thread,
     time::{Duration, Instant},
 };
@@ -29,6 +29,7 @@ use trnm_poco_lab_validator::{
         ExternalFenceError, ExternalPeerDirectionV1, ExternalPeerLeaseAuthorityV1,
         ExternalPeerLeaseRequestV1, ExternalPeerLeaseScopeV1, UnixExternalPeerLeaseAuthorityV1,
     },
+    payload_replay::PayloadReplayStoreV1,
     transport::RunTransportContext,
     wire::encode_vote,
 };
@@ -212,8 +213,25 @@ fn establish_pair(
 #[test]
 fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let root = TempDir::new().unwrap();
+    // The replay authority intentionally requires a private parent.  Make
+    // the harness root explicit rather than inheriting a platform/umask
+    // dependent tempfile mode.
+    #[cfg(unix)]
+    {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    }
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
+    let replay_namespace = b_config
+        .payload_replay_namespace_v1()
+        .expect("payload replay namespace");
+    let replay = Mutex::new(
+        PayloadReplayStoreV1::open(root.path().join("b-payload-replay.wal"), replay_namespace)
+            .expect("payload replay WAL"),
+    );
+    let b_run_id = b_config.run_id_v1().to_owned();
     let transport_validator_set = a_config.validator_set_v1().clone();
     let consensus_parameters = ConsensusParametersV0::reference_shadow_v0();
     let admission_context = a_config.admission_context_v1();
@@ -264,7 +282,13 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
     let deadline = Instant::now() + Duration::from_secs(2);
     while Instant::now() < deadline {
         if let Some(trnm_poco_lab_validator::consensus_mesh::MeshIngressEventV0::Frame(frame)) =
-            b_mesh.receive_timeout(Duration::from_millis(100)).unwrap()
+            b_mesh
+                .receive_timeout_with_payload_replay_v1(
+                    Duration::from_millis(100),
+                    &replay,
+                    &b_run_id,
+                )
+                .unwrap()
         {
             assert_eq!(frame.remote(), ValidatorId::new([0x71; 32]));
             let authenticated = frame.into_frame();
@@ -285,6 +309,11 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
         }
     }
     assert!(received, "fenced mesh did not deliver authenticated frame");
+    assert_eq!(
+        replay.lock().unwrap().accepted_frame_count(),
+        1,
+        "mesh frame must be durably admitted before exposure"
+    );
     let outbound_session = a_mesh
         .initial_sessions()
         .iter()

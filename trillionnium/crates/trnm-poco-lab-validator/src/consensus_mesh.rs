@@ -32,6 +32,10 @@ use std::{
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use ed25519_dalek::SigningKey;
+use trnm_consensus_peer_lease::{
+    payload_replay_run_id_hash_v1, PayloadReplayDirectionV1, PayloadReplayErrorV1,
+    PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PayloadReplayStoreV1,
+};
 use trnm_consensus_types::{ValidatorId, ValidatorSet};
 
 use crate::{
@@ -53,7 +57,8 @@ use crate::{
         P2pIdentityErrorV1, P2pIdentitySignatureProducerV1, P2pIdentitySignatureRequestV1,
     },
     transport::{
-        AuthenticatedConnection, ExternallySignedAuthenticatedConnectionV1, RunTransportContext,
+        network_context_digest_v1, AuthenticatedConnection,
+        ExternallySignedAuthenticatedConnectionV1, RunTransportContext,
     },
 };
 
@@ -388,6 +393,7 @@ impl PeerSessionFactsV0 {
 #[derive(Debug)]
 pub struct MeshInboundFrameV0 {
     remote: ValidatorId,
+    direction: PeerDirectionV0,
     session_id: [u8; 32],
     session_generation: u64,
     frame: AuthenticatedFrame,
@@ -397,6 +403,10 @@ pub struct MeshInboundFrameV0 {
 impl MeshInboundFrameV0 {
     pub const fn remote(&self) -> ValidatorId {
         self.remote
+    }
+
+    pub const fn direction(&self) -> PeerDirectionV0 {
+        self.direction
     }
 
     pub const fn session_id(&self) -> [u8; 32] {
@@ -413,6 +423,51 @@ impl MeshInboundFrameV0 {
 
     pub fn into_frame(self) -> AuthenticatedFrame {
         self.frame
+    }
+
+    /// Durably admits this authenticated payload before a caller exposes it
+    /// to Core/collector code. The mesh worker has already checked the live
+    /// external peer lease for this generation; this second owner records the
+    /// exact `(peer,direction,session,generation,sequence,kind,fingerprint)`
+    /// in a cross-process WAL and rejects a stale session or sequence. The
+    /// caller must consume this queue owner only after this method succeeds.
+    pub fn admit_payload_replay_v1(
+        &self,
+        replay: &mut PayloadReplayStoreV1,
+        run_id: &str,
+    ) -> Result<PayloadReplayReceiptV1, PayloadReplayErrorV1> {
+        if self.remote != self.frame.sender
+            || self.session_id == [0; 32]
+            || self.session_id != self.frame.session
+        {
+            return Err(PayloadReplayErrorV1::ContextMismatch);
+        }
+        if payload_replay_run_id_hash_v1(run_id) != replay.namespace().run_id_hash() {
+            return Err(PayloadReplayErrorV1::ContextMismatch);
+        }
+        let remote_id: [u8; 32] = self
+            .remote
+            .as_bytes()
+            .try_into()
+            .map_err(|_| PayloadReplayErrorV1::ContextMismatch)?;
+        let direction = match self.direction {
+            PeerDirectionV0::Inbound => PayloadReplayDirectionV1::Inbound,
+            PeerDirectionV0::Outbound => PayloadReplayDirectionV1::Outbound,
+        };
+        let namespace = replay.namespace();
+        let scope = namespace.scope_for(remote_id, direction)?;
+        let frame = PayloadReplayFrameV1::new(
+            scope,
+            namespace.run_id_hash(),
+            namespace.network_context_hash(),
+            self.session_id,
+            self.session_generation,
+            self.frame.sequence,
+            self.frame.kind as u8,
+            self.frame.payload.len(),
+            self.frame.fingerprint(run_id),
+        )?;
+        replay.admit(&frame)
     }
 
     /// Mints a queue owner for tests in sibling modules.  The real mesh is
@@ -432,6 +487,7 @@ impl MeshInboundFrameV0 {
                 .expect("test inbound frame fits the bounded queue");
         Self {
             remote: facts.remote,
+            direction: facts.direction,
             session_id: facts.session_id,
             session_generation: facts.generation,
             frame,
@@ -694,6 +750,11 @@ impl MeshFixtureConfigV1 {
         PeerAdmissionContextV1::from_validator_set(&self.validator_set)
     }
 
+    #[doc(hidden)]
+    pub fn run_id_v1(&self) -> &str {
+        &self.run_id
+    }
+
     /// Returns the immutable validator-set context used by this transport
     /// fixture.  This exposes no key material and exists only so a test can
     /// run the same strict consensus-wire decoder after a frame crosses the
@@ -701,6 +762,27 @@ impl MeshFixtureConfigV1 {
     #[doc(hidden)]
     pub fn validator_set_v1(&self) -> &ValidatorSet {
         &self.validator_set
+    }
+
+    /// Returns the exact namespace required by the candidate durable payload
+    /// replay owner. The run-id and network-context digests are identical to
+    /// those authenticated by the mesh handshake; callers cannot accidentally
+    /// bind a replay journal to a different validator set or deployment.
+    #[doc(hidden)]
+    pub fn payload_replay_namespace_v1(&self) -> Result<PayloadReplayNamespaceV1> {
+        let local_id: [u8; 32] = self
+            .local
+            .as_bytes()
+            .try_into()
+            .map_err(|_| anyhow!("mesh local validator ID is not 32 bytes"))?;
+        PayloadReplayNamespaceV1::new(
+            local_id,
+            self.validator_set.epoch().get(),
+            self.validator_set.id().into_bytes(),
+            payload_replay_run_id_hash_v1(&self.run_id),
+            network_context_digest_v1(&self.validator_set, &self.key_roles, self.transport_context),
+        )
+        .map_err(|error| anyhow!("payload replay namespace: {error}"))
     }
 }
 
@@ -2375,6 +2457,79 @@ impl PersistentAuthenticatedPeerMeshV0 {
         }
     }
 
+    /// Receives one mesh event while installing the candidate durable payload
+    /// replay fence. For a frame event, the queue owner is retained until the
+    /// WAL/head fsync succeeds; any replay, prefix, context, or lease-boundary
+    /// failure poisons the mesh and stops every worker. Lifecycle events pass
+    /// through unchanged. The ordinary `receive_timeout` API remains intact
+    /// for compatibility, but callers using a restart-safe ingress must route
+    /// through this explicit method.
+    pub fn receive_timeout_with_payload_replay_v1(
+        &self,
+        timeout: Duration,
+        replay: &Mutex<PayloadReplayStoreV1>,
+        run_id: &str,
+    ) -> Result<Option<MeshIngressEventV0>> {
+        let event = self.receive_timeout(timeout)?;
+        let Some(MeshIngressEventV0::Frame(ref inbound)) = event else {
+            return Ok(event);
+        };
+        // Revalidate the exact directed lease immediately before durable
+        // payload admission. This closes the interval between the worker's
+        // frame-path check and the WAL commit; a renewed/fenced generation
+        // cannot race a stale payload into the replay owner.
+        if let Err(error) = self.fences.revalidate(inbound.direction, inbound.remote) {
+            let facts = PeerSessionFactsV0 {
+                remote: inbound.remote,
+                direction: inbound.direction,
+                session_id: inbound.session_id,
+                generation: inbound.session_generation,
+            };
+            let error = anyhow!("payload replay peer lease: {error}");
+            set_terminal(
+                &self.terminal,
+                &self.stop,
+                MeshTerminalFailureV0 {
+                    remote: facts.remote,
+                    direction: facts.direction,
+                    reason: error.to_string(),
+                },
+            );
+            shutdown_all(&self.controls);
+            return Err(error);
+        }
+        let result = replay
+            .lock()
+            .map_err(|_| anyhow!("payload replay owner mutex poisoned"))
+            .and_then(|mut owner| {
+                inbound
+                    .admit_payload_replay_v1(&mut owner, run_id)
+                    .map(|_| ())
+                    .map_err(|error| anyhow!("durable authenticated payload replay: {error}"))
+            });
+        if let Err(error) = result {
+            let facts = PeerSessionFactsV0 {
+                remote: inbound.remote,
+                direction: inbound.direction,
+                session_id: inbound.session_id,
+                generation: inbound.session_generation,
+            };
+            set_terminal(
+                &self.terminal,
+                &self.stop,
+                MeshTerminalFailureV0 {
+                    remote: facts.remote,
+                    direction: facts.direction,
+                    reason: error.to_string(),
+                },
+            );
+            shutdown_all(&self.controls);
+            return Err(error);
+        }
+        self.ensure_healthy()?;
+        Ok(event)
+    }
+
     pub fn close(mut self) -> Result<()> {
         self.close_inner()
     }
@@ -3108,6 +3263,7 @@ fn accept_loop(
                                         &ingress_tx,
                                         MeshIngressEventV0::Frame(MeshInboundFrameV0 {
                                             remote,
+                                            direction: PeerDirectionV0::Inbound,
                                             session_id: facts.session_id,
                                             session_generation: facts.generation,
                                             frame,
@@ -3991,6 +4147,7 @@ mod tests {
     ) -> MeshIngressEventV0 {
         MeshIngressEventV0::Frame(MeshInboundFrameV0 {
             remote: facts.remote,
+            direction: facts.direction,
             session_id: facts.session_id,
             session_generation: facts.generation,
             frame: AuthenticatedFrame {
@@ -4002,6 +4159,68 @@ mod tests {
             },
             _reservation: reservation,
         })
+    }
+
+    #[test]
+    fn durable_payload_replay_admission_binds_mesh_owner_v1() {
+        let (client, server) = authenticated_identity_fixture_v0();
+        let local_id: [u8; 32] = server.local.as_bytes().try_into().unwrap();
+        let namespace = PayloadReplayNamespaceV1::new(
+            local_id,
+            server.validator_set.epoch().get(),
+            server.validator_set.id().into_bytes(),
+            payload_replay_run_id_hash_v1(&server.run_id),
+            network_context_digest_v1(
+                &server.validator_set,
+                &server.key_roles,
+                server.transport_context,
+            ),
+        )
+        .unwrap();
+        let directory = tempfile::tempdir().unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700))
+                .unwrap();
+        }
+        let mut replay =
+            PayloadReplayStoreV1::open(directory.path().join("frames.wal"), namespace).unwrap();
+        let facts =
+            PeerSessionFactsV0::for_test(client.local, PeerDirectionV0::Inbound, [0x55; 32], 1);
+        let first = MeshInboundFrameV0::for_test(
+            facts,
+            AuthenticatedFrame {
+                sender: client.local,
+                session: [0x55; 32],
+                sequence: 0,
+                kind: FrameKind::Vote,
+                payload: b"durable-vote".to_vec(),
+            },
+        );
+        let receipt = first
+            .admit_payload_replay_v1(&mut replay, &server.run_id)
+            .unwrap();
+        assert_eq!(receipt.record_index(), 1);
+        assert_eq!(replay.accepted_frame_count(), 1);
+        assert!(matches!(
+            first.admit_payload_replay_v1(&mut replay, &server.run_id),
+            Err(PayloadReplayErrorV1::Replay)
+        ));
+        let second = MeshInboundFrameV0::for_test(
+            facts,
+            AuthenticatedFrame {
+                sender: client.local,
+                session: [0x55; 32],
+                sequence: 1,
+                kind: FrameKind::Vote,
+                payload: b"durable-vote-next".to_vec(),
+            },
+        );
+        second
+            .admit_payload_replay_v1(&mut replay, &server.run_id)
+            .unwrap();
+        assert_eq!(replay.accepted_frame_count(), 2);
     }
 
     struct NoopExternalIdentityProducerV1 {

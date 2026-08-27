@@ -46,6 +46,10 @@ pub mod p2p_host_attestation;
 /// emitting a handshake or frame; no activation authority is implied.
 pub mod p2p_identity;
 pub mod pacemaker;
+/// Explicit candidate-only durable authenticated payload replay/fencing seam.
+/// It is consumed by `PersistentAuthenticatedPeerMeshV0` only when a caller
+/// opts into the replay-aware receive API; no production activation follows.
+pub mod payload_replay;
 pub mod process_event;
 pub mod relay;
 pub mod restart_catchup;
@@ -172,6 +176,12 @@ pub const PRIVATE_RUNTIME_CONTROL_CANDIDATE: bool = true;
 /// fault campaign.
 pub const PRIVATE_RUNTIME_CONTROL_RUNTIME_WIRED: bool = true;
 pub const AUTHENTICATED_FRAME_RESTART_REPLAY_AUTHORITY: bool = false;
+/// A cross-process WAL/head owner can fence authenticated mesh payload
+/// sequences when explicitly composed by a caller. This is not restart or
+/// production authority until an external anti-rollback anchor and Core
+/// integration are proven.
+pub const AUTHENTICATED_PAYLOAD_FRAME_DURABLE_REPLAY_CANDIDATE: bool = true;
+pub const AUTHENTICATED_PAYLOAD_FRAME_DURABLE_REPLAY_PRODUCTION_ACTIVATION: bool = false;
 /// Exact deployed anchored-ordinary Ready cuts can be reopened and joined into
 /// an inert, replay-fenced owner. Revision>5 exposes comparison-only signed
 /// ancestry replay coordinates; Core/effects remain private and no runtime

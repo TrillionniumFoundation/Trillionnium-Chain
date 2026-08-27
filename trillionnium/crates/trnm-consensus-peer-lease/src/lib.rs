@@ -12,12 +12,20 @@
 //! must explicitly consume and revalidate a token before each worker/generation
 //! action; this crate cannot make that runtime integration implicitly safe.
 
+mod payload;
 mod protocol;
 mod store;
 
 #[cfg(unix)]
 mod unix;
 
+pub use payload::{
+    payload_replay_run_id_hash_v1, PayloadReplayDirectionV1, PayloadReplayErrorV1,
+    PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PayloadReplayStoreV1,
+    PAYLOAD_REPLAY_APPEND_ONLY_HASH_CHAIN_V1, PAYLOAD_REPLAY_CANDIDATE_V1,
+    PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
+    PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
+};
 pub use protocol::{
     LeaseRejectCodeV1, PeerLeaseDirectionV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
     ProtocolErrorV1, MAX_FRAME_BYTES_V1, PEER_LEASE_SCHEMA_V1,
@@ -60,6 +68,16 @@ mod source_truth_tests {
             assert!(
                 manifest.contains(required_false),
                 "missing truth flag: {required_false}"
+            );
+        }
+        for required_true in [
+            "payload_replay_append_only_hash_chain = true",
+            "payload_replay_candidate = true",
+            "payload_replay_production_activation = false",
+        ] {
+            assert!(
+                manifest.contains(required_true),
+                "missing payload replay truth flag: {required_true}"
             );
         }
         assert!(!include_str!("lib.rs").contains(concat!("Signing", "Key")));
