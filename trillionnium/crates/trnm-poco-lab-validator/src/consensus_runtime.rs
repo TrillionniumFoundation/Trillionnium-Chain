@@ -7589,17 +7589,15 @@ impl PendingCertificateV1 {
                         *certificate.block_id().as_bytes(),
                     ))
             }
-            Self::Timeout { certificate, .. } => certificate
-                .referenced_qcs()
-                .iter()
-                .find(|reference| reference.id() == certificate.selected_high_qc_digest())
-                .is_some_and(|selected| {
-                    selected.qc_ref().height().get() <= facts.high_qc_v0().height().get()
+            Self::Timeout { certificate, .. } => {
+                certificate.referenced_qcs().iter().all(|reference| {
+                    reference.qc_ref().height().get() <= facts.high_qc_v0().height().get()
                         || owner.known_executions.contains(&(
-                            selected.qc_ref().height().get(),
-                            *selected.qc_ref().block_id().as_bytes(),
+                            reference.qc_ref().height().get(),
+                            *reference.qc_ref().block_id().as_bytes(),
                         ))
-                }),
+                })
+            }
         })
     }
 }
