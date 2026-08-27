@@ -57,17 +57,20 @@ use trnm_consensus_peer_lease::{UnixPeerLeaseClientV1, UnixPeerLeaseDaemonV1};
 
 #[cfg(unix)]
 use std::{
-    fs::Metadata,
+    fs::{self, Metadata},
     io::Write,
     os::unix::{
         ffi::OsStrExt,
-        fs::{MetadataExt, OpenOptionsExt},
+        fs::{MetadataExt, OpenOptionsExt, PermissionsExt},
     },
     path::Component,
 };
 
 #[cfg(unix)]
-const UNIX_SOCKET_PATH_MAX_BYTES_V1: usize = 107;
+// Keep the CLI in lock-step with the peer-lease library's cross-platform
+// bound.  `sockaddr_un.sun_path` is 104 bytes on the macOS observer, including
+// the trailing NUL, so at most 103 path bytes are portable.
+const UNIX_SOCKET_PATH_MAX_BYTES_V1: usize = 103;
 
 fn main() -> ExitCode {
     match run() {
@@ -781,7 +784,87 @@ fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
         metadata.mode() & 0o7777 == 0o700,
         "{label} parent must have private mode 0700"
     );
+    let canonical = std::fs::canonicalize(parent)
+        .with_context(|| format!("{label} parent cannot be canonicalized"))?;
+    ensure!(
+        canonical.as_path() == parent,
+        "{label} parent must not be a symlink alias"
+    );
     Ok(metadata)
+}
+
+#[cfg(unix)]
+fn ready_parent_components_v1(path: &PathBuf, label: &str) -> Result<Vec<PathBuf>> {
+    let mut missing = Vec::new();
+    let mut cursor = path.clone();
+    loop {
+        match fs::symlink_metadata(&cursor) {
+            Ok(metadata) => {
+                ensure!(
+                    metadata.is_dir() && !metadata.file_type().is_symlink(),
+                    "{label} parent must be a real directory"
+                );
+                ensure!(
+                    metadata.mode() & 0o7777 == 0o700,
+                    "{label} parent must have private mode 0700"
+                );
+                let canonical = fs::canonicalize(&cursor)
+                    .with_context(|| format!("{label} parent cannot be canonicalized"))?;
+                ensure!(
+                    canonical == cursor,
+                    "{label} parent must not be a symlink alias"
+                );
+                return Ok(missing);
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                missing.push(cursor.clone());
+                ensure!(cursor.pop(), "{label} parent has no existing ancestor");
+            }
+            Err(error) => return Err(error.into()),
+        }
+    }
+}
+
+#[cfg(unix)]
+fn validate_peer_lease_ready_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+    ensure!(path.is_absolute(), "{label} path must be absolute");
+    ensure!(
+        path.components()
+            .all(|component| !matches!(component, Component::CurDir | Component::ParentDir)),
+        "{label} path contains a traversal component"
+    );
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("{label} path has no parent"))?;
+    let parent = PathBuf::from(parent);
+    let _ = ready_parent_components_v1(&parent, label)?;
+    Ok(())
+}
+
+#[cfg(unix)]
+fn ensure_private_ready_parent_v1(path: &PathBuf, label: &str) -> Result<()> {
+    let missing = ready_parent_components_v1(path, label)?;
+    for directory in missing.iter().rev() {
+        let created = match fs::create_dir(directory) {
+            Ok(()) => true,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => false,
+            Err(error) => return Err(error.into()),
+        };
+        let metadata = fs::symlink_metadata(directory)?;
+        ensure!(
+            metadata.is_dir() && !metadata.file_type().is_symlink(),
+            "{label} parent component must be a real directory"
+        );
+        if created {
+            fs::set_permissions(directory, fs::Permissions::from_mode(0o700))?;
+        }
+        let metadata = fs::symlink_metadata(directory)?;
+        ensure!(
+            metadata.mode() & 0o7777 == 0o700,
+            "{label} parent must have private mode 0700"
+        );
+    }
+    Ok(())
 }
 
 #[cfg(unix)]
@@ -852,8 +935,25 @@ where
             ready != &socket && ready != &journal,
             "peer-lease ready path collides with socket or journal"
         );
-        validate_peer_lease_data_path_v1(ready, "peer-lease ready file")?;
+        validate_peer_lease_ready_path_v1(ready, "peer-lease ready file")?;
     }
+    let journal_lock = journal.with_extension("lease-lock");
+    let journal_name = journal
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| anyhow::anyhow!("peer-lease journal filename must be UTF-8"))?;
+    let journal_head = journal.with_file_name(format!(".{journal_name}.head-v1"));
+    ensure!(
+        socket != journal_lock && socket != journal_head,
+        "peer-lease socket collides with a journal sidecar"
+    );
+    ensure!(
+        ready_file
+            .as_ref()
+            .map_or(true, |ready| ready != &journal_lock
+                && ready != &journal_head),
+        "peer-lease ready path collides with a journal sidecar"
+    );
     Ok(PeerLeaseDaemonArgsV1 {
         socket,
         journal,
@@ -887,14 +987,16 @@ where
     if let Some(ready) = parsed.ready_file {
         loop {
             if parsed.socket.exists() {
-                if let Some(parent) = ready.parent() {
-                    std::fs::create_dir_all(parent)
-                        .context("create peer-lease ready-file parent")?;
-                }
-                let mut ready_file = std::fs::OpenOptions::new()
+                let parent = ready
+                    .parent()
+                    .ok_or_else(|| anyhow::anyhow!("peer-lease ready file has no parent"))?;
+                let parent = PathBuf::from(parent);
+                ensure_private_ready_parent_v1(&parent, "peer-lease ready file")?;
+                let mut ready_file = fs::OpenOptions::new()
                     .write(true)
                     .create_new(true)
                     .mode(0o600)
+                    .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
                     .open(&ready)
                     .context("create peer-lease ready file")?;
                 ready_file
@@ -903,6 +1005,14 @@ where
                 ready_file
                     .sync_all()
                     .context("sync peer-lease ready file")?;
+                let directory = fs::OpenOptions::new()
+                    .read(true)
+                    .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_DIRECTORY)
+                    .open(&parent)
+                    .context("open peer-lease ready-file parent")?;
+                directory
+                    .sync_all()
+                    .context("sync peer-lease ready-file parent")?;
                 break;
             }
             match result_receiver.try_recv() {
@@ -994,7 +1104,10 @@ mod tests {
     #[cfg(unix)]
     use tempfile::tempdir;
 
-    use super::{parse_optional_peer_lease_socket, usage};
+    use super::{
+        ensure_private_ready_parent_v1, parse_optional_peer_lease_socket, usage,
+        validate_peer_lease_ready_path_v1,
+    };
 
     #[test]
     fn external_config_command_is_explicit_and_keeps_activation_closed() {
@@ -1066,6 +1179,14 @@ mod tests {
         ];
         assert!(super::parse_peer_lease_daemon_args(collision.into_iter()).is_err());
 
+        let sidecar_collision = vec![
+            OsString::from("--socket"),
+            root.path().join("authority.lease-lock").into_os_string(),
+            OsString::from("--journal"),
+            journal.as_os_str().to_owned(),
+        ];
+        assert!(super::parse_peer_lease_daemon_args(sidecar_collision.into_iter()).is_err());
+
         let broad_parent = vec![
             OsString::from("--socket"),
             OsString::from("/tmp/authority.sock"),
@@ -1073,6 +1194,49 @@ mod tests {
             OsString::from("/tmp/authority.journal"),
         ];
         assert!(super::parse_peer_lease_daemon_args(broad_parent.into_iter()).is_err());
+
+        let alias = root.path().join("alias");
+        std::os::unix::fs::symlink(root.path(), &alias).expect("directory alias");
+        let aliased = vec![
+            OsString::from("--socket"),
+            alias.join("authority.sock").into_os_string(),
+            OsString::from("--journal"),
+            alias.join("authority.journal").into_os_string(),
+        ];
+        assert!(super::parse_peer_lease_daemon_args(aliased.into_iter()).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn ready_parent_creation_is_private_and_existing_broad_parent_fails() {
+        let root = tempdir().expect("temporary root");
+        std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private temporary root");
+        let nested_parent = root.path().join("new").join("nested");
+        ensure_private_ready_parent_v1(&nested_parent, "peer-lease ready file")
+            .expect("create private ready parent chain");
+        for component in [root.path().join("new"), nested_parent.clone()] {
+            assert_eq!(
+                std::fs::metadata(component)
+                    .expect("created ready parent")
+                    .permissions()
+                    .mode()
+                    & 0o7777,
+                0o700
+            );
+        }
+        let ready = nested_parent.join("authority.ready");
+        validate_peer_lease_ready_path_v1(&ready, "peer-lease ready file")
+            .expect("private ready path validates");
+
+        let broad_parent = root.path().join("broad");
+        std::fs::create_dir(&broad_parent).expect("broad parent");
+        std::fs::set_permissions(&broad_parent, std::fs::Permissions::from_mode(0o755))
+            .expect("broad mode");
+        assert!(
+            ensure_private_ready_parent_v1(&broad_parent, "peer-lease ready file").is_err(),
+            "existing non-private parent must fail closed"
+        );
     }
 
     #[cfg(unix)]

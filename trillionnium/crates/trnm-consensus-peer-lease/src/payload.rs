@@ -28,6 +28,7 @@ use fs2::FileExt;
 use sha2::{Digest, Sha256};
 
 use crate::protocol::{PeerLeaseDirectionV1, PeerLeaseScopeV1};
+use crate::store::ensure_private_directory;
 
 /// Candidate-only metadata.  This journal does not imply consensus-runtime
 /// or production activation truth.
@@ -294,6 +295,11 @@ impl PayloadReplayReceiptV1 {
 pub enum PayloadReplayErrorV1 {
     InvalidRequest(&'static str),
     Io(io::Error),
+    /// The WAL record was written (and may have been synced), but the
+    /// admission operation could not finish publishing its exact head.  The
+    /// caller must not report this as an ordinary rejection: reopening the
+    /// journal is the only way to determine whether the frame is durable.
+    CommitAmbiguous(Box<PayloadReplayErrorV1>),
     Protocol(&'static str),
     ContextMismatch,
     Replay,
@@ -305,11 +311,26 @@ pub enum PayloadReplayErrorV1 {
     Poisoned,
 }
 
+impl PayloadReplayErrorV1 {
+    /// Whether the failed call may already have appended its frame record.
+    /// A fresh owner must reopen and authenticate the WAL/head pair before
+    /// deciding whether a retry is a replay or a new admission.
+    pub const fn commit_ambiguous(&self) -> bool {
+        matches!(self, Self::CommitAmbiguous(_))
+    }
+}
+
 impl fmt::Display for PayloadReplayErrorV1 {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::InvalidRequest(reason) | Self::Protocol(reason) => formatter.write_str(reason),
             Self::Io(error) => write!(formatter, "payload replay I/O error: {error}"),
+            Self::CommitAmbiguous(error) => {
+                write!(
+                    formatter,
+                    "payload replay commit outcome is ambiguous: {error}"
+                )
+            }
             Self::ContextMismatch => formatter.write_str("payload replay context mismatch"),
             Self::Replay => formatter.write_str("authenticated payload frame was replayed"),
             Self::StaleGeneration => formatter.write_str("payload frame generation is stale"),
@@ -326,6 +347,7 @@ impl std::error::Error for PayloadReplayErrorV1 {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Self::Io(error) => Some(error),
+            Self::CommitAmbiguous(error) => Some(error.as_ref()),
             _ => None,
         }
     }
@@ -542,17 +564,26 @@ impl PayloadReplayStoreV1 {
             index,
             self.last_hash,
         );
-        self.file.write_all(&record)?;
+        if let Err(error) = self.file.write_all(&record) {
+            self.poisoned = true;
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(
+                PayloadReplayErrorV1::Io(error),
+            )));
+        }
         if let Err(error) = self.file.sync_all().and_then(|_| self.directory.sync_all()) {
             self.poisoned = true;
-            return Err(PayloadReplayErrorV1::Io(error));
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(
+                PayloadReplayErrorV1::Io(error),
+            )));
         }
         let record_hash = record_digest(&record[..RECORD_PREFIX_BYTES_V1]);
         let new_count = match self.record_count.checked_add(1) {
             Some(value) => value,
             None => {
                 self.poisoned = true;
-                return Err(PayloadReplayErrorV1::TooLarge);
+                return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(
+                    PayloadReplayErrorV1::TooLarge,
+                )));
             }
         };
         if let Err(error) = persist_head(
@@ -563,7 +594,7 @@ impl PayloadReplayStoreV1 {
             self.namespace_digest,
         ) {
             self.poisoned = true;
-            return Err(error);
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
         }
         self.states.insert(key, next_state);
         self.seen_sessions.insert((key, frame.session_id));
@@ -1105,11 +1136,29 @@ fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayErrorV1> 
         ))?
         .to_path_buf();
     let metadata = fs::symlink_metadata(&parent).map_err(PayloadReplayErrorV1::Io)?;
+    if metadata.file_type().is_symlink() {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay parent directory is a symlink alias",
+        ));
+    }
     if !metadata.is_dir() || !private_parent_mode(&metadata) {
         return Err(PayloadReplayErrorV1::InvalidRequest(
             "payload replay parent directory is not private",
         ));
     }
+    if fs::canonicalize(&parent).map_err(PayloadReplayErrorV1::Io)? != parent {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay parent directory is a symlink alias",
+        ));
+    }
+    ensure_private_directory(&parent).map_err(|error| match error {
+        crate::PeerLeaseErrorV1::InvalidRequest(reason)
+        | crate::PeerLeaseErrorV1::Protocol(reason) => PayloadReplayErrorV1::InvalidRequest(reason),
+        crate::PeerLeaseErrorV1::Io(error) => PayloadReplayErrorV1::Io(error),
+        crate::PeerLeaseErrorV1::Rejected(_) => {
+            PayloadReplayErrorV1::InvalidRequest("payload replay parent ancestry is not private")
+        }
+    })?;
     let directory = File::open(&parent).map_err(PayloadReplayErrorV1::Io)?;
     Ok((directory, parent))
 }
@@ -1125,9 +1174,9 @@ fn open_private_lock(path: &Path) -> Result<File, PayloadReplayErrorV1> {
 
 fn validate_private_file(file: &File) -> Result<(), PayloadReplayErrorV1> {
     let metadata = file.metadata().map_err(PayloadReplayErrorV1::Io)?;
-    if !private_file_mode(&metadata) {
+    if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayErrorV1::InvalidRequest(
-            "payload replay file permissions are not private",
+            "payload replay file is not a private single-link regular file",
         ));
     }
     Ok(())
@@ -1396,5 +1445,44 @@ mod tests {
         store.admit(&outbound).unwrap();
         assert!(store.contains_session([9; 32], PeerLeaseDirectionV1::Inbound, [5; 32]));
         assert!(store.contains_session([9; 32], PeerLeaseDirectionV1::Outbound, [5; 32]));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn private_file_validation_rejects_directories_and_symlink_aliased_parents() {
+        use std::os::unix::fs::{symlink, PermissionsExt};
+
+        let dir = private_tempdir();
+        let directory_file = File::open(dir.path()).expect("directory can be opened on Unix");
+        assert!(matches!(
+            validate_private_file(&directory_file),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("regular file")
+        ));
+
+        let real = dir.path().join("real");
+        fs::create_dir(&real).expect("real parent");
+        fs::set_permissions(&real, fs::Permissions::from_mode(0o700)).unwrap();
+        let alias = dir.path().join("alias");
+        symlink(&real, &alias).expect("parent alias");
+        let aliased_path = alias.join("frames.wal");
+        assert!(matches!(
+            PayloadReplayStoreV1::open(&aliased_path, namespace()),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("symlink alias")
+        ));
+    }
+
+    #[test]
+    fn post_append_failures_have_an_explicit_ambiguous_commit_marker() {
+        let error = PayloadReplayErrorV1::CommitAmbiguous(Box::new(PayloadReplayErrorV1::Io(
+            io::Error::new(io::ErrorKind::Interrupted, "directory sync interrupted"),
+        )));
+        assert!(error.commit_ambiguous());
+        assert!(std::error::Error::source(&error).is_some());
+        assert!(error
+            .to_string()
+            .contains("payload replay commit outcome is ambiguous"));
+        assert!(!PayloadReplayErrorV1::Replay.commit_ambiguous());
     }
 }

@@ -200,6 +200,7 @@ pub enum LeaseRejectCodeV1 {
     ClockRollback = 9,
     AuthorityCorrupt = 10,
     Unsupported = 11,
+    UnauthorizedPeer = 12,
 }
 
 impl LeaseRejectCodeV1 {
@@ -216,6 +217,7 @@ impl LeaseRejectCodeV1 {
             9 => Self::ClockRollback,
             10 => Self::AuthorityCorrupt,
             11 => Self::Unsupported,
+            12 => Self::UnauthorizedPeer,
             _ => return None,
         })
     }
@@ -235,6 +237,7 @@ impl fmt::Display for LeaseRejectCodeV1 {
             Self::ClockRollback => "authority clock moved backwards",
             Self::AuthorityCorrupt => "authority journal is corrupt",
             Self::Unsupported => "operation is unsupported",
+            Self::UnauthorizedPeer => "peer credentials are not authorized",
         })
     }
 }
@@ -549,5 +552,16 @@ mod tests {
         let mut encoded = encode_request(request);
         encoded.pop();
         assert!(decode_request(&encoded).is_err());
+    }
+
+    #[test]
+    fn unauthorized_peer_rejection_round_trips() {
+        let response = encode_response(LeaseResponseV1::Rejected(
+            LeaseRejectCodeV1::UnauthorizedPeer,
+        ));
+        assert_eq!(
+            decode_response(&response).unwrap(),
+            LeaseResponseV1::Rejected(LeaseRejectCodeV1::UnauthorizedPeer)
+        );
     }
 }

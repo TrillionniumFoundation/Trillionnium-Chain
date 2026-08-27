@@ -546,7 +546,8 @@ fn map_unix_lease_error(error: trnm_consensus_peer_lease::PeerLeaseErrorV1) -> E
             LeaseRejectCodeV1::AuthorityUnavailable
             | LeaseRejectCodeV1::ClockRollback
             | LeaseRejectCodeV1::AuthorityCorrupt
-            | LeaseRejectCodeV1::Unsupported => ExternalFenceError::Unavailable,
+            | LeaseRejectCodeV1::Unsupported
+            | LeaseRejectCodeV1::UnauthorizedPeer => ExternalFenceError::Unavailable,
         },
         trnm_consensus_peer_lease::PeerLeaseErrorV1::Io(_)
         | trnm_consensus_peer_lease::PeerLeaseErrorV1::Protocol(_) => {

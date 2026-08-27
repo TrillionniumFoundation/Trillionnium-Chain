@@ -6,7 +6,10 @@
 
 use std::{
     env,
-    path::PathBuf,
+    fs::{self, OpenOptions},
+    io::Write,
+    os::unix::fs::{OpenOptionsExt, PermissionsExt},
+    path::{Path, PathBuf},
     process::ExitCode,
     sync::mpsc::{self, TryRecvError},
     time::Duration,
@@ -49,13 +52,26 @@ fn main() -> ExitCode {
     if let Some(path) = ready {
         loop {
             if socket_for_ready.exists() {
-                if let Some(parent) = path.parent() {
-                    if let Err(error) = std::fs::create_dir_all(parent) {
-                        eprintln!("ready directory error: {error}");
-                        return ExitCode::from(1);
-                    }
-                }
-                if let Err(error) = std::fs::write(path, b"ready\n") {
+                let result = (|| -> std::io::Result<()> {
+                    let parent = path.parent().ok_or_else(|| {
+                        std::io::Error::new(std::io::ErrorKind::InvalidInput, "ready parent")
+                    })?;
+                    ensure_private_ready_parent(parent)?;
+                    let mut file = OpenOptions::new();
+                    file.write(true)
+                        .create_new(true)
+                        .mode(0o600)
+                        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+                    let mut file = file.open(&path)?;
+                    file.write_all(b"ready\n")?;
+                    file.sync_all()?;
+                    let directory = OpenOptions::new()
+                        .read(true)
+                        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_DIRECTORY)
+                        .open(parent)?;
+                    directory.sync_all()
+                })();
+                if let Err(error) = result {
                     eprintln!("ready file error: {error}");
                     return ExitCode::from(1);
                 }
@@ -75,6 +91,67 @@ fn main() -> ExitCode {
             .unwrap_or_else(|_| ExitCode::from(1)),
         Err(_) => ExitCode::from(1),
     }
+}
+
+/// Ensure every component created for a ready marker is private. Existing
+/// components are never chmod'd in place: a pre-existing non-private or
+/// symlink component fails closed instead of silently changing an operator's
+/// directory policy.
+fn ensure_private_ready_parent(path: &Path) -> std::io::Result<()> {
+    let mut missing = Vec::new();
+    let mut cursor = path.to_path_buf();
+    loop {
+        match fs::symlink_metadata(&cursor) {
+            Ok(metadata) => {
+                ensure_private_ready_directory(&metadata)?;
+                break;
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                missing.push(cursor.clone());
+                if !cursor.pop() {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::InvalidInput,
+                        "ready parent has no existing ancestor",
+                    ));
+                }
+            }
+            Err(error) => return Err(error),
+        }
+    }
+
+    for directory in missing.iter().rev() {
+        let created = match fs::create_dir(directory) {
+            Ok(()) => true,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => false,
+            Err(error) => return Err(error),
+        };
+        let metadata = fs::symlink_metadata(directory)?;
+        if !metadata.is_dir() || metadata.file_type().is_symlink() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                "ready parent component is not a real directory",
+            ));
+        }
+        if created {
+            fs::set_permissions(directory, fs::Permissions::from_mode(0o700))?;
+        }
+        let metadata = fs::symlink_metadata(directory)?;
+        ensure_private_ready_directory(&metadata)?;
+    }
+    Ok(())
+}
+
+fn ensure_private_ready_directory(metadata: &fs::Metadata) -> std::io::Result<()> {
+    if !metadata.is_dir()
+        || metadata.file_type().is_symlink()
+        || metadata.permissions().mode() & 0o7777 != 0o700
+    {
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::PermissionDenied,
+            "ready parent must be a private directory",
+        ));
+    }
+    Ok(())
 }
 
 fn report_result(result: Result<(), trnm_consensus_peer_lease::PeerLeaseErrorV1>) -> ExitCode {

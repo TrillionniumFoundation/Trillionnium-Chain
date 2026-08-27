@@ -12,6 +12,9 @@ use std::{
     process::{Command, Stdio},
 };
 
+#[cfg(unix)]
+use std::os::unix::fs::PermissionsExt;
+
 use ed25519_dalek::{Signature, Verifier, VerifyingKey};
 use serde_json::{json, Value};
 use tempfile::TempDir;
@@ -25,6 +28,13 @@ struct ProcessV1 {
 
 impl ProcessV1 {
     fn spawn(root: &TempDir, fail_checkpoint: bool) -> Self {
+        // `tempfile::tempdir` inherits the process umask and can be
+        // group-writable in this workspace.  The candidate intentionally
+        // rejects writable ancestors, so make the test-owned root explicit
+        // before handing it to the real process.
+        #[cfg(unix)]
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700))
+            .expect("private process root");
         let mut command = Command::new(env!("CARGO_BIN_EXE_trnm-poco-effect-driver-process"));
         command
             .arg(root.path())
@@ -654,6 +664,10 @@ mod p2p_socket_e2e {
         assert_eq!(accepted["status"], "accepted");
         assert_eq!(accepted["candidate_only"], true);
         assert_eq!(accepted["production_activation"], false);
+        assert_eq!(
+            accepted["replay_commit_state"],
+            "admitted_not_core_committed"
+        );
         drop(daemon);
 
         // A fresh lease authority cannot make the exact authenticated frame

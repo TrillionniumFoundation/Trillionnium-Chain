@@ -23,11 +23,12 @@ use std::{
     fs::{self, File, OpenOptions},
     io::{self, BufRead, Read, Write},
     path::{Component, Path, PathBuf},
-    time::{Duration, Instant},
+    time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 
 #[cfg(unix)]
 use std::os::unix::{
+    ffi::OsStrExt,
     fs::{FileTypeExt, MetadataExt, OpenOptionsExt, PermissionsExt},
     net::{UnixListener, UnixStream},
 };
@@ -48,8 +49,8 @@ use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(unix)]
 use trnm_consensus_peer_lease::{
     payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayDirectionV1,
-    PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayStoreV1, PeerLeaseErrorV1,
-    PeerLeaseScopeV1, PeerLeaseTokenV1, UnixPeerLeaseClientV1,
+    PayloadReplayErrorV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayStoreV1,
+    PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1, UnixPeerLeaseClientV1,
 };
 use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1};
 use trnm_consensus_types::{
@@ -88,6 +89,11 @@ const CHECKPOINT_V1: &str = "whole-node.checkpoint";
 const OUTBOUND_WAL_V1: &str = "outbound.wal";
 const TIMER_WAL_V1: &str = "timer.wal";
 const APPLICATION_WAL_V1: &str = "application-seal.wal";
+// A prepared-but-not-acknowledged P2P replay is retained as an explicit
+// recovery breadcrumb.  It is deliberately part of the fresh-root inventory:
+// a subsequent one-shot owner must stop and hand this record to a recovery
+// owner rather than silently retrying the same frame.
+const P2P_REPLAY_PENDING_V1: &str = "p2p-replay.pending";
 const FAIL_CHECKPOINT_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT";
 const LOCAL_KEY_BYTES_V1: [u8; 32] = [41; 32];
 const FIXTURE_PAYLOAD_V1: &[u8] = b"candidate-synced-proposal-v1";
@@ -109,8 +115,19 @@ const P2P_SOCKET_ACCEPT_TIMEOUT_V1: Duration = Duration::from_secs(5);
 const P2P_SOCKET_ACCEPT_POLL_V1: Duration = Duration::from_millis(10);
 #[cfg(unix)]
 const P2P_SOCKET_LEASE_TTL_MS_V1: u64 = 30_000;
+// A token which is about to expire cannot safely cover the replay/Core
+// boundary.  Keep a full socket operation budget in reserve and fail closed
+// before exposing an input when the authority returns a nearly-dead token.
+#[cfg(unix)]
+const P2P_SOCKET_MIN_REMAINING_LEASE_MS_V1: u64 = P2P_SOCKET_READ_TIMEOUT_V1.as_millis() as u64;
 #[cfg(unix)]
 const P2P_SOCKET_RUN_ID_MAX_BYTES_V1: usize = 128;
+// macOS has the smallest `sockaddr_un.sun_path` supported by the candidate
+// fleet (104 bytes including the trailing NUL).  Keep the shared candidate
+// seam within that cross-platform bound instead of relying on bind/connect to
+// fail after durable state has already been created.
+#[cfg(unix)]
+const P2P_UNIX_SOCKET_PATH_MAX_BYTES_V1: usize = 103;
 #[cfg(unix)]
 const P2P_SOCKET_FRAME_FINGERPRINT_DOMAIN_V1: &[u8] =
     b"trnm.poco-node.candidate-p2p.frame-fingerprint.v1\0";
@@ -122,6 +139,7 @@ const P2P_SOCKET_NETWORK_CONTEXT_DOMAIN_V1: &[u8] =
 pub struct EffectDriverProcessErrorV1 {
     code: &'static str,
     detail: String,
+    commit_ambiguous: bool,
 }
 
 impl EffectDriverProcessErrorV1 {
@@ -129,7 +147,23 @@ impl EffectDriverProcessErrorV1 {
         Self {
             code,
             detail: detail.into(),
+            commit_ambiguous: false,
         }
+    }
+
+    fn commit_ambiguous(code: &'static str, detail: impl Into<String>) -> Self {
+        Self {
+            code,
+            detail: detail.into(),
+            commit_ambiguous: true,
+        }
+    }
+
+    /// True when the failed operation may already have crossed a durable
+    /// lease, replay, or Core-delivery boundary.  Callers must resolve the
+    /// owned state rather than treating this as an ordinary retryable reject.
+    pub const fn is_commit_ambiguous(&self) -> bool {
+        self.commit_ambiguous
     }
 }
 
@@ -512,8 +546,15 @@ fn append_durable(path: &Path, bytes: &[u8]) -> io::Result<()> {
     let file = options.open(path)?;
     ensure_private_artifact_file(&file)?;
     let mut file = file;
+    #[cfg(unix)]
+    let identity = artifact_identity_v1(path, &file)?;
+    #[cfg(unix)]
+    verify_artifact_path_identity_v1(path, identity)?;
     file.write_all(bytes)?;
-    file.sync_all()
+    file.sync_all()?;
+    #[cfg(unix)]
+    verify_artifact_path_identity_v1(path, identity)?;
+    sync_parent_directory_v1(path)
 }
 
 fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
@@ -533,9 +574,17 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
             .mode(0o600)
             .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
         let mut file = options.open(&temp)?;
+        ensure_private_artifact_file(&file)?;
         file.write_all(bytes)?;
         file.sync_all()?;
+        #[cfg(unix)]
+        let replacement_identity = artifact_identity_v1(&temp, &file)?;
         fs::rename(&temp, path)?;
+        #[cfg(unix)]
+        verify_artifact_path_identity_v1(path, replacement_identity)?;
+        #[cfg(not(unix))]
+        ensure_private_artifact_metadata(&fs::symlink_metadata(path)?)?;
+        sync_parent_directory_v1(path)?;
         Ok::<(), io::Error>(())
     })();
     if let Err(error) = result {
@@ -545,11 +594,52 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
         let _ = fs::remove_file(&temp);
         return Err(error);
     }
-    // Syncing the parent closes the rename durability window on Unix.  Some
-    // non-Unix test filesystems reject opening a directory; the file itself
-    // is still synchronously written in that case.
-    if let Ok(directory) = File::open(parent) {
-        let _ = directory.sync_all();
+    Ok(())
+}
+
+fn sync_parent_directory_v1(path: &Path) -> io::Result<()> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "path has no parent"))?;
+    #[cfg(unix)]
+    {
+        // WAL creation and rename publication are not durable until the
+        // containing directory is synced.  Propagate both open and fsync
+        // failures: returning success here would misclassify an uncertain
+        // crash cut as a committed artifact.
+        let directory = open_directory_no_follow_v1(parent)?;
+        directory.sync_all()?;
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = parent;
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn artifact_identity_v1(path: &Path, file: &File) -> io::Result<CandidateFsIdentityV1> {
+    let descriptor = file.metadata()?;
+    let path_metadata = fs::symlink_metadata(path)?;
+    ensure_private_artifact_metadata(&path_metadata)?;
+    let descriptor_identity = CandidateFsIdentityV1::from_metadata(&descriptor);
+    if descriptor_identity != CandidateFsIdentityV1::from_metadata(&path_metadata) {
+        return Err(io::Error::other(
+            "candidate artifact descriptor/path identity changed",
+        ));
+    }
+    Ok(descriptor_identity)
+}
+
+#[cfg(unix)]
+fn verify_artifact_path_identity_v1(
+    path: &Path,
+    expected: CandidateFsIdentityV1,
+) -> io::Result<()> {
+    let metadata = fs::symlink_metadata(path)?;
+    ensure_private_artifact_metadata(&metadata)?;
+    if CandidateFsIdentityV1::from_metadata(&metadata) != expected {
+        return Err(io::Error::other("candidate artifact path identity changed"));
     }
     Ok(())
 }
@@ -664,14 +754,14 @@ fn validate_directory_ancestor_metadata_v1(
     let owner = metadata.uid();
     // A root-owned sticky directory (for example /tmp) is the one deliberate
     // exception to the no-write rule: the sticky bit prevents an unprivileged
-    // peer from replacing another owner's child.  Group-write is tolerated
-    // for a same-owner deployment whose final run root is 0700 (the enclosing
-    // private root prevents group traversal); world-write remains rejected.
-    if mode & 0o002 != 0 && !(owner == 0 && mode & 0o1000 != 0) {
+    // peer from replacing another owner's child.  Group-write is rejected as
+    // well as world-write for every other ancestor; a same-group process can
+    // otherwise replace a pathname between the lexical check and openat.
+    if mode & 0o022 != 0 && !(owner == 0 && mode & 0o1000 != 0) {
         return Err(EffectDriverProcessErrorV1::new(
             "root",
             format!(
-                "directory ancestor {} is world writable (mode {mode:o})",
+                "directory ancestor {} is group/world writable (mode {mode:o})",
                 path.display()
             ),
         ));
@@ -760,6 +850,7 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
         OUTBOUND_WAL_V1,
         TIMER_WAL_V1,
         APPLICATION_WAL_V1,
+        P2P_REPLAY_PENDING_V1,
     ] {
         let path = root.join(name);
         match fs::symlink_metadata(&path) {
@@ -1451,10 +1542,54 @@ fn validate_p2p_socket_parameters_v1(
     validate_narrow_absolute_path_v1(socket_path, "socket")?;
     validate_narrow_absolute_path_v1(lease_socket_path, "lease socket")?;
     validate_narrow_absolute_path_v1(replay_path, "replay WAL")?;
-    if socket_path == lease_socket_path || socket_path == replay_path {
+    validate_unix_socket_path_length_v1(socket_path, "socket")?;
+    validate_unix_socket_path_length_v1(lease_socket_path, "lease socket")?;
+
+    let replay_name = replay_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::new("p2p", "replay WAL requires a UTF-8 filename")
+        })?;
+    let replay_lock = replay_path.with_file_name(format!(".{replay_name}.lock-v1"));
+    let replay_head = replay_path.with_file_name(format!(".{replay_name}.head-v1"));
+    let candidate_paths = [
+        socket_path.to_path_buf(),
+        lease_socket_path.to_path_buf(),
+        replay_path.to_path_buf(),
+        replay_lock,
+        replay_head,
+    ];
+    for (index, left) in candidate_paths.iter().enumerate() {
+        if candidate_paths[index + 1..]
+            .iter()
+            .any(|right| right == left)
+        {
+            return Err(EffectDriverProcessErrorV1::new(
+                "p2p",
+                "candidate socket/replay paths or replay sidecars collide",
+            ));
+        }
+    }
+
+    let root_artifacts = [
+        ROOT_MARKER_V1,
+        TRANSITION_WAL_V1,
+        SAFETY_STATE_V1,
+        CHECKPOINT_V1,
+        OUTBOUND_WAL_V1,
+        TIMER_WAL_V1,
+        APPLICATION_WAL_V1,
+        P2P_REPLAY_PENDING_V1,
+    ]
+    .map(|name| root.join(name));
+    if candidate_paths
+        .iter()
+        .any(|path| path == root || root_artifacts.iter().any(|artifact| artifact == path))
+    {
         return Err(EffectDriverProcessErrorV1::new(
             "p2p",
-            "socket path aliases another candidate path",
+            "candidate socket/replay path collides with the run root or a root artifact",
         ));
     }
     if lease_generation == 0 {
@@ -1476,6 +1611,21 @@ fn validate_p2p_socket_parameters_v1(
 }
 
 #[cfg(unix)]
+fn validate_unix_socket_path_length_v1(
+    path: &Path,
+    label: &'static str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let bytes = path.as_os_str().as_bytes();
+    if bytes.is_empty() || bytes.contains(&0) || bytes.len() > P2P_UNIX_SOCKET_PATH_MAX_BYTES_V1 {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            format!("{label} is empty, contains NUL, or exceeds the Unix sun_path limit"),
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
 fn validate_narrow_absolute_path_v1(
     path: &Path,
     label: &'static str,
@@ -1491,6 +1641,39 @@ fn validate_narrow_absolute_path_v1(
         return Err(EffectDriverProcessErrorV1::new(
             "p2p",
             format!("{label} requires a narrow absolute path without dot components"),
+        ));
+    }
+    // Reject an existing symlink alias before any caller opens or creates the
+    // path.  Missing leaf components are fine (the owner may create them),
+    // but the nearest existing prefix must have the exact lexical identity
+    // supplied by the caller.
+    let mut existing_prefix = path.to_path_buf();
+    loop {
+        match fs::symlink_metadata(&existing_prefix) {
+            Ok(_) => break,
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                if !existing_prefix.pop() {
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "p2p",
+                        format!("{label} has no existing filesystem prefix"),
+                    ));
+                }
+            }
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "p2p",
+                    format!("{label} prefix metadata: {error:?}"),
+                ));
+            }
+        }
+    }
+    let canonical_prefix = fs::canonicalize(&existing_prefix).map_err(|error| {
+        EffectDriverProcessErrorV1::new("p2p", format!("{label} canonical prefix: {error:?}"))
+    })?;
+    if canonical_prefix != existing_prefix {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            format!("{label} contains a symlink alias"),
         ));
     }
     Ok(())
@@ -1651,21 +1834,16 @@ pub fn run_p2p_socket_once_v1(
         );
         match outcome {
             Ok((response, summary)) => {
-                write_p2p_socket_response_v1(&mut stream, response)?;
+                write_p2p_socket_response_v1(&mut stream, response).map_err(|error| {
+                    EffectDriverProcessErrorV1::commit_ambiguous(
+                        "p2p_response_uncertain",
+                        error.to_string(),
+                    )
+                })?;
                 Ok(summary)
             }
             Err(error) => {
-                let response = json!({
-                    "status": if error.code == "p2p_lease_release_uncertain" {
-                        "uncertain"
-                    } else {
-                        "rejected"
-                    },
-                    "reason": error.to_string(),
-                    "commit_ambiguous": error.code == "p2p_lease_release_uncertain",
-                    "candidate_only": true,
-                    "production_activation": false,
-                });
+                let response = p2p_error_response_v1(&error);
                 let _ = write_p2p_socket_response_v1(&mut stream, response);
                 Err(error)
             }
@@ -1673,6 +1851,151 @@ pub fn run_p2p_socket_once_v1(
     })();
     root_guard.validate_identity()?;
     result
+}
+
+#[cfg(unix)]
+fn p2p_error_response_v1(error: &EffectDriverProcessErrorV1) -> Value {
+    let commit_ambiguous = error.is_commit_ambiguous();
+    json!({
+        "status": if commit_ambiguous { "uncertain" } else { "rejected" },
+        "reason": error.to_string(),
+        "commit_ambiguous": commit_ambiguous,
+        "replay_commit_state": if commit_ambiguous {
+            "unknown_requires_recovery"
+        } else {
+            "not_admitted"
+        },
+        "candidate_only": true,
+        "production_activation": false,
+    })
+}
+
+#[cfg(unix)]
+fn map_peer_lease_acquire_error_v1(error: PeerLeaseErrorV1) -> EffectDriverProcessErrorV1 {
+    let detail = error.to_string();
+    match error {
+        // A decoded rejection is the daemon's explicit statement that the
+        // acquire did not commit.  Any transport/protocol/local-shape error
+        // may instead be a lost response after the daemon synced the lease.
+        PeerLeaseErrorV1::Rejected(_) => EffectDriverProcessErrorV1::new("p2p_lease", detail),
+        PeerLeaseErrorV1::InvalidRequest(_)
+        | PeerLeaseErrorV1::Io(_)
+        | PeerLeaseErrorV1::Protocol(_) => {
+            EffectDriverProcessErrorV1::commit_ambiguous("p2p_lease_acquire_uncertain", detail)
+        }
+    }
+}
+
+#[cfg(unix)]
+fn map_payload_replay_admit_error_v1(error: PayloadReplayErrorV1) -> EffectDriverProcessErrorV1 {
+    let commit_ambiguous = error.commit_ambiguous();
+    let detail = error.to_string();
+    if commit_ambiguous {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_replay_admission_uncertain", detail)
+    } else {
+        EffectDriverProcessErrorV1::new("p2p_replay", detail)
+    }
+}
+
+#[cfg(unix)]
+fn finalize_p2p_post_acquire_error_v1(
+    lease_guard: &mut CandidatePeerLeaseGuardV1,
+    error: EffectDriverProcessErrorV1,
+) -> EffectDriverProcessErrorV1 {
+    // Once acquire has returned a token, every exit must make the release
+    // outcome explicit.  A clean release proves that a pre-admission reject
+    // did not leave a live lease; a failed release is itself an uncertain
+    // commit boundary and must never be reported as an ordinary retryable
+    // rejection.  For errors which already crossed replay/Core, preserve the
+    // original uncertainty even when release succeeds.
+    match lease_guard.release() {
+        Ok(()) => error,
+        Err(release_error) => EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_lease_release_uncertain",
+            format!("{error}; lease release outcome is uncertain: {release_error}"),
+        ),
+    }
+}
+
+#[cfg(unix)]
+fn validate_p2p_token_remaining_ttl_v1(
+    token: PeerLeaseTokenV1,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let now_ms = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|error| {
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_lease_acquire_uncertain",
+                format!("system clock is before Unix epoch: {error}"),
+            )
+        })?
+        .as_millis();
+    let now_ms = u64::try_from(now_ms).map_err(|_| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_lease_acquire_uncertain",
+            "system clock milliseconds overflow",
+        )
+    })?;
+    let required_until = now_ms
+        .checked_add(P2P_SOCKET_MIN_REMAINING_LEASE_MS_V1)
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_lease_acquire_uncertain",
+                "lease remaining-TTL bound overflow",
+            )
+        })?;
+    if token.expires_at_ms() <= required_until {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_lease_acquire_uncertain",
+            format!(
+                "lease token has insufficient remaining TTL (expires_at_ms={}, now_ms={now_ms})",
+                token.expires_at_ms()
+            ),
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn prepare_p2p_replay_pending_v1(
+    root: &Path,
+    frame: PayloadReplayFrameV1,
+    driver_generation: u64,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    // Publish the recovery breadcrumb before touching the replay WAL.  A
+    // crash at any later cut therefore leaves an owner-visible record instead
+    // of an apparently fresh root which invites an unsafe duplicate retry.
+    let line = format!(
+        "v=1\tstate=prepared\tremote={}\tdirection={}\tsession={}\tlease_generation={}\tsequence={}\tframe_kind={}\tpayload_len={}\tdriver_generation={}\tfingerprint={}\n",
+        hex::encode(frame.scope().remote_id()),
+        frame.scope().direction() as u8,
+        hex::encode(frame.session_id()),
+        frame.generation(),
+        frame.sequence(),
+        frame.frame_kind(),
+        frame.payload_len(),
+        driver_generation,
+        hex::encode(frame.frame_fingerprint()),
+    );
+    atomic_replace(&root.join(P2P_REPLAY_PENDING_V1), line.as_bytes()).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_recovery_pending_uncertain",
+            format!("publish replay recovery breadcrumb: {error:?}"),
+        )
+    })
+}
+
+#[cfg(unix)]
+fn clear_p2p_replay_pending_v1(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
+    // Keep an empty, private file as the explicit acknowledged state.  The
+    // next fresh-root preflight accepts it, while a non-empty record remains
+    // a hard recovery stop.
+    atomic_replace(&root.join(P2P_REPLAY_PENDING_V1), &[]).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_recovery_pending_uncertain",
+            format!("clear replay recovery breadcrumb: {error:?}"),
+        )
+    })
 }
 
 #[cfg(unix)]
@@ -1728,14 +2051,34 @@ fn process_one_candidate_p2p_connection_v1(
     lease_authority
         .preflight()
         .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
-    let token = lease_authority
-        .acquire(
-            scope,
-            session_id,
-            lease_generation,
-            P2P_SOCKET_LEASE_TTL_MS_V1,
-        )
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    let token = match lease_authority.acquire(
+        scope,
+        session_id,
+        lease_generation,
+        P2P_SOCKET_LEASE_TTL_MS_V1,
+    ) {
+        Ok(token) => token,
+        Err(error) => {
+            let mapped = map_peer_lease_acquire_error_v1(error);
+            if !mapped.is_commit_ambiguous() {
+                return Err(mapped);
+            }
+            // Acquire is idempotent for an exact session/generation tuple.
+            // A single bounded retry recovers a token when the daemon
+            // durably appended the first request but its response was lost;
+            // if the retry also fails, retain the original uncertainty and
+            // require the recovery owner to inspect the authority journal.
+            match lease_authority.acquire(
+                scope,
+                session_id,
+                lease_generation,
+                P2P_SOCKET_LEASE_TTL_MS_V1,
+            ) {
+                Ok(token) => token,
+                Err(_) => return Err(mapped),
+            }
+        }
+    };
     // Arm the cleanup guard before validating any returned token fields.  A
     // compromised/misconfigured authority must not strand an active lease.
     let mut lease_guard =
@@ -1746,40 +2089,73 @@ fn process_one_candidate_p2p_connection_v1(
         || token.expires_at_ms() == 0
         || token.record_hash() == [0; 32]
     {
-        return Err(EffectDriverProcessErrorV1::new(
-            "p2p_lease",
-            "authority returned a token with mismatched scope or generation",
+        return Err(finalize_p2p_post_acquire_error_v1(
+            &mut lease_guard,
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_lease_acquire_uncertain",
+                "authority returned a token with mismatched scope or generation",
+            ),
         ));
     }
+    if let Err(error) = validate_p2p_token_remaining_ttl_v1(token) {
+        return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
+    }
 
-    let mut replay = PayloadReplayStoreV1::open(&replay_path, namespace)
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
+    let mut replay = match PayloadReplayStoreV1::open(&replay_path, namespace) {
+        Ok(replay) => replay,
+        Err(error) => {
+            return Err(finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()),
+            ));
+        }
+    };
 
     // Revalidate immediately before the payload append.  The external lease
     // daemon and this WAL are intentionally separate owners; if the lease is
     // fenced in this interval, no Core input is exposed.
-    let revalidated = lease_guard
-        .revalidate()
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    let revalidated = match lease_guard.revalidate() {
+        Ok(token) => token,
+        Err(error) => {
+            return Err(finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()),
+            ));
+        }
+    };
     if revalidated != token {
-        return Err(EffectDriverProcessErrorV1::new(
-            "p2p_lease",
-            "lease revalidation changed the exact token",
+        return Err(finalize_p2p_post_acquire_error_v1(
+            &mut lease_guard,
+            EffectDriverProcessErrorV1::new(
+                "p2p_lease",
+                "lease revalidation changed the exact token",
+            ),
         ));
+    }
+    if let Err(error) = validate_p2p_token_remaining_ttl_v1(revalidated) {
+        return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
     }
 
     let driver_facts = driver.facts_v1();
     if driver_facts.queue_depth() >= driver_facts.queue_capacity() {
-        return Err(EffectDriverProcessErrorV1::new(
-            "p2p_queue",
-            "Core ingress queue has no capacity before durable replay admission",
+        return Err(finalize_p2p_post_acquire_error_v1(
+            &mut lease_guard,
+            EffectDriverProcessErrorV1::new(
+                "p2p_queue",
+                "Core ingress queue has no capacity before durable replay admission",
+            ),
         ));
     }
     let driver_generation = driver_facts
         .generation()
         .checked_add(driver_facts.queue_depth() as u64)
         .and_then(|value| value.checked_add(1))
-        .ok_or_else(|| EffectDriverProcessErrorV1::new("p2p_queue", "Core generation overflow"))?;
+        .ok_or_else(|| {
+            finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                EffectDriverProcessErrorV1::new("p2p_queue", "Core generation overflow"),
+            )
+        })?;
     let fingerprint = p2p_frame_fingerprint_v1(token.session_id(), accepted.2, &frame_bytes);
     let replay_frame = PayloadReplayFrameV1::new(
         scope,
@@ -1792,38 +2168,70 @@ fn process_one_candidate_p2p_connection_v1(
         frame_bytes.len(),
         fingerprint,
     )
-    .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
-    let receipt = replay
-        .admit(&replay_frame)
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
+    .map_err(|error| {
+        finalize_p2p_post_acquire_error_v1(
+            &mut lease_guard,
+            EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()),
+        )
+    })?;
+    if let Err(error) = prepare_p2p_replay_pending_v1(root, replay_frame, driver_generation) {
+        return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
+    }
+    let receipt = match replay.admit(&replay_frame) {
+        Ok(receipt) => receipt,
+        Err(error) => {
+            let mapped = map_payload_replay_admit_error_v1(error);
+            // A validation/replay reject is known to have happened before a
+            // durable append, so remove the prepared breadcrumb before
+            // returning.  If clearing it fails, retain uncertainty.
+            let mapped = if mapped.is_commit_ambiguous() {
+                mapped
+            } else {
+                match clear_p2p_replay_pending_v1(root) {
+                    Ok(()) => mapped,
+                    Err(clear_error) => clear_error,
+                }
+            };
+            return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, mapped));
+        }
+    };
 
     // Close the second half of the lease/WAL race before handing the typed
     // value to Core.  A failed check leaves a durable replay tombstone but no
     // consensus transition, which is the safe liveness tradeoff here.
-    let revalidated_after_append = lease_guard
-        .revalidate()
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    let revalidated_after_append = lease_guard.revalidate().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_post_replay_uncertain", error.to_string())
+    })?;
     if revalidated_after_append != token {
-        return Err(EffectDriverProcessErrorV1::new(
-            "p2p_lease",
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
             "lease was fenced after durable replay admission",
         ));
     }
     let admission = driver
         .enqueue_authenticated_peer_input_v1(driver_generation, accepted.0)
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_core", error.to_string()))?;
+        .map_err(|error| {
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_post_replay_uncertain",
+                error.to_string(),
+            )
+        })?;
     if !matches!(admission, CandidateEffectDriverAdmissionV1::Accepted { .. }) {
-        return Err(EffectDriverProcessErrorV1::new(
-            "p2p_core",
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_post_replay_uncertain",
             format!("unexpected Core ingress admission: {admission:?}"),
         ));
     }
-    let facts = driver
-        .drive_v1()
-        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_core", error.to_string()))?;
-    lease_guard.release().map_err(|error| {
-        EffectDriverProcessErrorV1::new("p2p_lease_release_uncertain", error.to_string())
+    let facts = driver.drive_v1().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_post_replay_uncertain", error.to_string())
     })?;
+    lease_guard.release().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_lease_release_uncertain",
+            error.to_string(),
+        )
+    })?;
+    clear_p2p_replay_pending_v1(root)?;
 
     let response = json!({
         "status": "accepted",
@@ -1833,6 +2241,7 @@ fn process_one_candidate_p2p_connection_v1(
         "lease_generation": token.generation(),
         "replay_record_index": receipt.record_index(),
         "replay_record_hash": hex::encode(receipt.record_hash()),
+        "replay_commit_state": "admitted_not_core_committed",
         "processed_ingress": facts.processed_ingress(),
         "processed_effects": facts.processed_effects(),
         "candidate_only": true,
@@ -2170,6 +2579,8 @@ mod persistence_security_tests {
     #[test]
     fn fresh_root_sets_private_mode_on_new_and_existing_roots() {
         let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
         let root = parent.path().join("run");
         fresh_root(&root).expect("new root is accepted");
         assert_eq!(
@@ -2198,6 +2609,8 @@ mod persistence_security_tests {
     #[test]
     fn durable_artifacts_use_private_files_and_reject_symlink_targets() {
         let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
         let root = parent.path().join("run");
         fresh_root(&root).expect("new root is accepted");
 
@@ -2286,6 +2699,8 @@ mod persistence_security_tests {
     #[test]
     fn run_root_lock_is_exclusive_and_identity_pinned() {
         let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
         let root = parent.path().join("run");
         fresh_root(&root).expect("root is accepted");
         let first = CandidateRunRootGuardV1::acquire(&root).expect("first owner lock");
@@ -2340,5 +2755,138 @@ mod persistence_security_tests {
         drop(listener);
         drop(replacement);
         fs::remove_file(&path).expect("remove replacement socket");
+    }
+
+    #[test]
+    fn p2p_parameter_validation_rejects_path_collisions_aliases_and_long_sockets() {
+        let root = PathBuf::from("/tmp/trnm-poco-parameter-root");
+        let socket = PathBuf::from("/tmp/trnm-poco-candidate.sock");
+        let lease_socket = PathBuf::from("/tmp/trnm-poco-lease.sock");
+        let replay = PathBuf::from("/tmp/trnm-poco-replay.wal");
+        validate_p2p_socket_parameters_v1(&root, &socket, &lease_socket, &replay, "run-1", 1)
+            .expect("distinct bounded paths are accepted");
+
+        assert!(
+            validate_p2p_socket_parameters_v1(&root, &socket, &replay, &replay, "run-1", 1,)
+                .is_err()
+        );
+
+        let artifact = root.join(ROOT_MARKER_V1);
+        assert!(validate_p2p_socket_parameters_v1(
+            &root,
+            &artifact,
+            &lease_socket,
+            &replay,
+            "run-1",
+            1,
+        )
+        .is_err());
+
+        let long_socket =
+            PathBuf::from("/tmp").join("s".repeat(P2P_UNIX_SOCKET_PATH_MAX_BYTES_V1 + 1));
+        assert!(validate_p2p_socket_parameters_v1(
+            &root,
+            &long_socket,
+            &lease_socket,
+            &replay,
+            "run-1",
+            1,
+        )
+        .is_err());
+
+        let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+        let real = parent.path().join("real");
+        fs::create_dir(&real).expect("real directory");
+        fs::set_permissions(&real, fs::Permissions::from_mode(0o700)).expect("real directory mode");
+        symlink(&real, parent.path().join("alias")).expect("directory alias");
+        let aliased_socket = parent.path().join("alias").join("candidate.sock");
+        assert!(validate_p2p_socket_parameters_v1(
+            &parent.path().join("run"),
+            &aliased_socket,
+            &parent.path().join("lease.sock"),
+            &parent.path().join("replay.wal"),
+            "run-1",
+            1,
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn p2p_commit_boundary_errors_are_reported_as_uncertain() {
+        let definitive = map_peer_lease_acquire_error_v1(PeerLeaseErrorV1::Rejected(
+            trnm_consensus_peer_lease::LeaseRejectCodeV1::AlreadyLeased,
+        ));
+        assert!(!definitive.is_commit_ambiguous());
+        assert_eq!(p2p_error_response_v1(&definitive)["status"], "rejected");
+        assert_eq!(
+            p2p_error_response_v1(&definitive)["commit_ambiguous"],
+            false
+        );
+
+        // A transport/protocol failure can be the lost response after the
+        // daemon synced the acquire record.  It must not be collapsed into a
+        // normal rejection which invites an unsafe generation retry.
+        let acquire_io = map_peer_lease_acquire_error_v1(PeerLeaseErrorV1::Io(io::Error::new(
+            io::ErrorKind::ConnectionReset,
+            "response lost",
+        )));
+        assert!(acquire_io.is_commit_ambiguous());
+        assert_eq!(p2p_error_response_v1(&acquire_io)["status"], "uncertain");
+        assert_eq!(p2p_error_response_v1(&acquire_io)["commit_ambiguous"], true);
+
+        let replay_io = map_payload_replay_admit_error_v1(PayloadReplayErrorV1::CommitAmbiguous(
+            Box::new(PayloadReplayErrorV1::Io(io::Error::new(
+                io::ErrorKind::WriteZero,
+                "head publication interrupted",
+            ))),
+        ));
+        assert!(replay_io.is_commit_ambiguous());
+        assert_eq!(p2p_error_response_v1(&replay_io)["status"], "uncertain");
+        assert_eq!(p2p_error_response_v1(&replay_io)["commit_ambiguous"], true);
+
+        // Validation/replay rejects happen before the WAL append and retain
+        // the ordinary rejected response semantics.
+        let replay_reject = map_payload_replay_admit_error_v1(PayloadReplayErrorV1::Replay);
+        assert!(!replay_reject.is_commit_ambiguous());
+        assert_eq!(p2p_error_response_v1(&replay_reject)["status"], "rejected");
+        assert_eq!(
+            p2p_error_response_v1(&replay_reject)["commit_ambiguous"],
+            false
+        );
+    }
+
+    #[test]
+    fn pending_replay_breadcrumb_blocks_fresh_owner_until_acknowledged() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+        let root = parent.path().join("run");
+        fresh_root(&root).expect("fresh root");
+        let scope = PeerLeaseScopeV1::new(
+            [1; 32],
+            [2; 32],
+            PayloadReplayDirectionV1::Inbound,
+            1,
+            [3; 32],
+        )
+        .expect("scope");
+        let frame =
+            PayloadReplayFrameV1::new(scope, [4; 32], [5; 32], [6; 32], 1, 0, 1, 16, [7; 32])
+                .expect("frame");
+        prepare_p2p_replay_pending_v1(&root, frame, 1).expect("prepare breadcrumb");
+        assert_eq!(
+            fs::symlink_metadata(root.join(P2P_REPLAY_PENDING_V1))
+                .expect("pending metadata")
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o600
+        );
+        let blocked = fresh_root(&root).expect_err("pending replay must require recovery");
+        assert!(blocked.to_string().contains("recovery"));
+        clear_p2p_replay_pending_v1(&root).expect("ack breadcrumb");
+        fresh_root(&root).expect("empty acknowledged breadcrumb is reusable");
     }
 }

@@ -7,7 +7,7 @@ use std::{
 };
 
 #[cfg(unix)]
-use std::os::unix::fs::{OpenOptionsExt, PermissionsExt};
+use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt};
 
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
@@ -142,6 +142,29 @@ impl PeerLeaseStoreV1 {
         let latest_generation = self.latest_generation(scope);
         let new_state = match request.operation {
             LeaseOperationV1::Acquire => {
+                // Acquire is an idempotent request for the exact
+                // (scope, session, generation) tuple.  If the daemon synced
+                // the record but the response was lost, a bounded retry can
+                // recover the original token without appending a second
+                // generation or returning a misleading AlreadyLeased error.
+                if let Some(state) = current {
+                    if state.session_id == request.session_id
+                        && state.generation == request.generation
+                    {
+                        if now_ms >= state.expires_at_ms {
+                            return Err(PeerLeaseErrorV1::Rejected(
+                                LeaseRejectCodeV1::LeaseExpired,
+                            ));
+                        }
+                        return Ok(PeerLeaseTokenV1::new(
+                            scope,
+                            state.session_id,
+                            state.generation,
+                            state.expires_at_ms,
+                            state.record_hash,
+                        ));
+                    }
+                }
                 if self.seen_sessions.contains(&(scope, request.session_id)) {
                     return Err(PeerLeaseErrorV1::Rejected(
                         LeaseRejectCodeV1::StaleGeneration,
@@ -763,6 +786,27 @@ pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseError
                 "journal parent must not be a symlink alias",
             ));
         }
+        // Check every existing ancestor as well as the immediate parent.  A
+        // group-writable ancestor permits a same-group process to swap the
+        // final pathname after the lexical/canonical checks.  Root-owned
+        // sticky directories (notably /tmp) are the only intentional
+        // exception because the kernel prevents cross-owner child removal.
+        let mut ancestor = path.to_path_buf();
+        loop {
+            let ancestor_metadata = fs::symlink_metadata(&ancestor)?;
+            let mode = ancestor_metadata.permissions().mode() & 0o7777;
+            if mode & 0o022 != 0 && !(ancestor_metadata.uid() == 0 && mode & 0o1000 != 0) {
+                return Err(PeerLeaseErrorV1::InvalidRequest(
+                    "journal parent ancestry must not be group/world writable",
+                ));
+            }
+            if ancestor == Path::new("/") {
+                break;
+            }
+            if !ancestor.pop() {
+                break;
+            }
+        }
     }
     #[cfg(not(unix))]
     if !metadata.is_dir() {
@@ -863,6 +907,40 @@ mod tests {
         assert_eq!(second.generation(), first.generation() + 1);
         assert_eq!(restarted.latest_generation(scope()), 2);
         assert_eq!(restarted.last_now_ms(), 3_000);
+    }
+
+    #[test]
+    fn acquire_retry_for_same_session_is_idempotent_after_durable_commit() {
+        let directory = private_tempdir();
+        let path = directory.path().join("leases.log");
+        let mut store = PeerLeaseStoreV1::open(&path).unwrap();
+        let first = store.apply(acquire([5; 32], 1), 1_000).unwrap();
+        let record_count = store.record_count;
+
+        // A response-loss retry may carry a different TTL hint, but it must
+        // recover the exact durable token and must not append another record.
+        let mut retry = acquire([5; 32], 1);
+        retry.ttl_ms = 20_000;
+        let recovered = store.apply(retry, 1_100).unwrap();
+        assert_eq!(recovered, first);
+        assert_eq!(store.record_count, record_count);
+
+        let release = LeaseRequestV1 {
+            operation: LeaseOperationV1::Release,
+            scope: first.scope(),
+            session_id: first.session_id(),
+            generation: first.generation(),
+            expires_at_ms: first.expires_at_ms(),
+            ttl_ms: 0,
+            record_hash: first.record_hash(),
+        };
+        store.apply(release, 1_200).unwrap();
+        assert!(matches!(
+            store.apply(acquire([5; 32], 1), 1_300),
+            Err(PeerLeaseErrorV1::Rejected(
+                LeaseRejectCodeV1::StaleGeneration
+            ))
+        ));
     }
 
     #[test]
