@@ -35,9 +35,10 @@ use trnm_consensus_signer_journal::{
     SignerWatermarkV0,
 };
 use trnm_consensus_types::{
-    BlockId, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate, RecoveryContextV1,
-    RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1, RecoveryZeroDeltaCutV1Fields,
-    StateRoot, TimeoutCertificateV0, ValidatorId, View, RECOVERY_PROCESS_INSTANCE_V1,
+    BlockId, ContextAuthorizedQcV0, Epoch, Height, QcRef, QcReferenceV0, QuorumCertificate,
+    RecoveryContextV1, RecoveryContextV1Fields, RecoveryModeV1, RecoveryZeroDeltaCutV1,
+    RecoveryZeroDeltaCutV1Fields, StateRoot, TimeoutCertificateV0, ValidatorId, View,
+    RECOVERY_PROCESS_INSTANCE_V1,
 };
 use trnm_consensus_unix_fleet_signer::{
     FleetRootPurposeV1, UnixFleetRootSignerConfig, UnixFleetRootSignerProducerV1,
@@ -7576,29 +7577,61 @@ impl PendingCertificateV1 {
     }
 
     fn ready_v1(&self, owner: &BoundedConsensusOwnerV1) -> Result<bool> {
-        let facts = owner
+        // Keep the authority read as an explicit liveness/ownership check,
+        // but do not use a bare height watermark as proof that a certificate
+        // can reach the lab Node.  A lower-height or same-height fork may be
+        // authenticated evidence while its payload/K row is absent; feeding
+        // that value into the Node would request a sync effect which this
+        // bounded owner cannot service and can leave a split P/K checkpoint.
+        let _facts = owner
             .authority
             .as_ref()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?
             .facts_v0()?;
         Ok(match self {
             Self::Quorum { certificate, .. } => {
-                certificate.height().get() <= facts.high_qc_v0().height().get()
-                    || owner.known_executions.contains(&(
-                        certificate.height().get(),
-                        *certificate.block_id().as_bytes(),
-                    ))
+                ordinary_qc_execution_ready_v1(certificate, &owner.known_executions)
             }
             Self::Timeout { certificate, .. } => {
                 certificate.referenced_qcs().iter().all(|reference| {
-                    reference.qc_ref().height().get() <= facts.high_qc_v0().height().get()
-                        || owner.known_executions.contains(&(
-                            reference.qc_ref().height().get(),
-                            *reference.qc_ref().block_id().as_bytes(),
-                        ))
+                    qc_reference_execution_ready_v1(reference, &owner.known_executions)
                 })
             }
         })
+    }
+}
+
+/// Returns whether the runtime has an exact local execution identity for an
+/// ordinary QC.  Height alone is intentionally insufficient: two branches
+/// can share a height, and a stale branch may have already been pruned from
+/// the native P/K projection while its height remains below the high QC.
+fn ordinary_qc_execution_ready_v1(
+    certificate: &QuorumCertificate,
+    known_executions: &BTreeSet<(u64, [u8; 32])>,
+) -> bool {
+    known_executions.contains(&(
+        certificate.height().get(),
+        *certificate.block_id().as_bytes(),
+    ))
+}
+
+/// Synthetic context anchors have no native payload/K dependency.  Ordinary
+/// references, including every non-selected TC reference, require the exact
+/// `(height, block_id)` execution identity before entering the lab authority.
+fn qc_reference_execution_ready_v1(
+    reference: &QcReferenceV0,
+    known_executions: &BTreeSet<(u64, [u8; 32])>,
+) -> bool {
+    match reference {
+        QcReferenceV0::Synthetic(anchor) => {
+            // Epoch anchors are not supported by the bounded runtime's Core
+            // verifier.  Do not let a future synthetic variant bypass the
+            // exact ordinary-execution gate by merely being synthetic.
+            matches!(anchor.as_ref(), ContextAuthorizedQcV0::Genesis(_))
+        }
+        QcReferenceV0::Ordinary(certificate) => {
+            ordinary_qc_execution_ready_v1(certificate, known_executions)
+        }
     }
 }
 
@@ -9924,6 +9957,83 @@ mod tests {
             "the conflicting TC selects a different semantic target"
         );
         assert!(!timeout_certificates_same_semantic_target_v1(&accepted, &conflicting).unwrap());
+    }
+
+    #[test]
+    fn pending_quorum_readiness_requires_exact_execution_coordinate_v1() {
+        let (keys, validator_set, _parameters, _genesis_high_qc, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let mut known =
+            BTreeSet::from([(parent_qc.height().get(), *parent_qc.block_id().as_bytes())]);
+        assert!(ordinary_qc_execution_ready_v1(&parent_qc, &known));
+
+        let foreign = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            parent_qc.view(),
+            parent_qc.height(),
+            BlockId::new([0xb3; 32]),
+            &[0, 1, 2],
+        );
+        assert!(
+            !ordinary_qc_execution_ready_v1(&foreign, &known),
+            "same-height different-block QC must not use the height watermark"
+        );
+        assert!(
+            !ordinary_qc_execution_ready_v1(
+                &qc_variant_for_classifier_test_v1(
+                    &validator_set,
+                    &keys,
+                    parent_qc.view(),
+                    Height::new(1),
+                    BlockId::new([0xb4; 32]),
+                    &[0, 1, 2],
+                ),
+                &known,
+            ),
+            "unknown coordinate QC must remain pending"
+        );
+        known.insert((foreign.height().get(), *foreign.block_id().as_bytes()));
+        assert!(ordinary_qc_execution_ready_v1(&foreign, &known));
+    }
+
+    #[test]
+    fn pending_timeout_readiness_requires_every_exact_reference_v1() {
+        let (keys, validator_set, _parameters, _genesis_high_qc, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let foreign = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            parent_qc.view(),
+            parent_qc.height(),
+            BlockId::new([0xb5; 32]),
+            &[0, 1, 2],
+        );
+        let known = BTreeSet::from([(parent_qc.height().get(), *parent_qc.block_id().as_bytes())]);
+        let genesis = GenesisQcV0::new(
+            validator_set.genesis_hash(),
+            validator_set.chain_id(),
+            &validator_set,
+        )
+        .expect("construct synthetic genesis anchor");
+        assert!(qc_reference_execution_ready_v1(
+            &QcReferenceV0::genesis_anchor(genesis),
+            &known,
+        ));
+        assert!(qc_reference_execution_ready_v1(
+            &QcReferenceV0::ordinary(parent_qc),
+            &known
+        ));
+        assert!(
+            !qc_reference_execution_ready_v1(&QcReferenceV0::ordinary(foreign.clone()), &known),
+            "one unknown non-selected TC reference must keep the whole TC pending"
+        );
+        let mut all_known = known;
+        all_known.insert((foreign.height().get(), *foreign.block_id().as_bytes()));
+        assert!(qc_reference_execution_ready_v1(
+            &QcReferenceV0::ordinary(foreign),
+            &all_known,
+        ));
     }
 
     #[test]
