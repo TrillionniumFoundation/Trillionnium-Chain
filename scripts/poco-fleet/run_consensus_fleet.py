@@ -52,6 +52,9 @@ TERMINAL_DRAIN_ALLOWANCE_SECONDS = 30
 PACEMAKER_BASE_TIMEOUT_SECONDS = 2
 COMMISSIONING_ALLOWANCE_SECONDS = 300
 FLEET_LAUNCH_SKEW_ALLOWANCE_SECONDS = 30
+PEER_LEASE_DAEMON_READY_TIMEOUT_SECONDS = 30
+PEER_LEASE_DAEMON_POLL_SECONDS = 0.1
+PEER_LEASE_SOCKET_MAX_BYTES = 103
 # Sizing input for the enforced timeout-view cap. This is deliberately
 # separate from the observed process-launch skew: independent host clocks and
 # an asynchronous start protocol cannot make that observation a safety fact.
@@ -159,6 +162,23 @@ class CoordinatorAnchorSnapshot:
     size: int
     modified_ns: int
     checked_monotonic_ns: int
+
+
+@dataclasses.dataclass(frozen=True)
+class PeerLeasePaths:
+    """Private, host-scoped paths for the candidate external fence daemon."""
+
+    socket: str
+    journal: str
+    ready: str
+
+
+@dataclasses.dataclass
+class RunningPeerLeaseDaemon:
+    host_id: str
+    stage: base.HostStage
+    paths: PeerLeasePaths
+    child: subprocess.Popen[bytes]
 
 
 def exact_object(value: object, keys: set[str], field: str) -> dict[str, Any]:
@@ -1033,12 +1053,201 @@ def exact_terminal_agreement(
     }
 
 
+def peer_lease_paths(stage: base.HostStage) -> PeerLeasePaths:
+    """Derive one private external-fence endpoint for a validator host.
+
+    The authority is host-scoped rather than validator-scoped.  This matters
+    on the two hosts carrying two validators: both processes must share one
+    durable CAS/journal namespace so an overlapping lease cannot be hidden by
+    starting a second authority.  The stage ``bin`` directory is materialized
+    mode 0700 before this function is called, and the daemon itself enforces
+    the 0600 socket/regular-file boundaries.
+    """
+
+    prefix = f"{stage.root}/bin"
+    paths = PeerLeasePaths(
+        socket=f"{prefix}/peer-lease.sock",
+        journal=f"{prefix}/peer-lease.journal",
+        ready=f"{prefix}/peer-lease.ready",
+    )
+    for value in (paths.socket, paths.journal, paths.ready):
+        # shell_path validates the frozen stage spelling and rejects traversal
+        # before any local or remote effect.  The socket bound is the smaller
+        # Linux/macOS sockaddr_un limit used by the fleet.
+        base.shell_path(value)
+    if len(paths.socket.encode("utf-8")) > PEER_LEASE_SOCKET_MAX_BYTES:
+        base.fail("peer-lease socket path exceeds the portable Unix bound")
+    if len({paths.socket, paths.journal, paths.ready}) != 3:
+        base.fail("peer-lease daemon paths collide")
+    return paths
+
+
+def peer_lease_daemon_command(
+    stage: base.HostStage,
+    binary: str,
+    paths: PeerLeasePaths,
+) -> list[str]:
+    """Build the candidate-only daemon command for one host stage.
+
+    A remote daemon remains a child of its SSH shell and is killed by the
+    shell trap when the coordinator closes the channel.  Its output is not
+    mixed with validator evidence; the validator's signed journal remains the
+    authoritative runtime artifact.
+    """
+
+    arguments = [
+        binary,
+        "peer-lease-daemon",
+        "--socket",
+        paths.socket,
+        "--journal",
+        paths.journal,
+        "--ready-file",
+        paths.ready,
+    ]
+    if not stage.remote:
+        return arguments
+    command = " ".join(shlex.quote(value) for value in arguments)
+    remote = (
+        "set -eu; daemon=''; "
+        "cleanup() { if test -n \"$daemon\"; then kill \"$daemon\" 2>/dev/null || true; "
+        "wait \"$daemon\" 2>/dev/null || true; fi; }; "
+        "trap cleanup EXIT HUP INT TERM; "
+        f"{command} >/dev/null 2>&1 & daemon=$!; "
+        "wait \"$daemon\"; status=$?; daemon=''; exit \"$status\""
+    )
+    return [
+        "ssh",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "ConnectTimeout=15",
+        stage.management,
+        remote,
+    ]
+
+
+def peer_lease_ready_probe(stage: base.HostStage, paths: PeerLeasePaths) -> None:
+    """Check the daemon's private readiness contract without granting a lease."""
+
+    if stage.remote:
+        command = "set -eu; test -S {socket}; test -f {ready}; test ! -L {ready}".format(
+            socket=shlex.quote(paths.socket),
+            ready=shlex.quote(paths.ready),
+        )
+        base.run_checked(
+            [
+                "ssh",
+                "-o",
+                "BatchMode=yes",
+                "-o",
+                "ConnectTimeout=2",
+                stage.management,
+                command,
+            ],
+            timeout=4,
+        )
+        return
+    socket_path = pathlib.Path(paths.socket)
+    ready_path = pathlib.Path(paths.ready)
+    socket_metadata = socket_path.lstat()
+    ready_metadata = ready_path.lstat()
+    if (
+        not stat.S_ISSOCK(socket_metadata.st_mode)
+        or socket_metadata.st_mode & 0o7777 != 0o600
+        or stat.S_ISLNK(ready_metadata.st_mode)
+        or not stat.S_ISREG(ready_metadata.st_mode)
+        or ready_metadata.st_mode & 0o7777 != 0o600
+    ):
+        raise RuntimeError("peer-lease daemon readiness files are not private")
+
+
+def wait_for_peer_lease_ready(
+    daemon: RunningPeerLeaseDaemon,
+    *,
+    timeout_seconds: int = PEER_LEASE_DAEMON_READY_TIMEOUT_SECONDS,
+) -> None:
+    """Wait on the daemon's ready socket with one bounded wall-clock budget."""
+
+    deadline = time.monotonic() + timeout_seconds
+    last_error: BaseException | None = None
+    while True:
+        if daemon.child.poll() is not None:
+            raise RuntimeError(
+                f"peer-lease daemon on {daemon.host_id} exited "
+                f"{daemon.child.returncode} before readiness"
+            )
+        try:
+            peer_lease_ready_probe(daemon.stage, daemon.paths)
+            return
+        except (OSError, subprocess.SubprocessError, RuntimeError) as error:
+            last_error = error
+        if time.monotonic() >= deadline:
+            detail = f": {last_error}" if last_error is not None else ""
+            raise RuntimeError(
+                f"peer-lease daemon on {daemon.host_id} did not become ready{detail}"
+            )
+        time.sleep(PEER_LEASE_DAEMON_POLL_SECONDS)
+
+
+def start_peer_lease_daemons(
+    stages: dict[str, base.HostStage],
+    processes: list[base.ValidatorProcess],
+    linux_paths: dict[str, str],
+) -> tuple[dict[str, PeerLeasePaths], list[RunningPeerLeaseDaemon]]:
+    """Start exactly one candidate authority per validator host."""
+
+    paths_by_host: dict[str, PeerLeasePaths] = {}
+    running: list[RunningPeerLeaseDaemon] = []
+    try:
+        for host_id in sorted({process.host_id for process in processes}):
+            stage = stages[host_id]
+            paths = peer_lease_paths(stage)
+            daemon = RunningPeerLeaseDaemon(
+                host_id=host_id,
+                stage=stage,
+                paths=paths,
+                child=subprocess.Popen(
+                    peer_lease_daemon_command(stage, linux_paths[host_id], paths),
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                ),
+            )
+            running.append(daemon)
+            wait_for_peer_lease_ready(daemon)
+            paths_by_host[host_id] = paths
+    except BaseException:
+        stop_peer_lease_daemons(running)
+        raise
+    return paths_by_host, running
+
+
+def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
+    """Terminate/reap authorities before their stage roots are removed."""
+
+    failures: list[str] = []
+    for daemon in reversed(daemons):
+        child = daemon.child
+        try:
+            if child.poll() is None:
+                child.terminate()
+                try:
+                    child.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.wait(timeout=10)
+        except (OSError, subprocess.SubprocessError) as error:
+            failures.append(f"peer-lease daemon {daemon.host_id}: {error}")
+    return failures
+
+
 def command_for(
     process: base.ValidatorProcess,
     stage: base.HostStage,
     binary: str,
     duration_seconds: int,
     max_blocks: int,
+    peer_lease_socket: str | None = None,
 ) -> tuple[list[str], str, str, str, str, str]:
     root = base.validator_stage_root(process, stage)
     config = f"{root}/{process.config_relative.as_posix()}"
@@ -1056,6 +1265,11 @@ def command_for(
         str(max_blocks),
         report,
     ]
+    if peer_lease_socket is not None:
+        base.shell_path(peer_lease_socket)
+        if len(peer_lease_socket.encode("utf-8")) > PEER_LEASE_SOCKET_MAX_BYTES:
+            base.fail("peer-lease socket path exceeds the portable Unix bound")
+        arguments.extend(("--peer-lease-socket", peer_lease_socket))
     if not stage.remote:
         return (
             arguments,
@@ -2390,6 +2604,8 @@ def main() -> None:
         directory.mkdir(mode=0o700)
 
     stages: dict[str, base.HostStage] = {}
+    peer_lease_paths_by_host: dict[str, PeerLeasePaths] = {}
+    peer_lease_daemons: list[RunningPeerLeaseDaemon] = []
     running: list[
         tuple[
             base.ValidatorProcess,
@@ -2424,6 +2640,10 @@ def main() -> None:
             candidate["linux_x86_64_sha256"],
             candidate["macos_arm64_sha256"],
         )
+        (
+            peer_lease_paths_by_host,
+            peer_lease_daemons,
+        ) = start_peer_lease_daemons(stages, processes, linux_paths)
         record_lifecycle_event(lifecycle_events, "deployment_completed")
         observer_stage = stages["mac"]
         first_launch_ns: int | None = None
@@ -2443,6 +2663,7 @@ def main() -> None:
                 linux_paths[process.host_id],
                 args.duration_seconds,
                 args.max_blocks,
+                peer_lease_paths_by_host[process.host_id].socket,
             )
             capture = base.open_process_capture(process_io, process.validator_id)
             try:
@@ -2727,7 +2948,8 @@ def main() -> None:
                 base.close_process_capture(capture)
             except OSError:
                 pass
-        cleanup_failures = base.clean_stages(stages)
+        cleanup_failures.extend(stop_peer_lease_daemons(peer_lease_daemons))
+        cleanup_failures.extend(base.clean_stages(stages))
         try:
             verify_coordinator_anchor(anchor_snapshot)
         except SystemExit as error:

@@ -303,6 +303,32 @@ def test_local_and_remote_commands() -> None:
     assert final_state.endswith("/runtime-final-state.json")
     assert certificate.endswith("/fleet-start-certificate.bin")
 
+    local_lease_paths = fleet.peer_lease_paths(local_stage)
+    assert local_lease_paths.socket.endswith("/bin/peer-lease.sock")
+    assert local_lease_paths.journal.endswith("/bin/peer-lease.journal")
+    assert local_lease_paths.ready.endswith("/bin/peer-lease.ready")
+    local_daemon = fleet.peer_lease_daemon_command(
+        local_stage, "/stage/validator", local_lease_paths
+    )
+    assert local_daemon[1:] == [
+        "peer-lease-daemon",
+        "--socket",
+        local_lease_paths.socket,
+        "--journal",
+        local_lease_paths.journal,
+        "--ready-file",
+        local_lease_paths.ready,
+    ]
+    local_with_socket, *_ = fleet.command_for(
+        process("local"),
+        local_stage,
+        "/bin/v",
+        60,
+        100,
+        local_lease_paths.socket,
+    )
+    assert local_with_socket[-2:] == ["--peer-lease-socket", local_lease_paths.socket]
+
     remote_stage = fleet.base.HostStage(
         "desktop", "p4-desktop", "/tmp/tp3-remote", None
     )
@@ -318,6 +344,24 @@ def test_local_and_remote_commands() -> None:
         process("p4-desktop"), remote_stage
     )
     assert remote_report == f"{expected_root}/consensus-report.json"
+    remote_lease_paths = fleet.peer_lease_paths(remote_stage)
+    remote_daemon = fleet.peer_lease_daemon_command(
+        remote_stage, "/stage/validator", remote_lease_paths
+    )
+    assert remote_daemon[:3] == ["ssh", "-o", "BatchMode=yes"]
+    assert "peer-lease-daemon" in remote_daemon[-1]
+    assert "--ready-file" in remote_daemon[-1]
+    assert "trap cleanup EXIT HUP INT TERM" in remote_daemon[-1]
+    remote_with_socket, *_ = fleet.command_for(
+        process("p4-desktop"),
+        remote_stage,
+        "/stage/validator",
+        60,
+        100,
+        remote_lease_paths.socket,
+    )
+    assert "--peer-lease-socket" in remote_with_socket[-1]
+    assert remote_lease_paths.socket in remote_with_socket[-1]
     replay_sources = fleet.replay_archive_sources_v1(
         process("p4-desktop"), remote_stage
     )
