@@ -282,6 +282,8 @@ pub use effect_driver::{
     EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1, EFFECT_DRIVER_MAX_INGRESS_V1,
     EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1,
 };
+#[cfg(all(feature = "g1-process-test-support", unix))]
+pub use effect_driver_process::run_p2p_socket_once_v1;
 #[cfg(feature = "g1-process-test-support")]
 pub use effect_driver_process::{
     run_stdio_v1 as run_effect_driver_process_stdio_v1, EffectDriverProcessErrorV1,

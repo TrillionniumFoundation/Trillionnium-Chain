@@ -71,6 +71,7 @@ g1-process-test-support = [
   "dep:trnm-finality-types",
   "dep:trnm-protocol",
   "dep:trnm-consensus-safety-rules",
+  "dep:trnm-consensus-peer-lease",
 ]
 
 # The former App-aware recovery modules remain as non-buildable archive source.
@@ -287,6 +288,7 @@ sha2 = "0.10"
 tempfile = { version = "3", optional = true }
 trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
 trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-peer-lease = { version = "0.1.0", path = "../trnm-consensus-peer-lease", optional = true }
 trnm-consensus-external-watermark = { version = "0.1.0", path = "../trnm-consensus-external-watermark", optional = true }
 trnm-consensus-remote-signer-protocol = { version = "0.1.0", path = "../trnm-consensus-remote-signer-protocol" }
 trnm-consensus-safety-store = { version = "0.1.0", path = "../trnm-consensus-safety-store" }

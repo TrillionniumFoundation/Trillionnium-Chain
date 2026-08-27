@@ -322,7 +322,7 @@ where
     core: Core,
     authority: CoreSafetyRulesAuthorityV1<S>,
     hooks: H,
-    ingress: VecDeque<CandidateEffectDriverIngressV1>,
+    ingress: VecDeque<QueuedIngressV1>,
     generation: u64,
     queue_capacity: usize,
     status: CandidateEffectDriverStatusV1,
@@ -331,6 +331,25 @@ where
     stale_generation_rejections: u64,
     backpressure_rejections: u64,
     pending_signed_outbound: Option<PendingSignedOutboundV1>,
+}
+
+/// Internal queue carrier for authenticated transport ingress.  Keeping this
+/// variant out of the public [`CandidateEffectDriverIngressV1`] enum is
+/// intentional: callers cannot label an arbitrary `Input` as authenticated
+/// peer evidence.  Only the node-owned P2P boundary can mint this carrier
+/// after socket, session, lease, and replay checks have completed.
+enum QueuedIngressV1 {
+    Public(CandidateEffectDriverIngressV1),
+    AuthenticatedPeer { generation: u64, input: Box<Input> },
+}
+
+impl QueuedIngressV1 {
+    fn generation(&self) -> u64 {
+        match self {
+            Self::Public(ingress) => ingress.generation(),
+            Self::AuthenticatedPeer { generation, .. } => *generation,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -425,6 +444,46 @@ where
         &mut self,
         ingress: CandidateEffectDriverIngressV1,
     ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
+        let generation = ingress.generation();
+        self.enqueue_queued_v1(QueuedIngressV1::Public(ingress), generation)
+    }
+
+    /// Enqueue one Core input which has crossed the node-owned authenticated
+    /// P2P boundary.  This method is crate-private so a caller cannot bypass
+    /// the session signature, peer lease, or payload replay owner by handing
+    /// the driver a caller-selected `Input`.
+    pub(crate) fn enqueue_authenticated_peer_input_v1(
+        &mut self,
+        generation: u64,
+        input: Input,
+    ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
+        if !matches!(
+            &input,
+            Input::Vote(_)
+                | Input::TimeoutVote(_)
+                | Input::QuorumCertificate(_)
+                | Input::TimeoutCertificate(_)
+        ) {
+            return Err(
+                self.fail_stop(CandidateEffectDriverErrorV1::UnsupportedEffect(
+                    "authenticated peer input",
+                )),
+            );
+        }
+        self.enqueue_queued_v1(
+            QueuedIngressV1::AuthenticatedPeer {
+                generation,
+                input: Box::new(input),
+            },
+            generation,
+        )
+    }
+
+    fn enqueue_queued_v1(
+        &mut self,
+        ingress: QueuedIngressV1,
+        received: u64,
+    ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
         self.ensure_active()?;
         let expected = match self
             .generation
@@ -436,7 +495,6 @@ where
                 return Err(self.fail_stop(CandidateEffectDriverErrorV1::GenerationOverflow));
             }
         };
-        let received = ingress.generation();
         if received != expected {
             self.stale_generation_rejections = self.stale_generation_rejections.saturating_add(1);
             return Ok(CandidateEffectDriverAdmissionV1::StaleGeneration {
@@ -556,17 +614,25 @@ where
 
     fn process_ingress_v1(
         &mut self,
-        ingress: CandidateEffectDriverIngressV1,
+        ingress: QueuedIngressV1,
         effects_processed_this_drive: &mut usize,
     ) -> Result<(), CandidateEffectDriverErrorV1> {
         let effects = match ingress {
-            CandidateEffectDriverIngressV1::Proposal { proposal, .. } => self
+            QueuedIngressV1::Public(CandidateEffectDriverIngressV1::Proposal {
+                proposal, ..
+            }) => self
                 .core
                 .step(Input::Proposal(proposal), &StrictEd25519Verifier)?,
-            CandidateEffectDriverIngressV1::SyncedProposal { proposal, .. } => self
+            QueuedIngressV1::Public(CandidateEffectDriverIngressV1::SyncedProposal {
+                proposal,
+                ..
+            }) => self
                 .core
                 .step(Input::SyncedProposal(proposal), &StrictEd25519Verifier)?,
-            CandidateEffectDriverIngressV1::AuthorityVote { proposal, .. } => self
+            QueuedIngressV1::Public(CandidateEffectDriverIngressV1::AuthorityVote {
+                proposal,
+                ..
+            }) => self
                 .core
                 .step_vote_with_safety_rules_authority_v1(
                     &mut self.authority,
@@ -574,8 +640,11 @@ where
                     &StrictEd25519Verifier,
                 )
                 .map_err(Self::map_authority_error)?,
-            CandidateEffectDriverIngressV1::LocalTimeout { generation: _ } => {
-                self.step_timeout_from_authority_v1()?
+            QueuedIngressV1::Public(CandidateEffectDriverIngressV1::LocalTimeout {
+                generation: _,
+            }) => self.step_timeout_from_authority_v1()?,
+            QueuedIngressV1::AuthenticatedPeer { input, .. } => {
+                self.core.step(*input, &StrictEd25519Verifier)?
             }
         };
         self.process_effects_v1(effects, effects_processed_this_drive)

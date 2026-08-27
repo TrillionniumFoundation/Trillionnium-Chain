@@ -1840,6 +1840,7 @@ dependencies = [
  "trnm-consensus-core",
  "trnm-consensus-crypto",
  "trnm-consensus-external-watermark",
+ "trnm-consensus-peer-lease",
  "trnm-consensus-remote-signer-protocol",
  "trnm-consensus-remote-signer-service",
  "trnm-consensus-safety-rules",

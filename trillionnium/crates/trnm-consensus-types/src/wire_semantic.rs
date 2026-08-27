@@ -212,6 +212,47 @@ impl<'a> WireEnvelopeSemanticProof<'a> {
         self.aggregate_signature_shares
     }
 
+    /// Borrows the exact typed Vote carried by this proof, when the semantic
+    /// body is a Vote.  The value is shape-checked by the decoder; callers
+    /// crossing an authenticated transport boundary must still call
+    /// [`Self::verify_signatures`] before exposing it to a consensus consumer.
+    pub fn as_vote(&self) -> Option<&Vote> {
+        match &self.body {
+            WireSemanticBodyV0::Vote(vote) => Some(vote),
+            _ => None,
+        }
+    }
+
+    /// Borrows the exact typed TimeoutVote carried by this proof, when the
+    /// semantic body is a TimeoutVote.  Signature verification remains an
+    /// explicit caller obligation.
+    pub fn as_timeout_vote(&self) -> Option<&TimeoutVote> {
+        match &self.body {
+            WireSemanticBodyV0::TimeoutVote(vote) => Some(vote),
+            _ => None,
+        }
+    }
+
+    /// Borrows the exact typed quorum certificate carried by this proof, when
+    /// the semantic body is a quorum certificate.  Nested share signatures
+    /// are not implied by this accessor; use [`Self::verify_signatures`].
+    pub fn as_quorum_certificate(&self) -> Option<&QuorumCertificate> {
+        match &self.body {
+            WireSemanticBodyV0::QuorumCertificate(certificate) => Some(certificate),
+            _ => None,
+        }
+    }
+
+    /// Borrows the exact typed timeout certificate carried by this proof, when
+    /// the semantic body is a timeout certificate.  Nested share signatures
+    /// are not implied by this accessor; use [`Self::verify_signatures`].
+    pub fn as_timeout_certificate(&self) -> Option<&TimeoutCertificateV0> {
+        match &self.body {
+            WireSemanticBodyV0::TimeoutCertificate(certificate) => Some(certificate),
+            _ => None,
+        }
+    }
+
     /// Verify every signature-bearing object in the decoded body against the
     /// supplied validator set.  Semantic decoding intentionally remains
     /// cryptographically backend-neutral; callers that cross an authenticated

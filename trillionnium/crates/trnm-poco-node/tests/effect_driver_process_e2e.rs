@@ -264,3 +264,497 @@ impl SigningKeyFixture {
         }
     }
 }
+
+#[cfg(unix)]
+mod p2p_socket_e2e {
+    use super::*;
+    use std::{
+        io::{Read, Write},
+        net::Shutdown,
+        os::unix::fs::PermissionsExt,
+        os::unix::net::UnixStream,
+        path::{Path, PathBuf},
+        process::{Child, Command, Stdio},
+        thread,
+        time::{Duration, Instant},
+    };
+
+    use ed25519_dalek::Signer;
+    use sha2::{Digest, Sha256};
+    use trnm_consensus_types::{
+        BlockId, CanonicalSignable, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
+        GenesisHash, Height, MessageKind, ProtocolVersion, SignatureBytes, Validator, ValidatorId,
+        ValidatorSet, View, Vote, VotingPower,
+    };
+
+    const HANDSHAKE_MAGIC: &[u8; 4] = b"TRNH";
+    const FRAME_MAGIC: &[u8; 4] = b"TRNF";
+    const PROTOCOL_VERSION: u16 = 0;
+    const WIRE_BODY_KIND_VOTE: u64 = 2;
+    const DOMAIN_HANDSHAKE: &[u8] = b"trnm.poco.p2p.handshake.v0\0";
+    const DOMAIN_SESSION_ID: &[u8] = b"trnm.poco.p2p.session-id.v0\0";
+    const DOMAIN_FRAME: &[u8] = b"trnm.poco.p2p.frame.v0\0";
+
+    struct LeaseDaemon {
+        child: Child,
+        socket: PathBuf,
+    }
+
+    impl LeaseDaemon {
+        fn start(dir: &TempDir, name: &str) -> Self {
+            let socket = dir.path().join(format!("{name}.sock"));
+            let journal = dir.path().join(format!("{name}.journal"));
+            let child = Command::new(env!("CARGO_BIN_EXE_trnm-poco-effect-driver-process"))
+                .args([
+                    "--peer-lease-daemon",
+                    socket.to_str().expect("socket path UTF-8"),
+                    journal.to_str().expect("journal path UTF-8"),
+                ])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .spawn()
+                .expect("peer lease daemon must spawn");
+            wait_for_path(&socket, true);
+            Self { child, socket }
+        }
+    }
+
+    impl Drop for LeaseDaemon {
+        fn drop(&mut self) {
+            let _ = self.child.kill();
+            let _ = self.child.wait();
+        }
+    }
+
+    fn wait_for_path(path: &Path, expected: bool) {
+        let deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            if path.exists() == expected {
+                return;
+            }
+            assert!(
+                Instant::now() < deadline,
+                "timed out waiting for {} (expected exists={expected})",
+                path.display()
+            );
+            thread::sleep(Duration::from_millis(10));
+        }
+    }
+
+    fn make_private(dir: &TempDir) {
+        fs::set_permissions(dir.path(), fs::Permissions::from_mode(0o700))
+            .expect("socket test directory must be private");
+    }
+
+    fn connect_retry(path: &Path) -> UnixStream {
+        let deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            match UnixStream::connect(path) {
+                Ok(stream) => return stream,
+                Err(error) => {
+                    assert!(
+                        Instant::now() < deadline,
+                        "timed out connecting to {}: {error}",
+                        path.display()
+                    );
+                    thread::sleep(Duration::from_millis(10));
+                }
+            }
+        }
+    }
+
+    fn send_socket_process(
+        dir: &TempDir,
+        name: &str,
+        lease_socket: &Path,
+        replay_path: &Path,
+        handshake: &[u8],
+        frame: &[u8],
+        trailing_record: Option<&[u8]>,
+    ) -> (std::process::ExitStatus, Value, String) {
+        let root = dir.path().join(format!("{name}.root"));
+        let socket = dir.path().join(format!("{name}.sock"));
+        let mut child = Command::new(env!("CARGO_BIN_EXE_trnm-poco-effect-driver-process"))
+            .args([
+                "--p2p-socket-once",
+                root.to_str().expect("root path UTF-8"),
+                socket.to_str().expect("socket path UTF-8"),
+                lease_socket.to_str().expect("lease path UTF-8"),
+                replay_path.to_str().expect("replay path UTF-8"),
+                "socket-e2e-v1",
+                "1",
+            ])
+            .stdout(Stdio::null())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("socket process must spawn");
+        let deadline = Instant::now() + Duration::from_secs(3);
+        loop {
+            if socket.exists() {
+                break;
+            }
+            if let Some(status) = child.try_wait().expect("poll socket process") {
+                let mut stderr = String::new();
+                child
+                    .stderr
+                    .take()
+                    .expect("socket stderr pipe")
+                    .read_to_string(&mut stderr)
+                    .expect("read early socket stderr");
+                panic!("socket process exited before bind ({status}): {stderr}");
+            }
+            assert!(
+                Instant::now() < deadline,
+                "timed out waiting for {} (expected exists=true)",
+                socket.display()
+            );
+            thread::sleep(Duration::from_millis(10));
+        }
+        let mut stream = connect_retry(&socket);
+        write_record(&mut stream, handshake);
+        write_record(&mut stream, frame);
+        if let Some(record) = trailing_record {
+            write_record(&mut stream, record);
+        }
+        stream
+            .shutdown(Shutdown::Write)
+            .expect("peer half-close must succeed");
+        stream
+            .set_read_timeout(Some(Duration::from_secs(8)))
+            .expect("response timeout");
+        let response = read_record(&mut stream).expect("socket process response");
+        let response: Value = serde_json::from_slice(&response).expect("response JSON");
+        let status = child.wait().expect("wait socket process");
+        let mut stderr = String::new();
+        child
+            .stderr
+            .take()
+            .expect("socket stderr pipe")
+            .read_to_string(&mut stderr)
+            .expect("read socket stderr");
+        wait_for_path(&socket, false);
+        (status, response, stderr)
+    }
+
+    fn write_record(stream: &mut UnixStream, bytes: &[u8]) {
+        let length = u32::try_from(bytes.len()).expect("bounded test record");
+        stream
+            .write_all(&length.to_be_bytes())
+            .expect("record length");
+        stream.write_all(bytes).expect("record bytes");
+        stream.flush().expect("record flush");
+    }
+
+    fn read_record(stream: &mut UnixStream) -> std::io::Result<Vec<u8>> {
+        let mut length = [0u8; 4];
+        stream.read_exact(&mut length)?;
+        let length = u32::from_be_bytes(length) as usize;
+        let mut bytes = vec![0u8; length];
+        stream.read_exact(&mut bytes)?;
+        Ok(bytes)
+    }
+
+    fn tlv(target: &mut Vec<u8>, tag: u8, value: &[u8]) {
+        target.push(tag);
+        target.extend((value.len() as u32).to_be_bytes());
+        target.extend(value);
+    }
+
+    fn pvarint(mut value: u64) -> Vec<u8> {
+        let mut output = Vec::new();
+        loop {
+            let mut byte = (value & 0x7f) as u8;
+            value >>= 7;
+            if value != 0 {
+                byte |= 0x80;
+            }
+            output.push(byte);
+            if value == 0 {
+                return output;
+            }
+        }
+    }
+
+    fn pfield_varint(target: &mut Vec<u8>, field: u32, value: u64) {
+        target.extend(pvarint(u64::from(field << 3)));
+        target.extend(pvarint(value));
+    }
+
+    fn pfield_bytes(target: &mut Vec<u8>, field: u32, value: &[u8]) {
+        target.extend(pvarint(u64::from((field << 3) | 2)));
+        target.extend(pvarint(value.len() as u64));
+        target.extend(value);
+    }
+
+    fn fixture() -> (Vec<u8>, Vec<u8>) {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let key = ed25519_dalek::SigningKey::from_bytes(&[42; 32]);
+        let validators = (1u8..=4)
+            .map(|id| {
+                let validator_key = ed25519_dalek::SigningKey::from_bytes(&[40 + id; 32]);
+                Validator::new(
+                    ValidatorId::new([id; 32]),
+                    ConsensusPublicKey::new(validator_key.verifying_key().to_bytes()),
+                    VotingPower::new(1).expect("voting power"),
+                )
+                .expect("validator")
+            })
+            .collect();
+        let set = ValidatorSet::new(
+            GenesisHash::new([0x91; 32]),
+            ChainId::from_static("trnm-effect-driver-process-v1"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("validator set");
+        let peer = ValidatorId::new([2; 32]);
+        let block_id = BlockId::new([0x42; 32]);
+        let unsigned_vote = Vote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            View::new(1),
+            Height::new(1),
+            block_id,
+            set.id(),
+            peer,
+            SignatureBytes::from_array([0; 64]),
+            &set,
+        )
+        .expect("vote shape");
+        let vote_signature = key.sign(unsigned_vote.signing_root().as_bytes()).to_bytes();
+        let vote = Vote::new(
+            set.chain_id(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            View::new(1),
+            Height::new(1),
+            block_id,
+            set.id(),
+            peer,
+            SignatureBytes::from_array(vote_signature),
+            &set,
+        )
+        .expect("signed vote shape");
+
+        let mut common = Vec::new();
+        pfield_varint(&mut common, 1, 0);
+        pfield_bytes(&mut common, 2, set.genesis_hash().as_bytes());
+        pfield_bytes(&mut common, 3, set.chain_id().as_bytes());
+        pfield_varint(&mut common, 4, 0);
+        pfield_varint(&mut common, 5, set.epoch().get());
+        pfield_bytes(&mut common, 6, set.id().as_bytes());
+        pfield_varint(&mut common, 7, 1);
+        pfield_varint(&mut common, 8, MessageKind::Vote as u64);
+        pfield_bytes(&mut common, 9, set.consensus_parameters_hash().as_bytes());
+        let mut vote_body = Vec::new();
+        pfield_bytes(&mut vote_body, 1, &common);
+        pfield_varint(&mut vote_body, 2, 1);
+        pfield_bytes(&mut vote_body, 3, block_id.as_bytes());
+        pfield_bytes(&mut vote_body, 4, peer.as_bytes());
+        pfield_bytes(&mut vote_body, 5, vote.signature().as_bytes());
+
+        // Frozen WireEnvelope protobuf fields, emitted in canonical order.
+        // The transport session binds sender sequence zero to its first
+        // replay-WAL record; the nested Vote carries the same view/context.
+        let mut payload = Vec::new();
+        pfield_varint(&mut payload, 1, 0);
+        pfield_varint(&mut payload, 2, 0);
+        pfield_bytes(&mut payload, 3, set.genesis_hash().as_bytes());
+        pfield_bytes(&mut payload, 4, set.chain_id().as_bytes());
+        pfield_varint(&mut payload, 5, 0);
+        pfield_varint(&mut payload, 6, set.epoch().get());
+        pfield_varint(&mut payload, 7, 1);
+        pfield_bytes(&mut payload, 8, set.id().as_bytes());
+        pfield_bytes(&mut payload, 9, set.consensus_parameters_hash().as_bytes());
+        pfield_varint(&mut payload, 10, 1);
+        pfield_varint(&mut payload, 11, MessageKind::Vote as u64);
+        pfield_varint(&mut payload, 12, WIRE_BODY_KIND_VOTE);
+        pfield_bytes(&mut payload, 13, peer.as_bytes());
+        pfield_bytes(&mut payload, 14, &[0x71; 16]);
+        pfield_varint(&mut payload, 15, 0);
+        let body_hash: [u8; 32] = Sha256::digest(&vote_body).into();
+        pfield_bytes(&mut payload, 16, &body_hash);
+        pfield_bytes(&mut payload, 33, &vote_body);
+
+        let mut handshake_unsigned = HANDSHAKE_MAGIC.to_vec();
+        tlv(&mut handshake_unsigned, 1, &PROTOCOL_VERSION.to_be_bytes());
+        tlv(&mut handshake_unsigned, 2, set.genesis_hash().as_bytes());
+        tlv(&mut handshake_unsigned, 3, set.chain_id().as_bytes());
+        tlv(&mut handshake_unsigned, 4, set.id().as_bytes());
+        tlv(&mut handshake_unsigned, 5, &set.epoch().get().to_be_bytes());
+        tlv(&mut handshake_unsigned, 6, peer.as_bytes());
+        tlv(&mut handshake_unsigned, 7, &key.verifying_key().to_bytes());
+        tlv(&mut handshake_unsigned, 8, &[0xA5; 32]);
+        let handshake_root = hash_domain(DOMAIN_HANDSHAKE, &handshake_unsigned);
+        let handshake_signature = key.sign(&handshake_root).to_bytes();
+        let mut handshake = handshake_unsigned;
+        tlv(&mut handshake, 9, &handshake_signature);
+
+        let session_id = hash_domain(DOMAIN_SESSION_ID, &handshake);
+        let sequence = 0u64;
+        let mut frame_unsigned = FRAME_MAGIC.to_vec();
+        tlv(&mut frame_unsigned, 1, &PROTOCOL_VERSION.to_be_bytes());
+        tlv(&mut frame_unsigned, 2, &session_id);
+        tlv(&mut frame_unsigned, 3, &sequence.to_be_bytes());
+        tlv(&mut frame_unsigned, 4, &payload);
+        let frame_root = frame_signing_root(&frame_unsigned, session_id, sequence, &payload);
+        let frame_signature = key.sign(&frame_root).to_bytes();
+        let mut frame = frame_unsigned;
+        tlv(&mut frame, 5, &frame_signature);
+        (handshake, frame)
+    }
+
+    fn hash_domain(domain: &[u8], bytes: &[u8]) -> [u8; 32] {
+        let mut hasher = Sha256::new();
+        hasher.update(domain);
+        hasher.update((bytes.len() as u64).to_be_bytes());
+        hasher.update(bytes);
+        hasher.finalize().into()
+    }
+
+    fn frame_signing_root(
+        unsigned: &[u8],
+        session_id: [u8; 32],
+        sequence: u64,
+        payload: &[u8],
+    ) -> [u8; 32] {
+        let payload_hash: [u8; 32] = Sha256::digest(payload).into();
+        let mut hasher = Sha256::new();
+        hasher.update(DOMAIN_FRAME);
+        hasher.update(session_id);
+        hasher.update(sequence.to_be_bytes());
+        hasher.update((payload.len() as u64).to_be_bytes());
+        hasher.update(payload_hash);
+        hasher.update((unsigned.len() as u64).to_be_bytes());
+        hasher.update(unsigned);
+        hasher.finalize().into()
+    }
+
+    #[test]
+    fn socket_valid_replay_and_malformed_paths_are_bounded() {
+        let dir = tempfile::tempdir().expect("socket test dir");
+        make_private(&dir);
+        let replay_path = dir.path().join("payload-replay.wal");
+        let (handshake, frame) = fixture();
+
+        let daemon = LeaseDaemon::start(&dir, "lease-first");
+        let (status, accepted, stderr) = send_socket_process(
+            &dir,
+            "valid",
+            &daemon.socket,
+            &replay_path,
+            &handshake,
+            &frame,
+            None,
+        );
+        assert!(status.success(), "valid stderr: {stderr}");
+        assert_eq!(accepted["status"], "accepted");
+        assert_eq!(accepted["candidate_only"], true);
+        assert_eq!(accepted["production_activation"], false);
+        drop(daemon);
+
+        // A fresh lease authority cannot make the exact authenticated frame
+        // live again: the durable replay WAL remains the independent fence.
+        let daemon = LeaseDaemon::start(&dir, "lease-replay");
+        let (status, replayed, stderr) = send_socket_process(
+            &dir,
+            "replay",
+            &daemon.socket,
+            &replay_path,
+            &handshake,
+            &frame,
+            None,
+        );
+        assert!(!status.success(), "replay unexpectedly succeeded: {stderr}");
+        assert_eq!(replayed["status"], "rejected");
+        assert!(
+            replayed["reason"]
+                .as_str()
+                .is_some_and(|reason| reason.contains("replayed")),
+            "unexpected replay reason: {replayed}"
+        );
+        drop(daemon);
+
+        // The handshake is framed correctly but not authenticated. It must
+        // be rejected before the lease authority is touched, and the socket
+        // path must still be removed on this failure path.
+        let malformed = b"TRNH\x00\x00\x00\x00".to_vec();
+        let daemon = LeaseDaemon::start(&dir, "lease-malformed");
+        let (status, rejected, stderr) = send_socket_process(
+            &dir,
+            "malformed",
+            &daemon.socket,
+            &dir.path().join("malformed-replay.wal"),
+            &malformed,
+            &frame,
+            None,
+        );
+        assert!(
+            !status.success(),
+            "malformed unexpectedly succeeded: {stderr}"
+        );
+        assert_eq!(rejected["status"], "rejected");
+        assert!(
+            rejected["reason"]
+                .as_str()
+                .is_some_and(|reason| reason.contains("p2p_handshake")),
+            "unexpected malformed reason: {rejected}"
+        );
+    }
+
+    #[test]
+    fn socket_rejects_trailing_record_before_lease_admission() {
+        let dir = tempfile::tempdir().expect("socket trailing test dir");
+        make_private(&dir);
+        let replay_path = dir.path().join("trailing-replay.wal");
+        let (handshake, frame) = fixture();
+        let daemon = LeaseDaemon::start(&dir, "lease-trailing");
+        let (status, rejected, stderr) = send_socket_process(
+            &dir,
+            "trailing",
+            &daemon.socket,
+            &replay_path,
+            &handshake,
+            &frame,
+            Some(b"extra-record"),
+        );
+        assert!(
+            !status.success(),
+            "trailing unexpectedly succeeded: {stderr}"
+        );
+        assert_eq!(rejected["status"], "rejected");
+        assert!(
+            rejected["reason"]
+                .as_str()
+                .is_some_and(|reason| reason.contains("trailing")),
+            "unexpected trailing reason: {rejected}"
+        );
+    }
+
+    #[test]
+    fn socket_parameter_rejection_precedes_root_marker_and_filesystem_work() {
+        let dir = tempfile::tempdir().expect("socket parameter test dir");
+        make_private(&dir);
+        let root = dir.path().join("invalid.root");
+        let socket = dir.path().join("invalid.sock");
+        let lease = dir.path().join("missing-lease.sock");
+        let replay = dir.path().join("invalid-replay.wal");
+        let error = trnm_poco_node::run_p2p_socket_once_v1(
+            root.clone(),
+            socket,
+            lease,
+            replay,
+            "socket-e2e-v1".to_owned(),
+            0,
+        )
+        .expect_err("zero lease generation must be rejected");
+        assert!(error.to_string().contains("generation"));
+        assert!(
+            !root.exists(),
+            "invalid arguments must not create a root or start marker"
+        );
+    }
+}

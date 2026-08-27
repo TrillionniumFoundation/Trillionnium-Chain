@@ -21,8 +21,15 @@ const RAW_KEY_SOURCE_IS_EXPLICITLY_GATED_V1: bool = true;
 
 use std::{
     fs::{self, File, OpenOptions},
-    io::{self, BufRead, Write},
-    path::{Path, PathBuf},
+    io::{self, BufRead, Read, Write},
+    path::{Component, Path, PathBuf},
+    time::{Duration, Instant},
+};
+
+#[cfg(unix)]
+use std::os::unix::{
+    fs::{FileTypeExt, PermissionsExt},
+    net::{UnixListener, UnixStream},
 };
 
 use ed25519_dalek::{Signer, SigningKey};
@@ -31,24 +38,35 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::validate_strict_json_structure_v0;
 use trnm_consensus_core::{
-    BlockIdOverlayRefV0, Core, CoreConfig, CoreIssuedApplicationSealAuthorityV0, Effect,
+    BlockIdOverlayRefV0, Core, CoreConfig, CoreIssuedApplicationSealAuthorityV0, Effect, Input,
     OutboundMessage, SafetyHalt, SafetyState, SafetyStatePersistenceV0,
     ValidatedPayloadArtifactRefV0,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
+#[cfg(unix)]
+use trnm_consensus_peer_lease::{
+    payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayDirectionV1,
+    PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayStoreV1, PeerLeaseErrorV1,
+    PeerLeaseScopeV1, PeerLeaseTokenV1, UnixPeerLeaseClientV1,
+};
 use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1};
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader,
-    BlockKind, CanonicalSignIntentV0, CanonicalSignable, ChainId, ConsensusParametersV0,
-    ConsensusPublicKey, Epoch, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, GenesisHash,
-    GenesisQcV0, Height, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, Signature64,
-    SignatureBytes, SignedProposalV0, StateRoot, Validator, ValidatorId, ValidatorSet, View,
-    VotingPower,
+    BlockKind, CanonicalSignIntentV0, CanonicalSignable, Cev0AdmissionBudgetV0, ChainId,
+    ConsensusParametersV0, ConsensusPublicKey, Epoch, ExecutionReceiptCommitmentV0,
+    ExecutionReceiptsV0, GenesisHash, GenesisQcV0, Height, ProposalWitnessV0, ProtocolVersion,
+    QcReferenceV0, Signature64, SignatureBytes, SignedProposalV0, StateRoot, Validator,
+    ValidatorId, ValidatorSet, View, VotingPower, WireEnvelopeSemanticProof,
+    WireSemanticBodyKindV0,
 };
 
 use crate::effect_driver::{
     CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1, CandidateEffectDriverFactsV1,
     CandidateEffectDriverHooksV1, CandidateEffectDriverStatusV1, CandidateEffectDriverV1,
+};
+#[cfg(unix)]
+use crate::{
+    PocoNodeP2pSessionV0, P2P_SESSION_MAX_FRAME_BYTES_V0, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0,
 };
 
 /// This process is a candidate fixture only.
@@ -71,6 +89,32 @@ const APPLICATION_WAL_V1: &str = "application-seal.wal";
 const FAIL_CHECKPOINT_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT";
 const LOCAL_KEY_BYTES_V1: [u8; 32] = [41; 32];
 const FIXTURE_PAYLOAD_V1: &[u8] = b"candidate-synced-proposal-v1";
+
+#[cfg(unix)]
+const P2P_SOCKET_RECORD_HEADER_BYTES_V1: usize = 4;
+#[cfg(unix)]
+const P2P_SOCKET_MAX_RECORD_BYTES_V1: usize =
+    if P2P_SESSION_MAX_FRAME_BYTES_V0 > P2P_SESSION_MAX_HANDSHAKE_BYTES_V0 {
+        P2P_SESSION_MAX_FRAME_BYTES_V0
+    } else {
+        P2P_SESSION_MAX_HANDSHAKE_BYTES_V0
+    };
+#[cfg(unix)]
+const P2P_SOCKET_READ_TIMEOUT_V1: Duration = Duration::from_secs(5);
+#[cfg(unix)]
+const P2P_SOCKET_ACCEPT_TIMEOUT_V1: Duration = Duration::from_secs(5);
+#[cfg(unix)]
+const P2P_SOCKET_ACCEPT_POLL_V1: Duration = Duration::from_millis(10);
+#[cfg(unix)]
+const P2P_SOCKET_LEASE_TTL_MS_V1: u64 = 30_000;
+#[cfg(unix)]
+const P2P_SOCKET_RUN_ID_MAX_BYTES_V1: usize = 128;
+#[cfg(unix)]
+const P2P_SOCKET_FRAME_FINGERPRINT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-node.candidate-p2p.frame-fingerprint.v1\0";
+#[cfg(unix)]
+const P2P_SOCKET_NETWORK_CONTEXT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-node.candidate-p2p.network-context.v1\0";
 
 #[derive(Debug)]
 pub struct EffectDriverProcessErrorV1 {
@@ -755,6 +799,33 @@ fn driver_error_json(error: &CandidateEffectDriverErrorV1) -> Value {
     json!({"status":"fail_stopped","reason":error.to_string(),"candidate_only":true})
 }
 
+type FileEffectDriverV1 = CandidateEffectDriverV1<FileTransitionStoreV1, FileHooksV1>;
+
+fn open_file_effect_driver_v1(
+    root: &Path,
+) -> Result<FileEffectDriverV1, EffectDriverProcessErrorV1> {
+    let core = build_core_v1()?;
+    // Install the one Core-affined application seal authority before issuing
+    // the SafetyRules authority. Both capabilities are process-local and are
+    // moved into the private host owner below; neither is reconstructible
+    // from an ingress stream or a durable record.
+    let application_seal_authority = core
+        .issue_application_seal_authority_v0()
+        .map_err(|error| EffectDriverProcessErrorV1::new("application", error.to_string()))?;
+    let store = FileTransitionStoreV1::open(root)?;
+    let authority = core
+        .issue_safety_rules_authority_v1(store, &StrictEd25519Verifier)
+        .map_err(|error| EffectDriverProcessErrorV1::new("authority", error.to_string()))?;
+    let hooks = FileHooksV1::new(root, application_seal_authority);
+    CandidateEffectDriverV1::new(
+        core,
+        authority,
+        hooks,
+        EFFECT_DRIVER_PROCESS_QUEUE_CAPACITY_V1,
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("driver", error.to_string()))
+}
+
 /// Run the candidate process over line-delimited JSON stdin/stdout.
 pub fn run_stdio_v1<R: BufRead, W: Write>(
     root: PathBuf,
@@ -767,26 +838,7 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
         b"v=1\tprocess=candidate-effect-driver\tstate=fresh\n",
     )
     .map_err(|error| EffectDriverProcessErrorV1::new("root", format!("start marker: {error:?}")))?;
-    let core = build_core_v1()?;
-    // Install the one Core-affined application seal authority before issuing
-    // the SafetyRules authority. Both capabilities are process-local and are
-    // moved into the private host owner below; neither is reconstructible
-    // from the command stream or a durable record.
-    let application_seal_authority = core
-        .issue_application_seal_authority_v0()
-        .map_err(|error| EffectDriverProcessErrorV1::new("application", error.to_string()))?;
-    let store = FileTransitionStoreV1::open(&root)?;
-    let authority = core
-        .issue_safety_rules_authority_v1(store, &StrictEd25519Verifier)
-        .map_err(|error| EffectDriverProcessErrorV1::new("authority", error.to_string()))?;
-    let hooks = FileHooksV1::new(&root, application_seal_authority);
-    let mut driver = CandidateEffectDriverV1::new(
-        core,
-        authority,
-        hooks,
-        EFFECT_DRIVER_PROCESS_QUEUE_CAPACITY_V1,
-    )
-    .map_err(|error| EffectDriverProcessErrorV1::new("driver", error.to_string()))?;
+    let mut driver = open_file_effect_driver_v1(&root)?;
 
     let mut line = String::new();
     let mut shutdown = false;
@@ -955,6 +1007,655 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
         broadcasts: broadcast_count(&root),
         status: facts.status(),
     })
+}
+
+#[cfg(unix)]
+fn validate_p2p_socket_parameters_v1(
+    root: &Path,
+    socket_path: &Path,
+    lease_socket_path: &Path,
+    replay_path: &Path,
+    run_id: &str,
+    lease_generation: u64,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    // This function is deliberately side-effect free.  In particular, it is
+    // called before `fresh_root` creates a directory or writes the start
+    // marker, so malformed caller input cannot leave an apparently started
+    // owner behind.
+    validate_narrow_absolute_path_v1(root, "run root")?;
+    validate_narrow_absolute_path_v1(socket_path, "socket")?;
+    validate_narrow_absolute_path_v1(lease_socket_path, "lease socket")?;
+    validate_narrow_absolute_path_v1(replay_path, "replay WAL")?;
+    if socket_path == lease_socket_path || socket_path == replay_path {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            "socket path aliases another candidate path",
+        ));
+    }
+    if lease_generation == 0 {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            "lease generation must be positive",
+        ));
+    }
+    if run_id.is_empty()
+        || run_id.len() > P2P_SOCKET_RUN_ID_MAX_BYTES_V1
+        || run_id.as_bytes().contains(&0)
+    {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            "run id is empty, contains NUL, or exceeds the bounded candidate limit",
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+fn validate_narrow_absolute_path_v1(
+    path: &Path,
+    label: &'static str,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    if !path.is_absolute()
+        || path == Path::new("/")
+        || path.components().count() < 3
+        || path.file_name().is_none()
+        || path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+    {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p",
+            format!("{label} requires a narrow absolute path without dot components"),
+        ));
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+struct CandidateP2pSocketCleanupV1 {
+    path: PathBuf,
+    armed: bool,
+}
+
+#[cfg(unix)]
+impl CandidateP2pSocketCleanupV1 {
+    fn new(path: PathBuf) -> Self {
+        Self { path, armed: false }
+    }
+
+    fn arm(&mut self) {
+        self.armed = true;
+    }
+}
+
+#[cfg(unix)]
+impl Drop for CandidateP2pSocketCleanupV1 {
+    fn drop(&mut self) {
+        if self.armed {
+            cleanup_candidate_p2p_socket_v1(&self.path);
+        }
+    }
+}
+
+#[cfg(unix)]
+fn accept_candidate_p2p_v1(
+    listener: &UnixListener,
+) -> Result<UnixStream, EffectDriverProcessErrorV1> {
+    listener.set_nonblocking(true).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("nonblocking: {error:?}"))
+    })?;
+    let deadline = Instant::now() + P2P_SOCKET_ACCEPT_TIMEOUT_V1;
+    loop {
+        match listener.accept() {
+            Ok((stream, _address)) => return Ok(stream),
+            Err(error) if error.kind() == io::ErrorKind::WouldBlock => {
+                if Instant::now() >= deadline {
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "socket",
+                        "accept timed out before a peer connected",
+                    ));
+                }
+                std::thread::sleep(P2P_SOCKET_ACCEPT_POLL_V1);
+            }
+            Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "socket",
+                    format!("accept: {error:?}"),
+                ));
+            }
+        }
+    }
+}
+
+/// Runs one bounded, candidate-only Unix-socket ingress session.
+///
+/// The owner accepts exactly one authenticated `TRNH`/`TRNF` stream, binds it
+/// to an externally administered peer lease, durably admits the exact frame
+/// through `PayloadReplayStoreV1`, and only then hands the typed consensus
+/// input to the private Core effect-driver queue.  The lease and replay WAL
+/// are intentionally separate transactions; a failure between them poisons
+/// this one-shot owner and never exposes the frame to Core.
+#[cfg(unix)]
+pub fn run_p2p_socket_once_v1(
+    root: PathBuf,
+    socket_path: PathBuf,
+    lease_socket_path: PathBuf,
+    replay_path: PathBuf,
+    run_id: String,
+    lease_generation: u64,
+) -> Result<EffectDriverProcessSummaryV1, EffectDriverProcessErrorV1> {
+    validate_p2p_socket_parameters_v1(
+        &root,
+        &socket_path,
+        &lease_socket_path,
+        &replay_path,
+        &run_id,
+        lease_generation,
+    )?;
+    fresh_root(&root)?;
+    atomic_replace(
+        &root.join(ROOT_MARKER_V1),
+        b"v=1\tprocess=candidate-p2p-core-ingress\tstate=fresh\n",
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("root", format!("start marker: {error:?}")))?;
+
+    let mut driver = open_file_effect_driver_v1(&root)?;
+    let network_context_hash = network_context_hash_v1(driver.core());
+    let local_id = fixed_validator_id_v1(driver.core().config().local_validator())?;
+    let validator_set_id = fixed_bytes_v1(
+        driver.core().config().validator_set().id().as_bytes(),
+        "validator set id",
+    )?;
+    let namespace = PayloadReplayNamespaceV1::new(
+        local_id,
+        driver.core().config().validator_set().epoch().get(),
+        validator_set_id,
+        payload_replay_run_id_hash_v1(&run_id),
+        network_context_hash,
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("p2p", error.to_string()))?;
+
+    // Arm cleanup only after a successful bind.  The guard is declared before
+    // the listener so normal unwinding drops the listener first and then
+    // unlinks the socket path.  This also covers accept/read/write failures.
+    let mut socket_cleanup = CandidateP2pSocketCleanupV1::new(socket_path.clone());
+    let listener = bind_candidate_p2p_socket_v1(&socket_path)?;
+    socket_cleanup.arm();
+    let result = (|| {
+        let mut stream = accept_candidate_p2p_v1(&listener)?;
+        stream
+            .set_nonblocking(false)
+            .and_then(|_| stream.set_read_timeout(Some(P2P_SOCKET_READ_TIMEOUT_V1)))
+            .and_then(|_| stream.set_write_timeout(Some(P2P_SOCKET_READ_TIMEOUT_V1)))
+            .map_err(|error| {
+                EffectDriverProcessErrorV1::new("socket", format!("timeout: {error:?}"))
+            })?;
+
+        let outcome = process_one_candidate_p2p_connection_v1(
+            &mut stream,
+            &mut driver,
+            &root,
+            namespace,
+            lease_socket_path,
+            replay_path,
+            lease_generation,
+        );
+        match outcome {
+            Ok((response, summary)) => {
+                write_p2p_socket_response_v1(&mut stream, response)?;
+                Ok(summary)
+            }
+            Err(error) => {
+                let response = json!({
+                    "status": if error.code == "p2p_lease_release_uncertain" {
+                        "uncertain"
+                    } else {
+                        "rejected"
+                    },
+                    "reason": error.to_string(),
+                    "commit_ambiguous": error.code == "p2p_lease_release_uncertain",
+                    "candidate_only": true,
+                    "production_activation": false,
+                });
+                let _ = write_p2p_socket_response_v1(&mut stream, response);
+                Err(error)
+            }
+        }
+    })();
+    drop(listener);
+    result
+}
+
+#[cfg(unix)]
+fn process_one_candidate_p2p_connection_v1(
+    stream: &mut UnixStream,
+    driver: &mut FileEffectDriverV1,
+    root: &Path,
+    namespace: PayloadReplayNamespaceV1,
+    lease_socket_path: PathBuf,
+    replay_path: PathBuf,
+    lease_generation: u64,
+) -> Result<(Value, EffectDriverProcessSummaryV1), EffectDriverProcessErrorV1> {
+    let handshake = read_p2p_socket_record_v1(stream, P2P_SESSION_MAX_HANDSHAKE_BYTES_V0)?;
+    let session = PocoNodeP2pSessionV0::open(
+        &handshake,
+        driver.core().config().validator_set(),
+        driver.core().config().consensus_parameters(),
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("p2p_handshake", error.to_string()))?;
+    let peer_id = fixed_validator_id_v1(session.peer_id())?;
+    let scope = PeerLeaseScopeV1::new(
+        namespace.local_id(),
+        peer_id,
+        PayloadReplayDirectionV1::Inbound,
+        namespace.epoch(),
+        namespace.validator_set_id(),
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    let session_id = session.session_id();
+    // Authenticate and structurally finish both records before acquiring a
+    // lease.  A malformed or incomplete peer cannot consume an authority
+    // lease, and the mandatory EOF check rejects a third record/trailing byte
+    // on this one-shot protocol.
+    let frame_bytes = read_p2p_socket_record_v1(stream, P2P_SOCKET_MAX_RECORD_BYTES_V1)?;
+    require_p2p_socket_eof_v1(stream)?;
+    let mut budget = Cev0AdmissionBudgetV0::for_validator_set(
+        driver.core().config().consensus_parameters(),
+        driver.core().config().validator_set(),
+    );
+    let accepted = {
+        let mut session = session;
+        let accepted = session
+            .accept_frame(&frame_bytes, &mut budget)
+            .map_err(|error| EffectDriverProcessErrorV1::new("p2p_frame", error.to_string()))?;
+        let input = core_input_from_p2p_proof_v1(accepted.proof())?;
+        let frame_kind = accepted.proof().body_kind() as u8;
+        let sequence = accepted.sequence();
+        (input, frame_kind, sequence)
+    };
+
+    let lease_authority =
+        UnixPeerLeaseClientV1::connect(&lease_socket_path).with_timeout(P2P_SOCKET_READ_TIMEOUT_V1);
+    lease_authority
+        .preflight()
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    let token = lease_authority
+        .acquire(
+            scope,
+            session_id,
+            lease_generation,
+            P2P_SOCKET_LEASE_TTL_MS_V1,
+        )
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    // Arm the cleanup guard before validating any returned token fields.  A
+    // compromised/misconfigured authority must not strand an active lease.
+    let mut lease_guard =
+        CandidatePeerLeaseGuardV1::new(lease_authority.clone(), token, root.to_path_buf());
+    if token.scope() != scope
+        || token.session_id() != session_id
+        || token.generation() != lease_generation
+        || token.expires_at_ms() == 0
+        || token.record_hash() == [0; 32]
+    {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p_lease",
+            "authority returned a token with mismatched scope or generation",
+        ));
+    }
+
+    let mut replay = PayloadReplayStoreV1::open(&replay_path, namespace)
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
+
+    // Revalidate immediately before the payload append.  The external lease
+    // daemon and this WAL are intentionally separate owners; if the lease is
+    // fenced in this interval, no Core input is exposed.
+    let revalidated = lease_guard
+        .revalidate()
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    if revalidated != token {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p_lease",
+            "lease revalidation changed the exact token",
+        ));
+    }
+
+    let driver_facts = driver.facts_v1();
+    if driver_facts.queue_depth() >= driver_facts.queue_capacity() {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p_queue",
+            "Core ingress queue has no capacity before durable replay admission",
+        ));
+    }
+    let driver_generation = driver_facts
+        .generation()
+        .checked_add(driver_facts.queue_depth() as u64)
+        .and_then(|value| value.checked_add(1))
+        .ok_or_else(|| EffectDriverProcessErrorV1::new("p2p_queue", "Core generation overflow"))?;
+    let fingerprint = p2p_frame_fingerprint_v1(token.session_id(), accepted.2, &frame_bytes);
+    let replay_frame = PayloadReplayFrameV1::new(
+        scope,
+        namespace.run_id_hash(),
+        namespace.network_context_hash(),
+        token.session_id(),
+        token.generation(),
+        accepted.2,
+        accepted.1,
+        frame_bytes.len(),
+        fingerprint,
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
+    let receipt = replay
+        .admit(&replay_frame)
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()))?;
+
+    // Close the second half of the lease/WAL race before handing the typed
+    // value to Core.  A failed check leaves a durable replay tombstone but no
+    // consensus transition, which is the safe liveness tradeoff here.
+    let revalidated_after_append = lease_guard
+        .revalidate()
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_lease", error.to_string()))?;
+    if revalidated_after_append != token {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p_lease",
+            "lease was fenced after durable replay admission",
+        ));
+    }
+    let admission = driver
+        .enqueue_authenticated_peer_input_v1(driver_generation, accepted.0)
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_core", error.to_string()))?;
+    if !matches!(admission, CandidateEffectDriverAdmissionV1::Accepted { .. }) {
+        return Err(EffectDriverProcessErrorV1::new(
+            "p2p_core",
+            format!("unexpected Core ingress admission: {admission:?}"),
+        ));
+    }
+    let facts = driver
+        .drive_v1()
+        .map_err(|error| EffectDriverProcessErrorV1::new("p2p_core", error.to_string()))?;
+    lease_guard.release().map_err(|error| {
+        EffectDriverProcessErrorV1::new("p2p_lease_release_uncertain", error.to_string())
+    })?;
+
+    let response = json!({
+        "status": "accepted",
+        "peer_id": hex::encode(peer_id),
+        "session_id": hex::encode(token.session_id()),
+        "sequence": accepted.2,
+        "lease_generation": token.generation(),
+        "replay_record_index": receipt.record_index(),
+        "replay_record_hash": hex::encode(receipt.record_hash()),
+        "processed_ingress": facts.processed_ingress(),
+        "processed_effects": facts.processed_effects(),
+        "candidate_only": true,
+        "production_activation": EFFECT_DRIVER_PROCESS_PRODUCTION_ACTIVATION_V1,
+        "finality_verified": facts.finality_verified(),
+    });
+    let summary = EffectDriverProcessSummaryV1 {
+        generation: facts.generation(),
+        processed_ingress: facts.processed_ingress(),
+        processed_effects: facts.processed_effects(),
+        broadcasts: broadcast_count(root),
+        status: facts.status(),
+    };
+    Ok((response, summary))
+}
+
+#[cfg(unix)]
+fn core_input_from_p2p_proof_v1(
+    proof: &WireEnvelopeSemanticProof<'_>,
+) -> Result<Input, EffectDriverProcessErrorV1> {
+    match proof.body_kind() {
+        WireSemanticBodyKindV0::Vote => proof.as_vote().cloned().map(Input::Vote),
+        WireSemanticBodyKindV0::TimeoutVote => {
+            proof.as_timeout_vote().cloned().map(Input::TimeoutVote)
+        }
+        WireSemanticBodyKindV0::QuorumCertificate => proof
+            .as_quorum_certificate()
+            .cloned()
+            .map(Input::QuorumCertificate),
+        WireSemanticBodyKindV0::TimeoutCertificate => proof
+            .as_timeout_certificate()
+            .cloned()
+            .map(Input::TimeoutCertificate),
+    }
+    .ok_or_else(|| {
+        EffectDriverProcessErrorV1::new(
+            "p2p_frame",
+            "semantic proof body kind did not expose its exact typed value",
+        )
+    })
+}
+
+#[cfg(unix)]
+fn read_p2p_socket_record_v1(
+    stream: &mut UnixStream,
+    maximum: usize,
+) -> Result<Vec<u8>, EffectDriverProcessErrorV1> {
+    let mut header = [0u8; P2P_SOCKET_RECORD_HEADER_BYTES_V1];
+    stream.read_exact(&mut header).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("record header: {error:?}"))
+    })?;
+    let length = u32::from_be_bytes(header) as usize;
+    if length == 0 || length > maximum {
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            format!("record length {length} exceeds bound {maximum}"),
+        ));
+    }
+    let mut bytes = vec![0u8; length];
+    stream.read_exact(&mut bytes).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("record body: {error:?}"))
+    })?;
+    Ok(bytes)
+}
+
+#[cfg(unix)]
+fn require_p2p_socket_eof_v1(stream: &mut UnixStream) -> Result<(), EffectDriverProcessErrorV1> {
+    let mut trailing = [0u8; 1];
+    match stream.read(&mut trailing) {
+        Ok(0) => Ok(()),
+        Ok(_) => Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "trailing bytes or records after the single candidate frame",
+        )),
+        Err(error)
+            if matches!(
+                error.kind(),
+                io::ErrorKind::WouldBlock | io::ErrorKind::TimedOut
+            ) =>
+        {
+            Err(EffectDriverProcessErrorV1::new(
+                "socket",
+                "peer did not half-close after the single candidate frame",
+            ))
+        }
+        Err(error) => Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            format!("trailing-byte check: {error:?}"),
+        )),
+    }
+}
+
+#[cfg(unix)]
+fn write_p2p_socket_response_v1(
+    stream: &mut UnixStream,
+    response: Value,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let bytes = serde_json::to_vec(&response).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("response: {error:?}"))
+    })?;
+    if bytes.len() > P2P_SOCKET_MAX_RECORD_BYTES_V1 {
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "response exceeds bounded socket frame",
+        ));
+    }
+    let length = u32::try_from(bytes.len())
+        .map_err(|_| EffectDriverProcessErrorV1::new("socket", "response length overflow"))?;
+    stream.write_all(&length.to_be_bytes())?;
+    stream.write_all(&bytes)?;
+    stream.flush()?;
+    Ok(())
+}
+
+#[cfg(unix)]
+fn bind_candidate_p2p_socket_v1(path: &Path) -> Result<UnixListener, EffectDriverProcessErrorV1> {
+    if !path.is_absolute() || path == Path::new("/") || path.components().count() < 3 {
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "candidate socket requires an absolute narrow path",
+        ));
+    }
+    let parent = path.parent().ok_or_else(|| {
+        EffectDriverProcessErrorV1::new("socket", "candidate socket has no parent")
+    })?;
+    let metadata = fs::symlink_metadata(parent).map_err(|error| {
+        EffectDriverProcessErrorV1::new("socket", format!("socket parent: {error:?}"))
+    })?;
+    if !metadata.is_dir() || metadata.permissions().mode() & 0o077 != 0 {
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "candidate socket parent must be a private directory",
+        ));
+    }
+    if let Ok(existing) = fs::symlink_metadata(path) {
+        let detail = if existing.file_type().is_socket() {
+            "candidate socket path already exists"
+        } else {
+            "candidate socket path is not a socket"
+        };
+        return Err(EffectDriverProcessErrorV1::new("socket", detail));
+    }
+    let listener = UnixListener::bind(path)
+        .map_err(|error| EffectDriverProcessErrorV1::new("socket", format!("bind: {error:?}")))?;
+    if let Err(error) = fs::set_permissions(path, fs::Permissions::from_mode(0o600)) {
+        drop(listener);
+        cleanup_candidate_p2p_socket_v1(path);
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            format!("permissions: {error:?}"),
+        ));
+    }
+    Ok(listener)
+}
+
+#[cfg(unix)]
+fn cleanup_candidate_p2p_socket_v1(path: &Path) {
+    if fs::symlink_metadata(path)
+        .map(|metadata| metadata.file_type().is_socket())
+        .unwrap_or(false)
+    {
+        let _ = fs::remove_file(path);
+    }
+}
+
+#[cfg(unix)]
+struct CandidatePeerLeaseGuardV1 {
+    authority: UnixPeerLeaseClientV1,
+    token: Option<PeerLeaseTokenV1>,
+    root: PathBuf,
+}
+
+#[cfg(unix)]
+impl CandidatePeerLeaseGuardV1 {
+    fn new(authority: UnixPeerLeaseClientV1, token: PeerLeaseTokenV1, root: PathBuf) -> Self {
+        Self {
+            authority,
+            token: Some(token),
+            root,
+        }
+    }
+
+    fn revalidate(&self) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
+        let token = self.token()?;
+        self.authority.revalidate(token)
+    }
+
+    fn token(&self) -> Result<PeerLeaseTokenV1, PeerLeaseErrorV1> {
+        // The guard is only constructed after a successful acquire, and the
+        // token remains armed until an explicit release succeeds.
+        self.token
+            .ok_or(PeerLeaseErrorV1::InvalidRequest("lease guard is disarmed"))
+    }
+
+    fn release(&mut self) -> Result<(), PeerLeaseErrorV1> {
+        let Some(token) = self.token else {
+            return Ok(());
+        };
+        match self.authority.release(token) {
+            Ok(()) => {
+                self.token = None;
+                Ok(())
+            }
+            Err(error) => Err(error),
+        }
+    }
+}
+
+#[cfg(unix)]
+impl Drop for CandidatePeerLeaseGuardV1 {
+    fn drop(&mut self) {
+        let Some(token) = self.token else {
+            return;
+        };
+        if self.authority.release(token).is_err() {
+            // Drop cannot surface an error.  Persist a fail-stop breadcrumb so
+            // a supervisor/recovery owner can distinguish an uncertain lease
+            // release from a clean one-shot completion; the daemon TTL still
+            // bounds the orphaned lease if the best-effort retry also fails.
+            let line = format!(
+                "v=1\tp2p_lease_release=failed\tsession={}\tgeneration={}\n",
+                hex::encode(token.session_id()),
+                token.generation(),
+            );
+            let _ = append_durable(&self.root.join(ROOT_MARKER_V1), line.as_bytes());
+        }
+    }
+}
+
+#[cfg(unix)]
+fn fixed_bytes_v1(
+    bytes: &[u8],
+    label: &'static str,
+) -> Result<[u8; 32], EffectDriverProcessErrorV1> {
+    bytes.try_into().map_err(|_| {
+        EffectDriverProcessErrorV1::new("p2p", format!("{label} is not exactly 32 bytes"))
+    })
+}
+
+#[cfg(unix)]
+fn fixed_validator_id_v1(id: ValidatorId) -> Result<[u8; 32], EffectDriverProcessErrorV1> {
+    fixed_bytes_v1(id.as_bytes(), "validator id")
+}
+
+#[cfg(unix)]
+fn p2p_frame_fingerprint_v1(session_id: [u8; 32], sequence: u64, frame: &[u8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(P2P_SOCKET_FRAME_FINGERPRINT_DOMAIN_V1);
+    hasher.update(session_id);
+    hasher.update(sequence.to_be_bytes());
+    hasher.update((frame.len() as u64).to_be_bytes());
+    hasher.update(frame);
+    hasher.finalize().into()
+}
+
+#[cfg(unix)]
+fn network_context_hash_v1(core: &Core) -> [u8; 32] {
+    let config = core.config();
+    let set = config.validator_set();
+    let chain = set.chain_id();
+    let chain_id = chain.as_bytes();
+    let mut hasher = Sha256::new();
+    hasher.update(P2P_SOCKET_NETWORK_CONTEXT_DOMAIN_V1);
+    hasher.update(set.genesis_hash().as_bytes());
+    hasher.update((chain_id.len() as u64).to_be_bytes());
+    hasher.update(chain_id);
+    hasher.update(set.protocol_version().get().to_be_bytes());
+    hasher.update(set.epoch().get().to_be_bytes());
+    hasher.update(set.id().as_bytes());
+    hasher.update(set.consensus_parameters_hash().as_bytes());
+    hasher.finalize().into()
 }
 
 fn broadcast_count(root: &Path) -> u64 {
