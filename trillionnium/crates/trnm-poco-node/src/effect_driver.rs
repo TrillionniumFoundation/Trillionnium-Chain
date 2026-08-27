@@ -1128,8 +1128,17 @@ mod tests {
 
     #[test]
     fn candidate_flags_never_claim_production_or_finality() {
-        assert!(CANDIDATE_EFFECT_DRIVER_V1);
-        assert!(!EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1);
-        assert!(!EFFECT_DRIVER_FINALITY_VERIFIED_V1);
+        // Keep the test useful without tripping Clippy's constant-assertion
+        // lint: the compile-time contract below is the authoritative check,
+        // while the facts API exercises the same values through the owner.
+        const {
+            assert!(CANDIDATE_EFFECT_DRIVER_V1);
+            assert!(!EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1);
+            assert!(!EFFECT_DRIVER_FINALITY_VERIFIED_V1);
+        }
+        let (driver, _store_facts, _hook_facts) = test_driver_v1(1, false);
+        let facts = driver.facts_v1();
+        assert!(facts.candidate_only());
+        assert!(!facts.finality_verified());
     }
 }
