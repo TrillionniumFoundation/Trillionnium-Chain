@@ -1850,6 +1850,21 @@ pub fn run_deployed_bounded_consensus_v1(
     )
 }
 
+/// Candidate-only commission callback for the explicit CLI peer-fence seam.
+///
+/// The binary crate cannot name the private config commission method directly;
+/// keeping this tiny adapter here preserves the same deployed runtime
+/// construction used by [`run_deployed_bounded_consensus_v1`] while requiring
+/// the caller to pass the external fence separately to
+/// [`run_bounded_consensus_with_external_fence_v1`].  This does not alter any
+/// production or activation truth bit.
+pub fn commission_deployed_ordinary_runtime_for_cli_v1(
+    config: &mut LoadedValidatorConfig,
+    _signer_lifetime: ContinuousSignerLifetimeBoundsV0,
+) -> Result<PocoNodeLabOrdinaryProposalRuntimeV0<LabFileWatermark>> {
+    config.commission_deployed_ordinary_runtime_v1()
+}
+
 #[derive(Debug, Clone)]
 struct ConsensusRuntimePreflightV1 {
     duration: Duration,

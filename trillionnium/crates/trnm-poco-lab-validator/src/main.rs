@@ -1,7 +1,16 @@
 #![recursion_limit = "256"]
 #![forbid(unsafe_code)]
 
-use std::{env, path::PathBuf, process::ExitCode, time::Duration};
+use std::{
+    env,
+    path::PathBuf,
+    process::ExitCode,
+    sync::{
+        mpsc::{self, TryRecvError},
+        Arc,
+    },
+    time::Duration,
+};
 
 use anyhow::{bail, ensure, Context, Result};
 use serde_json::json;
@@ -12,8 +21,10 @@ use trnm_poco_lab_validator::{
         MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
     },
     consensus_runtime::{
-        run_deployed_bounded_consensus_v1, BoundedConsensusRunOutcomeV1,
-        MINIMUM_CONSENSUS_RUN_BLOCKS_V1, PROCESS1_TARGET_PARKED_EXIT_STATUS_V1,
+        commission_deployed_ordinary_runtime_for_cli_v1,
+        run_bounded_consensus_with_external_fence_v1, run_deployed_bounded_consensus_v1,
+        BoundedConsensusRunOutcomeV1, MINIMUM_CONSENSUS_RUN_BLOCKS_V1,
+        PROCESS1_TARGET_PARKED_EXIT_STATUS_V1,
     },
     fleet_barrier_evidence::load_and_verify_fleet_start_certificate_v1,
     network::{load_signed_network_smoke_report, run_network_smoke},
@@ -38,6 +49,26 @@ use trnm_poco_lab_validator::{
     WEIGHTED_VOTE_QC_COLLECTOR,
 };
 
+#[cfg(unix)]
+use trnm_poco_lab_validator::p2p_admission::UnixExternalPeerLeaseAuthorityV1;
+
+#[cfg(unix)]
+use trnm_consensus_peer_lease::{UnixPeerLeaseClientV1, UnixPeerLeaseDaemonV1};
+
+#[cfg(unix)]
+use std::{
+    fs::Metadata,
+    io::Write,
+    os::unix::{
+        ffi::OsStrExt,
+        fs::{MetadataExt, OpenOptionsExt},
+    },
+    path::Component,
+};
+
+#[cfg(unix)]
+const UNIX_SOCKET_PATH_MAX_BYTES_V1: usize = 107;
+
 fn main() -> ExitCode {
     match run() {
         Ok(exit_code) => exit_code,
@@ -54,6 +85,12 @@ fn run() -> Result<ExitCode> {
         .next()
         .and_then(|value| value.into_string().ok())
         .ok_or_else(|| anyhow::anyhow!(usage()))?;
+    // The lease daemon is an independent candidate-only process.  Dispatch it
+    // before the normal command envelope so this subcommand never parses a
+    // validator run-root/config and therefore cannot load validator secrets.
+    if command == "peer-lease-daemon" {
+        return run_peer_lease_daemon(arguments);
+    }
     let run_root = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
     let config = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
     if command == "verify-replay-archive" {
@@ -343,18 +380,49 @@ fn run() -> Result<ExitCode> {
             MAX_CONSENSUS_RUN_BLOCKS_V1,
         )?;
         let report_path = PathBuf::from(arguments.next().ok_or_else(|| anyhow::anyhow!(usage()))?);
-        if arguments.next().is_some() {
-            bail!(usage());
-        }
+        let peer_lease_socket = parse_optional_peer_lease_socket(&mut arguments)?;
         let report_path = validate_consensus_run_report_target_v1(&report_path)?;
         let binary = env::current_exe().context("resolve current executable")?;
         let loaded = LoadedValidatorConfig::load(run_root, config, binary)?;
-        let outcome = run_deployed_bounded_consensus_v1(
-            loaded,
-            Duration::from_secs(duration_seconds),
-            max_blocks,
-            report_path,
-        )?;
+        let outcome = match peer_lease_socket {
+            Some(socket_path) => {
+                #[cfg(unix)]
+                {
+                    // This is the sole CLI opt-in to the Unix external-fence
+                    // seam.  The ordinary invocation below remains wired to
+                    // the rejecting authority and therefore fail-closed.
+                    let client = UnixPeerLeaseClientV1::connect(socket_path)
+                        .with_timeout(Duration::from_secs(5));
+                    let external_fence =
+                        Arc::new(UnixExternalPeerLeaseAuthorityV1::from_client(client));
+                    run_bounded_consensus_with_external_fence_v1(
+                        loaded,
+                        Duration::from_secs(duration_seconds),
+                        max_blocks,
+                        report_path,
+                        external_fence,
+                        commission_deployed_ordinary_runtime_for_cli_v1,
+                    )?
+                }
+                #[cfg(not(unix))]
+                {
+                    let _ = (
+                        socket_path,
+                        loaded,
+                        duration_seconds,
+                        max_blocks,
+                        report_path,
+                    );
+                    bail!("peer-lease socket opt-in is supported only on Unix")
+                }
+            }
+            None => run_deployed_bounded_consensus_v1(
+                loaded,
+                Duration::from_secs(duration_seconds),
+                max_blocks,
+                report_path,
+            )?,
+        };
         return match outcome {
             BoundedConsensusRunOutcomeV1::CompletedReport(report_path) => {
                 let report = load_signed_consensus_run_report_v1(&report_path)?;
@@ -650,6 +718,227 @@ fn parse_bounded_u64(
     Ok(parsed)
 }
 
+fn parse_optional_peer_lease_socket<I>(arguments: &mut I) -> Result<Option<PathBuf>>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    let mut socket = None;
+    while let Some(argument) = arguments.next() {
+        if argument != "--peer-lease-socket" || socket.is_some() {
+            bail!(usage());
+        }
+        let path = PathBuf::from(
+            arguments
+                .next()
+                .ok_or_else(|| anyhow::anyhow!("missing peer-lease socket path; {}", usage()))?,
+        );
+        ensure!(
+            !path.as_os_str().is_empty(),
+            "peer-lease socket path must not be empty"
+        );
+        validate_peer_lease_socket_path_v1(&path)?;
+        socket = Some(path);
+    }
+    Ok(socket)
+}
+
+#[cfg(unix)]
+fn validate_peer_lease_socket_path_v1(path: &PathBuf) -> Result<()> {
+    ensure!(
+        path.is_absolute(),
+        "peer-lease socket path must be absolute"
+    );
+    ensure!(
+        path.as_os_str().as_bytes().len() <= UNIX_SOCKET_PATH_MAX_BYTES_V1,
+        "peer-lease socket path exceeds Unix sun_path limit"
+    );
+    ensure!(
+        path.components()
+            .all(|component| !matches!(component, Component::CurDir | Component::ParentDir)),
+        "peer-lease socket path contains a traversal component"
+    );
+    let _ = validate_private_parent_v1(path, "peer-lease socket")?;
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn validate_peer_lease_socket_path_v1(_path: &PathBuf) -> Result<()> {
+    bail!("peer-lease socket opt-in is supported only on Unix")
+}
+
+#[cfg(unix)]
+fn validate_private_parent_v1(path: &PathBuf, label: &str) -> Result<Metadata> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| anyhow::anyhow!("{label} path has no parent"))?;
+    let metadata = std::fs::symlink_metadata(parent)
+        .with_context(|| format!("{label} parent does not exist"))?;
+    ensure!(
+        metadata.is_dir() && !metadata.file_type().is_symlink(),
+        "{label} parent must be a real directory"
+    );
+    ensure!(
+        metadata.mode() & 0o7777 == 0o700,
+        "{label} parent must have private mode 0700"
+    );
+    Ok(metadata)
+}
+
+#[cfg(unix)]
+fn validate_peer_lease_data_path_v1(path: &PathBuf, label: &str) -> Result<()> {
+    ensure!(path.is_absolute(), "{label} path must be absolute");
+    ensure!(
+        path.components()
+            .all(|component| !matches!(component, Component::CurDir | Component::ParentDir)),
+        "{label} path contains a traversal component"
+    );
+    let _ = validate_private_parent_v1(path, label)?;
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn validate_peer_lease_data_path_v1(_path: &PathBuf, _label: &str) -> Result<()> {
+    bail!("peer-lease daemon is supported only on Unix")
+}
+
+#[cfg(unix)]
+#[derive(Debug, PartialEq, Eq)]
+struct PeerLeaseDaemonArgsV1 {
+    socket: PathBuf,
+    journal: PathBuf,
+    ready_file: Option<PathBuf>,
+}
+
+#[cfg(unix)]
+fn parse_peer_lease_daemon_args<I>(arguments: I) -> Result<PeerLeaseDaemonArgsV1>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    let mut socket = None;
+    let mut journal = None;
+    let mut ready_file = None;
+    let mut arguments = arguments.peekable();
+    while let Some(argument) = arguments.next() {
+        let value = argument.to_str().ok_or_else(|| anyhow::anyhow!(usage()))?;
+        let destination = match value {
+            "--socket" => &mut socket,
+            "--journal" => &mut journal,
+            "--ready-file" => &mut ready_file,
+            "--help" | "-h" => bail!(usage()),
+            _ => bail!(usage()),
+        };
+        ensure!(destination.is_none(), "duplicate peer-lease daemon option");
+        let path = PathBuf::from(
+            arguments
+                .next()
+                .ok_or_else(|| anyhow::anyhow!("missing value for {value}; {}", usage()))?,
+        );
+        ensure!(
+            !path.as_os_str().is_empty(),
+            "peer-lease path must not be empty"
+        );
+        *destination = Some(path);
+    }
+    let socket = socket.ok_or_else(|| anyhow::anyhow!(usage()))?;
+    let journal = journal.ok_or_else(|| anyhow::anyhow!(usage()))?;
+    validate_peer_lease_socket_path_v1(&socket)?;
+    validate_peer_lease_data_path_v1(&journal, "peer-lease journal")?;
+    ensure!(
+        socket != journal,
+        "peer-lease socket and journal paths must differ"
+    );
+    if let Some(ready) = &ready_file {
+        ensure!(
+            ready != &socket && ready != &journal,
+            "peer-lease ready path collides with socket or journal"
+        );
+        validate_peer_lease_data_path_v1(ready, "peer-lease ready file")?;
+    }
+    Ok(PeerLeaseDaemonArgsV1 {
+        socket,
+        journal,
+        ready_file,
+    })
+}
+
+#[cfg(unix)]
+fn run_peer_lease_daemon<I>(arguments: I) -> Result<ExitCode>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    let parsed = parse_peer_lease_daemon_args(arguments)?;
+    ensure!(
+        !parsed.socket.exists() && !parsed.socket.is_symlink(),
+        "peer-lease socket path already exists"
+    );
+    if let Some(ready) = &parsed.ready_file {
+        ensure!(
+            !ready.exists() && !ready.is_symlink(),
+            "peer-lease ready path already exists"
+        );
+    }
+    let daemon = UnixPeerLeaseDaemonV1::new(&parsed.socket, &parsed.journal);
+    let (result_sender, result_receiver) = mpsc::sync_channel(1);
+    let thread = std::thread::spawn(move || {
+        let result = daemon.run();
+        let _ = result_sender.send(result);
+    });
+
+    if let Some(ready) = parsed.ready_file {
+        loop {
+            if parsed.socket.exists() {
+                if let Some(parent) = ready.parent() {
+                    std::fs::create_dir_all(parent)
+                        .context("create peer-lease ready-file parent")?;
+                }
+                let mut ready_file = std::fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .mode(0o600)
+                    .open(&ready)
+                    .context("create peer-lease ready file")?;
+                ready_file
+                    .write_all(b"ready\n")
+                    .context("write peer-lease ready file")?;
+                ready_file
+                    .sync_all()
+                    .context("sync peer-lease ready file")?;
+                break;
+            }
+            match result_receiver.try_recv() {
+                Ok(result) => {
+                    result
+                        .map_err(|error| anyhow::anyhow!("peer-lease daemon stopped: {error}"))?;
+                    return Ok(ExitCode::SUCCESS);
+                }
+                Err(TryRecvError::Disconnected) => {
+                    bail!("peer-lease daemon thread disconnected before ready")
+                }
+                Err(TryRecvError::Empty) => std::thread::sleep(Duration::from_millis(10)),
+            }
+        }
+    }
+
+    match thread.join() {
+        Ok(()) => {
+            let result = result_receiver
+                .recv()
+                .context("receive peer-lease daemon result")?;
+            result.map_err(|error| anyhow::anyhow!("peer-lease daemon stopped: {error}"))?;
+            Ok(ExitCode::SUCCESS)
+        }
+        Err(_) => bail!("peer-lease daemon thread panicked"),
+    }
+}
+
+#[cfg(not(unix))]
+fn run_peer_lease_daemon<I>(_arguments: I) -> Result<ExitCode>
+where
+    I: Iterator<Item = std::ffi::OsString>,
+{
+    bail!("peer-lease daemon is supported only on Unix")
+}
+
 fn parse_canonical_positive_u64(
     value: Option<std::ffi::OsString>,
     field: &str,
@@ -692,11 +981,21 @@ fn parse_canonical_hex32(value: Option<std::ffi::OsString>, field: &str) -> Resu
 }
 
 fn usage() -> &'static str {
-    "usage: trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
+    "usage: trnm-poco-lab-validator peer-lease-daemon --socket PATH --journal PATH [--ready-file PATH] | trnm-poco-lab-validator verify-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-external-config <private-run-root> <validator-config> | trnm-poco-lab-validator verify-replay-archive <observer-public-root> <validator-config> <absolute-archive-context> <absolute-archive-entries> <absolute-archive-head> <absolute-terminal-seal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-network-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-consensus-report <observer-public-root> <validator-config> <signed-report> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-journal <observer-public-root> <validator-config> <signed-journal> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-metrics <observer-public-root> <validator-config> <signed-metrics> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-runtime-final-state <observer-public-root> <validator-config> <signed-final-state> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator verify-fleet-start-certificate <observer-public-root> <validator-config> <fleet-start-certificate> <expected-coordinator-manifest-sha256> <expected-duration-seconds> <expected-max-blocks> | trnm-poco-lab-validator verify-isolated-startup-rejection <observer-public-root> <validator-config> <signed-rejection> <fleet-start-certificate> <expected-coordinator-manifest-sha256> | trnm-poco-lab-validator network-smoke <private-run-root> <validator-config> <rounds> <timeout-seconds> | trnm-poco-lab-validator run-consensus <private-run-root> <validator-config> <duration-seconds> <max-blocks> <report-path> [--peer-lease-socket PATH] | trnm-poco-lab-validator runtime-control <private-run-root> <validator-config> <process-instance> <generation> <nonce> <verb> <fault> | trnm-poco-lab-validator start-runtime-event-journal <private-run-root> <validator-config> <absolute-journal-path> | trnm-poco-lab-validator attempt-isolated-startup-rejection <private-run-root> <validator-config> <stale_snapshot|rollback_attempt> <absolute-isolated-authority-root> <attempt-nonce-hex> <absolute-evidence-path>"
 }
 
 #[cfg(test)]
 mod tests {
+    use std::ffi::OsString;
+
+    #[cfg(unix)]
+    use std::os::unix::fs::PermissionsExt;
+
+    #[cfg(unix)]
+    use tempfile::tempdir;
+
+    use super::{parse_optional_peer_lease_socket, usage};
+
     #[test]
     fn external_config_command_is_explicit_and_keeps_activation_closed() {
         let source = include_str!("main.rs");
@@ -707,5 +1006,100 @@ mod tests {
         assert!(
             source.contains("\"production_consensus_activation\": PRODUCTION_CONSENSUS_ACTIVATION")
         );
+    }
+
+    #[test]
+    fn peer_lease_cli_seams_are_explicit_and_default_remains_rejecting() {
+        let source = include_str!("main.rs");
+        let daemon_dispatch = source
+            .find("if command == \"peer-lease-daemon\"")
+            .expect("daemon dispatch remains present");
+        let run_root_parse = source
+            .find("let run_root = PathBuf::from")
+            .expect("normal command envelope remains present");
+        assert!(daemon_dispatch < run_root_parse);
+        assert!(source.contains("--peer-lease-socket"));
+        assert!(source.contains("UnixPeerLeaseClientV1::connect"));
+        assert!(source.contains("run_bounded_consensus_with_external_fence_v1"));
+        assert!(source.contains("run_deployed_bounded_consensus_v1("));
+        assert!(source.contains("UnixPeerLeaseDaemonV1::new"));
+        assert!(source.contains("\"peer-lease-daemon\""));
+        assert!(usage().contains("--peer-lease-socket PATH"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn peer_lease_daemon_args_require_private_absolute_noncolliding_paths() {
+        let root = tempdir().expect("temporary root");
+        std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private temporary root");
+        let socket = root.path().join("authority.sock");
+        let journal = root.path().join("authority.journal");
+        let ready = root.path().join("authority.ready");
+        let args = vec![
+            OsString::from("--socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--journal"),
+            journal.as_os_str().to_owned(),
+            OsString::from("--ready-file"),
+            ready.as_os_str().to_owned(),
+        ];
+        let parsed = super::parse_peer_lease_daemon_args(args.into_iter())
+            .expect("private daemon paths parse");
+        assert_eq!(parsed.socket, socket);
+        assert_eq!(parsed.journal, journal);
+        assert_eq!(parsed.ready_file, Some(ready));
+
+        let relative = vec![
+            OsString::from("--socket"),
+            OsString::from("relative.sock"),
+            OsString::from("--journal"),
+            journal.as_os_str().to_owned(),
+        ];
+        assert!(super::parse_peer_lease_daemon_args(relative.into_iter()).is_err());
+
+        let collision = vec![
+            OsString::from("--socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--journal"),
+            socket.as_os_str().to_owned(),
+        ];
+        assert!(super::parse_peer_lease_daemon_args(collision.into_iter()).is_err());
+
+        let broad_parent = vec![
+            OsString::from("--socket"),
+            OsString::from("/tmp/authority.sock"),
+            OsString::from("--journal"),
+            OsString::from("/tmp/authority.journal"),
+        ];
+        assert!(super::parse_peer_lease_daemon_args(broad_parent.into_iter()).is_err());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn peer_lease_socket_option_parser_rejects_unknown_or_duplicate_options() {
+        let root = tempdir().expect("temporary root");
+        std::fs::set_permissions(root.path(), std::fs::Permissions::from_mode(0o700))
+            .expect("private temporary root");
+        let socket = root.path().join("authority.sock");
+        let accepted = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+        ];
+        assert_eq!(
+            parse_optional_peer_lease_socket(&mut accepted.into_iter()).unwrap(),
+            Some(socket.clone())
+        );
+
+        let duplicate = vec![
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+            OsString::from("--peer-lease-socket"),
+            socket.as_os_str().to_owned(),
+        ];
+        assert!(parse_optional_peer_lease_socket(&mut duplicate.into_iter()).is_err());
+
+        let unknown = vec![OsString::from("--unexpected")];
+        assert!(parse_optional_peer_lease_socket(&mut unknown.into_iter()).is_err());
     }
 }

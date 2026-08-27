@@ -397,9 +397,13 @@ pub struct UnixExternalPeerLeaseAuthorityV1 {
 #[cfg(unix)]
 impl UnixExternalPeerLeaseAuthorityV1 {
     pub fn connect(path: impl AsRef<std::path::Path>) -> Self {
-        Self {
-            client: UnixPeerLeaseClientV1::connect(path),
-        }
+        Self::from_client(UnixPeerLeaseClientV1::connect(path))
+    }
+
+    /// Wraps an explicitly constructed client so candidate callers can make
+    /// transport deadlines visible at the authority-composition site.
+    pub fn from_client(client: UnixPeerLeaseClientV1) -> Self {
+        Self { client }
     }
 
     pub fn with_timeout(mut self, timeout: Duration) -> Self {
