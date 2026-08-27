@@ -737,13 +737,32 @@ fn anchor_path_for(path: &Path) -> PathBuf {
     path.with_file_name(format!(".{name}.head-v1"))
 }
 
-fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseErrorV1> {
+pub(crate) fn ensure_private_directory(path: &Path) -> Result<(), PeerLeaseErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     #[cfg(unix)]
-    if metadata.file_type().is_symlink() || !metadata.is_dir() {
-        return Err(PeerLeaseErrorV1::InvalidRequest(
-            "journal parent must be a directory",
-        ));
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if metadata.file_type().is_symlink() || !metadata.is_dir() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must be a directory",
+            ));
+        }
+        // Lease journals and their lock/head sidecars are authority state.
+        // Refuse a broad parent instead of trying to chmod a directory owned
+        // by another component.  The daemon/CLI creates a dedicated 0700
+        // directory before reaching this point.
+        if metadata.permissions().mode() & 0o077 != 0 {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must have private mode 0700",
+            ));
+        }
+        // A lexical path can still name a symlink alias.  Canonical equality
+        // is a cheap additional check before opening any authority artifact.
+        if fs::canonicalize(path).map_err(PeerLeaseErrorV1::Io)? != path {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "journal parent must not be a symlink alias",
+            ));
+        }
     }
     #[cfg(not(unix))]
     if !metadata.is_dir() {

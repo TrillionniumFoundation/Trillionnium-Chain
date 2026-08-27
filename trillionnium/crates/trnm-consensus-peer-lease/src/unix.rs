@@ -4,7 +4,7 @@ use std::{
     fs,
     io::{self, Read, Write},
     os::unix::{
-        fs::FileTypeExt,
+        fs::{FileTypeExt, MetadataExt, PermissionsExt},
         net::{UnixListener, UnixStream},
     },
     path::{Path, PathBuf},
@@ -16,13 +16,13 @@ use crate::protocol::{
     LeaseRejectCodeV1, LeaseRequestV1, LeaseResponseV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
     MAX_FRAME_BYTES_V1,
 };
-use crate::store::{now_ms, PeerLeaseStoreV1};
+use crate::store::{ensure_private_directory, now_ms, PeerLeaseStoreV1};
 use crate::PeerLeaseErrorV1;
 
-/// Maximum wall-clock time a peer-lease daemon spends servicing one accepted
-/// stream.  The protocol permits only one request per connection, so keeping
-/// one absolute deadline for frame read and response write prevents a client
-/// from resetting a per-I/O timeout forever (a slowloris pattern).
+/// Wall-clock budget for socket I/O while servicing one accepted stream.  The
+/// protocol permits only one request per connection, so keeping one absolute
+/// deadline for frame read and response write prevents a client from
+/// resetting a per-I/O timeout forever (a slowloris pattern).
 const DEFAULT_DAEMON_OPERATION_TIMEOUT_V1: Duration = Duration::from_secs(5);
 
 /// Protocol-neutral authority interface consumed by a P2P adapter.  It has
@@ -187,6 +187,87 @@ pub fn run_daemon(
     UnixPeerLeaseDaemonV1::new(socket_path, journal_path).run()
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct UnixSocketIdentityV1 {
+    device: u64,
+    inode: u64,
+}
+
+impl UnixSocketIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+        }
+    }
+}
+
+/// Pins the bound listener long enough to make error/unwind cleanup
+/// identity-aware.  A pathname-only unlink could otherwise remove a socket
+/// installed by another same-uid process after this daemon bound its own
+/// inode.  This is still a candidate guard (openat/unlinkat would be needed
+/// for a hostile non-cooperating namespace), but it closes the ordinary
+/// stale-path and chmod-failure cuts.
+struct UnixSocketCleanupGuardV1 {
+    path: PathBuf,
+    identity: Option<UnixSocketIdentityV1>,
+    _listener: Option<UnixListener>,
+}
+
+impl UnixSocketCleanupGuardV1 {
+    fn new(path: PathBuf) -> Self {
+        Self {
+            path,
+            identity: None,
+            _listener: None,
+        }
+    }
+
+    fn arm(&mut self, listener: &UnixListener) -> Result<(), PeerLeaseErrorV1> {
+        let metadata = fs::symlink_metadata(&self.path)?;
+        if !metadata.file_type().is_socket() {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "bound peer-lease path is not a Unix socket",
+            ));
+        }
+        self.identity = Some(UnixSocketIdentityV1::from_metadata(&metadata));
+        self._listener = Some(listener.try_clone()?);
+        Ok(())
+    }
+
+    fn verify(&self) -> Result<(), PeerLeaseErrorV1> {
+        let expected = self.identity.ok_or(PeerLeaseErrorV1::InvalidRequest(
+            "peer-lease socket cleanup guard is not armed",
+        ))?;
+        let metadata = fs::symlink_metadata(&self.path)?;
+        if !metadata.file_type().is_socket()
+            || UnixSocketIdentityV1::from_metadata(&metadata) != expected
+            || metadata.permissions().mode() & 0o7777 != 0o600
+        {
+            return Err(PeerLeaseErrorV1::InvalidRequest(
+                "peer-lease socket identity or permissions changed",
+            ));
+        }
+        Ok(())
+    }
+}
+
+impl Drop for UnixSocketCleanupGuardV1 {
+    fn drop(&mut self) {
+        let Some(expected) = self.identity else {
+            return;
+        };
+        let Ok(metadata) = fs::symlink_metadata(&self.path) else {
+            return;
+        };
+        if metadata.file_type().is_socket()
+            && UnixSocketIdentityV1::from_metadata(&metadata) == expected
+        {
+            let _ = fs::remove_file(&self.path);
+        }
+    }
+}
+
 impl UnixPeerLeaseDaemonV1 {
     pub fn new(socket_path: impl AsRef<Path>, journal_path: impl AsRef<Path>) -> Self {
         Self {
@@ -197,10 +278,11 @@ impl UnixPeerLeaseDaemonV1 {
     }
 
     /// Set the absolute wall-clock budget for each accepted stream.  The
-    /// budget covers request-frame reads, durable application, and response
-    /// writes.  This is primarily useful for deployments with a tighter local
-    /// failure budget and for deterministic tests; the default is five
-    /// seconds.
+    /// budget starts before request-frame reads and also covers response
+    /// writes; time spent applying the durable operation consumes the same
+    /// budget before the response is emitted.  This is primarily useful for
+    /// deployments with a tighter local failure budget and for deterministic
+    /// tests; the default is five seconds.
     pub fn with_timeout(mut self, timeout: Duration) -> Self {
         self.operation_timeout = timeout;
         self
@@ -223,6 +305,12 @@ impl UnixPeerLeaseDaemonV1 {
     /// tampered journal never gets hidden by socket cleanup.
     pub fn run(&self) -> Result<(), PeerLeaseErrorV1> {
         let mut store = PeerLeaseStoreV1::open(&self.journal_path)?;
+        let socket_parent = self
+            .socket_path
+            .parent()
+            .ok_or(PeerLeaseErrorV1::InvalidRequest("peer-lease socket parent"))?;
+        fs::create_dir_all(socket_parent)?;
+        ensure_private_directory(socket_parent)?;
         if self.socket_path.exists() {
             let metadata = fs::symlink_metadata(&self.socket_path)?;
             if !metadata.file_type().is_socket() {
@@ -232,11 +320,11 @@ impl UnixPeerLeaseDaemonV1 {
             }
             fs::remove_file(&self.socket_path)?;
         }
-        if let Some(parent) = self.socket_path.parent() {
-            fs::create_dir_all(parent)?;
-        }
+        let mut socket_cleanup = UnixSocketCleanupGuardV1::new(self.socket_path.clone());
         let listener = UnixListener::bind(&self.socket_path)?;
+        socket_cleanup.arm(&listener)?;
         set_socket_permissions(&self.socket_path)?;
+        socket_cleanup.verify()?;
         for stream in listener.incoming() {
             match stream {
                 Ok(mut stream) => {
@@ -503,6 +591,7 @@ mod tests {
     #[test]
     fn daemon_deadline_covers_fragmented_request_as_one_operation() {
         let directory = tempfile::tempdir().unwrap();
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700)).unwrap();
         let socket = directory.path().join("authority.sock");
         let journal = directory.path().join("authority.log");
         let listener = UnixListener::bind(&socket).unwrap();
@@ -555,5 +644,25 @@ mod tests {
             Err(PeerLeaseErrorV1::Io(error))
                 if error.kind() == io::ErrorKind::TimedOut
         ));
+    }
+
+    #[test]
+    fn socket_cleanup_guard_does_not_remove_replacement_inode() {
+        let directory = tempfile::tempdir().unwrap();
+        let socket = directory.path().join("authority.sock");
+        let listener = UnixListener::bind(&socket).unwrap();
+        let mut guard = UnixSocketCleanupGuardV1::new(socket.clone());
+        guard.arm(&listener).unwrap();
+
+        // Unlink the original name while the listener (and guard clone) stays
+        // open, then install a different socket at the same pathname.  Drop
+        // cleanup must not remove the replacement inode.
+        fs::remove_file(&socket).unwrap();
+        let replacement = UnixListener::bind(&socket).unwrap();
+        drop(listener);
+        drop(guard);
+        assert!(socket.exists());
+        drop(replacement);
+        fs::remove_file(socket).unwrap();
     }
 }

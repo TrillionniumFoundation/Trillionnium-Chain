@@ -167,6 +167,17 @@ fn start_daemon(root: &TempDir) -> (Child, std::path::PathBuf) {
     (child, socket)
 }
 
+fn private_tempdir() -> TempDir {
+    let root = TempDir::new().unwrap();
+    #[cfg(unix)]
+    {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    root
+}
+
 fn stop_daemon(child: &mut Child) {
     if child.try_wait().expect("poll peer-lease daemon").is_none() {
         let _ = child.kill();
@@ -212,16 +223,7 @@ fn establish_pair(
 
 #[test]
 fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
-    let root = TempDir::new().unwrap();
-    // The replay authority intentionally requires a private parent.  Make
-    // the harness root explicit rather than inheriting a platform/umask
-    // dependent tempfile mode.
-    #[cfg(unix)]
-    {
-        use std::fs;
-        use std::os::unix::fs::PermissionsExt;
-        fs::set_permissions(root.path(), fs::Permissions::from_mode(0o700)).unwrap();
-    }
+    let root = private_tempdir();
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
     let replay_namespace = b_config
@@ -351,7 +353,7 @@ fn unix_daemon_fences_real_mesh_workers_and_frames_across_process_boundary() {
 
 #[test]
 fn idle_mesh_shutdown_is_bounded_independently_of_lease_ttl() {
-    let root = TempDir::new().unwrap();
+    let root = private_tempdir();
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
     let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(30));
@@ -373,7 +375,7 @@ fn idle_mesh_shutdown_is_bounded_independently_of_lease_ttl() {
 
 #[test]
 fn idle_external_lease_renewal_failure_terminates_mesh() {
-    let root = TempDir::new().unwrap();
+    let root = private_tempdir();
     let (mut daemon, socket) = start_daemon(&root);
     let (a_config, b_config) = fixture_configs();
     let (a_mesh, b_mesh) = establish_pair(&socket, a_config, b_config, Duration::from_secs(1));
