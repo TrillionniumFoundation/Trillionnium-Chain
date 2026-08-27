@@ -307,6 +307,7 @@ def test_local_and_remote_commands() -> None:
     assert local_lease_paths.socket.endswith("/bin/peer-lease.sock")
     assert local_lease_paths.journal.endswith("/bin/peer-lease.journal")
     assert local_lease_paths.ready.endswith("/bin/peer-lease.ready")
+    assert local_lease_paths.pid.endswith("/bin/peer-lease.pid")
     local_daemon = fleet.peer_lease_daemon_command(
         local_stage, "/stage/validator", local_lease_paths
     )

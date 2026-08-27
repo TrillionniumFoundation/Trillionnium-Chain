@@ -171,6 +171,7 @@ class PeerLeasePaths:
     socket: str
     journal: str
     ready: str
+    pid: str
 
 
 @dataclasses.dataclass
@@ -178,6 +179,7 @@ class RunningPeerLeaseDaemon:
     host_id: str
     stage: base.HostStage
     paths: PeerLeasePaths
+    binary: str
     child: subprocess.Popen[bytes]
 
 
@@ -1069,15 +1071,16 @@ def peer_lease_paths(stage: base.HostStage) -> PeerLeasePaths:
         socket=f"{prefix}/peer-lease.sock",
         journal=f"{prefix}/peer-lease.journal",
         ready=f"{prefix}/peer-lease.ready",
+        pid=f"{prefix}/peer-lease.pid",
     )
-    for value in (paths.socket, paths.journal, paths.ready):
+    for value in (paths.socket, paths.journal, paths.ready, paths.pid):
         # shell_path validates the frozen stage spelling and rejects traversal
         # before any local or remote effect.  The socket bound is the smaller
         # Linux/macOS sockaddr_un limit used by the fleet.
         base.shell_path(value)
     if len(paths.socket.encode("utf-8")) > PEER_LEASE_SOCKET_MAX_BYTES:
         base.fail("peer-lease socket path exceeds the portable Unix bound")
-    if len({paths.socket, paths.journal, paths.ready}) != 3:
+    if len({paths.socket, paths.journal, paths.ready, paths.pid}) != 4:
         base.fail("peer-lease daemon paths collide")
     return paths
 
@@ -1108,12 +1111,15 @@ def peer_lease_daemon_command(
     if not stage.remote:
         return arguments
     command = " ".join(shlex.quote(value) for value in arguments)
+    pid = shlex.quote(paths.pid)
     remote = (
-        "set -eu; daemon=''; "
+        "set -eu; umask 077; daemon=''; "
         "cleanup() { if test -n \"$daemon\"; then kill \"$daemon\" 2>/dev/null || true; "
         "wait \"$daemon\" 2>/dev/null || true; fi; }; "
         "trap cleanup EXIT HUP INT TERM; "
+        f"test ! -e {pid}; "
         f"{command} >/dev/null 2>&1 & daemon=$!; "
+        f"printf '%s\\n' \"$daemon\" > {pid}; chmod 600 {pid}; "
         "wait \"$daemon\"; status=$?; daemon=''; exit \"$status\""
     )
     return [
@@ -1131,9 +1137,13 @@ def peer_lease_ready_probe(stage: base.HostStage, paths: PeerLeasePaths) -> None
     """Check the daemon's private readiness contract without granting a lease."""
 
     if stage.remote:
-        command = "set -eu; test -S {socket}; test -f {ready}; test ! -L {ready}".format(
+        command = (
+            "set -eu; test -S {socket}; test -f {ready}; test ! -L {ready}; "
+            "test -f {pid}; test ! -L {pid}"
+        ).format(
             socket=shlex.quote(paths.socket),
             ready=shlex.quote(paths.ready),
+            pid=shlex.quote(paths.pid),
         )
         base.run_checked(
             [
@@ -1207,6 +1217,7 @@ def start_peer_lease_daemons(
                 host_id=host_id,
                 stage=stage,
                 paths=paths,
+                binary=linux_paths[host_id],
                 child=subprocess.Popen(
                     peer_lease_daemon_command(stage, linux_paths[host_id], paths),
                     stdout=subprocess.DEVNULL,
@@ -1229,8 +1240,38 @@ def stop_peer_lease_daemons(daemons: list[RunningPeerLeaseDaemon]) -> list[str]:
     for daemon in reversed(daemons):
         child = daemon.child
         try:
-            if child.poll() is None:
+            if daemon.stage.remote:
+                pid = shlex.quote(daemon.paths.pid)
+                expected = shlex.quote(f"{daemon.binary} peer-lease-daemon ")
+                remote = (
+                    "set -eu; test -f {pid}; test ! -L {pid}; "
+                    "read -r daemon_pid < {pid}; "
+                    "case \"$daemon_pid\" in ''|*[!0-9]*) exit 41;; esac; "
+                    "test -r \"/proc/$daemon_pid/cmdline\"; "
+                    "command_line=$(tr '\\000' ' ' < \"/proc/$daemon_pid/cmdline\"); "
+                    "expected={expected}; "
+                    "case \"$command_line\" in \"$expected\"*) ;; *) exit 42;; esac; "
+                    "kill -TERM \"$daemon_pid\" 2>/dev/null || true; "
+                    "count=0; while kill -0 \"$daemon_pid\" 2>/dev/null; do "
+                    "count=$((count + 1)); if test \"$count\" -ge 100; then "
+                    "kill -KILL \"$daemon_pid\" 2>/dev/null || true; break; fi; "
+                    "sleep 0.1; done"
+                ).format(pid=pid, expected=expected)
+                base.run_checked(
+                    [
+                        "ssh",
+                        "-o",
+                        "BatchMode=yes",
+                        "-o",
+                        "ConnectTimeout=5",
+                        daemon.stage.management,
+                        remote,
+                    ],
+                    timeout=20,
+                )
+            elif child.poll() is None:
                 child.terminate()
+            if child.poll() is None:
                 try:
                     child.wait(timeout=10)
                 except subprocess.TimeoutExpired:
@@ -2948,8 +2989,14 @@ def main() -> None:
                 base.close_process_capture(capture)
             except OSError:
                 pass
-        cleanup_failures.extend(stop_peer_lease_daemons(peer_lease_daemons))
-        cleanup_failures.extend(base.clean_stages(stages))
+        daemon_cleanup_failures = stop_peer_lease_daemons(peer_lease_daemons)
+        cleanup_failures.extend(daemon_cleanup_failures)
+        # Never delete a private stage while its authority may still own open
+        # socket/journal descriptors.  A failed daemon stop preserves the
+        # complete stage for explicit operator recovery instead of hiding an
+        # orphan behind a successful-looking rm -rf.
+        if not daemon_cleanup_failures:
+            cleanup_failures.extend(base.clean_stages(stages))
         try:
             verify_coordinator_anchor(anchor_snapshot)
         except SystemExit as error:
