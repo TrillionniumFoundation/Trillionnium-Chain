@@ -55,6 +55,99 @@ fn real_process_sigkill_matrix_replays_exact_bounded_timeout_signing() {
     assert_eq!(completed, expected);
 }
 
+#[test]
+fn real_process_reopen_rejects_valid_lower_watermark_after_recovery() {
+    // Stop after the intent watermark has been durably advanced to sequence
+    // one.  The recovered process advances to sequence two; restoring only
+    // the old, still-valid record must then be fenced by the independent
+    // watermark anchor on the next process open.
+    let phase = "producer_entered_after_intent_watermark";
+    let root = protected_temp_root_v0();
+    let mut child = Command::new(HELPER)
+        .args([
+            "prepare",
+            root.path().to_str().expect("root path is UTF-8"),
+            phase,
+        ])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap_or_else(|error| panic!("spawn timeout helper for rollback test: {error}"));
+
+    let stdout = child
+        .stdout
+        .take()
+        .expect("rollback helper stdout must exist");
+    let (sender, receiver) = mpsc::channel();
+    let reader = thread::spawn(move || {
+        let mut reader = BufReader::new(stdout);
+        let mut checkpoint = String::new();
+        let result = reader
+            .read_line(&mut checkpoint)
+            .map(|bytes| (bytes != 0).then_some(checkpoint));
+        let _ = sender.send(result);
+    });
+    let checkpoint = match receiver.recv_timeout(CHECKPOINT_TIMEOUT) {
+        Ok(Ok(Some(checkpoint))) => checkpoint,
+        Ok(Ok(None)) => terminate_after_checkpoint_failure_v0(
+            &mut child,
+            phase,
+            "rollback helper closed checkpoint output before checkpoint",
+        ),
+        Ok(Err(error)) => terminate_after_checkpoint_failure_v0(
+            &mut child,
+            phase,
+            &format!("rollback helper checkpoint read failed: {error}"),
+        ),
+        Err(error) => terminate_after_checkpoint_failure_v0(
+            &mut child,
+            phase,
+            &format!("rollback helper checkpoint timeout: {error}"),
+        ),
+    };
+    reader
+        .join()
+        .expect("rollback checkpoint reader thread must not panic");
+    assert!(
+        checkpoint.starts_with("checkpoint_v0=producer_entered_after_intent_watermark;"),
+        "rollback helper emitted an unexpected checkpoint: {checkpoint:?}"
+    );
+
+    let watermark_path = root.path().join("watermark/signer-watermark.v0");
+    let lower_record = fs::read(&watermark_path)
+        .expect("read sequence-one watermark before killing rollback helper");
+    child
+        .kill()
+        .expect("SIGKILL rollback helper after sequence-one checkpoint");
+    let status = child.wait().expect("wait for killed rollback helper");
+    let stderr = take_child_stderr_v0(&mut child);
+    assert_eq!(
+        status.signal(),
+        Some(SIGKILL),
+        "rollback helper was not SIGKILLed: status={status:?} stderr={stderr}"
+    );
+
+    let recovered = run_helper_v0("recover", root.path(), phase);
+    assert_success_v0(&recovered, "recover watermark before rollback");
+    fs::write(&watermark_path, lower_record)
+        .expect("restore a coherent but lower watermark record");
+
+    let rejected = run_helper_v0("recover", root.path(), phase);
+    assert!(
+        !rejected.status.success(),
+        "reopening after a valid lower watermark unexpectedly succeeded: stdout={} stderr={}",
+        String::from_utf8_lossy(&rejected.stdout),
+        String::from_utf8_lossy(&rejected.stderr),
+    );
+    assert!(
+        String::from_utf8_lossy(&rejected.stderr).contains("InvalidPersistedState"),
+        "rollback rejection did not identify the persisted-state fence: stdout={} stderr={}",
+        String::from_utf8_lossy(&rejected.stdout),
+        String::from_utf8_lossy(&rejected.stderr),
+    );
+}
+
 fn exercise_sigkill_phase_v0(phase: &str) {
     let root = protected_temp_root_v0();
     let mut child = Command::new(HELPER)
