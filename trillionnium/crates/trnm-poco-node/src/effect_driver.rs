@@ -466,6 +466,55 @@ where
         self.enqueue_v1(CandidateEffectDriverIngressV1::LocalTimeout { generation })
     }
 
+    /// Convenience method for one Core-routed synced-proposal ingress item.
+    ///
+    /// A synced proposal is intentionally separate from a normal proposal:
+    /// Core may authenticate and application-validate it without implicitly
+    /// staging a legacy Vote.  The host can then submit the exact same signed
+    /// proposal through [`Self::enqueue_authority_vote_v1`] after the
+    /// application-valid boundary has durably completed.
+    pub fn enqueue_synced_proposal_v1(
+        &mut self,
+        generation: u64,
+        proposal: SignedProposalV0,
+    ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
+        self.enqueue_v1(CandidateEffectDriverIngressV1::SyncedProposal {
+            generation,
+            proposal: Box::new(proposal),
+        })
+    }
+
+    /// Convenience method for the ordinary proposal route.  A host may use
+    /// this to expose its application boundary; if no complete application
+    /// validation hook is installed, the hook must return an error and the
+    /// driver fail-stops before any signer or broadcast effect.
+    pub fn enqueue_proposal_v1(
+        &mut self,
+        generation: u64,
+        proposal: SignedProposalV0,
+    ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
+        self.enqueue_v1(CandidateEffectDriverIngressV1::Proposal {
+            generation,
+            proposal: Box::new(proposal),
+        })
+    }
+
+    /// Convenience method for one authority-backed Vote ingress item.
+    ///
+    /// The proposal is not converted into a caller-selected signing intent:
+    /// the live Core-owned SafetyRules authority derives and persists the
+    /// exact Vote transition before the driver can reach checkpoint/signing.
+    pub fn enqueue_authority_vote_v1(
+        &mut self,
+        generation: u64,
+        proposal: SignedProposalV0,
+    ) -> Result<CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1> {
+        self.enqueue_v1(CandidateEffectDriverIngressV1::AuthorityVote {
+            generation,
+            proposal: Box::new(proposal),
+        })
+    }
+
     /// Drain the bounded queue and process every effect returned by Core or a
     /// validation hook.  Any failure consumes the remaining queue and enters
     /// `FailStopped`; callers must construct a fresh owner after recovery.

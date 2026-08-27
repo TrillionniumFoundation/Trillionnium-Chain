@@ -31,14 +31,19 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::validate_strict_json_structure_v0;
 use trnm_consensus_core::{
-    Core, CoreConfig, Effect, OutboundMessage, SafetyHalt, SafetyState, SafetyStatePersistenceV0,
+    BlockIdOverlayRefV0, Core, CoreConfig, CoreIssuedApplicationSealAuthorityV0, Effect,
+    OutboundMessage, SafetyHalt, SafetyState, SafetyStatePersistenceV0,
+    ValidatedPayloadArtifactRefV0,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1};
 use trnm_consensus_types::{
-    CanonicalSignIntentV0, CanonicalSignable, ChainId, ConsensusParametersV0, ConsensusPublicKey,
-    Epoch, GenesisHash, GenesisQcV0, ProtocolVersion, SignatureBytes, Validator, ValidatorId,
-    ValidatorSet, View, VotingPower,
+    decode_application_payload_v0_exact, ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader,
+    BlockKind, CanonicalSignIntentV0, CanonicalSignable, ChainId, ConsensusParametersV0,
+    ConsensusPublicKey, Epoch, ExecutionReceiptCommitmentV0, ExecutionReceiptsV0, GenesisHash,
+    GenesisQcV0, Height, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, Signature64,
+    SignatureBytes, SignedProposalV0, StateRoot, Validator, ValidatorId, ValidatorSet, View,
+    VotingPower,
 };
 
 use crate::effect_driver::{
@@ -62,8 +67,10 @@ const SAFETY_STATE_V1: &str = "safety-state.record";
 const CHECKPOINT_V1: &str = "whole-node.checkpoint";
 const OUTBOUND_WAL_V1: &str = "outbound.wal";
 const TIMER_WAL_V1: &str = "timer.wal";
+const APPLICATION_WAL_V1: &str = "application-seal.wal";
 const FAIL_CHECKPOINT_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT";
 const LOCAL_KEY_BYTES_V1: [u8; 32] = [41; 32];
+const FIXTURE_PAYLOAD_V1: &[u8] = b"candidate-synced-proposal-v1";
 
 #[derive(Debug)]
 pub struct EffectDriverProcessErrorV1 {
@@ -109,6 +116,20 @@ pub struct EffectDriverProcessSummaryV1 {
 enum CommandV1 {
     #[serde(rename = "enqueue_timeout")]
     EnqueueTimeout { generation: u64 },
+    /// Candidate-only proposal ingress.  The fixture is routed through the
+    /// Core synced-proposal/application-valid boundary; it does not imply
+    /// production network admission.
+    #[serde(rename = "enqueue_synced_proposal")]
+    EnqueueSyncedProposal { generation: u64 },
+    /// Ordinary proposal ingress is exposed only to demonstrate the explicit
+    /// fail-closed application boundary in this fixture process.
+    #[serde(rename = "enqueue_proposal")]
+    EnqueueProposal { generation: u64 },
+    /// Candidate-only Vote ingress.  Core's one issued SafetyRules authority
+    /// derives the Vote transition from the exact previously validated
+    /// fixture proposal.
+    #[serde(rename = "enqueue_authority_vote", alias = "enqueue_vote")]
+    EnqueueAuthorityVote { generation: u64 },
     #[serde(rename = "drive")]
     Drive,
     #[serde(rename = "status")]
@@ -169,6 +190,7 @@ impl SafetyRulesDurableTransitionStoreV1 for FileTransitionStoreV1 {
 
 struct FileHooksV1 {
     root: PathBuf,
+    application_seal_authority: CoreIssuedApplicationSealAuthorityV0,
     persisted: Option<SafetyState>,
     persisted_record: Option<Vec<u8>>,
     broadcasts: u64,
@@ -176,9 +198,10 @@ struct FileHooksV1 {
 }
 
 impl FileHooksV1 {
-    fn new(root: &Path) -> Self {
+    fn new(root: &Path, application_seal_authority: CoreIssuedApplicationSealAuthorityV0) -> Self {
         Self {
             root: root.to_owned(),
+            application_seal_authority,
             persisted: None,
             persisted_record: None,
             broadcasts: 0,
@@ -214,6 +237,16 @@ impl FileHooksV1 {
         .into_bytes()
     }
 
+    fn checkpoint_state_record(state: &SafetyState) -> Vec<u8> {
+        format!(
+            "v=1\trevision={}\tepoch={}\tview={}\tkind=safety_state\n",
+            state.revision(),
+            state.epoch().get(),
+            state.current_view().get(),
+        )
+        .into_bytes()
+    }
+
     fn read_checkpoint_revision(&self) -> Result<Option<u64>, String> {
         let path = self.root.join(CHECKPOINT_V1);
         let bytes = match fs::read(path) {
@@ -232,6 +265,35 @@ impl FileHooksV1 {
             .map(Some)
             .map_err(|_| "checkpoint revision is not an integer".to_owned())
     }
+
+    fn record_application_seal(
+        &self,
+        id: trnm_consensus_core::ValidationId,
+        commitments: &trnm_consensus_types::ValidatedBlockCommitmentsV0,
+        artifact_ref: ValidatedPayloadArtifactRefV0,
+    ) -> Result<(), String> {
+        let overlay = artifact_ref.overlay();
+        let line = format!(
+            "v=1\troute=synced\tblock_id={}\tview={}\tgeneration={}\tlogical_size={}\ttransactions={}\tevidence={}\toverlay={}\tsource={}\n",
+            hex::encode(commitments.block_id().as_bytes()),
+            id.view().get(),
+            id.generation(),
+            commitments.logical_block_size(),
+            commitments.transaction_count(),
+            commitments.evidence_count(),
+            hex::encode(overlay.overlay_checksum()),
+            hex::encode(artifact_ref.source_artifact_checksum()),
+        );
+        let path = self.root.join(APPLICATION_WAL_V1);
+        append_durable(&path, line.as_bytes())
+            .map_err(|error| format!("application seal WAL: {error:?}"))?;
+        let on_disk =
+            fs::read(&path).map_err(|error| format!("application seal readback: {error:?}"))?;
+        if !on_disk.ends_with(line.as_bytes()) {
+            return Err("application seal durable readback mismatch".to_owned());
+        }
+        Ok(())
+    }
 }
 
 impl CandidateEffectDriverHooksV1 for FileHooksV1 {
@@ -244,6 +306,21 @@ impl CandidateEffectDriverHooksV1 for FileHooksV1 {
         let record = Self::record_for_state(request.state());
         atomic_replace(&self.root.join(SAFETY_STATE_V1), &record)
             .map_err(|error| format!("safety state persist: {error:?}"))?;
+        // Non-signing Core revisions (including the two revisions needed to
+        // cross the synced application-valid boundary) still advance the
+        // whole-node checkpoint predecessor. A signing transition carries an
+        // exact CAS successor and must leave the prior revision in place until
+        // `compare_and_advance_whole_node_checkpoint_v1` validates and writes
+        // that successor. This keeps Vote/Timeout and application persistence
+        // on one monotonic checkpoint chain without allowing a signer to run
+        // before the transition CAS.
+        if request.safety_rules_shadow_transition_v1().is_none() {
+            atomic_replace(
+                &self.root.join(CHECKPOINT_V1),
+                &Self::checkpoint_state_record(request.state()),
+            )
+            .map_err(|error| format!("checkpoint state advance: {error:?}"))?;
+        }
         self.persisted = Some(request.state().clone());
         self.persisted_record = Some(record);
         Ok(())
@@ -267,12 +344,38 @@ impl CandidateEffectDriverHooksV1 for FileHooksV1 {
 
     fn validate_payload_v1(
         &mut self,
-        _effect: Effect,
-        _core: &mut Core,
+        effect: Effect,
+        core: &mut Core,
     ) -> Result<Vec<Effect>, Self::Error> {
-        // The process command surface intentionally exposes timeout only.
-        // Proposal validation remains an explicit unsupported boundary.
-        Err("proposal validation is not enabled by this candidate process".to_owned())
+        let request = match effect {
+            Effect::ValidateSyncedPayload(request) => request,
+            Effect::ValidatePayload(_) => {
+                // A normal proposal still requires a complete application
+                // host integration. Keep that route explicit and fail closed
+                // instead of silently treating a missing runtime as Valid.
+                return Err(
+                    "normal proposal validation is not enabled; use the synced candidate boundary"
+                        .to_owned(),
+                );
+            }
+            _ => return Err("unexpected validation effect kind".to_owned()),
+        };
+        let claimed = request
+            .try_claim()
+            .map_err(|_| "duplicate validation request claim".to_owned())?;
+        let (_route, id, block, _parent, permit) = claimed.into_parts();
+        let commitments = validated_commitments_for_block(core, &block)?;
+        let artifact_ref = artifact_ref_for_block(&block);
+        // This WAL is the fixture's explicit application-store commit/readback
+        // marker. The opaque Core proof is minted only after the marker is
+        // durable, and Core still rechecks the exact request/affinity/root
+        // bindings before accepting it.
+        self.record_application_seal(id, &commitments, artifact_ref)?;
+        let proof = self
+            .application_seal_authority
+            .seal_after_application_store_commit_v0(permit, commitments, artifact_ref);
+        core.step_application_sealed_valid_v0(&proof, &StrictEd25519Verifier)
+            .map_err(|error| format!("Core application Valid callback: {error}"))
     }
 
     fn compare_and_advance_whole_node_checkpoint_v1(
@@ -402,6 +505,7 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
         CHECKPOINT_V1,
         OUTBOUND_WAL_V1,
         TIMER_WAL_V1,
+        APPLICATION_WAL_V1,
     ] {
         let path = root.join(name);
         if path.is_file() && fs::metadata(&path)?.len() != 0 {
@@ -456,6 +560,148 @@ fn build_core_v1() -> Result<Core, EffectDriverProcessErrorV1> {
     .map_err(|error| EffectDriverProcessErrorV1::new("core", format!("genesis QC: {error}")))?;
     Core::new(config, genesis_qc, &StrictEd25519Verifier)
         .map_err(|error| EffectDriverProcessErrorV1::new("core", format!("construct: {error}")))
+}
+
+/// Rebuilds the exact static commitment capability for the process fixture.
+///
+/// The process does not expose a generic caller-supplied Valid result. The
+/// body is decoded against Core's committed parameters, receipts are derived
+/// from that decoded payload, and the typed body kernel mints the private
+/// `ValidatedBlockCommitmentsV0` value used by the Core seal authority.
+fn validated_commitments_for_block(
+    core: &Core,
+    block: &Block,
+) -> Result<trnm_consensus_types::ValidatedBlockCommitmentsV0, String> {
+    let parameters = core.config().consensus_parameters();
+    let application_payload =
+        decode_application_payload_v0_exact(block.application_payload(), parameters)
+            .map_err(|error| format!("decode application payload: {error}"))?;
+    let receipts = ExecutionReceiptsV0::new(
+        &application_payload,
+        (0..application_payload.transaction_count())
+            .map(|index| {
+                ExecutionReceiptCommitmentV0::for_transaction(
+                    &application_payload,
+                    index,
+                    0,
+                    0,
+                    Vec::new(),
+                )
+                .map_err(|error| format!("derive execution receipt {index}: {error}"))
+            })
+            .collect::<Result<Vec<_>, String>>()?,
+    )
+    .map_err(|error| format!("construct execution receipts: {error}"))?;
+    let body = BlockBodyV0::new(application_payload, Vec::new())
+        .map_err(|error| format!("construct canonical body: {error}"))?;
+    body.validate_ordinary_commitments(
+        block.header(),
+        &receipts,
+        parameters,
+        core.config().validator_set(),
+        &StrictEd25519Verifier,
+    )
+    .map_err(|error| format!("validate ordinary commitments: {error}"))
+}
+
+fn artifact_ref_for_block(block: &Block) -> ValidatedPayloadArtifactRefV0 {
+    let mut overlay_checksum = *block.id().as_bytes();
+    overlay_checksum[0] ^= 0x5a;
+    let mut source_artifact_checksum = *block.id().as_bytes();
+    source_artifact_checksum[0] ^= 0xa5;
+    ValidatedPayloadArtifactRefV0::new(
+        BlockIdOverlayRefV0::new(block.id(), block.header().parent_id(), overlay_checksum),
+        source_artifact_checksum,
+    )
+}
+
+/// Deterministic signed h1 proposal used only by the candidate process tests.
+/// It is submitted through the synced-proposal route so application Valid can
+/// be persisted without bypassing the explicitly issued SafetyRules owner;
+/// the following `enqueue_authority_vote` command then exercises the same
+/// Core instance and authority.
+fn fixture_proposal_v1(core: &Core) -> Result<SignedProposalV0, EffectDriverProcessErrorV1> {
+    let config = core.config();
+    let parameters = config.consensus_parameters();
+    let set = config.validator_set();
+    let application_payload = ApplicationPayloadV0::new(vec![FIXTURE_PAYLOAD_V1.to_vec()])
+        .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("payload: {error}")))?;
+    let receipt =
+        ExecutionReceiptCommitmentV0::for_transaction(&application_payload, 0, 0, 0, Vec::new())
+            .map_err(|error| {
+                EffectDriverProcessErrorV1::new("fixture", format!("receipt: {error}"))
+            })?;
+    let receipts =
+        ExecutionReceiptsV0::new(&application_payload, vec![receipt]).map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("receipts: {error}"))
+        })?;
+    let body = BlockBodyV0::new(application_payload, Vec::new())
+        .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("body: {error}")))?;
+    let parent_timestamp_ms = config.trusted_genesis_timestamp_ms();
+    let header = BlockHeader::new(
+        set.genesis_hash(),
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(1),
+        Height::new(1),
+        BlockKind::Regular,
+        config.genesis_block_id(),
+        ValidatorId::new([1; 32]),
+        set.id(),
+        parameters.hash(),
+        body.payload_root().map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("payload root: {error}"))
+        })?,
+        StateRoot::new([1; 32]),
+        receipts.receipts_root().map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("receipts root: {error}"))
+        })?,
+        body.evidence_root().map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("evidence root: {error}"))
+        })?,
+        parent_timestamp_ms.saturating_add(1),
+        None,
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("header: {error}")))?;
+    let block = Block::new(
+        header.clone(),
+        body.application_payload()
+            .try_cev0_bytes()
+            .map_err(|error| {
+                EffectDriverProcessErrorV1::new("fixture", format!("payload bytes: {error}"))
+            })?,
+        Vec::new(),
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("block: {error}")))?;
+    let genesis_qc =
+        GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("genesis QC: {error}"))
+        })?;
+    let justify = QcReferenceV0::genesis_anchor(genesis_qc);
+    let proposal_root = ProposalWitnessV0::signing_root_for(&header, &justify, None, None)
+        .map_err(|error| {
+            EffectDriverProcessErrorV1::new("fixture", format!("proposal root: {error}"))
+        })?;
+    let proposer_signature = Signature64::from_array(
+        SigningKey::from_bytes(&LOCAL_KEY_BYTES_V1)
+            .sign(proposal_root.as_bytes())
+            .to_bytes(),
+    );
+    let witness = ProposalWitnessV0::new(
+        &header,
+        justify,
+        None,
+        None,
+        proposer_signature,
+        set,
+        None,
+        parameters,
+        parent_timestamp_ms,
+    )
+    .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("witness: {error}")))?;
+    SignedProposalV0::new(block, witness, set, None, parameters, parent_timestamp_ms)
+        .map_err(|error| EffectDriverProcessErrorV1::new("fixture", format!("proposal: {error}")))
 }
 
 fn facts_json(facts: CandidateEffectDriverFactsV1, broadcasts: u64) -> Value {
@@ -522,11 +768,18 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
     )
     .map_err(|error| EffectDriverProcessErrorV1::new("root", format!("start marker: {error:?}")))?;
     let core = build_core_v1()?;
+    // Install the one Core-affined application seal authority before issuing
+    // the SafetyRules authority. Both capabilities are process-local and are
+    // moved into the private host owner below; neither is reconstructible
+    // from the command stream or a durable record.
+    let application_seal_authority = core
+        .issue_application_seal_authority_v0()
+        .map_err(|error| EffectDriverProcessErrorV1::new("application", error.to_string()))?;
     let store = FileTransitionStoreV1::open(&root)?;
     let authority = core
         .issue_safety_rules_authority_v1(store, &StrictEd25519Verifier)
         .map_err(|error| EffectDriverProcessErrorV1::new("authority", error.to_string()))?;
-    let hooks = FileHooksV1::new(&root);
+    let hooks = FileHooksV1::new(&root, application_seal_authority);
     let mut driver = CandidateEffectDriverV1::new(
         core,
         authority,
@@ -597,6 +850,72 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
                     return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
                 }
             },
+            CommandV1::EnqueueSyncedProposal { generation } => {
+                let proposal = fixture_proposal_v1(driver.core())?;
+                match driver.enqueue_synced_proposal_v1(generation, proposal) {
+                    Ok(admission) => {
+                        let mut value = admission_json(admission);
+                        if let Value::Object(object) = &mut value {
+                            object
+                                .insert("status".to_owned(), Value::String("accepted".to_owned()));
+                        }
+                        value
+                    }
+                    Err(error) => {
+                        let value = driver_error_json(&error);
+                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
+                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
+                        })?;
+                        writer.write_all(b"\n")?;
+                        writer.flush()?;
+                        return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
+                    }
+                }
+            }
+            CommandV1::EnqueueProposal { generation } => {
+                let proposal = fixture_proposal_v1(driver.core())?;
+                match driver.enqueue_proposal_v1(generation, proposal) {
+                    Ok(admission) => {
+                        let mut value = admission_json(admission);
+                        if let Value::Object(object) = &mut value {
+                            object
+                                .insert("status".to_owned(), Value::String("accepted".to_owned()));
+                        }
+                        value
+                    }
+                    Err(error) => {
+                        let value = driver_error_json(&error);
+                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
+                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
+                        })?;
+                        writer.write_all(b"\n")?;
+                        writer.flush()?;
+                        return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
+                    }
+                }
+            }
+            CommandV1::EnqueueAuthorityVote { generation } => {
+                let proposal = fixture_proposal_v1(driver.core())?;
+                match driver.enqueue_authority_vote_v1(generation, proposal) {
+                    Ok(admission) => {
+                        let mut value = admission_json(admission);
+                        if let Value::Object(object) = &mut value {
+                            object
+                                .insert("status".to_owned(), Value::String("accepted".to_owned()));
+                        }
+                        value
+                    }
+                    Err(error) => {
+                        let value = driver_error_json(&error);
+                        serde_json::to_writer(&mut writer, &value).map_err(|json_error| {
+                            EffectDriverProcessErrorV1::new("json", format!("{json_error:?}"))
+                        })?;
+                        writer.write_all(b"\n")?;
+                        writer.flush()?;
+                        return Err(EffectDriverProcessErrorV1::new("driver", error.to_string()));
+                    }
+                }
+            }
             CommandV1::Drive => match driver.drive_v1() {
                 Ok(facts) => facts_json(facts, broadcast_count(&root)),
                 Err(error) => {
