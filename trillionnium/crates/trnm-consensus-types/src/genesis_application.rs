@@ -172,6 +172,64 @@ pub const MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1: usize = 2
     + 32
     + 32;
 
+/// Canonical schema marker for the explicit legacy-storage rejection
+/// attestation carried by a fresh-genesis import boundary.
+pub const LEGACY_STORAGE_REJECTION_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Profile for the storage disposition object.  The object is a positive
+/// statement that legacy data is *not* imported; it is not a path, a WAL
+/// reader, or a key-material container.
+pub const LEGACY_STORAGE_REJECTION_PROFILE_V1: &[u8] =
+    b"trnm.poco-bft.migration.legacy-storage-rejection.v1";
+
+/// Canonical schema marker for a fresh PoCO data-directory identity.
+pub const POCO_FRESH_DATA_DIRECTORY_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Profile for a fresh target data-directory identity.
+pub const POCO_FRESH_DATA_DIRECTORY_PROFILE_V1: &[u8] =
+    b"trnm.poco-bft.migration.fresh-data-directory.v1";
+
+/// Canonical schema marker for the one-way fresh-genesis import envelope.
+pub const POCO_FRESH_GENESIS_IMPORT_SCHEMA_VERSION_V1: u16 = 1;
+
+/// Profile for the one-way fresh-genesis import envelope.  This profile is
+/// intentionally separate from `PocoGenesisV1`: it records the storage
+/// disposition and fresh-directory identity without making either a live
+/// node-start capability.
+pub const POCO_FRESH_GENESIS_IMPORT_PROFILE_V1: &[u8] =
+    b"trnm.poco-bft.migration.fresh-genesis-import.v1";
+
+/// Domain for the content address of a fresh-genesis import envelope.
+pub const POCO_FRESH_GENESIS_IMPORT_COMMITMENT_DOMAIN_V1: &[u8] =
+    b"trnm.poco-bft.migration.fresh-genesis-import-commitment.v1";
+
+/// Maximum canonical bytes for the explicit legacy-storage rejection object.
+pub const MAX_LEGACY_STORAGE_REJECTION_CANONICAL_BYTES_V1: usize =
+    2 + (4 + LEGACY_STORAGE_REJECTION_PROFILE_V1.len()) + 32 + 32 + 32 + 3;
+
+/// Maximum canonical bytes for a fresh target data-directory identity.
+pub const MAX_POCO_FRESH_DATA_DIRECTORY_CANONICAL_BYTES_V1: usize = 2
+    + (4 + POCO_FRESH_DATA_DIRECTORY_PROFILE_V1.len())
+    + (2 + crate::MAX_CONSENSUS_STRING_BYTES)
+    + 32
+    + 32
+    + 1;
+
+/// Maximum exact canonical bytes accepted for a fresh-genesis import
+/// envelope.  The bound is derived from all nested bounded objects and the
+/// fixed commitment/policy fields so it can be checked before allocation.
+pub const MAX_POCO_FRESH_GENESIS_IMPORT_CANONICAL_BYTES_V1: usize = 2
+    + (4 + POCO_FRESH_GENESIS_IMPORT_PROFILE_V1.len())
+    + (4 + MAX_POCO_GENESIS_CANONICAL_BYTES_V1)
+    + (4 + MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1)
+    + 32
+    + 32
+    + 32
+    + 32
+    + (4 + MAX_LEGACY_STORAGE_REJECTION_CANONICAL_BYTES_V1)
+    + (4 + MAX_POCO_FRESH_DATA_DIRECTORY_CANONICAL_BYTES_V1)
+    + 3;
+
 /// Canonical schema marker for the non-wire application commitment bytes.
 pub const GENESIS_APPLICATION_COMMITMENT_SCHEMA_VERSION_V0: u16 = 0;
 
@@ -740,6 +798,366 @@ pub struct VerifiedPocoTargetGenesisCeremonyV1 {
     evidence: GenesisQcCeremonyEvidenceV1,
     projection_commitment: [u8; 32],
     evidence_commitment: [u8; 32],
+}
+
+/// Explicit, typed disposition for the legacy storage namespace at a
+/// Comet-to-PoCO cutover.
+///
+/// This is deliberately a *rejection* object, not an import handle.  The
+/// three source identifiers are opaque audit references supplied by an
+/// offline exporter; they do not grant this crate permission to open a path,
+/// WAL, database, snapshot, or signing-key file.  The only constructor emits
+/// the three zero-valued disposition tags encoded below (`not imported`).
+/// Consequently there is no representable in-place/legacy-reuse state in the
+/// fresh-genesis boundary API.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LegacyStorageRejectionV1 {
+    source_data_directory_id: [u8; 32],
+    source_wal_id: [u8; 32],
+    source_validator_key_set_id: [u8; 32],
+}
+
+impl LegacyStorageRejectionV1 {
+    /// Build a rejection attestation from independently recorded source
+    /// identities.  The identities are commitments only; no source file is
+    /// read or copied by this operation.
+    pub fn new(
+        source_data_directory_id: [u8; 32],
+        source_wal_id: [u8; 32],
+        source_validator_key_set_id: [u8; 32],
+    ) -> Result<Self> {
+        if source_data_directory_id == [0; 32]
+            || source_wal_id == [0; 32]
+            || source_validator_key_set_id == [0; 32]
+        {
+            return Err(ValidationError::InvalidCertificate(
+                "legacy storage rejection identities must be nonzero",
+            ));
+        }
+        // Keep each source namespace distinct.  This prevents an operator
+        // from accidentally presenting one digest as all three custody
+        // records while retaining the type-separated fields.
+        if source_data_directory_id == source_wal_id
+            || source_data_directory_id == source_validator_key_set_id
+            || source_wal_id == source_validator_key_set_id
+        {
+            return Err(ValidationError::InvalidCertificate(
+                "legacy storage rejection identities must be distinct",
+            ));
+        }
+        Ok(Self {
+            source_data_directory_id,
+            source_wal_id,
+            source_validator_key_set_id,
+        })
+    }
+
+    pub const fn source_data_directory_id(&self) -> [u8; 32] {
+        self.source_data_directory_id
+    }
+
+    pub const fn source_wal_id(&self) -> [u8; 32] {
+        self.source_wal_id
+    }
+
+    pub const fn source_validator_key_set_id(&self) -> [u8; 32] {
+        self.source_validator_key_set_id
+    }
+
+    /// The legacy data directory is never imported by this boundary.
+    pub const fn old_data_directory_imported(&self) -> bool {
+        false
+    }
+
+    /// The legacy WAL is never imported by this boundary.
+    pub const fn old_wal_imported(&self) -> bool {
+        false
+    }
+
+    /// Legacy validator signing keys/state are never imported by this
+    /// boundary.
+    pub const fn old_validator_keys_imported(&self) -> bool {
+        false
+    }
+
+    /// Exact canonical bytes for cross-peer migration review.
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| {
+            encoder.u16(LEGACY_STORAGE_REJECTION_SCHEMA_VERSION_V1);
+            encoder.bytes(LEGACY_STORAGE_REJECTION_PROFILE_V1);
+            encoder.fixed(&self.source_data_directory_id);
+            encoder.fixed(&self.source_wal_id);
+            encoder.fixed(&self.source_validator_key_set_id);
+            // Disposition tags: 0 = explicitly not imported.  They are
+            // fixed by this type and checked by the exact decoder.
+            encoder.u8(0);
+            encoder.u8(0);
+            encoder.u8(0);
+        })
+    }
+
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        Ok(hash_len_framed(
+            LEGACY_STORAGE_REJECTION_PROFILE_V1,
+            &[&bytes],
+        ))
+    }
+}
+
+/// Typed identity of a *new* PoCO data directory.  It carries no filesystem
+/// path and has no reopen/import operation; callers must provision the
+/// directory separately and bind its independently measured identity here.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PocoFreshDataDirectoryV1 {
+    target_chain_id: ChainId,
+    target_genesis_hash: GenesisHash,
+    target_data_directory_id: [u8; 32],
+}
+
+impl PocoFreshDataDirectoryV1 {
+    pub fn new(
+        target_chain_id: ChainId,
+        target_genesis_hash: GenesisHash,
+        target_data_directory_id: [u8; 32],
+    ) -> Result<Self> {
+        if target_genesis_hash.is_zero() {
+            return Err(ValidationError::ZeroGenesisHash);
+        }
+        if target_data_directory_id == [0; 32] {
+            return Err(ValidationError::InvalidCertificate(
+                "fresh target data-directory identity must be nonzero",
+            ));
+        }
+        Ok(Self {
+            target_chain_id,
+            target_genesis_hash,
+            target_data_directory_id,
+        })
+    }
+
+    pub const fn target_chain_id(&self) -> ChainId {
+        self.target_chain_id
+    }
+
+    pub const fn target_genesis_hash(&self) -> GenesisHash {
+        self.target_genesis_hash
+    }
+
+    pub const fn target_data_directory_id(&self) -> [u8; 32] {
+        self.target_data_directory_id
+    }
+
+    /// Freshness is a type-level policy bit, not a claim that this crate has
+    /// created or inspected a directory.
+    pub const fn is_fresh_target(&self) -> bool {
+        true
+    }
+
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| {
+            encoder.u16(POCO_FRESH_DATA_DIRECTORY_SCHEMA_VERSION_V1);
+            encoder.bytes(POCO_FRESH_DATA_DIRECTORY_PROFILE_V1);
+            encoder.consensus_string(self.target_chain_id.as_bytes());
+            encoder.fixed(self.target_genesis_hash.as_bytes());
+            encoder.fixed(&self.target_data_directory_id);
+            encoder.u8(1); // fresh target marker
+        })
+    }
+
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        Ok(hash_len_framed(
+            POCO_FRESH_DATA_DIRECTORY_PROFILE_V1,
+            &[&bytes],
+        ))
+    }
+}
+
+/// Candidate-only, one-way composition of a verified source export and a
+/// fresh target genesis descriptor/manifest.
+///
+/// Construction requires `VerifiedPocoTargetProjectionV1`, which itself
+/// retains the source identity/finality/mapping token and an independently
+/// recomputed native root.  The composition then adds an explicit legacy
+/// storage rejection and a fresh target-directory identity.  There is no
+/// method converting this value back into a source export, opening a legacy
+/// path, importing a WAL/key, or starting a node.  Target GenesisQC quorum
+/// and cross-peer cutover remain separate gates.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PocoFreshGenesisImportV1 {
+    projection: VerifiedPocoTargetProjectionV1,
+    descriptor: PocoGenesisV1,
+    target_manifest: PocoTargetGenesisManifestV1,
+    legacy_storage_rejection: LegacyStorageRejectionV1,
+    fresh_data_directory: PocoFreshDataDirectoryV1,
+    projection_commitment: [u8; 32],
+    descriptor_commitment: [u8; 32],
+    target_manifest_commitment: [u8; 32],
+    migration_instance: [u8; 32],
+}
+
+impl PocoFreshGenesisImportV1 {
+    /// Compose a fresh-genesis import only from a verified target projection.
+    /// All source fields copied into the descriptor are rechecked against the
+    /// retained verified export token before the object is returned.
+    pub fn new_from_verified_projection_v1(
+        projection: &VerifiedPocoTargetProjectionV1,
+        descriptor: PocoGenesisV1,
+        target_manifest: PocoTargetGenesisManifestV1,
+        legacy_storage_rejection: LegacyStorageRejectionV1,
+        fresh_data_directory: PocoFreshDataDirectoryV1,
+    ) -> Result<Self> {
+        let statement = projection.projection();
+        target_manifest.validate_against_projection_v1(statement)?;
+        projection
+            .source_export
+            .export()
+            .validate_against_genesis(&descriptor)?;
+
+        if descriptor.export_manifest_digest() != statement.source_export_commitment()
+            || descriptor.mapping_profile_digest() != statement.mapping_profile_digest()
+            || descriptor.target_chain_id() != statement.target_chain_id()
+            || descriptor.target_genesis_hash() != statement.target_genesis_hash()
+            || descriptor.target_genesis_manifest_digest()
+                != statement.target_genesis_manifest_digest()
+            || descriptor.new_state_root() != statement.claimed_state_root()
+            || descriptor.target_chain_id() != target_manifest.target_chain_id()
+            || descriptor.target_genesis_hash() != target_manifest.target_genesis_hash()
+            || descriptor.target_genesis_manifest_digest()
+                != target_manifest.commitment_digest_v1()?
+            || descriptor.new_state_root() != target_manifest.initial_state_root()
+            || descriptor.target_validator_set_digest()
+                != target_manifest.target_validator_set_digest()
+            || descriptor.target_protocol_version() != target_manifest.target_protocol_version()
+        {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+
+        let target_data_directory_id = fresh_data_directory.target_data_directory_id();
+        if fresh_data_directory.target_chain_id() != descriptor.target_chain_id()
+            || fresh_data_directory.target_genesis_hash() != descriptor.target_genesis_hash()
+            || target_data_directory_id == legacy_storage_rejection.source_data_directory_id()
+            || target_data_directory_id == legacy_storage_rejection.source_wal_id()
+            || target_data_directory_id == legacy_storage_rejection.source_validator_key_set_id()
+        {
+            return Err(ValidationError::InvalidCertificate(
+                "fresh target data directory must be distinct from every legacy storage identity",
+            ));
+        }
+        if !fresh_data_directory.is_fresh_target()
+            || legacy_storage_rejection.old_data_directory_imported()
+            || legacy_storage_rejection.old_wal_imported()
+            || legacy_storage_rejection.old_validator_keys_imported()
+        {
+            return Err(ValidationError::InvalidCertificate(
+                "legacy storage reuse is forbidden at fresh-genesis boundary",
+            ));
+        }
+
+        let projection_commitment = statement.commitment_digest_v1()?;
+        if projection_commitment != projection.projection_commitment() {
+            return Err(ValidationError::ConsensusContextMismatch);
+        }
+        let descriptor_commitment = descriptor.commitment_digest_v1()?;
+        let target_manifest_commitment = target_manifest.commitment_digest_v1()?;
+        let migration_instance = descriptor.migration_instance_digest_v1()?;
+        Ok(Self {
+            projection: projection.clone(),
+            descriptor,
+            target_manifest,
+            legacy_storage_rejection,
+            fresh_data_directory,
+            projection_commitment,
+            descriptor_commitment,
+            target_manifest_commitment,
+            migration_instance,
+        })
+    }
+
+    pub const fn projection(&self) -> &VerifiedPocoTargetProjectionV1 {
+        &self.projection
+    }
+
+    pub const fn descriptor(&self) -> &PocoGenesisV1 {
+        &self.descriptor
+    }
+
+    pub const fn target_manifest(&self) -> &PocoTargetGenesisManifestV1 {
+        &self.target_manifest
+    }
+
+    pub const fn legacy_storage_rejection(&self) -> &LegacyStorageRejectionV1 {
+        &self.legacy_storage_rejection
+    }
+
+    pub const fn fresh_data_directory(&self) -> &PocoFreshDataDirectoryV1 {
+        &self.fresh_data_directory
+    }
+
+    pub const fn projection_commitment(&self) -> [u8; 32] {
+        self.projection_commitment
+    }
+
+    pub const fn descriptor_commitment(&self) -> [u8; 32] {
+        self.descriptor_commitment
+    }
+
+    pub const fn target_manifest_commitment(&self) -> [u8; 32] {
+        self.target_manifest_commitment
+    }
+
+    pub const fn migration_instance(&self) -> [u8; 32] {
+        self.migration_instance
+    }
+
+    /// Explicit policy query used by independent import tooling.
+    pub const fn in_place_import_allowed(&self) -> bool {
+        false
+    }
+
+    /// Explicit policy query used by independent import tooling.
+    pub const fn old_wal_imported(&self) -> bool {
+        false
+    }
+
+    /// Explicit policy query used by independent import tooling.
+    pub const fn old_validator_keys_imported(&self) -> bool {
+        false
+    }
+
+    /// Exact canonical bytes for offline review and cross-peer comparison.
+    pub fn try_canonical_bytes_v1(&self) -> Result<Vec<u8>> {
+        let descriptor = self.descriptor.try_canonical_bytes_v1()?;
+        let target_manifest = self.target_manifest.try_canonical_bytes_v1()?;
+        let legacy_storage = self.legacy_storage_rejection.try_canonical_bytes_v1()?;
+        let fresh_directory = self.fresh_data_directory.try_canonical_bytes_v1()?;
+        try_canonical_bytes(|encoder| {
+            encoder.u16(POCO_FRESH_GENESIS_IMPORT_SCHEMA_VERSION_V1);
+            encoder.bytes(POCO_FRESH_GENESIS_IMPORT_PROFILE_V1);
+            encoder.bytes(&descriptor);
+            encoder.bytes(&target_manifest);
+            encoder.fixed(&self.projection_commitment);
+            encoder.fixed(&self.descriptor_commitment);
+            encoder.fixed(&self.target_manifest_commitment);
+            encoder.fixed(&self.migration_instance);
+            encoder.bytes(&legacy_storage);
+            encoder.bytes(&fresh_directory);
+            // Policy tags: in-place import, old WAL import, and old key
+            // import are all permanently disabled for this type.
+            encoder.u8(0);
+            encoder.u8(0);
+            encoder.u8(0);
+        })
+    }
+
+    pub fn commitment_digest_v1(&self) -> Result<[u8; 32]> {
+        let bytes = self.try_canonical_bytes_v1()?;
+        Ok(hash_len_framed(
+            POCO_FRESH_GENESIS_IMPORT_COMMITMENT_DOMAIN_V1,
+            &[&bytes],
+        ))
+    }
 }
 
 impl VerifiedPocoTargetGenesisCeremonyV1 {
@@ -3624,6 +4042,153 @@ mod tests {
         assert_eq!(
             crate::decode_poco_genesis_v1_exact(&bytes).unwrap(),
             descriptor
+        );
+    }
+
+    fn hex_bytes(bytes: &[u8]) -> alloc::string::String {
+        const HEX: &[u8; 16] = b"0123456789abcdef";
+        let mut output = alloc::string::String::with_capacity(bytes.len() * 2);
+        for byte in bytes {
+            output.push(HEX[(byte >> 4) as usize] as char);
+            output.push(HEX[(byte & 0x0f) as usize] as char);
+        }
+        output
+    }
+
+    #[test]
+    fn fresh_genesis_import_boundary_is_one_way_and_exactly_decodable() {
+        let source = verified_source_export();
+        let trusted_set = target_projection_trusted_set();
+        let target_manifest = target_genesis_manifest(&trusted_set);
+        let projection = source
+            .bind_target_projection_from_manifest_v1(&target_manifest)
+            .expect("typed target projection")
+            .verify_with_manifest_v1(
+                &source,
+                &target_manifest,
+                &RecordingTypedTargetProjectionVerifier {
+                    typed_calls: Cell::new(0),
+                    legacy_calls: Cell::new(0),
+                    root_calls: Cell::new(0),
+                    expected_validator_set_digest: trusted_set.id(),
+                    recomputed_root: StateRoot::new([0x73; 32]),
+                    reject_typed: false,
+                },
+            )
+            .expect("independently replayed target projection");
+        let descriptor = descriptor_for_target_projection(
+            &source,
+            &projection,
+            &trusted_set,
+            StateRoot::new([0x73; 32]),
+        );
+        let rejection = LegacyStorageRejectionV1::new([0x81; 32], [0x82; 32], [0x83; 32])
+            .expect("typed legacy-storage rejection");
+        let rejection_bytes = rejection.try_canonical_bytes_v1().unwrap();
+        assert_eq!(
+            crate::decode_legacy_storage_rejection_v1_exact(&rejection_bytes).unwrap(),
+            rejection
+        );
+        let mut imports_old_data_directory = rejection_bytes.clone();
+        let rejection_policy_offset = imports_old_data_directory.len() - 3;
+        imports_old_data_directory[rejection_policy_offset] = 1;
+        assert_eq!(
+            crate::decode_legacy_storage_rejection_v1_exact(&imports_old_data_directory)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+        assert!(LegacyStorageRejectionV1::new([0; 32], [0x82; 32], [0x83; 32]).is_err());
+        assert!(LegacyStorageRejectionV1::new([0x81; 32], [0x81; 32], [0x83; 32]).is_err());
+        let fresh_directory = PocoFreshDataDirectoryV1::new(
+            trusted_set.chain_id(),
+            trusted_set.genesis_hash(),
+            [0x84; 32],
+        )
+        .expect("fresh target directory identity");
+        let directory_bytes = fresh_directory.try_canonical_bytes_v1().unwrap();
+        assert_eq!(
+            crate::decode_poco_fresh_data_directory_v1_exact(&directory_bytes).unwrap(),
+            fresh_directory
+        );
+        let mut not_fresh = directory_bytes.clone();
+        *not_fresh.last_mut().unwrap() = 0;
+        assert_eq!(
+            crate::decode_poco_fresh_data_directory_v1_exact(&not_fresh)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+        assert!(PocoFreshDataDirectoryV1::new(
+            trusted_set.chain_id(),
+            trusted_set.genesis_hash(),
+            [0; 32]
+        )
+        .is_err());
+
+        let reused_legacy_directory = PocoFreshDataDirectoryV1::new(
+            trusted_set.chain_id(),
+            trusted_set.genesis_hash(),
+            rejection.source_data_directory_id(),
+        )
+        .unwrap();
+        assert!(matches!(
+            PocoFreshGenesisImportV1::new_from_verified_projection_v1(
+                &projection,
+                descriptor.clone(),
+                target_manifest,
+                rejection,
+                reused_legacy_directory,
+            ),
+            Err(ValidationError::InvalidCertificate(
+                "fresh target data directory must be distinct from every legacy storage identity"
+            ))
+        ));
+        let import = PocoFreshGenesisImportV1::new_from_verified_projection_v1(
+            &projection,
+            descriptor,
+            target_manifest,
+            rejection,
+            fresh_directory,
+        )
+        .expect("one-way fresh-genesis import boundary");
+
+        assert!(!import.in_place_import_allowed());
+        assert!(!import.old_wal_imported());
+        assert!(!import.old_validator_keys_imported());
+        assert!(!import
+            .legacy_storage_rejection()
+            .old_data_directory_imported());
+        let bytes = import
+            .try_canonical_bytes_v1()
+            .expect("canonical fresh-genesis import envelope");
+        assert!(bytes.len() <= MAX_POCO_FRESH_GENESIS_IMPORT_CANONICAL_BYTES_V1);
+        assert_eq!(
+            crate::decode_poco_fresh_genesis_import_v1_exact(&bytes, &projection)
+                .expect("exact fresh-genesis import decode"),
+            import
+        );
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_eq!(
+            crate::decode_poco_fresh_genesis_import_v1_exact(&trailing, &projection)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::TrailingBytes
+        );
+        let policy_offset = bytes.len() - 3;
+        let mut reused_wal = bytes.clone();
+        reused_wal[policy_offset + 1] = 1;
+        assert_eq!(
+            crate::decode_poco_fresh_genesis_import_v1_exact(&reused_wal, &projection)
+                .unwrap_err()
+                .code(),
+            crate::DecodeErrorCode::ContextMismatch
+        );
+        assert_eq!(
+            hex_bytes(&import.commitment_digest_v1().unwrap()),
+            "d0dae8ff8e9e73b2a9039ab0a166d80f73b14c21a700e1d49b44c8a2ff7f1ea7"
         );
     }
 }

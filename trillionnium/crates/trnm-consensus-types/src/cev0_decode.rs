@@ -27,23 +27,29 @@ use crate::{
     ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash, GenesisQcCeremonyEvidenceV1,
     GenesisQcSignatureShareV1, GenesisQcV0, HandoffCertificateV0, HandoffDescriptorV0,
     HandoffDescriptorV0Fields, HandoffSignIntentFingerprintV1, HandoffSignerRoleV1, Height,
-    LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1, MessageKind,
-    NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields, PayloadDigest,
-    PocoGenesisQcBindingV1, PocoGenesisV1, PocoTargetGenesisManifestV1, PocoTargetProjectionV1,
-    ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase,
-    SignIntentFingerprintV0, Signature64, SignatureShareV0, SignatureVerifier, SigningRoot,
-    StateRoot, TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator,
-    ValidatorId, ValidatorSet, ValidatorSetId, VerifiedCometStateExportV1, View, Vote,
-    VoteEvidenceRecordV0, VotingPower, CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1,
-    CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0, COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1,
-    COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1, COMET_STATE_EXPORT_PROFILE_V1,
-    COMET_STATE_EXPORT_SCHEMA_VERSION_V1, GENESIS_QC_CEREMONY_PROFILE_V1,
-    GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1, HANDOFF_SIGNER_PROFILE_V1,
-    MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1, MAX_CONSENSUS_STRING_BYTES,
-    MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1, MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1,
-    MAX_POCO_GENESIS_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
+    LeaderSchedule, LegacyCometAppHashV1, LegacyCometGenesisHashV1, LegacyStorageRejectionV1,
+    MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
+    PayloadDigest, PocoFreshDataDirectoryV1, PocoFreshGenesisImportV1, PocoGenesisQcBindingV1,
+    PocoGenesisV1, PocoTargetGenesisManifestV1, PocoTargetProjectionV1, ProtocolVersion, QcRef,
+    QcReferenceV0, QuorumCertificate, ReceiptsRoot, RolloutPhase, SignIntentFingerprintV0,
+    Signature64, SignatureShareV0, SignatureVerifier, SigningRoot, StateRoot, TimeoutCertificateV0,
+    TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId, ValidatorSet,
+    ValidatorSetId, VerifiedCometStateExportV1, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    CANONICAL_HANDOFF_SIGN_INTENT_SCHEMA_VERSION_V1, CANONICAL_SIGN_INTENT_SCHEMA_VERSION_V0,
+    COMET_BLOCK_IDENTITY_SCHEMA_VERSION_V1, COMET_FINALIZED_BLOCK_IDENTITY_PROFILE_V1,
+    COMET_STATE_EXPORT_PROFILE_V1, COMET_STATE_EXPORT_SCHEMA_VERSION_V1,
+    GENESIS_QC_CEREMONY_PROFILE_V1, GENESIS_QC_CEREMONY_SCHEMA_VERSION_V1,
+    HANDOFF_SIGNER_PROFILE_V1, LEGACY_STORAGE_REJECTION_PROFILE_V1,
+    LEGACY_STORAGE_REJECTION_SCHEMA_VERSION_V1, MAX_COMET_STATE_EXPORT_CANONICAL_BYTES_V1,
+    MAX_CONSENSUS_STRING_BYTES, MAX_GENESIS_QC_CEREMONY_CANONICAL_BYTES_V1,
+    MAX_GENESIS_QC_CEREMONY_SIGNATURES_V1, MAX_LEGACY_STORAGE_REJECTION_CANONICAL_BYTES_V1,
+    MAX_POCO_FRESH_DATA_DIRECTORY_CANONICAL_BYTES_V1,
+    MAX_POCO_FRESH_GENESIS_IMPORT_CANONICAL_BYTES_V1, MAX_POCO_GENESIS_CANONICAL_BYTES_V1,
+    MAX_POCO_GENESIS_QC_BINDING_CANONICAL_BYTES_V1,
     MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1,
     MAX_POCO_TARGET_PROJECTION_CANONICAL_BYTES_V1, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES,
+    POCO_FRESH_DATA_DIRECTORY_PROFILE_V1, POCO_FRESH_DATA_DIRECTORY_SCHEMA_VERSION_V1,
+    POCO_FRESH_GENESIS_IMPORT_PROFILE_V1, POCO_FRESH_GENESIS_IMPORT_SCHEMA_VERSION_V1,
     POCO_GENESIS_PROFILE_V1, POCO_GENESIS_QC_BINDING_PROFILE_V1, POCO_GENESIS_SCHEMA_VERSION_V1,
     POCO_TARGET_GENESIS_MANIFEST_PROFILE_V1, POCO_TARGET_GENESIS_MANIFEST_SCHEMA_VERSION_V1,
     POCO_TARGET_PROJECTION_PROFILE_V1, POCO_TARGET_PROJECTION_SCHEMA_VERSION_V1, SCHEMA_VERSION_V0,
@@ -587,6 +593,219 @@ pub fn decode_poco_target_genesis_manifest_v1_exact(
         return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
     }
     Ok(manifest)
+}
+
+/// Decode the exact canonical bytes of the legacy-storage rejection
+/// attestation.  The three disposition tags are required to be zero, so a
+/// mutated envelope cannot turn this object into an old-WAL/key/data-dir
+/// import request.
+pub fn decode_legacy_storage_rejection_v1_exact(
+    bytes: &[u8],
+) -> DecodeResult<LegacyStorageRejectionV1> {
+    if bytes.len() > MAX_LEGACY_STORAGE_REJECTION_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != LEGACY_STORAGE_REJECTION_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(LEGACY_STORAGE_REJECTION_PROFILE_V1.len())?;
+    if profile.bytes != LEGACY_STORAGE_REJECTION_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let source_data_directory_id = cursor.fixed()?;
+    let source_wal_id = cursor.fixed()?;
+    let source_validator_key_set_id = cursor.fixed()?;
+    let data_directory_disposition = cursor.u8()?;
+    let wal_disposition = cursor.u8()?;
+    let key_disposition = cursor.u8()?;
+    if data_directory_disposition != 0 || wal_disposition != 0 || key_disposition != 0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            cursor.offset().saturating_sub(3),
+        ));
+    }
+    cursor.finish()?;
+    let rejection = LegacyStorageRejectionV1::new(
+        source_data_directory_id,
+        source_wal_id,
+        source_validator_key_set_id,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = rejection
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(rejection)
+}
+
+/// Decode the exact canonical bytes of a fresh target data-directory
+/// identity.  This remains an inert identity statement; it does not inspect
+/// or create a filesystem directory.
+pub fn decode_poco_fresh_data_directory_v1_exact(
+    bytes: &[u8],
+) -> DecodeResult<PocoFreshDataDirectoryV1> {
+    if bytes.len() > MAX_POCO_FRESH_DATA_DIRECTORY_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != POCO_FRESH_DATA_DIRECTORY_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(POCO_FRESH_DATA_DIRECTORY_PROFILE_V1.len())?;
+    if profile.bytes != POCO_FRESH_DATA_DIRECTORY_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let chain_offset = cursor.offset();
+    let target_chain_id = ChainId::from_bytes(cursor.bounded_consensus_bytes()?.bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidConsensusString, chain_offset))?;
+    let target_genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let target_data_directory_id = cursor.fixed()?;
+    let fresh_marker_offset = cursor.offset();
+    let fresh_marker = cursor.u8()?;
+    if fresh_marker != 1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            fresh_marker_offset,
+        ));
+    }
+    cursor.finish()?;
+    let directory = PocoFreshDataDirectoryV1::new(
+        target_chain_id,
+        target_genesis_hash,
+        target_data_directory_id,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = directory
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(directory)
+}
+
+/// Decode a complete candidate-only fresh-genesis import envelope against an
+/// already verified target projection.  A raw source export is intentionally
+/// insufficient: the projection token carries the independently checked
+/// source identity/finality/mapping and target-root replay result.
+pub fn decode_poco_fresh_genesis_import_v1_exact(
+    bytes: &[u8],
+    verified_projection: &crate::VerifiedPocoTargetProjectionV1,
+) -> DecodeResult<PocoFreshGenesisImportV1> {
+    if bytes.len() > MAX_POCO_FRESH_GENESIS_IMPORT_CANONICAL_BYTES_V1 {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    let mut cursor = Cursor::new(bytes);
+    let schema_offset = cursor.offset();
+    let schema = cursor.u16()?;
+    if schema != POCO_FRESH_GENESIS_IMPORT_SCHEMA_VERSION_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            schema_offset,
+        ));
+    }
+    let profile_offset = cursor.offset();
+    let profile = cursor.bounded_body_bytes(POCO_FRESH_GENESIS_IMPORT_PROFILE_V1.len())?;
+    if profile.bytes != POCO_FRESH_GENESIS_IMPORT_PROFILE_V1 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            profile_offset,
+        ));
+    }
+    let descriptor_offset = cursor.offset();
+    let descriptor_bytes = cursor
+        .bounded_body_bytes(MAX_POCO_GENESIS_CANONICAL_BYTES_V1)?
+        .bytes;
+    let manifest_offset = cursor.offset();
+    let manifest_bytes = cursor
+        .bounded_body_bytes(MAX_POCO_TARGET_GENESIS_MANIFEST_CANONICAL_BYTES_V1)?
+        .bytes;
+    let projection_commitment = cursor.fixed()?;
+    let descriptor_commitment = cursor.fixed()?;
+    let target_manifest_commitment = cursor.fixed()?;
+    let migration_instance = cursor.fixed()?;
+    let rejection_offset = cursor.offset();
+    let rejection_bytes = cursor
+        .bounded_body_bytes(MAX_LEGACY_STORAGE_REJECTION_CANONICAL_BYTES_V1)?
+        .bytes;
+    let directory_offset = cursor.offset();
+    let directory_bytes = cursor
+        .bounded_body_bytes(MAX_POCO_FRESH_DATA_DIRECTORY_CANONICAL_BYTES_V1)?
+        .bytes;
+    let in_place_offset = cursor.offset();
+    let in_place = cursor.u8()?;
+    let old_wal = cursor.u8()?;
+    let old_keys = cursor.u8()?;
+    if in_place != 0 || old_wal != 0 || old_keys != 0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            in_place_offset,
+        ));
+    }
+    cursor.finish()?;
+
+    let descriptor = decode_poco_genesis_v1_exact(descriptor_bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, descriptor_offset))?;
+    let target_manifest = decode_poco_target_genesis_manifest_v1_exact(manifest_bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, manifest_offset))?;
+    let rejection = decode_legacy_storage_rejection_v1_exact(rejection_bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, rejection_offset))?;
+    let fresh_data_directory = decode_poco_fresh_data_directory_v1_exact(directory_bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, directory_offset))?;
+
+    let expected_projection_commitment = verified_projection.projection_commitment();
+    let expected_descriptor_commitment = descriptor
+        .commitment_digest_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let expected_manifest_commitment = target_manifest
+        .commitment_digest_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let expected_migration_instance = descriptor
+        .migration_instance_digest_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if projection_commitment != expected_projection_commitment
+        || descriptor_commitment != expected_descriptor_commitment
+        || target_manifest_commitment != expected_manifest_commitment
+        || migration_instance != expected_migration_instance
+    {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    let import = PocoFreshGenesisImportV1::new_from_verified_projection_v1(
+        verified_projection,
+        descriptor,
+        target_manifest,
+        rejection,
+        fresh_data_directory,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    let canonical = import
+        .try_canonical_bytes_v1()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, 0))?;
+    if canonical != bytes {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, 0));
+    }
+    Ok(import)
 }
 
 /// Decode exact, bounded target-validator genesis quorum evidence against an

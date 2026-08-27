@@ -51,6 +51,16 @@ that do not call the Rust consensus crates:
   semantic decoder and `StrictEd25519Verifier`.  Test-only seeds remain in the
   checker and are never serialized; `wire_conformance` and activation stay
   false.
+- `migration-boundary-v1.json` freezes the candidate-only one-way
+  `VerifiedCometStateExportV1` -> target-manifest/JMT-root -> fresh-genesis
+  composition. It includes typed legacy data-directory/WAL/validator-key
+  rejection identities, a fresh target-directory identity, nested commitment
+  bytes, and eight deterministic policy/root/trailing mutations. The
+  standard-library checker `scripts/ci/check_poco_bft_v0_migration_boundary_v1.sh`
+  independently reassembles the envelope and rejects every legacy-reuse or
+  in-place variant. This is an importer-boundary evidence slice only: there is
+  no Comet reader, physical quarantine, dual quorum, node-start cutover, or
+  production activation.
 - `ed25519-v0.json` freezes an RFC 8032 public key and signature over the
   foundation vote root, plus wrong-root, mutated-signature, undecodable-key,
   and small-order-key rejection cases. The exact bytes are reproduced by
