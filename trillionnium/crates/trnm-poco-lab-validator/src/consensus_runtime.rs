@@ -4400,7 +4400,16 @@ impl BoundedConsensusOwnerV1 {
                 return Ok(BoundedConsensusLoopOutcomeV1::NormalTerminal);
             }
             if let Some(stopping_since) = self.stopping_since {
-                let drain_deadline = stopping_since
+                // A height-bound stop can be observed well before the
+                // nominal duration on one host.  Keep every authenticated
+                // session alive until that common horizon so the first
+                // validator which reaches a quiet cut cannot turn into an
+                // unavailable peer while its siblings are still draining.
+                // The grace window is measured from the later of the local
+                // stop request and that horizon, preserving the bounded
+                // duration contract even under a very early height cut.
+                let drain_anchor = stopping_since.max(self.nominal_deadline);
+                let drain_deadline = drain_anchor
                     .checked_add(TERMINAL_DRAIN_GRACE_V1)
                     .ok_or_else(|| anyhow!("terminal drain deadline overflows"))?;
                 if now >= drain_deadline {
@@ -4470,6 +4479,14 @@ impl BoundedConsensusOwnerV1 {
             || !self.event_journal.observation().active_faults.is_empty()
             || self.mesh_v1()?.pending_outbound_bytes_v1()? != 0
         {
+            self.terminal_candidate_since = None;
+            return Ok(false);
+        }
+        // The height bound may be reached before the duration bound.  Do not
+        // let one fast host close its authenticated sessions early: peers
+        // need the same nominal horizon to establish a simultaneous terminal
+        // cut without manufacturing an unavailable-session obligation.
+        if now < self.nominal_deadline {
             self.terminal_candidate_since = None;
             return Ok(false);
         }
@@ -7823,6 +7840,7 @@ struct RuntimeOsSampleV1 {
     observed_at: SystemTime,
     process_start_ticks: u64,
     cpu_runtime_ns: u64,
+    process_cpu_runtime_ns: u64,
     peak_rss_bytes: u64,
     disk_read_bytes: u64,
     disk_write_bytes: u64,
@@ -7863,6 +7881,7 @@ impl RuntimeOsSampleV1 {
             .context("/proc/self/schedstat lacks runtime")?
             .parse::<u64>()
             .context("parse /proc/self/schedstat runtime")?;
+        let process_cpu_runtime_ns = process_cpu_time_ns_v1()?;
 
         let status = fs::read_to_string("/proc/self/status").context("read /proc/self/status")?;
         let peak_rss_kib = parse_proc_named_u64_v1(&status, "VmHWM:")
@@ -7881,6 +7900,7 @@ impl RuntimeOsSampleV1 {
             observed_at: SystemTime::now(),
             process_start_ticks,
             cpu_runtime_ns,
+            process_cpu_runtime_ns,
             peak_rss_bytes,
             disk_read_bytes,
             disk_write_bytes,
@@ -7905,10 +7925,16 @@ impl RuntimeOsSampleV1 {
             elapsed >= MINIMUM_METRICS_INTERVAL_V1,
             "runtime OS measurement interval is below one second"
         );
-        let cpu_runtime_ns = end
+        let schedstat_runtime_ns = end
             .cpu_runtime_ns
             .checked_sub(self.cpu_runtime_ns)
             .context("runtime CPU counter regresses")?;
+        let process_cpu_runtime_ns = end
+            .process_cpu_runtime_ns
+            .checked_sub(self.process_cpu_runtime_ns)
+            .context("runtime process CPU counter regresses")?;
+        let cpu_runtime_ns =
+            select_runtime_cpu_delta_v1(schedstat_runtime_ns, process_cpu_runtime_ns);
         let cpu_seconds = cpu_runtime_ns as f64 / 1_000_000_000.0;
         ensure!(
             cpu_seconds.is_finite() && cpu_seconds > 0.0,
@@ -7941,6 +7967,31 @@ impl RuntimeOsSampleV1 {
             peak_rss_bytes,
             disk_bytes,
         })
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn process_cpu_time_ns_v1() -> Result<u64> {
+    let timespec = rustix::time::clock_gettime(rustix::time::ClockId::ProcessCPUTime);
+    let seconds =
+        u64::try_from(timespec.tv_sec).context("process CPU clock returned negative seconds")?;
+    let nanoseconds = u64::try_from(timespec.tv_nsec)
+        .context("process CPU clock returned negative nanoseconds")?;
+    ensure!(
+        nanoseconds < 1_000_000_000,
+        "process CPU clock returned invalid nanoseconds"
+    );
+    seconds
+        .checked_mul(1_000_000_000)
+        .and_then(|value| value.checked_add(nanoseconds))
+        .context("process CPU clock overflows nanoseconds")
+}
+
+fn select_runtime_cpu_delta_v1(schedstat_runtime_ns: u64, process_cpu_runtime_ns: u64) -> u64 {
+    if process_cpu_runtime_ns > 0 {
+        process_cpu_runtime_ns
+    } else {
+        schedstat_runtime_ns
     }
 }
 
@@ -8069,6 +8120,13 @@ mod tests {
 
     fn restart_intent_fixture_v1() -> RuntimeRestartPrepareIntentV1 {
         RuntimeRestartPrepareIntentV1::test_only_v1(1, 9, 17, [0x31; 32])
+    }
+
+    #[test]
+    fn runtime_cpu_prefers_process_clock_when_schedstat_delta_is_zero_v1() {
+        assert_eq!(select_runtime_cpu_delta_v1(0, 123_456), 123_456);
+        assert_eq!(select_runtime_cpu_delta_v1(7, 123_456), 123_456);
+        assert_eq!(select_runtime_cpu_delta_v1(7, 0), 7);
     }
 
     #[test]
