@@ -42,6 +42,15 @@ that do not call the Rust consensus crates:
   and every nested Vote/TimeoutVote/QC/TC share with `StrictEd25519Verifier`.
   Proposal and the remaining body kinds, production authenticated P2P, full
   `wire_conformance`, and activation remain explicitly rejected or disabled.
+- `wire-authenticated-v0.json` adds a separate candidate-only cryptographic
+  reproduction of those same four frames.  The standard-library reference
+  checker independently implements RFC 8032 strict Ed25519, verifies every
+  Vote/TimeoutVote/QC/TC share against its reconstructed CEV0 root, and runs
+  digest-preserving signature mutations plus strict-prefix negatives.  A Rust
+  crypto integration test consumes the committed frame bytes through the
+  semantic decoder and `StrictEd25519Verifier`.  Test-only seeds remain in the
+  checker and are never serialized; `wire_conformance` and activation stay
+  false.
 - `ed25519-v0.json` freezes an RFC 8032 public key and signature over the
   foundation vote root, plus wrong-root, mutated-signature, undecodable-key,
   and small-order-key rejection cases. The exact bytes are reproduced by
