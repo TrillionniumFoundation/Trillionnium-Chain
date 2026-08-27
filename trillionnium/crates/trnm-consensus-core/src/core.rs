@@ -5514,6 +5514,79 @@ impl Core {
             .load(Ordering::Acquire)
     }
 
+    /// Runs one timeout through the explicitly issued Core-owned SafetyRules
+    /// authority.  The operation is transactional with respect to Core: the
+    /// owner evaluates and durably records the transition against a
+    /// transactional Core snapshot, the exact transition is installed and
+    /// checked by the normal runtime/monotonic validators, and only then is
+    /// the snapshot assigned to this Core.  A failure after durable owner
+    /// commit poisons the owner so a stale live Core cannot be retried.
+    ///
+    /// The returned effect is the ordinary `PersistSafetyState` request.  The
+    /// caller must acknowledge that request through `Core::step` before the
+    /// `RequestSignature` effect can be released.  This method is an explicit
+    /// host-composition seam; the default `Core::step(Input::LocalTimeout,
+    /// ...)` path remains unchanged and is fenced while the authority is
+    /// issued.
+    pub fn step_timeout_with_safety_rules_authority_v1<S, V>(
+        &mut self,
+        authority: &mut CoreSafetyRulesAuthorityV1<S>,
+        epoch: Epoch,
+        view: View,
+        verifier: &V,
+    ) -> core::result::Result<Vec<Effect>, CoreSafetyRulesAuthorityErrorV1<S::Error>>
+    where
+        S: SafetyRulesDurableTransitionStoreV1,
+        V: SignatureVerifier,
+    {
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let commit = authority.authorize_timeout_v1(&next, epoch, view, verifier)?;
+        let effects = authority.commit_v1(&mut next, commit, verifier)?;
+        if let Err(error) = next.validate_runtime(verifier, false) {
+            return authority.poison(CoreSafetyRulesAuthorityErrorV1::Core(error));
+        }
+        if let Err(error) = next.validate_monotonic_transition(&previous_safety) {
+            return authority.poison(CoreSafetyRulesAuthorityErrorV1::Core(error));
+        }
+        *self = next;
+        Ok(effects)
+    }
+
+    /// Runs one Vote through the explicitly issued Core-owned SafetyRules
+    /// authority.  The proposal must already have crossed the ordinary
+    /// application-Valid/observation boundary; the authority then performs
+    /// the exact ancestry and pure-kernel checks before durable persistence.
+    /// Core is assigned only after the committed transition passes the normal
+    /// runtime and monotonic validators.  Any post-commit validation failure
+    /// poisons the owner and leaves this Core unchanged.
+    ///
+    /// As with [`Self::step_timeout_with_safety_rules_authority_v1`], this is
+    /// an explicit host-composition seam and does not alter generic `step`.
+    pub fn step_vote_with_safety_rules_authority_v1<S, V>(
+        &mut self,
+        authority: &mut CoreSafetyRulesAuthorityV1<S>,
+        proposal: &SignedProposalV0,
+        verifier: &V,
+    ) -> core::result::Result<Vec<Effect>, CoreSafetyRulesAuthorityErrorV1<S::Error>>
+    where
+        S: SafetyRulesDurableTransitionStoreV1,
+        V: SignatureVerifier,
+    {
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let commit = authority.authorize_vote_v1(&next, proposal, verifier)?;
+        let effects = authority.commit_v1(&mut next, commit, verifier)?;
+        if let Err(error) = next.validate_runtime(verifier, false) {
+            return authority.poison(CoreSafetyRulesAuthorityErrorV1::Core(error));
+        }
+        if let Err(error) = next.validate_monotonic_transition(&previous_safety) {
+            return authority.poison(CoreSafetyRulesAuthorityErrorV1::Core(error));
+        }
+        *self = next;
+        Ok(effects)
+    }
+
     /// Issues this live Core instance's single application-store seal
     /// authority.
     ///

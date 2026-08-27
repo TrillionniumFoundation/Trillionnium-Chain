@@ -17105,6 +17105,94 @@ fn core_safety_rules_authority_poisoning_and_core_affinity_fail_closed() {
 }
 
 #[test]
+fn core_step_timeout_with_safety_rules_authority_is_transactional() {
+    let (_config, mut core) = configured_core();
+    let epoch = core.safety_state().epoch();
+    let view = core.safety_state().current_view();
+    let mut owner = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the live Core issues one SafetyRules owner");
+    let before = core.safety_state().clone();
+
+    let effects = core
+        .step_timeout_with_safety_rules_authority_v1(&mut owner, epoch, view, &RootSignatures)
+        .expect("timeout transition commits through the transactional wrapper");
+    let (barrier, persisted) = persistence_effect(&effects);
+    assert_eq!(persisted.revision(), before.revision() + 1);
+    assert_eq!(core.safety_state(), &persisted);
+    assert!(matches!(
+        persisted.pending_sign(),
+        Some(SignIntent::TimeoutVote {
+            view: pending_view,
+            authorizing_safety_revision,
+            ..
+        }) if *pending_view == view && *authorizing_safety_revision == barrier.get()
+    ));
+    assert!(!owner.is_poisoned());
+
+    let released = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the ordinary Core ack releases the exact signer request");
+    assert!(matches!(
+        released.as_slice(),
+        [Effect::RequestSignature { intent }]
+            if matches!(
+                intent.preimage(),
+                CanonicalSignPreimageV0::TimeoutVote(preimage)
+                    if preimage.view() == view
+            )
+    ));
+}
+
+#[test]
+fn core_step_vote_with_safety_rules_authority_commits_replayed_valid_body() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"authority wrapper vote");
+
+    // Synced replay records the exact body/observation and Valid terminal
+    // fact without invoking the legacy local Vote staging path.  The explicit
+    // authority wrapper can therefore own the first Vote transition.
+    replay_valid(&mut core, proposed.clone());
+    let mut owner = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the replayed Core issues one SafetyRules owner");
+    let before = core.safety_state().clone();
+
+    let effects = core
+        .step_vote_with_safety_rules_authority_v1(&mut owner, &proposed, &RootSignatures)
+        .expect("Vote transition commits through the transactional wrapper");
+    let (barrier, persisted) = persistence_effect(&effects);
+    assert_eq!(persisted.revision(), before.revision() + 1);
+    assert_eq!(core.safety_state(), &persisted);
+    assert!(matches!(
+        persisted.pending_sign(),
+        Some(SignIntent::Vote {
+            block_id,
+            view,
+            authorizing_safety_revision,
+            ..
+        }) if *block_id == proposed.block().id()
+            && *view == proposed.block().header().view()
+            && *authorizing_safety_revision == barrier.get()
+    ));
+    assert!(!owner.is_poisoned());
+
+    let released = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the ordinary Core ack releases the exact Vote signer request");
+    assert!(matches!(
+        released.as_slice(),
+        [Effect::RequestSignature { intent }]
+            if matches!(
+                intent.preimage(),
+                CanonicalSignPreimageV0::Vote(preimage)
+                    if preimage.block_id() == proposed.block().id()
+            )
+    ));
+}
+
+#[test]
 fn safety_rules_shadow_vote_transition_is_carried_by_persistence_request() {
     let (_config, mut core) = configured_core();
     let set = core.config().validator_set().clone();
