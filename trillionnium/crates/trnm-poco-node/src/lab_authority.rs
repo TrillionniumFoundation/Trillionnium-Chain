@@ -5171,17 +5171,22 @@ fn persist_signature_release_barrier_v0(
             "SignatureReady release persistence differs from the cleared Core state",
         ));
     }
-    match safety_store
-        .persist_exact_v0(request, &SafetyTransitionContextV0::ordinary())
-        .map_err(PocoNodeLabAuthorityErrorV0::Safety)?
-    {
+    let (disposition, safety_after) = safety_store
+        .persist_exact_and_confirm_node_checkpoint_head_v0(
+            request,
+            &SafetyTransitionContextV0::ordinary(),
+        )
+        .map_err(PocoNodeLabAuthorityErrorV0::Safety)?;
+    match disposition {
         SafetyPersistDispositionV0::Inserted
         | SafetyPersistDispositionV0::Existing
         | SafetyPersistDispositionV0::ConfirmedAfterCommitError => {}
     }
-    let safety_after = safety_store
-        .confirm_node_checkpoint_head_exact_v0(core.safety_state())
-        .map_err(PocoNodeLabAuthorityErrorV0::Safety)?;
+    if safety_after.state_v0() != core.safety_state() {
+        return Err(PocoNodeLabAuthorityErrorV0::UnexpectedEffect(
+            "SignatureReady release authenticated Safety head differs from cleared Core state",
+        ));
+    }
     let target_checkpoint =
         safety_checkpoint_successor_v0(predecessor_checkpoint, &safety_after, signer)?;
     compare_and_confirm_checkpoint_v0(

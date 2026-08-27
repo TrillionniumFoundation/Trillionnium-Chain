@@ -973,6 +973,70 @@ fn node_checkpoint_head_confirmation_is_exact_inert_and_reopens_v0() {
 }
 
 #[test]
+fn persist_exact_and_confirm_node_checkpoint_head_reuses_authenticated_result() {
+    let temporary = protected_temp_dir();
+    let path = temporary
+        .path()
+        .join("persist-and-confirm-node-checkpoint.sqlite3");
+    let config = test_config();
+    let profile = profile(&config);
+    let mut core = Core::new(
+        config.clone(),
+        genesis_qc(config.validator_set()),
+        &AcceptSignatures,
+    )
+    .expect("valid Core");
+    let genesis = core.safety_state().clone();
+    let mut store =
+        SqliteSafetyStateStoreV0::initialize_new(&path, profile, AcceptSignatures, &genesis)
+            .expect("initialize SafetyStore");
+    store
+        .bind_core_v0(core.safety_state_persistence_binding_v0())
+        .expect("bind designated Core");
+
+    let effects = core
+        .step(
+            Input::Proposal(Box::new(invalid_proposal(&config))),
+            &AcceptSignatures,
+        )
+        .expect("proposal creates one exact persistence request");
+    let request = persistence_effect(&effects);
+
+    let (inserted_disposition, inserted) = store
+        .persist_exact_and_confirm_node_checkpoint_head_v0(
+            &request,
+            &SafetyTransitionContextV0::Ordinary,
+        )
+        .expect("persist and authenticate inserted head");
+    assert_eq!(inserted_disposition, SafetyPersistDispositionV0::Inserted);
+    assert_eq!(inserted.state_v0(), request.state());
+    assert_eq!(inserted.revision_v0(), request.state().revision());
+    assert!(inserted.belongs_to_store_at_path_v0(&store, &path));
+
+    let (existing_disposition, existing) = store
+        .persist_exact_and_confirm_node_checkpoint_head_v0(
+            &request,
+            &SafetyTransitionContextV0::Ordinary,
+        )
+        .expect("retry and authenticate existing head");
+    assert_eq!(existing_disposition, SafetyPersistDispositionV0::Existing);
+    assert_eq!(existing.state_v0(), inserted.state_v0());
+    assert_eq!(existing.revision_v0(), inserted.revision_v0());
+    assert_eq!(
+        existing.state_record_checksum_v0(),
+        inserted.state_record_checksum_v0()
+    );
+    assert_eq!(existing.chain_checksum_v0(), inserted.chain_checksum_v0());
+    assert!(existing.belongs_to_store_at_path_v0(&store, &path));
+
+    let head = store
+        .head()
+        .expect("authenticate persisted head independently");
+    assert_eq!(head.state(), inserted.state_v0());
+    assert_eq!(head.chain_checksum(), inserted.chain_checksum_v0());
+}
+
+#[test]
 fn historical_journal_v3_is_rejected_before_any_namespace_mutation() {
     let temporary = protected_temp_dir();
     let config = test_config();

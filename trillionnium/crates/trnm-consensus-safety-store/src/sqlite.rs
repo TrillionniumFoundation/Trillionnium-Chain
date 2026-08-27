@@ -377,9 +377,9 @@ impl NativeFinalizationAppliedSafetyStatePreflightV0 {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum ExactSafetyStateConfirmationV0 {
-    Exact,
+    Exact(Box<RecoveredSafetyStateV0>),
     Absent,
     Conflict,
 }
@@ -392,6 +392,17 @@ pub struct RecoveredSafetyStateV0 {
     state_record_checksum: [u8; 32],
     transition_context_checksum: [u8; 32],
     chain_checksum: [u8; 32],
+}
+
+/// Private result carried from the authenticated persistence transaction to
+/// the public exact-head join.  The recovered head is never cached or
+/// reconstructed from scalar watermarks: it is the record decoded and
+/// authenticated by the same transaction path that committed (or confirmed)
+/// the persistence request.
+#[derive(Debug)]
+struct PersistedSafetyHeadOutcomeV0 {
+    disposition: SafetyPersistDispositionV0,
+    head: RecoveredSafetyStateV0,
 }
 
 impl RecoveredSafetyStateV0 {
@@ -4557,11 +4568,58 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         self.persist_bound_request_exact_v0(request, transition_context)
     }
 
+    /// Persists Core's exact request and returns the fully authenticated
+    /// node-checkpoint facts produced by that same persistence path.
+    ///
+    /// Unlike [`Self::confirm_node_checkpoint_head_exact_v0`], this method
+    /// does not open a second read/validation path after a successful write.
+    /// The returned capability is minted only after the existing transaction
+    /// checks have completed: record/profile/Core/H1 validation, exact
+    /// readback, durable lock-watermark intent, SQLite commit, fsync, resource
+    /// checks, and the commit-uncertain confirmation path.  No validation is
+    /// cached across calls, and the legacy `persist_exact_v0`/`head` methods
+    /// retain their full independent validation semantics.
+    pub fn persist_exact_and_confirm_node_checkpoint_head_v0(
+        &mut self,
+        request: &SafetyStatePersistenceV0,
+        transition_context: &SafetyTransitionContextV0,
+    ) -> Result<
+        (
+            SafetyPersistDispositionV0,
+            ConfirmedSafetyNodeCheckpointFactsV0,
+        ),
+        SafetyStoreErrorV0,
+    > {
+        let binding = self.ordinary_core_binding_v0()?;
+        if !binding.accepts(request) {
+            return Err(SafetyStoreErrorV0::CoreAffinityMismatch);
+        }
+        let outcome = self
+            .persist_bound_request_exact_with_authenticated_head_v0(request, transition_context)?;
+        let facts = ConfirmedSafetyNodeCheckpointFactsV0::from_authenticated_head(
+            self.journal_id,
+            self.profile.verifier_profile_ref(),
+            self.profile.core_config_ref()?,
+            outcome.head,
+            Arc::clone(&self.owner_affinity),
+        );
+        Ok((outcome.disposition, facts))
+    }
+
     fn persist_bound_request_exact_v0(
         &mut self,
         request: &SafetyStatePersistenceV0,
         transition_context: &SafetyTransitionContextV0,
     ) -> Result<SafetyPersistDispositionV0, SafetyStoreErrorV0> {
+        self.persist_bound_request_exact_with_authenticated_head_v0(request, transition_context)
+            .map(|outcome| outcome.disposition)
+    }
+
+    fn persist_bound_request_exact_with_authenticated_head_v0(
+        &mut self,
+        request: &SafetyStatePersistenceV0,
+        transition_context: &SafetyTransitionContextV0,
+    ) -> Result<PersistedSafetyHeadOutcomeV0, SafetyStoreErrorV0> {
         let manifest_count = usize::from(request.native_valid_post_ack_action_v0().is_some())
             + usize::from(request.native_finalization_applied_v0().is_some())
             + usize::from(request.state_sync_anchor_ordinary_promotion_v0().is_some());
@@ -4610,7 +4668,8 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
         validate_transaction_environment(&transaction, &self.profile, self.journal_id)?;
         ensure_not_halted_connection(&transaction)?;
         validate_storage_resource_bounds(&transaction, &self.profile)?;
-        validate_all_records(&transaction, &self.profile, &self.verifier, self.journal_id)?;
+        let validated_before =
+            validate_all_records(&transaction, &self.profile, &self.verifier, self.journal_id)?;
         let (active_revision, active_chain_checksum, retention_floor) =
             read_head(&transaction, self.journal_id)?;
         let stable_sequence = match self.observed_lock_watermark {
@@ -4654,7 +4713,27 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
                     .rollback()
                     .map_err(|error| SafetyStoreErrorV0::sqlite("finish exact retry", error))?;
                 self.postcheck_primary_resources()?;
-                return Ok(SafetyPersistDispositionV0::Existing);
+                let head = validated_before.recovered_records.last().cloned().ok_or(
+                    SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                        "exact retry has no authenticated active head",
+                    ),
+                )?;
+                if head.revision() != active.revision
+                    || head.chain_checksum() != active.chain_checksum
+                    || head.state_record_checksum() != active.state_record_checksum
+                    || head.transition_context_checksum() != active.transition_context_checksum
+                    || head.state() != state
+                    || head.transition_context() != transition_context
+                {
+                    self.sticky_halt.store(true, Ordering::Release);
+                    return Err(SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                        "exact retry authenticated head differs",
+                    ));
+                }
+                return Ok(PersistedSafetyHeadOutcomeV0 {
+                    disposition: SafetyPersistDispositionV0::Existing,
+                    head,
+                });
             }
             return Err(commit_conflict(
                 transaction,
@@ -4820,7 +4899,8 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
             .map_err(|error| SafetyStoreErrorV0::sqlite("prune old safety records", error))?;
         rewrite_accounting(&transaction)?;
         validate_storage_resource_bounds(&transaction, &self.profile)?;
-        validate_all_records(&transaction, &self.profile, &self.verifier, self.journal_id)?;
+        let validated_after =
+            validate_all_records(&transaction, &self.profile, &self.verifier, self.journal_id)?;
 
         let readback = read_active_record(&transaction)?;
         if readback != row {
@@ -4829,8 +4909,24 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
                 "transactional record readback differs",
             ));
         }
-        let decoded = decode_and_validate_record(&readback, &self.profile, &self.verifier)?;
-        if decoded.state() != state || decoded.transition_context() != transition_context {
+        // `validate_all_records` has already decoded and authenticated every
+        // retained row in this same transaction.  The exact byte-for-byte
+        // readback above binds its last recovered row to the newly written
+        // active row, so reusing that typed result preserves every record,
+        // Core/H1, chain, and transition-context check without a duplicate
+        // durable-crypto pass.
+        let decoded = validated_after.recovered_records.last().cloned().ok_or(
+            SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                "transactional validation has no authenticated active head",
+            ),
+        )?;
+        if decoded.revision() != row.revision
+            || decoded.chain_checksum() != row.chain_checksum
+            || decoded.state_record_checksum() != row.state_record_checksum
+            || decoded.transition_context_checksum() != row.transition_context_checksum
+            || decoded.state() != state
+            || decoded.transition_context() != transition_context
+        {
             self.sticky_halt.store(true, Ordering::Release);
             return Err(SafetyStoreErrorV0::PersistedRepresentationMalformed(
                 "transactional semantic readback differs",
@@ -4865,10 +4961,13 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
                     });
                 }
                 self.resolve_head_watermark(row.revision, row.chain_checksum)?;
-                Ok(SafetyPersistDispositionV0::Inserted)
+                Ok(PersistedSafetyHeadOutcomeV0 {
+                    disposition: SafetyPersistDispositionV0::Inserted,
+                    head: decoded,
+                })
             }
             Err(commit_error) => match self.confirm_stored_exact(&row) {
-                Ok(ExactSafetyStateConfirmationV0::Exact) => {
+                Ok(ExactSafetyStateConfirmationV0::Exact(head)) => {
                     if let Err(confirmation) = self.sync_confirmed_sqlite_commit() {
                         self.sticky_halt.store(true, Ordering::Release);
                         return Err(SafetyStoreErrorV0::CommitUncertain {
@@ -4877,7 +4976,10 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
                         });
                     }
                     self.resolve_head_watermark(row.revision, row.chain_checksum)?;
-                    Ok(SafetyPersistDispositionV0::ConfirmedAfterCommitError)
+                    Ok(PersistedSafetyHeadOutcomeV0 {
+                        disposition: SafetyPersistDispositionV0::ConfirmedAfterCommitError,
+                        head: *head,
+                    })
                 }
                 Ok(ExactSafetyStateConfirmationV0::Absent) => {
                     self.resolve_head_watermark(active_revision, active_chain_checksum)?;
@@ -4919,13 +5021,27 @@ impl<V: SignatureVerifier> SqliteSafetyStateStoreV0<V> {
             self.ensure_file_identity()?;
             return Ok(ExactSafetyStateConfirmationV0::Conflict);
         }
-        validate_all_records(connection, &self.profile, &self.verifier, self.journal_id)?;
+        let validated =
+            validate_all_records(connection, &self.profile, &self.verifier, self.journal_id)?;
         self.ensure_file_identity()?;
         let (active_revision, active_chain_checksum, _) = read_head(connection, self.journal_id)?;
         let active = read_active_record(connection)?;
         let outcome = if active_revision == expected.revision {
             if active.chain_checksum == active_chain_checksum && active == *expected {
-                ExactSafetyStateConfirmationV0::Exact
+                let head = validated.recovered_records.last().cloned().ok_or(
+                    SafetyStoreErrorV0::PersistedRepresentationMalformed(
+                        "commit confirmation has no authenticated active head",
+                    ),
+                )?;
+                if head.revision() != active.revision
+                    || head.chain_checksum() != active.chain_checksum
+                    || head.state_record_checksum() != active.state_record_checksum
+                    || head.transition_context_checksum() != active.transition_context_checksum
+                {
+                    ExactSafetyStateConfirmationV0::Conflict
+                } else {
+                    ExactSafetyStateConfirmationV0::Exact(Box::new(head))
+                }
             } else {
                 ExactSafetyStateConfirmationV0::Conflict
             }
