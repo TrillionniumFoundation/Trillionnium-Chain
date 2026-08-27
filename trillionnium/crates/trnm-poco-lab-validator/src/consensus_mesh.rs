@@ -2551,14 +2551,20 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .get(&remote)
             .ok_or_else(|| anyhow!("remote is outside frozen outgoing peer set"))?;
         // A worker-marked reconnect handoff may have released the old token
-        // before the owner flushes this bounded outbox.  The queue remains a
-        // safe holding area: the worker performs the authoritative lease
-        // revalidation again immediately before writing the frame.  Any
-        // present-but-invalid token, or an unmarked missing token, still
-        // fails closed here.
-        let _ = self
-            .fences
-            .revalidate_for_send(PeerDirectionV0::Outbound, remote)?;
+        // before the owner flushes this bounded outbox.  Keep the payload in
+        // the caller's outbox until the worker has admitted a fresh lease:
+        // queueing it here would let the worker's strict revalidation consume
+        // the entry and report a false frame-path failure (and, depending on
+        // timing, make the no-byte-on-gap guarantee unobservable to the
+        // caller).  Any present-but-invalid token, or an unmarked missing
+        // token, still fails closed here.
+        if matches!(
+            self.fences
+                .revalidate_for_send(PeerDirectionV0::Outbound, remote)?,
+            MeshFenceSendValidationV1::Reconnecting
+        ) {
+            return Ok(MeshSendDispositionV0::Backpressured);
+        }
         let reserved_bytes = payload
             .len()
             .checked_add(QUEUED_FRAME_OVERHEAD_BYTES)
@@ -5346,6 +5352,86 @@ mod tests {
             MeshFenceSendValidationV1::Admitted
         );
         fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+    }
+
+    #[test]
+    fn reconnecting_send_is_backpressured_without_queueing_bytes_v1() {
+        let remote = ValidatorId::new([0x73; 32]);
+        let local = ValidatorId::new([0x74; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x75; 32]).unwrap();
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let fences =
+            MeshFenceRegistryV1::new(authority, local, context, MESH_EXTERNAL_FENCE_TTL_V1)
+                .unwrap();
+        fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x76; 32], 1)
+            .unwrap();
+        fences
+            .begin_reconnect(PeerDirectionV0::Outbound, remote)
+            .unwrap();
+        fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+
+        let (sender, receiver) = mpsc::sync_channel(1);
+        let peer_budget = Arc::new(MeshQueueByteBudgetV0::new(1_024));
+        let global_budget = Arc::new(MeshQueueByteBudgetV0::new(1_024));
+        let mut outbound = BTreeMap::new();
+        outbound.insert(
+            remote,
+            OutboundQueueV0 {
+                sender,
+                peer_budget: Arc::clone(&peer_budget),
+                global_budget: Arc::clone(&global_budget),
+            },
+        );
+        let (_ingress_tx, ingress) = mpsc::sync_channel(1);
+        let stop = Arc::new(AtomicBool::new(false));
+        let terminal = Arc::new(Mutex::new(None));
+        let mut mesh = PersistentAuthenticatedPeerMeshV0 {
+            local,
+            outbound,
+            ingress,
+            stop,
+            terminal,
+            controls: Arc::new(Mutex::new(BTreeMap::new())),
+            fences: fences.clone(),
+            workers: Vec::new(),
+            initial_sessions: Vec::new(),
+            closed: false,
+        };
+
+        // The reconnect marker is a queue-retention signal only.  No budget
+        // may be reserved and no worker-visible bytes may cross the channel
+        // while the old lease is gone.
+        assert_eq!(
+            mesh.send_to(remote, FrameKind::Vote, vec![1, 2, 3])
+                .unwrap(),
+            MeshSendDispositionV0::Backpressured
+        );
+        assert!(matches!(receiver.try_recv(), Err(TryRecvError::Empty)));
+        assert_eq!(peer_budget.used_bytes.load(Ordering::Acquire), 0);
+        assert_eq!(global_budget.used_bytes.load(Ordering::Acquire), 0);
+
+        // Once the worker admits and completes the next generation, the same
+        // edge can queue normally; this proves the handoff did not poison or
+        // permanently remove the outgoing route.
+        fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x77; 32], 2)
+            .unwrap();
+        fences
+            .complete_reconnect(PeerDirectionV0::Outbound, remote)
+            .unwrap();
+        assert_eq!(
+            mesh.send_to(remote, FrameKind::Vote, vec![4, 5, 6])
+                .unwrap(),
+            MeshSendDispositionV0::Queued
+        );
+        let queued = receiver.try_recv().unwrap();
+        assert_eq!(queued.kind, FrameKind::Vote);
+        assert_eq!(&*queued.payload, &[4, 5, 6]);
+        drop(queued);
+        assert_eq!(peer_budget.used_bytes.load(Ordering::Acquire), 0);
+        assert_eq!(global_budget.used_bytes.load(Ordering::Acquire), 0);
+        mesh.close_inner().unwrap();
     }
 
     #[test]
