@@ -56,10 +56,14 @@ pub struct RunTransportContext {
     /// the transport digest then signs them as part of the handshake.
     epoch: Option<u64>,
     validator_set_id: Option<[u8; 32]>,
-    /// Optional hash of the exact validator configuration admitted by the
-    /// deployment manifest.  This is a node-identity binding, not host
-    /// attestation; an independent attestor is still required before signer
-    /// or consensus commissioning.
+    /// Optional shared deployment commitment carried by the authenticated
+    /// handshake.  It MUST be identical at both ends of a peer connection;
+    /// the live fleet therefore supplies the coordinator-manifest digest,
+    /// which commits the complete per-validator configuration set.  A local
+    /// validator-config hash is intentionally not suitable here because each
+    /// peer has a different config.  This is a transport/deployment binding,
+    /// not host attestation; an independent attestor is still required before
+    /// signer or consensus commissioning.
     node_config_sha256: Option<[u8; 32]>,
 }
 
@@ -123,12 +127,14 @@ impl RunTransportContext {
         Ok(())
     }
 
-    /// Adds the exact public validator-config digest to the authenticated
-    /// handshake context.  This prevents one validator's signed transport
-    /// session from being replayed under another deployment configuration.
-    /// It does not claim a cryptographic host/TEE attestation.
-    pub const fn with_node_config_binding(mut self, config_sha256: [u8; 32]) -> Self {
-        self.node_config_sha256 = Some(config_sha256);
+    /// Adds a shared deployment/config commitment to the authenticated
+    /// handshake context.  Callers must provide a campaign-wide value (in the
+    /// deployed fleet this is the coordinator-manifest digest), never the
+    /// local validator's distinct config hash.  The per-node config hash is
+    /// still checked independently while loading and sealing each report.
+    /// This does not claim a cryptographic host/TEE attestation.
+    pub const fn with_node_config_binding(mut self, deployment_sha256: [u8; 32]) -> Self {
+        self.node_config_sha256 = Some(deployment_sha256);
         self
     }
 

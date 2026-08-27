@@ -1842,7 +1842,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 config.validator_set().epoch().get(),
                 config.validator_set().id().into_bytes(),
             )
-            .with_node_config_binding(config.config_sha256()),
+            .with_node_config_binding(config.coordinator_manifest_sha256()),
             config.listen_addr(),
             outgoing,
             incoming,
@@ -1902,7 +1902,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 config.validator_set().epoch().get(),
                 config.validator_set().id().into_bytes(),
             )
-            .with_node_config_binding(config.config_sha256()),
+            .with_node_config_binding(config.coordinator_manifest_sha256()),
             host_attestation: None,
         };
         Self::establish_identity_with_fence_ttl_v1(
@@ -1966,7 +1966,7 @@ impl PersistentAuthenticatedPeerMeshV0 {
                 config.validator_set().epoch().get(),
                 config.validator_set().id().into_bytes(),
             )
-            .with_node_config_binding(config.config_sha256()),
+            .with_node_config_binding(config.coordinator_manifest_sha256()),
             host_attestation: Some(MeshHostAttestationConfigV1 {
                 authority: host_attestation_authority,
                 material: host_attestation_material,

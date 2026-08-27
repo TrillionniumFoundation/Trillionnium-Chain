@@ -691,7 +691,6 @@ fn transport_context(config: &LoadedValidatorConfig) -> RunTransportContext {
         config.candidate_source_sha256(),
         config.binary_sha256(),
         config.coordinator_manifest_sha256(),
-        config.config_sha256(),
         config.validator_set(),
     )
 }
@@ -708,7 +707,6 @@ fn transport_context_for_validator_set(
     candidate_source_sha256: [u8; 32],
     binary_sha256: [u8; 32],
     coordinator_manifest_sha256: [u8; 32],
-    config_sha256: [u8; 32],
     validator_set: &ValidatorSet,
 ) -> RunTransportContext {
     RunTransportContext::new(
@@ -718,7 +716,9 @@ fn transport_context_for_validator_set(
         coordinator_manifest_sha256,
     )
     .with_validator_set_binding(validator_set.epoch().get(), validator_set.id().into_bytes())
-    .with_node_config_binding(config_sha256)
+    // The handshake digest is shared by both peers.  Bind the complete
+    // deployment commitment, not one side's validator-specific config hash.
+    .with_node_config_binding(coordinator_manifest_sha256)
 }
 
 fn connect_until(address: SocketAddr, deadline: Instant) -> Result<TcpStream> {
@@ -957,14 +957,17 @@ mod tests {
             [0x75; 32],
             [0x76; 32],
             [0x77; 32],
-            [0x78; 32],
             &validator_set,
         );
         assert_eq!(
             context.validator_set_binding(),
             Some((validator_set.epoch().get(), validator_set.id().into_bytes()))
         );
-        assert_eq!(context.node_config_binding(), Some([0x78; 32]));
+        // The local config hash is deliberately not put in the shared
+        // handshake context: every validator has a different config.  The
+        // coordinator manifest commits the complete config set and is common
+        // to every peer.
+        assert_eq!(context.node_config_binding(), Some([0x77; 32]));
     }
 
     #[test]
