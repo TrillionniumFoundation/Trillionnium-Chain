@@ -71,11 +71,11 @@ the only starting point for a gate run; a local plan copy is an audit input.
   `SafetyRulesFinalityPredecessorV1` argument is fixed; focused Core,
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
-- The cumulative candidate source head immediately preceding this revision is
-  `236a7b50b546caafe9228f056f1697493d14d600` (tree
-  `0070fde2b67394f3a122345dd664367b3c0557d5`). It retains the real-process G1
-  fixture, native receipt binding, WAL restart/schema checks, semantic-wire
-  mutation evidence and strict nested candidate signatures from
+- The cumulative candidate source head for this revision is the committed
+  `db6092166` effect-driver process slice (the final full object/tree are
+  bound in `plan-manifest-v1.toml`). It retains the real-process G1
+  CheckTx/AppHash fixture, native receipt binding, WAL restart/schema checks,
+  semantic-wire mutation evidence and strict nested candidate signatures from
   `dff1ac5b6`, then adds the following separately tested source tranches:
   `d73ac583e` separates Core's one-shot Safety replay fence from simulator-local
   QC/TC fetch recovery; `a73b606e8` fsyncs genesis and H1 TrustedBase durable
@@ -99,9 +99,15 @@ the only starting point for a gate run; a local plan copy is an audit input.
   durable P and H1 inventories are empty, on both reopen and live initialize;
   this closes the residual-inventory-as-virgin ambiguity while leaving the
   indistinguishable all-empty rollback case to external anti-rollback.
-  These surfaces remain candidate-only and do not supply a production effect
-  driver, socket/peer lease, external monotonic anti-rollback, whole-node CAS,
-  Node/Core/Safety authority, or production activation.
+  `7e66e66b0`/`b6488c083` then bind Vote and Timeout to one Core-owned
+  SafetyRules authority; `a852dba5b` adds the bounded effect-driver API; and
+  `db6092166` exposes a fresh-state, feature-gated OS process that proves the
+  timeout ordering `Safety persist/readback -> whole-node CAS -> sign ->
+  broadcast` over stdin/stdout. `504e4aad0` adds a durable authenticated
+  payload replay fence, while `5d3458e0e` adds the one-way fresh-genesis
+  migration boundary. These surfaces remain candidate-only: the process has
+  no proposal/application/finality loop, recovery owner, socket/peer lease,
+  external monotonic anti-rollback, or production activation.
 - `stage = G1-native-host-incomplete`, `production_candidate = false`,
   `production_consensus_activation = false`, and Comet cleanup eligibility is
   false. There is no completed validator run and no native PoCO listener
@@ -150,7 +156,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`236a7b50b`) | Canonical execution ref; bounded source tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`db6092166`) | Canonical execution ref; bounded Core/Safety, process, wire, replay, and migration tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -568,8 +574,8 @@ crate-local owner. The following rows are the minimum signed closure index:
 
 | ID | Scope obligation | Required evidence | Exit assertion |
 | --- | --- | --- | --- |
-| `G1-S01` | Process host/effect driver, bounded ingress and pacemaker | Built native node binary, process topology, authenticated ingress trace, queue/backpressure and generation metrics | One real process can drive the complete bounded v0 path; a unit harness cannot close this row |
-| `G1-S02` | One authoritative SafetyRules owner for Vote and Timeout | Exact intent/Safety revision records, signer-journal and watermark replay, stale/mixed-cut negatives | Both signing paths share the same durable owner and fail closed before signature release |
+| `G1-S01` | Process host/effect driver, bounded ingress and pacemaker | Built native node binary, process topology, authenticated ingress trace, queue/backpressure and generation metrics | One real process can drive the complete bounded v0 path; the candidate timeout process is partial evidence only and a unit harness cannot close this row |
+| `G1-S02` | One authoritative SafetyRules owner for Vote and Timeout | Exact intent/Safety revision records, signer-journal and watermark replay, stale/mixed-cut negatives | Both signing paths share the same durable owner and fail closed before signature release; the current process proves the Timeout half only |
 | `G1-S03` | Whole-node Safety/Application/Signer checkpoint CAS | Crash matrix with SIGKILL, response loss, disk/I/O failure, rollback and skew; source/target readback proofs | Every durable boundary resolves only to the exact source or target; a third/mixed value reopens G1 |
 | `G1-S04` | Arbitrary non-empty v0 execution/finalization | 100,000-block corpus manifest, real-node logs, independent replay, roots/receipts/apply index and ancestor order | No double-sign, duplicate apply, lost obligation, skipped ancestor, or root/receipt drift |
 | `G1-S05` | Frozen v0 semantics and v1 rejection | CEV0 codec/domain vectors, complete-payload-before-vote checks, explicit v1 BatchRef/Agent rejection | v0 remains sequential and cannot silently accept v1 semantics |
@@ -1911,17 +1917,26 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it is retained in the dated audit record for provenance. The
-current cumulative source head is `236a7b50b`. Its candidate tranches have
-reproducible local tests, but none of those tests is a signed gate exit. The
-remaining blockers are concrete engineering boundaries:
+current cumulative source head is `db6092166`. Its candidate tranches have
+reproducible local tests and a real-process timeout probe, but none of those
+tests is a signed gate exit. The remaining blockers are concrete engineering
+boundaries:
 
-1. **G1 authoritative host/Core/Safety/CAS:** the real-process host is a
-   fixture-only composition. It does not drive the production Node effect
-   loop, Core-owned Vote/Timeout authority, whole-node checkpoint CAS, or
-   network broadcast. `G1-S01` through `G1-S03` remain open.
+1. **G1 authoritative host/Core/Safety/CAS:** `db6092166` now provides a
+   real, feature-gated OS process for the candidate Timeout path. Its black-box
+   trace proves one Core-owned SafetyRules transition, durable Safety
+   readback, whole-node checkpoint CAS before the fixture signer, and a
+   signature-bound outbound WAL; queue backpressure and non-empty-state
+   restart rejection are also exercised. It is fresh-state timeout-only and
+   does not drive proposal validation, application execution/finality,
+   recovery takeover, a live pacemaker, or a network socket. `G1-S01` through
+   `G1-S03` therefore remain open.
 2. **G1 arbitrary corpus and fault closure:** required non-empty v0 corpus,
    physical power-loss campaign, signer/Safety rollback matrix, and independent
-   whole-node crash/replay evidence are not complete. Genesis, H1 TrustedBase
+   whole-node crash/replay evidence are not complete. The new process probe
+   proves checkpoint failure stops before signing and refuses to reopen a
+   non-empty candidate root, but it is not a physical power-loss or complete
+   recovery matrix. Genesis, H1 TrustedBase
    and finalized application commits now retry database-and-directory sync
    fail-closed under injected uncertainty. Separate-process SIGKILL matrices
    cover pre-commit, committed-before-fsync and post-fsync cuts for initialize,
@@ -1935,14 +1950,14 @@ remaining blockers are concrete engineering boundaries:
    both live initialize and reopen; a metadata-missing all-empty image remains
    indistinguishable from a genuinely virgin file without an external anchor.
 3. **G2.0 authenticated nested transport:** semantic wire parsing checks
-   scope/shape/bounds/roots, and P2P candidate verifies the outer session frame
-   plus nested Vote/TimeoutVote/QC/TC signatures. An opt-in private anchor now
-   rejects an exact old handshake after process restart and detects journal or
-   retained-sidecar divergence, but both files can still be rolled back
-   together without an external monotonic authority and the frame bitmap is
-   session-object local. Socket/peer lease, a non-cloneable network owner,
-   durable frame replay, Core integration and independent network replay remain
-   open; P2P remains candidate-only.
+   scope/shape/bounds/roots, and the independent corpus at `f898f1adf`
+   exercises Vote/TimeoutVote/QC/TC nested signatures, 10,971 structural
+   mutations, strict-prefix negatives, and an RFC8032 reference verifier.
+   `504e4aad0` adds a durable payload replay WAL with lease revalidation and
+   cross-process owner tests. Both are candidate seams: socket/peer lease,
+   non-cloneable network owner, Core integration, whole-namespace rollback
+   authority and independent network replay remain open; P2P remains
+   candidate-only.
 4. **MIG-COMET-POCO provenance and cutover:** the offline exporter now rejects
    ambiguous duplicate-key/trailing/unknown-field JSON and zero-height source
    state; the rehearsal also requires canonical validator and QC signer order
@@ -1950,10 +1965,15 @@ remaining blockers are concrete engineering boundaries:
    trusted Comet DB reader/finalized source anchor/real target JMT writer/dual
    quorum/old WAL-key-data-dir rejection/node-start cutover. MIG-ROOT/G4/C0
    remain open; caller-supplied witnesses cannot close them.
-5. **G3/G4 release evidence:** seven/31/100-validator WAN fleet, independent
-   full/light clients, interop, benchmark manifest, security campaign, public
-   testnet ops have not run. Candidate-local metrics cannot be reported as
-   surpassing a first-line chain.
+5. **G3/G4 release evidence:** the 5-host Linux plus macOS observer inventory
+   and Android phone wire-vector hash probe are recorded in the 2026-08-27
+   audit, but no validator service was started and OpenClaw node connectivity
+   is 0/0. The attempted network-smoke run failed closed on a desktop SSH
+   timeout while that host was overloaded; no firewall/service mutation was
+   made. Seven/31/100-validator WAN fleet, independent full/light clients,
+   interop, benchmark manifest, security campaign, and public testnet ops
+   have not run. Candidate-local metrics cannot be reported as surpassing a
+   first-line chain.
 
 Owner must next commit only independently tested source changes, rerun the
 earliest affected gate from a clean clone, retain mutants/raw traces, and
