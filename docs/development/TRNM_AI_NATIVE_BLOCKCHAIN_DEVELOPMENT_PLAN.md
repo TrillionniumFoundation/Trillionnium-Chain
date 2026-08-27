@@ -80,9 +80,11 @@ the only starting point for a gate run; a local plan copy is an audit input.
   `SafetyRulesFinalityPredecessorV1` argument is fixed; focused Core,
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
-- The active candidate source baseline is `4a0de0cd0` plus subsequent hardening
-  source changes; the final assessed commit/tree are pending the last clean
-  source commit and will be bound in `plan-manifest-v1.toml`. It retains the
+- The active candidate source is the clean committed snapshot
+  `8198fea0307eb368df34ff77ffc272a6b0e655ec` (tree
+  `a1be71bba1b54c428493d186fafb656d081b31a9`), with runtime hardening rooted
+  at `e7da191d381b6adf4d58f2d846326630a278a773`. The plan manifest binds that
+  assessed snapshot; it is a candidate only and is not a production claim. It retains the
   real-process G1
   CheckTx/AppHash fixture, native receipt binding, WAL restart/schema checks,
   semantic-wire mutation evidence and strict nested candidate signatures from
@@ -200,7 +202,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`4a0de0cd0` plus subsequent hardening; final assessed commit pending) | Canonical execution ref for the bounded Core/Safety, process, wire, replay, watermark, migration, explicit ordinary-D, candidate socket/transport, client-deadline, and socket/root lifecycle tranches; final hardening is not release-bound until cleanly committed and replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`8198fea0307eb368df34ff77ffc272a6b0e655ec`, tree `a1be71bba1b54c428493d186fafb656d081b31a9`) | Canonical execution ref for the bounded Core/Safety, process, wire, replay, watermark, migration, explicit ordinary-D, candidate socket/transport, client-deadline, and socket/root lifecycle tranches; candidate remains unpromoted until fresh replay | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1962,10 +1964,10 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it remains in the dated audit for provenance. The active
-candidate source is `4a0de0cd0` plus subsequent hardening, with the final
-assessed commit/tree still pending the last clean source commit; the full
-assessed commit/tree and all bound hashes will be recorded in
-`plan-manifest-v1.toml`. Its process,
+candidate source is the clean committed
+`8198fea0307eb368df34ff77ffc272a6b0e655ec` snapshot (tree
+`a1be71bba1b54c428493d186fafb656d081b31a9`), and the plan manifest binds
+that assessed commit/tree and its input hashes. Its process,
 watermark, migration-writer, explicit ordinary-D, shared-context transport,
 client-deadline, and socket/root lifecycle slices have independently passing
 focused tests. The predecessor c04 LAN smoke has signed candidate evidence,
@@ -2025,7 +2027,7 @@ remaining blockers are concrete:
    `validator_run_completed=false`, `g3_lan_multihost_evidence=false`,
    `g3_complete=false`, `geo_wan_evidence=false`, and
    `production_activation=false`; none of those binaries or smoke reports is
-   evidence for the pending 4a0-plus-hardening source until rebuilt. The phone
+   evidence for the current 8198fea source until rebuilt. The phone
    is observer-only. Seven/31/100-validator consensus, fault/restart, WAN,
    independent clients, interop, benchmarks, security campaign, and
    public-testnet operations remain open.

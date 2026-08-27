@@ -3,7 +3,7 @@
   "as_of": "2026-08-27",
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
-  "active_candidate_source": "4a0de0cd0 plus subsequent hardening (final assessed commit pending)",
+  "active_candidate_source": "8198fea0307eb368df34ff77ffc272a6b0e655ec (tree a1be71bba1b54c428493d186fafb656d081b31a9); runtime hardening is e7da191d381b6adf4d58f2d846326630a278a773",
   "stage": "G1-native-host-incomplete",
   "production_candidate": false,
   "production_consensus_activation": false,
@@ -56,7 +56,7 @@
     },
     "candidate_p2p_socket_core_ingress": {
       "commit": "4a0de0cd0",
-      "source_status": "4a0de0cd0 plus subsequent hardening; final assessed commit pending",
+      "source_status": "current assessed candidate 8198fea0307eb368df34ff77ffc272a6b0e655ec/tree a1be71bba1b54c428493d186fafb656d081b31a9; candidate-only, unpromoted",
       "scope": "process",
       "authority": "candidate",
       "classification": "candidate-non-normative",
