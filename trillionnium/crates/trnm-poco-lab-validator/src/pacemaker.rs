@@ -105,6 +105,27 @@ impl GenerationAwarePacemakerV0 {
         Ok(generation)
     }
 
+    /// Arms the current `(epoch, view)` only when no generation is active.
+    ///
+    /// This is deliberately different from [`Self::observe_progress`] followed
+    /// by [`Self::arm`]: a phase-only certificate transition can restore a
+    /// Ready owner without changing any authoritative Core fact.  In that
+    /// case the old timeout has already been consumed, so liveness needs a
+    /// fresh timer, but the bounded exponential backoff must remain intact.
+    /// Calling this while a generation is active is an idempotent no-op, which
+    /// also prevents duplicate stale certificates from moving its deadline.
+    pub fn arm_if_unarmed(
+        &mut self,
+        epoch: Epoch,
+        view: View,
+        now: Instant,
+    ) -> Result<Option<PacemakerGenerationV0>> {
+        if self.armed.is_some() {
+            return Ok(None);
+        }
+        self.arm(epoch, view, now).map(Some)
+    }
+
     /// Returns an expiry at most once for the active generation.
     pub fn poll(&mut self, now: Instant) -> Option<PacemakerExpiryV0> {
         let armed = self.armed.as_mut()?;
@@ -230,5 +251,51 @@ mod tests {
         pacemaker.observe_progress();
         assert_eq!(pacemaker.consecutive_timeouts(), 0);
         assert!(pacemaker.poll(now + Duration::from_secs(2)).is_none());
+    }
+
+    #[test]
+    fn arm_if_unarmed_preserves_backoff_and_is_idempotent_when_armed() {
+        let now = Instant::now();
+        let mut pacemaker =
+            GenerationAwarePacemakerV0::new(Duration::from_millis(100), Duration::from_secs(1))
+                .unwrap();
+
+        let first = pacemaker
+            .arm(Epoch::new(0), View::new(1), now)
+            .expect("initial generation");
+        assert_eq!(
+            pacemaker
+                .arm_if_unarmed(Epoch::new(0), View::new(1), now + Duration::from_millis(50))
+                .unwrap(),
+            None,
+            "an active generation must not be moved by a duplicate certificate"
+        );
+        let expiry = pacemaker
+            .poll(now + Duration::from_millis(100))
+            .expect("the active generation is a single-shot expiry");
+        assert_eq!(expiry.generation(), first);
+        pacemaker
+            .confirm_timeout_emitted(expiry)
+            .expect("confirm initial timeout");
+        assert_eq!(pacemaker.consecutive_timeouts(), 1);
+
+        let rearmed = pacemaker
+            .arm_if_unarmed(Epoch::new(0), View::new(1), now)
+            .unwrap()
+            .expect("phase-only transition must restore a timer");
+        assert_ne!(rearmed, first);
+        assert!(
+            pacemaker.poll(now + Duration::from_millis(149)).is_none(),
+            "the second generation must retain the one-timeout backoff"
+        );
+        assert_eq!(
+            pacemaker
+                .poll(now + Duration::from_millis(150))
+                .expect("backoff uses the second-generation deadline")
+                .generation(),
+            rearmed,
+            "the timer should expire after the 3/2 backoff, not immediately"
+        );
+        assert_eq!(pacemaker.consecutive_timeouts(), 1);
     }
 }

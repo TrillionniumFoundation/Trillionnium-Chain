@@ -6515,6 +6515,14 @@ impl BoundedConsensusOwnerV1 {
         self.applied_qcs.insert(id);
         if made_authoritative_progress_v1(before, after) {
             self.rearm_after_progress_v1(after)?;
+        } else if before.phase_v0() != after.phase_v0() {
+            // A stale-but-authenticated QC can consume TimeoutSigned and
+            // restore Ready without changing Core's authoritative cut.  The
+            // timeout which produced TimeoutSigned already disarmed the
+            // pacemaker; restore one timer without resetting its bounded
+            // backoff. Exact high-QC replay is phase-neutral and therefore
+            // does not enter this branch.
+            self.rearm_after_phase_transition_v1(after)?;
         }
         Ok(())
     }
@@ -6675,6 +6683,11 @@ impl BoundedConsensusOwnerV1 {
                     .map_or(required, |existing| existing.max(required)),
             );
             self.rearm_after_progress_v1(after)?;
+        } else if before.phase_v0() != after.phase_v0() {
+            // See the QC path above: a no-op TC may still consume a signed
+            // timeout owner, so a fresh timer is required for liveness while
+            // preserving the existing timeout backoff.
+            self.rearm_after_phase_transition_v1(after)?;
         }
         Ok(())
     }
@@ -6751,6 +6764,17 @@ impl BoundedConsensusOwnerV1 {
         self.pacemaker.observe_progress();
         if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
             self.pacemaker.arm(
+                self.config.validator_set().epoch(),
+                facts.current_view_v0(),
+                Instant::now(),
+            )?;
+        }
+        Ok(())
+    }
+
+    fn rearm_after_phase_transition_v1(&mut self, facts: ContinuousRuntimeFactsV0) -> Result<()> {
+        if self.restart_lifecycle.is_running_v1() && self.stopping_since.is_none() {
+            self.pacemaker.arm_if_unarmed(
                 self.config.validator_set().epoch(),
                 facts.current_view_v0(),
                 Instant::now(),
