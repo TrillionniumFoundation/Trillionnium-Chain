@@ -28,7 +28,7 @@ use std::{
 
 #[cfg(unix)]
 use std::os::unix::{
-    fs::{FileTypeExt, PermissionsExt},
+    fs::{FileTypeExt, MetadataExt, OpenOptionsExt, PermissionsExt},
     net::{UnixListener, UnixStream},
 };
 
@@ -501,7 +501,15 @@ impl CandidateEffectDriverHooksV1 for FileHooksV1 {
 }
 
 fn append_durable(path: &Path, bytes: &[u8]) -> io::Result<()> {
-    let mut file = OpenOptions::new().create(true).append(true).open(path)?;
+    let mut options = OpenOptions::new();
+    options.create(true).append(true).write(true);
+    #[cfg(unix)]
+    options
+        .mode(0o600)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+    let file = options.open(path)?;
+    ensure_private_artifact_file(&file)?;
+    let mut file = file;
     file.write_all(bytes)?;
     file.sync_all()
 }
@@ -515,10 +523,26 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
         .and_then(|value| value.to_str())
         .ok_or_else(|| io::Error::new(io::ErrorKind::InvalidInput, "path has no UTF-8 name"))?;
     let temp = parent.join(format!(".{name}.tmp-{}", std::process::id()));
-    let mut file = File::create(&temp)?;
-    file.write_all(bytes)?;
-    file.sync_all()?;
-    fs::rename(&temp, path)?;
+    let result = (|| {
+        let mut options = OpenOptions::new();
+        options.write(true).create_new(true);
+        #[cfg(unix)]
+        options
+            .mode(0o600)
+            .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW);
+        let mut file = options.open(&temp)?;
+        file.write_all(bytes)?;
+        file.sync_all()?;
+        fs::rename(&temp, path)?;
+        Ok::<(), io::Error>(())
+    })();
+    if let Err(error) = result {
+        // A failed replacement must not leave a same-name temporary file that
+        // a later owner could accidentally trust.  `create_new` above also
+        // makes a stale temporary an explicit fail-closed condition.
+        let _ = fs::remove_file(&temp);
+        return Err(error);
+    }
     // Syncing the parent closes the rename durability window on Unix.  Some
     // non-Unix test filesystems reject opening a directory; the file itself
     // is still synchronously written in that case.
@@ -541,7 +565,28 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
             "refusing a broad filesystem root",
         ));
     }
+    match fs::symlink_metadata(root) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink() || !metadata.is_dir() {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "root",
+                    "candidate run root must be a directory and not a symlink",
+                ));
+            }
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+        Err(error) => return Err(error.into()),
+    }
     fs::create_dir_all(root)?;
+    // Make every candidate run root private explicitly; relying on the
+    // process umask is insufficient for consensus/WAL material.  The chmod is
+    // issued on an opened directory descriptor so the final component is not
+    // followed as a symlink.  (Ancestor replacement races still require an
+    // openat/descriptor-anchored owner in a production implementation.)
+    let directory = File::open(root)?;
+    set_private_root_permissions(&directory)?;
+    let metadata = directory.metadata()?;
+    ensure_private_root_metadata(root, &metadata)?;
     for name in [
         ROOT_MARKER_V1,
         TRANSITION_WAL_V1,
@@ -552,17 +597,105 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
         APPLICATION_WAL_V1,
     ] {
         let path = root.join(name);
-        if path.is_file() && fs::metadata(&path)?.len() != 0 {
-            return Err(EffectDriverProcessErrorV1::new(
-                "recovery_required",
-                format!(
-                    "non-empty candidate state {} requires an explicit recovery owner",
-                    path.display()
-                ),
-            ));
+        match fs::symlink_metadata(&path) {
+            Ok(metadata) => {
+                if metadata.file_type().is_symlink() || !metadata.is_file() {
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "root",
+                        format!("candidate state {} is not a regular file", path.display()),
+                    ));
+                }
+                ensure_private_artifact_metadata(&metadata).map_err(|error| {
+                    EffectDriverProcessErrorV1::new(
+                        "root",
+                        format!(
+                            "candidate state {} is not private: {error:?}",
+                            path.display()
+                        ),
+                    )
+                })?;
+                if metadata.len() != 0 {
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "recovery_required",
+                        format!(
+                            "non-empty candidate state {} requires an explicit recovery owner",
+                            path.display()
+                        ),
+                    ));
+                }
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+            Err(error) => return Err(error.into()),
         }
     }
     Ok(())
+}
+
+fn ensure_private_root_metadata(
+    _path: &Path,
+    metadata: &fs::Metadata,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    #[cfg(unix)]
+    {
+        if metadata.file_type().is_symlink()
+            || !metadata.is_dir()
+            || metadata.permissions().mode() & 0o077 != 0
+        {
+            return Err(EffectDriverProcessErrorV1::new(
+                "root",
+                "candidate run root must be a private directory",
+            ));
+        }
+    }
+    #[cfg(not(unix))]
+    if !metadata.is_dir() {
+        return Err(EffectDriverProcessErrorV1::new(
+            "root",
+            "candidate run root must be a directory",
+        ));
+    }
+    Ok(())
+}
+
+fn set_private_root_permissions(directory: &File) -> io::Result<()> {
+    #[cfg(unix)]
+    {
+        directory.set_permissions(fs::Permissions::from_mode(0o700))?;
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = directory;
+    }
+    Ok(())
+}
+
+fn ensure_private_artifact_metadata(metadata: &fs::Metadata) -> io::Result<()> {
+    #[cfg(unix)]
+    {
+        if metadata.file_type().is_symlink()
+            || !metadata.is_file()
+            || metadata.permissions().mode() & 0o7777 != 0o600
+            || metadata.nlink() != 1
+        {
+            return Err(io::Error::new(
+                io::ErrorKind::PermissionDenied,
+                "candidate artifact must be a private, single-link regular file",
+            ));
+        }
+    }
+    #[cfg(not(unix))]
+    if !metadata.is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::PermissionDenied,
+            "candidate artifact must be a regular file",
+        ));
+    }
+    Ok(())
+}
+
+fn ensure_private_artifact_file(file: &File) -> io::Result<()> {
+    let metadata = file.metadata()?;
+    ensure_private_artifact_metadata(&metadata)
 }
 
 fn build_core_v1() -> Result<Core, EffectDriverProcessErrorV1> {
@@ -1662,4 +1795,77 @@ fn broadcast_count(root: &Path) -> u64 {
     fs::read_to_string(root.join(OUTBOUND_WAL_V1))
         .map(|value| value.lines().count() as u64)
         .unwrap_or(0)
+}
+
+#[cfg(all(test, unix))]
+mod persistence_security_tests {
+    use super::*;
+    use std::{
+        fs,
+        os::unix::fs::{symlink, PermissionsExt},
+    };
+
+    #[test]
+    fn fresh_root_sets_private_mode_on_new_and_existing_roots() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        let root = parent.path().join("run");
+        fresh_root(&root).expect("new root is accepted");
+        assert_eq!(
+            fs::symlink_metadata(&root)
+                .expect("root metadata")
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o700
+        );
+
+        let broad = parent.path().join("broad");
+        fs::create_dir(&broad).expect("broad root");
+        fs::set_permissions(&broad, fs::Permissions::from_mode(0o755)).expect("set broad mode");
+        fresh_root(&broad).expect("existing root is tightened explicitly");
+        assert_eq!(
+            fs::symlink_metadata(&broad)
+                .expect("broad root metadata")
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o700
+        );
+    }
+
+    #[test]
+    fn durable_artifacts_use_private_files_and_reject_symlink_targets() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        let root = parent.path().join("run");
+        fresh_root(&root).expect("new root is accepted");
+
+        let append_path = root.join("append.wal");
+        append_durable(&append_path, b"record\n").expect("append artifact");
+        assert_eq!(
+            fs::symlink_metadata(&append_path)
+                .expect("append metadata")
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o600
+        );
+
+        let replace_path = root.join("replace.record");
+        atomic_replace(&replace_path, b"record\n").expect("replace artifact");
+        assert_eq!(
+            fs::symlink_metadata(&replace_path)
+                .expect("replace metadata")
+                .permissions()
+                .mode()
+                & 0o7777,
+            0o600
+        );
+
+        let target = parent.path().join("outside");
+        fs::write(&target, b"outside\n").expect("outside target");
+        let link = root.join("link.wal");
+        symlink(&target, &link).expect("symlink target");
+        assert!(append_durable(&link, b"must-not-follow\n").is_err());
+        assert_eq!(fs::read(&target).expect("outside read"), b"outside\n");
+    }
 }
