@@ -680,6 +680,7 @@ pub struct PocoNodeLabPhaseFactsV0 {
     pending_timeout_certificate_id: Option<CertificateId>,
     finalized_block_id: BlockId,
     finalized_height: u64,
+    finalized_view: View,
     finalized_chain_root: [u8; 32],
     application_applied_block_id: BlockId,
     application_applied_height: u64,
@@ -825,6 +826,10 @@ impl PocoNodeLabPhaseFactsV0 {
 
     pub const fn finalized_height_v0(self) -> u64 {
         self.finalized_height
+    }
+
+    pub const fn finalized_view_v0(self) -> View {
+        self.finalized_view
     }
 
     /// Domain-separated Core commitment to the exact hash-linked finalized
@@ -5621,6 +5626,7 @@ fn phase_facts_from_parts_v0(
             .map(|pending| pending.certificate_id()),
         finalized_block_id: finalized.block_id(),
         finalized_height: finalized.height().get(),
+        finalized_view: finalized.view(),
         finalized_chain_root: *core.finalized_chain_root_v0().as_bytes(),
         application_applied_block_id: applied.block_id(),
         application_applied_height: applied.height().get(),

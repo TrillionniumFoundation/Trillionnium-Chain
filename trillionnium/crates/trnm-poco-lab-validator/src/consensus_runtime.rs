@@ -6251,11 +6251,16 @@ impl BoundedConsensusOwnerV1 {
             "proposal exceeds the requested bounded height"
         );
         self.record_proposal_first_seen_v1(block_id, height)?;
-        let high_qc = self.authority_v1()?.facts_v0()?.high_qc_v0();
-        match self
-            .pending_proposals
-            .admit_v1(proposal, high_qc, &self.known_executions)?
-        {
+        let authority_facts = self.authority_v1()?.facts_v0()?;
+        let high_qc = authority_facts.high_qc_v0();
+        match self.pending_proposals.admit_v1(
+            proposal,
+            high_qc,
+            &self.known_executions,
+            authority_facts.finalized_height_v0(),
+            authority_facts.finalized_block_id_v0(),
+            authority_facts.finalized_view_v0(),
+        )? {
             PendingProposalAdmissionV1::Vote(proposal) => self.vote_ready_proposal_v1(*proposal),
             PendingProposalAdmissionV1::Buffered => Ok(()),
             PendingProposalAdmissionV1::IgnoreStale(block_id) => {
@@ -6293,11 +6298,15 @@ impl BoundedConsensusOwnerV1 {
     fn drain_pending_proposals_v1(&mut self) -> Result<bool> {
         let mut progressed = false;
         loop {
-            let high_qc = self.authority_v1()?.facts_v0()?.high_qc_v0();
-            let Some(admission) = self
-                .pending_proposals
-                .take_actionable_v1(high_qc, &self.known_executions)
-            else {
+            let authority_facts = self.authority_v1()?.facts_v0()?;
+            let high_qc = authority_facts.high_qc_v0();
+            let Some(admission) = self.pending_proposals.take_actionable_v1(
+                high_qc,
+                &self.known_executions,
+                authority_facts.finalized_height_v0(),
+                authority_facts.finalized_block_id_v0(),
+                authority_facts.finalized_view_v0(),
+            ) else {
                 break;
             };
             match admission {
@@ -7412,8 +7421,18 @@ impl PendingProposalBufferV1 {
         proposal: UnboundProposalV0,
         high_qc: QcRef,
         known_executions: &BTreeSet<(u64, [u8; 32])>,
+        finalized_height: u64,
+        finalized_block_id: BlockId,
+        finalized_view: View,
     ) -> Result<PendingProposalAdmissionV1> {
-        match proposal_disposition_v1(&proposal, high_qc, known_executions) {
+        match proposal_disposition_v1(
+            &proposal,
+            high_qc,
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ) {
             PendingProposalDispositionV1::Vote => {
                 Ok(PendingProposalAdmissionV1::Vote(Box::new(proposal)))
             }
@@ -7443,13 +7462,23 @@ impl PendingProposalBufferV1 {
         &mut self,
         high_qc: QcRef,
         known_executions: &BTreeSet<(u64, [u8; 32])>,
+        finalized_height: u64,
+        finalized_block_id: BlockId,
+        finalized_view: View,
     ) -> Option<PendingProposalAdmissionV1> {
         let (index, disposition) =
             self.pending
                 .iter()
                 .enumerate()
                 .find_map(|(index, proposal)| {
-                    let disposition = proposal_disposition_v1(proposal, high_qc, known_executions);
+                    let disposition = proposal_disposition_v1(
+                        proposal,
+                        high_qc,
+                        known_executions,
+                        finalized_height,
+                        finalized_block_id,
+                        finalized_view,
+                    );
                     (disposition != PendingProposalDispositionV1::Buffer)
                         .then_some((index, disposition))
                 })?;
@@ -7484,7 +7513,24 @@ fn proposal_disposition_v1(
     proposal: &UnboundProposalV0,
     high_qc: QcRef,
     known_executions: &BTreeSet<(u64, [u8; 32])>,
+    finalized_height: u64,
+    finalized_block_id: BlockId,
+    finalized_view: View,
 ) -> PendingProposalDispositionV1 {
+    if let Some(timeout_certificate) = proposal.timeout_certificate() {
+        if !timeout_certificate_references_ready_v1(
+            timeout_certificate,
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ) {
+            // A carried TC is an atomic certificate table.  Do not let a
+            // proposal whose selected/justify QC is known bypass the exact
+            // readiness check for a non-selected ordinary reference.
+            return PendingProposalDispositionV1::Buffer;
+        }
+    }
     let justify = proposal.justify_qc().qc_ref();
     if justify == high_qc {
         return PendingProposalDispositionV1::Vote;
@@ -7497,6 +7543,24 @@ fn proposal_disposition_v1(
     } else {
         PendingProposalDispositionV1::Buffer
     }
+}
+
+fn timeout_certificate_references_ready_v1(
+    certificate: &TimeoutCertificateV0,
+    known_executions: &BTreeSet<(u64, [u8; 32])>,
+    finalized_height: u64,
+    finalized_block_id: BlockId,
+    finalized_view: View,
+) -> bool {
+    certificate.referenced_qcs().iter().all(|reference| {
+        qc_reference_execution_ready_v1(
+            reference,
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        )
+    })
 }
 
 fn record_proposal_first_seen_at_v1(
@@ -7583,18 +7647,28 @@ impl PendingCertificateV1 {
         // authenticated evidence while its payload/K row is absent; feeding
         // that value into the Node would request a sync effect which this
         // bounded owner cannot service and can leave a split P/K checkpoint.
-        let _facts = owner
+        let facts = owner
             .authority
             .as_ref()
             .ok_or_else(|| anyhow!("continuous authority is unavailable"))?
             .facts_v0()?;
         Ok(match self {
-            Self::Quorum { certificate, .. } => {
-                ordinary_qc_execution_ready_v1(certificate, &owner.known_executions)
-            }
+            Self::Quorum { certificate, .. } => ordinary_qc_execution_ready_v1(
+                certificate,
+                &owner.known_executions,
+                facts.finalized_height_v0(),
+                facts.finalized_block_id_v0(),
+                facts.finalized_view_v0(),
+            ),
             Self::Timeout { certificate, .. } => {
                 certificate.referenced_qcs().iter().all(|reference| {
-                    qc_reference_execution_ready_v1(reference, &owner.known_executions)
+                    qc_reference_execution_ready_v1(
+                        reference,
+                        &owner.known_executions,
+                        facts.finalized_height_v0(),
+                        facts.finalized_block_id_v0(),
+                        facts.finalized_view_v0(),
+                    )
                 })
             }
         })
@@ -7608,19 +7682,38 @@ impl PendingCertificateV1 {
 fn ordinary_qc_execution_ready_v1(
     certificate: &QuorumCertificate,
     known_executions: &BTreeSet<(u64, [u8; 32])>,
+    finalized_height: u64,
+    finalized_block_id: BlockId,
+    finalized_view: View,
 ) -> bool {
-    known_executions.contains(&(
-        certificate.height().get(),
-        *certificate.block_id().as_bytes(),
-    ))
+    let height = certificate.height().get();
+    let block_id = *certificate.block_id().as_bytes();
+    // Core treats a QC strictly below finality as durably subsumed only after
+    // same-view conflicts have been observed.  The runtime does not carry
+    // that observation history, so do not release a competing block from the
+    // finalized view.  A QC at the finalized height is never admitted by this
+    // exception, even when it names another block.  This is an explicit
+    // finalized-coordinate exception, not a bare high-QC height shortcut.
+    known_executions.contains(&(height, block_id))
+        || (certificate.block_id() == finalized_block_id
+            && height == finalized_height
+            && certificate.view().get() == finalized_view.get())
+        || (certificate.block_id() != finalized_block_id
+            && height < finalized_height
+            && certificate.view().get() != finalized_view.get())
 }
 
-/// Synthetic context anchors have no native payload/K dependency.  Ordinary
+/// Synthetic context anchors have no native payload/K dependency. Ordinary
 /// references, including every non-selected TC reference, require the exact
-/// `(height, block_id)` execution identity before entering the lab authority.
+/// `(height, block_id)` execution identity before entering the lab authority,
+/// unless the exact finalized coordinates prove the reference is an inert
+/// historical prefix. No finalized exception is inferred from high-QC height.
 fn qc_reference_execution_ready_v1(
     reference: &QcReferenceV0,
     known_executions: &BTreeSet<(u64, [u8; 32])>,
+    finalized_height: u64,
+    finalized_block_id: BlockId,
+    finalized_view: View,
 ) -> bool {
     match reference {
         QcReferenceV0::Synthetic(anchor) => {
@@ -7629,9 +7722,13 @@ fn qc_reference_execution_ready_v1(
             // exact ordinary-execution gate by merely being synthetic.
             matches!(anchor.as_ref(), ContextAuthorizedQcV0::Genesis(_))
         }
-        QcReferenceV0::Ordinary(certificate) => {
-            ordinary_qc_execution_ready_v1(certificate, known_executions)
-        }
+        QcReferenceV0::Ordinary(certificate) => ordinary_qc_execution_ready_v1(
+            certificate,
+            known_executions,
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ),
     }
 }
 
@@ -9803,17 +9900,34 @@ mod tests {
         let (keys, validator_set, parameters, genesis_high_qc, parent_qc) =
             synthetic_proposal_fixture_v1();
         let known = BTreeSet::new();
+        let finalized_height = 0;
+        let finalized_block_id = BlockId::new([0; 32]);
+        let finalized_view = View::new(0);
         let first = synthetic_future_proposal_v1(1, &keys, &validator_set, parameters, &parent_qc);
         let mut duplicate_buffer = PendingProposalBufferV1::default();
         assert!(matches!(
             duplicate_buffer
-                .admit_v1(first.clone(), genesis_high_qc, &known)
+                .admit_v1(
+                    first.clone(),
+                    genesis_high_qc,
+                    &known,
+                    finalized_height,
+                    finalized_block_id,
+                    finalized_view,
+                )
                 .unwrap(),
             PendingProposalAdmissionV1::Buffered
         ));
         assert!(matches!(
             duplicate_buffer
-                .admit_v1(first.clone(), genesis_high_qc, &known)
+                .admit_v1(
+                    first.clone(),
+                    genesis_high_qc,
+                    &known,
+                    finalized_height,
+                    finalized_block_id,
+                    finalized_view,
+                )
                 .unwrap(),
             PendingProposalAdmissionV1::Buffered
         ));
@@ -9835,8 +9949,14 @@ mod tests {
             Instant::now(),
         )
         .unwrap();
-        let Some(PendingProposalAdmissionV1::IgnoreStale(block_id)) =
-            duplicate_buffer.take_actionable_v1(future_high_qc, &known)
+        let Some(PendingProposalAdmissionV1::IgnoreStale(block_id)) = duplicate_buffer
+            .take_actionable_v1(
+                future_high_qc,
+                &known,
+                finalized_height,
+                finalized_block_id,
+                finalized_view,
+            )
         else {
             panic!("high-QC progress must prune the now-stale pending proposal");
         };
@@ -9851,7 +9971,14 @@ mod tests {
                 synthetic_future_proposal_v1(marker, &keys, &validator_set, parameters, &parent_qc);
             assert!(matches!(
                 capacity_buffer
-                    .admit_v1(proposal, genesis_high_qc, &known)
+                    .admit_v1(
+                        proposal,
+                        genesis_high_qc,
+                        &known,
+                        finalized_height,
+                        finalized_block_id,
+                        finalized_view,
+                    )
                     .unwrap(),
                 PendingProposalAdmissionV1::Buffered
             ));
@@ -9865,7 +9992,14 @@ mod tests {
             &parent_qc,
         );
         let error = capacity_buffer
-            .admit_v1(overflow, genesis_high_qc, &known)
+            .admit_v1(
+                overflow,
+                genesis_high_qc,
+                &known,
+                finalized_height,
+                finalized_block_id,
+                finalized_view,
+            )
             .expect_err("the sixty-fifth distinct pending block must fail closed");
         assert!(error
             .to_string()
@@ -9965,7 +10099,14 @@ mod tests {
             synthetic_proposal_fixture_v1();
         let mut known =
             BTreeSet::from([(parent_qc.height().get(), *parent_qc.block_id().as_bytes())]);
-        assert!(ordinary_qc_execution_ready_v1(&parent_qc, &known));
+        let finalized_block_id = BlockId::new([0; 32]);
+        assert!(ordinary_qc_execution_ready_v1(
+            &parent_qc,
+            &known,
+            0,
+            finalized_block_id,
+            View::new(0),
+        ));
 
         let foreign = qc_variant_for_classifier_test_v1(
             &validator_set,
@@ -9976,7 +10117,7 @@ mod tests {
             &[0, 1, 2],
         );
         assert!(
-            !ordinary_qc_execution_ready_v1(&foreign, &known),
+            !ordinary_qc_execution_ready_v1(&foreign, &known, 0, finalized_block_id, View::new(0),),
             "same-height different-block QC must not use the height watermark"
         );
         assert!(
@@ -9990,11 +10131,99 @@ mod tests {
                     &[0, 1, 2],
                 ),
                 &known,
+                0,
+                finalized_block_id,
+                View::new(0),
             ),
             "unknown coordinate QC must remain pending"
         );
         known.insert((foreign.height().get(), *foreign.block_id().as_bytes()));
-        assert!(ordinary_qc_execution_ready_v1(&foreign, &known));
+        assert!(ordinary_qc_execution_ready_v1(
+            &foreign,
+            &known,
+            0,
+            finalized_block_id,
+            View::new(0),
+        ));
+
+        let finalized_height = parent_qc.height().get().saturating_add(1);
+        let finalized_view = View::new(7);
+        let finalized_block_id = BlockId::new([0xb7; 32]);
+        let exact_finalized = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            finalized_view,
+            Height::new(finalized_height),
+            finalized_block_id,
+            &[0, 1, 2],
+        );
+        assert!(ordinary_qc_execution_ready_v1(
+            &exact_finalized,
+            &BTreeSet::new(),
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ));
+        let wrong_finalized_view = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            View::new(8),
+            Height::new(finalized_height),
+            finalized_block_id,
+            &[0, 1, 2],
+        );
+        assert!(!ordinary_qc_execution_ready_v1(
+            &wrong_finalized_view,
+            &BTreeSet::new(),
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ));
+        let lower_competing = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            View::new(6),
+            parent_qc.height(),
+            BlockId::new([0xb6; 32]),
+            &[0, 1, 2],
+        );
+        assert!(ordinary_qc_execution_ready_v1(
+            &lower_competing,
+            &BTreeSet::new(),
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ));
+        let lower_same_view = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            finalized_view,
+            parent_qc.height(),
+            BlockId::new([0xb8; 32]),
+            &[0, 1, 2],
+        );
+        assert!(!ordinary_qc_execution_ready_v1(
+            &lower_same_view,
+            &BTreeSet::new(),
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ));
+        let equal_height_competing = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            View::new(6),
+            Height::new(finalized_height),
+            BlockId::new([0xb9; 32]),
+            &[0, 1, 2],
+        );
+        assert!(!ordinary_qc_execution_ready_v1(
+            &equal_height_competing,
+            &BTreeSet::new(),
+            finalized_height,
+            finalized_block_id,
+            finalized_view,
+        ));
     }
 
     #[test]
@@ -10010,6 +10239,7 @@ mod tests {
             &[0, 1, 2],
         );
         let known = BTreeSet::from([(parent_qc.height().get(), *parent_qc.block_id().as_bytes())]);
+        let finalized_block_id = BlockId::new([0; 32]);
         let genesis = GenesisQcV0::new(
             validator_set.genesis_hash(),
             validator_set.chain_id(),
@@ -10019,13 +10249,25 @@ mod tests {
         assert!(qc_reference_execution_ready_v1(
             &QcReferenceV0::genesis_anchor(genesis),
             &known,
+            0,
+            finalized_block_id,
+            View::new(0),
         ));
         assert!(qc_reference_execution_ready_v1(
             &QcReferenceV0::ordinary(parent_qc),
-            &known
+            &known,
+            0,
+            finalized_block_id,
+            View::new(0),
         ));
         assert!(
-            !qc_reference_execution_ready_v1(&QcReferenceV0::ordinary(foreign.clone()), &known),
+            !qc_reference_execution_ready_v1(
+                &QcReferenceV0::ordinary(foreign.clone()),
+                &known,
+                0,
+                finalized_block_id,
+                View::new(0),
+            ),
             "one unknown non-selected TC reference must keep the whole TC pending"
         );
         let mut all_known = known;
@@ -10033,6 +10275,9 @@ mod tests {
         assert!(qc_reference_execution_ready_v1(
             &QcReferenceV0::ordinary(foreign),
             &all_known,
+            0,
+            finalized_block_id,
+            View::new(0),
         ));
     }
 
@@ -10140,7 +10385,14 @@ mod tests {
             };
             assert!(matches!(
                 pending
-                    .admit_v1(*child, initial.high_qc_v0(), &known)
+                    .admit_v1(
+                        *child,
+                        initial.high_qc_v0(),
+                        &known,
+                        initial.finalized_height_v0(),
+                        initial.finalized_block_id_v0(),
+                        initial.finalized_view_v0(),
+                    )
                     .unwrap(),
                 PendingProposalAdmissionV1::Buffered
             ));
@@ -10170,12 +10422,18 @@ mod tests {
                 parent.block().header().height().get(),
                 *parent.block().id().as_bytes(),
             ));
-            let lagging_high_qc = fixture.authorities[target_index]
+            let lagging_facts = fixture.authorities[target_index]
                 .facts_v0()
-                .expect("read VoteSigned lagging facts")
-                .high_qc_v0();
+                .expect("read VoteSigned lagging facts");
+            let lagging_high_qc = lagging_facts.high_qc_v0();
             let PendingProposalAdmissionV1::Vote(child) = pending
-                .take_actionable_v1(lagging_high_qc, &known)
+                .take_actionable_v1(
+                    lagging_high_qc,
+                    &known,
+                    lagging_facts.finalized_height_v0(),
+                    lagging_facts.finalized_block_id_v0(),
+                    lagging_facts.finalized_view_v0(),
+                )
                 .expect("known parent makes the child actionable")
             else {
                 panic!("known parent must drain the pending child for voting");

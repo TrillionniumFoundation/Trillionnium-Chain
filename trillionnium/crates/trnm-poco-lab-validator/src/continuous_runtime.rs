@@ -2797,6 +2797,7 @@ pub struct ContinuousRuntimeFactsV0 {
     pending_timeout_certificate_id: Option<CertificateId>,
     finalized_block_id: BlockId,
     finalized_height: u64,
+    finalized_view: View,
     finalized_chain_root: [u8; 32],
     application_applied_block_id: BlockId,
     application_applied_height: u64,
@@ -2834,6 +2835,7 @@ impl ContinuousRuntimeFactsV0 {
             pending_timeout_certificate_id: facts.pending_timeout_certificate_id_v0(),
             finalized_block_id: facts.finalized_block_id_v0(),
             finalized_height: facts.finalized_height_v0(),
+            finalized_view: facts.finalized_view_v0(),
             finalized_chain_root: facts.finalized_chain_root_v0(),
             application_applied_block_id: facts.application_applied_block_id_v0(),
             application_applied_height: facts.application_applied_height_v0(),
@@ -2893,6 +2895,10 @@ impl ContinuousRuntimeFactsV0 {
 
     pub const fn finalized_height_v0(self) -> u64 {
         self.finalized_height
+    }
+
+    pub const fn finalized_view_v0(self) -> View {
+        self.finalized_view
     }
 
     pub const fn finalized_chain_root_v0(self) -> [u8; 32] {
