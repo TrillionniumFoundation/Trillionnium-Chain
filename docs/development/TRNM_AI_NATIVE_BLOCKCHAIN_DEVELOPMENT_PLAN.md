@@ -72,7 +72,7 @@ the only starting point for a gate run; a local plan copy is an audit input.
   SafetyRules, and all-features node tests pass. This closes a source defect,
   not the G1 exit.
 - The cumulative candidate code head for this revision is the committed
-  `e4581a9c1` source slice (the final full object/tree are bound in
+  `dc501c0bc` source slice (the final full object/tree are bound in
   `plan-manifest-v1.toml`). It retains the real-process G1
   CheckTx/AppHash fixture, native receipt binding, WAL restart/schema checks,
   semantic-wire mutation evidence and strict nested candidate signatures from
@@ -112,10 +112,14 @@ the only starting point for a gate run; a local plan copy is an audit input.
   while `5d3458e0e` adds the one-way fresh-genesis migration boundary.
   `4958bbf17`/`e4581a9c1` add a candidate durable target-JMT replay writer
   with atomic record/head sidecars, fsync and reopen/divergence checks. These
-  surfaces remain candidate-only: the process has no arbitrary
-  proposal/application/finality loop, authenticated recovery owner, socket/
-  peer lease, whole-namespace anti-rollback, trusted Comet reader/cutover, or
-  production activation.
+  surfaces remain candidate-only. `dc501c0bc` additionally adds a
+  feature-gated one-shot Unix socket -> authenticated session/frame ->
+  external peer lease -> durable replay WAL -> private Core-ingress path,
+  with bounded EOF/trailing-record, replay, malformed-input, cleanup and
+  parameter negatives. It does not add a production listener, transport-key
+  profile, pacemaker, signer/watermark, recovery owner, cross-restart
+  handshake anchor, whole-namespace anti-rollback, trusted Comet
+  reader/cutover, or production activation.
 - `stage = G1-native-host-incomplete`, `production_candidate = false`,
   `production_consensus_activation = false`, and Comet cleanup eligibility is
   false. There is no completed validator run and no native PoCO listener
@@ -164,7 +168,7 @@ state forward and never rewrites a finalized block.
 | Legacy mock/Comet runtime | Historical/development oracle | Differential tests and one-way finalized export only |
 | Public-testnet/Comet generation (`e73d1a930` lineage) | Superseded | No new protocol work; never cite as native evidence |
 | PoCO-BFT v0 | Frozen safety baseline, incomplete host | Close protocol, Core/Safety, node, migration, and network gates first |
-| Current PoCO mainline (`e4581a9c1`) | Canonical execution ref; bounded Core/Safety, process, wire, replay, watermark, and migration tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
+| Current PoCO mainline (`dc501c0bc`) | Canonical execution ref; bounded Core/Safety, process, wire, replay, watermark, migration, and candidate socket tranches committed and locally replayed | Only branch that can receive the next ordered slices after review |
 | PoCO AI-native v1 design | Draft/candidate, non-normative | Freeze schemas and implement planes only after v0 authority exists |
 | v1 activated network | Not implemented | Requires every gate below plus an explicit versioned activation proof |
 
@@ -1925,7 +1929,7 @@ remediation, independent review and a fresh signed evidence index.
 
 The former five-file compile blocker is closed as a source defect by
 `fcdc16104`; it remains in the dated audit for provenance. The current
-candidate code head is `e4581a9c1`; the full assessed commit/tree and all
+candidate code head is `dc501c0bc`; the full assessed commit/tree and all
 bound hashes are recorded in `plan-manifest-v1.toml`. Its new process,
 watermark, and migration-writer slices have independently passing focused
 tests, but none is a signed gate exit. The remaining blockers are concrete:
@@ -1933,12 +1937,15 @@ tests, but none is a signed gate exit. The remaining blockers are concrete:
 1. **G1 authoritative host/Core/Safety/CAS:** `32e00eefa` proves, in a
    feature-gated real OS process, `SyncedProposal -> application seal ->`
    Core-owned `Valid` callback -> the same Core-owned AuthorityVote, while
-   ordinary Proposal input is strict fail-closed. The Timeout path still
-   proves durable Safety readback, whole-node checkpoint CAS before the
-   fixture signer, and a signature-bound outbound WAL. This is fresh-state
-   candidate composition only: arbitrary proposal validation/execution,
-   finality, live pacemaker, production signer construction, recovery owner,
-   and network socket remain absent; `G1-S01`–`G1-S03` stay open.
+   ordinary Proposal input is strict fail-closed. `dc501c0bc` also exercises
+   a candidate-only one-shot Unix socket/session/frame -> peer-lease ->
+   replay-WAL -> private Core-ingress path. The Timeout path still proves
+   durable Safety readback, whole-node checkpoint CAS before the fixture
+   signer, and a signature-bound outbound WAL. This is fresh-state candidate
+   composition only: arbitrary proposal validation/execution, finality, live
+   pacemaker, production signer construction, recovery owner, persistent
+   production socket ownership, and independent LAN replay remain absent;
+   `G1-S01`–`G1-S03` stay open.
 2. **G1 corpus, crash and anti-rollback closure:** `75c969a48` adds an
    `.anchor-v0` watermark sidecar and a separate-process lower-watermark
    rejection test. It does not protect a coherent rollback of record plus
@@ -1949,9 +1956,14 @@ tests, but none is a signed gate exit. The remaining blockers are concrete:
    an external anchor.
 3. **G2.0 authenticated transport:** semantic parsing and the independent
    nested corpus remain valid, and `504e4aad0` supplies a durable payload
-   replay WAL with lease revalidation. A candidate-only socket/peer-owner
-   seam is being reviewed next; production socket ownership, pacemaker/Core
-   ingress, signer/watermark fencing, whole-namespace rollback authority and
+   replay WAL with lease revalidation. `dc501c0bc` now supplies a
+   feature-gated, process-scoped Unix socket -> authenticated session/frame
+   -> external peer lease -> durable replay -> private Core-ingress seam;
+   its E2E covers valid Vote, replay, malformed, trailing-record and
+   parameter rejection. Lease and replay remain separate transactions, and
+   the seam uses no persistent handshake replay anchor or independent
+   parser/client. Production socket ownership, pacemaker/Core runtime,
+   signer/watermark fencing, whole-namespace rollback authority and
    independent LAN replay are still open.
 4. **MIG-COMET-POCO provenance and cutover:** the strict exporter/rehearsal
    rejects ambiguous source input, and `4958bbf17`/`e4581a9c1` now persist a

@@ -11,8 +11,8 @@ or intentionally unrun checks.  `production_candidate` and
 - Canonical worktree:
   `/home/alex/projects/worktrees/trillionnium-chain/poco-mainline-20260825`
 - Branch: `docs/chain-poco-bft-mainline-20260825`
-- Candidate code head: `e4581a9c1` (`fix(migration): make lock open intent
-  explicit`; the full assessed object ID and tree are bound by
+- Candidate code head: `dc501c0bc` (`feat(poco-node): harden candidate p2p
+  socket ingress`; the full assessed object ID and tree are bound by
   `docs/development/plan-manifest-v1.toml` after the documentation commit).
 - Required preflight: the staged commit hooks passed for each source tranche
   (`warnings=1 errors=0`); the canonical preflight and truth checks are rerun
@@ -30,6 +30,7 @@ or intentionally unrun checks.  `production_candidate` and
 | Process watermark fence | `75c969a48` | Separate-process lower-watermark rollback is rejected against an exact `.anchor-v0` sidecar; kill-matrix fixtures remain bounded and fail-closed | Coherent record+anchor rollback protection, physical power-loss, or whole-node recovery authority |
 | Authenticated nested wire corpus | `f898f1adf` | Independent RFC8032 Ed25519 reference verification; Vote/TimeoutVote/QC/TC nested signatures; 10,971 structural mutations and strict-prefix/crypto negatives | Live peer admission or network finality |
 | Durable payload replay fence | `504e4aad0` (lint follow-up `2853cb481`) | Append-only hash-chain WAL, lease revalidation, namespace/session/generation/sequence binding, cross-process owner tests | Core-integrated production socket owner or whole-namespace anti-rollback |
+| Candidate socket/peer/Core ingress | `dc501c0bc` | Feature-gated one-shot Unix listener with private `0600` socket, authenticated `TRNH`/`TRNF` session/frame, external peer-lease acquire/revalidate/release, durable payload-replay admission, and private non-cloneable Core ingress; bounded EOF/trailing, replay, malformed, parameter and cleanup negatives | Persistent production listener, independent parser/client, handshake replay anchor across restart, pacemaker/finality, signer/watermark, coherent rollback or LAN replay |
 | Fresh-genesis migration boundary | `5d3458e0e`, `4958bbf17`, `e4581a9c1` | Typed one-way import; legacy WAL/key/data-directory and in-place reuse rejection; strict bounded decoder; verified replay can be written to an atomic, fsynced target-JMT record/head and reopened with divergence rejection | Trusted Comet reader/finalized anchor, independent source quorum, dual quorum, cross-peer GenesisQC, or cutover |
 
 The source-level feature and package metadata keep all production and
@@ -45,8 +46,10 @@ cargo test -p trnm-poco-node --features g1-process-test-support \
   --test effect_driver_process_e2e -- --nocapture
 ```
 
-Result: **4 passed** (including the synced-proposal application-seal -> Core
-`Valid` -> same-owner AuthorityVote trace).
+Result: **7 passed** (including the synced-proposal application-seal -> Core
+`Valid` -> same-owner AuthorityVote trace and candidate socket checks for a
+valid Vote, replay, malformed handshake, trailing record and invalid
+parameters).
 
 The black-box trace uses a temporary absolute run root and the actual binary
 over stdin/stdout.  A successful timeout produced:
@@ -71,13 +74,17 @@ The same test also proves:
    Safety transition/state marker, and writes neither checkpoint nor outbound
    signature;
 4. a non-empty candidate root cannot be reopened as fresh state and exits
-   with `recovery_required`.
+   with `recovery_required`;
+5. the one-shot socket path is removed on successful and rejected sessions,
+   and malformed/trailing input is rejected before lease admission.
 
 This remains a deliberately bounded fresh-state process slice.  It does not
 close G1-S01, G1-S02, G1-S03, or G1-S06: ordinary proposal validation,
 arbitrary non-empty execution/finality, production signer/watermark wiring,
 physical power-loss, coherent namespace anti-rollback, and a recovery owner
-are still absent.
+are still absent. The socket seam is process-scoped candidate evidence only;
+its lease and replay WAL are separate transactions and it does not reserve a
+persistent handshake replay anchor.
 
 ## Focused source gates
 
@@ -90,6 +97,8 @@ cargo test -p trnm-consensus-types --lib                        # 169 passed
 cargo test -p trnm-consensus-crypto --test wire_authenticated_reference # 2 passed
 cargo test -p trnm-consensus-types wire_semantic --lib           # 6 passed
 cargo test -p trnm-consensus-peer-lease --lib --tests            # 10 + 2 + 2 passed
+cargo test -p trnm-poco-node --features g1-process-test-support \
+  --test effect_driver_process_e2e -- --nocapture --test-threads=1 # 7 passed
 cargo test -p trnm-poco-node --features g1-process-test-support # feature suite passed
 cargo test -p trnm-poco-node --features recovery-process-test-support \
   --bin trnm-poco-timeout-signing-kill-helper -- --nocapture     # 3 passed
@@ -178,7 +187,7 @@ across two independent v2 builds (`6a67cc...` validator and `5b6f94...`
 material builder).  Raw macOS Cargo builds differed; the v2 macOS builder
 then produced matching independent outputs (`0fab5c...` validator and
 `ed53b8...` material builder).  Those artifacts are bound to the older source
-and are not current evidence; they must be rebuilt against `e4581a9c1` before
+and are not current evidence; they must be rebuilt against `dc501c0bc` before
 any release claim.
 
 ## Remaining blockers and next executable queue
@@ -190,8 +199,10 @@ any release claim.
    candidate evidence.
 3. Implement an authenticated recovery owner, coherent whole-namespace
    anti-rollback, and physical power-loss/fault evidence.
-4. Join the payload replay fence to a non-cloneable socket/peer owner and Core
-   ingress, then rerun independent network replay on the LAN.
+4. The candidate payload replay fence is now joined to a process-scoped
+   one-shot Unix socket/peer-lease owner and private Core ingress in
+   `dc501c0bc`; rerun independent LAN replay only after a production owner,
+   pacemaker, state-sync and fault/recovery path exist.
 5. Add a trusted Comet finalized-state reader/source anchor, independently
    recomputed target root, dual quorum, cross-peer GenesisQC, and cutover
    rehearsal; the new writer alone is insufficient.
