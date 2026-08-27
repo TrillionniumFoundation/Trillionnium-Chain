@@ -1580,6 +1580,7 @@ impl MigrationTargetJmtWriterV1 {
             .create(true)
             .read(true)
             .write(true)
+            .truncate(false)
             .open(&lock_path)
             .with_context(|| format!("open target JMT lock {}", lock_path.display()))?;
         ensure!(
@@ -1686,6 +1687,7 @@ impl MigrationTargetJmtWriterV1 {
             .create(true)
             .read(true)
             .write(true)
+            .truncate(false)
             .open(&lock_path)
             .with_context(|| format!("open target JMT lock {}", lock_path.display()))?;
         ensure!(
