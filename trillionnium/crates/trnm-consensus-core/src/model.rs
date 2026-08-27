@@ -3913,13 +3913,15 @@ impl SafetyStatePersistenceV0 {
 /// Opaque Core authority proving one exact application-sealed Valid callback
 /// advanced to the durable-delivery (`D`) boundary.
 ///
-/// This value is minted only by
-/// [`crate::Core::step_application_sealed_valid_to_delivery_v0`]. It owns the
-/// exact process-affined Safety persistence request emitted by that Core step
-/// and binds it to the completed validation identity and canonical Valid
-/// result. It is deliberately non-`Clone`, non-serializable, and has no public
-/// constructor. Persisting its inert digest is not a substitute for the
-/// retained carrier or for a real SafetyStore confirmation.
+/// This value is minted only by the legacy
+/// [`crate::Core::step_application_sealed_valid_to_delivery_v0`] path or the
+/// explicit-authority
+/// [`crate::Core::step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1`]
+/// path. It owns the exact process-affined Safety persistence request emitted
+/// by that Core step and binds it to the completed validation identity and
+/// canonical Valid result. It is deliberately non-`Clone`, non-serializable,
+/// and has no public constructor. Persisting its inert digest is not a
+/// substitute for the retained carrier or for a real SafetyStore confirmation.
 ///
 /// ```compile_fail
 /// use trnm_consensus_core::CoreAcceptedApplicationValidDV0;

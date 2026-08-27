@@ -153,6 +153,18 @@ enum AuthenticatedTcOutcome {
     Complete,
 }
 
+/// Selects who owns the Vote transition after an application-valid callback.
+///
+/// The legacy path stages a local SafetyRules shadow transition in the same
+/// callback.  The explicit-authority candidate path deliberately stops after
+/// the durable Valid delivery (`D`) boundary and lets the already-issued
+/// [`CoreSafetyRulesAuthorityV1`] evaluate/commit Vote in a separate step.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PayloadValidationVoteModeV0 {
+    Legacy,
+    ExplicitSafetyRules,
+}
+
 /// A deterministic, single-threaded PoCO-BFT state machine.
 ///
 /// `Core` owns no clock, network, database, or private key. All interaction
@@ -8450,6 +8462,40 @@ impl Core {
         self.step(input, verifier)
     }
 
+    /// Runs the local, transactional Core boundary for the candidate
+    /// ordinary Valid-delivery seam.  Unlike [`Self::step`], the ordinary
+    /// `PayloadValidated` callback is routed to the delivery-only handler so
+    /// it cannot stage a legacy Vote transition.
+    fn step_application_sealed_valid_delivery_only_v1<V: SignatureVerifier>(
+        &mut self,
+        proof: &ApplicationSealedValidV0,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        self.reject_state_sync_anchor_successor_progression_v0()?;
+        let input = self.application_sealed_valid_input_v0(proof)?;
+        if !matches!(input, Input::PayloadValidated { .. }) {
+            return Err(CoreError::ApplicationValidDeliveryInvariant(
+                "delivery-only ordinary seam received a non-ordinary Valid route",
+            ));
+        }
+        // Keep the same admission-before-clone boundary as `Core::step`.
+        self.reject_state_sync_anchor_successor_input_v0(&input)?;
+        self.reject_while_busy(&input)?;
+        self.preauthenticate_input(&input, verifier)?;
+        let previous_safety = self.safety.clone();
+        let mut next = self.transactional_clone_v0();
+        let effects = match input {
+            Input::PayloadValidated { id, result } => {
+                next.handle_payload_validated_delivery_only(id, result, verifier)
+            }
+            _ => unreachable!("the ordinary route was checked above"),
+        }?;
+        next.validate_runtime(verifier, false)?;
+        next.validate_monotonic_transition(&previous_safety)?;
+        *self = next;
+        Ok(effects)
+    }
+
     /// Atomically accepts one application-sealed Valid callback and returns
     /// the sole opaque Core authority for the durable-delivery (`D`) stage.
     ///
@@ -8468,13 +8514,101 @@ impl Core {
         verifier: &V,
     ) -> Result<CoreAcceptedApplicationValidDV0> {
         let before_revision = self.safety.revision();
+        let mut next = self.transactional_clone_v0();
+        let effects = next.step_application_sealed_valid_v0(proof, verifier)?;
+        let accepted = Self::validate_application_valid_delivery_v0(
+            &next,
+            before_revision,
+            proof,
+            effects,
+            PayloadValidationVoteModeV0::Legacy,
+        )?;
+        *self = next;
+        Ok(accepted)
+    }
+
+    /// Candidate-only ordinary Valid callback owned by the explicit
+    /// Core/SafetyRules authority.  This emits the exact Core-owned D carrier
+    /// and one Safety persistence effect, but never stages an implicit Vote.
+    /// The host must persist/acknowledge that carrier, rebind the authority
+    /// with [`CoreSafetyRulesAuthorityV1::rebind_after_core_persistence_v1`],
+    /// and then submit the same authenticated proposal to
+    /// [`Self::step_vote_with_safety_rules_authority_v1`].  In concrete terms,
+    /// the host sequence is:
+    ///
+    /// 1. persist the returned carrier's `persistence_request_v0()` and feed
+    ///    its exact barrier back as `Input::StorageAck`;
+    /// 2. rebind the authority against this now-current `Core`; and
+    /// 3. call [`Self::step_vote_with_safety_rules_authority_v1`] with the
+    ///    same authenticated `SignedProposalV0` that produced `proof`.
+    ///
+    /// The authority must also be rebound after any earlier ordinary
+    /// proposal-registration persistence before this method is called.  A
+    /// rebind never writes the store; it only advances the authority's
+    /// process-local predecessor digest to the live Core state.
+    ///
+    /// The method is intentionally unavailable without the explicit
+    /// authority.  This keeps the legacy
+    /// [`Self::step_application_sealed_valid_to_delivery_v0`] behavior intact
+    /// and prevents a caller from silently creating a second Vote owner.
+    pub fn step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1<
+        V: SignatureVerifier,
+    >(
+        &mut self,
+        proof: &ApplicationSealedValidV0,
+        verifier: &V,
+    ) -> Result<CoreAcceptedApplicationValidDV0> {
+        if proof.route() != PayloadValidationRouteV0::Proposal {
+            return Err(CoreError::ApplicationValidDeliveryInvariant(
+                "the explicit-authority delivery seam accepts only ordinary Proposal proofs",
+            ));
+        }
+        if !self.safety_rules_authority_issued_v1() {
+            return Err(CoreError::Busy(
+                "ordinary Valid delivery-only requires the explicit Core SafetyRules authority",
+            ));
+        }
+        if self.safety.pending_sign().is_some()
+            || self.safety.pending_finalize().is_some()
+            || self.safety.pending_tc_high_qc_sync().is_some()
+            || self.safety.pending_standalone_qc_sync().is_some()
+            || self.awaiting_signature
+            || self.replay_required
+        {
+            return Err(CoreError::Busy(
+                "ordinary Valid delivery-only requires an idle Core signing boundary",
+            ));
+        }
+
+        let before_revision = self.safety.revision();
+        let mut next = self.transactional_clone_v0();
+        let effects = next.step_application_sealed_valid_delivery_only_v1(proof, verifier)?;
+        let accepted = Self::validate_application_valid_delivery_v0(
+            &next,
+            before_revision,
+            proof,
+            effects,
+            PayloadValidationVoteModeV0::ExplicitSafetyRules,
+        )?;
+        *self = next;
+        Ok(accepted)
+    }
+
+    /// Reuses the exact callback/carrier invariants for both legacy and
+    /// explicit-authority delivery paths.  The explicit mode additionally
+    /// requires a `None` post-ack action and an idle signing/finalization
+    /// state, so the next Vote can only be created by the explicit authority.
+    fn validate_application_valid_delivery_v0(
+        next: &Core,
+        before_revision: u64,
+        proof: &ApplicationSealedValidV0,
+        effects: Vec<Effect>,
+        vote_mode: PayloadValidationVoteModeV0,
+    ) -> Result<CoreAcceptedApplicationValidDV0> {
         let route = proof.route();
         let validation_id = proof.id();
         let commitments = proof.commitments();
         let artifact_ref = proof.artifact_ref();
-
-        let mut next = self.transactional_clone_v0();
-        let effects = next.step_application_sealed_valid_v0(proof, verifier)?;
         let persistence = match effects.as_slice() {
             [Effect::PersistSafetyState(_)] => match effects.into_iter().next() {
                 Some(Effect::PersistSafetyState(value)) => value,
@@ -8487,7 +8621,7 @@ impl Core {
             }
         };
         let state = persistence.state();
-        if state != &next.safety {
+        if state != next.safety_state() {
             return Err(CoreError::ApplicationValidDeliveryInvariant(
                 "the persistence request differs from the transactional Core state",
             ));
@@ -8574,6 +8708,16 @@ impl Core {
                 "the Valid callback unexpectedly carries a finalization-applied manifest",
             ));
         }
+        if vote_mode == PayloadValidationVoteModeV0::ExplicitSafetyRules
+            && (post_ack_action != NativeValidPostAckActionV0::None
+                || state.pending_sign().is_some()
+                || state.pending_finalize().is_some()
+                || next.awaiting_signature)
+        {
+            return Err(CoreError::ApplicationValidDeliveryInvariant(
+                "explicit-authority delivery exposed a signing or finalization side effect",
+            ));
+        }
         let delivery_digest = core_accepted_application_valid_delivery_digest_v0(
             state,
             route,
@@ -8586,7 +8730,6 @@ impl Core {
                 "the Core delivery digest is zero",
             ));
         }
-        *self = next;
         Ok(CoreAcceptedApplicationValidDV0::new(
             route,
             validation_id,
@@ -9979,8 +10122,62 @@ impl Core {
         result: PayloadValidationResult,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
+        self.handle_payload_validated_with_vote_mode(
+            id,
+            result,
+            verifier,
+            PayloadValidationVoteModeV0::Legacy,
+        )
+    }
+
+    /// Handles an ordinary Valid callback without entering the legacy local
+    /// Vote-staging path.  The caller has already checked that the explicit
+    /// Core SafetyRules authority is issued and that the signing/finalization
+    /// boundary is idle; this helper therefore emits only the exact durable
+    /// Valid-delivery persistence request.  The caller must subsequently feed
+    /// the same authenticated proposal to
+    /// `Core::step_vote_with_safety_rules_authority_v1`.
+    fn handle_payload_validated_delivery_only<V: SignatureVerifier>(
+        &mut self,
+        id: ValidationId,
+        result: PayloadValidationResult,
+        verifier: &V,
+    ) -> Result<Vec<Effect>> {
+        self.handle_payload_validated_with_vote_mode(
+            id,
+            result,
+            verifier,
+            PayloadValidationVoteModeV0::ExplicitSafetyRules,
+        )
+    }
+
+    fn handle_payload_validated_with_vote_mode<V: SignatureVerifier>(
+        &mut self,
+        id: ValidationId,
+        result: PayloadValidationResult,
+        verifier: &V,
+        vote_mode: PayloadValidationVoteModeV0,
+    ) -> Result<Vec<Effect>> {
         Self::validate_payload_capability(id, result)?;
         let route = PayloadValidationRouteV0::Proposal;
+        if vote_mode == PayloadValidationVoteModeV0::ExplicitSafetyRules {
+            if !self.safety_rules_authority_issued_v1() {
+                return Err(CoreError::Busy(
+                    "ordinary Valid delivery-only requires the explicit Core SafetyRules authority",
+                ));
+            }
+            if self.safety.pending_sign().is_some()
+                || self.safety.pending_finalize().is_some()
+                || self.safety.pending_tc_high_qc_sync().is_some()
+                || self.safety.pending_standalone_qc_sync().is_some()
+                || self.awaiting_signature
+                || self.replay_required
+            {
+                return Err(CoreError::Busy(
+                    "ordinary Valid delivery-only requires an idle Core signing boundary",
+                ));
+            }
+        }
         if let Some(effects) = self.handle_resolved_validation(route, id, result)? {
             return Ok(effects);
         }
@@ -10043,6 +10240,14 @@ impl Core {
                 return self.persist(vec![DeferredEffect::RequestStandaloneQcSync]);
             }
             return self.persist(Vec::new());
+        }
+        if vote_mode == PayloadValidationVoteModeV0::ExplicitSafetyRules {
+            // The explicit-authority candidate seam deliberately stops at the
+            // Core-owned durable Valid completion.  In particular, do not
+            // process an observed QC here: doing so could enqueue finality or
+            // another post-ack action before the host has submitted the exact
+            // proposal to `step_vote_with_safety_rules_authority_v1`.
+            return self.persist_native_valid_v0(Vec::new());
         }
         if self.safety.pending_tc_high_qc_sync().is_some() {
             // A Valid result may satisfy one of the pending TC's references,

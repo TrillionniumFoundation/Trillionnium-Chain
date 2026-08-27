@@ -4474,6 +4474,233 @@ fn application_sealed_valid_to_delivery_returns_only_the_affined_core_d_carrier_
 }
 
 #[test]
+fn ordinary_delivery_only_requires_authority_and_leaves_legacy_path_unchanged() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"ordinary delivery-only gate");
+    let seal_authority = core
+        .issue_application_seal_authority_v0()
+        .expect("one application seal authority");
+    let proof = ordinary_sealed_valid_proof_for_test(&mut core, &proposed, &seal_authority);
+    let before = core.safety_state().clone();
+
+    assert!(matches!(
+        core.step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1(
+            &proof,
+            &RootSignatures,
+        ),
+        Err(CoreError::Busy(
+            "ordinary Valid delivery-only requires the explicit Core SafetyRules authority"
+        ))
+    ));
+    assert_eq!(
+        core.safety_state(),
+        &before,
+        "a delivery-only call without its authority must be transactional"
+    );
+
+    // The existing API remains the legacy owner: the same live proof is still
+    // accepted and stages its historical Vote transition.
+    let accepted = core
+        .step_application_sealed_valid_to_delivery_v0(&proof, &RootSignatures)
+        .expect("legacy delivery path remains available without explicit authority");
+    assert_eq!(
+        accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::RequestSignature)
+    );
+    assert!(core.safety_state().pending_sign().is_some());
+}
+
+#[test]
+fn ordinary_delivery_only_authority_stops_before_vote_and_then_allows_explicit_vote() {
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"ordinary authority delivery");
+    let mut safety_authority = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the live Core issues one explicit SafetyRules authority");
+    let seal_authority = core
+        .issue_application_seal_authority_v0()
+        .expect("one application seal authority");
+    let proof = ordinary_sealed_valid_proof_for_test(&mut core, &proposed, &seal_authority);
+    // Proposal registration/ack is a non-signing Core transition. Rebind the
+    // explicit owner before it is used for the next Vote transition.
+    safety_authority
+        .rebind_after_core_persistence_v1(&core, &RootSignatures)
+        .expect("authority rebinds after ordinary validation registration");
+
+    let accepted = core
+        .step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1(
+            &proof,
+            &RootSignatures,
+        )
+        .expect("explicit authority delivery accepts the exact ordinary proof");
+    assert_eq!(accepted.route_v0(), PayloadValidationRouteV0::Proposal);
+    assert_eq!(
+        accepted.validation_id_v0().block_id(),
+        proposed.block().id()
+    );
+    assert_eq!(accepted.completion_revision_v0(), 2);
+    assert_eq!(accepted.barrier_v0().get(), 2);
+    assert_ne!(accepted.valid_result_checksum_v0(), [0; 32]);
+    assert_ne!(accepted.delivery_digest_v0(), [0; 32]);
+    assert_eq!(
+        accepted
+            .persistence_request_v0()
+            .native_valid_post_ack_action_v0(),
+        Some(NativeValidPostAckActionV0::None),
+        "delivery-only must not release a legacy RequestSignature action"
+    );
+    assert!(accepted
+        .persistence_request_v0()
+        .state()
+        .pending_sign()
+        .is_none());
+    assert!(accepted
+        .persistence_request_v0()
+        .state()
+        .pending_finalize()
+        .is_none());
+    assert!(core.safety_state().pending_sign().is_none());
+    assert!(core.safety_state().pending_finalize().is_none());
+
+    let delivered = core
+        .step(
+            Input::StorageAck {
+                barrier: accepted.barrier_v0(),
+            },
+            &RootSignatures,
+        )
+        .expect("the D persistence acknowledgement has no implicit signer");
+    assert!(delivered.is_empty());
+    assert!(core.safety_state().pending_sign().is_none());
+    assert!(core.safety_state().pending_finalize().is_none());
+
+    safety_authority
+        .rebind_after_core_persistence_v1(&core, &RootSignatures)
+        .expect("authority rebinds after the D acknowledgement");
+    let vote_effects = core
+        .step_vote_with_safety_rules_authority_v1(&mut safety_authority, &proposed, &RootSignatures)
+        .expect("the same explicit authority owns the subsequent Vote");
+    let vote_request = persistence_request(&vote_effects);
+    assert_eq!(vote_request.barrier().get(), 3);
+    let intent = vote_request
+        .state()
+        .pending_sign()
+        .expect("the explicit Vote transition creates one pending intent");
+    let SignIntent::Vote {
+        block_id,
+        view,
+        height,
+        signing_root,
+        ..
+    } = intent
+    else {
+        panic!("expected an explicit Vote intent, got {intent:?}");
+    };
+    assert_eq!(*block_id, proposed.block().id());
+    assert_eq!(*view, proposed.block().header().view());
+    assert_eq!(*height, proposed.block().header().height());
+    assert_eq!(
+        *signing_root,
+        Vote::signing_root_for_set(
+            core.config().validator_set(),
+            proposed.block().header().view(),
+            proposed.block().header().height(),
+            proposed.block().id(),
+        )
+        .expect("canonical Vote root")
+    );
+}
+
+#[test]
+fn ordinary_delivery_only_rejects_mismatched_commitment_and_parent_carriers() {
+    // A commitment for a different block cannot be attached to the exact
+    // ordinary validation permit.
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"ordinary carrier binding");
+    let other = proposal(&set, genesis_qc(&set), 1, b"different committed root");
+    let mut safety_authority = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the explicit authority is required");
+    let seal_authority = core
+        .issue_application_seal_authority_v0()
+        .expect("one application seal authority");
+    let obligation = core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("proposal registers validation");
+    let (barrier, _) = persistence_effect(&obligation);
+    let released = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("validation request release");
+    let request = into_validation_request(released);
+    let claimed = request.try_claim().expect("claim exact permit");
+    let (_route, _id, block, _parent, permit) = claimed.into_parts();
+    safety_authority
+        .rebind_after_core_persistence_v1(&core, &RootSignatures)
+        .expect("authority rebinds after proposal persistence");
+    let wrong_commitment_proof = seal_authority.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(core.config(), &other.block()),
+        artifact_ref_for_ids(other.block().id(), other.block().header().parent_id()),
+    );
+    let before = core.safety_state().clone();
+    assert!(matches!(
+        core.step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1(
+            &wrong_commitment_proof,
+            &RootSignatures,
+        ),
+        Err(CoreError::ValidationCapabilityMismatch { expected, received })
+            if expected == block.id() && received == other.block().id()
+    ));
+    assert_eq!(core.safety_state(), &before);
+
+    // A fresh Core/permit checks the parent edge independently of the block
+    // commitment, so a forged overlay parent cannot become a durable Valid.
+    let (_config, mut core) = configured_core();
+    let set = core.config().validator_set().clone();
+    let proposed = proposal(&set, genesis_qc(&set), 1, b"ordinary parent edge binding");
+    let mut safety_authority = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the explicit authority is required");
+    let seal_authority = core
+        .issue_application_seal_authority_v0()
+        .expect("one application seal authority");
+    let obligation = core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("proposal registers validation");
+    let (barrier, _) = persistence_effect(&obligation);
+    let released = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("validation request release");
+    let request = into_validation_request(released);
+    let claimed = request.try_claim().expect("claim exact permit");
+    let (_route, _id, block, _parent, permit) = claimed.into_parts();
+    safety_authority
+        .rebind_after_core_persistence_v1(&core, &RootSignatures)
+        .expect("authority rebinds after proposal persistence");
+    let mut wrong_parent = *block.header().parent_id().as_bytes();
+    wrong_parent[0] ^= 0x01;
+    let wrong_parent_proof = seal_authority.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(core.config(), &block),
+        artifact_ref_for_ids(block.id(), BlockId::new(wrong_parent)),
+    );
+    let before = core.safety_state().clone();
+    assert!(matches!(
+        core.step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1(
+            &wrong_parent_proof,
+            &RootSignatures,
+        ),
+        Err(CoreError::ConflictingPayloadValidation(block_id)) if block_id == block.id()
+    ));
+    assert_eq!(core.safety_state(), &before);
+}
+
+#[test]
 fn h1_anchor_successor_replay_closes_exact_h2_h3_without_side_effects_v0() {
     let (config, proof, h1, h2, h3) = h1_state_sync_fixture();
     let initial = Core::prepare_h1_state_sync_bootstrap_v0(config.clone(), proof, &RootSignatures)
@@ -6717,6 +6944,33 @@ fn artifact_ref_for_ids(block_id: BlockId, parent_id: BlockId) -> ValidatedPaylo
     ValidatedPayloadArtifactRefV0::new(
         BlockIdOverlayRefV0::new(block_id, parent_id, overlay_checksum),
         source_artifact_checksum,
+    )
+}
+
+/// Registers one ordinary proposal, acknowledges the Core-owned validation
+/// obligation, and seals the exact application-valid callback capability.
+/// Keeping this setup in one helper makes the delivery-only tests exercise the
+/// same P/permit/affinity boundary as the legacy carrier test above.
+fn ordinary_sealed_valid_proof_for_test(
+    core: &mut Core,
+    proposed: &SignedProposalV0,
+    authority: &CoreIssuedApplicationSealAuthorityV0,
+) -> ApplicationSealedValidV0 {
+    let obligation = core
+        .step(Input::Proposal(Box::new(proposed.clone())), &RootSignatures)
+        .expect("ordinary proposal registers one validation obligation");
+    let (barrier, _) = persistence_effect(&obligation);
+    let released = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("the obligation persistence releases validation");
+    let request = into_validation_request(released);
+    let claimed = request.try_claim().expect("claim exact ordinary request");
+    let (route, _id, block, _parent, permit) = claimed.into_parts();
+    assert_eq!(route, PayloadValidationRouteV0::Proposal);
+    authority.seal_after_application_store_commit_v0(
+        permit,
+        valid_commitments_for_config(core.config(), &block),
+        artifact_ref_for_ids(block.id(), block.header().parent_id()),
     )
 }
 
