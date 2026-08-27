@@ -152,6 +152,29 @@ impl BoundedConsensusIngressLoopV0 {
         self.collector.register_qc_reference(reference)
     }
 
+    /// Retries timeout-certificate formation for all retained timeout views.
+    ///
+    /// TimeoutVotes are independently authenticated and may be observed
+    /// before the complete QC carrier they reference.  The strict collector
+    /// keeps those votes, while this event-loop helper treats only a missing
+    /// carrier as pending and returns certificates once a later QC admission
+    /// makes them fully resolvable.
+    pub(crate) fn retry_pending_timeout_certificates_v0(
+        &mut self,
+    ) -> Result<Vec<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
+        let views = self.collector.pending_timeout_views();
+        let mut formed = Vec::new();
+        for view in views {
+            let already_formed = self.collector.canonical_timeout_certificate(view).is_some();
+            if !already_formed {
+                if let Some(certificate) = self.collector.try_timeout_certificate_if_ready(view)? {
+                    formed.push(certificate);
+                }
+            }
+        }
+        Ok(formed)
+    }
+
     fn admit_decoded_consensus_message(
         &mut self,
         message: AdmittedConsensusMessageV0,
@@ -198,7 +221,7 @@ impl BoundedConsensusIngressLoopV0 {
                 self.collector.admit_timeout_vote(vote.clone())?;
                 let formed_tc = self
                     .collector
-                    .try_timeout_certificate(vote.view())?
+                    .try_timeout_certificate_if_ready(vote.view())?
                     .map(Box::new);
                 Ok(RoutedConsensusActionV0::TimeoutVote {
                     vote: Box::new(vote),
@@ -345,7 +368,10 @@ mod tests {
     };
 
     use super::*;
-    use crate::{frame::FrameKind, wire::encode_vote};
+    use crate::{
+        frame::FrameKind,
+        wire::{encode_quorum_certificate, encode_timeout_vote, encode_vote},
+    };
 
     fn fixture() -> (Vec<SigningKey>, ValidatorSet, ConsensusParametersV0) {
         let keys: Vec<_> = (1u8..=7)
@@ -608,6 +634,73 @@ mod tests {
                 assert_eq!(certificate.block_id(), block);
             }
         }
+    }
+
+    #[test]
+    fn timeout_votes_wait_for_a_late_exact_qc_carrier() {
+        let (keys, set, parameters) = fixture();
+        let block = BlockId::new([0x64; 32]);
+        let qc = quorum_certificate(&keys, &set, block);
+        let high_qc = QcRef::from(&qc);
+        let mut router = BoundedConsensusIngressLoopV0::new(set.clone(), parameters, 16).unwrap();
+
+        // The timeout quorum is intentionally delivered before the QC frame.
+        // Each TimeoutVote is still authenticated and retained, but the
+        // event-loop route must defer certificate formation rather than turn
+        // a transport ordering difference into a validator failure.
+        for index in 0..4 {
+            let timeout = timeout_vote(&keys, &set, index, high_qc);
+            let frame = AuthenticatedFrame {
+                sender: timeout.author(),
+                session: [u8::try_from(index + 0x20).unwrap(); 32],
+                sequence: 0,
+                kind: FrameKind::TimeoutVote,
+                payload: encode_timeout_vote(&timeout),
+            };
+            let RoutedConsensusActionV0::TimeoutVote { formed_tc, .. } =
+                router.admit_authenticated_frame(&frame).unwrap()
+            else {
+                panic!("timeout frame reached the wrong action");
+            };
+            assert!(formed_tc.is_none());
+        }
+        assert!(router
+            .collector()
+            .canonical_timeout_certificate(View::new(3))
+            .is_none());
+
+        // The strict collector API continues to expose a missing carrier to
+        // callers that explicitly request a fail-closed diagnostic.
+        assert!(matches!(
+            router
+                .collector()
+                .clone()
+                .try_timeout_certificate(View::new(3)),
+            Err(ConsensusIngressErrorV0::MissingQcReference(_))
+        ));
+
+        let qc_frame = AuthenticatedFrame {
+            sender: set.validators()[0].id(),
+            session: [0x2f; 32],
+            sequence: 0,
+            kind: FrameKind::QuorumCertificate,
+            payload: encode_quorum_certificate(&qc).unwrap(),
+        };
+        assert!(matches!(
+            router.admit_authenticated_frame(&qc_frame).unwrap(),
+            RoutedConsensusActionV0::QuorumCertificate(_)
+        ));
+
+        let formed = router
+            .retry_pending_timeout_certificates_v0()
+            .expect("late QC should release the retained timeout quorum");
+        assert_eq!(formed.len(), 1);
+        assert_eq!(formed[0].timed_out_view(), View::new(3));
+        assert_eq!(formed[0].selected_high_qc_digest(), qc.id());
+        assert!(router
+            .retry_pending_timeout_certificates_v0()
+            .expect("formed TC retry is idempotent")
+            .is_empty());
     }
 
     #[test]

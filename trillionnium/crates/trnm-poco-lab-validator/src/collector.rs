@@ -626,6 +626,29 @@ impl ConsensusCertificateCollectorV0 {
         Ok(self.formed_tcs.get(&timed_out_view).cloned())
     }
 
+    /// Attempts timeout-certificate formation for a live ingress path where
+    /// authenticated TimeoutVotes may arrive before their complete QC
+    /// carrier.  The strict [`Self::try_timeout_certificate`] API remains
+    /// fail-closed for callers that need to distinguish a permanently
+    /// missing reference; the event loop treats that one dependency as
+    /// transient and retries after the QC frame is admitted.
+    pub(crate) fn try_timeout_certificate_if_ready(
+        &mut self,
+        timed_out_view: View,
+    ) -> Result<Option<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
+        match self.try_timeout_certificate(timed_out_view) {
+            Err(ConsensusIngressErrorV0::MissingQcReference(_)) => Ok(None),
+            result => result,
+        }
+    }
+
+    /// Returns every timeout view currently retained by the collector.  The
+    /// caller snapshots the keys before attempting formation so a late QC can
+    /// be registered and retried without borrowing the map across mutation.
+    pub(crate) fn pending_timeout_views(&self) -> Vec<View> {
+        self.timeouts.keys().copied().collect()
+    }
+
     /// Returns the first verified TC for one timed-out view, if any.
     pub fn canonical_timeout_certificate(
         &self,

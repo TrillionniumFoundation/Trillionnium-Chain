@@ -3076,22 +3076,6 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         let source_checkpoint = self.checkpoint;
         let before = self.core.safety_state().clone();
         let is_timeout_certificate = matches!(&input, Input::TimeoutCertificate(_));
-        if is_timeout_certificate {
-            let committed = self
-                .application
-                .confirmed_committed_head_v0()
-                .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_string()))?;
-            let _ = require_fresh_checkpoint_application_join_v0(
-                &self.application,
-                &committed,
-                source_checkpoint,
-                &self.proposal_journal,
-                &self.application_head,
-                &self.pending_executions,
-                None,
-                None,
-            )?;
-        }
         let effects = self
             .core
             .step(input, &StrictEd25519Verifier)
@@ -3110,6 +3094,10 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
             ));
         };
         if is_timeout_certificate {
+            // Core selects the authoritative high-QC path while applying the
+            // TC.  Audit that post-step selection before persisting Safety;
+            // joining the pre-step source checkpoint here would authenticate
+            // a stale prepared head in a separate snapshot.
             preflight_authoritative_high_qc_retained_path_v0(
                 &self.core,
                 &self.application,
@@ -5490,24 +5478,16 @@ fn rebase_to_authoritative_high_qc_v0(
             "native committed head differs from Core application_applied during rebase",
         ));
     }
-    if let FreshCheckpointApplicationJoinV0::Prepared { block_id, height } =
-        require_fresh_checkpoint_application_join_v0(
-            application,
-            &committed,
-            checkpoint,
-            proposal_journal,
-            application_head,
-            pending_executions,
-            None,
-            cross_store_lock,
-        )?
-    {
-        if block_id != high_qc.block_id() || height != high_qc.height().get() {
-            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "prepared application checkpoint is not the authoritative high-QC head",
-            ));
-        }
-    }
+    let checkpoint_join = require_fresh_checkpoint_application_join_v0(
+        application,
+        &committed,
+        checkpoint,
+        proposal_journal,
+        application_head,
+        pending_executions,
+        None,
+        cross_store_lock,
+    )?;
 
     if high_qc.height().get() < applied.height().get()
         || (high_qc.height() == applied.height() && high_qc.block_id() != applied.block_id())
@@ -5583,6 +5563,27 @@ fn rebase_to_authoritative_high_qc_v0(
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
             "retained high-QC path does not terminate at the committed applied head",
         ));
+    }
+
+    // A prepared checkpoint is only admissible when its complete existing
+    // projection names the exact retained execution selected by the current
+    // high QC.  The join helper already authenticates the P/K owner and row;
+    // repeat the full projection here after the high-QC path audit instead of
+    // reducing the decision to a block/height comparison.
+    if let FreshCheckpointApplicationJoinV0::Prepared { block_id, height } = checkpoint_join {
+        let retained = pending_executions.get(&block_id).ok_or(
+            PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "prepared application checkpoint is not the authoritative high-QC head",
+            ),
+        )?;
+        if block_id != high_qc.block_id()
+            || height != high_qc.height().get()
+            || !terminal_checkpoint_projection_matches_retained_v0(checkpoint.fields(), retained)
+        {
+            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
+                "prepared application checkpoint is not the authoritative high-QC head",
+            ));
+        }
     }
 
     pending_executions.retain(|block_id, _| retained_path.contains(block_id));

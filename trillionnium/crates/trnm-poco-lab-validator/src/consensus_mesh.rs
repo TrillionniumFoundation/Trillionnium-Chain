@@ -550,6 +550,17 @@ enum MeshFenceRenewalOutcomeV1 {
     Renewed,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum MeshFenceSendValidationV1 {
+    /// The exact directed lease was revalidated and a worker may send after
+    /// it consumes the bounded queue entry.
+    Admitted,
+    /// The edge is in an explicitly authenticated reconnect handoff.  No
+    /// frame may be emitted until the reconnect worker acquires and validates
+    /// a fresh lease; the caller may retain the frame in its bounded queue.
+    Reconnecting,
+}
+
 impl MeshTerminalFailureV0 {
     fn render(&self) -> String {
         format!(
@@ -998,6 +1009,11 @@ struct MeshFenceRegistryV1 {
     /// Host receipts whose exact compensating release failed before a peer
     /// lease could be installed, or while an active edge was unwinding.
     pending_host_releases: Arc<Mutex<BTreeMap<ActiveFenceKeyV0, Vec<HostAttestationAdmissionV1>>>>,
+    /// Directed edges explicitly marked by their worker as being between
+    /// authenticated generations.  A missing token is tolerated by the
+    /// outbound queue only while this marker is present; all other missing
+    /// lease states remain fail-closed.
+    reconnecting: Arc<Mutex<BTreeSet<ActiveFenceKeyV0>>>,
 }
 
 impl MeshFenceRegistryV1 {
@@ -1032,6 +1048,7 @@ impl MeshFenceRegistryV1 {
             admission_lock: Arc::new(Mutex::new(())),
             pending_releases: Arc::new(Mutex::new(BTreeMap::new())),
             pending_host_releases: Arc::new(Mutex::new(BTreeMap::new())),
+            reconnecting: Arc::new(Mutex::new(BTreeSet::new())),
         })
     }
 
@@ -1245,6 +1262,98 @@ impl MeshFenceRegistryV1 {
         }
     }
 
+    /// Marks an already-admitted edge as entering a worker-owned reconnect
+    /// handoff.  The marker is installed before the old token is released and
+    /// before the lifecycle event is published, so an owner that observes the
+    /// event can retain outbound payloads without mistaking the handoff for a
+    /// lease failure.  It never authorizes a frame by itself.
+    fn begin_reconnect(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
+        let key = (direction, remote);
+        let _admission_guard = self
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        let entry = self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .get(&key)
+            .copied()
+            .ok_or_else(|| anyhow!("mesh reconnect started without an admitted external lease"))?;
+        if entry.external_release_confirmed {
+            bail!("mesh reconnect started after lease release confirmation")
+        }
+        if self
+            .pending_releases
+            .lock()
+            .map_err(|_| anyhow!("mesh fence pending-release map poisoned"))?
+            .contains_key(&key)
+            || self
+                .pending_host_releases
+                .lock()
+                .map_err(|_| anyhow!("mesh pending host-release map poisoned"))?
+                .contains_key(&key)
+        {
+            bail!("mesh reconnect started with unresolved lease cleanup")
+        }
+        let mut reconnecting = self
+            .reconnecting
+            .lock()
+            .map_err(|_| anyhow!("mesh reconnecting map poisoned"))?;
+        if !reconnecting.insert(key) {
+            bail!("mesh reconnect already marked for directed edge")
+        }
+        Ok(())
+    }
+
+    /// Clears the reconnect handoff only after the worker has authenticated a
+    /// fresh generation, acquired its exact external lease, and (when
+    /// configured) admitted the matching host-attestation receipt.
+    fn complete_reconnect(&self, direction: PeerDirectionV0, remote: ValidatorId) -> Result<()> {
+        let key = (direction, remote);
+        let _admission_guard = self
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        let marked = self
+            .reconnecting
+            .lock()
+            .map_err(|_| anyhow!("mesh reconnecting map poisoned"))?
+            .contains(&key);
+        if !marked {
+            // Initial generation admission does not have a handoff marker.
+            return Ok(());
+        }
+        let entry = self
+            .tokens
+            .lock()
+            .map_err(|_| anyhow!("mesh fence token map poisoned"))?
+            .get(&key)
+            .copied()
+            .ok_or_else(|| anyhow!("mesh reconnect completed without a fresh external lease"))?;
+        if entry.external_release_confirmed {
+            bail!("mesh reconnect completed with a released lease")
+        }
+        if self
+            .pending_releases
+            .lock()
+            .map_err(|_| anyhow!("mesh fence pending-release map poisoned"))?
+            .contains_key(&key)
+            || self
+                .pending_host_releases
+                .lock()
+                .map_err(|_| anyhow!("mesh pending host-release map poisoned"))?
+                .contains_key(&key)
+        {
+            bail!("mesh reconnect completed with unresolved lease cleanup")
+        }
+        self.reconnecting
+            .lock()
+            .map_err(|_| anyhow!("mesh reconnecting map poisoned"))?
+            .remove(&key);
+        Ok(())
+    }
+
     fn acquire(
         &self,
         direction: PeerDirectionV0,
@@ -1379,6 +1488,24 @@ impl MeshFenceRegistryV1 {
         self.revalidate_locked(key)
     }
 
+    /// Revalidates an outbound frame path.  A missing token is tolerated only
+    /// when this exact edge was marked by its authenticated worker as being in
+    /// a reconnect handoff; the caller still queues the payload behind the
+    /// bounded worker queue, and the worker revalidates the fresh token before
+    /// emitting any bytes.
+    fn revalidate_for_send(
+        &self,
+        direction: PeerDirectionV0,
+        remote: ValidatorId,
+    ) -> Result<MeshFenceSendValidationV1> {
+        let key = (direction, remote);
+        let _admission_guard = self
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        self.revalidate_locked_for_send(key, true)
+    }
+
     /// Revalidate one edge while the admission lock is already held.
     ///
     /// `revalidate_all` uses this form so its key snapshot and every lookup
@@ -1387,16 +1514,33 @@ impl MeshFenceRegistryV1 {
     /// per-key lookup, turning a legitimate transient handoff into a false
     /// frame-path failure.
     fn revalidate_locked(&self, key: ActiveFenceKeyV0) -> Result<()> {
+        self.revalidate_locked_for_send(key, false).map(|_| ())
+    }
+
+    fn revalidate_locked_for_send(
+        &self,
+        key: ActiveFenceKeyV0,
+        allow_reconnecting: bool,
+    ) -> Result<MeshFenceSendValidationV1> {
         self.retry_pending_releases_v1(key)?;
         self.retry_pending_host_releases_v1(key)?;
         let mut tokens = self
             .tokens
             .lock()
             .map_err(|_| anyhow!("mesh fence token map poisoned"))?;
-        let entry = tokens
-            .get(&key)
-            .copied()
-            .ok_or_else(|| anyhow!("mesh frame path has no admitted external lease"))?;
+        let Some(entry) = tokens.get(&key).copied() else {
+            if allow_reconnecting {
+                let reconnecting = self
+                    .reconnecting
+                    .lock()
+                    .map_err(|_| anyhow!("mesh reconnecting map poisoned"))?
+                    .contains(&key);
+                if reconnecting {
+                    return Ok(MeshFenceSendValidationV1::Reconnecting);
+                }
+            }
+            bail!("mesh frame path has no admitted external lease");
+        };
         if entry.external_release_confirmed {
             bail!("mesh external lease is pending host-attestation release")
         }
@@ -1435,7 +1579,7 @@ impl MeshFenceRegistryV1 {
                 .revalidate(token)
                 .map_err(|error| anyhow!("external fence revalidation failed: {error}"))?;
         }
-        Ok(())
+        Ok(MeshFenceSendValidationV1::Admitted)
     }
 
     /// Renews a lease only when its local cadence says it is due.  Idle
@@ -1777,6 +1921,13 @@ impl MeshFenceRegistryV1 {
         if let Some(error) = first_error {
             return Err(error);
         }
+        // A fully completed shutdown must not leave a stale reconnect marker
+        // that could authorize queue-only admission if this registry is
+        // inspected again by cleanup code.
+        self.reconnecting
+            .lock()
+            .map_err(|_| anyhow!("mesh reconnecting map poisoned"))?
+            .clear();
         Ok(())
     }
 
@@ -2399,7 +2550,15 @@ impl PersistentAuthenticatedPeerMeshV0 {
             .outbound
             .get(&remote)
             .ok_or_else(|| anyhow!("remote is outside frozen outgoing peer set"))?;
-        self.fences.revalidate(PeerDirectionV0::Outbound, remote)?;
+        // A worker-marked reconnect handoff may have released the old token
+        // before the owner flushes this bounded outbox.  The queue remains a
+        // safe holding area: the worker performs the authoritative lease
+        // revalidation again immediately before writing the frame.  Any
+        // present-but-invalid token, or an unmarked missing token, still
+        // fails closed here.
+        let _ = self
+            .fences
+            .revalidate_for_send(PeerDirectionV0::Outbound, remote)?;
         let reserved_bytes = payload
             .len()
             .checked_add(QUEUED_FRAME_OVERHEAD_BYTES)
@@ -2692,6 +2851,26 @@ fn outgoing_loop(
             match connection.send(message.kind, message.payload.as_ref().to_vec()) {
                 Ok(()) => break,
                 Err(error) if transient_frame_error(&error) => {
+                    // Publish the reconnecting marker before the lifecycle
+                    // event and before releasing the old lease.  This makes
+                    // the owner-side outbox handoff atomic with respect to
+                    // frame-path validation; no missing token is treated as
+                    // transient unless this worker established the marker.
+                    if let Err(marker_error) =
+                        fences.begin_reconnect(PeerDirectionV0::Outbound, remote)
+                    {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote,
+                                direction: PeerDirectionV0::Outbound,
+                                reason: marker_error.to_string(),
+                            },
+                        );
+                        shutdown_all(&controls);
+                        return;
+                    }
                     if emit_event(
                         &ingress_tx,
                         MeshIngressEventV0::SessionUnavailable(facts),
@@ -2785,6 +2964,25 @@ fn outgoing_loop(
                         session_id: connection.session_id(),
                         generation,
                     };
+                    // `connect_authenticated_until` has already acquired and
+                    // host-validated the new generation.  Clearing the
+                    // marker now permits the next owner flush to require the
+                    // normal exact-token path again.
+                    if let Err(error) = fences.complete_reconnect(PeerDirectionV0::Outbound, remote)
+                    {
+                        set_terminal(
+                            &terminal,
+                            &stop,
+                            MeshTerminalFailureV0 {
+                                remote,
+                                direction: PeerDirectionV0::Outbound,
+                                reason: error.to_string(),
+                            },
+                        );
+                        shutdown_all(&controls);
+                        let _ = fences.release(PeerDirectionV0::Outbound, remote);
+                        return;
+                    }
                     if emit_event(
                         &ingress_tx,
                         MeshIngressEventV0::SessionReestablished(facts),
@@ -5087,6 +5285,67 @@ mod tests {
         // observed by a worker after lease expiry.
         assert!(matches!(receiver.try_recv(), Err(TryRecvError::Empty)));
         drop(mesh);
+    }
+
+    #[test]
+    fn outbound_reconnect_gap_is_explicit_and_queue_only_v1() {
+        let remote = ValidatorId::new([0x6d; 32]);
+        let other = ValidatorId::new([0x6e; 32]);
+        let local = ValidatorId::new([0x6f; 32]);
+        let context = PeerAdmissionContextV1::new(0, [0x70; 32]).unwrap();
+        let authority = Arc::new(TestExternalPeerLeaseAuthorityV1::new(context));
+        let fences =
+            MeshFenceRegistryV1::new(authority, local, context, MESH_EXTERNAL_FENCE_TTL_V1)
+                .unwrap();
+        fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x71; 32], 1)
+            .unwrap();
+
+        assert_eq!(
+            fences
+                .revalidate_for_send(PeerDirectionV0::Outbound, remote)
+                .unwrap(),
+            MeshFenceSendValidationV1::Admitted
+        );
+        fences
+            .begin_reconnect(PeerDirectionV0::Outbound, remote)
+            .unwrap();
+        // The marker does not bypass an active token's authority check.
+        assert_eq!(
+            fences
+                .revalidate_for_send(PeerDirectionV0::Outbound, remote)
+                .unwrap(),
+            MeshFenceSendValidationV1::Admitted
+        );
+
+        fences.release(PeerDirectionV0::Outbound, remote).unwrap();
+        assert_eq!(
+            fences
+                .revalidate_for_send(PeerDirectionV0::Outbound, remote)
+                .unwrap(),
+            MeshFenceSendValidationV1::Reconnecting
+        );
+        // A missing token on an edge that the worker did not mark is still a
+        // hard failure; callers cannot opt into the queue-only state by key.
+        assert!(fences
+            .revalidate_for_send(PeerDirectionV0::Outbound, other)
+            .unwrap_err()
+            .to_string()
+            .contains("no admitted external lease"));
+
+        fences
+            .acquire(PeerDirectionV0::Outbound, remote, [0x72; 32], 2)
+            .unwrap();
+        fences
+            .complete_reconnect(PeerDirectionV0::Outbound, remote)
+            .unwrap();
+        assert_eq!(
+            fences
+                .revalidate_for_send(PeerDirectionV0::Outbound, remote)
+                .unwrap(),
+            MeshFenceSendValidationV1::Admitted
+        );
+        fences.release(PeerDirectionV0::Outbound, remote).unwrap();
     }
 
     #[test]

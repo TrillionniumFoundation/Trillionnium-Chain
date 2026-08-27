@@ -4545,6 +4545,7 @@ impl BoundedConsensusOwnerV1 {
         self.local_proposal_views.insert(view.get());
         self.emit_local_vote_v1(vote)?;
         self.drain_pending_certificates_v1()?;
+        self.queue_ready_timeout_certificates_v1()?;
         Ok(true)
     }
 
@@ -6161,6 +6162,7 @@ impl BoundedConsensusOwnerV1 {
                             publish: true,
                         })?;
                         self.drain_pending_certificates_v1()?;
+                        self.queue_ready_timeout_certificates_v1()?;
                     }
                 }
                 let _ = vote;
@@ -6185,6 +6187,7 @@ impl BoundedConsensusOwnerV1 {
                     publish: false,
                 })?;
                 self.drain_pending_certificates_v1()?;
+                self.queue_ready_timeout_certificates_v1()?;
                 Ok(true)
             }
             RoutedConsensusActionV0::TimeoutCertificate(certificate) => {
@@ -6196,6 +6199,30 @@ impl BoundedConsensusOwnerV1 {
                 Ok(true)
             }
         }
+    }
+
+    /// Rechecks locally retained timeout quorums after a QC carrier arrives.
+    /// TimeoutVotes are authenticated before they enter the collector, so a
+    /// missing carrier is the only deferred dependency; no certificate is
+    /// queued until the collector can verify every exact reference.
+    fn queue_ready_timeout_certificates_v1(&mut self) -> Result<bool> {
+        let certificates = self
+            .authority_v1()?
+            .retry_pending_timeout_certificates_v0()?;
+        let mut queued = false;
+        for certificate in certificates {
+            if self.is_tc_aggregator_v1(&certificate)? {
+                self.queue_certificate_v1(PendingCertificateV1::Timeout {
+                    certificate,
+                    publish: true,
+                })?;
+                queued = true;
+            }
+        }
+        if queued {
+            self.drain_pending_certificates_v1()?;
+        }
+        Ok(queued)
     }
 
     fn queue_or_vote_proposal_v1(&mut self, proposal: UnboundProposalV0) -> Result<()> {
@@ -6241,6 +6268,7 @@ impl BoundedConsensusOwnerV1 {
         self.highest_submitted_height = self.highest_submitted_height.max(height);
         self.emit_local_vote_v1(vote)?;
         self.drain_pending_certificates_v1()?;
+        self.queue_ready_timeout_certificates_v1()?;
         Ok(())
     }
 

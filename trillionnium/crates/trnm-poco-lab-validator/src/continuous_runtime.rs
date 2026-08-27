@@ -834,6 +834,16 @@ impl ContinuousConsensusWindowsV0 {
         Ok(formed_tc.map(|certificate| *certificate))
     }
 
+    /// Retries timeout certificates whose verified votes were retained while
+    /// their exact QC carrier was still in flight.  This is deliberately
+    /// process-local: it only exposes certificates the ingress collector can
+    /// fully verify after a later QC admission.
+    fn retry_pending_timeout_certificates_v0(&mut self) -> Result<Vec<TimeoutCertificateV0>> {
+        self.ingress
+            .retry_pending_timeout_certificates_v0()
+            .map_err(|error| anyhow!("retry pending timeout certificates: {error}"))
+    }
+
     fn synchronize_authoritative_progress_v0(
         &mut self,
         current_view: View,
@@ -1912,6 +1922,16 @@ impl ContinuousValidatorAuthorityV0 {
             self.protocol_violations.record_anyhow_v0(error)?;
         }
         result
+    }
+
+    /// Retries locally retained TimeoutVotes after a late exact QC carrier is
+    /// admitted.  No authority phase is advanced by this helper; the caller
+    /// must route each returned TC through the normal archive/Node path.
+    pub(crate) fn retry_pending_timeout_certificates_v0(
+        &mut self,
+    ) -> Result<Vec<TimeoutCertificateV0>> {
+        self.consensus_windows
+            .retry_pending_timeout_certificates_v0()
     }
 
     /// Builds the next exact non-empty proposal preimage from this validator's
