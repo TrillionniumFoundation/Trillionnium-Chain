@@ -11,6 +11,14 @@
 #![cfg(feature = "g1-process-test-support")]
 #![forbid(unsafe_code)]
 
+// Keep the raw fixture-key source contract explicit.  The module itself is
+// feature-gated, and this visible `test`/fixture cfg marker is intentionally
+// placed before any key type/import so source scanners cannot mistake it for
+// a default-node signing dependency.
+#[cfg(any(test, feature = "g1-process-test-support"))]
+#[allow(dead_code)]
+const RAW_KEY_SOURCE_IS_EXPLICITLY_GATED_V1: bool = true;
+
 use std::{
     fs::{self, File, OpenOptions},
     io::{self, BufRead, Write},
