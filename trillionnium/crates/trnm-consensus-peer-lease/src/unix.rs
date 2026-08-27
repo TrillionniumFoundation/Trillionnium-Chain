@@ -19,6 +19,12 @@ use crate::protocol::{
 use crate::store::{now_ms, PeerLeaseStoreV1};
 use crate::PeerLeaseErrorV1;
 
+/// Maximum wall-clock time a peer-lease daemon spends servicing one accepted
+/// stream.  The protocol permits only one request per connection, so keeping
+/// one absolute deadline for frame read and response write prevents a client
+/// from resetting a per-I/O timeout forever (a slowloris pattern).
+const DEFAULT_DAEMON_OPERATION_TIMEOUT_V1: Duration = Duration::from_secs(5);
+
 /// Protocol-neutral authority interface consumed by a P2P adapter.  It has
 /// no consensus-message or private-key operation; a caller must still bind a
 /// returned token to its own transport worker/generation before sending data.
@@ -167,6 +173,7 @@ impl ExternalPeerLeaseAuthorityV1 for UnixPeerLeaseClientV1 {
 pub struct UnixPeerLeaseDaemonV1 {
     socket_path: PathBuf,
     journal_path: PathBuf,
+    operation_timeout: Duration,
 }
 
 /// Short aliases used by the lab adapter and command-line tooling.
@@ -185,7 +192,22 @@ impl UnixPeerLeaseDaemonV1 {
         Self {
             socket_path: socket_path.as_ref().to_path_buf(),
             journal_path: journal_path.as_ref().to_path_buf(),
+            operation_timeout: DEFAULT_DAEMON_OPERATION_TIMEOUT_V1,
         }
+    }
+
+    /// Set the absolute wall-clock budget for each accepted stream.  The
+    /// budget covers request-frame reads, durable application, and response
+    /// writes.  This is primarily useful for deployments with a tighter local
+    /// failure budget and for deterministic tests; the default is five
+    /// seconds.
+    pub fn with_timeout(mut self, timeout: Duration) -> Self {
+        self.operation_timeout = timeout;
+        self
+    }
+
+    pub const fn timeout(&self) -> Duration {
+        self.operation_timeout
     }
 
     pub fn socket_path(&self) -> &Path {
@@ -218,7 +240,9 @@ impl UnixPeerLeaseDaemonV1 {
         for stream in listener.incoming() {
             match stream {
                 Ok(mut stream) => {
-                    if let Err(error) = serve_connection(&mut stream, &mut store) {
+                    if let Err(error) =
+                        serve_connection(&mut stream, &mut store, self.operation_timeout)
+                    {
                         // A malformed request is isolated to its connection;
                         // authority/journal errors are returned and terminate
                         // the daemon rather than continuing unsafely.
@@ -226,8 +250,16 @@ impl UnixPeerLeaseDaemonV1 {
                             PeerLeaseErrorV1::Rejected(
                                 LeaseRejectCodeV1::ClockRollback
                                 | LeaseRejectCodeV1::AuthorityCorrupt,
-                            )
-                            | PeerLeaseErrorV1::Io(_) => return Err(error),
+                            ) => return Err(error),
+                            PeerLeaseErrorV1::Io(ref io_error)
+                                if matches!(
+                                    io_error.kind(),
+                                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
+                                ) =>
+                            {
+                                continue
+                            }
+                            PeerLeaseErrorV1::Io(_) => return Err(error),
                             PeerLeaseErrorV1::Rejected(_)
                             | PeerLeaseErrorV1::InvalidRequest(_)
                             | PeerLeaseErrorV1::Protocol(_) => continue,
@@ -244,8 +276,12 @@ impl UnixPeerLeaseDaemonV1 {
 fn serve_connection(
     stream: &mut UnixStream,
     store: &mut PeerLeaseStoreV1,
+    operation_timeout: Duration,
 ) -> Result<(), PeerLeaseErrorV1> {
-    let frame = read_frame(stream)?;
+    let deadline = Instant::now()
+        .checked_add(operation_timeout)
+        .unwrap_or_else(Instant::now);
+    let frame = read_frame_until(stream, deadline)?;
     let request = decode_request(&frame)?;
     let now = now_ms()?;
     let result = store.apply(request, now);
@@ -263,8 +299,7 @@ fn serve_connection(
         }
         Err(error) => return Err(error),
     };
-    stream.write_all(&encode_response(response))?;
-    stream.flush()?;
+    write_all_until(stream, &encode_response(response), deadline)?;
     if let Some(error) = fatal_error {
         return Err(match error {
             PeerLeaseErrorV1::Rejected(code) => PeerLeaseErrorV1::Rejected(*code),
@@ -272,10 +307,6 @@ fn serve_connection(
         });
     }
     Ok(())
-}
-
-fn read_frame(stream: &mut UnixStream) -> Result<Vec<u8>, PeerLeaseErrorV1> {
-    read_frame_inner(stream, None)
 }
 
 fn read_frame_until(
@@ -467,5 +498,62 @@ mod tests {
             "operation exceeded bounded deadline: {elapsed:?}"
         );
         server.join().unwrap();
+    }
+
+    #[test]
+    fn daemon_deadline_covers_fragmented_request_as_one_operation() {
+        let directory = tempfile::tempdir().unwrap();
+        let socket = directory.path().join("authority.sock");
+        let journal = directory.path().join("authority.log");
+        let listener = UnixListener::bind(&socket).unwrap();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut store = PeerLeaseStoreV1::open(&journal).unwrap();
+            let started = Instant::now();
+            let result = serve_connection(&mut stream, &mut store, Duration::from_millis(150));
+            (result, started.elapsed())
+        });
+
+        let request = encode_request(LeaseRequestV1 {
+            operation: LeaseOperationV1::Acquire,
+            scope: test_scope(),
+            session_id: [6; 32],
+            generation: 1,
+            expires_at_ms: 0,
+            ttl_ms: 1_000,
+            record_hash: [0; 32],
+        });
+        let mut client = UnixStream::connect(&socket).unwrap();
+        client.write_all(&request[..8]).unwrap();
+        // Keep each gap below the old per-read timeout while making the
+        // complete frame exceed the absolute operation budget.
+        for byte in request[8..].iter().take(3) {
+            thread::sleep(Duration::from_millis(60));
+            if client.write_all(std::slice::from_ref(byte)).is_err() {
+                break;
+            }
+        }
+
+        let (result, elapsed) = server.join().unwrap();
+        assert!(matches!(
+            result,
+            Err(PeerLeaseErrorV1::Io(error))
+                if error.kind() == io::ErrorKind::TimedOut
+        ));
+        assert!(
+            elapsed < Duration::from_secs(1),
+            "daemon spent too long servicing a stalled stream: {elapsed:?}"
+        );
+    }
+
+    #[test]
+    fn daemon_response_write_rejects_expired_operation_deadline() {
+        let (mut stream, _peer) = UnixStream::pair().unwrap();
+        let result = write_all_until(&mut stream, &[0u8; 1], Instant::now());
+        assert!(matches!(
+            result,
+            Err(PeerLeaseErrorV1::Io(error))
+                if error.kind() == io::ErrorKind::TimedOut
+        ));
     }
 }
