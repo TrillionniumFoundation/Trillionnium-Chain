@@ -328,6 +328,14 @@ fn read_exact_until(
             }
             Ok(count) => offset += count,
             Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
+                ) =>
+            {
+                return Err(operation_timeout_error())
+            }
             Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
         }
     }
@@ -351,6 +359,14 @@ fn write_all_until(
             }
             Ok(count) => offset += count,
             Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    io::ErrorKind::TimedOut | io::ErrorKind::WouldBlock
+                ) =>
+            {
+                return Err(operation_timeout_error())
+            }
             Err(error) => return Err(PeerLeaseErrorV1::Io(error)),
         }
     }
@@ -362,12 +378,16 @@ fn write_all_until(
 fn remaining_timeout(deadline: Instant) -> Result<Duration, PeerLeaseErrorV1> {
     let remaining = deadline.saturating_duration_since(Instant::now());
     if remaining.is_zero() {
-        return Err(PeerLeaseErrorV1::Io(io::Error::new(
-            io::ErrorKind::TimedOut,
-            "peer-lease operation deadline exceeded",
-        )));
+        return Err(operation_timeout_error());
     }
     Ok(remaining)
+}
+
+fn operation_timeout_error() -> PeerLeaseErrorV1 {
+    PeerLeaseErrorV1::Io(io::Error::new(
+        io::ErrorKind::TimedOut,
+        "peer-lease operation deadline exceeded",
+    ))
 }
 
 fn set_socket_permissions(path: &Path) -> Result<(), PeerLeaseErrorV1> {
@@ -418,20 +438,22 @@ mod tests {
         let response = encode_response(LeaseResponseV1::Rejected(LeaseRejectCodeV1::Unsupported));
         let server = thread::spawn(move || {
             let (mut stream, _) = listener.accept().unwrap();
-            // Consume the request before dribbling the response.  A byte at a
-            // time keeps each individual read below the old per-I/O timeout,
-            // while the complete operation exceeds the configured deadline.
+            // Consume the request before dribbling the response.  Keep the
+            // header intact, then put each body byte 60ms apart: every gap is
+            // below the old per-I/O timeout, while the complete operation
+            // exceeds the configured deadline.
             let mut request = [0u8; MAX_FRAME_BYTES_V1];
             let _ = stream.read(&mut request);
-            for byte in response {
-                if stream.write_all(&[byte]).is_err() {
+            stream.write_all(&response[..8]).unwrap();
+            for byte in &response[8..] {
+                thread::sleep(Duration::from_millis(60));
+                if stream.write_all(&[*byte]).is_err() {
                     break;
                 }
-                thread::sleep(Duration::from_millis(20));
             }
         });
         let client =
-            UnixPeerLeaseClientV1::connect(&socket).with_timeout(Duration::from_millis(100));
+            UnixPeerLeaseClientV1::connect(&socket).with_timeout(Duration::from_millis(150));
         let started = Instant::now();
         let result = client.acquire(test_scope(), [6; 32], 1, 1_000);
         let elapsed = started.elapsed();
