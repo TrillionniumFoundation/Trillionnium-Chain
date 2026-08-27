@@ -1376,6 +1376,17 @@ impl MeshFenceRegistryV1 {
             .admission_lock
             .lock()
             .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
+        self.revalidate_locked(key)
+    }
+
+    /// Revalidate one edge while the admission lock is already held.
+    ///
+    /// `revalidate_all` uses this form so its key snapshot and every lookup
+    /// remain one atomic admission transaction.  Without that boundary a
+    /// reconnect worker can release a token after the snapshot but before the
+    /// per-key lookup, turning a legitimate transient handoff into a false
+    /// frame-path failure.
+    fn revalidate_locked(&self, key: ActiveFenceKeyV0) -> Result<()> {
         self.retry_pending_releases_v1(key)?;
         self.retry_pending_host_releases_v1(key)?;
         let mut tokens = self
@@ -1536,6 +1547,10 @@ impl MeshFenceRegistryV1 {
     }
 
     fn revalidate_all(&self) -> Result<()> {
+        let _admission_guard = self
+            .admission_lock
+            .lock()
+            .map_err(|_| anyhow!("mesh fence admission lock poisoned"))?;
         let keys = self
             .tokens
             .lock()
@@ -1543,8 +1558,8 @@ impl MeshFenceRegistryV1 {
             .keys()
             .copied()
             .collect::<Vec<_>>();
-        for (direction, remote) in keys {
-            self.revalidate(direction, remote)?;
+        for key in keys {
+            self.revalidate_locked(key)?;
         }
         Ok(())
     }
