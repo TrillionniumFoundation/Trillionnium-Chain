@@ -2479,6 +2479,18 @@ impl ContinuousValidatorAuthorityV0 {
         certificate
             .verify(&self.validator_set, None, &StrictEd25519Verifier)
             .map_err(|error| anyhow!("verify continuous TC: {error}"))?;
+        // A TC that was already accepted and installed in Ready is an exact
+        // replay, not a second phase transition.  In particular, do not take
+        // the live phase before this check: a late duplicate can otherwise
+        // consume TimeoutSigned/Ready and leave the authority fail-closed
+        // even though it carries the same authenticated bytes.
+        if self
+            .proposal_timeout_certificate
+            .as_ref()
+            .is_some_and(|accepted| accepted == &certificate)
+        {
+            return self.facts_v0();
+        }
         let accepted_certificate = certificate.clone();
         let phase = self
             .phase

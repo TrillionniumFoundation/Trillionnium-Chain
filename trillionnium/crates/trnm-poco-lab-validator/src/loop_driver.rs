@@ -158,6 +158,29 @@ impl BoundedConsensusIngressLoopV0 {
     ) -> Result<RoutedConsensusActionV0, ConsensusIngressErrorV0> {
         match message {
             AdmittedConsensusMessageV0::Proposal(proposal) => {
+                // Proposal witnesses carry the same authority-bearing QC/TC
+                // values as standalone frames.  Stage their collector
+                // admission before returning the proposal so the subsequent
+                // Node authority call cannot bypass watermark, capacity, or
+                // frozen-certificate checks. Same-coordinate alternate QCs
+                // remain exact protocol evidence and are forwarded unchanged
+                // to Core, which owns the digest-ordering semantics.
+                let mut staged = self.collector.clone();
+                if let Some(certificate) = proposal.justify_qc().as_ordinary() {
+                    staged.register_qc_reference(QcReferenceV0::ordinary(certificate.clone()))?;
+                } else {
+                    staged.register_qc_reference(proposal.justify_qc().clone())?;
+                }
+                if let Some(certificate) = proposal.timeout_certificate() {
+                    staged.register_timeout_certificate(certificate.clone())?;
+                }
+                // Do not commit the staged snapshot yet.  A Proposal may be
+                // buffered by the pending-proposal gate and therefore may
+                // never become an authority event; freezing its embedded
+                // carriers at ingress would suppress a later actionable
+                // standalone QC/TC.  The staged clone still performs all
+                // validation and bounded-capacity checks without mutating the
+                // live collector.
                 Ok(RoutedConsensusActionV0::Proposal(proposal))
             }
             AdmittedConsensusMessageV0::Vote(vote) => {
@@ -183,20 +206,29 @@ impl BoundedConsensusIngressLoopV0 {
                 })
             }
             AdmittedConsensusMessageV0::QuorumCertificate(certificate) => {
+                let view = certificate.view();
+                let height = certificate.height();
+                let block_id = certificate.block_id();
                 self.collector.register_qc_reference(
                     trnm_consensus_types::QcReferenceV0::ordinary(certificate.clone()),
                 )?;
-                Ok(RoutedConsensusActionV0::QuorumCertificate(Box::new(
-                    certificate,
-                )))
+                // Route the first frozen representation into the runtime
+                // archive lane. Same-coordinate signer-subset alternates are
+                // retained as exact collector evidence, but must not create a
+                // second append-only archive record or a second authority
+                // transition.
+                let exact = self
+                    .collector
+                    .canonical_quorum_certificate(view, height, block_id)
+                    .cloned()
+                    .unwrap_or(certificate);
+                Ok(RoutedConsensusActionV0::QuorumCertificate(Box::new(exact)))
             }
             AdmittedConsensusMessageV0::TimeoutCertificate(certificate) => {
-                for reference in certificate.referenced_qcs() {
-                    self.collector.register_qc_reference(reference.clone())?;
-                }
-                Ok(RoutedConsensusActionV0::TimeoutCertificate(Box::new(
-                    certificate,
-                )))
+                let exact = self
+                    .collector
+                    .register_timeout_certificate(certificate.clone())?;
+                Ok(RoutedConsensusActionV0::TimeoutCertificate(Box::new(exact)))
             }
         }
     }

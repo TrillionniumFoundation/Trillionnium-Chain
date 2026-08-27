@@ -118,7 +118,8 @@ use crate::{
     },
     signed_replay_archive::{
         ArchivedDeployedProcess2RecoveryOwnerV1, ArchivedDeployedProcess2ZeroDeltaCaughtUpOwnerV1,
-        SignedReplayArchiveBoundsV1, SignedReplayArchiveV1, MAXIMUM_ENTRY_COUNT_V1,
+        ReplayArchiveQcCoordinateStateV1, SignedReplayArchiveBoundsV1, SignedReplayArchiveV1,
+        MAXIMUM_ENTRY_COUNT_V1,
     },
     wire::{
         encode_quorum_certificate, encode_timeout_certificate, encode_timeout_vote, encode_vote,
@@ -2876,6 +2877,73 @@ fn write_fleet_start_certificate_v1(
     Ok(expected_sha256.into())
 }
 
+/// Semantic identity of one QC reference carried by a TimeoutCertificate.
+///
+/// The certificate digest is intentionally omitted: two valid signer-subset
+/// certificates can have different IDs while certifying the same logical
+/// target.  The synthetic discriminator remains part of the identity because
+/// an authenticated anchor is not interchangeable with an ordinary QC even
+/// when their summaries happen to coincide.
+type TimeoutQcTargetV1 = (bool, u64, u64, u64, [u8; 32], [u8; 32]);
+
+fn timeout_qc_target_v1(reference: &QcReferenceV0) -> TimeoutQcTargetV1 {
+    let summary = reference.qc_ref();
+    (
+        reference.as_synthetic().is_some(),
+        summary.epoch().get(),
+        summary.view().get(),
+        summary.height().get(),
+        *summary.block_id().as_bytes(),
+        *summary.validator_set_id().as_bytes(),
+    )
+}
+
+fn timeout_qc_targets_v1(certificate: &TimeoutCertificateV0) -> Vec<TimeoutQcTargetV1> {
+    let mut targets = certificate
+        .referenced_qcs()
+        .iter()
+        .map(timeout_qc_target_v1)
+        .collect::<Vec<_>>();
+    targets.sort_unstable();
+    targets
+}
+
+fn selected_timeout_qc_target_v1(certificate: &TimeoutCertificateV0) -> Result<TimeoutQcTargetV1> {
+    let selected_id = certificate.selected_high_qc_digest();
+    let selected = certificate
+        .referenced_qcs()
+        .iter()
+        .find(|reference| reference.id() == selected_id)
+        .ok_or_else(|| {
+            anyhow!("timeout certificate selected high-QC digest is absent from referenced QCs")
+        })?;
+    Ok(timeout_qc_target_v1(selected))
+}
+
+/// Compares two authenticated TCs while ignoring only signer-subset/digest
+/// variation.  A different timeout target (or context/anchor class) is a
+/// safety conflict and must fail closed rather than be silently dropped by
+/// the runtime archive lane.
+fn timeout_certificates_same_semantic_target_v1(
+    accepted: &TimeoutCertificateV0,
+    candidate: &TimeoutCertificateV0,
+) -> Result<bool> {
+    if accepted.genesis_hash() != candidate.genesis_hash()
+        || accepted.chain_id() != candidate.chain_id()
+        || accepted.protocol_version() != candidate.protocol_version()
+        || accepted.epoch() != candidate.epoch()
+        || accepted.validator_set_hash() != candidate.validator_set_hash()
+        || accepted.timed_out_view() != candidate.timed_out_view()
+    {
+        return Ok(false);
+    }
+    Ok(
+        timeout_qc_targets_v1(accepted) == timeout_qc_targets_v1(candidate)
+            && selected_timeout_qc_target_v1(accepted)?
+                == selected_timeout_qc_target_v1(candidate)?,
+    )
+}
+
 struct BoundedConsensusOwnerV1 {
     config: LoadedValidatorConfig,
     authority: Option<ContinuousValidatorAuthorityV0>,
@@ -2910,6 +2978,13 @@ struct BoundedConsensusOwnerV1 {
     finality_samples_ms: Vec<f64>,
     applied_qcs: BTreeSet<[u8; 32]>,
     applied_tcs: BTreeSet<[u8; 32]>,
+    /// Runtime archive lane pins the first applied TC representation for each
+    /// timed-out view. Core-level collectors may still inspect alternate
+    /// certificates; this map stores the full accepted TC so same-target
+    /// signer-subset alternates can be recognized without treating a
+    /// different referenced-QC target as harmless. Multiple candidates may
+    /// remain pending until one is actually ready for authority.
+    accepted_tc_by_view: BTreeMap<u64, TimeoutCertificateV0>,
     local_proposal_views: BTreeSet<u64>,
     unavailable_sessions: BTreeSet<(PeerDirectionV0, ValidatorId)>,
     highest_submitted_height: u64,
@@ -4221,6 +4296,7 @@ impl BoundedConsensusOwnerV1 {
             finality_samples_ms: Vec::new(),
             applied_qcs: BTreeSet::new(),
             applied_tcs: BTreeSet::new(),
+            accepted_tc_by_view: BTreeMap::new(),
             local_proposal_views: BTreeSet::new(),
             unavailable_sessions: BTreeSet::new(),
             highest_submitted_height,
@@ -4446,12 +4522,23 @@ impl BoundedConsensusOwnerV1 {
         self.record_proposal_first_seen_v1(block_id, height)?;
         let unbound = UnboundProposalV0::from_signed(&proposal)
             .map_err(|error| anyhow!("project local proposal to wire: {error}"))?;
-        self.archive_proposal_before_authority_v1(&unbound)?;
+        if !self.archive_proposal_before_authority_v1(&unbound)? {
+            // A same-coordinate alternate witness is valid protocol evidence
+            // but is inert in this append-only runtime archive lane.  Do not
+            // let it consume the local proposal slot or reach authority.
+            forget_proposal_first_seen_v1(&mut self.proposal_first_seen, block_id);
+            return Ok(false);
+        }
         let encoded = unbound
             .encode()
             .map_err(|error| anyhow!("encode local proposal: {error}"))?;
         self.enqueue_consensus_statement_v1(FrameKind::Proposal, encoded)?;
+        let carried_tc = unbound.timeout_certificate().cloned();
         let vote = self.authority_v1()?.vote_unbound_proposal_v0(unbound)?;
+        if let Some(certificate) = carried_tc {
+            self.accepted_tc_by_view
+                .insert(certificate.timed_out_view().get(), certificate);
+        }
         self.record_proposal_admitted_v1(block_id, height)?;
         self.known_executions.insert((height, *block_id.as_bytes()));
         self.highest_submitted_height = self.highest_submitted_height.max(height);
@@ -6136,8 +6223,19 @@ impl BoundedConsensusOwnerV1 {
     fn vote_ready_proposal_v1(&mut self, proposal: UnboundProposalV0) -> Result<()> {
         let block_id = proposal.block().id();
         let height = proposal.block().header().height().get();
-        self.archive_proposal_before_authority_v1(&proposal)?;
+        if !self.archive_proposal_before_authority_v1(&proposal)? {
+            // The archive already pins a different authenticated witness for
+            // this Proposal coordinate.  Preserve the first representation
+            // and drop this alternate before any Vote/Core mutation.
+            forget_proposal_first_seen_v1(&mut self.proposal_first_seen, block_id);
+            return Ok(());
+        }
+        let carried_tc = proposal.timeout_certificate().cloned();
         let vote = self.authority_v1()?.vote_unbound_proposal_v0(proposal)?;
+        if let Some(certificate) = carried_tc {
+            self.accepted_tc_by_view
+                .insert(certificate.timed_out_view().get(), certificate);
+        }
         self.record_proposal_admitted_v1(block_id, height)?;
         self.known_executions.insert((height, *block_id.as_bytes()));
         self.highest_submitted_height = self.highest_submitted_height.max(height);
@@ -6239,8 +6337,26 @@ impl BoundedConsensusOwnerV1 {
             if self.applied_qcs.contains(&id) {
                 return Ok(());
             }
-        } else if self.applied_tcs.contains(&id) {
-            return Ok(());
+        } else {
+            let PendingCertificateV1::Timeout { certificate, .. } = &candidate else {
+                unreachable!("non-quorum pending certificate must be a Timeout")
+            };
+            let timed_out_view = certificate.timed_out_view().get();
+            if let Some(accepted) = self.accepted_tc_by_view.get(&timed_out_view) {
+                ensure!(
+                    timeout_certificates_same_semantic_target_v1(accepted, certificate)?,
+                    "conflicting timeout certificate target for an already accepted timed-out view"
+                );
+                // Core may understand exact or same-target signer-subset
+                // alternates, but this runtime's append-only authority lane
+                // pins one target per timed-out view.  Once pinned, a later
+                // representation is inert and must not consume another phase
+                // or trigger a second rebase.
+                return Ok(());
+            }
+            if self.applied_tcs.contains(&id) {
+                return Ok(());
+            }
         }
         if let Some(existing) = self.pending_certificates.iter_mut().find(|existing| {
             existing.id_v1() == id && existing.is_quorum_v1() == candidate.is_quorum_v1()
@@ -6298,11 +6414,32 @@ impl BoundedConsensusOwnerV1 {
             return Ok(());
         }
         self.require_archivable_view_v1(certificate.view().get(), false, "quorum certificate")?;
-        // The exact certificate is durable before either publication or the
-        // first phase-neutral Core/Safety mutation.
-        self.replay_archive
-            .append_quorum_certificate_v1(&certificate)
-            .context("durably archive quorum certificate before authority")?;
+        match self
+            .replay_archive
+            .quorum_coordinate_state_v1(&certificate)
+            .context("probe archived quorum certificate coordinate")?
+        {
+            ReplayArchiveQcCoordinateStateV1::Conflict => {
+                // Treat this alternate as inert at the runtime archive gate:
+                // the first byte representation remains pinned, and this
+                // candidate must not be published or consume another
+                // authority phase. Core-level callers that bypass this gate
+                // retain their own certificate semantics.
+                self.applied_qcs.insert(id);
+                return Ok(());
+            }
+            ReplayArchiveQcCoordinateStateV1::Vacant => {
+                // The exact certificate is durable before either publication
+                // or the first phase-neutral Core/Safety mutation.
+                self.replay_archive
+                    .append_quorum_certificate_v1(&certificate)
+                    .context("durably archive quorum certificate before authority")?;
+            }
+            ReplayArchiveQcCoordinateStateV1::Exact => {
+                // The exact representation is already durable (for example,
+                // after a restart); proceed with the authority replay.
+            }
+        }
         if publish {
             let encoded = encode_quorum_certificate(&certificate)
                 .map_err(|error| anyhow!("encode quorum certificate: {error}"))?;
@@ -6331,27 +6468,90 @@ impl BoundedConsensusOwnerV1 {
     /// which its witness can apply before Proposal admission.  Returning from
     /// this method is the sole runtime point immediately preceding the
     /// authority call.
-    fn archive_proposal_before_authority_v1(&mut self, proposal: &UnboundProposalV0) -> Result<()> {
+    fn archive_proposal_before_authority_v1(
+        &mut self,
+        proposal: &UnboundProposalV0,
+    ) -> Result<bool> {
         proposal
             .verify_proposer_signature(self.config.validator_set())
             .map_err(|error| {
                 anyhow!("reject unauthenticated proposer witness before replay archive: {error}")
             })?;
         self.require_archivable_view_v1(proposal.block().header().view().get(), true, "Proposal")?;
-        self.replay_archive
-            .append_proposal_v1(proposal)
-            .context("durably archive Proposal before authority")?;
+
+        // A standalone TC may already have advanced this owner.  A same-target
+        // alternate (including a signer-subset/digest variant) is inert before
+        // any archive probe or append; a different referenced-QC target is a
+        // safety conflict and fails closed.  An exact TC replay remains
+        // admissible only while the Node still carries the same skipped-view
+        // marker; that is the normal successor Proposal path.  Once the marker
+        // is absent, the direct-TC transition has already consumed the phase
+        // and the delayed carrier must be dropped before it can reach the Node.
+        if let Some(certificate) = proposal.timeout_certificate() {
+            let timed_out_view = certificate.timed_out_view().get();
+            self.require_archivable_view_v1(
+                timed_out_view,
+                true,
+                "Proposal carried timeout certificate",
+            )?;
+            if let Some(accepted) = self.accepted_tc_by_view.get(&timed_out_view) {
+                ensure!(
+                    timeout_certificates_same_semantic_target_v1(accepted, certificate)?,
+                    "conflicting timeout certificate target for carried Proposal"
+                );
+                if accepted.id() != certificate.id() {
+                    return Ok(false);
+                }
+                let pending = self
+                    .authority_v1()?
+                    .facts_v0()?
+                    .pending_timeout_certificate_id_v0();
+                if pending != Some(certificate.id()) {
+                    return Ok(false);
+                }
+            }
+        }
+
+        // Probe the Proposal coordinate before writing its justify QC.  This
+        // avoids leaving an orphan QC if an alternate authenticated witness
+        // for the same block coordinate is already pinned in the archive.
+        let proposal_state = self
+            .replay_archive
+            .proposal_coordinate_state_v1(proposal)
+            .context("probe archived Proposal coordinate")?;
+        if proposal_state == ReplayArchiveQcCoordinateStateV1::Conflict {
+            return Ok(false);
+        }
+
         if let QcReferenceV0::Ordinary(certificate) = proposal.justify_qc() {
             self.require_archivable_view_v1(
                 certificate.view().get(),
                 false,
                 "Proposal justify QC",
             )?;
-            self.replay_archive
-                .append_quorum_certificate_v1(certificate)
-                .context("durably archive Proposal justify QC before authority")?;
+            match self
+                .replay_archive
+                .quorum_coordinate_state_v1(certificate)
+                .context("probe Proposal justify QC coordinate")?
+            {
+                ReplayArchiveQcCoordinateStateV1::Conflict => return Ok(false),
+                ReplayArchiveQcCoordinateStateV1::Vacant => {
+                    // Archive the parent witness before the Proposal.  If a
+                    // conflicting parent QC is encountered, no Proposal bytes
+                    // have been appended yet and the alternate is inert.
+                    self.replay_archive
+                        .append_quorum_certificate_v1(certificate)
+                        .context("durably archive Proposal justify QC before authority")?;
+                }
+                ReplayArchiveQcCoordinateStateV1::Exact => {}
+            }
         }
-        Ok(())
+        if proposal_state == ReplayArchiveQcCoordinateStateV1::Vacant {
+            self.replay_archive
+                .append_proposal_v1(proposal)
+                .context("durably archive Proposal before authority")?;
+        }
+        Ok(true)
     }
 
     fn apply_timeout_certificate_v1(
@@ -6363,11 +6563,21 @@ impl BoundedConsensusOwnerV1 {
         if self.applied_tcs.contains(&id) {
             return Ok(());
         }
-        self.require_archivable_view_v1(
-            certificate.timed_out_view().get(),
-            true,
-            "timeout certificate",
-        )?;
+        let timed_out_view = certificate.timed_out_view().get();
+        if let Some(accepted) = self.accepted_tc_by_view.get(&timed_out_view) {
+            ensure!(
+                timeout_certificates_same_semantic_target_v1(accepted, &certificate)?,
+                "conflicting timeout certificate target for an already accepted timed-out view"
+            );
+            // The exact TC, or a same-target signer-subset alternate, was
+            // already consumed by a Proposal-carried vote or an earlier
+            // apply.  Do not feed it into Node a second time; the Proposal
+            // path deliberately leaves `applied_tcs` unset until duplicate
+            // ingress is observed.
+            self.applied_tcs.insert(id);
+            return Ok(());
+        }
+        self.require_archivable_view_v1(timed_out_view, true, "timeout certificate")?;
         ensure!(
             u64::try_from(self.applied_tcs.len()).context("applied TC count overflows")?
                 < self
@@ -6385,6 +6595,13 @@ impl BoundedConsensusOwnerV1 {
         let after = self
             .authority_v1()?
             .advance_timeout_certificate_v0(certificate.clone())?;
+        // Pin only after the authority transition succeeds.  Keeping the map
+        // unset while candidates wait (and while a failed transition has not
+        // crossed the boundary) allows a later alternate to remain pending
+        // and avoids queue-order bias.
+        self.accepted_tc_by_view
+            .entry(timed_out_view)
+            .or_insert(certificate.clone());
         self.event_journal
             .append(
                 RuntimeEventKindV1::TimeoutCertificateAdmitted,
@@ -7806,8 +8023,9 @@ mod tests {
     use trnm_consensus_types::{
         ApplicationPayloadV0, Block, BlockHeader, BlockKind, ChainId, ConsensusParametersV0,
         ConsensusPublicKey, Epoch, EvidenceRoot, GenesisHash, GenesisQcV0, Height,
-        ProposalWitnessV0, ProtocolVersion, QcReferenceV0, ReceiptsRoot, SignatureBytes,
-        SignedProposalV0, StateRoot, Validator, ValidatorSet, Vote, VotingPower,
+        ProposalWitnessV0, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
+        SignatureBytes, SignedProposalV0, StateRoot, TimeoutCertificateV0, TimeoutEntryV0,
+        TimeoutVote, Validator, ValidatorSet, Vote, VotingPower,
     };
     use trnm_poco_node::{
         commission_native_h1_ordinary_lab_test_bundle_v0, DEPLOYED_LAB_MAXIMUM_BLOB_BYTES_V0,
@@ -9561,6 +9779,70 @@ mod tests {
     }
 
     #[test]
+    fn timeout_classifier_marks_same_target_signer_alternate_inert_v1() {
+        let (keys, validator_set, _parameters, _genesis_high_qc, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let accepted = timeout_certificate_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            2,
+            &[parent_qc.clone()],
+            &[0, 1, 2],
+        );
+        let alternate = timeout_certificate_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            2,
+            &[parent_qc],
+            &[0, 1, 2, 3],
+        );
+
+        // Different signer subsets produce different authenticated bytes and
+        // IDs, but they certify exactly the same timeout target.  The runtime
+        // queue/apply gates must therefore treat the alternate as inert.
+        assert_ne!(accepted.id(), alternate.id());
+        assert!(timeout_certificates_same_semantic_target_v1(&accepted, &alternate).unwrap());
+    }
+
+    #[test]
+    fn timeout_classifier_rejects_different_target_at_same_timed_out_view_v1() {
+        let (keys, validator_set, _parameters, _genesis_high_qc, parent_qc) =
+            synthetic_proposal_fixture_v1();
+        let alternate_block = BlockId::new([0xb2; 32]);
+        let alternate_qc = qc_variant_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            View::new(1),
+            Height::new(1),
+            alternate_block,
+            &[0, 1, 2],
+        );
+        let accepted = timeout_certificate_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            2,
+            &[parent_qc],
+            &[0, 1, 2],
+        );
+        let conflicting = timeout_certificate_for_classifier_test_v1(
+            &validator_set,
+            &keys,
+            2,
+            &[alternate_qc],
+            &[0, 1, 2],
+        );
+
+        // Same timed-out view is not enough to make a TC interchangeable: a
+        // different referenced block must fail closed at the runtime gate.
+        assert_ne!(
+            selected_timeout_qc_target_v1(&accepted).unwrap(),
+            selected_timeout_qc_target_v1(&conflicting).unwrap(),
+            "the conflicting TC selects a different semantic target"
+        );
+        assert!(!timeout_certificates_same_semantic_target_v1(&accepted, &conflicting).unwrap());
+    }
+
+    #[test]
     fn real_authority_drains_child_after_late_parent_execution() {
         on_consensus_owner_stack_v1(|| {
             let mut fixture = real_takeover_fixture_v1(4);
@@ -9865,6 +10147,83 @@ mod tests {
             validator_set,
         )
         .unwrap()
+    }
+
+    fn qc_variant_for_classifier_test_v1(
+        validator_set: &ValidatorSet,
+        keys: &[SigningKey],
+        view: View,
+        height: Height,
+        block_id: BlockId,
+        signer_indices: &[usize],
+    ) -> QuorumCertificate {
+        assert!(!signer_indices.is_empty());
+        let votes = signer_indices
+            .iter()
+            .map(|index| {
+                signed_vote_v1(validator_set, &keys[*index], *index, view, height, block_id)
+            })
+            .collect::<Vec<_>>();
+        QuorumCertificate::new(
+            validator_set.chain_id(),
+            validator_set.protocol_version(),
+            validator_set.epoch(),
+            view,
+            height,
+            block_id,
+            validator_set.id(),
+            votes,
+            validator_set,
+        )
+        .expect("classifier QC variant has quorum")
+    }
+
+    fn timeout_certificate_for_classifier_test_v1(
+        validator_set: &ValidatorSet,
+        keys: &[SigningKey],
+        timed_out_view: u64,
+        qcs: &[QuorumCertificate],
+        signer_indices: &[usize],
+    ) -> TimeoutCertificateV0 {
+        assert!(!qcs.is_empty());
+        assert!(!signer_indices.is_empty());
+        let mut references = qcs
+            .iter()
+            .cloned()
+            .map(QcReferenceV0::ordinary)
+            .collect::<Vec<_>>();
+        references.sort_by_key(QcReferenceV0::id);
+        let timeout_view = View::new(timed_out_view);
+        let entries = signer_indices
+            .iter()
+            .enumerate()
+            .map(|(position, signer_index)| {
+                let high_qc = references[position % references.len()].qc_ref();
+                let root = TimeoutVote::signing_root_for_set(validator_set, timeout_view, high_qc)
+                    .expect("classifier timeout signing root");
+                TimeoutEntryV0::new(
+                    validator_set.validators()[*signer_index].id(),
+                    high_qc,
+                    SignatureBytes::from_array(
+                        keys[*signer_index].sign(root.as_bytes()).to_bytes(),
+                    ),
+                )
+                .expect("classifier timeout entry shape")
+            })
+            .collect::<Vec<_>>();
+        let selected = references
+            .iter()
+            .max_by_key(|reference| {
+                (
+                    reference.qc_ref().view(),
+                    reference.qc_ref().block_id(),
+                    reference.qc_ref().qc_digest(),
+                )
+            })
+            .map(QcReferenceV0::id)
+            .expect("classifier TC has selected QC");
+        TimeoutCertificateV0::new(timeout_view, entries, references, selected, validator_set)
+            .expect("classifier TC shape")
     }
 
     struct RealTakeoverFixtureV1 {

@@ -29,6 +29,17 @@ use crate::{
 
 pub const MAX_PENDING_COORDINATES_V0: usize = 4_096;
 
+type QuorumCoordinateV0 = (View, Height, BlockId);
+
+/// Semantic identity of a QC carrier inside a timeout certificate.
+///
+/// The certificate digest is intentionally omitted: signer-subset variants
+/// may have different bytes while certifying the same logical target.  The
+/// synthetic/ordinary discriminator remains part of the identity because an
+/// authenticated anchor is not interchangeable with an ordinary QC whose
+/// summary happens to match.
+type TimeoutQcTargetV0 = (bool, u64, u64, u64, [u8; 32], [u8; 32]);
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AdmittedConsensusMessageV0 {
     Proposal(Box<UnboundProposalV0>),
@@ -56,6 +67,12 @@ pub enum ConsensusIngressErrorV0 {
     TimeoutEquivocation,
     MissingQcReference(CertificateId),
     ConflictingQcReference(CertificateId),
+    ConflictingQcCoordinate {
+        view: View,
+        height: Height,
+        block_id: BlockId,
+    },
+    ConflictingTimeoutCoordinate(View),
     InvalidCertificate(String),
 }
 
@@ -88,6 +105,24 @@ impl fmt::Display for ConsensusIngressErrorV0 {
                     formatter,
                     "conflicting QC reference {}",
                     hex::encode(id.as_bytes())
+                )
+            }
+            Self::ConflictingQcCoordinate {
+                view,
+                height,
+                block_id,
+            } => write!(
+                formatter,
+                "conflicting QC coordinate view={} height={} block={}",
+                view.get(),
+                height.get(),
+                hex::encode(block_id.as_bytes())
+            ),
+            Self::ConflictingTimeoutCoordinate(view) => {
+                write!(
+                    formatter,
+                    "conflicting timeout coordinate view={}",
+                    view.get()
                 )
             }
             Self::InvalidCertificate(reason) => write!(formatter, "invalid certificate: {reason}"),
@@ -178,6 +213,7 @@ pub fn decode_authenticated_consensus_frame_v0(
 /// Exact replays are idempotent. Conflicting statements by one author are
 /// rejected and retained as a safety signal; this collector does not attempt
 /// to manufacture an evidence object or mutate Core state.
+#[derive(Clone)]
 pub struct ConsensusCertificateCollectorV0 {
     validator_set: ValidatorSet,
     max_pending_coordinates: usize,
@@ -187,6 +223,19 @@ pub struct ConsensusCertificateCollectorV0 {
     timeouts: BTreeMap<View, BTreeMap<ValidatorId, TimeoutVote>>,
     timeout_choices: BTreeMap<(View, ValidatorId), QcRef>,
     qc_references: BTreeMap<CertificateId, QcReferenceV0>,
+    /// First verified QC observed for each semantic coordinate.
+    ///
+    /// A later vote can enlarge the collector's vote set after quorum has
+    /// already been reached. Rebuilding a certificate from that enlarged set
+    /// would produce a second valid QC with different bytes for the same
+    /// `(view, height, block_id)`, which is not a new consensus event and
+    /// conflicts with the content-addressed replay archive. Freeze the first
+    /// verified certificate so retries and relays remain byte-identical.
+    formed_qcs: BTreeMap<QuorumCoordinateV0, QuorumCertificate>,
+    /// First verified TC observed for each timed-out view.  As with QCs,
+    /// additional timeout votes can otherwise rebuild a byte-different
+    /// certificate for an already completed semantic view.
+    formed_tcs: BTreeMap<View, TimeoutCertificateV0>,
 }
 
 impl ConsensusCertificateCollectorV0 {
@@ -209,6 +258,8 @@ impl ConsensusCertificateCollectorV0 {
             timeouts: BTreeMap::new(),
             timeout_choices: BTreeMap::new(),
             qc_references: BTreeMap::new(),
+            formed_qcs: BTreeMap::new(),
+            formed_tcs: BTreeMap::new(),
         })
     }
 
@@ -245,11 +296,27 @@ impl ConsensusCertificateCollectorV0 {
             .retain(|(view, _), _| *view >= minimum_retained_view);
 
         let mut retained_qcs = retain_qc_references.into_iter().collect::<BTreeSet<_>>();
+        // A live canonical QC is itself an authoritative carrier.  Keep its
+        // exact reference together with the frozen certificate even when the
+        // caller did not repeat the ID in the explicit retention set; this
+        // prevents a post-prune canonical getter from exposing an orphan that
+        // TC formation can no longer resolve.
+        retained_qcs.extend(
+            self.formed_qcs
+                .iter()
+                .filter(|(coordinate, _)| coordinate.0 >= minimum_retained_view)
+                .map(|(_, certificate)| certificate.id()),
+        );
         for votes in self.timeouts.values() {
             retained_qcs.extend(votes.values().map(|vote| vote.high_qc().qc_digest()));
         }
         self.qc_references
             .retain(|certificate_id, _| retained_qcs.contains(certificate_id));
+        self.formed_qcs.retain(|coordinate, certificate| {
+            coordinate.0 >= minimum_retained_view || retained_qcs.contains(&certificate.id())
+        });
+        self.formed_tcs
+            .retain(|timed_out_view, _| *timed_out_view >= minimum_retained_view);
         self.minimum_retained_view = minimum_retained_view;
         Ok(())
     }
@@ -276,7 +343,7 @@ impl ConsensusCertificateCollectorV0 {
             Entry::Occupied(_) => {}
         }
         let coordinate = (vote.view(), vote.height(), vote.block_id());
-        if !self.votes.contains_key(&coordinate) && self.votes.len() == self.max_pending_coordinates
+        if !self.votes.contains_key(&coordinate) && self.votes.len() >= self.max_pending_coordinates
         {
             if inserted_choice {
                 self.vote_choices.remove(&author_coordinate);
@@ -307,6 +374,10 @@ impl ConsensusCertificateCollectorV0 {
         if view < self.minimum_retained_view {
             return Err(ConsensusIngressErrorV0::StaleView);
         }
+        let coordinate = (view, height, block_id);
+        if let Some(certificate) = self.formed_qcs.get(&coordinate) {
+            return Ok(Some(certificate.clone()));
+        }
         let Some(votes) = self.votes.get(&(view, height, block_id)) else {
             return Ok(None);
         };
@@ -330,8 +401,26 @@ impl ConsensusCertificateCollectorV0 {
         certificate
             .verify(&self.validator_set, &StrictEd25519Verifier)
             .map_err(invalid_certificate)?;
-        self.register_qc_reference(QcReferenceV0::ordinary(certificate.clone()))?;
-        Ok(Some(certificate))
+        self.register_qc_reference(QcReferenceV0::ordinary(certificate))?;
+        // `register_qc_reference` may have observed a different valid QC for
+        // this coordinate first.  Always return the frozen entry, never the
+        // newly rebuilt candidate.
+        Ok(self.formed_qcs.get(&coordinate).cloned())
+    }
+
+    /// Returns the first verified QC for one semantic coordinate, if any.
+    pub fn canonical_quorum_certificate(
+        &self,
+        view: View,
+        height: Height,
+        block_id: BlockId,
+    ) -> Option<&QuorumCertificate> {
+        self.formed_qcs
+            .get(&(view, height, block_id))
+            .filter(|certificate| {
+                view >= self.minimum_retained_view
+                    || self.qc_references.contains_key(&certificate.id())
+            })
     }
 
     pub fn register_qc_reference(
@@ -340,23 +429,76 @@ impl ConsensusCertificateCollectorV0 {
     ) -> Result<CollectorAdmissionV0, ConsensusIngressErrorV0> {
         verify_qc_reference(&reference, &self.validator_set)?;
         let id = reference.id();
+        if let Some(existing) = self.qc_references.get(&id) {
+            if existing != &reference {
+                return Err(ConsensusIngressErrorV0::ConflictingQcReference(id));
+            }
+            // An exact replay is inert.  If a retained reference lost its
+            // auxiliary canonical entry due to an interrupted prune, restore
+            // that entry only when capacity still permits it.
+            if let QcReferenceV0::Ordinary(certificate) = &reference {
+                let coordinate = (
+                    certificate.view(),
+                    certificate.height(),
+                    certificate.block_id(),
+                );
+                if !self.formed_qcs.contains_key(&coordinate) {
+                    if self.formed_qcs.len() >= self.max_pending_coordinates {
+                        return Err(ConsensusIngressErrorV0::Capacity);
+                    }
+                    self.formed_qcs.insert(coordinate, (**certificate).clone());
+                }
+            }
+            return Ok(CollectorAdmissionV0::ExactReplay);
+        }
+        let mut canonical_candidate = match &reference {
+            QcReferenceV0::Ordinary(certificate) => Some((
+                (
+                    certificate.view(),
+                    certificate.height(),
+                    certificate.block_id(),
+                ),
+                (**certificate).clone(),
+            )),
+            QcReferenceV0::Synthetic(_) => None,
+        };
+        if let Some(((view, height, block_id), certificate)) = &canonical_candidate {
+            let exact_retained = self
+                .qc_references
+                .get(&certificate.id())
+                .is_some_and(|existing| existing.as_ordinary() == Some(certificate));
+            if *view < self.minimum_retained_view && !exact_retained {
+                return Err(ConsensusIngressErrorV0::StaleView);
+            }
+            if let Some(existing) = self.formed_qcs.get(&(*view, *height, *block_id)) {
+                if existing.id() != certificate.id() {
+                    // Same-coordinate QC variants are valid consensus
+                    // evidence.  Keep the exact reference for decoding and
+                    // audit, but do not let it replace the already frozen
+                    // authority value or enter the canonical route.
+                    canonical_candidate = None;
+                }
+            }
+        }
+        if let Some(((view, height, block_id), _)) = &canonical_candidate {
+            if !self.formed_qcs.contains_key(&(*view, *height, *block_id))
+                && self.formed_qcs.len() >= self.max_pending_coordinates
+            {
+                return Err(ConsensusIngressErrorV0::Capacity);
+            }
+        }
         let reference_bound = self
             .max_pending_coordinates
             .checked_add(1)
             .ok_or(ConsensusIngressErrorV0::Capacity)?;
-        if !self.qc_references.contains_key(&id) && self.qc_references.len() == reference_bound {
+        if self.qc_references.len() >= reference_bound {
             return Err(ConsensusIngressErrorV0::Capacity);
         }
-        match self.qc_references.entry(id) {
-            Entry::Occupied(entry) if entry.get() == &reference => {
-                Ok(CollectorAdmissionV0::ExactReplay)
-            }
-            Entry::Occupied(_) => Err(ConsensusIngressErrorV0::ConflictingQcReference(id)),
-            Entry::Vacant(entry) => {
-                entry.insert(reference);
-                Ok(CollectorAdmissionV0::Inserted)
-            }
+        self.qc_references.insert(id, reference);
+        if let Some((coordinate, certificate)) = canonical_candidate {
+            self.formed_qcs.entry(coordinate).or_insert(certificate);
         }
+        Ok(CollectorAdmissionV0::Inserted)
     }
 
     pub fn admit_timeout_vote(
@@ -368,6 +510,19 @@ impl ConsensusCertificateCollectorV0 {
         }
         vote.verify(&self.validator_set, &StrictEd25519Verifier)
             .map_err(invalid_certificate)?;
+        if let Some(reference) = self.qc_references.get(&vote.high_qc().qc_digest()) {
+            if reference.qc_ref() != vote.high_qc() {
+                return Err(ConsensusIngressErrorV0::ConflictingQcReference(
+                    vote.high_qc().qc_digest(),
+                ));
+            }
+            // A timeout vote may use an old high-QC only when that exact
+            // reference is still retained across the watermark.  Same-view
+            // alternate signer subsets remain valid protocol evidence and are
+            // intentionally not rejected here; Core applies its own
+            // coordinate/digest ordering rules.
+            self.ensure_canonical_qc_reference(reference)?;
+        }
         let author_coordinate = (vote.view(), vote.author());
         let mut inserted_choice = false;
         match self.timeout_choices.entry(author_coordinate) {
@@ -381,7 +536,7 @@ impl ConsensusCertificateCollectorV0 {
             Entry::Occupied(_) => {}
         }
         if !self.timeouts.contains_key(&vote.view())
-            && self.timeouts.len() == self.max_pending_coordinates
+            && self.timeouts.len() >= self.max_pending_coordinates
         {
             if inserted_choice {
                 self.timeout_choices.remove(&author_coordinate);
@@ -404,11 +559,14 @@ impl ConsensusCertificateCollectorV0 {
     }
 
     pub fn try_timeout_certificate(
-        &self,
+        &mut self,
         timed_out_view: View,
     ) -> Result<Option<TimeoutCertificateV0>, ConsensusIngressErrorV0> {
         if timed_out_view < self.minimum_retained_view {
             return Err(ConsensusIngressErrorV0::StaleView);
+        }
+        if let Some(certificate) = self.formed_tcs.get(&timed_out_view) {
+            return Ok(Some(certificate.clone()));
         }
         let Some(votes) = self.timeouts.get(&timed_out_view) else {
             return Ok(None);
@@ -431,6 +589,7 @@ impl ConsensusCertificateCollectorV0 {
                     high_qc.qc_digest(),
                 ));
             }
+            self.ensure_canonical_qc_reference(reference)?;
             referenced.insert(reference.id(), reference.clone());
             maximum = match maximum {
                 Some(current)
@@ -460,7 +619,116 @@ impl ConsensusCertificateCollectorV0 {
         certificate
             .verify(&self.validator_set, None, &StrictEd25519Verifier)
             .map_err(invalid_certificate)?;
-        Ok(Some(certificate))
+        if self.formed_tcs.len() >= self.max_pending_coordinates {
+            return Err(ConsensusIngressErrorV0::Capacity);
+        }
+        self.formed_tcs.insert(timed_out_view, certificate);
+        Ok(self.formed_tcs.get(&timed_out_view).cloned())
+    }
+
+    /// Returns the first verified TC for one timed-out view, if any.
+    pub fn canonical_timeout_certificate(
+        &self,
+        timed_out_view: View,
+    ) -> Option<&TimeoutCertificateV0> {
+        self.formed_tcs
+            .get(&timed_out_view)
+            .filter(|_| timed_out_view >= self.minimum_retained_view)
+    }
+
+    /// Registers a complete remote TC and freezes the first verified bytes for
+    /// its timed-out view.  Later valid variants remain available through the
+    /// ordinary QC-reference map for strict decoding, but are not routed as a
+    /// second authority event.
+    pub fn register_timeout_certificate(
+        &mut self,
+        certificate: TimeoutCertificateV0,
+    ) -> Result<TimeoutCertificateV0, ConsensusIngressErrorV0> {
+        // Exact replay and a previously frozen conflicting view are handled
+        // before clone-on-write.  This keeps a replay storm from repeatedly
+        // copying the bounded collector maps.
+        let timed_out_view = certificate.timed_out_view();
+        if timed_out_view < self.minimum_retained_view {
+            return Err(ConsensusIngressErrorV0::StaleView);
+        }
+        if self
+            .formed_tcs
+            .get(&timed_out_view)
+            .is_some_and(|existing| existing == &certificate)
+        {
+            return Ok(self
+                .formed_tcs
+                .get(&timed_out_view)
+                .expect("checked frozen timeout certificate")
+                .clone());
+        }
+        let mut staged = self.clone();
+        let canonical = staged.register_timeout_certificate_inner(certificate)?;
+        *self = staged;
+        Ok(canonical)
+    }
+
+    fn register_timeout_certificate_inner(
+        &mut self,
+        certificate: TimeoutCertificateV0,
+    ) -> Result<TimeoutCertificateV0, ConsensusIngressErrorV0> {
+        let timed_out_view = certificate.timed_out_view();
+        if timed_out_view < self.minimum_retained_view {
+            return Err(ConsensusIngressErrorV0::StaleView);
+        }
+        let had_frozen_tc = self.formed_tcs.contains_key(&timed_out_view);
+        certificate
+            .verify(&self.validator_set, None, &StrictEd25519Verifier)
+            .map_err(invalid_certificate)?;
+        // A signer-subset/digest alternate for the same logical target is
+        // harmless and is routed through the first frozen bytes.  A
+        // certificate that changes the timeout context or any referenced-QC
+        // target is a safety conflict, even when its signatures are valid.
+        // Check this before mutating the staged reference maps so the
+        // clone-on-write admission remains fail-closed and atomic.
+        if let Some(existing) = self.formed_tcs.get(&timed_out_view) {
+            if !timeout_certificates_same_semantic_target_v0(existing, &certificate)? {
+                return Err(ConsensusIngressErrorV0::ConflictingTimeoutCoordinate(
+                    timed_out_view,
+                ));
+            }
+        }
+        for reference in certificate.referenced_qcs() {
+            self.ensure_canonical_qc_reference(reference)?;
+            self.register_qc_reference(reference.clone())?;
+        }
+        if !had_frozen_tc && self.formed_tcs.len() >= self.max_pending_coordinates {
+            return Err(ConsensusIngressErrorV0::Capacity);
+        }
+        if !had_frozen_tc {
+            self.formed_tcs.insert(timed_out_view, certificate.clone());
+        }
+        // A remote alternate can still be a valid certificate for the same
+        // timed-out view.  It is retained only through its exact QC
+        // references for audit/decoding; the route must carry the first
+        // verified bytes that were frozen for this semantic coordinate.
+        Ok(self
+            .formed_tcs
+            .get(&timed_out_view)
+            .expect("timeout certificate is frozen after admission")
+            .clone())
+    }
+
+    fn ensure_canonical_qc_reference(
+        &self,
+        reference: &QcReferenceV0,
+    ) -> Result<(), ConsensusIngressErrorV0> {
+        let QcReferenceV0::Ordinary(certificate) = reference else {
+            return Ok(());
+        };
+        let exact_retained = self
+            .qc_references
+            .get(&certificate.id())
+            .is_some_and(|existing| existing.as_ordinary() == Some(certificate));
+        if certificate.view() < self.minimum_retained_view && !exact_retained {
+            return Err(ConsensusIngressErrorV0::StaleView);
+        }
+        Ok(())
     }
 }
 
@@ -481,6 +749,68 @@ pub fn required_pending_coordinate_capacity_v0(
         .and_then(|per_view| per_view.checked_mul(retained_views))
         .filter(|capacity| *capacity <= MAX_PENDING_COORDINATES_V0)
         .ok_or(ConsensusIngressErrorV0::Capacity)
+}
+
+fn timeout_qc_target_v0(reference: &QcReferenceV0) -> TimeoutQcTargetV0 {
+    let summary = reference.qc_ref();
+    (
+        reference.as_synthetic().is_some(),
+        summary.epoch().get(),
+        summary.view().get(),
+        summary.height().get(),
+        *summary.block_id().as_bytes(),
+        *summary.validator_set_id().as_bytes(),
+    )
+}
+
+fn timeout_qc_targets_v0(certificate: &TimeoutCertificateV0) -> Vec<TimeoutQcTargetV0> {
+    let mut targets = certificate
+        .referenced_qcs()
+        .iter()
+        .map(timeout_qc_target_v0)
+        .collect::<Vec<_>>();
+    targets.sort_unstable();
+    targets
+}
+
+fn selected_timeout_qc_target_v0(
+    certificate: &TimeoutCertificateV0,
+) -> Result<TimeoutQcTargetV0, ConsensusIngressErrorV0> {
+    let selected_id = certificate.selected_high_qc_digest();
+    let selected = certificate
+        .referenced_qcs()
+        .iter()
+        .find(|reference| reference.id() == selected_id)
+        .ok_or_else(|| {
+            ConsensusIngressErrorV0::InvalidCertificate(
+                "timeout certificate selected high-QC digest is absent from referenced QCs"
+                    .to_owned(),
+            )
+        })?;
+    Ok(timeout_qc_target_v0(selected))
+}
+
+/// Compares authenticated TCs while ignoring only signer-subset/digest
+/// variation.  A different context, referenced-QC target, or selected target
+/// must fail closed at the collector boundary.
+fn timeout_certificates_same_semantic_target_v0(
+    accepted: &TimeoutCertificateV0,
+    candidate: &TimeoutCertificateV0,
+) -> Result<bool, ConsensusIngressErrorV0> {
+    if accepted.genesis_hash() != candidate.genesis_hash()
+        || accepted.chain_id() != candidate.chain_id()
+        || accepted.protocol_version() != candidate.protocol_version()
+        || accepted.epoch() != candidate.epoch()
+        || accepted.validator_set_hash() != candidate.validator_set_hash()
+        || accepted.timed_out_view() != candidate.timed_out_view()
+    {
+        return Ok(false);
+    }
+    Ok(
+        timeout_qc_targets_v0(accepted) == timeout_qc_targets_v0(candidate)
+            && selected_timeout_qc_target_v0(accepted)?
+                == selected_timeout_qc_target_v0(candidate)?,
+    )
 }
 
 fn signed_power(
@@ -699,6 +1029,69 @@ mod tests {
     }
 
     #[test]
+    fn quorum_certificate_is_frozen_at_first_verified_coordinate() {
+        let (keys, set) = fixture();
+        let block = BlockId::new([0xb3; 32]);
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            collector
+                .admit_vote(vote(&keys, &set, index, 4, 2, block))
+                .unwrap();
+        }
+        let first = collector
+            .try_quorum_certificate(View::new(4), Height::new(2), block)
+            .unwrap()
+            .expect("first quorum certificate");
+        assert_eq!(first.votes().len(), 4);
+
+        // A later vote would previously rebuild a larger, byte-different QC
+        // for the same semantic coordinate.  The first verified certificate
+        // remains the canonical replay/archive value.
+        collector
+            .admit_vote(vote(&keys, &set, 4, 4, 2, block))
+            .unwrap();
+        let retry = collector
+            .try_quorum_certificate(View::new(4), Height::new(2), block)
+            .unwrap()
+            .expect("frozen quorum certificate retry");
+        assert_eq!(retry, first);
+        assert_eq!(
+            collector
+                .canonical_quorum_certificate(View::new(4), Height::new(2), block)
+                .expect("canonical quorum certificate"),
+            &first
+        );
+
+        // A separately received valid alternate is retained as a verified
+        // reference for timeout-vote decoding, but cannot replace the frozen
+        // canonical certificate used by the runtime.
+        let alternate = QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(4),
+            Height::new(2),
+            block,
+            set.id(),
+            (0..5)
+                .map(|index| vote(&keys, &set, index, 4, 2, block))
+                .collect(),
+            &set,
+        )
+        .unwrap();
+        assert_ne!(alternate.id(), first.id());
+        collector
+            .register_qc_reference(QcReferenceV0::ordinary(alternate))
+            .unwrap();
+        assert_eq!(
+            collector
+                .canonical_quorum_certificate(View::new(4), Height::new(2), block)
+                .expect("canonical quorum certificate after alternate"),
+            &first
+        );
+    }
+
+    #[test]
     fn timeout_collection_requires_exact_qc_carrier() {
         let (keys, set) = fixture();
         let block = BlockId::new([0xc3; 32]);
@@ -731,6 +1124,140 @@ mod tests {
         assert_eq!(tc.referenced_qcs().len(), 1);
         assert_eq!(tc.selected_high_qc_digest(), qc.id());
         tc.verify(&set, None, &StrictEd25519Verifier).unwrap();
+    }
+
+    #[test]
+    fn timeout_certificate_is_frozen_at_first_verified_view() {
+        let (keys, set) = fixture();
+        let block = BlockId::new([0xc4; 32]);
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            collector
+                .admit_vote(vote(&keys, &set, index, 5, 3, block))
+                .unwrap();
+        }
+        let qc = collector
+            .try_quorum_certificate(View::new(5), Height::new(3), block)
+            .unwrap()
+            .expect("quorum carrier for timeout votes");
+        let high_qc = QcRef::from(&qc);
+        for index in 0..4 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, high_qc))
+                .unwrap();
+        }
+        let first = collector
+            .try_timeout_certificate(View::new(6))
+            .unwrap()
+            .expect("first timeout certificate");
+        collector
+            .admit_timeout_vote(timeout_vote(&keys, &set, 4, 6, high_qc))
+            .unwrap();
+        let retry = collector
+            .try_timeout_certificate(View::new(6))
+            .unwrap()
+            .expect("frozen timeout certificate retry");
+        assert_eq!(retry, first);
+        assert_eq!(
+            collector
+                .canonical_timeout_certificate(View::new(6))
+                .expect("canonical timeout certificate"),
+            &first
+        );
+    }
+
+    #[test]
+    fn remote_timeout_registration_routes_the_frozen_canonical() {
+        let (keys, set) = fixture();
+        let block = BlockId::new([0xc5; 32]);
+        let mut collector = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            collector
+                .admit_vote(vote(&keys, &set, index, 5, 3, block))
+                .unwrap();
+        }
+        let qc = collector
+            .try_quorum_certificate(View::new(5), Height::new(3), block)
+            .unwrap()
+            .expect("quorum carrier for timeout votes");
+        let high_qc = QcRef::from(&qc);
+        for index in 0..4 {
+            collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, high_qc))
+                .unwrap();
+        }
+        let first = collector
+            .try_timeout_certificate(View::new(6))
+            .unwrap()
+            .expect("first timeout certificate");
+
+        // Build a separately received, valid alternate with a larger signer
+        // set.  It has the same semantic timed-out view but different bytes.
+        let mut remote = ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        remote
+            .register_qc_reference(QcReferenceV0::ordinary(qc.clone()))
+            .unwrap();
+        for index in 0..5 {
+            remote
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, high_qc))
+                .unwrap();
+        }
+        let alternate = remote
+            .try_timeout_certificate(View::new(6))
+            .unwrap()
+            .expect("alternate timeout certificate");
+        assert_ne!(alternate, first);
+
+        let routed = collector.register_timeout_certificate(alternate).unwrap();
+        assert_eq!(routed, first);
+        assert_eq!(
+            collector
+                .canonical_timeout_certificate(View::new(6))
+                .expect("frozen canonical timeout certificate"),
+            &first
+        );
+
+        // A valid TC for the same timed-out view but a different high-QC
+        // target is not an alternate signer subset; it is a conflicting
+        // consensus coordinate and must be rejected atomically.
+        let conflict_block = BlockId::new([0xc6; 32]);
+        let mut conflicting_collector =
+            ConsensusCertificateCollectorV0::new(set.clone(), 8).unwrap();
+        for index in 0..4 {
+            conflicting_collector
+                .admit_vote(vote(&keys, &set, index, 5, 3, conflict_block))
+                .unwrap();
+        }
+        let conflict_qc = conflicting_collector
+            .try_quorum_certificate(View::new(5), Height::new(3), conflict_block)
+            .unwrap()
+            .expect("conflicting quorum carrier");
+        let conflict_high_qc = QcRef::from(&conflict_qc);
+        for index in 0..4 {
+            conflicting_collector
+                .admit_timeout_vote(timeout_vote(&keys, &set, index, 6, conflict_high_qc))
+                .unwrap();
+        }
+        let conflicting_tc = conflicting_collector
+            .try_timeout_certificate(View::new(6))
+            .unwrap()
+            .expect("conflicting timeout certificate");
+        assert!(matches!(
+            collector.register_timeout_certificate(conflicting_tc),
+            Err(ConsensusIngressErrorV0::ConflictingTimeoutCoordinate(view))
+                if view == View::new(6)
+        ));
+        // Clone-on-write admission must leave the conflicting QC out of the
+        // live canonical map as well as preserving the accepted TC.
+        assert!(collector
+            .canonical_quorum_certificate(View::new(5), Height::new(3), conflict_block)
+            .is_none());
+        assert_eq!(
+            collector
+                .canonical_timeout_certificate(View::new(6))
+                .expect("canonical timeout certificate after conflict"),
+            &first
+        );
     }
 
     #[test]

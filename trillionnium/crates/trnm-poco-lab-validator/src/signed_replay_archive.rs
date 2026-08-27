@@ -838,6 +838,17 @@ pub(crate) struct SignedReplayArchiveFactsV1 {
     record_sha256: [u8; 32],
 }
 
+/// Result of checking whether one QC semantic coordinate is already pinned in
+/// the append-only archive.  The archive intentionally permits only one exact
+/// byte representation per `(view, height, block_id)` even though Core can
+/// accept alternate signer-subset certificates as protocol evidence.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum ReplayArchiveQcCoordinateStateV1 {
+    Vacant,
+    Exact,
+    Conflict,
+}
+
 impl SignedReplayArchiveFactsV1 {
     pub(crate) const fn context_sha256_v1(self) -> [u8; 32] {
         self.context_sha256
@@ -1005,6 +1016,65 @@ impl SignedReplayArchiveV1 {
             sequence: self.head.sequence,
             record_sha256: self.head.record_sha256,
         }
+    }
+
+    /// Checks the pinned archive representation for one QC coordinate without
+    /// appending or changing any state.  A conflicting alternate is handled by
+    /// the runtime as an inert evidence replay; it must not reach the append
+    /// path and leave the archive fail-stopped.
+    pub(crate) fn quorum_coordinate_state_v1(
+        &mut self,
+        certificate: &QuorumCertificate,
+    ) -> Result<ReplayArchiveQcCoordinateStateV1> {
+        let payload = encode_quorum_certificate(certificate)
+            .map_err(|error| anyhow!("encode quorum certificate for archive probe: {error}"))?;
+        let coordinate = ReplayArchiveCoordinateV1 {
+            kind: ReplayArchiveEntryKindV1::QuorumCertificate,
+            height: certificate.height().get(),
+            view: certificate.view().get(),
+            block_id: *certificate.block_id().as_bytes(),
+        };
+        let Some(index) = self.index.get(&coordinate).cloned() else {
+            return Ok(ReplayArchiveQcCoordinateStateV1::Vacant);
+        };
+        let existing = self.read_indexed_payload_v1(index)?;
+        Ok(if existing == payload {
+            ReplayArchiveQcCoordinateStateV1::Exact
+        } else {
+            ReplayArchiveQcCoordinateStateV1::Conflict
+        })
+    }
+
+    /// Checks the pinned archive representation for one Proposal coordinate
+    /// without appending or changing any state.  Proposals can carry
+    /// alternate authenticated witnesses (for example, an alternate
+    /// same-coordinate QC/TC witness) while retaining the same block ID.  The
+    /// append-only archive deliberately pins one byte representation; an
+    /// alternate is therefore reported to the runtime as inert evidence
+    /// rather than allowed to fail-stop the archive owner.
+    pub(crate) fn proposal_coordinate_state_v1(
+        &mut self,
+        proposal: &UnboundProposalV0,
+    ) -> Result<ReplayArchiveQcCoordinateStateV1> {
+        let payload = proposal
+            .encode()
+            .map_err(|error| anyhow!("encode Proposal for archive probe: {error}"))?;
+        let header = proposal.block().header();
+        let coordinate = ReplayArchiveCoordinateV1 {
+            kind: ReplayArchiveEntryKindV1::Proposal,
+            height: header.height().get(),
+            view: header.view().get(),
+            block_id: *proposal.block().id().as_bytes(),
+        };
+        let Some(index) = self.index.get(&coordinate).cloned() else {
+            return Ok(ReplayArchiveQcCoordinateStateV1::Vacant);
+        };
+        let existing = self.read_indexed_payload_v1(index)?;
+        Ok(if existing == payload {
+            ReplayArchiveQcCoordinateStateV1::Exact
+        } else {
+            ReplayArchiveQcCoordinateStateV1::Conflict
+        })
     }
 
     pub(crate) fn append_proposal_v1(&mut self, proposal: &UnboundProposalV0) -> Result<()> {
@@ -3968,6 +4038,49 @@ mod tests {
         .unwrap()
     }
 
+    fn qc_variant_for_archive_probe_test_v1(
+        set: &ValidatorSet,
+        keys: &[SigningKey],
+        height: u64,
+        block_id: BlockId,
+        signer_count: usize,
+    ) -> QuorumCertificate {
+        assert!(signer_count >= 3 && signer_count <= keys.len());
+        let view = View::new(height);
+        let height = Height::new(height);
+        let votes = (0..signer_count)
+            .map(|index| {
+                let root = Vote::signing_root_for_set(set, view, height, block_id)
+                    .expect("archive-probe QC signing root");
+                Vote::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    view,
+                    height,
+                    block_id,
+                    set.id(),
+                    set.validators()[index].id(),
+                    SignatureBytes::from_array(keys[index].sign(root.as_bytes()).to_bytes()),
+                    set,
+                )
+                .expect("archive-probe vote shape")
+            })
+            .collect();
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            height,
+            block_id,
+            set.id(),
+            votes,
+            set,
+        )
+        .expect("archive-probe QC shape")
+    }
+
     fn strict_proposal_fixture_v1(
         set: &ValidatorSet,
         keys: &[SigningKey],
@@ -4318,6 +4431,55 @@ mod tests {
         assert_eq!(archive.facts_v1().sequence_v1(), 1);
         assert!(archive.append_statement_v1(statement_v1(b"fork")).is_err());
         assert_eq!(archive.facts_v1().sequence_v1(), 1);
+    }
+
+    #[test]
+    fn coordinate_probe_reports_conflict_without_writing_v1() {
+        let temp = TempDir::new().unwrap();
+        let (set, keys) = qc_fixture_v1();
+        let first =
+            qc_variant_for_archive_probe_test_v1(&set, &keys, 4, BlockId::new([0xa4; 32]), 3);
+        let alternate =
+            qc_variant_for_archive_probe_test_v1(&set, &keys, 4, BlockId::new([0xa4; 32]), 4);
+        assert_ne!(first.id(), alternate.id());
+
+        let mut archive = initialize_for_test_v1(&temp);
+        let entries_path = archive.root.join(ENTRY_FILE_V1);
+        let before_probe_facts = archive.facts_v1();
+        let before_probe_head = archive.head;
+        let before_probe_index_len = archive.index.len();
+        let before_probe_entries_len = archive.entries_len;
+        let before_probe_bytes = fs::read(&entries_path).unwrap();
+        assert_eq!(
+            archive.quorum_coordinate_state_v1(&first).unwrap(),
+            ReplayArchiveQcCoordinateStateV1::Vacant
+        );
+        assert_eq!(archive.facts_v1(), before_probe_facts);
+        assert_eq!(archive.head, before_probe_head);
+        assert_eq!(archive.index.len(), before_probe_index_len);
+        assert_eq!(archive.entries_len, before_probe_entries_len);
+        assert_eq!(fs::read(&entries_path).unwrap(), before_probe_bytes);
+
+        archive.append_quorum_certificate_v1(&first).unwrap();
+        let before_conflict_facts = archive.facts_v1();
+        let before_conflict_head = archive.head;
+        let before_conflict_index_len = archive.index.len();
+        let before_conflict_entries_len = archive.entries_len;
+        let before_conflict_bytes = fs::read(&entries_path).unwrap();
+        assert_eq!(
+            archive.quorum_coordinate_state_v1(&first).unwrap(),
+            ReplayArchiveQcCoordinateStateV1::Exact
+        );
+        assert_eq!(
+            archive.quorum_coordinate_state_v1(&alternate).unwrap(),
+            ReplayArchiveQcCoordinateStateV1::Conflict
+        );
+        assert_eq!(archive.facts_v1(), before_conflict_facts);
+        assert_eq!(archive.head, before_conflict_head);
+        assert_eq!(archive.index.len(), before_conflict_index_len);
+        assert_eq!(archive.entries_len, before_conflict_entries_len);
+        assert_eq!(fs::read(&entries_path).unwrap(), before_conflict_bytes);
+        assert!(!archive.fail_stopped);
     }
 
     #[test]
