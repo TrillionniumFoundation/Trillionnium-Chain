@@ -812,7 +812,7 @@ fn parse_log(
     if bytes.is_empty() {
         return Err(PayloadReplayErrorV1::Truncated);
     }
-    if bytes.len() % RECORD_BYTES_V1 != 0 {
+    if !bytes.len().is_multiple_of(RECORD_BYTES_V1) {
         return Err(PayloadReplayErrorV1::Truncated);
     }
     let count = bytes.len() / RECORD_BYTES_V1;
