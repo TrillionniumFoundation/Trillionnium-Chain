@@ -237,6 +237,11 @@ path = "src/bin/trnm-poco-g1-process-host.rs"
 required-features = ["g1-process-test-support"]
 
 [[bin]]
+name = "trnm-poco-effect-driver-process"
+path = "src/bin/trnm-poco-effect-driver-process.rs"
+required-features = ["g1-process-test-support"]
+
+[[bin]]
 name = "trnm-poco-timeout-signing-kill-helper"
 path = "src/bin/trnm-poco-timeout-signing-kill-helper.rs"
 required-features = ["recovery-process-test-support"]
@@ -262,6 +267,11 @@ required-features = ["external-signer-runtime"]
 [[test]]
 name = "g1_process_host_e2e"
 path = "tests/g1_process_host_e2e.rs"
+required-features = ["g1-process-test-support"]
+
+[[test]]
+name = "effect_driver_process_e2e"
+path = "tests/effect_driver_process_e2e.rs"
 required-features = ["g1-process-test-support"]
 
 [dependencies]

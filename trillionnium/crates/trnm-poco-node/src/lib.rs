@@ -178,6 +178,8 @@ mod deployed_lab_process2_recovery;
 mod deployed_lab_recovery;
 #[cfg(feature = "g1-process-test-support")]
 pub mod effect_driver;
+#[cfg(feature = "g1-process-test-support")]
+pub mod effect_driver_process;
 mod external_node_checkpoint;
 #[cfg(feature = "external-proposal-signer")]
 mod external_proposal_signer_runtime;
@@ -279,6 +281,13 @@ pub use effect_driver::{
     CandidateEffectDriverV1, CANDIDATE_EFFECT_DRIVER_V1, EFFECT_DRIVER_FINALITY_VERIFIED_V1,
     EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1, EFFECT_DRIVER_MAX_INGRESS_V1,
     EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1,
+};
+#[cfg(feature = "g1-process-test-support")]
+pub use effect_driver_process::{
+    run_stdio_v1 as run_effect_driver_process_stdio_v1, EffectDriverProcessErrorV1,
+    EffectDriverProcessSummaryV1, EFFECT_DRIVER_PROCESS_CANDIDATE_V1,
+    EFFECT_DRIVER_PROCESS_MAX_FRAME_BYTES_V1, EFFECT_DRIVER_PROCESS_PRODUCTION_ACTIVATION_V1,
+    EFFECT_DRIVER_PROCESS_QUEUE_CAPACITY_V1,
 };
 pub use external_node_checkpoint::{
     reconcile_development_only_external_node_checkpoint_startup_v0,
