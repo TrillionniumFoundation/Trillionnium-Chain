@@ -4,7 +4,9 @@ use ::core::{
 };
 use alloc::{boxed::Box, collections::BTreeSet, vec, vec::Vec};
 
-use trnm_consensus_safety_rules::InertSafetyTransitionKindV1;
+use trnm_consensus_safety_rules::{
+    InertSafetyTransitionKindV1, SafetyRulesDurableTransitionStoreV1, SafetyRulesStateDigestV1,
+};
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, decode_double_vote_evidence_v0_exact,
     decode_finality_proof_v0_exact_with_trusted_genesis, ApplicationPayloadV0, Block, BlockBodyV0,
@@ -80,6 +82,30 @@ impl SignatureVerifier for RejectSignatures {
         _signature: &SignatureBytes,
     ) -> bool {
         false
+    }
+}
+
+#[derive(Debug, Default)]
+struct CoreAuthorityTransitionStore {
+    transitions: Vec<(SafetyRulesStateDigestV1, SafetyRulesStateDigestV1)>,
+    fail: bool,
+}
+
+impl SafetyRulesDurableTransitionStoreV1 for CoreAuthorityTransitionStore {
+    type Error = &'static str;
+
+    fn persist_transition_v1(
+        &mut self,
+        transition: &trnm_consensus_safety_rules::InertSafetyTransitionV1,
+    ) -> ::core::result::Result<(), Self::Error> {
+        if self.fail {
+            return Err("simulated Core authority persistence failure");
+        }
+        self.transitions.push((
+            transition.predecessor_state_digest(),
+            transition.successor_state().digest(),
+        ));
+        Ok(())
     }
 }
 
@@ -16985,6 +17011,96 @@ fn safety_rules_shadow_timeout_uses_the_exact_complete_high_qc() {
                 CanonicalSignPreimageV0::TimeoutVote(preimage)
                     if preimage.view() == view && preimage.high_qc() == expected_high_qc
             )
+    ));
+}
+
+#[test]
+fn core_safety_rules_authority_owns_timeout_and_fences_legacy_staging() {
+    let (_config, mut core) = configured_core();
+    let epoch = core.safety_state().epoch();
+    let view = core.safety_state().current_view();
+    let mut owner = core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("the live Core issues one SafetyRules owner");
+    assert!(core.safety_rules_authority_issued_v1());
+    assert!(matches!(
+        core.issue_safety_rules_authority_v1(
+            CoreAuthorityTransitionStore::default(),
+            &RootSignatures
+        ),
+        Err(CoreError::Busy(
+            "this Core instance already issued its SafetyRules authority"
+        ))
+    ));
+
+    let commit = owner
+        .authorize_timeout_v1(&core, epoch, view, &RootSignatures)
+        .expect("the owner evaluates and durably records the timeout transition");
+    assert_eq!(
+        commit.transition().kind(),
+        InertSafetyTransitionKindV1::TimeoutVote
+    );
+    let expected_digest = commit.transition().successor_state().digest();
+    let effects = owner
+        .commit_v1(&mut core, commit, &RootSignatures)
+        .expect("the exact persisted timeout transition installs into Core");
+    let (barrier, persisted) = persistence_effect(&effects);
+    assert_eq!(
+        persisted
+            .pending_sign()
+            .expect("timeout intent remains pending until StorageAck")
+            .kind(),
+        SignKind::TimeoutVote
+    );
+    assert_eq!(owner.state_digest(), expected_digest,);
+    assert!(matches!(
+        core.step(Input::LocalTimeout { epoch, view }, &RootSignatures),
+        Err(CoreError::Busy(_))
+    ));
+    let request = core
+        .step(Input::StorageAck { barrier }, &RootSignatures)
+        .expect("Core releases the ordinary signer request after its barrier");
+    assert!(matches!(
+        request.as_slice(),
+        [Effect::RequestSignature { .. }]
+    ));
+}
+
+#[test]
+fn core_safety_rules_authority_poisoning_and_core_affinity_fail_closed() {
+    let (_config, core) = configured_core();
+    let epoch = core.safety_state().epoch();
+    let view = core.safety_state().current_view();
+    let before = core.safety_state().clone();
+    let mut owner = core
+        .issue_safety_rules_authority_v1(
+            CoreAuthorityTransitionStore {
+                fail: true,
+                ..CoreAuthorityTransitionStore::default()
+            },
+            &RootSignatures,
+        )
+        .expect("the owner opens before its store is exercised");
+    assert!(matches!(
+        owner.authorize_timeout_v1(&core, epoch, view, &RootSignatures),
+        Err(CoreSafetyRulesAuthorityErrorV1::Persistence(
+            "simulated Core authority persistence failure"
+        ))
+    ));
+    assert!(owner.is_poisoned());
+    assert_eq!(core.safety_state(), &before);
+    assert!(matches!(
+        owner.authorize_timeout_v1(&core, epoch, view, &RootSignatures),
+        Err(CoreSafetyRulesAuthorityErrorV1::Poisoned)
+    ));
+
+    let (_other_config, other_core) = configured_core();
+    let mut healthy_owner = other_core
+        .issue_safety_rules_authority_v1(CoreAuthorityTransitionStore::default(), &RootSignatures)
+        .expect("a separate Core issues an independent owner");
+    assert!(matches!(
+        healthy_owner.authorize_timeout_v1(&core, epoch, view, &RootSignatures),
+        Err(CoreSafetyRulesAuthorityErrorV1::OwnerMismatch)
     ));
 }
 

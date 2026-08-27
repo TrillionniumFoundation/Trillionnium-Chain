@@ -13,9 +13,9 @@ use core::{
 use sha2::{Digest, Sha256};
 use trnm_consensus_safety_rules::{
     FinalizedBlockRefV1, InertSafetyTransitionKindV1, InertSafetyTransitionV1,
-    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesFinalityPermitV1,
-    SafetyRulesFinalityPredecessorV1, SafetyRulesStateDigestV1, SafetyRulesStateSeedV1,
-    SafetyRulesStateV1,
+    PureHotStuffSafetyKernelV1, SafetyRulesContextV1, SafetyRulesDurableTransitionStoreV1,
+    SafetyRulesFinalityPermitV1, SafetyRulesFinalityPredecessorV1, SafetyRulesStateDigestV1,
+    SafetyRulesStateSeedV1, SafetyRulesStateV1,
 };
 use trnm_consensus_types::{
     validate_root_bound_regular_body_v0, Block, BlockHeader, BlockId, BlockKind,
@@ -192,6 +192,46 @@ impl PartialEq for CorePersistenceAffinityV0 {
 }
 
 impl Eq for CorePersistenceAffinityV0 {}
+
+/// Process-local issuance gate for the optional Core-owned SafetyRules
+/// authority.  A public Core clone receives a fresh gate; the transactional
+/// clone used by `step` preserves the live gate so an authority cannot be
+/// duplicated by a failed or speculative transition.
+#[derive(Debug)]
+struct CoreSafetyRulesAuthorityAffinityV1 {
+    affinity: Arc<()>,
+    authority_issued: Arc<AtomicBool>,
+}
+
+impl CoreSafetyRulesAuthorityAffinityV1 {
+    fn new() -> Self {
+        Self {
+            affinity: Arc::new(()),
+            authority_issued: Arc::new(AtomicBool::new(false)),
+        }
+    }
+
+    fn preserve(&self) -> Self {
+        Self {
+            affinity: Arc::clone(&self.affinity),
+            authority_issued: Arc::clone(&self.authority_issued),
+        }
+    }
+}
+
+impl Clone for CoreSafetyRulesAuthorityAffinityV1 {
+    fn clone(&self) -> Self {
+        Self::new()
+    }
+}
+
+impl PartialEq for CoreSafetyRulesAuthorityAffinityV1 {
+    fn eq(&self, _other: &Self) -> bool {
+        true
+    }
+}
+
+impl Eq for CoreSafetyRulesAuthorityAffinityV1 {}
 
 /// Process-local identity for one live Core's admission boundary.
 ///
@@ -5039,6 +5079,353 @@ struct RecoveredNativeFinalizationAppliedFenceV0 {
     affinity: Arc<()>,
 }
 
+/// Errors returned by the optional Core-owned SafetyRules authority.
+///
+/// The authority is a host-composition seam: it is deliberately separate
+/// from `Core::step`, and production activation remains disabled.  Once a
+/// durable transition has been handed to the store, any inability to install
+/// the same successor into Core poisons the owner rather than retrying from an
+/// ambiguous state.
+#[derive(Debug)]
+pub enum CoreSafetyRulesAuthorityErrorV1<E> {
+    Core(CoreError),
+    Persistence(E),
+    OwnerMismatch,
+    StaleCore,
+    Poisoned,
+}
+
+type CoreSafetyRulesAuthorityResultV1<T, E> =
+    core::result::Result<T, CoreSafetyRulesAuthorityErrorV1<E>>;
+
+impl<E> From<CoreError> for CoreSafetyRulesAuthorityErrorV1<E> {
+    fn from(value: CoreError) -> Self {
+        Self::Core(value)
+    }
+}
+
+impl<E> core::fmt::Display for CoreSafetyRulesAuthorityErrorV1<E> {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Core(error) => write!(formatter, "Core SafetyRules authority: {error}"),
+            Self::Persistence(_) => {
+                formatter.write_str("Core SafetyRules authority persistence failed")
+            }
+            Self::OwnerMismatch => {
+                formatter.write_str("Core SafetyRules authority belongs to another owner")
+            }
+            Self::StaleCore => {
+                formatter.write_str("Core SafetyRules authority observed a stale Core state")
+            }
+            Self::Poisoned => formatter.write_str("Core SafetyRules authority is poisoned"),
+        }
+    }
+}
+
+/// A non-cloneable, one-shot commit returned after a Core-owned SafetyRules
+/// transition has crossed the durable transition-store boundary.
+///
+/// Keeping the exact transition and legacy intent together prevents a caller
+/// from committing a valid transition while substituting a different signer
+/// intent.  The token can only be consumed by the owner which created it and
+/// by the same live Core process affinity.
+#[derive(Debug)]
+pub struct CoreSafetyRulesAuthorityCommitV1 {
+    transition: InertSafetyTransitionV1,
+    legacy_intent: SignIntent,
+    core_affinity: Arc<()>,
+    owner_affinity: Arc<()>,
+}
+
+impl CoreSafetyRulesAuthorityCommitV1 {
+    pub const fn transition(&self) -> &InertSafetyTransitionV1 {
+        &self.transition
+    }
+
+    pub const fn intent(&self) -> &SignIntent {
+        &self.legacy_intent
+    }
+}
+
+/// One Core-owned authority for both Vote and Timeout transitions.
+///
+/// The owner is intentionally not `Clone`.  It performs the pure SafetyRules
+/// evaluation against the exact Core state, persists the complete transition
+/// through the supplied durable store, and only then hands a linear commit
+/// token back to Core.  This closes the missing ownership seam without
+/// changing the inert runtime/production flags or the legacy `Core::step`
+/// surface.
+#[derive(Debug)]
+pub struct CoreSafetyRulesAuthorityV1<S> {
+    store: S,
+    core_affinity: Arc<()>,
+    owner_affinity: Arc<()>,
+    state_digest: SafetyRulesStateDigestV1,
+    pending_successor: Option<SafetyRulesStateDigestV1>,
+    poisoned: bool,
+}
+
+impl<S> CoreSafetyRulesAuthorityV1<S>
+where
+    S: SafetyRulesDurableTransitionStoreV1,
+{
+    fn new(store: S, core_affinity: Arc<()>, state_digest: SafetyRulesStateDigestV1) -> Self {
+        Self {
+            store,
+            core_affinity,
+            owner_affinity: Arc::new(()),
+            state_digest,
+            pending_successor: None,
+            poisoned: false,
+        }
+    }
+
+    pub const fn is_poisoned(&self) -> bool {
+        self.poisoned
+    }
+
+    pub const fn state_digest(&self) -> SafetyRulesStateDigestV1 {
+        self.state_digest
+    }
+
+    fn ensure_live(&self) -> CoreSafetyRulesAuthorityResultV1<(), S::Error> {
+        if self.poisoned {
+            Err(CoreSafetyRulesAuthorityErrorV1::Poisoned)
+        } else {
+            Ok(())
+        }
+    }
+
+    fn poison<T>(
+        &mut self,
+        error: CoreSafetyRulesAuthorityErrorV1<S::Error>,
+    ) -> CoreSafetyRulesAuthorityResultV1<T, S::Error> {
+        self.poisoned = true;
+        Err(error)
+    }
+
+    fn persist_transition_v1(
+        &mut self,
+        transition: InertSafetyTransitionV1,
+        legacy_intent: SignIntent,
+    ) -> CoreSafetyRulesAuthorityResultV1<CoreSafetyRulesAuthorityCommitV1, S::Error> {
+        self.ensure_live()?;
+        if transition.predecessor_state_digest() != self.state_digest
+            || transition.successor_state().revision()
+                != legacy_intent.authorizing_safety_revision()
+        {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::StaleCore);
+        }
+        if self.pending_successor.is_some() {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(CoreError::Busy(
+                "Core SafetyRules authority already has a persisted transition awaiting Core commit",
+            )));
+        }
+        if let Err(error) = self.store.persist_transition_v1(&transition) {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::Persistence(error));
+        }
+        self.pending_successor = Some(transition.successor_state().digest());
+        Ok(CoreSafetyRulesAuthorityCommitV1 {
+            transition,
+            legacy_intent,
+            core_affinity: Arc::clone(&self.core_affinity),
+            owner_affinity: Arc::clone(&self.owner_affinity),
+        })
+    }
+
+    /// Rebinds the owner after an unrelated, non-signing Core persistence
+    /// transition.  The caller must present the same live Core and an idle
+    /// signing boundary; no external store write occurs.
+    pub fn rebind_after_core_persistence_v1<V: SignatureVerifier>(
+        &mut self,
+        core: &Core,
+        verifier: &V,
+    ) -> CoreSafetyRulesAuthorityResultV1<(), S::Error> {
+        self.ensure_live()?;
+        if !Arc::ptr_eq(&self.core_affinity, &core.persistence_affinity.0)
+            || !core
+                .safety_rules_authority_affinity
+                .authority_issued
+                .load(Ordering::Acquire)
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::OwnerMismatch);
+        }
+        if core.pending_persistence.is_some()
+            || core.safety.pending_sign().is_some()
+            || core.awaiting_signature
+            || self.pending_successor.is_some()
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(CoreError::Busy(
+                "cannot rebind Core SafetyRules authority while a durable/signing outbox is active",
+            )));
+        }
+        let context = core.safety_rules_shadow_context_v1()?;
+        let state = core.safety_rules_shadow_state_v1(&context, verifier)?;
+        self.state_digest = state.digest();
+        Ok(())
+    }
+
+    /// Evaluates and durably records the next Vote transition for `core`.
+    /// Core is not mutated until the returned commit is consumed.
+    pub fn authorize_vote_v1<V: SignatureVerifier>(
+        &mut self,
+        core: &Core,
+        proposal: &SignedProposalV0,
+        verifier: &V,
+    ) -> CoreSafetyRulesAuthorityResultV1<CoreSafetyRulesAuthorityCommitV1, S::Error> {
+        self.ensure_live()?;
+        self.check_core_with_verifier_v1(core, verifier)?;
+        if core.pending_persistence.is_some()
+            || core.safety.pending_sign().is_some()
+            || core.awaiting_signature
+            || core.replay_required
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(CoreError::Busy(
+                "Core SafetyRules authority requires an idle Core signing boundary",
+            )));
+        }
+        let header = proposal.block().header();
+        let root = Vote::signing_root_for_set(
+            core.config.validator_set(),
+            header.view(),
+            header.height(),
+            proposal.block().id(),
+        )
+        .map_err(CoreError::from)?;
+        let revision = core
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
+        let intent = SignIntent::Vote {
+            authorizing_safety_revision: revision,
+            view: header.view(),
+            height: header.height(),
+            block_id: proposal.block().id(),
+            signing_root: root,
+        };
+        let transition = core.verify_vote_safety_shadow_v1(proposal, &intent, verifier)?;
+        self.persist_transition_v1(transition, intent)
+    }
+
+    /// Evaluates and durably records the next Timeout transition for `core`.
+    /// Core is not mutated until the returned commit is consumed.
+    pub fn authorize_timeout_v1<V: SignatureVerifier>(
+        &mut self,
+        core: &Core,
+        epoch: Epoch,
+        view: View,
+        verifier: &V,
+    ) -> CoreSafetyRulesAuthorityResultV1<CoreSafetyRulesAuthorityCommitV1, S::Error> {
+        self.ensure_live()?;
+        self.check_core_with_verifier_v1(core, verifier)?;
+        core.require_epoch(epoch)?;
+        if view != core.safety.current_view() {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(
+                CoreError::WrongView {
+                    expected: core.safety.current_view(),
+                    received: view,
+                },
+            ));
+        }
+        if core
+            .safety
+            .last_timeout_view()
+            .is_some_and(|last| last >= view)
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(CoreError::StaleInput));
+        }
+        if core.pending_persistence.is_some()
+            || core.safety.pending_sign().is_some()
+            || core.awaiting_signature
+            || core.replay_required
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::Core(CoreError::Busy(
+                "Core SafetyRules authority requires an idle Core signing boundary",
+            )));
+        }
+        let high_qc = core.safety.high_qc().qc_ref();
+        let root = TimeoutVote::signing_root_for_set(core.config.validator_set(), view, high_qc)
+            .map_err(CoreError::from)?;
+        let revision = core
+            .safety
+            .revision()
+            .checked_add(1)
+            .ok_or(CoreError::ArithmeticOverflow("safety-state revision"))?;
+        let intent = SignIntent::TimeoutVote {
+            authorizing_safety_revision: revision,
+            view,
+            high_qc,
+            signing_root: root,
+        };
+        let transition = core.verify_timeout_safety_shadow_v1(&intent, verifier)?;
+        self.persist_transition_v1(transition, intent)
+    }
+
+    /// Installs a previously persisted transition into the same Core and
+    /// creates its ordinary SafetyStore persistence effect.  A failure after
+    /// the external store accepted the transition poisons this owner.
+    pub fn commit_v1<V: SignatureVerifier>(
+        &mut self,
+        core: &mut Core,
+        commit: CoreSafetyRulesAuthorityCommitV1,
+        verifier: &V,
+    ) -> CoreSafetyRulesAuthorityResultV1<Vec<Effect>, S::Error> {
+        self.ensure_live()?;
+        if !Arc::ptr_eq(&commit.owner_affinity, &self.owner_affinity)
+            || !Arc::ptr_eq(&commit.core_affinity, &core.persistence_affinity.0)
+        {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::OwnerMismatch);
+        }
+        if commit.transition.predecessor_state_digest() != self.state_digest {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::StaleCore);
+        }
+        if self.pending_successor != Some(commit.transition.successor_state().digest()) {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::StaleCore);
+        }
+        if let Err(error) = core.install_safety_rules_transition_v1(
+            &commit.transition,
+            &commit.legacy_intent,
+            verifier,
+        ) {
+            return self.poison(CoreSafetyRulesAuthorityErrorV1::Core(error));
+        }
+        let successor_digest = commit.transition.successor_state().digest();
+        match core.persist_with_safety_rules_shadow_transition(
+            vec![DeferredEffect::RequestSignature],
+            Some(commit.transition),
+        ) {
+            Ok(effects) => {
+                self.state_digest = successor_digest;
+                self.pending_successor = None;
+                Ok(effects)
+            }
+            Err(error) => self.poison(CoreSafetyRulesAuthorityErrorV1::Core(error)),
+        }
+    }
+
+    fn check_core_with_verifier_v1<V: SignatureVerifier>(
+        &self,
+        core: &Core,
+        verifier: &V,
+    ) -> CoreSafetyRulesAuthorityResultV1<(), S::Error> {
+        if !Arc::ptr_eq(&self.core_affinity, &core.persistence_affinity.0)
+            || !core
+                .safety_rules_authority_affinity
+                .authority_issued
+                .load(Ordering::Acquire)
+        {
+            return Err(CoreSafetyRulesAuthorityErrorV1::OwnerMismatch);
+        }
+        let context = core.safety_rules_shadow_context_v1()?;
+        let state = core.safety_rules_shadow_state_v1(&context, verifier)?;
+        if state.digest() != self.state_digest {
+            return Err(CoreSafetyRulesAuthorityErrorV1::StaleCore);
+        }
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Core {
     config: CoreConfig,
@@ -5064,6 +5451,7 @@ pub struct Core {
     recovered_validation_pending: Option<RecoveredPayloadValidationFenceV0>,
     recovered_native_finalization_applied: Option<RecoveredNativeFinalizationAppliedFenceV0>,
     persistence_affinity: CorePersistenceAffinityV0,
+    safety_rules_authority_affinity: CoreSafetyRulesAuthorityAffinityV1,
     preauthentication_affinity: CorePreauthenticationAffinityV0,
     application_seal_affinity: CoreApplicationSealAffinityV0,
     application_finalization_affinity: CoreApplicationFinalizationAffinityV0,
@@ -5080,6 +5468,50 @@ impl Core {
             Arc::clone(&self.persistence_affinity.0),
             CorePersistenceSealV0::new(),
         )
+    }
+
+    /// Issues the sole optional Core-owned SafetyRules authority for this
+    /// live Core instance.
+    ///
+    /// The authority is intentionally an explicit host-composition seam.  It
+    /// does not flip any runtime or production flag, and issuing it fences
+    /// the legacy local Vote/Timeout staging paths until the owner is used or
+    /// the Core is discarded.  This prevents two independent owners from
+    /// competing for one Safety revision namespace.
+    pub fn issue_safety_rules_authority_v1<S, V>(
+        &self,
+        store: S,
+        verifier: &V,
+    ) -> Result<CoreSafetyRulesAuthorityV1<S>>
+    where
+        S: SafetyRulesDurableTransitionStoreV1,
+        V: SignatureVerifier,
+    {
+        let context = self.safety_rules_shadow_context_v1()?;
+        let state = self.safety_rules_shadow_state_v1(&context, verifier)?;
+        if self
+            .safety_rules_authority_affinity
+            .authority_issued
+            .compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire)
+            .is_err()
+        {
+            return Err(CoreError::Busy(
+                "this Core instance already issued its SafetyRules authority",
+            ));
+        }
+        Ok(CoreSafetyRulesAuthorityV1::new(
+            store,
+            Arc::clone(&self.persistence_affinity.0),
+            state.digest(),
+        ))
+    }
+
+    /// Reports whether this Core has handed its Vote/Timeout boundary to the
+    /// explicit SafetyRules authority owner.
+    pub fn safety_rules_authority_issued_v1(&self) -> bool {
+        self.safety_rules_authority_affinity
+            .authority_issued
+            .load(Ordering::Acquire)
     }
 
     /// Issues this live Core instance's single application-store seal
@@ -5205,6 +5637,7 @@ impl Core {
     pub(crate) fn transactional_clone_v0(&self) -> Self {
         let mut cloned = self.clone();
         cloned.persistence_affinity = self.persistence_affinity.preserve();
+        cloned.safety_rules_authority_affinity = self.safety_rules_authority_affinity.preserve();
         cloned.preauthentication_affinity = self.preauthentication_affinity.preserve();
         cloned.application_seal_affinity = self.application_seal_affinity.preserve();
         cloned.application_finalization_affinity =
@@ -8636,6 +9069,7 @@ impl Core {
             recovered_validation_pending: None,
             recovered_native_finalization_applied: None,
             persistence_affinity: CorePersistenceAffinityV0::new(),
+            safety_rules_authority_affinity: CoreSafetyRulesAuthorityAffinityV1::new(),
             preauthentication_affinity: CorePreauthenticationAffinityV0::new(),
             application_seal_affinity: CoreApplicationSealAffinityV0::new(),
             application_finalization_affinity: CoreApplicationFinalizationAffinityV0::new(),
@@ -9626,6 +10060,11 @@ impl Core {
         proposal: &SignedProposalV0,
         verifier: &V,
     ) -> Result<Option<InertSafetyTransitionV1>> {
+        if self.safety_rules_authority_issued_v1() {
+            return Err(CoreError::Busy(
+                "Vote staging is owned by the explicit Core SafetyRules authority",
+            ));
+        }
         if self.safety.pending_standalone_qc_sync().is_some() {
             return Ok(None);
         }
@@ -10482,6 +10921,11 @@ impl Core {
         view: View,
         verifier: &V,
     ) -> Result<Vec<Effect>> {
+        if self.safety_rules_authority_issued_v1() {
+            return Err(CoreError::Busy(
+                "Timeout staging is owned by the explicit Core SafetyRules authority",
+            ));
+        }
         self.require_epoch(epoch)?;
         if view != self.safety.current_view() {
             return Err(CoreError::WrongView {
