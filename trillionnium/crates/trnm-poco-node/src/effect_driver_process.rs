@@ -33,6 +33,8 @@ use std::os::unix::{
 };
 
 use ed25519_dalek::{Signer, SigningKey};
+#[cfg(unix)]
+use fs2::FileExt;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
@@ -552,6 +554,176 @@ fn atomic_replace(path: &Path, bytes: &[u8]) -> io::Result<()> {
     Ok(())
 }
 
+/// Validate every already-materialized directory component of a candidate
+/// path before any state is created.  A lexical `Path` check is not enough:
+/// an ancestor symlink (or a world-writable ancestor) can redirect the
+/// process into a namespace which the caller did not intend to own.  Missing
+/// components are returned so the caller can create and tighten only those
+/// components, rather than changing permissions on an existing parent.
+fn validate_directory_ancestry_v1(
+    path: &Path,
+    label: &'static str,
+    minimum_components: usize,
+    allow_missing: bool,
+) -> Result<Vec<PathBuf>, EffectDriverProcessErrorV1> {
+    if !path.is_absolute()
+        || path == Path::new("/")
+        || path.components().count() < minimum_components
+        || path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+    {
+        return Err(EffectDriverProcessErrorV1::new(
+            "root",
+            format!("{label} requires a narrow absolute path without dot components"),
+        ));
+    }
+
+    let mut current = PathBuf::from("/");
+    let mut missing = Vec::new();
+    #[cfg(unix)]
+    let mut trusted_owner: Option<u32> = None;
+
+    for component in path.components() {
+        let Component::Normal(part) = component else {
+            if matches!(component, Component::RootDir) {
+                continue;
+            }
+            return Err(EffectDriverProcessErrorV1::new(
+                "root",
+                format!("{label} contains a non-normal path component"),
+            ));
+        };
+        current.push(part);
+
+        // Once a component is missing, all following components are also
+        // missing by definition.  They are checked with O_NOFOLLOW after
+        // creation below.
+        if !missing.is_empty() {
+            missing.push(current.clone());
+            continue;
+        }
+
+        match fs::symlink_metadata(&current) {
+            Ok(metadata) => {
+                if metadata.file_type().is_symlink() || !metadata.is_dir() {
+                    return Err(EffectDriverProcessErrorV1::new(
+                        "root",
+                        format!(
+                            "{label} component {} is a symlink or not a directory",
+                            current.display()
+                        ),
+                    ));
+                }
+                #[cfg(unix)]
+                validate_directory_ancestor_metadata_v1(&current, &metadata, &mut trusted_owner)?;
+            }
+            Err(error) if error.kind() == io::ErrorKind::NotFound && allow_missing => {
+                missing.push(current.clone());
+            }
+            Err(error) => {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "root",
+                    format!("{label} component {}: {error:?}", current.display()),
+                ));
+            }
+        }
+    }
+
+    // Canonicalizing the last existing prefix catches a symlink alias even
+    // when the final run-root component itself has not been created yet.
+    let existing_prefix = missing
+        .first()
+        .and_then(|value| value.parent())
+        .unwrap_or(path);
+    let canonical_prefix = fs::canonicalize(existing_prefix).map_err(|error| {
+        EffectDriverProcessErrorV1::new(
+            "root",
+            format!(
+                "{label} canonical prefix {}: {error:?}",
+                existing_prefix.display()
+            ),
+        )
+    })?;
+    if canonical_prefix != existing_prefix {
+        return Err(EffectDriverProcessErrorV1::new(
+            "root",
+            format!("{label} contains a symlink alias"),
+        ));
+    }
+    Ok(missing)
+}
+
+#[cfg(unix)]
+fn validate_directory_ancestor_metadata_v1(
+    path: &Path,
+    metadata: &fs::Metadata,
+    trusted_owner: &mut Option<u32>,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    let mode = metadata.permissions().mode() & 0o7777;
+    let owner = metadata.uid();
+    // A root-owned sticky directory (for example /tmp) is the one deliberate
+    // exception to the no-write rule: the sticky bit prevents an unprivileged
+    // peer from replacing another owner's child.  Group-write is tolerated
+    // for a same-owner deployment whose final run root is 0700 (the enclosing
+    // private root prevents group traversal); world-write remains rejected.
+    if mode & 0o002 != 0 && !(owner == 0 && mode & 0o1000 != 0) {
+        return Err(EffectDriverProcessErrorV1::new(
+            "root",
+            format!(
+                "directory ancestor {} is world writable (mode {mode:o})",
+                path.display()
+            ),
+        ));
+    }
+    // System-owned components are accepted only when they are not writable;
+    // all non-root components in the chain must belong to one uid.  This
+    // rejects a path which crosses into a different user's writable tree
+    // without requiring a platform-specific getuid syscall.
+    if owner != 0 {
+        if let Some(expected) = *trusted_owner {
+            if expected != owner {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "root",
+                    format!(
+                        "directory ancestor {} changes non-root owner from {expected} to {owner}",
+                        path.display()
+                    ),
+                ));
+            }
+        } else {
+            *trusted_owner = Some(owner);
+        }
+    }
+    Ok(())
+}
+
+fn open_directory_no_follow_v1(path: &Path) -> io::Result<File> {
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_DIRECTORY);
+    options.open(path)
+}
+
+fn tighten_new_directories_v1(missing: &[PathBuf]) -> Result<(), EffectDriverProcessErrorV1> {
+    for path in missing {
+        let directory = open_directory_no_follow_v1(path).map_err(|error| {
+            EffectDriverProcessErrorV1::new(
+                "root",
+                format!("open newly-created directory {}: {error:?}", path.display()),
+            )
+        })?;
+        set_private_root_permissions(&directory).map_err(|error| {
+            EffectDriverProcessErrorV1::new(
+                "root",
+                format!("tighten directory {}: {error:?}", path.display()),
+            )
+        })?;
+    }
+    Ok(())
+}
+
 fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
     if !root.is_absolute() {
         return Err(EffectDriverProcessErrorV1::new(
@@ -565,25 +737,18 @@ fn fresh_root(root: &Path) -> Result<(), EffectDriverProcessErrorV1> {
             "refusing a broad filesystem root",
         ));
     }
-    match fs::symlink_metadata(root) {
-        Ok(metadata) => {
-            if metadata.file_type().is_symlink() || !metadata.is_dir() {
-                return Err(EffectDriverProcessErrorV1::new(
-                    "root",
-                    "candidate run root must be a directory and not a symlink",
-                ));
-            }
-        }
-        Err(error) if error.kind() == io::ErrorKind::NotFound => {}
-        Err(error) => return Err(error.into()),
-    }
+    let missing = validate_directory_ancestry_v1(root, "run root", 3, true)?;
     fs::create_dir_all(root)?;
+    tighten_new_directories_v1(&missing)?;
+    // Re-run the complete ancestry check after creation.  This closes the
+    // common create_dir_all/symlink substitution cut before any artifact is
+    // opened or renamed.
+    validate_directory_ancestry_v1(root, "run root", 3, false)?;
     // Make every candidate run root private explicitly; relying on the
     // process umask is insufficient for consensus/WAL material.  The chmod is
-    // issued on an opened directory descriptor so the final component is not
-    // followed as a symlink.  (Ancestor replacement races still require an
-    // openat/descriptor-anchored owner in a production implementation.)
-    let directory = File::open(root)?;
+    // issued on an opened, O_NOFOLLOW directory descriptor so the final
+    // component is not followed as a symlink.
+    let directory = open_directory_no_follow_v1(root)?;
     set_private_root_permissions(&directory)?;
     let metadata = directory.metadata()?;
     ensure_private_root_metadata(root, &metadata)?;
@@ -655,6 +820,129 @@ fn ensure_private_root_metadata(
         ));
     }
     Ok(())
+}
+
+#[cfg(unix)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct CandidateFsIdentityV1 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+}
+
+#[cfg(unix)]
+impl CandidateFsIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+        }
+    }
+}
+
+/// One advisory lock and descriptor/path identity pin for a candidate run
+/// root.  The lock is intentionally held for the whole process lifetime, so
+/// two cooperating candidate owners cannot append to the same WAL namespace.
+/// Every caller still has to treat an identity mismatch as a poisoned cut:
+/// advisory locks cannot stop a hostile same-uid process from replacing a
+/// pathname after validation.
+#[cfg(unix)]
+#[derive(Debug)]
+struct CandidateRunRootGuardV1 {
+    path: PathBuf,
+    directory: File,
+    identity: CandidateFsIdentityV1,
+}
+
+#[cfg(unix)]
+impl CandidateRunRootGuardV1 {
+    fn acquire(path: &Path) -> Result<Self, EffectDriverProcessErrorV1> {
+        let directory = open_directory_no_follow_v1(path).map_err(|error| {
+            EffectDriverProcessErrorV1::new("root", format!("open run-root descriptor: {error:?}"))
+        })?;
+        let descriptor_metadata = directory.metadata().map_err(|error| {
+            EffectDriverProcessErrorV1::new("root", format!("stat run-root descriptor: {error:?}"))
+        })?;
+        ensure_private_root_metadata(path, &descriptor_metadata)?;
+        let path_metadata = fs::symlink_metadata(path).map_err(|error| {
+            EffectDriverProcessErrorV1::new("root", format!("stat run-root path: {error:?}"))
+        })?;
+        ensure_private_root_metadata(path, &path_metadata)?;
+        let identity = CandidateFsIdentityV1::from_metadata(&descriptor_metadata);
+        if CandidateFsIdentityV1::from_metadata(&path_metadata) != identity {
+            return Err(EffectDriverProcessErrorV1::new(
+                "root",
+                "run-root descriptor/path identity changed before locking",
+            ));
+        }
+        if fs::canonicalize(path).map_err(|error| {
+            EffectDriverProcessErrorV1::new("root", format!("canonicalize run-root: {error:?}"))
+        })? != path
+        {
+            return Err(EffectDriverProcessErrorV1::new(
+                "root",
+                "run-root path is a symlink alias",
+            ));
+        }
+        if let Err(error) = FileExt::try_lock_exclusive(&directory) {
+            let code = if matches!(
+                error.kind(),
+                io::ErrorKind::WouldBlock | io::ErrorKind::PermissionDenied
+            ) {
+                "root_busy"
+            } else {
+                "root_lock"
+            };
+            return Err(EffectDriverProcessErrorV1::new(
+                code,
+                format!("run-root lock: {error:?}"),
+            ));
+        }
+        let guard = Self {
+            path: path.to_path_buf(),
+            directory,
+            identity,
+        };
+        guard.validate_identity()?;
+        Ok(guard)
+    }
+
+    fn validate_identity(&self) -> Result<(), EffectDriverProcessErrorV1> {
+        let descriptor_metadata = self.directory.metadata().map_err(|error| {
+            EffectDriverProcessErrorV1::new(
+                "root",
+                format!("stat held run-root descriptor: {error:?}"),
+            )
+        })?;
+        let path_metadata = fs::symlink_metadata(&self.path).map_err(|error| {
+            EffectDriverProcessErrorV1::new("root", format!("stat held run-root path: {error:?}"))
+        })?;
+        ensure_private_root_metadata(&self.path, &descriptor_metadata)?;
+        ensure_private_root_metadata(&self.path, &path_metadata)?;
+        if CandidateFsIdentityV1::from_metadata(&descriptor_metadata) != self.identity
+            || CandidateFsIdentityV1::from_metadata(&path_metadata) != self.identity
+            || fs::canonicalize(&self.path).map_err(|error| {
+                EffectDriverProcessErrorV1::new(
+                    "root",
+                    format!("canonicalize held run-root: {error:?}"),
+                )
+            })? != self.path
+        {
+            return Err(EffectDriverProcessErrorV1::new(
+                "root",
+                "run-root descriptor/path identity changed",
+            ));
+        }
+        Ok(())
+    }
+}
+
+#[cfg(unix)]
+impl Drop for CandidateRunRootGuardV1 {
+    fn drop(&mut self) {
+        let _ = FileExt::unlock(&self.directory);
+    }
 }
 
 fn set_private_root_permissions(directory: &File) -> io::Result<()> {
@@ -966,6 +1254,8 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
     mut writer: W,
 ) -> Result<EffectDriverProcessSummaryV1, EffectDriverProcessErrorV1> {
     fresh_root(&root)?;
+    #[cfg(unix)]
+    let root_guard = CandidateRunRootGuardV1::acquire(&root)?;
     atomic_replace(
         &root.join(ROOT_MARKER_V1),
         b"v=1\tprocess=candidate-effect-driver\tstate=fresh\n",
@@ -1132,6 +1422,8 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
         }
     }
 
+    #[cfg(unix)]
+    root_guard.validate_identity()?;
     let facts = driver.facts_v1();
     Ok(EffectDriverProcessSummaryV1 {
         generation: facts.generation(),
@@ -1207,17 +1499,30 @@ fn validate_narrow_absolute_path_v1(
 #[cfg(unix)]
 struct CandidateP2pSocketCleanupV1 {
     path: PathBuf,
+    identity: Option<CandidateFsIdentityV1>,
+    // Keep a descriptor clone alive until cleanup runs.  Otherwise the
+    // original inode could be freed after the listener drops and a racing
+    // replacement could (in principle) receive the same inode number.
+    listener: Option<UnixListener>,
     armed: bool,
 }
 
 #[cfg(unix)]
 impl CandidateP2pSocketCleanupV1 {
     fn new(path: PathBuf) -> Self {
-        Self { path, armed: false }
+        Self {
+            path,
+            identity: None,
+            listener: None,
+            armed: false,
+        }
     }
 
-    fn arm(&mut self) {
+    fn arm(&mut self, identity: CandidateFsIdentityV1, listener: &UnixListener) -> io::Result<()> {
+        self.listener = Some(listener.try_clone()?);
+        self.identity = Some(identity);
         self.armed = true;
+        Ok(())
     }
 }
 
@@ -1225,7 +1530,7 @@ impl CandidateP2pSocketCleanupV1 {
 impl Drop for CandidateP2pSocketCleanupV1 {
     fn drop(&mut self) {
         if self.armed {
-            cleanup_candidate_p2p_socket_v1(&self.path);
+            cleanup_candidate_p2p_socket_v1(&self.path, self.identity);
         }
     }
 }
@@ -1287,6 +1592,7 @@ pub fn run_p2p_socket_once_v1(
         lease_generation,
     )?;
     fresh_root(&root)?;
+    let root_guard = CandidateRunRootGuardV1::acquire(&root)?;
     atomic_replace(
         &root.join(ROOT_MARKER_V1),
         b"v=1\tprocess=candidate-p2p-core-ingress\tstate=fresh\n",
@@ -1310,11 +1616,20 @@ pub fn run_p2p_socket_once_v1(
     .map_err(|error| EffectDriverProcessErrorV1::new("p2p", error.to_string()))?;
 
     // Arm cleanup only after a successful bind.  The guard is declared before
-    // the listener so normal unwinding drops the listener first and then
-    // unlinks the socket path.  This also covers accept/read/write failures.
+    // the listener and retains a descriptor clone, so its identity-pinned
+    // unlink runs while the original inode is still held open.  This also
+    // covers accept/read/write failures.
     let mut socket_cleanup = CandidateP2pSocketCleanupV1::new(socket_path.clone());
-    let listener = bind_candidate_p2p_socket_v1(&socket_path)?;
-    socket_cleanup.arm();
+    let (listener, socket_identity) = bind_candidate_p2p_socket_v1(&socket_path)?;
+    if let Err(error) = socket_cleanup.arm(socket_identity, &listener) {
+        // The listener is still alive here, so identity-pinned cleanup cannot
+        // be confused with an inode which a replacement process reclaimed.
+        cleanup_candidate_p2p_socket_v1(&socket_path, Some(socket_identity));
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            format!("pin listener: {error:?}"),
+        ));
+    }
     let result = (|| {
         let mut stream = accept_candidate_p2p_v1(&listener)?;
         stream
@@ -1356,7 +1671,7 @@ pub fn run_p2p_socket_once_v1(
             }
         }
     })();
-    drop(listener);
+    root_guard.validate_identity()?;
     result
 }
 
@@ -1633,16 +1948,14 @@ fn write_p2p_socket_response_v1(
 }
 
 #[cfg(unix)]
-fn bind_candidate_p2p_socket_v1(path: &Path) -> Result<UnixListener, EffectDriverProcessErrorV1> {
-    if !path.is_absolute() || path == Path::new("/") || path.components().count() < 3 {
-        return Err(EffectDriverProcessErrorV1::new(
-            "socket",
-            "candidate socket requires an absolute narrow path",
-        ));
-    }
+fn bind_candidate_p2p_socket_v1(
+    path: &Path,
+) -> Result<(UnixListener, CandidateFsIdentityV1), EffectDriverProcessErrorV1> {
+    validate_narrow_absolute_path_v1(path, "socket")?;
     let parent = path.parent().ok_or_else(|| {
         EffectDriverProcessErrorV1::new("socket", "candidate socket has no parent")
     })?;
+    validate_directory_ancestry_v1(parent, "socket parent", 2, false)?;
     let metadata = fs::symlink_metadata(parent).map_err(|error| {
         EffectDriverProcessErrorV1::new("socket", format!("socket parent: {error:?}"))
     })?;
@@ -1662,25 +1975,73 @@ fn bind_candidate_p2p_socket_v1(path: &Path) -> Result<UnixListener, EffectDrive
     }
     let listener = UnixListener::bind(path)
         .map_err(|error| EffectDriverProcessErrorV1::new("socket", format!("bind: {error:?}")))?;
-    if let Err(error) = fs::set_permissions(path, fs::Permissions::from_mode(0o600)) {
+    let bound_metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            drop(listener);
+            return Err(EffectDriverProcessErrorV1::new(
+                "socket",
+                format!("stat bound socket: {error:?}"),
+            ));
+        }
+    };
+    if !bound_metadata.file_type().is_socket() {
         drop(listener);
-        cleanup_candidate_p2p_socket_v1(path);
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "bind did not produce a Unix socket path",
+        ));
+    }
+    let identity = CandidateFsIdentityV1::from_metadata(&bound_metadata);
+    if let Err(error) = fs::set_permissions(path, fs::Permissions::from_mode(0o600)) {
+        cleanup_candidate_p2p_socket_v1(path, Some(identity));
+        drop(listener);
         return Err(EffectDriverProcessErrorV1::new(
             "socket",
             format!("permissions: {error:?}"),
         ));
     }
-    Ok(listener)
+    let post_metadata = match fs::symlink_metadata(path) {
+        Ok(metadata) => metadata,
+        Err(error) => {
+            cleanup_candidate_p2p_socket_v1(path, Some(identity));
+            drop(listener);
+            return Err(EffectDriverProcessErrorV1::new(
+                "socket",
+                format!("stat socket after permissions: {error:?}"),
+            ));
+        }
+    };
+    if !post_metadata.file_type().is_socket()
+        || CandidateFsIdentityV1::from_metadata(&post_metadata) != identity
+        || post_metadata.permissions().mode() & 0o7777 != 0o600
+    {
+        // Never remove a replacement socket/path: cleanup is pinned to the
+        // device/inode observed immediately after bind.
+        cleanup_candidate_p2p_socket_v1(path, Some(identity));
+        drop(listener);
+        return Err(EffectDriverProcessErrorV1::new(
+            "socket",
+            "socket path identity changed during bind setup",
+        ));
+    }
+    Ok((listener, identity))
 }
 
 #[cfg(unix)]
-fn cleanup_candidate_p2p_socket_v1(path: &Path) {
-    if fs::symlink_metadata(path)
-        .map(|metadata| metadata.file_type().is_socket())
-        .unwrap_or(false)
-    {
-        let _ = fs::remove_file(path);
+fn cleanup_candidate_p2p_socket_v1(path: &Path, expected: Option<CandidateFsIdentityV1>) {
+    let Ok(metadata) = fs::symlink_metadata(path) else {
+        return;
+    };
+    if !metadata.file_type().is_socket() {
+        return;
     }
+    if let Some(expected) = expected {
+        if CandidateFsIdentityV1::from_metadata(&metadata) != expected {
+            return;
+        }
+    }
+    let _ = fs::remove_file(path);
 }
 
 #[cfg(unix)]
@@ -1803,6 +2164,7 @@ mod persistence_security_tests {
     use std::{
         fs,
         os::unix::fs::{symlink, PermissionsExt},
+        os::unix::net::UnixListener,
     };
 
     #[test]
@@ -1867,5 +2229,116 @@ mod persistence_security_tests {
         symlink(&target, &link).expect("symlink target");
         assert!(append_durable(&link, b"must-not-follow\n").is_err());
         assert_eq!(fs::read(&target).expect("outside read"), b"outside\n");
+    }
+
+    #[test]
+    fn fresh_root_rejects_symlink_and_writable_ancestors() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+
+        let real = parent.path().join("real");
+        fs::create_dir(&real).expect("real ancestor");
+        fs::set_permissions(&real, fs::Permissions::from_mode(0o700))
+            .expect("private real ancestor");
+        let alias = parent.path().join("alias");
+        symlink(&real, &alias).expect("ancestor symlink");
+        let symlink_root = alias.join("run");
+        let error = fresh_root(&symlink_root).expect_err("symlink ancestor must fail closed");
+        assert!(error.to_string().contains("symlink"));
+        assert!(!real.join("run").exists());
+
+        let broad = parent.path().join("broad");
+        fs::create_dir(&broad).expect("broad ancestor");
+        fs::set_permissions(&broad, fs::Permissions::from_mode(0o777))
+            .expect("broad ancestor mode");
+        let broad_root = broad.join("run");
+        let error = fresh_root(&broad_root).expect_err("writable ancestor must fail closed");
+        assert!(error.to_string().contains("writable"));
+        assert!(!broad_root.exists());
+    }
+
+    #[test]
+    fn fresh_root_tightens_all_new_directory_components() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private parent");
+        let root = parent.path().join("new").join("nested").join("run");
+        fresh_root(&root).expect("new nested root is accepted");
+        for path in [
+            parent.path().join("new"),
+            parent.path().join("new").join("nested"),
+            root.clone(),
+        ] {
+            assert_eq!(
+                fs::symlink_metadata(&path)
+                    .expect("new directory metadata")
+                    .permissions()
+                    .mode()
+                    & 0o7777,
+                0o700,
+                "new directory {} must be private",
+                path.display()
+            );
+        }
+    }
+
+    #[test]
+    fn run_root_lock_is_exclusive_and_identity_pinned() {
+        let parent = tempfile::tempdir().expect("temporary parent");
+        let root = parent.path().join("run");
+        fresh_root(&root).expect("root is accepted");
+        let first = CandidateRunRootGuardV1::acquire(&root).expect("first owner lock");
+        let second = CandidateRunRootGuardV1::acquire(&root)
+            .expect_err("second owner must not share the run root");
+        assert!(
+            second.to_string().contains("root_busy"),
+            "unexpected lock error: {second}"
+        );
+        first.validate_identity().expect("held root identity");
+
+        // Replacing the pathname while the original descriptor is retained
+        // must poison the guard rather than silently blessing the replacement.
+        let moved = parent.path().join("moved");
+        fs::rename(&root, &moved).expect("move original root");
+        fs::create_dir(&root).expect("replacement root");
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
+            .expect("replacement root mode");
+        assert!(
+            first.validate_identity().is_err(),
+            "root replacement must fail the descriptor/path identity check"
+        );
+        drop(first);
+        fs::remove_dir(&root).expect("remove replacement root");
+        fs::rename(&moved, &root).expect("restore original root");
+        let replacement = CandidateRunRootGuardV1::acquire(&root).expect("lock after release");
+        replacement
+            .validate_identity()
+            .expect("replacement owner identity");
+    }
+
+    #[test]
+    fn socket_cleanup_does_not_unlink_a_replacement_inode() {
+        let parent = tempfile::tempdir().expect("temporary socket parent");
+        fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("private socket parent");
+        let path = parent.path().join("candidate.sock");
+        let (listener, identity) =
+            bind_candidate_p2p_socket_v1(&path).expect("candidate socket bind");
+        // A pathname must be unlinked before a second listener can claim it;
+        // this models a same-uid replacement racing with the cleanup guard.
+        fs::remove_file(&path).expect("remove original socket pathname");
+        let replacement = UnixListener::bind(&path).expect("replacement socket bind");
+        cleanup_candidate_p2p_socket_v1(&path, Some(identity));
+        assert!(
+            fs::symlink_metadata(&path)
+                .expect("replacement metadata")
+                .file_type()
+                .is_socket(),
+            "cleanup must leave a replacement socket inode in place"
+        );
+        drop(listener);
+        drop(replacement);
+        fs::remove_file(&path).expect("remove replacement socket");
     }
 }
