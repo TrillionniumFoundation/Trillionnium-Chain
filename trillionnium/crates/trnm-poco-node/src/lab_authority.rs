@@ -5478,7 +5478,12 @@ fn rebase_to_authoritative_high_qc_v0(
             "native committed head differs from Core application_applied during rebase",
         ));
     }
-    let checkpoint_join = require_fresh_checkpoint_application_join_v0(
+    // Authenticate the complete P/K checkpoint owner and terminal projection
+    // under the cross-store fence.  The result is intentionally not used to
+    // require that a stale Prepared projection already names the current
+    // high-QC head: a valid no-op/replay timeout may legitimately arrive with
+    // such a projection and is rebased below after the retained-path audit.
+    let _checkpoint_join = require_fresh_checkpoint_application_join_v0(
         application,
         &committed,
         checkpoint,
@@ -5563,27 +5568,6 @@ fn rebase_to_authoritative_high_qc_v0(
         return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
             "retained high-QC path does not terminate at the committed applied head",
         ));
-    }
-
-    // A prepared checkpoint is only admissible when its complete existing
-    // projection names the exact retained execution selected by the current
-    // high QC.  The join helper already authenticates the P/K owner and row;
-    // repeat the full projection here after the high-QC path audit instead of
-    // reducing the decision to a block/height comparison.
-    if let FreshCheckpointApplicationJoinV0::Prepared { block_id, height } = checkpoint_join {
-        let retained = pending_executions.get(&block_id).ok_or(
-            PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "prepared application checkpoint is not the authoritative high-QC head",
-            ),
-        )?;
-        if block_id != high_qc.block_id()
-            || height != high_qc.height().get()
-            || !terminal_checkpoint_projection_matches_retained_v0(checkpoint.fields(), retained)
-        {
-            return Err(PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
-                "prepared application checkpoint is not the authoritative high-QC head",
-            ));
-        }
     }
 
     pending_executions.retain(|block_id, _| retained_path.contains(block_id));
