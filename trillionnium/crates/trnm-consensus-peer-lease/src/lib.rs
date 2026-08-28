@@ -13,6 +13,7 @@
 //! action; this crate cannot make that runtime integration implicitly safe.
 
 mod payload;
+mod payload_body;
 mod payload_recovery;
 mod protocol;
 mod store;
@@ -26,6 +27,11 @@ pub use payload::{
     PAYLOAD_REPLAY_APPEND_ONLY_HASH_CHAIN_V1, PAYLOAD_REPLAY_CANDIDATE_V1,
     PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
     PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
+};
+pub use payload_body::{
+    payload_replay_body_digest_v1, PayloadReplayAuthenticatedBodyV1, PayloadReplayBodyReceiptV1,
+    PayloadReplayBodyStoreV1, PAYLOAD_REPLAY_BODY_STORE_CANDIDATE_V1,
+    PAYLOAD_REPLAY_BODY_STORE_PRODUCTION_ACTIVATION_V1, PAYLOAD_REPLAY_MAX_BODY_STORE_BYTES_V1,
 };
 pub use payload_recovery::{
     PayloadReplayCoreAckReceiptV1, PayloadReplayCoreAcknowledgementV1,
@@ -84,6 +90,8 @@ mod source_truth_tests {
         for required_true in [
             "payload_replay_append_only_hash_chain = true",
             "payload_replay_candidate = true",
+            "payload_replay_body_store_candidate = true",
+            "payload_replay_body_store_production_activation = false",
             "payload_replay_external_recovery_owner_candidate = true",
             "payload_replay_core_ack_ledger_candidate = true",
         ] {

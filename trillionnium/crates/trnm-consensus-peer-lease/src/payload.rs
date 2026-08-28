@@ -1051,7 +1051,7 @@ fn decode_record(bytes: &[u8]) -> Result<DecodedRecordV1, PayloadReplayErrorV1> 
     })
 }
 
-fn encode_head(
+pub(crate) fn encode_head(
     record_count: u64,
     record_hash: [u8; 32],
     namespace_digest: [u8; 32],
@@ -1071,7 +1071,7 @@ fn encode_head(
     bytes.try_into().expect("fixed payload replay head")
 }
 
-fn decode_head(bytes: &[u8]) -> Result<(u64, [u8; 32], [u8; 32]), PayloadReplayErrorV1> {
+pub(crate) fn decode_head(bytes: &[u8]) -> Result<(u64, [u8; 32], [u8; 32]), PayloadReplayErrorV1> {
     if bytes.len() != HEAD_BYTES_V1
         || bytes[..8] != HEAD_MAGIC_V1
         || bytes[8] != HEAD_VERSION_V1
@@ -1097,7 +1097,7 @@ fn decode_head(bytes: &[u8]) -> Result<(u64, [u8; 32], [u8; 32]), PayloadReplayE
 /// identity before allocating.  A private pathname alone is not enough: a
 /// same-UID writer can replace it with an oversized file or a symlink between
 /// metadata and `read_to_end`.
-fn read_private_head(path: &Path) -> Result<Vec<u8>, PayloadReplayErrorV1> {
+pub(crate) fn read_private_head(path: &Path) -> Result<Vec<u8>, PayloadReplayErrorV1> {
     let metadata = fs::symlink_metadata(path).map_err(PayloadReplayErrorV1::Io)?;
     if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayErrorV1::InvalidRequest(
@@ -1137,7 +1137,7 @@ fn read_private_head(path: &Path) -> Result<Vec<u8>, PayloadReplayErrorV1> {
     Ok(bytes)
 }
 
-fn persist_head(
+pub(crate) fn persist_head(
     path: &Path,
     directory: &File,
     record_count: u64,
@@ -1176,7 +1176,7 @@ fn persist_head(
     Ok(())
 }
 
-fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayErrorV1> {
+pub(crate) fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayErrorV1> {
     let name = path.file_name().and_then(|value| value.to_str()).ok_or(
         PayloadReplayErrorV1::InvalidRequest("payload replay path filename"),
     )?;
@@ -1187,7 +1187,7 @@ fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayError
 /// Refuse to treat one as invisible on restart: otherwise PID reuse or a
 /// stale pathname can turn a response-loss cut into a permanent liveness or
 /// replay ambiguity.
-fn reject_stale_head_temps(path: &Path) -> Result<(), PayloadReplayErrorV1> {
+pub(crate) fn reject_stale_head_temps(path: &Path) -> Result<(), PayloadReplayErrorV1> {
     let parent = path.parent().ok_or(PayloadReplayErrorV1::InvalidRequest(
         "payload replay path has no parent",
     ))?;
@@ -1212,7 +1212,7 @@ fn reject_stale_head_temps(path: &Path) -> Result<(), PayloadReplayErrorV1> {
     Ok(())
 }
 
-fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayErrorV1> {
+pub(crate) fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayErrorV1> {
     let parent = path
         .parent()
         .ok_or(PayloadReplayErrorV1::InvalidRequest(
@@ -1247,7 +1247,7 @@ fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayErrorV1> 
     Ok((directory, parent))
 }
 
-fn open_private_lock(path: &Path) -> Result<File, PayloadReplayErrorV1> {
+pub(crate) fn open_private_lock(path: &Path) -> Result<File, PayloadReplayErrorV1> {
     let mut options = OpenOptions::new();
     options.read(true).write(true).create(true);
     set_private_mode_options(&mut options);
@@ -1256,7 +1256,7 @@ fn open_private_lock(path: &Path) -> Result<File, PayloadReplayErrorV1> {
     Ok(file)
 }
 
-fn validate_private_file(file: &File) -> Result<(), PayloadReplayErrorV1> {
+pub(crate) fn validate_private_file(file: &File) -> Result<(), PayloadReplayErrorV1> {
     let metadata = file.metadata().map_err(PayloadReplayErrorV1::Io)?;
     if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayErrorV1::InvalidRequest(
@@ -1266,7 +1266,7 @@ fn validate_private_file(file: &File) -> Result<(), PayloadReplayErrorV1> {
     Ok(())
 }
 
-fn set_private_mode(file: &File) -> Result<(), PayloadReplayErrorV1> {
+pub(crate) fn set_private_mode(file: &File) -> Result<(), PayloadReplayErrorV1> {
     #[cfg(unix)]
     {
         file.set_permissions(fs::Permissions::from_mode(PRIVATE_MODE_V1))
@@ -1279,7 +1279,7 @@ fn set_private_mode(file: &File) -> Result<(), PayloadReplayErrorV1> {
     }
 }
 
-fn set_private_mode_options(options: &mut OpenOptions) {
+pub(crate) fn set_private_mode_options(options: &mut OpenOptions) {
     #[cfg(unix)]
     {
         options.mode(PRIVATE_MODE_V1);
@@ -1287,7 +1287,7 @@ fn set_private_mode_options(options: &mut OpenOptions) {
     }
 }
 
-fn private_parent_mode(metadata: &fs::Metadata) -> bool {
+pub(crate) fn private_parent_mode(metadata: &fs::Metadata) -> bool {
     #[cfg(unix)]
     {
         metadata.permissions().mode() & 0o077 == 0
@@ -1299,7 +1299,7 @@ fn private_parent_mode(metadata: &fs::Metadata) -> bool {
     }
 }
 
-fn private_file_mode(metadata: &fs::Metadata) -> bool {
+pub(crate) fn private_file_mode(metadata: &fs::Metadata) -> bool {
     #[cfg(unix)]
     {
         metadata.nlink() == 1
