@@ -90,8 +90,6 @@ struct BodyAuthorityPathIdentityV1 {
     is_file: bool,
     #[cfg(not(unix))]
     is_directory: bool,
-    #[cfg(not(unix))]
-    length: u64,
 }
 
 impl BodyAuthorityPathIdentityV1 {
@@ -111,7 +109,6 @@ impl BodyAuthorityPathIdentityV1 {
             Self {
                 is_file: metadata.is_file(),
                 is_directory: metadata.is_dir(),
-                length: metadata.len(),
             }
         }
     }
@@ -263,11 +260,15 @@ impl PayloadReplayBodyStoreV1 {
 
         let mut options = OpenOptions::new();
         options.read(true).write(true).append(true);
+        // Existing files need the same no-follow protection as newly-created
+        // files.  A metadata probe alone is not sufficient: a same-UID
+        // pathname swap between the probe and `open` must not redirect the
+        // body descriptor through a symlink.
+        set_private_mode_options(&mut options);
         if existing {
             options.create(false);
         } else {
             options.create_new(true);
-            set_private_mode_options(&mut options);
         }
         let file = options.open(&path).map_err(PayloadReplayErrorV1::Io)?;
         if !existing {
@@ -1355,6 +1356,23 @@ mod tests {
             PayloadReplayBodyStoreV1::open(alias.join("bodies.wal"), namespace()),
             Err(PayloadReplayErrorV1::InvalidRequest(reason))
                 if reason.contains("symlink alias")
+        ));
+
+        // An existing journal pathname must also reject a symlink target;
+        // this exercises the non-creation open path, which must carry
+        // `O_NOFOLLOW` just like a virgin journal.
+        let real_file = dir.path().join("real-bodies.wal");
+        let mut real_store = PayloadReplayBodyStoreV1::open(&real_file, namespace()).unwrap();
+        real_store
+            .admit(&frame(namespace(), 0, [10; 32]), b"exact-body!")
+            .unwrap();
+        drop(real_store);
+        let file_alias = dir.path().join("alias-bodies.wal");
+        symlink(&real_file, &file_alias).unwrap();
+        assert!(matches!(
+            PayloadReplayBodyStoreV1::open(&file_alias, namespace()),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("private regular file")
         ));
 
         let temporary = dir.path().join("..bodies.wal.head-v1.tmp-retained");
