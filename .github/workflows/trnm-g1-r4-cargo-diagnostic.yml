@@ -1,4 +1,4 @@
-name: TRNM G1-R4 Cargo cache authority repair
+name: TRNM G1-R4 Cargo migration fingerprint
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: trnm-g1-r4-cargo-cache-authority-repair
+  group: trnm-g1-r4-cargo-migration-fingerprint
   cancel-in-progress: true
 
 env:
@@ -23,25 +23,24 @@ env:
   CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
 jobs:
-  verify-repair-and-reverify:
-    name: Verify, repair root-owned stamp, and reverify R4A
+  fingerprint:
+    name: Fingerprint current offline manifests and graph
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       github.ref == 'refs/heads/feature/chain-g1-r4-gap-closure-20260828' &&
       github.actor == 'Tomasrgbsf' &&
       github.triggering_actor == 'Tomasrgbsf'
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 150
+    timeout-minutes: 60
     steps:
-      - name: Checkout exact current R4A source
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
           path: trillionnium-chain
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify toolchain and immutable repair preconditions
+      - name: Compute canonical migration fingerprints without mutation
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -49,72 +48,39 @@ jobs:
             --toolchain 1.95.0 \
             --component clippy \
             --component rustfmt
-          test "$(git rev-parse HEAD)" = '3a4e2fa066de74025866da94cfe8a9efbfca03aa'
           test -z "$(git status --porcelain)"
-          test "$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')" = \
-            'ee1e9a8382092a397f1b041107cf6b86e468d521af3aa7963e5f6e714e6c3382'
-          command -v sudo >/dev/null 2>&1
-          sudo -n true
-
-      - name: Prove the complete current graph is already available offline
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          cargo fetch \
+          printf 'source_commit=%s\n' "$(git rev-parse HEAD)"
+          printf 'source_tree=%s\n' "$(git rev-parse HEAD^{tree})"
+          printf 'lock_sha256=%s\n' "$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')"
+          manifest_list="$RUNNER_TEMP/manifests.sha256"
+          : > "$manifest_list"
+          while IFS= read -r -d '' manifest; do
+            sha256sum -- "$manifest" >> "$manifest_list"
+          done < <(git ls-files -z -- 'Cargo.toml' ':(glob)**/Cargo.toml' | LC_ALL=C sort -z)
+          printf 'manifest_count=%s\n' "$(wc -l < "$manifest_list")"
+          printf 'manifest_inventory_sha256=%s\n' "$(sha256sum "$manifest_list" | awk '{print $1}')"
+          cargo metadata \
             --manifest-path trillionnium/Cargo.toml \
+            --format-version 1 \
             --locked \
-            --offline
-          bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
+            --offline > "$RUNNER_TEMP/metadata.json"
+          python3 - "$RUNNER_TEMP/metadata.json" <<'PY'
+          import hashlib, json, sys
+          data=json.load(open(sys.argv[1], encoding='utf-8'))
+          packages=[]
+          for p in data['packages']:
+              packages.append({
+                  'name': p['name'],
+                  'version': p['version'],
+                  'source': p.get('source'),
+                  'checksum': p.get('checksum'),
+                  'manifest_rel': p['manifest_path'].split('/trillionnium-chain/',1)[-1],
+                  'dependencies': sorted((d['name'], d.get('rename'), d['req'], d.get('kind'), d.get('target'), d.get('optional',False), tuple(sorted(d.get('features',[])))) for d in p.get('dependencies',[])),
+                  'features': sorted((k, tuple(sorted(v))) for k,v in p.get('features',{}).items()),
+              })
+          packages.sort(key=lambda p:(p['name'],p['version'],p['source'] or '',p['manifest_rel']))
+          canonical=json.dumps(packages,sort_keys=True,separators=(',',':')).encode()
+          print(f'package_count={len(packages)}')
+          print('locked_graph_sha256='+hashlib.sha256(canonical).hexdigest())
+          PY
           test -z "$(git status --porcelain)"
-
-      - name: Atomically advance only the reviewed Cargo.lock stamp entry
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          stamp="$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
-          old='72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b  trillionnium/Cargo.lock'
-          new='ee1e9a8382092a397f1b041107cf6b86e468d521af3aa7963e5f6e714e6c3382  trillionnium/Cargo.lock'
-          test -f "$stamp" && test ! -L "$stamp"
-          test "$(stat -c '%u' "$stamp")" = 0
-          test $((8#$(stat -c '%a' "$stamp") & 0222)) -eq 0
-          test "$(grep -Fxc "$old" "$stamp")" -eq 1
-          test "$(grep -Fc '  trillionnium/Cargo.lock' "$stamp")" -eq 1
-          cp -- "$stamp" "$RUNNER_TEMP/stamp.before"
-          awk -v old="$old" -v new="$new" '
-            $0 == old { print new; changed++; next }
-            { print }
-            END { if (changed != 1) exit 17 }
-          ' "$stamp" > "$RUNNER_TEMP/stamp.after"
-          test "$(grep -Fxc "$new" "$RUNNER_TEMP/stamp.after")" -eq 1
-          sudo -n install -o root -g root -m 0444 \
-            "$RUNNER_TEMP/stamp.after" "$stamp.new"
-          sudo -n mv -f -- "$stamp.new" "$stamp"
-          sudo -n sh -c 'sync "$1"; sync "$(dirname "$1")"' sh "$stamp"
-          test "$(stat -c '%u' "$stamp")" = 0
-          test $((8#$(stat -c '%a' "$stamp") & 0222)) -eq 0
-          cmp -s "$RUNNER_TEMP/stamp.after" "$stamp"
-          sha256sum "$RUNNER_TEMP/stamp.before" "$stamp"
-
-      - name: Re-run the official immutable offline authority gate
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          state="$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
-          ./scripts/ci/check_cargo_offline_ready.sh \
-            --toolchain 1.95.0 \
-            --state "$state" \
-            trillionnium/Cargo.toml:trillionnium/Cargo.lock
-          ./scripts/ci/check_cargo_offline_unchanged.sh --state "$state"
-          bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
-          bash ./scripts/project-preflight.sh --audit
-
-      - name: Upload authority-repair evidence
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: trnm-g1-r4-cargo-authority-repair-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            ${{ runner.temp }}/stamp.before
-            ${{ runner.temp }}/stamp.after
-          if-no-files-found: warn
-          retention-days: 30
