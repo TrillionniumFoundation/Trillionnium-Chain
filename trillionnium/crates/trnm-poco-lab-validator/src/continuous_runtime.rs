@@ -4560,16 +4560,18 @@ mod tests {
 
     #[test]
     fn restart_parked_authority_rejects_signed_intermediate_phase() {
-        let mut harness = fresh_test_harness_v0(4, 1);
-        let mut authority = harness.authorities.remove(0);
-        authority
-            .begin_local_timeout_v0()
-            .expect("enter a signed TimeoutVote intermediate phase");
+        on_bounded_takeover_owner_stack_v0(|| {
+            let mut harness = fresh_test_harness_v0(4, 1);
+            let mut authority = harness.authorities.remove(0);
+            authority
+                .begin_local_timeout_v0()
+                .expect("enter a signed TimeoutVote intermediate phase");
 
-        let rejection = authority
-            .into_restart_parked_authority_v1()
-            .expect_err("restart park must consume only the exact Ready phase");
-        assert!(rejection.to_string().contains("Ready authority"));
+            let rejection = authority
+                .into_restart_parked_authority_v1()
+                .expect_err("restart park must consume only the exact Ready phase");
+            assert!(rejection.to_string().contains("Ready authority"));
+        });
     }
 
     #[test]
