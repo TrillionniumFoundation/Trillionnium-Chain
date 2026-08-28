@@ -235,13 +235,17 @@ fn map_peer_lease_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayRecovery
     }
 }
 
-fn open_private_lock(path: &Path) -> Result<File, PayloadReplayRecoveryErrorV1> {
+fn open_private_lock(
+    path: &Path,
+) -> Result<(File, AuthorityPathIdentityV1), PayloadReplayRecoveryErrorV1> {
     let mut options = OpenOptions::new();
     options.read(true).write(true).create(true);
     set_private_options(&mut options);
     let file = options.open(path)?;
     validate_private_file(&file)?;
-    Ok(file)
+    let identity = descriptor_identity(&file)?;
+    verify_bound_path_identity(path, identity)?;
+    Ok((file, identity))
 }
 
 fn open_private_file(path: &Path, writable: bool) -> Result<File, PayloadReplayRecoveryErrorV1> {

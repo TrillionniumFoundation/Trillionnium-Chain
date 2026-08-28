@@ -72,6 +72,55 @@ const PRIVATE_FILE_MODE_V1: u32 = 0o600;
 
 static TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 
+/// A descriptor/path identity captured when the candidate recovery owner is
+/// opened.  The owner keeps the descriptor locked, but pathname operations
+/// (head repair and acknowledgement publication) still need a post-open
+/// identity fence: a same-UID process can otherwise rename a replacement
+/// artifact into the authority pathname while the original descriptor stays
+/// valid.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct AuthorityPathIdentityV1 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+    #[cfg(unix)]
+    uid: u32,
+    #[cfg(unix)]
+    mode: u32,
+    #[cfg(unix)]
+    nlink: u64,
+    #[cfg(not(unix))]
+    is_file: bool,
+    #[cfg(not(unix))]
+    is_directory: bool,
+    #[cfg(not(unix))]
+    length: u64,
+}
+
+impl AuthorityPathIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        #[cfg(unix)]
+        {
+            Self {
+                device: metadata.dev(),
+                inode: metadata.ino(),
+                uid: metadata.uid(),
+                mode: metadata.mode(),
+                nlink: metadata.nlink(),
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            Self {
+                is_file: metadata.is_file(),
+                is_directory: metadata.is_dir(),
+                length: metadata.len(),
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PayloadReplayRecoveryTargetV1 {
     record_index: u64,
@@ -354,4 +403,77 @@ impl From<io::Error> for PayloadReplayRecoveryErrorV1 {
     fn from(error: io::Error) -> Self {
         Self::Io(error)
     }
+}
+
+fn descriptor_identity(
+    file: &File,
+) -> Result<AuthorityPathIdentityV1, PayloadReplayRecoveryErrorV1> {
+    Ok(AuthorityPathIdentityV1::from_metadata(&file.metadata()?))
+}
+
+fn path_identity(path: &Path) -> Result<AuthorityPathIdentityV1, PayloadReplayRecoveryErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink() {
+        return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+            "recovery authority path is a symlink",
+        ));
+    }
+    Ok(AuthorityPathIdentityV1::from_metadata(&metadata))
+}
+
+fn verify_bound_file_identity(
+    path: &Path,
+    file: &File,
+    expected: AuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayRecoveryErrorV1> {
+    validate_private_file(file)?;
+    let descriptor = descriptor_identity(file)?;
+    let named = path_identity(path)?;
+    if !file.metadata()?.is_file() || descriptor != expected || named != expected {
+        return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+            "recovery authority file identity changed",
+        ));
+    }
+    Ok(())
+}
+
+fn verify_bound_path_identity(
+    path: &Path,
+    expected: AuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayRecoveryErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink()
+        || !metadata.is_file()
+        || !private_file_mode(&metadata)
+        || AuthorityPathIdentityV1::from_metadata(&metadata) != expected
+    {
+        return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+            "recovery authority path identity changed",
+        ));
+    }
+    Ok(())
+}
+
+fn verify_bound_directory_identity(
+    path: &Path,
+    directory: &File,
+    expected: AuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayRecoveryErrorV1> {
+    let descriptor_metadata = directory.metadata()?;
+    let named_metadata = fs::symlink_metadata(path)?;
+    if named_metadata.file_type().is_symlink()
+        || !descriptor_metadata.is_dir()
+        || !named_metadata.is_dir()
+        || !private_parent_mode(&descriptor_metadata)
+        || !private_parent_mode(&named_metadata)
+        || AuthorityPathIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || AuthorityPathIdentityV1::from_metadata(&named_metadata) != expected
+        || fs::canonicalize(path)? != path
+    {
+        return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+            "recovery authority directory identity changed",
+        ));
+    }
+    ensure_private_directory(path).map_err(map_peer_lease_error)?;
+    Ok(())
 }

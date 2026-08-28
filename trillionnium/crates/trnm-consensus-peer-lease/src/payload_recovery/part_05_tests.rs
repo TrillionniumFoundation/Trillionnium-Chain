@@ -361,4 +361,90 @@ mod tests {
             Err(PayloadReplayRecoveryErrorV1::InvalidRequest(_))
         ));
     }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_payload_replacement_after_open() {
+        let root = private_tempdir("trnm-payload-endpoint-payload-");
+        let wal = root.path().join("frames.wal");
+        let ack_root = acknowledgement_root(root.path());
+        let (namespace, target) = seeded_payload(&wal);
+        let owner = PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target)
+            .expect("open recovery owner");
+
+        let original = root.path().join("frames.wal.original");
+        fs::rename(&wal, &original).unwrap();
+        fs::copy(&original, &wal).unwrap();
+        fs::set_permissions(&wal, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            owner.verify_bound_endpoint_identity(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(_))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_head_replacement_after_open() {
+        let root = private_tempdir("trnm-payload-endpoint-head-");
+        let wal = root.path().join("frames.wal");
+        let ack_root = acknowledgement_root(root.path());
+        let (namespace, target) = seeded_payload(&wal);
+        let owner = PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target)
+            .expect("open recovery owner");
+        let head = sidecar_path(&wal, "head-v1").unwrap();
+
+        let original = root.path().join("frames.head.original");
+        fs::rename(&head, &original).unwrap();
+        fs::copy(&original, &head).unwrap();
+        fs::set_permissions(&head, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            owner.verify_bound_endpoint_identity(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(_))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_acknowledgement_root_replacement_after_open() {
+        let root = private_tempdir("trnm-payload-endpoint-ack-root-");
+        let wal = root.path().join("frames.wal");
+        let ack_root = acknowledgement_root(root.path());
+        let (namespace, target) = seeded_payload(&wal);
+        let owner = PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target)
+            .expect("open recovery owner");
+
+        let original = root.path().join("core-acks.original");
+        fs::rename(&ack_root, &original).unwrap();
+        fs::create_dir(&ack_root).unwrap();
+        fs::set_permissions(&ack_root, fs::Permissions::from_mode(0o700)).unwrap();
+
+        assert!(matches!(
+            owner.verify_bound_endpoint_identity(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(_))
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_lock_replacement_after_open() {
+        let root = private_tempdir("trnm-payload-endpoint-lock-");
+        let wal = root.path().join("frames.wal");
+        let ack_root = acknowledgement_root(root.path());
+        let (namespace, target) = seeded_payload(&wal);
+        let owner = PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target)
+            .expect("open recovery owner");
+        let lock = sidecar_path(&wal, "lock-v1").unwrap();
+
+        let original = root.path().join("frames.lock.original");
+        fs::rename(&lock, &original).unwrap();
+        fs::copy(&original, &lock).unwrap();
+        fs::set_permissions(&lock, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            owner.verify_bound_endpoint_identity(),
+            Err(PayloadReplayRecoveryErrorV1::InvalidRequest(_))
+        ));
+    }
 }

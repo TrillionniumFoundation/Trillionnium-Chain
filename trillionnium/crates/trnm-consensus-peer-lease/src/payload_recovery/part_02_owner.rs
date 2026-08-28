@@ -93,8 +93,13 @@ struct PayloadJournalRecoveryV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
+    directory_identity: AuthorityPathIdentityV1,
     _file: File,
+    file_identity: AuthorityPathIdentityV1,
     _lock: File,
+    lock_path: PathBuf,
+    lock_identity: AuthorityPathIdentityV1,
+    head_identity: AuthorityPathIdentityV1,
     namespace_digest: [u8; 32],
     snapshot: PayloadSnapshotV1,
     head: PayloadHeadV1,
@@ -116,26 +121,40 @@ impl PayloadJournalRecoveryV1 {
         if !metadata.is_file() || !private_file_mode(&metadata) {
             return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
         }
-        let (directory, _) = private_parent(path)?;
+        let (directory, parent) = private_parent(path)?;
+        let directory_identity = descriptor_identity(&directory)?;
+        verify_bound_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(path, "lock-v1")?;
         let head_path = sidecar_path(path, "head-v1")?;
-        if !fs::symlink_metadata(&lock_path).is_ok_and(|value| value.is_file()) {
+        if !fs::symlink_metadata(&lock_path)
+            .is_ok_and(|value| value.is_file() && private_file_mode(&value))
+        {
             return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
         }
         let lock = open_private_file(&lock_path, true)?;
         try_lock(&lock, PayloadReplayRecoveryErrorV1::PayloadJournalBusy)?;
+        let lock_identity = descriptor_identity(&lock)?;
+        verify_bound_file_identity(&lock_path, &lock, lock_identity)?;
         let mut file = open_private_file(path, true)?;
         try_lock(&file, PayloadReplayRecoveryErrorV1::PayloadJournalBusy)?;
+        let file_identity = descriptor_identity(&file)?;
+        verify_bound_file_identity(path, &file, file_identity)?;
         let namespace_digest = namespace_digest(namespace);
         let snapshot = read_snapshot(&mut file, namespace, namespace_digest)?;
-        let head = read_head(&head_path)?;
+        verify_bound_file_identity(path, &file, file_identity)?;
+        let (head, head_identity) = read_head_with_identity(&head_path)?;
         let stale_temporaries = scan_head_temporaries(path)?;
         Ok(Self {
             path: path.to_path_buf(),
             head_path,
             directory,
+            directory_identity,
             _file: file,
+            file_identity,
             _lock: lock,
+            lock_path,
+            lock_identity,
+            head_identity,
             namespace_digest,
             snapshot,
             head,
@@ -155,10 +174,25 @@ impl PayloadJournalRecoveryV1 {
         Ok(record)
     }
 
+    fn revalidate_bound_paths(&self) -> Result<(), PayloadReplayRecoveryErrorV1> {
+        let parent = self
+            .path
+            .parent()
+            .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "payload replay path has no parent",
+            ))?;
+        verify_bound_directory_identity(parent, &self.directory, self.directory_identity)?;
+        verify_bound_file_identity(&self.path, &self._file, self.file_identity)?;
+        verify_bound_file_identity(&self.lock_path, &self._lock, self.lock_identity)?;
+        verify_bound_path_identity(&self.head_path, self.head_identity)?;
+        Ok(())
+    }
+
     fn classify(
         &self,
         target: PayloadReplayRecoveryTargetV1,
     ) -> Result<PublicationStateV1, PayloadReplayRecoveryErrorV1> {
+        self.revalidate_bound_paths()?;
         let target_record = self.target_record(target)?;
         if self.head.namespace_digest != self.namespace_digest {
             return Err(PayloadReplayRecoveryErrorV1::PayloadHeadDiverged);
@@ -205,14 +239,20 @@ impl PayloadJournalRecoveryV1 {
                     record_hash: self.snapshot.last_hash,
                     namespace_digest: self.namespace_digest,
                 };
+                self.head_identity = path_identity(&self.head_path)?;
             }
             PublicationStateV1::ResidualTemporaries => {}
         }
         quarantine_temporaries(&self.directory, &self.stale_temporaries)?;
         self.stale_temporaries.clear();
-        let reread = read_head(&self.head_path)?;
+        let (reread, reread_identity) = read_head_with_identity(&self.head_path)?;
         if reread != self.head || !scan_head_temporaries(&self.path)?.is_empty() {
             return Err(PayloadReplayRecoveryErrorV1::PayloadHeadDiverged);
+        }
+        if reread_identity != self.head_identity {
+            return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "payload replay head identity changed during recovery",
+            ));
         }
         Ok(())
     }
@@ -250,7 +290,10 @@ pub struct PayloadReplayRecoveryOwnerV1 {
     payload: PayloadJournalRecoveryV1,
     acknowledgement_root: PathBuf,
     acknowledgement_directory: File,
+    acknowledgement_directory_identity: AuthorityPathIdentityV1,
     _ack_lock: File,
+    ack_lock_path: PathBuf,
+    ack_lock_identity: AuthorityPathIdentityV1,
     target: PayloadReplayRecoveryTargetV1,
 }
 
@@ -273,18 +316,43 @@ impl PayloadReplayRecoveryOwnerV1 {
             ));
         }
         let acknowledgement_directory = private_directory(&acknowledgement_root)?;
+        let acknowledgement_directory_identity = descriptor_identity(&acknowledgement_directory)?;
+        verify_bound_directory_identity(
+            &acknowledgement_root,
+            &acknowledgement_directory,
+            acknowledgement_directory_identity,
+        )?;
         let ack_lock_path = acknowledgement_root.join(ACK_LOCK_NAME_V1);
-        let ack_lock = open_private_lock(&ack_lock_path)?;
+        let (ack_lock, ack_lock_identity) = open_private_lock(&ack_lock_path)?;
         try_lock(&ack_lock, PayloadReplayRecoveryErrorV1::AckLedgerBusy)?;
+        verify_bound_file_identity(&ack_lock_path, &ack_lock, ack_lock_identity)?;
         let payload = PayloadJournalRecoveryV1::open(payload_path, namespace)?;
         payload.target_record(target)?;
         Ok(Self {
             payload,
             acknowledgement_root,
             acknowledgement_directory,
+            acknowledgement_directory_identity,
             _ack_lock: ack_lock,
+            ack_lock_path,
+            ack_lock_identity,
             target,
         })
+    }
+
+    /// Revalidate the locked payload and acknowledgement endpoints before a
+    /// status, recovery, or acknowledgement operation.  This is a candidate
+    /// fail-closed fence for pathname replacement; it does not provide a
+    /// whole-node anti-rollback authority.
+    pub fn verify_bound_endpoint_identity(&self) -> Result<(), PayloadReplayRecoveryErrorV1> {
+        self.payload.revalidate_bound_paths()?;
+        verify_bound_directory_identity(
+            &self.acknowledgement_root,
+            &self.acknowledgement_directory,
+            self.acknowledgement_directory_identity,
+        )?;
+        verify_bound_file_identity(&self.ack_lock_path, &self._ack_lock, self.ack_lock_identity)?;
+        Ok(())
     }
 
     pub const fn target(&self) -> PayloadReplayRecoveryTargetV1 {
@@ -292,6 +360,7 @@ impl PayloadReplayRecoveryOwnerV1 {
     }
 
     pub fn status(&self) -> Result<PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryErrorV1> {
+        self.verify_bound_endpoint_identity()?;
         match self.payload.classify(self.target)? {
             PublicationStateV1::HeadLag => Ok(PayloadReplayRecoveryStatusV1::RecoverableHeadLag {
                 payload_record_count: self.payload.snapshot.record_count,
@@ -329,7 +398,9 @@ impl PayloadReplayRecoveryOwnerV1 {
     pub fn recover_payload_publication(
         &mut self,
     ) -> Result<PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryErrorV1> {
+        self.verify_bound_endpoint_identity()?;
         self.payload.recover(self.target)?;
+        self.verify_bound_endpoint_identity()?;
         self.status()
     }
 
@@ -337,6 +408,7 @@ impl PayloadReplayRecoveryOwnerV1 {
         &mut self,
         acknowledgement: PayloadReplayCoreAcknowledgementV1,
     ) -> Result<PayloadReplayCoreAckReceiptV1, PayloadReplayRecoveryErrorV1> {
+        self.verify_bound_endpoint_identity()?;
         if acknowledgement.target != self.target {
             return Err(PayloadReplayRecoveryErrorV1::PayloadRecordMismatch);
         }
@@ -386,6 +458,7 @@ impl PayloadReplayRecoveryOwnerV1 {
                 error,
             )));
         }
+        self.verify_bound_endpoint_identity()?;
         let reread = read_ack(&final_path, self.payload.namespace_digest, self.target)?;
         if !reread.matches(self.payload.namespace_digest, acknowledgement)
             || reread.acknowledgement_hash != acknowledgement_hash

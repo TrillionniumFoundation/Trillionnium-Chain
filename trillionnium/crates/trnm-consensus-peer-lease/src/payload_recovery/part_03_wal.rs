@@ -222,8 +222,12 @@ fn decode_record(bytes: &[u8]) -> Result<DecodedRecordV1, PayloadReplayRecoveryE
     })
 }
 
-fn read_head(path: &Path) -> Result<PayloadHeadV1, PayloadReplayRecoveryErrorV1> {
+fn read_head_with_identity(
+    path: &Path,
+) -> Result<(PayloadHeadV1, AuthorityPathIdentityV1), PayloadReplayRecoveryErrorV1> {
     let mut file = open_private_file(path, false)?;
+    let identity = descriptor_identity(&file)?;
+    verify_bound_path_identity(path, identity)?;
     if file.metadata()?.len() != HEAD_BYTES_V1 as u64 {
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
     }
@@ -241,11 +245,15 @@ fn read_head(path: &Path) -> Result<PayloadHeadV1, PayloadReplayRecoveryErrorV1>
     {
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
     }
-    Ok(PayloadHeadV1 {
-        record_count: u64::from_be_bytes(bytes[12..20].try_into().expect("head count")),
-        record_hash: bytes[20..52].try_into().expect("head hash"),
-        namespace_digest: bytes[52..84].try_into().expect("head namespace"),
-    })
+    verify_bound_file_identity(path, &file, identity)?;
+    Ok((
+        PayloadHeadV1 {
+            record_count: u64::from_be_bytes(bytes[12..20].try_into().expect("head count")),
+            record_hash: bytes[20..52].try_into().expect("head hash"),
+            namespace_digest: bytes[52..84].try_into().expect("head namespace"),
+        },
+        identity,
+    ))
 }
 
 fn encode_head(
