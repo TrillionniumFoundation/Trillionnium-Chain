@@ -37,6 +37,16 @@ The marker helper and matrix are compiled only under
 endpoint and do not make `Effect::Finalize` available in the generic effect
 driver.
 
+## G1-R4A child tranche
+
+[`TRNM_G1_R4A_FINALIZATION_INTENT_PROCESS_MATRIX_V1.md`](TRNM_G1_R4A_FINALIZATION_INTENT_PROCESS_MATRIX_V1.md)
+adds an exact source-derived publication-repair owner and five
+independent-process SIGKILL cuts around the marker write/clear algorithm. The
+production WAL remains byte-identical; the test-only build derives its process
+copy from the reviewed WAL and fails closed if that preimage changes. This
+tranche covers only the intent fence—not the application/Safety/checkpoint
+chain.
+
 ## Required follow-up before an R4 claim
 
 - inject and record SIGKILL, response-loss, disk-full and torn-write cuts at

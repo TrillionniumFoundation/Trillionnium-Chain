@@ -1,14 +1,12 @@
-use std::{env, fs, path::PathBuf};
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+};
 
 const WAL_BYTES_V1: usize = 28_263;
 const GENERATED_NAME_V1: &str = "finalization_intent_wal_process_v1.rs";
 
-fn replace_exact_once_v1(
-    source: String,
-    old: &str,
-    new: &str,
-    label: &str,
-) -> String {
+fn replace_exact_once_v1(source: String, old: &str, new: &str, label: &str) -> String {
     let matches = source.match_indices(old).count();
     assert_eq!(
         matches, 1,
@@ -17,7 +15,7 @@ fn replace_exact_once_v1(
     source.replacen(old, new, 1)
 }
 
-fn read_fragment_v1(manifest_dir: &PathBuf, name: &str) -> String {
+fn read_fragment_v1(manifest_dir: &Path, name: &str) -> String {
     fs::read_to_string(manifest_dir.join("src").join(name))
         .unwrap_or_else(|error| panic!("read G1-R4A source fragment {name}: {error}"))
 }
@@ -38,7 +36,8 @@ fn main() {
         return;
     }
 
-    let manifest_dir = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"));
+    let manifest_dir =
+        PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR"));
     let wal_path = manifest_dir.join("src/finalization_intent_wal.rs");
     let mut generated = fs::read_to_string(&wal_path)
         .unwrap_or_else(|error| panic!("read exact production finalization WAL: {error}"));
@@ -76,9 +75,7 @@ fn main() {
     generated = replace_exact_once_v1(
         generated,
         "const FIXED_BYTES_V0: usize = 8 + (6 * 8) + (11 * 32) + 32;\n",
-        &format!(
-            "const FIXED_BYTES_V0: usize = 8 + (6 * 8) + (11 * 32) + 32;\n{prefix}"
-        ),
+        &format!("const FIXED_BYTES_V0: usize = 8 + (6 * 8) + (11 * 32) + 32;\n{prefix}"),
         "process checkpoint prefix",
     );
 
