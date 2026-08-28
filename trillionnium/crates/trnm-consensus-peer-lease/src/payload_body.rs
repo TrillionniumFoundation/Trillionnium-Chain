@@ -830,7 +830,8 @@ fn decode_body_header_v1(
         frame_kind,
         payload_len as usize,
         frame_fingerprint,
-    )?;
+    )
+    .map_err(|_| PayloadReplayErrorV1::Corrupt)?;
     Ok(DecodedBodyHeaderV1 {
         operation: bytes[9],
         index,
