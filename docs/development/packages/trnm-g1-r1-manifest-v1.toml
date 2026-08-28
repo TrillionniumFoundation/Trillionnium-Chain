@@ -1,0 +1,66 @@
+manifest_version = 1
+package_id = "trnm-g1-r1-payload-replay-recovery-core-ack-v1"
+classification = "candidate-non-normative"
+parent_plan_id = "trnm-ai-native-blockchain-development-plan-v1"
+parent_plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+package_path = "docs/development/packages/TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md"
+canonical_ref = "refs/heads/docs/chain-poco-bft-mainline-20260825"
+implementation_ref = "refs/heads/dev/g1-payload-replay-recovery-owner-v1"
+branch_tip_at_package_start = "92449b8e101642f39d644d863db7bb60dea488f7"
+latest_code_ancestor = "3e6bdf1938ca409b8a32db922548bf6232391a7a"
+plan_assessed_commit = "8198fea0307eb368df34ff77ffc272a6b0e655ec"
+plan_assessed_tree = "a1be71bba1b54c428493d186fafb656d081b31a9"
+source_commit = "e1db5d2bc829f0e9a416d28079e93dd7a2baf60b"
+source_tree = "3f0bdf81539c3245147bbffcb57cf01c278a9b1e"
+evidence_commit = "ada568ee032698a44e8764a44cddaa963e9cc37e"
+evidence_tree = "b0173a64ba8c538eef5bfc4b838d4da9fefebe4f"
+status = "candidate-implemented-unverified"
+scope = "crate"
+authority = "candidate"
+data_scope = "synthetic-local"
+production_candidate = false
+production_consensus_activation = false
+g1_exit = false
+
+[capabilities]
+independent_full_wal_replay = true
+exact_target_binding = true
+exact_one_record_head_recovery = true
+retained_temporary_quarantine = true
+external_status_api = true
+external_recovery_api = true
+stable_cli = true
+immutable_core_ack_ledger = true
+core_ack_caller_supplied = true
+core_ack_generated_by_core = false
+core_ack_atomic_with_core = false
+whole_node_anti_rollback = false
+node_process_integration = false
+production_activation = false
+
+[files]
+implementation = "trillionnium/crates/trnm-consensus-peer-lease/src/payload_recovery.rs"
+implementation_units = "trillionnium/crates/trnm-consensus-peer-lease/src/payload_recovery/part_*.rs"
+cli = "trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs"
+crate_manifest = "trillionnium/crates/trnm-consensus-peer-lease/Cargo.toml"
+crate_root = "trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs"
+gate = "scripts/ci/check_payload_replay_recovery_v1.sh"
+workflow = ".github/workflows/trnm-payload-replay-recovery-v1.yml"
+
+[verification]
+format_required = true
+unit_tests_required = true
+strict_clippy_required = true
+clean_clone_required = true
+independent_replay_required = true
+local_rust_toolchain_available = false
+local_compile_result = "not-run"
+remote_ci_result = "skipped-by-trusted-actor-policy"
+remote_ci_commit = "ada568ee032698a44e8764a44cddaa963e9cc37e"
+remote_ci_run_ids = [33138150771, 33138150780, 33138150837]
+process_kill_matrix_required_for_promotion = true
+process_kill_matrix_complete = false
+
+[successor]
+package_id = "trnm-g1-r2-replay-to-core-durable-ack-v1"
+objective = "Node-owned Core acknowledgement and pending-breadcrumb closure"
