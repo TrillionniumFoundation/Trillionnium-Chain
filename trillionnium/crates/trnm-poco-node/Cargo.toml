@@ -177,6 +177,10 @@ native_application_owner_production_constructor = false
 native_application_finality_permit_integration = false
 native_application_recovery_integration = false
 native_application_commit_uncertainty_recovery = false
+finalization_intent_publication_repair_candidate = true
+finalization_intent_process_sigkill_source = true
+finalization_intent_process_sigkill_executed = false
+finalization_process_kill_matrix_complete = false
 native_application_durable_p_host = true
 native_application_durable_p_host_public_api = false
 native_application_durable_p_host_production_constructor = false
@@ -266,10 +270,20 @@ name = "trnm-poco-timeout-signing-kill-helper"
 path = "src/bin/trnm-poco-timeout-signing-kill-helper.rs"
 required-features = ["recovery-process-test-support"]
 
+[[bin]]
+name = "trnm-poco-finalization-intent-kill-helper"
+path = "src/bin/trnm-poco-finalization-intent-kill-helper.rs"
+required-features = ["lab-validator-runtime-test-support"]
+
 [[test]]
 name = "timeout_signing_process_kill_matrix"
 path = "tests/timeout_signing_process_kill_matrix.rs"
 required-features = ["recovery-process-test-support"]
+
+[[test]]
+name = "finalization_intent_process_kill_matrix"
+path = "tests/finalization_intent_process_kill_matrix.rs"
+required-features = ["lab-validator-runtime-test-support"]
 
 [[test]]
 name = "g2_manifest_bound_process_v2"
