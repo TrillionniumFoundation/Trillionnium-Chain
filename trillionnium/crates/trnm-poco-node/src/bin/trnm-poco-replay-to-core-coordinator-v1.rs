@@ -36,6 +36,10 @@ use trnm_consensus_peer_lease::{
     PayloadReplayCoreAcknowledgementV1, PayloadReplayNamespaceV1, PayloadReplayRecoveryErrorV1,
     PayloadReplayRecoveryOwnerV1, PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryTargetV1,
 };
+use trnm_consensus_safety_store::{
+    native_valid_result_checksum_v0, NativeValidTransitionV0, SafetyStateStoreProfileV0,
+    SafetyTransitionContextV0, SqliteSafetyStateStoreV0, NATIVE_VALID_POST_ACK_NONE_V0,
+};
 use trnm_consensus_types::{
     decode_application_payload_v0_exact, ApplicationPayloadV0, Block, BlockBodyV0, BlockHeader,
     BlockKind, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
@@ -73,7 +77,9 @@ const CORE_PREDECESSOR_NAME_V1: &str = "core-predecessor.v1";
 const CORE_LOCK_NAME_V1: &str = ".core-ingress.lock-v1";
 const CORE_OBLIGATION_NAME_V1: &str = "core-safety-obligation.record";
 const CORE_DELIVERY_NAME_V1: &str = "core-safety-delivery.record";
+const CORE_SAFETY_DATABASE_NAME_V1: &str = "core-safety.sqlite3";
 const CORE_VERIFIER_PROFILE_REF_V1: [u8; 32] = [0xC7; 32];
+const CORE_SAFETY_MAX_DATABASE_BYTES_V1: usize = 256 * 1024 * 1024;
 const CORE_INPUT_PREAUTH_DOMAIN_V1: &str = "trnm.consensus-core.preauthentication-input.v0";
 const CORE_INPUT_RECORD_PREFIX_BYTES_V1: usize = 204;
 const CORE_INPUT_RECORD_BYTES_V1: usize = CORE_INPUT_RECORD_PREFIX_BYTES_V1 + 32;
@@ -362,6 +368,10 @@ pub struct CandidateCoreIngressV1 {
     _lock: File,
     core: Core,
     application_seal_authority: CoreIssuedApplicationSealAuthorityV0,
+    // The SQLite owner is deliberately kept behind an Option so a restart
+    // reconstruction can drop the old process-affined binding before opening
+    // and binding a fresh Core instance to the same durable journal.
+    safety_store: Option<SqliteSafetyStateStoreV0<StrictEd25519Verifier>>,
     fault_cut: Option<CoreReplayFaultCutV1>,
     calls: u64,
 }
@@ -374,6 +384,7 @@ impl fmt::Debug for CandidateCoreIngressV1 {
             .field("fault_cut", &self.fault_cut)
             .field("calls", &self.calls)
             .field("core_revision", &self.core.safety_state().revision())
+            .field("safety_store_open", &self.safety_store.is_some())
             .finish_non_exhaustive()
     }
 }
@@ -429,12 +440,14 @@ impl CandidateCoreIngressV1 {
                     "candidate application seal authority unavailable",
                 ))
             })?;
+        let safety_store = open_candidate_safety_store_v1(&root, &core)?;
         Ok(Self {
             root,
             directory,
             _lock: lock,
             core,
             application_seal_authority,
+            safety_store: Some(safety_store),
             fault_cut: None,
             calls: 0,
         })
@@ -475,8 +488,16 @@ impl CandidateCoreIngressV1 {
             core.issue_application_seal_authority_v0().map_err(|_| {
                 CoreDeliveryErrorV1::new("candidate application seal authority unavailable")
             })?;
+        // `SafetyStatePersistenceBindingV0` is process/Core-affined and the
+        // store intentionally rejects a second binding. Drop the old owner
+        // before binding the reconstructed Core so retries after a fault cut
+        // exercise the same real SQLite journal rather than an ad-hoc cache.
+        drop(self.safety_store.take());
+        let safety_store = open_candidate_safety_store_v1(&self.root, &core)
+            .map_err(|_| CoreDeliveryErrorV1::new("candidate SafetyStore reconstruction failed"))?;
         self.core = core;
         self.application_seal_authority = application_seal_authority;
+        self.safety_store = Some(safety_store);
         Ok(())
     }
 
@@ -623,6 +644,26 @@ impl CandidateCoreIngressV1 {
                         "Core durable states do not bind the exact candidate request transition",
                     ));
                 }
+                // The phase files are not the SafetyStore authority.  On a
+                // restart the SQLite owner may have advanced before the
+                // final receipt breadcrumb was published; require its
+                // authenticated head to be the exact durable delivery state
+                // and transition context before treating the receipt as
+                // idempotently complete.
+                let expected_context =
+                    self.candidate_transition_context_v1(request, &delivery_state)?;
+                let store = self.safety_store.as_ref().ok_or_else(|| {
+                    CoreDeliveryErrorV1::new("candidate SafetyStore owner is unavailable")
+                })?;
+                let head = store.head().map_err(|_| {
+                    CoreDeliveryErrorV1::new("candidate SafetyStore terminal head readback failed")
+                })?;
+                if head.state() != &delivery_state || head.transition_context() != &expected_context
+                {
+                    return Err(CoreDeliveryErrorV1::new(
+                        "Core receipt facts do not match the authenticated SafetyStore head",
+                    ));
+                }
                 Ok(Some(facts))
             }
             Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(None),
@@ -630,11 +671,137 @@ impl CandidateCoreIngressV1 {
         }
     }
 
-    fn write_safety_state(
+    /// Derives the only transition context admitted by the candidate
+    /// SafetyStore for one exact replay request/state pair. Revision-one
+    /// obligation records are ordinary transitions. Revision-two delivery
+    /// records contain Core's `NativeValid(None)` manifest, so the store must
+    /// receive a canonical NativeValid context rather than an unbound
+    /// `Ordinary` marker. The extra application fields are deterministic
+    /// candidate facts bound to the request; they are intentionally inert and
+    /// do not claim an application-store or signer authority.
+    fn candidate_transition_context_v1(
         &self,
+        request: CoreReplayRequestV1,
+        state: &SafetyState,
+    ) -> Result<SafetyTransitionContextV0, CoreDeliveryErrorV1> {
+        let Some(completion) = state
+            .payload_validation_completions()
+            .iter()
+            .find(|completion| completion.result().is_valid())
+        else {
+            return Ok(SafetyTransitionContextV0::ordinary());
+        };
+        if state.revision() != 2
+            || completion.route() != PayloadValidationRouteV0::Synced
+            || completion.id().generation() != 1
+            || completion.first_recorded_revision() != state.revision()
+        {
+            return Err(CoreDeliveryErrorV1::new(
+                "candidate delivery completion is not the exact replay completion",
+            ));
+        }
+        let valid_result_checksum = native_valid_result_checksum_v0(completion.result())
+            .map_err(|_| CoreDeliveryErrorV1::new("candidate Valid result checksum failed"))?;
+        let application_host_config_ref = candidate_preauth_hash_v1(
+            "trnm.g1-r2b.candidate-application-host-config.v1",
+            &[
+                self.core.config().validator_set().id().as_bytes(),
+                self.core.config().consensus_parameters().hash().as_bytes(),
+            ],
+        );
+        let block_id = completion.id().block_id();
+        let delivered_job_row_checksum = candidate_preauth_hash_v1(
+            "trnm.g1-r2b.candidate-delivered-row.v1",
+            &[&request.target_digest, block_id.as_bytes()],
+        );
+        let outbox_checksum = candidate_preauth_hash_v1(
+            "trnm.g1-r2b.candidate-outbox.v1",
+            &[&request.request_digest, &request.idempotency_key],
+        );
+        let facts = NativeValidTransitionV0::new(
+            completion.route(),
+            completion.id(),
+            request.request_digest,
+            request.target_digest,
+            application_host_config_ref,
+            valid_result_checksum,
+            request.input_digest,
+            request.idempotency_key,
+            1,
+            delivered_job_row_checksum,
+            outbox_checksum,
+            NATIVE_VALID_POST_ACK_NONE_V0,
+            state.revision(),
+        )
+        .map_err(|_| {
+            CoreDeliveryErrorV1::new("candidate NativeValid context construction failed")
+        })?;
+        Ok(SafetyTransitionContextV0::native_valid(facts))
+    }
+
+    fn write_safety_state(
+        &mut self,
         persistence: &SafetyStatePersistenceV0,
         slot: &'static str,
+        request: CoreReplayRequestV1,
     ) -> Result<Vec<u8>, CoreDeliveryErrorV1> {
+        let transition_context =
+            self.candidate_transition_context_v1(request, persistence.state())?;
+        let Some(store) = self.safety_store.as_mut() else {
+            return Err(CoreDeliveryErrorV1::new(
+                "candidate SafetyStore owner is unavailable",
+            ));
+        };
+        // A retry can reach this phase after a later SafetyStore revision was
+        // already committed (for example, the process stopped after delivery
+        // read-back but before the replay receipt).  Never submit an older
+        // request to `persist_exact...`: the store must reject that regression
+        // and the coordinator must prove the exact retained predecessor
+        // instead.  Equality is checked against both state and typed
+        // transition context, not merely the revision number.
+        let head = store
+            .head()
+            .map_err(|_| CoreDeliveryErrorV1::new("candidate SafetyStore head read failed"))?;
+        let incoming_revision = persistence.state().revision();
+        let mut already_durable =
+            head.state() == persistence.state() && head.transition_context() == &transition_context;
+        if !already_durable && incoming_revision < head.revision() {
+            let predecessor = store.authenticated_predecessor_v0().map_err(|_| {
+                CoreDeliveryErrorV1::new("candidate SafetyStore predecessor read failed")
+            })?;
+            already_durable = predecessor.as_ref().is_some_and(|value| {
+                value.state() == persistence.state()
+                    && value.transition_context() == &transition_context
+            });
+        }
+        if !already_durable {
+            if incoming_revision <= head.revision() {
+                return Err(CoreDeliveryErrorV1::new(
+                    "candidate SafetyStore head conflicts with the exact Core transition",
+                ));
+            }
+            let (_, confirmed) = store
+                .persist_exact_and_confirm_node_checkpoint_head_v0(
+                    persistence,
+                    &transition_context,
+                )
+                .map_err(|_| {
+                    CoreDeliveryErrorV1::new(
+                        "candidate SafetyStore persistence or authenticated head confirmation failed",
+                    )
+                })?;
+            if confirmed.state_v0() != persistence.state()
+                || confirmed.revision_v0() != incoming_revision
+                || !confirmed.belongs_to_store_at_path_v0(
+                    store,
+                    &self.root.join(CORE_SAFETY_DATABASE_NAME_V1),
+                )
+            {
+                return Err(CoreDeliveryErrorV1::new(
+                    "candidate SafetyStore confirmation does not bind the live owner",
+                ));
+            }
+        }
         let limits = SafetyStateRecordLimitsV0::new(64 * 1024 * 1024, 16 * 1024 * 1024)
             .map_err(|_| CoreDeliveryErrorV1::new("invalid SafetyState record limits"))?;
         let context = SafetyStateRecordContextV0::new(
@@ -657,6 +824,7 @@ impl CandidateCoreIngressV1 {
         persistence: &SafetyStatePersistenceV0,
         slot: &'static str,
         expected_len: usize,
+        request: CoreReplayRequestV1,
     ) -> Result<Vec<u8>, CoreDeliveryErrorV1> {
         let limits = SafetyStateRecordLimitsV0::new(64 * 1024 * 1024, 16 * 1024 * 1024)
             .map_err(|_| CoreDeliveryErrorV1::new("invalid SafetyState record limits"))?;
@@ -682,6 +850,34 @@ impl CandidateCoreIngressV1 {
             &StrictEd25519Verifier,
         )
         .map_err(|_| CoreDeliveryErrorV1::new("SafetyState semantic readback validation failed"))?;
+        let expected_context = self.candidate_transition_context_v1(request, decoded.state())?;
+        let store = self.safety_store.as_ref().ok_or_else(|| {
+            CoreDeliveryErrorV1::new("candidate SafetyStore owner is unavailable")
+        })?;
+        let head = store
+            .head()
+            .map_err(|_| CoreDeliveryErrorV1::new("candidate SafetyStore head readback failed"))?;
+        let mut exact =
+            head.state() == decoded.state() && head.transition_context() == &expected_context;
+        // Historical phase records are retained as the immediately previous
+        // SafetyStore row.  Accept that row only when the active head is
+        // exactly one revision newer; this is the explicit recovery case for
+        // a cut between delivery persistence and replay acknowledgement.
+        if !exact && decoded.state().revision() < head.revision() {
+            let predecessor = store.authenticated_predecessor_v0().map_err(|_| {
+                CoreDeliveryErrorV1::new("candidate SafetyStore predecessor readback failed")
+            })?;
+            exact = predecessor.as_ref().is_some_and(|value| {
+                value.state() == decoded.state()
+                    && value.transition_context() == &expected_context
+                    && decoded.state().revision().checked_add(1) == Some(head.revision())
+            });
+        }
+        if !exact {
+            return Err(CoreDeliveryErrorV1::new(
+                "SafetyStore head differs from the exact Core readback",
+            ));
+        }
         Ok(reread)
     }
 
@@ -724,12 +920,13 @@ impl CandidateCoreIngressV1 {
     }
 
     fn persist_safety_state(
-        &self,
+        &mut self,
         persistence: &SafetyStatePersistenceV0,
         slot: &'static str,
+        request: CoreReplayRequestV1,
     ) -> Result<Vec<u8>, CoreDeliveryErrorV1> {
-        let bytes = self.write_safety_state(persistence, slot)?;
-        self.readback_safety_state(persistence, slot, bytes.len())
+        let bytes = self.write_safety_state(persistence, slot, request)?;
+        self.readback_safety_state(persistence, slot, bytes.len(), request)
     }
 
     fn deliver_real_candidate(
@@ -774,13 +971,19 @@ impl CandidateCoreIngressV1 {
                 CoreReplayFaultCutV1::CoreAcceptedBeforePersistence.reason(),
             ));
         }
-        let obligation_bytes = self.write_safety_state(&obligation, CORE_OBLIGATION_NAME_V1)?;
+        let obligation_bytes =
+            self.write_safety_state(&obligation, CORE_OBLIGATION_NAME_V1, request)?;
         if self.consume_fault(CoreReplayFaultCutV1::PersistenceBeforeReadback) {
             return Err(CoreDeliveryErrorV1::new(
                 CoreReplayFaultCutV1::PersistenceBeforeReadback.reason(),
             ));
         }
-        self.readback_safety_state(&obligation, CORE_OBLIGATION_NAME_V1, obligation_bytes.len())?;
+        self.readback_safety_state(
+            &obligation,
+            CORE_OBLIGATION_NAME_V1,
+            obligation_bytes.len(),
+            request,
+        )?;
         let released = self
             .core
             .step(
@@ -852,7 +1055,7 @@ impl CandidateCoreIngressV1 {
             ));
         }
         let delivery_bytes =
-            self.persist_safety_state(&delivery_persistence, CORE_DELIVERY_NAME_V1)?;
+            self.persist_safety_state(&delivery_persistence, CORE_DELIVERY_NAME_V1, request)?;
         if self.consume_fault(CoreReplayFaultCutV1::ReadbackBeforeReplayAck) {
             return Err(CoreDeliveryErrorV1::new(
                 CoreReplayFaultCutV1::ReadbackBeforeReplayAck.reason(),
@@ -1386,6 +1589,77 @@ impl ReplayToCoreCoordinatorV1 {
 const CANDIDATE_CORE_CHAIN_ID_V1: &str = "trnm-replay-core-candidate-v1";
 const CANDIDATE_CORE_KEY_BYTES_V1: [u8; 32] = [41; 32];
 const CANDIDATE_CORE_PAYLOAD_DOMAIN_V1: &[u8] = b"trnm.g1-r2b.candidate-replay-payload.v1";
+
+fn open_candidate_safety_store_v1(
+    root: &Path,
+    core: &Core,
+) -> Result<SqliteSafetyStateStoreV0<StrictEd25519Verifier>, ReplayToCoreCoordinatorErrorV1> {
+    let database_path = root.join(CORE_SAFETY_DATABASE_NAME_V1);
+    let record_limits = SafetyStateRecordLimitsV0::new(64 * 1024 * 1024, 16 * 1024 * 1024)
+        .map_err(|_| {
+            ReplayToCoreCoordinatorErrorV1::CoreDelivery(CoreDeliveryErrorV1::new(
+                "candidate SafetyStore record limits are invalid",
+            ))
+        })?;
+    let profile = SafetyStateStoreProfileV0::new(
+        core.config().clone(),
+        CORE_VERIFIER_PROFILE_REF_V1,
+        record_limits,
+        CORE_SAFETY_MAX_DATABASE_BYTES_V1,
+    )
+    .map_err(|_| {
+        ReplayToCoreCoordinatorErrorV1::CoreDelivery(CoreDeliveryErrorV1::new(
+            "candidate SafetyStore profile was rejected",
+        ))
+    })?;
+    let database_exists = match fs::symlink_metadata(&database_path) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink() || !metadata.is_file() {
+                return Err(ReplayToCoreCoordinatorErrorV1::Corrupt);
+            }
+            true
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => false,
+        Err(error) => return Err(ReplayToCoreCoordinatorErrorV1::Io(error)),
+    };
+    let mut store = if database_exists {
+        SqliteSafetyStateStoreV0::open_existing(&database_path, profile, StrictEd25519Verifier)
+    } else {
+        SqliteSafetyStateStoreV0::initialize_new(
+            &database_path,
+            profile,
+            StrictEd25519Verifier,
+            core.safety_state(),
+        )
+    }
+    .map_err(|_| {
+        ReplayToCoreCoordinatorErrorV1::CoreDelivery(CoreDeliveryErrorV1::new(
+            "candidate SafetyStore open or initialization failed",
+        ))
+    })?;
+    store
+        .bind_core_v0(core.safety_state_persistence_binding_v0())
+        .map_err(|_| {
+            ReplayToCoreCoordinatorErrorV1::CoreDelivery(CoreDeliveryErrorV1::new(
+                "candidate SafetyStore Core binding failed",
+            ))
+        })?;
+    // Even a virgin store must prove its exact revision-zero state before the
+    // owner can accept a replay. For an existing journal, the durable head may
+    // be rev1/rev2 while this process is reconstructing a fresh Core; the
+    // later phase reconciliation compares that head to the exact request.
+    let head = store.head().map_err(|_| {
+        ReplayToCoreCoordinatorErrorV1::CoreDelivery(CoreDeliveryErrorV1::new(
+            "candidate SafetyStore initial head authentication failed",
+        ))
+    })?;
+    if !database_exists && head.state() != core.safety_state() {
+        return Err(ReplayToCoreCoordinatorErrorV1::CoreDelivery(
+            CoreDeliveryErrorV1::new("candidate SafetyStore genesis readback differs"),
+        ));
+    }
+    Ok(store)
+}
 
 struct CandidateExpectedTransitionV1 {
     core_input_digest: [u8; 32],

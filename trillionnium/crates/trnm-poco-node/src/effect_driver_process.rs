@@ -49,9 +49,10 @@ use trnm_consensus_core::{
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(unix)]
 use trnm_consensus_peer_lease::{
-    payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayDirectionV1,
-    PayloadReplayErrorV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayStoreV1,
-    PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1, UnixPeerLeaseClientV1,
+    payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayBodyErrorV1,
+    PayloadReplayBodyStoreV1, PayloadReplayDirectionV1, PayloadReplayErrorV1, PayloadReplayFrameV1,
+    PayloadReplayNamespaceV1, PayloadReplayStoreV1, PeerLeaseErrorV1, PeerLeaseScopeV1,
+    PeerLeaseTokenV1, UnixPeerLeaseClientV1,
 };
 use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1};
 use trnm_consensus_types::{
@@ -95,6 +96,11 @@ const APPLICATION_WAL_V1: &str = "application-seal.wal";
 // a subsequent one-shot owner must stop and hand this record to a recovery
 // owner rather than silently retrying the same frame.
 const P2P_REPLAY_PENDING_V1: &str = "p2p-replay.pending";
+// The replay WAL intentionally contains only authenticated frame identity.
+// Exact frame bytes live in a separate, dedicated directory beside that WAL;
+// the two stores are reconciled explicitly and are never treated as one
+// atomic transaction.
+const P2P_REPLAY_BODY_DIRECTORY_SUFFIX_V1: &str = ".body-v1";
 // Failed atomic publications are retained as recovery evidence.  A process
 // local nonce prevents a retry in the same owner from colliding forever with
 // the retained temporary pathname.
@@ -1655,6 +1661,71 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
 }
 
 #[cfg(unix)]
+fn payload_replay_body_root_v1(replay_path: &Path) -> Result<PathBuf, EffectDriverProcessErrorV1> {
+    let name = replay_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::new("p2p", "replay WAL requires a UTF-8 filename")
+        })?;
+    Ok(replay_path.with_file_name(format!(".{name}{P2P_REPLAY_BODY_DIRECTORY_SUFFIX_V1}")))
+}
+
+#[cfg(unix)]
+fn ensure_payload_replay_body_root_v1(
+    replay_path: &Path,
+) -> Result<PathBuf, EffectDriverProcessErrorV1> {
+    let body_root = payload_replay_body_root_v1(replay_path)?;
+    match fs::symlink_metadata(&body_root) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink()
+                || !metadata.is_dir()
+                || metadata.permissions().mode() & 0o7777 != 0o700
+                || metadata.uid() != rustix::process::geteuid().as_raw()
+                || fs::canonicalize(&body_root).map_err(|error| {
+                    EffectDriverProcessErrorV1::new(
+                        "p2p_replay_body",
+                        format!("canonicalize body store root: {error:?}"),
+                    )
+                })? != body_root
+            {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "p2p_replay_body",
+                    "body store root is not an owner-private canonical directory",
+                ));
+            }
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {
+            fs::create_dir(&body_root).map_err(|error| {
+                EffectDriverProcessErrorV1::new(
+                    "p2p_replay_body",
+                    format!("create body store root: {error:?}"),
+                )
+            })?;
+            let directory = open_directory_no_follow_v1(&body_root).map_err(|error| {
+                EffectDriverProcessErrorV1::new(
+                    "p2p_replay_body",
+                    format!("open body store root: {error:?}"),
+                )
+            })?;
+            set_private_root_permissions(&directory).map_err(|error| {
+                EffectDriverProcessErrorV1::new(
+                    "p2p_replay_body",
+                    format!("tighten body store root: {error:?}"),
+                )
+            })?;
+        }
+        Err(error) => {
+            return Err(EffectDriverProcessErrorV1::new(
+                "p2p_replay_body",
+                format!("body store root metadata: {error:?}"),
+            ))
+        }
+    }
+    Ok(body_root)
+}
+
+#[cfg(unix)]
 fn validate_p2p_socket_parameters_v1(
     root: &Path,
     socket_path: &Path,
@@ -1682,12 +1753,14 @@ fn validate_p2p_socket_parameters_v1(
         })?;
     let replay_lock = replay_path.with_file_name(format!(".{replay_name}.lock-v1"));
     let replay_head = replay_path.with_file_name(format!(".{replay_name}.head-v1"));
+    let replay_body_root = payload_replay_body_root_v1(replay_path)?;
     let candidate_paths = [
         socket_path.to_path_buf(),
         lease_socket_path.to_path_buf(),
         replay_path.to_path_buf(),
         replay_lock,
         replay_head,
+        replay_body_root,
     ];
     for (index, left) in candidate_paths.iter().enumerate() {
         if candidate_paths[index + 1..]
@@ -2043,6 +2116,16 @@ fn map_payload_replay_admit_error_v1(error: PayloadReplayErrorV1) -> EffectDrive
 }
 
 #[cfg(unix)]
+fn map_payload_replay_body_error_v1(error: PayloadReplayBodyErrorV1) -> EffectDriverProcessErrorV1 {
+    let detail = error.to_string();
+    if error.commit_ambiguous() {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_replay_body_uncertain", detail)
+    } else {
+        EffectDriverProcessErrorV1::new("p2p_replay_body", detail)
+    }
+}
+
+#[cfg(unix)]
 fn finalize_p2p_post_acquire_error_v1(
     lease_guard: &mut CandidatePeerLeaseGuardV1,
     error: EffectDriverProcessErrorV1,
@@ -2265,6 +2348,19 @@ fn process_one_candidate_p2p_connection_v1(
             ));
         }
     };
+    let body_root = match ensure_payload_replay_body_root_v1(&replay_path) {
+        Ok(path) => path,
+        Err(error) => return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error)),
+    };
+    let mut body_store = match PayloadReplayBodyStoreV1::open(&body_root, namespace) {
+        Ok(store) => store,
+        Err(error) => {
+            return Err(finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                map_payload_replay_body_error_v1(error),
+            ))
+        }
+    };
 
     // Revalidate immediately before the payload append.  The external lease
     // daemon and this WAL are intentionally separate owners; if the lease is
@@ -2350,6 +2446,16 @@ fn process_one_candidate_p2p_connection_v1(
             return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, mapped));
         }
     };
+
+    // The metadata WAL and the exact authenticated bytes are separate durable
+    // owners.  Persist the bytes before exposing the typed input to Core; a
+    // failure here is explicitly uncertain and leaves the replay breadcrumb
+    // for the external recovery owner rather than dropping the only source
+    // body after a successful WAL append.
+    let body_receipt = body_store
+        .put(replay_frame, receipt, &frame_bytes)
+        .map_err(map_payload_replay_body_error_v1)
+        .map_err(|error| finalize_p2p_post_acquire_error_v1(&mut lease_guard, error))?;
 
     // Close the second half of the lease/WAL race before handing the typed
     // value to Core.  A failed check leaves a durable replay tombstone but no
@@ -2443,6 +2549,9 @@ fn process_one_candidate_p2p_connection_v1(
         "lease_generation": token.generation(),
         "replay_record_index": receipt.record_index(),
         "replay_record_hash": hex::encode(receipt.record_hash()),
+        "replay_body_digest": hex::encode(body_receipt.body_digest()),
+        "replay_body_len": body_receipt.body_len(),
+        "replay_body_idempotent": body_receipt.idempotent_replay(),
         "replay_commit_state": "admitted_not_core_committed",
         "processed_ingress": facts.processed_ingress(),
         "processed_effects": facts.processed_effects(),
