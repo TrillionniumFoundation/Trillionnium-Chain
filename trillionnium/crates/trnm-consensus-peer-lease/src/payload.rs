@@ -452,6 +452,57 @@ struct ReplaySnapshotV1 {
     record_count: u64,
 }
 
+/// Descriptor/path identity retained for every endpoint of a replay owner.
+///
+/// The journal and lock descriptors are kept open for the lifetime of the
+/// owner, but the head sidecar (and the parent directory used by atomic
+/// publication) is still addressed by pathname.  Comparing both descriptor
+/// and pathname metadata before and after each operation turns a same-UID
+/// rename/symlink/hard-link substitution into a fail-closed error instead of
+/// silently moving the replay namespace.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct PayloadReplayPathIdentityV1 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+    #[cfg(unix)]
+    uid: u32,
+    #[cfg(unix)]
+    mode: u32,
+    #[cfg(unix)]
+    nlink: u64,
+    #[cfg(not(unix))]
+    is_file: bool,
+    #[cfg(not(unix))]
+    is_directory: bool,
+    #[cfg(not(unix))]
+    length: u64,
+}
+
+impl PayloadReplayPathIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        #[cfg(unix)]
+        {
+            Self {
+                device: metadata.dev(),
+                inode: metadata.ino(),
+                uid: metadata.uid(),
+                mode: metadata.mode(),
+                nlink: metadata.nlink(),
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            Self {
+                is_file: metadata.is_file(),
+                is_directory: metadata.is_dir(),
+                length: metadata.len(),
+            }
+        }
+    }
+}
+
 /// Node-owned append-only payload replay journal.  One exclusive lock covers
 /// the whole namespace; a second process cannot open the same owner while it
 /// is live.  Reopening replays every record and requires an exact sidecar
@@ -462,8 +513,13 @@ pub struct PayloadReplayStoreV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
+    directory_identity: PayloadReplayPathIdentityV1,
     file: File,
+    file_identity: PayloadReplayPathIdentityV1,
+    lock_path: PathBuf,
     _lock: File,
+    lock_identity: PayloadReplayPathIdentityV1,
+    head_identity: Option<PayloadReplayPathIdentityV1>,
     namespace: PayloadReplayNamespaceV1,
     namespace_digest: [u8; 32],
     states: BTreeMap<PeerKeyV1, ReplayStateV1>,
@@ -484,11 +540,15 @@ impl PayloadReplayStoreV1 {
         namespace: PayloadReplayNamespaceV1,
     ) -> Result<Self, PayloadReplayErrorV1> {
         let path = path.as_ref().to_path_buf();
-        let (directory, _parent) = private_parent(&path)?;
+        let (directory, parent) = private_parent(&path)?;
+        let directory_identity = payload_replay_descriptor_identity(&directory)?;
+        verify_payload_replay_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(&path, "lock-v1")?;
         let head_path = sidecar_path(&path, "head-v1")?;
         reject_stale_head_temps(&path)?;
         let lock = open_private_lock(&lock_path)?;
+        let lock_identity = payload_replay_descriptor_identity(&lock)?;
+        verify_payload_replay_file_identity(&lock_path, &lock, lock_identity)?;
         lock.try_lock_exclusive()
             .map_err(PayloadReplayErrorV1::Io)?;
 
@@ -520,29 +580,48 @@ impl PayloadReplayStoreV1 {
         }
         let mut options = OpenOptions::new();
         options.read(true).write(true).append(true);
+        // Existing files need the same no-follow protection as newly-created
+        // files.  Without this flag a same-UID rename between the metadata
+        // probe above and `open` could redirect the descriptor to an alias.
+        set_private_mode_options(&mut options);
         if existing {
             options.create(false);
         } else {
             options.create_new(true);
-            set_private_mode_options(&mut options);
         }
         let file = options.open(&path).map_err(PayloadReplayErrorV1::Io)?;
         if !existing {
             set_private_mode(&file)?;
         }
         validate_private_file(&file)?;
+        let file_identity = payload_replay_descriptor_identity(&file)?;
+        verify_payload_replay_file_identity(&path, &file, file_identity)?;
         file.try_lock_exclusive()
             .map_err(PayloadReplayErrorV1::Io)?;
         if existing && file.metadata()?.len() == 0 {
             return Err(PayloadReplayErrorV1::Truncated);
         }
         let namespace_digest = namespace.digest();
+        let head_identity = match payload_replay_path_identity(&head_path) {
+            Ok(identity) => Some(identity),
+            Err(PayloadReplayErrorV1::Io(error))
+                if error.kind() == io::ErrorKind::NotFound && !existing =>
+            {
+                None
+            }
+            Err(error) => return Err(error),
+        };
         let mut store = Self {
             path,
             head_path,
             directory,
+            directory_identity,
             file,
+            file_identity,
+            lock_path,
             _lock: lock,
+            lock_identity,
+            head_identity,
             namespace,
             namespace_digest,
             states: BTreeMap::new(),
@@ -555,12 +634,16 @@ impl PayloadReplayStoreV1 {
         };
         if !existing {
             let genesis = encode_record(None, namespace, namespace_digest, 0, [0; 32]);
+            store.verify_payload_replay_storage_paths_v1()?;
             store.file.write_all(&genesis)?;
             store.file.sync_all()?;
             store.directory.sync_all()?;
+            store.verify_payload_replay_storage_paths_v1()?;
         }
         store.reload_from_disk()?;
         store.reconcile_head(!existing)?;
+        store.refresh_head_identity_v1()?;
+        store.verify_bound_paths_v1()?;
         Ok(store)
     }
 
@@ -617,6 +700,14 @@ impl PayloadReplayStoreV1 {
             .map(|state| state.generation)
     }
 
+    /// Revalidate the journal, lock, head and parent identities held by this
+    /// owner.  A caller which performs additional work between replay
+    /// operations can use this explicit fence; `admit` and `lookup_exact_v1`
+    /// invoke the same check internally.
+    pub fn verify_bound_endpoint_identity(&self) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_bound_paths_v1()
+    }
+
     /// Durably admits one already-authenticated frame.  The frame is never
     /// exposed as accepted until both the WAL record and exact head sidecar
     /// have been synced.
@@ -655,6 +746,14 @@ impl PayloadReplayStoreV1 {
             index,
             self.last_hash,
         );
+        // Frame validation and in-memory preview happen before the append and
+        // may yield to a same-UID namespace replacement.  Recheck every
+        // bound endpoint immediately before crossing the durable boundary so
+        // a stale pathname can never be treated as this owner's append.
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
+        }
         if let Err(error) = self.file.write_all(&record) {
             self.poisoned = true;
             return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(
@@ -668,16 +767,25 @@ impl PayloadReplayStoreV1 {
             )));
         }
         let record_hash = record_digest(&record[..RECORD_PREFIX_BYTES_V1]);
-        if let Err(error) = persist_head(
+        let published_head_identity = match persist_head_with_identity(
             &self.head_path,
             &self.directory,
             new_count,
             record_hash,
             self.namespace_digest,
         ) {
-            self.poisoned = true;
-            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
-        }
+            Ok(identity) => identity,
+            Err(error) => {
+                self.poisoned = true;
+                return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
+            }
+        };
+        // `persist_head_with_identity` publishes a replacement inode and
+        // authenticates that the pathname still names the exact descriptor
+        // which was written.  Keep that identity before exposing the new
+        // in-memory state; any later substitution is caught by the final
+        // bound-path check below.
+        self.head_identity = Some(published_head_identity);
         self.states.insert(key, next_state);
         self.seen_sessions.insert((key, frame.session_id));
         let identity = ReplayFrameIdentityV1::from_frame(*frame);
@@ -692,6 +800,10 @@ impl PayloadReplayStoreV1 {
         self.frame_positions.insert(position, identity);
         self.last_hash = record_hash;
         self.record_count = new_count;
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
+        }
         Ok(PayloadReplayReceiptV1 {
             record_index: index,
             record_hash,
@@ -723,6 +835,7 @@ impl PayloadReplayStoreV1 {
         if self.frame_positions.contains_key(&identity.position()) {
             return Err(PayloadReplayErrorV1::Replay);
         }
+        self.verify_bound_paths_v1()?;
         Ok(None)
     }
 
@@ -795,7 +908,43 @@ impl PayloadReplayStoreV1 {
         })
     }
 
+    /// Revalidate the descriptor/path identity of the journal, lock and
+    /// parent directory.  The head sidecar is optional only while opening a
+    /// virgin journal; all externally visible operations use
+    /// `verify_bound_paths_v1`, which requires a pinned head as well.
+    fn verify_payload_replay_storage_paths_v1(&self) -> Result<(), PayloadReplayErrorV1> {
+        let parent = self
+            .path
+            .parent()
+            .ok_or(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay path has no parent",
+            ))?;
+        verify_payload_replay_directory_identity(parent, &self.directory, self.directory_identity)?;
+        verify_payload_replay_file_identity(&self.path, &self.file, self.file_identity)?;
+        verify_payload_replay_file_identity(&self.lock_path, &self._lock, self.lock_identity)?;
+        Ok(())
+    }
+
+    fn verify_bound_paths_v1(&self) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_payload_replay_storage_paths_v1()?;
+        let head_identity = self.head_identity.ok_or(PayloadReplayErrorV1::Corrupt)?;
+        verify_payload_replay_path_identity(&self.head_path, head_identity)
+    }
+
+    fn refresh_head_identity_v1(&mut self) -> Result<(), PayloadReplayErrorV1> {
+        let identity = payload_replay_path_identity(&self.head_path)?;
+        let metadata = fs::symlink_metadata(&self.head_path)?;
+        if !metadata.is_file() || !private_file_mode(&metadata) {
+            return Err(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay head is not a private regular file",
+            ));
+        }
+        self.head_identity = Some(identity);
+        Ok(())
+    }
+
     fn verify_live_head(&mut self) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_bound_paths_v1()?;
         let bytes = self.read_log_bytes()?;
         let snapshot = parse_log(&bytes, self.namespace, self.namespace_digest)?;
         if snapshot.record_count != self.record_count
@@ -815,10 +964,12 @@ impl PayloadReplayStoreV1 {
         {
             return Err(PayloadReplayErrorV1::Corrupt);
         }
+        self.verify_bound_paths_v1()?;
         Ok(())
     }
 
     fn reload_from_disk(&mut self) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_payload_replay_storage_paths_v1()?;
         let bytes = self.read_log_bytes()?;
         let snapshot = parse_log(&bytes, self.namespace, self.namespace_digest)?;
         self.states = snapshot.states;
@@ -827,6 +978,7 @@ impl PayloadReplayStoreV1 {
         self.frame_positions = snapshot.frame_positions;
         self.last_hash = snapshot.last_hash;
         self.record_count = snapshot.record_count;
+        self.verify_payload_replay_storage_paths_v1()?;
         Ok(())
     }
 
@@ -852,6 +1004,7 @@ impl PayloadReplayStoreV1 {
     }
 
     fn reconcile_head(&self, virgin: bool) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_payload_replay_storage_paths_v1()?;
         let bytes = match read_private_head(&self.head_path) {
             Ok(bytes) => bytes,
             Err(PayloadReplayErrorV1::Io(error))
@@ -867,6 +1020,15 @@ impl PayloadReplayStoreV1 {
             }
             Err(error) => return Err(error),
         };
+        if virgin {
+            // A head sidecar appearing after the initial virgin-journal probe
+            // is a namespace race, even if its bytes happen to describe the
+            // expected genesis. Accepting it would let an uncooperating
+            // writer install authority state between our checks.
+            return Err(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay head appeared during virgin open",
+            ));
+        }
         let (count, hash, namespace_digest) = decode_head(&bytes)?;
         if namespace_digest != self.namespace_digest
             || count != self.record_count
@@ -877,8 +1039,102 @@ impl PayloadReplayStoreV1 {
             // frame appear new after a rollback.
             return Err(PayloadReplayErrorV1::Corrupt);
         }
+        self.verify_payload_replay_storage_paths_v1()?;
         Ok(())
     }
+}
+
+fn payload_replay_descriptor_identity(
+    file: &File,
+) -> Result<PayloadReplayPathIdentityV1, PayloadReplayErrorV1> {
+    Ok(PayloadReplayPathIdentityV1::from_metadata(
+        &file.metadata()?,
+    ))
+}
+
+fn payload_replay_path_identity(
+    path: &Path,
+) -> Result<PayloadReplayPathIdentityV1, PayloadReplayErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink() {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay authority path is a symlink",
+        ));
+    }
+    Ok(PayloadReplayPathIdentityV1::from_metadata(&metadata))
+}
+
+fn map_private_directory_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayErrorV1 {
+    match error {
+        crate::PeerLeaseErrorV1::InvalidRequest(reason)
+        | crate::PeerLeaseErrorV1::Protocol(reason) => PayloadReplayErrorV1::InvalidRequest(reason),
+        crate::PeerLeaseErrorV1::Io(error) => PayloadReplayErrorV1::Io(error),
+        crate::PeerLeaseErrorV1::Rejected(_) => {
+            PayloadReplayErrorV1::InvalidRequest("payload replay parent ancestry is not private")
+        }
+    }
+}
+
+fn verify_payload_replay_directory_identity(
+    path: &Path,
+    directory: &File,
+    expected: PayloadReplayPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    let descriptor_metadata = directory.metadata()?;
+    let named_metadata = fs::symlink_metadata(path)?;
+    if named_metadata.file_type().is_symlink()
+        || !descriptor_metadata.is_dir()
+        || !named_metadata.is_dir()
+        || !private_parent_mode(&descriptor_metadata)
+        || !private_parent_mode(&named_metadata)
+        || PayloadReplayPathIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || PayloadReplayPathIdentityV1::from_metadata(&named_metadata) != expected
+        || fs::canonicalize(path)? != path
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay parent directory identity changed",
+        ));
+    }
+    crate::store::ensure_private_directory(path).map_err(map_private_directory_error)
+}
+
+fn verify_payload_replay_file_identity(
+    path: &Path,
+    file: &File,
+    expected: PayloadReplayPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    validate_private_file(file)?;
+    let descriptor_metadata = file.metadata()?;
+    let named_metadata = fs::symlink_metadata(path)?;
+    if named_metadata.file_type().is_symlink()
+        || !descriptor_metadata.is_file()
+        || !named_metadata.is_file()
+        || !private_file_mode(&named_metadata)
+        || PayloadReplayPathIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || PayloadReplayPathIdentityV1::from_metadata(&named_metadata) != expected
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay authority file identity changed",
+        ));
+    }
+    Ok(())
+}
+
+fn verify_payload_replay_path_identity(
+    path: &Path,
+    expected: PayloadReplayPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink()
+        || !metadata.is_file()
+        || !private_file_mode(&metadata)
+        || PayloadReplayPathIdentityV1::from_metadata(&metadata) != expected
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay authority path identity changed",
+        ));
+    }
+    Ok(())
 }
 
 fn encode_record(
@@ -1269,6 +1525,20 @@ pub(crate) fn persist_head(
     record_hash: [u8; 32],
     namespace_digest: [u8; 32],
 ) -> Result<(), PayloadReplayErrorV1> {
+    persist_head_with_identity(path, directory, record_count, record_hash, namespace_digest)
+        .map(|_| ())
+}
+
+/// Publish a replay head and return the exact inode which was written.  The
+/// identity is used by the live replay owner to distinguish its own atomic
+/// replacement from a same-UID pathname substitution racing the rename.
+fn persist_head_with_identity(
+    path: &Path,
+    directory: &File,
+    record_count: u64,
+    record_hash: [u8; 32],
+    namespace_digest: [u8; 32],
+) -> Result<PayloadReplayPathIdentityV1, PayloadReplayErrorV1> {
     let name = path.file_name().and_then(|value| value.to_str()).ok_or(
         PayloadReplayErrorV1::InvalidRequest("payload replay head filename"),
     )?;
@@ -1287,18 +1557,32 @@ pub(crate) fn persist_head(
         let mut file = options.open(&temporary)?;
         file.write_all(&encode_head(record_count, record_hash, namespace_digest))?;
         file.sync_all()?;
+        let replacement_identity = PayloadReplayPathIdentityV1::from_metadata(&file.metadata()?);
         fs::rename(&temporary, path)?;
+        let published = fs::symlink_metadata(path)?;
+        if published.file_type().is_symlink()
+            || !published.is_file()
+            || !private_file_mode(&published)
+            || PayloadReplayPathIdentityV1::from_metadata(&published) != replacement_identity
+        {
+            return Err(io::Error::other(
+                "payload replay head descriptor/path identity changed",
+            ));
+        }
         directory.sync_all()?;
-        Ok::<(), io::Error>(())
+        Ok::<PayloadReplayPathIdentityV1, io::Error>(replacement_identity)
     })();
-    if let Err(error) = result {
-        // Do not unlink the temporary by pathname after a failed create/write
-        // operation: a same-UID process could have replaced it.  Retaining
-        // the stale name preserves recovery evidence for an explicit owner;
-        // normal retries use a fresh process-local nonce.
-        return Err(PayloadReplayErrorV1::Io(error));
+    match result {
+        Ok(identity) => Ok(identity),
+        Err(error) => {
+            // Do not unlink the temporary by pathname after a failed
+            // create/write operation: a same-UID process could have replaced
+            // it.  Retaining the stale name preserves recovery evidence for
+            // an explicit owner; normal retries use a fresh process-local
+            // nonce.
+            Err(PayloadReplayErrorV1::Io(error))
+        }
     }
-    Ok(())
 }
 
 pub(crate) fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayErrorV1> {
@@ -1831,6 +2115,98 @@ mod tests {
             PayloadReplayStoreV1::open(&aliased_path, namespace()),
             Err(PayloadReplayErrorV1::InvalidRequest(reason))
                 if reason.contains("symlink alias")
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_wal_replacement_before_lookup() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        let ns = namespace();
+        let first = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        store.admit(&first).unwrap();
+
+        // Keep the original descriptor (and lock) alive, then substitute a
+        // same-shaped private file at the authority pathname.  The next
+        // operation must fence on dev/inode identity before consulting the
+        // in-memory receipt index.
+        let displaced = dir.path().join("frames.displaced");
+        fs::rename(&path, &displaced).unwrap();
+        fs::write(&path, fs::read(&displaced).unwrap()).unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            store.lookup_exact_v1(&first),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_head_and_lock_replacement_before_admit() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        let ns = namespace();
+        let first = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let second = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            1,
+            [11; 32],
+        );
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        store.admit(&first).unwrap();
+
+        let head = store.head_path().to_path_buf();
+        let displaced_head = dir.path().join("frames.head.displaced");
+        fs::rename(&head, &displaced_head).unwrap();
+        fs::write(&head, fs::read(&displaced_head).unwrap()).unwrap();
+        fs::set_permissions(&head, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            store.admit(&second),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
+
+        // Reopen a fresh owner and perform the same deterministic substitution
+        // on the lock sidecar.  The held lock descriptor must not allow a
+        // pathname replacement to go unnoticed.
+        drop(store);
+        let mut reopened = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        let lock = path.with_file_name(".frames.wal.lock-v1");
+        let displaced_lock = dir.path().join("frames.lock.displaced");
+        fs::rename(&lock, &displaced_lock).unwrap();
+        fs::write(&lock, fs::read(&displaced_lock).unwrap()).unwrap();
+        fs::set_permissions(&lock, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            reopened.lookup_exact_v1(&first),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
         ));
     }
 
