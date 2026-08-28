@@ -382,8 +382,32 @@ mod p2p_socket_e2e {
         frame: &[u8],
         trailing_record: Option<&[u8]>,
     ) -> (std::process::ExitStatus, Value, String) {
+        send_socket_process_with_generation(
+            dir,
+            name,
+            lease_socket,
+            replay_path,
+            handshake,
+            frame,
+            trailing_record,
+            1,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn send_socket_process_with_generation(
+        dir: &TempDir,
+        name: &str,
+        lease_socket: &Path,
+        replay_path: &Path,
+        handshake: &[u8],
+        frame: &[u8],
+        trailing_record: Option<&[u8]>,
+        lease_generation: u64,
+    ) -> (std::process::ExitStatus, Value, String) {
         let root = dir.path().join(format!("{name}.root"));
         let socket = dir.path().join(format!("{name}.sock"));
+        let lease_generation = lease_generation.to_string();
         let mut child = Command::new(env!("CARGO_BIN_EXE_trnm-poco-effect-driver-process"))
             .args([
                 "--p2p-socket-once",
@@ -392,8 +416,8 @@ mod p2p_socket_e2e {
                 lease_socket.to_str().expect("lease path UTF-8"),
                 replay_path.to_str().expect("replay path UTF-8"),
                 "socket-e2e-v1",
-                "1",
             ])
+            .arg(&lease_generation)
             .stdout(Stdio::null())
             .stderr(Stdio::piped())
             .spawn()
@@ -497,6 +521,10 @@ mod p2p_socket_e2e {
     }
 
     fn fixture() -> (Vec<u8>, Vec<u8>) {
+        fixture_for_sequence(0)
+    }
+
+    fn fixture_for_sequence(sequence: u64) -> (Vec<u8>, Vec<u8>) {
         let parameters = ConsensusParametersV0::reference_shadow_v0();
         let key = ed25519_dalek::SigningKey::from_bytes(&[42; 32]);
         let validators = (1u8..=4)
@@ -604,7 +632,6 @@ mod p2p_socket_e2e {
         tlv(&mut handshake, 9, &handshake_signature);
 
         let session_id = hash_domain(DOMAIN_SESSION_ID, &handshake);
-        let sequence = 0u64;
         let mut frame_unsigned = FRAME_MAGIC.to_vec();
         tlv(&mut frame_unsigned, 1, &PROTOCOL_VERSION.to_be_bytes());
         tlv(&mut frame_unsigned, 2, &session_id);
@@ -660,13 +687,30 @@ mod p2p_socket_e2e {
             &frame,
             None,
         );
-        assert!(status.success(), "valid stderr: {stderr}");
-        assert_eq!(accepted["status"], "accepted");
+        assert!(
+            !status.success(),
+            "unacknowledged Core input unexpectedly succeeded: {stderr}"
+        );
+        assert_eq!(accepted["status"], "uncertain");
         assert_eq!(accepted["candidate_only"], true);
         assert_eq!(accepted["production_activation"], false);
-        assert_eq!(
-            accepted["replay_commit_state"],
-            "admitted_not_core_committed"
+        assert_eq!(accepted["replay_commit_state"], "unknown_requires_recovery");
+        assert!(accepted["reason"].as_str().is_some_and(|reason| {
+            reason.contains("p2p_core_ack_missing")
+                && reason.contains("did not advance SafetyState revision")
+        }));
+        assert!(
+            replay_path
+                .with_file_name(".payload-replay.wal.body-v1.wal")
+                .is_file(),
+            "exact authenticated body WAL must be durable beside the replay WAL"
+        );
+        assert!(
+            dir.path()
+                .join("valid.root")
+                .join("p2p-replay.pending")
+                .is_file(),
+            "Core without a Safety revision must retain the recovery breadcrumb"
         );
         drop(daemon);
 
@@ -683,11 +727,12 @@ mod p2p_socket_e2e {
             None,
         );
         assert!(!status.success(), "replay unexpectedly succeeded: {stderr}");
-        assert_eq!(replayed["status"], "rejected");
+        assert_eq!(replayed["status"], "uncertain");
+        assert_eq!(replayed["replay_commit_state"], "unknown_requires_recovery");
         assert!(
-            replayed["reason"]
-                .as_str()
-                .is_some_and(|reason| reason.contains("replayed")),
+            replayed["reason"].as_str().is_some_and(
+                |reason| reason.contains("existing replay requires external Core recovery")
+            ),
             "unexpected replay reason: {replayed}"
         );
         drop(daemon);
@@ -717,6 +762,48 @@ mod p2p_socket_e2e {
                 .is_some_and(|reason| reason.contains("p2p_handshake")),
             "unexpected malformed reason: {rejected}"
         );
+    }
+
+    #[test]
+    fn socket_rejects_stale_lease_generation_without_body_append() {
+        let dir = tempfile::tempdir().expect("stale-generation socket test dir");
+        make_private(&dir);
+        let replay_path = dir.path().join("stale-generation-replay.wal");
+        let (handshake, frame) = fixture();
+        let daemon = LeaseDaemon::start(&dir, "lease-stale-generation");
+        let (status, rejected, stderr) = send_socket_process_with_generation(
+            &dir,
+            "stale-generation",
+            &daemon.socket,
+            &replay_path,
+            &handshake,
+            &frame,
+            None,
+            2,
+        );
+        assert!(
+            !status.success(),
+            "stale lease generation unexpectedly succeeded: {stderr}"
+        );
+        assert_eq!(rejected["status"], "rejected");
+        assert_eq!(rejected["commit_ambiguous"], false);
+        assert!(
+            rejected["reason"]
+                .as_str()
+                .is_some_and(|reason| reason.contains("lease generation is stale")),
+            "unexpected stale-generation response: {rejected}"
+        );
+        assert!(
+            !replay_path
+                .with_file_name(".stale-generation-replay.wal.body-v1.wal")
+                .exists(),
+            "pre-lease rejection must not create an orphan body WAL"
+        );
+        assert!(
+            dir.path().join("stale-generation.root").is_dir(),
+            "socket process should establish its private root before lease validation"
+        );
+        drop(daemon);
     }
 
     #[test]

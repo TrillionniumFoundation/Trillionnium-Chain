@@ -49,10 +49,12 @@ use trnm_consensus_core::{
 use trnm_consensus_crypto::StrictEd25519Verifier;
 #[cfg(unix)]
 use trnm_consensus_peer_lease::{
-    payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayBodyErrorV1,
-    PayloadReplayBodyStoreV1, PayloadReplayDirectionV1, PayloadReplayErrorV1, PayloadReplayFrameV1,
-    PayloadReplayNamespaceV1, PayloadReplayStoreV1, PeerLeaseErrorV1, PeerLeaseScopeV1,
-    PeerLeaseTokenV1, UnixPeerLeaseClientV1,
+    payload_replay_run_id_hash_v1, ExternalPeerLeaseAuthorityV1, PayloadReplayBodyReceiptV1,
+    PayloadReplayBodyStoreV1, PayloadReplayCoreAcknowledgementV1, PayloadReplayDirectionV1,
+    PayloadReplayErrorV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayReceiptV1,
+    PayloadReplayRecoveryOwnerV1, PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryTargetV1,
+    PayloadReplayStoreV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
+    UnixPeerLeaseClientV1,
 };
 use trnm_consensus_safety_rules::{InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1};
 use trnm_consensus_types::{
@@ -97,10 +99,20 @@ const APPLICATION_WAL_V1: &str = "application-seal.wal";
 // owner rather than silently retrying the same frame.
 const P2P_REPLAY_PENDING_V1: &str = "p2p-replay.pending";
 // The replay WAL intentionally contains only authenticated frame identity.
-// Exact frame bytes live in a separate, dedicated directory beside that WAL;
+// Exact frame bytes live in a separate, dedicated body WAL beside that WAL;
 // the two stores are reconciled explicitly and are never treated as one
 // atomic transaction.
-const P2P_REPLAY_BODY_DIRECTORY_SUFFIX_V1: &str = ".body-v1";
+const P2P_REPLAY_BODY_FILE_SUFFIX_V1: &str = ".body-v1.wal";
+// The first candidate body-store revision used a directory named
+// `.<replay-name>.body-v1`.  It is not wire-compatible with the file WAL
+// above.  Keep the old namespace explicit so a stale directory can never be
+// silently ignored and replayed into a fresh body journal.
+const P2P_REPLAY_LEGACY_BODY_DIRECTORY_SUFFIX_V1: &str = ".body-v1";
+const P2P_REPLAY_ACK_DIRECTORY_SUFFIX_V1: &str = ".ack-v1";
+// Version the digest domain alongside its field set.  Older candidate
+// acknowledgements omitted the companion-WAL receipt and process-local
+// counters; they must never collide with or satisfy this stable binding.
+const P2P_CORE_ACK_DOMAIN_V2: &[u8] = b"trnm.poco-g3.p2p-core-ack.v2";
 // Failed atomic publications are retained as recovery evidence.  A process
 // local nonce prevents a retry in the same owner from colliding forever with
 // the retained temporary pathname.
@@ -1661,68 +1673,167 @@ pub fn run_stdio_v1<R: BufRead, W: Write>(
 }
 
 #[cfg(unix)]
-fn payload_replay_body_root_v1(replay_path: &Path) -> Result<PathBuf, EffectDriverProcessErrorV1> {
+fn payload_replay_body_path_v1(replay_path: &Path) -> Result<PathBuf, EffectDriverProcessErrorV1> {
     let name = replay_path
         .file_name()
         .and_then(|value| value.to_str())
         .ok_or_else(|| {
             EffectDriverProcessErrorV1::new("p2p", "replay WAL requires a UTF-8 filename")
         })?;
-    Ok(replay_path.with_file_name(format!(".{name}{P2P_REPLAY_BODY_DIRECTORY_SUFFIX_V1}")))
+    Ok(replay_path.with_file_name(format!(".{name}{P2P_REPLAY_BODY_FILE_SUFFIX_V1}")))
 }
 
 #[cfg(unix)]
-fn ensure_payload_replay_body_root_v1(
+fn payload_replay_legacy_body_root_v1(
     replay_path: &Path,
 ) -> Result<PathBuf, EffectDriverProcessErrorV1> {
-    let body_root = payload_replay_body_root_v1(replay_path)?;
-    match fs::symlink_metadata(&body_root) {
+    let name = replay_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::new("p2p", "replay WAL requires a UTF-8 filename")
+        })?;
+    Ok(replay_path.with_file_name(format!(
+        ".{name}{P2P_REPLAY_LEGACY_BODY_DIRECTORY_SUFFIX_V1}"
+    )))
+}
+
+#[cfg(unix)]
+fn payload_replay_ack_root_v1(replay_path: &Path) -> Result<PathBuf, EffectDriverProcessErrorV1> {
+    let name = replay_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::new("p2p", "replay WAL requires a UTF-8 filename")
+        })?;
+    Ok(replay_path.with_file_name(format!(".{name}{P2P_REPLAY_ACK_DIRECTORY_SUFFIX_V1}")))
+}
+
+/// Create/open the candidate acknowledgement namespace without following a
+/// symlink.  The recovery owner performs its own descriptor/path identity
+/// pinning after this helper returns; this helper only establishes the private
+/// directory required by that owner.
+#[cfg(unix)]
+fn ensure_payload_replay_ack_root_v1(
+    replay_path: &Path,
+) -> Result<PathBuf, EffectDriverProcessErrorV1> {
+    let path = payload_replay_ack_root_v1(replay_path)?;
+    match fs::symlink_metadata(&path) {
         Ok(metadata) => {
             if metadata.file_type().is_symlink()
                 || !metadata.is_dir()
                 || metadata.permissions().mode() & 0o7777 != 0o700
                 || metadata.uid() != rustix::process::geteuid().as_raw()
-                || fs::canonicalize(&body_root).map_err(|error| {
+                || fs::canonicalize(&path).map_err(|error| {
                     EffectDriverProcessErrorV1::new(
-                        "p2p_replay_body",
-                        format!("canonicalize body store root: {error:?}"),
+                        "p2p_recovery",
+                        format!("canonicalize acknowledgement root: {error:?}"),
                     )
-                })? != body_root
+                })? != path
             {
                 return Err(EffectDriverProcessErrorV1::new(
-                    "p2p_replay_body",
-                    "body store root is not an owner-private canonical directory",
+                    "p2p_recovery",
+                    "acknowledgement root is not an owner-private canonical directory",
                 ));
             }
         }
         Err(error) if error.kind() == io::ErrorKind::NotFound => {
-            fs::create_dir(&body_root).map_err(|error| {
+            fs::create_dir(&path).map_err(|error| {
                 EffectDriverProcessErrorV1::new(
-                    "p2p_replay_body",
-                    format!("create body store root: {error:?}"),
+                    "p2p_recovery",
+                    format!("create acknowledgement root: {error:?}"),
                 )
             })?;
-            let directory = open_directory_no_follow_v1(&body_root).map_err(|error| {
+            let directory = open_directory_no_follow_v1(&path).map_err(|error| {
                 EffectDriverProcessErrorV1::new(
-                    "p2p_replay_body",
-                    format!("open body store root: {error:?}"),
+                    "p2p_recovery",
+                    format!("open acknowledgement root: {error:?}"),
                 )
             })?;
             set_private_root_permissions(&directory).map_err(|error| {
                 EffectDriverProcessErrorV1::new(
-                    "p2p_replay_body",
-                    format!("tighten body store root: {error:?}"),
+                    "p2p_recovery",
+                    format!("tighten acknowledgement root: {error:?}"),
                 )
             })?;
+            let metadata = directory.metadata().map_err(|error| {
+                EffectDriverProcessErrorV1::new(
+                    "p2p_recovery",
+                    format!("read acknowledgement root: {error:?}"),
+                )
+            })?;
+            if metadata.uid() != rustix::process::geteuid().as_raw()
+                || metadata.permissions().mode() & 0o7777 != 0o700
+                || fs::canonicalize(&path).map_err(|error| {
+                    EffectDriverProcessErrorV1::new(
+                        "p2p_recovery",
+                        format!("recheck acknowledgement root: {error:?}"),
+                    )
+                })? != path
+            {
+                return Err(EffectDriverProcessErrorV1::new(
+                    "p2p_recovery",
+                    "new acknowledgement root identity changed",
+                ));
+            }
         }
         Err(error) => {
             return Err(EffectDriverProcessErrorV1::new(
-                "p2p_replay_body",
-                format!("body store root metadata: {error:?}"),
-            ))
+                "p2p_recovery",
+                format!("acknowledgement root metadata: {error:?}"),
+            ));
         }
     }
-    Ok(body_root)
+    Ok(path)
+}
+
+#[cfg(unix)]
+fn p2p_core_ack_digest_v2(
+    frame: PayloadReplayFrameV1,
+    replay_receipt: trnm_consensus_peer_lease::PayloadReplayReceiptV1,
+    body_receipt: PayloadReplayBodyReceiptV1,
+    safety_revision: u64,
+) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(P2P_CORE_ACK_DOMAIN_V2);
+    hasher.update(frame.frame_fingerprint());
+    hasher.update(frame.session_id());
+    hasher.update(frame.sequence().to_be_bytes());
+    hasher.update(replay_receipt.record_index().to_be_bytes());
+    hasher.update(replay_receipt.record_hash());
+    // Bind the exact companion-WAL receipt, not only a recomputed body
+    // digest.  The body record index/hash are independent of the metadata
+    // WAL hash domain and therefore must be carried as distinct fields.
+    // Runtime queue counters are intentionally excluded: a restarted owner
+    // cannot reconstruct those process-local values, while the durable
+    // receipt/revision tuple is stable and sufficient for idempotent replay.
+    hasher.update(body_receipt.record_index().to_be_bytes());
+    hasher.update(body_receipt.record_hash());
+    hasher.update(body_receipt.body_digest());
+    hasher.update(safety_revision.to_be_bytes());
+    hasher.finalize().into()
+}
+
+#[cfg(unix)]
+fn validate_p2p_body_receipt_binding_v1(
+    replay_receipt: PayloadReplayReceiptV1,
+    body_receipt: PayloadReplayBodyReceiptV1,
+) -> Result<(), EffectDriverProcessErrorV1> {
+    // Both journals begin with a genesis record and append one companion
+    // record for each admitted frame.  A differing index means that one WAL
+    // contains an orphan/reordered body; its independent hash must never be
+    // projected as the metadata target's body.
+    if body_receipt.record_index() != replay_receipt.record_index() {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_body_binding_uncertain",
+            format!(
+                "metadata/body receipt index mismatch (metadata={}, body={})",
+                replay_receipt.record_index(),
+                body_receipt.record_index()
+            ),
+        ));
+    }
+    Ok(())
 }
 
 #[cfg(unix)]
@@ -1753,14 +1864,28 @@ fn validate_p2p_socket_parameters_v1(
         })?;
     let replay_lock = replay_path.with_file_name(format!(".{replay_name}.lock-v1"));
     let replay_head = replay_path.with_file_name(format!(".{replay_name}.head-v1"));
-    let replay_body_root = payload_replay_body_root_v1(replay_path)?;
+    let replay_body_path = payload_replay_body_path_v1(replay_path)?;
+    let replay_legacy_body_root = payload_replay_legacy_body_root_v1(replay_path)?;
+    let replay_body_name = replay_body_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            EffectDriverProcessErrorV1::new("p2p", "replay body WAL requires a UTF-8 filename")
+        })?;
+    let replay_body_lock = replay_body_path.with_file_name(format!(".{replay_body_name}.lock-v1"));
+    let replay_body_head = replay_body_path.with_file_name(format!(".{replay_body_name}.head-v1"));
+    let replay_ack_root = payload_replay_ack_root_v1(replay_path)?;
     let candidate_paths = [
         socket_path.to_path_buf(),
         lease_socket_path.to_path_buf(),
         replay_path.to_path_buf(),
         replay_lock,
         replay_head,
-        replay_body_root,
+        replay_body_path,
+        replay_legacy_body_root.clone(),
+        replay_body_lock,
+        replay_body_head,
+        replay_ack_root,
     ];
     for (index, left) in candidate_paths.iter().enumerate() {
         if candidate_paths[index + 1..]
@@ -1770,6 +1895,32 @@ fn validate_p2p_socket_parameters_v1(
             return Err(EffectDriverProcessErrorV1::new(
                 "p2p",
                 "candidate socket/replay paths or replay sidecars collide",
+            ));
+        }
+    }
+
+    // A legacy body directory is durable evidence from the pre-WAL body
+    // namespace.  It cannot be interpreted by the current file-WAL owner;
+    // reject the startup before the run root or any new body state is opened
+    // and require an explicit migration/recovery owner instead.
+    match fs::symlink_metadata(&replay_legacy_body_root) {
+        Ok(_) => {
+            return Err(EffectDriverProcessErrorV1::new(
+                "recovery_required",
+                format!(
+                    "legacy replay body namespace {} requires explicit recovery",
+                    replay_legacy_body_root.display()
+                ),
+            ));
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => {}
+        Err(error) => {
+            return Err(EffectDriverProcessErrorV1::new(
+                "p2p",
+                format!(
+                    "legacy replay body namespace metadata {}: {error:?}",
+                    replay_legacy_body_root.display()
+                ),
             ));
         }
     }
@@ -2116,13 +2267,93 @@ fn map_payload_replay_admit_error_v1(error: PayloadReplayErrorV1) -> EffectDrive
 }
 
 #[cfg(unix)]
-fn map_payload_replay_body_error_v1(error: PayloadReplayBodyErrorV1) -> EffectDriverProcessErrorV1 {
+fn map_payload_replay_open_error_v1(error: PayloadReplayErrorV1) -> EffectDriverProcessErrorV1 {
+    // Opening an existing journal is itself a recovery observation.  I/O,
+    // corruption, truncation, bound violations, poisoning, and pathname
+    // identity failures may describe a prefix which a previous owner had
+    // already published; never erase the breadcrumb and invite an ordinary
+    // retry for those outcomes.  Only an explicit semantic request/context
+    // rejection is safe to downgrade before this operation has touched the
+    // journal.
     let detail = error.to_string();
-    if error.commit_ambiguous() {
-        EffectDriverProcessErrorV1::commit_ambiguous("p2p_replay_body_uncertain", detail)
+    let definitive_reject = matches!(
+        error,
+        PayloadReplayErrorV1::Protocol(_)
+            | PayloadReplayErrorV1::ContextMismatch
+            | PayloadReplayErrorV1::Replay
+            | PayloadReplayErrorV1::StaleGeneration
+            | PayloadReplayErrorV1::SequenceGap
+    );
+    if definitive_reject {
+        EffectDriverProcessErrorV1::new("p2p_replay", detail)
     } else {
-        EffectDriverProcessErrorV1::new("p2p_replay_body", detail)
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_replay_open_uncertain", detail)
     }
+}
+
+#[cfg(unix)]
+fn map_payload_replay_lookup_error_v1(error: PayloadReplayErrorV1) -> EffectDriverProcessErrorV1 {
+    // A lookup happens after the recovery breadcrumb is published but before
+    // either replay/body append.  Semantic conflicts can be cleaned up after
+    // a successful release; any filesystem/cryptographic/integrity failure
+    // must retain the breadcrumb for an owner to inspect.
+    let detail = error.to_string();
+    let definitive_reject = matches!(
+        error,
+        PayloadReplayErrorV1::Protocol(_)
+            | PayloadReplayErrorV1::ContextMismatch
+            | PayloadReplayErrorV1::Replay
+            | PayloadReplayErrorV1::StaleGeneration
+            | PayloadReplayErrorV1::SequenceGap
+    );
+    if definitive_reject {
+        EffectDriverProcessErrorV1::new("p2p_replay", detail)
+    } else {
+        EffectDriverProcessErrorV1::commit_ambiguous("p2p_replay_lookup_uncertain", detail)
+    }
+}
+
+#[cfg(unix)]
+fn map_payload_replay_body_after_metadata_error_v1(
+    error: PayloadReplayErrorV1,
+) -> EffectDriverProcessErrorV1 {
+    // Once metadata is known to be present (or was just appended), a body
+    // failure leaves two independent durable owners with an unknown common
+    // prefix.  Even a seemingly ordinary length/conflict/path error must go
+    // through recovery; returning an ordinary reject could discard the only
+    // evidence needed to reconcile the pair.
+    EffectDriverProcessErrorV1::commit_ambiguous(
+        "p2p_replay_body_after_metadata_uncertain",
+        error.to_string(),
+    )
+}
+
+#[cfg(unix)]
+fn admit_and_resolve_p2p_body_v1(
+    body_path: &Path,
+    namespace: PayloadReplayNamespaceV1,
+    frame: PayloadReplayFrameV1,
+    frame_bytes: &[u8],
+) -> Result<PayloadReplayBodyReceiptV1, EffectDriverProcessErrorV1> {
+    let mut body_store = PayloadReplayBodyStoreV1::open(body_path, namespace)
+        .map_err(map_payload_replay_body_after_metadata_error_v1)?;
+    let admitted = body_store
+        .admit(&frame, frame_bytes)
+        .map_err(map_payload_replay_body_after_metadata_error_v1)?;
+    let authenticated = body_store
+        .resolve(&frame, admitted)
+        .map_err(map_payload_replay_body_after_metadata_error_v1)?;
+    // `resolve` re-hashes and re-reads the bytes from the bound descriptor.
+    // Keep this explicit comparison at the process seam so a future store
+    // implementation cannot accidentally return metadata without the exact
+    // authenticated frame body.
+    if authenticated.frame() != frame || authenticated.body() != frame_bytes {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_body_binding_uncertain",
+            "resolved body does not equal the authenticated frame bytes",
+        ));
+    }
+    Ok(authenticated.receipt())
 }
 
 #[cfg(unix)]
@@ -2224,6 +2455,157 @@ fn clear_p2p_replay_pending_v1(root: &Path) -> Result<(), EffectDriverProcessErr
             format!("clear replay recovery breadcrumb: {error:?}"),
         )
     })
+}
+
+#[cfg(unix)]
+fn p2p_process_summary_v1(
+    driver: &FileEffectDriverV1,
+    root: &Path,
+) -> EffectDriverProcessSummaryV1 {
+    let facts = driver.facts_v1();
+    EffectDriverProcessSummaryV1 {
+        generation: facts.generation(),
+        processed_ingress: facts.processed_ingress(),
+        processed_effects: facts.processed_effects(),
+        broadcasts: broadcast_count(root),
+        status: facts.status(),
+    }
+}
+
+/// Reconcile a frame which is already present in the metadata replay WAL.
+///
+/// A second one-shot process cannot safely hand the frame to Core again: the
+/// first owner may have crossed the Core boundary before losing its response.
+/// The external recovery owner is therefore the only authority consulted. An
+/// existing immutable Core acknowledgement can be returned idempotently; an
+/// admitted-but-unacknowledged frame remains an explicit uncertainty and
+/// retains the new process breadcrumb for an operator/recovery owner.
+#[cfg(unix)]
+#[allow(clippy::too_many_arguments)]
+fn reconcile_existing_p2p_replay_v1(
+    driver: &FileEffectDriverV1,
+    root: &Path,
+    namespace: PayloadReplayNamespaceV1,
+    replay_path: &Path,
+    replay_frame: PayloadReplayFrameV1,
+    replay_receipt: PayloadReplayReceiptV1,
+    body_receipt: PayloadReplayBodyReceiptV1,
+    peer_id: [u8; 32],
+    token: PeerLeaseTokenV1,
+    lease_guard: &mut CandidatePeerLeaseGuardV1,
+) -> Result<Option<(Value, EffectDriverProcessSummaryV1)>, EffectDriverProcessErrorV1> {
+    let target = PayloadReplayRecoveryTargetV1::from_admission(replay_frame, replay_receipt);
+    // Body and metadata are already durable when this path is entered.  A
+    // failure while establishing the acknowledgement namespace therefore
+    // cannot be reported as an ordinary validation error: the retry must stay
+    // in the explicit recovery/uncertainty state until an owner can inspect
+    // the retained journals.
+    let acknowledgement_root = ensure_payload_replay_ack_root_v1(replay_path).map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_recovery_uncertain",
+            format!("prepare replay acknowledgement root: {error}"),
+        )
+    })?;
+    let mut recovery_owner =
+        PayloadReplayRecoveryOwnerV1::open(replay_path, &acknowledgement_root, namespace, target)
+            .map_err(|error| {
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_replay_existing_recovery_uncertain",
+                format!("open replay recovery owner for existing frame: {error}"),
+            )
+        })?;
+    // Recover an exact one-record head lag/residual temporary before reading
+    // the acknowledgement ledger.  Any wider divergence is returned as a
+    // conservative uncertainty by the mapping below.
+    let status = recovery_owner
+        .recover_payload_publication()
+        .map_err(|error| {
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_replay_existing_recovery_uncertain",
+                format!("recover existing replay publication: {error}"),
+            )
+        })?;
+    if !status.core_acknowledged() {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_unacknowledged",
+            format!(
+                "existing replay requires external Core recovery (state={})",
+                status.kind()
+            ),
+        ));
+    }
+    let PayloadReplayRecoveryStatusV1::CoreAcknowledged {
+        core_safety_revision,
+        core_ack_digest,
+        acknowledgement_hash,
+        ..
+    } = status
+    else {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_recovery_uncertain",
+            "recovery status changed before acknowledgement projection",
+        ));
+    };
+
+    let expected_core_ack_digest = p2p_core_ack_digest_v2(
+        replay_frame,
+        replay_receipt,
+        body_receipt,
+        core_safety_revision,
+    );
+    if core_ack_digest != expected_core_ack_digest {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_ack_binding_uncertain",
+            "durable Core acknowledgement digest does not bind the exact body receipt",
+        ));
+    }
+
+    // The lease remains a separate authority.  Do not publish an idempotent
+    // response unless this retry also proves that its acquired token is still
+    // the exact live token and can be cleanly released.
+    let revalidated = lease_guard.revalidate().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_lease_uncertain",
+            error.to_string(),
+        )
+    })?;
+    if revalidated != token {
+        return Err(EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_replay_existing_lease_uncertain",
+            "lease token changed while reconciling an existing replay",
+        ));
+    }
+    lease_guard.release().map_err(|error| {
+        EffectDriverProcessErrorV1::commit_ambiguous(
+            "p2p_lease_release_uncertain",
+            error.to_string(),
+        )
+    })?;
+    clear_p2p_replay_pending_v1(root)?;
+    let facts = driver.facts_v1();
+    let response = json!({
+        "status": "accepted",
+        "peer_id": hex::encode(peer_id),
+        "session_id": hex::encode(token.session_id()),
+        "sequence": replay_frame.sequence(),
+        "lease_generation": token.generation(),
+        "replay_record_index": replay_receipt.record_index(),
+        "replay_record_hash": hex::encode(replay_receipt.record_hash()),
+        "replay_body_digest": hex::encode(body_receipt.body_digest()),
+        "replay_body_len": replay_frame.payload_len(),
+        "replay_body_idempotent": body_receipt.idempotent_replay(),
+        "replay_core_ack_digest": hex::encode(core_ack_digest),
+        "replay_core_ack_hash": hex::encode(acknowledgement_hash),
+        "replay_core_ack_idempotent": true,
+        "replay_core_safety_revision": core_safety_revision,
+        "replay_commit_state": "core_acknowledged_candidate",
+        "processed_ingress": facts.processed_ingress(),
+        "processed_effects": facts.processed_effects(),
+        "candidate_only": true,
+        "production_activation": EFFECT_DRIVER_PROCESS_PRODUCTION_ACTIVATION_V1,
+        "finality_verified": facts.finality_verified(),
+    });
+    Ok(Some((response, p2p_process_summary_v1(driver, root))))
 }
 
 #[cfg(unix)]
@@ -2344,24 +2726,10 @@ fn process_one_candidate_p2p_connection_v1(
         Err(error) => {
             return Err(finalize_p2p_post_acquire_error_v1(
                 &mut lease_guard,
-                EffectDriverProcessErrorV1::new("p2p_replay", error.to_string()),
+                map_payload_replay_open_error_v1(error),
             ));
         }
     };
-    let body_root = match ensure_payload_replay_body_root_v1(&replay_path) {
-        Ok(path) => path,
-        Err(error) => return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error)),
-    };
-    let mut body_store = match PayloadReplayBodyStoreV1::open(&body_root, namespace) {
-        Ok(store) => store,
-        Err(error) => {
-            return Err(finalize_p2p_post_acquire_error_v1(
-                &mut lease_guard,
-                map_payload_replay_body_error_v1(error),
-            ))
-        }
-    };
-
     // Revalidate immediately before the payload append.  The external lease
     // daemon and this WAL are intentionally separate owners; if the lease is
     // fenced in this interval, no Core input is exposed.
@@ -2428,13 +2796,15 @@ fn process_one_candidate_p2p_connection_v1(
     if let Err(error) = prepare_p2p_replay_pending_v1(root, replay_frame, driver_generation) {
         return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
     }
-    let receipt = match replay.admit(&replay_frame) {
+
+    // Probe the metadata owner before touching the companion body WAL.  This
+    // prevents an authenticated but out-of-order frame (or a metadata slot
+    // conflict) from consuming body-journal space which no recovery target
+    // could ever reconcile.
+    let existing_replay_receipt = match replay.lookup_exact_v1(&replay_frame) {
         Ok(receipt) => receipt,
         Err(error) => {
-            let mapped = map_payload_replay_admit_error_v1(error);
-            // A validation/replay reject is known to have happened before a
-            // durable append, so remove the prepared breadcrumb before
-            // returning.  If clearing it fails, retain uncertainty.
+            let mapped = map_payload_replay_lookup_error_v1(error);
             let mapped = if mapped.is_commit_ambiguous() {
                 mapped
             } else {
@@ -2446,16 +2816,78 @@ fn process_one_candidate_p2p_connection_v1(
             return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, mapped));
         }
     };
+    let body_path = match payload_replay_body_path_v1(&replay_path) {
+        Ok(path) => path,
+        Err(error) => return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error)),
+    };
+    if let Some(existing_replay_receipt) = existing_replay_receipt {
+        // Metadata is already durable.  Resolve the exact body before handing
+        // the record to the external recovery owner; a receipt alone is not a
+        // proof that the bytes still match the authenticated frame.
+        let body_receipt = match admit_and_resolve_p2p_body_v1(
+            &body_path,
+            namespace,
+            replay_frame,
+            &frame_bytes,
+        ) {
+            Ok(receipt) => receipt,
+            Err(error) => {
+                return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
+            }
+        };
+        validate_p2p_body_receipt_binding_v1(existing_replay_receipt, body_receipt)?;
+        drop(replay);
+        return match reconcile_existing_p2p_replay_v1(
+            driver,
+            root,
+            namespace,
+            &replay_path,
+            replay_frame,
+            existing_replay_receipt,
+            body_receipt,
+            peer_id,
+            token,
+            &mut lease_guard,
+        ) {
+            Ok(Some(outcome)) => Ok(outcome),
+            Ok(None) => Err(finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                EffectDriverProcessErrorV1::commit_ambiguous(
+                    "p2p_replay_existing_uncertain",
+                    "existing replay reconciliation returned no terminal outcome",
+                ),
+            )),
+            Err(error) => Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error)),
+        };
+    }
 
-    // The metadata WAL and the exact authenticated bytes are separate durable
-    // owners.  Persist the bytes before exposing the typed input to Core; a
-    // failure here is explicitly uncertain and leaves the replay breadcrumb
-    // for the external recovery owner rather than dropping the only source
-    // body after a successful WAL append.
-    let body_receipt = body_store
-        .put(replay_frame, receipt, &frame_bytes)
-        .map_err(map_payload_replay_body_error_v1)
-        .map_err(|error| finalize_p2p_post_acquire_error_v1(&mut lease_guard, error))?;
+    // Validate sequence/generation and publish the metadata prefix before the
+    // body companion.  If the body append then fails, the retained metadata
+    // record plus breadcrumb is an explicit recoverable ambiguity; no orphan
+    // body record can be created for a frame the metadata owner rejected.
+    let receipt = match replay.admit(&replay_frame) {
+        Ok(receipt) => receipt,
+        Err(error) => {
+            let mapped = map_payload_replay_admit_error_v1(error);
+            let mapped = if mapped.is_commit_ambiguous() {
+                mapped
+            } else {
+                match clear_p2p_replay_pending_v1(root) {
+                    Ok(()) => mapped,
+                    Err(clear_error) => clear_error,
+                }
+            };
+            return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, mapped));
+        }
+    };
+    let body_receipt =
+        match admit_and_resolve_p2p_body_v1(&body_path, namespace, replay_frame, &frame_bytes) {
+            Ok(receipt) => receipt,
+            Err(error) => {
+                return Err(finalize_p2p_post_acquire_error_v1(&mut lease_guard, error));
+            }
+        };
+    validate_p2p_body_receipt_binding_v1(receipt, body_receipt)?;
 
     // Close the second half of the lease/WAL race before handing the typed
     // value to Core.  A failed check leaves a durable replay tombstone but no
@@ -2479,6 +2911,10 @@ fn process_one_candidate_p2p_connection_v1(
             format!("lease remaining TTL expired before Core delivery: {error}"),
         )
     })?;
+    // A pre-existing positive SafetyState revision is not evidence that this
+    // replay crossed the Core boundary.  Capture the exact revision before
+    // enqueue/drive and require a monotonic advance from this operation.
+    let core_revision_before_drive = driver.core().safety_state().revision();
     let admission = driver
         .enqueue_authenticated_peer_input_v1(driver_generation, accepted.0)
         .map_err(|error| {
@@ -2533,13 +2969,114 @@ fn process_one_candidate_p2p_connection_v1(
             format!("lease expired during Core drive: {error}"),
         ));
     }
+
+    // Close the replay-to-Core observability gap with the candidate external
+    // recovery owner.  The owner reopens the authenticated replay journal
+    // after both live WAL descriptors are dropped, proves the exact target,
+    // and records a target-bound Core acknowledgement.  This acknowledgement
+    // is intentionally not advertised as atomic with Core or with the body
+    // WAL; a failure leaves the prepared breadcrumb for explicit recovery.
+    let safety_revision = driver.core().safety_state().revision();
+    if safety_revision <= core_revision_before_drive {
+        // The candidate peer-vote path may consume the input without issuing
+        // a SafetyState transition.  Do not manufacture an acknowledgement
+        // from a pre-existing revision; retain both durable journals and the
+        // recovery breadcrumb for an owner with the real Core authority.
+        drop(replay);
+        return Err(finalize_p2p_post_acquire_error_v1(
+            &mut lease_guard,
+            EffectDriverProcessErrorV1::commit_ambiguous(
+                "p2p_core_ack_missing",
+                format!(
+                    "Core drive did not advance SafetyState revision (before={core_revision_before_drive}, after={safety_revision})"
+                ),
+            ),
+        ));
+    }
+    let mut core_ack_digest = None;
+    let mut core_ack_receipt = None;
+    if safety_revision > core_revision_before_drive {
+        let recovery_target = PayloadReplayRecoveryTargetV1::from_admission(replay_frame, receipt);
+        let digest = p2p_core_ack_digest_v2(replay_frame, receipt, body_receipt, safety_revision);
+        // Both stores hold process-local exclusive locks.  Release them before
+        // opening the recovery owner, which deliberately takes a fresh lock
+        // and authenticates the on-disk namespace again.
+        drop(replay);
+        let acknowledgement_root = match ensure_payload_replay_ack_root_v1(&replay_path) {
+            Ok(path) => path,
+            Err(error) => {
+                return Err(finalize_p2p_post_acquire_error_v1(
+                    &mut lease_guard,
+                    EffectDriverProcessErrorV1::commit_ambiguous(
+                        "p2p_core_ack_uncertain",
+                        format!("prepare replay acknowledgement root: {error}"),
+                    ),
+                ))
+            }
+        };
+        let mut recovery_owner = match PayloadReplayRecoveryOwnerV1::open(
+            &replay_path,
+            &acknowledgement_root,
+            namespace,
+            recovery_target,
+        ) {
+            Ok(owner) => owner,
+            Err(error) => {
+                return Err(finalize_p2p_post_acquire_error_v1(
+                    &mut lease_guard,
+                    EffectDriverProcessErrorV1::commit_ambiguous(
+                        "p2p_core_ack_uncertain",
+                        format!("open replay recovery owner: {error}"),
+                    ),
+                ));
+            }
+        };
+        if let Err(error) = recovery_owner.recover_payload_publication() {
+            return Err(finalize_p2p_post_acquire_error_v1(
+                &mut lease_guard,
+                EffectDriverProcessErrorV1::commit_ambiguous(
+                    "p2p_core_ack_uncertain",
+                    format!("recover replay publication before Core acknowledgement: {error}"),
+                ),
+            ));
+        }
+        let acknowledgement =
+            PayloadReplayCoreAcknowledgementV1::new(recovery_target, safety_revision, digest)
+                .map_err(|error| {
+                    finalize_p2p_post_acquire_error_v1(
+                        &mut lease_guard,
+                        EffectDriverProcessErrorV1::commit_ambiguous(
+                            "p2p_core_ack_uncertain",
+                            format!("construct Core acknowledgement: {error}"),
+                        ),
+                    )
+                })?;
+        let acknowledgement_receipt =
+            recovery_owner
+                .acknowledge_core(acknowledgement)
+                .map_err(|error| {
+                    finalize_p2p_post_acquire_error_v1(
+                        &mut lease_guard,
+                        EffectDriverProcessErrorV1::commit_ambiguous(
+                            "p2p_core_ack_uncertain",
+                            format!("persist Core acknowledgement: {error}"),
+                        ),
+                    )
+                })?;
+        core_ack_digest = Some(digest);
+        core_ack_receipt = Some(acknowledgement_receipt);
+    }
     lease_guard.release().map_err(|error| {
         EffectDriverProcessErrorV1::commit_ambiguous(
             "p2p_lease_release_uncertain",
             error.to_string(),
         )
     })?;
-    clear_p2p_replay_pending_v1(root)?;
+    if core_ack_receipt.is_some() {
+        clear_p2p_replay_pending_v1(root)?;
+    }
+
+    let replay_commit_state = "core_acknowledged_candidate";
 
     let response = json!({
         "status": "accepted",
@@ -2550,9 +3087,14 @@ fn process_one_candidate_p2p_connection_v1(
         "replay_record_index": receipt.record_index(),
         "replay_record_hash": hex::encode(receipt.record_hash()),
         "replay_body_digest": hex::encode(body_receipt.body_digest()),
-        "replay_body_len": body_receipt.body_len(),
+        "replay_body_len": frame_bytes.len(),
         "replay_body_idempotent": body_receipt.idempotent_replay(),
-        "replay_commit_state": "admitted_not_core_committed",
+        "replay_core_ack_digest": core_ack_digest.map(hex::encode),
+        "replay_core_ack_hash": core_ack_receipt.map(|value| hex::encode(value.acknowledgement_hash())),
+        "replay_core_ack_idempotent": core_ack_receipt.map(|value| value.idempotent_replay()),
+        "replay_core_safety_revision_before": core_revision_before_drive,
+        "replay_core_safety_revision_after": safety_revision,
+        "replay_commit_state": replay_commit_state,
         "processed_ingress": facts.processed_ingress(),
         "processed_effects": facts.processed_effects(),
         "candidate_only": true,
@@ -3285,6 +3827,26 @@ mod persistence_security_tests {
         )
         .is_err());
 
+        let legacy_parent = tempfile::tempdir().expect("legacy body parent");
+        fs::set_permissions(legacy_parent.path(), fs::Permissions::from_mode(0o700))
+            .expect("legacy parent mode");
+        let legacy_replay = legacy_parent.path().join("replay.wal");
+        let legacy_root =
+            payload_replay_legacy_body_root_v1(&legacy_replay).expect("legacy body namespace path");
+        fs::create_dir(&legacy_root).expect("legacy body namespace");
+        fs::set_permissions(&legacy_root, fs::Permissions::from_mode(0o700))
+            .expect("legacy body namespace mode");
+        let legacy_error = validate_p2p_socket_parameters_v1(
+            &legacy_parent.path().join("run"),
+            &legacy_parent.path().join("candidate.sock"),
+            &legacy_parent.path().join("lease.sock"),
+            &legacy_replay,
+            "run-1",
+            1,
+        )
+        .expect_err("legacy body namespace must require explicit recovery");
+        assert!(legacy_error.to_string().contains("recovery_required"));
+
         let parent = tempfile::tempdir().expect("temporary parent");
         fs::set_permissions(parent.path(), fs::Permissions::from_mode(0o700))
             .expect("private parent");
@@ -3346,6 +3908,75 @@ mod persistence_security_tests {
             p2p_error_response_v1(&replay_reject)["commit_ambiguous"],
             false
         );
+    }
+
+    #[test]
+    fn p2p_core_ack_digest_binds_exact_companion_receipt_and_is_restart_stable() {
+        assert!(P2P_CORE_ACK_DOMAIN_V2.ends_with(b".v2"));
+        let directory = tempfile::tempdir().expect("temporary receipt directory");
+        fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700))
+            .expect("private receipt directory");
+        let namespace = PayloadReplayNamespaceV1::new([1; 32], 1, [2; 32], [3; 32], [4; 32])
+            .expect("namespace");
+        let scope = namespace
+            .scope_for([5; 32], PayloadReplayDirectionV1::Inbound)
+            .expect("scope");
+        let first_frame = PayloadReplayFrameV1::new(
+            scope,
+            namespace.run_id_hash(),
+            namespace.network_context_hash(),
+            [6; 32],
+            1,
+            0,
+            2,
+            3,
+            [7; 32],
+        )
+        .expect("first frame");
+        let second_frame = PayloadReplayFrameV1::new(
+            scope,
+            namespace.run_id_hash(),
+            namespace.network_context_hash(),
+            [6; 32],
+            1,
+            1,
+            2,
+            3,
+            [8; 32],
+        )
+        .expect("second frame");
+        let metadata_path = directory.path().join("metadata.wal");
+        let body_path = directory.path().join("body.wal");
+        let (first_replay, second_replay, first_body, second_body) = {
+            let mut replay =
+                PayloadReplayStoreV1::open(&metadata_path, namespace).expect("metadata store");
+            let mut body =
+                PayloadReplayBodyStoreV1::open(&body_path, namespace).expect("body store");
+            let first_replay = replay.admit(&first_frame).expect("first metadata");
+            let first_body = body.admit(&first_frame, b"abc").expect("first body");
+            let second_replay = replay.admit(&second_frame).expect("second metadata");
+            let second_body = body.admit(&second_frame, b"def").expect("second body");
+            (first_replay, second_replay, first_body, second_body)
+        };
+
+        let first_digest = p2p_core_ack_digest_v2(first_frame, first_replay, first_body, 9);
+        assert_eq!(
+            first_digest,
+            p2p_core_ack_digest_v2(first_frame, first_replay, first_body, 9),
+            "the digest must be reproducible by a restarted owner"
+        );
+        assert_ne!(
+            first_digest,
+            p2p_core_ack_digest_v2(first_frame, first_replay, second_body, 9),
+            "a body receipt from another WAL position must not verify"
+        );
+        assert_ne!(
+            first_digest,
+            p2p_core_ack_digest_v2(first_frame, first_replay, first_body, 10),
+            "the durable Core revision remains bound"
+        );
+        assert!(validate_p2p_body_receipt_binding_v1(first_replay, second_body).is_err());
+        assert!(validate_p2p_body_receipt_binding_v1(second_replay, second_body).is_ok());
     }
 
     #[test]
