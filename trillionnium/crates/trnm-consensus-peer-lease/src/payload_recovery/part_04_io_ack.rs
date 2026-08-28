@@ -19,7 +19,9 @@ fn encode_ack(
     hasher.update((bytes.len() as u64).to_be_bytes());
     hasher.update(&bytes);
     bytes.extend_from_slice(&hasher.finalize());
-    bytes.try_into().expect("fixed payload Core acknowledgement")
+    bytes
+        .try_into()
+        .expect("fixed payload Core acknowledgement")
 }
 
 fn decode_ack(bytes: &[u8]) -> Result<AckFactsV1, PayloadReplayRecoveryErrorV1> {
@@ -110,9 +112,7 @@ fn read_ack_if_present(
     }
 }
 
-fn scan_ack_temporaries(
-    root: &Path,
-) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
+fn scan_ack_temporaries(root: &Path) -> Result<Vec<PathBuf>, PayloadReplayRecoveryErrorV1> {
     let mut paths = Vec::new();
     for entry in fs::read_dir(root)? {
         let entry = entry?;
@@ -172,10 +172,7 @@ fn read_ack(
     Ok(decoded)
 }
 
-fn sidecar_path(
-    path: &Path,
-    suffix: &str,
-) -> Result<PathBuf, PayloadReplayRecoveryErrorV1> {
+fn sidecar_path(path: &Path, suffix: &str) -> Result<PathBuf, PayloadReplayRecoveryErrorV1> {
     let name = utf8_filename(path, "payload replay filename")?;
     Ok(path.with_file_name(format!(".{name}.{suffix}")))
 }
@@ -189,9 +186,7 @@ fn utf8_filename<'a>(
         .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(reason))
 }
 
-fn private_parent(
-    path: &Path,
-) -> Result<(File, PathBuf), PayloadReplayRecoveryErrorV1> {
+fn private_parent(path: &Path) -> Result<(File, PathBuf), PayloadReplayRecoveryErrorV1> {
     let parent = path
         .parent()
         .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(
@@ -234,9 +229,9 @@ fn map_peer_lease_error(error: crate::PeerLeaseErrorV1) -> PayloadReplayRecovery
             PayloadReplayRecoveryErrorV1::InvalidRequest(reason)
         }
         crate::PeerLeaseErrorV1::Io(error) => PayloadReplayRecoveryErrorV1::Io(error),
-        crate::PeerLeaseErrorV1::Rejected(_) => PayloadReplayRecoveryErrorV1::InvalidRequest(
-            "authority parent ancestry is not private",
-        ),
+        crate::PeerLeaseErrorV1::Rejected(_) => {
+            PayloadReplayRecoveryErrorV1::InvalidRequest("authority parent ancestry is not private")
+        }
     }
 }
 
@@ -249,10 +244,7 @@ fn open_private_lock(path: &Path) -> Result<File, PayloadReplayRecoveryErrorV1> 
     Ok(file)
 }
 
-fn open_private_file(
-    path: &Path,
-    writable: bool,
-) -> Result<File, PayloadReplayRecoveryErrorV1> {
+fn open_private_file(path: &Path, writable: bool) -> Result<File, PayloadReplayRecoveryErrorV1> {
     let metadata = fs::symlink_metadata(path)?;
     if !metadata.is_file() || !private_file_mode(&metadata) {
         return Err(PayloadReplayRecoveryErrorV1::InvalidRequest(

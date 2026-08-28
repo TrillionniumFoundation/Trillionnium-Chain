@@ -42,8 +42,8 @@ fn read_snapshot(
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
     }
     file.seek(SeekFrom::Start(0))?;
-    let capacity = usize::try_from(length)
-        .map_err(|_| PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
+    let capacity =
+        usize::try_from(length).map_err(|_| PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
     let mut bytes = Vec::with_capacity(capacity);
     Read::by_ref(file)
         .take(maximum.saturating_add(1))
@@ -281,11 +281,7 @@ fn persist_head(
     options.write(true).create_new(true);
     set_private_options(&mut options);
     let mut file = options.open(&temporary)?;
-    file.write_all(&encode_head(
-        record_count,
-        record_hash,
-        namespace_digest,
-    ))?;
+    file.write_all(&encode_head(record_count, record_hash, namespace_digest))?;
     file.sync_all()?;
     fs::rename(&temporary, path)?;
     directory.sync_all()?;

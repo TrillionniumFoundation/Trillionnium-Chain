@@ -44,9 +44,7 @@ mod tests {
         path
     }
 
-    fn seeded_payload(
-        path: &Path,
-    ) -> (PayloadReplayNamespaceV1, PayloadReplayRecoveryTargetV1) {
+    fn seeded_payload(path: &Path) -> (PayloadReplayNamespaceV1, PayloadReplayRecoveryTargetV1) {
         let namespace = namespace();
         let frame = frame(namespace, 0, [10; 32]);
         let receipt = {
@@ -82,30 +80,21 @@ mod tests {
             store.admit(&frame).unwrap()
         };
         let target = PayloadReplayRecoveryTargetV1::from_admission(frame, receipt);
-        let mut owner = PayloadReplayRecoveryOwnerV1::open(
-            &payload,
-            &acknowledgements,
-            namespace,
-            target,
-        )
-        .unwrap();
+        let mut owner =
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
+                .unwrap();
         assert!(matches!(
             owner.status().unwrap(),
             PayloadReplayRecoveryStatusV1::AdmittedUnacknowledged { .. }
         ));
-        let acknowledgement =
-            PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
+        let acknowledgement = PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
         let written = owner.acknowledge_core(acknowledgement).unwrap();
         assert!(!written.idempotent_replay());
         drop(owner);
 
-        let mut reopened = PayloadReplayRecoveryOwnerV1::open(
-            &payload,
-            &acknowledgements,
-            namespace,
-            target,
-        )
-        .unwrap();
+        let mut reopened =
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
+                .unwrap();
         assert!(reopened.status().unwrap().core_acknowledged());
         let replayed = reopened.acknowledge_core(acknowledgement).unwrap();
         assert!(replayed.idempotent_replay());
@@ -127,17 +116,11 @@ mod tests {
             store.admit(&frame).unwrap()
         };
         let target = PayloadReplayRecoveryTargetV1::from_admission(frame, receipt);
-        let mut owner = PayloadReplayRecoveryOwnerV1::open(
-            &payload,
-            &acknowledgements,
-            namespace,
-            target,
-        )
-        .unwrap();
+        let mut owner =
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
+                .unwrap();
         owner
-            .acknowledge_core(
-                PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap(),
-            )
+            .acknowledge_core(PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap())
             .unwrap();
         assert!(matches!(
             owner.acknowledge_core(
@@ -167,13 +150,9 @@ mod tests {
         #[cfg(unix)]
         fs::set_permissions(&retained, fs::Permissions::from_mode(0o600)).unwrap();
 
-        let mut owner = PayloadReplayRecoveryOwnerV1::open(
-            &payload,
-            &acknowledgements,
-            namespace,
-            target,
-        )
-        .unwrap();
+        let mut owner =
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
+                .unwrap();
         assert!(matches!(
             owner.status().unwrap(),
             PayloadReplayRecoveryStatusV1::RecoverableHeadLag { .. }
@@ -199,15 +178,10 @@ mod tests {
         };
         let target = PayloadReplayRecoveryTargetV1::from_admission(frame, receipt);
         rewind_head_to_genesis(&payload, namespace);
-        let mut owner = PayloadReplayRecoveryOwnerV1::open(
-            &payload,
-            &acknowledgements,
-            namespace,
-            target,
-        )
-        .unwrap();
-        let acknowledgement =
-            PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
+        let mut owner =
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target)
+                .unwrap();
+        let acknowledgement = PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
         assert!(matches!(
             owner.acknowledge_core(acknowledgement),
             Err(PayloadReplayRecoveryErrorV1::RecoveryRequired)
@@ -225,12 +199,7 @@ mod tests {
         let receipt = store.admit(&frame).unwrap();
         let target = PayloadReplayRecoveryTargetV1::from_admission(frame, receipt);
         assert!(matches!(
-            PayloadReplayRecoveryOwnerV1::open(
-                &payload,
-                &acknowledgements,
-                namespace,
-                target,
-            ),
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target,),
             Err(PayloadReplayRecoveryErrorV1::PayloadJournalBusy)
         ));
     }
@@ -249,12 +218,7 @@ mod tests {
         let mut target = PayloadReplayRecoveryTargetV1::from_admission(frame, receipt);
         target.frame_fingerprint = [99; 32];
         assert!(matches!(
-            PayloadReplayRecoveryOwnerV1::open(
-                &payload,
-                &acknowledgements,
-                namespace,
-                target,
-            ),
+            PayloadReplayRecoveryOwnerV1::open(&payload, &acknowledgements, namespace, target,),
             Err(PayloadReplayRecoveryErrorV1::PayloadRecordMismatch)
         ));
     }
@@ -286,8 +250,7 @@ mod tests {
         let (namespace, target) = seeded_payload(&wal);
         let owner = PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target)
             .expect("open recovery owner");
-        let acknowledgement =
-            PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
+        let acknowledgement = PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap();
         let bytes = encode_ack(namespace_digest(namespace), acknowledgement);
         let final_path = ack_path(&ack_root, target);
         let temp_path = ack_temp_path(&final_path);
@@ -307,13 +270,8 @@ mod tests {
         let ack_root = acknowledgement_root(root.path());
         let (namespace, target) = seeded_payload(&wal);
         {
-            let mut owner = PayloadReplayRecoveryOwnerV1::open(
-                &wal,
-                &ack_root,
-                namespace,
-                target,
-            )
-            .unwrap();
+            let mut owner =
+                PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, namespace, target).unwrap();
             owner
                 .acknowledge_core(
                     PayloadReplayCoreAcknowledgementV1::new(target, 9, [11; 32]).unwrap(),
@@ -365,12 +323,7 @@ mod tests {
         let wrong_namespace =
             PayloadReplayNamespaceV1::new([1; 32], 7, [2; 32], [3; 32], [44; 32]).unwrap();
         assert!(matches!(
-            PayloadReplayRecoveryOwnerV1::open(
-                &wal,
-                &ack_root,
-                wrong_namespace,
-                target,
-            ),
+            PayloadReplayRecoveryOwnerV1::open(&wal, &ack_root, wrong_namespace, target,),
             Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)
         ));
     }

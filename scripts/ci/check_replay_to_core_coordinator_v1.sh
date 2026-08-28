@@ -7,6 +7,7 @@ cd "$root"
 manifest=trillionnium/Cargo.toml
 package=trnm-poco-node
 binary=trnm-poco-replay-to-core-coordinator-v1
+feature=replay-to-core-coordinator-test-support
 source=trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-replay-to-core-coordinator-v1.rs
 package_doc=docs/development/packages/TRNM_G1_REPLAY_TO_CORE_DURABLE_ACK_EXECUTION_PACKAGE_V1.md
 package_manifest=docs/development/packages/trnm-g1-r2-manifest-v1.toml
@@ -14,9 +15,9 @@ workflow=.github/workflows/trnm-replay-to-core-coordinator-v1.yml
 
 rustfmt --edition 2021 --check "$source"
 cargo test --manifest-path "$manifest" --locked \
-  -p "$package" --bin "$binary" -- --test-threads=1
+  -p "$package" --features "$feature" --bin "$binary" -- --test-threads=1
 cargo clippy --manifest-path "$manifest" --locked \
-  -p "$package" --bin "$binary" -- -D warnings
+  -p "$package" --features "$feature" --bin "$binary" -- -D warnings
 
 # G1-R2A is stacked on G1-R1.  Its gate must never replace or suppress the
 # parent recovery/ack gate.
@@ -39,6 +40,18 @@ manifest = Path(
 workflow = Path(
     ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
 ).read_text()
+cargo_manifest = Path("trillionnium/crates/trnm-poco-node/Cargo.toml").read_text()
+
+required_cargo = {
+    "replay-to-core-coordinator-test-support = [",
+    '"dep:rustix"',
+    '"dep:trnm-consensus-peer-lease"',
+    'name = "trnm-poco-replay-to-core-coordinator-v1"',
+    'required-features = ["replay-to-core-coordinator-test-support"]',
+}
+for value in sorted(required_cargo):
+    if value not in cargo_manifest:
+        raise SystemExit(f"missing R2A Cargo target boundary: {value}")
 
 required_source = {
     "REPLAY_TO_CORE_PENDING_BEFORE_CORE_V1: bool = true",

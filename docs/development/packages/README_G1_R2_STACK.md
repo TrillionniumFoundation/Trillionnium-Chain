@@ -15,6 +15,17 @@ G1-R1 authorized clean-clone verification
  -> G1-R2B real Core adapter/process evidence
 ```
 
+The R2-B contract is documented separately:
+
+- [`TRNM_G1_R2B_REAL_CORE_ADAPTER_EXECUTION_PACKAGE_V1.md`](TRNM_G1_R2B_REAL_CORE_ADAPTER_EXECUTION_PACKAGE_V1.md)
+- [`trnm-g1-r2b-manifest-v1.toml`](trnm-g1-r2b-manifest-v1.toml)
+- [`check_replay_to_core_r2b_contract_v1.sh`](../../../scripts/ci/check_replay_to_core_r2b_contract_v1.sh)
+
+The current worktree carries a candidate `CandidateCoreIngressV1` probe. That
+probe is not source-bound evidence. R2-B remains a candidate-only
+contract until the real Core/SafetyState owner, process fault cuts and clean
+clone review are accepted.
+
 R2-A retains these false facts:
 
 ```text

@@ -3,9 +3,8 @@
 use std::{env, path::PathBuf, process::ExitCode};
 
 use trnm_consensus_peer_lease::{
-    PayloadReplayCoreAcknowledgementV1, PayloadReplayDirectionV1,
-    PayloadReplayNamespaceV1, PayloadReplayRecoveryOwnerV1,
-    PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryTargetV1,
+    PayloadReplayCoreAcknowledgementV1, PayloadReplayDirectionV1, PayloadReplayNamespaceV1,
+    PayloadReplayRecoveryOwnerV1, PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryTargetV1,
     PeerLeaseDirectionV1,
 };
 
@@ -57,13 +56,9 @@ fn run() -> Result<(), String> {
     )
     .map_err(|error| format!("invalid target: {error}"))?;
 
-    let mut owner = PayloadReplayRecoveryOwnerV1::open(
-        payload_path,
-        acknowledgement_root,
-        namespace,
-        target,
-    )
-    .map_err(|error| error.to_string())?;
+    let mut owner =
+        PayloadReplayRecoveryOwnerV1::open(payload_path, acknowledgement_root, namespace, target)
+            .map_err(|error| error.to_string())?;
 
     match operation {
         "status" => print_status(owner.status().map_err(|error| error.to_string())?),
@@ -165,8 +160,8 @@ fn parse_hex32(value: &str, name: &str) -> Result<[u8; 32], String> {
     let bytes = value.as_bytes();
     let mut output = [0u8; 32];
     for (index, chunk) in bytes.chunks_exact(2).enumerate() {
-        output[index] = (decode_hex_nibble(chunk[0], name)? << 4)
-            | decode_hex_nibble(chunk[1], name)?;
+        output[index] =
+            (decode_hex_nibble(chunk[0], name)? << 4) | decode_hex_nibble(chunk[1], name)?;
     }
     Ok(output)
 }

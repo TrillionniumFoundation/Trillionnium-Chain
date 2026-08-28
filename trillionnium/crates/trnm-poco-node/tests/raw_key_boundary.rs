@@ -184,8 +184,11 @@ fn raw_key_references_are_test_or_fixture_gated() {
                 .unwrap_or(&manifest[declaration_start..]);
             assert!(
                 declaration_tail
-                    .contains("required-features = [\"recovery-process-test-support\"]"),
-                "raw-key helper {binary_name} must require the fixture feature"
+                    .contains("required-features = [\"recovery-process-test-support\"]")
+                    || declaration_tail.contains(
+                        "required-features = [\"replay-to-core-coordinator-test-support\"]"
+                    ),
+                "raw-key helper {binary_name} must require an explicit fixture feature"
             );
             continue;
         }

@@ -57,10 +57,7 @@ struct PayloadSnapshotV1 {
 }
 
 impl PayloadSnapshotV1 {
-    fn record(
-        &self,
-        index: u64,
-    ) -> Result<DecodedRecordV1, PayloadReplayRecoveryErrorV1> {
+    fn record(&self, index: u64) -> Result<DecodedRecordV1, PayloadReplayRecoveryErrorV1> {
         let index = usize::try_from(index)
             .map_err(|_| PayloadReplayRecoveryErrorV1::PayloadRecordMismatch)?;
         let start = index
@@ -296,23 +293,17 @@ impl PayloadReplayRecoveryOwnerV1 {
 
     pub fn status(&self) -> Result<PayloadReplayRecoveryStatusV1, PayloadReplayRecoveryErrorV1> {
         match self.payload.classify(self.target)? {
-            PublicationStateV1::HeadLag => {
-                Ok(PayloadReplayRecoveryStatusV1::RecoverableHeadLag {
+            PublicationStateV1::HeadLag => Ok(PayloadReplayRecoveryStatusV1::RecoverableHeadLag {
+                payload_record_count: self.payload.snapshot.record_count,
+                payload_head_count: self.payload.head.record_count,
+                retained_temporary_count: bounded_count(self.payload.stale_temporaries.len()),
+            }),
+            PublicationStateV1::ResidualTemporaries => Ok(
+                PayloadReplayRecoveryStatusV1::RecoverableResidualTemporaries {
                     payload_record_count: self.payload.snapshot.record_count,
-                    payload_head_count: self.payload.head.record_count,
-                    retained_temporary_count: bounded_count(
-                        self.payload.stale_temporaries.len(),
-                    ),
-                })
-            }
-            PublicationStateV1::ResidualTemporaries => {
-                Ok(PayloadReplayRecoveryStatusV1::RecoverableResidualTemporaries {
-                    payload_record_count: self.payload.snapshot.record_count,
-                    retained_temporary_count: bounded_count(
-                        self.payload.stale_temporaries.len(),
-                    ),
-                })
-            }
+                    retained_temporary_count: bounded_count(self.payload.stale_temporaries.len()),
+                },
+            ),
             PublicationStateV1::Durable => {
                 match read_ack_if_present(
                     &self.acknowledgement_root,
@@ -395,11 +386,7 @@ impl PayloadReplayRecoveryOwnerV1 {
                 error,
             )));
         }
-        let reread = read_ack(
-            &final_path,
-            self.payload.namespace_digest,
-            self.target,
-        )?;
+        let reread = read_ack(&final_path, self.payload.namespace_digest, self.target)?;
         if !reread.matches(self.payload.namespace_digest, acknowledgement)
             || reread.acknowledgement_hash != acknowledgement_hash
         {

@@ -37,8 +37,7 @@ use sha2::{Digest, Sha256};
 use crate::{
     payload::{
         PayloadReplayDirectionV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1,
-        PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1,
-        PAYLOAD_REPLAY_MAX_RECORDS_V1,
+        PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
     },
     protocol::PeerLeaseDirectionV1,
     store::ensure_private_directory,
@@ -274,9 +273,7 @@ impl PayloadReplayRecoveryStatusV1 {
     pub const fn kind(self) -> &'static str {
         match self {
             Self::RecoverableHeadLag { .. } => "recoverable_head_lag",
-            Self::RecoverableResidualTemporaries { .. } => {
-                "recoverable_residual_temporaries"
-            }
+            Self::RecoverableResidualTemporaries { .. } => "recoverable_residual_temporaries",
             Self::AdmittedUnacknowledged { .. } => "admitted_unacknowledged",
             Self::CoreAcknowledged { .. } => "core_acknowledged",
         }
@@ -320,21 +317,18 @@ impl fmt::Display for PayloadReplayRecoveryErrorV1 {
                 formatter.write_str("payload replay journal is owned by a live process")
             }
             Self::PayloadJournalCorrupt => formatter.write_str("payload replay journal is corrupt"),
-            Self::PayloadRecordMismatch => formatter.write_str(
-                "payload replay recovery target does not match the durable record",
-            ),
-            Self::PayloadHeadDiverged => formatter.write_str(
-                "payload replay head is not the exact durable tip or one-target prefix",
-            ),
+            Self::PayloadRecordMismatch => formatter
+                .write_str("payload replay recovery target does not match the durable record"),
+            Self::PayloadHeadDiverged => formatter
+                .write_str("payload replay head is not the exact durable tip or one-target prefix"),
             Self::AckLedgerBusy => {
                 formatter.write_str("payload replay Core acknowledgement ledger is busy")
             }
-            Self::AckLedgerCorrupt => formatter.write_str(
-                "payload replay Core acknowledgement ledger is corrupt",
-            ),
-            Self::AckConflict => formatter.write_str(
-                "payload replay target already has a conflicting Core acknowledgement",
-            ),
+            Self::AckLedgerCorrupt => {
+                formatter.write_str("payload replay Core acknowledgement ledger is corrupt")
+            }
+            Self::AckConflict => formatter
+                .write_str("payload replay target already has a conflicting Core acknowledgement"),
             Self::AckCommitAmbiguous(error) => write!(
                 formatter,
                 "payload replay Core acknowledgement commit is ambiguous: {error}"

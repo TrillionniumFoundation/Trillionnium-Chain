@@ -74,6 +74,17 @@ g1-process-test-support = [
   "dep:trnm-consensus-safety-rules",
   "dep:trnm-consensus-peer-lease",
 ]
+# Candidate-only compilation support for the sealed replay-to-Core coordinator.
+# Keep this edge separate from the broader process-test feature so the default
+# node remains free of the peer-lease and rustix runtime composition.  This is
+# a test/verification target only; it does not provide a live Core adapter or
+# alter any production activation flag.
+replay-to-core-coordinator-test-support = [
+  "fixture-raw-key",
+  "dep:libc",
+  "dep:rustix",
+  "dep:trnm-consensus-peer-lease",
+]
 
 # The former App-aware recovery modules remain as non-buildable archive source.
 # Keeping their cfg names known avoids warnings without restoring a feature or
@@ -239,6 +250,11 @@ path = "src/main.rs"
 name = "trnm-poco-g1-process-host"
 path = "src/bin/trnm-poco-g1-process-host.rs"
 required-features = ["g1-process-test-support"]
+
+[[bin]]
+name = "trnm-poco-replay-to-core-coordinator-v1"
+path = "src/bin/trnm-poco-replay-to-core-coordinator-v1.rs"
+required-features = ["replay-to-core-coordinator-test-support"]
 
 [[bin]]
 name = "trnm-poco-effect-driver-process"
