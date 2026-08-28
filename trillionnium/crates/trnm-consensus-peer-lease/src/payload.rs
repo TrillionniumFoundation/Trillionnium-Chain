@@ -387,10 +387,67 @@ struct ReplayStateV1 {
     last_fingerprint: [u8; 32],
 }
 
+/// The complete immutable identity of one admitted frame.  The replay WAL
+/// stores this identity in every record; retaining it in memory lets a retry
+/// recover the original receipt without appending a second record.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct ReplayFrameIdentityV1 {
+    scope: PeerLeaseScopeV1,
+    run_id_hash: [u8; 32],
+    network_context_hash: [u8; 32],
+    session_id: [u8; 32],
+    generation: u64,
+    sequence: u64,
+    frame_kind: u8,
+    payload_len: u32,
+    frame_fingerprint: [u8; 32],
+}
+
+impl ReplayFrameIdentityV1 {
+    fn from_frame(frame: PayloadReplayFrameV1) -> Self {
+        Self {
+            scope: frame.scope,
+            run_id_hash: frame.run_id_hash,
+            network_context_hash: frame.network_context_hash,
+            session_id: frame.session_id,
+            generation: frame.generation,
+            sequence: frame.sequence,
+            frame_kind: frame.frame_kind,
+            payload_len: frame.payload_len,
+            frame_fingerprint: frame.frame_fingerprint,
+        }
+    }
+
+    fn position(self) -> ReplayFramePositionV1 {
+        ReplayFramePositionV1 {
+            key: PeerKeyV1 {
+                remote_id: self.scope.remote_id(),
+                direction: self.scope.direction(),
+            },
+            generation: self.generation,
+            sequence: self.sequence,
+        }
+    }
+}
+
+/// A frame slot excludes the payload fingerprint and session.  If a caller
+/// presents a different authenticated frame for an already occupied slot,
+/// lookup must report `Replay` rather than allowing the caller to treat it as
+/// an unseen frame.  The exact identity map above remains the authority for
+/// successful idempotent lookup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct ReplayFramePositionV1 {
+    key: PeerKeyV1,
+    generation: u64,
+    sequence: u64,
+}
+
 #[derive(Debug)]
 struct ReplaySnapshotV1 {
     states: BTreeMap<PeerKeyV1, ReplayStateV1>,
     seen_sessions: BTreeSet<(PeerKeyV1, [u8; 32])>,
+    frame_receipts: BTreeMap<ReplayFrameIdentityV1, PayloadReplayReceiptV1>,
+    frame_positions: BTreeMap<ReplayFramePositionV1, ReplayFrameIdentityV1>,
     last_hash: [u8; 32],
     record_count: u64,
 }
@@ -411,6 +468,8 @@ pub struct PayloadReplayStoreV1 {
     namespace_digest: [u8; 32],
     states: BTreeMap<PeerKeyV1, ReplayStateV1>,
     seen_sessions: BTreeSet<(PeerKeyV1, [u8; 32])>,
+    frame_receipts: BTreeMap<ReplayFrameIdentityV1, PayloadReplayReceiptV1>,
+    frame_positions: BTreeMap<ReplayFramePositionV1, ReplayFrameIdentityV1>,
     last_hash: [u8; 32],
     record_count: u64,
     poisoned: bool,
@@ -488,6 +547,8 @@ impl PayloadReplayStoreV1 {
             namespace_digest,
             states: BTreeMap::new(),
             seen_sessions: BTreeSet::new(),
+            frame_receipts: BTreeMap::new(),
+            frame_positions: BTreeMap::new(),
             last_hash: [0; 32],
             record_count: 0,
             poisoned: false,
@@ -619,12 +680,50 @@ impl PayloadReplayStoreV1 {
         }
         self.states.insert(key, next_state);
         self.seen_sessions.insert((key, frame.session_id));
+        let identity = ReplayFrameIdentityV1::from_frame(*frame);
+        let position = identity.position();
+        self.frame_receipts.insert(
+            identity,
+            PayloadReplayReceiptV1 {
+                record_index: index,
+                record_hash,
+            },
+        );
+        self.frame_positions.insert(position, identity);
         self.last_hash = record_hash;
         self.record_count = new_count;
         Ok(PayloadReplayReceiptV1 {
             record_index: index,
             record_hash,
         })
+    }
+
+    /// Looks up an already admitted frame without appending or otherwise
+    /// changing the replay journal.  The live WAL/head pair is authenticated
+    /// before consulting the in-memory index, so a caller can never receive a
+    /// stale receipt after an out-of-band rollback or replacement.  `None`
+    /// means that the exact frame has not been admitted; an occupied frame
+    /// slot with a different identity is a replay conflict.
+    pub fn lookup_exact_v1(
+        &mut self,
+        frame: &PayloadReplayFrameV1,
+    ) -> Result<Option<PayloadReplayReceiptV1>, PayloadReplayErrorV1> {
+        if self.poisoned {
+            return Err(PayloadReplayErrorV1::Poisoned);
+        }
+        if let Err(error) = self.verify_live_head() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        self.validate_frame_context(frame)?;
+        let identity = ReplayFrameIdentityV1::from_frame(*frame);
+        if let Some(receipt) = self.frame_receipts.get(&identity).copied() {
+            return Ok(Some(receipt));
+        }
+        if self.frame_positions.contains_key(&identity.position()) {
+            return Err(PayloadReplayErrorV1::Replay);
+        }
+        Ok(None)
     }
 
     fn validate_frame_context(
@@ -703,6 +802,8 @@ impl PayloadReplayStoreV1 {
             || snapshot.last_hash != self.last_hash
             || snapshot.states != self.states
             || snapshot.seen_sessions != self.seen_sessions
+            || snapshot.frame_receipts != self.frame_receipts
+            || snapshot.frame_positions != self.frame_positions
         {
             return Err(PayloadReplayErrorV1::Corrupt);
         }
@@ -722,6 +823,8 @@ impl PayloadReplayStoreV1 {
         let snapshot = parse_log(&bytes, self.namespace, self.namespace_digest)?;
         self.states = snapshot.states;
         self.seen_sessions = snapshot.seen_sessions;
+        self.frame_receipts = snapshot.frame_receipts;
+        self.frame_positions = snapshot.frame_positions;
         self.last_hash = snapshot.last_hash;
         self.record_count = snapshot.record_count;
         Ok(())
@@ -861,6 +964,8 @@ fn parse_log(
     }
     let mut states = BTreeMap::<PeerKeyV1, ReplayStateV1>::new();
     let mut seen_sessions = BTreeSet::<(PeerKeyV1, [u8; 32])>::new();
+    let mut frame_receipts = BTreeMap::<ReplayFrameIdentityV1, PayloadReplayReceiptV1>::new();
+    let mut frame_positions = BTreeMap::<ReplayFramePositionV1, ReplayFrameIdentityV1>::new();
     let mut last_hash = [0; 32];
     for (index, bytes) in bytes.chunks_exact(RECORD_BYTES_V1).enumerate() {
         let decoded = decode_record(bytes)?;
@@ -935,12 +1040,32 @@ fn parse_log(
             }
             let next = preview_replayed_state(states.get(&key).copied(), frame)?;
             states.insert(key, next);
+            let identity = ReplayFrameIdentityV1::from_frame(frame);
+            let position = identity.position();
+            if frame_positions.insert(position, identity).is_some()
+                || frame_receipts
+                    .insert(
+                        identity,
+                        PayloadReplayReceiptV1 {
+                            record_index: index as u64,
+                            record_hash: decoded.record_hash,
+                        },
+                    )
+                    .is_some()
+            {
+                // `preview_replayed_state` already rejects duplicate sequence
+                // positions. Keep this invariant explicit so a future record
+                // schema change cannot silently overwrite an older receipt.
+                return Err(PayloadReplayErrorV1::Corrupt);
+            }
         }
         last_hash = decoded.record_hash;
     }
     Ok(ReplaySnapshotV1 {
         states,
         seen_sessions,
+        frame_receipts,
+        frame_positions,
         last_hash,
         record_count: count as u64,
     })
@@ -1431,6 +1556,131 @@ mod tests {
         assert!(matches!(
             reopened.admit(&old),
             Err(PayloadReplayErrorV1::Replay)
+        ));
+    }
+
+    #[test]
+    fn exact_lookup_recovers_receipt_across_reopen_and_rejects_slot_conflicts() {
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        let ns = namespace();
+        let first = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let second = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            1,
+            [11; 32],
+        );
+        let conflicting = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [99; 32],
+        );
+
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        let first_receipt = store.admit(&first).unwrap();
+        let second_receipt = store.admit(&second).unwrap();
+        let before_count = store.record_count();
+        let before_hash = store.last_hash();
+        assert_eq!(store.lookup_exact_v1(&first).unwrap(), Some(first_receipt));
+        assert_eq!(
+            store.lookup_exact_v1(&second).unwrap(),
+            Some(second_receipt)
+        );
+        assert_eq!(store.record_count(), before_count);
+        assert_eq!(store.last_hash(), before_hash);
+        assert!(matches!(
+            store.lookup_exact_v1(&conflicting),
+            Err(PayloadReplayErrorV1::Replay)
+        ));
+        let unseen = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            2,
+            [12; 32],
+        );
+        assert_eq!(store.lookup_exact_v1(&unseen).unwrap(), None);
+        drop(store);
+
+        let mut reopened = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        assert_eq!(
+            reopened.lookup_exact_v1(&first).unwrap(),
+            Some(first_receipt)
+        );
+        assert_eq!(
+            reopened.lookup_exact_v1(&second).unwrap(),
+            Some(second_receipt)
+        );
+        assert!(matches!(
+            reopened.lookup_exact_v1(&conflicting),
+            Err(PayloadReplayErrorV1::Replay)
+        ));
+    }
+
+    #[test]
+    fn exact_lookup_checks_context_before_index_and_poisoned_head() {
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        let ns = namespace();
+        let first = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        let receipt = store.admit(&first).unwrap();
+        let wrong_context = PayloadReplayFrameV1::new(
+            ns.scope_for([9; 32], PeerLeaseDirectionV1::Inbound)
+                .unwrap(),
+            [8; 32],
+            ns.network_context_hash(),
+            first.session_id(),
+            first.generation(),
+            first.sequence(),
+            first.frame_kind(),
+            first.payload_len() as usize,
+            first.frame_fingerprint(),
+        )
+        .unwrap();
+        assert!(matches!(
+            store.lookup_exact_v1(&wrong_context),
+            Err(PayloadReplayErrorV1::ContextMismatch)
+        ));
+        assert_eq!(store.lookup_exact_v1(&first).unwrap(), Some(receipt));
+
+        let head = fs::read(store.head_path()).unwrap();
+        let mut tampered = head;
+        tampered[20] ^= 1;
+        fs::write(store.head_path(), tampered).unwrap();
+        assert!(matches!(
+            store.lookup_exact_v1(&first),
+            Err(PayloadReplayErrorV1::Corrupt)
+        ));
+        assert!(matches!(
+            store.lookup_exact_v1(&first),
+            Err(PayloadReplayErrorV1::Poisoned)
         ));
     }
 
