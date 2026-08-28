@@ -26,11 +26,15 @@ use std::{
 use fs2::FileExt;
 use sha2::{Digest, Sha256};
 
+#[cfg(unix)]
+use std::os::unix::fs::MetadataExt;
+
 use crate::payload::{
-    decode_head, open_private_lock, persist_head, private_parent, read_private_head,
-    reject_stale_head_temps, set_private_mode, set_private_mode_options, sidecar_path,
-    validate_private_file, PayloadReplayErrorV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1,
-    PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
+    decode_head, open_private_lock, persist_head, private_file_mode, private_parent,
+    private_parent_mode, read_private_head, reject_stale_head_temps, set_private_mode,
+    set_private_mode_options, sidecar_path, validate_private_file, PayloadReplayErrorV1,
+    PayloadReplayFrameV1, PayloadReplayNamespaceV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1,
+    PAYLOAD_REPLAY_MAX_RECORDS_V1,
 };
 use crate::protocol::PeerLeaseDirectionV1;
 
@@ -65,6 +69,53 @@ const BODY_RECORD_DIGEST_BYTES_V1: usize = 32;
 const BODY_MIN_RECORD_BYTES_V1: usize = BODY_HEADER_BYTES_V1 + BODY_RECORD_DIGEST_BYTES_V1;
 const BODY_HEAD_BYTES_V1: usize = 116;
 const BODY_CHUNK_BYTES_V1: usize = 64 * 1024;
+
+/// Descriptor/path identity retained for each body-store authority endpoint.
+/// The journal and lock descriptors remain open for the lifetime of the
+/// owner, but all mutable operations still use pathnames for the head sidecar
+/// and therefore need an explicit replacement fence before and after I/O.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct BodyAuthorityPathIdentityV1 {
+    #[cfg(unix)]
+    device: u64,
+    #[cfg(unix)]
+    inode: u64,
+    #[cfg(unix)]
+    uid: u32,
+    #[cfg(unix)]
+    mode: u32,
+    #[cfg(unix)]
+    nlink: u64,
+    #[cfg(not(unix))]
+    is_file: bool,
+    #[cfg(not(unix))]
+    is_directory: bool,
+    #[cfg(not(unix))]
+    length: u64,
+}
+
+impl BodyAuthorityPathIdentityV1 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        #[cfg(unix)]
+        {
+            Self {
+                device: metadata.dev(),
+                inode: metadata.ino(),
+                uid: metadata.uid(),
+                mode: metadata.mode(),
+                nlink: metadata.nlink(),
+            }
+        }
+        #[cfg(not(unix))]
+        {
+            Self {
+                is_file: metadata.is_file(),
+                is_directory: metadata.is_dir(),
+                length: metadata.len(),
+            }
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 struct BodyKeyV1 {
@@ -150,8 +201,13 @@ pub struct PayloadReplayBodyStoreV1 {
     path: PathBuf,
     head_path: PathBuf,
     directory: File,
+    directory_identity: BodyAuthorityPathIdentityV1,
     file: File,
+    file_identity: BodyAuthorityPathIdentityV1,
+    lock_path: PathBuf,
     _lock: File,
+    lock_identity: BodyAuthorityPathIdentityV1,
+    head_identity: Option<BodyAuthorityPathIdentityV1>,
     namespace: PayloadReplayNamespaceV1,
     namespace_digest: [u8; 32],
     locations: BTreeMap<BodyKeyV1, BodyLocationV1>,
@@ -170,11 +226,15 @@ impl PayloadReplayBodyStoreV1 {
         namespace: PayloadReplayNamespaceV1,
     ) -> Result<Self, PayloadReplayErrorV1> {
         let path = path.as_ref().to_path_buf();
-        let (directory, _parent) = private_parent(&path)?;
+        let (directory, parent) = private_parent(&path)?;
+        let directory_identity = body_descriptor_identity(&directory)?;
+        verify_body_directory_identity(&parent, &directory, directory_identity)?;
         let lock_path = sidecar_path(&path, BODY_LOCK_SUFFIX_V1)?;
         let head_path = sidecar_path(&path, BODY_HEAD_SUFFIX_V1)?;
         reject_stale_head_temps(&path)?;
         let lock = open_private_lock(&lock_path)?;
+        let lock_identity = body_descriptor_identity(&lock)?;
+        verify_body_file_identity(&lock_path, &lock, lock_identity)?;
         lock.try_lock_exclusive()
             .map_err(PayloadReplayErrorV1::Io)?;
 
@@ -214,6 +274,8 @@ impl PayloadReplayBodyStoreV1 {
             set_private_mode(&file)?;
         }
         validate_private_file(&file)?;
+        let file_identity = body_descriptor_identity(&file)?;
+        verify_body_file_identity(&path, &file, file_identity)?;
         file.try_lock_exclusive()
             .map_err(PayloadReplayErrorV1::Io)?;
 
@@ -222,8 +284,13 @@ impl PayloadReplayBodyStoreV1 {
             path,
             head_path,
             directory,
+            directory_identity,
             file,
+            file_identity,
+            lock_path,
             _lock: lock,
+            lock_identity,
+            head_identity: None,
             namespace,
             namespace_digest,
             locations: BTreeMap::new(),
@@ -240,6 +307,10 @@ impl PayloadReplayBodyStoreV1 {
         }
         store.reload_from_disk_v1()?;
         store.reconcile_head_v1(!existing)?;
+        let head_identity = body_path_identity(&store.head_path)?;
+        verify_body_path_identity(&store.head_path, head_identity)?;
+        store.head_identity = Some(head_identity);
+        store.verify_bound_paths_v1()?;
         Ok(store)
     }
 
@@ -265,6 +336,14 @@ impl PayloadReplayBodyStoreV1 {
 
     pub const fn last_hash(&self) -> [u8; 32] {
         self.last_hash
+    }
+
+    /// Revalidate the descriptor/path identity of the body journal, head,
+    /// lock, and parent directory.  This is a candidate-only fail-closed
+    /// fence for same-UID pathname replacement; it is not an openat/dirfd
+    /// transaction or a whole-node anti-rollback authority.
+    pub fn verify_bound_endpoint_identity(&self) -> Result<(), PayloadReplayErrorV1> {
+        self.verify_bound_paths_v1()
     }
 
     /// Compute the body digest used by the journal.  This is public so an
@@ -305,6 +384,10 @@ impl PayloadReplayBodyStoreV1 {
             let persisted = self.read_body_record_v1(location)?;
             if persisted != body {
                 return Err(PayloadReplayErrorV1::Replay);
+            }
+            if let Err(error) = self.verify_bound_paths_v1() {
+                self.poisoned = true;
+                return Err(error);
             }
             return Ok(PayloadReplayBodyReceiptV1 {
                 record_index: location.record_index,
@@ -373,6 +456,14 @@ impl PayloadReplayBodyStoreV1 {
         self.last_hash = record_hash;
         self.record_count += 1;
         self.file_len = new_file_len;
+        if let Err(error) = self.refresh_head_identity_v1() {
+            self.poisoned = true;
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
+        }
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(PayloadReplayErrorV1::CommitAmbiguous(Box::new(error)));
+        }
         Ok(PayloadReplayBodyReceiptV1 {
             record_index,
             record_hash,
@@ -410,6 +501,14 @@ impl PayloadReplayBodyStoreV1 {
             return Err(PayloadReplayErrorV1::ContextMismatch);
         }
         let body = self.read_body_record_v1(location)?;
+        if let Err(error) = self.verify_bound_paths_v1() {
+            // The bytes were read from a descriptor that may no longer be
+            // reachable through the authority pathname.  Even though the
+            // caller receives no body, retain the failure as a permanent
+            // fence until a fresh owner reopens and authenticates the pair.
+            self.poisoned = true;
+            return Err(error);
+        }
         Ok(PayloadReplayAuthenticatedBodyV1 {
             frame: *frame,
             body,
@@ -428,14 +527,49 @@ impl PayloadReplayBodyStoreV1 {
             return Err(PayloadReplayErrorV1::Poisoned);
         }
         self.verify_or_poison_v1()?;
-        self.reload_from_disk_v1()
+        self.reload_from_disk_v1()?;
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
     }
 
     fn verify_or_poison_v1(&mut self) -> Result<(), PayloadReplayErrorV1> {
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
+        }
         if let Err(error) = self.verify_live_head_v1() {
             self.poisoned = true;
             return Err(error);
         }
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    fn refresh_head_identity_v1(&mut self) -> Result<(), PayloadReplayErrorV1> {
+        let identity = body_path_identity(&self.head_path)?;
+        verify_body_path_identity(&self.head_path, identity)?;
+        self.head_identity = Some(identity);
+        Ok(())
+    }
+
+    fn verify_bound_paths_v1(&self) -> Result<(), PayloadReplayErrorV1> {
+        let parent = self
+            .path
+            .parent()
+            .ok_or(PayloadReplayErrorV1::InvalidRequest(
+                "payload replay body path has no parent",
+            ))?;
+        verify_body_directory_identity(parent, &self.directory, self.directory_identity)?;
+        verify_body_file_identity(&self.path, &self.file, self.file_identity)?;
+        verify_body_file_identity(&self.lock_path, &self._lock, self.lock_identity)?;
+        let head_identity = self.head_identity.ok_or(PayloadReplayErrorV1::Corrupt)?;
+        verify_body_path_identity(&self.head_path, head_identity)?;
         Ok(())
     }
 
@@ -482,6 +616,7 @@ impl PayloadReplayBodyStoreV1 {
         {
             return Err(PayloadReplayErrorV1::Corrupt);
         }
+        self.verify_bound_paths_v1()?;
         Ok(())
     }
 
@@ -566,6 +701,94 @@ pub fn payload_replay_body_digest_v1(body: &[u8]) -> Result<[u8; 32], PayloadRep
         return Err(PayloadReplayErrorV1::TooLarge);
     }
     Ok(body_digest_v1(body))
+}
+
+fn body_descriptor_identity(
+    file: &File,
+) -> Result<BodyAuthorityPathIdentityV1, PayloadReplayErrorV1> {
+    Ok(BodyAuthorityPathIdentityV1::from_metadata(
+        &file.metadata()?,
+    ))
+}
+
+fn body_path_identity(path: &Path) -> Result<BodyAuthorityPathIdentityV1, PayloadReplayErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink() {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay body authority path is a symlink",
+        ));
+    }
+    Ok(BodyAuthorityPathIdentityV1::from_metadata(&metadata))
+}
+
+fn verify_body_file_identity(
+    path: &Path,
+    file: &File,
+    expected: BodyAuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    validate_private_file(file)?;
+    let descriptor_metadata = file.metadata()?;
+    let named_metadata = fs::symlink_metadata(path)?;
+    if named_metadata.file_type().is_symlink()
+        || !descriptor_metadata.is_file()
+        || !named_metadata.is_file()
+        || !private_file_mode(&named_metadata)
+        || BodyAuthorityPathIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || BodyAuthorityPathIdentityV1::from_metadata(&named_metadata) != expected
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay body authority file identity changed",
+        ));
+    }
+    Ok(())
+}
+
+fn verify_body_path_identity(
+    path: &Path,
+    expected: BodyAuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    let metadata = fs::symlink_metadata(path)?;
+    if metadata.file_type().is_symlink()
+        || !metadata.is_file()
+        || !private_file_mode(&metadata)
+        || BodyAuthorityPathIdentityV1::from_metadata(&metadata) != expected
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay body authority path identity changed",
+        ));
+    }
+    Ok(())
+}
+
+fn verify_body_directory_identity(
+    path: &Path,
+    directory: &File,
+    expected: BodyAuthorityPathIdentityV1,
+) -> Result<(), PayloadReplayErrorV1> {
+    let descriptor_metadata = directory.metadata()?;
+    let named_metadata = fs::symlink_metadata(path)?;
+    if named_metadata.file_type().is_symlink()
+        || !descriptor_metadata.is_dir()
+        || !named_metadata.is_dir()
+        || !private_parent_mode(&descriptor_metadata)
+        || !private_parent_mode(&named_metadata)
+        || BodyAuthorityPathIdentityV1::from_metadata(&descriptor_metadata) != expected
+        || BodyAuthorityPathIdentityV1::from_metadata(&named_metadata) != expected
+        || fs::canonicalize(path)? != path
+    {
+        return Err(PayloadReplayErrorV1::InvalidRequest(
+            "payload replay body authority directory identity changed",
+        ));
+    }
+    crate::store::ensure_private_directory(path).map_err(|error| match error {
+        crate::PeerLeaseErrorV1::InvalidRequest(reason)
+        | crate::PeerLeaseErrorV1::Protocol(reason) => PayloadReplayErrorV1::InvalidRequest(reason),
+        crate::PeerLeaseErrorV1::Io(error) => PayloadReplayErrorV1::Io(error),
+        crate::PeerLeaseErrorV1::Rejected(_) => PayloadReplayErrorV1::InvalidRequest(
+            "payload replay body parent ancestry is not private",
+        ),
+    })?;
+    Ok(())
 }
 
 #[derive(Debug)]
@@ -957,6 +1180,8 @@ fn classify_read_error_v1(error: io::Error, file_len: u64, offset: u64) -> Paylo
 mod tests {
     use super::*;
     use std::fs;
+    #[cfg(unix)]
+    use std::os::unix::fs::PermissionsExt;
     use tempfile::TempDir;
 
     fn private_tempdir() -> TempDir {
@@ -1156,5 +1381,72 @@ mod tests {
         assert_eq!(head.permissions().mode() & 0o7777, 0o600);
         let lock = fs::symlink_metadata(path.with_file_name(".bodies.wal.lock-v1")).unwrap();
         assert_eq!(lock.permissions().mode() & 0o7777, 0o600);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_body_wal_replacement_before_resolve() {
+        let dir = private_tempdir();
+        let path = dir.path().join("bodies.wal");
+        let ns = namespace();
+        let frame = frame(ns, 0, [10; 32]);
+        let mut store = PayloadReplayBodyStoreV1::open(&path, ns).unwrap();
+        let receipt = store.admit(&frame, b"exact-body!").unwrap();
+
+        let original = dir.path().join("bodies.wal.original");
+        fs::rename(&path, &original).unwrap();
+        fs::copy(&original, &path).unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            store.resolve(&frame, receipt),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_body_head_replacement_before_refresh() {
+        let dir = private_tempdir();
+        let path = dir.path().join("bodies.wal");
+        let ns = namespace();
+        let frame = frame(ns, 0, [10; 32]);
+        let mut store = PayloadReplayBodyStoreV1::open(&path, ns).unwrap();
+        store.admit(&frame, b"exact-body!").unwrap();
+        let head = store.head_path().to_path_buf();
+
+        let original = dir.path().join("bodies.head.original");
+        fs::rename(&head, &original).unwrap();
+        fs::copy(&original, &head).unwrap();
+        fs::set_permissions(&head, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            store.refresh(),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_body_lock_replacement_before_admit() {
+        let dir = private_tempdir();
+        let path = dir.path().join("bodies.wal");
+        let ns = namespace();
+        let frame = frame(ns, 0, [10; 32]);
+        let mut store = PayloadReplayBodyStoreV1::open(&path, ns).unwrap();
+        let lock = path.with_file_name(".bodies.wal.lock-v1");
+
+        let original = dir.path().join("bodies.lock.original");
+        fs::rename(&lock, &original).unwrap();
+        fs::copy(&original, &lock).unwrap();
+        fs::set_permissions(&lock, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            store.admit(&frame, b"exact-body!"),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
     }
 }
