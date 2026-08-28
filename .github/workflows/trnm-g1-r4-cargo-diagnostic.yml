@@ -1,0 +1,108 @@
+name: TRNM G1-R4 Cargo authority diagnostic
+
+on:
+  push:
+    branches:
+      - feature/chain-g1-r4-gap-closure-20260828
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-g1-r4-cargo-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+
+jobs:
+  diagnose:
+    name: Diagnose manifest lock cache drift
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/feature/chain-g1-r4-gap-closure-20260828' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
+
+      - name: Diagnose exact drift without mutating cache
+        run: |
+          set -euo pipefail
+          current=a259e0b28a2d9dea838f5ceac0e805803ac51dd4
+          reviewed=9966186e104fb03e4844a356cd87391f54de1caf
+          stamp="$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
+          echo "stamp=$(cat "$stamp")"
+          echo "current_lock_sha=$(git show "$current:trillionnium/Cargo.lock" | sha256sum)"
+          echo "reviewed_lock_sha=$(git show "$reviewed:trillionnium/Cargo.lock" | sha256sum)"
+          echo '=== changed manifests ==='
+          git diff --name-only "$reviewed".."$current" -- '**/Cargo.toml' | sort
+          echo '=== fs2 manifests ==='
+          git grep -n -E '(^|[[:space:]])fs2([[:space:]]|=)' "$current" -- '**/Cargo.toml' || true
+          echo '=== fs2 source refs ==='
+          git grep -n -E 'fs2::|FileExt|lock_exclusive|try_lock_exclusive|unlock\(' "$current" -- '*.rs' || true
+          echo '=== rustix manifests ==='
+          git grep -n -E '(^|[[:space:]])rustix([[:space:]]|=)' "$current" -- '**/Cargo.toml' || true
+          echo '=== current packages depending on winapi ==='
+          git show "$current:trillionnium/Cargo.lock" > "$RUNNER_TEMP/current.lock"
+          python3 - "$RUNNER_TEMP/current.lock" <<'PY'
+          import sys, tomllib
+          data = tomllib.loads(open(sys.argv[1], 'rb').read().decode())
+          for pkg in data['package']:
+              deps = pkg.get('dependencies', [])
+              if any(d == 'winapi' or d.startswith('winapi ') for d in deps):
+                  print(pkg['name'], pkg['version'], deps)
+          PY
+          echo '=== package graph delta ==='
+          git show "$reviewed:trillionnium/Cargo.lock" > "$RUNNER_TEMP/reviewed.lock"
+          python3 - "$RUNNER_TEMP/reviewed.lock" "$RUNNER_TEMP/current.lock" <<'PY'
+          import sys, tomllib
+          def pkgs(path):
+              d=tomllib.loads(open(path,'rb').read().decode())
+              return {(p['name'],p['version'],p.get('source','path')) for p in d['package']}
+          old,new=pkgs(sys.argv[1]),pkgs(sys.argv[2])
+          print('added:')
+          for x in sorted(new-old): print(x)
+          print('removed:')
+          for x in sorted(old-new): print(x)
+          PY
+          echo '=== direct workspace package dependency delta ==='
+          python3 - "$RUNNER_TEMP/reviewed.lock" "$RUNNER_TEMP/current.lock" <<'PY'
+          import sys,tomllib
+          def m(path):
+              d=tomllib.loads(open(path,'rb').read().decode())
+              return {(p['name'],p['version']): tuple(p.get('dependencies',[])) for p in d['package'] if not p.get('source')}
+          a,b=m(sys.argv[1]),m(sys.argv[2])
+          for k in sorted(set(a)|set(b)):
+              if a.get(k)!=b.get(k):
+                  print(k, 'OLD=',a.get(k),'NEW=',b.get(k))
+          PY
+          echo '=== reviewed lock under current manifests ==='
+          cp "$RUNNER_TEMP/reviewed.lock" trillionnium/Cargo.lock
+          set +e
+          cargo metadata --manifest-path trillionnium/Cargo.toml --format-version 1 --locked --offline >/dev/null
+          rc=$?
+          set -e
+          echo "reviewed_locked_metadata_rc=$rc"
+          git checkout -- trillionnium/Cargo.lock
+          exit 0
