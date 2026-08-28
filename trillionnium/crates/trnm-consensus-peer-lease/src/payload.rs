@@ -476,8 +476,6 @@ struct PayloadReplayPathIdentityV1 {
     is_file: bool,
     #[cfg(not(unix))]
     is_directory: bool,
-    #[cfg(not(unix))]
-    length: u64,
 }
 
 impl PayloadReplayPathIdentityV1 {
@@ -497,7 +495,6 @@ impl PayloadReplayPathIdentityV1 {
             Self {
                 is_file: metadata.is_file(),
                 is_directory: metadata.is_dir(),
-                length: metadata.len(),
             }
         }
     }
@@ -828,15 +825,25 @@ impl PayloadReplayStoreV1 {
             return Err(error);
         }
         self.validate_frame_context(frame)?;
-        let identity = ReplayFrameIdentityV1::from_frame(*frame);
-        if let Some(receipt) = self.frame_receipts.get(&identity).copied() {
-            return Ok(Some(receipt));
+        let result = {
+            let identity = ReplayFrameIdentityV1::from_frame(*frame);
+            if let Some(receipt) = self.frame_receipts.get(&identity).copied() {
+                Ok(Some(receipt))
+            } else if self.frame_positions.contains_key(&identity.position()) {
+                Err(PayloadReplayErrorV1::Replay)
+            } else {
+                Ok(None)
+            }
+        };
+        // Fence every externally visible lookup result, including an exact
+        // receipt and a slot-conflict error.  Returning either one after a
+        // pathname substitution would expose state that was only valid for
+        // the old replay namespace.
+        if let Err(error) = self.verify_bound_paths_v1() {
+            self.poisoned = true;
+            return Err(error);
         }
-        if self.frame_positions.contains_key(&identity.position()) {
-            return Err(PayloadReplayErrorV1::Replay);
-        }
-        self.verify_bound_paths_v1()?;
-        Ok(None)
+        result
     }
 
     fn validate_frame_context(
@@ -969,7 +976,7 @@ impl PayloadReplayStoreV1 {
     }
 
     fn reload_from_disk(&mut self) -> Result<(), PayloadReplayErrorV1> {
-        self.verify_payload_replay_storage_paths_v1()?;
+        self.verify_reload_paths_v1()?;
         let bytes = self.read_log_bytes()?;
         let snapshot = parse_log(&bytes, self.namespace, self.namespace_digest)?;
         self.states = snapshot.states;
@@ -978,7 +985,15 @@ impl PayloadReplayStoreV1 {
         self.frame_positions = snapshot.frame_positions;
         self.last_hash = snapshot.last_hash;
         self.record_count = snapshot.record_count;
+        self.verify_reload_paths_v1()?;
+        Ok(())
+    }
+
+    fn verify_reload_paths_v1(&self) -> Result<(), PayloadReplayErrorV1> {
         self.verify_payload_replay_storage_paths_v1()?;
+        if let Some(head_identity) = self.head_identity {
+            verify_payload_replay_path_identity(&self.head_path, head_identity)?;
+        }
         Ok(())
     }
 
@@ -2148,6 +2163,49 @@ mod tests {
         fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
         assert!(matches!(
             store.lookup_exact_v1(&first),
+            Err(PayloadReplayErrorV1::InvalidRequest(reason))
+                if reason.contains("identity")
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn endpoint_identity_rejects_lookup_slot_conflict() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        let ns = namespace();
+        let admitted = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [10; 32],
+        );
+        let conflicting = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [5; 32],
+            1,
+            0,
+            [99; 32],
+        );
+        let mut store = PayloadReplayStoreV1::open(&path, ns).unwrap();
+        store.admit(&admitted).unwrap();
+
+        // A slot conflict would ordinarily be reported as Replay.  Once the
+        // journal pathname no longer names the descriptor captured at open,
+        // the endpoint fence must win on every lookup result path.
+        let displaced = dir.path().join("frames.conflict.displaced");
+        fs::rename(&path, &displaced).unwrap();
+        fs::write(&path, fs::read(&displaced).unwrap()).unwrap();
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            store.lookup_exact_v1(&conflicting),
             Err(PayloadReplayErrorV1::InvalidRequest(reason))
                 if reason.contains("identity")
         ));
