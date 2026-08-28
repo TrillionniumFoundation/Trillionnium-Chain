@@ -2616,9 +2616,55 @@ mod tests {
             by_height.read_v0().durable_row_v0().p_digest_v0(),
             by_block.read_v0().durable_row_v0().p_digest_v0()
         );
+        // Exercise the durable process-loss fence as an explicit recovery
+        // matrix.  The marker is first left on disk (simulating a crash after
+        // the application commit), then the exact Core/P/K tuple is retried
+        // and cleared.  A second retry is idempotent, while a source-digest
+        // substitution remains fail-closed and leaves the marker for an
+        // operator/recovery owner to inspect.
+        let validation_store_path = directory.path().join("validation/validation.sqlite3");
+        let marker = runtime
+            .install_finalization_intent_marker_for_test_v0()
+            .expect("write exact surviving finalization intent marker");
+        assert_eq!(
+            crate::finalization_intent_wal::load_marker_v0(&validation_store_path)
+                .expect("read exact surviving finalization intent marker"),
+            Some(marker)
+        );
         assert!(runtime
-            .install_and_recover_finalization_intent_marker_for_test_v0()
-            .expect("exact finalization intent readback"));
+            .recover_finalization_intent_for_test_v0()
+            .expect("retry exact finalization intent readback"));
+        assert_eq!(
+            crate::finalization_intent_wal::load_marker_v0(&validation_store_path)
+                .expect("read cleared finalization intent marker"),
+            None
+        );
+        assert!(!runtime
+            .recover_finalization_intent_for_test_v0()
+            .expect("idempotent retry with no finalization intent marker"));
+
+        let marker = runtime
+            .install_finalization_intent_marker_for_test_v0()
+            .expect("write marker for negative recovery case");
+        let mut tampered_marker = marker;
+        tampered_marker.source_artifact_checksum[0] ^= 1;
+        crate::finalization_intent_wal::clear_marker_v0(&validation_store_path, marker)
+            .expect("clear exact marker before installing negative case");
+        crate::finalization_intent_wal::write_marker_v0(&validation_store_path, tampered_marker)
+            .expect("write tampered source-digest marker");
+        let error = runtime
+            .recover_finalization_intent_for_test_v0()
+            .expect_err("source-digest substitution must fail closed");
+        assert!(error
+            .to_string()
+            .contains("exactly one durable Valid source"));
+        assert_eq!(
+            crate::finalization_intent_wal::load_marker_v0(&validation_store_path)
+                .expect("read retained tampered marker"),
+            Some(tampered_marker)
+        );
+        crate::finalization_intent_wal::clear_marker_v0(&validation_store_path, tampered_marker)
+            .expect("clear tampered marker after negative recovery assertion");
         drop(runtime);
 
         let first_core_config = core_config.clone();

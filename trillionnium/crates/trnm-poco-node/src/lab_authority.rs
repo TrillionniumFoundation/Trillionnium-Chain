@@ -2738,9 +2738,9 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
     }
 
     #[cfg(all(test, feature = "lab-validator-runtime-test-support"))]
-    pub(crate) fn install_and_recover_finalization_intent_marker_for_test_v0(
+    pub(crate) fn install_finalization_intent_marker_for_test_v0(
         &self,
-    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
+    ) -> Result<FinalizationIntentMarkerV0, PocoNodeLabAuthorityErrorV0> {
         let finalization = self.core.safety_state().last_finalization().ok_or(
             PocoNodeLabAuthorityErrorV0::InvalidBootstrap(
                 "test recovery marker requires a durable Core finalization",
@@ -2796,6 +2796,18 @@ impl<W: ExternalMonotonicWatermarkV0> PocoNodeLabOrdinaryProposalRuntimeV0<W> {
         .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
         write_marker_v0(&self.proposal_journal.store_path, marker)
             .map_err(|error| PocoNodeLabAuthorityErrorV0::AuthorityChain(error.to_owned()))?;
+        Ok(marker)
+    }
+
+    /// Test-only entry point for exercising the same explicit readback that a
+    /// fresh host must perform after a process-loss marker is found.  Keeping
+    /// the store handles behind this method preserves the production privacy
+    /// boundary while allowing the lab recovery matrix to assert exact retry,
+    /// idempotent no-marker, and fail-closed tamper behavior.
+    #[cfg(all(test, feature = "lab-validator-runtime-test-support"))]
+    pub(crate) fn recover_finalization_intent_for_test_v0(
+        &self,
+    ) -> Result<bool, PocoNodeLabAuthorityErrorV0> {
         Self::recover_finalization_intent_readback_v0(
             &self.core,
             &self.application,
