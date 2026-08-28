@@ -55,6 +55,7 @@ jobs:
           patch_sha='b4796394e3eb9fd09e2062217e5c161d6f632dfc8698298733ccb3bb0c867075'
           fmt_patch_sha='b0bf42271a073eadfde6b88aa599670f4efaa2522fb5a9226fab0a84cb0e622e'
           format_args_patch_sha='47397248558ab266c52d657b9b209f8194183db38797072614f43a583580fb88'
+          clippy_patch_sha='fd9bbb16a95aa338719d222939fe8a98cdceeb2285fddb2d41568de383cfbd3e'
 
           test "$(git rev-parse HEAD)" = "$expected_head"
           test "$(git rev-parse HEAD^{tree})" = "$expected_tree"
@@ -77,15 +78,20 @@ jobs:
             | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
           git show "origin/$carrier:scripts/ci/trnm-g1-r4a-format-args-fix.patch.gz.b64" \
             | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch"
+          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-clippy-path-fix.patch.gz.b64" \
+            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch"
           echo "$patch_sha  $RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch" | sha256sum -c -
           echo "$fmt_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch" | sha256sum -c -
           echo "$format_args_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch" | sha256sum -c -
+          echo "$clippy_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch" | sha256sum -c -
           git apply --check "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
           git apply "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
           git apply --check "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
           git apply "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
           git apply --check "$RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch"
           git apply "$RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch"
+          git apply --check "$RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch"
+          git apply "$RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch"
           test ! -e _probe
 
           topic=$(git rev-parse --git-path PROJECT_TOPIC)
@@ -122,8 +128,8 @@ jobs:
             | bash scripts/project-preflight.sh --push origin "$(git remote get-url --push origin)"
           git push origin "HEAD:refs/heads/$target"
 
-          printf 'source_commit=%s\nsource_tree=%s\npatch_sha256=%s\nfmt_patch_sha256=%s\nformat_args_patch_sha256=%s\n' \
-            "$new_head" "$new_tree" "$patch_sha" "$fmt_patch_sha" "$format_args_patch_sha" \
+          printf 'source_commit=%s\nsource_tree=%s\npatch_sha256=%s\nfmt_patch_sha256=%s\nformat_args_patch_sha256=%s\nclippy_patch_sha256=%s\n' \
+            "$new_head" "$new_tree" "$patch_sha" "$fmt_patch_sha" "$format_args_patch_sha" "$clippy_patch_sha" \
             | tee "$RUNNER_TEMP/trnm-g1-r4a-source-identity.txt"
           git show --stat --oneline --decorate HEAD
 
@@ -137,6 +143,7 @@ jobs:
             ${{ runner.temp }}/trnm-g1-r4a-gap-closure.patch
             ${{ runner.temp }}/trnm-g1-r4a-rustfmt-fix.patch
             ${{ runner.temp }}/trnm-g1-r4a-format-args-fix.patch
+            ${{ runner.temp }}/trnm-g1-r4a-clippy-path-fix.patch
             ${{ runner.temp }}/trnm-g1-r4a-source-identity.txt
           if-no-files-found: warn
           retention-days: 14
