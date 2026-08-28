@@ -42,8 +42,9 @@ use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::validate_strict_json_structure_v0;
 use trnm_consensus_core::{
-    BlockIdOverlayRefV0, Core, CoreConfig, CoreIssuedApplicationSealAuthorityV0, Effect, Input,
-    OutboundMessage, SafetyHalt, SafetyState, SafetyStatePersistenceV0,
+    ApplicationSealedValidV0, BlockIdOverlayRefV0, Core, CoreConfig,
+    CoreIssuedApplicationSealAuthorityV0, Effect, Input, OutboundMessage, PayloadValidationRequest,
+    PayloadValidationRouteV0, SafetyHalt, SafetyState, SafetyStatePersistenceV0,
     ValidatedPayloadArtifactRefV0,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
@@ -118,6 +119,10 @@ const P2P_CORE_ACK_DOMAIN_V2: &[u8] = b"trnm.poco-g3.p2p-core-ack.v2";
 // the retained temporary pathname.
 static ROOT_TEMP_NONCE_V1: AtomicU64 = AtomicU64::new(0);
 const FAIL_CHECKPOINT_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT";
+// Explicit opt-in for the candidate-only ordinary Proposal seam.  The
+// default process remains fail-closed because this hook uses a fixture
+// application store, not the production runtime/JMT owner.
+const ENABLE_ORDINARY_CANDIDATE_ENV_V1: &str = "TRNM_POCO_EFFECT_PROCESS_ENABLE_ORDINARY_CANDIDATE";
 const LOCAL_KEY_BYTES_V1: [u8; 32] = [41; 32];
 const FIXTURE_PAYLOAD_V1: &[u8] = b"candidate-synced-proposal-v1";
 
@@ -308,6 +313,7 @@ struct FileHooksV1 {
     persisted_record: Option<Vec<u8>>,
     broadcasts: u64,
     fail_checkpoint: bool,
+    enable_ordinary_candidate: bool,
 }
 
 impl FileHooksV1 {
@@ -319,6 +325,8 @@ impl FileHooksV1 {
             persisted_record: None,
             broadcasts: 0,
             fail_checkpoint: std::env::var_os(FAIL_CHECKPOINT_ENV_V1).is_some(),
+            enable_ordinary_candidate: std::env::var(ENABLE_ORDINARY_CANDIDATE_ENV_V1)
+                .is_ok_and(|value| value == "1"),
         }
     }
 
@@ -381,13 +389,18 @@ impl FileHooksV1 {
 
     fn record_application_seal(
         &self,
+        route: PayloadValidationRouteV0,
         id: trnm_consensus_core::ValidationId,
         commitments: &trnm_consensus_types::ValidatedBlockCommitmentsV0,
         artifact_ref: ValidatedPayloadArtifactRefV0,
     ) -> Result<(), String> {
         let overlay = artifact_ref.overlay();
+        let route_name = match route {
+            PayloadValidationRouteV0::Proposal => "proposal",
+            PayloadValidationRouteV0::Synced => "synced",
+        };
         let line = format!(
-            "v=1\troute=synced\tblock_id={}\tview={}\tgeneration={}\tlogical_size={}\ttransactions={}\tevidence={}\toverlay={}\tsource={}\n",
+            "v=1\troute={route_name}\tblock_id={}\tview={}\tgeneration={}\tlogical_size={}\ttransactions={}\tevidence={}\toverlay={}\tsource={}\n",
             hex::encode(commitments.block_id().as_bytes()),
             id.view().get(),
             id.generation(),
@@ -476,19 +489,47 @@ impl CandidateEffectDriverHooksV1 for FileHooksV1 {
         let claimed = request
             .try_claim()
             .map_err(|_| "duplicate validation request claim".to_owned())?;
-        let (_route, id, block, _parent, permit) = claimed.into_parts();
+        let (route, id, block, _parent, permit) = claimed.into_parts();
         let commitments = validated_commitments_for_block(core, &block)?;
         let artifact_ref = artifact_ref_for_block(&block);
         // This WAL is the fixture's explicit application-store commit/readback
         // marker. The opaque Core proof is minted only after the marker is
         // durable, and Core still rechecks the exact request/affinity/root
         // bindings before accepting it.
-        self.record_application_seal(id, &commitments, artifact_ref)?;
+        self.record_application_seal(route, id, &commitments, artifact_ref)?;
         let proof = self
             .application_seal_authority
             .seal_after_application_store_commit_v0(permit, commitments, artifact_ref);
         core.step_application_sealed_valid_v0(&proof, &StrictEd25519Verifier)
             .map_err(|error| format!("Core application Valid callback: {error}"))
+    }
+
+    fn seal_ordinary_payload_v1(
+        &mut self,
+        request: &PayloadValidationRequest,
+        core: &Core,
+    ) -> Result<Option<ApplicationSealedValidV0>, Self::Error> {
+        if !self.enable_ordinary_candidate {
+            return Ok(None);
+        }
+        let claimed = request
+            .clone()
+            .try_claim()
+            .map_err(|_| "duplicate ordinary validation request claim".to_owned())?;
+        let (route, id, block, _parent, permit) = claimed.into_parts();
+        if route != PayloadValidationRouteV0::Proposal {
+            return Err("ordinary candidate hook received a non-Proposal route".to_owned());
+        }
+        let commitments = validated_commitments_for_block(core, &block)?;
+        let artifact_ref = artifact_ref_for_block(&block);
+        // This is an explicit candidate fixture boundary.  It proves the
+        // driver-owned D -> SafetyRules Vote ordering, but it is not a
+        // production execution/JMT result and cannot toggle activation.
+        self.record_application_seal(route, id, &commitments, artifact_ref)?;
+        Ok(Some(
+            self.application_seal_authority
+                .seal_after_application_store_commit_v0(permit, commitments, artifact_ref),
+        ))
     }
 
     fn compare_and_advance_whole_node_checkpoint_v1(

@@ -28,6 +28,14 @@ struct ProcessV1 {
 
 impl ProcessV1 {
     fn spawn(root: &TempDir, fail_checkpoint: bool) -> Self {
+        Self::spawn_with_options(root, fail_checkpoint, false)
+    }
+
+    fn spawn_with_options(
+        root: &TempDir,
+        fail_checkpoint: bool,
+        enable_ordinary_candidate: bool,
+    ) -> Self {
         // `tempfile::tempdir` inherits the process umask and can be
         // group-writable in this workspace.  The candidate intentionally
         // rejects writable ancestors, so make the test-owned root explicit
@@ -43,6 +51,9 @@ impl ProcessV1 {
             .stderr(Stdio::piped());
         if fail_checkpoint {
             command.env("TRNM_POCO_EFFECT_PROCESS_FAIL_CHECKPOINT", "1");
+        }
+        if enable_ordinary_candidate {
+            command.env("TRNM_POCO_EFFECT_PROCESS_ENABLE_ORDINARY_CANDIDATE", "1");
         }
         let mut child = command.spawn().expect("effect-driver process must spawn");
         Self {
@@ -260,6 +271,33 @@ fn ordinary_proposal_boundary_fail_stops_before_signer_or_broadcast() {
     assert!(checkpoint.contains("revision=1"));
     let status = process.kill();
     assert!(!status.success());
+}
+
+#[test]
+fn explicitly_enabled_ordinary_candidate_runs_driver_owned_d_vote_path() {
+    let root = tempfile::tempdir().expect("temporary root");
+    let mut process = ProcessV1::spawn_with_options(&root, false, true);
+    let accepted = process.send(json!({
+        "op":"enqueue_proposal",
+        "generation":1
+    }));
+    assert_eq!(string_field(&accepted, "admission"), "accepted");
+    let completed = process.send(json!({"op":"drive"}));
+    assert_eq!(string_field(&completed, "status"), "active");
+    assert_eq!(completed["processed_ingress"], 1);
+    assert_eq!(completed["broadcasts"], 1);
+    assert_eq!(completed["candidate_only"], true);
+    assert_eq!(completed["production_activation"], false);
+
+    let application = fs::read_to_string(root.path().join("application-seal.wal"))
+        .expect("ordinary candidate application seal WAL");
+    assert!(application.contains("route=proposal"));
+    let outbound =
+        fs::read_to_string(root.path().join("outbound.wal")).expect("ordinary candidate Vote WAL");
+    assert!(outbound.contains("kind=vote"));
+
+    let (status, _stderr) = process.shutdown();
+    assert!(status.success());
 }
 
 struct SigningKeyFixture {
