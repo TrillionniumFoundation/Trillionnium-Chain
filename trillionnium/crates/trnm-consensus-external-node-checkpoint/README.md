@@ -12,6 +12,13 @@ The Unix client opens a fresh connection for each load or CAS and implements
 the canonical trait. A lost acknowledgement remains an uncertain result: the
 caller must perform a fresh exact-scope `load`, as required by the trait.
 
+The open authority also retains descriptor/path identity for its private
+journal, lock, head anchor, and parent directory. Each request and durable
+head publication revalidates device/inode, owner, mode, link count, type, and
+canonical pathname; a same-UID rename, replacement, hard-link, or symlink race
+fails closed. This is a candidate process-boundary fence, not an independent
+monotonic anti-rollback service.
+
 This slice deliberately does **not** provide:
 
 - a private key, signer, HSM/KMS, or arbitrary signing operation;

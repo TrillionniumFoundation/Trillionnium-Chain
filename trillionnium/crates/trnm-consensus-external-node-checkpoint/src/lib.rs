@@ -135,15 +135,69 @@ struct LogRecordV0 {
     record_hash: [u8; 32],
 }
 
+/// Descriptor/path identity retained by the candidate checkpoint owner.
+///
+/// A valid hash chain does not protect an already-open owner from a same-UID
+/// rename-and-replace of its log, lock, head, or parent directory.  Keep the
+/// identity fence local to this Unix adapter so every request can fail closed
+/// before it treats a pathname as the authority it originally opened.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct CheckpointPathIdentityV0 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    mode: u32,
+    links: u64,
+    kind: u8,
+}
+
+impl CheckpointPathIdentityV0 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        let kind = if metadata.is_dir() {
+            1
+        } else if metadata.is_file() {
+            2
+        } else {
+            0
+        };
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+            mode: metadata.mode() & 0o7777,
+            links: metadata.nlink(),
+            kind,
+        }
+    }
+
+    /// Compare the stable object identity fields.  Directory link counts are
+    /// intentionally excluded: creating/removing a child directory changes a
+    /// parent directory's `nlink` without replacing the directory itself.
+    fn same_object(self, other: Self) -> bool {
+        self.device == other.device
+            && self.inode == other.inode
+            && self.owner == other.owner
+            && self.mode == other.mode
+            && self.kind == other.kind
+            && (self.kind == 1 || self.links == other.links)
+    }
+}
+
 /// One process-owned checkpoint authority.  The process lock prevents a
 /// second daemon from serving the same namespace; clients only use the Unix
 /// socket and cannot mutate the journal directly through this API.
 pub struct ExternalNodeCheckpointAuthorityV0 {
     log_path: PathBuf,
     anchor_path: PathBuf,
+    lock_path: PathBuf,
+    directory_path: PathBuf,
     directory: File,
+    directory_identity: CheckpointPathIdentityV0,
     log: File,
+    log_identity: CheckpointPathIdentityV0,
     _lock: File,
+    lock_identity: CheckpointPathIdentityV0,
+    anchor_identity: Option<CheckpointPathIdentityV0>,
     current: BTreeMap<[u8; 32], ExternalNodeCheckpointV0>,
     head_hash: [u8; 32],
     record_count: u64,
@@ -158,6 +212,14 @@ impl ExternalNodeCheckpointAuthorityV0 {
         log_path: impl AsRef<Path>,
     ) -> Result<Self, ExternalNodeCheckpointAuthorityErrorV0> {
         let (directory, log_path) = private_path_v0(log_path.as_ref())?;
+        let directory_path = log_path
+            .parent()
+            .ok_or(ExternalNodeCheckpointAuthorityErrorV0::InvalidConfig(
+                "checkpoint journal parent",
+            ))?
+            .to_path_buf();
+        let directory_identity = checkpoint_path_identity_from_file_v0(&directory)?;
+        verify_checkpoint_path_identity_v0(&directory_path, directory_identity, true)?;
         let lock_path = sidecar_path_v0(&log_path, "lock-v0")?;
         let anchor_path = sidecar_path_v0(&log_path, "head-v0")?;
         let lock = OpenOptions::new()
@@ -172,6 +234,8 @@ impl ExternalNodeCheckpointAuthorityV0 {
                 source,
             })?;
         validate_private_file_v0(&lock, "authority lock")?;
+        let lock_identity = checkpoint_path_identity_from_file_v0(&lock)?;
+        verify_checkpoint_path_identity_v0(&lock_path, lock_identity, false)?;
         lock.try_lock_exclusive()
             .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
                 stage: "lock authority namespace",
@@ -190,12 +254,20 @@ impl ExternalNodeCheckpointAuthorityV0 {
                 source,
             })?;
         validate_private_file_v0(&log, "checkpoint journal")?;
+        let log_identity = checkpoint_path_identity_from_file_v0(&log)?;
+        verify_checkpoint_path_identity_v0(&log_path, log_identity, false)?;
         let mut authority = Self {
             log_path,
             anchor_path,
+            lock_path,
+            directory_path,
             directory,
+            directory_identity,
             log,
+            log_identity,
             _lock: lock,
+            lock_identity,
+            anchor_identity: None,
             current: BTreeMap::new(),
             head_hash: [0; 32],
             record_count: 0,
@@ -203,11 +275,48 @@ impl ExternalNodeCheckpointAuthorityV0 {
         };
         authority.replay_log_v0()?;
         authority.reconcile_anchor_v0()?;
+        authority.revalidate_bound_endpoints_v0()?;
         Ok(authority)
     }
 
     pub fn log_path(&self) -> &Path {
         &self.log_path
+    }
+
+    /// Revalidate every descriptor and canonical pathname bound by this
+    /// authority.  This is a candidate fail-closed fence for same-UID
+    /// rename/replace races; it is not a whole-node external anti-rollback
+    /// anchor and does not promote the adapter to production use.
+    pub fn revalidate_bound_endpoints_v0(
+        &self,
+    ) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        self.revalidate_base_endpoints_v0()?;
+        self.validate_anchor_endpoint_v0()?;
+        Ok(())
+    }
+
+    fn revalidate_base_endpoints_v0(&self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        self.validate_directory_identity_v0()?;
+        self.validate_file_identity_v0(&self.log_path, &self.log, self.log_identity)?;
+        self.validate_file_identity_v0(&self.lock_path, &self._lock, self.lock_identity)?;
+        Ok(())
+    }
+
+    fn validate_anchor_endpoint_v0(&self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        match self.anchor_identity {
+            Some(identity) => {
+                verify_checkpoint_path_identity_v0(&self.anchor_path, identity, false)
+            }
+            None => match fs::symlink_metadata(&self.anchor_path) {
+                Ok(_) => Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                    "checkpoint head appeared after it was bound absent",
+                )),
+                Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
+                Err(_) => Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                    "checkpoint head identity cannot be inspected",
+                )),
+            },
+        }
     }
 
     pub fn load_checked(
@@ -217,12 +326,15 @@ impl ExternalNodeCheckpointAuthorityV0 {
         if self.poisoned {
             return Err(ExternalNodeCheckpointAuthorityErrorV0::Unavailable);
         }
+        self.revalidate_bound_endpoints_v0()?;
         if scope == [0; 32] {
             return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidConfig(
                 "zero scope",
             ));
         }
-        Ok(self.current.get(&scope).copied())
+        let value = self.current.get(&scope).copied();
+        self.revalidate_bound_endpoints_v0()?;
+        Ok(value)
     }
 
     pub fn compare_and_advance_checked(
@@ -233,6 +345,7 @@ impl ExternalNodeCheckpointAuthorityV0 {
         if self.poisoned {
             return Err(ExternalNodeCheckpointAuthorityErrorV0::Unavailable);
         }
+        self.revalidate_bound_endpoints_v0()?;
         let scope = target.scope();
         if scope == [0; 32] || target.encode_canonical().iter().all(|byte| *byte == 0) {
             return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidConfig(
@@ -282,12 +395,93 @@ impl ExternalNodeCheckpointAuthorityV0 {
                 source,
             });
         }
+        if let Err(error) = self.revalidate_bound_endpoints_v0() {
+            self.poisoned = true;
+            return Err(error);
+        }
         self.current.insert(scope, target);
         self.record_count = sequence;
         self.head_hash = record_hash;
         if let Err(error) = self.persist_anchor_v0() {
             self.poisoned = true;
             return Err(error);
+        }
+        if let Err(error) = self.revalidate_bound_endpoints_v0() {
+            self.poisoned = true;
+            return Err(error);
+        }
+        Ok(())
+    }
+
+    fn validate_directory_identity_v0(&self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        let descriptor = self.directory.metadata().map_err(|source| {
+            ExternalNodeCheckpointAuthorityErrorV0::Io {
+                stage: "stat checkpoint directory descriptor",
+                source,
+            }
+        })?;
+        let named = fs::symlink_metadata(&self.directory_path).map_err(|_| {
+            ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                "checkpoint directory identity changed",
+            )
+        })?;
+        if !descriptor.is_dir()
+            || !named.is_dir()
+            || descriptor.file_type().is_symlink()
+            || named.file_type().is_symlink()
+            || descriptor.permissions().mode() & 0o7777 != 0o700
+            || named.permissions().mode() & 0o7777 != 0o700
+            || !CheckpointPathIdentityV0::from_metadata(&descriptor)
+                .same_object(self.directory_identity)
+            || !CheckpointPathIdentityV0::from_metadata(&named).same_object(self.directory_identity)
+            || fs::canonicalize(&self.directory_path).map_err(|_| {
+                ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                    "checkpoint directory is no longer canonical",
+                )
+            })? != self.directory_path
+        {
+            return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                "checkpoint directory identity changed",
+            ));
+        }
+        Ok(())
+    }
+
+    fn validate_file_identity_v0(
+        &self,
+        path: &Path,
+        descriptor: &File,
+        expected: CheckpointPathIdentityV0,
+    ) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        let descriptor_metadata = descriptor.metadata().map_err(|_| {
+            ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                "checkpoint endpoint descriptor identity changed",
+            )
+        })?;
+        let named = fs::symlink_metadata(path).map_err(|_| {
+            ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                "checkpoint endpoint pathname identity changed",
+            )
+        })?;
+        if !descriptor_metadata.is_file()
+            || !named.is_file()
+            || descriptor_metadata.file_type().is_symlink()
+            || named.file_type().is_symlink()
+            || descriptor_metadata.permissions().mode() & 0o7777 != 0o600
+            || named.permissions().mode() & 0o7777 != 0o600
+            || descriptor_metadata.nlink() != 1
+            || named.nlink() != 1
+            || !CheckpointPathIdentityV0::from_metadata(&descriptor_metadata).same_object(expected)
+            || !CheckpointPathIdentityV0::from_metadata(&named).same_object(expected)
+            || fs::canonicalize(path).map_err(|_| {
+                ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                    "checkpoint endpoint is no longer canonical",
+                )
+            })? != path
+        {
+            return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+                "checkpoint endpoint identity changed",
+            ));
         }
         Ok(())
     }
@@ -341,8 +535,10 @@ impl ExternalNodeCheckpointAuthorityV0 {
 
     fn reconcile_anchor_v0(&mut self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
         validate_existing_sidecar_v0(&self.anchor_path, "checkpoint head")?;
-        match fs::read(&self.anchor_path) {
-            Ok(bytes) => {
+        match fs::symlink_metadata(&self.anchor_path) {
+            Ok(_) => {
+                let (bytes, identity) = read_anchor_v0(&self.anchor_path)?;
+                self.anchor_identity = Some(identity);
                 let (count, head) = decode_anchor_v0(&bytes)?;
                 if count > self.record_count {
                     return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
@@ -363,6 +559,7 @@ impl ExternalNodeCheckpointAuthorityV0 {
                 Ok(())
             }
             Err(error) if error.kind() == io::ErrorKind::NotFound => {
+                self.anchor_identity = None;
                 if self.record_count != 0 {
                     return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
                         "non-empty journal has no durable head",
@@ -371,13 +568,15 @@ impl ExternalNodeCheckpointAuthorityV0 {
                 self.persist_anchor_v0()
             }
             Err(source) => Err(ExternalNodeCheckpointAuthorityErrorV0::Io {
-                stage: "read checkpoint head",
+                stage: "inspect checkpoint head",
                 source,
             }),
         }
     }
 
-    fn persist_anchor_v0(&self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+    fn persist_anchor_v0(&mut self) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+        self.revalidate_base_endpoints_v0()?;
+        self.validate_anchor_endpoint_v0()?;
         let name = self
             .anchor_path
             .file_name()
@@ -391,26 +590,52 @@ impl ExternalNodeCheckpointAuthorityV0 {
             self.record_count
         ));
         let bytes = encode_anchor_v0(self.record_count, self.head_hash);
-        let result = (|| {
+        let result = (|| -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
             let mut file = OpenOptions::new()
                 .write(true)
                 .create_new(true)
                 .mode(0o600)
                 .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
-                .open(&temporary)?;
-            file.write_all(&bytes)?;
-            file.sync_all()?;
-            fs::rename(&temporary, &self.anchor_path)?;
-            self.directory.sync_data()?;
-            Ok::<(), io::Error>(())
+                .open(&temporary)
+                .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
+                    stage: "open temporary checkpoint head",
+                    source,
+                })?;
+            file.write_all(&bytes).map_err(|source| {
+                ExternalNodeCheckpointAuthorityErrorV0::Io {
+                    stage: "write temporary checkpoint head",
+                    source,
+                }
+            })?;
+            file.sync_all()
+                .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
+                    stage: "sync temporary checkpoint head",
+                    source,
+                })?;
+            let temporary_identity = checkpoint_path_identity_from_file_v0(&file)?;
+            self.revalidate_base_endpoints_v0()?;
+            self.validate_anchor_endpoint_v0()?;
+            verify_checkpoint_path_identity_v0(&temporary, temporary_identity, false)?;
+            fs::rename(&temporary, &self.anchor_path).map_err(|source| {
+                ExternalNodeCheckpointAuthorityErrorV0::Io {
+                    stage: "publish checkpoint head",
+                    source,
+                }
+            })?;
+            self.directory.sync_data().map_err(|source| {
+                ExternalNodeCheckpointAuthorityErrorV0::Io {
+                    stage: "sync checkpoint head directory",
+                    source,
+                }
+            })?;
+            Ok(())
         })();
-        if let Err(source) = result {
+        if let Err(error) = result {
             let _ = fs::remove_file(&temporary);
-            return Err(ExternalNodeCheckpointAuthorityErrorV0::Io {
-                stage: "persist checkpoint head",
-                source,
-            });
+            return Err(error);
         }
+        let (_, identity) = read_anchor_v0(&self.anchor_path)?;
+        self.anchor_identity = Some(identity);
         Ok(())
     }
 
@@ -421,6 +646,7 @@ impl ExternalNodeCheckpointAuthorityV0 {
         if self.poisoned {
             return Err(ExternalNodeCheckpointAuthorityErrorV0::Unavailable);
         }
+        self.revalidate_bound_endpoints_v0()?;
         stream
             .set_read_timeout(Some(Duration::from_secs(5)))
             .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
@@ -444,10 +670,21 @@ impl ExternalNodeCheckpointAuthorityV0 {
             RequestV0::Load { scope } => match self.load_checked(scope) {
                 Ok(Some(value)) => write_frame_v0(&mut stream, &encode_value_response_v0(value)),
                 Ok(None) => write_frame_v0(&mut stream, &encode_status_response_v0(STATUS_NONE_V0)),
-                Err(_) => write_frame_v0(
-                    &mut stream,
-                    &encode_status_response_v0(STATUS_INVALID_STATE_V0),
-                ),
+                Err(error) => {
+                    let integrity_error =
+                        matches!(error, ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_));
+                    let result = write_frame_v0(
+                        &mut stream,
+                        &encode_status_response_v0(STATUS_INVALID_STATE_V0),
+                    );
+                    if integrity_error {
+                        self.poisoned = true;
+                        result?;
+                        Err(error)
+                    } else {
+                        result
+                    }
+                }
             },
             RequestV0::CompareAndAdvance(request) => {
                 let expected = request.expected;
@@ -460,13 +697,14 @@ impl ExternalNodeCheckpointAuthorityV0 {
                         &mut stream,
                         &encode_status_response_v0(STATUS_COMPARE_FAILED_V0),
                     ),
-                    Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_)) => {
+                    Err(error @ ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_)) => {
                         let result = write_frame_v0(
                             &mut stream,
                             &encode_status_response_v0(STATUS_INVALID_STATE_V0),
                         );
                         self.poisoned = true;
-                        result
+                        result?;
+                        Err(error)
                     }
                     Err(_) => write_frame_v0(
                         &mut stream,
@@ -1108,6 +1346,85 @@ fn validate_private_file_v0(
     Ok(())
 }
 
+fn checkpoint_path_identity_from_file_v0(
+    file: &File,
+) -> Result<CheckpointPathIdentityV0, ExternalNodeCheckpointAuthorityErrorV0> {
+    let metadata =
+        file.metadata()
+            .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
+                stage: "stat checkpoint endpoint descriptor",
+                source,
+            })?;
+    Ok(CheckpointPathIdentityV0::from_metadata(&metadata))
+}
+
+fn read_anchor_v0(
+    path: &Path,
+) -> Result<(Vec<u8>, CheckpointPathIdentityV0), ExternalNodeCheckpointAuthorityErrorV0> {
+    let file = OpenOptions::new()
+        .read(true)
+        .custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW)
+        .open(path)
+        .map_err(|source| ExternalNodeCheckpointAuthorityErrorV0::Io {
+            stage: "open checkpoint head",
+            source,
+        })?;
+    validate_private_file_v0(&file, "checkpoint head").map_err(|error| match error {
+        ExternalNodeCheckpointAuthorityErrorV0::InvalidConfig(_) => {
+            ExternalNodeCheckpointAuthorityErrorV0::InvalidLog("checkpoint head")
+        }
+        other => other,
+    })?;
+    let identity = checkpoint_path_identity_from_file_v0(&file)?;
+    verify_checkpoint_path_identity_v0(path, identity, false)?;
+    let mut bytes = Vec::new();
+    let mut reader = file;
+    reader.read_to_end(&mut bytes).map_err(|source| {
+        ExternalNodeCheckpointAuthorityErrorV0::Io {
+            stage: "read checkpoint head",
+            source,
+        }
+    })?;
+    verify_checkpoint_path_identity_v0(path, identity, false)?;
+    Ok((bytes, identity))
+}
+
+fn verify_checkpoint_path_identity_v0(
+    path: &Path,
+    expected: CheckpointPathIdentityV0,
+    directory: bool,
+) -> Result<(), ExternalNodeCheckpointAuthorityErrorV0> {
+    let metadata = fs::symlink_metadata(path).map_err(|_| {
+        ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+            "checkpoint endpoint pathname identity changed",
+        )
+    })?;
+    let valid_shape = if directory {
+        metadata.is_dir()
+            && !metadata.file_type().is_symlink()
+            && metadata.permissions().mode() & 0o7777 == 0o700
+    } else {
+        metadata.is_file()
+            && !metadata.file_type().is_symlink()
+            && metadata.permissions().mode() & 0o7777 == 0o600
+            && metadata.nlink() == 1
+    };
+    let canonical = fs::canonicalize(path).map_err(|_| {
+        ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+            "checkpoint endpoint pathname identity changed",
+        )
+    })?;
+    if !valid_shape
+        || !CheckpointPathIdentityV0::from_metadata(&metadata).same_object(expected)
+        || canonical != path
+    {
+        return Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(
+            "checkpoint endpoint pathname identity changed",
+        ));
+    }
+    Ok(())
+}
+
 fn validate_existing_sidecar_v0(
     path: &Path,
     what: &'static str,
@@ -1336,6 +1653,83 @@ mod tests {
             ExternalNodeCheckpointAuthorityV0::open(&log),
             Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_))
         ));
+    }
+
+    #[test]
+    fn bound_log_replacement_fails_closed_before_load() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let displaced = directory.path().join("checkpoint.log.displaced");
+        let first = checkpoint(0, [0; 32]);
+        let mut authority = ExternalNodeCheckpointAuthorityV0::open(&log).unwrap();
+        authority.compare_and_advance_checked(None, first).unwrap();
+        fs::rename(&log, &displaced).unwrap();
+        fs::copy(&displaced, &log).unwrap();
+        fs::set_permissions(&log, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            authority.load_checked([1; 32]),
+            Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_))
+        ));
+    }
+
+    #[test]
+    fn bound_lock_replacement_fails_closed_before_load() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let lock = directory.path().join(".checkpoint.log.lock-v0");
+        let displaced = directory.path().join(".checkpoint.log.lock-v0.displaced");
+        let authority = ExternalNodeCheckpointAuthorityV0::open(&log).unwrap();
+        fs::rename(&lock, &displaced).unwrap();
+        OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(&lock)
+            .unwrap();
+        assert!(matches!(
+            authority.load_checked([1; 32]),
+            Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_))
+        ));
+    }
+
+    #[test]
+    fn bound_anchor_replacement_fails_closed_before_load() {
+        let directory = private_tempdir();
+        let log = directory.path().join("checkpoint.log");
+        let anchor = directory.path().join(".checkpoint.log.head-v0");
+        let displaced = directory.path().join(".checkpoint.log.head-v0.displaced");
+        let first = checkpoint(0, [0; 32]);
+        let mut authority = ExternalNodeCheckpointAuthorityV0::open(&log).unwrap();
+        authority.compare_and_advance_checked(None, first).unwrap();
+        fs::rename(&anchor, &displaced).unwrap();
+        fs::copy(&displaced, &anchor).unwrap();
+        fs::set_permissions(&anchor, fs::Permissions::from_mode(0o600)).unwrap();
+        assert!(matches!(
+            authority.load_checked([1; 32]),
+            Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_))
+        ));
+    }
+
+    #[test]
+    fn bound_parent_directory_replacement_fails_closed_before_load() {
+        let directory = private_tempdir();
+        let root = directory.path().to_path_buf();
+        let displaced = root.with_file_name(format!(
+            "{}-displaced-{}",
+            root.file_name().unwrap().to_string_lossy(),
+            process::id()
+        ));
+        let log = root.join("checkpoint.log");
+        let authority = ExternalNodeCheckpointAuthorityV0::open(&log).unwrap();
+        fs::rename(&root, &displaced).unwrap();
+        fs::create_dir(&root).unwrap();
+        fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
+        assert!(matches!(
+            authority.load_checked([1; 32]),
+            Err(ExternalNodeCheckpointAuthorityErrorV0::InvalidLog(_))
+        ));
+        fs::remove_dir(&root).unwrap();
+        fs::rename(&displaced, &root).unwrap();
     }
 
     #[test]
