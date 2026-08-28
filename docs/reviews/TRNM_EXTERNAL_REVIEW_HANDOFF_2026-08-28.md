@@ -98,11 +98,18 @@ promote the branch or close the open blockers.
 | `git diff --check` | Pass | No whitespace errors in the committed source snapshot |
 | Tracked-secret / packaging review | Pass for current tracked tree | No tracked private key, token, cloud credential, submodule, or symlink was found; see exclusions below |
 | `cargo test -p trnm-poco-lab-validator --lib -- --test-threads=1` | **Outcome not recorded** | The process later disappeared after a gateway interruption; final exit code and libtest summary were not captured. This is not test evidence of pass or fail. Reviewer must rerun it. |
-| GitHub Actions after push | Queued when checked | Triggered runs are not treated as evidence until independently inspected and completed |
+| GitHub Actions after push | Not a pass | Run `33133507578` (`legacy-local-harness-preflight`) completed **failure** before the harness: the runner's Cargo offline-cache stamp expected `72e254afa47d8b92fe8803b35869990bcfaa7f8106d9f0d4ecb45d127fbe150b`, while this snapshot's locked file is `ee1e9a8382092a397f1b041107cf6b86e468d521af3aa7963e5f6e714e6c3382`; run `33133507597` (`rust-l1-nightly-health`) was still in progress when recorded and had already skipped its Rust test steps after the same cache check failed |
 
 The full validator test command intentionally remains an explicit
 `unverified` item. No test count, green status, or release conclusion should be
 derived from the missing process result.
+
+The two run IDs above were triggered for the tested source commit
+`3e6bdf1938ca409b8a32db922548bf6232391a7a`, before the later docs-only handoff
+commit. The cache-stamp mismatch is a CI runner/input-alignment blocker; it is
+not evidence that the local validator command passed or failed. The nightly
+run's eventual conclusion should be checked directly rather than inferred from
+this snapshot.
 
 ## What is and is not in the review source
 
