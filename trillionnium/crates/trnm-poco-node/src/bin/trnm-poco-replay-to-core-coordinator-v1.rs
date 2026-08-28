@@ -3130,6 +3130,87 @@ mod tests {
     }
 
     #[test]
+    fn real_core_receipt_is_bound_to_replay_ack_and_reopen_completion() {
+        let fixture = fixture("trnm-r2b-owner-bridge-");
+        let core_root = private_child(fixture._root.path(), "core-ingress");
+        let first = {
+            let mut adapter = CandidateCoreIngressV1::open(&core_root, [31; 32]).unwrap();
+            let mut coordinator =
+                ReplayToCoreCoordinatorV1::open(&fixture.coordinator_root).unwrap();
+            let completion = coordinator
+                .drive(
+                    &mut adapter,
+                    &fixture.wal,
+                    &fixture.replay_ack_root,
+                    fixture.namespace,
+                    fixture.target,
+                    [30; 32],
+                    [31; 32],
+                )
+                .unwrap();
+            assert_eq!(adapter.calls(), 1);
+            assert_eq!(completion.core_safety_revision(), 2);
+            assert_ne!(completion.core_ack_digest(), [0; 32]);
+            assert_ne!(completion.replay_ack_hash(), [0; 32]);
+            completion
+        };
+
+        // The coordinator's sealed Core receipt must be the exact fact that
+        // the external replay owner records.  A caller-supplied revision or
+        // digest which was not produced by the Core/SafetyStore bridge would
+        // fail this equality check or the owner’s target-bound ledger check.
+        {
+            let replay_owner = PayloadReplayRecoveryOwnerV1::open(
+                &fixture.wal,
+                &fixture.replay_ack_root,
+                fixture.namespace,
+                fixture.target,
+            )
+            .unwrap();
+            match replay_owner.status().unwrap() {
+                PayloadReplayRecoveryStatusV1::CoreAcknowledged {
+                    core_safety_revision,
+                    core_ack_digest,
+                    acknowledgement_hash,
+                    ..
+                } => {
+                    assert_eq!(core_safety_revision, first.core_safety_revision());
+                    assert_eq!(core_ack_digest, first.core_ack_digest());
+                    assert_eq!(acknowledgement_hash, first.replay_ack_hash());
+                }
+                other => panic!("expected CoreAcknowledged replay status, got {other:?}"),
+            }
+        }
+
+        // A fresh coordinator and a fresh Core/SafetyStore owner must resolve
+        // the immutable completion before invoking Core again.  This models a
+        // response-loss/restart boundary while keeping the production adapter
+        // and activation flags untouched.
+        let second = {
+            let mut adapter = CandidateCoreIngressV1::open(&core_root, [31; 32]).unwrap();
+            let mut coordinator =
+                ReplayToCoreCoordinatorV1::open(&fixture.coordinator_root).unwrap();
+            let completion = coordinator
+                .drive(
+                    &mut adapter,
+                    &fixture.wal,
+                    &fixture.replay_ack_root,
+                    fixture.namespace,
+                    fixture.target,
+                    [30; 32],
+                    [31; 32],
+                )
+                .unwrap();
+            assert_eq!(adapter.calls(), 0);
+            completion
+        };
+        assert!(second.idempotent_replay());
+        assert_eq!(second.core_safety_revision(), first.core_safety_revision());
+        assert_eq!(second.core_ack_digest(), first.core_ack_digest());
+        assert_eq!(second.replay_ack_hash(), first.replay_ack_hash());
+    }
+
+    #[test]
     fn candidate_reopen_rejects_ack_mutation_and_orphaned_phase() {
         let base_fixture = fixture("trnm-r2b-reopen-mutants-");
         let core_root = private_child(base_fixture._root.path(), "core-ingress");
