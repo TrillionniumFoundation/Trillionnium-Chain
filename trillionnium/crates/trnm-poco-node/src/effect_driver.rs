@@ -27,8 +27,9 @@
 use std::{collections::VecDeque, error::Error, fmt};
 
 use trnm_consensus_core::{
-    Core, CoreError, CoreSafetyRulesAuthorityErrorV1, CoreSafetyRulesAuthorityV1, Effect, Input,
-    OutboundMessage, SafetyHalt, SafetyState, SafetyStatePersistenceV0, SignIntent,
+    ApplicationSealedValidV0, Core, CoreAcceptedApplicationValidDV0, CoreError,
+    CoreSafetyRulesAuthorityErrorV1, CoreSafetyRulesAuthorityV1, Effect, Input, OutboundMessage,
+    PayloadValidationRequest, SafetyHalt, SafetyState, SafetyStatePersistenceV0, SignIntent,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_rules::SafetyRulesDurableTransitionStoreV1;
@@ -91,6 +92,32 @@ pub trait CandidateEffectDriverHooksV1 {
         effect: Effect,
         core: &mut Core,
     ) -> Result<Vec<Effect>, Self::Error>;
+
+    /// Optionally seals an ordinary Proposal validation request for the
+    /// driver-owned explicit SafetyRules delivery path.
+    ///
+    /// The request is borrowed so an adapter cannot consume the capability
+    /// and then silently fall back to the legacy callback.  A concrete
+    /// application owner may clone the request's process-local handle,
+    /// atomically claim that clone, and return an opaque
+    /// [`ApplicationSealedValidV0`].  The driver retains the private
+    /// [`CoreSafetyRulesAuthorityV1`] and is the only code which can submit
+    /// that proof to Core's delivery-only seam.  Passing an immutable Core
+    /// prevents this callback from mutating Core behind the authority owner.
+    ///
+    /// `None` means that this adapter has no complete ordinary execution
+    /// implementation.  The driver then invokes [`Self::validate_payload_v1`]
+    /// with the untouched request; an adapter may return an empty effect list
+    /// (leaving the obligation pending) or fail closed.  The default is
+    /// deliberately `None`, so existing candidate hooks gain no implicit
+    /// Vote or production authority merely by recompiling.
+    fn seal_ordinary_payload_v1(
+        &mut self,
+        _request: &PayloadValidationRequest,
+        _core: &Core,
+    ) -> Result<Option<ApplicationSealedValidV0>, Self::Error> {
+        Ok(None)
+    }
 
     /// Compare-and-set the exact whole-node checkpoint successor and perform
     /// a fresh readback.  This hook is called before every signer invocation.
@@ -256,6 +283,7 @@ pub enum CandidateEffectDriverErrorV1 {
     PersistenceStateMismatch,
     SignIntentMismatch,
     OutboundMessageMismatch,
+    OrdinaryProposalBindingMismatch,
     UnsupportedEffect(&'static str),
     EffectBudgetExceeded {
         limit: usize,
@@ -295,6 +323,9 @@ impl fmt::Display for CandidateEffectDriverErrorV1 {
             Self::OutboundMessageMismatch => {
                 formatter.write_str("broadcast message does not match the just-released signature")
             }
+            Self::OrdinaryProposalBindingMismatch => formatter.write_str(
+                "ordinary application Valid proof does not bind the retained SignedProposal",
+            ),
             Self::UnsupportedEffect(kind) => write!(formatter, "unsupported Core effect: {kind}"),
             Self::EffectBudgetExceeded { limit } => {
                 write!(formatter, "Core effect budget exceeded ({limit})")
@@ -331,6 +362,11 @@ where
     stale_generation_rejections: u64,
     backpressure_rejections: u64,
     pending_signed_outbound: Option<PendingSignedOutboundV1>,
+    /// Exact signed proposal retained only between ordinary Proposal ingress
+    /// and its explicit D -> AuthorityVote continuation.  The value is
+    /// cleared on every fallback/failure; it is never reconstructed from a
+    /// block body, validation id, or durable digest.
+    pending_ordinary_proposal: Option<Box<SignedProposalV0>>,
 }
 
 /// Internal queue carrier for authenticated transport ingress.  Keeping this
@@ -415,6 +451,7 @@ where
             stale_generation_rejections: 0,
             backpressure_rejections: 0,
             pending_signed_outbound: None,
+            pending_ordinary_proposal: None,
         })
     }
 
@@ -617,12 +654,31 @@ where
         ingress: QueuedIngressV1,
         effects_processed_this_drive: &mut usize,
     ) -> Result<(), CandidateEffectDriverErrorV1> {
+        let ordinary_proposal = matches!(
+            &ingress,
+            QueuedIngressV1::Public(CandidateEffectDriverIngressV1::Proposal { .. })
+        );
         let effects = match ingress {
             QueuedIngressV1::Public(CandidateEffectDriverIngressV1::Proposal {
                 proposal, ..
-            }) => self
-                .core
-                .step(Input::Proposal(proposal), &StrictEd25519Verifier)?,
+            }) => {
+                if self.pending_ordinary_proposal.is_some() {
+                    return Err(CandidateEffectDriverErrorV1::Core(CoreError::Busy(
+                        "ordinary Proposal continuation is already pending",
+                    )));
+                }
+                let retained = proposal.clone();
+                let effects = self
+                    .core
+                    .step(Input::Proposal(proposal), &StrictEd25519Verifier)?;
+                // The initial Core step normally emits only the SafetyState
+                // persistence barrier.  `ValidatePayload` arrives after the
+                // host crosses that barrier, so retain the exact witness
+                // across the whole effect chain rather than inspecting this
+                // first batch for a validation effect.
+                self.pending_ordinary_proposal = Some(retained);
+                effects
+            }
             QueuedIngressV1::Public(CandidateEffectDriverIngressV1::SyncedProposal {
                 proposal,
                 ..
@@ -647,7 +703,22 @@ where
                 self.core.step(*input, &StrictEd25519Verifier)?
             }
         };
-        self.process_effects_v1(effects, effects_processed_this_drive)
+        let mut ordinary_validation_seen = false;
+        let result = self.process_effects_v1(
+            effects,
+            effects_processed_this_drive,
+            &mut ordinary_validation_seen,
+        );
+        // A valid ordinary proposal normally crosses a delayed
+        // PersistSafetyState -> StorageAck barrier before Core emits
+        // ValidatePayload.  If that effect never appears (for example an
+        // empty/no-op or a durable SafetyHalted result), do not leave the
+        // retained witness blocking the next generation.  Any error path is
+        // fail-stopped by the caller, which also clears this field.
+        if ordinary_proposal && !ordinary_validation_seen {
+            self.pending_ordinary_proposal = None;
+        }
+        result
     }
 
     fn step_timeout_from_authority_v1(
@@ -669,6 +740,7 @@ where
         &mut self,
         effects: Vec<Effect>,
         effects_processed_this_drive: &mut usize,
+        ordinary_validation_seen: &mut bool,
     ) -> Result<(), CandidateEffectDriverErrorV1> {
         let mut pending = VecDeque::from(effects);
         while let Some(effect) = pending.pop_front() {
@@ -689,10 +761,8 @@ where
                     pending.extend(follow_up);
                 }
                 Effect::ValidatePayload(request) => {
-                    let follow_up = self
-                        .hooks
-                        .validate_payload_v1(Effect::ValidatePayload(request), &mut self.core)
-                        .map_err(|error| Self::hook_error("validate_payload", error))?;
+                    *ordinary_validation_seen = true;
+                    let follow_up = self.process_ordinary_validation_v1(request)?;
                     pending.extend(follow_up);
                 }
                 Effect::ValidateSyncedPayload(request) => {
@@ -766,6 +836,101 @@ where
             }
         }
         Ok(())
+    }
+
+    /// Runs the ordinary application boundary without handing the private
+    /// SafetyRules authority to the application hook.  An opted-in adapter
+    /// returns only an opaque application-sealed proof; this owner then
+    /// performs the explicit Core D transition and crosses its exact Safety
+    /// persistence barrier.  No signer/finalizer effect is accepted from the
+    /// delivery-only call.
+    fn process_ordinary_validation_v1(
+        &mut self,
+        request: PayloadValidationRequest,
+    ) -> Result<Vec<Effect>, CandidateEffectDriverErrorV1> {
+        let retained = self
+            .pending_ordinary_proposal
+            .as_ref()
+            .ok_or(CandidateEffectDriverErrorV1::OrdinaryProposalBindingMismatch)?;
+        if request.route() != trnm_consensus_core::PayloadValidationRouteV0::Proposal
+            || retained.block() != request.block()
+            || retained.block().id() != request.id().block_id()
+        {
+            return Err(CandidateEffectDriverErrorV1::OrdinaryProposalBindingMismatch);
+        }
+        let sealed = self
+            .hooks
+            .seal_ordinary_payload_v1(&request, &self.core)
+            .map_err(|error| Self::hook_error("seal_ordinary_payload", error))?;
+        let Some(proof) = sealed else {
+            let result = self
+                .hooks
+                .validate_payload_v1(Effect::ValidatePayload(request), &mut self.core)
+                .map_err(|error| Self::hook_error("validate_payload", error));
+            // No explicit proof means no safe route to D or Vote.  Do not
+            // retain a proposal that a later caller could accidentally pair
+            // with another validation request.
+            self.pending_ordinary_proposal = None;
+            return result;
+        };
+
+        let accepted = self
+            .core
+            .step_application_sealed_valid_to_delivery_with_safety_rules_authority_v1(
+                &proof,
+                &StrictEd25519Verifier,
+            )
+            .map_err(Self::map_core_error)?;
+        self.process_explicit_delivery_v1(accepted)
+    }
+
+    fn process_explicit_delivery_v1(
+        &mut self,
+        accepted: CoreAcceptedApplicationValidDV0,
+    ) -> Result<Vec<Effect>, CandidateEffectDriverErrorV1> {
+        // The delivery-only Core seam guarantees this shape, but retain an
+        // owner-side check so a future Core revision cannot accidentally
+        // expose a legacy RequestSignature action through this candidate
+        // adapter.
+        if accepted.route_v0() != trnm_consensus_core::PayloadValidationRouteV0::Proposal
+            || accepted
+                .persistence_request_v0()
+                .native_valid_post_ack_action_v0()
+                != Some(trnm_consensus_core::NativeValidPostAckActionV0::None)
+        {
+            return Err(CandidateEffectDriverErrorV1::UnsupportedEffect(
+                "ordinary Valid delivery emitted a signing action",
+            ));
+        }
+        let persistence = accepted.persistence_request_v0().clone();
+        let mut effects = self.process_persistence_v1(persistence)?;
+        if !effects.is_empty() {
+            return Err(CandidateEffectDriverErrorV1::UnsupportedEffect(
+                "ordinary Valid delivery acknowledgement emitted effects",
+            ));
+        }
+
+        // `process_persistence_v1` acknowledges the exact D barrier and
+        // rebinds the authority to the resulting Core state.  Retain no
+        // caller-selected proposal beyond this point: consume the original
+        // ingress value and hand that exact witness to the authority.
+        let proposal = self
+            .pending_ordinary_proposal
+            .take()
+            .ok_or(CandidateEffectDriverErrorV1::OrdinaryProposalBindingMismatch)?;
+        self.authority
+            .rebind_after_core_persistence_v1(&self.core, &StrictEd25519Verifier)
+            .map_err(Self::map_authority_error)?;
+        let vote_effects = self
+            .core
+            .step_vote_with_safety_rules_authority_v1(
+                &mut self.authority,
+                proposal.as_ref(),
+                &StrictEd25519Verifier,
+            )
+            .map_err(Self::map_authority_error)?;
+        effects.extend(vote_effects);
+        Ok(effects)
     }
 
     fn process_persistence_v1(
@@ -882,6 +1047,8 @@ where
     fn fail_stop(&mut self, error: CandidateEffectDriverErrorV1) -> CandidateEffectDriverErrorV1 {
         self.status = CandidateEffectDriverStatusV1::FailStopped;
         self.ingress.clear();
+        self.pending_ordinary_proposal = None;
+        self.pending_signed_outbound = None;
         error
     }
 
@@ -899,6 +1066,10 @@ where
         error: CoreSafetyRulesAuthorityErrorV1<E>,
     ) -> CandidateEffectDriverErrorV1 {
         CandidateEffectDriverErrorV1::Authority(error.to_string())
+    }
+
+    fn map_core_error(error: CoreError) -> CandidateEffectDriverErrorV1 {
+        CandidateEffectDriverErrorV1::Core(error)
     }
 }
 
@@ -944,9 +1115,16 @@ mod tests {
     use std::sync::{Arc, Mutex};
 
     use ed25519_dalek::{Signer, SigningKey};
-    use trnm_consensus_core::{CoreConfig, CoreSafetyRulesAuthorityV1};
+    use trnm_consensus_core::{
+        BlockIdOverlayRefV0, CoreConfig, CoreIssuedApplicationSealAuthorityV0,
+        CoreSafetyRulesAuthorityV1, ValidatedPayloadArtifactRefV0,
+    };
     use trnm_consensus_safety_rules::{
         InertSafetyTransitionV1, SafetyRulesDurableTransitionStoreV1,
+    };
+    use trnm_consensus_types::{
+        decode_application_payload_v0_exact, BlockBodyV0, ExecutionReceiptCommitmentV0,
+        ExecutionReceiptsV0,
     };
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, GenesisHash, GenesisQcV0,
@@ -993,6 +1171,8 @@ mod tests {
         facts: Arc<Mutex<HookFactsV1>>,
         local_key: SigningKey,
         fail_checkpoint: bool,
+        application_seal_authority: Option<CoreIssuedApplicationSealAuthorityV0>,
+        enable_ordinary_delivery: bool,
     }
 
     impl CandidateEffectDriverHooksV1 for RecordingHooksV1 {
@@ -1030,6 +1210,78 @@ mod tests {
                 .events
                 .push("validate");
             Ok(Vec::new())
+        }
+
+        fn seal_ordinary_payload_v1(
+            &mut self,
+            request: &PayloadValidationRequest,
+            core: &Core,
+        ) -> Result<Option<ApplicationSealedValidV0>, Self::Error> {
+            if !self.enable_ordinary_delivery {
+                return Ok(None);
+            }
+            let authority = self
+                .application_seal_authority
+                .as_ref()
+                .ok_or("ordinary application authority is missing")?;
+            let claimed = request
+                .clone()
+                .try_claim()
+                .map_err(|_| "duplicate ordinary validation request claim")?;
+            let (route, _id, block, _parent, permit) = claimed.into_parts();
+            if route != trnm_consensus_core::PayloadValidationRouteV0::Proposal {
+                return Err("ordinary seam received a non-Proposal route");
+            }
+            let payload = decode_application_payload_v0_exact(
+                block.application_payload(),
+                core.config().consensus_parameters(),
+            )
+            .map_err(|_| "ordinary payload decode failed")?;
+            let receipts = ExecutionReceiptsV0::new(
+                &payload,
+                (0..payload.transaction_count())
+                    .map(|index| {
+                        ExecutionReceiptCommitmentV0::for_transaction(
+                            &payload,
+                            index,
+                            0,
+                            0,
+                            Vec::new(),
+                        )
+                        .map_err(|_| "ordinary receipt derivation failed")
+                    })
+                    .collect::<Result<Vec<_>, _>>()?,
+            )
+            .map_err(|_| "ordinary receipt list failed")?;
+            let body = BlockBodyV0::new(payload, Vec::new())
+                .map_err(|_| "ordinary body construction failed")?;
+            let commitments = body
+                .validate_ordinary_commitments(
+                    block.header(),
+                    &receipts,
+                    core.config().consensus_parameters(),
+                    core.config().validator_set(),
+                    &StrictEd25519Verifier,
+                )
+                .map_err(|_| "ordinary commitment validation failed")?;
+            let mut overlay_checksum = *block.id().as_bytes();
+            overlay_checksum[0] ^= 0x5a;
+            let mut source_checksum = *block.id().as_bytes();
+            source_checksum[0] ^= 0xa5;
+            let artifact_ref = ValidatedPayloadArtifactRefV0::new(
+                BlockIdOverlayRefV0::new(block.id(), block.header().parent_id(), overlay_checksum),
+                source_checksum,
+            );
+            self.facts
+                .lock()
+                .expect("recording hook mutex")
+                .events
+                .push("seal_ordinary");
+            Ok(Some(authority.seal_after_application_store_commit_v0(
+                permit,
+                commitments,
+                artifact_ref,
+            )))
         }
 
         fn compare_and_advance_whole_node_checkpoint_v1(
@@ -1142,6 +1394,11 @@ mod tests {
             facts: Arc::clone(&hook_facts),
             local_key: SigningKey::from_bytes(&[41; 32]),
             fail_checkpoint,
+            application_seal_authority: Some(
+                core.issue_application_seal_authority_v0()
+                    .expect("issue test application seal authority"),
+            ),
+            enable_ordinary_delivery: false,
         };
         let driver = CandidateEffectDriverV1::new(core, authority, hooks, queue_capacity)
             .expect("construct bounded candidate driver");
@@ -1272,5 +1529,108 @@ mod tests {
         let facts = driver.facts_v1();
         assert!(facts.candidate_only());
         assert!(!facts.finality_verified());
+    }
+
+    #[test]
+    fn ordinary_delivery_uses_driver_owned_authority_then_votes_exact_proposal() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let validators = (1_u8..=4)
+            .map(|index| {
+                let key = SigningKey::from_bytes(&[index.saturating_add(40); 32]);
+                Validator::new(
+                    ValidatorId::new([index; 32]),
+                    ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                    VotingPower::new(1).expect("positive test voting power"),
+                )
+                .expect("valid strict-ed25519 test validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0x91; 32]),
+            ChainId::from_static("trnm-effect-driver-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("valid test validator set");
+        let config = CoreConfig::new(
+            ValidatorId::new([1; 32]),
+            validator_set.clone(),
+            parameters,
+            17,
+            32,
+            64,
+        )
+        .expect("valid test Core config");
+        let genesis_qc = GenesisQcV0::new(
+            config.validator_set().genesis_hash(),
+            config.validator_set().chain_id(),
+            config.validator_set(),
+        )
+        .expect("valid test genesis anchor");
+        let core = Core::new(config, genesis_qc, &StrictEd25519Verifier)
+            .expect("valid strict-ed25519 test Core");
+        let store_facts = Arc::new(Mutex::new(StoreFactsV1::default()));
+        let authority = core
+            .issue_safety_rules_authority_v1(
+                RecordingTransitionStoreV1 {
+                    facts: Arc::clone(&store_facts),
+                },
+                &StrictEd25519Verifier,
+            )
+            .expect("issue test SafetyRules authority");
+        let app_authority = core
+            .issue_application_seal_authority_v0()
+            .expect("issue test application authority");
+        let hook_facts = Arc::new(Mutex::new(HookFactsV1::default()));
+        let hooks = RecordingHooksV1 {
+            facts: Arc::clone(&hook_facts),
+            local_key: SigningKey::from_bytes(&[41; 32]),
+            fail_checkpoint: false,
+            application_seal_authority: Some(app_authority),
+            enable_ordinary_delivery: true,
+        };
+        let mut driver = CandidateEffectDriverV1::new(core, authority, hooks, 4)
+            .expect("construct ordinary candidate driver");
+        let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
+            .expect("construct exact ordinary fixture proposal");
+        driver
+            .enqueue_proposal_v1(1, proposal)
+            .expect("enqueue ordinary proposal");
+        let facts = driver
+            .drive_v1()
+            .expect("ordinary D and explicit Vote should complete");
+        assert_eq!(facts.processed_ingress(), 1);
+        assert_eq!(facts.status(), CandidateEffectDriverStatusV1::Active);
+        let hook_facts = hook_facts.lock().expect("recording hook mutex");
+        assert_eq!(hook_facts.sign_calls, 1);
+        assert_eq!(hook_facts.broadcasts, 1);
+        assert_eq!(
+            hook_facts.events,
+            vec![
+                "persist",
+                "confirm",
+                "timer",
+                "seal_ordinary",
+                "persist",
+                "confirm",
+                "persist",
+                "confirm",
+                "checkpoint_cas",
+                "sign",
+                "persist",
+                "confirm",
+                "broadcast",
+            ]
+        );
+        assert_eq!(
+            store_facts
+                .lock()
+                .expect("recording transition-store mutex")
+                .transitions
+                .len(),
+            1
+        );
     }
 }

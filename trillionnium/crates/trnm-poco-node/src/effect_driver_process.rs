@@ -1255,7 +1255,9 @@ fn artifact_ref_for_block(block: &Block) -> ValidatedPayloadArtifactRefV0 {
 /// be persisted without bypassing the explicitly issued SafetyRules owner;
 /// the following `enqueue_authority_vote` command then exercises the same
 /// Core instance and authority.
-fn fixture_proposal_v1(core: &Core) -> Result<SignedProposalV0, EffectDriverProcessErrorV1> {
+pub(crate) fn fixture_proposal_v1(
+    core: &Core,
+) -> Result<SignedProposalV0, EffectDriverProcessErrorV1> {
     let config = core.config();
     let parameters = config.consensus_parameters();
     let set = config.validator_set();
