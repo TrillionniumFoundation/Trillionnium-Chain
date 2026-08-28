@@ -71,6 +71,8 @@ jobs:
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' &&
         github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' &&
+        github.triggering_actor == 'Tomasrgbsf') ||
        (github.actor == 'github-actions[bot]' &&
         github.triggering_actor == 'github-actions[bot]' &&
         github.event_name == 'pull_request' &&
