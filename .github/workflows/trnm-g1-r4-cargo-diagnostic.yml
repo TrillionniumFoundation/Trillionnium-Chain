@@ -1,4 +1,4 @@
-name: TRNM G1-R4 Cargo authority diagnostic
+name: TRNM G1-R4 workspace export and Cargo diagnostic
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: trnm-g1-r4-cargo-diagnostic-${{ github.ref }}
+  group: trnm-g1-r4-workspace-export-${{ github.ref }}
   cancel-in-progress: false
 
 env:
@@ -23,8 +23,8 @@ env:
   CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
 jobs:
-  diagnose:
-    name: Diagnose manifest lock cache drift
+  diagnose-and-export:
+    name: Diagnose authority drift and export exact R4A source
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       github.ref == 'refs/heads/feature/chain-g1-r4-gap-closure-20260828' &&
@@ -33,10 +33,19 @@ jobs:
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Checkout exact R4A branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify exact source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "b91e98160e6a27ca367cb34c611a5eaa7b79c0a6"
+          test "$(git rev-parse HEAD^{tree})" = "9fe5d8116fc9f2e0d1744e59032aee262505ebd5"
+          test -z "$(git status --porcelain)"
 
       - name: Verify runner-provisioned Rust toolchain
         run: |
@@ -46,7 +55,7 @@ jobs:
             --component clippy \
             --component rustfmt
 
-      - name: Diagnose exact drift without mutating cache
+      - name: Diagnose exact Cargo drift without mutating cache
         run: |
           set -euo pipefail
           current=a259e0b28a2d9dea838f5ceac0e805803ac51dd4
@@ -63,41 +72,21 @@ jobs:
           git grep -n -E 'fs2::|FileExt|lock_exclusive|try_lock_exclusive|unlock\(' "$current" -- '*.rs' || true
           echo '=== rustix manifests ==='
           git grep -n -E '(^|[[:space:]])rustix([[:space:]]|=)' "$current" -- '**/Cargo.toml' || true
-          echo '=== current packages depending on winapi ==='
           git show "$current:trillionnium/Cargo.lock" > "$RUNNER_TEMP/current.lock"
-          python3 - "$RUNNER_TEMP/current.lock" <<'PY'
-          import sys, tomllib
-          data = tomllib.loads(open(sys.argv[1], 'rb').read().decode())
-          for pkg in data['package']:
-              deps = pkg.get('dependencies', [])
-              if any(d == 'winapi' or d.startswith('winapi ') for d in deps):
-                  print(pkg['name'], pkg['version'], deps)
-          PY
-          echo '=== package graph delta ==='
           git show "$reviewed:trillionnium/Cargo.lock" > "$RUNNER_TEMP/reviewed.lock"
           python3 - "$RUNNER_TEMP/reviewed.lock" "$RUNNER_TEMP/current.lock" <<'PY'
           import sys, tomllib
           def pkgs(path):
-              d=tomllib.loads(open(path,'rb').read().decode())
-              return {(p['name'],p['version'],p.get('source','path')) for p in d['package']}
-          old,new=pkgs(sys.argv[1]),pkgs(sys.argv[2])
+              data = tomllib.loads(open(path, 'rb').read().decode())
+              return {(p['name'], p['version'], p.get('source', 'path')) for p in data['package']}
+          old, new = pkgs(sys.argv[1]), pkgs(sys.argv[2])
           print('added:')
-          for x in sorted(new-old): print(x)
+          for value in sorted(new - old):
+              print(value)
           print('removed:')
-          for x in sorted(old-new): print(x)
+          for value in sorted(old - new):
+              print(value)
           PY
-          echo '=== direct workspace package dependency delta ==='
-          python3 - "$RUNNER_TEMP/reviewed.lock" "$RUNNER_TEMP/current.lock" <<'PY'
-          import sys,tomllib
-          def m(path):
-              d=tomllib.loads(open(path,'rb').read().decode())
-              return {(p['name'],p['version']): tuple(p.get('dependencies',[])) for p in d['package'] if not p.get('source')}
-          a,b=m(sys.argv[1]),m(sys.argv[2])
-          for k in sorted(set(a)|set(b)):
-              if a.get(k)!=b.get(k):
-                  print(k, 'OLD=',a.get(k),'NEW=',b.get(k))
-          PY
-          echo '=== reviewed lock under current manifests ==='
           cp "$RUNNER_TEMP/reviewed.lock" trillionnium/Cargo.lock
           set +e
           cargo metadata --manifest-path trillionnium/Cargo.toml --format-version 1 --locked --offline >/dev/null
@@ -105,4 +94,25 @@ jobs:
           set -e
           echo "reviewed_locked_metadata_rc=$rc"
           git checkout -- trillionnium/Cargo.lock
-          exit 0
+
+      - name: Export exact tracked source archive
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/trnm-chain-r4a-b91e98160e6a27ca.tar.gz"
+          checksum="$archive.sha256"
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD | gzip -n -9 > "$archive"
+          sha256sum "$archive" > "$checksum"
+          tar -tzf "$archive" | grep -Fx 'Trillionnium-Chain/trillionnium/crates/trnm-poco-node/build.rs'
+          tar -tzf "$archive" | grep -Fx 'Trillionnium-Chain/trillionnium/crates/trnm-poco-node/src/lab_authority.rs'
+          tar -tzf "$archive" | grep -Fx 'Trillionnium-Chain/trillionnium/crates/trnm-poco-node/src/finalization_intent_wal.rs'
+          cat "$checksum"
+
+      - name: Upload exact tracked source archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-chain-r4a-source-b91e98160e6a27ca-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/trnm-chain-r4a-b91e98160e6a27ca.tar.gz
+            ${{ runner.temp }}/trnm-chain-r4a-b91e98160e6a27ca.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 7
