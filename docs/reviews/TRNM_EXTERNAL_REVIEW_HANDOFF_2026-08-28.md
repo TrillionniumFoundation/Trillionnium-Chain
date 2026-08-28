@@ -17,7 +17,7 @@ the repository's release-readiness and machine-truth sources.
 | Tested source tree | `2cb6c0acfb4c7308adbca22cda36ecae01c778fb` |
 | Tested source parent | `8d715a3f8b5114c49f52765f48685774f8ab2da1` |
 | Source relation to `origin/main` | Linear descendant; `origin/main` at review preparation was `e73d1a930991f0e308bf72854b334b6191c7fcc3` |
-| Source worktree | `/home/alex/projects/worktrees/trillionnium-chain/poco-mainline-20260825` |
+| Source worktree | Canonical linked worktree (local path intentionally omitted) |
 | Source status at test start | Clean (`git status --porcelain=v2` contained no paths) |
 
 The branch tip may move by a docs-only commit when this handoff is published.
