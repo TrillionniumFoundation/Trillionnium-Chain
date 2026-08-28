@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: trnm-g1-r4a-tested-gap-closure
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   CI: "true"
@@ -41,7 +41,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Apply exact patch, execute evidence, and push only when green
+      - name: Apply exact patches, execute evidence, and push only when green
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -53,6 +53,7 @@ jobs:
           expected_head='b91e98160e6a27ca367cb34c611a5eaa7b79c0a6'
           expected_tree='9fe5d8116fc9f2e0d1744e59032aee262505ebd5'
           patch_sha='b4796394e3eb9fd09e2062217e5c161d6f632dfc8698298733ccb3bb0c867075'
+          fmt_patch_sha='b0bf42271a073eadfde6b88aa599670f4efaa2522fb5a9226fab0a84cb0e622e'
 
           test "$(git rev-parse HEAD)" = "$expected_head"
           test "$(git rev-parse HEAD^{tree})" = "$expected_tree"
@@ -71,9 +72,14 @@ jobs:
           git fetch origin "$carrier:refs/remotes/origin/$carrier"
           git show "origin/$carrier:scripts/ci/trnm-g1-r4a-gap-closure.patch.gz.b64" \
             | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
+          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-rustfmt-fix.patch.gz.b64" \
+            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
           echo "$patch_sha  $RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch" | sha256sum -c -
+          echo "$fmt_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch" | sha256sum -c -
           git apply --check "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
           git apply "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
+          git apply --check "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
+          git apply "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
           test ! -e _probe
 
           topic=$(git rev-parse --git-path PROJECT_TOPIC)
@@ -110,8 +116,8 @@ jobs:
             | bash scripts/project-preflight.sh --push origin "$(git remote get-url --push origin)"
           git push origin "HEAD:refs/heads/$target"
 
-          printf 'source_commit=%s\nsource_tree=%s\npatch_sha256=%s\n' \
-            "$new_head" "$new_tree" "$patch_sha" \
+          printf 'source_commit=%s\nsource_tree=%s\npatch_sha256=%s\nfmt_patch_sha256=%s\n' \
+            "$new_head" "$new_tree" "$patch_sha" "$fmt_patch_sha" \
             | tee "$RUNNER_TEMP/trnm-g1-r4a-source-identity.txt"
           git show --stat --oneline --decorate HEAD
 
@@ -123,6 +129,7 @@ jobs:
           path: |
             ${{ runner.temp }}/trnm-g1-r4a-evidence.log
             ${{ runner.temp }}/trnm-g1-r4a-gap-closure.patch
+            ${{ runner.temp }}/trnm-g1-r4a-rustfmt-fix.patch
             ${{ runner.temp }}/trnm-g1-r4a-source-identity.txt
           if-no-files-found: warn
           retention-days: 14
