@@ -1,4 +1,4 @@
-name: TRNM G1-R4 Cargo migration fingerprint
+name: TRNM G1-R4 lock dependency audit
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: trnm-g1-r4-cargo-migration-fingerprint
+  group: trnm-g1-r4-lock-dependency-audit
   cancel-in-progress: true
 
 env:
@@ -23,15 +23,15 @@ env:
   CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
 jobs:
-  fingerprint:
-    name: Fingerprint current offline manifests and graph
+  audit-lock:
+    name: Audit fs2/winapi lock ownership
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       github.ref == 'refs/heads/feature/chain-g1-r4-gap-closure-20260828' &&
       github.actor == 'Tomasrgbsf' &&
       github.triggering_actor == 'Tomasrgbsf'
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 60
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -40,47 +40,39 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Compute canonical migration fingerprints without mutation
+      - name: Parse exact lock ownership without Cargo index access
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 \
-            --component clippy \
-            --component rustfmt
-          test -z "$(git status --porcelain)"
-          printf 'source_commit=%s\n' "$(git rev-parse HEAD)"
-          printf 'source_tree=%s\n' "$(git rev-parse HEAD^{tree})"
-          printf 'lock_sha256=%s\n' "$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')"
-          manifest_list="$RUNNER_TEMP/manifests.sha256"
-          : > "$manifest_list"
-          while IFS= read -r -d '' manifest; do
-            sha256sum -- "$manifest" >> "$manifest_list"
-          done < <(git ls-files -z -- 'Cargo.toml' ':(glob)**/Cargo.toml' | LC_ALL=C sort -z)
-          printf 'manifest_count=%s\n' "$(wc -l < "$manifest_list")"
-          printf 'manifest_inventory_sha256=%s\n' "$(sha256sum "$manifest_list" | awk '{print $1}')"
-          cargo metadata \
-            --manifest-path trillionnium/Cargo.toml \
-            --format-version 1 \
-            --locked \
-            --offline > "$RUNNER_TEMP/metadata.json"
-          python3 - "$RUNNER_TEMP/metadata.json" <<'PY'
-          import hashlib, json, sys
-          data=json.load(open(sys.argv[1], encoding='utf-8'))
-          packages=[]
-          for p in data['packages']:
-              packages.append({
-                  'name': p['name'],
-                  'version': p['version'],
-                  'source': p.get('source'),
-                  'checksum': p.get('checksum'),
-                  'manifest_rel': p['manifest_path'].split('/trillionnium-chain/',1)[-1],
-                  'dependencies': sorted((d['name'], d.get('rename'), d['req'], d.get('kind'), d.get('target'), d.get('optional',False), tuple(sorted(d.get('features',[])))) for d in p.get('dependencies',[])),
-                  'features': sorted((k, tuple(sorted(v))) for k,v in p.get('features',{}).items()),
-              })
-          packages.sort(key=lambda p:(p['name'],p['version'],p['source'] or '',p['manifest_rel']))
-          canonical=json.dumps(packages,sort_keys=True,separators=(',',':')).encode()
-          print(f'package_count={len(packages)}')
-          print('locked_graph_sha256='+hashlib.sha256(canonical).hexdigest())
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0
+          python3 - trillionnium/Cargo.lock <<'PY'
+          import sys, tomllib
+          data = tomllib.loads(open(sys.argv[1], 'rb').read().decode())
+          packages = data['package']
+          targets = {'fs2','winapi','winapi-i686-pc-windows-gnu','winapi-x86_64-pc-windows-gnu'}
+          print('target_packages:')
+          for pkg in packages:
+              if pkg['name'] in targets:
+                  print(pkg['name'], pkg['version'], pkg.get('source'), pkg.get('dependencies', []))
+          print('reverse_dependencies:')
+          for pkg in packages:
+              deps = pkg.get('dependencies', [])
+              hits = [dep for dep in deps if dep.split(' ', 1)[0] in targets]
+              if hits:
+                  print(pkg['name'], pkg['version'], hits)
+          fs2_users = [
+              (pkg['name'], pkg['version'])
+              for pkg in packages
+              if any(dep.split(' ', 1)[0] == 'fs2' for dep in pkg.get('dependencies', []))
+          ]
+          winapi_users = [
+              (pkg['name'], pkg['version'])
+              for pkg in packages
+              if any(dep.split(' ', 1)[0] == 'winapi' for dep in pkg.get('dependencies', []))
+          ]
+          assert fs2_users == [('trnm-poco-node', '0.1.0')], fs2_users
+          assert winapi_users == [('fs2', '0.4.3')], winapi_users
+          print('fs2_unique_owner=trnm-poco-node')
+          print('winapi_unique_owner=fs2')
           PY
           test -z "$(git status --porcelain)"
