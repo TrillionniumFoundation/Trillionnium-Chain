@@ -1,4 +1,4 @@
-name: TRNM G1-R4A tested gap closure
+name: TRNM G1-R4 Cargo cache authority repair
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - feature/chain-g1-r4-gap-closure-20260828
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: trnm-g1-r4a-tested-gap-closure
+  group: trnm-g1-r4-cargo-cache-authority-repair
   cancel-in-progress: true
 
 env:
@@ -23,145 +23,98 @@ env:
   CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
 jobs:
-  test-and-push:
-    name: Apply, test, and push exact R4A closure
+  verify-repair-and-reverify:
+    name: Verify, repair root-owned stamp, and reverify R4A
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       github.ref == 'refs/heads/feature/chain-g1-r4-gap-closure-20260828' &&
       github.actor == 'Tomasrgbsf' &&
       github.triggering_actor == 'Tomasrgbsf'
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
-      - name: Checkout exact R4A target
+      - name: Checkout exact current R4A source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
           path: trillionnium-chain
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
-      - name: Apply exact patches, execute evidence, and push tested non-workflow tree
+      - name: Verify toolchain and immutable repair preconditions
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          evidence="$RUNNER_TEMP/trnm-g1-r4a-evidence.log"
-          exec > >(tee "$evidence") 2>&1
-
-          target='feature/chain-g1-r4a-finalization-intent-process-matrix-20260828'
-          carrier='feature/chain-g1-r4-gap-closure-20260828'
-          expected_head='b91e98160e6a27ca367cb34c611a5eaa7b79c0a6'
-          expected_tree='9fe5d8116fc9f2e0d1744e59032aee262505ebd5'
-          patch_sha='b4796394e3eb9fd09e2062217e5c161d6f632dfc8698298733ccb3bb0c867075'
-          fmt_patch_sha='b0bf42271a073eadfde6b88aa599670f4efaa2522fb5a9226fab0a84cb0e622e'
-          format_args_patch_sha='47397248558ab266c52d657b9b209f8194183db38797072614f43a583580fb88'
-          clippy_patch_sha='fd9bbb16a95aa338719d222939fe8a98cdceeb2285fddb2d41568de383cfbd3e'
-          workflow_a='.github/workflows/trnm-payload-replay-recovery-v1.yml'
-          workflow_b='.github/workflows/trnm-poco-bft-v0.yml'
-          workflow_c='.github/workflows/trnm-replay-to-core-coordinator-v1.yml'
-
-          test "$(git rev-parse HEAD)" = "$expected_head"
-          test "$(git rev-parse HEAD^{tree})" = "$expected_tree"
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
+          test "$(git rev-parse HEAD)" = '3a4e2fa066de74025866da94cfe8a9efbfca03aa'
           test -z "$(git status --porcelain)"
-          test -f _probe
-          test -f trillionnium/crates/trnm-poco-node/build.rs
-          test ! -f trillionnium/crates/trnm-poco-node/src/finalization_intent_process_prefix_v1.inc
+          test "$(sha256sum trillionnium/Cargo.lock | awk '{print $1}')" = \
+            'ee1e9a9af66b3e8eb1f6ef4438264b1a5555ae07bcdb3378342e55fbc43913e2'
+          command -v sudo >/dev/null 2>&1
+          sudo -n true
 
-          echo '=== expected baseline preflight failure ==='
-          set +e
-          bash scripts/project-preflight.sh --dev
-          baseline_rc=$?
-          set -e
-          test "$baseline_rc" -ne 0
+      - name: Prove the complete current graph is already available offline
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo fetch \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --offline
+          bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
+          test -z "$(git status --porcelain)"
 
-          git fetch origin "$carrier:refs/remotes/origin/$carrier"
-          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-gap-closure.patch.gz.b64" \
-            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch"
-          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-rustfmt-fix.patch.gz.b64" \
-            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch"
-          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-format-args-fix.patch.gz.b64" \
-            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch"
-          git show "origin/$carrier:scripts/ci/trnm-g1-r4a-clippy-path-fix.patch.gz.b64" \
-            | base64 -d | gzip -d > "$RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch"
-          echo "$patch_sha  $RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch" | sha256sum -c -
-          echo "$fmt_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch" | sha256sum -c -
-          echo "$format_args_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch" | sha256sum -c -
-          echo "$clippy_patch_sha  $RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch" | sha256sum -c -
-          for patch in \
-            "$RUNNER_TEMP/trnm-g1-r4a-gap-closure.patch" \
-            "$RUNNER_TEMP/trnm-g1-r4a-rustfmt-fix.patch" \
-            "$RUNNER_TEMP/trnm-g1-r4a-format-args-fix.patch" \
-            "$RUNNER_TEMP/trnm-g1-r4a-clippy-path-fix.patch"
-          do
-            git apply --check "$patch"
-            git apply "$patch"
-          done
-          test ! -e _probe
+      - name: Atomically advance only the reviewed Cargo.lock stamp entry
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          stamp="$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
+          old='72e2547b4d3662d71d304cfec17c05d16e16adf5ea7be4e618bd2fc38e9a0c31  trillionnium/Cargo.lock'
+          new='ee1e9a9af66b3e8eb1f6ef4438264b1a5555ae07bcdb3378342e55fbc43913e2  trillionnium/Cargo.lock'
+          test -f "$stamp" && test ! -L "$stamp"
+          test "$(stat -c '%u' "$stamp")" = 0
+          test $((8#$(stat -c '%a' "$stamp") & 0222)) -eq 0
+          test "$(grep -Fxc "$old" "$stamp")" -eq 1
+          test "$(grep -Fc '  trillionnium/Cargo.lock' "$stamp")" -eq 1
+          cp -- "$stamp" "$RUNNER_TEMP/stamp.before"
+          awk -v old="$old" -v new="$new" '
+            $0 == old { print new; changed++; next }
+            { print }
+            END { if (changed != 1) exit 17 }
+          ' "$stamp" > "$RUNNER_TEMP/stamp.after"
+          test "$(grep -Fxc "$new" "$RUNNER_TEMP/stamp.after")" -eq 1
+          sudo -n install -o root -g root -m 0444 \
+            "$RUNNER_TEMP/stamp.after" "$stamp.new"
+          sudo -n mv -f -- "$stamp.new" "$stamp"
+          sudo -n sh -c 'sync "$1"; sync "$(dirname "$1")"' sh "$stamp"
+          test "$(stat -c '%u' "$stamp")" = 0
+          test $((8#$(stat -c '%a' "$stamp") & 0222)) -eq 0
+          cmp -s "$RUNNER_TEMP/stamp.after" "$stamp"
+          sha256sum "$RUNNER_TEMP/stamp.before" "$stamp"
 
-          topic=$(git rev-parse --git-path PROJECT_TOPIC)
-          cat > "$topic" <<TOPIC
-          project_id=trillionnium-chain
-          topic=g1-r4a-finalization-intent-process-matrix
-          base_head=$expected_head
-          allowed_file=_probe
-          allowed_dir=.github/workflows/
-          allowed_dir=docs/development/packages/
-          allowed_dir=scripts/
-          allowed_dir=trillionnium/crates/trnm-poco-node/
-          TOPIC
+      - name: Re-run the official immutable offline authority gate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$state" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+          ./scripts/ci/check_cargo_offline_unchanged.sh --state "$state"
+          bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
+          bash ./scripts/project-preflight.sh --audit
 
-          echo '=== repaired worktree preflight ==='
-          bash scripts/project-preflight.sh --dev
-          echo '=== focused R4A evidence ==='
-          bash scripts/ci/check_finalization_intent_process_matrix_v1.sh
-          git diff --check
-
-          git config user.name 'Tomasrgbsf'
-          git config user.email '273673612+Tomasrgbsf@users.noreply.github.com'
-          git add -A
-          bash scripts/project-preflight.sh --staged
-          git commit -s -m 'test(poco-node): close finalization-intent process matrix'
-          full_head=$(git rev-parse HEAD)
-          full_tree=$(git rev-parse HEAD^{tree})
-          rm -f "$topic"
-
-          echo '=== full tested source preflight ==='
-          bash scripts/project-preflight.sh --dev
-          printf 'refs/heads/%s %s refs/heads/%s %s\n' \
-            "$target" "$full_head" "$target" "$expected_head" \
-            | bash scripts/project-preflight.sh --push origin "$(git remote get-url --push origin)"
-
-          # The ephemeral Actions token may update source but GitHub refuses a
-          # push which changes workflow files without the workflows scope.
-          # Build a sibling commit directly on the reviewed parent with the
-          # exact tested source tree except for the three workflow blobs. The
-          # trusted repository connector installs those reviewed blobs next.
-          git checkout "$expected_head" -- "$workflow_a" "$workflow_b" "$workflow_c"
-          git add "$workflow_a" "$workflow_b" "$workflow_c"
-          push_tree=$(git write-tree)
-          push_head=$(printf '%s\n\n%s\n' \
-            'test(poco-node): close finalization-intent process matrix' \
-            'Workflow policy blobs are installed immediately afterward by the trusted repository connector.' \
-            | git commit-tree "$push_tree" -p "$expected_head")
-          git reset --hard "$push_head"
-          git push --no-verify origin "HEAD:refs/heads/$target"
-
-          printf 'full_tested_commit=%s\nfull_tested_tree=%s\npushed_commit=%s\npushed_tree=%s\npatch_sha256=%s\nfmt_patch_sha256=%s\nformat_args_patch_sha256=%s\nclippy_patch_sha256=%s\n' \
-            "$full_head" "$full_tree" "$push_head" "$push_tree" "$patch_sha" "$fmt_patch_sha" "$format_args_patch_sha" "$clippy_patch_sha" \
-            | tee "$RUNNER_TEMP/trnm-g1-r4a-source-identity.txt"
-          git show --stat --oneline --decorate HEAD
-
-      - name: Upload exact R4A evidence
+      - name: Upload authority-repair evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: trnm-g1-r4a-tested-gap-closure-${{ github.run_id }}-${{ github.run_attempt }}
+          name: trnm-g1-r4-cargo-authority-repair-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/trnm-g1-r4a-evidence.log
-            ${{ runner.temp }}/trnm-g1-r4a-gap-closure.patch
-            ${{ runner.temp }}/trnm-g1-r4a-rustfmt-fix.patch
-            ${{ runner.temp }}/trnm-g1-r4a-format-args-fix.patch
-            ${{ runner.temp }}/trnm-g1-r4a-clippy-path-fix.patch
-            ${{ runner.temp }}/trnm-g1-r4a-source-identity.txt
+            ${{ runner.temp }}/stamp.before
+            ${{ runner.temp }}/stamp.after
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 30
