@@ -1,0 +1,74 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A12",
+  "package_id": "G2B_AGENT_MARKET_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "2fb72d01e49350d3b5dad158a6eaada37c0794b5",
+  "base_tree": "62fc26484927cbb9d7aa75a8c094d909e31b1537",
+  "head_commit": "a6478b21dca97769d6e9acba611859a45c44a399",
+  "changed_paths": [
+    "conformance/agent-market/cases-v1.json",
+    "conformance/agent-market/authority-extension-v2-cases.json",
+    "docs/development/packages/TRNM_G2B_AGENT_MARKET_V1.md",
+    "docs/evidence/g2b/G2B_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/agent-market/AGENT_MARKET_LIFECYCLE_V1.md",
+    "scripts/ci/check_agent_market_model_v1.sh",
+    "scripts/ci/check_agent_market_replay_v2.sh",
+    "tools/agent-market-model/model.py",
+    "tools/agent-market-model/authority_extension_v2.py"
+  ],
+  "gaps_closed": [
+    "A12-REPLAY-EXACT-A11",
+    "A12-CONTROLLER-GENERATION",
+    "A12-RECOVERY-QUORUM",
+    "A12-RESOURCE-SCOPE-ATTENUATION",
+    "A12-DETERMINISTIC-CAPABILITY-COMMITMENT"
+  ],
+  "gaps_open": [
+    "A12-AGENT-TRANSACTION-WIRE",
+    "A12-CRYPTOGRAPHIC-AUTHORITY",
+    "A12-CANONICAL-JMT-ORDER-PROOF",
+    "A12-DURABLE-PROCESS-RECOVERY",
+    "A12-VERIFY-SETTLEMENT-JOINS"
+  ],
+  "commands": [
+    "python3 tools/agent-market-model/authority_extension_v2.py --self-test: PASS in isolated local Python runtime",
+    "bash scripts/ci/check_agent_market_replay_v2.sh: exact-head replay required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "old-session-after-rotation",
+    "stale-controller-generation",
+    "wrong-controller",
+    "rotation-replay",
+    "insufficient-recovery-quorum",
+    "duplicate-recovery-signer",
+    "unknown-recovery-signer",
+    "model-scope-escalation",
+    "tool-scope-escalation",
+    "endpoint-scope-escalation",
+    "privacy-scope-escalation"
+  ],
+  "evidence_scope": "model|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "accepted AgentTransactionV1 and second binary parser absent",
+    "cryptographic controller/recovery signature authority absent",
+    "canonical application JMT and finalized Order proof authority absent",
+    "process crash and whole-store anti-rollback evidence absent"
+  ],
+  "interface_requests": [
+    "A12-ICR-A10-AGENT-TRANSACTION-WIRE-V1",
+    "A12-ICR-A16-JMT-ORDER-PROOF-V1",
+    "A12-ICR-A14-A15-CROSS-PLANE-JOINS-V1"
+  ],
+  "downstream_invalidation": [
+    "A13 execution/MVCC/fee replay",
+    "A14 verification/challenge replay",
+    "A15 settlement replay",
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Independent review and exact-head gate; A13 may consume this explicit candidate only as BLOCKED_UPSTREAM input."
+}
