@@ -5,9 +5,16 @@ cd "$root"
 
 required=(
   docs/development/CURRENT_SNAPSHOT_V1.json
+  docs/schemas/current-snapshot-v1.schema.json
+  docs/schemas/agent-handoff-v1.schema.json
   docs/development/TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1.md
+  docs/development/AGENT_WORK_PACKAGE_TEMPLATE_V1.md
   docs/development/agents/AGENT_CONTROL_AND_OPERATING_CONTRACT_V1.md
   docs/development/agents/AGENT_REGISTRY_V1.yaml
+  docs/development/agents/AGENT_DEPENDENCY_GRAPH_V1.yaml
+  docs/development/agents/AGENT_MERGE_QUEUE_V1.md
+  docs/development/agents/INTERFACE_CHANGE_REQUEST_V1.md
+  docs/development/agents/GPT_WORK_AGENT_SETUP_V1.md
   docs/development/agents/AGENT_PROMPT_PACK_V1.md
   docs/development/agents/AGENT_PROMPTS_A00_A02_V1.md
   docs/development/agents/AGENT_PROMPTS_A03_A05_V1.md
@@ -25,8 +32,13 @@ done
 python3 - <<'PY'
 import json, pathlib, re
 root = pathlib.Path(".")
+
 snap = json.loads((root/"docs/development/CURRENT_SNAPSHOT_V1.json").read_text())
+snapshot_schema = json.loads((root/"docs/schemas/current-snapshot-v1.schema.json").read_text())
+handoff_schema = json.loads((root/"docs/schemas/agent-handoff-v1.schema.json").read_text())
 assert snap["schema"] == "trnm-current-snapshot-v1"
+assert snapshot_schema["title"] == "TRNM Current Snapshot v1"
+assert handoff_schema["title"] == "TRNM Agent Handoff v1"
 assert snap["latest_candidate"]["commit"] == "6e0189e351015ef3230f217ca7ff86149baedcf0"
 assert snap["latest_candidate"]["tree"] == "efea864cb2fbc4835a59a089b3dbab8934e71231"
 assert snap["machine_truth"]["production_candidate"] is False
@@ -34,10 +46,16 @@ assert snap["machine_truth"]["production_consensus_activation"] is False
 
 registry = (root/"docs/development/agents/AGENT_REGISTRY_V1.yaml").read_text()
 ids = re.findall(r"(?m)^- id: (A\d\d)$", registry)
-assert ids == [f"A{i:02d}" for i in range(18)], ids
+expected = [f"A{i:02d}" for i in range(18)]
+assert ids == expected, ids
 assert len(ids) == len(set(ids))
 
+graph = (root/"docs/development/agents/AGENT_DEPENDENCY_GRAPH_V1.yaml").read_text()
+for agent_id in expected:
+    assert re.search(rf"(?m)^  {agent_id}: ", graph), agent_id
+
 prompt_files = sorted((root/"docs/development/agents").glob("AGENT_PROMPTS_A*_V1.md"))
+assert len(prompt_files) == 6, prompt_files
 prompt_text = "\n".join(path.read_text() for path in prompt_files)
 for agent_id in ids:
     assert re.search(rf"(?m)^## {agent_id} — ", prompt_text), agent_id
