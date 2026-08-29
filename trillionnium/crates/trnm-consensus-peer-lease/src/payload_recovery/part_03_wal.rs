@@ -330,20 +330,51 @@ fn quarantine_temporaries(
     paths: &[PathBuf],
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
     for (index, path) in paths.iter().enumerate() {
-        let file = open_private_file(path, false)?;
-        validate_private_file(&file)?;
+        let source = open_private_file(path, false)?;
+        validate_private_file(&source)?;
         let parent = path
             .parent()
             .ok_or(PayloadReplayRecoveryErrorV1::InvalidRequest(
                 "payload replay temporary has no parent",
             ))?;
-        let quarantine = parent.join(format!(
-            "payload-head-recovery-evidence-{}-{}-{index}.v1",
-            std::process::id(),
-            TEMP_NONCE_V1.fetch_add(1, Ordering::Relaxed)
-        ));
-        fs::rename(path, quarantine)?;
+        let mut quarantine = None;
+        for _ in 0..1024 {
+            let candidate = parent.join(format!(
+                "payload-head-recovery-evidence-{}-{}-{index}.v1",
+                std::process::id(),
+                TEMP_NONCE_V1.fetch_add(1, Ordering::Relaxed)
+            ));
+            let mut options = OpenOptions::new();
+            options.write(true).create_new(true);
+            set_private_options(&mut options);
+            match options.open(&candidate) {
+                Ok(reservation) => {
+                    validate_private_file(&reservation)?;
+                    drop(reservation);
+                    quarantine = Some(candidate);
+                    break;
+                }
+                Err(error) if error.kind() == io::ErrorKind::AlreadyExists => continue,
+                Err(error) => return Err(PayloadReplayRecoveryErrorV1::Io(error)),
+            }
+        }
+        let quarantine =
+            quarantine.ok_or(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
+        fs::rename(path, &quarantine)?;
+        directory.sync_all()?;
+        let evidence = open_private_file(&quarantine, false)?;
+        validate_private_file(&evidence)?;
+        #[cfg(unix)]
+        {
+            let source_metadata = source.metadata()?;
+            let evidence_metadata = evidence.metadata()?;
+            if source_metadata.dev() != evidence_metadata.dev()
+                || source_metadata.ino() != evidence_metadata.ino()
+                || source_metadata.uid() != evidence_metadata.uid()
+            {
+                return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
+            }
+        }
     }
-    directory.sync_all()?;
     Ok(())
 }
