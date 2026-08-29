@@ -105,10 +105,6 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Verify agent development documentation contracts
-        working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
-
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
         run: |
@@ -119,7 +115,6 @@ jobs:
             --component rustfmt
 
       - name: Verify Cargo offline cache readiness
-        id: cargo_offline_ready
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -127,6 +122,10 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify agent development documentation contracts
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
 
       - name: Verify payload replay package implementation and truth boundary
         working-directory: trillionnium-chain
@@ -149,7 +148,7 @@ jobs:
         run: bash ./scripts/project-preflight.sh --audit
 
       - name: Verify Cargo offline inputs remained unchanged
-        if: always() && steps.cargo_offline_ready.outcome == 'success'
+        if: always()
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
