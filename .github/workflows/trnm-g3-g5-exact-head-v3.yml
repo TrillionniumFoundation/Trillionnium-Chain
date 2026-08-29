@@ -1,0 +1,65 @@
+name: TRNM G3-G5 exact-head v3 gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-g3-g5-exact-head-v3.yml"
+      - "conformance/benchmark/**"
+      - "docs/bench/**"
+      - "docs/development/packages/TRNM_G3_G5_*"
+      - "docs/evidence/g2f/G2F_AGENT_HANDOFF_V2.json"
+      - "docs/evidence/g3-g5/**"
+      - "docs/runbooks/**"
+      - "docs/security/AI_NATIVE_THREAT_REGISTER_V1.md"
+      - "scripts/ci/check_benchmark_security_ops_contract_v1.sh"
+      - "scripts/ci/check_claim_activation_gate_v2.sh"
+      - "scripts/ci/check_g3_g5_*"
+      - "tools/benchmark-contract/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-g3-g5-exact-head-v3-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+
+jobs:
+  exact-head:
+    name: Exact-head benchmark, security and activation-claim replay
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' && github.triggering_actor == 'github-actions[bot]' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.author_association == 'MEMBER'))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact package head
+        working-directory: trillionnium-chain
+        run: test "$(git rev-parse HEAD)" = "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+      - name: Replay G3-G5 candidate contracts
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_g3_g5_replay_v2.sh
+      - name: Verify truth boundaries
+        working-directory: trillionnium-chain
+        run: |
+          bash ./scripts/ci/check_canonical_development_plan.sh
+          bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash ./scripts/project-preflight.sh --audit
