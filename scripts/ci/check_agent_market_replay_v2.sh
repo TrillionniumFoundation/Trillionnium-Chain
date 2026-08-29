@@ -2,6 +2,8 @@
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
 
+python3 scripts/ci/check_agent_handoff_v1.py \
+  --path docs/evidence/g2b/G2B_AGENT_HANDOFF_V2.json
 python3 tools/agent-market-model/model.py --self-test >/tmp/trnm-agent-market-v1.json
 python3 tools/agent-market-model/authority_extension_v2.py --self-test >/tmp/trnm-agent-market-v2.json
 
@@ -56,7 +58,7 @@ assert len(workflows)==13, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('global_state_authority','agent_transaction_wire_accepted','g2b_exit','production_candidate'):
     assert source[key] is False, key
-print('G2B replay v2: lifecycle + strict Rust/SQLite/Ed25519 kernel + independent AgentTransaction wire ok')
+print('G2B replay v2: lifecycle + strict Rust/SQLite/Ed25519 kernel + independent AgentTransaction wire + handoff schema ok')
 PY
 
 git diff --check
