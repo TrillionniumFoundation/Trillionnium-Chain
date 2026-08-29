@@ -1,0 +1,29 @@
+{
+  "schema":"trnm-cev1-limit-registry-v1",
+  "status":"candidate-non-normative",
+  "units":"bytes/items/signature-work/execution-units",
+  "limits":{
+    "max_cev1_nesting":32,
+    "max_cev1_value_bytes":1048576,
+    "max_transaction_bytes":262144,
+    "max_transactions_per_batch":4096,
+    "max_batch_refs_per_block":256,
+    "max_protocol_objects_per_block":16384,
+    "max_signatures_per_object":1024,
+    "max_signature_work_per_transaction":128,
+    "max_evidence_entries_per_challenge":64,
+    "max_artifact_descriptor_bytes":65536,
+    "max_artifact_fullrep_bytes":1073741824,
+    "max_capability_depth":16,
+    "max_operation_scopes":256,
+    "max_resource_scopes":256,
+    "max_nonce_lanes_per_agent":1024,
+    "max_read_set":4096,
+    "max_write_set":4096,
+    "max_execution_units_per_transaction":"340282366920938463463374607431768211455",
+    "max_light_client_hops_per_bundle":1024,
+    "max_state_sync_chunk_bytes":8388608
+  },
+  "note":"Candidate ceilings only; concrete StackProfile values must be frozen before normative promotion."
+}
+
