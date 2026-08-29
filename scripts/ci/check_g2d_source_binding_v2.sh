@@ -20,7 +20,11 @@ assert m['control_replay_commit']=='53c0312cf0da46fc884025838aeb23e7d6ae0fe3'
 assert a12['status']=='MODULE_CLOSED_CANDIDATE'
 assert m['worker_counts']==[1,2,4,8]
 assert Path('docs/development/agents/EXACT_HEAD_PACKAGE_REPLAY_POLICY_V1.md').is_file()
-assert not Path('.github/workflows/trnm-g2d-exact-head-v3.yml').exists()
+for path in (
+    '.github/workflows/trnm-g2d-exact-head-v3.yml',
+    '.github/workflows/trnm-g2d-execution-mvcc-fee-v2.yml',
+):
+    assert not Path(path).exists(), path
 for key in ('agent_transaction_wire_accepted','application_jmt_authority','settlement_authority','g2d_exit','production_candidate'):
     assert m[key] is False, key
 print('G2D source binding v2: exact A12 publication, frozen workflow route and false authority guards')
