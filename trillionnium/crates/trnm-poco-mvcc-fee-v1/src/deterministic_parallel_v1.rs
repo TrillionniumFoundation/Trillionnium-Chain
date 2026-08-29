@@ -359,9 +359,7 @@ fn validate_transaction(transaction: &ParallelTransactionV1) -> ParallelExecutio
     for instruction in &transaction.instructions {
         let (target, source) = match instruction {
             ParallelInstructionV1::Set { target, .. } => (*target, None),
-            ParallelInstructionV1::AddFromRead { target, source, .. } => {
-                (*target, Some(*source))
-            }
+            ParallelInstructionV1::AddFromRead { target, source, .. } => (*target, Some(*source)),
         };
         require_nonzero(&target)?;
         if !actual_writes.insert(target) {
@@ -672,12 +670,8 @@ mod tests {
     }
 
     fn parent() -> ParallelStateV1 {
-        ParallelStateV1::from_objects(vec![
-            (id(1), 0, 10),
-            (id(2), 0, 20),
-            (id(3), 0, 0),
-        ])
-        .expect("parent state")
+        ParallelStateV1::from_objects(vec![(id(1), 0, 10), (id(2), 0, 20), (id(3), 0, 0)])
+            .expect("parent state")
     }
 
     fn transactions() -> Vec<ParallelTransactionV1> {
