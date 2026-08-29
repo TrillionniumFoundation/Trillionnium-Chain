@@ -12,4 +12,3 @@
     {"id":"subjective-v1","class":"subjective","state":"design-only","globally_enabled":false,"required_evidence":["declared_evaluator_policy","audit_trail"],"result_authority":false,"settlement_authority":false,"objective_settlement_forbidden":true,"poco_weight_forbidden":true}
   ]
 }
-
