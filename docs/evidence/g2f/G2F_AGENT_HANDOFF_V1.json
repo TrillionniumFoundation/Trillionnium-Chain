@@ -63,14 +63,17 @@
     "isolated Rust 1.95 cargo metadata/check/test/clippy with g2f-namespace-test-support --locked --offline: PASS; 135 tests, -D warnings; candidate feature only, not normal-build/release proof",
     "sha256sorted A11-A15 interface path sets: PASS for candidate digests; accepted digests remain absent",
     "trailing-whitespace scan for package docs: PASS",
-    "GitHub Actions run 33253796703 on published head ff4af4c22a6816e47c56e265d472f6f847ad7d00: recovery and process steps PASS; canonical-plan step failed (job 99103921432); no green external CI claim"
+    "GitHub Actions run 33253796703 on published head ff4af4c22a6816e47c56e265d472f6f847ad7d00: recovery and process steps PASS; canonical-plan step failed (job 99103921432); no green external CI claim",
+    "GitHub Actions run 33254083018 on published head d33d8a81c6ce2b8d71a78aec2b8a96bd681b5765: recovery and process steps PASS; canonical-plan step failed (job 99104666102); no green external CI claim",
+    "detached local worktree of the same PR merge tree 9f804795647c0911f3883b9be3dad8fd1bafe405: check_canonical_development_plan.sh PASS (full-history local replay, not a fresh external clone)"
   ],
   "failed_tests": [
     "bash scripts/ci/check_poco_ai_native_v1_order_finality_light_client.sh (environment: xxd command not found; exit 127 after Python checker)",
     "cargo test --manifest-path trillionnium/Cargo.toml --locked --offline (environment: cargo command not found; not a source result)",
     "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline --all-targets -- -D warnings (environment: cargo command not found; not a source result)",
     "GitHub Actions run 33252294948 job 99099957089 (Payload replay and G1-R4A recovery contracts): FAILED at Verify payload replay package implementation/truth boundary on published pre-follow-up head 06d71c8; retained as external CI failure, not treated as a source-plane result",
-    "GitHub Actions run 33253796703 job 99103921432 (published head ff4af4c22): FAILED at Verify canonical development plan; recovery/process steps passed, local clean-merge replay of the same script passed, and the external check is not claimed green"
+    "GitHub Actions run 33253796703 job 99103921432 (published head ff4af4c22): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history merge-tree replay of the same script passed, and the external check is not claimed green",
+    "GitHub Actions run 33254083018 job 99104666102 (published head d33d8a81): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history merge-tree replay passed, and the external check is not claimed green"
   ],
   "retained_mutants": [
     "G2F-M-ATOMIC-TORN",
