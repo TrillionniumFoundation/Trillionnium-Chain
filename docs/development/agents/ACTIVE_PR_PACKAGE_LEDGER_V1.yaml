@@ -201,8 +201,8 @@ open_pull_requests:
     status: exact
   head:
     ref: feature/chain-g1-r4-application-finality-v1-20260829
-    commit: 3765b5a9ea3fbe5b7fb1e13f6709d4a7b6a7565a
-    tree: 9dd3f6ceaaf2d2e7d5e30684987d040f492f6b89
+    commit: f38df4ec81cb76f92c709d8cd45311e164fa5753
+    tree: bf7bbf43b8a783ffc443b1105f8f53aa406efff1
   classification: blocked-upstream-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
@@ -449,8 +449,8 @@ open_pull_requests:
     status: exact
   head:
     ref: agent/a17-g3-g5-bench-security-ops-v1-20260829
-    commit: 26d4f9df8e8d80db425820888b646ff7bd0e94af
-    tree: 8bdd8e57ceb5e734e998fdac07cdd08554113ce1
+    commit: f9acc32d422aef9b9132d6ddc830e64639c6ff8d
+    tree: 6719ff5b8cd8bc12e46d6528a535e25e63d10f07
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
@@ -599,8 +599,8 @@ open_pull_requests:
     status: exact
   head:
     ref: docs/chain-agent-fleet-plan-v1-20260829
-    commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
-    tree: f011d58c4f140612d277282b66aa009de7b2aa13
+    commit: c5c002290ea0ee3230d543fc429de5fa63054f9c
+    tree: 7c1d29b1940992e4ce294761e9e64e812dce6711
   relation_to_latest_candidate:
     kind: direct-candidate-child
   classification: active-package
@@ -655,6 +655,14 @@ known_control_gaps:
   - 18
   - 19
   next_action: Repair PR 10 on the exact current A00 baseline and replay PRs 11-19 in dependency order.
+- id: A05_V1_UNPUBLISHED_HEAD
+  status: OPEN
+  owner: A05
+  branch: feature/chain-g1-r4-safety-checkpoint-v1-20260829
+  head_commit: 523c0d9b6343df7cbd139a36bc04aaf60a7221c0
+  head_tree: c81ae16636c50d8177261f3755a27534362daabe
+  classification: candidate-non-normative
+  next_action: Publish or reconcile this head into the single A05 PR, add the missing checkpoint gate script, and rerun exact-candidate evidence; do not treat an unlisted branch as landed.
 observation_source:
   agent_id: A00
   package_id: AGENT_CONTROL_PLANE_V1
