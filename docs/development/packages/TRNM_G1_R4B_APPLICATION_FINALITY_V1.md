@@ -76,11 +76,11 @@ production/activation/release/normative truth
 |---|---:|---|---|
 | R4B-QUEUE-001 | P0 | CANDIDATE_SLICE | Queue rejects skipped, reordered, or conflicting successors; independent Rust execution is still required. |
 | R4B-APPLY-002 | P0 | BLOCKED_UPSTREAM | Needs an accepted Core permit plus authenticated body/overlay/JMT source. |
-| R4B-READBACK-003 | P0 | PENDING_DOWNSTREAM | App readback exists in a candidate archive, but the Core/Safety receipt/ack is a separate A05-owned transition. |
+| R4B-READBACK-003 | P0 | BLOCKED_UPSTREAM | App readback exists in a candidate archive, but the Core/Safety receipt/ack is a separate A05-owned transition (downstream handoff). |
 | R4B-MULTI-004 | P0 | CANDIDATE_SLICE | Three-successor queue ordering is covered; durable multi-block apply remains open. |
 | R4B-DUP-005 | P1 | CANDIDATE_SLICE | Exact queue replay is idempotent and conflicting readback is rejected; source cardinality remains open. |
 | R4B-FORK-006 | P0 | CANDIDATE_SLICE | Referenced/child fork evidence is retained and unreferenced leaves are reclaimed; cross-store GC remains open. |
-| R4B-RESPONSE-007 | P0 | PENDING_DOWNSTREAM | A local retry disposition is possible; the A05/A06 process-boundary proof is not. |
+| R4B-RESPONSE-007 | P0 | BLOCKED_UPSTREAM | A local retry disposition is possible; the A05/A06 process-boundary proof is not (downstream handoff). |
 | R4B-SOURCE-008 | P1 | BLOCKED_UPSTREAM | Exact-one source cardinality and authenticated route/generation binding require the A03 carrier. |
 | R4B-FAULT-009 | P0 | BLOCKED_UPSTREAM | Disk/torn/power-loss matrix belongs to the A06 harness after A03/A04 interfaces. |
 | R4B-SQLITE-010 | P0 | BLOCKED_UPSTREAM | The owned SQLite crate is a validation journal with no finalization queue/intent/head/JMT/receipt/fork schema; A03/A05 seams must be accepted before persistence is added. |
@@ -88,8 +88,9 @@ production/activation/release/normative truth
 No existing PR closes these A04 queue/app gaps.  PRs #6/#7/#8 and the R4A
 marker package are intentionally not duplicated.
 
-`PENDING_DOWNSTREAM` is a package-local handoff status, not a terminal package
-status and not permission to edit A05/A06.  The package terminal outcome is
+The A05/A06 entries use the governed `BLOCKED_UPSTREAM` status for the package
+ledger even though their dependency kind is a downstream handoff (A05 follows
+A04).  This is not permission to edit A05/A06.  The package terminal outcome is
 `BLOCKED_UPSTREAM` because the A03 carrier is still missing.
 
 The machine-readable ledger for this run is:
@@ -113,9 +114,10 @@ gaps:
     request: A04-R4B-001
   - id: R4B-READBACK-003
     severity: P0
-    status: PENDING_DOWNSTREAM
+    status: BLOCKED_UPSTREAM
     owner: A05
     request: A04-R4B-002
+    dependency_kind: downstream_handoff
   - id: R4B-MULTI-004
     severity: P0
     status: CANDIDATE_SLICE
@@ -133,9 +135,10 @@ gaps:
     evidence: reference and child protected fork reclamation vector
   - id: R4B-RESPONSE-007
     severity: P0
-    status: PENDING_DOWNSTREAM
+    status: BLOCKED_UPSTREAM
     owner: A05
     request: A04-R4B-002
+    dependency_kind: downstream_handoff
   - id: R4B-SOURCE-008
     severity: P1
     status: BLOCKED_UPSTREAM
@@ -174,7 +177,7 @@ interface_requests:
     version_impact: additive candidate interface; production flags unchanged
     required_vectors: [ack_loss, response_loss, store_skew, rollback, referenced_fork, restart]
     downstream_invalidation: [A04, A06, G1]
-    status: PENDING_DOWNSTREAM
+    status: BLOCKED_UPSTREAM
     dependency_kind: downstream_handoff (A05 depends on A04)
     reviewer: independent A04/A05 review required
 ```
@@ -236,8 +239,8 @@ version impact = additive candidate interface; no production flag change
 required vectors = ack loss; response loss; store skew; rollback; referenced
   fork; fresh-process restart
 downstream invalidation = A04 process/SQLite tests, A06 fault/replay matrix and G1 review
-status = PENDING_DOWNSTREAM pending A05 owner/reviewer acceptance; A05 is a
-  downstream handoff and this package does not edit its surface
+status = BLOCKED_UPSTREAM pending A05 owner/reviewer acceptance; dependency_kind
+  = downstream_handoff; A05 follows A04 and this package does not edit its surface
 reviewer = independent A04/A05 review required
 ```
 
