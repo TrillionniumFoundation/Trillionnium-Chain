@@ -1,44 +1,35 @@
-# G2F whole-node, state-sync and light-client v2 replay
+# G2F whole-node and light-client v2 replay
 
-Status: **STOP_CONDITION with one coordinated-view P0 closed-candidate; BLOCKED_UPSTREAM for canonical/production authority**
+Status: **STOP_CONDITION for production authority; candidate model gaps closed where locally implementable**
 
 Package: `G2F_WHOLE_NODE_LIGHT_CLIENT_V1`  
 Agent: `A16`  
-Exact base: PR #36, `feature/chain-a15-g2e-settlement-v2-20260830@048a5358c38dfcb8e150c0447c1b3d99c355942b`, tree `ef02fcb1112c52aaf40e03fe51a1447bf691b5df`.
+Exact base: PR #36, `feature/chain-a15-g2e-settlement-v2-20260830@fe61ee74b95b8768ba86f7a4a143a754d1b4159c`, tree `58dd1026fb58061848fb604e89c95ebdcb6a63b8`.
 
-## Replayed candidate hardening
+The package retains the complete PR #22 hardening candidate, the coordinated-view single-use permit and two independent light-client models. The GitHub Actions surface is restored to the frozen thirteen workflows; exact-head package execution is routed through the A00-owned payload-replay workflow rather than a package-specific workflow.
 
-This branch imports the complete 22-path PR #22 candidate: six-plane atomicity model, sparse JMT-shaped proof model, two independent light clients, staged state-sync, copy/rename/fork/residue/rollback fences and feature-gated descriptor/openat namespace identity plus external-anchor shapes.
+## Candidate closure
 
-## Coordinated view closure
+- six-plane atomicity and predecessor-bound whole-node checkpoint CAS;
+- staged state sync and atomic namespace swap;
+- copy, shallow-copy, rename, fork, residue and torn-state fences;
+- two separately authored light-client verifiers;
+- single-use owner permit binding namespace, predecessor, height, Order header, application root, manifest and six-plane identities;
+- deterministic candidate view commitment `2fe37224cda2bd9c5bc28126aa257e1a74718b72086752447694ae89fd827dec`.
 
-`G2F-M-SYNC-COORDINATED-NONZERO-VIEW` is closed at candidate-model scope by a separately administered single-use owner permit over the immutable ManifestView commitment. The commitment includes:
+## Remaining stop conditions
 
-- namespace identity and predecessor checkpoint;
-- height, Order header, application root and manifest hash;
-- sorted six-plane names, generations, source identities and state roots;
-- nonce and view-format version.
-
-Changing any field while merely recomputing the stage digest fails before permit consumption. Permit replay, wrong issuer, expiry and token mutation also fail closed.
-
-The HMAC issuer is an assurance model, not a production HSM or finality authority. The package remains `STOP_CONDITION` because the other retained P0 copy/fork/residue records still need independent acceptance and canonical JMT, real external anchor, accepted upstream interfaces and process/power-loss evidence remain absent.
-
-## Commands
-
-```bash
-bash scripts/ci/check_g2f_source_binding_v2.sh
-bash scripts/ci/check_g2f_replay_v2.sh
-```
-
-## Non-claims
+- independent acceptance of retained P0 copy/fork/residue records;
+- canonical Protocol09 application JMT and finalized Order authority;
+- accepted A11–A15 interface digests;
+- external monotonic anchor and HSM/KMS custody;
+- normal node-process ownership plus real power-loss and multi-host evidence.
 
 ```text
 g2f_exit=false
 canonical_application_jmt=false
-accepted_upstream_interfaces=false
 production_external_anchor=false
 production_hsm_authority=false
-state_sync_production=false
 node_support=false
 production_candidate=false
 production_consensus_activation=false
