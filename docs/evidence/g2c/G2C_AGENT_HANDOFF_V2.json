@@ -3,8 +3,8 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_tree": "b430c899be1b5c17815bdaf01a957f5565e105e9",
+  "base_commit": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
+  "base_tree": "a5003dd5616420ec9b87d4637efbfae3db3d470f",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
     ".github/workflows/trnm-g2c-replay-v2.yml",
@@ -81,5 +81,8 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only."
+  "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only.",
+  "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
+  "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
+  "base_sync_parent": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018"
 }
