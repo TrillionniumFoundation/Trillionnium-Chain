@@ -1,0 +1,16 @@
+{
+  "schema": "trnm-g2f-coordinated-view-closure-v2",
+  "gap_id": "G2F-M-SYNC-COORDINATED-NONZERO-VIEW",
+  "status": "closed-candidate",
+  "classification": "candidate-non-normative",
+  "mechanism": "separately administered owner-issued single-use commitment over namespace, predecessor, height, Order header, application root, manifest, six plane generations/source identities, nonce and version",
+  "positive_cases": 4,
+  "negative_cases": 11,
+  "view_commitment": "2fe37224cda2bd9c5bc28126aa257e1a74718b72086752447694ae89fd827dec",
+  "production_hsm_authority": false,
+  "canonical_jmt_authority": false,
+  "order_finality_authority": false,
+  "independent_review_accepted": false,
+  "g2f_exit": false,
+  "reopen_on": ["issuer or commitment format change", "plane set or generation semantics change", "namespace/predecessor/height/header/application-root/manifest binding change", "negative mutant acceptance"]
+}

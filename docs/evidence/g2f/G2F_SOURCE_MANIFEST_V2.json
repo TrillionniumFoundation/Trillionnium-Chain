@@ -1,0 +1,22 @@
+{
+  "schema": "trnm-g2f-source-manifest-v2",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_pr": 36,
+  "base_ref": "feature/chain-a15-g2e-settlement-v2-20260830",
+  "base_commit": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
+  "base_tree": "ef02fcb1112c52aaf40e03fe51a1447bf691b5df",
+  "imported_g2f_pr": 22,
+  "imported_g2f_commit": "f97b3b8e74439d6e80d13c4c8048578a631eb12b",
+  "imported_g2f_tree": "87511d76dd5703460076d73ecefeb28b9334bdfc",
+  "imported_paths": 22,
+  "upstream_prs": {"a11": 32, "a12": 33, "a13": 34, "a14": 35, "a15": 36},
+  "owner_view_commitment": "2fe37224cda2bd9c5bc28126aa257e1a74718b72086752447694ae89fd827dec",
+  "coordinated_nonzero_view_local_gap": "closed-candidate",
+  "canonical_application_jmt": false,
+  "production_external_anchor": false,
+  "production_hsm_authority": false,
+  "accepted_upstream_interfaces": false,
+  "g2f_exit": false,
+  "production_candidate": false
+}
