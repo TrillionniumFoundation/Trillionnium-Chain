@@ -3,11 +3,10 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "04e24192a23a8bb0fad19c798bc9f209fe0c10de",
-  "base_tree": "d79f966bf064aa15b81112202aff30082190ec66",
+  "base_commit": "24c49a3abcc9ac7fa94815d7fea34f328f439c67",
+  "base_tree": "cf118b8eadb22c438b80e6ab77689b097feba1ba",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": [
-    ".github/workflows/trnm-g3-g5-replay-v2.yml",
     "conformance/benchmark/**",
     "docs/bench/**",
     "docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V1.md",
@@ -30,7 +29,8 @@
     "A17-CLAIM-SCOPE-BOUNDING",
     "A17-ACTIVATION-DEPENDENCY-GATE",
     "A17-CRITICAL-HIGH-FINDING-BLOCK",
-    "A17-SOAK-AUDIT-DRILL-REQUIREMENTS"
+    "A17-SOAK-AUDIT-DRILL-REQUIREMENTS",
+    "A17-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
   "gaps_open": [
     "A17-REAL-BENCHMARK-RESULTS",
@@ -41,8 +41,7 @@
     "A17-GOVERNANCE-AND-ACTIVATION-CEREMONY"
   ],
   "commands": [
-    "tools/benchmark-contract/activation_gate_v2.py self-test: previously passed in isolated local Python runtime",
-    "bash scripts/ci/check_g3_g5_replay_v2.sh: exact-head replay required"
+    "bash scripts/ci/check_g3_g5_replay_v2.sh: exact-head trusted replay required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -81,8 +80,9 @@
     "production activation",
     "release readiness"
   ],
-  "next_action": "Exact-head replay and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
+  "next_action": "Run the frozen A00 exact-head replay route and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "04e24192a23a8bb0fad19c798bc9f209fe0c10de"
+  "base_sync_parent": "24c49a3abcc9ac7fa94815d7fea34f328f439c67",
+  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
 }
