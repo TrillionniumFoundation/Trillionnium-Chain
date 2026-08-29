@@ -78,7 +78,7 @@ production/activation/release/normative truth
 | R4B-APPLY-002 | P0 | BLOCKED_UPSTREAM | Needs an accepted Core permit plus authenticated body/overlay/JMT source. |
 | R4B-READBACK-003 | P0 | PENDING_DOWNSTREAM | App readback exists in a candidate archive, but the Core/Safety receipt/ack is a separate A05-owned transition. |
 | R4B-MULTI-004 | P0 | CANDIDATE_SLICE | Three-successor queue ordering is covered; durable multi-block apply remains open. |
-| R4B-DUP-005 | P1 | CANDIDATE_SLICE | Exact queue replay is idempotent and conflicting readback is rejected; source cardinality remains open. |
+| R4B-DUP-005 | P1 | CANDIDATE_SLICE | Exact queue replay is idempotent, target/proof collisions and aliased overlay tuples are rejected, and repeated body/JMT digests with a distinct target-bound overlay remain orderable; durable source cardinality remains open. |
 | R4B-FORK-006 | P0 | CANDIDATE_SLICE | Referenced/child fork evidence is retained and unreferenced leaves are reclaimed; cross-store GC remains open. |
 | R4B-RESPONSE-007 | P0 | PENDING_DOWNSTREAM | A local retry disposition is possible; the A05/A06 process-boundary proof is not. |
 | R4B-SOURCE-008 | P1 | BLOCKED_UPSTREAM | Exact-one source cardinality and authenticated route/generation binding require the A03 carrier. |
@@ -125,7 +125,7 @@ gaps:
     severity: P1
     status: CANDIDATE_SLICE
     owner: A04
-    evidence: exact replay and conflicting identity negatives
+    evidence: exact replay, target/proof/aliased-overlay conflicts, and repeated body/JMT digest vector with distinct overlays
   - id: R4B-FORK-006
     severity: P0
     status: CANDIDATE_SLICE
@@ -292,6 +292,7 @@ Retained negative mutants include:
 apply h3 before h2; omit h2; reorder h2/h3
 change parent BlockId/height/root or target JMT root
 change proof/body/overlay digest while retaining the target BlockId
+reuse an overlay/body/JMT tuple with a distinct proof on the next successor
 re-submit an exact receipt and a same-target conflicting receipt
 reclaim a fork while its reference or pending child remains
 return an unknown/mixed readback after the application write

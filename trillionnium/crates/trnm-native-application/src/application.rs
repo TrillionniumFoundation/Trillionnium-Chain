@@ -1153,11 +1153,13 @@ impl NativeFinalizationQueueV0 {
         if first == second {
             return false;
         }
-        // A body or JMT plan digest may legitimately repeat for two distinct
-        // blocks (for example, an empty deterministic block).  A target or
-        // proof collision is nevertheless always fatal: proof identifiers are
-        // unique finality evidence handles.  Reusing the complete source
-        // tuple across targets is also a replay/collision.
+        // Body and JMT-plan digests may legitimately repeat for two distinct
+        // blocks (for example, an empty deterministic block).  An overlay
+        // checksum is expected to be target-bound by the upstream manifest,
+        // so an identical overlay/body/JMT tuple on another target is retained
+        // as a conservative alias/collision fence.  The queue cannot verify
+        // that binding itself; source cardinality and route/profile scope
+        // still belong to the accepted upstream carrier.
         first.target().block_id() == second.target().block_id()
             || first.proof_id() == second.proof_id()
             || (first.overlay_checksum() == second.overlay_checksum()
