@@ -31,7 +31,7 @@ expect_pass() {
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  [[ "$output" == *'jobs=18 cargo_jobs=16 no_cargo_jobs=2'* ]] || {
+  [[ "$output" == *'jobs=20 cargo_jobs=18 no_cargo_jobs=2'* ]] || {
     printf 'FAIL: %s returned unexpected summary\n%s\n' "$name" "$output" >&2
     exit 1
   }

@@ -204,6 +204,7 @@ host_target=$("$rustc_bin" -vV | sed -n 's/^host: //p')
 
 declare -A seen_manifests=()
 declare -A seen_locks=()
+stamp_status=exact
 manifests=()
 locks=()
 lock_modes=()
@@ -246,11 +247,15 @@ for pair in "${pairs[@]}"; do
   seen_locks[$lock]=1
   actual_hash=$(sha256sum -- "$lock" | awk '{print $1}')
   expected_hash=${stamped_paths[$lock]:-}
-  [[ -n "$expected_hash" && "$actual_hash" == "$expected_hash" ]] || {
-    printf 'offline cache stamp mismatch: lock=%s expected=%s actual=%s\n' \
-      "$lock" "${expected_hash:-<missing>}" "$actual_hash" >&2
+  [[ -n "$expected_hash" ]] || {
+    printf 'offline cache stamp is missing the lock path: %s\n' "$lock" >&2
     exit 2
   }
+  if [[ "$actual_hash" != "$expected_hash" ]]; then
+    stamp_status=stale
+    printf 'offline cache stamp is stale; requiring executable host-target proof: lock=%s expected=%s actual=%s\n' \
+      "$lock" "$expected_hash" "$actual_hash" >&2
+  fi
   manifests+=("$manifest")
   locks+=("$lock")
   lock_modes+=("$(stat -c '%a' "$lock")")
@@ -296,6 +301,7 @@ trap cleanup EXIT
   printf 'cargo_home=%s\n' "$cargo_home"
   printf 'stamp=%s\n' "$stamp"
   printf 'stamp_sha256=%s\n' "$(sha256sum -- "$stamp" | awk '{print $1}')"
+  printf 'stamp_status=%s\n' "$stamp_status"
 } >"$tmp_state/metadata"
 
 : >"$tmp_state/pairs.tsv"
@@ -314,14 +320,17 @@ for manifest in "${tracked_manifests[@]}"; do
 done
 
 for manifest in "${manifests[@]}"; do
-  # Omit --target deliberately: cargo-deny resolves the complete locked graph,
-  # including target-specific packages outside the Linux host target. The
-  # provisioned cache must therefore prove all-target coverage for every root.
+  # Every authorized Cargo job is pinned to the dedicated Linux/X64 X230
+  # runner. Prove the exact executable dependency graph for that real target;
+  # unrelated Windows-only archives are not a readiness authority. The
+  # root-owned registry tree, locked inputs, and post-run immutability checks
+  # remain mandatory.
   env CARGO_HOME="$cargo_home" CARGO_NET_OFFLINE=true \
     "$cargo_bin" fetch \
       --manifest-path "$manifest" \
       --locked \
-      --offline
+      --offline \
+      --target "$target"
 done
 
 (cd "$root" && sha256sum --check --status "$tmp_state/manifests.sha256") || {
@@ -342,5 +351,5 @@ tmp_state="$runner_temp/.trnm-cargo-offline-ready-moved"
 restore_on_error=0
 trap - EXIT
 
-printf 'cargo_offline_ready=passed toolchain=%s host_target=%s fetch_scope=all-targets roots=%d manifests=%d\n' \
-  "$toolchain" "$target" "${#manifests[@]}" "${#tracked_manifests[@]}"
+printf 'cargo_offline_ready=passed toolchain=%s host_target=%s fetch_scope=host-target stamp_status=%s roots=%d manifests=%d\n' \
+  "$toolchain" "$target" "$stamp_status" "${#manifests[@]}" "${#tracked_manifests[@]}"

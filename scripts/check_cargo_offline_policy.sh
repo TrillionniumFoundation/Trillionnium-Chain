@@ -52,6 +52,10 @@ register trnm-live-devnet-package.yml:legacy-harness-reproducibility required 1.
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-merge-gates.yml:rust-l1-merge-gates required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
+register trnm-payload-replay-recovery-v1.yml:recovery-contract required 1.95.0 \
+  trillionnium/Cargo.toml:trillionnium/Cargo.lock
+register trnm-replay-to-core-coordinator-v1.yml:coordinator-contract required 1.95.0 \
+  trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-poco-bft-v0.yml:vectors-schema-proto required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-poco-bft-v0.yml:rust required 1.95.0 \
@@ -275,7 +279,7 @@ fi
 
 declare -A helper_hash=(
   [scripts/ci/check_preprovisioned_rust_toolchain.sh]=702ba1e134eee42e57e46da595ca9931f6298375112029c36807882c2d6c940a
-  [scripts/ci/check_cargo_offline_ready.sh]=273f7b7a933f6e092c859b9464da746b6f37853bebaa303267bcce3e4de40882
+  [scripts/ci/check_cargo_offline_ready.sh]=409381365591dabed19158a23a86206f400f6e46a46fac5db1e9bf2083186da0
   [scripts/ci/check_cargo_offline_unchanged.sh]=e76c1c06108553664b82fcc75789e4bde40541b99ebf8f5e86c09e7e6f59182f
   [scripts/ci/check_preprovisioned_cargo_deny.sh]=a1eb25bea55e2ec5ef41a5be596ef3447d77d8453e25ffd526d950933ec0ba5c
   [scripts/ci/check_cargo_deny_offline.sh]=84cb9a42c13117a3eba5a0630f2d9ce85fb5733d47513a2c75a3b96baf89ac09
@@ -297,7 +301,7 @@ printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workfl
 actual_workflows="$tmp/actual-workflows"
 printf '%s\n' "${workflows[@]}" | LC_ALL=C sort -u >"$actual_workflows"
 if ! diff -u "$expected_workflows" "$actual_workflows" >&2; then
-  error "workflow file set differs from the frozen 11-workflow Cargo policy"
+  error "workflow file set differs from the frozen 13-workflow Cargo policy"
 fi
 
 actual="$tmp/actual-jobs"
@@ -354,7 +358,7 @@ LC_ALL=C sort -u -o "$actual" "$actual"
 expected="$tmp/expected-jobs"
 printf '%s\n' "${!class[@]}" | LC_ALL=C sort >"$expected"
 if ! diff -u "$expected" "$actual" >&2; then
-  error "workflow/job set differs from the frozen 11-workflow/18-job Cargo policy"
+  error "workflow/job set differs from the frozen 13-workflow/20-job Cargo policy"
 fi
 
 for key in "${!class[@]}"; do
@@ -622,5 +626,5 @@ while IFS= read -r path; do
 done < <(list_script_paths)
 
 ((error_count == 0)) || exit 1
-printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=16 no_cargo_jobs=2 source=%s\n' \
+printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=18 no_cargo_jobs=2 source=%s\n' \
   "${#workflows[@]}" "${#class[@]}" "${source_mode#--}"

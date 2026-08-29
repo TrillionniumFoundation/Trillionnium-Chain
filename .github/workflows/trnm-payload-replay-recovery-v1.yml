@@ -8,6 +8,7 @@ on:
       - "docs/development/README.md"
       - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
       - "docs/development/packages/**"
+      - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
@@ -16,6 +17,7 @@ on:
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-poco-node/**"
   push:
     branches:
       - main
@@ -25,6 +27,7 @@ on:
       - "docs/development/README.md"
       - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
       - "docs/development/packages/**"
+      - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
@@ -33,6 +36,7 @@ on:
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
+      - "trillionnium/crates/trnm-poco-node/**"
 
 permissions:
   contents: read
@@ -54,21 +58,30 @@ env:
   CARGO_TERM_COLOR: never
   CARGO_NET_RETRY: "5"
   CARGO_HTTP_TIMEOUT: "120"
-  TRNM_CARGO_OFFLINE_POLICY: "required"
-  CARGO_NET_OFFLINE: "true"
-  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
 jobs:
   recovery-contract:
     name: Payload replay recovery contract
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.actor == 'ProfAlexQI' &&
-       github.triggering_actor == 'ProfAlexQI' &&
-       (github.event_name != 'pull_request' ||
-        github.event.pull_request.head.repo.full_name == github.repository))
+      ((github.actor == 'ProfAlexQI' &&
+        github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' &&
+        github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER' &&
+        startsWith(github.head_ref, 'feature/chain-'))) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 60
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
