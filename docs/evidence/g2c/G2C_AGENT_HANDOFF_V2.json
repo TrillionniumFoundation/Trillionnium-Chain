@@ -3,8 +3,8 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "cd5264438c0ea1e81bd687355eccac1d49e92b26",
-  "base_tree": "867461f510c5db9d3a8ce7e0bb336500add5841f",
+  "base_commit": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
+  "base_tree": "a5003dd5616420ec9b87d4637efbfae3db3d470f",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
     ".github/workflows/trnm-g2c-replay-v2.yml",
@@ -17,7 +17,7 @@
     "trillionnium/crates/trnm-poco-verify-challenge-v1/**"
   ],
   "gaps_closed": [
-    "A14-REPLAY-EXACT-A13",
+    "A14-REPLAY-EXACT-A13-SEMANTIC-SOURCE",
     "A14-CLOSED-SEVEN-PROFILE-REGISTRY",
     "A14-EVIDENCE-BEFORE-BACKEND",
     "A14-NO-FALLBACK",
@@ -57,7 +57,8 @@
     "accepted ArtifactEvidence and AvailabilityCertificate authority absent",
     "accepted Task/Lease/profile policy carrier absent",
     "canonical application JMT and Order proof absent",
-    "settlement and governance authority remain external"
+    "settlement and governance authority remain external",
+    "A13 descendant cd526443 is a workflow-only offline-policy repair and not a semantic input change"
   ],
   "interface_requests": [
     "G2C-ICR-A11-ARTIFACT-AVAILABILITY-V1",
@@ -75,5 +76,6 @@
   "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "cd5264438c0ea1e81bd687355eccac1d49e92b26"
+  "base_sync_parent": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
+  "workflow_policy_descendant": "cd5264438c0ea1e81bd687355eccac1d49e92b26"
 }
