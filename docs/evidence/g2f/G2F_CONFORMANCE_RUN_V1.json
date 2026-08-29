@@ -1,0 +1,139 @@
+{
+  "agent_id": "A16",
+  "authority": "candidate",
+  "blocking_status": "BLOCKED_UPSTREAM",
+  "bundle": {
+    "bytes": 1547,
+    "digest": "37bedeff62ac8e02de26e4cf9800554ce22704930d54cc67ab58e55d84952aba",
+    "families": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "positive_clients_agree": true,
+    "sha256": "61a5a8cd8908ee1639f93e06faa53352c2441247851d878ab67ed1f9808b39c2",
+    "trace_stages": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "candidate_base": {
+    "commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
+    "ref": "refs/remotes/origin/feature/chain-g1-r4c-full-gap-closure-20260829",
+    "tree": "efea864cb2fbc4835a59a089b3dbab8934e71231"
+  },
+  "classification": "candidate-non-normative",
+  "clients": {
+    "differential_fuzz": {
+      "disagreements": 0,
+      "exceptions": 0,
+      "samples": 7548
+    },
+    "implementations": [
+      "conformance/g2f/client_a.py",
+      "conformance/g2f/client_b.py"
+    ],
+    "positive_agree": true,
+    "proof_families": [
+      "order",
+      "da",
+      "execution",
+      "result",
+      "settlement",
+      "upgrade"
+    ],
+    "trace": "W0-W7 candidate trace only",
+    "wire_mutants": {
+      "accepted": 0,
+      "code_disagreements": 0,
+      "count": 21
+    }
+  },
+  "gate_id": "G2F",
+  "known_nonclaims": [
+    "candidate fixture is not the normative Protocol09 wire",
+    "no accepted A11-A15 interfaces or independent production replay",
+    "no external HSM/KMS/remote anchor backend or process custody",
+    "no 64-epoch/10000-header campaign and no complete real W0-W7 trace",
+    "machine truth and activation/release flags were not changed"
+  ],
+  "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+  "schema": "trnm-g2f-conformance-run-v1",
+  "scope": "fixture",
+  "source_commit": "2d43dfd00b1a30c43307e8067ddc81ebd665c82f",
+  "source_tree": "091496e5449af9e944a9f81495568ee8bab09d01",
+  "state_sync": {
+    "explicit_external_anchor_cas": true,
+    "faults": {
+      "copied_namespace": "rejected",
+      "copied_same_namespace": "rejected",
+      "full_store_rollback": "rejected",
+      "partial_swap_intent": "simulated crash before_active",
+      "rejected_fork": "rejected",
+      "rejected_fork_residue": "quarantined",
+      "renamed_token": "rejected",
+      "shallow_copy": "rejected",
+      "sidecar": "injected sidecar fault",
+      "sidecar_residue_clear": "rejected",
+      "torn": "injected torn fault",
+      "torn_residue_clear": "rejected",
+      "wal": "injected wal fault",
+      "wal_residue_clear": "rejected"
+    },
+    "manifest_mutants": 3000,
+    "positive_staged_swap": true,
+    "rejected": 3000,
+    "semantic_accepts": 0,
+    "unexpected_errors": 0
+  },
+  "status": "PASS",
+  "stop_conditions": [
+    {
+      "current_result": "candidate copy fence rejects reopen and stage; independent review pending",
+      "id": "G2F-M-NAMESPACE-COPY",
+      "observed": "pre-fix same-label copied namespace accepted a fresh stage/commit",
+      "severity": "P0"
+    },
+    {
+      "current_result": "fresh identity and copy fence reject reopen and commit; independent review pending",
+      "id": "G2F-M-NAMESPACE-SHALLOW-COPY",
+      "observed": "pre-fix Python copy.copy() duplicated owner identity and staged state, allowing the copied token to be presented",
+      "severity": "P0"
+    },
+    {
+      "current_result": "candidate quarantine retains residue and rejects reopen; independent review pending",
+      "id": "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
+      "observed": "pre-fix rejected same-height fork remained reopenable as clean residue",
+      "severity": "P0"
+    },
+    {
+      "current_result": "retained open mutant; no authority claim",
+      "id": "G2F-M-SYNC-COORDINATED-NONZERO-VIEW",
+      "observed": "owner-issued immutable commitment is absent for a coordinated non-zero view/digest replacement",
+      "severity": "P0"
+    },
+    {
+      "current_result": "irreversible quarantine rejects reopen after visible residue removal; independent review pending",
+      "id": "G2F-M-SYNC-RESIDUE-CLEAR",
+      "observed": "pre-fix clearing visible sidecar/torn/WAL residue after a rejected fault allowed reopen or a new stage",
+      "severity": "P0"
+    }
+  ],
+  "terminal_status": "STOP_CONDITION",
+  "unittest_discovery": {
+    "discovered_tests": 39,
+    "executed_all_discovered": true,
+    "run_suite_tests": 39,
+    "status": "PASS",
+    "tests": 39
+  }
+}
