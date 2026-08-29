@@ -1,0 +1,82 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A15",
+  "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "0ef40883e160f646158b6e483a69e2371fda989e",
+  "base_tree": "e1df009018c1d3f2967bdb905bdd96ab3cb6ea06",
+  "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
+  "changed_paths": [
+    ".github/workflows/trnm-g2e-replay-v2.yml",
+    "docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md",
+    "docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/settlement/SETTLEMENT_INTENT_RECEIPT_V1.md",
+    "scripts/ci/check_g2e_replay_v2.sh",
+    "scripts/ci/check_g2e_source_binding_v2.sh",
+    "scripts/ci/check_settlement_conservation_model_v1.sh",
+    "simulations/economics/settlement-cases-v1.json",
+    "simulations/economics/settlement-risk-v2-cases.json",
+    "simulations/economics/settlement_model.py",
+    "simulations/economics/settlement_risk_v2.py"
+  ],
+  "gaps_closed": [
+    "A15-REPLAY-EXACT-A14",
+    "A15-MULTI-ASSET-CONSERVATION",
+    "A15-EXACTLY-ONCE-RESPONSE-LOSS",
+    "A15-FAILURE-ATOMICITY",
+    "A15-BENEFICIAL-OWNER-SYBIL-AGGREGATION",
+    "A15-ROLE-COLLUSION-FENCES",
+    "A15-WASH-FUNDING-FENCE",
+    "A15-BOND-MINIMUMS",
+    "A15-ORDERING-INVARIANT-RISK-ROOT"
+  ],
+  "gaps_open": [
+    "A15-ACCEPTED-CROSS-PLANE-PROOFS",
+    "A15-CANONICAL-JMT-WHOLE-NODE-CAS",
+    "A15-DURABLE-RUST-PROCESS-IMPLEMENTATION",
+    "A15-PRODUCTION-ASSET-CUSTODY",
+    "A15-GOVERNANCE-AND-POCO-ELIGIBILITY"
+  ],
+  "commands": [
+    "python3 simulations/economics/settlement_risk_v2.py --self-test: PASS in isolated local Python runtime",
+    "bash scripts/ci/check_g2e_replay_v2.sh: exact-head replay required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "payer-provider-related",
+    "provider-verifier-related",
+    "challenger-conflict",
+    "provider-bond-under-collateralized",
+    "challenge-bond-under-collateralized",
+    "provider-concentration",
+    "beneficial-owner-sybil-concentration",
+    "duplicate-task",
+    "unknown-actor",
+    "wrong-role",
+    "wash-funding-source",
+    "asset-conservation",
+    "nonce-conflict",
+    "stale-price"
+  ],
+  "evidence_scope": "model|simulation|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "accepted Agent/DA/Order/Execution/Result proof carriers absent",
+    "canonical application JMT and whole-node CAS absent",
+    "production asset registry/custody and governance absent",
+    "multi-host economic attack evidence absent"
+  ],
+  "interface_requests": [
+    "A15-ICR-A12-TASK-ESCROW-V1",
+    "A15-ICR-A13-FEE-FACTS-V1",
+    "A15-ICR-A14-RESULT-MATURITY-V1",
+    "A15-ICR-A16-JMT-SETTLEMENT-PROOF-V1",
+    "A15-ICR-A17-GOVERNANCE-ELIGIBILITY-V1"
+  ],
+  "downstream_invalidation": [
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Exact-head replay and independent review; A16 may consume only candidate settlement facts with all authority flags false."
+}
