@@ -3,8 +3,8 @@
   "agent_id": "A13",
   "package_id": "G2D_EXECUTION_MVCC_FEE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "d72848ef5f5f7567eafba97a67921a81b6c8a252",
-  "base_tree": "fd069546f33335109587d4b06d153674fb2e7faf",
+  "base_commit": "1be1a4db2c6431232676c8904856e9eb1d49c9a4",
+  "base_tree": "89e2f06c56637d23607a4133f3ffbebdc23de356",
   "head_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
   "changed_paths": [
     "conformance/execution/mvcc-fee-cases-v1.json",
@@ -23,6 +23,7 @@
   "gaps_closed": [
     "A13-REPLAY-EXACT-A12",
     "A13-AGENT-TRANSACTION-WIRE-CANDIDATE-INPUT",
+    "A13-HANDOFF-SCHEMA-VALIDATION",
     "A13-REAL-BOUNDED-WORKER-POOL",
     "A13-WORKER-COUNT-ROOT-INVARIANCE",
     "A13-DETERMINISTIC-CONFLICT-REEXECUTION",
@@ -37,8 +38,9 @@
     "A13-WHOLE-NODE-RECOVERY"
   ],
   "commands": [
-    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head trusted replay required after A12 wire synchronization",
-    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head trusted replay required"
+    "python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g2d/G2D_AGENT_HANDOFF_V2.json: exact-head required",
+    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head required",
+    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -67,11 +69,11 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Run exact-head replay on the synchronized A12 wire input, then cascade the exact source/tree through A14-A17. Independent interface acceptance remains separate.",
+  "next_action": "Run exact-head replay with the A01 handoff contract, then cascade the publication head through A14-A17. Independent interface acceptance remains separate.",
   "implementation_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
   "implementation_tree": "de6b98988b2ca08e70046281c82a94e7acbf4e12",
   "metadata_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "d72848ef5f5f7567eafba97a67921a81b6c8a252",
+  "base_sync_parent": "1be1a4db2c6431232676c8904856e9eb1d49c9a4",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

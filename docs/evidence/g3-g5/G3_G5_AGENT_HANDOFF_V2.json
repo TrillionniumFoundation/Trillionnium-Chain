@@ -3,8 +3,8 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "316b2d4227764e1a2174f46c57a25272ced96f82",
-  "base_tree": "76f2bd4075d961c3a32df66d5bfdee9ccd5181b7",
+  "base_commit": "65deea3f1e9b25f3b6f57d30363857ed5bb16857",
+  "base_tree": "48f9e468747d45401834e3cef7f9834112fddee9",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": [
     "conformance/benchmark/**",
@@ -24,6 +24,7 @@
   "gaps_closed": [
     "A17-REPLAY-EXACT-A16",
     "A17-SYNCHRONIZED-A12-A16-CANDIDATE-LINEAGE",
+    "A17-HANDOFF-SCHEMA-VALIDATION",
     "A17-NO-ORPHAN-METRIC",
     "A17-TOPOLOGY-IDENTITY-ACCOUNTING",
     "A17-EXACT-COMPARATOR-ARTIFACT",
@@ -45,7 +46,8 @@
     "A17-GOVERNANCE-AND-ACTIVATION-CEREMONY"
   ],
   "commands": [
-    "bash scripts/ci/check_g3_g5_replay_v2.sh: exact-head trusted replay required after synchronized A16/A15/A14/A13/A12 lineage",
+    "python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g3-g5/G3_G5_AGENT_HANDOFF_V2.json: exact-head required",
+    "bash scripts/ci/check_g3_g5_replay_v2.sh: exact-head required",
     "external evidence evaluator self-test: synthetic-only; no real claim authority"
   ],
   "failed_tests": [],
@@ -84,10 +86,10 @@
     "production activation",
     "release readiness"
   ],
-  "next_action": "Run exact-head A17 on synchronized A16. Then only independently signed real campaign/audit/soak/governance evidence may change any readiness or activation decision.",
+  "next_action": "Run exact-head A17 with the A01 handoff contract. Only independently signed real campaign/audit/soak/governance evidence may change readiness or activation decisions.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "316b2d4227764e1a2174f46c57a25272ced96f82",
+  "base_sync_parent": "65deea3f1e9b25f3b6f57d30363857ed5bb16857",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }
