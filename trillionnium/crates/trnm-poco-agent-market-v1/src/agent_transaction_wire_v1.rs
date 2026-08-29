@@ -231,6 +231,7 @@ impl<'a> ParsedWireV1<'a> {
             ));
         }
         let command_len = reader.take_u32()? as usize;
+        let payload_digest = Hash32V1(reader.take_array::<32>()?);
         if command_len > MAX_AGENT_TRANSACTION_COMMAND_BYTES_V1
             || reader.remaining() != command_len + TRAILER_BYTES_V1
         {
@@ -239,7 +240,6 @@ impl<'a> ParsedWireV1<'a> {
                 "agent transaction command length or trailing data differs",
             ));
         }
-        let payload_digest = Hash32V1(reader.take_array::<32>()?);
         let command_bytes = reader.take_slice(command_len)?;
         let trailer = Hash32V1(reader.take_array::<32>()?);
         reader.finish()?;
