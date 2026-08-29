@@ -43,6 +43,12 @@ const CHAIN_DOMAIN_V0: &str = "trnm.consensus-signer-journal.chain.v0";
 const HEAD_DOMAIN_V0: &str = "trnm.consensus-signer-journal.head.v0";
 const LIFETIME_INVENTORY_DOMAIN_V1: &str = "trnm.consensus-signer-journal.lifetime-inventory.v1";
 const MAXIMUM_SHM_BYTES_V0: u64 = 1024 * 1024;
+const INCOMPATIBLE_SEMANTIC_LIFECYCLE_V0: &str =
+    "per-reservation semantic watermark cannot back signer-journal pair lifecycle";
+const UNATTESTED_SEMANTIC_LIFECYCLE_V0: &str =
+    "semantic watermark lacks explicit signer-journal pair lifecycle attestation";
+const CONTRADICTORY_SEMANTIC_LIFECYCLE_V0: &str =
+    "signer-journal pair attestation requires semantic watermark mode";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct JournalHeadV0 {
@@ -587,6 +593,9 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
         mut external_watermark: W,
     ) -> Result<Self, SignerJournalErrorV0> {
         ensure_supported_platform()?;
+        if let Some(error) = semantic_lifecycle_error_v0(&external_watermark) {
+            return Err(SignerJournalErrorV0::InvalidProfile(error));
+        }
         if !external_watermark.semantic_mode_v0()
             && external_watermark
                 .load(profile.external_watermark_scope())
@@ -667,6 +676,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             &mut store.external_watermark,
             store.profile.external_watermark_scope(),
             store.journal_id,
+            &store.connection,
         )
         .map_err(|error| SignerJournalErrorV0::external("preflight new semantic scope", error))?
         .is_some()
@@ -755,6 +765,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         )
         .map_err(|error| {
             SignerJournalErrorV0::external("pin operational external watermark", error)
@@ -886,6 +897,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         )
         .map_err(|error| {
             SignerJournalErrorV0::external(
@@ -958,6 +970,9 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
     where
         W: ExternalMonotonicWatermarkInjectionV0,
     {
+        if let Some(error) = semantic_lifecycle_error_v0(external.as_ref()) {
+            return Err(SignerJournalErrorV0::InvalidProfile(error));
+        }
         let existing = self.confirm_node_checkpoint_head_exact_v0()?;
         self.external_watermark
             .install_external_monotonic_watermark_v0(external)
@@ -1355,6 +1370,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         )
         .map_err(|error| SignerJournalErrorV0::external("read external watermark", error))?
         .ok_or(SignerJournalErrorV0::Conflict(
@@ -1386,6 +1402,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         )
         .map_err(|error| SignerJournalErrorV0::external(stage, error))?;
         if observed != Some(expected) {
@@ -1413,7 +1430,16 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteSignerJournalV0<W> {
                 SignerJournalConflictV0::CommitReadbackConflict,
             ));
         }
-        validate_capacity(&read_capacity(&self.connection)?, &self.profile)
+        validate_capacity(&read_capacity(&self.connection)?, &self.profile)?;
+        // Semantic authorities carry facts that are part of the pre-sign
+        // admission cut. Re-audit the complete append-only journal on every
+        // operational entry so an in-place historical row mutation cannot be
+        // hidden behind an unchanged external head/checksum.
+        if self.external_watermark.semantic_mode_v0() {
+            validate_integrity(&self.connection)?;
+            validate_all_records(&self.connection, &self.profile, self.journal_id)?;
+        }
+        Ok(())
     }
 
     fn ensure_file_identity(&self) -> Result<(), SignerJournalErrorV0> {
@@ -1465,6 +1491,9 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
         mut external_watermark: W,
     ) -> Result<Self, SignerJournalErrorV0> {
         ensure_supported_platform()?;
+        if let Some(error) = semantic_lifecycle_error_v0(&external_watermark) {
+            return Err(SignerJournalErrorV0::InvalidProfile(error));
+        }
         let database_path = canonical_existing_database_path(database_path.as_ref())?;
         let directory_path = database_path
             .parent()
@@ -1501,6 +1530,7 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             &mut external_watermark,
             profile.external_watermark_scope(),
             journal_id,
+            &connection,
         )
         .map_err(|error| {
             SignerJournalErrorV0::external("observe pinned external watermark", error)
@@ -1574,6 +1604,7 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         )
         .map_err(|error| {
             SignerJournalErrorV0::external("confirm node-checkpoint external watermark", error)
@@ -1621,6 +1652,7 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         ) {
             Ok(Some(value)) => value,
             Ok(None) => {
@@ -1682,6 +1714,7 @@ impl<W: ExternalMonotonicWatermarkV0> PinnedSqliteSignerJournalV0<W> {
             &mut self.external_watermark,
             self.profile.external_watermark_scope(),
             self.journal_id,
+            &self.connection,
         ) {
             Ok(value) => value,
             Err(error) => {
@@ -1871,6 +1904,21 @@ fn watermark_for_parts(
     .map_err(|error| SignerJournalErrorV0::external("construct local watermark", error))
 }
 
+fn semantic_lifecycle_error_v0(
+    external: &dyn ExternalMonotonicWatermarkV0,
+) -> Option<&'static str> {
+    if external.semantic_per_reservation_v0() {
+        return Some(INCOMPATIBLE_SEMANTIC_LIFECYCLE_V0);
+    }
+    if external.semantic_signer_journal_pair_v0() && !external.semantic_mode_v0() {
+        return Some(CONTRADICTORY_SEMANTIC_LIFECYCLE_V0);
+    }
+    if external.semantic_mode_v0() && !external.semantic_signer_journal_pair_v0() {
+        return Some(UNATTESTED_SEMANTIC_LIFECYCLE_V0);
+    }
+    None
+}
+
 /// Reads one external head through either the legacy opaque protocol or the
 /// explicitly opted-in semantic protocol.  The capability never crosses the
 /// signer-journal boundary: semantic implementations authenticate their own
@@ -1879,14 +1927,179 @@ fn load_external_head_v0<W: ExternalMonotonicWatermarkV0>(
     external: &mut W,
     scope: [u8; 32],
     journal_id: [u8; 32],
+    connection: &Connection,
 ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+    if semantic_lifecycle_error_v0(external).is_some() {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
     if external.semantic_mode_v0() {
-        external
-            .load_semantic_v0(scope, journal_id)
-            .map(|value| value.map(|(watermark, _facts)| watermark))
+        let Some((watermark, facts)) = external.load_semantic_v0(scope, journal_id)? else {
+            return Ok(None);
+        };
+        validate_loaded_external_semantic_facts_v0(
+            connection, scope, journal_id, watermark, facts,
+        )?;
+        Ok(Some(watermark))
     } else {
         external.load(scope)
     }
+}
+
+fn read_validated_semantic_intent_v0(
+    connection: &Connection,
+    journal_id: [u8; 32],
+    watermark: SignerWatermarkV0,
+) -> Result<PreparedIntentV0, ExternalWatermarkErrorV0> {
+    let event = read_event(connection, watermark.sequence())
+        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
+        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    if event.sequence != watermark.sequence() || event.chain_checksum != watermark.chain_checksum()
+    {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    let intent = validate_semantic_event_v0(connection, journal_id, &event)?;
+    if event.predecessor_sequence > 0 {
+        let previous = read_event(connection, event.predecessor_sequence)
+            .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
+            .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+        // Validate the predecessor's own intent and checksums before using its
+        // lifecycle fields as the adjacent pair witness.  A pointer-only check
+        // would allow an in-place historical row mutation to hide behind the
+        // unchanged target watermark.
+        let _previous_intent = validate_semantic_event_v0(connection, journal_id, &previous)?;
+        let adjacent_pair = if event.sequence % 2 == 0 {
+            previous.sequence.checked_add(1) == Some(event.sequence)
+                && event.predecessor_chain_checksum == previous.chain_checksum
+                && previous.kind == 0
+                && previous.signature.is_none()
+                && previous.fingerprint == event.fingerprint
+        } else {
+            previous.sequence.checked_add(1) == Some(event.sequence)
+                && event.predecessor_chain_checksum == previous.chain_checksum
+                && previous.kind == 1
+                && previous.signature.is_some()
+                && previous.fingerprint != event.fingerprint
+        };
+        if !adjacent_pair {
+            return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+        }
+    } else if event.sequence != 1 {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    Ok(intent)
+}
+
+/// Validates one semantic journal event, including its referenced intent and
+/// both event/chain checksums.  This is intentionally separate from the full
+/// inventory audit so every semantic watermark read can independently verify
+/// the target and its direct predecessor before a producer is reached.
+fn validate_semantic_event_v0(
+    connection: &Connection,
+    journal_id: [u8; 32],
+    event: &StoredEventV0,
+) -> Result<PreparedIntentV0, ExternalWatermarkErrorV0> {
+    let lifecycle_shape_matches = match event.sequence % 2 {
+        1 => event.kind == 0 && event.signature.is_none(),
+        0 => event.kind == 1 && event.signature.is_some(),
+        _ => false,
+    };
+    if event.sequence == 0
+        || event.predecessor_sequence.checked_add(1) != Some(event.sequence)
+        || event.predecessor_chain_checksum == [0; 32]
+        || !lifecycle_shape_matches
+    {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    let intent = read_intent(connection, event.fingerprint)
+        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
+        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    if intent.fingerprint != event.fingerprint
+        || intent.intent_checksum
+            != intent_checksum(
+                journal_id,
+                intent.fingerprint,
+                intent.epoch,
+                intent.view,
+                intent.kind,
+                intent.safety_revision,
+                intent.signing_root,
+                &intent.canonical_intent,
+            )
+    {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    let predecessor = JournalHeadV0 {
+        sequence: event.predecessor_sequence,
+        chain_checksum: event.predecessor_chain_checksum,
+    };
+    let expected_event = event_checksum(
+        journal_id,
+        event.sequence,
+        event.kind,
+        event.fingerprint,
+        event.signature.as_ref(),
+        predecessor,
+        intent.intent_checksum,
+    );
+    let expected_chain = chain_checksum(predecessor, expected_event);
+    if event.event_checksum != expected_event || event.chain_checksum != expected_chain {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    Ok(intent)
+}
+
+/// Validates the semantic facts returned with an external head against the
+/// exact intent event in the local journal.  The old loader intentionally
+/// projected a semantic response down to only its watermark, which allowed a
+/// same-sequence response with altered round, revision, nonce, fingerprint, or
+/// signing-root facts to pass the pre-sign fence.  Capability bytes remain
+/// authority-private and are therefore checked only for structural presence;
+/// the external adapter authenticates their value against its own binding.
+fn validate_loaded_external_semantic_facts_v0(
+    connection: &Connection,
+    scope: [u8; 32],
+    journal_id: [u8; 32],
+    watermark: SignerWatermarkV0,
+    facts: ExternalWatermarkSemanticFactsV0,
+) -> Result<(), ExternalWatermarkErrorV0> {
+    if watermark.scope() != scope
+        || watermark.journal_id() != journal_id
+        || watermark.chain_checksum() == [0; 32]
+        || facts.safety_revision == 0
+        || facts.request_nonce == [0; 32]
+        || facts.request_fingerprint == [0; 32]
+        || facts.signing_root == [0; 32]
+        || facts.capability == [0; 32]
+    {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+
+    // Sequence zero is a synthetic, adapter-owned genesis record.  There is
+    // no local signer intent from which to derive semantic round facts, so
+    // only the authenticated adapter's structural/nonzero contract applies.
+    if watermark.sequence() == 0 {
+        return Ok(());
+    }
+
+    let intent = read_validated_semantic_intent_v0(connection, journal_id, watermark)?;
+    let expected_nonce = signer_journal_lifecycle_nonce_v0(
+        intent.epoch,
+        intent.view,
+        intent.safety_revision,
+        intent.fingerprint,
+        intent.signing_root,
+        watermark.sequence(),
+    );
+    if facts.epoch != intent.epoch
+        || facts.view != intent.view
+        || facts.safety_revision != intent.safety_revision
+        || facts.request_nonce != expected_nonce
+        || facts.request_fingerprint != intent.fingerprint
+        || facts.signing_root != intent.signing_root
+    {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
+    Ok(())
 }
 
 /// Advances one external head through the semantic protocol when explicitly
@@ -1902,6 +2115,9 @@ fn compare_and_advance_external_head_v0<W: ExternalMonotonicWatermarkV0>(
     expected: Option<SignerWatermarkV0>,
     target: SignerWatermarkV0,
 ) -> Result<(), ExternalWatermarkErrorV0> {
+    if semantic_lifecycle_error_v0(external).is_some() {
+        return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
+    }
     if !external.semantic_mode_v0() {
         return external.compare_and_advance(expected, target);
     }
@@ -1911,12 +2127,7 @@ fn compare_and_advance_external_head_v0<W: ExternalMonotonicWatermarkV0>(
     if target.sequence() == 0 {
         return external.compare_and_advance_semantic_genesis_v0(expected, target);
     }
-    let event = read_event(connection, target.sequence())
-        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
-        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
-    let intent = read_intent(connection, event.fingerprint)
-        .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
-        .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+    let intent = read_validated_semantic_intent_v0(connection, journal_id, target)?;
     let facts = ExternalWatermarkSemanticFactsV0::from_journal_intent(
         intent.epoch,
         intent.view,
