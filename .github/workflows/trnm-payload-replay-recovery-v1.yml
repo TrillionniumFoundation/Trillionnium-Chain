@@ -63,10 +63,15 @@ jobs:
     name: Payload replay recovery contract
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (github.actor == 'ProfAlexQI' &&
-       github.triggering_actor == 'ProfAlexQI' &&
-       (github.event_name != 'pull_request' ||
-        github.event.pull_request.head.repo.full_name == github.repository))
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 60
     steps:
@@ -74,6 +79,16 @@ jobs:
         with:
           path: trillionnium-chain
           persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify exact package head checkout
+        working-directory: trillionnium-chain
+        env:
+          EXPECTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
