@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-g2b-source-manifest-v2",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_pr": 32,
+  "base_ref": "feature/chain-a11-g2a-da-fullrep-v2-20260829",
+  "base_commit": "2fb72d01e49350d3b5dad158a6eaada37c0794b5",
+  "base_tree": "62fc26484927cbb9d7aa75a8c094d909e31b1537",
+  "upstream_pins": {
+    "a08_pr": 29,
+    "a09_pr": 30,
+    "a10_pr": 31,
+    "a11_pr": 32
+  },
+  "replayed_from": "22057ba70c4ba2a1922dbbd02562f5ff960664f0",
+  "global_state_authority": false,
+  "agent_transaction_wire_accepted": false,
+  "g2b_exit": false,
+  "production_candidate": false
+}
