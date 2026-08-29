@@ -3,6 +3,15 @@ set -euo pipefail
 root=$(git rev-parse --show-toplevel)
 cd "$root"
 
+# A control-plane ledger is an exact observation, not a best-effort scan.
+# Refuse to certify it from a dirty checkout so untracked markers or local
+# edits cannot be mistaken for the committed fleet state.
+if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+  echo "agent development docs gate: dirty worktree rejected" >&2
+  git status --short >&2
+  exit 2
+fi
+
 required=(
   docs/development/CURRENT_SNAPSHOT_V1.json
   docs/schemas/current-snapshot-v1.schema.json
@@ -53,7 +62,12 @@ assert len(ids) == len(set(ids))
 
 a00_block = registry.split("- id: A00", 1)[1].split("- id: A01", 1)[0]
 a01_block = registry.split("- id: A01", 1)[1].split("- id: A02", 1)[0]
-assert "docs/development/CURRENT_SNAPSHOT_V1.*" not in a00_block
+# The wildcard appears in the required A00 forbidden-surface sentence below;
+# ownership must be checked against the structured owned-surfaces list rather
+# than by rejecting that sentence's descriptive text.  This keeps the gate
+# fail-closed without making its own ownership assertion impossible.
+a00_owned_surfaces = a00_block.split("  owned_surfaces:", 1)[1].split("  forbidden_surfaces:", 1)[0]
+assert "docs/development/CURRENT_SNAPSHOT_V1" not in a00_owned_surfaces
 assert "writes to docs/development/CURRENT_SNAPSHOT_V1.* owned by A01" in a00_block
 assert "scripts/ci/check_agent_development_docs_v1.sh" in a00_block
 assert "docs/development/CURRENT_SNAPSHOT_V1.json" in a01_block
@@ -73,16 +87,64 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], open_numbers
-pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
-assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
-assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
-assert pr10.count("  - ") >= 9
-assert ledger.count("  invalidated_by_pr: 10") == 9
+assert open_numbers == [1, 2, 3, 4, 7, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32], open_numbers
+assert re.search(r"(?m)^  source_head_ref: docs/chain-agent-fleet-plan-v1-20260829$", ledger)
+assert re.search(r"(?m)^  source_head_commit: 07c35f14a1d7bbbfa2d4c5491763765e25b02469$", ledger)
+assert re.search(r"(?m)^  source_head_tree: b7596feeef4bc36ab7d6ae93889c2cc2e522cc17$", ledger)
+pr28 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 28)
+assert re.search(r"(?m)^    ref: feature/chain-g1-r4-fault-matrix-v2-20260829$", pr28)
+assert re.search(r"(?m)^    commit: e88cda9401eb6219fe1425bebb1ef6b54b4c429d$", pr28)
+assert re.search(r"(?m)^    tree: 9c4249ce36061fcbd6eb8e522accd29127f7c01c$", pr28)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr28)
+pr29 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 29)
+assert re.search(r"(?m)^    ref: feature/chain-a08-g15-registry-parity-v4-20260829$", pr29)
+assert re.search(r"(?m)^    commit: 6c42673db5bc46f82934dddc678a1752a092ca04$", pr29)
+assert re.search(r"(?m)^    tree: df8f6bf0cfe0868668f86ba9b41fc34ce1a085c4$", pr29)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr29)
+for number in range(14, 20):
+    entry = next(entry for entry in open_entries if int(entry.splitlines()[0]) == number)
+    assert re.search(r"(?m)^  invalidated_by_pr: 32$", entry), number
+pr30 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 30)
+assert re.search(r"(?m)^    ref: feature/chain-a09-g15-independent-conformance-v3-20260829$", pr30)
+assert re.search(r"(?m)^    commit: 330a1b41e8730b343a51809377574d03596269f7$", pr30)
+assert re.search(r"(?m)^    tree: e8fa115857d13049858bd9682a8f1802656e5fd3$", pr30)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr30)
+pr31 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 31)
+assert re.search(r"(?m)^    ref: feature/chain-a10-g20-traceability-v2-20260829$", pr31)
+assert re.search(r"(?m)^    commit: 044224a3a6c9100cd64961ea34a28031bb78a636$", pr31)
+assert re.search(r"(?m)^    tree: 02fb16fd12d2c6387495087e3eff578c2c44100a$", pr31)
+assert re.search(r"(?m)^    pr_bound_commit: 330a1b41e8730b343a51809377574d03596269f7$", pr31)
+assert re.search(r"(?m)^    pr_bound_tree: e8fa115857d13049858bd9682a8f1802656e5fd3$", pr31)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr31)
+pr32 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 32)
+assert re.search(r"(?m)^    ref: feature/chain-a11-g2a-da-fullrep-v2-20260829$", pr32)
+assert re.search(r"(?m)^    commit: 2fb72d01e49350d3b5dad158a6eaada37c0794b5$", pr32)
+assert re.search(r"(?m)^    tree: 62fc26484927cbb9d7aa75a8c094d909e31b1537$", pr32)
+assert re.search(r"(?m)^    pr_bound_commit: 044224a3a6c9100cd64961ea34a28031bb78a636$", pr32)
+assert re.search(r"(?m)^    pr_bound_tree: 02fb16fd12d2c6387495087e3eff578c2c44100a$", pr32)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr32)
 terminal_section = ledger.split("terminal_pull_requests:", 1)[1]
+pr13_terminal = next(entry for entry in re.split(r"(?m)^- number: ", terminal_section)[1:] if int(entry.splitlines()[0]) == 13)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", pr13_terminal)
+assert re.search(r"(?m)^  closed_without_merge: true$", pr13_terminal)
+assert re.search(r"(?m)^  superseded_by_pr: 32$", pr13_terminal)
+pr12_terminal = next(entry for entry in re.split(r"(?m)^- number: ", terminal_section)[1:] if int(entry.splitlines()[0]) == 12)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", pr12_terminal)
+assert re.search(r"(?m)^  closed_without_merge: true$", pr12_terminal)
+assert re.search(r"(?m)^  superseded_by_pr: 31$", pr12_terminal)
+pr11_terminal = next(entry for entry in re.split(r"(?m)^- number: ", terminal_section)[1:] if int(entry.splitlines()[0]) == 11)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", pr11_terminal)
+assert re.search(r"(?m)^  closed_without_merge: true$", pr11_terminal)
+assert re.search(r"(?m)^  superseded_by_pr: 30$", pr11_terminal)
 assert re.search(r"(?m)^- number: 6$", terminal_section)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
 assert re.search(r"(?m)^  closed_without_merge: true$", terminal_section)
+assert re.search(r"(?m)^- number: 26$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", terminal_section)
+assert re.search(r"(?m)^- number: 10$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
+assert re.search(r"(?m)^- number: 27$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", terminal_section)
 assert re.search(r"(?m)^  sole_writer: A01$", ledger)
 assert re.search(r"(?m)^  read_only_observer: A00$", ledger)
 
