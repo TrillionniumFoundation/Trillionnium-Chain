@@ -1,0 +1,20 @@
+{
+  "schema":"trnm-benchmark-security-ops-contract-cases-v1",
+  "positive":["harness-contract-valid"],
+  "negative":[
+    "submitted-tps-substitution",
+    "missing-topology-mapping",
+    "topology-count-overclaim",
+    "operator-custody-overclaim",
+    "workload-mix",
+    "missing-comparator-digest",
+    "premature-surpass-claim",
+    "unknown-fault-target",
+    "orphan-metric",
+    "severity-vocabulary",
+    "open-high-testnet",
+    "invalid-dependency-status",
+    "link-bounds",
+    "unsupported-ai-profile"
+  ]
+}
