@@ -17,6 +17,7 @@
 
 mod codec;
 mod error;
+#[rustfmt::skip]
 pub mod profile_registry_v1;
 mod store;
 mod types;

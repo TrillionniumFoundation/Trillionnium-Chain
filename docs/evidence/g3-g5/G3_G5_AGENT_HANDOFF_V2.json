@@ -3,8 +3,8 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "4ce9a7880084c96903cf296e1d0c0f67c44118b9",
-  "base_tree": "f024e4478bfb793757cf4dce0b8e78a3a6d51713",
+  "base_commit": "3abba5882aa077187c67064ed7f5535bdd4289b1",
+  "base_tree": "f0609d1b1f659c12a99f1746060932d60b613a04",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": ["conformance/benchmark/**","docs/bench/**","docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V1.md","docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V2_REPLAY.md","docs/evidence/g3-g5/**","docs/runbooks/**","docs/security/AI_NATIVE_THREAT_REGISTER_V1.md","scripts/ci/check_agent_candidate_packages_v1.sh","scripts/ci/check_benchmark_security_ops_contract_v1.sh","scripts/ci/check_claim_activation_gate_v2.sh","scripts/ci/check_g3_g5_replay_v2.sh","scripts/ci/check_g3_g5_source_binding_v2.sh","tools/benchmark-contract/**"],
   "gaps_closed": ["A17-REPLAY-EXACT-A16","A17-NO-ORPHAN-METRIC","A17-TOPOLOGY-IDENTITY-ACCOUNTING","A17-EXACT-COMPARATOR-ARTIFACT","A17-CLAIM-SCOPE-BOUNDING","A17-ACTIVATION-DEPENDENCY-GATE","A17-CRITICAL-HIGH-FINDING-BLOCK","A17-SOAK-AUDIT-DRILL-REQUIREMENTS","A17-FROZEN-WORKFLOW-POLICY-COMPLIANCE","A17-DECISION-ROOT-VECTOR-REBOUND"],
@@ -21,7 +21,7 @@
   "next_action": "Run the final A00 exact-head replay and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "4ce9a7880084c96903cf296e1d0c0f67c44118b9",
+  "base_sync_parent": "3abba5882aa077187c67064ed7f5535bdd4289b1",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

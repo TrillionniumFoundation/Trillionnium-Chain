@@ -139,14 +139,8 @@ fn verified_rejected_and_unavailable_are_distinct_and_non_authoritative() {
             calls: 0,
             result: Some(backend_result),
         };
-        let decision = verify_statement_v1(
-            &registry,
-            &statement(),
-            &evidence(),
-            20,
-            &mut backend,
-        )
-        .expect("decision");
+        let decision = verify_statement_v1(&registry, &statement(), &evidence(), 20, &mut backend)
+            .expect("decision");
         assert_eq!(decision.status, expected);
         assert_eq!(backend.calls, 1);
         assert!(!decision.economic_authority);
@@ -157,10 +151,9 @@ fn verified_rejected_and_unavailable_are_distinct_and_non_authoritative() {
 
 #[test]
 fn disabled_expired_revoked_and_unknown_profiles_do_not_fallback() {
-    let disabled = VerificationProfileRegistryV1::closed(profiles(
-        VerificationProfileKindV1::StakeQuorum,
-    ))
-    .expect("registry");
+    let disabled =
+        VerificationProfileRegistryV1::closed(profiles(VerificationProfileKindV1::StakeQuorum))
+            .expect("registry");
     let mut backend = CountingBackend::default();
     assert_eq!(
         verify_statement_v1(&disabled, &statement(), &evidence(), 20, &mut backend),
@@ -210,7 +203,10 @@ fn duplicate_challenge_is_rejected_and_lifecycle_is_forward_only() {
         .expect("appeal decision");
     record.finalize(61).expect("finalize");
     assert_eq!(record.phase, ChallengePhaseV1::Final);
-    assert_eq!(record.final_outcome, Some(ChallengeFinalOutcomeV1::Rejected));
+    assert_eq!(
+        record.final_outcome,
+        Some(ChallengeFinalOutcomeV1::Rejected)
+    );
     assert!(!record.economic_authority);
     assert!(!record.order_reorg);
 }
@@ -223,7 +219,10 @@ fn withdrawal_and_expiry_close_without_economic_or_order_authority() {
         .open(id(90), result_id, id(92), 10, 20, 30, 40, 50, 60)
         .expect("open");
     record.withdraw().expect("withdraw");
-    assert_eq!(record.final_outcome, Some(ChallengeFinalOutcomeV1::Withdrawn));
+    assert_eq!(
+        record.final_outcome,
+        Some(ChallengeFinalOutcomeV1::Withdrawn)
+    );
 
     let mut book = ChallengeBookV1::default();
     let result_id = id(94);
