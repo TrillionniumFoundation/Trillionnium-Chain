@@ -1,6 +1,6 @@
 schema: trnm-active-pr-package-ledger-v1
 repository: TrillionniumFoundation/Trillionnium-Chain
-observed_at_utc: '2026-08-29T13:42:30Z'
+observed_at_utc: '2026-08-29T13:55:26Z'
 assessed_plan:
   ref: docs/chain-poco-bft-mainline-20260825
   commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
@@ -12,8 +12,8 @@ latest_candidate:
   tree: efea864cb2fbc4835a59a089b3dbab8934e71231
 control_package_evidence:
   source_head_ref: docs/agent-fleet-plan-v1-20260829
-  source_head_commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
-  source_head_tree: f011d58c4f140612d277282b66aa009de7b2aa13
+  source_head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
+  source_head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
   historical_workflow_runs_not_evidence:
   - name: TRNM payload replay recovery v1 gate
     run_id: 33249877031
@@ -30,7 +30,19 @@ control_package_evidence:
   - name: TRNM replay-to-Core coordinator v1 gate
     run_id: 33250709393
     status: queued
-  workflow_runs: []
+  workflow_runs:
+  - name: TRNM payload replay recovery v1 gate
+    run_id: 33255822585
+    job_id: 99109282010
+    conclusion: success
+    head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
+    head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
+  - name: TRNM replay-to-Core coordinator v1 gate
+    run_id: 33255822576
+    job_id: 99109218098
+    conclusion: success
+    head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
+    head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
 ownership_resolutions:
 - surface: docs/development/CURRENT_SNAPSHOT_V1.*
   previous_writers:
@@ -647,5 +659,6 @@ observation_source:
   agent_id: A00
   package_id: AGENT_CONTROL_PLANE_V1
   head_ref: docs/chain-agent-fleet-plan-v1-20260829
-  head_commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
-  head_tree: f011d58c4f140612d277282b66aa009de7b2aa13
+  head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
+  head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
+
