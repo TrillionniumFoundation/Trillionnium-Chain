@@ -85,7 +85,14 @@ replay-to-core-coordinator-test-support = [
   "dep:rustix",
   "dep:trnm-consensus-peer-lease",
 ]
-
+# Candidate-only descriptor/openat namespace and external-anchor contract.
+# This feature is opt-in and has no production or authority wiring; it exists
+# for the G2F negative/race matrix until A11--A15 publish accepted snapshots.
+g2f-namespace-test-support = [
+  "dep:rustix",
+  "rustix/fs",
+  "dep:tempfile",
+]
 # The former App-aware recovery modules remain as non-buildable archive source.
 # Keeping their cfg names known avoids warnings without restoring a feature or
 # dependency edge into the active workspace.
@@ -244,6 +251,14 @@ poco_ai_v1_manifest_bound_candidate_local_external_pin_authenticated_process_own
 poco_ai_v1_manifest_bound_candidate_local_process_integration = true
 poco_ai_v1_manifest_bound_candidate_local_journal_only_authority = false
 poco_ai_v1_manifest_bound_candidate_local_external_pin_process_persisted = true
+# G2F namespace/anchor API is an opt-in candidate seam only. These keys do not
+# alter the existing false production/authority truth above.
+poco_ai_v1_g2f_namespace_identity_contract_candidate = true
+poco_ai_v1_g2f_openat_descriptor_contract_candidate = true
+poco_ai_v1_g2f_external_monotonic_anchor_contract_candidate = true
+poco_ai_v1_g2f_namespace_process_integration = false
+poco_ai_v1_g2f_external_anchor_backend = false
+poco_ai_v1_g2f_production_activation = false
 poco_ai_v1_g2_global_complete = false
 
 [[bin]]
