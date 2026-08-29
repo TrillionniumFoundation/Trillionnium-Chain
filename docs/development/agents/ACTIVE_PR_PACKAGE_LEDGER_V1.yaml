@@ -1,6 +1,6 @@
 schema: trnm-active-pr-package-ledger-v1
 repository: TrillionniumFoundation/Trillionnium-Chain
-observed_at_utc: '2026-08-29T13:30:59Z'
+observed_at_utc: '2026-08-29T13:42:30Z'
 assessed_plan:
   ref: docs/chain-poco-bft-mainline-20260825
   commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
@@ -12,9 +12,9 @@ latest_candidate:
   tree: efea864cb2fbc4835a59a089b3dbab8934e71231
 control_package_evidence:
   source_head_ref: docs/agent-fleet-plan-v1-20260829
-  source_head_commit: 8bfd73f0cf1b785a29ae212f13212e51fe34231e
-  source_head_tree: cfedd363147934f50d1352dae31b7d87d79aa8d9
-  workflow_runs:
+  source_head_commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
+  source_head_tree: f011d58c4f140612d277282b66aa009de7b2aa13
+  historical_workflow_runs_not_evidence:
   - name: TRNM payload replay recovery v1 gate
     run_id: 33249877031
     job_id: 99093668532
@@ -30,6 +30,7 @@ control_package_evidence:
   - name: TRNM replay-to-Core coordinator v1 gate
     run_id: 33250709393
     status: queued
+  workflow_runs: []
 ownership_resolutions:
 - surface: docs/development/CURRENT_SNAPSHOT_V1.*
   previous_writers:
@@ -171,29 +172,6 @@ open_pull_requests:
   merge_queue_eligible: false
   accepts_new_package_writes: false
   next_action: Use as an exact candidate baseline only; all remaining Plan packages require separate owner branches and PRs.
-- number: 8
-  title: 'docs(agent): operationalize the full Plan with an 18-agent gap-closure fleet'
-  state: open
-  draft: true
-  mergeable: true
-  package_id: AGENT_CONTROL_PLANE_V1
-  owner: A00
-  owner_kind: fleet-agent
-  base:
-    ref: feature/chain-g1-r4c-full-gap-closure-20260829
-    pr_bound_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
-    pr_bound_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
-    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
-    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
-    status: exact
-  head:
-    ref: docs/agent-fleet-plan-v1-20260829
-    commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
-    tree: 55dff92ec01c4cdde93d29cee502e647251284f0
-  classification: active-package
-  merge_queue_eligible: false
-  terminal_state: WORKING
-  next_action: Finish exact-head CI, publish this ledger, and request independent review; never self-merge.
 - number: 9
   title: '[G1-R4B] Candidate application finalization queue/readback'
   state: open
@@ -567,6 +545,56 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
   next_action: Regenerate the snapshot after A00's exact-head gate repair, then obtain independent G0 replay and review.
+- number: 24
+  title: 'fix(chain): fence semantic signer watermark facts before signing'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R4_SAFETY_CHECKPOINT_V1
+  owner: A05
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    pr_bound_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    pr_bound_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    status: exact
+  head:
+    ref: feature/chain-g1-r4-safety-checkpoint-20260829
+    commit: d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c
+    tree: c0eecdaca70750c94fd33f9be57e794d7aa17dea
+  relation_to_latest_candidate:
+    kind: direct-candidate-child
+  classification: blocked-upstream-candidate
+  merge_queue_eligible: false
+  terminal_state: BLOCKED_UPSTREAM
+  next_action: Resolve A03/A04 admission and application bridges, external anchor/custody, and A06 process/clean-clone evidence before any G1 exit claim.
+- number: 25
+  title: '[A00] Repair ownership gate and refresh live PR ledger'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: AGENT_CONTROL_PLANE_V1
+  owner: A00
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    pr_bound_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    pr_bound_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    status: exact
+  head:
+    ref: docs/chain-agent-fleet-plan-v1-20260829
+    commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
+    tree: f011d58c4f140612d277282b66aa009de7b2aa13
+  relation_to_latest_candidate:
+    kind: direct-candidate-child
+  classification: active-package
+  merge_queue_eligible: false
+  terminal_state: WORKING
+  next_action: Obtain independent A00 review and exact-head CI; never self-merge or promote truth.
 terminal_pull_requests:
 - number: 6
   title: 'merge(chain): unify G1-R4A crash matrix with R4B authority seams'
@@ -600,7 +628,7 @@ known_control_gaps:
 - id: A00_INDEPENDENT_REVIEW
   status: OPEN
   owner: reviewer-not-A00
-  next_action: Review PR 8 exact head after the ledger/ownership commit and its exact-head control gate succeed.
+  next_action: Review PR 25 exact head after the ledger/ownership commit and its exact-head control gate succeed.
 - id: G15_STACK_BASE_DRIFT
   status: OPEN
   owner: A08
@@ -618,6 +646,6 @@ known_control_gaps:
 observation_source:
   agent_id: A00
   package_id: AGENT_CONTROL_PLANE_V1
-  head_ref: docs/agent-fleet-plan-v1-20260829
-  head_commit: d2c14fa686a7836e607661aaf1da34f971d12bc4
-  head_tree: 86d17fbb369481a66684078ea1acef9550d36dad
+  head_ref: docs/chain-agent-fleet-plan-v1-20260829
+  head_commit: e1d4106db7b5d46aab2b6213a2e182a82329a020
+  head_tree: f011d58c4f140612d277282b66aa009de7b2aa13
