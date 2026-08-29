@@ -1,0 +1,15 @@
+{
+  "schema":"trnm-cev1-verification-profile-registry-v1",
+  "status":"candidate-non-normative",
+  "fallback_allowed":false,
+  "profiles":[
+    {"id":"deterministic-reexecution-v1","class":"objective","state":"design-only","globally_enabled":false,"required_evidence":["runtime_digest","input_commitment","output_commitment","execution_trace"],"result_authority":false,"settlement_authority":false},
+    {"id":"reproducible-ml-v1","class":"objective-with-tolerance-contract","state":"design-only","globally_enabled":false,"required_evidence":["model_digest","data_digest","tokenizer_digest","runtime_digest","seed","numeric_policy"],"result_authority":false,"settlement_authority":false},
+    {"id":"zk-v1","class":"objective-cryptographic","state":"design-only","globally_enabled":false,"required_evidence":["proof","public_statement","verification_key_digest","setup_or_image_digest"],"result_authority":false,"settlement_authority":false},
+    {"id":"tee-v1","class":"hardware-attested","state":"design-only","globally_enabled":false,"required_evidence":["quote_or_report","measurement","tcb_status","freshness","revocation_state"],"result_authority":false,"settlement_authority":false},
+    {"id":"stake-quorum-v1","class":"economic-attestation","state":"candidate-local","globally_enabled":false,"required_evidence":["statement_digest","evidence_root","unique_weighted_claims","verifier_set_hash"],"result_authority":false,"settlement_authority":false},
+    {"id":"optimistic-v1","class":"objective-if-fraud-proof-complete","state":"design-only","globally_enabled":false,"required_evidence":["bonded_assertion","fraud_proof_vm","challenge_window"],"result_authority":false,"settlement_authority":false},
+    {"id":"subjective-v1","class":"subjective","state":"design-only","globally_enabled":false,"required_evidence":["declared_evaluator_policy","audit_trail"],"result_authority":false,"settlement_authority":false,"objective_settlement_forbidden":true,"poco_weight_forbidden":true}
+  ]
+}
+
