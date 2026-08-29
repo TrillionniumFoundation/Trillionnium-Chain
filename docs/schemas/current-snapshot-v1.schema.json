@@ -5,27 +5,53 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema",
-    "as_of",
-    "repository",
-    "default_branch",
-    "default_branch_head_observed",
-    "latest_candidate",
-    "assessed_plan_source",
-    "documentation_upgrade",
-    "machine_truth",
-    "current_promotion_critical_stack",
-    "truth_rule"
+    "schema", "as_of", "repository", "default_branch",
+    "default_branch_head_observed", "latest_candidate", "assessed_plan_source",
+    "documentation_upgrade", "observed_control_plane", "revalidated_candidate_chain",
+    "external_blockers", "evidence_contract", "machine_truth",
+    "current_promotion_critical_stack", "truth_rule"
   ],
   "properties": {
     "schema": { "const": "trnm-current-snapshot-v1" },
-    "as_of": { "type": "string", "format": "date" },
+    "as_of": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
     "repository": { "const": "TrillionniumFoundation/Trillionnium-Chain" },
-    "default_branch": { "type": "string", "minLength": 1 },
+    "default_branch": { "const": "main" },
     "default_branch_head_observed": { "$ref": "#/$defs/sha40" },
-    "latest_candidate": {
-      "type": "object",
-      "additionalProperties": false,
+    "latest_candidate": { "$ref": "#/$defs/candidate" },
+    "assessed_plan_source": { "$ref": "#/$defs/assessed" },
+    "documentation_upgrade": { "$ref": "#/$defs/documentation" },
+    "observed_control_plane": { "$ref": "#/$defs/control" },
+    "revalidated_candidate_chain": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/package" }
+    },
+    "external_blockers": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^EXT-[A-Z0-9-]+$" }
+    },
+    "evidence_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["handoff_schema", "handoff_checker", "exact_head_completed_success_required", "candidate_acceptance_implies_gate_exit"],
+      "properties": {
+        "handoff_schema": { "const": "docs/schemas/agent-handoff-v1.schema.json" },
+        "handoff_checker": { "const": "scripts/ci/check_agent_handoff_v1.py" },
+        "exact_head_completed_success_required": { "const": true },
+        "candidate_acceptance_implies_gate_exit": { "const": false }
+      }
+    },
+    "machine_truth": { "$ref": "#/$defs/machine" },
+    "current_promotion_critical_stack": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "truth_rule": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "sha40": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "candidate": {
+      "type": "object", "additionalProperties": false,
       "required": ["ref", "commit", "tree", "pull_request", "status", "checks"],
       "properties": {
         "ref": { "type": "string", "minLength": 1 },
@@ -36,9 +62,8 @@
         "checks": { "type": "string", "minLength": 1 }
       }
     },
-    "assessed_plan_source": {
-      "type": "object",
-      "additionalProperties": false,
+    "assessed": {
+      "type": "object", "additionalProperties": false,
       "required": ["ref", "commit", "tree", "authority_status"],
       "properties": {
         "ref": { "type": "string", "minLength": 1 },
@@ -47,9 +72,8 @@
         "authority_status": { "type": "string", "minLength": 1 }
       }
     },
-    "documentation_upgrade": {
-      "type": "object",
-      "additionalProperties": false,
+    "documentation": {
+      "type": "object", "additionalProperties": false,
       "required": ["branch", "base_commit", "classification"],
       "properties": {
         "branch": { "type": "string", "minLength": 1 },
@@ -57,12 +81,39 @@
         "classification": { "const": "subordinate-documentation-candidate" }
       }
     },
-    "machine_truth": {
-      "type": "object",
-      "additionalProperties": false,
+    "control": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ref", "commit", "tree", "pull_request", "status"],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/sha40" },
+        "tree": { "$ref": "#/$defs/sha40" },
+        "pull_request": { "type": "integer", "minimum": 1 },
+        "status": { "enum": ["candidate-unaccepted", "tested-unaccepted", "accepted"] }
+      }
+    },
+    "package": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent", "package_id", "pull_request", "ref", "commit", "tree", "workflow_run", "workflow_status", "workflow_conclusion", "candidate_status", "accepted"],
+      "properties": {
+        "agent": { "type": "string", "pattern": "^A(0[0-9]|1[0-7])$" },
+        "package_id": { "type": "string", "minLength": 1 },
+        "pull_request": { "type": "integer", "minimum": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/sha40" },
+        "tree": { "$ref": "#/$defs/sha40" },
+        "workflow_run": { "type": "integer", "minimum": 1 },
+        "workflow_status": { "const": "completed" },
+        "workflow_conclusion": { "const": "success" },
+        "candidate_status": { "enum": ["MODULE_CLOSED_CANDIDATE", "STOP_CONDITION", "BLOCKED_UPSTREAM"] },
+        "accepted": { "const": false }
+      }
+    },
+    "machine": {
+      "type": "object", "additionalProperties": false,
       "required": ["stage", "consensus_mainline", "production_candidate", "production_consensus_activation", "v1_normative_freeze", "v1_node_support", "v1_release_ready"],
       "properties": {
-        "stage": { "type": "string", "minLength": 1 },
+        "stage": { "const": "G1-native-host-incomplete" },
         "consensus_mainline": { "const": "native-poco-bft" },
         "production_candidate": { "const": false },
         "production_consensus_activation": { "const": false },
@@ -70,16 +121,6 @@
         "v1_node_support": { "const": false },
         "v1_release_ready": { "const": false }
       }
-    },
-    "current_promotion_critical_stack": {
-      "type": "array",
-      "minItems": 1,
-      "uniqueItems": true,
-      "items": { "type": "string", "minLength": 1 }
-    },
-    "truth_rule": { "type": "string", "minLength": 1 }
-  },
-  "$defs": {
-    "sha40": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+    }
   }
 }

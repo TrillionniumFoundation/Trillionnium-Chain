@@ -1,16 +1,16 @@
 {
   "schema": "trnm-current-snapshot-v1",
-  "as_of": "2026-08-29",
+  "as_of": "2026-08-30",
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "default_branch": "main",
-  "default_branch_head_observed": "e73d1a930991f0e308bf72854b334b6191c7fcc3",
+  "default_branch_head_observed": "b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9",
   "latest_candidate": {
     "ref": "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829",
     "commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
     "tree": "efea864cb2fbc4835a59a089b3dbab8934e71231",
     "pull_request": 7,
     "status": "draft-candidate-unaccepted",
-    "checks": "no accepted exact-commit evidence recorded by this snapshot"
+    "checks": "frozen G1 integration baseline; no Gate acceptance or release authority"
   },
   "assessed_plan_source": {
     "ref": "refs/heads/docs/chain-poco-bft-mainline-20260825",
@@ -19,9 +19,38 @@
     "authority_status": "provisional-until-committed-and-signed"
   },
   "documentation_upgrade": {
-    "branch": "docs/agent-fleet-plan-v1-20260829",
-    "base_commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
+    "branch": "docs/chain-agent-fleet-plan-v1-20260829",
+    "base_commit": "22a096c2dceaa85b6ed98fa4875969f6209c4823",
     "classification": "subordinate-documentation-candidate"
+  },
+  "observed_control_plane": {
+    "ref": "refs/heads/docs/chain-agent-fleet-plan-v1-20260829",
+    "commit": "22a096c2dceaa85b6ed98fa4875969f6209c4823",
+    "tree": "9151d521c3ef158986d0259d26e1e69894a61f89",
+    "pull_request": 25,
+    "status": "candidate-unaccepted"
+  },
+  "revalidated_candidate_chain": [
+    {"agent":"A12","package_id":"G2B_AGENT_MARKET_V1","pull_request":33,"ref":"refs/heads/feature/chain-a12-g2b-agent-market-v2-20260830","commit":"d72848ef5f5f7567eafba97a67921a81b6c8a252","tree":"fd069546f33335109587d4b06d153674fb2e7faf","workflow_run":33281216215,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"MODULE_CLOSED_CANDIDATE","accepted":false},
+    {"agent":"A13","package_id":"G2D_EXECUTION_MVCC_FEE_V1","pull_request":34,"ref":"refs/heads/feature/chain-a13-g2d-execution-mvcc-fee-v2-20260830","commit":"ee252f464d460c399b7d109c17dc9f5456bbf29a","tree":"a8c7d45137ffd8cd8e7144a66935f1bb45c71803","workflow_run":33281298494,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"MODULE_CLOSED_CANDIDATE","accepted":false},
+    {"agent":"A14","package_id":"G2C_VERIFY_CHALLENGE_V1","pull_request":35,"ref":"refs/heads/feature/chain-a14-g2c-verify-challenge-v2-20260830","commit":"1f66963784ebec21a7898f893e47cfc3190f59e9","tree":"96565090550aebd626e86b3196f4678fa595a00f","workflow_run":33281402403,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"MODULE_CLOSED_CANDIDATE","accepted":false},
+    {"agent":"A15","package_id":"G2E_SETTLEMENT_ECONOMICS_V1","pull_request":36,"ref":"refs/heads/feature/chain-a15-g2e-settlement-v2-20260830","commit":"0d78161b73a7c709506ec16709d40d434da56918","tree":"f715fb72af40f474f880db374a0d75b3c945f7e8","workflow_run":33281501900,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"MODULE_CLOSED_CANDIDATE","accepted":false},
+    {"agent":"A16","package_id":"G2F_WHOLE_NODE_LIGHT_CLIENT_V1","pull_request":37,"ref":"refs/heads/feature/chain-a16-g2f-whole-node-light-client-v2-20260830","commit":"316b2d4227764e1a2174f46c57a25272ced96f82","tree":"76f2bd4075d961c3a32df66d5bfdee9ccd5181b7","workflow_run":33281606861,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"STOP_CONDITION","accepted":false},
+    {"agent":"A17","package_id":"G3_G5_BENCH_SECURITY_OPS_V1","pull_request":38,"ref":"refs/heads/feature/chain-a17-g3-g5-bench-security-ops-v2-20260830","commit":"f8c67e486f4318fe9ba83a6ec046698b038806a2","tree":"149ad9128de0ee10a3eee2b1ea4f568e16ac76ea","workflow_run":33281014799,"workflow_status":"completed","workflow_conclusion":"success","candidate_status":"MODULE_CLOSED_CANDIDATE","accepted":false}
+  ],
+  "external_blockers": [
+    "EXT-REVIEW-001",
+    "EXT-G1-CAMPAIGN-001",
+    "EXT-ANCHOR-HSM-001",
+    "EXT-POWERLOSS-001",
+    "EXT-AUDIT-001",
+    "EXT-SOAK-ACTIVATION-001"
+  ],
+  "evidence_contract": {
+    "handoff_schema": "docs/schemas/agent-handoff-v1.schema.json",
+    "handoff_checker": "scripts/ci/check_agent_handoff_v1.py",
+    "exact_head_completed_success_required": true,
+    "candidate_acceptance_implies_gate_exit": false
   },
   "machine_truth": {
     "stage": "G1-native-host-incomplete",
@@ -33,11 +62,12 @@
     "v1_release_ready": false
   },
   "current_promotion_critical_stack": [
-    "G0 truth/provenance closure",
-    "G1-R2 recovery/Core acknowledgement",
-    "G1-R3 ordinary proposal authority",
-    "G1-R4 application/Safety/checkpoint/multi-block/anti-rollback",
-    "G1-R5 native 4/7-node evidence"
+    "G0 independent truth/provenance acceptance",
+    "G1 exact offline-cache epoch and accepted recovery/finality/Safety evidence",
+    "G1-R5 real 4/7-node multi-host campaign",
+    "G1.5/G2 independent interface acceptance",
+    "external monotonic anchor and production HSM/KMS custody",
+    "independent audits, physical-fault evidence, 72h/7d/30d soak and governance activation"
   ],
-  "truth_rule": "branch tip, source, tested, assessed and release candidate identities are distinct and must never be silently substituted"
+  "truth_rule": "default tip, control tip, assessed source, implementation source, publication head, exact-head replay, independent acceptance, Gate exit, release authority and production activation are distinct identities and must never be silently substituted"
 }
