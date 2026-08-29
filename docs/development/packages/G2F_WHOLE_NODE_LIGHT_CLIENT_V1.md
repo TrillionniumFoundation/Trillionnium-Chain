@@ -25,8 +25,8 @@ be silently substituted for it.
 | base commit | `6e0189e351015ef3230f217ca7ff86149baedcf0` |
 | base tree | `efea864cb2fbc4835a59a089b3dbab8934e71231` |
 | package branch | `feature/chain-g2f-whole-node-light-client-v1-20260829` |
-| implementation head (evidence snapshot) | `6f7d0f6b43b11b59b03e417154149c1d2c91aafa` |
-| implementation tree (evidence snapshot) | `a03b1aadf86355eb255ce04a2fb8474046c631d6` |
+| implementation head (evidence snapshot) | `c59ca9de4f4e46ae1e221e998b7623ab46b91af5` |
+| implementation tree (evidence snapshot) | `69c0561cbaa2f5d2f3d5f16a0a105da6ef5108d2` |
 | assessed Plan ref | `refs/heads/docs/chain-poco-bft-mainline-20260825` |
 | assessed Plan commit/tree | `8198fea0307eb368df34ff77ffc272a6b0e655ec` / `a1be71bba1b54c428493d186fafb656d081b31a9` |
 | Plan SHA-256 | `aba99ae6be2ff8a4aac4d6355e1f778e49a7075a80b09453f16984f85bb0b6cd` |
@@ -148,7 +148,7 @@ remain scoped candidate-non-normative:
 | Namespace/anchor contract (package working tree) | candidate `PocoNodeG2fNamespaceGuardV1`/`PocoNodeG2fFileHandleV1` openat identity and `PocoNodeG2fAnchorRecordV1` successor-CAS contract with unit mutants | feature-gated candidate contract only; no external HSM/KMS backend, normal-node process wiring or production authority |
 | Order-state membership writer | candidate tag-50 writer and canonical receipt projection | local writer does not commission canonical Node Order state or bind the application JMT |
 | Light-client checker | standalone Python Order-finality checker and bounded Rust verifier are present as candidate inputs | no accepted two-client end-to-end W3–W7 replay; `global_light_client_complete=false` |
-| G2F fixture conformance runner | 25 discovered tests, 21 wire mutants, 7,548 A/B differential samples and 3,000 state-sync mutants; both clients agree and reject negatives | fixture-only synthetic carrier; no accepted upstream interfaces, real W0–W7 trace, 64-epoch campaign or production authority |
+| G2F fixture conformance runner | 28 discovered and executed tests, 21 wire mutants, 7,548 A/B differential samples and 3,000 state-sync mutants; both clients agree and reject negatives | fixture-only synthetic carrier; no accepted upstream interfaces, real W0–W7 trace, 64-epoch campaign or production authority |
 
 All counts above are observations from candidate metadata, status tranches and
 source boundary scripts. They are not signed `TrnmGateEvidenceV1` bundles. The
@@ -192,7 +192,9 @@ root, caller-supplied sibling list or mismatched Order height.
 epoch, validator-set hash, manifest digest, file/device/inode/link-count/effective-UID identity and
 the checkpoint digest to an authenticated store outside the rollbackable DB
 (HSM/KMS, remote signer, or equivalent authenticated quorum). The anchor is
-successor-only and monotonic. `DescriptorNamespaceIdentityV1` (candidate code
+successor-only and monotonic; the Python fixture additionally requires a
+contiguous generation successor and rejects same-height equivocation. These
+are candidate checks, not an external backend. `DescriptorNamespaceIdentityV1` (candidate code
 names: `PocoNodeG2fNamespaceGuardV1` and `PocoNodeG2fFileHandleV1`) retains the
 directory/file descriptors used for all subsequent operations and revalidates
 identity before any mutable pragma, signing, voting, GC, sync or settlement.
@@ -252,13 +254,14 @@ UntrustedManifest -> VerifiedManifest -> IsolatedStage -> FsyncedStage
   -> AtomicSwap -> FreshSourceTargetReadback -> SyncEligible
 ```
 
-The candidate Rust anchor record currently binds manifest and filesystem
-identity but does not yet carry a canonical checkpoint/state-root field or an
-explicit scope argument on the initial backend CAS. The descriptor sampler
-also cannot detect an owner-unsequenced same-size A→B→A write, and its public
-identity deserializers are not an authenticator. These remain retained
-mutants, so the namespace/anchor rows stay `working` and no anti-rollback
-authority is claimed.
+The Python state-sync model now recomputes its candidate header/checkpoint and
+retains context, epoch and validator identity through the staged anchor. The
+candidate Rust anchor record still does not yet carry a canonical
+checkpoint/state-root field or an explicit scope argument on the initial
+backend CAS. The descriptor sampler also cannot detect an owner-unsequenced
+same-size A→B→A write, and its public identity deserializers are not an
+authenticator. These remain retained mutants, so the namespace/anchor rows
+stay `working` and no anti-rollback authority is claimed.
 
 `SyncEligible` is not signing/voting eligibility; both require the external
 anchor and process-owner proof. A failed check never falls back to a local
@@ -343,13 +346,15 @@ G2F-M-JMT-SIBLING-ORIENTATION    G2F-M-JMT-ORDER-HEIGHT
 G2F-M-ANCHOR-LOWER-GENERATION    G2F-M-ANCHOR-OLD-EPOCH
 G2F-M-ANCHOR-DB-ONLY-ROLLBACK     G2F-M-ANCHOR-MANIFEST-DRIFT
 G2F-M-ANCHOR-CHECKPOINT-BINDING   G2F-M-ANCHOR-SCOPE
+G2F-M-ANCHOR-SAME-HEIGHT-FORK     G2F-M-ANCHOR-GENERATION-GAP
 G2F-M-NAMESPACE-SAME-UID-RENAME   G2F-M-NAMESPACE-COPY
 G2F-M-NAMESPACE-ANCESTOR-SWAP     G2F-M-NAMESPACE-LINK-COUNT
 G2F-M-NAMESPACE-ABA               G2F-M-NAMESPACE-UNBOUNDED-SIZE
 G2F-M-NAMESPACE-FORGED-IDENTITY
 G2F-M-SYNC-STALE-CHECKPOINT       G2F-M-SYNC-CHUNK-ROOT
 G2F-M-SYNC-WAL                    G2F-M-SYNC-PARTIAL-SWAP
-G2F-M-SYNC-DOWNGRADE              G2F-M-LC-WRONG-EPOCH
+G2F-M-SYNC-DOWNGRADE              G2F-M-SYNC-CONTEXT-SCHEMA
+G2F-M-SYNC-HEADER-HEIGHT-BINDING  G2F-M-LC-WRONG-EPOCH
 G2F-M-LC-INSUFFICIENT-WEIGHT      G2F-M-LC-COMPOSITE-ROOT
 G2F-M-LC-STALE-ANCHOR             G2F-M-LC-DOWNGRADE
 G2F-M-TRACE-BATCHREF               G2F-M-TRACE-ORDER-HEIGHT
@@ -363,13 +368,12 @@ G2F-M-UPGRADE-OLD-VERSION          G2F-M-UPGRADE-OLD-ANCHOR
 G2F-M-UPGRADE-MISSING-EPOCH        G2F-M-UPGRADE-VALIDATOR-SUBSTITUTION
 ```
 
-The candidate Rust anchor record currently binds manifest and filesystem
-identity but does not yet carry a canonical checkpoint/state-root field or an
-explicit scope argument on the initial backend CAS. The descriptor sampler
-also cannot detect an owner-unsequenced same-size A→B→A write, and its public
-identity deserializers are not an authenticator. These remain retained
-mutants, so the namespace/anchor rows stay `working` and no anti-rollback
-authority is claimed.
+The Python model's candidate header/height/context checks are unit-tested, but
+the Rust descriptor/anchor contract still lacks a canonical checkpoint field,
+an explicit initial scope argument and an authenticated external backend.
+Same-size owner-unsequenced A→B→A and forged-identity mutants remain retained;
+the namespace/anchor rows stay `working` and no anti-rollback authority is
+claimed.
 
 ## 10. Fault, crash and replay matrix
 
@@ -428,13 +432,18 @@ control ref: live 8bfd73f0cf1b785a29ae212f13212e51fe34231 /
 sha256 plan/evidence/protocol/machine/Cargo.lock: matched manifest values
 JSON/TOML package files: PASS (`python3 -m json.tool`; Python `tomllib` parse)
 light-client shell: Python checker PASS; OpenSSL cross-check NOT RUN (`xxd` unavailable, exit 127)
-candidate conformance runner: PASS (25 discovered tests; 21 wire mutants;
+candidate conformance runner: PASS (28 discovered and executed tests; 21 wire mutants;
   7,548 differential samples with 0 exceptions/0 disagreements; 3,000
   state-sync mutants rejected; staged swap/CAS and residue fences PASS)
 normal cargo test/clippy: NOT RUN (`cargo` executable unavailable in the
   default environment); isolated Rust 1.95 candidate feature check/test/clippy:
-  PASS (134 tests, `-D warnings`), not a normal-build or release assertion
+  PASS (135 tests, `-D warnings`), not a normal-build or release assertion
 accepted evidence/signatures: none
+GitHub Actions historical check on the pre-follow-up published head
+`06d71c8eab3c05547f5d5c0b564a8985d3cff304` failed job `99099957089`
+(`Payload replay and G1-R4A recovery contracts`) at the payload-replay truth
+boundary; it is retained as an external CI failure and is not represented as a
+passing source result.
 ```
 
 The absence of `cargo` is an environment limitation, not a source pass/fail;

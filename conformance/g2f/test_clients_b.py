@@ -214,6 +214,7 @@ def _expected_sync_args(f: Any) -> dict[str, Any]:
     return {
         "expected_block_id": bytes.fromhex(f.manifest["block_id"]),
         "expected_root": bytes.fromhex(f.manifest["state_root"]),
+        "expected_height": f.height,
     }
 
 
@@ -464,22 +465,61 @@ class StateSyncConformanceTests(unittest.TestCase):
 
 
 def run_suite() -> dict[str, Any]:
-    """Run the suite and return machine-readable candidate evidence."""
+    """Run every discovered G2F test module and return candidate evidence.
+
+    The first version of the harness loaded only this module while reporting
+    the count from discovery.  That made the evidence count look complete
+    even if an atomicity or state-sync test failed.  Keep discovery and
+    execution on the same loader so the result is fail-closed and auditable.
+    """
 
     stream = __import__("io").StringIO()
-    module = sys.modules[__name__]
+    loader = unittest.defaultTestLoader
+    root = Path(__file__).resolve().parents[2]
+    try:
+        discovered = loader.discover(
+            str(root / "conformance" / "g2f"),
+            pattern="test_*.py",
+            top_level_dir=str(root),
+        )
+    except Exception as exc:  # pragma: no cover - discovery is evidence
+        stream.write(f"DISCOVERY ERROR: {type(exc).__name__}: {exc}\n")
+        return {
+            "schema": "trnm-g2f-conformance-result-v1",
+            "status": "FAIL",
+            "classification": "candidate-non-normative",
+            "authority": "candidate",
+            "tests_run": 0,
+            "discovered_tests": 0,
+            "tests_run_positive": False,
+            "failures": 0,
+            "errors": 1,
+            "output": stream.getvalue(),
+            "clients": ["client-a", "client-b"],
+            "proof_families": ["order", "da", "execution", "result", "settlement", "upgrade"],
+            "trace_stages": list(range(8)),
+            "known_nonclaims": [
+                "not a production signer or activation path",
+                "candidate fixture is not a normative W3-W7 wire",
+                "no 64-epoch/10000-header campaign",
+            ],
+        }
     result = unittest.TextTestRunner(stream=stream, verbosity=0).run(
-        unittest.defaultTestLoader.loadTestsFromModule(module)
+        discovered
     )
-    tests_run_positive = result.testsRun > 0
+    discovered_tests = discovered.countTestCases()
+    tests_run_positive = result.testsRun > 0 and result.testsRun == discovered_tests
     if not tests_run_positive:
-        stream.write("ASSERTION FAILED: tests_run must be greater than zero\n")
+        stream.write(
+            "ASSERTION FAILED: executed tests must equal discovered tests and be > 0\n"
+        )
     return {
         "schema": "trnm-g2f-conformance-result-v1",
         "status": "PASS" if result.wasSuccessful() and tests_run_positive else "FAIL",
         "classification": "candidate-non-normative",
         "authority": "candidate",
         "tests_run": result.testsRun,
+        "discovered_tests": discovered_tests,
         "tests_run_positive": tests_run_positive,
         "failures": len(result.failures),
         "errors": len(result.errors),

@@ -98,9 +98,15 @@ class SparseProof:
 
 
 def state_key(object_kind: int, object_id: bytes) -> bytes:
-    if not 0 < object_kind <= 0xFFFF or len(object_id) != 32:
+    if (
+        isinstance(object_kind, bool)
+        or not isinstance(object_kind, int)
+        or not 0 < object_kind <= 0xFFFF
+        or not isinstance(object_id, (bytes, bytearray))
+        or len(object_id) != 32
+    ):
         raise StateTreeError("invalid typed object id")
-    return digest("trnm.poco-ai.state-key.v1", _u16(object_kind) + object_id)
+    return digest("trnm.poco-ai.state-key.v1", _u16(object_kind) + bytes(object_id))
 
 
 def leaf_hash(record: StateRecord) -> bytes:
@@ -129,7 +135,13 @@ def empty_hashes() -> tuple[bytes, ...]:
 
 
 def _checked_records(records: Iterable[StateRecord]) -> tuple[StateRecord, ...]:
-    ordered = tuple(sorted(records, key=lambda record: record.key))
+    try:
+        candidate = tuple(records)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise StateTreeError("records are not iterable") from exc
+    if any(not isinstance(record, StateRecord) for record in candidate):
+        raise StateTreeError("record type")
+    ordered = tuple(sorted(candidate, key=lambda record: record.key))
     if len({record.key for record in ordered}) != len(ordered):
         raise StateTreeError("duplicate state key")
     for left, right in zip(ordered, ordered[1:]):
@@ -148,6 +160,11 @@ def encode_records(records: Iterable[StateRecord]) -> bytes:
 
 
 def decode_records(payload: bytes, *, max_records: int = 1024) -> tuple[StateRecord, ...]:
+    if not isinstance(payload, (bytes, bytearray)):
+        raise StateTreeError("record payload type")
+    payload = bytes(payload)
+    if isinstance(max_records, bool) or not isinstance(max_records, int) or max_records < 0:
+        raise StateTreeError("record count bound")
     if len(payload) < 2:
         raise StateTreeError("truncated record list")
     count = struct.unpack_from("<H", payload, 0)[0]
@@ -237,19 +254,36 @@ def verify_membership(
     proof: SparseProof,
     expected_root: bytes,
 ) -> bool:
-    if len(expected_root) != 32 or len(proof.siblings) != DEPTH:
-        return False
-    if proof.object_version is None or proof.value is None:
-        return False
     try:
+        if not isinstance(proof, SparseProof):
+            return False
+        if (
+            not isinstance(expected_root, (bytes, bytearray))
+            or len(expected_root) != 32
+            or not isinstance(object_kind, int)
+            or isinstance(object_kind, bool)
+            or not 0 < object_kind <= 0xFFFF
+            or not isinstance(object_id, (bytes, bytearray))
+            or len(object_id) != 32
+            or not isinstance(proof.siblings, (tuple, list))
+            or len(proof.siblings) != DEPTH
+            or proof.object_version is None
+            or proof.value is None
+        ):
+            return False
+        if any(
+            not isinstance(sibling, (bytes, bytearray)) or len(sibling) != 32
+            for sibling in proof.siblings
+        ):
+            return False
         target = StateRecord(object_kind, object_id, proof.object_version, proof.value)
     except StateTreeError:
+        return False
+    except (TypeError, ValueError, OverflowError):
         return False
     running = leaf_hash(target)
     key_number = int.from_bytes(target.key, "big")
     for level, sibling in enumerate(proof.siblings):
-        if len(sibling) != 32:
-            return False
         if (key_number >> level) & 1:
             left, right = sibling, running
         else:

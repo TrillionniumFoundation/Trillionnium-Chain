@@ -19,6 +19,7 @@ from typing import Any, Mapping, Sequence
 
 
 DEPTH = 256
+TREE_VERSION = 0
 MAX_MANIFEST_BYTES = 256 * 1024
 MAX_CHUNK_BYTES = 1024 * 1024
 MAX_CHUNKS = 64
@@ -113,6 +114,29 @@ _CONTEXT_HASH_FIELDS = (
     "verification_registry_hash",
     "fee_schedule_hash",
 )
+_CONTEXT_KEYS = frozenset(("chain_id", "epoch", *_CONTEXT_HASH_FIELDS))
+
+
+def _canonical_header_id(context_hash: bytes, height: int, state_root: bytes) -> bytes:
+    """Derive the candidate header identifier from the complete context cut.
+
+    This is intentionally kept local rather than importing the fixture/wire
+    encoder.  State-sync verification must recompute the binding itself so a
+    caller cannot make an arbitrary ``expected_block_id`` authoritative.
+    """
+
+    if len(context_hash) != 32 or len(state_root) != 32:
+        raise StateSyncError("header binding shape")
+    return _digest(
+        "trnm.poco-ai.block-header.v1",
+        context_hash + height.to_bytes(8, "little") + state_root + TREE_VERSION.to_bytes(2, "little"),
+    )
+
+
+def _checkpoint_id(block_id: bytes, state_root: bytes) -> bytes:
+    if len(block_id) != 32 or len(state_root) != 32:
+        raise StateSyncError("checkpoint binding shape")
+    return _digest("trnm.poco-ai.epoch-checkpoint-id.candidate.v1", block_id + state_root)
 
 
 def _validate_context(context: Mapping[str, Any]) -> tuple[str, int]:
@@ -120,6 +144,11 @@ def _validate_context(context: Mapping[str, Any]) -> tuple[str, int]:
 
     if not isinstance(context, Mapping):
         raise StateSyncError("context type")
+    try:
+        if frozenset(context.keys()) != _CONTEXT_KEYS:
+            raise StateSyncError("context fields")
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise StateSyncError("context fields") from exc
     chain = context.get("chain_id")
     if not isinstance(chain, str) or not chain or any(ord(char) > 127 for char in chain):
         raise StateSyncError("context chain")
@@ -251,6 +280,13 @@ class ManifestView:
     epoch: int
     chunk_count: int
     records: tuple[tuple[int, bytes, int, bytes, bytes], ...]
+    # These fields are retained in the verified view so the staged swap and
+    # external anchor can enforce the same context/checkpoint cut that was
+    # authenticated by the manifest.  They are appended to preserve the
+    # earlier positional constructor shape for candidate callers.
+    context_digest: bytes = ZERO32
+    validator_set_hash: bytes = ZERO32
+    checkpoint_digest: bytes = ZERO32
 
 
 def verify_manifest(
@@ -260,6 +296,7 @@ def verify_manifest(
     *,
     expected_block_id: bytes,
     expected_root: bytes,
+    expected_height: int | None = None,
 ) -> ManifestView:
     """Authenticate manifest metadata, chunks, and exact application root."""
 
@@ -305,6 +342,11 @@ def verify_manifest(
     if _hash_hex(value["context_digest"], "manifest context digest") != context_hash:
         raise StateSyncError("manifest context binding")
     height = _u64(value["height"], "manifest height", minimum=1)
+    if expected_height is None:
+        raise StateSyncError("expected height required")
+    expected_height = _u64(expected_height, "expected height", minimum=1)
+    if height != expected_height:
+        raise StateSyncError("manifest height binding")
     epoch = _u64(value["epoch"], "manifest epoch")
     if epoch != _u64(context.get("epoch"), "context epoch"):
         raise StateSyncError("manifest epoch binding")
@@ -312,9 +354,14 @@ def verify_manifest(
     root = _hash_hex(value["state_root"], "manifest state root")
     if block_id != expected_block_id or root != expected_root:
         raise StateSyncError("manifest order binding")
-    if _hash_hex(value["epoch_checkpoint_id"], "manifest checkpoint") != _digest(
-        "trnm.poco-ai.epoch-checkpoint-id.candidate.v1", block_id + root
-    ):
+    # The external expected block id is an additional predecessor binding,
+    # not a substitute for deriving the candidate header from the complete
+    # context/height/application root.  Without this recomputation a caller
+    # could supply a self-consistent but forged height or block id.
+    if block_id != _canonical_header_id(context_hash, height, root):
+        raise StateSyncError("manifest header binding")
+    checkpoint_digest = _hash_hex(value["epoch_checkpoint_id"], "manifest checkpoint")
+    if checkpoint_digest != _checkpoint_id(block_id, root):
         raise StateSyncError("manifest checkpoint binding")
     for name in (
         "state_schema_hash", "chunking_profile_hash", "compression_profile_hash",
@@ -407,6 +454,9 @@ def verify_manifest(
         epoch=epoch,
         chunk_count=chunk_count,
         records=tuple(all_records),
+        context_digest=context_hash,
+        validator_set_hash=_hash_hex(value["validator_set_hash"], "manifest validator set"),
+        checkpoint_digest=checkpoint_digest,
     )
 
 
@@ -418,6 +468,15 @@ class ExternalAnchor:
     state_root: bytes
     manifest_digest: bytes
     namespace_id: str
+    # The initial candidate anchor uses zero sentinels.  A committed anchor
+    # must carry every field below; keeping them on the predecessor prevents a
+    # same-height fork or an epoch/context substitution from being treated as
+    # a monotonic successor.
+    block_id: bytes = ZERO32
+    context_digest: bytes = ZERO32
+    epoch: int = 0
+    validator_set_hash: bytes = ZERO32
+    checkpoint_digest: bytes = ZERO32
 
     def __post_init__(self) -> None:
         # Freeze byte buffers at the public boundary.  A frozen dataclass alone
@@ -436,14 +495,23 @@ class ExternalAnchor:
             raise StateSyncError("external anchor identity")
         _u64(self.generation, "external anchor generation")
         _u64(self.height, "external anchor height")
+        _u64(self.epoch, "external anchor epoch")
         for value, label in (
             (self.state_root, "external anchor root"),
             (self.manifest_digest, "external anchor manifest"),
+            (self.block_id, "external anchor block"),
+            (self.context_digest, "external anchor context"),
+            (self.validator_set_hash, "external anchor validator set"),
+            (self.checkpoint_digest, "external anchor checkpoint"),
         ):
             if not isinstance(value, (bytes, bytearray)) or len(value) != 32:
                 raise StateSyncError(label)
         object.__setattr__(self, "state_root", bytes(self.state_root))
         object.__setattr__(self, "manifest_digest", bytes(self.manifest_digest))
+        object.__setattr__(self, "block_id", bytes(self.block_id))
+        object.__setattr__(self, "context_digest", bytes(self.context_digest))
+        object.__setattr__(self, "validator_set_hash", bytes(self.validator_set_hash))
+        object.__setattr__(self, "checkpoint_digest", bytes(self.checkpoint_digest))
 
     def digest(self) -> bytes:
         """Stable digest of the complete external record (candidate evidence)."""
@@ -454,6 +522,11 @@ class ExternalAnchor:
             + self.height.to_bytes(8, "little")
             + self.state_root
             + self.manifest_digest
+            + self.block_id
+            + self.context_digest
+            + self.epoch.to_bytes(8, "little")
+            + self.validator_set_hash
+            + self.checkpoint_digest
             + self.namespace_id.encode("utf-8")
         )
         return _digest("trnm.poco-ai.external-anchor-record.candidate.v1", material)
@@ -473,15 +546,51 @@ def _validate_anchor(
         raise StateSyncError("external anchor identity")
     _u64(anchor.generation, "external anchor generation")
     _u64(anchor.height, "external anchor height")
-    if not isinstance(anchor.state_root, (bytes, bytearray)) or len(anchor.state_root) != 32:
-        raise StateSyncError("external anchor root")
-    if not isinstance(anchor.manifest_digest, (bytes, bytearray)) or len(anchor.manifest_digest) != 32:
-        raise StateSyncError("external anchor manifest")
+    _u64(anchor.epoch, "external anchor epoch")
+    for value, label in (
+        (anchor.state_root, "external anchor root"),
+        (anchor.manifest_digest, "external anchor manifest"),
+        (anchor.block_id, "external anchor block"),
+        (anchor.context_digest, "external anchor context"),
+        (anchor.validator_set_hash, "external anchor validator set"),
+        (anchor.checkpoint_digest, "external anchor checkpoint"),
+    ):
+        if not isinstance(value, (bytes, bytearray)) or len(value) != 32:
+            raise StateSyncError(label)
     if anchor.generation == 0:
-        if anchor.height != 0 or bytes(anchor.state_root) != ZERO32 or bytes(anchor.manifest_digest) != ZERO32:
+        if (
+            anchor.height != 0
+            or anchor.epoch != 0
+            or bytes(anchor.state_root) != ZERO32
+            or bytes(anchor.manifest_digest) != ZERO32
+            or bytes(anchor.block_id) != ZERO32
+            or bytes(anchor.context_digest) != ZERO32
+            or bytes(anchor.validator_set_hash) != ZERO32
+            or bytes(anchor.checkpoint_digest) != ZERO32
+        ):
             raise StateSyncError("external anchor zero state")
-    elif bytes(anchor.state_root) == ZERO32 or bytes(anchor.manifest_digest) == ZERO32:
+    elif anchor.height < 1:
+        raise StateSyncError("external anchor height")
+    elif any(
+        bytes(value) == ZERO32
+        for value in (
+            anchor.state_root,
+            anchor.manifest_digest,
+            anchor.block_id,
+            anchor.context_digest,
+            anchor.validator_set_hash,
+            anchor.checkpoint_digest,
+        )
+    ):
         raise StateSyncError("external anchor empty state")
+    elif bytes(anchor.checkpoint_digest) != _checkpoint_id(
+        bytes(anchor.block_id), bytes(anchor.state_root)
+    ):
+        raise StateSyncError("external anchor checkpoint binding")
+    elif bytes(anchor.block_id) != _canonical_header_id(
+        bytes(anchor.context_digest), anchor.height, bytes(anchor.state_root)
+    ):
+        raise StateSyncError("external anchor header binding")
 
 
 @dataclass(frozen=True)
@@ -553,10 +662,16 @@ class StagedStateSync:
         expected_block_id: bytes,
         expected_root: bytes,
         generation: int,
+        expected_height: int | None = None,
         fault: str | None = None,
     ) -> StageToken:
         with self._lock:
             self._check_health()
+            _validate_anchor(
+                self._anchor,
+                chain_id=self._chain_id,
+                namespace_id=self._namespace_id,
+            )
             generation = _u64(generation, "stage generation", minimum=1)
             if fault not in {None, "torn", "sidecar", "wal"}:
                 raise StateSyncError("unknown stage fault")
@@ -566,7 +681,10 @@ class StagedStateSync:
                 # never be treated as a clean stage that can later authorize.
                 self.mark_sidecar(f"-{fault}")
                 raise StateSyncError(f"injected {fault} fault")
-            if generation <= self._anchor.generation:
+            if (
+                self._anchor.generation >= 2**64 - 1
+                or generation != self._anchor.generation + 1
+            ):
                 raise StateSyncError("stale generation")
             view = verify_manifest(
                 manifest,
@@ -574,6 +692,7 @@ class StagedStateSync:
                 context,
                 expected_block_id=expected_block_id,
                 expected_root=expected_root,
+                expected_height=expected_height,
             )
             context_chain, _ = _validate_context(context)
             if context_chain != self._chain_id:
@@ -626,8 +745,35 @@ class StagedStateSync:
                 raise StateSyncError("external anchor CAS mismatch")
             if generation != token.generation:
                 raise StateSyncError("stage generation mismatch")
-            if generation <= self._anchor.generation or token.view.height < self._anchor.height:
+            if (
+                self._anchor.generation >= 2**64 - 1
+                or generation != self._anchor.generation + 1
+                or token.view.height < self._anchor.height
+            ):
                 raise StateSyncError("external anchor rollback")
+            # A monotonic generation is not enough to authorize a new fork at
+            # an already-finalized height.  At equal height every immutable
+            # checkpoint/context identity must be byte-for-byte identical;
+            # otherwise quarantine before changing the active target.
+            if token.view.height == self._anchor.height and self._anchor.generation != 0:
+                if (
+                    token.view.block_id != self._anchor.block_id
+                    or token.view.state_root != self._anchor.state_root
+                    or token.view.digest != self._anchor.manifest_digest
+                    or token.view.context_digest != self._anchor.context_digest
+                    or token.view.epoch != self._anchor.epoch
+                    or token.view.validator_set_hash != self._anchor.validator_set_hash
+                    or token.view.checkpoint_digest != self._anchor.checkpoint_digest
+                ):
+                    raise StateSyncError("external anchor equivocation")
+            elif self._anchor.generation != 0:
+                if token.view.epoch < self._anchor.epoch:
+                    raise StateSyncError("external anchor epoch rollback")
+                if token.view.epoch == self._anchor.epoch:
+                    if token.view.validator_set_hash != self._anchor.validator_set_hash:
+                        raise StateSyncError("external anchor validator-set drift")
+                    if token.view.context_digest != self._anchor.context_digest:
+                        raise StateSyncError("external anchor context drift")
             if simulate_crash not in {None, "before_active", "after_active"}:
                 raise StateSyncError("unknown crash simulation")
             next_anchor = ExternalAnchor(
@@ -637,6 +783,11 @@ class StagedStateSync:
                 token.view.state_root,
                 token.view.digest,
                 self._namespace_id,
+                token.view.block_id,
+                token.view.context_digest,
+                token.view.epoch,
+                token.view.validator_set_hash,
+                token.view.checkpoint_digest,
             )
             # Intent is visible until both active target and external anchor
             # are updated.  A simulated crash leaves a permanent fence on
@@ -669,7 +820,17 @@ class StagedStateSync:
                 or self._active.namespace_id != self._namespace_id
             ):
                 raise StateSyncError("renamed namespace")
-            if self._anchor.generation == 0 or self._active.generation != self._anchor.generation or self._active.view.state_root != self._anchor.state_root:
+            if (
+                self._anchor.generation == 0
+                or self._active.generation != self._anchor.generation
+                or self._active.view.height != self._anchor.height
+                or self._active.view.state_root != self._anchor.state_root
+                or self._active.view.block_id != self._anchor.block_id
+                or self._active.view.context_digest != self._anchor.context_digest
+                or self._active.view.epoch != self._anchor.epoch
+                or self._active.view.validator_set_hash != self._anchor.validator_set_hash
+                or self._active.view.checkpoint_digest != self._anchor.checkpoint_digest
+            ):
                 raise StateSyncError("active/anchor mismatch")
             if self._active.view.digest != self._anchor.manifest_digest:
                 raise StateSyncError("full-store rollback")

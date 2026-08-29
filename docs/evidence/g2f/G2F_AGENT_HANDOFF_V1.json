@@ -5,8 +5,8 @@
   "status": "BLOCKED_UPSTREAM",
   "base_commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
   "base_tree": "efea864cb2fbc4835a59a089b3dbab8934e71231",
-  "head_commit": "6f7d0f6b43b11b59b03e417154149c1d2c91aafa",
-  "head_tree": "a03b1aadf86355eb255ce04a2fb8474046c631d6",
+  "head_commit": "c59ca9de4f4e46ae1e221e998b7623ab46b91af5",
+  "head_tree": "69c0561cbaa2f5d2f3d5f16a0a105da6ef5108d2",
   "changed_paths": [
     "conformance/g2f/__init__.py",
     "conformance/g2f/atomicity.py",
@@ -59,7 +59,7 @@
     "bash scripts/ci/check_trnm_poco_order_state_v1_boundary.sh --static-only: PASS",
     "bash scripts/ci/check_poco_ai_native_v1_order_finality_light_client.sh: Python checker PASS; shell stopped at OpenSSL cross-check because xxd is unavailable (exit 127)",
     "cargo test/clippy --manifest-path trillionnium/Cargo.toml --locked --offline: NOT RUN because cargo is unavailable (exit 127)",
-    "PYTHONDONTWRITEBYTECODE=1 ./scripts/g2f/check_g2f_conformance.sh: PASS; 25 discovered tests, 21 wire mutants rejected by both clients, 7,548 differential samples (0 exceptions/0 disagreements), 3,000 state-sync mutants rejected, staged swap/CAS and residue fences PASS",
+    "PYTHONDONTWRITEBYTECODE=1 ./scripts/g2f/check_g2f_conformance.sh: PASS; 28 discovered and executed tests, 21 wire mutants rejected by both clients, 7,548 differential samples (0 exceptions/0 disagreements), 3,000 state-sync mutants rejected, staged swap/CAS and residue fences PASS",
     "isolated Rust 1.95 cargo metadata/check/test/clippy with g2f-namespace-test-support --locked --offline: PASS; 135 tests, -D warnings; candidate feature only, not normal-build/release proof",
     "sha256sorted A11-A15 interface path sets: PASS for candidate digests; accepted digests remain absent",
     "trailing-whitespace scan for package docs: PASS"
@@ -67,7 +67,8 @@
   "failed_tests": [
     "bash scripts/ci/check_poco_ai_native_v1_order_finality_light_client.sh (environment: xxd command not found; exit 127 after Python checker)",
     "cargo test --manifest-path trillionnium/Cargo.toml --locked --offline (environment: cargo command not found; not a source result)",
-    "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline --all-targets -- -D warnings (environment: cargo command not found; not a source result)"
+    "cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline --all-targets -- -D warnings (environment: cargo command not found; not a source result)",
+    "GitHub Actions run 33252294948 job 99099957089 (Payload replay and G1-R4A recovery contracts): FAILED at Verify payload replay package implementation/truth boundary on published pre-follow-up head 06d71c8; retained as external CI failure, not treated as a source-plane result"
   ],
   "retained_mutants": [
     "G2F-M-ATOMIC-TORN",
@@ -79,10 +80,12 @@
     "G2F-M-JMT-SIBLING-ORIENTATION",
     "G2F-M-JMT-ORDER-HEIGHT",
     "G2F-M-ANCHOR-LOWER-GENERATION",
+    "G2F-M-ANCHOR-GENERATION-GAP",
     "G2F-M-ANCHOR-OLD-EPOCH",
     "G2F-M-ANCHOR-DB-ONLY-ROLLBACK",
     "G2F-M-ANCHOR-MANIFEST-DRIFT",
     "G2F-M-ANCHOR-CHECKPOINT-BINDING",
+    "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
     "G2F-M-ANCHOR-SCOPE",
     "G2F-M-NAMESPACE-SAME-UID-RENAME",
     "G2F-M-NAMESPACE-COPY",
@@ -96,6 +99,8 @@
     "G2F-M-SYNC-WAL",
     "G2F-M-SYNC-PARTIAL-SWAP",
     "G2F-M-SYNC-DOWNGRADE",
+    "G2F-M-SYNC-CONTEXT-SCHEMA",
+    "G2F-M-SYNC-HEADER-HEIGHT-BINDING",
     "G2F-M-LC-WRONG-EPOCH",
     "G2F-M-LC-INSUFFICIENT-WEIGHT",
     "G2F-M-LC-COMPOSITE-ROOT",
@@ -126,8 +131,8 @@
     "A11-A15 accepted interface versions/digests and independent replay records are absent; see G2F_INTERFACE_CHANGE_REQUESTS_V1.json.",
     "The candidate has no authenticated six-store snapshot, canonical application JMT-to-Order binding, external production anti-rollback anchor, staged state-sync swap, or global light-client completion.",
     "A candidate descriptor/openat and external-anchor contract is present in the package working tree; an isolated feature-gated Rust 1.95 check/test/clippy passed, but normal cargo is unavailable, there is no external HSM/KMS backend or normal-node wiring, and it does not close namespace/rollback authority.",
-    "The candidate anchor record does not yet bind a canonical checkpoint/state-root or an explicit initial scope argument; same-size owner-unsequenced A→B→A and forged identity mutants remain retained.",
-    "G2F_CONFORMANCE_RUN_V1.json is a fixture-only replay record (25 tests/21 wire mutants/7548 differential/3000 state-sync mutants); it is not a signed TrnmGateEvidenceV1 bundle or real W0-W7 trace.",
+    "The Python candidate model now binds its header/checkpoint/context and rejects same-height forks and generation gaps; the Rust anchor record still does not yet bind a canonical checkpoint/state-root or an explicit initial scope argument, and same-size owner-unsequenced A→B→A and forged identity mutants remain retained.",
+    "G2F_CONFORMANCE_RUN_V1.json is a fixture-only replay record (28 tests/21 wire mutants/7548 differential/3000 state-sync mutants); it is not a signed TrnmGateEvidenceV1 bundle or real W0-W7 trace.",
     "Live control ref is 8bfd73f0cf1b785a29ae212f13212e51fe34231/tree cfedd363147934f50d1352dae31b7d87d79aa8d9; ACTIVE_PR_PACKAGE_LEDGER retains d2c14fa686a7836e607661aaf1da34f971d12bc4/tree 86d17fbb369481a66684078ea1acef9550d36dad as historical metadata; assessed Plan tuple and locked digests remain unchanged.",
     "Control ledger marks prior PR18 (A16 model-only, a370a208/tree 02aa75) and stacked PR19 as upstream-invalidated by PR10/G15 stack drift; this branch is isolated on the exact candidate base and reuses neither.",
     "Machine truth remains G1-native-host-incomplete with production_candidate=false and production_consensus_activation=false."
@@ -144,5 +149,5 @@
     "Any G2F source/tree/plan/protocol/machine digest change invalidates the W0-W7 trace, both light-client replays, state-sync/rollback matrix and dependent G3-G5 evidence.",
     "A failed safety, root, durability, economic, profile, custody or light-client invariant reopens G2F and invalidates G3, G4, G5 and release evidence; failed mutants remain retained."
   ],
-  "next_action": "Owner-review G2F-ICR-A11-001 through G2F-ICR-A15-001; implement the highest-severity unblocked G2F-NAMESPACE-001 candidate fixture without authority wiring; then revalidate the exact source tuple and rerun independent replay. The package owner must update head_commit/tree after the package PR commit and obtain independent review before any MODULE_CLOSED_CANDIDATE claim."
+  "next_action": "Owner-review G2F-ICR-A11-001 through G2F-ICR-A15-001 and the candidate namespace/anchor hardening; execute the full process/power-loss fault matrix only after accepted interfaces are available, then revalidate the exact source tuple and rerun independent replay. The package owner must obtain independent review before any MODULE_CLOSED_CANDIDATE claim."
 }

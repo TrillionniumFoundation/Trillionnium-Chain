@@ -10,24 +10,135 @@ from __future__ import annotations
 
 import copy
 from dataclasses import replace
+import json
 import unittest
 
 try:  # package invocation and direct unittest discovery
     from .fixture import fixture
     from .state_sync import MAX_CHUNKS, MAX_CHUNK_BYTES, StateSyncError, StagedStateSync, verify_manifest
+    from .state_tree import digest, encode_records, sparse_root
+    from .wire import header_id
 except ImportError:  # pragma: no cover
     from conformance.g2f.fixture import fixture
     from conformance.g2f.state_sync import MAX_CHUNKS, MAX_CHUNK_BYTES, StateSyncError, StagedStateSync, verify_manifest
+    from conformance.g2f.state_tree import digest, encode_records, sparse_root
+    from conformance.g2f.wire import header_id
 
 
 def _args(f):
     return {
         "expected_block_id": bytes.fromhex(f.manifest["block_id"]),
         "expected_root": bytes.fromhex(f.manifest["state_root"]),
+        "expected_height": f.height,
     }
 
 
+def _alternate_manifest(f):
+    """Build a second valid candidate checkpoint at the same height."""
+
+    records = list(f.records)
+    records[0] = replace(records[0], value=records[0].value + b"-fork")
+    records = tuple(sorted(records, key=lambda record: record.key))
+    payload = encode_records(records)
+    root = sparse_root(records)
+    block = header_id(f.context, f.height, root)
+    descriptor = {
+        "chunk_index": 0,
+        "first_state_key": records[0].key.hex(),
+        "last_state_key": records[-1].key.hex(),
+        "uncompressed_bytes": len(payload),
+        "compressed_bytes": len(payload),
+        "uncompressed_hash": digest(
+            "trnm.poco-ai.state-sync-chunk-bytes.v1", payload
+        ).hex(),
+        "compressed_hash": digest(
+            "trnm.poco-ai.state-sync-chunk-bytes.v1", payload
+        ).hex(),
+    }
+    # Keep this helper independent of state_sync's private implementation;
+    # the manifest is rebuilt using the published candidate digest domains.
+    manifest = copy.deepcopy(f.manifest)
+    manifest.update(
+        {
+            "block_id": block.hex(),
+            "state_root": root.hex(),
+            "epoch_checkpoint_id": digest(
+                "trnm.poco-ai.epoch-checkpoint-id.candidate.v1", block + root
+            ).hex(),
+            "chunk_manifest_root": digest(
+                "trnm.poco-ai.state-sync-chunk-manifest-root.v1",
+                json.dumps(descriptor, sort_keys=True, separators=(",", ":")).encode(),
+            ).hex(),
+            "chunk_entries": [descriptor],
+            "total_uncompressed_bytes": len(payload),
+        }
+    )
+    return manifest, payload
+
+
 class StateSyncFaultAndBindingTests(unittest.TestCase):
+    def test_context_is_closed_and_height_header_is_bound(self) -> None:
+        f = fixture()
+        extra = copy.deepcopy(f.context)
+        extra["unexpected"] = "must-reject"
+        with self.assertRaises(StateSyncError):
+            verify_manifest(f.manifest, f.chunks, extra, **_args(f))
+
+        wrong_height = copy.deepcopy(f.manifest)
+        wrong_height["height"] = f.height + 1
+        wrong_height["catch_up_start_height"] = f.height + 2
+        with self.assertRaises(StateSyncError):
+            verify_manifest(wrong_height, f.chunks, f.context, **_args(f))
+        with self.assertRaises(StateSyncError):
+            verify_manifest(
+                f.manifest,
+                f.chunks,
+                f.context,
+                expected_block_id=bytes.fromhex(f.manifest["block_id"]),
+                expected_root=bytes.fromhex(f.manifest["state_root"]),
+            )
+        wrong_height_args = _args(f)
+        wrong_height_args["expected_height"] = f.height + 1
+        with self.assertRaises(StateSyncError):
+            verify_manifest(
+                f.manifest,
+                f.chunks,
+                f.context,
+                **wrong_height_args,
+            )
+
+    def test_same_height_fork_is_rejected_before_active_swap(self) -> None:
+        f = fixture()
+        owner = StagedStateSync(f.context["chain_id"])
+        first = owner.stage(f.manifest, f.chunks, f.context, **_args(f), generation=1)
+        predecessor = owner.anchor
+        owner.commit(first, generation=1, expected_anchor=predecessor)
+
+        fork_manifest, fork_payload = _alternate_manifest(f)
+        fork = owner.stage(
+            fork_manifest,
+            (fork_payload,),
+            f.context,
+            expected_block_id=bytes.fromhex(fork_manifest["block_id"]),
+            expected_root=bytes.fromhex(fork_manifest["state_root"]),
+            expected_height=f.height,
+            generation=2,
+        )
+        with self.assertRaises(StateSyncError):
+            owner.commit(fork, generation=2, expected_anchor=owner.anchor)
+
+    def test_generation_must_be_contiguous(self) -> None:
+        f = fixture()
+        owner = StagedStateSync(f.context["chain_id"])
+        with self.assertRaises(StateSyncError):
+            owner.stage(
+                f.manifest,
+                f.chunks,
+                f.context,
+                **_args(f),
+                generation=2,
+            )
+
     def test_profile_ceiling_downgrade_rejects_before_chunk_decode(self) -> None:
         f = fixture()
         for field, value in (

@@ -136,6 +136,7 @@ for case_index in range(3000):
             fixture_value.context,
             expected_block_id=bytes.fromhex(fixture_value.manifest["block_id"]),
             expected_root=bytes.fromhex(fixture_value.manifest["state_root"]),
+            expected_height=fixture_value.height,
         )
     except StateSyncError:
         sync_rejected += 1
@@ -156,6 +157,7 @@ if sync_semantic_accepts or sync_unexpected or sync_rejected != 3000:
 sync_args = {
     "expected_block_id": bytes.fromhex(fixture_value.manifest["block_id"]),
     "expected_root": bytes.fromhex(fixture_value.manifest["state_root"]),
+    "expected_height": fixture_value.height,
 }
 owner = StagedStateSync(fixture_value.context["chain_id"])
 predecessor = owner.anchor
@@ -311,6 +313,12 @@ try:
     ).countTestCases()
 except Exception as error:  # pragma: no cover - discovery itself is evidence
     raise SystemExit(f"unittest discovery failed: {error}") from error
+if suite.get("discovered_tests") != full_tests or suite.get("tests_run") != full_tests:
+    raise SystemExit(
+        "unittest execution coverage failed "
+        f"discovered={full_tests} suite_discovered={suite.get('discovered_tests')} "
+        f"executed={suite.get('tests_run')}"
+    )
 
 report = {
     "schema": "trnm-g2f-conformance-run-v1",
@@ -374,6 +382,8 @@ report = {
     "unittest_discovery": {
         "tests": full_tests,
         "run_suite_tests": suite["tests_run"],
+        "discovered_tests": suite.get("discovered_tests", full_tests),
+        "executed_all_discovered": suite["tests_run"] == full_tests,
         "status": suite["status"],
     },
     "known_nonclaims": [

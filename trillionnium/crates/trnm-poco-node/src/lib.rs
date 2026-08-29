@@ -192,14 +192,14 @@ pub mod g1_process_host;
 mod g2_manifest_bound_process_v2;
 #[allow(dead_code)]
 mod g2_manifest_bound_v2;
+#[allow(dead_code)]
+mod g2_order_commit_v1;
 // Candidate-only G2F descriptor/openat and external-anchor contract.  The
 // feature is intentionally opt-in and remains disconnected from every node,
 // signer, voting, activation, and release path.
 #[cfg(all(feature = "g2f-namespace-test-support", unix))]
 #[allow(dead_code)]
 mod g2f_namespace_identity;
-#[allow(dead_code)]
-mod g2_order_commit_v1;
 #[cfg(feature = "lab-validator-runtime")]
 mod lab_authority;
 #[cfg(feature = "lab-validator-runtime")]
@@ -326,25 +326,20 @@ pub use g2_manifest_bound_process_v2::{
     PocoNodeG2CandidatePreparedFactsV2, PocoNodeG2CandidateProcessErrorV2,
     PocoNodeG2CandidateProcessManifestV2,
 };
-#[cfg(all(feature = "g2f-namespace-test-support", unix))]
-#[doc(hidden)]
-pub use g2f_namespace_identity::{
-    compare_and_advance_bound_v1, PocoNodeG2fAnchorErrorCodeV1,
-    PocoNodeG2fAnchorErrorV1, PocoNodeG2fAnchorRecordV1,
-    PocoNodeG2fExternalMonotonicAnchorV1, PocoNodeG2fFileHandleV1,
-    PocoNodeG2fFileIdentityV1, PocoNodeG2fNamespaceErrorCodeV1,
-    PocoNodeG2fNamespaceErrorV1, PocoNodeG2fNamespaceGuardV1,
-    PocoNodeG2fNamespaceIdentityV1,
-    POCO_NODE_G2F_EXTERNAL_ANCHOR_BACKEND_V1,
-    POCO_NODE_G2F_EXTERNAL_MONOTONIC_ANCHOR_CONTRACT_V1,
-    POCO_NODE_G2F_NAMESPACE_IDENTITY_CONTRACT_V1,
-    POCO_NODE_G2F_NAMESPACE_OPENAT_DESCRIPTOR_V1,
-    POCO_NODE_G2F_NAMESPACE_PROCESS_INTEGRATION_V1,
-    POCO_NODE_G2F_PRODUCTION_ACTIVATION_V1,
-};
 #[cfg(feature = "g2-process-test-support")]
 #[doc(hidden)]
 pub use g2_order_commit_v1::real_e2e_tests::PocoNodeG2ProcessFixtureV2;
+#[cfg(all(feature = "g2f-namespace-test-support", unix))]
+#[doc(hidden)]
+pub use g2f_namespace_identity::{
+    compare_and_advance_bound_v1, PocoNodeG2fAnchorErrorCodeV1, PocoNodeG2fAnchorErrorV1,
+    PocoNodeG2fAnchorRecordV1, PocoNodeG2fExternalMonotonicAnchorV1, PocoNodeG2fFileHandleV1,
+    PocoNodeG2fFileIdentityV1, PocoNodeG2fNamespaceErrorCodeV1, PocoNodeG2fNamespaceErrorV1,
+    PocoNodeG2fNamespaceGuardV1, PocoNodeG2fNamespaceIdentityV1,
+    POCO_NODE_G2F_EXTERNAL_ANCHOR_BACKEND_V1, POCO_NODE_G2F_EXTERNAL_MONOTONIC_ANCHOR_CONTRACT_V1,
+    POCO_NODE_G2F_NAMESPACE_IDENTITY_CONTRACT_V1, POCO_NODE_G2F_NAMESPACE_OPENAT_DESCRIPTOR_V1,
+    POCO_NODE_G2F_NAMESPACE_PROCESS_INTEGRATION_V1, POCO_NODE_G2F_PRODUCTION_ACTIVATION_V1,
+};
 #[cfg(feature = "lab-validator-runtime")]
 pub use lab_authority::{
     PocoNodeLabAuthorityErrorV0, PocoNodeLabAuthorityPhaseV0, PocoNodeLabCertificateAdvanceV0,

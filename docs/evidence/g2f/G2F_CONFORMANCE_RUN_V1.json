@@ -68,8 +68,8 @@
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "schema": "trnm-g2f-conformance-run-v1",
   "scope": "fixture",
-  "source_commit": "6f7d0f6b43b11b59b03e417154149c1d2c91aafa",
-  "source_tree": "a03b1aadf86355eb255ce04a2fb8474046c631d6",
+  "source_commit": "c59ca9de4f4e46ae1e221e998b7623ab46b91af5",
+  "source_tree": "69c0561cbaa2f5d2f3d5f16a0a105da6ef5108d2",
   "state_sync": {
     "explicit_external_anchor_cas": true,
     "faults": {
@@ -89,8 +89,10 @@
   },
   "status": "PASS",
   "unittest_discovery": {
-    "run_suite_tests": 12,
+    "discovered_tests": 28,
+    "executed_all_discovered": true,
+    "run_suite_tests": 28,
     "status": "PASS",
-    "tests": 25
+    "tests": 28
   }
 }
