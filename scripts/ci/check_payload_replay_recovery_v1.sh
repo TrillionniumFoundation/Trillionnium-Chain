@@ -16,6 +16,7 @@ rustfmt --edition 2021 --check \
   "$recovery_root/part_03_wal.rs" \
   "$recovery_root/part_04_io_ack.rs" \
   "$recovery_root/part_05_tests.rs" \
+  "$recovery_root/part_06_projection.rs" \
   trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs
 cargo test --manifest-path "$manifest" --locked -p "$package" -- --test-threads=1
 cargo clippy --manifest-path "$manifest" --locked -p "$package" --all-targets -- -D warnings
@@ -31,8 +32,8 @@ implementation_root = Path(
 implementation_parts = sorted(Path(
     "trillionnium/crates/trnm-consensus-peer-lease/src/payload_recovery"
 ).glob("part_*.rs"))
-if len(implementation_parts) != 5:
-    raise SystemExit("payload replay recovery implementation must have five source units")
+if len(implementation_parts) != 6:
+    raise SystemExit("payload replay recovery implementation must have six source units")
 implementation = implementation_root + "\n" + "\n".join(
     path.read_text() for path in implementation_parts
 )
@@ -68,6 +69,10 @@ required_source = {
     "PayloadReplayRecoveryTargetV1",
     "PayloadReplayCoreAcknowledgementV1",
     "PayloadReplayRecoveryStatusV1",
+    "PayloadReplayRecoveryStatusProjectionV1",
+    "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_SCHEMA_V1",
+    "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_CANDIDATE_V1",
+    "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_PRODUCTION_ACTIVATION_V1",
 }
 for value in sorted(required_source):
     if value not in implementation or value not in crate_root:

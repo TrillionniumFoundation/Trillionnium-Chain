@@ -22,6 +22,26 @@ Core finalization queue front
  -> Ready/reopen
 ```
 
+The standalone `trnm-consensus-app` archive now exposes the same apply cut
+through `NativeConsensusApplicationHostV0::apply_native_application_finalization_v0`.
+The facade maps the store-private failure taxonomy to host errors and returns
+the exact Core-issued permit on every rejection, preserving linear retry or
+fail-stop ownership.  This remains a library-only candidate seam: it is not
+wired into process startup/effect driving, and `production_candidate=false`
+and `production_consensus_activation=false` remain unchanged.
+
+The payload-replay recovery owner now also exposes a target/namespace-bound
+`PayloadReplayRecoveryStatusProjectionV1`.  Its canonical digest and explicit
+candidate/production/atomicity bits make status responses safe to bind across
+an external supervisor boundary; endpoint identity and the Core acknowledgement
+ledger remain separate, and `atomic_with_core=false` is intentional.
+
+The candidate effect driver accepts an opt-in `apply_finalization_v1` hook. A
+hook may return only an opaque Core-issued application receipt; the driver then
+submits it through Core's exact receipt seam and continues the bounded effect
+queue. The default hook still rejects `Effect::Finalize`, so no application or
+finality authority appears merely by enabling the driver feature.
+
 This tranche makes the process-loss marker boundary directly testable without
 exporting the owner or its store handles.  The test matrix now proves:
 

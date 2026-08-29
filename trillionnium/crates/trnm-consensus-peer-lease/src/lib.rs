@@ -35,11 +35,15 @@ pub use payload_body::{
 };
 pub use payload_recovery::{
     PayloadReplayCoreAckReceiptV1, PayloadReplayCoreAcknowledgementV1,
-    PayloadReplayRecoveryErrorV1, PayloadReplayRecoveryOwnerV1, PayloadReplayRecoveryStatusV1,
+    PayloadReplayRecoveryErrorV1, PayloadReplayRecoveryOwnerV1,
+    PayloadReplayRecoveryStatusProjectionV1, PayloadReplayRecoveryStatusV1,
     PayloadReplayRecoveryTargetV1, PAYLOAD_REPLAY_CORE_ACK_ATOMIC_WITH_CORE_V1,
     PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1,
     PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1,
     PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_SCHEMA_V1,
 };
 pub use protocol::{
     LeaseRejectCodeV1, PeerLeaseDirectionV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,

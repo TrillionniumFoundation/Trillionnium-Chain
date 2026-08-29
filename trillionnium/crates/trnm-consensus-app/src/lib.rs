@@ -97,8 +97,9 @@ pub use native_consensus_application_host::{
     ConfirmedNativeApplicationStateSyncAnchorV0,
     ConfirmedNativeApplicationValidCompletionRecoveryV0, NativeConsensusApplicationAppliedKindV0,
     NativeConsensusApplicationAuthoritiesInstallRejectionV0,
-    NativeConsensusApplicationHostConfigV0, NativeConsensusApplicationHostErrorV0,
-    NativeConsensusApplicationHostV0, NativeConsensusApplicationValidCompletionSourceV0,
+    NativeConsensusApplicationFinalizationApplyRejectionV0, NativeConsensusApplicationHostConfigV0,
+    NativeConsensusApplicationHostErrorV0, NativeConsensusApplicationHostV0,
+    NativeConsensusApplicationValidCompletionSourceV0,
     NativeStateSyncAnchorSuccessorValidationFactsV0,
     PreparedNativeApplicationH1ProjectionExpectationV0,
 };

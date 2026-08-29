@@ -9,3 +9,4 @@ include!("payload_recovery/part_02_owner.rs");
 include!("payload_recovery/part_03_wal.rs");
 include!("payload_recovery/part_04_io_ack.rs");
 include!("payload_recovery/part_05_tests.rs");
+include!("payload_recovery/part_06_projection.rs");

@@ -87,10 +87,12 @@ jobs:
           allowed_file=scripts/check_cargo_offline_policy.sh
           allowed_file=scripts/check_ci_runner_policy.sh
           allowed_file=scripts/ci/check_cargo_offline_ready.sh
+          allowed_file=scripts/check_cargo_offline_policy_test.sh
           allowed_file=trillionnium/crates/trnm-consensus-core/src/core.rs
           allowed_file=docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
           EOF
           python3 ../driver/scripts/ci/apply_g1_r4b_recovery.py .
+          python3 ../driver/scripts/ci/apply_g1_r4b_policy_test_fix.py .
           git diff --check
           bash scripts/project-preflight.sh --dev
           bash scripts/check_cargo_offline_policy_test.sh
@@ -152,6 +154,7 @@ jobs:
             .github/workflows/trnm-payload-replay-recovery-v1.yml \
             .github/workflows/trnm-replay-to-core-coordinator-v1.yml \
             scripts/check_cargo_offline_policy.sh \
+            scripts/check_cargo_offline_policy_test.sh \
             scripts/check_ci_runner_policy.sh \
             scripts/ci/check_cargo_offline_ready.sh \
             trillionnium/crates/trnm-consensus-core/src/core.rs \

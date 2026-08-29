@@ -27,8 +27,9 @@
 use std::{collections::VecDeque, error::Error, fmt};
 
 use trnm_consensus_core::{
-    ApplicationSealedValidV0, Core, CoreAcceptedApplicationValidDV0, CoreError,
-    CoreSafetyRulesAuthorityErrorV1, CoreSafetyRulesAuthorityV1, Effect, Input, OutboundMessage,
+    ApplicationFinalizationReceiptV0, ApplicationSealedValidV0, Core,
+    CoreAcceptedApplicationValidDV0, CoreError, CoreSafetyRulesAuthorityErrorV1,
+    CoreSafetyRulesAuthorityV1, DurableFinalizationV0, Effect, Input, OutboundMessage,
     PayloadValidationRequest, SafetyHalt, SafetyState, SafetyStatePersistenceV0, SignIntent,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
@@ -45,7 +46,10 @@ pub const CANDIDATE_EFFECT_DRIVER_V1: bool = true;
 /// The candidate driver has no production activation path.
 pub const EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1: bool = false;
 
-/// This seam does not own finality verification or application finalization.
+/// This seam does not enable production finality.  An explicitly installed
+/// candidate hook may join one `Effect::Finalize` to a Core-issued,
+/// non-cloneable application receipt; all production/finality flags remain
+/// false until the independent G1 exit evidence is complete.
 pub const EFFECT_DRIVER_FINALITY_VERIFIED_V1: bool = false;
 
 /// Hard upper bound for the process-local ingress queue.  A caller may select
@@ -116,6 +120,32 @@ pub trait CandidateEffectDriverHooksV1 {
         _request: &PayloadValidationRequest,
         _core: &Core,
     ) -> Result<Option<ApplicationSealedValidV0>, Self::Error> {
+        Ok(None)
+    }
+
+    /// Optionally apply one exact Core finalization queue front and return the
+    /// opaque receipt minted by the installed application owner.
+    ///
+    /// The hook must own the non-cloneable
+    /// [`trnm_consensus_core::CoreIssuedApplicationFinalizationApplyAuthorityV0`] for this live
+    /// Core.  It should first verify that it can complete the application
+    /// intent/WAL and native-store commit, then call
+    /// `core.issue_application_finalization_permit_v0()`, consume that permit
+    /// exactly once through its private application authority, and return the
+    /// resulting [`ApplicationFinalizationReceiptV0`].  The inert
+    /// `finalization` argument is comparison data only; it is never accepted
+    /// as an acknowledgement by this driver.
+    ///
+    /// `None` means that this hook has no complete candidate finalization
+    /// owner.  The driver then rejects `Effect::Finalize` and fail-stops before
+    /// any Core state is advanced.  A hook which has issued a permit must not
+    /// return `None`; it must either return a receipt or return an error so the
+    /// owner is rebuilt during recovery.
+    fn apply_finalization_v1(
+        &mut self,
+        _finalization: &DurableFinalizationV0,
+        _core: &Core,
+    ) -> Result<Option<ApplicationFinalizationReceiptV0>, Self::Error> {
         Ok(None)
     }
 
@@ -827,8 +857,23 @@ where
                         "RequestStandaloneQcSync",
                     ));
                 }
-                Effect::Finalize(_) => {
-                    return Err(CandidateEffectDriverErrorV1::UnsupportedEffect("Finalize"));
+                Effect::Finalize(finalization) => {
+                    let receipt = self
+                        .hooks
+                        .apply_finalization_v1(finalization.as_ref(), &self.core)
+                        .map_err(|error| Self::hook_error("apply_finalization", error))?;
+                    let Some(receipt) = receipt else {
+                        return Err(CandidateEffectDriverErrorV1::UnsupportedEffect("Finalize"));
+                    };
+                    // Core rechecks the exact queue front, both process
+                    // affinities, the complete proof, and the SafetyRules
+                    // finality permit.  No caller-selected fields from the
+                    // inert effect can substitute for that receipt.
+                    let follow_up = self
+                        .core
+                        .step_application_finalization_receipt_v0(receipt, &StrictEd25519Verifier)
+                        .map_err(|rejection| Self::map_core_error(rejection.into_parts().0))?;
+                    pending.extend(follow_up);
                 }
                 Effect::Evidence(_) => {
                     return Err(CandidateEffectDriverErrorV1::UnsupportedEffect("Evidence"));

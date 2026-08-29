@@ -8,9 +8,9 @@
 use std::{fmt, path::Path, sync::Arc};
 
 use trnm_consensus_core::{
-    ApplicationFinalizationApplyReadbackV0, Core, CoreConfig,
-    CoreIssuedApplicationFinalizationApplyAuthorityV0, CoreIssuedApplicationSealAuthorityV0,
-    Effect, NativeFinalizationAppliedRecoveryAttestationV0,
+    ApplicationFinalizationApplyReadbackV0, ApplicationFinalizationReceiptV0, Core, CoreConfig,
+    CoreIssuedApplicationFinalizationApplyAuthorityV0, CoreIssuedApplicationFinalizationPermitV0,
+    CoreIssuedApplicationSealAuthorityV0, Effect, NativeFinalizationAppliedRecoveryAttestationV0,
     NativeFinalizationAppliedRecoveryChallengeV0, NativeFinalizationAppliedRecoveryReconcilerV0,
     NativeFinalizationAppliedRecoveryTransitionV0, NativeValidCompletionRecoveryAttestationV0,
     NativeValidCompletionRecoveryChallengeV0, NativeValidCompletionRecoveryReconcilerV0,
@@ -411,6 +411,68 @@ impl NativeConsensusApplicationAuthoritiesInstallRejectionV0 {
     }
 }
 
+/// Owner-preserving rejection from the candidate native application
+/// finalization bridge.
+///
+/// The underlying `ApplicationStore` rejection is intentionally private to
+/// this crate.  This facade carries its mapped host error together with the
+/// exact, non-cloneable Core-issued queue-front permit so a trusted caller can
+/// retry against the issuing Core or fail-stop without reminting/rebuilding a
+/// permit from durable comparison data.
+///
+/// This is a candidate-only library boundary.  It does not wire the generic
+/// node effect driver, process startup, or production consensus activation;
+/// `production_candidate` and `production_consensus_activation` remain
+/// `false`.
+#[must_use = "a rejected finalization apply retains the sole Core-issued permit"]
+pub struct NativeConsensusApplicationFinalizationApplyRejectionV0 {
+    error: NativeConsensusApplicationHostErrorV0,
+    permit: Box<CoreIssuedApplicationFinalizationPermitV0>,
+}
+
+impl fmt::Debug for NativeConsensusApplicationFinalizationApplyRejectionV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("NativeConsensusApplicationFinalizationApplyRejectionV0")
+            .field("error", &self.error)
+            .finish_non_exhaustive()
+    }
+}
+
+impl NativeConsensusApplicationFinalizationApplyRejectionV0 {
+    fn new_v0(
+        error: NativeConsensusApplicationHostErrorV0,
+        permit: CoreIssuedApplicationFinalizationPermitV0,
+    ) -> Self {
+        Self {
+            error,
+            permit: Box::new(permit),
+        }
+    }
+
+    /// Returns the mapped host-level cause without consuming the rejection or
+    /// its linear permit.
+    pub const fn error(&self) -> NativeConsensusApplicationHostErrorV0 {
+        self.error
+    }
+
+    /// Consumes the rejection and returns the exact permit unchanged.
+    pub fn into_permit(self) -> CoreIssuedApplicationFinalizationPermitV0 {
+        *self.permit
+    }
+
+    /// Consumes the rejection and returns both the mapped cause and exact
+    /// permit for explicit retry/fail-stop routing.
+    pub fn into_parts(
+        self,
+    ) -> (
+        NativeConsensusApplicationHostErrorV0,
+        CoreIssuedApplicationFinalizationPermitV0,
+    ) {
+        (self.error, *self.permit)
+    }
+}
+
 impl std::error::Error for NativeConsensusApplicationHostErrorV0 {}
 
 /// Canonical, owned opening facts for the existing-only application host.
@@ -490,6 +552,32 @@ fn map_store_failure_v0(
         NamespaceMismatch | AuthorityUnavailable | AuthorityMismatch | WriterUnavailable => {
             NativeConsensusApplicationHostErrorV0::NamespaceUnavailable
         }
+        DatabaseUnavailable | CommitUncertain => {
+            NativeConsensusApplicationHostErrorV0::DatabaseUnavailable
+        }
+        HostResourceUnavailable => NativeConsensusApplicationHostErrorV0::HostResourceUnavailable,
+        PersistedStateMismatch => NativeConsensusApplicationHostErrorV0::PersistedStateMismatch,
+        #[cfg(test)]
+        Injected => NativeConsensusApplicationHostErrorV0::PersistedStateMismatch,
+    }
+}
+
+/// Maps the store's apply-only failure taxonomy at the public host boundary.
+///
+/// The generic recovery mapper above intentionally keeps historical
+/// readback failures coarse.  A live finalization apply has a stricter
+/// authority distinction: a missing installed authority and a permit issued
+/// by a different Core are different operator actions, while a writer lock
+/// failure is a local resource failure.  Keep those distinctions visible to
+/// callers without exposing the store-private cause type.
+fn map_finalization_apply_failure_v0(
+    cause: NativeApplicationFinalizationApplyFailureCauseV0,
+) -> NativeConsensusApplicationHostErrorV0 {
+    match cause {
+        NamespaceMismatch => NativeConsensusApplicationHostErrorV0::NamespaceUnavailable,
+        AuthorityUnavailable => NativeConsensusApplicationHostErrorV0::CoreAuthorityUnavailable,
+        AuthorityMismatch => NativeConsensusApplicationHostErrorV0::CoreAuthorityMismatch,
+        WriterUnavailable => NativeConsensusApplicationHostErrorV0::HostResourceUnavailable,
         DatabaseUnavailable | CommitUncertain => {
             NativeConsensusApplicationHostErrorV0::DatabaseUnavailable
         }
@@ -1495,6 +1583,38 @@ impl NativeConsensusApplicationHostV0 {
             )
     }
 
+    /// Applies one exact Core-issued finalization queue front through the
+    /// existing ApplicationStore owner and returns the Core-bound receipt.
+    ///
+    /// The store performs all authority, namespace, authenticated carrier,
+    /// durable transaction, and fresh readback checks before this method can
+    /// return `Ok`.  Any rejection preserves the sole non-cloneable permit in
+    /// [`NativeConsensusApplicationFinalizationApplyRejectionV0`], allowing a
+    /// trusted caller to retry with the issuing Core or fail-stop without
+    /// reconstructing linear authority from persisted rows.
+    ///
+    /// This is deliberately a candidate-only library seam.  It is not called
+    /// by generic process startup or the effect driver, and it does not alter
+    /// `production_candidate=false` or
+    /// `production_consensus_activation=false`.
+    pub fn apply_native_application_finalization_v0(
+        &self,
+        permit: CoreIssuedApplicationFinalizationPermitV0,
+    ) -> Result<
+        ApplicationFinalizationReceiptV0,
+        NativeConsensusApplicationFinalizationApplyRejectionV0,
+    > {
+        self.store
+            .apply_native_application_finalization_v0(permit)
+            .map_err(|rejection| {
+                let error = map_finalization_apply_failure_v0(rejection.cause());
+                NativeConsensusApplicationFinalizationApplyRejectionV0::new_v0(
+                    error,
+                    rejection.into_permit(),
+                )
+            })
+    }
+
     /// Installs only the live anchored-successor Core's one-shot application
     /// seal capability. The ApplicationStore simultaneously proves that its
     /// finalization slot is empty; no apply authority is issued or accepted.
@@ -1937,6 +2057,45 @@ mod state_sync_projection_tests {
             super::NativeConsensusApplicationHostErrorV0::
                 AuthenticatedGenesisApplicationActivationUnavailable,
         );
+    }
+
+    #[test]
+    fn native_host_finalization_apply_maps_store_failures_and_keeps_fail_closed_taxonomy_v0() {
+        use super::map_finalization_apply_failure_v0;
+        use crate::store::NativeApplicationFinalizationApplyFailureCauseV0 as Cause;
+
+        assert_eq!(
+            map_finalization_apply_failure_v0(Cause::NamespaceMismatch),
+            NativeConsensusApplicationHostErrorV0::NamespaceUnavailable,
+        );
+        assert_eq!(
+            map_finalization_apply_failure_v0(Cause::AuthorityUnavailable),
+            NativeConsensusApplicationHostErrorV0::CoreAuthorityUnavailable,
+        );
+        assert_eq!(
+            map_finalization_apply_failure_v0(Cause::AuthorityMismatch),
+            NativeConsensusApplicationHostErrorV0::CoreAuthorityMismatch,
+        );
+        assert_eq!(
+            map_finalization_apply_failure_v0(Cause::WriterUnavailable),
+            NativeConsensusApplicationHostErrorV0::HostResourceUnavailable,
+        );
+        for cause in [Cause::DatabaseUnavailable, Cause::CommitUncertain] {
+            assert_eq!(
+                map_finalization_apply_failure_v0(cause),
+                NativeConsensusApplicationHostErrorV0::DatabaseUnavailable,
+            );
+        }
+        assert_eq!(
+            map_finalization_apply_failure_v0(Cause::HostResourceUnavailable),
+            NativeConsensusApplicationHostErrorV0::HostResourceUnavailable,
+        );
+        for cause in [Cause::PersistedStateMismatch, Cause::Injected] {
+            assert_eq!(
+                map_finalization_apply_failure_v0(cause),
+                NativeConsensusApplicationHostErrorV0::PersistedStateMismatch,
+            );
+        }
     }
 
     use super::{
