@@ -30,6 +30,7 @@ const ATTESTATION_SIGNATURE_DOMAIN: &str = "trnm.poco-ai.da-attestation-signatur
 const CERTIFICATE_DOMAIN: &str = "trnm.poco-ai.availability-certificate.v1";
 const OBLIGATION_DOMAIN: &str = "trnm.poco-ai.da-obligation.v1";
 const WITHHOLDING_DOMAIN: &str = "trnm.poco-ai.da-withholding-evidence.candidate.v1";
+const MAX_AUTHOR_ID_BYTES_V1: usize = 256;
 
 #[derive(
     Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd, BorshDeserialize, BorshSerialize,
@@ -505,37 +506,16 @@ impl DaAuthorAuthorityV1 {
         max_author_bytes: u64,
         max_outstanding_sequences: u32,
     ) -> DaResultV1<Self> {
-        if author_id.is_empty()
-            || first_sequence == 0
-            || maximum_sequence < first_sequence
-            || max_author_bytes == 0
-            || max_outstanding_sequences == 0
-        {
-            return Err(error(
-                DaErrorCodeV1::InvalidBounds,
-                "invalid DA author authority",
-            ));
-        }
-        let author_key = VerifyingKey::from_bytes(&author_public_key).map_err(|_| {
-            error(
-                DaErrorCodeV1::InvalidSignature,
-                "author key is not strict Ed25519",
-            )
-        })?;
-        if author_key.is_weak() {
-            return Err(error(
-                DaErrorCodeV1::InvalidSignature,
-                "weak author key is forbidden",
-            ));
-        }
-        Ok(Self {
+        let authority = Self {
             author_id,
             author_public_key,
             first_sequence,
             maximum_sequence,
             max_author_bytes,
             max_outstanding_sequences,
-        })
+        };
+        authority.validate()?;
+        Ok(authority)
     }
 
     pub fn author_id(&self) -> &[u8] {
@@ -560,6 +540,40 @@ impl DaAuthorAuthorityV1 {
 
     pub const fn max_outstanding_sequences(&self) -> u32 {
         self.max_outstanding_sequences
+    }
+
+    /// Validate every field of an authority, including values that can be
+    /// obtained through a canonical decode rather than the constructor.
+    ///
+    /// Policy validation must not trust that all authorities were created by
+    /// `new`: a malformed authority can otherwise enter a decoded policy with
+    /// a zero watermark, an inverted sequence interval, or an invalid key.
+    pub(crate) fn validate(&self) -> DaResultV1<()> {
+        if self.author_id.is_empty()
+            || self.author_id.len() > MAX_AUTHOR_ID_BYTES_V1
+            || self.first_sequence == 0
+            || self.maximum_sequence < self.first_sequence
+            || self.max_author_bytes == 0
+            || self.max_outstanding_sequences == 0
+        {
+            return Err(error(
+                DaErrorCodeV1::InvalidBounds,
+                "invalid DA author authority",
+            ));
+        }
+        let author_key = VerifyingKey::from_bytes(&self.author_public_key).map_err(|_| {
+            error(
+                DaErrorCodeV1::InvalidSignature,
+                "author key is not strict Ed25519",
+            )
+        })?;
+        if author_key.is_weak() {
+            return Err(error(
+                DaErrorCodeV1::InvalidSignature,
+                "weak author key is forbidden",
+            ));
+        }
+        Ok(())
     }
 }
 
@@ -639,6 +653,7 @@ impl DaPolicyV1 {
         let mut prior: Option<&[u8]> = None;
         let mut keys = BTreeSet::new();
         for authority in &self.authorities {
+            authority.validate()?;
             if prior.is_some_and(|value| value >= authority.author_id.as_slice())
                 || !keys.insert(authority.author_public_key)
                 || authority.max_author_bytes > committee.max_author_bytes
@@ -1658,8 +1673,9 @@ impl DaObligationV1 {
         if self.obligation_id != expected
             || self.retain_until_epoch == 0
             || self.status > 2
+            || self.version < u64::from(self.status)
             || (self.status < 2 && self.gc_tombstone_height.is_some())
-            || (self.status == 2 && self.gc_tombstone_height.is_none())
+            || (self.status == 2 && self.gc_tombstone_height.is_none_or(|height| height == 0))
         {
             return Err(error(
                 DaErrorCodeV1::TamperDetected,
@@ -1719,6 +1735,21 @@ impl AttestorEquivocationEvidenceV1 {
 
     pub const fn evidence_id(&self) -> WithholdingEvidenceIdV1 {
         self.evidence_id
+    }
+
+    /// Recompute the canonical evidence ID and both signed statements before
+    /// accepting a decoded/transported evidence object.  Construction alone
+    /// is not sufficient because callers may receive a Borsh value from an
+    /// untrusted source after the original constructor has run.
+    pub fn verify(&self, committee: &DaCommitteeDescriptorV1) -> DaResultV1<()> {
+        let rebuilt = Self::new(committee, self.left.clone(), self.right.clone())?;
+        if rebuilt != *self {
+            return Err(error(
+                DaErrorCodeV1::InvalidWithholdingEvidence,
+                "equivocation evidence ID or ordering does not recompute",
+            ));
+        }
+        Ok(())
     }
 }
 

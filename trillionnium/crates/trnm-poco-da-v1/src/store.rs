@@ -2477,6 +2477,19 @@ fn verify_envelope_row_minimum(
     row: &BatchRowV1,
 ) -> DaResultV1<DaBatchEnvelopeV1> {
     verify_batch_row_checksum(config, row)?;
+    decode_envelope_row_minimum(config, row)
+}
+
+/// Decode and bind the immutable envelope/author columns without consulting
+/// the row checksum.  `audit_batch` deliberately allows a content/checksum
+/// drift to be latched into `Unavailable`; requiring the checksum here would
+/// prevent that safety transition and leave a corrupted row permanently
+/// unaudited.  Callers that require an intact row use
+/// `verify_envelope_row_minimum`, which performs the checksum check first.
+fn decode_envelope_row_minimum(
+    config: &DaStoreConfigV1,
+    row: &BatchRowV1,
+) -> DaResultV1<DaBatchEnvelopeV1> {
     let envelope: DaBatchEnvelopeV1 = strict_decode(&row.envelope)?;
     envelope.validate_shape()?;
     let author: DaBatchAuthorV1 = strict_decode(&row.author)?;
@@ -2727,10 +2740,21 @@ fn audit_attestation_rows(connection: &Connection, config: &DaStoreConfigV1) -> 
                 "attestation journal references a missing batch",
             )
         })?;
-        if body_value.storage_record_checksum() != batch.durable_manifest_checksum {
+        // A content mutation is intentionally latched by `audit_batch`; the
+        // row checksum may therefore already be stale while the immutable
+        // envelope/author columns remain available for attestation binding.
+        let envelope = decode_envelope_row_minimum(config, &batch)?;
+        let expected_body = DaAttestationBodyV1::new(
+            &envelope,
+            batch_id,
+            attestor_id,
+            sequence,
+            batch.durable_manifest_checksum,
+        );
+        if body_value != expected_body {
             return Err(error(
                 DaErrorCodeV1::TamperDetected,
-                "attestation does not bind the immutable durable manifest",
+                "attestation does not bind the exact persisted batch envelope/manifest",
             ));
         }
         if let Some(signature) = &signature {
