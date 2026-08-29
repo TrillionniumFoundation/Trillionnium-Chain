@@ -3,85 +3,48 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "10a61e8e98bb2ea360404d5dcb24367a649b27a1",
-  "base_tree": "309dfcdd4ede4960921abb9c8f993e1ea2a7ea74",
+  "base_commit": "1a2efe08295cfa5ab745047bc75f37890d3ef58d",
+  "base_tree": "5396675fb3d3c991c561de16b07dbeff6afcc220",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": [
-    "conformance/benchmark/**",
-    "docs/bench/**",
-    "docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V1.md",
-    "docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V2_REPLAY.md",
-    "docs/evidence/g3-g5/**",
-    "docs/runbooks/**",
-    "docs/security/AI_NATIVE_THREAT_REGISTER_V1.md",
-    "scripts/ci/check_agent_candidate_packages_v1.sh",
-    "scripts/ci/check_benchmark_security_ops_contract_v1.sh",
-    "scripts/ci/check_claim_activation_gate_v2.sh",
-    "scripts/ci/check_g3_g5_replay_v2.sh",
-    "scripts/ci/check_g3_g5_source_binding_v2.sh",
-    "tools/benchmark-contract/**"
+    "conformance/benchmark/**","docs/bench/**","docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V1.md",
+    "docs/development/packages/TRNM_G3_G5_BENCH_SECURITY_OPS_V2_REPLAY.md","docs/evidence/g3-g5/**",
+    "docs/runbooks/**","docs/security/AI_NATIVE_THREAT_REGISTER_V1.md","scripts/ci/check_agent_candidate_packages_v1.sh",
+    "scripts/ci/check_benchmark_security_ops_contract_v1.sh","scripts/ci/check_claim_activation_gate_v2.sh",
+    "scripts/ci/check_g3_g5_replay_v2.sh","scripts/ci/check_g3_g5_source_binding_v2.sh","tools/benchmark-contract/**"
   ],
   "gaps_closed": [
-    "A17-REPLAY-EXACT-A16",
-    "A17-NO-ORPHAN-METRIC",
-    "A17-TOPOLOGY-IDENTITY-ACCOUNTING",
-    "A17-EXACT-COMPARATOR-ARTIFACT",
-    "A17-CLAIM-SCOPE-BOUNDING",
-    "A17-ACTIVATION-DEPENDENCY-GATE",
-    "A17-CRITICAL-HIGH-FINDING-BLOCK",
-    "A17-SOAK-AUDIT-DRILL-REQUIREMENTS",
-    "A17-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
+    "A17-REPLAY-EXACT-A16","A17-NO-ORPHAN-METRIC","A17-TOPOLOGY-IDENTITY-ACCOUNTING","A17-EXACT-COMPARATOR-ARTIFACT",
+    "A17-CLAIM-SCOPE-BOUNDING","A17-ACTIVATION-DEPENDENCY-GATE","A17-CRITICAL-HIGH-FINDING-BLOCK",
+    "A17-SOAK-AUDIT-DRILL-REQUIREMENTS","A17-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
   "gaps_open": [
-    "A17-REAL-BENCHMARK-RESULTS",
-    "A17-REAL-MULTI-HOST-CAMPAIGNS",
-    "A17-INDEPENDENT-AUDITS-AND-RED-TEAM",
-    "A17-72H-7D-30D-SOAK-EVIDENCE",
-    "A17-ACCEPTED-G0-G2F-EVIDENCE",
-    "A17-GOVERNANCE-AND-ACTIVATION-CEREMONY"
+    "A17-REAL-BENCHMARK-RESULTS","A17-REAL-MULTI-HOST-CAMPAIGNS","A17-INDEPENDENT-AUDITS-AND-RED-TEAM",
+    "A17-72H-7D-30D-SOAK-EVIDENCE","A17-ACCEPTED-G0-G2F-EVIDENCE","A17-GOVERNANCE-AND-ACTIVATION-CEREMONY"
   ],
   "commands": ["bash scripts/ci/check_g3_g5_replay_v2.sh: exact-head trusted replay required"],
   "failed_tests": [],
   "retained_mutants": [
-    "submitted-tps-substitution",
-    "topology-count-overclaim",
-    "operator-custody-overclaim",
-    "missing-comparator-digest",
-    "premature-surpass-claim",
-    "orphan-metric",
-    "open-high-testnet",
-    "invalid-dependency-status",
-    "unsupported-ai-profile",
-    "missing-independent-replay",
-    "insufficient-soak",
-    "missing-audit",
-    "unscoped-superiority-claim"
+    "submitted-tps-substitution","topology-count-overclaim","operator-custody-overclaim","missing-comparator-digest",
+    "premature-surpass-claim","orphan-metric","open-high-testnet","invalid-dependency-status","unsupported-ai-profile",
+    "missing-independent-replay","insufficient-soak","missing-audit","unscoped-superiority-claim"
   ],
   "evidence_scope": "contract|fixture|simulation",
   "authority": "candidate",
   "classification": "candidate-non-normative",
   "known_gaps": [
-    "A16 remains STOP_CONDITION",
-    "no real performance traces or signatures exist",
-    "no independent audits/red-team/soak evidence exists",
-    "production and activation authority remains absent"
+    "A16 remains STOP_CONDITION","no real performance traces or signatures exist",
+    "no independent audits/red-team/soak evidence exists","production and activation authority remains absent"
   ],
   "interface_requests": [
-    "A17-ICR-A00-A01-ACCEPTED-EVIDENCE-INDEX-V1",
-    "A17-ICR-A07-MULTI-HOST-CAMPAIGN-V1",
-    "A17-ICR-A16-WHOLE-NODE-LIGHT-CLIENT-EVIDENCE-V1",
-    "A17-ICR-GOVERNANCE-ACTIVATION-CEREMONY-V1"
+    "A17-ICR-A00-A01-ACCEPTED-EVIDENCE-INDEX-V1","A17-ICR-A07-MULTI-HOST-CAMPAIGN-V1",
+    "A17-ICR-A16-WHOLE-NODE-LIGHT-CLIENT-EVIDENCE-V1","A17-ICR-GOVERNANCE-ACTIVATION-CEREMONY-V1"
   ],
-  "downstream_invalidation": [
-    "all public performance claims",
-    "public testnet readiness",
-    "production activation",
-    "release readiness"
-  ],
-  "next_action": "Run the frozen A00 exact-head replay route and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
+  "downstream_invalidation": ["all public performance claims","public testnet readiness","production activation","release readiness"],
+  "next_action": "Run the final A00 exact-head replay and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "10a61e8e98bb2ea360404d5dcb24367a649b27a1",
-  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3",
-  "frozen_workflow_tree": "616377d0525e6b5157b4394aa7f347d4d053bbf1"
+  "base_sync_parent": "1a2efe08295cfa5ab745047bc75f37890d3ef58d",
+  "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+  "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

@@ -7,4 +7,8 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s conformance/g2f -p 
 bash scripts/g2f/check_g2f_conformance.sh
 bash scripts/g2f/check_view_commitment_v2.sh
 
+cargo test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib
+cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib -- -D warnings
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
 git diff --check
