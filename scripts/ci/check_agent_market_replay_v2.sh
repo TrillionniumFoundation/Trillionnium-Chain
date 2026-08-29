@@ -5,18 +5,18 @@ root=$(git rev-parse --show-toplevel); cd "$root"
 python3 tools/agent-market-model/model.py --self-test >/tmp/trnm-agent-market-v1.json
 python3 tools/agent-market-model/authority_extension_v2.py --self-test >/tmp/trnm-agent-market-v2.json
 
-cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --offline \
+cargo test --manifest-path trillionnium/Cargo.toml --locked --offline \
   -p trnm-poco-agent-market-v1 --all-targets
-cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
+cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
   -p trnm-poco-agent-market-v1 --all-targets -- -D warnings
-cargo +1.95.0 run --manifest-path trillionnium/Cargo.toml --locked --offline \
+cargo run --manifest-path trillionnium/Cargo.toml --locked --offline \
   -p trnm-poco-agent-market-v1 --example agent_transaction_wire_v1 --quiet \
   >/tmp/trnm-agent-transaction-wire-v1.json
 PYTHONDONTWRITEBYTECODE=1 python3 -B \
   conformance/agent-market/independent_agent_transaction_wire_v1.py \
   --fixture /tmp/trnm-agent-transaction-wire-v1.json --self-test \
   >/tmp/trnm-agent-transaction-independent-v1.json
-cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
 python3 - <<'PY'
 import json
