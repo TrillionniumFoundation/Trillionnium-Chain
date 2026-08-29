@@ -259,6 +259,327 @@ fn genesis_result_binds_root_height_and_validator_set() {
     assert_eq!(result.active_validator_set_id(), validators.set_id());
 }
 
+fn finalization_head(height: u64, seed: u8) -> ApplicationHeadV0 {
+    ApplicationHeadV0::new(
+        HeightV0::new(height),
+        block_id(seed),
+        state_root(seed.wrapping_add(1)),
+        commit_id(seed.wrapping_add(2)),
+    )
+}
+
+fn finalization_intent(
+    parent: ApplicationHeadV0,
+    target: ApplicationHeadV0,
+    seed: u8,
+) -> NativeFinalizationIntentV0 {
+    NativeFinalizationIntentV0::new(
+        parent,
+        target,
+        hash(seed),
+        hash(seed.wrapping_add(1)),
+        hash(seed.wrapping_add(2)),
+        hash(seed.wrapping_add(3)),
+    )
+    .unwrap()
+}
+
+fn finalization_readback(
+    intent: NativeFinalizationIntentV0,
+    durable_sequence: u64,
+    seed: u8,
+) -> NativeFinalizationApplyReadbackV0 {
+    NativeFinalizationApplyReadbackV0::new(
+        intent.clone(),
+        intent.target().clone(),
+        intent.target().state_root(),
+        hash(seed),
+        durable_sequence,
+    )
+    .unwrap()
+}
+
+#[test]
+fn finalization_queue_rejects_skips_reorders_and_root_drift_without_mutation() {
+    let h0 = finalization_head(0, 101);
+    let h1 = finalization_head(1, 111);
+    let h2 = finalization_head(2, 121);
+    let h3 = finalization_head(3, 131);
+    let i1 = finalization_intent(h0.clone(), h1.clone(), 141);
+    let i2 = finalization_intent(h1.clone(), h2.clone(), 151);
+    let i3 = finalization_intent(h2.clone(), h3.clone(), 161);
+    let mut queue = NativeFinalizationQueueV0::new(h0.clone(), 8).unwrap();
+    let before_skip = queue.clone();
+    assert_eq!(
+        queue.enqueue(i2.clone()).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::NonContiguous
+    );
+    assert_eq!(queue, before_skip, "a skipped enqueue changed queue state");
+    assert_eq!(
+        queue.enqueue(i1.clone()).unwrap(),
+        NativeFinalizationEnqueueOutcomeV0::Queued
+    );
+    assert_eq!(
+        queue.enqueue(i2.clone()).unwrap(),
+        NativeFinalizationEnqueueOutcomeV0::Queued
+    );
+    assert_eq!(
+        queue.enqueue(i3.clone()).unwrap(),
+        NativeFinalizationEnqueueOutcomeV0::Queued
+    );
+    let before = queue.clone();
+    assert_eq!(
+        queue
+            .acknowledge_front(finalization_readback(i2.clone(), 2, 171))
+            .unwrap_err()
+            .code(),
+        NativeBoundaryErrorCodeV0::NonContiguous
+    );
+    assert_eq!(queue, before, "a skipped front changed queue state");
+
+    let before_bad_root = queue.clone();
+    assert_eq!(
+        NativeFinalizationApplyReadbackV0::new(
+            i1.clone(),
+            i1.target().clone(),
+            state_root(0xee),
+            hash(181),
+            1,
+        )
+        .unwrap_err()
+        .code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+    assert_eq!(
+        queue, before_bad_root,
+        "a post-state-root drift changed queue state"
+    );
+
+    assert!(matches!(
+        queue.acknowledge_front(finalization_readback(i1.clone(), 1, 181)),
+        Ok(NativeFinalizationApplyOutcomeV0::NewlyCommitted(_))
+    ));
+    assert!(matches!(
+        queue.acknowledge_front(finalization_readback(i2.clone(), 2, 191)),
+        Ok(NativeFinalizationApplyOutcomeV0::NewlyCommitted(_))
+    ));
+    assert!(matches!(
+        queue.acknowledge_front(finalization_readback(i3.clone(), 3, 201)),
+        Ok(NativeFinalizationApplyOutcomeV0::NewlyCommitted(_))
+    ));
+    assert_eq!(queue.committed_head(), &h3);
+    assert!(queue.pending().is_empty());
+    assert_eq!(
+        queue.reconcile(&i2).unwrap(),
+        NativeFinalizationRetryDispositionV0::ExactCommitted(finalization_readback(i2, 2, 191))
+    );
+}
+
+#[test]
+fn finalization_queue_rejects_conflicting_duplicates_and_preserves_exact_replay() {
+    let h0 = finalization_head(0, 211);
+    let h1 = finalization_head(1, 221);
+    let intent = finalization_intent(h0.clone(), h1, 231);
+    let mut queue = NativeFinalizationQueueV0::new(h0, 2).unwrap();
+    assert_eq!(
+        queue.enqueue(intent.clone()).unwrap(),
+        NativeFinalizationEnqueueOutcomeV0::Queued
+    );
+    assert_eq!(
+        queue.enqueue(intent.clone()).unwrap(),
+        NativeFinalizationEnqueueOutcomeV0::AlreadyQueued
+    );
+    let conflicting = NativeFinalizationIntentV0::new(
+        intent.parent().clone(),
+        intent.target().clone(),
+        hash(241),
+        intent.overlay_checksum(),
+        intent.body_digest(),
+        intent.jmt_plan_digest(),
+    )
+    .unwrap();
+    assert_eq!(
+        queue.enqueue(conflicting).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+    let readback = finalization_readback(intent.clone(), 1, 251);
+    let first = queue.acknowledge_front(readback.clone()).unwrap();
+    assert_eq!(
+        first,
+        NativeFinalizationApplyOutcomeV0::NewlyCommitted(readback.clone())
+    );
+    assert_eq!(
+        queue.acknowledge_front(readback.clone()).unwrap(),
+        NativeFinalizationApplyOutcomeV0::ExactReplay(readback.clone())
+    );
+    let conflicting_readback = NativeFinalizationApplyReadbackV0::new(
+        readback.intent().clone(),
+        readback.committed_head().clone(),
+        readback.jmt_root(),
+        hash(252),
+        readback.durable_sequence(),
+    )
+    .unwrap();
+    assert_eq!(
+        queue
+            .acknowledge_front(conflicting_readback)
+            .unwrap_err()
+            .code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+    assert_eq!(queue.history().len(), 1, "duplicate replay appended history");
+}
+
+#[test]
+fn finalization_queue_retains_referenced_fork_and_reclaims_only_unreferenced_evidence() {
+    let h0 = finalization_head(0, 31);
+    let canonical_h1 = finalization_head(1, 41);
+    let fork_h1 = finalization_head(1, 51);
+    let fork_h2 = finalization_head(2, 61);
+    let canonical = finalization_intent(h0.clone(), canonical_h1, 71);
+    let losing = finalization_intent(h0, fork_h1.clone(), 81);
+    let losing_child = finalization_intent(fork_h1, fork_h2, 91);
+    let reference = hash(101);
+    let mut queue = NativeFinalizationQueueV0::new(finalization_head(0, 31), 4).unwrap();
+    queue.enqueue(canonical).unwrap();
+    queue
+        .retain_losing_fork(losing.clone(), reference)
+        .unwrap();
+    assert_eq!(
+        queue.enqueue(losing).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::Duplicate,
+        "a retained losing fork must never be promoted by retry"
+    );
+    queue
+        .retain_losing_fork(losing_child, hash(102))
+        .unwrap();
+    assert_eq!(
+        queue
+            .reclaim_unreferenced_forks(&[reference, hash(102)])
+            .unwrap(),
+        0
+    );
+    assert_eq!(queue.forks().len(), 2);
+    // Once the child reference is released, the child can be reclaimed first;
+    // the parent remains protected by its own live reference.
+    assert_eq!(queue.reclaim_unreferenced_forks(&[reference]).unwrap(), 1);
+    assert_eq!(queue.forks().len(), 1);
+    assert_eq!(queue.reclaim_unreferenced_forks(&[]).unwrap(), 1);
+    assert!(queue.forks().is_empty());
+}
+
+#[test]
+fn finalization_queue_reconciles_pending_and_fails_closed_for_unknown_sources() {
+    let h0 = finalization_head(0, 41);
+    let h1 = finalization_head(1, 51);
+    let h2 = finalization_head(2, 61);
+    let h3 = finalization_head(3, 91);
+    let intent = finalization_intent(h0.clone(), h1.clone(), 71);
+    let unknown = finalization_intent(h2, h3, 81);
+    let mut queue = NativeFinalizationQueueV0::new(h0, 2).unwrap();
+    queue.enqueue(intent.clone()).unwrap();
+    assert_eq!(
+        queue.reconcile(&intent).unwrap(),
+        NativeFinalizationRetryDispositionV0::Pending
+    );
+    assert_eq!(
+        queue.reconcile(&unknown).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::InvalidTransition
+    );
+    let before = queue.clone();
+    assert_eq!(
+        queue.enqueue(unknown).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::NonContiguous
+    );
+    assert_eq!(queue, before, "unknown retry altered the pending front");
+}
+
+#[test]
+fn finalization_queue_bounds_and_sequence_regressions_are_atomic() {
+    let h0 = finalization_head(0, 101);
+    assert_eq!(
+        NativeFinalizationQueueV0::new(h0.clone(), 0)
+            .unwrap_err()
+            .code(),
+        NativeBoundaryErrorCodeV0::ZeroValue
+    );
+    assert_eq!(
+        NativeFinalizationQueueV0::new(h0.clone(), MAX_FINALIZATION_QUEUE_ENTRIES_V0 + 1)
+            .unwrap_err()
+            .code(),
+        NativeBoundaryErrorCodeV0::TooMany
+    );
+
+    let h1 = finalization_head(1, 111);
+    let h2 = finalization_head(2, 121);
+    let i1 = finalization_intent(h0.clone(), h1.clone(), 131);
+    let i2 = finalization_intent(h1, h2, 141);
+    let mut queue = NativeFinalizationQueueV0::new(h0, 1).unwrap();
+    queue.enqueue(i1.clone()).unwrap();
+    let before_full = queue.clone();
+    assert_eq!(
+        queue.enqueue(i2.clone()).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::TooMany
+    );
+    assert_eq!(queue, before_full);
+    queue
+        .acknowledge_front(finalization_readback(i1, 2, 151))
+        .unwrap();
+    queue.enqueue(i2.clone()).unwrap();
+    let before_regression = queue.clone();
+    assert_eq!(
+        queue
+            .acknowledge_front(finalization_readback(i2, 1, 161))
+            .unwrap_err()
+            .code(),
+        NativeBoundaryErrorCodeV0::InvalidTransition
+    );
+    assert_eq!(queue, before_regression);
+}
+
+#[test]
+fn finalization_intent_and_readback_reject_zero_or_non_successor_identity() {
+    let h0 = finalization_head(0, 111);
+    let same_height = finalization_head(0, 121);
+    assert_eq!(
+        NativeFinalizationIntentV0::new(
+            h0.clone(),
+            same_height,
+            hash(131),
+            hash(132),
+            hash(133),
+            hash(134),
+        )
+        .unwrap_err()
+        .code(),
+        NativeBoundaryErrorCodeV0::NonContiguous
+    );
+    let h1 = finalization_head(1, 141);
+    let intent = NativeFinalizationIntentV0::new(
+        h0,
+        h1.clone(),
+        Hash32V0::new([0; 32]),
+        hash(151),
+        hash(152),
+        hash(153),
+    )
+    .unwrap_err();
+    assert_eq!(intent.code(), NativeBoundaryErrorCodeV0::ZeroValue);
+    let valid = finalization_intent(finalization_head(0, 161), h1, 171);
+    assert_eq!(
+        NativeFinalizationApplyReadbackV0::new(
+            valid,
+            finalization_head(1, 181),
+            state_root(182),
+            hash(183),
+            1,
+        )
+        .unwrap_err()
+        .code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+}
+
 #[test]
 fn snapshot_manifest_requires_contiguous_bounded_chunks() {
     let request = NativeSnapshotRequestV0::new(parent_head(), 1024).unwrap();
