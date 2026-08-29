@@ -17,6 +17,7 @@
 
 mod codec;
 mod error;
+pub mod profile_registry_v1;
 mod store;
 mod types;
 
