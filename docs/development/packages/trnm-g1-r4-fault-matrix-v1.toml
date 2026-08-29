@@ -117,7 +117,7 @@ targeted_crypto_tests = "passed-pinned-1.95.0-three-tests"
 cargo_tests = "package-suite-not-complete-long-running-runtime-tests"
 clippy = "not-run"
 authorized_clean_clone = "not-run"
-project_preflight = "pending-final-clean-tree"
+project_preflight = "passed-clean-tree"
 host = "Linux; single host; no network"
 
 [truth]
