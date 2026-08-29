@@ -78,7 +78,7 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], open_numbers
+assert open_numbers == [1, 2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25], open_numbers
 pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
 assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
