@@ -30,7 +30,8 @@ use trnm_consensus_core::{
     ApplicationFinalizationReceiptV0, ApplicationSealedValidV0, Core,
     CoreAcceptedApplicationValidDV0, CoreError, CoreSafetyRulesAuthorityErrorV1,
     CoreSafetyRulesAuthorityV1, DurableFinalizationV0, Effect, Input, OutboundMessage,
-    PayloadValidationRequest, SafetyHalt, SafetyState, SafetyStatePersistenceV0, SignIntent,
+    PayloadValidationRequest, PayloadValidationResult, SafetyHalt, SafetyState,
+    SafetyStatePersistenceV0, SignIntent,
 };
 use trnm_consensus_crypto::StrictEd25519Verifier;
 use trnm_consensus_safety_rules::SafetyRulesDurableTransitionStoreV1;
@@ -59,6 +60,36 @@ pub const EFFECT_DRIVER_MAX_INGRESS_V1: usize = 32;
 /// Hard upper bound for effects (including effects returned by a validation
 /// hook) processed by one `drive_v1` call.
 pub const EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1: usize = 64;
+
+/// Candidate-only result of the ordinary application boundary.
+///
+/// This enum keeps the host's tri-state decision explicit at the driver
+/// boundary.  In particular, a missing body, parent, runtime profile, or
+/// transient store failure must be reported as [`Self::Unavailable`] rather than
+/// being collapsed into the deterministic-invalid or Valid paths.  Only the
+/// Core-issued, non-cloneable [`ApplicationSealedValidV0`] can select
+/// [`Self::Sealed`]; callers cannot manufacture a Valid result from commitments.
+///
+/// [`Self::Unsupported`] is an integration capability marker, not a validation
+/// result.  It preserves source compatibility for adapters that have not yet
+/// implemented ordinary execution, but the legacy callback may return only an
+/// empty effect list; any attempted side effect is rejected by the driver.
+#[allow(clippy::large_enum_variant)]
+#[derive(Debug)]
+pub enum CandidateOrdinaryValidationOutcomeV1 {
+    /// The application atomically committed the exact body and returns the
+    /// Core-affined proof which may enter the explicit D -> Vote path.
+    Sealed(ApplicationSealedValidV0),
+    /// Source/dependency data is not currently available.  The driver sends
+    /// an explicit Core `Unavailable` callback and never signs.
+    Unavailable,
+    /// Complete canonical evidence was available and the exact proposal is
+    /// deterministically invalid.  The driver sends an explicit Core terminal
+    /// callback and never signs.
+    DeterministicallyInvalid,
+    /// No ordinary execution adapter is installed yet.
+    Unsupported,
+}
 
 /// Hook boundary for all nondeterministic work required by Core effects.
 ///
@@ -111,16 +142,47 @@ pub trait CandidateEffectDriverHooksV1 {
     ///
     /// `None` means that this adapter has no complete ordinary execution
     /// implementation.  The driver then invokes [`Self::validate_payload_v1`]
-    /// with the untouched request; an adapter may return an empty effect list
-    /// (leaving the obligation pending) or fail closed.  The default is
-    /// deliberately `None`, so existing candidate hooks gain no implicit
-    /// Vote or production authority merely by recompiling.
+    /// with the untouched request for source compatibility.  That legacy
+    /// callback must return an empty effect list (leaving the obligation
+    /// pending) or fail closed; a non-empty list is rejected so it cannot
+    /// smuggle a signer, finalizer, timer, or network action through the
+    /// compatibility path.  The default is deliberately `None`, so existing
+    /// candidate hooks gain no implicit Vote or production authority merely by
+    /// recompiling.
+    /// An adapter must not claim the request and then return `None`. If the
+    /// subsequent legacy callback tries to reclaim that linear request, Core's
+    /// claim fence causes a fail-stop; a callback which silently ignores the
+    /// consumed request remains a liveness residual until an explicit claim
+    /// status accessor is frozen.
     fn seal_ordinary_payload_v1(
         &mut self,
         _request: &PayloadValidationRequest,
         _core: &Core,
     ) -> Result<Option<ApplicationSealedValidV0>, Self::Error> {
         Ok(None)
+    }
+
+    /// Resolve the ordinary application boundary with an explicit tri-state
+    /// outcome.  The default delegates to the original seal-only hook so
+    /// existing candidate adapters remain source-compatible: `Some(proof)`
+    /// becomes [`CandidateOrdinaryValidationOutcomeV1::Sealed`], while
+    /// `None` remains [`CandidateOrdinaryValidationOutcomeV1::Unsupported`].
+    ///
+    /// Implementations must not return `DeterministicallyInvalid` until the
+    /// complete canonical body/evidence, authenticated parent, active
+    /// validator/parameter set, and runtime profile have been checked.  A
+    /// transient or missing dependency is `Unavailable` and is passed to Core
+    /// as such.  No variant grants a signer, finality, or application-commit
+    /// authority.
+    fn validate_ordinary_payload_v1(
+        &mut self,
+        request: &PayloadValidationRequest,
+        core: &Core,
+    ) -> Result<CandidateOrdinaryValidationOutcomeV1, Self::Error> {
+        Ok(match self.seal_ordinary_payload_v1(request, core)? {
+            Some(proof) => CandidateOrdinaryValidationOutcomeV1::Sealed(proof),
+            None => CandidateOrdinaryValidationOutcomeV1::Unsupported,
+        })
     }
 
     /// Optionally apply one exact Core finalization queue front and return the
@@ -900,23 +962,68 @@ where
         if request.route() != trnm_consensus_core::PayloadValidationRouteV0::Proposal
             || retained.block() != request.block()
             || retained.block().id() != request.id().block_id()
+            || retained.block().header().view() != request.id().view()
         {
             return Err(CandidateEffectDriverErrorV1::OrdinaryProposalBindingMismatch);
         }
-        let sealed = self
+        let validation_id = request.id();
+        let outcome = self
             .hooks
-            .seal_ordinary_payload_v1(&request, &self.core)
-            .map_err(|error| Self::hook_error("seal_ordinary_payload", error))?;
-        let Some(proof) = sealed else {
-            let result = self
-                .hooks
-                .validate_payload_v1(Effect::ValidatePayload(request), &mut self.core)
-                .map_err(|error| Self::hook_error("validate_payload", error));
-            // No explicit proof means no safe route to D or Vote.  Do not
-            // retain a proposal that a later caller could accidentally pair
-            // with another validation request.
-            self.pending_ordinary_proposal = None;
-            return result;
+            .validate_ordinary_payload_v1(&request, &self.core)
+            .map_err(|error| Self::hook_error("validate_ordinary_payload", error))?;
+        let proof = match outcome {
+            CandidateOrdinaryValidationOutcomeV1::Sealed(proof) => proof,
+            CandidateOrdinaryValidationOutcomeV1::Unavailable => {
+                // `Unavailable` consumes this exact Core request generation,
+                // but remains source-scoped and retryable under a later
+                // generation.  Clear the retained proposal before handing
+                // the callback to Core so no later request can reuse it.
+                self.pending_ordinary_proposal = None;
+                return self
+                    .core
+                    .step(
+                        Input::PayloadValidated {
+                            id: validation_id,
+                            result: PayloadValidationResult::Unavailable,
+                        },
+                        &StrictEd25519Verifier,
+                    )
+                    .map_err(Self::map_core_error);
+            }
+            CandidateOrdinaryValidationOutcomeV1::DeterministicallyInvalid => {
+                // A deterministic-invalid result is terminal for this exact
+                // block and is never a disguised application error.  Core
+                // owns the durable negative fact/safety-halt decision.
+                self.pending_ordinary_proposal = None;
+                return self
+                    .core
+                    .step(
+                        Input::PayloadValidated {
+                            id: validation_id,
+                            result: PayloadValidationResult::DeterministicallyInvalid,
+                        },
+                        &StrictEd25519Verifier,
+                    )
+                    .map_err(Self::map_core_error);
+            }
+            CandidateOrdinaryValidationOutcomeV1::Unsupported => {
+                let safety_before_legacy = self.core.safety_state().clone();
+                let result = self
+                    .hooks
+                    .validate_payload_v1(Effect::ValidatePayload(request), &mut self.core)
+                    .map_err(|error| Self::hook_error("validate_payload", error));
+                // No explicit proof means no safe route to D or Vote.  Do
+                // not retain a proposal that a later caller could
+                // accidentally pair with another validation request.
+                self.pending_ordinary_proposal = None;
+                let effects = result?;
+                if self.core.safety_state() != &safety_before_legacy {
+                    return Err(CandidateEffectDriverErrorV1::UnsupportedEffect(
+                        "ordinary Unsupported fallback mutated Core",
+                    ));
+                }
+                return reject_ordinary_unsupported_effects_v1(effects);
+            }
         };
 
         let accepted = self
@@ -1118,6 +1225,17 @@ where
     }
 }
 
+fn reject_ordinary_unsupported_effects_v1(
+    effects: Vec<Effect>,
+) -> Result<Vec<Effect>, CandidateEffectDriverErrorV1> {
+    if effects.is_empty() {
+        return Ok(effects);
+    }
+    Err(CandidateEffectDriverErrorV1::UnsupportedEffect(
+        "ordinary Unsupported fallback emitted effects",
+    ))
+}
+
 fn intent_sign_id(intent: &CanonicalSignIntentV0) -> trnm_consensus_core::SignId {
     trnm_consensus_core::SignId::new(intent.signing_root())
 }
@@ -1173,7 +1291,7 @@ mod tests {
     };
     use trnm_consensus_types::{
         ChainId, ConsensusParametersV0, ConsensusPublicKey, GenesisHash, GenesisQcV0,
-        ProtocolVersion, Validator, ValidatorId, ValidatorSet, VotingPower,
+        ProtocolVersion, Validator, ValidatorId, ValidatorSet, View, VotingPower,
     };
 
     use super::*;
@@ -1210,6 +1328,15 @@ mod tests {
         checkpoint_committed: bool,
         sign_calls: usize,
         broadcasts: usize,
+        last_broadcast: Option<OutboundMessage>,
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    enum OrdinaryValidationModeV1 {
+        /// Delegate to the existing seal-only fixture hook.
+        Legacy,
+        Unavailable,
+        DeterministicallyInvalid,
     }
 
     struct RecordingHooksV1 {
@@ -1218,6 +1345,9 @@ mod tests {
         fail_checkpoint: bool,
         application_seal_authority: Option<CoreIssuedApplicationSealAuthorityV0>,
         enable_ordinary_delivery: bool,
+        ordinary_validation_mode: OrdinaryValidationModeV1,
+        emit_legacy_side_effect: bool,
+        mutate_core_in_legacy_fallback: bool,
     }
 
     impl CandidateEffectDriverHooksV1 for RecordingHooksV1 {
@@ -1246,14 +1376,35 @@ mod tests {
 
         fn validate_payload_v1(
             &mut self,
-            _effect: Effect,
-            _core: &mut Core,
+            effect: Effect,
+            core: &mut Core,
         ) -> Result<Vec<Effect>, Self::Error> {
             self.facts
                 .lock()
                 .expect("recording hook mutex")
                 .events
                 .push("validate");
+            if self.mutate_core_in_legacy_fallback {
+                let request = match effect {
+                    Effect::ValidatePayload(request) => request,
+                    _ => return Err("legacy fallback mutation received a non-ordinary effect"),
+                };
+                core.step(
+                    Input::PayloadValidated {
+                        id: request.id(),
+                        result: PayloadValidationResult::Unavailable,
+                    },
+                    &StrictEd25519Verifier,
+                )
+                .map_err(|_| "legacy fallback Core mutation failed")?;
+                return Ok(Vec::new());
+            }
+            if self.emit_legacy_side_effect && matches!(effect, Effect::ValidatePayload(_)) {
+                return Ok(vec![Effect::ArmViewTimer {
+                    epoch: core.safety_state().epoch(),
+                    view: core.safety_state().current_view(),
+                }]);
+            }
             Ok(Vec::new())
         }
 
@@ -1329,6 +1480,37 @@ mod tests {
             )))
         }
 
+        fn validate_ordinary_payload_v1(
+            &mut self,
+            request: &PayloadValidationRequest,
+            core: &Core,
+        ) -> Result<CandidateOrdinaryValidationOutcomeV1, Self::Error> {
+            match self.ordinary_validation_mode {
+                OrdinaryValidationModeV1::Legacy => self
+                    .seal_ordinary_payload_v1(request, core)
+                    .map(|proof| match proof {
+                        Some(proof) => CandidateOrdinaryValidationOutcomeV1::Sealed(proof),
+                        None => CandidateOrdinaryValidationOutcomeV1::Unsupported,
+                    }),
+                OrdinaryValidationModeV1::Unavailable => {
+                    self.facts
+                        .lock()
+                        .expect("recording hook mutex")
+                        .events
+                        .push("ordinary_unavailable");
+                    Ok(CandidateOrdinaryValidationOutcomeV1::Unavailable)
+                }
+                OrdinaryValidationModeV1::DeterministicallyInvalid => {
+                    self.facts
+                        .lock()
+                        .expect("recording hook mutex")
+                        .events
+                        .push("ordinary_invalid");
+                    Ok(CandidateOrdinaryValidationOutcomeV1::DeterministicallyInvalid)
+                }
+            }
+        }
+
         fn compare_and_advance_whole_node_checkpoint_v1(
             &mut self,
             _core: &Core,
@@ -1360,10 +1542,11 @@ mod tests {
             ))
         }
 
-        fn broadcast_v1(&mut self, _message: OutboundMessage) -> Result<(), Self::Error> {
+        fn broadcast_v1(&mut self, message: OutboundMessage) -> Result<(), Self::Error> {
             let mut facts = self.facts.lock().expect("recording hook mutex");
             facts.events.push("broadcast");
             facts.broadcasts += 1;
+            facts.last_broadcast = Some(message);
             Ok(())
         }
 
@@ -1379,9 +1562,10 @@ mod tests {
 
     type TestDriverV1 = CandidateEffectDriverV1<RecordingTransitionStoreV1, RecordingHooksV1>;
 
-    fn test_driver_v1(
+    fn test_driver_with_ordinary_mode_v1(
         queue_capacity: usize,
         fail_checkpoint: bool,
+        ordinary_validation_mode: OrdinaryValidationModeV1,
     ) -> (
         TestDriverV1,
         Arc<Mutex<StoreFactsV1>>,
@@ -1444,10 +1628,28 @@ mod tests {
                     .expect("issue test application seal authority"),
             ),
             enable_ordinary_delivery: false,
+            ordinary_validation_mode,
+            emit_legacy_side_effect: false,
+            mutate_core_in_legacy_fallback: false,
         };
         let driver = CandidateEffectDriverV1::new(core, authority, hooks, queue_capacity)
             .expect("construct bounded candidate driver");
         (driver, store_facts, hook_facts)
+    }
+
+    fn test_driver_v1(
+        queue_capacity: usize,
+        fail_checkpoint: bool,
+    ) -> (
+        TestDriverV1,
+        Arc<Mutex<StoreFactsV1>>,
+        Arc<Mutex<HookFactsV1>>,
+    ) {
+        test_driver_with_ordinary_mode_v1(
+            queue_capacity,
+            fail_checkpoint,
+            OrdinaryValidationModeV1::Legacy,
+        )
     }
 
     fn event_index(events: &[&'static str], expected: &'static str) -> usize {
@@ -1635,11 +1837,17 @@ mod tests {
             fail_checkpoint: false,
             application_seal_authority: Some(app_authority),
             enable_ordinary_delivery: true,
+            ordinary_validation_mode: OrdinaryValidationModeV1::Legacy,
+            emit_legacy_side_effect: false,
+            mutate_core_in_legacy_fallback: false,
         };
         let mut driver = CandidateEffectDriverV1::new(core, authority, hooks, 4)
             .expect("construct ordinary candidate driver");
         let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
             .expect("construct exact ordinary fixture proposal");
+        let expected_block = proposal.block().id();
+        let expected_view = proposal.block().header().view();
+        let expected_height = proposal.block().header().height();
         driver
             .enqueue_proposal_v1(1, proposal)
             .expect("enqueue ordinary proposal");
@@ -1651,6 +1859,17 @@ mod tests {
         let hook_facts = hook_facts.lock().expect("recording hook mutex");
         assert_eq!(hook_facts.sign_calls, 1);
         assert_eq!(hook_facts.broadcasts, 1);
+        match hook_facts.last_broadcast.as_ref() {
+            Some(OutboundMessage::Vote(vote)) => {
+                assert_eq!(vote.block_id(), expected_block);
+                assert_eq!(vote.view(), expected_view);
+                assert_eq!(vote.height(), expected_height);
+                assert_eq!(vote.author(), ValidatorId::new([1; 32]));
+                vote.verify(&validator_set, &StrictEd25519Verifier)
+                    .expect("same-owner Vote must verify against the configured set");
+            }
+            other => panic!("ordinary path broadcast unexpected message: {other:?}"),
+        }
         assert_eq!(
             hook_facts.events,
             vec![
@@ -1676,6 +1895,197 @@ mod tests {
                 .transitions
                 .len(),
             1
+        );
+    }
+
+    #[test]
+    fn ordinary_unavailable_is_explicit_and_never_signs() {
+        let (mut driver, store_facts, hook_facts) = test_driver_with_ordinary_mode_v1(
+            2,
+            false,
+            OrdinaryValidationModeV1::Unavailable,
+        );
+        let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
+            .expect("construct exact ordinary fixture proposal");
+        let expected_block = proposal.block().id();
+        driver
+            .enqueue_proposal_v1(1, proposal)
+            .expect("enqueue ordinary proposal");
+
+        let facts = driver
+            .drive_v1()
+            .expect("Unavailable must complete through Core's durable callback");
+        assert_eq!(facts.generation(), 1);
+        assert_eq!(facts.processed_ingress(), 1);
+        assert_eq!(facts.status(), CandidateEffectDriverStatusV1::Active);
+        let completions = driver.core().safety_state().payload_validation_completions();
+        assert_eq!(completions.len(), 1);
+        assert_eq!(
+            completions[0].route(),
+            trnm_consensus_core::PayloadValidationRouteV0::Proposal
+        );
+        assert_eq!(completions[0].id().block_id(), expected_block);
+        assert!(matches!(
+            completions[0].result(),
+            trnm_consensus_core::DurablePayloadValidationResultV1::Unavailable
+        ));
+        assert!(driver.core().safety_state().pending_sign().is_none());
+        assert!(driver.core().safety_state().payload_terminal_facts().is_empty());
+        let hook_facts = hook_facts.lock().expect("recording hook mutex");
+        assert_eq!(hook_facts.sign_calls, 0);
+        assert_eq!(hook_facts.broadcasts, 0);
+        assert!(hook_facts.events.contains(&"ordinary_unavailable"));
+        assert!(hook_facts.events.contains(&"persist"));
+        assert!(hook_facts.events.contains(&"confirm"));
+        assert!(!hook_facts.events.contains(&"checkpoint_cas"));
+        assert!(!hook_facts.events.contains(&"sign"));
+        assert!(!hook_facts.events.contains(&"broadcast"));
+        assert_eq!(
+            store_facts
+                .lock()
+                .expect("recording transition-store mutex")
+                .transitions
+                .len(),
+            0
+        );
+    }
+
+    #[test]
+    fn ordinary_deterministic_invalid_is_explicit_and_never_signs() {
+        let (mut driver, store_facts, hook_facts) = test_driver_with_ordinary_mode_v1(
+            2,
+            false,
+            OrdinaryValidationModeV1::DeterministicallyInvalid,
+        );
+        let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
+            .expect("construct exact ordinary fixture proposal");
+        let expected_block = proposal.block().id();
+        driver
+            .enqueue_proposal_v1(1, proposal)
+            .expect("enqueue ordinary proposal");
+
+        let facts = driver
+            .drive_v1()
+            .expect("deterministic invalid must complete through Core's callback");
+        assert_eq!(facts.generation(), 1);
+        assert_eq!(facts.processed_ingress(), 1);
+        let completions = driver.core().safety_state().payload_validation_completions();
+        assert_eq!(completions.len(), 1);
+        assert_eq!(
+            completions[0].route(),
+            trnm_consensus_core::PayloadValidationRouteV0::Proposal
+        );
+        assert_eq!(completions[0].id().block_id(), expected_block);
+        assert!(matches!(
+            completions[0].result(),
+            trnm_consensus_core::DurablePayloadValidationResultV1::DeterministicallyInvalid
+        ));
+        assert!(driver.core().safety_state().pending_sign().is_none());
+        assert_eq!(
+            driver
+                .core()
+                .safety_state()
+                .payload_terminal_result(expected_block),
+            Some(trnm_consensus_core::PayloadTerminalResult::DeterministicallyInvalid)
+        );
+        let hook_facts = hook_facts.lock().expect("recording hook mutex");
+        assert_eq!(hook_facts.sign_calls, 0);
+        assert_eq!(hook_facts.broadcasts, 0);
+        assert!(hook_facts.events.contains(&"ordinary_invalid"));
+        assert!(hook_facts.events.contains(&"persist"));
+        assert!(hook_facts.events.contains(&"confirm"));
+        assert!(!hook_facts.events.contains(&"checkpoint_cas"));
+        assert!(!hook_facts.events.contains(&"sign"));
+        assert!(!hook_facts.events.contains(&"broadcast"));
+        assert_eq!(
+            store_facts
+                .lock()
+                .expect("recording transition-store mutex")
+                .transitions
+                .len(),
+            0
+        );
+    }
+
+    #[test]
+    fn unsupported_ordinary_fallback_rejects_legacy_side_effects() {
+        let (mut driver, _store_facts, hook_facts) = test_driver_v1(2, false);
+        driver.hooks.emit_legacy_side_effect = true;
+        let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
+            .expect("construct exact ordinary fixture proposal");
+        driver
+            .enqueue_proposal_v1(1, proposal)
+            .expect("enqueue ordinary proposal");
+        let drive_error = driver
+            .drive_v1()
+            .expect_err("legacy ordinary effects must fail-stop in the driver");
+        assert!(matches!(
+            drive_error,
+            CandidateEffectDriverErrorV1::UnsupportedEffect(
+                "ordinary Unsupported fallback emitted effects"
+            )
+        ));
+        assert_eq!(
+            driver.facts_v1().status(),
+            CandidateEffectDriverStatusV1::FailStopped
+        );
+        let hook_facts = hook_facts.lock().expect("recording hook mutex");
+        assert_eq!(hook_facts.sign_calls, 0);
+        assert_eq!(hook_facts.broadcasts, 0);
+
+        let error = reject_ordinary_unsupported_effects_v1(vec![Effect::ArmViewTimer {
+            epoch: Epoch::new(0),
+            view: View::new(0),
+        }])
+        .expect_err("Unsupported ordinary validation must not smuggle effects");
+        assert!(matches!(
+            error,
+            CandidateEffectDriverErrorV1::UnsupportedEffect(
+                "ordinary Unsupported fallback emitted effects"
+            )
+        ));
+        assert!(reject_ordinary_unsupported_effects_v1(Vec::new())
+            .expect("an empty compatibility result remains pending")
+            .is_empty());
+    }
+
+    #[test]
+    fn unsupported_ordinary_fallback_core_mutation_fail_stops() {
+        let (mut driver, store_facts, hook_facts) = test_driver_v1(2, false);
+        driver.hooks.mutate_core_in_legacy_fallback = true;
+        let proposal = crate::effect_driver_process::fixture_proposal_v1(driver.core())
+            .expect("construct exact ordinary fixture proposal");
+        let safety_before = driver.core().safety_state().clone();
+        driver
+            .enqueue_proposal_v1(1, proposal)
+            .expect("enqueue ordinary proposal");
+
+        let drive_error = driver
+            .drive_v1()
+            .expect_err("legacy fallback Core mutation must fail-stop");
+        assert!(matches!(
+            drive_error,
+            CandidateEffectDriverErrorV1::UnsupportedEffect(
+                "ordinary Unsupported fallback mutated Core"
+            )
+        ));
+        assert_eq!(
+            driver.facts_v1().status(),
+            CandidateEffectDriverStatusV1::FailStopped
+        );
+        assert_ne!(driver.core().safety_state(), &safety_before);
+        let hook_facts = hook_facts.lock().expect("recording hook mutex");
+        assert_eq!(hook_facts.sign_calls, 0);
+        assert_eq!(hook_facts.broadcasts, 0);
+        assert_eq!(hook_facts.events, vec!["persist", "confirm", "timer", "validate"]);
+        drop(hook_facts);
+        assert_eq!(
+            store_facts
+                .lock()
+                .expect("recording transition-store mutex")
+                .transitions
+                .len(),
+            0
         );
     }
 }
