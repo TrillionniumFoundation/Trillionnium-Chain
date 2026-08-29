@@ -4,37 +4,22 @@ Status: **MODULE_CLOSED_CANDIDATE for A17-owned contracts; BLOCKED_UPSTREAM by A
 
 Package: `G3_G5_BENCH_SECURITY_OPS_V1`  
 Agent: `A17`  
-Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@a1f3af9c3e1829785180188425df87fe1b7e8ef1`, tree `e2fd8a5d3e2e5f8d7052de722c6f65c92c963bd3`.
+Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@10a61e8e98bb2ea360404d5dcb24367a649b27a1`, tree `309dfcdd4ede4960921abb9c8f993e1ea2a7ea74`.
 
-## Replayed contracts
+The package retains strict topology/workload/fault/metric contracts, threat mapping, runbooks and a fail-closed claim/activation gate. GitHub Actions is restored to the frozen thirteen-workflow surface; package replay is routed through A00's exact-head payload-replay workflow.
 
-The package replays the PR #19 benchmark manifest/schema, topology/workload/fault/metric requirements, threat register, incident/DR/key-rotation runbook and public-testnet campaign contract. It intentionally does not replay PR #19's modification to a shared payload workflow; A17 owns a dedicated workflow.
+Synthetic evidence exists only to test deterministic decision logic. It does not authorize a real claim.
 
-## Strict claim and activation gate
+## Required before any claim
 
-The v2 gate denies claims unless all of the following are simultaneously true:
-
-- exact accepted G0 through G5 evidence with two independent replays each;
-- exact release, workload, trace and comparator roots;
-- same hardware and workload for comparison;
-- committed goodput plus Order/result/settlement p99 metrics;
-- at least 100 processes, 7 hosts, 5 operators, 3 regions and 3 custody domains;
-- at least 7-day soak for scoped comparison/public testnet and 30-day soak for production;
+- accepted G0 through G5 evidence with two independent replays;
+- real 4/7/31/100-process multi-host campaigns and signed raw traces;
+- exact comparator artifact on the same hardware and workload;
 - zero open Critical/High findings;
-- independent consensus/crypto audits, economic review and red team;
-- SLO, incident, restore, key rotation, state-sync and observability drills;
-- a narrow workload scope rather than a universal superiority claim.
-
-Synthetic complete evidence exists solely to test deterministic decision logic. Real claim authorization remains false.
-
-## Commands
-
-```bash
-bash scripts/ci/check_g3_g5_source_binding_v2.sh
-bash scripts/ci/check_g3_g5_replay_v2.sh
-```
-
-## Non-claims
+- independent consensus/crypto/economic audits and red team;
+- incident, restore, key rotation, state-sync and observability drills;
+- 72-hour, 7-day and 30-day soak evidence;
+- governance and activation ceremony.
 
 ```text
 g3_exit=false
@@ -45,4 +30,5 @@ surpass_claim_allowed=false
 public_testnet_ready=false
 production_candidate=false
 production_consensus_activation=false
+release_ready=false
 ```

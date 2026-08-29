@@ -3,8 +3,8 @@
   "agent_id": "A16",
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "status": "STOP_CONDITION",
-  "base_commit": "2472bb75e8e6aa728205a0ee7e67d919ea3c1693",
-  "base_tree": "7a2b6c0bf03bcadb4e49a872d8736c2842a39ed4",
+  "base_commit": "fe61ee74b95b8768ba86f7a4a143a754d1b4159c",
+  "base_tree": "58dd1026fb58061848fb604e89c95ebdcb6a63b8",
   "head_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
   "changed_paths": [
     "conformance/g2f/**",
@@ -83,6 +83,7 @@
   "next_action": "Run the frozen A00 exact-head replay route, obtain independent P0 review, then replace the assurance HMAC with accepted external owner/HSM and canonical JMT/Order authority.",
   "implementation_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
   "implementation_parent": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
-  "base_sync_parent": "2472bb75e8e6aa728205a0ee7e67d919ea3c1693",
-  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
+  "base_sync_parent": "fe61ee74b95b8768ba86f7a4a143a754d1b4159c",
+  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3",
+  "frozen_workflow_tree": "616377d0525e6b5157b4394aa7f347d4d053bbf1"
 }
