@@ -1,0 +1,105 @@
+{
+  "schema": "trnm-agent-interface-change-request-set-v1",
+  "package_id": "G1_R4_SAFETY_CHECKPOINT_V1",
+  "requesting_agent": "A05",
+  "status": "open-blocked-upstream",
+  "requests": [
+    {
+      "request_id": "A05-R4C-001",
+      "owner": "A03",
+      "required_interface": "AuthenticatedCoreFinalizationPermitV1",
+      "purpose": "Bind the exact finalized Order target, block body, application/JMT expectation, Core predecessor and post-commit action without exposing a forgeable data constructor.",
+      "required_fields": [
+        "namespace_scope",
+        "epoch",
+        "view",
+        "height",
+        "block_id",
+        "body_hash",
+        "expected_application_root",
+        "expected_receipts_root",
+        "core_predecessor_checkpoint",
+        "permit_generation"
+      ],
+      "authority_requirements": [
+        "non-cloneable or owner-consuming",
+        "constructed only after accepted Core transition",
+        "exact source/body/JMT binding",
+        "no production activation implication"
+      ],
+      "status": "BLOCKED_UPSTREAM",
+      "responds_to": "TRNM_G1_R3_A05_INTERFACE_CHANGE_REQUEST_001"
+    },
+    {
+      "request_id": "A05-R4C-002",
+      "owner": "A04",
+      "required_interface": "NativeApplicationFinalizationReadbackV1",
+      "purpose": "Provide a non-forgeable fresh readback after the application commit and JMT promotion for the exact A03 permit target.",
+      "required_fields": [
+        "namespace_scope",
+        "application_store_id",
+        "durable_sequence",
+        "height",
+        "block_id",
+        "body_hash",
+        "application_jmt_root",
+        "receipts_root",
+        "fresh_reopen_inventory_digest"
+      ],
+      "authority_requirements": [
+        "fresh immutable reopen",
+        "exact JMT and receipts binding",
+        "response-loss idempotence",
+        "no caller-supplied root substitution"
+      ],
+      "status": "BLOCKED_UPSTREAM",
+      "responds_to": "A04-R4B-002 / R4B-READBACK-003 / R4B-RESPONSE-007"
+    },
+    {
+      "request_id": "A05-R4C-003",
+      "owner": "A06",
+      "required_interface": "G1R4CrossStoreProcessCrashMatrixV1",
+      "purpose": "Execute independent-process SIGKILL, fsync/rename, disk-full, short-write, response-loss and rollback cuts around Application, Safety tag-3, Signer intent, node-checkpoint CAS and external-watermark CAS.",
+      "required_cases": [
+        "kill before application durability",
+        "kill after application before Safety tag-3",
+        "kill after Safety tag-3 before signer intent",
+        "kill after signer intent before checkpoint CAS",
+        "kill after checkpoint CAS before watermark CAS",
+        "kill after watermark CAS before acknowledgement",
+        "whole namespace rollback",
+        "mixed namespace rollback",
+        "HSM unavailable and exact replay"
+      ],
+      "success_rule": "Only exact both-target readback may release a permit; every mixed or unknown cut must fence.",
+      "status": "BLOCKED_UPSTREAM",
+      "responds_to": "A04-R4B-003 / R4B-FAULT-009"
+    }
+  ],
+  "non_claims": {
+    "g1_r4_exit": false,
+    "production_signature_authority": false,
+    "production_activation": false,
+    "release_ready": false
+  },
+  "observed_upstream": [
+    {
+      "owner": "A03",
+      "pull_request": 21,
+      "head_ref": "refs/heads/feature/chain-g1-r3-ordinary-proposal-authority-v1",
+      "head_commit": "1b9543b3b22cc959d0ea2b3123c349761adada32",
+      "head_tree": "3c0ae054f358b45f5801ee8111d1833aee40dbd0",
+      "terminal_status": "BLOCKED_UPSTREAM",
+      "accepted_interface": false
+    },
+    {
+      "owner": "A04",
+      "pull_request": 9,
+      "head_ref": "refs/heads/feature/chain-g1-r4-application-finality-v1-20260829",
+      "head_commit": "f38df4ec81cb76f92c709d8cd45311e164fa5753",
+      "head_tree": "bf7bbf43b8a783ffc443b1105f8f53aa406efff1",
+      "terminal_status": "BLOCKED_UPSTREAM",
+      "accepted_interface": false
+    }
+  ]
+}
