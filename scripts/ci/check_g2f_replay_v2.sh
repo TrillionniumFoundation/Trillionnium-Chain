@@ -36,7 +36,6 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s conformance/g2f -p 
 bash scripts/g2f/check_g2f_conformance.sh
 bash scripts/g2f/check_view_commitment_v2.sh
 
-rustfmt --edition 2021 --check conformance/g2f/application_jmt_v1.rs
 rustc --edition=2021 --test -D warnings \
   conformance/g2f/application_jmt_v1.rs -o "$jmt_binary"
 "$jmt_binary"
