@@ -53,7 +53,12 @@ assert len(ids) == len(set(ids))
 
 a00_block = registry.split("- id: A00", 1)[1].split("- id: A01", 1)[0]
 a01_block = registry.split("- id: A01", 1)[1].split("- id: A02", 1)[0]
-assert "docs/development/CURRENT_SNAPSHOT_V1.*" not in a00_block
+# The wildcard appears in the required A00 forbidden-surface sentence below;
+# ownership must be checked against the structured owned-surfaces list rather
+# than by rejecting that sentence's descriptive text.  This keeps the gate
+# fail-closed without making its own ownership assertion impossible.
+a00_owned_surfaces = a00_block.split("  owned_surfaces:", 1)[1].split("  forbidden_surfaces:", 1)[0]
+assert "docs/development/CURRENT_SNAPSHOT_V1" not in a00_owned_surfaces
 assert "writes to docs/development/CURRENT_SNAPSHOT_V1.* owned by A01" in a00_block
 assert "scripts/ci/check_agent_development_docs_v1.sh" in a00_block
 assert "docs/development/CURRENT_SNAPSHOT_V1.json" in a01_block
@@ -73,7 +78,7 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], open_numbers
+assert open_numbers == [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], open_numbers
 pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
 assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
