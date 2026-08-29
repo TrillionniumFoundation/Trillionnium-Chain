@@ -9,6 +9,7 @@ root=$(git rev-parse --show-toplevel); cd "$root"
 # it is never package evidence and must not influence a detached exact-head run.
 report=docs/evidence/g2f/G2F_CONFORMANCE_RUN_V1.json
 backup=$(mktemp)
+jmt_binary=$(mktemp)
 report_existed=false
 if [[ -f "$report" ]]; then
   cp -- "$report" "$backup"
@@ -26,7 +27,7 @@ restore_generated_state() {
     fi
     rm -f -- "$backup"
   fi
-  rm -f -- "$topic_path"
+  rm -f -- "$jmt_binary" "$topic_path"
 }
 trap 'status=$?; restore_generated_state; exit "$status"' EXIT
 
@@ -34,6 +35,11 @@ bash scripts/ci/check_g2f_source_binding_v2.sh
 PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s conformance/g2f -p 'test_*.py'
 bash scripts/g2f/check_g2f_conformance.sh
 bash scripts/g2f/check_view_commitment_v2.sh
+
+rustfmt --edition 2021 --check conformance/g2f/application_jmt_v1.rs
+rustc --edition=2021 --test -D warnings \
+  conformance/g2f/application_jmt_v1.rs -o "$jmt_binary"
+"$jmt_binary"
 
 cargo test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib
 cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib -- -D warnings
