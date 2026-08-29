@@ -1,6 +1,6 @@
 schema: trnm-active-pr-package-ledger-v1
 repository: TrillionniumFoundation/Trillionnium-Chain
-observed_at_utc: '2026-08-29T13:55:26Z'
+observed_at_utc: '2026-08-29T14:29:00Z'
 assessed_plan:
   ref: docs/chain-poco-bft-mainline-20260825
   commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
@@ -11,9 +11,9 @@ latest_candidate:
   commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
   tree: efea864cb2fbc4835a59a089b3dbab8934e71231
 control_package_evidence:
-  source_head_ref: docs/agent-fleet-plan-v1-20260829
-  source_head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
-  source_head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
+  source_head_ref: docs/chain-agent-fleet-plan-v1-20260829
+  source_head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
+  source_head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
   historical_workflow_runs_not_evidence:
   - name: TRNM payload replay recovery v1 gate
     run_id: 33249877031
@@ -32,17 +32,17 @@ control_package_evidence:
     status: queued
   workflow_runs:
   - name: TRNM payload replay recovery v1 gate
-    run_id: 33255822585
-    job_id: 99109282010
+    run_id: 33256869504
+    job_id: 99112030829
     conclusion: success
-    head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
-    head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
+    head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
+    head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
   - name: TRNM replay-to-Core coordinator v1 gate
-    run_id: 33255822576
-    job_id: 99109218098
+    run_id: 33256869495
+    job_id: 99112030904
     conclusion: success
-    head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
-    head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
+    head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
+    head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
 ownership_resolutions:
 - surface: docs/development/CURRENT_SNAPSHOT_V1.*
   previous_writers:
@@ -524,8 +524,8 @@ open_pull_requests:
     status: exact
   head:
     ref: feature/chain-g2f-whole-node-light-client-v1-20260829
-    commit: 4936caeba16656dd196e95a60dc7455d9cca43d3
-    tree: 056e32bf9a62fbd8e55e0439a36fa5a224138014
+    commit: 96a424dc1dfdbff196658368438fb559eb6fd60f
+    tree: e3327bade4c355e0c3e09a44f47c20367bc8fdc0
   relation_to_latest_candidate:
     kind: direct-candidate-child
   classification: blocked-upstream-candidate
@@ -599,8 +599,8 @@ open_pull_requests:
     status: exact
   head:
     ref: docs/chain-agent-fleet-plan-v1-20260829
-    commit: c5c002290ea0ee3230d543fc429de5fa63054f9c
-    tree: 7c1d29b1940992e4ce294761e9e64e812dce6711
+    commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
+    tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
   relation_to_latest_candidate:
     kind: direct-candidate-child
   classification: active-package
@@ -632,6 +632,31 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: WORKING
   next_action: Obtain independent A08 review and exact-head CI; then replay A09 on this exact registry head.
+- number: 28
+  title: '[A06/G1-R4] Publish candidate fault matrix and independent replay'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R4_FAULT_MATRIX_V1
+  owner: A06
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    pr_bound_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    pr_bound_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    status: exact
+  head:
+    ref: feature/chain-g1-r4-fault-matrix-v2-20260829
+    commit: e88cda9401eb6219fe1425bebb1ef6b54b4c429d
+    tree: 9c4249ce36061fcbd6eb8e522accd29127f7c01c
+  relation_to_latest_candidate:
+    kind: direct-candidate-child
+  classification: blocked-upstream-candidate
+  merge_queue_eligible: false
+  terminal_state: BLOCKED_UPSTREAM
+  next_action: Obtain independent A06 review, exact-head CI, and authorized clean-clone replay; do not promote synthetic fault evidence.
 terminal_pull_requests:
 - number: 6
   title: 'merge(chain): unify G1-R4A crash matrix with R4B authority seams'
@@ -716,6 +741,5 @@ observation_source:
   agent_id: A00
   package_id: AGENT_CONTROL_PLANE_V1
   head_ref: docs/chain-agent-fleet-plan-v1-20260829
-  head_commit: 8fb9ad6ea27dd3026f0188df6a3b728545751027
-  head_tree: 70450d9d8ac3e2d7419675a0300c7a1aea8ef1e2
-
+  head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
+  head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1

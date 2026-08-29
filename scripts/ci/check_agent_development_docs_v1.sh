@@ -3,6 +3,15 @@ set -euo pipefail
 root=$(git rev-parse --show-toplevel)
 cd "$root"
 
+# A control-plane ledger is an exact observation, not a best-effort scan.
+# Refuse to certify it from a dirty checkout so untracked markers or local
+# edits cannot be mistaken for the committed fleet state.
+if [[ -n "$(git status --porcelain --untracked-files=all)" ]]; then
+  echo "agent development docs gate: dirty worktree rejected" >&2
+  git status --short >&2
+  exit 2
+fi
+
 required=(
   docs/development/CURRENT_SNAPSHOT_V1.json
   docs/schemas/current-snapshot-v1.schema.json
@@ -78,7 +87,15 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27], open_numbers
+assert open_numbers == [1, 2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28], open_numbers
+assert re.search(r"(?m)^  source_head_ref: docs/chain-agent-fleet-plan-v1-20260829$", ledger)
+assert re.search(r"(?m)^  source_head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b$", ledger)
+assert re.search(r"(?m)^  source_head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1$", ledger)
+pr28 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 28)
+assert re.search(r"(?m)^    ref: feature/chain-g1-r4-fault-matrix-v2-20260829$", pr28)
+assert re.search(r"(?m)^    commit: e88cda9401eb6219fe1425bebb1ef6b54b4c429d$", pr28)
+assert re.search(r"(?m)^    tree: 9c4249ce36061fcbd6eb8e522accd29127f7c01c$", pr28)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr28)
 pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
 assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
@@ -120,4 +137,3 @@ print("agent development docs gate: ok")
 PY
 
 git diff --check
-
