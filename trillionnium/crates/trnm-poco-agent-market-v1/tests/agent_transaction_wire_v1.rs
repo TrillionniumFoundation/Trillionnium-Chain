@@ -11,6 +11,11 @@ use trnm_poco_agent_market_v1::{
 };
 
 const HEADER_BYTES: usize = 294;
+const _: () = {
+    assert!(!AGENT_TRANSACTION_WIRE_ACCEPTED_V1);
+    assert!(!AGENT_TRANSACTION_GLOBAL_STATE_AUTHORITY_V1);
+    assert!(!AGENT_TRANSACTION_PRODUCTION_ACTIVATION_V1);
+};
 
 fn hash(value: u8) -> Hash32V1 {
     Hash32V1([value; 32])
@@ -137,9 +142,6 @@ fn exact_round_trip_and_transaction_id_are_stable() {
     let decoded = AgentTransactionV1::decode(transaction.encoded()).expect("decode transaction");
     assert_eq!(decoded, transaction);
     assert_ne!(transaction.transaction_id(), Hash32V1::default());
-    assert!(!AGENT_TRANSACTION_WIRE_ACCEPTED_V1);
-    assert!(!AGENT_TRANSACTION_GLOBAL_STATE_AUTHORITY_V1);
-    assert!(!AGENT_TRANSACTION_PRODUCTION_ACTIVATION_V1);
 }
 
 #[test]
