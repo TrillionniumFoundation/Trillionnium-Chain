@@ -27,6 +27,11 @@ python3 - <<'PY'
 from pathlib import Path
 source = Path('trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs').read_text()
 test = Path('trillionnium/crates/trnm-poco-verify-challenge-v1/tests/profile_registry_v1.rs').read_text()
+compiled_surface = source + '\n' + test
+
+# Every closed profile kind must be exercised through the public integration
+# surface. The implementation intentionally uses `Self::...` internally, so a
+# source-only spelling check would reject equivalent, compiled Rust.
 for token in (
     'VerificationProfileKindV1::DeterministicReexecution',
     'VerificationProfileKindV1::ReproducibleMachineLearning',
@@ -35,12 +40,19 @@ for token in (
     'VerificationProfileKindV1::StakeQuorum',
     'VerificationProfileKindV1::Optimistic',
     'VerificationProfileKindV1::Subjective',
+):
+    assert token in compiled_surface, token
+
+# Non-authority constants remain source-owned and may not be satisfied by a
+# test-only shadow declaration.
+for token in (
     'VERIFICATION_PROFILE_FALLBACK_ALLOWED_V1: bool = false',
     'VERIFICATION_DECISION_ECONOMIC_AUTHORITY_V1: bool = false',
     'VERIFICATION_DECISION_ORDER_REORG_AUTHORITY_V1: bool = false',
     'VERIFICATION_DECISION_POCO_WEIGHT_AUTHORITY_V1: bool = false',
 ):
     assert token in source, token
+
 for token in (
     'exact_resolution_and_evidence_precede_backend',
     'verified_rejected_and_unavailable_are_distinct_and_non_authoritative',
