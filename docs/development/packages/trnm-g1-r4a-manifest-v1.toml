@@ -6,6 +6,7 @@ base_branch = "feature/chain-g1-r2b-real-core-adapter-20260828"
 base_commit = "a259e0b28a2d9dea838f5ceac0e805803ac51dd4"
 base_tree = "1715f5f5a614679e1ba45239a7a884c10f7bc5ae"
 planned_branch = "feature/chain-g1-r4a-finalization-intent-process-matrix-20260828"
+integration_branch = "feature/chain-g1-r4c-full-gap-closure-20260829"
 parent_package = "TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md"
 production_candidate = false
 production_consensus_activation = false
@@ -45,7 +46,7 @@ support_prefix = "trillionnium/crates/trnm-poco-node/src/finalization_intent_pro
 helper = "trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-finalization-intent-kill-helper.rs"
 process_test = "trillionnium/crates/trnm-poco-node/tests/finalization_intent_process_kill_matrix.rs"
 gate = "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
-workflow = ".github/workflows/trnm-poco-bft-v0.yml"
+workflow = ".github/workflows/trnm-payload-replay-recovery-v1.yml"
 
 [evidence]
 authorized_clean_clone = false
