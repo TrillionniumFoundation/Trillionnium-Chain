@@ -2,6 +2,11 @@
 
 Status: **BLOCKED_UPSTREAM / candidate-only / no gate promotion**
 
+Package: `G1_R4_APPLICATION_FINALITY_V1`
+Gate: `G1`
+Agent: `A04`
+Package branch: `feature/chain-g1-r4-application-finality-v1-20260829`
+
 Outcome: the local queue/readback contract is a reviewable candidate slice;
 the package cannot close because the A03 permit/body/JMT carrier and the
 cross-store application-finalization callback have not been accepted.
@@ -17,7 +22,14 @@ repository = TrillionniumFoundation/Trillionnium-Chain
 base_ref  = feature/chain-g1-r4c-full-gap-closure-20260829
 base_sha  = 6e0189e351015ef3230f217ca7ff86149baedcf0
 base_tree = efea864cb2fbc4835a59a089b3dbab8934e71231
+plan_id   = trnm-ai-native-blockchain-development-plan-v1
 plan      = docs/chain-poco-bft-mainline-20260825@8198fea0307eb368df34ff77ffc272a6b0e655ec
+plan_sha256 = aba99ae6be2ff8a4aac4d6355e1f778e49a7075a80b09453f16984f85bb0b6cd
+machine_truth_sha256 = 19baef8a393d235b4f87a1351e2b8cdf2e7bb1f2eea8770ecc67d3e18966c6be
+protocol_manifest_sha256 = ca41347d4559934e706aea13d242625e905b99d956b6187f7df449c1c27299aa
+canonical_plan_ref_observed_tip = 92449b8e101642f39d644d863db7bb60dea488f7
+canonical_plan_ref_observed_tree = cf8f1ab4f5065cb0551a30ec0e036cd44cb31766
+branch_tip_at_package_start = 6e0189e351015ef3230f217ca7ff86149baedcf0
 stage     = G1-native-host-incomplete
 authority = candidate
 classification = candidate-non-normative
@@ -26,6 +38,9 @@ classification = candidate-non-normative
 The assessed plan, machine truth, protocol manifest, and release-readiness
 documents remain immutable inputs.  The candidate flags remain
 `production_candidate=false` and `production_consensus_activation=false`.
+The observed canonical-plan tip is a descendant of the manifest-assessed
+commit/tree and is recorded without substitution; the canonical-plan gate
+therefore remains a pass and this run has no `BASE_DRIFT`.
 
 ## 2. Objective and non-claims
 
@@ -84,6 +99,10 @@ production/activation/release/normative truth
 | R4B-SOURCE-008 | P1 | BLOCKED_UPSTREAM | Exact-one source cardinality and authenticated route/generation binding require the A03 carrier. |
 | R4B-FAULT-009 | P0 | BLOCKED_UPSTREAM | Disk/torn/power-loss matrix belongs to the A06 harness after A03/A04 interfaces. |
 | R4B-SQLITE-010 | P0 | BLOCKED_UPSTREAM | The owned SQLite crate is a validation journal with no finalization queue/intent/head/JMT/receipt/fork schema; A03/A05 seams must be accepted before persistence is added. |
+| R4B-HISTORY-011 | P0 | BLOCKED_UPSTREAM | The bounded replay history rejects the 1025th successor; authenticated durable receipt externalization/compaction and an exact old-retry anchor are still unaccepted. |
+| R4B-SCOPE-012 | P0 | BLOCKED_UPSTREAM | Intent values lack authenticated chain/genesis/route/generation/runtime-profile scope; this belongs in the accepted carrier. |
+| R4B-RECEIPT-013 | P0 | BLOCKED_UPSTREAM | Readback currently requires only a non-zero receipt digest and local sequence; cryptographic receipt binding and an external anti-rollback floor are absent. |
+| R4B-GC-014 | P0 | BLOCKED_UPSTREAM | Fork GC receives an opaque caller list; authenticated live-reference inventory and cross-store retention authority are absent. |
 
 No existing PR closes these A04 queue/app gaps.  PRs #6/#7/#8 and the R4A
 marker package are intentionally not duplicated.
@@ -156,6 +175,32 @@ gaps:
     owner: A04
     blocker: SQLite is validation-only; A03 carrier and A05 cross-store CAS/readback are not accepted
     requests: [A04-R4B-001, A04-R4B-002]
+  - id: R4B-HISTORY-011
+    severity: P0
+    status: BLOCKED_UPSTREAM
+    owner: A04
+    blocker: candidate replay history is hard-bounded at 1024; safe compaction needs an authenticated durable receipt/sequence anchor
+    requests: [A04-R4B-001, A04-R4B-002]
+  - id: R4B-SCOPE-012
+    severity: P0
+    status: BLOCKED_UPSTREAM
+    owner: A03
+    request: A04-R4B-001
+    blocker: chain/genesis/route/generation/runtime-profile scope is not carried by the local host-neutral intent
+  - id: R4B-RECEIPT-013
+    severity: P0
+    status: BLOCKED_UPSTREAM
+    owner: A05
+    request: A04-R4B-002
+    dependency_kind: downstream_handoff
+    blocker: receipt digest is structurally non-zero only; cryptographic binding and external sequence floor are unaccepted
+  - id: R4B-GC-014
+    severity: P0
+    status: BLOCKED_UPSTREAM
+    owner: A05
+    request: A04-R4B-002
+    dependency_kind: downstream_handoff
+    blocker: live-reference inventory is caller-supplied and not cross-store authenticated
 interface_requests:
   - request_id: A04-R4B-001
     requester_agent: A04
