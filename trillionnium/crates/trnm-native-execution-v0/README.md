@@ -91,8 +91,13 @@ protocol:
   TrustedBase, and finalized application commits (and during hot-journal
   recovery), but no external anti-rollback, file-descriptor pinning, remote
   signer, or whole-node checkpoint evidence is claimed; and
-- deterministic invalid executions currently use one closed rejection code;
-  production-grade typed invalid classifications remain future work.
+- runtime transaction-reject attempts now retain the runtime's closed typed
+  leaf code, while unclassified complete-execution errors still use the
+  legacy closed rejection code; an impossible/future runtime disposition is
+  fenced as `CorruptStore` at the primary durable execute boundary.
+  Exhaustive typed mapping for storage/JMT, profile, preview, and recovery
+  entry points remains future work. Runtime state-unavailable and invariant
+  attempts are kept out of the transaction rejection result at that boundary.
 
 Accordingly, `durable_artifact_p=true` and
 `native_application_v0_implementation=true` do not imply Core/Safety authority

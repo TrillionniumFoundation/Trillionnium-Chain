@@ -5,7 +5,10 @@
 //! is added by the durable application owner; Core, Safety, signing, finality,
 //! networking, and broadcast are outside this crate's authority.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fmt,
+};
 
 use anyhow::{anyhow, ensure, Context, Result};
 use borsh::{BorshDeserialize, BorshSerialize};
@@ -20,7 +23,10 @@ use trnm_native_application::{
     ReceiptsRootV0, StateRootV0, ValidatorSetIdV0, MAX_BLOCK_BYTES_V0, MAX_BLOCK_TRANSACTIONS_V0,
 };
 use trnm_protocol::{CanonicalTxV1, CANONICAL_TX_PAYLOAD_TYPE_V1};
-use trnm_runtime::{try_execute_v0, ExecutionContext, RuntimeReceipt, StateObject, TryStateViewV0};
+use trnm_runtime::{
+    try_execute_v0, DeterministicRuntimeFailureV0, ExecutionContext, RuntimeReceipt, StateObject,
+    TryStateViewV0,
+};
 
 use crate::{
     auth_tree::{self, AuthWrite},
@@ -300,6 +306,41 @@ pub(crate) struct CompleteNativeExecutionV0 {
     final_lifecycle: ValidatorLifecycleStateV1,
 }
 
+/// Structured runtime outcome preserved across the `anyhow`-based complete
+/// execution helper.  The durable owner uses this marker to keep a transient
+/// authenticated-state read failure retryable and to keep runtime invariant
+/// faults out of the deterministic-invalid result.  It is crate-private so a
+/// host cannot manufacture a validation disposition or bypass the durable
+/// application boundary.
+#[derive(Debug)]
+pub(crate) enum CompleteNativeExecutionFailureV0 {
+    Deterministic(DeterministicRuntimeFailureV0),
+    StateUnavailable,
+    /// Defensive fence for a future runtime attempt variant which is neither
+    /// an authenticated-state miss nor a closed deterministic disposition.
+    /// It must never be downgraded to a transaction rejection or retryable
+    /// Valid path.
+    Unclassified,
+}
+
+impl fmt::Display for CompleteNativeExecutionFailureV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Deterministic(classification) => write!(
+                formatter,
+                "deterministic runtime failure: {}",
+                classification.code()
+            ),
+            Self::StateUnavailable => {
+                formatter.write_str("authenticated runtime state unavailable")
+            }
+            Self::Unclassified => formatter.write_str("unclassified runtime execution failure"),
+        }
+    }
+}
+
+impl std::error::Error for CompleteNativeExecutionFailureV0 {}
+
 /// Exact replay identity carried by one accepted outer envelope.
 ///
 /// Keeping the command, signer, and nonce in one value prevents the
@@ -572,15 +613,20 @@ pub(crate) fn compute_complete_native_block_v0<R: CompleteBlockExecutionInputV0 
                     signer_role: signer.signer_role(),
                     payload_len: exact_inner.len(),
                 };
-                let receipt =
-                    try_execute_v0(&transaction, runtime_context, &view).map_err(|failure| {
-                        match failure.deterministic_failure_v0() {
+                let receipt = try_execute_v0(&transaction, runtime_context, &view).map_err(
+                    |failure| {
+                        let classified = match failure.deterministic_failure_v0() {
                             Some(classification) => {
-                                anyhow!("deterministic runtime failure: {}", classification.code())
+                                CompleteNativeExecutionFailureV0::Deterministic(classification)
                             }
-                            None => anyhow!("authenticated runtime state unavailable: {failure}"),
-                        }
-                    })?;
+                            None if failure.state_unavailable().is_some() => {
+                                CompleteNativeExecutionFailureV0::StateUnavailable
+                            }
+                            None => CompleteNativeExecutionFailureV0::Unclassified,
+                        };
+                        anyhow::Error::new(classified)
+                    },
+                )?;
                 changes = stage_runtime_mutations_v0(
                     &view,
                     request.height_v0().get(),

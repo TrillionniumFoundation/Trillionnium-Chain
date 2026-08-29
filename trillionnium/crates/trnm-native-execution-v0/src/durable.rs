@@ -37,7 +37,7 @@ use trnm_native_application::{
     NativeExecutedBlockV0, NativeRecoveryDispositionV0, NativeRecoveryWatermarksV0,
     NativeSnapshotChunkV0, NativeSnapshotManifestV0, NativeSnapshotRequestV0,
     NativeStateProofRequestV0, NativeStateProofSchemeV0, NativeStateProofV0, NativeValidatorSetV0,
-    NativeValidatorV0, StateRootV0, ValidatorSetIdV0,
+    NativeUnavailableReasonV0, NativeValidatorV0, StateRootV0, ValidatorSetIdV0,
 };
 
 use crate::{
@@ -48,7 +48,8 @@ use crate::{
     complete::{
         execute_complete_native_block_v0, load_validator_lifecycle_from_live_v0,
         preview_complete_native_block_v0, validate_application_validator_projection_v0,
-        validator_lifecycle_seed_write_v0, NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
+        validator_lifecycle_seed_write_v0, CompleteNativeExecutionFailureV0,
+        NativeBlockPreviewRequestV0, NativeBlockPreviewV0,
     },
     store::{InMemoryNativeExecutionStoreV0, NativeExecutionStoreV0},
     AuthorizedSignerV0, NativeStateWriteV0,
@@ -1984,18 +1985,65 @@ impl NativeApplicationV0 for DurableNativeApplicationV0 {
             &request,
         ) {
             Ok(value) => value,
-            Err(_) => {
-                let invalid =
-                    NativeDeterministicInvalidV0::new(&request, "frozen_v0_execution_rejected")
-                        .map_err(|_| {
-                            error(
-                                NativeApplicationExecutionErrorCodeV0::CorruptStore,
-                                "execute.invalid_code",
+            Err(execution_error) => {
+                if let Some(classified) = execution_error
+                    .downcast_ref::<CompleteNativeExecutionFailureV0>()
+                {
+                    match classified {
+                        CompleteNativeExecutionFailureV0::StateUnavailable => {
+                            return Ok(NativeBlockExecutionResultV0::unavailable(
+                                &request,
+                                NativeUnavailableReasonV0::AuthenticatedStateUnavailable,
+                            ));
+                        }
+                        CompleteNativeExecutionFailureV0::Deterministic(classification) => {
+                            if classification.disposition()
+                                == trnm_runtime::DeterministicRuntimeFailureDispositionV0::InvariantFault
+                            {
+                                return Err(error(
+                                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                                    "execute.runtime_invariant",
+                                ));
+                            }
+                            let invalid = NativeDeterministicInvalidV0::new(
+                                &request,
+                                classification.code(),
                             )
-                        })?;
-                return Ok(NativeBlockExecutionResultV0::DeterministicallyInvalid(
-                    invalid,
-                ));
+                            .map_err(|_| {
+                                error(
+                                    NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                                    "execute.invalid_code",
+                                )
+                            })?;
+                            return Ok(NativeBlockExecutionResultV0::DeterministicallyInvalid(
+                                invalid,
+                            ));
+                        }
+                        CompleteNativeExecutionFailureV0::Unclassified => {
+                            return Err(error(
+                                NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                                "execute.unclassified_runtime_failure",
+                            ));
+                        }
+                    }
+                }
+
+                // Preserve the pre-existing deterministic-invalid result for
+                // complete-body/schema errors which are not runtime attempt
+                // failures.  Runtime state unavailability and invariant
+                // faults take the typed branches above and can no longer be
+                // silently downgraded to a transaction rejection.
+                let invalid = NativeDeterministicInvalidV0::new(
+                    &request,
+                    "frozen_v0_execution_rejected",
+                )
+                .map_err(|_| {
+                    error(
+                        NativeApplicationExecutionErrorCodeV0::CorruptStore,
+                        "execute.invalid_code",
+                    )
+                })?;
+                return Ok(NativeBlockExecutionResultV0::DeterministicallyInvalid(invalid));
             }
         };
         let (executed, plan, replay_identities, lifecycle) = complete.into_parts();
