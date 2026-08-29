@@ -654,6 +654,11 @@ class StagedStateSync:
         """Test-only fault injection; any sidecar fences authority."""
 
         self._sidecars.add(suffix)
+        # The presence of a sidecar/WAL is a durable-integrity ambiguity, not
+        # a transient hint.  Quarantine at injection time so an operator (or
+        # a hostile storage mutation) cannot simply remove the visible
+        # residue before the next health check and then reuse the namespace.
+        self._quarantine("sidecar present")
 
     def mark_wal(self) -> None:
         self.mark_sidecar("-wal")
@@ -906,6 +911,29 @@ class StagedStateSync:
             stage_identities[token.generation] = identity
         if self._intent is not None:
             self._quarantine_and_raise("incomplete swap intent")
+
+    def __copy__(self) -> "StagedStateSync":
+        """Return a permanently fenced copy instead of duplicating authority.
+
+        ``copy.copy`` otherwise performs a shallow field copy: the new object
+        would inherit the source instance id, lock and mutable stage map.  A
+        copied owner must retain its residue for forensic review, but it can
+        never reopen, stage, or commit.  ``clone_namespace`` models the same
+        physical-copy boundary; this hook closes the standard Python copy
+        protocol as well.
+        """
+
+        with self._lock:
+            clone = StagedStateSync(self._chain_id, namespace_id=self._namespace_id)
+            clone._copy_fenced = True
+            clone._anchor = self._anchor
+            clone._active = self._active
+            clone._stages = dict(self._stages)
+            clone._sidecars = set(self._sidecars)
+            clone._intent = self._intent
+            clone._quarantined = self._quarantined
+            clone._quarantine_reason = self._quarantine_reason
+            return clone
 
     def stage(
         self,

@@ -6,7 +6,7 @@ classification = "candidate-non-normative"
 status = "STOP_CONDITION"
 terminal_status = "STOP_CONDITION"
 blocking_status = "BLOCKED_UPSTREAM"
-stop_condition = "P0 anti-rollback mutants were observed before hardening; copy/fork quarantine is candidate-only and coordinated non-zero view commitment remains open."
+stop_condition = "P0 anti-rollback mutants were observed before hardening (copy, shallow-copy, fork-residue and removable sidecar/torn/WAL residue); quarantine is candidate-only and coordinated non-zero view commitment remains open."
 
 repository = "TrillionniumFoundation/Trillionnium-Chain"
 package_branch = "feature/chain-g2f-whole-node-light-client-v1-20260829"
@@ -17,12 +17,12 @@ base_tree = "efea864cb2fbc4835a59a089b3dbab8934e71231"
 code_source_ref = "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829"
 code_source_commit = "6e0189e351015ef3230f217ca7ff86149baedcf0"
 code_source_tree = "efea864cb2fbc4835a59a089b3dbab8934e71231"
-evidence_source_commit = "b8f7d130858f341117502bc306a12a2a4c42d111"
-evidence_source_tree = "dd7c6d9bd3130b799f2646a517825750e8bbab06"
+evidence_source_commit = "2d43dfd00b1a30c43307e8067ddc81ebd665c82f"
+evidence_source_tree = "091496e5449af9e944a9f81495568ee8bab09d01"
 package_head_before_changes = "6e0189e351015ef3230f217ca7ff86149baedcf0"
 package_tree_before_changes = "efea864cb2fbc4835a59a089b3dbab8934e71231"
-package_head_after_changes = "b8f7d130858f341117502bc306a12a2a4c42d111"
-package_tree_after_changes = "dd7c6d9bd3130b799f2646a517825750e8bbab06"
+package_head_after_changes = "2d43dfd00b1a30c43307e8067ddc81ebd665c82f"
+package_tree_after_changes = "091496e5449af9e944a9f81495568ee8bab09d01"
 canonical_plan_ref = "refs/heads/docs/chain-poco-bft-mainline-20260825"
 control_github_ref = "refs/heads/docs/agent-fleet-plan-v1-20260829"
 control_ref = "refs/remotes/origin/docs/agent-fleet-plan-v1-20260829"
@@ -210,7 +210,7 @@ independent_replay_required = true
 cargo_execution_in_this_environment = "not-run-cargo-not-installed"
 xxd_execution_in_this_environment = "not-run-xxd-not-installed; light-client shell exited 127 after Python checker"
 pinned_rust_execution = "Rust 1.95 feature-gated cargo check/test/clippy: PASS; 135 tests; -D warnings; candidate-only, not normal-build/release proof"
-conformance_result = "PASS: 37 discovered and executed tests; 21 wire mutants; 7548 differential samples; 3000 state-sync mutants; candidate-only; package terminal_status=STOP_CONDITION"
+conformance_result = "PASS: 39 discovered and executed tests; 21 wire mutants; 7548 differential samples; 3000 state-sync mutants; shallow-copy and residue-clear fences PASS; candidate-only; package terminal_status=STOP_CONDITION"
 
 [evidence]
 candidate_readback_id = "G2F-CAND-READBACK-20260829"
@@ -247,6 +247,12 @@ observed = "Before dc9034d5d, a same-label copied namespace accepted a fresh sta
 current_result = "dc9034d5d/1be57d57f permanently fences the copy; independent review pending."
 
 [[stop_condition_record]]
+id = "G2F-M-NAMESPACE-SHALLOW-COPY"
+severity = "P0"
+observed = "Before 2d43dfd00, Python copy.copy() duplicated owner identity and staged state, allowing the copied token to be presented."
+current_result = "2d43dfd00 permanently fences shallow copies with a fresh identity; independent review pending."
+
+[[stop_condition_record]]
 id = "G2F-M-ANCHOR-SAME-HEIGHT-FORK"
 severity = "P0"
 observed = "Before dc9034d5d, a rejected same-height fork left reopenable staged residue."
@@ -257,3 +263,9 @@ id = "G2F-M-SYNC-COORDINATED-NONZERO-VIEW"
 severity = "P0"
 observed = "A coordinated non-zero ManifestView replacement can recompute the derived stage_digest without an independent owner-issued commitment."
 current_result = "Retained open; no authority claim."
+
+[[stop_condition_record]]
+id = "G2F-M-SYNC-RESIDUE-CLEAR"
+severity = "P0"
+observed = "Before 2d43dfd00, clearing visible sidecar/torn/WAL residue after a rejected fault allowed reopen or a new stage."
+current_result = "2d43dfd00 makes fault quarantine irreversible; residue removal remains rejected and independent review pending."

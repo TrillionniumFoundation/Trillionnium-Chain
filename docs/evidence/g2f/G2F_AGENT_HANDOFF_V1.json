@@ -4,15 +4,15 @@
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "status": "STOP_CONDITION",
   "blocking_status": "BLOCKED_UPSTREAM",
-  "terminal_reason": "P0 anti-rollback mutants were observed before hardening; copy/fork quarantine now rejects them in the candidate model, while a coordinated non-zero view replacement remains open. A11-A15 accepted interfaces are also absent.",
+  "terminal_reason": "P0 anti-rollback mutants were observed before hardening: copied namespace, shallow copy, same-height fork residue and removable sidecar/torn/WAL residue. Candidate quarantine now rejects them, while a coordinated non-zero view replacement remains open. A11-A15 accepted interfaces are also absent.",
   "base_commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
   "base_tree": "efea864cb2fbc4835a59a089b3dbab8934e71231",
-  "head_commit": "b8f7d130858f341117502bc306a12a2a4c42d111",
-  "head_tree": "dd7c6d9bd3130b799f2646a517825750e8bbab06",
-  "implementation_commit": "b8f7d130858f341117502bc306a12a2a4c42d111",
-  "implementation_tree": "dd7c6d9bd3130b799f2646a517825750e8bbab06",
-  "evidence_report_source_commit": "b8f7d130858f341117502bc306a12a2a4c42d111",
-  "evidence_report_source_tree": "dd7c6d9bd3130b799f2646a517825750e8bbab06",
+  "head_commit": "2d43dfd00b1a30c43307e8067ddc81ebd665c82f",
+  "head_tree": "091496e5449af9e944a9f81495568ee8bab09d01",
+  "implementation_commit": "2d43dfd00b1a30c43307e8067ddc81ebd665c82f",
+  "implementation_tree": "091496e5449af9e944a9f81495568ee8bab09d01",
+  "evidence_report_source_commit": "2d43dfd00b1a30c43307e8067ddc81ebd665c82f",
+  "evidence_report_source_tree": "091496e5449af9e944a9f81495568ee8bab09d01",
   "truth_snapshot_ref": "refs/remotes/origin/truth/current-snapshot-20260829-8bfd73f0",
   "truth_snapshot_commit": "a0f873eda03054adeed676b2e24bc5b483607600",
   "truth_snapshot_tree": "f840339cf90ca64a13b8abdd5816307860be81c4",
@@ -66,6 +66,12 @@
       "current_result": "Copy fence in dc9034d5d/1be57d57f rejects reopen and fresh stage; retained for independent review."
     },
     {
+      "id": "G2F-M-NAMESPACE-SHALLOW-COPY",
+      "severity": "P0",
+      "observed_before_fix": "Python copy.copy() duplicated the owner identity and staged map, allowing the copied object to present the source token.",
+      "current_result": "2d43dfd00 gives the copy a fresh identity and permanent copy fence; reopen and commit are rejected, retained for independent review."
+    },
+    {
       "id": "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
       "severity": "P0",
       "observed_before_fix": "A rejected same-height fork left retained stage residue that reopen treated as healthy.",
@@ -76,6 +82,12 @@
       "severity": "P0",
       "observed_before_fix": "No independent owner-issued commitment prevents coordinated non-zero view/digest replacement with a recomputed derived stage_digest.",
       "current_result": "Open retained mutant; no authority claim."
+    },
+    {
+      "id": "G2F-M-SYNC-RESIDUE-CLEAR",
+      "severity": "P0",
+      "observed_before_fix": "Clearing visible sidecar/torn/WAL residue after a rejected fault allowed reopen or a new stage.",
+      "current_result": "2d43dfd00 makes quarantine irreversible; residue removal is rejected, retained for independent review."
     }
   ],
   "commands": [
@@ -92,7 +104,8 @@
     "bash scripts/ci/check_trnm_poco_order_state_v1_boundary.sh --static-only: PASS",
     "bash scripts/ci/check_poco_ai_native_v1_order_finality_light_client.sh: Python checker PASS; shell stopped at OpenSSL cross-check because xxd is unavailable (exit 127)",
     "cargo test/clippy --manifest-path trillionnium/Cargo.toml --locked --offline: NOT RUN because cargo is unavailable (exit 127)",
-    "PYTHONDONTWRITEBYTECODE=1 ./scripts/g2f/check_g2f_conformance.sh: PASS; 37 discovered and executed tests, 21 wire mutants rejected by both clients, 7,548 differential samples (0 exceptions/0 disagreements), 3,000 state-sync mutants rejected, copied-same-label and fork-residue quarantine checks PASS; report terminal_status=STOP_CONDITION",
+    "PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest discover -s conformance/g2f -p 'test_*.py': PASS; 39 discovered and executed tests",
+    "PYTHONDONTWRITEBYTECODE=1 ./scripts/g2f/check_g2f_conformance.sh: PASS; 39 discovered and executed tests, 21 wire mutants rejected by both clients, 7,548 differential samples (0 exceptions/0 disagreements), 3,000 state-sync mutants rejected, copied-same-label, shallow-copy, fork-residue and residue-clear quarantine checks PASS; report terminal_status=STOP_CONDITION",
     "isolated Rust 1.95 cargo metadata/check/test/clippy with g2f-namespace-test-support --locked --offline: PASS; 135 tests, -D warnings; candidate feature only, not normal-build/release proof",
     "sha256sorted A11-A15 interface path sets: PASS for candidate digests; accepted digests remain absent",
     "trailing-whitespace scan for package docs: PASS",
@@ -129,6 +142,7 @@
     "G2F-M-ANCHOR-SCOPE",
     "G2F-M-NAMESPACE-SAME-UID-RENAME",
     "G2F-M-NAMESPACE-COPY",
+    "G2F-M-NAMESPACE-SHALLOW-COPY",
     "G2F-M-NAMESPACE-ANCESTOR-SWAP",
     "G2F-M-NAMESPACE-LINK-COUNT",
     "G2F-M-NAMESPACE-ABA",
@@ -137,6 +151,7 @@
     "G2F-M-SYNC-STALE-CHECKPOINT",
     "G2F-M-SYNC-CHUNK-ROOT",
     "G2F-M-SYNC-WAL",
+    "G2F-M-SYNC-RESIDUE-CLEAR",
     "G2F-M-SYNC-PARTIAL-SWAP",
     "G2F-M-SYNC-DOWNGRADE",
     "G2F-M-SYNC-CONTEXT-SCHEMA",
@@ -165,6 +180,8 @@
     "G2F-M-UPGRADE-MISSING-EPOCH",
     "G2F-M-UPGRADE-VALIDATOR-SUBSTITUTION"
   ],
+  "retained_mutant_reference_count": 60,
+  "retained_mutant_unique_count": 55,
   "evidence_scope": "fixture",
   "authority": "candidate",
   "classification": "candidate-non-normative",
@@ -172,8 +189,8 @@
     "A11-A15 accepted interface versions/digests and independent replay records are absent; see G2F_INTERFACE_CHANGE_REQUESTS_V1.json.",
     "The candidate has no authenticated six-store snapshot, canonical application JMT-to-Order binding, external production anti-rollback anchor, staged state-sync swap, or global light-client completion.",
     "A candidate descriptor/openat and external-anchor contract is present in the package working tree; isolated Rust 1.95 feature-gated check/test/clippy passed (135 tests), but normal cargo is unavailable, there is no external HSM/KMS backend or normal-node wiring, and it does not close namespace/rollback authority.",
-    "The Python candidate model now binds its header/checkpoint/context and quarantines same-height forks, copied namespaces and generation gaps; the Rust anchor record still does not yet bind a canonical checkpoint/state-root or an explicit initial scope argument, and same-size owner-unsequenced A→B→A, forged identity, and coordinated non-zero view mutants remain retained.",
-    "G2F_CONFORMANCE_RUN_V1.json is a fixture-only replay record (37 tests/21 wire mutants/7548 differential/3000 state-sync mutants); it is not a signed TrnmGateEvidenceV1 bundle or real W0-W7 trace, and its package terminal_status is STOP_CONDITION.",
+    "The Python candidate model now binds its header/checkpoint/context and quarantines same-height forks, copied and shallow-copied namespaces, generation gaps and visible-residue removal; the Rust anchor record still does not yet bind a canonical checkpoint/state-root or an explicit initial scope argument, and same-size owner-unsequenced A→B→A, forged identity, and coordinated non-zero view mutants remain retained.",
+    "G2F_CONFORMANCE_RUN_V1.json is a fixture-only replay record (39 tests/21 wire mutants/7548 differential/3000 state-sync mutants); it is not a signed TrnmGateEvidenceV1 bundle or real W0-W7 trace, and its package terminal_status is STOP_CONDITION.",
     "Live control ref is 8bfd73f0cf1b785a29ae212f13212e51fe34231/tree cfedd363147934f50d1352dae31b7d87d79aa8d9; truth snapshot advanced to a0f873eda03054adeed676b2e24bc5b483607600/tree f840339cf90ca64a13b8abdd5816307860be81c4 with provenance-only outputs; ACTIVE_PR_PACKAGE_LEDGER retains d2c14fa686a7836e607661aaf1da34f971d12bc4/tree 86d17fbb369481a66684078ea1acef9550d36dad as historical metadata; assessed Plan tuple and locked digests remain unchanged.",
     "Control ledger marks prior PR18 (A16 model-only, a370a208/tree 02aa75) and stacked PR19 as upstream-invalidated by PR10/G15 stack drift; this branch is isolated on the exact candidate base and reuses neither.",
     "Machine truth remains G1-native-host-incomplete with production_candidate=false and production_consensus_activation=false."

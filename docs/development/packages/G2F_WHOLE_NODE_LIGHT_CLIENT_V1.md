@@ -1,9 +1,9 @@
 # G2F whole-node authority, state sync and light client v1
 
 Status: **STOP_CONDITION (upstream blockers retained / candidate-only)**. This
-is a subordinate package contract and gap ledger for A16. A candidate safety
-mutant was observed and is retained below; the current hardening rejects it,
-but independent review is still required. This is not a protocol or normative
+is a subordinate package contract and gap ledger for A16. Candidate safety
+mutants were observed and are retained below; the current hardening rejects
+them, but independent review is still required. This is not a protocol or normative
 freeze, a Gate exit, a release decision, a private-alpha authorization, or a
 production activation record.
 
@@ -27,8 +27,8 @@ be silently substituted for it.
 | base commit | `6e0189e351015ef3230f217ca7ff86149baedcf0` |
 | base tree | `efea864cb2fbc4835a59a089b3dbab8934e71231` |
 | package branch | `feature/chain-g2f-whole-node-light-client-v1-20260829` |
-| implementation head (evidence snapshot) | `b8f7d130858f341117502bc306a12a2a4c42d111` |
-| implementation tree (evidence snapshot) | `dd7c6d9bd3130b799f2646a517825750e8bbab06` |
+| implementation head (evidence snapshot) | `2d43dfd00b1a30c43307e8067ddc81ebd665c82f` |
+| implementation tree (evidence snapshot) | `091496e5449af9e944a9f81495568ee8bab09d01` |
 | assessed Plan ref | `refs/heads/docs/chain-poco-bft-mainline-20260825` |
 | assessed Plan commit/tree | `8198fea0307eb368df34ff77ffc272a6b0e655ec` / `a1be71bba1b54c428493d186fafb656d081b31a9` |
 | Plan SHA-256 | `aba99ae6be2ff8a4aac4d6355e1f778e49a7075a80b09453f16984f85bb0b6cd` |
@@ -90,14 +90,16 @@ useful candidate inputs, not authority.
 
 ### Safety stop recorded in this run
 
-Before the quarantine hardening, adversarial replay found two P0 failures in the
-candidate model: a same-label physical namespace copy could stage/commit a new
-generation, and a rejected same-height fork left retained stage residue that
-`reopen()` later treated as healthy. Both mutants are retained as
-`G2F-M-NAMESPACE-COPY` and `G2F-M-ANCHOR-SAME-HEIGHT-FORK`; the fixes in
-`dc9034d5d`/`1be57d57f` now reject and permanently quarantine those paths, with
-37 tests and the runner's fault checks passing. Under the operating contract,
-the observed safety failures require the terminal outcome
+Before the latest quarantine hardening, adversarial replay found four P0
+failure variants in the candidate model: a same-label physical namespace copy,
+the standard Python shallow-copy protocol, a rejected same-height fork with
+retained stage residue, and visible sidecar/WAL/torn residue removal could
+reopen or reuse state. The variants are retained as
+`G2F-M-NAMESPACE-COPY`, `G2F-M-NAMESPACE-SHALLOW-COPY`,
+`G2F-M-ANCHOR-SAME-HEIGHT-FORK`, and `G2F-M-SYNC-RESIDUE-CLEAR`; the latest
+hardening in `2d43dfd00` now rejects and permanently quarantines those paths,
+with 39 tests and the runner's fault checks passing. Under the operating
+contract, the observed safety failures require the terminal outcome
 `STOP_CONDITION` until independent review and a clean-clone fault replay are
 complete. A coordinated non-zero `ManifestView` replacement with a recomputed
 `stage_digest` remains an open retained mutant because the model has no
@@ -166,10 +168,10 @@ remain scoped candidate-non-normative:
 | Bounded Order/checkpoint verifier | strict raw CEV1 decode, Ed25519/QC checks, sparse/tag-50 membership, successor-only checkpoint CAS; 15 verifier tests, 7 checkpoint tests | membership is not the application JMT in a finalized Order header; process and global authority remain false |
 | Global execution candidate | previews all five kernels and commits a domain-separated candidate composite root | composite root is explicitly not the application JMT; no global Order carrier issuer or anti-rollback authority |
 | Manifest-bound process tranche | recorded 7/7 process tests and five local negative classes (DA/Order mode drift, malformed temp, pin rollback, journal rollback) | path/hash/rusqlite checks do not retain openat/dirfd namespace identity or prevent same-UID rename; no production signer/broadcast |
-| Namespace/anchor contract (package working tree) | candidate `PocoNodeG2fNamespaceGuardV1`/`PocoNodeG2fFileHandleV1` openat identity and `PocoNodeG2fAnchorRecordV1` successor-CAS contract with unit mutants | feature-gated candidate contract only; pre-fix copy/fork acceptance triggered STOP_CONDITION and is now quarantined; no external HSM/KMS backend, normal-node process wiring or production authority |
+| Namespace/anchor contract (package working tree) | candidate `PocoNodeG2fNamespaceGuardV1`/`PocoNodeG2fFileHandleV1` openat identity and `PocoNodeG2fAnchorRecordV1` successor-CAS contract with unit mutants | feature-gated candidate contract only; pre-fix copy/shallow-copy/fork acceptance triggered STOP_CONDITION and is now quarantined; no external HSM/KMS backend, normal-node process wiring or production authority |
 | Order-state membership writer | candidate tag-50 writer and canonical receipt projection | local writer does not commission canonical Node Order state or bind the application JMT |
 | Light-client checker | standalone Python Order-finality checker and bounded Rust verifier are present as candidate inputs | no accepted two-client end-to-end W3–W7 replay; `global_light_client_complete=false` |
-| G2F fixture conformance runner | 37 discovered and executed tests, 21 wire mutants, 7,548 A/B differential samples and 3,000 state-sync mutants; both clients agree and reject negatives | fixture-only synthetic carrier; no accepted upstream interfaces, real W0–W7 trace, 64-epoch campaign or production authority |
+| G2F fixture conformance runner | 39 discovered and executed tests, 21 wire mutants, 7,548 A/B differential samples and 3,000 state-sync mutants; both clients agree and reject negatives | fixture-only synthetic carrier; no accepted upstream interfaces, real W0–W7 trace, 64-epoch campaign or production authority |
 
 All counts above are observations from candidate metadata, status tranches and
 source boundary scripts. They are not signed `TrnmGateEvidenceV1` bundles. The
@@ -375,6 +377,7 @@ G2F-M-ANCHOR-DB-ONLY-ROLLBACK     G2F-M-ANCHOR-MANIFEST-DRIFT
 G2F-M-ANCHOR-CHECKPOINT-BINDING   G2F-M-ANCHOR-SCOPE
 G2F-M-ANCHOR-SAME-HEIGHT-FORK     G2F-M-ANCHOR-GENERATION-GAP
 G2F-M-NAMESPACE-SAME-UID-RENAME   G2F-M-NAMESPACE-COPY
+G2F-M-NAMESPACE-SHALLOW-COPY
 G2F-M-NAMESPACE-ANCESTOR-SWAP     G2F-M-NAMESPACE-LINK-COUNT
 G2F-M-NAMESPACE-ABA               G2F-M-NAMESPACE-UNBOUNDED-SIZE
 G2F-M-NAMESPACE-FORGED-IDENTITY
@@ -382,6 +385,7 @@ G2F-M-SYNC-STALE-CHECKPOINT       G2F-M-SYNC-CHUNK-ROOT
 G2F-M-SYNC-WAL                    G2F-M-SYNC-PARTIAL-SWAP
 G2F-M-SYNC-DOWNGRADE              G2F-M-SYNC-CONTEXT-SCHEMA
 G2F-M-SYNC-HEADER-HEIGHT-BINDING  G2F-M-LC-WRONG-EPOCH
+G2F-M-SYNC-RESIDUE-CLEAR
 G2F-M-LC-INSUFFICIENT-WEIGHT      G2F-M-LC-COMPOSITE-ROOT
 G2F-M-LC-STALE-ANCHOR             G2F-M-LC-DOWNGRADE
 G2F-M-TRACE-BATCHREF               G2F-M-TRACE-ORDER-HEIGHT
@@ -396,14 +400,14 @@ G2F-M-UPGRADE-MISSING-EPOCH        G2F-M-UPGRADE-VALIDATOR-SUBSTITUTION
 G2F-M-SYNC-COORDINATED-NONZERO-VIEW (retained open; no owner-issued view commitment)
 ```
 
-The machine ledger retains 58 mutant references (53 unique IDs), including the
-three P0 stop-condition records above. A passing candidate replay never removes
+The machine ledger retains 60 mutant references (55 unique IDs), including the
+five P0 stop-condition records above. A passing candidate replay never removes
 the failed pre-fix artifacts or promotes an authority claim.
 
 The Python model's candidate header/height/context checks are unit-tested, and
-the latest hardening permanently quarantines copied namespaces, same-height
-fork residue, duplicate generations, malformed sidecars, and full-store
-rollback residue. The Rust descriptor/anchor contract still lacks a canonical
+the latest hardening permanently quarantines copied namespaces (including
+shallow copies), same-height fork residue, duplicate generations, malformed
+sidecars, visible-residue removal, and full-store rollback residue. The Rust descriptor/anchor contract still lacks a canonical
 checkpoint field, an explicit initial scope argument and an authenticated
 external backend. Same-size owner-unsequenced A→B→A, forged-identity, and
 coordinated non-zero view replacement mutants remain retained; the
@@ -468,10 +472,11 @@ control ref: live 8bfd73f0cf1b785a29ae212f13212e51fe34231 /
 sha256 plan/evidence/protocol/machine/Cargo.lock: matched manifest values
 JSON/TOML package files: PASS (`python3 -m json.tool`; Python `tomllib` parse)
 light-client shell: Python checker PASS; OpenSSL cross-check NOT RUN (`xxd` unavailable, exit 127)
-candidate conformance runner: PASS (37 discovered and executed tests; 21 wire mutants;
+candidate conformance runner: PASS (39 discovered and executed tests; 21 wire mutants;
   7,548 differential samples with 0 exceptions/0 disagreements; 3,000
-  state-sync mutants rejected; copied-same-label, fork-residue, staged swap/CAS
-  and rollback fences PASS); runner terminal_status=STOP_CONDITION
+  state-sync mutants rejected; copied-same-label, shallow-copy, fork-residue,
+  residue-clear, staged swap/CAS and rollback fences PASS); runner
+  terminal_status=STOP_CONDITION
 normal PATH cargo test/clippy: NOT RUN (`cargo` executable unavailable in the
   default environment); isolated Rust 1.95 candidate feature check/test/clippy:
   PASS (135 tests, `-D warnings`), not a normal-build or release assertion

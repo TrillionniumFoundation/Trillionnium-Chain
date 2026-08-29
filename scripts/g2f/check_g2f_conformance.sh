@@ -210,6 +210,14 @@ for fault in ("torn", "sidecar", "wal"):
         pass
     else:
         raise SystemExit(f"fault {fault} reopened cleanly")
+    # Removing the visible marker must not reset the durable safety fence.
+    fault_owner._sidecars.clear()
+    try:
+        fault_owner.reopen()
+    except StateSyncError:
+        fault_results[f"{fault}_residue_clear"] = "rejected"
+    else:
+        raise SystemExit(f"fault {fault} residue clear reopened cleanly")
 
 intent_owner = StagedStateSync(fixture_value.context["chain_id"])
 intent_token = intent_owner.stage(
@@ -279,6 +287,23 @@ except StateSyncError:
     fault_results["copied_namespace"] = "rejected"
 else:
     raise SystemExit("copied namespace token was accepted")
+
+# The standard Python shallow-copy protocol is another physical-copy path.
+# It must receive a fresh identity and remain permanently fenced, even though
+# it starts with the source's staged map.
+shallow_copy = copy.copy(copy_owner)
+try:
+    shallow_copy.reopen()
+except StateSyncError:
+    fault_results["shallow_copy"] = "rejected"
+else:
+    raise SystemExit("shallow copied namespace reopened cleanly")
+try:
+    shallow_copy.commit(copy_token, generation=1, expected_anchor=shallow_copy.anchor)
+except StateSyncError:
+    pass
+else:
+    raise SystemExit("shallow copied namespace token was accepted")
 
 # A physical copy with the *same* namespace label is a higher-risk mutant:
 # label equality must not turn copied staged bytes into a new authority.  The

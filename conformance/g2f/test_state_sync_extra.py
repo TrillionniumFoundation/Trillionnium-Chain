@@ -256,6 +256,37 @@ class StateSyncFaultAndBindingTests(unittest.TestCase):
                         generation=1,
                     )
 
+    def test_sidecar_fault_quarantine_survives_residue_removal(self) -> None:
+        """Deleting visible sidecar residue cannot clear a safety stop."""
+
+        f = fixture()
+        for fault in ("torn", "sidecar", "wal"):
+            with self.subTest(fault=fault):
+                owner = StagedStateSync(f.context["chain_id"])
+                with self.assertRaises(StateSyncError):
+                    owner.stage(
+                        f.manifest,
+                        f.chunks,
+                        f.context,
+                        **_args(f),
+                        generation=1,
+                        fault=fault,
+                    )
+                self.assertTrue(owner._quarantined)
+                # A hostile/operator cleanup can remove the visible marker;
+                # the irreversible quarantine must still fence authority.
+                owner._sidecars.clear()
+                with self.assertRaisesRegex(StateSyncError, "quarantined state-sync"):
+                    owner.reopen()
+                with self.assertRaisesRegex(StateSyncError, "quarantined state-sync"):
+                    owner.stage(
+                        f.manifest,
+                        f.chunks,
+                        f.context,
+                        **_args(f),
+                        generation=1,
+                    )
+
     def test_active_full_store_rollback_is_fenced_after_successor_commit(self) -> None:
         f = fixture()
         owner = StagedStateSync(f.context["chain_id"])
@@ -421,6 +452,24 @@ class StateSyncFaultAndBindingTests(unittest.TestCase):
         copied = owner.clone_namespace("copied-active")
         with self.assertRaises(StateSyncError):
             copied.reopen()
+
+    def test_shallow_python_copy_is_permanently_fenced(self) -> None:
+        """The standard copy protocol cannot duplicate a live owner."""
+
+        f = fixture()
+        owner = StagedStateSync(f.context["chain_id"])
+        token = owner.stage(f.manifest, f.chunks, f.context, **_args(f), generation=1)
+
+        # ``copy.copy`` would otherwise preserve the owner id and stage map,
+        # allowing the copied object to present the original token as its own.
+        copied = copy.copy(owner)
+        self.assertTrue(copied._copy_fenced)
+        self.assertNotEqual(copied._instance_id, owner._instance_id)
+        self.assertIn(token.stage_id, copied._stages)
+        with self.assertRaisesRegex(StateSyncError, "copied namespace"):
+            copied.reopen()
+        with self.assertRaisesRegex(StateSyncError, "copied namespace"):
+            copied.commit(token, generation=1, expected_anchor=copied.anchor)
 
     def test_same_namespace_copy_with_staged_residue_is_fenced(self) -> None:
         """A same-label copy cannot reuse pre-activation staged residue."""

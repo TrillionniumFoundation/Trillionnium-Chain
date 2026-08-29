@@ -19,8 +19,10 @@ release authority.  A green run is local candidate evidence only.
 * `state_sync.py` verifies a bounded manifest and identity-compressed chunks,
   checks sorted/gap-free state keys and recomputes the application root, then
   models an isolated staged swap guarded by a separate monotonic anchor.
-  Namespace-copy/rename, stale-anchor, torn, sidecar/WAL, interrupted-intent,
-  and full-store rollback mutants are fenced before the model can reopen.
+  Namespace-copy/rename (including the standard shallow-copy protocol),
+  stale-anchor, torn, sidecar/WAL (including visible-residue removal),
+  interrupted-intent, and full-store rollback mutants are fenced before the
+  model can reopen.
 * `atomicity.py` authenticates a common transaction/version cut across the six
   named planes and provides strict double-sampling/ABA rejection. It is an
   executable boundary proposal, not a database transaction implementation.
@@ -28,12 +30,13 @@ release authority.  A green run is local candidate evidence only.
 The state-sync and carrier domains are candidate domains. They are not a claim
 that the corresponding canonical Protocol 09 interfaces have been accepted;
 missing upstream contracts remain interface-change requests owned by the
-relevant A11--A15 package. The current runner reports 37 tests, but the package
-terminal status is `STOP_CONDITION`: earlier replay exposed same-label copy and
-same-height fork-residue acceptance before the quarantine hardening, and a
-coordinated non-zero view/digest replacement still lacks an independent
-owner-issued commitment. Passing tests therefore do not authorize a Gate,
-private-alpha, signing, or production claim.
+relevant A11--A15 package. The current runner reports 39 tests, but the package
+terminal status is `STOP_CONDITION`: earlier replay exposed same-label and
+shallow-copy namespace acceptance, same-height fork residue, and removable
+sidecar/WAL/torn residue before the quarantine hardening. A coordinated
+non-zero view/digest replacement still lacks an independent owner-issued
+commitment. Passing tests therefore do not authorize a Gate, private-alpha,
+signing, or production claim.
 
 ## Reproduce
 
