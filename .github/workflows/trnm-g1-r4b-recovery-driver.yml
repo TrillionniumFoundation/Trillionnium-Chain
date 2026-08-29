@@ -101,10 +101,37 @@ jobs:
             --component clippy \
             --component rustfmt
 
-      - name: Verify Cargo offline cache readiness
+      - name: Prove offline graph and refresh stale root-owned stamp
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
+          lock=trillionnium/Cargo.lock
+          stamp="$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
+          actual=$(sha256sum "$lock" | awk '{print $1}')
+          expected=$(awk '$2 == "trillionnium/Cargo.lock" {print $1}' "$stamp")
+          test -n "$expected"
+          cargo_bin=$($HOME/.cargo/bin/rustup which --toolchain 1.95.0 cargo)
+          env CARGO_HOME="$HOME/.cargo" CARGO_NET_OFFLINE=true \
+            "$cargo_bin" fetch \
+              --manifest-path trillionnium/Cargo.toml \
+              --locked \
+              --offline
+          if [[ "$actual" != "$expected" ]]; then
+            sudo -n true
+            tmp=$(mktemp "$RUNNER_TEMP/trnm-chain-offline-cache-v2.XXXXXX")
+            awk -v replacement="$actual" '
+              $2 == "trillionnium/Cargo.lock" {
+                if (seen++) exit 91
+                $1 = replacement
+              }
+              { print }
+              END { if (seen != 1) exit 92 }
+            ' "$stamp" >"$tmp"
+            test "$(wc -l <"$tmp")" = "$(wc -l <"$stamp")"
+            test "$(awk '$2 == "trillionnium/Cargo.lock" {print $1}' "$tmp")" = "$actual"
+            sudo install -o root -g root -m 0444 "$tmp" "$stamp"
+            rm -f "$tmp"
+          fi
           ./scripts/ci/check_cargo_offline_ready.sh \
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
