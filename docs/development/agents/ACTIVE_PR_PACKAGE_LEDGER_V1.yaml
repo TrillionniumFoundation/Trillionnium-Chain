@@ -1,6 +1,6 @@
 schema: trnm-active-pr-package-ledger-v1
 repository: TrillionniumFoundation/Trillionnium-Chain
-observed_at_utc: '2026-08-29T14:29:00Z'
+observed_at_utc: '2026-08-29T14:55:03Z'
 assessed_plan:
   ref: docs/chain-poco-bft-mainline-20260825
   commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
@@ -12,8 +12,8 @@ latest_candidate:
   tree: efea864cb2fbc4835a59a089b3dbab8934e71231
 control_package_evidence:
   source_head_ref: docs/chain-agent-fleet-plan-v1-20260829
-  source_head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
-  source_head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
+  source_head_commit: 7d9a17abb727950f278235dce817df29e97fea19
+  source_head_tree: 00a9de9534860abdccc2aeb31307810897330c4c
   historical_workflow_runs_not_evidence:
   - name: TRNM payload replay recovery v1 gate
     run_id: 33249877031
@@ -32,17 +32,17 @@ control_package_evidence:
     status: queued
   workflow_runs:
   - name: TRNM payload replay recovery v1 gate
-    run_id: 33256869504
-    job_id: 99112030829
+    run_id: 33257821913
+    job_id: 99114505036
     conclusion: success
-    head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
-    head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
+    head_commit: 7d9a17abb727950f278235dce817df29e97fea19
+    head_tree: 00a9de9534860abdccc2aeb31307810897330c4c
   - name: TRNM replay-to-Core coordinator v1 gate
-    run_id: 33256869495
-    job_id: 99112030904
+    run_id: 33257821746
+    job_id: 99114504115
     conclusion: success
-    head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b
-    head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1
+    head_commit: 7d9a17abb727950f278235dce817df29e97fea19
+    head_tree: 00a9de9534860abdccc2aeb31307810897330c4c
 ownership_resolutions:
 - surface: docs/development/CURRENT_SNAPSHOT_V1.*
   previous_writers:
@@ -207,39 +207,6 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
   next_action: A03 must accept the permit-bound application carrier; A05 and A06 interfaces/evidence remain required.
-- number: 10
-  title: '[A08/G1.5] Add candidate CEV1 registry closure'
-  state: open
-  draft: true
-  mergeable: true
-  package_id: G15_CEV1_REGISTRY_SPEC_V1
-  owner: A08
-  owner_kind: fleet-agent
-  base:
-    ref: docs/agent-fleet-plan-v1-20260829
-    pr_bound_commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
-    pr_bound_tree: 55dff92ec01c4cdde93d29cee502e647251284f0
-    observed_live_commit: d2c14fa686a7836e607661aaf1da34f971d12bc4
-    observed_live_tree: 86d17fbb369481a66684078ea1acef9550d36dad
-    status: advanced
-  head:
-    ref: agent/a08-g15-cev1-registry-spec-v1-20260829
-    commit: c6749f9e959a0838b200190c730fc28e053bbec7
-    tree: edd4afa398b4d0c7d478212659600451df2674ac
-  classification: base-drift-root-candidate
-  merge_queue_eligible: false
-  terminal_state: BASE_DRIFT
-  downstream_invalidation:
-  - 11
-  - 12
-  - 13
-  - 14
-  - 15
-  - 16
-  - 17
-  - 18
-  - 19
-  next_action: A08 must replay/rebase on the exact current A00 control baseline; PRs 11-19 must then replay evidence in order.
 - number: 11
   title: '[A09/G1.5] Add independent registry parser and mutation corpus'
   state: open
@@ -262,8 +229,8 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
-  next_action: Replay independent conformance after A08 repairs PR 10; do not normalize candidate wire IDs silently.
+  invalidated_by_pr: 29
+  next_action: Replay independent conformance after corrected A08 PR29; do not normalize candidate wire IDs silently.
 - number: 12
   title: '[A10/G2.0] Generate the complete W0-W7 operation trace inventory'
   state: open
@@ -286,7 +253,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Regenerate all 30 rows after accepted/replayed G1.5 inputs.
 - number: 13
   title: '[A11/G2A] Add DA-FULLREP-V1 assurance model and fault corpus'
@@ -310,7 +277,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay DA assurance after accepted G1.5/G2.0 inputs and preserve explicit no-DAS truth.
 - number: 14
   title: '[A12/G2B] Add capability, nonce and task-market assurance model'
@@ -334,7 +301,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay lifecycle model after accepted AgentTransaction and predecessor inputs.
 - number: 15
   title: '[A13/G2D] Add deterministic MVCC and fee serial-equivalence model'
@@ -358,7 +325,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay serial-equivalence evidence after accepted wire and state authority.
 - number: 16
   title: '[A14/G2C] Add deterministic re-execution and challenge assurance model'
@@ -382,7 +349,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay objective verification after canonical profiles and accepted predecessors.
 - number: 17
   title: '[A15/G2E] Add multi-asset settlement conservation and retry model'
@@ -406,7 +373,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay conservation evidence after canonical proof, JMT and whole-node authority.
 - number: 18
   title: '[A16/G2F] Add whole-node checkpoint, state-sync and independent light-client model'
@@ -430,7 +397,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay checkpoint/sync/light-client evidence after accepted G2 predecessors and real authority inputs.
 - number: 19
   title: '[A17/G3-G5] Add benchmark, security, operations and claim gates'
@@ -454,7 +421,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 10
+  invalidated_by_pr: 29
   next_action: Replay claim gates after accepted G0-G2F evidence; retain all activation and superiority claims false.
 - number: 20
   title: '[A07/G1-R5] Add gated 4/7-node native campaign contract'
@@ -607,31 +574,6 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: WORKING
   next_action: Obtain independent A00 review and exact-head CI; never self-merge or promote truth.
-- number: 27
-  title: '[A08/G1.5] Publish clean CEV1 registry parity package'
-  state: open
-  draft: true
-  mergeable: false
-  package_id: G15_CEV1_REGISTRY_SPEC_V1
-  owner: A08
-  owner_kind: fleet-agent
-  base:
-    ref: docs/chain-agent-fleet-plan-v1-20260829
-    pr_bound_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
-    pr_bound_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
-    live_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
-    live_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
-    status: exact
-  head:
-    ref: feature/chain-a08-g15-registry-parity-v3-20260829
-    commit: f951acc44092b6c7304fa05491f09810c2ec5182
-    tree: 864d82afad6507c2566f66ae7e7f56e2de40440a
-  relation_to_latest_candidate:
-    kind: control-child-candidate
-  classification: active-package
-  merge_queue_eligible: false
-  terminal_state: WORKING
-  next_action: Obtain independent A08 review and exact-head CI; then replay A09 on this exact registry head.
 - number: 28
   title: '[A06/G1-R4] Publish candidate fault matrix and independent replay'
   state: open
@@ -657,6 +599,31 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
   next_action: Obtain independent A06 review, exact-head CI, and authorized clean-clone replay; do not promote synthetic fault evidence.
+- number: 29
+  title: '[A08/G1.5] Publish corrected CEV1 registry parity candidate'
+  state: open
+  draft: true
+  mergeable: false
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  owner: A08
+  owner_kind: fleet-agent
+  base:
+    ref: docs/chain-agent-fleet-plan-v1-20260829
+    pr_bound_commit: 7d9a17abb727950f278235dce817df29e97fea19
+    pr_bound_tree: 00a9de9534860abdccc2aeb31307810897330c4c
+    live_commit: 7d9a17abb727950f278235dce817df29e97fea19
+    live_tree: 00a9de9534860abdccc2aeb31307810897330c4c
+    status: exact
+  head:
+    ref: feature/chain-a08-g15-registry-parity-v4-20260829
+    commit: 6c42673db5bc46f82934dddc678a1752a092ca04
+    tree: df8f6bf0cfe0868668f86ba9b41fc34ce1a085c4
+  relation_to_latest_candidate:
+    kind: direct-control-child-candidate
+  classification: blocked-upstream-candidate
+  merge_queue_eligible: false
+  terminal_state: BLOCKED_UPSTREAM
+  next_action: Independent protocol-authority review and A09 replay on this exact registry head; do not promote activation or wire truth.
 terminal_pull_requests:
 - number: 6
   title: 'merge(chain): unify G1-R4A crash matrix with R4B authority seams'
@@ -704,8 +671,58 @@ terminal_pull_requests:
   terminal_state: SUPERSEDED_WITHOUT_MERGE
   classification: superseded-duplicate
   merge_queue_eligible: false
-  next_action: Retain closed for audit; use PR27 as the sole A08 candidate.
+  next_action: Retain closed for audit; use PR29 as the sole corrected A08 candidate.
   closed_without_merge: true
+- number: 10
+  title: '[A08/G1.5] Add candidate CEV1 registry closure'
+  state: closed
+  draft: true
+  mergeable: true
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  owner: A08
+  owner_kind: fleet-agent
+  base:
+    ref: docs/agent-fleet-plan-v1-20260829
+    pr_bound_commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
+    pr_bound_tree: 55dff92ec01c4cdde93d29cee502e647251284f0
+    live_commit: 8bfd73f0cf1b785a29ae212f13212e51fe34231e
+    live_tree: cfedd363147934f50d1352dae31b7d87d79aa8d9
+    status: advanced
+  head:
+    ref: agent/a08-g15-cev1-registry-spec-v1-20260829
+    commit: c6749f9e959a0838b200190c730fc28e053bbec7
+    tree: edd4afa398b4d0c7d478212659600451df2674ac
+  terminal_state: BASE_DRIFT
+  classification: superseded-without-merge
+  merge_queue_eligible: false
+  closed_without_merge: true
+  superseded_by_pr: 29
+  next_action: Retain for audit; semantic projection is obsolete and must not feed downstream evidence.
+- number: 27
+  title: '[A08/G1.5] Publish clean CEV1 registry parity package'
+  state: closed
+  draft: true
+  mergeable: true
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  owner: A08
+  owner_kind: fleet-agent
+  base:
+    ref: docs/chain-agent-fleet-plan-v1-20260829
+    pr_bound_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    pr_bound_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    live_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    live_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    status: exact
+  head:
+    ref: feature/chain-a08-g15-registry-parity-v3-20260829
+    commit: f951acc44092b6c7304fa05491f09810c2ec5182
+    tree: 864d82afad6507c2566f66ae7e7f56e2de40440a
+  terminal_state: SUPERSEDED_WITHOUT_MERGE
+  classification: superseded-without-merge
+  merge_queue_eligible: false
+  closed_without_merge: true
+  superseded_by_pr: 29
+  next_action: Retain for audit; semantic operation projection is obsolete and must not feed downstream evidence.
 known_control_gaps:
 - id: PR4_IMPORT_EQUIVALENCE_REVIEW
   status: OPEN
@@ -728,7 +745,7 @@ known_control_gaps:
   - 17
   - 18
   - 19
-  next_action: Repair PR 10 on the exact current A00 baseline and replay PRs 11-19 in dependency order.
+  next_action: A08 PR29 is the corrected exact-base candidate; obtain independent protocol review, then replay A09/A10 and downstream packages in dependency order.
 - id: A05_V1_UNPUBLISHED_HEAD
   status: OPEN
   owner: A05

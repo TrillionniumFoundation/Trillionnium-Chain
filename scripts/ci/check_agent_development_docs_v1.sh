@@ -87,25 +87,30 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 27, 28], open_numbers
+assert open_numbers == [1, 2, 3, 4, 7, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28, 29], open_numbers
 assert re.search(r"(?m)^  source_head_ref: docs/chain-agent-fleet-plan-v1-20260829$", ledger)
-assert re.search(r"(?m)^  source_head_commit: 05c0ed5327c569802380e8543b0d3436ecbbc69b$", ledger)
-assert re.search(r"(?m)^  source_head_tree: 2ad6dfa2b4179302ff962e12bcae72a78ec613e1$", ledger)
+assert re.search(r"(?m)^  source_head_commit: 7d9a17abb727950f278235dce817df29e97fea19$", ledger)
+assert re.search(r"(?m)^  source_head_tree: 00a9de9534860abdccc2aeb31307810897330c4c$", ledger)
 pr28 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 28)
 assert re.search(r"(?m)^    ref: feature/chain-g1-r4-fault-matrix-v2-20260829$", pr28)
 assert re.search(r"(?m)^    commit: e88cda9401eb6219fe1425bebb1ef6b54b4c429d$", pr28)
 assert re.search(r"(?m)^    tree: 9c4249ce36061fcbd6eb8e522accd29127f7c01c$", pr28)
 assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr28)
-pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
-assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
-assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
-assert pr10.count("  - ") >= 9
-assert ledger.count("  invalidated_by_pr: 10") == 9
+pr29 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 29)
+assert re.search(r"(?m)^    ref: feature/chain-a08-g15-registry-parity-v4-20260829$", pr29)
+assert re.search(r"(?m)^    commit: 6c42673db5bc46f82934dddc678a1752a092ca04$", pr29)
+assert re.search(r"(?m)^    tree: df8f6bf0cfe0868668f86ba9b41fc34ce1a085c4$", pr29)
+assert re.search(r"(?m)^  terminal_state: BLOCKED_UPSTREAM$", pr29)
+assert ledger.count("  invalidated_by_pr: 29") == 9
 terminal_section = ledger.split("terminal_pull_requests:", 1)[1]
 assert re.search(r"(?m)^- number: 6$", terminal_section)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
 assert re.search(r"(?m)^  closed_without_merge: true$", terminal_section)
 assert re.search(r"(?m)^- number: 26$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", terminal_section)
+assert re.search(r"(?m)^- number: 10$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
+assert re.search(r"(?m)^- number: 27$", terminal_section)
 assert re.search(r"(?m)^  terminal_state: SUPERSEDED_WITHOUT_MERGE$", terminal_section)
 assert re.search(r"(?m)^  sole_writer: A01$", ledger)
 assert re.search(r"(?m)^  read_only_observer: A00$", ledger)
