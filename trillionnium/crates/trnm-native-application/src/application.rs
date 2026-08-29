@@ -703,7 +703,7 @@ pub enum NativeFinalizationApplyOutcomeV0 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NativeFinalizationRetryDispositionV0 {
     Pending,
-    ExactCommitted(NativeFinalizationApplyReadbackV0),
+    ExactCommitted(Box<NativeFinalizationApplyReadbackV0>),
 }
 
 /// Candidate-only application finalization queue.
@@ -928,7 +928,7 @@ impl NativeFinalizationQueueV0 {
         self.validate_v0()?;
         if let Some(readback) = self.history.iter().find(|entry| entry.intent() == intent) {
             return Ok(NativeFinalizationRetryDispositionV0::ExactCommitted(
-                readback.clone(),
+                Box::new(readback.clone()),
             ));
         }
         if self.pending.contains(intent) {

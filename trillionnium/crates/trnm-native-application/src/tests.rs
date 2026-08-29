@@ -371,7 +371,9 @@ fn finalization_queue_rejects_skips_reorders_and_root_drift_without_mutation() {
     assert!(queue.pending().is_empty());
     assert_eq!(
         queue.reconcile(&i2).unwrap(),
-        NativeFinalizationRetryDispositionV0::ExactCommitted(finalization_readback(i2, 2, 191))
+        NativeFinalizationRetryDispositionV0::ExactCommitted(Box::new(finalization_readback(
+            i2, 2, 191,
+        )))
     );
 }
 
