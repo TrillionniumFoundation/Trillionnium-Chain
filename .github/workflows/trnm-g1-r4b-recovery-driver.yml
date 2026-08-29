@@ -1,0 +1,159 @@
+name: TRNM G1-R4B recovery integration driver
+
+on:
+  push:
+    branches:
+      - test/chain-g1-r4b-recovery-driver-20260829
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-g1-r4b-recovery-driver-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_RETRY: "5"
+  CARGO_HTTP_TIMEOUT: "120"
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  TRNM_CARGO_OFFLINE_POLICY: "required"
+  R4A_HEAD: 3a4e2fa066de74025866da94cfe8a9efbfca03aa
+  TARGET_BRANCH: feature/chain-g1-r4b-finalization-recovery-integration-20260829
+
+jobs:
+  core-anchor-tag3:
+    name: Compile and publish anchored tag-3 recovery foundation
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 90
+    steps:
+      - name: Checkout driver instructions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: driver
+          persist-credentials: false
+
+      - name: Checkout exact R4A implementation head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: TrillionniumFoundation/Trillionnium-Chain
+          ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
+          path: trillionnium-chain
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify exact base and project boundary
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$R4A_HEAD"
+          bash scripts/project-preflight.sh --dev
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply exact Core recovery tranche
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          git checkout -B "$TARGET_BRANCH" "$R4A_HEAD"
+          topic_path=$(git rev-parse --path-format=absolute --git-path PROJECT_TOPIC)
+          cat >"$topic_path" <<EOF
+          project_id=trillionnium-chain
+          topic=g1-r4b-anchored-tag3-recovery
+          base_head=$R4A_HEAD
+          allowed_file=trillionnium/crates/trnm-consensus-core/src/core.rs
+          allowed_file=docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
+          EOF
+          python3 ../driver/scripts/ci/apply_g1_r4b_recovery.py .
+          git diff --check
+
+      - name: Verify formatting
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run focused Core recovery tests
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo test \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --offline \
+            -p trnm-consensus-core \
+            native_finalization_applied_recovery \
+            -- --nocapture
+
+      - name: Compile Node laboratory integration surface
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo check \
+            --manifest-path trillionnium/Cargo.toml \
+            --locked \
+            --offline \
+            -p trnm-poco-node \
+            --features lab-validator-runtime-test-support
+
+      - name: Stage and verify project policy
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          git add \
+            trillionnium/crates/trnm-consensus-core/src/core.rs \
+            docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
+          bash scripts/project-preflight.sh --staged
+
+      - name: Commit and publish integration branch
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          git config user.name "TRNM R4 recovery driver"
+          git config user.email "trnm-r4-driver@users.noreply.github.com"
+          git commit -m "feat(consensus): admit anchored tag-3 recovery fence"
+          head_oid=$(git rev-parse HEAD)
+          remote_oid=$(git ls-remote --heads origin "refs/heads/$TARGET_BRANCH" | awk '{print $1}')
+          remote_oid=${remote_oid:-0000000000000000000000000000000000000000}
+          printf 'refs/heads/%s %s refs/heads/%s %s\n' \
+            "$TARGET_BRANCH" "$head_oid" "$TARGET_BRANCH" "$remote_oid" | \
+            bash scripts/project-preflight.sh --push origin "$(git remote get-url --push origin)"
+          git push --force-with-lease origin "HEAD:refs/heads/$TARGET_BRANCH"
+          printf 'published_branch=%s\npublished_head=%s\n' "$TARGET_BRANCH" "$head_oid"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
