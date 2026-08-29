@@ -21,6 +21,8 @@ Candidate follow-on seam (does not satisfy the R3 exit):
 Candidate R4 recovery boundary (does not satisfy the R4 exit):
 
 - [`TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md`](TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md)
+- [`TRNM_G1_R4A_FINALIZATION_INTENT_PROCESS_MATRIX_V1.md`](TRNM_G1_R4A_FINALIZATION_INTENT_PROCESS_MATRIX_V1.md)
+- [`trnm-g1-r4a-manifest-v1.toml`](trnm-g1-r4a-manifest-v1.toml)
 
 Package ordering and the complete G0–G5 decomposition are maintained in
 [`../TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md`](../TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md).
