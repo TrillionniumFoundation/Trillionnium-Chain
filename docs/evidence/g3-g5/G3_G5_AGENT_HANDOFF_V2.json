@@ -3,8 +3,8 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "65deea3f1e9b25f3b6f57d30363857ed5bb16857",
-  "base_tree": "48f9e468747d45401834e3cef7f9834112fddee9",
+  "base_commit": "699d71ce998f695ce5a0bcffdb44105704995e68",
+  "base_tree": "7caf3d943aa08f041d9d2331a0fd59e65d85f240",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": [
     "conformance/benchmark/**",
@@ -86,10 +86,11 @@
     "production activation",
     "release readiness"
   ],
-  "next_action": "Run exact-head A17 with the A01 handoff contract. Only independently signed real campaign/audit/soak/governance evidence may change readiness or activation decisions.",
+  "next_action": "Run exact-head A17 with complete A16/A17 implementation provenance. Only independently signed real campaign/audit/soak/governance evidence may change readiness or activation decisions.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
+  "implementation_tree": "baba2e387cd667353a9d32cfeed2ecff9ebc643c",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "65deea3f1e9b25f3b6f57d30363857ed5bb16857",
+  "base_sync_parent": "699d71ce998f695ce5a0bcffdb44105704995e68",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

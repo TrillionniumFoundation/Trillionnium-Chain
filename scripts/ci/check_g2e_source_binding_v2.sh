@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
-base=c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde
+base=14602c4bdbc535903db7702d4e719e3e49c07c05
 
 git cat-file -e "${base}^{commit}"
 git merge-base --is-ancestor "$base" HEAD
@@ -16,10 +16,11 @@ a13_source=json.loads(Path('docs/evidence/g2d/G2D_SOURCE_MANIFEST_V2.json').read
 a12_source=json.loads(Path('docs/evidence/g2b/G2B_SOURCE_MANIFEST_V2.json').read_text())
 assert m['schema']=='trnm-g2e-source-manifest-v2'
 assert m['base_pr']==35
-assert m['base_commit']=='c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde'
-assert m['base_tree']=='c41350521550c90c535cfc9d81081eb565a56d88'
+assert m['base_commit']=='14602c4bdbc535903db7702d4e719e3e49c07c05'
+assert m['base_tree']=='b743bf45d5a2f97c880158bea854e5550bb72016'
 assert m['a14_implementation_commit']==a14['head_commit']=='0eed454d2895b8b034ada2af6bf96006cb094475'
-assert m['a14_base_sync_commit']=='c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde'
+assert m['a14_implementation_tree']==a14['implementation_tree']=='9b2030852132c147b63b1a5a7c269fff9424819c'
+assert m['a14_base_sync_commit']=='14602c4bdbc535903db7702d4e719e3e49c07c05'
 assert a14['status']=='MODULE_CLOSED_CANDIDATE'
 assert 'A14-HANDOFF-SCHEMA-VALIDATION' in a14['gaps_closed']
 assert a14_source['agent_transaction_wire_candidate_input'] is True
@@ -47,6 +48,6 @@ assert len(workflows)==13, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('agent_transaction_wire_accepted','canonical_settlement_receipt','application_jmt_authority','production_asset_custody','governance_activation','poco_weight_eligible','g2e_exit','production_candidate','production_consensus_activation'):
     assert m[key] is False, key
-print('G2E source binding v2: synchronized A12-A14 candidates, handoff schema, durable Rust settlement and false authority guards')
+print('G2E source binding v2: synchronized A12-A14 candidates, complete implementation provenance, durable Rust settlement and false authority guards')
 PY
 git diff --check

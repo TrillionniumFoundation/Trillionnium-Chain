@@ -3,8 +3,8 @@
   "agent_id": "A15",
   "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde",
-  "base_tree": "c41350521550c90c535cfc9d81081eb565a56d88",
+  "base_commit": "14602c4bdbc535903db7702d4e719e3e49c07c05",
+  "base_tree": "b743bf45d5a2f97c880158bea854e5550bb72016",
   "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "changed_paths": [
     "docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md",
@@ -80,11 +80,12 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Run exact-head G2E with the A01 handoff contract, then rebind A16. Settlement, custody, JMT, PoCO and governance authority remain false until independent acceptance.",
+  "next_action": "Run exact-head G2E with complete implementation provenance, then rebind A16. Settlement, custody, JMT, PoCO and governance authority remain false until independent acceptance.",
   "implementation_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
+  "implementation_tree": "896cf0622c9b3d99f534056c4221eb9bb84897ed",
   "implementation_parent": "0ef40883e160f646158b6e483a69e2371fda989e",
   "durable_rust_evidence_head": "29a64716286a8caf7d26ca01a14882d66ae38dd4",
-  "base_sync_parent": "c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde",
+  "base_sync_parent": "14602c4bdbc535903db7702d4e719e3e49c07c05",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
-base=847634df4c3f349d797a0a50eb0438b0537ac322
+base=33c74cb8ecc63a93b523ed2a9d70ba2aaf857604
 
 git cat-file -e "${base}^{commit}"
 git merge-base --is-ancestor "$base" HEAD
@@ -18,14 +18,15 @@ a12_source=json.loads(Path('docs/evidence/g2b/G2B_SOURCE_MANIFEST_V2.json').read
 closure=json.loads(Path('docs/evidence/g2f/G2F_COORDINATED_VIEW_CLOSURE_V2.json').read_text())
 assert m['schema']=='trnm-g2f-source-manifest-v2'
 assert m['base_pr']==36
-assert m['base_commit']=='847634df4c3f349d797a0a50eb0438b0537ac322'
-assert m['base_tree']=='af4e2e4280cd51e52f5226b607c6de499db598e2'
+assert m['base_commit']=='33c74cb8ecc63a93b523ed2a9d70ba2aaf857604'
+assert m['base_tree']=='e6174f037ac50762a8dbf047d547e82b6cba07b5'
 assert m['imported_g2f_commit']=='f97b3b8e74439d6e80d13c4c8048578a631eb12b'
 assert m['imported_g2f_tree']=='87511d76dd5703460076d73ecefeb28b9334bdfc'
 assert m['imported_paths']==22
 assert a15['status']=='MODULE_CLOSED_CANDIDATE'
-assert a15['base_commit']=='c8a66a043212bcfa02e3e7e1dd8bb299fe88fdde'
+assert a15['base_commit']=='14602c4bdbc535903db7702d4e719e3e49c07c05'
 assert a15['head_commit']=='da667f30cefa84fc967a96c817be07f8b779ac32'
+assert a15['implementation_tree']=='896cf0622c9b3d99f534056c4221eb9bb84897ed'
 assert 'A15-HANDOFF-SCHEMA-VALIDATION' in a15['gaps_closed']
 assert a15_source['durable_rust_settlement_candidate'] is True
 assert a15_source['handoff_schema_validated'] is True
@@ -56,6 +57,6 @@ assert len(workflow_names)==13, workflow_names
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflow_names), workflow_names
 for key in ('canonical_application_jmt','production_external_anchor','production_hsm_authority','accepted_upstream_interfaces','normal_node_process_ownership','power_loss_multi_host_evidence','g2f_exit','production_candidate','production_consensus_activation'):
     assert m[key] is False, key
-print('G2F source binding v2: synchronized A12-A15 candidates, handoff schema, sparse-tree candidate and false authority guards')
+print('G2F source binding v2: synchronized A12-A15 candidates, complete implementation provenance, STOP handoff and false authority guards')
 PY
 git diff --check
