@@ -6,9 +6,16 @@ on:
     paths:
       - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
       - "docs/development/README.md"
+      - "docs/development/CURRENT_SNAPSHOT_V1.json"
+      - "docs/development/TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1.md"
+      - "docs/development/AGENT_WORK_PACKAGE_TEMPLATE_V1.md"
+      - "docs/development/agents/**"
       - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
       - "docs/development/packages/**"
+      - "docs/schemas/current-snapshot-v1.schema.json"
+      - "docs/schemas/agent-handoff-v1.schema.json"
       - "scripts/check_ci_runner_policy.sh"
+      - "scripts/ci/check_agent_development_docs_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -26,9 +33,16 @@ on:
     paths:
       - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
       - "docs/development/README.md"
+      - "docs/development/CURRENT_SNAPSHOT_V1.json"
+      - "docs/development/TRNM_DEVELOPMENT_DOCUMENTATION_UPGRADE_V1.md"
+      - "docs/development/AGENT_WORK_PACKAGE_TEMPLATE_V1.md"
+      - "docs/development/agents/**"
       - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
       - "docs/development/packages/**"
+      - "docs/schemas/current-snapshot-v1.schema.json"
+      - "docs/schemas/agent-handoff-v1.schema.json"
       - "scripts/check_ci_runner_policy.sh"
+      - "scripts/ci/check_agent_development_docs_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -63,7 +77,7 @@ env:
 
 jobs:
   recovery-contract:
-    name: Payload replay and G1-R4A recovery contracts
+    name: Payload replay, G1-R4A and agent documentation contracts
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' &&
@@ -89,6 +103,10 @@ jobs:
         with:
           path: trillionnium-chain
           persist-credentials: false
+
+      - name: Verify agent development documentation contracts
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
