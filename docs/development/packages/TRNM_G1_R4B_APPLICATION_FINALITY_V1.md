@@ -39,9 +39,12 @@ It does **not** claim any of the following:
 
 ```text
 Core/Safety/signing/checkpoint authority
-authenticated proposal-body or runtime-profile retrieval
+authenticated proposal-body, header-context, or runtime-profile retrieval
+chain/genesis/route/generation scope binding for the opaque heads
+cryptographic receipt binding or an external anti-rollback sequence watermark
 production/effect-driver/process wiring
-cross-store atomicity with Core or Safety
+cross-store atomicity with Core, Safety, or checkpoint
+durable reopen/decode/receipt compaction or an authenticated live-reference inventory
 physical power-loss, disk-full, torn-write, or independent-process evidence
 G1-R4 exit, release readiness, or validator activation
 ```
@@ -73,16 +76,21 @@ production/activation/release/normative truth
 |---|---:|---|---|
 | R4B-QUEUE-001 | P0 | CANDIDATE_SLICE | Queue rejects skipped, reordered, or conflicting successors; independent Rust execution is still required. |
 | R4B-APPLY-002 | P0 | BLOCKED_UPSTREAM | Needs an accepted Core permit plus authenticated body/overlay/JMT source. |
-| R4B-READBACK-003 | P0 | BLOCKED_UPSTREAM | App readback exists in a candidate archive, but Core receipt/ack is a separate store transition. |
+| R4B-READBACK-003 | P0 | PENDING_DOWNSTREAM | App readback exists in a candidate archive, but the Core/Safety receipt/ack is a separate A05-owned transition. |
 | R4B-MULTI-004 | P0 | CANDIDATE_SLICE | Three-successor queue ordering is covered; durable multi-block apply remains open. |
 | R4B-DUP-005 | P1 | CANDIDATE_SLICE | Exact queue replay is idempotent and conflicting readback is rejected; source cardinality remains open. |
 | R4B-FORK-006 | P0 | CANDIDATE_SLICE | Referenced/child fork evidence is retained and unreferenced leaves are reclaimed; cross-store GC remains open. |
-| R4B-RESPONSE-007 | P0 | BLOCKED_UPSTREAM | A local retry disposition is possible; process-boundary proof is not. |
+| R4B-RESPONSE-007 | P0 | PENDING_DOWNSTREAM | A local retry disposition is possible; the A05/A06 process-boundary proof is not. |
 | R4B-SOURCE-008 | P1 | BLOCKED_UPSTREAM | Exact-one source cardinality and authenticated route/generation binding require the A03 carrier. |
 | R4B-FAULT-009 | P0 | BLOCKED_UPSTREAM | Disk/torn/power-loss matrix belongs to the A06 harness after A03/A04 interfaces. |
+| R4B-SQLITE-010 | P0 | BLOCKED_UPSTREAM | The owned SQLite crate is a validation journal with no finalization queue/intent/head/JMT/receipt/fork schema; A03/A05 seams must be accepted before persistence is added. |
 
 No existing PR closes these A04 queue/app gaps.  PRs #6/#7/#8 and the R4A
 marker package are intentionally not duplicated.
+
+`PENDING_DOWNSTREAM` is a package-local handoff status, not a terminal package
+status and not permission to edit A05/A06.  The package terminal outcome is
+`BLOCKED_UPSTREAM` because the A03 carrier is still missing.
 
 The machine-readable ledger for this run is:
 
@@ -105,9 +113,9 @@ gaps:
     request: A04-R4B-001
   - id: R4B-READBACK-003
     severity: P0
-    status: BLOCKED_UPSTREAM
-    owner: A03
-    request: A04-R4B-001
+    status: PENDING_DOWNSTREAM
+    owner: A05
+    request: A04-R4B-002
   - id: R4B-MULTI-004
     severity: P0
     status: CANDIDATE_SLICE
@@ -125,9 +133,9 @@ gaps:
     evidence: reference and child protected fork reclamation vector
   - id: R4B-RESPONSE-007
     severity: P0
-    status: BLOCKED_UPSTREAM
-    owner: A03
-    request: A04-R4B-001
+    status: PENDING_DOWNSTREAM
+    owner: A05
+    request: A04-R4B-002
   - id: R4B-SOURCE-008
     severity: P1
     status: BLOCKED_UPSTREAM
@@ -139,18 +147,36 @@ gaps:
     status: BLOCKED_UPSTREAM
     owner: A06
     blocker: approved process/fault hooks and A03 carrier are absent
+  - id: R4B-SQLITE-010
+    severity: P0
+    status: BLOCKED_UPSTREAM
+    owner: A04
+    blocker: SQLite is validation-only; A03 carrier and A05 cross-store CAS/readback are not accepted
+    requests: [A04-R4B-001, A04-R4B-002]
 interface_requests:
   - request_id: A04-R4B-001
     requester_agent: A04
     owner_agent: A03
     current_interface_digest: none
-    proposed_interface: permit-bound application body/overlay/JMT read plus fresh readback
+    proposed_interface: A03-provided permit-bound application body/header-context/overlay/JMT read plus fresh readback (using the existing Core permit; no new Core capability)
     safety_rationale: prevent skipped ancestors, root drift, source ambiguity, and fork replay
     version_impact: additive candidate interface; production flags unchanged
     required_vectors: [one, ascending_2_plus, skip, reorder, duplicate, sibling, response_loss, tamper]
     downstream_invalidation: [A04, A05, A06, G1]
     status: BLOCKED_UPSTREAM
     reviewer: independent A03/A04 review required
+  - request_id: A04-R4B-002
+    requester_agent: A04
+    owner_agent: A05
+    current_interface_digest: none
+    proposed_interface: opaque application receipt plus Safety/checkpoint CAS and fresh cross-store readback
+    safety_rationale: resolve commit/ack response loss to exact source or target without deleting referenced evidence
+    version_impact: additive candidate interface; production flags unchanged
+    required_vectors: [ack_loss, response_loss, store_skew, rollback, referenced_fork, restart]
+    downstream_invalidation: [A04, A06, G1]
+    status: PENDING_DOWNSTREAM
+    dependency_kind: downstream_handoff (A05 depends on A04)
+    reviewer: independent A04/A05 review required
 ```
 
 ## 5. Frozen candidate interface
@@ -179,9 +205,11 @@ request_id = A04-R4B-001
 requester_agent = A04
 owner_agent = A03
 current_interface_digest = none (no accepted A03 interface digest)
-proposed_interface = Core-issued non-cloneable finalization permit carrying exact
-  authenticated parent, target header/body, overlay identity, JMT plan/runtime
-  profile binding, and a fresh application readback consumed by Core
+proposed_interface = A03-provided permit-bound application execution carrier
+  (using the existing Core-issued non-cloneable permit) carrying exact
+  authenticated parent, target header/body/context, overlay identity, JMT
+  plan/runtime profile and chain/genesis/route/generation scope binding, plus a
+  fresh application readback consumed by Core
 safety rationale = prevent skipped ancestors, root drift, source ambiguity and
   replay of a competing fork
 version impact = additive candidate interface; no production flag change
@@ -191,6 +219,26 @@ downstream invalidation = A04 SQLite/process tests, A05 tag-3/checkpoint join,
   A06 fault/replay matrix and G1 review
 status = BLOCKED_UPSTREAM pending A03 owner/reviewer acceptance
 reviewer = independent A03/A04 review required
+```
+
+The separate A04→A05 cross-store request is frozen as:
+
+```text
+request_id = A04-R4B-002
+requester_agent = A04
+owner_agent = A05
+current_interface_digest = none (no accepted A05 receipt/checkpoint digest)
+proposed_interface = opaque application-finalization receipt, Safety tag-3 and
+  successor-checkpoint CAS/readback with exact source/target response-loss rule
+safety rationale = prevent ack-before-commit, cross-store skew and reclamation
+  of evidence still referenced by Safety/checkpoint recovery
+version impact = additive candidate interface; no production flag change
+required vectors = ack loss; response loss; store skew; rollback; referenced
+  fork; fresh-process restart
+downstream invalidation = A04 process/SQLite tests, A06 fault/replay matrix and G1 review
+status = PENDING_DOWNSTREAM pending A05 owner/reviewer acceptance; A05 is a
+  downstream handoff and this package does not edit its surface
+reviewer = independent A04/A05 review required
 ```
 
 ## 6. State machine and invariants
@@ -224,6 +272,14 @@ The retained in-memory history is intentionally bounded as well.  It is a
 candidate replay window, not the 100,000-block G1-S04 evidence ledger; a real
 adapter must externalize durable receipts before any history compaction and
 must preserve an exact source/target decision for older retries.
+
+The readback constructor currently checks only a non-zero receipt digest and a
+positive local sequence.  It does not authenticate the receipt checksum,
+anchor the first sequence to an external watermark, or decode/revalidate a
+persisted row after restart.  Likewise, fork reclamation accepts an opaque
+caller-supplied live-reference list.  These are deliberate candidate seams;
+the A05 receipt/checkpoint contract and A06 process/fault evidence must supply
+the authority before any of them can support a closure claim.
 
 ## 7. Vectors and negative mutants
 
