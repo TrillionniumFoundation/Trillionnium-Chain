@@ -4,7 +4,7 @@ Status: **MODULE_CLOSED_CANDIDATE for A17-owned contracts; BLOCKED_UPSTREAM by A
 
 Package: `G3_G5_BENCH_SECURITY_OPS_V1`  
 Agent: `A17`  
-Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@3abba5882aa077187c67064ed7f5535bdd4289b1`, tree `f0609d1b1f659c12a99f1746060932d60b613a04`.
+Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@b06eed9d31cc92e3d2764f056edb0b78dfe7beb4`, tree `96f12e80cdc9dd107040f4ae73585055ed217c3a`.
 
 The package retains strict topology/workload/fault/metric contracts, threat mapping, runbooks and a fail-closed claim/activation gate. GitHub Actions uses the frozen thirteen-workflow tree `dc9157617e7d00750f878aad33ee9b5cae5d9d5d` and A00 exact-head control commit `d1bbbb43d385dbadadb34710610a49e43c498863`.
 

@@ -3,8 +3,8 @@
   "agent_id": "A16",
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "status": "STOP_CONDITION",
-  "base_commit": "5068df3aa46b4585204396b41eedaa8fe2f4a7d9",
-  "base_tree": "cf42c401891b985031023aea97f77a6bd0ce4afd",
+  "base_commit": "79f3af84e2f5cf8a0aaa5a830f8bb0fa1beedb87",
+  "base_tree": "fdde805ad44443f6e1d566911e1fbb731077239c",
   "head_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
   "changed_paths": ["conformance/g2f/**","docs/development/packages/G2F_*","docs/development/packages/TRNM_G2F_WHOLE_NODE_LIGHT_CLIENT_V2_REPLAY.md","docs/evidence/g2f/**","scripts/g2f/**","scripts/ci/check_g2f_replay_v2.sh","scripts/ci/check_g2f_source_binding_v2.sh","trillionnium/crates/trnm-poco-node/Cargo.toml","trillionnium/crates/trnm-poco-node/src/g2f_namespace_identity.rs","trillionnium/crates/trnm-poco-node/src/lib.rs"],
   "gaps_closed": ["A16-REPLAY-PR22-ON-EXACT-A15","G2F-M-SYNC-COORDINATED-NONZERO-VIEW-CANDIDATE","A16-OWNER-VIEW-PERMIT-SINGLE-USE","A16-MANIFESTVIEW-COMPLETE-BINDING","A16-VIEW-PERMIT-REPLAY-EXPIRY-ISSUER-FENCES","A16-FROZEN-WORKFLOW-POLICY-COMPLIANCE","A16-PACKAGE-OWNED-RUST-GATE","A16-VIEW-COMMITMENT-VECTOR-REBOUND"],
@@ -18,10 +18,10 @@
   "known_gaps": ["canonical Protocol09 application JMT is not commissioned","A11-A15 candidates are not accepted interfaces","owner permit uses an assurance-model HMAC rather than production HSM/KMS","real external monotonic anchor and process/power-loss evidence are absent","remaining retained P0 records require independent acceptance"],
   "interface_requests": ["G2F-ICR-A11-001","G2F-ICR-A12-001","G2F-ICR-A13-001","G2F-ICR-A14-001","G2F-ICR-A15-001","G2F-ICR-G1-CANONICAL-JMT-ORDER-FINALITY-V2","G2F-ICR-OPS-EXTERNAL-ANCHOR-HSM-V2"],
   "downstream_invalidation": ["A17 benchmark/security/operations replay","W0-W7 and light-client evidence","G3-G5 activation and claim evidence"],
-  "next_action": "Run the final A00 exact-head replay, obtain independent P0 review, then replace the assurance HMAC with accepted external owner/HSM and canonical JMT/Order authority.",
+  "next_action": "Run the exact-head shared workflow, obtain independent P0 review, then replace the assurance HMAC with accepted external owner/HSM and canonical JMT/Order authority.",
   "implementation_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
   "implementation_parent": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
-  "base_sync_parent": "5068df3aa46b4585204396b41eedaa8fe2f4a7d9",
+  "base_sync_parent": "79f3af84e2f5cf8a0aaa5a830f8bb0fa1beedb87",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }
