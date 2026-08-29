@@ -8,8 +8,8 @@
 use crate::{
     codec::{canonical_bytes, digest_encoded, digest_value, strict_decode},
     error::{error, AgentMarketErrorCodeV1, AgentMarketResultV1},
-    AgentIdV1, AgentKeyIdV1, CapabilityIdV1, Hash32V1, KernelCommandV1,
-    SessionKeyGrantIdV1, PROTOCOL_VERSION_V1, SCHEMA_VERSION_V1,
+    AgentIdV1, AgentKeyIdV1, CapabilityIdV1, Hash32V1, KernelCommandV1, SessionKeyGrantIdV1,
+    PROTOCOL_VERSION_V1, SCHEMA_VERSION_V1,
 };
 
 pub const AGENT_TRANSACTION_MAGIC_V1: [u8; 8] = *b"TRNMATX1";
@@ -118,8 +118,7 @@ fn encode_command(command: &KernelCommandV1) -> AgentMarketResultV1<Vec<u8>> {
     let context_digest = digest_value(CONTEXT_DOMAIN_V1, &statement.context)?;
     let payload_digest = digest_encoded(PAYLOAD_DOMAIN_V1, &command_bytes)?;
 
-    let mut encoded =
-        Vec::with_capacity(HEADER_BYTES_V1 + command_bytes.len() + TRAILER_BYTES_V1);
+    let mut encoded = Vec::with_capacity(HEADER_BYTES_V1 + command_bytes.len() + TRAILER_BYTES_V1);
     encoded.extend_from_slice(&AGENT_TRANSACTION_MAGIC_V1);
     encoded.extend_from_slice(&AGENT_TRANSACTION_WIRE_VERSION_V1.to_le_bytes());
     encoded.extend_from_slice(&0_u16.to_le_bytes());
@@ -127,10 +126,7 @@ fn encode_command(command: &KernelCommandV1) -> AgentMarketResultV1<Vec<u8>> {
     encoded.extend_from_slice(&statement.sender_agent_id.0);
     encoded.extend_from_slice(&statement.authorizing_key_id.0);
     encoded.extend_from_slice(&authorization.signer_key_id.0);
-    encode_optional_id(
-        &mut encoded,
-        statement.capability_id.map(|value| value.0),
-    );
+    encode_optional_id(&mut encoded, statement.capability_id.map(|value| value.0));
     encode_optional_id(
         &mut encoded,
         statement.session_key_grant_id.map(|value| value.0),
@@ -273,9 +269,7 @@ fn decode_optional_session(
     decode_optional_id(reader).map(|value| value.map(SessionKeyGrantIdV1))
 }
 
-fn decode_optional_id(
-    reader: &mut WireReaderV1<'_>,
-) -> AgentMarketResultV1<Option<[u8; 32]>> {
+fn decode_optional_id(reader: &mut WireReaderV1<'_>) -> AgentMarketResultV1<Option<[u8; 32]>> {
     let tag = reader.take_u8()?;
     let value = reader.take_array::<32>()?;
     match tag {
