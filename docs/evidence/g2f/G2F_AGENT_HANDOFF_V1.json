@@ -16,6 +16,14 @@
   "truth_snapshot_ref": "refs/remotes/origin/truth/current-snapshot-20260829-8bfd73f0",
   "truth_snapshot_commit": "a0f873eda03054adeed676b2e24bc5b483607600",
   "truth_snapshot_tree": "f840339cf90ca64a13b8abdd5816307860be81c4",
+  "publication_integrity": {
+    "intermediate_head": "4a5dc54251f8f23edb16fda98160b8cdd65958c5",
+    "intermediate_tree": "639eab17fcb5c4eac8154b71deaac5591e2bcd35",
+    "failure": "Remote tree audit detected a truncated trnm-poco-node/src/lib.rs blob (2062 unintended deletions) before authority use.",
+    "corrected_head": "348eced7b71dde01738aaf7b265a0566a384c2dd",
+    "corrected_tree": "5174b65856964e9f7b38ad70efd3dd137eb42306",
+    "final_blob_audit": "all 22 changed-path blob SHAs match the local metadata tree"
+  },
   "changed_paths": [
     "conformance/g2f/__init__.py",
     "conformance/g2f/atomicity.py",
@@ -121,7 +129,8 @@
     "GitHub Actions run 33252294948 job 99099957089 (Payload replay and G1-R4A recovery contracts): FAILED at Verify payload replay package implementation/truth boundary on published pre-follow-up head 06d71c8; retained as external CI failure, not treated as a source-plane result",
     "GitHub Actions run 33253796703 job 99103921432 (published head ff4af4c22): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history merge-tree replay of the same script passed, and the external check is not claimed green",
     "GitHub Actions run 33254083018 job 99104666102 (published head d33d8a81): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history replay passed, and the external check is not claimed green",
-    "GitHub Actions run 33254312493 job 99105261590 (published head 4936caeba): FAILED at Verify canonical development plan; recovery/process and cargo-input steps passed, and the external check is not claimed green"
+    "GitHub Actions run 33254312493 job 99105261590 (published head 4936caeba): FAILED at Verify canonical development plan; recovery/process and cargo-input steps passed, and the external check is not claimed green",
+    "Remote publication tree audit on intermediate head 4a5dc5425/tree 639eab17: FAILED; truncated trnm-poco-node/src/lib.rs blob detected (2062 unintended deletions). Corrected by 348eced7/tree 5174b658; final 22-path blob audit PASS."
   ],
   "retained_mutants": [
     "G2F-M-ATOMIC-TORN",
