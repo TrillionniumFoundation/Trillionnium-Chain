@@ -427,7 +427,11 @@ fn finalization_queue_rejects_conflicting_duplicates_and_preserves_exact_replay(
             .code(),
         NativeBoundaryErrorCodeV0::BindingMismatch
     );
-    assert_eq!(queue.history().len(), 1, "duplicate replay appended history");
+    assert_eq!(
+        queue.history().len(),
+        1,
+        "duplicate replay appended history"
+    );
 }
 
 #[test]
@@ -436,15 +440,9 @@ fn finalization_queue_rejects_reused_proof_across_distinct_targets() {
     let h1 = finalization_head(1, 161);
     let h2 = finalization_head(2, 171);
     let first = finalization_intent(h0.clone(), h1.clone(), 181);
-    let reused_proof = NativeFinalizationIntentV0::new(
-        h1,
-        h2,
-        first.proof_id(),
-        hash(191),
-        hash(192),
-        hash(193),
-    )
-    .unwrap();
+    let reused_proof =
+        NativeFinalizationIntentV0::new(h1, h2, first.proof_id(), hash(191), hash(192), hash(193))
+            .unwrap();
     let mut queue = NativeFinalizationQueueV0::new(h0, 2).unwrap();
     queue.enqueue(first).unwrap();
     let before = queue.clone();
@@ -534,17 +532,13 @@ fn finalization_queue_retains_referenced_fork_and_reclaims_only_unreferenced_evi
     let reference = hash(101);
     let mut queue = NativeFinalizationQueueV0::new(finalization_head(0, 31), 4).unwrap();
     queue.enqueue(canonical).unwrap();
-    queue
-        .retain_losing_fork(losing.clone(), reference)
-        .unwrap();
+    queue.retain_losing_fork(losing.clone(), reference).unwrap();
     assert_eq!(
         queue.enqueue(losing).unwrap_err().code(),
         NativeBoundaryErrorCodeV0::Duplicate,
         "a retained losing fork must never be promoted by retry"
     );
-    queue
-        .retain_losing_fork(losing_child, hash(102))
-        .unwrap();
+    queue.retain_losing_fork(losing_child, hash(102)).unwrap();
     assert_eq!(
         queue
             .reclaim_unreferenced_forks(&[reference, hash(102)])

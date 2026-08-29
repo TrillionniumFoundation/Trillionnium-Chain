@@ -19,12 +19,11 @@ pub use application::{
     NativeApplicationCommitRequestV0, NativeApplicationCommitResultV0,
     NativeApplicationGenesisRequestV0, NativeApplicationGenesisResultV0, NativeApplicationV0,
     NativeBlockExecutionRequestV0, NativeBlockExecutionResultV0, NativeDeterministicInvalidV0,
-    NativeExecutedBlockV0, NativeExpectedBlockCommitmentsV0, NativeUnavailableReasonV0,
-    NativeUnavailableV0, MAX_BLOCK_BYTES_V0, MAX_BLOCK_TRANSACTIONS_V0,
-    NativeFinalizationApplyOutcomeV0, NativeFinalizationApplyReadbackV0,
-    NativeFinalizationEnqueueOutcomeV0, NativeFinalizationForkV0, NativeFinalizationIntentV0,
-    NativeFinalizationQueueV0, NativeFinalizationRetryDispositionV0,
-    MAX_FINALIZATION_QUEUE_ENTRIES_V0,
+    NativeExecutedBlockV0, NativeExpectedBlockCommitmentsV0, NativeFinalizationApplyOutcomeV0,
+    NativeFinalizationApplyReadbackV0, NativeFinalizationEnqueueOutcomeV0,
+    NativeFinalizationForkV0, NativeFinalizationIntentV0, NativeFinalizationQueueV0,
+    NativeFinalizationRetryDispositionV0, NativeUnavailableReasonV0, NativeUnavailableV0,
+    MAX_BLOCK_BYTES_V0, MAX_BLOCK_TRANSACTIONS_V0, MAX_FINALIZATION_QUEUE_ENTRIES_V0,
 };
 pub use artifact::{
     decode_native_executed_block_artifact_v0, encode_native_executed_block_artifact_v0,
