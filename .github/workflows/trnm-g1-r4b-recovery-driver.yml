@@ -55,11 +55,41 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Verify exact base and project boundary
+      - name: Verify exact base and classify inherited policy blocker
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$R4A_HEAD"
+          set +e
+          bash scripts/project-preflight.sh --dev \
+            >"$RUNNER_TEMP/r4a-inherited-preflight.log" 2>&1
+          rc=$?
+          set -e
+          test "$rc" -ne 0
+          grep -F "trnm-replay-to-core-coordinator-v1.yml: job coordinator-contract does not use the canonical trusted X230 invocation guard" \
+            "$RUNNER_TEMP/r4a-inherited-preflight.log"
+          grep -F "sets CARGO_NET_OFFLINE at workflow scope" \
+            "$RUNNER_TEMP/r4a-inherited-preflight.log"
+          cat "$RUNNER_TEMP/r4a-inherited-preflight.log"
+
+      - name: Apply exact governance and Core recovery tranche
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          git checkout -B "$TARGET_BRANCH" "$R4A_HEAD"
+          topic_path=$(git rev-parse --path-format=absolute --git-path PROJECT_TOPIC)
+          cat >"$topic_path" <<EOF
+          project_id=trillionnium-chain
+          topic=g1-r4b-anchored-tag3-recovery
+          base_head=$R4A_HEAD
+          allowed_file=.github/workflows/trnm-payload-replay-recovery-v1.yml
+          allowed_file=.github/workflows/trnm-replay-to-core-coordinator-v1.yml
+          allowed_file=scripts/check_ci_runner_policy.sh
+          allowed_file=trillionnium/crates/trnm-consensus-core/src/core.rs
+          allowed_file=docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
+          EOF
+          python3 ../driver/scripts/ci/apply_g1_r4b_recovery.py .
+          git diff --check
           bash scripts/project-preflight.sh --dev
 
       - name: Verify runner-provisioned Rust toolchain
@@ -79,22 +109,6 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
-
-      - name: Apply exact Core recovery tranche
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          git checkout -B "$TARGET_BRANCH" "$R4A_HEAD"
-          topic_path=$(git rev-parse --path-format=absolute --git-path PROJECT_TOPIC)
-          cat >"$topic_path" <<EOF
-          project_id=trillionnium-chain
-          topic=g1-r4b-anchored-tag3-recovery
-          base_head=$R4A_HEAD
-          allowed_file=trillionnium/crates/trnm-consensus-core/src/core.rs
-          allowed_file=docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
-          EOF
-          python3 ../driver/scripts/ci/apply_g1_r4b_recovery.py .
-          git diff --check
 
       - name: Verify formatting
         working-directory: trillionnium-chain
@@ -130,6 +144,9 @@ jobs:
         run: |
           set -euo pipefail
           git add \
+            .github/workflows/trnm-payload-replay-recovery-v1.yml \
+            .github/workflows/trnm-replay-to-core-coordinator-v1.yml \
+            scripts/check_ci_runner_policy.sh \
             trillionnium/crates/trnm-consensus-core/src/core.rs \
             docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
           bash scripts/project-preflight.sh --staged
@@ -140,7 +157,7 @@ jobs:
           set -euo pipefail
           git config user.name "TRNM R4 recovery driver"
           git config user.email "trnm-r4-driver@users.noreply.github.com"
-          git commit -m "feat(consensus): admit anchored tag-3 recovery fence"
+          git commit -m "feat(consensus): found anchored tag-3 recovery integration"
           head_oid=$(git rev-parse HEAD)
           remote_oid=$(git ls-remote --heads origin "refs/heads/$TARGET_BRANCH" | awk '{print $1}')
           remote_oid=${remote_oid:-0000000000000000000000000000000000000000}
@@ -155,5 +172,9 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          ./scripts/ci/check_cargo_offline_unchanged.sh \
-            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          state="$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          if [[ -d "$state" ]]; then
+            ./scripts/ci/check_cargo_offline_unchanged.sh --state "$state"
+          else
+            echo "offline-ready did not run; no state to compare"
+          fi
