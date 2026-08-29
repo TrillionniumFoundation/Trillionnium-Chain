@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
-base=048a5358c38dfcb8e150c0447c1b3d99c355942b
+base=e0c802855078d1df897ed7a67cd5573a8a691440
 
 git cat-file -e "${base}^{commit}"
 git merge-base --is-ancestor "$base" HEAD
@@ -14,12 +14,13 @@ a15=json.loads(Path('docs/evidence/g2e/G2E_AGENT_HANDOFF_V2.json').read_text())
 closure=json.loads(Path('docs/evidence/g2f/G2F_COORDINATED_VIEW_CLOSURE_V2.json').read_text())
 assert m['schema']=='trnm-g2f-source-manifest-v2'
 assert m['base_pr']==36
-assert m['base_commit']=='048a5358c38dfcb8e150c0447c1b3d99c355942b'
-assert m['base_tree']=='ef02fcb1112c52aaf40e03fe51a1447bf691b5df'
+assert m['base_commit']=='e0c802855078d1df897ed7a67cd5573a8a691440'
+assert m['base_tree']=='e38efb320653b7c57f7d6848c07eb20ef876e179'
 assert m['imported_g2f_commit']=='f97b3b8e74439d6e80d13c4c8048578a631eb12b'
 assert m['imported_g2f_tree']=='87511d76dd5703460076d73ecefeb28b9334bdfc'
 assert m['imported_paths']==22
 assert a15['status']=='MODULE_CLOSED_CANDIDATE'
+assert a15['base_commit']=='9e5ac3f056b36e924cf77592746c2e8a53bc6c82'
 assert a15['head_commit']=='da667f30cefa84fc967a96c817be07f8b779ac32'
 assert m['owner_view_commitment']==closure['view_commitment']=='2fe37224cda2bd9c5bc28126aa257e1a74718b72086752447694ae89fd827dec'
 assert m['coordinated_nonzero_view_local_gap']=='closed-candidate'
@@ -31,7 +32,7 @@ for path in (
     'trillionnium/crates/trnm-poco-node/src/g2f_namespace_identity.rs'
 ):
     assert Path(path).is_file(), path
-print('G2F source binding v2: exact A15 base, imported PR22 hardening, false authority guards')
+print('G2F source binding v2: exact synchronized A15 base, imported PR22 hardening, false authority guards')
 PY
 
 git diff --check

@@ -3,8 +3,8 @@
   "agent_id": "A15",
   "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "3d1cee9cc07979fab5e8e57610c9510d62efd9f1",
-  "base_tree": "1edb180d5cbbefa92a92ee902ddfd33933876365",
+  "base_commit": "9e5ac3f056b36e924cf77592746c2e8a53bc6c82",
+  "base_tree": "edc425aafbf4414cc363e1509a001d6d02b44f33",
   "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "changed_paths": [
     ".github/workflows/trnm-g2e-replay-v2.yml",
@@ -81,5 +81,5 @@
   "next_action": "Exact-head replay and independent review; A16 may consume only candidate settlement facts with all authority flags false.",
   "implementation_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "implementation_parent": "0ef40883e160f646158b6e483a69e2371fda989e",
-  "base_sync_parent": "3d1cee9cc07979fab5e8e57610c9510d62efd9f1"
+  "base_sync_parent": "9e5ac3f056b36e924cf77592746c2e8a53bc6c82"
 }
