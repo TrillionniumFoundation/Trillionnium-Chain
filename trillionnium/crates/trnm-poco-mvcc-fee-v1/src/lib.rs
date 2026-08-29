@@ -1,8 +1,12 @@
 //! Candidate-only deterministic object-MVCC and fee-delta kernel.
 //!
-//! This crate is deliberately non-normative. It does not implement global
-//! CEV1 transaction authorization, a production state tree, Order proof
-//! authority, a real parallel worker pool, Node integration, or activation.
+//! The crate now contains a bounded in-process worker pool whose workers
+//! speculate against one immutable parent snapshot. Canonical transaction-index
+//! commit and deterministic conflict re-execution keep state, receipt and fee
+//! roots invariant across worker counts. This is still candidate-only: it does
+//! not implement global CEV1 authorization, a production state tree, Order
+//! proof authority, Node runtime activation, settlement movement or PoCO
+//! weight.
 //!
 //! A durable block confirmation is store-bound and cannot be forged or cloned:
 //!
@@ -19,6 +23,7 @@
 #![forbid(unsafe_code)]
 
 mod codec;
+pub mod deterministic_parallel_v1;
 mod engine;
 mod error;
 mod store;
