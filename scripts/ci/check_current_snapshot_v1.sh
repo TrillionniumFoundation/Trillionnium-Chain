@@ -30,7 +30,8 @@ assert snapshot['repository']=='TrillionniumFoundation/Trillionnium-Chain'
 assert snapshot['default_branch_head_observed']=='b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9'
 assert snapshot['latest_candidate']['commit']=='6e0189e351015ef3230f217ca7ff86149baedcf0'
 assert snapshot['assessed_plan_source']['commit']=='8198fea0307eb368df34ff77ffc272a6b0e655ec'
-assert snapshot['observed_control_plane']['commit']=='d1bbbb43d385dbadadb34710610a49e43c498863'
+assert snapshot['observed_control_plane']['commit']=='22a096c2dceaa85b6ed98fa4875969f6209c4823'
+assert snapshot['observed_control_plane']['tree']=='9151d521c3ef158986d0259d26e1e69894a61f89'
 chain=snapshot['revalidated_candidate_chain']
 assert [row['agent'] for row in chain]==['A12','A13','A14','A15','A16','A17']
 assert len({row['commit'] for row in chain})==len(chain)

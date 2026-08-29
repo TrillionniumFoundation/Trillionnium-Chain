@@ -20,13 +20,13 @@
   },
   "documentation_upgrade": {
     "branch": "docs/chain-agent-fleet-plan-v1-20260829",
-    "base_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+    "base_commit": "22a096c2dceaa85b6ed98fa4875969f6209c4823",
     "classification": "subordinate-documentation-candidate"
   },
   "observed_control_plane": {
     "ref": "refs/heads/docs/chain-agent-fleet-plan-v1-20260829",
-    "commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
-    "tree": "10e31596254e4ad4f0b4f7378965b4f976629652",
+    "commit": "22a096c2dceaa85b6ed98fa4875969f6209c4823",
+    "tree": "9151d521c3ef158986d0259d26e1e69894a61f89",
     "pull_request": 25,
     "status": "candidate-unaccepted"
   },

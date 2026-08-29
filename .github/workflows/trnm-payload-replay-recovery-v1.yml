@@ -27,6 +27,8 @@ on:
       - "conformance/benchmark/**"
       - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_agent_development_docs_v1.sh"
+      - "scripts/ci/check_current_snapshot_v1.sh"
+      - "scripts/ci/check_agent_handoff_v1.py"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -68,6 +70,8 @@ on:
       - "docs/schemas/agent-handoff-v1.schema.json"
       - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_agent_development_docs_v1.sh"
+      - "scripts/ci/check_current_snapshot_v1.sh"
+      - "scripts/ci/check_agent_handoff_v1.py"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -166,6 +170,9 @@ jobs:
         run: |
           set -euo pipefail
           case "$TRNM_HEAD_REF" in
+            truth/current-snapshot-20260829-8bfd73f0)
+              bash ./scripts/ci/check_current_snapshot_v1.sh
+              ;;
             feature/chain-a12-g2b-agent-market-v2-20260830)
               bash ./scripts/ci/check_agent_market_replay_v2.sh
               ;;
