@@ -3,11 +3,10 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
-  "base_tree": "a5003dd5616420ec9b87d4637efbfae3db3d470f",
+  "base_commit": "7e02ee85d13532a20fdca706be78a97f52e156d1",
+  "base_tree": "083054cb927b05a6cedc1105d5afc8b01080e24e",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
-    ".github/workflows/trnm-g2c-replay-v2.yml",
     "conformance/verification/**",
     "docs/development/packages/TRNM_G2C_*",
     "docs/evidence/g2c/**",
@@ -17,14 +16,15 @@
     "trillionnium/crates/trnm-poco-verify-challenge-v1/**"
   ],
   "gaps_closed": [
-    "A14-REPLAY-EXACT-A13-SEMANTIC-SOURCE",
+    "A14-REPLAY-EXACT-A13-PUBLICATION",
     "A14-CLOSED-SEVEN-PROFILE-REGISTRY",
     "A14-EVIDENCE-BEFORE-BACKEND",
     "A14-NO-FALLBACK",
     "A14-CHALLENGE-ONE-APPEAL-LIFECYCLE",
     "A14-OUTBOX-RESPONSE-LOSS-RETRY",
     "A14-EXACT-IDEMPOTENT-ACK",
-    "A14-ORDERED-OUTBOX-COMMITMENT"
+    "A14-ORDERED-OUTBOX-COMMITMENT",
+    "A14-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
   "gaps_open": [
     "A14-ARTIFACT-DA-AUTHORITY",
@@ -34,8 +34,7 @@
     "A14-PRODUCTION-APPEAL-GOVERNANCE"
   ],
   "commands": [
-    "python3 tools/verification-model/outbox_recovery_v2.py --self-test: PASS in isolated local Python runtime",
-    "bash scripts/ci/check_g2c_replay_v2.sh: exact-head replay required"
+    "bash scripts/ci/check_g2c_replay_v2.sh: exact-head trusted replay required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -57,8 +56,7 @@
     "accepted ArtifactEvidence and AvailabilityCertificate authority absent",
     "accepted Task/Lease/profile policy carrier absent",
     "canonical application JMT and Order proof absent",
-    "settlement and governance authority remain external",
-    "A13 descendant cd526443 is a workflow-only offline-policy repair and not a semantic input change"
+    "settlement and governance authority remain external"
   ],
   "interface_requests": [
     "G2C-ICR-A11-ARTIFACT-AVAILABILITY-V1",
@@ -73,9 +71,9 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only.",
+  "next_action": "Run the frozen A00 exact-head replay route and obtain independent review; A15 may consume decision facts only.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
-  "workflow_policy_descendant": "cd5264438c0ea1e81bd687355eccac1d49e92b26"
+  "base_sync_parent": "7e02ee85d13532a20fdca706be78a97f52e156d1",
+  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
 }
