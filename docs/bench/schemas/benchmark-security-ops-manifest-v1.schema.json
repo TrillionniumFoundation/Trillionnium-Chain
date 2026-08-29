@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"trnm-benchmark-security-ops-manifest-v1.schema.json",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema","claim_class","identity","comparator","topology","workload","fault_schedule","measurement","threat_register","activation","dependencies","claim_policy","signatures"],
+  "properties":{
+    "schema":{"const":"trnm-benchmark-security-ops-manifest-v1"},
+    "claim_class":{"enum":["harness-only","measurement","surpass-candidate"]},
+    "identity":{"type":"object"},
+    "comparator":{"type":"object"},
+    "topology":{"type":"object"},
+    "workload":{"type":"object"},
+    "fault_schedule":{"type":"object"},
+    "measurement":{"type":"object"},
+    "threat_register":{"type":"object"},
+    "activation":{"type":"object"},
+    "dependencies":{"type":"object"},
+    "claim_policy":{"type":"object"},
+    "signatures":{"type":"array"}
+  }
+}
