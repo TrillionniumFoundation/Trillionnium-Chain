@@ -9,6 +9,26 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
+# Evidence is only reproducible from a clean source snapshot.  Reject both
+# tracked edits and untracked markers before doing any work; this prevents a
+# dirty worktree from being mistaken for a source-bound gate pass.  The
+# compile probe below creates Python bytecode, so remove only those known
+# generated files on every exit and leave the caller's tree clean.
+cleanup_generated_bytecode() {
+  if [[ -d scripts/faults/__pycache__ ]]; then
+    find scripts/faults/__pycache__ -maxdepth 1 -type f -name 'g1_r4_*.pyc' -delete
+    rmdir scripts/faults/__pycache__ 2>/dev/null || true
+  fi
+}
+trap cleanup_generated_bytecode EXIT
+
+dirty_status="$(git status --porcelain=v1 --untracked-files=all)"
+if [[ -n "$dirty_status" ]]; then
+  echo "A06 process gate requires a clean worktree (tracked and untracked changes rejected)" >&2
+  printf '%s\n' "$dirty_status" >&2
+  exit 1
+fi
+
 MATRIX="scripts/faults/g1_r4_fault_matrix_v1.py"
 REPLAY="scripts/faults/g1_r4_independent_replay_v1.py"
 EVIDENCE_DOC="docs/evidence/g1-r4/README.md"
@@ -35,9 +55,31 @@ python3 -m py_compile "$MATRIX" "$REPLAY"
 
 evidence_dir="$(mktemp -d "${TMPDIR:-/tmp}/trnm-g1-r4-matrix.XXXXXX")"
 chmod 700 "$evidence_dir"
-evidence_json="$evidence_dir/evidence.json"
+nested_output_parent="$evidence_dir/nested/private/deeper"
 
-python3 "$MATRIX" --output "$evidence_json"
+python3 "$MATRIX" --output "$nested_output_parent/evidence.json"
+test "$(stat -c '%a' "$evidence_dir/nested")" = "700"
+test "$(stat -c '%a' "$evidence_dir/nested/private")" = "700"
+test "$(stat -c '%a' "$nested_output_parent")" = "700"
+test "$(stat -c '%a' "$evidence_dir")" = "700"
+
+# Existing caller-owned parents are never chmod'd.  Keep one deliberately
+# non-private parent to prove the producer only tightens directories it made.
+existing_parent="$evidence_dir/existing-parent"
+mkdir "$existing_parent"
+chmod 755 "$existing_parent"
+python3 "$MATRIX" --output "$existing_parent/evidence.json"
+test "$(stat -c '%a' "$existing_parent")" = "755"
+
+# An output path naming an existing directory fails closed rather than trying
+# to replace it as a file.
+if python3 "$MATRIX" --output "$existing_parent" >"$evidence_dir/directory.stdout" 2>"$evidence_dir/directory.stderr"; then
+  echo "A06 gate expected an existing output directory to be rejected" >&2
+  exit 1
+fi
+grep -F -- "--output must name a file" "$evidence_dir/directory.stderr" >/dev/null
+
+evidence_json="$nested_output_parent/evidence.json"
 python3 "$REPLAY" "$evidence_json" >"$evidence_dir/replay.json"
 
 python3 - "$evidence_json" "$evidence_dir/replay.json" <<'PY'

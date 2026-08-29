@@ -12,6 +12,12 @@
   "production_candidate": false,
   "production_consensus_activation": false,
   "g1_r4_exit": false,
+  "gate_requirements": {
+    "clean_worktree": true,
+    "untracked_files_rejected": true,
+    "dirty_worktree_result": "REJECTED",
+    "clean_clone_replay": "required-before-acceptance"
+  },
   "base": {
     "ref": "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829",
     "commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",

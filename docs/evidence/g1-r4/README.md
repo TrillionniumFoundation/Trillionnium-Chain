@@ -18,8 +18,9 @@ python3 scripts/faults/g1_r4_independent_replay_v1.py \
   "$out_dir/evidence.json"
 ```
 
-`--output` must name a JSON **file**. The parent is created as a private
-`0700` directory, the report is atomically published as `0600`, and each
+`--output` must name a JSON **file**. Missing parent components are created
+one-by-one as private `0700` directories; existing caller-owned directories
+are never chmod'd. The report is atomically published as `0600`, and each
 negative residue is copied to `retained/<case-id>.bin` before the private run
 directory is removed. An existing file is safely replaced; an existing
 directory is rejected. A run without `--output` prints a local report but
@@ -29,6 +30,13 @@ The producer launches a separate writer process for each filesystem cut and
 the parent sends SIGKILL only after a phase-bound checkpoint line. The replay
 checker is another process with an independent fixed-line decoder and digest
 logic. It must agree on all bytes, roots, statuses, counts, and error classes.
+
+The process gate is clean-snapshot only: it checks
+`git status --porcelain --untracked-files=all` before execution and rejects
+both tracked edits and untracked marker files. A dirty-worktree invocation is
+therefore a negative test (`REJECTED`), not a candidate pass. The gate removes
+only its own generated Python bytecode on exit; acceptance still requires a
+fresh clean-clone replay.
 
 ## Current result vocabulary
 

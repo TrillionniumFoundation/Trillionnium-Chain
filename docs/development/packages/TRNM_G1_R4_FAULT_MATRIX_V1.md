@@ -20,7 +20,8 @@ repository = TrillionniumFoundation/Trillionnium-Chain
 base_ref   = refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829
 base_commit = 6e0189e351015ef3230f217ca7ff86149baedcf0
 base_tree   = efea864cb2fbc4835a59a089b3dbab8934e71231
-planned_branch = feature/chain-g1-r4-fault-matrix-v1-20260829
+source_branch = feature/chain-g1-r4-fault-matrix-v1-20260829
+published_branch = feature/chain-g1-r4-fault-matrix-v2-20260829 (orchestrator handoff target)
 ```
 
 The assessed plan tuple remains the one frozen in the registry
@@ -126,9 +127,10 @@ python3 scripts/faults/g1_r4_independent_replay_v1.py \
 bash scripts/ci/check_g1_r4_process_matrix_v1.sh
 ```
 
-`--output` names a JSON **file**, not a directory.  Its parent directory is
-created with mode `0700`; the file is atomically replaced with mode `0600` and
-the `retained/` siblings contain raw negative residues.  Passing an existing
+`--output` names a JSON **file**, not a directory.  Missing parent components
+are created one-by-one with mode `0700`; existing caller-owned directories are
+never chmod'd.  The file is atomically replaced with mode `0600` and the
+`retained/` siblings contain raw negative residues.  Passing an existing
 directory fails closed.  A stdout-only run hashes and indexes residues for a
 local check but does not create a durable evidence bundle; use `--output` for
 reviewable retention.
@@ -138,7 +140,11 @@ subprocess matrix and the independent replay in separate processes, checks all
 required scope/authority flags, and executes no Cargo command.  The targeted
 crypto test result is recorded above; workspace-wide format/clippy and
 authorized clean-clone replay are still pending and are not inferred as
-passes.
+passes.  Its static permission checks cover recursively created `0700`
+parents, preserve an existing non-private caller directory, and reject an
+existing directory supplied as the output path.  The gate is also
+clean-snapshot only: tracked edits and untracked marker files are rejected
+before execution, while a clean-clone replay remains required for acceptance.
 
 ## Invariants, mutants, and open upstream gaps
 

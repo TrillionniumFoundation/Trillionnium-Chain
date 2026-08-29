@@ -173,6 +173,35 @@ def safe_private_root(path: pathlib.Path) -> pathlib.Path:
     return path
 
 
+def ensure_private_output_parent(parent: pathlib.Path) -> pathlib.Path:
+    """Create missing output parents privately without changing existing paths."""
+
+    missing: list[pathlib.Path] = []
+    cursor = parent
+    while not cursor.exists():
+        missing.append(cursor)
+        ancestor = cursor.parent
+        if ancestor == cursor:
+            break
+        cursor = ancestor
+    parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    for created in missing:
+        try:
+            metadata = created.lstat()
+        except FileNotFoundError as error:
+            raise MatrixFailure(f"output parent disappeared during creation: {created}") from error
+        if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
+            raise MatrixFailure(f"new output parent is not a real directory: {created}")
+        os.chmod(created, 0o700)
+    try:
+        metadata = parent.lstat()
+    except FileNotFoundError as error:
+        raise MatrixFailure(f"output parent disappeared: {parent}") from error
+    if stat.S_ISLNK(metadata.st_mode) or not stat.S_ISDIR(metadata.st_mode):
+        raise MatrixFailure(f"output parent is not a real directory: {parent}")
+    return parent
+
+
 def fsync_directory(path: pathlib.Path) -> None:
     descriptor = os.open(
         path,
@@ -810,6 +839,7 @@ def copy_retained_mutants(
     retained: list[dict[str, Any]] = []
     destination = None
     if output_root is not None:
+        ensure_private_output_parent(output_root)
         destination = output_root / "retained"
         destination.mkdir(mode=0o700, parents=True, exist_ok=True)
     for event in case_events:
@@ -1010,7 +1040,7 @@ def run_replay_checker(replay_path: pathlib.Path, evidence_path: pathlib.Path) -
 
 
 def write_output(output: pathlib.Path, evidence: dict[str, Any]) -> None:
-    output.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    ensure_private_output_parent(output.parent)
     payload = canonical_json(evidence)
     # Replace the report atomically so the optional independent-replay result
     # can be appended without ever exposing a partially written JSON file.
