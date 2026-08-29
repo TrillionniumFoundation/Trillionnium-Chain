@@ -607,6 +607,31 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: WORKING
   next_action: Obtain independent A00 review and exact-head CI; never self-merge or promote truth.
+- number: 27
+  title: '[A08/G1.5] Publish clean CEV1 registry parity package'
+  state: open
+  draft: true
+  mergeable: false
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  owner: A08
+  owner_kind: fleet-agent
+  base:
+    ref: docs/chain-agent-fleet-plan-v1-20260829
+    pr_bound_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    pr_bound_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    live_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    live_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    status: exact
+  head:
+    ref: feature/chain-a08-g15-registry-parity-v3-20260829
+    commit: f951acc44092b6c7304fa05491f09810c2ec5182
+    tree: 864d82afad6507c2566f66ae7e7f56e2de40440a
+  relation_to_latest_candidate:
+    kind: control-child-candidate
+  classification: active-package
+  merge_queue_eligible: false
+  terminal_state: WORKING
+  next_action: Obtain independent A08 review and exact-head CI; then replay A09 on this exact registry head.
 terminal_pull_requests:
 - number: 6
   title: 'merge(chain): unify G1-R4A crash matrix with R4B authority seams'
@@ -631,6 +656,30 @@ terminal_pull_requests:
   classification: base-drifted-integration-pr
   merge_queue_eligible: false
   next_action: Retain closed; independently review PR 4 content equivalence before classifying PR 4 as superseded.
+  closed_without_merge: true
+- number: 26
+  title: '[A08/G1.5] Replay CEV1 registry parity on repaired control baseline'
+  state: closed
+  draft: true
+  mergeable: true
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  owner: A08
+  owner_kind: fleet-agent
+  base:
+    ref: docs/chain-agent-fleet-plan-v1-20260829
+    pr_bound_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    pr_bound_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    live_commit: 77b6b7b769e84a9112a153cc213d4a6900b9dbe7
+    live_tree: 1602d6c2d071c9bf73648eb6cf330ebf01aec316
+    status: exact
+  head:
+    ref: feature/chain-a08-g15-registry-parity-v2-20260829
+    commit: c8f4483067878040cdbea7d9810a218cd7550b4d
+    tree: ff32ccc7d15b137d6a9263aacb84757770e7c2ce
+  terminal_state: SUPERSEDED_WITHOUT_MERGE
+  classification: superseded-duplicate
+  merge_queue_eligible: false
+  next_action: Retain closed for audit; use PR27 as the sole A08 candidate.
   closed_without_merge: true
 known_control_gaps:
 - id: PR4_IMPORT_EQUIVALENCE_REVIEW
