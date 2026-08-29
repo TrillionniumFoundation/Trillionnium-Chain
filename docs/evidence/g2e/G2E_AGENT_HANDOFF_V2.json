@@ -3,11 +3,10 @@
   "agent_id": "A15",
   "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "9e5ac3f056b36e924cf77592746c2e8a53bc6c82",
-  "base_tree": "edc425aafbf4414cc363e1509a001d6d02b44f33",
+  "base_commit": "5be89ea68d2627415360e56b7a55d482588b3e02",
+  "base_tree": "1e8c3e08cbe1b5197b7868d68965db95678a91dd",
   "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "changed_paths": [
-    ".github/workflows/trnm-g2e-replay-v2.yml",
     "docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md",
     "docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json",
     "docs/protocol/poco-ai-native-v1/settlement/SETTLEMENT_INTENT_RECEIPT_V1.md",
@@ -28,7 +27,8 @@
     "A15-ROLE-COLLUSION-FENCES",
     "A15-WASH-FUNDING-FENCE",
     "A15-BOND-MINIMUMS",
-    "A15-ORDERING-INVARIANT-RISK-ROOT"
+    "A15-ORDERING-INVARIANT-RISK-ROOT",
+    "A15-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
   "gaps_open": [
     "A15-ACCEPTED-CROSS-PLANE-PROOFS",
@@ -38,8 +38,7 @@
     "A15-GOVERNANCE-AND-POCO-ELIGIBILITY"
   ],
   "commands": [
-    "python3 simulations/economics/settlement_risk_v2.py --self-test: PASS in isolated local Python runtime",
-    "bash scripts/ci/check_g2e_replay_v2.sh: exact-head replay required"
+    "bash scripts/ci/check_g2e_replay_v2.sh: exact-head trusted replay required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -78,8 +77,9 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Exact-head replay and independent review; A16 may consume only candidate settlement facts with all authority flags false.",
+  "next_action": "Run the frozen A00 exact-head replay route and obtain independent review; A16 may consume only candidate settlement facts with all authority flags false.",
   "implementation_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "implementation_parent": "0ef40883e160f646158b6e483a69e2371fda989e",
-  "base_sync_parent": "9e5ac3f056b36e924cf77592746c2e8a53bc6c82"
+  "base_sync_parent": "5be89ea68d2627415360e56b7a55d482588b3e02",
+  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
 }

@@ -3,12 +3,10 @@
   "agent_id": "A13",
   "package_id": "G2D_EXECUTION_MVCC_FEE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "a21285eeb90b2f1adf027cbed8039e37a05e1f6d",
-  "base_tree": "a3dbf4c7c7b9a5b06643b75ad951af73b893087b",
+  "base_commit": "38d96ebc8d38903773ea8d164a6ca30fc6d46520",
+  "base_tree": "792030026aad6bde84591d9bbdaae84e1dc427a6",
   "head_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
   "changed_paths": [
-    ".github/workflows/trnm-g2d-execution-mvcc-fee-v1.yml",
-    ".github/workflows/trnm-g2d-execution-mvcc-fee-v2.yml",
     "conformance/execution/mvcc-fee-cases-v1.json",
     "docs/development/packages/TRNM_G2D_EXECUTION_MVCC_FEE_V1.md",
     "docs/development/packages/TRNM_G2D_INTERFACE_REQUESTS_V1.md",
@@ -27,7 +25,8 @@
     "A13-REAL-BOUNDED-WORKER-POOL",
     "A13-WORKER-COUNT-ROOT-INVARIANCE",
     "A13-DETERMINISTIC-CONFLICT-REEXECUTION",
-    "A13-RESOURCE-FEE-CONSERVATION"
+    "A13-RESOURCE-FEE-CONSERVATION",
+    "A13-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
   "gaps_open": [
     "A13-AGENT-TRANSACTION-WIRE",
@@ -37,9 +36,8 @@
     "A13-WHOLE-NODE-RECOVERY"
   ],
   "commands": [
-    "prior identical Rust source blobs: cargo test/clippy/rustfmt PASS in isolated clean replay",
-    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head replay required",
-    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head replay required"
+    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head trusted replay required",
+    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head trusted replay required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -73,13 +71,9 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Exact-head trusted-runner replay and independent review; A14 may consume only the candidate receipt/data interface.",
+  "next_action": "Run the frozen A00 exact-head replay route and obtain independent review; A14 may consume only the candidate receipt/data interface.",
   "implementation_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
   "implementation_tree": "de6b98988b2ca08e70046281c82a94e7acbf4e12",
   "metadata_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "tree_neutral_publication_commits": [
-    "093cd0ed6531d3b3d57bb59e1f01eb9c79490f1c",
-    "347ee8001053a013b001c99d46379ec2666a19f0"
-  ],
-  "publication_tree_before_lineage_update": "b430c899be1b5c17815bdaf01a957f5565e105e9"
+  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
 }
