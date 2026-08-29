@@ -14,8 +14,11 @@ on:
       - "docs/development/packages/**"
       - "docs/schemas/current-snapshot-v1.schema.json"
       - "docs/schemas/agent-handoff-v1.schema.json"
+      - "tools/g1-r5-campaign/**"
+      - "conformance/g1-r5/**"
       - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_agent_development_docs_v1.sh"
+      - "scripts/ci/check_g1_r5_campaign_contract_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -41,8 +44,11 @@ on:
       - "docs/development/packages/**"
       - "docs/schemas/current-snapshot-v1.schema.json"
       - "docs/schemas/agent-handoff-v1.schema.json"
+      - "tools/g1-r5-campaign/**"
+      - "conformance/g1-r5/**"
       - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_agent_development_docs_v1.sh"
+      - "scripts/ci/check_g1_r5_campaign_contract_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
       - "scripts/ci/check_finalization_intent_process_matrix_v1.sh"
       - "scripts/ci/check_canonical_development_plan.sh"
@@ -77,7 +83,7 @@ env:
 
 jobs:
   recovery-contract:
-    name: Payload replay, G1-R4A and agent documentation contracts
+    name: Payload replay, G1-R4A, docs and G1-R5 campaign contracts
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
       ((github.actor == 'ProfAlexQI' &&
@@ -93,7 +99,7 @@ jobs:
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 90
+    timeout-minutes: 95
     env:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
@@ -105,6 +111,14 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
+      - name: Verify agent development documentation contracts
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
+
+      - name: Verify G1-R5 campaign contract
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_g1_r5_campaign_contract_v1.sh
+
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
         run: |
@@ -115,6 +129,7 @@ jobs:
             --component rustfmt
 
       - name: Verify Cargo offline cache readiness
+        id: cargo_offline_ready
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -122,10 +137,6 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
-
-      - name: Verify agent development documentation contracts
-        working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
 
       - name: Verify payload replay package implementation and truth boundary
         working-directory: trillionnium-chain
@@ -148,7 +159,7 @@ jobs:
         run: bash ./scripts/project-preflight.sh --audit
 
       - name: Verify Cargo offline inputs remained unchanged
-        if: always()
+        if: always() && steps.cargo_offline_ready.outcome == 'success'
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail

@@ -1,0 +1,20 @@
+{
+  "schema": "trnm-g1-r5-fixture-source-v2",
+  "source_commit": "e88cda9401eb6219fe1425bebb1ef6b54b4c429d",
+  "source_tree": "9c4249ce36061fcbd6eb8e522accd29127f7c01c",
+  "campaigns": [
+    {
+      "validator_count": 4,
+      "voting_powers": [25, 25, 25, 25],
+      "regions": ["region-1", "region-2", "region-3"]
+    },
+    {
+      "validator_count": 7,
+      "voting_powers": [22, 18, 16, 14, 12, 10, 8],
+      "regions": ["region-1", "region-2", "region-3"]
+    }
+  ],
+  "harness_only": true,
+  "production_candidate": false,
+  "production_consensus_activation": false
+}

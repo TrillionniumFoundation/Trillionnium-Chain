@@ -1,0 +1,67 @@
+name: TRNM G1-R5 native network campaign v2 gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-g1-r5-native-network-campaign-v2.yml"
+      - "config/campaigns/g1-r5-v2-fixture-source.json"
+      - "docs/development/packages/TRNM_G1_R5_NATIVE_NETWORK_CAMPAIGN_V2.md"
+      - "scripts/ci/check_g1_r5_campaign_contract_v2.sh"
+      - "tools/g1-r5-campaign-v2/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-g1-r5-native-network-campaign-v2-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+
+jobs:
+  campaign-contract:
+    name: Exact 4/7-node topology, identity, workload and fault contract
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify G1-R5 campaign contract
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_g1_r5_campaign_contract_v2.sh
+
+      - name: Verify canonical development plan
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_canonical_development_plan.sh
+
+      - name: Verify native PoCO pre-cutover truth
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+
+      - name: Verify project boundary
+        working-directory: trillionnium-chain
+        run: bash ./scripts/project-preflight.sh --audit

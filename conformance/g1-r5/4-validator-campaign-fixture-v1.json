@@ -1,0 +1,53 @@
+{
+  "classification": "candidate-harness-only",
+  "entry_gate": {
+    "campaign_execution_authorized": false,
+    "g1_r4_exit": "candidate"
+  },
+  "identity": {
+    "binary_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "genesis_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "plan_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "protocol_manifest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "repository": "TrillionniumFoundation/Trillionnium-Chain",
+    "sbom_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_tree": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "nonclaims": {
+    "g1_r5_exit": false,
+    "network_evidence_accepted": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "validator_run_completed": false
+  },
+  "placement": [
+    {"custody_domain":"c0","host_id":"h0","operator_id":"o0","process_id":"p0","validator_id":"v0"},
+    {"custody_domain":"c1","host_id":"h1","operator_id":"o1","process_id":"p1","validator_id":"v1"},
+    {"custody_domain":"c2","host_id":"h2","operator_id":"o2","process_id":"p2","validator_id":"v2"},
+    {"custody_domain":"c0","host_id":"h0","operator_id":"o0","process_id":"p3","validator_id":"v3"}
+  ],
+  "quorum_weight": 3,
+  "results": {"finalized_root":null,"present":false,"raw_trace_root":null,"reports":[],"transport_only":false,"validator_run_completed":false},
+  "scenarios": [
+    {"active_validators":["v0","v1","v2","v3"],"duration_seconds":60,"expected_outcome":"progress","id":"normal-finality","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"all","target_type":"network"},
+    {"active_validators":["v0","v1","v2"],"duration_seconds":60,"expected_outcome":"recover-and-progress","id":"offline-minority-rejoin","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"v3","target_type":"validator"},
+    {"active_validators":["v1","v2","v3"],"duration_seconds":60,"expected_outcome":"recover-and-progress","id":"leader-crash-timeout-certificate","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"v0","target_type":"validator"},
+    {"active_validators":["v0","v1","v2"],"duration_seconds":60,"expected_outcome":"progress","id":"partition-3-1-progress","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"partition","target_type":"validator-set"},
+    {"active_validators":["v0","v1"],"duration_seconds":60,"expected_outcome":"safe-stall-then-heal","id":"partition-2-2-safe-stall-heal","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"partition","target_type":"validator-set"},
+    {"active_validators":["v0","v2","v3"],"duration_seconds":60,"expected_outcome":"recover-and-progress","id":"validator-restart-catch-up","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"v1","target_type":"validator"},
+    {"active_validators":["v0","v1","v3"],"duration_seconds":60,"expected_outcome":"recover-and-progress","id":"state-sync-finalized-checkpoint","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"v2","target_type":"validator"},
+    {"active_validators":["v0","v1","v2","v3"],"duration_seconds":60,"expected_outcome":"recover-and-progress","id":"epoch-key-rotation","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"all","target_type":"validator-set"},
+    {"active_validators":["v1","v2","v3"],"duration_seconds":60,"expected_outcome":"reject-and-fence","id":"signer-fault","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"v0","target_type":"validator"},
+    {"active_validators":["v1","v2"],"duration_seconds":60,"expected_outcome":"reject-and-fence","id":"disk-full-io-fault","invariants":["no-conflicting-finality","no-double-sign","root-convergence-or-safe-stall"],"target":"h0","target_type":"host"}
+  ],
+  "schema": "trnm-g1-r5-campaign-manifest-v1",
+  "topology_counts": {"custody_domains":3,"hosts":3,"operators":3,"processes":4},
+  "total_weight": 4,
+  "validators": [
+    {"proof_of_possession":true,"public_key":"badb7283766a390840bbbf2120f850f6e3275e02fe13bb1703486166c1483cb7","validator_id":"v0","weight":1},
+    {"proof_of_possession":true,"public_key":"afce2c655df28c7937df72ad619e1020c001ec482432903a342744530bfac030","validator_id":"v1","weight":1},
+    {"proof_of_possession":true,"public_key":"cf9c904f77be6a166b14de841dce64f89ed63f429347818add121e6249794047","validator_id":"v2","weight":1},
+    {"proof_of_possession":true,"public_key":"f5cbb4066735081acafcd370a862d5a93a11bdd5afed30d80702e505028ad609","validator_id":"v3","weight":1}
+  ]
+}

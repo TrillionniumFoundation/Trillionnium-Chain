@@ -1,0 +1,23 @@
+{
+  "schema":"trnm-g1-r5-campaign-contract-cases-v1",
+  "positive":[
+    "four-validator-equal-weight-fixture",
+    "seven-validator-unequal-weight-fixture",
+    "count-specific-partition-quorum",
+    "candidate-execution-blocked"
+  ],
+  "negative":[
+    "duplicate-validator-key",
+    "missing-pop",
+    "quorum-mismatch",
+    "seven-equal-weight",
+    "topology-overclaim",
+    "single-host",
+    "missing-scenario",
+    "unknown-target",
+    "execute-before-r4",
+    "transport-smoke-as-result",
+    "premature-classification",
+    "nonclaim-drift"
+  ]
+}
