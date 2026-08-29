@@ -4,6 +4,7 @@ Status: **copy-ready starter-prompt index; subordinate to the canonical Plan**
 
 ## 1. How to configure each Workspace Agent
 
+Follow [`GPT_WORK_AGENT_SETUP_V1.md`](GPT_WORK_AGENT_SETUP_V1.md).
 Use [`AGENT_CONTROL_AND_OPERATING_CONTRACT_V1.md`](AGENT_CONTROL_AND_OPERATING_CONTRACT_V1.md)
 as the persistent Agent Instructions. Restrict GitHub to
 `TrillionniumFoundation/Trillionnium-Chain`, require confirmation for writes,
