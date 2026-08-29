@@ -25,10 +25,15 @@ release authority.  A green run is local candidate evidence only.
   named planes and provides strict double-sampling/ABA rejection. It is an
   executable boundary proposal, not a database transaction implementation.
 
-The state-sync and carrier domains are candidate domains.  They are not a
-claim that the corresponding canonical Protocol 09 interfaces have been
-accepted; missing upstream contracts remain interface-change requests owned by
-the relevant A11--A15 package.
+The state-sync and carrier domains are candidate domains. They are not a claim
+that the corresponding canonical Protocol 09 interfaces have been accepted;
+missing upstream contracts remain interface-change requests owned by the
+relevant A11--A15 package. The current runner reports 37 tests, but the package
+terminal status is `STOP_CONDITION`: earlier replay exposed same-label copy and
+same-height fork-residue acceptance before the quarantine hardening, and a
+coordinated non-zero view/digest replacement still lacks an independent
+owner-issued commitment. Passing tests therefore do not authorize a Gate,
+private-alpha, signing, or production claim.
 
 ## Reproduce
 

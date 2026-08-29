@@ -28,6 +28,7 @@ from conformance.g2f import client_a, client_b
 from conformance.g2f.fixture import fixture
 from conformance.g2f.state_sync import StateSyncError, StagedStateSync, verify_manifest
 from conformance.g2f.test_clients_b import _mutant_bytes, run_suite
+from conformance.g2f.test_state_sync_extra import _alternate_manifest
 
 
 ROOT = Path.cwd()
@@ -279,6 +280,74 @@ except StateSyncError:
 else:
     raise SystemExit("copied namespace token was accepted")
 
+# A physical copy with the *same* namespace label is a higher-risk mutant:
+# label equality must not turn copied staged bytes into a new authority.  The
+# candidate copy fence must reject both reopen and a fresh stage before any
+# anchor CAS or active-target write can occur.
+same_label_owner = StagedStateSync(fixture_value.context["chain_id"])
+same_label_token = same_label_owner.stage(
+    fixture_value.manifest,
+    fixture_value.chunks,
+    fixture_value.context,
+    **sync_args,
+    generation=1,
+)
+same_label_copy = same_label_owner.clone_namespace("whole-node-active-v1")
+try:
+    same_label_copy.reopen()
+except StateSyncError:
+    pass
+else:
+    raise SystemExit("same-label copied namespace reopened cleanly")
+try:
+    same_label_copy.stage(
+        fixture_value.manifest,
+        fixture_value.chunks,
+        fixture_value.context,
+        **sync_args,
+        generation=1,
+    )
+except StateSyncError:
+    fault_results["copied_same_namespace"] = "rejected"
+else:
+    raise SystemExit("same-label copied namespace staged new authority")
+
+# A rejected same-height fork leaves its bytes available for forensic review,
+# but it must permanently quarantine the owner.  Otherwise a later reopen or
+# a valid sibling could silently turn the earlier fork into an accepted
+# rollback/replay path.
+fork_owner = StagedStateSync(fixture_value.context["chain_id"])
+fork_base = fork_owner.stage(
+    fixture_value.manifest,
+    fixture_value.chunks,
+    fixture_value.context,
+    **sync_args,
+    generation=1,
+)
+fork_owner.commit(fork_base, generation=1, expected_anchor=fork_owner.anchor)
+fork_manifest, fork_payload = _alternate_manifest(fixture_value)
+fork_token = fork_owner.stage(
+    fork_manifest,
+    (fork_payload,),
+    fixture_value.context,
+    expected_block_id=bytes.fromhex(fork_manifest["block_id"]),
+    expected_root=bytes.fromhex(fork_manifest["state_root"]),
+    expected_height=fixture_value.height,
+    generation=2,
+)
+try:
+    fork_owner.commit(fork_token, generation=2, expected_anchor=fork_owner.anchor)
+except StateSyncError:
+    fault_results["rejected_fork"] = "rejected"
+else:
+    raise SystemExit("same-height fork was accepted")
+try:
+    fork_owner.reopen()
+except StateSyncError:
+    fault_results["rejected_fork_residue"] = "quarantined"
+else:
+    raise SystemExit("rejected fork residue reopened cleanly")
+
 renamed_token = __import__("dataclasses").replace(copy_token, namespace_id="renamed-g2f")
 try:
     copy_owner.commit(renamed_token, generation=1, expected_anchor=copy_owner.anchor)
@@ -323,6 +392,33 @@ if suite.get("discovered_tests") != full_tests or suite.get("tests_run") != full
 report = {
     "schema": "trnm-g2f-conformance-run-v1",
     "status": "PASS",
+    # The executable fixture passed, but the package terminal outcome remains
+    # STOP_CONDITION: this run retains previously observed safety failures and
+    # an unresolved coordinated non-zero view mutation.  Keeping the two
+    # statuses separate prevents a green unit campaign from being mistaken for
+    # a Gate/authority closure.
+    "terminal_status": "STOP_CONDITION",
+    "blocking_status": "BLOCKED_UPSTREAM",
+    "stop_conditions": [
+        {
+            "id": "G2F-M-NAMESPACE-COPY",
+            "severity": "P0",
+            "observed": "pre-fix same-label copied namespace accepted a fresh stage/commit",
+            "current_result": "candidate copy fence rejects reopen and stage; independent review pending",
+        },
+        {
+            "id": "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
+            "severity": "P0",
+            "observed": "pre-fix rejected same-height fork remained reopenable as clean residue",
+            "current_result": "candidate quarantine retains residue and rejects reopen; independent review pending",
+        },
+        {
+            "id": "G2F-M-SYNC-COORDINATED-NONZERO-VIEW",
+            "severity": "P0",
+            "observed": "owner-issued immutable commitment is absent for a coordinated non-zero view/digest replacement",
+            "current_result": "retained open mutant; no authority claim",
+        },
+    ],
     "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
     "gate_id": "G2F",
     "agent_id": "A16",

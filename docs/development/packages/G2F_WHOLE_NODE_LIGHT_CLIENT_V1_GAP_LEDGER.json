@@ -4,7 +4,28 @@
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "agent_id": "A16",
   "gate_id": "G2F",
-  "status": "BLOCKED_UPSTREAM",
+  "status": "STOP_CONDITION",
+  "blocking_status": "BLOCKED_UPSTREAM",
+  "stop_conditions": [
+    {
+      "id": "G2F-M-NAMESPACE-COPY",
+      "severity": "P0",
+      "observed": "Before dc9034d5d, a same-label copied namespace accepted a fresh stage/commit.",
+      "current_result": "dc9034d5d/1be57d57f permanently fences the copy; independent review is pending."
+    },
+    {
+      "id": "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
+      "severity": "P0",
+      "observed": "Before dc9034d5d, a rejected same-height fork left reopenable staged residue.",
+      "current_result": "dc9034d5d/1be57d57f quarantines the residue; independent review is pending."
+    },
+    {
+      "id": "G2F-M-SYNC-COORDINATED-NONZERO-VIEW",
+      "severity": "P0",
+      "observed": "A coordinated non-zero ManifestView replacement can recompute the derived stage_digest without an independent owner-issued commitment.",
+      "current_result": "Retained open; no authority claim."
+    }
+  ],
   "scope": "fixture",
   "authority": "candidate",
   "classification": "candidate-non-normative",
@@ -18,14 +39,17 @@
     "control_ref": "refs/remotes/origin/docs/agent-fleet-plan-v1-20260829",
     "control_commit_observed": "8bfd73f0cf1b785a29ae212f13212e51fe34231",
     "control_tree_observed": "cfedd363147934f50d1352dae31b7d87d79aa8d9",
+    "truth_snapshot_ref": "refs/remotes/origin/truth/current-snapshot-20260829-8bfd73f0",
+    "truth_snapshot_commit_observed": "a0f873eda03054adeed676b2e24bc5b483607600",
+    "truth_snapshot_tree_observed": "f840339cf90ca64a13b8abdd5816307860be81c4",
     "control_plane_drift_observed": true,
     "control_observation_note": "Live control ref revalidated at 8bfd/cfedd; active ledger's d2c14/86d source fields are historical metadata only.",
     "package_head_before_changes": "6e0189e351015ef3230f217ca7ff86149baedcf0",
     "package_tree_before_changes": "efea864cb2fbc4835a59a089b3dbab8934e71231",
-    "package_head_after_changes": "c59ca9de4f4e46ae1e221e998b7623ab46b91af5",
-    "package_tree_after_changes": "69c0561cbaa2f5d2f3d5f16a0a105da6ef5108d2",
+    "package_head_after_changes": "b8f7d130858f341117502bc306a12a2a4c42d111",
+    "package_tree_after_changes": "dd7c6d9bd3130b799f2646a517825750e8bbab06",
     "revalidation_command": "git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*' && git rev-parse refs/remotes/origin/feature/chain-g1-r4c-full-gap-closure-20260829 && git rev-parse refs/remotes/origin/feature/chain-g1-r4c-full-gap-closure-20260829^{tree}",
-    "revalidation_result": "base tuple matched 6e0189e351015ef3230f217ca7ff86149baedcf0 / efea864cb2fbc4835a59a089b3dbab8934e71231 before package edits"
+    "revalidation_result": "base tuple matched 6e0189e351015ef3230f217ca7ff86149baedcf0 / efea864cb2fbc4835a59a089b3dbab8934e71231; truth snapshot a0f873eda/f840339c added provenance outputs without changing locked inputs"
   },
   "plan": {
     "id": "trnm-ai-native-blockchain-development-plan-v1",
@@ -189,12 +213,12 @@
       "gap_id": "G2F-ANCHOR-001",
       "severity": "P0",
       "surface": "external monotonic anti-rollback anchor",
-      "status": "working",
+      "status": "reopened",
       "dependency": [],
       "adjacent_owner": ["A05", "A17"],
       "description": "Keep generation/height/epoch/validator-set/manifest and file/namespace identity monotonic using an authenticated anchor outside the rollbackable database.",
       "evidence": ["G2F-CAND-PROCESS-20260829", "G2F-CAND-ANCHOR-CONTRACT-20260829"],
-      "evidence_status": "candidate external-anchor contract now carries checkpoint/context/header identity and contiguous successor checks; no HSM/KMS/remote backend and anti-whole-store rollback authority=false",
+      "evidence_status": "candidate external-anchor contract now carries checkpoint/context/header identity and contiguous successor checks; pre-fix same-height fork residue triggered STOP_CONDITION; hardening quarantines it, but no HSM/KMS/remote backend and anti-whole-store rollback authority=false",
       "acceptance_assertions": ["external_anchor_monotonic_cas", "old_anchor_rejected", "database_and_anchor_rollback_pair_rejected", "anchor_authentication_and_quorum"],
       "retained_mutants": ["G2F-M-ANCHOR-LOWER-GENERATION", "G2F-M-ANCHOR-GENERATION-GAP", "G2F-M-ANCHOR-OLD-EPOCH", "G2F-M-ANCHOR-DB-ONLY-ROLLBACK", "G2F-M-ANCHOR-MANIFEST-DRIFT", "G2F-M-ANCHOR-CHECKPOINT-BINDING", "G2F-M-ANCHOR-SAME-HEIGHT-FORK", "G2F-M-ANCHOR-SCOPE"],
       "invalidation_edges": ["G2F", "G3", "G4", "G5", "release"],
@@ -204,11 +228,11 @@
       "gap_id": "G2F-NAMESPACE-001",
       "severity": "P0",
       "surface": "descriptor/openat namespace identity",
-      "status": "working",
+      "status": "reopened",
       "dependency": [],
       "description": "Retain directory/file descriptors and authenticated inode/device/link-count/effective-UID identity so copied, renamed, same-UID and ancestor replacement cannot be consumed.",
       "evidence": ["G2F-CAND-PROCESS-20260829", "G2F-CAND-NAMESPACE-CONTRACT-20260829"],
-      "evidence_status": "candidate descriptor/openat guard and race tests are being implemented; process integration and production namespace authority remain false",
+      "evidence_status": "candidate descriptor/openat guard and race tests pass; pre-fix copied-namespace acceptance triggered STOP_CONDITION; hardening permanently fences copies, while process integration and production namespace authority remain false",
       "acceptance_assertions": ["retained_dirfd_identity", "same_uid_rename_rejected", "ancestor_replacement_rejected", "namespace_owner_pinned_before_authority"],
       "retained_mutants": ["G2F-M-NAMESPACE-SAME-UID-RENAME", "G2F-M-NAMESPACE-COPY", "G2F-M-NAMESPACE-ANCESTOR-SWAP", "G2F-M-NAMESPACE-LINK-COUNT", "G2F-M-NAMESPACE-ABA", "G2F-M-NAMESPACE-UNBOUNDED-SIZE", "G2F-M-NAMESPACE-FORGED-IDENTITY"],
       "invalidation_edges": ["G2F", "G3", "G4", "G5"],
@@ -222,9 +246,9 @@
       "dependency": ["A11", "A12", "A13", "A14", "A15"],
       "description": "Verify a checkpoint/chunk manifest against Order/JMT/DA/result/settlement proofs, stage in an isolated namespace, and atomically swap only after complete fresh readback.",
       "evidence": ["G2F-CAND-STATE-SYNC-20260829"],
-      "evidence_status": "candidate header/height/context/checkpoint binding, chunk tamper tests and staged-swap residue fences pass; accepted upstream proofs and production state sync remain absent",
+      "evidence_status": "candidate header/height/context/checkpoint binding, chunk tamper tests and staged-swap residue fences pass; coordinated non-zero view replacement remains a retained open mutant; accepted upstream proofs and production state sync remain absent",
       "acceptance_assertions": ["verify_before_stage", "isolated_staging_namespace", "atomic_swap_and_fsync", "old_anchor_wal_key_sidecar_rejected", "post_swap_fresh_readback"],
-      "retained_mutants": ["G2F-M-SYNC-STALE-CHECKPOINT", "G2F-M-SYNC-CHUNK-ROOT", "G2F-M-SYNC-WAL", "G2F-M-SYNC-PARTIAL-SWAP", "G2F-M-SYNC-DOWNGRADE", "G2F-M-SYNC-CONTEXT-SCHEMA", "G2F-M-SYNC-HEADER-HEIGHT-BINDING"],
+      "retained_mutants": ["G2F-M-SYNC-STALE-CHECKPOINT", "G2F-M-SYNC-CHUNK-ROOT", "G2F-M-SYNC-WAL", "G2F-M-SYNC-PARTIAL-SWAP", "G2F-M-SYNC-DOWNGRADE", "G2F-M-SYNC-CONTEXT-SCHEMA", "G2F-M-SYNC-HEADER-HEIGHT-BINDING", "G2F-M-SYNC-COORDINATED-NONZERO-VIEW"],
       "invalidation_edges": ["W7", "G2F", "G3", "G4", "G5"],
       "next_action": "Wait for accepted upstream snapshot/JMT/result/settlement interfaces, freeze the staged-swap manifest, then run interruption and restart campaigns."
     },
@@ -315,6 +339,7 @@
     }
   ],
   "terminal_assertions": {
+    "stop_condition_observed": true,
     "copied_renamed_stale_torn_sidecar_wal_full_store_rollback_fails_before_authority_use": false,
     "two_independent_clients_verify_order_da_execution_result_settlement_upgrade": false,
     "complete_w0_w7_real_agent_transaction_trace": false,
@@ -324,20 +349,25 @@
   "counts": {
     "total_gaps": 11,
     "open_gaps": 2,
-    "working_gaps": 2,
+    "working_gaps": 0,
+    "reopened_gaps": 2,
     "blocked_upstream_gaps": 7,
     "closed_candidate_gaps": 0,
     "invalidated_gaps": 0,
-    "retained_mutant_reference_count": 57,
-    "retained_mutant_unique_count": 52
+    "retained_mutant_reference_count": 58,
+    "retained_mutant_unique_count": 53
   },
   "control_invalidation": {
     "trigger": "PR10/G15_STACK_BASE_DRIFT",
     "observed_control_ref": "8bfd73f0cf1b785a29ae212f13212e51fe34231",
+    "observed_control_tree": "cfedd363147934f50d1352dae31b7d87d79aa8d9",
+    "truth_snapshot_ref": "refs/remotes/origin/truth/current-snapshot-20260829-8bfd73f0",
+    "truth_snapshot_commit": "a0f873eda03054adeed676b2e24bc5b483607600",
+    "truth_snapshot_tree": "f840339cf90ca64a13b8abdd5816307860be81c4",
     "affected_prior_prs": [18, 19],
     "effect": "prior stacked candidates remain upstream-invalidated; replay is required after A08 repair",
     "candidate_base_affected": false
   },
-  "terminal_reason": "A11-A15 accepted interface digests and global W0-W7/JMT/Order authority are absent; local candidate readback, process and bounded light-client observations cannot close G2F.",
-  "next_action": "Send G2F-ICR-A11-001 through G2F-ICR-A15-001 to the owning agents, obtain independent review of the candidate namespace/anchor hardening, then run the full process/power-loss matrix only after accepted interfaces arrive and revalidate the exact candidate tuple before every subsequent run."
+  "terminal_reason": "STOP_CONDITION: pre-fix copied-namespace and same-height-fork residue mutants violated the anti-rollback barrier; current quarantine hardening is candidate-only and the coordinated non-zero view mutant remains open. BLOCKED_UPSTREAM also remains because A11-A15 accepted interface digests and global W0-W7/JMT/Order authority are absent.",
+  "next_action": "Obtain independent review of the copy/fork quarantine and coordinated-view commitment design; send G2F-ICR-A11-001 through G2F-ICR-A15-001 to the owning agents; only after accepted interfaces and review, run the full process/power-loss matrix and revalidate the exact candidate tuple before every subsequent run."
 }

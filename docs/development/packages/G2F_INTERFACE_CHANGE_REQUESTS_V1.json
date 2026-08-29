@@ -6,7 +6,9 @@
   "gate_id": "G2F",
   "requester_gate": "G2F",
   "status": "BLOCKED_UPSTREAM",
-  "package_status": "BLOCKED_UPSTREAM",
+  "package_status": "STOP_CONDITION",
+  "terminal_status": "STOP_CONDITION",
+  "blocking_status": "BLOCKED_UPSTREAM",
   "terminal_classification": "candidate-non-normative",
   "reviewer": null,
   "base": {
@@ -21,6 +23,9 @@
     "github_ref": "refs/heads/docs/agent-fleet-plan-v1-20260829",
     "commit": "8bfd73f0cf1b785a29ae212f13212e51fe34231",
     "tree": "cfedd363147934f50d1352dae31b7d87d79aa8d9",
+    "truth_snapshot_ref": "refs/remotes/origin/truth/current-snapshot-20260829-8bfd73f0",
+    "truth_snapshot_commit": "a0f873eda03054adeed676b2e24bc5b483607600",
+    "truth_snapshot_tree": "f840339cf90ca64a13b8abdd5816307860be81c4",
     "historical_observation": "ACTIVE_PR_PACKAGE_LEDGER embeds d2c14fa686a7836e607661aaf1da34f971d12bc4/tree 86d17fbb369481a66684078ea1acef9550d36dad; live ref was revalidated above.",
     "assessed_plan_tuple_unchanged": true,
     "candidate_base_drift": false
@@ -483,6 +488,7 @@
       }
     }
   ],
+  "stop_condition_rule": "The ICRs remain BLOCKED_UPSTREAM per owner request status; the package terminal outcome is STOP_CONDITION because retained P0 anti-rollback mutants were observed. No request status or missing upstream contract is promoted by this record.",
   "policy": "A16 must not edit A11-A15 source-plane semantics. Until each owner accepts the request and publishes an immutable interface version/digest, integrated G2F closure remains BLOCKED_UPSTREAM; candidate adapters may only reject missing or untrusted facts.",
   "downstream_rule": "Acceptance or revision of any request invalidates the affected G2F gap rows and all dependent W0-W7, state-sync, light-client, G3, G4 and G5 evidence until clean-clone replay regenerates digests."
 }

@@ -1,6 +1,7 @@
 {
   "agent_id": "A16",
   "authority": "candidate",
+  "blocking_status": "BLOCKED_UPSTREAM",
   "bundle": {
     "bytes": 1547,
     "digest": "37bedeff62ac8e02de26e4cf9800554ce22704930d54cc67ab58e55d84952aba",
@@ -68,14 +69,17 @@
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "schema": "trnm-g2f-conformance-run-v1",
   "scope": "fixture",
-  "source_commit": "c59ca9de4f4e46ae1e221e998b7623ab46b91af5",
-  "source_tree": "69c0561cbaa2f5d2f3d5f16a0a105da6ef5108d2",
+  "source_commit": "b8f7d130858f341117502bc306a12a2a4c42d111",
+  "source_tree": "dd7c6d9bd3130b799f2646a517825750e8bbab06",
   "state_sync": {
     "explicit_external_anchor_cas": true,
     "faults": {
       "copied_namespace": "rejected",
+      "copied_same_namespace": "rejected",
       "full_store_rollback": "rejected",
       "partial_swap_intent": "simulated crash before_active",
+      "rejected_fork": "rejected",
+      "rejected_fork_residue": "quarantined",
       "renamed_token": "rejected",
       "sidecar": "injected sidecar fault",
       "torn": "injected torn fault",
@@ -88,11 +92,32 @@
     "unexpected_errors": 0
   },
   "status": "PASS",
+  "stop_conditions": [
+    {
+      "current_result": "candidate copy fence rejects reopen and stage; independent review pending",
+      "id": "G2F-M-NAMESPACE-COPY",
+      "observed": "pre-fix same-label copied namespace accepted a fresh stage/commit",
+      "severity": "P0"
+    },
+    {
+      "current_result": "candidate quarantine retains residue and rejects reopen; independent review pending",
+      "id": "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
+      "observed": "pre-fix rejected same-height fork remained reopenable as clean residue",
+      "severity": "P0"
+    },
+    {
+      "current_result": "retained open mutant; no authority claim",
+      "id": "G2F-M-SYNC-COORDINATED-NONZERO-VIEW",
+      "observed": "owner-issued immutable commitment is absent for a coordinated non-zero view/digest replacement",
+      "severity": "P0"
+    }
+  ],
+  "terminal_status": "STOP_CONDITION",
   "unittest_discovery": {
-    "discovered_tests": 28,
+    "discovered_tests": 37,
     "executed_all_discovered": true,
-    "run_suite_tests": 28,
+    "run_suite_tests": 37,
     "status": "PASS",
-    "tests": 28
+    "tests": 37
   }
 }

@@ -626,6 +626,17 @@ class StagedStateSync:
         self._stages: dict[str, StageToken] = {}
         self._sidecars: set[str] = set()
         self._intent: StageToken | None = None
+        # ``clone_namespace`` represents a physical storage copy, not a new
+        # owner.  A copied object is permanently quarantined: even an
+        # anchor-only or otherwise empty copy has no authenticated provenance
+        # with which it could safely be admitted to the state machine.
+        self._copy_fenced = False
+        # Security-relevant predecessor, identity, or fork failures put this
+        # owner into an irreversible candidate quarantine.  The offending
+        # stage/anchor is retained for evidence; clearing it would erase the
+        # very mutant that caused the safety stop.
+        self._quarantined = False
+        self._quarantine_reason: str | None = None
         # The lock only serializes this in-memory candidate owner.  A real
         # node still needs an independently administered compare-and-advance
         # backend; this lock is not presented as that authority.
@@ -647,11 +658,254 @@ class StagedStateSync:
     def mark_wal(self) -> None:
         self.mark_sidecar("-wal")
 
-    def _check_health(self) -> None:
-        if self._sidecars:
-            raise StateSyncError("sidecar present")
+    def _quarantine(self, reason: str) -> None:
+        self._quarantined = True
+        if self._quarantine_reason is None:
+            self._quarantine_reason = reason
+
+    def _quarantine_and_raise(self, reason: str) -> None:
+        self._quarantine(reason)
+        raise StateSyncError(reason)
+
+    @staticmethod
+    def _stage_identity(token: StageToken) -> tuple[object, ...]:
+        view = token.view
+        return (
+            view.height,
+            view.state_root,
+            view.block_id,
+            view.digest,
+            view.context_digest,
+            view.epoch,
+            view.validator_set_hash,
+            view.checkpoint_digest,
+        )
+
+    @staticmethod
+    def _stage_integrity_reason(token: StageToken) -> str | None:
+        """Recompute token bytes before accepting persisted stage state."""
+
+        try:
+            view = token.view
+            if not isinstance(view, ManifestView):
+                return "malformed stage view"
+            generation = _u64(token.generation, "stage generation")
+            _u64(view.height, "stage height", minimum=1)
+            _u64(view.epoch, "stage epoch")
+            if (
+                not isinstance(token.stage_digest, bytes)
+                or len(token.stage_digest) != 32
+                or token.stage_digest == ZERO32
+                or not isinstance(view.digest, bytes)
+                or len(view.digest) != 32
+                or view.digest == ZERO32
+            ):
+                return "stage digest shape"
+            expected_digest = _digest(
+                "trnm.poco-ai.state-sync-stage.v1",
+                view.digest + generation.to_bytes(8, "little"),
+            )
+            if token.stage_digest != expected_digest:
+                return "stage digest mismatch"
+            if (
+                not isinstance(token.chunks, tuple)
+                or len(token.chunks) != view.chunk_count
+                or not isinstance(view.chunk_count, int)
+                or isinstance(view.chunk_count, bool)
+                or not 1 <= view.chunk_count <= MAX_CHUNKS
+            ):
+                return "stage chunk count"
+            if any(not isinstance(chunk, bytes) for chunk in token.chunks):
+                return "stage chunk type"
+            decoded: list[tuple[int, bytes, int, bytes, bytes]] = []
+            for chunk in token.chunks:
+                decoded.extend(_decode_records(chunk))
+            if not isinstance(view.records, tuple) or tuple(decoded) != view.records:
+                return "stage record bytes mismatch"
+            if (
+                not isinstance(view.state_root, bytes)
+                or len(view.state_root) != 32
+                or view.state_root == ZERO32
+            ):
+                return "stage root shape"
+            if _state_root(decoded) != view.state_root:
+                return "stage root mismatch"
+            if (
+                not isinstance(view.block_id, bytes)
+                or len(view.block_id) != 32
+                or view.block_id == ZERO32
+                or not isinstance(view.context_digest, bytes)
+                or len(view.context_digest) != 32
+                or view.context_digest == ZERO32
+                or not isinstance(view.validator_set_hash, bytes)
+                or len(view.validator_set_hash) != 32
+                or view.validator_set_hash == ZERO32
+                or not isinstance(view.checkpoint_digest, bytes)
+                or len(view.checkpoint_digest) != 32
+                or view.checkpoint_digest == ZERO32
+                or _canonical_header_id(view.context_digest, view.height, view.state_root)
+                != view.block_id
+                or _checkpoint_id(view.block_id, view.state_root) != view.checkpoint_digest
+            ):
+                return "stage header binding"
+        except (AttributeError, TypeError, ValueError, OverflowError):
+            return "malformed stage token"
+        return None
+
+    def _staged_residue_reason(self, token: StageToken) -> str | None:
+        """Return a safety reason when a retained stage no longer fits.
+
+        A pending stage is allowed only as the immediate successor of the
+        current anchor.  Once a predecessor advances, an old stage is stale;
+        an equal-height stage with a different identity is a fork.  Both are
+        quarantined before any subsequent authority-bearing operation.
+        """
+
+        try:
+            anchor_generation = _u64(self._anchor.generation, "anchor generation")
+            anchor_height = _u64(self._anchor.height, "anchor height")
+            token_generation = _u64(token.generation, "stage generation")
+            if anchor_generation >= 2**64 - 1 or token_generation != anchor_generation + 1:
+                return "stale staged generation"
+            if token.view.height < anchor_height:
+                return "stale staged height"
+            if anchor_generation == 0:
+                return None
+            if token.view.height == anchor_height:
+                if self._stage_identity(token) != (
+                    self._anchor.height,
+                    self._anchor.state_root,
+                    self._anchor.block_id,
+                    self._anchor.manifest_digest,
+                    self._anchor.context_digest,
+                    self._anchor.epoch,
+                    self._anchor.validator_set_hash,
+                    self._anchor.checkpoint_digest,
+                ):
+                    return "forked staged checkpoint"
+            elif token.view.epoch < self._anchor.epoch:
+                return "stale staged epoch"
+            elif token.view.epoch == self._anchor.epoch:
+                if (
+                    token.view.validator_set_hash != self._anchor.validator_set_hash
+                    or token.view.context_digest != self._anchor.context_digest
+                ):
+                    return "staged context drift"
+        except (AttributeError, TypeError, ValueError, OverflowError):
+            return "malformed staged state"
+        return None
+
+    def _active_residue_reason(self) -> str | None:
+        """Return a safety reason when active state diverges from anchor."""
+
+        # During a simulated crash the intent itself is the authoritative
+        # fence; report that below instead of masking it with a transient
+        # active/anchor mismatch.
         if self._intent is not None:
-            raise StateSyncError("incomplete swap intent")
+            return None
+        try:
+            if self._active is None:
+                return "active target missing" if self._anchor.generation != 0 else None
+            if self._active.generation != self._anchor.generation:
+                return "active/anchor mismatch"
+            active_identity = self._stage_identity(self._active)
+            anchor_identity = (
+                self._anchor.height,
+                self._anchor.state_root,
+                self._anchor.block_id,
+                self._anchor.manifest_digest,
+                self._anchor.context_digest,
+                self._anchor.epoch,
+                self._anchor.validator_set_hash,
+                self._anchor.checkpoint_digest,
+            )
+            if active_identity[:3] != anchor_identity[:3] or active_identity[4:] != anchor_identity[4:]:
+                return "active/anchor mismatch"
+            if active_identity[3] != self._anchor.manifest_digest:
+                return "full-store rollback"
+        except (AttributeError, TypeError, ValueError, OverflowError):
+            return "malformed active state"
+        return None
+
+    def _check_health(self) -> None:
+        if self._copy_fenced:
+            raise StateSyncError("copied namespace")
+        if self._quarantined:
+            raise StateSyncError("quarantined state-sync")
+        if not isinstance(self._sidecars, (set, frozenset)):
+            self._quarantine_and_raise("malformed sidecar state")
+        if self._sidecars:
+            self._quarantine_and_raise("sidecar present")
+
+        try:
+            _validate_anchor(
+                self._anchor,
+                chain_id=self._chain_id,
+                namespace_id=self._namespace_id,
+            )
+        except StateSyncError:
+            self._quarantine("anchor validation")
+            raise
+
+        # A copied namespace can retain a valid-looking anchor and staged
+        # bytes while carrying the owner identity of the source instance.  A
+        # namespace label alone is not an ownership boundary: if we only
+        # checked the label, a clone made before activation could reopen at
+        # the zero anchor and then stage/commit a fresh token while leaving
+        # the copied residue behind.  Fence every persisted token before any
+        # authority-bearing operation (reopen, stage, or commit).
+        for token in (self._active, self._intent):
+            if token is None:
+                continue
+            if (
+                not isinstance(token, StageToken)
+                or token.instance_id != self._instance_id
+                or token.namespace_id != self._namespace_id
+            ):
+                self._quarantine_and_raise("copied namespace residue")
+            integrity_reason = self._stage_integrity_reason(token)
+            if integrity_reason is not None:
+                self._quarantine_and_raise(integrity_reason)
+        active_reason = self._active_residue_reason()
+        if active_reason is not None:
+            self._quarantine_and_raise(active_reason)
+        try:
+            staged_items = tuple(self._stages.items())
+        except (AttributeError, TypeError, ValueError) as exc:
+            self._quarantine("malformed staged state")
+            raise StateSyncError("malformed staged state") from exc
+        stage_identities: dict[int, tuple[object, ...]] = {}
+        for stage_id, token in staged_items:
+            if (
+                not isinstance(stage_id, str)
+                or not isinstance(token, StageToken)
+                or token.stage_id != stage_id
+                or token.instance_id != self._instance_id
+                or token.namespace_id != self._namespace_id
+            ):
+                self._quarantine_and_raise("copied namespace residue")
+            integrity_reason = self._stage_integrity_reason(token)
+            if integrity_reason is not None:
+                self._quarantine_and_raise(integrity_reason)
+            reason = self._staged_residue_reason(token)
+            if reason is not None:
+                self._quarantine_and_raise(reason)
+            try:
+                identity = self._stage_identity(token)
+                previous = stage_identities.get(token.generation)
+            except (AttributeError, TypeError, ValueError, OverflowError) as exc:
+                self._quarantine("malformed staged state")
+                raise StateSyncError("malformed staged state") from exc
+            if previous is not None:
+                if previous != identity:
+                    self._quarantine_and_raise("forked staged checkpoint")
+                # Two physically distinct tokens for one generation are not
+                # an idempotent retry.  They create an ambiguous promotion
+                # choice even when their visible checkpoint identity matches.
+                self._quarantine_and_raise("duplicate staged generation")
+            stage_identities[token.generation] = identity
+        if self._intent is not None:
+            self._quarantine_and_raise("incomplete swap intent")
 
     def stage(
         self,
@@ -697,6 +951,16 @@ class StagedStateSync:
             context_chain, _ = _validate_context(context)
             if context_chain != self._chain_id:
                 raise StateSyncError("chain namespace mismatch")
+            staged_chunks = tuple(bytes(chunk) for chunk in chunks)
+            for existing in self._stages.values():
+                if existing.generation != generation:
+                    continue
+                # A byte-for-byte retry of the same verified stage is safe to
+                # make idempotent.  Any other token at this generation is an
+                # ambiguous sibling and permanently quarantines the owner.
+                if existing.view == view and existing.chunks == staged_chunks:
+                    return existing
+                self._quarantine_and_raise("forked staged checkpoint")
             stage_id = os.urandom(16).hex()
             token = StageToken(
                 self._instance_id,
@@ -704,7 +968,7 @@ class StagedStateSync:
                 self._namespace_id,
                 generation,
                 view,
-                tuple(bytes(chunk) for chunk in chunks),
+                staged_chunks,
                 _digest("trnm.poco-ai.state-sync-stage.v1", view.digest + generation.to_bytes(8, "little")),
             )
             self._stages[stage_id] = token
@@ -731,26 +995,41 @@ class StagedStateSync:
                 chain_id=self._chain_id,
                 namespace_id=self._namespace_id,
             )
-            _validate_anchor(
-                expected_anchor,
-                chain_id=self._chain_id,
-                namespace_id=self._namespace_id,
-            )
+            try:
+                _validate_anchor(
+                    expected_anchor,
+                    chain_id=self._chain_id,
+                    namespace_id=self._namespace_id,
+                )
+            except StateSyncError:
+                self._quarantine("external anchor validation")
+                raise
             if not isinstance(token, StageToken) or token.instance_id != self._instance_id:
                 raise StateSyncError("copied stage token")
-            stored = self._stages.get(token.stage_id)
-            if stored != token or token.namespace_id != self._namespace_id:
-                raise StateSyncError("unknown or mutated stage")
+            if token.namespace_id != self._namespace_id or not isinstance(token.stage_id, str):
+                self._quarantine_and_raise("unknown or mutated stage")
+            try:
+                stored = self._stages.get(token.stage_id)
+            except (AttributeError, TypeError, ValueError) as exc:
+                self._quarantine("malformed staged state")
+                raise StateSyncError("malformed staged state") from exc
+            if stored is None:
+                self._quarantine_and_raise("missing staged state")
+            if stored != token:
+                self._quarantine_and_raise("unknown or mutated stage")
+            integrity_reason = self._stage_integrity_reason(token)
+            if integrity_reason is not None:
+                self._quarantine_and_raise(integrity_reason)
             if expected_anchor is not None and expected_anchor != self._anchor:
-                raise StateSyncError("external anchor CAS mismatch")
+                self._quarantine_and_raise("external anchor CAS mismatch")
             if generation != token.generation:
-                raise StateSyncError("stage generation mismatch")
+                self._quarantine_and_raise("stage generation mismatch")
             if (
                 self._anchor.generation >= 2**64 - 1
                 or generation != self._anchor.generation + 1
                 or token.view.height < self._anchor.height
             ):
-                raise StateSyncError("external anchor rollback")
+                self._quarantine_and_raise("external anchor rollback")
             # A monotonic generation is not enough to authorize a new fork at
             # an already-finalized height.  At equal height every immutable
             # checkpoint/context identity must be byte-for-byte identical;
@@ -765,15 +1044,15 @@ class StagedStateSync:
                     or token.view.validator_set_hash != self._anchor.validator_set_hash
                     or token.view.checkpoint_digest != self._anchor.checkpoint_digest
                 ):
-                    raise StateSyncError("external anchor equivocation")
+                    self._quarantine_and_raise("external anchor equivocation")
             elif self._anchor.generation != 0:
                 if token.view.epoch < self._anchor.epoch:
-                    raise StateSyncError("external anchor epoch rollback")
+                    self._quarantine_and_raise("external anchor epoch rollback")
                 if token.view.epoch == self._anchor.epoch:
                     if token.view.validator_set_hash != self._anchor.validator_set_hash:
-                        raise StateSyncError("external anchor validator-set drift")
+                        self._quarantine_and_raise("external anchor validator-set drift")
                     if token.view.context_digest != self._anchor.context_digest:
-                        raise StateSyncError("external anchor context drift")
+                        self._quarantine_and_raise("external anchor context drift")
             if simulate_crash not in {None, "before_active", "after_active"}:
                 raise StateSyncError("unknown crash simulation")
             next_anchor = ExternalAnchor(
@@ -789,6 +1068,15 @@ class StagedStateSync:
                 token.view.validator_set_hash,
                 token.view.checkpoint_digest,
             )
+            try:
+                _validate_anchor(
+                    next_anchor,
+                    chain_id=self._chain_id,
+                    namespace_id=self._namespace_id,
+                )
+            except StateSyncError:
+                self._quarantine("next anchor validation")
+                raise
             # Intent is visible until both active target and external anchor
             # are updated.  A simulated crash leaves a permanent fence on
             # reopen and retains the failed token for review.
@@ -813,13 +1101,13 @@ class StagedStateSync:
             )
             if self._active is None:
                 if self._anchor.generation != 0:
-                    raise StateSyncError("active target missing")
+                    self._quarantine_and_raise("active target missing")
                 return self._anchor
             if (
                 self._active.instance_id != self._instance_id
                 or self._active.namespace_id != self._namespace_id
             ):
-                raise StateSyncError("renamed namespace")
+                self._quarantine_and_raise("renamed namespace")
             if (
                 self._anchor.generation == 0
                 or self._active.generation != self._anchor.generation
@@ -831,9 +1119,9 @@ class StagedStateSync:
                 or self._active.view.validator_set_hash != self._anchor.validator_set_hash
                 or self._active.view.checkpoint_digest != self._anchor.checkpoint_digest
             ):
-                raise StateSyncError("active/anchor mismatch")
+                self._quarantine_and_raise("active/anchor mismatch")
             if self._active.view.digest != self._anchor.manifest_digest:
-                raise StateSyncError("full-store rollback")
+                self._quarantine_and_raise("full-store rollback")
             return self._anchor
 
     def clone_namespace(self, namespace_id: str) -> "StagedStateSync":
@@ -842,6 +1130,7 @@ class StagedStateSync:
         if not isinstance(namespace_id, str) or not namespace_id:
             raise StateSyncError("invalid namespace")
         clone = StagedStateSync(self._chain_id, namespace_id=namespace_id)
+        clone._copy_fenced = True
         clone._anchor = self._anchor
         clone._active = self._active
         clone._stages = dict(self._stages)
