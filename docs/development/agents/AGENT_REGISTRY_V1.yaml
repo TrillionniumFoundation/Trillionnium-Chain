@@ -1,0 +1,371 @@
+schema: trnm-workspace-agent-registry-v1
+repository: TrillionniumFoundation/Trillionnium-Chain
+source_baseline:
+  latest_candidate_ref: feature/chain-g1-r4c-full-gap-closure-20260829
+  latest_candidate_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+  latest_candidate_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+  assessed_plan_ref: docs/chain-poco-bft-mainline-20260825
+  assessed_commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
+  assessed_tree: a1be71bba1b54c428493d186fafb656d081b31a9
+  as_of: '2026-08-29'
+  production_candidate: false
+  production_consensus_activation: false
+global_policy:
+  one_package_one_branch_one_pr: true
+  no_self_merge: true
+  truth_promotion_separate_pr: true
+  max_concurrent_core_writers: 5
+  write_confirmation_required: true
+  default_evidence_scope: candidate
+  module_close_is_not_gate_acceptance: true
+agents:
+- id: A00
+  name: TRNM Control Tower
+  gate: CONTROL
+  package_id: AGENT_CONTROL_PLANE_V1
+  priority: P0
+  scope: orchestration/read-mostly
+  depends_on: []
+  recommended_trigger: every 2 hours, read-only by default; write only its own documentation branch
+  owned_surfaces:
+  - docs/development/agents/**
+  - docs/development/AGENT_*
+  - docs/development/CURRENT_SNAPSHOT_V1.*
+  - docs/development/packages/README.md
+  forbidden_surfaces:
+  - Rust protocol/runtime/consensus implementation
+  - production, activation, release-ready or normative-freeze flags
+  - merging its own PR
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A00
+- id: A01
+  name: G0 Truth, Provenance and Reproducibility
+  gate: G0
+  package_id: G0_TRUTH_PROVENANCE_V1
+  priority: P0
+  scope: docs/CI/release metadata
+  depends_on: [A00]
+  recommended_trigger: daily and on candidate branch updates
+  owned_surfaces:
+  - docs/development/CURRENT_SNAPSHOT_V1.json
+  - docs/schemas/current-snapshot-v1.schema.json
+  - scripts/ci/generate_current_snapshot_v1.*
+  - scripts/ci/check_current_snapshot_v1.*
+  - docs/development/plan-manifest-v1.toml through a separate truth-only PR
+  - SBOM/provenance schemas and indexes
+  forbidden_surfaces:
+  - consensus or state-transition semantics
+  - truth promotion without accepted evidence
+  - mixing source implementation and truth updates in one PR
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A01
+- id: A02
+  name: G1-R2 Recovery and Core Acknowledgement
+  gate: G1
+  package_id: G1_R2_RECOVERY_CORE_ACK_V1
+  priority: P0
+  scope: core candidate implementation
+  depends_on: [A00, A01]
+  recommended_trigger: every 6 hours while package remains open; write only its package branch
+  owned_surfaces:
+  - trillionnium/crates/trnm-consensus-peer-lease/**
+  - trillionnium/crates/trnm-poco-node/src/**/*replay*
+  - trillionnium/crates/trnm-poco-node/src/**/*recovery*
+  - trillionnium/crates/trnm-poco-node/src/bin/*replay-to-core*
+  - trillionnium/crates/trnm-poco-node/tests/**/*replay*
+  - docs/development/packages/**/*R2*
+  - scripts/ci/**/*replay*
+  forbidden_surfaces:
+  - application finalization owned by A04
+  - Safety/checkpoint/signing owned by A05
+  - global truth flags
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A02
+- id: A03
+  name: G1-R3 Ordinary Proposal Authority
+  gate: G1
+  package_id: G1_R3_ORDINARY_PROPOSAL_AUTHORITY_V1
+  priority: P0
+  scope: core candidate implementation
+  depends_on: [A02]
+  recommended_trigger: every 6 hours after A02 interface acceptance
+  owned_surfaces:
+  - ordinary proposal validation and authority modules
+  - trillionnium/crates/trnm-native-execution-v0/**
+  - proposal-side effect-driver integration
+  - docs/development/packages/**/*R3*
+  - ordinary-proposal focused tests and gates
+  forbidden_surfaces:
+  - finalization queue/application apply owned by A04
+  - SafetyStore/signer/checkpoint owned by A05
+  - direct broad rewrites of core.rs without an approved thin module hook
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A03
+- id: A04
+  name: G1-R4 Application and Ordered Finality
+  gate: G1
+  package_id: G1_R4_APPLICATION_FINALITY_V1
+  priority: P0
+  scope: core candidate implementation
+  depends_on: [A03]
+  recommended_trigger: every 6 hours after A03 interface acceptance
+  owned_surfaces:
+  - trillionnium/crates/trnm-native-application/**
+  - trillionnium/crates/trnm-native-application-sqlite/**
+  - finalization queue and application-finalization modules
+  - docs/development/packages/**/*R4B*
+  - application-finalization focused tests and gates
+  forbidden_surfaces:
+  - SafetyStore/signer/checkpoint owned by A05
+  - fault-harness ownership owned by A06 except approved test hooks
+  - ordinary proposal validation owned by A03
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A04
+- id: A05
+  name: G1-R4 Safety, Signer, Checkpoint and Anti-Rollback
+  gate: G1
+  package_id: G1_R4_SAFETY_CHECKPOINT_V1
+  priority: P0
+  scope: core candidate implementation
+  depends_on: [A03, A04]
+  recommended_trigger: every 6 hours after A03/A04 interface acceptance
+  owned_surfaces:
+  - trillionnium/crates/trnm-consensus-safety-rules/**
+  - trillionnium/crates/trnm-consensus-safety-store/**
+  - trillionnium/crates/trnm-consensus-signer-journal/**
+  - trillionnium/crates/trnm-consensus-external-watermark/**
+  - trillionnium/crates/trnm-consensus-external-node-checkpoint/**
+  - trillionnium/crates/trnm-whole-node-checkpoint-types/**
+  - remote signer protocol/service modules
+  - docs/development/packages/**/*R4C*
+  forbidden_surfaces:
+  - application object mutation/JMT final apply owned by A04
+  - ordinary proposal execution owned by A03
+  - network campaign harness owned by A07
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A05
+- id: A06
+  name: G1-R4 Fault Matrix and Independent Replay
+  gate: G1
+  package_id: G1_R4_FAULT_MATRIX_V1
+  priority: P0
+  scope: tests/harness/independent replay
+  depends_on: [A02, A03, A04, A05]
+  recommended_trigger: every 6 hours after module test hooks land
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-node/tests/**
+  - trillionnium/crates/trnm-poco-lab-validator/**
+  - scripts/ci/**/*process_matrix*
+  - scripts/faults/**
+  - docs/evidence/g1-r4/**
+  - R4 crash/fault matrix documents
+  forbidden_surfaces:
+  - production semantics
+  - production capability constructors
+  - editing module-owned source except approved test-only injection hooks
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A06
+- id: A07
+  name: G1-R5 Native 4/7-Node Campaign
+  gate: G1
+  package_id: G1_R5_NATIVE_NETWORK_CAMPAIGN_V1
+  priority: P1
+  scope: network harness/evidence
+  depends_on: [A06]
+  recommended_trigger: every 12 hours; promotion blocked until R4 accepted
+  owned_surfaces:
+  - network campaign scripts/configs
+  - validator topology and identity manifests
+  - multi-host evidence collection
+  - docs/development/packages/**/*R5*
+  - campaign workflows
+  forbidden_surfaces:
+  - changing consensus safety semantics
+  - production key material
+  - promoting transport smoke as validator-run evidence
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A07
+- id: A08
+  name: G1.5 CEV1 Registry and Normative Specification
+  gate: G1.5
+  package_id: G15_CEV1_REGISTRY_SPEC_V1
+  priority: P1
+  scope: spec/codegen candidate
+  depends_on: [A00, A01]
+  recommended_trigger: every 8 hours; specs may advance, promotion is prerequisite-gated
+  owned_surfaces:
+  - docs/protocol/poco-ai-native-v1/**
+  - docs/schemas/poco-ai-native-v1/**
+  - CEV1 registries and code generators
+  - spec consistency gates
+  forbidden_surfaces:
+  - status promotion fields
+  - G1 production implementation
+  - claiming normative freeze before accepted review and G1 exit
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A08
+- id: A09
+  name: Independent Parser, Vectors, Mutation and Fuzz
+  gate: G1.5
+  package_id: G15_INDEPENDENT_CONFORMANCE_V1
+  priority: P1
+  scope: independent implementation
+  depends_on: [A08]
+  recommended_trigger: every 8 hours after registry updates
+  owned_surfaces:
+  - independent parser implementation outside canonical crates
+  - conformance/cev1/**
+  - fuzz/cev1/**
+  - conformance evidence
+  forbidden_surfaces:
+  - linking/importing the canonical parser/serializer
+  - editing canonical protocol implementation
+  - calling itself independent if it shares parsing/signature code
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A09
+- id: A10
+  name: G2.0 W0-W7 Traceability and Codegen
+  gate: G2.0
+  package_id: G20_W0_W7_TRACEABILITY_V1
+  priority: P1
+  scope: spec/codegen candidate
+  depends_on: [A08, A09]
+  recommended_trigger: every 8 hours; promotion blocked until G1.5 accepted
+  owned_surfaces:
+  - W0-W7 traceability registry
+  - 30 operation row generator
+  - logical wire and authenticated transport contracts
+  - RPC/WS/SDK/indexer schema projection
+  forbidden_surfaces:
+  - local kernel semantic changes
+  - production RPC deployment
+  - marking a row complete at a local SQLite/composite root
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A10
+- id: A11
+  name: G2A DA-FULLREP-V1
+  gate: G2A
+  package_id: G2A_DA_FULLREP_V1
+  priority: P1
+  scope: candidate module
+  depends_on: [A08, A10]
+  recommended_trigger: every 8 hours; integration promotion prerequisite-gated
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-da-v1/**
+  - DA protocol/contracts/vectors
+  - DA focused gates and conformance
+  forbidden_surfaces:
+  - Order vote authority
+  - production GC permit issuance
+  - DA-DAS activation or sampling claims
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A11
+- id: A12
+  name: G2B Agent, Capability and Task Market
+  gate: G2B
+  package_id: G2B_AGENT_MARKET_V1
+  priority: P1
+  scope: candidate module
+  depends_on: [A08, A10]
+  recommended_trigger: every 8 hours; integration promotion prerequisite-gated
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-agent-market-v1/**
+  - Agent/Market protocol/contracts/vectors
+  - Agent/Market focused gates
+  forbidden_surfaces:
+  - verification decisions
+  - settlement asset movement
+  - claiming local store roots as global state
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A12
+- id: A13
+  name: G2D Deterministic Execution, MVCC and Fees
+  gate: G2D
+  package_id: G2D_EXECUTION_MVCC_FEE_V1
+  priority: P1
+  scope: candidate module
+  depends_on: [A08, A10, A12]
+  recommended_trigger: every 8 hours after AgentTransaction interface freeze
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-mvcc-fee-v1/**
+  - execution/MVCC/fee contracts and vectors
+  - execution focused gates
+  forbidden_surfaces:
+  - settlement movement
+  - verification decisions
+  - global JMT commissioning without G2F
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A13
+- id: A14
+  name: G2C Verification and Challenge
+  gate: G2C
+  package_id: G2C_VERIFY_CHALLENGE_V1
+  priority: P1
+  scope: candidate module
+  depends_on: [A08, A10, A11, A12, A13]
+  recommended_trigger: every 8 hours after DA/Agent/Execution interface freeze
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-verify-challenge-v1/**
+  - verification profiles/contracts/vectors
+  - verification focused gates
+  forbidden_surfaces:
+  - settlement asset movement
+  - automatic profile fallback
+  - subjective evidence as objective finality
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A14
+- id: A15
+  name: G2E Settlement and Economic Conservation
+  gate: G2E
+  package_id: G2E_SETTLEMENT_ECONOMICS_V1
+  priority: P1
+  scope: candidate module/simulation
+  depends_on: [A12, A13, A14]
+  recommended_trigger: every 8 hours after Agent/Execution/Verification interfaces freeze
+  owned_surfaces:
+  - trillionnium/crates/trnm-poco-consumption-settlement-v1/**
+  - settlement/economics contracts
+  - economic simulations and vectors
+  forbidden_surfaces:
+  - validator or PoCO weight activation
+  - verification authority
+  - governance activation
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A15
+- id: A16
+  name: G2F Whole-Node Authority, State Sync and Light Client
+  gate: G2F
+  package_id: G2F_WHOLE_NODE_LIGHT_CLIENT_V1
+  priority: P1
+  scope: candidate integration/docs/tests
+  depends_on: [A11, A12, A13, A14, A15]
+  recommended_trigger: every 12 hours; promotion blocked until all predecessor subgates accepted
+  owned_surfaces:
+  - cross-plane readback/global execution/order-application/finality-verifier candidates
+  - whole-node authority/state-sync/light-client contracts
+  - light-client conformance
+  forbidden_surfaces:
+  - editing source-plane transition semantics
+  - substituting composite root for application JMT
+  - production signer or activation
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A16
+- id: A17
+  name: G3-G5 Benchmark, Security, Operations and Activation Preparation
+  gate: G3-G5
+  package_id: G3_G5_BENCH_SECURITY_OPS_V1
+  priority: P2
+  scope: harness/review/runbooks
+  depends_on: [A01, A06, A07, A16]
+  recommended_trigger: daily; promotion remains strictly gate-dependent
+  owned_surfaces:
+  - benchmark/topology/workload/fault schemas
+  - chaos/security/operations runbooks
+  - RPC/SDK/indexer conformance plans
+  - G3-G5 evidence and ceremony preparation
+  forbidden_surfaces:
+  - consensus or protocol semantic changes
+  - superiority claims without accepted evidence
+  - production credentials or activation decisions
+  prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md
+  prompt_anchor: A17
