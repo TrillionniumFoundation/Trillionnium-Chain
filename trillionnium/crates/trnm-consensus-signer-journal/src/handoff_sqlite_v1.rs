@@ -26,8 +26,7 @@ use crate::{
     },
     hash::hash_domain,
     schema::validate_canonical_schema,
-    ExternalMonotonicWatermarkV0, HandoffSignatureProducerV1,
-    HandoffSignatureRequestV1,
+    ExternalMonotonicWatermarkV0, HandoffSignatureProducerV1, HandoffSignatureRequestV1,
     HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1, HandoffSignerJournalProfileV1,
     SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictOldSetHandoffAdmissionV1,
 };

@@ -23,6 +23,13 @@ package_base_commit = 6e0189e351015ef3230f217ca7ff86149baedcf0
 package_base_tree = efea864cb2fbc4835a59a089b3dbab8934e71231
 package_head_before_changes = 202d4b9ab719fe596b00b189acb1e2372bcb99fa
 package_tree_before_changes = 8209d4a8089b9260e754ec3519af4c2deb23b48f
+package_before_changes_note = local linked-worktree snapshot; not a GitHub remote source object
+package_head_after_changes = d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c
+package_tree_after_changes = c0eecdaca70750c94fd33f9be57e794d7aa17dea
+package_head_after_changes_note = last authenticated GitHub publication; final follow-up head/tree is recorded in the Draft PR and final revalidation envelope after a reconciled exact-head update (local 757 is a sibling snapshot, not a literal fast-forward)
+local_followup_commit = 757470475249eed135ef7bf4e9e58a164f3c8915
+local_followup_tree = db307b6ed3c1025755180dcc7cce4161b14c89da
+local_followup_note = clean committed rustfmt correction and test-only compile fix; exact-head local rerun recorded below
 assessed_plan_ref = refs/heads/docs/chain-poco-bft-mainline-20260825
 assessed_plan_commit = 8198fea0307eb368df34ff77ffc272a6b0e655ec
 assessed_plan_tree = a1be71bba1b54c428493d186fafb656d081b31a9
@@ -39,11 +46,11 @@ observed_main_tip = b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
 observed_main_tree = ffbad926850a12159336126390271abffc1d99a6
 release_truth_path = RELEASE_READINESS.md
 release_truth_sha256 = 1659693f0662f8a19b526c602379fe9fa54626afefe33d35917983f699f2dfa4
-live_scan_at_utc = 2026-08-29T13:10:49Z
-live_scan_result = authenticated connector scan found PR7/8/9/20/21/22 open Draft/mergeable/unmerged; PR22 head 4936caeba16656dd196e95a60dc7455d9cca43d3/tree 056e32bf9a62fbd8e55e0439a36fa5a224138014; no pre-existing remote A05-owned G1-R4C branch or path overlap (local package branch unpushed); re-scan is required after publication
-# Complete exact candidate/control/main and PR7/8/9/20/21/22 commit/tree tuples
-# for this scan are recorded in the manifest; this package does not promote
-# abbreviated PR references to source truth.
+live_scan_at_utc = 2026-08-29T14:42:33Z
+live_scan_result = authenticated connector and refs scan interval 2026-08-29T14:42:19Z–14:42:33Z: candidate 6e0189e351015ef3230f217ca7ff86149baedcf0/tree efea864cb2fbc4835a59a089b3dbab8934e71231; main b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9/tree ffbad926850a12159336126390271abffc1d99a6; canonical control 8bfd73f0cf1b785a29ae212f13212e51fe34231e/tree cfedd363147934f50d1352dae31b7d87d79aa8d9; live Plan 92449b8e101642f39d644d863db7bb60dea488f7/tree cf8f1ab4f5065cb0551a30ec0e036cd44cb31766; PR24 (A05) d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c/tree c0eecdaca70750c94fd33f9be57e794d7aa17dea, parent candidate; PR22 A16 f97b3b8e74439d6e80d13c4c8048578a631eb12b/tree e65de294899497d8fd2731d11315886d5f731583; PR23 A01 a0f873eda03054adeed676b2e24bc5b483607600/tree f840339cf90ca64a13b8abdd5816307860be81c4; PR25 A00 unaccepted control candidate 7d9a17abb727950f278235dce817df29e97fea19/tree 00a9de9534860abdccc2aeb31307810897330c4c; PR27 A08 f951acc44092b6c7304fa05491f09810c2ec5182/tree 864d82afad6507c2566f66ae7e7f56e2de40440a (base still names stale control 77b6b7b; semantic BASE_DRIFT for A08); PR28 A06 e88cda9401eb6219fe1425bebb1ef6b54b4c429d/tree 9c4249ce36061fcbd6eb8e522accd29127f7c01c; all listed PRs are open Draft, unmerged and mergeable with no reviews/threads at scan time; PR26 is closed; competing A05-v1 branch 523c0d9b6343df7cbd139a36bc04aaf60a7221c0/tree c81ae16636c50d8177261f3755a27534362daabe has no PR and is excluded as an unaccepted overlapping candidate because its gate/model claims are not reproducible; PR24 remains the only canonical A05 PR; no forbidden-path overlap; candidate base remains exact and unchanged
+# Complete exact candidate/control/main, Plan, package-PR and competing-branch
+# tuples for this scan are recorded in the manifest and gap ledger; abbreviated
+# PR references are not promoted to source truth.
 ```
 
 The assessed plan commit is immutable truth even though the remote plan branch
@@ -194,10 +201,13 @@ readback/retry, signer intent-before-signature and watermark negatives
 (`trnm-consensus-external-watermark/tests/authority_blackbox.rs`), local
 checkpoint CAS (`trnm-consensus-external-node-checkpoint/tests/cross_process.rs`),
 and whole-node predecessor/phase validation
-(`trnm-whole-node-checkpoint-types/src/tests.rs`). These are source-present but
-not executed in this environment. They do not join real Application, Safety,
-Signer, and external stores in one process boundary. The `100k` replay helper
-is an ignored synthetic kernel test, not real-node evidence.
+(`trnm-whole-node-checkpoint-types/src/tests.rs`). The isolated Rust run below
+executes the crate-local portions, but it does not join real Application,
+Safety, Signer, and external stores in one process boundary. The `100k` replay
+helper is an ignored synthetic kernel test, not the required real-node corpus.
+The semantic fixture tests may generate fixture Ed25519 signatures for replay
+assertions; no production or remote-signer authority was invoked, and the
+no-escape invariant remains unverified.
 
 ### Candidate slice implemented in this run
 
@@ -247,8 +257,10 @@ upstream interface gap; the accepted interface must capture one immutable
 snapshot/token and fail closed on drift. Exact capability equality/authentication
 and custody remain the adapter's responsibility and are not proven by the
 journal.
-This is a candidate-only source change; the tests are **not executed** here
-because the pinned Rust toolchain is unavailable.
+This is a candidate-only source change. The default environment could not run
+Cargo, while a later isolated Rust 1.95.0 run executed the signer-journal and
+semantic negative tests; process, fault, custody, and cross-store claims remain
+unverified.
 
 The following mutants remain retained and must not be deleted or weakened:
 
@@ -269,13 +281,15 @@ The following mutants remain retained and must not be deleted or weakened:
 | `M-R4C-13` | pair=true while semantic_mode=false (contradictory lifecycle state) | reject before journal bytes or authority use |
 | `M-R4C-14` | crash after immutable semantic mode-marker rename before directory sync | marker and sidecars remain coherent; otherwise halt |
 | `M-R4C-15` | remote-timeout default pair mode performs one CAS per request | reject/quarantine until an explicit lifecycle bridge exists |
-| `M-R4C-16` | historical semantic predecessor event/checksum or content mutation | reject before producer |
+| `M-R4C-16` | historical non-genesis semantic predecessor event/checksum/row mutation (content mutation remains unexecuted) | reject before producer |
 | `M-R4C-17` | lifecycle mode/pair bits flip between admission and external dispatch | fail closed before opaque or semantic CAS |
 
 R4 rows assigned to A05 are R4-M07 (Safety intent), R4-M08 (Safety
 persist/readback), R4-M09 (checkpoint CAS), R4-M10 (CAS response loss), R4-M14
 (store skew), R4-M15 (coherent rollback), and R4-M16 (independent replay).
-Every row is currently `NOT_EVALUATED` at process/fault scope.
+Every row is currently `NOT_EVALUATED` at process/fault scope; the selected
+crate-local semantic negatives above are executed observations only and do not
+close their corresponding process/fault rows.
 
 ## 6. Fault/replay matrix
 
@@ -305,8 +319,9 @@ The following assertions are the required local exit predicates. They remain
 
 The direct signer-journal adapter and schema1 handoff constructor are guarded,
 but `trnm-poco-lab-validator`'s `LabFileWatermark` wrapper currently does not
-forward either lifecycle-mode bit. The remote-timeout service's production
-path intentionally uses an explicit per-reservation constructor: its first
+forward either lifecycle-mode bit. The configured remote-timeout service path
+(not a production authority) intentionally uses an explicit per-reservation
+constructor: its first
 request claims sequence zero with request facts and each request consumes one
 CAS. Its public default `from_binding` constructor advertises pair mode even
 though `reserve_v1` follows that one-CAS/request shape, so the first request is
@@ -365,10 +380,62 @@ bash scripts/ci/check_agent_development_docs_v1.sh
   NOT RUN: guard exists only on observed control tip 8bfd73f0; candidate base lacks the script
 ```
 
-The mandatory Rust 1.95.0/X230 toolchain is not installed (`/root/.rustup` is
-absent). These are environment failures, not test passes; a clean-clone rerun
-is required after provisioning. `cargo fmt` and Clippy were not attempted
-because the same `cargo` executable is absent.
+The default environment has no `cargo` and no `/root/.rustup`, so the commands
+above are retained as rc=127/rc=1 environment observations. A separate
+isolated Rust 1.95.0 toolchain (`/tmp/a05-rustup`, `/tmp/a05-cargo`) was later
+used without changing repository truth. The exact clean source snapshot for
+the isolated run is commit `757470475249eed135ef7bf4e9e58a164f3c8915` / tree
+`db307b6ed3c1025755180dcc7cce4161b14c89da`:
+
+```text
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-format /tmp/a05-cargo/bin/cargo fmt --all -- --check
+  PASS
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-signer /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-signer-journal
+  PASS: unit 4/4, integration 32/32, doctests 5/5
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-signer /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0
+  PASS: 8/8
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-extwm /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-external-watermark --all-targets
+  PARTIAL: unit 2/2; authority_blackbox 13 tests blocked by sandbox EPERM on Unix socket bind
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-node /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-external-node-checkpoint --all-targets
+  PARTIAL: lib 8/9; one lib Unix round-trip and cross_process process/socket cases blocked by sandbox EPERM/timeouts (8 pass, 2 environment-blocked overall)
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-truth bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+  PASS: production_dependency=false cleanup_eligible=false activation=false
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-rules /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-safety-rules --all-targets
+  PASS: 18 unit + source_contract 1; replay_100k is not included in this default target set
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-replay /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-safety-rules --test replay_100k --release -- --ignored --test-threads=1
+  PASS: 1/1 synthetic byte-stability replay; not real-node G1-S04 evidence
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-store /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-safety-store --all-targets
+  PASS: 54 unit + sqlite_store 27; doctests separately 11/11
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-types /tmp/a05-cargo/bin/cargo test --locked -p trnm-whole-node-checkpoint-types --all-targets
+  PASS: 12/12 crate-local shape/phase tests
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-protocol /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets
+  PASS: 16/16 inert wire/ID tests; no custody authority
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-service /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-remote-signer-service --all-targets
+  PARTIAL: lib 7/8; bins 3/3 and external_authority_contract 1/1; Unix/process integration cases blocked by sandbox EPERM/timeouts or isolated-binary harness availability
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-unix /tmp/a05-cargo/bin/cargo test --locked -p trnm-consensus-unix-remote-signer --all-targets
+  PASS: source_contract 1/1; cross_process target contains 0 tests
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-clippy /tmp/a05-cargo/bin/cargo clippy --locked -p trnm-consensus-signer-journal -p trnm-consensus-external-watermark --all-targets -- -D warnings
+  PASS: A05 signer-journal/external-watermark targets
+RUSTUP_HOME=/tmp/a05-rustup CARGO_HOME=/tmp/a05-cargo CARGO_TARGET_DIR=/tmp/a05-target-clippy /tmp/a05-cargo/bin/cargo clippy --locked -p trnm-consensus-remote-signer-protocol --all-targets -- -D warnings
+  FAIL: four pre-existing assertions_on_constants in ids.rs:425 and wire.rs:1317-1319; path is outside the admitted A05 topic rules
+```
+
+The isolated run observes candidate crate compilation and selected local
+negative tests only; it does not prove process, power-loss, whole-node CAS,
+external-anchor, HSM/KMS, or production authority behavior. A clean-clone
+X230 process/fault rerun remains required.
+
+Post-publication CI evidence is separate from the local result: workflow run
+`33255373387`, job `99108021372`, checked out synthetic merge commit
+`50759930f0c11f1607f1460d203491b79a2486fe` for PR head
+`d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c` / tree
+`c0eecdaca70750c94fd33f9be57e794d7aa17dea`, reached the X230 Rust 1.95.0 and
+offline-cache checks successfully, then failed at step 5 (`Verify payload
+replay package implementation and truth boundary`) because rustfmt reported
+differences in the three signer-journal files (exit 1). Later R4A, Plan, truth
+and boundary steps were skipped; the offline-unchanged check passed. The
+format correction is present in the local follow-up, but this historical CI
+failure remains retained and a fresh CI run on the final head is required.
 
 ## 9. Rollback and operator recovery
 
@@ -381,12 +448,17 @@ database/WAL/anchor namespace or alter a truth flag to bypass a fence.
 
 ## 10. Evidence envelope and terminal decision
 
-The machine-readable handoff is the exact object below (also mirrored in the
-YAML/TOML ledgers). `head_commit` is `null` only while the isolated branch is
-uncommitted; the post-commit envelope and Draft PR body must replace it with
-the final 40-hex package head. `head_tree` and the implementation/metadata
-commit trees are recorded in the surrounding source envelope because the
-canonical handoff schema intentionally carries only `head_commit`.
+The machine-readable handoff is the schema-valid object below (represented in
+the YAML/TOML ledgers; their detailed command lists are intentionally not
+byte-identical). It records the last authenticated PR24 publication head;
+the final follow-up remote head/tree is published in the Draft PR and the
+final revalidation envelope after the reconciled exact-head update. `head_tree` and
+the implementation/metadata commit trees are recorded in the surrounding
+source envelope because the canonical handoff schema intentionally carries
+only `head_commit`. The adjacent `head_tree` is metadata, not a field in the
+canonical JSON schema.
+
+head_tree = c0eecdaca70750c94fd33f9be57e794d7aa17dea
 
 ```json
 {
@@ -396,7 +468,7 @@ canonical handoff schema intentionally carries only `head_commit`.
   "status": "BLOCKED_UPSTREAM",
   "base_commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
   "base_tree": "efea864cb2fbc4835a59a089b3dbab8934e71231",
-  "head_commit": null,
+  "head_commit": "d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c",
   "changed_paths": [
     "docs/development/packages/TRNM_G1_R4C_GAP_LEDGER_V1.yaml",
     "docs/development/packages/TRNM_G1_R4C_INTERFACE_CHANGE_REQUESTS_V1.md",
@@ -418,16 +490,9 @@ canonical handoff schema intentionally carries only `head_commit`.
   "commands": [
     "bash scripts/project-preflight.sh --audit: PASS; errors=0",
     "bash scripts/ci/check_canonical_development_plan.sh: PASS",
-    "bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover: BLOCKED; wrapper rc=1; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-safety-rules --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-safety-store --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-external-watermark --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-external-node-checkpoint --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-whole-node-checkpoint-types --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-remote-signer-protocol --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-remote-signer-service --all-targets): BLOCKED; cargo rc=127",
-    "(cd trillionnium && cargo test --locked -p trnm-consensus-unix-remote-signer --all-targets): BLOCKED; cargo rc=127",
+    "bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover: default environment BLOCKED; wrapper rc=1; cargo rc=127; isolated run PASS",
+    "default-environment nine package cargo suites and seven focused semantic/handoff tests: BLOCKED; cargo rc=127",
+    "isolated Rust 1.95 package suites: signer 41/41 and semantic 8/8 PASS; safety-rules/store/types/protocol PASS; external socket suites partial",
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0 semantic_journal_dispatch_binds_exact_intent_facts_and_never_opaque): BLOCKED; cargo rc=127",
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0 altered_loaded_semantic_facts_fail_before_next_producer_call): BLOCKED; cargo rc=127",
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0 tampered_semantic_predecessor_fails_before_next_producer_call): BLOCKED; cargo rc=127",
@@ -435,16 +500,20 @@ canonical handoff schema intentionally carries only `head_commit`.
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0 unattested_semantic_authority_is_rejected_before_journal_creation): BLOCKED; cargo rc=127",
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --test external_watermark_contract_v0 contradictory_pair_attestation_is_rejected_before_journal_creation): BLOCKED; cargo rc=127",
     "(cd trillionnium && cargo test --locked -p trnm-consensus-signer-journal --lib semantic_watermark_is_rejected_before_schema1_file_creation): BLOCKED; cargo rc=127",
-    "bash scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0: BLOCKED; rc=1; /root/.rustup absent",
+    "bash scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0: default environment BLOCKED; rc=1; /root/.rustup absent; isolated toolchain PASS",
     "bash scripts/ci/check_agent_development_docs_v1.sh: NOT RUN; candidate base lacks the guard script",
     "git diff --check: PASS",
-    "YAML/TOML parse: PASS after provisional handoff sentinel"
+    "YAML/TOML parse: PASS; handoff head is the last authenticated PR24 publication snapshot",
+    "historical workflow 33255373387/job 99108021372: FAIL at rustfmt on synthetic merge checkout 50759930; downstream steps skipped"
   ],
   "failed_tests": [
-    "all nine package cargo suites: exit 127 (cargo command not found)",
-    "all seven focused semantic/handoff tests: exit 127 (cargo command not found)",
+    "default-environment all nine package cargo suites: exit 127 (cargo command not found)",
+    "default-environment all seven focused semantic/handoff tests: exit 127 (cargo command not found)",
     "check_poco_bft_mainline_truth.sh: wrapper rc=1; inner cargo rc=127",
-    "check_preprovisioned_rust_toolchain.sh: rc=1; /root/.rustup absent"
+    "check_preprovisioned_rust_toolchain.sh: rc=1; /root/.rustup absent",
+    "workflow 33255373387/job 99108021372: exit 1 rustfmt on synthetic merge checkout 50759930",
+    "isolated external-watermark authority_blackbox: 13 sandbox EPERM failures (overall rc=101); external-node-checkpoint lib 8/9 plus cross_process process/socket blocks; remote-signer-service lib 7/8 plus integration process/socket blocks",
+    "isolated clippy -D warnings: exit 101 on four pre-existing remote-signer-protocol assertions_on_constants; no out-of-topic fix"
   ],
   "retained_mutants": [
     "M-R4C-01", "M-R4C-02", "M-R4C-03", "M-R4C-04", "M-R4C-05", "M-R4C-06",
@@ -460,7 +529,8 @@ canonical handoff schema intentionally carries only `head_commit`.
     "dynamic lifecycle bits lack an immutable attestation snapshot (TOCTOU open)",
     "A06 LabFileWatermark does not forward lifecycle bits",
     "remote public from_binding Pair default is offset from one-CAS/request timeout records",
-    "exact capability authentication and process/fault evidence are unverified"
+    "exact capability authentication and process/fault evidence are unverified",
+    "competing unaccepted A05-v1 branch requires owner reconciliation before overlap or evidence use"
   ],
   "interface_requests": [
     "G1-R4C-ICR-A03-SAFETY-ADMISSION-CHECKPOINT-V1",
@@ -474,20 +544,24 @@ canonical handoff schema intentionally carries only `head_commit`.
     "A04 finalization/readback; A05 signer/checkpoint evidence; A06 fault/replay; A07 campaign",
     "G1-S02/G1-S03/G1 exit; G2F; light-client and release readiness evidence"
   ],
-  "next_action": "Obtain six owner decisions and exact interface digests, provision Rust 1.95.0/X230, rerun focused mutants and clean-clone process/fault replay, then revalidate candidate/control refs before the next run."
+  "next_action": "Reconcile the format/test-only follow-up onto the canonical A05 branch, obtain fresh X230 CI on its exact head, resolve six owner decisions and exact interface digests, run clean-clone tag-3/process-fault/replay, then revalidate candidate/control/Plan refs."
 }
 ```
 
 Source-envelope metadata (including the final `head_tree`) is kept adjacent
 to this exact handoff object in the manifest and gap ledger. The implementation
-commit is `dd3699c7a3bfe5438369e9d74ad0ca2817faab44` with tree
-`4d345c48ae49462be8a7e216d65e461408a74d31`; the publication metadata/head
-commit and tree are populated in the Draft PR/final handoff after the final
-revalidation. The frozen pre-change package head was
+commit is the local pre-publication snapshot `dd3699c7a3bfe5438369e9d74ad0ca2817faab44`
+with tree `4d345c48ae49462be8a7e216d65e461408a74d31`; it is not presented as a
+remote GitHub ancestor. The last authenticated remote publication is
+`d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c` with tree
+`c0eecdaca70750c94fd33f9be57e794d7aa17dea`; the final follow-up remote
+head/tree is recorded in the Draft PR and final revalidation envelope after
+the reconciled exact-head update. The frozen pre-change package head was
 `202d4b9ab719fe596b00b189acb1e2372bcb99fa` with tree
 `8209d4a8089b9260e754ec3519af4c2deb23b48f`.
 
-Terminal outcome: **`BLOCKED_UPSTREAM`**. A03 and A04 must accept and publish
+Terminal outcome: **`BLOCKED_UPSTREAM`** (with `RESUME_REQUIRED` for the
+environment/clean-clone rerun and competing-branch reconciliation). A03 and A04 must accept and publish
 the exact version/digest for their capabilities, and A00 must designate the
 independent anchor/custody authority. The toolchain must then be provisioned
 and all R4-M07/M08/M09/M10/M14/M15/M16 rows rerun from a clean clone. Until

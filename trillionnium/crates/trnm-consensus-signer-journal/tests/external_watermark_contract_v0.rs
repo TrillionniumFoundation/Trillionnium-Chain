@@ -174,13 +174,7 @@ impl SemanticRegister {
 
     fn genesis_facts() -> ExternalWatermarkSemanticFactsV0 {
         ExternalWatermarkSemanticFactsV0::new(
-            0,
-            0,
-            1,
-            [0x71; 32],
-            [0x72; 32],
-            [0x73; 32],
-            [0x74; 32],
+            0, 0, 1, [0x71; 32], [0x72; 32], [0x73; 32], [0x74; 32],
         )
         .expect("valid semantic genesis facts")
     }
@@ -603,7 +597,7 @@ fn semantic_journal_dispatch_binds_exact_intent_facts_and_never_opaque() {
         facts[0].request_nonce,
         trnm_consensus_signer_journal::signer_journal_lifecycle_nonce_v0(
             intent.epoch().get(),
-            intent.view().get(),
+            intent.preimage().context().view().get(),
             intent.authorizing_safety_revision(),
             intent.fingerprint().into_bytes(),
             intent.signing_root().into_bytes(),
@@ -614,7 +608,7 @@ fn semantic_journal_dispatch_binds_exact_intent_facts_and_never_opaque() {
         facts[1].request_nonce,
         trnm_consensus_signer_journal::signer_journal_lifecycle_nonce_v0(
             intent.epoch().get(),
-            intent.view().get(),
+            intent.preimage().context().view().get(),
             intent.authorizing_safety_revision(),
             intent.fingerprint().into_bytes(),
             intent.signing_root().into_bytes(),
@@ -706,11 +700,8 @@ fn contradictory_pair_attestation_is_rejected_before_journal_creation() {
     let (profile, _) = fixture();
     let temp = TempDir::new().unwrap();
     let database = db_path(&temp);
-    let result = SqliteSignerJournalV0::initialize_new(
-        &database,
-        profile,
-        ContradictorySemanticRegister,
-    );
+    let result =
+        SqliteSignerJournalV0::initialize_new(&database, profile, ContradictorySemanticRegister);
     assert!(matches!(
         result,
         Err(SignerJournalErrorV0::InvalidProfile(
@@ -726,12 +717,8 @@ fn tampered_semantic_predecessor_fails_before_next_producer_call() {
     let temp = TempDir::new().unwrap();
     let database = db_path(&temp);
     let register = SemanticRegister::default();
-    let mut journal = SqliteSignerJournalV0::initialize_new(
-        &database,
-        profile.clone(),
-        register,
-    )
-    .expect("initialize semantic signer journal");
+    let mut journal = SqliteSignerJournalV0::initialize_new(&database, profile.clone(), register)
+        .expect("initialize semantic signer journal");
     let mut producer = ReplayBoundProducer::new(key);
     journal
         .sign_exact_v0(&vote(&profile, 7, 3, 0x73), &mut producer)
@@ -767,11 +754,10 @@ fn tampered_semantic_predecessor_fails_before_next_producer_call() {
     assert!(matches!(
         error,
         SignerJournalErrorV0::PersistedRepresentationMalformed(_)
-            |
-        SignerJournalErrorV0::ExternalWatermark {
-            source: ExternalWatermarkErrorV0::InvalidPersistedState,
-            ..
-        }
+            | SignerJournalErrorV0::ExternalWatermark {
+                source: ExternalWatermarkErrorV0::InvalidPersistedState,
+                ..
+            }
     ));
     assert_eq!(producer.calls(), calls);
     drop(connection);

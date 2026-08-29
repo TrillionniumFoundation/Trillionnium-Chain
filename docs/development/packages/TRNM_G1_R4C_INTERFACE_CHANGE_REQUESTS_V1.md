@@ -25,9 +25,9 @@ observed_main_tree = ffbad926850a12159336126390271abffc1d99a6
 embedded_snapshot_main = e73d1a930991f0e308bf72854b334b6191c7fcc3 # historical control snapshot
 release_truth_path = RELEASE_READINESS.md
 release_truth_sha256 = 1659693f0662f8a19b526c602379fe9fa54626afefe33d35917983f699f2dfa4
-live_scan_at_utc = 2026-08-29T13:10:49Z
-live_scan_result = authenticated connector scan found PR22 at 4936caeba16656dd196e95a60dc7455d9cca43d3/tree 056e32bf9a62fbd8e55e0439a36fa5a224138014 and no pre-existing remote A05-owned G1-R4C branch or path overlap (local package branch unpushed); re-scan is required immediately before push and after Draft PR creation
-# Complete candidate/control/main and PR7/8/9/20/21/22 commit/tree tuples for
+live_scan_at_utc = 2026-08-29T14:42:33Z
+live_scan_result = authenticated connector and refs scan interval 2026-08-29T14:42:19Z–14:42:33Z: candidate 6e0189e351015ef3230f217ca7ff86149baedcf0/tree efea864cb2fbc4835a59a089b3dbab8934e71231; main b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9/tree ffbad926850a12159336126390271abffc1d99a6; canonical control 8bfd73f0cf1b785a29ae212f13212e51fe34231e/tree cfedd363147934f50d1352dae31b7d87d79aa8d9; live Plan 92449b8e101642f39d644d863db7bb60dea488f7/tree cf8f1ab4f5065cb0551a30ec0e036cd44cb31766; PR24 A05 d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c/tree c0eecdaca70750c94fd33f9be57e794d7aa17dea; PR22 A16 f97b3b8e74439d6e80d13c4c8048578a631eb12b/tree e65de294899497d8fd2731d11315886d5f731583; PR23 A01 a0f873eda03054adeed676b2e24bc5b483607600/tree f840339cf90ca64a13b8abdd5816307860be81c4; PR25 A00 unaccepted control candidate 7d9a17abb727950f278235dce817df29e97fea19/tree 00a9de9534860abdccc2aeb31307810897330c4c; PR27 A08 f951acc44092b6c7304fa05491f09810c2ec5182/tree 864d82afad6507c2566f66ae7e7f56e2de40440a (base still names stale control 77b6b7b; semantic BASE_DRIFT for A08); PR28 A06 e88cda9401eb6219fe1425bebb1ef6b54b4c429d/tree 9c4249ce36061fcbd6eb8e522accd29127f7c01c; PR26 A08 is closed at c8f4483067878040cdbea7d9810a218cd7550b4d/tree ff32ccc7d15b137d6a9263aacb84757770e7c2ce; listed PRs are open Draft, unmerged and mergeable with no reviews/threads at scan time; competing A05-v1 branch 523c0d9b6343df7cbd139a36bc04aaf60a7221c0/tree c81ae16636c50d8177261f3755a27534362daabe has no PR and is excluded as an unaccepted overlapping candidate with non-reproducible gate/model claims; PR24 is the only canonical A05 PR; no forbidden or other-owner overlap; candidate base remains exact and unchanged
+# Complete candidate/control/main and PR7/8/9/20/21/22/23/24/25/27/28 commit/tree tuples for
 # this scan are recorded in TRNM_G1_R4C_MANIFEST_V1.toml; abbreviated
 # references are not used as source truth.
 control_docs_ref = refs/heads/docs/agent-fleet-plan-v1-20260829 (assessed alias; see observed_control_docs_*)
@@ -83,6 +83,14 @@ supersedes that inventory snapshot. This is recorded as control-plane drift and
 revalidated for A05 scope; it is not silently substituted for the assessed
 authority snapshot. Any prior control-tip/registry/inventory evidence is
 invalidated and must be regenerated from the observed tip.
+
+Post-publication PR24 CI is retained as a failed observation, not an accepted
+interface result: workflow `33255373387` / job `99108021372` checked out the
+synthetic merge commit `50759930f0c11f1607f1460d203491b79a2486fe` for PR head
+`d54f8f7bebd4b5c8f97ad0ad3204036bbf02030c`, passed the pinned Rust 1.95.0 and
+offline-cache checks on p4-x230, then failed its format gate at step 5 on the
+three signer-journal files. Downstream checks were skipped. The failure does
+not alter the six pending owner decisions or promote any authority.
 
 ## ICR-A03-001 — Safety admission bound to the checkpoint
 
@@ -403,8 +411,8 @@ intent mutants; SIGKILL, response loss, I/O, restart and replay.
 ### Rationale and safety analysis
 
 The current wire is data-only and the service's external-authority path is
-timeout-only with a fixture key. Its production constructor is explicitly
-per-reservation (the first request occupies sequence zero with request facts),
+timeout-only with a fixture key. Its configured service constructor (not a
+production authority) is explicitly per-reservation (the first request occupies sequence zero with request facts),
 while the public `from_binding` constructor defaults to pair mode; this
 sequence/genesis mismatch is an unresolved owner contract. A05 cannot make it
 a production signer or invent custody semantics locally.

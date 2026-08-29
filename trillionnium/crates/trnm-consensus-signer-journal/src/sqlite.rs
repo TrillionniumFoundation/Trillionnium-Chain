@@ -1937,11 +1937,7 @@ fn load_external_head_v0<W: ExternalMonotonicWatermarkV0>(
             return Ok(None);
         };
         validate_loaded_external_semantic_facts_v0(
-            connection,
-            scope,
-            journal_id,
-            watermark,
-            facts,
+            connection, scope, journal_id, watermark, facts,
         )?;
         Ok(Some(watermark))
     } else {
@@ -1957,7 +1953,8 @@ fn read_validated_semantic_intent_v0(
     let event = read_event(connection, watermark.sequence())
         .map_err(|_| ExternalWatermarkErrorV0::InvalidPersistedState)?
         .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
-    if event.sequence != watermark.sequence() || event.chain_checksum != watermark.chain_checksum() {
+    if event.sequence != watermark.sequence() || event.chain_checksum != watermark.chain_checksum()
+    {
         return Err(ExternalWatermarkErrorV0::InvalidPersistedState);
     }
     let intent = validate_semantic_event_v0(connection, journal_id, &event)?;
