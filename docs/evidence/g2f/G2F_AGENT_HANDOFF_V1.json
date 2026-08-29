@@ -130,7 +130,8 @@
     "GitHub Actions run 33253796703 job 99103921432 (published head ff4af4c22): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history merge-tree replay of the same script passed, and the external check is not claimed green",
     "GitHub Actions run 33254083018 job 99104666102 (published head d33d8a81): FAILED at Verify canonical development plan; recovery/process steps passed, local full-history replay passed, and the external check is not claimed green",
     "GitHub Actions run 33254312493 job 99105261590 (published head 4936caeba): FAILED at Verify canonical development plan; recovery/process and cargo-input steps passed, and the external check is not claimed green",
-    "Remote publication tree audit on intermediate head 4a5dc5425/tree 639eab17: FAILED; truncated trnm-poco-node/src/lib.rs blob detected (2062 unintended deletions). Corrected by 348eced7/tree 5174b658; final 22-path blob audit PASS."
+    "Remote publication tree audit on intermediate head 4a5dc5425/tree 639eab17: FAILED; truncated trnm-poco-node/src/lib.rs blob detected (2062 unintended deletions). Corrected by 348eced7/tree 5174b658; final 22-path blob audit PASS.",
+    "GitHub Actions run 33258116666 (#79), job 99115254974, on published head 3d0c5539: queued at handoff capture; skipped auxiliary runs are not package evidence."
   ],
   "retained_mutants": [
     "G2F-M-ATOMIC-TORN",
