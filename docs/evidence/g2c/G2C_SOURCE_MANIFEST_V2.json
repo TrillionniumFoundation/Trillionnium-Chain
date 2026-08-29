@@ -1,0 +1,21 @@
+{
+  "schema": "trnm-g2c-source-manifest-v2",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_pr": 34,
+  "base_ref": "feature/chain-a13-g2d-execution-mvcc-fee-v2-20260830",
+  "base_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
+  "base_tree": "b430c899be1b5c17815bdaf01a957f5565e105e9",
+  "a11_pr": 32,
+  "a12_pr": 33,
+  "a13_pr": 34,
+  "a13_implementation_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
+  "replayed_from": "0159d58ad453d23c169a508cfa90136f9185fa3c",
+  "profiles_globally_enabled": false,
+  "profile_fallback_allowed": false,
+  "artifact_availability_authority": false,
+  "order_finality_authority": false,
+  "settlement_authority": false,
+  "g2c_exit": false,
+  "production_candidate": false
+}
