@@ -1,0 +1,85 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A14",
+  "package_id": "G2C_VERIFY_CHALLENGE_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
+  "base_tree": "b430c899be1b5c17815bdaf01a957f5565e105e9",
+  "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
+  "changed_paths": [
+    ".github/workflows/trnm-g2c-replay-v2.yml",
+    "conformance/verification/deterministic-reexecution-cases-v1.json",
+    "conformance/verification/outbox-recovery-v2-cases.json",
+    "docs/development/packages/TRNM_G2C_INTERFACE_REQUESTS_V1.md",
+    "docs/development/packages/TRNM_G2C_VERIFY_CHALLENGE_IMPLEMENTATION_V2.md",
+    "docs/development/packages/TRNM_G2C_VERIFY_CHALLENGE_V1.md",
+    "docs/evidence/g2c/A14_EXACT_HEAD_TRIGGER_V1.md",
+    "docs/evidence/g2c/G2C_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/verification/DETERMINISTIC_REEXECUTION_V1.md",
+    "scripts/ci/check_deterministic_reexecution_model_v1.sh",
+    "scripts/ci/check_g2c_profile_registry_v1.sh",
+    "scripts/ci/check_g2c_replay_v2.sh",
+    "scripts/ci/check_g2c_source_binding_v2.sh",
+    "tools/verification-model/deterministic_reexecution.py",
+    "tools/verification-model/outbox_recovery_v2.py",
+    "trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs",
+    "trillionnium/crates/trnm-poco-verify-challenge-v1/tests/profile_registry_v1.rs"
+  ],
+  "gaps_closed": [
+    "A14-REPLAY-EXACT-A13",
+    "A14-CLOSED-SEVEN-PROFILE-REGISTRY",
+    "A14-EVIDENCE-BEFORE-BACKEND",
+    "A14-NO-FALLBACK",
+    "A14-CHALLENGE-ONE-APPEAL-LIFECYCLE",
+    "A14-OUTBOX-RESPONSE-LOSS-RETRY",
+    "A14-EXACT-IDEMPOTENT-ACK",
+    "A14-ORDERED-OUTBOX-COMMITMENT"
+  ],
+  "gaps_open": [
+    "A14-ARTIFACT-DA-AUTHORITY",
+    "A14-TASK-LEASE-PROFILE-AUTHORITY",
+    "A14-CANONICAL-JMT-ORDER-PROOF",
+    "A14-SETTLEMENT-MOVEMENT",
+    "A14-PRODUCTION-APPEAL-GOVERNANCE"
+  ],
+  "commands": [
+    "python3 tools/verification-model/outbox_recovery_v2.py --self-test: PASS in isolated local Python runtime",
+    "bash scripts/ci/check_g2c_replay_v2.sh: exact-head replay required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "unknown-event",
+    "retry-too-early",
+    "duplicate-appeal",
+    "premature-finalize",
+    "late-challenge",
+    "event-id-conflict",
+    "delivery-token-mismatch",
+    "sequence-gap-or-reuse",
+    "profile-fallback",
+    "subjective-objective-escalation"
+  ],
+  "evidence_scope": "crate|model|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "accepted ArtifactEvidence and AvailabilityCertificate authority absent",
+    "accepted Task/Lease/profile policy carrier absent",
+    "canonical application JMT and Order proof absent",
+    "settlement and governance authority remain external"
+  ],
+  "interface_requests": [
+    "G2C-ICR-A11-ARTIFACT-AVAILABILITY-V1",
+    "G2C-ICR-A12-TASK-LEASE-PROFILE-V1",
+    "G2C-ICR-A13-EXECUTION-RECEIPT-V1",
+    "G2C-ICR-A16-ORDER-JMT-PROOF-V1",
+    "G2C-ICR-A15-CHALLENGE-ECONOMICS-V1",
+    "G2C-ICR-A17-APPEAL-GOVERNANCE-V1"
+  ],
+  "downstream_invalidation": [
+    "A15 settlement replay",
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only."
+}
