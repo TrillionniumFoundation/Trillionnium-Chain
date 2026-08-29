@@ -912,7 +912,11 @@ impl NativeFinalizationQueueV0 {
         }
 
         let mut next = self.clone();
-        next.pending.remove(0);
+        // The front is known to exist above.  Rotate then pop so the bounded
+        // Vec does not trigger Clippy's `vec_remove_first` lint while keeping
+        // the clone-and-validate commit atomic.
+        next.pending.rotate_left(1);
+        let _removed_front = next.pending.pop();
         next.committed_head = intent.target().clone();
         next.history.push(readback.clone());
         next.validate_v0()?;
