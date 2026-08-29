@@ -5,11 +5,11 @@ root=$(git rev-parse --show-toplevel); cd "$root"
 bash scripts/ci/check_g2e_source_binding_v2.sh
 bash scripts/ci/check_settlement_conservation_model_v1.sh
 
-cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --offline \
+cargo test --manifest-path trillionnium/Cargo.toml --locked --offline \
   -p trnm-poco-consumption-settlement-v1 --all-targets
-cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
+cargo clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
   -p trnm-poco-consumption-settlement-v1 --all-targets -- -D warnings
-cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
 out=$(PYTHONDONTWRITEBYTECODE=1 python3 -B simulations/economics/settlement_risk_v2.py --self-test)
 python3 - "$out" <<'PY'
