@@ -1,0 +1,25 @@
+{
+  "schema":"trnm-cev1-registry-mutants-v1",
+  "status":"candidate-non-normative",
+  "checker":"scripts/ci/check_cev1_registry_spec_v1.py",
+  "purpose":"retained fail-closed registry/catalog drift mutants",
+  "cases":[
+    {"id":"object-missing","target":"object-registry-v1.json","mutation":"remove_last_object","expected":"object registry/catalog count mismatch"},
+    {"id":"object-extra","target":"object-registry-v1.json","mutation":"append_unknown_object","expected":"object registry/catalog count mismatch"},
+    {"id":"object-duplicate","target":"object-registry-v1.json","mutation":"duplicate_first_object_id","expected":"duplicate object registry id"},
+    {"id":"object-reordered","target":"object-registry-v1.json","mutation":"swap_first_two_objects","expected":"object registry/catalog id mismatch"},
+    {"id":"object-plane-drift","target":"object-registry-v1.json","mutation":"change_first_plane","expected":"object registry/catalog plane mismatch"},
+    {"id":"catalog-plane-drift","target":"object-catalog-v1.toml","mutation":"change_first_plane","expected":"catalog plane drift"},
+    {"id":"global-activation","target":"object-registry-v1.json","mutation":"enable_global_activation","expected":"global_activation must remain false"},
+    {"id":"duplicate-json-key","target":"object-registry-v1.json","mutation":"duplicate_schema_key","expected":"duplicate JSON key"},
+    {"id":"operation-enabled","target":"operation-registry-v1.json","mutation":"enable_first_operation","expected":"enabled must remain false"},
+    {"id":"operation-name-drift","target":"operation-registry-v1.json","mutation":"change_operation_name","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-body-type-drift","target":"operation-registry-v1.json","mutation":"change_operation_body_type","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-plane-drift","target":"operation-registry-v1.json","mutation":"change_operation_plane","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-authority-drift","target":"operation-registry-v1.json","mutation":"change_operation_authority","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-nonce-drift","target":"operation-registry-v1.json","mutation":"change_operation_nonce","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-status-drift","target":"operation-registry-v1.json","mutation":"change_operation_status","expected":"canonical operation mapping mismatch"},
+    {"id":"operation-kind29-enabled","target":"operation-registry-v1.json","mutation":"enable_kind29_operation","expected":"enabled must remain false"},
+    {"id":"profile-fallback","target":"verification-profile-registry-v1.json","mutation":"enable_fallback","expected":"fallback must remain false"}
+  ]
+}
