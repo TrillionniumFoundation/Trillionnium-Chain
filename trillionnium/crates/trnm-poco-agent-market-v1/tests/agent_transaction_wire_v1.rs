@@ -2,12 +2,11 @@ use borsh::BorshSerialize;
 use ed25519_dalek::{Signer, SigningKey};
 use sha2::{Digest, Sha256};
 use trnm_poco_agent_market_v1::{
-    AgentIdV1, AgentKeyIdV1, AgentTransactionV1, AssetLimitV1, CapabilityGrantBodyV1,
-    Hash32V1, KernelAuthorizationStatementV1, KernelAuthorizationV1, KernelCommandV1,
-    OperationScopeV1, ProtocolContextV1, ResourceScopeV1,
-    AGENT_TRANSACTION_GLOBAL_STATE_AUTHORITY_V1, AGENT_TRANSACTION_PRODUCTION_ACTIVATION_V1,
-    AGENT_TRANSACTION_WIRE_ACCEPTED_V1, CONTROLLER_SENTINEL_KEY_V1, PROTOCOL_VERSION_V1,
-    SCHEMA_VERSION_V1,
+    AgentIdV1, AgentKeyIdV1, AgentTransactionV1, AssetLimitV1, CapabilityGrantBodyV1, Hash32V1,
+    KernelAuthorizationStatementV1, KernelAuthorizationV1, KernelCommandV1, OperationScopeV1,
+    ProtocolContextV1, ResourceScopeV1, AGENT_TRANSACTION_GLOBAL_STATE_AUTHORITY_V1,
+    AGENT_TRANSACTION_PRODUCTION_ACTIVATION_V1, AGENT_TRANSACTION_WIRE_ACCEPTED_V1,
+    CONTROLLER_SENTINEL_KEY_V1, PROTOCOL_VERSION_V1, SCHEMA_VERSION_V1,
 };
 
 const HEADER_BYTES: usize = 294;
@@ -32,7 +31,11 @@ fn key(value: u8) -> AgentKeyIdV1 {
 fn digest_value<T: BorshSerialize>(domain: &str, value: &T) -> [u8; 32] {
     let encoded = borsh::to_vec(value).expect("canonical Borsh");
     let mut hasher = Sha256::new();
-    hasher.update(u32::try_from(domain.len()).expect("domain length").to_le_bytes());
+    hasher.update(
+        u32::try_from(domain.len())
+            .expect("domain length")
+            .to_le_bytes(),
+    );
     hasher.update(domain.as_bytes());
     hasher.update(encoded);
     hasher.finalize().into()
