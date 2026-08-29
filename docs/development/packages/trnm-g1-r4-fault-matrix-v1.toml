@@ -1,0 +1,146 @@
+schema_version = 1
+package_id = "G1_R4_FAULT_MATRIX_V1"
+status = "blocked-upstream"
+repository = "TrillionniumFoundation/Trillionnium-Chain"
+gate = "G1"
+owner_agent = "A06"
+base_ref = "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829"
+base_commit = "6e0189e351015ef3230f217ca7ff86149baedcf0"
+base_tree = "efea864cb2fbc4835a59a089b3dbab8934e71231"
+source_branch = "feature/chain-g1-r4-fault-matrix-v1-20260829"
+planned_branch = "feature/chain-g1-r4-fault-matrix-v2-20260829"
+plan_path = "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+assessed_plan_commit = "8198fea0307eb368df34ff77ffc272a6b0e655ec"
+assessed_plan_tree = "a1be71bba1b54c428493d186fafb656d081b31a9"
+latest_live_plan_commit = "92449b8e101642f39d644d863db7bb60dea488f7"
+latest_live_plan_tree = "cf8f1ab4f5065cb0551a30ec0e036cd44cb31766"
+parent_package = "TRNM_G1_R4_FULL_CLOSURE_DOCUMENTATION_V1.md"
+production_candidate = false
+production_consensus_activation = false
+g1_r4_exit = false
+
+[scope]
+scope = "process"
+authority = "candidate"
+classification = "candidate-non-normative"
+data_scope = "synthetic-local-fault-replay"
+owned_surface = "tests/harness/docs/evidence"
+production_capability_constructors = false
+truth_flags_changed = false
+
+[capabilities]
+independent_process_writer = true
+independent_process_replay = true
+real_sigkill_observed = true
+response_loss_before_commit = true
+response_loss_after_commit = true
+disk_full_injection = true
+io_failure_injection = true
+fsync_failure_injection = true
+directory_fsync_failure_injection = true
+torn_write_retained = true
+database_rollback_rejected = true
+namespace_rollback_rejected = true
+application_safety_skew_rejected = true
+multi_block_ancestor_order = true
+losing_fork_retained = true
+semantic_per_reservation_forwarding = true
+semantic_signer_journal_pair_forwarding = false
+physical_disk_full = false
+physical_power_loss = false
+whole_node_checkpoint_cas = false
+production_signer = false
+
+[fault_matrix]
+case_count = 13
+positive_count = 4
+negative_count = 9
+cases = [
+  "R4-M01-sigkill-before-publish",
+  "R4-M02-response-loss-before-commit",
+  "R4-M03-response-loss-after-commit",
+  "R4-M04-disk-full-before-publish",
+  "R4-M05-io-error-before-publish",
+  "R4-M06-fsync-error-before-publish",
+  "R4-M07-directory-fsync-error-after-publish",
+  "R4-M08-torn-write-before-publish",
+  "R4-M09-database-rollback",
+  "R4-M10-namespace-rollback",
+  "R4-M11-application-safety-skew",
+  "R4-M12-multi-block-ancestor-order",
+  "R4-M13-losing-fork-retention",
+]
+retained_mutants = [
+  "disk_full",
+  "io_error",
+  "fsync_error",
+  "directory_fsync_error",
+  "torn_write",
+  "database_rollback",
+  "namespace_rollback",
+  "application_safety_skew",
+  "losing_fork",
+]
+
+[files]
+matrix = "scripts/faults/g1_r4_fault_matrix_v1.py"
+independent_replay = "scripts/faults/g1_r4_independent_replay_v1.py"
+process_gate = "scripts/ci/check_g1_r4_process_matrix_v1.sh"
+lab_wrapper = "trillionnium/crates/trnm-poco-lab-validator/src/crypto.rs"
+evidence_contract = "docs/evidence/g1-r4/fault-matrix-contract-v1.json"
+evidence_readme = "docs/evidence/g1-r4/README.md"
+package_document = "docs/development/packages/TRNM_G1_R4_FAULT_MATRIX_V1.md"
+
+[interface_requests]
+request_id = "G1-R4C-ICR-A06-LAB-WATERMARK-LIFECYCLE-MODE-V1"
+requester_agent = "A05"
+owner_agent = "A06"
+current_interface = "LabFileWatermark as ExternalMonotonicWatermarkV0"
+current_interface_digest = "a2f5a43911f8809c21d1e13141d52d2dae3a73f4f7ab8671f0d3b729f143099c"
+proposed_interface = "forward semantic_per_reservation_v0 and semantic_signer_journal_pair_v0 exactly; reject unknown lifecycle mode"
+semantic_per_reservation_status = "implemented-source-unexecuted"
+semantic_signer_journal_pair_status = "blocked-until-A05-additive-trait"
+reviewer = "A00 and A06 independent reviewer (required)"
+accepted_interface_version = "none"
+accepted_interface_digest = "none"
+
+[verification]
+python_compile = "passed"
+process_matrix = "passed-candidate-only"
+independent_replay = "passed-candidate-only"
+rustfmt = "passed-targeted-crypto-rs"
+output_parent_permissions = "passed-new-components-0700-existing-unchanged"
+dirty_worktree_negative = "passed-rejected-before-execution"
+clean_clone_replay_requirement = "required-before-acceptance"
+cargo_fmt_workspace = "not-run-toolchain-cache"
+targeted_crypto_tests = "passed-pinned-1.95.0-three-tests"
+cargo_tests = "package-suite-not-complete-long-running-runtime-tests"
+clippy = "not-run"
+authorized_clean_clone = "not-run"
+project_preflight = "passed-clean-tree"
+host = "Linux; single host; no network"
+
+[truth]
+production_candidate = false
+production_consensus_activation = false
+g1_r4_exit = false
+finality_verified = false
+native_application_finality_permit_integration = false
+native_application_recovery_integration = false
+process_kill_matrix_complete = false
+whole_node_anti_rollback = false
+
+[upstream_blockers]
+ids = [
+  "A02_CORE_ACK_ATOMIC_WITH_CORE_UNAVAILABLE",
+  "A03_ORDINARY_PROPOSAL_PERMIT_UNAVAILABLE",
+  "A04_APPLICATION_COMMIT_READBACK_UNAVAILABLE",
+  "A05_WHOLE_NODE_CHECKPOINT_CAS_UNAVAILABLE",
+  "A05_SEMANTIC_SIGNER_JOURNAL_PAIR_TRAIT_UNAVAILABLE",
+]
+
+[handoff]
+head_commit = "BOUND_IN_AGENT_HANDOFF"
+head_tree = "BOUND_IN_AGENT_HANDOFF"
+terminal_status = "BLOCKED_UPSTREAM"
+next_action = "Replay Cargo suites and add pair-bit forwarding after A05 additive trait is accepted; retain all mutants and rerun independent clean-clone evidence."
