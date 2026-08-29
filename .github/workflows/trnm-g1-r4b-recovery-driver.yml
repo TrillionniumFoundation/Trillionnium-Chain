@@ -84,13 +84,16 @@ jobs:
           base_head=$R4A_HEAD
           allowed_file=.github/workflows/trnm-payload-replay-recovery-v1.yml
           allowed_file=.github/workflows/trnm-replay-to-core-coordinator-v1.yml
+          allowed_file=scripts/check_cargo_offline_policy.sh
           allowed_file=scripts/check_ci_runner_policy.sh
+          allowed_file=scripts/ci/check_cargo_offline_ready.sh
           allowed_file=trillionnium/crates/trnm-consensus-core/src/core.rs
           allowed_file=docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
           EOF
           python3 ../driver/scripts/ci/apply_g1_r4b_recovery.py .
           git diff --check
           bash scripts/project-preflight.sh --dev
+          bash scripts/check_cargo_offline_policy_test.sh
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
@@ -132,16 +135,6 @@ jobs:
             -p trnm-poco-node \
             --features lab-validator-runtime-test-support
 
-      - name: Provision exact missing locked crates and refresh stamp
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          python3 ../driver/scripts/ci/provision_exact_locked_crates.py \
-            --manifest trillionnium/Cargo.toml \
-            --lock trillionnium/Cargo.lock \
-            --toolchain 1.95.0 \
-            --stamp "$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
-
       - name: Verify Cargo offline cache readiness
         working-directory: trillionnium-chain
         run: |
@@ -158,7 +151,9 @@ jobs:
           git add \
             .github/workflows/trnm-payload-replay-recovery-v1.yml \
             .github/workflows/trnm-replay-to-core-coordinator-v1.yml \
+            scripts/check_cargo_offline_policy.sh \
             scripts/check_ci_runner_policy.sh \
+            scripts/ci/check_cargo_offline_ready.sh \
             trillionnium/crates/trnm-consensus-core/src/core.rs \
             docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md
           bash scripts/project-preflight.sh --staged
