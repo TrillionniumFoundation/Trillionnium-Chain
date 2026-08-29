@@ -781,7 +781,7 @@ impl NativeFinalizationQueueV0 {
         intent: NativeFinalizationIntentV0,
     ) -> NativeBoundaryResultV0<NativeFinalizationEnqueueOutcomeV0> {
         self.validate_v0()?;
-        if self.pending.iter().any(|entry| entry == &intent)
+        if self.pending.contains(&intent)
             || self.history.iter().any(|entry| entry.intent() == &intent)
         {
             return Ok(NativeFinalizationEnqueueOutcomeV0::AlreadyQueued);
@@ -798,11 +798,10 @@ impl NativeFinalizationQueueV0 {
                 "finalization_queue.identity",
             ));
         }
-        let expected_parent = self
-            .pending
-            .last()
-            .map(|entry| entry.target().clone())
-            .unwrap_or_else(|| self.committed_head.clone());
+        let expected_parent = match self.pending.last() {
+            Some(entry) => entry.target().clone(),
+            None => self.committed_head.clone(),
+        };
         if intent.parent() != &expected_parent {
             return Err(error(
                 NativeBoundaryErrorCodeV0::NonContiguous,
@@ -933,7 +932,7 @@ impl NativeFinalizationQueueV0 {
                 readback.clone(),
             ));
         }
-        if self.pending.iter().any(|entry| entry == intent) {
+        if self.pending.contains(intent) {
             return Ok(NativeFinalizationRetryDispositionV0::Pending);
         }
         if self.forks.iter().any(|entry| entry.intent() == intent) {
@@ -979,9 +978,7 @@ impl NativeFinalizationQueueV0 {
         let mut removed = 0usize;
         let mut next = self.clone();
         next.forks.retain(|fork| {
-            let referenced = live_reference_digests
-                .iter()
-                .any(|digest| *digest == fork.reference_digest());
+            let referenced = live_reference_digests.contains(&fork.reference_digest());
             let protected_by_child = pending_or_fork_child(fork, &pending, &forks);
             if !referenced && !protected_by_child {
                 removed = removed.saturating_add(1);
@@ -1104,7 +1101,7 @@ impl NativeFinalizationQueueV0 {
     }
 
     fn contains_exact_intent_v0(&self, intent: &NativeFinalizationIntentV0) -> bool {
-        self.pending.iter().any(|entry| entry == intent)
+        self.pending.contains(intent)
             || self.history.iter().any(|entry| entry.intent() == intent)
             || self.forks.iter().any(|entry| entry.intent() == intent)
     }
@@ -1157,12 +1154,13 @@ impl NativeFinalizationQueueV0 {
             return false;
         }
         // A body or JMT plan digest may legitimately repeat for two distinct
-        // blocks (for example, an empty deterministic block).  A target
-        // collision is nevertheless always fatal, and reusing the complete
-        // source tuple across targets is also a replay/collision.
+        // blocks (for example, an empty deterministic block).  A target or
+        // proof collision is nevertheless always fatal: proof identifiers are
+        // unique finality evidence handles.  Reusing the complete source
+        // tuple across targets is also a replay/collision.
         first.target().block_id() == second.target().block_id()
-            || (first.proof_id() == second.proof_id()
-                && first.overlay_checksum() == second.overlay_checksum()
+            || first.proof_id() == second.proof_id()
+            || (first.overlay_checksum() == second.overlay_checksum()
                 && first.body_digest() == second.body_digest()
                 && first.jmt_plan_digest() == second.jmt_plan_digest())
     }

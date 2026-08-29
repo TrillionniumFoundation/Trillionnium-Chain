@@ -431,6 +431,31 @@ fn finalization_queue_rejects_conflicting_duplicates_and_preserves_exact_replay(
 }
 
 #[test]
+fn finalization_queue_rejects_reused_proof_across_distinct_targets() {
+    let h0 = finalization_head(0, 151);
+    let h1 = finalization_head(1, 161);
+    let h2 = finalization_head(2, 171);
+    let first = finalization_intent(h0.clone(), h1.clone(), 181);
+    let reused_proof = NativeFinalizationIntentV0::new(
+        h1,
+        h2,
+        first.proof_id(),
+        hash(191),
+        hash(192),
+        hash(193),
+    )
+    .unwrap();
+    let mut queue = NativeFinalizationQueueV0::new(h0, 2).unwrap();
+    queue.enqueue(first).unwrap();
+    let before = queue.clone();
+    assert_eq!(
+        queue.enqueue(reused_proof).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+    assert_eq!(queue, before);
+}
+
+#[test]
 fn finalization_queue_retains_referenced_fork_and_reclaims_only_unreferenced_evidence() {
     let h0 = finalization_head(0, 31);
     let canonical_h1 = finalization_head(1, 41);
