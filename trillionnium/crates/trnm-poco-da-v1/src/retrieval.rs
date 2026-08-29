@@ -472,6 +472,17 @@ pub(crate) fn prepare_full_range_response_v1(
     responder: &DaMemberV1,
 ) -> DaResultV1<RetrievalResponseIntentV1> {
     request.verify(requester_authority)?;
+    responder.validate()?;
+    if !certificate
+        .attestations()
+        .iter()
+        .any(|attestation| attestation.body().attestor_id() == responder.definition_hash())
+    {
+        return Err(error(
+            DaErrorCodeV1::InvalidCommittee,
+            "retrieval responder is not a member of the active certificate",
+        ));
+    }
     if request.body.context != *certificate.envelope().context()
         || request.body.certificate_id != certificate.certificate_id()
         || request.body.batch_id != batch.batch_id()
@@ -764,6 +775,16 @@ fn verify_response_v1(
                 "retrieval responder is not an active committee member",
             )
         })?;
+    if !certificate
+        .attestations()
+        .iter()
+        .any(|attestation| attestation.body().attestor_id() == Hash32V1::new(responder_hash))
+    {
+        return Err(error(
+            DaErrorCodeV1::InvalidCommittee,
+            "retrieval responder is not a member of the active certificate",
+        ));
+    }
     if response.body.schema_version != 1
         || response.body.context != request.body.context
         || response.body.request_id != request.request_id

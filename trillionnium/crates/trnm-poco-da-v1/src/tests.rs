@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use borsh::{from_slice, to_vec};
 use ed25519_dalek::{Signer, SigningKey};
 use rusqlite::{params, Connection};
 use tempfile::TempDir;
@@ -655,6 +656,52 @@ fn signed_full_range_retrieval_rejects_certificate_author_key_outside_policy() {
 }
 
 #[test]
+fn signed_full_range_retrieval_rejects_active_committee_nonmember_responder() {
+    let fixture = Fixture::new(4, 16_384);
+    let (batch, author) = fixture.multi_chunk_batch(1, 35);
+    let certificate = fixture.certificate(&batch, &author);
+    let source = fixture.store(0);
+    source
+        .admit_certificate(&certificate)
+        .expect("certificate admission");
+    let (requester_key, requester_authority) = retrieval_requester();
+    let request =
+        signed_full_range_request(&fixture, &certificate, &requester_key, &requester_authority);
+
+    // The fourth committee member is active but intentionally absent from
+    // this three-attestor certificate.  A committee membership check alone is
+    // insufficient: the response must be attributable to a certified
+    // provider as well.
+    let non_certified_member = fixture
+        .committee
+        .members()
+        .iter()
+        .find(|member| {
+            !certificate
+                .attestations()
+                .iter()
+                .any(|attestation| attestation.body().attestor_id() == member.definition_hash())
+        })
+        .expect("fixture has a non-certified active member");
+    assert_eq!(
+        prepare_full_range_response_v1(
+            fixture.scope_id,
+            hash(220),
+            hash(221),
+            &request,
+            &requester_authority,
+            105,
+            &batch,
+            &certificate,
+            non_certified_member,
+        )
+        .expect_err("non-certified responder must be rejected")
+        .code(),
+        DaErrorCodeV1::InvalidCommittee
+    );
+}
+
+#[test]
 fn typed_namespace_and_batch_derivation_are_deterministic() {
     let fixture = Fixture::new(4, 16_384);
     let (left, _) = fixture.batch(1, 5);
@@ -1144,6 +1191,19 @@ fn under_quorum_and_signed_equivocation_are_distinct() {
     let evidence = AttestorEquivocationEvidenceV1::new(&fixture.committee, left, right)
         .expect("objective signed conflict evidence");
     assert_ne!(evidence.evidence_id().as_bytes(), &[0; 32]);
+
+    let encoded = to_vec(&evidence).expect("evidence encoding");
+    let mut tampered = encoded.clone();
+    *tampered.last_mut().expect("evidence ID bytes") ^= 1;
+    let tampered: AttestorEquivocationEvidenceV1 =
+        from_slice(&tampered).expect("tampered evidence decodes");
+    assert_eq!(
+        tampered
+            .verify(&fixture.committee)
+            .expect_err("tampered evidence ID must not verify")
+            .code(),
+        DaErrorCodeV1::InvalidWithholdingEvidence
+    );
 }
 
 #[test]
