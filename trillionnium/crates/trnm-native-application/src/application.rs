@@ -561,11 +561,9 @@ impl NativeFinalizationIntentV0 {
             parent,
             target,
             proof_id: proof_id.require_nonzero("finalization.proof_id")?,
-            overlay_checksum: overlay_checksum
-                .require_nonzero("finalization.overlay_checksum")?,
+            overlay_checksum: overlay_checksum.require_nonzero("finalization.overlay_checksum")?,
             body_digest: body_digest.require_nonzero("finalization.body_digest")?,
-            jmt_plan_digest: jmt_plan_digest
-                .require_nonzero("finalization.jmt_plan_digest")?,
+            jmt_plan_digest: jmt_plan_digest.require_nonzero("finalization.jmt_plan_digest")?,
         })
     }
 
@@ -724,10 +722,7 @@ pub struct NativeFinalizationQueueV0 {
 }
 
 impl NativeFinalizationQueueV0 {
-    pub fn new(
-        committed_head: ApplicationHeadV0,
-        capacity: usize,
-    ) -> NativeBoundaryResultV0<Self> {
+    pub fn new(committed_head: ApplicationHeadV0, capacity: usize) -> NativeBoundaryResultV0<Self> {
         if capacity == 0 {
             return Err(error(
                 NativeBoundaryErrorCodeV0::ZeroValue,
@@ -966,17 +961,18 @@ impl NativeFinalizationQueueV0 {
         live_reference_digests: &[Hash32V0],
     ) -> NativeBoundaryResultV0<usize> {
         self.validate_v0()?;
-        let pending_or_fork_child = |fork: &NativeFinalizationForkV0,
-                                     pending: &[NativeFinalizationIntentV0],
-                                     forks: &[NativeFinalizationForkV0]| {
-            pending
-                .iter()
-                .any(|entry| entry.parent() == fork.intent().target())
-                || forks.iter().any(|other| {
-                    other.intent() != fork.intent()
-                        && other.intent().parent() == fork.intent().target()
-                })
-        };
+        let pending_or_fork_child =
+            |fork: &NativeFinalizationForkV0,
+             pending: &[NativeFinalizationIntentV0],
+             forks: &[NativeFinalizationForkV0]| {
+                pending
+                    .iter()
+                    .any(|entry| entry.parent() == fork.intent().target())
+                    || forks.iter().any(|other| {
+                        other.intent() != fork.intent()
+                            && other.intent().parent() == fork.intent().target()
+                    })
+            };
         let pending = self.pending.clone();
         let forks = self.forks.clone();
         let mut removed = 0usize;
@@ -1138,12 +1134,14 @@ impl NativeFinalizationQueueV0 {
 
     fn known_head_v0(&self, head: &ApplicationHeadV0) -> bool {
         &self.committed_head == head
-            || self.history.iter().any(|entry| {
-                entry.committed_head() == head || entry.intent().parent() == head
-            })
-            || self.pending.iter().any(|entry| {
-                entry.target() == head || entry.parent() == head
-            })
+            || self
+                .history
+                .iter()
+                .any(|entry| entry.committed_head() == head || entry.intent().parent() == head)
+            || self
+                .pending
+                .iter()
+                .any(|entry| entry.target() == head || entry.parent() == head)
             || self
                 .forks
                 .iter()
