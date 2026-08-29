@@ -98,7 +98,6 @@ EXPECTED_OBJECTS: tuple[tuple[str, str], ...] = (
     ("GlobalExecutionBindingV1", "order-coordination-settlement"),
 )
 EXPECTED_OBJECT_IDS = tuple(item[0] for item in EXPECTED_OBJECTS)
-EXPECTED_OBJECT_PLANES = dict(EXPECTED_OBJECTS)
 
 REGISTRY_FILES = (
     "operation-registry-v1.json",
@@ -312,7 +311,7 @@ def check_catalog(catalog: dict[str, Any], root: Path) -> list[dict[str, Any]]:
         if exact_bool(item["activation"], f"{item_label}.activation") is not False:
             fail(f"{item_label}.activation must remain false")
         projection.append(item)
-    if tuple(seen) and len(seen) != len(EXPECTED_OBJECTS):
+    if len(seen) != len(EXPECTED_OBJECTS):
         fail("catalog object identifiers are not unique")
     return projection
 
