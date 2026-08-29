@@ -452,7 +452,7 @@ impl ExternalWatermarkAuthority {
                         "authority mode marker is missing",
                     ));
                 }
-                write_mode_marker(&semantic_mode_path, requested)?;
+                write_mode_marker(&semantic_mode_path, requested, &directory)?;
             }
         }
         let mut authority = Self {
@@ -1789,6 +1789,12 @@ impl ExternalMonotonicWatermarkV0 for UnixWatermarkClient {
     fn semantic_per_reservation_v0(&self) -> bool {
         self.semantic_binding.is_some_and(|binding| {
             binding.lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::PerReservation
+        })
+    }
+
+    fn semantic_signer_journal_pair_v0(&self) -> bool {
+        self.semantic_binding.is_some_and(|binding| {
+            binding.lifecycle_mode == ExternalWatermarkSemanticLifecycleModeV1::SignerJournalPair
         })
     }
 
@@ -3238,6 +3244,7 @@ fn decode_mode_marker(bytes: &[u8]) -> Result<ModeMarkerV1, ExternalWatermarkAut
 fn write_mode_marker(
     path: &Path,
     binding: Option<ExternalWatermarkSemanticBindingV1>,
+    directory: &File,
 ) -> Result<(), ExternalWatermarkAuthorityError> {
     let (semantic, lifecycle_mode, scope, journal_id, capability) = match binding {
         Some(binding) => (
@@ -3280,6 +3287,11 @@ fn write_mode_marker(
         file.write_all(&bytes)?;
         file.sync_all()?;
         fs::rename(&temporary, path)?;
+        // The marker selects the immutable semantic/opaque namespace.  Sync
+        // the parent directory after the atomic rename so a crash cannot
+        // lose the name while retaining semantic sidecars and permit a
+        // subsequent opaque downgrade.
+        directory.sync_data()?;
         Ok::<(), io::Error>(())
     })();
     if let Err(source) = result {

@@ -26,7 +26,8 @@ use crate::{
     },
     hash::hash_domain,
     schema::validate_canonical_schema,
-    ExternalMonotonicWatermarkV0, HandoffSignatureProducerV1, HandoffSignatureRequestV1,
+    ExternalMonotonicWatermarkV0, HandoffSignatureProducerV1,
+    HandoffSignatureRequestV1,
     HandoffSignerJournalConflictV1, HandoffSignerJournalErrorV1, HandoffSignerJournalProfileV1,
     SignatureProducerV0, SignatureRequestV0, SignerWatermarkV0, StrictOldSetHandoffAdmissionV1,
 };
@@ -39,6 +40,8 @@ const EVENT_DOMAIN_V1: &str = "trnm.consensus-signer-journal.unified-event.v1";
 const CHAIN_DOMAIN_V1: &str = "trnm.consensus-signer-journal.unified-chain.v1";
 const HEAD_DOMAIN_V1: &str = "trnm.consensus-signer-journal.unified-head.v1";
 const FENCE_DOMAIN_V1: &str = "trnm.consensus-signer-journal.terminal-fence.v1";
+const UNSUPPORTED_SEMANTIC_WATERMARK_V1: &str =
+    "schema1 handoff journal requires an opaque external watermark; semantic lifecycle is unsupported";
 
 const CLASS_CONSENSUS: u8 = 0;
 const CLASS_HANDOFF: u8 = 1;
@@ -392,6 +395,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         external_watermark: W,
     ) -> Result<Self, HandoffSignerJournalErrorV1> {
         ensure_supported_platform_v1()?;
+        reject_semantic_watermark_v1(&external_watermark)?;
         let database_path = absolute_database_path(database_path.as_ref())?;
         match fs::symlink_metadata(&database_path) {
             Ok(_) => return Err(HandoffSignerJournalErrorV1::AlreadyExists),
@@ -453,6 +457,7 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         external_watermark: W,
     ) -> Result<Self, HandoffSignerJournalErrorV1> {
         ensure_supported_platform_v1()?;
+        reject_semantic_watermark_v1(&external_watermark)?;
         let database_path = absolute_database_path(database_path.as_ref())?;
         match inspect_signer_journal_schema_read_only_v1(&database_path)? {
             SignerJournalSchemaKindV1::LegacyV0ReadOnly => {
@@ -1018,6 +1023,26 @@ impl<W: ExternalMonotonicWatermarkV0> SqliteHandoffSignerJournalV1<W> {
         }
         Ok(())
     }
+}
+
+/// Schema1 currently uses the legacy opaque watermark calls for its unified
+/// consensus/handoff event chain.  Refusing semantic authorities at the
+/// constructor boundary prevents a semantic adapter from creating a local
+/// database and only failing later when the first opaque CAS is attempted.
+/// A future schema1 semantic implementation must define and attest its own
+/// handoff lifecycle before this guard is relaxed.
+fn reject_semantic_watermark_v1(
+    external: &dyn ExternalMonotonicWatermarkV0,
+) -> Result<(), HandoffSignerJournalErrorV1> {
+    if external.semantic_mode_v0()
+        || external.semantic_per_reservation_v0()
+        || external.semantic_signer_journal_pair_v0()
+    {
+        return Err(HandoffSignerJournalErrorV1::InvalidProfile(
+            UNSUPPORTED_SEMANTIC_WATERMARK_V1,
+        ));
+    }
+    Ok(())
 }
 
 fn prepare_consensus_intent_v1(
@@ -3532,6 +3557,7 @@ mod tests {
     };
 
     use super::*;
+    use crate::ExternalWatermarkErrorV0;
 
     fn audit_profile_v1() -> HandoffSignerJournalProfileV1 {
         let parameters = ConsensusParametersV0::reference_shadow_v0();
@@ -3579,6 +3605,50 @@ mod tests {
             32 * 1024 * 1024,
         )
         .expect("audit profile")
+    }
+
+    #[derive(Debug, Default)]
+    struct SemanticWatermarkForTest;
+
+    impl ExternalMonotonicWatermarkV0 for SemanticWatermarkForTest {
+        fn load(
+            &mut self,
+            _scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            _expected: Option<SignerWatermarkV0>,
+            _target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+    }
+
+    #[test]
+    fn semantic_watermark_is_rejected_before_schema1_file_creation() {
+        let temporary = TempDir::new().expect("temporary directory");
+        fs::set_permissions(temporary.path(), fs::Permissions::from_mode(0o700))
+            .expect("private directory");
+        let path = temporary.path().join("semantic-rejected.sqlite3");
+        let result = SqliteHandoffSignerJournalV1::create_new(
+            &path,
+            audit_profile_v1(),
+            SemanticWatermarkForTest,
+        );
+        assert!(matches!(
+            result,
+            Err(HandoffSignerJournalErrorV1::InvalidProfile(
+                UNSUPPORTED_SEMANTIC_WATERMARK_V1
+            ))
+        ));
+        assert!(!path.exists());
     }
 
     #[test]
