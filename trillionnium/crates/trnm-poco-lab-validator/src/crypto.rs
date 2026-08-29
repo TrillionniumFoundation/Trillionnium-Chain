@@ -387,6 +387,20 @@ impl ExternalMonotonicWatermarkV0 for LabFileWatermark {
             .is_some_and(|external| external.semantic_mode_v0())
     }
 
+    /// Preserve the wrapped authority's lifecycle declaration exactly.
+    ///
+    /// The signer-journal semantic adapter must distinguish one CAS per
+    /// reservation from the two-record signer-journal-pair protocol.  The
+    /// laboratory file wrapper is only a persistence envelope; it must not
+    /// infer or widen that declaration.  A missing delegate therefore stays
+    /// `false` (unknown), which is the fail-closed default required by the
+    /// semantic sidecar.
+    fn semantic_per_reservation_v0(&self) -> bool {
+        self.external
+            .as_ref()
+            .is_some_and(|external| external.semantic_per_reservation_v0())
+    }
+
     fn load_semantic_v0(
         &mut self,
         scope: [u8; 32],
@@ -674,6 +688,112 @@ mod tests {
         }
     }
 
+    #[derive(Debug, Clone)]
+    struct MemorySemanticWatermark {
+        state: Arc<
+            Mutex<(
+                Option<SignerWatermarkV0>,
+                Option<ExternalWatermarkSemanticFactsV0>,
+            )>,
+        >,
+        per_reservation: bool,
+    }
+
+    impl MemorySemanticWatermark {
+        fn new(per_reservation: bool) -> Self {
+            Self {
+                state: Arc::new(Mutex::new((None, None))),
+                per_reservation,
+            }
+        }
+
+        fn facts(sequence: u64) -> ExternalWatermarkSemanticFactsV0 {
+            ExternalWatermarkSemanticFactsV0::new(
+                0,
+                sequence,
+                sequence.saturating_add(1),
+                [0x31; 32],
+                [0x32; 32],
+                [0x33; 32],
+                [0x34; 32],
+            )
+            .expect("semantic fixture facts are nonzero")
+        }
+    }
+
+    impl ExternalMonotonicWatermarkV0 for MemorySemanticWatermark {
+        fn load(
+            &mut self,
+            _scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            _expected: Option<SignerWatermarkV0>,
+            _target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            // A semantic authority must never be reachable through the
+            // legacy opaque CAS methods.
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            self.per_reservation
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            _scope: [u8; 32],
+            _journal_id: [u8; 32],
+        ) -> Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            let state = self.state.lock().expect("semantic authority mutex");
+            Ok(state.0.zip(state.1))
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            let mut state = self.state.lock().expect("semantic authority mutex");
+            if state.0 != expected || target.sequence() != 0 {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            state.0 = Some(target);
+            state.1 = Some(Self::facts(0));
+            Ok(())
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            let mut state = self.state.lock().expect("semantic authority mutex");
+            if state.0 != expected
+                || target.sequence()
+                    != expected
+                        .map(|value| value.sequence().saturating_add(1))
+                        .unwrap_or_default()
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            state.0 = Some(target);
+            state.1 = Some(facts);
+            Ok(())
+        }
+    }
+
     fn private_temp() -> TempDir {
         let temporary = TempDir::new().expect("temporary directory");
         fs::set_permissions(temporary.path(), fs::Permissions::from_mode(0o700))
@@ -684,6 +804,100 @@ mod tests {
     fn mark(sequence: u64, checksum: u8) -> SignerWatermarkV0 {
         SignerWatermarkV0::from_persisted_parts([0x11; 32], [0x22; 32], sequence, [checksum; 32])
             .expect("valid fixture watermark")
+    }
+
+    #[test]
+    fn semantic_per_reservation_is_forwarded_without_legacy_fallback() {
+        let temporary = private_temp();
+        let path = temporary.path().join("semantic-watermark.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open semantic watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        let external = MemorySemanticWatermark::new(true);
+        store
+            .install_external_monotonic_watermark_v0(Box::new(external))
+            .expect("bind semantic external authority");
+
+        assert!(store.semantic_mode_v0());
+        assert!(store.semantic_per_reservation_v0());
+        assert_eq!(
+            store
+                .load_semantic_v0([0x11; 32], [0x22; 32])
+                .unwrap()
+                .expect("semantic genesis head")
+                .0,
+            mark(0, 0x31)
+        );
+        assert_eq!(
+            store.compare_and_advance(Some(mark(0, 0x31)), mark(1, 0x32)),
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState),
+            "semantic delegates must not be reachable through opaque CAS"
+        );
+    }
+
+    #[test]
+    fn semantic_unknown_lifecycle_stays_false_and_restart_missing_head_fails_closed() {
+        let temporary = private_temp();
+        let path = temporary.path().join("semantic-unknown.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open semantic watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        store
+            .install_external_monotonic_watermark_v0(Box::new(MemorySemanticWatermark::new(false)))
+            .expect("bind unknown semantic authority for negative test");
+        assert!(store.semantic_mode_v0());
+        assert!(!store.semantic_per_reservation_v0());
+        store
+            .compare_and_advance_semantic_v0(
+                Some(mark(0, 0x31)),
+                mark(1, 0x32),
+                MemorySemanticWatermark::facts(1),
+            )
+            .expect("advance the unknown-mode fixture before restart");
+        drop(store);
+
+        // A fresh external process with no authenticated semantic head cannot
+        // be adopted after local history exists.  The wrapper poisons itself
+        // instead of silently falling back to opaque load/compare methods.
+        let mut reopened = LabFileWatermark::open(&path).expect("reopen local watermark");
+        assert_eq!(
+            reopened.install_external_monotonic_watermark_v0(Box::new(
+                MemorySemanticWatermark::new(false),
+            )),
+            Err(ExternalWatermarkErrorV0::CompareFailed)
+        );
+        assert_eq!(
+            reopened.load([0x11; 32]),
+            Err(ExternalWatermarkErrorV0::Unavailable),
+            "failed semantic restart binding must remain poisoned"
+        );
+    }
+
+    #[test]
+    fn semantic_retry_with_different_facts_is_rejected_and_poisoned() {
+        let temporary = private_temp();
+        let path = temporary.path().join("semantic-facts.bin");
+        let mut store = LabFileWatermark::open(&path).expect("open semantic watermark");
+        store.compare_and_advance(None, mark(0, 0x31)).unwrap();
+        store
+            .install_external_monotonic_watermark_v0(Box::new(MemorySemanticWatermark::new(true)))
+            .expect("bind semantic external authority");
+        let target = mark(1, 0x32);
+        let facts = MemorySemanticWatermark::facts(1);
+        store
+            .compare_and_advance_semantic_v0(Some(mark(0, 0x31)), target, facts)
+            .expect("advance exact semantic facts");
+
+        let mut altered = facts;
+        altered.request_fingerprint[0] ^= 1;
+        assert_eq!(
+            store.compare_and_advance_semantic_v0(Some(mark(0, 0x31)), target, altered),
+            Err(ExternalWatermarkErrorV0::CompareFailed),
+            "same target with altered intent facts must not replay"
+        );
+        assert_eq!(
+            store.load([0x11; 32]),
+            Err(ExternalWatermarkErrorV0::Unavailable),
+            "semantic fact mismatch must poison the local owner"
+        );
     }
 
     #[test]
