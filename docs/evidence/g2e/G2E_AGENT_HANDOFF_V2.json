@@ -3,25 +3,86 @@
   "agent_id": "A15",
   "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "43df2b2887c084832e1e9fbf13fc33f96f2ee486",
-  "base_tree": "c9d97cc58f4fb315bb8a86b3ec791b676bc1bc4a",
+  "base_commit": "1f66963784ebec21a7898f893e47cfc3190f59e9",
+  "base_tree": "96565090550aebd626e86b3196f4678fa595a00f",
   "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
-  "changed_paths": ["docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md","docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json","docs/evidence/g2e/G2E_AGENT_HANDOFF_V2.json","docs/protocol/poco-ai-native-v1/settlement/SETTLEMENT_INTENT_RECEIPT_V1.md","scripts/ci/check_g2e_replay_v2.sh","scripts/ci/check_g2e_source_binding_v2.sh","scripts/ci/check_settlement_conservation_model_v1.sh","simulations/economics/settlement-cases-v1.json","simulations/economics/settlement-risk-v2-cases.json","simulations/economics/settlement_model.py","simulations/economics/settlement_risk_v2.py","trillionnium/crates/trnm-poco-consumption-settlement-v1/**"],
-  "gaps_closed": ["A15-REPLAY-EXACT-A14","A15-MULTI-ASSET-CONSERVATION","A15-EXACTLY-ONCE-RESPONSE-LOSS","A15-FAILURE-ATOMICITY","A15-BENEFICIAL-OWNER-SYBIL-AGGREGATION","A15-ROLE-COLLUSION-FENCES","A15-WASH-FUNDING-FENCE","A15-BOND-MINIMUMS","A15-ORDERING-INVARIANT-RISK-ROOT","A15-DURABLE-RUST-PROCESS-IMPLEMENTATION-CANDIDATE","A15-FROZEN-WORKFLOW-POLICY-COMPLIANCE"],
-  "gaps_open": ["A15-ACCEPTED-CROSS-PLANE-PROOFS","A15-CANONICAL-JMT-WHOLE-NODE-CAS","A15-PRODUCTION-ASSET-CUSTODY","A15-GOVERNANCE-AND-POCO-ELIGIBILITY","A15-MULTI-HOST-ECONOMIC-ATTACK-EVIDENCE"],
-  "commands": ["TRNM payload replay recovery v1 gate run 33278204666 on exact head 29a64716286a8caf7d26ca01a14882d66ae38dd4: completed/success","cargo test --locked --offline -p trnm-poco-consumption-settlement-v1 --all-targets: PASS 11/11","cargo clippy --locked --offline -p trnm-poco-consumption-settlement-v1 --all-targets -- -D warnings: PASS","cargo fmt --all -- --check: PASS","bash scripts/ci/check_g2e_replay_v2.sh: PASS on exact head"],
+  "changed_paths": [
+    "docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md",
+    "docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json",
+    "docs/evidence/g2e/G2E_AGENT_HANDOFF_V2.json",
+    "docs/protocol/poco-ai-native-v1/settlement/SETTLEMENT_INTENT_RECEIPT_V1.md",
+    "scripts/ci/check_g2e_replay_v2.sh",
+    "scripts/ci/check_g2e_source_binding_v2.sh",
+    "scripts/ci/check_settlement_conservation_model_v1.sh",
+    "simulations/economics/settlement-cases-v1.json",
+    "simulations/economics/settlement-risk-v2-cases.json",
+    "simulations/economics/settlement_model.py",
+    "simulations/economics/settlement_risk_v2.py",
+    "trillionnium/crates/trnm-poco-consumption-settlement-v1/**"
+  ],
+  "gaps_closed": [
+    "A15-REPLAY-EXACT-A14",
+    "A15-AGENT-TRANSACTION-WIRE-CANDIDATE-INPUT",
+    "A15-MULTI-ASSET-CONSERVATION",
+    "A15-EXACTLY-ONCE-RESPONSE-LOSS",
+    "A15-FAILURE-ATOMICITY",
+    "A15-BENEFICIAL-OWNER-SYBIL-AGGREGATION",
+    "A15-ROLE-COLLUSION-FENCES",
+    "A15-WASH-FUNDING-FENCE",
+    "A15-BOND-MINIMUMS",
+    "A15-ORDERING-INVARIANT-RISK-ROOT",
+    "A15-DURABLE-RUST-PROCESS-IMPLEMENTATION-CANDIDATE",
+    "A15-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
+  ],
+  "gaps_open": [
+    "A15-ACCEPTED-CROSS-PLANE-PROOFS",
+    "A15-CANONICAL-JMT-WHOLE-NODE-CAS",
+    "A15-PRODUCTION-ASSET-CUSTODY",
+    "A15-GOVERNANCE-AND-POCO-ELIGIBILITY",
+    "A15-MULTI-HOST-ECONOMIC-ATTACK-EVIDENCE"
+  ],
+  "commands": [
+    "TRNM payload replay recovery v1 gate run 33278204666 on exact durable implementation head 29a64716286a8caf7d26ca01a14882d66ae38dd4: completed/success",
+    "cargo test --locked --offline -p trnm-poco-consumption-settlement-v1 --all-targets: PASS 11/11",
+    "cargo clippy --locked --offline -p trnm-poco-consumption-settlement-v1 --all-targets -- -D warnings: PASS",
+    "cargo fmt --all -- --check: PASS",
+    "bash scripts/ci/check_g2e_replay_v2.sh: exact-head replay required after synchronized A14/A13/A12 inputs"
+  ],
   "failed_tests": [],
-  "retained_mutants": ["payer-provider-related","provider-verifier-related","challenger-conflict","provider-bond-under-collateralized","challenge-bond-under-collateralized","provider-concentration","beneficial-owner-sybil-concentration","duplicate-task","unknown-actor","wrong-role","wash-funding-source","asset-conservation","nonce-conflict","stale-price","journal-tail-tamper","receipt-chain-replay","bilateral-signature-mismatch","rollup-assignment-conflict"],
+  "retained_mutants": [
+    "payer-provider-related","provider-verifier-related","challenger-conflict",
+    "provider-bond-under-collateralized","challenge-bond-under-collateralized",
+    "provider-concentration","beneficial-owner-sybil-concentration","duplicate-task",
+    "unknown-actor","wrong-role","wash-funding-source","asset-conservation","nonce-conflict",
+    "stale-price","journal-tail-tamper","receipt-chain-replay","bilateral-signature-mismatch",
+    "rollup-assignment-conflict"
+  ],
   "evidence_scope": "crate|model|simulation|fixture",
   "authority": "candidate",
   "classification": "candidate-non-normative",
-  "known_gaps": ["accepted Agent/DA/Order/Execution/Result proof carriers absent","canonical application JMT and whole-node CAS absent","production asset registry/custody and governance absent","multi-host economic attack evidence absent","independent acceptance of the durable Rust candidate absent"],
-  "interface_requests": ["A15-ICR-A12-TASK-ESCROW-V1","A15-ICR-A13-FEE-FACTS-V1","A15-ICR-A14-RESULT-MATURITY-V1","A15-ICR-A16-JMT-SETTLEMENT-PROOF-V1","A15-ICR-A17-GOVERNANCE-ELIGIBILITY-V1"],
-  "downstream_invalidation": ["A16 whole-node/light-client replay","A17 benchmark/security/activation evidence"],
-  "next_action": "Rebind A16 to this exact durable-settlement evidence head, rerun exact-head G2F, and obtain independent review. All settlement, custody, JMT, PoCO and governance authority flags remain false.",
+  "known_gaps": [
+    "A12-A14 cross-plane carriers are tested candidates but not independently accepted interfaces",
+    "canonical application JMT and whole-node CAS are absent",
+    "production asset registry/custody and governance are absent",
+    "multi-host economic attack evidence is absent",
+    "independent acceptance of the durable Rust candidate is absent"
+  ],
+  "interface_requests": [
+    "A15-ICR-A12-TASK-ESCROW-V1",
+    "A15-ICR-A13-FEE-FACTS-V1",
+    "A15-ICR-A14-RESULT-MATURITY-V1",
+    "A15-ICR-A16-JMT-SETTLEMENT-PROOF-V1",
+    "A15-ICR-A17-GOVERNANCE-ELIGIBILITY-V1"
+  ],
+  "downstream_invalidation": [
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Run exact-head G2E on synchronized upstream candidates, then rebind A16. All settlement, custody, JMT, PoCO and governance authority flags remain false until independent acceptance.",
   "implementation_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "implementation_parent": "0ef40883e160f646158b6e483a69e2371fda989e",
-  "base_sync_parent": "43df2b2887c084832e1e9fbf13fc33f96f2ee486",
+  "durable_rust_evidence_head": "29a64716286a8caf7d26ca01a14882d66ae38dd4",
+  "base_sync_parent": "1f66963784ebec21a7898f893e47cfc3190f59e9",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }

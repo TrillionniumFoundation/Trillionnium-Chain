@@ -4,13 +4,15 @@
   "repository": "TrillionniumFoundation/Trillionnium-Chain",
   "base_pr": 35,
   "base_ref": "feature/chain-a14-g2c-verify-challenge-v2-20260830",
-  "base_commit": "43df2b2887c084832e1e9fbf13fc33f96f2ee486",
-  "base_tree": "c9d97cc58f4fb315bb8a86b3ec791b676bc1bc4a",
+  "base_commit": "1f66963784ebec21a7898f893e47cfc3190f59e9",
+  "base_tree": "96565090550aebd626e86b3196f4678fa595a00f",
   "a12_pr": 33,
   "a13_pr": 34,
   "a14_pr": 35,
   "a14_implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
-  "a14_base_sync_commit": "43df2b2887c084832e1e9fbf13fc33f96f2ee486",
+  "a14_base_sync_commit": "1f66963784ebec21a7898f893e47cfc3190f59e9",
+  "agent_transaction_wire_candidate_input": true,
+  "agent_transaction_wire_accepted": false,
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d",
   "replayed_from": "b009ac7f58fa3088136469598f9d2b6298a940d4",
@@ -24,5 +26,6 @@
   "governance_activation": false,
   "poco_weight_eligible": false,
   "g2e_exit": false,
-  "production_candidate": false
+  "production_candidate": false,
+  "production_consensus_activation": false
 }
