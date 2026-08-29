@@ -1,0 +1,14 @@
+{
+  "schema":"trnm-independent-cev1-registry-negative-cases-v1",
+  "cases":[
+    "duplicate-json-key",
+    "missing-operation-slot",
+    "enabled-operation",
+    "enabled-profile",
+    "fallback-enabled",
+    "duplicate-domain",
+    "bad-domain",
+    "zero-limit"
+  ],
+  "expected":"all rejected"
+}
