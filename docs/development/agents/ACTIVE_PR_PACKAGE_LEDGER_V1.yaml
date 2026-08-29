@@ -1,6 +1,6 @@
 schema: trnm-active-pr-package-ledger-v1
 repository: TrillionniumFoundation/Trillionnium-Chain
-observed_at_utc: '2026-08-29T15:16:30Z'
+observed_at_utc: '2026-08-29T15:40:33Z'
 assessed_plan:
   ref: docs/chain-poco-bft-mainline-20260825
   commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
@@ -12,8 +12,8 @@ latest_candidate:
   tree: efea864cb2fbc4835a59a089b3dbab8934e71231
 control_package_evidence:
   source_head_ref: docs/chain-agent-fleet-plan-v1-20260829
-  source_head_commit: e6987fec6c7d0bc4306d62bec6fca5256f2e1b13
-  source_head_tree: 77dbb3890b5bafe17869d07906bdc7c3b3c411d4
+  source_head_commit: 07c35f14a1d7bbbfa2d4c5491763765e25b02469
+  source_head_tree: b7596feeef4bc36ab7d6ae93889c2cc2e522cc17
   historical_workflow_runs_not_evidence:
   - name: TRNM payload replay recovery v1 gate
     run_id: 33249877031
@@ -32,17 +32,17 @@ control_package_evidence:
     status: queued
   workflow_runs:
   - name: TRNM payload replay recovery v1 gate
-    run_id: 33258962358
-    job_id: 99117498809
+    run_id: 33260028728
+    job_id: 99120261387
     conclusion: success
-    head_commit: e6987fec6c7d0bc4306d62bec6fca5256f2e1b13
-    head_tree: 77dbb3890b5bafe17869d07906bdc7c3b3c411d4
+    head_commit: 07c35f14a1d7bbbfa2d4c5491763765e25b02469
+    head_tree: b7596feeef4bc36ab7d6ae93889c2cc2e522cc17
   - name: TRNM replay-to-Core coordinator v1 gate
-    run_id: 33258962357
-    job_id: 99117498838
+    run_id: 33260028590
+    job_id: 99120260980
     conclusion: success
-    head_commit: e6987fec6c7d0bc4306d62bec6fca5256f2e1b13
-    head_tree: 77dbb3890b5bafe17869d07906bdc7c3b3c411d4
+    head_commit: 07c35f14a1d7bbbfa2d4c5491763765e25b02469
+    head_tree: b7596feeef4bc36ab7d6ae93889c2cc2e522cc17
 ownership_resolutions:
 - surface: docs/development/CURRENT_SNAPSHOT_V1.*
   previous_writers:
@@ -207,30 +207,6 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
   next_action: A03 must accept the permit-bound application carrier; A05 and A06 interfaces/evidence remain required.
-- number: 12
-  title: '[A10/G2.0] Generate the complete W0-W7 operation trace inventory'
-  state: open
-  draft: true
-  mergeable: true
-  package_id: G20_W0_W7_TRACEABILITY_V1
-  owner: A10
-  owner_kind: fleet-agent
-  base:
-    ref: agent/a09-g15-independent-conformance-v1-20260829
-    pr_bound_commit: 42584132125700b87c08ba7786f6ad4896afb7bf
-    pr_bound_tree: 2826db21c8cb5025f4ed9c2afec56e69399e5f10
-    live_commit: 42584132125700b87c08ba7786f6ad4896afb7bf
-    live_tree: 2826db21c8cb5025f4ed9c2afec56e69399e5f10
-    status: exact
-  head:
-    ref: agent/a10-g20-w0-w7-traceability-v1-20260829
-    commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
-    tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
-  classification: upstream-invalidated-candidate
-  merge_queue_eligible: false
-  terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
-  next_action: Regenerate all 30 rows after the exact A09 PR30 replay and independent review.
 - number: 13
   title: '[A11/G2A] Add DA-FULLREP-V1 assurance model and fault corpus'
   state: open
@@ -253,7 +229,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay DA assurance after accepted G1.5/G2.0 inputs and preserve explicit no-DAS truth.
 - number: 14
   title: '[A12/G2B] Add capability, nonce and task-market assurance model'
@@ -277,7 +253,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay lifecycle model after accepted AgentTransaction and predecessor inputs.
 - number: 15
   title: '[A13/G2D] Add deterministic MVCC and fee serial-equivalence model'
@@ -301,7 +277,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay serial-equivalence evidence after accepted wire and state authority.
 - number: 16
   title: '[A14/G2C] Add deterministic re-execution and challenge assurance model'
@@ -325,7 +301,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay objective verification after canonical profiles and accepted predecessors.
 - number: 17
   title: '[A15/G2E] Add multi-asset settlement conservation and retry model'
@@ -349,7 +325,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay conservation evidence after canonical proof, JMT and whole-node authority.
 - number: 18
   title: '[A16/G2F] Add whole-node checkpoint, state-sync and independent light-client model'
@@ -373,7 +349,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay checkpoint/sync/light-client evidence after accepted G2 predecessors and real authority inputs.
 - number: 19
   title: '[A17/G3-G5] Add benchmark, security, operations and claim gates'
@@ -397,7 +373,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 30
+  invalidated_by_pr: 31
   next_action: Replay claim gates after accepted G0-G2F evidence; retain all activation and superiority claims false.
 - number: 20
   title: '[A07/G1-R5] Add gated 4/7-node native campaign contract'
@@ -617,15 +593,70 @@ open_pull_requests:
     status: exact
   head:
     ref: feature/chain-a09-g15-independent-conformance-v3-20260829
-    commit: 6bff24e6d06e77a12bfbe3a676e34ec848a8a3e2
-    tree: 2d2ba1605f2ac70882e8b21095da55f6eb608815
+    commit: 330a1b41e8730b343a51809377574d03596269f7
+    tree: e8fa115857d13049858bd9682a8f1802656e5fd3
   relation_to_latest_candidate:
     kind: direct-a08-child-candidate
   classification: blocked-upstream-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  next_action: Obtain independent protocol-authority review and then regenerate A10 on this exact A09 head; no normative or activation promotion.
+  next_action: Retain the exact remote v4 candidate for independent review; A10 PR31 is the replayed downstream candidate; no normative or activation promotion.
+- number: 31
+  title: '[A10/G2.0] Bind W0-W7 traceability to independent A09 replay'
+  state: open
+  draft: true
+  mergeable: false
+  package_id: G20_W0_W7_TRACEABILITY_V1
+  owner: A10
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-a09-g15-independent-conformance-v3-20260829
+    pr_bound_commit: 330a1b41e8730b343a51809377574d03596269f7
+    pr_bound_tree: e8fa115857d13049858bd9682a8f1802656e5fd3
+    live_commit: 330a1b41e8730b343a51809377574d03596269f7
+    live_tree: e8fa115857d13049858bd9682a8f1802656e5fd3
+    status: exact
+  head:
+    ref: feature/chain-a10-g20-traceability-v2-20260829
+    commit: 044224a3a6c9100cd64961ea34a28031bb78a636
+    tree: 02fb16fd12d2c6387495087e3eff578c2c44100a
+  relation_to_latest_candidate:
+    kind: exact-a09-child-candidate
+  classification: blocked-upstream-candidate
+  merge_queue_eligible: false
+  terminal_state: BLOCKED_UPSTREAM
+  source_evidence:
+    a09_evidence_id: g15-a09-de41ae077b167991a2873dadd243191d
+    a09_evidence_sha256: be2ad2433bf0976e38afe849d533283fdc8fee21cc5ce95cb4d4bb12f977b81c
+    retained_negative_cases: 54
+    evidence_id_control: 1
+  next_action: Obtain independent A10 review and exact-head CI; downstream A11/A12 replays may use this candidate as an explicit BLOCKED_UPSTREAM input only.
 terminal_pull_requests:
+- number: 12
+  title: '[A10/G2.0] Generate the complete W0-W7 operation trace inventory'
+  state: closed
+  draft: true
+  mergeable: true
+  package_id: G20_W0_W7_TRACEABILITY_V1
+  owner: A10
+  owner_kind: fleet-agent
+  base:
+    ref: agent/a09-g15-independent-conformance-v1-20260829
+    pr_bound_commit: 42584132125700b87c08ba7786f6ad4896afb7bf
+    pr_bound_tree: 2826db21c8cb5025f4ed9c2afec56e69399e5f10
+    live_commit: 42584132125700b87c08ba7786f6ad4896afb7bf
+    live_tree: 2826db21c8cb5025f4ed9c2afec56e69399e5f10
+    status: stale-closed
+  head:
+    ref: agent/a10-g20-w0-w7-traceability-v1-20260829
+    commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
+    tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
+  classification: superseded-without-merge
+  merge_queue_eligible: false
+  terminal_state: SUPERSEDED_WITHOUT_MERGE
+  closed_without_merge: true
+  superseded_by_pr: 31
+  next_action: Retain for audit only; use PR31 as the sole A10 candidate and do not feed this stale projection downstream.
 - number: 11
   title: '[A09/G1.5] Add independent registry parser and mutation corpus'
   state: closed
@@ -762,7 +793,6 @@ known_control_gaps:
   status: OPEN
   owner: A08
   downstream_invalidation:
-  - 12
   - 13
   - 14
   - 15
@@ -771,7 +801,8 @@ known_control_gaps:
   - 18
   - 19
   - 30
-  next_action: A08 PR29 and A09 PR30 are corrected candidate heads; obtain independent protocol review, then replay A10 and downstream packages in dependency order.
+  - 31
+  next_action: A08 PR29 and A09 PR30 are corrected candidate heads; A10 PR31 is replayed on the exact remote A09 tree. Obtain independent review, then replay A11/A12 and downstream packages in dependency order.
 - id: A05_V1_UNPUBLISHED_HEAD
   status: OPEN
   owner: A05
@@ -784,5 +815,5 @@ observation_source:
   agent_id: A00
   package_id: AGENT_CONTROL_PLANE_V1
   head_ref: docs/chain-agent-fleet-plan-v1-20260829
-  head_commit: e6987fec6c7d0bc4306d62bec6fca5256f2e1b13
-  head_tree: 77dbb3890b5bafe17869d07906bdc7c3b3c411d4
+  head_commit: 07c35f14a1d7bbbfa2d4c5491763765e25b02469
+  head_tree: b7596feeef4bc36ab7d6ae93889c2cc2e522cc17
