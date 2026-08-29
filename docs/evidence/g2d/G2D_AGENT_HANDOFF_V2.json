@@ -1,0 +1,76 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A13",
+  "package_id": "G2D_EXECUTION_MVCC_FEE_V1",
+  "status": "MODULE_CLOSED_CANDIDATE",
+  "base_commit": "a21285eeb90b2f1adf027cbed8039e37a05e1f6d",
+  "base_tree": "a3dbf4c7c7b9a5b06643b75ad951af73b893087b",
+  "head_commit": "71f68181f8afa52168bd49d2de7514deb2ddba5a",
+  "changed_paths": [
+    ".github/workflows/trnm-g2d-execution-mvcc-fee-v2.yml",
+    "conformance/execution/mvcc-fee-cases-v1.json",
+    "docs/development/packages/TRNM_G2D_EXECUTION_MVCC_FEE_V1.md",
+    "docs/development/packages/TRNM_G2D_INTERFACE_REQUESTS_V1.md",
+    "docs/evidence/g2d/A13_EXACT_HEAD_TRIGGER_V1.md",
+    "docs/evidence/g2d/G2D_SOURCE_MANIFEST_V2.json",
+    "docs/protocol/poco-ai-native-v1/execution/MVCC_FEE_V1.md",
+    "scripts/ci/check_g2d_source_binding_v2.sh",
+    "scripts/ci/check_mvcc_serial_equivalence_model_v1.sh",
+    "tools/mvcc-serial-model/model.py",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/Cargo.toml",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/deterministic_parallel_v1.rs",
+    "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/lib.rs"
+  ],
+  "gaps_closed": [
+    "A13-REPLAY-EXACT-A12",
+    "A13-REAL-BOUNDED-WORKER-POOL",
+    "A13-WORKER-COUNT-ROOT-INVARIANCE",
+    "A13-DETERMINISTIC-CONFLICT-REEXECUTION",
+    "A13-RESOURCE-FEE-CONSERVATION"
+  ],
+  "gaps_open": [
+    "A13-AGENT-TRANSACTION-WIRE",
+    "A13-PRODUCTION-RUNTIME",
+    "A13-CANONICAL-JMT-ORDER-PROOF",
+    "A13-SETTLEMENT-AUTHORITY",
+    "A13-WHOLE-NODE-RECOVERY"
+  ],
+  "commands": [
+    "prior identical Rust source blobs: cargo test/clippy/rustfmt PASS in isolated clean replay",
+    "bash scripts/ci/check_g2d_source_binding_v2.sh: exact-head replay required",
+    "bash scripts/ci/check_mvcc_serial_equivalence_model_v1.sh: exact-head replay required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "bad-worker-count",
+    "bad-schedule",
+    "arithmetic-overflow",
+    "undeclared-missing-object",
+    "worker-count-root-drift",
+    "reverted-write",
+    "out-of-resource-write",
+    "fee-conservation-drift"
+  ],
+  "evidence_scope": "crate|model|fixture",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "accepted AgentTransaction and access-set carrier absent",
+    "canonical application JMT and finalized Order proof absent",
+    "settlement movement remains A15-owned",
+    "whole-node process and rollback evidence absent"
+  ],
+  "interface_requests": [
+    "G2D-ICR-A10-A12-AGENT-TRANSACTION-V1",
+    "G2D-ICR-A16-APPLICATION-JMT-V1",
+    "G2D-ICR-G1-A16-ORDER-FINALITY-V1",
+    "G2D-ICR-A15-FEE-APPLICATION-V1"
+  ],
+  "downstream_invalidation": [
+    "A14 verification/challenge replay",
+    "A15 settlement replay",
+    "A16 whole-node/light-client replay",
+    "A17 benchmark/security/activation evidence"
+  ],
+  "next_action": "Exact-head trusted-runner replay and independent review; A14 may consume only the candidate receipt/data interface."
+}
