@@ -1,0 +1,5 @@
+{
+  "schema":"trnm-agent-market-model-cases-v1",
+  "positive":["capability-session","task-funded","bid-lease","provider-start","checkpoint","pause","migrate","successor-start","cancel","refund"],
+  "negative":["cross-lane-replay","scope-escalation","revoked-capability","duplicate-refund","duplicate-lease","migration-without-checkpoint","budget-overflow"]
+}

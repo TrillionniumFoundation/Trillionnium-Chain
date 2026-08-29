@@ -1,8 +1,9 @@
 //! Candidate-only PoCO-Agent + PoCO-Market local execution kernel.
 //!
-//! This crate is deliberately non-normative. It does not implement the global
-//! `AgentTransactionV1` wire, identity/key lifecycle, a state tree, Node
-//! integration, protocol activation, or production signing authority.
+//! This crate implements a bounded candidate `AgentTransactionV1` outer wire,
+//! strict Ed25519 authorization, and a durable local SQLite kernel. It does not
+//! provide accepted protocol authority, production identity/key lifecycle, a
+//! canonical application JMT, Node integration, or activation.
 //!
 //! A durable transition receipt is store-bound and cannot be forged or copied
 //! into another store authority:
@@ -21,11 +22,17 @@
 
 #![forbid(unsafe_code)]
 
+mod agent_transaction_wire_v1;
 mod codec;
 mod error;
 mod store;
 mod types;
 
+pub use agent_transaction_wire_v1::{
+    AgentTransactionV1, AGENT_TRANSACTION_GLOBAL_STATE_AUTHORITY_V1, AGENT_TRANSACTION_MAGIC_V1,
+    AGENT_TRANSACTION_PRODUCTION_ACTIVATION_V1, AGENT_TRANSACTION_WIRE_ACCEPTED_V1,
+    AGENT_TRANSACTION_WIRE_VERSION_V1, MAX_AGENT_TRANSACTION_COMMAND_BYTES_V1,
+};
 pub use error::{AgentMarketErrorCodeV1, AgentMarketErrorV1, AgentMarketResultV1};
 pub use store::{
     AgentMarketFreshReadbackV1, AgentMarketPreVotePreviewV1, AgentMarketStoreConfigV1,
