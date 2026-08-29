@@ -1,0 +1,85 @@
+{
+  "schema": "trnm-agent-handoff-v1",
+  "agent_id": "A16",
+  "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+  "status": "STOP_CONDITION",
+  "base_commit": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
+  "base_tree": "ef02fcb1112c52aaf40e03fe51a1447bf691b5df",
+  "head_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
+  "changed_paths": [
+    "conformance/g2f/**",
+    "docs/development/packages/G2F_*",
+    "docs/development/packages/TRNM_G2F_WHOLE_NODE_LIGHT_CLIENT_V2_REPLAY.md",
+    "docs/evidence/g2f/**",
+    "scripts/g2f/**",
+    "scripts/ci/check_g2f_replay_v2.sh",
+    "scripts/ci/check_g2f_source_binding_v2.sh",
+    ".github/workflows/trnm-g2f-replay-v2.yml",
+    "trillionnium/crates/trnm-poco-node/Cargo.toml",
+    "trillionnium/crates/trnm-poco-node/src/g2f_namespace_identity.rs",
+    "trillionnium/crates/trnm-poco-node/src/lib.rs"
+  ],
+  "gaps_closed": [
+    "A16-REPLAY-PR22-ON-EXACT-A15",
+    "G2F-M-SYNC-COORDINATED-NONZERO-VIEW-CANDIDATE",
+    "A16-OWNER-VIEW-PERMIT-SINGLE-USE",
+    "A16-MANIFESTVIEW-COMPLETE-BINDING",
+    "A16-VIEW-PERMIT-REPLAY-EXPIRY-ISSUER-FENCES"
+  ],
+  "gaps_open": [
+    "G2F-P0-INDEPENDENT-REVIEW-COPY-FORK-RESIDUE",
+    "G2F-CANONICAL-APPLICATION-JMT",
+    "G2F-ACCEPTED-A11-A15-INTERFACES",
+    "G2F-PRODUCTION-EXTERNAL-ANCHOR-HSM",
+    "G2F-NORMAL-NODE-PROCESS-OWNERSHIP",
+    "G2F-POWER-LOSS-MULTI-HOST-EVIDENCE"
+  ],
+  "commands": [
+    "python3 conformance/g2f/view_commitment_v2.py --self-test: PASS in isolated local Python runtime",
+    "bash scripts/ci/check_g2f_replay_v2.sh: exact-head replay required",
+    "feature-gated Rust test/clippy/rustfmt: exact-head X230 replay required"
+  ],
+  "failed_tests": [],
+  "retained_mutants": [
+    "G2F-M-NAMESPACE-COPY",
+    "G2F-M-NAMESPACE-SHALLOW-COPY",
+    "G2F-M-ANCHOR-SAME-HEIGHT-FORK",
+    "G2F-M-SYNC-RESIDUE-CLEAR",
+    "permit-replay",
+    "coordinated-nonzero-view-recompute",
+    "namespace-copy",
+    "same-height-fork",
+    "application-root-drift",
+    "manifest-drift",
+    "generation-aba",
+    "source-identity-drift",
+    "token-tamper",
+    "expired",
+    "wrong-issuer"
+  ],
+  "evidence_scope": "crate|model|fixture|process-candidate",
+  "authority": "candidate",
+  "classification": "candidate-non-normative",
+  "known_gaps": [
+    "canonical Protocol09 application JMT is not commissioned",
+    "A11-A15 candidates are not accepted interfaces",
+    "owner permit uses an assurance-model HMAC rather than production HSM/KMS",
+    "real external monotonic anchor and process/power-loss evidence are absent",
+    "remaining retained P0 records require independent acceptance"
+  ],
+  "interface_requests": [
+    "G2F-ICR-A11-001",
+    "G2F-ICR-A12-001",
+    "G2F-ICR-A13-001",
+    "G2F-ICR-A14-001",
+    "G2F-ICR-A15-001",
+    "G2F-ICR-G1-CANONICAL-JMT-ORDER-FINALITY-V2",
+    "G2F-ICR-OPS-EXTERNAL-ANCHOR-HSM-V2"
+  ],
+  "downstream_invalidation": [
+    "A17 benchmark/security/operations replay",
+    "W0-W7 and light-client evidence",
+    "G3-G5 activation and claim evidence"
+  ],
+  "next_action": "Run exact-head replay, obtain independent review of retained P0 records, then replace model HMAC with accepted external owner/HSM carrier and canonical JMT/Order authority."
+}
