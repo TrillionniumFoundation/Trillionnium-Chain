@@ -4,7 +4,7 @@ Status: **MODULE_CLOSED_CANDIDATE / candidate-non-normative / promotion blocked 
 
 Package ID: `G15_CEV1_REGISTRY_SPEC_V1`
 Agent: `A08`
-Base: `docs/agent-fleet-plan-v1-20260829@5b3c650397c64bd4e037eedf2a601356637fe10a`
+Base: `docs/chain-agent-fleet-plan-v1-20260829@8fb9ad6ea27dd3026f0188df6a3b728545751027`
 
 This package closes the repository-shape gap for one machine-readable CEV1 registry set. It does not freeze protocol v1, enable a wire kind, implement a node, or change any production/activation truth.
 
@@ -12,7 +12,12 @@ This package closes the repository-shape gap for one machine-readable CEV1 regis
 
 - closed operation slot registry for kinds `0..29`;
 - object, digest-domain, error, limit, and verification-profile registries;
-- standard-library checker that rejects duplicate IDs, missing slots, unsupported activation, unknown cross references, and silent profile fallback;
+- exact 53-object catalog projection (IDs/order/planning planes) with a
+  standard-library checker that rejects duplicate IDs, missing slots,
+  unsupported activation, unknown cross references, catalog drift, and silent
+  profile fallback;
+- retained 10-case negative-mutant harness for object/catalog drift,
+  duplicate JSON keys, activation, operation, and profile enablement;
 - exact candidate/non-claim boundary for A09/A10 and G2 plane consumers.
 
 ## Authority hierarchy
@@ -42,9 +47,13 @@ Run:
 
 ```bash
 python3 scripts/ci/check_cev1_registry_spec_v1.py
+scripts/ci/check_cev1_registry_mutants_v1.sh
 ```
 
-Candidate closure requires the checker to pass from a clean checkout, independent review of slot/domain/error meaning, and an immutable source/tree binding. Promotion remains `BLOCKED_UPSTREAM` until accepted G1 evidence and complete G1.5 independent conformance exist.
+Candidate closure requires both checkers to pass from a clean checkout,
+independent review of slot/domain/error meaning, and an immutable source/tree
+binding. Promotion remains `BLOCKED_UPSTREAM` until accepted G1 evidence and
+complete G1.5 independent conformance exist.
 
 ## Non-claims
 
@@ -61,4 +70,3 @@ release_ready=false
 ## Downstream invalidation
 
 Any change to an operation number, object identifier, domain, error code, limit key, or profile hash input invalidates A09, A10, every G2A-G2F wire/vector result, all SDK/light-client fixtures, and every benchmark manifest consuming it.
-
