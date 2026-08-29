@@ -504,16 +504,16 @@ fn finalization_queue_allows_repeated_source_digests_with_distinct_proofs() {
     )
     .unwrap();
     let mut alias_queue = NativeFinalizationQueueV0::new(finalization_head(0, 31), 2).unwrap();
-    alias_queue
-        .enqueue(NativeFinalizationIntentV0::new(
-            finalization_head(0, 31),
-            finalization_head(1, 41),
-            hash(71),
-            shared_overlay,
-            shared_body,
-            shared_jmt_plan,
-        ))
-        .unwrap();
+    let alias_source = NativeFinalizationIntentV0::new(
+        finalization_head(0, 31),
+        finalization_head(1, 41),
+        hash(71),
+        shared_overlay,
+        shared_body,
+        shared_jmt_plan,
+    )
+    .unwrap();
+    alias_queue.enqueue(alias_source).unwrap();
     let before_alias = alias_queue.clone();
     assert_eq!(
         alias_queue.enqueue(alias).unwrap_err().code(),
