@@ -207,30 +207,6 @@ open_pull_requests:
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
   next_action: A03 must accept the permit-bound application carrier; A05 and A06 interfaces/evidence remain required.
-- number: 13
-  title: '[A11/G2A] Add DA-FULLREP-V1 assurance model and fault corpus'
-  state: open
-  draft: true
-  mergeable: true
-  package_id: G2A_DA_FULLREP_V1
-  owner: A11
-  owner_kind: fleet-agent
-  base:
-    ref: agent/a10-g20-w0-w7-traceability-v1-20260829
-    pr_bound_commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
-    pr_bound_tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
-    live_commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
-    live_tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
-    status: exact
-  head:
-    ref: agent/a11-g2a-da-fullrep-v1-20260829
-    commit: a4db1b42110b37e3db55f0810631092ce2a3f54d
-    tree: fc398777b02d26494e4fbb6502949a191f02454f
-  classification: upstream-invalidated-candidate
-  merge_queue_eligible: false
-  terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
-  next_action: Replay DA assurance after accepted G1.5/G2.0 inputs and preserve explicit no-DAS truth.
 - number: 14
   title: '[A12/G2B] Add capability, nonce and task-market assurance model'
   state: open
@@ -253,7 +229,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay lifecycle model after accepted AgentTransaction and predecessor inputs.
 - number: 15
   title: '[A13/G2D] Add deterministic MVCC and fee serial-equivalence model'
@@ -277,7 +253,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay serial-equivalence evidence after accepted wire and state authority.
 - number: 16
   title: '[A14/G2C] Add deterministic re-execution and challenge assurance model'
@@ -301,7 +277,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay objective verification after canonical profiles and accepted predecessors.
 - number: 17
   title: '[A15/G2E] Add multi-asset settlement conservation and retry model'
@@ -325,7 +301,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay conservation evidence after canonical proof, JMT and whole-node authority.
 - number: 18
   title: '[A16/G2F] Add whole-node checkpoint, state-sync and independent light-client model'
@@ -349,7 +325,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay checkpoint/sync/light-client evidence after accepted G2 predecessors and real authority inputs.
 - number: 19
   title: '[A17/G3-G5] Add benchmark, security, operations and claim gates'
@@ -373,7 +349,7 @@ open_pull_requests:
   classification: upstream-invalidated-candidate
   merge_queue_eligible: false
   terminal_state: BLOCKED_UPSTREAM
-  invalidated_by_pr: 31
+  invalidated_by_pr: 32
   next_action: Replay claim gates after accepted G0-G2F evidence; retain all activation and superiority claims false.
 - number: 20
   title: '[A07/G1-R5] Add gated 4/7-node native campaign contract'
@@ -631,7 +607,65 @@ open_pull_requests:
     retained_negative_cases: 54
     evidence_id_control: 1
   next_action: Obtain independent A10 review and exact-head CI; downstream A11/A12 replays may use this candidate as an explicit BLOCKED_UPSTREAM input only.
+- number: 32
+  title: '[A11/G2A] Replay DA full-replication assurance on exact A10'
+  state: open
+  draft: true
+  mergeable: false
+  package_id: G2A_DA_FULLREP_V1
+  owner: A11
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-a10-g20-traceability-v2-20260829
+    pr_bound_commit: 044224a3a6c9100cd64961ea34a28031bb78a636
+    pr_bound_tree: 02fb16fd12d2c6387495087e3eff578c2c44100a
+    live_commit: 044224a3a6c9100cd64961ea34a28031bb78a636
+    live_tree: 02fb16fd12d2c6387495087e3eff578c2c44100a
+    status: exact
+  head:
+    ref: feature/chain-a11-g2a-da-fullrep-v2-20260829
+    commit: 2fb72d01e49350d3b5dad158a6eaada37c0794b5
+    tree: 62fc26484927cbb9d7aa75a8c094d909e31b1537
+  relation_to_latest_candidate:
+    kind: exact-a10-child-candidate
+  classification: blocked-upstream-candidate
+  merge_queue_eligible: false
+  terminal_state: BLOCKED_UPSTREAM
+  source_evidence:
+    model_canonical_sha256: 786330b080539c9f0aca5a5f381f838cafe79087bc558f11dee9515652c3d9
+    vectors: 5
+    compatibility_negatives: 6
+    strict_negatives: 10
+    authenticated_negatives: 2
+    faults: 7
+    retained_mutants: 10
+  next_action: Obtain independent DA review and accepted A08/A10 interfaces; retain no-DAS, no-GC-authority and ArtifactEvidence blocker truth.
 terminal_pull_requests:
+- number: 13
+  title: '[A11/G2A] Add DA-FULLREP-V1 assurance model and fault corpus'
+  state: closed
+  draft: true
+  mergeable: true
+  package_id: G2A_DA_FULLREP_V1
+  owner: A11
+  owner_kind: fleet-agent
+  base:
+    ref: agent/a10-g20-w0-w7-traceability-v1-20260829
+    pr_bound_commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
+    pr_bound_tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
+    live_commit: 56f274410dcb624c59ae45a0272bacfb60cbad59
+    live_tree: 7166e0413a7f4b7dccc5ad63afc9d84939e982c9
+    status: stale-closed
+  head:
+    ref: agent/a11-g2a-da-fullrep-v1-20260829
+    commit: a4db1b42110b37e3db55f0810631092ce2a3f54d
+    tree: fc398777b02d26494e4fbb6502949a191f02454f
+  classification: superseded-without-merge
+  merge_queue_eligible: false
+  terminal_state: SUPERSEDED_WITHOUT_MERGE
+  closed_without_merge: true
+  superseded_by_pr: 32
+  next_action: Retain for audit only; use PR32 as the sole A11 candidate and do not feed this stale projection downstream.
 - number: 12
   title: '[A10/G2.0] Generate the complete W0-W7 operation trace inventory'
   state: closed
@@ -793,7 +827,6 @@ known_control_gaps:
   status: OPEN
   owner: A08
   downstream_invalidation:
-  - 13
   - 14
   - 15
   - 16
@@ -802,7 +835,8 @@ known_control_gaps:
   - 19
   - 30
   - 31
-  next_action: A08 PR29 and A09 PR30 are corrected candidate heads; A10 PR31 is replayed on the exact remote A09 tree. Obtain independent review, then replay A11/A12 and downstream packages in dependency order.
+  - 32
+  next_action: A08 PR29, A09 PR30, A10 PR31 and A11 PR32 are exact candidate heads. Obtain independent reviews, then replay A12 and downstream packages in dependency order.
 - id: A05_V1_UNPUBLISHED_HEAD
   status: OPEN
   owner: A05
