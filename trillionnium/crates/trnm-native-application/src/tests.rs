@@ -456,6 +456,73 @@ fn finalization_queue_rejects_reused_proof_across_distinct_targets() {
 }
 
 #[test]
+fn finalization_queue_allows_repeated_source_digests_with_distinct_proofs() {
+    let h0 = finalization_head(0, 31);
+    let h1 = finalization_head(1, 41);
+    let h2 = finalization_head(2, 51);
+    let shared_overlay = hash(61);
+    let distinct_overlay = hash(64);
+    let shared_body = hash(62);
+    let shared_jmt_plan = hash(63);
+    let i1 = NativeFinalizationIntentV0::new(
+        h0.clone(),
+        h1.clone(),
+        hash(71),
+        shared_overlay,
+        shared_body,
+        shared_jmt_plan,
+    )
+    .unwrap();
+    let i2 = NativeFinalizationIntentV0::new(
+        h1,
+        h2.clone(),
+        hash(72),
+        distinct_overlay,
+        shared_body,
+        shared_jmt_plan,
+    )
+    .unwrap();
+    let mut queue = NativeFinalizationQueueV0::new(h0, 2).unwrap();
+    queue.enqueue(i1.clone()).unwrap();
+    queue.enqueue(i2.clone()).unwrap();
+    queue
+        .acknowledge_front(finalization_readback(i1, 1, 81))
+        .unwrap();
+    queue
+        .acknowledge_front(finalization_readback(i2, 2, 82))
+        .unwrap();
+    assert_eq!(queue.committed_head(), &h2);
+    assert_eq!(queue.history().len(), 2);
+
+    let alias = NativeFinalizationIntentV0::new(
+        finalization_head(1, 41),
+        finalization_head(2, 51),
+        hash(73),
+        shared_overlay,
+        shared_body,
+        shared_jmt_plan,
+    )
+    .unwrap();
+    let mut alias_queue = NativeFinalizationQueueV0::new(finalization_head(0, 31), 2).unwrap();
+    alias_queue
+        .enqueue(NativeFinalizationIntentV0::new(
+            finalization_head(0, 31),
+            finalization_head(1, 41),
+            hash(71),
+            shared_overlay,
+            shared_body,
+            shared_jmt_plan,
+        ))
+        .unwrap();
+    let before_alias = alias_queue.clone();
+    assert_eq!(
+        alias_queue.enqueue(alias).unwrap_err().code(),
+        NativeBoundaryErrorCodeV0::BindingMismatch
+    );
+    assert_eq!(alias_queue, before_alias);
+}
+
+#[test]
 fn finalization_queue_retains_referenced_fork_and_reclaims_only_unreferenced_evidence() {
     let h0 = finalization_head(0, 31);
     let canonical_h1 = finalization_head(1, 41);
