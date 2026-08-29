@@ -3,8 +3,8 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "d1536edb6143b7373be89e45a4cbb545d66ca77c",
-  "base_tree": "35ba6155432469fe8de9f8924be55808149a0664",
+  "base_commit": "a4bd309db4fb68ca908f6af03fc20b8f59a5a59a",
+  "base_tree": "264884de8ab11cf7d89ee19ba96c7b78ee2930a1",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
     "conformance/verification/**",
@@ -16,23 +16,11 @@
     "trillionnium/crates/trnm-poco-verify-challenge-v1/**"
   ],
   "gaps_closed": [
-    "A14-REPLAY-EXACT-A13-PUBLICATION",
-    "A14-CLOSED-SEVEN-PROFILE-REGISTRY",
-    "A14-EVIDENCE-BEFORE-BACKEND",
-    "A14-NO-FALLBACK",
-    "A14-CHALLENGE-ONE-APPEAL-LIFECYCLE",
-    "A14-OUTBOX-RESPONSE-LOSS-RETRY",
-    "A14-EXACT-IDEMPOTENT-ACK",
-    "A14-ORDERED-OUTBOX-COMMITMENT",
-    "A14-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
+    "A14-REPLAY-EXACT-A13-PUBLICATION","A14-CLOSED-SEVEN-PROFILE-REGISTRY","A14-EVIDENCE-BEFORE-BACKEND",
+    "A14-NO-FALLBACK","A14-CHALLENGE-ONE-APPEAL-LIFECYCLE","A14-OUTBOX-RESPONSE-LOSS-RETRY",
+    "A14-EXACT-IDEMPOTENT-ACK","A14-ORDERED-OUTBOX-COMMITMENT","A14-FROZEN-WORKFLOW-POLICY-COMPLIANCE"
   ],
-  "gaps_open": [
-    "A14-ARTIFACT-DA-AUTHORITY",
-    "A14-TASK-LEASE-PROFILE-AUTHORITY",
-    "A14-CANONICAL-JMT-ORDER-PROOF",
-    "A14-SETTLEMENT-MOVEMENT",
-    "A14-PRODUCTION-APPEAL-GOVERNANCE"
-  ],
+  "gaps_open": ["A14-ARTIFACT-DA-AUTHORITY","A14-TASK-LEASE-PROFILE-AUTHORITY","A14-CANONICAL-JMT-ORDER-PROOF","A14-SETTLEMENT-MOVEMENT","A14-PRODUCTION-APPEAL-GOVERNANCE"],
   "commands": ["bash scripts/ci/check_g2c_replay_v2.sh: exact-head trusted replay required"],
   "failed_tests": [],
   "retained_mutants": ["unknown-event","retry-too-early","duplicate-appeal","premature-finalize","late-challenge","event-id-conflict","delivery-token-mismatch","sequence-gap-or-reuse","profile-fallback","subjective-objective-escalation"],
@@ -42,9 +30,10 @@
   "known_gaps": ["accepted ArtifactEvidence and AvailabilityCertificate authority absent","accepted Task/Lease/profile policy carrier absent","canonical application JMT and Order proof absent","settlement and governance authority remain external"],
   "interface_requests": ["G2C-ICR-A11-ARTIFACT-AVAILABILITY-V1","G2C-ICR-A12-TASK-LEASE-PROFILE-V1","G2C-ICR-A13-EXECUTION-RECEIPT-V1","G2C-ICR-A16-ORDER-JMT-PROOF-V1","G2C-ICR-A15-CHALLENGE-ECONOMICS-V1","G2C-ICR-A17-APPEAL-GOVERNANCE-V1"],
   "downstream_invalidation": ["A15 settlement replay","A16 whole-node/light-client replay","A17 benchmark/security/activation evidence"],
-  "next_action": "Run the frozen A00 exact-head replay route and obtain independent review; A15 may consume decision facts only.",
+  "next_action": "Run the final A00 exact-head replay and obtain independent review; A15 may consume decision facts only.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "d1536edb6143b7373be89e45a4cbb545d66ca77c",
-  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
+  "base_sync_parent": "a4bd309db4fb68ca908f6af03fc20b8f59a5a59a",
+  "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+  "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }
