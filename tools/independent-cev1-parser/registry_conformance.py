@@ -6,6 +6,8 @@ import an A08 checker, Rust crate, or canonical serializer.  The A08 checker
 is invoked separately as an optional cross-check and its result is recorded in
 the evidence envelope.  A pending A08 semantic-correction pin is reported as
 ``BLOCKED_UPSTREAM``; local strict parsing and all retained mutants still run.
+The retained corpus has a 54-case minimum, including dedicated corrected-A08
+operation body-type, kind-27 disabled-row, and kind-29 mapping mutants.
 """
 
 from __future__ import annotations
@@ -89,6 +91,17 @@ JSON_WS = " \t\r\n"
 EVIDENCE_ID_PREFIX = "g15-a09-"
 EVIDENCE_ID_HEX_LENGTH = 32
 EVIDENCE_ID_ALGORITHM = "sha256-canonical-json-stable-projection-v1"
+
+# The retained corpus is part of the independent conformance contract, not a
+# best-effort smoke test.  Keep the historical 51 cases and require the three
+# corrected-A08 semantic sentinels below so a future fixture refresh cannot
+# silently drop coverage for body types, disabled kind 27, or kind 29.
+MIN_NEGATIVE_CASE_COUNT = 54
+REQUIRED_NEGATIVE_CASES = {
+    "operation-body-type-drift": ("operation-registry-v1.json", "operation_body_type_drift"),
+    "operation-kind27-disabled-drift": ("operation-registry-v1.json", "operation_kind27_disabled_drift"),
+    "operation-kind29-mapping-drift": ("operation-registry-v1.json", "operation_kind29_mapping_drift"),
+}
 
 
 # A09-owned semantic assignment map.  It is intentionally independent of the
@@ -514,8 +527,9 @@ def evidence_id_preimage(evidence: dict[str, Any]) -> dict[str, Any]:
     useful evidence metadata but are deliberately excluded: the same exact
     source and inputs must replay to the same ID in another worktree.  The
     source commit/tree, exact A08 tuple, checker content/result digests, all
-    registry/corpus/plan digests, negative outcomes, and candidate flags remain
-    bound.  This projection is also what prevents ``evidence_id`` self-reference.
+    registry/corpus/plan digests, negative outcomes, corpus minimum/ordered IDs,
+    and candidate flags remain bound.  This projection is also what prevents
+    ``evidence_id`` self-reference.
     """
 
     source = exact_dict(evidence.get("source"), "evidence.source")
@@ -542,6 +556,8 @@ def evidence_id_preimage(evidence: dict[str, Any]) -> dict[str, Any]:
         "inputs",
         "negative_cases",
         "negative_case_count",
+        "negative_case_minimum",
+        "negative_case_ids",
         "negative_controls",
         "negative_control_count",
         "global_cev1_conformance_complete",
@@ -1132,6 +1148,8 @@ def mutate_json_sandbox(sandbox: Path, case: dict[str, Any]) -> None:
             value["protocol_version"] = True
     elif mutation == "operation_kind_out_of_range":
         value["operations"][0]["kind"] = 30
+    elif mutation == "operation_body_type_drift":
+        value["operations"][0]["body_type"] = "DifferentBodyV1"
     elif mutation == "operation_name_drift":
         value["operations"][0]["name"] = "DifferentOperation"
     elif mutation == "operation_plane_drift":
@@ -1148,6 +1166,10 @@ def mutate_json_sandbox(sandbox: Path, case: dict[str, Any]) -> None:
         # The corrected map reserves disabled profile slots 20 and 27; kind 29
         # is a candidate EconomicObject row.  Mutate the first disabled slot.
         value["operations"][20]["canonical_error"] = "ERR_INTERNAL"
+    elif mutation == "operation_kind27_disabled_drift":
+        value["operations"][27]["status"] = "candidate-assigned"
+    elif mutation == "operation_kind29_mapping_drift":
+        value["operations"][29]["name"] = "EconomicObjectDrift"
     elif mutation == "object_id_drift":
         value["objects"][0]["id"] = "UnexpectedObjectV1"
     elif mutation == "object_plane_drift":
@@ -1210,6 +1232,11 @@ def load_negative_cases(path: Path, root: Path) -> list[dict[str, Any]]:
     cases = exact_list(value["cases"], "negative corpus.cases")
     if not cases:
         fail("negative corpus must not be empty")
+    if len(cases) < MIN_NEGATIVE_CASE_COUNT:
+        fail(
+            "negative corpus must retain at least "
+            f"{MIN_NEGATIVE_CASE_COUNT} cases; found {len(cases)}"
+        )
     output: list[dict[str, Any]] = []
     seen_ids: set[str] = set()
     allowed_targets = set(REGISTRY_FILES) | {"object-catalog-v1.toml", "operation-mapping-v1.json"}
@@ -1229,6 +1256,17 @@ def load_negative_cases(path: Path, root: Path) -> list[dict[str, Any]]:
             fail(f"negative case target is not allowed: {target}")
         seen_ids.add(case_id)
         output.append({"id": case_id, "target": target, "mutation": mutation, "expected": expected})
+    by_id = {item["id"]: item for item in output}
+    for required_id, (required_target, required_mutation) in REQUIRED_NEGATIVE_CASES.items():
+        required = by_id.get(required_id)
+        if required is None:
+            fail(f"negative corpus is missing required retained mutant: {required_id}")
+        if required["target"] != required_target or required["mutation"] != required_mutation:
+            fail(
+                f"negative corpus retained mutant {required_id} drifted: "
+                f"expected {(required_target, required_mutation)!r}, "
+                f"found {(required['target'], required['mutation'])!r}"
+            )
     return output
 
 
@@ -1275,6 +1313,11 @@ def run_negative_cases(root: Path, corpus_path: Path, mapping_path: Path) -> lis
 
 
 def build_evidence(root: Path, registry_data: dict[str, Any], mapping_path: Path, corpus_path: Path, a08_result: dict[str, Any] | None, upstream_pin: dict[str, Any], negative_results: list[dict[str, Any]]) -> dict[str, Any]:
+    if len(negative_results) < MIN_NEGATIVE_CASE_COUNT:
+        fail(
+            "retained negative result count is below the independent corpus "
+            f"minimum {MIN_NEGATIVE_CASE_COUNT}: {len(negative_results)}"
+        )
     source = git_source_tuple(root)
     registry_hashes = [file_hash_record(root / REGISTRY_REL / name, root, parsed=registry_data["documents"][name], raw=registry_data["raw_files"][name]) for name in REGISTRY_FILES]
     catalog_raw = registry_data["catalog_raw"]
@@ -1311,6 +1354,12 @@ def build_evidence(root: Path, registry_data: dict[str, Any], mapping_path: Path
         },
         "negative_cases": negative_results,
         "negative_case_count": len(negative_results),
+        # Keep the contract and the ordered IDs in the stable evidence
+        # projection.  The corpus raw/canonical digests above bind the exact
+        # recipes; these fields make the promised minimum and dedicated
+        # corrected-A08 mutants visible to downstream consumers.
+        "negative_case_minimum": MIN_NEGATIVE_CASE_COUNT,
+        "negative_case_ids": [item["id"] for item in negative_results],
         "negative_controls": [
             {
                 "id": "evidence-id-payload-mutation",

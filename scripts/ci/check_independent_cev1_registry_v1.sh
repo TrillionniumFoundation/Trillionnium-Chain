@@ -39,9 +39,17 @@ assert data["global_cev1_conformance_complete"] is False
 assert data["normative_freeze"] is False
 assert data["node_support"] is False
 assert data["production_candidate"] is False
-assert data["negative_case_count"] >= 30
+assert data["negative_case_minimum"] == 54
+assert data["negative_case_count"] >= data["negative_case_minimum"]
 assert len(data["negative_cases"]) == data["negative_case_count"]
+assert data["negative_case_ids"] == [case["id"] for case in data["negative_cases"]]
 assert all(case["result"] == "rejected" for case in data["negative_cases"])
+required_mutants = {
+    "operation-body-type-drift",
+    "operation-kind27-disabled-drift",
+    "operation-kind29-mapping-drift",
+}
+assert required_mutants <= set(data["negative_case_ids"])
 assert any(case["id"] == "evidence-id-payload-mutation" and case["result"] == "rejected" for case in data["negative_controls"])
 assert data["negative_control_count"] == len(data["negative_controls"]) == 1
 assert data["upstream"]["a08_checker"]["returncode"] == 0
@@ -57,6 +65,7 @@ stable_fields = (
     "schema", "agent_id", "package_id", "gate_id", "plan_id", "plan_sha256",
     "status", "classification", "scope", "evidence_scope", "data_scope",
     "authority", "inputs", "negative_cases", "negative_case_count",
+    "negative_case_minimum", "negative_case_ids",
     "negative_controls", "negative_control_count",
     "global_cev1_conformance_complete", "normative_freeze", "node_support",
     "production_candidate", "known_gaps", "evidence_id_algorithm",
@@ -112,5 +121,6 @@ PY
 
 # Run the local retained corpus once more without A08 to prove that the
 # independent implementation, rather than the canonical checker, rejects each
-# malformed candidate.
+# malformed candidate.  The parser enforces the 54-case floor and the three
+# corrected-A08 operation sentinels before it starts this replay.
 python3 "$PARSER" --root "$ROOT" --skip-a08-checker --mutants-only

@@ -41,13 +41,17 @@ operation.
 
 ## Retained negative corpus
 
-`conformance/cev1/registry-v1/negative-cases.json` retains 51 mutations covering
-duplicate top-level and nested keys, trailing JSON, NaN, unknown fields,
-boolean-as-integer confusion, operation mapping/status/enablement drift,
-object/catalog projection drift, domain/error/limit/profile shape and mapping
-drift, and operation-map fixture drift.  Each case records a target, recipe,
-expected rejection class and the observed error.  Mutants are applied only to
-temporary copies; the candidate checkout is never modified by the harness.
+`conformance/cev1/registry-v1/negative-cases.json` retains 54 mutations (the
+original 51 plus three corrected-A08 sentinels) covering duplicate top-level
+and nested keys, trailing JSON, NaN, unknown fields, boolean-as-integer
+confusion, operation mapping/status/enablement drift, object/catalog projection
+drift, domain/error/limit/profile shape and mapping drift, and operation-map
+fixture drift.  The dedicated operation cases are `operation-body-type-drift`,
+`operation-kind27-disabled-drift` (the corrected disabled row), and
+`operation-kind29-mapping-drift` (the candidate `EconomicObject` row).  Each
+case records a target, recipe, expected rejection class and the observed error.
+Mutants are applied only to temporary copies; the candidate checkout is never
+modified by the harness.
 
 ## Commands
 
@@ -58,7 +62,13 @@ python3 tools/independent-cev1-parser/registry_conformance.py \
 ```
 
 The shell gate requires the exact A08 pin, a clean source tree, the independent
-subprocess checker, all 51 retained mutants, and a deterministic evidence ID.
+subprocess checker, at least 54 retained mutants (including the three
+dedicated operation sentinels), and a deterministic evidence ID.  The evidence
+envelope exposes `negative_case_count`, `negative_case_minimum`, and the
+ordered `negative_case_ids`; all three fields, the individual rejection
+records, and the raw/canonical corpus digests are included in the stable
+`evidence_id_preimage` projection.  This makes a dropped or renamed mutant
+change the source-bound evidence identity instead of silently passing.
 It exits with `status=MODULE_CLOSED_CANDIDATE` after the pin is verified; the
 package/PR remains candidate-non-normative and control-ledger/independent-review
 promotion is still blocked.  To exercise the explicit pending branch, make a
