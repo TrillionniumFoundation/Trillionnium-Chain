@@ -3,27 +3,18 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018",
-  "base_tree": "a5003dd5616420ec9b87d4637efbfae3db3d470f",
+  "base_commit": "cd5264438c0ea1e81bd687355eccac1d49e92b26",
+  "base_tree": "867461f510c5db9d3a8ce7e0bb336500add5841f",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
     ".github/workflows/trnm-g2c-replay-v2.yml",
-    "conformance/verification/deterministic-reexecution-cases-v1.json",
-    "conformance/verification/outbox-recovery-v2-cases.json",
-    "docs/development/packages/TRNM_G2C_INTERFACE_REQUESTS_V1.md",
-    "docs/development/packages/TRNM_G2C_VERIFY_CHALLENGE_IMPLEMENTATION_V2.md",
-    "docs/development/packages/TRNM_G2C_VERIFY_CHALLENGE_V1.md",
-    "docs/evidence/g2c/A14_EXACT_HEAD_TRIGGER_V1.md",
-    "docs/evidence/g2c/G2C_SOURCE_MANIFEST_V2.json",
-    "docs/protocol/poco-ai-native-v1/verification/DETERMINISTIC_REEXECUTION_V1.md",
-    "scripts/ci/check_deterministic_reexecution_model_v1.sh",
-    "scripts/ci/check_g2c_profile_registry_v1.sh",
-    "scripts/ci/check_g2c_replay_v2.sh",
-    "scripts/ci/check_g2c_source_binding_v2.sh",
-    "tools/verification-model/deterministic_reexecution.py",
-    "tools/verification-model/outbox_recovery_v2.py",
-    "trillionnium/crates/trnm-poco-verify-challenge-v1/src/profile_registry_v1.rs",
-    "trillionnium/crates/trnm-poco-verify-challenge-v1/tests/profile_registry_v1.rs"
+    "conformance/verification/**",
+    "docs/development/packages/TRNM_G2C_*",
+    "docs/evidence/g2c/**",
+    "docs/protocol/poco-ai-native-v1/verification/**",
+    "scripts/ci/check_g2c_*",
+    "tools/verification-model/**",
+    "trillionnium/crates/trnm-poco-verify-challenge-v1/**"
   ],
   "gaps_closed": [
     "A14-REPLAY-EXACT-A13",
@@ -84,5 +75,5 @@
   "next_action": "Exact-head trusted-runner replay and independent reconciliation with active PR #16; A15 may consume decision facts only.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "dd778a0dd88592c92e646dfa70e1b99b3a8bd018"
+  "base_sync_parent": "cd5264438c0ea1e81bd687355eccac1d49e92b26"
 }

@@ -3,8 +3,8 @@
   "agent_id": "A17",
   "package_id": "G3_G5_BENCH_SECURITY_OPS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "a1f3af9c3e1829785180188425df87fe1b7e8ef1",
-  "base_tree": "e2fd8a5d3e2e5f8d7052de722c6f65c92c963bd3",
+  "base_commit": "04e24192a23a8bb0fad19c798bc9f209fe0c10de",
+  "base_tree": "d79f966bf064aa15b81112202aff30082190ec66",
   "head_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "changed_paths": [
     ".github/workflows/trnm-g3-g5-replay-v2.yml",
@@ -84,5 +84,5 @@
   "next_action": "Exact-head replay and independent review; retain every public-testnet, superiority and production claim false until all accepted evidence exists.",
   "implementation_commit": "7a2f7c4d09d2619ec70fc895af73d916c5f84f12",
   "implementation_parent": "575cddb5d6f54d12cfd751f730417a7fe4e3e55a",
-  "base_sync_parent": "a1f3af9c3e1829785180188425df87fe1b7e8ef1"
+  "base_sync_parent": "04e24192a23a8bb0fad19c798bc9f209fe0c10de"
 }
