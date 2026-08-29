@@ -1,0 +1,103 @@
+{
+  "schema": "trnm-g1-r4-safety-checkpoint-package-evidence-v1",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "package_id": "G1_R4_SAFETY_CHECKPOINT_V1",
+  "candidate_base": {
+    "ref": "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829",
+    "commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
+    "tree": "efea864cb2fbc4835a59a089b3dbab8934e71231"
+  },
+  "artifacts": [
+    {
+      "path": ".github/workflows/trnm-g1-r4-safety-checkpoint-v1.yml",
+      "sha256": "sha256:1b95d15622978cc2b13c57b3697eefab642ce497e9b89eb94800ec7177af471e"
+    },
+    {
+      "path": "docs/development/packages/TRNM_G1_R4_SAFETY_CHECKPOINT_V1.md",
+      "sha256": "sha256:cf1e8acaa7624e0c3f156cd3d7232ec10ae6caccebfeb4faa655ccc86a94ad0b"
+    },
+    {
+      "path": "docs/development/interface-change-requests/A05_G1_R4_INTERFACE_REQUESTS_V1.json",
+      "sha256": "sha256:a2928f7866f005bec492714b94a8bfa258e75a5f3f28e6352a4cb9d4ee0bff37"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/Cargo.toml",
+      "sha256": "sha256:dba280dfe3ee2d0a942884c75fa5bcdd65011d2dc10f5f098c020d7e47b832b0"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/README.md",
+      "sha256": "sha256:63b5d81b3c97187ebd98910e6a849052f6f9ee50740a473fbf177e67473c338b"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/src/lib.rs",
+      "sha256": "sha256:027c33be7aa773163dd6ac3988e9fecbb37f9744ceb64f2d030d400c42ad8d47"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/src/types_v1.rs",
+      "sha256": "sha256:8f2a3f3331ec35106c312da409326ffaf0291c3d9292984c7388cf363a6175a2"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/src/coordinator_v1.rs",
+      "sha256": "sha256:01d7c2b74e5cc228524a2c602a03b7601625e1d37960bc2bb87b91f1c717a218"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/src/tests_v1.rs",
+      "sha256": "sha256:585c547691fe46edcbc89a3f6cf80ec6a4623552e0d205225bcb4bf619342916"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/model.py",
+      "sha256": "sha256:56089f3885cb10b33f72c62b6ef7236be213127f8791555e78e0b32dc90a1ffe"
+    },
+    {
+      "path": "trillionnium/crates/trnm-whole-node-checkpoint-types/reference-r4-coordinator-v1/tests/test_model.py",
+      "sha256": "sha256:d597db3198a8750626c9403e9ffe8ee21db79bfd00a0fc8276bdf45f2f47ffe0"
+    },
+    {
+      "path": "scripts/ci/check_g1_r4_safety_checkpoint_v1.py",
+      "sha256": "sha256:55d4593452391ee981338b2534a8159968dc714ff19f2b3274f6ca68043397f8"
+    },
+    {
+      "path": "scripts/ci/check_g1_r4_safety_checkpoint_v1.sh",
+      "sha256": "sha256:a93290e4ab183fecb8dfff23dd4966cff28db6ac5700242200ee77a3a046bba2"
+    }
+  ],
+  "local_diagnostic_evidence": {
+    "artifact_manifest_count": 13,
+    "artifact_manifest_verified": true,
+    "candidate_only": true,
+    "classification": "RESUME_REQUIRED",
+    "interface_request_count": 3,
+    "model_tests_passed": true,
+    "negative_model_cases": 15,
+    "positive_model_cases": 3,
+    "production_activation": false,
+    "rust_compile_test_clippy_fmt": false,
+    "rust_test_count": 13,
+    "rust_toolchain": "missing",
+    "schema": "trnm-g1-r4-safety-checkpoint-gate-evidence-v1",
+    "source_balanced": true
+  },
+  "exact_gate": {
+    "exit_code": 2,
+    "classification": "RESUME_REQUIRED",
+    "reason": "cargo/rustc unavailable; compile, Rust tests, Clippy and rustfmt not claimed"
+  },
+  "terminal_status": {
+    "package": "BLOCKED_UPSTREAM",
+    "owned_reference_surface": "MODULE_CLOSED_CANDIDATE",
+    "upstream_interfaces": [
+      "A05-R4C-001",
+      "A05-R4C-002",
+      "A05-R4C-003"
+    ]
+  },
+  "non_claims": {
+    "g1_r4_exit": false,
+    "g1_exit": false,
+    "production_signature_authority": false,
+    "private_key_handling": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false
+  }
+}
