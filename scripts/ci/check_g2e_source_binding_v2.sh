@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 root=$(git rev-parse --show-toplevel); cd "$root"
-base=96d4733a941fe2fe5104d378177c8d05475a7af1
+base=43df2b2887c084832e1e9fbf13fc33f96f2ee486
 
 git cat-file -e "${base}^{commit}"
 git merge-base --is-ancestor "$base" HEAD
@@ -12,10 +12,10 @@ m=json.loads(Path('docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json').read_text())
 a14=json.loads(Path('docs/evidence/g2c/G2C_AGENT_HANDOFF_V2.json').read_text())
 assert m['schema']=='trnm-g2e-source-manifest-v2'
 assert m['base_pr']==35
-assert m['base_commit']=='96d4733a941fe2fe5104d378177c8d05475a7af1'
-assert m['base_tree']=='867d50c52cf750abe3ff086b0a6b51b998163add'
+assert m['base_commit']=='43df2b2887c084832e1e9fbf13fc33f96f2ee486'
+assert m['base_tree']=='c9d97cc58f4fb315bb8a86b3ec791b676bc1bc4a'
 assert m['a14_implementation_commit']==a14['head_commit']=='0eed454d2895b8b034ada2af6bf96006cb094475'
-assert m['a14_base_sync_commit']=='96d4733a941fe2fe5104d378177c8d05475a7af1'
+assert m['a14_base_sync_commit']=='43df2b2887c084832e1e9fbf13fc33f96f2ee486'
 assert m['control_replay_commit']==a14['control_replay_commit']=='d1bbbb43d385dbadadb34710610a49e43c498863'
 assert m['frozen_workflow_tree']==a14['frozen_workflow_tree']=='dc9157617e7d00750f878aad33ee9b5cae5d9d5d'
 assert a14['status']=='MODULE_CLOSED_CANDIDATE'
@@ -25,6 +25,6 @@ assert not any('exact-head' in name or name.startswith('trnm-g2') or name.starts
 assert m['risk_root']=='8c9b246d0c94f0ffaf477c9385f296cc98f70951bed9316eb970efedb15d3a57'
 for key in ('canonical_settlement_receipt','application_jmt_authority','governance_activation','poco_weight_eligible','g2e_exit','production_candidate'):
     assert m[key] is False, key
-print('G2E source binding v2: exact rustfmt-closed A14 publication, frozen workflow route and false authority guards')
+print('G2E source binding v2: exact public-surface-gated A14 publication, frozen workflow route and false authority guards')
 PY
 git diff --check
