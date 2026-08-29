@@ -23,7 +23,6 @@ from typing import Any, NoReturn
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_REL = Path("docs/protocol/poco-ai-native-v1/registry")
 CATALOG_REL = Path("docs/protocol/poco-ai-native-v1/schema/object-catalog-v1.toml")
-CHECKER_REL = Path("scripts/ci/check_cev1_registry_spec_v1.py")
 MUTANTS_REL = REGISTRY_REL / "cev1-registry-mutants-v1.json"
 REGISTRY_FILES = (
     "operation-registry-v1.json",
@@ -157,7 +156,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     source_root = args.root.resolve()
     fixture_path = source_root / MUTANTS_REL
-    checker = source_root / CHECKER_REL
+    # Resolve the checker beside this harness, not beneath ``--root``.  A
+    # temporary root intentionally contains only the registry inputs, so the
+    # harness remains usable when callers point --root at an extracted tree.
+    checker = Path(__file__).resolve().with_name("check_cev1_registry_spec_v1.py")
     fixture = read_json(fixture_path)
     if not isinstance(fixture, dict) or fixture.get("schema") != "trnm-cev1-registry-mutants-v1":
         fail("mutant fixture schema mismatch")
