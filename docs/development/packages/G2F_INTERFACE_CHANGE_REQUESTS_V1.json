@@ -1,0 +1,488 @@
+{
+  "schema": "trnm-interface-change-request-v1",
+  "schema_version": 1,
+  "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+  "requester_agent": "A16",
+  "gate_id": "G2F",
+  "requester_gate": "G2F",
+  "status": "BLOCKED_UPSTREAM",
+  "package_status": "BLOCKED_UPSTREAM",
+  "terminal_classification": "candidate-non-normative",
+  "reviewer": null,
+  "base": {
+    "ref": "refs/heads/feature/chain-g1-r4c-full-gap-closure-20260829",
+    "commit": "6e0189e351015ef3230f217ca7ff86149baedcf0",
+    "tree": "efea864cb2fbc4835a59a089b3dbab8934e71231",
+    "authority": "candidate",
+    "classification": "candidate-non-normative"
+  },
+  "control_plane_observation": {
+    "ref": "refs/remotes/origin/docs/agent-fleet-plan-v1-20260829",
+    "github_ref": "refs/heads/docs/agent-fleet-plan-v1-20260829",
+    "commit": "8bfd73f0cf1b785a29ae212f13212e51fe34231",
+    "tree": "cfedd363147934f50d1352dae31b7d87d79aa8d9",
+    "historical_observation": "ACTIVE_PR_PACKAGE_LEDGER embeds d2c14fa686a7836e607661aaf1da34f971d12bc4/tree 86d17fbb369481a66684078ea1acef9550d36dad; live ref was revalidated above.",
+    "assessed_plan_tuple_unchanged": true,
+    "candidate_base_drift": false
+  },
+  "digest_method": "sha256 over UTF-8 LF-terminated lines of sorted relative_path + single space + file_sha256 for the listed candidate interface files (including final LF)",
+  "requests": [
+    {
+      "request_id": "G2F-ICR-A11-001",
+      "requester_agent": "A16",
+      "requester_package": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+      "owner_agent": "A11",
+      "owner_package": "G2A_DA_FULLREP_V1",
+      "created_at": "2026-08-29",
+      "status": "proposed",
+      "blocking_status": "BLOCKED_UPSTREAM",
+      "current_interface_version": "candidate-local-da-v1",
+      "current_interface_digest": "sha256:e86c9febced9421155ec8a24c0c67ae11117f7e2f0642b48e454189bd696bc75",
+      "current_interface_owner": "A11",
+      "current_interface": {
+        "paths": [
+          "trillionnium/crates/trnm-poco-da-v1/Cargo.toml",
+          "trillionnium/crates/trnm-poco-da-v1/src/lib.rs",
+          "trillionnium/crates/trnm-poco-da-v1/src/types.rs",
+          "trillionnium/crates/trnm-poco-da-v1/src/retrieval.rs",
+          "trillionnium/crates/trnm-poco-da-v1/src/store.rs"
+        ],
+        "available_types": ["DaCertifiedBatchFreshReadbackV1", "CertifiedBatchFactsV1", "AvailabilityCertificateV1", "DaObligationV1"],
+        "availability": "candidate-local-only",
+        "missing": ["authenticated cross-plane snapshot", "stable namespace/file identity", "atomic multi-store commit token", "accepted global BatchRef/ArtifactEvidence binding"]
+      },
+      "proposed_interface": {
+        "name": "AuthenticatedDaSnapshotV1",
+        "semantic_version": "1.0.0-candidate",
+        "canonical_fields": [
+          "chain_id",
+          "store_instance_id",
+          "namespace_id",
+          "snapshot_generation",
+          "height",
+          "sequence",
+          "batch_ref",
+          "content_root",
+          "availability_certificate_digest",
+          "obligation_digest",
+          "state_root",
+          "journal_tail",
+          "file_identity",
+          "authenticator"
+        ],
+        "canonical_bytes": "length-delimited canonical Borsh bytes; exact re-encoding required",
+        "domain": "trnm.poco-ai.g2f.da-snapshot.v1",
+        "issuer_authority": "A11 DA store owner after authenticated fresh readback and durable fsync",
+        "caller_authority": "A16 read-only whole-node coordinator; no caller-provided root or certificate is trusted",
+        "linearity": "non-Clone capability; one snapshot token per generation",
+        "bounds": {
+          "max_encoded_bytes": 65536,
+          "max_chunks": 1048576,
+          "max_nested_depth": 8,
+          "max_signatures": 1024,
+          "max_verification_time_ms": 1000
+        },
+        "errors": ["ERR_DA_SNAPSHOT_AUTH", "ERR_DA_SNAPSHOT_STALE", "ERR_DA_BATCH_REF_MISMATCH", "ERR_DA_NAMESPACE_IDENTITY", "ERR_DA_ROLLBACK"],
+        "replay_and_durability": "same generation and digest is idempotent; lower generation, changed bytes, response loss without durable readback, sidecar/WAL drift and namespace replacement fail closed; issuer returns only after fsync and reopen confirmation",
+        "consumers": ["G2F authenticated multi-store snapshot", "G2F state sync", "G2F DA light-client proof"]
+      },
+      "safety_rationale": "A16 cannot treat a fresh local DA readback or a caller-supplied BatchRef as an authenticated cross-plane fact; the DA owner must attest the exact bytes, identity and monotonic position.",
+      "version_impact": "Changing BatchRef, certificate, namespace, root, generation or error semantics invalidates G2F snapshot, state-sync and light-client evidence.",
+      "required_vectors": {
+        "positive": ["one authenticated full-replication snapshot", "same-generation idempotent reopen", "durable fsync/reopen"],
+        "negative": ["wrong BatchRef", "certificate/root mismatch", "stale sequence", "missing chunk", "copied store", "sidecar/WAL drift", "namespace replacement"],
+        "fault_matrix": ["kill before snapshot fsync", "response loss after fsync", "torn chunk", "power-loss-equivalent restart", "full-store rollback"]
+      },
+      "downstream_invalidation": ["G2F-ATOMIC-001", "G2F-SYNC-001", "G2F-LC-001", "G2F-TRACE-001", "G2F-UPGRADE-001", "G2F", "G3", "G4", "G5"],
+      "safety_analysis": {
+        "new_authority_created": false,
+        "production_reachability_changed": false,
+        "signing_or_settlement_authority_changed": false,
+        "serialization_boundary_changed": true
+      },
+      "exact_commands": [
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-da-v1/src/store.rs",
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-da-v1/src/types.rs",
+        "sha256sum trillionnium/crates/trnm-poco-da-v1/Cargo.toml trillionnium/crates/trnm-poco-da-v1/src/lib.rs trillionnium/crates/trnm-poco-da-v1/src/retrieval.rs trillionnium/crates/trnm-poco-da-v1/src/store.rs trillionnium/crates/trnm-poco-da-v1/src/types.rs"
+      ],
+      "independent_replay": "blocked until A11 publishes an accepted digest and an independent replay verifies bytes, roots, errors and rollback mutants",
+      "implementation_ownership": "A11 only; A16 may consume the accepted token and implement only its adapter",
+      "review_decision": {
+        "owner_decision": null,
+        "independent_reviewer": null,
+        "accepted_interface_version": null,
+        "accepted_interface_digest": null,
+        "source_commit": null,
+        "source_tree": null,
+        "notes": "Pending A11 owner review and independent DA conformance"
+      }
+    },
+    {
+      "request_id": "G2F-ICR-A12-001",
+      "requester_agent": "A16",
+      "requester_package": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+      "owner_agent": "A12",
+      "owner_package": "G2B_AGENT_MARKET_V1",
+      "created_at": "2026-08-29",
+      "status": "proposed",
+      "blocking_status": "BLOCKED_UPSTREAM",
+      "current_interface_version": "candidate-local-agent-market-v1",
+      "current_interface_digest": "sha256:3d6b2607aa72cf10d6bc631c08357ea50adfddc17c079a9b234518001caa8c2d",
+      "current_interface_owner": "A12",
+      "current_interface": {
+        "paths": [
+          "trillionnium/crates/trnm-poco-agent-market-v1/Cargo.toml",
+          "trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs",
+          "trillionnium/crates/trnm-poco-agent-market-v1/src/types.rs",
+          "trillionnium/crates/trnm-poco-agent-market-v1/src/store.rs"
+        ],
+        "available_types": ["AgentMarketFreshReadbackV1", "AgentMarketPreVotePreviewV1", "ConfirmedKernelReceiptV1", "CapabilityStateV1", "TaskStateV1", "EscrowStateV1"],
+        "availability": "candidate-local-only",
+        "missing": ["authenticated global task/account snapshot", "canonical AgentTransactionV1 binding", "cross-plane generation token", "accepted application-JMT projection"]
+      },
+      "proposed_interface": {
+        "name": "AuthenticatedAgentTaskSnapshotV1",
+        "semantic_version": "1.0.0-candidate",
+        "canonical_fields": [
+          "chain_id",
+          "store_instance_id",
+          "snapshot_generation",
+          "agent_id",
+          "capability_id",
+          "task_id",
+          "lease_id",
+          "escrow_id",
+          "account_versions",
+          "bond_versions",
+          "terminal_status",
+          "authorization_digest",
+          "state_root",
+          "journal_tail",
+          "file_identity",
+          "authenticator"
+        ],
+        "canonical_bytes": "length-delimited canonical Borsh bytes; sorted typed IDs and exact re-encoding",
+        "domain": "trnm.poco-ai.g2f.agent-task-snapshot.v1",
+        "issuer_authority": "A12 Agent/Market store owner after durable transition and fresh readback",
+        "caller_authority": "A16 read-only coordinator; no caller-supplied account, escrow or capability state",
+        "linearity": "non-Clone snapshot token bound to one store generation",
+        "bounds": {
+          "max_encoded_bytes": 131072,
+          "max_objects": 4096,
+          "max_nested_depth": 8,
+          "max_signatures": 256,
+          "max_verification_time_ms": 1000
+        },
+        "errors": ["ERR_AGENT_SNAPSHOT_AUTH", "ERR_AGENT_VERSION_STALE", "ERR_AGENT_ID_MISMATCH", "ERR_CAPABILITY_SCOPE", "ERR_AGENT_ROLLBACK"],
+        "replay_and_durability": "same generation/digest may be retried exactly; duplicate terminal transitions, lower versions, changed authorization, response-loss uncertainty and file replacement fail closed",
+        "consumers": ["G2F authenticated multi-store snapshot", "G2F application-JMT input", "G2F settlement and light-client proof"]
+      },
+      "safety_rationale": "A16 must not infer task, capability, escrow or account authority from a local preview; A12 must attest the exact typed IDs, versions and authorization context.",
+      "version_impact": "Changing lifecycle IDs, version ordering, terminal states or authorization domains invalidates G2F cross-plane and W0-W7 trace evidence.",
+      "required_vectors": {
+        "positive": ["authenticated task/lease/escrow snapshot", "terminal receipt exact retry", "fresh reopen with stable generation"],
+        "negative": ["wrong task ID", "capability scope mismatch", "stale account version", "duplicate terminal transition", "escrow/bond substitution", "copied store", "journal-tail drift"],
+        "fault_matrix": ["kill before durable transition", "response loss after commit", "torn terminal row", "WAL rollback", "same-UID path replacement"]
+      },
+      "downstream_invalidation": ["G2F-ATOMIC-001", "G2F-SYNC-001", "G2F-LC-001", "G2F-TRACE-001", "G2F", "G3", "G4", "G5"],
+      "safety_analysis": {
+        "new_authority_created": false,
+        "production_reachability_changed": false,
+        "signing_or_settlement_authority_changed": false,
+        "serialization_boundary_changed": true
+      },
+      "exact_commands": [
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-agent-market-v1/src/store.rs",
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-agent-market-v1/src/types.rs",
+        "sha256sum trillionnium/crates/trnm-poco-agent-market-v1/Cargo.toml trillionnium/crates/trnm-poco-agent-market-v1/src/lib.rs trillionnium/crates/trnm-poco-agent-market-v1/src/store.rs trillionnium/crates/trnm-poco-agent-market-v1/src/types.rs"
+      ],
+      "independent_replay": "blocked until A12 publishes an accepted digest and independent Agent/Task replay agrees on IDs, versions, roots and errors",
+      "implementation_ownership": "A12 only; A16 may consume the accepted snapshot and implement only its adapter",
+      "review_decision": {
+        "owner_decision": null,
+        "independent_reviewer": null,
+        "accepted_interface_version": null,
+        "accepted_interface_digest": null,
+        "source_commit": null,
+        "source_tree": null,
+        "notes": "Pending A12 owner review and independent lifecycle conformance"
+      }
+    },
+    {
+      "request_id": "G2F-ICR-A13-001",
+      "requester_agent": "A16",
+      "requester_package": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+      "owner_agent": "A13",
+      "owner_package": "G2D_EXECUTION_MVCC_FEE_V1",
+      "created_at": "2026-08-29",
+      "status": "proposed",
+      "blocking_status": "BLOCKED_UPSTREAM",
+      "current_interface_version": "candidate-local-mvcc-v1",
+      "current_interface_digest": "sha256:f3b7dd05c389838d72ff184dd6f77d1c3d81d058898a97197e05fb1e09d3d5ff",
+      "current_interface_owner": "A13",
+      "current_interface": {
+        "paths": [
+          "trillionnium/crates/trnm-poco-mvcc-fee-v1/Cargo.toml",
+          "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/lib.rs",
+          "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/types.rs",
+          "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/engine.rs",
+          "trillionnium/crates/trnm-poco-mvcc-fee-v1/src/store.rs"
+        ],
+        "available_types": ["TransactionExecutionReceiptV1", "MvccBlockReceiptV1", "MvccFeeFreshReadbackV1", "derive_state_root_v1"],
+        "availability": "candidate-local-only",
+        "missing": ["canonical application JMT", "membership proof bound to exact bytes", "finalized Order header binding", "accepted AgentTransactionV1 execution contract"]
+      },
+      "proposed_interface": {
+        "name": "CanonicalExecutionJmtSnapshotV1",
+        "semantic_version": "1.0.0-candidate",
+        "canonical_fields": [
+          "chain_id",
+          "execution_generation",
+          "agent_transaction_digest",
+          "receipt_digest",
+          "read_set_digest",
+          "write_set_digest",
+          "resource_fee_root",
+          "application_jmt_root",
+          "membership_key",
+          "membership_value_digest",
+          "membership_siblings",
+          "predecessor_root",
+          "finalized_height",
+          "file_identity",
+          "authenticator"
+        ],
+        "canonical_bytes": "canonical length-delimited bytes for receipt and proof; exact decode/re-encode and domain separation",
+        "domain": "trnm.poco-ai.g2f.application-jmt-binding.v1",
+        "issuer_authority": "A13 execution/JMT owner after deterministic replay and proof recomputation",
+        "caller_authority": "A16 read-only verifier; caller cannot provide a root, key, sibling list or receipt",
+        "linearity": "non-Clone verified proof carrier bound to one finalized execution generation",
+        "bounds": {
+          "max_encoded_bytes": 262144,
+          "max_read_write_entries": 4096,
+          "max_jmt_depth": 256,
+          "max_siblings": 256,
+          "max_verification_time_ms": 2000
+        },
+        "errors": ["ERR_EXECUTION_ROOT_MISMATCH", "ERR_JMT_PROOF_INVALID", "ERR_JMT_DOMAIN_MISMATCH", "ERR_EXECUTION_VERSION_DRIFT", "ERR_COMPOSITE_ROOT_SUBSTITUTION"],
+        "replay_and_durability": "proof verifies exact receipt/read-write bytes and JMT root; stale/forked roots, duplicate writes, noncanonical siblings, composite roots and response-loss uncertainty fail closed; durable receipt precedes carrier issuance",
+        "consumers": ["G2F Order application binding", "G2F state sync", "G2F execution light-client proof", "G2F W0-W7 trace"]
+      },
+      "safety_rationale": "The candidate currently derives local MVCC roots and a composite cross-plane root. Only A13 may define the canonical application JMT algorithm and proof; A16 must reject any composite-root substitution.",
+      "version_impact": "Any JMT key/value/domain, receipt field, version rule or root-binding change invalidates Order, state-sync, settlement and light-client evidence.",
+      "required_vectors": {
+        "positive": ["exact receipt-to-JMT inclusion", "serial-equivalent replay root", "finalized Order height/root binding"],
+        "negative": ["composite-root substitution", "wrong key/value", "sibling orientation swap", "read/write version drift", "duplicate write", "forked predecessor", "noncanonical proof bytes"],
+        "fault_matrix": ["kill before durable receipt", "response loss after JMT commit", "torn proof row", "database rollback", "stale execution generation"]
+      },
+      "downstream_invalidation": ["G2F-JMT-001", "G2F-SYNC-001", "G2F-LC-001", "G2F-TRACE-001", "G2F-UPGRADE-001", "G2F", "G3", "G4", "G5"],
+      "safety_analysis": {
+        "new_authority_created": false,
+        "production_reachability_changed": false,
+        "signing_or_settlement_authority_changed": false,
+        "serialization_boundary_changed": true
+      },
+      "exact_commands": [
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-mvcc-fee-v1/src/engine.rs",
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-mvcc-fee-v1/src/types.rs",
+        "sha256sum trillionnium/crates/trnm-poco-mvcc-fee-v1/Cargo.toml trillionnium/crates/trnm-poco-mvcc-fee-v1/src/engine.rs trillionnium/crates/trnm-poco-mvcc-fee-v1/src/lib.rs trillionnium/crates/trnm-poco-mvcc-fee-v1/src/store.rs trillionnium/crates/trnm-poco-mvcc-fee-v1/src/types.rs"
+      ],
+      "independent_replay": "blocked until A13 publishes an accepted JMT interface and a second implementation reproduces roots, proofs and exact errors",
+      "implementation_ownership": "A13 owns JMT semantics; A16 owns only the consumer/Order binding and must not invent a replacement root",
+      "review_decision": {
+        "owner_decision": null,
+        "independent_reviewer": null,
+        "accepted_interface_version": null,
+        "accepted_interface_digest": null,
+        "source_commit": null,
+        "source_tree": null,
+        "notes": "Pending A13 JMT owner review, independent replay and Order binding review"
+      }
+    },
+    {
+      "request_id": "G2F-ICR-A14-001",
+      "requester_agent": "A16",
+      "requester_package": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+      "owner_agent": "A14",
+      "owner_package": "G2C_VERIFY_CHALLENGE_V1",
+      "created_at": "2026-08-29",
+      "status": "proposed",
+      "blocking_status": "BLOCKED_UPSTREAM",
+      "current_interface_version": "candidate-local-verify-challenge-v1",
+      "current_interface_digest": "sha256:0cca47a48e00741bd9f857bacd44c0be94f7994201da90ade7998a4ef1bc71d4",
+      "current_interface_owner": "A14",
+      "current_interface": {
+        "paths": [
+          "trillionnium/crates/trnm-poco-verify-challenge-v1/Cargo.toml",
+          "trillionnium/crates/trnm-poco-verify-challenge-v1/src/lib.rs",
+          "trillionnium/crates/trnm-poco-verify-challenge-v1/src/types.rs",
+          "trillionnium/crates/trnm-poco-verify-challenge-v1/src/store.rs"
+        ],
+        "available_types": ["SignedVerificationClaimV1", "ResultStateV1", "ChallengeStateV1", "VerifyChallengeFreshReadbackV1", "VerifyChallengePreVotePreviewV1"],
+        "availability": "candidate-local-only",
+        "missing": ["authenticated result/challenge finality snapshot", "profile/quote revocation authority", "challenge maturity proof bound to JMT/Order", "global result settlement handoff"]
+      },
+      "proposed_interface": {
+        "name": "AuthenticatedResultChallengeSnapshotV1",
+        "semantic_version": "1.0.0-candidate",
+        "canonical_fields": [
+          "chain_id",
+          "store_instance_id",
+          "snapshot_generation",
+          "result_id",
+          "result_revision",
+          "profile_id",
+          "profile_hash",
+          "evidence_digest",
+          "challenge_id",
+          "challenge_status",
+          "maturity_height",
+          "hold_close_height",
+          "terminal_status",
+          "execution_jmt_root",
+          "order_proof_digest",
+          "file_identity",
+          "authenticator"
+        ],
+        "canonical_bytes": "canonical length-delimited bytes; profile, result, challenge and hold domains are distinct",
+        "domain": "trnm.poco-ai.g2f.result-challenge-snapshot.v1",
+        "issuer_authority": "A14 verification/challenge owner after profile, evidence, challenge and hold rechecks",
+        "caller_authority": "A16 read-only verifier; caller cannot select a profile or declare maturity",
+        "linearity": "non-Clone finality snapshot; one terminal revision per result/challenge generation",
+        "bounds": {
+          "max_encoded_bytes": 131072,
+          "max_evidence_bytes": 65536,
+          "max_challenges": 1024,
+          "max_nested_depth": 8,
+          "max_verification_time_ms": 2000
+        },
+        "errors": ["ERR_RESULT_PROFILE_DISABLED", "ERR_RESULT_REVISION_STALE", "ERR_CHALLENGE_OPEN", "ERR_RESULT_MATURITY", "ERR_RESULT_ROOT_MISMATCH", "ERR_RESULT_ROLLBACK"],
+        "replay_and_durability": "only an exact terminal revision can be retried; open challenge, stale quote/key, profile drift, response-loss uncertainty, duplicate resolution and store rollback fail closed; durable evidence precedes terminal carrier",
+        "consumers": ["G2F authenticated multi-store snapshot", "G2F settlement proof", "G2F result light-client proof", "G2F W0-W7 trace"]
+      },
+      "safety_rationale": "A16 cannot convert a local verification claim or subjective profile into objective result finality; A14 must attest profile, evidence, challenge maturity and exact roots.",
+      "version_impact": "Changing profile, result revision, challenge/hold heights, terminal states or root bindings invalidates settlement and light-client evidence.",
+      "required_vectors": {
+        "positive": ["terminal result with no open challenge", "maturity boundary exact height", "profile/evidence root recheck"],
+        "negative": ["disabled profile", "stale quote/key", "open challenge", "result revision drift", "premature maturity", "duplicate challenge resolution", "wrong execution root"],
+        "fault_matrix": ["kill before evidence commit", "response loss after terminal commit", "torn challenge row", "WAL rollback", "profile revocation during reopen"]
+      },
+      "downstream_invalidation": ["G2F-ATOMIC-001", "G2F-SYNC-001", "G2F-LC-001", "G2F-TRACE-001", "G2F", "G3", "G4", "G5"],
+      "safety_analysis": {
+        "new_authority_created": false,
+        "production_reachability_changed": false,
+        "signing_or_settlement_authority_changed": false,
+        "serialization_boundary_changed": true
+      },
+      "exact_commands": [
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-verify-challenge-v1/src/store.rs",
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-verify-challenge-v1/src/types.rs",
+        "sha256sum trillionnium/crates/trnm-poco-verify-challenge-v1/Cargo.toml trillionnium/crates/trnm-poco-verify-challenge-v1/src/lib.rs trillionnium/crates/trnm-poco-verify-challenge-v1/src/store.rs trillionnium/crates/trnm-poco-verify-challenge-v1/src/types.rs"
+      ],
+      "independent_replay": "blocked until A14 publishes an accepted result/challenge digest and independent profile/maturity replay",
+      "implementation_ownership": "A14 only; A16 may consume the accepted terminal snapshot and implement only its adapter",
+      "review_decision": {
+        "owner_decision": null,
+        "independent_reviewer": null,
+        "accepted_interface_version": null,
+        "accepted_interface_digest": null,
+        "source_commit": null,
+        "source_tree": null,
+        "notes": "Pending A14 owner review, profile safety review and independent replay"
+      }
+    },
+    {
+      "request_id": "G2F-ICR-A15-001",
+      "requester_agent": "A16",
+      "requester_package": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
+      "owner_agent": "A15",
+      "owner_package": "G2E_SETTLEMENT_ECONOMICS_V1",
+      "created_at": "2026-08-29",
+      "status": "proposed",
+      "blocking_status": "BLOCKED_UPSTREAM",
+      "current_interface_version": "candidate-local-settlement-v1",
+      "current_interface_digest": "sha256:144e31fcd915fded7f3a30fb6ab138ec591d16c6c6c0d79298b005ceeae4179f",
+      "current_interface_owner": "A15",
+      "current_interface": {
+        "paths": [
+          "trillionnium/crates/trnm-poco-consumption-settlement-v1/Cargo.toml",
+          "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/lib.rs",
+          "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/types.rs",
+          "trillionnium/crates/trnm-poco-consumption-settlement-v1/src/store.rs"
+        ],
+        "available_types": ["ConsumptionSettlementFreshReadbackV1", "SettlementIntentV1", "SettlementReceiptV1", "ConsumptionRollupV1", "SettlementStateV1"],
+        "availability": "candidate-local-only",
+        "missing": ["authenticated global settlement snapshot", "application-JMT and Order proof binding", "external exactly-once anchor", "accepted multi-asset conservation authority"]
+      },
+      "proposed_interface": {
+        "name": "AuthenticatedSettlementSnapshotV1",
+        "semantic_version": "1.0.0-candidate",
+        "canonical_fields": [
+          "chain_id",
+          "store_instance_id",
+          "snapshot_generation",
+          "settlement_intent_id",
+          "settlement_receipt_id",
+          "result_id",
+          "challenge_maturity",
+          "fee_schedule_root",
+          "conservation_vector_root",
+          "asset_deltas",
+          "account_versions",
+          "execution_jmt_root",
+          "order_proof_digest",
+          "terminal_status",
+          "file_identity",
+          "authenticator"
+        ],
+        "canonical_bytes": "canonical length-delimited bytes; sorted asset IDs/deltas and exact intent/receipt re-encoding",
+        "domain": "trnm.poco-ai.g2f.settlement-snapshot.v1",
+        "issuer_authority": "A15 settlement owner after maturity, conservation and exactly-once durable commit",
+        "caller_authority": "A16 read-only verifier; caller cannot supply balances, prices, roots or terminal receipt",
+        "linearity": "non-Clone terminal receipt carrier; one receipt per intent",
+        "bounds": {
+          "max_encoded_bytes": 131072,
+          "max_assets": 1024,
+          "max_deltas": 4096,
+          "max_nested_depth": 8,
+          "max_verification_time_ms": 2000
+        },
+        "errors": ["ERR_SETTLEMENT_AUTH", "ERR_SETTLEMENT_DUPLICATE", "ERR_SETTLEMENT_NOT_MATURE", "ERR_SETTLEMENT_ROOT_MISMATCH", "ERR_SETTLEMENT_INSOLVENT", "ERR_SETTLEMENT_ROLLBACK"],
+        "replay_and_durability": "same intent/receipt is idempotent; a second terminal receipt, stale price/fee root, wrong asset, insolvency, response-loss uncertainty, WAL/sidecar rollback or changed account version fails closed; durable receipt precedes carrier issuance",
+        "consumers": ["G2F authenticated multi-store snapshot", "G2F state sync", "G2F settlement light-client proof", "G2F W0-W7 trace"]
+      },
+      "safety_rationale": "A16 cannot infer conservation or terminal settlement from a local rollup. A15 must attest the exact intent, receipt, maturity, asset deltas, fee/conservation roots and execution/Order bindings.",
+      "version_impact": "Changing asset registry, fee schedule, maturity, conservation, exactly-once or root semantics invalidates G2F state-sync, light-client and downstream economic evidence.",
+      "required_vectors": {
+        "positive": ["multi-asset conserved terminal settlement", "exact retry after response loss", "maturity-boundary acceptance"],
+        "negative": ["duplicate receipt", "premature settlement", "wrong asset", "stale price/fee root", "insolvency", "result/challenge mismatch", "composite-root substitution"],
+        "fault_matrix": ["kill before durable intent", "response loss after receipt commit", "torn receipt row", "WAL/full-store rollback", "reopen with stale anchor"]
+      },
+      "downstream_invalidation": ["G2F-ATOMIC-001", "G2F-SYNC-001", "G2F-LC-001", "G2F-TRACE-001", "G2F-UPGRADE-001", "G2F", "G3", "G4", "G5"],
+      "safety_analysis": {
+        "new_authority_created": false,
+        "production_reachability_changed": false,
+        "signing_or_settlement_authority_changed": false,
+        "serialization_boundary_changed": true
+      },
+      "exact_commands": [
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-consumption-settlement-v1/src/store.rs",
+        "git show 6e0189e351015ef3230f217ca7ff86149baedcf0:trillionnium/crates/trnm-poco-consumption-settlement-v1/src/types.rs",
+        "sha256sum trillionnium/crates/trnm-poco-consumption-settlement-v1/Cargo.toml trillionnium/crates/trnm-poco-consumption-settlement-v1/src/lib.rs trillionnium/crates/trnm-poco-consumption-settlement-v1/src/store.rs trillionnium/crates/trnm-poco-consumption-settlement-v1/src/types.rs"
+      ],
+      "independent_replay": "blocked until A15 publishes an accepted settlement digest and independent conservation/exactly-once replay",
+      "implementation_ownership": "A15 only; A16 may consume the accepted terminal snapshot and implement only its adapter",
+      "review_decision": {
+        "owner_decision": null,
+        "independent_reviewer": null,
+        "accepted_interface_version": null,
+        "accepted_interface_digest": null,
+        "source_commit": null,
+        "source_tree": null,
+        "notes": "Pending A15 owner review, economic conservation review and independent replay"
+      }
+    }
+  ],
+  "policy": "A16 must not edit A11-A15 source-plane semantics. Until each owner accepts the request and publishes an immutable interface version/digest, integrated G2F closure remains BLOCKED_UPSTREAM; candidate adapters may only reject missing or untrusted facts.",
+  "downstream_rule": "Acceptance or revision of any request invalidates the affected G2F gap rows and all dependent W0-W7, state-sync, light-client, G3, G4 and G5 evidence until clean-clone replay regenerates digests."
+}
