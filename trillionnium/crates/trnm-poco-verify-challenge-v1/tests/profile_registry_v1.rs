@@ -1,7 +1,12 @@
-#[path = "../src/profile_registry_v1.rs"]
-mod profile_registry_v1;
+use trnm_poco_verify_challenge_v1::profile_registry_v1::*;
 
-use profile_registry_v1::*;
+const _: () = {
+    assert!(!VERIFICATION_PROFILE_FALLBACK_ALLOWED_V1);
+    assert!(!VERIFICATION_PROFILES_GLOBALLY_ENABLED_V1);
+    assert!(!VERIFICATION_DECISION_ECONOMIC_AUTHORITY_V1);
+    assert!(!VERIFICATION_DECISION_ORDER_REORG_AUTHORITY_V1);
+    assert!(!VERIFICATION_DECISION_POCO_WEIGHT_AUTHORITY_V1);
+};
 
 fn id(value: u8) -> [u8; 32] {
     let mut out = [0; 32];
@@ -90,6 +95,7 @@ fn exact_resolution_and_evidence_precede_backend() {
     ))
     .expect("registry");
     assert_eq!(registry.len(), 7);
+    assert!(!registry.is_empty());
 
     let mut bad_statement = statement();
     bad_statement.profile_hash = id(99);
@@ -161,8 +167,6 @@ fn disabled_expired_revoked_and_unknown_profiles_do_not_fallback() {
         Err(VerificationProfileErrorV1::ProfileDisabled)
     );
     assert_eq!(backend.calls, 0);
-    assert!(!VERIFICATION_PROFILE_FALLBACK_ALLOWED_V1);
-    assert!(!VERIFICATION_PROFILES_GLOBALLY_ENABLED_V1);
 }
 
 #[test]
