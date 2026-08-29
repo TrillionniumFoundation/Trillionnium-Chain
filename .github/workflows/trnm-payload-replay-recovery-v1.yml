@@ -12,8 +12,19 @@ on:
       - "docs/development/agents/**"
       - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
       - "docs/development/packages/**"
+      - "docs/evidence/g2b/**"
+      - "docs/evidence/g2c/**"
+      - "docs/evidence/g2d/**"
+      - "docs/evidence/g2e/**"
+      - "docs/evidence/g2f/**"
+      - "docs/evidence/g3-g5/**"
       - "docs/schemas/current-snapshot-v1.schema.json"
       - "docs/schemas/agent-handoff-v1.schema.json"
+      - "conformance/agent-market/**"
+      - "conformance/execution/**"
+      - "conformance/verification/**"
+      - "conformance/g2f/**"
+      - "conformance/benchmark/**"
       - "scripts/check_ci_runner_policy.sh"
       - "scripts/ci/check_agent_development_docs_v1.sh"
       - "scripts/ci/check_payload_replay_recovery_v1.sh"
@@ -22,10 +33,24 @@ on:
       - "scripts/ci/check_poco_bft_mainline_truth.sh"
       - "scripts/ci/check_cargo_offline_*"
       - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_agent_market_*"
+      - "scripts/ci/check_g2c_*"
+      - "scripts/ci/check_g2d_*"
+      - "scripts/ci/check_g2e_*"
+      - "scripts/ci/check_g2f_*"
+      - "scripts/ci/check_g3_g5_*"
+      - "scripts/ci/check_mvcc_serial_equivalence_model_v1.sh"
+      - "tools/agent-market-model/**"
+      - "tools/mvcc-serial-model/**"
+      - "tools/verification-model/**"
+      - "tools/benchmark-contract/**"
+      - "simulations/economics/**"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-consensus-peer-lease/**"
       - "trillionnium/crates/trnm-poco-node/**"
+      - "trillionnium/crates/trnm-poco-mvcc-fee-v1/**"
+      - "trillionnium/crates/trnm-poco-verify-challenge-v1/**"
   push:
     branches:
       - main
@@ -93,7 +118,7 @@ jobs:
       (github.event_name != 'pull_request' ||
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 90
+    timeout-minutes: 130
     env:
       TRNM_CARGO_OFFLINE_POLICY: "required"
       CARGO_NET_OFFLINE: "true"
@@ -104,6 +129,16 @@ jobs:
           path: trillionnium-chain
           persist-credentials: false
           fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Assert exact checked-out source
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          actual=$(git rev-parse HEAD)
+          test "$actual" = "$expected"
+          printf 'exact_head=%s\n' "$actual"
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
@@ -115,6 +150,7 @@ jobs:
             --component rustfmt
 
       - name: Verify Cargo offline cache readiness
+        id: cargo_offline_ready
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -123,17 +159,42 @@ jobs:
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
-      - name: Verify agent development documentation contracts
+      - name: Verify scoped package or canonical recovery contracts
         working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_agent_development_docs_v1.sh
-
-      - name: Verify payload replay package implementation and truth boundary
-        working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_payload_replay_recovery_v1.sh
-
-      - name: Verify G1-R4A finalization-intent process matrix
-        working-directory: trillionnium-chain
-        run: bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
+        env:
+          TRNM_PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+          TRNM_HEAD_REF: ${{ github.head_ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          case "$TRNM_HEAD_REF" in
+            feature/chain-a12-g2b-agent-market-v2-20260830)
+              bash ./scripts/ci/check_agent_market_replay_v2.sh
+              ;;
+            feature/chain-a13-g2d-execution-mvcc-fee-v2-20260830)
+              bash ./scripts/ci/check_g2d_source_binding_v2.sh
+              bash ./scripts/ci/check_mvcc_serial_equivalence_model_v1.sh
+              ;;
+            feature/chain-a14-g2c-verify-challenge-v2-20260830)
+              bash ./scripts/ci/check_g2c_replay_v2.sh
+              ;;
+            feature/chain-a15-g2e-settlement-v2-20260830)
+              bash ./scripts/ci/check_g2e_replay_v2.sh
+              ;;
+            feature/chain-a16-g2f-whole-node-light-client-v2-20260830)
+              bash ./scripts/ci/check_g2f_replay_v2.sh
+              cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib
+              cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib -- -D warnings
+              cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+              ;;
+            feature/chain-a17-g3-g5-bench-security-ops-v2-20260830)
+              bash ./scripts/ci/check_g3_g5_replay_v2.sh
+              ;;
+            *)
+              bash ./scripts/ci/check_agent_development_docs_v1.sh
+              bash ./scripts/ci/check_payload_replay_recovery_v1.sh
+              bash ./scripts/ci/check_finalization_intent_process_matrix_v1.sh
+              ;;
+          esac
 
       - name: Verify canonical development plan
         working-directory: trillionnium-chain
