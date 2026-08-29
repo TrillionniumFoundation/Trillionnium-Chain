@@ -97,6 +97,7 @@ class Engine:
         if height<intent.maturity_height: raise Reject("not-mature")
         if height>intent.expiry_height and intent.result_status not in {"Expired","Cancelled"}: raise Reject("intent-expired")
         if intent.payer==intent.provider and not self.policy.related_party_allowed: raise Reject("related-party")
+        if intent.result_status=="ResultRejected" and not intent.challenger: raise Reject("challenger-required")
         if self.get(intent.escrow_id,intent.escrow_asset)!=intent.escrow_amount: raise Reject("wrong-asset-or-escrow")
         if self.get(intent.bond_id,intent.bond_asset)!=intent.bond_amount: raise Reject("wrong-asset-or-bond")
         before=self.snapshot_totals(); movements=[]
@@ -116,7 +117,6 @@ class Engine:
             status="Settled"
         elif intent.result_status=="ResultRejected":
             self.move(escrow,intent.payer,intent.escrow_asset,intent.escrow_amount,movements)
-            if not intent.challenger: raise Reject("challenger-required")
             reward=intent.bond_amount*self.policy.challenger_bps_of_slashed_bond//10000
             treasury=intent.bond_amount-reward
             self.move(bond,intent.challenger,intent.bond_asset,reward,movements)
@@ -134,6 +134,19 @@ class Engine:
         receipt=Receipt(intent_id,status,movements,False,False)
         self.receipts[intent_id]=receipt; self.nonce_index[intent.nonce]=intent_id
         return receipt
+
+# Make all economic transitions failure-atomic: a rejected path restores every
+# mutable map, including response-loss indexes. This intentionally wraps the
+# model instead of relying on individual branches to remember rollback.
+_unchecked_apply=Engine.apply
+def _transactional_apply(self:Engine,intent:Intent,height:int)->Receipt:
+    before_balances=dict(self.balances); before_receipts=dict(self.receipts); before_nonces=dict(self.nonce_index)
+    try:
+        return _unchecked_apply(self,intent,height)
+    except Exception:
+        self.balances=before_balances; self.receipts=before_receipts; self.nonce_index=before_nonces
+        raise
+Engine.apply=_transactional_apply
 
 def make(status:str,nonce:str="n1",payer:str="consumer",provider:str="provider",price:str="price-v1",asset:str="USD",bond_asset:str="BOND")->Intent:
     return Intent("task","lease","result",status,"profile",payer,provider,"verifier-pool","challenger" if status=="ResultRejected" else None,"escrow",asset,10000,"bond",bond_asset,1000,price,price,"policy-v1",10,100,nonce)
@@ -157,11 +170,12 @@ def self_test()->dict:
     wrong=engine_for(i); wrong.set_balance("escrow","USD",9999); reject("insolvent-escrow",lambda:wrong.apply(i,10))
     related=make("ResultFinal",payer="same",provider="same"); reject("related-party",lambda:engine_for(related).apply(related,10))
     badstatus=make("ResultPending"); reject("unknown-result-status",lambda:engine_for(badstatus).apply(badstatus,10))
-    overflow=make("ResultFinal"); oe=engine_for(overflow); oe.set_balance("provider","USD",MAX); reject("arithmetic-overflow",lambda:oe.apply(overflow,10))
+    overflow=make("ResultFinal"); oe=engine_for(overflow); oe.set_balance("provider","USD",MAX); frozen=dict(oe.balances); reject("arithmetic-overflow",lambda:oe.apply(overflow,10)); assert oe.balances==frozen
+    rejected=make("ResultRejected"); missing=Intent(**{**asdict(rejected),"challenger":None}); me=engine_for(missing); frozen=dict(me.balances); reject("missing-challenger",lambda:me.apply(missing,10)); assert me.balances==frozen
     base=make("Cancelled",nonce="shared"); ce=engine_for(base); ce.apply(base,10)
     conflict=Intent(**{**asdict(base),"task_id":"other"}); reject("nonce-conflict",lambda:ce.apply(conflict,10))
     wrong_asset=make("ResultFinal",asset="EUR"); we=engine_for(wrong_asset); we.balances[("escrow","EUR")]=0; we.balances[("escrow","USD")]=10000; reject("wrong-asset",lambda:we.apply(wrong_asset,10))
-    return {"schema":"trnm-settlement-conservation-evidence-v1","outcomes":outcomes,"negative":negatives,"multi_asset":True,"candidate_only":True,"poco_weight_eligible":False,"jmt_authority":False}
+    return {"schema":"trnm-settlement-conservation-evidence-v1","outcomes":outcomes,"negative":negatives,"multi_asset":True,"candidate_only":True,"failure_atomic":True,"poco_weight_eligible":False,"jmt_authority":False}
 
 def main()->int:
     p=argparse.ArgumentParser(); p.add_argument("--self-test",action="store_true"); a=p.parse_args()

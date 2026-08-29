@@ -1,5 +1,6 @@
 {
   "schema":"trnm-settlement-model-cases-v1",
   "positive":["mature-result-final","result-rejected-slash-refund","cancel-refund","expiry-refund","exact-response-loss-replay"],
-  "negative":["not-mature","stale-price","insolvent-escrow","related-party","unknown-result-status","arithmetic-overflow","nonce-conflict","wrong-asset"]
+  "negative":["not-mature","stale-price","insolvent-escrow","related-party","unknown-result-status","arithmetic-overflow","missing-challenger","nonce-conflict","wrong-asset"],
+  "failure_atomicity_required":true
 }

@@ -7,9 +7,10 @@ import json,sys
 v=json.loads(sys.argv[1])
 assert v['schema']=='trnm-settlement-conservation-evidence-v1'
 assert set(v['outcomes'])=={'ResultFinal','ResultRejected','Cancelled','Expired'}
-assert len(v['negative'])==8
+assert len(v['negative'])==9
 assert v['multi_asset'] is True
 assert v['candidate_only'] is True
+assert v['failure_atomic'] is True
 assert v['poco_weight_eligible'] is False
 assert v['jmt_authority'] is False
 print('settlement conservation model: ok')
