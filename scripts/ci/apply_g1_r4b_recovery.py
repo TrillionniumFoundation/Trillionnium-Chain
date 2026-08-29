@@ -8,6 +8,9 @@ from pathlib import Path
 
 EXPECTED_HEAD = "3a4e2fa066de74025866da94cfe8a9efbfca03aa"
 EXPECTED_BLOBS = {
+    ".github/workflows/trnm-payload-replay-recovery-v1.yml": "507beb1ecae827cdb6bdcca6117cd9d94acd3ed0",
+    ".github/workflows/trnm-replay-to-core-coordinator-v1.yml": "13abca240c836d183e35f4adc62b1a058f2c1f44",
+    "scripts/check_ci_runner_policy.sh": "3a426c5af5998160d74abd71018dc0a3ba9f10ee",
     "trillionnium/crates/trnm-consensus-core/src/core.rs": "b2192afcb7f3b0e4e84a7fbdcc983efef5c2bd74",
     "docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md": "685d9854537dc61550331de60ec0294d301f2371",
 }
@@ -41,11 +44,78 @@ def replace_exact(path: Path, old: str, new: str) -> None:
     path.write_text(text.replace(old, new), encoding="utf-8")
 
 
+def make_cargo_job_local(path: Path, timeout: int) -> None:
+    text = path.read_text(encoding="utf-8")
+    for line in (
+        '  TRNM_CARGO_OFFLINE_POLICY: "required"\n',
+        '  CARGO_NET_OFFLINE: "true"\n',
+        '  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"\n',
+    ):
+        if text.count(line) != 1:
+            raise SystemExit(f"{path}: expected one workflow-level {line.strip()}")
+        text = text.replace(line, "", 1)
+    anchor = f"    timeout-minutes: {timeout}\n"
+    if text.count(anchor) != 1:
+        raise SystemExit(f"{path}: expected one job timeout anchor")
+    job_env = (
+        anchor
+        + "    env:\n"
+        + '      TRNM_CARGO_OFFLINE_POLICY: "required"\n'
+        + '      CARGO_NET_OFFLINE: "true"\n'
+        + '      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"\n'
+    )
+    path.write_text(text.replace(anchor, job_env, 1), encoding="utf-8")
+
+
 def main() -> None:
     root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
     require_exact_base(root)
+    payload = root / ".github/workflows/trnm-payload-replay-recovery-v1.yml"
+    coordinator = root / ".github/workflows/trnm-replay-to-core-coordinator-v1.yml"
+    runner_policy = root / "scripts/check_ci_runner_policy.sh"
     core = root / "trillionnium/crates/trnm-consensus-core/src/core.rs"
     docs = root / "docs/development/packages/TRNM_G1_R4_FINALIZATION_RECOVERY_TARGET_V1.md"
+
+    make_cargo_job_local(payload, 90)
+    make_cargo_job_local(coordinator, 75)
+
+    replace_exact(
+        coordinator,
+        '''    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.actor == 'ProfAlexQI' &&
+       github.triggering_actor == 'ProfAlexQI' &&
+       (github.event_name != 'pull_request' ||
+        github.event.pull_request.head.repo.full_name == github.repository))
+''',
+        '''    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' &&
+        github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' &&
+        github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER' &&
+        startsWith(github.head_ref, 'feature/chain-'))) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+''',
+    )
+    replace_exact(
+        runner_policy,
+        '''        if (workflow == "trnm-payload-replay-recovery-v1.yml") {
+          required_guard = payload_recovery_trust_guard
+        }
+''',
+        '''        if (workflow == "trnm-payload-replay-recovery-v1.yml" ||
+            workflow == "trnm-replay-to-core-coordinator-v1.yml") {
+          required_guard = payload_recovery_trust_guard
+        }
+''',
+    )
 
     replace_exact(
         core,
@@ -85,6 +155,9 @@ def main() -> None:
   body/overlay lineage and a real runtime/JMT application owner;
 - wire Core's exact tag-3 recovery fence to the deployed state-sync anchored
   owner without clearing its independent ancestry-replay fence;
+- restore repository-local X230/Cargo policy consistency so the recovery
+  tranche can pass its own fail-closed preflight rather than relying on a
+  skipped or policy-invalid workflow;
 ''',
     )
 
