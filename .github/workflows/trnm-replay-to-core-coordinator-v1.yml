@@ -97,6 +97,7 @@ jobs:
         with:
           path: trillionnium-chain
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
@@ -108,6 +109,7 @@ jobs:
             --component rustfmt
 
       - name: Verify Cargo offline cache readiness
+        id: cargo_offline_ready
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -137,7 +139,7 @@ jobs:
         run: bash ./scripts/project-preflight.sh --audit
 
       - name: Verify Cargo offline inputs remained unchanged
-        if: always()
+        if: always() && steps.cargo_offline_ready.outcome == 'success'
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail

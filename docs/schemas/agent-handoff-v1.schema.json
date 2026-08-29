@@ -14,7 +14,7 @@
   "properties": {
     "schema": { "const": "trnm-agent-handoff-v1" },
     "agent_id": { "type": "string", "pattern": "^A(0[0-9]|1[0-7])$" },
-    "package_id": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_\-]{2,127}$" },
+    "package_id": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{2,127}$" },
     "status": {
       "enum": [
         "WORKING", "MODULE_CLOSED_CANDIDATE", "BLOCKED_UPSTREAM",
