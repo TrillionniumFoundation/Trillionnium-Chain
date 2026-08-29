@@ -1,0 +1,94 @@
+{
+  "schema": "trnm-independent-package-review-decision-v1",
+  "classification": "candidate-non-normative",
+  "decision_id": "UNASSIGNED",
+  "status": "NOT_REVIEWED",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "package": {
+    "agent_id": null,
+    "package_id": null,
+    "pull_request": null,
+    "branch": null,
+    "commit": null,
+    "tree": null,
+    "base_commit": null,
+    "base_tree": null,
+    "handoff_path": null,
+    "handoff_git_blob": null,
+    "handoff_sha256": null,
+    "source_manifest_path": null,
+    "source_manifest_git_blob": null,
+    "source_manifest_sha256": null
+  },
+  "reviewer": {
+    "identity": null,
+    "organization": null,
+    "role": null,
+    "is_package_author": null,
+    "is_package_committer": null,
+    "is_campaign_operator": null,
+    "conflict_disclosure": null,
+    "independence_declaration_sha256": null
+  },
+  "replay": {
+    "workflow_name": null,
+    "workflow_run_id": null,
+    "workflow_head_sha": null,
+    "workflow_status": null,
+    "workflow_conclusion": null,
+    "runner_identity": null,
+    "toolchain_identity": null,
+    "command_manifest_root": null,
+    "raw_log_sha256": null,
+    "exact_head_completed_success": false
+  },
+  "mutants": {
+    "corpus_root": null,
+    "p0_ids": [],
+    "all_p0_replayed": false,
+    "accepted_mutants": [],
+    "rejected_mutants": [],
+    "replay_evidence_root": null
+  },
+  "interfaces": {
+    "requested": [],
+    "accepted": [],
+    "rejected": [],
+    "accepted_interface_bundle_root": null
+  },
+  "findings": {
+    "open_critical": null,
+    "open_high": null,
+    "open_medium": null,
+    "open_low": null,
+    "finding_ledger_root": null
+  },
+  "decision": {
+    "package_candidate_accepted": false,
+    "interface_candidate_accepted": false,
+    "gate_exit_authorized": false,
+    "merge_authorized": false,
+    "release_authorized": false,
+    "production_activation_authorized": false,
+    "reason": null,
+    "decision_root": null
+  },
+  "downstream_invalidation": [],
+  "reopen_on": [
+    "package commit or tree change",
+    "base commit or tree change",
+    "handoff or source manifest change",
+    "mutant corpus change",
+    "workflow, runner or toolchain change",
+    "accepted interface change",
+    "finding reopened",
+    "evidence root or signature invalidation"
+  ],
+  "signatures": [],
+  "notes": [
+    "This checked-in file is an empty template and carries no review decision.",
+    "The package author cannot be the independent reviewer.",
+    "A package-candidate acceptance does not authorize Gate exit, merge, release or production activation.",
+    "False, null, skipped, stale, queued, in-progress, cancelled or failed evidence is not acceptance."
+  ]
+}

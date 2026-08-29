@@ -1,0 +1,104 @@
+{
+  "schema": "trnm-remaining-blocker-execution-matrix-v1",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "owner": "A00",
+  "package_id": "AGENT_CONTROL_PLANE_V1",
+  "status": "BLOCKED_UPSTREAM",
+  "purpose": "Make every remaining non-repository or independent blocker executable, source-bound and fail-closed without converting missing real-world evidence into completion claims.",
+  "global_truth": {
+    "all_plan_gaps_closed": false,
+    "g0_exit": false,
+    "g1_exit": false,
+    "g2_exit": false,
+    "g3_exit": false,
+    "g4_exit": false,
+    "g5_exit": false,
+    "production_candidate": false,
+    "production_consensus_activation": false,
+    "release_ready": false,
+    "normative_freeze": false,
+    "node_support": false
+  },
+  "evidence_rules": {
+    "exact_head_completed_success_required": true,
+    "synthetic_merge_ref_is_evidence": false,
+    "stale_head_is_evidence": false,
+    "queued_or_in_progress_is_evidence": false,
+    "skipped_or_cancelled_is_evidence": false,
+    "owner_self_acceptance_allowed": false,
+    "owner_self_merge_allowed": false,
+    "fixture_or_simulation_may_substitute_real_campaign": false,
+    "local_hmac_or_file_watermark_may_substitute_hsm_anchor": false,
+    "shortened_soak_may_substitute_required_duration": false
+  },
+  "blockers": [
+    {
+      "id": "EXT-REVIEW-001",
+      "severity": "P0",
+      "owner": "A00",
+      "executor_role": "independent-reviewer",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["exact package commit/tree", "exact handoff digest", "retained mutant corpus", "completed-success exact-head replay"],
+      "required_outputs": ["signed review decision", "accepted or rejected interface digest", "reviewer independence declaration", "downstream invalidation set"],
+      "acceptance": ["reviewer is not package author", "all P0 mutants independently replayed", "accepted digest matches exact source", "no production or Gate truth promoted inside package PR"],
+      "invalidation": ["package commit/tree changes", "handoff changes", "mutant corpus changes", "workflow or toolchain changes"]
+    },
+    {
+      "id": "EXT-G1-CAMPAIGN-001",
+      "severity": "P0",
+      "owner": "A07",
+      "executor_role": "multi-host-campaign-operator",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["independently accepted G1-R2 through G1-R4 evidence", "exact binary/SBOM/genesis tuple", "4-node and 7-node topology manifests", "operator and custody identities"],
+      "required_outputs": ["signed raw traces", "partition/heal results", "restart/state-sync results", "epoch/key-rotation results", "double-sign and conflicting-finality absence proof"],
+      "acceptance": ["multiple physical hosts", "multiple operators", "multiple custody domains", "real process identities", "no transport-only substitution"],
+      "invalidation": ["binary/SBOM/genesis changes", "validator-set changes", "consensus parameter changes", "accepted G1 evidence changes"]
+    },
+    {
+      "id": "EXT-ANCHOR-HSM-001",
+      "severity": "P0",
+      "owner": "A05",
+      "executor_role": "independent-security-custodian",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["external monotonic-anchor design", "HSM/KMS key policy", "signer lifecycle policy", "whole-node checkpoint schema"],
+      "required_outputs": ["device-backed key-generation evidence", "rotation and revocation ceremony", "monotonic rollback-rejection evidence", "disaster-recovery evidence", "custody-domain audit trail"],
+      "acceptance": ["anchor administered outside rollbackable node namespace", "private keys non-exportable", "quorum custody", "rollback and cloned-namespace mutants rejected"],
+      "invalidation": ["device firmware or policy changes", "key generation changes", "checkpoint schema changes", "custody membership changes"]
+    },
+    {
+      "id": "EXT-POWERLOSS-001",
+      "severity": "P0",
+      "owner": "A06",
+      "executor_role": "physical-fault-operator",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["accepted G1 package tuple", "fault-cut matrix", "storage/controller inventory", "expected recovery oracle"],
+      "required_outputs": ["power-cut traces", "host-reboot traces", "controller-cache-loss traces", "fresh-process replay", "quarantine decisions"],
+      "acceptance": ["physical power interruption", "independent recovery process", "exact readback roots", "no same-process or SIGKILL-only substitution"],
+      "invalidation": ["storage stack changes", "filesystem or mount policy changes", "binary changes", "fault oracle changes"]
+    },
+    {
+      "id": "EXT-AUDIT-001",
+      "severity": "P0",
+      "owner": "A17",
+      "executor_role": "independent-audit-team",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["accepted source release root", "threat register", "formal and mutation evidence", "deployment topology"],
+      "required_outputs": ["consensus audit", "cryptography audit", "economic review", "red-team report", "finding remediation ledger"],
+      "acceptance": ["zero open Critical findings", "zero open High findings", "auditor independent from package authors", "all findings source-bound"],
+      "invalidation": ["source release changes", "cryptography changes", "economic parameters change", "threat model changes"]
+    },
+    {
+      "id": "EXT-SOAK-ACTIVATION-001",
+      "severity": "P0",
+      "owner": "A17",
+      "executor_role": "operations-and-governance",
+      "status": "BLOCKED_UPSTREAM",
+      "required_inputs": ["accepted G0 through G5 evidence", "signed benchmark traces", "audit closure", "SLO and incident runbooks"],
+      "required_outputs": ["72-hour chaos evidence", "7-day public-testnet soak", "30-day production-candidate soak", "incident/restore/key-rotation/state-sync drills", "governance and activation ceremony records"],
+      "acceptance": ["wall-clock durations met", "no simulated-time substitution", "all SLO breaches recorded", "activation performed only by authorized governance"],
+      "invalidation": ["release root changes", "validator or operator set changes", "critical configuration changes", "audit findings reopened"]
+    }
+  ],
+  "terminal_rule": "Until every blocker has independently accepted evidence, the only honest project outcome is BLOCKED_UPSTREAM or STOP_CONDITION; repository candidates may be MODULE_CLOSED_CANDIDATE but may not claim Gate exit, release readiness or production activation."
+}

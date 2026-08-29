@@ -97,6 +97,7 @@ jobs:
         with:
           path: trillionnium-chain
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
