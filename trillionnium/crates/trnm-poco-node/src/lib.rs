@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 50450)
-Total output lines: 4877
-
 #![forbid(unsafe_code)]
 //! Fail-closed lifecycle scaffold for the future PoCO-BFT node.
 //!
@@ -1343,7 +1340,2068 @@ fn recover_one_invalid_obligation_v0(
             ValidationRecoveryProcessCheckpointPhaseV0::ObligationCallbackPending,
             reconciled_callback,
             obligation_revision,
-            oblig…20450 tokens truncated…sqlite3"),
+            obligation_revision,
+        );
+    }
+    let input = match route {
+        PayloadValidationRouteV0::Proposal => Input::PayloadValidated {
+            id: validation_id,
+            result: PayloadValidationResult::DeterministicallyInvalid,
+        },
+        PayloadValidationRouteV0::Synced => Input::SyncedPayloadValidated {
+            id: validation_id,
+            result: PayloadValidationResult::DeterministicallyInvalid,
+        },
+    };
+    let effects = core
+        .step(input, verifier)
+        .map_err(PocoNodeHostErrorV0::core)?;
+    let request = take_exact_recovery_persistence_v0(effects)?;
+    let callback_facts = application
+        .record_recovered_core_acceptance_v0(&request)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    validate_callback_identity_v0(&callback_facts, route, validation_id)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::ObligationDelivered,
+        callback_facts,
+        obligation_revision,
+        obligation_revision,
+    );
+    let context =
+        native_invalid_transition_context_v0(&callback_facts, request.state().revision())?;
+    safety_store
+        .bind_core_v0(core.safety_state_persistence_binding_v0())
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    safety_store
+        .persist_exact_v0(&request, &context)
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    let confirmed = safety_store
+        .confirmed_native_deterministic_invalid_head_exact_v0(request.state(), &context)
+        .map_err(PocoNodeHostErrorV0::safety_store)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::CompletionDelivered,
+        callback_facts,
+        obligation_revision,
+        confirmed.revision(),
+    );
+    let completion_state = application
+        .recover_confirmed_invalid_completion_v0(&confirmed)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    if completion_state != NativeValidationRecoveredInvalidStateV0::Delivered {
+        return Err(PocoNodeHostErrorV0::UnexpectedCompletionApplicationState);
+    }
+    let acked = application
+        .acknowledge_recovered_invalid_completion_v0(&confirmed)
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    validate_acked_facts_against_confirmation_v0(&acked, &confirmed)?;
+    application
+        .final_exact_audit_v0()
+        .map_err(PocoNodeHostErrorV0::ApplicationRecoveryTransition)?;
+    #[cfg(feature = "recovery-process-test-support")]
+    emit_recovery_process_checkpoint_v0(
+        &mut checkpoint_observer,
+        ValidationRecoveryProcessCheckpointPhaseV0::CompletionAcked,
+        callback_facts,
+        obligation_revision,
+        confirmed.revision(),
+    );
+    let barrier = request.barrier();
+    let pending_inert_effects = core
+        .step(Input::StorageAck { barrier }, verifier)
+        .map_err(PocoNodeHostErrorV0::core)?;
+    validate_inert_post_ack_effects_v0(&pending_inert_effects)?;
+    if core.safety_state() != confirmed.state() {
+        return Err(PocoNodeHostErrorV0::RecoveredHeadMismatch);
+    }
+    Ok((
+        core,
+        ValidationRecoveryBootstrapV0::ObligationCompleted {
+            route,
+            validation_id,
+            completion_revision: confirmed.transition().completion_revision(),
+            source: source.into(),
+        },
+        pending_inert_effects,
+        true,
+    ))
+}
+
+#[cfg(all(
+    feature = "legacy-consensus-app",
+    feature = "recovery-process-test-support"
+))]
+fn emit_recovery_process_checkpoint_v0(
+    observer: &mut Option<&mut dyn FnMut(ValidationRecoveryProcessCheckpointV0)>,
+    phase: ValidationRecoveryProcessCheckpointPhaseV0,
+    callback: NativeValidationRecoveredInvalidCallbackFactsV0,
+    obligation_revision: u64,
+    safety_revision: u64,
+) {
+    if let Some(observer) = observer.as_deref_mut() {
+        observer(ValidationRecoveryProcessCheckpointV0 {
+            phase,
+            route: callback.route(),
+            validation_id: callback.validation_id(),
+            reason: callback.reason(),
+            obligation_revision,
+            safety_revision,
+        });
+    }
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+impl From<NativeValidationRecoveredInvalidStateV0> for ValidationRecoverySourceStateV0 {
+    fn from(state: NativeValidationRecoveredInvalidStateV0) -> Self {
+        match state {
+            NativeValidationRecoveredInvalidStateV0::CallbackPending => Self::CallbackPending,
+            NativeValidationRecoveredInvalidStateV0::Delivered => Self::Delivered,
+            NativeValidationRecoveredInvalidStateV0::Acked => Self::Acked,
+        }
+    }
+}
+
+fn head_has_current_invalid_completion_v0(state: &SafetyState) -> bool {
+    state
+        .payload_validation_completions()
+        .iter()
+        .any(|completion| {
+            completion.first_recorded_revision() == state.revision()
+                && completion.result() == DurablePayloadValidationResultV1::DeterministicallyInvalid
+        })
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+fn take_exact_recovery_persistence_v0(
+    effects: Vec<Effect>,
+) -> Result<SafetyStatePersistenceV0, PocoNodeHostErrorV0> {
+    if effects.len() != 1 {
+        return Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffectSet {
+            expected: 1,
+            actual: effects.len(),
+        });
+    }
+    match effects
+        .into_iter()
+        .next()
+        .expect("exact effect count checked")
+    {
+        Effect::PersistSafetyState(request) => Ok(request),
+        effect => Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffect {
+            effect: effect_name_v0(&effect),
+        }),
+    }
+}
+
+fn effect_name_v0(effect: &Effect) -> &'static str {
+    match effect {
+        Effect::PersistSafetyState(_) => "persist_safety_state",
+        Effect::ValidatePayload(_) => "validate_payload",
+        Effect::ValidateSyncedPayload(_) => "validate_synced_payload",
+        Effect::RequestSignature { .. } => "request_signature",
+        Effect::Broadcast(_) => "broadcast",
+        Effect::ArmViewTimer { .. } => "arm_view_timer",
+        Effect::RequestSafetyReplay { .. } => "request_safety_replay",
+        Effect::RequestTcHighQcSync { .. } => "request_tc_high_qc_sync",
+        Effect::RequestStandaloneQcSync { .. } => "request_standalone_qc_sync",
+        Effect::SafetyHalted(_) => "safety_halted",
+        Effect::Finalize(_) => "finalize",
+        Effect::Evidence(_) => "evidence",
+    }
+}
+
+fn validate_signer_safety_revision_v0<W: ExternalMonotonicWatermarkV0>(
+    signer_journal: &SqliteSignerJournalV0<W>,
+    safety_head: &RecoveredSafetyStateV0,
+) -> Result<(), PocoNodeHostErrorV0> {
+    let capacity = signer_journal
+        .capacity()
+        .map_err(PocoNodeHostErrorV0::signer_journal)?;
+    if let Some(signer_revision) = capacity.maximum_safety_revision() {
+        if signer_revision > safety_head.revision() {
+            return Err(PocoNodeHostErrorV0::SignerSafetyRevisionAhead {
+                signer_revision,
+                safety_revision: safety_head.revision(),
+            });
+        }
+    }
+    let prepared_tail = capacity.intent_count() > 0
+        && capacity
+            .intent_count()
+            .checked_mul(2)
+            .and_then(|events| events.checked_sub(1))
+            == Some(capacity.event_count());
+    if prepared_tail && safety_head.state().pending_sign().is_none() {
+        return Err(PocoNodeHostErrorV0::PreparedSignerIntentWithoutCoreOutbox {
+            safety_revision: safety_head.revision(),
+        });
+    }
+    Ok(())
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+fn validate_inert_post_ack_effects_v0(effects: &[Effect]) -> Result<(), PocoNodeHostErrorV0> {
+    if let Some(effect) = effects
+        .iter()
+        .find(|effect| !matches!(effect, Effect::SafetyHalted(_)))
+    {
+        return Err(PocoNodeHostErrorV0::UnexpectedRecoveryEffect {
+            effect: effect_name_v0(effect),
+        });
+    }
+    Ok(())
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+fn validate_callback_identity_v0(
+    facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
+    route: PayloadValidationRouteV0,
+    validation_id: ValidationId,
+) -> Result<(), PocoNodeHostErrorV0> {
+    if facts.route() != route || facts.validation_id() != validation_id {
+        return Err(PocoNodeHostErrorV0::ApplicationCallbackIdentityMismatch);
+    }
+    Ok(())
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+fn native_invalid_transition_context_v0(
+    facts: &NativeValidationRecoveredInvalidCallbackFactsV0,
+    completion_revision: u64,
+) -> Result<SafetyTransitionContextV0, PocoNodeHostErrorV0> {
+    let transition = NativeDeterministicInvalidTransitionV0::new(
+        facts.route(),
+        facts.validation_id(),
+        facts.request_fingerprint(),
+        facts.immutable_checksum(),
+        facts.host_config_ref(),
+        facts.reason().code_v0(),
+        facts.artifact_checksum(),
+        facts.callback_payload_checksum(),
+        facts.idempotency_key(),
+        facts.delivery_attempt(),
+        facts.row_checksum(),
+        facts.outbox_checksum(),
+        completion_revision,
+    )
+    .map_err(PocoNodeHostErrorV0::safety_store)?;
+    Ok(SafetyTransitionContextV0::native_deterministic_invalid(
+        transition,
+    ))
+}
+
+#[cfg(feature = "legacy-consensus-app")]
+fn validate_acked_facts_against_confirmation_v0(
+    acked: &NativeValidationRecoveredAckedFactsV0,
+    confirmed: &ConfirmedNativeDeterministicInvalidHeadV0,
+) -> Result<(), PocoNodeHostErrorV0> {
+    let transition = confirmed.transition();
+    if acked.route() != transition.route()
+        || acked.validation_id() != transition.validation_id()
+        || acked.request_fingerprint() != transition.request_fingerprint()
+        || acked.immutable_checksum() != transition.job_immutable_checksum()
+        || acked.host_config_ref() != transition.application_host_config_ref()
+        || acked.reason().code_v0() != transition.reason_code()
+        || acked.artifact_checksum() != transition.artifact_checksum()
+        || acked.callback_payload_checksum() != transition.callback_payload_checksum()
+        || acked.accepted_core_revision() != transition.completion_revision()
+        || acked.predecessor_idempotency_key() != transition.idempotency_key()
+        || acked.predecessor_delivery_attempt() != transition.delivery_attempt()
+        || acked.predecessor_delivered_row_checksum() != transition.delivered_job_row_checksum()
+        || acked.predecessor_outbox_checksum() != transition.outbox_checksum()
+    {
+        return Err(PocoNodeHostErrorV0::ApplicationAcknowledgementMismatch);
+    }
+    Ok(())
+}
+
+fn reject_activation_request(config: &PocoNodeStartConfigV0) -> Result<(), PocoNodeHostErrorV0> {
+    reject_authenticated_genesis_commissioning_v0(config.core_config())?;
+    let parameters = config.core_config().consensus_parameters();
+    if parameters.production_activation() {
+        return Err(PocoNodeHostErrorV0::ProductionActivationRequested);
+    }
+    let rollout_phase = parameters.rollout_phase();
+    if rollout_phase != RolloutPhase::Shadow {
+        return Err(PocoNodeHostErrorV0::NonShadowRolloutRequested { rollout_phase });
+    }
+    Ok(())
+}
+
+/// The static production gate used by the inert binary and live owner alike.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProductionActivationBlockedV0 {
+    _private: (),
+}
+
+impl ProductionActivationBlockedV0 {
+    const fn new() -> Self {
+        Self { _private: () }
+    }
+
+    pub const fn blockers(self) -> &'static [UnwiredProductionContractV0] {
+        UNWIRED_PRODUCTION_CONTRACTS_V0
+    }
+}
+
+impl fmt::Display for ProductionActivationBlockedV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("production activation is blocked; unwired contracts: ")?;
+        for (index, contract) in UNWIRED_PRODUCTION_CONTRACTS_V0.iter().enumerate() {
+            if index != 0 {
+                formatter.write_str(",")?;
+            }
+            formatter.write_str(contract.as_str())?;
+        }
+        Ok(())
+    }
+}
+
+impl Error for ProductionActivationBlockedV0 {}
+
+pub const fn production_activation_gate_v0() -> Result<(), ProductionActivationBlockedV0> {
+    Err(ProductionActivationBlockedV0::new())
+}
+
+/// Startup failures are fail-closed and never converted into consensus
+/// invalidity.
+#[derive(Debug)]
+pub enum PocoNodeHostErrorV0 {
+    RelativeSafetyStorePath,
+    InvalidSafetyStorePath,
+    SafetyStoreParentIo(Box<io::Error>),
+    InvalidSafetyStoreParent,
+    RelativeSignerJournalPath,
+    InvalidSignerJournalPath,
+    SignerJournalParentIo(Box<io::Error>),
+    InvalidSignerJournalParent,
+    SharedStoreParentNamespace,
+    RelativeApplicationStatusPath,
+    InvalidApplicationStatusPath,
+    ApplicationStoreParentIo(Box<io::Error>),
+    InvalidApplicationStoreParent,
+    SharedApplicationStoreParentNamespace,
+    AuthenticatedGenesisCommissioningRequiresDedicatedHost,
+    ProductionActivationRequested,
+    StrictValidatorSetAdmission {
+        reason: &'static str,
+    },
+    NonShadowRolloutRequested {
+        rollout_phase: RolloutPhase,
+    },
+    UnsupportedEpoch {
+        epoch: u64,
+    },
+    AuthenticatedObligationReplayUnavailable {
+        revision: u64,
+        obligation_count: usize,
+    },
+    ValidationRecoveryAwareOpenRequired {
+        revision: u64,
+    },
+    UnsupportedValidationObligationCount {
+        count: usize,
+    },
+    UnexpectedActiveApplicationRecoveryJobs {
+        expected: usize,
+        actual: usize,
+    },
+    OrdinaryContextForInvalidCompletion {
+        revision: u64,
+    },
+    NativeValidRecoveryUnavailable {
+        revision: u64,
+    },
+    NativeFinalizationAppliedRecoveryUnavailable {
+        revision: u64,
+    },
+    StateSyncCheckpointBootstrapRequiresUnifiedHost {
+        revision: u64,
+    },
+    UnexpectedObligationTransitionContext {
+        revision: u64,
+    },
+    MissingNativeInvalidTransitionContext {
+        revision: u64,
+    },
+    MissingReconciledApplicationOwner,
+    UnexpectedObligationApplicationState,
+    UnexpectedCompletionApplicationState,
+    ApplicationCallbackIdentityMismatch,
+    ApplicationAcknowledgementMismatch,
+    UnexpectedRecoveryEffectSet {
+        expected: usize,
+        actual: usize,
+    },
+    UnexpectedRecoveryEffect {
+        effect: &'static str,
+    },
+    RecoveredHeadMismatch,
+    RecoveredTransitionHeadMismatch,
+    OrdinaryPersistenceReadbackMismatch {
+        expected_revision: u64,
+        actual_revision: u64,
+    },
+    NonOrdinarySigningHead {
+        revision: u64,
+    },
+    SignerSafetyRevisionAhead {
+        signer_revision: u64,
+        safety_revision: u64,
+    },
+    PreparedSignerIntentWithoutCoreOutbox {
+        safety_revision: u64,
+    },
+    UnsupportedBoundedBootstrapState {
+        revision: u64,
+        state: &'static str,
+    },
+    UnsupportedTimeoutSigningIntentKind,
+    MissingTimeoutIntentAfterPersistence {
+        revision: u64,
+    },
+    MissingDurableTimeoutSignIntent {
+        revision: u64,
+    },
+    DurableSignIntentMismatch {
+        revision: u64,
+    },
+    SigningCoreSafetyHeadMismatch {
+        core_revision: u64,
+        safety_revision: u64,
+    },
+    SigningHeadChangedDuringProducer {
+        before_revision: u64,
+        after_revision: u64,
+    },
+    SignIntentSafetyRevisionMismatch {
+        intent_revision: u64,
+        safety_revision: u64,
+    },
+    MultipleBoundedPersistenceEffects,
+    MultipleSignedOutboundContexts,
+    MissingSignedOutboundContext,
+    SignedOutboundMismatch,
+    UnconsumedSignedOutboundContext,
+    UnsupportedBoundedHostEffect {
+        effect: &'static str,
+    },
+    BoundedEffectLimitExceeded,
+    BoundedTimeoutHostFailStopped,
+    Core(Box<trnm_consensus_core::CoreError>),
+    SafetyStore(Box<SafetyStoreErrorV0>),
+    SignerJournal(Box<SignerJournalErrorV0>),
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSemanticSidecar(safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1),
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesShadowTransitionMismatch {
+        revision: u64,
+    },
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSidecarPendingRecoveryRequired {
+        revision: u64,
+    },
+    #[cfg(feature = "safety-rules-sidecar")]
+    SafetyRulesSidecarRecoveryNotPending,
+    #[cfg(feature = "legacy-consensus-app")]
+    ApplicationRecoveryOpen(NativeValidationRecoveryOpenFailureV0),
+    #[cfg(feature = "legacy-consensus-app")]
+    ApplicationRecoveryReconcile(NativeValidationRecoveryReconcileFailureV0),
+    #[cfg(feature = "legacy-consensus-app")]
+    ApplicationRecoveryTransition(NativeValidationRecoveryTransitionFailureV0),
+}
+
+impl PocoNodeHostErrorV0 {
+    fn core(error: trnm_consensus_core::CoreError) -> Self {
+        Self::Core(Box::new(error))
+    }
+
+    fn safety_store(error: SafetyStoreErrorV0) -> Self {
+        Self::SafetyStore(Box::new(error))
+    }
+
+    fn signer_journal(error: SignerJournalErrorV0) -> Self {
+        Self::SignerJournal(Box::new(error))
+    }
+
+    fn strict_validator_set(error: ValidationError) -> Self {
+        let reason = match error {
+            ValidationError::InvalidValidatorSet(reason) => reason,
+            _ => "validator set shape is not admissible for strict Ed25519",
+        };
+        Self::StrictValidatorSetAdmission { reason }
+    }
+
+    #[cfg(feature = "safety-rules-sidecar")]
+    fn safety_rules_sidecar(
+        error: safety_rules_sidecar::SafetyRulesSemanticSidecarErrorV1,
+    ) -> Self {
+        Self::SafetyRulesSemanticSidecar(error)
+    }
+
+    fn safety_store_parent(error: io::Error) -> Self {
+        Self::SafetyStoreParentIo(Box::new(error))
+    }
+
+    fn signer_journal_parent(error: io::Error) -> Self {
+        Self::SignerJournalParentIo(Box::new(error))
+    }
+
+    #[cfg(feature = "legacy-consensus-app")]
+    fn application_store_parent(error: io::Error) -> Self {
+        Self::ApplicationStoreParentIo(Box::new(error))
+    }
+}
+
+impl fmt::Display for PocoNodeHostErrorV0 {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::RelativeSafetyStorePath => {
+                formatter.write_str("safety-store path must be absolute")
+            }
+            Self::InvalidSafetyStorePath => {
+                formatter.write_str("safety-store path must name a database file")
+            }
+            Self::SafetyStoreParentIo(error) => {
+                write!(formatter, "safety-store parent must already exist: {error}")
+            }
+            Self::InvalidSafetyStoreParent => {
+                formatter.write_str("safety-store parent must be a directory")
+            }
+            Self::RelativeSignerJournalPath => {
+                formatter.write_str("signer-journal path must be absolute")
+            }
+            Self::InvalidSignerJournalPath => {
+                formatter.write_str("signer-journal path must name a database file")
+            }
+            Self::SignerJournalParentIo(error) => {
+                write!(formatter, "signer-journal parent must already exist: {error}")
+            }
+            Self::InvalidSignerJournalParent => {
+                formatter.write_str("signer-journal parent must be a directory")
+            }
+            Self::SharedStoreParentNamespace => {
+                formatter.write_str(
+                    "safety-store and signer-journal must use non-overlapping canonical parent directories",
+                )
+            }
+            Self::RelativeApplicationStatusPath => {
+                formatter.write_str("application status path must be absolute")
+            }
+            Self::InvalidApplicationStatusPath => {
+                formatter.write_str("application status path must name a file")
+            }
+            Self::ApplicationStoreParentIo(error) => {
+                write!(formatter, "application-store parent must already exist: {error}")
+            }
+            Self::InvalidApplicationStoreParent => {
+                formatter.write_str("application-store parent must be a directory")
+            }
+            Self::SharedApplicationStoreParentNamespace => formatter.write_str(
+                "application, safety, and signer stores must use non-overlapping canonical parent directories",
+            ),
+            Self::AuthenticatedGenesisCommissioningRequiresDedicatedHost => formatter.write_str(
+                "authenticated genesis application commissioning requires the dedicated inert commissioning host",
+            ),
+            Self::ProductionActivationRequested => formatter.write_str(
+                "incomplete PoCO host refuses production-activated consensus parameters",
+            ),
+            Self::StrictValidatorSetAdmission { reason } => write!(
+                formatter,
+                "strict Ed25519 validator-set admission failed: {reason}",
+            ),
+            Self::NonShadowRolloutRequested { rollout_phase } => write!(
+                formatter,
+                "incomplete PoCO host supports only shadow rollout, got {rollout_phase:?}",
+            ),
+            Self::UnsupportedEpoch { epoch } => {
+                write!(formatter, "incomplete PoCO host supports only epoch zero, got {epoch}")
+            }
+            Self::AuthenticatedObligationReplayUnavailable {
+                revision,
+                obligation_count,
+            } => write!(
+                formatter,
+                "safety revision {revision} retains {obligation_count} validation obligation(s); this legacy open cannot authenticate the application recovery join",
+            ),
+            Self::ValidationRecoveryAwareOpenRequired { revision } => write!(
+                formatter,
+                "safety revision {revision} requires the application-aware validation recovery host",
+            ),
+            Self::UnsupportedValidationObligationCount { count } => write!(
+                formatter,
+                "bounded validation recovery requires at most one obligation, got {count}",
+            ),
+            Self::UnexpectedActiveApplicationRecoveryJobs { expected, actual } => write!(
+                formatter,
+                "validation recovery expected {expected} active application job(s), got {actual}",
+            ),
+            Self::OrdinaryContextForInvalidCompletion { revision } => write!(
+                formatter,
+                "safety revision {revision} records a deterministic-invalid completion with an ordinary transition context",
+            ),
+            Self::NativeValidRecoveryUnavailable { revision } => write!(
+                formatter,
+                "safety revision {revision} records a native Valid completion, but this invalid-only recovery host cannot authenticate its application lifecycle or remint its callback authority",
+            ),
+            Self::NativeFinalizationAppliedRecoveryUnavailable { revision } => write!(
+                formatter,
+                "safety revision {revision} records a native finalization apply, but this invalid-only recovery host cannot authenticate its ApplicationStore receipt or remint the exact post-ack action",
+            ),
+            Self::StateSyncCheckpointBootstrapRequiresUnifiedHost { revision } => write!(
+                formatter,
+                "safety revision {revision} is an h1 state-sync checkpoint bootstrap which only the unified offline process host may reconcile",
+            ),
+            Self::UnexpectedObligationTransitionContext { revision } => write!(
+                formatter,
+                "obligation-bearing safety revision {revision} has a non-ordinary transition context",
+            ),
+            Self::MissingNativeInvalidTransitionContext { revision } => write!(
+                formatter,
+                "safety revision {revision} lacks its authenticated native-invalid transition context",
+            ),
+            Self::MissingReconciledApplicationOwner => formatter.write_str(
+                "application recovery accepted the Core challenge without retaining its exact owner",
+            ),
+            Self::UnexpectedObligationApplicationState => formatter.write_str(
+                "obligation recovery did not bind a CallbackPending or Delivered application row",
+            ),
+            Self::UnexpectedCompletionApplicationState => formatter.write_str(
+                "completion recovery encountered an application state outside Delivered/Acked",
+            ),
+            Self::ApplicationCallbackIdentityMismatch => formatter.write_str(
+                "application callback facts differ from the Core recovery challenge",
+            ),
+            Self::ApplicationAcknowledgementMismatch => formatter.write_str(
+                "application acknowledgement differs from the authenticated SafetyStore context",
+            ),
+            Self::UnexpectedRecoveryEffectSet { expected, actual } => write!(
+                formatter,
+                "Core recovery expected {expected} effect(s), got {actual}",
+            ),
+            Self::UnexpectedRecoveryEffect { effect } => {
+                write!(formatter, "Core recovery emitted unsupported effect {effect}")
+            }
+            Self::RecoveredHeadMismatch => {
+                formatter.write_str("recovered Core state differs from the authenticated journal head")
+            }
+            Self::RecoveredTransitionHeadMismatch => formatter.write_str(
+                "SafetyStore exact readback differs from the Core request or application transition context",
+            ),
+            Self::OrdinaryPersistenceReadbackMismatch {
+                expected_revision,
+                actual_revision,
+            } => write!(
+                formatter,
+                "ordinary SafetyStore readback revision {actual_revision} differs from Core barrier {expected_revision}",
+            ),
+            Self::NonOrdinarySigningHead { revision } => write!(
+                formatter,
+                "signing requires an ordinary authenticated SafetyStore head, got revision {revision}",
+            ),
+            Self::SignerSafetyRevisionAhead {
+                signer_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "signer journal safety revision {signer_revision} is ahead of SafetyStore revision {safety_revision}",
+            ),
+            Self::PreparedSignerIntentWithoutCoreOutbox { safety_revision } => write!(
+                formatter,
+                "signer journal has one prepared unsigned tail, but SafetyStore revision {safety_revision} has no durable Core signing outbox",
+            ),
+            Self::UnsupportedBoundedBootstrapState { revision, state } => write!(
+                formatter,
+                "bounded timeout-signing host cannot open SafetyStore revision {revision} with {state}",
+            ),
+            Self::UnsupportedTimeoutSigningIntentKind => formatter.write_str(
+                "bounded timeout-signing host refuses vote signing and non-timeout outbound messages",
+            ),
+            Self::MissingTimeoutIntentAfterPersistence { revision } => write!(
+                formatter,
+                "ordinary timeout persistence at SafetyStore revision {revision} did not retain a durable timeout sign intent",
+            ),
+            Self::MissingDurableTimeoutSignIntent { revision } => write!(
+                formatter,
+                "SafetyStore revision {revision} has no durable timeout sign intent for the Core signer request",
+            ),
+            Self::DurableSignIntentMismatch { revision } => write!(
+                formatter,
+                "Core signer request differs from the durable timeout intent at SafetyStore revision {revision}",
+            ),
+            Self::SigningCoreSafetyHeadMismatch {
+                core_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "Core signing state revision {core_revision} differs from authenticated SafetyStore revision {safety_revision}",
+            ),
+            Self::SigningHeadChangedDuringProducer {
+                before_revision,
+                after_revision,
+            } => write!(
+                formatter,
+                "authenticated SafetyStore head changed from revision {before_revision} to {after_revision} while the signature producer was running",
+            ),
+            Self::SignIntentSafetyRevisionMismatch {
+                intent_revision,
+                safety_revision,
+            } => write!(
+                formatter,
+                "sign intent authorizes SafetyState revision {intent_revision}, but authenticated head is {safety_revision}",
+            ),
+            Self::MultipleBoundedPersistenceEffects => formatter.write_str(
+                "bounded timeout-signing call emitted more than one SafetyState persistence effect",
+            ),
+            Self::MultipleSignedOutboundContexts => formatter.write_str(
+                "bounded timeout-signing call attempted to authorize multiple outbound messages",
+            ),
+            Self::MissingSignedOutboundContext => formatter.write_str(
+                "Core emitted a broadcast without the exact signer context owned by this call",
+            ),
+            Self::SignedOutboundMismatch => formatter.write_str(
+                "Core outbound message differs from the exact signature and signing root released by the signer journal",
+            ),
+            Self::UnconsumedSignedOutboundContext => formatter.write_str(
+                "Core accepted a signature without emitting its exact outbound message",
+            ),
+            Self::UnsupportedBoundedHostEffect { effect } => write!(
+                formatter,
+                "bounded timeout-signing host cannot drive Core effect {effect}",
+            ),
+            Self::BoundedEffectLimitExceeded => formatter.write_str(
+                "bounded timeout-signing host exceeded its per-call effect limit",
+            ),
+            Self::BoundedTimeoutHostFailStopped => formatter.write_str(
+                "bounded timeout-signing host is terminally fail-stopped after a non-retryable error",
+            ),
+            Self::Core(error) => write!(formatter, "PoCO Core startup failed: {error}"),
+            Self::SafetyStore(error) => write!(formatter, "PoCO safety-store startup failed: {error}"),
+            Self::SignerJournal(error) => {
+                write!(formatter, "PoCO signer-journal startup failed: {error}")
+            }
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSemanticSidecar(error) => {
+                write!(formatter, "PoCO SafetyRules semantic sidecar failed: {error}")
+            }
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesShadowTransitionMismatch { revision } => write!(
+                formatter,
+                "Core SafetyRules shadow transition does not bind timeout persistence revision {revision}",
+            ),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSidecarPendingRecoveryRequired { revision } => write!(
+                formatter,
+                "SafetyRules sidecar has an unresolved pending timeout transition at revision {revision}; ordinary reopen is fail-closed",
+            ),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSidecarRecoveryNotPending => formatter.write_str(
+                "explicit SafetyRules sidecar recovery was requested without a durable pending marker",
+            ),
+            #[cfg(feature = "legacy-consensus-app")]
+            Self::ApplicationRecoveryOpen(error) => {
+                write!(formatter, "application recovery open failed: {error}")
+            }
+            #[cfg(feature = "legacy-consensus-app")]
+            Self::ApplicationRecoveryReconcile(error) => {
+                write!(formatter, "application recovery reconciliation failed: {error:?}")
+            }
+            #[cfg(feature = "legacy-consensus-app")]
+            Self::ApplicationRecoveryTransition(error) => {
+                write!(formatter, "application recovery transition failed: {error:?}")
+            }
+        }
+    }
+}
+
+impl Error for PocoNodeHostErrorV0 {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            Self::SafetyStoreParentIo(error) => Some(error.as_ref()),
+            Self::SignerJournalParentIo(error) => Some(error.as_ref()),
+            Self::ApplicationStoreParentIo(error) => Some(error.as_ref()),
+            Self::SafetyStore(error) => Some(error.as_ref()),
+            Self::SignerJournal(error) => Some(error.as_ref()),
+            #[cfg(feature = "safety-rules-sidecar")]
+            Self::SafetyRulesSemanticSidecar(error) => Some(error),
+            #[cfg(feature = "legacy-consensus-app")]
+            Self::ApplicationRecoveryOpen(error) => Some(error),
+            _ => None,
+        }
+    }
+}
+
+#[cfg(all(test, feature = "recovery-test-support", target_os = "linux"))]
+mod recovery_tests;
+
+#[cfg(test)]
+mod tests {
+    #[cfg(target_os = "linux")]
+    use std::{
+        fs,
+        sync::{
+            atomic::{AtomicUsize, Ordering},
+            Arc, Mutex,
+        },
+    };
+
+    #[cfg(target_os = "linux")]
+    use ed25519_dalek::{Signer, SigningKey};
+    #[cfg(target_os = "linux")]
+    use tempfile::TempDir;
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    use trnm_consensus_core::AuthenticatedGenesisApplicationParentV0;
+    use trnm_consensus_core::{OutboundMessage, SafetyStateRecordLimitsV0, SignIntent};
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_safety_rules::{SafetyRulesContextV1, SafetyRulesStateV1};
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_safety_store::SqliteSafetyStateStoreV0;
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    use trnm_consensus_signer_journal::{
+        ExternalWatermarkErrorV0, ExternalWatermarkSemanticFactsV0,
+    };
+    #[cfg(target_os = "linux")]
+    use trnm_consensus_signer_journal::{
+        SignatureProducerErrorV0, SignatureProducerV0, SignatureRequestV0,
+    };
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    use trnm_consensus_types::StateRoot;
+    use trnm_consensus_types::{
+        BlockId, CanonicalSignIntentV0, ChainId, ConsensusParametersV0, ConsensusPublicKey, Epoch,
+        GenesisHash, GenesisQcV0, Height, ProtocolVersion, QcReferenceV0, SignatureBytes,
+        Validator, ValidatorId, ValidatorSet, View, VotingPower,
+    };
+
+    use super::*;
+
+    const _: () = {
+        assert!(!PRODUCTION_CANDIDATE_V0);
+        assert!(!HOST_IMPLEMENTATION_COMPLETE_V0);
+    };
+
+    const MAXIMUM_RECORD_BYTES: usize = 64 * 1024 * 1024;
+    const MAXIMUM_BLOB_BYTES: usize = 16 * 1024 * 1024;
+    const MAXIMUM_DATABASE_BYTES: usize = 192 * 1024 * 1024;
+    const MAXIMUM_SIGNER_INTENTS: u64 = 64;
+    const MAXIMUM_SIGNER_INTENT_BYTES: usize = 4096;
+    const MAXIMUM_SIGNER_DATABASE_BYTES: usize = 32 * 1024 * 1024;
+
+    // Public keys derived from deterministic test seeds 101..104.  The
+    // generic Core fixtures may still use synthetic signatures, but startup
+    // configuration now exercises the real strict Ed25519 key-shape gate.
+    const TEST_VALID_CONSENSUS_PUBLIC_KEYS: [[u8; 32]; 4] = [
+        [
+            0xd6, 0x2f, 0x01, 0x6a, 0x1e, 0xfd, 0x1e, 0x4f, 0xdf, 0x79, 0x3e, 0xb4, 0x2c, 0xd8,
+            0x44, 0x71, 0xe1, 0xba, 0x9f, 0x0c, 0xf0, 0x4d, 0x12, 0x87, 0xb5, 0xcc, 0x71, 0xf6,
+            0x16, 0x28, 0x7c, 0xb8,
+        ],
+        [
+            0x34, 0xb4, 0xd9, 0x04, 0x31, 0x56, 0xcb, 0x6d, 0xcf, 0x0b, 0xeb, 0x0a, 0x29, 0x49,
+            0xb7, 0x55, 0x9c, 0x94, 0x0d, 0x2b, 0xcb, 0x6d, 0xbe, 0x8c, 0x53, 0xa9, 0xb3, 0x02,
+            0x78, 0xe3, 0xa7, 0x46,
+        ],
+        [
+            0x12, 0xa4, 0x15, 0x92, 0xc8, 0xb7, 0xc1, 0x7d, 0x40, 0x59, 0xe7, 0xb2, 0x9b, 0x61,
+            0xe8, 0xff, 0x96, 0xc7, 0x41, 0x5f, 0x2f, 0x80, 0x33, 0x48, 0xf2, 0xf0, 0x17, 0xe0,
+            0x5b, 0x9e, 0xa1, 0xda,
+        ],
+        [
+            0x54, 0xb0, 0xd8, 0x1d, 0x0f, 0xa7, 0xd0, 0x0e, 0x4a, 0x7d, 0x60, 0x0d, 0xfa, 0xba,
+            0x6f, 0x2b, 0x22, 0x03, 0x5b, 0x22, 0xfe, 0x33, 0x5e, 0x17, 0xed, 0xf5, 0xf9, 0xaa,
+            0x5b, 0xb0, 0x50, 0x74,
+        ],
+    ];
+
+    #[cfg(target_os = "linux")]
+    #[derive(Debug, Clone, Default)]
+    struct MemoryWatermark {
+        value: Arc<Mutex<Option<SignerWatermarkV0>>>,
+        load_calls: Arc<AtomicUsize>,
+        compare_calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    impl MemoryWatermark {
+        fn load_call_count(&self) -> usize {
+            self.load_calls.load(Ordering::SeqCst)
+        }
+
+        fn compare_call_count(&self) -> usize {
+            self.compare_calls.load(Ordering::SeqCst)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    impl ExternalMonotonicWatermarkV0 for MemoryWatermark {
+        fn load(
+            &mut self,
+            scope: [u8; 32],
+        ) -> Result<
+            Option<SignerWatermarkV0>,
+            trnm_consensus_signer_journal::ExternalWatermarkErrorV0,
+        > {
+            self.load_calls.fetch_add(1, Ordering::SeqCst);
+            let value = *self.value.lock().expect("test watermark lock");
+            if value.is_some_and(|watermark| watermark.scope() != scope) {
+                return Err(
+                    trnm_consensus_signer_journal::ExternalWatermarkErrorV0::InvalidPersistedState,
+                );
+            }
+            Ok(value)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), trnm_consensus_signer_journal::ExternalWatermarkErrorV0> {
+            use trnm_consensus_signer_journal::ExternalWatermarkErrorV0;
+
+            self.compare_calls.fetch_add(1, Ordering::SeqCst);
+            let mut value = self.value.lock().expect("test watermark lock");
+            if *value != expected {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            match expected {
+                None if target.sequence() == 0 => {}
+                Some(source)
+                    if source.scope() == target.scope()
+                        && source.journal_id() == target.journal_id()
+                        && source.sequence().checked_add(1) == Some(target.sequence()) => {}
+                _ => return Err(ExternalWatermarkErrorV0::InvalidPersistedState),
+            }
+            *value = Some(target);
+            Ok(())
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[derive(Debug, Default)]
+    struct MemorySemanticWatermarkV0 {
+        head: Option<SignerWatermarkV0>,
+        facts: Option<ExternalWatermarkSemanticFactsV0>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    impl ExternalMonotonicWatermarkV0 for MemorySemanticWatermarkV0 {
+        fn load(
+            &mut self,
+            _scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            _expected: Option<SignerWatermarkV0>,
+            _target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            Err(ExternalWatermarkErrorV0::InvalidPersistedState)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            true
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            _scope: [u8; 32],
+            _journal_id: [u8; 32],
+        ) -> Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            Ok(self.head.zip(self.facts))
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            if self.head != expected || target.sequence() != 0 {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            let facts =
+                ExternalWatermarkSemanticFactsV0::new(0, 0, 1, [1; 32], [2; 32], [3; 32], [9; 32])
+                    .ok_or(ExternalWatermarkErrorV0::InvalidPersistedState)?;
+            self.head = Some(target);
+            self.facts = Some(facts);
+            Ok(())
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            let Some(previous) = self.head else {
+                return Err(ExternalWatermarkErrorV0::Unavailable);
+            };
+            if self.head != expected
+                || target.sequence() != previous.sequence().saturating_add(1)
+                || facts.capability != [9; 32]
+            {
+                return Err(ExternalWatermarkErrorV0::CompareFailed);
+            }
+            self.head = Some(target);
+            self.facts = Some(facts);
+            Ok(())
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    #[derive(Debug, Clone, Default)]
+    struct SharedMemorySemanticWatermarkV0 {
+        inner: Arc<Mutex<MemorySemanticWatermarkV0>>,
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    impl ExternalMonotonicWatermarkV0 for SharedMemorySemanticWatermarkV0 {
+        fn load(
+            &mut self,
+            scope: [u8; 32],
+        ) -> Result<Option<SignerWatermarkV0>, ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .load(scope)
+        }
+
+        fn compare_and_advance(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance(expected, target)
+        }
+
+        fn semantic_mode_v0(&self) -> bool {
+            true
+        }
+
+        fn semantic_per_reservation_v0(&self) -> bool {
+            true
+        }
+
+        fn load_semantic_v0(
+            &mut self,
+            scope: [u8; 32],
+            journal_id: [u8; 32],
+        ) -> Result<
+            Option<(SignerWatermarkV0, ExternalWatermarkSemanticFactsV0)>,
+            ExternalWatermarkErrorV0,
+        > {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .load_semantic_v0(scope, journal_id)
+        }
+
+        fn compare_and_advance_semantic_genesis_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance_semantic_genesis_v0(expected, target)
+        }
+
+        fn compare_and_advance_semantic_v0(
+            &mut self,
+            expected: Option<SignerWatermarkV0>,
+            target: SignerWatermarkV0,
+            facts: ExternalWatermarkSemanticFactsV0,
+        ) -> Result<(), ExternalWatermarkErrorV0> {
+            self.inner
+                .lock()
+                .expect("shared semantic watermark lock")
+                .compare_and_advance_semantic_v0(expected, target, facts)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[derive(Debug, Default)]
+    struct UnavailableProducerV0;
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for UnavailableProducerV0 {
+        fn sign(
+            &mut self,
+            _request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            Err(SignatureProducerErrorV0::Unavailable)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    #[derive(Debug, Default)]
+    struct RejectedProducerV0 {
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for RejectedProducerV0 {
+        fn sign(
+            &mut self,
+            _request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            Err(SignatureProducerErrorV0::Rejected)
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    struct StrictProducerV0 {
+        key: SigningKey,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for StrictProducerV0 {
+        fn sign(
+            &mut self,
+            request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            assert_eq!(request.signer_profile_ref(), SIGNER_JOURNAL_PROFILE_REF_V0);
+            self.calls.fetch_add(1, Ordering::SeqCst);
+            Ok(SignatureBytes::from_array(
+                self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+            ))
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    struct UnavailableOnceProducerV0 {
+        key: SigningKey,
+        calls: Arc<AtomicUsize>,
+    }
+
+    #[cfg(target_os = "linux")]
+    impl SignatureProducerV0 for UnavailableOnceProducerV0 {
+        fn sign(
+            &mut self,
+            request: SignatureRequestV0<'_>,
+        ) -> Result<SignatureBytes, SignatureProducerErrorV0> {
+            let call = self.calls.fetch_add(1, Ordering::SeqCst);
+            if call == 0 {
+                return Err(SignatureProducerErrorV0::Unavailable);
+            }
+            Ok(SignatureBytes::from_array(
+                self.key.sign(request.signing_root().as_bytes()).to_bytes(),
+            ))
+        }
+    }
+
+    fn validator_id(index: u8) -> ValidatorId {
+        ValidatorId::new([index; 32])
+    }
+
+    fn core_config(parameters: ConsensusParametersV0) -> CoreConfig {
+        let validators = (1u8..=4)
+            .map(|index| {
+                Validator::new(
+                    validator_id(index),
+                    ConsensusPublicKey::new(TEST_VALID_CONSENSUS_PUBLIC_KEYS[(index - 1) as usize]),
+                    VotingPower::new(1).expect("positive voting power"),
+                )
+                .expect("valid validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0xa5; 32]),
+            ChainId::from_static("trnm-poco-node-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("valid validator set");
+        CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
+            .expect("valid Core config")
+    }
+
+    fn core_config_with_first_consensus_key(
+        parameters: ConsensusParametersV0,
+        first_key: [u8; 32],
+    ) -> CoreConfig {
+        let validators = (1u8..=4)
+            .map(|index| {
+                let key = if index == 1 {
+                    first_key
+                } else {
+                    TEST_VALID_CONSENSUS_PUBLIC_KEYS[(index - 1) as usize]
+                };
+                Validator::new(
+                    validator_id(index),
+                    ConsensusPublicKey::new(key),
+                    VotingPower::new(1).expect("positive voting power"),
+                )
+                .expect("shape-valid validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0xa5; 32]),
+            ChainId::from_static("trnm-poco-node-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("shape-valid validator set");
+        CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
+            .expect("valid Core config")
+    }
+
+    #[cfg(target_os = "linux")]
+    fn strict_core_config_and_local_key() -> (CoreConfig, SigningKey) {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let validators = (1_u8..=4)
+            .map(|index| {
+                let key = SigningKey::from_bytes(&[index.saturating_add(40); 32]);
+                Validator::new(
+                    validator_id(index),
+                    ConsensusPublicKey::new(key.verifying_key().to_bytes()),
+                    VotingPower::new(1).expect("positive strict voting power"),
+                )
+                .expect("valid strict validator")
+            })
+            .collect();
+        let validator_set = ValidatorSet::new(
+            GenesisHash::new([0xa5; 32]),
+            ChainId::from_static("trnm-poco-node-timeout-signing-test"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .expect("valid strict validator set");
+        let config = CoreConfig::new(validator_id(1), validator_set, parameters, 17, 64, 64)
+            .expect("valid strict Core config");
+        (config, SigningKey::from_bytes(&[41; 32]))
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn authenticated_genesis_core_config_v0() -> CoreConfig {
+        let base = core_config(ConsensusParametersV0::reference_shadow_v0());
+        let parent = AuthenticatedGenesisApplicationParentV0::new(
+            base.genesis_block_id(),
+            base.trusted_genesis_timestamp_ms(),
+            0,
+            StateRoot::new([0x31; 32]),
+            [0x41; 32],
+            [0x51; 32],
+        )
+        .expect("shape-valid authenticated genesis application parent");
+        CoreConfig::new_with_authenticated_genesis_application_parent_v0(
+            base.local_validator(),
+            base.validator_set().clone(),
+            *base.consensus_parameters(),
+            base.trusted_genesis_timestamp_ms(),
+            parent,
+            base.max_blocks(),
+            base.max_observed_messages(),
+        )
+        .expect("shadow authenticated-genesis Core config")
+    }
+
+    fn record_limits() -> SafetyStateRecordLimitsV0 {
+        SafetyStateRecordLimitsV0::new(MAXIMUM_RECORD_BYTES, MAXIMUM_BLOB_BYTES)
+            .expect("valid local record limits")
+    }
+
+    fn start_config(
+        safety_store_path: impl AsRef<Path>,
+        signer_journal_path: impl AsRef<Path>,
+        core_config: CoreConfig,
+    ) -> Result<PocoNodeStartConfigV0, PocoNodeHostErrorV0> {
+        PocoNodeStartConfigV0::new(
+            safety_store_path,
+            signer_journal_path,
+            core_config,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn unchecked_start_config_v0(
+        safety_store_path: impl AsRef<Path>,
+        signer_journal_path: impl AsRef<Path>,
+        core_config: CoreConfig,
+    ) -> PocoNodeStartConfigV0 {
+        let signer_journal_profile = SignerJournalProfileV0::new(
+            core_config.validator_set().clone(),
+            core_config.local_validator(),
+            SIGNER_JOURNAL_PROFILE_REF_V0,
+            derive_signer_watermark_scope_v0(&core_config),
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect("construct test-only signer profile before the node fence");
+        let safety_store_profile = SafetyStateStoreProfileV0::new(
+            core_config,
+            STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+        )
+        .expect("construct test-only Safety profile before the node fence");
+        PocoNodeStartConfigV0 {
+            safety_store_path: safety_store_path.as_ref().to_path_buf(),
+            safety_store_profile,
+            signer_journal_path: signer_journal_path.as_ref().to_path_buf(),
+            signer_journal_profile,
+        }
+    }
+
+    fn genesis_qc(core_config: &CoreConfig) -> GenesisQcV0 {
+        GenesisQcV0::new(
+            core_config.validator_set().genesis_hash(),
+            core_config.validator_set().chain_id(),
+            core_config.validator_set(),
+        )
+        .expect("valid genesis anchor")
+    }
+
+    #[cfg(target_os = "linux")]
+    fn protected_temp_dir() -> TempDir {
+        let directory = TempDir::new().expect("temporary directory");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(directory.path(), fs::Permissions::from_mode(0o700))
+                .expect("protect temporary safety-store directory");
+        }
+        directory
+    }
+
+    #[cfg(target_os = "linux")]
+    fn protected_store_namespace(root: &TempDir, name: &str) -> PathBuf {
+        let namespace = root.path().join(name);
+        create_protected_directory(&namespace);
+        namespace
+    }
+
+    #[cfg(target_os = "linux")]
+    fn create_protected_directory(path: &Path) {
+        fs::create_dir_all(path).expect("create isolated store namespace");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            fs::set_permissions(path, fs::Permissions::from_mode(0o700))
+                .expect("protect isolated store namespace");
+        }
+    }
+
+    #[cfg(target_os = "linux")]
+    fn dual_store_paths(root: &TempDir) -> (PathBuf, PathBuf) {
+        (
+            protected_store_namespace(root, "safety").join("safety.sqlite3"),
+            protected_store_namespace(root, "signer").join("signer.sqlite3"),
+        )
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    fn timeout_sidecar_fixture_v1(
+        core_config: &CoreConfig,
+        genesis_qc: &GenesisQcV0,
+        semantic_watermark: SharedMemorySemanticWatermarkV0,
+    ) -> (
+        SafetyRulesSemanticSidecarV1<SharedMemorySemanticWatermarkV0>,
+        [u8; 32],
+        [u8; 32],
+        [u8; 32],
+    ) {
+        let context = SafetyRulesContextV1::new(
+            core_config.validator_set().clone(),
+            *core_config.consensus_parameters(),
+            core_config.local_validator(),
+            core_config.trusted_genesis_timestamp_ms(),
+            64,
+        )
+        .expect("construct exact shadow context");
+        let shadow_state =
+            SafetyRulesStateV1::from_genesis(&context, genesis_qc.clone(), &StrictEd25519Verifier)
+                .expect("construct exact genesis shadow state");
+        let scope = [0x11; 32];
+        let journal_id = [0x22; 32];
+        let capability = [0x09; 32];
+        let sidecar = SafetyRulesSemanticSidecarV1::open(
+            semantic_watermark,
+            scope,
+            journal_id,
+            capability,
+            shadow_state.digest(),
+        )
+        .expect("open semantic sidecar against genesis");
+        (sidecar, scope, journal_id, capability)
+    }
+
+    #[cfg(all(target_os = "linux", feature = "safety-rules-sidecar"))]
+    fn read_safety_head_for_test_v1(
+        safety_path: &Path,
+        core_config: CoreConfig,
+    ) -> RecoveredSafetyStateV0 {
+        let profile = SafetyStateStoreProfileV0::new(
+            core_config,
+            STRICT_ED25519_VERIFIER_PROFILE_REF_V0,
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+        )
+        .expect("construct SafetyStore profile for inspection");
+        let store =
+            SqliteSafetyStateStoreV0::open_existing(safety_path, profile, StrictEd25519Verifier)
+                .expect("open SafetyStore for inspection");
+        store.head().expect("read SafetyStore head")
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn triple_store_paths(root: &TempDir) -> (PathBuf, PathBuf, PathBuf) {
+        let (safety, signer) = dual_store_paths(root);
+        let application = protected_store_namespace(root, "application").join("state.json");
+        (safety, signer, application)
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    fn assert_store_parent_empty_v0(path: &Path, context: &str) {
+        let parent = path.parent().expect("store path retains its parent");
+        let entries = fs::read_dir(parent)
+            .expect("read protected store parent")
+            .map(|entry| {
+                entry
+                    .expect("read protected store-parent entry")
+                    .file_name()
+            })
+            .collect::<Vec<_>>();
+        assert!(
+            entries.is_empty(),
+            "{context} must leave the complete store parent empty: {entries:?}"
+        );
+    }
+
+    #[test]
+    fn static_activation_gate_names_real_unwired_contracts() {
+        let error = production_activation_gate_v0().expect_err("activation must remain blocked");
+        assert_eq!(error.blockers(), UNWIRED_PRODUCTION_CONTRACTS_V0);
+        assert!(error.to_string().contains("independent_signer_watermark"));
+        assert!(error.to_string().contains("complete_hotstuff_safety_rules"));
+        assert!(!error.to_string().contains("append_only_sign_journal"));
+        assert!(error.to_string().contains("block_id_speculative_overlay"));
+        assert!(error
+            .to_string()
+            .contains("application_validation_recovery_beyond_deterministic_invalid_v0"));
+        assert!(!error
+            .to_string()
+            .contains(",application_validation_recovery,"));
+    }
+
+    /// Keep every currently exposed node/runtime activation claim closed in
+    /// one executable manifest.  Composition flags are intentionally omitted:
+    /// compiling a bounded WAL, adapter, or recovery coordinator is not the
+    /// same thing as enabling a production authority.  This is a release
+    /// boundary test, not a runtime switch; adding a new activation constant
+    /// must come with an explicit entry here before it can be considered in a
+    /// candidate build.
+    #[test]
+    fn static_activation_manifest_is_closed_across_enabled_boundaries() {
+        #[allow(unused_mut)]
+        let mut manifest = vec![
+            ("node.production_candidate", PRODUCTION_CANDIDATE_V0),
+            (
+                "node.host_implementation_complete",
+                HOST_IMPLEMENTATION_COMPLETE_V0,
+            ),
+            (
+                "node.production_raw_key_dependency",
+                PRODUCTION_RAW_KEY_DEPENDENCY_V0,
+            ),
+            (
+                "external_node_checkpoint.operational_integration",
+                EXTERNAL_NODE_CHECKPOINT_OPERATIONAL_INTEGRATION_V0,
+            ),
+            (
+                "external_node_checkpoint.production_activation",
+                EXTERNAL_NODE_CHECKPOINT_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "remote_signer_protocol_adapter.runtime_activation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_RUNTIME_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.production_activation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_PRODUCTION_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.request_authority",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_REQUEST_AUTHORITY_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.lease_authority",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_LEASE_AUTHORITY_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.safety_rules",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_SAFETY_RULES_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.resolver_attestation",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_RESOLVER_ATTESTATION_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.descriptor_equivalence",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_DESCRIPTOR_EQUIVALENCE_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.bare_ref_binding_source",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_BARE_REF_BINDING_SOURCE_V1,
+            ),
+            (
+                "remote_signer_protocol_adapter.direct_constructor",
+                REMOTE_SIGNER_PROTOCOL_ADAPTER_DIRECT_CONSTRUCTOR_V1,
+            ),
+            (
+                "remote_signer_roles.runtime_activation",
+                REMOTE_SIGNER_RUNTIME_ACTIVATION_V1,
+            ),
+            (
+                "remote_signer_roles.private_key_config",
+                REMOTE_SIGNER_RUNTIME_PRIVATE_KEY_CONFIG_V1,
+            ),
+            (
+                "remote_signer_roles.generic_sign_bytes",
+                REMOTE_SIGNER_GENERIC_SIGN_BYTES_V1,
+            ),
+            (
+                "remote_signer_roles.safety_rules_evaluation",
+                REMOTE_SIGNER_SAFETY_RULES_EVALUATION_V1,
+            ),
+            (
+                "remote_signer_roles.safe_vote_authority",
+                REMOTE_SIGNER_SAFE_VOTE_AUTHORITY_V1,
+            ),
+            (
+                "recovery_ready_start.runtime_wiring",
+                PROCESS2_RECOVERY_RUNTIME_WIRING_V1,
+            ),
+            (
+                "recovery_ready_start.start_activation",
+                PROCESS2_RECOVERY_START_ACTIVATION_V1,
+            ),
+        ];
+
+        #[cfg(feature = "node-event-wal")]
+        manifest.push((
+            "node_event_wal.production_activation",
+            NODE_EVENT_WAL_PRODUCTION_ACTIVATION_V1,
+        ));
+        #[cfg(feature = "tx-admission-wal")]
+        manifest.extend([
+            (
+                "tx_admission_wal.production_activation",
+                TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "tx_admission_boundary.production_activation",
+                TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "tx_admission_boundary.signer_resolver_production",
+                TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.context_resolver_production",
+                TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.handoff_recovery_production",
+                TX_ADMISSION_BOUNDARY_HANDOFF_RECOVERY_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.commit_receipt_production",
+                tx_admission_wal::TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0,
+            ),
+            (
+                "tx_admission_boundary.native_readback_production",
+                TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0,
+            ),
+        ]);
+        #[cfg(feature = "external-signer-runtime")]
+        manifest.extend([
+            (
+                "external_timeout_host.production_activation",
+                UNIX_EXTERNAL_TIMEOUT_PRODUCTION_ACTIVATION_V0,
+            ),
+            (
+                "external_timeout_host.proposal_signing",
+                UNIX_EXTERNAL_TIMEOUT_PROPOSAL_SIGNING_V0,
+            ),
+            (
+                "external_timeout_host.locked_qc_authority",
+                UNIX_EXTERNAL_TIMEOUT_LOCKED_QC_AUTHORITY_V0,
+            ),
+        ]);
+        #[cfg(feature = "external-proposal-signer")]
+        manifest.extend([
+            (
+                "external_proposal_signer.runtime_activation",
+                UNIX_EXTERNAL_PROPOSAL_SIGNER_RUNTIME_ACTIVATION_V0,
+            ),
+            (
+                "external_proposal_signer.production_candidate",
+                UNIX_EXTERNAL_PROPOSAL_SIGNER_PRODUCTION_CANDIDATE_V0,
+            ),
+        ]);
+        #[cfg(feature = "safety-rules-sidecar")]
+        manifest.push((
+            "safety_rules_sidecar.production_activation",
+            SAFETY_RULES_SEMANTIC_SIDECAR_PRODUCTION_ACTIVATION_V1,
+        ));
+        #[cfg(feature = "lab-validator-runtime")]
+        manifest.extend([
+            (
+                "deployed_lab_process2_recovery.activation",
+                DEPLOYED_LAB_PROCESS2_ACTIVATION_V0,
+            ),
+            (
+                "deployed_lab_recovery.coherent_whole_root_rollback_authority",
+                DEPLOYED_LAB_COHERENT_WHOLE_ROOT_ROLLBACK_AUTHORITY_V0,
+            ),
+        ]);
+
+        assert!(!manifest.is_empty());
+        for (name, enabled) in manifest {
+            assert!(!enabled, "activation boundary unexpectedly open: {name}");
+        }
+        let blockers = production_activation_gate_v0()
+            .expect_err("the static activation gate must remain closed")
+            .blockers();
+        assert!(!blockers.is_empty());
+        assert!(blockers
+            .iter()
+            .all(|contract| !contract.as_str().is_empty()));
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn ordinary_config_surfaces_fence_authenticated_genesis_before_path_validation_v0() {
+        enum Surface {
+            Start,
+            ValidationRecovery,
+        }
+
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, _) = triple_store_paths(&directory);
+        for surface in [Surface::Start, Surface::ValidationRecovery] {
+            let error = match surface {
+                Surface::Start => start_config(
+                    "relative-safety.sqlite3",
+                    "relative-signer.sqlite3",
+                    authenticated_genesis_core_config_v0(),
+                )
+                .expect_err("authenticated-genesis start config must be fenced before relative paths"),
+                Surface::ValidationRecovery => PocoNodeValidationRecoveryConfigV0::new(
+                    unchecked_start_config_v0(
+                        &safety_path,
+                        &signer_path,
+                        authenticated_genesis_core_config_v0(),
+                    ),
+                    "relative-application.json",
+                    [0x5a; 32],
+                )
+                .expect_err(
+                    "authenticated-genesis recovery config must be fenced before its application path",
+                ),
+            };
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost
+            ));
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn ordinary_host_entries_fence_authenticated_genesis_before_every_owner_v0() {
+        #[derive(Clone, Copy, Debug)]
+        enum Surface {
+            Initialize,
+            Open,
+            ValidationRecoveryOpen,
+        }
+
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, application_path) = triple_store_paths(&directory);
+        let core_config = authenticated_genesis_core_config_v0();
+        let genesis_qc = genesis_qc(&core_config);
+        for surface in [
+            Surface::Initialize,
+            Surface::Open,
+            Surface::ValidationRecoveryOpen,
+        ] {
+            let watermark = MemoryWatermark::default();
+            let node = unchecked_start_config_v0(&safety_path, &signer_path, core_config.clone());
+            let error = match surface {
+                Surface::Initialize => PocoNodeHostV0::initialize_new(
+                    node,
+                    genesis_qc.clone(),
+                    watermark.clone(),
+                    UnavailableProducerV0,
+                )
+                .err()
+                .expect("generic initialization must reject authenticated genesis"),
+                Surface::Open => {
+                    PocoNodeHostV0::open_existing(node, watermark.clone(), UnavailableProducerV0)
+                        .err()
+                        .expect("generic open must reject authenticated genesis")
+                }
+                Surface::ValidationRecoveryOpen => PocoNodeValidationRecoveryHostV0::open_existing(
+                    PocoNodeValidationRecoveryConfigV0 {
+                        node,
+                        application_status_path: application_path.clone(),
+                        signer_policy_hash: [0x5a; 32],
+                    },
+                    watermark.clone(),
+                )
+                .err()
+                .expect("generic recovery open must reject authenticated genesis"),
+            };
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::AuthenticatedGenesisCommissioningRequiresDedicatedHost
+            ));
+            assert_eq!(
+                watermark.load_call_count(),
+                0,
+                "{surface:?} must reject before loading the external watermark",
+            );
+            assert_eq!(
+                watermark.compare_call_count(),
+                0,
+                "{surface:?} must reject before external watermark CAS",
+            );
+            assert!(
+                !safety_path.exists(),
+                "{surface:?} must reject before SafetyStore creation/open",
+            );
+            assert!(
+                !signer_path.exists(),
+                "{surface:?} must reject before signer creation/open",
+            );
+            assert!(
+                !application_path.exists(),
+                "{surface:?} must reject before application recovery open",
+            );
+            assert_store_parent_empty_v0(&safety_path, "Safety fence");
+            assert_store_parent_empty_v0(&signer_path, "signer fence");
+            assert_store_parent_empty_v0(&application_path, "application fence");
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn validation_recovery_config_requires_a_third_canonical_namespace() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let application_path = safety_path
+            .parent()
+            .expect("safety namespace")
+            .join("state.json");
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let error = PocoNodeValidationRecoveryConfigV0::new(node, application_path, [0x5a; 32])
+            .expect_err("application WAL must not share the safety namespace");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+        ));
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn validation_recovery_config_rejects_application_ancestor_and_descendant_namespaces() {
+        let directory = protected_temp_dir();
+        let cases = [
+            (
+                "application-under-safety",
+                "safety",
+                "signer",
+                "safety/application",
+            ),
+            (
+                "application-over-safety",
+                "application/safety",
+                "signer",
+                "application",
+            ),
+            (
+                "application-under-signer",
+                "safety",
+                "signer",
+                "signer/application",
+            ),
+            (
+                "application-over-signer",
+                "safety",
+                "application/signer",
+                "application",
+            ),
+        ];
+
+        for (case, safety_parent, signer_parent, application_parent) in cases {
+            let case_root = directory.path().join(case);
+            let safety_parent = case_root.join(safety_parent);
+            let signer_parent = case_root.join(signer_parent);
+            let application_parent = case_root.join(application_parent);
+            create_protected_directory(&safety_parent);
+            create_protected_directory(&signer_parent);
+            create_protected_directory(&application_parent);
+
+            let node = start_config(
+                safety_parent.join("safety.sqlite3"),
+                signer_parent.join("signer.sqlite3"),
+                core_config(ConsensusParametersV0::reference_shadow_v0()),
+            )
+            .expect("safety and signer parents remain non-overlapping");
+            let error = PocoNodeValidationRecoveryConfigV0::new(
+                node,
+                application_parent.join("state.json"),
+                [0x5a; 32],
+            )
+            .expect_err("application parent must not contain or be contained by another store");
+            assert!(matches!(
+                error,
+                PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+            ));
+        }
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn validation_recovery_config_rejects_nested_application_after_symlink_canonicalization() {
+        use std::os::unix::fs::symlink;
+
+        let directory = protected_temp_dir();
+        let safety_parent = protected_store_namespace(&directory, "safety");
+        let signer_parent = protected_store_namespace(&directory, "signer");
+        let nested_application_parent = safety_parent.join("nested-application");
+        create_protected_directory(&nested_application_parent);
+        let application_alias = directory.path().join("application-alias");
+        symlink(&nested_application_parent, &application_alias)
+            .expect("create application namespace symlink");
+
+        let node = start_config(
+            safety_parent.join("safety.sqlite3"),
+            signer_parent.join("signer.sqlite3"),
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("raw safety and signer paths are valid siblings");
+        let error = PocoNodeValidationRecoveryConfigV0::new(
+            node,
+            application_alias.join("state.json"),
+            [0x5a; 32],
+        )
+        .expect_err("canonicalized application alias must reveal the nested namespace");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedApplicationStoreParentNamespace
+        ));
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn validation_recovery_config_freezes_three_distinct_paths() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path, application_path) = triple_store_paths(&directory);
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let recovery = PocoNodeValidationRecoveryConfigV0::new(node, &application_path, [0x5a; 32])
+            .expect("valid triple-store recovery config");
+        assert_eq!(recovery.application_status_path(), application_path);
+        assert_eq!(recovery.signer_policy_hash(), [0x5a; 32]);
+        assert_eq!(recovery.node_config().safety_store_path(), safety_path);
+        assert_eq!(recovery.node_config().signer_journal_path(), signer_path);
+    }
+
+    #[cfg(all(target_os = "linux", feature = "legacy-consensus-app"))]
+    #[test]
+    fn validation_recovery_config_rejects_relative_application_path() {
+        let directory = protected_temp_dir();
+        let (safety_path, signer_path) = dual_store_paths(&directory);
+        let node = start_config(
+            &safety_path,
+            &signer_path,
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect("valid dual-store config");
+        let error =
+            PocoNodeValidationRecoveryConfigV0::new(node, "relative/state.json", [0x5a; 32])
+                .expect_err("relative application recovery state must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::RelativeApplicationStatusPath
+        ));
+    }
+
+    #[test]
+    fn startup_config_rejects_relative_store_path() {
+        let error = PocoNodeStartConfigV0::new(
+            "relative/safety.sqlite3",
+            "/tmp/trnm-poco-node-relative-safety-signer.sqlite3",
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("relative startup state must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::RelativeSafetyStorePath
+        ));
+    }
+
+    #[test]
+    fn startup_config_rejects_undecodable_consensus_key_before_filesystem_work() {
+        let error = PocoNodeStartConfigV0::new(
+            "relative-safety.sqlite3",
+            "relative-signer.sqlite3",
+            core_config_with_first_consensus_key(
+                ConsensusParametersV0::reference_shadow_v0(),
+                [0x02; 32],
+            ),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("startup must reject an undecodable consensus key");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::StrictValidatorSetAdmission { reason }
+                if reason.contains("decodable Ed25519")
+        ));
+    }
+
+    #[test]
+    fn startup_config_rejects_small_order_consensus_key_before_filesystem_work() {
+        let error = PocoNodeStartConfigV0::new(
+            "relative-safety.sqlite3",
+            "relative-signer.sqlite3",
+            core_config_with_first_consensus_key(
+                ConsensusParametersV0::reference_shadow_v0(),
+                [
+                    0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0,
+                ],
+            ),
+            record_limits(),
+            MAXIMUM_DATABASE_BYTES,
+            MAXIMUM_SIGNER_INTENTS,
+            MAXIMUM_SIGNER_INTENT_BYTES,
+            MAXIMUM_SIGNER_DATABASE_BYTES,
+        )
+        .expect_err("startup must reject a weak consensus key");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::StrictValidatorSetAdmission { reason }
+                if reason.contains("weak/small-order")
+        ));
+    }
+
+    #[test]
+    fn startup_source_contract_keeps_strict_validator_admission_before_store_setup() {
+        let source = include_str!("lib.rs");
+        let admission = source
+            .find("validate_validator_set_strict_ed25519_v0(core_config.validator_set())")
+            .expect("startup must retain strict validator-set admission");
+        let path_validation = source
+            .find("let safety_store_path = safety_store_path.as_ref();")
+            .expect("startup path validation marker");
+        assert!(
+            admission < path_validation,
+            "strict key admission must run before path/store setup"
+        );
+        assert!(
+            source.contains("StrictValidatorSetAdmission { reason }")
+                || source.contains("StrictValidatorSetAdmission {")
+        );
+    }
+
+    #[test]
+    fn startup_config_rejects_relative_signer_journal_path() {
+        let error = start_config(
+            "/tmp/trnm-poco-node-relative-signer-safety.sqlite3",
+            "relative/signer.sqlite3",
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect_err("relative signer state must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::RelativeSignerJournalPath
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn startup_config_rejects_shared_canonical_parent_namespace() {
+        let directory = protected_temp_dir();
+        let error = start_config(
+            directory.path().join("safety.sqlite3"),
+            directory.path().join("signer.sqlite3"),
+            core_config(ConsensusParametersV0::reference_shadow_v0()),
+        )
+        .expect_err("two histories in one canonical parent must be refused");
+        assert!(matches!(
+            error,
+            PocoNodeHostErrorV0::SharedStoreParentNamespace
+        ));
+    }
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn startup_config_rejects_safety_signer_ancestor_and_descendant_namespaces() {
+        let directory = protected_temp_dir();
+        let outer = protected_store_namespace(&directory, "outer");
+        let nested = outer.join("nested");
+        create_protected_directory(&nested);
+
+        for (safety_parent, signer_parent) in [(&outer, &nested), (&nested, &outer)] {
+            let error = start_config(
+                safety_parent.join("safety.sqlite3"),
+                signer_parent.join("signer.sqlite3"),
                 core_config(ConsensusParametersV0::reference_shadow_v0()),
             )
             .expect_err("safety and signer parents must not contain one another");
