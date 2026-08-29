@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-g3-g5-source-manifest-v2",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_pr": 37,
+  "base_ref": "feature/chain-a16-g2f-whole-node-light-client-v2-20260830",
+  "base_commit": "b1b10e1bd4e89ef64abd81f2e79f106535537532",
+  "base_tree": "ab3396de7f7e18aef80432f7764857d8e0820a1c",
+  "imported_a17_pr": 19,
+  "imported_a17_commit": "f9acc32d422aef9b9132d6ddc830e64639c6ff8d",
+  "imported_paths": 11,
+  "a16_status": "STOP_CONDITION",
+  "synthetic_decision_root": "ad1ae325fac3762af64ed01a444f807fb0b0ef5c00418fe8387d6635009b7028",
+  "real_claim_authorized": false,
+  "benchmark_results_present": false,
+  "surpass_claim_allowed": false,
+  "public_testnet_ready": false,
+  "production_candidate": false,
+  "production_consensus_activation": false,
+  "g3_exit": false,
+  "g4_exit": false,
+  "g5_exit": false
+}
