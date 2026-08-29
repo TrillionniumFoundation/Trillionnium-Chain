@@ -5,6 +5,12 @@ root=$(git rev-parse --show-toplevel); cd "$root"
 python3 tools/agent-market-model/model.py --self-test >/tmp/trnm-agent-market-v1.json
 python3 tools/agent-market-model/authority_extension_v2.py --self-test >/tmp/trnm-agent-market-v2.json
 
+cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --offline \
+  -p trnm-poco-agent-market-v1 --all-targets
+cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline \
+  -p trnm-poco-agent-market-v1 --all-targets -- -D warnings
+cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
 python3 - <<'PY'
 import json
 from pathlib import Path
@@ -33,7 +39,7 @@ assert len(workflows)==13, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('global_state_authority','agent_transaction_wire_accepted','g2b_exit','production_candidate'):
     assert source[key] is False, key
-print('G2B replay v2: candidate lifecycle + authority attenuation + frozen exact-head route ok')
+print('G2B replay v2: candidate lifecycle + strict Rust/SQLite/Ed25519 kernel + frozen exact-head route ok')
 PY
 
 git diff --check
