@@ -1,0 +1,5 @@
+{
+  "schema":"trnm-da-fullrep-conformance-cases-v1",
+  "positive":["durable-attest-certificate-retrieve","idempotent-attestation","complete-repair","retention-release-gc","certified-withholding-evidence"],
+  "negative":["attest-before-durable","cross-namespace","duplicate-provider","sampling-disabled","gc-with-hold","gc-without-node-permit"]
+}
