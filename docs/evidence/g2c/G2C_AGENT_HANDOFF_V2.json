@@ -3,8 +3,8 @@
   "agent_id": "A14",
   "package_id": "G2C_VERIFY_CHALLENGE_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "ee252f464d460c399b7d109c17dc9f5456bbf29a",
-  "base_tree": "a8c7d45137ffd8cd8e7144a66935f1bb45c71803",
+  "base_commit": "55157eff2ad9ba6bdd412e479685e0dd7a654287",
+  "base_tree": "656b697596d83da4f42e59dbd92ef350b1a698b3",
   "head_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "changed_paths": [
     "conformance/verification/**",
@@ -18,6 +18,7 @@
   "gaps_closed": [
     "A14-REPLAY-EXACT-A13-PUBLICATION",
     "A14-AGENT-TRANSACTION-WIRE-CANDIDATE-INPUT",
+    "A14-HANDOFF-SCHEMA-VALIDATION",
     "A14-CLOSED-SEVEN-PROFILE-REGISTRY",
     "A14-EVIDENCE-BEFORE-BACKEND",
     "A14-NO-FALLBACK",
@@ -36,7 +37,8 @@
     "A14-PRODUCTION-APPEAL-GOVERNANCE"
   ],
   "commands": [
-    "bash scripts/ci/check_g2c_replay_v2.sh: exact-head trusted replay required after synchronized A13 publication"
+    "python3 scripts/ci/check_agent_handoff_v1.py --path docs/evidence/g2c/G2C_AGENT_HANDOFF_V2.json: exact-head required",
+    "bash scripts/ci/check_g2c_replay_v2.sh: exact-head required"
   ],
   "failed_tests": [],
   "retained_mutants": [
@@ -67,10 +69,10 @@
     "A16 whole-node/light-client replay",
     "A17 benchmark/security/activation evidence"
   ],
-  "next_action": "Run exact-head replay on synchronized A13/A12 candidate inputs, then cascade source/tree binding through A15-A17. Independent interface acceptance remains separate.",
+  "next_action": "Run exact-head replay with the A01 handoff contract, then cascade the source/tree through A15-A17. Independent interface acceptance remains separate.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
-  "base_sync_parent": "ee252f464d460c399b7d109c17dc9f5456bbf29a",
+  "base_sync_parent": "55157eff2ad9ba6bdd412e479685e0dd7a654287",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
   "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }
