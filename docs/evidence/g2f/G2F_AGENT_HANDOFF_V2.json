@@ -3,8 +3,8 @@
   "agent_id": "A16",
   "package_id": "G2F_WHOLE_NODE_LIGHT_CLIENT_V1",
   "status": "STOP_CONDITION",
-  "base_commit": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
-  "base_tree": "ef02fcb1112c52aaf40e03fe51a1447bf691b5df",
+  "base_commit": "287adb88a544434f203b0707bf0be21ce705f889",
+  "base_tree": "7045452a80b3cdb8c7ef54e77312404d6fd59414",
   "head_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
   "changed_paths": [
     "conformance/g2f/**",
@@ -81,5 +81,8 @@
     "W0-W7 and light-client evidence",
     "G3-G5 activation and claim evidence"
   ],
-  "next_action": "Run exact-head replay, obtain independent review of retained P0 records, then replace model HMAC with accepted external owner/HSM carrier and canonical JMT/Order authority."
+  "next_action": "Run exact-head replay, obtain independent review of retained P0 records, then replace model HMAC with accepted external owner/HSM carrier and canonical JMT/Order authority.",
+  "implementation_commit": "6d093ce67fd3c5fff2ee8822b0fe56842578026d",
+  "implementation_parent": "048a5358c38dfcb8e150c0447c1b3d99c355942b",
+  "base_sync_parent": "287adb88a544434f203b0707bf0be21ce705f889"
 }

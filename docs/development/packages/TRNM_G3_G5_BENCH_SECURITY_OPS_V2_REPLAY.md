@@ -4,11 +4,11 @@ Status: **MODULE_CLOSED_CANDIDATE for A17-owned contracts; BLOCKED_UPSTREAM by A
 
 Package: `G3_G5_BENCH_SECURITY_OPS_V1`  
 Agent: `A17`  
-Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@b1b10e1bd4e89ef64abd81f2e79f106535537532`, tree `ab3396de7f7e18aef80432f7764857d8e0820a1c`.
+Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@a1f3af9c3e1829785180188425df87fe1b7e8ef1`, tree `e2fd8a5d3e2e5f8d7052de722c6f65c92c963bd3`.
 
 ## Replayed contracts
 
-The package replays the PR #19 benchmark manifest/schema, topology/workload/fault/metric requirements, threat register, incident/DR/key-rotation runbook and public-testnet campaign contract. It intentionally does not replay PR #19's modification to a shared payload workflow; A17 now owns a dedicated workflow.
+The package replays the PR #19 benchmark manifest/schema, topology/workload/fault/metric requirements, threat register, incident/DR/key-rotation runbook and public-testnet campaign contract. It intentionally does not replay PR #19's modification to a shared payload workflow; A17 owns a dedicated workflow.
 
 ## Strict claim and activation gate
 
