@@ -73,7 +73,12 @@ for entry in open_entries:
     assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
     assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
     assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
-assert open_numbers == [1, 2, 3, 4, 7, 8], open_numbers
+assert open_numbers == [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], open_numbers
+pr10 = next(entry for entry in open_entries if int(entry.splitlines()[0]) == 10)
+assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", pr10)
+assert re.search(r"(?m)^  classification: base-drift-root-candidate$", pr10)
+assert pr10.count("  - ") >= 9
+assert ledger.count("  invalidated_by_pr: 10") == 9
 terminal_section = ledger.split("terminal_pull_requests:", 1)[1]
 assert re.search(r"(?m)^- number: 6$", terminal_section)
 assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
