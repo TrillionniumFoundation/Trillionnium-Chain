@@ -71,6 +71,7 @@
   ],
   "next_action": "Run exact-head replay with the A01 handoff contract, then cascade the source/tree through A15-A17. Independent interface acceptance remains separate.",
   "implementation_commit": "0eed454d2895b8b034ada2af6bf96006cb094475",
+  "implementation_tree": "9b2030852132c147b63b1a5a7c269fff9424819c",
   "implementation_parent": "ad633bf7557052c02bf214b683a18bd72bb4bec5",
   "base_sync_parent": "55157eff2ad9ba6bdd412e479685e0dd7a654287",
   "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
