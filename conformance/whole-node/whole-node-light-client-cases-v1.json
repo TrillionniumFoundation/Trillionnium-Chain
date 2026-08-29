@@ -1,0 +1,33 @@
+{
+  "schema":"trnm-whole-node-light-client-cases-v1",
+  "positive":[
+    "five-plane-order-root-binding",
+    "checkpoint-successor-cas",
+    "response-loss-exact-replay",
+    "external-anchor-reopen",
+    "staged-state-sync",
+    "atomic-namespace-swap",
+    "six-proof-family-reference-client",
+    "six-proof-family-independent-client"
+  ],
+  "negative":[
+    "missing-plane",
+    "forked-plane-cut",
+    "order-root-substitution",
+    "namespace-copy-or-rename",
+    "inventory-rename",
+    "coherent-local-rollback",
+    "torn-checkpoint",
+    "sync-chunk-drift",
+    "sync-downgrade",
+    "sync-wrong-anchor",
+    "unverified-atomic-swap",
+    "missing-proof-family",
+    "sampling-proof-while-disabled",
+    "composite-root-substitution",
+    "immature-result",
+    "duplicate-settlement",
+    "upgrade-downgrade",
+    "insufficient-order-proof"
+  ]
+}
