@@ -4,11 +4,11 @@ Status: **MODULE_CLOSED_CANDIDATE for A17-owned contracts; BLOCKED_UPSTREAM by A
 
 Package: `G3_G5_BENCH_SECURITY_OPS_V1`  
 Agent: `A17`  
-Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@1a2efe08295cfa5ab745047bc75f37890d3ef58d`, tree `5396675fb3d3c991c561de16b07dbeff6afcc220`.
+Exact base: PR #37, `feature/chain-a16-g2f-whole-node-light-client-v2-20260830@4ce9a7880084c96903cf296e1d0c0f67c44118b9`, tree `f024e4478bfb793757cf4dce0b8e78a3a6d51713`.
 
 The package retains strict topology/workload/fault/metric contracts, threat mapping, runbooks and a fail-closed claim/activation gate. GitHub Actions uses the frozen thirteen-workflow tree `dc9157617e7d00750f878aad33ee9b5cae5d9d5d` and A00 exact-head control commit `d1bbbb43d385dbadadb34710610a49e43c498863`.
 
-Synthetic evidence exists only to test deterministic decision logic. It does not authorize a real claim.
+Synthetic evidence root `e7c04e43e24b42b9e3d305b00af83a1aee86343f5d0e3f287a030f0de1520414` exists only to test deterministic decision logic. It does not authorize a real claim.
 
 ## Required before any claim
 

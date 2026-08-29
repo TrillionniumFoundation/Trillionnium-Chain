@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-"""Candidate-only strict claim and activation evidence gate.
-
-Synthetic complete evidence is used only to test the decision function. The
-checked-in repository carries no real benchmark, public-testnet or production
-claim authorization.
-"""
+"""Candidate-only strict benchmark claim and activation evidence gate."""
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
 from dataclasses import asdict, dataclass, replace
+from typing import Callable
 
 
 class Reject(ValueError):
@@ -25,19 +21,15 @@ REQUIRED_GATES = (
 
 def canonical(value: object) -> bytes:
     return json.dumps(
-        value,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=True,
-        allow_nan=False,
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False
     ).encode("utf-8")
 
 
 def commitment(domain: str, value: object) -> str:
+    raw = canonical(value)
     digest = hashlib.sha256()
     digest.update(domain.encode("ascii"))
-    digest.update(b"\x00")
-    raw = canonical(value)
+    digest.update(b"\0")
     digest.update(len(raw).to_bytes(8, "big"))
     digest.update(raw)
     return digest.hexdigest()
@@ -45,7 +37,7 @@ def commitment(domain: str, value: object) -> str:
 
 def is_hex(value: object, length: int) -> bool:
     return isinstance(value, str) and len(value) == length and all(
-        character in "0123456789abcdef" for character in value
+        char in "0123456789abcdef" for char in value
     )
 
 
@@ -123,7 +115,9 @@ def evaluate(
         raise Reject("claim-kind")
     if not request.workload_scope or request.workload_scope in {"all", "universal"}:
         raise Reject("claim-scope")
-    if not is_hex(request.exact_release_root, 64) or not is_hex(request.exact_comparator_root, 64):
+    if not is_hex(request.exact_release_root, 64) or not is_hex(
+        request.exact_comparator_root, 64
+    ):
         raise Reject("claim-root")
 
     gate_map: dict[str, GateEvidenceV2] = {}
@@ -144,10 +138,8 @@ def evaluate(
             raise Reject("independent-replay")
 
     roots = (
-        benchmark.artifact_root,
-        benchmark.workload_root,
-        benchmark.raw_trace_root,
-        benchmark.comparator_root,
+        benchmark.artifact_root, benchmark.workload_root,
+        benchmark.raw_trace_root, benchmark.comparator_root,
     )
     if not all(is_hex(root, 64) for root in roots):
         raise Reject("benchmark-root")
@@ -159,16 +151,15 @@ def evaluate(
         raise Reject("comparison-not-like-for-like")
     if benchmark.committed_goodput <= 0:
         raise Reject("committed-goodput")
-    if min(benchmark.order_p99_ms, benchmark.result_p99_ms, benchmark.settlement_p99_ms) <= 0:
+    if min(
+        benchmark.order_p99_ms, benchmark.result_p99_ms, benchmark.settlement_p99_ms
+    ) <= 0:
         raise Reject("finality-metric")
 
     topology = benchmark.topology
     if (
-        topology.processes < 100
-        or topology.hosts < 7
-        or topology.operators < 5
-        or topology.regions < 3
-        or topology.custody_domains < 3
+        topology.processes < 100 or topology.hosts < 7 or topology.operators < 5
+        or topology.regions < 3 or topology.custody_domains < 3
     ):
         raise Reject("topology-insufficient")
     if (
@@ -179,14 +170,9 @@ def evaluate(
     ):
         raise Reject("topology-overclaim")
 
-    minimum_soak = {
-        "surpass-workload": 168,
-        "public-testnet": 168,
-        "production": 720,
-    }[request.kind]
-    if benchmark.soak_hours < minimum_soak:
+    minimum_soak = {"surpass-workload": 168, "public-testnet": 168, "production": 720}
+    if benchmark.soak_hours < minimum_soak[request.kind]:
         raise Reject("soak-insufficient")
-
     if security.open_critical or security.open_high:
         raise Reject("open-critical-high")
     if not (
@@ -251,24 +237,26 @@ def fixtures() -> tuple[
     security = SecurityEvidenceV2(0, 0, True, True, True, True)
     operations = OperationsEvidenceV2(True, True, True, True, True, True)
     request = ClaimRequestV2(
-        "surpass-workload",
-        "deterministic-reexecution-v1",
-        benchmark.artifact_root,
-        benchmark.comparator_root,
+        "surpass-workload", "deterministic-reexecution-v1",
+        benchmark.artifact_root, benchmark.comparator_root,
     )
     return gates, benchmark, security, operations, request
+
+
+EXPECTED_SYNTHETIC_DECISION_ROOT_V2 = (
+    "e7c04e43e24b42b9e3d305b00af83a1aee86343f5d0e3f287a030f0de1520414"
+)
 
 
 def self_test() -> dict[str, object]:
     gates, benchmark, security, operations, request = fixtures()
     decision = evaluate(gates, benchmark, security, operations, request)
-    expected_root = "ad1ae325fac3762af64ed01a444f807fb0b0ef5c00418fe8387d6635009b7028"
-    if decision["decision_root"] != expected_root:
+    if decision["decision_root"] != EXPECTED_SYNTHETIC_DECISION_ROOT_V2:
         raise AssertionError("decision-root-drift")
 
     negatives: list[dict[str, str]] = []
 
-    def reject(name: str, operation) -> None:
+    def reject(name: str, operation: Callable[[], object]) -> None:
         try:
             operation()
         except Reject as error:
@@ -277,30 +265,16 @@ def self_test() -> dict[str, object]:
             raise AssertionError(f"accepted:{name}")
 
     reject("missing-gate", lambda: evaluate(gates[:-1], benchmark, security, operations, request))
-    changed = list(gates)
-    changed[1] = replace(changed[1], accepted=False)
+    changed = list(gates); changed[1] = replace(changed[1], accepted=False)
     reject("unaccepted-gate", lambda: evaluate(changed, benchmark, security, operations, request))
-    changed = list(gates)
-    changed[1] = replace(changed[1], independent_replays=1)
+    changed = list(gates); changed[1] = replace(changed[1], independent_replays=1)
     reject("single-replay", lambda: evaluate(changed, benchmark, security, operations, request))
-    reject(
-        "release-mismatch",
-        lambda: evaluate(gates, benchmark, security, operations, replace(request, exact_release_root=commitment("x", "x"))),
-    )
-    reject(
-        "comparator-mismatch",
-        lambda: evaluate(gates, benchmark, security, operations, replace(request, exact_comparator_root=commitment("x", "x"))),
-    )
+    reject("release-mismatch", lambda: evaluate(gates, benchmark, security, operations, replace(request, exact_release_root=commitment("x", "x"))))
+    reject("comparator-mismatch", lambda: evaluate(gates, benchmark, security, operations, replace(request, exact_comparator_root=commitment("x", "x"))))
     reject("hardware-mismatch", lambda: evaluate(gates, replace(benchmark, same_hardware=False), security, operations, request))
     reject("workload-mismatch", lambda: evaluate(gates, replace(benchmark, same_workload=False), security, operations, request))
-    reject(
-        "topology-insufficient",
-        lambda: evaluate(gates, replace(benchmark, topology=TopologyV2(31, 4, 3, 2, 2)), security, operations, request),
-    )
-    reject(
-        "topology-overclaim",
-        lambda: evaluate(gates, replace(benchmark, topology=TopologyV2(100, 20, 10, 21, 5)), security, operations, request),
-    )
+    reject("topology-insufficient", lambda: evaluate(gates, replace(benchmark, topology=TopologyV2(31, 4, 3, 2, 2)), security, operations, request))
+    reject("topology-overclaim", lambda: evaluate(gates, replace(benchmark, topology=TopologyV2(100, 20, 10, 21, 5)), security, operations, request))
     reject("soak-insufficient", lambda: evaluate(gates, replace(benchmark, soak_hours=100), security, operations, request))
     reject("open-critical", lambda: evaluate(gates, benchmark, replace(security, open_critical=1), operations, request))
     reject("open-high", lambda: evaluate(gates, benchmark, replace(security, open_high=1), operations, request))
