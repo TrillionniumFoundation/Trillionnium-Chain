@@ -1,0 +1,19 @@
+{
+  "schema": "trnm-g2d-source-manifest-v2",
+  "classification": "candidate-non-normative",
+  "repository": "TrillionniumFoundation/Trillionnium-Chain",
+  "base_pr": 33,
+  "base_ref": "feature/chain-a12-g2b-agent-market-v2-20260830",
+  "base_commit": "a21285eeb90b2f1adf027cbed8039e37a05e1f6d",
+  "base_tree": "a3dbf4c7c7b9a5b06643b75ad951af73b893087b",
+  "a12_implementation_commit": "a6478b21dca97769d6e9acba611859a45c44a399",
+  "a12_handoff": "docs/evidence/g2b/G2B_AGENT_HANDOFF_V2.json",
+  "replayed_from": "0388395bb5d99a371679f97b72716bf67842418b",
+  "worker_counts": [1, 2, 4, 8],
+  "real_parallel_worker_pool_scope": "bounded-in-process-candidate",
+  "agent_transaction_wire_accepted": false,
+  "application_jmt_authority": false,
+  "settlement_authority": false,
+  "g2d_exit": false,
+  "production_candidate": false
+}
