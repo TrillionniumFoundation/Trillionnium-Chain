@@ -131,15 +131,6 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
-      - name: Assert exact checked-out source
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
-          actual=$(git rev-parse HEAD)
-          test "$actual" = "$expected"
-          printf 'exact_head=%s\n' "$actual"
-
       - name: Verify runner-provisioned Rust toolchain
         working-directory: trillionnium-chain
         run: |
@@ -150,7 +141,6 @@ jobs:
             --component rustfmt
 
       - name: Verify Cargo offline cache readiness
-        id: cargo_offline_ready
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -158,6 +148,15 @@ jobs:
             --toolchain 1.95.0 \
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Assert exact checked-out source
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          expected="${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
+          actual=$(git rev-parse HEAD)
+          test "$actual" = "$expected"
+          printf 'exact_head=%s\n' "$actual"
 
       - name: Verify scoped package or canonical recovery contracts
         working-directory: trillionnium-chain
@@ -182,9 +181,6 @@ jobs:
               ;;
             feature/chain-a16-g2f-whole-node-light-client-v2-20260830)
               bash ./scripts/ci/check_g2f_replay_v2.sh
-              cargo +1.95.0 test --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib
-              cargo +1.95.0 clippy --manifest-path trillionnium/Cargo.toml --locked --offline -p trnm-poco-node --features g2f-namespace-test-support --lib -- -D warnings
-              cargo +1.95.0 fmt --manifest-path trillionnium/Cargo.toml --all -- --check
               ;;
             feature/chain-a17-g3-g5-bench-security-ops-v2-20260830)
               bash ./scripts/ci/check_g3_g5_replay_v2.sh

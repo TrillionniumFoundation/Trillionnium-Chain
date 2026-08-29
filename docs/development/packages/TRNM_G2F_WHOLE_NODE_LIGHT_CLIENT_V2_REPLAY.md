@@ -4,24 +4,17 @@ Status: **STOP_CONDITION for production authority; candidate model gaps closed w
 
 Package: `G2F_WHOLE_NODE_LIGHT_CLIENT_V1`  
 Agent: `A16`  
-Exact base: PR #36, `feature/chain-a15-g2e-settlement-v2-20260830@fe61ee74b95b8768ba86f7a4a143a754d1b4159c`, tree `58dd1026fb58061848fb604e89c95ebdcb6a63b8`.
+Exact base: PR #36, `feature/chain-a15-g2e-settlement-v2-20260830@1ec2a1245e3241fd6925a5d5fa400f04374c8b4f`, tree `d314feacba8f1690b828eb63e67b019c7dbf5ed9`.
 
-The package retains the complete PR #22 hardening candidate, the coordinated-view single-use permit and two independent light-client models. The GitHub Actions surface is restored to the frozen thirteen workflows; exact-head package execution is routed through the A00-owned payload-replay workflow rather than a package-specific workflow.
+The package retains the complete PR #22 hardening candidate, the coordinated-view single-use permit and two independent light-client models. The GitHub Actions surface is the frozen thirteen-workflow tree `dc9157617e7d00750f878aad33ee9b5cae5d9d5d`; exact-head package execution is routed through A00 control commit `d1bbbb43d385dbadadb34710610a49e43c498863`.
 
-## Candidate closure
-
-- six-plane atomicity and predecessor-bound whole-node checkpoint CAS;
-- staged state sync and atomic namespace swap;
-- copy, shallow-copy, rename, fork, residue and torn-state fences;
-- two separately authored light-client verifiers;
-- single-use owner permit binding namespace, predecessor, height, Order header, application root, manifest and six-plane identities;
-- deterministic candidate view commitment `2fe37224cda2bd9c5bc28126aa257e1a74718b72086752447694ae89fd827dec`.
+The package-owned replay script runs Python conformance, two-client checks, state-sync/view-commitment checks, feature-gated Rust tests, strict Clippy and rustfmt. No Cargo command is embedded in the shared control workflow.
 
 ## Remaining stop conditions
 
 - independent acceptance of retained P0 copy/fork/residue records;
 - canonical Protocol09 application JMT and finalized Order authority;
-- accepted A11–A15 interface digests;
+- accepted A11-A15 interface digests;
 - external monotonic anchor and HSM/KMS custody;
 - normal node-process ownership plus real power-loss and multi-host evidence.
 

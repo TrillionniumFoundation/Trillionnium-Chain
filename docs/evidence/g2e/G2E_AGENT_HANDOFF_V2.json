@@ -3,8 +3,8 @@
   "agent_id": "A15",
   "package_id": "G2E_SETTLEMENT_ECONOMICS_V1",
   "status": "MODULE_CLOSED_CANDIDATE",
-  "base_commit": "8075b218e3b7cbb3eeebd2c0f75542afb059f1a3",
-  "base_tree": "bf71c892a570b879222ccd9610f8a6061eab6d23",
+  "base_commit": "839345825396343290a59d329eb38e6b3ecb4576",
+  "base_tree": "3b1ab558b23353f190c3cab51d1140d84049e30a",
   "head_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "changed_paths": ["docs/development/packages/TRNM_G2E_SETTLEMENT_ECONOMICS_V1.md","docs/evidence/g2e/G2E_SOURCE_MANIFEST_V2.json","docs/protocol/poco-ai-native-v1/settlement/SETTLEMENT_INTENT_RECEIPT_V1.md","scripts/ci/check_g2e_replay_v2.sh","scripts/ci/check_g2e_source_binding_v2.sh","scripts/ci/check_settlement_conservation_model_v1.sh","simulations/economics/settlement-cases-v1.json","simulations/economics/settlement-risk-v2-cases.json","simulations/economics/settlement_model.py","simulations/economics/settlement_risk_v2.py"],
   "gaps_closed": ["A15-REPLAY-EXACT-A14","A15-MULTI-ASSET-CONSERVATION","A15-EXACTLY-ONCE-RESPONSE-LOSS","A15-FAILURE-ATOMICITY","A15-BENEFICIAL-OWNER-SYBIL-AGGREGATION","A15-ROLE-COLLUSION-FENCES","A15-WASH-FUNDING-FENCE","A15-BOND-MINIMUMS","A15-ORDERING-INVARIANT-RISK-ROOT","A15-FROZEN-WORKFLOW-POLICY-COMPLIANCE"],
@@ -18,9 +18,10 @@
   "known_gaps": ["accepted Agent/DA/Order/Execution/Result proof carriers absent","canonical application JMT and whole-node CAS absent","production asset registry/custody and governance absent","multi-host economic attack evidence absent"],
   "interface_requests": ["A15-ICR-A12-TASK-ESCROW-V1","A15-ICR-A13-FEE-FACTS-V1","A15-ICR-A14-RESULT-MATURITY-V1","A15-ICR-A16-JMT-SETTLEMENT-PROOF-V1","A15-ICR-A17-GOVERNANCE-ELIGIBILITY-V1"],
   "downstream_invalidation": ["A16 whole-node/light-client replay","A17 benchmark/security/activation evidence"],
-  "next_action": "Run the frozen A00 exact-head replay route and obtain independent review; A16 may consume only candidate settlement facts with all authority flags false.",
+  "next_action": "Run the final A00 exact-head replay and obtain independent review; A16 may consume only candidate settlement facts with all authority flags false.",
   "implementation_commit": "da667f30cefa84fc967a96c817be07f8b779ac32",
   "implementation_parent": "0ef40883e160f646158b6e483a69e2371fda989e",
-  "base_sync_parent": "8075b218e3b7cbb3eeebd2c0f75542afb059f1a3",
-  "control_replay_commit": "53c0312cf0da46fc884025838aeb23e7d6ae0fe3"
+  "base_sync_parent": "839345825396343290a59d329eb38e6b3ecb4576",
+  "control_replay_commit": "d1bbbb43d385dbadadb34710610a49e43c498863",
+  "frozen_workflow_tree": "dc9157617e7d00750f878aad33ee9b5cae5d9d5d"
 }
