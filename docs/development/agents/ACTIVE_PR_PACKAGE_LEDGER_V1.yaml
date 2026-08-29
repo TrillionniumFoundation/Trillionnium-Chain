@@ -1,0 +1,229 @@
+schema: trnm-active-pr-package-ledger-v1
+repository: TrillionniumFoundation/Trillionnium-Chain
+observed_at_utc: '2026-08-29T11:28:21Z'
+assessed_plan:
+  ref: docs/chain-poco-bft-mainline-20260825
+  commit: 8198fea0307eb368df34ff77ffc272a6b0e655ec
+  tree: a1be71bba1b54c428493d186fafb656d081b31a9
+latest_candidate:
+  pull_request: 7
+  ref: feature/chain-g1-r4c-full-gap-closure-20260829
+  commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+  tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+control_package_evidence:
+  source_head_ref: docs/agent-fleet-plan-v1-20260829
+  source_head_commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
+  source_head_tree: 55dff92ec01c4cdde93d29cee502e647251284f0
+  workflow_runs:
+  - name: TRNM payload replay recovery v1 gate
+    run_id: 33249877031
+    job_id: 99093668532
+    conclusion: success
+  - name: TRNM replay-to-Core coordinator v1 gate
+    run_id: 33249877038
+    job_id: 99093608106
+    conclusion: success
+ownership_resolutions:
+- surface: docs/development/CURRENT_SNAPSHOT_V1.*
+  previous_writers:
+  - A00
+  - A01
+  sole_writer: A01
+  read_only_observer: A00
+  status: resolved
+rules:
+  one_package_per_pull_request: true
+  one_owner_per_pull_request: true
+  self_merge_allowed: false
+  integration_pull_requests_accept_new_package_writes: false
+  superseded_does_not_mean_accepted: true
+  closed_does_not_mean_promoted: true
+  snapshot_semantics: immutable-exact-observation; revalidate live refs on every later run
+open_pull_requests:
+- number: 1
+  title: 'feat(consensus): close PoCO-BFT v0 recovery baseline'
+  state: open
+  draft: false
+  mergeable: false
+  package_id: LEGACY_POCO_BFT_V0_RECOVERY_BASELINE
+  owner: ProfHepta
+  owner_kind: github-user-pre-fleet
+  base:
+    ref: main
+    pr_bound_commit: e73d1a930991f0e308bf72854b334b6191c7fcc3
+    pr_bound_tree: 49a2db9d1eaa4fa649cc7476f1e7dfda2a24bef9
+    live_commit: b2d485e5641614ea0ca34ebf80a5f7843ff1e6d9
+    live_tree: ffbad926850a12159336126390271abffc1d99a6
+    status: advanced
+  head:
+    ref: feature/chain-poco-bft-v0
+    commit: eea8be5a6f40072002d78583206c805acd68e8b3
+    tree: a070fed99a4e555ff2b65b74a3dc78824fa92c67
+  relation_to_latest_candidate:
+    kind: exact-ancestor
+    ahead_by: 553
+  classification: superseded-ancestor
+  merge_queue_eligible: false
+  next_action: Independent reviewer may close as superseded; do not merge or promote.
+- number: 2
+  title: 'feat(consensus): add payload replay recovery owner'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R1_PAYLOAD_REPLAY_RECOVERY_V1
+  owner: A02
+  owner_kind: fleet-agent
+  base:
+    ref: docs/chain-poco-bft-mainline-20260825
+    pr_bound_commit: 92449b8e101642f39d644d863db7bb60dea488f7
+    pr_bound_tree: cf8f1ab4f5065cb0551a30ec0e036cd44cb31766
+    live_commit: 92449b8e101642f39d644d863db7bb60dea488f7
+    live_tree: cf8f1ab4f5065cb0551a30ec0e036cd44cb31766
+    status: exact
+  head:
+    ref: dev/g1-payload-replay-recovery-owner-v1
+    commit: 0db883131f28f25faf3d2a9e684b997e7aa9909d
+    tree: 2d727577bde41d5b9c3c294212e8e9682a5ead15
+  relation_to_latest_candidate:
+    kind: exact-ancestor
+    ahead_by: 76
+  classification: superseded-ancestor
+  merge_queue_eligible: false
+  next_action: Independent reviewer may close as superseded; package evidence remains historical.
+- number: 3
+  title: 'feat(node): add sealed replay-to-Core coordinator candidate'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R2_RECOVERY_CORE_ACK_V1
+  owner: A02
+  owner_kind: fleet-agent
+  base:
+    ref: dev/g1-payload-replay-recovery-owner-v1
+    pr_bound_commit: 0db883131f28f25faf3d2a9e684b997e7aa9909d
+    pr_bound_tree: 2d727577bde41d5b9c3c294212e8e9682a5ead15
+    live_commit: 0db883131f28f25faf3d2a9e684b997e7aa9909d
+    live_tree: 2d727577bde41d5b9c3c294212e8e9682a5ead15
+    status: exact
+  head:
+    ref: dev/g1-replay-to-core-durable-ack-owner-v1
+    commit: fda42ca060ebd00724cf644a96e7e1fa6b108ae2
+    tree: 3e8905237a57bee9db2a4b5ccee417f1eff0490b
+  relation_to_latest_candidate:
+    kind: exact-ancestor
+    ahead_by: 55
+  classification: superseded-ancestor
+  merge_queue_eligible: false
+  next_action: Independent reviewer may close as superseded; R2B nonclaims remain open in the latest candidate.
+- number: 4
+  title: 'test(poco-node): add finalization-intent process crash matrix'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R4_FAULT_MATRIX_V1
+  owner: A06
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r2b-real-core-adapter-20260828
+    pr_bound_commit: a259e0b28a2d9dea838f5ceac0e805803ac51dd4
+    pr_bound_tree: 1715f5f5a614679e1ba45239a7a884c10f7bc5ae
+    live_commit: a259e0b28a2d9dea838f5ceac0e805803ac51dd4
+    live_tree: 1715f5f5a614679e1ba45239a7a884c10f7bc5ae
+    status: exact
+  head:
+    ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
+    commit: 3a4e2fa066de74025866da94cfe8a9efbfca03aa
+    tree: 837992631a8de9faa5246e53457867bdc2fd7a15
+  relation_to_latest_candidate:
+    kind: diverged-content-import
+    latest_candidate_claims_exact_import: true
+    independent_equivalence_review_required: true
+  classification: predecessor-content-candidate
+  merge_queue_eligible: false
+  next_action: Retain until an independent reviewer confirms exact imported content, then close as superseded.
+- number: 7
+  title: 'feat(chain): integrate G1-R4A process evidence with R4B authority seams'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: G1_R4_INTEGRATION_BASELINE_V1
+  owner: A00
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4b-next-20260829
+    pr_bound_commit: 6f5535af1e595baca351ddbcaa95f9667134d6cf
+    pr_bound_tree: f7f1c5f9875d6700963e2f9cd2a1a332c709bf80
+    live_commit: 6f5535af1e595baca351ddbcaa95f9667134d6cf
+    live_tree: f7f1c5f9875d6700963e2f9cd2a1a332c709bf80
+    status: exact
+  head:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+  classification: frozen-integration-baseline
+  merge_queue_eligible: false
+  accepts_new_package_writes: false
+  next_action: Use as an exact candidate baseline only; all remaining Plan packages require separate owner branches and PRs.
+- number: 8
+  title: 'docs(agent): operationalize the full Plan with an 18-agent gap-closure fleet'
+  state: open
+  draft: true
+  mergeable: true
+  package_id: AGENT_CONTROL_PLANE_V1
+  owner: A00
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    pr_bound_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    pr_bound_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    status: exact
+  head:
+    ref: docs/agent-fleet-plan-v1-20260829
+    commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
+    tree: 55dff92ec01c4cdde93d29cee502e647251284f0
+  classification: active-package
+  merge_queue_eligible: false
+  terminal_state: WORKING
+  next_action: Finish exact-head CI, publish this ledger, and request independent review; never self-merge.
+terminal_pull_requests:
+- number: 6
+  title: 'merge(chain): unify G1-R4A crash matrix with R4B authority seams'
+  state: closed
+  draft: false
+  mergeable: false
+  package_id: G1_R4_INTEGRATION_TRAIN_V1
+  owner: A00
+  owner_kind: fleet-agent
+  base:
+    ref: feature/chain-g1-r4c-full-gap-closure-20260829
+    pr_bound_commit: 6f5535af1e595baca351ddbcaa95f9667134d6cf
+    pr_bound_tree: f7f1c5f9875d6700963e2f9cd2a1a332c709bf80
+    live_commit: 6e0189e351015ef3230f217ca7ff86149baedcf0
+    live_tree: efea864cb2fbc4835a59a089b3dbab8934e71231
+    status: advanced
+  head:
+    ref: feature/chain-g1-r4a-finalization-intent-process-matrix-20260828
+    commit: 3a4e2fa066de74025866da94cfe8a9efbfca03aa
+    tree: 837992631a8de9faa5246e53457867bdc2fd7a15
+  terminal_state: BASE_DRIFT
+  classification: base-drifted-integration-pr
+  merge_queue_eligible: false
+  next_action: Retain closed; independently review PR 4 content equivalence before classifying PR 4 as superseded.
+  closed_without_merge: true
+known_control_gaps:
+- id: PR4_IMPORT_EQUIVALENCE_REVIEW
+  status: OPEN
+  owner: independent-reviewer
+  next_action: Compare PR 4 content with the claimed import in PR 7 before classifying PR 4 as superseded.
+- id: A00_INDEPENDENT_REVIEW
+  status: OPEN
+  owner: reviewer-not-A00
+  next_action: Review PR 8 exact head after the ledger/ownership commit and its exact-head control gate succeed.
+observation_source:
+  agent_id: A00
+  package_id: AGENT_CONTROL_PLANE_V1
+  head_ref: docs/agent-fleet-plan-v1-20260829
+  head_commit: 0c9368c3555faab0e497a5521321b2b2908d4d61
+  head_tree: 55dff92ec01c4cdde93d29cee502e647251284f0

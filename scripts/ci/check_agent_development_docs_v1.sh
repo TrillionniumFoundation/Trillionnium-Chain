@@ -13,6 +13,7 @@ required=(
   docs/development/agents/AGENT_REGISTRY_V1.yaml
   docs/development/agents/AGENT_DEPENDENCY_GRAPH_V1.yaml
   docs/development/agents/AGENT_MERGE_QUEUE_V1.md
+  docs/development/agents/ACTIVE_PR_PACKAGE_LEDGER_V1.yaml
   docs/development/agents/INTERFACE_CHANGE_REQUEST_V1.md
   docs/development/agents/GPT_WORK_AGENT_SETUP_V1.md
   docs/development/agents/AGENT_PROMPT_PACK_V1.md
@@ -49,6 +50,36 @@ ids = re.findall(r"(?m)^- id: (A\d\d)$", registry)
 expected = [f"A{i:02d}" for i in range(18)]
 assert ids == expected, ids
 assert len(ids) == len(set(ids))
+
+a00_block = registry.split("- id: A00", 1)[1].split("- id: A01", 1)[0]
+a01_block = registry.split("- id: A01", 1)[1].split("- id: A02", 1)[0]
+assert "docs/development/CURRENT_SNAPSHOT_V1.*" not in a00_block
+assert "writes to docs/development/CURRENT_SNAPSHOT_V1.* owned by A01" in a00_block
+assert "scripts/ci/check_agent_development_docs_v1.sh" in a00_block
+assert "docs/development/CURRENT_SNAPSHOT_V1.json" in a01_block
+
+ledger = (root/"docs/development/agents/ACTIVE_PR_PACKAGE_LEDGER_V1.yaml").read_text()
+assert re.search(r"(?m)^schema: trnm-active-pr-package-ledger-v1$", ledger)
+assert re.search(r"(?m)^  one_package_per_pull_request: true$", ledger)
+assert re.search(r"(?m)^  one_owner_per_pull_request: true$", ledger)
+assert re.search(r"(?m)^  self_merge_allowed: false$", ledger)
+open_section = ledger.split("open_pull_requests:", 1)[1].split("terminal_pull_requests:", 1)[0]
+open_entries = re.split(r"(?m)^- number: ", open_section)[1:]
+open_numbers = []
+for entry in open_entries:
+    number = int(entry.splitlines()[0])
+    open_numbers.append(number)
+    assert re.search(r"(?m)^  package_id: [A-Z0-9][A-Z0-9_]{2,127}$", entry), number
+    assert re.search(r"(?m)^  owner: [A-Za-z0-9][A-Za-z0-9_-]{1,127}$", entry), number
+    assert re.search(r"(?m)^    pr_bound_commit: [0-9a-f]{40}$", entry), number
+    assert re.search(r"(?m)^    pr_bound_tree: [0-9a-f]{40}$", entry), number
+assert open_numbers == [1, 2, 3, 4, 7, 8], open_numbers
+terminal_section = ledger.split("terminal_pull_requests:", 1)[1]
+assert re.search(r"(?m)^- number: 6$", terminal_section)
+assert re.search(r"(?m)^  terminal_state: BASE_DRIFT$", terminal_section)
+assert re.search(r"(?m)^  closed_without_merge: true$", terminal_section)
+assert re.search(r"(?m)^  sole_writer: A01$", ledger)
+assert re.search(r"(?m)^  read_only_observer: A00$", ledger)
 
 graph = (root/"docs/development/agents/AGENT_DEPENDENCY_GRAPH_V1.yaml").read_text()
 for agent_id in expected:

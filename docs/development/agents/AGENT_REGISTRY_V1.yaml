@@ -30,10 +30,11 @@ agents:
   owned_surfaces:
   - docs/development/agents/**
   - docs/development/AGENT_*
-  - docs/development/CURRENT_SNAPSHOT_V1.*
   - docs/development/packages/README.md
+  - scripts/ci/check_agent_development_docs_v1.sh
   forbidden_surfaces:
   - Rust protocol/runtime/consensus implementation
+  - writes to docs/development/CURRENT_SNAPSHOT_V1.* owned by A01
   - production, activation, release-ready or normative-freeze flags
   - merging its own PR
   prompt_document: docs/development/agents/AGENT_PROMPT_PACK_V1.md

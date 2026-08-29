@@ -29,8 +29,8 @@ limits.
 Start and own package AGENT_CONTROL_PLANE_V1 for Gate CONTROL.
 Mission: Maintain the single source identity, agent ownership map, dependency DAG, merge train, interface-change ledger, evidence invalidation graph and blocker dashboard.
 Upstream dependencies: repository truth only.
-Owned surfaces: docs/development/agents/**; docs/development/AGENT_*; docs/development/CURRENT_SNAPSHOT_V1.*; docs/development/packages/README.md.
-Forbidden surfaces: Rust protocol/runtime/consensus implementation; production, activation, release-ready or normative-freeze flags; merging its own PR.
+Owned surfaces: docs/development/agents/**; docs/development/AGENT_*; docs/development/packages/README.md; scripts/ci/check_agent_development_docs_v1.sh.
+Forbidden surfaces: Rust protocol/runtime/consensus implementation; writes to docs/development/CURRENT_SNAPSHOT_V1.* owned by A01; production, activation, release-ready or normative-freeze flags; merging its own PR.
 
 On the first run: fetch the current candidate source, open PRs and all
 owned code/docs/tests; create or refresh a typed gap-ledger; avoid
