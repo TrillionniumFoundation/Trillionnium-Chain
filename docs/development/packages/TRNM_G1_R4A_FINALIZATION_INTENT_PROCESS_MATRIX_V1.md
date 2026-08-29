@@ -85,10 +85,11 @@ The gate runs formatting, the focused library tests, the Linux process matrix,
 clippy with warnings denied, package truth checks, and the unchanged Cargo
 offline-input guard in CI.
 
-The focused gate is integrated into the existing trusted PoCO-BFT workflow,
-not a new workflow outside the frozen CI inventory. At source publication time
-no authorized runner result is attached; execution conclusions remain pending
-until the exact commit/tree passes from a clean checkout.
+The focused gate is integrated into the existing trusted payload-replay
+recovery workflow, not a new workflow outside the frozen CI inventory. At
+source publication time no authorized runner result is attached; execution
+conclusions remain pending until the exact integration commit/tree passes from
+a clean checkout.
 
 ## 5. Explicit non-claims
 
@@ -122,7 +123,7 @@ Core queue front
  -> application apply/readback
  -> Core receipt
  -> tag-3 Safety persist/readback
- -> whole-node checkpoint CAS
+ -> successor whole-node checkpoint CAS
  -> Ready/reopen
 ```
 
