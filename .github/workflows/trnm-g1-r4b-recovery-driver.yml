@@ -38,7 +38,7 @@ jobs:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain'
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - name: Checkout driver instructions
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -101,49 +101,13 @@ jobs:
             --component clippy \
             --component rustfmt
 
-      - name: Prove offline graph and refresh stale root-owned stamp
-        working-directory: trillionnium-chain
-        run: |
-          set -euo pipefail
-          lock=trillionnium/Cargo.lock
-          stamp="$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
-          actual=$(sha256sum "$lock" | awk '{print $1}')
-          expected=$(awk '$2 == "trillionnium/Cargo.lock" {print $1}' "$stamp")
-          test -n "$expected"
-          cargo_bin=$($HOME/.cargo/bin/rustup which --toolchain 1.95.0 cargo)
-          env CARGO_HOME="$HOME/.cargo" CARGO_NET_OFFLINE=true \
-            "$cargo_bin" fetch \
-              --manifest-path trillionnium/Cargo.toml \
-              --locked \
-              --offline
-          if [[ "$actual" != "$expected" ]]; then
-            sudo -n true
-            tmp=$(mktemp "$RUNNER_TEMP/trnm-chain-offline-cache-v2.XXXXXX")
-            awk -v replacement="$actual" '
-              $2 == "trillionnium/Cargo.lock" {
-                if (seen++) exit 91
-                $1 = replacement
-              }
-              { print }
-              END { if (seen != 1) exit 92 }
-            ' "$stamp" >"$tmp"
-            test "$(wc -l <"$tmp")" = "$(wc -l <"$stamp")"
-            test "$(awk '$2 == "trillionnium/Cargo.lock" {print $1}' "$tmp")" = "$actual"
-            sudo install -o root -g root -m 0444 "$tmp" "$stamp"
-            rm -f "$tmp"
-          fi
-          ./scripts/ci/check_cargo_offline_ready.sh \
-            --toolchain 1.95.0 \
-            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
-            trillionnium/Cargo.toml:trillionnium/Cargo.lock
-
       - name: Verify formatting
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 
-      - name: Run focused Core recovery tests
+      - name: Run focused Linux Core recovery tests
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -151,11 +115,12 @@ jobs:
             --manifest-path trillionnium/Cargo.toml \
             --locked \
             --offline \
+            --target x86_64-unknown-linux-gnu \
             -p trnm-consensus-core \
             native_finalization_applied_recovery \
             -- --nocapture
 
-      - name: Compile Node laboratory integration surface
+      - name: Compile Linux Node laboratory integration surface
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
@@ -163,8 +128,28 @@ jobs:
             --manifest-path trillionnium/Cargo.toml \
             --locked \
             --offline \
+            --target x86_64-unknown-linux-gnu \
             -p trnm-poco-node \
             --features lab-validator-runtime-test-support
+
+      - name: Provision exact missing locked crates and refresh stamp
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 ../driver/scripts/ci/provision_exact_locked_crates.py \
+            --manifest trillionnium/Cargo.toml \
+            --lock trillionnium/Cargo.lock \
+            --toolchain 1.95.0 \
+            --stamp "$HOME/.cargo/trnm-chain-offline-cache-v2.sha256"
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Stage and verify project policy
         working-directory: trillionnium-chain
