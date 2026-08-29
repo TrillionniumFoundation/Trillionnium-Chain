@@ -11,7 +11,7 @@ deriver="trillionnium/crates/trnm-poco-node/build.rs"
 prefix="trillionnium/crates/trnm-poco-node/src/finalization_intent_process_prefix_v1.inc"
 helper="trillionnium/crates/trnm-poco-node/src/bin/trnm-poco-finalization-intent-kill-helper.rs"
 test_file="trillionnium/crates/trnm-poco-node/tests/finalization_intent_process_kill_matrix.rs"
-workflow=".github/workflows/trnm-poco-bft-v0.yml"
+workflow=".github/workflows/trnm-payload-replay-recovery-v1.yml"
 support=(
   trillionnium/crates/trnm-poco-node/src/finalization_intent_process_support_v1_1.inc
   trillionnium/crates/trnm-poco-node/src/finalization_intent_process_support_v1_2.inc
@@ -63,7 +63,7 @@ assert capabilities["production_wal_byte_identical"] is True
 assert capabilities["real_process_sigkill_source"] is True
 assert capabilities["real_process_sigkill_executed"] is False
 assert capabilities["process_kill_matrix_complete"] is False
-assert data["source"]["workflow"] == ".github/workflows/trnm-poco-bft-v0.yml"
+assert data["source"]["workflow"] == ".github/workflows/trnm-payload-replay-recovery-v1.yml"
 assert data["evidence"]["hosted_workflow"] == "not-run"
 assert len(data["cut_matrix"]["write"]) == 3
 assert len(data["cut_matrix"]["clear"]) == 2
