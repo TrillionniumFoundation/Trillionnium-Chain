@@ -2,232 +2,280 @@
 set -euo pipefail
 
 source_mode="${1:---worktree}"
-expected='runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]'
-standard_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))"
-# The payload/recovery workflow accepts the repository connector only for a
-# same-repository, member-authored Chain feature PR. This does not authorize
-# bot pushes, forks, workflow_dispatch, or a non-Chain branch.
-payload_recovery_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') || (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') || (github.actor == 'github-actions[bot]' && github.triggering_actor == 'github-actions[bot]' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.author_association == 'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)"
-# The PoCO-BFT workflow has a first-class weekly schedule. Its scheduled
-# branch is intentionally narrower than the historical shared guard: only the
-# canonical default branch may execute it.
-poco_bft_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && (github.event_name == 'schedule' && github.ref == 'refs/heads/main' || (github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)))"
-p1_trust_guard="github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')"
 root=$(git rev-parse --show-toplevel)
 
-list_index_workflows() {
-  git -C "$root" ls-files --cached -- '.github/workflows/' | \
-    sed 's#^.github/workflows/##' | \
-    awk '/\.ya?ml$/ && index($0, "/") == 0' | sort
-}
+python3 - "$root" "$source_mode" <<'PY'
+from __future__ import annotations
 
-list_head_workflows() {
-  git -C "$root" ls-tree -r --name-only HEAD -- .github/workflows/ | \
-    sed 's#^.github/workflows/##' | \
-    awk '/\.ya?ml$/ && index($0, "/") == 0' | sort
-}
+import pathlib
+import re
+import subprocess
+import sys
 
-validate_workflow_jobs() {
-  local workflow=$1
+ROOT = pathlib.Path(sys.argv[1])
+MODE = sys.argv[2]
+WORKFLOW_DIR = ".github/workflows"
+SELF_HOSTED = "runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]"
+HOSTED_BASELINE = "runs-on: ubuntu-24.04"
+BASELINE = "trnm-required-baseline.yml"
 
-  awk -v workflow="$workflow" \
-    -v expected="$expected" \
-    -v standard_trust_guard="$standard_trust_guard" \
-    -v payload_recovery_trust_guard="$payload_recovery_trust_guard" \
-    -v poco_bft_trust_guard="$poco_bft_trust_guard" \
-    -v p1_trust_guard="$p1_trust_guard" '
-    function report(message) {
-      printf "ERROR: %s: %s\n", workflow, message > "/dev/stderr"
-      invalid = 1
+STANDARD_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "(github.event_name == 'schedule' || (github.actor == 'ProfAlexQI' && "
+    "github.triggering_actor == 'ProfAlexQI' && (github.event_name != "
+    "'pull_request' || github.event.pull_request.head.repo.full_name == "
+    "github.repository)))"
+)
+PAYLOAD_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') "
+    "|| (github.actor == 'Tomasrgbsf' && github.triggering_actor == "
+    "'Tomasrgbsf') || (github.actor == 'github-actions[bot]' && "
+    "github.triggering_actor == 'github-actions[bot]' && github.event_name == "
+    "'pull_request' && github.event.pull_request.head.repo.full_name == "
+    "github.repository && github.event.pull_request.author_association == "
+    "'MEMBER' && startsWith(github.head_ref, 'feature/chain-'))) && "
+    "(github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository)"
+)
+POCO_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "(github.event_name == 'schedule' && github.ref == 'refs/heads/main' || "
+    "(github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' "
+    "&& (github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository)))"
+)
+P1_GUARD = (
+    "github.repository == 'TrillionniumFoundation/Trillionnium-Chain' && "
+    "github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI' "
+    "&& (github.event_name != 'pull_request' || "
+    "github.event.pull_request.head.repo.full_name == github.repository) && "
+    "(github.event_name != 'workflow_dispatch' || github.ref == "
+    "'refs/heads/main')"
+)
+
+
+class PolicyError(RuntimeError):
+    pass
+
+
+def git(*args: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), *args],
+        check=True,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return result.stdout
+
+
+def workflow_names() -> list[str]:
+    if MODE == "--worktree":
+        base = ROOT / WORKFLOW_DIR
+        return sorted(
+            path.name
+            for path in base.iterdir()
+            if path.is_file() and path.suffix in {".yml", ".yaml"}
+        )
+    if MODE == "--staged":
+        paths = git("ls-files", "--cached", "--", f"{WORKFLOW_DIR}/").splitlines()
+    elif MODE == "--head":
+        git("cat-file", "-e", "HEAD^{commit}")
+        paths = git("ls-tree", "-r", "--name-only", "HEAD", "--", f"{WORKFLOW_DIR}/").splitlines()
+    else:
+        raise PolicyError(f"unsupported CI runner policy source: {MODE}")
+    names: list[str] = []
+    prefix = f"{WORKFLOW_DIR}/"
+    for path in paths:
+        if not path.startswith(prefix):
+            continue
+        name = path[len(prefix):]
+        if "/" not in name and pathlib.Path(name).suffix in {".yml", ".yaml"}:
+            names.append(name)
+    return sorted(names)
+
+
+def read_workflow(name: str) -> str:
+    path = f"{WORKFLOW_DIR}/{name}"
+    if MODE == "--worktree":
+        return (ROOT / path).read_text(encoding="utf-8")
+    if MODE == "--staged":
+        return git("show", f":{path}")
+    return git("show", f"HEAD:{path}")
+
+
+def indent_of(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
+
+
+def normalized(parts: list[str]) -> str:
+    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+
+
+def parse_jobs(name: str, text: str) -> dict[str, dict[str, object]]:
+    lines = text.replace("\r\n", "\n").splitlines()
+    jobs: dict[str, dict[str, object]] = {}
+    jobs_sections = 0
+    in_jobs = False
+    current: str | None = None
+    i = 0
+    while i < len(lines):
+        raw = lines[i]
+        stripped = raw.strip()
+        indent = indent_of(raw)
+        if not stripped or stripped.startswith("#"):
+            i += 1
+            continue
+        if indent == 0 and re.fullmatch(r"jobs:\s*(?:#.*)?", stripped):
+            jobs_sections += 1
+            if jobs_sections > 1:
+                raise PolicyError(f"{name}: multiple top-level jobs mappings")
+            in_jobs = True
+            current = None
+            i += 1
+            continue
+        if in_jobs and indent == 0:
+            in_jobs = False
+            current = None
+        if not in_jobs:
+            i += 1
+            continue
+        if indent == 2:
+            match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*):\s*(?:#.*)?", stripped)
+            if not match:
+                raise PolicyError(f"{name}: unsupported jobs entry: {stripped}")
+            current = match.group(1)
+            jobs[current] = {"runs_on": [], "ifs": [], "guards": [], "uses": []}
+            i += 1
+            continue
+        if current is None:
+            raise PolicyError(f"{name}: content appears before a supported job identifier")
+        if indent == 4:
+            match = re.match(r"['\"]?([A-Za-z0-9_-]+)['\"]?\s*:", stripped)
+            if match:
+                key = match.group(1)
+                props = jobs[current]
+                if key == "runs-on":
+                    props["runs_on"].append(stripped)
+                elif key == "uses":
+                    props["uses"].append(stripped)
+                elif key == "if":
+                    props["ifs"].append(stripped)
+                    guard_parts: list[str] = []
+                    if stripped == "if: >-":
+                        j = i + 1
+                        while j < len(lines) and indent_of(lines[j]) > 4:
+                            part = lines[j].strip()
+                            if part and not part.startswith("#"):
+                                guard_parts.append(part)
+                            j += 1
+                        props["guards"].append(normalized(guard_parts))
+                        i = j
+                        continue
+                    props["guards"].append(stripped.split(":", 1)[1].strip())
+        i += 1
+    if jobs_sections != 1:
+        raise PolicyError(f"{name}: missing top-level jobs mapping")
+    if not jobs:
+        raise PolicyError(f"{name}: top-level jobs mapping contains no supported jobs")
+    return jobs
+
+
+def required_guard(name: str) -> str:
+    if name in {"trnm-payload-replay-recovery-v1.yml", "trnm-replay-to-core-coordinator-v1.yml"}:
+        return PAYLOAD_GUARD
+    if name == "trnm-poco-bft-v0.yml":
+        return POCO_GUARD
+    if name == "p1-rust-sidecar.yml":
+        return P1_GUARD
+    return STANDARD_GUARD
+
+
+def validate_baseline(name: str, text: str, jobs: dict[str, dict[str, object]]) -> int:
+    required_jobs = {
+        "repository-truth",
+        "protocol-contract",
+        "fuzz-smoke",
+        "external-evidence-contract",
+        "rust-baseline",
     }
+    missing = sorted(required_jobs - set(jobs))
+    if missing:
+        raise PolicyError(f"{name}: missing required hosted jobs: {missing}")
+    if "permissions:\n  contents: read" not in text:
+        raise PolicyError(f"{name}: hosted baseline must retain read-only contents permission")
+    if re.search(r"(?m)^\s{2}(contents|pull-requests|actions):\s*write\s*$", text):
+        raise PolicyError(f"{name}: hosted baseline may not request write permissions")
+    if "TRNM_EXPECTED_SOURCE_SHA:" not in text:
+        raise PolicyError(f"{name}: exact source identity expression is missing")
+    if text.count("persist-credentials: false") < len(jobs):
+        raise PolicyError(f"{name}: every hosted job must disable persisted checkout credentials")
+    if text.count("ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}") < len(jobs):
+        raise PolicyError(f"{name}: every hosted job must check out the exact source SHA")
+    for job, props in jobs.items():
+        if props["uses"]:
+            raise PolicyError(f"{name}: job {job} uses an unauthorized reusable workflow")
+        if props["runs_on"] != [HOSTED_BASELINE]:
+            raise PolicyError(
+                f"{name}: job {job} must contain exactly one pinned hosted runner {HOSTED_BASELINE}; "
+                f"found {props['runs_on']}"
+            )
+        if props["ifs"]:
+            raise PolicyError(
+                f"{name}: job {job} must remain actor-independent and may not have a job-level if"
+            )
+    return len(jobs)
 
-    function finish_job() {
-      if (job == "") {
-        return
-      }
-      if (job_uses > 0) {
-        report("job " job " uses a reusable workflow; job-level uses is not authorized")
-      }
-      if (job_runs_on != 1) {
-        report("job " job " must contain exactly one direct " expected \
-          " (found " job_runs_on ")")
-      }
-      if (job_if != 1) {
-        report("job " job " must contain exactly one direct folded trust guard (found " \
-          job_if ")")
-      } else {
-        normalized_guard = job_guard
-        gsub(/[[:space:]]+/, " ", normalized_guard)
-        sub(/^ /, "", normalized_guard)
-        sub(/ $/, "", normalized_guard)
 
-        required_guard = standard_trust_guard
-        if (workflow == "trnm-payload-replay-recovery-v1.yml" ||
-            workflow == "trnm-replay-to-core-coordinator-v1.yml") {
-          required_guard = payload_recovery_trust_guard
-        }
-        if (workflow == "trnm-poco-bft-v0.yml") {
-          required_guard = poco_bft_trust_guard
-        }
-        if (workflow == "p1-rust-sidecar.yml") {
-          required_guard = p1_trust_guard
-        }
-        if (normalized_guard != required_guard) {
-          report("job " job " does not use the canonical trusted X230 invocation guard")
-        }
-      }
-      job = ""
-      job_runs_on = 0
-      job_uses = 0
-      job_if = 0
-      job_guard = ""
-      capture_job_if = 0
-    }
+def validate_privileged(name: str, jobs: dict[str, dict[str, object]]) -> int:
+    expected_guard = required_guard(name)
+    for job, props in jobs.items():
+        if props["uses"]:
+            raise PolicyError(f"{name}: job {job} uses an unauthorized reusable workflow")
+        if props["runs_on"] != [SELF_HOSTED]:
+            raise PolicyError(
+                f"{name}: job {job} must contain exactly one trusted runner {SELF_HOSTED}; "
+                f"found {props['runs_on']}"
+            )
+        if props["ifs"] != ["if: >-"] or len(props["guards"]) != 1:
+            raise PolicyError(
+                f"{name}: job {job} must contain exactly one direct folded trust guard"
+            )
+        if props["guards"][0] != expected_guard:
+            raise PolicyError(
+                f"{name}: job {job} does not use its canonical trusted X230 invocation guard"
+            )
+    return len(jobs)
 
-    {
-      line = $0
-      sub(/\r$/, "", line)
 
-      if (line ~ /^[ ]*$/ || line ~ /^[ ]*#/) {
-        next
-      }
+def main() -> int:
+    names = workflow_names()
+    if not names:
+        raise PolicyError("no GitHub Actions workflows were found")
+    hosted_jobs = 0
+    privileged_jobs = 0
+    for name in names:
+        text = read_workflow(name)
+        jobs = parse_jobs(name, text)
+        if name == BASELINE:
+            hosted_jobs += validate_baseline(name, text, jobs)
+        else:
+            privileged_jobs += validate_privileged(name, jobs)
+    if hosted_jobs == 0 or privileged_jobs == 0:
+        raise PolicyError(
+            "runner policy requires both an actor-independent hosted baseline and privileged X230 jobs"
+        )
+    print(
+        "ci_runner_policy=mixed-trust "
+        f"hosted_jobs={hosted_jobs} privileged_jobs={privileged_jobs} source={MODE[2:]}"
+    )
+    return 0
 
-      indent = 0
-      while (substr(line, indent + 1, 1) == " ") {
-        indent++
-      }
-      text = substr(line, indent + 1)
 
-      if (capture_job_if) {
-        if (indent > 4) {
-          job_guard = job_guard " " text
-          next
-        }
-        capture_job_if = 0
-      }
-
-      if (indent == 0 && text ~ /^jobs:[[:space:]]*(#.*)?$/) {
-        if (in_jobs) {
-          finish_job()
-        }
-        jobs_sections++
-        if (jobs_sections > 1) {
-          report("multiple top-level jobs mappings are not authorized")
-        }
-        in_jobs = 1
-        next
-      }
-
-      if (in_jobs && indent == 0) {
-        finish_job()
-        in_jobs = 0
-      }
-
-      if (!in_jobs) {
-        next
-      }
-
-      if (indent == 2) {
-        finish_job()
-        if (text !~ /^[A-Za-z_][A-Za-z0-9_-]*:/) {
-          report("unsupported jobs entry: " text)
-          next
-        }
-
-        job = text
-        sub(/:.*/, "", job)
-        jobs_seen++
-
-        remainder = text
-        sub(/^[^:]*:/, "", remainder)
-        if (remainder !~ /^[[:space:]]*(#.*)?$/) {
-          report("job " job " must use a block mapping so its runner policy can be validated")
-        }
-        next
-      }
-
-      if (job == "") {
-        report("content appears in jobs before a supported job identifier: " text)
-        next
-      }
-
-      if (indent == 4) {
-        if (text ~ /^(runs-on|[\047\"]runs-on[\047\"])[[:space:]]*:/) {
-          job_runs_on++
-          if (text != expected) {
-            report("job " job " uses unauthorized CI runner: " text)
-          }
-        } else if (text ~ /^(uses|[\047\"]uses[\047\"])[[:space:]]*:/) {
-          job_uses++
-        } else if (text ~ /^(if|[\047\"]if[\047\"])[[:space:]]*:/) {
-          job_if++
-          if (text != "if: >-") {
-            report("job " job " trust guard must use the direct folded form: if: >-")
-          }
-          capture_job_if = 1
-        }
-      }
-    }
-
-    END {
-      if (in_jobs) {
-        finish_job()
-      }
-      if (jobs_sections == 0) {
-        report("missing top-level jobs mapping")
-      } else if (jobs_seen == 0) {
-        report("top-level jobs mapping contains no supported jobs")
-      }
-      if (invalid) {
-        exit 1
-      }
-      print jobs_seen
-    }
-  '
-}
-
-case "$source_mode" in
-  --worktree)
-    mapfile -t workflows < <(find "$root/.github/workflows" -maxdepth 1 -type f \
-      \( -name '*.yml' -o -name '*.yaml' \) -printf '%P\n' | sort)
-    read_workflow() {
-      cat "$root/.github/workflows/$1"
-    }
-    ;;
-  --staged)
-    mapfile -t workflows < <(list_index_workflows)
-    read_workflow() {
-      git -C "$root" show ":.github/workflows/$1"
-    }
-    ;;
-  --head)
-    git -C "$root" cat-file -e 'HEAD^{commit}' 2>/dev/null || {
-      echo "ERROR: HEAD does not name a commit for CI runner policy validation" >&2
-      exit 2
-    }
-    mapfile -t workflows < <(list_head_workflows)
-    read_workflow() {
-      git -C "$root" show "HEAD:.github/workflows/$1"
-    }
-    ;;
-  *)
-    echo "ERROR: unsupported CI runner policy source: $source_mode" >&2
-    exit 2
-    ;;
-esac
-
-job_count=0
-for workflow in "${workflows[@]}"; do
-  if ! workflow_job_count=$(read_workflow "$workflow" | validate_workflow_jobs "$workflow"); then
-    exit 1
-  fi
-  job_count=$((job_count + workflow_job_count))
-done
-
-if (( job_count == 0 )); then
-  echo "ERROR: no GitHub Actions jobs were found for CI runner policy validation" >&2
-  exit 1
-fi
-
-printf 'ci_runner_policy=x230-self-hosted-only jobs=%d source=%s\n' \
-  "$job_count" "${source_mode#--}"
+try:
+    raise SystemExit(main())
+except (PolicyError, OSError, subprocess.CalledProcessError) as exc:
+    print(f"ERROR: {exc}", file=sys.stderr)
+    raise SystemExit(1)
+PY
