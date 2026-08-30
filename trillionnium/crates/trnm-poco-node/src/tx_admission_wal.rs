@@ -102,6 +102,8 @@ pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
 /// finality proof lifetimes.
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
+/// Native commit-receipt verification is sealed to implementations owned by this crate.
+pub const TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1: bool = true;
 
 const SCHEMA_VERSION_V0: i64 = 2;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
@@ -533,11 +535,40 @@ impl NativeCommitReceiptEvidenceV0 {
     }
 }
 
-/// Explicit verifier boundary for the application store and native PoCO
+mod native_commit_receipt_verifier_seal_v1 {
+    pub trait Sealed {}
+}
+
+/// Crate-owned verifier boundary for the application store and native PoCO
 /// finality proof. A production implementation must read back the exact
 /// transaction/result from durable application state and independently verify
 /// the finalized block/QC before returning `Ok(())`.
-pub trait NativeCommitReceiptVerifierV0 {
+///
+/// The supertrait is private by design: downstream crates may call the public
+/// verification API but cannot install an always-accept verifier and mint a
+/// durable commit capability from caller assertions.
+///
+/// ```compile_fail
+/// use trnm_poco_node::{
+///     NativeCommitReceiptEvidenceV0, NativeCommitReceiptVerifierV0,
+///     TxAdmissionWalErrorV0,
+/// };
+/// use trnm_mempool::SignedEnvelopeMetadata;
+///
+/// struct ForgedAlwaysAcceptCommitVerifier;
+///
+/// impl NativeCommitReceiptVerifierV0 for ForgedAlwaysAcceptCommitVerifier {
+///     fn verify_application_and_finality_v0(
+///         &self,
+///         _metadata: &SignedEnvelopeMetadata,
+///         _evidence: &NativeCommitReceiptEvidenceV0,
+///     ) -> Result<(), TxAdmissionWalErrorV0> {
+///         Ok(())
+///     }
+/// }
+/// ```
+#[allow(private_bounds)]
+pub trait NativeCommitReceiptVerifierV0: native_commit_receipt_verifier_seal_v1::Sealed {
     fn verify_application_and_finality_v0(
         &self,
         metadata: &SignedEnvelopeMetadata,
@@ -696,6 +727,8 @@ fn validate_native_readback_binding_v0(
     }
     Ok(())
 }
+
+impl native_commit_receipt_verifier_seal_v1::Sealed for DurableNativeCommitReceiptVerifierV0<'_> {}
 
 impl NativeCommitReceiptVerifierV0 for DurableNativeCommitReceiptVerifierV0<'_> {
     fn verify_application_and_finality_v0(
@@ -2694,6 +2727,8 @@ mod tests {
 
     struct AcceptingCommitVerifier;
 
+    impl super::native_commit_receipt_verifier_seal_v1::Sealed for AcceptingCommitVerifier {}
+
     impl NativeCommitReceiptVerifierV0 for AcceptingCommitVerifier {
         fn verify_application_and_finality_v0(
             &self,
@@ -2709,6 +2744,8 @@ mod tests {
 
     struct RejectingCommitVerifier;
 
+    impl super::native_commit_receipt_verifier_seal_v1::Sealed for RejectingCommitVerifier {}
+
     impl NativeCommitReceiptVerifierV0 for RejectingCommitVerifier {
         fn verify_application_and_finality_v0(
             &self,
@@ -2717,6 +2754,13 @@ mod tests {
         ) -> Result<(), TxAdmissionWalErrorV0> {
             Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable)
         }
+    }
+
+    #[test]
+    fn native_commit_verifier_authority_is_sealed_v1() {
+        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
+        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
     }
 
     fn fixture() -> FixtureEnvelope {
