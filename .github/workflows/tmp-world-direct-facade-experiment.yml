@@ -1,0 +1,61 @@
+name: tmp-world-direct-facade-experiment
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+  RUST_TOOLCHAIN: "1.98.0"
+  WORLD_HEAD: "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903"
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Install pinned Rust
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal
+          rustup default "${RUST_TOOLCHAIN}"
+      - name: Build direct facade experiment
+        run: |
+          set -euo pipefail
+          crate=world/trillionnium/crates/trnm-game-server
+          cp "$crate/src/lib.rs.in" "$crate/src/legacy.rs"
+          mkdir -p "$crate/src/legacy"
+          for source in cex.rs map.rs operations_v1.rs product_v2.rs production_v1.rs published_tick_journal.rs signer_protocol.rs stream.rs; do
+            cp "$crate/src/$source" "$crate/src/legacy/$source"
+          done
+          cat > "$crate/src/lib.rs" <<'RS'
+          #![recursion_limit = "512"]
+
+          #[path = "legacy.rs"]
+          mod legacy;
+
+          pub use legacy::*;
+          RS
+          python3 - <<'PY'
+          from pathlib import Path
+          manifest = Path("world/trillionnium/crates/trnm-game-server/Cargo.toml")
+          text = manifest.read_text()
+          text = text.replace('build = "build.rs"\n', '')
+          manifest.write_text(text)
+          Path("world/trillionnium/crates/trnm-game-server/build.rs").unlink()
+          Path("world/trillionnium/crates/trnm-game-server/src/lib.rs.in").unlink()
+          PY
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
