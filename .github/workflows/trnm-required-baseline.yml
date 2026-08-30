@@ -28,7 +28,7 @@ env:
 jobs:
   repository-truth:
     name: repository-truth
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Check out exact source with full history
@@ -81,7 +81,7 @@ jobs:
 
   protocol-contract:
     name: protocol-contract
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - name: Check out exact source
@@ -149,7 +149,7 @@ jobs:
 
   fuzz-smoke:
     name: fuzz-smoke
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - name: Check out exact source
@@ -179,7 +179,7 @@ jobs:
 
   external-evidence-contract:
     name: external-evidence-contract
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Check out exact source
@@ -209,7 +209,7 @@ jobs:
 
   rust-baseline:
     name: rust-baseline
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - name: Check out exact source
