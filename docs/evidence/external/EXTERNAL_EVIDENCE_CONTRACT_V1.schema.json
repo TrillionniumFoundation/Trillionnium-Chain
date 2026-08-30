@@ -20,7 +20,9 @@
     "wall_clock_seconds",
     "artifacts",
     "signatures",
-    "claims"
+    "claims",
+    "evidence_digest",
+    "signer_registry_sha256"
   ],
   "properties": {
     "schema": {
@@ -112,6 +114,14 @@
           "immutable_uri": {
             "type": "string",
             "minLength": 1
+          },
+          "local_path": {
+            "type": "string",
+            "pattern": "^[^/\\\\].*$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
           }
         }
       }
@@ -124,6 +134,7 @@
         "additionalProperties": false,
         "required": [
           "signer",
+          "key_id",
           "algorithm",
           "signature",
           "signed_digest"
@@ -133,13 +144,16 @@
             "type": "string",
             "minLength": 1
           },
-          "algorithm": {
+          "key_id": {
             "type": "string",
-            "minLength": 1
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+          },
+          "algorithm": {
+            "const": "ed25519-sha256-v1"
           },
           "signature": {
             "type": "string",
-            "minLength": 16
+            "pattern": "^[0-9a-f]{128}$"
           },
           "signed_digest": {
             "type": "string",
@@ -150,6 +164,14 @@
     },
     "claims": {
       "type": "object"
+    },
+    "evidence_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "signer_registry_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "notes": {
       "type": "string"

@@ -35,7 +35,22 @@ body:
     id: artifacts
     attributes:
       label: Immutable artifacts
-      description: List immutable URIs and SHA-256 digests. Do not paste secrets.
+      description: List immutable URIs carrying matching SHA-256 digests (and local paths only when reproducible). Do not paste secrets.
+    validations:
+      required: true
+  - type: input
+    id: envelope_digest
+    attributes:
+      label: Evidence envelope digest
+      description: SHA-256 canonical envelope digest signed by every signer.
+      placeholder: "64 lowercase hex"
+    validations:
+      required: true
+  - type: textarea
+    id: signer_keys
+    attributes:
+      label: Registered signer key IDs
+      description: Provide distinct active key IDs from SIGNER_KEY_REGISTRY_V1.json; signatures are raw Ed25519 hex.
     validations:
       required: true
   - type: checkboxes
