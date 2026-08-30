@@ -1,0 +1,134 @@
+# Exact offline-cache epoch revalidation: 2026-08-30
+name: TRNM payload replay recovery v1 gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
+      - "docs/development/packages/**"
+      - "scripts/ci/check_payload_replay_recovery_v1.sh"
+      - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_poco_bft_mainline_truth.sh"
+      - "scripts/ci/check_cargo_offline_*"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+  push:
+    branches:
+      - main
+      - "docs/chain-poco-bft-mainline-20260825"
+    paths:
+      - ".github/workflows/trnm-payload-replay-recovery-v1.yml"
+      - "docs/development/README.md"
+      - "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_EXECUTION_PACKAGES_V1.md"
+      - "docs/development/packages/**"
+      - "scripts/ci/check_payload_replay_recovery_v1.sh"
+      - "scripts/ci/check_canonical_development_plan.sh"
+      - "scripts/ci/check_poco_bft_mainline_truth.sh"
+      - "scripts/ci/check_cargo_offline_*"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-peer-lease/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-payload-replay-recovery-v1-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_RETRY: "5"
+  CARGO_HTTP_TIMEOUT: "120"
+  TRNM_CARGO_OFFLINE_POLICY: "required"
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+
+jobs:
+  recovery-contract:
+    name: Payload replay recovery contract
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      ((github.actor == 'ProfAlexQI' && github.triggering_actor == 'ProfAlexQI') ||
+       (github.actor == 'Tomasrgbsf' && github.triggering_actor == 'Tomasrgbsf') ||
+       (github.actor == 'github-actions[bot]' &&
+        github.triggering_actor == 'github-actions[bot]' &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.author_association == 'MEMBER')) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Verify exact package head checkout
+        working-directory: trillionnium-chain
+        env:
+          EXPECTED_HEAD: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+
+      - name: Verify runner-provisioned Rust toolchain
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component clippy \
+            --component rustfmt
+
+      - name: Verify Cargo offline cache readiness
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify package implementation and truth boundary
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_payload_replay_recovery_v1.sh
+
+      - name: Verify canonical development plan
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_canonical_development_plan.sh
+
+      - name: Verify native PoCO pre-cutover truth
+        working-directory: trillionnium-chain
+        run: bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+
+      - name: Verify project boundary
+        working-directory: trillionnium-chain
+        run: bash ./scripts/project-preflight.sh --audit
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

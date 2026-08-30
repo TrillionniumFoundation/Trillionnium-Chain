@@ -13,6 +13,7 @@
 //! action; this crate cannot make that runtime integration implicitly safe.
 
 mod payload;
+mod payload_recovery;
 mod protocol;
 mod store;
 
@@ -25,6 +26,14 @@ pub use payload::{
     PAYLOAD_REPLAY_APPEND_ONLY_HASH_CHAIN_V1, PAYLOAD_REPLAY_CANDIDATE_V1,
     PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
     PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
+};
+pub use payload_recovery::{
+    PayloadReplayCoreAckReceiptV1, PayloadReplayCoreAcknowledgementV1,
+    PayloadReplayRecoveryErrorV1, PayloadReplayRecoveryOwnerV1, PayloadReplayRecoveryStatusV1,
+    PayloadReplayRecoveryTargetV1, PAYLOAD_REPLAY_CORE_ACK_ATOMIC_WITH_CORE_V1,
+    PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1,
+    PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1,
 };
 pub use protocol::{
     LeaseRejectCodeV1, PeerLeaseDirectionV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
@@ -62,6 +71,8 @@ mod source_truth_tests {
             "consensus_runtime = false",
             "consensus_payload_transport = false",
             "core_safety_authority = false",
+            "payload_replay_core_ack_atomic_with_core = false",
+            "payload_replay_recovery_production_activation = false",
             "production_activation = false",
             "production_candidate = false",
         ] {
@@ -73,7 +84,8 @@ mod source_truth_tests {
         for required_true in [
             "payload_replay_append_only_hash_chain = true",
             "payload_replay_candidate = true",
-            "payload_replay_production_activation = false",
+            "payload_replay_external_recovery_owner_candidate = true",
+            "payload_replay_core_ack_ledger_candidate = true",
         ] {
             assert!(
                 manifest.contains(required_true),
