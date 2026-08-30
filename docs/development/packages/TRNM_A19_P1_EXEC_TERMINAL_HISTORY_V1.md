@@ -12,7 +12,7 @@ and cannot close the application, Core, recovery, release, or external gates.
 repository = TrillionniumFoundation/Trillionnium-Chain
 candidate_branch = feature/chain-g1-external-blocker-closure-20260830
 candidate_base = 1663abd8935be4e5819f5ff0c7ded250a3664097
-implementation_refs = a34ae75d5, 75308f1d3, 4541832ea, b82bfe90c, 56f637686
+implementation_refs = a34ae75d5, 75308f1d3, 4541832ea, b82bfe90c, 56f637686, 8e39213f3
 plan = docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md
 stage = G1-native-host-incomplete
 authority = candidate
@@ -76,10 +76,13 @@ cross-database commit, production application integration or receipt ownership
 independent review, real multi-host campaign, soak or activation evidence
 ```
 
-The journal must fail closed if its path, schema, identity, chain head or
-record bytes are replaced.  Path/descriptor identity hardening and adversarial
-replacement tests are tracked as a follow-on candidate repair; until that
-repair and an independent exact-source replay are accepted, A19 remains
+The journal now fails closed if its path, parent directory, permissions, schema,
+identity, chain head or record bytes are replaced; the path repair adds
+pre/post identity fences and adversarial replacement tests.  The remaining
+limitations are deliberate: pathname operations are not an `openat` authority,
+SQLite WAL/SHM sidecars are not independently pinned, and no external
+anti-rollback or power-loss evidence exists.  Until an independent exact-source
+replay and the Core/cross-store owner are accepted, A19 remains
 `BLOCKED_UPSTREAM` for release purposes.  No local test changes any machine
 truth or promotion flag.
 

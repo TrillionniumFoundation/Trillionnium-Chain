@@ -24,15 +24,17 @@ The newest Chain ref observed during this audit was:
 
 ```text
 origin/feature/chain-a20-p2-tx-tombstone-gc-v1-20260830
-observed_tip = a5d9e64102fa87090d92ddf842f60270515c0a78
+observed_tip = 7bc87e153a3d4c6426ff9e0a22e8469923d7ffe4
 ```
 
 Its Rust/schema/doc work was reviewed read-only.  The tip also contains a
 hosted workflow that self-modifies and removes repository files, requests
 write permission, commits and pushes from the workflow, and publishes a
-candidate from an actor-controlled path.  That workflow and its one-shot
-finalizer were deliberately not merged.  The local branch carries only the
-reviewable candidate tombstone implementation (`603bccc32`, `50bf6cdc1`).
+candidate from an actor-controlled path.  Its exact-head typed SQLite fixture
+run also failed (four tombstone tests exited with SQLite errors).  That
+workflow and its one-shot finalizer were deliberately not merged.  The local
+branch carries only the reviewable candidate tombstone implementation
+(`603bccc32`, `50bf6cdc1`).
 
 ## Candidate slices carried locally
 

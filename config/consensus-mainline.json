@@ -115,7 +115,8 @@
         "75308f1d3",
         "4541832ea",
         "b82bfe90c",
-        "56f637686"
+        "56f637686",
+        "8e39213f3"
       ],
       "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
       "content_addressed_records": true,
@@ -125,6 +126,9 @@
       "sqlite_wal_full_sync": true,
       "exact_replay_outcome": true,
       "path_replacement_fail_closed": true,
+      "parent_and_file_identity_fence": true,
+      "private_parent_and_file_modes": true,
+      "sqlite_wal_shm_identity_pinned": false,
       "core_receipt_owner": false,
       "cross_store_atomicity": false,
       "production_application_integration": false,
@@ -340,7 +344,7 @@
       "id": "P1-EXEC-001",
       "severity": "P1",
       "status": "open",
-      "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Candidate refs `a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c` and `56f637686` add a scope-bound content-addressed SQLite terminal-history projection with exact replay, ordered hash-chain audit and fresh readback. Full body/parent/runtime validation, a Core-owned permanent terminal execution log, cross-store atomicity, path replacement/power-loss evidence and crash/replay equivalence remain open",
+      "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Candidate refs `a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c`, `56f637686` and `8e39213f3` add a scope-bound content-addressed SQLite terminal-history projection with exact replay, ordered hash-chain audit and fresh readback. Full body/parent/runtime validation, a Core-owned permanent terminal execution log, cross-store atomicity, path replacement/power-loss evidence and crash/replay equivalence remain open",
       "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"
     },
     {
@@ -388,7 +392,7 @@
       "id": "P3-HISTORY-001",
       "severity": "P3",
       "status": "open",
-      "evidence": "Candidate A19 durable history (`a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c`, `56f637686`) and A20 replay-tombstone retention (`603bccc32`, `50bf6cdc1`) provide bounded local projections, exact replay and authenticated purge seams. A Core-owned terminal log, charging/retention governance, external anti-rollback, long-history scale and independent power-loss evidence remain absent",
+      "evidence": "Candidate A19 durable history (`a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c`, `56f637686`, `8e39213f3`) and A20 replay-tombstone retention (`603bccc32`, `50bf6cdc1`) provide bounded local projections, exact replay and authenticated purge seams. A Core-owned terminal log, charging/retention governance, external anti-rollback, long-history scale and independent power-loss evidence remain absent",
       "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"
     },
     {

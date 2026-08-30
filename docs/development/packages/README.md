@@ -7,7 +7,7 @@ They cannot override protocol, machine, release or evidence truth.
 
 - Continuation candidate source: `feature/chain-g1-external-blocker-closure-20260830` (commit/tree are derived at verification time)
 - Synced base: `origin/feature/chain-a18-repository-truth-ci-hardening-v1-20260830@1663abd8935be4e5819f5ff0c7ded250a3664097`
-- Latest inspected A20 remote tip: `feature/chain-a20-p2-tx-tombstone-gc-v1-20260830@a5d9e64102fa87090d92ddf842f60270515c0a78` (unsafe self-modifying workflow excluded)
+- Latest inspected A20 remote tip: `feature/chain-a20-p2-tx-tombstone-gc-v1-20260830@7bc87e153a3d4c6426ff9e0a22e8469923d7ffe4` (unsafe self-modifying workflow excluded; exact remote fixtures run failed)
 - Latest candidate classification: `draft / unaccepted`
 - Assessed Plan source: `docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md` (SHA-256 `aba99ae6be2ff8a4aac4d6355e1f778e49a7075a80b09453f16984f85bb0b6cd`; assessed snapshot `8198fea0307eb368df34ff77ffc272a6b0e655ec`)
 - Machine stage: `G1-native-host-incomplete`

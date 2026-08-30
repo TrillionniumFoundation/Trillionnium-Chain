@@ -9,7 +9,7 @@ repository = TrillionniumFoundation/Trillionnium-Chain
 candidate_branch = feature/chain-g1-external-blocker-closure-20260830
 candidate_base = 1663abd8935be4e5819f5ff0c7ded250a3664097
 implementation_refs = 603bccc32, 50bf6cdc1
-latest_inspected_remote_tip = a5d9e64102fa87090d92ddf842f60270515c0a78
+latest_inspected_remote_tip = 7bc87e153a3d4c6426ff9e0a22e8469923d7ffe4
 consensus_mainline = native-poco-bft
 protocol_target = poco-bft-v0
 production_candidate = false
@@ -17,9 +17,9 @@ production_candidate = false
 
 The latest remote A20 tip was inspected read-only. Its hosted workflow is a
 one-shot, self-modifying publisher with write permissions and is intentionally
-not part of this candidate. Only the reviewable Rust/schema/doc slice is
-carried here; the candidate source commit and tree are derived again at
-verification time.
+not part of this candidate; its exact-head typed SQLite fixture run also
+failed. Only the reviewable Rust/schema/doc slice is carried here; the
+candidate source commit and tree are derived again at verification time.
 
 The existing transaction-admission WAL retains every committed or released row
 forever because deleting either the nonce key or transaction digest would make
