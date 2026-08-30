@@ -1,15 +1,18 @@
 {
   "schema": "trnm-consensus-mainline-truth-v1",
-  "as_of": "2026-08-27",
+  "as_of": "2026-08-30",
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
-  "active_candidate_source": "8198fea0307eb368df34ff77ffc272a6b0e655ec (tree a1be71bba1b54c428493d186fafb656d081b31a9); runtime hardening is e7da191d381b6adf4d58f2d846326630a278a773",
+  "active_candidate_source": "derived-at-verification-time-from-git-head-and-tree",
   "stage": "G1-native-host-incomplete",
   "production_candidate": false,
   "production_consensus_activation": false,
   "candidate_seams": {
     "core_safety_rules_authority": {
-      "commits": ["7e66e66b0", "b6488c083"],
+      "commits": [
+        "7e66e66b0",
+        "b6488c083"
+      ],
       "vote_and_timeout_share_one_non_cloneable_owner": true,
       "durable_transition_before_signature": true,
       "runtime_activation": false,
@@ -56,7 +59,7 @@
     },
     "candidate_p2p_socket_core_ingress": {
       "commit": "4a0de0cd0",
-      "source_status": "current assessed candidate 8198fea0307eb368df34ff77ffc272a6b0e655ec/tree a1be71bba1b54c428493d186fafb656d081b31a9; candidate-only, unpromoted",
+      "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
       "scope": "process",
       "authority": "candidate",
       "classification": "candidate-non-normative",
@@ -128,7 +131,29 @@
   "tx_admission": {
     "candidate_node_owned_wal": true,
     "feature": "tx-admission-wal",
-    "implementation_commits": ["5891e9c8f", "5c736d998", "541110990", "d6d67f929", "e48376dfa", "84bc4f83d", "617cbb15a", "fecca250b", "1ad718fd2", "d0cc52e2e", "01b378560", "6611ef07f", "72f89abe6", "d9f31f96e", "167dfbba4", "3f5432682", "4d16d42ae", "c68500676", "d97ec3ee8", "51a1954d8", "286ae09a9"],
+    "implementation_commits": [
+      "5891e9c8f",
+      "5c736d998",
+      "541110990",
+      "d6d67f929",
+      "e48376dfa",
+      "84bc4f83d",
+      "617cbb15a",
+      "fecca250b",
+      "1ad718fd2",
+      "d0cc52e2e",
+      "01b378560",
+      "6611ef07f",
+      "72f89abe6",
+      "d9f31f96e",
+      "167dfbba4",
+      "3f5432682",
+      "4d16d42ae",
+      "c68500676",
+      "d97ec3ee8",
+      "51a1954d8",
+      "286ae09a9"
+    ],
     "sqlite_wal_full": true,
     "namespace_and_path_identity_fences": true,
     "sidecar_lock_fd_identity_fence": true,
@@ -217,20 +242,100 @@
     "production_state_sync": false
   },
   "blockers": [
-    {"id": "P0-TRUTH-001", "severity": "P0", "status": "open", "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"},
-    {"id": "P0-SCHEMA-001", "severity": "P0", "status": "open", "evidence": "`5a4bfccb8` registers the four node-local signer-intent DecodeErrorCode values with an explicit scope, keeps them outside the B2-A..E peer taxonomy, and makes all 15 `check_poco_bft_v0_*_schema.sh` gates pass (including B2-A/B/C/D/E). `bd6d3b148` aligns the gap-register/conformance wording at 48 B2-A..E peer codes plus four node-local codes (52 Rust values overall). The wider generated metadata/schema/error registry and independent second implementation are still not one release authority", "exit": "one generated metadata/schema/error registry consumed consistently by every boundary gate"},
-    {"id": "P0-PROTOCOL-001", "severity": "P0", "status": "open", "evidence": "PocoGenesisV1 has separated legacy Comet evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck. The checksum-pinned protoc bootstrap (`eaf1db12e`) and local Quint formal gate passed the listed safety/TC/epoch/partition/upgrade/handoff/light-client/application invariants and mutant witnesses; independent protocol review, CI reproduction and a second implementation remain open", "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"},
-    {"id": "P0-TC-001", "severity": "P0", "status": "open", "evidence": "CEV0AdmissionBudgetV0 (`c8f8ea8e9`, `760d60e79`, building on `5b28425df`, `cd7602693`, `b1e3f3528`, `cba106bd8`, `488e015f9`, `50b8a0dbd`) derives byte, signature-work, and nested-TC share ceilings only after ConsensusParametersV0.hash() equals the active ValidatorSet consensus_parameters_hash. The default and authenticated validator-set bounds now both accept the frozen 100x100=10,000 TC-share ceiling and reject a 101st reference before nested allocation; public Vote/TimeoutVote/QC/TC/proposal decode APIs use the context-bound budget, while low-level protocol_v0 remains trusted-local replay vocabulary. Wire/QC-TC/handoff/parameter/ordered-root vectors and the formal gate pass locally; independent replay, fuzz coverage and production activation remain open", "exit": "validator-set, CPU, byte, signature-count, and admission budgets for QC/TC/CEV0 are enforced and fuzzed"},
-    {"id": "P1-CORE-001", "severity": "P1", "status": "open", "evidence": "`7e66e66b0` and `b6488c083` add one non-cloneable Core-owned SafetyRules authority for Vote and Timeout, with durable transition-before-signature ordering and explicit Core/authority affinity checks. `a852dba5b` adds a candidate bounded effect-driver seam with generation fencing, Safety persistence/readback, checkpoint CAS-before-sign, and signed-outbound binding. `32e00eefa` wraps the candidate process with a synced Proposal -> application seal -> Core Valid -> same-owner AuthorityVote path and strict ordinary-Proposal fail-closed behavior; `75c969a48` adds a lower-watermark sidecar negative. These remain candidate composition seams; the production Node constructor, arbitrary proposal/application/finality loop, live pacemaker/network integration, coherent anti-rollback, and independent fault/corpus evidence remain open", "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"},
-    {"id": "P1-EXEC-001", "severity": "P1", "status": "open", "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence remain open", "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"},
-    {"id": "P2-NODE-001", "severity": "P2", "status": "open", "evidence": "`a852dba5b` provides the candidate bounded Core effect-driver API and `32e00eefa` adds `trnm-poco-effect-driver-process`, a feature-gated real OS process whose timeout path persists Safety, performs whole-node checkpoint CAS, signs the exact Core intent, and writes a bound outbound record; its synced-proposal path reaches application seal, Core Valid, and same-owner AuthorityVote, while ordinary Proposal is fail-closed. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening adds conservative commit-uncertainty responses, exact live-acquire retry, Linux same-UID peer credentials, bounded connect/daemon I/O, private path checks, and a pending replay breadcrumb. The process remains fresh-state candidate-only and intentionally has no arbitrary proposal validation/application receipt/finality loop, externally callable recovery owner, production listener, or default-node activation", "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"},
-    {"id": "P2-TX-001", "severity": "P2", "status": "open", "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, and an explicit authenticated HandedOff recovery seam that accepts only exact metadata plus a verified native application/finality receipt. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and tombstone GC remain absent", "exit": "canonical envelope builder -> authoritative signer-identity and chain-context binding -> node-owned pending nonce/WAL -> production CheckTx admission -> committed receipt/AppHash replay with signer/broadcast and ambiguous-handoff resolution; CLI remains dev-only"},
-    {"id": "P2-NET-001", "severity": "P2", "status": "open", "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, external status/recovery, persistent handshake replay anchoring, production socket owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open", "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"},
-    {"id": "P2-OPS-001", "severity": "P2", "status": "open", "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"},
-    {"id": "P2-STORE-001", "severity": "P2", "status": "open", "evidence": "`6850b57f1` adds the root-bound advisory exclusive fence to fresh P genesis, H1 install, K open, deployed/process2 recovery, native proposal/core/safety/checkpoint writers, lab finalization and high-QC rebase; the adoption matrix is `docs/audits/TRNM_POCO_P2_STORE_WRITER_MATRIX_AUDIT_2026-08-26.md`. `d696ce01d` extends the fence across finalization-marker load, proof-bound P readback, and marker clear, with mutual-exclusion and rename/recreate tests. Cross-store readers still fail closed on digest/head drift, but external/uncooperating writers, child-file fd binding, fsync/power-loss and cross-database atomicity remain open", "exit": "K/P audit is atomic under concurrent rewrite using one shared cross-store lock plus fd-bound identity where required; all P/K mutation paths must adopt the exclusive hook and pass adversarial replacement tests"},
-    {"id": "MIG-ROOT-001", "severity": "P1", "status": "open", "evidence": "PocoGenesisV1 separates legacy Comet genesis/block/AppHash types and binds source namespace plus complete migration-instance inputs. `f03564038` adds the explicit VerifiedCometStateExportV1 source identity/finality/mapping boundary; `079d695b5` binds the typed target manifest to that verified source and rejects forged source metadata even with a matching export digest. `5d3458e0e` adds a candidate-only one-way fresh-genesis import boundary, and `4958bbf17`/`e4581a9c1` add a bounded target-JMT replay writer with atomic fsynced record/head sidecars, reopen validation and divergent-overwrite rejection. Concrete trusted Comet source reader/finality quorum, independently verified target root authority, dual authority, cross-peer GenesisQC activation and cutover remain false", "exit": "export/import binds source manifest, mapping digest, independently recomputed new JMT root, and GenesisQC/ceremony across peers with signed rehearsal"},
-    {"id": "P3-HISTORY-001", "severity": "P3", "status": "open", "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"},
-    {"id": "MIG-CLEAN-001", "severity": "P3", "status": "blocked-by-cutover", "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"}
+    {
+      "id": "P0-TRUTH-001",
+      "severity": "P0",
+      "status": "open",
+      "exit": "one clean canonical branch, one machine-readable status, no dual-track authority"
+    },
+    {
+      "id": "P0-SCHEMA-001",
+      "severity": "P0",
+      "status": "open",
+      "evidence": "`5a4bfccb8` registers the four node-local signer-intent DecodeErrorCode values with an explicit scope, keeps them outside the B2-A..E peer taxonomy, and makes all 15 `check_poco_bft_v0_*_schema.sh` gates pass (including B2-A/B/C/D/E). `bd6d3b148` aligns the gap-register/conformance wording at 48 B2-A..E peer codes plus four node-local codes (52 Rust values overall). The wider generated metadata/schema/error registry and independent second implementation are still not one release authority",
+      "exit": "one generated metadata/schema/error registry consumed consistently by every boundary gate"
+    },
+    {
+      "id": "P0-PROTOCOL-001",
+      "severity": "P0",
+      "status": "open",
+      "evidence": "PocoGenesisV1 has separated legacy Comet evidence types, profile-tagged canonical bytes, a 1 KiB exact decoding ceiling, migration-instance recheck, and the QC ceremony has a bounded exact decoder with trusted-set recheck. The checksum-pinned protoc bootstrap (`eaf1db12e`) and local Quint formal gate passed the listed safety/TC/epoch/partition/upgrade/handoff/light-client/application invariants and mutant witnesses; independent protocol review, CI reproduction and a second implementation remain open",
+      "exit": "independent review plus complete schemas, vectors, decoder bounds, and formal mutants"
+    },
+    {
+      "id": "P0-TC-001",
+      "severity": "P0",
+      "status": "open",
+      "evidence": "CEV0AdmissionBudgetV0 (`c8f8ea8e9`, `760d60e79`, building on `5b28425df`, `cd7602693`, `b1e3f3528`, `cba106bd8`, `488e015f9`, `50b8a0dbd`) derives byte, signature-work, and nested-TC share ceilings only after ConsensusParametersV0.hash() equals the active ValidatorSet consensus_parameters_hash. The default and authenticated validator-set bounds now both accept the frozen 100x100=10,000 TC-share ceiling and reject a 101st reference before nested allocation; public Vote/TimeoutVote/QC/TC/proposal decode APIs use the context-bound budget, while low-level protocol_v0 remains trusted-local replay vocabulary. Wire/QC-TC/handoff/parameter/ordered-root vectors and the formal gate pass locally; independent replay, fuzz coverage and production activation remain open",
+      "exit": "validator-set, CPU, byte, signature-count, and admission budgets for QC/TC/CEV0 are enforced and fuzzed"
+    },
+    {
+      "id": "P1-CORE-001",
+      "severity": "P1",
+      "status": "open",
+      "evidence": "`7e66e66b0` and `b6488c083` add one non-cloneable Core-owned SafetyRules authority for Vote and Timeout, with durable transition-before-signature ordering and explicit Core/authority affinity checks. `a852dba5b` adds a candidate bounded effect-driver seam with generation fencing, Safety persistence/readback, checkpoint CAS-before-sign, and signed-outbound binding. `32e00eefa` wraps the candidate process with a synced Proposal -> application seal -> Core Valid -> same-owner AuthorityVote path and strict ordinary-Proposal fail-closed behavior; `75c969a48` adds a lower-watermark sidecar negative. These remain candidate composition seams; the production Node constructor, arbitrary proposal/application/finality loop, live pacemaker/network integration, coherent anti-rollback, and independent fault/corpus evidence remain open",
+      "exit": "authoritative SafetyRules/Core with pacemaker, epoch, checkpoint catch-up, and ordered ancestor finalization"
+    },
+    {
+      "id": "P1-EXEC-001",
+      "severity": "P1",
+      "status": "open",
+      "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence remain open",
+      "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"
+    },
+    {
+      "id": "P2-NODE-001",
+      "severity": "P2",
+      "status": "open",
+      "evidence": "`a852dba5b` provides the candidate bounded Core effect-driver API and `32e00eefa` adds `trnm-poco-effect-driver-process`, a feature-gated real OS process whose timeout path persists Safety, performs whole-node checkpoint CAS, signs the exact Core intent, and writes a bound outbound record; its synced-proposal path reaches application seal, Core Valid, and same-owner AuthorityVote, while ordinary Proposal is fail-closed. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening adds conservative commit-uncertainty responses, exact live-acquire retry, Linux same-UID peer credentials, bounded connect/daemon I/O, private path checks, and a pending replay breadcrumb. The process remains fresh-state candidate-only and intentionally has no arbitrary proposal validation/application receipt/finality loop, externally callable recovery owner, production listener, or default-node activation",
+      "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"
+    },
+    {
+      "id": "P2-TX-001",
+      "severity": "P2",
+      "status": "open",
+      "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, and an explicit authenticated HandedOff recovery seam that accepts only exact metadata plus a verified native application/finality receipt. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and tombstone GC remain absent",
+      "exit": "canonical envelope builder -> authoritative signer-identity and chain-context binding -> node-owned pending nonce/WAL -> production CheckTx admission -> committed receipt/AppHash replay with signer/broadcast and ambiguous-handoff resolution; CLI remains dev-only"
+    },
+    {
+      "id": "P2-NET-001",
+      "severity": "P2",
+      "status": "open",
+      "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, external status/recovery, persistent handshake replay anchoring, production socket owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open",
+      "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"
+    },
+    {
+      "id": "P2-OPS-001",
+      "severity": "P2",
+      "status": "open",
+      "exit": "cross-host 4-to-7 node fault matrix, metrics, recovery, and soak evidence"
+    },
+    {
+      "id": "P2-STORE-001",
+      "severity": "P2",
+      "status": "open",
+      "evidence": "`6850b57f1` adds the root-bound advisory exclusive fence to fresh P genesis, H1 install, K open, deployed/process2 recovery, native proposal/core/safety/checkpoint writers, lab finalization and high-QC rebase; the adoption matrix is `docs/audits/TRNM_POCO_P2_STORE_WRITER_MATRIX_AUDIT_2026-08-26.md`. `d696ce01d` extends the fence across finalization-marker load, proof-bound P readback, and marker clear, with mutual-exclusion and rename/recreate tests. Cross-store readers still fail closed on digest/head drift, but external/uncooperating writers, child-file fd binding, fsync/power-loss and cross-database atomicity remain open",
+      "exit": "K/P audit is atomic under concurrent rewrite using one shared cross-store lock plus fd-bound identity where required; all P/K mutation paths must adopt the exclusive hook and pass adversarial replacement tests"
+    },
+    {
+      "id": "MIG-ROOT-001",
+      "severity": "P1",
+      "status": "open",
+      "evidence": "PocoGenesisV1 separates legacy Comet genesis/block/AppHash types and binds source namespace plus complete migration-instance inputs. `f03564038` adds the explicit VerifiedCometStateExportV1 source identity/finality/mapping boundary; `079d695b5` binds the typed target manifest to that verified source and rejects forged source metadata even with a matching export digest. `5d3458e0e` adds a candidate-only one-way fresh-genesis import boundary, and `4958bbf17`/`e4581a9c1` add a bounded target-JMT replay writer with atomic fsynced record/head sidecars, reopen validation and divergent-overwrite rejection. Concrete trusted Comet source reader/finality quorum, independently verified target root authority, dual authority, cross-peer GenesisQC activation and cutover remain false",
+      "exit": "export/import binds source manifest, mapping digest, independently recomputed new JMT root, and GenesisQC/ceremony across peers with signed rehearsal"
+    },
+    {
+      "id": "P3-HISTORY-001",
+      "severity": "P3",
+      "status": "open",
+      "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"
+    },
+    {
+      "id": "MIG-CLEAN-001",
+      "severity": "P3",
+      "status": "blocked-by-cutover",
+      "exit": "remove Comet packages, locks, workflows, scripts, fixtures, and active docs after signed cutover"
+    }
   ],
   "authoritative_docs": {
     "decision": "docs/architecture/TRNM_POCO_BFT_MAINLINE_CUTOVER_2026-08-25.md",
@@ -242,5 +347,11 @@
     "historical_execution_board_audit": "docs/audits/TRNM_POCO_BFT_EXECUTION_BOARD_AUDIT_2026-08-26.md",
     "current_progress_audit": "docs/audits/TRNM_POCO_G1_G2_PROGRESS_2026-08-27.md",
     "store_writer_audit": "docs/audits/TRNM_POCO_P2_STORE_WRITER_MATRIX_AUDIT_2026-08-26.md"
+  },
+  "source_binding_policy": {
+    "mode": "runtime-git-commit-and-tree",
+    "generator": "scripts/ci/generate_release_status_v1.py",
+    "committed_truth_may_not_claim_its_own_future_commit": true,
+    "exact_source_required_for_evidence": true
   }
 }

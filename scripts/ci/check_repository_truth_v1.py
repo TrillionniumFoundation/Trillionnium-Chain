@@ -113,6 +113,21 @@ def main() -> int:
             "machine truth production_candidate must remain false")
     require(truth.get("production_consensus_activation") is False,
             "machine truth production_consensus_activation must remain false")
+    require(truth.get("as_of") == "2026-08-30",
+            "machine truth as_of date is stale")
+    require(truth.get("active_candidate_source") ==
+            "derived-at-verification-time-from-git-head-and-tree",
+            "machine truth must not embed a self-invalidating candidate SHA")
+    source_binding = truth.get("source_binding_policy", {})
+    require(source_binding.get("mode") == "runtime-git-commit-and-tree",
+            "machine truth source-binding mode drift")
+    require(source_binding.get("generator") ==
+            "scripts/ci/generate_release_status_v1.py",
+            "machine truth source-binding generator drift")
+    require(source_binding.get("committed_truth_may_not_claim_its_own_future_commit") is True,
+            "machine truth must forbid self-referential future commit claims")
+    require(source_binding.get("exact_source_required_for_evidence") is True,
+            "external evidence must bind the exact runtime source")
 
     workspace = cargo.get("workspace", {})
     members = set(workspace.get("members", []))
