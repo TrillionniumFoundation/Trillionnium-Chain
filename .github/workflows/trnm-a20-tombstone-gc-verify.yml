@@ -33,7 +33,7 @@ jobs:
       - name: Verify immutable candidate base
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "47766cb0f2019e109b3c3e0a467ac2f7d03629a2"
+          test "$(git rev-parse HEAD^)" = "0aaa5f1dbd32bfb3cbea5e26b8613ef2fe1585de"
           git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 HEAD
 
       - name: Install pinned Rust toolchain
@@ -58,25 +58,25 @@ jobs:
               text = text.replace(old, new)
 
           replace_once("const SCHEMA_VERSION_V0: i64 = 1;", "const SCHEMA_VERSION_V0: i64 = 2;")
-          replace_once(
-              "    UNIQUE(namespace, tx_digest)\n);\n\"#;",
-              """    UNIQUE(namespace, tx_digest)
-);
-CREATE TABLE tx_admission_tombstone_v1 (
-    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
-    signer BLOB NOT NULL CHECK(length(signer) = 32),
-    nonce BLOB NOT NULL CHECK(length(nonce) = 8),
-    tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
-    terminal_state INTEGER NOT NULL CHECK(terminal_state IN (2, 3)),
-    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),
-    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),
-    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),
-    PRIMARY KEY(namespace, signer, nonce),
-    UNIQUE(namespace, tx_digest),
-    UNIQUE(namespace, tombstone_digest)
-);
-"#;""",
-          )
+          ddl = "\n".join([
+              "    UNIQUE(namespace, tx_digest)",
+              ");",
+              "CREATE TABLE tx_admission_tombstone_v1 (",
+              "    namespace BLOB NOT NULL CHECK(length(namespace) = 32),",
+              "    signer BLOB NOT NULL CHECK(length(signer) = 32),",
+              "    nonce BLOB NOT NULL CHECK(length(nonce) = 8),",
+              "    tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),",
+              "    terminal_state INTEGER NOT NULL CHECK(terminal_state IN (2, 3)),",
+              "    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),",
+              "    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),",
+              "    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),",
+              "    PRIMARY KEY(namespace, signer, nonce),",
+              "    UNIQUE(namespace, tx_digest),",
+              "    UNIQUE(namespace, tombstone_digest)",
+              ");",
+              '"#;',
+          ])
+          replace_once("    UNIQUE(namespace, tx_digest)\n);\n\"#;", ddl)
           replace_once(
               'execute_batch("PRAGMA user_version = 1;")',
               'execute_batch("PRAGMA user_version = 2;")',
@@ -95,20 +95,21 @@ CREATE TABLE tx_admission_tombstone_v1 (
               "(SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
           )
 
-          reserve_marker = "    fn reserve_record<E: ?Sized>("
-          reserve_start = text.index(reserve_marker)
+          reserve_start = text.index("    fn reserve_record<E: ?Sized>(")
           insertion_marker = "        if let Some((existing, state)) = read_row_v0("
           insertion = text.index(insertion_marker, reserve_start)
-          guard = """        if tombstone_exists_by_nonce_or_digest_v1(
-            &transaction,
-            self.namespace,
-            expected.signer,
-            expected.nonce,
-            expected.digest,
-        )? {
-            return Err(TxAdmissionWalErrorV0::Replay);
-        }
-"""
+          guard = "\n".join([
+              "        if tombstone_exists_by_nonce_or_digest_v1(",
+              "            &transaction,",
+              "            self.namespace,",
+              "            expected.signer,",
+              "            expected.nonce,",
+              "            expected.digest,",
+              "        )? {",
+              "            return Err(TxAdmissionWalErrorV0::Replay);",
+              "        }",
+              "",
+          ])
           text = text[:insertion] + guard + text[insertion:]
 
           include_marker = "#[cfg(test)]\nmod tests {"
@@ -123,11 +124,13 @@ CREATE TABLE tx_admission_tombstone_v1 (
           cargo = Path("trillionnium/crates/trnm-poco-node/Cargo.toml")
           cargo_text = cargo.read_text(encoding="utf-8")
           old = "tx_admission_tombstone_gc = false"
-          new = """tx_admission_tombstone_gc = true
-tx_admission_tombstone_compaction = true
-tx_admission_tombstone_authenticated_purge = true
-tx_admission_tombstone_gc_production = false
-tx_admission_replay_floor_native_integration = false"""
+          new = "\n".join([
+              "tx_admission_tombstone_gc = true",
+              "tx_admission_tombstone_compaction = true",
+              "tx_admission_tombstone_authenticated_purge = true",
+              "tx_admission_tombstone_gc_production = false",
+              "tx_admission_replay_floor_native_integration = false",
+          ])
           if cargo_text.count(old) != 1:
               raise SystemExit("tx admission tombstone metadata drift")
           cargo.write_text(cargo_text.replace(old, new), encoding="utf-8")
