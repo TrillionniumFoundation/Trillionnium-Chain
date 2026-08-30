@@ -1,6 +1,6 @@
 # A20 / P2-TX authenticated tombstone GC v1
 
-Status: **candidate-implemented / verification pending / no production activation**
+Status: **candidate-implemented / exact-head verification required / no production activation**
 
 ## Exact boundary
 
@@ -43,8 +43,11 @@ re-open either `(signer, nonce)` or transaction digest authority.
 ## Authenticated purge contract
 
 A compact tombstone can be physically deleted only with a private
-`VerifiedTxAdmissionReplayFloorV1` token. The token is minted only after an
-owner-installed `TxAdmissionReplayFloorVerifierV1` accepts evidence binding:
+`VerifiedTxAdmissionReplayFloorV1` token. The token is minted only after a
+crate-owned `TxAdmissionReplayFloorVerifierV1` accepts evidence binding. The
+verifier trait is sealed: downstream crates can inspect the public contract but
+cannot implement an always-accept verifier or mint their own purge capability.
+The evidence binds:
 
 - repository namespace;
 - canonical signer identity;
@@ -90,5 +93,5 @@ This slice does not provide the production application nonce-floor verifier,
 production CheckTx, transaction execution/broadcast, cross-database commit,
 external anti-rollback custody, physical power-loss evidence, independent
 review, multi-host campaign, audit, soak, public-testnet readiness, release
-readiness or production consensus activation. The generic verifier seam is an
-integration point, not permission to accept caller assertions.
+readiness or production consensus activation. The sealed verifier seam is an integration point for a future node-owned
+application/finality adapter, not permission to accept caller assertions.

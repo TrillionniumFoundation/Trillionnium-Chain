@@ -455,7 +455,9 @@ pub use tx_admission_wal::{
     CanonicalAdmissionContextResolverV0, CanonicalSignerIdentityResolverV0,
     DurableNativeCommitReceiptVerifierV0, NativeCommitReceiptEvidenceV0,
     NativeCommitReceiptVerifierV0, NodeOwnedTxAdmissionBoundaryV0, PendingNonceHandoffRecordV0,
-    SqlitePendingNonceAuthorityV0, TxAdmissionWalErrorV0, VerifiedNativeCommitReceiptV0,
+    SqlitePendingNonceAuthorityV0, TxAdmissionReplayFloorEvidenceV1,
+    TxAdmissionReplayFloorVerifierV1, TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0,
+    VerifiedNativeCommitReceiptV0, VerifiedTxAdmissionReplayFloorV1,
     TX_ADMISSION_BOUNDARY_BROADCAST_V0, TX_ADMISSION_BOUNDARY_CHECKTX_CANDIDATE_V0,
     TX_ADMISSION_BOUNDARY_CHECKTX_V0, TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_PRODUCTION_V0,
     TX_ADMISSION_BOUNDARY_CONTEXT_RESOLVER_V0,
@@ -464,7 +466,9 @@ pub use tx_admission_wal::{
     TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0, TX_ADMISSION_BOUNDARY_PRODUCTION_ACTIVATION_V0,
     TX_ADMISSION_BOUNDARY_RUNTIME_COMPOSITION_V0,
     TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_PRODUCTION_V0, TX_ADMISSION_BOUNDARY_SIGNER_RESOLVER_V0,
-    TX_ADMISSION_BOUNDARY_SIGNING_V0, TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
+    TX_ADMISSION_BOUNDARY_SIGNING_V0, TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1,
+    TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1, TX_ADMISSION_TOMBSTONE_COMPACTION_V1,
+    TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1, TX_ADMISSION_WAL_PRODUCTION_ACTIVATION_V0,
     TX_ADMISSION_WAL_RUNTIME_COMPOSITION_V0,
 };
 /// This package must not be interpreted as a deployable consensus candidate.

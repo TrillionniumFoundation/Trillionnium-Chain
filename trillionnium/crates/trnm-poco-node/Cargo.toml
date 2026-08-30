@@ -134,6 +134,7 @@ tx_admission_handoff_readback = false
 tx_admission_tombstone_gc = true
 tx_admission_tombstone_compaction = true
 tx_admission_tombstone_authenticated_purge = true
+tx_admission_replay_floor_verifier_sealed = true
 tx_admission_tombstone_gc_production = false
 tx_admission_replay_floor_native_integration = false
 fixture_raw_key_feature_only = true
