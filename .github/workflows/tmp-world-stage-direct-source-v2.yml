@@ -33,6 +33,10 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
+      - name: Retire generator-shaped source contracts
+        shell: bash
+        run: python3 scripts/tmp-world-retire-generator-contracts-v2.py world
+
       - name: Stage validated ordinary World source
         shell: bash
         env:
@@ -40,3 +44,7 @@ jobs:
           CARGO_INCREMENTAL: "0"
           RUST_BACKTRACE: "1"
         run: bash scripts/tmp-world-stage-direct-source-v2.sh
+
+      - name: Bind direct-source boundary files to transport
+        shell: bash
+        run: bash scripts/tmp-world-extend-direct-source-payload-v2.sh
