@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: trnm-g1-vertical-integration-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   integrate-reviewed-candidate-snapshots:
@@ -33,7 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "8e13f1f8ed713539965f69ad98f7898858232cc5"
+          test "$(git rev-parse HEAD^)" = "7c0df05c03f0ddc128c5869b5c803d9996b2216d"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
