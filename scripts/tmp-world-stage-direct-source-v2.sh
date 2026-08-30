@@ -17,6 +17,10 @@ test "$(git -C "${WORLD_DIR}" hash-object trillionnium/crates/trnm-game-server/s
 test "$(git -C "${WORLD_DIR}" hash-object trillionnium/crates/trnm-game-server/Cargo.toml)" = "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
 test -z "$(git -C "${WORLD_DIR}" status --porcelain)"
 
+# Only after immutable source identity and a clean checkout are proven may the
+# direct-source boundary tests be materialized in the disposable checkout.
+python3 scripts/tmp-world-retire-generator-contracts-v2.py "${WORLD_DIR}"
+
 rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
 rustup default "${RUST_TOOLCHAIN}"
 rustc --version --verbose
