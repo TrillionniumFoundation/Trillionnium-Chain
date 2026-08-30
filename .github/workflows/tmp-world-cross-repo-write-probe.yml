@@ -1,0 +1,33 @@
+name: tmp-world-cross-repo-write-probe
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: write
+
+env:
+  WORLD_HEAD: "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903"
+  PROBE_BRANCH: "tmp/chain-token-cross-repo-probe-20260830"
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact World candidate with ephemeral token
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          fetch-depth: 1
+          persist-credentials: true
+          token: ${{ github.token }}
+      - name: Attempt no-content temporary ref creation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${WORLD_HEAD}"
+          git push origin "HEAD:refs/heads/${PROBE_BRANCH}"
