@@ -39,7 +39,26 @@ for path in (
 ):
     assert Path(path).is_file(), path
 workflows=sorted(p.name for p in Path('.github/workflows').glob('*.yml'))
-assert len(workflows)==13, workflows
+# Keep this source-bound inventory explicit.  The current repository carries
+# the hosted baseline and the unrelated Web4 frontend alongside the twelve
+# privileged protocol workflows, for a deliberate fourteen-file set.
+expected_workflows = sorted([
+    'agent-user-phasea-gate.yml',
+    'p1-rust-sidecar.yml',
+    'rust-l1-nightly-health.yml',
+    'rust-l1-testnet-preflight.yml',
+    'trnm-canonical-input-fuzz-smoke.yml',
+    'trnm-cometbft-spike.yml',
+    'trnm-gate-quick-check.yml',
+    'trnm-live-devnet-package.yml',
+    'trnm-merge-gates.yml',
+    'trnm-payload-replay-recovery-v1.yml',
+    'trnm-poco-bft-v0.yml',
+    'trnm-replay-to-core-coordinator-v1.yml',
+    'trnm-required-baseline.yml',
+    'web4-frontend-ci.yml',
+])
+assert workflows == expected_workflows, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('agent_transaction_wire_accepted','profiles_globally_enabled','profile_fallback_allowed','artifact_availability_authority','task_lease_profile_authority','order_finality_authority','settlement_authority','g2c_exit','production_candidate','production_consensus_activation'):
     assert m[key] is False, key

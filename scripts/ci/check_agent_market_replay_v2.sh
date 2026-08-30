@@ -54,7 +54,24 @@ assert wire['production_activation'] is False
 assert source['control_replay_commit']==handoff['control_replay_commit']=='d1bbbb43d385dbadadb34710610a49e43c498863'
 assert source['frozen_workflow_tree']==handoff['frozen_workflow_tree']=='dc9157617e7d00750f878aad33ee9b5cae5d9d5d'
 workflows=sorted(p.name for p in Path('.github/workflows').glob('*.yml'))
-assert len(workflows)==13, workflows
+# Keep replay provenance fail-closed against the exact current workflow set.
+expected_workflows = sorted([
+    'agent-user-phasea-gate.yml',
+    'p1-rust-sidecar.yml',
+    'rust-l1-nightly-health.yml',
+    'rust-l1-testnet-preflight.yml',
+    'trnm-canonical-input-fuzz-smoke.yml',
+    'trnm-cometbft-spike.yml',
+    'trnm-gate-quick-check.yml',
+    'trnm-live-devnet-package.yml',
+    'trnm-merge-gates.yml',
+    'trnm-payload-replay-recovery-v1.yml',
+    'trnm-poco-bft-v0.yml',
+    'trnm-replay-to-core-coordinator-v1.yml',
+    'trnm-required-baseline.yml',
+    'web4-frontend-ci.yml',
+])
+assert workflows == expected_workflows, workflows
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflows), workflows
 for key in ('global_state_authority','agent_transaction_wire_accepted','g2b_exit','production_candidate'):
     assert source[key] is False, key

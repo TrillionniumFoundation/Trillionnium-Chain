@@ -462,7 +462,10 @@ require_literal "$POCO_WORKFLOW" \
   'bash ./scripts/ci/check_poco_bft_v0_registry_reference.sh --self-test'
 require_literal "$POCO_WORKFLOW" \
   'run: bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test'
-require_literal "$CI_RUNNER_POLICY" 'poco_bft_trust_guard='
+# The runner-policy checker is now Python and binds the PoCO lane through its
+# source-level POCO_GUARD tuple.  Keep this assertion source-bound to the
+# current implementation rather than the retired lower-case assignment.
+require_literal "$CI_RUNNER_POLICY" 'POCO_GUARD = ('
 require_literal "$RECOVERY_GATE" 'require_one_executed_test() {'
 require_literal_count "$RECOVERY_GATE" \
   'grep -Fc -- "$filter: test"' 4
@@ -782,7 +785,7 @@ require_literal "$NODE_SOURCE" '"completion_acked"'
 require_literal "$NODE_PROCESS_WATERMARK" \
   'It is not an independently administered'
 require_literal "$NODE_PROCESS_WATERMARK" \
-  'cloning, hostile same-EUID replacement, device write-cache loss, or power'
+  'hostile same-EUID replacement, device write-cache loss, or power failure'
 require_literal "$NODE_PROCESS_WATERMARK" \
   'fn file_watermark_excludes_live_owner_and_enforces_exact_cas()'
 require_literal "$NODE_PROCESS_WATERMARK" \
@@ -833,9 +836,9 @@ require_literal "$G1C_TRUTH" \
 require_literal "$G1C_TRUTH" \
   'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$RELEASE_TRUTH" \
-  'G1e validation-recovery SIGKILL is archive-only.'
+  'single-host simulations, local watermarks, SIGKILL-only tests, self-review,'
 require_literal "$ROOT_README" \
-  'G1e validation-recovery SIGKILL is archive-only.'
+  'Do not convert simulations, local SIGKILL tests, local file watermarks'
 require_literal "$PROTOCOL_README" \
   'G1e validation-recovery SIGKILL is archive-only.'
 require_literal "$INVARIANTS_DOC" \
@@ -856,9 +859,9 @@ require_literal "$PRODUCTION_CONTRACTS" \
 
 # G1f is one default-build timeout lane, not a production/general driver.
 require_literal "$ROOT_README" \
-  'G1f ordinary owner now uniquely holds Core, SafetyStore, signer journal, and'
+  'The default node is deliberately not a production daemon.'
 require_literal "$RELEASE_TRUTH" \
-  'default-build G1f path is bounded to a host-derived local timeout'
+  'The default `trnm-poco-node` startup path remains fail-closed.'
 require_literal "$G1C_TRUTH" \
   'G1f adds a distinct default-build ordinary owner for one bounded local-timeout'
 require_literal "$PROTOCOL_README" \
@@ -872,9 +875,9 @@ require_literal "$DUAL_TRACK_DECISION" \
 require_literal "$PRODUCTION_CONTRACTS" \
   'Current G1f evidence closes only the local-timeout subset of this contract.'
 require_literal "$ROOT_README" \
-  'required-feature local Linux matrix now kills and reaps a direct child with'
+  'Those commands do not prove production networking, validator signing, voting,'
 require_literal "$RELEASE_TRUTH" \
-  'required-feature local Linux process matrix covers six'
+  'candidate process commands are useful repository evidence but are not a'
 require_literal "$G1C_TRUTH" \
   'required-feature local Linux matrix now exercises six real child-process'
 require_literal "$PROTOCOL_README" \
@@ -901,9 +904,9 @@ reject_literal "$PROTOCOL_README" 'timeout-path SIGKILL and power-loss matrices 
 # session, and describe the concrete Safety token as bounded joint provenance
 # rather than either standalone authority or comparison-only data.
 require_literal "$ROOT_README" \
-  'The G1c validation-recovery slice is intentionally narrow. Ordinary'
+  'External blockers are accepted only through the schema and validator under'
 require_literal "$ROOT_README" \
-  'grants no callback, Core, or general application transition authority by'
+  'pacemaker/finality, HSM custody, state sync, power-loss recovery, or activation.'
 require_literal "$PROTOCOL_README" \
   'Ordinary `Core::recover` validates every schema-v8 obligation and inert'
 require_literal "$PROTOCOL_README" \

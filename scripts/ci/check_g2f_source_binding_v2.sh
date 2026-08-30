@@ -53,7 +53,25 @@ for path in (
 ):
     assert Path(path).is_file(), path
 workflow_names=sorted(path.name for path in Path('.github/workflows').glob('*.yml'))
-assert len(workflow_names)==13, workflow_names
+# Bind the checker to the exact current workflow inventory, including the
+# hosted baseline and unrelated Web4 frontend workflow.
+expected_workflows = sorted([
+    'agent-user-phasea-gate.yml',
+    'p1-rust-sidecar.yml',
+    'rust-l1-nightly-health.yml',
+    'rust-l1-testnet-preflight.yml',
+    'trnm-canonical-input-fuzz-smoke.yml',
+    'trnm-cometbft-spike.yml',
+    'trnm-gate-quick-check.yml',
+    'trnm-live-devnet-package.yml',
+    'trnm-merge-gates.yml',
+    'trnm-payload-replay-recovery-v1.yml',
+    'trnm-poco-bft-v0.yml',
+    'trnm-replay-to-core-coordinator-v1.yml',
+    'trnm-required-baseline.yml',
+    'web4-frontend-ci.yml',
+])
+assert workflow_names == expected_workflows, workflow_names
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflow_names), workflow_names
 for key in ('canonical_application_jmt','production_external_anchor','production_hsm_authority','accepted_upstream_interfaces','normal_node_process_ownership','power_loss_multi_host_evidence','g2f_exit','production_candidate','production_consensus_activation'):
     assert m[key] is False, key

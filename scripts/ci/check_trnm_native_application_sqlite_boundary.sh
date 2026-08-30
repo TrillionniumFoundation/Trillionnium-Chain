@@ -83,6 +83,14 @@ expected_metadata = {
     "terminal_k_whole_node_cas_integration": False,
     "safety_confirmation_sealed_authority": True,
     "safety_confirmation_authority_integration": True,
+    "terminal_finalization_history_schema": 1,
+    "terminal_finalization_history_content_addressed": True,
+    "terminal_finalization_history_exact_replay": True,
+    "terminal_finalization_history_fresh_connection_readback": True,
+    "terminal_finalization_history_restart_audit": True,
+    "terminal_finalization_history_cross_store_atomicity": False,
+    "terminal_finalization_history_external_rollback_anchor": False,
+    "terminal_finalization_history_physical_power_loss_verified": False,
     "committed_application_head_advance": False,
     "node_process_integration": False,
     "complete_crash_recovery": False,
@@ -183,7 +191,14 @@ for literal in (
     if literal not in node_p_host:
         issues.append(f"Node private-P host is missing boundary literal {literal!r}")
 
-expected_sources = {"binding.rs", "error.rs", "lib.rs", "store.rs", "tests.rs"}
+expected_sources = {
+    "binding.rs",
+    "error.rs",
+    "finalization_history.rs",
+    "lib.rs",
+    "store.rs",
+    "tests.rs",
+}
 actual_sources = {path.name for path in (crate_root / "src").glob("*.rs")}
 if actual_sources != expected_sources:
     issues.append(f"source inventory={sorted(actual_sources)!r}, expected {sorted(expected_sources)!r}")
@@ -204,10 +219,10 @@ store = (crate_root / "src" / "store.rs").read_text(encoding="utf-8")
 tests = (crate_root / "src" / "tests.rs").read_text(encoding="utf-8")
 for literal in (
     "#![forbid(unsafe_code)]",
-    "deliberately narrower than an application engine",
+    "This crate remains narrower than an application engine.",
     "complete canonical",
-    "atomic write and fresh-connection exact artifact readback",
-    "execute transactions, advance the committed",
+    "atomic write and fresh-connection exact artifact",
+    "it does not execute transactions, mint a Core/Safety permit, advance the",
 ):
     if literal not in lib:
         issues.append(f"lib.rs is missing boundary literal {literal!r}")
@@ -279,6 +294,26 @@ for literal in (
 ):
     if literal not in store:
         issues.append(f"store.rs is missing fail-closed literal {literal!r}")
+finalization_history = (crate_root / "src" / "finalization_history.rs").read_text(encoding="utf-8")
+for literal in (
+    "TRNM_NATIVE_FINALIZATION_HISTORY_RECORD_V0",
+    "TRNM_NATIVE_FINALIZATION_HISTORY_CHAIN_V0",
+    "CREATE TABLE finalization_history_metadata_v0",
+    "CREATE TABLE finalization_history_records_v0",
+    "pub struct SqliteNativeFinalizationHistoryV0",
+    "pub fn append(",
+    "pub fn audit(",
+    "pub fn read_sequence(",
+    "open_bound_connection_v0",
+    "verify_path_binding_v0",
+    "FinalizationHistoryAppendOutcomeV0::ExactReplay",
+    "FinalizationHistoryAppendOutcomeV0::NewlyAppended",
+    "MAX_FINALIZATION_HISTORY_ENTRIES_V0",
+):
+    if literal not in finalization_history:
+        issues.append(
+            f"finalization_history.rs is missing boundary literal {literal!r}"
+        )
 for literal in (
     "ack_loss_resolves_only_exact_source_or_target_using_a_fresh_connection",
     "third_state_during_uncertain_commit_permanently_fences_the_handle",
@@ -306,6 +341,17 @@ for literal in (
 ):
     if literal not in tests:
         issues.append(f"tests.rs is missing required negative {literal!r}")
+for literal in (
+    "append_reopen_exact_replay_and_chain_audit",
+    "rejects_gap_conflict_and_parent_drift_without_mutation",
+    "tampered_record_and_metadata_fail_closed_after_reopen",
+    "read_sequence_rejects_file_and_parent_identity_replacement",
+    "history_rejects_a_group_writable_parent_ancestor",
+):
+    if literal not in finalization_history:
+        issues.append(
+            f"finalization_history.rs is missing required test {literal!r}"
+        )
 
 if issues:
     for issue in issues:
