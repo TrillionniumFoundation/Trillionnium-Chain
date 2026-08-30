@@ -1,0 +1,62 @@
+name: tmp-world-source-foundations-validate
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tmp-world-source-foundations-validate
+  cancel-in-progress: true
+
+env:
+  WORLD_HEAD: "34499bb587fbe73dd2eb97ff3221f9a53e437f06"
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact World staging commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Bind immutable source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C world rev-parse HEAD)" = "${WORLD_HEAD}"
+          printf '%s\n' "commit=${WORLD_HEAD}" "tree=$(git -C world rev-parse HEAD^{tree})"
+          test -z "$(git -C world status --porcelain)"
+
+      - name: Execute World source-foundation contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          bash scripts/check-trnm-world-source-foundations.sh
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          required = [
+              Path('docs/protocol/openapi/trnm-world-legacy-local-alpha-v1.openapi.json'),
+              Path('docs/protocol/openapi/path-templates.json'),
+              Path('docs/protocol/schemas/trnm-world-match-stream-connect-v1.schema.json'),
+              Path('docs/protocol/schemas/trnm-world-match-stream-v1.schema.json'),
+              Path('docs/status/world-source-foundations-v1.json'),
+          ]
+          for path in required:
+              with path.open('rb') as handle:
+                  json.load(handle)
+              print(f'validated_json={path}')
+          PY
+          git diff --check
+          test -z "$(git status --porcelain)"
