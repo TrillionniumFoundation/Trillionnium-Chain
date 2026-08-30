@@ -33,7 +33,7 @@ jobs:
       - name: Verify immutable candidate base
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "0aaa5f1dbd32bfb3cbea5e26b8613ef2fe1585de"
+          test "$(git rev-parse HEAD^)" = "92ed373b4777a04de11aef051e3e2ad7a8f7d823"
           git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 HEAD
 
       - name: Install pinned Rust toolchain
@@ -87,8 +87,8 @@ jobs:
           )
 
           count_sql = "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1"
-          if text.count(count_sql) != 3:
-              raise SystemExit(f"expected three bounded inventory queries, got {text.count(count_sql)}")
+          if text.count(count_sql) != 4:
+              raise SystemExit(f"expected four bounded inventory queries, got {text.count(count_sql)}")
           text = text.replace(
               count_sql,
               "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + "
