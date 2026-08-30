@@ -59,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
           cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
-          generated="$(find world/target world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print 2>/dev/null | head -n 1)"
+          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
           test -n "${generated}"
           test -s "${generated}"
           cp "${generated}" /tmp/trnm_game_server_lib_generated.rs
@@ -126,7 +126,7 @@ jobs:
             'trillionnium/crates/trnm-game-server/src/lib.rs.in' \
             > "${out}/deleted-files.txt"
           python3 - <<'PY'
-          import hashlib, json, subprocess
+          import hashlib, json
           from pathlib import Path
 
           out = Path("run/world-materialization")
