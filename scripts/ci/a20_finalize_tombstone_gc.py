@@ -44,7 +44,7 @@ def finalize_source() -> None:
             "    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),",
             "    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),",
             "    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),",
-            "    PRIMARY KEY(namespace, signer,nonce),",
+            "    PRIMARY KEY(namespace, signer, nonce),",
             "    UNIQUE(namespace, tx_digest),",
             "    UNIQUE(namespace, tombstone_digest)",
             ");",
@@ -73,16 +73,36 @@ def finalize_source() -> None:
         "tombstone validation hook",
     )
 
+    # Only exact, unfiltered inventory counts should include tombstones.  The
+    # handed-off-state query shares the same prefix but must remain untouched;
+    # rewriting it as an arithmetic expression would leave `state` outside a
+    # table scope and make every fresh database fail at open.
+    handed_off_sql = (
+        "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2"
+    )
+    sentinel = "__TRNM_A20_HANDED_OFF_COUNT_QUERY_V1__"
+    text = replace_once(
+        text,
+        handed_off_sql,
+        sentinel,
+        "handed-off count query",
+    )
     count_sql = "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1"
     query_count = text.count(count_sql)
-    if query_count != 4:
+    if query_count != 3:
         raise SystemExit(
-            f"bounded inventory query drift: expected four markers, got {query_count}"
+            f"bounded inventory query drift: expected three exact markers, got {query_count}"
         )
     text = text.replace(
         count_sql,
         "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + "
         "(SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
+    )
+    text = replace_once(
+        text,
+        sentinel,
+        handed_off_sql,
+        "restore handed-off count query",
     )
 
     reserve_start = text.index("    fn reserve_record<E: ?Sized>(")
