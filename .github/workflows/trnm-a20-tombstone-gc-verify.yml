@@ -33,7 +33,7 @@ jobs:
       - name: Verify immutable candidate base
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "92ed373b4777a04de11aef051e3e2ad7a8f7d823"
+          test "$(git rev-parse HEAD^)" = "aa0c2be0a3b4a8ed06172eacc7162f75beb95854"
           git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 HEAD
 
       - name: Install pinned Rust toolchain
