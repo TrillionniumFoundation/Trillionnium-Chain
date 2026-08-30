@@ -1,0 +1,60 @@
+name: trnm-a18-one-shot-clippy-fix
+
+on:
+  push:
+    branches:
+      - feature/chain-a18-repository-truth-ci-hardening-v1-20260830
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-a18-one-shot-clippy-fix
+  cancel-in-progress: false
+
+jobs:
+  apply-trnm-state-fixes:
+    if: ${{ !contains(github.event.head_commit.message, '[a18-clippy-fix]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out the branch head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 \
+            --profile minimal \
+            --component rustfmt \
+            --component clippy
+          rustup override set 1.95.0
+
+      - name: Apply only machine-applicable trnm-state Clippy fixes
+        working-directory: trillionnium
+        run: |
+          set +e
+          cargo clippy --fix -p trnm-state --all-targets \
+            --allow-dirty --allow-staged --locked -- -D warnings
+          rc=$?
+          set -e
+          echo "clippy_fix_exit=$rc"
+          cargo fmt --all
+
+      - name: Commit source-only fix set
+        run: |
+          set -euo pipefail
+          git diff --check
+          git status --short
+          if git diff --quiet -- trillionnium/crates/trnm-state/src; then
+            echo "No machine-applicable source fixes were produced" >&2
+            exit 2
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add trillionnium/crates/trnm-state/src
+          git commit -m "fix(state): apply Rust 1.95 Clippy suggestions [a18-clippy-fix]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
