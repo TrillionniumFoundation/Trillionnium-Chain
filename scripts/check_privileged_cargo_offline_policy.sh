@@ -557,7 +557,7 @@ while IFS= read -r path; do
   case "$path" in
     scripts/ci/install_cargo_fuzz.sh|scripts/ci/check_cargo_offline_ready.sh|\
     scripts/ci/check_cargo_offline_unchanged.sh|\
-    scripts/check_cargo_offline_policy.sh|scripts/check_cargo_offline_policy_test.sh)
+    scripts/check_cargo_offline_policy.sh|scripts/check_privileged_cargo_offline_policy.sh|scripts/check_cargo_offline_policy_test.sh)
       continue
       ;;
   esac
