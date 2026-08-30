@@ -3,6 +3,8 @@ set -euo pipefail
 
 root=$(git rev-parse --show-toplevel)
 checker="$root/scripts/check_cargo_offline_policy.sh"
+runner_checker="$root/scripts/check_ci_runner_policy.sh"
+privileged_checker="$root/scripts/check_privileged_cargo_offline_policy.sh"
 fixture=$(mktemp -d)
 trap 'rm -rf -- "$fixture"' EXIT
 repo="$fixture/repo"
@@ -17,12 +19,17 @@ cp "$root/scripts/ci/check_preprovisioned_rust_toolchain.sh" \
   "$root/scripts/ci/check_preprovisioned_cargo_fuzz.sh" \
   "$root/scripts/ci/check_canonical_fuzz_smoke.sh" \
   "$root/scripts/ci/check_poco_bft_v0_formal.sh" "$repo/scripts/ci/"
+cp "$runner_checker" "$privileged_checker" "$checker" "$repo/scripts/"
 git init -q "$repo"
 git -C "$repo" config user.name cargo-offline-policy-test
 git -C "$repo" config user.email cargo-offline-policy-test@example.invalid
 
 run_policy() {
   (cd "$repo" && bash "$checker" "$1")
+}
+
+run_privileged_policy() {
+  (cd "$repo" && bash scripts/check_privileged_cargo_offline_policy.sh "$1")
 }
 
 expect_pass() {
@@ -36,6 +43,28 @@ expect_pass() {
     exit 1
   }
   printf 'PASS: %s\n' "$name"
+}
+
+expect_privileged_pass() {
+  local name=$1 mode=$2 output
+  if ! output=$(run_privileged_policy "$mode" 2>&1); then
+    printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
+    exit 1
+  fi
+  [[ "$output" == *'workflows=13 jobs=20 cargo_jobs=18 no_cargo_jobs=2'* ]] || {
+    printf 'FAIL: %s returned unexpected privileged summary\n%s\n' "$name" "$output" >&2
+    exit 1
+  }
+  printf 'PASS: %s\n' "$name"
+}
+
+expect_privileged_fail() {
+  local name=$1 mode=${2:---worktree} output
+  if output=$(run_privileged_policy "$mode" 2>&1); then
+    printf 'FAIL: %s unexpectedly passed\n%s\n' "$name" "$output" >&2
+    exit 1
+  fi
+  printf 'PASS: %s rejected\n' "$name"
 }
 
 expect_fail() {
@@ -52,11 +81,34 @@ restore_fixture() {
   git -C "$repo" clean -qfd
 }
 
-git -C "$repo" add .github/workflows scripts/ci rust-toolchain.toml
+git -C "$repo" add .github/workflows scripts rust-toolchain.toml
 git -C "$repo" commit -qm 'cargo offline policy baseline'
 expect_pass worktree-positive --worktree
 expect_pass staged-positive --staged
 expect_pass head-positive --head
+expect_privileged_pass privileged-worktree-positive --worktree
+expect_privileged_pass privileged-staged-positive --staged
+expect_privileged_pass privileged-head-positive --head
+
+# The mixed-trust wrapper must fail closed if its privileged implementation is
+# absent, and the privileged checker must reject an unclassified workflow
+# instead of counting it as part of the hosted baseline.
+rm -f "$repo/scripts/check_privileged_cargo_offline_policy.sh"
+expect_fail missing-privileged-policy-helper
+restore_fixture
+
+cat >"$repo/.github/workflows/unclassified-extra.yml" <<'EOF'
+name: unclassified-extra
+on: [push]
+jobs:
+  extra:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: true
+EOF
+expect_fail unclassified-extra-workflow
+expect_privileged_fail privileged-unclassified-extra-workflow
+restore_fixture
 
 sed -i 's/channel = "1.95.0"/channel = "nightly"/' "$repo/rust-toolchain.toml"
 expect_fail root-toolchain-policy-drift

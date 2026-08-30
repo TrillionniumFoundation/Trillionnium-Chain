@@ -19,6 +19,13 @@ declare -A class=()
 declare -A toolchain=()
 declare -A roots=()
 
+# The privileged policy owns exactly the historical X230 workflow set.  The
+# actor-independent hosted baseline is a separate trust class, but it may be
+# present when this checker is invoked directly from a mixed-trust checkout.
+# Keep the canonical name explicit so an arbitrary hosted workflow can never
+# be silently folded into (or counted as) the privileged set.
+hosted_baseline_workflow=trnm-required-baseline.yml
+
 register() {
   local key=$1 policy_class=$2 rust_toolchain=$3 cargo_roots=${4:-}
   [[ -z "${class[$key]:-}" ]] || {
@@ -78,6 +85,15 @@ read_path() {
   esac
 }
 
+source_has_path() {
+  local path=$1
+  case "$source_mode" in
+    --worktree) [[ -f "$root/$path" ]] ;;
+    --staged) git -C "$root" show ":$path" >/dev/null 2>&1 ;;
+    --head) git -C "$root" show "HEAD:$path" >/dev/null 2>&1 ;;
+  esac
+}
+
 list_workflows() {
   case "$source_mode" in
     --worktree)
@@ -92,7 +108,7 @@ list_workflows() {
       git -C "$root" ls-tree -r --name-only HEAD -- .github/workflows/ \
         | sed 's#^.github/workflows/##' | awk '/\.ya?ml$/' | LC_ALL=C sort
       ;;
-  esac
+  esac | awk -v baseline="$hosted_baseline_workflow" '$0 != baseline'
 }
 
 list_script_paths() {
@@ -178,6 +194,29 @@ home_override_re="(^|[[:space:]\"'])HOME([\"']?[[:space:]]*:|=)"
 error() {
   printf 'ERROR: %s\n' "$*" >&2
   error_count=$((error_count + 1))
+}
+
+validate_hosted_baseline_if_present() {
+  local baseline_path=".github/workflows/$hosted_baseline_workflow"
+  local runner_checker="$tmp/check_ci_runner_policy.sh"
+  local runner_output="$tmp/hosted-baseline-runner-policy.out"
+
+  # A standalone privileged-policy invocation is allowed to operate on the
+  # historical 13-workflow source, which predates the hosted baseline.  When a
+  # canonical baseline is present, however, validate it through the exact
+  # source representation before excluding it from the privileged set.
+  if ! source_has_path "$baseline_path"; then
+    return 0
+  fi
+  if ! read_path scripts/check_ci_runner_policy.sh >"$runner_checker" 2>/dev/null; then
+    error "$hosted_baseline_workflow is present but scripts/check_ci_runner_policy.sh is missing"
+    return 0
+  fi
+  chmod +x "$runner_checker"
+  if ! bash "$runner_checker" "$source_mode" >"$runner_output" 2>&1; then
+    error "$hosted_baseline_workflow failed mixed-trust runner validation"
+    sed 's/^/  /' "$runner_output" >&2
+  fi
 }
 
 validate_simple_helper_step() {
@@ -294,6 +333,10 @@ for helper in "${!helper_hash[@]}"; do
     error "$helper differs from its frozen reviewed content"
   fi
 done
+
+# Validate the separate hosted trust class, if this source carries it, before
+# constructing the exact privileged workflow/job inventory below.
+validate_hosted_baseline_if_present
 
 mapfile -t workflows < <(list_workflows)
 expected_workflows="$tmp/expected-workflows"

@@ -33,6 +33,15 @@ restore_worktree() {
 }
 trap restore_worktree EXIT HUP INT TERM
 
+snapshot_git() {
+  # Git exports GIT_INDEX_FILE to commit hooks.  A policy snapshot must use
+  # its own index; otherwise `git add` below can mutate the caller's staged
+  # index (including staging a deletion of the hosted baseline).  Clear all
+  # repository-selection variables and disable hooks for this throwaway repo.
+  env -u GIT_DIR -u GIT_INDEX_FILE -u GIT_WORK_TREE -u GIT_COMMON_DIR \
+    git -C "$snapshot" "$@"
+}
+
 case "$source_mode" in
   --worktree)
     test -f "$root/$baseline" || {
@@ -48,14 +57,15 @@ case "$source_mode" in
     mkdir -p "$snapshot"
     git -C "$root" checkout-index --all --prefix="$snapshot/"
     rm -f "$snapshot/$baseline"
-    git -C "$snapshot" init -q
-    git -C "$snapshot" add -A
-    env \
-      GIT_AUTHOR_NAME=trnm-policy-snapshot \
-      GIT_AUTHOR_EMAIL=policy-snapshot@example.invalid \
-      GIT_COMMITTER_NAME=trnm-policy-snapshot \
-      GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid \
-      git -C "$snapshot" commit -qm staged-policy-snapshot
+    snapshot_git init -q
+    snapshot_git add -A
+    (
+      export GIT_AUTHOR_NAME=trnm-policy-snapshot \
+        GIT_AUTHOR_EMAIL=policy-snapshot@example.invalid \
+        GIT_COMMITTER_NAME=trnm-policy-snapshot \
+        GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid
+      snapshot_git -c core.hooksPath=/dev/null commit --no-verify -qm staged-policy-snapshot
+    )
     bash "$snapshot/$privileged" --head
     ;;
   --head)
@@ -63,14 +73,15 @@ case "$source_mode" in
     mkdir -p "$snapshot"
     git -C "$root" archive --format=tar HEAD | tar -xf - -C "$snapshot"
     rm -f "$snapshot/$baseline"
-    git -C "$snapshot" init -q
-    git -C "$snapshot" add -A
-    env \
-      GIT_AUTHOR_NAME=trnm-policy-snapshot \
-      GIT_AUTHOR_EMAIL=policy-snapshot@example.invalid \
-      GIT_COMMITTER_NAME=trnm-policy-snapshot \
-      GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid \
-      git -C "$snapshot" commit -qm head-policy-snapshot
+    snapshot_git init -q
+    snapshot_git add -A
+    (
+      export GIT_AUTHOR_NAME=trnm-policy-snapshot \
+        GIT_AUTHOR_EMAIL=policy-snapshot@example.invalid \
+        GIT_COMMITTER_NAME=trnm-policy-snapshot \
+        GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid
+      snapshot_git -c core.hooksPath=/dev/null commit --no-verify -qm head-policy-snapshot
+    )
     bash "$snapshot/$privileged" --head
     ;;
 esac

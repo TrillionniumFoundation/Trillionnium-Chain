@@ -32,6 +32,7 @@ policy_workflow="$workflow_dir/policy.yml"
 companion_workflow="$workflow_dir/companion.yaml"
 p1_workflow="$workflow_dir/p1-rust-sidecar.yml"
 poco_workflow="$workflow_dir/trnm-poco-bft-v0.yml"
+baseline_workflow="$workflow_dir/trnm-required-baseline.yml"
 mkdir -p "$workflow_dir"
 git init -q "$repo"
 git -C "$repo" config user.name ci-runner-policy-test
@@ -39,6 +40,53 @@ git -C "$repo" config user.email ci-runner-policy-test@example.invalid
 
 write_policy_workflow() {
   printf '%s\n' "$@" >"$policy_workflow"
+}
+
+write_hosted_baseline() {
+  cat >"$baseline_workflow" <<'EOF'
+name: trnm-required-baseline
+on: [push]
+permissions:
+  contents: read
+env:
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}
+jobs:
+  repository-truth:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+  protocol-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+  fuzz-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+  external-evidence-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+  rust-baseline:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@0000000000000000000000000000000000000000
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          persist-credentials: false
+EOF
 }
 
 write_companion_workflow() {
@@ -93,13 +141,14 @@ run_policy() {
 expect_pass() {
   local name=$1
   local source_mode=$2
-  local expected_jobs="${3:-3}"
+  local expected_hosted_jobs="${3:-5}"
+  local expected_privileged_jobs="${4:-4}"
   local output
   if ! output=$(run_policy "$source_mode" 2>&1); then
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  if [[ "$output" != *"jobs=${expected_jobs} "* ]]; then
+  if [[ "$output" != *"hosted_jobs=${expected_hosted_jobs} privileged_jobs=${expected_privileged_jobs} "* ]]; then
     printf 'FAIL: %s returned an unexpected job count\n%s\n' "$name" "$output" >&2
     exit 1
   fi
@@ -120,6 +169,7 @@ expect_fail() {
 write_companion_workflow
 write_p1_workflow
 write_poco_workflow
+write_hosted_baseline
 write_policy_workflow \
   'name: policy' \
   'on: [push]' \
@@ -132,11 +182,34 @@ write_policy_workflow \
   '          # Nested scalar content must not be interpreted as a job runner.' \
   '          runs-on: ubuntu-latest'
 
-expect_pass worktree-positive --worktree 4
+expect_pass worktree-positive --worktree 5 4
 git -C "$repo" add .github/workflows
-expect_pass staged-positive --staged 4
+expect_pass staged-positive --staged 5 4
 git -C "$repo" commit -qm 'baseline runner policy fixture'
-expect_pass head-positive --head 4
+expect_pass head-positive --head 5 4
+
+# The hosted trust class is a single canonical workflow.  Removing it or
+# introducing another hosted-looking workflow must never silently downgrade
+# the mixed-trust requirement.
+mv "$baseline_workflow" "$baseline_workflow.missing"
+expect_fail missing-hosted-baseline --worktree
+mv "$baseline_workflow.missing" "$baseline_workflow"
+
+cat >"$workflow_dir/extra-hosted.yml" <<'EOF'
+name: extra-hosted
+on: [push]
+jobs:
+  extra:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: true
+EOF
+expect_fail unclassified-hosted-workflow --worktree
+rm -f "$workflow_dir/extra-hosted.yml"
+
+sed -i 's/runs-on: ubuntu-24.04/runs-on: ubuntu-latest/' "$baseline_workflow"
+expect_fail malformed-hosted-baseline --worktree
+git show HEAD:.github/workflows/trnm-required-baseline.yml >"$baseline_workflow"
 
 write_policy_workflow \
   'name: policy' \
