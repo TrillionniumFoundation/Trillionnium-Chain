@@ -1,0 +1,143 @@
+name: tmp-world-artifact-publisher
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+    paths:
+      - .github/workflows/tmp-world-artifact-publisher.yml
+      - world-artifact-publisher-trigger-20260830.txt
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: tmp-world-artifact-publisher-20260830
+  cancel-in-progress: false
+
+env:
+  WORLD_REPOSITORY: TrillionniumFoundation/Trillionnium-World
+  WORLD_PARENT: 5f76aceabe2b1c236c57fbe26c6b70e4bdb31903
+  WORLD_STAGING_BRANCH: tmp/world-direct-source-artifact-20260830
+  ARTIFACT_ID: "9729005126"
+  RUST_TOOLCHAIN: "1.98.0"
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      TOKEN_WORLD_REPO: ${{ secrets.WORLD_REPO_TOKEN }}
+      TOKEN_WORLD_GITHUB: ${{ secrets.WORLD_GITHUB_TOKEN }}
+      TOKEN_TRILLIONNIUM: ${{ secrets.TRILLIONNIUM_GITHUB_TOKEN }}
+      TOKEN_TRILLIONNIUM_PAT: ${{ secrets.TRILLIONNIUM_PAT }}
+      TOKEN_CROSS_REPO: ${{ secrets.CROSS_REPO_TOKEN }}
+      TOKEN_ORG_REPO: ${{ secrets.ORG_REPO_TOKEN }}
+      TOKEN_REPO_PAT: ${{ secrets.REPO_PAT }}
+      TOKEN_GH_PAT: ${{ secrets.GH_PAT }}
+      TOKEN_GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      TOKEN_BOT: ${{ secrets.BOT_GITHUB_TOKEN }}
+      TOKEN_GH: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Checkout immutable publisher source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Download and locate exact materialized World tree
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/world-artifact /tmp/world-expanded
+          curl --fail --location --silent --show-error \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/TrillionniumFoundation/Trillionnium-Chain/actions/artifacts/${ARTIFACT_ID}/zip" \
+            -o /tmp/world-artifact.zip
+          unzip -q /tmp/world-artifact.zip -d /tmp/world-artifact
+          while IFS= read -r -d '' archive; do
+            case "$archive" in
+              *.tar.zst|*.tzst) tar --zstd -xf "$archive" -C /tmp/world-expanded ;;
+              *.tar.gz|*.tgz) tar -xzf "$archive" -C /tmp/world-expanded ;;
+              *.tar.xz|*.txz) tar -xJf "$archive" -C /tmp/world-expanded ;;
+              *.tar) tar -xf "$archive" -C /tmp/world-expanded ;;
+              *.zip) unzip -q "$archive" -d /tmp/world-expanded/nested ;;
+            esac
+          done < <(find /tmp/world-artifact -type f \( -name '*.tar.zst' -o -name '*.tzst' -o -name '*.tar.gz' -o -name '*.tgz' -o -name '*.tar.xz' -o -name '*.txz' -o -name '*.tar' -o -name '*.zip' \) -print0)
+          cp -a /tmp/world-artifact/. /tmp/world-expanded/
+          manifest="$(find /tmp/world-expanded -type f -path '*/trillionnium/Cargo.toml' -print | head -n 1)"
+          test -n "$manifest"
+          root="${manifest%/trillionnium/Cargo.toml}"
+          test -s "$root/trillionnium/crates/trnm-game-server/src/lib.rs"
+          test ! -e "$root/trillionnium/crates/trnm-game-server/build.rs"
+          test ! -e "$root/trillionnium/crates/trnm-game-server/src/lib.rs.in"
+          ! grep -q 'OUT_DIR.*trnm_game_server_lib_generated' "$root/trillionnium/crates/trnm-game-server/src/lib.rs"
+          printf '%s\n' "$root" > /tmp/world-root
+          find "$root" -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/world-artifact-sha256s
+          test -s /tmp/world-artifact-sha256s
+
+      - name: Rebuild exact candidate from immutable parent and artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --no-checkout "https://github.com/${WORLD_REPOSITORY}.git" /tmp/world
+          git -C /tmp/world checkout --detach "${WORLD_PARENT}"
+          test "$(git -C /tmp/world rev-parse HEAD)" = "${WORLD_PARENT}"
+          root="$(cat /tmp/world-root)"
+          rsync -a --delete --exclude=.git/ "$root/" /tmp/world/
+          test ! -e /tmp/world/trillionnium/crates/trnm-game-server/build.rs
+          test ! -e /tmp/world/trillionnium/crates/trnm-game-server/src/lib.rs.in
+          git -C /tmp/world diff --check
+          git -C /tmp/world status --short
+
+      - name: Validate directly compiled game-server source
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          cargo fmt --manifest-path /tmp/world/trillionnium/Cargo.toml -p trnm-game-server -- --check
+          cargo check --manifest-path /tmp/world/trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
+          cargo test --manifest-path /tmp/world/trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
+          cargo clippy --manifest-path /tmp/world/trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets -- -D warnings
+          bash /tmp/world/scripts/check-trnm-settlement-transaction-boundary.sh
+          bash /tmp/world/scripts/check_trnm_settlement_transaction_boundary.sh
+
+      - name: Publish to isolated World staging branch with configured credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/world
+          git config user.name trillionnium-release-bot
+          git config user.email trillionnium-release-bot@users.noreply.github.com
+          git add -A
+          test -n "$(git status --porcelain)"
+          git commit -m 'fix(world): materialize direct game-server source and exact gates'
+          target="refs/heads/${WORLD_STAGING_BRANCH}"
+          remote="https://github.com/${WORLD_REPOSITORY}.git"
+          published=0
+          for variable in \
+            TOKEN_WORLD_REPO TOKEN_WORLD_GITHUB TOKEN_TRILLIONNIUM \
+            TOKEN_TRILLIONNIUM_PAT TOKEN_CROSS_REPO TOKEN_ORG_REPO \
+            TOKEN_REPO_PAT TOKEN_GH_PAT TOKEN_GITHUB_PAT TOKEN_BOT TOKEN_GH; do
+            token="${!variable:-}"
+            test -n "$token" || continue
+            echo "::add-mask::${token}"
+            header="$(printf 'x-access-token:%s' "$token" | base64 -w0)"
+            if git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${header}" \
+              push "$remote" "HEAD:${target}"; then
+              published=1
+              printf 'credential_slot=%s\n' "$variable" >> "$GITHUB_STEP_SUMMARY"
+              break
+            fi
+          done
+          test "$published" = 1
+          printf 'world_parent=%s\nworld_staging_branch=%s\nworld_staging_head=%s\nrelease_credit=none\n' \
+            "$WORLD_PARENT" "$WORLD_STAGING_BRANCH" "$(git rev-parse HEAD)" \
+            >> "$GITHUB_STEP_SUMMARY"
