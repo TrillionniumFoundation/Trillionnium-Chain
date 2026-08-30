@@ -18,7 +18,8 @@ use crate::error::{error, ValidationStoreErrorCodeV0, ValidationStoreResultV0};
 
 const SCHEMA_VERSION_V0: i64 = 1;
 const HEAD_BYTES_V0: usize = 8 + 32 + 32 + 32;
-const RECORD_BYTES_V0: usize = 2 + HEAD_BYTES_V0 + HEAD_BYTES_V0 + (4 * 32) + HEAD_BYTES_V0 + 32 + 32 + 8;
+const RECORD_BYTES_V0: usize =
+    2 + HEAD_BYTES_V0 + HEAD_BYTES_V0 + (4 * 32) + HEAD_BYTES_V0 + 32 + 32 + 8;
 const RECORD_VERSION_V0: u16 = 1;
 const RECORD_DIGEST_DOMAIN_V0: &[u8] = b"TRNM_NATIVE_FINALIZATION_HISTORY_RECORD_V0";
 const CHAIN_DIGEST_DOMAIN_V0: &[u8] = b"TRNM_NATIVE_FINALIZATION_HISTORY_CHAIN_V0";
@@ -220,10 +221,12 @@ impl SqliteNativeFinalizationHistoryV0 {
             ));
         }
 
-        let expected_sequence = before
-            .entry_count
-            .checked_add(1)
-            .ok_or_else(|| error(ValidationStoreErrorCodeV0::Overflow, "finalization_history.sequence"))?;
+        let expected_sequence = before.entry_count.checked_add(1).ok_or_else(|| {
+            error(
+                ValidationStoreErrorCodeV0::Overflow,
+                "finalization_history.sequence",
+            )
+        })?;
         if sequence != expected_sequence || sequence > MAX_FINALIZATION_HISTORY_ENTRIES_V0 {
             return Err(error(
                 ValidationStoreErrorCodeV0::InvalidTransition,
@@ -237,8 +240,10 @@ impl SqliteNativeFinalizationHistoryV0 {
             ));
         }
 
-        let target_block_id = readback.intent().target().block_id().as_bytes();
-        let proof_id = readback.intent().proof_id().as_bytes();
+        let target_block_id_value = readback.intent().target().block_id();
+        let target_block_id = target_block_id_value.as_bytes();
+        let proof_id_value = readback.intent().proof_id();
+        let proof_id = proof_id_value.as_bytes();
         let collision = connection
             .query_row(
                 "SELECT record_digest FROM finalization_history_records_v0 WHERE target_block_id = ?1 OR proof_id = ?2 LIMIT 1",
@@ -410,12 +415,14 @@ fn open_connection_v0(path: &Path) -> ValidationStoreResultV0<Connection> {
             "finalization_history.open",
         )
     })?;
-    connection.busy_timeout(Duration::from_secs(5)).map_err(|_| {
-        error(
-            ValidationStoreErrorCodeV0::Storage,
-            "finalization_history.busy_timeout",
-        )
-    })?;
+    connection
+        .busy_timeout(Duration::from_secs(5))
+        .map_err(|_| {
+            error(
+                ValidationStoreErrorCodeV0::Storage,
+                "finalization_history.busy_timeout",
+            )
+        })?;
     connection
         .execute_batch(
             "PRAGMA foreign_keys = ON; PRAGMA trusted_schema = OFF; PRAGMA synchronous = FULL; PRAGMA temp_store = MEMORY; PRAGMA wal_autocheckpoint = 0;",
@@ -427,7 +434,9 @@ fn open_connection_v0(path: &Path) -> ValidationStoreResultV0<Connection> {
             )
         })?;
     let journal_mode = connection
-        .query_row("PRAGMA journal_mode = WAL", [], |row| row.get::<_, String>(0))
+        .query_row("PRAGMA journal_mode = WAL", [], |row| {
+            row.get::<_, String>(0)
+        })
         .map_err(|_| {
             error(
                 ValidationStoreErrorCodeV0::Storage,
@@ -468,10 +477,7 @@ fn initialize_or_validate_schema_v0(
             let sequence = 0u64.to_be_bytes();
             let chain_digest = digest_v0(
                 GENESIS_DIGEST_DOMAIN_V0,
-                &[
-                    scope.as_bytes().as_slice(),
-                    initial_head_bytes.as_slice(),
-                ],
+                &[scope.as_bytes().as_slice(), initial_head_bytes.as_slice()],
             );
             connection
                 .execute(
@@ -580,7 +586,8 @@ fn audit_connection_v0(
             "finalization_history.metadata_binding",
         ));
     }
-    let metadata_sequence = decode_u64_blob_v0(&metadata.3, "finalization_history.metadata_sequence")?;
+    let metadata_sequence =
+        decode_u64_blob_v0(&metadata.3, "finalization_history.metadata_sequence")?;
     let metadata_chain = decode_array_v0::<32>(&metadata.4, "finalization_history.metadata_chain")?;
     if metadata_sequence > MAX_FINALIZATION_HISTORY_ENTRIES_V0 {
         return Err(error(
@@ -646,10 +653,7 @@ fn audit_connection_v0(
     let initial_head_bytes = encode_head_v0(initial_head);
     let mut previous_chain = digest_v0(
         GENESIS_DIGEST_DOMAIN_V0,
-        &[
-            scope.as_bytes().as_slice(),
-            initial_head_bytes.as_slice(),
-        ],
+        &[scope.as_bytes().as_slice(), initial_head_bytes.as_slice()],
     );
     let mut committed_head = initial_head.clone();
     let mut observed = 0u64;
@@ -918,10 +922,7 @@ fn decode_head_v0(raw: &[u8], offset: &mut usize) -> ValidationStoreResultV0<App
         )
     })?;
     Ok(ApplicationHeadV0::new(
-        height,
-        block_id,
-        state_root,
-        commit_id,
+        height, block_id, state_root, commit_id,
     ))
 }
 
@@ -1060,8 +1061,8 @@ mod tests {
         let h2 = head(2, 31);
         let first = readback(intent(h0.clone(), h1.clone(), 41), 1, 51);
         let second = readback(intent(h1.clone(), h2.clone(), 61), 2, 71);
-        let store = SqliteNativeFinalizationHistoryV0::open(&path.database, scope(1), h0.clone())
-            .unwrap();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(1), h0.clone()).unwrap();
         let first_confirmed = match store.append(first.clone()).unwrap() {
             FinalizationHistoryAppendOutcomeV0::NewlyAppended(value) => value,
             FinalizationHistoryAppendOutcomeV0::ExactReplay(_) => panic!("first append replayed"),
@@ -1100,10 +1101,12 @@ mod tests {
         let h0 = head(0, 81);
         let h1 = head(1, 91);
         let h2 = head(2, 101);
-        let store = SqliteNativeFinalizationHistoryV0::open(&path.database, scope(2), h0.clone())
-            .unwrap();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(2), h0.clone()).unwrap();
         let first_intent = intent(h0.clone(), h1.clone(), 111);
-        store.append(readback(first_intent.clone(), 1, 121)).unwrap();
+        store
+            .append(readback(first_intent.clone(), 1, 121))
+            .unwrap();
 
         let gap = readback(intent(h1.clone(), h2.clone(), 131), 3, 141);
         assert_eq!(
@@ -1130,8 +1133,8 @@ mod tests {
         let path = TestPathV0::new();
         let h0 = head(0, 191);
         let h1 = head(1, 201);
-        let store = SqliteNativeFinalizationHistoryV0::open(&path.database, scope(3), h0.clone())
-            .unwrap();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(3), h0.clone()).unwrap();
         store
             .append(readback(intent(h0.clone(), h1, 211), 1, 221))
             .unwrap();
@@ -1149,8 +1152,8 @@ mod tests {
         );
 
         let other = TestPathV0::new();
-        let store = SqliteNativeFinalizationHistoryV0::open(&other.database, scope(4), h0.clone())
-            .unwrap();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&other.database, scope(4), h0.clone()).unwrap();
         store
             .append(readback(intent(h0, head(1, 231), 232), 1, 233))
             .unwrap();
