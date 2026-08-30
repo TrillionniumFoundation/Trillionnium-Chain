@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://trillionnium.org/schemas/external-evidence-v1.json",
+  "title": "TRNM external blocker evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "evidence_id",
+    "blocker_id",
+    "source_commit",
+    "source_tree",
+    "producer",
+    "independent_reviewer",
+    "independence_declaration",
+    "scope",
+    "result",
+    "started_at",
+    "ended_at",
+    "wall_clock_seconds",
+    "artifacts",
+    "signatures",
+    "claims"
+  ],
+  "properties": {
+    "schema": {
+      "const": "trnm-external-evidence-v1"
+    },
+    "evidence_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 160
+    },
+    "blocker_id": {
+      "enum": [
+        "EXT-REVIEW-001",
+        "EXT-G1-CAMPAIGN-001",
+        "EXT-ANCHOR-HSM-001",
+        "EXT-POWERLOSS-001",
+        "EXT-AUDIT-001",
+        "EXT-SOAK-ACTIVATION-001"
+      ]
+    },
+    "source_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_tree": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "producer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "independent_reviewer": {
+      "type": "string",
+      "minLength": 1
+    },
+    "independence_declaration": {
+      "type": "boolean",
+      "const": true
+    },
+    "scope": {
+      "enum": [
+        "review",
+        "host",
+        "network",
+        "custody",
+        "audit",
+        "production"
+      ]
+    },
+    "result": {
+      "enum": [
+        "accepted",
+        "rejected"
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "wall_clock_seconds": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "sha256",
+          "immutable_uri"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "immutable_uri": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "signer",
+          "algorithm",
+          "signature",
+          "signed_digest"
+        ],
+        "properties": {
+          "signer": {
+            "type": "string",
+            "minLength": 1
+          },
+          "algorithm": {
+            "type": "string",
+            "minLength": 1
+          },
+          "signature": {
+            "type": "string",
+            "minLength": 16
+          },
+          "signed_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "claims": {
+      "type": "object"
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
