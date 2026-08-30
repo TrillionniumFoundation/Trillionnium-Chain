@@ -87,18 +87,13 @@ jobs:
               raise SystemExit("localhost normalization shape drifted")
           cex_path.write_text(cex.replace(old, new, 1), encoding="utf-8")
 
-          for obsolete in (
-              crate / "build.rs",
-              crate / "src/lib.rs.in",
-              crate / "src/settlement_worker.rs.in",
-          ):
+          for obsolete in (crate / "build.rs", crate / "src/lib.rs.in"):
               if not obsolete.is_file():
                   raise SystemExit(f"missing obsolete source: {obsolete}")
               obsolete.unlink()
           PY
           test ! -e world/trillionnium/crates/trnm-game-server/build.rs
           test ! -e world/trillionnium/crates/trnm-game-server/src/lib.rs.in
-          test ! -e world/trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in
           cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
           git -C world diff --binary > /tmp/materialization.patch
           git -C world diff --check
