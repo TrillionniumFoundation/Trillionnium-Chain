@@ -1,0 +1,61 @@
+name: tmp-world-publisher-status-classifier
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-world-publisher-status-classifier
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: tmp/world-source-materializer-20260830
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Emit mutually exclusive classification marker
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=run/world-plan-v4/source-publisher-v3.json
+          out=run/world-plan-v4/classification
+          rm -rf "${out}"
+          mkdir -p "${out}"
+          if test ! -s "${status}"; then
+            marker=RUNNING_OR_MISSING
+          else
+            job_status="$(jq -r '.job_status // ""' "${status}")"
+            credential="$(jq -r '.credential_source // ""' "${status}")"
+            published="$(jq -r '.published_head // ""' "${status}")"
+            source_changed="$(jq -r '.source_changed // ""' "${status}")"
+            if test "${job_status}" = success && test -n "${published}"; then
+              marker=SUCCESS
+            elif test -z "${credential}"; then
+              marker=FAILURE_NO_CROSS_REPO_CREDENTIAL
+            else
+              marker=FAILURE_AFTER_CREDENTIAL
+            fi
+            printf '%s\n' \
+              "job_status=${job_status}" \
+              "credential_source=${credential}" \
+              "published_head=${published}" \
+              "source_changed=${source_changed}" \
+              > "${out}/DETAILS"
+          fi
+          printf '%s\n' "${marker}" > "${out}/${marker}"
+          git config user.name 'Trillionnium evidence bot'
+          git config user.email 'evidence@users.noreply.github.com'
+          git add run/world-plan-v4/classification
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(chain): classify World publisher as ${marker}"
+            git push origin HEAD:tmp/world-source-materializer-20260830
+          fi
