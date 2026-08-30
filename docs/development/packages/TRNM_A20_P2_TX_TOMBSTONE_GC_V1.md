@@ -1,14 +1,14 @@
 # A20 / P2-TX authenticated tombstone GC v1
 
-Status: **candidate-implemented / verification pending / no production activation**
+Status: **candidate-hardened / verification pending / no production activation**
 
 ## Exact boundary
 
 ```text
 repository = TrillionniumFoundation/Trillionnium-Chain
-candidate_branch = feature/chain-g1-external-blocker-closure-20260830
-candidate_base = 1663abd8935be4e5819f5ff0c7ded250a3664097
-implementation_refs = 603bccc32, 50bf6cdc1
+candidate_branch = feature/chain-a20-candidate-hardening-20260830
+candidate_base = 795ce1010
+implementation_refs = 795ce1010 + local hardening commit
 latest_inspected_remote_tip = 7bc87e153a3d4c6426ff9e0a22e8469923d7ffe4
 consensus_mainline = native-poco-bft
 protocol_target = poco-bft-v0
@@ -51,8 +51,9 @@ re-open either `(signer, nonce)` or transaction digest authority.
 ## Authenticated purge contract
 
 A compact tombstone can be physically deleted only with a private
-`VerifiedTxAdmissionReplayFloorV1` token. The token is minted only after an
-owner-installed `TxAdmissionReplayFloorVerifierV1` accepts evidence binding:
+`VerifiedTxAdmissionReplayFloorV1` token. The token is minted only after a
+crate-owned `TxAdmissionReplayFloorVerifierV1` accepts evidence binding. The
+verifier boundary is sealed and the trait/minting method are crate-private:
 
 - repository namespace;
 - canonical signer identity;
@@ -64,6 +65,27 @@ owner-installed `TxAdmissionReplayFloorVerifierV1` accepts evidence binding:
 Purge is signer-local, nonce-bounded, finality-height-bounded and batch-bounded.
 A rejected or foreign-namespace floor leaves all tombstones unchanged.
 
+The replay-floor verifier trait and `TxAdmissionReplayFloorEvidenceV1::verify_with`
+are crate-private.  The native commit-receipt verifier is also sealed to
+crate-owned implementations.  The crate root exports neither the replay trait
+nor its minting method, and the native trait's private supertrait blocks an
+unconditional `Ok(())` implementation.  Downstream code therefore cannot
+manufacture either purge or commit tokens from caller assertions.  Concrete
+owners must remain inside this crate until authenticated application/finality
+adapters are accepted.
+
+## Path and open fencing
+
+Before opening the database or lock, the candidate validates the canonical
+parent and every existing ancestor: directories must be owner/root-controlled
+and not group/world writable, with only a root-owned sticky directory (such as
+`/tmp`) allowed as the fixture boundary.  The immediate parent is opened with
+`O_DIRECTORY|O_NOFOLLOW`, and its device/inode/owner/mode identity is retained
+by both the authority and every reservation token.  Parent and child identities
+are checked before and after DB/lock opens and around SQLite use; DB/lock files
+must be regular, single-link, owner-owned and private, and SQLite is opened with
+`SQLITE_OPEN_NOFOLLOW`.  Any mismatch fails closed as `PathReplaced`.
+
 ## Storage and restart invariants
 
 - schema version is bumped to v2 with no implicit v1 migration;
@@ -72,7 +94,9 @@ A rejected or foreign-namespace floor leaves all tombstones unchanged.
 - rich rows and tombstones may not overlap;
 - all tombstone widths, states, zero/nonzero relations and digests are audited
   on every open;
-- combined rich+tombstone inventory remains capped at 1,000,000 rows;
+- the combined rich+tombstone inventory cap is a full-table total across every
+  namespace (1,000,000 rows), while replay lookups, validation and retained-row
+  reporting remain bound to the opened namespace;
 - each compact or purge call is capped at 4,096 rows;
 - tombstone digest tamper, cross-table overlap, malformed terminal evidence and
   partial compaction are rejected.
@@ -92,11 +116,24 @@ cargo test --manifest-path trillionnium/Cargo.toml \
   tx_admission_wal::tests -- --nocapture
 ```
 
+The package gate markers for this hardening are
+`tx_admission_path_ancestry_identity_fence = true`,
+`tx_admission_global_inventory_cap = true`,
+`tx_admission_replay_floor_verifier_sealed = true`, and
+`tx_admission_native_commit_verifier_sealed = true` in the crate metadata,
+plus the exported candidate-only constants
+`TX_ADMISSION_WAL_PATH_IDENTITY_FENCE_V0`,
+`TX_ADMISSION_WAL_GLOBAL_INVENTORY_CAP_V0`, and
+`TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1`, and
+`TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1`.  All production/activation
+markers remain false.
+
 ## Non-claims
 
 This slice does not provide the production application nonce-floor verifier,
 production CheckTx, transaction execution/broadcast, cross-database commit,
 external anti-rollback custody, physical power-loss evidence, independent
 review, multi-host campaign, audit, soak, public-testnet readiness, release
-readiness or production consensus activation. The generic verifier seam is an
-integration point, not permission to accept caller assertions.
+readiness or production consensus activation.  The authenticated application
+and finality owner is still absent; keeping the verifier seam crate-private is
+an API capability fence, not evidence that production readback exists.

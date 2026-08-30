@@ -16,6 +16,7 @@ node-event-wal = ["dep:libc"]
 # broadcast in the default node.
 tx-admission-wal = [
   "dep:libc",
+  "dep:rustix",
   "dep:trnm-mempool",
   "dep:trnm-application-tx-builder-v0",
 ]
@@ -136,6 +137,10 @@ tx_admission_tombstone_compaction = true
 tx_admission_tombstone_authenticated_purge = true
 tx_admission_tombstone_gc_production = false
 tx_admission_replay_floor_native_integration = false
+tx_admission_replay_floor_verifier_sealed = true
+tx_admission_native_commit_verifier_sealed = true
+tx_admission_global_inventory_cap = true
+tx_admission_path_ancestry_identity_fence = true
 fixture_raw_key_feature_only = true
 production_raw_key_dependency = false
 lab_raw_key_split_complete = false

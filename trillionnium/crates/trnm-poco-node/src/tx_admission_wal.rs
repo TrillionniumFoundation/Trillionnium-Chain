@@ -48,7 +48,7 @@ use std::{
 };
 
 use fs2::FileExt;
-use rusqlite::{params, Connection, OptionalExtension, TransactionBehavior};
+use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
 use trnm_application_tx_builder_v0::{BuiltCanonicalTxAdmissionViewV0, BuiltCanonicalTxV0};
 use trnm_consensus_types::{BlockId, FinalityProofV0, Height, StateRoot};
@@ -108,6 +108,17 @@ pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
 /// finality proof lifetimes.
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
+/// Native commit-receipt verification is sealed to implementations owned by
+/// this crate.  This is a capability marker only; production activation stays
+/// disabled until an authenticated application/finality owner is installed.
+#[allow(dead_code)]
+pub const TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1: bool = true;
+/// Candidate hardening markers consumed by the A20 package gate.  These are
+/// descriptive contract facts; none of them enables production admission.
+#[allow(dead_code)]
+pub const TX_ADMISSION_WAL_GLOBAL_INVENTORY_CAP_V0: bool = true;
+#[allow(dead_code)]
+pub const TX_ADMISSION_WAL_PATH_IDENTITY_FENCE_V0: bool = true;
 
 // Version 2 adds the authenticated replay-tombstone table.  There is no
 // implicit in-place migration: an existing v1 file is rejected so replay
@@ -257,6 +268,12 @@ struct PathIdentityV0 {
     device: u64,
     #[cfg(unix)]
     inode: u64,
+    #[cfg(unix)]
+    uid: u32,
+    #[cfg(unix)]
+    gid: u32,
+    #[cfg(unix)]
+    mode: u32,
 }
 
 #[cfg(unix)]
@@ -266,6 +283,9 @@ impl PathIdentityV0 {
         Self {
             device: metadata.dev(),
             inode: metadata.ino(),
+            uid: metadata.uid(),
+            gid: metadata.gid(),
+            mode: metadata.mode() & 0o7777,
         }
     }
 
@@ -542,11 +562,40 @@ impl NativeCommitReceiptEvidenceV0 {
     }
 }
 
-/// Explicit verifier boundary for the application store and native PoCO
+mod native_commit_receipt_verifier_seal_v1 {
+    pub trait Sealed {}
+}
+
+/// Crate-owned verifier boundary for the application store and native PoCO
 /// finality proof. A production implementation must read back the exact
 /// transaction/result from durable application state and independently verify
 /// the finalized block/QC before returning `Ok(())`.
-pub trait NativeCommitReceiptVerifierV0 {
+///
+/// The supertrait is private by design: downstream crates may call the public
+/// verification API but cannot install an always-accept verifier and mint a
+/// durable commit capability from caller assertions.
+///
+/// ```compile_fail
+/// use trnm_poco_node::{
+///     NativeCommitReceiptEvidenceV0, NativeCommitReceiptVerifierV0,
+///     TxAdmissionWalErrorV0,
+/// };
+/// use trnm_mempool::SignedEnvelopeMetadata;
+///
+/// struct ForgedAlwaysAcceptCommitVerifier;
+///
+/// impl NativeCommitReceiptVerifierV0 for ForgedAlwaysAcceptCommitVerifier {
+///     fn verify_application_and_finality_v0(
+///         &self,
+///         _metadata: &SignedEnvelopeMetadata,
+///         _evidence: &NativeCommitReceiptEvidenceV0,
+///     ) -> Result<(), TxAdmissionWalErrorV0> {
+///         Ok(())
+///     }
+/// }
+/// ```
+#[allow(private_bounds)]
+pub trait NativeCommitReceiptVerifierV0: native_commit_receipt_verifier_seal_v1::Sealed {
     fn verify_application_and_finality_v0(
         &self,
         metadata: &SignedEnvelopeMetadata,
@@ -705,6 +754,8 @@ fn validate_native_readback_binding_v0(
     }
     Ok(())
 }
+
+impl native_commit_receipt_verifier_seal_v1::Sealed for DurableNativeCommitReceiptVerifierV0<'_> {}
 
 impl NativeCommitReceiptVerifierV0 for DurableNativeCommitReceiptVerifierV0<'_> {
     fn verify_application_and_finality_v0(
@@ -878,10 +929,49 @@ fn validate_parent_v0(path: &Path) -> Result<&Path, TxAdmissionWalErrorV0> {
         return Err(TxAdmissionWalErrorV0::InvalidPath);
     }
     let parent = path.parent().ok_or(TxAdmissionWalErrorV0::InvalidPath)?;
-    let metadata = fs::symlink_metadata(parent).map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
-    if metadata.file_type().is_symlink() || !metadata.is_dir() {
-        return Err(TxAdmissionWalErrorV0::InvalidPath);
+
+    // The WAL and its sidecars are authority state.  Every existing directory
+    // component is therefore checked before any child pathname is opened.  A
+    // root-owned sticky directory (notably `/tmp`, used by the candidate
+    // fixtures) is the one intentional writable exception: the kernel prevents
+    // an unrelated owner from replacing an existing child there.  Other
+    // group/world-writable ancestors would make the name-to-inode check below
+    // susceptible to a same-group pathname swap and are rejected.
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::{MetadataExt, PermissionsExt};
+        let current_uid = rustix::process::geteuid().as_raw();
+        let mut ancestor = parent;
+        loop {
+            let metadata =
+                fs::symlink_metadata(ancestor).map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
+            let mode = metadata.permissions().mode() & 0o7777;
+            let root_sticky = metadata.uid() == 0 && mode & 0o1000 != 0;
+            let owner_ok = metadata.uid() == current_uid || metadata.uid() == 0;
+            if metadata.file_type().is_symlink()
+                || !metadata.is_dir()
+                || !owner_ok
+                || (mode & 0o022 != 0 && !root_sticky)
+            {
+                return Err(TxAdmissionWalErrorV0::InvalidPath);
+            }
+            if ancestor == Path::new("/") {
+                break;
+            }
+            ancestor = ancestor
+                .parent()
+                .ok_or(TxAdmissionWalErrorV0::InvalidPath)?;
+        }
     }
+    #[cfg(not(unix))]
+    {
+        let metadata =
+            fs::symlink_metadata(parent).map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
+        if metadata.file_type().is_symlink() || !metadata.is_dir() {
+            return Err(TxAdmissionWalErrorV0::InvalidPath);
+        }
+    }
+
     let canonical = fs::canonicalize(parent).map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
     if canonical != parent {
         return Err(TxAdmissionWalErrorV0::InvalidPath);
@@ -889,12 +979,90 @@ fn validate_parent_v0(path: &Path) -> Result<&Path, TxAdmissionWalErrorV0> {
     Ok(parent)
 }
 
+/// Capture the immediate parent identity before opening either the database or
+/// its lock.  The binding is retained by the live authority and every
+/// reservation token, so a directory replacement cannot silently redirect a
+/// later SQLite operation to another namespace.
+fn capture_parent_v0(
+    path: &Path,
+) -> Result<(PathBuf, Rc<File>, PathIdentityV0), TxAdmissionWalErrorV0> {
+    let parent = validate_parent_v0(path)?.to_path_buf();
+    let metadata = fs::symlink_metadata(&parent).map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err(TxAdmissionWalErrorV0::InvalidPath);
+    }
+    let mut options = OpenOptions::new();
+    options.read(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.custom_flags(libc::O_CLOEXEC | libc::O_NOFOLLOW | libc::O_DIRECTORY);
+    }
+    let handle = options
+        .open(&parent)
+        .map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
+    let handle_metadata = handle
+        .metadata()
+        .map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
+    let identity = PathIdentityV0::from_metadata(&metadata);
+    if !is_private_directory_v0(&handle_metadata)
+        || PathIdentityV0::from_metadata(&handle_metadata) != identity
+    {
+        return Err(TxAdmissionWalErrorV0::InvalidPath);
+    }
+    Ok((parent, Rc::new(handle), identity))
+}
+
+/// Recheck the parent pathname and its metadata against the identity captured
+/// before opening a child.  A failed recheck is reported as `PathReplaced` so
+/// callers never continue with a partially fenced authority.
+fn ensure_parent_identity_v0(
+    path: &Path,
+    expected_parent: &Path,
+    expected: PathIdentityV0,
+) -> Result<(), TxAdmissionWalErrorV0> {
+    let parent = validate_parent_v0(path).map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
+    if parent != expected_parent {
+        return Err(TxAdmissionWalErrorV0::PathReplaced);
+    }
+    let metadata = fs::symlink_metadata(parent).map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
+    if metadata.file_type().is_symlink()
+        || !metadata.is_dir()
+        || PathIdentityV0::from_metadata(&metadata) != expected
+    {
+        return Err(TxAdmissionWalErrorV0::PathReplaced);
+    }
+    Ok(())
+}
+
+fn ensure_parent_handle_identity_v0(
+    path: &Path,
+    expected_parent: &Path,
+    expected: PathIdentityV0,
+    handle: &File,
+) -> Result<(), TxAdmissionWalErrorV0> {
+    ensure_parent_identity_v0(path, expected_parent, expected)?;
+    let metadata = handle
+        .metadata()
+        .map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
+    if !is_private_directory_v0(&metadata) || PathIdentityV0::from_metadata(&metadata) != expected {
+        return Err(TxAdmissionWalErrorV0::PathReplaced);
+    }
+    Ok(())
+}
+
 /// Validate the database path and report whether this invocation created the
 /// file.  The creation bit is part of the schema fail-closed boundary: an
 /// existing path with an empty/partial schema must never be mistaken for a
 /// virgin database and silently repaired by `CREATE TABLE IF NOT EXISTS`.
-fn ensure_regular_db_v0(path: &Path) -> Result<(PathIdentityV0, bool), TxAdmissionWalErrorV0> {
-    validate_parent_v0(path)?;
+fn ensure_regular_db_v0(
+    path: &Path,
+    parent_path: &Path,
+    parent_identity: PathIdentityV0,
+    parent_handle: &File,
+) -> Result<(PathIdentityV0, bool), TxAdmissionWalErrorV0> {
+    ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)
+        .map_err(|_| TxAdmissionWalErrorV0::InvalidPath)?;
     match fs::symlink_metadata(path) {
         Ok(metadata) => {
             if metadata.file_type().is_symlink()
@@ -917,10 +1085,13 @@ fn ensure_regular_db_v0(path: &Path) -> Result<(PathIdentityV0, bool), TxAdmissi
             let file = options.open(path).map_err(|_| TxAdmissionWalErrorV0::Io)?;
             file.sync_all().map_err(|_| TxAdmissionWalErrorV0::Io)?;
             drop(file);
-            File::open(path.parent().ok_or(TxAdmissionWalErrorV0::InvalidPath)?)
-                .map_err(|_| TxAdmissionWalErrorV0::Io)?
+            ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)
+                .map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
+            parent_handle
                 .sync_data()
                 .map_err(|_| TxAdmissionWalErrorV0::Io)?;
+            ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)
+                .map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
             let metadata = fs::symlink_metadata(path).map_err(|_| TxAdmissionWalErrorV0::Io)?;
             if metadata.file_type().is_symlink()
                 || !metadata.is_file()
@@ -934,16 +1105,27 @@ fn ensure_regular_db_v0(path: &Path) -> Result<(PathIdentityV0, bool), TxAdmissi
     }
 }
 
-fn open_lock_v0(path: &Path) -> Result<(Rc<File>, PathBuf, PathIdentityV0), TxAdmissionWalErrorV0> {
+fn open_lock_v0(
+    path: &Path,
+    parent_path: &Path,
+    parent_identity: PathIdentityV0,
+    parent_handle: &File,
+) -> Result<(Rc<File>, PathBuf, PathIdentityV0), TxAdmissionWalErrorV0> {
+    ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)?;
     let lock_path = lock_path_v0(path)?;
-    if let Ok(metadata) = fs::symlink_metadata(&lock_path) {
-        if metadata.file_type().is_symlink()
-            || !metadata.is_file()
-            || !is_private_mode_v0(&metadata)
-        {
-            return Err(TxAdmissionWalErrorV0::InvalidPath);
+    let existing_identity = match fs::symlink_metadata(&lock_path) {
+        Ok(metadata) => {
+            if metadata.file_type().is_symlink()
+                || !metadata.is_file()
+                || !is_private_mode_v0(&metadata)
+            {
+                return Err(TxAdmissionWalErrorV0::InvalidPath);
+            }
+            Some(PathIdentityV0::from_metadata(&metadata))
         }
-    }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => None,
+        Err(_) => return Err(TxAdmissionWalErrorV0::Io),
+    };
     let mut options = OpenOptions::new();
     options.read(true).write(true).create(true);
     #[cfg(unix)]
@@ -957,15 +1139,40 @@ fn open_lock_v0(path: &Path) -> Result<(Rc<File>, PathBuf, PathIdentityV0), TxAd
         .map_err(|_| TxAdmissionWalErrorV0::Io)?;
     file.try_lock_exclusive()
         .map_err(|_| TxAdmissionWalErrorV0::LockUnavailable)?;
+    ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)
+        .map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
     let lock_identity = PathIdentityV0::from_file(&file)?;
+    if !is_private_mode_v0(&file.metadata().map_err(|_| TxAdmissionWalErrorV0::Io)?)
+        || existing_identity.is_some_and(|expected| expected != lock_identity)
+    {
+        return Err(TxAdmissionWalErrorV0::PathReplaced);
+    }
     ensure_identity_v0(&lock_path, lock_identity)?;
+    ensure_parent_handle_identity_v0(path, parent_path, parent_identity, parent_handle)
+        .map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
     Ok((Rc::new(file), lock_path, lock_identity))
 }
 
 #[cfg(unix)]
 fn is_private_mode_v0(metadata: &fs::Metadata) -> bool {
-    use std::os::unix::fs::PermissionsExt;
-    metadata.permissions().mode() & 0o077 == 0
+    use std::os::unix::fs::{MetadataExt, PermissionsExt};
+    metadata.file_type().is_file()
+        && !metadata.file_type().is_symlink()
+        && metadata.nlink() == 1
+        && metadata.permissions().mode() & 0o077 == 0
+        && metadata.uid() == rustix::process::geteuid().as_raw()
+}
+
+#[cfg(unix)]
+fn is_private_directory_v0(metadata: &fs::Metadata) -> bool {
+    use std::os::unix::fs::{MetadataExt, PermissionsExt};
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return false;
+    }
+    let mode = metadata.permissions().mode() & 0o7777;
+    let root_sticky = metadata.uid() == 0 && mode & 0o1000 != 0;
+    let owner_ok = metadata.uid() == rustix::process::geteuid().as_raw() || metadata.uid() == 0;
+    owner_ok && (mode & 0o022 == 0 || root_sticky)
 }
 
 #[cfg(not(unix))]
@@ -973,10 +1180,16 @@ fn is_private_mode_v0(_metadata: &fs::Metadata) -> bool {
     true
 }
 
+#[cfg(not(unix))]
+fn is_private_directory_v0(metadata: &fs::Metadata) -> bool {
+    metadata.is_dir() && !metadata.file_type().is_symlink()
+}
+
 fn ensure_identity_v0(path: &Path, expected: PathIdentityV0) -> Result<(), TxAdmissionWalErrorV0> {
     let metadata = fs::symlink_metadata(path).map_err(|_| TxAdmissionWalErrorV0::PathReplaced)?;
     if metadata.file_type().is_symlink()
         || !metadata.is_file()
+        || !is_private_mode_v0(&metadata)
         || PathIdentityV0::from_metadata(&metadata) != expected
     {
         return Err(TxAdmissionWalErrorV0::PathReplaced);
@@ -1088,6 +1301,23 @@ fn decode_state(value: i64) -> Result<i64, TxAdmissionWalErrorV0> {
         }
         _ => Err(TxAdmissionWalErrorV0::Malformed),
     }
+}
+
+/// Count the complete rich-plus-compact inventory before any namespace-local
+/// validator allocates row keys.  Replay lookups and row validation remain
+/// namespace-bound; only the resource cap is intentionally global to this
+/// SQLite authority so a foreign namespace cannot consume unbounded restart
+/// work while the selected namespace still appears empty.
+fn total_inventory_count_v0(connection: &Connection) -> Result<usize, TxAdmissionWalErrorV0> {
+    let count: i64 = connection
+        .query_row(
+            "SELECT (SELECT COUNT(*) FROM pending_nonce)
+             + (SELECT COUNT(*) FROM tx_admission_tombstone_v1)",
+            [],
+            |row| row.get(0),
+        )
+        .map_err(sqlite_error)?;
+    usize::try_from(count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)
 }
 
 fn read_row_v0(
@@ -1354,6 +1584,9 @@ pub struct SqlitePendingNonceAuthorityV0 {
     lock_identity: PathIdentityV0,
     path: PathBuf,
     path_identity: PathIdentityV0,
+    parent_path: PathBuf,
+    parent_handle: Rc<File>,
+    parent_identity: PathIdentityV0,
     namespace: [u8; 32],
 }
 
@@ -1908,14 +2141,25 @@ impl SqlitePendingNonceAuthorityV0 {
             return Err(TxAdmissionWalErrorV0::InvalidNamespace);
         }
         let path = path.as_ref().to_path_buf();
-        let (path_identity, created_new) = ensure_regular_db_v0(&path)?;
-        let (lock, lock_path, lock_identity) = open_lock_v0(&path)?;
+        let (parent_path, parent_handle, parent_identity) = capture_parent_v0(&path)?;
+        let (path_identity, created_new) =
+            ensure_regular_db_v0(&path, &parent_path, parent_identity, &parent_handle)?;
+        let (lock, lock_path, lock_identity) =
+            open_lock_v0(&path, &parent_path, parent_identity, &parent_handle)?;
+        ensure_parent_handle_identity_v0(&path, &parent_path, parent_identity, &parent_handle)?;
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
-        let connection = Connection::open(&path).map_err(sqlite_error)?;
+        let connection = Connection::open_with_flags(
+            &path,
+            OpenFlags::SQLITE_OPEN_READ_WRITE
+                | OpenFlags::SQLITE_OPEN_NO_MUTEX
+                | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+        )
+        .map_err(sqlite_error)?;
         // The first identity check protects the name-to-inode transition around
         // SQLite open. A second fence below catches a replacement which raced
         // that open before any schema/WAL write is attempted.
+        ensure_parent_handle_identity_v0(&path, &parent_path, parent_identity, &parent_handle)?;
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         connection
@@ -1963,6 +2207,7 @@ impl SqlitePendingNonceAuthorityV0 {
         if !journal_mode.eq_ignore_ascii_case("wal") || synchronous != 2 {
             return Err(TxAdmissionWalErrorV0::Sqlite);
         }
+        ensure_parent_handle_identity_v0(&path, &parent_path, parent_identity, &parent_handle)?;
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         // Recheck after initialization to bind the exact schema that will be
@@ -2010,15 +2255,7 @@ impl SqlitePendingNonceAuthorityV0 {
         // decodes any attacker-controlled rows.  A copied SQLite file can be
         // much larger than the live admission capacity; checking the count
         // first keeps restart cost fail-closed and memory-bounded.
-        let row_count: i64 = connection
-            .query_row(
-                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1)
-                 + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
-                params![namespace.as_slice()],
-                |row| row.get(0),
-            )
-            .map_err(sqlite_error)?;
-        let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+        let row_count = total_inventory_count_v0(&connection)?;
         if row_count > MAX_RESERVATION_ROWS_V0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
@@ -2035,6 +2272,7 @@ impl SqlitePendingNonceAuthorityV0 {
         if handed_off != 0 && !allow_handed_off {
             return Err(TxAdmissionWalErrorV0::AmbiguousHandoff);
         }
+        ensure_parent_handle_identity_v0(&path, &parent_path, parent_identity, &parent_handle)?;
         ensure_identity_v0(&path, path_identity)?;
         ensure_open_lock_identity_v0(&lock_path, lock_identity, &lock)?;
         Ok(Self {
@@ -2044,6 +2282,9 @@ impl SqlitePendingNonceAuthorityV0 {
             lock_identity,
             path,
             path_identity,
+            parent_path,
+            parent_handle,
+            parent_identity,
             namespace,
         })
     }
@@ -2145,6 +2386,12 @@ impl SqlitePendingNonceAuthorityV0 {
     }
 
     fn ensure_identity(&self) -> Result<(), TxAdmissionWalErrorV0> {
+        ensure_parent_handle_identity_v0(
+            &self.path,
+            &self.parent_path,
+            self.parent_identity,
+            &self.parent_handle,
+        )?;
         ensure_identity_v0(&self.path, self.path_identity)?;
         ensure_open_lock_identity_v0(&self.lock_path, self.lock_identity, &self.lock)
     }
@@ -2184,6 +2431,9 @@ impl SqlitePendingNonceAuthorityV0 {
                 lock_identity: self.lock_identity,
                 path: self.path.clone(),
                 path_identity: self.path_identity,
+                parent_path: self.parent_path.clone(),
+                parent_handle: Rc::clone(&self.parent_handle),
+                parent_identity: self.parent_identity,
                 namespace: self.namespace,
                 record: expected,
                 state: STATE_RESERVED_V0,
@@ -2204,15 +2454,7 @@ impl SqlitePendingNonceAuthorityV0 {
         if read_state_by_digest_v0(&transaction, self.namespace, expected.digest)?.is_some() {
             return Err(TxAdmissionWalErrorV0::Replay);
         }
-        let row_count: i64 = transaction
-            .query_row(
-                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1)
-                 + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
-                params![self.namespace.as_slice()],
-                |row| row.get(0),
-            )
-            .map_err(sqlite_error)?;
-        let row_count = usize::try_from(row_count).map_err(|_| TxAdmissionWalErrorV0::TooLarge)?;
+        let row_count = total_inventory_count_v0(&transaction)?;
         if row_count >= MAX_RESERVATION_ROWS_V0 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
@@ -2248,6 +2490,9 @@ impl SqlitePendingNonceAuthorityV0 {
             lock_identity: self.lock_identity,
             path: self.path.clone(),
             path_identity: self.path_identity,
+            parent_path: self.parent_path.clone(),
+            parent_handle: Rc::clone(&self.parent_handle),
+            parent_identity: self.parent_identity,
             namespace: self.namespace,
             record: expected,
             state: STATE_RESERVED_V0,
@@ -2392,6 +2637,9 @@ struct SqlitePendingNonceReservationV0 {
     lock_identity: PathIdentityV0,
     path: PathBuf,
     path_identity: PathIdentityV0,
+    parent_path: PathBuf,
+    parent_handle: Rc<File>,
+    parent_identity: PathIdentityV0,
     namespace: [u8; 32],
     record: AdmissionRecordV0,
     state: i64,
@@ -2399,11 +2647,17 @@ struct SqlitePendingNonceReservationV0 {
 
 impl SqlitePendingNonceReservationV0 {
     fn ensure_identity(&self) -> Result<(), AdmissionReject> {
-        ensure_identity_v0(&self.path, self.path_identity)
-            .and_then(|()| {
-                ensure_open_lock_identity_v0(&self.lock_path, self.lock_identity, &self._lock)
-            })
-            .map_err(|_| AdmissionReject::InconsistentState)
+        ensure_parent_handle_identity_v0(
+            &self.path,
+            &self.parent_path,
+            self.parent_identity,
+            &self.parent_handle,
+        )
+        .and_then(|()| ensure_identity_v0(&self.path, self.path_identity))
+        .and_then(|()| {
+            ensure_open_lock_identity_v0(&self.lock_path, self.lock_identity, &self._lock)
+        })
+        .map_err(|_| AdmissionReject::InconsistentState)
     }
 
     fn transition(&mut self, target_state: i64) -> Result<(), AdmissionReject> {
@@ -2709,6 +2963,8 @@ mod tests {
 
     struct AcceptingCommitVerifier;
 
+    impl super::native_commit_receipt_verifier_seal_v1::Sealed for AcceptingCommitVerifier {}
+
     impl NativeCommitReceiptVerifierV0 for AcceptingCommitVerifier {
         fn verify_application_and_finality_v0(
             &self,
@@ -2724,6 +2980,8 @@ mod tests {
 
     struct RejectingCommitVerifier;
 
+    impl super::native_commit_receipt_verifier_seal_v1::Sealed for RejectingCommitVerifier {}
+
     impl NativeCommitReceiptVerifierV0 for RejectingCommitVerifier {
         fn verify_application_and_finality_v0(
             &self,
@@ -2732,6 +2990,13 @@ mod tests {
         ) -> Result<(), TxAdmissionWalErrorV0> {
             Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable)
         }
+    }
+
+    #[test]
+    fn native_commit_verifier_authority_is_sealed_v1() {
+        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
+        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
+        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
     }
 
     fn fixture() -> FixtureEnvelope {
@@ -3149,6 +3414,91 @@ mod tests {
             .unwrap();
         drop(connection);
         drop(authority);
+    }
+
+    #[test]
+    fn global_inventory_count_preserves_namespace_row_semantics() {
+        let path = temp_path();
+        let namespace = [0xC1u8; 32];
+        let foreign_namespace = [0xC2u8; 32];
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        {
+            let connection = authority.connection.borrow();
+            connection
+                .execute(
+                    "INSERT INTO pending_nonce
+                     (namespace, signer, nonce, digest, body_digest, fee_limit,
+                      max_gas, max_bytes, state)
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                    params![
+                        foreign_namespace.as_slice(),
+                        [0xC3u8; 32].as_slice(),
+                        to_blob_u64(1).as_slice(),
+                        [0xC4u8; 32].as_slice(),
+                        [0xC5u8; 32].as_slice(),
+                        to_blob_u128(17).as_slice(),
+                        to_blob_u64(10_000).as_slice(),
+                        to_blob_u64(512).as_slice(),
+                        STATE_RESERVED_V0,
+                    ],
+                )
+                .unwrap();
+            assert_eq!(total_inventory_count_v0(&connection).unwrap(), 1);
+        }
+        // Capacity accounting sees every table row, while the public retained
+        // count and replay validators remain bound to the opened namespace.
+        assert_eq!(authority.retained_rows().unwrap(), 0);
+        drop(authority);
+        let reopened = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        assert_eq!(reopened.retained_rows().unwrap(), 0);
+        drop(reopened);
+        cleanup(&path);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn parent_directory_mode_and_identity_are_fenced() {
+        use std::os::unix::fs::{MetadataExt, PermissionsExt};
+
+        let directory = temp_path();
+        fs::create_dir(&directory).unwrap();
+        fs::set_permissions(&directory, fs::Permissions::from_mode(0o770)).unwrap();
+        let path = directory.join("authority.sqlite");
+        assert_eq!(
+            SqlitePendingNonceAuthorityV0::open(&path, [0xD1u8; 32]).unwrap_err(),
+            TxAdmissionWalErrorV0::InvalidPath
+        );
+
+        fs::set_permissions(&directory, fs::Permissions::from_mode(0o700)).unwrap();
+        let authority = SqlitePendingNonceAuthorityV0::open(&path, [0xD1u8; 32]).unwrap();
+        let before = fs::symlink_metadata(&directory).unwrap();
+        assert_eq!(before.uid(), rustix::process::geteuid().as_raw());
+        fs::set_permissions(&directory, fs::Permissions::from_mode(0o770)).unwrap();
+        assert_eq!(
+            authority.retained_rows().unwrap_err(),
+            TxAdmissionWalErrorV0::PathReplaced
+        );
+        // Restore permissions so cleanup remains deterministic, then replace
+        // the directory name with a fresh inode and verify the descriptor fence.
+        fs::set_permissions(&directory, fs::Permissions::from_mode(0o700)).unwrap();
+        let moved = directory.with_file_name(format!(
+            "{}.moved-{}",
+            directory.file_name().unwrap().to_string_lossy(),
+            NEXT_PATH_V0.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::rename(&directory, &moved).unwrap();
+        fs::create_dir(&directory).unwrap();
+        fs::set_permissions(&directory, fs::Permissions::from_mode(0o700)).unwrap();
+        assert_eq!(
+            authority.retained_rows().unwrap_err(),
+            TxAdmissionWalErrorV0::PathReplaced
+        );
+        drop(authority);
+        cleanup(&path);
+        let moved_path = moved.join("authority.sqlite");
+        cleanup(&moved_path);
+        let _ = fs::remove_dir(&directory);
+        let _ = fs::remove_dir(&moved);
     }
 
     #[test]

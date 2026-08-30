@@ -10,7 +10,12 @@ pub const TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1: bool = true;
 /// Neither compaction nor purge activates production transaction admission.
 #[allow(dead_code)]
 pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;
-
+/// The replay-floor verifier is an owner-only crate boundary.  Keeping the
+/// trait and its minting method private prevents downstream callers from
+/// implementing an unconditional `Ok(())` verifier and manufacturing the
+/// purge capability without an authenticated application/finality owner.
+#[allow(dead_code)]
+pub const TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1: bool = true;
 /// Keep the candidate lifecycle truth executable at the Rust boundary.  This
 /// intentionally does not mean that production admission is active: the
 /// production flag must remain false until an external application/finality
@@ -18,6 +23,7 @@ pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;
 const fn tombstone_gc_candidate_contract_v1() -> bool {
     TX_ADMISSION_TOMBSTONE_COMPACTION_V1
         && TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1
+        && TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1
         && !TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1
 }
 
@@ -126,7 +132,8 @@ impl TxAdmissionReplayFloorEvidenceV1 {
         self.retention_policy_digest
     }
 
-    pub fn verify_with<V: TxAdmissionReplayFloorVerifierV1 + ?Sized>(
+    #[allow(dead_code)]
+    pub(crate) fn verify_with<V: TxAdmissionReplayFloorVerifierV1 + ?Sized>(
         self,
         verifier: &V,
     ) -> Result<VerifiedTxAdmissionReplayFloorV1, TxAdmissionWalErrorV0> {
@@ -138,7 +145,14 @@ impl TxAdmissionReplayFloorEvidenceV1 {
     }
 }
 
-pub trait TxAdmissionReplayFloorVerifierV1: fmt::Debug {
+#[allow(dead_code)]
+mod replay_floor_verifier_seal_v1 {
+    pub trait Sealed {}
+}
+
+pub(crate) trait TxAdmissionReplayFloorVerifierV1:
+    replay_floor_verifier_seal_v1::Sealed + fmt::Debug
+{
     fn verify_replay_floor_v1(
         &self,
         evidence: &TxAdmissionReplayFloorEvidenceV1,
@@ -632,6 +646,8 @@ mod tombstone_gc_tests_v1 {
     #[derive(Debug)]
     struct AcceptFloorV1;
 
+    impl super::replay_floor_verifier_seal_v1::Sealed for AcceptFloorV1 {}
+
     impl TxAdmissionReplayFloorVerifierV1 for AcceptFloorV1 {
         fn verify_replay_floor_v1(
             &self,
@@ -644,6 +660,8 @@ mod tombstone_gc_tests_v1 {
     #[derive(Debug)]
     struct RejectFloorV1;
 
+    impl super::replay_floor_verifier_seal_v1::Sealed for RejectFloorV1 {}
+
     impl TxAdmissionReplayFloorVerifierV1 for RejectFloorV1 {
         fn verify_replay_floor_v1(
             &self,
@@ -651,6 +669,13 @@ mod tombstone_gc_tests_v1 {
         ) -> Result<(), TxAdmissionWalErrorV0> {
             Err(TxAdmissionWalErrorV0::CommitReadbackUnavailable)
         }
+    }
+
+    #[test]
+    fn replay_floor_verifier_authority_is_sealed_v1() {
+        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);
+        assert!(tombstone_gc_candidate_contract_v1());
+        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);
     }
 
     fn temp_path_v1() -> PathBuf {
