@@ -141,8 +141,8 @@ jobs:
           cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
           cargo test --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
           cargo clippy --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib -- -D warnings
-          bash world/scripts/check-trnm-settlement-transaction-boundary.sh
-          bash world/scripts/check_trnm_settlement_transaction_boundary.sh
+          (cd world && bash scripts/check-trnm-settlement-transaction-boundary.sh)
+          (cd world && bash scripts/check_trnm_settlement_transaction_boundary.sh)
           git -C world diff --check
 
       - name: Bind materialization evidence
