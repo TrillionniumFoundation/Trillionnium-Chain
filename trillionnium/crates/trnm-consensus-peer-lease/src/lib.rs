@@ -40,10 +40,19 @@ pub use payload_recovery::{
     PayloadReplayRecoveryTargetV1, PAYLOAD_REPLAY_CORE_ACK_ATOMIC_WITH_CORE_V1,
     PAYLOAD_REPLAY_CORE_ACK_LEDGER_CANDIDATE_V1,
     PAYLOAD_REPLAY_EXTERNAL_RECOVERY_OWNER_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1,
     PAYLOAD_REPLAY_RECOVERY_PRODUCTION_ACTIVATION_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_CANDIDATE_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_PRODUCTION_ACTIVATION_V1,
     PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_SCHEMA_V1,
+};
+#[cfg(unix)]
+pub use payload_recovery::{
+    PayloadReplayRecoveryClientV1, PayloadReplayRecoveryDaemonV1, PayloadReplayRecoverySocketAckV1,
+    PayloadReplayRecoverySocketErrorV1, PayloadReplayRecoverySocketStatusV1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_SCHEMA_V1,
 };
 pub use protocol::{
     LeaseRejectCodeV1, PeerLeaseDirectionV1, PeerLeaseErrorV1, PeerLeaseScopeV1, PeerLeaseTokenV1,
@@ -97,6 +106,10 @@ mod source_truth_tests {
             "payload_replay_body_store_candidate = true",
             "payload_replay_body_store_production_activation = false",
             "payload_replay_external_recovery_owner_candidate = true",
+            "payload_replay_recovery_socket_candidate = true",
+            "payload_replay_recovery_socket_peer_credentials = true",
+            "payload_replay_recovery_socket_mac = false",
+            "payload_replay_recovery_socket_production_activation = false",
             "payload_replay_core_ack_ledger_candidate = true",
         ] {
             assert!(

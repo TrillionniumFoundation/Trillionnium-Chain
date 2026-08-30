@@ -17,7 +17,9 @@ rustfmt --edition 2021 --check \
   "$recovery_root/part_04_io_ack.rs" \
   "$recovery_root/part_05_tests.rs" \
   "$recovery_root/part_06_projection.rs" \
-  trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs
+  "$recovery_root/part_07_socket.rs" \
+  trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-v1.rs \
+  trillionnium/crates/trnm-consensus-peer-lease/src/bin/trnm-payload-replay-recovery-owner-v1.rs
 cargo test --manifest-path "$manifest" --locked -p "$package" -- --test-threads=1
 cargo clippy --manifest-path "$manifest" --locked -p "$package" --all-targets -- -D warnings
 
@@ -32,14 +34,18 @@ implementation_root = Path(
 implementation_parts = sorted(Path(
     "trillionnium/crates/trnm-consensus-peer-lease/src/payload_recovery"
 ).glob("part_*.rs"))
-if len(implementation_parts) != 6:
-    raise SystemExit("payload replay recovery implementation must have six source units")
+if len(implementation_parts) != 7:
+    raise SystemExit("payload replay recovery implementation must have seven source units")
 implementation = implementation_root + "\n" + "\n".join(
     path.read_text() for path in implementation_parts
 )
 cli = Path(
     "trillionnium/crates/trnm-consensus-peer-lease/src/bin/"
     "trnm-payload-replay-recovery-v1.rs"
+).read_text()
+owner_cli = Path(
+    "trillionnium/crates/trnm-consensus-peer-lease/src/bin/"
+    "trnm-payload-replay-recovery-owner-v1.rs"
 ).read_text()
 package = Path(
     "docs/development/packages/"
@@ -51,6 +57,10 @@ workflow = Path(
 
 required_manifest = {
     "payload_replay_external_recovery_owner_candidate = true",
+    "payload_replay_recovery_socket_candidate = true",
+    "payload_replay_recovery_socket_peer_credentials = true",
+    "payload_replay_recovery_socket_mac = false",
+    "payload_replay_recovery_socket_production_activation = false",
     "payload_replay_core_ack_ledger_candidate = true",
     "payload_replay_core_ack_atomic_with_core = false",
     "payload_replay_recovery_production_activation = false",
@@ -73,6 +83,12 @@ required_source = {
     "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_SCHEMA_V1",
     "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_CANDIDATE_V1",
     "PAYLOAD_REPLAY_RECOVERY_STATUS_PROJECTION_PRODUCTION_ACTIVATION_V1",
+    "PAYLOAD_REPLAY_RECOVERY_ENDPOINT_IDENTITY_SCHEMA_V1",
+    "PAYLOAD_REPLAY_RECOVERY_SOCKET_SCHEMA_V1",
+    "PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1",
+    "PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1",
+    "PayloadReplayRecoveryDaemonV1",
+    "PayloadReplayRecoveryClientV1",
 }
 for value in sorted(required_source):
     if value not in implementation or value not in crate_root:
@@ -85,6 +101,15 @@ for value in (
 ):
     if value not in cli:
         raise SystemExit(f"CLI truth output missing: {value}")
+
+for value in (
+    "candidate_only=true",
+    "production=false",
+    "atomic_with_core=false",
+    "trnm.payload-replay-recovery-owner-socket.v1",
+):
+    if value not in owner_cli:
+        raise SystemExit(f"owner CLI truth output missing: {value}")
 
 required_workflow = {
     "github.actor == 'ProfAlexQI'",

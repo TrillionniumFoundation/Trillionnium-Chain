@@ -19,6 +19,7 @@ identities.
 ### Recovery/Core acknowledgement
 
 - [`TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md`](TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md)
+- [`TRNM_G1_R1_SOCKET_OWNER_BOUNDARY_V1.md`](TRNM_G1_R1_SOCKET_OWNER_BOUNDARY_V1.md)
 - G1-R2 package and crash/evidence companions
 - Draft PRs #2 and #3 remain candidate inputs, not accepted exits
 
