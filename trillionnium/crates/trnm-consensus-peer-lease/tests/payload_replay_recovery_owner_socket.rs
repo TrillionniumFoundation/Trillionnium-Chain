@@ -7,7 +7,9 @@
 
 use std::{
     fs,
+    io::Write,
     os::unix::fs::{FileTypeExt, PermissionsExt},
+    os::unix::net::UnixStream,
     path::{Path, PathBuf},
     process::{Child, Command},
     thread,
@@ -149,6 +151,20 @@ fn stop_owner(mut child: Child, socket: &Path) {
     fs::remove_file(socket).expect("remove test-owned stale socket");
 }
 
+fn exercise_malformed_client_disconnects(socket: &Path) {
+    // A same-UID peer can reach this private candidate socket.  Closing
+    // before a frame is complete must be scoped to that accepted stream; it
+    // must not terminate the owner listener.
+    drop(UnixStream::connect(socket).expect("connect then EOF"));
+
+    // Also cover a fully connected peer that sends an invalid frame and then
+    // disconnects before the daemon can write its bounded error response.
+    let mut malformed = UnixStream::connect(socket).expect("connect malformed peer");
+    malformed
+        .write_all(b"NOPE\x01\x01\x00\x00\x00\x00\x00\x00")
+        .expect("write malformed frame");
+}
+
 #[test]
 fn persistent_owner_serves_status_ack_and_pins_endpoint_identity() {
     let root = tempfile::Builder::new()
@@ -166,6 +182,7 @@ fn persistent_owner_serves_status_ack_and_pins_endpoint_identity() {
     assert_eq!(metadata.permissions().mode() & 0o7777, 0o600);
 
     let client = PayloadReplayRecoveryClientV1::connect(&socket);
+    exercise_malformed_client_disconnects(&socket);
     let status = client.status().expect("socket status");
     assert!(status.endpoint_identity() != [0; 32]);
     assert!(matches!(

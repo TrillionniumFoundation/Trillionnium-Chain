@@ -51,6 +51,8 @@ pub use payload_recovery::{
     PayloadReplayRecoveryClientV1, PayloadReplayRecoveryDaemonV1, PayloadReplayRecoverySocketAckV1,
     PayloadReplayRecoverySocketErrorV1, PayloadReplayRecoverySocketStatusV1,
     PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_CLIENT_TRANSPORT_ERRORS_NON_FATAL_V1,
+    PAYLOAD_REPLAY_RECOVERY_SOCKET_MAX_CONCURRENT_CONNECTIONS_V1,
     PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1,
     PAYLOAD_REPLAY_RECOVERY_SOCKET_SCHEMA_V1,
 };
@@ -110,6 +112,8 @@ mod source_truth_tests {
             "payload_replay_recovery_socket_peer_credentials = true",
             "payload_replay_recovery_socket_mac = false",
             "payload_replay_recovery_socket_production_activation = false",
+            "payload_replay_recovery_socket_client_transport_errors_non_fatal = true",
+            "payload_replay_recovery_socket_max_concurrent_connections = 1",
             "payload_replay_core_ack_ledger_candidate = true",
         ] {
             assert!(

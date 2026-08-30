@@ -35,6 +35,15 @@ pub const PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1: bool = true;
 /// Production activation remains disabled.
 pub const PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1: bool = false;
 
+/// Transport failures caused by one accepted client are scoped to that
+/// connection and never stop the listener.  Durable owner identity and
+/// corruption failures retain their fail-closed policy below.
+pub const PAYLOAD_REPLAY_RECOVERY_SOCKET_CLIENT_TRANSPORT_ERRORS_NON_FATAL_V1: bool = true;
+
+/// The candidate listener intentionally serves one request at a time.  This
+/// is the explicit concurrency bound retained while isolating client faults.
+pub const PAYLOAD_REPLAY_RECOVERY_SOCKET_MAX_CONCURRENT_CONNECTIONS_V1: usize = 1;
+
 #[cfg(unix)]
 const SOCKET_PATH_MAX_BYTES_V1: usize = 103;
 #[cfg(unix)]
@@ -194,11 +203,12 @@ impl PayloadReplayRecoveryDaemonV1 {
                 self.operation_timeout,
             );
             if let Err(error) = result {
-                if is_fatal_recovery_socket_error(&error) {
-                    return Err(error);
+                if let Some(fatal) = error.into_fatal_owner() {
+                    return Err(fatal);
                 }
-                // Malformed requests, target conflicts, and explicit
-                // recovery-required responses are isolated to this stream.
+                // Non-fatal owner responses (target conflicts and explicit
+                // recovery-required states), as well as every client
+                // transport error, are isolated to this stream.
             }
         }
         Ok(())
@@ -455,6 +465,48 @@ enum RecoverySocketRequestV1 {
     },
 }
 
+/// Error provenance for one accepted recovery-socket connection.  Keeping
+/// transport/client failures separate from owner failures prevents a peer
+/// that disconnects at an unlucky point from being mistaken for a durable
+/// authority-integrity fault.
+#[cfg(unix)]
+#[derive(Debug)]
+enum RecoverySocketConnectionErrorV1 {
+    Client(PayloadReplayRecoveryErrorV1),
+    Owner(PayloadReplayRecoveryErrorV1),
+}
+
+#[cfg(unix)]
+impl RecoverySocketConnectionErrorV1 {
+    fn into_fatal_owner(self) -> Option<PayloadReplayRecoveryErrorV1> {
+        match self {
+            Self::Owner(error) if is_fatal_recovery_socket_error(&error) => Some(error),
+            Self::Client(error) | Self::Owner(error) => {
+                // Read the payload even when the caller intentionally drops
+                // this per-connection diagnostic; this keeps provenance
+                // explicit without logging attacker-controlled text.
+                let _ = error;
+                None
+            }
+        }
+    }
+}
+
+#[cfg(unix)]
+fn classify_response_write_error(
+    error: PayloadReplayRecoveryErrorV1,
+) -> RecoverySocketConnectionErrorV1 {
+    match error {
+        // All I/O returned while writing a response is peer/transport scoped.
+        // In particular, BrokenPipe/ConnectionReset/TimedOut must not stop
+        // the owner after it has already completed (or rejected) one request.
+        PayloadReplayRecoveryErrorV1::Io(_) => RecoverySocketConnectionErrorV1::Client(error),
+        // A non-I/O response construction error (for example a projection
+        // that exceeds its fixed wire bound) is an owner-side invariant.
+        _ => RecoverySocketConnectionErrorV1::Owner(error),
+    }
+}
+
 #[cfg(unix)]
 #[derive(Debug)]
 enum RecoverySocketResponseV1 {
@@ -669,17 +721,41 @@ fn authorize_recovery_peer(_stream: &UnixStream) -> Result<(), PayloadReplayReco
 }
 
 #[cfg(unix)]
+fn classify_peer_authorization_error(
+    error: PayloadReplayRecoveryErrorV1,
+) -> RecoverySocketConnectionErrorV1 {
+    match error {
+        // A successfully inspected but unauthorized UID is an untrusted
+        // client and must not be able to stop the owner listener.
+        error @ PayloadReplayRecoveryErrorV1::InvalidRequest(
+            "recovery socket peer credentials are unauthorized",
+        ) => RecoverySocketConnectionErrorV1::Client(error),
+        // Failure to obtain peer credentials is a local authentication
+        // boundary failure, not a transport event from the client.  Keep the
+        // fail-closed owner policy for this case.
+        error => RecoverySocketConnectionErrorV1::Owner(error),
+    }
+}
+
+#[cfg(unix)]
 fn serve_recovery_connection(
     stream: &mut UnixStream,
     owner: &mut PayloadReplayRecoveryOwnerV1,
     endpoint_identity: [u8; 32],
     timeout: Duration,
-) -> Result<(), PayloadReplayRecoveryErrorV1> {
+) -> Result<(), RecoverySocketConnectionErrorV1> {
     let deadline = Instant::now()
         .checked_add(timeout)
         .unwrap_or_else(Instant::now);
-    authorize_recovery_peer(stream)?;
-    let request = read_recovery_request(stream, deadline)?;
+    // A successfully authenticated-but-untrusted peer and all frame/stream
+    // failures are properties of this accepted client stream.  A peer may
+    // disconnect before sending anything, send a malformed/truncated frame,
+    // or hold a partial frame until the deadline; none of those conditions
+    // invalidate the already-open owner.  Failure of the local peer-credential
+    // lookup remains owner-fatal and is classified separately above.
+    authorize_recovery_peer(stream).map_err(classify_peer_authorization_error)?;
+    let request =
+        read_recovery_request(stream, deadline).map_err(RecoverySocketConnectionErrorV1::Client)?;
     let response = match request {
         RecoverySocketRequestV1::Status => {
             owner
@@ -699,29 +775,60 @@ fn serve_recovery_connection(
         RecoverySocketRequestV1::Acknowledge {
             core_safety_revision,
             core_ack_digest,
-        } => PayloadReplayCoreAcknowledgementV1::new(
-            owner.target(),
-            core_safety_revision,
-            core_ack_digest,
-        )
-        .and_then(|acknowledgement| owner.acknowledge_core(acknowledgement))
-        .map(|receipt| RecoverySocketResponseV1::Ack {
-            endpoint_identity,
-            receipt,
-        }),
+        } => {
+            let acknowledgement = match PayloadReplayCoreAcknowledgementV1::new(
+                owner.target(),
+                core_safety_revision,
+                core_ack_digest,
+            ) {
+                Ok(acknowledgement) => acknowledgement,
+                Err(error) => {
+                    // Revision/digest validation is driven entirely by
+                    // this client's request.  Return a bounded rejection
+                    // but keep it client-scoped rather than treating the
+                    // invalid caller fact as owner corruption.
+                    let encoded = RecoverySocketResponseV1::Error {
+                        endpoint_identity,
+                        code: recovery_error_code(&error),
+                        message: bounded_error_message(&error),
+                    };
+                    return match write_recovery_response(stream, &encoded, deadline) {
+                        Ok(()) => Err(RecoverySocketConnectionErrorV1::Client(error)),
+                        Err(write_error) => Err(classify_response_write_error(write_error)),
+                    };
+                }
+            };
+            owner
+                .acknowledge_core(acknowledgement)
+                .map(|receipt| RecoverySocketResponseV1::Ack {
+                    endpoint_identity,
+                    receipt,
+                })
+        }
     };
     match response {
-        Ok(response) => write_recovery_response(stream, &response, deadline),
+        Ok(response) => write_recovery_response(stream, &response, deadline)
+            .map_err(classify_response_write_error),
         Err(error) => {
+            // Preserve a fatal owner result even if the client closes before
+            // receiving its error response.  Otherwise a response-write
+            // BrokenPipe would hide an identity/corruption failure and let the
+            // daemon continue serving unsafe state.
+            let fatal_owner_error = is_fatal_recovery_socket_error(&error);
             let encoded = RecoverySocketResponseV1::Error {
                 endpoint_identity,
                 code: recovery_error_code(&error),
                 message: bounded_error_message(&error),
             };
-            // A response-write failure is itself ambiguous.  Return the
-            // underlying error so the daemon applies its fatal policy.
-            write_recovery_response(stream, &encoded, deadline)?;
-            Err(error)
+            match write_recovery_response(stream, &encoded, deadline) {
+                Ok(()) => Err(RecoverySocketConnectionErrorV1::Owner(error)),
+                Err(_write_error) if fatal_owner_error => {
+                    // The durable owner error always wins over a client
+                    // transport failure at this boundary.
+                    Err(RecoverySocketConnectionErrorV1::Owner(error))
+                }
+                Err(write_error) => Err(classify_response_write_error(write_error)),
+            }
         }
     }
 }
@@ -729,13 +836,11 @@ fn serve_recovery_connection(
 #[cfg(unix)]
 fn is_fatal_recovery_socket_error(error: &PayloadReplayRecoveryErrorV1) -> bool {
     match error {
-        PayloadReplayRecoveryErrorV1::InvalidRequest(reason) => {
-            reason.contains("identity")
-                || reason.contains("corrupt")
-                || reason.contains("private")
-                || reason.contains("canonical")
-                || reason.contains("socket")
-        }
+        // This helper is called only for `Owner`-provenance errors.  Every
+        // owner-side InvalidRequest therefore represents a startup/path/schema
+        // invariant (request-shape InvalidRequest values are tagged Client
+        // before reaching this function) and must fail closed.
+        PayloadReplayRecoveryErrorV1::InvalidRequest(_) => true,
         PayloadReplayRecoveryErrorV1::PayloadRecordMismatch
         | PayloadReplayRecoveryErrorV1::RecoveryRequired
         | PayloadReplayRecoveryErrorV1::AckConflict => false,
@@ -1202,5 +1307,82 @@ mod socket_tests {
         let error = PayloadReplayRecoveryErrorV1::InvalidRequest("candidate error");
         let message = bounded_error_message(&error);
         assert_eq!(message, "candidate error");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn client_transport_errors_are_not_owner_fatal() {
+        for kind in [
+            io::ErrorKind::UnexpectedEof,
+            io::ErrorKind::TimedOut,
+            io::ErrorKind::ConnectionReset,
+            io::ErrorKind::BrokenPipe,
+            io::ErrorKind::WriteZero,
+        ] {
+            let error = PayloadReplayRecoveryErrorV1::Io(io::Error::new(kind, "client"));
+            let classified = classify_response_write_error(error);
+            assert!(matches!(
+                classified,
+                RecoverySocketConnectionErrorV1::Client(_)
+            ));
+        }
+
+        // The same I/O shape returned by an owner operation remains fatal;
+        // only the typed client provenance makes transport failures safe to
+        // continue.
+        let owner_io = PayloadReplayRecoveryErrorV1::Io(io::Error::other("owner storage"));
+        assert!(is_fatal_recovery_socket_error(&owner_io));
+        assert!(matches!(
+            classify_peer_authorization_error(PayloadReplayRecoveryErrorV1::InvalidRequest(
+                "recovery socket peer credentials are unauthorized"
+            )),
+            RecoverySocketConnectionErrorV1::Client(_)
+        ));
+        assert!(matches!(
+            classify_peer_authorization_error(PayloadReplayRecoveryErrorV1::Io(io::Error::other(
+                "peer credential lookup"
+            ))),
+            RecoverySocketConnectionErrorV1::Owner(_)
+        ));
+        assert!(is_fatal_recovery_socket_error(
+            &PayloadReplayRecoveryErrorV1::InvalidRequest("owner path invariant")
+        ));
+        assert!(is_fatal_recovery_socket_error(
+            &PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt
+        ));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn truncated_and_slow_client_frames_are_tagged_client_scoped() {
+        // EOF before a complete header is the exact regression that used to
+        // bubble out of `serve_recovery_connection` as a daemon-fatal I/O
+        // error.
+        let (peer, mut server) = UnixStream::pair().expect("socket pair");
+        drop(peer);
+        let eof = read_recovery_request(&mut server, Instant::now() + Duration::from_millis(100))
+            .map_err(RecoverySocketConnectionErrorV1::Client)
+            .expect_err("EOF must reject this client");
+        assert!(matches!(
+            eof,
+            RecoverySocketConnectionErrorV1::Client(
+                PayloadReplayRecoveryErrorV1::Io(ref error)
+            ) if error.kind() == io::ErrorKind::UnexpectedEof
+        ));
+
+        // A peer that dribbles only part of a header is bounded by the same
+        // absolute deadline and is likewise isolated to its connection.
+        let (mut peer, mut server) = UnixStream::pair().expect("socket pair");
+        peer.write_all(b"TR").expect("partial header");
+        let timeout =
+            read_recovery_request(&mut server, Instant::now() + Duration::from_millis(50))
+                .map_err(RecoverySocketConnectionErrorV1::Client)
+                .expect_err("partial frame must time out");
+        assert!(matches!(
+            timeout,
+            RecoverySocketConnectionErrorV1::Client(
+                PayloadReplayRecoveryErrorV1::Io(ref error)
+            ) if error.kind() == io::ErrorKind::TimedOut
+        ));
     }
 }

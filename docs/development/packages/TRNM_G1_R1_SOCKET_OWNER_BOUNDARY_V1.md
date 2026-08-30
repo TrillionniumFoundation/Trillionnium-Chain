@@ -45,6 +45,23 @@ private parent directory and mode `0600`; a platform-specific MAC is not
 claimed.  Socket, parent-directory and owner identities are rechecked around
 each request, and all I/O uses an absolute deadline.
 
+### Per-connection failure isolation
+
+The listener is deliberately sequential (`max_concurrent_connections=1`) and
+keeps the existing five-second absolute operation deadline for each accepted
+stream.  Authentication, frame parsing, and response writes carry explicit
+client-transport provenance.  A client that authenticates to the socket but
+is not on the UID allowlist, closes at EOF, sends a truncated/invalid frame,
+times out while dribbling bytes, or resets/breaks the pipe while a response is
+written is discarded as a non-fatal connection failure; it cannot terminate
+the owner daemon.  Failure of the local peer-credential lookup, owner-side
+identity/path changes, WAL or acknowledgement corruption, and other
+fail-closed authority invariants remain fatal even when that client disconnects
+before receiving the error response.  The source marker
+`payload_replay_recovery_socket_client_transport_errors_non_fatal=true` and
+the focused process regression lock this distinction without changing any
+production activation flag.
+
 Acknowledgement is deliberately an explicit, caller-supplied Core fact.  The
 socket returns the immutable ledger receipt and exposes the existing truth:
 
@@ -70,15 +87,15 @@ metadata therefore keep production candidate and consensus activation false.
 
 ## Verification
 
-The focused package gate covers formatting, unit tests, the socket restart and
-identity-pin integration test, clippy with `-D warnings`, source/manifest truth
-checks, and the existing recovery workflow policy.  The integration test
-exercises status, identity pinning, explicit synthetic acknowledgement and
-idempotent replay across a daemon replacement; it does not represent a real
-Core acknowledgement or real-device campaign.
+The focused package gate covers formatting, unit tests, client-transport error
+classification, the daemon-survives-malformed-client regression, the socket
+restart and identity-pin integration test, clippy with `-D warnings`,
+source/manifest truth checks, and the existing recovery workflow policy.  The
+integration test exercises status, identity pinning, explicit synthetic
+acknowledgement and idempotent replay across a daemon replacement; it does not
+represent a real Core acknowledgement or real-device campaign.
 
 Remaining external blockers include real Core-owned acknowledgement wiring,
 authenticated node-to-owner deployment, MAC/host identity policy, crash and
 anti-rollback evidence on the target machine, and the broader G1 native-host
 and consensus exit gates.
-

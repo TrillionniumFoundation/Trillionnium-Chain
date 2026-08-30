@@ -51,6 +51,13 @@ package = Path(
     "docs/development/packages/"
     "TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md"
 ).read_text()
+socket_package = Path(
+    "docs/development/packages/TRNM_G1_R1_SOCKET_OWNER_BOUNDARY_V1.md"
+).read_text()
+socket_test = Path(
+    "trillionnium/crates/trnm-consensus-peer-lease/tests/"
+    "payload_replay_recovery_owner_socket.rs"
+).read_text()
 workflow = Path(
     ".github/workflows/trnm-payload-replay-recovery-v1.yml"
 ).read_text()
@@ -61,6 +68,8 @@ required_manifest = {
     "payload_replay_recovery_socket_peer_credentials = true",
     "payload_replay_recovery_socket_mac = false",
     "payload_replay_recovery_socket_production_activation = false",
+    "payload_replay_recovery_socket_client_transport_errors_non_fatal = true",
+    "payload_replay_recovery_socket_max_concurrent_connections = 1",
     "payload_replay_core_ack_ledger_candidate = true",
     "payload_replay_core_ack_atomic_with_core = false",
     "payload_replay_recovery_production_activation = false",
@@ -87,12 +96,23 @@ required_source = {
     "PAYLOAD_REPLAY_RECOVERY_SOCKET_SCHEMA_V1",
     "PAYLOAD_REPLAY_RECOVERY_SOCKET_CANDIDATE_V1",
     "PAYLOAD_REPLAY_RECOVERY_SOCKET_PRODUCTION_ACTIVATION_V1",
+    "PAYLOAD_REPLAY_RECOVERY_SOCKET_CLIENT_TRANSPORT_ERRORS_NON_FATAL_V1",
+    "PAYLOAD_REPLAY_RECOVERY_SOCKET_MAX_CONCURRENT_CONNECTIONS_V1",
     "PayloadReplayRecoveryDaemonV1",
     "PayloadReplayRecoveryClientV1",
 }
 for value in sorted(required_source):
     if value not in implementation or value not in crate_root:
         raise SystemExit(f"missing public recovery boundary: {value}")
+
+for value in (
+    "RecoverySocketConnectionErrorV1",
+    "exercise_malformed_client_disconnects",
+    "max_concurrent_connections=1",
+    "non-fatal connection",
+):
+    if value not in implementation + socket_test + socket_package:
+        raise SystemExit(f"missing recovery socket DoS hardening marker: {value}")
 
 for value in (
     "candidate_only=true",
