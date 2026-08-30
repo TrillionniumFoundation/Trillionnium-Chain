@@ -3,9 +3,13 @@
 
 The ordinary `cargo test --lib` invocation exceeded the single-job integration
 budget because hundreds of process/recovery tests were serialized behind one
-job.  This runner preserves the complete discovered test set, executes every
+job. This runner preserves the complete discovered test set, executes every
 non-ignored test exactly once in isolated test-binary processes, and fails if a
 test disappears, is selected zero times, times out, or returns non-zero.
+
+Tests that own process, socket, or filesystem lifecycle state can be assigned
+to an explicit serial phase. This avoids cross-test resource contention without
+ignoring, retrying around, or weakening any test.
 """
 
 from __future__ import annotations
@@ -161,7 +165,9 @@ def run_one_test(binary: Path, test_name: str, timeout_seconds: int) -> dict[str
     }
 
 
-def canonical_result_projection(results: Iterable[dict[str, object]]) -> list[dict[str, object]]:
+def canonical_result_projection(
+    results: Iterable[dict[str, object]],
+) -> list[dict[str, object]]:
     return [
         {
             "test": result["test"],
@@ -174,6 +180,23 @@ def canonical_result_projection(results: Iterable[dict[str, object]]) -> list[di
     ]
 
 
+def emit_progress(
+    result: dict[str, object],
+    *,
+    completed: int,
+    total: int,
+    phase: str,
+) -> None:
+    print(
+        "g1_lab_progress "
+        f"completed={completed}/{total} "
+        f"phase={phase} "
+        f"passed={str(bool(result['passed'])).lower()} "
+        f"elapsed_seconds={result['elapsed_seconds']} "
+        f"test={result['test']}"
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repository", default=".")
@@ -184,12 +207,24 @@ def main() -> int:
         type=int,
         default=REPOSITORY_MINIMUM_DISCOVERED_TESTS,
     )
+    parser.add_argument(
+        "--serial-prefix",
+        action="append",
+        default=[],
+        help=(
+            "Run matching test-name prefixes sequentially after all parallel "
+            "tests. May be supplied more than once."
+        ),
+    )
     args = parser.parse_args()
 
     if args.workers < 1 or args.workers > 32:
         raise SystemExit("workers must be in 1..32")
     if args.per_test_timeout_seconds < 60:
         raise SystemExit("per-test timeout must be at least 60 seconds")
+    serial_prefixes = tuple(dict.fromkeys(args.serial_prefix))
+    if any(not prefix for prefix in serial_prefixes):
+        raise SystemExit("serial prefixes must be non-empty")
 
     repository = Path(args.repository).resolve()
     binary = discover_test_binary(repository)
@@ -206,14 +241,39 @@ def main() -> int:
     if not runnable:
         raise SystemExit("no runnable laboratory tests discovered")
 
+    unmatched_prefixes = [
+        prefix
+        for prefix in serial_prefixes
+        if not any(test.startswith(prefix) for test in runnable)
+    ]
+    if unmatched_prefixes:
+        raise SystemExit(
+            f"serial test-prefix drift: no tests matched {unmatched_prefixes!r}"
+        )
+
+    serial_tests = [
+        test
+        for test in runnable
+        if any(test.startswith(prefix) for prefix in serial_prefixes)
+    ]
+    serial_set = set(serial_tests)
+    parallel_tests = [test for test in runnable if test not in serial_set]
+    scheduled = parallel_tests + serial_tests
+    if len(scheduled) != len(runnable) or set(scheduled) != set(runnable):
+        raise SystemExit("resource-aware schedule is not an exact runnable-test partition")
+    if len(scheduled) != len(set(scheduled)):
+        raise SystemExit("resource-aware schedule selects a test more than once")
+
     print(
         "g1_lab_discovery "
         f"binary={binary} discovered={len(all_tests)} "
         f"ignored={len(ignored_tests)} runnable={len(runnable)} "
-        f"workers={args.workers}"
+        f"parallel={len(parallel_tests)} serial={len(serial_tests)} "
+        f"workers={args.workers} serial_prefixes={','.join(serial_prefixes) or '-'}"
     )
 
     results: list[dict[str, object]] = []
+    completed = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
         future_to_test = {
             executor.submit(
@@ -222,20 +282,32 @@ def main() -> int:
                 test_name,
                 args.per_test_timeout_seconds,
             ): test_name
-            for test_name in runnable
+            for test_name in parallel_tests
         }
-        for completed, future in enumerate(
-            concurrent.futures.as_completed(future_to_test), start=1
-        ):
+        for future in concurrent.futures.as_completed(future_to_test):
             result = future.result()
             results.append(result)
-            print(
-                "g1_lab_progress "
-                f"completed={completed}/{len(runnable)} "
-                f"passed={str(bool(result['passed'])).lower()} "
-                f"elapsed_seconds={result['elapsed_seconds']} "
-                f"test={result['test']}"
+            completed += 1
+            emit_progress(
+                result,
+                completed=completed,
+                total=len(runnable),
+                phase="parallel",
             )
+
+    for test_name in serial_tests:
+        result = run_one_test(binary, test_name, args.per_test_timeout_seconds)
+        results.append(result)
+        completed += 1
+        emit_progress(
+            result,
+            completed=completed,
+            total=len(runnable),
+            phase="serial",
+        )
+
+    if completed != len(runnable) or len(results) != len(runnable):
+        raise SystemExit("not every runnable laboratory test completed exactly once")
 
     projection = canonical_result_projection(results)
     encoded = json.dumps(
@@ -243,6 +315,9 @@ def main() -> int:
             "schema": "trnm-g1-lab-validator-sharded-result-v1",
             "discovered": len(all_tests),
             "ignored": sorted(ignored_tests),
+            "parallel_tests": sorted(parallel_tests),
+            "serial_prefixes": list(serial_prefixes),
+            "serial_tests": sorted(serial_tests),
             "results": projection,
         },
         sort_keys=True,
@@ -259,7 +334,8 @@ def main() -> int:
     print(
         "g1_lab_result "
         f"passed={len(results) - len(failures)} failed={len(failures)} "
-        f"ignored={len(ignored_tests)} sha256={digest} report={report_path}"
+        f"ignored={len(ignored_tests)} parallel={len(parallel_tests)} "
+        f"serial={len(serial_tests)} sha256={digest} report={report_path}"
     )
     return 1 if failures else 0
 
