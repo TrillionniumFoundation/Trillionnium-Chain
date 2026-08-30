@@ -1,0 +1,124 @@
+name: trnm-a21-seal-native-commit-verifier
+
+on:
+  push:
+    branches:
+      - feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830
+    paths:
+      - .github/workflows/trnm-a21-seal-native-commit-verifier.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-a21-seal-native-commit-verifier-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  seal-verify-and-publish:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830' &&
+      github.actor == 'Tomasrgbsf'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact candidate branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify immutable hardening source
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "11a0e8aeac9cecfea5efb352226e337a07869fde"
+          test "$(git rev-parse HEAD^^)" = "0aeb5a797b3726c6657b003b44f7ec0040d7d423"
+          git merge-base --is-ancestor 9dfee13c02c0f3f291f838109419405fbab8c435 HEAD
+
+      - name: Install pinned Rust toolchain
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Apply sealed native commit verifier hardening
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a21_seal_native_commit_verifier.py
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm \
+            .github/workflows/trnm-a21-seal-native-commit-verifier.yml \
+            scripts/ci/a21_seal_native_commit_verifier.py
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          git diff --cached --check
+          git commit -m "fix(tx): seal native commit verifier authority"
+
+      - name: Compile complete active workspace
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+
+      - name: Enforce feature-specific zero-warning boundary
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked -- -D warnings
+
+      - name: Prove downstream commit-verifier forgery is rejected
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked
+
+      - name: Run sealed-authority and retained admission regressions
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib \
+            tx_admission_wal::tests::native_commit_verifier_authority_is_sealed_v1 \
+            -- --exact --nocapture
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib \
+            tx_admission_wal::tombstone_gc_tests_v1 -- --nocapture
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib \
+            tx_admission_wal::tests -- --nocapture
+
+      - name: Preserve fail-closed Plan and machine truth
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          python3 - <<'PY'
+          import pathlib
+          import tomllib
+
+          cargo = tomllib.loads(
+              pathlib.Path("trillionnium/crates/trnm-poco-node/Cargo.toml")
+              .read_text(encoding="utf-8")
+          )
+          metadata = cargo["package"]["metadata"]["trnm"]
+          assert metadata["tx_admission_native_commit_verifier_sealed"] is True
+          assert metadata["tx_admission_tombstone_gc"] is True
+          assert metadata["tx_admission_tombstone_authenticated_purge"] is True
+          assert metadata["tx_admission_replay_floor_verifier_sealed"] is True
+          assert metadata["tx_admission_boundary_production_activation"] is False
+          assert metadata["tx_admission_boundary_signing"] is False
+          assert metadata["tx_admission_boundary_broadcast"] is False
+          assert metadata["tx_admission_handoff_readback"] is False
+          assert metadata["production_candidate"] is False
+          assert metadata["production_consensus_activation"] is False
+          PY
+          test ! -e .github/workflows/trnm-a21-seal-native-commit-verifier.yml
+          test ! -e scripts/ci/a21_seal_native_commit_verifier.py
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish exact tested source
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830"
