@@ -33,7 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "e32024aa3f816935fae1a429672ccd04c96384a2"
+          test "$(git rev-parse HEAD^)" = "c0e044586b9fcbd7f8e3a10fae65b8399ac1d0d1"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
@@ -83,7 +83,7 @@ jobs:
           - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
           - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
 
-          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through the bounded sharded runner. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
+          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
           EOF
           git add -A
           git diff --cached --check
@@ -115,13 +115,16 @@ jobs:
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-external-watermark --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --lib --locked
 
-      - name: Run complete sharded laboratory-validator inventory
+      - name: Run complete resource-aware laboratory-validator inventory
         run: |
           set -euo pipefail
           python3 -B scripts/ci/run_g1_lab_validator_shards_v1.py \
-            --workers 8 \
+            --workers 4 \
             --minimum-discovered-tests 398 \
-            --per-test-timeout-seconds 1800
+            --per-test-timeout-seconds 1800 \
+            --serial-prefix 'consensus_runtime::' \
+            --serial-prefix 'continuous_runtime::' \
+            --serial-prefix 'process_event::'
 
       - name: Run fault, truth and repository contracts
         run: |
