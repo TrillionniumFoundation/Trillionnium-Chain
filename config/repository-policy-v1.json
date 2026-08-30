@@ -8,6 +8,7 @@
   "required_check_names": [
     "repository-truth",
     "protocol-contract",
+    "fuzz-smoke",
     "rust-baseline",
     "external-evidence-contract"
   ],
