@@ -203,8 +203,8 @@ def main() -> int:
         "trillionnium/crates/trnm-poco-node/src/main.rs",
         (
             "production_activation_gate_v0()",
-            "production_candidate=false",
-            "host_complete=false",
+            "production_candidate={PRODUCTION_CANDIDATE_V0}",
+            "host_complete={HOST_IMPLEMENTATION_COMPLETE_V0}",
         ),
     )
     require_tokens(
