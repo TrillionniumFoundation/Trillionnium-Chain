@@ -61,6 +61,16 @@ These changes are candidate work until their pull request passes on the exact
 head, receives a genuinely independent CODEOWNER review, and is integrated into
 a protected canonical branch.
 
+The current continuation branch also carries two repository-owned candidate
+projections: A19 content-addressed SQLite terminal-finalization history and A20
+authenticated transaction-admission tombstone compaction/purge.  Their exact
+boundaries and non-claims are documented in
+[`TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md`](docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md)
+and
+[`TRNM_A20_P2_TX_TOMBSTONE_GC_V1.md`](docs/development/packages/TRNM_A20_P2_TX_TOMBSTONE_GC_V1.md).
+Neither projection supplies a Core-owned production receipt, external
+anti-rollback custody, power-loss evidence, or an activation decision.
+
 ## Release-blocking repository work
 
 The canonical machine register remains the complete inventory. Major open areas

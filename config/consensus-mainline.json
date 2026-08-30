@@ -91,6 +91,63 @@
       "independent_lan_replay": false,
       "production_activation": false
     },
+    "external_recovery_status_owner": {
+      "commit": "6556fd9d5",
+      "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
+      "scope": "process",
+      "authority": "candidate",
+      "classification": "candidate-non-normative",
+      "one_shot_private_unix_owner": true,
+      "linux_same_uid_peer_credentials": true,
+      "socket_and_parent_inode_fence": true,
+      "absolute_io_deadline": true,
+      "endpoint_identity_digest_and_client_pin": true,
+      "strict_status_projection": true,
+      "explicit_core_ack_boundary": true,
+      "persistent_external_owner": false,
+      "replay_core_ack_atomic": false,
+      "mac_or_cross_platform_peer_authentication": false,
+      "production_activation": false
+    },
+    "terminal_finalization_history": {
+      "implementation_commits": [
+        "a34ae75d5",
+        "75308f1d3",
+        "4541832ea",
+        "b82bfe90c",
+        "56f637686"
+      ],
+      "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
+      "content_addressed_records": true,
+      "scope_and_initial_head_binding": true,
+      "ordered_hash_chain_audit": true,
+      "strict_sqlite_schema": true,
+      "sqlite_wal_full_sync": true,
+      "exact_replay_outcome": true,
+      "path_replacement_fail_closed": true,
+      "core_receipt_owner": false,
+      "cross_store_atomicity": false,
+      "production_application_integration": false,
+      "power_loss_evidence": false,
+      "production_activation": false
+    },
+    "tx_tombstone_gc": {
+      "implementation_commits": [
+        "603bccc32",
+        "50bf6cdc1"
+      ],
+      "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
+      "schema_version": 2,
+      "terminal_compaction": true,
+      "authenticated_nonce_floor_purge_boundary": true,
+      "replay_authoritative_tombstones": true,
+      "combined_inventory_cap": true,
+      "application_nonce_floor_verifier_installed": false,
+      "production_checktx_integration": false,
+      "production_gc": false,
+      "power_loss_evidence": false,
+      "production_activation": false
+    },
     "migration_boundary": {
       "commit": "e4581a9c1",
       "replay_writer_commit": "4958bbf17",
@@ -181,7 +238,10 @@
     "commit_receipt_apphash": false,
     "broadcast": false,
     "ambiguous_handoff_readback_resolver": false,
-    "tombstone_gc": false,
+    "tombstone_gc": true,
+    "tombstone_gc_candidate_compaction": true,
+    "tombstone_gc_candidate_authenticated_purge": true,
+    "tombstone_gc_production": false,
     "activation_manifest_test": "286ae09a9",
     "activation_manifest_requires_all_flags_false": true,
     "activation_manifest_requires_named_blockers": true
@@ -280,7 +340,7 @@
       "id": "P1-EXEC-001",
       "severity": "P1",
       "status": "open",
-      "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence remain open",
+      "evidence": "`567d24aeb` adds a live application-finalization ACK guard requiring a non-empty exact ancestor-ordered queue front and matching pending proof before any state mutation; empty/front-replacement cases are transactional and Core tests are 220/220. Candidate refs `a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c` and `56f637686` add a scope-bound content-addressed SQLite terminal-history projection with exact replay, ordered hash-chain audit and fresh readback. Full body/parent/runtime validation, a Core-owned permanent terminal execution log, cross-store atomicity, path replacement/power-loss evidence and crash/replay equivalence remain open",
       "exit": "full body/parent/runtime validation, permanent terminal execution log, and crash/replay equivalence"
     },
     {
@@ -294,14 +354,14 @@
       "id": "P2-TX-001",
       "severity": "P2",
       "status": "open",
-      "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, and an explicit authenticated HandedOff recovery seam that accepts only exact metadata plus a verified native application/finality receipt. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and tombstone GC remain absent",
+      "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b, 603bccc32, 50bf6cdc1) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, an explicit authenticated HandedOff recovery seam, and candidate schema-v2 compact replay tombstones with an authenticated nonce-floor purge boundary. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and production tombstone GC remain absent",
       "exit": "canonical envelope builder -> authoritative signer-identity and chain-context binding -> node-owned pending nonce/WAL -> production CheckTx admission -> committed receipt/AppHash replay with signer/broadcast and ambiguous-handoff resolution; CLI remains dev-only"
     },
     {
       "id": "P2-NET-001",
       "severity": "P2",
       "status": "open",
-      "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, external status/recovery, persistent handshake replay anchoring, production socket owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open",
+      "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. Candidate owner ref `6556fd9d5` adds a one-shot private status/recovery socket, endpoint identity pin, strict projection and explicit Core-ack boundary. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, persistent handshake replay anchoring, a persistent production owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open",
       "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"
     },
     {
@@ -328,6 +388,7 @@
       "id": "P3-HISTORY-001",
       "severity": "P3",
       "status": "open",
+      "evidence": "Candidate A19 durable history (`a34ae75d5`, `75308f1d3`, `4541832ea`, `b82bfe90c`, `56f637686`) and A20 replay-tombstone retention (`603bccc32`, `50bf6cdc1`) provide bounded local projections, exact replay and authenticated purge seams. A Core-owned terminal log, charging/retention governance, external anti-rollback, long-history scale and independent power-loss evidence remain absent",
       "exit": "TaskV1 terminal rows have archive/GC/retention/charging policy and long-history scale evidence"
     },
     {
