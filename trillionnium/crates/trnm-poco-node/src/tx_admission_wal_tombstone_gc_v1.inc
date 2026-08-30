@@ -2,11 +2,24 @@
 ///
 /// This boundary is candidate-only. Compaction never removes replay identity;
 /// final deletion requires a separately verified application nonce floor.
+#[allow(dead_code)]
 pub const TX_ADMISSION_TOMBSTONE_COMPACTION_V1: bool = true;
 /// A typed authenticated purge boundary exists for compact tombstones.
+#[allow(dead_code)]
 pub const TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1: bool = true;
 /// Neither compaction nor purge activates production transaction admission.
+#[allow(dead_code)]
 pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;
+
+/// Keep the candidate lifecycle truth executable at the Rust boundary.  This
+/// intentionally does not mean that production admission is active: the
+/// production flag must remain false until an external application/finality
+/// owner installs the verifier and the node composition is enabled.
+const fn tombstone_gc_candidate_contract_v1() -> bool {
+    TX_ADMISSION_TOMBSTONE_COMPACTION_V1
+        && TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1
+        && !TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1
+}
 
 const TOMBSTONE_DIGEST_DOMAIN_V1: &[u8] = b"trnm.poco-node.tx-admission-tombstone.v1";
 const REPLAY_FLOOR_DIGEST_DOMAIN_V1: &[u8] = b"trnm.poco-node.tx-replay-floor.v1";
@@ -330,6 +343,9 @@ impl SqlitePendingNonceAuthorityV0 {
         &mut self,
         max_rows: usize,
     ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {
+        if !tombstone_gc_candidate_contract_v1() {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
         if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
@@ -496,6 +512,9 @@ impl SqlitePendingNonceAuthorityV0 {
         floor: &VerifiedTxAdmissionReplayFloorV1,
         max_rows: usize,
     ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {
+        if !tombstone_gc_candidate_contract_v1() {
+            return Err(TxAdmissionWalErrorV0::Malformed);
+        }
         if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {
             return Err(TxAdmissionWalErrorV0::TooLarge);
         }
@@ -671,7 +690,7 @@ mod tombstone_gc_tests_v1 {
                     signer.as_slice(),
                     nonce.to_be_bytes().as_slice(),
                     digest.as_slice(),
-                    [0xA1; 32].as_slice(),
+                    [0xA1u8; 32].as_slice(),
                     17u128.to_be_bytes().as_slice(),
                     10_000u64.to_be_bytes().as_slice(),
                     512u64.to_be_bytes().as_slice(),
@@ -691,11 +710,11 @@ mod tombstone_gc_tests_v1 {
                         signer.as_slice(),
                         nonce.to_be_bytes().as_slice(),
                         digest.as_slice(),
-                        [0xB1; 32].as_slice(),
+                        [0xB1u8; 32].as_slice(),
                         height.to_be_bytes().as_slice(),
-                        [0xB2; 32].as_slice(),
-                        [0xB3; 32].as_slice(),
-                        [0xB4; 32].as_slice(),
+                        [0xB2u8; 32].as_slice(),
+                        [0xB3u8; 32].as_slice(),
+                        [0xB4u8; 32].as_slice(),
                         receipt_commitment.as_slice(),
                     ],
                 )
@@ -863,7 +882,7 @@ mod tombstone_gc_tests_v1 {
         connection
             .execute(
                 "UPDATE tx_admission_tombstone_v1 SET tombstone_digest = ?1",
-                params![[0xFF; 32].as_slice()],
+                params![[0xFFu8; 32].as_slice()],
             )
             .unwrap();
         drop(connection);

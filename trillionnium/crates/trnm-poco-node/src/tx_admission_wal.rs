@@ -26,6 +26,12 @@
 //! `HandedOff` -> `Released` transition: dropping a handoff token leaves the
 //! durable ambiguity in place, and only authenticated receipt recovery may
 //! resolve it.
+//!
+//! Once a terminal row has an authenticated native receipt (or an explicit
+//! released state), the candidate tombstone-GC extension may compact it into a
+//! digest-bound replay tombstone.  Physical purge still requires a private
+//! application/finality nonce-floor token; no production admission or GC path
+//! is enabled by this feature.
 
 #![cfg(feature = "tx-admission-wal")]
 
@@ -103,7 +109,10 @@ pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
 
-const SCHEMA_VERSION_V0: i64 = 1;
+// Version 2 adds the authenticated replay-tombstone table.  There is no
+// implicit in-place migration: an existing v1 file is rejected so replay
+// history can never be lost during an upgrade.
+const SCHEMA_VERSION_V0: i64 = 2;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
 const LOCK_SUFFIX_V0: &str = ".tx-admission.lock.v0";
 const MAX_RESERVATION_ROWS_V0: usize = 1_000_000;
@@ -150,6 +159,19 @@ CREATE TABLE tx_commit_receipt_v0 (
     commitment BLOB NOT NULL CHECK(length(commitment) = 32),
     PRIMARY KEY(namespace, signer, nonce),
     UNIQUE(namespace, tx_digest)
+);
+CREATE TABLE tx_admission_tombstone_v1 (
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+    signer BLOB NOT NULL CHECK(length(signer) = 32),
+    nonce BLOB NOT NULL CHECK(length(nonce) = 8),
+    tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
+    terminal_state INTEGER NOT NULL CHECK(terminal_state IN (2, 3)),
+    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),
+    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),
+    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),
+    PRIMARY KEY(namespace, signer, nonce),
+    UNIQUE(namespace, tx_digest),
+    UNIQUE(namespace, tombstone_digest)
 );
 "#;
 
@@ -1929,7 +1951,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 .execute_batch(SQLITE_SCHEMA_DDL_V0)
                 .map_err(sqlite_error)?;
             connection
-                .execute_batch("PRAGMA user_version = 1;")
+                .execute_batch("PRAGMA user_version = 2;")
                 .map_err(sqlite_error)?;
         }
         let journal_mode: String = connection
@@ -1990,7 +2012,8 @@ impl SqlitePendingNonceAuthorityV0 {
         // first keeps restart cost fail-closed and memory-bounded.
         let row_count: i64 = connection
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1)
+                 + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2001,6 +2024,7 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         validate_pending_rows_v0(&connection, namespace)?;
         validate_receipt_rows_v0(&connection, namespace)?;
+        validate_tombstone_rows_v1(&connection, namespace)?;
         let handed_off: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
@@ -2035,9 +2059,9 @@ impl SqlitePendingNonceAuthorityV0 {
         Rc::as_ptr(&self.connection) as usize as u64
     }
 
-    /// Number of rows retained for this namespace.  Released/committed rows
-    /// are deliberately retained as replay tombstones until a future,
-    /// authenticated GC policy exists.
+    /// Number of rich pending rows plus compact replay tombstones retained for
+    /// this namespace.  A tombstone remains replay-authoritative until an
+    /// authenticated application/finality nonce-floor token permits purge.
     pub fn retained_rows(&self) -> Result<usize, TxAdmissionWalErrorV0> {
         self.ensure_identity()?;
         let connection = self
@@ -2046,7 +2070,8 @@ impl SqlitePendingNonceAuthorityV0 {
             .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
         let count: i64 = connection
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1)
+                 + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![self.namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2164,12 +2189,25 @@ impl SqlitePendingNonceAuthorityV0 {
                 state: STATE_RESERVED_V0,
             });
         }
+        // A compact tombstone is just as authoritative as a rich pending
+        // row.  Check both replay coordinates before allocating a new nonce
+        // reservation so GC can never make an old transaction admissible.
+        if tombstone_exists_by_nonce_or_digest_v1(
+            &transaction,
+            self.namespace,
+            expected.signer,
+            expected.nonce,
+            expected.digest,
+        )? {
+            return Err(TxAdmissionWalErrorV0::Replay);
+        }
         if read_state_by_digest_v0(&transaction, self.namespace, expected.digest)?.is_some() {
             return Err(TxAdmissionWalErrorV0::Replay);
         }
         let row_count: i64 = transaction
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1)
+                 + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![self.namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2486,6 +2524,8 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
         | TxAdmissionWalErrorV0::TooLarge => AdmissionReject::InconsistentState,
     }
 }
+
+include!("tx_admission_wal_tombstone_gc_v1.inc");
 
 #[cfg(test)]
 mod tests {
@@ -3368,6 +3408,10 @@ mod tests {
             ("tx_admission_meta", "DROP TABLE tx_admission_meta;"),
             ("pending_nonce", "DROP TABLE pending_nonce;"),
             ("tx_commit_receipt_v0", "DROP TABLE tx_commit_receipt_v0;"),
+            (
+                "tx_admission_tombstone_v1",
+                "DROP TABLE tx_admission_tombstone_v1;",
+            ),
         ]
         .into_iter()
         .enumerate()
@@ -4479,6 +4523,66 @@ mod tests {
         assert_eq!(boundary.queued_counts(), (0, 0, 0));
         assert_eq!(boundary.retained_rows().unwrap(), 0);
         drop(boundary);
+        cleanup(&path);
+    }
+
+    #[test]
+    fn compact_tombstone_remains_replay_authoritative_for_new_admission() {
+        let path = temp_path();
+        let namespace = [0xA4; 32];
+        let signer = [0x22u8; 32];
+        let nonce = 7u64;
+        let digest = [0x11u8; 32];
+        let terminal_state = STATE_RELEASED_V0;
+        let terminal_height = 0u64;
+        let receipt_commitment = [0u8; 32];
+        let tombstone_digest = tombstone_digest_v1(
+            namespace,
+            signer,
+            nonce,
+            digest,
+            terminal_state,
+            terminal_height,
+            receipt_commitment,
+        )
+        .unwrap();
+        let mut authority = SqlitePendingNonceAuthorityV0::open(&path, namespace).unwrap();
+        {
+            let connection = authority.connection.borrow();
+            connection
+                .execute(
+                    "INSERT INTO tx_admission_tombstone_v1
+                     (namespace,signer,nonce,tx_digest,terminal_state,terminal_height,
+                      receipt_commitment,tombstone_digest)
+                     VALUES (?1,?2,?3,?4,?5,?6,?7,?8)",
+                    params![
+                        namespace.as_slice(),
+                        signer.as_slice(),
+                        nonce.to_be_bytes().as_slice(),
+                        digest.as_slice(),
+                        terminal_state,
+                        terminal_height.to_be_bytes().as_slice(),
+                        receipt_commitment.as_slice(),
+                        tombstone_digest.as_slice(),
+                    ],
+                )
+                .unwrap();
+        }
+        assert_eq!(authority.retained_rows().unwrap(), 1);
+        let envelope = fixture();
+        let mut gate = TypedAdmissionGate::with_default_body_limit(2, 0);
+        let mut hooks = Hooks;
+        assert_eq!(
+            gate.admit_signed_with_pending_nonce(
+                &envelope,
+                IngressClass::Normal,
+                &mut hooks,
+                &mut authority,
+            ),
+            TypedAdmitOutcome::Rejected(AdmissionReject::Replay)
+        );
+        assert_eq!(authority.retained_rows().unwrap(), 1);
+        drop(authority);
         cleanup(&path);
     }
 }
