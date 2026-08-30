@@ -1,0 +1,143 @@
+name: trnm-required-baseline
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-required-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  repository-truth:
+    name: repository-truth
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact source with full history
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate repository and consensus truth
+        run: python3 scripts/ci/check_repository_truth_v1.py
+
+      - name: Validate deterministic release-status projection
+        run: |
+          python3 scripts/ci/generate_release_status_v1.py \
+            --check-deterministic \
+            --output "${RUNNER_TEMP}/trnm-release-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/trnm-release-status-v1.json" >/dev/null
+
+      - name: Validate committed JSON and TOML
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import tomllib
+
+          root = pathlib.Path(".")
+          for path in sorted(root.rglob("*.json")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("r", encoding="utf-8") as handle:
+                  json.load(handle)
+          for path in sorted(root.rglob("*.toml")):
+              if any(part in {".git", "node_modules", "target"} for part in path.parts):
+                  continue
+              with path.open("rb") as handle:
+                  tomllib.load(handle)
+          PY
+
+      - name: Compile Python CI tooling
+        run: |
+          PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
+            scripts/ci/check_repository_truth_v1.py \
+            scripts/ci/generate_release_status_v1.py \
+            scripts/ci/check_external_evidence_v1.py
+
+      - name: Require generators to leave the checkout clean
+        run: |
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  external-evidence-contract:
+    name: external-evidence-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate all supplied external evidence and report open blockers
+        run: |
+          python3 scripts/ci/check_external_evidence_v1.py \
+            --output "${RUNNER_TEMP}/external-evidence-status-v1.json"
+          python3 -m json.tool "${RUNNER_TEMP}/external-evidence-status-v1.json"
+
+      - name: Prove release mode is fail-closed while evidence is absent
+        run: |
+          set +e
+          python3 scripts/ci/check_external_evidence_v1.py \
+            --require-all \
+            --source-commit "$(git rev-parse HEAD)" \
+            --source-tree "$(git rev-parse 'HEAD^{tree}')" \
+            >/tmp/trnm-external-release-gate.out 2>/tmp/trnm-external-release-gate.err
+          rc=$?
+          set -e
+          test "$rc" -eq 2
+          grep -q "external evidence gate remains open" \
+            /tmp/trnm-external-release-gate.err
+
+  rust-baseline:
+    name: rust-baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install pinned Rust toolchain
+        run: |
+          rustup toolchain install 1.95.0 \
+            --profile minimal \
+            --component rustfmt \
+            --component clippy
+          rustup override set 1.95.0
+
+      - name: Rust format
+        working-directory: trillionnium
+        run: cargo fmt --all -- --check
+
+      - name: Compile every active workspace target
+        working-directory: trillionnium
+        run: cargo check --workspace --all-targets --locked
+
+      - name: Strict Clippy for consensus safety kernel
+        working-directory: trillionnium
+        run: |
+          cargo clippy --locked --all-targets -- \
+            -D warnings
