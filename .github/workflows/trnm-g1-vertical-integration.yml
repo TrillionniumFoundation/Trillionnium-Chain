@@ -33,21 +33,26 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "c0e044586b9fcbd7f8e3a10fae65b8399ac1d0d1"
+          test "$(git rev-parse HEAD^)" = "8e13f1f8ed713539965f69ad98f7898858232cc5"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
             +refs/heads/feature/chain-g1-r3-ordinary-proposal-authority-v1:refs/remotes/origin/g1-a03 \
-            +refs/heads/feature/chain-g1-r4-application-finality-v1-20260829:refs/remotes/origin/g1-a04 \
+            +refs/heads/feature/chain-a19-p1-exec-terminal-history-v2-20260830:refs/remotes/origin/g1-a19 \
             +refs/heads/feature/chain-g1-r4-safety-checkpoint-20260829:refs/remotes/origin/g1-a05 \
-            +refs/heads/feature/chain-g1-r4-fault-matrix-v2-20260829:refs/remotes/origin/g1-a06
+            +refs/heads/feature/chain-g1-r4-fault-matrix-v2-20260829:refs/remotes/origin/g1-a06 \
+            +refs/heads/feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830:refs/remotes/origin/g1-a21
           test "$(git rev-parse refs/remotes/origin/g1-a03)" = "1b9543b3b22cc959d0ea2b3123c349761adada32"
-          test "$(git rev-parse refs/remotes/origin/g1-a04)" = "f38df4ec81cb76f92c709d8cd45311e164fa5753"
+          test "$(git rev-parse refs/remotes/origin/g1-a19)" = "fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea"
           test "$(git rev-parse refs/remotes/origin/g1-a05)" = "97f9dec406f1a3bd261ae093c60e44fcd9d4bad6"
           test "$(git rev-parse refs/remotes/origin/g1-a06)" = "e88cda9401eb6219fe1425bebb1ef6b54b4c429d"
-          for ref in g1-a03 g1-a04 g1-a05 g1-a06; do
-            git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 "refs/remotes/origin/${ref}"
-          done
+          test "$(git rev-parse refs/remotes/origin/g1-a21)" = "b58665a783c0e1bcceb33455acde65ee6ada4034"
+          git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a03
+          git merge-base --is-ancestor f38df4ec81cb76f92c709d8cd45311e164fa5753 refs/remotes/origin/g1-a19
+          git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a05
+          git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a06
+          git merge-base --is-ancestor 0aeb5a797b3726c6657b003b44f7ec0040d7d423 refs/remotes/origin/g1-a21
+          git merge-base --is-ancestor 1663abd8935be4e5819f5ff0c7ded250a3664097 refs/remotes/origin/g1-a21
           python3 -B - <<'PY'
           import ast
           from pathlib import Path
@@ -61,9 +66,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git merge --no-ff --no-edit refs/remotes/origin/g1-a03
-          git merge --no-ff --no-edit refs/remotes/origin/g1-a04
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a19
           git merge --no-ff --no-edit refs/remotes/origin/g1-a05
           git merge --no-ff --no-edit refs/remotes/origin/g1-a06
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a21
 
       - name: Finalize the source-only integration tree
         run: |
@@ -78,9 +84,11 @@ jobs:
           This branch composes exact immutable candidate snapshots without promoting any Gate or release flag.
 
           - A03 ordinary proposal authority: `1b9543b3b22cc959d0ea2b3123c349761adada32`
-          - A04 application finalization: `f38df4ec81cb76f92c709d8cd45311e164fa5753`
+          - A19 durable terminal finalization history, including its A04 parent: `fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea`
           - A05 signer/checkpoint safety: `97f9dec406f1a3bd261ae093c60e44fcd9d4bad6`
           - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
+          - A21 sealed native commit verifier, including its A20 parent: `b58665a783c0e1bcceb33455acde65ee6ada4034`
+          - A20 verified publication parent: `0aeb5a797b3726c6657b003b44f7ec0040d7d423`
           - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
 
           The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
@@ -98,6 +106,7 @@ jobs:
           cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
           for package in \
             trnm-native-application \
+            trnm-native-application-sqlite \
             trnm-native-execution-v0 \
             trnm-consensus-signer-journal \
             trnm-consensus-external-watermark \
@@ -105,15 +114,22 @@ jobs:
           do
             cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --locked -- -D warnings
           done
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked -- -D warnings
 
       - name: Run package-owned G1 regressions
         run: |
           set -euo pipefail
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application-sqlite --all-targets --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-signer-journal --all-targets --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-external-watermark --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked
 
       - name: Run complete resource-aware laboratory-validator inventory
         run: |
