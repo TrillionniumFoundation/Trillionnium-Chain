@@ -236,9 +236,32 @@ def main() -> int:
             "baseline workflow must not depend on self-hosted runners")
     require("runs-on: ubuntu-latest" in workflow,
             "baseline workflow must use a GitHub-hosted runner")
-    for check_name in policy.get("required_check_names", []):
+
+    required_check_names = policy.get("required_check_names")
+    require(isinstance(required_check_names, list) and required_check_names,
+            "required_check_names must be a non-empty list")
+    require(len(set(required_check_names)) == len(required_check_names),
+            "required check names must be unique")
+    for check_name in required_check_names:
         require(f"name: {check_name}" in workflow,
                 f"baseline workflow missing stable check name {check_name}")
+
+    exact_source_expression = (
+        "TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && "
+        "github.event.pull_request.head.sha || github.sha }}"
+    )
+    require(exact_source_expression in workflow,
+            "baseline workflow must derive the exact pull-request head SHA")
+    expected_job_count = len(required_check_names)
+    require(workflow.count("ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}") == expected_job_count,
+            "every stable required job must explicitly check out the exact source SHA")
+    require(workflow.count("- name: Verify exact source identity") == expected_job_count,
+            "every stable required job must assert its checked-out source identity")
+    require(workflow.count(
+        'run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"'
+    ) == expected_job_count,
+            "every stable required job must compare HEAD with the expected source SHA")
+
     for package in (
         "trnm-state",
         "trnm-consensus-types",
@@ -251,6 +274,12 @@ def main() -> int:
         "trnm-poco-node",
     ):
         require(package in workflow, f"strict safety-kernel Clippy missing {package}")
+    require("TRNM_FUZZ_SMOKE_SECONDS: \"5\"" in workflow,
+            "required fuzz smoke must retain a bounded five-second target budget")
+    require("scripts/ci/install_cargo_fuzz.sh" in workflow,
+            "required fuzz smoke must use the checksum-pinned installer")
+    require("scripts/ci/check_canonical_fuzz_smoke.sh" in workflow,
+            "required fuzz smoke must exercise the canonical public-input targets")
 
     expected_external = {
         "EXT-REVIEW-001",
@@ -273,6 +302,8 @@ def main() -> int:
         "consensus_mainline": "native-poco-bft",
         "workspace_members": len(members),
         "legacy_active_members": [],
+        "required_checks": required_check_names,
+        "exact_source_binding": True,
         "external_blockers": sorted(expected_external),
         "production_candidate": False,
         "production_consensus_activation": False,
