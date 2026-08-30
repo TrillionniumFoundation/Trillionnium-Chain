@@ -1,0 +1,206 @@
+name: tmp-world-stage-direct-source-v2
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-world-stage-direct-source-v2
+  cancel-in-progress: false
+
+env:
+  WORLD_HEAD: "2b3a71c34fcbe9b8dac51826d70e65c4553cbba7"
+  RUST_TOOLCHAIN: "1.98.0"
+  STAGE_DIR: "transport/world-direct-source-2b3a71c34fcbe9b8dac51826d70e65c4553cbba7"
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Checkout transport repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: tmp/world-source-materializer-20260830
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Checkout immutable World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify immutable source inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          test "$(git rev-parse HEAD)" = "${WORLD_HEAD}"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/build.rs)" = "abc8d4228123e13a3dc5e3e154467a7d2b67e2ee"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/src/lib.rs)" = "f5b2d91ae359d86fd259dc1b170982b8a0960d13"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/src/lib.rs.in)" = "8882f47db55ca5993329594901c828c6faf325a8"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/src/cex.rs)" = "4b8c9d6618d8eff167a5048192f6431e0427a6f0"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/Cargo.toml)" = "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
+          test -z "$(git status --porcelain)"
+
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc --version --verbose
+          cargo --version --verbose
+
+      - name: Materialize ordinary source and close loopback regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
+          test -n "${generated}"
+          test -s "${generated}"
+          cp "${generated}" /tmp/trnm_game_server_lib_generated.rs
+          python3 - <<'PY'
+          from pathlib import Path
+
+          crate = Path("world/trillionnium/crates/trnm-game-server")
+          lib = crate / "src/lib.rs"
+          wrapper = lib.read_text(encoding="utf-8")
+          marker = "// The full reviewed server body is generated from src/lib.rs.in by build.rs."
+          if wrapper.count(marker) != 1:
+              raise SystemExit("reviewed lib.rs wrapper marker drifted")
+          header = wrapper.split(marker, 1)[0].rstrip()
+          generated = Path("/tmp/trnm_game_server_lib_generated.rs").read_text(encoding="utf-8")
+          if "trnm_game_server_lib_generated.rs" in generated or "reconcile_economy(&state.cex" in generated:
+              raise SystemExit("materialized body retained forbidden source authority")
+          lib.write_text(f"{header}\n\n{generated.lstrip()}", encoding="utf-8")
+
+          manifest = crate / "Cargo.toml"
+          cargo = manifest.read_text(encoding="utf-8")
+          build_line = 'build = "build.rs"\n'
+          if cargo.count(build_line) != 1:
+              raise SystemExit("Cargo build-script declaration drifted")
+          manifest.write_text(cargo.replace(build_line, "", 1), encoding="utf-8")
+
+          for obsolete in (crate / "build.rs", crate / "src/lib.rs.in"):
+              if not obsolete.is_file():
+                  raise SystemExit(f"missing obsolete source: {obsolete}")
+              obsolete.unlink()
+
+          cex = crate / "src/cex.rs"
+          source = cex.read_text(encoding="utf-8")
+          old = '''            let host = url.host_str().unwrap_or_default();
+            let loopback = host.eq_ignore_ascii_case("localhost")
+                || host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          new = '''            let host = url.host_str().unwrap_or_default();
+            // Normalize presentation-only DNS root dots and IPv6 brackets before
+            // deciding whether plaintext transport is confined to loopback.
+            let canonical_host = host
+                .trim_end_matches('.')
+                .trim_start_matches('[')
+                .trim_end_matches(']');
+            let loopback = canonical_host.eq_ignore_ascii_case("localhost")
+                || canonical_host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          if source.count(old) != 1:
+              raise SystemExit("CEX loopback source drifted")
+          source = source.replace(old, new, 1)
+          anchor = '''        assert_eq!(
+            normalize_service_base_url("http://localhost:8080", "TEST_URL").unwrap(),
+            "http://localhost:8080"
+        );
+'''
+          extra = '''        for loopback in [
+            "http://LOCALHOST:8080/",
+            "http://localhost.:8080/",
+            "http://[0:0:0:0:0:0:0:1]:8080/",
+        ] {
+            assert!(
+                normalize_service_base_url(loopback, "TEST_URL").is_ok(),
+                "unexpectedly rejected loopback endpoint {loopback}"
+            );
+        }
+'''
+          if source.count(anchor) != 1:
+              raise SystemExit("CEX loopback test anchor drifted")
+          cex.write_text(source.replace(anchor, anchor + extra, 1), encoding="utf-8")
+          PY
+
+      - name: Validate materialized source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path world/trillionnium/Cargo.toml -p trnm-game-server
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          cargo test --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          cargo clippy --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib -- -D warnings
+          bash world/scripts/check-trnm-game-server-direct-source.sh
+          bash world/scripts/check-trnm-settlement-transaction-boundary.sh
+          bash world/scripts/check_trnm_settlement_transaction_boundary.sh
+          git -C world diff --check
+
+      - name: Commit immutable transport payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "${STAGE_DIR}"
+          mkdir -p "${STAGE_DIR}"
+          cp world/trillionnium/crates/trnm-game-server/src/lib.rs "${STAGE_DIR}/lib.rs"
+          cp world/trillionnium/crates/trnm-game-server/src/cex.rs "${STAGE_DIR}/cex.rs"
+          cp world/trillionnium/crates/trnm-game-server/Cargo.toml "${STAGE_DIR}/Cargo.toml"
+          printf '%s\n' \
+            'trillionnium/crates/trnm-game-server/build.rs' \
+            'trillionnium/crates/trnm-game-server/src/lib.rs.in' \
+            > "${STAGE_DIR}/deleted-files.txt"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          stage = Path(os.environ["STAGE_DIR"])
+          files = {}
+          for name in ("lib.rs", "cex.rs", "Cargo.toml", "deleted-files.txt"):
+              data = stage.joinpath(name).read_bytes()
+              files[name] = {"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+          record = {
+              "contract": "trnm_world_direct_source_transport_v2",
+              "world_head": os.environ["WORLD_HEAD"],
+              "rust_toolchain": os.environ["RUST_TOOLCHAIN"],
+              "validation": {
+                  "cargo_check_lib": "passed",
+                  "cargo_test_lib": "passed",
+                  "cargo_clippy_deny_warnings": "passed",
+                  "direct_source_gate": "passed",
+                  "settlement_transaction_boundaries": "passed",
+                  "diff_check": "passed"
+              },
+              "files": files,
+              "release_credit": "none"
+          }
+          stage.joinpath("manifest.json").write_text(json.dumps(record, sort_keys=True, indent=2) + "\n")
+          PY
+          sha256sum "${STAGE_DIR}"/* > "${STAGE_DIR}/SHA256SUMS"
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add "${STAGE_DIR}"
+          if git diff --cached --quiet; then
+            echo "transport payload already current"
+            exit 0
+          fi
+          git commit -m "chore(transport): stage validated World direct source [skip ci]"
+          git push origin HEAD:refs/heads/tmp/world-source-materializer-20260830
