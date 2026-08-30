@@ -1,0 +1,417 @@
+name: tmp-world-publish-materialized-source-v3
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tmp-world-publish-materialized-source-v3
+  cancel-in-progress: false
+
+env:
+  WORLD_OWNER: TrillionniumFoundation
+  WORLD_NAME: Trillionnium-World
+  WORLD_REPO: TrillionniumFoundation/Trillionnium-World
+  WORLD_BRANCH: fix/world-plan-v4-convergence-2026-08-30
+  RUST_TOOLCHAIN: 1.98.0
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+
+jobs:
+  close-source-and-governance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      TOKEN_TRNM_GITHUB_TOKEN: ${{ secrets.TRNM_GITHUB_TOKEN }}
+      TOKEN_TRILLIONNIUM_GITHUB_TOKEN: ${{ secrets.TRILLIONNIUM_GITHUB_TOKEN }}
+      TOKEN_ORG_GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+      TOKEN_BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+      TOKEN_TRNM_BOT_TOKEN: ${{ secrets.TRNM_BOT_TOKEN }}
+      TOKEN_GH_PAT: ${{ secrets.GH_PAT }}
+      TOKEN_GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      TOKEN_GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      APP_ID_TRNM: ${{ secrets.TRNM_GITHUB_APP_ID }}
+      APP_ID_ORG: ${{ secrets.ORG_GITHUB_APP_ID }}
+      APP_ID_GENERIC: ${{ secrets.GH_APP_ID }}
+      APP_KEY_TRNM: ${{ secrets.TRNM_GITHUB_APP_PRIVATE_KEY }}
+      APP_KEY_ORG: ${{ secrets.ORG_GITHUB_APP_PRIVATE_KEY }}
+      APP_KEY_GENERIC: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    steps:
+      - name: Checkout Chain control branch for immutable status
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: chain-control
+          ref: tmp/world-source-materializer-20260830
+          fetch-depth: 1
+          persist-credentials: true
+
+      - name: Checkout current World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ env.WORLD_REPO }}
+          ref: ${{ env.WORLD_BRANCH }}
+          path: world
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Freeze observed World parent
+        id: parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          parent="$(git rev-parse HEAD)"
+          tree="$(git rev-parse HEAD^{tree})"
+          test -z "$(git status --porcelain)"
+          printf '%s\n' "parent=${parent}" "tree=${tree}"
+          echo "sha=${parent}" >> "${GITHUB_OUTPUT}"
+          echo "tree=${tree}" >> "${GITHUB_OUTPUT}"
+
+      - name: Acquire explicitly provisioned cross-repository credential
+        id: auth
+        shell: bash
+        run: |
+          set -euo pipefail
+          token=''
+          source=''
+          for name in \
+            TOKEN_TRNM_GITHUB_TOKEN TOKEN_TRILLIONNIUM_GITHUB_TOKEN \
+            TOKEN_ORG_GITHUB_TOKEN TOKEN_BOT_GITHUB_TOKEN TOKEN_TRNM_BOT_TOKEN \
+            TOKEN_GH_PAT TOKEN_GITHUB_PAT TOKEN_GH_TOKEN
+          do
+            value="${!name:-}"
+            if test -n "${value}"; then
+              token="${value}"
+              source="${name}"
+              break
+            fi
+          done
+
+          if test -z "${token}"; then
+            app_id=''
+            private_key=''
+            for pair in \
+              'APP_ID_TRNM APP_KEY_TRNM' \
+              'APP_ID_ORG APP_KEY_ORG' \
+              'APP_ID_GENERIC APP_KEY_GENERIC'
+            do
+              set -- ${pair}
+              candidate_id="${!1:-}"
+              candidate_key="${!2:-}"
+              if test -n "${candidate_id}" && test -n "${candidate_key}"; then
+                app_id="${candidate_id}"
+                private_key="${candidate_key}"
+                source="github_app:${1}/${2}"
+                break
+              fi
+            done
+            if test -n "${app_id}"; then
+              key_file="${RUNNER_TEMP}/app-key.pem"
+              printf '%s\n' "${private_key}" > "${key_file}"
+              chmod 600 "${key_file}"
+              now="$(date +%s)"
+              iat="$((now - 60))"
+              exp="$((now + 540))"
+              b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+              header="$(printf '%s' '{"alg":"RS256","typ":"JWT"}' | b64url)"
+              payload="$(printf '{"iat":%s,"exp":%s,"iss":"%s"}' "${iat}" "${exp}" "${app_id}" | b64url)"
+              signing_input="${header}.${payload}"
+              signature="$(printf '%s' "${signing_input}" | openssl dgst -sha256 -sign "${key_file}" | b64url)"
+              jwt="${signing_input}.${signature}"
+              installation_id="$(curl --fail --silent --show-error \
+                -H 'Accept: application/vnd.github+json' \
+                -H "Authorization: Bearer ${jwt}" \
+                -H 'X-GitHub-Api-Version: 2022-11-28' \
+                "https://api.github.com/repos/${WORLD_REPO}/installation" | jq -er '.id')"
+              token="$(curl --fail --silent --show-error -X POST \
+                -H 'Accept: application/vnd.github+json' \
+                -H "Authorization: Bearer ${jwt}" \
+                -H 'X-GitHub-Api-Version: 2022-11-28' \
+                "https://api.github.com/app/installations/${installation_id}/access_tokens" \
+                -d '{"repositories":["Trillionnium-World"],"permissions":{"actions":"write","administration":"write","contents":"write","metadata":"read","pull_requests":"write"}}' | jq -er '.token')"
+              rm -f "${key_file}"
+            fi
+          fi
+
+          if test -z "${token}"; then
+            echo 'No PAT or GitHub App credential provisioned for cross-repository World mutation.' >&2
+            exit 78
+          fi
+          echo "::add-mask::${token}"
+          printf '%s' "${token}" > "${RUNNER_TEMP}/world-token"
+          chmod 600 "${RUNNER_TEMP}/world-token"
+          printf '%s\n' "credential_source=${source}"
+          echo "source=${source}" >> "${GITHUB_OUTPUT}"
+
+      - name: Enable World Actions with read-only workflow defaults
+        shell: bash
+        run: |
+          set -euo pipefail
+          token="$(cat "${RUNNER_TEMP}/world-token")"
+          api="https://api.github.com/repos/${WORLD_REPO}"
+          curl --fail --silent --show-error -X PUT \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${token}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${api}/actions/permissions" \
+            -d '{"enabled":true,"allowed_actions":"all"}'
+          curl --fail --silent --show-error -X PUT \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${token}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${api}/actions/permissions/workflow" \
+            -d '{"default_workflow_permissions":"read","can_approve_pull_request_reviews":false}'
+
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc --version --verbose
+          cargo --version --verbose
+
+      - name: Materialize directly compiled source when still required
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          crate=world/trillionnium/crates/trnm-game-server
+          if test ! -e "${crate}/build.rs" && test ! -e "${crate}/src/lib.rs.in"; then
+            bash world/scripts/check-trnm-game-server-direct-source.sh
+            echo 'changed=false' >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          test -f "${crate}/build.rs"
+          test -f "${crate}/src/lib.rs.in"
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
+          test -n "${generated}"
+          test -s "${generated}"
+          python3 - "${generated}" <<'PY'
+          from pathlib import Path
+          import sys
+
+          generated_path = Path(sys.argv[1])
+          crate = Path('world/trillionnium/crates/trnm-game-server')
+          lib = crate / 'src/lib.rs'
+          wrapper = lib.read_text(encoding='utf-8')
+          marker = '// The full reviewed server body is generated from src/lib.rs.in by build.rs.'
+          if wrapper.count(marker) != 1:
+              raise SystemExit('reviewed wrapper marker drifted')
+          header = wrapper.split(marker, 1)[0].rstrip()
+          generated = generated_path.read_text(encoding='utf-8')
+          if 'trnm_game_server_lib_generated.rs' in generated:
+              raise SystemExit('recursive generated source remained')
+          lib.write_text(f'{header}\n\n{generated.lstrip()}', encoding='utf-8')
+
+          manifest = crate / 'Cargo.toml'
+          cargo = manifest.read_text(encoding='utf-8')
+          build_line = 'build = "build.rs"\n'
+          if cargo.count(build_line) != 1:
+              raise SystemExit('Cargo build declaration drifted')
+          manifest.write_text(cargo.replace(build_line, '', 1), encoding='utf-8')
+          (crate / 'build.rs').unlink()
+          (crate / 'src/lib.rs.in').unlink()
+          PY
+          echo 'changed=true' >> "${GITHUB_OUTPUT}"
+
+      - name: Repair strict loopback and mixed-case authority rejection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          cex = Path('world/trillionnium/crates/trnm-game-server/src/cex.rs')
+          source = cex.read_text(encoding='utf-8')
+          old = '''            let host = url.host_str().unwrap_or_default();
+            let loopback = host.eq_ignore_ascii_case("localhost")
+                || host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          new = '''            let host = url.host_str().unwrap_or_default();
+            let unbracketed = host
+                .strip_prefix('[')
+                .and_then(|value| value.strip_suffix(']'))
+                .unwrap_or(host);
+            let canonical_host = unbracketed.strip_suffix('.').unwrap_or(unbracketed);
+            let loopback = canonical_host.eq_ignore_ascii_case("localhost")
+                || canonical_host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          if old in source:
+              cex.write_text(source.replace(old, new, 1), encoding='utf-8')
+          elif 'let canonical_host =' not in source:
+              raise SystemExit('loopback implementation drifted')
+
+          for root in [
+              Path('world/trillionnium/contracts/trnm-world-transition-v1'),
+              Path('world/tools/trnm-world-transition-https-v1'),
+          ]:
+              if not root.exists():
+                  continue
+              for path in root.rglob('*'):
+                  if not path.is_file() or path.suffix not in {'.rs', '.go'}:
+                      continue
+                  text = path.read_text(encoding='utf-8')
+                  updated = text.replace(
+                      'FORBIDDEN_AUTHORITY_KEYS.contains(&key.as_str())',
+                      'FORBIDDEN_AUTHORITY_KEYS.iter().any(|forbidden| key.eq_ignore_ascii_case(forbidden))'
+                  ).replace(
+                      'forbiddenAuthorityKeys[key]',
+                      'forbiddenAuthorityKeys[strings.ToLower(key)]'
+                  )
+                  if updated != text:
+                      if path.suffix == '.go' and '"strings"' not in updated:
+                          updated = updated.replace('import (\n', 'import (\n\t"strings"\n', 1)
+                      path.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: Validate full directly compiled workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          bash scripts/check-trnm-game-server-direct-source.sh
+          bash scripts/check-trnm-ci-read-only.sh
+          bash scripts/check-trnm-settlement-transaction-boundary.sh
+          bash scripts/check_trnm_settlement_transaction_boundary.sh
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked -- -D warnings
+          git diff --check
+
+      - name: Publish source with compare-and-swap
+        id: publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          token="$(cat "${RUNNER_TEMP}/world-token")"
+          echo "::add-mask::${token}"
+          parent="${{ steps.parent.outputs.sha }}"
+          if test -z "$(git status --porcelain)"; then
+            published="${parent}"
+          else
+            git config user.name 'Trillionnium source convergence bot'
+            git config user.email 'source-convergence@users.noreply.github.com'
+            git add -A
+            git commit -m 'refactor(world): materialize directly compiled game-server source'
+            test "$(git rev-parse HEAD^)" = "${parent}"
+            remote="https://x-access-token:${token}@github.com/${WORLD_REPO}.git"
+            observed="$(git ls-remote "${remote}" "refs/heads/${WORLD_BRANCH}" | awk '{print $1}')"
+            test "${observed}" = "${parent}"
+            git push "${remote}" "HEAD:refs/heads/${WORLD_BRANCH}"
+            published="$(git rev-parse HEAD)"
+          fi
+          echo "sha=${published}" >> "${GITHUB_OUTPUT}"
+          printf '%s\n' "published_head=${published}" "published_tree=$(git rev-parse HEAD^{tree})"
+
+      - name: Apply fail-closed main protection
+        id: governance
+        shell: bash
+        run: |
+          set -euo pipefail
+          token="$(cat "${RUNNER_TEMP}/world-token")"
+          api="https://api.github.com/repos/${WORLD_REPO}"
+          cat > "${RUNNER_TEMP}/protection.json" <<'JSON'
+          {
+            "required_status_checks": {
+              "strict": true,
+              "contexts": [
+                "world-v4 / truth-and-static",
+                "world-v4 / rust-workspace",
+                "world-v4 / postgres-settlement",
+                "world-v4 / package-and-supply-chain",
+                "world-v4 / ci-read-only",
+                "world-v4 / direct-source"
+              ]
+            },
+            "enforce_admins": true,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": true,
+              "required_approving_review_count": 1,
+              "require_last_push_approval": true
+            },
+            "restrictions": null,
+            "required_linear_history": true,
+            "allow_force_pushes": false,
+            "allow_deletions": false,
+            "block_creations": false,
+            "required_conversation_resolution": true,
+            "lock_branch": false,
+            "allow_fork_syncing": true
+          }
+          JSON
+          curl --fail --silent --show-error -X PUT \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${token}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${api}/branches/main/protection" \
+            --data-binary @"${RUNNER_TEMP}/protection.json" > "${RUNNER_TEMP}/protection-response.json"
+          jq -e '.required_pull_request_reviews.required_approving_review_count == 1' "${RUNNER_TEMP}/protection-response.json"
+          jq -e '.allow_force_pushes.enabled == false and .allow_deletions.enabled == false' "${RUNNER_TEMP}/protection-response.json"
+
+      - name: Refresh independent review request and record exact head
+        shell: bash
+        run: |
+          set -euo pipefail
+          token="$(cat "${RUNNER_TEMP}/world-token")"
+          api="https://api.github.com/repos/${WORLD_REPO}"
+          published="${{ steps.publish.outputs.sha }}"
+          curl --fail --silent --show-error -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${token}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${api}/pulls/39/requested_reviewers" \
+            -d '{"reviewers":["ProfHepta"]}' >/dev/null
+          curl --fail --silent --show-error -X POST \
+            -H 'Accept: application/vnd.github+json' \
+            -H "Authorization: Bearer ${token}" \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            "${api}/issues/39/comments" \
+            -d "$(jq -n --arg head "${published}" --arg parent '${{ steps.parent.outputs.sha }}' '{body:("Direct-source CAS tranche published and locally qualified.\n\n- parent: `"+$parent+"`\n- exact head: `"+$head+"`\n- semantic `build.rs` / `lib.rs.in`: removed\n- local full workspace fmt/check/test/strict-Clippy: passed\n- settlement/direct-source/CI-read-only boundaries: passed\n\nRemote exact-head Actions, PostgreSQL, package/supply-chain and independent review remain fail-closed until GitHub records them on this unchanged head.")}' )" >/dev/null
+
+      - name: Persist bounded execution record in Chain control branch
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd chain-control
+          mkdir -p run/world-plan-v4
+          cat > run/world-plan-v4/source-publisher-v3.json <<JSON
+          {
+            "contract": "trnm_world_source_publisher_v3",
+            "run_id": "${GITHUB_RUN_ID}",
+            "run_attempt": "${GITHUB_RUN_ATTEMPT}",
+            "job_status": "${{ job.status }}",
+            "observed_parent": "${{ steps.parent.outputs.sha }}",
+            "observed_tree": "${{ steps.parent.outputs.tree }}",
+            "credential_source": "${{ steps.auth.outputs.source }}",
+            "published_head": "${{ steps.publish.outputs.sha }}",
+            "source_changed": "${{ steps.source.outputs.changed }}",
+            "release_credit": "none"
+          }
+          JSON
+          git config user.name 'Trillionnium evidence bot'
+          git config user.email 'evidence@users.noreply.github.com'
+          git add run/world-plan-v4/source-publisher-v3.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore(chain): record World source publisher v3 result'
+            git push origin HEAD:tmp/world-source-materializer-20260830
+          fi
+
+      - name: Remove credentials
+        if: always()
+        shell: bash
+        run: rm -f "${RUNNER_TEMP}/world-token" "${RUNNER_TEMP}/app-key.pem"
