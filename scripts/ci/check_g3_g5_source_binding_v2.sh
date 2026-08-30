@@ -39,7 +39,29 @@ assert m['strict_external_evidence_evaluator_present'] is True
 for key in ('real_external_evidence_present','real_claim_authorized','benchmark_results_present','surpass_claim_allowed','public_testnet_ready','production_candidate','production_consensus_activation','release_ready','g3_exit','g4_exit','g5_exit'):
     assert m[key] is False, key
 workflow_names=sorted(path.name for path in Path('.github/workflows').glob('*.yml'))
-assert len(workflow_names)==13, workflow_names
+# The historical A16 source manifest counted only the thirteen privileged
+# workflows.  The current repository deliberately carries one additional,
+# actor-independent hosted baseline (`trnm-required-baseline.yml`) alongside
+# the unrelated Web4 frontend workflow.  Keep the inventory exact and
+# fail-closed, but bind the checker to the present fourteen-file set instead of
+# silently treating the hosted baseline as an unclassified extra.
+expected_workflows = sorted([
+    'agent-user-phasea-gate.yml',
+    'p1-rust-sidecar.yml',
+    'rust-l1-nightly-health.yml',
+    'rust-l1-testnet-preflight.yml',
+    'trnm-canonical-input-fuzz-smoke.yml',
+    'trnm-cometbft-spike.yml',
+    'trnm-gate-quick-check.yml',
+    'trnm-live-devnet-package.yml',
+    'trnm-merge-gates.yml',
+    'trnm-payload-replay-recovery-v1.yml',
+    'trnm-poco-bft-v0.yml',
+    'trnm-replay-to-core-coordinator-v1.yml',
+    'trnm-required-baseline.yml',
+    'web4-frontend-ci.yml',
+])
+assert workflow_names == expected_workflows, workflow_names
 assert not any('exact-head' in name or name.startswith('trnm-g2') or name.startswith('trnm-g3-g5') for name in workflow_names), workflow_names
 print('G3-G5 source binding v2: synchronized A16 STOP input, complete implementation provenance, strict external evaluator and all real claims disabled')
 PY
