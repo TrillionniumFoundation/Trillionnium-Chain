@@ -28,8 +28,9 @@ jobs:
       - name: Verify immutable audit parent
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "7a9c1bc85dd190a8cbf13da53020b86e6e676092"
-          test "$(git rev-parse HEAD^^)" = "b58665a783c0e1bcceb33455acde65ee6ada4034"
+          test "$(git rev-parse HEAD^)" = "8e6c2fb5b9f2dd6d60f2b7fb00ac8382b95ba18d"
+          test "$(git rev-parse HEAD^^)" = "7a9c1bc85dd190a8cbf13da53020b86e6e676092"
+          test "$(git rev-parse HEAD^^^)" = "b58665a783c0e1bcceb33455acde65ee6ada4034"
 
       - name: Validate and run deterministic authority inventory
         run: |
@@ -37,4 +38,46 @@ jobs:
           python3 -B -m py_compile scripts/ci/a22_capability_authority_audit_v1.py
           python3 -B scripts/ci/a22_capability_authority_audit_v1.py
           test -s /tmp/trnm-capability-authority-audit-v1.json
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v1.json').read_text())
+          findings = report['generic_authority_mint_findings']
+          candidate = [row for row in findings if row['severity'] == 'candidate-p0']
+          review = [row for row in findings if row['severity'] == 'review-required']
+          assert len(candidate) == 4, candidate
+          assert len(review) == 1, review
+          PY
           test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Trace every P0 trait implementation and mint call site
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          from pathlib import Path
+
+          names = (
+              'CometStateExportVerifierV1',
+              'PocoTargetProjectionVerifierV1',
+              'PocoTargetProjectionManifestVerifierV1',
+              'SignatureVerifier',
+          )
+          root = Path('trillionnium/crates')
+          for name in names:
+              print(f'=== {name} ===')
+              found = 0
+              for path in sorted(root.rglob('*.rs')):
+                  lines = path.read_text(encoding='utf-8').splitlines()
+                  for index, line in enumerate(lines):
+                      if name not in line:
+                          continue
+                      found += 1
+                      start = max(0, index - 2)
+                      end = min(len(lines), index + 4)
+                      print(f'--- {path}:{index + 1} ---')
+                      for offset in range(start, end):
+                          print(f'{offset + 1}: {lines[offset]}')
+              print(f'trace_count name={name} count={found}')
+              if found < 2:
+                  raise SystemExit(f'implementation/call trace unexpectedly small for {name}: {found}')
+          PY
