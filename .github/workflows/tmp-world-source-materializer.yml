@@ -42,6 +42,7 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-game-server/build.rs)" = "abc8d4228123e13a3dc5e3e154467a7d2b67e2ee"
           test "$(git hash-object trillionnium/crates/trnm-game-server/src/lib.rs)" = "f5b2d91ae359d86fd259dc1b170982b8a0960d13"
           test "$(git hash-object trillionnium/crates/trnm-game-server/src/lib.rs.in)" = "8882f47db55ca5993329594901c828c6faf325a8"
+          test "$(git hash-object trillionnium/crates/trnm-game-server/src/cex.rs)" = "4b8c9d6618d8eff167a5048192f6431e0427a6f0"
           test "$(git hash-object trillionnium/crates/trnm-game-server/Cargo.toml)" = "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
           test -z "$(git status --porcelain)"
 
@@ -53,6 +54,39 @@ jobs:
           rustup default "${RUST_TOOLCHAIN}"
           rustc --version --verbose
           cargo --version --verbose
+
+      - name: Repair literal localhost loopback normalization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("world/trillionnium/crates/trnm-game-server/src/cex.rs")
+          source = path.read_text(encoding="utf-8")
+          old = '''            let host = url.host_str().unwrap_or_default();
+            let loopback = host.eq_ignore_ascii_case("localhost")
+                || host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          new = '''            let host = url.host_str().unwrap_or_default();
+            let canonical_host = host
+                .strip_suffix('.')
+                .unwrap_or(host)
+                .strip_prefix('[')
+                .and_then(|host| host.strip_suffix(']'))
+                .unwrap_or_else(|| host.strip_suffix('.').unwrap_or(host));
+            let loopback = canonical_host.eq_ignore_ascii_case("localhost")
+                || canonical_host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          if source.count(old) != 1:
+              raise SystemExit("localhost normalization source drifted")
+          path.write_text(source.replace(old, new, 1), encoding="utf-8")
+          PY
+          grep -q 'let canonical_host = host' world/trillionnium/crates/trnm-game-server/src/cex.rs
 
       - name: Produce and materialize the reviewed generated body
         shell: bash
@@ -120,7 +154,15 @@ jobs:
           set -euo pipefail
           out=run/world-materialization
           cp world/trillionnium/crates/trnm-game-server/src/lib.rs "${out}/lib.rs"
+          cp world/trillionnium/crates/trnm-game-server/src/cex.rs "${out}/cex.rs"
           cp world/trillionnium/crates/trnm-game-server/Cargo.toml "${out}/Cargo.toml"
+          git -C world diff --binary -- \
+            trillionnium/crates/trnm-game-server/Cargo.toml \
+            trillionnium/crates/trnm-game-server/build.rs \
+            trillionnium/crates/trnm-game-server/src/lib.rs \
+            trillionnium/crates/trnm-game-server/src/lib.rs.in \
+            trillionnium/crates/trnm-game-server/src/cex.rs \
+            > "${out}/direct-source.patch"
           printf '%s\n' \
             'trillionnium/crates/trnm-game-server/build.rs' \
             'trillionnium/crates/trnm-game-server/src/lib.rs.in' \
@@ -131,21 +173,24 @@ jobs:
 
           out = Path("run/world-materialization")
           lib = out.joinpath("lib.rs").read_bytes()
+          cex = out.joinpath("cex.rs").read_bytes()
           cargo = out.joinpath("Cargo.toml").read_bytes()
           git_blob = hashlib.sha1(f"blob {len(lib)}\0".encode() + lib).hexdigest()
           record = {
-              "contract": "trnm_world_direct_source_materialization_v1",
+              "contract": "trnm_world_direct_source_materialization_v2",
               "world_head": "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903",
               "source_blobs": {
                   "build.rs": "abc8d4228123e13a3dc5e3e154467a7d2b67e2ee",
                   "src/lib.rs": "f5b2d91ae359d86fd259dc1b170982b8a0960d13",
                   "src/lib.rs.in": "8882f47db55ca5993329594901c828c6faf325a8",
+                  "src/cex.rs": "4b8c9d6618d8eff167a5048192f6431e0427a6f0",
                   "Cargo.toml": "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
               },
               "outputs": {
                   "lib_rs_bytes": len(lib),
                   "lib_rs_git_blob_sha1": git_blob,
                   "lib_rs_sha256": hashlib.sha256(lib).hexdigest(),
+                  "cex_rs_sha256": hashlib.sha256(cex).hexdigest(),
                   "cargo_toml_sha256": hashlib.sha256(cargo).hexdigest()
               },
               "validation": {
@@ -161,7 +206,7 @@ jobs:
               json.dumps(record, sort_keys=True, indent=2) + "\n", encoding="utf-8"
           )
           PY
-          sha256sum "${out}/lib.rs" "${out}/Cargo.toml" "${out}/materialization.json" > "${out}/SHA256SUMS"
+          sha256sum "${out}/lib.rs" "${out}/cex.rs" "${out}/Cargo.toml" "${out}/direct-source.patch" "${out}/materialization.json" > "${out}/SHA256SUMS"
           cat "${out}/materialization.json"
 
       - name: Upload exact materialized source
