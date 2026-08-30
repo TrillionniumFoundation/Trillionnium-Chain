@@ -35,8 +35,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Validate repository and consensus truth
-        run: python3 scripts/ci/check_repository_truth_v1.py
+      - name: Validate repository, consensus and blocker truth
+        run: |
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
       - name: Validate deterministic release-status projection
         run: |
           python3 scripts/ci/generate_release_status_v1.py --check-deterministic \
@@ -64,6 +66,7 @@ jobs:
         run: |
           PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
             scripts/ci/check_repository_truth_v1.py \
+            scripts/ci/check_blocker_execution_v1.py \
             scripts/ci/generate_release_status_v1.py \
             scripts/ci/check_external_evidence_v1.py
       - name: Require generators to leave the checkout clean

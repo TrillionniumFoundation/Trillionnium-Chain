@@ -54,13 +54,15 @@
     ".github/workflows/trnm-required-baseline.yml",
     "PROJECT_BOUNDARY.json",
     "PROJECT_BOUNDARY.md",
-    "SECURITY.md",
     "README.md",
+    "SECURITY.md",
+    "config/blocker-execution-v1.json",
     "config/consensus-mainline.json",
     "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
     "docs/development/plan-manifest-v1.toml",
     "rust-toolchain.toml",
-    "trillionnium/Cargo.toml",
-    "trillionnium/Cargo.lock"
+    "scripts/ci/check_blocker_execution_v1.py",
+    "trillionnium/Cargo.lock",
+    "trillionnium/Cargo.toml"
   ]
 }
