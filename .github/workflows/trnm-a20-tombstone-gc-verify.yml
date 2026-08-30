@@ -33,7 +33,7 @@ jobs:
       - name: Verify immutable candidate base
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "19c2d0e9d07d00c2180a5f7f756a1fd220b69f22"
+          test "$(git rev-parse HEAD^)" = "5d2bf9e4ad2fa2e772c6a1726d0a8124aad68f5c"
           git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 HEAD
 
       - name: Install pinned Rust toolchain
@@ -120,30 +120,38 @@ jobs:
 
           inc = Path("trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc")
           inc_text = inc.read_text(encoding="utf-8")
-          constants_marker = """/// Neither compaction nor purge activates production transaction admission.
-pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;
-
-const TOMBSTONE_DIGEST_DOMAIN_V1"""
-          constants_replacement = """/// Neither compaction nor purge activates production transaction admission.
-pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;
-
-const fn tombstone_gc_candidate_contract_v1() -> bool {
-    TX_ADMISSION_TOMBSTONE_COMPACTION_V1
-        && TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1
-        && !TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1
-}
-
-const TOMBSTONE_DIGEST_DOMAIN_V1"""
+          constants_marker = "\n".join([
+              "/// Neither compaction nor purge activates production transaction admission.",
+              "pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;",
+              "",
+              "const TOMBSTONE_DIGEST_DOMAIN_V1",
+          ])
+          constants_replacement = "\n".join([
+              "/// Neither compaction nor purge activates production transaction admission.",
+              "pub const TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1: bool = false;",
+              "",
+              "const fn tombstone_gc_candidate_contract_v1() -> bool {",
+              "    TX_ADMISSION_TOMBSTONE_COMPACTION_V1",
+              "        && TX_ADMISSION_TOMBSTONE_AUTHENTICATED_PURGE_V1",
+              "        && !TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1",
+              "}",
+              "",
+              "const TOMBSTONE_DIGEST_DOMAIN_V1",
+          ])
           if inc_text.count(constants_marker) != 1:
               raise SystemExit("tombstone candidate truth marker drift")
           inc_text = inc_text.replace(constants_marker, constants_replacement)
-          compact_marker = """    ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {
-        if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {"""
-          compact_replacement = """    ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {
-        if !tombstone_gc_candidate_contract_v1() {
-            return Err(TxAdmissionWalErrorV0::Malformed);
-        }
-        if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {"""
+          compact_marker = "\n".join([
+              "    ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {",
+              "        if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {",
+          ])
+          compact_replacement = "\n".join([
+              "    ) -> Result<TxAdmissionTombstoneGcResultV1, TxAdmissionWalErrorV0> {",
+              "        if !tombstone_gc_candidate_contract_v1() {",
+              "            return Err(TxAdmissionWalErrorV0::Malformed);",
+              "        }",
+              "        if max_rows == 0 || max_rows > MAX_TOMBSTONE_BATCH_V1 {",
+          ])
           if inc_text.count(compact_marker) != 1:
               raise SystemExit("tombstone compaction entry marker drift")
           inc.write_text(inc_text.replace(compact_marker, compact_replacement), encoding="utf-8")
