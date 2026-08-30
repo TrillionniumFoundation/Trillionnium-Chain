@@ -1,0 +1,122 @@
+name: trnm-g1-vertical-integration
+
+on:
+  push:
+    branches:
+      - integration/g1-vertical-closure-v1-20260830
+    paths:
+      - .github/workflows/trnm-g1-vertical-integration.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-g1-vertical-integration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integrate-reviewed-candidate-snapshots:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830' &&
+      github.actor == 'Tomasrgbsf'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact integration branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: integration/g1-vertical-closure-v1-20260830
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify source and fetch immutable package heads
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "0fd31a31d9cc29fd292fab97c3183127e3bdba21"
+          git fetch --no-tags origin \
+            +refs/heads/feature/chain-g1-r3-ordinary-proposal-authority-v1:refs/remotes/origin/g1-a03 \
+            +refs/heads/feature/chain-g1-r4-application-finality-v1-20260829:refs/remotes/origin/g1-a04 \
+            +refs/heads/feature/chain-g1-r4-safety-checkpoint-20260829:refs/remotes/origin/g1-a05 \
+            +refs/heads/feature/chain-g1-r4-fault-matrix-v2-20260829:refs/remotes/origin/g1-a06
+          test "$(git rev-parse refs/remotes/origin/g1-a03)" = "1b9543b3b22cc959d0ea2b3123c349761adada32"
+          test "$(git rev-parse refs/remotes/origin/g1-a04)" = "f38df4ec81cb76f92c709d8cd45311e164fa5753"
+          test "$(git rev-parse refs/remotes/origin/g1-a05)" = "97f9dec406f1a3bd261ae093c60e44fcd9d4bad6"
+          test "$(git rev-parse refs/remotes/origin/g1-a06)" = "e88cda9401eb6219fe1425bebb1ef6b54b4c429d"
+          for ref in g1-a03 g1-a04 g1-a05 g1-a06; do
+            git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 "refs/remotes/origin/${ref}"
+          done
+
+      - name: Compose G1 candidate packages without source substitution
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a03
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a04
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a05
+          git merge --no-ff --no-edit refs/remotes/origin/g1-a06
+
+      - name: Finalize the source-only integration tree
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/trnm-g1-vertical-integration.yml
+          git rm -f tmp-probe.txt
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          mkdir -p docs/development/packages
+          cat > docs/development/packages/TRNM_G1_VERTICAL_INTEGRATION_V1.md <<'EOF'
+          # TRNM G1 vertical integration candidate v1
+
+          This branch composes exact immutable candidate snapshots without promoting any Gate or release flag.
+
+          - A03 ordinary proposal authority: `1b9543b3b22cc959d0ea2b3123c349761adada32`
+          - A04 application finalization: `f38df4ec81cb76f92c709d8cd45311e164fa5753`
+          - A05 signer/checkpoint safety: `97f9dec406f1a3bd261ae093c60e44fcd9d4bad6`
+          - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
+          - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
+
+          The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
+          EOF
+          git add -A
+          git diff --cached --check
+          git commit -m "integration(g1): compose vertical safety candidates"
+
+      - name: Compile and lint the composed active workspace
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+          for package in \
+            trnm-native-application \
+            trnm-native-execution-v0 \
+            trnm-consensus-signer-journal \
+            trnm-consensus-external-watermark \
+            trnm-poco-lab-validator \
+            trnm-poco-node
+          do
+            cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --locked -- -D warnings
+          done
+
+      - name: Run focused G1 regressions and fault contracts
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-signer-journal --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-external-watermark --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-lab-validator --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --lib --locked
+          bash scripts/ci/check_g1_r4_process_matrix_v1.sh
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/project-preflight.sh --audit
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish exact tested integration commit
+        run: |
+          set -euo pipefail
+          git push origin "HEAD:integration/g1-vertical-closure-v1-20260830"
