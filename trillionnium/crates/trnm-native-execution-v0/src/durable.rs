@@ -4159,13 +4159,18 @@ enum SyncStoreCommitBoundaryFaultPointV0 {
 }
 
 #[cfg(test)]
+// Tests execute in parallel and each `TempDir` owns an independent durable
+// store.  Keep one armed fault per exact (path, point) key rather than using a
+// process-wide singleton; otherwise an unrelated test can panic while arming
+// its own boundary fault.  The vector remains behind a mutex so arm/consume/
+// drop operations are atomic with respect to the test threads.
 static SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0: Mutex<
-    Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>,
-> = Mutex::new(None);
+    Vec<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>,
+> = Mutex::new(Vec::new());
 
 #[cfg(test)]
 fn sync_store_commit_boundary_fault_lock_v0(
-) -> std::sync::MutexGuard<'static, Option<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>> {
+) -> std::sync::MutexGuard<'static, Vec<(PathBuf, SyncStoreCommitBoundaryFaultPointV0)>> {
     SYNC_STORE_COMMIT_BOUNDARY_FAULT_V0
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())
@@ -4182,10 +4187,11 @@ struct SyncStoreCommitBoundaryFaultGuardV0 {
 impl Drop for SyncStoreCommitBoundaryFaultGuardV0 {
     fn drop(&mut self) {
         let mut fault = sync_store_commit_boundary_fault_lock_v0();
-        if fault.as_ref().is_some_and(|(path, point)| {
-            path.as_path() == self.path.as_path() && *point == self.point
-        }) {
-            *fault = None;
+        if let Some(index) = fault
+            .iter()
+            .position(|(path, point)| path.as_path() == self.path.as_path() && *point == self.point)
+        {
+            fault.remove(index);
         }
     }
 }
@@ -4197,10 +4203,12 @@ fn arm_sync_store_commit_boundary_fault_v0(
 ) -> SyncStoreCommitBoundaryFaultGuardV0 {
     let mut fault = sync_store_commit_boundary_fault_lock_v0();
     assert!(
-        fault.is_none(),
-        "another sync boundary fault is already armed"
+        !fault.iter().any(|(armed_path, armed_point)| {
+            armed_path.as_path() == path && *armed_point == point
+        }),
+        "the same sync boundary fault is already armed"
     );
-    *fault = Some((path.to_path_buf(), point));
+    fault.push((path.to_path_buf(), point));
     SyncStoreCommitBoundaryFaultGuardV0 {
         path: path.to_path_buf(),
         point,
@@ -4213,13 +4221,13 @@ fn consume_sync_store_commit_boundary_fault_v0(
     point: SyncStoreCommitBoundaryFaultPointV0,
 ) -> bool {
     let mut fault = sync_store_commit_boundary_fault_lock_v0();
-    let matches = fault.as_ref().is_some_and(|(armed_path, armed_point)| {
+    let Some(index) = fault.iter().position(|(armed_path, armed_point)| {
         armed_path.as_path() == path && *armed_point == point
-    });
-    if matches {
-        *fault = None;
-    }
-    matches
+    }) else {
+        return false;
+    };
+    fault.remove(index);
+    true
 }
 
 /// Flushes the commit image and its directory entry before the caller does a
@@ -5927,6 +5935,57 @@ mod tests {
         assert!(body.contains("NativeApplicationV0::commit_block"));
         assert!(!body.contains("qc_as_application_commit = true"));
         assert!(!body.contains("production_activation: true"));
+    }
+
+    #[test]
+    fn sync_store_commit_boundary_faults_are_scoped_by_path_v0() {
+        // Two independent stores may arm and consume different sync points
+        // concurrently.  Consuming one exact key must leave the other key
+        // untouched; this mirrors the parallel test harness without
+        // weakening one-shot fault semantics for any individual store.
+        let left = TempDir::new().unwrap();
+        let right = TempDir::new().unwrap();
+        let left_path = left.path().join("left.sqlite");
+        let right_path = right.path().join("right.sqlite");
+        let armed = Arc::new(std::sync::Barrier::new(2));
+
+        std::thread::scope(|scope| {
+            let left_armed = Arc::clone(&armed);
+            let left_path = left_path.clone();
+            scope.spawn(move || {
+                let _left_fault = arm_sync_store_commit_boundary_fault_v0(
+                    &left_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Database,
+                );
+                left_armed.wait();
+                assert!(consume_sync_store_commit_boundary_fault_v0(
+                    &left_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Database,
+                ));
+                assert!(!consume_sync_store_commit_boundary_fault_v0(
+                    &left_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Database,
+                ));
+            });
+
+            let right_armed = Arc::clone(&armed);
+            let right_path = right_path.clone();
+            scope.spawn(move || {
+                let _right_fault = arm_sync_store_commit_boundary_fault_v0(
+                    &right_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                );
+                right_armed.wait();
+                assert!(consume_sync_store_commit_boundary_fault_v0(
+                    &right_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                ));
+                assert!(!consume_sync_store_commit_boundary_fault_v0(
+                    &right_path,
+                    SyncStoreCommitBoundaryFaultPointV0::Directory,
+                ));
+            });
+        });
     }
 
     /// Injects one software-visible sync error after the SQLite transaction has
