@@ -16,6 +16,10 @@ pub use consumption::{
     ConsumptionSettlementStateSnapshot, TaskConsumptionSummary,
 };
 
+// The task variant intentionally preserves the existing public representation.
+// Boxing it is an ABI-wide migration and must be performed with state-root and
+// downstream compatibility evidence rather than as a lint-only edit.
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
     Task(TaskObject),
@@ -111,6 +115,18 @@ pub struct MonetaryState {
 }
 
 pub type MonetaryStateSnapshot = MonetaryState;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct MonetaryTickConfig {
+    interval_blocks: u64,
+    cooldown_blocks: u64,
+    minted: u128,
+    burned: u128,
+    interval_param_version: u64,
+    issuance_param_version: u64,
+    burn_param_version: u64,
+    cooldown_param_version: u64,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PolicyTickEvent {
@@ -985,6 +1001,9 @@ fn validate_governance_schema_sample_registry_shape() -> Result<(), String> {
 }
 
 #[cfg(test)]
+// This private test oracle deliberately receives each independent registry so
+// mutation tests cannot accidentally reuse production globals.
+#[allow(clippy::too_many_arguments)]
 fn validate_governance_key_registration_lists(
     gov_param_key_index: &BTreeMap<String, u64>,
     key: &str,
@@ -2277,9 +2296,7 @@ impl StateStore {
         if !is_effective_resolve_authority_match(self, &authority_canonical) {
             return None;
         }
-        let Some(current_ref) = self.get_ref(task_id) else {
-            return None;
-        };
+        let current_ref = self.get_ref(task_id)?;
         if task.task_id != task_id
             || task.status != TaskStatus::Challenged
             || task.version != snapshot.task_version
@@ -2486,7 +2503,7 @@ impl StateStore {
         id: u64,
         task: &TaskObject,
     ) -> bool {
-        self.pending_resolve_approvals.get(&id).is_some()
+        self.pending_resolve_approvals.contains_key(&id)
             && !self.should_preserve_pending_resolve_on_task_restore(id, task)
     }
 
@@ -3232,7 +3249,7 @@ impl StateStore {
         }
 
         if action != GovPendingUpdateAction::Cancel {
-            if self.pending_gov_updates.get(&key).is_none()
+            if !self.pending_gov_updates.contains_key(&key)
                 && self.gov_param_value(&key) == Some(value.as_str())
             {
                 if let Some(existing_ref) = self
@@ -3618,7 +3635,7 @@ impl StateStore {
         self.canonical_gov_param_for_key(key)
     }
 
-    fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {
+    fn monetary_tick_config(&self) -> Option<MonetaryTickConfig> {
         let (_, interval_param) =
             self.gov_param_ref_for_key("monetary_policy_tick_interval_blocks")?;
         let (_, cooldown_param) =
@@ -3639,16 +3656,16 @@ impl StateStore {
             return None;
         }
 
-        Some((
-            interval,
-            cooldown,
+        Some(MonetaryTickConfig {
+            interval_blocks: interval,
+            cooldown_blocks: cooldown,
             minted,
             burned,
-            interval_param.version,
-            issuance_param.version,
-            burn_param.version,
-            cooldown_param.version,
-        ))
+            interval_param_version: interval_param.version,
+            issuance_param_version: issuance_param.version,
+            burn_param_version: burn_param.version,
+            cooldown_param_version: cooldown_param.version,
+        })
     }
 
     pub fn monetary_state(&self) -> &MonetaryState {
@@ -3665,7 +3682,7 @@ impl StateStore {
     }
 
     pub fn should_trigger_policy_tick(&self, block_height: u64) -> bool {
-        let Some((interval, cooldown, _, _, _, _, _, _)) = self.monetary_tick_config() else {
+        let Some(config) = self.monetary_tick_config() else {
             // Fail-closed: missing/invalid monetary params disable policy tick.
             return false;
         };
@@ -3673,16 +3690,16 @@ impl StateStore {
             || self
                 .monetary_state
                 .last_tick_height
-                .saturating_add(cooldown)
+                .saturating_add(config.cooldown_blocks)
                 <= block_height;
         block_height > 0
-            && block_height.is_multiple_of(interval)
+            && block_height.is_multiple_of(config.interval_blocks)
             && cooldown_allows
             && self.monetary_state.last_tick_height < block_height
     }
 
     pub fn policy_tick(&mut self, block_height: u64) -> Option<PolicyTickEvent> {
-        let (
+        let MonetaryTickConfig {
             interval_blocks,
             cooldown_blocks,
             minted,
@@ -3691,7 +3708,7 @@ impl StateStore {
             issuance_param_version,
             burn_param_version,
             cooldown_param_version,
-        ) = self.monetary_tick_config()?;
+        } = self.monetary_tick_config()?;
 
         let cooldown_allows = self.monetary_state.tick_count == 0
             || self
