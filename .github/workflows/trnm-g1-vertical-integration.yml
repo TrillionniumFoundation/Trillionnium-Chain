@@ -33,7 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "7c0df05c03f0ddc128c5869b5c803d9996b2216d"
+          test "$(git rev-parse HEAD^)" = "582d6308eccb79e06de922e667ef3179daefedf0"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
@@ -52,7 +52,9 @@ jobs:
           git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a05
           git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a06
           git merge-base --is-ancestor 0aeb5a797b3726c6657b003b44f7ec0040d7d423 refs/remotes/origin/g1-a21
-          git merge-base --is-ancestor 1663abd8935be4e5819f5ff0c7ded250a3664097 refs/remotes/origin/g1-a21
+          git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 refs/remotes/origin/g1-a21
+          test "$(git rev-parse 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0^{tree})" = \
+            "$(git rev-parse 1663abd8935be4e5819f5ff0c7ded250a3664097^{tree})"
           python3 -B - <<'PY'
           import ast
           from pathlib import Path
@@ -89,7 +91,10 @@ jobs:
           - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
           - A21 sealed native commit verifier, including its A20 parent: `b58665a783c0e1bcceb33455acde65ee6ada4034`
           - A20 verified publication parent: `0aeb5a797b3726c6657b003b44f7ec0040d7d423`
+          - normalized A18 source tree: `f80db352e8e2fa50e72b41836fd2079fa0d51e22`
           - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
+
+          The A21 lineage descends from A18 commit `13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0`. The later A18 hygiene commit `1663abd8935be4e5819f5ff0c7ded250a3664097` has the same Git tree and is therefore bound by exact tree equality rather than a false ancestry claim.
 
           The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
           EOF
