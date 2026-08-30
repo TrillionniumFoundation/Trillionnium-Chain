@@ -3,7 +3,7 @@
 
 This check deliberately avoids treating historical prose layout or privileged
 self-hosted workflow implementation details as protocol semantics. Expensive
-formal/fault/evidence campaigns remain separate fail-closed gates.
+formal, fault and external-evidence campaigns remain separate fail-closed gates.
 """
 
 from __future__ import annotations
@@ -84,18 +84,30 @@ def main() -> int:
     node_cargo = load_toml("trillionnium/crates/trnm-poco-node/Cargo.toml")
     protocol_manifest = load_toml("docs/protocol/poco-ai-native-v1/spec-manifest.toml")
 
-    require(truth.get("consensus_mainline") == "native-poco-bft",
-            "machine truth must select Native PoCO-BFT")
-    require(truth.get("protocol_target") == "poco-bft-v0",
-            "machine truth protocol target drift")
-    require(truth.get("production_candidate") is False,
-            "protocol contract cannot run against a promoted production candidate")
-    require(truth.get("production_consensus_activation") is False,
-            "protocol contract cannot activate consensus")
-    require(truth.get("cometbft", {}).get("role") == "migration-residue-only",
-            "CometBFT role must remain migration-only")
-    require(boundary.get("consensus", {}).get("legacy_comet_may_authorize_release") is False,
-            "legacy Comet path must not authorize release")
+    require(
+        truth.get("consensus_mainline") == "native-poco-bft",
+        "machine truth must select Native PoCO-BFT",
+    )
+    require(
+        truth.get("protocol_target") == "poco-bft-v0",
+        "machine truth protocol target drift",
+    )
+    require(
+        truth.get("production_candidate") is False,
+        "protocol contract cannot run against a promoted production candidate",
+    )
+    require(
+        truth.get("production_consensus_activation") is False,
+        "protocol contract cannot activate consensus",
+    )
+    require(
+        truth.get("cometbft", {}).get("role") == "migration-residue-only",
+        "CometBFT role must remain migration-only",
+    )
+    require(
+        boundary.get("consensus", {}).get("legacy_comet_may_authorize_release") is False,
+        "legacy Comet path must not authorize release",
+    )
 
     workspace = cargo.get("workspace", {})
     members = set(workspace.get("members", []))
@@ -110,35 +122,74 @@ def main() -> int:
         "crates/trnm-native-application",
         "crates/trnm-poco-node",
     }
-    require(required_members <= members,
-            f"active protocol workspace members missing: {sorted(required_members - members)}")
-    require({"crates/trnm-consensus-app", "crates/trnm-node"} <= excluded,
-            "legacy Comet packages must remain excluded")
-    require(not ({"crates/trnm-consensus-app", "crates/trnm-node"} & members),
-            "legacy Comet packages re-entered the active workspace")
+    require(
+        required_members <= members,
+        f"active protocol workspace members missing: {sorted(required_members - members)}",
+    )
+    require(
+        {"crates/trnm-consensus-app", "crates/trnm-node"} <= excluded,
+        "legacy Comet packages must remain excluded",
+    )
+    require(
+        not ({"crates/trnm-consensus-app", "crates/trnm-node"} & members),
+        "legacy Comet packages re-entered the active workspace",
+    )
 
     required_checks = policy.get("required_check_names", [])
-    require("protocol-contract" in required_checks,
-            "protocol-contract is not a stable required check")
-    require("fuzz-smoke" in required_checks,
-            "canonical input fuzz smoke is not a stable required check")
+    require(
+        "protocol-contract" in required_checks,
+        "protocol-contract is not a stable required check",
+    )
+    require(
+        "fuzz-smoke" in required_checks,
+        "canonical input fuzz smoke is not a stable required check",
+    )
 
-    require(protocol_manifest.get("manifest_version") in {1, "1"},
-            "unsupported protocol spec manifest version")
-    require(protocol_manifest.get("protocol_id") is not None,
-            "protocol spec manifest must identify the protocol")
+    # The canonical spec manifest has always named this field schema_version.
+    # Reject aliases so two version authorities cannot silently diverge.
+    require(
+        protocol_manifest.get("schema_version") in {1, "1"},
+        "unsupported protocol spec schema version",
+    )
+    require(
+        "manifest_version" not in protocol_manifest,
+        "protocol spec manifest must not carry a second version alias",
+    )
+    require(
+        protocol_manifest.get("protocol_id") == "trnm-poco-ai-native-v1",
+        "protocol spec manifest protocol id drift",
+    )
+    require(
+        protocol_manifest.get("manifest_status") == "draft-design-only",
+        "v1 protocol manifest must remain draft-design-only",
+    )
+    for key in ("normative", "implementation_authority", "activation_authority"):
+        require(
+            protocol_manifest.get(key) is False,
+            f"v1 protocol manifest may not promote {key}",
+        )
 
     node_metadata = node_cargo.get("package", {}).get("metadata", {}).get("trnm", {})
-    require(node_metadata.get("production_candidate") is False,
-            "node package metadata may not claim production candidacy")
-    require(node_metadata.get("production_consensus_activation") is False,
-            "node package metadata may not activate production consensus")
-    require(node_metadata.get("incomplete") is True,
-            "node package must retain its incomplete boundary")
-    require(node_metadata.get("effect_driver") is False,
-            "default production effect driver must remain unavailable")
-    require(node_metadata.get("production_signature_producer") is False,
-            "production signature producer must remain unavailable")
+    require(
+        node_metadata.get("production_candidate") is False,
+        "node package metadata may not claim production candidacy",
+    )
+    require(
+        node_metadata.get("production_consensus_activation") is False,
+        "node package metadata may not activate production consensus",
+    )
+    require(
+        node_metadata.get("incomplete") is True,
+        "node package must retain its incomplete boundary",
+    )
+    require(
+        node_metadata.get("effect_driver") is False,
+        "default production effect driver must remain unavailable",
+    )
+    require(
+        node_metadata.get("production_signature_producer") is False,
+        "production signature producer must remain unavailable",
+    )
 
     require_tokens(
         "trillionnium/crates/trnm-poco-node/src/lib.rs",
@@ -212,16 +263,21 @@ def main() -> int:
         require((ROOT / path).is_file(), f"required protocol contract file missing: {path}")
         require_tracked_clean(path)
 
+    baseline = read(".github/workflows/trnm-required-baseline.yml")
     legacy_truth = read("scripts/ci/check_poco_bft_v0_ci_truth.sh")
-    require("runs-on: [self-hosted" not in read(".github/workflows/trnm-required-baseline.yml"),
-            "required baseline must not depend on a self-hosted runner")
-    require("require_literal" in legacy_truth,
-            "legacy deep CI truth checker unexpectedly disappeared")
-    require("check_poco_bft_v0_ci_truth.sh" not in
-            read(".github/workflows/trnm-required-baseline.yml"),
-            "historical line-layout checker must not be a required merge dependency")
+    require(
+        "runs-on: [self-hosted" not in baseline,
+        "required baseline must not depend on a self-hosted runner",
+    )
+    require(
+        "require_literal" in legacy_truth,
+        "legacy deep CI truth checker unexpectedly disappeared",
+    )
+    require(
+        "check_poco_bft_v0_ci_truth.sh" not in baseline,
+        "historical line-layout checker must not be a required merge dependency",
+    )
 
-    # Refuse an accidental production promotion hidden in active source or docs.
     forbidden_patterns = (
         r"PRODUCTION_CANDIDATE_V0:\s*bool\s*=\s*true",
         r"HOST_IMPLEMENTATION_COMPLETE_V0:\s*bool\s*=\s*true",
@@ -236,8 +292,10 @@ def main() -> int:
         )
     )
     for pattern in forbidden_patterns:
-        require(re.search(pattern, active_text) is None,
-                f"forbidden production promotion matched: {pattern}")
+        require(
+            re.search(pattern, active_text) is None,
+            f"forbidden production promotion matched: {pattern}",
+        )
 
     report = {
         "schema": "trnm-required-protocol-contract-v1",
