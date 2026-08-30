@@ -1,0 +1,123 @@
+name: tmp-world-export-materialized-tree
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+  RUST_TOOLCHAIN: "1.98.0"
+  WORLD_HEAD: "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903"
+
+jobs:
+  export:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout immutable World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal
+          rustup default "${RUST_TOOLCHAIN}"
+
+      - name: Materialize reviewed game-server body
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C world rev-parse HEAD)" = "${WORLD_HEAD}"
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
+          test -n "${generated}"
+          test -s "${generated}"
+          cp "${generated}" /tmp/trnm_game_server_lib_generated.rs
+          python3 - <<'PY'
+          from pathlib import Path
+
+          crate = Path("world/trillionnium/crates/trnm-game-server")
+          wrapper_path = crate / "src/lib.rs"
+          wrapper = wrapper_path.read_text(encoding="utf-8")
+          marker = "// The full reviewed server body is generated from src/lib.rs.in by build.rs."
+          if wrapper.count(marker) != 1:
+              raise SystemExit("reviewed wrapper marker drifted")
+          header = wrapper.split(marker, 1)[0].rstrip()
+          generated = Path("/tmp/trnm_game_server_lib_generated.rs").read_text(encoding="utf-8")
+          wrapper_path.write_text(f"{header}\n\n{generated.lstrip()}", encoding="utf-8")
+
+          manifest = crate / "Cargo.toml"
+          cargo = manifest.read_text(encoding="utf-8")
+          build_line = 'build = "build.rs"\n'
+          if cargo.count(build_line) != 1:
+              raise SystemExit("build declaration drifted")
+          manifest.write_text(cargo.replace(build_line, "", 1), encoding="utf-8")
+
+          cex_path = crate / "src/cex.rs"
+          cex = cex_path.read_text(encoding="utf-8")
+          old = (
+              '            let host = url.host_str().unwrap_or_default();\n'
+              '            let loopback = host.eq_ignore_ascii_case("localhost")\n'
+              '                || host\n'
+              '                    .parse::<IpAddr>()\n'
+              '                    .is_ok_and(|address| address.is_loopback());\n'
+          )
+          new = (
+              '            let host = url.host_str().unwrap_or_default();\n'
+              "            let canonical_host = host.trim_start_matches('[').trim_end_matches(']').trim_end_matches('.');\n"
+              '            let loopback = canonical_host.eq_ignore_ascii_case("localhost")\n'
+              '                || canonical_host\n'
+              '                    .parse::<IpAddr>()\n'
+              '                    .is_ok_and(|address| address.is_loopback());\n'
+          )
+          if cex.count(old) != 1:
+              raise SystemExit("localhost normalization shape drifted")
+          cex_path.write_text(cex.replace(old, new, 1), encoding="utf-8")
+
+          for obsolete in (
+              crate / "build.rs",
+              crate / "src/lib.rs.in",
+              crate / "src/settlement_worker.rs.in",
+          ):
+              if not obsolete.is_file():
+                  raise SystemExit(f"missing obsolete source: {obsolete}")
+              obsolete.unlink()
+          PY
+          test ! -e world/trillionnium/crates/trnm-game-server/build.rs
+          test ! -e world/trillionnium/crates/trnm-game-server/src/lib.rs.in
+          test ! -e world/trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          git -C world diff --binary > /tmp/materialization.patch
+          git -C world diff --check
+
+      - name: Package complete materialized working tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p export
+          cp /tmp/materialization.patch export/materialization.patch
+          printf '%s\n' "${WORLD_HEAD}" > export/source-world-head.txt
+          rm -rf world/.git world/trillionnium/target
+          tar -C . -czf export/world-materialized-tree.tar.gz world
+          sha256sum export/world-materialized-tree.tar.gz export/materialization.patch > export/SHA256SUMS
+
+      - name: Upload materialized tree
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-world-materialized-tree-${{ env.WORLD_HEAD }}
+          path: export/**
+          if-no-files-found: error
+          retention-days: 7
