@@ -1,0 +1,133 @@
+name: tmp-world-f574-validation
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tmp-world-f574-validation
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+  RUST_TOOLCHAIN: "1.98.0"
+  WORLD_HEAD: "f57475de2e6acb1b61607614ff5661c791820a09"
+
+jobs:
+  source-and-rust:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - name: Checkout immutable World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind direct-source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          test "$(git rev-parse HEAD)" = "${WORLD_HEAD}"
+          test ! -e trillionnium/crates/trnm-game-server/build.rs
+          test ! -e trillionnium/crates/trnm-game-server/src/lib.rs.in
+          test ! -e trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in
+          test "$(wc -c < trillionnium/crates/trnm-game-server/src/lib.rs)" -gt 100000
+          ! grep -Eq '^\s*build\s*=\s*"build\.rs"\s*$' trillionnium/crates/trnm-game-server/Cargo.toml
+          ! grep -Eq 'OUT_DIR|trnm_game_server_lib_generated' trillionnium/crates/trnm-game-server/src/lib.rs
+          git diff --check
+          test -z "$(git status --porcelain)"
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc --version --verbose
+          cargo --version --verbose
+      - name: Execute source and game-server gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          test -x scripts/check-trnm-game-server-direct-source.sh && bash scripts/check-trnm-game-server-direct-source.sh || true
+          bash scripts/check-trnm-settlement-transaction-boundary.sh
+          bash scripts/check_trnm_settlement_transaction_boundary.sh
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
+          cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets -- --test-threads=1
+          cargo clippy --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets -- -D warnings
+          git diff --check
+          test -z "$(git status --porcelain)"
+      - name: Execute deterministic contract gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          for script in \
+            scripts/check-trnm-world-transition-contract.sh \
+            scripts/test-trnm-world-transition-contract-negative.sh \
+            scripts/check-trnm-world-v4-convergence.py; do
+            if test -f "$script"; then
+              case "$script" in
+                *.py) python3 "$script" ;;
+                *) bash "$script" ;;
+              esac
+            fi
+          done
+          test -z "$(git status --porcelain)"
+
+  postgres-settlement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    services:
+      postgres:
+        image: postgres:16.4
+        env:
+          POSTGRES_USER: trnm
+          POSTGRES_PASSWORD: trnm_ci_only
+          POSTGRES_DB: trnm_world
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U trnm -d trnm_world"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgres://trnm:trnm_ci_only@127.0.0.1:5432/trnm_world
+      TEST_DATABASE_URL: postgres://trnm:trnm_ci_only@127.0.0.1:5432/trnm_world
+    steps:
+      - name: Checkout immutable World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: TrillionniumFoundation/Trillionnium-World
+          ref: ${{ env.WORLD_HEAD }}
+          path: world
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Install pinned Rust and PostgreSQL client
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal
+          rustup default "${RUST_TOOLCHAIN}"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends postgresql-client
+      - name: Execute PostgreSQL-bound game-server tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          psql "${DATABASE_URL}" -v ON_ERROR_STOP=1 -c 'select version();'
+          cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets -- --test-threads=1
+          test -z "$(git status --porcelain)"
