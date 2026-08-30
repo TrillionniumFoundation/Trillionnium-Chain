@@ -154,5 +154,5 @@ cargo clippy \
   -- -D warnings
 
 bash scripts/check_ci_runner_policy.sh --worktree
-bash scripts/check_cargo_offline_policy.sh --worktree
+bash scripts/ci/check_mixed_trust_cargo_policy_v1.sh
 git diff --check
