@@ -52,12 +52,18 @@ def read(path: str) -> str:
         raise TruthError(f"{path}: unreadable text: {exc}") from exc
 
 
+def require_absent(text: str, forbidden: tuple[str, ...], label: str) -> None:
+    hits = [item for item in forbidden if item in text]
+    require(not hits, f"{label} contains forbidden stale claims/paths: {hits}")
+
+
 def main() -> int:
     policy = load_json("config/repository-policy-v1.json")
     boundary = load_json("PROJECT_BOUNDARY.json")
     truth = load_json("config/consensus-mainline.json")
     cargo = load_toml("trillionnium/Cargo.toml")
     toolchain = load_toml("rust-toolchain.toml")
+    web_package = load_json("web4-frontend/package.json")
 
     required_paths = policy.get("required_paths")
     require(isinstance(required_paths, list), "policy required_paths must be a list")
@@ -129,20 +135,67 @@ def main() -> int:
     require(toolchain.get("toolchain", {}).get("channel") == "1.95.0",
             "Rust toolchain must remain exactly 1.95.0")
 
+    engines = web_package.get("engines", {})
+    require(engines.get("node") == ">=24.18.0 <25", "web Node engine drift")
+    require(engines.get("npm") == ">=11.16.0 <12", "web npm engine drift")
+
     readme = read("README.md")
     require(len(readme.strip()) >= 1000, "README is empty or was destructively truncated")
+    require("https://github.com/TrillionniumFoundation/Trillionnium-Chain.git" in readme,
+            "README must use the canonical clone URL")
+    require("Node.js `>=24.18.0 <25`" in readme,
+            "README Node requirement must match package.json")
+    require("machine-readable authority is `config/consensus-mainline.json`" in readme,
+            "README must defer to machine truth")
+    require_absent(readme, (
+        "https://github.com/ProfAlexQI/TrillionniumChain.git",
+        "Node.js 20+",
+        "CometBFT is the sole",
+    ), "README")
 
     boundary_md = read("PROJECT_BOUNDARY.md")
-    require("/home/" not in boundary_md, "project boundary must not depend on a local absolute path")
-    require("Private remote:" not in boundary_md, "project boundary contains stale private-remote claim")
+    require_absent(boundary_md, ("/home/", "/Users/", "Private remote:"),
+                   "project boundary")
 
     security = read("SECURITY.md")
     require("trnm-poco-node" in security and "trnm-consensus-core" in security,
             "security policy does not cover the native consensus path")
     require("migration residue" in security,
             "security policy must classify legacy Comet as migration residue")
-    require("CometBFT -> trnm-consensus-app -> trnm-runtime" not in security,
-            "security policy still declares the superseded Comet production path")
+    require_absent(security, (
+        "CometBFT -> trnm-consensus-app -> trnm-runtime",
+        "/home/",
+        "/Users/",
+    ), "security policy")
+
+    operations = read("OPERATIONS.md")
+    require("candidate-only; no public-testnet, production, or activation runbook" in operations,
+            "operations manual must declare its fail-closed scope")
+    require("default `trnm-poco-node` path intentionally exits with failure" in operations,
+            "operations manual must preserve default node fail-closed behavior")
+    require("check_external_evidence_v1.py --require-all" in operations,
+            "operations manual must document the release evidence gate")
+    require_absent(operations, (
+        "Canonical Public-Testnet Candidate",
+        "Run the application with `trnm-cometbft-app`",
+        "CometBFT -> trnm-consensus-app -> trnm-runtime",
+        "BankKeeper",
+        "/home/",
+        "/Users/",
+    ), "operations manual")
+
+    readiness = read("RELEASE_READINESS.md")
+    require("human-readable release projection" in readiness,
+            "release readiness must be a projection, not a second truth source")
+    require("NO-GO: not public-testnet-ready" in readiness,
+            "release readiness must retain the current NO-GO conclusion")
+    require("Production consensus activation | `false`" in readiness,
+            "release readiness must retain false activation state")
+    require_absent(readiness, (
+        "active **release readiness truth source**",
+        "/home/",
+        "/Users/",
+    ), "release readiness")
 
     codeowners = read(".github/CODEOWNERS")
     for critical in (
@@ -171,6 +224,18 @@ def main() -> int:
     for check_name in policy.get("required_check_names", []):
         require(f"name: {check_name}" in workflow,
                 f"baseline workflow missing stable check name {check_name}")
+    for package in (
+        "trnm-state",
+        "trnm-consensus-types",
+        "trnm-consensus-crypto",
+        "trnm-consensus-core",
+        "trnm-consensus-safety-rules",
+        "trnm-consensus-safety-store",
+        "trnm-consensus-signer-journal",
+        "trnm-native-application",
+        "trnm-poco-node",
+    ):
+        require(package in workflow, f"strict safety-kernel Clippy missing {package}")
 
     expected_external = {
         "EXT-REVIEW-001",

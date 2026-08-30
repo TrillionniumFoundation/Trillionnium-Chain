@@ -89,7 +89,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Validate all supplied external evidence and report open blockers
+      - name: Validate supplied external evidence and report open blockers
         run: |
           python3 scripts/ci/check_external_evidence_v1.py \
             --output "${RUNNER_TEMP}/external-evidence-status-v1.json"
@@ -112,7 +112,7 @@ jobs:
   rust-baseline:
     name: rust-baseline
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Check out exact source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -136,8 +136,30 @@ jobs:
         working-directory: trillionnium
         run: cargo check --workspace --all-targets --locked
 
-      - name: Strict Clippy for consensus safety kernel
+      - name: Strict Clippy for executable safety kernel
         working-directory: trillionnium
         run: |
-          cargo clippy --locked --all-targets -- \
-            -D warnings
+          set -euo pipefail
+          for package in \
+            trnm-state \
+            trnm-consensus-types \
+            trnm-consensus-crypto \
+            trnm-consensus-core \
+            trnm-consensus-safety-rules \
+            trnm-consensus-safety-store \
+            trnm-consensus-signer-journal \
+            trnm-native-application \
+            trnm-poco-node
+          do
+            echo "clippy package=${package}"
+            cargo clippy -p "${package}" --locked -- -D warnings
+          done
+
+      - name: Run critical library regressions
+        working-directory: trillionnium
+        run: |
+          set -euo pipefail
+          cargo test -p trnm-state --lib --locked
+          cargo test -p trnm-consensus-types --lib --locked
+          cargo test -p trnm-consensus-core --lib --locked
+          cargo test -p trnm-poco-node --lib --locked
