@@ -147,6 +147,36 @@ jobs:
           git diff --exit-code -- .
           test -z "$(git status --porcelain --untracked-files=all)"
 
+  fuzz-smoke:
+    name: fuzz-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact source identity
+        run: test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+      - name: Install pinned fuzz toolchain
+        run: |
+          rustup toolchain install nightly-2026-07-27 --profile minimal
+          bash ./scripts/ci/install_cargo_fuzz.sh
+      - name: Run bounded three-target canonical-input smoke
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "5"
+        run: ./scripts/ci/check_canonical_fuzz_smoke.sh
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-required-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14
+
   external-evidence-contract:
     name: external-evidence-contract
     runs-on: ubuntu-latest
