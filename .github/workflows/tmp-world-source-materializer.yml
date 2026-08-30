@@ -33,7 +33,16 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Verify reviewed source inputs
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc --version --verbose
+          cargo --version --verbose
+
+      - name: Materialize every compiled source and retire generator contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -44,26 +53,23 @@ jobs:
           test "$(git hash-object trillionnium/crates/trnm-game-server/src/lib.rs.in)" = "8882f47db55ca5993329594901c828c6faf325a8"
           test "$(git hash-object trillionnium/crates/trnm-game-server/src/cex.rs)" = "4b8c9d6618d8eff167a5048192f6431e0427a6f0"
           test "$(git hash-object trillionnium/crates/trnm-game-server/Cargo.toml)" = "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
+          test -s trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in
           test -z "$(git status --porcelain)"
 
-      - name: Install pinned Rust toolchain
-        shell: bash
-        run: |
-          set -euo pipefail
-          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
-          rustup default "${RUST_TOOLCHAIN}"
-          rustc --version --verbose
-          cargo --version --verbose
+          cargo check --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          generated="$(find trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
+          test -n "${generated}"
+          test -s "${generated}"
+          cp "${generated}" /tmp/trnm_game_server_lib_generated.rs
 
-      - name: Repair literal localhost loopback normalization
-        shell: bash
-        run: |
-          set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
 
-          path = Path("world/trillionnium/crates/trnm-game-server/src/cex.rs")
-          source = path.read_text(encoding="utf-8")
+          root = Path.cwd()
+          crate = root / "trillionnium/crates/trnm-game-server"
+
+          cex_path = crate / "src/cex.rs"
+          cex = cex_path.read_text(encoding="utf-8")
           old = (
               '            let host = url.host_str().unwrap_or_default();\n'
               '            let loopback = host.eq_ignore_ascii_case("localhost")\n'
@@ -79,28 +85,10 @@ jobs:
               '                    .parse::<IpAddr>()\n'
               '                    .is_ok_and(|address| address.is_loopback());\n'
           )
-          if source.count(old) != 1:
+          if cex.count(old) != 1:
               raise SystemExit("localhost normalization source drifted")
-          path.write_text(source.replace(old, new, 1), encoding="utf-8")
-          PY
-          grep -q 'let canonical_host = host' world/trillionnium/crates/trnm-game-server/src/cex.rs
+          cex_path.write_text(cex.replace(old, new, 1), encoding="utf-8")
 
-      - name: Produce and materialize the reviewed generated body
-        shell: bash
-        run: |
-          set -euo pipefail
-          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
-          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
-          test -n "${generated}"
-          test -s "${generated}"
-          cp "${generated}" /tmp/trnm_game_server_lib_generated.rs
-          grep -q 'terminal settlement is owned by trnm-settlement-worker' /tmp/trnm_game_server_lib_generated.rs
-          ! grep -q 'reconcile_economy(&state.cex' /tmp/trnm_game_server_lib_generated.rs
-          ! grep -q 'settle_pending_matches(&settlement_state' /tmp/trnm_game_server_lib_generated.rs
-          python3 - <<'PY'
-          from pathlib import Path
-
-          crate = Path("world/trillionnium/crates/trnm-game-server")
           lib = crate / "src/lib.rs"
           wrapper = lib.read_text(encoding="utf-8")
           marker = "// The full reviewed server body is generated from src/lib.rs.in by build.rs."
@@ -119,91 +107,265 @@ jobs:
               raise SystemExit("reviewed Cargo.toml build-script declaration drifted")
           manifest.write_text(cargo.replace(build_line, "", 1), encoding="utf-8")
 
-          for obsolete in (crate / "build.rs", crate / "src/lib.rs.in"):
+          gate_path = root / "scripts/check-trnm-settlement-transaction-boundary.sh"
+          gate = gate_path.read_text(encoding="utf-8")
+          old_reads = '''entry = read("trillionnium/crates/trnm-game-server/src/lib.rs")
+          worker_entry = read("trillionnium/crates/trnm-game-server/src/settlement_worker.rs")
+          worker = read("trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in")
+          build = read("trillionnium/crates/trnm-game-server/build.rs")
+          cex = read("trillionnium/crates/trnm-game-server/src/cex.rs")
+          '''
+          new_reads = '''entry = read("trillionnium/crates/trnm-game-server/src/lib.rs")
+          worker_entry = read("trillionnium/crates/trnm-game-server/src/settlement_worker.rs")
+          worker_legacy = read("trillionnium/crates/trnm-game-server/src/settlement_worker_legacy.rs")
+          worker_runtime = read("trillionnium/crates/trnm-game-server/src/settlement_worker_runtime_v2.rs")
+          worker = worker_legacy + "\\n" + worker_runtime
+          cex = read("trillionnium/crates/trnm-game-server/src/cex.rs")
+          '''
+          if gate.count(old_reads) != 1:
+              raise SystemExit("settlement boundary source-list shape drifted")
+          gate = gate.replace(old_reads, new_reads, 1)
+
+          old_generator = '''for source, generated_name, label in (
+              (entry, "trnm_game_server_lib_generated.rs", "game-server entrypoint"),
+              (worker_entry, "trnm_settlement_worker_generated.rs", "settlement-worker entrypoint"),
+          ):
+              require(source, ("include!", "OUT_DIR", generated_name), label)
+
+          if "reconcile_economy(&state.cex" in entry:
+              fail("compiled game-server entrypoint reintroduced synchronous CEX settlement")
+          require(
+              build,
+              (
+                  'source.contains("reconcile_economy(&state.cex")',
+                  'source.contains("settle_pending_matches(&settlement_state")',
+                  "WORLD-P0-001 source transform failed closed",
+                  "terminal settlement is owned by trnm-settlement-worker",
+                  "0018_online_settlement_operator_controls_v1",
+              ),
+              "generated runtime transform",
+          )
+          '''
+          new_direct = '''for forbidden in (
+              "trnm_game_server_lib_generated.rs",
+              "trnm_settlement_worker_generated.rs",
+              "env!(\\"OUT_DIR\\")",
+          ):
+              if forbidden in entry or forbidden in worker_entry:
+                  fail(f"direct source regressed to generated entrypoint: {forbidden}")
+          require(
+              worker_entry,
+              ('include!("settlement_worker_legacy.rs")', 'include!("settlement_worker_runtime_v2.rs")'),
+              "direct settlement-worker entrypoint",
+          )
+          if "reconcile_economy(&state.cex" in entry:
+              fail("compiled game-server entrypoint reintroduced synchronous CEX settlement")
+          if "settle_pending_matches(&settlement_state" in entry:
+              fail("compiled game-server entrypoint reintroduced the in-process settlement loop")
+          require(
+              entry,
+              (
+                  "terminal settlement is owned by trnm-settlement-worker",
+                  "0016_online_settlement_outbox_v1",
+                  "0017_online_settlement_worker_runtime_v1",
+                  "0018_online_settlement_operator_controls_v1",
+                  "0019_online_settlement_quarantine_v1",
+              ),
+              "direct game-server source",
+          )
+          require(
+              worker_legacy,
+              ("0016_online_settlement_outbox_v1", "0017_online_settlement_worker_runtime_v1"),
+              "direct settlement-worker legacy source",
+          )
+          require(
+              worker_runtime,
+              ("0018_online_settlement_operator_controls_v1", "0019_online_settlement_quarantine_v1"),
+              "direct settlement-worker v2 source",
+          )
+          '''
+          if gate.count(old_generator) != 1:
+              raise SystemExit("settlement generator-gate shape drifted")
+          gate = gate.replace(old_generator, new_direct, 1)
+          gate = gate.replace(
+              '("GENERATED_GAME_SERVER_SOURCE", "terminal settlement is owned by trnm-settlement-worker"),',
+              '("DIRECT_GAME_SERVER_SOURCE", "terminal settlement is owned by trnm-settlement-worker"),',
+              1,
+          )
+          gate = gate.replace(
+              '"TRNM settlement transaction boundary: PASS "\n    "(generated entrypoints, capture/execute/apply, durable identity, live lease, "',
+              '"TRNM settlement transaction boundary: PASS "\n    "(direct sources, capture/execute/apply, durable identity, live lease, "',
+              1,
+          )
+          gate_path.write_text(gate, encoding="utf-8")
+
+          boundary_test = crate / "tests/settlement_game_server_boundary.rs"
+          boundary_test.write_text(r'''const DIRECT_GAME_SERVER_SOURCE: &str = include_str!("../src/lib.rs");
+          const SETTLEMENT_WORKER_ENTRYPOINT: &str = include_str!("../src/settlement_worker.rs");
+          const SETTLEMENT_WORKER_LEGACY_SOURCE: &str = include_str!("../src/settlement_worker_legacy.rs");
+          const SETTLEMENT_WORKER_RUNTIME_SOURCE: &str =
+              include_str!("../src/settlement_worker_runtime_v2.rs");
+
+          #[test]
+          fn game_server_direct_source_does_not_execute_terminal_economy_settlement() {
+              for forbidden in [
+                  "trnm_game_server_lib_generated.rs",
+                  "env!(\"OUT_DIR\")",
+                  "src/lib.rs.in",
+              ] {
+                  assert!(
+                      !DIRECT_GAME_SERVER_SOURCE.contains(forbidden),
+                      "direct game-server source regressed to generator marker {forbidden}"
+                  );
+              }
+              assert!(!DIRECT_GAME_SERVER_SOURCE.contains("reconcile_economy(&state.cex"));
+              assert!(!DIRECT_GAME_SERVER_SOURCE.contains("settle_pending_matches(&settlement_state"));
+              assert!(DIRECT_GAME_SERVER_SOURCE.contains(
+                  "terminal settlement is owned by trnm-settlement-worker; in-process settlement is prohibited"
+              ));
+          }
+
+          #[test]
+          fn settlement_worker_uses_only_direct_reviewable_sources() {
+              assert!(SETTLEMENT_WORKER_ENTRYPOINT.contains("settlement_worker_legacy.rs"));
+              assert!(SETTLEMENT_WORKER_ENTRYPOINT.contains("settlement_worker_runtime_v2.rs"));
+              assert!(!SETTLEMENT_WORKER_ENTRYPOINT.contains("OUT_DIR"));
+              assert!(!SETTLEMENT_WORKER_ENTRYPOINT.contains("trnm_settlement_worker_generated.rs"));
+          }
+
+          #[test]
+          fn direct_runtime_sources_register_the_complete_settlement_migration_chain() {
+              for marker in [
+                  "0016_online_settlement_outbox_v1",
+                  "0017_online_settlement_worker_runtime_v1",
+                  "0018_online_settlement_operator_controls_v1",
+                  "0019_online_settlement_quarantine_v1",
+              ] {
+                  assert!(
+                      DIRECT_GAME_SERVER_SOURCE.contains(marker),
+                      "direct game-server source lost {marker}"
+                  );
+              }
+              for marker in [
+                  "0016_online_settlement_outbox_v1",
+                  "0017_online_settlement_worker_runtime_v1",
+              ] {
+                  assert!(SETTLEMENT_WORKER_LEGACY_SOURCE.contains(marker));
+              }
+              for marker in [
+                  "0018_online_settlement_operator_controls_v1",
+                  "0019_online_settlement_quarantine_v1",
+              ] {
+                  assert!(SETTLEMENT_WORKER_RUNTIME_SOURCE.contains(marker));
+              }
+          }
+
+          #[test]
+          fn direct_migration_includes_are_unambiguous() {
+              assert!(DIRECT_GAME_SERVER_SOURCE.contains(
+                  "concat!(::std::env!(\"CARGO_MANIFEST_DIR\")"
+              ));
+              for source in [
+                  SETTLEMENT_WORKER_LEGACY_SOURCE,
+                  SETTLEMENT_WORKER_RUNTIME_SOURCE,
+              ] {
+                  assert!(source.contains("include_str!(\"../migrations/"));
+              }
+          }
+          ''', encoding="utf-8")
+
+          for obsolete in (
+              crate / "build.rs",
+              crate / "src/lib.rs.in",
+              crate / "src/settlement_worker.rs.in",
+          ):
               if not obsolete.is_file():
                   raise SystemExit(f"expected obsolete source missing: {obsolete}")
               obsolete.unlink()
           PY
-          test ! -e world/trillionnium/crates/trnm-game-server/build.rs
-          test ! -e world/trillionnium/crates/trnm-game-server/src/lib.rs.in
-          ! grep -q '^build = "build.rs"$' world/trillionnium/crates/trnm-game-server/Cargo.toml
-          ! grep -q 'OUT_DIR.*trnm_game_server_lib_generated' world/trillionnium/crates/trnm-game-server/src/lib.rs
-          ! grep -q 'reconcile_economy(&state.cex' world/trillionnium/crates/trnm-game-server/src/lib.rs
-          ! grep -q 'settle_pending_matches(&settlement_state' world/trillionnium/crates/trnm-game-server/src/lib.rs
 
-      - name: Format and validate directly compiled source
+          test ! -e trillionnium/crates/trnm-game-server/build.rs
+          test ! -e trillionnium/crates/trnm-game-server/src/lib.rs.in
+          test ! -e trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in
+          ! grep -q '^build = "build.rs"$' trillionnium/crates/trnm-game-server/Cargo.toml
+          ! grep -q 'OUT_DIR.*trnm_game_server_lib_generated' trillionnium/crates/trnm-game-server/src/lib.rs
+          ! grep -q 'reconcile_economy(&state.cex' trillionnium/crates/trnm-game-server/src/lib.rs
+          ! grep -q 'settle_pending_matches(&settlement_state' trillionnium/crates/trnm-game-server/src/lib.rs
+
+      - name: Format and validate all directly compiled targets
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p run/world-materialization
           exec > >(tee run/world-materialization/validation.log) 2>&1
-          cargo fmt --manifest-path world/trillionnium/Cargo.toml -p trnm-game-server
-          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
-          cargo test --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
-          cargo clippy --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib -- -D warnings
-          (cd world && bash scripts/check-trnm-settlement-transaction-boundary.sh)
-          (cd world && bash scripts/check_trnm_settlement_transaction_boundary.sh)
-          git -C world diff --check
+          cd world
+          cargo fmt --manifest-path trillionnium/Cargo.toml -p trnm-game-server
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
+          cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
+          cargo clippy --manifest-path trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets -- -D warnings
+          bash scripts/check-trnm-settlement-transaction-boundary.sh
+          bash scripts/check_trnm_settlement_transaction_boundary.sh
+          git diff --check
 
-      - name: Bind materialization evidence
+      - name: Bind exact materialization evidence
         shell: bash
         run: |
           set -euo pipefail
           out=run/world-materialization
-          cp world/trillionnium/crates/trnm-game-server/src/lib.rs "${out}/lib.rs"
-          cp world/trillionnium/crates/trnm-game-server/src/cex.rs "${out}/cex.rs"
-          cp world/trillionnium/crates/trnm-game-server/Cargo.toml "${out}/Cargo.toml"
-          git -C world diff --binary -- \
-            trillionnium/crates/trnm-game-server/Cargo.toml \
-            trillionnium/crates/trnm-game-server/build.rs \
-            trillionnium/crates/trnm-game-server/src/lib.rs \
-            trillionnium/crates/trnm-game-server/src/lib.rs.in \
-            trillionnium/crates/trnm-game-server/src/cex.rs \
-            > "${out}/direct-source.patch"
+          mkdir -p "${out}/files/trillionnium/crates/trnm-game-server/src" \
+                   "${out}/files/trillionnium/crates/trnm-game-server/tests" \
+                   "${out}/files/trillionnium/crates/trnm-game-server" \
+                   "${out}/files/scripts"
+          cp world/trillionnium/crates/trnm-game-server/src/lib.rs "${out}/files/trillionnium/crates/trnm-game-server/src/lib.rs"
+          cp world/trillionnium/crates/trnm-game-server/src/cex.rs "${out}/files/trillionnium/crates/trnm-game-server/src/cex.rs"
+          cp world/trillionnium/crates/trnm-game-server/Cargo.toml "${out}/files/trillionnium/crates/trnm-game-server/Cargo.toml"
+          cp world/trillionnium/crates/trnm-game-server/tests/settlement_game_server_boundary.rs "${out}/files/trillionnium/crates/trnm-game-server/tests/settlement_game_server_boundary.rs"
+          cp world/scripts/check-trnm-settlement-transaction-boundary.sh "${out}/files/scripts/check-trnm-settlement-transaction-boundary.sh"
+          git -C world diff --binary > "${out}/direct-source.patch"
           printf '%s\n' \
             'trillionnium/crates/trnm-game-server/build.rs' \
             'trillionnium/crates/trnm-game-server/src/lib.rs.in' \
+            'trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in' \
             > "${out}/deleted-files.txt"
           python3 - <<'PY'
           import hashlib, json
           from pathlib import Path
 
           out = Path("run/world-materialization")
-          lib = out.joinpath("lib.rs").read_bytes()
-          cex = out.joinpath("cex.rs").read_bytes()
-          cargo = out.joinpath("Cargo.toml").read_bytes()
-          git_blob = hashlib.sha1(f"blob {len(lib)}\0".encode() + lib).hexdigest()
+          files = sorted(path for path in out.joinpath("files").rglob("*") if path.is_file())
+          outputs = {}
+          for path in files:
+              payload = path.read_bytes()
+              outputs[str(path.relative_to(out / "files"))] = {
+                  "bytes": len(payload),
+                  "sha256": hashlib.sha256(payload).hexdigest(),
+                  "git_blob_sha1": hashlib.sha1(f"blob {len(payload)}\0".encode() + payload).hexdigest(),
+              }
           record = {
-              "contract": "trnm_world_direct_source_materialization_v2",
-              "world_head": "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903",
-              "source_blobs": {
-                  "build.rs": "abc8d4228123e13a3dc5e3e154467a7d2b67e2ee",
-                  "src/lib.rs": "f5b2d91ae359d86fd259dc1b170982b8a0960d13",
-                  "src/lib.rs.in": "8882f47db55ca5993329594901c828c6faf325a8",
-                  "src/cex.rs": "4b8c9d6618d8eff167a5048192f6431e0427a6f0",
-                  "Cargo.toml": "d27f7eb6a06bc3b8ceb13e31edacc72d3f58262f"
-              },
-              "outputs": {
-                  "lib_rs_bytes": len(lib),
-                  "lib_rs_git_blob_sha1": git_blob,
-                  "lib_rs_sha256": hashlib.sha256(lib).hexdigest(),
-                  "cex_rs_sha256": hashlib.sha256(cex).hexdigest(),
-                  "cargo_toml_sha256": hashlib.sha256(cargo).hexdigest()
-              },
+              "contract": "trnm_world_direct_source_materialization_v3",
+              "source_world_head": "5f76aceabe2b1c236c57fbe26c6b70e4bdb31903",
+              "deleted_files": [
+                  "trillionnium/crates/trnm-game-server/build.rs",
+                  "trillionnium/crates/trnm-game-server/src/lib.rs.in",
+                  "trillionnium/crates/trnm-game-server/src/settlement_worker.rs.in",
+              ],
+              "outputs": outputs,
               "validation": {
-                  "cargo_check": "passed",
-                  "cargo_test_lib": "passed",
-                  "cargo_clippy_deny_warnings": "passed",
+                  "cargo_check_all_targets": "passed",
+                  "cargo_test_all_targets": "passed",
+                  "cargo_clippy_all_targets_deny_warnings": "passed",
                   "settlement_boundary_checks": "passed",
-                  "git_diff_check": "passed"
+                  "git_diff_check": "passed",
               },
-              "release_credit": "none"
+              "release_credit": "none",
           }
           out.joinpath("materialization.json").write_text(
               json.dumps(record, sort_keys=True, indent=2) + "\n", encoding="utf-8"
           )
           PY
-          sha256sum "${out}/lib.rs" "${out}/cex.rs" "${out}/Cargo.toml" "${out}/direct-source.patch" "${out}/materialization.json" > "${out}/SHA256SUMS"
+          find "${out}/files" -type f -print0 | sort -z | xargs -0 sha256sum > "${out}/SHA256SUMS"
+          sha256sum "${out}/direct-source.patch" "${out}/materialization.json" >> "${out}/SHA256SUMS"
           cat "${out}/materialization.json"
 
       - name: Upload exact materialized source
