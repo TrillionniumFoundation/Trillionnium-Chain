@@ -7,6 +7,7 @@
   "baseline_workflow": ".github/workflows/trnm-required-baseline.yml",
   "required_check_names": [
     "repository-truth",
+    "protocol-contract",
     "rust-baseline",
     "external-evidence-contract"
   ],
