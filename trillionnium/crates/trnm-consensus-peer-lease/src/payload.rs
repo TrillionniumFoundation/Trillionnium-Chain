@@ -42,6 +42,26 @@ pub const PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1: bool = false;
 /// payload itself.
 pub const PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1: usize = 8 * 1024 * 1024;
 pub const PAYLOAD_REPLAY_MAX_RECORDS_V1: u64 = 1_048_576;
+/// Bound the complete metadata WAL snapshot independently from the record
+/// count.  Replay is intentionally a whole-snapshot operation today, so this
+/// cap prevents a locally supplied record-count limit from becoming an
+/// unexpectedly large allocation during open/reload.  It is a local,
+/// candidate-only resource fence and does not alter the wire frame contract.
+pub const PAYLOAD_REPLAY_MAX_WAL_BYTES_V1: u64 = 64 * 1024 * 1024;
+/// Bound the number of retained publication temporary paths held by an
+/// external recovery owner.  Excess evidence is a fail-closed condition.
+pub const PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1: usize = 64;
+/// Bound directory entries inspected while looking for replay publication
+/// temporaries.  This protects the no-temporary case as well as the matching
+/// path collection case from an attacker-controlled directory fan-out.
+pub const PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1: usize = 4096;
+
+/// Return the only valid successor for a persisted replay generation.
+/// Saturation would make `u64::MAX` look like a legal rollover to itself;
+/// checked arithmetic instead makes that boundary stale/fail closed.
+pub(crate) const fn payload_replay_generation_successor_v1(previous: u64) -> Option<u64> {
+    previous.checked_add(1)
+}
 
 const LOG_MAGIC_V1: [u8; 8] = *b"TRNPRW01";
 const LOG_VERSION_V1: u8 = 1;
@@ -743,6 +763,13 @@ impl PayloadReplayStoreV1 {
             index,
             self.last_hash,
         );
+        let current_length = self.file.metadata()?.len();
+        let new_length = current_length
+            .checked_add(record.len() as u64)
+            .ok_or(PayloadReplayErrorV1::TooLarge)?;
+        if new_length > PAYLOAD_REPLAY_MAX_WAL_BYTES_V1 {
+            return Err(PayloadReplayErrorV1::TooLarge);
+        }
         // Frame validation and in-memory preview happen before the append and
         // may yield to a same-UID namespace replacement.  Recheck every
         // bound endpoint immediately before crossing the durable boundary so
@@ -897,7 +924,10 @@ impl PayloadReplayStoreV1 {
                     return Err(PayloadReplayErrorV1::SequenceGap);
                 }
             }
-            Some(previous) if frame.generation == previous.generation.saturating_add(1) => {
+            Some(previous)
+                if payload_replay_generation_successor_v1(previous.generation)
+                    == Some(frame.generation) =>
+            {
                 if frame.session_id == previous.session_id || frame.sequence != 0 {
                     return Err(PayloadReplayErrorV1::Replay);
                 }
@@ -999,21 +1029,39 @@ impl PayloadReplayStoreV1 {
 
     fn read_log_bytes(&mut self) -> Result<Vec<u8>, PayloadReplayErrorV1> {
         let length = self.file.metadata()?.len();
-        let maximum = PAYLOAD_REPLAY_MAX_RECORDS_V1
-            .checked_add(1)
-            .and_then(|count| count.checked_mul(RECORD_BYTES_V1 as u64))
+        let record_maximum = PAYLOAD_REPLAY_MAX_RECORDS_V1
+            .checked_mul(RECORD_BYTES_V1 as u64)
             .ok_or(PayloadReplayErrorV1::TooLarge)?;
+        let maximum = record_maximum.min(PAYLOAD_REPLAY_MAX_WAL_BYTES_V1);
         if length > maximum {
             return Err(PayloadReplayErrorV1::TooLarge);
         }
         self.file.seek(SeekFrom::Start(0))?;
         let mut bytes = Vec::new();
-        std::io::Read::by_ref(&mut self.file)
-            .take(maximum.saturating_add(1))
-            .read_to_end(&mut bytes)?;
-        self.file.seek(SeekFrom::End(0))?;
-        if bytes.len() as u64 > maximum {
+        let capacity = usize::try_from(length).map_err(|_| PayloadReplayErrorV1::TooLarge)?;
+        bytes
+            .try_reserve_exact(capacity)
+            .map_err(|_| PayloadReplayErrorV1::TooLarge)?;
+        bytes.resize(capacity, 0);
+        if let Err(error) = self.file.read_exact(&mut bytes) {
+            return if error.kind() == io::ErrorKind::UnexpectedEof {
+                Err(PayloadReplayErrorV1::Truncated)
+            } else {
+                Err(PayloadReplayErrorV1::Io(error))
+            };
+        }
+        let mut trailing = [0_u8; 1];
+        if self.file.read(&mut trailing)? != 0 {
             return Err(PayloadReplayErrorV1::TooLarge);
+        }
+        let observed_length = self.file.metadata()?.len();
+        self.file.seek(SeekFrom::End(0))?;
+        if observed_length != length {
+            return Err(if observed_length > maximum {
+                PayloadReplayErrorV1::TooLarge
+            } else {
+                PayloadReplayErrorV1::Truncated
+            });
         }
         Ok(bytes)
     }
@@ -1226,6 +1274,9 @@ fn parse_log(
     if bytes.is_empty() {
         return Err(PayloadReplayErrorV1::Truncated);
     }
+    if bytes.len() as u64 > PAYLOAD_REPLAY_MAX_WAL_BYTES_V1 {
+        return Err(PayloadReplayErrorV1::TooLarge);
+    }
     if !bytes.len().is_multiple_of(RECORD_BYTES_V1) {
         return Err(PayloadReplayErrorV1::Truncated);
     }
@@ -1363,7 +1414,10 @@ fn preview_replayed_state(
                 return Err(PayloadReplayErrorV1::Corrupt);
             }
         }
-        Some(previous) if frame.generation == previous.generation.saturating_add(1) => {
+        Some(previous)
+            if payload_replay_generation_successor_v1(previous.generation)
+                == Some(frame.generation) =>
+        {
             if frame.session_id == previous.session_id || frame.sequence != 0 {
                 return Err(PayloadReplayErrorV1::Corrupt);
             }
@@ -1623,7 +1677,14 @@ pub(crate) fn reject_stale_head_temps(path: &Path) -> Result<(), PayloadReplayEr
             "payload replay head filename",
         ))?;
     let prefix = format!(".{head_name}.tmp-");
+    let mut scanned = 0_usize;
     for entry in fs::read_dir(parent).map_err(PayloadReplayErrorV1::Io)? {
+        scanned = scanned
+            .checked_add(1)
+            .ok_or(PayloadReplayErrorV1::TooLarge)?;
+        if scanned > PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1 {
+            return Err(PayloadReplayErrorV1::TooLarge);
+        }
         let entry = entry.map_err(PayloadReplayErrorV1::Io)?;
         if entry
             .file_name()
@@ -1855,6 +1916,78 @@ mod tests {
         assert!(matches!(
             reopened.admit(&old),
             Err(PayloadReplayErrorV1::Replay)
+        ));
+    }
+
+    #[test]
+    fn generation_successor_fails_closed_at_u64_max() {
+        assert_eq!(
+            payload_replay_generation_successor_v1(u64::MAX - 1),
+            Some(u64::MAX)
+        );
+        assert_eq!(payload_replay_generation_successor_v1(u64::MAX), None);
+
+        let ns = namespace();
+        let previous = ReplayStateV1 {
+            session_id: [5; 32],
+            generation: u64::MAX,
+            last_sequence: 0,
+            last_fingerprint: [10; 32],
+        };
+        let rollover = frame(
+            ns,
+            [9; 32],
+            PeerLeaseDirectionV1::Inbound,
+            [6; 32],
+            u64::MAX,
+            0,
+            [11; 32],
+        );
+        assert!(matches!(
+            preview_replayed_state(Some(previous), rollover),
+            Err(PayloadReplayErrorV1::Corrupt)
+        ));
+    }
+
+    #[test]
+    fn oversized_payload_wal_is_rejected_before_snapshot_allocation() {
+        let dir = private_tempdir();
+        let path = dir.path().join("oversized-frames.wal");
+        let oversized_length = PAYLOAD_REPLAY_MAX_WAL_BYTES_V1 + 1;
+        let file = OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .unwrap();
+        file.set_len(oversized_length).unwrap();
+        file.sync_all().unwrap();
+        drop(file);
+        #[cfg(unix)]
+        use std::os::unix::fs::PermissionsExt;
+        #[cfg(unix)]
+        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+        let head = sidecar_path(&path, "head-v1").unwrap();
+        fs::write(&head, vec![0_u8; HEAD_BYTES_V1]).unwrap();
+        #[cfg(unix)]
+        fs::set_permissions(&head, fs::Permissions::from_mode(0o600)).unwrap();
+
+        assert!(matches!(
+            PayloadReplayStoreV1::open(&path, namespace()),
+            Err(PayloadReplayErrorV1::TooLarge)
+        ));
+        assert_eq!(fs::metadata(&path).unwrap().len(), oversized_length);
+    }
+
+    #[test]
+    fn stale_head_scan_is_bounded_before_directory_fanout() {
+        let dir = private_tempdir();
+        let path = dir.path().join("frames.wal");
+        for index in 0..=PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1 {
+            fs::write(dir.path().join(format!("unrelated-{index}")), b"x").unwrap();
+        }
+        assert!(matches!(
+            reject_stale_head_temps(&path),
+            Err(PayloadReplayErrorV1::TooLarge)
         ));
     }
 

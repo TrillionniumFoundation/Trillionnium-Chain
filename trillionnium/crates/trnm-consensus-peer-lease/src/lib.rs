@@ -26,7 +26,8 @@ pub use payload::{
     PayloadReplayFrameV1, PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PayloadReplayStoreV1,
     PAYLOAD_REPLAY_APPEND_ONLY_HASH_CHAIN_V1, PAYLOAD_REPLAY_CANDIDATE_V1,
     PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
-    PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
+    PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1, PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1,
+    PAYLOAD_REPLAY_MAX_WAL_BYTES_V1, PAYLOAD_REPLAY_PRODUCTION_ACTIVATION_V1,
 };
 pub use payload_body::{
     payload_replay_body_digest_v1, PayloadReplayAuthenticatedBodyV1, PayloadReplayBodyReceiptV1,
@@ -115,6 +116,9 @@ mod source_truth_tests {
             "payload_replay_recovery_socket_client_transport_errors_non_fatal = true",
             "payload_replay_recovery_socket_max_concurrent_connections = 1",
             "payload_replay_core_ack_ledger_candidate = true",
+            "payload_replay_bounded_wal_replay_memory = true",
+            "payload_replay_bounded_temporary_scan = true",
+            "payload_replay_generation_overflow_fail_closed = true",
         ] {
             assert!(
                 manifest.contains(required_true),

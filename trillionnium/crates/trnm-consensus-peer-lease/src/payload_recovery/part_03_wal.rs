@@ -34,9 +34,10 @@ fn read_snapshot(
     namespace: PayloadReplayNamespaceV1,
     expected_namespace_digest: [u8; 32],
 ) -> Result<PayloadSnapshotV1, PayloadReplayRecoveryErrorV1> {
-    let maximum = PAYLOAD_REPLAY_MAX_RECORDS_V1
+    let record_maximum = PAYLOAD_REPLAY_MAX_RECORDS_V1
         .checked_mul(RECORD_BYTES_V1 as u64)
         .ok_or(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
+    let maximum = record_maximum.min(PAYLOAD_REPLAY_MAX_WAL_BYTES_V1);
     let length = file.metadata()?.len();
     if length == 0 || length > maximum || length % RECORD_BYTES_V1 as u64 != 0 {
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
@@ -44,12 +45,25 @@ fn read_snapshot(
     file.seek(SeekFrom::Start(0))?;
     let capacity =
         usize::try_from(length).map_err(|_| PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
-    let mut bytes = Vec::with_capacity(capacity);
-    Read::by_ref(file)
-        .take(maximum.saturating_add(1))
-        .read_to_end(&mut bytes)?;
+    let mut bytes = Vec::new();
+    bytes
+        .try_reserve_exact(capacity)
+        .map_err(|_| PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
+    bytes.resize(capacity, 0);
+    if let Err(error) = file.read_exact(&mut bytes) {
+        return if error.kind() == io::ErrorKind::UnexpectedEof {
+            Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)
+        } else {
+            Err(PayloadReplayRecoveryErrorV1::Io(error))
+        };
+    }
+    let mut trailing = [0_u8; 1];
+    if file.read(&mut trailing)? != 0 {
+        return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
+    }
+    let observed_length = file.metadata()?.len();
     file.seek(SeekFrom::End(0))?;
-    if bytes.len() as u64 != length {
+    if observed_length != length {
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
     }
     verify_log(&bytes, namespace, expected_namespace_digest)?;
@@ -70,7 +84,10 @@ fn verify_log(
     namespace: PayloadReplayNamespaceV1,
     expected_namespace_digest: [u8; 32],
 ) -> Result<(), PayloadReplayRecoveryErrorV1> {
-    if bytes.is_empty() || !bytes.len().is_multiple_of(RECORD_BYTES_V1) {
+    if bytes.is_empty()
+        || bytes.len() as u64 > PAYLOAD_REPLAY_MAX_WAL_BYTES_V1
+        || !bytes.len().is_multiple_of(RECORD_BYTES_V1)
+    {
         return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
     }
     let count = bytes.len() / RECORD_BYTES_V1;
@@ -160,7 +177,10 @@ fn verify_frame_record(
                 return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
             }
         }
-        Some(previous) if record.generation == previous.generation.saturating_add(1) => {
+        Some(previous)
+            if payload_replay_generation_successor_v1(previous.generation)
+                == Some(record.generation) =>
+        {
             if record.session_id == previous.session_id || record.sequence != 0 {
                 return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
             }
@@ -308,13 +328,23 @@ fn scan_head_temporaries(
     let head_name = utf8_filename(&head_path, "payload replay head filename")?;
     let prefix = format!(".{head_name}.tmp-");
     let mut paths = Vec::new();
+    let mut scanned = 0_usize;
     for entry in fs::read_dir(parent)? {
+        scanned = scanned
+            .checked_add(1)
+            .ok_or(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt)?;
+        if scanned > PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1 {
+            return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
+        }
         let entry = entry?;
         if entry
             .file_name()
             .to_str()
             .is_some_and(|value| value.starts_with(&prefix))
         {
+            if paths.len() >= PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1 {
+                return Err(PayloadReplayRecoveryErrorV1::PayloadJournalCorrupt);
+            }
             let metadata = fs::symlink_metadata(entry.path())?;
             if metadata.file_type().is_symlink()
                 || !metadata.is_file()

@@ -36,8 +36,10 @@ use sha2::{Digest, Sha256};
 
 use crate::{
     payload::{
-        PayloadReplayDirectionV1, PayloadReplayFrameV1, PayloadReplayNamespaceV1,
-        PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1, PAYLOAD_REPLAY_MAX_RECORDS_V1,
+        payload_replay_generation_successor_v1, PayloadReplayDirectionV1, PayloadReplayFrameV1,
+        PayloadReplayNamespaceV1, PayloadReplayReceiptV1, PAYLOAD_REPLAY_MAX_PAYLOAD_BYTES_V1,
+        PAYLOAD_REPLAY_MAX_RECORDS_V1, PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1,
+        PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1, PAYLOAD_REPLAY_MAX_WAL_BYTES_V1,
     },
     protocol::PeerLeaseDirectionV1,
     store::ensure_private_directory,

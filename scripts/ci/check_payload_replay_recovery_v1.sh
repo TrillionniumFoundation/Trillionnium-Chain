@@ -28,6 +28,7 @@ from pathlib import Path
 
 manifest = Path("trillionnium/crates/trnm-consensus-peer-lease/Cargo.toml").read_text()
 crate_root = Path("trillionnium/crates/trnm-consensus-peer-lease/src/lib.rs").read_text()
+payload_root = Path("trillionnium/crates/trnm-consensus-peer-lease/src/payload.rs").read_text()
 implementation_root = Path(
     "trillionnium/crates/trnm-consensus-peer-lease/src/payload_recovery.rs"
 ).read_text()
@@ -73,6 +74,9 @@ required_manifest = {
     "payload_replay_core_ack_ledger_candidate = true",
     "payload_replay_core_ack_atomic_with_core = false",
     "payload_replay_recovery_production_activation = false",
+    "payload_replay_bounded_wal_replay_memory = true",
+    "payload_replay_bounded_temporary_scan = true",
+    "payload_replay_generation_overflow_fail_closed = true",
     "production_activation = false",
     "production_candidate = false",
 }
@@ -104,6 +108,44 @@ required_source = {
 for value in sorted(required_source):
     if value not in implementation or value not in crate_root:
         raise SystemExit(f"missing public recovery boundary: {value}")
+
+required_payload_source = {
+    "PAYLOAD_REPLAY_MAX_WAL_BYTES_V1",
+    "PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1",
+    "PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1",
+    "payload_replay_generation_successor_v1",
+    "generation_successor_fails_closed_at_u64_max",
+    "oversized_payload_wal_is_rejected_before_snapshot_allocation",
+    "stale_head_scan_is_bounded_before_directory_fanout",
+}
+for value in sorted(required_payload_source):
+    if value not in payload_root:
+        raise SystemExit(f"missing bounded payload replay marker: {value}")
+
+required_recovery_source = {
+    "recovery_rejects_oversized_wal_before_snapshot_allocation",
+    "recovery_temporary_path_collections_are_bounded",
+}
+for value in sorted(required_recovery_source):
+    if value not in implementation:
+        raise SystemExit(f"missing bounded recovery replay marker: {value}")
+
+if any(
+    marker in payload_root or marker in implementation
+    for marker in (
+        "generation.saturating_add(1)",
+        "record.generation.saturating_add(1)",
+    )
+):
+    raise SystemExit("generation rollover must use checked successor arithmetic")
+
+for value in (
+    "bounded_wal_replay_memory = true",
+    "bounded_temporary_scan = true",
+    "generation_overflow_fail_closed = true",
+):
+    if value not in package:
+        raise SystemExit(f"package manifest missing bounded replay capability: {value}")
 
 for value in (
     "RecoverySocketConnectionErrorV1",

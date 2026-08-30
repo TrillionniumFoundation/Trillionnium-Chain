@@ -219,6 +219,30 @@ prefix. The recovery owner:
 
 It never interprets temporary bytes as authority and never deletes them.
 
+### 7.1 Restart resource and generation fences
+
+Replay reads are bounded before any whole-WAL allocation. The metadata and
+external-recovery readers use the lower of the fixed-record limit and
+`PAYLOAD_REPLAY_MAX_WAL_BYTES_V1 = 64 MiB`, reserve exactly the observed
+bounded length, and fail closed on allocation failure, short reads, growth, or
+trailing bytes. This is a node-local candidate resource fence; it does not
+change the authenticated frame or wire schema.
+
+Directory scans are bounded independently: at most
+`PAYLOAD_REPLAY_MAX_TEMPORARY_SCAN_ENTRIES_V1 = 4096` entries are inspected and
+at most `PAYLOAD_REPLAY_MAX_TEMPORARY_FILES_V1 = 64` matching temporary paths
+are retained. Crossing either bound returns the existing corruption/too-large
+stop condition for the corresponding owner; no evidence is silently dropped.
+
+Generation rollover uses checked successor arithmetic. A generation at
+`u64::MAX` cannot roll over to itself, while `u64::MAX - 1 -> u64::MAX` remains
+valid. The overflow fence is covered by a regression test and remains
+candidate-only with production activation false.
+
+Manifest capability markers: `bounded_wal_replay_memory = true`,
+`bounded_temporary_scan = true`, and
+`generation_overflow_fail_closed = true`.
+
 ## 8. Core acknowledgement write contract
 
 The `ack` operation requires publication state `Durable`. It creates a private
