@@ -17,6 +17,7 @@ CANDIDATE_INVENTORY=(
   "trillionnium/Cargo.toml" "trillionnium/Cargo.lock"
   "$CRATE/Cargo.toml" "$CRATE/README.md"
   "$CRATE/src/codec.rs" "$CRATE/src/engine.rs" "$CRATE/src/error.rs"
+  "$CRATE/src/deterministic_parallel_v1.rs"
   "$CRATE/src/lib.rs" "$CRATE/src/store.rs" "$CRATE/src/tests.rs" "$CRATE/src/types.rs"
   "$SCHEMA" "$VECTORS" "$STATUS" "$SPEC_MANIFEST"
   "RELEASE_READINESS.md"
@@ -59,8 +60,11 @@ assert set(manifest["dependencies"]) == {"borsh","rusqlite","sha2"}
 truth=manifest["package"]["metadata"]["trnm"]
 assert truth["classification"] == "candidate-non-normative"
 for key in ["object_mvcc","canonical_serial_oracle","deterministic_conflict_retry","explicit_versioned_read_write_sets","complete_success_failure_receipts","multi_resource_usage","checked_fee_arithmetic","per_transaction_fee_deltas","block_end_sorted_fee_reduction","immutable_read_only_existing_file_preflight","atomic_block_state_receipts_fees","deterministic_journal_replay_audit"]: assert truth[key] is True
-for key in ["global_fee_collector_per_transaction_write","whole_store_rollback_authority","real_parallel_worker_pool","authenticated_global_state_tree","agent_transaction_wire_complete","order_proof_authority_complete","node_integration","g2_global_complete","protocol_implementation_complete","normative_freeze","production_candidate","activation"]: assert truth[key] is False
-assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","engine.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
+for key in ["global_fee_collector_per_transaction_write","whole_store_rollback_authority","authenticated_global_state_tree","agent_transaction_wire_complete","order_proof_authority_complete","node_integration","g2_global_complete","protocol_implementation_complete","normative_freeze","production_candidate","activation"]: assert truth[key] is False
+assert truth["real_parallel_worker_pool"] is True
+assert truth["parallel_worker_pool_scope"] == "bounded-in-process-candidate"
+assert truth["worker_count_invariant_roots"] is True
+assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","deterministic_parallel_v1.rs","engine.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
 for path in [manifest_path, *(crate_root/"src").glob("*.rs")]:
     assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(), re.I), path
 assert schema["status"] == "candidate-non-normative"

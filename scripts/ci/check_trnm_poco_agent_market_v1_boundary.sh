@@ -20,6 +20,7 @@ CANDIDATE_INVENTORY=(
   "$CRATE/README.md"
   "$CRATE/src/codec.rs"
   "$CRATE/src/error.rs"
+  "$CRATE/src/agent_transaction_wire_v1.rs"
   "$CRATE/src/lib.rs"
   "$CRATE/src/store.rs"
   "$CRATE/src/tests.rs"
@@ -89,6 +90,10 @@ assert manifest["package"]["metadata"]["trnm"] == {
     "order_finalized_execution_context_cas": True,
     "order_proof_authority_complete": False,
     "agent_transaction_wire_complete": False,
+    "agent_transaction_wire_candidate": True,
+    "independent_agent_transaction_parser_candidate": True,
+    "strict_ed25519_authorization_candidate": True,
+    "durable_sqlite_replay_candidate": True,
     "identity_and_key_lifecycle_complete": False,
     "capability_session_nonce_kernel": True,
     "task_funded_escrow_bid_lease_kernel": True,
@@ -106,7 +111,8 @@ assert manifest["package"]["metadata"]["trnm"] == {
     "activation": False,
 }
 assert {path.name for path in (crate_root / "src").glob("*.rs")} == {
-    "codec.rs", "error.rs", "lib.rs", "store.rs", "tests.rs", "types.rs"
+    "agent_transaction_wire_v1.rs", "codec.rs", "error.rs", "lib.rs",
+    "store.rs", "tests.rs", "types.rs"
 }
 for path in [manifest_path, *(crate_root / "src").glob("*.rs")]:
     assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(encoding="utf-8"), re.I), path

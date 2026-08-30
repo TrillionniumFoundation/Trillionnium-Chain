@@ -21,6 +21,7 @@ CANDIDATE_INVENTORY=(
   "$CRATE/src/codec.rs"
   "$CRATE/src/error.rs"
   "$CRATE/src/lib.rs"
+  "$CRATE/src/profile_registry_v1.rs"
   "$CRATE/src/store.rs"
   "$CRATE/src/tests.rs"
   "$CRATE/src/types.rs"
@@ -77,7 +78,7 @@ for key in ["fresh_genesis_trust_bundle_is_consensus_object","order_finalized_ex
     assert manifest["package"]["metadata"]["trnm"][key] is False
 for key in ["settlement_integration","artifact_da_verification","agent_transaction_wire_complete","whole_store_rollback_authority","node_integration","g2_global_complete","protocol_implementation_complete","normative_freeze","production_candidate","activation"]:
     assert manifest["package"]["metadata"]["trnm"][key] is False
-assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","error.rs","lib.rs","store.rs","tests.rs","types.rs"}
+assert {p.name for p in (crate_root/"src").glob("*.rs")} == {"codec.rs","error.rs","lib.rs","profile_registry_v1.rs","store.rs","tests.rs","types.rs"}
 for path in [manifest_path, *(crate_root/"src").glob("*.rs")]:
     assert not re.search(r"tendermint|\\babci\\b|comet|trnm-consensus-app", path.read_text(), re.I), path
 assert schema["status"] == "candidate-non-normative"
