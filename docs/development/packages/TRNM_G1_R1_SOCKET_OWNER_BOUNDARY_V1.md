@@ -5,6 +5,16 @@ Package ID: `trnm-g1-r1-payload-replay-recovery-owner-socket-v1`
 Status: **candidate-only engineering boundary; not a G1 exit, production
 authority, or real-device evidence**
 
+Code-closure source for this continuation:
+
+```text
+branch = feature/chain-g1-external-blocker-closure-20260830
+commit = c0e309743f9696c8ee8bc035ff4c427df4d0eb25
+tree = 3b46b2e72879afb4750aab61ebab955ef2c375d1
+base = 1663abd8935be4e5819f5ff0c7ded250a3664097
+socket-hardening = 0049ff9c1
+```
+
 This package adds a narrow, externally callable process boundary around the
 existing payload-replay recovery owner.  It is intentionally subordinate to
 the [payload replay recovery and Core acknowledgement package](TRNM_G1_REPLAY_RECOVERY_AND_CORE_ACK_EXECUTION_PACKAGE_V1.md)
@@ -94,6 +104,12 @@ source/manifest truth checks, and the existing recovery workflow policy.  The
 integration test exercises status, identity pinning, explicit synthetic
 acknowledgement and idempotent replay across a daemon replacement; it does not
 represent a real Core acknowledgement or real-device campaign.
+
+The companion G1 process-host fixture normalizes its temporary root to mode
+0700 because the production admission owner rejects group/world-writable
+parents.  This is a test-fixture correction, not a relaxation of the path
+identity fence.  The process-host generation successor and three-block proof
+horizon are checked before any WAL handoff.
 
 Remaining external blockers include real Core-owned acknowledgement wiring,
 authenticated node-to-owner deployment, MAC/host identity policy, crash and

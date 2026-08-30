@@ -4,6 +4,8 @@
   "consensus_mainline": "native-poco-bft",
   "protocol_target": "poco-bft-v0",
   "active_candidate_source": "derived-at-verification-time-from-git-head-and-tree",
+  "candidate_source_commit_at_code_closure": "c0e309743f9696c8ee8bc035ff4c427df4d0eb25",
+  "candidate_source_tree_at_code_closure": "3b46b2e72879afb4750aab61ebab955ef2c375d1",
   "stage": "G1-native-host-incomplete",
   "production_candidate": false,
   "production_consensus_activation": false,
@@ -29,6 +31,14 @@
       "real_process_entrypoint": true,
       "real_process_black_box_tests": true,
       "real_process_recovery_owner": false,
+      "production_activation": false
+    },
+    "g1_process_host_generation_fence": {
+      "commit": "c0e309743",
+      "checked_generation_successor": true,
+      "checked_three_block_finality_horizon": true,
+      "pre_wal_side_effect_fence": true,
+      "candidate_only": true,
       "production_activation": false
     },
     "synced_proposal_authority_vote": {
@@ -93,6 +103,7 @@
     },
     "external_recovery_status_owner": {
       "commit": "6556fd9d5",
+      "hardening_commits": ["0049ff9c1"],
       "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
       "scope": "process",
       "authority": "candidate",
@@ -138,7 +149,9 @@
     "tx_tombstone_gc": {
       "implementation_commits": [
         "603bccc32",
-        "50bf6cdc1"
+        "50bf6cdc1",
+        "7cbca1090",
+        "53d5818e8"
       ],
       "source_status": "candidate-only-unpromoted; current commit/tree are derived at verification time",
       "schema_version": 2,
@@ -150,6 +163,14 @@
       "production_checktx_integration": false,
       "production_gc": false,
       "power_loss_evidence": false,
+      "production_activation": false
+    },
+    "capability_authority_inventory": {
+      "commit": "7772c820a",
+      "candidate_only": true,
+      "report_schema": "trnm-capability-authority-audit-v1",
+      "finding_count": 5,
+      "independent_review": false,
       "production_activation": false
     },
     "migration_boundary": {
@@ -351,21 +372,21 @@
       "id": "P2-NODE-001",
       "severity": "P2",
       "status": "open",
-      "evidence": "`a852dba5b` provides the candidate bounded Core effect-driver API and `32e00eefa` adds `trnm-poco-effect-driver-process`, a feature-gated real OS process whose timeout path persists Safety, performs whole-node checkpoint CAS, signs the exact Core intent, and writes a bound outbound record; its synced-proposal path reaches application seal, Core Valid, and same-owner AuthorityVote, while ordinary Proposal is fail-closed. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening adds conservative commit-uncertainty responses, exact live-acquire retry, Linux same-UID peer credentials, bounded connect/daemon I/O, private path checks, and a pending replay breadcrumb. The process remains fresh-state candidate-only and intentionally has no arbitrary proposal validation/application receipt/finality loop, externally callable recovery owner, production listener, or default-node activation",
+      "evidence": "`a852dba5b` provides the candidate bounded Core effect-driver API and `32e00eefa` adds `trnm-poco-effect-driver-process`, a feature-gated real OS process whose timeout path persists Safety, performs whole-node checkpoint CAS, signs the exact Core intent, and writes a bound outbound record; its synced-proposal path reaches application seal, Core Valid, and same-owner AuthorityVote, while ordinary Proposal is fail-closed. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening adds conservative commit-uncertainty responses, exact live-acquire retry, Linux same-UID peer credentials, bounded connect/daemon I/O, private path checks, and a pending replay breadcrumb. `c0e309743` additionally fences process-host generation successor and three-block proof-horizon overflow before WAL handoff. The process remains fresh-state candidate-only and intentionally has no arbitrary proposal validation/application receipt/finality loop, externally callable recovery owner, production listener, or default-node activation",
       "exit": "default node executes proposal through durable apply; effect driver and Vote/Timeout path are live"
     },
     {
       "id": "P2-TX-001",
       "severity": "P2",
       "status": "open",
-      "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b, 603bccc32, 50bf6cdc1) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, an explicit authenticated HandedOff recovery seam, and candidate schema-v2 compact replay tombstones with an authenticated nonce-floor purge boundary. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and production tombstone GC remain absent",
+      "evidence": "candidate tx-admission-wal feature (5891e9c8f, 5c736d998, 541110990, d6d67f929, e48376dfa, 84bc4f83, 617cbb15a, fecca250b, 1ad718fd2, d0cc52e2e, 01b378560, 6611ef07f, 72f89abe6, d9f31f96e, 167dfbba4, 3f5432682, 4d16d42ae, c68500676, d97ec3ee8, 51a1954d8, f1b20e40b, 603bccc32, 50bf6cdc1, 7cbca1090, 53d5818e8) provides node-owned SQLite WAL/FULL Reserved-HandedOff-Committed-Released lifecycle, typed builder-to-boundary API, namespace/path/private-file fences, retained-row cap, exact Reserved retry, fail-closed ordinary HandedOff startup, an explicit authenticated HandedOff recovery seam, and candidate schema-v2 compact replay tombstones with an authenticated nonce-floor purge boundary. `f1b20e40b` additionally forbids HandedOff -> Released through explicit cancel or lease drop, preserving ambiguity until exact receipt recovery. `7cbca1090` adds parent/child identity fences, a combined inventory cap, and sealed native/replay verifier seams; `53d5818e8` bounds replay WAL and temporary-path resources. It also provides a signature-checked candidate CheckTx seam, authority-owned signer resolver with mismatch/no-resolver fail-closed tests, and a node-owned chain/time context seam. The candidate surface remains composition-only: low-level typed admission and legacy caller-context APIs remain available for migration, while resolver/context/recovery production integration is false. Production CheckTx ingress, canonical signing, broadcast, application receipt/AppHash ownership, and production tombstone GC remain absent",
       "exit": "canonical envelope builder -> authoritative signer-identity and chain-context binding -> node-owned pending nonce/WAL -> production CheckTx admission -> committed receipt/AppHash replay with signer/broadcast and ambiguous-handoff resolution; CLI remains dev-only"
     },
     {
       "id": "P2-NET-001",
       "severity": "P2",
       "status": "open",
-      "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. Candidate owner ref `6556fd9d5` adds a one-shot private status/recovery socket, endpoint identity pin, strict projection and explicit Core-ack boundary. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, persistent handshake replay anchoring, a persistent production owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open",
+      "evidence": "`504e4aad0` adds a candidate append-only authenticated payload replay WAL with private owner lock, exact head sidecar, generation/session/sequence/context binding, lease revalidation before exposure, and cross-process Unix-daemon tests. `f898f1adf` adds an independent authenticated nested Vote/TimeoutVote/QC/TC corpus with 10,971 structural mutations and strict-prefix/crypto negatives. `dc501c0bc` is the ingress origin; `4a0de0cd0` plus subsequent hardening joins the candidate seam with conservative uncertainty reporting, exact acquire retry, Linux same-UID peer credentials, absolute connect/daemon deadlines, private path/ancestor checks, minimum token TTL, and a pending replay breadcrumb. `0049ff9c1` isolates malformed-client transport failures per recovery-owner connection, while `53d5818e8` bounds replay WAL and temporary scans. Candidate owner ref `6556fd9d5` adds a one-shot private status/recovery socket, endpoint identity pin, strict projection and explicit Core-ack boundary. Lease and replay remain separate transactions and replay is not atomically acknowledged by Core. Descriptor-anchored namespace ownership, MAC/cross-platform peer authentication, persistent handshake replay anchoring, a persistent production owner, pacemaker, signer/watermark, state sync, and independent LAN replay remain open",
       "exit": "authenticated bounded P2P, pacemaker, remote signer/watermark, mempool replay, and state sync"
     },
     {

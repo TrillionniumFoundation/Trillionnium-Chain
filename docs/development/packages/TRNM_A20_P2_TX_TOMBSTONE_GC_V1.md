@@ -6,20 +6,24 @@ Status: **candidate-hardened / verification pending / no production activation**
 
 ```text
 repository = TrillionniumFoundation/Trillionnium-Chain
-candidate_branch = feature/chain-a20-candidate-hardening-20260830
-candidate_base = 795ce1010
-implementation_refs = 795ce1010 + local hardening commit
-latest_inspected_remote_tip = 7bc87e153a3d4c6426ff9e0a22e8469923d7ffe4
+candidate_branch = feature/chain-g1-external-blocker-closure-20260830
+candidate_code_closure_commit = c0e309743f9696c8ee8bc035ff4c427df4d0eb25
+candidate_code_closure_tree = 3b46b2e72879afb4750aab61ebab955ef2c375d1
+candidate_base = 1663abd8935be4e5819f5ff0c7ded250a3664097
+implementation_refs = 603bccc32 + 50bf6cdc1 + 7cbca1090 + 53d5818e8
+latest_inspected_remote_tip = 9bf9ef2f0cf18183f5a5b0ec459e8affae4d8df5
+latest_inspected_remote_tree = 43b00a053971405a8eeb4e4c581d04eaee9ade59
 consensus_mainline = native-poco-bft
 protocol_target = poco-bft-v0
 production_candidate = false
 ```
 
 The latest remote A20 tip was inspected read-only. Its hosted workflow is a
-one-shot, self-modifying publisher with write permissions and is intentionally
-not part of this candidate; its exact-head typed SQLite fixture run also
-failed. Only the reviewable Rust/schema/doc slice is carried here; the
-candidate source commit and tree are derived again at verification time.
+one-shot, write-capable publisher and is intentionally not part of this
+candidate; the exact-head A20 workflow failed, while its required baseline
+passed and its payload job was blocked by the trusted self-hosted runner
+policy. Only the reviewable Rust/schema slice is carried here; the remote tip
+is not treated as accepted or independently signed evidence.
 
 The existing transaction-admission WAL retains every committed or released row
 forever because deleting either the nonce key or transaction digest would make
@@ -101,6 +105,12 @@ must be regular, single-link, owner-owned and private, and SQLite is opened with
 - tombstone digest tamper, cross-table overlap, malformed terminal evidence and
   partial compaction are rejected.
 
+The adjacent G1 process-host ingress now also uses checked generation
+successors and rejects a three-block finality-proof horizon that would overflow
+before queue/WAL handoff (`c0e309743`).  This protects the candidate host from
+stranding a `HandedOff` row at the numeric boundary; it does not turn the A20
+nonce-floor seam into a production application owner.
+
 ## Required exact-head verification
 
 ```text
@@ -127,6 +137,11 @@ plus the exported candidate-only constants
 `TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1`, and
 `TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1`.  All production/activation
 markers remain false.
+
+At the code-closure tree, the A20-focused library run was 158/158 tests and
+the tombstone subset was 5/5; strict Clippy and the full payload-recovery gate
+also passed.  These are local candidate checks, not external finality or
+power-loss evidence.
 
 ## Non-claims
 

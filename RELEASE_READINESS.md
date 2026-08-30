@@ -2,6 +2,11 @@
 
 Updated: **2026-08-30**
 
+Current candidate source snapshot: `feature/chain-g1-external-blocker-closure-20260830`
+at code-closure commit `c0e309743f9696c8ee8bc035ff4c427df4d0eb25` (tree
+`3b46b2e72879afb4750aab61ebab955ef2c375d1`).  This is a candidate snapshot,
+not an accepted or signed release source.
+
 This file is the human-readable release projection. It is not an independent
 truth source. The machine-readable authority is
 `config/consensus-mainline.json`; repository merge policy is
@@ -70,6 +75,12 @@ and
 [`TRNM_A20_P2_TX_TOMBSTONE_GC_V1.md`](docs/development/packages/TRNM_A20_P2_TX_TOMBSTONE_GC_V1.md).
 Neither projection supplies a Core-owned production receipt, external
 anti-rollback custody, power-loss evidence, or an activation decision.
+
+The same candidate includes the A21 sealed native commit-receipt verifier
+boundary, bounded recovery socket/WAL resource hardening, a deterministic A22
+capability inventory, and a pre-handoff G1 generation/proof-horizon overflow
+fence.  Local tests and six-host readiness probes pass within their declared
+scope; no probe is a validator finality or real-device campaign result.
 
 ## Release-blocking repository work
 
