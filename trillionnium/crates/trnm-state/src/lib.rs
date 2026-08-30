@@ -81,11 +81,10 @@ impl Default for StateStore {
 
 impl Clone for StateStore {
     fn clone(&self) -> Self {
-        let cached = self
+        let cached = *self
             .state_root_cache
             .read()
-            .expect("state root cache poisoned")
-            .clone();
+            .expect("state root cache poisoned");
         Self {
             objects: self.objects.clone(),
             balances: self.balances.clone(),
@@ -383,10 +382,10 @@ fn governance_registry_lookup_id_for_key(
     })
 }
 
-fn governance_registry_unique_dynamic_key_for_id<'a>(
-    gov_param_key_index: &'a BTreeMap<String, u64>,
+fn governance_registry_unique_dynamic_key_for_id(
+    gov_param_key_index: &BTreeMap<String, u64>,
     key_id: u64,
-) -> Result<Option<&'a str>, Vec<&'a str>> {
+) -> Result<Option<&str>, Vec<&str>> {
     let mut matches = gov_param_key_index
         .iter()
         .filter_map(|(indexed_key, indexed_key_id)| {
@@ -406,10 +405,10 @@ fn governance_registry_unique_dynamic_key_for_id<'a>(
     }
 }
 
-fn governance_registry_lookup_key_for_id<'a>(
-    gov_param_key_index: &'a BTreeMap<String, u64>,
+fn governance_registry_lookup_key_for_id(
+    gov_param_key_index: &BTreeMap<String, u64>,
     key_id: u64,
-) -> Option<&'a str> {
+) -> Option<&str> {
     let dynamic_key =
         match governance_registry_unique_dynamic_key_for_id(gov_param_key_index, key_id) {
             Ok(dynamic_key) => dynamic_key,
@@ -2288,7 +2287,7 @@ impl StateStore {
         {
             return None;
         }
-        if snapshot.confirmations == 2 && !task_supports_pending_resolve_snapshot_restore(&task) {
+        if snapshot.confirmations == 2 && !task_supports_pending_resolve_snapshot_restore(task) {
             return None;
         }
 
@@ -2617,7 +2616,7 @@ impl StateStore {
                 let had_pending = pending_confirmations > 0;
                 if self.is_emergency_paused()
                     && task.status == TaskStatus::Challenged
-                    && !task.challenge_bond.is_none()
+                    && task.challenge_bond.is_some()
                     && !task_supports_pending_resolve_snapshot_restore(&task)
                 {
                     self.pending_resolve_approvals.remove(&id);
@@ -2643,7 +2642,7 @@ impl StateStore {
                 };
                 if task.status == TaskStatus::Challenged
                     && (self.is_emergency_paused()
-                        && !task.challenge_bond.is_none()
+                        && task.challenge_bond.is_some()
                         && !task_supports_pending_resolve_snapshot_restore(&task)
                         && !is_replay_version_drift)
                 {
@@ -2667,7 +2666,7 @@ impl StateStore {
                             || pending.task_version != task.version
                             || task
                                 .challenge_bond_forfeited
-                                .is_some_and(|forfeited| forfeited != !pending.slash_worker) =>
+                                .is_some_and(|forfeited| forfeited == pending.slash_worker) =>
                     {
                         self.pending_resolve_approvals.remove(&id);
                     }
@@ -3546,17 +3545,16 @@ impl StateStore {
                     return;
                 }
 
-                if GOV_ALLOWED_KEYS.contains(&key) {
-                    if snapshot.activate_at_height == 0
-                        || validate_gov_param_value(key, &snapshot.value).is_err()
-                    {
-                        self.pending_gov_updates.remove(key);
-                        if scrubs_resolve_quorum {
-                            self.pending_resolve_approvals.clear();
-                        }
-                        self.invalidate_state_root_cache();
-                        return;
+                if GOV_ALLOWED_KEYS.contains(&key)
+                    && (snapshot.activate_at_height == 0
+                        || validate_gov_param_value(key, &snapshot.value).is_err())
+                {
+                    self.pending_gov_updates.remove(key);
+                    if scrubs_resolve_quorum {
+                        self.pending_resolve_approvals.clear();
                     }
+                    self.invalidate_state_root_cache();
+                    return;
                 }
 
                 self.pending_gov_updates
@@ -3678,7 +3676,7 @@ impl StateStore {
                 .saturating_add(cooldown)
                 <= block_height;
         block_height > 0
-            && block_height % interval == 0
+            && block_height.is_multiple_of(interval)
             && cooldown_allows
             && self.monetary_state.last_tick_height < block_height
     }
@@ -3703,7 +3701,7 @@ impl StateStore {
                 <= block_height;
 
         if !(block_height > 0
-            && block_height % interval_blocks == 0
+            && block_height.is_multiple_of(interval_blocks)
             && cooldown_allows
             && self.monetary_state.last_tick_height < block_height)
         {
@@ -3885,9 +3883,7 @@ impl StateStore {
     ) -> bool {
         self.billing_window_policies
             .get(&policy.billing_window_id)
-            .map_or(true, |persisted| {
-                policy.preserves_version_boundary_of(persisted)
-            })
+            .is_none_or(|persisted| policy.preserves_version_boundary_of(persisted))
     }
 
     pub fn set_billing_window_policy(
@@ -4046,7 +4042,7 @@ impl StateStore {
         } = snapshot;
         let snapshot_had_invalid_record = record
             .as_ref()
-            .map_or(false, |record| !record.is_persistable_snapshot_for(key));
+            .is_some_and(|record| !record.is_persistable_snapshot_for(key));
         let record = record.filter(|record| record.is_persistable_snapshot_for(key));
         let consumer_nonce = if snapshot_had_invalid_record {
             None
@@ -4160,11 +4156,10 @@ impl StateStore {
     }
 
     pub fn state_root(&self) -> Hash32 {
-        if let Some(cached) = self
+        if let Some(cached) = *self
             .state_root_cache
             .read()
             .expect("state root cache poisoned")
-            .clone()
         {
             return cached;
         }
@@ -4173,7 +4168,7 @@ impl StateStore {
             .state_root_cache
             .write()
             .expect("state root cache poisoned");
-        if let Some(cached) = cache_guard.clone() {
+        if let Some(cached) = *cache_guard {
             return cached;
         }
 
@@ -4456,7 +4451,7 @@ impl StateStore {
         hasher.update(self.monetary_state.total_burned.to_le_bytes());
         hasher.update(self.monetary_state.net_issuance.to_le_bytes());
         let root: Hash32 = hasher.finalize().into();
-        *cache_guard = Some(root.clone());
+        *cache_guard = Some(root);
         root
     }
 }
