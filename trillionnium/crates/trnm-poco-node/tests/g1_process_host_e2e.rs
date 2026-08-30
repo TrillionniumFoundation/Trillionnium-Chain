@@ -213,6 +213,23 @@ fn wait_for_marker(path: &Path) {
     );
 }
 
+fn private_tempdir_v0() -> TempDir {
+    let root = tempfile::tempdir().expect("temporary run root");
+    // The admission WAL intentionally rejects group/world-writable parents.
+    // Some CI/container umasks make tempfile directories 0775, so normalize
+    // the fixture explicitly instead of weakening the production fence.
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        let mut permissions = fs::metadata(root.path())
+            .expect("temporary root metadata")
+            .permissions();
+        permissions.set_mode(0o700);
+        fs::set_permissions(root.path(), permissions).expect("private temporary root");
+    }
+    root
+}
+
 fn assert_string_field<'a>(value: &'a Value, field: &str) -> &'a str {
     value
         .get(field)
@@ -222,7 +239,7 @@ fn assert_string_field<'a>(value: &'a Value, field: &str) -> &'a str {
 
 #[test]
 fn real_process_checktx_native_apphash_and_wal_commit_are_observable() {
-    let root = tempfile::tempdir().expect("temporary run root");
+    let root = private_tempdir_v0();
     let mut process = ProcessV0::spawn(&root);
 
     let malformed = process.request(json!({ "op": "not-supported" }));
@@ -332,7 +349,7 @@ fn real_process_checktx_native_apphash_and_wal_commit_are_observable() {
 
 #[test]
 fn real_process_rejects_an_oversized_frame_without_allocating_it() {
-    let root = tempfile::tempdir().expect("temporary run root");
+    let root = private_tempdir_v0();
     let mut process = ProcessV0::spawn(&root);
     let oversized = format!(
         "{{\"op\":\"submit\",\"generation\":1,\"tx_hex\":\"{}\"}}",
@@ -361,7 +378,7 @@ fn real_process_rejects_an_oversized_frame_without_allocating_it() {
 
 #[test]
 fn sigkill_after_handoff_without_application_evidence_stays_fail_closed() {
-    let root = tempfile::tempdir().expect("temporary run root");
+    let root = private_tempdir_v0();
     let marker = root.path().join("after-handoff.ready");
     let _ = fs::remove_file(&marker);
     let mut process =
@@ -389,7 +406,7 @@ fn sigkill_after_handoff_without_application_evidence_stays_fail_closed() {
 
 #[test]
 fn sigkill_after_application_commit_recovers_exact_wal_handoff() {
-    let root = tempfile::tempdir().expect("temporary run root");
+    let root = private_tempdir_v0();
     let marker = root.path().join("after-application-commit.ready");
     let _ = fs::remove_file(&marker);
     let mut process = ProcessV0::spawn_with_marker(

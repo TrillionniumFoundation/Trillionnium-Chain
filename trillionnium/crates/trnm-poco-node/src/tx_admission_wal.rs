@@ -2994,9 +2994,11 @@ mod tests {
 
     #[test]
     fn native_commit_verifier_authority_is_sealed_v1() {
-        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
-        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
+        const {
+            assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
+            assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
+            assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
+        }
     }
 
     fn fixture() -> FixtureEnvelope {

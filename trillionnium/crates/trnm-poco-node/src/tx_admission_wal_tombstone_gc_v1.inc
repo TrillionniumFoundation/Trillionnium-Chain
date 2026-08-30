@@ -673,9 +673,13 @@ mod tombstone_gc_tests_v1 {
 
     #[test]
     fn replay_floor_verifier_authority_is_sealed_v1() {
-        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);
+        const {
+            assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);
+        }
         assert!(tombstone_gc_candidate_contract_v1());
-        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);
+        const {
+            assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);
+        }
     }
 
     fn temp_path_v1() -> PathBuf {

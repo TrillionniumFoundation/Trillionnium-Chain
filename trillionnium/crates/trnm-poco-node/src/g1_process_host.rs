@@ -495,7 +495,8 @@ impl G1ProcessHostV0 {
         generation: u64,
         tx_hex: &str,
     ) -> Result<G1IngressResponseV0, G1ProcessHostErrorV0> {
-        if generation != self.generation.saturating_add(1) {
+        let expected_generation = next_generation_v0(self.generation)?;
+        if generation != expected_generation {
             self.rejected = self.rejected.saturating_add(1);
             return Ok(G1IngressResponseV0::rejected(
                 "stale_generation",
@@ -506,6 +507,11 @@ impl G1ProcessHostV0 {
                 self.generation,
             ));
         }
+        // The candidate finality fixture constructs a three-block chain
+        // (h1, h2, h3) after this ingress.  Reject a generation whose proof
+        // horizon cannot be represented before any queue/WAL side effect;
+        // otherwise h3 overflow would strand an ambiguous HandedOff row.
+        ensure_finality_horizon_v0(generation)?;
         if self.queue.len() >= G1_PROCESS_HOST_QUEUE_CAPACITY_V0 {
             self.rejected = self.rejected.saturating_add(1);
             self.backpressure_rejected = self.backpressure_rejected.saturating_add(1);
@@ -767,6 +773,27 @@ impl G1ProcessHostV0 {
             finality_verified: false,
         }
     }
+}
+
+fn next_generation_v0(current: u64) -> Result<u64, G1ProcessHostErrorV0> {
+    current.checked_add(1).ok_or_else(|| {
+        G1ProcessHostErrorV0::new(
+            "generation.overflow",
+            "candidate ingress generation overflowed",
+        )
+    })
+}
+
+fn ensure_finality_horizon_v0(first_height: u64) -> Result<(), G1ProcessHostErrorV0> {
+    first_height
+        .checked_add(2)
+        .ok_or_else(|| {
+            G1ProcessHostErrorV0::new(
+                "generation.horizon",
+                "candidate finality proof height overflowed",
+            )
+        })
+        .map(|_| ())
 }
 
 /// Run the bounded newline protocol over an arbitrary reader/writer. This is
@@ -1441,5 +1468,20 @@ mod tests {
         let oversized = decode_hex_v0(&"aa".repeat(G1_PROCESS_HOST_MAX_FRAME_BYTES_V0 + 1))
             .expect_err("oversized decoded bytes must reject");
         assert_eq!(oversized.code_v0(), "ingress.too_large");
+    }
+
+    #[test]
+    fn generation_successor_and_finality_horizon_fail_closed() {
+        assert_eq!(
+            next_generation_v0(u64::MAX - 1).expect("MAX is representable"),
+            u64::MAX
+        );
+        let overflow = next_generation_v0(u64::MAX).expect_err("successor must overflow");
+        assert_eq!(overflow.code_v0(), "generation.overflow");
+
+        ensure_finality_horizon_v0(u64::MAX - 2).expect("three-block horizon is representable");
+        let horizon = ensure_finality_horizon_v0(u64::MAX - 1)
+            .expect_err("h3 must not wrap after a durable handoff");
+        assert_eq!(horizon.code_v0(), "generation.horizon");
     }
 }
