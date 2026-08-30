@@ -1,0 +1,40 @@
+name: trnm-a22-capability-authority-audit
+
+on:
+  push:
+    branches:
+      - feature/chain-a22-p1-capability-authority-audit-v1-20260830
+    paths:
+      - .github/workflows/trnm-a22-capability-authority-audit.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inventory-authority-mint-paths:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/feature/chain-a22-p1-capability-authority-audit-v1-20260830'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact audit source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: feature/chain-a22-p1-capability-authority-audit-v1-20260830
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify immutable audit parent
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "7a9c1bc85dd190a8cbf13da53020b86e6e676092"
+          test "$(git rev-parse HEAD^^)" = "b58665a783c0e1bcceb33455acde65ee6ada4034"
+
+      - name: Validate and run deterministic authority inventory
+        run: |
+          set -euo pipefail
+          python3 -B -m py_compile scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          test -s /tmp/trnm-capability-authority-audit-v1.json
+          test -z "$(git status --porcelain --untracked-files=all)"
