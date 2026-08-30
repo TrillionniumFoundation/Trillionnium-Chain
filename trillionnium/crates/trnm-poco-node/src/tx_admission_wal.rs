@@ -103,7 +103,7 @@ pub const TX_ADMISSION_BOUNDARY_COMMIT_RECEIPT_PRODUCTION_V0: bool = false;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0: bool = true;
 pub const TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0: bool = false;
 
-const SCHEMA_VERSION_V0: i64 = 1;
+const SCHEMA_VERSION_V0: i64 = 2;
 const WAL_DOMAIN_V0: &[u8] = b"trnm.poco-node.tx-admission-wal.v0";
 const LOCK_SUFFIX_V0: &str = ".tx-admission.lock.v0";
 const MAX_RESERVATION_ROWS_V0: usize = 1_000_000;
@@ -150,6 +150,19 @@ CREATE TABLE tx_commit_receipt_v0 (
     commitment BLOB NOT NULL CHECK(length(commitment) = 32),
     PRIMARY KEY(namespace, signer, nonce),
     UNIQUE(namespace, tx_digest)
+);
+CREATE TABLE tx_admission_tombstone_v1 (
+    namespace BLOB NOT NULL CHECK(length(namespace) = 32),
+    signer BLOB NOT NULL CHECK(length(signer) = 32),
+    nonce BLOB NOT NULL CHECK(length(nonce) = 8),
+    tx_digest BLOB NOT NULL CHECK(length(tx_digest) = 32),
+    terminal_state INTEGER NOT NULL CHECK(terminal_state IN (2, 3)),
+    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),
+    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),
+    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),
+    PRIMARY KEY(namespace, signer, nonce),
+    UNIQUE(namespace, tx_digest),
+    UNIQUE(namespace, tombstone_digest)
 );
 "#;
 
@@ -1929,7 +1942,7 @@ impl SqlitePendingNonceAuthorityV0 {
                 .execute_batch(SQLITE_SCHEMA_DDL_V0)
                 .map_err(sqlite_error)?;
             connection
-                .execute_batch("PRAGMA user_version = 1;")
+                .execute_batch("PRAGMA user_version = 2;")
                 .map_err(sqlite_error)?;
         }
         let journal_mode: String = connection
@@ -1990,7 +2003,7 @@ impl SqlitePendingNonceAuthorityV0 {
         // first keeps restart cost fail-closed and memory-bounded.
         let row_count: i64 = connection
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2001,6 +2014,7 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         validate_pending_rows_v0(&connection, namespace)?;
         validate_receipt_rows_v0(&connection, namespace)?;
+        validate_tombstone_rows_v1(&connection, namespace)?;
         let handed_off: i64 = connection
             .query_row(
                 "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1 AND state = ?2",
@@ -2046,7 +2060,7 @@ impl SqlitePendingNonceAuthorityV0 {
             .map_err(|_| TxAdmissionWalErrorV0::Sqlite)?;
         let count: i64 = connection
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![self.namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2138,6 +2152,15 @@ impl SqlitePendingNonceAuthorityV0 {
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(sqlite_error)?;
+        if tombstone_exists_by_nonce_or_digest_v1(
+            &transaction,
+            self.namespace,
+            expected.signer,
+            expected.nonce,
+            expected.digest,
+        )? {
+            return Err(TxAdmissionWalErrorV0::Replay);
+        }
         if let Some((existing, state)) = read_row_v0(
             &transaction,
             self.namespace,
@@ -2169,7 +2192,7 @@ impl SqlitePendingNonceAuthorityV0 {
         }
         let row_count: i64 = transaction
             .query_row(
-                "SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1",
+                "SELECT (SELECT COUNT(*) FROM pending_nonce WHERE namespace = ?1) + (SELECT COUNT(*) FROM tx_admission_tombstone_v1 WHERE namespace = ?1)",
                 params![self.namespace.as_slice()],
                 |row| row.get(0),
             )
@@ -2486,6 +2509,8 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
         | TxAdmissionWalErrorV0::TooLarge => AdmissionReject::InconsistentState,
     }
 }
+
+include!("tx_admission_wal_tombstone_gc_v1.inc");
 
 #[cfg(test)]
 mod tests {
