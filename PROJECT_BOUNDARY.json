@@ -56,5 +56,19 @@
     "cross-repository end-to-end orchestration"
   ],
   "authoritative_status": "config/consensus-mainline.json",
-  "authoritative_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md"
+  "authoritative_plan": "docs/development/TRNM_AI_NATIVE_BLOCKCHAIN_DEVELOPMENT_PLAN.md",
+  "canonical_dir": "trillionnium-chain",
+  "development": true,
+  "remote": {
+    "policy": "required",
+    "canonical_slug": "TrillionniumFoundation/Trillionnium-Chain",
+    "upstream_required": true
+  },
+  "branch": {
+    "protected": [
+      "main"
+    ],
+    "development_regex": "^(feature|fix|chore|docs|test)/chain-[a-z0-9][a-z0-9._-]*$"
+  },
+  "deny_changed_paths_regex": "^trillionnium/crates/(trnm-first-contact|trnm-game-server|trnm-campaign-core|trnm-rts-|trnm-online-|trnm-economy-)"
 }
