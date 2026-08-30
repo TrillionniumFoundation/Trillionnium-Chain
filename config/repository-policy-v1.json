@@ -63,6 +63,7 @@
     "docs/development/plan-manifest-v1.toml",
     "rust-toolchain.toml",
     "scripts/ci/check_blocker_execution_v1.py",
+    "scripts/ci/check_required_protocol_contract_v1.py",
     "trillionnium/Cargo.lock",
     "trillionnium/Cargo.toml"
   ]
