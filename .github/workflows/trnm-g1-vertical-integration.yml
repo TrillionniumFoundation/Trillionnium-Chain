@@ -21,7 +21,7 @@ jobs:
       github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830' &&
       github.actor == 'Tomasrgbsf'
     runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    timeout-minutes: 360
     steps:
       - name: Check out exact integration branch
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -33,6 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "e32024aa3f816935fae1a429672ccd04c96384a2"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
@@ -47,6 +48,12 @@ jobs:
           for ref in g1-a03 g1-a04 g1-a05 g1-a06; do
             git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 "refs/remotes/origin/${ref}"
           done
+          python3 -B - <<'PY'
+          import ast
+          from pathlib import Path
+          path = Path("scripts/ci/run_g1_lab_validator_shards_v1.py")
+          ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+          PY
 
       - name: Compose G1 candidate packages without source substitution
         run: |
@@ -76,7 +83,7 @@ jobs:
           - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
           - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
 
-          The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
+          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through the bounded sharded runner. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
           EOF
           git add -A
           git diff --cached --check
@@ -99,21 +106,33 @@ jobs:
             cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --locked -- -D warnings
           done
 
-      - name: Run focused G1 regressions and fault contracts
+      - name: Run package-owned G1 regressions
         run: |
           set -euo pipefail
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-signer-journal --all-targets --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-consensus-external-watermark --lib --locked
-          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-lab-validator --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --lib --locked
+
+      - name: Run complete sharded laboratory-validator inventory
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/run_g1_lab_validator_shards_v1.py \
+            --workers 8 \
+            --minimum-discovered-tests 398 \
+            --per-test-timeout-seconds 1800
+
+      - name: Run fault, truth and repository contracts
+        run: |
+          set -euo pipefail
           bash scripts/ci/check_g1_r4_process_matrix_v1.sh
           bash scripts/ci/check_canonical_development_plan.sh
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           bash scripts/project-preflight.sh --audit
+          test ! -e .github/workflows/trnm-g1-vertical-integration.yml
           test -z "$(git status --porcelain --untracked-files=all)"
 
       - name: Publish exact tested integration commit
