@@ -44,7 +44,7 @@ def finalize_source() -> None:
             "    terminal_height BLOB NOT NULL CHECK(length(terminal_height) = 8),",
             "    receipt_commitment BLOB NOT NULL CHECK(length(receipt_commitment) = 32),",
             "    tombstone_digest BLOB NOT NULL CHECK(length(tombstone_digest) = 32),",
-            "    PRIMARY KEY(namespace, signer, nonce),",
+            "    PRIMARY KEY(namespace, signer,nonce),",
             "    UNIQUE(namespace, tx_digest),",
             "    UNIQUE(namespace, tombstone_digest)",
             ");",
@@ -173,6 +173,19 @@ def finalize_candidate_contract() -> None:
         compact_replacement,
         "compact_terminal_rows_v1 entry",
     )
+
+    # SQL fixture byte arrays need an explicit u8 type. Without the suffix,
+    # Rust infers [i32; 32] inside params!, which cannot implement ToSql.
+    for old, new, label in (
+        ("[0xA1; 32].as_slice()", "[0xA1u8; 32].as_slice()", "body digest fixture"),
+        ("[0xB1; 32].as_slice()", "[0xB1u8; 32].as_slice()", "block id fixture"),
+        ("[0xB2; 32].as_slice()", "[0xB2u8; 32].as_slice()", "state root fixture"),
+        ("[0xB3; 32].as_slice()", "[0xB3u8; 32].as_slice()", "receipt digest fixture"),
+        ("[0xB4; 32].as_slice()", "[0xB4u8; 32].as_slice()", "finality proof fixture"),
+        ("[0xFF; 32].as_slice()", "[0xFFu8; 32].as_slice()", "tamper fixture"),
+    ):
+        text = replace_once(text, old, new, label)
+
     INC.write_text(text, encoding="utf-8")
 
 
