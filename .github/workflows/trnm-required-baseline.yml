@@ -71,6 +71,7 @@ jobs:
           PYTHONPYCACHEPREFIX="${RUNNER_TEMP}/pycache" python3 -m py_compile \
             scripts/ci/check_repository_truth_v1.py \
             scripts/ci/check_blocker_execution_v1.py \
+            scripts/ci/check_required_protocol_contract_v1.py \
             scripts/ci/generate_release_status_v1.py \
             scripts/ci/check_external_evidence_v1.py
       - name: Require generators to leave the checkout clean
@@ -102,13 +103,12 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: "24.18.0"
-      - name: Validate canonical plan, mainline, CI and workflow truth
+      - name: Validate canonical plan, mainline and active protocol contract
         run: |
           set -euo pipefail
           bash ./scripts/ci/check_canonical_development_plan.sh
           bash ./scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
-          bash ./scripts/ci/check_poco_bft_v0_ci_truth.sh
-          bash ./scripts/ci/check_poco_bft_v0_workflow_trigger_truth.sh --self-test
+          python3 ./scripts/ci/check_required_protocol_contract_v1.py
       - name: Validate independent frozen vectors
         run: |
           set -euo pipefail
