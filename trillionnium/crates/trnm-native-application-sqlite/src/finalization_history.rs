@@ -1,11 +1,13 @@
 use std::{
     fs,
+    fs::{File, OpenOptions},
     path::{Path, PathBuf},
+    sync::Arc,
     time::Duration,
 };
 
 #[cfg(unix)]
-use std::os::unix::fs::MetadataExt;
+use std::os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt, PermissionsExt};
 
 use rusqlite::{params, Connection, OpenFlags, OptionalExtension, TransactionBehavior};
 use sha2::{Digest, Sha256};
@@ -107,6 +109,34 @@ pub struct SqliteNativeFinalizationHistoryV0 {
     path: PathBuf,
     scope: FinalizationHistoryScopeV0,
     initial_head: ApplicationHeadV0,
+    path_binding: FinalizationHistoryPathBindingV0,
+}
+
+/// The pathname is only a candidate namespace handle. Keep the parent
+/// directory descriptor and the file/parent metadata captured at open so
+/// every later operation can reject a renamed or replaced store before and
+/// after SQLite is consulted. The parent and database are also bound to the
+/// same Unix owner at capture time. This intentionally remains a
+/// pathname-based guard; it is not an `openat`/dirfd authority or a
+/// production anti-rollback anchor.
+#[derive(Debug, Clone)]
+struct FinalizationHistoryPathBindingV0 {
+    parent: PathBuf,
+    parent_handle: Arc<File>,
+    #[cfg(unix)]
+    parent_identity: FinalizationHistoryFileIdentityV0,
+    #[cfg(unix)]
+    file_identity: FinalizationHistoryFileIdentityV0,
+}
+
+#[cfg(unix)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct FinalizationHistoryFileIdentityV0 {
+    device: u64,
+    inode: u64,
+    owner: u32,
+    links: u64,
+    mode: u32,
 }
 
 impl SqliteNativeFinalizationHistoryV0 {
@@ -122,24 +152,26 @@ impl SqliteNativeFinalizationHistoryV0 {
                 "finalization_history.path",
             ));
         }
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).map_err(|_| {
-                error(
-                    ValidationStoreErrorCodeV0::Storage,
-                    "finalization_history.parent",
-                )
-            })?;
-        }
-        reject_unsafe_existing_path_v0(path)?;
+        let parent = path.parent().ok_or_else(|| {
+            error(
+                ValidationStoreErrorCodeV0::InvalidBinding,
+                "finalization_history.parent",
+            )
+        })?;
+        prepare_parent_directory_v0(parent)?;
+        create_or_validate_file_v0(path)?;
+        let path_binding = capture_path_binding_v0(path)?;
         let connection = open_connection_v0(path)?;
+        verify_path_binding_v0(path, &path_binding)?;
         initialize_or_validate_schema_v0(&connection, scope, &initial_head)?;
         let _ = audit_connection_v0(&connection, scope, &initial_head)?;
         drop(connection);
-        reject_unsafe_existing_path_v0(path)?;
+        verify_path_binding_v0(path, &path_binding)?;
         Ok(Self {
             path: path.to_path_buf(),
             scope,
             initial_head,
+            path_binding,
         })
     }
 
@@ -156,11 +188,10 @@ impl SqliteNativeFinalizationHistoryV0 {
     }
 
     pub fn audit(&self) -> ValidationStoreResultV0<ConfirmedFinalizationHistoryAuditV0> {
-        reject_unsafe_existing_path_v0(&self.path)?;
-        let connection = open_connection_v0(&self.path)?;
+        let connection = self.open_bound_connection_v0()?;
         let audit = audit_connection_v0(&connection, self.scope, &self.initial_head)?;
         drop(connection);
-        reject_unsafe_existing_path_v0(&self.path)?;
+        self.verify_path_binding_v0()?;
         Ok(audit)
     }
 
@@ -174,9 +205,14 @@ impl SqliteNativeFinalizationHistoryV0 {
                 "finalization_history.read_sequence",
             ));
         }
-        let connection = open_connection_v0(&self.path)?;
+        // Reads must use the same replacement fence as writes.  In
+        // particular, do not let a missing pathname trigger SQLite's CREATE
+        // behavior and silently turn a deleted history into an empty one.
+        let connection = self.open_bound_connection_v0()?;
         let audit = audit_connection_v0(&connection, self.scope, &self.initial_head)?;
         if sequence > audit.entry_count {
+            drop(connection);
+            self.verify_path_binding_v0()?;
             return Ok(None);
         }
         let row = load_row_by_sequence_v0(&connection, sequence)?.ok_or_else(|| {
@@ -186,6 +222,8 @@ impl SqliteNativeFinalizationHistoryV0 {
             )
         })?;
         let confirmed = confirm_row_v0(self.scope, &row)?;
+        drop(connection);
+        self.verify_path_binding_v0()?;
         Ok(Some(confirmed))
     }
 
@@ -193,8 +231,7 @@ impl SqliteNativeFinalizationHistoryV0 {
         &self,
         readback: NativeFinalizationApplyReadbackV0,
     ) -> ValidationStoreResultV0<FinalizationHistoryAppendOutcomeV0> {
-        reject_unsafe_existing_path_v0(&self.path)?;
-        let mut connection = open_connection_v0(&self.path)?;
+        let mut connection = self.open_bound_connection_v0()?;
         let before = audit_connection_v0(&connection, self.scope, &self.initial_head)?;
         let sequence = readback.durable_sequence();
         let record = encode_readback_v0(&readback);
@@ -211,9 +248,10 @@ impl SqliteNativeFinalizationHistoryV0 {
                 )
             })?;
             if existing.record == record && existing.record_digest == record_digest {
-                return Ok(FinalizationHistoryAppendOutcomeV0::ExactReplay(
-                    confirm_row_v0(self.scope, &existing)?,
-                ));
+                let confirmed = confirm_row_v0(self.scope, &existing)?;
+                drop(connection);
+                self.verify_path_binding_v0()?;
+                return Ok(FinalizationHistoryAppendOutcomeV0::ExactReplay(confirmed));
             }
             return Err(error(
                 ValidationStoreErrorCodeV0::BindingMismatch,
@@ -333,8 +371,8 @@ impl SqliteNativeFinalizationHistoryV0 {
         })?;
         drop(connection);
 
-        reject_unsafe_existing_path_v0(&self.path)?;
-        let fresh = open_connection_v0(&self.path)?;
+        self.verify_path_binding_v0()?;
+        let fresh = self.open_bound_connection_v0()?;
         let after = audit_connection_v0(&fresh, self.scope, &self.initial_head)?;
         if after.entry_count() != sequence || after.committed_head() != readback.committed_head() {
             return Err(error(
@@ -358,9 +396,21 @@ impl SqliteNativeFinalizationHistoryV0 {
                 "finalization_history.fresh_identity",
             ));
         }
-        Ok(FinalizationHistoryAppendOutcomeV0::NewlyAppended(
-            confirm_row_v0(self.scope, &stored)?,
-        ))
+        let confirmed = confirm_row_v0(self.scope, &stored)?;
+        drop(fresh);
+        self.verify_path_binding_v0()?;
+        Ok(FinalizationHistoryAppendOutcomeV0::NewlyAppended(confirmed))
+    }
+
+    fn open_bound_connection_v0(&self) -> ValidationStoreResultV0<Connection> {
+        self.verify_path_binding_v0()?;
+        let connection = open_connection_v0(&self.path)?;
+        self.verify_path_binding_v0()?;
+        Ok(connection)
+    }
+
+    fn verify_path_binding_v0(&self) -> ValidationStoreResultV0<()> {
+        verify_path_binding_v0(&self.path, &self.path_binding)
     }
 }
 
@@ -375,17 +425,195 @@ struct StoredFinalizationRowV0 {
     chain_digest: [u8; 32],
 }
 
-fn reject_unsafe_existing_path_v0(path: &Path) -> ValidationStoreResultV0<()> {
-    let metadata = match fs::symlink_metadata(path) {
-        Ok(metadata) => metadata,
-        Err(error_value) if error_value.kind() == std::io::ErrorKind::NotFound => return Ok(()),
-        Err(_) => {
-            return Err(error(
-                ValidationStoreErrorCodeV0::Storage,
-                "finalization_history.path_metadata",
-            ))
+fn prepare_parent_directory_v0(parent: &Path) -> ValidationStoreResultV0<()> {
+    if parent.as_os_str().is_empty() || !parent.is_absolute() {
+        return Err(error(
+            ValidationStoreErrorCodeV0::InvalidBinding,
+            "finalization_history.parent",
+        ));
+    }
+
+    // Build missing components one at a time with a private mode. A broad
+    // `create_dir_all` would expose an authority directory under the process
+    // umask before the later checks get a chance to reject it.
+    let mut missing = Vec::new();
+    let mut cursor = parent.to_path_buf();
+    loop {
+        match fs::symlink_metadata(&cursor) {
+            Ok(metadata) => {
+                validate_parent_ancestor_v0(&cursor, &metadata)?;
+                break;
+            }
+            Err(value) if value.kind() == std::io::ErrorKind::NotFound => {
+                missing.push(cursor.clone());
+                if !cursor.pop() {
+                    return Err(error(
+                        ValidationStoreErrorCodeV0::Storage,
+                        "finalization_history.parent",
+                    ));
+                }
+            }
+            Err(_) => {
+                return Err(error(
+                    ValidationStoreErrorCodeV0::Storage,
+                    "finalization_history.parent_metadata",
+                ));
+            }
         }
-    };
+    }
+
+    for directory in missing.iter().rev() {
+        #[cfg(unix)]
+        let create_result = {
+            let mut builder = fs::DirBuilder::new();
+            builder.mode(0o700);
+            builder.create(directory)
+        };
+        #[cfg(not(unix))]
+        let create_result = fs::create_dir(directory);
+
+        match create_result {
+            Ok(()) => {
+                #[cfg(unix)]
+                fs::set_permissions(directory, fs::Permissions::from_mode(0o700)).map_err(
+                    |_| {
+                        error(
+                            ValidationStoreErrorCodeV0::InvalidPermissions,
+                            "finalization_history.parent_permissions",
+                        )
+                    },
+                )?;
+            }
+            Err(value) if value.kind() == std::io::ErrorKind::AlreadyExists => {}
+            Err(_) => {
+                return Err(error(
+                    ValidationStoreErrorCodeV0::Storage,
+                    "finalization_history.parent_create",
+                ));
+            }
+        }
+        let metadata = fs::symlink_metadata(directory).map_err(|_| {
+            error(
+                ValidationStoreErrorCodeV0::Storage,
+                "finalization_history.parent_metadata",
+            )
+        })?;
+        validate_parent_ancestor_v0(directory, &metadata)?;
+    }
+
+    validate_private_parent_v0(parent)
+}
+
+fn validate_parent_ancestor_v0(
+    path: &Path,
+    metadata: &fs::Metadata,
+) -> ValidationStoreResultV0<()> {
+    if metadata.file_type().is_symlink() || !metadata.is_dir() {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_type",
+        ));
+    }
+    #[cfg(unix)]
+    {
+        let mode = metadata.permissions().mode() & 0o7777;
+        // A root-owned sticky directory (for example /tmp) is safe as an
+        // ancestor because the kernel prevents another owner from unlinking
+        // a child. The immediate history parent is still required to be
+        // exactly 0700 below.
+        if mode & 0o022 != 0 && !(metadata.uid() == 0 && mode & 0o1000 != 0) {
+            return Err(error(
+                ValidationStoreErrorCodeV0::InvalidPermissions,
+                "finalization_history.parent_ancestry_permissions",
+            ));
+        }
+    }
+    let canonical = fs::canonicalize(path).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::Storage,
+            "finalization_history.parent_canonicalize",
+        )
+    })?;
+    if canonical != path {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_alias",
+        ));
+    }
+    Ok(())
+}
+
+fn validate_private_parent_v0(path: &Path) -> ValidationStoreResultV0<()> {
+    let mut ancestor = path.to_path_buf();
+    loop {
+        let metadata = fs::symlink_metadata(&ancestor).map_err(|_| {
+            error(
+                ValidationStoreErrorCodeV0::Storage,
+                "finalization_history.parent_metadata",
+            )
+        })?;
+        validate_parent_ancestor_v0(&ancestor, &metadata)?;
+        if ancestor == Path::new("/") || !ancestor.pop() {
+            break;
+        }
+    }
+    let metadata = fs::symlink_metadata(path).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::Storage,
+            "finalization_history.parent_metadata",
+        )
+    })?;
+    #[cfg(unix)]
+    if metadata.permissions().mode() & 0o7777 != 0o700 {
+        return Err(error(
+            ValidationStoreErrorCodeV0::InvalidPermissions,
+            "finalization_history.parent_permissions",
+        ));
+    }
+    #[cfg(not(unix))]
+    let _ = metadata;
+    Ok(())
+}
+
+fn create_or_validate_file_v0(path: &Path) -> ValidationStoreResultV0<()> {
+    match fs::symlink_metadata(path) {
+        Ok(metadata) => validate_private_file_v0(&metadata),
+        Err(value) if value.kind() == std::io::ErrorKind::NotFound => {
+            let mut options = OpenOptions::new();
+            options.write(true).create_new(true);
+            #[cfg(unix)]
+            options.mode(0o600);
+            match options.open(path) {
+                Ok(_) => {}
+                Err(value) if value.kind() == std::io::ErrorKind::AlreadyExists => {
+                    return Err(error(
+                        ValidationStoreErrorCodeV0::ReplacedStore,
+                        "finalization_history.create_race",
+                    ));
+                }
+                Err(_) => {
+                    return Err(error(
+                        ValidationStoreErrorCodeV0::Storage,
+                        "finalization_history.create",
+                    ));
+                }
+            }
+            let metadata = fs::symlink_metadata(path).map_err(|_| {
+                error(
+                    ValidationStoreErrorCodeV0::ReplacedStore,
+                    "finalization_history.path_metadata",
+                )
+            })?;
+            validate_private_file_v0(&metadata)
+        }
+        Err(_) => Err(error(
+            ValidationStoreErrorCodeV0::Storage,
+            "finalization_history.path_metadata",
+        )),
+    }
+}
+
+fn validate_private_file_v0(metadata: &fs::Metadata) -> ValidationStoreResultV0<()> {
     if metadata.file_type().is_symlink() || !metadata.file_type().is_file() {
         return Err(error(
             ValidationStoreErrorCodeV0::ReplacedStore,
@@ -393,20 +621,170 @@ fn reject_unsafe_existing_path_v0(path: &Path) -> ValidationStoreResultV0<()> {
         ));
     }
     #[cfg(unix)]
-    if metadata.nlink() != 1 {
-        return Err(error(
-            ValidationStoreErrorCodeV0::ReplacedStore,
-            "finalization_history.path_links",
-        ));
+    {
+        if metadata.nlink() != 1 {
+            return Err(error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.path_links",
+            ));
+        }
+        if metadata.permissions().mode() & 0o7777 != 0o600 {
+            return Err(error(
+                ValidationStoreErrorCodeV0::InvalidPermissions,
+                "finalization_history.path_permissions",
+            ));
+        }
     }
     Ok(())
+}
+
+fn capture_path_binding_v0(
+    path: &Path,
+) -> ValidationStoreResultV0<FinalizationHistoryPathBindingV0> {
+    let parent = path.parent().ok_or_else(|| {
+        error(
+            ValidationStoreErrorCodeV0::InvalidBinding,
+            "finalization_history.parent",
+        )
+    })?;
+    let parent_handle = File::open(parent).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::Storage,
+            "finalization_history.parent_open",
+        )
+    })?;
+    let parent_metadata = parent_handle.metadata().map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::Storage,
+            "finalization_history.parent_metadata",
+        )
+    })?;
+    let named_parent_metadata = fs::symlink_metadata(parent).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_metadata",
+        )
+    })?;
+    #[cfg(not(unix))]
+    let _ = &named_parent_metadata;
+    validate_private_parent_v0(parent)?;
+    if !parent_metadata.is_dir() {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_type",
+        ));
+    }
+    let file_metadata = fs::symlink_metadata(path).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.path_metadata",
+        )
+    })?;
+    validate_private_file_v0(&file_metadata)?;
+    #[cfg(unix)]
+    {
+        let descriptor_parent = FinalizationHistoryFileIdentityV0::from_metadata(&parent_metadata);
+        let named_parent = FinalizationHistoryFileIdentityV0::from_metadata(&named_parent_metadata);
+        if descriptor_parent != named_parent {
+            return Err(error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.parent_identity",
+            ));
+        }
+        let file_identity = FinalizationHistoryFileIdentityV0::from_metadata(&file_metadata);
+        if file_identity.owner != descriptor_parent.owner {
+            return Err(error(
+                ValidationStoreErrorCodeV0::InvalidPermissions,
+                "finalization_history.owner_binding",
+            ));
+        }
+        Ok(FinalizationHistoryPathBindingV0 {
+            parent: parent.to_path_buf(),
+            parent_handle: Arc::new(parent_handle),
+            parent_identity: descriptor_parent,
+            file_identity,
+        })
+    }
+    #[cfg(not(unix))]
+    Ok(FinalizationHistoryPathBindingV0 {
+        parent: parent.to_path_buf(),
+        parent_handle: Arc::new(parent_handle),
+    })
+}
+
+fn verify_path_binding_v0(
+    path: &Path,
+    binding: &FinalizationHistoryPathBindingV0,
+) -> ValidationStoreResultV0<()> {
+    let descriptor_parent_metadata = binding.parent_handle.metadata().map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_identity",
+        )
+    })?;
+    let named_parent_metadata = fs::symlink_metadata(&binding.parent).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_identity",
+        )
+    })?;
+    #[cfg(not(unix))]
+    let _ = &named_parent_metadata;
+    validate_private_parent_v0(&binding.parent)?;
+    if !descriptor_parent_metadata.is_dir() {
+        return Err(error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.parent_type",
+        ));
+    }
+    let file_metadata = fs::symlink_metadata(path).map_err(|_| {
+        error(
+            ValidationStoreErrorCodeV0::ReplacedStore,
+            "finalization_history.path_identity",
+        )
+    })?;
+    validate_private_file_v0(&file_metadata)?;
+    #[cfg(unix)]
+    {
+        if FinalizationHistoryFileIdentityV0::from_metadata(&descriptor_parent_metadata)
+            != binding.parent_identity
+            || FinalizationHistoryFileIdentityV0::from_metadata(&named_parent_metadata)
+                != binding.parent_identity
+        {
+            return Err(error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.parent_identity",
+            ));
+        }
+        if FinalizationHistoryFileIdentityV0::from_metadata(&file_metadata) != binding.file_identity
+        {
+            return Err(error(
+                ValidationStoreErrorCodeV0::ReplacedStore,
+                "finalization_history.path_identity",
+            ));
+        }
+    }
+    Ok(())
+}
+
+#[cfg(unix)]
+impl FinalizationHistoryFileIdentityV0 {
+    fn from_metadata(metadata: &fs::Metadata) -> Self {
+        Self {
+            device: metadata.dev(),
+            inode: metadata.ino(),
+            owner: metadata.uid(),
+            links: metadata.nlink(),
+            mode: metadata.permissions().mode() & 0o7777,
+        }
+    }
 }
 
 fn open_connection_v0(path: &Path) -> ValidationStoreResultV0<Connection> {
     let connection = Connection::open_with_flags(
         path,
         OpenFlags::SQLITE_OPEN_READ_WRITE
-            | OpenFlags::SQLITE_OPEN_CREATE
+            | OpenFlags::SQLITE_OPEN_NOFOLLOW
             | OpenFlags::SQLITE_OPEN_NO_MUTEX,
     )
     .map_err(|_| {
@@ -994,6 +1372,8 @@ mod tests {
                 nonce
             ));
             fs::create_dir_all(&root).unwrap();
+            #[cfg(unix)]
+            fs::set_permissions(&root, fs::Permissions::from_mode(0o700)).unwrap();
             let database = root.join("history.sqlite");
             Self { root, database }
         }
@@ -1214,5 +1594,104 @@ mod tests {
                 ValidationStoreErrorCodeV0::ReplacedStore
             );
         }
+    }
+
+    #[test]
+    fn read_sequence_does_not_recreate_a_removed_store() {
+        let path = TestPathV0::new();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(8), head(0, 29)).unwrap();
+        fs::remove_file(&path.database).unwrap();
+        let error = store.read_sequence(1).unwrap_err();
+        assert_eq!(error.code(), ValidationStoreErrorCodeV0::ReplacedStore);
+        assert!(!path.database.exists());
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn read_sequence_rejects_file_and_parent_identity_replacement() {
+        let path = TestPathV0::new();
+        let store =
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(9), head(0, 39)).unwrap();
+
+        // A same-name replacement must not be treated as the originally
+        // opened history, even when the replacement is a private regular
+        // file and therefore passes the basic type/mode checks.
+        let moved = path.root.join("moved.sqlite");
+        fs::rename(&path.database, &moved).unwrap();
+        create_or_validate_file_v0(&path.database).unwrap();
+        let error = store.read_sequence(1).unwrap_err();
+        assert_eq!(error.code(), ValidationStoreErrorCodeV0::ReplacedStore);
+
+        // Replacing the parent directory is fenced independently of the
+        // database pathname.  Keep the moved directory alive until the test
+        // has finished so its old descriptor remains a meaningful identity.
+        fs::remove_file(&path.database).unwrap();
+        fs::rename(&path.root, path.root.with_extension("moved")).unwrap();
+        fs::create_dir(&path.root).unwrap();
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o700)).unwrap();
+        let error = store.read_sequence(1).unwrap_err();
+        assert_eq!(error.code(), ValidationStoreErrorCodeV0::ReplacedStore);
+        fs::remove_dir_all(path.root.with_extension("moved")).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn history_requires_private_parent_and_file_modes() {
+        let path = TestPathV0::new();
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o750)).unwrap();
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&path.database, scope(10), head(0, 49))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+
+        fs::set_permissions(&path.root, fs::Permissions::from_mode(0o700)).unwrap();
+        let store = SqliteNativeFinalizationHistoryV0::open(&path.database, scope(10), head(0, 49))
+            .unwrap();
+        fs::set_permissions(&path.database, fs::Permissions::from_mode(0o640)).unwrap();
+        assert_eq!(
+            store.read_sequence(1).unwrap_err().code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn history_rejects_a_group_writable_parent_ancestor() {
+        let path = TestPathV0::new();
+        let broad = path.root.join("broad");
+        let private = broad.join("private");
+        fs::create_dir_all(&private).unwrap();
+        fs::set_permissions(&broad, fs::Permissions::from_mode(0o770)).unwrap();
+        fs::set_permissions(&private, fs::Permissions::from_mode(0o700)).unwrap();
+        let database = private.join("history.sqlite");
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&database, scope(12), head(0, 69))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::InvalidPermissions
+        );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn history_rejects_a_symlinked_parent_alias() {
+        use std::os::unix::fs::symlink;
+
+        let path = TestPathV0::new();
+        let real_parent = path.root.join("real");
+        fs::create_dir(&real_parent).unwrap();
+        fs::set_permissions(&real_parent, fs::Permissions::from_mode(0o700)).unwrap();
+        let alias = path.root.join("alias");
+        symlink(&real_parent, &alias).unwrap();
+        let database = alias.join("history.sqlite");
+        assert_eq!(
+            SqliteNativeFinalizationHistoryV0::open(&database, scope(11), head(0, 59))
+                .unwrap_err()
+                .code(),
+            ValidationStoreErrorCodeV0::ReplacedStore
+        );
     }
 }
