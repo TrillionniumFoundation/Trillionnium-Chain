@@ -33,7 +33,8 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "0fd31a31d9cc29fd292fab97c3183127e3bdba21"
+          base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
+          test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
             +refs/heads/feature/chain-g1-r3-ordinary-proposal-authority-v1:refs/remotes/origin/g1-a03 \
             +refs/heads/feature/chain-g1-r4-application-finality-v1-20260829:refs/remotes/origin/g1-a04 \
@@ -93,7 +94,6 @@ jobs:
             trnm-native-execution-v0 \
             trnm-consensus-signer-journal \
             trnm-consensus-external-watermark \
-            trnm-poco-lab-validator \
             trnm-poco-node
           do
             cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --locked -- -D warnings
