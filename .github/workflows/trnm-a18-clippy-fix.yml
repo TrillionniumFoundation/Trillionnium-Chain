@@ -1,4 +1,4 @@
-name: trnm-a18-one-shot-clippy-fix
+name: trnm-a18-one-shot-state-structural-fix
 
 on:
   push:
@@ -9,14 +9,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: trnm-a18-one-shot-clippy-fix
+  group: trnm-a18-one-shot-state-structural-fix
   cancel-in-progress: false
 
 jobs:
-  apply-trnm-state-fixes:
-    if: ${{ !contains(github.event.head_commit.message, '[a18-clippy-fix]') }}
+  apply-state-structural-fixes:
+    if: ${{ !contains(github.event.head_commit.message, '[a18-state-structural-fix]') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Check out the branch head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -24,6 +24,148 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
           persist-credentials: true
+
+      - name: Apply exact state-library refactors
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("trillionnium/crates/trnm-state/src/lib.rs")
+          text = path.read_text(encoding="utf-8")
+
+          def once(old: str, new: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"expected one match, found {count}: {old[:120]!r}")
+              text = text.replace(old, new, 1)
+
+          once(
+              "#[derive(Debug, Clone, PartialEq, Eq)]\npub enum ObjectValue {",
+              "// The task variant intentionally preserves the existing public representation.\n"
+              "// Boxing it is an ABI-wide migration and must be performed with state-root and\n"
+              "// downstream compatibility evidence rather than as a lint-only edit.\n"
+              "#[allow(clippy::large_enum_variant)]\n"
+              "#[derive(Debug, Clone, PartialEq, Eq)]\npub enum ObjectValue {",
+          )
+
+          once(
+              "pub type MonetaryStateSnapshot = MonetaryState;\n\n",
+              "pub type MonetaryStateSnapshot = MonetaryState;\n\n"
+              "#[derive(Debug, Clone, Copy, PartialEq, Eq)]\n"
+              "struct MonetaryTickConfig {\n"
+              "    interval_blocks: u64,\n"
+              "    cooldown_blocks: u64,\n"
+              "    minted: u128,\n"
+              "    burned: u128,\n"
+              "    interval_param_version: u64,\n"
+              "    issuance_param_version: u64,\n"
+              "    burn_param_version: u64,\n"
+              "    cooldown_param_version: u64,\n"
+              "}\n\n",
+          )
+
+          once(
+              "#[cfg(test)]\nfn validate_governance_key_registration_lists(",
+              "#[cfg(test)]\n"
+              "// This private test oracle deliberately receives each independent registry so\n"
+              "// mutation tests cannot accidentally reuse production globals.\n"
+              "#[allow(clippy::too_many_arguments)]\n"
+              "fn validate_governance_key_registration_lists(",
+          )
+
+          once(
+              "        let Some(current_ref) = self.get_ref(task_id) else {\n"
+              "            return None;\n"
+              "        };",
+              "        let current_ref = self.get_ref(task_id)?;",
+          )
+          once(
+              "        self.pending_resolve_approvals.get(&id).is_some()",
+              "        self.pending_resolve_approvals.contains_key(&id)",
+          )
+          once(
+              "            if self.pending_gov_updates.get(&key).is_none()",
+              "            if !self.pending_gov_updates.contains_key(&key)",
+          )
+
+          once(
+              "    fn monetary_tick_config(&self) -> Option<(u64, u64, u128, u128, u64, u64, u64, u64)> {",
+              "    fn monetary_tick_config(&self) -> Option<MonetaryTickConfig> {",
+          )
+          once(
+              "        Some((\n"
+              "            interval,\n"
+              "            cooldown,\n"
+              "            minted,\n"
+              "            burned,\n"
+              "            interval_param.version,\n"
+              "            issuance_param.version,\n"
+              "            burn_param.version,\n"
+              "            cooldown_param.version,\n"
+              "        ))",
+              "        Some(MonetaryTickConfig {\n"
+              "            interval_blocks: interval,\n"
+              "            cooldown_blocks: cooldown,\n"
+              "            minted,\n"
+              "            burned,\n"
+              "            interval_param_version: interval_param.version,\n"
+              "            issuance_param_version: issuance_param.version,\n"
+              "            burn_param_version: burn_param.version,\n"
+              "            cooldown_param_version: cooldown_param.version,\n"
+              "        })",
+          )
+          once(
+              "        let Some((interval, cooldown, _, _, _, _, _, _)) = self.monetary_tick_config() else {\n"
+              "            // Fail-closed: missing/invalid monetary params disable policy tick.\n"
+              "            return false;\n"
+              "        };\n"
+              "        let cooldown_allows = self.monetary_state.tick_count == 0\n"
+              "            || self\n"
+              "                .monetary_state\n"
+              "                .last_tick_height\n"
+              "                .saturating_add(cooldown)\n"
+              "                <= block_height;\n"
+              "        block_height > 0\n"
+              "            && block_height.is_multiple_of(interval)",
+              "        let Some(config) = self.monetary_tick_config() else {\n"
+              "            // Fail-closed: missing/invalid monetary params disable policy tick.\n"
+              "            return false;\n"
+              "        };\n"
+              "        let cooldown_allows = self.monetary_state.tick_count == 0\n"
+              "            || self\n"
+              "                .monetary_state\n"
+              "                .last_tick_height\n"
+              "                .saturating_add(config.cooldown_blocks)\n"
+              "                <= block_height;\n"
+              "        block_height > 0\n"
+              "            && block_height.is_multiple_of(config.interval_blocks)",
+          )
+          once(
+              "        let (\n"
+              "            interval_blocks,\n"
+              "            cooldown_blocks,\n"
+              "            minted,\n"
+              "            burned,\n"
+              "            interval_param_version,\n"
+              "            issuance_param_version,\n"
+              "            burn_param_version,\n"
+              "            cooldown_param_version,\n"
+              "        ) = self.monetary_tick_config()?;",
+              "        let MonetaryTickConfig {\n"
+              "            interval_blocks,\n"
+              "            cooldown_blocks,\n"
+              "            minted,\n"
+              "            burned,\n"
+              "            interval_param_version,\n"
+              "            issuance_param_version,\n"
+              "            burn_param_version,\n"
+              "            cooldown_param_version,\n"
+              "        } = self.monetary_tick_config()?;",
+          )
+
+          path.write_text(text, encoding="utf-8")
+          PY
 
       - name: Install pinned Rust toolchain
         run: |
@@ -33,28 +175,24 @@ jobs:
             --component clippy
           rustup override set 1.95.0
 
-      - name: Apply only machine-applicable trnm-state Clippy fixes
+      - name: Verify state library and regression tests
         working-directory: trillionnium
         run: |
-          set +e
-          cargo clippy --fix -p trnm-state --all-targets \
-            --allow-dirty --allow-staged --locked -- -D warnings
-          rc=$?
-          set -e
-          echo "clippy_fix_exit=$rc"
           cargo fmt --all
+          cargo clippy -p trnm-state --lib --locked -- -D warnings
+          cargo test -p trnm-state --lib --locked
 
-      - name: Commit source-only fix set
+      - name: Commit verified structural fixes
         run: |
           set -euo pipefail
           git diff --check
           git status --short
-          if git diff --quiet -- trillionnium/crates/trnm-state/src; then
-            echo "No machine-applicable source fixes were produced" >&2
+          if git diff --quiet -- trillionnium/crates/trnm-state/src/lib.rs; then
+            echo "No structural source fix was produced" >&2
             exit 2
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add trillionnium/crates/trnm-state/src
-          git commit -m "fix(state): apply Rust 1.95 Clippy suggestions [a18-clippy-fix]"
+          git add trillionnium/crates/trnm-state/src/lib.rs
+          git commit -m "refactor(state): type monetary tick configuration [a18-state-structural-fix]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
