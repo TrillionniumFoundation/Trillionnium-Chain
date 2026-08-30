@@ -1,0 +1,233 @@
+name: tmp-world-publish-materialized-source-v2
+
+on:
+  push:
+    branches:
+      - tmp/world-source-materializer-20260830
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tmp-world-publish-materialized-source-v2
+  cancel-in-progress: false
+
+env:
+  WORLD_REPO: TrillionniumFoundation/Trillionnium-World
+  WORLD_BRANCH: fix/world-plan-v4-convergence-2026-08-30
+  EXPECTED_WORLD_HEAD: 2b3a71c34fcbe9b8dac51826d70e65c4553cbba7
+  RUST_TOOLCHAIN: 1.98.0
+  CARGO_TERM_COLOR: never
+  CARGO_INCREMENTAL: "0"
+  RUST_BACKTRACE: "1"
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    env:
+      TOKEN_TRNM_GITHUB_TOKEN: ${{ secrets.TRNM_GITHUB_TOKEN }}
+      TOKEN_TRILLIONNIUM_GITHUB_TOKEN: ${{ secrets.TRILLIONNIUM_GITHUB_TOKEN }}
+      TOKEN_ORG_GITHUB_TOKEN: ${{ secrets.ORG_GITHUB_TOKEN }}
+      TOKEN_BOT_GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+      TOKEN_TRNM_BOT_TOKEN: ${{ secrets.TRNM_BOT_TOKEN }}
+      TOKEN_GH_PAT: ${{ secrets.GH_PAT }}
+      TOKEN_GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+      TOKEN_GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Checkout exact World candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ env.WORLD_REPO }}
+          ref: ${{ env.WORLD_BRANCH }}
+          path: world
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind compare-and-swap parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          actual="$(git rev-parse HEAD)"
+          test "${actual}" = "${EXPECTED_WORLD_HEAD}"
+          test -z "$(git status --porcelain)"
+          printf '%s\n' "world_parent=${actual}" "world_tree=$(git rev-parse HEAD^{tree})"
+
+      - name: Select an explicitly provisioned cross-repository credential
+        id: credential
+        shell: bash
+        run: |
+          set -euo pipefail
+          selected=''
+          selected_name=''
+          for name in \
+            TOKEN_TRNM_GITHUB_TOKEN \
+            TOKEN_TRILLIONNIUM_GITHUB_TOKEN \
+            TOKEN_ORG_GITHUB_TOKEN \
+            TOKEN_BOT_GITHUB_TOKEN \
+            TOKEN_TRNM_BOT_TOKEN \
+            TOKEN_GH_PAT \
+            TOKEN_GITHUB_PAT \
+            TOKEN_GH_TOKEN
+          do
+            value="${!name:-}"
+            if test -n "${value}"; then
+              selected="${value}"
+              selected_name="${name}"
+              break
+            fi
+          done
+          if test -z "${selected}"; then
+            echo 'No explicitly provisioned cross-repository credential is available.' >&2
+            exit 78
+          fi
+          echo "::add-mask::${selected}"
+          printf '%s' "${selected}" > "${RUNNER_TEMP}/world-publish-token"
+          chmod 600 "${RUNNER_TEMP}/world-publish-token"
+          printf '%s\n' "credential_source=${selected_name}"
+
+      - name: Install pinned Rust
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install "${RUST_TOOLCHAIN}" --profile minimal --component rustfmt,clippy
+          rustup default "${RUST_TOOLCHAIN}"
+          rustc --version --verbose
+          cargo --version --verbose
+
+      - name: Materialize directly compiled game-server source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --lib
+          generated="$(find world/trillionnium/target -type f -path '*/out/trnm_game_server_lib_generated.rs' -print | head -n 1)"
+          test -n "${generated}"
+          test -s "${generated}"
+          python3 - "${generated}" <<'PY'
+          from pathlib import Path
+          import sys
+
+          generated_path = Path(sys.argv[1])
+          crate = Path('world/trillionnium/crates/trnm-game-server')
+          lib = crate / 'src/lib.rs'
+          wrapper = lib.read_text(encoding='utf-8')
+          marker = '// The full reviewed server body is generated from src/lib.rs.in by build.rs.'
+          if wrapper.count(marker) != 1:
+              raise SystemExit('reviewed lib.rs wrapper marker drifted')
+          header = wrapper.split(marker, 1)[0].rstrip()
+          generated = generated_path.read_text(encoding='utf-8')
+          if 'trnm_game_server_lib_generated.rs' in generated:
+              raise SystemExit('generated source retained recursive include')
+          lib.write_text(f'{header}\n\n{generated.lstrip()}', encoding='utf-8')
+
+          manifest = crate / 'Cargo.toml'
+          cargo = manifest.read_text(encoding='utf-8')
+          build_line = 'build = "build.rs"\n'
+          if cargo.count(build_line) != 1:
+              raise SystemExit('Cargo build-script declaration drifted')
+          manifest.write_text(cargo.replace(build_line, '', 1), encoding='utf-8')
+
+          for obsolete in (crate / 'build.rs', crate / 'src/lib.rs.in'):
+              if not obsolete.is_file():
+                  raise SystemExit(f'expected obsolete source missing: {obsolete}')
+              obsolete.unlink()
+          PY
+
+      - name: Repair strict loopback and authority-key normalization
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          cex = Path('world/trillionnium/crates/trnm-game-server/src/cex.rs')
+          source = cex.read_text(encoding='utf-8')
+          old = '''            let host = url.host_str().unwrap_or_default();
+            let loopback = host.eq_ignore_ascii_case("localhost")
+                || host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          new = '''            let host = url.host_str().unwrap_or_default();
+            let unbracketed = host
+                .strip_prefix('[')
+                .and_then(|value| value.strip_suffix(']'))
+                .unwrap_or(host);
+            let canonical_host = unbracketed.strip_suffix('.').unwrap_or(unbracketed);
+            let loopback = canonical_host.eq_ignore_ascii_case("localhost")
+                || canonical_host
+                    .parse::<IpAddr>()
+                    .is_ok_and(|address| address.is_loopback());
+'''
+          if old in source:
+              source = source.replace(old, new, 1)
+              cex.write_text(source, encoding='utf-8')
+          elif 'let canonical_host =' not in source:
+              raise SystemExit('loopback normalization source drifted')
+
+          roots = [
+              Path('world/trillionnium/contracts/trnm-world-transition-v1'),
+              Path('world/tools/trnm-world-transition-https-v1'),
+          ]
+          for root in roots:
+              if not root.exists():
+                  continue
+              for path in root.rglob('*'):
+                  if not path.is_file() or path.suffix not in {'.rs', '.go'}:
+                      continue
+                  text = path.read_text(encoding='utf-8')
+                  updated = text
+                  updated = updated.replace(
+                      'FORBIDDEN_AUTHORITY_KEYS.contains(&key.as_str())',
+                      'FORBIDDEN_AUTHORITY_KEYS.iter().any(|forbidden| key.eq_ignore_ascii_case(forbidden))'
+                  )
+                  updated = updated.replace(
+                      'forbiddenAuthorityKeys[key]',
+                      'forbiddenAuthorityKeys[strings.ToLower(key)]'
+                  )
+                  if updated != text:
+                      if path.suffix == '.go' and '"strings"' not in updated:
+                          updated = updated.replace('import (\n', 'import (\n\t"strings"\n', 1)
+                      path.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: Validate complete direct-source candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          bash scripts/check-trnm-game-server-direct-source.sh
+          bash scripts/check-trnm-ci-read-only.sh
+          bash scripts/check-trnm-settlement-transaction-boundary.sh
+          bash scripts/check_trnm_settlement_transaction_boundary.sh
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+          cargo test --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked -- -D warnings
+          git diff --check
+          test -n "$(git status --porcelain)"
+
+      - name: Commit and publish with a non-force CAS
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd world
+          token="$(cat "${RUNNER_TEMP}/world-publish-token")"
+          echo "::add-mask::${token}"
+          git config user.name 'Trillionnium source convergence bot'
+          git config user.email 'source-convergence@users.noreply.github.com'
+          git add -A
+          git commit -m 'refactor(world): materialize directly compiled game-server source'
+          parent="$(git rev-parse HEAD^)"
+          test "${parent}" = "${EXPECTED_WORLD_HEAD}"
+          remote="https://x-access-token:${token}@github.com/${WORLD_REPO}.git"
+          observed="$(git ls-remote "${remote}" "refs/heads/${WORLD_BRANCH}" | awk '{print $1}')"
+          test "${observed}" = "${EXPECTED_WORLD_HEAD}"
+          git push "${remote}" "HEAD:refs/heads/${WORLD_BRANCH}"
+          printf '%s\n' "published_head=$(git rev-parse HEAD)" "published_tree=$(git rev-parse HEAD^{tree})"
+
+      - name: Remove credential material
+        if: always()
+        shell: bash
+        run: rm -f "${RUNNER_TEMP}/world-publish-token"
