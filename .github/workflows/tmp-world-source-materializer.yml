@@ -64,24 +64,21 @@ jobs:
 
           path = Path("world/trillionnium/crates/trnm-game-server/src/cex.rs")
           source = path.read_text(encoding="utf-8")
-          old = '''            let host = url.host_str().unwrap_or_default();
-            let loopback = host.eq_ignore_ascii_case("localhost")
-                || host
-                    .parse::<IpAddr>()
-                    .is_ok_and(|address| address.is_loopback());
-'''
-          new = '''            let host = url.host_str().unwrap_or_default();
-            let canonical_host = host
-                .strip_suffix('.')
-                .unwrap_or(host)
-                .strip_prefix('[')
-                .and_then(|host| host.strip_suffix(']'))
-                .unwrap_or_else(|| host.strip_suffix('.').unwrap_or(host));
-            let loopback = canonical_host.eq_ignore_ascii_case("localhost")
-                || canonical_host
-                    .parse::<IpAddr>()
-                    .is_ok_and(|address| address.is_loopback());
-'''
+          old = (
+              '            let host = url.host_str().unwrap_or_default();\n'
+              '            let loopback = host.eq_ignore_ascii_case("localhost")\n'
+              '                || host\n'
+              '                    .parse::<IpAddr>()\n'
+              '                    .is_ok_and(|address| address.is_loopback());\n'
+          )
+          new = (
+              '            let host = url.host_str().unwrap_or_default();\n'
+              "            let canonical_host = host.trim_start_matches('[').trim_end_matches(']').trim_end_matches('.');\n"
+              '            let loopback = canonical_host.eq_ignore_ascii_case("localhost")\n'
+              '                || canonical_host\n'
+              '                    .parse::<IpAddr>()\n'
+              '                    .is_ok_and(|address| address.is_loopback());\n'
+          )
           if source.count(old) != 1:
               raise SystemExit("localhost normalization source drifted")
           path.write_text(source.replace(old, new, 1), encoding="utf-8")
