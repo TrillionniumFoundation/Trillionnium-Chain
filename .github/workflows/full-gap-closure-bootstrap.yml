@@ -1,0 +1,49 @@
+name: full-gap-closure-bootstrap
+
+on:
+  push:
+    branches:
+      - work/full-gap-closure-20260831
+    paths:
+      - .github/workflows/full-gap-closure-bootstrap.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-gap-closure-bootstrap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact closure branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Build exact source archive and inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/trnm-gap-closure
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD \
+            | gzip -9 > /tmp/trnm-gap-closure/source.tar.gz
+          git rev-parse HEAD > /tmp/trnm-gap-closure/source.commit
+          git rev-parse 'HEAD^{tree}' > /tmp/trnm-gap-closure/source.tree
+          find . -type f -not -path './.git/*' -print0 \
+            | sort -z \
+            | xargs -0 sha256sum > /tmp/trnm-gap-closure/source-files.sha256
+          sha256sum /tmp/trnm-gap-closure/source.tar.gz \
+            > /tmp/trnm-gap-closure/source.tar.gz.sha256
+
+      - name: Upload immutable source snapshot
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-full-gap-closure-source-${{ github.sha }}
+          path: /tmp/trnm-gap-closure/
+          if-no-files-found: error
+          retention-days: 7
