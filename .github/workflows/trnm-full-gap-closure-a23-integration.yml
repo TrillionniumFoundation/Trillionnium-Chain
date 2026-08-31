@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "c7c9a7be5f5369f0a024e2917c2eb861a1c3436d"
+          test "$(git rev-parse HEAD^)" = "36f3dba1984606f09b5dc478a2d9e84d367c02d9"
           git merge-base --is-ancestor 2384e7e4ceb1fe63a0f29e91dab274d74940a8d3 HEAD
           git fetch --no-tags origin \
             ca172504a975565ac329757c0e0fb3568f7b7985:refs/remotes/origin/a23-generator
@@ -85,35 +85,35 @@ jobs:
           )
           exact_replace(
               tombstone,
-              '''    #[test]
-              fn replay_floor_verifier_authority_is_sealed_v1() {
-                  assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);
-                  assert!(tombstone_gc_candidate_contract_v1());
-                  assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);
-              }'''.replace('              ', ''),
-              '''    #[test]
-              fn replay_floor_verifier_authority_is_sealed_v1() {
-                  const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };
-                  assert!(tombstone_gc_candidate_contract_v1());
-                  const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };
-              }'''.replace('              ', ''),
+              "    #[test]\n"
+              "    fn replay_floor_verifier_authority_is_sealed_v1() {\n"
+              "        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);\n"
+              "        assert!(tombstone_gc_candidate_contract_v1());\n"
+              "        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);\n"
+              "    }",
+              "    #[test]\n"
+              "    fn replay_floor_verifier_authority_is_sealed_v1() {\n"
+              "        const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };\n"
+              "        assert!(tombstone_gc_candidate_contract_v1());\n"
+              "        const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };\n"
+              "    }",
           )
 
           wal = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs')
           exact_replace(
               wal,
-              '''    #[test]
-              fn native_commit_verifier_authority_is_sealed_v1() {
-                  assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
-                  assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
-                  assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
-              }'''.replace('              ', ''),
-              '''    #[test]
-              fn native_commit_verifier_authority_is_sealed_v1() {
-                  const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };
-                  const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };
-                  const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };
-              }'''.replace('              ', ''),
+              "    #[test]\n"
+              "    fn native_commit_verifier_authority_is_sealed_v1() {\n"
+              "        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);\n"
+              "        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);\n"
+              "        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);\n"
+              "    }",
+              "    #[test]\n"
+              "    fn native_commit_verifier_authority_is_sealed_v1() {\n"
+              "        const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };\n"
+              "        const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };\n"
+              "        const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };\n"
+              "    }",
           )
           PY
           test ! -e .github/workflows/trnm-a23-native-replay-floor-verify.yml
