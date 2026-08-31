@@ -1,0 +1,148 @@
+name: native-poco-a04-a19-a23-cleanup
+
+on:
+  push:
+    branches:
+      - qualification/native-poco-a04-a19-a23-exact-head-v1-20260901
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-cleanup.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: native-poco-a04-a19-a23-cleanup-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FINAL_BRANCH: integration/native-poco-a04-a19-a23-qualified-final-20260901
+  BASE_BRANCH: feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+  EXPECTED_PARENT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  FINALIZER_WORKFLOW: native-poco-a04-a19-a23-finalizer.yml
+
+jobs:
+  cleanup:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - name: Require successful finalizer and stable final PR
+        id: final
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          finalizer_id=""
+          for attempt in $(seq 1 480); do
+            response="$(
+              gh api --method GET \
+                "/repos/${GITHUB_REPOSITORY}/actions/workflows/${FINALIZER_WORKFLOW}/runs" \
+                -f branch='qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' \
+                -f event=push -f per_page=10
+            )"
+            finalizer_id="$(jq -r '.workflow_runs | sort_by(.created_at) | reverse | .[0].id // empty' <<<"$response")"
+            if [[ -z "$finalizer_id" ]]; then sleep 15; continue; fi
+            status="$(jq -r --argjson id "$finalizer_id" '.workflow_runs[] | select(.id == $id) | .status' <<<"$response")"
+            conclusion="$(jq -r --argjson id "$finalizer_id" '.workflow_runs[] | select(.id == $id) | .conclusion // empty' <<<"$response")"
+            printf 'finalizer=%s status=%s conclusion=%s\n' "$finalizer_id" "$status" "$conclusion"
+            if [[ "$status" = completed ]]; then
+              test "$conclusion" = success
+              break
+            fi
+            sleep 15
+          done
+          test -n "$finalizer_id"
+
+          final_ref="$(gh api --method GET "/repos/${GITHUB_REPOSITORY}/git/ref/heads/${FINAL_BRANCH}")"
+          final_sha="$(jq -r .object.sha <<<"$final_ref")"
+          commit="$(gh api --method GET "/repos/${GITHUB_REPOSITORY}/git/commits/${final_sha}")"
+          test "$(jq -r '.parents[0].sha' <<<"$commit")" = "$EXPECTED_PARENT"
+
+          prs="$(
+            gh api --method GET "/repos/${GITHUB_REPOSITORY}/pulls" \
+              -f state=open \
+              -f head="TrillionniumFoundation:${FINAL_BRANCH}" \
+              -f base="${BASE_BRANCH}" \
+              -f per_page=10
+          )"
+          pr="$(jq -r '.[0].number // empty' <<<"$prs")"
+          test -n "$pr"
+          test "$(jq -r '.[0].draft' <<<"$prs")" = true
+          echo "finalizer_id=$finalizer_id" >> "$GITHUB_OUTPUT"
+          echo "final_sha=$final_sha" >> "$GITHUB_OUTPUT"
+          echo "pr=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: Delete only frozen temporary refs
+        id: delete
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          refs=(
+            integration/native-poco-a04-a19-a23-publisher-20260901
+            integration/native-poco-a04-a19-a23-publisher-v2-20260901
+            integration/native-poco-a04-a19-a23-publisher-v3-20260901
+            integration/native-poco-a04-a19-a23-publisher-v4-20260901
+            integration/native-poco-a04-a19-a23-publisher-v5-20260901
+            integration/native-poco-a04-a19-a23-qualified-v1-20260901
+            integration/native-poco-a04-a19-a23-qualified-v2-20260901
+            integration/native-poco-a04-a19-a23-qualified-v3-20260901
+            integration/native-poco-a04-a19-a23-qualified-v4-20260901
+            integration/native-poco-a04-a19-a23-qualified-v5-20260901
+            integration/native-poco-node-a19-restacked-20260831
+            integration/native-poco-a19-a23-publisher-20260831
+            integration/native-poco-a19-a23-publisher-v2-20260831
+          )
+          deleted="$RUNNER_TEMP/deleted-refs"
+          : > "$deleted"
+          for ref in "${refs[@]}"; do
+            case "$ref" in
+              "$FINAL_BRANCH"|"$BASE_BRANCH"|main)
+                printf 'refuse protected cleanup ref: %s\n' "$ref" >&2
+                exit 2
+                ;;
+            esac
+            encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$ref")"
+            if gh api --method GET "/repos/${GITHUB_REPOSITORY}/git/ref/heads/${encoded}" >/dev/null 2>&1; then
+              gh api --method DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/heads/${encoded}"
+              printf '%s\n' "$ref" >> "$deleted"
+            fi
+          done
+          echo "deleted_count=$(wc -l < "$deleted" | tr -d ' ')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish cleanup receipt
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FINALIZER_ID: ${{ steps.final.outputs.finalizer_id }}
+          FINAL_SHA: ${{ steps.final.outputs.final_sha }}
+          FINAL_PR: ${{ steps.final.outputs.pr }}
+          DELETED_COUNT: ${{ steps.delete.outputs.deleted_count }}
+        run: |
+          set -euo pipefail
+          body="<!-- trnm-native-stack-cleanup-v1 -->
+          ## Native stack temporary-ref cleanup
+
+          \`\`\`text
+          final_branch=${FINAL_BRANCH}
+          final_commit=${FINAL_SHA}
+          final_pr=#${FINAL_PR}
+          finalizer_run=${FINALIZER_ID}
+          deleted_temporary_refs=${DELETED_COUNT}
+          \`\`\`
+
+          Cleanup executed only after the stable code-only final branch and Draft PR were verified. The qualification carrier branch and workflow history remain available for audit; production and external predicates remain unchanged."
+          gh api --method POST "/repos/${GITHUB_REPOSITORY}/issues/55/comments" \
+            --raw-field body="$body" >/dev/null
