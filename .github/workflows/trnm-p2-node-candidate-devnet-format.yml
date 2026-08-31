@@ -60,7 +60,7 @@ jobs:
           set -euo pipefail
           rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
           git rm .github/workflows/trnm-p2-node-candidate-devnet-format.yml
-          mapfile -t changed < <(git diff --name-only | sort)
+          mapfile -t changed < <(git diff --name-only HEAD | sort)
           expected=(
             .github/workflows/trnm-p2-node-candidate-devnet-format.yml
             trillionnium/crates/trnm-poco-lab-validator/src/bin/trnm-poco-candidate-devnet-validator.rs
