@@ -1,0 +1,138 @@
+name: trnm-full-gap-closure-a23-integration
+
+on:
+  push:
+    branches:
+      - work/full-gap-closure-20260831
+    paths:
+      - .github/workflows/trnm-full-gap-closure-a23-integration.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-full-gap-closure-a23-integration-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-verify-publish:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/work/full-gap-closure-20260831'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Check out exact closure head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/full-gap-closure-20260831
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify closure lineage and fetch immutable A23 generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "c7c95258afbfb996f2cdf22e45e535570234a95a"
+          git merge-base --is-ancestor 2384e7e4ceb1fe63a0f29e91dab274d74940a8d3 HEAD
+          git fetch --no-tags origin \
+            ca172504a975565ac329757c0e0fb3568f7b7985:refs/remotes/origin/a23-generator
+          test "$(git rev-parse refs/remotes/origin/a23-generator)" = \
+            "ca172504a975565ac329757c0e0fb3568f7b7985"
+          test "$(git rev-parse refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py)" = \
+            "a1af430ec06a6cbb826a8d5d31d1dd60c10314a4"
+          git show refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py \
+            > "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          python3 -B -m py_compile "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+
+      - name: Generate A23 source and remove branch-specific workflow output
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          rm -f .github/workflows/trnm-a23-native-replay-floor-verify.yml
+          python3 -B - <<'PY'
+          from pathlib import Path
+          path = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc')
+          text = path.read_text(encoding='utf-8')
+          replacements = {
+              '.field("namespace", &hex::encode(self.namespace))':
+                  '.field("namespace", &self.namespace)',
+              '.field("canonical_signer", &hex::encode(self.canonical_signer))':
+                  '.field("canonical_signer", &self.canonical_signer)',
+          }
+          for old, new in replacements.items():
+              if text.count(old) != 1:
+                  raise SystemExit(f'unexpected A23 debug expression count: {old!r}')
+              text = text.replace(old, new)
+          path.write_text(text, encoding='utf-8')
+          PY
+          test ! -e .github/workflows/trnm-a23-native-replay-floor-verify.yml
+          git diff --check
+
+      - name: Install pinned Rust toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup override set 1.95.0
+
+      - name: Format compile lint and test native replay floor
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --all-targets --locked
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --all-targets --locked -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --doc --locked
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked
+
+      - name: Re-run authority and repository contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v2.json').read_text())
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          git diff --check
+
+      - name: Publish exact tested source-only A23 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=$'docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md\ntrillionnium/crates/trnm-native-execution-v0/src/durable.rs\ntrillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs\ntrillionnium/crates/trnm-native-execution-v0/src/lib.rs\ntrillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs\ntrillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc'
+          test "$(git status --short | sed -E 's/^...//' | sort)" = "${expected}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md \
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs \
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs \
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs \
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs \
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+          git diff --cached --check
+          git commit -m "feat(node): bind tombstone GC to finalized native replay floor"
+          git push origin "HEAD:work/full-gap-closure-20260831"
