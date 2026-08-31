@@ -1,0 +1,52 @@
+name: trnm-exact-source-32c1a49-snapshot
+
+on:
+  push:
+    branches:
+      - tmp/exact-source-32c1a49-20260831
+    paths:
+      - .github/workflows/trnm-exact-source-32c1a49-snapshot.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-exact-source-32c1a49-snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_SHA: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Build exact source archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_SHA}"
+          out="${RUNNER_TEMP}/trnm-exact-source"
+          mkdir -p "${out}"
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD |
+            gzip -9 > "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz"
+          git rev-parse HEAD > "${out}/source.commit"
+          git rev-parse 'HEAD^{tree}' > "${out}/source.tree"
+          sha256sum "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz" >
+            "${out}/source.tar.gz.sha256"
+
+      - name: Upload exact source archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-exact-source-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-exact-source/
+          if-no-files-found: error
+          retention-days: 3
