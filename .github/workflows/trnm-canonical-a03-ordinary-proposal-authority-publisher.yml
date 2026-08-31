@@ -1,0 +1,336 @@
+name: trnm-canonical-a03-ordinary-proposal-authority-publisher
+
+on:
+  push:
+    branches:
+      - feature/chain-a03-ordinary-proposal-authority-canonical-v1-20260831
+    paths:
+      - .github/workflows/trnm-canonical-a03-ordinary-proposal-authority-publisher.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-canonical-a03-ordinary-proposal-authority-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TARGET_BRANCH: feature/chain-a03-ordinary-proposal-authority-canonical-v1-20260831
+  BASE_COMMIT: 44d53c0df1658fa8cd1aadd707ac404ffaf2480f
+  REVIEWED_HEAD: 1b9543b3b22cc959d0ea2b3123c349761adada32
+  REVIEWED_TREE: cf1488613e5b8ca65ee4302f6b47e28d2b09b56a
+
+jobs:
+  qualify-a03:
+    name: qualify-canonical-a03-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/feature/chain-a03-ordinary-proposal-authority-canonical-v1-20260831' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.candidate.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.candidate.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Check out exact read-only source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify source boundary and reviewed blobs
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${BASE_COMMIT}"
+          test -z "$(git diff --name-only "${BASE_COMMIT}..HEAD" | grep -Ev '^\.github/workflows/trnm-canonical-a03-ordinary-proposal-authority-publisher\.yml$' || true)"
+
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-execution-v0/README.md)" = 503f0dc782216254c09806b97a5f236614aef558
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-execution-v0/src/complete.rs)" = a90e759c4bb949cee8dd4c08a89dacb1582e8718
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-execution-v0/src/durable.rs)" = f913492dde15528cbd328100ff5f40039944c23e
+          test "$(git rev-parse HEAD:trillionnium/crates/trnm-poco-node/src/effect_driver.rs)" = 3d185f363df67b701d0c6e8cd991335176472a39
+
+          git fetch --no-tags origin "${REVIEWED_HEAD}:refs/remotes/origin/a03-reviewed"
+          test "$(git rev-parse refs/remotes/origin/a03-reviewed)" = "${REVIEWED_HEAD}"
+          test "$(git rev-parse 'refs/remotes/origin/a03-reviewed^{tree}')" = "${REVIEWED_TREE}"
+          test "$(git rev-parse refs/remotes/origin/a03-reviewed:trillionnium/crates/trnm-native-execution-v0/README.md)" = ea1f411ed9864dec1d44da0926f4577d27e5eb27
+          test "$(git rev-parse refs/remotes/origin/a03-reviewed:trillionnium/crates/trnm-native-execution-v0/src/complete.rs)" = fad7dfaf5cfecc24d0b1ee0ec33e3ec3c9448106
+          test "$(git rev-parse refs/remotes/origin/a03-reviewed:trillionnium/crates/trnm-native-execution-v0/src/durable.rs)" = 94ae2ee5f0b3cfdd47409e0b28ff11a58646129c
+          test "$(git rev-parse refs/remotes/origin/a03-reviewed:trillionnium/crates/trnm-poco-node/src/effect_driver.rs)" = 4572ff7ad8b0e9671273eb9209218413ac43a4cc
+
+      - name: Verify pinned toolchain and offline cache
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0 --component clippy --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh --toolchain 1.95.0 --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Compose exact workflow-free A03 candidate
+        id: candidate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          reviewed=refs/remotes/origin/a03-reviewed
+          git show "${reviewed}:trillionnium/crates/trnm-native-execution-v0/README.md" > trillionnium/crates/trnm-native-execution-v0/README.md
+          git show "${reviewed}:trillionnium/crates/trnm-native-execution-v0/src/complete.rs" > trillionnium/crates/trnm-native-execution-v0/src/complete.rs
+          git show "${reviewed}:trillionnium/crates/trnm-native-execution-v0/src/durable.rs" > trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+          git show "${reviewed}:trillionnium/crates/trnm-poco-node/src/effect_driver.rs" > trillionnium/crates/trnm-poco-node/src/effect_driver.rs
+
+          python3 -B - <<'PY'
+          from pathlib import Path
+
+          path = Path("trillionnium/crates/trnm-poco-node/src/lib.rs")
+          text = path.read_text(encoding="utf-8")
+          old = """pub use effect_driver::{
+              CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1, CandidateEffectDriverFactsV1,
+              CandidateEffectDriverHooksV1, CandidateEffectDriverIngressV1, CandidateEffectDriverStatusV1,
+              CandidateEffectDriverV1, CANDIDATE_EFFECT_DRIVER_V1, EFFECT_DRIVER_FINALITY_VERIFIED_V1,
+              EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1, EFFECT_DRIVER_MAX_INGRESS_V1,
+              EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1,
+          };"""
+          new = """pub use effect_driver::{
+              CandidateEffectDriverAdmissionV1, CandidateEffectDriverErrorV1, CandidateEffectDriverFactsV1,
+              CandidateEffectDriverHooksV1, CandidateEffectDriverIngressV1,
+              CandidateEffectDriverStatusV1, CandidateEffectDriverV1,
+              CandidateOrdinaryValidationOutcomeV1, CANDIDATE_EFFECT_DRIVER_V1,
+              EFFECT_DRIVER_FINALITY_VERIFIED_V1, EFFECT_DRIVER_MAX_EFFECTS_PER_DRIVE_V1,
+              EFFECT_DRIVER_MAX_INGRESS_V1, EFFECT_DRIVER_PRODUCTION_ACTIVATION_V1,
+          };"""
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f"A03 export-block replacement count={count}, expected=1")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+
+          cat > docs/development/packages/TRNM_A03_ORDINARY_PROPOSAL_AUTHORITY_CANONICAL_V1.md <<'DOC'
+          # A03 ordinary-proposal authority canonical slice v1
+
+          Status: **candidate-implemented / canonical qualification pending / no Gate promotion**
+
+          ```text
+          repository = TrillionniumFoundation/Trillionnium-Chain
+          base_commit = 44d53c0df1658fa8cd1aadd707ac404ffaf2480f
+          branch = feature/chain-a03-ordinary-proposal-authority-canonical-v1-20260831
+          reviewed_import_commit = 1b9543b3b22cc959d0ea2b3123c349761adada32
+          reviewed_import_tree = cf1488613e5b8ca65ee4302f6b47e28d2b09b56a
+          reviewed_original_base = 6e0189e351015ef3230f217ca7ff86149baedcf0
+          production_candidate = false
+          production_consensus_activation = false
+          ```
+
+          Four code/document destinations were transplanted only after their
+          canonical blobs were proven identical to the reviewed original base.
+          The node crate receives only the reviewed one-symbol re-export patch;
+          obsolete branch ancestry and stale planning documents are excluded.
+
+          The slice makes ordinary proposal validation explicitly tri-state:
+          committed and re-executable, recoverably rejected, or unsafe durable
+          storage failure. It binds request, body, parent, overlay and durable
+          readback identities without minting finality, Safety, signer, network
+          or production authority.
+
+          Required qualification covers the complete workspace, strict Clippy,
+          native-execution tests, feature-gated node effect-driver tests, A04/A19
+          regressions, transaction-WAL regressions, authority audit and all
+          canonical truth contracts on Rust 1.95.0 with offline Cargo inputs.
+
+          This is not a production node, arbitrary live ingress service,
+          cross-store atomic finalization, external signer/HSM boundary,
+          multi-host campaign, physical power-loss proof, independent audit or
+          activation evidence. Those predicates remain fail-closed.
+          DOC
+
+          git rm .github/workflows/trnm-canonical-a03-ordinary-proposal-authority-publisher.yml
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+
+          mapfile -t changed < <(git diff --name-only HEAD | sort)
+          expected=(
+            .github/workflows/trnm-canonical-a03-ordinary-proposal-authority-publisher.yml
+            docs/development/packages/TRNM_A03_ORDINARY_PROPOSAL_AUTHORITY_CANONICAL_V1.md
+            trillionnium/crates/trnm-native-execution-v0/README.md
+            trillionnium/crates/trnm-native-execution-v0/src/complete.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-poco-node/src/effect_driver.rs
+            trillionnium/crates/trnm-poco-node/src/lib.rs
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          printf 'A03 changed paths:\n'; printf '  %s\n' "${changed[@]}"
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+
+          git add -A
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(exec): bind ordinary proposal outcomes to durable authority'
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "${GITHUB_SHA}"
+          echo "candidate_commit=${candidate_commit}" >> "$GITHUB_OUTPUT"
+          echo "candidate_tree=${candidate_tree}" >> "$GITHUB_OUTPUT"
+
+      - name: Compile and test exact A03 candidate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features g1-process-test-support --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features g1-process-test-support --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features tx-admission-wal --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features tx-admission-wal --doc --locked --offline
+
+      - name: Validate authority and canonical truth contracts
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v2.json').read_text())
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/canonical-a03"
+          mkdir -p "$out"
+          candidate_commit="${{ steps.candidate.outputs.candidate_commit }}"
+          candidate_tree="${{ steps.candidate.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "$candidate_commit"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$candidate_tree"
+          git update-ref refs/heads/trnm-canonical-a03-candidate "$candidate_commit"
+          git bundle create "$out/candidate.bundle" refs/heads/trnm-canonical-a03-candidate
+          git update-ref -d refs/heads/trnm-canonical-a03-candidate
+          sha256sum "$out/candidate.bundle" > "$out/candidate.bundle.sha256"
+          printf '%s\n' "$GITHUB_SHA" > "$out/source-commit"
+          printf '%s\n' "$BASE_COMMIT" > "$out/base-commit"
+          printf '%s\n' "$candidate_commit" > "$out/candidate-commit"
+          printf '%s\n' "$candidate_tree" > "$out/candidate-tree"
+
+      - name: Upload qualified A03 bundle
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-canonical-a03-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/canonical-a03/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          if [[ -d "$state" ]]; then
+            ./scripts/ci/check_cargo_offline_unchanged.sh --state "$state"
+          fi
+
+  publish-a03:
+    name: publish-qualified-canonical-a03
+    needs: qualify-a03
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact qualified bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify-a03.outputs.artifact_id }}
+          path: ${{ runner.temp }}/canonical-a03
+
+      - name: Verify and atomically publish only qualified A03 tree
+        working-directory: trillionnium-chain
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify-a03.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify-a03.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/canonical-a03"
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(cat "$out/source-commit")" = "$GITHUB_SHA"
+          test "$(cat "$out/base-commit")" = "$BASE_COMMIT"
+          test "$(cat "$out/candidate-commit")" = "$EXPECTED_COMMIT"
+          test "$(cat "$out/candidate-tree")" = "$EXPECTED_TREE"
+          sha256sum --check "$out/candidate.bundle.sha256"
+          git bundle verify "$out/candidate.bundle"
+          git fetch "$out/candidate.bundle" refs/heads/trnm-canonical-a03-candidate:refs/remotes/qualified/a03
+          candidate="$(git rev-parse refs/remotes/qualified/a03)"
+          test "$candidate" = "$EXPECTED_COMMIT"
+          test "$(git rev-parse "$candidate^{tree}")" = "$EXPECTED_TREE"
+          test "$(git rev-parse "$candidate^")" = "$GITHUB_SHA"
+          git merge-base --is-ancestor "$BASE_COMMIT" "$candidate"
+          if git cat-file -e "$candidate:.github/workflows/trnm-canonical-a03-ordinary-proposal-authority-publisher.yml" 2>/dev/null; then exit 3; fi
+          mapfile -t changed < <(git diff --name-only "$BASE_COMMIT..$candidate" | sort)
+          expected=(
+            docs/development/packages/TRNM_A03_ORDINARY_PROPOSAL_AUTHORITY_CANONICAL_V1.md
+            trillionnium/crates/trnm-native-execution-v0/README.md
+            trillionnium/crates/trnm-native-execution-v0/src/complete.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-poco-node/src/effect_driver.rs
+            trillionnium/crates/trnm-poco-node/src/lib.rs
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          remote_head="$(git ls-remote origin "refs/heads/$TARGET_BRANCH" | awk '{print $1}')"
+          test "$remote_head" = "$GITHUB_SHA"
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $auth"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "$candidate:refs/heads/$TARGET_BRANCH"
