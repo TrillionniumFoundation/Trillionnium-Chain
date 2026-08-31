@@ -1,0 +1,94 @@
+name: trnm-selected-history-bundle
+
+on:
+  push:
+    branches:
+      - tmp/selected-history-bundle-20260831
+    paths:
+      - .github/workflows/trnm-selected-history-bundle.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-selected-history-bundle-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_SHA: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+
+jobs:
+  bundle:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch selected immutable development refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_SHA}"
+          refs=(
+            main
+            docs/chain-poco-bft-mainline-20260825
+            integration/canonical-native-poco-bootstrap-linear-20260831
+            integration/g1-vertical-closure-v1-20260830
+            feature/chain-a03-ordinary-proposal-authority-canonical-v1-20260831
+            feature/chain-a04-g1-r4-application-finality-canonical-v1-20260831
+            feature/chain-a19-p1-exec-terminal-history-canonical-v1-20260831
+            feature/chain-a20-p2-tx-tombstone-gc-v1-20260830
+            feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830
+            feature/chain-a22-p1-capability-authority-audit-v1-20260830
+            feature/chain-a23-p2-native-replay-floor-canonical-v1-20260831
+            feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+            feature/chain-g1-r4-safety-checkpoint-20260829
+            feature/chain-g1-r4-fault-matrix-v2-20260829
+            dev/g1-payload-replay-recovery-owner-v1
+            dev/g1-replay-to-core-durable-ack-owner-v1
+            dev/g1-replay-to-core-real-adapter-v1
+            dev/g1-replay-to-core-safety-store-owner-v1
+          )
+          for ref in "${refs[@]}"; do
+            git fetch --no-tags origin \
+              "+refs/heads/${ref}:refs/remotes/origin/${ref}"
+          done
+          printf '%s\n' "${refs[@]}" >"${RUNNER_TEMP}/selected-refs.txt"
+
+      - name: Build selected Git history bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-selected-history"
+          mkdir -p "${out}"
+          mapfile -t refs <"${RUNNER_TEMP}/selected-refs.txt"
+          bundle_refs=()
+          : >"${out}/refs.txt"
+          for ref in "${refs[@]}"; do
+            remote="refs/remotes/origin/${ref}"
+            sha="$(git rev-parse "${remote}")"
+            printf '%s %s\n' "${sha}" "${remote}" >>"${out}/refs.txt"
+            bundle_refs+=("${remote}")
+          done
+          git bundle create "${out}/Trillionnium-Chain-selected.bundle" "${bundle_refs[@]}"
+          git bundle verify "${out}/Trillionnium-Chain-selected.bundle"
+          sha256sum "${out}/Trillionnium-Chain-selected.bundle" >"${out}/bundle.sha256"
+
+      - name: Upload selected history bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-selected-history-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-selected-history/
+          if-no-files-found: error
+          retention-days: 3
