@@ -1,0 +1,191 @@
+name: native-poco-post-a23-blocker-audit
+
+on:
+  push:
+    branches:
+      - qualification/native-poco-a04-a19-a23-exact-head-v1-20260901
+    paths:
+      - .github/workflows/native-poco-post-a23-blocker-audit.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: native-poco-post-a23-blocker-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v4-20260901
+  EXPECTED_PARENT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  REPLAY_WORKFLOW: native-poco-a04-a19-a23-exact-head-replay-v2.yml
+
+jobs:
+  audit:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - name: Wait for exact-head replay success
+        id: replay
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_id=""
+          for attempt in $(seq 1 360); do
+            response="$(
+              gh api --method GET \
+                "/repos/${GITHUB_REPOSITORY}/actions/workflows/${REPLAY_WORKFLOW}/runs" \
+                -f branch='qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' \
+                -f event=push -f per_page=10
+            )"
+            run_id="$(jq -r '.workflow_runs | sort_by(.created_at) | reverse | .[0].id // empty' <<<"$response")"
+            if [[ -z "$run_id" ]]; then sleep 20; continue; fi
+            status="$(jq -r --argjson id "$run_id" '.workflow_runs[] | select(.id == $id) | .status' <<<"$response")"
+            conclusion="$(jq -r --argjson id "$run_id" '.workflow_runs[] | select(.id == $id) | .conclusion // empty' <<<"$response")"
+            printf 'replay=%s status=%s conclusion=%s\n' "$run_id" "$status" "$conclusion"
+            if [[ "$status" = completed ]]; then
+              test "$conclusion" = success
+              break
+            fi
+            sleep 20
+          done
+          test -n "$run_id"
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+
+      - name: Check out published code-only target
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind exact source and generate blocker audit
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(git rev-parse HEAD)"
+          tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "$EXPECTED_PARENT"
+          test -z "$(git diff --name-only "${EXPECTED_PARENT}..HEAD" | grep '^\.github/workflows/' || true)"
+
+          mkdir -p "$RUNNER_TEMP/post-a23-audit"
+          python3 scripts/ci/check_repository_truth_v1.py \
+            | tee "$RUNNER_TEMP/post-a23-audit/repository-truth.json"
+          python3 scripts/ci/check_blocker_execution_v1.py \
+            | tee "$RUNNER_TEMP/post-a23-audit/blocker-execution.json"
+          bash scripts/ci/check_canonical_development_plan.sh \
+            | tee "$RUNNER_TEMP/post-a23-audit/canonical-plan.txt"
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover \
+            | tee "$RUNNER_TEMP/post-a23-audit/pre-cutover.txt"
+
+          python3 -B - "$RUNNER_TEMP/post-a23-audit" "$target" "$tree" <<'PY'
+          import json
+          from pathlib import Path
+          import re
+          import sys
+
+          out = Path(sys.argv[1])
+          target, tree = sys.argv[2], sys.argv[3]
+
+          def last_json(path: Path):
+              for line in reversed(path.read_text(encoding='utf-8').splitlines()):
+                  line = line.strip()
+                  if line.startswith('{') and line.endswith('}'):
+                      return json.loads(line)
+              raise SystemExit(f'no JSON object in {path}')
+
+          repository = last_json(out / 'repository-truth.json')
+          blocker = last_json(out / 'blocker-execution.json')
+          plan_path = Path('docs/development/TRNM_CANONICAL_DEVELOPMENT_PLAN.md')
+          plan = plan_path.read_text(encoding='utf-8')
+          open_lines = []
+          for number, line in enumerate(plan.splitlines(), 1):
+              lowered = line.lower()
+              if any(token in lowered for token in ('open', 'blocked', 'pending', 'not started')):
+                  if re.search(r'(P[0-9]-|G[0-9]|EXT-|blocker|gate)', line, re.I):
+                      open_lines.append({'line': number, 'text': line[:500]})
+
+          payload = {
+              'schema': 'trnm-post-a23-blocker-audit-v1',
+              'target_commit': target,
+              'target_tree': tree,
+              'repository_truth': repository,
+              'blocker_execution': blocker,
+              'canonical_plan_open_lines': open_lines,
+              'production_candidate': False,
+              'production_consensus_activation': False,
+              'release_ready': False,
+          }
+          (out / 'post-a23-blocker-audit.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n',
+              encoding='utf-8',
+          )
+          md = [
+              '# Post-A23 blocker audit', '',
+              f'- Target commit: `{target}`',
+              f'- Target tree: `{tree}`',
+              f'- Repository open: `{blocker.get("repository_open")}`',
+              f'- External open: `{blocker.get("external_open")}`',
+              f'- Settings open: `{blocker.get("settings_open")}`',
+              f'- All gaps closed: `{blocker.get("all_gaps_closed")}`', '',
+              '## Canonical-plan open lines', '',
+          ]
+          md.extend(
+              f'- L{item["line"]}: {item["text"]}' for item in open_lines
+          )
+          md.extend(['', '## Exact blocker JSON', '', '```json', json.dumps(blocker, indent=2, sort_keys=True), '```', ''])
+          (out / 'post-a23-blocker-audit.md').write_text('\n'.join(md), encoding='utf-8')
+          PY
+
+          sha256sum "$RUNNER_TEMP/post-a23-audit"/* \
+            > "$RUNNER_TEMP/post-a23-audit/SHA256SUMS"
+          echo "commit=$target" >> "$GITHUB_OUTPUT"
+          echo "tree=$tree" >> "$GITHUB_OUTPUT"
+
+      - name: Upload blocker-audit artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-poco-post-a23-blocker-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/post-a23-audit/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish machine audit to PR 55
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_COMMIT: ${{ steps.target.outputs.commit }}
+          TARGET_TREE: ${{ steps.target.outputs.tree }}
+          REPLAY_RUN_ID: ${{ steps.replay.outputs.run_id }}
+        run: |
+          set -euo pipefail
+          marker='<!-- trnm-post-a23-blocker-audit-v1 -->'
+          report="$(cat "$RUNNER_TEMP/post-a23-audit/post-a23-blocker-audit.md")"
+          body="${marker}
+          ${report}
+          Exact-head replay run: ${REPLAY_RUN_ID}."
+          comments="$(
+            gh api --method GET "/repos/${GITHUB_REPOSITORY}/issues/55/comments" \
+              -f per_page=100
+          )"
+          existing="$(jq -r --arg marker "$marker" '[.[] | select(.body | contains($marker))] | .[0].id // empty' <<<"$comments")"
+          if [[ -n "$existing" ]]; then
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" \
+              --raw-field body="$body" >/dev/null
+          else
+            gh api --method POST "/repos/${GITHUB_REPOSITORY}/issues/55/comments" \
+              --raw-field body="$body" >/dev/null
+          fi
