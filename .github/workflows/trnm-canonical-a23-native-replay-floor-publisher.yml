@@ -1,0 +1,370 @@
+name: trnm-canonical-a23-native-replay-floor-publisher
+
+on:
+  push:
+    branches:
+      - feature/chain-a23-p2-native-replay-floor-canonical-v1-20260831
+    paths:
+      - .github/workflows/trnm-canonical-a23-native-replay-floor-publisher.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-canonical-a23-native-replay-floor-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  TARGET_BRANCH: feature/chain-a23-p2-native-replay-floor-canonical-v1-20260831
+  BASE_COMMIT: 44d53c0df1658fa8cd1aadd707ac404ffaf2480f
+  A23_GENERATOR_HEAD: ca172504a975565ac329757c0e0fb3568f7b7985
+  A23_GENERATOR_BLOB: a1af430ec06a6cbb826a8d5d31d1dd60c10314a4
+
+jobs:
+  qualify-a23:
+    name: qualify-canonical-a23-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/feature/chain-a23-p2-native-replay-floor-canonical-v1-20260831' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.candidate.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.candidate.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Check out exact read-only source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact source and immutable generator
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${BASE_COMMIT}"
+          unexpected="$(
+            git diff --name-only "${BASE_COMMIT}..HEAD" |
+              grep -Ev '^\.github/workflows/trnm-canonical-a23-native-replay-floor-publisher\.yml$' || true
+          )"
+          test -z "${unexpected}"
+          git fetch --no-tags origin \
+            "${A23_GENERATOR_HEAD}:refs/remotes/origin/a23-generator"
+          test "$(git rev-parse refs/remotes/origin/a23-generator)" = \
+            "${A23_GENERATOR_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py)" = \
+            "${A23_GENERATOR_BLOB}"
+          git show \
+            refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py \
+            > "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          python3 -B -m py_compile \
+            "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+
+      - name: Verify pinned toolchain and offline cache
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component clippy --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Generate exact workflow-free A23 candidate
+        id: candidate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 -B "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          rm -f .github/workflows/trnm-a23-native-replay-floor-verify.yml
+          git rm .github/workflows/trnm-canonical-a23-native-replay-floor-publisher.yml
+
+          python3 -B - <<'PY'
+          from pathlib import Path
+
+          def exact_replace(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f"unexpected replacement count in {path}: {count}; needle={old!r}"
+                  )
+              path.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          generated = Path(
+              "trillionnium/crates/trnm-poco-node/src/"
+              "tx_admission_wal_native_replay_floor_v1.inc"
+          )
+          exact_replace(
+              generated,
+              '.field("namespace", &hex::encode(self.namespace))',
+              '.field("namespace", &self.namespace)',
+          )
+          exact_replace(
+              generated,
+              '.field("canonical_signer", &hex::encode(self.canonical_signer))',
+              '.field("canonical_signer", &self.canonical_signer)',
+          )
+
+          tombstone = Path(
+              "trillionnium/crates/trnm-poco-node/src/"
+              "tx_admission_wal_tombstone_gc_v1.inc"
+          )
+          exact_replace(
+              tombstone,
+              "    #[test]\n"
+              "    fn replay_floor_verifier_authority_is_sealed_v1() {\n"
+              "        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);\n"
+              "        assert!(tombstone_gc_candidate_contract_v1());\n"
+              "        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);\n"
+              "    }",
+              "    #[test]\n"
+              "    fn replay_floor_verifier_authority_is_sealed_v1() {\n"
+              "        const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };\n"
+              "        assert!(tombstone_gc_candidate_contract_v1());\n"
+              "        const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };\n"
+              "    }",
+          )
+
+          wal = Path(
+              "trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs"
+          )
+          exact_replace(
+              wal,
+              "    #[test]\n"
+              "    fn native_commit_verifier_authority_is_sealed_v1() {\n"
+              "        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);\n"
+              "        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);\n"
+              "        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);\n"
+              "    }",
+              "    #[test]\n"
+              "    fn native_commit_verifier_authority_is_sealed_v1() {\n"
+              "        const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };\n"
+              "        const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };\n"
+              "        const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };\n"
+              "    }",
+          )
+          PY
+
+          rustup run 1.95.0 cargo fmt \
+            --manifest-path trillionnium/Cargo.toml --all
+
+          mapfile -t changed < <(git diff --name-only HEAD | sort)
+          expected=(
+            .github/workflows/trnm-canonical-a23-native-replay-floor-publisher.yml
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u \
+            <(printf '%s\n' "${sorted_expected[@]}") \
+            <(printf '%s\n' "${changed[@]}")
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+          test ! -e .github/workflows/trnm-a23-native-replay-floor-verify.yml
+
+          git add -A
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(tx): bind tombstone GC to native finalized replay floor'
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "${GITHUB_SHA}"
+          echo "candidate_commit=${candidate_commit}" >> "${GITHUB_OUTPUT}"
+          echo "candidate_tree=${candidate_tree}" >> "${GITHUB_OUTPUT}"
+
+      - name: Compile and test exact A23 candidate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets \
+            --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets \
+            --locked --offline
+
+      - name: Validate authority, plan, truth and project contracts
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v2.json').read_text())
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        run: |
+          set -euo pipefail
+          cd trillionnium-chain
+          out="${RUNNER_TEMP}/canonical-a23"
+          mkdir -p "${out}"
+          candidate_commit="${{ steps.candidate.outputs.candidate_commit }}"
+          candidate_tree="${{ steps.candidate.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "${candidate_commit}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${candidate_tree}"
+          git update-ref refs/heads/trnm-canonical-a23-candidate "${candidate_commit}"
+          git bundle create "${out}/candidate.bundle" \
+            refs/heads/trnm-canonical-a23-candidate
+          git update-ref -d refs/heads/trnm-canonical-a23-candidate
+          sha256sum "${out}/candidate.bundle" > "${out}/candidate.bundle.sha256"
+          printf '%s\n' "${GITHUB_SHA}" > "${out}/source-commit"
+          printf '%s\n' "${BASE_COMMIT}" > "${out}/base-commit"
+          printf '%s\n' "${candidate_commit}" > "${out}/candidate-commit"
+          printf '%s\n' "${candidate_tree}" > "${out}/candidate-tree"
+
+      - name: Upload qualified A23 bundle
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-canonical-a23-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/canonical-a23/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish-a23:
+    name: publish-qualified-canonical-a23
+    needs: qualify-a23
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact qualified bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify-a23.outputs.artifact_id }}
+          path: ${{ runner.temp }}/canonical-a23
+
+      - name: Verify and atomically publish only qualified A23 tree
+        working-directory: trillionnium-chain
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify-a23.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify-a23.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/canonical-a23"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(cat "${out}/source-commit")" = "${GITHUB_SHA}"
+          test "$(cat "${out}/base-commit")" = "${BASE_COMMIT}"
+          test "$(cat "${out}/candidate-commit")" = "${EXPECTED_COMMIT}"
+          test "$(cat "${out}/candidate-tree")" = "${EXPECTED_TREE}"
+          sha256sum --check "${out}/candidate.bundle.sha256"
+          git bundle verify "${out}/candidate.bundle"
+          git fetch "${out}/candidate.bundle" \
+            refs/heads/trnm-canonical-a23-candidate:refs/remotes/qualified/a23
+          candidate="$(git rev-parse refs/remotes/qualified/a23)"
+          test "${candidate}" = "${EXPECTED_COMMIT}"
+          test "$(git rev-parse "${candidate}^{tree}")" = "${EXPECTED_TREE}"
+          test "$(git rev-parse "${candidate}^")" = "${GITHUB_SHA}"
+          git merge-base --is-ancestor "${BASE_COMMIT}" "${candidate}"
+          if git cat-file -e "${candidate}:.github/workflows/trnm-canonical-a23-native-replay-floor-publisher.yml" 2>/dev/null; then
+            exit 3
+          fi
+          if git cat-file -e "${candidate}:.github/workflows/trnm-a23-native-replay-floor-verify.yml" 2>/dev/null; then
+            exit 4
+          fi
+          mapfile -t changed < <(git diff --name-only "${BASE_COMMIT}..${candidate}" | sort)
+          expected=(
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u \
+            <(printf '%s\n' "${sorted_expected[@]}") \
+            <(printf '%s\n' "${changed[@]}")
+          remote_head="$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          test "${remote_head}" = "${GITHUB_SHA}"
+          auth="$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic ${auth}"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "${candidate}:refs/heads/${TARGET_BRANCH}"
