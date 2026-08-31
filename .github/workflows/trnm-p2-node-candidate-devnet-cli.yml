@@ -39,12 +39,11 @@ jobs:
     name: candidate-devnet-cli
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      (((github.actor == 'ProfAlexQI') &&
-        (github.triggering_actor == 'ProfAlexQI')) ||
-       ((github.actor == 'Tomasrgbsf') &&
-        (github.triggering_actor == 'Tomasrgbsf'))) &&
-      (github.event_name != 'pull_request' ||
-       github.event.pull_request.head.repo.full_name == github.repository)
+      (github.event_name == 'schedule' ||
+       (github.actor == 'ProfAlexQI' &&
+        github.triggering_actor == 'ProfAlexQI' &&
+        (github.event_name != 'pull_request' ||
+         github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 120
     env:
