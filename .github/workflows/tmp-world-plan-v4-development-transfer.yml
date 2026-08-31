@@ -154,12 +154,23 @@ jobs:
           git -C world apply "$GITHUB_WORKSPACE/tmp/world-plan-v4-development-transfer/world-campaign-atomicity.patch"
           git -C world apply "$GITHUB_WORKSPACE/tmp/world-plan-v4-development-transfer/world-rts-atomicity.patch"
 
-      - name: Format and run correctness gates
+      - name: Format and partition directly reviewed source
         shell: bash
         run: |
           set -euo pipefail
           cargo fmt --manifest-path world/trillionnium/Cargo.toml --all
+          python3 "$GITHUB_WORKSPACE/tmp/world-plan-v4-development-transfer/partition-world-game-server.py" world
+          test -f world/trillionnium/crates/trnm-game-server/src/lib_parts/manifest.json
+          test "$(find world/trillionnium/crates/trnm-game-server/src/lib_parts -maxdepth 1 -type f -name '*.rs' | wc -l)" -eq 13
+          ! grep -R -q 'trnm_game_server_lib_generated.rs' \
+            world/trillionnium/crates/trnm-game-server/src/lib.rs \
+            world/trillionnium/crates/trnm-game-server/src/lib_parts
           cargo fmt --manifest-path world/trillionnium/Cargo.toml --all -- --check
+
+      - name: Run correctness gates
+        shell: bash
+        run: |
+          set -euo pipefail
           cargo test --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-campaign-core --lib
           cargo test --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-rts-sim --lib
           cargo check --manifest-path world/trillionnium/Cargo.toml --locked -p trnm-game-server --all-targets
@@ -187,6 +198,8 @@ jobs:
             "${export_root}/trillionnium/crates/trnm-game-server/src/lib.rs"
           cp world/trillionnium/crates/trnm-game-server/src/cex.rs \
             "${export_root}/trillionnium/crates/trnm-game-server/src/cex.rs"
+          cp -a world/trillionnium/crates/trnm-game-server/src/lib_parts \
+            "${export_root}/trillionnium/crates/trnm-game-server/src/lib_parts"
           cp world/trillionnium/crates/trnm-campaign-core/src/lib.rs \
             "${export_root}/trillionnium/crates/trnm-campaign-core/src/lib.rs"
           cp world/trillionnium/crates/trnm-rts-sim/src/lib.rs \
@@ -211,6 +224,8 @@ jobs:
               ).strip(),
               "rust_toolchain": "1.98.0",
               "gates": [
+                  "direct-source-materialization",
+                  "direct-source-partition",
                   "campaign-core-lib-tests",
                   "rts-sim-lib-tests",
                   "game-server-all-target-check",
