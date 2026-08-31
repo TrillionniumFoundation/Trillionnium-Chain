@@ -92,6 +92,28 @@ action-required, this documentation-only successor deliberately retriggers all
 exact-head checks under the repository actor. It does not alter runtime code,
 protocol truth, authority, readiness, or activation state.
 
+## Exact lint and trusted-runner boundary
+
+The pre-existing laboratory validator contains experimental modules that are not
+part of this package and retain separately tracked lint debt. The candidate gate
+does not suppress those warnings and does not add crate-wide `allow` attributes.
+Instead, `scripts/ci/check_candidate_devnet_clippy_v1.sh` copies the exact bytes
+of the candidate module, binary, and CLI test into a temporary standalone crate.
+The binary and CLI test compile against the real laboratory package as an
+ordinary `--no-deps` dependency; the private candidate module is linted against
+minimal typed API-shape stubs because its production commissioning method is
+intentionally `pub(crate)`. The normal package `cargo check` and focused tests
+still verify the real integration. Rust 1.95.0 Clippy then applies `-D warnings`
+only to the copied candidate targets. Byte-for-byte `cmp` checks and a clean
+repository assertion prevent source substitution.
+
+The X230 job uses the same internal-member feature-branch guard as the existing
+payload/replay recovery gate. This adds no new actor with self-hosted execution
+authority: it permits `ProfAlexQI`, `Tomasrgbsf`, or the tightly constrained
+GitHub Actions bot case already accepted for same-repository MEMBER feature
+branches. The policy checker and its positive/negative fixture suite bind this
+exception by exact workflow name and exact normalized guard text.
+
 ## Repository verification
 
 The package must pass on the exact unchanged head:
@@ -100,8 +122,7 @@ The package must pass on the exact unchanged head:
 cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
 cargo check --manifest-path trillionnium/Cargo.toml \
   -p trnm-poco-lab-validator --all-targets --locked
-cargo clippy --manifest-path trillionnium/Cargo.toml \
-  -p trnm-poco-lab-validator --all-targets --locked -- -D warnings
+bash scripts/ci/check_candidate_devnet_clippy_v1.sh
 cargo test --manifest-path trillionnium/Cargo.toml \
   -p trnm-poco-lab-validator --lib --locked candidate_devnet
 cargo run --manifest-path trillionnium/Cargo.toml \

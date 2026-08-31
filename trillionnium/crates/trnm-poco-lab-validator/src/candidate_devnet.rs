@@ -452,12 +452,14 @@ mod tests {
             OsString::from("--acknowledge-candidate-only"),
         ])
         .is_err());
-        assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
-        assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
-        assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
-        assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
-        assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
-        assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
-        assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
+        const {
+            assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
+            assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
+            assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
+            assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
+            assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
+            assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
+            assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
+        }
     }
 }
