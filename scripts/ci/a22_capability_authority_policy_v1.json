@@ -1,0 +1,50 @@
+{
+  "schema": "trnm-capability-authority-policy-v1",
+  "reviewed_findings": [
+    {
+      "path": "trillionnium/crates/trnm-consensus-types/src/genesis_application.rs",
+      "function": "verify_with",
+      "capability": "VerifiedCometStateExportV1",
+      "authority_trait": "CometStateExportVerifierV1",
+      "disposition": "reviewed-inert",
+      "proof_id": "A22-CF-COMET-TO-GENESIS-QC",
+      "rationale": "Source-export verification type state is an offline migration observation and has no GenesisQC/Core conversion."
+    },
+    {
+      "path": "trillionnium/crates/trnm-consensus-types/src/genesis_application.rs",
+      "function": "verify_with",
+      "capability": "VerifiedPocoTargetProjectionV1",
+      "authority_trait": "PocoTargetProjectionVerifierV1",
+      "disposition": "reviewed-inert",
+      "proof_id": "A22-CF-PROJECTION-TO-GENESIS-QC",
+      "rationale": "The digest-only target replay trait is retained for tests/legacy tooling; its result is an inert projection observation."
+    },
+    {
+      "path": "trillionnium/crates/trnm-consensus-types/src/genesis_application.rs",
+      "function": "verify_with_manifest_v1",
+      "capability": "VerifiedPocoTargetProjectionV1",
+      "authority_trait": "PocoTargetProjectionManifestVerifierV1",
+      "disposition": "reviewed-inert",
+      "proof_id": "A22-CF-PROJECTION-TO-GENESIS-QC",
+      "rationale": "The typed-manifest replay result remains an offline projection observation and cannot activate consensus."
+    },
+    {
+      "path": "trillionnium/crates/trnm-consensus-types/src/genesis_application.rs",
+      "function": "verify_against_target_projection_v1",
+      "capability": "VerifiedPocoTargetGenesisCeremonyV1",
+      "authority_trait": "SignatureVerifier",
+      "disposition": "reviewed-inert",
+      "proof_id": "A22-CF-CEREMONY-TO-GENESIS-QC",
+      "rationale": "Generic ceremony verification is inert; the repository production rehearsal fixes StrictEd25519Verifier and leaves production activation false."
+    },
+    {
+      "path": "trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs",
+      "function": "verify_with",
+      "capability": "VerifiedNativeCommitReceiptV0",
+      "authority_trait": "NativeCommitReceiptVerifierV0",
+      "disposition": "reviewed-sealed",
+      "proof_id": "A21-SEALED-NATIVE-COMMIT-VERIFIER",
+      "rationale": "The verifier trait has a private sealed supertrait and the production implementation is repository-owned."
+    }
+  ]
+}
