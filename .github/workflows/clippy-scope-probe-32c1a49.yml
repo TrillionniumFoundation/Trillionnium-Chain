@@ -1,0 +1,69 @@
+name: clippy-scope-probe-32c1a49
+
+on:
+  push:
+    branches:
+      - tmp/clippy-scope-probe-32c1a49-20260831
+    paths:
+      - .github/workflows/clippy-scope-probe-32c1a49.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Rust 1.95.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component clippy --component rustfmt
+          rustup override set 1.95.0
+
+      - name: Probe target-scoped Clippy
+        shell: bash
+        run: |
+          set -uo pipefail
+          out="${RUNNER_TEMP}/clippy-probe"
+          mkdir -p "${out}"
+          run_probe() {
+            name="$1"
+            shift
+            set +e
+            "$@" >"${out}/${name}.log" 2>&1
+            rc=$?
+            set -e
+            printf '%s=%s\n' "${name}" "${rc}" | tee -a "${out}/result.env"
+          }
+          run_probe binary \
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator \
+              --bin trnm-poco-candidate-devnet-validator \
+              --no-deps --locked -- -D warnings
+          run_probe integration_test \
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator \
+              --test candidate_devnet_cli \
+              --no-deps --locked -- -D warnings
+          run_probe library \
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator \
+              --lib --no-deps --locked -- -D warnings
+          cat "${out}/result.env"
+
+      - name: Upload probe logs
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: clippy-scope-probe-32c1a49
+          path: ${{ runner.temp }}/clippy-probe/
+          if-no-files-found: error
+          retention-days: 3
