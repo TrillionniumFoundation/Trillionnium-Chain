@@ -1,0 +1,287 @@
+name: process2-recovery-start-qualifier-v1
+
+on:
+  push:
+    branches:
+      - integration/process2-recovery-start-qualifier-v1-20260831
+    paths:
+      - .github/workflows/process2-recovery-start-qualifier-v1.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: process2-recovery-start-qualifier-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 5ed5802d9b8a75ec3770ea2094de5de095dd794c
+  SOURCE_TREE: 57501b206cd7263a2bf85e040ebaa6d7e0b6e5ce
+  TARGET_BRANCH: feature/chain-p2-process2-recovery-start-wiring-v1-20260831
+  PATCH_SHA256: a42fc1fa262e11e428d474e4793931a21ec1806193aacbb2505842bd23eef66f
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/process2-recovery-start-qualifier-v1-20260831' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 220
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.freeze.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.freeze.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+
+    steps:
+      - name: Check out exact read-only carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify carrier source and frozen patch
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse "${SOURCE_COMMIT}^{tree}")" = "${SOURCE_TREE}"
+          mapfile -t changed < <(git diff --name-only "${SOURCE_COMMIT}..HEAD" | sort)
+          expected=(
+            .ci/process2-recovery-start.patch.gz.b64
+            .github/workflows/process2-recovery-start-qualifier-v1.yml
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          base64 -d .ci/process2-recovery-start.patch.gz.b64 | gzip -d \
+            > "$RUNNER_TEMP/process2-recovery-start.patch"
+          echo "${PATCH_SHA256}  $RUNNER_TEMP/process2-recovery-start.patch" | sha256sum --check
+
+      - name: Verify pinned Rust and offline Cargo cache
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply format and freeze exact candidate
+        id: freeze
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "${SOURCE_COMMIT}"
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SOURCE_TREE}"
+          git apply --index "$RUNNER_TEMP/process2-recovery-start.patch"
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          mapfile -t changed < <(git diff --cached --name-only | sort)
+          expected=(
+            docs/development/packages/TRNM_P2_NODE_PROCESS2_RECOVERY_START_WIRING_V1.md
+            trillionnium/crates/trnm-poco-node/Cargo.toml
+            trillionnium/crates/trnm-poco-node/src/deployed_lab_process2_recovery.rs
+            trillionnium/crates/trnm-poco-node/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/recovery_ready_start.rs
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          git diff --cached --check
+          git diff --cached --exit-code -- trillionnium/Cargo.lock
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(recovery): wire verified RecoveryStart into process2 runtime'
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          echo "candidate_commit=${candidate_commit}" >> "$GITHUB_OUTPUT"
+          echo "candidate_tree=${candidate_tree}" >> "$GITHUB_OUTPUT"
+
+      - name: Compile and strictly lint the process2 boundary
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline -- -D warnings
+
+      - name: Run RecoveryStart journal and owner regressions
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline recovery_ready_start::tests
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline \
+            deployed_lab_process2_recovery::tests::inert_process2_owner_has_no_public_activation_bypass_v1
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline \
+            deployed_lab_process2_recovery::tests::process2_zero_delta_restart_cut_join_is_read_only_and_replay_fenced_v1
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline \
+            deployed_lab_process2_recovery::tests::process2_recovered_ordinary_runtime_v1
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --lib --locked --offline static_activation_manifest_is_closed_across_enabled_boundaries
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features lab-validator-runtime-test-support \
+            --doc --locked --offline
+
+      - name: Validate authority policy and repository truth
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path('/tmp/trnm-capability-authority-audit-v2.json').read_text(
+                  encoding='utf-8'
+              )
+          )
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_cargo_offline_policy.sh --head
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/process2-recovery-start-qualified"
+          mkdir -p "$out"
+          candidate="${{ steps.freeze.outputs.candidate_commit }}"
+          tree="${{ steps.freeze.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "$candidate"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$tree"
+          test "$(git rev-parse "${candidate}^")" = "${SOURCE_COMMIT}"
+          git update-ref refs/heads/process2-recovery-start-qualified "$candidate"
+          git bundle create "$out/candidate.bundle" \
+            refs/heads/process2-recovery-start-qualified
+          git update-ref -d refs/heads/process2-recovery-start-qualified
+          sha256sum "$out/candidate.bundle" > "$out/candidate.bundle.sha256"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "${SOURCE_TREE}" > "$out/source-tree"
+          printf '%s\n' "$candidate" > "$out/candidate-commit"
+          printf '%s\n' "$tree" > "$out/candidate-tree"
+
+      - name: Upload qualified candidate
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: process2-recovery-start-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/process2-recovery-start-qualified/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish:
+    needs: qualify
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Check out carrier without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download qualified bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify.outputs.artifact_id }}
+          path: ${{ runner.temp }}/process2-recovery-start-qualified
+
+      - name: Verify and publish only the qualified tree
+        working-directory: trillionnium-chain
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/process2-recovery-start-qualified"
+          test "$(cat "$out/source-commit")" = "${SOURCE_COMMIT}"
+          test "$(cat "$out/source-tree")" = "${SOURCE_TREE}"
+          test "$(cat "$out/candidate-commit")" = "$EXPECTED_COMMIT"
+          test "$(cat "$out/candidate-tree")" = "$EXPECTED_TREE"
+          sha256sum --check "$out/candidate.bundle.sha256"
+          git bundle verify "$out/candidate.bundle"
+          git fetch "$out/candidate.bundle" \
+            refs/heads/process2-recovery-start-qualified:refs/remotes/qualified/process2
+          candidate="$(git rev-parse refs/remotes/qualified/process2)"
+          test "$candidate" = "$EXPECTED_COMMIT"
+          test "$(git rev-parse "${candidate}^{tree}")" = "$EXPECTED_TREE"
+          test "$(git rev-parse "${candidate}^")" = "${SOURCE_COMMIT}"
+          test -z "$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic $auth"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "${candidate}:refs/heads/${TARGET_BRANCH}"
