@@ -1,0 +1,181 @@
+name: pr55-qualification-diagnostic
+
+on:
+  push:
+    branches:
+      - integration/pr55-exact-closure-publisher-20260831
+    paths:
+      - .github/workflows/pr55-qualification-diagnostic.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr55-qualification-diagnostic-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 5383d7b47537c52d028d207f3763a65c7cfd86a7
+  PATCH_SHA256: c93dd9d51fb06aa74b417f01c34374c997cf457323ccf2ba6a5ec7c96266d768
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  diagnose:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact read-only carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify toolchain and reconstruct exact patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "${SOURCE_COMMIT}" HEAD
+          cat .ci/pr55-closure.patch.gz.b64.part{1,2,3,4} > "$RUNNER_TEMP/pr55.patch.gz.b64"
+          base64 -d "$RUNNER_TEMP/pr55.patch.gz.b64" | gzip -d > "$RUNNER_TEMP/pr55.patch"
+          echo "${PATCH_SHA256}  $RUNNER_TEMP/pr55.patch" | sha256sum --check
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply exact frozen candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "${SOURCE_COMMIT}"
+          git apply --index "$RUNNER_TEMP/pr55.patch"
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(node): isolate candidate Clippy and align trusted guard'
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+
+      - name: Runner policy tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/check_ci_runner_policy_test.sh
+
+      - name: Runner policy current tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/check_ci_runner_policy.sh --worktree
+          bash scripts/check_ci_runner_policy.sh --head
+
+      - name: Rust formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Package compilation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline
+
+      - name: Candidate-only strict Clippy
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_candidate_devnet_clippy_v1.sh
+
+      - name: Candidate library regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --lib --locked --offline candidate_devnet
+
+      - name: Candidate process regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --test candidate_devnet_cli --locked --offline
+
+      - name: Candidate CLI help
+        shell: bash
+        run: |
+          set -euo pipefail
+          help_output="$(cargo run --quiet --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --bin trnm-poco-candidate-devnet-validator \
+            --locked --offline -- --help)"
+          grep -q 'acknowledge-candidate-only' <<<"${help_output}"
+          grep -q 'not a production validator' <<<"${help_output}"
+
+      - name: Candidate missing-ack refusal
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          cargo run --quiet --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --bin trnm-poco-candidate-devnet-validator \
+            --locked --offline -- \
+            --run-root /tmp/run \
+            --config /tmp/run/public/configs/validator.json \
+            --peer-lease-socket /tmp/fence.sock \
+            --report /tmp/run/report.json \
+            --duration-seconds 30 \
+            --max-blocks 12 \
+            >"$RUNNER_TEMP/candidate-no-ack.out" \
+            2>"$RUNNER_TEMP/candidate-no-ack.err"
+          rc=$?
+          set -e
+          test "${rc}" -eq 2
+          grep -q 'acknowledge-candidate-only is required' "$RUNNER_TEMP/candidate-no-ack.err"
+
+      - name: Repository truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+
+      - name: Native PoCO and canonical plan truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+
+      - name: Project preflight and clean tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/project-preflight.sh --audit
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify offline inputs unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
