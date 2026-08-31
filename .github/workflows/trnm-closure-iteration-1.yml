@@ -1,0 +1,190 @@
+name: trnm-closure-iteration-1
+
+on:
+  push:
+    branches:
+      - tmp/closure-iteration-1-20260831
+    paths:
+      - .github/workflows/trnm-closure-iteration-1.yml
+      - scripts/ci/trnm-closure-iteration-1.patch.gz.b64
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-closure-iteration-1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BASE_SHA: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+  PATCH_SHA256: 1ef4084ba05a8f25395651c483e4902f3703075c13890f26d4ff6c5abf8524d7
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  compile-iteration:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 120
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out diagnostic driver
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: driver
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out exact product source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: source
+          ref: ${{ env.BASE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify immutable inputs and offline toolchain
+        working-directory: source
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${BASE_SHA}"
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component clippy --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply and format exact structural patch
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          payload="../driver/scripts/ci/trnm-closure-iteration-1.patch.gz.b64"
+          base64 -d "${payload}" | gzip -d >"${RUNNER_TEMP}/iteration.patch"
+          printf '%s  %s\n' "${PATCH_SHA256}" "${RUNNER_TEMP}/iteration.patch" | sha256sum --check
+          git apply --check "${RUNNER_TEMP}/iteration.patch"
+          git apply "${RUNNER_TEMP}/iteration.patch"
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+          test -z "$(git status --porcelain --untracked-files=all | grep '^??' || true)"
+
+      - name: Compile and capture strict residuals
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-closure-iteration-1"
+          mkdir -p "${out}"
+
+          set +e
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline \
+            --message-format=json \
+            >"${out}/cargo-check.jsonl" 2>"${out}/cargo-check.stderr"
+          check_rc=$?
+          set -e
+          printf '%s\n' "${check_rc}" >"${out}/cargo-check.exit-code"
+
+          clippy_rc=125
+          if [[ "${check_rc}" -eq 0 ]]; then
+            set +e
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator --all-targets --locked --offline \
+              --message-format=json -- -D warnings \
+              >"${out}/cargo-clippy.jsonl" 2>"${out}/cargo-clippy.stderr"
+            clippy_rc=$?
+            set -e
+          else
+            : >"${out}/cargo-clippy.jsonl"
+            printf '%s\n' 'skipped because cargo check failed' >"${out}/cargo-clippy.stderr"
+          fi
+          printf '%s\n' "${clippy_rc}" >"${out}/cargo-clippy.exit-code"
+
+          python3 -B - "${out}" <<'PY'
+          import collections
+          import json
+          import pathlib
+          import sys
+
+          out = pathlib.Path(sys.argv[1])
+          def collect(path: pathlib.Path):
+              lints = collections.Counter()
+              files = collections.Counter()
+              messages = []
+              for raw in path.read_text(encoding='utf-8', errors='replace').splitlines():
+                  try:
+                      row = json.loads(raw)
+                  except json.JSONDecodeError:
+                      continue
+                  if row.get('reason') != 'compiler-message':
+                      continue
+                  message = row.get('message', {})
+                  if message.get('level') != 'error':
+                      continue
+                  code = (message.get('code') or {}).get('code') or 'uncoded'
+                  primary = [s for s in message.get('spans', []) if s.get('is_primary')]
+                  file_name = primary[0].get('file_name', 'unknown') if primary else 'unknown'
+                  line = primary[0].get('line_start') if primary else None
+                  lints[code] += 1
+                  files[file_name] += 1
+                  messages.append({
+                      'code': code,
+                      'message': message.get('message'),
+                      'file': file_name,
+                      'line': line,
+                      'rendered': message.get('rendered'),
+                  })
+              return {
+                  'error_count': len(messages),
+                  'lints': dict(sorted(lints.items())),
+                  'files': dict(sorted(files.items())),
+                  'messages': messages,
+              }
+
+          summary = {
+              'schema': 'trnm-closure-iteration-v1',
+              'base_sha': '32c1a49a42ff6f2bc1f523ae80a32db41bb543cf',
+              'patch_sha256': '1ef4084ba05a8f25395651c483e4902f3703075c13890f26d4ff6c5abf8524d7',
+              'cargo_check_exit_code': int((out / 'cargo-check.exit-code').read_text()),
+              'cargo_clippy_exit_code': int((out / 'cargo-clippy.exit-code').read_text()),
+              'cargo_check': collect(out / 'cargo-check.jsonl'),
+              'cargo_clippy': collect(out / 'cargo-clippy.jsonl'),
+          }
+          (out / 'summary.json').write_text(
+              json.dumps(summary, indent=2, sort_keys=True), encoding='utf-8'
+          )
+          PY
+
+          git diff --binary --full-index "${BASE_SHA}" -- . >"${out}/formatted.patch"
+          git diff --name-only "${BASE_SHA}" -- . >"${out}/changed-files.txt"
+          sha256sum "${out}/formatted.patch" >"${out}/formatted.patch.sha256"
+          git status --short >"${out}/git-status.txt"
+
+      - name: Upload exact iteration evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-closure-iteration-1-${{ env.BASE_SHA }}
+          path: ${{ runner.temp }}/trnm-closure-iteration-1/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: source
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
