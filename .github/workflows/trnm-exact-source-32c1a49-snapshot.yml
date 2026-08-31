@@ -19,7 +19,13 @@ env:
 
 jobs:
   snapshot:
-    runs-on: ubuntu-24.04
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 20
     steps:
       - name: Check out exact source without persisted credentials
