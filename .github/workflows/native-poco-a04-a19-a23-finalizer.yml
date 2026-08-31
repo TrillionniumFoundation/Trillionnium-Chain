@@ -1,0 +1,320 @@
+name: native-poco-a04-a19-a23-finalizer
+
+on:
+  push:
+    branches:
+      - qualification/native-poco-a04-a19-a23-exact-head-v1-20260901
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-finalizer.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-poco-a04-a19-a23-finalizer-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  V5_BRANCH: integration/native-poco-a04-a19-a23-qualified-v5-20260901
+  V4_BRANCH: integration/native-poco-a04-a19-a23-qualified-v4-20260901
+  FINAL_BRANCH: integration/native-poco-a04-a19-a23-qualified-final-20260901
+  BASE_BRANCH: feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  qualify-winner:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 420
+    permissions:
+      contents: write
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.select.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.select.outputs.candidate_tree }}
+      source_branch: ${{ steps.select.outputs.source_branch }}
+    steps:
+      - name: Check out read-only finalizer carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Select published qualified candidate
+        id: select
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          selected=""
+          candidate=""
+
+          for attempt in $(seq 1 120); do
+            candidate="$(git ls-remote origin "refs/heads/${V5_BRANCH}" | awk '{print $1}')"
+            if [[ -n "$candidate" ]]; then
+              selected="$V5_BRANCH"
+              break
+            fi
+            printf 'v5_not_published attempt=%s\n' "$attempt"
+            sleep 15
+          done
+
+          if [[ -z "$candidate" ]]; then
+            for attempt in $(seq 1 120); do
+              candidate="$(git ls-remote origin "refs/heads/${V4_BRANCH}" | awk '{print $1}')"
+              if [[ -n "$candidate" ]]; then
+                selected="$V4_BRANCH"
+                break
+              fi
+              printf 'v4_not_published attempt=%s\n' "$attempt"
+              sleep 15
+            done
+          fi
+
+          test -n "$candidate"
+          test -n "$selected"
+          git fetch --no-tags origin \
+            "refs/heads/${selected}:refs/remotes/origin/native-stack-winner"
+          test "$(git rev-parse refs/remotes/origin/native-stack-winner)" = "$candidate"
+          git checkout --detach "$candidate"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test -z "$(git diff --name-only "${SOURCE_COMMIT}..HEAD" | grep '^\.github/workflows/' || true)"
+          git diff --name-only "${SOURCE_COMMIT}..HEAD" | sort -u > "$RUNNER_TEMP/changed-paths"
+          test -s "$RUNNER_TEMP/changed-paths"
+          while IFS= read -r path; do
+            case "$path" in
+              docs/development/packages/*A04*.md|\
+              docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md|\
+              docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md|\
+              trillionnium/crates/trnm-native-application/*|\
+              trillionnium/crates/trnm-native-application-sqlite/*|\
+              trillionnium/crates/trnm-native-execution-v0/*|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc)
+                ;;
+              *)
+                printf 'winner changed unexpected path: %s\n' "$path" >&2
+                exit 2
+                ;;
+            esac
+          done < "$RUNNER_TEMP/changed-paths"
+          tree="$(git rev-parse 'HEAD^{tree}')"
+          echo "candidate_commit=$candidate" >> "$GITHUB_OUTPUT"
+          echo "candidate_tree=$tree" >> "$GITHUB_OUTPUT"
+          echo "source_branch=$selected" >> "$GITHUB_OUTPUT"
+          printf 'winner_branch=%s winner_commit=%s winner_tree=%s\n' "$selected" "$candidate" "$tree"
+
+      - name: Verify pinned Rust and frozen offline cache
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Recompile and strictly lint winner exact head
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.select.outputs.candidate_commit }}"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --all-targets --locked --offline -- -D warnings
+
+      - name: Replay complete winner regression matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked --offline
+
+      - name: Revalidate winner authority and global truth
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path('/tmp/trnm-capability-authority-audit-v2.json').read_text(
+                  encoding='utf-8'
+              )
+          )
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          assert report['production_migration_authority_impl_findings'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_cargo_offline_policy.sh --head
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Publish stable final ref
+        working-directory: trillionnium-chain
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          candidate="${{ steps.select.outputs.candidate_commit }}"
+          remote_head="$(git ls-remote origin "refs/heads/${FINAL_BRANCH}" | awk '{print $1}')"
+          if [[ -n "$remote_head" && "$remote_head" != "$candidate" ]]; then
+            printf 'final branch already exists at different commit: %s\n' "$remote_head" >&2
+            exit 2
+          fi
+          if [[ "$remote_head" = "$candidate" ]]; then exit 0; fi
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $auth"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "${candidate}:refs/heads/${FINAL_BRANCH}"
+
+      - name: Build finalizer attestation
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-stack-finalizer"
+          mkdir -p "$out"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "${{ steps.select.outputs.source_branch }}" > "$out/source-branch"
+          printf '%s\n' "${{ steps.select.outputs.candidate_commit }}" > "$out/candidate-commit"
+          printf '%s\n' "${{ steps.select.outputs.candidate_tree }}" > "$out/candidate-tree"
+          printf '%s\n' "${FINAL_BRANCH}" > "$out/final-branch"
+          cp "$RUNNER_TEMP/changed-paths" "$out/changed-paths"
+          sha256sum "$out"/* > "$out/SHA256SUMS"
+
+      - name: Upload finalizer attestation
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-poco-a04-a19-a23-finalizer-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-stack-finalizer/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish-pr:
+    needs: qualify-winner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Create or update final Draft PR and evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_COMMIT: ${{ needs.qualify-winner.outputs.candidate_commit }}
+          CANDIDATE_TREE: ${{ needs.qualify-winner.outputs.candidate_tree }}
+          SOURCE_BRANCH: ${{ needs.qualify-winner.outputs.source_branch }}
+        run: |
+          set -euo pipefail
+          ref="$(gh api --method GET "/repos/${GITHUB_REPOSITORY}/git/ref/heads/${FINAL_BRANCH}")"
+          test "$(jq -r .object.sha <<<"$ref")" = "$CANDIDATE_COMMIT"
+          body_file="$RUNNER_TEMP/final-pr.md"
+          cat >"$body_file" <<EOF
+          ## Outcome
+
+          Stable code-only integration of A04 native application-finality carriers, A19 durable terminal-finalization history, and A23 strictly verified native finalized replay-floor/tombstone-GC authority.
+
+          ## Exact qualified identity
+
+          \`\`\`text
+          parent_commit=${SOURCE_COMMIT}
+          selected_source_branch=${SOURCE_BRANCH}
+          final_branch=${FINAL_BRANCH}
+          candidate_commit=${CANDIDATE_COMMIT}
+          candidate_tree=${CANDIDATE_TREE}
+          finalizer_run=${GITHUB_RUN_ID}
+          finalizer_conclusion=success
+          \`\`\`
+
+          The selected candidate was re-fetched and independently requalified on X230/Rust 1.95.0 with the frozen offline cache. Formatting, all-target compilation, strict Clippy for all four affected crates, complete A04/A19/A23 regressions, A22 capability-authority audit, runner/offline policy, repository/blocker truth, canonical plan, Native PoCO pre-cutover truth, project-boundary audit, clean-tree verification, and offline-input immutability passed on the exact unchanged commit.
+
+          ## Non-claims
+
+          Production HSM/KMS custody, independent monotonic anti-rollback anchoring, whole-node cross-store atomicity, process-2/state sync, authenticated cross-platform P2P, real multi-host and physical power-loss evidence, independent audit, soak, release, mainnet, and production activation remain open.
+          EOF
+          sed -i 's/^          //' "$body_file"
+          query="$(gh api --method GET "/repos/${GITHUB_REPOSITORY}/pulls" -f state=open -f head="TrillionniumFoundation:${FINAL_BRANCH}" -f base="${BASE_BRANCH}" -f per_page=10)"
+          pr="$(jq -r '.[0].number // empty' <<<"$query")"
+          if [[ -z "$pr" ]]; then
+            created="$(gh api --method POST "/repos/${GITHUB_REPOSITORY}/pulls" -f title='[A04/A19/A23] Final qualified native finality history and replay floor' -f head="${FINAL_BRANCH}" -f base="${BASE_BRANCH}" -F draft=true --raw-field body="$(cat "$body_file")")"
+            pr="$(jq -r .number <<<"$created")"
+          else
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/pulls/${pr}" --raw-field body="$(cat "$body_file")" >/dev/null
+          fi
+          marker='<!-- trnm-native-stack-finalizer-v1 -->'
+          comment="${marker}
+          Final qualified A04/A19/A23 stack: branch \`${FINAL_BRANCH}\`, commit \`${CANDIDATE_COMMIT}\`, tree \`${CANDIDATE_TREE}\`, finalizer run \`${GITHUB_RUN_ID}\`, downstream PR #${pr}. Production and external predicates remain fail-closed."
+          gh api --method POST "/repos/${GITHUB_REPOSITORY}/issues/55/comments" --raw-field body="$comment" >/dev/null
