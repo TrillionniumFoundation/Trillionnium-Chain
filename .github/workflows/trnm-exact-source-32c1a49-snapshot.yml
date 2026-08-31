@@ -42,12 +42,10 @@ jobs:
           test "$(git rev-parse HEAD)" = "${SOURCE_SHA}"
           out="${RUNNER_TEMP}/trnm-exact-source"
           mkdir -p "${out}"
-          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD |
-            gzip -9 > "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz"
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD | gzip -9 > "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz"
           git rev-parse HEAD > "${out}/source.commit"
           git rev-parse 'HEAD^{tree}' > "${out}/source.tree"
-          sha256sum "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz" >
-            "${out}/source.tar.gz.sha256"
+          sha256sum "${out}/Trillionnium-Chain-${SOURCE_SHA}.tar.gz" > "${out}/source.tar.gz.sha256"
 
       - name: Upload exact source archive
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
