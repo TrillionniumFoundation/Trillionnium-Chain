@@ -1,43 +1,69 @@
 {
   "schema": "trnm-blocker-execution-v1",
-  "as_of": "2026-08-30",
+  "as_of": "2026-08-31",
   "source_binding": "runtime-git-commit-and-tree",
   "canonical_register": "config/consensus-mainline.json",
   "repository_policy": "config/repository-policy-v1.json",
   "settings_gates": [
     {
       "id": "RPO-GITHUB-SETTINGS-001",
-      "status": "external-admin-action-required",
+      "status": "enforced-negative-corpus-pending",
       "owner_class": "repository-administrator",
-      "dependencies": ["P0-TRUTH-001"],
+      "dependencies": [],
       "acceptance_predicates": [
         "main is protected by pull-request-only integration",
-        "two approvals, CODEOWNER review and last-push approval are enforced",
-        "repository-truth, protocol-contract, rust-baseline and external-evidence-contract are required",
-        "force push and branch deletion are blocked",
+        "two approvals, CODEOWNER review, stale-review dismissal and last-push approval are enforced",
+        "repository-truth, protocol-contract, fuzz-smoke, rust-baseline and external-evidence-contract are required",
+        "strict up-to-date integration, conversation resolution and linear history are enforced",
+        "administrator bypass, force push and branch deletion are blocked",
         "negative mutations prove every rule is enforced"
       ],
-      "evidence_outputs": ["GitHub ruleset or branch-protection JSON", "negative enforcement traces"],
-      "invalidation_triggers": ["ruleset edit", "required-check rename", "default-branch change"],
-      "next_actions": ["complete GitHub issue #40 and attach contemporaneous settings evidence"]
+      "evidence_outputs": [
+        "contemporaneous GitHub branch-protection or ruleset JSON",
+        "normal-actor rejection traces for every protected rule"
+      ],
+      "invalidation_triggers": [
+        "ruleset edit",
+        "required-check rename",
+        "default-branch change",
+        "review-policy change"
+      ],
+      "next_actions": [
+        "attach the 2026-08-31 protected-main readback to issue #40",
+        "complete the remaining independent negative enforcement corpus"
+      ]
     }
   ],
   "repository_blockers": [
     {
       "id": "P0-TRUTH-001",
       "severity": "P0",
-      "status": "candidate-implemented-awaiting-admin-and-independent-review",
-      "owner_class": "repository-and-administrator",
+      "status": "canonical-bootstrap-open",
+      "owner_class": "repository-and-independent-reviewer",
       "dependencies": ["RPO-GITHUB-SETTINGS-001", "EXT-REVIEW-001"],
       "acceptance_predicates": [
-        "one canonical Native PoCO-BFT branch and machine truth",
-        "all PRs run actor-independent stable required checks",
-        "current README, security, operations, boundary and readiness projections agree",
-        "independent CODEOWNER accepts the exact source tuple"
+        "protected main contains one Native PoCO-BFT machine truth and one canonical plan",
+        "README, security, operations, boundary and readiness projections agree",
+        "all required checks pass on the exact unchanged PR head",
+        "an independent CODEOWNER accepts the exact source tuple"
       ],
-      "evidence_outputs": ["release-status-v1 JSON", "required check conclusions", "independent review"],
-      "invalidation_triggers": ["branch divergence", "authority document edit", "workflow or policy edit"],
-      "next_actions": ["obtain exact-head check success", "apply issue #40 settings", "obtain non-author review"]
+      "evidence_outputs": [
+        "protected-main branch readback",
+        "release-status-v1 JSON",
+        "five exact-head required-check conclusions",
+        "independent review"
+      ],
+      "invalidation_triggers": [
+        "branch divergence",
+        "authority document edit",
+        "workflow or policy edit",
+        "required-check rename"
+      ],
+      "next_actions": [
+        "qualify and merge the canonical Native PoCO bootstrap into protected main",
+        "complete issue #40 denial evidence",
+        "obtain non-author CODEOWNER approval"
+      ]
     },
     {
       "id": "P0-SCHEMA-001",
@@ -46,14 +72,26 @@
       "owner_class": "repository-and-independent-reviewer",
       "dependencies": ["P0-TRUTH-001", "EXT-REVIEW-001"],
       "acceptance_predicates": [
-        "one generated metadata/schema/error registry is authoritative",
-        "all boundary parsers consume the same generated registry",
-        "independent implementation accepts valid vectors and rejects all mutants",
+        "one generated metadata, schema and error registry is authoritative",
+        "every public boundary parser consumes the same generated registry",
+        "an independent implementation accepts valid vectors and rejects retained mutants",
         "wire and node-local error taxonomies remain disjoint"
       ],
-      "evidence_outputs": ["protocol-contract check", "generated registry digest", "independent decoder report"],
-      "invalidation_triggers": ["wire field edit", "error-code edit", "decoder edit", "generator edit"],
-      "next_actions": ["pass protocol-contract on exact head", "replace hand-maintained duplicate registry projections"]
+      "evidence_outputs": [
+        "protocol-contract result",
+        "generated registry digest",
+        "independent decoder report"
+      ],
+      "invalidation_triggers": [
+        "wire field edit",
+        "error-code edit",
+        "decoder edit",
+        "generator edit"
+      ],
+      "next_actions": [
+        "pass protocol-contract on the canonical exact head",
+        "eliminate hand-maintained duplicate registry projections"
+      ]
     },
     {
       "id": "P0-PROTOCOL-001",
@@ -62,14 +100,27 @@
       "owner_class": "repository-and-independent-reviewer",
       "dependencies": ["P0-SCHEMA-001", "P0-TC-001", "EXT-REVIEW-001", "EXT-AUDIT-001"],
       "acceptance_predicates": [
-        "complete bounded protocol specification and frozen vectors",
+        "the bounded protocol specification and frozen vectors are complete",
         "formal safety, epoch, partition, handoff, light-client and application mutants pass",
-        "second implementation reproduces protocol decisions",
-        "independent protocol review has no open Critical or High finding"
+        "a second implementation reproduces protocol decisions",
+        "independent review leaves no open Critical or High finding"
       ],
-      "evidence_outputs": ["protocol-contract check", "formal model report", "second implementation report", "audit report"],
-      "invalidation_triggers": ["protocol semantic edit", "parameter edit", "validator-set transition edit", "formal model edit"],
-      "next_actions": ["make formal and second-implementation replay source-bound", "obtain independent review"]
+      "evidence_outputs": [
+        "protocol-contract result",
+        "formal-model report",
+        "second-implementation report",
+        "independent audit report"
+      ],
+      "invalidation_triggers": [
+        "protocol semantic edit",
+        "parameter edit",
+        "validator-set transition edit",
+        "formal-model edit"
+      ],
+      "next_actions": [
+        "bind formal and second-implementation replay to the exact source",
+        "obtain independent protocol review"
+      ]
     },
     {
       "id": "P0-TC-001",
@@ -80,44 +131,81 @@
       "acceptance_predicates": [
         "QC, TC and CEV0 byte, nesting, signature-work and validator-set budgets are context-bound",
         "limits reject before allocation or expensive verification",
-        "maximum valid inputs are accepted on every supported validator-set size",
+        "maximum valid inputs pass for every supported validator-set size",
         "long-running independent fuzz covers every public decoder and admission path"
       ],
-      "evidence_outputs": ["budget vectors", "fuzz corpus digest", "coverage report", "CPU benchmark report"],
-      "invalidation_triggers": ["decoder edit", "budget or validator-limit edit", "crypto verification edit"],
-      "next_actions": ["promote bounded fuzz smoke into baseline", "produce long-run independent coverage evidence"]
+      "evidence_outputs": [
+        "budget vectors",
+        "fuzz corpus digest",
+        "coverage report",
+        "CPU benchmark report"
+      ],
+      "invalidation_triggers": [
+        "decoder edit",
+        "budget or validator-limit edit",
+        "crypto verification edit"
+      ],
+      "next_actions": [
+        "retain the three-target bounded smoke as a required check",
+        "produce long-run independent fuzz and coverage evidence"
+      ]
     },
     {
       "id": "P1-CORE-001",
       "severity": "P1",
-      "status": "partial-candidate-composition",
+      "status": "vertical-candidate-qualification-in-progress",
       "owner_class": "repository-and-independent-fault-campaign",
       "dependencies": ["P0-PROTOCOL-001", "P0-TC-001", "P1-EXEC-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
       "acceptance_predicates": [
-        "one authoritative non-cloneable SafetyRules owner controls Vote and Timeout",
+        "one non-cloneable SafetyRules owner controls Vote and Timeout",
         "live pacemaker, epoch transition and checkpoint catch-up are integrated",
         "ordered ancestor finalization is durable and replay-equivalent",
-        "fault campaign observes no conflicting finality or double-sign"
+        "fault campaigns observe no conflicting finality or double-sign"
       ],
-      "evidence_outputs": ["core transition tests", "crash/replay traces", "multi-host signed protocol traces"],
-      "invalidation_triggers": ["core transition edit", "SafetyRules edit", "pacemaker edit", "epoch edit"],
-      "next_actions": ["replace candidate fixture path with arbitrary proposal/finality loop", "run independent campaign"]
+      "evidence_outputs": [
+        "core transition tests",
+        "crash and replay traces",
+        "multi-host signed protocol traces"
+      ],
+      "invalidation_triggers": [
+        "core transition edit",
+        "SafetyRules edit",
+        "pacemaker edit",
+        "epoch edit"
+      ],
+      "next_actions": [
+        "complete the read-only G1 vertical integration qualification",
+        "replace bounded fixture paths with the persistent arbitrary proposal and finality loop",
+        "run the independent campaign"
+      ]
     },
     {
       "id": "P1-EXEC-001",
       "severity": "P1",
-      "status": "partial-finalization-ack-guard",
+      "status": "terminal-history-candidate-integrating",
       "owner_class": "repository",
       "dependencies": ["P0-PROTOCOL-001", "P2-STORE-001"],
       "acceptance_predicates": [
-        "full block body, parent, runtime and application validation precedes Valid",
-        "terminal execution log is permanent and content-addressed",
-        "application state mutation follows exact ordered-finalization proof",
+        "full body, parent, runtime and application validation precedes Valid",
+        "the terminal execution log is permanent and content-addressed",
+        "application mutation follows exact ordered-finalization proof",
         "every crash point is replay-equivalent and idempotent"
       ],
-      "evidence_outputs": ["execution mutant suite", "terminal log readback", "crash matrix"],
-      "invalidation_triggers": ["application semantics edit", "state-root edit", "finalization ACK edit"],
-      "next_actions": ["complete terminal execution journal", "add exhaustive crash-boundary replay tests"]
+      "evidence_outputs": [
+        "execution mutant suite",
+        "terminal-log readback",
+        "complete crash matrix"
+      ],
+      "invalidation_triggers": [
+        "application semantics edit",
+        "state-root edit",
+        "finalization acknowledgement edit"
+      ],
+      "next_actions": [
+        "integrate the A19 terminal-history candidate",
+        "bind finalization history to the live node process and cross-store protocol",
+        "complete crash-boundary replay"
+      ]
     },
     {
       "id": "P2-NODE-001",
@@ -126,30 +214,55 @@
       "owner_class": "repository-and-network-campaign",
       "dependencies": ["P1-CORE-001", "P1-EXEC-001", "P2-NET-001", "P2-STORE-001", "EXT-G1-CAMPAIGN-001"],
       "acceptance_predicates": [
-        "default devnet profile runs persistent authenticated ingress and pacemaker",
-        "arbitrary proposal reaches application seal, Core Valid, signing and outbound Vote or Timeout",
+        "the default devnet profile runs persistent authenticated ingress and pacemaker",
+        "arbitrary proposals reach application seal, Core Valid, signing and outbound Vote or Timeout",
         "ordered finality reaches durable application apply and restart recovery",
-        "production profile remains impossible without all release evidence"
+        "production activation remains impossible while any release evidence is absent"
       ],
-      "evidence_outputs": ["real process trace", "restart trace", "durable state-root readback", "activation-negative test"],
-      "invalidation_triggers": ["node constructor edit", "effect driver edit", "network or signer integration edit"],
-      "next_actions": ["add a non-production persistent devnet constructor", "integrate recovery owner and finality loop"]
+      "evidence_outputs": [
+        "real process trace",
+        "restart trace",
+        "durable state-root readback",
+        "activation-negative test"
+      ],
+      "invalidation_triggers": [
+        "node constructor edit",
+        "effect-driver edit",
+        "network or signer integration edit"
+      ],
+      "next_actions": [
+        "add a non-production persistent devnet constructor",
+        "integrate the recovery owner, pacemaker and finality loop"
+      ]
     },
     {
       "id": "P2-TX-001",
       "severity": "P2",
-      "status": "partial-candidate-wal",
+      "status": "tombstone-and-verifier-candidates-integrating",
       "owner_class": "repository",
       "dependencies": ["P1-EXEC-001", "P2-NODE-001", "P2-STORE-001"],
       "acceptance_predicates": [
-        "canonical envelope binds authoritative signer identity and chain context",
-        "node-owned nonce/WAL drives production CheckTx, signing and broadcast",
-        "ambiguous HandedOff state resolves only through exact application/finality receipt",
-        "committed tombstones have bounded safe retention and garbage collection"
+        "the canonical envelope binds authoritative signer identity and chain context",
+        "node-owned nonce and WAL drive CheckTx, signing and broadcast",
+        "ambiguous HandedOff state resolves only through an exact application and finality receipt",
+        "committed tombstones have bounded authenticated retention and garbage collection"
       ],
-      "evidence_outputs": ["transaction lifecycle matrix", "ambiguous handoff replay", "AppHash-bound receipt"],
-      "invalidation_triggers": ["envelope edit", "nonce/WAL edit", "receipt or AppHash edit"],
-      "next_actions": ["integrate production ingress and broadcaster", "close receipt ownership and tombstone GC"]
+      "evidence_outputs": [
+        "transaction lifecycle matrix",
+        "ambiguous-handoff replay",
+        "AppHash-bound commit receipt",
+        "authenticated replay-floor proof"
+      ],
+      "invalidation_triggers": [
+        "envelope edit",
+        "nonce or WAL edit",
+        "receipt or AppHash edit"
+      ],
+      "next_actions": [
+        "integrate the A20 tombstone and A21 sealed-verifier candidates",
+        "connect production ingress and broadcaster only after node authority closes",
+        "close handoff readback ownership"
+      ]
     },
     {
       "id": "P2-NET-001",
@@ -160,12 +273,25 @@
       "acceptance_predicates": [
         "authenticated bounded cross-platform P2P has persistent identity and replay anchor",
         "lease acquisition and Core acknowledgement form one recoverable protocol",
-        "pacemaker, signer/watermark, mempool replay and state sync are live",
-        "independent LAN/WAN fault campaign passes"
+        "pacemaker, signer, watermark, mempool replay and state sync are live",
+        "independent LAN and WAN fault campaigns pass"
       ],
-      "evidence_outputs": ["network protocol vectors", "replay and lease crash traces", "signed LAN/WAN campaign"],
-      "invalidation_triggers": ["handshake edit", "authentication edit", "replay/WAL edit", "network timeout edit"],
-      "next_actions": ["add persistent handshake replay anchor", "integrate Core acknowledgement", "run real LAN campaign"]
+      "evidence_outputs": [
+        "network protocol vectors",
+        "replay and lease crash traces",
+        "signed LAN and WAN campaign"
+      ],
+      "invalidation_triggers": [
+        "handshake edit",
+        "authentication edit",
+        "replay or WAL edit",
+        "network timeout edit"
+      ],
+      "next_actions": [
+        "add a persistent handshake replay anchor",
+        "make replay-to-Core acknowledgement atomic",
+        "run a real independent LAN campaign"
+      ]
     },
     {
       "id": "P2-OPS-001",
@@ -175,13 +301,24 @@
       "dependencies": ["P2-NODE-001", "P2-NET-001", "EXT-G1-CAMPAIGN-001", "EXT-SOAK-ACTIVATION-001"],
       "acceptance_predicates": [
         "4, 7, 31 and 100 real processes run across multiple physical hosts",
-        "partition, restart, state-sync, epoch/key rotation and recovery drills pass",
+        "partition, restart, state-sync, epoch and key-rotation drills pass",
         "metrics and alerts demonstrate bounded recovery and no safety violation",
         "72-hour, 7-day and 30-day wall-clock campaigns complete"
       ],
-      "evidence_outputs": ["signed raw traces", "SLO report", "incident and recovery drill records"],
-      "invalidation_triggers": ["node/network/recovery edit", "validator topology edit", "SLO policy edit"],
-      "next_actions": ["provision independent operators and hosts", "execute external campaign contract"]
+      "evidence_outputs": [
+        "signed raw traces",
+        "SLO report",
+        "incident and recovery drill records"
+      ],
+      "invalidation_triggers": [
+        "node, network or recovery edit",
+        "validator topology edit",
+        "SLO policy edit"
+      ],
+      "next_actions": [
+        "provision independent operators and physical hosts",
+        "execute the external campaign contract"
+      ]
     },
     {
       "id": "P2-STORE-001",
@@ -190,14 +327,28 @@
       "owner_class": "repository-and-hardware-campaign",
       "dependencies": ["EXT-ANCHOR-HSM-001", "EXT-POWERLOSS-001"],
       "acceptance_predicates": [
-        "all safety, signer, checkpoint and application mutation paths share one exclusive namespace fence",
+        "all safety, signer, checkpoint and application writers share one exclusive namespace fence",
         "child files and directory generations are descriptor-bound against replacement",
-        "cross-database commit protocol has explicit recoverable ordering",
-        "physical power-loss and cloned-namespace mutants preserve or safely halt"
+        "the cross-database commit protocol has explicit recoverable ordering",
+        "physical power-loss and cloned-namespace mutants preserve safety or halt"
       ],
-      "evidence_outputs": ["writer adoption matrix", "replacement mutant suite", "power-loss trace", "HSM/anchor attestation"],
-      "invalidation_triggers": ["store writer edit", "filesystem layout edit", "fsync ordering edit", "anchor edit"],
-      "next_actions": ["close uncooperative writer and child-fd identity gaps", "define cross-store commit protocol", "run hardware tests"]
+      "evidence_outputs": [
+        "writer-adoption matrix",
+        "replacement-mutant suite",
+        "power-loss trace",
+        "HSM and external-anchor attestation"
+      ],
+      "invalidation_triggers": [
+        "store writer edit",
+        "filesystem layout edit",
+        "fsync ordering edit",
+        "anchor edit"
+      ],
+      "next_actions": [
+        "close remaining writer and child-descriptor identity gaps",
+        "implement the cross-store commit protocol",
+        "execute independent hardware tests"
+      ]
     },
     {
       "id": "MIG-ROOT-001",
@@ -206,14 +357,28 @@
       "owner_class": "repository-and-independent-ceremony",
       "dependencies": ["P0-PROTOCOL-001", "P1-EXEC-001", "P2-STORE-001", "EXT-REVIEW-001", "EXT-G1-CAMPAIGN-001"],
       "acceptance_predicates": [
-        "trusted Comet source reader verifies finality quorum and exact source namespace",
+        "the trusted Comet source reader verifies finality quorum and source namespace",
         "mapping digest and target JMT root are independently recomputed",
         "fresh target import is deterministic across peers",
         "GenesisQC and signed dual-authority cutover rehearsal succeed"
       ],
-      "evidence_outputs": ["source export proof", "independent root recomputation", "cross-peer GenesisQC", "signed rehearsal"],
-      "invalidation_triggers": ["source reader edit", "mapping edit", "state-root edit", "genesis ceremony edit"],
-      "next_actions": ["implement concrete source verifier", "add independent target-root tool", "execute signed rehearsal"]
+      "evidence_outputs": [
+        "source export proof",
+        "independent root recomputation",
+        "cross-peer GenesisQC",
+        "signed rehearsal"
+      ],
+      "invalidation_triggers": [
+        "source-reader edit",
+        "mapping edit",
+        "state-root edit",
+        "genesis ceremony edit"
+      ],
+      "next_actions": [
+        "implement the concrete source verifier",
+        "add an independent target-root tool",
+        "execute the signed rehearsal"
+      ]
     },
     {
       "id": "P3-HISTORY-001",
@@ -222,14 +387,27 @@
       "owner_class": "repository-and-scale-campaign",
       "dependencies": ["P1-EXEC-001", "P2-STORE-001"],
       "acceptance_predicates": [
-        "terminal TaskV1 rows have canonical archive and garbage-collection lifecycle",
+        "terminal TaskV1 rows have a canonical archive and garbage-collection lifecycle",
         "retention and storage charging are protocol-governed",
-        "light-client/audit proofs remain available after pruning",
-        "long-history scale test stays within resource budgets"
+        "light-client and audit proofs remain available after pruning",
+        "long-history scale tests stay within resource budgets"
       ],
-      "evidence_outputs": ["archive schema", "pruning proof", "charging vectors", "long-history benchmark"],
-      "invalidation_triggers": ["TaskV1 schema edit", "retention policy edit", "proof format edit"],
-      "next_actions": ["specify archive commitments and retention", "implement bounded pruning", "run scale campaign"]
+      "evidence_outputs": [
+        "archive schema",
+        "pruning proof",
+        "charging vectors",
+        "long-history benchmark"
+      ],
+      "invalidation_triggers": [
+        "TaskV1 schema edit",
+        "retention-policy edit",
+        "proof-format edit"
+      ],
+      "next_actions": [
+        "specify archive commitments and retention",
+        "implement bounded pruning",
+        "run the scale campaign"
+      ]
     },
     {
       "id": "MIG-CLEAN-001",
@@ -238,14 +416,24 @@
       "owner_class": "repository-and-governance",
       "dependencies": ["MIG-ROOT-001", "EXT-SOAK-ACTIVATION-001"],
       "acceptance_predicates": [
-        "signed cutover and rollback window have completed",
+        "the signed cutover and rollback window have completed",
         "no active build, workflow, document or operator path references Comet authority",
         "legacy packages, locks, workflows, fixtures and scripts are removed",
         "historical evidence remains content-addressed and readable"
       ],
-      "evidence_outputs": ["authorized cutover record", "dependency/reference scan", "post-cutover cleanup diff"],
-      "invalidation_triggers": ["cutover rollback", "legacy reference reintroduction"],
-      "next_actions": ["do not execute before signed cutover", "prepare deterministic post-cutover deletion manifest"]
+      "evidence_outputs": [
+        "authorized cutover record",
+        "dependency and reference scan",
+        "post-cutover cleanup diff"
+      ],
+      "invalidation_triggers": [
+        "cutover rollback",
+        "legacy authority reference reintroduction"
+      ],
+      "next_actions": [
+        "do not execute deletion before signed cutover",
+        "prepare the deterministic post-cutover deletion manifest"
+      ]
     }
   ],
   "external_blockers": [
@@ -254,60 +442,108 @@
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-reviewer",
       "dependencies": [],
-      "acceptance_predicates": ["independent exact-source protocol/package review and mutant replay"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["covered source or interface digest changes"],
-      "next_actions": ["assign reviewer distinct from source author"]
+      "acceptance_predicates": [
+        "independent exact-source protocol and package review plus mutant replay is accepted"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 review submission"
+      ],
+      "invalidation_triggers": [
+        "covered source or interface digest changes"
+      ],
+      "next_actions": [
+        "assign reviewers distinct from source authors"
+      ]
     },
     {
       "id": "EXT-G1-CAMPAIGN-001",
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-operators",
       "dependencies": ["P2-NODE-001", "P2-NET-001"],
-      "acceptance_predicates": ["real 4/7/31/100-process multi-host campaign with signed traces and zero safety violations"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["node, protocol, network, signer or recovery source changes"],
-      "next_actions": ["provision hosts, operators and custody domains"]
+      "acceptance_predicates": [
+        "real 4, 7, 31 and 100-process multi-host campaigns produce signed traces and zero safety violations"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 campaign submission"
+      ],
+      "invalidation_triggers": [
+        "node, protocol, network, signer or recovery source changes"
+      ],
+      "next_actions": [
+        "provision independent hosts, operators and custody domains"
+      ]
     },
     {
       "id": "EXT-ANCHOR-HSM-001",
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-custody",
       "dependencies": ["P2-STORE-001"],
-      "acceptance_predicates": ["device-backed non-exportable key and external monotonic anchor survive rollback/clone mutants"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["device, firmware, policy, signer or watermark changes"],
-      "next_actions": ["select HSM/KMS and execute custody rehearsal"]
+      "acceptance_predicates": [
+        "a device-backed non-exportable key and external monotonic anchor survive rollback and clone mutants"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 custody submission"
+      ],
+      "invalidation_triggers": [
+        "device, firmware, policy, signer or watermark changes"
+      ],
+      "next_actions": [
+        "select the HSM or KMS and execute the custody rehearsal"
+      ]
     },
     {
       "id": "EXT-POWERLOSS-001",
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-hardware-operator",
       "dependencies": ["P2-STORE-001"],
-      "acceptance_predicates": ["physical power and controller-cache loss recover exact safe state in a fresh process"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["storage hardware, filesystem, kernel or fsync ordering changes"],
-      "next_actions": ["prepare destructive hardware test host"]
+      "acceptance_predicates": [
+        "physical power and controller-cache loss recover the exact safe state in a fresh process"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 power-loss submission"
+      ],
+      "invalidation_triggers": [
+        "storage hardware, filesystem, kernel or fsync ordering changes"
+      ],
+      "next_actions": [
+        "prepare an independently controlled destructive hardware test host"
+      ]
     },
     {
       "id": "EXT-AUDIT-001",
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-auditors-and-red-team",
       "dependencies": ["P0-PROTOCOL-001", "P1-CORE-001", "P1-EXEC-001", "P2-STORE-001"],
-      "acceptance_predicates": ["consensus, cryptography, economics and red-team reviews leave zero open Critical or High findings"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["audited source, dependency, compiler, protocol or configuration changes"],
-      "next_actions": ["freeze audit candidate and contract independent firms"]
+      "acceptance_predicates": [
+        "consensus, cryptography, economics and red-team reviews leave zero open Critical or High findings"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 audit submissions"
+      ],
+      "invalidation_triggers": [
+        "audited source, dependency, compiler, protocol or configuration changes"
+      ],
+      "next_actions": [
+        "freeze the audit candidate and contract independent firms"
+      ]
     },
     {
       "id": "EXT-SOAK-ACTIVATION-001",
       "status": "open-no-accepted-evidence",
       "owner_class": "independent-operators-and-governance",
       "dependencies": ["EXT-G1-CAMPAIGN-001", "EXT-ANCHOR-HSM-001", "EXT-POWERLOSS-001", "EXT-AUDIT-001"],
-      "acceptance_predicates": ["72-hour chaos, 7-day public-testnet and 30-day production-candidate wall-clock runs complete with drills and authorized governance"],
-      "evidence_outputs": ["accepted trnm-external-evidence-v1 submission"],
-      "invalidation_triggers": ["release candidate, topology, custody, protocol or governance input changes"],
-      "next_actions": ["start only after all prerequisite external gates are accepted"]
+      "acceptance_predicates": [
+        "72-hour chaos, 7-day public-testnet and 30-day production-candidate wall-clock runs complete with drills and authorized governance"
+      ],
+      "evidence_outputs": [
+        "accepted trnm-external-evidence-v1 soak and activation submission"
+      ],
+      "invalidation_triggers": [
+        "release candidate, topology, custody, protocol or governance input changes"
+      ],
+      "next_actions": [
+        "start only after every prerequisite external gate is accepted"
+      ]
     }
   ],
   "release_summary": {
