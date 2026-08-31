@@ -13,6 +13,22 @@ standard_guard_lines=(
   "         (github.event_name != 'pull_request' ||"
   '          github.event.pull_request.head.repo.full_name == github.repository)))'
 )
+payload_guard_lines=(
+  '    if: >-'
+  "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&"
+  "      ((github.actor == 'ProfAlexQI' &&"
+  "        github.triggering_actor == 'ProfAlexQI') ||"
+  "       (github.actor == 'Tomasrgbsf' &&"
+  "        github.triggering_actor == 'Tomasrgbsf') ||"
+  "       (github.actor == 'github-actions[bot]' &&"
+  "        github.triggering_actor == 'github-actions[bot]' &&"
+  "        github.event_name == 'pull_request' &&"
+  "        github.event.pull_request.head.repo.full_name == github.repository &&"
+  "        github.event.pull_request.author_association == 'MEMBER' &&"
+  "        startsWith(github.head_ref, 'feature/chain-'))) &&"
+  "      (github.event_name != 'pull_request' ||"
+  '       github.event.pull_request.head.repo.full_name == github.repository)'
+)
 p1_guard_lines=(
   '    if: >-'
   "      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&"
@@ -32,6 +48,8 @@ policy_workflow="$workflow_dir/policy.yml"
 companion_workflow="$workflow_dir/companion.yaml"
 p1_workflow="$workflow_dir/p1-rust-sidecar.yml"
 poco_workflow="$workflow_dir/trnm-poco-bft-v0.yml"
+candidate_workflow="$workflow_dir/trnm-p2-node-candidate-devnet-cli.yml"
+baseline_workflow="$workflow_dir/trnm-required-baseline.yml"
 mkdir -p "$workflow_dir"
 git init -q "$repo"
 git -C "$repo" config user.name ci-runner-policy-test
@@ -39,6 +57,29 @@ git -C "$repo" config user.email ci-runner-policy-test@example.invalid
 
 write_policy_workflow() {
   printf '%s\n' "$@" >"$policy_workflow"
+}
+
+write_baseline_workflow() {
+  {
+    printf '%s\n' \
+      'name: trnm-required-baseline' \
+      'on: [pull_request]' \
+      'permissions:' \
+      '  contents: read' \
+      'env:' \
+      '  TRNM_EXPECTED_SOURCE_SHA: ${{ github.sha }}' \
+      'jobs:'
+    for job in repository-truth protocol-contract fuzz-smoke external-evidence-contract rust-baseline; do
+      printf '%s\n' \
+        "  ${job}:" \
+        '    runs-on: ubuntu-24.04' \
+        '    steps:' \
+        '      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262' \
+        '        with:' \
+        '          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}' \
+        '          persist-credentials: false'
+    done
+  } >"$baseline_workflow"
 }
 
 write_companion_workflow() {
@@ -83,6 +124,18 @@ write_poco_workflow() {
     '      - run: true' >"$poco_workflow"
 }
 
+write_candidate_workflow() {
+  printf '%s\n' \
+    'name: trnm-p2-node-candidate-devnet-cli' \
+    'on: [pull_request]' \
+    'jobs:' \
+    '  candidate-devnet-cli:' \
+    "${payload_guard_lines[@]}" \
+    "    $expected" \
+    '    steps:' \
+    '      - run: true' >"$candidate_workflow"
+}
+
 run_policy() {
   (
     cd "$repo"
@@ -117,9 +170,11 @@ expect_fail() {
   printf 'PASS: %s rejected\n' "$name"
 }
 
+write_baseline_workflow
 write_companion_workflow
 write_p1_workflow
 write_poco_workflow
+write_candidate_workflow
 write_policy_workflow \
   'name: policy' \
   'on: [push]' \
@@ -132,11 +187,11 @@ write_policy_workflow \
   '          # Nested scalar content must not be interpreted as a job runner.' \
   '          runs-on: ubuntu-latest'
 
-expect_pass worktree-positive --worktree 4
+expect_pass worktree-positive --worktree 5
 git -C "$repo" add .github/workflows
-expect_pass staged-positive --staged 4
+expect_pass staged-positive --staged 5
 git -C "$repo" commit -qm 'baseline runner policy fixture'
-expect_pass head-positive --head 4
+expect_pass head-positive --head 5
 
 write_policy_workflow \
   'name: policy' \
@@ -240,6 +295,18 @@ printf '%s\n' \
   '      - run: true' >"$p1_workflow"
 expect_fail p1-cannot-use-schedule-exception-guard --worktree
 write_p1_workflow
+
+printf '%s\n' \
+  'name: trnm-p2-node-candidate-devnet-cli' \
+  'on: [pull_request]' \
+  'jobs:' \
+  '  candidate-devnet-cli:' \
+  "${standard_guard_lines[@]}" \
+  "    $expected" \
+  '    steps:' \
+  '      - run: true' >"$candidate_workflow"
+expect_fail candidate-workflow-requires-member-feature-guard --worktree
+write_candidate_workflow
 
 write_policy_workflow \
   'name: policy' \

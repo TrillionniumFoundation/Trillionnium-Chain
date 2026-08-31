@@ -183,7 +183,11 @@ def parse_jobs(name: str, text: str) -> dict[str, dict[str, object]]:
 
 
 def required_guard(name: str) -> str:
-    if name in {"trnm-payload-replay-recovery-v1.yml", "trnm-replay-to-core-coordinator-v1.yml"}:
+    if name in {
+        "trnm-payload-replay-recovery-v1.yml",
+        "trnm-replay-to-core-coordinator-v1.yml",
+        "trnm-p2-node-candidate-devnet-cli.yml",
+    }:
         return PAYLOAD_GUARD
     if name == "trnm-poco-bft-v0.yml":
         return POCO_GUARD
