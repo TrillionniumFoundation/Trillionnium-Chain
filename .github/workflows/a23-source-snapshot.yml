@@ -1,0 +1,36 @@
+name: a23-source-snapshot
+
+on:
+  push:
+    branches:
+      - feature/chain-a23-p2-native-replay-floor-v1-20260831
+    paths:
+      - .github/workflows/a23-source-snapshot.yml
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Archive exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/a23-source
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD | gzip -9 > /tmp/a23-source/source.tar.gz
+          git rev-parse HEAD > /tmp/a23-source/source.commit
+          git rev-parse 'HEAD^{tree}' > /tmp/a23-source/source.tree
+          sha256sum /tmp/a23-source/source.tar.gz > /tmp/a23-source/source.tar.gz.sha256
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: a23-exact-source-${{ github.sha }}
+          path: /tmp/a23-source/
+          if-no-files-found: error
+          retention-days: 3
