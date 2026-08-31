@@ -56,7 +56,8 @@ case "$source_mode" in
       GIT_COMMITTER_NAME=trnm-policy-snapshot \
       GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid \
       git -C "$snapshot" commit -qm staged-policy-snapshot
-    bash "$snapshot/$privileged" --head
+    test ! -e "$snapshot/$baseline"
+    (cd "$snapshot" && bash "./$privileged" --head)
     ;;
   --head)
     snapshot="$tmp/snapshot"
@@ -71,10 +72,11 @@ case "$source_mode" in
       GIT_COMMITTER_NAME=trnm-policy-snapshot \
       GIT_COMMITTER_EMAIL=policy-snapshot@example.invalid \
       git -C "$snapshot" commit -qm head-policy-snapshot
-    bash "$snapshot/$privileged" --head
+    test ! -e "$snapshot/$baseline"
+    (cd "$snapshot" && bash "./$privileged" --head)
     ;;
 esac
 
 trap - EXIT HUP INT TERM
 restore_worktree
-printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=20 source=%s\n' "${source_mode#--}"
+printf 'mixed_trust_cargo_policy=passed hosted_required_jobs=5 privileged_offline_jobs=22 source=%s\n' "${source_mode#--}"
