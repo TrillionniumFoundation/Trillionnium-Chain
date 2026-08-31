@@ -35,7 +35,7 @@ jobs:
           git rev-parse HEAD
           git rev-parse 'HEAD^{tree}'
           test "$(git hash-object trillionnium/crates/trnm-finality-verifier/src/lib.rs)" = \
-            "f38bdf6c76f5ce6ac2b7ce4abca86e6d585b7a4b"
+            "7f8a822d00937be0d8d3d295f123dd1cd67daaf2"
           test "$(git hash-object trillionnium/crates/trnm-node/src/live/merkle.rs)" = \
             "8d9943230a356adda53b143ea5de409df799be74"
 
