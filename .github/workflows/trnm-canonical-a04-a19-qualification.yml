@@ -1,0 +1,148 @@
+name: trnm-canonical-a04-a19-qualification
+
+on:
+  push:
+    branches:
+      - integration/canonical-a04-a19-qualification-v1-20260831
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-canonical-a04-a19-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  SOURCE_FLOOR: 44d53c0df1658fa8cd1aadd707ac404ffaf2480f
+  CANONICAL_A04_HEAD: 1fa71c942e129ce88937a030c3054c8f72649aaf
+  CANONICAL_NODE_HEAD: eb0f1de90d2baa5d0f8a7ef1975d7914bd9d4af9
+  CANONICAL_A22_HEAD: c151323e28a3a305a195333536a66930723a6684
+
+jobs:
+  qualify-a04-a19-x230:
+    name: canonical-a04-a19-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/canonical-a04-a19-qualification-v1-20260831' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    defaults:
+      run:
+        working-directory: trillionnium-chain
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact read-only source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify exact canonical wrapper boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_FLOOR}"
+          test "$(git rev-parse "${SOURCE_FLOOR}^")" = "${CANONICAL_A04_HEAD}"
+          git merge-base --is-ancestor "${CANONICAL_NODE_HEAD}" HEAD
+          git merge-base --is-ancestor "${CANONICAL_A22_HEAD}" HEAD
+          test -z "$(git diff --name-only "${SOURCE_FLOOR}..HEAD" | grep -Ev '^\.github/workflows/trnm-canonical-a04-a19-qualification\.yml$' || true)"
+
+      - name: Verify pinned toolchain and offline cache
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0 --component clippy --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh --toolchain 1.95.0 --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify complete active workspace
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked --offline
+
+      - name: Verify A04 ordered finalization boundary
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml -p trnm-native-application --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --all-targets --locked --offline
+
+      - name: Verify A19 durable terminal history
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml -p trnm-native-application-sqlite --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application-sqlite --all-targets --locked --offline
+
+      - name: Regress canonical transaction and candidate-node slices
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features tx-admission-wal --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-node --features tx-admission-wal --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-lab-validator --lib candidate_devnet --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml -p trnm-poco-lab-validator --test candidate_devnet_cli --locked --offline
+
+      - name: Validate A22 capability-authority audit
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v2.json').read_text())
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          PY
+
+      - name: Validate inert authority compile-fail proofs
+        run: bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+
+      - name: Validate canonical development plan
+        run: bash scripts/ci/check_canonical_development_plan.sh
+
+      - name: Validate Native PoCO pre-cutover truth
+        run: bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+
+      - name: Validate repository truth
+        run: python3 scripts/ci/check_repository_truth_v1.py
+
+      - name: Validate blocker execution register
+        run: python3 scripts/ci/check_blocker_execution_v1.py
+
+      - name: Validate project boundary
+        run: bash scripts/project-preflight.sh --audit
+
+      - name: Require side-effect-free qualification
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          state="$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+          if [[ -d "${state}" ]]; then
+            ./scripts/ci/check_cargo_offline_unchanged.sh --state "${state}"
+          else
+            printf 'offline-ready state absent because the readiness step did not run\n'
+          fi
