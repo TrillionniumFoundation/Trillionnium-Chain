@@ -1,6 +1,6 @@
 # Trillionnium Chain release readiness
 
-Updated: **2026-08-30**
+Updated: **2026-08-31**
 
 This file is the human-readable release projection. It is not an independent
 truth source. The machine-readable authority is
@@ -51,24 +51,29 @@ repository CI check cannot independently change these values.
 
 ## Repository-owned hardening in progress
 
-A18 introduces an actor-independent GitHub-hosted baseline, critical-path
+The live GitHub `main` branch is protected and currently binds the five stable
+required checks named by `config/repository-policy-v1.json`. The A18 repository
+hardening candidate adds actor-independent hosted validation, critical-path
 CODEOWNERS, a machine-validated Native PoCO-BFT project/security boundary,
 deterministic source-bound status generation, and a fail-closed external-evidence
 contract. It also begins paying down strict Rust 1.95 Clippy debt while retaining
 all ABI, production, release, and activation non-claims.
 
-These changes are candidate work until their pull request passes on the exact
-head, receives a genuinely independent CODEOWNER review, and is integrated into
-a protected canonical branch.
+The Native PoCO truth tree is now staged on a branch whose first parent is the
+current protected `main` head. It remains candidate work until the exact PR head
+passes all five checks, receives genuinely independent CODEOWNER acceptance, and
+is merged through the protected branch policy. The remaining settings work is a
+complete negative-enforcement evidence corpus, not initial protection enablement.
 
 ## Release-blocking repository work
 
 The canonical machine register remains the complete inventory. Major open areas
 include:
 
-- one canonical protected branch and enforced required checks;
+- exact-head qualification and protected-main integration of the canonical
+  Native PoCO truth tree, plus completion of the GitHub denial corpus;
 - one generated wire/schema/error registry plus independent protocol review;
-- complete bounded QC/TC/CEV0 admission and fuzz evidence;
+- complete bounded QC/TC/CEV0 admission and long-running fuzz evidence;
 - authoritative SafetyRules/Core, live pacemaker, epoch and catch-up behavior;
 - full application body/parent/runtime validation, permanent terminal execution
   log, ordered finalization, and crash/replay equivalence;
