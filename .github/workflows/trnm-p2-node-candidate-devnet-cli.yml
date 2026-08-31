@@ -94,7 +94,7 @@ jobs:
           git merge-base --is-ancestor "${CANONICAL_A22_HEAD}" HEAD
           unexpected="$(
             git diff --name-only "${CANONICAL_A22_HEAD}..HEAD" |
-              grep -Ev '^(\.github/workflows/trnm-a22-capability-authority-audit\.yml|\.github/workflows/trnm-p2-node-candidate-devnet-cli\.yml|docs/development/packages/TRNM_P2_NODE_CANDIDATE_DEVNET_CLI_V1\.md|scripts/check_cargo_offline_policy\.sh|scripts/check_cargo_offline_policy_test\.sh|scripts/check_privileged_cargo_offline_policy\.sh|scripts/check_ci_runner_policy\.sh|scripts/check_ci_runner_policy_test\.sh|trillionnium/crates/trnm-poco-lab-validator/)' || true
+              grep -Ev '^(\.github/workflows/trnm-a22-capability-authority-audit\.yml|\.github/workflows/trnm-p2-node-candidate-devnet-cli\.yml|docs/development/packages/TRNM_P2_NODE_CANDIDATE_DEVNET_CLI_V1\.md|scripts/check_cargo_offline_policy\.sh|scripts/check_cargo_offline_policy_test\.sh|scripts/check_privileged_cargo_offline_policy\.sh|scripts/check_ci_runner_policy\.sh|scripts/check_ci_runner_policy_test\.sh|scripts/ci/check_candidate_devnet_clippy_v1\.sh|trillionnium/crates/trnm-poco-lab-validator/)' || true
           )"
           if [[ -n "${unexpected}" ]]; then
             printf 'candidate devnet package changed unexpected paths:\n%s\n' "${unexpected}" >&2
