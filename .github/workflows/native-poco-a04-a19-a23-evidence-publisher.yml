@@ -1,0 +1,211 @@
+name: native-poco-a04-a19-a23-evidence-publisher
+
+on:
+  push:
+    branches:
+      - qualification/native-poco-a04-a19-a23-exact-head-v1-20260901
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-evidence-publisher.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: native-poco-a04-a19-a23-evidence-publisher-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v4-20260901
+  BASE_BRANCH: feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+  EXPECTED_PARENT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  REPLAY_WORKFLOW: native-poco-a04-a19-a23-exact-head-replay.yml
+
+jobs:
+  publish-evidence:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Wait for successful published-head replay
+        id: replay
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          replay_id=""
+          replay_url=""
+          for attempt in $(seq 1 180); do
+            response="$(
+              gh api \
+                -H 'Accept: application/vnd.github+json' \
+                -H 'X-GitHub-Api-Version: 2022-11-28' \
+                "/repos/${GITHUB_REPOSITORY}/actions/workflows/${REPLAY_WORKFLOW}/runs" \
+                -f branch='qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' \
+                -f event='push' \
+                -f per_page=10
+            )"
+            replay_id="$(
+              jq -r --arg self "${GITHUB_RUN_ID}" \
+                '[.workflow_runs[] | select((.id|tostring) != $self)] | sort_by(.created_at) | reverse | .[0].id // empty' \
+                <<<"$response"
+            )"
+            if [[ -z "$replay_id" ]]; then
+              sleep 20
+              continue
+            fi
+            status="$(jq -r --argjson id "$replay_id" '.workflow_runs[] | select(.id == $id) | .status' <<<"$response")"
+            conclusion="$(jq -r --argjson id "$replay_id" '.workflow_runs[] | select(.id == $id) | .conclusion // empty' <<<"$response")"
+            replay_url="$(jq -r --argjson id "$replay_id" '.workflow_runs[] | select(.id == $id) | .html_url' <<<"$response")"
+            printf 'replay run=%s status=%s conclusion=%s\n' "$replay_id" "$status" "$conclusion"
+            if [[ "$status" = completed ]]; then
+              test "$conclusion" = success
+              break
+            fi
+            sleep 20
+          done
+          test -n "$replay_id"
+          final="$(gh api "/repos/${GITHUB_REPOSITORY}/actions/runs/${replay_id}")"
+          test "$(jq -r .status <<<"$final")" = completed
+          test "$(jq -r .conclusion <<<"$final")" = success
+          echo "run_id=$replay_id" >> "$GITHUB_OUTPUT"
+          echo "run_url=$replay_url" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve immutable target identity
+        id: target
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          ref="$(gh api "/repos/${GITHUB_REPOSITORY}/git/ref/heads/${TARGET_BRANCH}" )"
+          commit="$(jq -r .object.sha <<<"$ref")"
+          object="$(gh api "/repos/${GITHUB_REPOSITORY}/git/commits/${commit}")"
+          tree="$(jq -r .tree.sha <<<"$object")"
+          parent="$(jq -r '.parents[0].sha' <<<"$object")"
+          test "$parent" = "$EXPECTED_PARENT"
+          compare="$(gh api "/repos/${GITHUB_REPOSITORY}/compare/${EXPECTED_PARENT}...${commit}")"
+          test "$(jq -r .status <<<"$compare")" = ahead
+          test "$(jq -r .behind_by <<<"$compare")" = 0
+          test "$(jq -r .ahead_by <<<"$compare")" = 1
+          test "$(jq -r '[.files[].filename | select(startswith(".github/workflows/"))] | length' <<<"$compare")" = 0
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          echo "tree=$tree" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update downstream Draft PR
+        id: pr
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_COMMIT: ${{ steps.target.outputs.commit }}
+          TARGET_TREE: ${{ steps.target.outputs.tree }}
+          REPLAY_RUN_ID: ${{ steps.replay.outputs.run_id }}
+          REPLAY_RUN_URL: ${{ steps.replay.outputs.run_url }}
+        run: |
+          set -euo pipefail
+          body_file="$RUNNER_TEMP/downstream-pr.md"
+          cat >"$body_file" <<EOF
+          ## Outcome
+
+          Code-only integration of A04 native application-finality carriers, A19 durable terminal-finalization history, and A23 strictly verified native finalized replay-floor/tombstone-GC authority on the exact fully qualified PR #55 head.
+
+          ## Exact source and evidence
+
+          \`\`\`text
+          parent_commit=${EXPECTED_PARENT}
+          target_branch=${TARGET_BRANCH}
+          target_commit=${TARGET_COMMIT}
+          target_tree=${TARGET_TREE}
+          exact_head_replay_run=${REPLAY_RUN_ID}
+          exact_head_replay_conclusion=success
+          \`\`\`
+
+          The published target was re-fetched from GitHub and independently replayed on the X230/Rust 1.95.0 frozen-offline environment. Formatting, all-target compilation, strict Clippy for all four affected crates, the complete A04/A19/A23 regression matrix, A22 capability-authority audit, runner/offline policy, repository/blocker truth, canonical plan, Native PoCO pre-cutover truth, project-boundary audit, clean-tree verification, and offline-input immutability all passed on that exact unchanged head.
+
+          ## Closed repository-owned slice
+
+          - A04: typed application-finalization intent/readback carrier.
+          - A19: content-addressed SQLite terminal history, exact replay, corruption detection, and restart audit.
+          - A23: sealed signer-local verified replay floor required before tombstone deletion.
+
+          ## Non-claims
+
+          Production remote signing/HSM custody, independently administered monotonic anti-rollback anchoring, whole-node cross-store atomicity, process-2/state sync, authenticated cross-platform P2P, real multi-host and physical power-loss evidence, independent audit, soak, release, mainnet, and production activation remain open.
+          EOF
+          sed -i 's/^          //' "$body_file"
+
+          query="$(
+            gh api "/repos/${GITHUB_REPOSITORY}/pulls" \
+              -f state=open -f head="TrillionniumFoundation:${TARGET_BRANCH}" \
+              -f base="${BASE_BRANCH}" -f per_page=10
+          )"
+          number="$(jq -r '.[0].number // empty' <<<"$query")"
+          if [[ -z "$number" ]]; then
+            created="$(
+              gh api --method POST "/repos/${GITHUB_REPOSITORY}/pulls" \
+                -f title='[A04/A19/A23] Qualified native finality history and replay-floor stack' \
+                -f head="${TARGET_BRANCH}" \
+                -f base="${BASE_BRANCH}" \
+                -F draft=true \
+                --raw-field body="$(cat "$body_file")"
+            )"
+            number="$(jq -r .number <<<"$created")"
+          else
+            gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/pulls/${number}" \
+              --raw-field body="$(cat "$body_file")" >/dev/null
+          fi
+          test -n "$number"
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+
+      - name: Publish exact evidence to both PRs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET_COMMIT: ${{ steps.target.outputs.commit }}
+          TARGET_TREE: ${{ steps.target.outputs.tree }}
+          REPLAY_RUN_ID: ${{ steps.replay.outputs.run_id }}
+          DOWNSTREAM_PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          marker='<!-- trnm-a04-a19-a23-exact-head-evidence-v1 -->'
+          body="$(cat <<EOF
+          ${marker}
+          ## A04/A19/A23 published exact-head qualification
+
+          \`\`\`text
+          parent_commit=${EXPECTED_PARENT}
+          target_branch=${TARGET_BRANCH}
+          target_commit=${TARGET_COMMIT}
+          target_tree=${TARGET_TREE}
+          exact_head_replay_run=${REPLAY_RUN_ID}
+          exact_head_replay_conclusion=success
+          downstream_pr=#${DOWNSTREAM_PR}
+          production_candidate=false
+          production_consensus_activation=false
+          release_ready=false
+          \`\`\`
+
+          The target branch is a one-commit, code-only child of the exact qualified PR #55 head. Its published remote head passed the independent X230 offline replay. This closes the repository-owned A04 carrier, A19 terminal-history, and A23 verified replay-floor/tombstone-GC slice only; all external evidence and production activation predicates remain fail-closed.
+          EOF
+          )"
+          for issue in 55 "$DOWNSTREAM_PR"; do
+            comments="$(gh api "/repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" -f per_page=100)"
+            existing="$(jq -r --arg marker "$marker" '[.[] | select(.body | contains($marker))] | .[0].id // empty' <<<"$comments")"
+            if [[ -n "$existing" ]]; then
+              gh api --method PATCH "/repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" \
+                --raw-field body="$body" >/dev/null
+            else
+              gh api --method POST "/repos/${GITHUB_REPOSITORY}/issues/${issue}/comments" \
+                --raw-field body="$body" >/dev/null
+            fi
+          done
