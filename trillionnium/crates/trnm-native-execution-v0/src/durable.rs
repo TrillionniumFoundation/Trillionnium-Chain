@@ -54,6 +54,9 @@ use crate::{
     AuthorizedSignerV0, NativeStateWriteV0,
 };
 
+mod replay_floor_v1;
+pub use replay_floor_v1::VerifiedNativeSignerReplayFloorV1;
+
 const APPLICATION_SCHEMA_VERSION_V0: u64 = 3;
 const P_STATUS_PREPARED: u64 = 1;
 const P_STATUS_COMMITTED: u64 = 2;
@@ -996,6 +999,7 @@ pub struct FinalizedNativeApplicationReadV0 {
     row: ConfirmedDurableExecutionHistoryRowV0,
     executed: NativeExecutedBlockV0,
     receipt_commitments: Vec<Hash32V0>,
+    replay_signer_nonces: BTreeSet<(String, u64)>,
 }
 
 impl FinalizedNativeApplicationReadV0 {
@@ -1357,6 +1361,8 @@ impl DurableNativeApplicationV0 {
             .iter()
             .map(|receipt| Hash32V0::new(*receipt.commitment().as_bytes()))
             .collect::<Vec<_>>();
+        let replay_signer_nonces: BTreeSet<(String, u64)> =
+            decode_borsh_v0(&p.target_nonce_bytes, "read_finalized.target_nonces")?;
         let row = ConfirmedDurableExecutionHistoryRowV0 {
             owner_affinity: Arc::clone(&self.owner_affinity),
             store_id: p.store_id,
@@ -1389,6 +1395,7 @@ impl DurableNativeApplicationV0 {
             row,
             executed,
             receipt_commitments,
+            replay_signer_nonces,
         })
     }
 
@@ -5757,6 +5764,58 @@ mod tests {
             .unwrap();
         assert_eq!(recovery.disposition(), NativeRecoveryDispositionV0::Exact);
         assert_eq!(recovery.head(), committed.head());
+
+        let operator_floor = reopened
+            .verify_finalized_signer_replay_floor_v1(
+                "did:operator:1",
+                1,
+                request.height(),
+                &proof,
+                template.timestamp_ms() - 1_000,
+            )
+            .unwrap();
+        assert!(operator_floor.belongs_to_application_v1(&reopened));
+        assert_eq!(operator_floor.application_signer_id_v1(), "did:operator:1");
+        assert_eq!(operator_floor.reject_nonce_through_v1(), 1);
+        assert_eq!(operator_floor.finalized_height_v1(), request.height().get());
+        assert_eq!(
+            operator_floor.state_root_v1(),
+            *request.expected().post_state_root().as_bytes()
+        );
+        assert_eq!(
+            operator_floor.finality_proof_digest_v1(),
+            *proof.id().as_bytes()
+        );
+
+        let missing_prefix = reopened
+            .verify_finalized_signer_replay_floor_v1(
+                "did:operator:1",
+                2,
+                request.height(),
+                &proof,
+                template.timestamp_ms() - 1_000,
+            )
+            .expect_err("a missing nonce in the claimed prefix must fail closed");
+        assert_eq!(
+            missing_prefix.code(),
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch
+        );
+        assert_eq!(missing_prefix.field(), "replay_floor.non_contiguous");
+
+        let foreign_signer = reopened
+            .verify_finalized_signer_replay_floor_v1(
+                "did:missing:1",
+                1,
+                request.height(),
+                &proof,
+                template.timestamp_ms() - 1_000,
+            )
+            .expect_err("a foreign application signer must not inherit another prefix");
+        assert_eq!(
+            foreign_signer.code(),
+            NativeApplicationExecutionErrorCodeV0::BindingMismatch
+        );
+        assert_eq!(foreign_signer.field(), "replay_floor.non_contiguous");
     }
 
     #[test]
