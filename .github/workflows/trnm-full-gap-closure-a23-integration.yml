@@ -6,67 +6,96 @@ on:
       - work/full-gap-closure-20260831
     paths:
       - .github/workflows/trnm-full-gap-closure-a23-integration.yml
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: trnm-full-gap-closure-a23-integration-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  CLOSURE_BRANCH: work/full-gap-closure-20260831
+  SOURCE_FLOOR: 10417802d688160109b9350a15c82f7076fd9249
+  A22_HEAD: 2384e7e4ceb1fe63a0f29e91dab274d74940a8d3
+  A23_GENERATOR_HEAD: ca172504a975565ac329757c0e0fb3568f7b7985
+  A23_GENERATOR_BLOB: a1af430ec06a6cbb826a8d5d31d1dd60c10314a4
+
 jobs:
-  generate-verify-publish:
-    if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      github.ref == 'refs/heads/work/full-gap-closure-20260831'
+  qualify-a23-source:
+    name: qualify-a23-native-replay-floor
     runs-on: ubuntu-24.04
     timeout-minutes: 180
+    permissions:
+      contents: read
+    outputs:
+      candidate_commit: ${{ steps.identity.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.identity.outputs.candidate_tree }}
+      workflow_blob: ${{ steps.identity.outputs.workflow_blob }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+
     steps:
-      - name: Check out exact closure head
+      - name: Check out exact read-only closure source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: work/full-gap-closure-20260831
+          ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
-      - name: Verify closure lineage and fetch immutable A23 generator
+      - name: Verify source scope and fetch immutable A23 generator
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "36f3dba1984606f09b5dc478a2d9e84d367c02d9"
-          git merge-base --is-ancestor 2384e7e4ceb1fe63a0f29e91dab274d74940a8d3 HEAD
-          git fetch --no-tags origin \
-            ca172504a975565ac329757c0e0fb3568f7b7985:refs/remotes/origin/a23-generator
-          test "$(git rev-parse refs/remotes/origin/a23-generator)" = \
-            "ca172504a975565ac329757c0e0fb3568f7b7985"
-          test "$(git rev-parse refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py)" = \
-            "a1af430ec06a6cbb826a8d5d31d1dd60c10314a4"
-          git show refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py \
-            > "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
-          python3 -B -m py_compile "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          test "${GITHUB_REPOSITORY}" = "TrillionniumFoundation/Trillionnium-Chain"
+          test "${GITHUB_REF}" = "refs/heads/${CLOSURE_BRANCH}"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git merge-base --is-ancestor "${SOURCE_FLOOR}" HEAD
+          git merge-base --is-ancestor "${A22_HEAD}" HEAD
 
-      - name: Generate A23 source and close deterministic baseline lint debt
+          unexpected="$(
+            git diff --name-only "${SOURCE_FLOOR}..HEAD" |
+              grep -Ev '^\.github/workflows/trnm-full-gap-closure-a23-integration\.yml$' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'unexpected A23 qualification source changes:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+
+          git fetch --no-tags origin \
+            "${A23_GENERATOR_HEAD}:refs/remotes/origin/a23-generator"
+          test "$(git rev-parse refs/remotes/origin/a23-generator)" = \
+            "${A23_GENERATOR_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py)" = \
+            "${A23_GENERATOR_BLOB}"
+          git show \
+            refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py \
+            > "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+          python3 -B -m py_compile \
+            "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
+
+      - name: Generate exact A23 native replay-floor source
         shell: bash
         run: |
           set -euo pipefail
           python3 -B "${RUNNER_TEMP}/a23_implement_native_replay_floor_v1.py"
           rm -f .github/workflows/trnm-a23-native-replay-floor-verify.yml
+
           python3 -B - <<'PY'
           from pathlib import Path
 
           def exact_replace(path: Path, old: str, new: str) -> None:
-              text = path.read_text(encoding='utf-8')
+              text = path.read_text(encoding="utf-8")
               count = text.count(old)
               if count != 1:
                   raise SystemExit(
-                      f'unexpected replacement count in {path}: {count}; '
-                      f'needle={old!r}'
+                      f"unexpected replacement count in {path}: {count}; needle={old!r}"
                   )
-              path.write_text(text.replace(old, new), encoding='utf-8')
+              path.write_text(text.replace(old, new, 1), encoding="utf-8")
 
           generated = Path(
-              'trillionnium/crates/trnm-poco-node/src/'
-              'tx_admission_wal_native_replay_floor_v1.inc'
+              "trillionnium/crates/trnm-poco-node/src/"
+              "tx_admission_wal_native_replay_floor_v1.inc"
           )
           exact_replace(
               generated,
@@ -80,8 +109,8 @@ jobs:
           )
 
           tombstone = Path(
-              'trillionnium/crates/trnm-poco-node/src/'
-              'tx_admission_wal_tombstone_gc_v1.inc'
+              "trillionnium/crates/trnm-poco-node/src/"
+              "tx_admission_wal_tombstone_gc_v1.inc"
           )
           exact_replace(
               tombstone,
@@ -99,7 +128,9 @@ jobs:
               "    }",
           )
 
-          wal = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs')
+          wal = Path(
+              "trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs"
+          )
           exact_replace(
               wal,
               "    #[test]\n"
@@ -116,6 +147,7 @@ jobs:
               "    }",
           )
           PY
+
           test ! -e .github/workflows/trnm-a23-native-replay-floor-verify.yml
           git diff --check
 
@@ -123,7 +155,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
+          rustup toolchain install 1.95.0 \
+            --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
 
       - name: Format compile lint and test native replay floor
@@ -139,7 +172,8 @@ jobs:
           cargo clippy --manifest-path trillionnium/Cargo.toml \
             -p trnm-native-execution-v0 --all-targets --locked -- -D warnings
           cargo clippy --manifest-path trillionnium/Cargo.toml \
-            -p trnm-poco-node --features tx-admission-wal --all-targets --locked -- -D warnings
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked -- -D warnings
           cargo test --manifest-path trillionnium/Cargo.toml \
             -p trnm-native-execution-v0 --lib --locked
           cargo test --manifest-path trillionnium/Cargo.toml \
@@ -157,22 +191,35 @@ jobs:
           python3 -B - <<'PY'
           import json
           from pathlib import Path
-          report = json.loads(Path('/tmp/trnm-capability-authority-audit-v2.json').read_text())
-          assert report['unresolved_total'] == 0, report
-          assert report['authority_sink_findings'] == [], report
+
+          report = json.loads(
+              Path("/tmp/trnm-capability-authority-audit-v2.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          assert report["unresolved_total"] == 0, report
+          assert report["authority_sink_findings"] == [], report
           PY
           bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
           python3 scripts/ci/check_repository_truth_v1.py
           python3 scripts/ci/check_blocker_execution_v1.py
           bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
           git diff --check
 
-      - name: Publish exact tested source-only A23 commit
+      - name: Commit exact qualified A23 source
+        id: identity
         shell: bash
         run: |
           set -euo pipefail
           expected=$'docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md\ntrillionnium/crates/trnm-native-execution-v0/src/durable.rs\ntrillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs\ntrillionnium/crates/trnm-native-execution-v0/src/lib.rs\ntrillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs\ntrillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc\ntrillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc'
-          test "$(git status --short | sed -E 's/^...//' | sort)" = "${expected}"
+          actual="$(git status --short | sed -E 's/^...//' | sort)"
+          if [[ "${actual}" != "${expected}" ]]; then
+            printf 'unexpected A23 source inventory:\n%s\n' "${actual}" >&2
+            exit 3
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add \
@@ -184,5 +231,181 @@ jobs:
             trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc \
             trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
           git diff --cached --check
-          git commit -m "feat(node): bind tombstone GC to finalized native replay floor"
-          git push origin "HEAD:work/full-gap-closure-20260831"
+          git commit -m \
+            "feat(node): bind tombstone GC to finalized native replay floor"
+
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          source_workflow_blob="$(git rev-parse "${GITHUB_SHA}:.github/workflows/trnm-full-gap-closure-a23-integration.yml")"
+          candidate_workflow_blob="$(git rev-parse "${candidate_commit}:.github/workflows/trnm-full-gap-closure-a23-integration.yml")"
+          test "${candidate_workflow_blob}" = "${source_workflow_blob}"
+
+          output="${RUNNER_TEMP}/a23-qualified"
+          mkdir -p "${output}"
+          git update-ref refs/heads/trnm-a23-qualified-candidate \
+            "${candidate_commit}"
+          git bundle create "${output}/candidate.bundle" \
+            refs/heads/trnm-a23-qualified-candidate
+          git update-ref -d refs/heads/trnm-a23-qualified-candidate
+          sha256sum "${output}/candidate.bundle" \
+            > "${output}/candidate.bundle.sha256"
+
+          CANDIDATE_COMMIT="${candidate_commit}" \
+          CANDIDATE_TREE="${candidate_tree}" \
+          WORKFLOW_BLOB="${candidate_workflow_blob}" \
+          python3 -B - "${output}/attestation.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          def git(*args: str) -> str:
+              return subprocess.check_output(["git", *args], text=True).strip()
+
+          attestation = {
+              "schema": "trnm-a23-native-replay-floor-attestation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["GITHUB_SHA"],
+              "source_tree": git(
+                  "rev-parse", f"{os.environ['GITHUB_SHA']}^{{tree}}"
+              ),
+              "candidate_commit": os.environ["CANDIDATE_COMMIT"],
+              "candidate_tree": os.environ["CANDIDATE_TREE"],
+              "workflow_blob": os.environ["WORKFLOW_BLOB"],
+              "a22_head": os.environ["A22_HEAD"],
+              "a23_generator_head": os.environ["A23_GENERATOR_HEAD"],
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          Path(sys.argv[1]).write_text(
+              json.dumps(attestation, sort_keys=True, separators=(",", ":"))
+              + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          echo "candidate_commit=${candidate_commit}" >> "${GITHUB_OUTPUT}"
+          echo "candidate_tree=${candidate_tree}" >> "${GITHUB_OUTPUT}"
+          echo "workflow_blob=${candidate_workflow_blob}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload exact qualified A23 bundle
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-a23-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/a23-qualified/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-a23-source:
+    name: publish-a23-native-replay-floor
+    needs: qualify-a23-source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Check out exact source without persisted write credential
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact qualification artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify-a23-source.outputs.artifact_id }}
+          path: ${{ runner.temp }}/a23-qualified
+          merge-multiple: true
+
+      - name: Verify A23 attestation and Git object identity
+        shell: bash
+        env:
+          EXPECTED_CANDIDATE_COMMIT: ${{ needs.qualify-a23-source.outputs.candidate_commit }}
+          EXPECTED_CANDIDATE_TREE: ${{ needs.qualify-a23-source.outputs.candidate_tree }}
+          EXPECTED_WORKFLOW_BLOB: ${{ needs.qualify-a23-source.outputs.workflow_blob }}
+        run: |
+          set -euo pipefail
+          artifact="${RUNNER_TEMP}/a23-qualified"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          sha256sum --check "${artifact}/candidate.bundle.sha256"
+          git bundle verify "${artifact}/candidate.bundle"
+
+          python3 -B - "${artifact}/attestation.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected = {
+              "schema": "trnm-a23-native-replay-floor-attestation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["GITHUB_SHA"],
+              "candidate_commit": os.environ["EXPECTED_CANDIDATE_COMMIT"],
+              "candidate_tree": os.environ["EXPECTED_CANDIDATE_TREE"],
+              "workflow_blob": os.environ["EXPECTED_WORKFLOW_BLOB"],
+              "a22_head": os.environ["A22_HEAD"],
+              "a23_generator_head": os.environ["A23_GENERATOR_HEAD"],
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          mismatches = {
+              key: (data.get(key), value)
+              for key, value in expected.items()
+              if data.get(key) != value
+          }
+          if mismatches:
+              raise SystemExit(f"A23 attestation mismatch: {mismatches}")
+          PY
+
+          git fetch "${artifact}/candidate.bundle" \
+            refs/heads/trnm-a23-qualified-candidate:refs/remotes/qualified/a23
+          candidate="$(git rev-parse refs/remotes/qualified/a23)"
+          tree="$(git rev-parse "${candidate}^{tree}")"
+          workflow_blob="$(git rev-parse "${candidate}:.github/workflows/trnm-full-gap-closure-a23-integration.yml")"
+          test "${candidate}" = "${EXPECTED_CANDIDATE_COMMIT}"
+          test "${tree}" = "${EXPECTED_CANDIDATE_TREE}"
+          test "${workflow_blob}" = "${EXPECTED_WORKFLOW_BLOB}"
+          git merge-base --is-ancestor "${GITHUB_SHA}" "${candidate}"
+
+      - name: Publish only the already-qualified A23 commit
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_CANDIDATE_COMMIT: ${{ needs.qualify-a23-source.outputs.candidate_commit }}
+        run: |
+          set -euo pipefail
+          remote_head="$(
+            git ls-remote origin "refs/heads/${CLOSURE_BRANCH}" |
+              awk '{print $1}'
+          )"
+          test "${remote_head}" = "${GITHUB_SHA}"
+
+          auth="$(
+            printf 'x-access-token:%s' "${GITHUB_TOKEN}" |
+              base64 -w0
+          )"
+          git config --local \
+            http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic ${auth}"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+
+          git push --atomic origin \
+            "${EXPECTED_CANDIDATE_COMMIT}:refs/heads/${CLOSURE_BRANCH}"
+
+          published="$(
+            git ls-remote origin "refs/heads/${CLOSURE_BRANCH}" |
+              awk '{print $1}'
+          )"
+          test "${published}" = "${EXPECTED_CANDIDATE_COMMIT}"
