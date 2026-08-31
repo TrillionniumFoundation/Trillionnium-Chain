@@ -6,7 +6,7 @@ on:
       - tmp/closure-diagnostic-runner-20260831
     paths:
       - .github/workflows/trnm-closure-diagnostic-runner.yml
-      - scripts/ci/trnm-closure-current.patch.gz.b64
+      - scripts/ci/trnm-closure-current.patch.gz
 
 permissions:
   contents: read
@@ -17,6 +17,8 @@ concurrency:
 
 env:
   BASE_SHA: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+  PATCH_GZIP_SHA256: 23cf7f299192438f23af4e897a5f3716dca042b1dc041c4cda0c6a5579fae1e0
+  PATCH_SHA256: 86b51d092425c903903647875e383e667f948dfd8a4acd8da8ddeb2751165964
   CARGO_NET_OFFLINE: "true"
   CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
   CARGO_INCREMENTAL: "0"
@@ -65,14 +67,15 @@ jobs:
             --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
             trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
-      - name: Decode apply and format current patch
+      - name: Verify decode apply and format exact patch
         working-directory: source
         shell: bash
         run: |
           set -euo pipefail
-          payload="../driver/scripts/ci/trnm-closure-current.patch.gz.b64"
-          base64 -d "${payload}" | gzip -d >"${RUNNER_TEMP}/closure.patch"
-          sha256sum "${RUNNER_TEMP}/closure.patch" | tee "${RUNNER_TEMP}/closure.patch.sha256"
+          payload="../driver/scripts/ci/trnm-closure-current.patch.gz"
+          printf '%s  %s\n' "${PATCH_GZIP_SHA256}" "${payload}" | sha256sum --check
+          gzip -dc "${payload}" >"${RUNNER_TEMP}/closure.patch"
+          printf '%s  %s\n' "${PATCH_SHA256}" "${RUNNER_TEMP}/closure.patch" | sha256sum --check
           git apply --check "${RUNNER_TEMP}/closure.patch"
           git apply "${RUNNER_TEMP}/closure.patch"
           rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
@@ -87,7 +90,7 @@ jobs:
           set -euo pipefail
           out="${RUNNER_TEMP}/trnm-closure-diagnostic"
           mkdir -p "${out}"
-          cp "${RUNNER_TEMP}/closure.patch.sha256" "${out}/input.patch.sha256"
+          printf '%s\n' "${PATCH_SHA256}" >"${out}/input.patch.sha256"
 
           set +e
           cargo check --manifest-path trillionnium/Cargo.toml \
@@ -120,6 +123,7 @@ jobs:
           import sys
 
           out = pathlib.Path(sys.argv[1])
+
           def collect(path):
               lints = collections.Counter()
               files = collections.Counter()
@@ -135,7 +139,7 @@ jobs:
                   if message.get('level') != 'error':
                       continue
                   code = (message.get('code') or {}).get('code') or 'uncoded'
-                  primary = [s for s in message.get('spans', []) if s.get('is_primary')]
+                  primary = [span for span in message.get('spans', []) if span.get('is_primary')]
                   file_name = primary[0].get('file_name', 'unknown') if primary else 'unknown'
                   line = primary[0].get('line_start') if primary else None
                   lints[code] += 1
@@ -155,8 +159,9 @@ jobs:
               }
 
           summary = {
-              'schema': 'trnm-closure-diagnostic-v1',
+              'schema': 'trnm-closure-diagnostic-v2',
               'base_sha': '32c1a49a42ff6f2bc1f523ae80a32db41bb543cf',
+              'patch_sha256': '86b51d092425c903903647875e383e667f948dfd8a4acd8da8ddeb2751165964',
               'cargo_check_exit_code': int((out / 'cargo-check.exit-code').read_text()),
               'cargo_clippy_exit_code': int((out / 'cargo-clippy.exit-code').read_text()),
               'cargo_check': collect(out / 'cargo-check.jsonl'),
