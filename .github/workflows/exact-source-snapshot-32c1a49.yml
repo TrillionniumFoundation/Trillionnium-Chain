@@ -1,0 +1,46 @@
+name: exact-source-snapshot-32c1a49
+
+on:
+  push:
+    branches:
+      - tmp/exact-source-snapshot-32c1a49-20260831
+    paths:
+      - .github/workflows/exact-source-snapshot-32c1a49.yml
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out snapshot carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Archive exact parent source
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_commit="$(git rev-parse HEAD^)"
+          test "${source_commit}" = "32c1a49a42ff6f2bc1f523ae80a32db41bb543cf"
+          source_tree="$(git rev-parse "${source_commit}^{tree}")"
+          out="${RUNNER_TEMP}/exact-source"
+          mkdir -p "${out}"
+          git archive --format=tar --prefix=Trillionnium-Chain/ "${source_commit}" |
+            gzip -9 > "${out}/source.tar.gz"
+          printf '%s\n' "${source_commit}" > "${out}/source.commit"
+          printf '%s\n' "${source_tree}" > "${out}/source.tree"
+          sha256sum "${out}/source.tar.gz" > "${out}/source.tar.gz.sha256"
+
+      - name: Upload exact source
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: exact-source-32c1a49
+          path: ${{ runner.temp }}/exact-source/
+          if-no-files-found: error
+          retention-days: 3
