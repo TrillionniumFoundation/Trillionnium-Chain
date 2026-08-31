@@ -1,0 +1,71 @@
+name: candidate-clippy-harness-probe-x230-5383
+
+on:
+  push:
+    branches:
+      - tmp/candidate-clippy-harness-probe-5383-20260831
+    paths:
+      - .github/workflows/candidate-clippy-harness-probe-x230-5383.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact probe source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify toolchain and offline cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Run isolated harness and retain diagnostic
+        shell: bash
+        run: |
+          set -uo pipefail
+          out="${RUNNER_TEMP}/candidate-clippy-harness"
+          mkdir -p "${out}"
+          set +e
+          bash scripts/ci/check_candidate_devnet_clippy_v1.sh >"${out}/harness.log" 2>&1
+          rc=$?
+          set -e
+          printf 'harness_rc=%s\n' "${rc}" | tee "${out}/result.env"
+          grep -E '^(error|warning):|candidate_devnet_clippy=' "${out}/harness.log" || true
+
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: candidate-clippy-harness-probe-x230-5383
+          path: ${{ runner.temp }}/candidate-clippy-harness/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify offline inputs unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
