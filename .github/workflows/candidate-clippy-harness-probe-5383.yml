@@ -1,0 +1,57 @@
+name: candidate-clippy-harness-probe-5383
+
+on:
+  push:
+    branches:
+      - tmp/candidate-clippy-harness-probe-5383-20260831
+    paths:
+      - .github/workflows/candidate-clippy-harness-probe-5383.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out exact probe source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Rust 1.95.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup toolchain install 1.95.0 --profile minimal --component clippy
+          rustup override set 1.95.0
+
+      - name: Populate exact dependency cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fetch --manifest-path trillionnium/Cargo.toml --locked
+
+      - name: Run isolated harness and retain diagnostic
+        shell: bash
+        run: |
+          set -uo pipefail
+          out="${RUNNER_TEMP}/candidate-clippy-harness"
+          mkdir -p "${out}"
+          set +e
+          bash scripts/ci/check_candidate_devnet_clippy_v1.sh >"${out}/harness.log" 2>&1
+          rc=$?
+          set -e
+          printf 'harness_rc=%s\n' "${rc}" | tee "${out}/result.env"
+          grep -E '^(error|warning):|candidate_devnet_clippy=' "${out}/harness.log" || true
+
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: candidate-clippy-harness-probe-5383
+          path: ${{ runner.temp }}/candidate-clippy-harness/
+          if-no-files-found: error
+          retention-days: 3
