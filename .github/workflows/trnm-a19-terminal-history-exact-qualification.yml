@@ -69,6 +69,24 @@ jobs:
           test "$(git rev-parse HEAD:trillionnium/crates/trnm-native-application-sqlite/src/lib.rs)" = \
             94f16147f236affab1a30707c403fb93e1d61046
 
+      - name: Archive exact candidate source
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/trnm-a19-source"
+          mkdir -p "$out"
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD | gzip -9 > "$out/source.tar.gz"
+          git rev-parse HEAD > "$out/source.commit"
+          git rev-parse 'HEAD^{tree}' > "$out/source.tree"
+          sha256sum "$out/source.tar.gz" > "$out/source.tar.gz.sha256"
+
+      - name: Upload exact candidate source
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-a19-source-${{ env.TARGET_COMMIT }}
+          path: ${{ runner.temp }}/trnm-a19-source/
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Verify preprovisioned Rust and offline Cargo cache
         run: |
           set -euo pipefail
