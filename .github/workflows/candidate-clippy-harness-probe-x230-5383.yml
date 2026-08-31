@@ -39,24 +39,26 @@ jobs:
           from pathlib import Path
           path = Path('trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs')
           text = path.read_text(encoding='utf-8')
-          old = '''        assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
-                  assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
-                  assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
-                  assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
-                  assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
-                  assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
-                  assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
-          '''
-          new = '''        const {
-                      assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
-                      assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
-                      assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
-                      assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
-                      assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
-                      assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
-                      assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
-                  }
-          '''
+          old = '\n'.join([
+              '        assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);',
+              '        assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);',
+              '        assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);',
+              '        assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);',
+              '        assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);',
+              '        assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);',
+              '        assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);',
+          ]) + '\n'
+          new = '\n'.join([
+              '        const {',
+              '            assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);',
+              '            assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);',
+              '            assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);',
+              '            assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);',
+              '            assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);',
+              '            assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);',
+              '            assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);',
+              '        }',
+          ]) + '\n'
           if text.count(old) != 1:
               raise SystemExit('candidate const assertion source drift')
           path.write_text(text.replace(old, new, 1), encoding='utf-8')
