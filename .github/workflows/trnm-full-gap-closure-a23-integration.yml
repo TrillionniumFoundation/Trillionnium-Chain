@@ -33,7 +33,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "b3149acd9d4a289f7bb00edf3c68d1266c200d19"
+          test "$(git rev-parse HEAD^)" = "c7c9a7be5f5369f0a024e2917c2eb861a1c3436d"
           git merge-base --is-ancestor 2384e7e4ceb1fe63a0f29e91dab274d74940a8d3 HEAD
           git fetch --no-tags origin \
             ca172504a975565ac329757c0e0fb3568f7b7985:refs/remotes/origin/a23-generator
@@ -54,55 +54,67 @@ jobs:
           python3 -B - <<'PY'
           from pathlib import Path
 
+          def exact_replace(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f'unexpected replacement count in {path}: {count}; '
+                      f'needle={old!r}'
+                  )
+              path.write_text(text.replace(old, new), encoding='utf-8')
+
           generated = Path(
               'trillionnium/crates/trnm-poco-node/src/'
               'tx_admission_wal_native_replay_floor_v1.inc'
           )
-          text = generated.read_text(encoding='utf-8')
-          generated_replacements = {
-              '.field("namespace", &hex::encode(self.namespace))':
-                  '.field("namespace", &self.namespace)',
-              '.field("canonical_signer", &hex::encode(self.canonical_signer))':
-                  '.field("canonical_signer", &self.canonical_signer)',
-          }
-          for old, new in generated_replacements.items():
-              if text.count(old) != 1:
-                  raise SystemExit(
-                      f'unexpected A23 debug expression count for {old!r}: '
-                      f'{text.count(old)}'
-                  )
-              text = text.replace(old, new)
-          generated.write_text(text, encoding='utf-8')
+          exact_replace(
+              generated,
+              '.field("namespace", &hex::encode(self.namespace))',
+              '.field("namespace", &self.namespace)',
+          )
+          exact_replace(
+              generated,
+              '.field("canonical_signer", &hex::encode(self.canonical_signer))',
+              '.field("canonical_signer", &self.canonical_signer)',
+          )
 
-          source_patches = {
-              Path(
-                  'trillionnium/crates/trnm-poco-node/src/'
-                  'tx_admission_wal_tombstone_gc_v1.inc'
-              ): {
-                  '        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);':
-                      '        const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };',
-                  '        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);':
-                      '        const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };',
-              },
-              Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs'): {
-                  '        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);':
-                      '        const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };',
-                  '        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);':
-                      '        const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };',
-                  '        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);':
-                      '        const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };',
-              },
-          }
-          for path, replacements in source_patches.items():
-              source = path.read_text(encoding='utf-8')
-              for old, new in replacements.items():
-                  if source.count(old) != 1:
-                      raise SystemExit(
-                          f'unexpected constant assertion count in {path}: '
-                          f'{old!r} -> {source.count(old)}'
-                      )
-                  source = source.replace(old, new)
-              path.write_text(source, encoding='utf-8')
+          tombstone = Path(
+              'trillionnium/crates/trnm-poco-node/src/'
+              'tx_admission_wal_tombstone_gc_v1.inc'
+          )
+          exact_replace(
+              tombstone,
+              '''    #[test]
+              fn replay_floor_verifier_authority_is_sealed_v1() {
+                  assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);
+                  assert!(tombstone_gc_candidate_contract_v1());
+                  assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);
+              }'''.replace('              ', ''),
+              '''    #[test]
+              fn replay_floor_verifier_authority_is_sealed_v1() {
+                  const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };
+                  assert!(tombstone_gc_candidate_contract_v1());
+                  const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };
+              }'''.replace('              ', ''),
+          )
+
+          wal = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs')
+          exact_replace(
+              wal,
+              '''    #[test]
+              fn native_commit_verifier_authority_is_sealed_v1() {
+                  assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
+                  assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
+                  assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
+              }'''.replace('              ', ''),
+              '''    #[test]
+              fn native_commit_verifier_authority_is_sealed_v1() {
+                  const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };
+                  const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };
+                  const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };
+              }'''.replace('              ', ''),
+          )
           PY
           test ! -e .github/workflows/trnm-a23-native-replay-floor-verify.yml
           git diff --check
