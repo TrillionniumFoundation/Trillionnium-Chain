@@ -1,0 +1,366 @@
+name: native-poco-a04-a19-a23-qualifier-v1
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-qualifier-v1-20260831
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-qualifier-v1.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-poco-a04-a19-a23-qualifier-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 50e05d9eff6d12050bf792d8d1ea0ad74314a481
+  SOURCE_TREE: 2d351c0082580976fcceda527eb198ba2939848f
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v1-20260831
+  PATCH_SHA256: 3978ee7a03650c8e4add0d3818d5ed3913d171a55b22404563fc173bdef20e85
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/native-poco-a04-a19-a23-qualifier-v1-20260831' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 220
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.freeze.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.freeze.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+
+    steps:
+      - name: Check out exact read-only carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify carrier source and frozen A23 patch
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse "${SOURCE_COMMIT}^{tree}")" = "${SOURCE_TREE}"
+          mapfile -t changed < <(git diff --name-only "${SOURCE_COMMIT}..HEAD" | sort)
+          expected=(
+            .ci/a23-full.patch.gz.b64.part1
+            .ci/a23-full.patch.gz.b64.part2
+            .github/workflows/native-poco-a04-a19-a23-qualifier-v1.yml
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          cat .ci/a23-full.patch.gz.b64.part{1,2} > "$RUNNER_TEMP/a23.patch.gz.b64"
+          base64 -d "$RUNNER_TEMP/a23.patch.gz.b64" | gzip -d > "$RUNNER_TEMP/a23.patch"
+          echo "${PATCH_SHA256}  $RUNNER_TEMP/a23.patch" | sha256sum --check
+
+      - name: Verify pinned Rust and offline Cargo cache
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Qualify exact A04 and A19 prerequisite stack
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "${SOURCE_COMMIT}"
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SOURCE_TREE}"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+
+      - name: Apply format and freeze exact A23 candidate
+        id: freeze
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          git apply --index "$RUNNER_TEMP/a23.patch"
+          cat > docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md <<'DOC'
+          # A23 / P2 native finalized replay floor v1
+
+          Status: **candidate-implemented / exact-head qualification in progress / no Gate promotion**
+
+          ## Exact source and patch boundary
+
+          ```text
+          repository = TrillionniumFoundation/Trillionnium-Chain
+          base_ref = integration/native-poco-a04-a19-a23-v1-20260831
+          base_commit = 50e05d9eff6d12050bf792d8d1ea0ad74314a481
+          base_tree = 2d351c0082580976fcceda527eb198ba2939848f
+          target_ref = integration/native-poco-a04-a19-a23-qualified-v1-20260831
+          patch_sha256 = 3978ee7a03650c8e4add0d3818d5ed3913d171a55b22404563fc173bdef20e85
+          generator_commit = ca172504a975565ac329757c0e0fb3568f7b7985
+          generator_blob = a1af430ec06a6cbb826a8d5d31d1dd60c10314a4
+          consensus_mainline = native-poco-bft
+          protocol_target = poco-bft-v0
+          production_candidate = false
+          production_consensus_activation = false
+          ```
+
+          The exact seven-file patch was frozen before this run. The qualifier
+          reconstructs it from two content-addressed carrier blobs, verifies its
+          SHA-256, applies it only to the exact A04+A19 source tree, formats it with
+          Rust 1.95.0, and accepts no unexpected path or Cargo.lock change.
+
+          ## Implemented repository-owned boundary
+
+          The candidate derives a signer-local replay floor only from strictly
+          verified native finality and durable application history. The verified
+          floor is bound to application owner affinity, durable store identity,
+          canonical signer resolution, WAL namespace and the frozen retention
+          policy. Tombstone deletion requires the non-cloneable verified floor;
+          an unverified height, local cache value or caller-supplied signer cannot
+          authorize reclamation.
+
+          This slice does not start a production validator, mint signing authority,
+          establish cross-store atomicity, supply an external anti-rollback anchor,
+          prove physical power-loss durability, or promote any production flag.
+
+          ## Required exact-head verification
+
+          ```text
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check/clippy/test: trnm-native-execution-v0
+          cargo check/clippy/test: trnm-poco-node --features tx-admission-wal
+          cargo test: trnm-native-application and trnm-native-application-sqlite
+          capability-authority audit and compile-fail proofs
+          CI runner/offline policy
+          repository/blocker/canonical-plan/pre-cutover/project truth
+          Cargo offline inputs unchanged
+          ```
+
+          ## Remaining fail-closed boundary
+
+          Live default-node integration, process-2 recovery/state sync,
+          descriptor-anchored whole-node storage, production remote signing,
+          external monotonic anti-rollback, authenticated cross-platform P2P,
+          production transaction ingress/broadcast, real multi-host campaigns,
+          physical power-loss, independent audit and soak remain separate evidence
+          predicates. No absent evidence is inferred from this repository slice.
+          DOC
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git add -A
+          mapfile -t changed < <(git diff --cached --name-only | sort)
+          expected=(
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          test "${#changed[@]}" -eq "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          git diff --cached --check
+          git diff --cached --exit-code -- trillionnium/Cargo.lock
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(tx): bind tombstone GC to native finalized replay floor'
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          echo "candidate_commit=${candidate_commit}" >> "$GITHUB_OUTPUT"
+          echo "candidate_tree=${candidate_tree}" >> "$GITHUB_OUTPUT"
+
+      - name: Compile lint and test exact A04 A19 A23 stack
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline -- -D warnings
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+
+      - name: Validate authority policy and repository truth
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path('/tmp/trnm-capability-authority-audit-v2.json').read_text(
+                  encoding='utf-8'
+              )
+          )
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_cargo_offline_policy.sh --head
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-poco-a04-a19-a23-qualified"
+          mkdir -p "$out"
+          candidate="${{ steps.freeze.outputs.candidate_commit }}"
+          tree="${{ steps.freeze.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "$candidate"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$tree"
+          test "$(git rev-parse "${candidate}^")" = "${SOURCE_COMMIT}"
+          git update-ref refs/heads/native-poco-a04-a19-a23-qualified "$candidate"
+          git bundle create "$out/candidate.bundle" \
+            refs/heads/native-poco-a04-a19-a23-qualified
+          git update-ref -d refs/heads/native-poco-a04-a19-a23-qualified
+          sha256sum "$out/candidate.bundle" > "$out/candidate.bundle.sha256"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "${SOURCE_TREE}" > "$out/source-tree"
+          printf '%s\n' "$candidate" > "$out/candidate-commit"
+          printf '%s\n' "$tree" > "$out/candidate-tree"
+
+      - name: Upload qualified candidate
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-poco-a04-a19-a23-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-poco-a04-a19-a23-qualified/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish:
+    needs: qualify
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Check out carrier without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download qualified bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify.outputs.artifact_id }}
+          path: ${{ runner.temp }}/native-poco-a04-a19-a23-qualified
+
+      - name: Verify and publish only the qualified tree
+        working-directory: trillionnium-chain
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-poco-a04-a19-a23-qualified"
+          test "$(cat "$out/source-commit")" = "${SOURCE_COMMIT}"
+          test "$(cat "$out/source-tree")" = "${SOURCE_TREE}"
+          test "$(cat "$out/candidate-commit")" = "$EXPECTED_COMMIT"
+          test "$(cat "$out/candidate-tree")" = "$EXPECTED_TREE"
+          sha256sum --check "$out/candidate.bundle.sha256"
+          git bundle verify "$out/candidate.bundle"
+          git fetch "$out/candidate.bundle" \
+            refs/heads/native-poco-a04-a19-a23-qualified:refs/remotes/qualified/native-poco
+          candidate="$(git rev-parse refs/remotes/qualified/native-poco)"
+          test "$candidate" = "$EXPECTED_COMMIT"
+          test "$(git rev-parse "${candidate}^{tree}")" = "$EXPECTED_TREE"
+          test "$(git rev-parse "${candidate}^")" = "${SOURCE_COMMIT}"
+          test -z "$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic $auth"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "${candidate}:refs/heads/${TARGET_BRANCH}"
