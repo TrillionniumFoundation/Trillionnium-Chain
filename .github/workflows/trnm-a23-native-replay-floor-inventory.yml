@@ -29,10 +29,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify immutable A22 parent
+      - name: Verify immutable inventory lineage
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "2384e7e4ceb1fe63a0f29e91dab274d74940a8d3"
+          test "$(git rev-parse HEAD^)" = "62c4077e3320f43e437710ef76a3a372b5665ec0"
+          test "$(git rev-parse HEAD^^)" = "2384e7e4ceb1fe63a0f29e91dab274d74940a8d3"
 
       - name: Inventory exact native replay-floor seams
         run: |
@@ -47,26 +48,23 @@ jobs:
                   'struct FinalizedNativeApplicationReadV0',
                   'impl FinalizedNativeApplicationReadV0',
                   'impl DurableNativeApplicationV0',
-                  'signer_nonces',
-                  'committed_signer_nonce_v0',
+                  'target_nonce_bytes',
                   'read_finalized_by_height_with_proof_v0',
-                  'read_finalized_by_block_id_with_proof_v0',
+                  'FinalityProofV0::new',
+                  'StrictEd25519Verifier',
               ),
-              Path('trillionnium/crates/trnm-native-execution-v0/src/store.rs'): (
-                  'pub trait NativeExecutionStoreV0',
-                  'committed_signer_nonce_v0',
+              Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs'): (
+                  'native_fixture_config()',
+                  'native_fixture_structural_proof',
+                  'native_readback_real_store_rejects_unauthenticated_finality_before_wal_commit',
+                  'commit_candidate_with_native_readback',
+                  'CanonicalSignerIdentityResolverV0',
               ),
               Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc'): (
                   'TxAdmissionReplayFloorEvidenceV1',
                   'TxAdmissionReplayFloorVerifierV1',
                   'VerifiedTxAdmissionReplayFloorV1',
                   'purge_tombstones_with_replay_floor_v1',
-              ),
-              Path('trillionnium/crates/trnm-application-tx-builder-v0/src/lib.rs'): (
-                  'BuiltCanonicalTxV0',
-                  'signer_id',
-                  'protocol_tx_hash_v1',
-                  'admission_view_v0',
               ),
           }
 
@@ -77,9 +75,9 @@ jobs:
               for needle in needles:
                   matches = [index for index, line in enumerate(lines) if needle in line]
                   print(f'QUERY {needle!r} matches={[index + 1 for index in matches]}')
-                  for index in matches[:12]:
-                      start = max(0, index - 4)
-                      end = min(len(lines), index + 8)
+                  for index in matches[:20]:
+                      start = max(0, index - 8)
+                      end = min(len(lines), index + 16)
                       key = (start, end)
                       if key in emitted:
                           continue
@@ -87,6 +85,23 @@ jobs:
                       print(f'--- {path}:{start + 1}-{end} ---')
                       for offset in range(start, end):
                           print(f'{offset + 1}: {lines[offset]}')
+
+          print('=== STRICT FINALITY FIXTURE CANDIDATES ===')
+          for path in sorted(Path('trillionnium/crates').rglob('*.rs')):
+              text = path.read_text(encoding='utf-8')
+              if 'FinalityProofV0::new' not in text:
+                  continue
+              if 'SigningKey' not in text and 'StrictEd25519Verifier' not in text:
+                  continue
+              lines = text.splitlines()
+              matches = [i for i, line in enumerate(lines) if 'FinalityProofV0::new' in line]
+              print(f'FILE {path} matches={[i + 1 for i in matches]}')
+              for index in matches[:8]:
+                  start = max(0, index - 45)
+                  end = min(len(lines), index + 15)
+                  print(f'--- {path}:{start + 1}-{end} ---')
+                  for offset in range(start, end):
+                      print(f'{offset + 1}: {lines[offset]}')
           PY
 
       - name: Confirm probe leaves exact tree clean
