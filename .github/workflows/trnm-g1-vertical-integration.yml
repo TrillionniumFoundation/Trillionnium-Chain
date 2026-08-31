@@ -6,6 +6,7 @@ on:
       - integration/g1-vertical-closure-v1-20260830
     paths:
       - .github/workflows/trnm-g1-vertical-integration.yml
+      - scripts/ci/run_g1_lab_validator_shards_v1.py
 
 permissions:
   contents: write
@@ -18,10 +19,9 @@ jobs:
   integrate-reviewed-candidate-snapshots:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830' &&
-      github.actor == 'Tomasrgbsf'
+      github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830'
     runs-on: ubuntu-24.04
-    timeout-minutes: 360
+    timeout-minutes: 300
     steps:
       - name: Check out exact integration branch
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -33,7 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "68d9bda622079d6a224287ff09005d5c8050d9fd"
+          test "$(git rev-parse HEAD^)" = "f02a4ad44eb147476b1eb09710c4a143ada8fac0"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
@@ -96,7 +96,7 @@ jobs:
 
           The A21 lineage descends from A18 commit `13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0`. The later A18 hygiene commit `1663abd8935be4e5819f5ff0c7ded250a3664097` has the same Git tree and is therefore bound by exact tree equality rather than a false ancestry claim.
 
-          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
+          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. Child process lifetime, pipe capture, per-test execution, whole-run wall clock and captured output are all bounded. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
           EOF
           git add -A
           git diff --cached --check
@@ -136,13 +136,17 @@ jobs:
           cargo test --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node --features tx-admission-wal --doc --locked
 
-      - name: Run complete resource-aware laboratory-validator inventory
+      - name: Run bounded complete laboratory-validator inventory
         run: |
           set -euo pipefail
           python3 -B scripts/ci/run_g1_lab_validator_shards_v1.py \
             --workers 4 \
             --minimum-discovered-tests 398 \
-            --per-test-timeout-seconds 1800 \
+            --parallel-test-timeout-seconds 300 \
+            --serial-test-timeout-seconds 900 \
+            --global-timeout-seconds 14400 \
+            --heartbeat-seconds 60 \
+            --max-captured-output-bytes 262144 \
             --serial-prefix 'consensus_runtime::' \
             --serial-prefix 'continuous_runtime::' \
             --serial-prefix 'process_event::'
