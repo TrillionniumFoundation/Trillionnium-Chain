@@ -2544,6 +2544,7 @@ fn map_reject_v0(error: TxAdmissionWalErrorV0) -> AdmissionReject {
 }
 
 include!("tx_admission_wal_tombstone_gc_v1.inc");
+include!("tx_admission_wal_native_replay_floor_v1.inc");
 
 #[cfg(test)]
 mod tests {
@@ -2758,9 +2759,9 @@ mod tests {
 
     #[test]
     fn native_commit_verifier_authority_is_sealed_v1() {
-        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);
-        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);
-        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);
+        const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };
+        const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };
+        const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };
     }
 
     fn fixture() -> FixtureEnvelope {
@@ -3084,6 +3085,227 @@ mod tests {
             authenticated_parent_timestamp_ms,
         )
         .unwrap()
+    }
+
+    fn native_fixture_header_for_execution_v1(
+        execution: &NativeBlockExecutionRequestV0,
+        set: &ValidatorSet,
+        view: u64,
+        timestamp_ms: u64,
+    ) -> BlockHeader {
+        let expected = execution.expected();
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(execution.height().get()),
+            BlockKind::Regular,
+            BlockId::new(*execution.parent().block_id().as_bytes()),
+            set.validators()[(view.saturating_sub(1) as usize) % set.validators().len()].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new(*expected.payload_root().as_bytes()),
+            ConsensusStateRoot::new(*expected.post_state_root().as_bytes()),
+            ReceiptsRoot::new(*expected.receipts_root().as_bytes()),
+            EvidenceRoot::new(*expected.evidence_root().as_bytes()),
+            timestamp_ms,
+            None,
+        )
+        .unwrap()
+    }
+
+    fn native_fixture_signed_finality_proof_v1(
+        execution: &NativeBlockExecutionRequestV0,
+        set: &ValidatorSet,
+        parameters: &ConsensusParametersV0,
+        authenticated_parent_timestamp_ms: u64,
+    ) -> FinalityProofV0 {
+        fn consensus_key(index: usize) -> SigningKey {
+            SigningKey::from_bytes(&[20 + index as u8; 32])
+        }
+
+        fn signed_qc(
+            set: &ValidatorSet,
+            view: View,
+            height: Height,
+            block_id: BlockId,
+        ) -> QuorumCertificate {
+            let votes = set
+                .validators()
+                .iter()
+                .take(3)
+                .enumerate()
+                .map(|(index, validator)| {
+                    let root = Vote::signing_root_for_set(set, view, height, block_id).unwrap();
+                    let signature = SignatureBytes::from_array(
+                        consensus_key(index).sign(root.as_bytes()).to_bytes(),
+                    );
+                    Vote::new(
+                        set.chain_id(),
+                        set.protocol_version(),
+                        set.epoch(),
+                        view,
+                        height,
+                        block_id,
+                        set.id(),
+                        validator.id(),
+                        signature,
+                        set,
+                    )
+                    .unwrap()
+                })
+                .collect();
+            QuorumCertificate::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                view,
+                height,
+                block_id,
+                set.id(),
+                votes,
+                set,
+            )
+            .unwrap()
+        }
+
+        fn certified(
+            header: BlockHeader,
+            justify: QcReferenceV0,
+            qc: QuorumCertificate,
+            set: &ValidatorSet,
+            parameters: &ConsensusParametersV0,
+            authenticated_parent_timestamp_ms: u64,
+        ) -> CertifiedHeaderV0 {
+            let root = trnm_consensus_types::ProposalWitnessV0::signing_root_for(
+                &header, &justify, None, None,
+            )
+            .unwrap();
+            let proposer_index = set
+                .validators()
+                .iter()
+                .position(|validator| validator.id() == header.proposer_id())
+                .unwrap();
+            let signature = Signature64::from_array(
+                consensus_key(proposer_index)
+                    .sign(root.as_bytes())
+                    .to_bytes(),
+            );
+            CertifiedHeaderV0::new(
+                header,
+                justify,
+                None,
+                None,
+                signature,
+                qc,
+                set,
+                None,
+                parameters,
+                authenticated_parent_timestamp_ms,
+            )
+            .unwrap()
+        }
+
+        let h1 = native_fixture_header_for_execution_v1(
+            execution,
+            set,
+            execution.height().get(),
+            execution.timestamp_ms(),
+        );
+        assert_eq!(h1.id().as_bytes(), execution.block_id().as_bytes());
+        let q1 = signed_qc(set, h1.view(), h1.height(), h1.id());
+        let c1 = certified(
+            h1.clone(),
+            QcReferenceV0::genesis_anchor(
+                GenesisQcV0::new(set.genesis_hash(), set.chain_id(), set).unwrap(),
+            ),
+            q1.clone(),
+            set,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        );
+
+        let h2 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(h1.view().get() + 1),
+            Height::new(h1.height().get() + 1),
+            BlockKind::Regular,
+            h1.id(),
+            set.validators()[(h1.view().get() as usize) % set.validators().len()].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x61; 32]),
+            ConsensusStateRoot::new([0x62; 32]),
+            ReceiptsRoot::new([0x63; 32]),
+            EvidenceRoot::new([0x64; 32]),
+            execution.timestamp_ms() + 1,
+            None,
+        )
+        .unwrap();
+        let q2 = signed_qc(set, h2.view(), h2.height(), h2.id());
+        let c2 = certified(
+            h2.clone(),
+            QcReferenceV0::ordinary(q1),
+            q2.clone(),
+            set,
+            parameters,
+            h1.timestamp_ms(),
+        );
+
+        let h3 = BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(h2.view().get() + 1),
+            Height::new(h2.height().get() + 1),
+            BlockKind::Regular,
+            h2.id(),
+            set.validators()[(h2.view().get() as usize) % set.validators().len()].id(),
+            set.id(),
+            set.consensus_parameters_hash(),
+            PayloadDigest::new([0x71; 32]),
+            ConsensusStateRoot::new([0x72; 32]),
+            ReceiptsRoot::new([0x73; 32]),
+            EvidenceRoot::new([0x74; 32]),
+            execution.timestamp_ms() + 2,
+            None,
+        )
+        .unwrap();
+        let q3 = signed_qc(set, h3.view(), h3.height(), h3.id());
+        let c3 = certified(
+            h3,
+            QcReferenceV0::ordinary(q2),
+            q3,
+            set,
+            parameters,
+            h2.timestamp_ms(),
+        );
+        let proof = FinalityProofV0::new(
+            c1,
+            c2,
+            c3,
+            set,
+            None,
+            parameters,
+            authenticated_parent_timestamp_ms,
+        )
+        .unwrap();
+        proof
+            .verify(
+                set,
+                None,
+                parameters,
+                authenticated_parent_timestamp_ms,
+                &trnm_consensus_crypto::StrictEd25519Verifier,
+            )
+            .unwrap();
+        proof
     }
 
     fn commit_evidence_for(envelope: &FixtureEnvelope) -> NativeCommitReceiptEvidenceV0 {
@@ -4188,6 +4410,170 @@ mod tests {
         drop(ready);
         drop(boundary);
         cleanup(&path);
+    }
+
+    #[test]
+    fn native_replay_floor_purges_only_strictly_finalized_contiguous_prefix_v1() {
+        let application_temp = tempfile::tempdir().unwrap();
+        let application_path = application_temp.path().join("native-replay-floor.sqlite");
+        let config = native_fixture_config();
+        let set = config.validator_set_v0().clone();
+        let parameters = *config.consensus_parameters_v0();
+        let transaction = native_fixture_transaction();
+        transaction
+            .envelope()
+            .validate_at_strict("trnm-devnet", 1_700_000_001_000)
+            .expect("native replay-floor fixture must pass strict signature/context checks");
+        let application = DurableNativeApplicationV0::open(&application_path, config).unwrap();
+        let genesis = application
+            .initialize(native_fixture_genesis_request(application.config_v0()))
+            .unwrap();
+        let timestamp_ms = 1_700_000_001_000;
+        let parent_timestamp_ms = timestamp_ms - 1_000;
+        let preview_request = NativeBlockPreviewRequestV0::new(
+            trnm_native_application::ChainIdV0::new(application.config_v0().chain_id_v0()).unwrap(),
+            trnm_native_application::GenesisHashV0::new(application.config_v0().genesis_hash_v0())
+                .unwrap(),
+            genesis.head().clone(),
+            trnm_native_application::HeightV0::new(1),
+            timestamp_ms,
+            genesis.active_validator_set_id(),
+            vec![transaction.exact_outer_bytes().to_vec()],
+        )
+        .unwrap();
+        let preview = application.preview_block_v0(&preview_request).unwrap();
+        let expected = NativeExpectedBlockCommitmentsV0::new(
+            preview.payload_root(),
+            preview.post_state_root(),
+            preview.receipts_root(),
+            preview.evidence_root(),
+        )
+        .unwrap();
+        let template = NativeBlockExecutionRequestV0::new(
+            preview_request.chain_id().clone(),
+            preview_request.genesis_hash(),
+            preview_request.parent().clone(),
+            trnm_native_application::BlockIdV0::new([0xD5; 32]).unwrap(),
+            preview_request.height(),
+            timestamp_ms,
+            preview_request.active_validator_set_id(),
+            preview_request.transactions().to_vec(),
+            expected,
+        )
+        .unwrap();
+        let header = native_fixture_header_for_execution_v1(
+            &template,
+            &set,
+            template.height().get(),
+            timestamp_ms,
+        );
+        let execution = NativeBlockExecutionRequestV0::new(
+            template.chain_id().clone(),
+            template.genesis_hash(),
+            template.parent().clone(),
+            trnm_native_application::BlockIdV0::new(*header.id().as_bytes()).unwrap(),
+            template.height(),
+            timestamp_ms,
+            template.active_validator_set_id(),
+            template.transactions().to_vec(),
+            template.expected(),
+        )
+        .unwrap();
+        let executed = match application.execute_block(execution.clone()).unwrap() {
+            NativeBlockExecutionResultV0::Valid(value) => *value,
+            other => panic!("native replay-floor execution was not valid: {other:?}"),
+        };
+        let receipt_digest = *executed.receipts()[0].commitment().as_bytes();
+        let proof = native_fixture_signed_finality_proof_v1(
+            &execution,
+            &set,
+            &parameters,
+            parent_timestamp_ms,
+        );
+        application
+            .commit_finalized_block_v0(
+                trnm_native_execution_v0::FinalizedNativeApplicationCommitRequestV0::new(
+                    executed,
+                    proof.clone(),
+                    parent_timestamp_ms,
+                ),
+            )
+            .unwrap();
+
+        let signer_id = CanonicalSignerId::from_bytes([0xD6; 32]).unwrap();
+        let wal_path = temp_path();
+        let mut boundary =
+            NodeOwnedTxAdmissionBoundaryV0::with_default_body_limit_and_signer_resolver(
+                &wal_path,
+                [0xD7; 32],
+                2,
+                0,
+                NativeFixtureSignerResolver { signer: signer_id },
+            )
+            .unwrap();
+        assert_eq!(
+            boundary.check_tx_candidate_with_resolver(
+                &transaction,
+                IngressClass::Normal,
+                "trnm-devnet",
+                timestamp_ms,
+            ),
+            TypedAdmitOutcome::Accepted
+        );
+        let mut ready = boundary.pop_ready_with_lifecycle().unwrap();
+        ready.handoff().unwrap();
+        let evidence = NativeCommitReceiptEvidenceV0::new(
+            transaction.protocol_tx_hash_v1(),
+            BlockId::new(*execution.block_id().as_bytes()),
+            Height::new(1),
+            StateRoot::new(*execution.expected().post_state_root().as_bytes()),
+            receipt_digest,
+            *proof.id().as_bytes(),
+        )
+        .unwrap();
+        boundary
+            .commit_candidate_with_native_readback(
+                &mut ready,
+                &transaction,
+                evidence,
+                &application,
+                &proof,
+                parent_timestamp_ms,
+            )
+            .unwrap();
+        drop(ready);
+        let compacted = boundary.compact_terminal_rows_v1(8).unwrap();
+        assert_eq!(compacted.compacted(), 1);
+        assert_eq!(boundary.retained_tombstones_v1().unwrap(), 1);
+
+        assert_eq!(
+            boundary.purge_tombstones_with_native_replay_floor_v1(
+                &transaction,
+                2,
+                &application,
+                &proof,
+                parent_timestamp_ms,
+                8,
+            ),
+            Err(AdmissionReject::InconsistentState)
+        );
+        assert_eq!(boundary.retained_tombstones_v1().unwrap(), 1);
+
+        let purged = boundary
+            .purge_tombstones_with_native_replay_floor_v1(
+                &transaction,
+                1,
+                &application,
+                &proof,
+                parent_timestamp_ms,
+                8,
+            )
+            .unwrap();
+        assert_eq!(purged.purged(), 1);
+        assert_eq!(purged.retained_tombstones(), 0);
+        drop(boundary);
+        drop(application);
+        cleanup(&wal_path);
     }
 
     #[test]
