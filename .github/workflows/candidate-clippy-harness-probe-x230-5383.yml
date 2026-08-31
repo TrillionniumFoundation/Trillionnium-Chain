@@ -31,6 +31,42 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Apply exact const-assertion candidate fix locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          from pathlib import Path
+          path = Path('trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs')
+          text = path.read_text(encoding='utf-8')
+          old = '''        assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
+                  assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
+                  assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
+                  assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
+                  assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
+                  assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
+                  assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
+          '''
+          new = '''        const {
+                      assert!(CANDIDATE_DEVNET_VALIDATOR_CLI_V1);
+                      assert!(CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1);
+                      assert!(CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1);
+                      assert!(!CANDIDATE_DEVNET_HSM_AUTHORITY_V1);
+                      assert!(!CANDIDATE_DEVNET_HOST_ATTESTATION_V1);
+                      assert!(!CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1);
+                      assert!(!CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1);
+                  }
+          '''
+          if text.count(old) != 1:
+              raise SystemExit('candidate const assertion source drift')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+          git diff --check
+          git add trillionnium/crates/trnm-poco-lab-validator/src/candidate_devnet.rs
+          git config user.name 'probe-only'
+          git config user.email 'probe-only@example.invalid'
+          git commit -m 'probe: const candidate non-claims'
+
       - name: Verify toolchain and offline cache
         shell: bash
         run: |
