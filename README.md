@@ -82,10 +82,20 @@ cargo fmt --all -- --check
 cargo check --workspace --all-targets --locked
 ```
 
-Every pull request must run the actor-independent GitHub-hosted checks
-`repository-truth`, `rust-baseline`, and `external-evidence-contract`. A skipped,
-queued, stale-head, synthetic-merge, or self-authored result is not acceptance
-evidence.
+The protected `main` branch binds five actor-independent, exact-head GitHub-hosted
+checks:
+
+- `repository-truth`;
+- `protocol-contract`;
+- `fuzz-smoke`;
+- `rust-baseline`;
+- `external-evidence-contract`.
+
+A skipped, queued, stale-head, synthetic-merge, cancelled, failed, or self-authored
+result is not acceptance evidence. `fuzz-smoke` is only a bounded integration
+smoke, not a long-running fuzz campaign. A green `external-evidence-contract`
+means the schema and fail-closed behavior passed; it does not mean the required
+independent real-world evidence already exists.
 
 ## Candidate node boundary
 
