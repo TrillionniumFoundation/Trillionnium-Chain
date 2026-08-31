@@ -1,0 +1,146 @@
+name: trnm-a22-capability-authority-audit
+
+on:
+  push:
+    branches:
+      - feature/chain-a22-p1-capability-authority-audit-v1-20260830
+    paths:
+      - .github/workflows/trnm-a22-capability-authority-audit.yml
+      - scripts/ci/a22_capability_authority_audit_v1.py
+      - scripts/ci/a22_capability_authority_policy_v1.json
+      - scripts/ci/a22_inert_capability_compile_fail_v1.sh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-a22-capability-authority-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  RUSTUP_TOOLCHAIN: "1.95.0"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CANONICAL_A21_HEAD: a26aa0ada6b230b7a39c2a2d68a0462267e4c751
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  enforce-capability-authority-policy:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+       (github.actor == 'ProfAlexQI' &&
+        github.triggering_actor == 'ProfAlexQI' &&
+        (github.event_name != 'pull_request' ||
+         github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact read-only audit source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify canonical A22 source boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          git merge-base --is-ancestor "${CANONICAL_A21_HEAD}" HEAD
+          unexpected="$(
+            git diff --name-only "${CANONICAL_A21_HEAD}..HEAD" |
+              grep -Ev '^(\.github/workflows/trnm-a22-capability-authority-audit\.yml|scripts/ci/a22_capability_authority_audit_v1\.py|scripts/ci/a22_capability_authority_policy_v1\.json|scripts/ci/a22_inert_capability_compile_fail_v1\.sh)$' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'A22 source boundary contains unexpected paths:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+          test "$(git diff --name-only "${CANONICAL_A21_HEAD}..HEAD" | wc -l | tr -d ' ')" -eq 4
+
+      - name: Verify preprovisioned Rust and offline Cargo cache
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Run deterministic authority policy audit
+        run: |
+          set -euo pipefail
+          python3 -B -m py_compile scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          test -s /tmp/trnm-capability-authority-audit-v2.json
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(
+              Path('/tmp/trnm-capability-authority-audit-v2.json').read_text()
+          )
+          assert report['schema'] == 'trnm-capability-authority-audit-v2'
+          raw = report['generic_authority_mint_findings']
+          reviewed = report['reviewed_authority_mint_findings']
+          assert len(raw) == 5, raw
+          assert len(reviewed) == 5, reviewed
+          assert sum(row['disposition'] == 'reviewed-inert' for row in reviewed) == 4
+          assert sum(row['disposition'] == 'reviewed-sealed' for row in reviewed) == 1
+          assert report['unresolved_authority_mint_findings'] == []
+          assert report['stale_policy_entries'] == []
+          assert report['missing_compile_fail_proofs'] == []
+          assert report['authority_sink_findings'] == []
+          assert report['production_migration_authority_impl_findings'] == []
+          assert report['strict_rehearsal_boundary_failures'] == []
+          assert all(report['strict_rehearsal_boundary'].values())
+          assert report['unresolved_total'] == 0
+
+          production = [
+              (row['authority_trait'], row['path'])
+              for row in report['production_migration_authority_impls']
+              if not row['test_only']
+          ]
+          assert production == [
+              (
+                  'CometStateExportVerifierV1',
+                  'trillionnium/crates/trnm-consensus-app/src/migration_rehearsal.rs',
+              ),
+              (
+                  'PocoTargetProjectionManifestVerifierV1',
+                  'trillionnium/crates/trnm-consensus-app/src/migration_rehearsal.rs',
+              ),
+          ], production
+          PY
+
+      - name: Prove inert capabilities cannot become activation authority
+        run: |
+          set -euo pipefail
+          bash -n scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+
+      - name: Confirm audit leaves a clean exact tree
+        run: |
+          set -euo pipefail
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
