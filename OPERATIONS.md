@@ -59,10 +59,19 @@ cargo fmt --all -- --check
 cargo check --workspace --all-targets --locked
 ```
 
-The GitHub-hosted checks `repository-truth`, `rust-baseline`, and
-`external-evidence-contract` must complete on the exact pull-request head. A
-skipped, queued, cancelled, stale-head, synthetic-merge-only, or manually copied
-result is not evidence.
+The protected `main` branch binds five GitHub-hosted exact-head checks:
+
+- `repository-truth`;
+- `protocol-contract`;
+- `fuzz-smoke`;
+- `rust-baseline`;
+- `external-evidence-contract`.
+
+A skipped, queued, cancelled, stale-head, synthetic-merge-only, failed, or
+self-authored result is not acceptance evidence. `fuzz-smoke` is bounded smoke,
+not a completed independent long-running fuzz campaign. A green
+`external-evidence-contract` result proves schema and fail-closed behavior; it
+does not mean the required real-world submissions are present.
 
 ## 4. Candidate-only process commands
 
