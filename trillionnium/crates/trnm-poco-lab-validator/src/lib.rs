@@ -19,6 +19,9 @@
 //! false.
 
 pub mod bootstrap_material;
+/// Explicit, bounded, externally fenced candidate-devnet CLI composition. It
+/// does not alter the production node's fail-closed startup path.
+pub mod candidate_devnet;
 pub mod collector;
 pub mod config;
 pub mod consensus_mesh;

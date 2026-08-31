@@ -9,6 +9,11 @@ repo="$fixture/repo"
 mkdir -p "$repo/.github/workflows" "$repo/scripts/ci"
 cp "$root"/.github/workflows/*.yml "$repo/.github/workflows/"
 cp "$root/rust-toolchain.toml" "$repo/rust-toolchain.toml"
+install -m 0755 "$root/scripts/check_ci_runner_policy.sh" \
+  "$repo/scripts/check_ci_runner_policy.sh"
+install -m 0755 \
+  "$root/scripts/check_privileged_cargo_offline_policy.sh" \
+  "$repo/scripts/check_privileged_cargo_offline_policy.sh"
 cp "$root/scripts/ci/check_preprovisioned_rust_toolchain.sh" \
   "$root/scripts/ci/check_cargo_offline_ready.sh" \
   "$root/scripts/ci/check_cargo_offline_unchanged.sh" \
@@ -31,7 +36,7 @@ expect_pass() {
     printf 'FAIL: %s unexpectedly failed\n%s\n' "$name" "$output" >&2
     exit 1
   fi
-  [[ "$output" == *'jobs=20 cargo_jobs=18 no_cargo_jobs=2'* ]] || {
+  [[ "$output" == *'jobs=22 cargo_jobs=20 no_cargo_jobs=2'* ]] || {
     printf 'FAIL: %s returned unexpected summary\n%s\n' "$name" "$output" >&2
     exit 1
   }
@@ -52,7 +57,7 @@ restore_fixture() {
   git -C "$repo" clean -qfd
 }
 
-git -C "$repo" add .github/workflows scripts/ci rust-toolchain.toml
+git -C "$repo" add .github/workflows scripts rust-toolchain.toml
 git -C "$repo" commit -qm 'cargo offline policy baseline'
 expect_pass worktree-positive --worktree
 expect_pass staged-positive --staged

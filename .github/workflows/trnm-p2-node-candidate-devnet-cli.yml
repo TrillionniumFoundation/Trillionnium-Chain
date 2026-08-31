@@ -1,0 +1,166 @@
+name: trnm-p2-node-candidate-devnet-cli
+
+on:
+  push:
+    branches:
+      - feature/chain-p2-node-candidate-devnet-cli-v1-20260831
+    paths:
+      - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
+      - 'docs/development/packages/TRNM_P2_NODE_CANDIDATE_DEVNET_CLI_V1.md'
+      - 'trillionnium/crates/trnm-poco-lab-validator/**'
+  pull_request:
+    paths:
+      - '.github/workflows/trnm-p2-node-candidate-devnet-cli.yml'
+      - 'docs/development/packages/TRNM_P2_NODE_CANDIDATE_DEVNET_CLI_V1.md'
+      - 'trillionnium/crates/trnm-poco-lab-validator/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-p2-node-candidate-devnet-cli-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CANONICAL_A22_HEAD: bc07f168792da929636c22851f44959909ce26b4
+  TRNM_EXPECTED_SOURCE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  candidate-devnet-cli:
+    name: candidate-devnet-cli
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf'))) &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 120
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt \
+            --component clippy
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Verify exact source identity and change boundary
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${TRNM_EXPECTED_SOURCE_SHA}"
+          git merge-base --is-ancestor "${CANONICAL_A22_HEAD}" HEAD
+          unexpected="$(
+            git diff --name-only "${CANONICAL_A22_HEAD}..HEAD" |
+              grep -Ev '^(\.github/workflows/trnm-a22-capability-authority-audit\.yml|\.github/workflows/trnm-p2-node-candidate-devnet-cli\.yml|docs/development/packages/TRNM_P2_NODE_CANDIDATE_DEVNET_CLI_V1\.md|scripts/check_cargo_offline_policy\.sh|scripts/check_cargo_offline_policy_test\.sh|scripts/check_privileged_cargo_offline_policy\.sh|trillionnium/crates/trnm-poco-lab-validator/)' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'candidate devnet package changed unexpected paths:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+          test "$(git diff --name-only "${CANONICAL_A22_HEAD}..HEAD" | wc -l | tr -d ' ')" -eq 11
+
+      - name: Format compile and strict lint
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline -- -D warnings
+
+      - name: Run candidate devnet regressions
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --lib --locked --offline candidate_devnet
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --test candidate_devnet_cli --locked --offline
+
+      - name: Prove CLI help and fail-closed acknowledgement
+        run: |
+          set -euo pipefail
+          help_output="$(
+            cargo run --quiet --manifest-path trillionnium/Cargo.toml \
+              -p trnm-poco-lab-validator \
+              --bin trnm-poco-candidate-devnet-validator \
+              --locked --offline -- --help
+          )"
+          grep -q 'acknowledge-candidate-only' <<<"${help_output}"
+          grep -q 'not a production validator' <<<"${help_output}"
+
+          set +e
+          cargo run --quiet --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator \
+            --bin trnm-poco-candidate-devnet-validator \
+            --locked --offline -- \
+            --run-root /tmp/run \
+            --config /tmp/run/public/configs/validator.json \
+            --peer-lease-socket /tmp/fence.sock \
+            --report /tmp/run/report.json \
+            --duration-seconds 30 \
+            --max-blocks 12 \
+            >"${RUNNER_TEMP}/candidate-no-ack.out" \
+            2>"${RUNNER_TEMP}/candidate-no-ack.err"
+          rc=$?
+          set -e
+          test "${rc}" -eq 2
+          grep -q 'acknowledge-candidate-only is required' \
+            "${RUNNER_TEMP}/candidate-no-ack.err"
+
+      - name: Validate non-promotion and canonical truth
+        run: |
+          set -euo pipefail
+          grep -q '^candidate_devnet_validator_cli = true$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_external_fence_required = true$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_hsm_authority = false$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_host_attestation = false$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          grep -q '^candidate_devnet_production_activation = false$' \
+            trillionnium/crates/trnm-poco-lab-validator/Cargo.toml
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

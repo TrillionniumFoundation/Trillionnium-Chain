@@ -25,9 +25,6 @@ env:
   LC_ALL: C.UTF-8
   CARGO_INCREMENTAL: "0"
   CARGO_TERM_COLOR: never
-  CARGO_NET_OFFLINE: "true"
-  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
-  RUSTUP_TOOLCHAIN: "1.95.0"
   PYTHONHASHSEED: "0"
   PYTHONDONTWRITEBYTECODE: "1"
   CANONICAL_A21_HEAD: a26aa0ada6b230b7a39c2a2d68a0462267e4c751
@@ -46,6 +43,8 @@ jobs:
     timeout-minutes: 60
     env:
       TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
       - name: Check out exact read-only audit source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -53,6 +52,21 @@ jobs:
           ref: ${{ env.TRNM_EXPECTED_SOURCE_SHA }}
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 \
+            --component rustfmt
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Verify canonical A22 source boundary
         run: |
@@ -68,16 +82,6 @@ jobs:
             exit 2
           fi
           test "$(git diff --name-only "${CANONICAL_A21_HEAD}..HEAD" | wc -l | tr -d ' ')" -eq 4
-
-      - name: Verify preprovisioned Rust and offline Cargo cache
-        run: |
-          set -euo pipefail
-          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
-            --toolchain 1.95.0 --component rustfmt
-          ./scripts/ci/check_cargo_offline_ready.sh \
-            --toolchain 1.95.0 \
-            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
-            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Run deterministic authority policy audit
         run: |

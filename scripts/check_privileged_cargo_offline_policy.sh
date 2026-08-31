@@ -38,6 +38,8 @@ register rust-l1-nightly-health.yml:rust-l1-health required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register rust-l1-testnet-preflight.yml:preflight required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
+register trnm-a22-capability-authority-audit.yml:enforce-capability-authority-policy required 1.95.0 \
+  trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-canonical-input-fuzz-smoke.yml:bounded-smoke cargo-fuzz nightly-2026-07-27 \
   trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
 register trnm-cometbft-spike.yml:dependency-policy cargo-deny 1.95.0 \
@@ -51,6 +53,8 @@ register trnm-gate-quick-check.yml:shell-static-checks required 1.95.0 \
 register trnm-live-devnet-package.yml:legacy-harness-reproducibility required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-merge-gates.yml:rust-l1-merge-gates required 1.95.0 \
+  trillionnium/Cargo.toml:trillionnium/Cargo.lock
+register trnm-p2-node-candidate-devnet-cli.yml:candidate-devnet-cli required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
 register trnm-payload-replay-recovery-v1.yml:recovery-contract required 1.95.0 \
   trillionnium/Cargo.toml:trillionnium/Cargo.lock
@@ -301,7 +305,7 @@ printf '%s\n' "${!class[@]}" | cut -d: -f1 | LC_ALL=C sort -u >"$expected_workfl
 actual_workflows="$tmp/actual-workflows"
 printf '%s\n' "${workflows[@]}" | LC_ALL=C sort -u >"$actual_workflows"
 if ! diff -u "$expected_workflows" "$actual_workflows" >&2; then
-  error "workflow file set differs from the frozen 13-workflow Cargo policy"
+  error "workflow file set differs from the frozen 15-workflow Cargo policy"
 fi
 
 actual="$tmp/actual-jobs"
@@ -358,7 +362,7 @@ LC_ALL=C sort -u -o "$actual" "$actual"
 expected="$tmp/expected-jobs"
 printf '%s\n' "${!class[@]}" | LC_ALL=C sort >"$expected"
 if ! diff -u "$expected" "$actual" >&2; then
-  error "workflow/job set differs from the frozen 13-workflow/20-job Cargo policy"
+  error "workflow/job set differs from the frozen 15-workflow/22-job Cargo policy"
 fi
 
 for key in "${!class[@]}"; do
@@ -626,5 +630,5 @@ while IFS= read -r path; do
 done < <(list_script_paths)
 
 ((error_count == 0)) || exit 1
-printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=18 no_cargo_jobs=2 source=%s\n' \
+printf 'cargo_offline_policy=passed workflows=%d jobs=%d cargo_jobs=20 no_cargo_jobs=2 source=%s\n' \
   "${#workflows[@]}" "${#class[@]}" "${source_mode#--}"
