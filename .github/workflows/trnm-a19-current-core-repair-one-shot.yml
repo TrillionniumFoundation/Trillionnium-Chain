@@ -1,0 +1,291 @@
+name: trnm-a19-current-core-repair-one-shot
+
+on:
+  push:
+    branches:
+      - repair/a19-current-core-readback-v2-20260831
+    paths:
+      - .github/workflows/trnm-a19-current-core-repair-one-shot.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-a19-current-core-repair-one-shot-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  SOURCE_BRANCH: repair/a19-current-core-readback-v2-20260831
+  TARGET_BRANCH: feature/chain-a19-p1-exec-terminal-history-v2-20260830
+  BASE_COMMIT: 5383d7b47537c52d028d207f3763a65c7cfd86a7
+  BASE_TREE: 35104c76df8f501218f11a79a5b78e74d6edf3c9
+  EXPECTED_TARGET_HEAD: fa7aa82a5fa8fe1910b26845caae99784211746b
+  REPAIR_ARCHIVE_SHA256: 0db794da670aa6a8d4a6f5cde6f8e10bdebdbe7e22667182c789be92499d46d0
+
+jobs:
+  qualify-repair:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/repair/a19-current-core-readback-v2-20260831' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 240
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.candidate.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.candidate.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+      - name: Check out exact staging source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Bind staging source and repair archive
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse "${BASE_COMMIT}^{tree}")" = "${BASE_TREE}"
+          git merge-base --is-ancestor "${BASE_COMMIT}" HEAD
+          unexpected="$(
+            git diff --name-only "${BASE_COMMIT}..HEAD" |
+              grep -Ev '^(\.github/workflows/trnm-a19-current-core-repair-one-shot\.yml|\.trnm-repair/a19/product\.tar\.gz\.b64\.0[0-3])$' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'unexpected A19 repair staging paths:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+          test "$(git diff --name-only "${BASE_COMMIT}..HEAD" | wc -l | tr -d ' ')" -eq 5
+          test "$(find .trnm-repair/a19 -maxdepth 1 -type f -name 'product.tar.gz.b64.*' | wc -l | tr -d ' ')" -eq 4
+          cat .trnm-repair/a19/product.tar.gz.b64.* \
+            | base64 --decode > "${RUNNER_TEMP}/a19-repair-product.tar.gz"
+          printf '%s  %s\n' "${REPAIR_ARCHIVE_SHA256}" \
+            "${RUNNER_TEMP}/a19-repair-product.tar.gz" \
+            | sha256sum --check
+          tar -tzf "${RUNNER_TEMP}/a19-repair-product.tar.gz" | sort \
+            > "${RUNNER_TEMP}/a19-repair-paths.actual"
+          cat > "${RUNNER_TEMP}/a19-repair-paths.expected" <<'PATHS'
+          docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md
+          trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+          trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+          trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          PATHS
+          diff -u "${RUNNER_TEMP}/a19-repair-paths.expected" \
+            "${RUNNER_TEMP}/a19-repair-paths.actual"
+
+      - name: Verify preprovisioned Rust and offline Cargo cache
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Materialize and format direct-child repaired candidate
+        id: candidate
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          git checkout --detach "${BASE_COMMIT}"
+          test "$(git rev-parse HEAD)" = "${BASE_COMMIT}"
+          tar -xzf "${RUNNER_TEMP}/a19-repair-product.tar.gz" -C .
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+          mapfile -t changed < <(git diff --name-only "${BASE_COMMIT}" | sort)
+          expected=(
+            docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+            trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          )
+          diff -u <(printf '%s\n' "${expected[@]}") <(printf '%s\n' "${changed[@]}")
+          ! grep -RInE 'NativeFinalizationApplyReadbackV0|NativeFinalizationIntentV0' \
+            trillionnium/crates/trnm-native-application-sqlite
+          grep -q 'ApplicationFinalizationApplyReadbackV0' \
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+          grep -q 'terminal_finalization_history_public_readback_constructor = false' \
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+
+          git add \
+            docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md \
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml \
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs \
+            trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          candidate_tree="$(git write-tree)"
+          candidate_commit="$(
+            printf '%s\n' 'fix(exec): bind terminal history to current Core readback' |
+              git commit-tree "${candidate_tree}" -p "${BASE_COMMIT}"
+          )"
+          git reset --hard "${candidate_commit}"
+          test "$(git rev-parse HEAD)" = "${candidate_commit}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${candidate_tree}"
+          test "$(git rev-parse HEAD^)" = "${BASE_COMMIT}"
+          echo "candidate_commit=${candidate_commit}" >> "${GITHUB_OUTPUT}"
+          echo "candidate_tree=${candidate_tree}" >> "${GITHUB_OUTPUT}"
+
+      - name: Compile exact repaired workspace and strict lint A19
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets \
+            --locked --offline -- -D warnings
+
+      - name: Run A19 and application regressions
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --lib --locked --offline
+
+      - name: Revalidate repository authority and plan contracts
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/qualified-a19"
+          mkdir -p "${out}"
+          candidate_commit="${{ steps.candidate.outputs.candidate_commit }}"
+          candidate_tree="${{ steps.candidate.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "${candidate_commit}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${candidate_tree}"
+          git update-ref refs/heads/trnm-qualified-a19 "${candidate_commit}"
+          git bundle create "${out}/candidate.bundle" refs/heads/trnm-qualified-a19
+          git update-ref -d refs/heads/trnm-qualified-a19
+          sha256sum "${out}/candidate.bundle" > "${out}/candidate.bundle.sha256"
+          printf '%s\n' "${GITHUB_SHA}" > "${out}/source-commit"
+          printf '%s\n' "${BASE_COMMIT}" > "${out}/base-commit"
+          printf '%s\n' "${candidate_commit}" > "${out}/candidate-commit"
+          printf '%s\n' "${candidate_tree}" > "${out}/candidate-tree"
+
+      - name: Upload qualified A19 bundle
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-qualified-a19-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/qualified-a19/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish-repair:
+    name: publish-qualified-a19-repair
+    needs: qualify-repair
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/repair/a19-current-core-readback-v2-20260831' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Check out staging source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact qualified A19 bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify-repair.outputs.artifact_id }}
+          path: ${{ runner.temp }}/qualified-a19
+
+      - name: Verify and atomically publish only qualified product tree
+        working-directory: trillionnium-chain
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify-repair.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify-repair.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/qualified-a19"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(cat "${out}/source-commit")" = "${GITHUB_SHA}"
+          test "$(cat "${out}/base-commit")" = "${BASE_COMMIT}"
+          test "$(cat "${out}/candidate-commit")" = "${EXPECTED_COMMIT}"
+          test "$(cat "${out}/candidate-tree")" = "${EXPECTED_TREE}"
+          sha256sum --check "${out}/candidate.bundle.sha256"
+          git bundle verify "${out}/candidate.bundle"
+          git fetch "${out}/candidate.bundle" \
+            refs/heads/trnm-qualified-a19:refs/remotes/qualified/a19
+          candidate="$(git rev-parse refs/remotes/qualified/a19)"
+          test "${candidate}" = "${EXPECTED_COMMIT}"
+          test "$(git rev-parse "${candidate}^{tree}")" = "${EXPECTED_TREE}"
+          test "$(git rev-parse "${candidate}^")" = "${BASE_COMMIT}"
+          mapfile -t changed < <(git diff --name-only "${BASE_COMMIT}..${candidate}" | sort)
+          expected=(
+            docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+            trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          )
+          diff -u <(printf '%s\n' "${expected[@]}") <(printf '%s\n' "${changed[@]}")
+          if git cat-file -e "${candidate}:.github/workflows/trnm-a19-current-core-repair-one-shot.yml" 2>/dev/null; then
+            exit 3
+          fi
+          if git cat-file -e "${candidate}:.trnm-repair/a19/product.tar.gz.b64.00" 2>/dev/null; then
+            exit 4
+          fi
+          remote_head="$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          test "${remote_head}" = "${EXPECTED_TARGET_HEAD}"
+          auth="$(printf 'x-access-token:%s' "${GITHUB_TOKEN}" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic ${auth}"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic \
+            --force-with-lease="refs/heads/${TARGET_BRANCH}:${EXPECTED_TARGET_HEAD}" \
+            origin "${candidate}:refs/heads/${TARGET_BRANCH}"
