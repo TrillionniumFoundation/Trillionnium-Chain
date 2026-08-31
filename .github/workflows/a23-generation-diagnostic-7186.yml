@@ -1,0 +1,166 @@
+name: a23-generation-diagnostic-7186
+
+on:
+  push:
+    branches:
+      - tmp/a23-generation-diagnostic-7186-20260831
+    paths:
+      - .github/workflows/a23-generation-diagnostic-7186.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a23-generation-diagnostic-7186-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 7186e720d29bdf7f34a7c901026bb6134b6e5fde
+  BASE_COMMIT: fa7aa82a5fa8fe1910b26845caae99784211746b
+  GENERATOR_COMMIT: ca172504a975565ac329757c0e0fb3568f7b7985
+  GENERATOR_BLOB: a1af430ec06a6cbb826a8d5d31d1dd60c10314a4
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  diagnose:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'Tomasrgbsf' &&
+      github.triggering_actor == 'Tomasrgbsf'
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 180
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact restacked source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_COMMIT }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify source and generator identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse HEAD^)" = "${BASE_COMMIT}"
+          test "$(git diff --name-only "${BASE_COMMIT}..HEAD")" = ".github/workflows/trnm-a23-native-replay-floor-restacked-publisher.yml"
+          git fetch --no-tags origin "${GENERATOR_COMMIT}:refs/remotes/origin/a23-generator"
+          test "$(git rev-parse refs/remotes/origin/a23-generator)" = "${GENERATOR_COMMIT}"
+          test "$(git rev-parse refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py)" = "${GENERATOR_BLOB}"
+          git show refs/remotes/origin/a23-generator:scripts/ci/a23_implement_native_replay_floor_v1.py > "$RUNNER_TEMP/a23-generator.py"
+          python3 -B -m py_compile "$RUNNER_TEMP/a23-generator.py"
+
+      - name: Verify toolchain and offline cache
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Run generator
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$RUNNER_TEMP/a23-generator.py"
+          test -f .github/workflows/trnm-a23-native-replay-floor-verify.yml
+          test -f docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+          test -f trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+          test -f trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+
+      - name: Remove generated and carrier workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/trnm-a23-native-replay-floor-verify.yml
+          git rm .github/workflows/trnm-a23-native-replay-floor-restacked-publisher.yml
+
+      - name: Apply exact lint-safe transformations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              print(f'replacement path={path} count={count} needle={old[:80]!r}')
+              if count != 1:
+                  raise SystemExit(f'unexpected replacement count: {path}: {count}')
+              path.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          generated = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc')
+          replace_once(generated, '.field("namespace", &hex::encode(self.namespace))', '.field("namespace", &self.namespace)')
+          replace_once(generated, '.field("canonical_signer", &hex::encode(self.canonical_signer))', '.field("canonical_signer", &self.canonical_signer)')
+
+          tombstone = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc')
+          replace_once(
+              tombstone,
+              '    #[test]\n    fn replay_floor_verifier_authority_is_sealed_v1() {\n        assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1);\n        assert!(tombstone_gc_candidate_contract_v1());\n        assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1);\n    }',
+              '    #[test]\n    fn replay_floor_verifier_authority_is_sealed_v1() {\n        const { assert!(TX_ADMISSION_REPLAY_FLOOR_VERIFIER_SEALED_V1) };\n        assert!(tombstone_gc_candidate_contract_v1());\n        const { assert!(!TX_ADMISSION_TOMBSTONE_PRODUCTION_ACTIVATION_V1) };\n    }',
+          )
+
+          wal = Path('trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs')
+          replace_once(
+              wal,
+              '    #[test]\n    fn native_commit_verifier_authority_is_sealed_v1() {\n        assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1);\n        assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0);\n        assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0);\n    }',
+              '    #[test]\n    fn native_commit_verifier_authority_is_sealed_v1() {\n        const { assert!(TX_ADMISSION_NATIVE_COMMIT_VERIFIER_SEALED_V1) };\n        const { assert!(TX_ADMISSION_BOUNDARY_NATIVE_READBACK_V0) };\n        const { assert!(!TX_ADMISSION_BOUNDARY_NATIVE_READBACK_PRODUCTION_V0) };\n    }',
+          )
+          PY
+
+      - name: Inventory pre-format changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --short
+          mapfile -t changed < <(git diff --name-only HEAD | sort)
+          printf 'pre_format_change_count=%s\n' "${#changed[@]}"
+          printf '%s\n' "${changed[@]}"
+
+      - name: Run pinned rustfmt
+        shell: bash
+        run: |
+          set -euo pipefail
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+
+      - name: Verify exact post-format path boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t changed < <(git diff --name-only HEAD | sort)
+          expected=(
+            .github/workflows/trnm-a23-native-replay-floor-restacked-publisher.yml
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
+          )
+          mapfile -t sorted_expected < <(printf '%s\n' "${expected[@]}" | sort)
+          printf 'post_format_change_count=%s expected=%s\n' "${#changed[@]}" "${#sorted_expected[@]}"
+          diff -u <(printf '%s\n' "${sorted_expected[@]}") <(printf '%s\n' "${changed[@]}")
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+
+      - name: Verify offline inputs unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
