@@ -1,0 +1,240 @@
+name: native-poco-runtime-fault-matrix-v1
+
+on:
+  push:
+    branches:
+      - integration/native-poco-runtime-fault-matrix-v1-20260901
+    paths:
+      - .github/workflows/native-poco-runtime-fault-matrix-v1.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-poco-runtime-fault-matrix-v1-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 3c46293e78a125dec9504e51c355a20216341338
+  SOURCE_TREE: 875a1e6366df7cd9da80de145e25584ae309cee8
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  runtime-fault-matrix:
+    name: runtime-fault-matrix-x230
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/native-poco-runtime-fault-matrix-v1-20260901' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 240
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact read-only carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify carrier lineage and frozen source
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse "${SOURCE_COMMIT}^{tree}")" = "${SOURCE_TREE}"
+          changed="$(git diff --name-only "${SOURCE_COMMIT}..HEAD")"
+          test "$changed" = ".github/workflows/native-poco-runtime-fault-matrix-v1.yml"
+
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+          git checkout --detach "${SOURCE_COMMIT}"
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          test "$(git rev-parse 'HEAD^{tree}')" = "${SOURCE_TREE}"
+          test ! -e .github/workflows/native-poco-runtime-fault-matrix-v1.yml
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+
+      - name: Run deployed-lab and process-2 recovery library matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features lab-validator-runtime-test-support \
+            --lib --locked --offline
+
+      - name: Run finalization-intent SIGKILL matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features lab-validator-runtime-test-support \
+            --test finalization_intent_process_kill_matrix \
+            --locked --offline
+
+      - name: Run timeout-signing SIGKILL matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features recovery-process-test-support \
+            --test timeout_signing_process_kill_matrix \
+            --locked --offline
+
+      - name: Run G1 process-host end-to-end matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features g1-process-test-support \
+            --test g1_process_host_e2e \
+            --locked --offline
+
+      - name: Run effect-driver process end-to-end matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features g1-process-test-support \
+            --test effect_driver_process_e2e \
+            --locked --offline
+
+      - name: Run external signer and raw-key boundaries
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features external-signer-runtime \
+            --test external_signer_runtime \
+            --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --test raw_key_boundary \
+            --locked --offline
+
+      - name: Run replay-to-Core coordinator library matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node \
+            --features replay-to-core-coordinator-test-support \
+            --lib --locked --offline
+
+      - name: Run manifest-bound process matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --test g2_manifest_bound_process_v2 \
+            --locked --offline
+
+      - name: Revalidate authority truth and source cleanliness
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build exact-source runtime evidence record
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/runtime-fault-matrix"
+          mkdir -p "$out"
+          SOURCE_COMMIT="${SOURCE_COMMIT}" \
+          SOURCE_TREE="${SOURCE_TREE}" \
+          python3 -B - "$out/evidence.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          record = {
+              "schema": "trnm-native-poco-runtime-fault-matrix-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["SOURCE_COMMIT"],
+              "source_tree": os.environ["SOURCE_TREE"],
+              "runner_name": os.environ["RUNNER_NAME"],
+              "runner_os": os.environ["RUNNER_OS"],
+              "finalization_intent_sigkill_matrix": True,
+              "timeout_signing_sigkill_matrix": True,
+              "g1_process_host_e2e": True,
+              "effect_driver_process_e2e": True,
+              "external_signer_boundary": True,
+              "replay_to_core_library_matrix": True,
+              "process2_recovery_library_matrix": True,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          Path(sys.argv[1]).write_text(
+              json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          PY
+          sha256sum "$out/evidence.json" > "$out/evidence.json.sha256"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "${SOURCE_TREE}" > "$out/source-tree"
+
+      - name: Upload exact-source runtime evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: runtime-fault-matrix-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/runtime-fault-matrix/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
