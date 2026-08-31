@@ -6,6 +6,7 @@ on:
       - tmp/candidate-clippy-harness-probe-5383-20260831
     paths:
       - .github/workflows/candidate-clippy-harness-probe-x230-5383.yml
+      - scripts/ci/check_candidate_devnet_clippy_v1.sh
 
 permissions:
   contents: read
