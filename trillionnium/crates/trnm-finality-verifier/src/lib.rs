@@ -189,9 +189,9 @@ pub fn verify_finality_receipt(
 mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_finality_types::{
-        BlockHeaderV1, FinalityReceiptV1, MerkleProofStepV1, MerkleProofV1,
-        QuorumCertificateV1, ValidatorDescriptorV1, ValidatorSetV1, ValidatorVoteV1,
-        BLOCK_HEADER_SCHEMA_V1, FINALITY_RECEIPT_SCHEMA_V1, VALIDATOR_VOTE_SCHEMA_V1,
+        BlockHeaderV1, FinalityReceiptV1, MerkleProofStepV1, MerkleProofV1, QuorumCertificateV1,
+        ValidatorDescriptorV1, ValidatorSetV1, ValidatorVoteV1, BLOCK_HEADER_SCHEMA_V1,
+        FINALITY_RECEIPT_SCHEMA_V1, VALIDATOR_VOTE_SCHEMA_V1,
     };
 
     use super::*;
@@ -414,8 +414,7 @@ mod tests {
     #[test]
     fn public_receipt_verifier_rejects_proof_domain_injection() {
         let (mut receipt, validator_set) = fixture();
-        receipt.transaction_inclusion_proof.tree_domain =
-            STATE_OBJECT_TREE_DOMAIN_V1.to_string();
+        receipt.transaction_inclusion_proof.tree_domain = STATE_OBJECT_TREE_DOMAIN_V1.to_string();
         receipt.receipt_hash_hex = hex::encode(receipt.compute_receipt_hash().unwrap());
         assert!(verify_finality_receipt(&receipt, &validator_set).is_err());
     }
