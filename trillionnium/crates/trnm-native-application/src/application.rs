@@ -514,6 +514,662 @@ impl NativeApplicationCommitResultV0 {
     }
 }
 
+/// Maximum number of canonical finalization intents retained by the
+/// host-neutral queue.  A process owner may choose a smaller bound, but may
+/// never grow an unbounded queue from an unauthenticated caller.
+pub const MAX_FINALIZATION_QUEUE_ENTRIES_V0: usize = 1024;
+
+/// The complete identity of one application-finalization successor.
+///
+/// This value is deliberately independent of Core/Safety types.  A consuming
+/// owner must join it to a live Core-issued permit before applying it.  The
+/// body, overlay and JMT-plan digests are carried explicitly so a height/root
+/// tuple can never stand in for the authenticated source.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeFinalizationIntentV0 {
+    parent: ApplicationHeadV0,
+    target: ApplicationHeadV0,
+    proof_id: Hash32V0,
+    overlay_checksum: Hash32V0,
+    body_digest: Hash32V0,
+    jmt_plan_digest: Hash32V0,
+}
+
+impl NativeFinalizationIntentV0 {
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        parent: ApplicationHeadV0,
+        target: ApplicationHeadV0,
+        proof_id: Hash32V0,
+        overlay_checksum: Hash32V0,
+        body_digest: Hash32V0,
+        jmt_plan_digest: Hash32V0,
+    ) -> NativeBoundaryResultV0<Self> {
+        if target.height() != parent.height().checked_next()? {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::NonContiguous,
+                "finalization.target_height",
+            ));
+        }
+        if target.block_id() == parent.block_id() {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::InvalidTransition,
+                "finalization.target_block_id",
+            ));
+        }
+        Ok(Self {
+            parent,
+            target,
+            proof_id: proof_id.require_nonzero("finalization.proof_id")?,
+            overlay_checksum: overlay_checksum.require_nonzero("finalization.overlay_checksum")?,
+            body_digest: body_digest.require_nonzero("finalization.body_digest")?,
+            jmt_plan_digest: jmt_plan_digest.require_nonzero("finalization.jmt_plan_digest")?,
+        })
+    }
+
+    pub const fn parent(&self) -> &ApplicationHeadV0 {
+        &self.parent
+    }
+
+    pub const fn target(&self) -> &ApplicationHeadV0 {
+        &self.target
+    }
+
+    pub const fn proof_id(&self) -> Hash32V0 {
+        self.proof_id
+    }
+
+    pub const fn overlay_checksum(&self) -> Hash32V0 {
+        self.overlay_checksum
+    }
+
+    pub const fn body_digest(&self) -> Hash32V0 {
+        self.body_digest
+    }
+
+    pub const fn jmt_plan_digest(&self) -> Hash32V0 {
+        self.jmt_plan_digest
+    }
+}
+
+/// Fresh readback proving that one exact finalization intent was committed.
+///
+/// The JMT root is repeated rather than inferred from the target head.  This
+/// forces a store adapter to report the root it actually read after commit and
+/// lets the queue reject a post-state-root drift before acknowledging its
+/// front.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeFinalizationApplyReadbackV0 {
+    intent: NativeFinalizationIntentV0,
+    committed_head: ApplicationHeadV0,
+    jmt_root: StateRootV0,
+    application_receipt_digest: Hash32V0,
+    durable_sequence: u64,
+}
+
+impl NativeFinalizationApplyReadbackV0 {
+    pub fn new(
+        intent: NativeFinalizationIntentV0,
+        committed_head: ApplicationHeadV0,
+        jmt_root: StateRootV0,
+        application_receipt_digest: Hash32V0,
+        durable_sequence: u64,
+    ) -> NativeBoundaryResultV0<Self> {
+        if &committed_head != intent.target() || jmt_root != intent.target().state_root() {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization.readback.head",
+            ));
+        }
+        if durable_sequence == 0 {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::ZeroValue,
+                "finalization.readback.durable_sequence",
+            ));
+        }
+        Ok(Self {
+            intent,
+            committed_head,
+            jmt_root,
+            application_receipt_digest: application_receipt_digest
+                .require_nonzero("finalization.readback.receipt_digest")?,
+            durable_sequence,
+        })
+    }
+
+    pub const fn intent(&self) -> &NativeFinalizationIntentV0 {
+        &self.intent
+    }
+
+    pub const fn committed_head(&self) -> &ApplicationHeadV0 {
+        &self.committed_head
+    }
+
+    pub const fn jmt_root(&self) -> StateRootV0 {
+        self.jmt_root
+    }
+
+    pub const fn application_receipt_digest(&self) -> Hash32V0 {
+        self.application_receipt_digest
+    }
+
+    pub const fn durable_sequence(&self) -> u64 {
+        self.durable_sequence
+    }
+}
+
+/// A retained losing-fork record.  The reference digest is an inert handle
+/// supplied by the caller; only an authenticated recovery owner should decide
+/// which references are still live.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeFinalizationForkV0 {
+    intent: NativeFinalizationIntentV0,
+    reference_digest: Hash32V0,
+}
+
+impl NativeFinalizationForkV0 {
+    pub fn new(
+        intent: NativeFinalizationIntentV0,
+        reference_digest: Hash32V0,
+    ) -> NativeBoundaryResultV0<Self> {
+        Ok(Self {
+            intent,
+            reference_digest: reference_digest
+                .require_nonzero("finalization.fork.reference_digest")?,
+        })
+    }
+
+    pub const fn intent(&self) -> &NativeFinalizationIntentV0 {
+        &self.intent
+    }
+
+    pub const fn reference_digest(&self) -> Hash32V0 {
+        self.reference_digest
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum NativeFinalizationEnqueueOutcomeV0 {
+    Queued,
+    AlreadyQueued,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NativeFinalizationApplyOutcomeV0 {
+    NewlyCommitted(NativeFinalizationApplyReadbackV0),
+    ExactReplay(NativeFinalizationApplyReadbackV0),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum NativeFinalizationRetryDispositionV0 {
+    Pending,
+    ExactCommitted(Box<NativeFinalizationApplyReadbackV0>),
+}
+
+/// Candidate-only application finalization queue.
+///
+/// The queue is intentionally a pure state machine.  It does not open a
+/// database, issue a Core permit, or perform a JMT write.  A durable adapter
+/// must first commit its rows and obtain a fresh
+/// [`NativeFinalizationApplyReadbackV0`], then consume that readback here.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NativeFinalizationQueueV0 {
+    committed_head: ApplicationHeadV0,
+    pending: Vec<NativeFinalizationIntentV0>,
+    history: Vec<NativeFinalizationApplyReadbackV0>,
+    forks: Vec<NativeFinalizationForkV0>,
+    capacity: usize,
+}
+
+impl NativeFinalizationQueueV0 {
+    pub fn new(committed_head: ApplicationHeadV0, capacity: usize) -> NativeBoundaryResultV0<Self> {
+        if capacity == 0 {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::ZeroValue,
+                "finalization_queue.capacity",
+            ));
+        }
+        if capacity > MAX_FINALIZATION_QUEUE_ENTRIES_V0 {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::TooMany,
+                "finalization_queue.capacity",
+            ));
+        }
+        Ok(Self {
+            committed_head,
+            pending: Vec::new(),
+            history: Vec::new(),
+            forks: Vec::new(),
+            capacity,
+        })
+    }
+
+    pub const fn committed_head(&self) -> &ApplicationHeadV0 {
+        &self.committed_head
+    }
+
+    pub fn pending(&self) -> &[NativeFinalizationIntentV0] {
+        &self.pending
+    }
+
+    pub fn history(&self) -> &[NativeFinalizationApplyReadbackV0] {
+        &self.history
+    }
+
+    pub fn forks(&self) -> &[NativeFinalizationForkV0] {
+        &self.forks
+    }
+
+    pub fn front(&self) -> Option<&NativeFinalizationIntentV0> {
+        self.pending.first()
+    }
+
+    pub const fn capacity(&self) -> usize {
+        self.capacity
+    }
+
+    /// Appends one exact successor.  An exact retry is reported as
+    /// `AlreadyQueued`; a same-target/different-identity collision is rejected
+    /// instead of silently selecting a source by route or insertion order.
+    pub fn enqueue(
+        &mut self,
+        intent: NativeFinalizationIntentV0,
+    ) -> NativeBoundaryResultV0<NativeFinalizationEnqueueOutcomeV0> {
+        self.validate_v0()?;
+        if self.pending.contains(&intent)
+            || self.history.iter().any(|entry| entry.intent() == &intent)
+        {
+            return Ok(NativeFinalizationEnqueueOutcomeV0::AlreadyQueued);
+        }
+        if self.forks.iter().any(|entry| entry.intent() == &intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::Duplicate,
+                "finalization_queue.losing_fork",
+            ));
+        }
+        if self.contains_conflicting_identity_v0(&intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_queue.identity",
+            ));
+        }
+        let expected_parent = match self.pending.last() {
+            Some(entry) => entry.target().clone(),
+            None => self.committed_head.clone(),
+        };
+        if intent.parent() != &expected_parent {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::NonContiguous,
+                "finalization_queue.parent",
+            ));
+        }
+        if self.pending.len() >= self.capacity {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::TooMany,
+                "finalization_queue.pending",
+            ));
+        }
+        let mut next = self.clone();
+        next.pending.push(intent);
+        next.validate_v0()?;
+        *self = next;
+        Ok(NativeFinalizationEnqueueOutcomeV0::Queued)
+    }
+
+    /// Retains a competing branch without allowing it to become executable.
+    /// The parent must be an authenticated head already known to this queue;
+    /// the branch is never inserted into the canonical pending sequence.
+    pub fn retain_losing_fork(
+        &mut self,
+        intent: NativeFinalizationIntentV0,
+        reference_digest: Hash32V0,
+    ) -> NativeBoundaryResultV0<()> {
+        self.validate_v0()?;
+        if self.contains_exact_intent_v0(&intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::Duplicate,
+                "finalization_fork.identity",
+            ));
+        }
+        if self.contains_conflicting_identity_v0(&intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_fork.identity",
+            ));
+        }
+        if !self.known_head_v0(intent.parent()) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::NonContiguous,
+                "finalization_fork.parent",
+            ));
+        }
+        if self.forks.len() >= MAX_FINALIZATION_QUEUE_ENTRIES_V0 {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::TooMany,
+                "finalization_fork.retained",
+            ));
+        }
+        let mut next = self.clone();
+        next.forks
+            .push(NativeFinalizationForkV0::new(intent, reference_digest)?);
+        next.validate_v0()?;
+        *self = next;
+        Ok(())
+    }
+
+    /// Atomically acknowledges the queue front with an exact post-commit
+    /// readback.  A clone-and-validate commit gives this in-memory contract the
+    /// same no-partial-mutation property required from a SQLite adapter.
+    pub fn acknowledge_front(
+        &mut self,
+        readback: NativeFinalizationApplyReadbackV0,
+    ) -> NativeBoundaryResultV0<NativeFinalizationApplyOutcomeV0> {
+        self.validate_v0()?;
+        let intent = readback.intent();
+        if let Some(existing) = self.history.iter().find(|entry| entry.intent() == intent) {
+            if existing == &readback {
+                return Ok(NativeFinalizationApplyOutcomeV0::ExactReplay(
+                    existing.clone(),
+                ));
+            }
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_queue.replay",
+            ));
+        }
+        if self
+            .history
+            .iter()
+            .any(|entry| entry.intent().target().block_id() == intent.target().block_id())
+        {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_queue.target_collision",
+            ));
+        }
+        let Some(front) = self.pending.first() else {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::InvalidTransition,
+                "finalization_queue.empty",
+            ));
+        };
+        if front != intent {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::NonContiguous,
+                "finalization_queue.front",
+            ));
+        }
+        if intent.parent() != &self.committed_head {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_queue.committed_head",
+            ));
+        }
+
+        let mut next = self.clone();
+        // The front is known to exist above.  Rotate then pop so the bounded
+        // Vec does not trigger Clippy's `vec_remove_first` lint while keeping
+        // the clone-and-validate commit atomic.
+        next.pending.rotate_left(1);
+        let _removed_front = next.pending.pop();
+        next.committed_head = intent.target().clone();
+        next.history.push(readback.clone());
+        next.validate_v0()?;
+        *self = next;
+        Ok(NativeFinalizationApplyOutcomeV0::NewlyCommitted(readback))
+    }
+
+    /// Classifies a response-loss retry from the queue's exact retained
+    /// history.  No caller-supplied “already applied” boolean is accepted.
+    pub fn reconcile(
+        &self,
+        intent: &NativeFinalizationIntentV0,
+    ) -> NativeBoundaryResultV0<NativeFinalizationRetryDispositionV0> {
+        self.validate_v0()?;
+        if let Some(readback) = self.history.iter().find(|entry| entry.intent() == intent) {
+            return Ok(NativeFinalizationRetryDispositionV0::ExactCommitted(
+                Box::new(readback.clone()),
+            ));
+        }
+        if self.pending.contains(intent) {
+            return Ok(NativeFinalizationRetryDispositionV0::Pending);
+        }
+        if self.forks.iter().any(|entry| entry.intent() == intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::Duplicate,
+                "finalization_queue.reconcile_losing_fork",
+            ));
+        }
+        if self.contains_conflicting_identity_v0(intent) {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::BindingMismatch,
+                "finalization_queue.reconcile_collision",
+            ));
+        }
+        Err(error(
+            NativeBoundaryErrorCodeV0::InvalidTransition,
+            "finalization_queue.reconcile",
+        ))
+    }
+
+    /// Reclaims only fork records whose explicit reference is absent and which
+    /// are not named as a parent by another retained/canonical pending record.
+    /// An empty reference list is allowed for a fully audited owner; an
+    /// unauthenticated caller must not invoke this method.
+    pub fn reclaim_unreferenced_forks(
+        &mut self,
+        live_reference_digests: &[Hash32V0],
+    ) -> NativeBoundaryResultV0<usize> {
+        self.validate_v0()?;
+        let pending_or_fork_child =
+            |fork: &NativeFinalizationForkV0,
+             pending: &[NativeFinalizationIntentV0],
+             forks: &[NativeFinalizationForkV0]| {
+                pending
+                    .iter()
+                    .any(|entry| entry.parent() == fork.intent().target())
+                    || forks.iter().any(|other| {
+                        other.intent() != fork.intent()
+                            && other.intent().parent() == fork.intent().target()
+                    })
+            };
+        let pending = self.pending.clone();
+        let forks = self.forks.clone();
+        let mut removed = 0usize;
+        let mut next = self.clone();
+        next.forks.retain(|fork| {
+            let referenced = live_reference_digests.contains(&fork.reference_digest());
+            let protected_by_child = pending_or_fork_child(fork, &pending, &forks);
+            if !referenced && !protected_by_child {
+                removed = removed.saturating_add(1);
+                false
+            } else {
+                true
+            }
+        });
+        next.validate_v0()?;
+        *self = next;
+        Ok(removed)
+    }
+
+    /// Audits all local queue invariants.  This is intentionally public so a
+    /// durable adapter can run it after a fresh reopen before exposing any
+    /// retry disposition.
+    pub fn validate_v0(&self) -> NativeBoundaryResultV0<()> {
+        if self.capacity == 0 || self.capacity > MAX_FINALIZATION_QUEUE_ENTRIES_V0 {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::InvalidTransition,
+                "finalization_queue.capacity",
+            ));
+        }
+        if self.pending.len() > self.capacity
+            || self.history.len() > MAX_FINALIZATION_QUEUE_ENTRIES_V0
+            || self.forks.len() > MAX_FINALIZATION_QUEUE_ENTRIES_V0
+        {
+            return Err(error(
+                NativeBoundaryErrorCodeV0::TooMany,
+                "finalization_queue.length",
+            ));
+        }
+        for pair in self.history.windows(2) {
+            if pair[1].intent().parent() != pair[0].committed_head()
+                || pair[1].intent().target().height()
+                    != pair[0].intent().target().height().checked_next()?
+                || pair[1].durable_sequence() <= pair[0].durable_sequence()
+            {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::InvalidTransition,
+                    "finalization_history.order",
+                ));
+            }
+        }
+        if let Some(last) = self.history.last() {
+            if last.committed_head() != &self.committed_head {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::BindingMismatch,
+                    "finalization_history.head",
+                ));
+            }
+        }
+        let mut expected_parent = self.committed_head.clone();
+        for entry in &self.pending {
+            if entry.parent() != &expected_parent {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::NonContiguous,
+                    "finalization_queue.order",
+                ));
+            }
+            expected_parent = entry.target().clone();
+        }
+        for (index, first) in self.pending.iter().enumerate() {
+            for second in self.pending.iter().skip(index + 1) {
+                if first == second || Self::identity_conflict_v0(first, second) {
+                    return Err(error(
+                        NativeBoundaryErrorCodeV0::Duplicate,
+                        "finalization_queue.identity",
+                    ));
+                }
+            }
+        }
+        for (index, first) in self.history.iter().enumerate() {
+            for second in self.history.iter().skip(index + 1) {
+                if first.intent() == second.intent()
+                    || Self::identity_conflict_v0(first.intent(), second.intent())
+                {
+                    return Err(error(
+                        NativeBoundaryErrorCodeV0::Duplicate,
+                        "finalization_history.identity",
+                    ));
+                }
+            }
+        }
+        for entry in &self.pending {
+            if self.history.iter().any(|done| {
+                done.intent() == entry || Self::identity_conflict_v0(done.intent(), entry)
+            }) {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::BindingMismatch,
+                    "finalization_queue.history_collision",
+                ));
+            }
+        }
+        for (index, first) in self.forks.iter().enumerate() {
+            if self.contains_canonical_target_v0(first.intent().target().block_id()) {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::BindingMismatch,
+                    "finalization_fork.canonical_target",
+                ));
+            }
+            for second in self.forks.iter().skip(index + 1) {
+                if first.intent() == second.intent()
+                    || Self::identity_conflict_v0(first.intent(), second.intent())
+                {
+                    return Err(error(
+                        NativeBoundaryErrorCodeV0::Duplicate,
+                        "finalization_fork.identity",
+                    ));
+                }
+            }
+            if !self.known_head_v0(first.intent().parent()) {
+                return Err(error(
+                    NativeBoundaryErrorCodeV0::NonContiguous,
+                    "finalization_fork.parent",
+                ));
+            }
+        }
+        Ok(())
+    }
+
+    fn contains_exact_intent_v0(&self, intent: &NativeFinalizationIntentV0) -> bool {
+        self.pending.contains(intent)
+            || self.history.iter().any(|entry| entry.intent() == intent)
+            || self.forks.iter().any(|entry| entry.intent() == intent)
+    }
+
+    fn contains_conflicting_identity_v0(&self, intent: &NativeFinalizationIntentV0) -> bool {
+        self.pending
+            .iter()
+            .any(|entry| Self::identity_conflict_v0(entry, intent))
+            || self
+                .history
+                .iter()
+                .any(|entry| Self::identity_conflict_v0(entry.intent(), intent))
+            || self
+                .forks
+                .iter()
+                .any(|entry| Self::identity_conflict_v0(entry.intent(), intent))
+    }
+
+    fn contains_canonical_target_v0(&self, block_id: BlockIdV0) -> bool {
+        self.committed_head.block_id() == block_id
+            || self
+                .pending
+                .iter()
+                .any(|entry| entry.target().block_id() == block_id)
+            || self
+                .history
+                .iter()
+                .any(|entry| entry.intent().target().block_id() == block_id)
+    }
+
+    fn known_head_v0(&self, head: &ApplicationHeadV0) -> bool {
+        &self.committed_head == head
+            || self
+                .history
+                .iter()
+                .any(|entry| entry.committed_head() == head || entry.intent().parent() == head)
+            || self
+                .pending
+                .iter()
+                .any(|entry| entry.target() == head || entry.parent() == head)
+            || self
+                .forks
+                .iter()
+                .any(|entry| entry.intent().target() == head || entry.intent().parent() == head)
+    }
+
+    fn identity_conflict_v0(
+        first: &NativeFinalizationIntentV0,
+        second: &NativeFinalizationIntentV0,
+    ) -> bool {
+        if first == second {
+            return false;
+        }
+        // Body and JMT-plan digests may legitimately repeat for two distinct
+        // blocks (for example, an empty deterministic block).  An overlay
+        // checksum is expected to be target-bound by the upstream manifest,
+        // so an identical overlay/body/JMT tuple on another target is retained
+        // as a conservative alias/collision fence.  The queue cannot verify
+        // that binding itself; source cardinality and route/profile scope
+        // still belong to the accepted upstream carrier.
+        first.target().block_id() == second.target().block_id()
+            || first.proof_id() == second.proof_id()
+            || (first.overlay_checksum() == second.overlay_checksum()
+                && first.body_digest() == second.body_digest()
+                && first.jmt_plan_digest() == second.jmt_plan_digest())
+    }
+}
+
 /// Host contract implemented by the native application store/engine.
 pub trait NativeApplicationV0 {
     type Error;
