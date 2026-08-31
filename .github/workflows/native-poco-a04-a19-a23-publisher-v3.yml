@@ -1,0 +1,383 @@
+name: native-poco-a04-a19-a23-publisher-v3
+
+on:
+  push:
+    branches:
+      - integration/native-poco-a04-a19-a23-publisher-v3-20260901
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-publisher-v3.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-poco-a04-a19-a23-publisher-v3-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  A04_HEAD: 1fa71c942e129ce88937a030c3054c8f72649aaf
+  A19_HEAD: fa7aa82a5fa8fe1910b26845caae99784211746b
+  A23_HEAD: 69ad386f1248d79a89c6e677d7c71a431747b646
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v3-20260901
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  qualify:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/native-poco-a04-a19-a23-publisher-v3-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 300
+    permissions:
+      contents: read
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    outputs:
+      candidate_commit: ${{ steps.freeze.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.freeze.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+      a04_mode: ${{ steps.freeze.outputs.a04_mode }}
+    steps:
+      - name: Check out exact read-only carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify carrier source and immutable inputs
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test "$(git diff --name-only "${SOURCE_COMMIT}..HEAD")" = \
+            '.github/workflows/native-poco-a04-a19-a23-publisher-v3.yml'
+          for commit in "${SOURCE_COMMIT}" "${A04_HEAD}" "${A19_HEAD}" "${A23_HEAD}"; do
+            git fetch --no-tags origin "${commit}"
+            test "$(git rev-parse "${commit}")" = "${commit}"
+            test "$(git cat-file -t "${commit}")" = commit
+          done
+
+      - name: Verify pinned Rust and offline cache
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply canonical deltas and freeze candidate
+        id: freeze
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout --detach "${SOURCE_COMMIT}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          a04_base="$(git merge-base "${SOURCE_COMMIT}" "${A04_HEAD}")"
+          test -n "${a04_base}"
+          mapfile -t a04_paths < <(
+            git diff --name-only "${a04_base}..${A04_HEAD}" -- \
+              'docs/development/packages/*A04*.md' \
+              'trillionnium/crates/trnm-native-application/**' \
+              | sort -u
+          )
+          test "${#a04_paths[@]}" -gt 0
+          printf '%s\n' "${a04_paths[@]}" > "$RUNNER_TEMP/a04-paths"
+
+          a04_mode=three-way
+          set +e
+          git diff --binary "${a04_base}..${A04_HEAD}" -- "${a04_paths[@]}" \
+            | git apply --3way --index
+          apply_rc=$?
+          set -e
+          if [[ "$apply_rc" -ne 0 ]]; then
+            a04_mode=bounded-checkout
+            git reset --hard "${SOURCE_COMMIT}"
+            git clean -ffdx
+            for path in "${a04_paths[@]}"; do
+              if git cat-file -e "${A04_HEAD}:${path}" 2>/dev/null; then
+                git checkout "${A04_HEAD}" -- "${path}"
+              else
+                git rm -f --ignore-unmatch -- "${path}"
+              fi
+            done
+          fi
+
+          a19_paths=(
+            docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md
+            trillionnium/crates/trnm-native-application-sqlite/Cargo.toml
+            trillionnium/crates/trnm-native-application-sqlite/src/finalization_history.rs
+            trillionnium/crates/trnm-native-application-sqlite/src/lib.rs
+          )
+          a23_paths=(
+            docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md
+            trillionnium/crates/trnm-native-execution-v0/src/durable.rs
+            trillionnium/crates/trnm-native-execution-v0/src/durable/replay_floor_v1.rs
+            trillionnium/crates/trnm-native-execution-v0/src/lib.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc
+            trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc
+          )
+          for path in "${a19_paths[@]}"; do
+            git cat-file -e "${A19_HEAD}:${path}"
+            git checkout "${A19_HEAD}" -- "${path}"
+          done
+          for path in "${a23_paths[@]}"; do
+            git cat-file -e "${A23_HEAD}:${path}"
+            git checkout "${A23_HEAD}" -- "${path}"
+          done
+
+          rustup run 1.95.0 cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+          rg -q 'NativeFinalizationIntentV0' trillionnium/crates/trnm-native-application
+          rg -q 'NativeFinalizationApplyReadbackV0' trillionnium/crates/trnm-native-application
+          rg -q 'SqliteNativeFinalizationHistoryV0' \
+            trillionnium/crates/trnm-native-application-sqlite
+          rg -q 'VerifiedNativeSignerReplayFloorV1' \
+            trillionnium/crates/trnm-poco-node trillionnium/crates/trnm-native-execution-v0
+
+          git diff --name-only | sort -u > "$RUNNER_TEMP/changed-paths"
+          test -s "$RUNNER_TEMP/changed-paths"
+          while IFS= read -r path; do
+            case "$path" in
+              docs/development/packages/*A04*.md|\
+              docs/development/packages/TRNM_A19_P1_EXEC_TERMINAL_HISTORY_V1.md|\
+              docs/development/packages/TRNM_A23_P2_NATIVE_REPLAY_FLOOR_V1.md|\
+              trillionnium/crates/trnm-native-application/*|\
+              trillionnium/crates/trnm-native-application-sqlite/*|\
+              trillionnium/crates/trnm-native-execution-v0/*|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal.rs|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal_native_replay_floor_v1.inc|\
+              trillionnium/crates/trnm-poco-node/src/tx_admission_wal_tombstone_gc_v1.inc)
+                ;;
+              *)
+                printf 'candidate changed unexpected path: %s\n' "$path" >&2
+                exit 2
+                ;;
+            esac
+          done < "$RUNNER_TEMP/changed-paths"
+          test -z "$(grep '^\.github/workflows/' "$RUNNER_TEMP/changed-paths" || true)"
+
+          git add -A
+          git diff --cached --check
+          env GIT_AUTHOR_DATE='2026-09-01T00:46:00Z' \
+              GIT_COMMITTER_DATE='2026-09-01T00:46:00Z' \
+            git commit -m 'feat(stack): integrate native finality history and replay floor'
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --name-only "${SOURCE_COMMIT}..${candidate_commit}" \
+            | sort -u > "$RUNNER_TEMP/committed-paths"
+          diff -u "$RUNNER_TEMP/changed-paths" "$RUNNER_TEMP/committed-paths"
+
+          echo "candidate_commit=${candidate_commit}" >> "$GITHUB_OUTPUT"
+          echo "candidate_tree=${candidate_tree}" >> "$GITHUB_OUTPUT"
+          echo "a04_mode=${a04_mode}" >> "$GITHUB_OUTPUT"
+          printf 'a04_base=%s a04_mode=%s candidate=%s tree=%s\n' \
+            "$a04_base" "$a04_mode" "$candidate_commit" "$candidate_tree"
+          git diff --stat "${SOURCE_COMMIT}..${candidate_commit}"
+
+      - name: Compile exact integrated stack
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline
+
+      - name: Strict lint exact integrated stack
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline -- -D warnings
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal \
+            --all-targets --locked --offline -- -D warnings
+
+      - name: Run exact integrated regression matrix
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-application-sqlite --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-native-execution-v0 --all-targets --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --lib --locked --offline
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-node --features tx-admission-wal --doc --locked --offline
+
+      - name: Revalidate capability and repository truth
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B scripts/ci/a22_capability_authority_audit_v1.py
+          python3 -B - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(
+              Path('/tmp/trnm-capability-authority-audit-v2.json').read_text(
+                  encoding='utf-8'
+              )
+          )
+          assert report['unresolved_total'] == 0, report
+          assert report['authority_sink_findings'] == [], report
+          assert report['missing_compile_fail_proofs'] == [], report
+          assert report['stale_policy_entries'] == [], report
+          assert report['production_migration_authority_impl_findings'] == [], report
+          PY
+          bash scripts/ci/a22_inert_capability_compile_fail_v1.sh
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_cargo_offline_policy.sh --head
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build qualified content-addressed bundle
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-poco-a04-a19-a23-qualified-v3"
+          mkdir -p "$out"
+          candidate="${{ steps.freeze.outputs.candidate_commit }}"
+          tree="${{ steps.freeze.outputs.candidate_tree }}"
+          test "$(git rev-parse HEAD)" = "$candidate"
+          test "$(git rev-parse 'HEAD^{tree}')" = "$tree"
+          git update-ref refs/heads/native-poco-a04-a19-a23-qualified-v3 "$candidate"
+          git bundle create "$out/candidate.bundle" \
+            refs/heads/native-poco-a04-a19-a23-qualified-v3
+          git update-ref -d refs/heads/native-poco-a04-a19-a23-qualified-v3
+          sha256sum "$out/candidate.bundle" > "$out/candidate.bundle.sha256"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "$candidate" > "$out/candidate-commit"
+          printf '%s\n' "$tree" > "$out/candidate-tree"
+          printf '%s\n' "${{ steps.freeze.outputs.a04_mode }}" > "$out/a04-mode"
+          cp "$RUNNER_TEMP/changed-paths" "$out/changed-paths"
+
+      - name: Upload qualified candidate
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-poco-a04-a19-a23-qualified-v3-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-poco-a04-a19-a23-qualified-v3/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
+  publish:
+    needs: qualify
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Check out carrier without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download qualified bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify.outputs.artifact_id }}
+          path: ${{ runner.temp }}/native-poco-a04-a19-a23-qualified-v3
+
+      - name: Verify and publish qualified code-only tree
+        working-directory: trillionnium-chain
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_COMMIT: ${{ needs.qualify.outputs.candidate_commit }}
+          EXPECTED_TREE: ${{ needs.qualify.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-poco-a04-a19-a23-qualified-v3"
+          test "$(cat "$out/source-commit")" = "${SOURCE_COMMIT}"
+          test "$(cat "$out/candidate-commit")" = "$EXPECTED_COMMIT"
+          test "$(cat "$out/candidate-tree")" = "$EXPECTED_TREE"
+          sha256sum --check "$out/candidate.bundle.sha256"
+          git bundle verify "$out/candidate.bundle"
+          git fetch "$out/candidate.bundle" \
+            refs/heads/native-poco-a04-a19-a23-qualified-v3:refs/remotes/qualified/native-stack-v3
+          candidate="$(git rev-parse refs/remotes/qualified/native-stack-v3)"
+          test "$candidate" = "$EXPECTED_COMMIT"
+          test "$(git rev-parse "${candidate}^{tree}")" = "$EXPECTED_TREE"
+          test "$(git rev-parse "${candidate}^")" = "${SOURCE_COMMIT}"
+          test -z "$(git diff --name-only "${SOURCE_COMMIT}..${candidate}" | grep '^\.github/workflows/' || true)"
+          remote_head="$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+          if [[ -n "$remote_head" && "$remote_head" != "$candidate" ]]; then
+            printf 'target branch exists at unexpected commit: %s\n' "$remote_head" >&2
+            exit 2
+          fi
+          if [[ "$remote_head" = "$candidate" ]]; then
+            printf 'target already published at %s\n' "$candidate"
+            exit 0
+          fi
+          auth="$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)"
+          git config --local http.https://github.com/.extraheader "AUTHORIZATION: basic $auth"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+          git push --atomic origin "${candidate}:refs/heads/${TARGET_BRANCH}"
