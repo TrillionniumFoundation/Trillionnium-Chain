@@ -1,0 +1,162 @@
+name: native-poco-a04-a19-a23-workspace-regression
+
+on:
+  push:
+    branches:
+      - qualification/native-poco-a04-a19-a23-exact-head-v1-20260901
+    paths:
+      - .github/workflows/native-poco-a04-a19-a23-workspace-regression.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-poco-a04-a19-a23-workspace-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: fddc8e919a77f3be42b72ad4b8a7f8ff91d7abdc
+  TARGET_BRANCH: integration/native-poco-a04-a19-a23-qualified-v4-20260901
+  CI: "true"
+  TZ: UTC
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+
+jobs:
+  workspace-regression:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/qualification/native-poco-a04-a19-a23-exact-head-v1-20260901' &&
+      (((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')) ||
+       ((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 480
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out read-only qualification carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Wait for and bind published exact head
+        id: target
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          target=""
+          for attempt in $(seq 1 180); do
+            target="$(git ls-remote origin "refs/heads/${TARGET_BRANCH}" | awk '{print $1}')"
+            if [[ -n "$target" ]]; then break; fi
+            printf 'target_not_published branch=%s attempt=%s\n' "$TARGET_BRANCH" "$attempt"
+            sleep 20
+          done
+          test -n "$target"
+          git fetch --no-tags origin \
+            "refs/heads/${TARGET_BRANCH}:refs/remotes/origin/native-stack-workspace"
+          test "$(git rev-parse refs/remotes/origin/native-stack-workspace)" = "$target"
+          git checkout --detach "$target"
+          test "$(git rev-parse HEAD^)" = "${SOURCE_COMMIT}"
+          test -z "$(git diff --name-only "${SOURCE_COMMIT}..HEAD" | grep '^\.github/workflows/' || true)"
+          echo "commit=$target" >> "$GITHUB_OUTPUT"
+          echo "tree=$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
+
+      - name: Verify pinned Rust and frozen offline cache
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component rustfmt --component clippy
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Compile every active workspace target
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ steps.target.outputs.commit }}"
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          cargo check --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+
+      - name: Run every active workspace test target
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            --workspace --all-targets --locked --offline
+
+      - name: Run all workspace doctests
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml \
+            --workspace --doc --locked --offline
+
+      - name: Revalidate global repository contracts
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/check_ci_runner_policy_test.sh
+          bash scripts/check_ci_runner_policy.sh --head
+          bash scripts/check_cargo_offline_policy.sh --head
+          python3 scripts/ci/check_repository_truth_v1.py
+          python3 scripts/ci/check_blocker_execution_v1.py
+          bash scripts/ci/check_poco_bft_mainline_truth.sh --pre-cutover
+          bash scripts/ci/check_canonical_development_plan.sh
+          bash scripts/project-preflight.sh --audit
+          git diff --check
+          git diff --exit-code -- .
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Build workspace-regression attestation
+        shell: bash
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/native-stack-workspace-regression"
+          mkdir -p "$out"
+          printf '%s\n' "${SOURCE_COMMIT}" > "$out/source-commit"
+          printf '%s\n' "${{ steps.target.outputs.commit }}" > "$out/target-commit"
+          printf '%s\n' "${{ steps.target.outputs.tree }}" > "$out/target-tree"
+          printf '%s\n' 'workspace_check=success' > "$out/result"
+          printf '%s\n' 'workspace_all_targets_test=success' >> "$out/result"
+          printf '%s\n' 'workspace_doctest=success' >> "$out/result"
+          sha256sum "$out"/* > "$out/SHA256SUMS"
+
+      - name: Upload workspace-regression attestation
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: native-poco-a04-a19-a23-workspace-regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/native-stack-workspace-regression/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        working-directory: trillionnium-chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
