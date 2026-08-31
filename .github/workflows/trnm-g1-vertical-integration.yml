@@ -33,7 +33,7 @@ jobs:
       - name: Verify source and fetch immutable package heads
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "582d6308eccb79e06de922e667ef3179daefedf0"
+          test "$(git rev-parse HEAD^)" = "68d9bda622079d6a224287ff09005d5c8050d9fd"
           base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
           test "$(git merge-base HEAD "${base}")" = "${base}"
           git fetch --no-tags origin \
@@ -77,7 +77,7 @@ jobs:
         run: |
           set -euo pipefail
           git rm .github/workflows/trnm-g1-vertical-integration.yml
-          git rm -f tmp-probe.txt
+          git rm -f --ignore-unmatch -- tmp-probe.txt
           cargo fmt --manifest-path trillionnium/Cargo.toml --all
           mkdir -p docs/development/packages
           cat > docs/development/packages/TRNM_G1_VERTICAL_INTEGRATION_V1.md <<'EOF'
