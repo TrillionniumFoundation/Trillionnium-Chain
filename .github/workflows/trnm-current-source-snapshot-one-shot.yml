@@ -1,0 +1,51 @@
+name: trnm-current-source-snapshot-one-shot
+
+on:
+  push:
+    branches:
+      - ops/current-source-snapshot-5383d7b-20260831
+    paths:
+      - .github/workflows/trnm-current-source-snapshot-one-shot.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-current-source-snapshot-one-shot-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_COMMIT: 5383d7b47537c52d028d207f3763a65c7cfd86a7
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_COMMIT }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Archive and bind exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_COMMIT}"
+          mkdir -p "${RUNNER_TEMP}/trnm-current-source"
+          git archive --format=tar --prefix=Trillionnium-Chain/ HEAD \
+            | gzip -9 > "${RUNNER_TEMP}/trnm-current-source/source.tar.gz"
+          git rev-parse HEAD > "${RUNNER_TEMP}/trnm-current-source/source.commit"
+          git rev-parse 'HEAD^{tree}' > "${RUNNER_TEMP}/trnm-current-source/source.tree"
+          sha256sum "${RUNNER_TEMP}/trnm-current-source/source.tar.gz" \
+            > "${RUNNER_TEMP}/trnm-current-source/source.tar.gz.sha256"
+
+      - name: Upload exact current source
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-current-source-${{ env.SOURCE_COMMIT }}
+          path: ${{ runner.temp }}/trnm-current-source/
+          if-no-files-found: error
+          retention-days: 3
