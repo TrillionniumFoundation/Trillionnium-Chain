@@ -1,0 +1,61 @@
+name: trnm-g1-normalize-format-patch
+
+on:
+  push:
+    branches:
+      - integration/g1-vertical-closure-v1-20260830
+    paths:
+      - .github/workflows/trnm-g1-normalize-format-patch.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trnm-g1-normalize-format-patch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  patch-and-remove-self:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out exact patch carrier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: integration/g1-vertical-closure-v1-20260830
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Apply deterministic format normalization and delete carrier
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "720337ceb8ed27781f88eec8521ad2d83cb369c4"
+          python3 -B - <<'PY'
+          from pathlib import Path
+
+          path = Path('.github/workflows/trnm-g1-vertical-integration.yml')
+          text = path.read_text(encoding='utf-8')
+          needle = (
+              '          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
+              '          git add -A\n'
+          )
+          replacement = (
+              '          cargo fmt --manifest-path trillionnium/Cargo.toml --all\n'
+              '          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check\n'
+              '          git add -A\n'
+          )
+          if text.count(needle) != 1:
+              raise SystemExit('format-normalization patch target count is not exactly one')
+          path.write_text(text.replace(needle, replacement, 1), encoding='utf-8')
+          PY
+          git rm .github/workflows/trnm-g1-normalize-format-patch.yml
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/trnm-g1-vertical-integration.yml
+          git commit -m "fix(ci): normalize composed G1 source before qualification"
+          git push origin HEAD:integration/g1-vertical-closure-v1-20260830
