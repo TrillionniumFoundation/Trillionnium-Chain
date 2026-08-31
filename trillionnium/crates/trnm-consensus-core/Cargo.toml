@@ -1,0 +1,39 @@
+[package]
+name = "trnm-consensus-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-p1-prototype"
+protocol = "poco-bft-v0"
+wire_conformance = false
+bounded_exact_validated_proposal_retention = true
+proposal_retention_aggregate_resource_budget_enforced = true
+proposal_retention_resource_accounting_unit = "durable-validation-resource-size-v0"
+proposal_retention_max_resource_bytes = 67108864
+proposal_retention_arc_backed = true
+proposal_retention_application_valid_authority = false
+proposal_retention_finality_authority = false
+proposal_retention_persistence_authority = false
+proposal_retention_signer_authority = false
+safety_rules_shadow_evaluation = true
+safety_rules_max_ancestry_blocks = 64
+safety_rules_ancestry_over_bound_fails_closed = true
+safety_rules_long_ancestry_liveness_equivalence = false
+safety_rules_authoritative = false
+safety_rules_application_valid_authority = false
+safety_rules_persistence_authority = false
+safety_rules_signer_authority = false
+safety_rules_recovery_replay_authority = false
+safety_rules_remote_wire = false
+safety_rules_runtime_activation = false
+safety_rules_production_candidate = false
+safety_rules_production_consensus_activation = false
+
+[dependencies]
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-safety-rules = { version = "0.1.0", path = "../trnm-consensus-safety-rules" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }

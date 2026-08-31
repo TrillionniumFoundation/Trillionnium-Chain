@@ -1,0 +1,25 @@
+[package]
+name = "trnm-consensus-crypto"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-p1-reference-verifier"
+protocol = "poco-bft-v0"
+private_key_api = false
+strict_same_version_epoch_transition_observation = true
+strict_same_version_epoch_pre_first_block_authority = true
+same_version_epoch_transition_signing_authority = false
+same_version_epoch_transition_core_activation = false
+
+[dependencies]
+curve25519-dalek = { version = "4", default-features = false, features = ["digest"] }
+ed25519-dalek = { version = "2.2", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
+
+[dev-dependencies]
+serde_json = "1"

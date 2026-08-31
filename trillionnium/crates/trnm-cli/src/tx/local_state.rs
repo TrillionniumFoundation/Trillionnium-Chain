@@ -1,6 +1,8 @@
 use super::*;
 use anyhow::anyhow;
 
+const DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV: &str = "TRNM_CLI_DEVELOPMENT_ONLY_LOCAL_TX_STATE";
+
 pub(crate) fn default_tx_state_file() -> PathBuf {
     if let Ok(path) = std::env::var("TRNM_RPC_TX_FILE") {
         return PathBuf::from(path);
@@ -50,9 +52,38 @@ pub(crate) fn query_local_tx_status(tx_hash: &str) -> Option<String> {
     .find_map(|key| rec.get(key).and_then(normalize_json_status))
 }
 
+pub(super) fn development_only_local_tx_state_enabled() -> Result<bool> {
+    match std::env::var_os(DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV) {
+        None => Ok(false),
+        Some(value) if value == std::ffi::OsStr::new("1") => Ok(true),
+        Some(_) => bail!(
+            "{DEVELOPMENT_ONLY_LOCAL_TX_STATE_ENV} must be exactly 1 to enable the non-authoritative development-only local pending-state diagnostic"
+        ),
+    }
+}
+
+pub(super) fn development_only_local_tx_query(
+    tx_hash: &str,
+    enabled: bool,
+) -> Option<TxQueryResponse> {
+    if !enabled {
+        return None;
+    }
+    let status = query_local_tx_status(tx_hash)?;
+    eprintln!(
+        "WARNING: tx status source=development_only_local_pending_cache authoritative=false production_ready=false; this is not node inclusion or finality evidence"
+    );
+    Some(TxQueryResponse {
+        tx_hash: tx_hash.to_string(),
+        status,
+        error: None,
+    })
+}
+
 pub(crate) fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
-    let normalized = super::parse::normalize_tx_hash(tx_hash)
-        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    let normalized = super::parse::normalize_tx_hash(tx_hash).ok_or_else(|| {
+        anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)")
+    })?;
     if !normalized.starts_with("0x") {
         return Err(anyhow!(
             "invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)"
@@ -90,6 +121,9 @@ pub(crate) fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
             },
             "status": "pending",
             "error": null,
+            "status_source": "development_only_local_pending_cache",
+            "authoritative": false,
+            "production_ready": false,
             "submitted_at_unix_ms": now_ms,
             "updated_at_unix_ms": now_ms
         }),

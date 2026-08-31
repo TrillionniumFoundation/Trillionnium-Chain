@@ -1,0 +1,5 @@
+{
+  "schema": "trnm-g2f-owner-view-commitment-cases-v2",
+  "positive": ["canonical-view-commitment", "owner-issued-permit", "single-use-consumption", "deterministic-consumed-commitment"],
+  "negative": ["permit-replay", "coordinated-nonzero-view-recompute", "namespace-copy", "same-height-fork", "application-root-drift", "manifest-drift", "generation-aba", "source-identity-drift", "token-tamper", "expired", "wrong-issuer"]
+}

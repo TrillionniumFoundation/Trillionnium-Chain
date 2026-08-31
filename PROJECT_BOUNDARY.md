@@ -1,19 +1,28 @@
-# Trillionnium Chain Boundary
+# Trillionnium Chain project boundary
 
-- Project ID: `trillionnium-chain`
-- Canonical root: `/home/alex/projects/trillionnium-chain`
-- Lane: `chain-consensus`
-- Private remote: `TrillionniumFoundation/Trillionnium-Chain`
-- Legacy shared source: `legacy-shared` (fetch-only)
+The canonical repository is `TrillionniumFoundation/Trillionnium-Chain`. Its
+active consensus lane is **native PoCO-BFT v0**. CometBFT code is retained only
+for one-way migration and historical differential replay; it cannot authorize a
+release, validator deployment, or production-readiness claim.
 
-## Owns
+## Owned surfaces
 
-Consensus, canonical runtime and state, mempool/RPC/node interfaces,
-genesis/validator/operator tooling, and the canonical AppHash/proof/finality
-semantics consumed by other projects.
+This repository owns consensus protocol and safety rules, native application and
+state execution, mempool/RPC/node interfaces, genesis and validator tooling,
+migration/state-sync/light-client proofs, and the release/SBOM/evidence chain.
 
-## Does not own
+## Excluded surfaces
 
-World gameplay/campaign/economy logic, Hepta services, Nakama authoritative
-match state, or cross-repository E2E orchestration. Game packages and sibling
-working-tree Cargo paths are forbidden here.
+World gameplay, campaign and economy logic, Hepta services, Nakama authoritative
+match state, sibling-repository Cargo paths, and cross-repository orchestration
+are outside this boundary.
+
+## Governance boundary
+
+`main` is the default integration branch and is required to be protected by pull
+requests, two approvals, a code-owner review, last-push approval, and stable
+required checks. `PROJECT_BOUNDARY.json` is the machine-readable policy; GitHub
+settings are independently verified and may not be inferred from this document.
+
+Production candidacy and consensus activation remain false until signed,
+source-bound evidence satisfies every gate in the canonical development plan.

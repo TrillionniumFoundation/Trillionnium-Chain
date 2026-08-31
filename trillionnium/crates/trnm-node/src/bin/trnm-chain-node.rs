@@ -8,7 +8,7 @@ use trnm_node::live::node::{load_live_chain_config, LiveChain};
 #[command(
     name = "trnm-chain-node",
     version,
-    about = "TRNM signed durable loopback devnet node with verifiable finality"
+    about = "TRNM development-only signed durable loopback devnet node (not a production PoCO node)"
 )]
 struct Args {
     #[arg(long)]
@@ -21,7 +21,7 @@ fn main() -> Result<()> {
     let listen_addr = config.listen_addr;
     let chain = Arc::new(LiveChain::open(config)?);
     println!(
-        "[chain] listening={} chain_id={} genesis_hash_hex={}",
+        "[chain] listening={} chain_id={} genesis_hash_hex={} development_only=true production_ready=false",
         listen_addr,
         chain.config().chain_id,
         chain.genesis_hash_hex()

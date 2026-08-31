@@ -1,0 +1,23 @@
+{
+  "schema": "trnm-agent-market-authority-extension-cases-v2",
+  "positive": [
+    "deterministic-state-commitment",
+    "attenuated-session",
+    "controller-rotation",
+    "old-session-revocation",
+    "threshold-recovery-rotation"
+  ],
+  "negative": [
+    "old-session-after-rotation",
+    "stale-controller-generation",
+    "wrong-controller",
+    "rotation-replay",
+    "insufficient-recovery-quorum",
+    "duplicate-recovery-signer",
+    "unknown-recovery-signer",
+    "model-scope-escalation",
+    "tool-scope-escalation",
+    "endpoint-scope-escalation",
+    "privacy-scope-escalation"
+  ]
+}

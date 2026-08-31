@@ -1,0 +1,52 @@
+[package]
+name = "trnm-poco-consumption-settlement-v1"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-consumption-settlement-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+kernel_scope = "single-asset-single-result-single-rollup"
+fresh_genesis_trust_bundle_is_consensus_object = false
+order_finalized_execution_context_is_consensus_object = false
+order_finalized_execution_context_cas = true
+order_proof_authority_complete = false
+bilateral_receipt_signatures = true
+monotonic_consumption_receipt_chain = true
+gap_free_atomic_rollup_assignment = true
+chain_assigned_rollup_challenge_window = true
+one_shot_conserved_settlement = true
+settlement_amounts_caller_selected = false
+deterministic_journal_replay_audit = true
+immutable_read_only_existing_file_preflight = true
+durable_state_and_journal_tail_roots = true
+durable_finalized_order_block_journal = true
+agent_market_authority_integration = false
+artifact_da_authority_integration = false
+result_challenge_authority_integration = false
+mvcc_final_apply_integration = false
+whole_store_rollback_authority = false
+node_integration = false
+g2_global_complete = false
+protocol_implementation_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+
+[dependencies]
+borsh = { version = "1", features = ["derive"] }
+ed25519-dalek = "2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+trnm-poco-agent-market-v1 = { path = "../trnm-poco-agent-market-v1" }
+
+[dev-dependencies]
+serde_json = "1"
+tempfile = "3"

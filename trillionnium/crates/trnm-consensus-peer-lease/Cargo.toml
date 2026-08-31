@@ -1,0 +1,41 @@
+[package]
+name = "trnm-consensus-peer-lease"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-p0-external-peer-lease"
+protocol = "poco-bft-v0"
+unix_socket_transport = true
+peer_lease_linux_peer_credentials = true
+peer_lease_absolute_operation_deadline = true
+append_only_hash_chain = true
+cross_process_fencing = true
+local_private_key_handling = false
+host_attestation = false
+consensus_runtime = false
+consensus_payload_transport = false
+payload_replay_append_only_hash_chain = true
+payload_replay_candidate = true
+payload_replay_body_store_candidate = true
+payload_replay_body_store_production_activation = false
+payload_replay_production_activation = false
+payload_replay_external_recovery_owner_candidate = true
+payload_replay_core_ack_ledger_candidate = true
+payload_replay_core_ack_atomic_with_core = false
+payload_replay_recovery_production_activation = false
+core_safety_authority = false
+production_activation = false
+production_candidate = false
+
+[dependencies]
+fs2 = "0.4"
+libc = "0.2"
+rustix = { version = "1.1.4", features = ["event", "net", "process"] }
+sha2 = { version = "0.10", default-features = false }
+
+[dev-dependencies]
+tempfile = "3"

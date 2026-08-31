@@ -26,6 +26,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
     let _ = fs::remove_file(&bids);
 
     let create_out = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "market.create_task",
@@ -55,6 +56,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
         .to_string();
 
     let bid_out = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args([
             "market.submit_bid",
@@ -98,6 +100,7 @@ fn market_match_waits_for_bids_lock_before_reading() {
 
     let started = Instant::now();
     let match_out = Command::new("cargo")
+        .env("TRNM_RPC_DEVELOPMENT_ONLY", "1")
         .args(["run", "-p", "trnm-rpc", "--"])
         .args(["market.match_task", "--task-id", &task_id])
         .env("TRNM_RPC_MARKET_TASKS_FILE", &tasks)

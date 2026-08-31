@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "protocol_id": "trnm-poco-ai-native-v1",
+  "status": "candidate-non-normative",
+  "scope": "global-execution-binding-tag-50-value-membership-and-candidate-claim-only",
+  "closed_for_listed_types_only": true,
+  "encoding": {
+    "name": "CEV1",
+    "integers": "unsigned-little-endian-fixed-width",
+    "bytes": "u32_le_length_then_bytes",
+    "strings": "canonical-utf8-as-Bytes",
+    "lists": "u32_le_count_then_items",
+    "records": "listed-field-order-without-tags",
+    "trailing_bytes": "forbidden"
+  },
+  "domains": {
+    "binding_id": "trnm.poco-ai.global-execution-binding.v1",
+    "state_key": "trnm.poco-ai.state-key.v1",
+    "state_leaf": "trnm.poco-ai.state-leaf.v1",
+    "state_node": "trnm.poco-ai.state-node.v1",
+    "claim_id": "trnm.poco-ai.global-execution-order-state-binding.claim.candidate.v1"
+  },
+  "constants": {
+    "object_kind": 50,
+    "state_tree_version": 0,
+    "state_tree_depth": 256,
+    "object_version": 0,
+    "maximum_claim_input_bytes": 4194304,
+    "maximum_witnesses_before_semantic_narrowing": 16,
+    "required_witnesses": 1,
+    "maximum_chain_id_bytes": 1024
+  },
+  "types": {
+    "Hash32": {
+      "kind": "fixed-bytes",
+      "length": 32
+    },
+    "GlobalExecutionBindingIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "BlockIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "TypedObjectIdV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "object_kind", "type": "u16"},
+        {"name": "object_id", "type": "Hash32"}
+      ]
+    },
+    "ProtocolContextV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "constant": 1},
+        {"name": "genesis_hash", "type": "Hash32", "nonzero": true},
+        {"name": "chain_id", "type": "ConsensusString", "minimum_bytes": 1, "maximum_bytes": 1024},
+        {"name": "protocol_version", "type": "u32", "constant": 1},
+        {"name": "stack_profile_hash", "type": "Hash32", "nonzero": true}
+      ]
+    },
+    "GlobalExecutionBindingBodyV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "constant": 1},
+        {"name": "context", "type": "ProtocolContextV1"},
+        {"name": "candidate_height", "type": "u64", "nonzero": true},
+        {"name": "candidate_block_id", "type": "BlockIdV1", "nonzero": true},
+        {"name": "candidate_composite_root", "type": "Hash32", "nonzero": true},
+        {"name": "final_execution_root", "type": "Hash32", "nonzero": true}
+      ]
+    },
+    "GlobalExecutionBindingV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "body", "type": "GlobalExecutionBindingBodyV1"},
+        {"name": "binding_id", "type": "GlobalExecutionBindingIdV1", "derived": "DigestV1(domains.binding_id, body)"}
+      ]
+    },
+    "GlobalExecutionBindingStateV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "constant": 1},
+        {"name": "binding_id", "type": "GlobalExecutionBindingIdV1", "must_equal": "GlobalExecutionBindingV1.binding_id"},
+        {"name": "version", "type": "u64", "constant": 0}
+      ]
+    },
+    "ApplicationObjectValueV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "constant": 1},
+        {"name": "object_id", "type": "TypedObjectIdV1", "constant_object_kind": 50},
+        {"name": "immutable_object_bytes", "type": "Bytes", "strict_type": "GlobalExecutionBindingV1"},
+        {"name": "mutable_state_bytes", "type": "Bytes", "strict_type": "GlobalExecutionBindingStateV1"}
+      ]
+    },
+    "ExecutionBindingStateWitnessV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "state_tree_version", "type": "u16", "constant": 0},
+        {"name": "object_kind", "type": "u16", "constant": 50},
+        {"name": "object_id", "type": "GlobalExecutionBindingIdV1"},
+        {"name": "object_version", "type": "u64", "constant": 0},
+        {"name": "value_bytes", "type": "Bytes", "strict_type": "ApplicationObjectValueV1"},
+        {"name": "siblings", "type": {"list": "Hash32"}, "exact_count": 256}
+      ]
+    },
+    "ExecutionBindingClaimBodyV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "constant": 1},
+        {"name": "order_proof_id", "type": "Hash32", "nonzero": true},
+        {"name": "chain_id", "type": "ConsensusString", "minimum_bytes": 1, "maximum_bytes": 1024},
+        {"name": "genesis_hash", "type": "Hash32", "nonzero": true},
+        {"name": "protocol_version", "type": "u32", "constant": 1},
+        {"name": "stack_profile_hash", "type": "Hash32", "nonzero": true},
+        {"name": "finalized_epoch", "type": "u64"},
+        {"name": "finalized_block_id", "type": "BlockIdV1", "nonzero": true},
+        {"name": "finalized_height", "type": "u64", "nonzero": true},
+        {"name": "finalized_post_state_root", "type": "Hash32", "nonzero": true},
+        {"name": "candidate_height", "type": "u64", "nonzero": true},
+        {"name": "candidate_block_id", "type": "BlockIdV1", "nonzero": true},
+        {"name": "candidate_composite_root", "type": "Hash32", "nonzero": true},
+        {"name": "final_execution_root", "type": "Hash32", "nonzero": true},
+        {"name": "witnesses", "type": {"list": "ExecutionBindingStateWitnessV1"}, "exact_count": 1, "parser_maximum_count": 16}
+      ]
+    },
+    "ExecutionBindingClaimV1": {
+      "kind": "record",
+      "fields": [
+        {"name": "body", "type": "ExecutionBindingClaimBodyV1"},
+        {"name": "claim_id", "type": "Hash32", "derived": "DigestV1(domains.claim_id, body)"}
+      ]
+    },
+    "GlobalExecutionBindingCreateMaterialV1": {
+      "kind": "inert-derived-data",
+      "fields": [
+        {"name": "materialized_at_height", "type": "u64", "constraint": "strictly_greater_than_candidate_height", "encoded_in_binding_id": false},
+        {"name": "object_kind", "type": "u16", "constant": 50},
+        {"name": "object_id", "type": "GlobalExecutionBindingIdV1"},
+        {"name": "object_version", "type": "u64", "constant": 0},
+        {"name": "state_key", "type": "Hash32"},
+        {"name": "value_bytes", "type": "Bytes", "strict_type": "ApplicationObjectValueV1"}
+      ]
+    }
+  },
+  "derivations": {
+    "DigestV1": "SHA-256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+    "binding_id": "DigestV1(domains.binding_id, GlobalExecutionBindingBodyV1)",
+    "state_key": "DigestV1(domains.state_key, (object_kind:u16, object_id:Hash32))",
+    "state_leaf": "DigestV1(domains.state_leaf, (state_key:Hash32, object_kind:u16, object_version:u64, value_bytes:Bytes))",
+    "state_node": "DigestV1(domains.state_node, (level:u16, left:Hash32, right:Hash32))",
+    "claim_id": "DigestV1(domains.claim_id, ExecutionBindingClaimBodyV1)",
+    "sparse_path": "siblings are leaf-to-root; level 0 uses state-key bit 255, level 255 uses bit 0; bit 0 places running hash left"
+  },
+  "admission": {
+    "claim_input_bound_applied_before_decode": true,
+    "exact_decode_reencode_required": true,
+    "claim_must_match_independently_verified_order_facts": true,
+    "candidate_must_be_nonzero_strict_ancestor_proved_by_order_carrier": true,
+    "single_registered_tag_50_membership_required": true,
+    "membership_root_must_equal_finalized_post_state_root": true,
+    "inner_and_outer_context_ids_versions_must_match": true,
+    "materialized_at_height_must_exceed_candidate_height": true,
+    "successful_byte_and_membership_validation_terminal": "VerifiedOrderStateExecutionBindingV1",
+    "reserved_compatibility_error_code": "ExecutionBindingWriterUnavailable"
+  },
+  "authority_boundary": {
+    "machine_schema_assigned_for_tag_50_kernel": true,
+    "canonical_vector_corpus_present": true,
+    "independent_standard_library_checker_present": true,
+    "authoritative_order_state_writer": true,
+    "normal_execution_binding_issuer": true,
+    "order_state_membership_binding": true,
+    "g2_global_complete": false,
+    "global_wire_schema_complete": false,
+    "global_conformance_vectors_complete": false,
+    "normative_freeze": false,
+    "production_candidate": false,
+    "activation": false
+  }
+}

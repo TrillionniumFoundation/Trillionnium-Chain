@@ -85,11 +85,14 @@ def status_hist(records: List[Dict[str, Any]]) -> Dict[str, int]:
 
 
 def ensure_bins(rust_root: Path, env: Dict[str, str]) -> None:
-    rpc = rust_root / "target" / "debug" / "trnm-rpc"
-    worker = rust_root / "target" / "debug" / "trnm-worker-agent"
-    if rpc.exists() and worker.exists():
-        return
-    r = run_cmd(["cargo", "build", "-p", "trnm-rpc", "-p", "trnm-worker-agent"], rust_root, env)
+    command = ["cargo", "build", "--locked"]
+    if env.get("CARGO_NET_OFFLINE") == "true":
+        command.append("--offline")
+    command.extend(["-p", "trnm-rpc", "-p", "trnm-worker-agent"])
+    # Never treat persistent self-hosted-runner target binaries as evidence that
+    # they match this checkout. Cargo must validate the exact source and lock on
+    # every run, even when it can reuse verified incremental artifacts.
+    r = run_cmd(command, rust_root, env)
     if not r.ok:
         print(r.stderr)
         raise SystemExit("build failed")

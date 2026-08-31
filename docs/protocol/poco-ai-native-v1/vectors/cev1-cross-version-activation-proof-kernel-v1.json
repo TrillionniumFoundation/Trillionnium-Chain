@@ -1,0 +1,269 @@
+{
+  "artifact": "poco-ai-native-v1-cross-version-activation-proof-corpus",
+  "artifact_version": 1,
+  "status": "candidate-non-normative",
+  "schema": "../schema/cev1-cross-version-activation-proof-kernel-v1.json",
+  "source_activation_kernel": [
+    {
+      "path": "docs/protocol/poco-ai-native-v1/schema/v0-to-v1-activation-kernel-v1.json",
+      "sha256": "48b98a2247eeff78ceef36416e166a546680a1deb0b428241765d61d13fe5da3"
+    },
+    {
+      "path": "docs/protocol/poco-ai-native-v1/vectors/v0-to-v1-activation-kernel-v1.json",
+      "sha256": "f7d9c14b1e253b1acf154073675c7b97a38132bf24bc02e367d7ec8025ab20cd"
+    },
+    {
+      "path": "scripts/ci/check_poco_ai_native_v1_upgrade_kernel.py",
+      "sha256": "fe773bffa14665abb4c8c9ef8d7f73bd350766788c8a8a9416c579c17badf544"
+    }
+  ],
+  "positive_cases": [
+    {
+      "case_id": "exact_field12_and_separate_cev1_activation_finality",
+      "activation_proof_cev1_hex": "0100890c87f5ab25c712744acf1495629b0a10257284c03606e21cebd0cfa3917402db00000000003333333333333333333333333333333333333333333333333333333333333333000e74726e6d2d76302d746573742d31143ed8764908ce9615b443d5930ffef421a2043d92de8d018436c7e3594d41730000000000000001000000000000000700000000000002bc00000000000000080000000000000320f96d83bb0e28cff50350e1b0a060d075fbf5e9dddcf4cf837674ad61706bcf42666666666666666666666666666666666666666666666666666666666666666601bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb00004a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9617deb95ad014a10af0cc654766fb249ea3da62452b7feac673b36cd857fc0339212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b0930300000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d310100000022222222222222222222222222222222222222222222222222222222222222220100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d310100000022222222222222222222222222222222222222222222222222222222222222220800000000000000010000000000000020030000000000000502131313131313131313131313131313131313131313131313131313131313131316161616161616161616161616161616161616161616161616161616161616164a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9050000006e65772d61aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0000ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc1818181818181818181818181818181818181818181818181818181818181818e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd07134d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c22834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b10000004a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9617deb95ad014a10af0cc654766fb249ea3da62452b7feac673b36cd857fc0339212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b095f83a3d9603d54cb2a767fc821874624d358788db0f3e427860a52368a91a12161616161616161616161616161616161616161616161616161616161616161615151515151515151515151515151515151515151515151515151515151515150000000000000000db996472275fe0ac55d32c92c08772b1037e6959abd57906684ffa187d3b1283050000006e65772d6100004000000006e3dcd67ab8f940269c79420c5263c46b5e0e3ccce920bcda79bd5dd2699b688528836dfd97327376db5823a391f27ce585fae5c9d9356c06c2b5ac6c0f9302d31100000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d310100000022222222222222222222222222222222222222222222222222222222222222224a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaac6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f99999999999999999999999999999999999999999999999999999999999999998f5b402556990545dffba49ae0c9e4bb655e72b192f0b08b81e0b05af9a0151420030000000000000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d310100000022222222222222222222222222222222222222222222222222222222222222220800000000000000010000000000000020030000000000000502131313131313131313131313131313131313131313131313131313131313131316161616161616161616161616161616161616161616161616161616161616164a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9050000006e65772d61aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0000ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc1818181818181818181818181818181818181818181818181818181818181818e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd07134d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c22834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b1000000030000000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d310100000022222222222222222222222222222222222222222222222222222222222222220800000000000000010000000000000020030000000000000502131313131313131313131313131313131313131313131313131313131313131316161616161616161616161616161616161616161616161616161616161616164a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9050000006e65772d61aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0000ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc1818181818181818181818181818181818181818181818181818181818181818e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd07134d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c22834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b10000008f5b402556990545dffba49ae0c9e4bb655e72b192f0b08b81e0b05af9a01514010001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222244444444444444444444444444444444444444444444444444444444444444440800000000000000c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f99999999999999999999999999999999999999999999999999999999999999990100000000000000018f5b402556990545dffba49ae0c9e4bb655e72b192f0b08b81e0b05af9a015142003000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1818181818181818181818181818181818181818181818181818181818181818ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a50604000000050000006e65772d610000400000008df22237ad75a0fa6bc8c88afe8fc04e9f0a4226ba10f1dbe1fe8f71ac09a967bed6bd37b4cb3a79ff0a528f1019f99faf3287d1ecff581fa58e204560e8a206050000006e65772d6200004000000023b45c664d8a8679bf9b873a7af5efeb516005adb8a98a47f6e38b199ba1f0cc011ed337af048ce59eacfe71e3b7d5b18302825154c1c1e6c1af0dc3b65b8c0f050000006e65772d630000400000009a05a4be1a7e32f2a5612b75f746cffc11f61e6a8cc1a1a09804ad53e9376730d0da94fe35d84dae8435965a1cadede738145b4fe1f38ee1e82f229cead2b409050000006e65772d6400004000000070cdbcc13d950cb4c06df5c2ef4efb90b95bf63d4740e490bf57460f19ad1970c19ba7d12848075cd0a0cfe1b2a407d1c759fda1233199f95be555ba1388500917b013e9862323ba38cfb0e38c29bd65cdca824e89f1b470e79d44b7f5f27fa50100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222208000000000000000200000000000000210300000000000001018f5b402556990545dffba49ae0c9e4bb655e72b192f0b08b81e0b05af9a01514050000006e65772d62aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa0117b013e9862323ba38cfb0e38c29bd65cdca824e89f1b470e79d44b7f5f27fa500ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc1818181818181818181818181818181818181818181818181818181818181818e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd07134d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c22834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b100000020603cf3c371cf8d996d6bf0eff62ff47493b204490079c0bc07f9b67932a155010001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222244444444444444444444444444444444444444444444444444444444444444440800000000000000c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f999999999999999999999999999999999999999999999999999999999999999902000000000000000120603cf3c371cf8d996d6bf0eff62ff47493b204490079c0bc07f9b67932a1552103000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1818181818181818181818181818181818181818181818181818181818181818ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a50604000000050000006e65772d61000040000000658ecc8e37283b29ba6472e216135a1369cb32747e7eabe3f6bb6647d6ad1d8508cdf3e7e5f0232cc93d26c901fe386c298a030544e661e4f666fc8a9592ce01050000006e65772d6200004000000030de3b74c2a1f568c062acb8f39837f94de24dbd5edc1e1e981c57d6ecca18421517d9594e334c59ad75c742fa862c39926305b0a6af7633289b823483d95709050000006e65772d6300004000000083d74e19f7c9a8743f2326a7531f5dd45044fd1596fe258f18b50aa48d78d359683e125c69d357ad1557462a19eab44fd64de77cd1a538e407afa382d26edb04050000006e65772d64000040000000b2056db4ef64c729a4eababee44d9e193f824ab96adba105d68c7eeaa3b094ddf75882e5486dbd7c9c3db234ebceffdfeb915e8ff8bbb4e0ae11e13706623f02f90e074215d29ae31bc9f41983c417486982000a792489b98e6f24d33780ca1c0100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d31010000002222222222222222222222222222222222222222222222222222222222222222080000000000000003000000000000002203000000000000010120603cf3c371cf8d996d6bf0eff62ff47493b204490079c0bc07f9b67932a155050000006e65772d63aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa01f90e074215d29ae31bc9f41983c417486982000a792489b98e6f24d33780ca1c00ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753a558cc85fa809f70c345a693462f944705ca7adee61b60f29fdd1f3ab97cd4cc1818181818181818181818181818181818181818181818181818181818181818e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a506a1cba5e08ad6bb80b32e8efa9c219bc534525a57eda4edc278b7def0214dd07134d2c7c6b9af96d70a10b7760feda3ff8eec071091fdf459fbc96bc6237a11c22834549575d4aba8074e751b7e78bc1da5debcab6710aa5117594196f86ff9fa3caa0d13124e7615c894fc7e233992c2ff4e9719286be48b8dc496391b1bd8b10000002d0c21134573715f61f91e72e234fca7f991256ad4b64f0a714c848370ab7500010001000100010011111111111111111111111111111111111111111111111111111111111111110e00000074726e6d2d76312d746573742d3101000000222222222222222222222222222222222222222222222222222222222222222244444444444444444444444444444444444444444444444444444444444444440800000000000000c6b259f74cb2fe4fddd08c50d0b229152e3c27f06114bc33b98c420ca564da3f99999999999999999999999999999999999999999999999999999999999999990300000000000000012d0c21134573715f61f91e72e234fca7f991256ad4b64f0a714c848370ab75002203000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1818181818181818181818181818181818181818181818181818181818181818ae77b13f714ad5a65d4b422478ad3dc5837b09dbb7692ea5fb162db406afd753e33110efe075928bbc71964431a5275540ecb3d0b8cfc58b38a0e0f37037a50604000000050000006e65772d61000040000000071fbd2b15f4da1cb063401a216cf5223d1d539b7d69df848001ca0a69ca27478c10cbbf97060ecb3e826dc461dd420759278cdae929a509dfe49d4c02553902050000006e65772d620000400000001c658eeef3350466de6d68c5936b1e41ce87e9cb42c9eaffd8693ff58cc85fdccfbcd1eb9be07f3360b486befa53ef1007d6aa09eeea79a3ab9887245493dc0d050000006e65772d6300004000000026729abe25257e2cfef42ae442b63555ead1ea4f2473c13d0796d60062eca4a89cff00f94283f1df88ec7b891b438627272e95d6279ffb6c784e5b601b7f330e050000006e65772d6400004000000076c71d8fc61035cff9645d58a68de35e5210b91445701e8cb765bab177a7bf51b4a62e1fac1d0d7b499cd309fbf2777357a005185d3173a6b68cf960e716d60f6f34b35e49a8922ebfa726bb3e524ad71f88709d16250151e2d437a6fa406583bf43ac82b2875c46a8a6d8bd53e855acf130e453aa135760801f757fd837e494db8fc57800856e8ee2d6042812222f18542955df7f3450fc93b991d2b9e244d2",
+      "expected": {
+        "source_upgrade_plan_hash": "95f83a3d9603d54cb2a767fc821874624d358788db0f3e427860a52368a91a12",
+        "activation_statement_id": "4a35557cb2aa20373128188865ee931f20e82cc8ad6cf1c7f3b072b181f7cbe9",
+        "activation_anchor_id": "617deb95ad014a10af0cc654766fb249ea3da62452b7feac673b36cd857fc033",
+        "migration_receipt_id": "9212a61ae024069ac393bb6465950858ff28b94aa04d418a80f7ddc2da2053b0",
+        "first_block_id": "8f5b402556990545dffba49ae0c9e4bb655e72b192f0b08b81e0b05af9a01514",
+        "first_proposal_id": "db996472275fe0ac55d32c92c08772b1037e6959abd57906684ffa187d3b1283",
+        "finality_proof_id": "bf43ac82b2875c46a8a6d8bd53e855acf130e453aa135760801f757fd837e494",
+        "activation_proof_id": "db8fc57800856e8ee2d6042812222f18542955df7f3450fc93b991d2b9e244d2",
+        "finalized_height": 800,
+        "qc_signatures": 12,
+        "proposal_signatures": 1,
+        "frozen_v0_fields_13_14": "forbidden-for-cross-version"
+      }
+    }
+  ],
+  "negative_cases": [
+    {
+      "case_id": "reject_v0_plan_trailing",
+      "mutation": "v0_plan_trailing",
+      "expected_error": "trailing"
+    },
+    {
+      "case_id": "reject_v0_plan_truncated",
+      "mutation": "v0_plan_truncated",
+      "expected_error": "truncated"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_schema",
+      "mutation": "v0_plan_wrong_schema",
+      "expected_error": "v0_plan_schema"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_genesis",
+      "mutation": "v0_plan_wrong_genesis",
+      "expected_error": "v0_plan_genesis"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_chain",
+      "mutation": "v0_plan_wrong_chain",
+      "expected_error": "v0_plan_chain"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_version",
+      "mutation": "v0_plan_wrong_version",
+      "expected_error": "v0_plan_version"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_approval",
+      "mutation": "v0_plan_wrong_approval",
+      "expected_error": "v0_plan_approval"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_activation",
+      "mutation": "v0_plan_wrong_activation",
+      "expected_error": "v0_plan_activation"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_artifact",
+      "mutation": "v0_plan_wrong_artifact",
+      "expected_error": "v0_plan_artifact"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_parameters",
+      "mutation": "v0_plan_wrong_parameters",
+      "expected_error": "v0_plan_parameters"
+    },
+    {
+      "case_id": "reject_v0_plan_missing_migration",
+      "mutation": "v0_plan_missing_migration",
+      "expected_error": "v0_plan_migration"
+    },
+    {
+      "case_id": "reject_v0_plan_wrong_migration",
+      "mutation": "v0_plan_wrong_migration",
+      "expected_error": "v0_plan_migration"
+    },
+    {
+      "case_id": "reject_frozen_v0_field13_present",
+      "mutation": "frozen_v0_field13_present",
+      "expected_error": "frozen_v0_field13_forbidden"
+    },
+    {
+      "case_id": "reject_frozen_v0_field14_present",
+      "mutation": "frozen_v0_field14_present",
+      "expected_error": "frozen_v0_field14_forbidden"
+    },
+    {
+      "case_id": "reject_source_handoff_substitution",
+      "mutation": "source_handoff_substitution",
+      "expected_error": "source_handoff_binding"
+    },
+    {
+      "case_id": "reject_activation_statement_substitution",
+      "mutation": "activation_statement_substitution",
+      "expected_error": "activation_statement_binding"
+    },
+    {
+      "case_id": "reject_activation_anchor_substitution",
+      "mutation": "activation_anchor_substitution",
+      "expected_error": "activation_anchor_binding"
+    },
+    {
+      "case_id": "reject_migration_receipt_substitution",
+      "mutation": "migration_receipt_substitution",
+      "expected_error": "migration_receipt_binding"
+    },
+    {
+      "case_id": "reject_proposal_trailing",
+      "mutation": "proposal_trailing",
+      "expected_error": "trailing"
+    },
+    {
+      "case_id": "reject_proposal_truncated",
+      "mutation": "proposal_truncated",
+      "expected_error": "truncated"
+    },
+    {
+      "case_id": "reject_proposal_id_flip",
+      "mutation": "proposal_id_flip",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_proposal_signature_flip",
+      "mutation": "proposal_signature_flip",
+      "expected_error": "proposal_signature"
+    },
+    {
+      "case_id": "reject_proposal_wrong_proposer",
+      "mutation": "proposal_wrong_proposer",
+      "expected_error": "proposal_proposer"
+    },
+    {
+      "case_id": "reject_proposal_wrong_kind",
+      "mutation": "proposal_wrong_kind",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_proposal_wrong_parent",
+      "mutation": "proposal_wrong_parent",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_proposal_has_payload",
+      "mutation": "proposal_has_payload",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_proposal_wrong_plan",
+      "mutation": "proposal_wrong_plan",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_proposal_wrong_state",
+      "mutation": "proposal_wrong_state",
+      "expected_error": "proposal_id"
+    },
+    {
+      "case_id": "reject_finality_trailing",
+      "mutation": "finality_trailing",
+      "expected_error": "trailing"
+    },
+    {
+      "case_id": "reject_finality_truncated",
+      "mutation": "finality_truncated",
+      "expected_error": "truncated"
+    },
+    {
+      "case_id": "reject_finality_wrong_context",
+      "mutation": "finality_wrong_context",
+      "expected_error": "finality_context"
+    },
+    {
+      "case_id": "reject_finality_wrong_target",
+      "mutation": "finality_wrong_target",
+      "expected_error": "finality_target"
+    },
+    {
+      "case_id": "reject_finality_chain_short",
+      "mutation": "finality_chain_short",
+      "expected_error": "finality_chain_count"
+    },
+    {
+      "case_id": "reject_finality_block_id_flip",
+      "mutation": "finality_block_id_flip",
+      "expected_error": "finality_block_id"
+    },
+    {
+      "case_id": "reject_qc_signature_flip",
+      "mutation": "qc_signature_flip",
+      "expected_error": "qc_signature"
+    },
+    {
+      "case_id": "reject_qc_duplicate_signer",
+      "mutation": "qc_duplicate_signer",
+      "expected_error": "qc_signer_order"
+    },
+    {
+      "case_id": "reject_qc_under_quorum",
+      "mutation": "qc_under_quorum",
+      "expected_error": "qc_quorum"
+    },
+    {
+      "case_id": "reject_qc_wrong_set",
+      "mutation": "qc_wrong_set",
+      "expected_error": "qc_authority"
+    },
+    {
+      "case_id": "reject_qc_block_substitution",
+      "mutation": "qc_block_substitution",
+      "expected_error": "qc_block"
+    },
+    {
+      "case_id": "reject_finality_parent_break",
+      "mutation": "finality_parent_break",
+      "expected_error": "finality_parent"
+    },
+    {
+      "case_id": "reject_finality_height_gap",
+      "mutation": "finality_height_gap",
+      "expected_error": "finality_height"
+    },
+    {
+      "case_id": "reject_finality_view_gap",
+      "mutation": "finality_view_gap",
+      "expected_error": "finality_view"
+    },
+    {
+      "case_id": "reject_finality_justify_substitution",
+      "mutation": "finality_justify_substitution",
+      "expected_error": "finality_justify"
+    },
+    {
+      "case_id": "reject_activation_proof_id_flip",
+      "mutation": "activation_proof_id_flip",
+      "expected_error": "activation_proof_id"
+    }
+  ],
+  "explicit_exclusions": [
+    "frozen-v0 EpochHandoffProof fields 13 and 14 are forbidden on this cross-version path; they are not reinterpreted as CEV1",
+    "governance-state membership/finality for UpgradePlanV0 is not proved",
+    "migration execution, complete source-state authentication, audit/conservation recomputation, and output construction are not proved",
+    "the proposal carrier is a bounded candidate witness binding the exact V0ActivationFirst header and activation IDs; full OrderProposalV1 admission/transport remains outside this tranche",
+    "delayed first-view TC, arbitrary multi-hop light-client updates, signer durability, implementation, activation, production, release readiness, and normative freeze are not proved"
+  ]
+}

@@ -1,0 +1,1997 @@
+{
+  "artifact": "trnm.poco-ai.cev1-foundation-order-kernel.v1",
+  "artifact_version": 1,
+  "protocol_version": 1,
+  "canonical_encoding": "CEV1",
+  "status": {
+    "classification": "candidate_non_normative",
+    "closed_for_listed_types_only": true,
+    "normative_freeze": false,
+    "global_wire_schema_complete": false,
+    "semantic_consistency_proven": false,
+    "implementation_or_activation_evidence": false,
+    "cryptographic_interoperability_evidence": false
+  },
+  "scope": {
+    "covered_types": [
+      "ProtocolContextV1",
+      "ValidatorMemberV1",
+      "ValidatorSetDefinitionV1",
+      "ValidatorSetDescriptorV1",
+      "ConsensusParametersV1",
+      "TypedObjectIdV1",
+      "MerkleLeafBodyV1",
+      "MerkleNodeBodyV1",
+      "MerkleListRootBodyV1",
+      "ConsensusContextV1",
+      "BatchRefV1",
+      "ParentBlockRefV1",
+      "BlockKindV1",
+      "BlockHeaderV1",
+      "VoteStatementBodyV1",
+      "VoteSignatureEntryV1",
+      "VoteIdentityBodyV1",
+      "QuorumCertificateBodyV1",
+      "QuorumCertificateV1",
+      "HighJustificationRefV1",
+      "FinalizedAnchorRefV1",
+      "TimeoutStatementBodyV1",
+      "TimeoutSignatureEntryV1",
+      "TimeoutIdentityBodyV1",
+      "GenesisAnchorBodyV1",
+      "GenesisAnchorV1",
+      "ActivationAnchorBodyV1",
+      "ActivationAnchorV1",
+      "EpochHandoffBodyV1",
+      "EpochHandoffSignStatementV1",
+      "EpochHandoffSignatureEntryV1",
+      "EpochHandoffV1",
+      "EpochStartJustificationV1",
+      "HighJustificationObjectV1",
+      "TimeoutCertificateBodyV1"
+    ],
+    "typed_id_wrappers": [
+      "AgentIdV1",
+      "AgentKeyIdV1",
+      "CapabilityIdV1",
+      "SessionKeyGrantIdV1",
+      "TaskIdV1",
+      "BidIdV1",
+      "LeaseIdV1",
+      "EscrowIdV1",
+      "CheckpointIdV1",
+      "ResultIdV1",
+      "ExecutionReceiptIdV1",
+      "TransactionExecutionReceiptIdV1",
+      "VerificationClaimIdV1",
+      "VerificationDecisionIdV1",
+      "ChallengeIdV1",
+      "BatchIdV1",
+      "ArtifactIdV1",
+      "AvailabilityCertificateIdV1",
+      "ConsumptionRollupIdV1",
+      "ConsumptionReceiptIdV1",
+      "SettlementIdV1",
+      "AgentTransactionIdV1",
+      "BlockIdV1",
+      "OrderProposalIdV1",
+      "VoteIdV1",
+      "TimeoutIdV1",
+      "QuorumCertificateIdV1",
+      "TimeoutCertificateIdV1",
+      "EpochDescriptorIdV1",
+      "EpochCheckpointIdV1",
+      "EpochHandoffIdV1",
+      "DaCommitteeIdV1",
+      "DaAttestationIdV1",
+      "RetrievalReceiptIdV1",
+      "StateSyncManifestIdV1",
+      "UpgradePlanIdV1",
+      "MigrationReceiptIdV1",
+      "V0ToV1ActivationStatementIdV1",
+      "ActivationAnchorIdV1",
+      "OrderFinalityProofIdV1",
+      "ApplicationStateProofIdV1",
+      "ArtifactAvailabilityProofIdV1",
+      "ResultSettlementFinalityProofIdV1",
+      "GenesisAnchorIdV1",
+      "NonceLaneIdV1",
+      "AccountIdV1",
+      "ValuePoolIdV1",
+      "BondIdV1",
+      "ConsumptionReceiptCoordinateIdV1",
+      "DaObligationIdV1",
+      "GlobalExecutionBindingIdV1"
+    ],
+    "structural_helper_types": [
+      "GenesisParentBodyV1",
+      "V1BlockParentBodyV1",
+      "V0TerminalBlockParentBodyV1",
+      "QcJustificationRefBodyV1",
+      "EpochStartJustificationRefBodyV1",
+      "FreshGenesisFinalizedAnchorBodyV1",
+      "V0ActivationFinalizedAnchorBodyV1",
+      "EpochCheckpointFinalizedAnchorBodyV1"
+    ],
+    "excluded": [
+      "OrderProposalBodyV1 and transport protobuf",
+      "DA, Agent, Market, Compute, execution, settlement, state-sync, and light-client schemas",
+      "strict Ed25519 verification and independent parser interoperability",
+      "repository-wide schema completeness, normative freeze, implementation, activation, or release claims"
+    ]
+  },
+  "source_contracts": [
+    "docs/protocol/poco-ai-native-v1/02-versioning-chain-profile-wire-and-crypto.md",
+    "docs/protocol/poco-ai-native-v1/07-order-consensus-epochs-and-finality.md",
+    "docs/protocol/poco-ai-native-v1/10-invariants-formal-obligations-and-conformance.md"
+  ],
+  "encoding": {
+    "integers": "fixed_width_little_endian",
+    "bool": {
+      "width_bytes": 1,
+      "accepted": [
+        0,
+        1
+      ]
+    },
+    "Hash32": {
+      "width_bytes": 32
+    },
+    "Bytes": "u32_le_length_then_exact_bytes",
+    "ConsensusString": "u32_le_utf8_byte_length_then_exact_utf8",
+    "Option": "u8_tag_0_absent_1_present_then_value",
+    "List": "u32_le_count_then_items_in_declared_order",
+    "record": "fields_in_declared_order_without_tags",
+    "enum": "declared_integer_discriminant_then_selected_body_only",
+    "strict_decode": [
+      "no trailing bytes",
+      "no unknown discriminants",
+      "no alternate integer widths",
+      "no ignored or omitted record fields",
+      "bounds before allocation",
+      "canonical input order is verified, never repaired"
+    ]
+  },
+  "machine_json_representation": {
+    "unsigned_integer": "unquoted base-10 integer parsed losslessly through u128; floats, exponents, signs, leading zeros, and overflow are invalid",
+    "Hash32_and_Bytes": "lowercase even-length hexadecimal without 0x prefix; Hash32 is exactly 64 hex digits",
+    "enum": "object with variant and, only for a body-carrying variant, value",
+    "option": "null for absent or the represented inner value for present",
+    "note": "This JSON representation authors CEV1 values; JSON bytes are never CEV1 signing or hashing preimages."
+  },
+  "digest": {
+    "algorithm": "SHA-256",
+    "formula": "SHA256(u32_le(len(UTF8(domain))) || UTF8(domain) || CEV1(value))",
+    "domain_policy": "nonempty ASCII candidate domains"
+  },
+  "ordered_root_algorithm": {
+    "leaf": "DigestV1(merkle_leaf, (root_kind,index,item_kind,item_id,item_commitment)) in canonical input order",
+    "parent": "DigestV1(merkle_node, (root_kind,level,left,right)); level 0 is the parent of leaves",
+    "odd_width": "duplicate the final unpaired hash as both left and right",
+    "final": "DigestV1(merkle_list_root, (root_kind,item_count,tree_root:Option<Hash32>))",
+    "empty": "item_count=0 and tree_root=None"
+  },
+  "domains": {
+    "validator_set_definition": "trnm.poco-ai.validator-set-definition.v1",
+    "validator_set": "trnm.poco-ai.validator-set.v1",
+    "consensus_parameters": "trnm.poco-ai.consensus-parameters.v1",
+    "merkle_leaf": "trnm.poco-ai.merkle-leaf.v1",
+    "merkle_node": "trnm.poco-ai.merkle-node.v1",
+    "merkle_list_root": "trnm.poco-ai.merkle-list-root.v1",
+    "block_id": "trnm.poco-ai.order-block.v1",
+    "vote_id": "trnm.poco-ai.order-vote.v1",
+    "vote_signature": "trnm.poco-ai.order-vote-signature.v1",
+    "quorum_certificate": "trnm.poco-ai.order-qc.v1",
+    "timeout_id": "trnm.poco-ai.order-timeout.v1",
+    "timeout_signature": "trnm.poco-ai.order-timeout-signature.v1",
+    "timeout_certificate": "trnm.poco-ai.order-tc.v1",
+    "genesis_anchor": "trnm.poco-ai.genesis-anchor.v1",
+    "activation_anchor": "trnm.poco-ai.activation-anchor.v1",
+    "epoch_handoff": "trnm.poco-ai.epoch-handoff.v1",
+    "epoch_handoff_old_signature": "trnm.poco-ai.epoch-handoff-old-signature.v1",
+    "epoch_handoff_new_signature": "trnm.poco-ai.epoch-handoff-new-signature.v1"
+  },
+  "registries": {
+    "RootKindV1": [
+      {
+        "tag": 0,
+        "purpose": "block_batch_refs"
+      },
+      {
+        "tag": 1,
+        "purpose": "block_protocol_objects"
+      },
+      {
+        "tag": 2,
+        "purpose": "block_transaction_execution_receipts"
+      },
+      {
+        "tag": 3,
+        "purpose": "block_or_evaluation_evidence"
+      },
+      {
+        "tag": 4,
+        "purpose": "block_consumption_rollups"
+      },
+      {
+        "tag": 5,
+        "purpose": "block_settlement"
+      },
+      {
+        "tag": 6,
+        "purpose": "block_resource_usage"
+      },
+      {
+        "tag": 7,
+        "purpose": "transaction_batch_content"
+      },
+      {
+        "tag": 8,
+        "purpose": "artifact_evidence_content"
+      },
+      {
+        "tag": 9,
+        "purpose": "da_chunks"
+      },
+      {
+        "tag": 10,
+        "purpose": "retrieval_returned_chunks"
+      },
+      {
+        "tag": 11,
+        "purpose": "transaction_events"
+      },
+      {
+        "tag": 12,
+        "purpose": "transaction_read_set"
+      },
+      {
+        "tag": 13,
+        "purpose": "transaction_write_set"
+      },
+      {
+        "tag": 14,
+        "purpose": "transaction_state_delta"
+      },
+      {
+        "tag": 15,
+        "purpose": "transaction_created_objects"
+      },
+      {
+        "tag": 16,
+        "purpose": "rollup_receipts"
+      },
+      {
+        "tag": 17,
+        "purpose": "result_task_result"
+      },
+      {
+        "tag": 18,
+        "purpose": "settlement_input_value"
+      },
+      {
+        "tag": 19,
+        "purpose": "settlement_planned_deltas"
+      },
+      {
+        "tag": 20,
+        "purpose": "settlement_conservation"
+      }
+    ],
+    "ObjectKindV1": [
+      {
+        "tag": 0,
+        "type": "AgentIdV1",
+        "domain": "trnm.poco-ai.agent.v1"
+      },
+      {
+        "tag": 1,
+        "type": "AgentKeyIdV1",
+        "domain": "trnm.poco-ai.agent-key.v1"
+      },
+      {
+        "tag": 2,
+        "type": "CapabilityIdV1",
+        "domain": "trnm.poco-ai.capability.v1"
+      },
+      {
+        "tag": 3,
+        "type": "SessionKeyGrantIdV1",
+        "domain": "trnm.poco-ai.session-key-grant.v1"
+      },
+      {
+        "tag": 4,
+        "type": "TaskIdV1",
+        "domain": "trnm.poco-ai.task.v1"
+      },
+      {
+        "tag": 5,
+        "type": "BidIdV1",
+        "domain": "trnm.poco-ai.bid.v1"
+      },
+      {
+        "tag": 6,
+        "type": "LeaseIdV1",
+        "domain": "trnm.poco-ai.lease.v1"
+      },
+      {
+        "tag": 7,
+        "type": "EscrowIdV1",
+        "domain": "trnm.poco-ai.escrow.v1"
+      },
+      {
+        "tag": 8,
+        "type": "CheckpointIdV1",
+        "domain": "trnm.poco-ai.compute-checkpoint.v1"
+      },
+      {
+        "tag": 9,
+        "type": "ResultIdV1",
+        "domain": "trnm.poco-ai.result.v1"
+      },
+      {
+        "tag": 10,
+        "type": "ExecutionReceiptIdV1",
+        "domain": "trnm.poco-ai.execution-receipt.v1"
+      },
+      {
+        "tag": 11,
+        "type": "TransactionExecutionReceiptIdV1",
+        "domain": "trnm.poco-ai.transaction-execution-receipt.v1"
+      },
+      {
+        "tag": 12,
+        "type": "VerificationClaimIdV1",
+        "domain": "trnm.poco-ai.verification-claim.v1"
+      },
+      {
+        "tag": 13,
+        "type": "VerificationDecisionIdV1",
+        "domain": "trnm.poco-ai.verification-decision.v1"
+      },
+      {
+        "tag": 14,
+        "type": "ChallengeIdV1",
+        "domain": "trnm.poco-ai.challenge.v1"
+      },
+      {
+        "tag": 15,
+        "type": "BatchIdV1",
+        "domain": "trnm.poco-ai.da-batch.v1"
+      },
+      {
+        "tag": 16,
+        "type": "ArtifactIdV1",
+        "domain": "trnm.poco-ai.artifact.v1"
+      },
+      {
+        "tag": 17,
+        "type": "AvailabilityCertificateIdV1",
+        "domain": "trnm.poco-ai.availability-certificate.v1"
+      },
+      {
+        "tag": 18,
+        "type": "ConsumptionRollupIdV1",
+        "domain": "trnm.poco-ai.consumption-rollup.v1"
+      },
+      {
+        "tag": 19,
+        "type": "ConsumptionReceiptIdV1",
+        "domain": "trnm.poco-ai.consumption-receipt.v1"
+      },
+      {
+        "tag": 20,
+        "type": "SettlementIdV1",
+        "domain": "trnm.poco-ai.settlement.v1"
+      },
+      {
+        "tag": 21,
+        "type": "AgentTransactionIdV1",
+        "domain": "trnm.poco-ai.agent-transaction.v1"
+      },
+      {
+        "tag": 22,
+        "type": "BlockIdV1",
+        "domain": "trnm.poco-ai.order-block.v1"
+      },
+      {
+        "tag": 23,
+        "type": "OrderProposalIdV1",
+        "domain": "trnm.poco-ai.order-proposal.v1"
+      },
+      {
+        "tag": 24,
+        "type": "VoteIdV1",
+        "domain": "trnm.poco-ai.order-vote.v1"
+      },
+      {
+        "tag": 25,
+        "type": "TimeoutIdV1",
+        "domain": "trnm.poco-ai.order-timeout.v1"
+      },
+      {
+        "tag": 26,
+        "type": "QuorumCertificateIdV1",
+        "domain": "trnm.poco-ai.order-qc.v1"
+      },
+      {
+        "tag": 27,
+        "type": "TimeoutCertificateIdV1",
+        "domain": "trnm.poco-ai.order-tc.v1"
+      },
+      {
+        "tag": 28,
+        "type": "EpochDescriptorIdV1",
+        "domain": "trnm.poco-ai.epoch-descriptor.v1"
+      },
+      {
+        "tag": 29,
+        "type": "EpochCheckpointIdV1",
+        "domain": "trnm.poco-ai.epoch-checkpoint.v1"
+      },
+      {
+        "tag": 30,
+        "type": "EpochHandoffIdV1",
+        "domain": "trnm.poco-ai.epoch-handoff.v1"
+      },
+      {
+        "tag": 31,
+        "type": "DaCommitteeIdV1",
+        "domain": "trnm.poco-ai.da-committee.v1"
+      },
+      {
+        "tag": 32,
+        "type": "DaAttestationIdV1",
+        "domain": "trnm.poco-ai.da-attestation.v1"
+      },
+      {
+        "tag": 33,
+        "type": "RetrievalReceiptIdV1",
+        "domain": "trnm.poco-ai.retrieval-receipt.v1"
+      },
+      {
+        "tag": 34,
+        "type": "StateSyncManifestIdV1",
+        "domain": "trnm.poco-ai.state-sync-manifest.v1"
+      },
+      {
+        "tag": 35,
+        "type": "UpgradePlanIdV1",
+        "domain": "trnm.poco-ai.upgrade-plan.v1"
+      },
+      {
+        "tag": 36,
+        "type": "MigrationReceiptIdV1",
+        "domain": "trnm.poco-ai.migration-receipt.v1"
+      },
+      {
+        "tag": 37,
+        "type": "V0ToV1ActivationStatementIdV1",
+        "domain": "trnm.poco-ai.v0-to-v1-activation-statement.v1"
+      },
+      {
+        "tag": 38,
+        "type": "ActivationAnchorIdV1",
+        "domain": "trnm.poco-ai.activation-anchor.v1"
+      },
+      {
+        "tag": 39,
+        "type": "OrderFinalityProofIdV1",
+        "domain": "trnm.poco-ai.order-finality-proof.v1"
+      },
+      {
+        "tag": 40,
+        "type": "ApplicationStateProofIdV1",
+        "domain": "trnm.poco-ai.application-state-proof.v1"
+      },
+      {
+        "tag": 41,
+        "type": "ArtifactAvailabilityProofIdV1",
+        "domain": "trnm.poco-ai.artifact-availability-proof.v1"
+      },
+      {
+        "tag": 42,
+        "type": "ResultSettlementFinalityProofIdV1",
+        "domain": "trnm.poco-ai.result-settlement-finality-proof.v1"
+      },
+      {
+        "tag": 43,
+        "type": "GenesisAnchorIdV1",
+        "domain": "trnm.poco-ai.genesis-anchor.v1"
+      },
+      {
+        "tag": 44,
+        "type": "NonceLaneIdV1",
+        "domain": "trnm.poco-ai.nonce-lane.v1"
+      },
+      {
+        "tag": 45,
+        "type": "AccountIdV1",
+        "domain": "trnm.poco-ai.account.v1"
+      },
+      {
+        "tag": 46,
+        "type": "ValuePoolIdV1",
+        "domain": "trnm.poco-ai.value-pool.v1"
+      },
+      {
+        "tag": 47,
+        "type": "BondIdV1",
+        "domain": "trnm.poco-ai.bond.v1"
+      },
+      {
+        "tag": 48,
+        "type": "ConsumptionReceiptCoordinateIdV1",
+        "domain": "trnm.poco-ai.consumption-receipt-coordinate.v1"
+      },
+      {
+        "tag": 49,
+        "type": "DaObligationIdV1",
+        "domain": "trnm.poco-ai.da-obligation.v1"
+      },
+      {
+        "tag": 50,
+        "type": "GlobalExecutionBindingIdV1",
+        "domain": "trnm.poco-ai.global-execution-binding.v1"
+      }
+    ],
+    "ConsensusMessageKindV1": [
+      {
+        "tag": 0,
+        "name": "OrderProposal"
+      },
+      {
+        "tag": 1,
+        "name": "Vote"
+      },
+      {
+        "tag": 2,
+        "name": "Timeout"
+      },
+      {
+        "tag": 3,
+        "name": "EpochHandoffOldSet"
+      },
+      {
+        "tag": 4,
+        "name": "EpochHandoffNewSet"
+      }
+    ]
+  },
+  "constraints": [
+    {
+      "id": "schema-v1",
+      "rule": "Every covered version field named schema_version equals 1."
+    },
+    {
+      "id": "protocol-v1",
+      "rule": "ProtocolContextV1.protocol_version equals 1."
+    },
+    {
+      "id": "validator-order",
+      "rule": "Validator IDs are nonempty, unique, and strictly increasing by raw bytes; consensus public keys are unique."
+    },
+    {
+      "id": "validator-quorum",
+      "rule": "Positive u128 weights checked-sum to total_weight; threshold=floor(2W/3)+1 with checked arithmetic."
+    },
+    {
+      "id": "root-registry",
+      "rule": "RootKindV1 is closed to tags 0..20 and the requested destination kind is bound."
+    },
+    {
+      "id": "vote-context",
+      "rule": "VoteStatementBodyV1 carries ConsensusMessageKindV1 Vote."
+    },
+    {
+      "id": "timeout-context",
+      "rule": "TimeoutStatementBodyV1 carries ConsensusMessageKindV1 Timeout."
+    },
+    {
+      "id": "certificate-order",
+      "rule": "QC and TC signer entries are strictly increasing by raw signer ID and duplicate-free before checked weight accumulation."
+    },
+    {
+      "id": "certificate-quorum",
+      "rule": "QC and TC checked signer weight reaches the committed validator-set threshold."
+    },
+    {
+      "id": "tc-view",
+      "rule": "TimeoutCertificateBodyV1.target_view=timed_out_view+1 with checked u64 arithmetic."
+    },
+    {
+      "id": "handoff-monotonic",
+      "rule": "new_epoch=old_epoch+1, activation_height=terminal_height+1, and initial_new_view=1 with checked arithmetic."
+    },
+    {
+      "id": "signature-carrier",
+      "rule": "Candidate vectors bind exact signature roots and opaque canonical signature bytes but do not claim Ed25519 verification."
+    }
+  ],
+  "types": {
+    "AgentIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "AgentKeyIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "CapabilityIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "SessionKeyGrantIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "TaskIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "BidIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "LeaseIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "EscrowIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "CheckpointIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ResultIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ExecutionReceiptIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "TransactionExecutionReceiptIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "VerificationClaimIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "VerificationDecisionIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ChallengeIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "BatchIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ArtifactIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "AvailabilityCertificateIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ConsumptionRollupIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ConsumptionReceiptIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "SettlementIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "AgentTransactionIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "BlockIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "OrderProposalIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "VoteIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "TimeoutIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "QuorumCertificateIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "TimeoutCertificateIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "EpochDescriptorIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "EpochCheckpointIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "EpochHandoffIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "DaCommitteeIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "DaAttestationIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "RetrievalReceiptIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "StateSyncManifestIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "UpgradePlanIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "MigrationReceiptIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "V0ToV1ActivationStatementIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ActivationAnchorIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "OrderFinalityProofIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ApplicationStateProofIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ArtifactAvailabilityProofIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ResultSettlementFinalityProofIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "GenesisAnchorIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "NonceLaneIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "AccountIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ValuePoolIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "BondIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ConsumptionReceiptCoordinateIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "DaObligationIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "GlobalExecutionBindingIdV1": {
+      "kind": "alias",
+      "target": "Hash32"
+    },
+    "ProtocolContextV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "genesis_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "chain_id",
+          "type": "ConsensusString"
+        },
+        {
+          "name": "protocol_version",
+          "type": "u32"
+        },
+        {
+          "name": "stack_profile_hash",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "ValidatorMemberV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "validator_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "consensus_key_scheme",
+          "type": "u16"
+        },
+        {
+          "name": "consensus_public_key",
+          "type": "Bytes"
+        },
+        {
+          "name": "voting_weight",
+          "type": "u128"
+        },
+        {
+          "name": "network_identity_commitment",
+          "type": "Hash32"
+        },
+        {
+          "name": "safety_signer_policy_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "poco_economic_record_hash",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "ValidatorSetDefinitionV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "members",
+          "type": {
+            "list": "ValidatorMemberV1"
+          }
+        },
+        {
+          "name": "total_weight",
+          "type": "u128"
+        },
+        {
+          "name": "quorum_threshold",
+          "type": "u128"
+        }
+      ]
+    },
+    "ValidatorSetDescriptorV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "definition",
+          "type": "ValidatorSetDefinitionV1"
+        }
+      ]
+    },
+    "ConsensusParametersV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "quorum_numerator",
+          "type": "u16"
+        },
+        {
+          "name": "quorum_denominator",
+          "type": "u16"
+        },
+        {
+          "name": "finality_chain_length",
+          "type": "u8"
+        },
+        {
+          "name": "execute_coordination_before_vote",
+          "type": "bool"
+        },
+        {
+          "name": "max_validators",
+          "type": "u32"
+        },
+        {
+          "name": "max_consensus_string_bytes",
+          "type": "u32"
+        },
+        {
+          "name": "max_cev1_nesting",
+          "type": "u16"
+        },
+        {
+          "name": "max_cev1_value_bytes",
+          "type": "u64"
+        },
+        {
+          "name": "max_signature_bytes",
+          "type": "u32"
+        },
+        {
+          "name": "max_certificate_signers",
+          "type": "u32"
+        },
+        {
+          "name": "max_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "max_view",
+          "type": "u64"
+        },
+        {
+          "name": "max_height",
+          "type": "u64"
+        },
+        {
+          "name": "max_retained_views",
+          "type": "u32"
+        },
+        {
+          "name": "epoch_length_blocks",
+          "type": "u64"
+        },
+        {
+          "name": "checkpoint_offset_blocks",
+          "type": "u64"
+        },
+        {
+          "name": "seal_1_offset_blocks",
+          "type": "u64"
+        },
+        {
+          "name": "seal_2_offset_blocks",
+          "type": "u64"
+        },
+        {
+          "name": "max_block_ordered_bytes",
+          "type": "u64"
+        },
+        {
+          "name": "max_batch_refs_per_block",
+          "type": "u32"
+        },
+        {
+          "name": "max_protocol_objects_per_block",
+          "type": "u32"
+        },
+        {
+          "name": "max_transactions_per_batch",
+          "type": "u32"
+        },
+        {
+          "name": "max_transaction_bytes",
+          "type": "u64"
+        },
+        {
+          "name": "max_block_execution_units",
+          "type": "u128"
+        },
+        {
+          "name": "base_view_timeout_ms",
+          "type": "u64"
+        },
+        {
+          "name": "maximum_view_timeout_ms",
+          "type": "u64"
+        },
+        {
+          "name": "timeout_multiplier_numerator",
+          "type": "u32"
+        },
+        {
+          "name": "timeout_multiplier_denominator",
+          "type": "u32"
+        },
+        {
+          "name": "max_evidence_items_per_block",
+          "type": "u32"
+        },
+        {
+          "name": "max_evidence_bytes_per_block",
+          "type": "u64"
+        }
+      ]
+    },
+    "TypedObjectIdV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "object_kind",
+          "type": "u16"
+        },
+        {
+          "name": "object_id",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "MerkleLeafBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "root_kind",
+          "type": "u16"
+        },
+        {
+          "name": "index",
+          "type": "u32"
+        },
+        {
+          "name": "item_kind",
+          "type": "u16"
+        },
+        {
+          "name": "item_id",
+          "type": "Hash32"
+        },
+        {
+          "name": "item_commitment",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "MerkleNodeBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "root_kind",
+          "type": "u16"
+        },
+        {
+          "name": "level",
+          "type": "u32"
+        },
+        {
+          "name": "left",
+          "type": "Hash32"
+        },
+        {
+          "name": "right",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "MerkleListRootBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "root_kind",
+          "type": "u16"
+        },
+        {
+          "name": "item_count",
+          "type": "u32"
+        },
+        {
+          "name": "tree_root",
+          "type": {
+            "option": "Hash32"
+          }
+        }
+      ]
+    },
+    "ConsensusContextV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "runtime_profile_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "view",
+          "type": "u64"
+        },
+        {
+          "name": "message_kind",
+          "type": "u8"
+        }
+      ]
+    },
+    "BatchRefV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "author_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "author_sequence",
+          "type": "u64"
+        },
+        {
+          "name": "batch_id",
+          "type": "BatchIdV1"
+        },
+        {
+          "name": "content_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "item_count",
+          "type": "u32"
+        },
+        {
+          "name": "uncompressed_bytes",
+          "type": "u64"
+        },
+        {
+          "name": "availability_certificate_id",
+          "type": "AvailabilityCertificateIdV1"
+        },
+        {
+          "name": "retention_end_epoch",
+          "type": "u64"
+        }
+      ]
+    },
+    "GenesisParentBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "genesis_derived_state_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "application_state_root",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "V1BlockParentBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "block_id",
+          "type": "BlockIdV1"
+        }
+      ]
+    },
+    "V0TerminalBlockParentBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "block_id_bytes",
+          "type": "Hash32"
+        },
+        {
+          "name": "handoff_certificate_digest",
+          "type": "Hash32"
+        },
+        {
+          "name": "activation_statement_id",
+          "type": "V0ToV1ActivationStatementIdV1"
+        }
+      ]
+    },
+    "ParentBlockRefV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "GenesisAnchor",
+          "body": "GenesisParentBodyV1"
+        },
+        {
+          "tag": 1,
+          "name": "V1Block",
+          "body": "V1BlockParentBodyV1"
+        },
+        {
+          "tag": 2,
+          "name": "V0TerminalBlock",
+          "body": "V0TerminalBlockParentBodyV1"
+        }
+      ]
+    },
+    "BlockKindV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "FreshGenesis"
+        },
+        {
+          "tag": 1,
+          "name": "Ordinary"
+        },
+        {
+          "tag": 2,
+          "name": "EpochCheckpoint"
+        },
+        {
+          "tag": 3,
+          "name": "EpochSeal1"
+        },
+        {
+          "tag": 4,
+          "name": "EpochSeal2"
+        },
+        {
+          "tag": 5,
+          "name": "V0ActivationFirst"
+        },
+        {
+          "tag": 6,
+          "name": "V1HandoffFirst"
+        }
+      ]
+    },
+    "BlockHeaderV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "view",
+          "type": "u64"
+        },
+        {
+          "name": "height",
+          "type": "u64"
+        },
+        {
+          "name": "block_kind",
+          "type": "BlockKindV1"
+        },
+        {
+          "name": "parent",
+          "type": "ParentBlockRefV1"
+        },
+        {
+          "name": "proposer_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "justify_qc_id",
+          "type": {
+            "option": "QuorumCertificateIdV1"
+          }
+        },
+        {
+          "name": "timeout_certificate_id",
+          "type": {
+            "option": "TimeoutCertificateIdV1"
+          }
+        },
+        {
+          "name": "batch_refs_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "protocol_objects_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "post_state_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "transaction_execution_receipts_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "evidence_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "consumption_rollups_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "settlement_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "resource_usage_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "next_epoch_descriptor_id",
+          "type": {
+            "option": "EpochDescriptorIdV1"
+          }
+        },
+        {
+          "name": "upgrade_plan_id",
+          "type": {
+            "option": "UpgradePlanIdV1"
+          }
+        },
+        {
+          "name": "epoch_handoff_id",
+          "type": {
+            "option": "EpochHandoffIdV1"
+          }
+        }
+      ]
+    },
+    "VoteStatementBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "consensus_context",
+          "type": "ConsensusContextV1"
+        },
+        {
+          "name": "block_id",
+          "type": "BlockIdV1"
+        },
+        {
+          "name": "height",
+          "type": "u64"
+        },
+        {
+          "name": "epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "post_state_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "batch_refs_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "transaction_execution_receipts_root",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "VoteSignatureEntryV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "voter_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "signature_scheme",
+          "type": "u16"
+        },
+        {
+          "name": "signature",
+          "type": "Bytes"
+        }
+      ]
+    },
+    "VoteIdentityBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "statement",
+          "type": "VoteStatementBodyV1"
+        },
+        {
+          "name": "voter_id",
+          "type": "Bytes"
+        }
+      ]
+    },
+    "QuorumCertificateBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "statement",
+          "type": "VoteStatementBodyV1"
+        },
+        {
+          "name": "signatures",
+          "type": {
+            "list": "VoteSignatureEntryV1"
+          }
+        }
+      ]
+    },
+    "QuorumCertificateV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "body",
+          "type": "QuorumCertificateBodyV1"
+        },
+        {
+          "name": "quorum_certificate_id",
+          "type": "QuorumCertificateIdV1"
+        }
+      ]
+    },
+    "QcJustificationRefBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "qc_id",
+          "type": "QuorumCertificateIdV1"
+        },
+        {
+          "name": "qc_view",
+          "type": "u64"
+        }
+      ]
+    },
+    "EpochStartJustificationRefBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "anchor_kind",
+          "type": "u8"
+        },
+        {
+          "name": "anchor_id",
+          "type": "Hash32"
+        },
+        {
+          "name": "anchor_view",
+          "type": "u64"
+        }
+      ]
+    },
+    "HighJustificationRefV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "QC",
+          "body": "QcJustificationRefBodyV1"
+        },
+        {
+          "tag": 1,
+          "name": "EpochStart",
+          "body": "EpochStartJustificationRefBodyV1"
+        }
+      ]
+    },
+    "FreshGenesisFinalizedAnchorBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "genesis_derived_state_hash",
+          "type": "Hash32"
+        }
+      ]
+    },
+    "V0ActivationFinalizedAnchorBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "activation_statement_id",
+          "type": "V0ToV1ActivationStatementIdV1"
+        }
+      ]
+    },
+    "EpochCheckpointFinalizedAnchorBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "checkpoint_id",
+          "type": "EpochCheckpointIdV1"
+        }
+      ]
+    },
+    "FinalizedAnchorRefV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "FreshGenesis",
+          "body": "FreshGenesisFinalizedAnchorBodyV1"
+        },
+        {
+          "tag": 1,
+          "name": "V0Activation",
+          "body": "V0ActivationFinalizedAnchorBodyV1"
+        },
+        {
+          "tag": 2,
+          "name": "EpochCheckpoint",
+          "body": "EpochCheckpointFinalizedAnchorBodyV1"
+        }
+      ]
+    },
+    "TimeoutStatementBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "consensus_context",
+          "type": "ConsensusContextV1"
+        },
+        {
+          "name": "high_justification",
+          "type": "HighJustificationRefV1"
+        },
+        {
+          "name": "locked_qc_id",
+          "type": {
+            "option": "QuorumCertificateIdV1"
+          }
+        },
+        {
+          "name": "locked_qc_view",
+          "type": "u64"
+        },
+        {
+          "name": "last_finalized_anchor",
+          "type": "FinalizedAnchorRefV1"
+        },
+        {
+          "name": "pacemaker_generation",
+          "type": "u64"
+        }
+      ]
+    },
+    "TimeoutSignatureEntryV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "validator_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "statement",
+          "type": "TimeoutStatementBodyV1"
+        },
+        {
+          "name": "signature_scheme",
+          "type": "u16"
+        },
+        {
+          "name": "signature",
+          "type": "Bytes"
+        }
+      ]
+    },
+    "TimeoutIdentityBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "statement",
+          "type": "TimeoutStatementBodyV1"
+        },
+        {
+          "name": "validator_id",
+          "type": "Bytes"
+        }
+      ]
+    },
+    "GenesisAnchorBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "target_context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "genesis_derived_state_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "application_state_root",
+          "type": "Hash32"
+        },
+        {
+          "name": "target_epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "initial_height",
+          "type": "u64"
+        },
+        {
+          "name": "initial_view",
+          "type": "u64"
+        }
+      ]
+    },
+    "GenesisAnchorV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "body",
+          "type": "GenesisAnchorBodyV1"
+        },
+        {
+          "name": "genesis_anchor_id",
+          "type": "GenesisAnchorIdV1"
+        }
+      ]
+    },
+    "ActivationAnchorBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "target_context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "activation_statement_id",
+          "type": "V0ToV1ActivationStatementIdV1"
+        },
+        {
+          "name": "handoff_certificate_digest_v0",
+          "type": "Hash32"
+        },
+        {
+          "name": "terminal_qc_digest_v0",
+          "type": "Hash32"
+        },
+        {
+          "name": "source_terminal_block_id",
+          "type": "Hash32"
+        },
+        {
+          "name": "target_epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "activation_height",
+          "type": "u64"
+        },
+        {
+          "name": "initial_view",
+          "type": "u64"
+        }
+      ]
+    },
+    "ActivationAnchorV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "body",
+          "type": "ActivationAnchorBodyV1"
+        },
+        {
+          "name": "activation_anchor_id",
+          "type": "ActivationAnchorIdV1"
+        }
+      ]
+    },
+    "EpochHandoffBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "source_context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "target_context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "old_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "new_epoch",
+          "type": "u64"
+        },
+        {
+          "name": "old_epoch_checkpoint_id",
+          "type": "EpochCheckpointIdV1"
+        },
+        {
+          "name": "old_epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "new_epoch_descriptor_id",
+          "type": "EpochDescriptorIdV1"
+        },
+        {
+          "name": "old_validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "new_validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "old_consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "new_consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "terminal_block_id",
+          "type": "BlockIdV1"
+        },
+        {
+          "name": "terminal_height",
+          "type": "u64"
+        },
+        {
+          "name": "terminal_view",
+          "type": "u64"
+        },
+        {
+          "name": "activation_height",
+          "type": "u64"
+        },
+        {
+          "name": "initial_new_view",
+          "type": "u64"
+        }
+      ]
+    },
+    "EpochHandoffSignStatementV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "consensus_context",
+          "type": "ConsensusContextV1"
+        },
+        {
+          "name": "handoff_id",
+          "type": "EpochHandoffIdV1"
+        }
+      ]
+    },
+    "EpochHandoffSignatureEntryV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "signer_id",
+          "type": "Bytes"
+        },
+        {
+          "name": "role",
+          "type": "u8"
+        },
+        {
+          "name": "statement",
+          "type": "EpochHandoffSignStatementV1"
+        },
+        {
+          "name": "signature_scheme",
+          "type": "u16"
+        },
+        {
+          "name": "signature",
+          "type": "Bytes"
+        }
+      ]
+    },
+    "EpochHandoffV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "body",
+          "type": "EpochHandoffBodyV1"
+        },
+        {
+          "name": "handoff_id",
+          "type": "EpochHandoffIdV1"
+        },
+        {
+          "name": "old_set_signatures",
+          "type": {
+            "list": "EpochHandoffSignatureEntryV1"
+          }
+        },
+        {
+          "name": "new_set_signatures",
+          "type": {
+            "list": "EpochHandoffSignatureEntryV1"
+          }
+        }
+      ]
+    },
+    "EpochStartJustificationV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "GenesisAnchor",
+          "body": "GenesisAnchorV1"
+        },
+        {
+          "tag": 1,
+          "name": "ActivationAnchor",
+          "body": "ActivationAnchorV1"
+        },
+        {
+          "tag": 2,
+          "name": "EpochHandoff",
+          "body": "EpochHandoffV1"
+        }
+      ]
+    },
+    "HighJustificationObjectV1": {
+      "kind": "enum",
+      "repr": "u8",
+      "variants": [
+        {
+          "tag": 0,
+          "name": "QC",
+          "body": "QuorumCertificateV1"
+        },
+        {
+          "tag": 1,
+          "name": "EpochStart",
+          "body": "EpochStartJustificationV1"
+        }
+      ]
+    },
+    "TimeoutCertificateBodyV1": {
+      "kind": "record",
+      "fields": [
+        {
+          "name": "schema_version",
+          "type": "u16"
+        },
+        {
+          "name": "context",
+          "type": "ProtocolContextV1"
+        },
+        {
+          "name": "runtime_profile_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "epoch",
+          "type": "u64"
+        },
+        {
+          "name": "validator_set_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "consensus_parameters_hash",
+          "type": "Hash32"
+        },
+        {
+          "name": "timed_out_view",
+          "type": "u64"
+        },
+        {
+          "name": "target_view",
+          "type": "u64"
+        },
+        {
+          "name": "justifications",
+          "type": {
+            "list": "HighJustificationObjectV1"
+          }
+        },
+        {
+          "name": "entries",
+          "type": {
+            "list": "TimeoutSignatureEntryV1"
+          }
+        }
+      ]
+    }
+  }
+}

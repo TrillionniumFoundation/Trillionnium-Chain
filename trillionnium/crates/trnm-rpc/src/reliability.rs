@@ -2469,8 +2469,10 @@ mod tests {
 
     #[test]
     fn collect_due_retries_drops_session_when_retry_state_persist_fails() {
-        let mut store = FailingUpsertStore::default();
-        store.fail_upsert = true;
+        let store = FailingUpsertStore {
+            fail_upsert: true,
+            ..FailingUpsertStore::default()
+        };
         let mut engine = ReliabilityEngine::new(
             store,
             RetryConfig {

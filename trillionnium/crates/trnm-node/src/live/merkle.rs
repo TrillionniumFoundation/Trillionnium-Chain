@@ -22,7 +22,7 @@ pub fn root_and_proofs(tree_domain: &str, leaves: &[Hash32]) -> (Hash32, Vec<Mer
     let mut levels = vec![leaves.to_vec()];
     while levels.last().expect("non-empty levels").len() > 1 {
         let current = levels.last().expect("current level");
-        let mut next = Vec::with_capacity((current.len() + 1) / 2);
+        let mut next = Vec::with_capacity(current.len().div_ceil(2));
         for pair in current.chunks(2) {
             let left = pair[0];
             let right = pair.get(1).copied().unwrap_or(left);

@@ -647,6 +647,34 @@ pub(crate) fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     Ok(format!("trnm1{}", addr_hex))
 }
 
+pub(crate) fn ed25519_public_key_hex(priv_hex: &str) -> Result<String> {
+    let key = hex::decode(ensure_hex_32_bytes(priv_hex)?)?;
+    let key_bytes: [u8; 32] = key
+        .as_slice()
+        .try_into()
+        .map_err(|_| anyhow!("private key hex must be 32 bytes (64 hex chars)"))?;
+    let signing_key = SigningKey::from_bytes(&key_bytes);
+    Ok(hex::encode(signing_key.verifying_key().as_bytes()))
+}
+
+pub(crate) fn sign_message_ed25519(priv_hex: &str, message: &str) -> Result<(String, String)> {
+    let key = hex::decode(ensure_hex_32_bytes(priv_hex)?)?;
+    let key_bytes: [u8; 32] = key
+        .as_slice()
+        .try_into()
+        .map_err(|_| anyhow!("private key hex must be 32 bytes (64 hex chars)"))?;
+    let signing_key = SigningKey::from_bytes(&key_bytes);
+    let verifying_key = signing_key.verifying_key();
+    let signature = signing_key.sign(message.as_bytes());
+    verifying_key
+        .verify_strict(message.as_bytes(), &signature)
+        .map_err(|_| anyhow!("internal Ed25519 signature self-verification failed"))?;
+    Ok((
+        hex::encode(verifying_key.as_bytes()),
+        hex::encode(signature.to_bytes()),
+    ))
+}
+
 fn is_unsafe_sign_message_char(c: char) -> bool {
     (c.is_whitespace() && c != ' ')
         || c.is_control()
@@ -738,6 +766,7 @@ pub(crate) fn random_priv_hex() -> Result<String> {
 }
 
 pub(crate) fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
+    eprintln!("{LOCAL_WALLET_WARNING}");
     let store = resolve_wallet_store(out)?;
     let priv_hex = random_priv_hex()?;
     let path = write_key(&store, &name, &priv_hex)?;
@@ -745,7 +774,7 @@ pub(crate) fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
     println!("wallet_name={}", name);
     println!("wallet_path={}", path.display());
     println!("address={}", addr);
-    println!("public_key_hint={}", sha256_hex(priv_hex.as_bytes()));
+    println!("public_key={}", ed25519_public_key_hex(&priv_hex)?);
     Ok(())
 }
 

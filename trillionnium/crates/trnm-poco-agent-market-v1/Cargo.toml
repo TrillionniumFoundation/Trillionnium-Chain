@@ -1,0 +1,51 @@
+[package]
+name = "trnm-poco-agent-market-v1"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-ai-native-v1-agent-market-candidate"
+protocol = "poco-ai-native-v1"
+classification = "candidate-non-normative"
+fresh_genesis_trust_bundle_is_consensus_object = false
+bootstrap_identity_key_derivation_authority_complete = false
+order_finalized_execution_context_is_consensus_object = false
+order_finalized_execution_context_cas = true
+order_proof_authority_complete = false
+agent_transaction_wire_complete = false
+agent_transaction_wire_candidate = true
+independent_agent_transaction_parser_candidate = true
+strict_ed25519_authorization_candidate = true
+durable_sqlite_replay_candidate = true
+identity_and_key_lifecycle_complete = false
+capability_session_nonce_kernel = true
+task_funded_escrow_bid_lease_kernel = true
+sqlite_atomic_replay_kernel = true
+exact_scope_enforcement = true
+committed_resource_scope_verifier = false
+durable_state_and_journal_tail_roots = true
+durable_finalized_order_block_journal = true
+whole_store_rollback_authority = false
+node_integration = false
+g2_global_complete = false
+protocol_implementation_complete = false
+normative_freeze = false
+production_candidate = false
+activation = false
+
+[features]
+default = []
+
+[dependencies]
+borsh = { version = "1", features = ["derive"] }
+ed25519-dalek = "2"
+rusqlite = { version = "0.32", features = ["bundled"] }
+sha2 = "0.10"
+
+[dev-dependencies]
+hex = "0.4"
+serde_json = "1"
+tempfile = "3"

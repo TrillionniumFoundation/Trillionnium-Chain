@@ -1,7 +1,14 @@
 # TRNM Canonical Runtime Freeze
 
 Date: 2026-07-28
-Status: binding architecture decision for the public-testnet production candidate
+Status: **superseded for consensus-engine authority by the 2026-08-04
+PoCO-BFT v0 architecture freeze**
+
+The deterministic `trnm-runtime` transition boundary, authenticated JMT/ICS23
+state assets, and evidence recorded here remain reusable. The decision assigning
+production finality authority to CometBFT does not. During PoCO-BFT development,
+this path is a differential oracle and migration fixture. The binding target is
+`TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`.
 
 ## Decision
 

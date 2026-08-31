@@ -16,6 +16,8 @@ required_lines=(
   'steps.pr6_daily_security_summary.outcome'
   'steps.p11_policy_rollback_guard.outcome'
   'steps.pr7_alert_delivery_gate.outcome'
+  'P11_ROLLBACK_GUARD_JSON_OUT="$p11_json"'
+  'payload.get("would_rollback") is True'
   'nightly_critical_soft_fail'
 )
 
@@ -30,6 +32,13 @@ python3 - <<'PY' "$WF"
 from pathlib import Path
 import sys
 text = Path(sys.argv[1]).read_text()
+pr7_pos = text.index('name: PR-7 alert delivery gate (non-gate, observable)')
+p11_pos = text.index('name: Build P11 policy rollback guard (dry-run, observable)')
+if pr7_pos >= p11_pos:
+    raise SystemExit('[FAIL] P11 rollback guard must evaluate the current PR7 delivery state')
+p11_block = text[p11_pos:text.index('name: PR-7 delivery end-to-end replay gate (hard)', p11_pos)]
+if 'raise SystemExit("P11 dry-run detected a rollback condition")' not in p11_block:
+    raise SystemExit('[FAIL] P11 step must convert would_rollback/status=FAIL into a failed outcome')
 critical_tokens = [
     '| security | pr6_daily_security_summary | critical | ${pr6_outcome} |',
     '| delivery_guard | p11_policy_rollback_guard | critical | ${p11_outcome} |',

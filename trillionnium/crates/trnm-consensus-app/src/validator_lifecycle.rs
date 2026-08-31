@@ -97,7 +97,7 @@ pub struct ValidatorLifecycleStateV1 {
     pub last_applied_transition_id: Option<String>,
 }
 
-pub(super) struct ValidatorTransitionAuthorization<'a> {
+pub(crate) struct ValidatorTransitionAuthorization<'a> {
     pub command_id: &'a str,
     pub signer_id: &'a str,
     pub signer_role: &'a str,
@@ -105,6 +105,66 @@ pub(super) struct ValidatorTransitionAuthorization<'a> {
     pub chain_id: &'a str,
     pub accepted_height: u64,
 }
+
+/// A protocol-invalid validator transition. Every variant is derived only
+/// from the signed transition and its authorization joined to an already
+/// authenticated lifecycle; no diagnostic text participates in the
+/// classification.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ValidatorTransitionDeterministicInvalidV1 {
+    Schema,
+    TransitionChainId,
+    TransitionId,
+    GovernanceAuthorization,
+    GovernanceSequenceMismatch,
+    PendingTransitionExists,
+    BaseValidatorSetHash,
+    ActivationHeight,
+    TargetValidatorSet,
+    ValidatorSetOverlap,
+    NewValidatorProof,
+    NoActiveSetChange,
+}
+
+/// A fail-stop condition while scheduling against authenticated lifecycle
+/// state. These variants deliberately carry no source error or free-form
+/// string, keeping the protocol disposition closed and data-free.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ValidatorTransitionInvariantV1 {
+    AuthenticatedLifecycle,
+    LifecycleContextBinding,
+    GovernanceSequenceExhausted,
+    ActivationDelayOverflow,
+    ActiveSetHash,
+    ScheduledLifecyclePostcondition,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum ValidatorTransitionScheduleFailureV1 {
+    DeterministicallyInvalid(ValidatorTransitionDeterministicInvalidV1),
+    Invariant(ValidatorTransitionInvariantV1),
+}
+
+impl std::fmt::Display for ValidatorTransitionScheduleFailureV1 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::DeterministicallyInvalid(reason) => {
+                write!(
+                    formatter,
+                    "deterministically invalid validator transition: {reason:?}"
+                )
+            }
+            Self::Invariant(reason) => {
+                write!(
+                    formatter,
+                    "validator transition scheduling invariant: {reason:?}"
+                )
+            }
+        }
+    }
+}
+
+impl std::error::Error for ValidatorTransitionScheduleFailureV1 {}
 
 impl ValidatorLifecycleStateV1 {
     pub fn from_genesis(
@@ -164,12 +224,13 @@ impl ValidatorLifecycleStateV1 {
                 "pending base validator set hash",
                 &pending.base_validator_set_hash_hex,
             )?;
+            let minimum_activation_height = pending
+                .accepted_height
+                .checked_add(self.governance.min_activation_delay_blocks)
+                .context("pending validator activation delay overflow")?;
             ensure!(
                 pending.accepted_height > 0
-                    && pending.activation_height
-                        >= pending
-                            .accepted_height
-                            .saturating_add(self.governance.min_activation_delay_blocks),
+                    && pending.activation_height >= minimum_activation_height,
                 "pending validator activation height violates governance delay"
             );
             ensure!(
@@ -223,69 +284,90 @@ impl ValidatorLifecycleStateV1 {
         self.validate()
     }
 
-    pub fn schedule(
+    pub(crate) fn schedule(
         &mut self,
         transition: ValidatorSetTransitionV1,
         authorization: ValidatorTransitionAuthorization<'_>,
-    ) -> Result<()> {
-        self.validate()?;
-        ensure!(
-            transition.schema == VALIDATOR_TRANSITION_SCHEMA_V1,
-            "unsupported validator transition schema"
-        );
-        ensure!(
-            transition.chain_id == authorization.chain_id,
-            "validator transition chain_id mismatch"
-        );
-        ensure!(
-            self.chain_id == authorization.chain_id,
-            "committed validator lifecycle chain_id mismatch"
-        );
-        ensure!(
-            transition.transition_id == authorization.command_id,
-            "validator transition_id must equal envelope command_id"
-        );
-        ensure!(
-            authorization.signer_role == "operator"
-                && authorization.signer_id == self.governance.signer_id,
-            "validator transition is not signed by the configured governance operator"
-        );
-        ensure!(
-            authorization.nonce == self.governance_sequence.saturating_add(1),
-            "validator governance sequence is not contiguous"
-        );
-        ensure!(
-            self.pending_transition.is_none(),
-            "a validator transition is already pending"
-        );
-        ensure!(
-            transition.base_validator_set_hash_hex == self.active_set_hash_hex()?,
-            "validator transition base set hash mismatch"
-        );
-        ensure!(
-            transition.activation_height
-                >= authorization
-                    .accepted_height
-                    .saturating_add(self.governance.min_activation_delay_blocks),
-            "validator transition activation height is too early"
-        );
-        let target_validators = canonicalize_validators(transition.target_validators.clone())?;
-        validate_transition_target(&target_validators)?;
-        validate_overlap(&self.active_validators, &target_validators)?;
-        validate_new_validator_proofs(&transition, &self.active_validators, &target_validators)?;
-        ensure!(
-            target_validators != self.active_validators,
-            "validator transition does not change the active set"
-        );
-        self.pending_transition = Some(ScheduledValidatorTransitionV1 {
+    ) -> std::result::Result<(), ValidatorTransitionScheduleFailureV1> {
+        use ValidatorTransitionDeterministicInvalidV1 as Invalid;
+        use ValidatorTransitionInvariantV1 as Invariant;
+        use ValidatorTransitionScheduleFailureV1::{
+            DeterministicallyInvalid, Invariant as FailStop,
+        };
+
+        self.validate()
+            .map_err(|_| FailStop(Invariant::AuthenticatedLifecycle))?;
+        if transition.schema != VALIDATOR_TRANSITION_SCHEMA_V1 {
+            return Err(DeterministicallyInvalid(Invalid::Schema));
+        }
+        if transition.chain_id != authorization.chain_id {
+            return Err(DeterministicallyInvalid(Invalid::TransitionChainId));
+        }
+        if self.chain_id != authorization.chain_id {
+            return Err(FailStop(Invariant::LifecycleContextBinding));
+        }
+        if transition.transition_id != authorization.command_id {
+            return Err(DeterministicallyInvalid(Invalid::TransitionId));
+        }
+        if authorization.signer_role != "operator"
+            || authorization.signer_id != self.governance.signer_id
+        {
+            return Err(DeterministicallyInvalid(Invalid::GovernanceAuthorization));
+        }
+        let expected_nonce = self
+            .governance_sequence
+            .checked_add(1)
+            .ok_or(FailStop(Invariant::GovernanceSequenceExhausted))?;
+        if authorization.nonce != expected_nonce {
+            return Err(DeterministicallyInvalid(
+                Invalid::GovernanceSequenceMismatch,
+            ));
+        }
+        if self.pending_transition.is_some() {
+            return Err(DeterministicallyInvalid(Invalid::PendingTransitionExists));
+        }
+        let active_set_hash_hex = self
+            .active_set_hash_hex()
+            .map_err(|_| FailStop(Invariant::ActiveSetHash))?;
+        if transition.base_validator_set_hash_hex != active_set_hash_hex {
+            return Err(DeterministicallyInvalid(Invalid::BaseValidatorSetHash));
+        }
+        let minimum_activation_height = authorization
+            .accepted_height
+            .checked_add(self.governance.min_activation_delay_blocks)
+            .ok_or(FailStop(Invariant::ActivationDelayOverflow))?;
+        if transition.activation_height < minimum_activation_height {
+            return Err(DeterministicallyInvalid(Invalid::ActivationHeight));
+        }
+        let target_validators = canonicalize_validators(transition.target_validators.clone())
+            .map_err(|_| DeterministicallyInvalid(Invalid::TargetValidatorSet))?;
+        validate_transition_target(&target_validators)
+            .map_err(|_| DeterministicallyInvalid(Invalid::TargetValidatorSet))?;
+        validate_overlap(&self.active_validators, &target_validators)
+            .map_err(|_| DeterministicallyInvalid(Invalid::ValidatorSetOverlap))?;
+        validate_new_validator_proofs(&transition, &self.active_validators, &target_validators)
+            .map_err(|_| DeterministicallyInvalid(Invalid::NewValidatorProof))?;
+        if target_validators == self.active_validators {
+            return Err(DeterministicallyInvalid(Invalid::NoActiveSetChange));
+        }
+
+        // Build and validate a complete candidate first. The authenticated
+        // lifecycle is swapped only after every fallible check has passed, so
+        // every `Err` leaves `self` byte-for-byte unchanged.
+        let mut candidate = self.clone();
+        candidate.pending_transition = Some(ScheduledValidatorTransitionV1 {
             transition_id: transition.transition_id,
             base_validator_set_hash_hex: transition.base_validator_set_hash_hex,
             accepted_height: authorization.accepted_height,
             activation_height: transition.activation_height,
             target_validators,
         });
-        self.governance_sequence = authorization.nonce;
-        self.validate()
+        candidate.governance_sequence = authorization.nonce;
+        candidate
+            .validate()
+            .map_err(|_| FailStop(Invariant::ScheduledLifecyclePostcondition))?;
+        *self = candidate;
+        Ok(())
     }
 
     pub fn updates_due_at_finalize_height(&self, height: u64) -> Result<Vec<ValidatorUpdate>> {
@@ -607,4 +689,390 @@ fn comet_address(public_key: &[u8; 32]) -> [u8; 20] {
     let mut address = [0u8; 20];
     address.copy_from_slice(&digest[..20]);
     address
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ed25519_dalek::SigningKey;
+    use trnm_finality_types::crypto::{public_key_hex, sign_hex};
+
+    const CHAIN_ID: &str = "trnm-validator-lifecycle-typed-test";
+    const GOVERNANCE_SIGNER: &str = "did:operator:validator-lifecycle-test";
+
+    fn validator(seed: u8) -> ConsensusValidatorV1 {
+        ConsensusValidatorV1 {
+            public_key_hex: public_key_hex(&SigningKey::from_bytes(&[seed; 32])),
+            voting_power: 10,
+        }
+    }
+
+    fn lifecycle() -> ValidatorLifecycleStateV1 {
+        ValidatorLifecycleStateV1::from_genesis(
+            CHAIN_ID.to_string(),
+            1,
+            "11".repeat(32),
+            ValidatorGovernanceV1 {
+                schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
+                signer_id: GOVERNANCE_SIGNER.to_string(),
+                min_activation_delay_blocks: 2,
+                unsafe_allow_single_validator_genesis: false,
+            },
+            vec![validator(1), validator(2), validator(3), validator(4)],
+        )
+        .expect("construct valid lifecycle fixture")
+    }
+
+    fn transition_for_target(
+        lifecycle: &ValidatorLifecycleStateV1,
+        transition_id: &str,
+        activation_height: u64,
+        mut target_validators: Vec<ConsensusValidatorV1>,
+        proof_seeds: &[u8],
+    ) -> ValidatorSetTransitionV1 {
+        target_validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        let base_validator_set_hash_hex = lifecycle
+            .active_set_hash_hex()
+            .expect("hash valid lifecycle fixture");
+        let message = validator_key_proof_message(
+            CHAIN_ID,
+            transition_id,
+            &base_validator_set_hash_hex,
+            activation_height,
+            &target_validators,
+        )
+        .expect("derive validator key proof message");
+        ValidatorSetTransitionV1 {
+            schema: VALIDATOR_TRANSITION_SCHEMA_V1.to_string(),
+            chain_id: CHAIN_ID.to_string(),
+            transition_id: transition_id.to_string(),
+            base_validator_set_hash_hex,
+            activation_height,
+            target_validators,
+            new_validator_proofs: proof_seeds
+                .iter()
+                .map(|seed| {
+                    let key = SigningKey::from_bytes(&[*seed; 32]);
+                    ValidatorKeyProofV1 {
+                        public_key_hex: public_key_hex(&key),
+                        signature_hex: sign_hex(&key, &message),
+                    }
+                })
+                .collect(),
+        }
+    }
+
+    fn valid_transition(
+        lifecycle: &ValidatorLifecycleStateV1,
+        transition_id: &str,
+    ) -> ValidatorSetTransitionV1 {
+        let mut target = lifecycle.active_validators.clone();
+        target.remove(0);
+        target.push(validator(9));
+        transition_for_target(lifecycle, transition_id, 3, target, &[9])
+    }
+
+    fn authorization<'a>(
+        command_id: &'a str,
+        signer_id: &'a str,
+        signer_role: &'a str,
+        nonce: u64,
+        chain_id: &'a str,
+        accepted_height: u64,
+    ) -> ValidatorTransitionAuthorization<'a> {
+        ValidatorTransitionAuthorization {
+            command_id,
+            signer_id,
+            signer_role,
+            nonce,
+            chain_id,
+            accepted_height,
+        }
+    }
+
+    fn valid_authorization(command_id: &str) -> ValidatorTransitionAuthorization<'_> {
+        authorization(command_id, GOVERNANCE_SIGNER, "operator", 1, CHAIN_ID, 1)
+    }
+
+    fn assert_failure_without_mutation(
+        lifecycle: &mut ValidatorLifecycleStateV1,
+        transition: ValidatorSetTransitionV1,
+        authorization: ValidatorTransitionAuthorization<'_>,
+        expected: ValidatorTransitionScheduleFailureV1,
+    ) {
+        let before = lifecycle.clone();
+        assert_eq!(lifecycle.schedule(transition, authorization), Err(expected));
+        assert_eq!(*lifecycle, before, "schedule failure mutated lifecycle");
+    }
+
+    fn invalid(
+        reason: ValidatorTransitionDeterministicInvalidV1,
+    ) -> ValidatorTransitionScheduleFailureV1 {
+        ValidatorTransitionScheduleFailureV1::DeterministicallyInvalid(reason)
+    }
+
+    fn invariant(reason: ValidatorTransitionInvariantV1) -> ValidatorTransitionScheduleFailureV1 {
+        ValidatorTransitionScheduleFailureV1::Invariant(reason)
+    }
+
+    #[test]
+    fn schedule_classifies_intrinsic_and_governance_rejections_without_mutation() {
+        let command_id = "typed-validator-intrinsic";
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.schema = "trnm_validator_set_transition_v2".to_string();
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::Schema),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.chain_id = "trnm-other-chain".to_string();
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::TransitionChainId),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.transition_id = "different-command".to_string();
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::TransitionId),
+        );
+
+        let mut state = lifecycle();
+        let transition = valid_transition(&state, command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(command_id, "did:operator:wrong", "operator", 1, CHAIN_ID, 1),
+            invalid(ValidatorTransitionDeterministicInvalidV1::GovernanceAuthorization),
+        );
+
+        let mut state = lifecycle();
+        let transition = valid_transition(&state, command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(command_id, GOVERNANCE_SIGNER, "client", 1, CHAIN_ID, 1),
+            invalid(ValidatorTransitionDeterministicInvalidV1::GovernanceAuthorization),
+        );
+
+        let mut state = lifecycle();
+        let transition = valid_transition(&state, command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(command_id, GOVERNANCE_SIGNER, "operator", 2, CHAIN_ID, 1),
+            invalid(ValidatorTransitionDeterministicInvalidV1::GovernanceSequenceMismatch),
+        );
+    }
+
+    #[test]
+    fn schedule_classifies_state_and_transition_rejections_without_mutation() {
+        let command_id = "typed-validator-state";
+
+        let mut state = lifecycle();
+        let first = valid_transition(&state, "typed-validator-first");
+        state
+            .schedule(first, valid_authorization("typed-validator-first"))
+            .expect("schedule first pending transition");
+        let transition = valid_transition(&state, command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(command_id, GOVERNANCE_SIGNER, "operator", 2, CHAIN_ID, 1),
+            invalid(ValidatorTransitionDeterministicInvalidV1::PendingTransitionExists),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.base_validator_set_hash_hex = "22".repeat(32);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::BaseValidatorSetHash),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.activation_height = 2;
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::ActivationHeight),
+        );
+
+        let mut state = lifecycle();
+        let target = state.active_validators.iter().take(3).cloned().collect();
+        let transition = transition_for_target(&state, command_id, 3, target, &[]);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::TargetValidatorSet),
+        );
+
+        let mut state = lifecycle();
+        let mut target = state.active_validators.clone();
+        target.drain(0..2);
+        target.extend([validator(8), validator(9)]);
+        let transition = transition_for_target(&state, command_id, 3, target, &[]);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::ValidatorSetOverlap),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.new_validator_proofs[0].signature_hex = "00".to_string();
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::NewValidatorProof),
+        );
+
+        let mut state = lifecycle();
+        let target = state.active_validators.clone();
+        let transition = transition_for_target(&state, command_id, 3, target, &[]);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invalid(ValidatorTransitionDeterministicInvalidV1::NoActiveSetChange),
+        );
+    }
+
+    #[test]
+    fn schedule_classifies_authenticated_invariants_and_overflows_without_mutation() {
+        let command_id = "typed-validator-invariant";
+
+        let mut state = lifecycle();
+        state.schema = "trnm_validator_lifecycle_v2".to_string();
+        let transition = valid_transition(&lifecycle(), command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invariant(ValidatorTransitionInvariantV1::AuthenticatedLifecycle),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.chain_id = "trnm-joined-other-chain".to_string();
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(
+                command_id,
+                GOVERNANCE_SIGNER,
+                "operator",
+                1,
+                "trnm-joined-other-chain",
+                1,
+            ),
+            invariant(ValidatorTransitionInvariantV1::LifecycleContextBinding),
+        );
+
+        let mut state = lifecycle();
+        state.governance_sequence = u64::MAX;
+        let transition = valid_transition(&state, command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(
+                command_id,
+                GOVERNANCE_SIGNER,
+                "operator",
+                u64::MAX,
+                CHAIN_ID,
+                1,
+            ),
+            invariant(ValidatorTransitionInvariantV1::GovernanceSequenceExhausted),
+        );
+
+        let mut state = lifecycle();
+        let mut transition = valid_transition(&state, command_id);
+        transition.activation_height = u64::MAX;
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            authorization(
+                command_id,
+                GOVERNANCE_SIGNER,
+                "operator",
+                1,
+                CHAIN_ID,
+                u64::MAX,
+            ),
+            invariant(ValidatorTransitionInvariantV1::ActivationDelayOverflow),
+        );
+
+        let mut state = lifecycle();
+        let target = valid_transition(&state, command_id).target_validators;
+        state.pending_transition = Some(ScheduledValidatorTransitionV1 {
+            transition_id: "overflowing-authenticated-pending".to_string(),
+            base_validator_set_hash_hex: state
+                .active_set_hash_hex()
+                .expect("hash lifecycle for pending overflow"),
+            accepted_height: u64::MAX,
+            activation_height: u64::MAX,
+            target_validators: target,
+        });
+        assert!(state.validate().is_err());
+        let transition = valid_transition(&lifecycle(), command_id);
+        assert_failure_without_mutation(
+            &mut state,
+            transition,
+            valid_authorization(command_id),
+            invariant(ValidatorTransitionInvariantV1::AuthenticatedLifecycle),
+        );
+    }
+
+    #[test]
+    fn schedule_swaps_only_a_fully_validated_candidate() {
+        let command_id = "typed-validator-success";
+        let mut state = lifecycle();
+        let before = state.clone();
+        let transition = valid_transition(&state, command_id);
+        let expected_target = transition.target_validators.clone();
+
+        state
+            .schedule(transition, valid_authorization(command_id))
+            .expect("schedule valid typed validator transition");
+
+        assert_eq!(state.governance_sequence, 1);
+        assert_eq!(state.active_validators, before.active_validators);
+        assert_eq!(
+            state.last_applied_transition_id,
+            before.last_applied_transition_id
+        );
+        assert_eq!(
+            state.pending_transition,
+            Some(ScheduledValidatorTransitionV1 {
+                transition_id: command_id.to_string(),
+                base_validator_set_hash_hex: before
+                    .active_set_hash_hex()
+                    .expect("hash pre-schedule active set"),
+                accepted_height: 1,
+                activation_height: 3,
+                target_validators: expected_target,
+            })
+        );
+        state.validate().expect("validate scheduled candidate");
+    }
 }

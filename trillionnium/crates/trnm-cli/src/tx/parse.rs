@@ -911,14 +911,7 @@ pub(crate) fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
     if !requested.starts_with("0x") {
         bail!("invalid tx hash for query (expected 0x-prefixed hex tx hash)");
     }
-
-    if let Some(status) = query_local_tx_status(&requested) {
-        return Ok(TxQueryResponse {
-            tx_hash: requested,
-            status,
-            error: None,
-        });
-    }
+    let allow_local_diagnostic = super::local_state::development_only_local_tx_state_enabled()?;
 
     if let Ok(template) = std::env::var("TRNM_TX_QUERY_CMD") {
         let cmd = tpl(template, "tx_hash", &requested);
@@ -934,6 +927,12 @@ pub(crate) fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
             }
         }
         return Ok(parsed);
+    }
+
+    if let Some(response) =
+        super::local_state::development_only_local_tx_query(&requested, allow_local_diagnostic)
+    {
+        return Ok(response);
     }
 
     let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -977,12 +976,11 @@ pub(crate) fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
         Err(e) => {
             let msg = e.to_string();
             if msg.contains("TX_NOT_FOUND") {
-                if let Some(status) = query_local_tx_status(&requested) {
-                    return Ok(TxQueryResponse {
-                        tx_hash: requested,
-                        status,
-                        error: None,
-                    });
+                if let Some(response) = super::local_state::development_only_local_tx_query(
+                    &requested,
+                    allow_local_diagnostic,
+                ) {
+                    return Ok(response);
                 }
             }
             Err(e)

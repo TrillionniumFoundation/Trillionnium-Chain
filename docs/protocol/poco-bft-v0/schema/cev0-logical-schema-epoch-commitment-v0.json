@@ -1,0 +1,246 @@
+{
+  "schema": "trnm_poco_bft_cev0_logical_schema_epoch_commitment_v0",
+  "schema_version": 0,
+  "scope": "B2-C NextEpochCommitmentV0 logical object and same-version v0 context-binding kernel only",
+  "status": "closed_for_listed_object_and_inert_relations_only",
+  "cryptographic_validity_claimed": false,
+  "imports": [
+    {
+      "path": "cev0-logical-schema-v0.json",
+      "schema": "trnm_poco_bft_cev0_logical_schema_v0",
+      "schema_version": 0,
+      "reuse": [
+        "hash_construction",
+        "primitives",
+        "Hash32",
+        "ValidatorV0",
+        "ValidatorSetV0",
+        "validator-set domain"
+      ],
+      "note": "B2-C imports B2-A primitives and validator-set encoding. It does not redeclare them or claim that a peer-supplied set/parameter hash is authorized state."
+    }
+  ],
+  "hard_limits": {
+    "max_chain_id_bytes": "128",
+    "fixed_hash_bytes": "32",
+    "maximum_fallback_reason_code": "9"
+  },
+  "enums": [
+    {
+      "name": "RolloutPhaseV0",
+      "encoding": "u8",
+      "coverage": "closed",
+      "variants": [
+        { "name": "shadow", "value": 0 },
+        { "name": "eligibility_only", "value": 1 },
+        { "name": "capped_weight", "value": 2 },
+        { "name": "full", "value": 3 }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "name": "NextEpochCommitmentV0",
+      "coverage": "closed",
+      "fields": [
+        { "name": "schema_version", "type": "u16", "equals": "0" },
+        { "name": "genesis_hash", "type": "Hash32", "nonzero": true },
+        { "name": "chain_id", "type": "ConsensusString" },
+        { "name": "old_epoch", "type": "u64" },
+        {
+          "name": "new_epoch",
+          "type": "u64",
+          "relation": "old_epoch.checked_add(1)"
+        },
+        { "name": "snapshot_cutoff_height", "type": "u64" },
+        { "name": "snapshot_state_root", "type": "Hash32", "nonzero": true },
+        { "name": "new_protocol_version", "type": "u32" },
+        { "name": "new_validator_set_hash", "type": "Hash32", "nonzero": true },
+        { "name": "new_consensus_parameters_hash", "type": "Hash32", "nonzero": true },
+        { "name": "rollout_phase", "type": "RolloutPhaseV0" },
+        {
+          "name": "upgrade_plan_hash",
+          "type": { "kind": "optional", "item": "Hash32" },
+          "present_value_nonzero": true
+        },
+        { "name": "fallback_used", "type": "bool" },
+        { "name": "fallback_reason_code", "type": "u16", "min": "0", "max": "9" },
+        { "name": "activation_height", "type": "u64", "min": "1" }
+      ]
+    }
+  ],
+  "domains": [
+    {
+      "id": "epoch_commitment",
+      "ascii": "trnm.poco-bft.epoch-commitment.v0",
+      "logical_object": "NextEpochCommitmentV0",
+      "coverage": "closed"
+    }
+  ],
+  "same_version_v0_context_contract": {
+    "inert": true,
+    "result": "Result<()> only",
+    "caller_supplied_context_inputs": [
+      "old ValidatorSetV0 value",
+      "old ConsensusParametersV0 value",
+      "new ValidatorSetV0 value",
+      "new ConsensusParametersV0 value"
+    ],
+    "input_provenance": "Authentication and authority are external to this inert relation kernel.",
+    "implementation_profiles": {
+      "rust": "full typed ValidatorSetV0 and ConsensusParametersV0 values; hashes and relations are recomputed",
+      "node_gate": "partial hash-and-schedule fixtures only; not independently decoded complete ConsensusParametersV0 preimages"
+    },
+    "checks": [
+      "old and new validator-set hashes are recomputed from their exact values",
+      "old and new validator sets match genesis, chain, protocol version, epoch, and committed parameter hash",
+      "old and new protocol versions equal 0",
+      "new_epoch equals old_epoch plus one using checked arithmetic",
+      "new epoch_length_blocks equals outgoing epoch_length_blocks",
+      "old and new snapshot_lead_blocks are each at least the v0 finality_certified_chain_length of 3, and each epoch_length_blocks is greater than snapshot_lead_blocks plus the two v0 seal blocks",
+      "snapshot_cutoff_height equals ((old_epoch + 1) * outgoing_epoch_length_blocks - 2) - outgoing_snapshot_lead_blocks using checked arithmetic",
+      "activation_height equals (old_epoch + 1) * outgoing_epoch_length_blocks + 1 using checked arithmetic",
+      "rollout_phase equals the supplied new parameter context",
+      "fallback_used false iff fallback_reason_code is 0",
+      "fallback_used true requires reason 1..9, unchanged parameters, identical ordered validator IDs/keys/weights re-encoded for new_epoch, protocol version 0, unchanged rollout, and absent upgrade_plan_hash",
+      "a non-fallback value with a present upgrade_plan_hash is parseable but unsupported by this same-version context kernel"
+    ],
+    "does_not_prove": [
+      "snapshot state authenticity",
+      "candidate construction or lowest fallback reason",
+      "validator proof of possession",
+      "governance or UpgradePlanV0 authority",
+      "checkpoint or two-seal finality",
+      "handoff signatures",
+      "EpochAnchorQC authorization"
+    ]
+  },
+  "context_error_codes": [
+    { "code": "context_mismatch", "class": "context" },
+    { "code": "unsupported_protocol_transition", "class": "context" },
+    { "code": "epoch_schedule_mismatch", "class": "schedule" },
+    { "code": "snapshot_cutoff_mismatch", "class": "schedule" },
+    { "code": "activation_height_mismatch", "class": "schedule" },
+    { "code": "epoch_length_change", "class": "context" },
+    { "code": "rollout_phase_mismatch", "class": "context" },
+    { "code": "fallback_context_mismatch", "class": "fallback" },
+    { "code": "unsupported_upgrade_plan", "class": "authorization" }
+  ],
+  "decoder_error_codes": [
+    { "code": "unexpected_eof", "class": "structural" },
+    { "code": "trailing_bytes", "class": "structural" },
+    { "code": "length_limit_exceeded", "class": "structural" },
+    { "code": "count_limit_exceeded", "class": "structural", "origin": "imported B2-A" },
+    { "code": "aggregate_limit_exceeded", "class": "structural", "origin": "imported B2-A" },
+    { "code": "invalid_schema_version", "class": "semantic" },
+    { "code": "invalid_protocol_version", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "invalid_consensus_string", "class": "canonical" },
+    { "code": "invalid_block_kind", "class": "canonical", "origin": "imported B2-B" },
+    { "code": "invalid_optional_tag", "class": "canonical" },
+    { "code": "invalid_block_header", "class": "semantic", "origin": "imported B2-B" },
+    { "code": "invalid_handoff_descriptor", "class": "semantic", "origin": "imported B2-B" },
+    { "code": "invalid_handoff_certificate", "class": "semantic", "origin": "imported B2-B" },
+    { "code": "invalid_epoch_anchor_relations", "class": "semantic", "origin": "imported B2-B" },
+    { "code": "unauthorized_synthetic_qc", "class": "authorization", "origin": "imported B2-A" },
+    { "code": "zero_genesis_hash", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "zero_public_key", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "zero_voting_power", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "empty_validator_set", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "duplicate_validator_id", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "duplicate_public_key", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "noncanonical_validator_order", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "context_mismatch", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "unknown_signer", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "duplicate_signer", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "noncanonical_signer_order", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "noncanonical_reference_order", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "conflicting_same_view_qc", "class": "safety", "origin": "imported B2-A" },
+    { "code": "insufficient_quorum", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "invalid_referenced_qc", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "empty_tc", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "duplicate_reference", "class": "canonical", "origin": "imported B2-A" },
+    { "code": "future_reference_view", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "same_block_different_coordinates", "class": "safety", "origin": "imported B2-A" },
+    { "code": "reference_summary_mismatch", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "unreferenced_qc", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "selected_not_maximum", "class": "semantic", "origin": "imported B2-A" },
+    { "code": "invalid_boolean", "class": "canonical" },
+    { "code": "invalid_rollout_phase", "class": "canonical" },
+    { "code": "invalid_fallback_reason", "class": "semantic" },
+    { "code": "invalid_next_epoch_commitment", "class": "semantic" }
+  ],
+  "rust_decoder_error_additions": [
+    { "code": "invalid_boolean", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_rollout_phase", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_fallback_reason", "scope": "B2-C NextEpochCommitmentV0 endpoint only" },
+    { "code": "invalid_next_epoch_commitment", "scope": "B2-C NextEpochCommitmentV0 endpoint only" }
+  ],
+  "gate_error_codes": [
+    { "code": "schema_manifest_invalid", "class": "manifest" },
+    { "code": "proto_projection_drift", "class": "manifest" },
+    { "code": "source_vector_drift", "class": "fixture" },
+    { "code": "digest_mismatch", "class": "fixture" }
+  ],
+  "node_decoder_entry_points": [
+    "decodeNextEpochCommitmentExact",
+    "validateSameVersionContext"
+  ],
+  "rust_entry_points": [
+    "decode_next_epoch_commitment_v0_exact",
+    "NextEpochCommitmentV0::validate_same_version_context"
+  ],
+  "forbidden_entry_points": [
+    "NextEpochCommitmentV0::authorize_epoch",
+    "NextEpochCommitmentV0::epoch_anchor_qc",
+    "NextEpochCommitmentV0::into_trusted_context",
+    "NextEpochCommitmentV0::into_authorization",
+    "decode_next_epoch_commitment_v0_exact -> EpochAnchorAuthorizationV0",
+    "decode_next_epoch_commitment_v0_exact -> EpochAnchorQcV0"
+  ],
+  "transport_enums": [
+    {
+      "proto_file": "proto/trnm/poco/bft/v0/common.proto",
+      "proto_enum": "RolloutPhase",
+      "logical_enum": "RolloutPhaseV0",
+      "variants": [
+        { "name": "ROLLOUT_PHASE_SHADOW", "value": 0 },
+        { "name": "ROLLOUT_PHASE_ELIGIBILITY_ONLY", "value": 1 },
+        { "name": "ROLLOUT_PHASE_CAPPED_WEIGHT", "value": 2 },
+        { "name": "ROLLOUT_PHASE_FULL", "value": 3 }
+      ]
+    }
+  ],
+  "transport_projections": [
+    {
+      "projection_id": "next_epoch_commitment_projection",
+      "proto_file": "proto/trnm/poco/bft/v0/epoch.proto",
+      "proto_message": "NextEpochCommitment",
+      "logical_object": "NextEpochCommitmentV0",
+      "fields": [
+        { "number": 1, "name": "schema_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "schema_version", "logical_type": "u16" },
+        { "number": 2, "name": "genesis_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "genesis_hash" },
+        { "number": 3, "name": "chain_id", "proto_type": "string", "cardinality": "singular", "role": "canonical", "logical_field": "chain_id" },
+        { "number": 4, "name": "old_epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "old_epoch" },
+        { "number": 5, "name": "new_epoch", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "new_epoch" },
+        { "number": 6, "name": "snapshot_cutoff_height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "snapshot_cutoff_height" },
+        { "number": 7, "name": "snapshot_state_root", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "snapshot_state_root" },
+        { "number": 8, "name": "new_protocol_version", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "new_protocol_version" },
+        { "number": 9, "name": "new_validator_set_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "new_validator_set_hash" },
+        { "number": 10, "name": "new_consensus_parameters_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "new_consensus_parameters_hash" },
+        { "number": 11, "name": "rollout_phase", "proto_type": "RolloutPhase", "cardinality": "singular", "role": "canonical", "logical_field": "rollout_phase" },
+        { "number": 12, "name": "upgrade_plan_hash", "proto_type": "bytes", "cardinality": "singular", "role": "canonical", "logical_field": "upgrade_plan_hash", "binding": "empty means absent; otherwise exactly 32 bytes" },
+        { "number": 13, "name": "fallback_used", "proto_type": "bool", "cardinality": "singular", "role": "canonical", "logical_field": "fallback_used" },
+        { "number": 14, "name": "fallback_reason_code", "proto_type": "uint32", "cardinality": "singular", "role": "canonical", "logical_field": "fallback_reason_code", "logical_type": "u16" },
+        { "number": 15, "name": "activation_height", "proto_type": "uint64", "cardinality": "singular", "role": "canonical", "logical_field": "activation_height" },
+        { "number": 16, "name": "commitment_digest", "proto_type": "bytes", "cardinality": "singular", "role": "derived", "derivation": "Digest(epoch_commitment, NextEpochCommitmentV0)" }
+      ]
+    }
+  ],
+  "honest_boundary": [
+    "B2-C closes only the one listed logical object, exact CEV0 parser/re-encoder/digest, protobuf projection, and same-version v0 relation kernel.",
+    "The decoder output is inert peer data. Context validation returns Result<()> and cannot create a trusted transition, EpochAnchorAuthorizationV0, or EpochAnchorQcV0.",
+    "The supplied parameter contexts are hash-and-schedule fixtures, not complete independently decoded ConsensusParametersV0 preimages.",
+    "A present upgrade_plan_hash is shape-valid but unsupported by the same-version v0 context kernel.",
+    "Snapshot state authenticity, deterministic candidate construction, lowest fallback-reason selection, PoP, governance, checkpoint/two-seal finality, handoff cryptography, complete epoch authorization, first-new-block rules, B2 overall, and wire_conformance remain open."
+  ]
+}

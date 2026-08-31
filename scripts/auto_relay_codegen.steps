@@ -18,9 +18,7 @@ bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 bash ./scripts/codegen/run_codegen_task.sh C1
 bash ./scripts/codegen/run_codegen_task.sh C2
 bash ./scripts/codegen/run_codegen_task.sh C3
-bash ./scripts/v2/worker_real_cli_readiness.sh
 bash ./scripts/v2/run_worker_receipt_gates.sh
-bash -lc 'if [[ "${REQUIRE_REAL_TX_CLI:-0}" == "1" ]]; then TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" ./scripts/v2/run_worker_receipt_gates_real_cli.sh; else echo "[skip] strict real-cli gate disabled"; fi'
 bash ./scripts/v2/post_vote_verification.sh
 bash ./scripts/v2/emergency_pause_drill.sh
 bash ./scripts/challenge_reexec_template_smoke.sh

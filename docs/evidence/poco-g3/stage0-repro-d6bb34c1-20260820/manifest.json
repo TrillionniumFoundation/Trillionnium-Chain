@@ -1,0 +1,100 @@
+{
+  "binary_outputs": [
+    {
+      "bundled": false,
+      "bytes": 15060832,
+      "role": "validator",
+      "sha256": "cdf379d6e314c37ff50c59cbc040257770e3cc239215270d0b926ba486b88c74"
+    },
+    {
+      "bundled": false,
+      "bytes": 5381608,
+      "role": "material_builder",
+      "sha256": "40ff33c3cb269fb1d3b44e9cc0faca123f9223673dd84b1f29d78dcf6194f3b6"
+    }
+  ],
+  "build_reports": [
+    {
+      "bytes": 1329,
+      "path": "build-a.json",
+      "sha256": "06247f6858ce04d4075da9843b3d36e36c76da1df626752a289e9a8bc3b70acd",
+      "subject": "build-a"
+    },
+    {
+      "bytes": 1329,
+      "path": "build-b.json",
+      "sha256": "dc1cb6b0deec1e3e391c1f6d5766b3ecb68851b751b5d656b1a8f05af5306e23",
+      "subject": "build-b"
+    }
+  ],
+  "claims": {
+    "aggregate_build_report_emitted": false,
+    "build_execution_cryptographically_attested": false,
+    "builder_reports_claim_reproducible_build": true,
+    "fault_matrix_completed": false,
+    "fresh_clone_check_observed": false,
+    "fresh_clone_fmt_observed": false,
+    "g3_geo_wan_evidence": false,
+    "g3_lan_multihost_evidence": false,
+    "key_tests_observed": false,
+    "multihost_consensus_observed": false,
+    "native_cross_architecture_build_observed": false,
+    "operator_records_native_linux_x86_64_build_execution": true,
+    "performance_evidence": false,
+    "production_activation": false,
+    "production_candidate": false,
+    "signed_runtime_evidence_multihost_observed": false,
+    "validator_run_7_completed": false,
+    "validator_runtime_started": false
+  },
+  "evidence_id": "trnm-poco-g3-stage0-linux-x86_64-repro-d6bb34c1-20260820",
+  "evidence_profile": "poco-g3-stage0-linux-x86_64-reproducible-build-observation-v1",
+  "operator_recorded_offline_dependency_cache": {
+    "bundled": false,
+    "bytes": 61465388,
+    "format": "cargo-home-registry-tar-gzip-v1",
+    "sha256": "fe3ba33ea062553ff08b1232f75534460bef93d212acec98794c9474fb609910"
+  },
+  "operator_recorded_tools": [
+    {
+      "bytes": 31428,
+      "path": "scripts/poco-fleet/build_reproducible_lab_candidate.py",
+      "role": "reproducible_builder",
+      "sha256": "f6e86e72934d29a3f7015be4ca5b3d5c595941aef4c7aa75cb712f4c0cc80bde"
+    },
+    {
+      "bytes": 19570,
+      "path": "scripts/poco-fleet/check_source_candidate.py",
+      "role": "source_candidate_checker",
+      "sha256": "2c9222dd65448fa89558c8c25873adf6ca6f1ad157a90655539c14da0864d4e6"
+    }
+  ],
+  "runner_record": {
+    "builder_invocation_count": 2,
+    "cryptographic_host_attestation": false,
+    "host_triple": "x86_64-unknown-linux-gnu",
+    "independent_cargo_build_count": 4,
+    "paid_ci_used": false,
+    "runner_label": "x230-self-hosted",
+    "rustc_vv_sha256": "4fdff2578428e9c5c08ddd7a0d3079c1a106b1cdaa46e73e46f7cd32b0fb9cad",
+    "tool_and_cache_use_cryptographically_attested": false,
+    "transport": "manual-ssh"
+  },
+  "schema_version": 1,
+  "source_candidate": {
+    "archive_bytes": 73400320,
+    "base_commit": "d6bb34c149edd07d6412b169c471dbb017eb301e",
+    "cargo_lock_bytes": 50286,
+    "cargo_lock_path": "trillionnium/Cargo.lock",
+    "cargo_lock_sha256": "3e2352127ef45a35f808a549cf459959b17054f615744382c0f00a3a6a29b6da",
+    "file_count": 3272,
+    "geo_wan_evidence": false,
+    "git_object_format": "sha1",
+    "git_status_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_tree_oid": "d14ed7015b13f487738451e4243b8ec962db0f87",
+    "production_activation": false,
+    "source_bytes": 69359540,
+    "source_candidate_sha256": "bf1f77a229d6eae8e975481728e157e87c6bb9e923ec0e3c2f8f422918e4ae58",
+    "source_profile": "clean-commit-v1"
+  }
+}

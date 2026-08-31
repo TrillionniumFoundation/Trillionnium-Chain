@@ -1,0 +1,33 @@
+[package]
+name = "trnm-application-tx-builder-v0"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-v0-application-tx-builder"
+protocol = "poco-bft-v0"
+development_only = true
+production_candidate = false
+signing_runtime = false
+signing_or_broadcast = false
+broadcast = false
+pending_nonce_authority = false
+canonical_outer_bytes = true
+external_signer_only = true
+mempool_view_adapter = true
+
+[dependencies]
+anyhow = "1"
+hex = "0.4"
+serde_json = "1"
+serde = "1"
+sha2 = "0.10"
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
+trnm-mempool = { version = "0.1.0", path = "../trnm-mempool" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
+
+[dev-dependencies]
+ed25519-dalek = "2"

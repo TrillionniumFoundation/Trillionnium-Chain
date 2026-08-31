@@ -270,8 +270,8 @@ fn borrowed_last_idle_reserved_slot_recloses_to_normal_once_critical_backlog_app
     assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(g.queued_counts(), (2, 1, 3));
-    assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
-    assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+    assert!(!g.qos_snapshot().fresh_normal_admissible);
+    assert!(g.qos_snapshot().fresh_critical_admissible);
 
     // As soon as a real critical tx claims backlog ownership, the borrowed-slot
     // exception must snap shut for fresh normal ingress while preserving critical

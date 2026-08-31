@@ -21,8 +21,15 @@ concurrency:
 
 jobs:
   gates:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     env:
       # Keep locale/time hashing deterministic for frontend snapshots/log assertions.
       TZ: UTC
@@ -36,6 +43,7 @@ jobs:
       # Disable npm update notifier network check to avoid nondeterministic stderr timing/noise.
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       CI: 'true'
+      TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
     defaults:
       run:
         working-directory: web4-frontend
@@ -46,18 +54,27 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         with:
           node-version-file: '.node-version'
           cache: npm
           cache-dependency-path: web4-frontend/package-lock.json
 
       - name: Install deps
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm ci
 
       - name: Install pinned Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright
+        run: npx playwright install chromium
 
       - name: Run CI checks (enforce e2e)
         env:
           CI_RUN_E2E: '1'
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/ms-playwright
         run: npm run ci:check

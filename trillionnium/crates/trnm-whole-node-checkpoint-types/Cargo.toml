@@ -1,0 +1,36 @@
+[package]
+name = "trnm-whole-node-checkpoint-types"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+publish = false
+
+[package.metadata.trnm]
+lane = "poco-bft-stage1-whole-node-checkpoint-types-v1"
+protocol = "poco-bft-v0"
+data_only = true
+decoded_record_authority = false
+checkpoint_reference_authority = false
+epoch_activation_authority = false
+application_validation_authority = false
+safety_rules_authority = false
+signer_authority = false
+lease_authority = false
+role_binding_authority = false
+persistence_authority = false
+checkpoint_store = false
+successor_cas = false
+external_anti_rollback_authority = false
+application_attestation_producer = false
+signature_producer = false
+hsm_adapter = false
+runtime_activation = false
+post_epoch_signing_cycle_bridge = false
+production_candidate = false
+production_activation = false
+production_consensus_activation = false
+
+[dependencies]
+sha2 = { version = "0.10", default-features = false }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
