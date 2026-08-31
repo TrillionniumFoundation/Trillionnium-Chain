@@ -79,7 +79,15 @@ where
     current[0]
 }
 
-pub fn verify_proof(expected_root: &Hash32, proof: &MerkleProofV1) -> Result<()> {
+pub fn verify_proof(
+    expected_root: &Hash32,
+    expected_tree_domain: &str,
+    proof: &MerkleProofV1,
+) -> Result<()> {
+    ensure!(
+        proof.tree_domain == expected_tree_domain,
+        "Merkle proof tree domain mismatch"
+    );
     ensure!(
         proof.leaf_count > 0,
         "Merkle proof leaf_count must be positive"
@@ -88,15 +96,45 @@ pub fn verify_proof(expected_root: &Hash32, proof: &MerkleProofV1) -> Result<()>
         proof.leaf_index < proof.leaf_count,
         "Merkle proof leaf_index is out of range"
     );
+
     let mut current = decode_hash32("leaf_hash_hex", &proof.leaf_hash_hex)?;
-    for step in &proof.steps {
+    let mut index = proof.leaf_index;
+    let mut width = proof.leaf_count;
+    let mut steps = proof.steps.iter();
+    while width > 1 {
+        let step = steps
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("Merkle proof is missing a required path step"))?;
         let sibling = decode_hash32("sibling_hash_hex", &step.sibling_hash_hex)?;
-        current = if step.sibling_on_left {
-            parent(&proof.tree_domain, &sibling, &current)
+        let sibling_on_left = index % 2 == 1;
+        ensure!(
+            step.sibling_on_left == sibling_on_left,
+            "Merkle proof path direction conflicts with leaf index"
+        );
+        let duplicate_last_padding = !sibling_on_left && index == width - 1;
+        if duplicate_last_padding {
+            ensure!(
+                sibling == current,
+                "Merkle proof odd-width padding must duplicate the current subtree"
+            );
         } else {
-            parent(&proof.tree_domain, &current, &sibling)
+            ensure!(
+                sibling != current,
+                "Merkle proof repeats the current subtree outside canonical padding"
+            );
+        }
+        current = if sibling_on_left {
+            parent(expected_tree_domain, &sibling, &current)
+        } else {
+            parent(expected_tree_domain, &current, &sibling)
         };
+        index /= 2;
+        width = width.div_ceil(2);
     }
+    ensure!(
+        steps.next().is_none(),
+        "Merkle proof has trailing path steps"
+    );
     ensure!(
         &current == expected_root,
         "Merkle inclusion proof root mismatch"
@@ -117,12 +155,56 @@ mod tests {
         ];
         let (root, proofs) = root_and_proofs("transactions", &leaves);
         for proof in &proofs {
-            verify_proof(&root, proof).unwrap();
+            verify_proof(&root, "transactions", proof).unwrap();
         }
 
         let mut tampered = proofs[1].clone();
         tampered.steps[0].sibling_hash_hex = hex::encode([0u8; 32]);
-        assert!(verify_proof(&root, &tampered).is_err());
+        assert!(verify_proof(&root, "transactions", &tampered).is_err());
+    }
+
+    #[test]
+    fn proof_shape_is_derived_from_index_and_count() {
+        let leaves = [
+            hash_domain("leaf", &[b"a"]),
+            hash_domain("leaf", &[b"b"]),
+            hash_domain("leaf", &[b"c"]),
+        ];
+        let (root, proofs) = root_and_proofs("transactions", &leaves);
+
+        let mut wrong_domain = proofs[2].clone();
+        wrong_domain.tree_domain = "objects".to_string();
+        assert!(verify_proof(&root, "transactions", &wrong_domain).is_err());
+
+        let mut wrong_direction = proofs[2].clone();
+        wrong_direction.steps[0].sibling_on_left = true;
+        assert!(verify_proof(&root, "transactions", &wrong_direction).is_err());
+
+        let mut missing = proofs[2].clone();
+        missing.steps.pop();
+        assert!(verify_proof(&root, "transactions", &missing).is_err());
+
+        let mut trailing = proofs[2].clone();
+        trailing.steps.push(MerkleProofStepV1 {
+            sibling_hash_hex: hex::encode([0x44; 32]),
+            sibling_on_left: false,
+        });
+        assert!(verify_proof(&root, "transactions", &trailing).is_err());
+    }
+
+    #[test]
+    fn duplicate_last_padding_cannot_be_relabelled_as_a_real_leaf() {
+        let leaves = [
+            hash_domain("leaf", &[b"a"]),
+            hash_domain("leaf", &[b"b"]),
+            hash_domain("leaf", &[b"c"]),
+        ];
+        let (root, proofs) = root_and_proofs("transactions", &leaves);
+        let mut relabelled = proofs[2].clone();
+        relabelled.leaf_index = 3;
+        relabelled.leaf_count = 4;
+        relabelled.steps[0].sibling_on_left = true;
+        assert!(verify_proof(&root, "transactions", &relabelled).is_err());
     }
 
     #[test]
