@@ -9,9 +9,8 @@ use std::{env, process::ExitCode};
 
 use trnm_poco_lab_validator::{
     candidate_devnet::{
-        parse_candidate_devnet_args_v1, run_candidate_devnet_v1,
-        CandidateDevnetCliActionV1, CandidateDevnetRunOutcomeV1,
-        CANDIDATE_DEVNET_USAGE_V1,
+        parse_candidate_devnet_args_v1, run_candidate_devnet_v1, CandidateDevnetCliActionV1,
+        CandidateDevnetRunOutcomeV1, CANDIDATE_DEVNET_USAGE_V1,
     },
     consensus_runtime::PROCESS1_TARGET_PARKED_EXIT_STATUS_V1,
     PRODUCTION_CANDIDATE, PRODUCTION_CONSENSUS_ACTIVATION,

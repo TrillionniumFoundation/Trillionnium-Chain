@@ -4,8 +4,8 @@ use std::{ffi::OsString, path::PathBuf};
 
 use trnm_poco_lab_validator::candidate_devnet::{
     parse_candidate_devnet_args_v1, run_candidate_devnet_v1, CandidateDevnetCliActionV1,
-    CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1, CANDIDATE_DEVNET_HSM_AUTHORITY_V1,
-    CANDIDATE_DEVNET_HOST_ATTESTATION_V1, CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1,
+    CANDIDATE_DEVNET_EXTERNAL_FENCE_REQUIRED_V1, CANDIDATE_DEVNET_HOST_ATTESTATION_V1,
+    CANDIDATE_DEVNET_HSM_AUTHORITY_V1, CANDIDATE_DEVNET_LOCAL_TEST_KEYS_V1,
     CANDIDATE_DEVNET_PRODUCTION_ACTIVATION_V1, CANDIDATE_DEVNET_PUBLIC_TESTNET_READY_V1,
     CANDIDATE_DEVNET_VALIDATOR_CLI_V1,
 };
@@ -16,9 +16,7 @@ fn run_arguments(socket: PathBuf) -> Vec<OsString> {
         OsString::from("--run-root"),
         OsString::from("/tmp/trnm-candidate-devnet-ordering"),
         OsString::from("--config"),
-        OsString::from(
-            "/tmp/trnm-candidate-devnet-ordering/public/configs/missing.json",
-        ),
+        OsString::from("/tmp/trnm-candidate-devnet-ordering/public/configs/missing.json"),
         OsString::from("--peer-lease-socket"),
         socket.into_os_string(),
         OsString::from("--report"),

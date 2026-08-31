@@ -23,16 +23,12 @@ use anyhow::{anyhow, bail, ensure, Context, Result};
 
 use crate::{
     config::LoadedValidatorConfig,
-    consensus_report::{
-        MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
-    },
+    consensus_report::{MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1},
     consensus_runtime::{
         run_bounded_consensus_with_external_fence_v1, BoundedConsensusRunOutcomeV1,
         MINIMUM_CONSENSUS_RUN_BLOCKS_V1,
     },
-    p2p_admission::{
-        ExternalPeerLeaseAuthorityV1, UnixExternalPeerLeaseAuthorityV1,
-    },
+    p2p_admission::{ExternalPeerLeaseAuthorityV1, UnixExternalPeerLeaseAuthorityV1},
 };
 
 pub const CANDIDATE_DEVNET_VALIDATOR_CLI_V1: bool = true;
@@ -225,21 +221,16 @@ pub fn run_candidate_devnet_v1(
 
     // Prove the external fencing service is reachable before config loading can
     // open any manifest-bound local test key or create the runtime namespace.
-    let external_fence = UnixExternalPeerLeaseAuthorityV1::connect(
-        arguments.peer_lease_socket(),
-    )
-    .with_timeout(Duration::from_millis(arguments.lease_timeout_millis()));
+    let external_fence = UnixExternalPeerLeaseAuthorityV1::connect(arguments.peer_lease_socket())
+        .with_timeout(Duration::from_millis(arguments.lease_timeout_millis()));
     external_fence
         .preflight()
         .map_err(|error| anyhow!("candidate peer-lease preflight failed: {error}"))?;
 
     let binary_path = std::env::current_exe().context("resolve candidate validator executable")?;
-    let config = LoadedValidatorConfig::load(
-        arguments.run_root(),
-        arguments.config_path(),
-        &binary_path,
-    )
-    .context("load manifest-bound candidate validator configuration")?;
+    let config =
+        LoadedValidatorConfig::load(arguments.run_root(), arguments.config_path(), &binary_path)
+            .context("load manifest-bound candidate validator configuration")?;
     ensure!(
         config.has_local_consensus_secret()
             && config.has_local_p2p_identity_secret()
@@ -274,18 +265,18 @@ fn validate_candidate_devnet_args_v1(arguments: &CandidateDevnetRunArgsV1) -> Re
     validate_clean_absolute_path(arguments.config_path(), "validator config")?;
     validate_clean_absolute_path(arguments.peer_lease_socket(), "peer-lease socket")?;
     validate_clean_absolute_path(arguments.report_path(), "report path")?;
-    ensure!(arguments.run_root() != Path::new("/"), "run root must not be /");
+    ensure!(
+        arguments.run_root() != Path::new("/"),
+        "run root must not be /"
+    );
 
     require_lexical_descendant(
         arguments.run_root(),
         arguments.config_path(),
         "validator config",
     )?;
-    let report_relative = require_lexical_descendant(
-        arguments.run_root(),
-        arguments.report_path(),
-        "report path",
-    )?;
+    let report_relative =
+        require_lexical_descendant(arguments.run_root(), arguments.report_path(), "report path")?;
     ensure!(
         arguments.report_path() != arguments.config_path(),
         "report path aliases the validator config"
@@ -306,8 +297,7 @@ fn validate_candidate_devnet_args_v1(arguments: &CandidateDevnetRunArgsV1) -> Re
         "report path must not be inside immutable public/secret deployment inputs"
     );
     ensure!(
-        (1..=MAX_CONSENSUS_RUN_DURATION_SECONDS_V1)
-            .contains(&arguments.duration_seconds()),
+        (1..=MAX_CONSENSUS_RUN_DURATION_SECONDS_V1).contains(&arguments.duration_seconds()),
         "duration is outside the bounded consensus profile"
     );
     ensure!(
@@ -353,9 +343,8 @@ fn set_u64_option(slot: &mut Option<u64>, value: OsString, option: &str) -> Resu
 fn validate_clean_absolute_path(path: &Path, label: &str) -> Result<()> {
     ensure!(path.is_absolute(), "{label} must be absolute");
     ensure!(
-        path.components().all(|component| {
-            !matches!(component, Component::CurDir | Component::ParentDir)
-        }),
+        path.components()
+            .all(|component| { !matches!(component, Component::CurDir | Component::ParentDir) }),
         "{label} must not contain . or .. components"
     );
     Ok(())
@@ -365,7 +354,10 @@ fn require_lexical_descendant<'a>(root: &'a Path, path: &'a Path, label: &str) -
     let relative = path
         .strip_prefix(root)
         .with_context(|| format!("{label} must be below the run root"))?;
-    ensure!(!relative.as_os_str().is_empty(), "{label} aliases the run root");
+    ensure!(
+        !relative.as_os_str().is_empty(),
+        "{label} aliases the run root"
+    );
     Ok(relative)
 }
 
@@ -429,9 +421,7 @@ mod tests {
         assert!(parse_candidate_devnet_args_v1(relative).is_err());
 
         let mut immutable = valid_arguments();
-        immutable[8] = OsString::from(
-            "/tmp/trnm-candidate-run/public/candidate-report.json",
-        );
+        immutable[8] = OsString::from("/tmp/trnm-candidate-run/public/candidate-report.json");
         assert!(parse_candidate_devnet_args_v1(immutable).is_err());
     }
 
