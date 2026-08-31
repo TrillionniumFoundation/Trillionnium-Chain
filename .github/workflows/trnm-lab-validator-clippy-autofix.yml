@@ -1,0 +1,138 @@
+name: trnm-lab-validator-clippy-autofix
+
+on:
+  push:
+    branches:
+      - tmp/clippy-autofix-32c1a49-20260831
+    paths:
+      - .github/workflows/trnm-lab-validator-clippy-autofix.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-lab-validator-clippy-autofix-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SOURCE_SHA: 32c1a49a42ff6f2bc1f523ae80a32db41bb543cf
+  CARGO_NET_OFFLINE: "true"
+  CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+
+jobs:
+  autofix:
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (((github.actor == 'ProfAlexQI') &&
+        (github.triggering_actor == 'ProfAlexQI')) ||
+       ((github.actor == 'Tomasrgbsf') &&
+        (github.triggering_actor == 'Tomasrgbsf')))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 90
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify toolchain and offline cache
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${SOURCE_SHA}"
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0 --component clippy --component rustfmt
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
+
+      - name: Apply only machine-applicable Clippy suggestions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo clippy --fix --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline \
+            --allow-dirty --allow-staged -- -W clippy::all
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all
+          git diff --check
+          git diff --exit-code -- trillionnium/Cargo.lock
+
+      - name: Capture patch and residual strict diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="${RUNNER_TEMP}/trnm-clippy-autofix"
+          mkdir -p "${out}"
+          git diff --binary -- . >"${out}/autofix.patch"
+          git diff --name-only -- . >"${out}/changed-files.txt"
+          set +e
+          cargo clippy --manifest-path trillionnium/Cargo.toml \
+            -p trnm-poco-lab-validator --all-targets --locked --offline \
+            --message-format=json -- -D warnings \
+            >"${out}/residual.jsonl" 2>"${out}/residual.stderr"
+          rc=$?
+          set -e
+          printf '%s\n' "${rc}" >"${out}/residual.exit-code"
+          python3 -B - "${out}/residual.jsonl" "${out}/residual-summary.json" <<'PY'
+          import collections
+          import json
+          import pathlib
+          import sys
+
+          source = pathlib.Path(sys.argv[1])
+          destination = pathlib.Path(sys.argv[2])
+          lints = collections.Counter()
+          files = collections.Counter()
+          messages = []
+          for raw in source.read_text(encoding="utf-8", errors="replace").splitlines():
+              try:
+                  row = json.loads(raw)
+              except json.JSONDecodeError:
+                  continue
+              if row.get("reason") != "compiler-message":
+                  continue
+              message = row.get("message", {})
+              if message.get("level") != "error":
+                  continue
+              code = (message.get("code") or {}).get("code") or "uncoded"
+              spans = [span for span in message.get("spans", []) if span.get("is_primary")]
+              path = spans[0].get("file_name", "unknown") if spans else "unknown"
+              lints[code] += 1
+              files[path] += 1
+              messages.append({
+                  "code": code,
+                  "message": message.get("message"),
+                  "file": path,
+                  "line": spans[0].get("line_start") if spans else None,
+                  "rendered": message.get("rendered"),
+              })
+          destination.write_text(json.dumps({
+              "schema": "trnm-clippy-residual-v1",
+              "source_sha": "32c1a49a42ff6f2bc1f523ae80a32db41bb543cf",
+              "error_count": len(messages),
+              "lints": dict(sorted(lints.items())),
+              "files": dict(sorted(files.items())),
+              "messages": messages,
+          }, indent=2, sort_keys=True), encoding="utf-8")
+          PY
+
+      - name: Upload machine-applicable patch
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-lab-validator-clippy-autofix-${{ env.SOURCE_SHA }}
+          path: ${{ runner.temp }}/trnm-clippy-autofix/
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Verify offline inputs unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
