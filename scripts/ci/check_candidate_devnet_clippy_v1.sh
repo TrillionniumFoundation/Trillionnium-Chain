@@ -59,26 +59,106 @@ cat > "$work/src/lib.rs" <<'EOF_LIB'
 #![forbid(unsafe_code)]
 
 mod config {
-    pub use trnm_poco_lab_validator::config::LoadedValidatorConfig;
+    use std::path::Path;
+
+    #[derive(Debug)]
+    pub struct LoadedValidatorConfig;
+
+    impl LoadedValidatorConfig {
+        pub fn load(_root: &Path, _config: &Path, _binary: &Path) -> anyhow::Result<Self> {
+            Ok(Self)
+        }
+
+        pub const fn has_local_consensus_secret(&self) -> bool {
+            true
+        }
+
+        pub const fn has_local_p2p_identity_secret(&self) -> bool {
+            true
+        }
+
+        pub const fn has_local_operator_recovery_secret(&self) -> bool {
+            true
+        }
+
+        pub fn commission_deployed_ordinary_runtime_v1(&mut self) -> anyhow::Result<()> {
+            Ok(())
+        }
+    }
 }
 
 mod consensus_report {
-    pub use trnm_poco_lab_validator::consensus_report::{
-        MAX_CONSENSUS_RUN_BLOCKS_V1, MAX_CONSENSUS_RUN_DURATION_SECONDS_V1,
-    };
-}
-
-mod consensus_runtime {
-    pub use trnm_poco_lab_validator::consensus_runtime::{
-        run_bounded_consensus_with_external_fence_v1, BoundedConsensusRunOutcomeV1,
-        MINIMUM_CONSENSUS_RUN_BLOCKS_V1,
-    };
+    pub const MAX_CONSENSUS_RUN_BLOCKS_V1: u64 = 1_000_000;
+    pub const MAX_CONSENSUS_RUN_DURATION_SECONDS_V1: u64 = 86_400;
 }
 
 mod p2p_admission {
-    pub use trnm_poco_lab_validator::p2p_admission::{
-        ExternalPeerLeaseAuthorityV1, UnixExternalPeerLeaseAuthorityV1,
+    use std::{path::Path, time::Duration};
+
+    pub trait ExternalPeerLeaseAuthorityV1 {
+        type Error: std::fmt::Display;
+
+        fn preflight(&self) -> Result<(), Self::Error>;
+    }
+
+    #[derive(Debug)]
+    pub struct UnixExternalPeerLeaseAuthorityV1;
+
+    impl UnixExternalPeerLeaseAuthorityV1 {
+        pub fn connect(_path: &Path) -> Self {
+            Self
+        }
+
+        pub const fn with_timeout(self, _timeout: Duration) -> Self {
+            self
+        }
+    }
+
+    impl ExternalPeerLeaseAuthorityV1 for UnixExternalPeerLeaseAuthorityV1 {
+        type Error = anyhow::Error;
+
+        fn preflight(&self) -> Result<(), Self::Error> {
+            Ok(())
+        }
+    }
+}
+
+mod consensus_runtime {
+    use std::{path::PathBuf, sync::Arc, time::Duration};
+
+    use crate::{
+        config::LoadedValidatorConfig,
+        p2p_admission::UnixExternalPeerLeaseAuthorityV1,
     };
+
+    pub const MINIMUM_CONSENSUS_RUN_BLOCKS_V1: u64 = 3;
+
+    #[derive(Debug)]
+    pub enum BoundedConsensusRunOutcomeV1 {
+        CompletedReport(PathBuf),
+        Process1TargetParked(String),
+    }
+
+    pub fn run_bounded_consensus_with_external_fence_v1<F, T>(
+        mut config: LoadedValidatorConfig,
+        _duration: Duration,
+        _max_blocks: u64,
+        _report: PathBuf,
+        _fence: Arc<UnixExternalPeerLeaseAuthorityV1>,
+        commission: F,
+    ) -> anyhow::Result<BoundedConsensusRunOutcomeV1>
+    where
+        F: FnOnce(&mut LoadedValidatorConfig, ()) -> anyhow::Result<T>,
+    {
+        let _ = commission(&mut config, ())?;
+        if std::hint::black_box(false) {
+            Ok(BoundedConsensusRunOutcomeV1::Process1TargetParked(
+                String::new(),
+            ))
+        } else {
+            Ok(BoundedConsensusRunOutcomeV1::CompletedReport(PathBuf::new()))
+        }
+    }
 }
 
 #[path = "candidate_devnet.rs"]
