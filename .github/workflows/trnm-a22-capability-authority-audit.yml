@@ -9,6 +9,7 @@ on:
       - scripts/ci/a22_capability_authority_audit_v1.py
       - scripts/ci/a22_capability_authority_policy_v1.json
       - scripts/ci/a22_inert_capability_compile_fail_v1.sh
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,6 +17,9 @@ permissions:
 concurrency:
   group: trnm-a22-capability-authority-audit-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  CANONICAL_A21_HEAD: a26aa0ada6b230b7a39c2a2d68a0462267e4c751
 
 jobs:
   enforce-capability-authority-policy:
@@ -25,21 +29,28 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
-      - name: Check out exact audit source
+      - name: Check out exact read-only audit source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: feature/chain-a22-p1-capability-authority-audit-v1-20260830
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Verify immutable A22 closure lineage
+      - name: Verify canonical A22 source boundary
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "2923aa02f443c3cc82522efa2d92d4b74a82d827"
-          test "$(git rev-parse HEAD^^)" = "d287e8d10ceb5d2c6f4bf1abd0634c376bb66589"
-          test "$(git rev-parse HEAD^^^)" = "5fc3e972a7694635c2c2e9e0a8aecca5ef51a9c8"
-          test "$(git rev-parse HEAD^^^^)" = "40a3826d5abb890749ee554c849ec81b8464a520"
-          git merge-base --is-ancestor b58665a783c0e1bcceb33455acde65ee6ada4034 HEAD
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          test "$(git rev-parse HEAD^)" = "${CANONICAL_A21_HEAD}"
+          git merge-base --is-ancestor "${CANONICAL_A21_HEAD}" HEAD
+          unexpected="$(
+            git diff --name-only "${CANONICAL_A21_HEAD}..HEAD" |
+              grep -Ev '^(\.github/workflows/trnm-a22-capability-authority-audit\.yml|scripts/ci/a22_capability_authority_audit_v1\.py|scripts/ci/a22_capability_authority_policy_v1\.json|scripts/ci/a22_inert_capability_compile_fail_v1\.sh)$' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'A22 source boundary contains unexpected paths:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+          test "$(git diff --name-only "${CANONICAL_A21_HEAD}..HEAD" | wc -l | tr -d ' ')" -eq 4
 
       - name: Run deterministic authority policy audit
         run: |
