@@ -7,62 +7,98 @@ on:
     paths:
       - .github/workflows/trnm-g1-vertical-integration.yml
       - scripts/ci/run_g1_lab_validator_shards_v1.py
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: trnm-g1-vertical-integration-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  INTEGRATION_BRANCH: integration/g1-vertical-closure-v1-20260830
+  SOURCE_FLOOR: 730fdb65a0f64f717d169ce62818e72061478227
+  INTEGRATION_BASE: 0fd31a31d9cc29fd292fab97c3183127e3bdba21
+  G1_A03_HEAD: 1b9543b3b22cc959d0ea2b3123c349761adada32
+  G1_A19_HEAD: fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea
+  G1_A05_HEAD: 97f9dec406f1a3bd261ae093c60e44fcd9d4bad6
+  G1_A06_HEAD: e88cda9401eb6219fe1425bebb1ef6b54b4c429d
+  G1_A21_HEAD: b58665a783c0e1bcceb33455acde65ee6ada4034
+  A18_TREE_EQUIVALENT_COMMIT: 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0
+  A18_REVIEW_HEAD: 1663abd8935be4e5819f5ff0c7ded250a3664097
+
 jobs:
-  integrate-reviewed-candidate-snapshots:
-    if: >-
-      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
-      github.ref == 'refs/heads/integration/g1-vertical-closure-v1-20260830'
+  qualify-integration-tree:
+    name: qualify-g1-integration-tree
     runs-on: ubuntu-24.04
     timeout-minutes: 300
+    permissions:
+      contents: read
+    outputs:
+      candidate_commit: ${{ steps.identity.outputs.candidate_commit }}
+      candidate_tree: ${{ steps.identity.outputs.candidate_tree }}
+      artifact_id: ${{ steps.upload.outputs.artifact-id }}
+
     steps:
-      - name: Check out exact integration branch
+      - name: Check out exact read-only integration source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: integration/g1-vertical-closure-v1-20260830
+          ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
 
-      - name: Verify source and fetch immutable package heads
+      - name: Verify source scope and fetch immutable package heads
+        shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "f02a4ad44eb147476b1eb09710c4a143ada8fac0"
-          base=0fd31a31d9cc29fd292fab97c3183127e3bdba21
-          test "$(git merge-base HEAD "${base}")" = "${base}"
+          test "${GITHUB_REPOSITORY}" = "TrillionniumFoundation/Trillionnium-Chain"
+          test "${GITHUB_REF}" = "refs/heads/${INTEGRATION_BRANCH}"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          git merge-base --is-ancestor "${SOURCE_FLOOR}" HEAD
+          test "$(git merge-base HEAD "${INTEGRATION_BASE}")" = "${INTEGRATION_BASE}"
+
+          unexpected="$(
+            git diff --name-only "${SOURCE_FLOOR}..HEAD" |
+              grep -Ev '^(\.github/workflows/trnm-g1-vertical-integration\.yml|scripts/ci/run_g1_lab_validator_shards_v1\.py)$' || true
+          )"
+          if [[ -n "${unexpected}" ]]; then
+            printf 'unexpected integration-executor source changes:\n%s\n' "${unexpected}" >&2
+            exit 2
+          fi
+
           git fetch --no-tags origin \
             +refs/heads/feature/chain-g1-r3-ordinary-proposal-authority-v1:refs/remotes/origin/g1-a03 \
             +refs/heads/feature/chain-a19-p1-exec-terminal-history-v2-20260830:refs/remotes/origin/g1-a19 \
             +refs/heads/feature/chain-g1-r4-safety-checkpoint-20260829:refs/remotes/origin/g1-a05 \
             +refs/heads/feature/chain-g1-r4-fault-matrix-v2-20260829:refs/remotes/origin/g1-a06 \
             +refs/heads/feature/chain-a21-p1-seal-native-commit-verifier-v1-20260830:refs/remotes/origin/g1-a21
-          test "$(git rev-parse refs/remotes/origin/g1-a03)" = "1b9543b3b22cc959d0ea2b3123c349761adada32"
-          test "$(git rev-parse refs/remotes/origin/g1-a19)" = "fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea"
-          test "$(git rev-parse refs/remotes/origin/g1-a05)" = "97f9dec406f1a3bd261ae093c60e44fcd9d4bad6"
-          test "$(git rev-parse refs/remotes/origin/g1-a06)" = "e88cda9401eb6219fe1425bebb1ef6b54b4c429d"
-          test "$(git rev-parse refs/remotes/origin/g1-a21)" = "b58665a783c0e1bcceb33455acde65ee6ada4034"
+
+          test "$(git rev-parse refs/remotes/origin/g1-a03)" = "${G1_A03_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/g1-a19)" = "${G1_A19_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/g1-a05)" = "${G1_A05_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/g1-a06)" = "${G1_A06_HEAD}"
+          test "$(git rev-parse refs/remotes/origin/g1-a21)" = "${G1_A21_HEAD}"
+
           git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a03
           git merge-base --is-ancestor f38df4ec81cb76f92c709d8cd45311e164fa5753 refs/remotes/origin/g1-a19
           git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a05
           git merge-base --is-ancestor 6e0189e351015ef3230f217ca7ff86149baedcf0 refs/remotes/origin/g1-a06
           git merge-base --is-ancestor 0aeb5a797b3726c6657b003b44f7ec0040d7d423 refs/remotes/origin/g1-a21
-          git merge-base --is-ancestor 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0 refs/remotes/origin/g1-a21
-          test "$(git rev-parse 13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0^{tree})" = \
-            "$(git rev-parse 1663abd8935be4e5819f5ff0c7ded250a3664097^{tree})"
+          git merge-base --is-ancestor "${A18_TREE_EQUIVALENT_COMMIT}" refs/remotes/origin/g1-a21
+          test "$(git rev-parse "${A18_TREE_EQUIVALENT_COMMIT}^{tree}")" = \
+            "$(git rev-parse "${A18_REVIEW_HEAD}^{tree}")"
+
           python3 -B - <<'PY'
           import ast
           from pathlib import Path
+
           path = Path("scripts/ci/run_g1_lab_validator_shards_v1.py")
           ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
           PY
 
-      - name: Compose G1 candidate packages without source substitution
+      - name: Compose exact G1 candidate packages
+        shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -73,40 +109,63 @@ jobs:
           git merge --no-ff --no-edit refs/remotes/origin/g1-a06
           git merge --no-ff --no-edit refs/remotes/origin/g1-a21
 
-      - name: Finalize the source-only integration tree
-        run: |
-          set -euo pipefail
-          git rm .github/workflows/trnm-g1-vertical-integration.yml
-          git rm -f --ignore-unmatch -- tmp-probe.txt
-          cargo fmt --manifest-path trillionnium/Cargo.toml --all
-          mkdir -p docs/development/packages
-          cat > docs/development/packages/TRNM_G1_VERTICAL_INTEGRATION_V1.md <<'EOF'
-          # TRNM G1 vertical integration candidate v1
-
-          This branch composes exact immutable candidate snapshots without promoting any Gate or release flag.
-
-          - A03 ordinary proposal authority: `1b9543b3b22cc959d0ea2b3123c349761adada32`
-          - A19 durable terminal finalization history, including its A04 parent: `fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea`
-          - A05 signer/checkpoint safety: `97f9dec406f1a3bd261ae093c60e44fcd9d4bad6`
-          - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
-          - A21 sealed native commit verifier, including its A20 parent: `b58665a783c0e1bcceb33455acde65ee6ada4034`
-          - A20 verified publication parent: `0aeb5a797b3726c6657b003b44f7ec0040d7d423`
-          - normalized A18 source tree: `f80db352e8e2fa50e72b41836fd2079fa0d51e22`
-          - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
-
-          The A21 lineage descends from A18 commit `13ecabcbd9ad6f1320d3d5ff1083d1a0b08f47c0`. The later A18 hygiene commit `1663abd8935be4e5819f5ff0c7ded250a3664097` has the same Git tree and is therefore bound by exact tree equality rather than a false ancestry claim.
-
-          The full non-ignored `trnm-poco-lab-validator` library test inventory is discovered at run time and executed exactly once through a resource-aware bounded runner. Ordinary tests run in bounded parallel workers; process-, socket-, and filesystem-owning runtime modules run serially after the parallel phase. Child process lifetime, pipe capture, per-test execution, whole-run wall clock and captured output are all bounded. No test is ignored, retried around, or removed. The composition is a review and test candidate only. Independent acceptance, production HSM/anchor, physical power-loss, multi-host campaign, 100,000 arbitrary-block corpus, audit and wall-clock soak remain mandatory.
-          EOF
-          git add -A
-          git diff --cached --check
-          git commit -m "integration(g1): compose vertical safety candidates"
-
-      - name: Compile and lint the composed active workspace
+      - name: Install pinned Rust toolchain
+        shell: bash
         run: |
           set -euo pipefail
           rustup toolchain install 1.95.0 --profile minimal --component rustfmt --component clippy
           rustup override set 1.95.0
+
+      - name: Finalize immutable source-only candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/trnm-g1-vertical-integration.yml
+          git rm -f --ignore-unmatch -- tmp-probe.txt
+
+          mkdir -p docs/development/packages
+          cat > docs/development/packages/TRNM_G1_VERTICAL_INTEGRATION_V1.md <<'EOF'
+          # TRNM G1 vertical integration candidate v1
+
+          This candidate composes exact immutable package snapshots without
+          promoting any Gate, testnet, production, release or activation flag.
+
+          - A03 ordinary proposal authority: `1b9543b3b22cc959d0ea2b3123c349761adada32`
+          - A19 terminal finalization history: `fb19f7346b415fb49ce7b6ed3c577ab5d5d3a7ea`
+          - A05 signer/checkpoint safety: `97f9dec406f1a3bd261ae093c60e44fcd9d4bad6`
+          - A06 process fault matrix: `e88cda9401eb6219fe1425bebb1ef6b54b4c429d`
+          - A21 sealed native commit verifier, including A20:
+            `b58665a783c0e1bcceb33455acde65ee6ada4034`
+          - normalized A18 source tree:
+            `f80db352e8e2fa50e72b41836fd2079fa0d51e22`
+          - integration base: `0fd31a31d9cc29fd292fab97c3183127e3bdba21`
+
+          Qualification and publication are separated. Candidate code is built
+          and tested in a `contents: read` job with no persisted credential. A
+          second job receives only a content-addressed Git bundle and
+          attestation, executes no candidate code, verifies the exact commit and
+          tree, and then performs the sole branch write.
+
+          The complete non-ignored `trnm-poco-lab-validator` inventory is
+          discovered at run time and executed exactly once. Resource-owning
+          modules are serial; all process groups, per-test execution, aggregate
+          wall clock and captured output are bounded. Temporary-file capture
+          prevents detached descendants from retaining a pipe writer.
+
+          Independent acceptance, a production HSM/anchor, physical power-loss,
+          multi-host campaigns, the arbitrary-block corpus, independent audit
+          and wall-clock soak remain mandatory external evidence.
+          EOF
+
+          cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
+          git add -A
+          git diff --cached --check
+          git commit -m "integration(g1): compose qualified vertical candidate"
+
+      - name: Compile and lint composed active workspace
+        shell: bash
+        run: |
+          set -euo pipefail
           cargo fmt --manifest-path trillionnium/Cargo.toml --all -- --check
           cargo check --manifest-path trillionnium/Cargo.toml --workspace --all-targets --locked
           for package in \
@@ -117,12 +176,14 @@ jobs:
             trnm-consensus-external-watermark \
             trnm-poco-node
           do
-            cargo clippy --manifest-path trillionnium/Cargo.toml -p "${package}" --locked -- -D warnings
+            cargo clippy --manifest-path trillionnium/Cargo.toml \
+              -p "${package}" --locked -- -D warnings
           done
           cargo clippy --manifest-path trillionnium/Cargo.toml \
             -p trnm-poco-node --features tx-admission-wal --lib --locked -- -D warnings
 
       - name: Run package-owned G1 regressions
+        shell: bash
         run: |
           set -euo pipefail
           cargo test --manifest-path trillionnium/Cargo.toml -p trnm-native-application --lib --locked
@@ -137,6 +198,7 @@ jobs:
             -p trnm-poco-node --features tx-admission-wal --doc --locked
 
       - name: Run bounded complete laboratory-validator inventory
+        shell: bash
         run: |
           set -euo pipefail
           python3 -B scripts/ci/run_g1_lab_validator_shards_v1.py \
@@ -152,6 +214,7 @@ jobs:
             --serial-prefix 'process_event::'
 
       - name: Run fault, truth and repository contracts
+        shell: bash
         run: |
           set -euo pipefail
           bash scripts/ci/check_g1_r4_process_matrix_v1.sh
@@ -163,7 +226,188 @@ jobs:
           test ! -e .github/workflows/trnm-g1-vertical-integration.yml
           test -z "$(git status --porcelain --untracked-files=all)"
 
-      - name: Publish exact tested integration commit
+      - name: Build content-addressed qualification bundle
+        id: identity
+        shell: bash
         run: |
           set -euo pipefail
-          git push origin "HEAD:integration/g1-vertical-closure-v1-20260830"
+          candidate_commit="$(git rev-parse HEAD)"
+          candidate_tree="$(git rev-parse 'HEAD^{tree}')"
+          output="${RUNNER_TEMP}/g1-qualified"
+          mkdir -p "${output}"
+
+          git update-ref refs/heads/trnm-g1-qualified-candidate "${candidate_commit}"
+          git bundle create "${output}/candidate.bundle" \
+            refs/heads/trnm-g1-qualified-candidate
+          git update-ref -d refs/heads/trnm-g1-qualified-candidate
+          sha256sum "${output}/candidate.bundle" > "${output}/candidate.bundle.sha256"
+          cp /tmp/trnm-g1-lab-validator-result-v3.json \
+            "${output}/trnm-g1-lab-validator-result-v3.json"
+
+          python3 -B - "${output}/attestation.json" <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          output = Path(sys.argv[1])
+
+          def git(*args: str) -> str:
+              return subprocess.check_output(["git", *args], text=True).strip()
+
+          report = Path("/tmp/trnm-g1-lab-validator-result-v3.json")
+          report_digest = hashlib.sha256(report.read_bytes()).hexdigest()
+          attestation = {
+              "schema": "trnm-g1-qualified-integration-attestation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["GITHUB_SHA"],
+              "source_tree": git("rev-parse", f"{os.environ['GITHUB_SHA']}^{{tree}}"),
+              "candidate_commit": git("rev-parse", "HEAD"),
+              "candidate_tree": git("rev-parse", "HEAD^{tree}"),
+              "integration_branch": os.environ["INTEGRATION_BRANCH"],
+              "source_floor": os.environ["SOURCE_FLOOR"],
+              "package_heads": {
+                  "A03": os.environ["G1_A03_HEAD"],
+                  "A19": os.environ["G1_A19_HEAD"],
+                  "A05": os.environ["G1_A05_HEAD"],
+                  "A06": os.environ["G1_A06_HEAD"],
+                  "A21": os.environ["G1_A21_HEAD"],
+              },
+              "lab_report_sha256": report_digest,
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          output.write_text(
+              json.dumps(attestation, sort_keys=True, separators=(",", ":")) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          echo "candidate_commit=${candidate_commit}" >> "${GITHUB_OUTPUT}"
+          echo "candidate_tree=${candidate_tree}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload qualified bundle
+        id: upload
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: trnm-g1-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/g1-qualified/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-qualified-tree:
+    name: publish-g1-qualified-tree
+    needs: qualify-integration-tree
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: write
+
+    steps:
+      - name: Check out exact source without persisted write credential
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download exact qualification artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          artifact-ids: ${{ needs.qualify-integration-tree.outputs.artifact_id }}
+          path: ${{ runner.temp }}/g1-qualified
+          merge-multiple: true
+
+      - name: Verify attestation and Git object identity
+        shell: bash
+        env:
+          EXPECTED_CANDIDATE_COMMIT: ${{ needs.qualify-integration-tree.outputs.candidate_commit }}
+          EXPECTED_CANDIDATE_TREE: ${{ needs.qualify-integration-tree.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          artifact="${RUNNER_TEMP}/g1-qualified"
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          sha256sum --check "${artifact}/candidate.bundle.sha256"
+          git bundle verify "${artifact}/candidate.bundle"
+
+          python3 -B - "${artifact}/attestation.json" <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import sys
+
+          data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          expected = {
+              "schema": "trnm-g1-qualified-integration-attestation-v1",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "source_commit": os.environ["GITHUB_SHA"],
+              "candidate_commit": os.environ["EXPECTED_CANDIDATE_COMMIT"],
+              "candidate_tree": os.environ["EXPECTED_CANDIDATE_TREE"],
+              "integration_branch": os.environ["INTEGRATION_BRANCH"],
+              "source_floor": os.environ["SOURCE_FLOOR"],
+              "production_candidate": False,
+              "production_consensus_activation": False,
+              "release_ready": False,
+          }
+          mismatches = {
+              key: (data.get(key), value)
+              for key, value in expected.items()
+              if data.get(key) != value
+          }
+          if mismatches:
+              raise SystemExit(f"qualification attestation mismatch: {mismatches}")
+          PY
+
+          git fetch "${artifact}/candidate.bundle" \
+            refs/heads/trnm-g1-qualified-candidate:refs/remotes/qualified/candidate
+          candidate="$(git rev-parse refs/remotes/qualified/candidate)"
+          tree="$(git rev-parse "${candidate}^{tree}")"
+          test "${candidate}" = "${EXPECTED_CANDIDATE_COMMIT}"
+          test "${tree}" = "${EXPECTED_CANDIDATE_TREE}"
+          git merge-base --is-ancestor "${GITHUB_SHA}" "${candidate}"
+          if git cat-file -e \
+            "${candidate}:.github/workflows/trnm-g1-vertical-integration.yml" \
+            2>/dev/null
+          then
+            echo "qualified tree still contains write-capable integration workflow" >&2
+            exit 3
+          fi
+
+      - name: Publish only the already-qualified commit
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_CANDIDATE_COMMIT: ${{ needs.qualify-integration-tree.outputs.candidate_commit }}
+        run: |
+          set -euo pipefail
+          remote_head="$(
+            git ls-remote origin "refs/heads/${INTEGRATION_BRANCH}" |
+              awk '{print $1}'
+          )"
+          test "${remote_head}" = "${GITHUB_SHA}"
+
+          auth="$(
+            printf 'x-access-token:%s' "${GITHUB_TOKEN}" |
+              base64 -w0
+          )"
+          git config --local \
+            http.https://github.com/.extraheader \
+            "AUTHORIZATION: basic ${auth}"
+          trap 'git config --local --unset-all http.https://github.com/.extraheader || true' EXIT
+
+          git push --atomic origin \
+            "${EXPECTED_CANDIDATE_COMMIT}:refs/heads/${INTEGRATION_BRANCH}"
+
+          published="$(
+            git ls-remote origin "refs/heads/${INTEGRATION_BRANCH}" |
+              awk '{print $1}'
+          )"
+          test "${published}" = "${EXPECTED_CANDIDATE_COMMIT}"
