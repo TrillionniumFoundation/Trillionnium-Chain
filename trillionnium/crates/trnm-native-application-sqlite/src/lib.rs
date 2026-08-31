@@ -1,16 +1,18 @@
 #![forbid(unsafe_code)]
-//! Durable proposal-validation journal owned by the native application lane.
+//! Durable native-application journals for proposal validation and candidate finalization history.
 //!
-//! This crate is deliberately narrower than an application engine. It stores
-//! exact proposal-validation bindings, complete canonical
-//! `NativeExecutedBlockV0` artifacts, and the ordered `P` -> `D` ->
-//! request-bound, `C`-shaped `K` recovery journal. The `P` capability is released only
-//! after an atomic write and fresh-connection exact artifact readback. It does
-//! not execute transactions, advance the committed
-//! application head, sign, broadcast, or decide consensus validity.
+//! This crate remains narrower than an application engine. It stores exact
+//! proposal-validation bindings, complete canonical `NativeExecutedBlockV0`
+//! artifacts, the ordered `P` -> `D` -> request-bound, `C`-shaped `K` recovery
+//! journal, and content-addressed finalization readbacks. The `P` capability is
+//! released only after an atomic write and fresh-connection exact artifact
+//! readback. The finalization history records an application-produced readback;
+//! it does not execute transactions, mint a Core/Safety permit, advance the
+//! application head by itself, sign, broadcast, or decide consensus validity.
 
 mod binding;
 mod error;
+mod finalization_history;
 mod store;
 
 pub use binding::{
@@ -19,6 +21,11 @@ pub use binding::{
     SafetyConfirmationReadbackV0, UntrustedSafetyConfirmationReadbackV0, ValidationIdV0,
 };
 pub use error::{ValidationStoreErrorCodeV0, ValidationStoreErrorV0, ValidationStoreResultV0};
+pub use finalization_history::{
+    ConfirmedFinalizationHistoryAuditV0, ConfirmedFinalizationHistoryRecordV0,
+    FinalizationHistoryAppendOutcomeV0, FinalizationHistoryScopeV0,
+    SqliteNativeFinalizationHistoryV0, MAX_FINALIZATION_HISTORY_ENTRIES_V0,
+};
 pub use store::{
     AckTransitionOutcomeV0, AckedValidationV0, ActiveReplaySessionV0, AliasClosedReplayLinkKV0,
     CheckpointedReplayLinkV0, ConfirmedProposalValidationCheckpointFactsV0,
