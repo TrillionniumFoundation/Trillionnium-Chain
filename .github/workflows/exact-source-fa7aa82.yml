@@ -1,0 +1,40 @@
+name: exact-source-fa7aa82
+
+on:
+  push:
+    branches:
+      - tmp/exact-source-fa7aa82-20260831
+    paths:
+      - .github/workflows/exact-source-fa7aa82.yml
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Archive exact parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_commit="$(git rev-parse HEAD^)"
+          test "$source_commit" = "fa7aa82a5fa8fe1910b26845caae99784211746b"
+          out="$RUNNER_TEMP/exact-source"
+          mkdir -p "$out"
+          git archive --format=tar --prefix=Trillionnium-Chain/ "$source_commit" | gzip -9 > "$out/source.tar.gz"
+          git rev-parse "$source_commit" > "$out/source.commit"
+          git rev-parse "$source_commit^{tree}" > "$out/source.tree"
+          sha256sum "$out/source.tar.gz" > "$out/source.tar.gz.sha256"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: exact-source-fa7aa82
+          path: ${{ runner.temp }}/exact-source/
+          if-no-files-found: error
+          retention-days: 3
